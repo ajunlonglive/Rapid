@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<security>
+    <roles>RapidAdmin</roles>
+    <roles>RapidDesign</roles>
+    <users>
+        <entry>
+            <key>admin</key>
+            <value>
+                <password>admin</password>
+                <roles>RapidDesign</roles>
+                <roles>RapidAdmin</roles>
+            </value>
+        </entry>
+    </users>
+</security>

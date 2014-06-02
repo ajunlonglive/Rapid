@@ -1,0 +1,840 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<page>
+    <controls>
+        <childControls>
+            <childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P3_C15</value>
+                    </entry>
+                    <entry>
+                        <key>text</key>
+                        <value>New page</value>
+                    </entry>
+                    <entry>
+                        <key>colSpan</key>
+                        <value>2</value>
+                    </entry>
+                    <entry>
+                        <key>name</key>
+                        <value>Table cell 17</value>
+                    </entry>
+                    <entry>
+                        <key>rowSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableCell</value>
+                    </entry>
+                </properties>
+                <styles>
+                    <appliesTo>#rapid_P3_C15</appliesTo>
+                    <rules>color:white;</rules>
+                    <rules>padding:10px;</rules>
+                    <rules>text-align:center;</rules>
+                    <rules>font-weight:bold;</rules>
+                    <rules>background:#e00 url(highlight_red_1x44.png) 50% 50% repeat-x;</rules>
+                    <rules>text-shadow :-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;</rules>
+                </styles>
+            </childControls>
+            <properties>
+                <entry>
+                    <key>id</key>
+                    <value>rapid_P3_C14</value>
+                </entry>
+                <entry>
+                    <key>name</key>
+                    <value>Table row 8</value>
+                </entry>
+                <entry>
+                    <key>type</key>
+                    <value>tableRow</value>
+                </entry>
+            </properties>
+        </childControls>
+        <childControls>
+            <childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P3_C3</value>
+                    </entry>
+                    <entry>
+                        <key>text</key>
+                        <value>Name</value>
+                    </entry>
+                    <entry>
+                        <key>colSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>name</key>
+                        <value></value>
+                    </entry>
+                    <entry>
+                        <key>rowSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableCell</value>
+                    </entry>
+                </properties>
+            </childControls>
+            <childControls>
+                <childControls>
+                    <events>
+                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="existing">
+                            <properties>
+<entry>
+    <key>id</key>
+    <value>P3_A30</value>
+</entry>
+<entry>
+    <key>name</key>
+    <value>Existing 30</value>
+</entry>
+<entry>
+    <key>action</key>
+    <value>P3_A29</value>
+</entry>
+<entry>
+    <key>type</key>
+    <value>existing</value>
+</entry>
+                            </properties>
+                        </actions>
+                        <filter></filter>
+                        <type>keyup</type>
+                    </events>
+                    <events>
+                        <filter></filter>
+                        <type>change</type>
+                    </events>
+                    <events>
+                        <filter></filter>
+                        <type>blur</type>
+                    </events>
+                    <properties>
+                        <entry>
+                            <key>id</key>
+                            <value>rapid_P3_C17</value>
+                        </entry>
+                        <entry>
+                            <key>name</key>
+                            <value>Name</value>
+                        </entry>
+                        <entry>
+                            <key>value</key>
+                            <value></value>
+                        </entry>
+                        <entry>
+                            <key>controlType</key>
+                            <value>N</value>
+                        </entry>
+                        <entry>
+                            <key>type</key>
+                            <value>input</value>
+                        </entry>
+                    </properties>
+                    <styles>
+                        <appliesTo>#rapid_P3_C17</appliesTo>
+                        <rules>width:100%;</rules>
+                    </styles>
+                    <validation>
+                        <allowNulls>false</allowNulls>
+                        <javaScript>var name = $(&quot;#rapid_P3_C17&quot;).val();
+if (!name) return &quot;A page name must be provided&quot;;
+if (!name.match(new RegExp(&quot;^[0-9A-Za-z_-]+$&quot;))) return &quot;A page name can only contain characters a-z, A-Z, 0-9, -, and _&quot;;
+var exists = false;
+$.ajax({
+    url: &quot;designer?a=&quot; + _app.id + &quot;&amp;action=checkPage&amp;name=&quot; + name,
+    type: &quot;GET&quot;,    
+    async: false,                
+    success: function(result) {
+        if (result) {
+            exists = true;
+        }
+    }
+});
+if (exists) return &quot;A page with this name already exists&quot;;</javaScript>
+                        <message>Page name can only contain the characters a-z, A-Z, 0-9, -, and _</message>
+                        <regEx></regEx>
+                        <type>javascript</type>
+                    </validation>
+                </childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P3_C4</value>
+                    </entry>
+                    <entry>
+                        <key>text</key>
+                        <value></value>
+                    </entry>
+                    <entry>
+                        <key>colSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>name</key>
+                        <value>Table cell 10</value>
+                    </entry>
+                    <entry>
+                        <key>rowSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableCell</value>
+                    </entry>
+                </properties>
+                <styles>
+                    <appliesTo>#rapid_P3_C4</appliesTo>
+                    <rules>width:250px;</rules>
+                    <rules>padding-right:25px;</rules>
+                </styles>
+            </childControls>
+            <properties>
+                <entry>
+                    <key>id</key>
+                    <value>rapid_P3_C2</value>
+                </entry>
+                <entry>
+                    <key>name</key>
+                    <value>Table row 4</value>
+                </entry>
+                <entry>
+                    <key>type</key>
+                    <value>tableRow</value>
+                </entry>
+            </properties>
+        </childControls>
+        <childControls>
+            <childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P3_C6</value>
+                    </entry>
+                    <entry>
+                        <key>text</key>
+                        <value>Title</value>
+                    </entry>
+                    <entry>
+                        <key>colSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>name</key>
+                        <value></value>
+                    </entry>
+                    <entry>
+                        <key>rowSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableCell</value>
+                    </entry>
+                </properties>
+            </childControls>
+            <childControls>
+                <childControls>
+                    <events>
+                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="existing">
+                            <properties>
+<entry>
+    <key>id</key>
+    <value>P3_A31</value>
+</entry>
+<entry>
+    <key>name</key>
+    <value>Existing 31</value>
+</entry>
+<entry>
+    <key>action</key>
+    <value>P3_A29</value>
+</entry>
+<entry>
+    <key>type</key>
+    <value>existing</value>
+</entry>
+                            </properties>
+                        </actions>
+                        <filter></filter>
+                        <type>keyup</type>
+                    </events>
+                    <events>
+                        <filter></filter>
+                        <type>change</type>
+                    </events>
+                    <events>
+                        <filter></filter>
+                        <type>blur</type>
+                    </events>
+                    <properties>
+                        <entry>
+                            <key>id</key>
+                            <value>rapid_P3_C18</value>
+                        </entry>
+                        <entry>
+                            <key>name</key>
+                            <value>Title</value>
+                        </entry>
+                        <entry>
+                            <key>value</key>
+                            <value></value>
+                        </entry>
+                        <entry>
+                            <key>controlType</key>
+                            <value>N</value>
+                        </entry>
+                        <entry>
+                            <key>type</key>
+                            <value>input</value>
+                        </entry>
+                    </properties>
+                    <styles>
+                        <appliesTo>#rapid_P3_C18</appliesTo>
+                        <rules>width:100%;</rules>
+                    </styles>
+                    <validation>
+                        <allowNulls>false</allowNulls>
+                        <javaScript></javaScript>
+                        <message>A page title must be provided</message>
+                        <regEx>[\s\S]</regEx>
+                        <type>value</type>
+                    </validation>
+                </childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P3_C7</value>
+                    </entry>
+                    <entry>
+                        <key>text</key>
+                        <value></value>
+                    </entry>
+                    <entry>
+                        <key>colSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>name</key>
+                        <value>Table cell 12</value>
+                    </entry>
+                    <entry>
+                        <key>rowSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableCell</value>
+                    </entry>
+                </properties>
+                <styles>
+                    <appliesTo>#rapid_P3_C7</appliesTo>
+                    <rules>padding-right:25px;</rules>
+                </styles>
+            </childControls>
+            <properties>
+                <entry>
+                    <key>id</key>
+                    <value>rapid_P3_C5</value>
+                </entry>
+                <entry>
+                    <key>name</key>
+                    <value>Table row 5</value>
+                </entry>
+                <entry>
+                    <key>type</key>
+                    <value>tableRow</value>
+                </entry>
+            </properties>
+        </childControls>
+        <childControls>
+            <childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P3_C9</value>
+                    </entry>
+                    <entry>
+                        <key>text</key>
+                        <value>Description</value>
+                    </entry>
+                    <entry>
+                        <key>colSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>name</key>
+                        <value></value>
+                    </entry>
+                    <entry>
+                        <key>rowSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableCell</value>
+                    </entry>
+                </properties>
+            </childControls>
+            <childControls>
+                <childControls>
+                    <events>
+                        <filter></filter>
+                        <type>keyup</type>
+                    </events>
+                    <events>
+                        <filter></filter>
+                        <type>change</type>
+                    </events>
+                    <events>
+                        <filter></filter>
+                        <type>blur</type>
+                    </events>
+                    <properties>
+                        <entry>
+                            <key>id</key>
+                            <value>rapid_P3_C19</value>
+                        </entry>
+                        <entry>
+                            <key>name</key>
+                            <value>Description</value>
+                        </entry>
+                        <entry>
+                            <key>value</key>
+                            <value></value>
+                        </entry>
+                        <entry>
+                            <key>controlType</key>
+                            <value>L</value>
+                        </entry>
+                        <entry>
+                            <key>type</key>
+                            <value>input</value>
+                        </entry>
+                    </properties>
+                    <styles>
+                        <appliesTo>#rapid_P3_C19</appliesTo>
+                        <rules>width:100%;</rules>
+                        <rules>height:70px;</rules>
+                    </styles>
+                    <validation>
+                        <allowNulls>false</allowNulls>
+                        <javaScript></javaScript>
+                        <message></message>
+                        <regEx></regEx>
+                        <type></type>
+                    </validation>
+                </childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P3_C10</value>
+                    </entry>
+                    <entry>
+                        <key>text</key>
+                        <value></value>
+                    </entry>
+                    <entry>
+                        <key>colSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>name</key>
+                        <value>Table cell 14</value>
+                    </entry>
+                    <entry>
+                        <key>rowSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableCell</value>
+                    </entry>
+                </properties>
+                <styles>
+                    <appliesTo>#rapid_P3_C10</appliesTo>
+                    <rules>padding-right:25px;</rules>
+                </styles>
+            </childControls>
+            <properties>
+                <entry>
+                    <key>id</key>
+                    <value>rapid_P3_C8</value>
+                </entry>
+                <entry>
+                    <key>name</key>
+                    <value>Table row 6</value>
+                </entry>
+                <entry>
+                    <key>type</key>
+                    <value>tableRow</value>
+                </entry>
+            </properties>
+        </childControls>
+        <childControls>
+            <childControls>
+                <childControls>
+                    <events>
+                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="custom">
+                            <properties>
+<entry>
+    <key>id</key>
+    <value>P3_A37_</value>
+</entry>
+<entry>
+    <key>javascript</key>
+    <value>hideDialogue();</value>
+</entry>
+<entry>
+    <key>name</key>
+    <value>Custom 37</value>
+</entry>
+<entry>
+    <key>type</key>
+    <value>custom</value>
+</entry>
+                            </properties>
+                        </actions>
+                        <filter></filter>
+                        <type>click</type>
+                    </events>
+                    <properties>
+                        <entry>
+                            <key>id</key>
+                            <value>rapid_P3_C20</value>
+                        </entry>
+                        <entry>
+                            <key>name</key>
+                            <value>Cancel</value>
+                        </entry>
+                        <entry>
+                            <key>label</key>
+                            <value>Cancel</value>
+                        </entry>
+                        <entry>
+                            <key>type</key>
+                            <value>button</value>
+                        </entry>
+                    </properties>
+                    <styles>
+                        <appliesTo>#rapid_P3_C20</appliesTo>
+                        <rules>width:60px;</rules>
+                    </styles>
+                </childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P3_C22</value>
+                    </entry>
+                    <entry>
+                        <key>text</key>
+                        <value></value>
+                    </entry>
+                    <entry>
+                        <key>colSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>name</key>
+                        <value>Table cell 9</value>
+                    </entry>
+                    <entry>
+                        <key>rowSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableCell</value>
+                    </entry>
+                </properties>
+                <styles>
+                    <appliesTo>#rapid_P3_C22</appliesTo>
+                    <rules>padding-bottom:10px;</rules>
+                </styles>
+            </childControls>
+            <childControls>
+                <childControls>
+                    <events>
+                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="validation">
+                            <properties>
+<entry>
+    <key>id</key>
+    <value>P3_A29</value>
+</entry>
+<entry>
+    <key>showMessages</key>
+    <value>true</value>
+</entry>
+<entry>
+    <key>name</key>
+    <value>Validation 29</value>
+</entry>
+<entry>
+    <key>type</key>
+    <value>validation</value>
+</entry>
+<entry>
+    <key>stopActions</key>
+    <value>true</value>
+</entry>
+                            </properties>
+                            <controls>rapid_P3_C17</controls>
+                            <controls>rapid_P3_C18</controls>
+                            <failActions xsi:type="control">
+<properties>
+    <entry>
+        <key>id</key>
+        <value>P3_A33</value>
+    </entry>
+    <entry>
+        <key>control</key>
+        <value>rapid_P3_C24</value>
+    </entry>
+    <entry>
+        <key>name</key>
+        <value>Control 33</value>
+    </entry>
+    <entry>
+        <key>command</key>
+        <value>attr(&quot;disabled&quot;,&quot;disabled&quot;)</value>
+    </entry>
+    <entry>
+        <key>type</key>
+        <value>control</value>
+    </entry>
+</properties>
+                            </failActions>
+                            <passActions xsi:type="control">
+<properties>
+    <entry>
+        <key>id</key>
+        <value>P3_A35</value>
+    </entry>
+    <entry>
+        <key>control</key>
+        <value>rapid_P3_C24</value>
+    </entry>
+    <entry>
+        <key>name</key>
+        <value>Control 35</value>
+    </entry>
+    <entry>
+        <key>command</key>
+        <value>removeAttr(&quot;disabled&quot;)</value>
+    </entry>
+    <entry>
+        <key>type</key>
+        <value>control</value>
+    </entry>
+</properties>
+                            </passActions>
+                        </actions>
+                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="rapid">
+                            <properties>
+<entry>
+    <key>id</key>
+    <value>P1_A27</value>
+</entry>
+<entry>
+    <key>childActions</key>
+    <value>[]</value>
+</entry>
+<entry>
+    <key>name</key>
+    <value>Rapid 27</value>
+</entry>
+<entry>
+    <key>actionType</key>
+    <value>NEWPAGE</value>
+</entry>
+<entry>
+    <key>type</key>
+    <value>rapid</value>
+</entry>
+                            </properties>
+                        </actions>
+                        <filter></filter>
+                        <type>click</type>
+                    </events>
+                    <properties>
+                        <entry>
+                            <key>id</key>
+                            <value>rapid_P3_C24</value>
+                        </entry>
+                        <entry>
+                            <key>name</key>
+                            <value>Save</value>
+                        </entry>
+                        <entry>
+                            <key>label</key>
+                            <value>Save</value>
+                        </entry>
+                        <entry>
+                            <key>type</key>
+                            <value>button</value>
+                        </entry>
+                    </properties>
+                    <styles>
+                        <appliesTo>#rapid_P3_C24</appliesTo>
+                        <rules>width:60px;</rules>
+                    </styles>
+                </childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P3_C28</value>
+                    </entry>
+                    <entry>
+                        <key>text</key>
+                        <value></value>
+                    </entry>
+                    <entry>
+                        <key>colSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>name</key>
+                        <value>Table cell 10</value>
+                    </entry>
+                    <entry>
+                        <key>rowSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableCell</value>
+                    </entry>
+                </properties>
+                <styles>
+                    <appliesTo>#rapid_P3_C28</appliesTo>
+                    <rules>text-align:right;</rules>
+                    <rules>padding-bottom:10px;</rules>
+                    <rules>padding-right:20px;</rules>
+                </styles>
+            </childControls>
+            <properties>
+                <entry>
+                    <key>id</key>
+                    <value>rapid_P3_C21</value>
+                </entry>
+                <entry>
+                    <key>name</key>
+                    <value>Table row 6</value>
+                </entry>
+                <entry>
+                    <key>type</key>
+                    <value>tableRow</value>
+                </entry>
+            </properties>
+            <styles>
+                <appliesTo>.</appliesTo>
+                <rules>margin-top:10px</rules>
+            </styles>
+        </childControls>
+        <properties>
+            <entry>
+                <key>id</key>
+                <value>rapid_P3_C1</value>
+            </entry>
+            <entry>
+                <key>name</key>
+                <value>Table 2</value>
+            </entry>
+            <entry>
+                <key>type</key>
+                <value>table</value>
+            </entry>
+        </properties>
+        <styles>
+            <appliesTo>#rapid_P3_C1</appliesTo>
+            <rules>border-spacing:0;</rules>
+        </styles>
+        <styles>
+            <appliesTo>#rapid_P3_C1 td</appliesTo>
+            <rules>padding-left:15px;</rules>
+            <rules>padding-top:10px;</rules>
+        </styles>
+    </controls>
+    <description>Allows users to create new pages in their application</description>
+    <events>
+        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="control">
+            <properties>
+                <entry>
+                    <key>id</key>
+                    <value>P3_A32</value>
+                </entry>
+                <entry>
+                    <key>control</key>
+                    <value>rapid_P3_C17</value>
+                </entry>
+                <entry>
+                    <key>name</key>
+                    <value>Control 32</value>
+                </entry>
+                <entry>
+                    <key>command</key>
+                    <value>focus()</value>
+                </entry>
+                <entry>
+                    <key>type</key>
+                    <value>control</value>
+                </entry>
+            </properties>
+        </actions>
+        <filter></filter>
+        <type>pageload</type>
+    </events>
+    <events>
+        <filter></filter>
+        <type>reusable</type>
+    </events>
+    <htmlBody>&lt;table id=&quot;rapid_P3_C1&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;rapid_P3_C14&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P3_C15&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;New page&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P3_C2&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P3_C3&quot; class=&quot;tabelCell&quot;&gt;Name&lt;/td&gt;&lt;td id=&quot;rapid_P3_C4&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P3_C17&quot; value=&quot;&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P3_C5&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P3_C6&quot; class=&quot;tabelCell&quot;&gt;Title&lt;/td&gt;&lt;td id=&quot;rapid_P3_C7&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P3_C18&quot; value=&quot;&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P3_C8&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P3_C9&quot; class=&quot;tabelCell&quot;&gt;Description&lt;/td&gt;&lt;td id=&quot;rapid_P3_C10&quot; class=&quot;tabelCell&quot;&gt;&lt;textarea id=&quot;rapid_P3_C19&quot; class=&quot;input&quot;&gt;&lt;/textarea&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P3_C21&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P3_C22&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P3_C20&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P3_C28&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P3_C24&quot; class=&quot;button&quot;&gt;Save&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
+    <id>P3</id>
+    <name>03_PageNew</name>
+    <rolesHtml>
+        <html>&lt;table id=&quot;rapid_P3_C1&quot; class=&quot;table&quot;&gt;
+		&lt;tbody&gt;
+			&lt;tr id=&quot;rapid_P3_C14&quot; class=&quot;tableRow&quot;&gt;
+				&lt;td id=&quot;rapid_P3_C15&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;New page&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr id=&quot;rapid_P3_C2&quot; class=&quot;tableRow&quot;&gt;
+				&lt;td id=&quot;rapid_P3_C3&quot; class=&quot;tabelCell&quot;&gt;Name&lt;/td&gt;
+				&lt;td id=&quot;rapid_P3_C4&quot; class=&quot;tabelCell&quot;&gt;
+					&lt;input id=&quot;rapid_P3_C17&quot; value=&quot;&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
+				&lt;/tr&gt;
+				&lt;tr id=&quot;rapid_P3_C5&quot; class=&quot;tableRow&quot;&gt;
+					&lt;td id=&quot;rapid_P3_C6&quot; class=&quot;tabelCell&quot;&gt;Title&lt;/td&gt;
+					&lt;td id=&quot;rapid_P3_C7&quot; class=&quot;tabelCell&quot;&gt;
+						&lt;input id=&quot;rapid_P3_C18&quot; value=&quot;&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
+					&lt;/tr&gt;
+					&lt;tr id=&quot;rapid_P3_C8&quot; class=&quot;tableRow&quot;&gt;
+						&lt;td id=&quot;rapid_P3_C9&quot; class=&quot;tabelCell&quot;&gt;Description&lt;/td&gt;
+						&lt;td id=&quot;rapid_P3_C10&quot; class=&quot;tabelCell&quot;&gt;
+							&lt;textarea id=&quot;rapid_P3_C19&quot; class=&quot;input&quot;&gt;&lt;/textarea&gt;
+						&lt;/td&gt;
+					&lt;/tr&gt;
+					&lt;tr id=&quot;rapid_P3_C21&quot; class=&quot;tableRow&quot;&gt;
+						&lt;td id=&quot;rapid_P3_C22&quot; class=&quot;tabelCell&quot;&gt;
+							&lt;button id=&quot;rapid_P3_C20&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;
+						&lt;/td&gt;
+						&lt;td id=&quot;rapid_P3_C28&quot; class=&quot;tabelCell&quot;&gt;
+							&lt;button id=&quot;rapid_P3_C24&quot; class=&quot;button&quot;&gt;Save&lt;/button&gt;
+						&lt;/td&gt;
+					&lt;/tr&gt;
+				&lt;/tbody&gt;
+			&lt;/table&gt;</html>
+    </rolesHtml>
+    <styles>
+        <appliesTo>body</appliesTo>
+        <rules>font-size:14px;</rules>
+    </styles>
+    <title>New page</title>
+</page>

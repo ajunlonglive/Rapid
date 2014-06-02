@@ -1,0 +1,723 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<page>
+    <controls>
+        <childControls>
+            <childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P9_C4_</value>
+                    </entry>
+                    <entry>
+                        <key>text</key>
+                        <value>Import application</value>
+                    </entry>
+                    <entry>
+                        <key>colSpan</key>
+                        <value>2</value>
+                    </entry>
+                    <entry>
+                        <key>name</key>
+                        <value>Table cell 17</value>
+                    </entry>
+                    <entry>
+                        <key>rowSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableCell</value>
+                    </entry>
+                </properties>
+                <styles>
+                    <appliesTo>#rapid_P9_C4_</appliesTo>
+                    <rules>background:#e00 url(highlight_red_1x44.png) 50% 50% repeat-x;</rules>
+                    <rules>padding:10px;</rules>
+                    <rules>text-shadow :-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;</rules>
+                </styles>
+            </childControls>
+            <properties>
+                <entry>
+                    <key>id</key>
+                    <value>rapid_P9_C3_</value>
+                </entry>
+                <entry>
+                    <key>name</key>
+                    <value>Table row 8</value>
+                </entry>
+                <entry>
+                    <key>type</key>
+                    <value>tableRow</value>
+                </entry>
+            </properties>
+            <styles>
+                <appliesTo>#rapid_P9_C3_</appliesTo>
+                <rules>background-color:red;</rules>
+                <rules>color:white;</rules>
+                <rules>font-weight:bold;</rules>
+                <rules>text-align:center;</rules>
+            </styles>
+        </childControls>
+        <childControls>
+            <childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P9_C31_</value>
+                    </entry>
+                    <entry>
+                        <key>text</key>
+                        <value>File :</value>
+                    </entry>
+                    <entry>
+                        <key>colSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>name</key>
+                        <value>Table cell 9</value>
+                    </entry>
+                    <entry>
+                        <key>rowSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableCell</value>
+                    </entry>
+                </properties>
+            </childControls>
+            <childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P9_C32_</value>
+                    </entry>
+                    <entry>
+                        <key>text</key>
+                        <value></value>
+                    </entry>
+                    <entry>
+                        <key>colSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>name</key>
+                        <value>Table cell 10</value>
+                    </entry>
+                    <entry>
+                        <key>rowSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableCell</value>
+                    </entry>
+                </properties>
+                <styles>
+                    <appliesTo>#rapid_P9_C32_</appliesTo>
+                    <rules>padding-right:25px;</rules>
+                </styles>
+            </childControls>
+            <properties>
+                <entry>
+                    <key>id</key>
+                    <value>rapid_P9_C30_</value>
+                </entry>
+                <entry>
+                    <key>name</key>
+                    <value>Table row 4</value>
+                </entry>
+                <entry>
+                    <key>type</key>
+                    <value>tableRow</value>
+                </entry>
+            </properties>
+            <styles>
+                <appliesTo>.</appliesTo>
+                <rules>padding:5px</rules>
+            </styles>
+        </childControls>
+        <childControls>
+            <childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P9_C6_</value>
+                    </entry>
+                    <entry>
+                        <key>text</key>
+                        <value>Name :</value>
+                    </entry>
+                    <entry>
+                        <key>colSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>name</key>
+                        <value>Table cell 9</value>
+                    </entry>
+                    <entry>
+                        <key>rowSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableCell</value>
+                    </entry>
+                </properties>
+            </childControls>
+            <childControls>
+                <childControls>
+                    <events>
+                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="existing">
+                            <properties>
+<entry>
+    <key>id</key>
+    <value>P9_A9_</value>
+</entry>
+<entry>
+    <key>name</key>
+    <value>Existing 26</value>
+</entry>
+<entry>
+    <key>action</key>
+    <value>P9_A25_</value>
+</entry>
+<entry>
+    <key>type</key>
+    <value>existing</value>
+</entry>
+                            </properties>
+                        </actions>
+                        <filter></filter>
+                        <type>keyup</type>
+                    </events>
+                    <events>
+                        <filter></filter>
+                        <type>change</type>
+                    </events>
+                    <events>
+                        <filter></filter>
+                        <type>blur</type>
+                    </events>
+                    <properties>
+                        <entry>
+                            <key>id</key>
+                            <value>rapid_P9_C8_</value>
+                        </entry>
+                        <entry>
+                            <key>name</key>
+                            <value>Name</value>
+                        </entry>
+                        <entry>
+                            <key>value</key>
+                            <value></value>
+                        </entry>
+                        <entry>
+                            <key>controlType</key>
+                            <value>N</value>
+                        </entry>
+                        <entry>
+                            <key>type</key>
+                            <value>input</value>
+                        </entry>
+                    </properties>
+                    <styles>
+                        <appliesTo>#rapid_P9_C8_</appliesTo>
+                        <rules>width:100%;</rules>
+                    </styles>
+                    <validation>
+                        <allowNulls>false</allowNulls>
+                        <javaScript>var file = $(&quot;#file&quot;).val();
+if (!file) return &quot;A file must be chosen using the button above&quot;;
+if (file.toLowerCase().indexOf(&quot;.zip&quot;) != file.length - 4) return &quot;File must be a .zip&quot;;
+var name = $(&quot;#rapid_P9_C8_&quot;).val();
+if (!name) return &quot;An application name must be provided&quot;;
+if (!name.match(new RegExp(&quot;^[0-9A-Za-z_-]+$&quot;))) return &quot;An application name can only contain characters a-z, A-Z, 0-9, -, and _&quot;;
+var exists = false;
+$.ajax({
+    url: &quot;designer?action=checkApp&amp;name=&quot; + name,
+    type: &quot;GET&quot;,    
+    async: false,                
+    success: function(result) {
+        if (result) {
+            exists = true;
+        }
+    }
+});
+if (exists) return &quot;An application with this name already exists&quot;;</javaScript>
+                        <message>An application name can only contain characters a-z, A-Z, 0-9, -, and _</message>
+                        <regEx></regEx>
+                        <type>javascript</type>
+                    </validation>
+                </childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P9_C7_</value>
+                    </entry>
+                    <entry>
+                        <key>text</key>
+                        <value></value>
+                    </entry>
+                    <entry>
+                        <key>colSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>name</key>
+                        <value>Table cell 10</value>
+                    </entry>
+                    <entry>
+                        <key>rowSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableCell</value>
+                    </entry>
+                </properties>
+                <styles>
+                    <appliesTo>#rapid_P9_C7_</appliesTo>
+                    <rules>padding-right:25px;</rules>
+                </styles>
+            </childControls>
+            <properties>
+                <entry>
+                    <key>id</key>
+                    <value>rapid_P9_C5_</value>
+                </entry>
+                <entry>
+                    <key>name</key>
+                    <value>Table row 4</value>
+                </entry>
+                <entry>
+                    <key>type</key>
+                    <value>tableRow</value>
+                </entry>
+            </properties>
+            <styles>
+                <appliesTo>.</appliesTo>
+                <rules>padding:5px</rules>
+            </styles>
+        </childControls>
+        <childControls>
+            <childControls>
+                <childControls>
+                    <events>
+                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="control">
+                            <properties>
+<entry>
+    <key>id</key>
+    <value>P9_A22_</value>
+</entry>
+<entry>
+    <key>control</key>
+    <value>rapid_P9_C2_</value>
+</entry>
+<entry>
+    <key>name</key>
+    <value>Control 24</value>
+</entry>
+<entry>
+    <key>command</key>
+    <value>hideDialogue();</value>
+</entry>
+<entry>
+    <key>type</key>
+    <value>control</value>
+</entry>
+                            </properties>
+                        </actions>
+                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="custom">
+                            <properties>
+<entry>
+    <key>id</key>
+    <value>P9_A38_</value>
+</entry>
+<entry>
+    <key>javascript</key>
+    <value>return false;</value>
+</entry>
+<entry>
+    <key>name</key>
+    <value>Custom 38</value>
+</entry>
+<entry>
+    <key>type</key>
+    <value>custom</value>
+</entry>
+                            </properties>
+                        </actions>
+                        <filter></filter>
+                        <type>click</type>
+                    </events>
+                    <properties>
+                        <entry>
+                            <key>id</key>
+                            <value>rapid_P9_C21_</value>
+                        </entry>
+                        <entry>
+                            <key>name</key>
+                            <value>Cancel</value>
+                        </entry>
+                        <entry>
+                            <key>label</key>
+                            <value>Cancel</value>
+                        </entry>
+                        <entry>
+                            <key>type</key>
+                            <value>button</value>
+                        </entry>
+                    </properties>
+                    <styles>
+                        <appliesTo>#rapid_P9_C2_9</appliesTo>
+                        <rules>width:60px;</rules>
+                    </styles>
+                </childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P9_C20_</value>
+                    </entry>
+                    <entry>
+                        <key>text</key>
+                        <value></value>
+                    </entry>
+                    <entry>
+                        <key>colSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>name</key>
+                        <value>Table cell 9</value>
+                    </entry>
+                    <entry>
+                        <key>rowSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableCell</value>
+                    </entry>
+                </properties>
+                <styles>
+                    <appliesTo>#rapid_P9_C20_</appliesTo>
+                    <rules>padding-bottom:10px;</rules>
+                </styles>
+            </childControls>
+            <childControls>
+                <childControls>
+                    <events>
+                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="validation">
+                            <properties>
+<entry>
+    <key>id</key>
+    <value>P9_A25_</value>
+</entry>
+<entry>
+    <key>showMessages</key>
+    <value>true</value>
+</entry>
+<entry>
+    <key>name</key>
+    <value>Validation 25</value>
+</entry>
+<entry>
+    <key>type</key>
+    <value>validation</value>
+</entry>
+<entry>
+    <key>stopActions</key>
+    <value>true</value>
+</entry>
+                            </properties>
+                            <controls>rapid_P9_C8_</controls>
+                            <failActions xsi:type="control">
+<properties>
+    <entry>
+        <key>id</key>
+        <value>P1_A29</value>
+    </entry>
+    <entry>
+        <key>control</key>
+        <value>rapid_P9_C24_</value>
+    </entry>
+    <entry>
+        <key>name</key>
+        <value>Control 29</value>
+    </entry>
+    <entry>
+        <key>command</key>
+        <value>disable();</value>
+    </entry>
+    <entry>
+        <key>type</key>
+        <value>control</value>
+    </entry>
+</properties>
+                            </failActions>
+                            <passActions xsi:type="control">
+<properties>
+    <entry>
+        <key>id</key>
+        <value>P1_A28</value>
+    </entry>
+    <entry>
+        <key>control</key>
+        <value>rapid_P9_C24_</value>
+    </entry>
+    <entry>
+        <key>name</key>
+        <value>Control 28</value>
+    </entry>
+    <entry>
+        <key>command</key>
+        <value>enable();</value>
+    </entry>
+    <entry>
+        <key>type</key>
+        <value>control</value>
+    </entry>
+</properties>
+                            </passActions>
+                        </actions>
+                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="custom">
+                            <properties>
+<entry>
+    <key>id</key>
+    <value>P9_A37_</value>
+</entry>
+<entry>
+    <key>javascript</key>
+    <value>var form = $(&quot;#form&quot;);
+form[0].action = 'designer?a=rapid&amp;action=import&amp;name=' + $(&quot;#rapid_P9_C8_&quot;).val();
+form.submit();</value>
+</entry>
+<entry>
+    <key>name</key>
+    <value>Custom 37</value>
+</entry>
+<entry>
+    <key>type</key>
+    <value>custom</value>
+</entry>
+                            </properties>
+                        </actions>
+                        <filter></filter>
+                        <type>click</type>
+                    </events>
+                    <properties>
+                        <entry>
+                            <key>id</key>
+                            <value>rapid_P9_C24_</value>
+                        </entry>
+                        <entry>
+                            <key>name</key>
+                            <value>Import</value>
+                        </entry>
+                        <entry>
+                            <key>label</key>
+                            <value>Import</value>
+                        </entry>
+                        <entry>
+                            <key>type</key>
+                            <value>button</value>
+                        </entry>
+                    </properties>
+                    <styles>
+                        <appliesTo>#rapid_P9_C24_</appliesTo>
+                        <rules>margin-right:-5px;</rules>
+                    </styles>
+                </childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P9_C23_</value>
+                    </entry>
+                    <entry>
+                        <key>text</key>
+                        <value></value>
+                    </entry>
+                    <entry>
+                        <key>colSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>name</key>
+                        <value>Table cell 10</value>
+                    </entry>
+                    <entry>
+                        <key>rowSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableCell</value>
+                    </entry>
+                </properties>
+                <styles>
+                    <appliesTo>#rapid_P9_C23_</appliesTo>
+                    <rules>text-align:right;</rules>
+                    <rules>padding-bottom:10px;</rules>
+                    <rules>padding-right:20px;</rules>
+                </styles>
+            </childControls>
+            <properties>
+                <entry>
+                    <key>id</key>
+                    <value>rapid_P9_C19_</value>
+                </entry>
+                <entry>
+                    <key>name</key>
+                    <value>Table row 6</value>
+                </entry>
+                <entry>
+                    <key>type</key>
+                    <value>tableRow</value>
+                </entry>
+            </properties>
+            <styles>
+                <appliesTo>.</appliesTo>
+                <rules>margin-top:10px</rules>
+            </styles>
+        </childControls>
+        <properties>
+            <entry>
+                <key>id</key>
+                <value>rapid_P9_C2_</value>
+            </entry>
+            <entry>
+                <key>name</key>
+                <value>Table 2</value>
+            </entry>
+            <entry>
+                <key>type</key>
+                <value>table</value>
+            </entry>
+        </properties>
+        <styles>
+            <appliesTo>#rapid_P9_C2_</appliesTo>
+            <rules>border-spacing:0;</rules>
+            <rules>border-collapse:collapse;</rules>
+        </styles>
+        <styles>
+            <appliesTo>#rapid_P9_C2_ td</appliesTo>
+            <rules>padding-left:15px;</rules>
+            <rules>padding-top:10px;</rules>
+        </styles>
+    </controls>
+    <description>Allows an application to be imported from a .zip file</description>
+    <events>
+        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="custom">
+            <properties>
+                <entry>
+                    <key>id</key>
+                    <value>P9_A43_</value>
+                </entry>
+                <entry>
+                    <key>javascript</key>
+                    <value>$(&quot;body&quot;).append(&quot;&lt;iframe id='importIFrame' name='importIFrame' width='0' height='0' style='width:0;height:0;border:0px hidden 'fff;' onload='Event_reusable_P9(this);'&gt;&lt;/iframe&gt;&quot;);</value>
+                </entry>
+                <entry>
+                    <key>name</key>
+                    <value>Custom 43</value>
+                </entry>
+                <entry>
+                    <key>type</key>
+                    <value>custom</value>
+                </entry>
+            </properties>
+        </actions>
+        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="control">
+            <properties>
+                <entry>
+                    <key>id</key>
+                    <value>P9_A44_</value>
+                </entry>
+                <entry>
+                    <key>control</key>
+                    <value>rapid_P9_C32_</value>
+                </entry>
+                <entry>
+                    <key>name</key>
+                    <value>Control 44</value>
+                </entry>
+                <entry>
+                    <key>command</key>
+                    <value>.html(&quot;&lt;form id='form' method='post' target='importIFrame' enctype='multipart/form-data'&gt;&lt;input type='file' id='file' name='file'&gt;&lt;/input&gt;&lt;/form&gt;&quot;);</value>
+                </entry>
+                <entry>
+                    <key>type</key>
+                    <value>control</value>
+                </entry>
+            </properties>
+        </actions>
+        <filter></filter>
+        <type>pageload</type>
+    </events>
+    <events>
+        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="custom">
+            <properties>
+                <entry>
+                    <key>id</key>
+                    <value>P9_A39_</value>
+                </entry>
+                <entry>
+                    <key>javascript</key>
+                    <value>var f = window.frames[&quot;importIFrame&quot;];
+if (!f) f = document.getElementById(&quot;importIFrame&quot;).contentDocument;
+var r = $(f.document.body).text();
+if ((r) &amp;&amp; (r != &quot;&quot;)) {
+  if (r.indexOf(&quot;Error&quot;) == 0) {
+    alert(r);		
+  } else {    		
+    location.reload();
+  }
+}</value>
+                </entry>
+                <entry>
+                    <key>name</key>
+                    <value>Custom 39</value>
+                </entry>
+                <entry>
+                    <key>type</key>
+                    <value>custom</value>
+                </entry>
+            </properties>
+        </actions>
+        <filter></filter>
+        <type>reusable</type>
+    </events>
+    <htmlBody>&lt;table id=&quot;rapid_P9_C2_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;rapid_P9_C3_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P9_C4_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Import application&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P9_C30_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P9_C31_&quot; class=&quot;tabelCell&quot;&gt;File :&lt;/td&gt;&lt;td id=&quot;rapid_P9_C32_&quot; class=&quot;tabelCell&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P9_C5_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P9_C6_&quot; class=&quot;tabelCell&quot;&gt;Name :&lt;/td&gt;&lt;td id=&quot;rapid_P9_C7_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P9_C8_&quot; value=&quot;&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P9_C19_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P9_C20_&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P9_C21_&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P9_C23_&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P9_C24_&quot; class=&quot;button&quot;&gt;Import&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
+    <id>P9</id>
+    <name>09_AppImport</name>
+    <rolesHtml>
+        <html>&lt;table id=&quot;rapid_P9_C2_&quot; class=&quot;table&quot;&gt;
+		&lt;tbody&gt;
+			&lt;tr id=&quot;rapid_P9_C3_&quot; class=&quot;tableRow&quot;&gt;
+				&lt;td id=&quot;rapid_P9_C4_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Import application&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr id=&quot;rapid_P9_C30_&quot; class=&quot;tableRow&quot;&gt;
+				&lt;td id=&quot;rapid_P9_C31_&quot; class=&quot;tabelCell&quot;&gt;File :&lt;/td&gt;
+				&lt;td id=&quot;rapid_P9_C32_&quot; class=&quot;tabelCell&quot;&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr id=&quot;rapid_P9_C5_&quot; class=&quot;tableRow&quot;&gt;
+				&lt;td id=&quot;rapid_P9_C6_&quot; class=&quot;tabelCell&quot;&gt;Name :&lt;/td&gt;
+				&lt;td id=&quot;rapid_P9_C7_&quot; class=&quot;tabelCell&quot;&gt;
+					&lt;input id=&quot;rapid_P9_C8_&quot; value=&quot;&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
+				&lt;/tr&gt;
+				&lt;tr id=&quot;rapid_P9_C19_&quot; class=&quot;tableRow&quot;&gt;
+					&lt;td id=&quot;rapid_P9_C20_&quot; class=&quot;tabelCell&quot;&gt;
+						&lt;button id=&quot;rapid_P9_C21_&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;
+					&lt;/td&gt;
+					&lt;td id=&quot;rapid_P9_C23_&quot; class=&quot;tabelCell&quot;&gt;
+						&lt;button id=&quot;rapid_P9_C24_&quot; class=&quot;button&quot;&gt;Import&lt;/button&gt;
+					&lt;/td&gt;
+				&lt;/tr&gt;
+			&lt;/tbody&gt;
+		&lt;/table&gt;</html>
+    </rolesHtml>
+    <title>Import application</title>
+</page>

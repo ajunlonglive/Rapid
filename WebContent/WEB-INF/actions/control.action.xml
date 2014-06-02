@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/action.xsd">
+    <action>
+        <type>control</type>
+        <version>1</version>
+        <name>Control</name>	        
+	    <class>com.rapid.actions.Control</class>
+<!-- 
+
+This action runs JQuery functions against specific controls		
+		
+-->	    	
+	    <properties>
+		    <property>
+	            <key>control</key>
+	            <name>Control</name>
+	            <changeValueJavaScript>select</changeValueJavaScript>	 
+	            <getValuesFunction>return getControlOptions(this.control);</getValuesFunction>
+	        </property>
+		    <property>
+	            <key>command</key>
+	            <name>Command</name>
+	            <setConstructValueFunction>return "// Enter JQuery command here. The event object is passed in as \"ev\"";</setConstructValueFunction>
+	            <changeValueJavaScript>bigtext</changeValueJavaScript>	 
+	        </property>
+	    </properties>
+	    <actionJavaScript>
+function Action_control(actions) {
+	for (var i in actions) {
+		var action = actions[i];
+		$("#" + action.id)[action["function"]](action.value);
+	}	
+}	        
+	    </actionJavaScript>    
+    </action> 
+</actions>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<controls xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/control.xsd">
+	<control>
+	    
+	    <type>image</type>	 
+	    <name>Image</name>	   
+	    <image>images/stamp_24x24.png</image>
+	    <noDefaultName>true</noDefaultName>
+	            
+	    <canUserAdd>true</canUserAdd>
+	    <canUserMove>true</canUserMove>
+	    <canUserAddPeers>true</canUserAddPeers>
+	    	    
+	    <properties>
+	        <property>
+	            <key>name</key>
+	            <name>Name</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>	            
+	        </property>	            
+	        <property>
+	            <key>title</key>
+	            <name>Title</name>
+	            <setConstructValueFunction>return this.name;</setConstructValueFunction>  
+	            <changeValueJavaScript>text</changeValueJavaScript>	     	                 
+	        </property>
+	        <property>
+	            <key>file</key>
+	            <name>File</name>
+	            <setConstructValueFunction>return "../../images/RapidLogo_60x40.png"</setConstructValueFunction>
+	            <changeValueJavaScript>imageFile</changeValueJavaScript>	     	                 
+	        </property>
+	    </properties>
+	    
+	    <getHtmlFunction>
+	        <![CDATA[	   	        
+if (this.file && this.file.substr(0,13) == 'applications/') this.file = this.file.substr(this.file.indexOf('/',13) + 1);	          
+return "<img id='" + this.id + "' src='applications/" + _app.id + "/" + this.file + "' title='" + this.title + "' class='image" + getStyleClasses(this) + "'></img>"
+	        ]]>
+	    </getHtmlFunction> 
+	    
+	    <events>
+	        <event>
+	            <type>click</type>
+	            <name>Click</name>
+	        </event>
+	    </events>
+	    
+	    <styles>
+	        <style>
+	            <name>Image</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id;
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	    </styles>
+	    	    
+	</control>
+</controls>

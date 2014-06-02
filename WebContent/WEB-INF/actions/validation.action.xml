@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/action.xsd">
+    <action>
+        <type>validation</type>
+        <version>1</version>
+        <name>Validation</name>	        
+	    <class>com.rapid.actions.Validation</class>	    
+	    <properties>
+	        <property>
+	            <key>controls</key>
+	            <name>Controls</name>
+	            <changeValueJavaScript>validationControls</changeValueJavaScript>	 
+	        </property>
+	        <property>
+	            <key>showMessages</key>
+	            <name>Show messages</name>
+	            <setConstructValueFunction>return true;</setConstructValueFunction>
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>	 
+	        </property>
+	        <property>
+	            <key>stopActions</key>
+	            <name>Stop actions</name>
+	            <setConstructValueFunction>return true;</setConstructValueFunction>
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>	 
+	        </property>
+	        <property>
+	            <key>passActions</key>
+	            <name>Pass actions</name>
+	            <changeValueJavaScript>childActions</changeValueJavaScript>	 
+	        </property>
+	        <property>
+	            <key>failActions</key>
+	            <name>Fail actions</name>
+	            <changeValueJavaScript>childActions</changeValueJavaScript>	 
+	        </property>
+	    </properties>
+	    <actionJavaScript>
+	        <![CDATA[   
+function Action_validation(ev, validations, showMessages) {
+	var valid = true;
+	for (var i in validations) {
+		var validation = validations[i];
+		var value = window["getData_" + validation.controlType](ev, validation.controlId, validation.field, validation.details);
+		if (validation.validationType == "javascript") {						
+			var validationFunction = new Function("value", validation.javaScript);
+			var failMessage = validationFunction.apply(this, [value]);
+			if (failMessage) {
+				if (showMessages) showValidationMessage(validation.controlId, failMessage);
+				valid = false;
+			} else {
+				if (showMessages) hideValidationMessage(validation.controlId);
+			}
+		} else {
+			if ((value && value.match(new RegExp(validation.regEx)))||(!value && validation.allowNulls)) {
+				// passed
+				if (showMessages) hideValidationMessage(validation.controlId);				
+			} else {
+				// failed
+				if (showMessages) showValidationMessage(validation.controlId, validation.message);
+				valid = false;					
+			}	
+		}	
+	}	
+	return valid;
+}	        ]]>
+	    </actionJavaScript> 
+    </action> 
+</actions>

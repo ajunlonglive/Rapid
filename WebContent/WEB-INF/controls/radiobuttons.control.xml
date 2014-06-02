@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<controls xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/control.xsd">
+	<control>
+	    
+	    <type>radiobuttons</type>	 
+	    <name>Radio buttons</name>	   
+	    <image>images/radiobutton_24x24.png</image>        
+	    <canUserAdd>true</canUserAdd>
+	    <canUserMove>true</canUserMove>
+	    <canUserAddPeers>true</canUserAddPeers>
+	    
+	    <properties>
+	        <property>
+	            <key>name</key>
+	            <name>Name</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>	            
+	        </property>	
+	        <property>
+	            <key>codes</key>
+	            <name>Codes</name>
+	            <visible>false</visible>
+	        </property> 
+	        <property>
+	            <key>buttons</key>
+	            <name>Buttons</name>
+	            <visible>true</visible>
+	            <setConstructValueFunction>return [{value:"", label:"Radio button 1"}, {value:"", label:"Radio button 2"}];</setConstructValueFunction>
+	            <changeValueJavaScript>radiobuttons</changeValueJavaScript>		            
+	        </property>      
+	        <property>
+	            <key>value</key>
+	            <name>Inital value</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>	            
+	        </property>	      
+	        <property>
+	            <key>buttonposition</key>
+	            <name>Button position</name>	            
+	            <setConstructValueFunction>return "L";</setConstructValueFunction>	            
+	            <changeValueJavaScript>select</changeValueJavaScript>	
+	            <getValuesFunction>return [{value:"L", text:"left"}, {value:"R", text:"right"}];</getValuesFunction>            
+	        </property>
+	        <property>
+	            <key>layout</key>
+	            <name>Layout</name>
+	            <setConstructValueFunction>return "H";</setConstructValueFunction>  	            
+	            <changeValueJavaScript>select</changeValueJavaScript>	            
+	            <getValuesFunction>return [{value:"H", text:"horizontal"}, {value:"V", text:"vertical"}];</getValuesFunction>
+	        </property>
+	    </properties>
+	    
+	    <getHtmlFunction>
+	        <![CDATA[
+// return our html for adding to our parent object	
+var radiobuttonHtml = "";
+// check we have buttons
+if (this.buttons) {
+	// if the options are a string turn them in an array
+	if ($.type(this.buttons) == "string") this.buttons = JSON.parse(this.buttons);
+	// loop the options
+	for (var i in this.buttons) {
+		var button = this.buttons[i];
+		var label = button.label;
+		var value = (this.codes ? button.value : label);
+		if (this.buttonposition == 'R') radiobuttonHtml += "<span>" + label + "</span>";
+		radiobuttonHtml += "<input type='radio' name='" + this.id + "' value='" + value + "' " + (this.value == value ? "checked='checked'" :  "") + " />";
+		if (this.buttonposition == 'L') radiobuttonHtml += "<span>" + label + "</span>";
+		if (this.layout == 'V') radiobuttonHtml += "<br/>";
+	}
+} else {
+	radiobuttonHtml = "No buttons";
+}
+// place into the select
+var html = "<span id='" + this.id + "' class='radiobuttons" + getStyleClasses(this) + "'>" + radiobuttonHtml + "</span>";
+// return
+return html;
+	        ]]>
+	    </getHtmlFunction> 
+	    
+		<updateChildObjects>true</updateChildObjects>
+	    
+	    <getDataFunction>
+	        <![CDATA[
+return $("#" + id).children("input[type=radio]:checked").val();
+			]]>
+	    </getDataFunction>
+	    
+	    <setDataJavaScript>
+	        <![CDATA[
+if (data != null) {
+	var radiobuttons = $("#" + id);
+	radiobuttons.children("input[type=radio]").prop('checked',false);
+	data = makeDataObject(data, field);
+	var value = null;
+	if (data.rows && data.rows[0]) {	        		
+		if (field && data.fields) {
+			for (var i in data.fields) {
+				if (data.fields[i].toLowerCase() == field.toLowerCase()) {
+					value = data.rows[0][i];					
+					break;
+				}
+			}
+		} else {
+			value = data.rows[0][0];
+		}
+	} 
+	if (value) {
+		radiobuttons.children("input[type=radio][value=" + value + "]").prop('checked',true);
+	}
+}		        
+        
+	        ]]>
+	    </setDataJavaScript>
+	    
+	    <events>
+	        <event>
+	            <type>change</type>
+	            <name>Change</name>
+	        </event>
+	    </events>
+	    
+	    <styles>
+	        <style>
+	            <name>Radio button group</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id;
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	        <style>
+	            <name>Labels</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id + " span";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	    </styles>
+	    
+	</control>
+</controls>

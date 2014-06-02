@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<controls xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/control.xsd">
+	<control>
+	    
+	    <type>input</type>	 
+	    <name>Input box</name>	   
+	    <image>images/input_24x24.png</image>        
+	    <canUserAdd>true</canUserAdd>
+	    <canUserMove>true</canUserMove>
+	    <canUserAddPeers>true</canUserAddPeers>
+	    <canValidate>true</canValidate>
+	    
+	    <properties>
+	        <property>
+	            <key>name</key>
+	            <name>Name</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>	            
+	        </property>	            
+	        <property>
+	            <key>value</key>
+	            <name>Value</name>
+	            <setConstructValueFunction>return "";</setConstructValueFunction>
+	            <changeValueJavaScript>text</changeValueJavaScript>	            
+	        </property>
+	        <property>
+	            <key>maxLength</key>
+	            <name>Character limit</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>	            
+	        </property>	 
+	        <property>
+	            <key>controlType</key>
+	            <name>Type</name>
+	            <setConstructValueFunction>return "N";</setConstructValueFunction>
+	            <changeValueJavaScript>select</changeValueJavaScript>	
+	            <getValuesFunction>
+	                <![CDATA[
+return [["N","Normal"],["L","Large"],["P","Password"]];
+					]]>
+	            </getValuesFunction>               
+	        </property>
+	    </properties>
+	    
+	    <getHtmlFunction>
+	        <![CDATA[
+// return our html for adding to our parent object	
+var value = "";
+if (this.value) value = this.value  
+switch (this.controlType) {
+	case "N" : return "<input id='" + this.id + "' value='" + value + "' type='text'" + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + " class='input" + getStyleClasses(this) + "'></input>";
+	case "L" : return "<textarea id='" + this.id + "' class='input" + getStyleClasses(this) + "' " + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + ">" + value + "</textarea>";
+	case "P" : return "<input id='" + this.id + "' value='" + value + "' type='password'" + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + " class='input" + getStyleClasses(this) + "'></input>";
+}      
+
+	        ]]>
+	    </getHtmlFunction> 
+	    
+	    <getDataFunction>
+	        <![CDATA[
+return $("#" + id).val();
+			]]>
+	    </getDataFunction>
+	    
+	    <setDataJavaScript>
+	        <![CDATA[
+var control = $("#" + id);
+if (data) {	
+	data = makeDataObject(data, field);
+	if (data.rows && data.rows[0]) {	        		
+		if (field && data.fields) {
+			for (var i in data.fields) {
+				if (data.fields[i].toLowerCase() == field.toLowerCase()) {
+					control.val(data.rows[0][i]);
+					break;
+				}
+			}
+		} else {
+			control.val(data.rows[0][0]);
+		}
+	} else {
+		control.val("");
+	}
+} else {
+	control.val("");
+}       
+			]]>
+	    </setDataJavaScript>
+	    
+	    <events>
+	        <event>
+	            <type>keyup</type>
+	            <name>Key up</name>
+	        </event>
+	        <event>
+	            <type>change</type>
+	            <name>Change</name>
+	        </event>
+	        <event>
+	            <type>blur</type>
+	            <name>Blur</name>
+	        </event>
+	    </events> 
+	    
+	    <styles>
+	        <style>
+	            <name>Input</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id;
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	        <style>
+	            <name>:hover</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id + ":hover";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	        <style>
+	            <name>:focus</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id + ":focus";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	    </styles>
+	    
+	</control>
+</controls>

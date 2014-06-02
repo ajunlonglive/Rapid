@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:annotation>
+		<xs:documentation>The schema for .action.xml files</xs:documentation>
+	</xs:annotation>
+	<xs:element name="actions">
+		<xs:annotation>
+			<xs:documentation>Each .action.xml file can describe several actions
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="action" minOccurs="1" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>The action xml is turned into json and loaded
+							into the designer where it is used to create new objects
+						</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>							
+							<xs:element name="type">
+								<xs:annotation>
+									<xs:documentation>The action type is used to uniquely identify
+										this control, it should not contain spaces or punctuation
+									</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:pattern value="[a-zA-Z0-9_]{1,}" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="version" type="xs:int">
+								<xs:annotation>
+									<xs:documentation>Each type has it's own version, this will allow 
+									us to write code to update the old way an action is stored to a new way
+									</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="name">
+								<xs:annotation>
+									<xs:documentation>The action name is presented to users when
+										describing, or logging something about this action
+									</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="1" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="class">
+								<xs:annotation>
+									<xs:documentation>Each action must have a Java class, in the
+										classpath, that extends com.rapid.desktop.Action
+									</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="1" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="resources" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="resource" minOccurs="1"
+											maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="type">
+														<xs:annotation>
+															<xs:documentation>The javascriptFile and cssFile are
+																written into the document includes, the plain javascript
+																is written to the rapid.js file and the plain css is
+																written to the application rapid.css file
+															</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:enumeration value="javascriptFile" />
+																<xs:enumeration value="cssFile" />
+																<xs:enumeration value="javascript" />
+																<xs:enumeration value="css" />
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="contents">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:minLength value="1" />
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="properties" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="property" minOccurs="1"
+											maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="key">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:minLength value="1" />
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="name">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:minLength value="1" />
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="setConstructValueFunction"
+														minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Leave this out to not set a property
+																value when the control is constructed</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:minLength value="1" />
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="changeValueJavaScript">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:minLength value="1" />
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="getValuesFunction" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Possible values that can be used to
+																create selects, radio groups, etc</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:minLength value="1" />
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="actionJavaScript" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>This is the client-side JavaScript that will
+										be called, that actually performs the action. Typically the
+										properties will be passed in</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="1" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

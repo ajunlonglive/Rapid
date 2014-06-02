@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<controls xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/control.xsd">
+	<control>
+	    <type>grid</type>	 
+	    <name>Grid</name>	   
+	    <image>images/grid_24x24.png</image>        
+	    <canUserAdd>true</canUserAdd>
+	    <canUserMove>true</canUserMove>
+	    <canUserAddPeers>true</canUserAddPeers>
+	    <properties>
+	        <property>
+	            <key>name</key>
+	            <name>Name</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>	            
+	        </property>	            
+	        <property>
+	            <key>columnHeadings</key>
+	            <name>Column headings</name>
+	            <setConstructValueFunction>return true;</setConstructValueFunction>
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>	            
+	        </property>
+	        <property>
+	            <key>columns</key>
+	            <name>Columns</name>
+	            <setConstructValueFunction>return [];</setConstructValueFunction>
+	            <changeValueJavaScript>gridColumns</changeValueJavaScript>	              
+	        </property>
+	    </properties>
+	    
+	    <resources>
+	        <resource>
+	            <type>css</type>
+	            <contents>
+	                <![CDATA[	                
+table.grid {
+	border-collapse:collapse;
+}           
+	                ]]>
+				</contents>
+	        </resource>
+	    </resources>
+	    
+	    <getHtmlFunction>
+	        <![CDATA[
+// return an empty table, all the work is done in the rebuild	
+return "<table id='" + this.id + "' class='grid" + getStyleClasses(this) + "'></table>";
+	        ]]>
+	    </getHtmlFunction> 	 
+	    
+	    <rebuildJavaScript>
+	        <![CDATA[        
+var table = this.object;
+table.children().remove();
+if (this.columns.length > 0) {
+	var headerHtml = "<tr>";
+	var rowHtml = "<tr>";
+	var columnCount = 0;
+	for (var i in this.columns) {
+		var column = this.columns[i];
+		if (column.visible) {
+			headerHtml += "<td" + (column.titleStyle ? " style='" + column.titleStyle + "'" : "") + ">" + column.title + "</td>";
+			if (i % 2 == 1) {
+			 	rowHtml += "<td " + (column.fieldStyle ? " style='" + column.fieldStyle + "'" : "") + ">123.00</td>"
+			} else {
+				rowHtml += "<td" + (column.fieldStyle ? " style='" + column.fieldStyle + "'" : "") + ">Data</td>"
+			}
+			columnCount ++;
+		} else {
+			headerHtml += "<td style='display:none;'>" + column.title + "</td>";
+			rowHtml += "<td style='display:none;'></td>"
+		}
+	}
+	if (columnCount == 0) {
+		headerHtml += "<td>No visible columns</td>"
+		rowHtml += "<td>No visible columns</td>";
+	}
+	headerHtml += "</tr>";
+	rowHtml += "</tr>";
+	table.append(headerHtml);
+	table.append(rowHtml.replace("<tr>","<tr class='rowStyle1'>"));
+	table.append(rowHtml.replace("<tr>","<tr class='rowStyle2'>"));
+} else {
+	table.append("<tr><td>No columns</td></tr>");
+}	        	        
+	        ]]>
+	    </rebuildJavaScript>
+	    
+	    <saveJavaScript>
+	        <![CDATA[ 
+var table = this.object;
+table.children().last().children(":not(:first)").remove();	        
+	        ]]>
+	    </saveJavaScript>
+	    
+	    <getDetailsFunction>	        
+	        <![CDATA[
+var details = {};
+if (this.columns && this.columns.length > 0) {
+	details.columns = [];
+	for (var i in this.columns) {
+		var column = this.columns[i];
+		details.columns.push({field: column.field, style: column.fieldStyle, visible: column.visible, cellFunction: column.cellFunction});
+	}
+} 	        
+if (this.styles && this.styles.length > 0) {
+	details.rowHover = false;
+	details.rowSelect = false;
+	for (var i in this.styles) {
+		var style = this.styles[i];
+		if (style.appliesTo && style.appliesTo.indexOf("rowHover") > 0) details.rowHover = true;
+		if (style.appliesTo && style.appliesTo.indexOf("rowSelect") > 0) details.rowSelect = true;
+	}
+}
+return details;
+			]]>	        	        
+	    </getDetailsFunction>
+	    	    
+	    <getDataFunction>
+	        <![CDATA[
+var data = null;
+if (details && details.columns) {
+	if (field) {
+		var row = $(ev.target).closest("tr");
+		var rowIndex = row.index() - 1;
+		if (rowIndex >= 0) {
+			for (var i in details.columns) {
+				if (details.columns[i].field.toLowerCase() == field.toLowerCase()) {
+					data = row.children(":nth(" + i + ")").html();
+					break;
+				}
+			}
+		}	    
+	} else {
+		var data = {};
+		data.fields = [];		
+		for (var i in details.columns) {	
+			data.fields.push(details.columns[i].field);		
+		}
+		data.rows = [];
+		$("#" + id).find("tr:not(:first)").each(function(i) {
+			var row = [];
+			$(this).children().each(function(i) {
+				row.push($(this).html());
+			});
+			data.rows.push(row);
+		});
+	}	
+}
+return data;
+
+			]]>
+	    </getDataFunction>	    		
+	    
+	    <setDataJavaScript>
+	        <![CDATA[
+var control = $("#" + id);
+control.find("tr:not(:first)").remove();	        
+if (data) {	
+	data = makeDataObject(data, field);
+	if (data.rows) {	        		
+		if (details && details.columns && data.fields) {
+			var columnMap = [];
+			for (var i in details.columns) {				
+				for (var j in data.fields) {
+					if (details.columns[i].field.toLowerCase() == data.fields[j].toLowerCase()) {
+						columnMap.push(j);
+						break;
+					}
+				}
+				if (columnMap.length == i)
+					columnMap.push("");
+				if (details.columns[i].cellFunction) 
+					details.columns[i].cellFunction = new Function(details.columns[i].cellFunction);
+			}
+			for (var i in data.rows) {
+				var row = data.rows[i];
+				var rowObject = control.append("<tr class='rowStyle" + (i % 2 + 1) + "'></tr>").find("tr:last");
+				for (var j in details.columns) {
+					var cellObject = rowObject.append("<td style='" + (details.columns[j].visible ? "" : "display:none;") + details.columns[j].style + "'>" + ((columnMap[j]) ? row[columnMap[j]] : "") + "</td>").find("td:last");
+					if (details.columns[j].cellFunction) 
+						details.columns[j].cellFunction.apply(cellObject,[id, data, field, details]);
+				}				
+			}
+		} else {
+			for (var i in data.rows) {
+				var row = data.rows[i];
+				var rowHtml = "<tr>";
+				for (var j in row) {
+					rowHtml += "<td>" + row[j] + "</td>";
+				}
+				rowHtml += "</tr>";
+				control.append(rowHtml);
+			}
+		}	
+	} 
+	
+	control.children().last().children("tr:not(:first)").click( function() { 
+		var row = $(this);
+		row.parent().find("tr.rowSelect").each( function() {
+			var row = $(this);
+			row.removeClass("rowSelect");
+		});
+		row.addClass("rowSelect"); 
+	});
+	
+}
+			]]>
+	    </setDataJavaScript>
+	    
+	    <events>
+	        <event>
+	            <type>click</type>
+	            <name>Row click</name>
+	            <filterFunction>
+<![CDATA[
+if ($(ev.target).closest("tr").index() == 0) return false;
+]]>	                
+	            </filterFunction>
+	        </event>
+	    </events> 
+	    
+	    <styles>
+	        <style>
+	            <name>Grid</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id;
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	        <style>
+	            <name>Row style 1</name>
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id + " .rowStyle1";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	        <style>
+	            <name>Row style 2</name>
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id + " .rowStyle2";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	        <style>
+	            <name>Row hover</name>
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id + " tr:hover:not(:first-child)";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>	 
+	        <style>
+	            <name>Row select</name>
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id + " .rowSelect";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>       
+	    </styles>
+	    
+	</control>
+</controls>

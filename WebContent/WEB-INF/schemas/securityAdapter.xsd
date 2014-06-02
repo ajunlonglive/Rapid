@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:annotation>
+		<xs:documentation>The schema for .securityAdapter.xml files
+		</xs:documentation>
+	</xs:annotation>
+	<xs:element name="securityAdapter">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="type">
+					<xs:annotation>
+						<xs:documentation>The security type is used to uniquely identify
+							this security adapter, it should not contain spaces or
+							punctuation</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:minLength value="1" />
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="name">
+					<xs:annotation>
+						<xs:documentation>The action name is presented to users when
+							describing, or logging something about this security adapter
+						</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:minLength value="1" />
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="class">
+					<xs:annotation>
+						<xs:documentation>Each security adapter must have a Java class, in the
+							classpath, that extends com.rapid.desktop.security.SecurityAdapter
+						</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:minLength value="1" />
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="canManageRoles" type="xs:boolean" />
+				<xs:element name="canManageUsers" type="xs:boolean" />
+				<xs:element name="canManageUserRoles" type="xs:boolean" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

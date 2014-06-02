@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <databaseDrivers xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/databaseDrivers.xsd">
+     
+     <databaseDriver>
+         <name>SQLite</name>
+         <class>org.sqlite.JDBC</class>
+     </databaseDriver>
+     
+     <databaseDriver>
+         <name>Oracle</name>
+         <class>oracle.jdbc.driver.OracleDriver</class>
+     </databaseDriver>
+                
+ </databaseDrivers>

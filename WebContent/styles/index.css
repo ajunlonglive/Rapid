@@ -1,0 +1,58 @@
+body {
+	font-family:arial;
+}	
+
+span {
+	font-size:36px;
+	font-weight:bold;
+}
+
+div.image {
+	height: 100px;
+}
+
+.image img {
+	position:absolute;
+	top:16px;
+	right:30px;
+	width:200px;
+	height:134px;
+}
+
+div.title {
+	background-color:#ccc;
+	padding:40px;
+	margin: 10px 0px 10px 0px;
+}
+
+.body {
+	padding: 20px 0px 0px 100px;
+}
+
+.body img {
+    vertical-align: middle;   
+    width: 157px;
+	height: 135px;     
+	border: 1px solid black;
+}
+
+.body a { 
+	display: inline-block; 
+	vertical-align: middle; 
+	padding: 50px;
+	font-size: 36px;
+	font-weight: bold;
+	color: black;
+}
+
+.info {
+	padding: 20px 0px 0px 100px;
+}
+
+.apps {
+	padding-left: 300px;
+}
+
+.apps li {
+	padding: 10px;
+}

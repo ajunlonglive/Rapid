@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<controls xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/control.xsd">
+    <control>
+        
+        <type>page</type>
+        <name>Page</name>	 
+
+        <canUserInsert>true</canUserInsert>
+                	    
+	    <properties>
+	        <property>
+	            <key>name</key>
+	            <name>Name</name>
+	            <changeValueJavaScript>pageName</changeValueJavaScript>	            
+	        </property>	            
+	        <property>
+	            <key>title</key>
+	            <name>Title</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>	            
+	        </property>
+	        <property>
+	            <key>description</key>
+	            <name>Description</name>
+	            <changeValueJavaScript>bigtext</changeValueJavaScript>	            
+	        </property>
+	        <property>
+	            <key>sessionVariables</key>
+	            <name>Variables</name>
+	            <changeValueJavaScript>pageSessionVariables</changeValueJavaScript>	            
+	        </property>
+	        <property>
+	            <key>roles</key>
+	            <name>User roles</name>
+	            <changeValueJavaScript>roles</changeValueJavaScript>	            
+	        </property>
+	    </properties>
+	    
+	    <resources>
+            <resource>
+                <type>css</type>
+                <contents>
+                    <![CDATA[
+/* Dialogue cover */
+
+.dialogueCover {
+	background-color: white;
+	opacity:0.8;
+	filter:alpha(opacity=80); 
+}
+
+/* Dialogue */
+
+.dialogue {
+	background-color: white;
+	padding: 0px;
+}
+
+/* Validation */
+
+div.validation {
+	padding: 10px;
+	color: red;
+	font-weight: bold;
+	max-width: 200px;
+}
+
+input.validation {
+	border: 2px solid red;
+}
+
+textarea.validation {
+	border: 2px solid red;
+}                    
+
+/* Loading */
+
+div.loading {
+	position: absolute;
+	background-color: black;
+	opacity:0.2;
+	filter:alpha(opacity=20); 
+	text-align: center;
+	vertical-align: middle;
+	display: none;
+}
+
+span.loading {
+	position: absolute;
+	background: url("../../images/wait_120x15.gif");
+	background-repeat : no-repeat;
+	width: 120px;
+	height: 15px;
+	border: 2px solid #777;
+	display: none;
+}
+
+
+                    ]]>
+                </contents>                
+            </resource>            
+        </resources>
+	    
+	    <getHtmlFunction>
+	        <![CDATA[       
+	        ]]>
+	    </getHtmlFunction>  
+	    
+	    <appendJavaScript>
+	        <![CDATA[       
+	        ]]>	        
+	    </appendJavaScript>
+	    
+	    <events>
+	        <event>
+	            <type>pageload</type>
+	            <name>Load</name>
+	        </event>
+	        <event>
+	            <type>reusable</type>
+	            <name>Reusable</name>
+	        </event>
+	    </events> 
+	    
+	    <styles>       
+	        <style>
+	            <name>body</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "body";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	    </styles>
+	    	    
+    </control> 
+</controls>

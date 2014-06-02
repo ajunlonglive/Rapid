@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<controls xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/control.xsd">
+	<control>
+	    
+	    <type>pagePanel</type>	 
+	    <name>Page</name>	   
+	    <image>images/tools_24x24.png</image>       
+	    <noDefaultName>true</noDefaultName>
+	    
+	    <canUserAdd>true</canUserAdd>
+	    <canUserMove>true</canUserMove>
+	    
+	    <properties>           
+	        <property>
+	            <key>pageId</key>
+	            <name>Page</name>
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	            <getValuesFunction>
+	                <![CDATA[       
+return "<option value=''>None</option>" + getPageOptions(this.pageId,_page.id); 	                
+	                ]]>
+	            </getValuesFunction>		                        
+	        </property>
+	    </properties>
+	    <getHtmlFunction>
+	        <![CDATA[
+return "<div id='" + this.id + "' class='pagepanel'><center><h1>Page</h1></center></div>";
+	        ]]>
+	    </getHtmlFunction> 
+	    
+	    <rebuildJavaScript>
+	        <![CDATA[
+// inject the page html	
+if (this.pageId) {
+
+	var html = "";
+
+	// request the page		
+	$.ajax({
+    	url: "~?a=" + _app.id + "&p=" + this.pageId,
+    	type: "GET",          
+        data: null,   
+        async: false,         
+        error: function(server, status, error) { 
+        	var bodyHtml = "Error loading page : " + error; 
+        },
+        success: function(page) {
+        	
+        	// if the page can't be found a blank response is sent, so only show if we got something
+        	if (page) {
+        	
+        		// empty the body html
+        		bodyHtml = "";
+        		
+            	// loop the items
+            	var items = $(page);
+            	for (var i in items) {
+            		// check for a script node
+            		switch (items[i].nodeName) {
+            		case "#text" : case "TITLE" : case "SCRIPT" : // ignore these types
+            		break;
+            		default :
+            			if (items[i].outerHTML) {
+            				// retain the script in our body html
+            				bodyHtml += items[i].outerHTML;        				
+            			}
+            		break;
+            		}
+            	}
+            	            	            	            	
+        	} 
+        	       	        	        	        	        		
+        }
+        	        	        
+	});
+	
+	// set the html
+    this.object.html("#" + this.id).html(bodyHtml);
+	
+} else {
+	this.object.html("#" + this.id).html("<center><h1>Page</h1></center>");
+}     
+	         ]]>
+	    </rebuildJavaScript>
+	    
+	    <saveJavaScript>
+	        <![CDATA[
+// empty the contents prior to saving	        
+this.object.html("");	        
+	        ]]>
+	    </saveJavaScript>
+	    
+	    <getDetailsFunction>
+	        <![CDATA[
+return {appId: _app.id, pageId: this.pageId};	        
+	        ]]>
+	    </getDetailsFunction>
+	    
+	    <styles>       
+	        <style>
+	            <name>Page</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id;
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	    </styles>
+	    	    
+	    <initJavaScript>
+	        <![CDATA[
+
+var bodyHtml = "<center><h1>Page</h1></center>";
+
+// request the page		
+$.ajax({
+   	url: "~?a=" + details.appId + "&p=" + details.pageId,
+   	type: "GET",          
+       data: null,        
+       error: function(server, status, error) { 
+       	var bodyHtml = "Error loading page : " + error; 
+       },
+       success: function(page) {
+       	
+       // if the page can't be found a blank response is sent, so only show if we got something
+       if (page) {
+       	
+       		// empty the body html
+       		bodyHtml = "";
+       		script = "";
+       		
+           	// loop the items
+           	var items = $(page);
+           	for (var i in items) {
+           		// check for a script node
+           		switch (items[i].nodeName) {
+           		case "#text" : case "TITLE" : // ignore these types
+           		break;
+           		case "SCRIPT" :
+           			if (items[i].innerHTML) {
+           				script += items[i].outerHTML;
+           			}
+           		break;
+           		default :
+           			if (items[i].outerHTML) {
+           				// retain the script in our body html
+           				bodyHtml += items[i].outerHTML;        				
+           			}
+           		break;
+           		}
+           	}   
+           	// apply the injected html
+           	$("#" + id).html(bodyHtml);
+           	// add script into the page (if applicable)
+           	if (script) $("#" + id).append(script);
+           	           	        	            	            	            
+    	}        	       	        	        	        	        		
+    }       	        	        
+});	        
+	        ]]>	        
+	    </initJavaScript>
+	    
+	</control>
+</controls>

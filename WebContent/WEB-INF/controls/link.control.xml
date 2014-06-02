@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<controls xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/control.xsd">
+	<control>
+	    
+	    <type>link</type>	 
+	    <name>Link</name>	   
+	    <image>images/link_24x24.png</image>       
+	    <noDefaultName>true</noDefaultName>
+	    
+	    <canUserAdd>true</canUserAdd>
+	    <canUserMove>true</canUserMove>
+	    
+	    <properties>
+	        <property>
+	            <key>text</key>
+	            <name>Text</name>
+	            <setConstructValueFunction>return this.name;</setConstructValueFunction>  
+	            <changeValueJavaScript>text</changeValueJavaScript>	            
+	        </property>    
+	        <property>
+	            <key>linkType</key>
+	            <name>Type</name>
+	            <setConstructValueFunction>return "P";</setConstructValueFunction>
+	            <changeValueJavaScript>linkType</changeValueJavaScript>	              
+	        </property>  	                
+	        <property>
+	            <key>page</key>
+	            <name>Page</name>
+	           	<changeValueJavaScript>linkPage</changeValueJavaScript>	 	            
+	        </property>
+	        <property>
+	            <key>url</key>
+	            <name>URL</name>  
+	            <changeValueJavaScript>linkURL</changeValueJavaScript>	            
+	        </property>
+	        <property>
+	            <key>sessionVariables</key>
+	            <name>Session variables</name>
+	            <changeValueJavaScript>navigationSessionVariables</changeValueJavaScript>	
+	        </property>
+	        <property>
+	            <key>popup</key>
+	            <name>Popup</name>
+	            <changeValueJavaScript>linkPopup</changeValueJavaScript>	
+	        </property>
+	    </properties>
+	    
+	    <resources>
+	    	<resource>
+	    		<type>javascript</type>
+	    		<contents>
+	    			<![CDATA[
+function linkClick(url, sessionVariablesString) {
+	
+	var sessionVariables = JSON.parse(sessionVariablesString);
+	
+	for (var i in sessionVariables) {
+	
+		var item = sessionVariables[i];
+		
+		if (item.type) {
+		
+			var value = window["getData_" + item.type](null, item.itemId, item.field, item.details);
+			
+		} else {
+		
+			var value = $.getUrlVar(item.itemId);
+		
+		}
+	
+		if (value !== undefined) url += "&" + item.name + "=" + value;
+	}
+	
+	window.location = url;
+	
+}	    			
+	    			]]>
+	    		</contents>
+	    	</resource>
+	    </resources>
+	    
+	    <getHtmlFunction>
+	        <![CDATA[
+// retrive the text property	        
+var text = this.text;
+
+// if text isn't specified add a message
+if (!text) text = "link text required";	        
+
+// if the link is to a page	
+if (this.linkType == "P") {
+	
+	// if a page was chosen
+	if (this.page) {
+		
+		// if page variables have been saved					
+		if (this.sessionVariables && this.sessionVariables.length > 0) {
+			
+			// start with an empty control
+			var sessionVariables = [];
+			
+			// loop the variables
+			for (var i in this.sessionVariables) {
+				
+				// retrieve one of them
+				var item = this.sessionVariables[i];
+				
+				// create an object for the item
+				var itemObject = {name:item.name, itemId:item.itemId};
+				
+				// try and find a control for the item id
+				var control = getControlById(item.itemId);
+				
+				// if we got a control add the field, type, and details			
+				if (control) {
+					itemObject.field = item.field;
+					itemObject.type = control.type;
+					if (control.details) itemObject.details = control.details;					
+				} 
+				
+				// add the item object to the collection
+				sessionVariables.push(itemObject);
+			}
+			
+			// stringify the collection
+			sessionVariables = JSON.stringify(sessionVariables);
+		
+			// escape any quotes
+			sessionVariables = sessionVariables.replace(/\"/g,'&quot;');
+		
+			// return the link
+			return "<a id='" + this.id + "' href='#' class='link" + getStyleClasses(this) + "' onclick=\"linkClick('~?a=" + _app.id + "&p=" + this.page + "','" + sessionVariables + "');\">" + text + "</a>";
+			
+		} else {
+		
+			return "<a id='" + this.id + "' href='~?a=" + _app.id + "&p=" + this.page + "' class='link" + getStyleClasses(this) + "'>" + text + "</a>";
+							
+		}
+								
+	} else {
+    	return "<a id='" + this.id + "' href='#' class='link" + getStyleClasses(this) + "'>link page required</a>";
+    }
+} else {
+	if (this.url) {
+		var popup = "";
+		if (this.popup) popup = "target='_blank'";
+		return "<a id='" + this.id + "' href='" + this.url + "' " + popup + " class='link" + getStyleClasses(this) + "'>" + text + "</a>";
+	} else {
+    	return "<a id='" + this.id + "' href='#' class='link" + getStyleClasses(this) + "'>link url required</a>";
+    }
+}
+
+	        ]]>
+	    </getHtmlFunction>
+	    
+	    <saveJavaScript>
+	    <![CDATA[
+// this is required to get the details of controls that appear after this one as they would not have been present the first time	    
+rebuildHtml(this);	    
+	    ]]>
+	    </saveJavaScript>
+	     
+	    <getDetailsFunction>
+	        <![CDATA[
+return { dialogue: this.dialogue };	        
+	        ]]>	        
+	    </getDetailsFunction>
+	    
+	    <styles>
+	        <style>
+	            <name>Link</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id;
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>	        
+	        <style>
+	            <name>:link</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id + ":link";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	        <style>
+	            <name>:visited</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id + ":visited";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	        <style>
+	            <name>:hover</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id + ":hover";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	    </styles>
+	    
+	</control>
+</controls>

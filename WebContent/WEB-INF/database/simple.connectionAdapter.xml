@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<connectionAdapter xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/connectionAdapter.xsd">
+  <name>Simple connection adapter</name>
+  <class>com.rapid.data.SimpleConnectionAdapter</class>
+  <order>1</order>
+</connectionAdapter>

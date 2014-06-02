@@ -1,0 +1,476 @@
+package com.rapid.actions;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.annotation.XmlType;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.rapid.core.Action;
+import com.rapid.core.Application;
+import com.rapid.core.Control;
+import com.rapid.core.Page;
+import com.rapid.core.Parameter;
+import com.rapid.core.Application.DatabaseConnection;
+import com.rapid.data.ConnectionAdapter;
+import com.rapid.data.DataFactory;
+import com.rapid.data.DataFactory.Parameters;
+import com.rapid.server.RapidHttpServlet;
+import com.rapid.server.RapidHttpServlet.RapidRequest;
+import com.rapid.soa.SOAData;
+import com.rapid.soa.SOADataWriter;
+import com.rapid.soa.SOADataReader.SOAXMLReader;
+import com.rapid.soa.SOADataWriter.SOAJSONWriter;
+import com.rapid.soa.SOADataWriter.SOARapidWriter;
+import com.rapid.soa.SOADataWriter.SOAXMLWriter;
+
+public class Webservice extends Action {
+	
+	// details of the request (inputs, sql, outputs)
+	public static class Request {
+		
+		private String _type, _url, _action, _body;
+		private ArrayList<Parameter> _inputs, _outputs;				
+				
+		public ArrayList<Parameter> getInputs() { return _inputs; }
+		public void setInputs(ArrayList<Parameter> inputs) { _inputs = inputs; }
+		
+		public String getType() { return _type; }
+		public void setType(String type) { _type = type; }
+		
+		public String getUrl() { return _url; }
+		public void setUrl(String url) { _url = url; }
+		
+		public String getAction() { return _action; }
+		public void setAction(String action) { _action = action; }
+		
+		public String getBody() { return _body; }
+		public void setBody(String body) { _body = body; }
+		
+		public ArrayList<Parameter> getOutputs() { return _outputs; }
+		public void setOutputs(ArrayList<Parameter> outputs) { _outputs = outputs; }
+		
+		public Request() {};
+		public Request(ArrayList<Parameter> inputs, String type, String url, String action, String body, ArrayList<Parameter> outputs) {
+			_inputs = inputs;
+			_type = type;
+			_url = url;
+			_action = action;
+			_body = body;
+			_outputs = outputs;
+		}
+				
+	}
+	
+	// instance variables
+	
+	private Request _request;
+	private boolean _showLoading;
+	private ArrayList<Action> _successActions, _errorActions, _childActions;
+	
+	// properties
+	
+	public Request getRequest() { return _request; }
+	public void setRequest(Request request) { _request = request; }
+	
+	public boolean getShowLoading() { return _showLoading; }
+	public void setShowLoading(boolean showLoading) { _showLoading = showLoading; }
+	
+	public ArrayList<Action> getSuccessActions() { return _successActions; }
+	public void setSuccessActions(ArrayList<Action> successActions) { _successActions = successActions; }
+	
+	public ArrayList<Action> getErrorActions() { return _errorActions; }
+	public void setErrorActions(ArrayList<Action> errorActions) { _errorActions = errorActions; }
+		
+	// constructors
+	
+	public Webservice() {}	
+	public Webservice(RapidHttpServlet rapidServlet, JSONObject jsonAction) throws JSONException { 
+		
+		// save all key/values from the json into the properties 
+		for (String key : JSONObject.getNames(jsonAction)) {
+			// add all json properties to our properties, except for query
+			if (!"request".equals(key) && !"showLoading".equals(key) && !"successActions".equals(key) && !"errorActions".equals(key)) addProperty(key, jsonAction.get(key).toString());
+		} 
+		
+		// try and build the query object
+		JSONObject jsonQuery = jsonAction.optJSONObject("request");
+		
+		// check we got one
+		if (jsonQuery != null) {
+			// get the parameters						
+			ArrayList<Parameter> inputs = getParameters(jsonQuery.optJSONArray("inputs"));
+			String type = jsonQuery.optString("type");
+			String url = jsonQuery.optString("url");
+			String action = jsonQuery.optString("action");
+			String body = jsonQuery.optString("body");
+			ArrayList<Parameter> outputs = getParameters(jsonQuery.optJSONArray("outputs"));
+			// make the object
+			_request = new Request(inputs, type, url, action, body, outputs);
+		}
+		
+		// look for showLoading
+		_showLoading = jsonAction.optBoolean("showLoading");
+		
+		// grab any successActions
+		JSONArray jsonSuccessActions = jsonAction.optJSONArray("successActions");
+		// if we had some
+		if (jsonSuccessActions != null) {
+			// instantiate our contols collection
+			try {
+				_successActions = Control.getActions(rapidServlet, jsonSuccessActions);
+			} catch (Exception ex) {
+				// rethrow as a JSON error
+				throw new JSONException(ex);
+			}
+		}
+		
+		// grab any errorActions
+		JSONArray jsonErrorActions = jsonAction.optJSONArray("errorActions");
+		// if we had some
+		if (jsonErrorActions != null) {
+			// instantiate our contols collection
+			try {
+				_errorActions = Control.getActions(rapidServlet, jsonErrorActions);
+			} catch (Exception ex) {
+				// rethrow as a JSON error
+				throw new JSONException(ex);
+			}
+		}
+				
+	}
+	
+	// this is used to get both input and output parameters
+	private ArrayList<Parameter> getParameters(JSONArray jsonParameters) throws JSONException {
+		// prepare return
+		ArrayList<Parameter> parameters = null;
+		// check
+		if (jsonParameters != null) {
+			// instantiate collection
+			parameters = new ArrayList<Parameter>();
+			// loop
+			for (int i = 0; i < jsonParameters.length(); i++) {
+				// instaniate member
+				Parameter parameter = new Parameter(
+					jsonParameters.getJSONObject(i).optString("itemId"),
+					jsonParameters.getJSONObject(i).optString("field")
+				);
+				// add member
+				parameters.add(parameter);
+			}
+		}
+		// return
+		return parameters;
+	}
+		
+	// overrides
+	
+	@Override
+	public List<Action> getChildActions() {			
+		// initialise and populate on first get
+		if (_childActions == null) {
+			// our list of all child actions
+			_childActions = new ArrayList<Action>();
+			// add child success actions
+			if (_successActions != null) {
+				for (Action action : _successActions) _childActions.add(action);			
+			}
+			// add child error actions
+			if (_errorActions != null) {
+				for (Action action : _errorActions) _childActions.add(action);			
+			}
+		}
+		return _childActions;	
+	}
+	
+	public String getLoadingJS(Page page, List<Parameter> parameters, boolean show) {
+		String js = "";
+		// check there are parameters
+		if (parameters != null) {			
+			// loop the output parameters
+			for (int i = 0; i < parameters.size(); i++) {					
+				// get the parameter
+				Parameter output = parameters.get(i);
+				// get the control the data is going into
+				Control control = page.getControl(output.getItemId());
+				// check the control still exists
+				if (control != null) {
+					if ("grid".equals(control.getType())) {
+						if (show) {
+							js += "  $('#" + control.getId() + "').showLoading();\n";						
+						} else {
+							js += "  $('#" + control.getId() + "').hideLoading();\n";
+						}
+					}
+				}
+			}
+			
+		}
+		return js;
+	}
+	
+	@Override
+	public String getJavaScript(Application application, Page page, Control control) {
+		
+		String js = "";
+		
+		if (_request != null) {
+			
+			// start the js
+			js = "  var data = { inputs:[] };\n";
+			
+			// build the inputs
+			if (_request.getInputs() != null) {
+				int i = 0;
+				for (Parameter parameter : _request.getInputs()) {
+					Control inputControl = page.getControl(parameter.getItemId());
+					if (inputControl != null) {
+						i++;
+						// get the field into a string
+						String field = parameter.getField();
+						// some checks which either don't provide the field or build it properly
+						if (field == null) {
+							field = "";
+						} else if ("".equals(field.trim())) {
+							field = "";
+						} 
+						// get any details we may have
+						String details = inputControl.getDetails();
+						// set to empty string or clean up
+						if (details == null) {
+							details = "";
+						} else {
+							details = ", " + details;
+						}
+						js += "  var input" + i + " = getData_" + inputControl.getType() + "(ev,'" + inputControl.getId() + "'" + (field.length() > 0 ? ", '" + field + "'" : "") + details + ");\n";
+						js += "  if (input" + i + " === undefined) return false;\n";
+						js += "  data.inputs.push({id:'" + inputControl.getId() + "',value:input" + i;
+						if (field.length() > 0) js += ",field:'" + field + "'";
+						js += "});\n";
+						
+					}
+				}
+			} // got inputs
+			
+			// control can be null when the action is called from the page load
+			String controlParam = "";
+			if (control != null) controlParam = "&c=" + control.getId();
+			
+			// get the outputs
+			ArrayList<Parameter> outputs = _request.getOutputs();
+			
+			// get the js to show the loading (if applicable)
+			if (_showLoading) js += "  " + getLoadingJS(page, outputs, true);
+									
+			// open the ajax call
+			js += "  $.ajax({ url : '~?a=" + application.getId() + "&p=" + page.getId() + controlParam + "&act=" + getId() + "', type: 'POST', dataType: 'json',\n";
+			js += "    data: JSON.stringify(data),\n";
+			js += "    error: function(error, status, message) {\n";
+			
+			// get the js to hide the loading (if applicable)
+			if (_showLoading) js += "      " + getLoadingJS(page, outputs, false);
+			
+			// retain if error actions
+			boolean errorActions = false;
+			
+			// add any error actions
+			if (_errorActions != null) {
+				for (Action action : _errorActions) {
+					errorActions = true;
+					js += "       " + action.getJavaScript(application, page, control).trim().replace("\n", "\n       ") + "\n";
+				}
+			}
+			// add manual if not in collection
+			if (!errorActions) {
+				js += "      alert('Error with webservice action : ' + error.responseText||message);\n";
+			}
+			
+			// close error actions
+			js += "    },\n";
+			
+			// open success function
+			js += "    success: function(data) {\n";	
+			// get the js to hide the loading (if applicable)
+			if (_showLoading) js += "      " + getLoadingJS(page, outputs, false);
+			// open if data check
+			js += "      if (data) {\n";
+									
+			// check there are outputs
+			if (outputs != null) {
+				// the outputs array we're going to make
+				String jsOutputs = "";				
+				// loop the output parameters
+				for (int i = 0; i < outputs.size(); i++) {
+					
+					// get the parameter
+					Parameter output = outputs.get(i);
+					// get the control the data is going into
+					Control outputControl = page.getControl(output.getItemId());
+					// check the control is still on the page
+					if (outputControl != null) {
+						// get any mappings we may have
+						String details = outputControl.getDetails();
+						// set to empty string or clean up
+						if (details == null) {
+							details = "";
+						} else {
+							details = ", details: " + details;
+						}
+						// append the javascript outputs
+						jsOutputs += "{id: '" + outputControl.getId() + "', type: '" + outputControl.getType() + "', field: '" + output.getField() + "'" + details + "}";
+						// add a comma if not the last
+						if (i < outputs.size() - 1) jsOutputs += ","; 
+					}
+										
+				}			
+				js += "       var outputs = [" + jsOutputs + "];\n";
+				// send them them and the data to the database action				
+				js += "       Action_webservice(data, outputs);\n";
+				// add any sucess actions
+				if (_successActions != null) {
+					for (Action action : _successActions) {
+						js += "       " + action.getJavaScript(application, page, control).trim().replace("\n", "\n       ") + "\n";
+					}
+				}
+			}
+			
+			// close if data check
+			js += "      }\n";						
+			// close success function
+			js += "    }\n";
+			
+			// close ajax call
+			js += "  });";
+		}
+				
+		// return what we built			
+		return js;
+	}
+	
+	@Override
+	public JSONObject doAction(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, JSONObject jsonAction) throws JSONException, JAXBException, IOException {
+				
+		JSONObject jsonData = new JSONObject();
+		
+		Application application = rapidRequest.getApplication();
+		
+		Page page = rapidRequest.getPage();
+		
+		try {
+		
+			if (_request != null && application != null && page != null) {
+						
+				// get the body into a string
+				String body = _request.getBody();
+				// retain the current position
+				int pos = body.indexOf("?");
+				// keep track of the index of the ?
+				int index = 0;
+				// if there are any question marks
+				if (pos > 0) {
+					// check we have some inputs
+					JSONArray jsonInputs = jsonAction.getJSONArray("inputs");
+					// loop, but check condition at the end
+					do {
+						// get the input
+						JSONObject input = jsonInputs.getJSONObject(index);
+						// replace the ? with the input value
+						body = body.substring(0, pos) + input.getString("value") + body.substring(pos + 1);
+						// look for the next question mark
+						pos = body.indexOf("?",pos + 1);
+						// inc the index for the next round
+						index ++;
+						// stop looping if no more ?
+					} while (pos > 0);
+				}
+				
+				// create a placeholder for the request url
+				URL url = null;				
+				// if the given request url starts with http use it as is, otherwise use the soa servlet
+				if (_request.getUrl().startsWith("http")) {
+					url = new URL(_request.getUrl());
+				} else {
+					HttpServletRequest httpRequest = rapidRequest.getRequest();
+					url = new URL(httpRequest.getScheme(), httpRequest.getServerName(), httpRequest.getServerPort(), httpRequest.getContextPath() + "/" + _request.getUrl());
+				}
+				
+				// establish the connection
+				HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+				connection.setDoOutput(true); // Triggers POST.
+				
+				// set the content type and action header accordingly
+				if ("SOAP".equals(_request.getType())) {
+					connection.setRequestProperty("Content-Type", "text/xml");
+					connection.setRequestProperty("SOAPAction", _request.getAction());
+				} else if ("JSON".equals(_request.getType())) {
+					connection.setRequestProperty("Content-Type", "application/json");
+					connection.setRequestProperty("Action", _request.getAction());
+				} else if ("XML".equals(_request.getType())) {
+					connection.setRequestProperty("Content-Type", "text/xml");
+					connection.setRequestProperty("Action", _request.getAction());
+				}
+								
+				// get the output stream from the connection into which we write the request
+				OutputStream output = connection.getOutputStream();		
+				
+				// write the processed body string into the request output stream
+				output.write(body.getBytes("UTF8"));
+				
+				// check the response code
+				int responseCode = connection.getResponseCode();
+				
+				// read input stream if all ok, otherwise something meaningful should be in error stream
+				if (responseCode == 200) {
+					
+					InputStream response = connection.getInputStream();
+					
+					SOAXMLReader xmlReader = new SOAXMLReader();
+					
+					SOAData soaData = xmlReader.read(response);
+					
+					SOADataWriter jsonWriter = new SOARapidWriter(soaData);
+					
+					String jsonString = jsonWriter.write();
+					
+					jsonData = new JSONObject(jsonString);
+					
+				} else {
+					
+					InputStream response = connection.getErrorStream();
+					
+					BufferedReader rd  = new BufferedReader( new InputStreamReader(response));
+		        
+					throw new JSONException(" response code " + responseCode + " from server : " + rd.readLine());
+										
+				}
+				
+				connection.disconnect();
+																
+			} // got app and page
+			
+		} catch (Exception ex) {
+			// rethrow as JSONException
+			throw new JSONException(ex);
+		}
+								
+		return jsonData;
+		
+	}
+	
+}

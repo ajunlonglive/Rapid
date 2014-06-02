@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<controls xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/control.xsd">
+	<control>
+	    
+	    <type>panel</type>	 
+	    <name>Panel</name>	   
+	    <image>images/panel_24x24.png</image>     
+	    
+	    <canUserAdd>true</canUserAdd>
+	    <canUserMove>true</canUserMove>
+	    <canUserInsert>true</canUserInsert>
+	    <canUserAddPeers>true</canUserAddPeers>
+	    
+	    <properties>      
+	        <property>
+	            <key>name</key>
+	            <name>Name</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>	            
+	        </property>     
+	        <property>
+	            <key>text</key>
+	            <name>Text</name>
+	            <setConstructValueFunction>return "Panel"</setConstructValueFunction>
+	            <changeValueJavaScript>bigtext</changeValueJavaScript>	            
+	        </property>
+	        <property>
+	            <key>roles</key>
+	            <name>User roles</name>
+	            <changeValueJavaScript>roles</changeValueJavaScript>	            
+	        </property>
+	    </properties>
+	    
+	    <getHtmlFunction>
+	        <![CDATA[
+// return our html for adding to our parent object	        
+return "<div id='" + this.id + "' class='panel" + getStyleClasses(this) + "'>" + this.text + "</div>";
+	        ]]>
+	    </getHtmlFunction> 
+	    
+	    <styles>       
+	        <style>
+	            <name>Panel</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id;
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	    </styles>
+	    
+	</control>
+</controls>

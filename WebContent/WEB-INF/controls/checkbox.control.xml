@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<controls xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/control.xsd">
+	<control>
+	    
+	    <type>checkbox</type>	 
+	    <name>Checkbox</name>	   
+	    <image>images/checkbox_24x24.png</image>        
+	    <canUserAdd>true</canUserAdd>
+	    <canUserMove>true</canUserMove>
+	    <canUserAddPeers>true</canUserAddPeers>
+	    
+	    <properties>
+	        <property>
+	            <key>name</key>
+	            <name>Name</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>	            
+	        </property>	       
+	        <property>
+	            <key>checked</key>
+	            <name>Checked</name> 
+	            <setConstructValueFunction>return "false";</setConstructValueFunction>
+	            <changeValueJavaScript>select</changeValueJavaScript>	
+	            <getValuesFunction>
+	                <![CDATA[
+return ["false","true"];
+					]]>
+	            </getValuesFunction>     
+	        </property>	      
+	    </properties>
+	    
+	    <getHtmlFunction>
+	        <![CDATA[	    
+var checked = "";
+
+if (this.checked == "true") checked=" checked='checked'";
+	          
+return "<input id='" + this.id + "' type='checkbox' class='checkbox" + getStyleClasses(this) + "'" + checked + "></input>"
+	        ]]>
+	    </getHtmlFunction> 
+	    
+	    <getDataFunction>
+	        <![CDATA[
+return $("#" + id).prop("checked") ? "true" : "false";
+			]]>
+	    </getDataFunction>
+	    
+	    <setDataJavaScript>
+	        <![CDATA[
+var control = $("#" + id);	        
+if (data) {	
+	data = makeDataObject(data, field);
+	if (data.rows && data.rows[0]) {	        		
+		if (field && data.fields) {
+			for (var i in data.fields) {
+				if (data.fields[i].toLowerCase() == field.toLowerCase()) {
+					control.prop('checked', data.rows[0][i]);
+					break;
+				}
+			}
+		} else {
+			control.prop('checked', data.rows[0][0]);
+		}
+	} else {
+		control.prop('checked', false);
+	}
+} else {
+	control.prop('checked', false);
+}       
+			]]>
+	    </setDataJavaScript>
+	    
+	    <events>
+	        <event>
+	            <type>click</type>
+	            <name>Click</name>
+	        </event>
+	    </events>
+	    
+	    <styles>
+	        <style>
+	            <name>Button</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id;
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	        <style>
+	            <name>:hover</name>
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id + " :hover";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	    </styles>
+	    
+	</control>
+</controls>

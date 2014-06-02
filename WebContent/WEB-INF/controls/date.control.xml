@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<controls xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/control.xsd">
+	<control>
+	    
+	    <type>date</type>	 
+	    <name>Date</name>	   
+	    <image>images/input_24x24.png</image>        
+	    <canUserAdd>true</canUserAdd>
+	    <canUserMove>true</canUserMove>
+	    <canUserAddPeers>true</canUserAddPeers>
+	    <canValidate>true</canValidate>
+	    
+	    <properties>
+	        <property>
+	            <key>name</key>
+	            <name>Name</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>	            
+	        </property>	            
+	        <property>
+	            <key>value</key>
+	            <name>Value</name>
+	            <setConstructValueFunction>return "";</setConstructValueFunction>
+	            <changeValueJavaScript>text</changeValueJavaScript>	            
+	        </property>
+	        <property>
+	            <key>dateFormat</key>
+	            <name>Date format</name>
+	            <setConstructValueFunction>return "d/m/Y";</setConstructValueFunction>
+	            <changeValueJavaScript>select</changeValueJavaScript>	
+	            <getValuesFunction>
+	                <![CDATA[
+return [["d/m/Y","dd/mm/yyyy"],["m/d/Y","mm/dd/yyyy"],["Y-m-d","yyyy-mm-dd"]];
+					]]>
+	            </getValuesFunction>             
+	        </property>	 
+	    </properties>
+	    
+	    <resources>
+            <resource>
+                <type>javascriptFile</type>
+                <contents>scripts/controls/date.js</contents>
+            </resource>
+            <resource>
+                <type>cssFile</type>
+                <contents>styles/controls/date.css</contents>
+            </resource>
+        </resources>
+	    
+	    <getHtmlFunction>
+	        <![CDATA[
+// return our html for adding to our parent object	
+var value = this.value;
+if (!value) value = "";
+return "<input id='" + this.id + "' value='" + value + "' readonly='readonly' class='date tcal tcalInput'></input>";  
+
+	        ]]>
+	    </getHtmlFunction> 
+	    
+	    <getDetailsFunction>	        
+	        <![CDATA[
+return { dateFormat: this.dateFormat };
+			]]>	        	        
+	    </getDetailsFunction>
+	    
+	    <getDataFunction>
+	        <![CDATA[
+return $("#" + id).val();
+			]]>
+	    </getDataFunction>
+	    
+	    <setDataJavaScript>
+	        <![CDATA[
+var control = $("#" + id);
+var value = "";
+if (data) {	
+	data = makeDataObject(data, field);
+	if (data.rows && data.rows[0]) {	        		
+		if (field && data.fields) {
+			for (var i in data.fields) {
+				if (data.fields[i].toLowerCase() == field.toLowerCase()) {
+					value = data.rows[0][i];
+					break;
+				}
+			}
+		} else {
+			value = data.rows[0][0];
+		}
+	} 
+}      
+if (value) {
+	var date = f_tcalParseDate(value,'Y-m-d');
+	if (date) value = f_tcalGenerateDate(date, details.dateFormat);
+}
+control.val(value);
+
+			]]>
+	    </setDataJavaScript>
+	    
+	    <events>
+	        <event>
+	            <type>keyup</type>
+	            <name>Key up</name>
+	        </event>
+	        <event>
+	            <type>change</type>
+	            <name>Change</name>
+	        </event>
+	        <event>
+	            <type>blur</type>
+	            <name>Blur</name>
+	        </event>
+	    </events> 
+	    	    	    	    
+	    <styles>
+	        <style>
+	            <name>Date</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id;
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	        <style>
+	            <name>:hover</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id + ":hover";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	        <style>
+	            <name>:focus</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id + ":focus";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	    </styles>
+	    
+	    <initJavaScript>
+	        <![CDATA[
+A_TCALCONF.format = details.dateFormat;	     
+f_tcalAdd (id);   
+	        ]]>
+	    </initJavaScript>
+	    	   	    
+	</control>
+</controls>

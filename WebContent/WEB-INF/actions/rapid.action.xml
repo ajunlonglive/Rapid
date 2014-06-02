@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/action.xsd">
+    <action>
+        <type>rapid</type>
+        <version>1</version>
+        <name>Rapid</name>	        
+	    <class>com.rapid.actions.Rapid</class>	 
+	    <properties>
+	        <property>
+	            <key>actionType</key>
+	            <name>Type</name>
+	            <setConstructValueFunction>return "NONE";</setConstructValueFunction>
+	            <changeValueJavaScript>select</changeValueJavaScript>	
+	            <getValuesFunction>
+	                <![CDATA[
+return [
+ ["NONE","None"], 
+ ["GETAPPS","Get applications"],
+ ["GETAPP","Get application details"],
+ ["GETDBCONN","Get database connection details"],
+ ["GETSOA","Get soa webservice details"],
+ ["GETSEC","Get security details"],  
+ ["GETUSER","Get users details"], 
+ ["RELOADACTIONS","Reload actions"],
+ ["RELOADCONTROLS","Reload controls"],
+ ["RELOADAPPLICATIONS","Reload applications"],
+ ["RELOADADAPTERS","Reload adapters"],
+ ["SAVEAPP","Save application details"], 
+ ["SAVESTYLES","Save styles"], 
+ ["SAVEDBCONN","Save database connection"],
+ ["SAVESOASQL","Save SOA SQL webservice"],
+ ["SAVESOAOBJ","Save SOA object webservice"],
+ ["SAVESECURITYADAPT","Save security adapter"],
+ ["SAVEACTIONS","Save actions"],
+ ["SAVECONTROLS","Save controls"],    
+ ["NEWAPP","New application"],
+ ["DELAPP","Delete application"],
+ ["DUPAPP","Duplicate application"],
+ ["NEWPAGE","New page"],
+ ["DELPAGE","Delete page"],
+ ["NEWDBCONN","New database connection"],
+ ["DELDBCONN","Delete database connection"],
+ ["NEWSOA","New SOA webservice"],
+ ["DELSOA","Delete SOA webservice"],
+ ["NEWROLE","New role"],
+ ["DELROLE","Delete role"],
+ ["NEWUSER","New user"],
+ ["DELUSER","Delete user"],
+ ["NEWUSERROLE","New user role"],
+ ["DELUSERROLE","Delete user role"],
+ ["SAVEUSERPASSWORD","Save user password"],
+ ["REBUILDPAGES","Rebuild application pages"],
+ ["TESTDBCONN","Test database connection"]
+];
+					]]>
+	            </getValuesFunction>  
+	        </property>
+	        <property>
+	            <key>successActions</key>
+	            <name>Success actions</name>
+	            <changeValueJavaScript>childActions</changeValueJavaScript>	 
+	        </property>
+	        <property>
+	            <key>errorActions</key>
+	            <name>Error actions</name>
+	            <changeValueJavaScript>childActions</changeValueJavaScript>	 
+	        </property>	 
+	    </properties>
+	    <actionJavaScript>
+	        <![CDATA[
+function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, successCallback, errorCallback) {
+
+	var type = "GET";
+	
+	var data = null;
+	var callback = null;
+
+	// some special types require data and callbacks	
+	switch (actionType) {
+		case "GETAPPS" :		
+			data = { actionType: actionType, appId: "rapid" };	
+			callback = function(data) {
+				setData_dataStore('rapid_P0_C210', data, null, {storageType:"S", id:"rapidrapid_P0_C210"});
+			};
+		break;
+		case "GETAPP" :		
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val() };	
+			callback = function(data) {
+				setData_dataStore('rapid_P0_C127', data, "application", {storageType:"S", id:"rapidrapid_P0_C127"});
+			};
+		break;	
+		case "GETDBCONN" :		
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), index: $("#rapid_P0_C311").find("tr.rowSelect").index()-1 };	
+			callback = function(data) {
+				setData_dataStore('rapid_P0_C361', data, "databaseConnection", {storageType:"S", id:"rapidrapid_P0_C361"});
+			};
+		break;
+		case "GETSOA" :		
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), index: $("#rapid_P0_C483_").find("tr.rowSelect").index()-1 };	
+			callback = function(data) {
+				setData_dataStore('rapid_P0_C528_', data, "webservice", {storageType:"S", id:"rapidrapid_P0_C528_"});
+				loadSOA(data.webservice);
+			};
+		break;
+		case "GETSEC" :		
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), securityAdapter: $("#rapid_P0_C81").val() };	
+			callback = function(data) {
+				setData_dataStore('rapid_P0_C469_', data, "security", {storageType:"S", id:"rapidrapid_P0_C469_"});
+			};
+		break;
+		case "GETUSER" :		
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: getData_grid(ev, "rapid_P0_C216", "userName", {columns:[{field:"userName"}]}) };	
+			callback = function(data) {
+				setData_dataStore('rapid_P0_C243', data, "user", {storageType:"S", id:"rapidrapid_P0_C243"});
+			};
+		break;
+		case "SAVEAPP" :		
+			data = { 
+				actionType: actionType, 
+				appId: $("#rapid_P0_C43").val(), 
+				name: $("#rapid_P0_C392_").val(),
+				title: $("#rapid_P0_C394_").val(),
+				description: $("#rapid_P0_C393_").val(),
+				showControlIds: $("#rapid_P0_C381_").prop("checked"),
+				showActionIds: $("#rapid_P0_C382_").prop("checked"),
+				startPageId: $("#rapid_P0_C644_").val()
+			};	
+		break;
+		case "SAVESTYLES" :		
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), styles: $("#rapid_P0_C116").val() };	
+		break;		
+		case "SAVEDBCONN" :		
+			data = { 
+				actionType: actionType, 
+				appId: $("#rapid_P0_C43").val(), 
+				index: $("#rapid_P0_C311").find("tr.rowSelect").index()-1,
+				name: $("#rapid_P0_C360").val(),
+				driver: $("#rapid_P0_C338").val(),
+				connectionString: $("#rapid_P0_C374").val(),
+				connectionAdapter: $("#rapid_P0_C339").val(),
+				userName: $("#rapid_P0_C340").val(),
+				password: $("#rapid_P0_C341").val()
+			};	
+			callback = function() {
+				Event_click_rapid_P0_C311({target: $("#rapid_P0_C311").find("tr.rowSelect").children().first()[0] });
+			};
+		break;
+		case "SAVESOASQL" :		
+			data = { 
+				actionType: actionType, 
+				appId: $("#rapid_P0_C43").val(), 
+				index: $("#rapid_P0_C483_").find("tr.rowSelect").index()-1,
+				name: $("#rapid_P0_C496_").val(), 
+				databaseConnectionIndex: $("#rapid_P0_C536_")[0].selectedIndex,
+				details: _soaDetails
+			};	
+		break;
+		case "SAVESECURITYADAPT" :		
+			data = { 
+				actionType: actionType, 
+				appId: $("#rapid_P0_C43").val(), 
+				securityAdapter: $("#rapid_P0_C81").val()
+			};	
+		break;
+		case "SAVEACTIONS" :
+			var actionTypes = [];
+			$("#rapid_P0_C288").find("input:checked").each( function(){
+				actionTypes.push($(this).closest("tr").children().first().html());
+			});		
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), actionTypes: actionTypes };	
+		break;
+		case "SAVECONTROLS" :	
+			var controlTypes = [];
+			$("#rapid_P0_C289").find("input:checked").each( function(){
+				controlTypes.push($(this).closest("tr").children().first().html());
+			});		
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), controlTypes: controlTypes };	
+		break;
+		case "REBUILDPAGES" :		
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val() };	
+		break;
+		case "NEWAPP" :
+			data = {
+				actionType: actionType,
+				appId: "rapid",
+				name: $("#rapid_P1_C7").val(),
+				title: $("#rapid_P1_C11").val(),
+				description: $("#rapid_P1_C15").val()
+			}
+			callback = function(response) {
+				location.reload();
+			}; 
+		break;
+		case "DELAPP" :		
+			data = { 
+				actionType: actionType, 
+				appId: $("#rapid_P0_C43").val() 
+			};	
+			callback = function() {
+				location.reload();
+			}; 			
+		break;		
+		case "DUPAPP" :		
+			data = {
+				actionType: actionType,
+				appId: $("#rapid_P0_C43").val(),
+				name: $("#rapid_P8_C7_").val(),
+				title: $("#rapid_P8_C12_").val(),
+				description: $("#rapid_P8_C17_").val()
+			}
+			callback = function(response) {
+				location.reload();
+			}; 			
+		break;
+		case "NEWPAGE" :	
+			data = {
+				actionType: actionType,
+				appId: _app.id,
+				id: "P" + _nextPageId, 
+				name: $("#rapid_P3_C17").val(),
+				title: $("#rapid_P3_C18").val(),
+				description: $("#rapid_P3_C19").val()
+			}
+			callback = function(data) {
+				hideDialogue();
+				loadPages(data.id, true);
+			}; 
+		break;
+		case "DELPAGE" :
+			data = { actionType: actionType, appId: _app.id, id: _page.id }; 
+			callback = function() {
+				hideDialogue();
+				loadPages(null, true);
+			}; 
+		break;	
+		case "NEWDBCONN" :		
+			data = { 
+				actionType: actionType, 
+				appId: $("#rapid_P0_C43").val(), 
+				name: $("#rapid_P7_C7").val(),
+				driver: $("#rapid_P7_C37").val(),
+				connectionString: $("#rapid_P7_C44").val(),
+				connectionAdapter: $("#rapid_P7_C38").val(),
+				userName: $("#rapid_P7_C30").val(),
+				password: $("#rapid_P7_C35").val()
+			};	
+			callback = function() {
+				Event_change_rapid_P0_C43(ev);
+			};	
+		break;
+		case "DELDBCONN" :		
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), index: $(ev.target).parent().parent().index()-1 };
+			callback = function() {
+				Event_change_rapid_P0_C43(ev);
+			};	
+		break;
+		case "NEWSOA" :		
+			data = { 
+				actionType: actionType, 
+				appId: $("#rapid_P0_C43").val(), 
+				name: $("#rapid_P10_C8_").val(),
+				type: $("#rapid_P10_C23_").val()
+			};	
+			callback = function() {
+				Event_change_rapid_P0_C43(ev);
+			};	
+		break;
+		case "DELSOA" :		
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), index: $(ev.target).parent().parent().index()-1 };
+			callback = function() {
+				Event_change_rapid_P0_C43(ev);
+			};	
+		break;
+		case "NEWROLE" :		
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), role: $("#rapid_P5_C7").val() };
+			callback = function() {
+				Event_change_rapid_P0_C43(ev);
+			};								
+		break;
+		case "DELROLE" :		
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), role: $(ev.target).parent().prev().html() };
+			callback = function() {
+				Event_change_rapid_P0_C43(ev);
+			};								
+		break;
+		case "NEWUSER" :		
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: $("#rapid_P6_C7").val(), password: $("#rapid_P6_C18").val() };
+			callback = function() {
+				Event_change_rapid_P0_C43(ev);
+			};								
+		break;
+		case "DELUSER" :		
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: $(ev.target).parent().prev().html() };
+			callback = function() {
+				Event_change_rapid_P0_C43(ev);
+			};								
+		break;
+		case "NEWUSERROLE" : 
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: $("#rapid_P0_C216").find("tr.rowSelect").children().first().html(), role: $("#rapid_P0_C254").val() };
+			callback = function() {
+				Event_click_rapid_P0_C216({target: $("#rapid_P0_C216").find("tr.rowSelect").children().first()[0] });
+			};																
+		break;
+		case "DELUSERROLE" :	
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: $("#rapid_P0_C216").find("tr.rowSelect").children().first().html(), role: $(ev.target).parent().prev().html() };
+			callback = function() {
+				Event_click_rapid_P0_C216({target: $("#rapid_P0_C216").find("tr.rowSelect").children().first()[0] });
+			};																
+		break;
+		case "SAVEUSERPASSWORD" :	
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: $("#rapid_P0_C216").find("tr.rowSelect").children().first().html(), password: $("#rapid_P0_C231").val() };															
+		break;
+		case "TESTDBCONN" :	
+			data = { 
+				actionType: actionType, 
+				appId: $("#rapid_P0_C43").val(), 
+				index: $("#rapid_P0_C311").find("tr.rowSelect").index()-1,
+				driver: $("#rapid_P0_C338").val(),
+				connectionString: $("#rapid_P0_C374").val(),
+				connectionAdapter: $("#rapid_P0_C339").val(),
+				userName: $("#rapid_P0_C340").val(),
+				password: $("#rapid_P0_C341").val()
+			};	
+			callback = function() {
+				alert("Database connection OK");
+			};															
+		break;
+		default :
+			data = { actionType: actionType, appId: "rapid" };
+	}
+	
+	// stringify any data
+	if (data) data = JSON.stringify(data);
+	
+	// run the action on the server	
+	$.ajax({
+    	url: "~?a=rapid&p=" + pageId + "&act=" + actionId,
+    	type: "POST",          
+    	dataType: "json",
+        data: data,            
+        error: function(server, status, error) { 
+        	errorCallback(server, status, error); 
+        },
+        success: function(data) {
+       		if (callback) callback(data);
+       		if (successCallback) successCallback(data);        	
+        }
+	});
+}	        
+			]]>
+	    </actionJavaScript>   
+    </action> 
+</actions>

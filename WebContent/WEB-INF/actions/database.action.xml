@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/action.xsd">
+    <action>
+        
+        <type>database</type>
+        <version>1</version>
+        <name>Database</name>	        
+	    <class>com.rapid.actions.Database</class>	 
+	    
+	    <resources>
+	    	<resource>
+	    		<type>javascript</type>
+	    		<contents>
+	    		<![CDATA[
+	    		
+var _pageUnloading = false;
+
+window.onbeforeunload = function(ev) {
+       _pageUnloading = true;
+       return null;
+};	    
+	    		 
+	    		]]>
+	    		</contents>
+	    	</resource>
+	    </resources>  
+	    
+	    <properties>
+	        <property>
+	            <key>query</key>
+	            <name>Query</name>
+	            <changeValueJavaScript>databaseQuery</changeValueJavaScript>	 
+	        </property>	  
+	        <property>
+	            <key>showLoading</key>
+	            <name>Loading animation</name>
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>	 
+	        </property>	
+	        <property>
+	            <key>successActions</key>
+	            <name>Success actions</name>
+	            <changeValueJavaScript>childActions</changeValueJavaScript>	 
+	        </property>
+	        <property>
+	            <key>errorActions</key>
+	            <name>Error actions</name>
+	            <changeValueJavaScript>childActions</changeValueJavaScript>	 
+	        </property>      
+	    </properties>	 
+	    	    	      
+	    <actionJavaScript>
+	        <![CDATA[ 
+function Action_database(data, outputs) {
+	if (data && outputs) {
+		for (var i in outputs) {
+			var output = outputs[i];			
+			window["setData_" + output.type](output.id, data, output.field, output.details);
+		}
+	}
+}	        ]]>
+	    </actionJavaScript>
+	    	    	    
+    </action> 
+</actions>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/action.xsd">
+    <action>
+        <type>navigate</type>
+        <version>1</version>
+        <name>Navigate</name>	        
+	    <class>com.rapid.actions.Navigate</class>	
+	    <properties>
+	        <property>
+	            <key>page</key>
+	            <name>Page</name>
+	            <changeValueJavaScript>navigationPage</changeValueJavaScript>	 
+	        </property>	    	
+	    	<property>
+	            <key>sessionVariables</key>
+	            <name>Page variables</name>
+	            <changeValueJavaScript>navigationSessionVariables</changeValueJavaScript>	
+	        </property>
+	        <property>
+	            <key>dialogue</key>
+	            <name>Show as dialogue</name>
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>	
+	        </property>
+	    </properties>    	    
+	    <actionJavaScript>
+	        <![CDATA[
+function Action_navigate(url, dialogue) {
+	if (dialogue) {
+	
+		var bodyHtml = "<center><h1>Page</h1></center>";
+		
+		// request the page		
+		$.ajax({
+		   	url: url,
+		   	type: "GET",          
+		       data: null,        
+		       error: function(server, status, error) { 
+		       	var bodyHtml = "Error loading page : " + error; 
+		       },
+		       success: function(page) {
+		       	
+		       // if the page can't be found a blank response is sent, so only show if we got something
+		       if (page) {
+		       	
+		       		// empty the body html
+		       		bodyHtml = "";
+		       		script = "";
+		       		
+		           	// loop the items
+		           	var items = $(page);
+		           	for (var i in items) {
+		           		// check for a script node
+		           		switch (items[i].nodeName) {
+		           		case "#text" : case "TITLE" : // ignore these types
+		           		break;
+		           		case "SCRIPT" :
+		           			if (items[i].innerHTML) {
+		           				script += items[i].outerHTML;
+		           			}
+		           		break;
+		           		default :
+		           			if (items[i].outerHTML) {
+		           				// retain the script in our body html
+		           				bodyHtml += items[i].outerHTML;        				
+		           			}
+		           		break;
+		           		}
+		           	}   
+		           	
+		           	var doc = $(document);
+		           	var body = $("body");
+		           	var dialogueCover = body.append("<div class='dialogueCover' style='position:absolute;left:0px;top:0px;z-index:100;'></div>").children().last();
+		           	// size and show the dialogueCover
+	            	dialogueCover.css({
+	            		width : doc.width(),
+	            		height : doc.height()
+	            	}).show();
+		           	var dialogue = body.append("<div class='dialogue' style='position:absolute;z-index:101;'></div>").children().last();
+		           	// apply the injected html
+		           	dialogue.hide().html(bodyHtml);
+		           	// add script into the page (if applicable)
+		           	if (script) dialogue.append(script);
+		           	var win = $(window);
+		           	// size and show the dialogue
+		           	dialogue.show().css({
+		           		position : "fixed",
+	            		left : (win.width() - dialogue.outerWidth()) / 2,
+	            		top : (win.height() - dialogue.outerHeight()) / 3
+	            	}); 
+		           	           	        	            	            	            
+		    	}        	       	        	        	        	        		
+		    }       	        	        
+		});	      
+	
+	} else {
+		window.location = url;
+	}
+}	        ]]>
+	    </actionJavaScript>    	    
+    </action> 
+</actions>

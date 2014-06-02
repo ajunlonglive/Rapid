@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<securityAdapter xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/securityAdapter.xsd">
+  <type>rapid</type>
+  <name>Rapid</name>
+  <class>com.rapid.security.RapidSecurityAdapter</class>
+  <canManageRoles>true</canManageRoles>
+  <canManageUsers>true</canManageUsers>
+  <canManageUserRoles>true</canManageUserRoles>
+</securityAdapter>

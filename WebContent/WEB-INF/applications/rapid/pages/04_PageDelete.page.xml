@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<page>
+    <controls>
+        <childControls>
+            <childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P4_C3</value>
+                    </entry>
+                    <entry>
+                        <key>text</key>
+                        <value>Delete page</value>
+                    </entry>
+                    <entry>
+                        <key>colSpan</key>
+                        <value>2</value>
+                    </entry>
+                    <entry>
+                        <key>name</key>
+                        <value>Table cell 17</value>
+                    </entry>
+                    <entry>
+                        <key>rowSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableCell</value>
+                    </entry>
+                </properties>
+                <styles>
+                    <appliesTo>#rapid_P4_C3</appliesTo>
+                    <rules>padding:10px;</rules>
+                    <rules>background:#e00 url(highlight_red_1x44.png) 50% 50% repeat-x;</rules>
+                    <rules>text-shadow :-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;</rules>
+                </styles>
+            </childControls>
+            <properties>
+                <entry>
+                    <key>id</key>
+                    <value>rapid_P4_C2</value>
+                </entry>
+                <entry>
+                    <key>name</key>
+                    <value>Table row 8</value>
+                </entry>
+                <entry>
+                    <key>type</key>
+                    <value>tableRow</value>
+                </entry>
+            </properties>
+            <styles>
+                <appliesTo>#rapid_P4_C2</appliesTo>
+                <rules>background-color:red;</rules>
+                <rules>color:white;</rules>
+                <rules>font-weight:bold;</rules>
+                <rules>text-align:center;</rules>
+            </styles>
+        </childControls>
+        <childControls>
+            <childControls>
+                <childControls>
+                    <events>
+                        <filter></filter>
+                        <type>mouseover</type>
+                    </events>
+                    <events>
+                        <filter></filter>
+                        <type>click</type>
+                    </events>
+                    <properties>
+                        <entry>
+                            <key>id</key>
+                            <value>rapid_P4_C24</value>
+                        </entry>
+                        <entry>
+                            <key>text</key>
+                            <value>Are you sure you want to delete the current page?</value>
+                        </entry>
+                        <entry>
+                            <key>name</key>
+                            <value>Text 1</value>
+                        </entry>
+                        <entry>
+                            <key>format</key>
+                            <value>N</value>
+                        </entry>
+                        <entry>
+                            <key>type</key>
+                            <value>text</value>
+                        </entry>
+                    </properties>
+                </childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P4_C10</value>
+                    </entry>
+                    <entry>
+                        <key>text</key>
+                        <value></value>
+                    </entry>
+                    <entry>
+                        <key>colSpan</key>
+                        <value>2</value>
+                    </entry>
+                    <entry>
+                        <key>name</key>
+                        <value>Table cell 12</value>
+                    </entry>
+                    <entry>
+                        <key>rowSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableCell</value>
+                    </entry>
+                </properties>
+                <styles>
+                    <appliesTo>#rapid_P4_C10</appliesTo>
+                    <rules>padding:20px;</rules>
+                </styles>
+            </childControls>
+            <properties>
+                <entry>
+                    <key>id</key>
+                    <value>rapid_P4_C8</value>
+                </entry>
+                <entry>
+                    <key>name</key>
+                    <value>Table row 5</value>
+                </entry>
+                <entry>
+                    <key>type</key>
+                    <value>tableRow</value>
+                </entry>
+            </properties>
+        </childControls>
+        <childControls>
+            <childControls>
+                <childControls>
+                    <events>
+                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="custom">
+                            <properties>
+<entry>
+    <key>id</key>
+    <value>P2_A20</value>
+</entry>
+<entry>
+    <key>javascript</key>
+    <value>hideDialogue();</value>
+</entry>
+<entry>
+    <key>name</key>
+    <value>Custom 26</value>
+</entry>
+<entry>
+    <key>type</key>
+    <value>custom</value>
+</entry>
+                            </properties>
+                        </actions>
+                        <filter></filter>
+                        <type>click</type>
+                    </events>
+                    <properties>
+                        <entry>
+                            <key>id</key>
+                            <value>rapid_P4_C19</value>
+                        </entry>
+                        <entry>
+                            <key>name</key>
+                            <value>Cancel</value>
+                        </entry>
+                        <entry>
+                            <key>label</key>
+                            <value>Cancel</value>
+                        </entry>
+                        <entry>
+                            <key>type</key>
+                            <value>button</value>
+                        </entry>
+                    </properties>
+                    <styles>
+                        <appliesTo>.</appliesTo>
+                        <rules>width:80px</rules>
+                    </styles>
+                </childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P4_C18</value>
+                    </entry>
+                    <entry>
+                        <key>text</key>
+                        <value></value>
+                    </entry>
+                    <entry>
+                        <key>colSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>name</key>
+                        <value>Table cell 10</value>
+                    </entry>
+                    <entry>
+                        <key>rowSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableCell</value>
+                    </entry>
+                </properties>
+                <styles>
+                    <appliesTo>#rapid_P4_C18</appliesTo>
+                    <rules>padding-left:10px;</rules>
+                    <rules>padding-bottom:10px;</rules>
+                </styles>
+            </childControls>
+            <childControls>
+                <childControls>
+                    <events>
+                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="rapid">
+                            <properties>
+<entry>
+    <key>id</key>
+    <value>P2_A23</value>
+</entry>
+<entry>
+    <key>childActions</key>
+    <value>[]</value>
+</entry>
+<entry>
+    <key>name</key>
+    <value>Rapid 27</value>
+</entry>
+<entry>
+    <key>actionType</key>
+    <value>DELPAGE</value>
+</entry>
+<entry>
+    <key>type</key>
+    <value>rapid</value>
+</entry>
+                            </properties>
+                        </actions>
+                        <filter></filter>
+                        <type>click</type>
+                    </events>
+                    <properties>
+                        <entry>
+                            <key>id</key>
+                            <value>rapid_P4_C22</value>
+                        </entry>
+                        <entry>
+                            <key>name</key>
+                            <value>Delete</value>
+                        </entry>
+                        <entry>
+                            <key>label</key>
+                            <value>Delete</value>
+                        </entry>
+                        <entry>
+                            <key>type</key>
+                            <value>button</value>
+                        </entry>
+                    </properties>
+                    <styles>
+                        <appliesTo>.</appliesTo>
+                        <rules>width:80px</rules>
+                    </styles>
+                </childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P4_C21</value>
+                    </entry>
+                    <entry>
+                        <key>text</key>
+                        <value></value>
+                    </entry>
+                    <entry>
+                        <key>colSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>name</key>
+                        <value>Table cell 10</value>
+                    </entry>
+                    <entry>
+                        <key>rowSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableCell</value>
+                    </entry>
+                </properties>
+                <styles>
+                    <appliesTo>#rapid_P4_C21</appliesTo>
+                    <rules>text-align:right;</rules>
+                    <rules>padding-right:10px;</rules>
+                    <rules>padding-bottom:10px;</rules>
+                </styles>
+            </childControls>
+            <properties>
+                <entry>
+                    <key>id</key>
+                    <value>rapid_P4_C16</value>
+                </entry>
+                <entry>
+                    <key>name</key>
+                    <value>Table row 6</value>
+                </entry>
+                <entry>
+                    <key>type</key>
+                    <value>tableRow</value>
+                </entry>
+            </properties>
+            <styles>
+                <appliesTo>.</appliesTo>
+                <rules>margin-top:10px</rules>
+            </styles>
+        </childControls>
+        <properties>
+            <entry>
+                <key>id</key>
+                <value>rapid_P4_C1</value>
+            </entry>
+            <entry>
+                <key>name</key>
+                <value>Table 2</value>
+            </entry>
+            <entry>
+                <key>type</key>
+                <value>table</value>
+            </entry>
+        </properties>
+        <styles>
+            <appliesTo>#rapid_P4_C1</appliesTo>
+            <rules>border-collapse:collapse;</rules>
+            <rules>border-spacing:0;</rules>
+        </styles>
+    </controls>
+    <description>Prompts users as to whether they wish to delete the page currently loaded in the designer</description>
+    <events>
+        <filter></filter>
+        <type>pageload</type>
+    </events>
+    <events>
+        <filter></filter>
+        <type>reusable</type>
+    </events>
+    <htmlBody>&lt;table id=&quot;rapid_P4_C1&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;rapid_P4_C2&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P4_C3&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Delete page&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P4_C8&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P4_C10&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;span id=&quot;rapid_P4_C24&quot; class=&quot;text&quot;&gt;Are you sure you want to delete the current page?&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P4_C16&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P4_C18&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P4_C19&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P4_C21&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P4_C22&quot; class=&quot;button&quot;&gt;Delete&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
+    <id>P4</id>
+    <name>04_PageDelete</name>
+    <rolesHtml>
+        <html>&lt;table id=&quot;rapid_P4_C1&quot; class=&quot;table&quot;&gt;
+		&lt;tbody&gt;
+			&lt;tr id=&quot;rapid_P4_C2&quot; class=&quot;tableRow&quot;&gt;
+				&lt;td id=&quot;rapid_P4_C3&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Delete page&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr id=&quot;rapid_P4_C8&quot; class=&quot;tableRow&quot;&gt;
+				&lt;td id=&quot;rapid_P4_C10&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;
+					&lt;span id=&quot;rapid_P4_C24&quot; class=&quot;text&quot;&gt;Are you sure you want to delete the current page?&lt;/span&gt;
+				&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr id=&quot;rapid_P4_C16&quot; class=&quot;tableRow&quot;&gt;
+				&lt;td id=&quot;rapid_P4_C18&quot; class=&quot;tabelCell&quot;&gt;
+					&lt;button id=&quot;rapid_P4_C19&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;
+				&lt;/td&gt;
+				&lt;td id=&quot;rapid_P4_C21&quot; class=&quot;tabelCell&quot;&gt;
+					&lt;button id=&quot;rapid_P4_C22&quot; class=&quot;button&quot;&gt;Delete&lt;/button&gt;
+				&lt;/td&gt;
+			&lt;/tr&gt;
+		&lt;/tbody&gt;
+	&lt;/table&gt;</html>
+    </rolesHtml>
+    <title>Delete page</title>
+</page>

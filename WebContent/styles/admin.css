@@ -1,0 +1,87 @@
+
+img.delete {
+	float: right;
+	width: 16px;
+	height: 16px;
+}
+
+img.reorder {
+	float: right;
+	width: 16px;
+	height: 16px;
+}
+
+td.elementName {
+	max-width: 40px;
+}
+
+td.elementField {
+	max-width: 60px;
+}
+
+td.restriction {
+	max-width: 60px;
+}
+
+table.propertiesPanelTable  {
+	width: 100%;
+	background-color: white;
+	border-left: 1px solid gray;
+	border-top: 1px solid gray;
+	border-right: 1px solid gray;
+	border-spacing: 0px;
+	margin-top: 2px;	
+	font-size: 11px;
+}
+
+.propertiesPanelTable tr {
+	text-align:left;
+}
+
+.propertiesPanelTable td {
+	text-align: left;
+	border-bottom: 1px solid gray;	
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	vertical-align: top; 
+	padding-top: 0;
+}
+
+.propertiesPanelTable input {
+	width: 100%;
+	padding-left: 0;
+	margin-top: -2px;
+	margin-left: -2px;
+	margin-bottom: -2px;
+	font-size: 11px;
+	text-indent: 3px;
+}
+
+.propertiesPanelTable input[type=checkbox] {
+	width: auto;
+	margin-top: -1px;
+	margin-left: 0px;
+}
+
+.propertiesPanelTable select {
+	width: 100%;
+	margin-top: -1px;
+	margin-left: -5px;
+	margin-bottom: -5px;	
+	font-size: 11px;
+}
+
+.propertiesPanelTable input[type=file] {
+	width: 100%;
+	margin-top: -2px;
+	margin-bottom: -2px;
+	font-size: 11px;
+}
+
+.propertiesPanelTable input[type=submit] {
+	width: 100%;
+	margin-top: -2px;
+	margin-bottom: -2px;
+	font-size: 11px;
+}

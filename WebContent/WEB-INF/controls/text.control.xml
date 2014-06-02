@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<controls xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/control.xsd">
+    <control>
+        
+        <type>text</type>
+        <name>Text</name>	 
+        <image>images/text_24x24.png</image>
+	    <canUserAdd>true</canUserAdd>
+	    <canUserMove>true</canUserMove>
+	    <canUserAddPeers>true</canUserAddPeers>	    
+	    
+	    <properties>
+	        <property>
+	            <key>name</key>
+	            <name>Name</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>	            
+	        </property>	            
+	        <property>
+	            <key>text</key>
+	            <name>Text</name>
+	            <setConstructValueFunction>return "Text"</setConstructValueFunction>
+	            <changeValueJavaScript>bigtext</changeValueJavaScript>	            
+	        </property>
+	        <property>
+	            <key>format</key>
+	            <name>Format</name>
+	            <setConstructValueFunction>return "N";</setConstructValueFunction>
+	            <changeValueJavaScript>select</changeValueJavaScript>	
+	            <getValuesFunction>
+	                <![CDATA[
+return [{"value":"N","text":"None"},{"value":"P","text":"Paragraph"},{"value":"BF","text":"Line break"}];
+					]]>
+	            </getValuesFunction>               
+	        </property>
+	    </properties>
+	    
+	    <getHtmlFunction>
+	        <![CDATA[
+// return the html for adding to our parent object	 
+var text = this.text;
+if (!text) text = "&nbsp;"       
+return (this.format == "P" ? "<p" : (this.format == "BF" ? "<br/><span" : "<span")) + " id='" + this.id + "' class='text" + getStyleClasses(this) + "'>" + text + "</" + (this.format == "P" ? "p>" : "span>");
+	        ]]>
+	    </getHtmlFunction>  
+	    
+	    <getDataFunction>
+	        <![CDATA[
+return $("#" + id).html();
+			]]>
+	    </getDataFunction>
+	    
+	    <setDataJavaScript>
+	        <![CDATA[
+var control = $("#" + id);	        
+if (data) {	
+	data = makeDataObject(data, field);
+	if (data.rows && data.rows[0]) {	        		
+		if (field && data.fields) {
+			for (var i in data.fields) {
+				if (data.fields[i].toLowerCase() == field.toLowerCase()) {
+					control.html(data.rows[0][i]);
+					break;
+				}
+			}
+		} else {
+			control.html(data.rows[0][0]);
+		}
+	} else {
+		control.html("");
+	}
+} else {
+	control.html("");
+}
+			]]>
+	    </setDataJavaScript>
+	    
+	    <events>
+	        <event>
+	            <type>mouseover</type>
+	            <name>Mouse over</name>
+	        </event>
+	        <event>
+	            <type>click</type>
+	            <name>Click</name>
+	        </event>
+	    </events> 
+	    
+	    <styles>
+	        <style>
+	            <name>Text</name>
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id;
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>  
+	    </styles>
+	    
+    </control> 
+</controls>

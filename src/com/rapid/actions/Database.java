@@ -1,0 +1,540 @@
+package com.rapid.actions;
+
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.annotation.XmlType;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.rapid.core.Action;
+import com.rapid.core.Application;
+import com.rapid.core.Control;
+import com.rapid.core.Page;
+import com.rapid.core.Parameter;
+import com.rapid.core.Application.DatabaseConnection;
+import com.rapid.data.ConnectionAdapter;
+import com.rapid.data.DataFactory;
+import com.rapid.data.DataFactory.Parameters;
+import com.rapid.server.RapidHttpServlet;
+import com.rapid.server.RapidHttpServlet.RapidRequest;
+
+public class Database extends Action {
+	
+	// details of the query (inputs, sql, outputs)
+	public static class Query {
+		
+		private ArrayList<Parameter> _inputs, _outputs;
+		private String _sql;
+		private int _databaseConnectionIndex;
+		
+		public ArrayList<Parameter> getInputs() { return _inputs; }
+		public void setInputs(ArrayList<Parameter> inputs) { _inputs = inputs; }
+		
+		public String getSQL() { return _sql; }
+		public void setSQL(String sql) { _sql = sql; }
+		
+		public int getDatabaseConnectionIndex() { return _databaseConnectionIndex; }
+		public void setDatabaseConnectionIndex(int databaseConnectionIndex) { _databaseConnectionIndex = databaseConnectionIndex; }
+		
+		public ArrayList<Parameter> getOutputs() { return _outputs; }
+		public void setOutputs(ArrayList<Parameter> outputs) { _outputs = outputs; }
+		
+		public Query() {};
+		public Query(ArrayList<Parameter> inputs, String sql, int databaseConnectionIndex, ArrayList<Parameter> outputs) {
+			_inputs = inputs;
+			_sql = sql;
+			_databaseConnectionIndex = databaseConnectionIndex;
+			_outputs = outputs;
+		}
+				
+	}
+	
+	// instance variables
+	
+	private Query _query;
+	private boolean _showLoading;
+	private ArrayList<Action> _successActions, _errorActions, _childActions;
+
+	// properties
+	
+	public Query getQuery() { return _query; }
+	public void setQuery(Query query) { _query = query; }
+	
+	public boolean getShowLoading() { return _showLoading; }
+	public void setShowLoading(boolean showLoading) { _showLoading = showLoading; }
+	
+	public ArrayList<Action> getSuccessActions() { return _successActions; }
+	public void setSuccessActions(ArrayList<Action> successActions) { _successActions = successActions; }
+	
+	public ArrayList<Action> getErrorActions() { return _errorActions; }
+	public void setErrorActions(ArrayList<Action> errorActions) { _errorActions = errorActions; }
+		
+	// constructors
+	
+	public Database() {}	
+	public Database(RapidHttpServlet rapidServlet, JSONObject jsonAction) throws JSONException { 
+		
+		// save all key/values from the json into the properties 
+		for (String key : JSONObject.getNames(jsonAction)) {
+			// add all json properties to our properties, except for query
+			if (!"query".equals(key) && !"showLoading".equals(key) && !"successActions".equals(key) && !"errorActions".equals(key)) addProperty(key, jsonAction.get(key).toString());
+		} 
+		
+		// try and build the query object
+		JSONObject jsonQuery = jsonAction.optJSONObject("query");
+		
+		// check we got one
+		if (jsonQuery != null) {
+			// get the parameters						
+			ArrayList<Parameter> inputs = getParameters(jsonQuery.optJSONArray("inputs"));
+			String sql = jsonQuery.optString("SQL");
+			int databaseConnectionIndex = jsonQuery.optInt("databaseConnectionIndex");
+			ArrayList<Parameter> outputs = getParameters(jsonQuery.optJSONArray("outputs"));
+			// make the object
+			_query = new Query(inputs, sql, databaseConnectionIndex, outputs);
+		}
+		
+		// look for showLoading
+		_showLoading = jsonAction.optBoolean("showLoading");
+		
+		// grab any successActions
+		JSONArray jsonSuccessActions = jsonAction.optJSONArray("successActions");
+		// if we had some
+		if (jsonSuccessActions != null) {
+			// instantiate our contols collection
+			try {
+				_successActions = Control.getActions(rapidServlet, jsonSuccessActions);
+			} catch (Exception ex) {
+				// rethrow as a JSON error
+				throw new JSONException(ex);
+			}
+		}
+		
+		// grab any errorActions
+		JSONArray jsonErrorActions = jsonAction.optJSONArray("errorActions");
+		// if we had some
+		if (jsonErrorActions != null) {
+			// instantiate our contols collection
+			try {
+				_errorActions = Control.getActions(rapidServlet, jsonErrorActions);
+			} catch (Exception ex) {
+				// rethrow as a JSON error
+				throw new JSONException(ex);
+			}
+		}
+				
+	}
+	
+	// this is used to get both input and output parameters
+	private ArrayList<Parameter> getParameters(JSONArray jsonParameters) throws JSONException {
+		// prepare return
+		ArrayList<Parameter> parameters = null;
+		// check
+		if (jsonParameters != null) {
+			// instantiate collection
+			parameters = new ArrayList<Parameter>();
+			// loop
+			for (int i = 0; i < jsonParameters.length(); i++) {
+				// instaniate member
+				Parameter parameter = new Parameter(
+					jsonParameters.getJSONObject(i).optString("itemId"),
+					jsonParameters.getJSONObject(i).optString("field")
+				);
+				// add member
+				parameters.add(parameter);
+			}
+		}
+		// return
+		return parameters;
+	}
+		
+	// overrides
+	
+	@Override
+	public List<Action> getChildActions() {			
+		// initialise and populate on first get
+		if (_childActions == null) {
+			// our list of all child actions
+			_childActions = new ArrayList<Action>();
+			// add child success actions
+			if (_successActions != null) {
+				for (Action action : _successActions) _childActions.add(action);			
+			}
+			// add child error actions
+			if (_errorActions != null) {
+				for (Action action : _errorActions) _childActions.add(action);			
+			}
+		}
+		return _childActions;	
+	}
+	
+	public String getLoadingJS(Page page, List<Parameter> parameters, boolean show) {
+		String js = "";
+		// check there are parameters
+		if (parameters != null) {			
+			// loop the output parameters
+			for (int i = 0; i < parameters.size(); i++) {					
+				// get the parameter
+				Parameter output = parameters.get(i);
+				// get the control the data is going into
+				Control control = page.getControl(output.getItemId());
+				// check the control still exists
+				if (control != null) {
+					if ("grid".equals(control.getType())) {
+						if (show) {
+							js += "  $('#" + control.getId() + "').showLoading();\n";						
+						} else {
+							js += "  $('#" + control.getId() + "').hideLoading();\n";
+						}
+					}
+				}
+			}
+			
+		}
+		return js;
+	}
+	
+	@Override
+	public String getJavaScript(Application application, Page page, Control control) {
+		
+		String js = "";
+		
+		if (_query != null) {
+			
+			// start the js
+			js = "  var data = { inputs:[] };\n";
+			
+			// build the inputs
+			if (_query.getInputs() != null) {
+				int i = 0;
+				for (Parameter parameter : _query.getInputs()) {
+					Control inputControl = page.getControl(parameter.getItemId());
+					if (inputControl != null) {
+						i++;
+						// get the field into a string
+						String field = parameter.getField();
+						// some checks which either don't provide the field or build it properly
+						if (field == null) {
+							field = "";
+						} else if ("".equals(field.trim())) {
+							field = "";
+						} 
+						// get any details we may have
+						String details = inputControl.getDetails();
+						// set to empty string or clean up
+						if (details == null) {
+							details = "";
+						} else {
+							details = ", " + details;
+						}
+						js += "  var input" + i + " = getData_" + inputControl.getType() + "(ev,'" + inputControl.getId() + "'" + (field.length() > 0 ? ", '" + field + "'" : "") + details + ");\n";
+						js += "  if (input" + i + " === undefined) return false;\n";
+						js += "  data.inputs.push({id:'" + inputControl.getId() + "',value:input" + i;
+						if (field.length() > 0) js += ",field:'" + field + "'";
+						js += "});\n";
+					}
+				}
+			} // got inputs
+						
+			// control can be null when the action is called from the page load
+			String controlParam = "";
+			if (control != null) controlParam = "&c=" + control.getId();
+						
+			// get the outputs
+			ArrayList<Parameter> outputs = _query.getOutputs();
+			
+			// get the js to hide the loading (if applicable)
+			if (_showLoading) js += "  " + getLoadingJS(page, outputs, true);
+						
+			// open the ajax call
+			js += "  $.ajax({ url : '~?a=" + application.getId() + "&p=" + page.getId() + controlParam + "&act=" + getId() + "', type: 'POST', dataType: 'json',\n";
+			js += "    data: JSON.stringify(data),\n";
+			js += "    error: function(error, status, message) {\n";
+			
+			// hide the loading javascript (if applicable)
+			if (_showLoading) js += "      " + getLoadingJS(page, outputs, false);
+							
+			// this avoids doing the errors if the page is unloading or the back button was pressed
+			js += "      if (!_pageUnloading && error.readyState > 0) {\n";
+			
+			// retain if error actions
+			boolean errorActions = false;
+			
+			// add any error actions
+			if (_errorActions != null) {
+				for (Action action : _errorActions) {
+					errorActions = true;
+					js += "         " + action.getJavaScript(application, page, control).trim().replace("\n", "\n         ") + "\n";
+				}
+			}
+			// add manual if not in collection
+			if (!errorActions) {
+				js += "        alert('Error with database action : ' + error.responseText||message);\n";
+			}
+			
+			// close unloading check
+			js += "      }\n";
+			
+			// close error actions
+			js += "    },\n";
+			
+			// open success function
+			js += "    success: function(data) {\n";	
+			
+			// hide the loading javascript (if applicable)
+			if (_showLoading) js += "      " + getLoadingJS(page, outputs, false);
+			
+			// open if data check
+			js += "      if (data) {\n";
+						
+			// check there are outputs
+			if (outputs != null) {
+				// the outputs array we're going to make
+				String jsOutputs = "";				
+				// loop the output parameters
+				for (int i = 0; i < outputs.size(); i++) {
+					// get the parameter
+					Parameter output = outputs.get(i);
+					// get the control the data is going into
+					Control outputControl = page.getControl(output.getItemId());	
+					// get any mappings we may have
+					String details = outputControl.getDetails();
+					// set to empty string or clean up
+					if (details == null) {
+						details = "";
+					} else {
+						details = ", details: " + details;
+					}
+					// append the javascript outputs
+					jsOutputs += "{id: '" + outputControl.getId() + "', type: '" + outputControl.getType() + "', field: '" + output.getField() + "'" + details + "}";
+					// add a comma if not the last
+					if (i < outputs.size() - 1) jsOutputs += ","; 
+				}			
+				js += "       var outputs = [" + jsOutputs + "];\n";
+				// send them them and the data to the database action				
+				js += "       Action_database(data, outputs);\n";				
+			}
+			
+			// add any sucess actions
+			if (_successActions != null) {
+				for (Action action : _successActions) {
+					js += "       " + action.getJavaScript(application, page, control).trim().replace("\n", "\n       ") + "\n";
+				}
+			}
+			
+			// close if data check
+			js += "      }\n";						
+			// close success function
+			js += "    }\n";
+			
+			// close ajax call
+			js += "  });";
+		}
+				
+		// return what we built			
+		return js;
+	}
+	
+	@Override
+	public JSONObject doAction(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, JSONObject jsonAction) throws JSONException, JAXBException, IOException {
+		
+		// This code could be optimised to only return required data, according to the outputs collection
+						
+		JSONObject jsonData = new JSONObject();
+		
+		Application application = rapidRequest.getApplication();
+		
+		Page page = rapidRequest.getPage();
+		
+		try {
+		
+			if (_query != null && application != null && page != null) {
+				
+				// retrieve the sql
+				String sql = _query.getSQL();
+				
+				// only if there is some sql is it worth going further
+				if (sql != null) {
+				
+					DatabaseConnection databaseConnection = application.getDatabaseConnections().get(_query.getDatabaseConnectionIndex());
+					
+					ConnectionAdapter ca = databaseConnection.getConnectionAdapter(rapidServlet.getServletContext());			
+					
+					Parameters parameters = new Parameters();
+					
+					// populate the parameters from the inputs collection
+					if (_query.getInputs() != null) {
+						// get any json inputs
+						JSONArray jsonInputs = jsonAction.optJSONArray("inputs");
+						// loop the query inputs
+						for (Parameter input : _query.getInputs()) {
+							// get the input id
+							String id = input.getItemId();
+							// get the input field
+							String field = input.getField();
+							// retain the value
+							String value = null;
+							// if it looks like a control 
+							if ("P".equals(id.substring(0,1)) && id.indexOf("_C") > 0) {
+								// loop the json inputs looking for the value
+								if (jsonInputs != null) {
+									for (int i = 0; i < jsonInputs.length(); i++) {
+										// get this jsonInput
+										JSONObject jsonInput = jsonInputs.getJSONObject(i);
+										// check we got one 
+										if (jsonInput != null) {
+											// if the id we want matches this one 
+											if (id.equals(jsonInput.optString("id"))) {
+												// get the input field
+												String jsonField = jsonInput.optString("field");
+												// field check
+												if ((jsonField == null && "".equals(field)) || jsonField.equals(field)) {
+													// set the value
+													value = jsonInput.getString("value");
+													// no need to keep looking
+													break;
+												}
+											}
+										}																	
+									}
+								}
+							}
+							// if still null try the session
+							if (value == null) value = (String) rapidRequest.getSessionAttribute(input.getItemId());
+							// add the parameter
+							parameters.add(value);
+						}
+					}
+														
+					// instantiate a data factory
+					DataFactory df = new DataFactory(ca);
+					
+					try {
+						
+						// trim the sql
+						sql = sql.trim();
+						
+						// check the verb
+						if (sql.toLowerCase().startsWith("select") || sql.toLowerCase().startsWith("width")) {
+							
+							// set readonly to true
+							df.setReadOnly(true);
+							
+							// get the resultset!
+							ResultSet rs = df.getPreparedResultSet(rapidRequest, sql, parameters);
+							
+							ResultSetMetaData rsmd = rs.getMetaData();
+							
+							// fields collection
+							JSONArray jsonFields = new JSONArray();
+							// got fields indicator
+							boolean gotFields = false;
+							// rows collection can start initialised
+							JSONArray jsonRows = new JSONArray();
+							
+							// loop the result set
+							while (rs.next()) {
+								
+								// initialise the row
+								JSONArray jsonRow = new JSONArray();
+								
+								// loop the columns
+								for (int i = 0; i < rsmd.getColumnCount(); i++) {
+									// add the field name to the fields collection if not done yet
+									if (!gotFields) jsonFields.put(rsmd.getColumnName(i + 1));
+									// add the data to the row according to it's type	
+									switch (rsmd.getColumnType(i + 1)) {
+									case (Types.INTEGER) : 
+										jsonRow.put(rs.getInt(i + 1));
+									break;
+									case (Types.BIGINT) :
+										jsonRow.put(rs.getLong(i + 1));
+									break;
+									case (Types.FLOAT) : 
+										jsonRow.put(rs.getFloat(i + 1));
+									break;
+									case (Types.DOUBLE) : 
+										jsonRow.put(rs.getDouble(i + 1));
+									break;
+									default :
+										jsonRow.put(rs.getString(i + 1));
+									}						
+								}
+								// add the row to the rows collection
+								jsonRows.put(jsonRow);
+								// remember we now have our fields
+								gotFields = true;
+								
+							}
+							
+							// add the fields to the data object
+							jsonData.put("fields", jsonFields);
+							// add the rows to the data object
+							jsonData.put("rows", jsonRows);
+							
+							// close the record set
+							rs.close();
+							
+						} else {
+							
+							// perform an update
+							int rows = df.getPreparedUpdate(rapidRequest, sql, parameters);
+							
+							// create a fields array
+							JSONArray jsonFields = new JSONArray();
+							// add a psuedo field 
+							jsonFields.put("rows");
+							
+							// create a row array
+							JSONArray jsonRow = new JSONArray();
+							// add the rows updated
+							jsonRow.put(rows);
+							
+							// create a rows array
+							JSONArray jsonRows = new JSONArray();
+							// add the row we just made
+							jsonRows.put(jsonRow);
+							
+							// add the fields to the data object
+							jsonData.put("fields", jsonFields);
+							// add the rows to the data object
+							jsonData.put("rows", jsonRows);
+												
+						}
+						
+					} catch (Exception ex) {
+						
+						// rethrow as JSONException
+						throw new JSONException(ex);
+						
+					} finally {
+						
+						df.close();
+						
+					}
+														
+					// close the data factory
+					df.close();
+					
+				} // got sql
+																				
+			} // got query, app, and page
+			
+		} catch (Exception ex) {
+			// rethrow as JSONException
+			throw new JSONException(ex);
+		}
+								
+		return jsonData;
+		
+	}
+	
+}

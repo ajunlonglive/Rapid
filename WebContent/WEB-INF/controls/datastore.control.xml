@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<controls xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/control.xsd">
+	<control>
+	    
+	    <type>dataStore</type>	 
+	    <name>Data store</name>	   
+	    <image>images/datastore_24x24.png</image>        
+	    
+	    <canUserAdd>true</canUserAdd>
+	    <canUserAddPeers>true</canUserAddPeers>
+	    <canBeUsedFromOtherPages>true</canBeUsedFromOtherPages>
+	    
+	    <properties>
+	        <property>
+	            <key>name</key>
+	            <name>Name</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>	            
+	        </property>	       
+	        <property>
+	            <key>storageType</key>
+	            <name>Type</name>
+	            <setConstructValueFunction>return "S";</setConstructValueFunction>
+	            <changeValueJavaScript>select</changeValueJavaScript>	
+	            <getValuesFunction>
+	                <![CDATA[
+return [["S","Session storage"],["L","Local storage"]];
+					]]>
+	            </getValuesFunction>               
+	        </property>     
+	    </properties>
+	    
+	    <getHtmlFunction>
+	        <![CDATA[	  
+// return our html 
+return "<img id='" + this.id + "' class='nonVisibleControl' src='images/datastore_24x24.png'></img>"
+	        ]]>
+	    </getHtmlFunction> 
+	    
+	    <saveJavaScript>
+	        <![CDATA[
+this.object.remove();     
+	        ]]>	        	        
+	    </saveJavaScript>
+	    
+	   	<getDetailsFunction>	        
+	        <![CDATA[
+return {id : _app.id + this.id, storageType: this.storageType};
+			]]>	        	        
+	    </getDetailsFunction>
+	    
+	    <getDataFunction>
+	        <![CDATA[        
+var dataStore;
+switch (details.storageType) {
+	case "S": 
+	dataStore = sessionStorage;
+	break;
+	case "L":
+	dataStore = localStorage;
+	break;
+}  
+if (dataStore) {
+	if (details.id) id = details.id;
+	var data = null;
+	var dataString = dataStore[id];
+	if (dataString) {
+		var data = JSON.parse(dataString);
+		if (data) {		
+			if (data.rows && data.fields) {
+				if (data.rows[0] && field) {
+					for (var i in data.fields) {
+						if (data.fields[i].toLowerCase() == field.toLowerCase()) {
+							return data.rows[0][i];
+						}
+					}
+				} else {
+					return data;
+				}
+			} else if (field && data[field]) {
+				return data[field];
+			}
+		}	 
+	} 
+	return null;		
+}
+			]]>
+	    </getDataFunction>
+	    
+	    <setDataJavaScript>
+	        <![CDATA[	  
+var dataStore;
+switch (details.storageType) {
+	case "S": 
+	dataStore = sessionStorage;
+	break;
+	case "L":
+	dataStore = localStorage;
+	break;
+} 	   
+if (dataStore) {
+	if (details.id) id = details.id;
+	if (data != null && data !== undefined) {
+		data = makeDataObject(data, field);
+		if (dataStore[id]) data = mergeDataObjects(data, JSON.parse(dataStore[id]));		
+		dataStore[id] = JSON.stringify(data);
+	} else {
+		dataStore[id] = null;
+	}
+} 
+
+			]]>
+	    </setDataJavaScript>
+
+	</control>
+</controls>

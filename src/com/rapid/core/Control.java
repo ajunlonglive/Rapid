@@ -1,0 +1,257 @@
+package com.rapid.core;
+
+/*
+
+ The control object is a discreetly functioning html ui "widget", from an input box, or span, to a table, tabs, or calendar
+ 
+ Controls are described in .control.xml files in the /controls folder. This description data is used to create JavaScript class objects
+ with which the designer instantiates specific JavaScript control objects in the control tree. When the page is saved the control tree is 
+ sent in JSON and a series of these java objects are created in the page object, so the whole thing can be serialised into .xml and saved 
+ to disk
+ 
+ */
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.rapid.core.Action;
+import com.rapid.server.RapidHttpServlet;
+
+@XmlRootElement
+@XmlType(namespace="http://rapid-is.co.uk/core")
+public class Control {
+			
+	// these are instance variables that all the different controls provide
+	protected HashMap<String,String> _properties;
+	protected Validation _validation;		
+	protected ArrayList<Event> _events;
+	protected ArrayList<Style> _styles;
+	protected ArrayList<Control> _childControls;
+	
+	// all properties are stored here (allowing us to define them just in the .control.xml files)
+	public HashMap<String,String> getProperties() { return _properties; }
+	public void setProperties(HashMap<String,String> properties) { _properties = properties; }
+	
+	// every control can have validation (not all do)
+	public ArrayList<Event> getEvents() { return _events; }	
+	public void setEvents(ArrayList<Event> events) { _events = events; }
+		
+	// every control can have events (and actions)
+	public Validation getValidation() { return _validation; }	
+	public void setValidation(Validation validation) { _validation = validation; }
+	
+	// every control can have styles
+	public ArrayList<Style> getStyles() { return _styles; }	
+	public void setStyles(ArrayList<Style> styles) { _styles = styles;	}
+	
+	// every control can have child components
+	public ArrayList<Control> getChildControls() { return _childControls; }	
+	public void setChildControls(ArrayList<Control> childControls) { _childControls = childControls; }
+	
+	// these are some helper methods for common properties
+	public void addProperty(String key, String value) {
+		if (_properties == null) _properties = new HashMap<String,String>();
+		_properties.put(key, value); 
+	}
+	public String getProperty(String key) { return _properties.get(key); }
+	// the type of this object
+	public String getType() { return getProperty("type"); }
+	// the id of this object
+	public String getId() { return getProperty("id"); }
+	// the name of this object
+	public String getName() { return getProperty("name"); }
+	// the details used by the getData and setData method to map the data to the control
+	public String getDetails() { return getProperty("details"); }
+	// whether this control can be used from other pages
+	public boolean getCanBeUsedFromOtherPages() { return Boolean.parseBoolean(getProperty("canBeUsedFromOtherPages")); }
+	// whether there is javascript that must be run to initialise the control when the page loads
+	public boolean hasInitJavaScript() { return Boolean.parseBoolean(getProperty("initJavaScript")); }
+			
+	// helper method for child components
+	public void addChildControl(Control childControl) {
+		if (_childControls == null) _childControls = new ArrayList<Control>();
+		_childControls.add(childControl); 
+	}
+		
+	// helper methods for eventActions
+	public Event getEvent(String eventType) {
+		if (_events != null) {
+			for (Event event : _events) {
+				if (eventType.equals(event.getType())) return event;
+			}
+		}
+		return null;
+	}
+	public Action getAction(String actionId) {
+		if (_events != null) {
+			for (Event event : _events) {
+				if (event.getActions() != null) {
+					for (Action action : event.getActions()) {
+						if (actionId.equals(action.getId())) return action;
+					}
+				}
+			}
+		}
+		return null;
+	}
+	
+	// helper method for styles
+	public void addStyle(Style style) {
+		if (_styles == null) _styles = new ArrayList<Style>();
+		_styles.add(style);
+	}
+		
+	// a parameterless constructor is required so they can go in the JAXB context and be unmarshalled 
+	public Control() {};
+	
+	// this constructor is used when saving from the designer
+	public Control(JSONObject jsonControl) throws JSONException {
+		// save all key/values from the json into the properties, except for class variables such as childControls and eventActions 
+		for (String key : JSONObject.getNames(jsonControl)) {
+			// don't save complex properties such as validation, childControls, events, and styles into simple properties (they are turned into objects in the Designer.java savePage method) 
+			if (!key.equals("validation") && !key.equals("events") && !key.equals("styles") && !key.equals("childControls")) addProperty(key, jsonControl.get(key).toString());
+		}
+	}
+	
+	// static methods
+	
+	public static Control searchChildControl(ArrayList<Control> controls, String controlId) {
+		Control returnControl = null;
+		if (controls != null) {
+			for (Control childControl : controls) { 												
+				if (childControl.getId().equals(controlId)) {
+					returnControl = childControl;
+					break;
+				}
+				returnControl = searchChildControl(childControl.getChildControls(), controlId);
+			}
+		}		
+		return returnControl; 
+	}
+	
+	// this is here as a static to match getEvents, and getActions, even though there isn't currently a need to reuse it between pages/controls
+	public static Validation getValidation(RapidHttpServlet rapidServlet, JSONObject jsonValidation) {
+		
+		// check we where given something
+		if (jsonValidation != null) {
+			
+			// make a validation object from the json
+			Validation validation = new Validation(
+				jsonValidation.optString("type"),
+				jsonValidation.optBoolean("allowNulls"),
+				jsonValidation.optString("regEx"),				
+				jsonValidation.optString("message"),
+				jsonValidation.optString("javaScript")
+			);
+			
+			// return the validation object
+			return validation;
+			
+		}
+		
+		// return nothing
+		return null;
+	}
+	
+	// this is here as a static so it used when creating the page object, or a control object
+	public static ArrayList<Event> getEvents(RapidHttpServlet rapidServlet, JSONArray jsonEvents) throws IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException, JSONException {
+		
+		// the array of events we're about to return
+		ArrayList<Event> events = new ArrayList<Event>(); 
+		
+		// if we have events
+		if (jsonEvents != null) {
+			
+			// loop them
+			for (int i = 0; i < jsonEvents.length(); i++) {
+				
+				// get the jsonEvent
+				JSONObject jsonEvent = jsonEvents.getJSONObject(i);
+				
+				// create an event object
+				Event event = new Event(
+					jsonEvent.getString("type"),
+					jsonEvent.optString("filterFunction")
+				);
+				
+				// get any actions
+				ArrayList<Action> actions = getActions(rapidServlet, jsonEvent.optJSONArray("actions"));
+				
+				// check we got some
+				if (actions != null) {
+					// loop them
+					for (Action action : actions) {
+						// add action object to this event collection
+						event.getActions().add(action);
+					}
+					// retain the event
+					events.add(event);
+				}
+									
+			}
+		}
+		return events;
+	}
+	
+	// this is here as a static so it used when creating control event actions, or child actions
+	public static ArrayList<Action> getActions(RapidHttpServlet rapidServlet, JSONArray jsonActions) throws JSONException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
+		// the array we are going to return
+		ArrayList<Action> actions = null;		
+		if (jsonActions != null) {
+			// instantiate our return
+			actions = new ArrayList<Action>();
+			// loop them
+			for (int j = 0; j < jsonActions.length(); j++) {
+				// get an action
+				JSONObject jsonAction = jsonActions.getJSONObject(j);
+				// fetch the constructor for this type of object
+				Constructor actionConstructor = rapidServlet.getActionConstructor(jsonAction.getString("type"));
+				// instantiate the object
+				Action action = (Action) actionConstructor.newInstance(rapidServlet, jsonAction);
+				// add action object to this event collection
+				actions.add(action);
+			}
+
+		}
+		// return the actions		
+		return actions;		
+	}
+	
+	// this is here as a static so it used when creating the page object, or a control object
+	public static ArrayList<Style> getStyles(RapidHttpServlet rapidServlet, JSONArray jsonStyles) throws JSONException {
+		// the styles we are making
+		ArrayList<Style> styles = new ArrayList<Style>();
+		// if not null
+		if (jsonStyles != null) {
+			// loop jsonStyles
+			for (int i = 0; i < jsonStyles.length(); i++) {
+				// get this json style
+				JSONObject jsonStyle = jsonStyles.getJSONObject(i);
+				// get the applies to
+				String appliesTo = jsonStyle.getString("appliesTo");
+				// create a new style
+				Style style = new Style(appliesTo);
+				// loop the rules and add
+				JSONArray jsonRules = jsonStyle.optJSONArray("rules");
+				// check we got something
+				if (jsonRules != null) {
+					// loop it
+					for (int j = 0; j < jsonRules.length(); j++) style.getRules().add(jsonRules.getString(j)); 
+				}
+				// add style into Control
+				styles.add(style);
+			}
+			
+		}				
+		return styles;		
+	}
+	
+}

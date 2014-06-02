@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<controls xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/control.xsd">
+	<control>
+	    
+	    <type>dropdown</type>	 
+	    <name>Drop down</name>	   
+	    <image>images/dropdown_24x24.png</image>        
+	    <canUserAdd>true</canUserAdd>
+	    <canUserMove>true</canUserMove>
+	    <canUserAddPeers>true</canUserAddPeers>
+	    
+	    <properties>
+	        <property>
+	            <key>name</key>
+	            <name>Name</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>	            
+	        </property>	
+	        <property>
+	            <key>codes</key>
+	            <name>Codes</name>
+	            <visible>false</visible>
+	        </property>            
+	        <property>
+	            <key>options</key>
+	            <name>Options</name>
+	            <setConstructValueFunction>return [{value:"", text:"Value 1"}, {value:"", text:"Value 2"}, {value:"", text:"Value 3"}];</setConstructValueFunction>
+	            <changeValueJavaScript>options</changeValueJavaScript>	            
+	        </property>
+	    </properties>
+	    
+	    <getHtmlFunction>
+	        <![CDATA[
+// return our html for adding to our parent object	
+var value = "";
+if (this.value) value = this.value;
+var options = "";
+// check we have options
+if (this.options) {
+	// if the options are a string turn them in an array
+	if ($.type(this.options) == "string") this.options = JSON.parse(this.options);
+	// loop the options
+	for (var i in this.options) {
+		if (this.codes) {
+			options += "<option value='" + this.options[i].value + "'>" + this.options[i].text + "</option>";
+		} else {
+			options += "<option>" + this.options[i].text + "</option>";
+		}
+	}
+}
+// place into the select
+var html = "<select id='" + this.id + "' value='" + value + "' class='dropdown" + getStyleClasses(this) + "'>" + options + "</select>";
+// return
+return html;
+	        ]]>
+	    </getHtmlFunction> 
+	    
+	    <updateChildObjects>true</updateChildObjects>
+	    
+	    <getDataFunction>
+	        <![CDATA[
+return $("#" + id).val();
+			]]>
+	    </getDataFunction>
+	    
+	    <setDataJavaScript>
+	        <![CDATA[
+if (data) {
+	var control = $("#" + id);
+	data = makeDataObject(data, field);
+	if (data.rows && data.fields) {
+		if (field && data.rows[0]) {	      
+			var foundField = false;  	
+			for (var i in data.fields) {
+				if (field.toLowerCase() == data.fields[i].toLowerCase()) {
+					control.val(data.rows[0][i]);
+					foundField = true;
+					break;
+				}
+			}				
+			if (!foundField) control.val(data.rows[0][0]);
+		} else {
+			for (var i in data.rows) {
+				var row = data.rows[i];		
+				var text = "";
+				var value = "";
+				if (data.fields) {
+					for (var j in data.fields) {
+						if (data.fields[j].toLowerCase() == "text") text = data.rows[i][j];
+						if (data.fields[j].toLowerCase() == "value") value = data.rows[i][j];
+					}
+				}
+				if (!text) text = row[0];
+				if (!value && row[1]) value = row[1];
+				if (value || value == "0") value = 	" value='" + value + "'";
+				control.append("<option " + value + ">" + text + "</option>");
+			}	
+		}
+	} 
+}
+        
+	        ]]>
+	    </setDataJavaScript>
+	    
+	    <events>
+	        <event>
+	            <type>change</type>
+	            <name>Change</name>
+	        </event>
+	    </events>
+	    
+	    <styles>
+	        <style>
+	            <name>Drop down</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id;
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	    </styles>
+	    
+	</control>
+</controls>
