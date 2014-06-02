@@ -629,6 +629,7 @@ public class Application {
         cx.setOptimizationLevel(-1);
         
         try {
+        	        	        	
             // Initialize the standard objects (Object, Function, etc.)
             // This must be done before scripts can be executed. Returns
             // a scope object that we use in later calls.
