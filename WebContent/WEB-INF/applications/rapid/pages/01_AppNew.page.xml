@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<page>
+<?xml version="1.0" encoding="UTF-8"?><page>
     <controls>
         <childControls>
             <childControls>
@@ -71,7 +70,7 @@
                     </entry>
                     <entry>
                         <key>name</key>
-                        <value></value>
+                        <value/>
                     </entry>
                     <entry>
                         <key>rowSpan</key>
@@ -110,15 +109,15 @@
 </entry>
                             </properties>
                         </actions>
-                        <filter></filter>
+                        <filter/>
                         <type>keyup</type>
                     </events>
                     <events>
-                        <filter></filter>
+                        <filter/>
                         <type>change</type>
                     </events>
                     <events>
-                        <filter></filter>
+                        <filter/>
                         <type>blur</type>
                     </events>
                     <properties>
@@ -132,7 +131,7 @@
                         </entry>
                         <entry>
                             <key>value</key>
-                            <value></value>
+                            <value/>
                         </entry>
                         <entry>
                             <key>controlType</key>
@@ -149,13 +148,13 @@
                     </styles>
                     <validation>
                         <allowNulls>false</allowNulls>
-                        <javaScript>var name = $(&quot;#rapid_P1_C7&quot;).val();
-if (!name) return &quot;An application name must be provided&quot;;
-if (!name.match(new RegExp(&quot;^[0-9A-Za-z_-]+$&quot;))) return &quot;An application name can only contain characters a-z, A-Z, 0-9, -, and _&quot;;
+                        <javaScript>var name = $("#rapid_P1_C7").val();
+if (!name) return "An application name must be provided";
+if (!name.match(new RegExp("^[0-9A-Za-z_-]+$"))) return "An application name can only contain characters a-z, A-Z, 0-9, -, and _";
 var exists = false;
 $.ajax({
-    url: &quot;designer?action=checkApp&amp;name=&quot; + name,
-    type: &quot;GET&quot;,    
+    url: "designer?action=checkApp&amp;name=" + name,
+    type: "GET",    
     async: false,                
     success: function(result) {
         if (result) {
@@ -163,9 +162,9 @@ $.ajax({
         }
     }
 });
-if (exists) return &quot;An application with this name already exists&quot;;</javaScript>
+if (exists) return "An application with this name already exists";</javaScript>
                         <message>An application name can only contain characters a-z, A-Z, 0-9, -, and _</message>
-                        <regEx></regEx>
+                        <regEx/>
                         <type>javascript</type>
                     </validation>
                 </childControls>
@@ -176,7 +175,7 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
                     </entry>
                     <entry>
                         <key>text</key>
-                        <value></value>
+                        <value/>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -237,7 +236,7 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
                     </entry>
                     <entry>
                         <key>name</key>
-                        <value></value>
+                        <value/>
                     </entry>
                     <entry>
                         <key>rowSpan</key>
@@ -276,15 +275,15 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
 </entry>
                             </properties>
                         </actions>
-                        <filter></filter>
+                        <filter/>
                         <type>keyup</type>
                     </events>
                     <events>
-                        <filter></filter>
+                        <filter/>
                         <type>change</type>
                     </events>
                     <events>
-                        <filter></filter>
+                        <filter/>
                         <type>blur</type>
                     </events>
                     <properties>
@@ -298,7 +297,7 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
                         </entry>
                         <entry>
                             <key>value</key>
-                            <value></value>
+                            <value/>
                         </entry>
                         <entry>
                             <key>controlType</key>
@@ -315,7 +314,7 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
                     </styles>
                     <validation>
                         <allowNulls>false</allowNulls>
-                        <javaScript></javaScript>
+                        <javaScript/>
                         <message>An application title must be provided</message>
                         <regEx>[\s\S]</regEx>
                         <type>value</type>
@@ -328,7 +327,7 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
                     </entry>
                     <entry>
                         <key>text</key>
-                        <value></value>
+                        <value/>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -384,7 +383,7 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
                     </entry>
                     <entry>
                         <key>name</key>
-                        <value></value>
+                        <value/>
                     </entry>
                     <entry>
                         <key>rowSpan</key>
@@ -403,15 +402,15 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
             <childControls>
                 <childControls>
                     <events>
-                        <filter></filter>
+                        <filter/>
                         <type>keyup</type>
                     </events>
                     <events>
-                        <filter></filter>
+                        <filter/>
                         <type>change</type>
                     </events>
                     <events>
-                        <filter></filter>
+                        <filter/>
                         <type>blur</type>
                     </events>
                     <properties>
@@ -425,7 +424,7 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
                         </entry>
                         <entry>
                             <key>value</key>
-                            <value></value>
+                            <value/>
                         </entry>
                         <entry>
                             <key>controlType</key>
@@ -443,10 +442,10 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
                     </styles>
                     <validation>
                         <allowNulls>false</allowNulls>
-                        <javaScript></javaScript>
-                        <message></message>
-                        <regEx></regEx>
-                        <type></type>
+                        <javaScript/>
+                        <message/>
+                        <regEx/>
+                        <type/>
                     </validation>
                 </childControls>
                 <properties>
@@ -456,7 +455,7 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
                     </entry>
                     <entry>
                         <key>text</key>
-                        <value></value>
+                        <value/>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -523,7 +522,7 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
 </entry>
                             </properties>
                         </actions>
-                        <filter></filter>
+                        <filter/>
                         <type>click</type>
                     </events>
                     <properties>
@@ -556,7 +555,7 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
                     </entry>
                     <entry>
                         <key>text</key>
-                        <value></value>
+                        <value/>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -683,7 +682,7 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
 </entry>
                             </properties>
                         </actions>
-                        <filter></filter>
+                        <filter/>
                         <type>click</type>
                     </events>
                     <properties>
@@ -716,7 +715,7 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
                     </entry>
                     <entry>
                         <key>text</key>
-                        <value></value>
+                        <value/>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -788,44 +787,44 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
     </controls>
     <description>Used to create new applications</description>
     <events>
-        <filter></filter>
+        <filter/>
         <type>pageload</type>
     </events>
     <events>
-        <filter></filter>
+        <filter/>
         <type>reusable</type>
     </events>
-    <htmlBody>&lt;table id=&quot;rapid_P1_C1&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;rapid_P1_C2&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P1_C3&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;New application&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P1_C4&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P1_C5&quot; class=&quot;tabelCell&quot;&gt;Name&lt;/td&gt;&lt;td id=&quot;rapid_P1_C6&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P1_C7&quot; value=&quot;&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P1_C8&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P1_C9&quot; class=&quot;tabelCell&quot;&gt;Title&lt;/td&gt;&lt;td id=&quot;rapid_P1_C10&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P1_C11&quot; value=&quot;&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P1_C12&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P1_C13&quot; class=&quot;tabelCell&quot;&gt;Description&lt;/td&gt;&lt;td id=&quot;rapid_P1_C14&quot; class=&quot;tabelCell&quot;&gt;&lt;textarea id=&quot;rapid_P1_C15&quot; class=&quot;input&quot;&gt;&lt;/textarea&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P1_C16&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P1_C17&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P1_C19&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P1_C21&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P1_C22&quot; class=&quot;button&quot;&gt;Save&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
+    <htmlBody>&lt;table id="rapid_P1_C1" class="table"&gt;&lt;tbody&gt;&lt;tr id="rapid_P1_C2" class="tableRow"&gt;&lt;td id="rapid_P1_C3" colspan="2" class="tabelCell"&gt;New application&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P1_C4" class="tableRow"&gt;&lt;td id="rapid_P1_C5" class="tabelCell"&gt;Name&lt;/td&gt;&lt;td id="rapid_P1_C6" class="tabelCell"&gt;&lt;input id="rapid_P1_C7" value="" class="input"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P1_C8" class="tableRow"&gt;&lt;td id="rapid_P1_C9" class="tabelCell"&gt;Title&lt;/td&gt;&lt;td id="rapid_P1_C10" class="tabelCell"&gt;&lt;input id="rapid_P1_C11" value="" class="input"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P1_C12" class="tableRow"&gt;&lt;td id="rapid_P1_C13" class="tabelCell"&gt;Description&lt;/td&gt;&lt;td id="rapid_P1_C14" class="tabelCell"&gt;&lt;textarea id="rapid_P1_C15" class="input"&gt;&lt;/textarea&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P1_C16" class="tableRow"&gt;&lt;td id="rapid_P1_C17" class="tabelCell"&gt;&lt;button id="rapid_P1_C19" class="button"&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id="rapid_P1_C21" class="tabelCell"&gt;&lt;button id="rapid_P1_C22" class="button"&gt;Save&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
     <id>P1</id>
     <name>01_AppNew</name>
     <rolesHtml>
-        <html>&lt;table id=&quot;rapid_P1_C1&quot; class=&quot;table&quot;&gt;
+        <html>&lt;table id="rapid_P1_C1" class="table"&gt;
 		&lt;tbody&gt;
-			&lt;tr id=&quot;rapid_P1_C2&quot; class=&quot;tableRow&quot;&gt;
-				&lt;td id=&quot;rapid_P1_C3&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;New application&lt;/td&gt;
+			&lt;tr id="rapid_P1_C2" class="tableRow"&gt;
+				&lt;td id="rapid_P1_C3" colspan="2" class="tabelCell"&gt;New application&lt;/td&gt;
 			&lt;/tr&gt;
-			&lt;tr id=&quot;rapid_P1_C4&quot; class=&quot;tableRow&quot;&gt;
-				&lt;td id=&quot;rapid_P1_C5&quot; class=&quot;tabelCell&quot;&gt;Name&lt;/td&gt;
-				&lt;td id=&quot;rapid_P1_C6&quot; class=&quot;tabelCell&quot;&gt;
-					&lt;input id=&quot;rapid_P1_C7&quot; value=&quot;&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
+			&lt;tr id="rapid_P1_C4" class="tableRow"&gt;
+				&lt;td id="rapid_P1_C5" class="tabelCell"&gt;Name&lt;/td&gt;
+				&lt;td id="rapid_P1_C6" class="tabelCell"&gt;
+					&lt;input id="rapid_P1_C7" value="" class="input"&gt;&lt;/td&gt;
 				&lt;/tr&gt;
-				&lt;tr id=&quot;rapid_P1_C8&quot; class=&quot;tableRow&quot;&gt;
-					&lt;td id=&quot;rapid_P1_C9&quot; class=&quot;tabelCell&quot;&gt;Title&lt;/td&gt;
-					&lt;td id=&quot;rapid_P1_C10&quot; class=&quot;tabelCell&quot;&gt;
-						&lt;input id=&quot;rapid_P1_C11&quot; value=&quot;&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
+				&lt;tr id="rapid_P1_C8" class="tableRow"&gt;
+					&lt;td id="rapid_P1_C9" class="tabelCell"&gt;Title&lt;/td&gt;
+					&lt;td id="rapid_P1_C10" class="tabelCell"&gt;
+						&lt;input id="rapid_P1_C11" value="" class="input"&gt;&lt;/td&gt;
 					&lt;/tr&gt;
-					&lt;tr id=&quot;rapid_P1_C12&quot; class=&quot;tableRow&quot;&gt;
-						&lt;td id=&quot;rapid_P1_C13&quot; class=&quot;tabelCell&quot;&gt;Description&lt;/td&gt;
-						&lt;td id=&quot;rapid_P1_C14&quot; class=&quot;tabelCell&quot;&gt;
-							&lt;textarea id=&quot;rapid_P1_C15&quot; class=&quot;input&quot;&gt;&lt;/textarea&gt;
+					&lt;tr id="rapid_P1_C12" class="tableRow"&gt;
+						&lt;td id="rapid_P1_C13" class="tabelCell"&gt;Description&lt;/td&gt;
+						&lt;td id="rapid_P1_C14" class="tabelCell"&gt;
+							&lt;textarea id="rapid_P1_C15" class="input"&gt;&lt;/textarea&gt;
 						&lt;/td&gt;
 					&lt;/tr&gt;
-					&lt;tr id=&quot;rapid_P1_C16&quot; class=&quot;tableRow&quot;&gt;
-						&lt;td id=&quot;rapid_P1_C17&quot; class=&quot;tabelCell&quot;&gt;
-							&lt;button id=&quot;rapid_P1_C19&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;
+					&lt;tr id="rapid_P1_C16" class="tableRow"&gt;
+						&lt;td id="rapid_P1_C17" class="tabelCell"&gt;
+							&lt;button id="rapid_P1_C19" class="button"&gt;Cancel&lt;/button&gt;
 						&lt;/td&gt;
-						&lt;td id=&quot;rapid_P1_C21&quot; class=&quot;tabelCell&quot;&gt;
-							&lt;button id=&quot;rapid_P1_C22&quot; class=&quot;button&quot;&gt;Save&lt;/button&gt;
+						&lt;td id="rapid_P1_C21" class="tabelCell"&gt;
+							&lt;button id="rapid_P1_C22" class="button"&gt;Save&lt;/button&gt;
 						&lt;/td&gt;
 					&lt;/tr&gt;
 				&lt;/tbody&gt;
@@ -836,4 +835,4 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
         <rules>font-size:14px;</rules>
     </styles>
     <title>New application</title>
-</page>
+<version>1</version></page>

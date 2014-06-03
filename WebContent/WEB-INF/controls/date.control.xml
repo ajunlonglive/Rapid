@@ -3,6 +3,7 @@
 	<control>
 	    
 	    <type>date</type>	 
+	    <version>1</version>
 	    <name>Date</name>	   
 	    <image>images/input_24x24.png</image>        
 	    <canUserAdd>true</canUserAdd>

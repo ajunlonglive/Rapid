@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <controls xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/control.xsd">
 	<control>
-	    <type>grid</type>	 
+	    <type>grid</type>	
+	    <version>1</version> 
 	    <name>Grid</name>	   
 	    <image>images/grid_24x24.png</image>        
 	    <canUserAdd>true</canUserAdd>

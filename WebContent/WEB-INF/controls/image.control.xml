@@ -2,7 +2,8 @@
 <controls xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/control.xsd">
 	<control>
 	    
-	    <type>image</type>	 
+	    <type>image</type>	
+	    <version>1</version> 
 	    <name>Image</name>	   
 	    <image>images/stamp_24x24.png</image>
 	    <noDefaultName>true</noDefaultName>

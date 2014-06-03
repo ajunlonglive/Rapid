@@ -3,6 +3,7 @@
 	<control>
 	    
 	    <type>pagePanel</type>	 
+	    <version>1</version>
 	    <name>Page</name>	   
 	    <image>images/tools_24x24.png</image>       
 	    <noDefaultName>true</noDefaultName>

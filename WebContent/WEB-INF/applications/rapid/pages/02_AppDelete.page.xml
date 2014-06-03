@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<page>
+<?xml version="1.0" encoding="UTF-8"?><page>
     <controls>
         <childControls>
             <childControls>
@@ -58,11 +57,11 @@
             <childControls>
                 <childControls>
                     <events>
-                        <filter></filter>
+                        <filter/>
                         <type>mouseover</type>
                     </events>
                     <events>
-                        <filter></filter>
+                        <filter/>
                         <type>click</type>
                     </events>
                     <properties>
@@ -95,7 +94,7 @@
                     </entry>
                     <entry>
                         <key>text</key>
-                        <value></value>
+                        <value/>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -162,7 +161,7 @@
 </entry>
                             </properties>
                         </actions>
-                        <filter></filter>
+                        <filter/>
                         <type>click</type>
                     </events>
                     <properties>
@@ -195,7 +194,7 @@
                     </entry>
                     <entry>
                         <key>text</key>
-                        <value></value>
+                        <value/>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -247,7 +246,7 @@
 </entry>
                             </properties>
                         </actions>
-                        <filter></filter>
+                        <filter/>
                         <type>click</type>
                     </events>
                     <properties>
@@ -280,7 +279,7 @@
                     </entry>
                     <entry>
                         <key>text</key>
-                        <value></value>
+                        <value/>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -346,33 +345,33 @@
     </controls>
     <description>Prompts as to whether the user is sure they want to deletes the current application</description>
     <events>
-        <filter></filter>
+        <filter/>
         <type>pageload</type>
     </events>
     <events>
-        <filter></filter>
+        <filter/>
         <type>reusable</type>
     </events>
-    <htmlBody>&lt;table id=&quot;rapid_P2_C1&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;rapid_P2_C2&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P2_C3&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Delete application&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P2_C4&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P2_C5&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;span id=&quot;rapid_P2_C6&quot; class=&quot;text&quot;&gt;Are you sure you wish to delete the current application?&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P2_C7&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P2_C8&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P2_C9&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P2_C11&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P2_C12&quot; class=&quot;button&quot;&gt;Delete&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
+    <htmlBody>&lt;table id="rapid_P2_C1" class="table"&gt;&lt;tbody&gt;&lt;tr id="rapid_P2_C2" class="tableRow"&gt;&lt;td id="rapid_P2_C3" colspan="2" class="tabelCell"&gt;Delete application&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P2_C4" class="tableRow"&gt;&lt;td id="rapid_P2_C5" colspan="2" class="tabelCell"&gt;&lt;span id="rapid_P2_C6" class="text"&gt;Are you sure you wish to delete the current application?&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P2_C7" class="tableRow"&gt;&lt;td id="rapid_P2_C8" class="tabelCell"&gt;&lt;button id="rapid_P2_C9" class="button"&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id="rapid_P2_C11" class="tabelCell"&gt;&lt;button id="rapid_P2_C12" class="button"&gt;Delete&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
     <id>P2</id>
     <name>02_AppDelete</name>
     <rolesHtml>
-        <html>&lt;table id=&quot;rapid_P2_C1&quot; class=&quot;table&quot;&gt;
+        <html>&lt;table id="rapid_P2_C1" class="table"&gt;
 		&lt;tbody&gt;
-			&lt;tr id=&quot;rapid_P2_C2&quot; class=&quot;tableRow&quot;&gt;
-				&lt;td id=&quot;rapid_P2_C3&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Delete application&lt;/td&gt;
+			&lt;tr id="rapid_P2_C2" class="tableRow"&gt;
+				&lt;td id="rapid_P2_C3" colspan="2" class="tabelCell"&gt;Delete application&lt;/td&gt;
 			&lt;/tr&gt;
-			&lt;tr id=&quot;rapid_P2_C4&quot; class=&quot;tableRow&quot;&gt;
-				&lt;td id=&quot;rapid_P2_C5&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;
-					&lt;span id=&quot;rapid_P2_C6&quot; class=&quot;text&quot;&gt;Are you sure you wish to delete the current application?&lt;/span&gt;
+			&lt;tr id="rapid_P2_C4" class="tableRow"&gt;
+				&lt;td id="rapid_P2_C5" colspan="2" class="tabelCell"&gt;
+					&lt;span id="rapid_P2_C6" class="text"&gt;Are you sure you wish to delete the current application?&lt;/span&gt;
 				&lt;/td&gt;
 			&lt;/tr&gt;
-			&lt;tr id=&quot;rapid_P2_C7&quot; class=&quot;tableRow&quot;&gt;
-				&lt;td id=&quot;rapid_P2_C8&quot; class=&quot;tabelCell&quot;&gt;
-					&lt;button id=&quot;rapid_P2_C9&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;
+			&lt;tr id="rapid_P2_C7" class="tableRow"&gt;
+				&lt;td id="rapid_P2_C8" class="tabelCell"&gt;
+					&lt;button id="rapid_P2_C9" class="button"&gt;Cancel&lt;/button&gt;
 				&lt;/td&gt;
-				&lt;td id=&quot;rapid_P2_C11&quot; class=&quot;tabelCell&quot;&gt;
-					&lt;button id=&quot;rapid_P2_C12&quot; class=&quot;button&quot;&gt;Delete&lt;/button&gt;
+				&lt;td id="rapid_P2_C11" class="tabelCell"&gt;
+					&lt;button id="rapid_P2_C12" class="button"&gt;Delete&lt;/button&gt;
 				&lt;/td&gt;
 			&lt;/tr&gt;
 		&lt;/tbody&gt;
@@ -383,4 +382,4 @@
         <rules>font-size:14px;</rules>
     </styles>
     <title>Delete application</title>
-</page>
+<version>1</version></page>

@@ -22,7 +22,6 @@ if (userName == null) userName = "";
 RapidRequest rapidRequest = new RapidRequest(request); 
 // check permission
 boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, userName, Rapid.DESIGN_ROLE);
-
 %>
 <html>
 <head>

@@ -3,6 +3,7 @@
 	<control>
 	    
 	    <type>tabsPanel</type>
+	    <version>1</version>
 	    <name>Tab panel</name>	 
 	    <noDefaultName>true</noDefaultName>
 	      	    
@@ -172,6 +173,7 @@ return "#" + this.id;
 	<control>
 	    
 	    <type>tabGroup</type>
+	    <version>1</version>
 	    <name>Tabs</name>	    
 	    <image>images/tabs_24x24.png</image>  	
 		<noDefaultName>true</noDefaultName>

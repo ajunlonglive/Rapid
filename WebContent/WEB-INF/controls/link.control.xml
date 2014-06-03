@@ -2,7 +2,8 @@
 <controls xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/control.xsd">
 	<control>
 	    
-	    <type>link</type>	 
+	    <type>link</type>	
+	    <version>1</version> 
 	    <name>Link</name>	   
 	    <image>images/link_24x24.png</image>       
 	    <noDefaultName>true</noDefaultName>

@@ -87,18 +87,11 @@ function Action_navigate(url, dialogue) {
 		           	// add script into the page (if applicable)
 		           	if (script) dialogue.append(script);
 		           	var win = $(window);
-		           	
-		           	// size the dialogue
-		           	dialogue.css({
-		           		position : "fixed",
+		           	// size and show the dialogue
+		           	dialogue.show().css({
 	            		left : (win.width() - dialogue.outerWidth()) / 2,
-	            		top : (win.height() - dialogue.outerHeight()) / 3
+	            		top : (win.height() - dialogue.outerHeight()) / 3 + win.scrollTop()
 	            	}); 
-	            	
-	            	// this seems to be the best way to avoid the resizing/flicker when showing
-	            	window.setTimeout( function() {
-	            		dialogue.show();
-	            	}, 1);
 		           	           	        	            	            	            
 		    	}        	       	        	        	        	        		
 		    }       	        	        
@@ -419,15 +412,13 @@ function setData_grid(id, data, field, details) {
   	if (data.rows) {	        		
   		if (details && details.columns && data.fields) {
   			var columnMap = [];
-  			for (var i in details.columns) {				
+  			for (var i in details.columns) {
   				for (var j in data.fields) {
   					if (details.columns[i].field.toLowerCase() == data.fields[j].toLowerCase()) {
   						columnMap.push(j);
   						break;
   					}
   				}
-  				if (columnMap.length == i)
-  					columnMap.push("");
   				if (details.columns[i].cellFunction) 
   					details.columns[i].cellFunction = new Function(details.columns[i].cellFunction);
   			}
@@ -452,16 +443,18 @@ function setData_grid(id, data, field, details) {
   			}
   		}	
   	} 
-  	
-  	control.children().last().children("tr:not(:first)").click( function() { 
-  		var row = $(this);
-  		row.parent().find("tr.rowSelect").each( function() {
+  	if (details.rowSelect) {
+  		control.children().last().children("tr:not(:first)").click( function() { 
   			var row = $(this);
-  			row.removeClass("rowSelect");
+  			row.parent().find("tr.rowSelect").each( function() {
+  				var row = $(this);
+  				row.removeClass("rowSelect");
+  				row.addClass("rowStyle" + (2 - row.index() % 2) );
+  			});
+  			row.removeClass("rowStyle" + (2 - row.index() % 2) ); 
+  			row.addClass("rowSelect"); 
   		});
-  		row.addClass("rowSelect"); 
-  	});
-  	
+  	}
   }
 }
 
@@ -550,39 +543,3 @@ function setData_text(id, data, field, details) {
 
 /* Control and Action resource JavaScript */
 
-
-/* Link control resource JavaScript */
-
-function linkClick(url, sessionVariablesString) {
-	
-	var sessionVariables = JSON.parse(sessionVariablesString);
-	
-	for (var i in sessionVariables) {
-	
-		var item = sessionVariables[i];
-		
-		if (item.type) {
-		
-			var value = window["getData_" + item.type](null, item.itemId, item.field, item.details);
-			
-		} else {
-		
-			var value = $.getUrlVar(item.itemId);
-		
-		}
-	
-		if (value !== undefined) url += "&" + item.name + "=" + value;
-	}
-	
-	window.location = url;
-	
-}
-
-/* Database action resource JavaScript */
-
-var _pageUnloading = false;
-
-window.onbeforeunload = function(ev) {
-       _pageUnloading = true;
-       return null;
-};

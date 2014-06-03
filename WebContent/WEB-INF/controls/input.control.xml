@@ -3,6 +3,7 @@
 	<control>
 	    
 	    <type>input</type>	 
+	    <version>1</version>
 	    <name>Input box</name>	   
 	    <image>images/input_24x24.png</image>        
 	    <canUserAdd>true</canUserAdd>

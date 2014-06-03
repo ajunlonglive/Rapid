@@ -73,6 +73,7 @@ input.validation {
 }
 </styles>
     <title>Sample application</title>
+    <version>1</version>
     <webservices xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="sqlWebservice">
         <id>Samplewebservice</id>
         <name>Sample webservice</name>
