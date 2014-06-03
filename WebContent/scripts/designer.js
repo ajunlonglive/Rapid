@@ -903,6 +903,8 @@ function loadPages(selectedPageId, forceLoad) {
         		$("#pageEdit").attr("disabled","disabled");
         		$("#pageSave").attr("disabled","disabled");
         		$("#pageView").attr("disabled","disabled");
+        		// show the new page dialogue
+        		showDialogue('~?action=page&a=rapid&p=P3'); 
         	}
         	
         } // success

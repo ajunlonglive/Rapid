@@ -6,6 +6,8 @@
         <version>1</version>
         <name>Page</name>	 
 
+		<addToNewApplications>true</addToNewApplications>
+		
         <canUserInsert>true</canUserInsert>
                 	    
 	    <properties>

@@ -51,8 +51,13 @@
 					  <xs:minLength value="1"/>
 					</xs:restriction>
 				  </xs:simpleType>	            
-	            </xs:element>	 
-	            <xs:element name="noDefaultName" type="xs:boolean"  minOccurs="0">
+	            </xs:element>	
+	            <xs:element name="addToNewApplications" type="xs:boolean" minOccurs="0">
+	            	<xs:annotation>
+	            		<xs:documentation>If set to true the control will be added to new applications when they are created</xs:documentation>
+	            	</xs:annotation>
+	            </xs:element>    
+	            <xs:element name="noDefaultName" type="xs:boolean" minOccurs="0">
 	            	<xs:annotation>
 	            		<xs:documentation>If set to true the control will not be given a name so by default it will not appear in lists of controls, this is useful for controls like table cells and rows which are seldom used</xs:documentation>
 	            	</xs:annotation>

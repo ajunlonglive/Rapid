@@ -5,7 +5,9 @@
         <type>database</type>
         <version>1</version>
         <name>Database</name>	        
-	    <class>com.rapid.actions.Database</class>	 
+	    <class>com.rapid.actions.Database</class>	
+	    
+	    <addToNewApplications>true</addToNewApplications> 
 	    
 	    <resources>
 	    	<resource>

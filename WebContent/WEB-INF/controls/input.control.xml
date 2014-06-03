@@ -5,7 +5,10 @@
 	    <type>input</type>	 
 	    <version>1</version>
 	    <name>Input box</name>	   
-	    <image>images/input_24x24.png</image>        
+	    <image>images/input_24x24.png</image>  
+	    
+	    <addToNewApplications>true</addToNewApplications>
+	          
 	    <canUserAdd>true</canUserAdd>
 	    <canUserMove>true</canUserMove>
 	    <canUserAddPeers>true</canUserAddPeers>

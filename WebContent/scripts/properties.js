@@ -28,7 +28,7 @@ function showProperties(control) {
 	// add a small break
 	propertiesTable.append("<tr><td colspan='2'></td></tr>");
 	// show the control id if requested
-	if (_app.showControlIds) propertiesTable.append("<tr><td>ID</td><td>" + control.id + "</td></tr>");
+	if (_app.showControlIds) propertiesTable.append("<tr><td>ID</td><td class='canSelect'>" + control.id + "</td></tr>");
 	// check there are class properties
 	var properties = control._class.properties;
 	if (properties) {

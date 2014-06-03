@@ -228,7 +228,7 @@ function showAction(actionsTable, action, collection, refreshFunction) {
 		}		
 	}));
 	// show the id if this is the rapid application
-	if (_app.showActionIds) actionsTable.append("<tr><td>ID</td><td>" + action.id + "</td></tr>");
+	if (_app.showActionIds) actionsTable.append("<tr><td>ID</td><td class='canSelect'>" + action.id + "</td></tr>");
 	// get the action class properties
 	var properties = action._class.properties;
 	// check

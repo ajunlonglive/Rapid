@@ -5,7 +5,10 @@
 	    <type>dropdown</type>	
 	    <version>1</version> 
 	    <name>Drop down</name>	   
-	    <image>images/dropdown_24x24.png</image>        
+	    <image>images/dropdown_24x24.png</image>    
+	    
+	    <addToNewApplications>true</addToNewApplications>
+	        
 	    <canUserAdd>true</canUserAdd>
 	    <canUserMove>true</canUserMove>
 	    <canUserAddPeers>true</canUserAddPeers>

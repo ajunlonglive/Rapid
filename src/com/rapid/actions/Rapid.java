@@ -911,6 +911,46 @@ public class Rapid extends Action {
 					// initialise the application
 					newApp.initialise(rapidServlet.getServletContext(), true);
 					
+					// initialise the list of action
+					List<String> actionTypes = new ArrayList<String>();
+					
+					// get the JSONArray of controls
+					JSONArray jsonActionTypes = rapidServlet.getJsonActions();
+					
+					// if there were some
+					if (jsonActionTypes != null) {
+						// loop them 
+						for (int i = 0; i < jsonActionTypes.length(); i++) {
+							// get the action
+							JSONObject jsonActionType = jsonActionTypes.getJSONObject(i);
+							// add to list if addToNewApplications is set
+							if (jsonActionType.optBoolean("addToNewApplications")) actionTypes.add(jsonActionType.getString("type"));
+						}
+					}
+										
+					// assign the list to the application
+					newApp.setActionTypes(actionTypes);
+					
+					// initialise the list of controls
+					List<String> controlTypes = new ArrayList<String>();
+					
+					// get the JSONArray of controls
+					JSONArray jsonControlTypes = rapidServlet.getJsonControls();
+					
+					// if there were some
+					if (jsonControlTypes != null) {
+						// loop them 
+						for (int i = 0; i < jsonControlTypes.length(); i++) {
+							// get the control
+							JSONObject jsonControlType = jsonControlTypes.getJSONObject(i);
+							// add to list if addToNewApplications is set
+							if (jsonControlType.optBoolean("addToNewApplications")) controlTypes.add(jsonControlType.getString("type"));
+						}
+					}
+										
+					// assign the list to the application
+					newApp.setControlTypes(controlTypes);
+					
 					// get the security 
 					SecurityAdapater security = newApp.getSecurity();
 					// check there is one
@@ -938,6 +978,9 @@ public class Rapid extends Action {
 								
 				// set the result message
 				result.put("message", "Application " + app.getTitle() + " created");
+				
+				// set the result appId
+				result.put("appId", newApp.getId());
 				
 			} else if ("DELAPP".equals(action)) {
 						

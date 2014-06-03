@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/action.xsd">
     <action>
+    
         <type>existing</type>
         <version>1</version>
         <name>Existing</name>	        
 	    <class>com.rapid.actions.Existing</class>
+	    
+	    <addToNewApplications>true</addToNewApplications>
 <!-- 
 
 This action runs actions that already exist on other controls		

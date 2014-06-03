@@ -5,6 +5,8 @@
 	    <type>tabsPanel</type>
 	    <version>1</version>
 	    <name>Tab panel</name>	 
+	    
+	    <addToNewApplications>true</addToNewApplications>
 	    <noDefaultName>true</noDefaultName>
 	      	    
 	    <canUserInsert>true</canUserInsert>    

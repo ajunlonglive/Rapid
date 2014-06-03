@@ -5,6 +5,7 @@
         <version>1</version>
         <name>Navigate</name>	        
 	    <class>com.rapid.actions.Navigate</class>	
+	    <addToNewApplications>true</addToNewApplications>
 	    <properties>
 	        <property>
 	            <key>page</key>

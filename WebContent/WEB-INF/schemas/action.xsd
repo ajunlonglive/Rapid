@@ -61,6 +61,11 @@
 									</xs:restriction>
 								</xs:simpleType>
 							</xs:element>
+							<xs:element name="addToNewApplications" type="xs:boolean"  minOccurs="0">
+				            	<xs:annotation>
+				            		<xs:documentation>If set to true the action will be added to new applications when they are created</xs:documentation>
+				            	</xs:annotation>
+				            </xs:element>    
 							<xs:element name="resources" minOccurs="0">
 								<xs:complexType>
 									<xs:sequence>

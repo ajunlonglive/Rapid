@@ -188,7 +188,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, succes
 				description: $("#rapid_P1_C15").val()
 			}
 			callback = function(response) {
-				location.reload();
+				window.location = "~?a=rapid&p=P0&appId=" + response.appId;
 			}; 
 		break;
 		case "DELAPP" :		
@@ -197,7 +197,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, succes
 				appId: $("#rapid_P0_C43").val() 
 			};	
 			callback = function() {
-				location.reload();
+				window.location = "~?a=rapid&p=P0";
 			}; 			
 		break;		
 		case "DUPAPP" :		

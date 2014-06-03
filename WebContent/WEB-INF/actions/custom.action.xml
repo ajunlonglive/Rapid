@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/action.xsd">
     <action>
+    
         <type>custom</type>
         <version>1</version>
         <name>Custom</name>	        
-	    <class>com.rapid.actions.Custom</class>	    
+	    <class>com.rapid.actions.Custom</class>	 
+	    
+	    <addToNewApplications>true</addToNewApplications>
+	       
 	    <properties>
 	        <property>
 	            <key>javascript</key>
@@ -13,5 +17,6 @@
 	            <changeValueJavaScript>bigtext</changeValueJavaScript>	 
 	        </property>
 	    </properties>
+	    
     </action> 
 </actions>

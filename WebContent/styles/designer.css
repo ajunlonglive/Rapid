@@ -172,6 +172,14 @@ div#propertiesPanel h2 {
 	font-size: 11px;
 }
 
+.canSelect {
+	-webkit-user-select: text;
+	-khtml-user-select: text;
+	-moz-user-select: text;
+	-ms-user-select: text;
+	user-select: text;
+}
+
 .validationPanelDiv h3 {
 	margin-top: 0px;
 	margin-bottom: 2px;

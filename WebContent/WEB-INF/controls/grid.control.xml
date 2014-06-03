@@ -4,10 +4,14 @@
 	    <type>grid</type>	
 	    <version>1</version> 
 	    <name>Grid</name>	   
-	    <image>images/grid_24x24.png</image>        
+	    <image>images/grid_24x24.png</image>  
+	    
+	    <addToNewApplications>true</addToNewApplications>
+	          
 	    <canUserAdd>true</canUserAdd>
 	    <canUserMove>true</canUserMove>
 	    <canUserAddPeers>true</canUserAddPeers>
+	    
 	    <properties>
 	        <property>
 	            <key>name</key>

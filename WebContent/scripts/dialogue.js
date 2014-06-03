@@ -18,8 +18,7 @@ function showDialogue(url) {
 	var dialogueCover = $("#dialogueCover");
 	// hide it (but it must retain its geometry)
 	dialogue.hide();
-	
-	
+		
 	// request the dialogue		
 	$.ajax({
     	url: url,
@@ -80,7 +79,7 @@ function showDialogue(url) {
             	// this seems to be the best way to avoid the resizing/flicker when showing
             	window.setTimeout( function() {
             		dialogue.show();
-            	}, 1);
+            	}, 10);
             	
         	}        	        	
         }

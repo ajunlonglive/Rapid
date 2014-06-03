@@ -5,7 +5,10 @@
 	    <type>radiobuttons</type>
 	    <version>1</version>	 
 	    <name>Radio buttons</name>	   
-	    <image>images/radiobutton_24x24.png</image>        
+	    <image>images/radiobutton_24x24.png</image>       
+	    
+	    <addToNewApplications>true</addToNewApplications>
+	     
 	    <canUserAdd>true</canUserAdd>
 	    <canUserMove>true</canUserMove>
 	    <canUserAddPeers>true</canUserAddPeers>

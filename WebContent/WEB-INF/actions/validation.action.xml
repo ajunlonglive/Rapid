@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/action.xsd">
     <action>
+    
         <type>validation</type>
         <version>1</version>
         <name>Validation</name>	        
-	    <class>com.rapid.actions.Validation</class>	    
+	    <class>com.rapid.actions.Validation</class>	
+	    
+	    <addToNewApplications>true</addToNewApplications>    
+	    
 	    <properties>
 	        <property>
 	            <key>controls</key>
@@ -34,6 +38,7 @@
 	            <changeValueJavaScript>childActions</changeValueJavaScript>	 
 	        </property>
 	    </properties>
+	    
 	    <actionJavaScript>
 	        <![CDATA[   
 function Action_validation(ev, validations, showMessages) {
@@ -65,4 +70,5 @@ function Action_validation(ev, validations, showMessages) {
 }	        ]]>
 	    </actionJavaScript> 
     </action> 
+    
 </actions>

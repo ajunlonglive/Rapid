@@ -6,6 +6,9 @@
         <version>1</version>
         <name>Text</name>	 
         <image>images/text_24x24.png</image>
+        
+        <addToNewApplications>true</addToNewApplications>
+        
 	    <canUserAdd>true</canUserAdd>
 	    <canUserMove>true</canUserMove>
 	    <canUserAddPeers>true</canUserAddPeers>	    
