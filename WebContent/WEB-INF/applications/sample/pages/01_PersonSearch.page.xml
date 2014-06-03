@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<page>
+<?xml version="1.0" encoding="UTF-8"?><page>
     <controls>
         <childControls>
             <childControls>
@@ -18,7 +17,7 @@
                     </entry>
                     <entry>
                         <key>name</key>
-                        <value></value>
+                        <value/>
                     </entry>
                     <entry>
                         <key>rowSpan</key>
@@ -27,6 +26,10 @@
                     <entry>
                         <key>type</key>
                         <value>tableCell</value>
+                    </entry>
+                    <entry>
+                        <key>version</key>
+                        <value>1</value>
                     </entry>
                 </properties>
                 <styles>
@@ -45,11 +48,15 @@
                 </entry>
                 <entry>
                     <key>name</key>
-                    <value></value>
+                    <value/>
                 </entry>
                 <entry>
                     <key>type</key>
                     <value>tableRow</value>
+                </entry>
+                <entry>
+                    <key>version</key>
+                    <value>1</value>
                 </entry>
             </properties>
         </childControls>
@@ -70,7 +77,7 @@
                     </entry>
                     <entry>
                         <key>name</key>
-                        <value></value>
+                        <value/>
                     </entry>
                     <entry>
                         <key>rowSpan</key>
@@ -79,6 +86,10 @@
                     <entry>
                         <key>type</key>
                         <value>tableCell</value>
+                    </entry>
+                    <entry>
+                        <key>version</key>
+                        <value>1</value>
                     </entry>
                 </properties>
                 <styles>
@@ -115,7 +126,7 @@
                             </properties>
                             <request>
 <action>sample.Samplewebservice</action>
-<body>&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot; xmlns:soa=&quot;http://soa.rapid-is.co.uk&quot;&gt;
+<body>&lt;soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soa="http://soa.rapid-is.co.uk"&gt;
   &lt;soapenv:Body&gt;
     &lt;soa:personSearchRequest&gt;
       &lt;soa:forename&gt;?&lt;/soa:forename&gt;
@@ -124,11 +135,11 @@
   &lt;/soapenv:Body&gt;
 &lt;/soapenv:Envelope&gt;</body>
 <inputs>
-    <field></field>
+    <field/>
     <itemId>P1_C11_</itemId>
 </inputs>
 <inputs>
-    <field></field>
+    <field/>
     <itemId>P1_C12_</itemId>
 </inputs>
 <outputs>
@@ -140,15 +151,15 @@
                             </request>
                             <showLoading>true</showLoading>
                         </actions>
-                        <filter></filter>
+                        <filter/>
                         <type>keyup</type>
                     </events>
                     <events>
-                        <filter></filter>
+                        <filter/>
                         <type>change</type>
                     </events>
                     <events>
-                        <filter></filter>
+                        <filter/>
                         <type>blur</type>
                     </events>
                     <properties>
@@ -166,7 +177,7 @@
                         </entry>
                         <entry>
                             <key>value</key>
-                            <value></value>
+                            <value/>
                         </entry>
                         <entry>
                             <key>controlType</key>
@@ -176,13 +187,17 @@
                             <key>type</key>
                             <value>input</value>
                         </entry>
+                        <entry>
+                            <key>version</key>
+                            <value>1</value>
+                        </entry>
                     </properties>
                     <validation>
                         <allowNulls>false</allowNulls>
-                        <javaScript></javaScript>
-                        <message></message>
-                        <regEx></regEx>
-                        <type></type>
+                        <javaScript/>
+                        <message/>
+                        <regEx/>
+                        <type/>
                     </validation>
                 </childControls>
                 <properties>
@@ -192,7 +207,7 @@
                     </entry>
                     <entry>
                         <key>text</key>
-                        <value></value>
+                        <value/>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -200,7 +215,7 @@
                     </entry>
                     <entry>
                         <key>name</key>
-                        <value></value>
+                        <value/>
                     </entry>
                     <entry>
                         <key>rowSpan</key>
@@ -209,6 +224,10 @@
                     <entry>
                         <key>type</key>
                         <value>tableCell</value>
+                    </entry>
+                    <entry>
+                        <key>version</key>
+                        <value>1</value>
                     </entry>
                 </properties>
                 <styles>
@@ -224,11 +243,15 @@
                 </entry>
                 <entry>
                     <key>name</key>
-                    <value></value>
+                    <value/>
                 </entry>
                 <entry>
                     <key>type</key>
                     <value>tableRow</value>
+                </entry>
+                <entry>
+                    <key>version</key>
+                    <value>1</value>
                 </entry>
             </properties>
         </childControls>
@@ -249,7 +272,7 @@
                     </entry>
                     <entry>
                         <key>name</key>
-                        <value></value>
+                        <value/>
                     </entry>
                     <entry>
                         <key>rowSpan</key>
@@ -258,6 +281,10 @@
                     <entry>
                         <key>type</key>
                         <value>tableCell</value>
+                    </entry>
+                    <entry>
+                        <key>version</key>
+                        <value>1</value>
                     </entry>
                 </properties>
                 <styles>
@@ -293,15 +320,15 @@
 </entry>
                             </properties>
                         </actions>
-                        <filter></filter>
+                        <filter/>
                         <type>keyup</type>
                     </events>
                     <events>
-                        <filter></filter>
+                        <filter/>
                         <type>change</type>
                     </events>
                     <events>
-                        <filter></filter>
+                        <filter/>
                         <type>blur</type>
                     </events>
                     <properties>
@@ -319,7 +346,7 @@
                         </entry>
                         <entry>
                             <key>value</key>
-                            <value></value>
+                            <value/>
                         </entry>
                         <entry>
                             <key>controlType</key>
@@ -329,13 +356,17 @@
                             <key>type</key>
                             <value>input</value>
                         </entry>
+                        <entry>
+                            <key>version</key>
+                            <value>1</value>
+                        </entry>
                     </properties>
                     <validation>
                         <allowNulls>false</allowNulls>
-                        <javaScript></javaScript>
-                        <message></message>
-                        <regEx></regEx>
-                        <type></type>
+                        <javaScript/>
+                        <message/>
+                        <regEx/>
+                        <type/>
                     </validation>
                 </childControls>
                 <properties>
@@ -345,7 +376,7 @@
                     </entry>
                     <entry>
                         <key>text</key>
-                        <value></value>
+                        <value/>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -353,7 +384,7 @@
                     </entry>
                     <entry>
                         <key>name</key>
-                        <value></value>
+                        <value/>
                     </entry>
                     <entry>
                         <key>rowSpan</key>
@@ -362,6 +393,10 @@
                     <entry>
                         <key>type</key>
                         <value>tableCell</value>
+                    </entry>
+                    <entry>
+                        <key>version</key>
+                        <value>1</value>
                     </entry>
                 </properties>
                 <styles>
@@ -377,11 +412,15 @@
                 </entry>
                 <entry>
                     <key>name</key>
-                    <value></value>
+                    <value/>
                 </entry>
                 <entry>
                     <key>type</key>
                     <value>tableRow</value>
+                </entry>
+                <entry>
+                    <key>version</key>
+                    <value>1</value>
                 </entry>
             </properties>
         </childControls>
@@ -392,11 +431,15 @@
             </entry>
             <entry>
                 <key>name</key>
-                <value></value>
+                <value/>
             </entry>
             <entry>
                 <key>type</key>
                 <value>table</value>
+            </entry>
+            <entry>
+                <key>version</key>
+                <value>1</value>
             </entry>
         </properties>
         <styles>
@@ -424,7 +467,7 @@
                     </entry>
                     <entry>
                         <key>name</key>
-                        <value></value>
+                        <value/>
                     </entry>
                     <entry>
                         <key>rowSpan</key>
@@ -433,6 +476,10 @@
                     <entry>
                         <key>type</key>
                         <value>tableCell</value>
+                    </entry>
+                    <entry>
+                        <key>version</key>
+                        <value>1</value>
                     </entry>
                 </properties>
                 <styles>
@@ -453,11 +500,15 @@
                 </entry>
                 <entry>
                     <key>name</key>
-                    <value></value>
+                    <value/>
                 </entry>
                 <entry>
                     <key>type</key>
                     <value>tableRow</value>
+                </entry>
+                <entry>
+                    <key>version</key>
+                    <value>1</value>
                 </entry>
             </properties>
         </childControls>
@@ -481,7 +532,7 @@
 </entry>
 <entry>
     <key>dataDestinations</key>
-    <value>[{&quot;field&quot;:&quot;forename&quot;,&quot;itemId&quot;:&quot;P1_C25_&quot;}]</value>
+    <value>[{"field":"forename","itemId":"P1_C25_"}]</value>
 </entry>
 <entry>
     <key>type</key>
@@ -509,7 +560,7 @@
 </entry>
 <entry>
     <key>dataDestinations</key>
-    <value>[{&quot;field&quot;:&quot;surname&quot;,&quot;itemId&quot;:&quot;P1_C25_&quot;}]</value>
+    <value>[{"field":"surname","itemId":"P1_C25_"}]</value>
 </entry>
 <entry>
     <key>type</key>
@@ -554,23 +605,23 @@
 <name>id</name>
                             </sessionVariables>
                         </actions>
-                        <filter>&#xD;
-if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
+                        <filter>&#13;
+if ($(ev.target).closest("tr").index() == 0) return false;&#13;
 </filter>
                         <type>click</type>
                     </events>
                     <properties>
                         <entry>
-                            <key>id</key>
-                            <value>P1_C20_</value>
-                        </entry>
-                        <entry>
                             <key>columnHeadings</key>
                             <value>true</value>
                         </entry>
                         <entry>
+                            <key>id</key>
+                            <value>P1_C20_</value>
+                        </entry>
+                        <entry>
                             <key>details</key>
-                            <value>{&quot;rowSelect&quot;:false,&quot;columns&quot;:[{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;id&quot;,&quot;visible&quot;:false,&quot;style&quot;:&quot;&quot;},{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;forename&quot;,&quot;visible&quot;:true,&quot;style&quot;:&quot;padding:2px 5px 2px 10px;&quot;},{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;surname&quot;,&quot;visible&quot;:true,&quot;style&quot;:&quot;padding:2px;&quot;},{&quot;cellFunction&quot;:&quot;var value = this.html();\nif (value) {\n  var parts = value.split(\&quot;-\&quot;);\n  if (parts.length == 3) {\n    value = parts[2] + \&quot;/\&quot; + parts[1] + \&quot;/\&quot; + parts[0];\n    this.html(value);\n  }\n}&quot;,&quot;field&quot;:&quot;birthday&quot;,&quot;visible&quot;:true,&quot;style&quot;:&quot;padding:2px;text-align:center;&quot;},{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;gender&quot;,&quot;visible&quot;:true,&quot;style&quot;:&quot;padding:2px 10px 2px 5px;text-align:center;&quot;}],&quot;rowHover&quot;:false}</value>
+                            <value>{"rowSelect":false,"columns":[{"cellFunction":"","field":"id","visible":false,"style":""},{"cellFunction":"","field":"forename","visible":true,"style":"padding:2px 5px 2px 10px;"},{"cellFunction":"","field":"surname","visible":true,"style":"padding:2px;"},{"cellFunction":"var value = this.html();\nif (value) {\n  var parts = value.split(\"-\");\n  if (parts.length == 3) {\n    value = parts[2] + \"/\" + parts[1] + \"/\" + parts[0];\n    this.html(value);\n  }\n}","field":"birthday","visible":true,"style":"padding:2px;text-align:center;"},{"cellFunction":"","field":"gender","visible":true,"style":"padding:2px 10px 2px 5px;text-align:center;"}],"rowHover":false}</value>
                         </entry>
                         <entry>
                             <key>name</key>
@@ -578,11 +629,15 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
                         </entry>
                         <entry>
                             <key>columns</key>
-                            <value>[{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;id&quot;,&quot;title&quot;:&quot;Id&quot;,&quot;visible&quot;:false,&quot;titleStyle&quot;:&quot;&quot;,&quot;fieldStyle&quot;:&quot;&quot;},{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;forename&quot;,&quot;title&quot;:&quot;Forename&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;padding:2px 5px 2px 10px;text-align:center;border-bottom:1px solid #aaa;&quot;,&quot;fieldStyle&quot;:&quot;padding:2px 5px 2px 10px;&quot;},{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;surname&quot;,&quot;title&quot;:&quot;Surname&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;,&quot;fieldStyle&quot;:&quot;padding:2px;&quot;},{&quot;cellFunction&quot;:&quot;var value = this.html();\nif (value) {\n  var parts = value.split(\&quot;-\&quot;);\n  if (parts.length == 3) {\n    value = parts[2] + \&quot;/\&quot; + parts[1] + \&quot;/\&quot; + parts[0];\n    this.html(value);\n  }\n}&quot;,&quot;field&quot;:&quot;birthday&quot;,&quot;title&quot;:&quot;Birthday&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;,&quot;fieldStyle&quot;:&quot;padding:2px;text-align:center;&quot;},{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;gender&quot;,&quot;title&quot;:&quot;Gender&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;padding:2px 10px 2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;,&quot;fieldStyle&quot;:&quot;padding:2px 10px 2px 5px;text-align:center;&quot;}]</value>
+                            <value>[{"field":"id","cellFunction":"","title":"Id","visible":false,"titleStyle":"","fieldStyle":""},{"field":"forename","cellFunction":"","title":"Forename","visible":true,"titleStyle":"padding:2px 5px 2px 10px;text-align:center;border-bottom:1px solid #aaa;","fieldStyle":"padding:2px 5px 2px 10px;"},{"field":"surname","cellFunction":"","title":"Surname","visible":true,"titleStyle":"padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;","fieldStyle":"padding:2px;"},{"field":"birthday","cellFunction":"var value = this.html();\nif (value) {\n  var parts = value.split(\"-\");\n  if (parts.length == 3) {\n    value = parts[2] + \"/\" + parts[1] + \"/\" + parts[0];\n    this.html(value);\n  }\n}","title":"Birthday","visible":true,"titleStyle":"padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;","fieldStyle":"padding:2px;text-align:center;"},{"field":"gender","cellFunction":"","title":"Gender","visible":true,"titleStyle":"padding:2px 10px 2px 5px;text-align:center;border-bottom:1px solid #aaa;","fieldStyle":"padding:2px 10px 2px 5px;text-align:center;"}]</value>
                         </entry>
                         <entry>
                             <key>type</key>
                             <value>grid</value>
+                        </entry>
+                        <entry>
+                            <key>version</key>
+                            <value>1</value>
                         </entry>
                     </properties>
                     <styles>
@@ -606,7 +661,7 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
                         </entry>
                         <entry>
                             <key>text</key>
-                            <value></value>
+                            <value/>
                         </entry>
                         <entry>
                             <key>name</key>
@@ -615,6 +670,10 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
                         <entry>
                             <key>type</key>
                             <value>panel</value>
+                        </entry>
+                        <entry>
+                            <key>version</key>
+                            <value>1</value>
                         </entry>
                     </properties>
                 </childControls>
@@ -625,7 +684,7 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
                     </entry>
                     <entry>
                         <key>text</key>
-                        <value></value>
+                        <value/>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -633,7 +692,7 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
                     </entry>
                     <entry>
                         <key>name</key>
-                        <value></value>
+                        <value/>
                     </entry>
                     <entry>
                         <key>rowSpan</key>
@@ -642,6 +701,10 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
                     <entry>
                         <key>type</key>
                         <value>tableCell</value>
+                    </entry>
+                    <entry>
+                        <key>version</key>
+                        <value>1</value>
                     </entry>
                 </properties>
                 <styles>
@@ -661,11 +724,15 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
                 </entry>
                 <entry>
                     <key>name</key>
-                    <value></value>
+                    <value/>
                 </entry>
                 <entry>
                     <key>type</key>
                     <value>tableRow</value>
+                </entry>
+                <entry>
+                    <key>version</key>
+                    <value>1</value>
                 </entry>
             </properties>
         </childControls>
@@ -676,11 +743,15 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
             </entry>
             <entry>
                 <key>name</key>
-                <value></value>
+                <value/>
             </entry>
             <entry>
                 <key>type</key>
                 <value>table</value>
+            </entry>
+            <entry>
+                <key>version</key>
+                <value>1</value>
             </entry>
         </properties>
         <styles>
@@ -701,7 +772,7 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
             </entry>
             <entry>
                 <key>details</key>
-                <value>{&quot;id&quot;:&quot;sampleP1_C25_&quot;,&quot;storageType&quot;:&quot;S&quot;}</value>
+                <value>{"id":"sampleP1_C25_","storageType":"S"}</value>
             </entry>
             <entry>
                 <key>storageType</key>
@@ -715,6 +786,10 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
                 <key>type</key>
                 <value>dataStore</value>
             </entry>
+            <entry>
+                <key>version</key>
+                <value>1</value>
+            </entry>
         </properties>
     </controls>
     <controls>
@@ -725,19 +800,23 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
             </entry>
             <entry>
                 <key>text</key>
-                <value>This panel only appears if the user has the &quot;Sample role 1&quot; security role</value>
-            </entry>
-            <entry>
-                <key>roles</key>
-                <value>[&quot;Sample role 1&quot;]</value>
+                <value>This panel only appears if the user has the "Sample role 1" security role</value>
             </entry>
             <entry>
                 <key>name</key>
                 <value>Role 1 panel</value>
             </entry>
             <entry>
+                <key>roles</key>
+                <value>["Sample role 1"]</value>
+            </entry>
+            <entry>
                 <key>type</key>
                 <value>panel</value>
+            </entry>
+            <entry>
+                <key>version</key>
+                <value>1</value>
             </entry>
         </properties>
         <styles>
@@ -754,19 +833,23 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
             </entry>
             <entry>
                 <key>text</key>
-                <value>This panel only appears if the user has the &quot;Sample role 2&quot; security role</value>
-            </entry>
-            <entry>
-                <key>roles</key>
-                <value>[&quot;Sample role 2&quot;]</value>
+                <value>This panel only appears if the user has the "Sample role 2" security role</value>
             </entry>
             <entry>
                 <key>name</key>
                 <value>Role 2 panel</value>
             </entry>
             <entry>
+                <key>roles</key>
+                <value>["Sample role 2"]</value>
+            </entry>
+            <entry>
                 <key>type</key>
                 <value>panel</value>
+            </entry>
+            <entry>
+                <key>version</key>
+                <value>1</value>
             </entry>
         </properties>
         <styles>
@@ -775,7 +858,7 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
             <rules>padding:10px;</rules>
         </styles>
     </controls>
-    <description></description>
+    <description/>
     <events>
         <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="datacopy">
             <properties>
@@ -793,7 +876,7 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
                 </entry>
                 <entry>
                     <key>dataDestinations</key>
-                    <value>[{&quot;field&quot;:&quot;forename&quot;,&quot;itemId&quot;:&quot;P1_C11_&quot;},{&quot;field&quot;:&quot;surname&quot;,&quot;itemId&quot;:&quot;P1_C12_&quot;}]</value>
+                    <value>[{"field":"forename","itemId":"P1_C11_"},{"field":"surname","itemId":"P1_C12_"}]</value>
                 </entry>
                 <entry>
                     <key>type</key>
@@ -814,7 +897,7 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
                 <entry>
                     <key>javascript</key>
                     <value>// only (re)run the search if there is a forename or surname value
-if ($(&quot;#P1_C11_&quot;).val() || $(&quot;#P1_C12_&quot;).val()) Event_keyup_P1_C11_(ev);</value>
+if ($("#P1_C11_").val() || $("#P1_C12_").val()) Event_keyup_P1_C11_(ev);</value>
                 </entry>
                 <entry>
                     <key>name</key>
@@ -830,191 +913,191 @@ if ($(&quot;#P1_C11_&quot;).val() || $(&quot;#P1_C12_&quot;).val()) Event_keyup_
                 </entry>
             </properties>
         </actions>
-        <filter></filter>
+        <filter/>
         <type>pageload</type>
     </events>
     <events>
-        <filter></filter>
+        <filter/>
         <type>reusable</type>
     </events>
-    <htmlBody>&lt;table id=&quot;P1_C1_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P1_C2_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C3_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Person search&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C5_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C6_&quot; class=&quot;tabelCell&quot;&gt;Forename&lt;/td&gt;&lt;td id=&quot;P1_C7_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P1_C11_&quot; value=&quot;&quot; maxlength=&quot;20&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C8_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C9_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;&lt;td id=&quot;P1_C10_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P1_C12_&quot; value=&quot;&quot; maxlength=&quot;20&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;table id=&quot;P1_C13_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P1_C14_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C15_&quot; class=&quot;tabelCell&quot;&gt;Search results&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C17_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C18_&quot; class=&quot;tabelCell&quot;&gt;&lt;table id=&quot;P1_C20_&quot; class=&quot;grid&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td style=&quot;display:none;&quot;&gt;Id&lt;/td&gt;&lt;td style=&quot;padding:2px 5px 2px 10px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Forename&lt;/td&gt;&lt;td style=&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Surname&lt;/td&gt;&lt;td style=&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Birthday&lt;/td&gt;&lt;td style=&quot;padding:2px 10px 2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Gender&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;div id=&quot;P1_C23_&quot; class=&quot;panel&quot;&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;div id=&quot;P1_C40_&quot; class=&quot;panel&quot;&gt;This panel only appears if the user has the &quot;Sample role 1&quot; security role&lt;/div&gt;&lt;div id=&quot;P1_C41_&quot; class=&quot;panel&quot;&gt;This panel only appears if the user has the &quot;Sample role 2&quot; security role&lt;/div&gt;</htmlBody>
+    <htmlBody>&lt;table id="P1_C1_" class="table"&gt;&lt;tbody&gt;&lt;tr id="P1_C2_" class="tableRow"&gt;&lt;td id="P1_C3_" colspan="2" class="tabelCell"&gt;Person search&lt;/td&gt;&lt;/tr&gt;&lt;tr id="P1_C5_" class="tableRow"&gt;&lt;td id="P1_C6_" class="tabelCell"&gt;Forename&lt;/td&gt;&lt;td id="P1_C7_" class="tabelCell"&gt;&lt;input id="P1_C11_" value="" type="text" maxlength="20" class="input"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="P1_C8_" class="tableRow"&gt;&lt;td id="P1_C9_" class="tabelCell"&gt;Surname&lt;/td&gt;&lt;td id="P1_C10_" class="tabelCell"&gt;&lt;input id="P1_C12_" value="" type="text" maxlength="20" class="input"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;table id="P1_C13_" class="table"&gt;&lt;tbody&gt;&lt;tr id="P1_C14_" class="tableRow"&gt;&lt;td id="P1_C15_" class="tabelCell"&gt;Search results&lt;/td&gt;&lt;/tr&gt;&lt;tr id="P1_C17_" class="tableRow"&gt;&lt;td id="P1_C18_" class="tabelCell"&gt;&lt;table id="P1_C20_" class="grid"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td style="display:none;"&gt;Id&lt;/td&gt;&lt;td style="padding:2px 5px 2px 10px;text-align:center;border-bottom:1px solid #aaa;"&gt;Forename&lt;/td&gt;&lt;td style="padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;"&gt;Surname&lt;/td&gt;&lt;td style="padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;"&gt;Birthday&lt;/td&gt;&lt;td style="padding:2px 10px 2px 5px;text-align:center;border-bottom:1px solid #aaa;"&gt;Gender&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;div id="P1_C23_" class="panel"&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;div id="P1_C40_" class="panel"&gt;This panel only appears if the user has the "Sample role 1" security role&lt;/div&gt;&lt;div id="P1_C41_" class="panel"&gt;This panel only appears if the user has the "Sample role 2" security role&lt;/div&gt;</htmlBody>
     <id>P1</id>
     <name>01_PersonSearch</name>
     <rolesHtml>
-        <html>&lt;table id=&quot;P1_C1_&quot; class=&quot;table&quot;&gt;
+        <html>&lt;table id="P1_C1_" class="table"&gt;
 		&lt;tbody&gt;
-			&lt;tr id=&quot;P1_C2_&quot; class=&quot;tableRow&quot;&gt;
-				&lt;td id=&quot;P1_C3_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Person search&lt;/td&gt;
+			&lt;tr id="P1_C2_" class="tableRow"&gt;
+				&lt;td id="P1_C3_" colspan="2" class="tabelCell"&gt;Person search&lt;/td&gt;
 			&lt;/tr&gt;
-			&lt;tr id=&quot;P1_C5_&quot; class=&quot;tableRow&quot;&gt;
-				&lt;td id=&quot;P1_C6_&quot; class=&quot;tabelCell&quot;&gt;Forename&lt;/td&gt;
-				&lt;td id=&quot;P1_C7_&quot; class=&quot;tabelCell&quot;&gt;
-					&lt;input id=&quot;P1_C11_&quot; value=&quot;&quot; maxlength=&quot;20&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
+			&lt;tr id="P1_C5_" class="tableRow"&gt;
+				&lt;td id="P1_C6_" class="tabelCell"&gt;Forename&lt;/td&gt;
+				&lt;td id="P1_C7_" class="tabelCell"&gt;
+					&lt;input id="P1_C11_" value="" type="text" maxlength="20" class="input"&gt;&lt;/td&gt;
 				&lt;/tr&gt;
-				&lt;tr id=&quot;P1_C8_&quot; class=&quot;tableRow&quot;&gt;
-					&lt;td id=&quot;P1_C9_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;
-					&lt;td id=&quot;P1_C10_&quot; class=&quot;tabelCell&quot;&gt;
-						&lt;input id=&quot;P1_C12_&quot; value=&quot;&quot; maxlength=&quot;20&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
+				&lt;tr id="P1_C8_" class="tableRow"&gt;
+					&lt;td id="P1_C9_" class="tabelCell"&gt;Surname&lt;/td&gt;
+					&lt;td id="P1_C10_" class="tabelCell"&gt;
+						&lt;input id="P1_C12_" value="" type="text" maxlength="20" class="input"&gt;&lt;/td&gt;
 					&lt;/tr&gt;
 				&lt;/tbody&gt;
 			&lt;/table&gt;
-			&lt;table id=&quot;P1_C13_&quot; class=&quot;table&quot;&gt;
+			&lt;table id="P1_C13_" class="table"&gt;
 				&lt;tbody&gt;
-					&lt;tr id=&quot;P1_C14_&quot; class=&quot;tableRow&quot;&gt;
-						&lt;td id=&quot;P1_C15_&quot; class=&quot;tabelCell&quot;&gt;Search results&lt;/td&gt;
+					&lt;tr id="P1_C14_" class="tableRow"&gt;
+						&lt;td id="P1_C15_" class="tabelCell"&gt;Search results&lt;/td&gt;
 					&lt;/tr&gt;
-					&lt;tr id=&quot;P1_C17_&quot; class=&quot;tableRow&quot;&gt;
-						&lt;td id=&quot;P1_C18_&quot; class=&quot;tabelCell&quot;&gt;
-							&lt;table id=&quot;P1_C20_&quot; class=&quot;grid&quot;&gt;
+					&lt;tr id="P1_C17_" class="tableRow"&gt;
+						&lt;td id="P1_C18_" class="tabelCell"&gt;
+							&lt;table id="P1_C20_" class="grid"&gt;
 								&lt;tbody&gt;
 									&lt;tr&gt;
-										&lt;td style=&quot;display:none;&quot;&gt;Id&lt;/td&gt;
-										&lt;td style=&quot;padding:2px 5px 2px 10px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Forename&lt;/td&gt;
-										&lt;td style=&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Surname&lt;/td&gt;
-										&lt;td style=&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Birthday&lt;/td&gt;
-										&lt;td style=&quot;padding:2px 10px 2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Gender&lt;/td&gt;
+										&lt;td style="display:none;"&gt;Id&lt;/td&gt;
+										&lt;td style="padding:2px 5px 2px 10px;text-align:center;border-bottom:1px solid #aaa;"&gt;Forename&lt;/td&gt;
+										&lt;td style="padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;"&gt;Surname&lt;/td&gt;
+										&lt;td style="padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;"&gt;Birthday&lt;/td&gt;
+										&lt;td style="padding:2px 10px 2px 5px;text-align:center;border-bottom:1px solid #aaa;"&gt;Gender&lt;/td&gt;
 									&lt;/tr&gt;
 								&lt;/tbody&gt;
 							&lt;/table&gt;
-							&lt;div id=&quot;P1_C23_&quot; class=&quot;panel&quot;&gt;&lt;/div&gt;
+							&lt;div id="P1_C23_" class="panel"&gt;&lt;/div&gt;
 						&lt;/td&gt;
 					&lt;/tr&gt;
 				&lt;/tbody&gt;
 			&lt;/table&gt;
-			&lt;div id=&quot;P1_C40_&quot; class=&quot;panel&quot;&gt;This panel only appears if the user has the &quot;Sample role 1&quot; security role&lt;/div&gt;
-			&lt;div id=&quot;P1_C41_&quot; class=&quot;panel&quot;&gt;This panel only appears if the user has the &quot;Sample role 2&quot; security role&lt;/div&gt;</html>
+			&lt;div id="P1_C40_" class="panel"&gt;This panel only appears if the user has the "Sample role 1" security role&lt;/div&gt;
+			&lt;div id="P1_C41_" class="panel"&gt;This panel only appears if the user has the "Sample role 2" security role&lt;/div&gt;</html>
         <roles>Sample role 1</roles>
         <roles>Sample role 2</roles>
     </rolesHtml>
     <rolesHtml>
-        <html>&lt;table id=&quot;P1_C1_&quot; class=&quot;table&quot;&gt;
+        <html>&lt;table id="P1_C1_" class="table"&gt;
 		&lt;tbody&gt;
-			&lt;tr id=&quot;P1_C2_&quot; class=&quot;tableRow&quot;&gt;
-				&lt;td id=&quot;P1_C3_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Person search&lt;/td&gt;
+			&lt;tr id="P1_C2_" class="tableRow"&gt;
+				&lt;td id="P1_C3_" colspan="2" class="tabelCell"&gt;Person search&lt;/td&gt;
 			&lt;/tr&gt;
-			&lt;tr id=&quot;P1_C5_&quot; class=&quot;tableRow&quot;&gt;
-				&lt;td id=&quot;P1_C6_&quot; class=&quot;tabelCell&quot;&gt;Forename&lt;/td&gt;
-				&lt;td id=&quot;P1_C7_&quot; class=&quot;tabelCell&quot;&gt;
-					&lt;input id=&quot;P1_C11_&quot; value=&quot;&quot; maxlength=&quot;20&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
+			&lt;tr id="P1_C5_" class="tableRow"&gt;
+				&lt;td id="P1_C6_" class="tabelCell"&gt;Forename&lt;/td&gt;
+				&lt;td id="P1_C7_" class="tabelCell"&gt;
+					&lt;input id="P1_C11_" value="" type="text" maxlength="20" class="input"&gt;&lt;/td&gt;
 				&lt;/tr&gt;
-				&lt;tr id=&quot;P1_C8_&quot; class=&quot;tableRow&quot;&gt;
-					&lt;td id=&quot;P1_C9_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;
-					&lt;td id=&quot;P1_C10_&quot; class=&quot;tabelCell&quot;&gt;
-						&lt;input id=&quot;P1_C12_&quot; value=&quot;&quot; maxlength=&quot;20&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
+				&lt;tr id="P1_C8_" class="tableRow"&gt;
+					&lt;td id="P1_C9_" class="tabelCell"&gt;Surname&lt;/td&gt;
+					&lt;td id="P1_C10_" class="tabelCell"&gt;
+						&lt;input id="P1_C12_" value="" type="text" maxlength="20" class="input"&gt;&lt;/td&gt;
 					&lt;/tr&gt;
 				&lt;/tbody&gt;
 			&lt;/table&gt;
-			&lt;table id=&quot;P1_C13_&quot; class=&quot;table&quot;&gt;
+			&lt;table id="P1_C13_" class="table"&gt;
 				&lt;tbody&gt;
-					&lt;tr id=&quot;P1_C14_&quot; class=&quot;tableRow&quot;&gt;
-						&lt;td id=&quot;P1_C15_&quot; class=&quot;tabelCell&quot;&gt;Search results&lt;/td&gt;
+					&lt;tr id="P1_C14_" class="tableRow"&gt;
+						&lt;td id="P1_C15_" class="tabelCell"&gt;Search results&lt;/td&gt;
 					&lt;/tr&gt;
-					&lt;tr id=&quot;P1_C17_&quot; class=&quot;tableRow&quot;&gt;
-						&lt;td id=&quot;P1_C18_&quot; class=&quot;tabelCell&quot;&gt;
-							&lt;table id=&quot;P1_C20_&quot; class=&quot;grid&quot;&gt;
+					&lt;tr id="P1_C17_" class="tableRow"&gt;
+						&lt;td id="P1_C18_" class="tabelCell"&gt;
+							&lt;table id="P1_C20_" class="grid"&gt;
 								&lt;tbody&gt;
 									&lt;tr&gt;
-										&lt;td style=&quot;display:none;&quot;&gt;Id&lt;/td&gt;
-										&lt;td style=&quot;padding:2px 5px 2px 10px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Forename&lt;/td&gt;
-										&lt;td style=&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Surname&lt;/td&gt;
-										&lt;td style=&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Birthday&lt;/td&gt;
-										&lt;td style=&quot;padding:2px 10px 2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Gender&lt;/td&gt;
+										&lt;td style="display:none;"&gt;Id&lt;/td&gt;
+										&lt;td style="padding:2px 5px 2px 10px;text-align:center;border-bottom:1px solid #aaa;"&gt;Forename&lt;/td&gt;
+										&lt;td style="padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;"&gt;Surname&lt;/td&gt;
+										&lt;td style="padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;"&gt;Birthday&lt;/td&gt;
+										&lt;td style="padding:2px 10px 2px 5px;text-align:center;border-bottom:1px solid #aaa;"&gt;Gender&lt;/td&gt;
 									&lt;/tr&gt;
 								&lt;/tbody&gt;
 							&lt;/table&gt;
-							&lt;div id=&quot;P1_C23_&quot; class=&quot;panel&quot;&gt;&lt;/div&gt;
+							&lt;div id="P1_C23_" class="panel"&gt;&lt;/div&gt;
 						&lt;/td&gt;
 					&lt;/tr&gt;
 				&lt;/tbody&gt;
 			&lt;/table&gt;
-			&lt;div id=&quot;P1_C40_&quot; class=&quot;panel&quot;&gt;This panel only appears if the user has the &quot;Sample role 1&quot; security role&lt;/div&gt;</html>
+			&lt;div id="P1_C40_" class="panel"&gt;This panel only appears if the user has the "Sample role 1" security role&lt;/div&gt;</html>
         <roles>Sample role 1</roles>
     </rolesHtml>
     <rolesHtml>
-        <html>&lt;table id=&quot;P1_C1_&quot; class=&quot;table&quot;&gt;
+        <html>&lt;table id="P1_C1_" class="table"&gt;
 		&lt;tbody&gt;
-			&lt;tr id=&quot;P1_C2_&quot; class=&quot;tableRow&quot;&gt;
-				&lt;td id=&quot;P1_C3_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Person search&lt;/td&gt;
+			&lt;tr id="P1_C2_" class="tableRow"&gt;
+				&lt;td id="P1_C3_" colspan="2" class="tabelCell"&gt;Person search&lt;/td&gt;
 			&lt;/tr&gt;
-			&lt;tr id=&quot;P1_C5_&quot; class=&quot;tableRow&quot;&gt;
-				&lt;td id=&quot;P1_C6_&quot; class=&quot;tabelCell&quot;&gt;Forename&lt;/td&gt;
-				&lt;td id=&quot;P1_C7_&quot; class=&quot;tabelCell&quot;&gt;
-					&lt;input id=&quot;P1_C11_&quot; value=&quot;&quot; maxlength=&quot;20&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
+			&lt;tr id="P1_C5_" class="tableRow"&gt;
+				&lt;td id="P1_C6_" class="tabelCell"&gt;Forename&lt;/td&gt;
+				&lt;td id="P1_C7_" class="tabelCell"&gt;
+					&lt;input id="P1_C11_" value="" type="text" maxlength="20" class="input"&gt;&lt;/td&gt;
 				&lt;/tr&gt;
-				&lt;tr id=&quot;P1_C8_&quot; class=&quot;tableRow&quot;&gt;
-					&lt;td id=&quot;P1_C9_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;
-					&lt;td id=&quot;P1_C10_&quot; class=&quot;tabelCell&quot;&gt;
-						&lt;input id=&quot;P1_C12_&quot; value=&quot;&quot; maxlength=&quot;20&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
+				&lt;tr id="P1_C8_" class="tableRow"&gt;
+					&lt;td id="P1_C9_" class="tabelCell"&gt;Surname&lt;/td&gt;
+					&lt;td id="P1_C10_" class="tabelCell"&gt;
+						&lt;input id="P1_C12_" value="" type="text" maxlength="20" class="input"&gt;&lt;/td&gt;
 					&lt;/tr&gt;
 				&lt;/tbody&gt;
 			&lt;/table&gt;
-			&lt;table id=&quot;P1_C13_&quot; class=&quot;table&quot;&gt;
+			&lt;table id="P1_C13_" class="table"&gt;
 				&lt;tbody&gt;
-					&lt;tr id=&quot;P1_C14_&quot; class=&quot;tableRow&quot;&gt;
-						&lt;td id=&quot;P1_C15_&quot; class=&quot;tabelCell&quot;&gt;Search results&lt;/td&gt;
+					&lt;tr id="P1_C14_" class="tableRow"&gt;
+						&lt;td id="P1_C15_" class="tabelCell"&gt;Search results&lt;/td&gt;
 					&lt;/tr&gt;
-					&lt;tr id=&quot;P1_C17_&quot; class=&quot;tableRow&quot;&gt;
-						&lt;td id=&quot;P1_C18_&quot; class=&quot;tabelCell&quot;&gt;
-							&lt;table id=&quot;P1_C20_&quot; class=&quot;grid&quot;&gt;
+					&lt;tr id="P1_C17_" class="tableRow"&gt;
+						&lt;td id="P1_C18_" class="tabelCell"&gt;
+							&lt;table id="P1_C20_" class="grid"&gt;
 								&lt;tbody&gt;
 									&lt;tr&gt;
-										&lt;td style=&quot;display:none;&quot;&gt;Id&lt;/td&gt;
-										&lt;td style=&quot;padding:2px 5px 2px 10px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Forename&lt;/td&gt;
-										&lt;td style=&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Surname&lt;/td&gt;
-										&lt;td style=&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Birthday&lt;/td&gt;
-										&lt;td style=&quot;padding:2px 10px 2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Gender&lt;/td&gt;
+										&lt;td style="display:none;"&gt;Id&lt;/td&gt;
+										&lt;td style="padding:2px 5px 2px 10px;text-align:center;border-bottom:1px solid #aaa;"&gt;Forename&lt;/td&gt;
+										&lt;td style="padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;"&gt;Surname&lt;/td&gt;
+										&lt;td style="padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;"&gt;Birthday&lt;/td&gt;
+										&lt;td style="padding:2px 10px 2px 5px;text-align:center;border-bottom:1px solid #aaa;"&gt;Gender&lt;/td&gt;
 									&lt;/tr&gt;
 								&lt;/tbody&gt;
 							&lt;/table&gt;
-							&lt;div id=&quot;P1_C23_&quot; class=&quot;panel&quot;&gt;&lt;/div&gt;
+							&lt;div id="P1_C23_" class="panel"&gt;&lt;/div&gt;
 						&lt;/td&gt;
 					&lt;/tr&gt;
 				&lt;/tbody&gt;
 			&lt;/table&gt;
-			&lt;div id=&quot;P1_C41_&quot; class=&quot;panel&quot;&gt;This panel only appears if the user has the &quot;Sample role 2&quot; security role&lt;/div&gt;</html>
+			&lt;div id="P1_C41_" class="panel"&gt;This panel only appears if the user has the "Sample role 2" security role&lt;/div&gt;</html>
         <roles>Sample role 2</roles>
     </rolesHtml>
     <rolesHtml>
-        <html>&lt;table id=&quot;P1_C1_&quot; class=&quot;table&quot;&gt;
+        <html>&lt;table id="P1_C1_" class="table"&gt;
 		&lt;tbody&gt;
-			&lt;tr id=&quot;P1_C2_&quot; class=&quot;tableRow&quot;&gt;
-				&lt;td id=&quot;P1_C3_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Person search&lt;/td&gt;
+			&lt;tr id="P1_C2_" class="tableRow"&gt;
+				&lt;td id="P1_C3_" colspan="2" class="tabelCell"&gt;Person search&lt;/td&gt;
 			&lt;/tr&gt;
-			&lt;tr id=&quot;P1_C5_&quot; class=&quot;tableRow&quot;&gt;
-				&lt;td id=&quot;P1_C6_&quot; class=&quot;tabelCell&quot;&gt;Forename&lt;/td&gt;
-				&lt;td id=&quot;P1_C7_&quot; class=&quot;tabelCell&quot;&gt;
-					&lt;input id=&quot;P1_C11_&quot; value=&quot;&quot; maxlength=&quot;20&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
+			&lt;tr id="P1_C5_" class="tableRow"&gt;
+				&lt;td id="P1_C6_" class="tabelCell"&gt;Forename&lt;/td&gt;
+				&lt;td id="P1_C7_" class="tabelCell"&gt;
+					&lt;input id="P1_C11_" value="" type="text" maxlength="20" class="input"&gt;&lt;/td&gt;
 				&lt;/tr&gt;
-				&lt;tr id=&quot;P1_C8_&quot; class=&quot;tableRow&quot;&gt;
-					&lt;td id=&quot;P1_C9_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;
-					&lt;td id=&quot;P1_C10_&quot; class=&quot;tabelCell&quot;&gt;
-						&lt;input id=&quot;P1_C12_&quot; value=&quot;&quot; maxlength=&quot;20&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
+				&lt;tr id="P1_C8_" class="tableRow"&gt;
+					&lt;td id="P1_C9_" class="tabelCell"&gt;Surname&lt;/td&gt;
+					&lt;td id="P1_C10_" class="tabelCell"&gt;
+						&lt;input id="P1_C12_" value="" type="text" maxlength="20" class="input"&gt;&lt;/td&gt;
 					&lt;/tr&gt;
 				&lt;/tbody&gt;
 			&lt;/table&gt;
-			&lt;table id=&quot;P1_C13_&quot; class=&quot;table&quot;&gt;
+			&lt;table id="P1_C13_" class="table"&gt;
 				&lt;tbody&gt;
-					&lt;tr id=&quot;P1_C14_&quot; class=&quot;tableRow&quot;&gt;
-						&lt;td id=&quot;P1_C15_&quot; class=&quot;tabelCell&quot;&gt;Search results&lt;/td&gt;
+					&lt;tr id="P1_C14_" class="tableRow"&gt;
+						&lt;td id="P1_C15_" class="tabelCell"&gt;Search results&lt;/td&gt;
 					&lt;/tr&gt;
-					&lt;tr id=&quot;P1_C17_&quot; class=&quot;tableRow&quot;&gt;
-						&lt;td id=&quot;P1_C18_&quot; class=&quot;tabelCell&quot;&gt;
-							&lt;table id=&quot;P1_C20_&quot; class=&quot;grid&quot;&gt;
+					&lt;tr id="P1_C17_" class="tableRow"&gt;
+						&lt;td id="P1_C18_" class="tabelCell"&gt;
+							&lt;table id="P1_C20_" class="grid"&gt;
 								&lt;tbody&gt;
 									&lt;tr&gt;
-										&lt;td style=&quot;display:none;&quot;&gt;Id&lt;/td&gt;
-										&lt;td style=&quot;padding:2px 5px 2px 10px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Forename&lt;/td&gt;
-										&lt;td style=&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Surname&lt;/td&gt;
-										&lt;td style=&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Birthday&lt;/td&gt;
-										&lt;td style=&quot;padding:2px 10px 2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Gender&lt;/td&gt;
+										&lt;td style="display:none;"&gt;Id&lt;/td&gt;
+										&lt;td style="padding:2px 5px 2px 10px;text-align:center;border-bottom:1px solid #aaa;"&gt;Forename&lt;/td&gt;
+										&lt;td style="padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;"&gt;Surname&lt;/td&gt;
+										&lt;td style="padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;"&gt;Birthday&lt;/td&gt;
+										&lt;td style="padding:2px 10px 2px 5px;text-align:center;border-bottom:1px solid #aaa;"&gt;Gender&lt;/td&gt;
 									&lt;/tr&gt;
 								&lt;/tbody&gt;
 							&lt;/table&gt;
-							&lt;div id=&quot;P1_C23_&quot; class=&quot;panel&quot;&gt;&lt;/div&gt;
+							&lt;div id="P1_C23_" class="panel"&gt;&lt;/div&gt;
 						&lt;/td&gt;
 					&lt;/tr&gt;
 				&lt;/tbody&gt;
 			&lt;/table&gt;</html>
     </rolesHtml>
     <title>Person search</title>
-</page>
+<version>1</version></page>

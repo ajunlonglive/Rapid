@@ -3,6 +3,7 @@
 	<control>
 	    
 	    <type>panel</type>	 
+	    <version>1</version>
 	    <name>Panel</name>	   
 	    <image>images/panel_24x24.png</image>     
 	    

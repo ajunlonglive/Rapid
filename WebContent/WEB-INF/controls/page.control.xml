@@ -3,6 +3,7 @@
     <control>
         
         <type>page</type>
+        <version>1</version>
         <name>Page</name>	 
 
         <canUserInsert>true</canUserInsert>

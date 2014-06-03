@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
- <databaseDrivers xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/databaseDrivers.xsd">
+ <databaseDrivers 
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+ xsi:noNamespaceSchemaLocation="../schemas/databaseDrivers.xsd"
+ fileVersion="1"
+ >
      
      <databaseDriver>
          <name>SQLite</name>
@@ -8,7 +12,7 @@
      
      <databaseDriver>
          <name>Oracle</name>
-         <class>oracle.jdbc.driver.OracleDriver</class>
+         <class>oracle.jdbc.driver.OracleDriver</class>         
      </databaseDriver>
                 
  </databaseDrivers>

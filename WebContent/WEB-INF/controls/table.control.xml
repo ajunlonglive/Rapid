@@ -3,6 +3,7 @@
 	<control>
 	    
 	    <type>tableCell</type>
+	    <version>1</version>
 	    <name>Table cell</name>	   
 	    <noDefaultName>true</noDefaultName>
 	    	    
@@ -81,6 +82,7 @@ return "#" + this.id;
 	<control>
 	    
 	    <type>tableRow</type>	
+	    <version>1</version>
 	    <name>Table row</name>	    
 	    <noDefaultName>true</noDefaultName>
 	    
@@ -154,6 +156,7 @@ return "#" + this.id;
 	<control>
 	    
 	    <type>table</type>
+	    <version>1</version>
 	    <name>Table</name>	    
 	    <image>images/table_24x24.png</image>  	    
 	    <noDefaultName>true</noDefaultName>

@@ -25,6 +25,13 @@
 					</xs:restriction>
 				  </xs:simpleType>	            
 	            </xs:element>
+	            <xs:element name="version" type="xs:int">
+					<xs:annotation>
+						<xs:documentation>Each type has it's own version, this will allow 
+						us to write code to update the old way an action is stored to a new way
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
 	            <xs:element name="name">
 	          	  <xs:annotation>
 				    <xs:documentation>The control name is used presented to users when describing, or logging something about this control</xs:documentation>

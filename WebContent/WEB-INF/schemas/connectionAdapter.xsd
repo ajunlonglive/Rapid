@@ -43,6 +43,11 @@
 					</xs:simpleType>
 				</xs:element>
 			</xs:sequence>
+			<xs:attribute name="fileVersion" type="xs:integer" use="required">
+				<xs:annotation>
+					<xs:documentation>This attribute defines the version of the xml file</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
 		</xs:complexType>
 	</xs:element>
 </xs:schema>

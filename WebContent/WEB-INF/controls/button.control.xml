@@ -3,6 +3,7 @@
 	<control>
 	    
 	    <type>button</type>	 
+	    <version>1</version>
 	    <name>Button</name>	   
 	    <image>images/button_24x24.png</image>        
 	    <canUserAdd>true</canUserAdd>

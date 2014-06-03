@@ -17,24 +17,35 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 
+import org.apache.log4j.Logger;
+import org.eclipse.jetty.util.log.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Function;
 import org.mozilla.javascript.Scriptable;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 import com.rapid.server.RapidHttpServlet;
 import com.rapid.server.RapidHttpServlet.RapidRequest;
 import com.rapid.utils.Files;
+import com.rapid.utils.XML;
 
 @XmlRootElement
 @XmlType(namespace="http://rapid-is.co.uk/core")
 public class Page {
 	
-	// a class for retaining page html for a set of user roles
+	// the version of this class (if we have any significant changes down the line we can upgrade the xml files before unmarshalling)	
+	public static final int VERSION = 1;
 	
+	// a class for retaining page html for a set of user roles	
 	public static class RoleHtml {
 		
 		// instance variables
@@ -62,6 +73,7 @@ public class Page {
 	
 	// instance variables
 	
+	private int _version;
 	private String _id, _name, _title, _description, _htmlBody, _cachedStartHtml;
 	private List<String> _javascriptFiles, _cssFiles;
 	private List<Control> _controls;
@@ -72,6 +84,10 @@ public class Page {
 	private List<RoleHtml> _rolesHtml;
 	
 	// properties
+	
+	// the version is used to upgrade xml files before unmarshalling
+	public int getVersion() { return _version; }
+	public void setVersion(int version) { _version = version; }
 	
 	// the id uniquely identifies the page (it is quiet short and is concatinated to control id's so more than one page's control's can be working in a document at one time)
 	public String getId() { return _id; }
@@ -127,8 +143,12 @@ public class Page {
 	
 	// constructors
 	
-	public Page() {};
+	public Page() {
+		_version = VERSION;
+	};
+	
 	public Page(String id, String name, String title, String description) {
+		_version = VERSION;
 		_id = id;
 		_name = name;
 		_title = title;
@@ -454,8 +474,7 @@ public class Page {
 		// close
 		ps.close();
 		fos.close();
-		
-		
+				
 	}
 	
 	public void delete(RapidHttpServlet rapidServlet, RapidRequest rapidRequest) throws JAXBException, IOException {
@@ -481,7 +500,55 @@ public class Page {
 	 		 				
 	}
 		
-	public static Page load(ServletContext servletContext, File file) throws JAXBException {
+	public static Page load(ServletContext servletContext, File file) throws JAXBException, ParserConfigurationException, SAXException, IOException, TransformerFactoryConfigurationError, TransformerException {
+		
+		// open the xml file into a document
+		Document pageDocument = XML.openDocument(file);
+		
+		// specify the version as -1
+		int version = -1;
+		
+		// look for a version node
+		Node versionNode = XML.getChildElement(pageDocument.getFirstChild(), "version");
+		
+		// if we got one update the version
+		if (versionNode != null) version = Integer.parseInt(versionNode.getTextContent());
+				
+		// if the version of this xml isn't the same as this class we have some work to do!
+		if (version != VERSION) {
+			
+			// get the page name
+			String name = XML.getChildElementValue(pageDocument.getFirstChild(), "name");
+			
+			// get the logger
+			Logger logger = (Logger) servletContext.getAttribute("logger");
+			
+			// log the difference
+			logger.debug("Page " + name + " with version " + version + ", current version is " + VERSION);
+			
+			//
+			// Here we would have code to update from known version of the file
+			//
+			
+			// check whether there was a version node in the file to start with
+			if (versionNode == null) {
+				// create the version node
+				versionNode = pageDocument.createElement("version");
+				// add it to the root of the document
+				pageDocument.getFirstChild().appendChild(versionNode);
+			}
+			
+			// set the xml to the latest version
+			versionNode.setTextContent(Integer.toString(VERSION));
+			
+			// now we need to check the versions of all of the controls and actions
+			
+			// save it
+			XML.saveDocument(pageDocument, file);
+			
+			logger.debug("Updated " + name + " page version to " + VERSION);
+			
+		}
 		
 		// get the unmarshaller from the context
 		Unmarshaller unmarshaller = (Unmarshaller) servletContext.getAttribute("unmarshaller");	

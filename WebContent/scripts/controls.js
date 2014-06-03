@@ -56,6 +56,9 @@ function Control(controlClass, parentControl, jsonControl, loadComplexObjects, p
 		// retain the type
 		this.type = controlClass.type;
 		
+		// retain the version
+		this.version = controlClass.version;
+		
 		// store a count for number of controls of this type
 		if (!_controlNumbers[controlClass.type]) {
 			_controlNumbers[controlClass.type] = 1;

@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">	
 	<xs:annotation>
 		<xs:documentation>The schema for database driver xml files</xs:documentation>
 	</xs:annotation>
-	<xs:element name="databaseDrivers">
+	<xs:element name="databaseDrivers">		
 		<xs:annotation>
-			<xs:documentation>Each xml file can describe several drivers
-			</xs:documentation>
+			<xs:documentation>Each xml file can describe several drivers</xs:documentation>
 		</xs:annotation>
-		<xs:complexType>
-			<xs:sequence>
+		<xs:complexType>			
+			<xs:sequence>			
 				<xs:element name="databaseDriver" minOccurs="1" maxOccurs="unbounded">
 					<xs:annotation>
 						<xs:documentation>The dbdriver xml is turned into json and loaded into the admin screen where it is used to create new objects
@@ -38,11 +37,16 @@
 										<xs:minLength value="1" />
 									</xs:restriction>
 								</xs:simpleType>
-							</xs:element>							
+							</xs:element>													
 						</xs:sequence>
 					</xs:complexType>
 				</xs:element>
 			</xs:sequence>
+			<xs:attribute name="fileVersion" type="xs:integer" use="required">
+				<xs:annotation>
+					<xs:documentation>This attribute defines the version of the xml file</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
 		</xs:complexType>
 	</xs:element>
 </xs:schema>

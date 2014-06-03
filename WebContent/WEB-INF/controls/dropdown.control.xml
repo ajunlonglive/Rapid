@@ -2,7 +2,8 @@
 <controls xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/control.xsd">
 	<control>
 	    
-	    <type>dropdown</type>	 
+	    <type>dropdown</type>	
+	    <version>1</version> 
 	    <name>Drop down</name>	   
 	    <image>images/dropdown_24x24.png</image>        
 	    <canUserAdd>true</canUserAdd>

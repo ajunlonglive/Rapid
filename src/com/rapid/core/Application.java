@@ -23,15 +23,20 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Function;
 import org.mozilla.javascript.Scriptable;
-import org.mozilla.javascript.Synchronizer;
-import org.mozilla.javascript.edu.emory.mathcs.backport.java.util.Arrays;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 import com.rapid.data.ConnectionAdapter;
 import com.rapid.security.RapidSecurityAdapter;
@@ -41,12 +46,16 @@ import com.rapid.server.RapidHttpServlet.RapidRequest;
 import com.rapid.soa.Webservice;
 import com.rapid.utils.Files;
 import com.rapid.utils.JAXB;
+import com.rapid.utils.XML;
 import com.rapid.utils.ZipFile;
 import com.rapid.utils.ZipFile.ZipSource;
 
 @XmlRootElement
 @XmlType(namespace="http://rapid-is.co.uk/core")
 public class Application {
+	
+	// the version of this class (if we have any significant changes down the line we can upgrade the xml files before unmarshalling)	
+	public static final int VERSION = 1;
 	
 	// public static classes
 	
@@ -111,6 +120,7 @@ public class Application {
 	
 	// instance variables
 	
+	private int _version;
 	private String _id, _name, _title, _description, _startPageId, _styles, _securityAdapterType;
 	private boolean _showConrolIds, _showActionIds;
 	private Map<String,String> _settings;
@@ -122,6 +132,10 @@ public class Application {
 	private List<String> _styleClasses;
 	
 	// properties
+	
+	// the version is used to upgrade xml files before unmarshalling
+	public int getVersion() { return _version; }
+	public void setVersion(int version) { _version = version; }
 	
 	// the id uniquely identifies the page (it is produced by taking all unsafe characters out of the name)
 	public String getId() { return _id; }
@@ -181,12 +195,14 @@ public class Application {
 	// constructors
 	
 	public Application() {
+		_version = VERSION;
 		_pages = new HashMap<String,Page>();
 		_databaseConnections = new ArrayList<DatabaseConnection>();
 		_webservices = new ArrayList<Webservice>();
 	};
 	
 	public Application(String name) {
+		_version = VERSION;
 		_name = name;
 		_pages = new HashMap<String,Page>();
 		_databaseConnections = new ArrayList<DatabaseConnection>();
@@ -910,14 +926,60 @@ public class Application {
 	// static methods
 	
 	// this is a simple overload for default loading of applications where the resources are all regenerated
-	public static Application load(ServletContext servletContext, File file) throws JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException, IOException {
+	public static Application load(ServletContext servletContext, File file) throws JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException, IOException, ParserConfigurationException, SAXException, TransformerFactoryConfigurationError, TransformerException {
 				
 		return load(servletContext, file, true); 		
 		
 	}
 	
 	// this method loads the application by ummarshelling the xml, and then doing the same for all page .xmls, before calling the initialise method
-	public static Application load(ServletContext servletContext, File file, boolean createResources) throws JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException, IOException {
+	public static Application load(ServletContext servletContext, File file, boolean createResources) throws JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException, IOException, ParserConfigurationException, SAXException, TransformerFactoryConfigurationError, TransformerException {
+		
+		// open the xml file into a document
+		Document appDocument = XML.openDocument(file);
+		
+		// specify the version as -1
+		int version = -1;
+		
+		// look for a version node
+		Node versionNode = XML.getChildElement(appDocument.getFirstChild(), "version");
+		
+		// if we got one update the version
+		if (versionNode != null) version = Integer.parseInt(versionNode.getTextContent());
+				
+		// if the version of this xml isn't the same as this class we have some work to do!
+		if (version != VERSION) {
+			
+			// get the page name
+			String name = XML.getChildElementValue(appDocument.getFirstChild(), "name");
+			
+			// get the logger
+			Logger logger = (Logger) servletContext.getAttribute("logger");
+			
+			// log the difference
+			logger.debug("Application " + name + " with version " + version + ", current version is " + VERSION);
+			
+			//
+			// Here we would have code to update from known version of the file
+			//
+			
+			// check whether there was a version node in the file to start with
+			if (versionNode == null) {
+				// create the version node
+				versionNode = appDocument.createElement("version");
+				// add it to the root of the document
+				appDocument.getFirstChild().appendChild(versionNode);
+			}
+			
+			// set the xml to the latest version
+			versionNode.setTextContent(Integer.toString(VERSION));
+			
+			// save it
+			XML.saveDocument(appDocument, file);
+			
+			logger.debug("Updated " + name + " application version to " + VERSION);
+			
+		}
 		
 		// get the unmarshaller from the context
 		Unmarshaller unmarshallerObj = (Unmarshaller) servletContext.getAttribute("unmarshaller");	
