@@ -16,7 +16,7 @@ function showDialogue(url) {
 	var dialogue = $("#dialogue");
 	// retain a reference to the dialogueCover div
 	var dialogueCover = $("#dialogueCover");
-	// hide it
+	// hide it (but it must retain its geometry)
 	dialogue.hide();
 	
 	
@@ -69,16 +69,18 @@ function showDialogue(url) {
             	
             	// inject the html and JavaScript
             	dialogue.append(bodyHtml + javaScript);
-            	
-            	// show it
-            	dialogue.show();
-            	
+            	            	            	
             	// size the dialogue
             	dialogue.css({
             		position : "fixed",
             		left : (win.width() - dialogue.outerWidth()) / 2,
             		top : (win.height() - dialogue.outerHeight()) / 3
-            	});            	
+            	});
+            	
+            	// this seems to be the best way to avoid the resizing/flicker when showing
+            	window.setTimeout( function() {
+            		dialogue.show();
+            	}, 1);
             	
         	}        	        	
         }

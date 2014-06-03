@@ -37,6 +37,8 @@ optgroup {
 	right: 5px;
 	top: 5px;
 	cursor: pointer;
+	width: 14px;
+	height: 14px;
 }
 
 #controlPanel {
@@ -70,6 +72,10 @@ optgroup {
 
 #controlPanel select {
 	width: 100%;
+}
+
+#controlControls {
+	display:none;
 }
 
 ul.design-controls {

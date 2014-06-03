@@ -60,7 +60,7 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, use
 		<div id="controlPanelShow" style="z-index:10004"></div>
 		
 		<div id="controlPanel" style="z-index:10005">
-			<div id="controlPanelPin">unpin</div>
+			<div id="controlPanelPin"><img src="images/pinned_14x14.png" title="unpin" /></div>
 			<div class="buttons">
 				<button id="appAdmin" class="buttonLeft buttonRight">Administration</button>
 			</div>
@@ -91,12 +91,12 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, use
 				<h2>Controls</h2>
 				<ul class="design-controls" >
 					<!-- Controls are added here as list items when the designer loads -->
-				</ul>	
-			</div>				
+				</ul>					
+			</div>	
 			<div class="controlPanelVersion" >
 				<img src="images/RapidLogo_60x40.png" style="margin-left:-16px;"/>
 				<div id="controlPanelVersion">Rapid<br/>2.0.1</div>
-			</div>			
+			</div>									
 		</div>
 		
 		<div id="propertiesPanel" style="z-index:10005">

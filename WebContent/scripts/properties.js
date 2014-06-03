@@ -672,11 +672,14 @@ function Property_databaseQuery(cell, propertyObject, property, refreshHtml, ref
 	// add a listener for the database connection
 	_listeners.push( testSQL.click( {query: query}, function(ev) {
 		
+		var data = JSON.stringify(ev.data.query);
+		
 		$.ajax({
 	    	url: "designer?a=" + _app.id + "&action=testSQL",
 	    	type: "POST",          
+	    	contentType: "application/json",
 	    	dataType: "json",    
-	    	data: JSON.stringify(ev.data.query),
+	    	data: data,
 	        error: function(server, status, error) { 
 	        	alert(error + " : " + server.responseText); 
 	        },

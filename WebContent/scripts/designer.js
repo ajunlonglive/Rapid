@@ -680,6 +680,8 @@ function loadApps(selectedAppId, forceLoad) {
         	_app = _apps[appsDropDown[0].selectedIndex];        	
         	// load the app and its pages in the drop down if we weren't handed one
         	if (!selectedAppId || forceLoad) loadApp();
+        	// size the windows
+        	windowResize();
         }
 	});
 }
@@ -1490,14 +1492,14 @@ $(document).ready( function() {
 		if (_panelPinned) {
 			_panelPinned = false;
 			_panelPinnedOffset = 0;
-			$("#controlPanelPin").html("pin");
+			$("#controlPanelPin").html("<img src='images/unpinned_14x14.png' title='pin'>");
 			windowResize();
 			selectControl(_selectedControl);
 			$("#controlPanel").hide("slide", {direction: "left"}, 200);
 		} else {
 			_panelPinned = true;
 			_panelPinnedOffset = 221;
-			$("#controlPanelPin").html("unpin");
+			$("#controlPanelPin").html("<img src='images/pinned_14x14.png' title='unpin'>");
 			windowResize();
 			selectControl(_selectedControl);
 		}
@@ -2212,20 +2214,11 @@ function windowResize() {
 		"height": height
 	});
 	
-	// retain whether either panel was increased in height
-	var incPanelHeight = false;
-	
 	// adjust controlPanel height if necessary
-	if (controlPanelHeight < height) {
-		controlPanel.css({height: height});
-		incPanelHeight = true;
-	}
+	controlPanel.css({height: height});
 	
-	// adjust controlPanel height if necessary 
-	if (propertiesPanelHeight < height) {
-		propertiesPanel.css({height: height});
-		incPanelHeight = true;
-	}
+	// adjust propertiesPanel height if necessary 
+	propertiesPanel.css({height: height});
 		
 	// adjust iframe position, width and height
 	_pageIframe.css({

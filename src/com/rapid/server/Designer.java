@@ -69,6 +69,8 @@ public class Designer extends RapidHttpServlet {
 		
 		try {
 			
+			Thread.sleep(200);
+			
 			getLogger().debug("Designer GET request : " + request.getQueryString());
 											
 			String actionName = rapidRequest.getActionName();

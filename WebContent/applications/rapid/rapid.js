@@ -87,12 +87,18 @@ function Action_navigate(url, dialogue) {
 		           	// add script into the page (if applicable)
 		           	if (script) dialogue.append(script);
 		           	var win = $(window);
-		           	// size and show the dialogue
-		           	dialogue.show().css({
+		           	
+		           	// size the dialogue
+		           	dialogue.css({
 		           		position : "fixed",
 	            		left : (win.width() - dialogue.outerWidth()) / 2,
 	            		top : (win.height() - dialogue.outerHeight()) / 3
 	            	}); 
+	            	
+	            	// this seems to be the best way to avoid the resizing/flicker when showing
+	            	window.setTimeout( function() {
+	            		dialogue.show();
+	            	}, 1);
 		           	           	        	            	            	            
 		    	}        	       	        	        	        	        		
 		    }       	        	        
