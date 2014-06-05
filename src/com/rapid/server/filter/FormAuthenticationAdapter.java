@@ -59,21 +59,31 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 				userPassword = request.getParameter("userPassword");
 												
 				if (userName == null || userPassword == null) {
-															
+																									
 					// if we are attempting to authorise progress to the next step in the filter
 					if (requestPath.contains("login.jsp") && sessionRequestPath != null) return req;
 					
-					// retain the request path less the leading /
-					String authorisationRequestPath = requestPath.substring(1);
-					// append the query string if there was one
-					if (request.getQueryString() != null) authorisationRequestPath += "?" + request.getQueryString(); 
-					
-					// retain the request path in the session
-					session.setAttribute("requestPath", authorisationRequestPath);
-					
-					// send a redirect to load the login page
-					response.sendRedirect("login.jsp");
-										
+					// if this is json just send an empty response
+					if (request.getHeader("Accept").contains("application/json")) {
+						
+						// set the 401 - access denied
+						response.sendError(401);
+												
+					} else {
+						
+						// retain the request path less the leading /
+						String authorisationRequestPath = requestPath.substring(1);
+						// append the query string if there was one
+						if (request.getQueryString() != null) authorisationRequestPath += "?" + request.getQueryString(); 
+						
+						// retain the request path in the session
+						session.setAttribute("requestPath", authorisationRequestPath);
+						
+						// send a redirect to load the login page
+						response.sendRedirect("login.jsp");
+						
+					}
+									
 					// return immediately
 					return null;
 					

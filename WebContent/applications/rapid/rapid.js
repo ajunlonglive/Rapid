@@ -380,7 +380,11 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, succes
     	dataType: "json",
         data: data,            
         error: function(server, status, error) { 
-        	errorCallback(server, status, error); 
+        	if (server && server.status && server.status == 401) {
+        		window.location = "login.jsp";
+        	} else {
+        		errorCallback(server, status, error);
+        	} 
         },
         success: function(data) {
        		if (callback) callback(data);
