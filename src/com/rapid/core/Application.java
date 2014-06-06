@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -118,11 +119,44 @@ public class Application {
 		
 	}
 	
+	public static class Backup {
+		
+		private String _id, _name, _user, _size;
+		private Date _date;
+
+		public String getId() {	return _id;	}
+		
+		public String getName() { return _name; }
+
+		public Date getDate() { return _date; }
+
+		public String getUser() { return _user; }
+
+		public String getSize() { return _size;	}
+		
+		public Backup(String id, Date date, String user, String size) {
+			_id = id;
+			_date = date;
+			_user = user;
+			_size = size;
+		}
+		
+		public Backup(String id, String name, Date date, String user, String size) {
+			_id = id;
+			_name = name;
+			_date = date;
+			_user = user;
+			_size = size;
+		}
+					
+	}
+	
 	// instance variables
 	
 	private int _version;
-	private String _id, _name, _title, _description, _startPageId, _styles, _securityAdapterType;
+	private String _id, _name, _title, _description, _startPageId, _styles, _securityAdapterType, _createdBy, _modifiedBy;
 	private boolean _showConrolIds, _showActionIds;
+	private Date _createdDate, _modifiedDate;
 	private Map<String,String> _settings;
 	private SecurityAdapater _securityAdapter;
 	private List<String> _controlTypes, _actionTypes, _resourceIncludes;
@@ -153,6 +187,22 @@ public class Application {
 	public String getDescription() { return _description; }
 	public void setDescription(String description) { _description = description; }
 	
+	// the user that created this application 
+	public String getCreatedBy() { return _createdBy; }
+	public void setCreatedBy(String createdBy) { _createdBy = createdBy; }
+	
+	// the date this application was created
+	public Date getCreatedDate() { return _createdDate; }
+	public void setCreatedDate(Date createdDate) { _createdDate = createdDate; }
+	
+	// the last user to save this application 
+	public String getModifiedBy() { return _modifiedBy; }
+	public void setModifiedBy(String modifiedBy) { _modifiedBy = modifiedBy; }
+	
+	// the date this application was last saved
+	public Date getModifiedDate() { return _modifiedDate; }
+	public void setModifiedDate(Date modifiedDate) { _modifiedDate = modifiedDate; }
+		
 	// whether control ids should be shown when designing this app
 	public boolean getShowControlIds() { return _showConrolIds; }
 	public void setShowControlIds(boolean showConrolIds) { _showConrolIds = showConrolIds; }
@@ -200,15 +250,7 @@ public class Application {
 		_databaseConnections = new ArrayList<DatabaseConnection>();
 		_webservices = new ArrayList<Webservice>();
 	};
-	
-	public Application(String name) {
-		_version = VERSION;
-		_name = name;
-		_pages = new HashMap<String,Page>();
-		_databaseConnections = new ArrayList<DatabaseConnection>();
-		_webservices = new ArrayList<Webservice>();
-	}
-	
+		
 	// instance methods
 	
 	public Page getStartPage() {
@@ -748,40 +790,171 @@ public class Application {
 	                       
 	}
 	
-	public void archive(RapidHttpServlet rapidServlet, RapidRequest request) throws IOException {
+	public List<Backup> getApplicationBackups(RapidHttpServlet rapidServlet) {
+		
+		List<Backup> backups = new ArrayList<Backup>();
+				
+		File backupFolder = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/_backup/"));
+		
+		if (backupFolder.exists()) {
+			
+			for (File backup : backupFolder.listFiles()) {
+				
+				String id = backup.getName();
+				
+				String[] nameParts = id.split("_");
+				
+				if (id.contains(_id) && nameParts.length >= 3) {
+					
+					long sizeBytes = Files.getSize(backup);
+					
+					String size = "0b";
+									
+					if (sizeBytes < 1024) {
+						size = sizeBytes + " bytes";
+					} else if (sizeBytes < 1024 * 1024) {
+						size = Math.floor(sizeBytes / 1024d * 100) / 100d + " KB";
+					} else if (sizeBytes  < 1024 * 1024 * 1024) {
+						size =  Math.floor(sizeBytes / 1024d / 1024d * 100) / 100d + " MB";
+					} else if (sizeBytes < 1024 * 1024 * 1024 * 1024) {
+						size =  Math.floor(sizeBytes / 1024d / 1024d / 1024d * 100) / 100d + " GB";
+					} else {
+						size = "huge!";
+					}
+					
+					SimpleDateFormat df = new SimpleDateFormat("yyyymmdd HHMMss");
+					
+					Date date = new Date();
+					
+					try { date = df.parse(nameParts[nameParts.length - 3] + " " + nameParts[nameParts.length - 2]); } catch (ParseException e) {}
+					
+					backups.add(new Backup(id, date, nameParts[nameParts.length - 1], size));
+					
+					// sort the list by date
+					Collections.sort(backups, new Comparator<Backup>() {
+						@Override
+						public int compare(Backup obj1, Backup obj2) {
+							if (obj1.getDate().before(obj2.getDate())) {
+								return 1;
+							} else {
+								return -1;
+							}
+						}			
+					});
+					
+				}
+				
+			}
+			
+		}
+		
+		return backups;
+		
+	}
+	
+	public List<Backup> getPageBackups(RapidHttpServlet rapidServlet) {
+		
+		List<Backup> backups = new ArrayList<Backup>();
+				
+		File backupFolder = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + _id + "/_backup/"));
+		
+		if (backupFolder.exists()) {
+			
+			for (File backup : backupFolder.listFiles()) {
+				
+				String id = backup.getName();
+				
+				String[] nameParts = id.split("_");
+				
+				if (nameParts.length >= 3) {
+					
+					String name = nameParts[0];
+					
+					for (int i = 1; i < nameParts.length - 3; i++) {
+						name += "_" + nameParts[i];
+					}
+					
+					long sizeBytes = Files.getSize(backup);
+					
+					String size = "0b";
+									
+					if (sizeBytes < 1024) {
+						size = sizeBytes + " bytes";
+					} else if (sizeBytes < 1024 * 1024) {
+						size = Math.floor(sizeBytes / 1024d * 100) / 100d + " KB";
+					} else if (sizeBytes  < 1024 * 1024 * 1024) {
+						size =  Math.floor(sizeBytes / 1024d / 1024d * 100) / 100d + " MB";
+					} else if (sizeBytes < 1024 * 1024 * 1024 * 1024) {
+						size =  Math.floor(sizeBytes / 1024d / 1024d / 1024d * 100) / 100d + " GB";
+					} else {
+						size = "huge!";
+					}
+					
+					SimpleDateFormat df = new SimpleDateFormat("yyyymmdd HHMMss");
+					
+					Date date = new Date();
+					
+					try { date = df.parse(nameParts[nameParts.length - 3] + " " + nameParts[nameParts.length - 2]); } catch (ParseException e) {}
+					
+					String[] userParts = nameParts[nameParts.length - 1].split("\\.");
+					
+					backups.add(new Backup(id, name, date, userParts[0], size));
+					
+					// sort the list by date
+					Collections.sort(backups, new Comparator<Backup>() {
+						@Override
+						public int compare(Backup obj1, Backup obj2) {
+							if (obj1.getDate().before(obj2.getDate())) {
+								return 1;
+							} else {
+								return -1;
+							}
+						}			
+					});
+					
+				}
+				
+			}
+			
+		}
+		
+		return backups;
+		
+	}
+	
+	public void backup(RapidHttpServlet rapidServlet, RapidRequest rapidRequest) throws IOException {
 		
 		// get the username
-		String userName = request.getRequest().getRemoteUser();
-		if (userName == null) {
-			userName = "";
-		} else {
-			userName = "_" + Files.safeName(userName);
-		}
-				
+		String userName = rapidRequest.getUserName();
+		if (userName == null) userName = "unknown";
+		
 		// get the current date and time in a string
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd_HHmmss");
 		String dateString = formatter.format(new Date());
 		
-		// create folders to archive the app
-		String archivePath = rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/_archive/" + _id + "_" + dateString + userName);		
-		File archiveFolder = new File(archivePath);		
-		if (!archiveFolder.exists()) archiveFolder.mkdirs();
+		// create a fileName for the archive
+		String fileName = _id + "_" + dateString + "_" + Files.safeName(userName);
+								
+		// create folders to backup the app
+		String backupPath = rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/_backup/" + fileName);		
+		File backupFolder = new File(backupPath);		
+		if (!backupFolder.exists()) backupFolder.mkdirs();
 
 		// create a file object for the application data folder
 		File appFolder = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + _id));
 	 	
-	 	// copy the existing files and folders to the archive folder    
-	    Files.copyFolder(appFolder, archiveFolder);
+	 	// copy the existing files and folders to the backup folder    
+	    Files.copyFolder(appFolder, backupFolder);
 	    
 	    // create a file object and folders for the web folder archive
-	    archiveFolder = new File(archivePath + "/WebContent");
-	    if (!archiveFolder.exists()) archiveFolder.mkdirs();
+	    backupFolder = new File(backupPath + "/WebContent");
+	    if (!backupFolder.exists()) backupFolder.mkdirs();
 	    
 	    // create a file object for the application web folder
 	    appFolder = new File(rapidServlet.getServletContext().getRealPath("/applications/" + _id));
 	 		    	    
 	 	// copy the existing web content files and folders to the webcontent archive folder    
-	    Files.copyFolder(appFolder, archiveFolder);
+	    Files.copyFolder(appFolder, backupFolder);
 	    	
 	}
 	
@@ -818,10 +991,15 @@ public class Application {
 		
 		// create a file object for the application
 		File appFile = new File(folderPath + "/application.xml");
-		if (appFile.exists()) archive(rapidServlet, rapidRequest);
+		// backup the app if it already exists
+		if (appFile.exists()) backup(rapidServlet, rapidRequest);
 		
 		// create a temp file for saving the application to
 		File tempFile = new File(folderPath + "/application-saving.xml");
+		
+		// update the modified by and date
+		_modifiedBy = rapidRequest.getUserName();
+		_modifiedDate = new Date();
 		
 		// marshal the application object to the temp file
 		FileOutputStream fos = new FileOutputStream(tempFile.getAbsolutePath());		
@@ -858,8 +1036,8 @@ public class Application {
 						
 		// if the app file exists
 		if (appFile.exists()) {
-			// archive the application
-			archive(rapidServlet, rapidRequest);
+			// backup the application
+			backup(rapidServlet, rapidRequest);
 			// delete the app folder
 			Files.deleteRecurring(appFolder);
 			// delete the web folder

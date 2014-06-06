@@ -27,6 +27,8 @@
     <controlTypes>text</controlTypes>
     <description>This is the Rapid application and contains all of the pages which the designer and other screens use as dialogues</description>
     <id>rapid</id>
+    <modifiedBy>admin</modifiedBy>
+    <modifiedDate>2014-06-06T12:21:52.459+01:00</modifiedDate>
     <name>Rapid</name>
     <securityAdapterType>rapid</securityAdapterType>
     <showActionIds>true</showActionIds>

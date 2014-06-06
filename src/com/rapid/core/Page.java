@@ -67,7 +67,8 @@ public class Page {
 	// instance variables
 	
 	private int _version;
-	private String _id, _name, _title, _description, _htmlBody, _cachedStartHtml;
+	private String _id, _name, _title, _description, _createdBy, _modifiedBy, _htmlBody, _cachedStartHtml;
+	private Date _createdDate, _modifiedDate;
 	private List<String> _javascriptFiles, _cssFiles;
 	private List<Control> _controls;
 	private List<Event> _events;
@@ -97,6 +98,22 @@ public class Page {
 	// an even longer description of what this page does
 	public String getDescription() { return _description; }
 	public void setDescription(String description) { _description = description; }
+	
+	// the user that created this page (or archived page)
+	public String getCreatedBy() { return _createdBy; }
+	public void setCreatedBy(String createdBy) { _createdBy = createdBy; }
+	
+	// the date this page (or archive) was created
+	public Date getCreatedDate() { return _createdDate; }
+	public void setCreatedDate(Date createdDate) { _createdDate = createdDate; }
+	
+	// the last user to save this application 
+	public String getModifiedBy() { return _modifiedBy; }
+	public void setModifiedBy(String modifiedBy) { _modifiedBy = modifiedBy; }
+	
+	// the date this application was last saved
+	public Date getModifiedDate() { return _modifiedDate; }
+	public void setModifiedDate(Date modifiedDate) { _modifiedDate = modifiedDate; }
 	
 	// any bespoke javascript files can be added to the page by manually setting this property in the page xml
 	public List<String> getJavascriptFiles() { return _javascriptFiles; }
@@ -134,20 +151,12 @@ public class Page {
 	public List<RoleHtml> getRolesHtml() { return _rolesHtml; }	
 	public void setRolesHtml(List<RoleHtml> rolesHtml) { _rolesHtml = rolesHtml; }
 	
-	// constructors
+	// constructor
 	
 	public Page() {
 		_version = VERSION;
 	};
-	
-	public Page(String id, String name, String title, String description) {
-		_version = VERSION;
-		_id = id;
-		_name = name;
-		_title = title;
-		_description = description;
-	}
-	
+		
 	// instance methods
 	
 	// these two methods have different names to avoid being marshelled to the .xml file by JAXB
@@ -391,21 +400,21 @@ public class Page {
 		return stringBuilder.toString();		
 	}
 								
-	public void archive(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, File pageFile) throws IOException {
+	public void backup(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, File pageFile) throws IOException {
 		
 		// get the application
 		Application application = rapidRequest.getApplication();
 				
 		// get the username
-		String userName = rapidRequest.getRequest().getRemoteUser();
+		String userName = rapidRequest.getUserName();
 		if (userName == null) {
-			userName = "";
+			userName = "unknown";
 		} else {
-			userName = "_" + Files.safeName(userName);
+			userName = Files.safeName(userName);
 		}
 		
 		// create folders to archive the pages
-		String archivePath = rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + application.getId() + "/_archive");		
+		String archivePath = rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + application.getId() + "/_backup");		
 		File archiveFolder = new File(archivePath);		
 		if (!archiveFolder.exists()) archiveFolder.mkdirs();
 		
@@ -413,7 +422,7 @@ public class Page {
 		String dateString = formatter.format(new Date());
 		
 		 // create a file object for the archive file
-	 	File archiveFile = new File(archivePath + "/" + Files.safeName(_name) + "_" + dateString + userName + ".page.xml");
+	 	File archiveFile = new File(archivePath + "/" + Files.safeName(_name) + "_" + dateString + "_" + userName + ".page.xml");
 	 	
 	 	// copy the existing new file to the archive file
 	    Files.copyFile(pageFile, archiveFile);
@@ -434,10 +443,14 @@ public class Page {
 	 	File newFile = new File(pagePath + "/" + Files.safeName(getName()) + ".page.xml");
 	 	
 	 	// if the new file already exists it needs archiving
-	 	if (newFile.exists()) archive(rapidServlet, rapidRequest, newFile);	 			 	
+	 	if (newFile.exists()) backup(rapidServlet, rapidRequest, newFile);	 			 	
 				
 	 	// create a file for the temp file
 	    File tempFile = new File(pagePath + "/" + Files.safeName(getName()) + "-saving.page.xml");	
+	    
+	    // update the modified by and date
+	    _modifiedBy = rapidRequest.getUserName();
+	    _modifiedDate = new Date();
 		
 		// create a file output stream for the temp file
 		FileOutputStream fos = new FileOutputStream(tempFile.getAbsolutePath());
@@ -484,7 +497,7 @@ public class Page {
 	 	// if the new file already exists it needs archiving
 	 	if (delFile.exists()) {
 	 		// archive the page file
-	 		archive(rapidServlet, rapidRequest, delFile);
+	 		backup(rapidServlet, rapidRequest, delFile);
 	 		// delete the page file
 	 		delFile.delete();
 	 		// remove it from the current list of pages

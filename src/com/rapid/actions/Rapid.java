@@ -11,7 +11,9 @@ import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -35,6 +37,7 @@ import com.rapid.security.SecurityAdapater.SecurityAdapaterException;
 import com.rapid.server.RapidHttpServlet;
 import com.rapid.server.RapidServletContextListener;
 import com.rapid.server.RapidHttpServlet.RapidRequest;
+import com.rapid.server.filter.RapidFilter;
 import com.rapid.soa.SOAElementRestriction;
 import com.rapid.soa.SOASchema;
 import com.rapid.soa.SQLWebservice;
@@ -401,6 +404,7 @@ public class Rapid extends Action {
 				// create an array for the database connections
 				JSONArray jsonDatabaseConnections = new JSONArray();
 				
+				
 				// check we have some database connections
 				if (app.getDatabaseConnections() != null) {
 					// remember the index
@@ -421,10 +425,11 @@ public class Rapid extends Action {
 				}
 				// add database connections
 				result.put("databaseConnections", jsonDatabaseConnections);
-																										
+				
+				
 				// create an array for the soa webservices
 				JSONArray jsonWebservices = new JSONArray();
-				
+								
 				// check we have some webservices
 				if (app.getWebservices() != null) {
 					// loop and add to jsonArray
@@ -434,6 +439,56 @@ public class Rapid extends Action {
 				}	
 				// add webservices connections
 				result.put("webservices", jsonWebservices);
+				
+				
+				// create an array for the app backups
+				JSONArray jsonAppBackups = new JSONArray();
+				
+				// check we have some app backups
+				if (app.getApplicationBackups(rapidServlet) != null) {
+					// loop and add to jsonArray
+					for (Application.Backup appBackup : app.getApplicationBackups(rapidServlet)) {
+						// create the backup json object
+						JSONObject jsonBackup = new JSONObject();
+						// create a date formatter
+						SimpleDateFormat df = new SimpleDateFormat("dd/mm/yyyy HH:MM:ss");
+						// populate it
+						jsonBackup.append("id", appBackup.getId());
+						jsonBackup.append("date", df.format(appBackup.getDate()));
+						jsonBackup.append("user", appBackup.getUser());
+						jsonBackup.append("size", appBackup.getSize());
+						// add it
+						jsonAppBackups.put(jsonBackup);
+					}					
+				}	
+				// add webservices connections
+				result.put("appbackups", jsonAppBackups);
+				
+				
+				// create an array for the page backups
+				JSONArray jsonPageBackups = new JSONArray();
+				
+				// check we have some app backups
+				if (app.getPageBackups(rapidServlet) != null) {
+					// loop and add to jsonArray
+					for (Application.Backup appBackup : app.getPageBackups(rapidServlet)) {
+						// create the backup json object
+						JSONObject jsonBackup = new JSONObject();
+						// create a date formatter
+						SimpleDateFormat df = new SimpleDateFormat("dd/mm/yyyy HH:MM:ss");
+						// populate it
+						jsonBackup.append("id", appBackup.getId());
+						jsonBackup.append("page", appBackup.getName());
+						jsonBackup.append("date", df.format(appBackup.getDate()));
+						jsonBackup.append("user", appBackup.getUser());
+						jsonBackup.append("size", appBackup.getSize());
+						// add it
+						jsonPageBackups.put(jsonBackup);
+					}					
+				}	
+				// add webservices connections
+				result.put("pagebackups", jsonPageBackups);
+				
 				
 			} else if ("GETDBCONN".equals(action)) {
 				
@@ -607,7 +662,7 @@ public class Rapid extends Action {
 				// if the name is now different the derived id will be too
 				if (!app.getName().equals(name)) {
 					// archive the app as is
-					app.archive(rapidServlet, rapidRequest);
+					app.backup(rapidServlet, rapidRequest);
 					// copy the app to the id location
 					app.copy(rapidServlet, rapidRequest, id);
 					// delete it
@@ -904,6 +959,8 @@ public class Rapid extends Action {
 				newApp.setName(name);
 				newApp.setTitle(title);
 				newApp.setDescription(description);
+				newApp.setCreatedBy(rapidRequest.getUserName());
+				newApp.setCreatedDate(new Date());
 				newApp.setSecurityAdapterType("rapid");
 								 				
 				try {
@@ -1105,6 +1162,8 @@ public class Rapid extends Action {
 				newPage.setName(name);
 				newPage.setTitle(title);
 				newPage.setDescription(description);
+				newPage.setCreatedBy(rapidRequest.getUserName());
+				newPage.setCreatedDate(new Date());
 				
 				// save the page to file
 				newPage.save(rapidServlet, rapidActionRequest);

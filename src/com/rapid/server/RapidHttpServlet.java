@@ -244,7 +244,7 @@ public class RapidHttpServlet extends HttpServlet {
 	public SimpleDateFormat getDateTimeFormatter() {
 		return (SimpleDateFormat) getServletContext().getAttribute("dateTimeFormatter");
 	}
-	
+		
 	public void sendException(HttpServletResponse response, Exception ex) throws IOException {
 		sendException(null, response, ex);
 	}
