@@ -36,8 +36,9 @@
 	    
 	    <getHtmlFunction>
 	        <![CDATA[	   	        
-if (this.file && this.file.substr(0,13) == 'applications/') this.file = this.file.substr(this.file.indexOf('/',13) + 1);	          
-return "<img id='" + this.id + "' src='applications/" + _app.id + "/" + this.file + "' title='" + this.title + "' class='image" + getStyleClasses(this) + "'></img>"
+if (this.file && this.file.substr(0,13) == 'applications/') this.file = this.file.substr(this.file.indexOf('/',13) + 1);	 
+var title = (this.title) ? " title='" + this.title + "'": "";         
+return "<img id='" + this.id + "' src='applications/" + _app.id + "/" + this.file + "'" + title + " class='image" + getStyleClasses(this) + "'></img>"
 	        ]]>
 	    </getHtmlFunction> 
 	    

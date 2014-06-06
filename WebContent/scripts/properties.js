@@ -250,7 +250,7 @@ function Property_imageFile(cell, propertyObject, property, refreshHtml, refresh
 	if (_app.images) {
 		
 		// append the drop down for existing images
-		table.append("<tr><td><select></select></td></tr>");
+		table.append("<tr><td><select><option>Please select...</option></select></td></tr>");
 		
 		// get a reference to the drop down
 		var dropdown = table.find("select");
@@ -1602,4 +1602,121 @@ function Property_dataDestinations(cell, propertyObject, property, refreshHtml, 
 		// rebuild the dialgue
 		Property_dataDestinations(ev.data.cell, ev.data.propertyObject, {key: "dataDestinations"}, ev.data.refreshHtml, ev.data.dialogue);	
 	}));
+}
+
+// this is a dialogue to choose controls and specify their hints
+function Property_controlHints(cell, hints, property, refreshHtml, refreshDialogue) {
+	
+	// retain a reference to the dialogue (if we were passed one)
+	var dialogue = refreshDialogue;
+	// if we weren't passed one - make what we need
+	if (!dialogue) dialogue = createDialogue(cell, 300, "Control hints");		
+	// grab a reference to the table
+	var table = dialogue.find("table").first();
+	// make sure table is empty
+	table.children().remove();
+	
+	var text = "";
+	// get the hint controls
+	var controlHints = hints.controlHints;
+	// if they don't exist or an empty array string make them an empty array
+	if (!controlHints || controlHints == "[]") controlHints = [];
+	
+	// add a header
+	table.append("<tr><td><b>Control</b></td><td><b>Action</b></td><td colspan='2'><b>Hint text</b></td></td></tr>");
+		
+	// loop the controls
+	for (var i in controlHints) {
+		
+		// find the control hint
+		var controlHint = controlHints[i];
+		
+		// find the control
+		var control = getControlById(controlHint.controlId);
+
+		// append the control name to the hints text
+		if (control) text += control.name;
+		
+		// create the type options
+		var typeOptions = "<option value='hover'" + ((controlHint.type == 'hover') ? " selected": "") + ">hover</option><option value='click'" + ((controlHint.type == 'click') ? " selected": "") + ">click</option>";
+		
+		// add the row
+		table.append("<tr><td><select class='control'><option value=''>Please select...</option>" + getControlOptions(controlHint.controlId) + "</select></td><td><select class='type'>" + typeOptions + "</select></td><td><span>" + controlHint.text + "</span></td><td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
+	
+		// add a seperating comma to the text if not the last hint
+		if (i < controlHints.length - 1) text += ",";
+					
+	}
+	
+	// if the hints text is empty
+	if (!text) text = "Click to add...";
+	// append the text into the hints property
+	cell.text(text);
+	
+	// add control listeners
+	var controlSelects = table.find("select.control");
+	// add a listener
+	_listeners.push( controlSelects.change( {controlHints: controlHints}, function(ev) {
+		// get the select
+		var select = $(ev.target);
+		// update the control id
+		ev.data.controlHints[select.parent().parent().index()-1].controlId = select.val();
+	}));
+	
+	// add type listeners
+	var typeSelects = table.find("select.type");
+	// add a listener
+	_listeners.push( typeSelects.change( {controlHints: controlHints}, function(ev) {
+		// get the select
+		var select = $(ev.target);
+		// update the control id
+		ev.data.controlHints[select.parent().parent().index()-1].type = select.val();
+	}));
+	
+	// add text listeners
+	var texts = table.find("span");
+	// loop them
+	texts.each(function() {		
+		// get a reference to the span
+		var span = $(this);
+		//function Property_bigtext(cell, propertyObject, property, refreshHtml) {
+		Property_bigtext(span.parent(), controlHints[span.parent().parent().index()-1], {key: "text"});		
+	});
+				
+	// add delete listeners
+	var deleteImages = table.find("img.delete");
+	// add a listener
+	_listeners.push( deleteImages.click( {controlHints: controlHints}, function(ev) {
+		// get the input
+		var input = $(ev.target);
+		// remove from parameters
+		ev.data.controlHints.splice(input.parent().parent().index()-1,1);
+		// remove row
+		input.parent().parent().remove();
+		// refresh the html and regenerate the mappings
+		rebuildHtml(controlHints);
+	}));
+	
+	// add reorder listeners
+	addReorder(controlHints, table.find("img.reorder"), function() { 
+		// refresh the html and regenerate the mappings
+		rebuildHtml(hints);
+		// refresh the property
+		Property_controlHints(cell, hints, {key: "controlHints"}, refreshHtml, dialogue); 
+	});
+		
+	// have an add row
+	table.append("<tr><td colspan='4'><a href='#'>add...</a></td></tr>");
+	// get a reference to the add
+	var add = table.find("tr").last().children().last().children().last();
+	// add a listener
+	_listeners.push( add.click( {cell: cell, hints: hints, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
+		// instantiate array if need be
+		if (!ev.data.hints.controlHints) ev.data.hints.controlHints = [];
+		// add a blank hint
+		ev.data.hints.controlHints.push({controlId: "", type: "hover", text: ""});
+		// refresh
+		Property_controlHints(ev.data.cell, ev.data.hints, {key: "controlHints"}, ev.data.refreshHtml, ev.data.dialogue);		
+	}));
+
 }

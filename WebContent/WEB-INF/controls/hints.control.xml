@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<controls xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/control.xsd">
+	<control>
+	    
+	    <type>hints</type>	 
+	    <version>1</version>
+	    <name>Hints</name>	   
+	    <image>images/tools_24x24.png</image>    
+	    
+	    <addToNewApplications>true</addToNewApplications>    
+	    <noDefaultName>true</noDefaultName>
+	    
+	    <canUserAdd>true</canUserAdd>
+	    <canUserAddPeers>true</canUserAddPeers>
+	    
+	    <properties>
+	        <property>
+	            <key>name</key>
+	            <name>Name</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>	            
+	        </property>	       
+	        <property>
+	            <key>controlHints</key>
+	            <name>Hints</name>
+	            <changeValueJavaScript>controlHints</changeValueJavaScript>	             
+	        </property>     
+	    </properties>
+	    
+	    <resources>
+	        <resource>
+	            <type>css</type>
+	            <contents>
+	                <![CDATA[	                
+.hint {
+	position: absolute;
+}                
+	                ]]>
+				</contents>
+	        </resource>
+	    </resources>
+	    
+	    <getHtmlFunction>
+	        <![CDATA[	  
+// return our html 
+return "<img id='" + this.id + "' class='nonVisibleControl' src='images/tools_24x24.png'></img>"
+	        ]]>
+	    </getHtmlFunction> 
+	    
+	    <saveJavaScript>
+	        <![CDATA[
+this.object.remove();     
+	        ]]>	        	        
+	    </saveJavaScript>
+	    
+	   	<getDetailsFunction>	        
+	        <![CDATA[
+return { controlHints: this.controlHints };
+			]]>	        	        
+	    </getDetailsFunction>
+	    
+	    <initJavaScript>
+	    	<![CDATA[	    	
+var body = $("body");
+	    	
+for (var i in details.controlHints) {
+
+	var controlHint = details.controlHints[i];
+	
+	body.append("<span class='hint' id='" + controlHint.controlId + "_hint'>" + controlHint.text + "</span>");
+	
+	$("#" + controlHint.controlId + "_hint").hide();
+	
+	$("#" + controlHint.controlId).mouseout({controlId: controlHint.controlId}, function(ev) {
+		$("#" + ev.data.controlId + "_hint").hide();
+	});
+		
+	switch (controlHint.type) {		
+		case "click" :
+			$("#" + controlHint.controlId).click({controlId: controlHint.controlId}, function(ev) { 
+				$("#" + ev.data.controlId + "_hint").css({
+					left: ev.clientX + 5,
+					top: ev.clientY + 5
+				}).show(); 
+			});
+			break;
+		case "hover" :
+			$("#" + controlHint.controlId).mouseover({controlId: controlHint.controlId}, function(ev) { 
+				$("#" + ev.data.controlId + "_hint").css({
+					left: ev.clientX + 5,
+					top: ev.clientY + 5
+				}).show();  
+			});
+			break;
+	}
+}   	
+	    	]]>
+	    </initJavaScript>
+	    
+	</control>
+</controls>

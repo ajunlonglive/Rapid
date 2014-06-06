@@ -68,7 +68,7 @@ function loadApps() {
 </div>
 
 <div class="title">
-	<span>Rapid - Version 2.0.1</span>
+	<span>Rapid - version <%=com.rapid.server.Rapid.VERSION %></span>
 </div>
 
 <% 

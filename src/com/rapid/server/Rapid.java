@@ -34,6 +34,7 @@ public class Rapid extends RapidHttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	// these are held here and referred to globally
+	public static final String VERSION = "2.1.2";
 	public static final String DESIGN_ROLE = "RapidDesign";
 	public static final String ADMIN_ROLE = "RapidAdmin";
 					
@@ -211,20 +212,7 @@ public class Rapid extends RapidHttpServlet {
     private String getPageStartHtml(Application application, Page page) throws JSONException {
     	
     	StringBuilder stringBuilder = new StringBuilder();
-    	
-    	// whether we're trying to avoid caching
-    	boolean noCaching = Boolean.parseBoolean(getServletContext().getInitParameter("noCaching"));
-    	
-    	// a string that will be appended to resources to try and avoid caching
-    	String noCache = "";
-    	
-    	// if we're trying to avoid caching
-    	if (noCaching) {
-    		// create a string to append in the form ?x=12345
-    		noCache = "?" + (char) (Math.floor(Math.random() * 26) + 97) + "=" + Math.floor(Math.random() * 10000);
-    	}
-    	
-    								
+    	    								
 		// this doctype is necessary (amongst other things) to stop the "user agent stylesheet" overriding styles
 		stringBuilder.append("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">");
 								
@@ -248,25 +236,25 @@ public class Rapid extends RapidHttpServlet {
 		}
 		
 		// include the application's JavaScript file (also generated when the page loads from the controls and actions)
-		stringBuilder.append("    <script type='text/javascript' src='applications/" + application.getId() +"/rapid.js" + noCache + "'></script>\n");
+		stringBuilder.append("    <script type='text/javascript' src='applications/" + application.getId() +"/rapid.js'></script>\n");
 		
 		// look for any page javascript files
 		if (page.getJavascriptFiles() != null) {
 			for (String file : page.getJavascriptFiles()) {
-				stringBuilder.append("    <script type='text/javascript' src='" + file + noCache + "'></script>\n");
+				stringBuilder.append("    <script type='text/javascript' src='" + file + "'></script>\n");
 			}
 		}
 														
 		// include the application's css file (generated when the application is saved)
-		stringBuilder.append("    <link rel='stylesheet' type='text/css' href='applications/" + application.getId() +"/rapid.css" + noCache + "'></link>\n");
+		stringBuilder.append("    <link rel='stylesheet' type='text/css' href='applications/" + application.getId() +"/rapid.css'></link>\n");
 		
 		// include the page's css file (generated when the page is saved)
-		stringBuilder.append("    <link rel='stylesheet' type='text/css' href='applications/" + application.getId() +"/" + page.getName() + ".css" + noCache + "'></link>\n");
+		stringBuilder.append("    <link rel='stylesheet' type='text/css' href='applications/" + application.getId() +"/" + page.getName() + ".css'></link>\n");
 		
 		// look for any page css files
 		if (page.getCssFiles() != null) {
 			for (String file : page.getCssFiles()) {
-				stringBuilder.append("    <link rel='stylesheet' type='text/css' href='" + file + noCache + "'></link>\n");
+				stringBuilder.append("    <link rel='stylesheet' type='text/css' href='" + file + "'></link>\n");
 			}
 		}
 		

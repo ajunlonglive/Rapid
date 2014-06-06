@@ -5,8 +5,7 @@
 	    <type>tableCell</type>
 	    <version>1</version>
 	    <name>Table cell</name>	   
-	    
-	    <addToNewApplications>true</addToNewApplications>
+	    	    
 	    <noDefaultName>true</noDefaultName>
 	    	    
 	    <canUserInsert>true</canUserInsert>    
@@ -163,6 +162,8 @@ return "#" + this.id;
 	    <name>Table</name>	    
 	    <image>images/table_24x24.png</image>  
 	    	    
+	   	<addToNewApplications>true</addToNewApplications>
+	   	
 	    <noDefaultName>true</noDefaultName>
 	    
 	    <canUserAdd>true</canUserAdd>

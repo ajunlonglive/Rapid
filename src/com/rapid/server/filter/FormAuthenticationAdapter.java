@@ -46,11 +46,11 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 			userName = (String) session.getAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME);
 			userPassword = (String) session.getAttribute(RapidFilter.SESSION_VARIABLE_USER_PASSWORD);
 			
+			// cast response to http
+			HttpServletResponse response = (HttpServletResponse) res;
+			
 			if (userName == null || userPassword == null) {
-												
-				// cast response to http
-				HttpServletResponse response = (HttpServletResponse) res;
-				
+																				
 				// look for an authorisation attribute in the session
 				String sessionRequestPath = (String) session.getAttribute("requestPath");
 				
@@ -146,6 +146,17 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 																			
 				}
 												
+			}
+			
+			// if we are requesting the login.jsp but have authenticated go to index instead
+			if (requestPath.contains("login.jsp")) {
+				
+				// send a redirect to load the index page
+				response.sendRedirect("index.jsp");
+				
+				// return immediately
+				return null;
+				
 			}
 				
 			// return the request which will process the chain

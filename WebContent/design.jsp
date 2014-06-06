@@ -95,7 +95,7 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, use
 			</div>	
 			<div class="controlPanelVersion" >
 				<img src="images/RapidLogo_60x40.png" style="margin-left:-16px;"/>
-				<div id="controlPanelVersion">Rapid<br/>2.0.1</div>
+				<div id="controlPanelVersion">Rapid<br/><%=com.rapid.server.Rapid.VERSION %></div>
 			</div>									
 		</div>
 		
