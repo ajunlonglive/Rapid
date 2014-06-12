@@ -26,6 +26,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
+import com.rapid.server.Rapid;
 import com.rapid.server.RapidHttpServlet;
 import com.rapid.server.RapidHttpServlet.RapidRequest;
 import com.rapid.utils.Files;
@@ -414,7 +415,7 @@ public class Page {
 		}
 		
 		// create folders to archive the pages
-		String archivePath = rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + application.getId() + "/_backup");		
+		String archivePath = rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + application.getId() + "/" + Rapid.BACKUP_FOLDER);		
 		File archiveFolder = new File(archivePath);		
 		if (!archiveFolder.exists()) archiveFolder.mkdirs();
 		
@@ -561,6 +562,14 @@ public class Page {
 		// unmarshall the page
 		return (Page) unmarshaller.unmarshal(file);
 				
+	}
+	
+	// delete a page backup
+	public static void deleteBackup(RapidHttpServlet rapidServlet, String appId, String backupId) {
+		// get the backup folder into a file object
+		File backup = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + appId + "/" + Rapid.BACKUP_FOLDER + "/" + backupId));
+		// delete
+		backup.delete();
 	}
 
 }

@@ -37,6 +37,7 @@ public class Rapid extends RapidHttpServlet {
 	public static final String VERSION = "2.1.2";
 	public static final String DESIGN_ROLE = "RapidDesign";
 	public static final String ADMIN_ROLE = "RapidAdmin";
+	public static final String BACKUP_FOLDER = "_backups";
 					
 	// this byte buffer is used for reading the post data
 	private byte[] _byteBuffer = new byte[1024];

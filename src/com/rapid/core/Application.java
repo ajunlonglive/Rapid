@@ -42,6 +42,7 @@ import org.xml.sax.SAXException;
 import com.rapid.data.ConnectionAdapter;
 import com.rapid.security.RapidSecurityAdapter;
 import com.rapid.security.SecurityAdapater;
+import com.rapid.server.Rapid;
 import com.rapid.server.RapidHttpServlet;
 import com.rapid.server.RapidHttpServlet.RapidRequest;
 import com.rapid.soa.Webservice;
@@ -324,6 +325,18 @@ public class Application {
 	
 	// get a single page by it's id
 	public Page getPage(String id) { return _pages.get(id);	}
+	// get a single page by it's name
+	public Page getPageByName(String name) {
+		// loop the page keyset
+		for (String pageId : _pages.keySet()) {
+			// get this page
+			Page page = _pages.get(pageId);
+			// return immediately  with the matching page
+			if (name.equals(page.getName())) return page;
+		}
+		// return if we got here
+		return null;	
+	}
 	// add them singly 
 	public void addPage(Page page) { _pages.put(page.getId(), page); }	
 	// remove them one by one too
@@ -790,11 +803,11 @@ public class Application {
 	                       
 	}
 	
-	public List<Backup> getApplicationBackups(RapidHttpServlet rapidServlet) {
+	public List<Backup> getApplicationBackups(RapidHttpServlet rapidServlet) throws JSONException {
 		
 		List<Backup> backups = new ArrayList<Backup>();
 				
-		File backupFolder = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/_backup/"));
+		File backupFolder = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + Rapid.BACKUP_FOLDER + "/"));
 		
 		if (backupFolder.exists()) {
 			
@@ -822,11 +835,15 @@ public class Application {
 						size = "huge!";
 					}
 					
-					SimpleDateFormat df = new SimpleDateFormat("yyyymmdd HHMMss");
+					SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd HHmmss");
 					
 					Date date = new Date();
 					
-					try { date = df.parse(nameParts[nameParts.length - 3] + " " + nameParts[nameParts.length - 2]); } catch (ParseException e) {}
+					try { 
+						date = df.parse(nameParts[nameParts.length - 3] + " " + nameParts[nameParts.length - 2]); 
+					} catch (ParseException ex) {
+						throw new JSONException(ex);
+					}
 					
 					backups.add(new Backup(id, date, nameParts[nameParts.length - 1], size));
 					
@@ -835,9 +852,9 @@ public class Application {
 						@Override
 						public int compare(Backup obj1, Backup obj2) {
 							if (obj1.getDate().before(obj2.getDate())) {
-								return 1;
-							} else {
 								return -1;
+							} else {
+								return 1;
 							}
 						}			
 					});
@@ -852,11 +869,11 @@ public class Application {
 		
 	}
 	
-	public List<Backup> getPageBackups(RapidHttpServlet rapidServlet) {
+	public List<Backup> getPageBackups(RapidHttpServlet rapidServlet) throws JSONException {
 		
 		List<Backup> backups = new ArrayList<Backup>();
 				
-		File backupFolder = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + _id + "/_backup/"));
+		File backupFolder = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + _id + "/" + Rapid.BACKUP_FOLDER + "/"));
 		
 		if (backupFolder.exists()) {
 			
@@ -890,11 +907,15 @@ public class Application {
 						size = "huge!";
 					}
 					
-					SimpleDateFormat df = new SimpleDateFormat("yyyymmdd HHMMss");
+					SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd HHmmss");
 					
 					Date date = new Date();
 					
-					try { date = df.parse(nameParts[nameParts.length - 3] + " " + nameParts[nameParts.length - 2]); } catch (ParseException e) {}
+					try { 
+						date = df.parse(nameParts[nameParts.length - 3] + " " + nameParts[nameParts.length - 2]); 
+					} catch (ParseException ex) {
+						throw new JSONException(ex);
+					}
 					
 					String[] userParts = nameParts[nameParts.length - 1].split("\\.");
 					
@@ -905,9 +926,9 @@ public class Application {
 						@Override
 						public int compare(Backup obj1, Backup obj2) {
 							if (obj1.getDate().before(obj2.getDate())) {
-								return 1;
-							} else {
 								return -1;
+							} else {
+								return 1;
 							}
 						}			
 					});
@@ -936,15 +957,19 @@ public class Application {
 		String fileName = _id + "_" + dateString + "_" + Files.safeName(userName);
 								
 		// create folders to backup the app
-		String backupPath = rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/_backup/" + fileName);		
+		String backupPath = rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + Rapid.BACKUP_FOLDER + "/" + fileName);		
 		File backupFolder = new File(backupPath);		
 		if (!backupFolder.exists()) backupFolder.mkdirs();
 
 		// create a file object for the application data folder
 		File appFolder = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + _id));
+		
+		// create a list of files to ignore
+		List<String> ignoreFiles = new ArrayList<String>();
+		ignoreFiles.add(com.rapid.server.Rapid.BACKUP_FOLDER);
 	 	
 	 	// copy the existing files and folders to the backup folder    
-	    Files.copyFolder(appFolder, backupFolder);
+	    Files.copyFolder(appFolder, backupFolder, ignoreFiles);
 	    
 	    // create a file object and folders for the web folder archive
 	    backupFolder = new File(backupPath + "/WebContent");
@@ -954,7 +979,7 @@ public class Application {
 	    appFolder = new File(rapidServlet.getServletContext().getRealPath("/applications/" + _id));
 	 		    	    
 	 	// copy the existing web content files and folders to the webcontent archive folder    
-	    Files.copyFolder(appFolder, backupFolder);
+	    Files.copyFolder(appFolder, backupFolder, ignoreFiles);
 	    	
 	}
 	
@@ -967,8 +992,12 @@ public class Application {
 		File destFolder = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + newId));		
 		if (!destFolder.exists()) destFolder.mkdirs();
 		
+		// create a list of files to ignore
+		List<String> ignoreFiles = new ArrayList<String>();
+		ignoreFiles.add(com.rapid.server.Rapid.BACKUP_FOLDER);
+				
 		// copy the application folders
-		Files.copyFolder(sourceFolder, destFolder);
+		Files.copyFolder(sourceFolder, destFolder, ignoreFiles);
 		
 		// get the resources source folder
 		sourceFolder = new File(rapidServlet.getServletContext().getRealPath("/applications/" + _id));
@@ -978,7 +1007,7 @@ public class Application {
 		if (!destFolder.exists()) destFolder.mkdirs();
 		
 		// copy the resource folders
-		Files.copyFolder(sourceFolder, destFolder);
+		Files.copyFolder(sourceFolder, destFolder, ignoreFiles);
 	    		
 	}
 		
@@ -1090,8 +1119,8 @@ public class Application {
 
 			// create a list of files to ignore
 			ArrayList<String> ignoreFiles = new ArrayList<String>();
-			// don't include any files or folders called _archive in the .zip
-			ignoreFiles.add("_archive");
+			// don't include any files or folders from the back in the .zip
+			ignoreFiles.add(Rapid.BACKUP_FOLDER);
 			
 			// zip the sources into the file
 			zipFile.zipFiles(zipSources, ignoreFiles);
@@ -1187,6 +1216,14 @@ public class Application {
 		
 		return application; 		
 		
+	}
+	
+	// delete an application backup
+	public static void deleteBackup(RapidHttpServlet rapidServlet, String backupId) {
+		// get the backup folder into a file object
+		File backup = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + Rapid.BACKUP_FOLDER + "/" + backupId));
+		// delete
+		Files.deleteRecurring(backup);
 	}
 	
 }

@@ -865,7 +865,7 @@ public class Designer extends RapidHttpServlet {
 										// get application.xml file
 										File appFileSource = new File (appFolderSource + "/application.xml");
 										
-										if (appFileSource.exists()) {
+										if (appFileSource.exists()) {											
 											
 											// copy web content
 											Files.copyFolder(webFolderSource, webFolderDest);

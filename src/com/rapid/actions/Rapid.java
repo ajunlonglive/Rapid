@@ -451,7 +451,7 @@ public class Rapid extends Action {
 						// create the backup json object
 						JSONObject jsonBackup = new JSONObject();
 						// create a date formatter
-						SimpleDateFormat df = new SimpleDateFormat("dd/mm/yyyy HH:MM:ss");
+						SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 						// populate it
 						jsonBackup.append("id", appBackup.getId());
 						jsonBackup.append("date", df.format(appBackup.getDate()));
@@ -475,7 +475,7 @@ public class Rapid extends Action {
 						// create the backup json object
 						JSONObject jsonBackup = new JSONObject();
 						// create a date formatter
-						SimpleDateFormat df = new SimpleDateFormat("dd/mm/yyyy HH:MM:ss");
+						SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 						// populate it
 						jsonBackup.append("id", appBackup.getId());
 						jsonBackup.append("page", appBackup.getName());
@@ -1057,15 +1057,19 @@ public class Rapid extends Action {
 																				 				
 				try {
 					
+					// create a list of files to ignore
+					List<String> ignoreFiles = new ArrayList<String>();
+					ignoreFiles.add(com.rapid.server.Rapid.BACKUP_FOLDER);
+					
 					// copy any webcontent
 					File oldFolder = new File(rapidServlet.getServletContext().getRealPath("/applications/" + app.getId()));					
 					File newFolder = new File(rapidServlet.getServletContext().getRealPath("/applications/" + newAppId));					
-					Files.copyFolder(oldFolder, newFolder);
+					Files.copyFolder(oldFolder, newFolder, ignoreFiles);
 					
 					// copy application pages
 					oldFolder = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + app.getId()));					
 					newFolder = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + newAppId));					
-					Files.copyFolder(oldFolder, newFolder);
+					Files.copyFolder(oldFolder, newFolder, ignoreFiles);
 															
 					// look for page files
 					File pagesFolder = new File(newFolder.getAbsolutePath() + "/pages");
@@ -1108,7 +1112,7 @@ public class Rapid extends Action {
 					}
 					
 					// look for an archive folder
-					File archiveFolder = new File(newFolder.getAbsolutePath() + "/_archive");
+					File archiveFolder = new File(newFolder.getAbsolutePath() + "/" + com.rapid.server.Rapid.BACKUP_FOLDER);
 					// delete the archive folder if present
 					if (archiveFolder.exists()) Files.deleteRecurring(archiveFolder);
 										
@@ -1459,6 +1463,134 @@ public class Rapid extends Action {
 				
 				if (!foundConnection) result.put("message", "Database connection could not be found");
 					
+			} else if ("DELAPPBACKUP".equals(action)) {
+				
+				try {
+					
+					// get the id
+					String backupId = jsonAction.getString("backupId");
+					
+					// delete the backup
+					Application.deleteBackup(rapidServlet, backupId);
+					
+					// set the result message
+					result.put("message", "Application backup " + appId + "/" + backupId + " deleted");
+					// pass back a control id from in  the dialogue with which to close it
+					result.put("controlId", "#rapid_P12_C13_");
+					
+				} catch (Exception ex) {
+					throw new JSONException(ex);
+				}
+								
+			} else if ("DELPAGEBACKUP".equals(action)) {
+				
+				try {
+					
+					// get the id
+					String backupId = jsonAction.getString("backupId");
+					
+					// delete the backup
+					Page.deleteBackup(rapidServlet, appId, backupId);
+					
+					// set the result message
+					result.put("message", "Page backup " + appId + "/" + backupId + " deleted");
+					// pass back a control id from in  the dialogue with which to close it
+					result.put("controlId", "#rapid_P13_C13_");
+					
+				} catch (Exception ex) {
+					throw new JSONException(ex);
+				}
+								
+			} else if ("RESTOREAPPBACKUP".equals(action)) {
+				
+				try {
+					
+					// get the id
+					String backupId = jsonAction.getString("backupId");
+															
+					// back up the current state of the application
+					app.backup(rapidServlet, rapidRequest);
+					
+					// get this backup folder
+					File backupFolder = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + com.rapid.server.Rapid.BACKUP_FOLDER + "/" + backupId));
+					
+					// create a file object for the application folder
+				 	File applicationFolder = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + app.getId()));
+					
+				 	// delete the application folder
+				 	Files.deleteRecurring(applicationFolder);
+				 	
+					// copy the backup into the application folder
+					Files.copyFolder(backupFolder, applicationFolder);
+					
+					// get the application file
+					File applicationFile = new File(applicationFolder.getAbsolutePath() + "/application.xml");
+					
+					// reload the application
+					app = Application.load(rapidServlet.getServletContext(), applicationFile);
+					
+					// add it back to the collection
+					rapidServlet.getApplications().put(app.getId(), app);
+					
+					// set the result message
+					result.put("message", "Application backup " + appId + "/" + backupId + " restored");
+					// pass back a control id from in  the dialogue with which to close it
+					result.put("controlId", "#rapid_P14_C13_");
+					
+				} catch (Exception ex) {
+					throw new JSONException(ex);
+				}
+								
+			} else if ("RESTOREPAGEBACKUP".equals(action)) {
+				
+				try {
+					
+					// get the id
+					String backupId = jsonAction.getString("backupId");
+					
+					// turn the id into parts
+					String[] idParts = backupId.split("_");
+					
+					// start the page name
+					String pageName = idParts[0];
+					// loop the remaining parts and build
+					for (int i = 1; i < idParts.length - 3; i++) {
+						pageName += "_" + idParts[i];
+					}
+					
+					// get the page
+					Page page = app.getPageByName(pageName);
+					
+					// get the page path
+					String pagePath = rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + app.getId() + "/pages");
+					
+					// create a file object for the page
+				 	File pageFile = new File(pagePath + "/" + Files.safeName(page.getName()) + ".page.xml");
+					
+				 	// create a backup for the current state
+					page.backup(rapidServlet, rapidRequest, pageFile);
+					
+					// get this backup file
+					File backupFile = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + app.getId() + "/" + com.rapid.server.Rapid.BACKUP_FOLDER + "/" + backupId));
+					
+					// copy it over the current page file
+					Files.copyFile(backupFile, pageFile);
+					
+					// load the page from the backup 
+					page = Page.load(rapidServlet.getServletContext(), backupFile);
+					
+					// replace the current entry
+					app.addPage(page);
+										
+					// set the result message
+					result.put("message", "Page backup " + appId + "/" + backupId + " restored");
+					// pass back a control id from in  the dialogue with which to close it
+					result.put("controlId", "#rapid_P15_C13_");
+					
+				} catch (Exception ex) {
+					throw new JSONException(ex);
+				}
+								
 			}
 								
 			// sent back the new app id for the callback load

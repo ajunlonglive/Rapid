@@ -82,7 +82,8 @@ public class ZipFile {
     }
 	
     public void zipFiles(List<ZipSource> sources, List<String> ignoreFiles) throws IOException {
-        ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(_file));
+        
+    	ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(_file));
         zipOut.setLevel(Deflater.DEFAULT_COMPRESSION);
 
         for (ZipSource source : sources) {
@@ -111,7 +112,14 @@ public class ZipFile {
         
         zipOut.flush();
         zipOut.close();
-    }	    
+        
+    }	
+    
+    public void zipFiles(List<ZipSource> sources) throws IOException {
+        
+    	zipFiles(sources, null);
+    	
+    }	
     
     public void unZip(File dir) throws IOException  {
     	

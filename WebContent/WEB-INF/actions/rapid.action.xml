@@ -50,7 +50,11 @@ return [
  ["DELUSERROLE","Delete user role"],
  ["SAVEUSERPASSWORD","Save user password"],
  ["REBUILDPAGES","Rebuild application pages"],
- ["TESTDBCONN","Test database connection"]
+ ["TESTDBCONN","Test database connection"],
+ ["DELAPPBACKUP","Delete application backup"],
+ ["DELPAGEBACKUP","Delete page backup"],
+ ["RESTOREAPPBACKUP","Restore application backup"],
+ ["RESTOREPAGEBACKUP","Restore page backup"]
 ];
 					]]>
 	            </getValuesFunction>  
@@ -323,6 +327,28 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, succes
 			};	
 			callback = function() {
 				alert("Database connection OK");
+			};															
+		break;
+		case "DELAPPBACKUP" : case "RESTOREAPPBACKUP" : 
+			data = { actionType: actionType, 
+				appId: $("#rapid_P0_C43").val(), 
+				backupId: $("#rapid_P0_C663_").find("tr.rowSelect").children("td").first().text() 
+			};	
+			callback = function(data) {
+				$(data.controlId).hideDialogue();
+				Event_change_rapid_P0_C43();
+				$("#rapid_P0_C662_").click();
+			};														
+		break;
+		case "DELPAGEBACKUP" : case "RESTOREPAGEBACKUP" :	
+			data = { actionType: actionType, 
+				appId: $("#rapid_P0_C43").val(), 
+				backupId: $("#rapid_P0_C678_").find("tr.rowSelect").children("td").first().text()  
+			};	
+			callback = function(data) {
+				$(data.controlId).hideDialogue();
+				Event_change_rapid_P0_C43();
+				$("#rapid_P0_C662_").click();
 			};															
 		break;
 		default :

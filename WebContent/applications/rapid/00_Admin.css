@@ -52,7 +52,7 @@
 }
 
 #rapid_P0_C90 td {
-	vertical-align:middle;
+	padding-top:3px;
 }
 
 #rapid_P0_C391_ {
@@ -67,18 +67,20 @@
 	width:100%;
 }
 
+#rapid_P0_C384_ {
+	vertical-align:top;
+}
+
 #rapid_P0_C393_ {
 	width:100%;
 	height:100px;
 }
 
 #rapid_P0_C380_ {
-	padding-left:10px;
 	padding-top:5px;
 }
 
 #rapid_P0_C377_ {
-	padding-left:10px;
 	padding-top:5px;
 }
 

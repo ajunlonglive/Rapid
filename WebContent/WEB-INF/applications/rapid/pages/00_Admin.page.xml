@@ -164,12 +164,12 @@
                         </events>
                         <properties>
                             <entry>
-<key>id</key>
-<value>rapid_P0_C112</value>
-                            </entry>
-                            <entry>
 <key>classes</key>
 <value>[]</value>
+                            </entry>
+                            <entry>
+<key>id</key>
+<value>rapid_P0_C112</value>
                             </entry>
                             <entry>
 <key>name</key>
@@ -412,12 +412,12 @@
                         </events>
                         <properties>
                             <entry>
-<key>id</key>
-<value>rapid_P0_C15</value>
-                            </entry>
-                            <entry>
 <key>classes</key>
 <value>[]</value>
+                            </entry>
+                            <entry>
+<key>id</key>
+<value>rapid_P0_C15</value>
                             </entry>
                             <entry>
 <key>name</key>
@@ -865,12 +865,12 @@
                         </events>
                         <properties>
                             <entry>
-<key>id</key>
-<value>rapid_P0_C16</value>
-                            </entry>
-                            <entry>
 <key>classes</key>
 <value>[]</value>
+                            </entry>
+                            <entry>
+<key>id</key>
+<value>rapid_P0_C16</value>
                             </entry>
                             <entry>
 <key>name</key>
@@ -1954,12 +1954,12 @@ $(&quot;#rapid_P0_C99&quot;).click();</value>
                         </events>
                         <properties>
                             <entry>
-<key>classes</key>
-<value>[]</value>
-                            </entry>
-                            <entry>
 <key>id</key>
 <value>rapid_P0_C43</value>
+                            </entry>
+                            <entry>
+<key>classes</key>
+<value>[]</value>
                             </entry>
                             <entry>
 <key>name</key>
@@ -2230,12 +2230,12 @@ $(&quot;#rapid_P0_C99&quot;).click();</value>
                         </events>
                         <properties>
                             <entry>
-<key>id</key>
-<value>rapid_P0_C17</value>
-                            </entry>
-                            <entry>
 <key>classes</key>
 <value>[]</value>
+                            </entry>
+                            <entry>
+<key>id</key>
+<value>rapid_P0_C17</value>
                             </entry>
                             <entry>
 <key>name</key>
@@ -2646,12 +2646,12 @@ $(&quot;#rapid_P0_C99&quot;).click();</value>
                         </events>
                         <properties>
                             <entry>
-<key>id</key>
-<value>rapid_P0_C205</value>
-                            </entry>
-                            <entry>
 <key>classes</key>
 <value>[]</value>
+                            </entry>
+                            <entry>
+<key>id</key>
+<value>rapid_P0_C205</value>
                             </entry>
                             <entry>
 <key>name</key>
@@ -2714,12 +2714,12 @@ $(&quot;#rapid_P0_C99&quot;).click();</value>
                         </events>
                         <properties>
                             <entry>
-<key>id</key>
-<value>P0_C208</value>
-                            </entry>
-                            <entry>
 <key>classes</key>
 <value>[]</value>
+                            </entry>
+                            <entry>
+<key>id</key>
+<value>P0_C208</value>
                             </entry>
                             <entry>
 <key>text</key>
@@ -2828,6 +2828,10 @@ $(&quot;#rapid_P0_C99&quot;).click();</value>
             <entry>
                 <key>id</key>
                 <value>rapid_P0_C390_</value>
+            </entry>
+            <entry>
+                <key>classes</key>
+                <value>[]</value>
             </entry>
             <entry>
                 <key>text</key>
@@ -2972,6 +2976,10 @@ $(&quot;#rapid_P0_C99&quot;).click();</value>
             <value>rapid_P0_C389_</value>
         </entry>
         <entry>
+            <key>classes</key>
+            <value>[]</value>
+        </entry>
+        <entry>
             <key>name</key>
             <value></value>
         </entry>
@@ -2988,6 +2996,10 @@ $(&quot;#rapid_P0_C99&quot;).click();</value>
 <childControls>
     <childControls>
         <properties>
+            <entry>
+                <key>classes</key>
+                <value>[]</value>
+            </entry>
             <entry>
                 <key>id</key>
                 <value>rapid_P0_C387_</value>
@@ -3148,6 +3160,10 @@ $(&quot;#rapid_P0_C99&quot;).click();</value>
     <childControls>
         <properties>
             <entry>
+                <key>classes</key>
+                <value>[]</value>
+            </entry>
+            <entry>
                 <key>id</key>
                 <value>rapid_P0_C384_</value>
             </entry>
@@ -3176,6 +3192,10 @@ $(&quot;#rapid_P0_C99&quot;).click();</value>
                 <value>1</value>
             </entry>
         </properties>
+        <styles>
+            <appliesTo>#rapid_P0_C384_</appliesTo>
+            <rules>vertical-align:top;</rules>
+        </styles>
     </childControls>
     <childControls>
         <childControls>
@@ -3192,6 +3212,10 @@ $(&quot;#rapid_P0_C99&quot;).click();</value>
                 <type>blur</type>
             </events>
             <properties>
+                <entry>
+                    <key>classes</key>
+                    <value>[]</value>
+                </entry>
                 <entry>
                     <key>id</key>
                     <value>rapid_P0_C393_</value>
@@ -3267,6 +3291,10 @@ $(&quot;#rapid_P0_C99&quot;).click();</value>
             <value>rapid_P0_C383_</value>
         </entry>
         <entry>
+            <key>classes</key>
+            <value>[]</value>
+        </entry>
+        <entry>
             <key>name</key>
             <value></value>
         </entry>
@@ -3283,6 +3311,10 @@ $(&quot;#rapid_P0_C99&quot;).click();</value>
 <childControls>
     <childControls>
         <properties>
+            <entry>
+                <key>classes</key>
+                <value>[]</value>
+            </entry>
             <entry>
                 <key>id</key>
                 <value>rapid_P0_C641_</value>
@@ -3444,6 +3476,10 @@ $(&quot;#rapid_P0_C99&quot;).click();</value>
                 <value>rapid_P0_C380_</value>
             </entry>
             <entry>
+                <key>classes</key>
+                <value>[]</value>
+            </entry>
+            <entry>
                 <key>text</key>
                 <value></value>
             </entry>
@@ -3470,7 +3506,6 @@ $(&quot;#rapid_P0_C99&quot;).click();</value>
         </properties>
         <styles>
             <appliesTo>#rapid_P0_C380_</appliesTo>
-            <rules>padding-left:10px;</rules>
             <rules>padding-top:5px;</rules>
         </styles>
     </childControls>
@@ -3557,6 +3592,10 @@ $(&quot;#rapid_P0_C99&quot;).click();</value>
                 <value>rapid_P0_C377_</value>
             </entry>
             <entry>
+                <key>classes</key>
+                <value>[]</value>
+            </entry>
+            <entry>
                 <key>text</key>
                 <value></value>
             </entry>
@@ -3583,7 +3622,6 @@ $(&quot;#rapid_P0_C99&quot;).click();</value>
         </properties>
         <styles>
             <appliesTo>#rapid_P0_C377_</appliesTo>
-            <rules>padding-left:10px;</rules>
             <rules>padding-top:5px;</rules>
         </styles>
     </childControls>
@@ -3651,12 +3689,12 @@ $(&quot;#rapid_P0_C99&quot;).click();</value>
             </events>
             <properties>
                 <entry>
-                    <key>id</key>
-                    <value>rapid_P0_C446_</value>
-                </entry>
-                <entry>
                     <key>classes</key>
                     <value>[]</value>
+                </entry>
+                <entry>
+                    <key>id</key>
+                    <value>rapid_P0_C446_</value>
                 </entry>
                 <entry>
                     <key>text</key>
@@ -3885,12 +3923,12 @@ $(&quot;#rapid_P0_C99&quot;).click();</value>
             </events>
             <properties>
                 <entry>
-                    <key>id</key>
-                    <value>rapid_P0_C417_</value>
-                </entry>
-                <entry>
                     <key>classes</key>
                     <value>[]</value>
+                </entry>
+                <entry>
+                    <key>id</key>
+                    <value>rapid_P0_C417_</value>
                 </entry>
                 <entry>
                     <key>name</key>
@@ -3912,12 +3950,12 @@ $(&quot;#rapid_P0_C99&quot;).click();</value>
         </childControls>
         <properties>
             <entry>
-                <key>id</key>
-                <value>rapid_P0_C413_</value>
-            </entry>
-            <entry>
                 <key>classes</key>
                 <value>[]</value>
+            </entry>
+            <entry>
+                <key>id</key>
+                <value>rapid_P0_C413_</value>
             </entry>
             <entry>
                 <key>text</key>
@@ -3974,6 +4012,10 @@ $(&quot;#rapid_P0_C99&quot;).click();</value>
         <value>rapid_P0_C90</value>
     </entry>
     <entry>
+        <key>classes</key>
+        <value>[]</value>
+    </entry>
+    <entry>
         <key>name</key>
         <value>Table 5</value>
     </entry>
@@ -3988,7 +4030,7 @@ $(&quot;#rapid_P0_C99&quot;).click();</value>
 </properties>
 <styles>
     <appliesTo>#rapid_P0_C90 td</appliesTo>
-    <rules>vertical-align:middle;</rules>
+    <rules>padding-top:3px;</rules>
 </styles>
                             </childControls>
                             <properties>
@@ -4030,6 +4072,10 @@ $(&quot;#rapid_P0_C99&quot;).click();</value>
             <entry>
                 <key>id</key>
                 <value>rapid_P0_C430_</value>
+            </entry>
+            <entry>
+                <key>classes</key>
+                <value>[]</value>
             </entry>
             <entry>
                 <key>text</key>
@@ -4157,6 +4203,10 @@ $(&quot;#rapid_P0_C99&quot;).click();</value>
         <entry>
             <key>id</key>
             <value>rapid_P0_C429_</value>
+        </entry>
+        <entry>
+            <key>classes</key>
+            <value>[]</value>
         </entry>
         <entry>
             <key>name</key>
@@ -4617,6 +4667,10 @@ $(&quot;#rapid_P0_C99&quot;).click();</value>
                     <value>rapid_P0_C103</value>
                 </entry>
                 <entry>
+                    <key>classes</key>
+                    <value>[]</value>
+                </entry>
+                <entry>
                     <key>name</key>
                     <value>Delete button</value>
                 </entry>
@@ -4698,6 +4752,10 @@ $(&quot;#rapid_P0_C99&quot;).click();</value>
         <value>rapid_P0_C428_</value>
     </entry>
     <entry>
+        <key>classes</key>
+        <value>[]</value>
+    </entry>
+    <entry>
         <key>name</key>
         <value>Table 10</value>
     </entry>
@@ -4719,6 +4777,10 @@ $(&quot;#rapid_P0_C99&quot;).click();</value>
 <entry>
     <key>id</key>
     <value>rapid_P0_C427_</value>
+</entry>
+<entry>
+    <key>classes</key>
+    <value>[]</value>
 </entry>
 <entry>
     <key>text</key>
@@ -4772,12 +4834,12 @@ $(&quot;#rapid_P0_C99&quot;).click();</value>
                     </childControls>
                     <properties>
                         <entry>
-                            <key>id</key>
-                            <value>rapid_P0_C418_</value>
-                        </entry>
-                        <entry>
                             <key>classes</key>
                             <value>[]</value>
+                        </entry>
+                        <entry>
+                            <key>id</key>
+                            <value>rapid_P0_C418_</value>
                         </entry>
                         <entry>
                             <key>name</key>
@@ -4799,12 +4861,12 @@ $(&quot;#rapid_P0_C99&quot;).click();</value>
                 </childControls>
                 <properties>
                     <entry>
-                        <key>id</key>
-                        <value>rapid_P0_C99</value>
-                    </entry>
-                    <entry>
                         <key>classes</key>
                         <value>[]</value>
+                    </entry>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P0_C99</value>
                     </entry>
                     <entry>
                         <key>name</key>
@@ -5290,12 +5352,16 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
 </events>
 <properties>
     <entry>
+        <key>columnHeadings</key>
+        <value>true</value>
+    </entry>
+    <entry>
         <key>id</key>
         <value>rapid_P0_C311</value>
     </entry>
     <entry>
-        <key>columnHeadings</key>
-        <value>true</value>
+        <key>classes</key>
+        <value>[]</value>
     </entry>
     <entry>
         <key>details</key>
@@ -6937,12 +7003,16 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
 </events>
 <properties>
     <entry>
+        <key>columnHeadings</key>
+        <value>true</value>
+    </entry>
+    <entry>
         <key>id</key>
         <value>rapid_P0_C483_</value>
     </entry>
     <entry>
-        <key>columnHeadings</key>
-        <value>true</value>
+        <key>classes</key>
+        <value>[]</value>
     </entry>
     <entry>
         <key>details</key>
@@ -7998,12 +8068,12 @@ _soaDetails.responseSchema.rootElement.isArray = $(ev.target).val();
         <value>rapid_P0_C598_</value>
     </entry>
     <entry>
-        <key>name</key>
-        <value>Radio buttons 1</value>
-    </entry>
-    <entry>
         <key>layout</key>
         <value>H</value>
+    </entry>
+    <entry>
+        <key>name</key>
+        <value>Radio buttons 1</value>
     </entry>
     <entry>
         <key>codes</key>
@@ -9151,12 +9221,12 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
 </events>
 <properties>
     <entry>
-        <key>id</key>
-        <value>rapid_P0_C222</value>
-    </entry>
-    <entry>
         <key>columnHeadings</key>
         <value>true</value>
+    </entry>
+    <entry>
+        <key>id</key>
+        <value>rapid_P0_C222</value>
     </entry>
     <entry>
         <key>details</key>
@@ -9583,12 +9653,12 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
 </events>
 <properties>
     <entry>
-        <key>id</key>
-        <value>rapid_P0_C216</value>
-    </entry>
-    <entry>
         <key>columnHeadings</key>
         <value>true</value>
+    </entry>
+    <entry>
+        <key>id</key>
+        <value>rapid_P0_C216</value>
     </entry>
     <entry>
         <key>details</key>
@@ -9599,12 +9669,12 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
         <value>Users grid</value>
     </entry>
     <entry>
-        <key>columns</key>
-        <value>[{&quot;field&quot;:&quot;userName&quot;,&quot;title&quot;:&quot;Users&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;font-weight:bold;background-color:red; color:white; padding:5px;text-align:center;background :#e00 url(applications/rapid/highlight_red_1x44.png) 50% 50% repeat-x;text-shadow:-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;&quot;,&quot;fieldStyle&quot;:&quot;text-align:left;padding-left:10px;&quot;}]</value>
-    </entry>
-    <entry>
         <key>rowStyle2</key>
         <value>background-color:#ddd</value>
+    </entry>
+    <entry>
+        <key>columns</key>
+        <value>[{&quot;field&quot;:&quot;userName&quot;,&quot;title&quot;:&quot;Users&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;font-weight:bold;background-color:red; color:white; padding:5px;text-align:center;background :#e00 url(applications/rapid/highlight_red_1x44.png) 50% 50% repeat-x;text-shadow:-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;&quot;,&quot;fieldStyle&quot;:&quot;text-align:left;padding-left:10px;&quot;}]</value>
     </entry>
     <entry>
         <key>type</key>
@@ -10599,12 +10669,12 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
                 </events>
                 <properties>
                     <entry>
-                        <key>id</key>
-                        <value>rapid_P0_C235</value>
-                    </entry>
-                    <entry>
                         <key>columnHeadings</key>
                         <value>true</value>
+                    </entry>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P0_C235</value>
                     </entry>
                     <entry>
                         <key>details</key>
@@ -11038,16 +11108,16 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
             </events>
             <properties>
                 <entry>
-                    <key>id</key>
-                    <value>rapid_P0_C288</value>
+                    <key>classes</key>
+                    <value>[]</value>
                 </entry>
                 <entry>
                     <key>columnHeadings</key>
                     <value>true</value>
                 </entry>
                 <entry>
-                    <key>classes</key>
-                    <value>[]</value>
+                    <key>id</key>
+                    <value>rapid_P0_C288</value>
                 </entry>
                 <entry>
                     <key>details</key>
@@ -11059,7 +11129,7 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
                 </entry>
                 <entry>
                     <key>columns</key>
-                    <value>[{&quot;field&quot;:&quot;type&quot;,&quot;title&quot;:&quot;Type&quot;,&quot;visible&quot;:false,&quot;titleStyle&quot;:&quot;background-color:red;&quot;,&quot;fieldStyle&quot;:&quot;&quot;},{&quot;field&quot;:&quot;name&quot;,&quot;title&quot;:&quot;Actions&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;font-weight:bold; background-color:red; color:white; padding:5px;text-align:right;background :#e00 url(applications/rapid/highlight_red_1x44.png) 50% 50% repeat-x;text-shadow:-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;&quot;,&quot;fieldStyle&quot;:&quot;text-align:left;padding-left:10px;&quot;},{&quot;field&quot;:&quot;&quot;,&quot;cellFunction&quot;:&quot;this.html(\&quot;&lt;input type='checkbox'&gt;&lt;\/input&gt;\&quot;);&quot;,&quot;title&quot;:&quot;&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;background-color:red;background :#e00 url(applications/rapid/highlight_red_1x44.png) 50% 50% repeat-x;text-shadow:-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;&quot;,&quot;fieldStyle&quot;:&quot;&quot;}]</value>
+                    <value>[{&quot;field&quot;:&quot;type&quot;,&quot;title&quot;:&quot;Type&quot;,&quot;visible&quot;:false,&quot;titleStyle&quot;:&quot;background-color:red;&quot;,&quot;fieldStyle&quot;:&quot;&quot;},{&quot;field&quot;:&quot;name&quot;,&quot;title&quot;:&quot;Actions&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;font-weight:bold; background-color:red; color:white; padding:5px;text-align:right;background :#e00 url(applications/rapid/highlight_red_1x44.png) 50% 50% repeat-x;text-shadow:-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;&quot;,&quot;fieldStyle&quot;:&quot;text-align:left;padding-left:10px;&quot;},{&quot;cellFunction&quot;:&quot;this.html(\&quot;&lt;input type='checkbox'&gt;&lt;\/input&gt;\&quot;);&quot;,&quot;field&quot;:&quot;&quot;,&quot;title&quot;:&quot;&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;background-color:red;background :#e00 url(applications/rapid/highlight_red_1x44.png) 50% 50% repeat-x;text-shadow:-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;&quot;,&quot;fieldStyle&quot;:&quot;&quot;}]</value>
                 </entry>
                 <entry>
                     <key>type</key>
@@ -11082,12 +11152,12 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
         </childControls>
         <properties>
             <entry>
-                <key>id</key>
-                <value>rapid_P0_C291</value>
-            </entry>
-            <entry>
                 <key>classes</key>
                 <value>[]</value>
+            </entry>
+            <entry>
+                <key>id</key>
+                <value>rapid_P0_C291</value>
             </entry>
             <entry>
                 <key>text</key>
@@ -11121,12 +11191,12 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
     </childControls>
     <properties>
         <entry>
-            <key>id</key>
-            <value>rapid_P0_C290</value>
-        </entry>
-        <entry>
             <key>classes</key>
             <value>[]</value>
+        </entry>
+        <entry>
+            <key>id</key>
+            <value>rapid_P0_C290</value>
         </entry>
         <entry>
             <key>name</key>
@@ -11460,12 +11530,12 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
 </childControls>
 <properties>
     <entry>
-        <key>id</key>
-        <value>rapid_P0_C48</value>
-    </entry>
-    <entry>
         <key>classes</key>
         <value>[]</value>
+    </entry>
+    <entry>
+        <key>id</key>
+        <value>rapid_P0_C48</value>
     </entry>
     <entry>
         <key>name</key>
@@ -11488,12 +11558,12 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
                             </childControls>
                             <properties>
 <entry>
-    <key>id</key>
-    <value>rapid_P0_C630_</value>
-</entry>
-<entry>
     <key>classes</key>
     <value>[]</value>
+</entry>
+<entry>
+    <key>id</key>
+    <value>rapid_P0_C630_</value>
 </entry>
 <entry>
     <key>text</key>
@@ -11574,12 +11644,12 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
             </events>
             <properties>
                 <entry>
-                    <key>id</key>
-                    <value>rapid_P0_C289</value>
-                </entry>
-                <entry>
                     <key>columnHeadings</key>
                     <value>true</value>
+                </entry>
+                <entry>
+                    <key>id</key>
+                    <value>rapid_P0_C289</value>
                 </entry>
                 <entry>
                     <key>details</key>
@@ -11591,7 +11661,7 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
                 </entry>
                 <entry>
                     <key>columns</key>
-                    <value>[{&quot;field&quot;:&quot;type&quot;,&quot;title&quot;:&quot;Type&quot;,&quot;visible&quot;:false,&quot;titleStyle&quot;:&quot;background-color:red;&quot;,&quot;fieldStyle&quot;:&quot;&quot;},{&quot;field&quot;:&quot;name&quot;,&quot;title&quot;:&quot;Controls&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;font-weight:bold; background-color:red; color:white; padding:5px;text-align:right;background :#e00 url(applications/rapid/highlight_red_1x44.png) 50% 50% repeat-x;text-shadow:-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;&quot;,&quot;fieldStyle&quot;:&quot;text-align:left;padding-left:10px;&quot;},{&quot;field&quot;:&quot;&quot;,&quot;cellFunction&quot;:&quot;this.html(\&quot;&lt;input type='checkbox'&gt;&lt;\/input&gt;\&quot;);&quot;,&quot;title&quot;:&quot;&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;background-color:red;background :#e00 url(applications/rapid/highlight_red_1x44.png) 50% 50% repeat-x;text-shadow:-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;&quot;,&quot;fieldStyle&quot;:&quot;&quot;}]</value>
+                    <value>[{&quot;field&quot;:&quot;type&quot;,&quot;title&quot;:&quot;Type&quot;,&quot;visible&quot;:false,&quot;titleStyle&quot;:&quot;background-color:red;&quot;,&quot;fieldStyle&quot;:&quot;&quot;},{&quot;field&quot;:&quot;name&quot;,&quot;title&quot;:&quot;Controls&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;font-weight:bold; background-color:red; color:white; padding:5px;text-align:right;background :#e00 url(applications/rapid/highlight_red_1x44.png) 50% 50% repeat-x;text-shadow:-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;&quot;,&quot;fieldStyle&quot;:&quot;text-align:left;padding-left:10px;&quot;},{&quot;cellFunction&quot;:&quot;this.html(\&quot;&lt;input type='checkbox'&gt;&lt;\/input&gt;\&quot;);&quot;,&quot;field&quot;:&quot;&quot;,&quot;title&quot;:&quot;&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;background-color:red;background :#e00 url(applications/rapid/highlight_red_1x44.png) 50% 50% repeat-x;text-shadow:-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;&quot;,&quot;fieldStyle&quot;:&quot;&quot;}]</value>
                 </entry>
                 <entry>
                     <key>type</key>
@@ -12011,12 +12081,12 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
                         </childControls>
                         <properties>
                             <entry>
-<key>id</key>
-<value>rapid_P0_C629_</value>
-                            </entry>
-                            <entry>
 <key>classes</key>
 <value>[]</value>
+                            </entry>
+                            <entry>
+<key>id</key>
+<value>rapid_P0_C629_</value>
                             </entry>
                             <entry>
 <key>name</key>
@@ -12034,12 +12104,12 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
                     </childControls>
                     <properties>
                         <entry>
-                            <key>id</key>
-                            <value>rapid_P0_C625_</value>
-                        </entry>
-                        <entry>
                             <key>classes</key>
                             <value>[]</value>
+                        </entry>
+                        <entry>
+                            <key>id</key>
+                            <value>rapid_P0_C625_</value>
                         </entry>
                         <entry>
                             <key>name</key>
@@ -12061,12 +12131,12 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
                 </childControls>
                 <properties>
                     <entry>
-                        <key>id</key>
-                        <value>rapid_P0_C45</value>
-                    </entry>
-                    <entry>
                         <key>classes</key>
                         <value>[]</value>
+                    </entry>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P0_C45</value>
                     </entry>
                     <entry>
                         <key>name</key>
@@ -12092,12 +12162,12 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
                         <childControls>
                             <properties>
 <entry>
-    <key>id</key>
-    <value>rapid_P0_C672_</value>
-</entry>
-<entry>
     <key>classes</key>
     <value>[]</value>
+</entry>
+<entry>
+    <key>id</key>
+    <value>rapid_P0_C672_</value>
 </entry>
 <entry>
     <key>text</key>
@@ -12128,12 +12198,12 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
                         <childControls>
                             <properties>
 <entry>
-    <key>id</key>
-    <value>rapid_P0_C675_</value>
-</entry>
-<entry>
     <key>classes</key>
     <value>[]</value>
+</entry>
+<entry>
+    <key>id</key>
+    <value>rapid_P0_C675_</value>
 </entry>
 <entry>
     <key>text</key>
@@ -12164,12 +12234,12 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
                         <childControls>
                             <properties>
 <entry>
-    <key>id</key>
-    <value>rapid_P0_C676_</value>
-</entry>
-<entry>
     <key>classes</key>
     <value>[]</value>
+</entry>
+<entry>
+    <key>id</key>
+    <value>rapid_P0_C676_</value>
 </entry>
 <entry>
     <key>text</key>
@@ -12199,12 +12269,12 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
                         </childControls>
                         <properties>
                             <entry>
-<key>id</key>
-<value>rapid_P0_C671_</value>
-                            </entry>
-                            <entry>
 <key>classes</key>
 <value>[]</value>
+                            </entry>
+                            <entry>
+<key>id</key>
+<value>rapid_P0_C671_</value>
                             </entry>
                             <entry>
 <key>type</key>
@@ -12227,20 +12297,20 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
 </events>
 <properties>
     <entry>
-        <key>id</key>
-        <value>rapid_P0_C663_</value>
+        <key>classes</key>
+        <value>[]</value>
     </entry>
     <entry>
         <key>columnHeadings</key>
         <value>true</value>
     </entry>
     <entry>
-        <key>classes</key>
-        <value>[]</value>
+        <key>id</key>
+        <value>rapid_P0_C663_</value>
     </entry>
     <entry>
         <key>details</key>
-        <value>{&quot;rowSelect&quot;:false,&quot;columns&quot;:[{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;id&quot;,&quot;visible&quot;:false,&quot;style&quot;:&quot;&quot;},{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;date&quot;,&quot;visible&quot;:true,&quot;style&quot;:&quot;text-align:left;padding-left:10px;&quot;},{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;user&quot;,&quot;visible&quot;:true,&quot;style&quot;:&quot;text-align:left;padding-left:10px;&quot;},{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;size&quot;,&quot;visible&quot;:true,&quot;style&quot;:&quot;text-align:right;padding-left:10px;&quot;},{&quot;cellFunction&quot;:&quot;$(this).append(\&quot;&lt;button&gt;restore...&lt;\/button&gt;&lt;button&gt;delete...&lt;\/button&gt;\&quot;)&quot;,&quot;field&quot;:&quot;&quot;,&quot;visible&quot;:true,&quot;style&quot;:&quot;&quot;}],&quot;rowHover&quot;:false}</value>
+        <value>{&quot;rowSelect&quot;:false,&quot;columns&quot;:[{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;id&quot;,&quot;visible&quot;:false,&quot;style&quot;:&quot;&quot;},{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;date&quot;,&quot;visible&quot;:true,&quot;style&quot;:&quot;text-align:left;padding-left:10px;&quot;},{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;user&quot;,&quot;visible&quot;:true,&quot;style&quot;:&quot;text-align:left;padding-left:10px;&quot;},{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;size&quot;,&quot;visible&quot;:true,&quot;style&quot;:&quot;text-align:right;padding-left:10px;&quot;},{&quot;cellFunction&quot;:&quot;var cell = $(this);\ncell.append(\&quot;&lt;button&gt;restore...&lt;\/button&gt;&lt;button&gt;delete...&lt;\/button&gt;\&quot;);\ncell.find(\&quot;button\&quot;).click( function(ev) {\n  var button = $(ev.target);\n  switch (button.text()) {\n    case \&quot;restore...\&quot; :\n      Action_navigate('~?a=rapid&amp;p=P14',true);\n    break;\n    case \&quot;delete...\&quot; :\n      Action_navigate('~?a=rapid&amp;p=P12',true);\n    break;\n  }\n});\n\n&quot;,&quot;field&quot;:&quot;&quot;,&quot;visible&quot;:true,&quot;style&quot;:&quot;&quot;}],&quot;rowHover&quot;:false}</value>
     </entry>
     <entry>
         <key>name</key>
@@ -12248,7 +12318,7 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
     </entry>
     <entry>
         <key>columns</key>
-        <value>[{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;id&quot;,&quot;title&quot;:&quot;ID&quot;,&quot;visible&quot;:false,&quot;titleStyle&quot;:&quot;&quot;,&quot;fieldStyle&quot;:&quot;&quot;},{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;date&quot;,&quot;title&quot;:&quot;Date and time&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;font-weight:bold; background-color:red; color:white; padding:5px;text-align:center;background :#e00 url(applications/rapid/highlight_red_1x44.png) 50% 50% repeat-x;text-shadow:-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;&quot;,&quot;fieldStyle&quot;:&quot;text-align:left;padding-left:10px;&quot;},{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;user&quot;,&quot;title&quot;:&quot;User&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;font-weight:bold; background-color:red; color:white; padding:5px;text-align:center;background :#e00 url(applications/rapid/highlight_red_1x44.png) 50% 50% repeat-x;text-shadow:-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;&quot;,&quot;fieldStyle&quot;:&quot;text-align:left;padding-left:10px;&quot;},{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;size&quot;,&quot;title&quot;:&quot;Size&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;font-weight:bold; background-color:red; color:white; padding:5px;text-align:center;background :#e00 url(applications/rapid/highlight_red_1x44.png) 50% 50% repeat-x;text-shadow:-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;&quot;,&quot;fieldStyle&quot;:&quot;text-align:right;padding-left:10px;&quot;},{&quot;cellFunction&quot;:&quot;$(this).append(\&quot;&lt;button&gt;restore...&lt;\/button&gt;&lt;button&gt;delete...&lt;\/button&gt;\&quot;)&quot;,&quot;field&quot;:&quot;&quot;,&quot;title&quot;:&quot;&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;font-weight:bold; background-color:red; color:white; padding:5px;text-align:right;background :#e00 url(applications/rapid/highlight_red_1x44.png) 50% 50% repeat-x;text-shadow:-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;&quot;,&quot;fieldStyle&quot;:&quot;&quot;}]</value>
+        <value>[{&quot;field&quot;:&quot;id&quot;,&quot;cellFunction&quot;:&quot;&quot;,&quot;title&quot;:&quot;ID&quot;,&quot;visible&quot;:false,&quot;titleStyle&quot;:&quot;&quot;,&quot;fieldStyle&quot;:&quot;&quot;},{&quot;field&quot;:&quot;date&quot;,&quot;cellFunction&quot;:&quot;&quot;,&quot;title&quot;:&quot;Date and time&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;font-weight:bold; background-color:red; color:white; padding:5px;text-align:center;background :#e00 url(applications/rapid/highlight_red_1x44.png) 50% 50% repeat-x;text-shadow:-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;&quot;,&quot;fieldStyle&quot;:&quot;text-align:left;padding-left:10px;&quot;},{&quot;field&quot;:&quot;user&quot;,&quot;cellFunction&quot;:&quot;&quot;,&quot;title&quot;:&quot;User&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;font-weight:bold; background-color:red; color:white; padding:5px;text-align:center;background :#e00 url(applications/rapid/highlight_red_1x44.png) 50% 50% repeat-x;text-shadow:-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;&quot;,&quot;fieldStyle&quot;:&quot;text-align:left;padding-left:10px;&quot;},{&quot;field&quot;:&quot;size&quot;,&quot;cellFunction&quot;:&quot;&quot;,&quot;title&quot;:&quot;Size&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;font-weight:bold; background-color:red; color:white; padding:5px;text-align:center;background :#e00 url(applications/rapid/highlight_red_1x44.png) 50% 50% repeat-x;text-shadow:-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;&quot;,&quot;fieldStyle&quot;:&quot;text-align:right;padding-left:10px;&quot;},{&quot;field&quot;:&quot;&quot;,&quot;cellFunction&quot;:&quot;var cell = $(this);\ncell.append(\&quot;&lt;button&gt;restore...&lt;\/button&gt;&lt;button&gt;delete...&lt;\/button&gt;\&quot;);\ncell.find(\&quot;button\&quot;).click( function(ev) {\n  var button = $(ev.target);\n  switch (button.text()) {\n    case \&quot;restore...\&quot; :\n      Action_navigate('~?a=rapid&amp;p=P14',true);\n    break;\n    case \&quot;delete...\&quot; :\n      Action_navigate('~?a=rapid&amp;p=P12',true);\n    break;\n  }\n});\n\n&quot;,&quot;title&quot;:&quot;&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;font-weight:bold; background-color:red; color:white; padding:5px;text-align:right;background :#e00 url(applications/rapid/highlight_red_1x44.png) 50% 50% repeat-x;text-shadow:-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;&quot;,&quot;fieldStyle&quot;:&quot;&quot;}]</value>
     </entry>
     <entry>
         <key>type</key>
@@ -12271,12 +12341,12 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
                             </childControls>
                             <properties>
 <entry>
-    <key>id</key>
-    <value>rapid_P0_C666_</value>
-</entry>
-<entry>
     <key>classes</key>
     <value>[]</value>
+</entry>
+<entry>
+    <key>id</key>
+    <value>rapid_P0_C666_</value>
 </entry>
 <entry>
     <key>text</key>
@@ -12314,20 +12384,20 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
 </events>
 <properties>
     <entry>
-        <key>id</key>
-        <value>rapid_P0_C678_</value>
+        <key>classes</key>
+        <value>[]</value>
     </entry>
     <entry>
         <key>columnHeadings</key>
         <value>true</value>
     </entry>
     <entry>
-        <key>classes</key>
-        <value>[]</value>
+        <key>id</key>
+        <value>rapid_P0_C678_</value>
     </entry>
     <entry>
         <key>details</key>
-        <value>{&quot;rowSelect&quot;:false,&quot;columns&quot;:[{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;id&quot;,&quot;visible&quot;:false,&quot;style&quot;:&quot;&quot;},{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;date&quot;,&quot;visible&quot;:true,&quot;style&quot;:&quot;text-align:left;padding-left:10px;&quot;},{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;page&quot;,&quot;visible&quot;:true,&quot;style&quot;:&quot;text-align:left;padding-left:10px;&quot;},{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;user&quot;,&quot;visible&quot;:true,&quot;style&quot;:&quot;text-align:left;padding-left:10px;&quot;},{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;size&quot;,&quot;visible&quot;:true,&quot;style&quot;:&quot;text-align:right;padding-left:10px;&quot;},{&quot;cellFunction&quot;:&quot;$(this).append(\&quot;&lt;button&gt;restore...&lt;\/button&gt;&lt;button&gt;delete...&lt;\/button&gt;\&quot;)&quot;,&quot;field&quot;:&quot;&quot;,&quot;visible&quot;:true,&quot;style&quot;:&quot;&quot;}],&quot;rowHover&quot;:false}</value>
+        <value>{&quot;rowSelect&quot;:false,&quot;columns&quot;:[{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;id&quot;,&quot;visible&quot;:false,&quot;style&quot;:&quot;&quot;},{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;date&quot;,&quot;visible&quot;:true,&quot;style&quot;:&quot;text-align:left;padding-left:10px;&quot;},{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;page&quot;,&quot;visible&quot;:true,&quot;style&quot;:&quot;text-align:left;padding-left:10px;&quot;},{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;user&quot;,&quot;visible&quot;:true,&quot;style&quot;:&quot;text-align:left;padding-left:10px;&quot;},{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;size&quot;,&quot;visible&quot;:true,&quot;style&quot;:&quot;text-align:right;padding-left:10px;&quot;},{&quot;cellFunction&quot;:&quot;var cell = $(this);\ncell.append(\&quot;&lt;button&gt;restore...&lt;\/button&gt;&lt;button&gt;delete...&lt;\/button&gt;\&quot;);\ncell.find(\&quot;button\&quot;).click( function(ev) {\n  var button = $(ev.target);\n  switch (button.text()) {\n    case \&quot;restore...\&quot; :\n      Action_navigate('~?a=rapid&amp;p=P15',true);\n    break;\n    case \&quot;delete...\&quot; :\n      Action_navigate('~?a=rapid&amp;p=P13',true);\n    break;\n  }\n});&quot;,&quot;field&quot;:&quot;&quot;,&quot;visible&quot;:true,&quot;style&quot;:&quot;&quot;}],&quot;rowHover&quot;:false}</value>
     </entry>
     <entry>
         <key>name</key>
@@ -12335,7 +12405,7 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
     </entry>
     <entry>
         <key>columns</key>
-        <value>[{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;id&quot;,&quot;title&quot;:&quot;ID&quot;,&quot;visible&quot;:false,&quot;titleStyle&quot;:&quot;&quot;,&quot;fieldStyle&quot;:&quot;&quot;},{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;date&quot;,&quot;title&quot;:&quot;Date and time&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;font-weight:bold; background-color:red; color:white; padding:5px;text-align:center;background :#e00 url(applications/rapid/highlight_red_1x44.png) 50% 50% repeat-x;text-shadow:-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;&quot;,&quot;fieldStyle&quot;:&quot;text-align:left;padding-left:10px;&quot;},{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;page&quot;,&quot;title&quot;:&quot;Page&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;font-weight:bold; background-color:red; color:white; padding:5px;text-align:center;background :#e00 url(applications/rapid/highlight_red_1x44.png) 50% 50% repeat-x;text-shadow:-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;&quot;,&quot;fieldStyle&quot;:&quot;text-align:left;padding-left:10px;&quot;},{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;user&quot;,&quot;title&quot;:&quot;User&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;font-weight:bold; background-color:red; color:white; padding:5px;text-align:center;background :#e00 url(applications/rapid/highlight_red_1x44.png) 50% 50% repeat-x;text-shadow:-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;&quot;,&quot;fieldStyle&quot;:&quot;text-align:left;padding-left:10px;&quot;},{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;size&quot;,&quot;title&quot;:&quot;Size&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;font-weight:bold; background-color:red; color:white; padding:5px;text-align:center;background :#e00 url(applications/rapid/highlight_red_1x44.png) 50% 50% repeat-x;text-shadow:-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;&quot;,&quot;fieldStyle&quot;:&quot;text-align:right;padding-left:10px;&quot;},{&quot;cellFunction&quot;:&quot;$(this).append(\&quot;&lt;button&gt;restore...&lt;\/button&gt;&lt;button&gt;delete...&lt;\/button&gt;\&quot;)&quot;,&quot;field&quot;:&quot;&quot;,&quot;title&quot;:&quot;&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;font-weight:bold; background-color:red; color:white; padding:5px;text-align:right;background :#e00 url(applications/rapid/highlight_red_1x44.png) 50% 50% repeat-x;text-shadow:-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;&quot;,&quot;fieldStyle&quot;:&quot;&quot;}]</value>
+        <value>[{&quot;field&quot;:&quot;id&quot;,&quot;cellFunction&quot;:&quot;&quot;,&quot;title&quot;:&quot;ID&quot;,&quot;visible&quot;:false,&quot;titleStyle&quot;:&quot;&quot;,&quot;fieldStyle&quot;:&quot;&quot;},{&quot;field&quot;:&quot;date&quot;,&quot;cellFunction&quot;:&quot;&quot;,&quot;title&quot;:&quot;Date and time&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;font-weight:bold; background-color:red; color:white; padding:5px;text-align:center;background :#e00 url(applications/rapid/highlight_red_1x44.png) 50% 50% repeat-x;text-shadow:-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;&quot;,&quot;fieldStyle&quot;:&quot;text-align:left;padding-left:10px;&quot;},{&quot;field&quot;:&quot;page&quot;,&quot;cellFunction&quot;:&quot;&quot;,&quot;title&quot;:&quot;Page&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;font-weight:bold; background-color:red; color:white; padding:5px;text-align:center;background :#e00 url(applications/rapid/highlight_red_1x44.png) 50% 50% repeat-x;text-shadow:-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;&quot;,&quot;fieldStyle&quot;:&quot;text-align:left;padding-left:10px;&quot;},{&quot;field&quot;:&quot;user&quot;,&quot;cellFunction&quot;:&quot;&quot;,&quot;title&quot;:&quot;User&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;font-weight:bold; background-color:red; color:white; padding:5px;text-align:center;background :#e00 url(applications/rapid/highlight_red_1x44.png) 50% 50% repeat-x;text-shadow:-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;&quot;,&quot;fieldStyle&quot;:&quot;text-align:left;padding-left:10px;&quot;},{&quot;field&quot;:&quot;size&quot;,&quot;cellFunction&quot;:&quot;&quot;,&quot;title&quot;:&quot;Size&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;font-weight:bold; background-color:red; color:white; padding:5px;text-align:center;background :#e00 url(applications/rapid/highlight_red_1x44.png) 50% 50% repeat-x;text-shadow:-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;&quot;,&quot;fieldStyle&quot;:&quot;text-align:right;padding-left:10px;&quot;},{&quot;field&quot;:&quot;&quot;,&quot;cellFunction&quot;:&quot;var cell = $(this);\ncell.append(\&quot;&lt;button&gt;restore...&lt;\/button&gt;&lt;button&gt;delete...&lt;\/button&gt;\&quot;);\ncell.find(\&quot;button\&quot;).click( function(ev) {\n  var button = $(ev.target);\n  switch (button.text()) {\n    case \&quot;restore...\&quot; :\n      Action_navigate('~?a=rapid&amp;p=P15',true);\n    break;\n    case \&quot;delete...\&quot; :\n      Action_navigate('~?a=rapid&amp;p=P13',true);\n    break;\n  }\n});&quot;,&quot;title&quot;:&quot;&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;font-weight:bold; background-color:red; color:white; padding:5px;text-align:right;background :#e00 url(applications/rapid/highlight_red_1x44.png) 50% 50% repeat-x;text-shadow:-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;&quot;,&quot;fieldStyle&quot;:&quot;&quot;}]</value>
     </entry>
     <entry>
         <key>type</key>
@@ -12358,12 +12428,12 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
                             </childControls>
                             <properties>
 <entry>
-    <key>id</key>
-    <value>rapid_P0_C677_</value>
-</entry>
-<entry>
     <key>classes</key>
     <value>[]</value>
+</entry>
+<entry>
+    <key>id</key>
+    <value>rapid_P0_C677_</value>
 </entry>
 <entry>
     <key>text</key>
@@ -12389,12 +12459,12 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
                         </childControls>
                         <properties>
                             <entry>
-<key>id</key>
-<value>rapid_P0_C665_</value>
-                            </entry>
-                            <entry>
 <key>classes</key>
 <value>[]</value>
+                            </entry>
+                            <entry>
+<key>id</key>
+<value>rapid_P0_C665_</value>
                             </entry>
                             <entry>
 <key>type</key>
@@ -12408,12 +12478,12 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
                     </childControls>
                     <properties>
                         <entry>
-                            <key>id</key>
-                            <value>rapid_P0_C664_</value>
-                        </entry>
-                        <entry>
                             <key>classes</key>
                             <value>[]</value>
+                        </entry>
+                        <entry>
+                            <key>id</key>
+                            <value>rapid_P0_C664_</value>
                         </entry>
                         <entry>
                             <key>type</key>
@@ -12427,12 +12497,12 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
                 </childControls>
                 <properties>
                     <entry>
-                        <key>id</key>
-                        <value>rapid_P0_C662_</value>
-                    </entry>
-                    <entry>
                         <key>classes</key>
                         <value>[]</value>
+                    </entry>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P0_C662_</value>
                     </entry>
                     <entry>
                         <key>name</key>
@@ -12454,12 +12524,12 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
             </childControls>
             <properties>
                 <entry>
-                    <key>id</key>
-                    <value>rapid_P0_C44</value>
-                </entry>
-                <entry>
                     <key>classes</key>
                     <value>[]</value>
+                </entry>
+                <entry>
+                    <key>id</key>
+                    <value>rapid_P0_C44</value>
                 </entry>
                 <entry>
                     <key>name</key>
@@ -12493,12 +12563,12 @@ if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
         </childControls>
         <properties>
             <entry>
-                <key>id</key>
-                <value>rapid_P0_C650_</value>
-            </entry>
-            <entry>
                 <key>classes</key>
                 <value>[]</value>
+            </entry>
+            <entry>
+                <key>id</key>
+                <value>rapid_P0_C650_</value>
             </entry>
             <entry>
                 <key>text</key>
@@ -13271,7 +13341,7 @@ if (appId) {
     <javascriptFiles>scripts/reorder.js</javascriptFiles>
     <javascriptFiles>scripts/soa.js</javascriptFiles>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-06-06T17:27:15.136+01:00</modifiedDate>
+    <modifiedDate>2014-06-12T17:36:09.703+01:00</modifiedDate>
     <name>00_Admin</name>
     <rolesHtml>
         <html>&lt;div id=&quot;rapid_P0_C654_&quot; class=&quot;panel&quot;&gt;

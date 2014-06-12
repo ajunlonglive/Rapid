@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 public class Files {
 
@@ -45,29 +46,56 @@ public class Files {
 		
 	}
 	
-	// copies the contents of one folder to another recursively
-	public static void copyFolder(File src, File dest) throws IOException {
-		// if source is directory
-    	if (src.isDirectory()){ 
-    		// if directory not exists, create it
-    		if (!dest.exists()) dest.mkdirs();
-    		// list all the directory contents
-    		String files[] = src.list();
-    		// loop directory contents
-    		for (String file : files) {
-    		   // create a file object for the source
-    		   File srcFile = new File(src, file);
-    		   // create a file object for the destination, note the dest folder is the parent
-    		   File destFile = new File(dest, file);
-    		   // recursive copy
-    		   copyFolder(srcFile, destFile);
-    		}
-    	} else {
-    		// not a directory so only copy the file to the destination
-    		copyFile(src, dest);    		
-    	}
+	// copies the contents of one folder to another recursively, allowing for a list of files/folder to ignore by name
+	public static void copyFolder(File src, File dest, List<String> ignoreFiles) throws IOException {
+		
+		// whether to ignore
+		boolean ignore = false;
+		
+		// check if we have some ignore files
+		if (ignoreFiles != null) {
+			// loop them and compare
+			if (ignoreFiles != null) {
+        		for (String ignoreFile : ignoreFiles) {
+        			if (src.getName().equals(ignoreFile)) {
+        				ignore = true;
+        				break;
+        			}
+        		}
+        	}
+		}
+		
+		// not ignoring so proceed
+		if (!ignore) {
+		
+			// if source is directory
+	    	if (src.isDirectory()){ 
+	    		// if directory not exists, create it
+	    		if (!dest.exists()) dest.mkdirs();
+	    		// list all the directory contents
+	    		String files[] = src.list();
+	    		// loop directory contents
+	    		for (String file : files) {
+	    		   // create a file object for the source
+	    		   File srcFile = new File(src, file);
+	    		   // create a file object for the destination, note the dest folder is the parent
+	    		   File destFile = new File(dest, file);
+	    		   // recursive copy
+	    		   copyFolder(srcFile, destFile, ignoreFiles);
+	    		}
+	    	} else {
+	    		// not a directory so only copy the file to the destination
+	    		copyFile(src, dest);    		
+	    	}
+	    	
+		}
     	
     }
+	
+	// an override to the above without the list of folder/file ignore names
+	public static void copyFolder(File src, File dest) throws IOException {		
+		copyFolder(src, dest, null);		
+	}
 	
 	public static String safeName(String name) {
 		

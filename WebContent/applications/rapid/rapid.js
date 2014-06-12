@@ -366,6 +366,28 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, succes
 				alert("Database connection OK");
 			};															
 		break;
+		case "DELAPPBACKUP" : case "RESTOREAPPBACKUP" : 
+			data = { actionType: actionType, 
+				appId: $("#rapid_P0_C43").val(), 
+				backupId: $("#rapid_P0_C663_").find("tr.rowSelect").children("td").first().text() 
+			};	
+			callback = function(data) {
+				$(data.controlId).hideDialogue();
+				Event_change_rapid_P0_C43();
+				$("#rapid_P0_C662_").click();
+			};														
+		break;
+		case "DELPAGEBACKUP" : case "RESTOREPAGEBACKUP" :	
+			data = { actionType: actionType, 
+				appId: $("#rapid_P0_C43").val(), 
+				backupId: $("#rapid_P0_C678_").find("tr.rowSelect").children("td").first().text()  
+			};	
+			callback = function(data) {
+				$(data.controlId).hideDialogue();
+				Event_change_rapid_P0_C43();
+				$("#rapid_P0_C662_").click();
+			};															
+		break;
 		default :
 			data = { actionType: actionType, appId: "rapid" };
 	}
