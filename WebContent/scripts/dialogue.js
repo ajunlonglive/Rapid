@@ -66,6 +66,9 @@ function showDialogue(url) {
             		}
             	}
             	
+            	// if this is the login page go to the real thing
+            	if (bodyHtml.indexOf("<input type=\"submit\" value=\"log in\">") > 0) window.location = "login.jsp?requestPath=" + window.location; 
+            	
             	// inject the html and JavaScript
             	dialogue.append(bodyHtml + javaScript);
             	            	            	

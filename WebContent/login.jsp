@@ -35,7 +35,7 @@ String message = (String) session.getAttribute("Message");
 				<td>Password</td><td><input name="userPassword" type="password" /></td>
 			</tr>
 			<tr>
-				<td colspan="2" style="text-align:right;"><input type="submit"/ value="log in"></td>
+				<td colspan="2" style="text-align:right;"><input type="submit" value="log in"></td>
 			</tr>		
 		</table>
 	</form>

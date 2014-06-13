@@ -73,6 +73,10 @@ function Action_navigate(url, dialogue) {
 		           		}
 		           	}   
 		           	
+		           	// if this is the login page go to the real thing, requesting to come back to this location
+            		if (bodyHtml.indexOf("<input type=\"submit\" value=\"log in\">") > 0) window.location = "login.jsp?requestPath=" + window.location; 
+            	
+		           	
 		           	var doc = $(document);
 		           	var body = $("body");
 		           	var dialogueCover = body.append("<div class='dialogueCover' style='position:absolute;left:0px;top:0px;z-index:100;'></div>").children().last();
@@ -98,7 +102,7 @@ function Action_navigate(url, dialogue) {
 	            	// this seems to be the best way to avoid the resizing/flicker when showing
 	            	window.setTimeout( function() {
 	            		dialogue.show();
-	            	}, 1);
+	            	}, 5);
 		           	           	        	            	            	            
 		    	}        	       	        	        	        	        		
 		    }       	        	        

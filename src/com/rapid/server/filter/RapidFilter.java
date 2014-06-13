@@ -35,11 +35,15 @@ public class RapidFilter implements Filter {
 			
 			// look for a specified authentication adapter
 			String authenticationAdapterClass = filterConfig.getInitParameter("authenticationAdapterClass");
+			
 			// if we didn't find one
 			if (authenticationAdapterClass == null) {
+				
 				// fall back to the formauthenticationadapter
-				_authenticationAdapter = new FormAuthenticationAdapter(filterConfig.getServletContext());				
+				_authenticationAdapter = new FormAuthenticationAdapter(filterConfig.getServletContext());	
+				
 			} else {
+				
 				// try and instantiate the authentication adapter
 				Class classClass = Class.forName(authenticationAdapterClass);
 				// check the class extends com.rapid.server.filter.RapidAuthenticationAdapter
@@ -48,6 +52,7 @@ public class RapidFilter implements Filter {
 				if (!classClass.getSuperclass().equals(superClass)) throw new Exception(authenticationAdapterClass + " must extend " + superClass.getCanonicalName()); 
 				// instantiate an object and retain
 				_authenticationAdapter = (RapidAuthenticationAdapter) classClass.getConstructor(ServletContext.class).newInstance(filterConfig.getServletContext());				
+			
 			}						
 			
 		} catch (Exception ex) {
