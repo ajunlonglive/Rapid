@@ -823,6 +823,11 @@ public class Designer extends RapidHttpServlet {
 									// make the name file safe and lower case
 									appName = Files.safeName(appName).toLowerCase();
 									
+									// look for an existing application of this name
+									Application existingApplication = getApplication(appName); 
+									// if we have an existing application back it up first
+									if (existingApplication != null) existingApplication.backup(this, rapidRequest);
+									
 									// get a file for the temp directory
 									File tempDir = new File(getServletContext().getRealPath("/WEB-INF/temp"));
 									// create it if not there

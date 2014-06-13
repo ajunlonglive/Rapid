@@ -4,6 +4,7 @@
 #rapid_P9_C2_ {
 	border-spacing:0;
 	border-collapse:collapse;
+	width:280px;
 }
 
 #rapid_P9_C2_ td {
@@ -42,6 +43,10 @@
 
 #rapid_P9_C8_ {
 	width:100%;
+}
+
+#rapid_P9_C46_ {
+	text-align:center;
 }
 
 . {
