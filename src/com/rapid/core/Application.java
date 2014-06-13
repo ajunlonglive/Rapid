@@ -876,7 +876,11 @@ public class Application {
 			
 			// check if we have too many
 			while (backups.size() > _applicationBackupsMaxSize) {
-				// remove from the top
+				// get the top backup folder into a file object
+				backupFolder = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + Rapid.BACKUP_FOLDER + "/" + backups.get(0).getId()));
+				// delete it
+				Files.deleteRecurring(backupFolder);
+				// remove it
 				backups.remove(0);
 			}
 			
@@ -968,6 +972,10 @@ public class Application {
 				pageBackupCount ++;
 				// check the size
 				if (pageBackupCount > _pageBackupsMaxSize) {
+					// get the backup into a file object
+					File backupFile = new File(backupFolder.getAbsolutePath() + "/" + backups.get(i).getId());
+					// delete it
+					backupFile.delete();
 					// remove this backup
 					backups.remove(i);							
 				}

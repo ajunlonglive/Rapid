@@ -35,6 +35,8 @@
     </databaseConnections>
     <description>This is a sample Rapid application provided to demonstrate many common Rapid features</description>
     <id>sample</id>
+    <modifiedBy>admin</modifiedBy>
+    <modifiedDate>2014-06-13T20:53:08.970+01:00</modifiedDate>
     <name>sample</name>
     <securityAdapterType>rapid</securityAdapterType>
     <showActionIds>true</showActionIds>
