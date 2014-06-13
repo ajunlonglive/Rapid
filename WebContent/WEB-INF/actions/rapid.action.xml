@@ -54,7 +54,9 @@ return [
  ["DELAPPBACKUP","Delete application backup"],
  ["DELPAGEBACKUP","Delete page backup"],
  ["RESTOREAPPBACKUP","Restore application backup"],
- ["RESTOREPAGEBACKUP","Restore page backup"]
+ ["RESTOREPAGEBACKUP","Restore page backup"],
+ ["SAVEAPPBACKUPSIZE","Save number of application backups"],
+ ["SAVEPAGEBACKUPSIZE","Save number of page backups"]
 ];
 					]]>
 	            </getValuesFunction>  
@@ -350,6 +352,18 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, succes
 				Event_change_rapid_P0_C43();
 				$("#rapid_P0_C662_").click();
 			};															
+		break;
+		case "SAVEAPPBACKUPSIZE" :			
+			data = { actionType: actionType, 
+				appId: $("#rapid_P0_C43").val(), 
+				backupMaxSize: $("#rapid_P0_C685_").val()  
+			};
+		break;
+		case "SAVEPAGEBACKUPSIZE" :
+			data = { actionType: actionType, 
+				appId: $("#rapid_P0_C43").val(), 
+				backupMaxSize: $("#rapid_P0_C686_").val()  
+			};
 		break;
 		default :
 			data = { actionType: actionType, appId: "rapid" };

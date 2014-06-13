@@ -154,7 +154,7 @@ public class Application {
 	
 	// instance variables
 	
-	private int _version;
+	private int _version, _applicationBackupsMaxSize, _pageBackupsMaxSize;
 	private String _id, _name, _title, _description, _startPageId, _styles, _securityAdapterType, _createdBy, _modifiedBy;
 	private boolean _showConrolIds, _showActionIds;
 	private Date _createdDate, _modifiedDate;
@@ -224,6 +224,14 @@ public class Application {
 	public String getStyles() { return _styles; }
 	public void setStyles(String styles) { _styles = styles; }
 	
+	// a collection of database connections used via the connection adapter class to produce database connections 
+	public List<DatabaseConnection> getDatabaseConnections() { return _databaseConnections; }
+	public void setDatabaseConnections(List<DatabaseConnection> databaseConnections) { _databaseConnections = databaseConnections; }
+	
+	// a collection of webservices for this application
+	public List<Webservice> getWebservices() { return _webservices; }
+	public void setWebservices(List<Webservice> webservices) { _webservices = webservices; }
+	
 	// the class name of the security adapter this application uses
 	public String getSecurityAdapterType() { return _securityAdapterType; }
 	public void setSecurityAdapterType(String securityAdapterType) { _securityAdapterType = securityAdapterType; }
@@ -236,13 +244,14 @@ public class Application {
 	public List<String> getActionTypes() { return _actionTypes; }
 	public void setActionTypes(List<String> actionTypes) { _actionTypes = actionTypes; }
 	
-	// a collection of database connections used via the connection adapter class to produce database connections 
-	public List<DatabaseConnection> getDatabaseConnections() { return _databaseConnections; }
-	public void setDatabaseConnections(List<DatabaseConnection> databaseConnections) { _databaseConnections = databaseConnections; }
+	// number of application backups to keep
+	public int getApplicationBackupsMaxSize() { return _applicationBackupsMaxSize; }
+	public void setApplicationBackupMaxSize(int applicationBackupsMaxSize) { _applicationBackupsMaxSize = applicationBackupsMaxSize; }
 	
-	public List<Webservice> getWebservices() { return _webservices; }
-	public void setWebservices(List<Webservice> webservices) { _webservices = webservices; }
-	
+	// number of page backups to keep
+	public int getPageBackupsMaxSize() { return _pageBackupsMaxSize; }
+	public void setPageBackupMaxSize(int pageBackupsMaxSize) { _pageBackupsMaxSize = pageBackupsMaxSize; }
+		
 	// constructors
 	
 	public Application() {
@@ -250,6 +259,8 @@ public class Application {
 		_pages = new HashMap<String,Page>();
 		_databaseConnections = new ArrayList<DatabaseConnection>();
 		_webservices = new ArrayList<Webservice>();
+		_applicationBackupsMaxSize = 3;
+		_pageBackupsMaxSize = 3;
 	};
 		
 	// instance methods
@@ -846,21 +857,27 @@ public class Application {
 					}
 					
 					backups.add(new Backup(id, date, nameParts[nameParts.length - 1], size));
-					
-					// sort the list by date
-					Collections.sort(backups, new Comparator<Backup>() {
-						@Override
-						public int compare(Backup obj1, Backup obj2) {
-							if (obj1.getDate().before(obj2.getDate())) {
-								return -1;
-							} else {
-								return 1;
-							}
-						}			
-					});
-					
-				}
+															
+				} // name parts > 3
 				
+			} // file loop
+			
+			// sort the list by date
+			Collections.sort(backups, new Comparator<Backup>() {
+				@Override
+				public int compare(Backup obj1, Backup obj2) {
+					if (obj1.getDate().before(obj2.getDate())) {
+						return -1;
+					} else {
+						return 1;
+					}
+				}			
+			});
+			
+			// check if we have too many
+			while (backups.size() > _applicationBackupsMaxSize) {
+				// remove from the top
+				backups.remove(0);
 			}
 			
 		}
@@ -920,21 +937,42 @@ public class Application {
 					String[] userParts = nameParts[nameParts.length - 1].split("\\.");
 					
 					backups.add(new Backup(id, name, date, userParts[0], size));
-					
-					// sort the list by date
-					Collections.sort(backups, new Comparator<Backup>() {
-						@Override
-						public int compare(Backup obj1, Backup obj2) {
-							if (obj1.getDate().before(obj2.getDate())) {
-								return -1;
-							} else {
-								return 1;
-							}
-						}			
-					});
-					
-				}
+															
+				} // name parts > 3
 				
+			} // file loop
+			
+			// sort the list by date
+			Collections.sort(backups, new Comparator<Backup>() {
+				@Override
+				public int compare(Backup obj1, Backup obj2) {
+					if (obj1.getDate().before(obj2.getDate())) {
+						return -1;
+					} else {
+						return 1;
+					}
+				}			
+			});
+			
+			// create a map to count backups of each page
+			Map<String,Integer> pageBackupCounts = new HashMap<String,Integer>();
+			// loop all of the backups in reverse order
+			for (int i = backups.size() - 1; i >= 0; i--) {
+				// get the back up
+				Backup pageBackup = backups.get(i);
+				// assume no backups so far for this page
+				int pageBackupCount = 0;
+				// set the backup count if we have one
+				if (pageBackupCounts.get(pageBackup.getName()) != null) pageBackupCount = pageBackupCounts.get(pageBackup.getName());
+				// increment the count
+				pageBackupCount ++;
+				// check the size
+				if (pageBackupCount > _pageBackupsMaxSize) {
+					// remove this backup
+					backups.remove(i);							
+				}
+				// store the page backup count
+				pageBackupCounts.put(pageBackup.getName(), pageBackupCount);
 			}
 			
 		}

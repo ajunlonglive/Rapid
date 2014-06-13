@@ -388,6 +388,18 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, succes
 				$("#rapid_P0_C662_").click();
 			};															
 		break;
+		case "SAVEAPPBACKUPSIZE" :			
+			data = { actionType: actionType, 
+				appId: $("#rapid_P0_C43").val(), 
+				backupMaxSize: $("#rapid_P0_C685_").val()  
+			};
+		break;
+		case "SAVEPAGEBACKUPSIZE" :
+			data = { actionType: actionType, 
+				appId: $("#rapid_P0_C43").val(), 
+				backupMaxSize: $("#rapid_P0_C686_").val()  
+			};
+		break;
 		default :
 			data = { actionType: actionType, appId: "rapid" };
 	}

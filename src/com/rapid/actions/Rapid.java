@@ -356,7 +356,7 @@ public class Rapid extends Action {
 				}				
 				// add the controls to the result
 				result.put("controls", jsonSendControls);
-				
+								
 				// add the applications to the result
 				result.put("applications", jsonApplications);
 												
@@ -464,7 +464,9 @@ public class Rapid extends Action {
 				// add webservices connections
 				result.put("appbackups", jsonAppBackups);
 				
-				
+				// add the max number of application backups
+				result.put("appBackupsMaxSize", app.getApplicationBackupsMaxSize());
+								
 				// create an array for the page backups
 				JSONArray jsonPageBackups = new JSONArray();
 				
@@ -488,6 +490,9 @@ public class Rapid extends Action {
 				}	
 				// add webservices connections
 				result.put("pagebackups", jsonPageBackups);
+
+				// add the max number of page backups
+				result.put("pageBackupsMaxSize", app.getPageBackupsMaxSize());
 				
 				
 			} else if ("GETDBCONN".equals(action)) {
@@ -1511,17 +1516,47 @@ public class Rapid extends Action {
 					// back up the current state of the application
 					app.backup(rapidServlet, rapidRequest);
 					
-					// get this backup folder
-					File backupFolder = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + com.rapid.server.Rapid.BACKUP_FOLDER + "/" + backupId));
 					
-					// create a file object for the application folder
+					// get this backup folder
+					File applicationBackupFolder = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + com.rapid.server.Rapid.BACKUP_FOLDER + "/" + backupId));
+					
+					// create a file object for restoring the application folder
+				 	File applicationRestoreFolder = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/_" + app.getId() + "_restore"));
+				 	
+				 	// copy the backup into the application reatore folder
+					Files.copyFolder(applicationBackupFolder, applicationRestoreFolder);
+					
+				 	// create a file object for the application folder
 				 	File applicationFolder = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + app.getId()));
 					
 				 	// delete the application folder
 				 	Files.deleteRecurring(applicationFolder);
 				 	
-					// copy the backup into the application folder
-					Files.copyFolder(backupFolder, applicationFolder);
+				 	// rename the restore folder to the application folder
+				 	applicationRestoreFolder.renameTo(applicationFolder);
+				 	
+				 	
+				 	// create a file object for the web content backup folder (which is currently sitting under the application)
+					File webcontentBackupFolder = new File(applicationFolder.getAbsolutePath() + "/WebContent");
+					
+					// create a file object for the web content restore folder
+					File webcontentRestoreFolder = new File(rapidServlet.getServletContext().getRealPath("/applications/_") + app.getId() + "_restore");
+					
+					// copy the webcontent backup folder to the webcontent restore folder
+					Files.copyFolder(webcontentBackupFolder, webcontentRestoreFolder);
+					
+					// create a file object for the webcontent folder
+					File webcontentFolder = new File(rapidServlet.getServletContext().getRealPath("/applications/" + app.getId()));
+					
+					// delete the webcontent folder
+					Files.deleteRecurring(webcontentFolder);
+					
+					// rename the restore folder to the webconten folder
+					webcontentRestoreFolder.renameTo(webcontentFolder);
+					
+					// delete the webcontent backup folder from under the application folder
+					Files.deleteRecurring(webcontentBackupFolder);
+					
 					
 					// get the application file
 					File applicationFile = new File(applicationFolder.getAbsolutePath() + "/application.xml");
@@ -1591,6 +1626,46 @@ public class Rapid extends Action {
 					throw new JSONException(ex);
 				}
 								
+			} else if ("SAVEAPPBACKUPSIZE".equals(action)) {
+								
+				try {
+					
+					// get the max backup size
+					int backupMaxSize = jsonAction.getInt("backupMaxSize");
+					
+					// pass it to the application
+					app.setApplicationBackupMaxSize(backupMaxSize);
+										
+					// save the application
+					app.save(rapidServlet, rapidRequest);
+					
+					// set the result message
+					result.put("message", "Application backup max size updated to " + backupMaxSize);
+					
+				} catch (Exception ex) {
+					throw new JSONException(ex);
+				}
+				
+			} else if ("SAVEPAGEBACKUPSIZE".equals(action)) {
+				
+				try {
+					
+					// get the max backup size
+					int backupMaxSize = jsonAction.getInt("backupMaxSize");
+					
+					// pass it to the application
+					app.setPageBackupMaxSize(backupMaxSize);
+					
+					// save the application
+					app.save(rapidServlet, rapidRequest);
+					
+					// set the result message
+					result.put("message", "Page backup max size updated to " + backupMaxSize);
+					
+				} catch (Exception ex) {
+					throw new JSONException(ex);
+				}
+				
 			}
 								
 			// sent back the new app id for the callback load
