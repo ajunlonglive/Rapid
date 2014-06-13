@@ -1633,6 +1633,10 @@ $(document).ready( function() {
 	
 	// view page
 	$("#pageView").click( function(ev) {
+		// check there are no undo
+		if (_undo.length > 0) {
+			if (!confirm("You will lose your unsaved changes. Are you sure?")) return false;
+		}
 		// naviagte to page
 		window.location = "~?a=" + _app.id + "&p=" + _page.id;
 	});
@@ -1941,7 +1945,7 @@ $(document).ready( function() {
 					
 		}		
 	});		
-					
+							
 });
 
 // stop controls being inserted into their pass children for example pass a table cell and a table
@@ -2267,3 +2271,4 @@ function fileuploaded(fileuploadframe) {
     }
 
 }
+

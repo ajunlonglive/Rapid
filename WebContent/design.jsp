@@ -62,7 +62,7 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, use
 		<div id="controlPanel" style="z-index:10005">
 			<div id="controlPanelPin"><img src="images/pinned_14x14.png" title="unpin" /></div>
 			<div class="buttons">
-				<button id="appAdmin" class="buttonLeft buttonRight">Administration</button>
+				<button id="appAdmin" class="buttonLeft buttonRight" title="Load the Rapid administration screen">Administration</button>
 			</div>
 			<h2>Application</h2>
 			<select id="appSelect">
@@ -73,19 +73,20 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, use
 			<select id="pageSelect">
 				<!-- Pages are added here as options the designer loads -->
 			</select>
+			<div class="buttons">				
+				<button id="pageEdit" class="buttonLeft buttonRight" title="View and edit the page properties">properties</button>
+			</div>						
 			<div class="buttons">
-				<button id="pageNew" class="buttonLeft">new page</button>
-				<button id="pageEdit" class="buttonRight">edit page</button>
-			</div>	
-			<div class="buttons">
-				<button id="undo" class="buttonLeft" disabled="disabled">undo</button>
-				<button id="redo" class="buttonRight" disabled="disabled">redo</button>
-			</div>			
-			<div class="buttons">
-				<button id="pageSave" class="buttonLeft buttonRight">save page</button>
+				<button id="pageNew" class="buttonLeft" title="Create a new page for this application">new</button>
+				<button id="pageSave" class="" title="Save this page">save</button>
+				<button id="pageView" class="buttonRight" title="View this page in the application">view</button>
 			</div>
 			<div class="buttons">
-				<button id="pageView" class="buttonLeft buttonRight">view page</button>
+				
+			</div>	
+			<div class="buttons">
+				<button id="undo" class="buttonLeft" disabled="disabled" title="Undo changes">undo</button>
+				<button id="redo" class="buttonRight" disabled="disabled" title="Redo changes">redo</button>
 			</div>		
 			<div id="controlControls">
 				<h2>Controls</h2>
@@ -109,11 +110,11 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, use
 					<button id="selectPeerRight" class="buttonRight"><img src="images/moveRight_16x16.png" title="Select the control after this one"/></button>
 				</div>													
 				<div class="buttons">
-					<button id="swapPeerLeft" class="buttonLeft"><img src="images/swapLeft_16x16.png" title="Move a position backwards"/></button>
+					<button id="swapPeerLeft" class="buttonLeft"><img src="images/swapLeft_16x16.png" title="Swap position with control before this one"/></button>
 					<button id="addPeerLeft"><img src="images/addLeft_16x16.png" title="Add a new control before this one"/></button>
 					<button id="deleteControl">&nbsp;<img src="images/bin_16x16.png" title="Delete this control"/>&nbsp;</button>
 					<button id="addPeerRight"><img src="images/addRight_16x16.png" title="Add a new control after this one"/></button>
-					<button id="swapPeerRight" class="buttonRight"><img src="images/swapRight_16x16.png" title="Move a position forwards"/></button>
+					<button id="swapPeerRight" class="buttonRight"><img src="images/swapRight_16x16.png" title="Swap position with control after this one"/></button>
 				</div>						
 				<div class="buttons">
 					<button id="copy" class="buttonLeft">&nbsp;copy</button>

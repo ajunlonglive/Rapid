@@ -7,6 +7,7 @@ body {
 
 #rapid_P3_C1 {
 	border-spacing:0;
+	width:400px;
 }
 
 #rapid_P3_C1 td {
@@ -47,6 +48,11 @@ body {
 #rapid_P3_C19 {
 	width:100%;
 	height:70px;
+}
+
+#rapid_P3_C39_ {
+	text-align:center;
+	padding-right:25px;
 }
 
 . {

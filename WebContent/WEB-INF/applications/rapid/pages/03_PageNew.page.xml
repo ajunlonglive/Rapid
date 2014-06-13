@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><page>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<page>
     <controls>
         <childControls>
             <childControls>
@@ -6,6 +7,10 @@
                     <entry>
                         <key>id</key>
                         <value>rapid_P3_C15</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
                     </entry>
                     <entry>
                         <key>text</key>
@@ -27,6 +32,10 @@
                         <key>type</key>
                         <value>tableCell</value>
                     </entry>
+                    <entry>
+                        <key>version</key>
+                        <value>1</value>
+                    </entry>
                 </properties>
                 <styles>
                     <appliesTo>#rapid_P3_C15</appliesTo>
@@ -44,12 +53,20 @@
                     <value>rapid_P3_C14</value>
                 </entry>
                 <entry>
+                    <key>classes</key>
+                    <value>[]</value>
+                </entry>
+                <entry>
                     <key>name</key>
                     <value>Table row 8</value>
                 </entry>
                 <entry>
                     <key>type</key>
                     <value>tableRow</value>
+                </entry>
+                <entry>
+                    <key>version</key>
+                    <value>1</value>
                 </entry>
             </properties>
         </childControls>
@@ -70,7 +87,7 @@
                     </entry>
                     <entry>
                         <key>name</key>
-                        <value/>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>rowSpan</key>
@@ -79,6 +96,10 @@
                     <entry>
                         <key>type</key>
                         <value>tableCell</value>
+                    </entry>
+                    <entry>
+                        <key>version</key>
+                        <value>1</value>
                     </entry>
                 </properties>
             </childControls>
@@ -103,17 +124,21 @@
     <key>type</key>
     <value>existing</value>
 </entry>
+<entry>
+    <key>version</key>
+    <value>1</value>
+</entry>
                             </properties>
                         </actions>
-                        <filter/>
+                        <filter></filter>
                         <type>keyup</type>
                     </events>
                     <events>
-                        <filter/>
+                        <filter></filter>
                         <type>change</type>
                     </events>
                     <events>
-                        <filter/>
+                        <filter></filter>
                         <type>blur</type>
                     </events>
                     <properties>
@@ -127,7 +152,7 @@
                         </entry>
                         <entry>
                             <key>value</key>
-                            <value/>
+                            <value></value>
                         </entry>
                         <entry>
                             <key>controlType</key>
@@ -137,6 +162,10 @@
                             <key>type</key>
                             <value>input</value>
                         </entry>
+                        <entry>
+                            <key>version</key>
+                            <value>1</value>
+                        </entry>
                     </properties>
                     <styles>
                         <appliesTo>#rapid_P3_C17</appliesTo>
@@ -144,13 +173,13 @@
                     </styles>
                     <validation>
                         <allowNulls>false</allowNulls>
-                        <javaScript>var name = $("#rapid_P3_C17").val();
-if (!name) return "A page name must be provided";
-if (!name.match(new RegExp("^[0-9A-Za-z_-]+$"))) return "A page name can only contain characters a-z, A-Z, 0-9, -, and _";
+                        <javaScript>var name = $(&quot;#rapid_P3_C17&quot;).val();
+if (!name) return &quot;A page name must be provided&quot;;
+if (!name.match(new RegExp(&quot;^[0-9A-Za-z_-]+$&quot;))) return &quot;A page name can only contain characters a-z, A-Z, 0-9, -, and _&quot;;
 var exists = false;
 $.ajax({
-    url: "designer?a=" + _app.id + "&amp;action=checkPage&amp;name=" + name,
-    type: "GET",    
+    url: &quot;designer?a=&quot; + _app.id + &quot;&amp;action=checkPage&amp;name=&quot; + name,
+    type: &quot;GET&quot;,    
     async: false,                
     success: function(result) {
         if (result) {
@@ -158,9 +187,9 @@ $.ajax({
         }
     }
 });
-if (exists) return "A page with this name already exists";</javaScript>
+if (exists) return &quot;A page with this name already exists&quot;;</javaScript>
                         <message>Page name can only contain the characters a-z, A-Z, 0-9, -, and _</message>
-                        <regEx/>
+                        <regEx></regEx>
                         <type>javascript</type>
                     </validation>
                 </childControls>
@@ -170,8 +199,12 @@ if (exists) return "A page with this name already exists";</javaScript>
                         <value>rapid_P3_C4</value>
                     </entry>
                     <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
                         <key>text</key>
-                        <value/>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -188,6 +221,10 @@ if (exists) return "A page with this name already exists";</javaScript>
                     <entry>
                         <key>type</key>
                         <value>tableCell</value>
+                    </entry>
+                    <entry>
+                        <key>version</key>
+                        <value>1</value>
                     </entry>
                 </properties>
                 <styles>
@@ -209,6 +246,10 @@ if (exists) return "A page with this name already exists";</javaScript>
                     <key>type</key>
                     <value>tableRow</value>
                 </entry>
+                <entry>
+                    <key>version</key>
+                    <value>1</value>
+                </entry>
             </properties>
         </childControls>
         <childControls>
@@ -228,7 +269,7 @@ if (exists) return "A page with this name already exists";</javaScript>
                     </entry>
                     <entry>
                         <key>name</key>
-                        <value/>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>rowSpan</key>
@@ -237,6 +278,10 @@ if (exists) return "A page with this name already exists";</javaScript>
                     <entry>
                         <key>type</key>
                         <value>tableCell</value>
+                    </entry>
+                    <entry>
+                        <key>version</key>
+                        <value>1</value>
                     </entry>
                 </properties>
             </childControls>
@@ -261,17 +306,21 @@ if (exists) return "A page with this name already exists";</javaScript>
     <key>type</key>
     <value>existing</value>
 </entry>
+<entry>
+    <key>version</key>
+    <value>1</value>
+</entry>
                             </properties>
                         </actions>
-                        <filter/>
+                        <filter></filter>
                         <type>keyup</type>
                     </events>
                     <events>
-                        <filter/>
+                        <filter></filter>
                         <type>change</type>
                     </events>
                     <events>
-                        <filter/>
+                        <filter></filter>
                         <type>blur</type>
                     </events>
                     <properties>
@@ -285,7 +334,7 @@ if (exists) return "A page with this name already exists";</javaScript>
                         </entry>
                         <entry>
                             <key>value</key>
-                            <value/>
+                            <value></value>
                         </entry>
                         <entry>
                             <key>controlType</key>
@@ -295,6 +344,10 @@ if (exists) return "A page with this name already exists";</javaScript>
                             <key>type</key>
                             <value>input</value>
                         </entry>
+                        <entry>
+                            <key>version</key>
+                            <value>1</value>
+                        </entry>
                     </properties>
                     <styles>
                         <appliesTo>#rapid_P3_C18</appliesTo>
@@ -302,7 +355,7 @@ if (exists) return "A page with this name already exists";</javaScript>
                     </styles>
                     <validation>
                         <allowNulls>false</allowNulls>
-                        <javaScript/>
+                        <javaScript></javaScript>
                         <message>A page title must be provided</message>
                         <regEx>[\s\S]</regEx>
                         <type>value</type>
@@ -315,7 +368,7 @@ if (exists) return "A page with this name already exists";</javaScript>
                     </entry>
                     <entry>
                         <key>text</key>
-                        <value/>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -332,6 +385,10 @@ if (exists) return "A page with this name already exists";</javaScript>
                     <entry>
                         <key>type</key>
                         <value>tableCell</value>
+                    </entry>
+                    <entry>
+                        <key>version</key>
+                        <value>1</value>
                     </entry>
                 </properties>
                 <styles>
@@ -352,6 +409,10 @@ if (exists) return "A page with this name already exists";</javaScript>
                     <key>type</key>
                     <value>tableRow</value>
                 </entry>
+                <entry>
+                    <key>version</key>
+                    <value>1</value>
+                </entry>
             </properties>
         </childControls>
         <childControls>
@@ -371,7 +432,7 @@ if (exists) return "A page with this name already exists";</javaScript>
                     </entry>
                     <entry>
                         <key>name</key>
-                        <value/>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>rowSpan</key>
@@ -381,20 +442,24 @@ if (exists) return "A page with this name already exists";</javaScript>
                         <key>type</key>
                         <value>tableCell</value>
                     </entry>
+                    <entry>
+                        <key>version</key>
+                        <value>1</value>
+                    </entry>
                 </properties>
             </childControls>
             <childControls>
                 <childControls>
                     <events>
-                        <filter/>
+                        <filter></filter>
                         <type>keyup</type>
                     </events>
                     <events>
-                        <filter/>
+                        <filter></filter>
                         <type>change</type>
                     </events>
                     <events>
-                        <filter/>
+                        <filter></filter>
                         <type>blur</type>
                     </events>
                     <properties>
@@ -408,7 +473,7 @@ if (exists) return "A page with this name already exists";</javaScript>
                         </entry>
                         <entry>
                             <key>value</key>
-                            <value/>
+                            <value></value>
                         </entry>
                         <entry>
                             <key>controlType</key>
@@ -418,6 +483,10 @@ if (exists) return "A page with this name already exists";</javaScript>
                             <key>type</key>
                             <value>input</value>
                         </entry>
+                        <entry>
+                            <key>version</key>
+                            <value>1</value>
+                        </entry>
                     </properties>
                     <styles>
                         <appliesTo>#rapid_P3_C19</appliesTo>
@@ -426,10 +495,10 @@ if (exists) return "A page with this name already exists";</javaScript>
                     </styles>
                     <validation>
                         <allowNulls>false</allowNulls>
-                        <javaScript/>
-                        <message/>
-                        <regEx/>
-                        <type/>
+                        <javaScript></javaScript>
+                        <message></message>
+                        <regEx></regEx>
+                        <type></type>
                     </validation>
                 </childControls>
                 <properties>
@@ -438,8 +507,12 @@ if (exists) return "A page with this name already exists";</javaScript>
                         <value>rapid_P3_C10</value>
                     </entry>
                     <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
                         <key>text</key>
-                        <value/>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -456,6 +529,10 @@ if (exists) return "A page with this name already exists";</javaScript>
                     <entry>
                         <key>type</key>
                         <value>tableCell</value>
+                    </entry>
+                    <entry>
+                        <key>version</key>
+                        <value>1</value>
                     </entry>
                 </properties>
                 <styles>
@@ -475,6 +552,67 @@ if (exists) return "A page with this name already exists";</javaScript>
                 <entry>
                     <key>type</key>
                     <value>tableRow</value>
+                </entry>
+                <entry>
+                    <key>version</key>
+                    <value>1</value>
+                </entry>
+            </properties>
+        </childControls>
+        <childControls>
+            <childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P3_C39_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
+                        <key>text</key>
+                        <value></value>
+                    </entry>
+                    <entry>
+                        <key>colSpan</key>
+                        <value>2</value>
+                    </entry>
+                    <entry>
+                        <key>rowSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableCell</value>
+                    </entry>
+                    <entry>
+                        <key>version</key>
+                        <value>1</value>
+                    </entry>
+                </properties>
+                <styles>
+                    <appliesTo>#rapid_P3_C39_</appliesTo>
+                    <rules>text-align:center;</rules>
+                    <rules>padding-right:25px;</rules>
+                </styles>
+            </childControls>
+            <properties>
+                <entry>
+                    <key>id</key>
+                    <value>rapid_P3_C38_</value>
+                </entry>
+                <entry>
+                    <key>classes</key>
+                    <value>[]</value>
+                </entry>
+                <entry>
+                    <key>type</key>
+                    <value>tableRow</value>
+                </entry>
+                <entry>
+                    <key>version</key>
+                    <value>1</value>
                 </entry>
             </properties>
         </childControls>
@@ -500,9 +638,13 @@ if (exists) return "A page with this name already exists";</javaScript>
     <key>type</key>
     <value>custom</value>
 </entry>
+<entry>
+    <key>version</key>
+    <value>1</value>
+</entry>
                             </properties>
                         </actions>
-                        <filter/>
+                        <filter></filter>
                         <type>click</type>
                     </events>
                     <properties>
@@ -522,6 +664,10 @@ if (exists) return "A page with this name already exists";</javaScript>
                             <key>type</key>
                             <value>button</value>
                         </entry>
+                        <entry>
+                            <key>version</key>
+                            <value>1</value>
+                        </entry>
                     </properties>
                     <styles>
                         <appliesTo>#rapid_P3_C20</appliesTo>
@@ -535,7 +681,7 @@ if (exists) return "A page with this name already exists";</javaScript>
                     </entry>
                     <entry>
                         <key>text</key>
-                        <value/>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -552,6 +698,10 @@ if (exists) return "A page with this name already exists";</javaScript>
                     <entry>
                         <key>type</key>
                         <value>tableCell</value>
+                    </entry>
+                    <entry>
+                        <key>version</key>
+                        <value>1</value>
                     </entry>
                 </properties>
                 <styles>
@@ -584,6 +734,10 @@ if (exists) return "A page with this name already exists";</javaScript>
     <key>stopActions</key>
     <value>true</value>
 </entry>
+<entry>
+    <key>version</key>
+    <value>1</value>
+</entry>
                             </properties>
                             <controls>rapid_P3_C17</controls>
                             <controls>rapid_P3_C18</controls>
@@ -603,11 +757,15 @@ if (exists) return "A page with this name already exists";</javaScript>
     </entry>
     <entry>
         <key>command</key>
-        <value>attr("disabled","disabled")</value>
+        <value>attr(&quot;disabled&quot;,&quot;disabled&quot;)</value>
     </entry>
     <entry>
         <key>type</key>
         <value>control</value>
+    </entry>
+    <entry>
+        <key>version</key>
+        <value>1</value>
     </entry>
 </properties>
                             </failActions>
@@ -627,11 +785,15 @@ if (exists) return "A page with this name already exists";</javaScript>
     </entry>
     <entry>
         <key>command</key>
-        <value>removeAttr("disabled")</value>
+        <value>removeAttr(&quot;disabled&quot;)</value>
     </entry>
     <entry>
         <key>type</key>
         <value>control</value>
+    </entry>
+    <entry>
+        <key>version</key>
+        <value>1</value>
     </entry>
 </properties>
                             </passActions>
@@ -658,9 +820,13 @@ if (exists) return "A page with this name already exists";</javaScript>
     <key>type</key>
     <value>rapid</value>
 </entry>
+<entry>
+    <key>version</key>
+    <value>1</value>
+</entry>
                             </properties>
                         </actions>
-                        <filter/>
+                        <filter></filter>
                         <type>click</type>
                     </events>
                     <properties>
@@ -669,16 +835,24 @@ if (exists) return "A page with this name already exists";</javaScript>
                             <value>rapid_P3_C24</value>
                         </entry>
                         <entry>
+                            <key>classes</key>
+                            <value>[]</value>
+                        </entry>
+                        <entry>
                             <key>name</key>
-                            <value>Save</value>
+                            <value>Create</value>
                         </entry>
                         <entry>
                             <key>label</key>
-                            <value>Save</value>
+                            <value>Create</value>
                         </entry>
                         <entry>
                             <key>type</key>
                             <value>button</value>
+                        </entry>
+                        <entry>
+                            <key>version</key>
+                            <value>1</value>
                         </entry>
                     </properties>
                     <styles>
@@ -692,8 +866,12 @@ if (exists) return "A page with this name already exists";</javaScript>
                         <value>rapid_P3_C28</value>
                     </entry>
                     <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
                         <key>text</key>
-                        <value/>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -711,6 +889,10 @@ if (exists) return "A page with this name already exists";</javaScript>
                         <key>type</key>
                         <value>tableCell</value>
                     </entry>
+                    <entry>
+                        <key>version</key>
+                        <value>1</value>
+                    </entry>
                 </properties>
                 <styles>
                     <appliesTo>#rapid_P3_C28</appliesTo>
@@ -725,12 +907,20 @@ if (exists) return "A page with this name already exists";</javaScript>
                     <value>rapid_P3_C21</value>
                 </entry>
                 <entry>
+                    <key>classes</key>
+                    <value>[]</value>
+                </entry>
+                <entry>
                     <key>name</key>
                     <value>Table row 6</value>
                 </entry>
                 <entry>
                     <key>type</key>
                     <value>tableRow</value>
+                </entry>
+                <entry>
+                    <key>version</key>
+                    <value>1</value>
                 </entry>
             </properties>
             <styles>
@@ -744,6 +934,10 @@ if (exists) return "A page with this name already exists";</javaScript>
                 <value>rapid_P3_C1</value>
             </entry>
             <entry>
+                <key>classes</key>
+                <value>[]</value>
+            </entry>
+            <entry>
                 <key>name</key>
                 <value>Table 2</value>
             </entry>
@@ -751,10 +945,15 @@ if (exists) return "A page with this name already exists";</javaScript>
                 <key>type</key>
                 <value>table</value>
             </entry>
+            <entry>
+                <key>version</key>
+                <value>1</value>
+            </entry>
         </properties>
         <styles>
             <appliesTo>#rapid_P3_C1</appliesTo>
             <rules>border-spacing:0;</rules>
+            <rules>width:400px;</rules>
         </styles>
         <styles>
             <appliesTo>#rapid_P3_C1 td</appliesTo>
@@ -786,46 +985,79 @@ if (exists) return "A page with this name already exists";</javaScript>
                     <key>type</key>
                     <value>control</value>
                 </entry>
+                <entry>
+                    <key>version</key>
+                    <value>1</value>
+                </entry>
             </properties>
         </actions>
-        <filter/>
+        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="custom">
+            <properties>
+                <entry>
+                    <key>id</key>
+                    <value>P3_A40_</value>
+                </entry>
+                <entry>
+                    <key>javascript</key>
+                    <value>if (_undo.length &gt; 0) $(&quot;#rapid_P3_C39_&quot;).text(&quot;You have unsaved changes which you will lose if you create this new page&quot;);</value>
+                </entry>
+                <entry>
+                    <key>name</key>
+                    <value>Custom 40</value>
+                </entry>
+                <entry>
+                    <key>type</key>
+                    <value>custom</value>
+                </entry>
+                <entry>
+                    <key>version</key>
+                    <value>1</value>
+                </entry>
+            </properties>
+        </actions>
+        <filter></filter>
         <type>pageload</type>
     </events>
     <events>
-        <filter/>
+        <filter></filter>
         <type>reusable</type>
     </events>
-    <htmlBody>&lt;table id="rapid_P3_C1" class="table"&gt;&lt;tbody&gt;&lt;tr id="rapid_P3_C14" class="tableRow"&gt;&lt;td id="rapid_P3_C15" colspan="2" class="tabelCell"&gt;New page&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P3_C2" class="tableRow"&gt;&lt;td id="rapid_P3_C3" class="tabelCell"&gt;Name&lt;/td&gt;&lt;td id="rapid_P3_C4" class="tabelCell"&gt;&lt;input id="rapid_P3_C17" value="" class="input"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P3_C5" class="tableRow"&gt;&lt;td id="rapid_P3_C6" class="tabelCell"&gt;Title&lt;/td&gt;&lt;td id="rapid_P3_C7" class="tabelCell"&gt;&lt;input id="rapid_P3_C18" value="" class="input"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P3_C8" class="tableRow"&gt;&lt;td id="rapid_P3_C9" class="tabelCell"&gt;Description&lt;/td&gt;&lt;td id="rapid_P3_C10" class="tabelCell"&gt;&lt;textarea id="rapid_P3_C19" class="input"&gt;&lt;/textarea&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P3_C21" class="tableRow"&gt;&lt;td id="rapid_P3_C22" class="tabelCell"&gt;&lt;button id="rapid_P3_C20" class="button"&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id="rapid_P3_C28" class="tabelCell"&gt;&lt;button id="rapid_P3_C24" class="button"&gt;Save&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
+    <htmlBody>&lt;table id=&quot;rapid_P3_C1&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;rapid_P3_C14&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P3_C15&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;New page&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P3_C2&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P3_C3&quot; class=&quot;tabelCell&quot;&gt;Name&lt;/td&gt;&lt;td id=&quot;rapid_P3_C4&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P3_C17&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P3_C5&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P3_C6&quot; class=&quot;tabelCell&quot;&gt;Title&lt;/td&gt;&lt;td id=&quot;rapid_P3_C7&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P3_C18&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P3_C8&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P3_C9&quot; class=&quot;tabelCell&quot;&gt;Description&lt;/td&gt;&lt;td id=&quot;rapid_P3_C10&quot; class=&quot;tabelCell&quot;&gt;&lt;textarea id=&quot;rapid_P3_C19&quot; class=&quot;input&quot;&gt;&lt;/textarea&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P3_C38_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P3_C39_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P3_C21&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P3_C22&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P3_C20&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P3_C28&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P3_C24&quot; class=&quot;button&quot;&gt;Create&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
     <id>P3</id>
+    <modifiedBy>admin</modifiedBy>
+    <modifiedDate>2014-06-13T16:16:37.103+01:00</modifiedDate>
     <name>03_PageNew</name>
     <rolesHtml>
-        <html>&lt;table id="rapid_P3_C1" class="table"&gt;
+        <html>&lt;table id=&quot;rapid_P3_C1&quot; class=&quot;table&quot;&gt;
 		&lt;tbody&gt;
-			&lt;tr id="rapid_P3_C14" class="tableRow"&gt;
-				&lt;td id="rapid_P3_C15" colspan="2" class="tabelCell"&gt;New page&lt;/td&gt;
+			&lt;tr id=&quot;rapid_P3_C14&quot; class=&quot;tableRow&quot;&gt;
+				&lt;td id=&quot;rapid_P3_C15&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;New page&lt;/td&gt;
 			&lt;/tr&gt;
-			&lt;tr id="rapid_P3_C2" class="tableRow"&gt;
-				&lt;td id="rapid_P3_C3" class="tabelCell"&gt;Name&lt;/td&gt;
-				&lt;td id="rapid_P3_C4" class="tabelCell"&gt;
-					&lt;input id="rapid_P3_C17" value="" class="input"&gt;&lt;/td&gt;
+			&lt;tr id=&quot;rapid_P3_C2&quot; class=&quot;tableRow&quot;&gt;
+				&lt;td id=&quot;rapid_P3_C3&quot; class=&quot;tabelCell&quot;&gt;Name&lt;/td&gt;
+				&lt;td id=&quot;rapid_P3_C4&quot; class=&quot;tabelCell&quot;&gt;
+					&lt;input id=&quot;rapid_P3_C17&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
 				&lt;/tr&gt;
-				&lt;tr id="rapid_P3_C5" class="tableRow"&gt;
-					&lt;td id="rapid_P3_C6" class="tabelCell"&gt;Title&lt;/td&gt;
-					&lt;td id="rapid_P3_C7" class="tabelCell"&gt;
-						&lt;input id="rapid_P3_C18" value="" class="input"&gt;&lt;/td&gt;
+				&lt;tr id=&quot;rapid_P3_C5&quot; class=&quot;tableRow&quot;&gt;
+					&lt;td id=&quot;rapid_P3_C6&quot; class=&quot;tabelCell&quot;&gt;Title&lt;/td&gt;
+					&lt;td id=&quot;rapid_P3_C7&quot; class=&quot;tabelCell&quot;&gt;
+						&lt;input id=&quot;rapid_P3_C18&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
 					&lt;/tr&gt;
-					&lt;tr id="rapid_P3_C8" class="tableRow"&gt;
-						&lt;td id="rapid_P3_C9" class="tabelCell"&gt;Description&lt;/td&gt;
-						&lt;td id="rapid_P3_C10" class="tabelCell"&gt;
-							&lt;textarea id="rapid_P3_C19" class="input"&gt;&lt;/textarea&gt;
+					&lt;tr id=&quot;rapid_P3_C8&quot; class=&quot;tableRow&quot;&gt;
+						&lt;td id=&quot;rapid_P3_C9&quot; class=&quot;tabelCell&quot;&gt;Description&lt;/td&gt;
+						&lt;td id=&quot;rapid_P3_C10&quot; class=&quot;tabelCell&quot;&gt;
+							&lt;textarea id=&quot;rapid_P3_C19&quot; class=&quot;input&quot;&gt;&lt;/textarea&gt;
 						&lt;/td&gt;
 					&lt;/tr&gt;
-					&lt;tr id="rapid_P3_C21" class="tableRow"&gt;
-						&lt;td id="rapid_P3_C22" class="tabelCell"&gt;
-							&lt;button id="rapid_P3_C20" class="button"&gt;Cancel&lt;/button&gt;
+					&lt;tr id=&quot;rapid_P3_C38_&quot; class=&quot;tableRow&quot;&gt;
+						&lt;td id=&quot;rapid_P3_C39_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;/td&gt;
+					&lt;/tr&gt;
+					&lt;tr id=&quot;rapid_P3_C21&quot; class=&quot;tableRow&quot;&gt;
+						&lt;td id=&quot;rapid_P3_C22&quot; class=&quot;tabelCell&quot;&gt;
+							&lt;button id=&quot;rapid_P3_C20&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;
 						&lt;/td&gt;
-						&lt;td id="rapid_P3_C28" class="tabelCell"&gt;
-							&lt;button id="rapid_P3_C24" class="button"&gt;Save&lt;/button&gt;
+						&lt;td id=&quot;rapid_P3_C28&quot; class=&quot;tabelCell&quot;&gt;
+							&lt;button id=&quot;rapid_P3_C24&quot; class=&quot;button&quot;&gt;Create&lt;/button&gt;
 						&lt;/td&gt;
 					&lt;/tr&gt;
 				&lt;/tbody&gt;
@@ -836,4 +1068,5 @@ if (exists) return "A page with this name already exists";</javaScript>
         <rules>font-size:14px;</rules>
     </styles>
     <title>New page</title>
-<version>1</version></page>
+    <version>1</version>
+</page>
