@@ -33,7 +33,9 @@ import com.rapid.core.Application.DatabaseConnection;
 import com.rapid.data.ConnectionAdapter;
 import com.rapid.data.DataFactory;
 import com.rapid.security.SecurityAdapater;
+import com.rapid.security.SecurityAdapater.Role;
 import com.rapid.security.SecurityAdapater.SecurityAdapaterException;
+import com.rapid.security.SecurityAdapater.User;
 import com.rapid.server.RapidHttpServlet;
 import com.rapid.server.RapidServletContextListener;
 import com.rapid.server.RapidHttpServlet.RapidRequest;
@@ -565,13 +567,13 @@ public class Rapid extends Action {
 					try {
 						
 						// get the roles
-						List<String> roles = security.getRoles(rapidRequest);
+						List<String> roles = security.getRoles(rapidRequest).getNames();
 						
 						// add the users to the response
 						result.put("roles", roles);
 						
 						// get the users
-						List<String> users = security.getUsers(rapidRequest);
+						List<String> users = security.getUsers(rapidRequest).getNames();
 						
 						// add the users to the response
 						result.put("users", users);					
@@ -603,7 +605,7 @@ public class Rapid extends Action {
 					try {
 						
 						// get the users roles
-						List<String> roles = security.getUserRoles(rapidRequest, userName);
+						List<String> roles = security.getUser(rapidRequest, userName).getRoles();
 						
 						// add the users to the response
 						result.put("roles", roles);											
@@ -1015,19 +1017,32 @@ public class Rapid extends Action {
 					
 					// get the security 
 					SecurityAdapater security = newApp.getSecurity();
+					
 					// check there is one
 					if (security != null) {
-						// get the current userName
+						
+						// get the current user's name
 						String userName = rapidRequest.getUserName();
-						// get the current user's password
-						String password = rapidRequest.getUserPassword();
-						// update password to empty string if null
-						if (password == null) password = "";
-						// add new user
-						security.addUser(rapidRequest, userName, password);
-						// add Admin and Design roles for the new user
-						security.addUserRole(rapidRequest, userName, com.rapid.server.Rapid.ADMIN_ROLE);
-						security.addUserRole(rapidRequest, userName, com.rapid.server.Rapid.DESIGN_ROLE);
+						
+						// get the current users record from the adapter
+						User user = security.getUser(rapidRequest, userName);
+						
+						// get the rapid application
+						Application rapidApplication = rapidRequest.getRapidServlet().getApplication("rapid");
+						
+						// check the current user is present in the app's security adapter
+						if (user == null) {
+							// get the Rapid user object
+							User rapidUser = rapidApplication.getSecurity().getUser(rapidRequest, userName);
+							// create a new user based on the Rapid user
+							user = new User(userName, rapidUser.getDescription(), rapidUser.getPassword());
+							// add the new user 
+							security.addUser(rapidRequest, user);
+						}
+						
+						// add Admin and Design roles for the new user if required
+						if (!security.checkUserRole(rapidRequest, userName, com.rapid.server.Rapid.ADMIN_ROLE)) security.addUserRole(rapidRequest, userName, com.rapid.server.Rapid.ADMIN_ROLE);
+						if (!security.checkUserRole(rapidRequest, userName, com.rapid.server.Rapid.DESIGN_ROLE)) security.addUserRole(rapidRequest, userName, com.rapid.server.Rapid.DESIGN_ROLE);
 					}
 					
 					// save the application to file
@@ -1129,25 +1144,7 @@ public class Rapid extends Action {
 					newApp.setName(name);
 					newApp.setTitle(title);
 					newApp.setDescription(description);
-										
-					// get the security 
-					SecurityAdapater security = newApp.getSecurity();
-					
-					// if there is one
-					if (security != null) {
-						// get the current userName
-						String userName = rapidRequest.getUserName();
-						// get the current user's password
-						String password = rapidRequest.getUserPassword();
-						// update password to empty string if null
-						if (password == null) password = "";
-						// add new user
-						security.addUser(rapidRequest, userName, password);
-						// add Admin and Design roles for the new user
-						security.addUserRole(rapidRequest, userName, com.rapid.server.Rapid.ADMIN_ROLE);
-						security.addUserRole(rapidRequest, userName, com.rapid.server.Rapid.DESIGN_ROLE);
-					}
-					
+
 					// save the application to file
 					newApp.save(rapidServlet, rapidRequest);
 															
@@ -1307,10 +1304,13 @@ public class Rapid extends Action {
 				
 				try {
 					
-					// get the role
-					String role = jsonAction.getString("role").trim();
+					// get the role name
+					String roleName = jsonAction.getString("role").trim();
+					// get the role descrition
+					String roleDescription = jsonAction.optString("description").trim();
+					
 					// add the role
-					app.getSecurity().addRole(rapidRequest, role);
+					app.getSecurity().addRole(rapidRequest, new Role(roleName, roleDescription));
 					// set the result message
 					result.put("message", "Role added");
 					
@@ -1339,10 +1339,12 @@ public class Rapid extends Action {
 					
 					// get the userName
 					String userName = jsonAction.getString("userName").trim();
+					// get the userDescription
+					String userDescription = jsonAction.optString("userDescription","").trim();
 					// get the password
 					String password = jsonAction.getString("password");
 					// add the role
-					app.getSecurity().addUser(rapidRequest, userName, password);
+					app.getSecurity().addUser(rapidRequest, new User(userName, userDescription, password));
 					// set the result message
 					result.put("message", "User added");
 					
@@ -1407,8 +1409,12 @@ public class Rapid extends Action {
 					String userName = jsonAction.getString("userName").trim();
 					// get the password
 					String password = jsonAction.getString("password");
-					// add the user role
-					app.getSecurity().updateUserPassword(rapidRequest, userName, password);
+					// get the user
+					User user = app.getSecurity().getUser(rapidRequest, userName);
+					// update the password
+					user.setPassword(password);
+					// update the user
+					app.getSecurity().updateUser(rapidRequest, user);
 					// set the result message
 					result.put("message", "Password updated");
 					

@@ -26,6 +26,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
+import com.rapid.security.SecurityAdapater.User;
 import com.rapid.server.Rapid;
 import com.rapid.server.RapidHttpServlet;
 import com.rapid.server.RapidHttpServlet.RapidRequest;
@@ -405,14 +406,9 @@ public class Page {
 		
 		// get the application
 		Application application = rapidRequest.getApplication();
-				
-		// get the username
-		String userName = rapidRequest.getUserName();
-		if (userName == null) {
-			userName = "unknown";
-		} else {
-			userName = Files.safeName(userName);
-		}
+			
+		// get the user name
+		String userName = Files.safeName(rapidRequest.getUserName());		
 		
 		// create folders to archive the pages
 		String archivePath = rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + application.getId() + "/" + Rapid.BACKUP_FOLDER);		

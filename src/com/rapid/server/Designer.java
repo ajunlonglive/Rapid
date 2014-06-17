@@ -30,6 +30,8 @@ import org.json.JSONObject;
 
 import com.rapid.security.RapidSecurityAdapter;
 import com.rapid.security.SecurityAdapater;
+import com.rapid.security.SecurityAdapater.Role;
+import com.rapid.security.SecurityAdapater.User;
 import com.rapid.utils.Bytes;
 import com.rapid.utils.Files;
 import com.rapid.utils.Html;
@@ -86,10 +88,9 @@ public class Designer extends RapidHttpServlet {
 				// check we got some
 				if (rapidSecurity != null) {
 					
-					// get user name
+					// get the user
 					String userName = rapidRequest.getUserName();		
-					if (userName == null) userName = "";
-					
+
 					// check permission
 					if (rapidSecurity.checkUserRole(rapidRequest, userName, Rapid.DESIGN_ROLE)) {
 						
@@ -126,11 +127,9 @@ public class Designer extends RapidHttpServlet {
 							
 						} else if ("getApps".equals(actionName)) {
 							
+							// create a json array for holding our apps
 							JSONArray jsonApps = new JSONArray();
-							
-							String password = rapidRequest.getUserPassword();
-							if (password == null) password = "";
-							
+														
 							// loop the list of applications sorted by id (with rapid last)
 							for (Application application : getSortedApplications()) {
 								
@@ -172,16 +171,20 @@ public class Designer extends RapidHttpServlet {
 									if (security != null) {
 										// make an object we're going to return
 										JSONArray jsonRoles = new JSONArray();
-										// retrieve the role
-										List<String> roles = security.getRoles(rapidRequest);														
+										// retrieve the roles
+										List<Role> roles = security.getRoles(rapidRequest);														
 										// check we got some
-										if (roles != null) {								
+										if (roles != null) {			
+											// create a collection of names
+											ArrayList<String> roleNames = new ArrayList<String>();
+											// copy the names in
+											for (Role role : roles) roleNames.add(role.getName());
 											// sort them
-											Collections.sort(roles);
+											Collections.sort(roleNames);
 											// loop the sorted connections
-											for (String role : roles) {
+											for (String roleName : roleNames) {
 												// if it's not a special Rapid role add it to the list we're sending
-												if (!Rapid.ADMIN_ROLE.equals(role) && !Rapid.DESIGN_ROLE.equals(role)) jsonRoles.put(role);
+												if (!Rapid.ADMIN_ROLE.equals(roleName) && !Rapid.DESIGN_ROLE.equals(roleName)) jsonRoles.put(roleName);
 											}
 										}							
 										// add the security roles to the app 
@@ -944,15 +947,23 @@ public class Designer extends RapidHttpServlet {
 											
 											// if we have one
 											if (security != null) {									
-												// get the current user's password
-												String password = rapidRequest.getUserPassword();
-												// update password to empty string if null
-												if (password == null) password = "";												
-												// add new user
-												security.addUser(rapidRequest, userName, password);
-												// add Admin and Design roles for the new user
-												security.addUserRole(rapidRequest, userName, com.rapid.server.Rapid.ADMIN_ROLE);
-												security.addUserRole(rapidRequest, userName, com.rapid.server.Rapid.DESIGN_ROLE);									
+												
+												// get the current users record from the adapter
+												User user = security.getUser(rapidRequest, userName);
+												
+												// check the current user is present in the app's security adapter
+												if (user == null) {
+													// get the Rapid user object
+													User rapidUser = rapidApplication.getSecurity().getUser(rapidRequest, userName);
+													// create a new user based on the Rapid user
+													user = new User(userName, rapidUser.getDescription(), rapidUser.getPassword());
+													// add the new user 
+													security.addUser(rapidRequest, user);
+												}
+												
+												// add Admin and Design roles for the new user if required
+												if (!security.checkUserRole(rapidRequest, userName, com.rapid.server.Rapid.ADMIN_ROLE)) security.addUserRole(rapidRequest, userName, com.rapid.server.Rapid.ADMIN_ROLE);
+												if (!security.checkUserRole(rapidRequest, userName, com.rapid.server.Rapid.DESIGN_ROLE)) security.addUserRole(rapidRequest, userName, com.rapid.server.Rapid.DESIGN_ROLE);									
 											}
 											
 											// save application

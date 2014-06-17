@@ -26,7 +26,8 @@ import com.rapid.core.Event;
 import com.rapid.core.Page;
 import com.rapid.core.Page.RoleHtml;
 import com.rapid.security.SecurityAdapater;
-import com.rapid.security.RapidSecurityAdapter.Security;
+import com.rapid.security.SecurityAdapater.Role;
+import com.rapid.security.SecurityAdapater.User;
 import com.rapid.utils.Html;
 
 public class Rapid extends RapidHttpServlet {
@@ -366,11 +367,14 @@ public class Rapid extends RapidHttpServlet {
 				// if we have some
 				if (security != null) {
 					
-					// get the username
+					// get the userName
 					String userName = rapidRequest.getUserName();
 					
+					// get the user
+					User user = security.getUser(rapidRequest, userName);
+					
 					// get the users roles
-					List<String> userRoles = security.getUserRoles(rapidRequest, userName);
+					List<String> userRoles = user.getRoles();
 										
 					// retrieve and rolesHtml for the page
 					List<RoleHtml> rolesHtml = page.getRolesHtml();
@@ -502,15 +506,13 @@ public class Rapid extends RapidHttpServlet {
 					
 					for (Application app : apps) {
 						
+						String userName = rapidRequest.getUserName();
+						
 						SecurityAdapater security = app.getSecurity();
 						
-						String userName = rapidRequest.getUserName();
-						if (userName == null) userName = "";
-						
-						String password = rapidRequest.getUserPassword();
-						if (password == null) password = "";
-						
-						if (security.checkUserPassword(rapidRequest, userName, password)) {
+						User user = security.getUser(rapidRequest, userName);
+												
+						if (user != null) {
 							
 							JSONObject jsonApp = new JSONObject();
 							jsonApp.put("id", app.getId());

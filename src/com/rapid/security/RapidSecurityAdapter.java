@@ -2,10 +2,6 @@ package com.rapid.security;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.xml.bind.JAXBContext;
@@ -15,104 +11,50 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.log4j.Logger;
-import org.mozilla.javascript.edu.emory.mathcs.backport.java.util.Collections;
 
 import com.rapid.core.Application;
+import com.rapid.server.Rapid;
 import com.rapid.server.RapidHttpServlet.RapidRequest;
 import com.rapid.utils.Files;
 
 public class RapidSecurityAdapter extends SecurityAdapater {
-		
-	public static class User {
-		
-		private String _password;
-		private ArrayList<String> _roles;
-		
-		public String getPassword() { return _password; }
-		public void setPassword(String password) { _password = password; }
-		
-		public ArrayList<String> getRoles() { return _roles; }
-		public void setRoles(ArrayList<String> roles) { _roles = roles; }
-		
-		public User(){};
-		
-		public User(String password) {
-			_password = password;
-			_roles = new ArrayList<String>();
-		}
-		
-		public User(String password, ArrayList<String> roles) {
-			_password = password;
-			_roles = roles;
-		}
-		
-		public void addRole(String role) {
-			if (_roles == null) _roles = new ArrayList<String>();
-			if (!_roles.contains(role)) _roles.add(role);
-		}
-		
-		public void deleteRole(String role) {
-			_roles.remove(role);
-		}
-		
-	}
+	
+	// security object which is marshalled and unmarshalled
 	
 	@XmlRootElement
 	public static class Security {
 		
-		// instance variables
+		private Roles _roles;
+		private Users _users;
 		
-		private List<String> _roles;
-		private HashMap<String,User> _users;
+		// properties (these are mashalled in and out of the security.xml file)
 		
-		// properties
+		public Roles getRoles() { return _roles; }
+		public void setRoles(Roles roles) { _roles = roles; }
 		
-		public List<String> getRoles() { return _roles; }		
-		public void setRoles(List<String> roles) { _roles = roles; } 
+		public Users getUsers() { return _users; }
+		public void setUsers(Users users) { _users = users; }
 		
-		public HashMap<String,User> getUsers() { return _users; }		
-		public void setUsers(HashMap<String,User> users) { _users = users; } 
-		
-		// constructor
+		// constructors
 		
 		public Security() {
-			_roles = new ArrayList<String>();
-			_users = new HashMap<String,User>();
-		}
-		
-		// instance methods
-		
-		public void addRole(String role) {
-			_roles.add(role);
-		}
-				
-		public void removeRole(String role) {
-			_roles.remove(role);
-		}
-		
-		public void addUser(String userName, User user) {
-			_users.put(userName, user);
-		}
-		
-		public User getUser(String userName) {
-			return _users.get(userName);
-		}
-		
-		public void removeUser(String userName) {
-			_users.remove(userName);
+			_roles = new Roles();
+			_users = new Users();
 		}
 		
 	}
-	
+						
 	// instance variables
+	
 	private static Logger _logger = Logger.getLogger(RapidSecurityAdapter.class);	
-	private Security _security;
 	private Marshaller _marshaller;
 	private Unmarshaller _unmarshaller;
+	private Security _security;
 			
 	// constructors
-	
+
 	public RapidSecurityAdapter(ServletContext servletContext, Application application) {
+		// call the super method which retains the context and application
 		super(servletContext, application);
 		// init the marshaller and ununmarshaller
 		try { 
@@ -123,7 +65,7 @@ public class RapidSecurityAdapter extends SecurityAdapater {
 		} catch (JAXBException ex) {
 			_logger.error(ex);
 		}
-		// load the users
+		// load the users and roles
 		load();
 	}
 	
@@ -139,12 +81,36 @@ public class RapidSecurityAdapter extends SecurityAdapater {
 			// check the file exists
 			if (securityFile.exists()) {
 				
-				// marshal the users object to the temp file
+				// unmarshal the xml into an object
 				_security = (Security) _unmarshaller.unmarshal(securityFile);
-					
+									
 			} else {
 				
+				// initialise the security object
 				_security = new Security();
+				
+				// add the default application roles
+				_security.getRoles().add(new Role(Rapid.ADMIN_ROLE, "Rapid administrator"));
+				_security.getRoles().add(new Role(Rapid.DESIGN_ROLE, "Rapid designer"));
+				
+				// create a list of roles we want the user to have
+				UserRoles userRoles = new UserRoles();
+				userRoles.add(Rapid.ADMIN_ROLE);
+				userRoles.add(Rapid.DESIGN_ROLE);
+				
+				// initialise the admin user with all application roles
+				User adminUser = new User("admin", "Admin user", "admin", userRoles);
+				
+				// add the admin user
+				_security.getUsers().add(adminUser);
+				
+				// initialise the simple users with no application roles
+				User simpleUser = new User("user", "Unprivileged user", "user");
+				
+				// add the simple user
+				_security.getUsers().add(simpleUser);
+								
+				save();
 				
 			}
 							    
@@ -190,109 +156,103 @@ public class RapidSecurityAdapter extends SecurityAdapater {
 	    
 	}
 	
+	
 	// overrides
 	
 	@Override
-	public void addRole(RapidRequest rapidRequest, String role) throws SecurityAdapaterException {
-		_security.addRole(role);
-		save();
-	}
-
-	@Override
-	public void deleteRole(RapidRequest rapidRequest, String role) throws SecurityAdapaterException {
-		_security.removeRole(role);
-		save();
-	}
-	
-	@Override
-	public void addUser(RapidRequest rapidRequest, String userName, String password) throws SecurityAdapaterException {
-		_security.addUser(userName.toLowerCase(), new User(password));
-		save();
-	}
-		
-	@Override
-	public void deleteUser(RapidRequest rapidRequest, String userName) throws SecurityAdapaterException {
-		if (_security.getUser(userName.toLowerCase()) == null) throw new SecurityAdapaterException("No such user");
-		_security.removeUser(userName.toLowerCase());
-		save();
-	}
-	
-	@Override
-	public void addUserRole(RapidRequest rapidRequest, String userName, String role) throws SecurityAdapaterException {
-		User user = _security.getUser(userName.toLowerCase());
-		if (user == null) throw new SecurityAdapaterException("No such user");
-		user.addRole(role);
-		save();
-	}
-	
-	@Override
-	public void deleteUserRole(RapidRequest rapidRequest, String userName, String role) throws SecurityAdapaterException {
-		User user = _security.getUser(userName.toLowerCase());
-		if (user == null) throw new SecurityAdapaterException("No such user");
-		user.deleteRole(role);
-		save();
-	}
-	
-	@Override
-	public void updateUserPassword(RapidRequest rapidRequest, String userName, String password)	throws SecurityAdapaterException {
-		User user = _security.getUser(userName.toLowerCase());
-		if (user == null) throw new SecurityAdapaterException("No such user");
-		user.setPassword(password);
-		save();
-	}
-
-	@Override
-	public boolean checkUserPassword(RapidRequest rapidRequest, String userName, String password)	throws SecurityAdapaterException {
-		User user = _security.getUser(userName.toLowerCase());
-		if (user != null) {
-			if (password.equals(user.getPassword())) return true;
-		}
-		return false;		
-	}
-	
-	@Override
-	public boolean checkUserRole(RapidRequest rapidRequest, String userName,String role) throws SecurityAdapaterException {
-		User user = _security.getUser(userName.toLowerCase());
-		if (user != null) {			
-			List<String> roles = user.getRoles();
-			if (roles != null) {
-				for (String userRole : user.getRoles()) {
-					if (userRole.equals(role)) return true;
-				}
-			}							
-		}
-		return false;
-	}
-	
-	@Override
-	public List<String> getUserRoles(RapidRequest rapidRequest, String userName) throws SecurityAdapaterException {
-		User user = _security.getUser(userName.toLowerCase());
-		ArrayList<String> roles = new ArrayList<String>();
-		if (user != null) {		
-			ArrayList<String> userRoles =  user.getRoles();
-			if (userRoles != null) {
-				for (String role : userRoles) {
-					roles.add(role);
-				}
-			}
-			Collections.sort(roles);
-		}
-		return roles;
-	}
-
-	@Override
-	public List<String> getRoles(RapidRequest rapidRequest) throws SecurityAdapaterException {
+	public Roles getRoles(RapidRequest rapidRequest) throws SecurityAdapaterException {
 		return _security.getRoles();
 	}
 	
 	@Override
-	public List<String> getUsers(RapidRequest rapidRequest) throws SecurityAdapaterException {
-		ArrayList<String> users = new ArrayList<String>();
-		for (String key : _security.getUsers().keySet()) {
-			users.add(key);
-		}
-		Collections.sort(users);
-		return users;
-	}	
+	public Users getUsers(RapidRequest rapidRequest) throws SecurityAdapaterException {
+		return _security.getUsers();
+	}
 	
+	@Override
+	public Role getRole(RapidRequest rapidRequest, String roleName)	throws SecurityAdapaterException {
+		for (Role role : _security.getRoles()) if (role.getName().equals(roleName)) return role;
+		return null;
+	}
+	
+	@Override
+	public User getUser(RapidRequest rapidRequest, String userName) throws SecurityAdapaterException {
+		for (User user : _security.getUsers()) if (user.getName().equals(userName)) return user;
+		return null;
+	}
+	
+	@Override
+	public void addRole(RapidRequest rapidRequest, Role role) throws SecurityAdapaterException {
+		_security.getRoles().add(role);
+		_security.getRoles().sort();
+		save();
+	}
+	
+	@Override
+	public void deleteRole(RapidRequest rapidRequest, String roleName) throws SecurityAdapaterException {
+		for (Role role : _security.getRoles()) if (role.getName().equals(roleName)) {
+			_security.getRoles().remove(role);
+			_security.getRoles().sort();
+			save();
+			break;
+		};	
+	}
+	
+	@Override
+	public void addUser(RapidRequest rapidRequest, User user) throws SecurityAdapaterException {
+		_security.getUsers().add(user);
+		_security.getUsers().sort();
+	}
+	
+	@Override
+	public void deleteUser(RapidRequest rapidRequest, String userName) throws SecurityAdapaterException {
+		for (User user : _security.getUsers()) if (user.getName().equals(userName)){
+			_security.getUsers().remove(user);
+			_security.getUsers().sort();
+			save();
+			break;
+		}			
+	}
+	
+	@Override
+	public void addUserRole(RapidRequest rapidRequest, String userName,	String roleName) throws SecurityAdapaterException {
+		User user = getUser(rapidRequest, userName);
+		if (user == null) throw new SecurityAdapaterException("User " + userName + " cannot be found");
+		user.getRoles().add(roleName);
+		user.getRoles().sort();
+		save();		
+	}
+	
+	@Override
+	public void deleteUserRole(RapidRequest rapidRequest, String userName, String roleName) throws SecurityAdapaterException {
+		User user = getUser(rapidRequest, userName);
+		if (user == null) throw new SecurityAdapaterException("User " + userName + " cannot be found");
+		user.getRoles().remove(roleName);
+		user.getRoles().sort();
+		save();
+	}
+	
+	
+	@Override
+	public boolean checkUserPassword(RapidRequest rapidRequest, String userName, String password) throws SecurityAdapaterException {
+		User user = getUser(rapidRequest, userName);
+		if (user == null) throw new SecurityAdapaterException("User " + userName + " cannot be found");
+		if (password.equals(user.getPassword())) return true;
+		return false;
+	}
+	
+	@Override
+	public boolean checkUserRole(RapidRequest rapidRequest, String userName, String roleName) throws SecurityAdapaterException {
+		User user = getUser(rapidRequest, userName);
+		if (user == null) throw new SecurityAdapaterException("User " + userName + " cannot be found");
+		return user.getRoles().contains(roleName);
+	}
+	
+	@Override
+	public void updateUser(RapidRequest rapidRequest, User user) throws SecurityAdapaterException {
+		deleteUser(rapidRequest, user.getName());
+		_security.getUsers().add(user);
+		_security.getUsers().sort();
+	}
+						
 }

@@ -1,15 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <security>
-    <roles>RapidAdmin</roles>
-    <roles>RapidDesign</roles>
+    <roles>
+        <description>Rapid administrator</description>
+        <name>RapidAdmin</name>
+    </roles>
+    <roles>
+        <description>Rapid designer</description>
+        <name>RapidDesign</name>
+    </roles>
     <users>
-        <entry>
-            <key>admin</key>
-            <value>
-                <password>admin</password>
-                <roles>RapidDesign</roles>
-                <roles>RapidAdmin</roles>
-            </value>
-        </entry>
+        <description>Admin user</description>
+        <name>admin</name>
+        <password>admin</password>
+        <roles>RapidAdmin</roles>
+        <roles>RapidDesign</roles>
+    </users>
+    <users>
+        <description>Unprivileged user</description>
+        <name>user</name>
+        <password>user</password>
     </users>
 </security>

@@ -20,6 +20,8 @@ import com.rapid.server.RapidHttpServlet.RapidRequest;
 
 public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 	
+	private final static String SESSION_VARIABLE_USER_PASSWORD = "password";
+	
 	private static Logger _logger = Logger.getLogger(RapidFilter.class);
 	
 	public FormAuthenticationAdapter(ServletContext servletContext) {
@@ -42,23 +44,23 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 			
 			HttpSession session = request.getSession();
 			
-			// look in the session for username/password
+			// look in the session for username
 			userName = (String) session.getAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME);
-			userPassword = (String) session.getAttribute(RapidFilter.SESSION_VARIABLE_USER_PASSWORD);
-			
+
 			// cast response to http
 			HttpServletResponse response = (HttpServletResponse) res;
 			
-			if (userName == null || userPassword == null) {
+			if (userName == null) {
 																				
 				// look for an authorisation attribute in the session
 				String sessionRequestPath = (String) session.getAttribute("requestPath");
 				
-				// look in the request for the username/password
+				// look in the request for the username
 				userName = request.getParameter("userName");
+				// look in the request for the password
 				userPassword = request.getParameter("userPassword");
-												
-				if (userName == null || userPassword == null) {
+			
+				if (userName == null) {
 																									
 					// if we are attempting to authorise 
 					if (requestPath.contains("login.jsp") && sessionRequestPath != null) {
@@ -122,9 +124,8 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 					// we passed authorisation so redirect the client to the resource they wanted
 					if (authorised) {
 						
-						// retain username / password in the session
+						// retain username in the session
 						session.setAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME, userName);
-						session.setAttribute(RapidFilter.SESSION_VARIABLE_USER_PASSWORD, userPassword);
 						
 						// make the sessionRequest path the root just in case it was null (or login.jsp itself)
 						if (sessionRequestPath == null || "login.jsp".equals(sessionRequestPath)) sessionRequestPath = ".";

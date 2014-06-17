@@ -32,6 +32,7 @@ import com.rapid.core.Action;
 import com.rapid.core.Application;
 import com.rapid.core.Control;
 import com.rapid.core.Page;
+import com.rapid.security.SecurityAdapater.User;
 import com.rapid.server.filter.RapidFilter;
 
 @SuppressWarnings({"serial", "unchecked", "rawtypes"})
@@ -55,7 +56,6 @@ public class RapidHttpServlet extends HttpServlet {
 		public RapidHttpServlet getRapidServlet() { return _rapidServlet; }
 		public HttpServletRequest getRequest() { return _request; }
 		public String getUserName() { return (String) _request.getSession().getAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME); }
-		public String getUserPassword() { return (String) _request.getSession().getAttribute(RapidFilter.SESSION_VARIABLE_USER_PASSWORD); }
 		public String getActionName() { return _actionName; }
 		public Application getApplication() { return _application; }		
 		public Page getPage() { return _page; }

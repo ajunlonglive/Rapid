@@ -1,12 +1,18 @@
 package com.rapid.security;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 
 import com.rapid.core.Application;
 import com.rapid.server.RapidHttpServlet;
 import com.rapid.server.RapidHttpServlet.RapidRequest;
+import com.rapid.utils.Comparators;
 
 /*
 
@@ -23,6 +29,134 @@ are required in the rapid application security provider
 
 public abstract class SecurityAdapater {
 
+	// this class holds a roles details
+	public static class Role {
+		
+		// private class variables
+		protected String _name, _description;
+		
+		// properties
+		public String getName() { return _name; }
+		public void setName(String name) { _name = name; }
+		
+		public String getDescription() { return _description; }
+		public void setDescription(String description) { _description = description; }
+		
+		// constructors
+		public Role() {}
+		
+		public Role(String name, String description) {
+			_name = name;
+			_description = description;
+		}
+				
+	}
+		
+	// this class is an overridden list of roles with some useful methods
+	public static class Roles extends ArrayList<Role> {
+		
+		public List<String> getNames() {
+			// a list of strings
+			List<String> names = new ArrayList<String>();
+			// loop entries and add names
+			for (Role role : this) names.add(role.getName());
+			// return
+			return names;			
+		}
+		
+		
+		public Roles sort() {
+			// sort the roles alphabetically by the name
+			Collections.sort(this, new Comparator<Role>() {
+				@Override
+				public int compare(Role r1, Role r2) {
+					return Comparators.Ascii(r1.getName(), r2.getName());
+				}				
+			});			
+			return this;			
+		}
+						
+	}
+		
+	// this class is an overridden list of role names with some useful methods
+	public static class UserRoles extends ArrayList<String> {
+		
+		// sort the roles alphabetically
+		public UserRoles sort() {			
+			Collections.sort(this);			
+			return this;			
+		}
+		
+	}
+	
+	
+	// this class holds a users details
+	public static class User {
+		
+		// private class variables
+		protected String _name, _description, _password;
+		protected UserRoles _userRoles;
+		
+		// properties
+		public String getName() { return _name; }
+		public void setName(String name) { _name = name; }
+		
+		public String getDescription() { return _description; }
+		public void setDescription(String description) { _description = description; }
+		
+		public String getPassword() { return _password; }
+		public void setPassword(String password) { _password = password; }
+		
+		public UserRoles getRoles() { return _userRoles; }
+		public void setRoles(UserRoles roles) { _userRoles = roles; }
+		
+		// constructors
+		public User() {
+			_userRoles = new UserRoles();
+		}
+		
+		public User(String name, String description, String password) {
+			_name = name;
+			_description = description;
+			_password = password;
+			_userRoles = new UserRoles();
+		}
+		
+		public User(String name, String description, String password, UserRoles roles) {
+			_name = name;
+			_description = description;
+			_password = password;
+			_userRoles = roles;
+		}
+						
+	}
+	
+		
+	// this class is an overridden list of users with some useful methods
+	public static class Users extends ArrayList<User> {
+		
+		public List<String> getNames() {
+			// a list of strings
+			List<String> names = new ArrayList<String>();
+			// loop entries and add names
+			for (User user : this) names.add(user.getName());
+			// return
+			return names;			
+		}
+		
+		public Users sort() {
+			// sort the users alphabetically by the name
+			Collections.sort(this, new Comparator<User>() {
+				@Override
+				public int compare(User u1, User u2) {
+					return Comparators.Ascii(u1.getName(), u2.getName());
+				}				
+			});			
+			return this;			
+		}
+						
+	}
+	
 	// this exception class can be extended for more meaningful exceptions that may occur within the adapters
 	public static class SecurityAdapaterException extends Exception {
 		
@@ -75,29 +209,49 @@ public abstract class SecurityAdapater {
 	}
 	
 	// abstract methods
+		
+	// all roles available to the application
+	public abstract Roles getRoles(RapidRequest rapidRequest) throws SecurityAdapaterException;
 	
-	public abstract void addRole(RapidRequest rapidRequest, String role) throws SecurityAdapaterException;
+	// all users of the application
+	public abstract Users getUsers(RapidRequest rapidRequest) throws SecurityAdapaterException;
 	
-	public abstract void addUser(RapidRequest rapidRequest, String userName, String password) throws SecurityAdapaterException;
-			
-	public abstract void addUserRole(RapidRequest rapidRequest, String userName, String role) throws SecurityAdapaterException;
 	
-	public abstract void deleteRole(RapidRequest rapidRequest, String role) throws SecurityAdapaterException;
+	// details of a single role
+	public abstract Role getRole(RapidRequest rapidRequest, String roleName) throws SecurityAdapaterException;
+		
+	// details of a single user
+	public abstract User getUser(RapidRequest rapidRequest, String userName) throws SecurityAdapaterException;
 	
+		
+	// add a role to the application (the adapter will need to ensure that the role is not present already)
+	public abstract void addRole(RapidRequest rapidRequest, Role role) throws SecurityAdapaterException;
+						
+	// delete a role from the application
+	public abstract void deleteRole(RapidRequest rapidRequest, String roleName) throws SecurityAdapaterException;
+	
+	
+	// add a user to the application (the adapter will need to ensure that the user is not present already)
+	public abstract void addUser(RapidRequest rapidRequest, User user) throws SecurityAdapaterException;
+		
+	// delete a user from the application
 	public abstract void deleteUser(RapidRequest rapidRequest, String userName) throws SecurityAdapaterException;
 	
-	public abstract void deleteUserRole(RapidRequest rapidRequest, String userName, String role) throws SecurityAdapaterException;
 	
-	public abstract void updateUserPassword(RapidRequest rapidRequest, String userName, String password) throws SecurityAdapaterException;
+	// add a named role to a named user (the adapter will need to ensure that the role is not present already)
+	public abstract void addUserRole(RapidRequest rapidRequest, String userName, String roleName) throws SecurityAdapaterException;
 	
+	// remove a named role from a named user
+	public abstract void deleteUserRole(RapidRequest rapidRequest, String userName, String roleName) throws SecurityAdapaterException;
+
+	// check a named userName/password combination
 	public abstract boolean checkUserPassword(RapidRequest rapidRequest, String userName, String password) throws SecurityAdapaterException;
-		
-	public abstract boolean checkUserRole(RapidRequest rapidRequest, String userName, String role) throws SecurityAdapaterException;
 	
-	public abstract List<String> getUserRoles(RapidRequest rapidRequest, String userName) throws SecurityAdapaterException;
+	// check a named userName/roleName combination
+	public abstract boolean checkUserRole(RapidRequest rapidRequest, String userName, String roleName) throws SecurityAdapaterException;
 	
-	public abstract List<String> getRoles(RapidRequest rapidRequest) throws SecurityAdapaterException;
 	
-	public abstract List<String> getUsers(RapidRequest rapidRequest) throws SecurityAdapaterException;	
+	// update a user's details
+	public abstract void updateUser(RapidRequest rapidRequest, User user) throws SecurityAdapaterException;
 		
 }
