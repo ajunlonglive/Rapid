@@ -565,18 +565,12 @@ public class Rapid extends Action {
 				if (security != null) {
 					
 					try {
-						
-						// get the roles
-						List<String> roles = security.getRoles(rapidRequest).getNames();
-						
-						// add the users to the response
-						result.put("roles", roles);
-						
-						// get the users
-						List<String> users = security.getUsers(rapidRequest).getNames();
+												
+						// add the roles to the response
+						result.put("roles", security.getRoles(rapidRequest));
 						
 						// add the users to the response
-						result.put("users", users);					
+						result.put("users", security.getUsers(rapidRequest));					
 						
 					} catch (SecurityAdapaterException ex) {
 						rapidServlet.getLogger().error("Rapid security adapter error : " + ex.getMessage(),ex);
