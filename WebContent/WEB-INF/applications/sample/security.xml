@@ -8,12 +8,21 @@
         <description>Rapid designer</description>
         <name>RapidDesign</name>
     </roles>
+    <roles>
+        <description>Sample security role 1</description>
+        <name>Sample role 1</name>
+    </roles>
+    <roles>
+        <description>Sample security role 2</description>
+        <name>Sample role 2</name>
+    </roles>
     <users>
         <description>Admin user</description>
         <name>admin</name>
         <password>admin</password>
         <roles>RapidAdmin</roles>
         <roles>RapidDesign</roles>
+        <roles>Sample role 1</roles>
     </users>
     <users>
         <description>Unprivileged user</description>
