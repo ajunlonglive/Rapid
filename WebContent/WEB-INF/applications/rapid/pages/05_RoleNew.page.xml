@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><page>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<page>
     <controls>
         <childControls>
             <childControls>
@@ -27,6 +28,10 @@
                         <key>type</key>
                         <value>tableCell</value>
                     </entry>
+                    <entry>
+                        <key>version</key>
+                        <value>1</value>
+                    </entry>
                 </properties>
                 <styles>
                     <appliesTo>#rapid_P5_C3</appliesTo>
@@ -48,6 +53,10 @@
                     <key>type</key>
                     <value>tableRow</value>
                 </entry>
+                <entry>
+                    <key>version</key>
+                    <value>1</value>
+                </entry>
             </properties>
             <styles>
                 <appliesTo>#rapid_P5_C2</appliesTo>
@@ -65,6 +74,10 @@
                         <value>rapid_P5_C5</value>
                     </entry>
                     <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
                         <key>text</key>
                         <value>Name</value>
                     </entry>
@@ -74,7 +87,7 @@
                     </entry>
                     <entry>
                         <key>name</key>
-                        <value/>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>rowSpan</key>
@@ -83,6 +96,10 @@
                     <entry>
                         <key>type</key>
                         <value>tableCell</value>
+                    </entry>
+                    <entry>
+                        <key>version</key>
+                        <value>1</value>
                     </entry>
                 </properties>
             </childControls>
@@ -107,17 +124,21 @@
     <key>type</key>
     <value>existing</value>
 </entry>
+<entry>
+    <key>version</key>
+    <value>1</value>
+</entry>
                             </properties>
                         </actions>
-                        <filter/>
+                        <filter></filter>
                         <type>keyup</type>
                     </events>
                     <events>
-                        <filter/>
+                        <filter></filter>
                         <type>change</type>
                     </events>
                     <events>
-                        <filter/>
+                        <filter></filter>
                         <type>blur</type>
                     </events>
                     <properties>
@@ -126,12 +147,16 @@
                             <value>rapid_P5_C7</value>
                         </entry>
                         <entry>
+                            <key>classes</key>
+                            <value>[]</value>
+                        </entry>
+                        <entry>
                             <key>name</key>
                             <value>Name</value>
                         </entry>
                         <entry>
                             <key>value</key>
-                            <value/>
+                            <value></value>
                         </entry>
                         <entry>
                             <key>controlType</key>
@@ -141,6 +166,10 @@
                             <key>type</key>
                             <value>input</value>
                         </entry>
+                        <entry>
+                            <key>version</key>
+                            <value>1</value>
+                        </entry>
                     </properties>
                     <styles>
                         <appliesTo>#rapid_P5_C7</appliesTo>
@@ -148,7 +177,7 @@
                     </styles>
                     <validation>
                         <allowNulls>false</allowNulls>
-                        <javaScript/>
+                        <javaScript></javaScript>
                         <message>User name must be provided</message>
                         <regEx>[\s\S]</regEx>
                         <type>value</type>
@@ -160,8 +189,12 @@
                         <value>rapid_P5_C6</value>
                     </entry>
                     <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
                         <key>text</key>
-                        <value/>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -179,6 +212,10 @@
                         <key>type</key>
                         <value>tableCell</value>
                     </entry>
+                    <entry>
+                        <key>version</key>
+                        <value>1</value>
+                    </entry>
                 </properties>
                 <styles>
                     <appliesTo>#rapid_P5_C6</appliesTo>
@@ -191,6 +228,10 @@
                     <value>rapid_P5_C4</value>
                 </entry>
                 <entry>
+                    <key>classes</key>
+                    <value>[]</value>
+                </entry>
+                <entry>
                     <key>name</key>
                     <value>Table row 4</value>
                 </entry>
@@ -198,11 +239,158 @@
                     <key>type</key>
                     <value>tableRow</value>
                 </entry>
+                <entry>
+                    <key>version</key>
+                    <value>1</value>
+                </entry>
             </properties>
             <styles>
                 <appliesTo>#rapid_P5_C4</appliesTo>
                 <rules>padding-top:5px;</rules>
             </styles>
+        </childControls>
+        <childControls>
+            <childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P5_C40_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
+                        <key>text</key>
+                        <value>Description</value>
+                    </entry>
+                    <entry>
+                        <key>colSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>rowSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableCell</value>
+                    </entry>
+                    <entry>
+                        <key>version</key>
+                        <value>1</value>
+                    </entry>
+                </properties>
+            </childControls>
+            <childControls>
+                <childControls>
+                    <events>
+                        <filter></filter>
+                        <type>keyup</type>
+                    </events>
+                    <events>
+                        <filter></filter>
+                        <type>change</type>
+                    </events>
+                    <events>
+                        <filter></filter>
+                        <type>blur</type>
+                    </events>
+                    <properties>
+                        <entry>
+                            <key>id</key>
+                            <value>rapid_P5_C41_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
+                        </entry>
+                        <entry>
+                            <key>name</key>
+                            <value>Input box 2</value>
+                        </entry>
+                        <entry>
+                            <key>value</key>
+                            <value></value>
+                        </entry>
+                        <entry>
+                            <key>controlType</key>
+                            <value>N</value>
+                        </entry>
+                        <entry>
+                            <key>type</key>
+                            <value>input</value>
+                        </entry>
+                        <entry>
+                            <key>version</key>
+                            <value>1</value>
+                        </entry>
+                    </properties>
+                    <styles>
+                        <appliesTo>#rapid_P5_C41_</appliesTo>
+                        <rules>width:100%;</rules>
+                    </styles>
+                    <validation>
+                        <allowNulls>false</allowNulls>
+                        <javaScript></javaScript>
+                        <message></message>
+                        <regEx></regEx>
+                        <type></type>
+                    </validation>
+                </childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P5_C42_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
+                        <key>text</key>
+                        <value></value>
+                    </entry>
+                    <entry>
+                        <key>colSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>rowSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableCell</value>
+                    </entry>
+                    <entry>
+                        <key>version</key>
+                        <value>1</value>
+                    </entry>
+                </properties>
+                <styles>
+                    <appliesTo>#rapid_P5_C42_</appliesTo>
+                    <rules>padding-right:25px;</rules>
+                </styles>
+            </childControls>
+            <properties>
+                <entry>
+                    <key>id</key>
+                    <value>rapid_P5_C39_</value>
+                </entry>
+                <entry>
+                    <key>classes</key>
+                    <value>[]</value>
+                </entry>
+                <entry>
+                    <key>type</key>
+                    <value>tableRow</value>
+                </entry>
+                <entry>
+                    <key>version</key>
+                    <value>1</value>
+                </entry>
+            </properties>
         </childControls>
         <childControls>
             <childControls>
@@ -230,9 +418,13 @@
     <key>type</key>
     <value>control</value>
 </entry>
+<entry>
+    <key>version</key>
+    <value>1</value>
+</entry>
                             </properties>
                         </actions>
-                        <filter/>
+                        <filter></filter>
                         <type>click</type>
                     </events>
                     <properties>
@@ -252,6 +444,10 @@
                             <key>type</key>
                             <value>button</value>
                         </entry>
+                        <entry>
+                            <key>version</key>
+                            <value>1</value>
+                        </entry>
                     </properties>
                     <styles>
                         <appliesTo>#rapid_P5_C20</appliesTo>
@@ -265,7 +461,7 @@
                     </entry>
                     <entry>
                         <key>text</key>
-                        <value/>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -282,6 +478,10 @@
                     <entry>
                         <key>type</key>
                         <value>tableCell</value>
+                    </entry>
+                    <entry>
+                        <key>version</key>
+                        <value>1</value>
                     </entry>
                 </properties>
                 <styles>
@@ -314,6 +514,10 @@
     <key>stopActions</key>
     <value>true</value>
 </entry>
+<entry>
+    <key>version</key>
+    <value>1</value>
+</entry>
                             </properties>
                             <failActions xsi:type="control">
 <properties>
@@ -336,6 +540,10 @@
     <entry>
         <key>type</key>
         <value>control</value>
+    </entry>
+    <entry>
+        <key>version</key>
+        <value>1</value>
     </entry>
 </properties>
                             </failActions>
@@ -360,6 +568,10 @@
     <entry>
         <key>type</key>
         <value>control</value>
+    </entry>
+    <entry>
+        <key>version</key>
+        <value>1</value>
     </entry>
 </properties>
                             </passActions>
@@ -386,6 +598,10 @@
     <key>type</key>
     <value>rapid</value>
 </entry>
+<entry>
+    <key>version</key>
+    <value>1</value>
+</entry>
                             </properties>
                             <successActions xsi:type="control">
 <properties>
@@ -409,16 +625,24 @@
         <key>type</key>
         <value>control</value>
     </entry>
+    <entry>
+        <key>version</key>
+        <value>1</value>
+    </entry>
 </properties>
                             </successActions>
                         </actions>
-                        <filter/>
+                        <filter></filter>
                         <type>click</type>
                     </events>
                     <properties>
                         <entry>
                             <key>id</key>
                             <value>rapid_P5_C24</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
                         </entry>
                         <entry>
                             <key>name</key>
@@ -431,6 +655,10 @@
                         <entry>
                             <key>type</key>
                             <value>button</value>
+                        </entry>
+                        <entry>
+                            <key>version</key>
+                            <value>1</value>
                         </entry>
                     </properties>
                     <styles>
@@ -445,8 +673,12 @@
                         <value>rapid_P5_C23</value>
                     </entry>
                     <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
                         <key>text</key>
-                        <value/>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -463,6 +695,10 @@
                     <entry>
                         <key>type</key>
                         <value>tableCell</value>
+                    </entry>
+                    <entry>
+                        <key>version</key>
+                        <value>1</value>
                     </entry>
                 </properties>
                 <styles>
@@ -485,6 +721,10 @@
                     <key>type</key>
                     <value>tableRow</value>
                 </entry>
+                <entry>
+                    <key>version</key>
+                    <value>1</value>
+                </entry>
             </properties>
             <styles>
                 <appliesTo>.</appliesTo>
@@ -503,6 +743,10 @@
             <entry>
                 <key>type</key>
                 <value>table</value>
+            </entry>
+            <entry>
+                <key>version</key>
+                <value>1</value>
             </entry>
         </properties>
         <styles>
@@ -540,43 +784,55 @@
                     <key>type</key>
                     <value>control</value>
                 </entry>
+                <entry>
+                    <key>version</key>
+                    <value>1</value>
+                </entry>
             </properties>
         </actions>
-        <filter/>
+        <filter></filter>
         <type>pageload</type>
     </events>
     <events>
-        <filter/>
+        <filter></filter>
         <type>reusable</type>
     </events>
-    <htmlBody>&lt;table id="rapid_P5_C1" class="table"&gt;&lt;tbody&gt;&lt;tr id="rapid_P5_C2" class="tableRow"&gt;&lt;td id="rapid_P5_C3" colspan="2" class="tabelCell"&gt;New role&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P5_C4" class="tableRow"&gt;&lt;td id="rapid_P5_C5" class="tabelCell"&gt;Name&lt;/td&gt;&lt;td id="rapid_P5_C6" class="tabelCell"&gt;&lt;input id="rapid_P5_C7" value="" class="input"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P5_C18" class="tableRow"&gt;&lt;td id="rapid_P5_C19" class="tabelCell"&gt;&lt;button id="rapid_P5_C20" class="button"&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id="rapid_P5_C23" class="tabelCell"&gt;&lt;button id="rapid_P5_C24" class="button"&gt;Save&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
+    <htmlBody>&lt;table id=&quot;rapid_P5_C1&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;rapid_P5_C2&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P5_C3&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;New role&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P5_C4&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P5_C5&quot; class=&quot;tabelCell&quot;&gt;Name&lt;/td&gt;&lt;td id=&quot;rapid_P5_C6&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P5_C7&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P5_C39_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P5_C40_&quot; class=&quot;tabelCell&quot;&gt;Description&lt;/td&gt;&lt;td id=&quot;rapid_P5_C42_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P5_C41_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot; style=&quot;display: inline-block;&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P5_C18&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P5_C19&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P5_C20&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P5_C23&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P5_C24&quot; class=&quot;button&quot;&gt;Save&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
     <id>P5</id>
+    <modifiedBy>admin</modifiedBy>
+    <modifiedDate>2014-06-18T18:03:17.460+01:00</modifiedDate>
     <name>05_RoleNew</name>
     <rolesHtml>
-        <html>&lt;table id="rapid_P5_C1" class="table"&gt;
+        <html>&lt;table id=&quot;rapid_P5_C1&quot; class=&quot;table&quot;&gt;
 		&lt;tbody&gt;
-			&lt;tr id="rapid_P5_C2" class="tableRow"&gt;
-				&lt;td id="rapid_P5_C3" colspan="2" class="tabelCell"&gt;New role&lt;/td&gt;
+			&lt;tr id=&quot;rapid_P5_C2&quot; class=&quot;tableRow&quot;&gt;
+				&lt;td id=&quot;rapid_P5_C3&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;New role&lt;/td&gt;
 			&lt;/tr&gt;
-			&lt;tr id="rapid_P5_C4" class="tableRow"&gt;
-				&lt;td id="rapid_P5_C5" class="tabelCell"&gt;Name&lt;/td&gt;
-				&lt;td id="rapid_P5_C6" class="tabelCell"&gt;
-					&lt;input id="rapid_P5_C7" value="" class="input"&gt;&lt;/td&gt;
+			&lt;tr id=&quot;rapid_P5_C4&quot; class=&quot;tableRow&quot;&gt;
+				&lt;td id=&quot;rapid_P5_C5&quot; class=&quot;tabelCell&quot;&gt;Name&lt;/td&gt;
+				&lt;td id=&quot;rapid_P5_C6&quot; class=&quot;tabelCell&quot;&gt;
+					&lt;input id=&quot;rapid_P5_C7&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
 				&lt;/tr&gt;
-				&lt;tr id="rapid_P5_C18" class="tableRow"&gt;
-					&lt;td id="rapid_P5_C19" class="tabelCell"&gt;
-						&lt;button id="rapid_P5_C20" class="button"&gt;Cancel&lt;/button&gt;
-					&lt;/td&gt;
-					&lt;td id="rapid_P5_C23" class="tabelCell"&gt;
-						&lt;button id="rapid_P5_C24" class="button"&gt;Save&lt;/button&gt;
-					&lt;/td&gt;
-				&lt;/tr&gt;
-			&lt;/tbody&gt;
-		&lt;/table&gt;</html>
+				&lt;tr id=&quot;rapid_P5_C39_&quot; class=&quot;tableRow&quot;&gt;
+					&lt;td id=&quot;rapid_P5_C40_&quot; class=&quot;tabelCell&quot;&gt;Description&lt;/td&gt;
+					&lt;td id=&quot;rapid_P5_C42_&quot; class=&quot;tabelCell&quot;&gt;
+						&lt;input id=&quot;rapid_P5_C41_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot; style=&quot;display: inline-block;&quot;&gt;&lt;/td&gt;
+					&lt;/tr&gt;
+					&lt;tr id=&quot;rapid_P5_C18&quot; class=&quot;tableRow&quot;&gt;
+						&lt;td id=&quot;rapid_P5_C19&quot; class=&quot;tabelCell&quot;&gt;
+							&lt;button id=&quot;rapid_P5_C20&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;
+						&lt;/td&gt;
+						&lt;td id=&quot;rapid_P5_C23&quot; class=&quot;tabelCell&quot;&gt;
+							&lt;button id=&quot;rapid_P5_C24&quot; class=&quot;button&quot;&gt;Save&lt;/button&gt;
+						&lt;/td&gt;
+					&lt;/tr&gt;
+				&lt;/tbody&gt;
+			&lt;/table&gt;</html>
     </rolesHtml>
     <styles>
         <appliesTo>body</appliesTo>
         <rules>font-size:14px;</rules>
     </styles>
     <title>New role</title>
-<version>1</version></page>
+    <version>1</version>
+</page>

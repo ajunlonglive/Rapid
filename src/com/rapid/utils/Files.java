@@ -116,14 +116,14 @@ public class Files {
 	}
 	
 	// this function is called recurringly in the tree walk
-	public static long getFileSize(File file) {
+	public static long getSize(File file) {
 		// instantiate the return value
 		long size = 0;		
 		// if the file is a directory
 		if (file.isDirectory()) {				
 			// loop the contents constantly incrimenting the size
 			for (File childFile : file.listFiles()) {
-				size += getFileSize(childFile);			
+				size += getSize(childFile);			
 			}			
 		} else {			
 			// just return the size

@@ -202,6 +202,7 @@ public class RapidSecurityAdapter extends SecurityAdapater {
 	public void addUser(RapidRequest rapidRequest, User user) throws SecurityAdapaterException {
 		_security.getUsers().add(user);
 		_security.getUsers().sort();
+		save();
 	}
 	
 	@Override
@@ -253,6 +254,7 @@ public class RapidSecurityAdapter extends SecurityAdapater {
 		deleteUser(rapidRequest, user.getName());
 		_security.getUsers().add(user);
 		_security.getUsers().sort();
+		save();
 	}
 						
 }

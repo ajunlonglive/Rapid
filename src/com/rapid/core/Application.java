@@ -830,7 +830,7 @@ public class Application {
 				
 				if (id.contains(_id) && nameParts.length >= 3) {
 					
-					long sizeBytes = Files.getFileSize(backup);
+					long sizeBytes = Files.getSize(backup);
 					
 					String size = "0b";
 									
@@ -912,7 +912,7 @@ public class Application {
 						name += "_" + nameParts[i];
 					}
 					
-					long sizeBytes = Files.getFileSize(backup);
+					long sizeBytes = Files.getSize(backup);
 					
 					String size = "0b";
 									

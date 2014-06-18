@@ -442,6 +442,15 @@
 	height:15px;
 }
 
+#rapid_P0_C721_ {
+	padding-bottom:5px;
+}
+
+#rapid_P0_C722_ {
+	padding-left:40px;
+	padding-bottom:5px;
+}
+
 #rapid_P0_C221 {
 	padding-top:0px;
 	text-align:center;
@@ -536,6 +545,14 @@
 	text-align:left;
 	padding-top:5px;
 	padding-left:5px;
+}
+
+#rapid_P0_C715_ {
+	text-align:left;
+}
+
+#rapid_P0_C717_ {
+	width:90%;
 }
 
 #rapid_P0_C228 {

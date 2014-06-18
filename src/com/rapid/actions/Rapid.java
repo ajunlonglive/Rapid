@@ -581,35 +581,41 @@ public class Rapid extends Action {
 				
 			} else if ("GETUSER".equals(action)) { 
 										
-				// get the userName from the incoming json
-				String userName = jsonAction.getString("userName");
-				
-				// add the user name
-				result.put("userName", userName);
-				
-				// add a masked password
-				result.put("password", "********");
-				
-				// get the app security
-				SecurityAdapater security = app.getSecurity();
-				
-				// if we got one
-				if (security != null) {
+				try {
 					
-					try {
-						
+					// get the userName from the incoming json
+					String userName = jsonAction.getString("userName");
+					
+					// get the app security
+					SecurityAdapater security = app.getSecurity();
+					
+					// get the user
+					User user = security.getUser(rapidRequest, userName);
+					
+					// add the user name
+					result.put("userName", userName);
+					
+					// add the user description
+					result.put("description", user.getDescription());
+					
+					// add a masked password
+					result.put("password", "********");
+				
+					// if we got one
+					if (security != null) {
+										
 						// get the users roles
 						List<String> roles = security.getUser(rapidRequest, userName).getRoles();
 						
 						// add the users to the response
 						result.put("roles", roles);											
-						
-					} catch (SecurityAdapaterException ex) {
-						rapidServlet.getLogger().error("Rapid action error : " + ex.getMessage(),ex);
-						throw new JSONException(ex);
-					}
-															
-				} // got security
+													
+					} // got security
+					
+				} catch (SecurityAdapaterException ex) {
+					rapidServlet.getLogger().error("Rapid action error : " + ex.getMessage(),ex);
+					throw new JSONException(ex);
+				}
 								
 			} else if ("RELOADACTIONS".equals(action)) {
 							
@@ -1301,10 +1307,10 @@ public class Rapid extends Action {
 					// get the role name
 					String roleName = jsonAction.getString("role").trim();
 					// get the role descrition
-					String roleDescription = jsonAction.optString("description").trim();
+					String description = jsonAction.getString("description").trim();
 					
 					// add the role
-					app.getSecurity().addRole(rapidRequest, new Role(roleName, roleDescription));
+					app.getSecurity().addRole(rapidRequest, new Role(roleName, description));
 					// set the result message
 					result.put("message", "Role added");
 					
@@ -1334,11 +1340,11 @@ public class Rapid extends Action {
 					// get the userName
 					String userName = jsonAction.getString("userName").trim();
 					// get the userDescription
-					String userDescription = jsonAction.optString("userDescription","").trim();
+					String description = jsonAction.optString("description","").trim();
 					// get the password
 					String password = jsonAction.getString("password");
 					// add the role
-					app.getSecurity().addUser(rapidRequest, new User(userName, userDescription, password));
+					app.getSecurity().addUser(rapidRequest, new User(userName, description, password));
 					// set the result message
 					result.put("message", "User added");
 					
@@ -1395,22 +1401,26 @@ public class Rapid extends Action {
 					throw new JSONException(ex);
 				}
 								
-			} else if ("SAVEUSERPASSWORD".equals(action)) {
+			} else if ("SAVEUSER".equals(action)) {
 				
 				try {
 					
 					// get the userName
 					String userName = jsonAction.getString("userName").trim();
+					// get the description
+					String description = jsonAction.getString("description").trim();
 					// get the password
 					String password = jsonAction.getString("password");
 					// get the user
 					User user = app.getSecurity().getUser(rapidRequest, userName);
-					// update the password
-					user.setPassword(password);
+					// update the description
+					user.setDescription(description);
+					// update the password if different from the mask
+					if (!"********".equals(password)) user.setPassword(password);
 					// update the user
 					app.getSecurity().updateUser(rapidRequest, user);
 					// set the result message
-					result.put("message", "Password updated");
+					result.put("message", "User saved");
 					
 				} catch (SecurityAdapaterException ex) {
 					throw new JSONException(ex);

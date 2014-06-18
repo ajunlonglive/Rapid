@@ -48,7 +48,7 @@ return [
  ["DELUSER","Delete user"],
  ["NEWUSERROLE","New user role"],
  ["DELUSERROLE","Delete user role"],
- ["SAVEUSERPASSWORD","Save user password"],
+ ["SAVEUSER","Save user descrition and password"],
  ["REBUILDPAGES","Rebuild application pages"],
  ["TESTDBCONN","Test database connection"],
  ["DELAPPBACKUP","Delete application backup"],
@@ -278,27 +278,36 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, succes
 			};	
 		break;
 		case "NEWROLE" :		
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), role: $("#rapid_P5_C7").val() };
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), role: $("#rapid_P5_C7").val(), description: $("#rapid_P5_C41_").val() };
 			callback = function() {
-				Event_change_rapid_P0_C43(ev);
+				// fake an adapter change
+				$("#rapid_P0_C81").change();
+				// fake a tab click
+				$("#rapid_P0_C74").click(); 
 			};								
 		break;
 		case "DELROLE" :		
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), role: $(ev.target).parent().prev().html() };
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), role: $(ev.target).closest("tr").find("td").first().html() };
 			callback = function() {
-				Event_change_rapid_P0_C43(ev);
+				// fake an adapter change
+				$("#rapid_P0_C81").change(); 
+				// fake a tab click
+				$("#rapid_P0_C74").click(); 
 			};								
 		break;
 		case "NEWUSER" :		
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: $("#rapid_P6_C7").val(), password: $("#rapid_P6_C18").val() };
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: $("#rapid_P6_C7").val(), description: $("#rapid_P6_C42_").val() , password: $("#rapid_P6_C18").val() };
 			callback = function() {
 				Event_change_rapid_P0_C43(ev);
 			};								
 		break;
 		case "DELUSER" :		
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: $(ev.target).parent().prev().html() };
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: $(ev.target).closest("tr").find("td").first().html() };
 			callback = function() {
-				Event_change_rapid_P0_C43(ev);
+				// fake an adapter change
+				$("#rapid_P0_C81").change(); 
+				// fake a tab click
+				$("#rapid_P0_C74").click();    
 			};								
 		break;
 		case "NEWUSERROLE" : 
@@ -313,8 +322,14 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, succes
 				Event_click_rapid_P0_C216({target: $("#rapid_P0_C216").find("tr.rowSelect").children().first()[0] });
 			};																
 		break;
-		case "SAVEUSERPASSWORD" :	
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: $("#rapid_P0_C216").find("tr.rowSelect").children().first().html(), password: $("#rapid_P0_C231").val() };															
+		case "SAVEUSER" :	
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: $("#rapid_P0_C216").find("tr.rowSelect").children().first().html(), description: $("#rapid_P0_C717_").val(), password: $("#rapid_P0_C231").val() };
+			callback = function() {
+				// fake an adapter change
+				$("#rapid_P0_C81").change(); 
+				// fake a tab click
+				$("#rapid_P0_C74").click();    
+			};																
 		break;
 		case "TESTDBCONN" :	
 			data = { 
