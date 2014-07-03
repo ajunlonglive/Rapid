@@ -70,6 +70,8 @@ var _copyControl;
 var _undo = [];
 // redo stack
 var _redo = [];
+// whether there are unsaved changes
+var _dirty;
 
 // the next control id
 var _nextId = 1;
@@ -81,6 +83,8 @@ var _pasteMap = null;
 
 // takes a snapshot of the current page and adds it to the undo stack
 function addUndo(keepRedo) {
+	// set dirty
+	_dirty = true;
 	// grab the page
 	var page = JSON.stringify(getDataObject(_page));
 	// if the page is different from the last item on the undo stack push it on
@@ -97,7 +101,7 @@ function addUndo(keepRedo) {
 }
 
 // takes a snapshot of the current page and adds it to the redo stack
-function addRedo() {
+function addRedo() {	
 	// grab the page
 	var page = JSON.stringify(getDataObject(_page));
 	// only called in doUndo so less checking
@@ -186,6 +190,15 @@ function doRedo() {
 	}
 	// disable redo button if there's nothing more on the stack
 	if (_redo.length == 0) $("#redo").disable();
+}
+
+// if the page is dirty prompt the user that they will lose unsaved changes
+function checkDirty() {
+	if (_dirty) {
+		return confirm("You will lose your unsaved changes. Are you sure?");
+	} else {
+		return true;
+	}
 }
 
 // this function is useful for calling from the JavaScript terminal to find out why certain objects have not been found
@@ -969,7 +982,9 @@ function loadPage() {
 		// set the page id
 		_page.id = pageId;
 		// reload the page iFrame with resources for the app and this page
-    	_pageIframe[0].contentDocument.location.href = "designpage.jsp?a=" + _app.id + "&p=" + _page.id;						
+    	_pageIframe[0].contentDocument.location.href = "designpage.jsp?a=" + _app.id + "&p=" + _page.id;	
+    	// set dirty to false
+    	_dirty = false;
 	} // drop down val check
 	
 }
@@ -1595,12 +1610,23 @@ $(document).ready( function() {
 	// load app
 	$("#appSelect").change( function() {
     	// load the selected app and its pages in the drop down 
-    	loadApp();
+    	if (checkDirty()) {
+    		loadApp();
+    	} else {
+    		// revert the drop down on cancel
+    		$("#appSelect").val(_app.id);
+    	}
 	});
 			
 	// load page
 	$("#pageSelect").change( function() {
-		loadPage();
+		// load the selected page
+		if (checkDirty()) {
+			loadPage();
+		} else {
+			// revert the drop down on cancel
+			$("#pageSelect").val(_page.id);
+		}
 	});
 	
 	// new page
@@ -1650,6 +1676,8 @@ $(document).ready( function() {
 	        	$("#rapid_P11_C7_").html("Page saved!");
 	        	// enable close button
 	        	$("#rapid_P11_C10_").enable();
+	        	// set dirty to false
+	        	_dirty = false;
 	        	// reload the pages as the order may have changed, but keep the current one selected
 	        	loadPages(_page.id);
 	        	// arrange any non-visible controls
@@ -1660,12 +1688,8 @@ $(document).ready( function() {
 	
 	// view page
 	$("#pageView").click( function(ev) {
-		// check there are no undo
-		if (_undo.length > 0) {
-			if (!confirm("You will lose your unsaved changes. Are you sure?")) return false;
-		}
-		// naviagte to page
-		window.location = "~?a=" + _app.id + "&p=" + _page.id;
+		// prompet the user if the page is dirty
+		if (checkDirty()) window.location = "~?a=" + _app.id + "&p=" + _page.id;
 	});
 							
 	// select parent
