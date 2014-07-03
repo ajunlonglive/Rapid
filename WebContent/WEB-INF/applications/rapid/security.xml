@@ -15,10 +15,4 @@
         <roles>RapidAdmin</roles>
         <roles>RapidDesign</roles>
     </users>
-    <users>
-        <description>User</description>
-        <name>user</name>
-        <password>user</password>
-        <roles>RapidDesign</roles>
-    </users>
 </security>

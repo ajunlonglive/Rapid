@@ -28,6 +28,5 @@
         <description>Unprivileged user</description>
         <name>user</name>
         <password>user</password>
-        <roles>RapidDesign</roles>
     </users>
 </security>
