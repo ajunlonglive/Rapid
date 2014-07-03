@@ -44,11 +44,12 @@ return [
  ["DELSOA","Delete SOA webservice"],
  ["NEWROLE","New role"],
  ["DELROLE","Delete role"],
+ ["SAVEROLE","Save role description"],
  ["NEWUSER","New user"],
  ["DELUSER","Delete user"],
  ["NEWUSERROLE","New user role"],
  ["DELUSERROLE","Delete user role"],
- ["SAVEUSER","Save user descrition and password"],
+ ["SAVEUSER","Save user descrition, password, and roles"],
  ["REBUILDPAGES","Rebuild application pages"],
  ["TESTDBCONN","Test database connection"],
  ["DELAPPBACKUP","Delete application backup"],
@@ -293,7 +294,15 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, succes
 				$("#rapid_P0_C81").change(); 
 				// fake a tab click
 				$("#rapid_P0_C74").click(); 
-			};								
+			};	
+		case "SAVEROLE" :		
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), role: $("#rapid_P0_C222").find("tr.rowSelect").children().first().html(), description: $("#rapid_P0_C735_").val() };
+			callback = function() {
+				// fake an adapter change
+				$("#rapid_P0_C81").change(); 
+				// fake a tab click
+				$("#rapid_P0_C74").click(); 
+			};							
 		break;
 		case "NEWUSER" :		
 			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: $("#rapid_P6_C7").val(), description: $("#rapid_P6_C42_").val() , password: $("#rapid_P6_C18").val() };

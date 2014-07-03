@@ -251,6 +251,9 @@ public abstract class SecurityAdapater {
 	public abstract boolean checkUserRole(RapidRequest rapidRequest, String userName, String roleName) throws SecurityAdapaterException;
 	
 	
+	// update a role description
+	public abstract void updateRole(RapidRequest rapidRequest, Role role) throws SecurityAdapaterException;
+		
 	// update a user's details
 	public abstract void updateUser(RapidRequest rapidRequest, User user) throws SecurityAdapaterException;
 		

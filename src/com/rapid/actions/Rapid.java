@@ -1363,6 +1363,24 @@ public class Rapid extends Action {
 					throw new JSONException(ex);
 				}
 								
+			} else if ("SAVEROLE".equals(action)) {
+				
+				try {
+					
+					// get the role
+					String roleName = jsonAction.getString("role").trim();
+					// get the description
+					String roleDescription = jsonAction.getString("description").trim();
+					
+					// update the role
+					app.getSecurity().updateRole(rapidRequest, new Role(roleName, roleDescription));
+					// set the result message
+					result.put("message", "User saved");
+					
+				} catch (SecurityAdapaterException ex) {
+					throw new JSONException(ex);
+				}
+								
 			} else if ("NEWUSERROLE".equals(action)) {
 				
 				try {

@@ -253,6 +253,14 @@ public class RapidSecurityAdapter extends SecurityAdapater {
 	}
 	
 	@Override
+	public void updateRole(RapidRequest rapidRequest, Role role) throws SecurityAdapaterException {
+		Role currentRole = getRole(rapidRequest, role.getName());
+		if (currentRole == null) throw new SecurityAdapaterException("Role " + role.getName() + " cannot be found");
+		currentRole.setDescription(role.getDescription());
+		save();
+	}
+	
+	@Override
 	public void updateUser(RapidRequest rapidRequest, User user) throws SecurityAdapaterException {
 		deleteUser(rapidRequest, user.getName());
 		_security.getUsers().add(user);

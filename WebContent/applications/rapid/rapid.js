@@ -332,7 +332,15 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, succes
 				$("#rapid_P0_C81").change(); 
 				// fake a tab click
 				$("#rapid_P0_C74").click(); 
-			};								
+			};	
+		case "SAVEROLE" :		
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), role: $("#rapid_P0_C222").find("tr.rowSelect").children().first().html(), description: $("#rapid_P0_C735_").val() };
+			callback = function() {
+				// fake an adapter change
+				$("#rapid_P0_C81").change(); 
+				// fake a tab click
+				$("#rapid_P0_C74").click(); 
+			};							
 		break;
 		case "NEWUSER" :		
 			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: $("#rapid_P6_C7").val(), description: $("#rapid_P6_C42_").val() , password: $("#rapid_P6_C18").val() };
