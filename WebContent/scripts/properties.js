@@ -66,8 +66,6 @@ function showProperties(control) {
 			}			
 		}
 	}
-	// resize the window and panels
-	windowResize();
 }
 
 function updateProperty(propertyObject, property, value, refreshHtml) {

@@ -592,10 +592,7 @@ function selectControl(control) {
 			} else {
 				$("#paste").attr("disabled","disabled");
 			}
-			
-			// resize the widow in case the properties are really tall
-			windowResize();
-			
+						
 		} else {
 
 			// hide the selection border (this is the page)
@@ -634,6 +631,18 @@ function selectControl(control) {
 		$("#propertiesDialogues").children().remove();
 	}	
 	
+}
+
+// this function shows the whole designer to the user, usually after the first page is loaded but possible earlier if there are no applications or pages
+function showDesigner() {
+	// show the control panel and properties panel
+	$("#designerTools").show();
+	// show the page
+	$("#page").show();
+	// resize the elements on the page
+	windowResize("showDesigner");
+	// arrange any non-visible controls
+	arrangeNonVisibleControls();
 }
 
 //this function load the apps into appsSelect
@@ -679,9 +688,12 @@ function loadApps(selectedAppId, forceLoad) {
         	// set the selected app
         	_app = _apps[appsDropDown[0].selectedIndex];        	
         	// load the app and its pages in the drop down if we weren't handed one
-        	if (!selectedAppId || forceLoad) loadApp();
-        	// size the windows
-        	windowResize();
+        	if (!selectedAppId || forceLoad) {
+        		loadApp();
+        	} else {
+        		// size the windows
+        		windowResize();
+        	}
         }
 	});
 }
@@ -1345,9 +1357,7 @@ $(document).ready( function() {
 	// the div that covers all of the components in design mode so they don't react to clicks
 	_designCover = $("#designCover");
 	// attach a call to the window resize function to the window resize event listener
-	$(window).resize(windowResize);
-	// resize now for good measure (and initial sizing of the design cover)
-	//windowResize();
+	$(window).resize("windowResize",windowResize);
 	
 	// load the action classes
 	$.ajax({
@@ -1445,13 +1455,12 @@ $(document).ready( function() {
 				        		var control = page.controls[i];
 				        		// create and add
 				        		_page.childControls.push(loadControl(control, _page, true));
-				        	}				        	
-				        	// resize the page which cators for large iframe content
-				        	windowResize();
-				        	// arrange any non-visible controls
-				        	arrangeNonVisibleControls();
+				        	}				        					        	
 			        	}
-		        		
+			        	
+			        	// make everything visible
+			        	showDesigner();
+			        				        			        		
 		        	} catch (ex) {
 		        		
 		        		alert("Error loading page : " + ex);
@@ -2181,14 +2190,17 @@ function showControlPanel() {
 // this makes sure the properties panel is visible and tall enough for all properties
 function showPropertiesPanel() {
 	
-	windowResize();
+	windowResize("showPropertiesPanel");
 	
 	$("#propertiesPanel").show("slide", {direction: "right"}, 200);
 				
 }
 
 // called whenever the page is resized
-function windowResize() {
+function windowResize(ev) {
+	
+	// get the caller of this function
+	var caller = ev.data || ev;
 	
 	// get the window object
 	var win = $(window);
@@ -2200,18 +2212,21 @@ function windowResize() {
 			
 	// get the control panel
 	var controlPanel = $("#controlPanel");
-	// get its current height
-	var controlPanelHeight = controlPanel.innerHeight() - 20;
+	// get its current height (less the combined top and bottom padding)
+	var controlPanelHeight = controlPanel.outerHeight(true);
 	
 	// get the properties panel
 	var propertiesPanel = $("#propertiesPanel");
 	// get its current height
-	var propertiesPanelHeight = propertiesPanel.innerHeight() - 10;
+	var propertiesPanelHeight = propertiesPanel.outerHeight(true);
 	
 	// get the current iframe contents height
 	var iframeHeight =_pageIframe[0].contentWindow.document.body.offsetHeight;
+	
+	// log
+	console.log("caller = " + caller + ", window = " + height + ", control panel = " + controlPanelHeight + ", properties panel = " + propertiesPanelHeight + ", iframe = " + iframeHeight);
 		
-	// increase height to the tallest
+	// increase height to the tallest of the window, the panels, or the iFrame
 	height = Math.max(height, controlPanelHeight, propertiesPanelHeight, iframeHeight);
 	
 	// cover the entire screen with the design cover
@@ -2220,11 +2235,11 @@ function windowResize() {
 		"height": height
 	});
 	
-	// adjust controlPanel height if necessary
-	controlPanel.css({height: height});
+	// adjust controlPanel height if necessary, less it's padding
+	if (controlPanelHeight < height) controlPanel.css({height: height - 20});
 	
-	// adjust propertiesPanel height if necessary 
-	propertiesPanel.css({height: height});
+	// adjust propertiesPanel height if necessary, less it's padding
+	if (propertiesPanelHeight < height) propertiesPanel.css({height: height - 20});
 		
 	// adjust iframe position, width and height
 	_pageIframe.css({
@@ -2232,8 +2247,6 @@ function windowResize() {
 		width: width - _panelPinnedOffset,
 		height: height
 	});
-	
-	// check the iframe height
 				
 }
 

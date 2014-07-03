@@ -12,6 +12,12 @@ optgroup {
 #page {
 	border: 0px;
 	position: absolute;
+	display:none;
+	
+}
+
+#designerTools {
+	display:none;
 }
 
 #designCover {
@@ -90,16 +96,21 @@ ul.design-controls {
 li.design-control {
 	display: block;
 	cursor: pointer;
-	border: 1px solid #191919;
-	background-color: #777;	
-	background-image: -webkit-gradient(linear,50% 0%,50% 100%,color-stop(0,#E6E6E6),color-stop(1,#F5F5F5));
-	background-image: -webkit-linear-gradient(top,#E6E6E6,#F5F5F5);	
+	border: 1px solid #191919;	
 	margin: 0px 0px 5px 5px;
 	padding: 2px 2px 2px 5px;
 	color: #191919;	
 	font-size: 12px;		
 	text-align: left;	
 	border-radius: 3px;
+	background-color: #eee;
+	-webkit-box-shadow: 0 -1px 1px rgba(0,0,0,0.2) inset,0 1px 1px rgba(255,255,255,0.8) inset,1px 2px 2px -1px rgba(0,0,0,0.3);
+	-moz-box-shadow: 0 -1px 1px rgba(0,0,0,0.2) inset,0 1px 1px rgba(255,255,255,0.8) inset,1px 2px 2px -1px rgba(0,0,0,0.3);
+	box-shadow: 0 -1px 1px rgba(0,0,0,0.2) inset,0 1px 1px rgba(255,255,255,0.8) inset,1px 2px 2px -1px rgba(0,0,0,0.3);
+}
+
+li.design-control:hover {
+	background-color: #ddd;
 }
 
 .design-control img {
@@ -149,11 +160,10 @@ div#propertiesPanel {
 	background-color: #F5F5F5;
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#E6E6E6', endColorstr='#F5F5F5');
 	background: -webkit-gradient(linear, left top, left bottom, from(#E6E6E6), to(#F5F5F5));
-	background: -moz-linear-gradient(top, #E6E6E6, #F5F5F5);
-	display: none;
+	background: -moz-linear-gradient(top, #E6E6E6, #F5F5F5);	
 	overflow: hidden;
 	outline: none;
-	padding: 0px 10px 10px 10px;
+	padding: 0px 10px 20px 10px;
 	text-align: center;
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
@@ -161,6 +171,7 @@ div#propertiesPanel {
 	-moz-user-select: -moz-none;
 	-ms-user-select: none;
 	user-select: none;
+	display: none;
 }
 
 .propertiesPanelDiv {
@@ -395,13 +406,14 @@ div.button {
 	vertical-align: middle;
 	font-family: arial;
 	font-size: 12px; 
+	background-color: #eee;
 	-webkit-box-shadow: 0 -1px 1px rgba(0,0,0,0.2) inset,0 1px 1px rgba(255,255,255,0.8) inset,1px 2px 2px -1px rgba(0,0,0,0.3);
 	-moz-box-shadow: 0 -1px 1px rgba(0,0,0,0.2) inset,0 1px 1px rgba(255,255,255,0.8) inset,1px 2px 2px -1px rgba(0,0,0,0.3);
 	box-shadow: 0 -1px 1px rgba(0,0,0,0.2) inset,0 1px 1px rgba(255,255,255,0.8) inset,1px 2px 2px -1px rgba(0,0,0,0.3);
 }
 
 .buttons button:hover {
-	background-color: #eee;
+	background-color: #ddd;
 }
 
 .buttons button:disabled {

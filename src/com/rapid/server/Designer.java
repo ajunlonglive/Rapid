@@ -67,6 +67,15 @@ public class Designer extends RapidHttpServlet {
     
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 			
+		/*
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		*/
+		
 		RapidRequest rapidRequest = new RapidRequest(this, request);
 		
 		try {
