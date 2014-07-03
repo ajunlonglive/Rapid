@@ -72,13 +72,13 @@ public class SQLWebservice extends Webservice {
 						parameters.add(Float.parseFloat(childRequestElement.getValue()));							
 						break;							
 					case SOASchema.DATE :	
-						dateFormatter = rapidRequest.getRapidServlet().getDateFormatter();
+						dateFormatter = rapidRequest.getRapidServlet().getXMLDateFormatter();
 						long dateLong = dateFormatter.parse(childRequestElement.getValue()).getTime();
 						date = new Date(dateLong);
 						parameters.add(date);
 						break;						
 					case SOASchema.DATETIME :
-						dateFormatter = rapidRequest.getRapidServlet().getDateTimeFormatter();
+						dateFormatter = rapidRequest.getRapidServlet().getXMLDateTimeFormatter();
 						long dateTimeLong = dateFormatter.parse(childRequestElement.getValue()).getTime();
 						date = new Date(dateTimeLong);
 						parameters.add(date);
@@ -117,12 +117,12 @@ public class SQLWebservice extends Webservice {
 							elementValue = Float.toString(rs.getFloat(fieldName));							
 							break;							
 						case SOASchema.DATE :							
-							dateFormatter = rapidRequest.getRapidServlet().getDateFormatter();							
+							dateFormatter = rapidRequest.getRapidServlet().getXMLDateFormatter();							
 							date = rs.getDate(fieldName);							
 							if (date != null) elementValue = dateFormatter.format(date);							
 							break;							
 						case SOASchema.DATETIME :							
-							dateFormatter = rapidRequest.getRapidServlet().getDateTimeFormatter();							
+							dateFormatter = rapidRequest.getRapidServlet().getXMLDateTimeFormatter();							
 							date = rs.getDate(fieldName);							
 							if (date != null) elementValue = dateFormatter.format(date);							
 							break;

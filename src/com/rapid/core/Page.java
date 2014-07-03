@@ -66,6 +66,33 @@ public class Page {
 				
 	}
 	
+	// details of a lock that might be on this page
+	public static class Lock {
+		
+		private String _userName, _userDescription;
+		private Date _dateTime;
+		
+		public String getUserName() { return _userName; }
+		public void setUserName(String userName) { _userName = userName; }
+		
+		public String getUserDescription() { return _userDescription; }
+		public void setUserDescription(String userDescription) { _userDescription = userDescription; }
+		
+		public Date getDateTime() { return _dateTime; }
+		public void setDateTime(Date dateTime) { _dateTime = dateTime; }
+		
+		// constructors
+		
+		public Lock() {}
+		
+		public Lock(String userName, String userDescription, Date dateTime) {
+			_userName = userName;
+			_userDescription = userDescription;
+			_dateTime = dateTime;
+		}
+		
+	}
+			
 	// instance variables
 	
 	private int _version;
@@ -78,6 +105,7 @@ public class Page {
 	private List<String> _sessionVariables;
 	private List<String> _roles;
 	private List<RoleHtml> _rolesHtml;
+	private Lock _lock;
 	
 	// properties
 	
@@ -153,6 +181,10 @@ public class Page {
 	public List<RoleHtml> getRolesHtml() { return _rolesHtml; }	
 	public void setRolesHtml(List<RoleHtml> rolesHtml) { _rolesHtml = rolesHtml; }
 	
+	// any lock that might be on this page
+	public Lock getLock() { return _lock; }
+	public void setLock(Lock lock) { _lock = lock; }
+		
 	// constructor
 	
 	public Page() {
@@ -400,6 +432,19 @@ public class Page {
 		
 		// return it
 		return stringBuilder.toString();		
+	}
+	
+	// removes the page lock if it is more than 1 hour old
+	public void checkLock() {
+		// only check if there is one present
+		if (_lock != null) {
+			// get the time now
+			Date now = new Date();
+			// get the time an hour after the lock time
+			Date lockExpiry = new Date(_lock.getDateTime().getTime() + 1000 * 60 * 60);
+			// if the lock expiry has passed set the lock to null;
+			if (now.after(lockExpiry)) _lock = null;
+		}
 	}
 								
 	public void backup(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, File pageFile) throws IOException {

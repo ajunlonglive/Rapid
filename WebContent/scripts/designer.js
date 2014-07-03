@@ -72,6 +72,8 @@ var _undo = [];
 var _redo = [];
 // whether there are unsaved changes
 var _dirty;
+// whether this page is locked for editing by another user
+var _locked = true;
 
 // the next control id
 var _nextId = 1;
@@ -500,7 +502,7 @@ function selectControl(control) {
 		showEvents(_selectedControl);
 		// show the styles
 		showStyles(_selectedControl);
-						
+										
 		// selectChild
 		if (_selectedControl.childControls.length > 0) {
 			$("#selectChild").removeAttr("disabled");
@@ -629,7 +631,7 @@ function selectControl(control) {
 				$("#paste").attr("disabled","disabled");
 			}			
 		}
-		
+						
 		// show the properties panel	
 		showPropertiesPanel();	
 		
@@ -1452,7 +1454,7 @@ $(document).ready( function() {
 		// only if the app and page id's have been set
 		if (_app.id && _page.id) {
 			
-			// now load the page with ajax
+			// now load the page definition with ajax
 			$.ajax({
 		    	url: "designer?action=getPage&a=" + _app.id + "&p=" + _page.id,
 		    	type: "GET",
@@ -1495,6 +1497,34 @@ $(document).ready( function() {
 			        	
 			        	// make everything visible
 			        	showDesigner();
+			        	
+			        	// get the page lock object
+			        	var lock = _page.lock;
+			        	
+			        	// if there is a lock and the userName is different (see how the userName is set at the top of the design.jsp)
+			        	if (lock && lock.userName != _userName) {
+			        				        		
+			        		// set that this page is locked
+			        		_locked = true;
+			        		
+			        		// hide / disable certain features
+			        		$("#pageLock").show().children().first().html("This page is locked for editing by " + lock.userDescription);	
+			        		$("#pageSave").attr("disabled","disabled");
+			        		$("#controlControls").hide();			        		
+	        		
+			        		// show alert
+			        		alert("This page was locked for editing by " + lock.userDescription + " at " + lock.formattedDateTime + ".\nYou will not be able to make or save changes to this page until they start work on a different page, or an hour has passed.");
+			        					        					        		
+			        	} else {
+			        		
+			        		// no lock make sure all functionality is present
+			        		_locked = false;
+			        		// show / enable features
+			        		$("#pageLock").hide();
+			        		$("#pageSave").removeAttr("disabled");
+			        		$("#controlControls").show();
+			        	}
+			        	
 			        	
 		        	} catch (ex) {
 		        		
@@ -2207,24 +2237,25 @@ $(document).mouseup( function(ev) {
 }); // mouseup
 
 // called whenever a control is added or deleted in case one was a non-visible control and needs rearranging
-function arrangeNonVisibleControls() {
-	
-	// get existing page controls	         
-	var pageControls = _page.object.children(".nonVisibleControl");
-	// remember the last x
-	var x = 10;
-	// loop each one
-	pageControls.each( function(i) {
-		// get a reference to this object
-		var o = $(this);		
-		// ensure this page control is in the right place
-		o.css("left",x);
-		// get the width
-		var w = Math.max(o.outerWidth(),25);
-		// add to the growing x value
-		x += (5 + w);
-	});
-	
+function arrangeNonVisibleControls() {	
+	// check there is a page and a page object
+	if (_page && _page.object) {
+		// get existing page controls	         
+		var pageControls = _page.object.children(".nonVisibleControl");
+		// remember the last x
+		var x = 10;
+		// loop each one
+		pageControls.each( function(i) {
+			// get a reference to this object
+			var o = $(this);		
+			// ensure this page control is in the right place
+			o.css("left",x);
+			// get the width
+			var w = Math.max(o.outerWidth(),25);
+			// add to the growing x value
+			x += (5 + w);
+		});
+	}	
 }
 
 //this makes sure the control panel is visible and tall enough for all properties
@@ -2237,8 +2268,33 @@ function showControlPanel() {
 // this makes sure the properties panel is visible and tall enough for all properties
 function showPropertiesPanel() {
 	
+	// resize the window to accomodate the panel
 	windowResize("showPropertiesPanel");
 	
+	// set all controls to readonly if the page is locked
+	if (_locked) {		
+		// get the properties panel to include actions and styles
+		var propertiesPanel = $("#propertiesPanel");
+		// get the dialogues
+		var propertiesDialogues = $("#propertiesDialogues");
+		// disable inputs
+		propertiesPanel.find("input").attr("disabled","disabled");
+		propertiesDialogues.find("input").attr("disabled","disabled");
+		// disable drop downs
+		propertiesPanel.find("select").attr("disabled","disabled");
+		propertiesDialogues.find("select").attr("disabled","disabled");
+		// readonly textareas
+		propertiesPanel.find("textarea").attr("readonly","readonly");
+		propertiesDialogues.find("textarea").attr("readonly","readonly");
+		// disable deletes
+		propertiesPanel.find("img").off("click");
+		propertiesDialogues.find("img").off("click");	
+		// disable order moves
+		propertiesPanel.find("img").off("mousedown");
+		propertiesDialogues.find("img").off("mousedown");
+	}
+	
+	// show the panel
 	$("#propertiesPanel").show("slide", {direction: "right"}, 200);
 				
 }

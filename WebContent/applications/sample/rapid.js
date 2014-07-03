@@ -581,12 +581,3 @@ function linkClick(url, sessionVariablesString) {
 	window.location = url;
 	
 }
-
-/* Database action resource JavaScript */
-
-var _pageUnloading = false;
-
-window.onbeforeunload = function(ev) {
-       _pageUnloading = true;
-       return null;
-};

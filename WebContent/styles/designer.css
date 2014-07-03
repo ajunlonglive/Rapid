@@ -89,6 +89,10 @@ optgroup {
 	width: 100%;
 }
 
+#pageLock {
+	display:none;
+}
+
 #controlControls {
 	display:none;
 }

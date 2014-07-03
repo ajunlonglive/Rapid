@@ -43,7 +43,11 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, use
 	<script type="text/javascript" src="scripts/styles.js"></script>
 	<script type="text/javascript" src="scripts/dialogue.js"></script>		
 	<script type="text/javascript" src="applications/rapid/rapid.js"></script>
+	<script type="text/javascript">
 	
+	var _userName = "<%=userName %>";
+	
+	</script>
 	<link rel="stylesheet" type="text/css" href="styles/designer.css"></link>
 <%
 	}
@@ -80,6 +84,9 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, use
 			<select id="pageSelect">
 				<!-- Pages are added here as options the designer loads -->
 			</select>
+			<div id="pageLock">
+				<h3>This page is locked for editing by Gareth Edwards</h3>
+			</div>
 			<div class="buttons">				
 				<button id="pageEdit" class="buttonLeft buttonRight" title="View and edit the page properties">properties</button>
 			</div>						
@@ -87,14 +94,11 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, use
 				<button id="pageNew" class="buttonLeft" title="Create a new page for this application">new</button>
 				<button id="pageSave" class="" title="Save this page">save</button>
 				<button id="pageView" class="buttonRight" title="View this page in the application">view</button>
-			</div>
-			<div class="buttons">
-				
-			</div>	
+			</div>			
 			<div class="buttons">
 				<button id="undo" class="buttonLeft" disabled="disabled" title="Undo changes">undo</button>
 				<button id="redo" class="buttonRight" disabled="disabled" title="Redo changes">redo</button>
-			</div>		
+			</div>					
 			<div id="controlControls">
 				<h2>Controls</h2>
 				<ul class="design-controls" >
@@ -104,7 +108,7 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, use
 			<div class="controlPanelVersion" >
 				<img src="images/RapidLogo_60x40.png" style="margin-left:-16px;"/>
 				<div id="controlPanelVersion">Rapid<br/><%=com.rapid.server.Rapid.VERSION %></div>
-			</div>									
+			</div>												
 		</div>
 		
 		<div id="propertiesPanel" style="z-index:10005">

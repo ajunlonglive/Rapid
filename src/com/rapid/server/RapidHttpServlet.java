@@ -237,12 +237,24 @@ public class RapidHttpServlet extends HttpServlet {
 		return getInitParameter(name);
 	}
 	
-	public SimpleDateFormat getDateFormatter() {
-		return (SimpleDateFormat) getServletContext().getAttribute("dateFormatter");
+	// this is used to format between Java Date and XML date
+	public SimpleDateFormat getXMLDateFormatter() {
+		return (SimpleDateFormat) getServletContext().getAttribute("xmlDateFormatter");
 	}
 	
-	public SimpleDateFormat getDateTimeFormatter() {
-		return (SimpleDateFormat) getServletContext().getAttribute("dateTimeFormatter");
+	// this is used to format between Java Date and XML dateTime
+	public SimpleDateFormat getXMLDateTimeFormatter() {
+		return (SimpleDateFormat) getServletContext().getAttribute("xmlDateTimeFormatter");
+	}
+	
+	// this is used to format between Java Date and Local date format
+	public SimpleDateFormat getLocalDateFormatter() {
+		return (SimpleDateFormat) getServletContext().getAttribute("localDateFormatter");
+	}
+	
+	// this is used to format between Java Date and local dateTime format (used by backups and page lock)
+	public SimpleDateFormat getLocalDateTimeFormatter() {
+		return (SimpleDateFormat) getServletContext().getAttribute("localDateTimeFormatter");
 	}
 		
 	public void sendException(HttpServletResponse response, Exception ex) throws IOException {

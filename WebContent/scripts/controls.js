@@ -457,51 +457,55 @@ function Control(controlClass, parentControl, jsonControl, loadComplexObjects, p
 
 // rebuild the html for a given control used by updateProperty and .control.xml initJavaScript listeners, and swap peers
 function rebuildHtml(control) {
-	
-	// run any rebuild JavaScript (if present) - and this is not the page
-	if (control._rebuild) {
-		try {
-			control._rebuild();			
-		} catch(ex) {
-			alert("rebuildJavaScript failed for " + control.type + ". " + ex);
+	// only if the page isn't locked
+	if (!_locked) {
+		// run any rebuild JavaScript (if present) - and this is not the page
+		if (control._rebuild) {
+			try {
+				control._rebuild();			
+			} catch(ex) {
+				alert("rebuildJavaScript failed for " + control.type + ". " + ex);
+			}
+		} else if (control.parentControl) {
+			// append the new html to the page object 
+			_page.object.append(control._getHtml());
+			// get a reference to the new object
+			var object = _page.object.children().last();
+			// controls like dropdown and radiobuttons must replace the existing child controls from the new control, others must keep them
+			if (!control._class.updateChildObjects) {
+				// remove any child elements from this new object as we're about to copy in the old ones
+				object.children().remove();
+				// move in any child elements
+				control.object.children().each( function() {
+					object.append(this);
+				});
+			}
+			// move and remove only if there is more than one object with this id
+			if (_page.object.find("[id=" + control.id + "]").length > 1) {
+				// add it after the current object 
+				control.object.after(object); 
+				// remove the old object
+				control.object.remove(); 
+			}
+			// attach the new object
+			control.object = object; 		
 		}
-	} else if (control.parentControl) {
-		// append the new html to the page object 
-		_page.object.append(control._getHtml());
-		// get a reference to the new object
-		var object = _page.object.children().last();
-		// controls like dropdown and radiobuttons must replace the existing child controls from the new control, others must keep them
-		if (!control._class.updateChildObjects) {
-			// remove any child elements from this new object as we're about to copy in the old ones
-			object.children().remove();
-			// move in any child elements
-			control.object.children().each( function() {
-				object.append(this);
-			});
-		}
-		// move and remove only if there is more than one object with this id
-		if (_page.object.find("[id=" + control.id + "]").length > 1) {
-			// add it after the current object 
-			control.object.after(object); 
-			// remove the old object
-			control.object.remove(); 
-		}
-		// attach the new object
-		control.object = object; 		
-	}
+		
+		// run any getDetailsJavaScript function (if present) - this creates a "details" object which is passed to the getData and setData calls
+		if (control._getDetails) control.details = control._getDetails();
+		
+		// arrange the non-visible controls if our control looks like one
+		if (!control._class.canUserMove) arrangeNonVisibleControls();
+		
+		// resize the selection as the geometry may have changed
+		sizeBorder(control);	
+		
+		// reposition the border for the same reason
+		var os = control.object.offset();
+		positionBorder(os.left, os.top);
+		
+	} // page lock check
 	
-	// run any getDetailsJavaScript function (if present) - this creates a "details" object which is passed to the getData and setData calls
-	if (control._getDetails) control.details = control._getDetails();
-	
-	// arrange the non-visible controls if our control looks like one
-	if (!control._class.canUserMove) arrangeNonVisibleControls();
-	
-	// resize the selection as the geometry may have changed
-	sizeBorder(control);	
-	
-	// reposition the border for the same reason
-	var os = control.object.offset();
-	positionBorder(os.left, os.top);
 }
 
 // this function interatively finds a control by an id

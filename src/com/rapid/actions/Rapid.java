@@ -1,17 +1,13 @@
 package com.rapid.actions;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -453,10 +449,10 @@ public class Rapid extends Action {
 						// create the backup json object
 						JSONObject jsonBackup = new JSONObject();
 						// create a date formatter
-						SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+						//SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 						// populate it
 						jsonBackup.append("id", appBackup.getId());
-						jsonBackup.append("date", df.format(appBackup.getDate()));
+						jsonBackup.append("date", rapidServlet.getLocalDateTimeFormatter().format(appBackup.getDate()));
 						jsonBackup.append("user", appBackup.getUser());
 						jsonBackup.append("size", appBackup.getSize());
 						// add it
@@ -477,13 +473,11 @@ public class Rapid extends Action {
 					// loop and add to jsonArray
 					for (Application.Backup appBackup : app.getPageBackups(rapidServlet)) {
 						// create the backup json object
-						JSONObject jsonBackup = new JSONObject();
-						// create a date formatter
-						SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+						JSONObject jsonBackup = new JSONObject();						
 						// populate it
 						jsonBackup.append("id", appBackup.getId());
 						jsonBackup.append("page", appBackup.getName());
-						jsonBackup.append("date", df.format(appBackup.getDate()));
+						jsonBackup.append("date", rapidServlet.getLocalDateTimeFormatter().format(appBackup.getDate()));
 						jsonBackup.append("user", appBackup.getUser());
 						jsonBackup.append("size", appBackup.getSize());
 						// add it
@@ -1360,6 +1354,8 @@ public class Rapid extends Action {
 					String userName = jsonAction.getString("userName").trim();
 					// delete the user
 					app.getSecurity().deleteUser(rapidRequest, userName);
+					// remove any of their page locks
+					app.removeUserPageLocks(userName);
 					// set the result message
 					result.put("message", "User deleted");
 					

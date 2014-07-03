@@ -39,6 +39,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
+import com.rapid.core.Page.Lock;
 import com.rapid.data.ConnectionAdapter;
 import com.rapid.security.RapidSecurityAdapter;
 import com.rapid.security.SecurityAdapater;
@@ -61,6 +62,7 @@ public class Application {
 	
 	// public static classes
 	
+	// the details of a database connection (WebService is defined in its own class as its extendable)
 	public static class DatabaseConnection {
 		
 		// instance variables
@@ -120,6 +122,7 @@ public class Application {
 		
 	}
 	
+	// application and page backups
 	public static class Backup {
 		
 		private String _id, _name, _user, _size;
@@ -151,7 +154,7 @@ public class Application {
 		}
 					
 	}
-	
+				
 	// instance variables
 	
 	private int _version, _applicationBackupsMaxSize, _pageBackupsMaxSize;
@@ -812,6 +815,25 @@ public class Application {
         
         return pages;
 	                       
+	}
+	
+	// remove any page locks for a given user
+	public void removeUserPageLocks(String userName) {
+		// check there are pages
+		if (_pages != null) {
+			// loop them
+			for (String pageId : _pages.keySet()) {
+				// get the page
+				Page page = _pages.get(pageId);
+				// get the page lock
+				Lock pageLock = page.getLock();
+				// if there was one
+				if (pageLock != null) {
+					// if it matches the user name remove the lock
+					if (userName.equals(pageLock.getUserName())) page.setLock(null);
+				}
+			}
+		}
 	}
 	
 	public List<Backup> getApplicationBackups(RapidHttpServlet rapidServlet) throws JSONException {

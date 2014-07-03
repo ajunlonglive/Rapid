@@ -10,8 +10,10 @@ var _listeners = new Array();
 // this renders all the control properties in the properties panel
 function showProperties(control) {
 	
+	// grab a reference to any dialogues
+	var propertiesDialogues = $("#propertiesDialogues");
 	// empty any propertyDialogues that we may have used before
-	$("#propertiesDialogues").children().remove();
+	propertiesDialogues.children().remove();
 		
 	// grab a reference to the properties div
 	var propertiesPanel = $(".propertiesPanelDiv");
@@ -66,18 +68,22 @@ function showProperties(control) {
 			}			
 		}
 	}
+		
 }
 
 function updateProperty(propertyObject, property, value, refreshHtml) {
-	// create an undo snapshot just before we apply the change
-	addUndo();
-	// update the object property value
-	propertyObject[property.key] = value;
-	// if an html refresh is requested
-	if (refreshHtml) {
-		// in controls.js
-		rebuildHtml(propertyObject);
-	}		
+	// if the page isn't locked
+	if (!_locked) {
+		// create an undo snapshot just before we apply the change
+		addUndo();
+		// update the object property value
+		propertyObject[property.key] = value;
+		// if an html refresh is requested
+		if (refreshHtml) {
+			// in controls.js
+			rebuildHtml(propertyObject);
+		}	
+	}
 }
 
 // this is a reusable function for creating dialogue boxes

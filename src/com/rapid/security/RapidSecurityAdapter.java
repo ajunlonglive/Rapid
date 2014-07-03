@@ -237,16 +237,19 @@ public class RapidSecurityAdapter extends SecurityAdapater {
 	@Override
 	public boolean checkUserPassword(RapidRequest rapidRequest, String userName, String password) throws SecurityAdapaterException {
 		User user = getUser(rapidRequest, userName);
-		if (user == null) throw new SecurityAdapaterException("User " + userName + " cannot be found");
-		if (password.equals(user.getPassword())) return true;
+		if (user != null) {
+			if (password.equals(user.getPassword())) return true;
+		}
 		return false;
 	}
 	
 	@Override
 	public boolean checkUserRole(RapidRequest rapidRequest, String userName, String roleName) throws SecurityAdapaterException {
 		User user = getUser(rapidRequest, userName);
-		if (user == null) throw new SecurityAdapaterException("User " + userName + " cannot be found");
-		return user.getRoles().contains(roleName);
+		if (user != null) {
+			return user.getRoles().contains(roleName);
+		}
+		return false;
 	}
 	
 	@Override

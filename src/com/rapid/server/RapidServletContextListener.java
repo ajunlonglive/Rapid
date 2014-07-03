@@ -705,10 +705,18 @@ public class RapidServletContextListener implements ServletContextListener {
 			// load the applications!
 			loadApplications(servletContext);	
 			
-			// add some useful global objects
-			servletContext.setAttribute("dateFormatter", new SimpleDateFormat("yyyy-MM-dd"));
-			servletContext.setAttribute("dateTimeFormatter", new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"));
-					    		  									
+			// add some useful global objects 
+			servletContext.setAttribute("xmlDateFormatter", new SimpleDateFormat("yyyy-MM-dd"));
+			servletContext.setAttribute("xmlDateTimeFormatter", new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"));
+			
+			String localDateFormat = servletContext.getInitParameter("localDateFormat");			
+			if (localDateFormat == null) localDateFormat = "dd/MM/yyyy";
+			servletContext.setAttribute("localDateFormatter", new SimpleDateFormat(localDateFormat));
+			
+			String localDateTimeFormat = servletContext.getInitParameter("localDateTimeFormat");
+			if (localDateTimeFormat == null) localDateTimeFormat = "dd/MM/yyyy HH:mm a";
+			servletContext.setAttribute("localDateTimeFormatter", new SimpleDateFormat(localDateTimeFormat));
+								    		  									
 		} catch (Exception e) {	
 			
 			_logger.error("Error loading applications : " + e.getMessage());

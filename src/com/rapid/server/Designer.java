@@ -16,6 +16,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -37,9 +38,10 @@ import com.rapid.utils.Files;
 import com.rapid.utils.Html;
 import com.rapid.utils.ZipFile;
 import com.rapid.core.Application;
-import com.rapid.core.Control;
-import com.rapid.core.Page;
 import com.rapid.core.Application.DatabaseConnection;
+import com.rapid.core.Page;
+import com.rapid.core.Page.Lock;
+import com.rapid.core.Control;
 import com.rapid.data.ConnectionAdapter;
 import com.rapid.data.DataFactory;
 import com.rapid.data.DataFactory.Parameters;
@@ -335,18 +337,43 @@ public class Designer extends RapidHttpServlet {
 							
 						} else if ("getPage".equals(actionName)) {
 							
+							Application application = rapidRequest.getApplication();
+							
 							Page page = rapidRequest.getPage();
 							
 							if (page != null) {
-													
+								
+								// get user description
+								String userDescription = application.getSecurity().getUser(rapidRequest, userName).getDescription();
+								if (userDescription == null) userDescription = "unknown";
+																								
+								// remove any existing page locks for this user
+								application.removeUserPageLocks(userName);
+								
+								// check the page lock (which removes it if it has expired)
+								page.checkLock();
+								
+								// if there is no current lock add a fresh one for the current user
+								if (page.getLock() == null)	page.setLock(new Lock(userName, userDescription, new Date()));
+																																																											
 								// turn it into json
 								JSONObject jsonPage = new JSONObject(page);
 								
-								// remove the bodyHtml property as there is no need to send it to the designer
+								// remove the bodyHtml property as it in the designer
 								jsonPage.remove("htmlBody");
-								// remove the otherPageControls property as there is no need to send it to the designer
+								// remove the rolesHtml property as it is rebuilt in the designer
+								jsonPage.remove("rolesHtml");
+								// remove the otherPageControls property as it is sent with getApplication
 								jsonPage.remove("otherPageControls");
 								
+								// add a nicely formatted lock time
+								if (page.getLock() != null && jsonPage.optJSONObject("lock") != null) {
+									// get the date time formatter and format the lock date time
+									String formattedDateTime = getLocalDateTimeFormatter().format(page.getLock().getDateTime());
+									// add a special property to the json
+									jsonPage.getJSONObject("lock").put("formattedDateTime", formattedDateTime);
+								}
+																															
 								// print it to the output
 								output = jsonPage.toString();
 								// send as json response
