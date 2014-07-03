@@ -1376,6 +1376,11 @@ $(document).ready( function() {
 
 	_scrollBarWidth = (w1 - w2);
 	
+	// check for unsaved page changes if we move away
+	$(window).on('beforeunload', function(){
+		  if (_dirty) return 'You have unsaved changes.';
+	});
+	
 		
 	// the iframe in which we load the page
 	_pageIframe = $("#page");
@@ -2326,4 +2331,5 @@ function fileuploaded(fileuploadframe) {
     }
 
 }
+
 

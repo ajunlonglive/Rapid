@@ -8,25 +8,7 @@
 	    <class>com.rapid.actions.Database</class>	
 	    
 	    <addToNewApplications>true</addToNewApplications> 
-	    
-	    <resources>
-	    	<resource>
-	    		<type>javascript</type>
-	    		<contents>
-	    		<![CDATA[
-	    		
-var _pageUnloading = false;
-
-window.onbeforeunload = function(ev) {
-       _pageUnloading = true;
-       return null;
-};	    
-	    		 
-	    		]]>
-	    		</contents>
-	    	</resource>
-	    </resources>  
-	    
+	    	    
 	    <properties>
 	        <property>
 	            <key>query</key>
