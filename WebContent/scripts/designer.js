@@ -1572,14 +1572,14 @@ $(document).ready( function() {
 			_panelPinned = false;
 			_panelPinnedOffset = 0;
 			$("#controlPanelPin").html("<img src='images/unpinned_14x14.png' title='pin'>");
-			windowResize();
+			windowResize("pin");
 			selectControl(_selectedControl);
 			$("#controlPanel").hide("slide", {direction: "left"}, 200);
 		} else {
 			_panelPinned = true;
 			_panelPinnedOffset = 221;
 			$("#controlPanelPin").html("<img src='images/pinned_14x14.png' title='unpin'>");
-			windowResize();
+			windowResize("unpin");
 			selectControl(_selectedControl);
 		}
 	});
