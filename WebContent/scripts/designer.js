@@ -635,6 +635,8 @@ function selectControl(control) {
 
 // this function shows the whole designer to the user, usually after the first page is loaded but possible earlier if there are no applications or pages
 function showDesigner() {
+	// hide the loading message
+	$("#loading").hide();
 	// show the control panel and properties panel
 	$("#designerTools").show();
 	// show the page
@@ -665,6 +667,7 @@ function loadApps(selectedAppId, forceLoad) {
         dataType: "json",            
         data: null,            
         error: function(server, status, error) { 
+        	// show the error
         	alert("Error loading applications : " + error); 
         },
         success: function(apps) {        	
@@ -691,8 +694,8 @@ function loadApps(selectedAppId, forceLoad) {
         	if (!selectedAppId || forceLoad) {
         		loadApp();
         	} else {
-        		// size the windows
-        		windowResize();
+        		// show the designer
+        		showDesigner();
         	}
         }
 	});
@@ -851,6 +854,8 @@ function loadApp(forceLoad) {
 		$("#pageEdit").attr("disabled","disabled");
 		$("#pageSave").attr("disabled","disabled");
 		$("#pageView").attr("disabled","disabled");
+		// show the designer
+		showDesigner();
 	} // no app id
 	
 	// show the controls panel
@@ -868,7 +873,10 @@ function loadPages(selectedPageId, forceLoad) {
         dataType: "json",            
         data: null,            
         error: function(server, status, error) { 
-        	alert("Error loading pages : " + error); 
+        	// show the designer as there's a small chance it might not be visible yet
+        	showDesigner();
+        	// show an error
+        	alert("Error loading pages : " + error);        	
         },
         success: function(pages) {        	       	
         	
@@ -915,6 +923,8 @@ function loadPages(selectedPageId, forceLoad) {
         		$("#pageEdit").attr("disabled","disabled");
         		$("#pageSave").attr("disabled","disabled");
         		$("#pageView").attr("disabled","disabled");
+        		// show the designer
+        		showDesigner();
         		// show the new page dialogue
         		showDialogue('~?action=page&a=rapid&p=P3'); 
         	}
@@ -1366,8 +1376,9 @@ $(document).ready( function() {
     	contentType: "application/json",
         dataType: "json",       
         data: null,            
-        error: function(server, status, error) { 
-        	alert("Error loading controls : " + error); 
+        error: function(server, status, error) {
+        	// just show an error        	
+        	alert("Error loading actions : " + error); 
         },
         success: function(actions) {         	        	
 	    	
@@ -1389,6 +1400,7 @@ $(document).ready( function() {
 	            dataType: "json",            
 	            data: null,            
 	            error: function(server, status, error) { 
+	            	// just show an error
 	            	alert("Error loading controls : " + error); 
 	            },
 	            success: function(controls) { 
@@ -1428,6 +1440,9 @@ $(document).ready( function() {
 		        dataType: "json",            
 		        data: null,            
 		        error: function(server, status, error) { 
+		        	// ensure the designer is visble
+		        	showDesigner();
+		        	// show the error
 		        	alert("Error loading page : " + error); 
 		        },
 		        success: function(page) {       
@@ -1460,10 +1475,13 @@ $(document).ready( function() {
 			        	
 			        	// make everything visible
 			        	showDesigner();
-			        				        			        		
+			        	
 		        	} catch (ex) {
 		        		
-		        		alert("Error loading page : " + ex);
+		        		// ensure the designer is visible
+			        	showDesigner();
+		        		// show an error
+		        		alert("Error loading page : " + ex);	
 		        		
 		        	}
 		       		        		        		        			        			        		
@@ -2224,7 +2242,7 @@ function windowResize(ev) {
 	var iframeHeight =_pageIframe[0].contentWindow.document.body.offsetHeight;
 	
 	// log
-	console.log("caller = " + caller + ", window = " + height + ", control panel = " + controlPanelHeight + ", properties panel = " + propertiesPanelHeight + ", iframe = " + iframeHeight);
+	//console.log("caller = " + caller + ", window = " + height + ", control panel = " + controlPanelHeight + ", properties panel = " + propertiesPanelHeight + ", iframe = " + iframeHeight);
 		
 	// increase height to the tallest of the window, the panels, or the iFrame
 	height = Math.max(height, controlPanelHeight, propertiesPanelHeight, iframeHeight);
