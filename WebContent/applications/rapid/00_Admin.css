@@ -27,6 +27,20 @@
 	border:1px solid black;
 }
 
+#rapid_P0_C779_ li {
+	padding-top:10px;
+	padding-bottom:10px;
+}
+
+#rapid_P0_C779_ .tabsGroup {
+	padding-bottom:10px;
+}
+
+#rapid_P0_C2 {
+	margin-top:20px;
+	margin-bottom:10px;
+}
+
 #rapid_P0_C2 td {
 	vertical-align:middle;
 }
@@ -44,7 +58,13 @@
 }
 
 #rapid_P0_C44 li {
+	padding-top:0;
+	padding-bottom:0;
 	height:40px;
+}
+
+#rapid_P0_C99 {
+	padding-top:10px;
 }
 
 #rapid_P0_C418_ {
@@ -777,6 +797,11 @@
 
 #rapid_P0_C700_ {
 	text-align:right;
+}
+
+#rapid_P0_C783_ {
+	margin-top:10px;
+	margin-bottom:10px;
 }
 
 #rapid_P0_C652_ {
