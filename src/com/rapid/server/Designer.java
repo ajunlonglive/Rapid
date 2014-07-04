@@ -134,10 +134,13 @@ public class Designer extends RapidHttpServlet {
 														
 							// loop the list of applications sorted by id (with rapid last)
 							for (Application application : getSortedApplications()) {
-								
+																								
 								// check the users permission to design this application
 								boolean designPermission = application.getSecurity().checkUserRole(rapidRequest, userName, Rapid.DESIGN_ROLE);
-													
+								
+								// if app is rapid do a further check
+								//if (designPermission && "rapid".equals(application.getId())) designPermission = application.getSecurity().checkUserRole(rapidRequest, userName, Rapid.SUPER_ROLE);
+								
 								// check the RapidDesign role is present in the users roles for this application
 								if (designPermission) {												
 									
@@ -186,7 +189,7 @@ public class Designer extends RapidHttpServlet {
 											// loop the sorted connections
 											for (String roleName : roleNames) {
 												// if it's not a special Rapid role add it to the list we're sending
-												if (!Rapid.ADMIN_ROLE.equals(roleName) && !Rapid.DESIGN_ROLE.equals(roleName)) jsonRoles.put(roleName);
+												if (!Rapid.ADMIN_ROLE.equals(roleName) && !Rapid.DESIGN_ROLE.equals(roleName)&& !Rapid.SUPER_ROLE.equals(roleName)) jsonRoles.put(roleName);
 											}
 										}							
 										// add the security roles to the app 

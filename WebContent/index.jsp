@@ -75,7 +75,7 @@ function loadApps() {
 	if (rapid.getSecurity().checkUserRole(rapidRequest, userName, "RapidAdmin")) {
 %>
 <div class="body">
-	<img src="images/administration_157x135.png" /><a href="~?a=rapid&p=P0">Administration</a>
+	<img src="images/administration_157x135.png" /><a href="~?a=rapid&p=P0">Admin</a>
 </div>
 <% 
 	}

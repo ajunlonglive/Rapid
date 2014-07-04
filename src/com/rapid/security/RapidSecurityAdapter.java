@@ -90,8 +90,8 @@ public class RapidSecurityAdapter extends SecurityAdapater {
 				_security = new Security();
 				
 				// add the default application roles
-				_security.getRoles().add(new Role(Rapid.ADMIN_ROLE, "Rapid administrator"));
-				_security.getRoles().add(new Role(Rapid.DESIGN_ROLE, "Rapid designer"));
+				_security.getRoles().add(new Role(Rapid.ADMIN_ROLE, "Manage application in Rapid Admin"));
+				_security.getRoles().add(new Role(Rapid.DESIGN_ROLE, "Design application in Rapid Designer"));
 				
 				// create a list of roles we want the user to have
 				UserRoles userRoles = new UserRoles();

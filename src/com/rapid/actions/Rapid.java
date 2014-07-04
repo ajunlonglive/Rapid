@@ -227,8 +227,14 @@ public class Rapid extends Action {
 					// try and check the permission
 					try {
 						
+						// get the app permission
+						boolean appPermission = application.getSecurity().checkUserRole(rapidRequest, userName, com.rapid.server.Rapid.ADMIN_ROLE);
+						
+						// further check if rapid application
+						if (appPermission && "rapid".equals(application.getId())) appPermission = application.getSecurity().checkUserRole(rapidRequest, userName, com.rapid.server.Rapid.SUPER_ROLE);
+						
 						// check permission for the user against the RapidAdmin role
-						if (application.getSecurity().checkUserRole(rapidRequest, userName, "RapidAdmin")) {
+						if (appPermission) {							
 							JSONObject jsonApplication = new JSONObject();
 							jsonApplication.put("id", applicationId);
 							jsonApplication.put("title", application.getTitle());
@@ -1298,7 +1304,7 @@ public class Rapid extends Action {
 				// update the role
 				app.getSecurity().updateRole(rapidRequest, new Role(roleName, roleDescription));
 				// set the result message
-				result.put("message", "User saved");
+				result.put("message", "Role saved");
 													
 			} else if ("NEWUSERROLE".equals(action)) {
 				
