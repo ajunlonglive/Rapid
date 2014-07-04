@@ -2,7 +2,7 @@ package com.rapid.utils;
 
 public class Comparators {
 	
-	public static int Ascii (String s1, String s2) {
+	public static int AsciiCompare (String s1, String s2) {
 		// easy comparisons first
 		if (s1 == null && s2 == null) return 0;
 		if (s1 == null) return -1;

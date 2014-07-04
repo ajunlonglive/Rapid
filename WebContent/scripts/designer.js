@@ -690,13 +690,21 @@ function loadApps(selectedAppId, forceLoad) {
         	if (!selectedAppId) var urlAppId = $.getUrlVar("a");
         	// build the select options for each app
         	var options = "";
+        	// remember if we have the rapid app and we'll put it last
+        	var gotRapidApp = false;
         	// loop the apps we received
         	for (var i in apps) {        		
         		// get a reference to the app
         		var app = apps[i];
-        		// add an option for this page
-        		options += "<option value='" + app.id + "' " + (selectedAppId || urlAppId == app.id ? "selected='true'" : "") + ">" + app.title + "</option>";        		        		
+        		// add an option for this page (if not the rapid app itself)
+        		if (app.id == "rapid") {
+        			gotRapidApp = true;
+        		} else {
+        			options += "<option value='" + app.id + "' " + (selectedAppId || urlAppId == app.id ? "selected='true'" : "") + ">" + app.id + " - " + app.title + "</option>";        		        		
+        		}
         	}
+        	// only add the Rapid here
+        	if (gotRapidApp) options += "<option value='rapid' " + (selectedAppId || urlAppId == "rapid" ? "selected='true'" : "") + ">RAPID ADMINISTRATION APP</option>"; 
         	// get a reference to apps dropdown
         	var appsDropDown = $("#appSelect");
         	// put the options into the dropdown
@@ -913,7 +921,7 @@ function loadPages(selectedPageId, forceLoad) {
         		// check if selected already or if not whether its the start page
         		if (selectedPageId == page.id || (!selectedPageId && page.startPage)) selected = "selected='true'";
         		// add an option for this page
-        		options += "<option value='" + page.id + "' " + selected + ">" + page.title + "</option>";
+        		options += "<option value='" + page.id + "' " + selected + ">" + page.name + " - " + page.title + "</option>";
         		// check the next pageId
         		if (parseInt(page.id.substring(1)) >= _nextPageId) _nextPageId = parseInt(page.id.substring(1)) + 1; 
         	}

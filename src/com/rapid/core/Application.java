@@ -47,6 +47,7 @@ import com.rapid.server.Rapid;
 import com.rapid.server.RapidHttpServlet;
 import com.rapid.server.RapidHttpServlet.RapidRequest;
 import com.rapid.soa.Webservice;
+import com.rapid.utils.Comparators;
 import com.rapid.utils.Files;
 import com.rapid.utils.JAXB;
 import com.rapid.utils.XML;
@@ -314,22 +315,7 @@ public class Application {
 		Collections.sort(pages, new Comparator<Page>() {
 			@Override
 			public int compare(Page page1, Page page2) {
-				String name1 = page1.getTitle();
-				String name2 = page2.getTitle();
-				// easy comparisons first
-				if (name1 == null) return -1;
-				if (name2 == null) return 1;
-				if ("".equals(name1)) return -1;
-				if ("".equals(name2)) return 1;
-				if (name1.equals(name2)) return 0;
-				// get the smallest number of characters they both have
-				int minLength = Math.min(name1.length(), name2.length());
-				// loop characters and as soon as they're different return that
-				for (int i = 0; i < minLength; i++) {
-					if ( name1.charAt(i) != name2.charAt(i)) return name1.charAt(i) - name2.charAt(i);					
-				}
-				// all characters they might have in common have been compared, return the difference in length
-				return name1.length() - name2.length();
+				return Comparators.AsciiCompare(page1.getName(), page2.getName());
 			}
 			
 		});

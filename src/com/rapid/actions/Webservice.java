@@ -226,8 +226,11 @@ public class Webservice extends Action {
 		
 		if (_request != null) {
 			
-			// start the js
-			js = "  var data = { inputs:[] };\n";
+			// get the most recent sequence number for this action to stop slow-running early requests overwriting the results of fast later requests
+			js += "  var sequence = getWebserviceActionSequence('" + getId() + "');\n";
+			
+			// drop in the data varibable which holds our inputs and sequence
+			js += "  var data = { inputs:[], sequence:sequence };\n";
 			
 			// build the inputs
 			if (_request.getInputs() != null) {
@@ -335,7 +338,7 @@ public class Webservice extends Action {
 				}			
 				js += "       var outputs = [" + jsOutputs + "];\n";
 				// send them them and the data to the database action				
-				js += "       Action_webservice(data, outputs);\n";
+				js += "       Action_webservice('" + getId() + "', data, outputs);\n";
 				// add any sucess actions
 				if (_successActions != null) {
 					for (Action action : _successActions) {
@@ -359,13 +362,20 @@ public class Webservice extends Action {
 	
 	@Override
 	public JSONObject doAction(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, JSONObject jsonAction) throws Exception {
-				
-		JSONObject jsonData = new JSONObject();
 		
+		// get the application
 		Application application = rapidRequest.getApplication();
 		
+		// get the page
 		Page page = rapidRequest.getPage();
 		
+		// get the webservice action call sequence
+		int sequence = jsonAction.getInt("sequence");
+				
+		// create the object we're about to return
+		JSONObject jsonData = new JSONObject();
+			
+		// only proceed if there is a request and application and page
 		if (_request != null && application != null && page != null) {
 					
 			// get the body into a string
@@ -455,7 +465,11 @@ public class Webservice extends Action {
 			connection.disconnect();
 															
 		} // got app and page
-											
+							
+		// add the sequence
+		jsonData.put("sequence", sequence);
+		
+		// return the object
 		return jsonData;
 		
 	}

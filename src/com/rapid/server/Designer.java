@@ -316,6 +316,7 @@ public class Designer extends RapidHttpServlet {
 									JSONObject jsonPage = new JSONObject();
 									// add simple properties
 									jsonPage.put("id", page.getId());
+									jsonPage.put("name", page.getName());
 									jsonPage.put("title", page.getTitle());
 									jsonPage.put("sessionVariables", page.getSessionVariables());
 									// get a collection of other page controls in this page

@@ -97,6 +97,8 @@ function createDialogue(cell, width, title) {
 		showProperties(_selectedControl);
 		// update the events
 		showEvents(_selectedControl);
+		// update the screen layout
+		windowResize("PropertyDialogue");
 	}));	
 	// listener to show the dialogue
 	_listeners.push( cell.click( function(ev) { 
@@ -1645,7 +1647,7 @@ function Property_controlHints(cell, hints, property, refreshHtml, refreshDialog
 		var typeOptions = "<option value='hover'" + ((controlHint.type == 'hover') ? " selected": "") + ">hover</option><option value='click'" + ((controlHint.type == 'click') ? " selected": "") + ">click</option>";
 		
 		// add the row
-		table.append("<tr><td><select class='control'><option value=''>Please select...</option>" + getControlOptions(controlHint.controlId) + "</select></td><td><select class='type'>" + typeOptions + "</select></td><td><span>" + controlHint.text + "</span></td><td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
+		table.append("<tr><td><select class='control'><option value=''>Please select...</option>" + getControlOptions(controlHint.controlId) + "</select></td><td><select class='type'>" + typeOptions + "</select></td><td style='min-width:100px;'><span>" + controlHint.text + "</span></td><td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
 	
 		// add a seperating comma to the text if not the last hint
 		if (i < controlHints.length - 1) text += ",";

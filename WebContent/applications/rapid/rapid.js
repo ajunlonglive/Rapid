@@ -21,11 +21,17 @@ function Action_datacopy(data, outputs) {
 	}
 }
 
-function Action_database(data, outputs) {
+function Action_database(actionId, data, outputs) {
+	// check we got data and somewhere to put it
 	if (data && outputs) {
-		for (var i in outputs) {
-			var output = outputs[i];			
-			window["setData_" + output.type](output.id, data, output.field, output.details);
+		// check the returned sequence is higher than any others received so far
+		if (data.sequence > getDatabaseActionSequence(actionId)) {
+			// retain this sequence as the new highest
+			_databaseActionMaxSequence[actionId] = data.sequence;
+			for (var i in outputs) {
+				var output = outputs[i];			
+				window["setData_" + output.type](output.id, data, output.field, output.details);
+			}
 		}
 	}
 }
@@ -482,11 +488,18 @@ function Action_validation(ev, validations, showMessages) {
 	return valid;
 }
 
-function Action_webservice(data, outputs) {
+function Action_webservice(actionId, data, outputs) {
+	// only if there are data and outputs
 	if (data && outputs) {
-		for (var i in outputs) {
-			var output = outputs[i];			
-			window["setData_" + output.type](output.id, data, output.field, output.details);
+		// only if this is the latest sequence
+		if (data.sequence > getWebserviceActionMaxSequence(actionId)) {
+			// retain this as the lastest sequence
+			_webserviceActionMaxSequence[actionId] = data.sequence;
+			// loop the outputs
+			for (var i in outputs) {
+				var output = outputs[i];			
+				window["setData_" + output.type](output.id, data, output.field, output.details);
+			}
 		}
 	}
 }
@@ -887,4 +900,78 @@ function linkClick(url, sessionVariablesString) {
 	
 	window.location = url;
 	
+}
+
+/* Database action resource JavaScript */
+
+// this global associative array tracks the databaseAction call sequences for each action	    			
+var _databaseActionSequence = [];	    
+
+// this global associative array holds the greates sequence received back     			
+var _databaseActionMaxSequence = [];	
+
+// this function returns an incrementing sequence for each database action call so long-running slow queries don't overrwrite fast later queries
+function getDatabaseActionSequence(actionId) {
+	// retrieve the current sequence for the action
+	var sequence = _databaseActionSequence[actionId];
+	// if null set to 0
+	if (!sequence) sequence = 0
+	// increment
+	sequence++;
+	// store
+	_databaseActionSequence[actionId] = sequence;
+	// pass back
+	return sequence;
+}		
+
+// this function sets the max to 0 if null
+function getDatabaseActionSequence(actionId) {
+	// retrieve the current sequence for the action
+	var sequence = _databaseActionMaxSequence[actionId];
+	// if undefined
+	if (sequence === undefined) {
+		// set to 0
+		sequence = 0;
+		// retain for next time
+		_databaseActionMaxSequence[actionId] = sequence;
+	}
+	// pass back
+	return sequence;
+}
+
+/* Webservice action resource JavaScript */
+
+// this global associative array tracks the webserviceAction call sequences for each action	    			
+var _webserviceActionSequence = [];	    
+
+// this global associative array holds the greates sequence received back     			
+var _webserviceActionMaxSequence = [];	
+
+// this function returns an incrementing sequence for each database action call so long-running slow queries don't overrwrite fast later queries
+function getWebserviceActionSequence(actionId) {
+	// retrieve the current sequence for the action
+	var sequence = _webserviceActionSequence[actionId];
+	// if null set to 0
+	if (!sequence) sequence = 0
+	// increment
+	sequence++;
+	// store
+	_webserviceActionSequence[actionId] = sequence;
+	// pass back
+	return sequence;
+}	
+
+// this function sets the max to 0 if null
+function getWebserviceActionMaxSequence(actionId) {
+	// retrieve the current sequence for the action
+	var sequence = _webserviceActionMaxSequence[actionId];
+	// if undefined
+	if (sequence === undefined) {
+		// set to 0
+		sequence = 0;
+		// retain for next time
+		_webserviceActionMaxSequence[actionId] = sequence;
+	}
+	// pass back
+	return sequence;
 }

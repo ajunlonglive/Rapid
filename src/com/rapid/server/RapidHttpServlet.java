@@ -34,6 +34,7 @@ import com.rapid.core.Control;
 import com.rapid.core.Page;
 import com.rapid.security.SecurityAdapater.User;
 import com.rapid.server.filter.RapidFilter;
+import com.rapid.utils.Comparators;
 
 @SuppressWarnings({"serial", "unchecked", "rawtypes"})
 public class RapidHttpServlet extends HttpServlet {
@@ -223,25 +224,7 @@ public class RapidHttpServlet extends HttpServlet {
 		Collections.sort(applications, new Comparator<Application>() {
 			@Override
 			public int compare(Application app1, Application app2) {
-				String id1 = app1.getId();
-				String id2 = app2.getId();
-				// easy comparisons first
-				if (id1 == null) return -1;
-				if (id2 == null) return 1;
-				if ("".equals(id1)) return -1;
-				if ("".equals(id2)) return 1;
-				if (id1.equals(id2)) return 0;
-				// ensure rapid application always appears last
-				if ("rapid".equals(id1)) return 1;
-				if ("rapid".equals(id2)) return -1;					
-				// get the smallest number of characters they both have
-				int minLength = Math.min(id1.length(), id2.length());
-				// loop characters and as soon as they're different return that
-				for (int i = 0; i < minLength; i++) {
-					if ( id1.charAt(i) != id2.charAt(i)) return id1.charAt(i) - id2.charAt(i);					
-				}
-				// all characters they might have in common have been compared, return the difference in length
-				return id1.length() - id2.length();
+				return Comparators.AsciiCompare(app1.getId(), app2.getId());
 			}			
 		});
 		// return the sorted list

@@ -57,6 +57,17 @@ return { controlHints: this.controlHints };
 			]]>	        	        
 	    </getDetailsFunction>
 	    
+	    <styles>
+	        <style>
+	            <name>Hints</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return ".hint";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	    </styles>
+	    
 	    <initJavaScript>
 	    	<![CDATA[	    	
 var body = $("body");

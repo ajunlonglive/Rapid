@@ -1,14 +1,10 @@
 package com.rapid.actions;
 
-import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.annotation.XmlType;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -200,9 +196,12 @@ public class Database extends Action {
 		String js = "";
 		
 		if (_query != null) {
-			
-			// start the js
-			js = "  var data = { inputs:[] };\n";
+									
+			// get the sequence for this action requests so long-running early ones don't overwrite fast later ones (defined in databaseaction.xml)
+			js += "  var sequence = getDatabaseActionSequence('" + getId() + "');\n";
+						
+			// drop in the data variable used to collect the inputs, and hold the sequence
+			js += "  var data = { inputs:[], sequence:sequence };\n";
 			
 			// build the inputs
 			if (_query.getInputs() != null) {
@@ -312,7 +311,7 @@ public class Database extends Action {
 				}			
 				js += "       var outputs = [" + jsOutputs + "];\n";
 				// send them them and the data to the database action				
-				js += "       Action_database(data, outputs);\n";				
+				js += "       Action_database('" + getId() + "', data, outputs);\n";				
 			}
 			
 			// add any sucess actions
@@ -339,13 +338,23 @@ public class Database extends Action {
 	public JSONObject doAction(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, JSONObject jsonAction) throws Exception {
 		
 		// This code could be optimised to only return required data, according to the outputs collection
-						
-		JSONObject jsonData = new JSONObject();
 		
+		// fetch the application
 		Application application = rapidRequest.getApplication();
 		
+		// fetch the page
 		Page page = rapidRequest.getPage();
+		
+		// fetch in the sequence
+		int sequence = jsonAction.getInt("sequence");
 				
+		// initialise the object we are going to return
+		JSONObject jsonData = new JSONObject();
+						
+		// add it back to the data object we're returning
+		jsonData.put("sequence", sequence);
+		
+		// only if there is a query object, application, and page				
 		if (_query != null && application != null && page != null) {
 			
 			// retrieve the sql
@@ -354,10 +363,13 @@ public class Database extends Action {
 			// only if there is some sql is it worth going further
 			if (sql != null) {
 			
+				// get the relevant connection
 				DatabaseConnection databaseConnection = application.getDatabaseConnections().get(_query.getDatabaseConnectionIndex());
 				
+				// get the connection adpater
 				ConnectionAdapter ca = databaseConnection.getConnectionAdapter(rapidServlet.getServletContext());			
 				
+				// initialise the parameters list
 				Parameters parameters = new Parameters();
 				
 				// populate the parameters from the inputs collection

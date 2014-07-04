@@ -7,6 +7,50 @@
 	    <class>com.rapid.actions.Webservice</class>
 	    
 	    <addToNewApplications>true</addToNewApplications>
+	    
+	    <resources>
+	    	<resource>
+	    		<type>javascript</type>
+	    		<contents>
+	    			<![CDATA[
+// this global associative array tracks the webserviceAction call sequences for each action	    			
+var _webserviceActionSequence = [];	    
+
+// this global associative array holds the greates sequence received back     			
+var _webserviceActionMaxSequence = [];	
+
+// this function returns an incrementing sequence for each database action call so long-running slow queries don't overrwrite fast later queries
+function getWebserviceActionSequence(actionId) {
+	// retrieve the current sequence for the action
+	var sequence = _webserviceActionSequence[actionId];
+	// if null set to 0
+	if (!sequence) sequence = 0
+	// increment
+	sequence++;
+	// store
+	_webserviceActionSequence[actionId] = sequence;
+	// pass back
+	return sequence;
+}	
+
+// this function sets the max to 0 if null
+function getWebserviceActionMaxSequence(actionId) {
+	// retrieve the current sequence for the action
+	var sequence = _webserviceActionMaxSequence[actionId];
+	// if undefined
+	if (sequence === undefined) {
+		// set to 0
+		sequence = 0;
+		// retain for next time
+		_webserviceActionMaxSequence[actionId] = sequence;
+	}
+	// pass back
+	return sequence;
+}			
+	    			]]>
+	    		</contents>
+	    	</resource>
+	    </resources>
 	    	 
 	    <properties>
 	        <property>
@@ -33,11 +77,18 @@
 	     
 	    <actionJavaScript>
 	        <![CDATA[ 
-function Action_webservice(data, outputs) {
+function Action_webservice(actionId, data, outputs) {
+	// only if there are data and outputs
 	if (data && outputs) {
-		for (var i in outputs) {
-			var output = outputs[i];			
-			window["setData_" + output.type](output.id, data, output.field, output.details);
+		// only if this is the latest sequence
+		if (data.sequence > getWebserviceActionMaxSequence(actionId)) {
+			// retain this as the lastest sequence
+			_webserviceActionMaxSequence[actionId] = data.sequence;
+			// loop the outputs
+			for (var i in outputs) {
+				var output = outputs[i];			
+				window["setData_" + output.type](output.id, data, output.field, output.details);
+			}
 		}
 	}
 }	        ]]>

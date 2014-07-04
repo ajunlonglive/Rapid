@@ -70,7 +70,7 @@ public abstract class SecurityAdapater {
 			Collections.sort(this, new Comparator<Role>() {
 				@Override
 				public int compare(Role r1, Role r2) {
-					return Comparators.Ascii(r1.getName(), r2.getName());
+					return Comparators.AsciiCompare(r1.getName(), r2.getName());
 				}				
 			});			
 			return this;			
@@ -149,7 +149,7 @@ public abstract class SecurityAdapater {
 			Collections.sort(this, new Comparator<User>() {
 				@Override
 				public int compare(User u1, User u2) {
-					return Comparators.Ascii(u1.getName(), u2.getName());
+					return Comparators.AsciiCompare(u1.getName(), u2.getName());
 				}				
 			});			
 			return this;			
