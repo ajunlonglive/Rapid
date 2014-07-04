@@ -3,7 +3,6 @@
     <action>
     
         <type>custom</type>
-        <version>1</version>
         <name>Custom</name>	        
 	    <class>com.rapid.actions.Custom</class>	 
 	    

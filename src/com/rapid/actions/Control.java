@@ -7,6 +7,7 @@ import com.rapid.server.RapidHttpServlet;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Node;
 
 /*
 
@@ -41,5 +42,5 @@ public class Control extends Action {
 			return "$(\"#" + getProperty("control") + "\")." + command;
 		}		
 	}
-			
+				
 }

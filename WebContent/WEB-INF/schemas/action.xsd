@@ -17,7 +17,7 @@
 						</xs:documentation>
 					</xs:annotation>
 					<xs:complexType>
-						<xs:sequence>							
+						<xs:sequence>
 							<xs:element name="type">
 								<xs:annotation>
 									<xs:documentation>The action type is used to uniquely identify
@@ -29,13 +29,6 @@
 										<xs:pattern value="[a-zA-Z0-9_]{1,}" />
 									</xs:restriction>
 								</xs:simpleType>
-							</xs:element>
-							<xs:element name="version" type="xs:int">
-								<xs:annotation>
-									<xs:documentation>Each type has it's own version, this will allow 
-									us to write code to update the old way an action is stored to a new way
-									</xs:documentation>
-								</xs:annotation>
 							</xs:element>
 							<xs:element name="name">
 								<xs:annotation>
@@ -61,11 +54,14 @@
 									</xs:restriction>
 								</xs:simpleType>
 							</xs:element>
-							<xs:element name="addToNewApplications" type="xs:boolean"  minOccurs="0">
-				            	<xs:annotation>
-				            		<xs:documentation>If set to true the action will be added to new applications when they are created</xs:documentation>
-				            	</xs:annotation>
-				            </xs:element>    
+							<xs:element name="addToNewApplications" type="xs:boolean"
+								minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>If set to true the action will be added to
+										new applications when they are created
+									</xs:documentation>
+								</xs:annotation>
+							</xs:element>
 							<xs:element name="resources" minOccurs="0">
 								<xs:complexType>
 									<xs:sequence>
@@ -128,7 +124,8 @@
 														minOccurs="0">
 														<xs:annotation>
 															<xs:documentation>Leave this out to not set a property
-																value when the control is constructed</xs:documentation>
+																value when the control is constructed
+															</xs:documentation>
 														</xs:annotation>
 														<xs:simpleType>
 															<xs:restriction base="xs:string">
@@ -146,7 +143,8 @@
 													<xs:element name="getValuesFunction" minOccurs="0">
 														<xs:annotation>
 															<xs:documentation>Possible values that can be used to
-																create selects, radio groups, etc</xs:documentation>
+																create selects, radio groups, etc
+															</xs:documentation>
 														</xs:annotation>
 														<xs:simpleType>
 															<xs:restriction base="xs:string">
@@ -164,7 +162,8 @@
 								<xs:annotation>
 									<xs:documentation>This is the client-side JavaScript that will
 										be called, that actually performs the action. Typically the
-										properties will be passed in</xs:documentation>
+										properties will be passed in
+									</xs:documentation>
 								</xs:annotation>
 								<xs:simpleType>
 									<xs:restriction base="xs:string">

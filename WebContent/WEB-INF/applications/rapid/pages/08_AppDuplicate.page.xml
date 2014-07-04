@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><page>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><page>
     <controls>
         <childControls>
             <childControls>
@@ -834,4 +834,4 @@ if (exists) return "An application with this name already exists";</javaScript>
         <rules>font-size:14px;</rules>
     </styles>
     <title>Duplicate application</title>
-<version>1</version></page>
+<version>1</version><xmlVersion>1</xmlVersion><XMLVersion>1</XMLVersion></page>

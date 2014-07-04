@@ -3,7 +3,6 @@
     <action>
         
         <type>dataCopy</type>
-        <version>1</version>
         <name>Data copy</name>	        
 	    <class>com.rapid.actions.Datacopy</class>	 
 	    

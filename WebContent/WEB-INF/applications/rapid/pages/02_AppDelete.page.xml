@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><page>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><page>
     <controls>
         <childControls>
             <childControls>
@@ -382,4 +382,4 @@
         <rules>font-size:14px;</rules>
     </styles>
     <title>Delete application</title>
-<version>1</version></page>
+<version>1</version><xmlVersion>1</xmlVersion><XMLVersion>1</XMLVersion></page>

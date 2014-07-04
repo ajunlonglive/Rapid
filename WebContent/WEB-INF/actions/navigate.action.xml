@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/action.xsd">
     <action>
-        <type>navigate</type>
-        <version>1</version>
+    
+        <type>navigate</type>       
         <name>Navigate</name>	        
 	    <class>com.rapid.actions.Navigate</class>	
+	    
 	    <addToNewApplications>true</addToNewApplications>
 	    <properties>
 	        <property>
@@ -22,7 +23,8 @@
 	            <name>Show as dialogue</name>
 	            <changeValueJavaScript>checkbox</changeValueJavaScript>	
 	        </property>
-	    </properties>    	    
+	    </properties>
+	        	    
 	    <actionJavaScript>
 	        <![CDATA[
 function Action_navigate(url, dialogue) {

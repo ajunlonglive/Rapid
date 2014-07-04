@@ -3,7 +3,6 @@
 	<control>
 	    
 	    <type>dataStore</type>	 
-	    <version>1</version>
 	    <name>Data store</name>	   
 	    <image>images/datastore_24x24.png</image>    
 	    

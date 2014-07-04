@@ -2,8 +2,7 @@
 <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/action.xsd">
     <action>
     
-        <type>control</type>
-        <version>1</version>
+        <type>control</type>        
         <name>Control</name>	        
 	    <class>com.rapid.actions.Control</class>
 	     

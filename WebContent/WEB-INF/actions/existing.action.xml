@@ -3,7 +3,6 @@
     <action>
     
         <type>existing</type>
-        <version>1</version>
         <name>Existing</name>	        
 	    <class>com.rapid.actions.Existing</class>
 	    

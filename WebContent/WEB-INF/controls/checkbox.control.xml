@@ -3,7 +3,6 @@
 	<control>
 	    
 	    <type>checkbox</type>	
-	    <version>1</version> 
 	    <name>Checkbox</name>	   
 	    <image>images/checkbox_24x24.png</image>   
 	    

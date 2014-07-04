@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<page>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><page>
     <controls>
         <childControls>
             <childControls>
@@ -74,11 +73,11 @@
             <childControls>
                 <childControls>
                     <events>
-                        <filter></filter>
+                        <filter/>
                         <type>mouseover</type>
                     </events>
                     <events>
-                        <filter></filter>
+                        <filter/>
                         <type>click</type>
                     </events>
                     <properties>
@@ -123,7 +122,7 @@
                     </entry>
                     <entry>
                         <key>text</key>
-                        <value></value>
+                        <value/>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -202,7 +201,7 @@
 </entry>
                             </properties>
                         </actions>
-                        <filter></filter>
+                        <filter/>
                         <type>click</type>
                     </events>
                     <properties>
@@ -247,7 +246,7 @@
                     </entry>
                     <entry>
                         <key>text</key>
-                        <value></value>
+                        <value/>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -307,7 +306,7 @@
 </entry>
                             </properties>
                         </actions>
-                        <filter></filter>
+                        <filter/>
                         <type>click</type>
                     </events>
                     <properties>
@@ -352,7 +351,7 @@
                     </entry>
                     <entry>
                         <key>text</key>
-                        <value></value>
+                        <value/>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -439,35 +438,35 @@
     </controls>
     <description>Delete page backup</description>
     <events>
-        <filter></filter>
+        <filter/>
         <type>pageload</type>
     </events>
     <events>
-        <filter></filter>
+        <filter/>
         <type>reusable</type>
     </events>
-    <htmlBody>&lt;table id=&quot;rapid_P13_C2_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;rapid_P13_C3_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P13_C4_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Delete page backup&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P13_C5_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P13_C6_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;span id=&quot;rapid_P13_C7_&quot; class=&quot;text&quot;&gt;Are you sure you want to delete the page backup?&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P13_C8_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P13_C9_&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P13_C10_&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P13_C12_&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P13_C13_&quot; class=&quot;button&quot;&gt;Delete&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
+    <htmlBody>&lt;table id="rapid_P13_C2_" class="table"&gt;&lt;tbody&gt;&lt;tr id="rapid_P13_C3_" class="tableRow"&gt;&lt;td id="rapid_P13_C4_" colspan="2" class="tabelCell"&gt;Delete page backup&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P13_C5_" class="tableRow"&gt;&lt;td id="rapid_P13_C6_" colspan="2" class="tabelCell"&gt;&lt;span id="rapid_P13_C7_" class="text"&gt;Are you sure you want to delete the page backup?&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P13_C8_" class="tableRow"&gt;&lt;td id="rapid_P13_C9_" class="tabelCell"&gt;&lt;button id="rapid_P13_C10_" class="button"&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id="rapid_P13_C12_" class="tabelCell"&gt;&lt;button id="rapid_P13_C13_" class="button"&gt;Delete&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
     <id>P13</id>
     <modifiedBy>admin</modifiedBy>
     <modifiedDate>2014-06-12T14:37:43.925+01:00</modifiedDate>
     <name>13_DeletePageBackup</name>
     <rolesHtml>
-        <html>&lt;table id=&quot;rapid_P13_C2_&quot; class=&quot;table&quot;&gt;
+        <html>&lt;table id="rapid_P13_C2_" class="table"&gt;
 		&lt;tbody&gt;
-			&lt;tr id=&quot;rapid_P13_C3_&quot; class=&quot;tableRow&quot;&gt;
-				&lt;td id=&quot;rapid_P13_C4_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Delete page backup&lt;/td&gt;
+			&lt;tr id="rapid_P13_C3_" class="tableRow"&gt;
+				&lt;td id="rapid_P13_C4_" colspan="2" class="tabelCell"&gt;Delete page backup&lt;/td&gt;
 			&lt;/tr&gt;
-			&lt;tr id=&quot;rapid_P13_C5_&quot; class=&quot;tableRow&quot;&gt;
-				&lt;td id=&quot;rapid_P13_C6_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;
-					&lt;span id=&quot;rapid_P13_C7_&quot; class=&quot;text&quot;&gt;Are you sure you want to delete the page backup?&lt;/span&gt;
+			&lt;tr id="rapid_P13_C5_" class="tableRow"&gt;
+				&lt;td id="rapid_P13_C6_" colspan="2" class="tabelCell"&gt;
+					&lt;span id="rapid_P13_C7_" class="text"&gt;Are you sure you want to delete the page backup?&lt;/span&gt;
 				&lt;/td&gt;
 			&lt;/tr&gt;
-			&lt;tr id=&quot;rapid_P13_C8_&quot; class=&quot;tableRow&quot;&gt;
-				&lt;td id=&quot;rapid_P13_C9_&quot; class=&quot;tabelCell&quot;&gt;
-					&lt;button id=&quot;rapid_P13_C10_&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;
+			&lt;tr id="rapid_P13_C8_" class="tableRow"&gt;
+				&lt;td id="rapid_P13_C9_" class="tabelCell"&gt;
+					&lt;button id="rapid_P13_C10_" class="button"&gt;Cancel&lt;/button&gt;
 				&lt;/td&gt;
-				&lt;td id=&quot;rapid_P13_C12_&quot; class=&quot;tabelCell&quot;&gt;
-					&lt;button id=&quot;rapid_P13_C13_&quot; class=&quot;button&quot;&gt;Delete&lt;/button&gt;
+				&lt;td id="rapid_P13_C12_" class="tabelCell"&gt;
+					&lt;button id="rapid_P13_C13_" class="button"&gt;Delete&lt;/button&gt;
 				&lt;/td&gt;
 			&lt;/tr&gt;
 		&lt;/tbody&gt;
@@ -475,4 +474,4 @@
     </rolesHtml>
     <title>Delete page backup</title>
     <version>1</version>
-</page>
+<xmlVersion>1</xmlVersion><XMLVersion>1</XMLVersion></page>

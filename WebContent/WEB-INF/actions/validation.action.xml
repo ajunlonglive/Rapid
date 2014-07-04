@@ -3,7 +3,6 @@
     <action>
     
         <type>validation</type>
-        <version>1</version>
         <name>Validation</name>	        
 	    <class>com.rapid.actions.Validation</class>	
 	    

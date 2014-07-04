@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<page>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><page>
     <controls>
         <childControls>
             <childControls>
@@ -115,7 +114,7 @@
                     </entry>
                     <entry>
                         <key>text</key>
-                        <value></value>
+                        <value/>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -240,8 +239,8 @@
     <key>javascript</key>
     <value>var exists = false;
 $.ajax({
-    url: &quot;designer?action=checkApp&amp;name=&quot; + $(&quot;#rapid_P9_C8_&quot;).val(),
-    type: &quot;GET&quot;,    
+    url: "designer?action=checkApp&amp;name=" + $("#rapid_P9_C8_").val(),
+    type: "GET",    
     async: false,                
     success: function(result) {
         if (result) {
@@ -250,9 +249,9 @@ $.ajax({
     }
 });
 if (exists) {
-  $(&quot;#rapid_P9_C46_&quot;).html(&quot;An application with this name already exists.&lt;br/&gt;Continue with the import only if you wish to overwrite it&quot;);
+  $("#rapid_P9_C46_").html("An application with this name already exists.&lt;br/&gt;Continue with the import only if you wish to overwrite it");
 } else {
-  $(&quot;#rapid_P9_C46_&quot;).html(&quot;&quot;);
+  $("#rapid_P9_C46_").html("");
 }</value>
 </entry>
 <entry>
@@ -269,15 +268,15 @@ if (exists) {
 </entry>
                             </properties>
                         </actions>
-                        <filter></filter>
+                        <filter/>
                         <type>keyup</type>
                     </events>
                     <events>
-                        <filter></filter>
+                        <filter/>
                         <type>change</type>
                     </events>
                     <events>
-                        <filter></filter>
+                        <filter/>
                         <type>blur</type>
                     </events>
                     <properties>
@@ -295,7 +294,7 @@ if (exists) {
                         </entry>
                         <entry>
                             <key>value</key>
-                            <value></value>
+                            <value/>
                         </entry>
                         <entry>
                             <key>controlType</key>
@@ -316,15 +315,15 @@ if (exists) {
                     </styles>
                     <validation>
                         <allowNulls>false</allowNulls>
-                        <javaScript>var file = $(&quot;#file&quot;).val();
-if (!file) return &quot;A file must be chosen using the button above&quot;;
-if (file.toLowerCase().indexOf(&quot;.zip&quot;) != file.length - 4) return &quot;File must be a .zip&quot;;
-var name = $(&quot;#rapid_P9_C8_&quot;).val();
-if (!name) return &quot;An application name must be provided&quot;;
-if (!name.match(new RegExp(&quot;^[0-9A-Za-z_-]+$&quot;))) return &quot;An application name can only contain characters a-z, A-Z, 0-9, -, and _&quot;;
+                        <javaScript>var file = $("#file").val();
+if (!file) return "A file must be chosen using the button above";
+if (file.toLowerCase().indexOf(".zip") != file.length - 4) return "File must be a .zip";
+var name = $("#rapid_P9_C8_").val();
+if (!name) return "An application name must be provided";
+if (!name.match(new RegExp("^[0-9A-Za-z_-]+$"))) return "An application name can only contain characters a-z, A-Z, 0-9, -, and _";
 </javaScript>
                         <message>An application name can only contain characters a-z, A-Z, 0-9, -, and _</message>
-                        <regEx></regEx>
+                        <regEx/>
                         <type>javascript</type>
                     </validation>
                 </childControls>
@@ -339,7 +338,7 @@ if (!name.match(new RegExp(&quot;^[0-9A-Za-z_-]+$&quot;))) return &quot;An appli
                     </entry>
                     <entry>
                         <key>text</key>
-                        <value></value>
+                        <value/>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -407,7 +406,7 @@ if (!name.match(new RegExp(&quot;^[0-9A-Za-z_-]+$&quot;))) return &quot;An appli
                     </entry>
                     <entry>
                         <key>text</key>
-                        <value></value>
+                        <value/>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -510,7 +509,7 @@ if (!name.match(new RegExp(&quot;^[0-9A-Za-z_-]+$&quot;))) return &quot;An appli
 </entry>
                             </properties>
                         </actions>
-                        <filter></filter>
+                        <filter/>
                         <type>click</type>
                     </events>
                     <properties>
@@ -547,7 +546,7 @@ if (!name.match(new RegExp(&quot;^[0-9A-Za-z_-]+$&quot;))) return &quot;An appli
                     </entry>
                     <entry>
                         <key>text</key>
-                        <value></value>
+                        <value/>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -671,8 +670,8 @@ if (!name.match(new RegExp(&quot;^[0-9A-Za-z_-]+$&quot;))) return &quot;An appli
 </entry>
 <entry>
     <key>javascript</key>
-    <value>var form = $(&quot;#form&quot;);
-form[0].action = 'designer?a=rapid&amp;action=import&amp;name=' + $(&quot;#rapid_P9_C8_&quot;).val();
+    <value>var form = $("#form");
+form[0].action = 'designer?a=rapid&amp;action=import&amp;name=' + $("#rapid_P9_C8_").val();
 form.submit();</value>
 </entry>
 <entry>
@@ -689,7 +688,7 @@ form.submit();</value>
 </entry>
                             </properties>
                         </actions>
-                        <filter></filter>
+                        <filter/>
                         <type>click</type>
                     </events>
                     <properties>
@@ -734,7 +733,7 @@ form.submit();</value>
                     </entry>
                     <entry>
                         <key>text</key>
-                        <value></value>
+                        <value/>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -831,7 +830,7 @@ form.submit();</value>
                 </entry>
                 <entry>
                     <key>javascript</key>
-                    <value>$(&quot;body&quot;).append(&quot;&lt;iframe id='importIFrame' name='importIFrame' width='0' height='0' style='width:0;height:0;border:0px hidden 'fff;' onload='Event_reusable_P9(this);'&gt;&lt;/iframe&gt;&quot;);</value>
+                    <value>$("body").append("&lt;iframe id='importIFrame' name='importIFrame' width='0' height='0' style='width:0;height:0;border:0px hidden 'fff;' onload='Event_reusable_P9(this);'&gt;&lt;/iframe&gt;");</value>
                 </entry>
                 <entry>
                     <key>name</key>
@@ -863,7 +862,7 @@ form.submit();</value>
                 </entry>
                 <entry>
                     <key>command</key>
-                    <value>.html(&quot;&lt;form id='form' method='post' target='importIFrame' enctype='multipart/form-data'&gt;&lt;input type='file' id='file' name='file'&gt;&lt;/input&gt;&lt;/form&gt;&quot;);</value>
+                    <value>.html("&lt;form id='form' method='post' target='importIFrame' enctype='multipart/form-data'&gt;&lt;input type='file' id='file' name='file'&gt;&lt;/input&gt;&lt;/form&gt;");</value>
                 </entry>
                 <entry>
                     <key>type</key>
@@ -875,7 +874,7 @@ form.submit();</value>
                 </entry>
             </properties>
         </actions>
-        <filter></filter>
+        <filter/>
         <type>pageload</type>
     </events>
     <events>
@@ -887,11 +886,11 @@ form.submit();</value>
                 </entry>
                 <entry>
                     <key>javascript</key>
-                    <value>var f = window.frames[&quot;importIFrame&quot;];
-if (!f) f = document.getElementById(&quot;importIFrame&quot;).contentDocument;
+                    <value>var f = window.frames["importIFrame"];
+if (!f) f = document.getElementById("importIFrame").contentDocument;
 var r = $(f.document.body).text();
-if ((r) &amp;&amp; (r != &quot;&quot;)) {
-  if (r.indexOf(&quot;Error&quot;) == 0) {
+if ((r) &amp;&amp; (r != "")) {
+  if (r.indexOf("Error") == 0) {
     alert(r);		
   } else {    		
     location.reload();
@@ -912,38 +911,38 @@ if ((r) &amp;&amp; (r != &quot;&quot;)) {
                 </entry>
             </properties>
         </actions>
-        <filter></filter>
+        <filter/>
         <type>reusable</type>
     </events>
-    <htmlBody>&lt;table id=&quot;rapid_P9_C2_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;rapid_P9_C3_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P9_C4_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Import application&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P9_C30_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P9_C31_&quot; class=&quot;tabelCell&quot;&gt;File :&lt;/td&gt;&lt;td id=&quot;rapid_P9_C32_&quot; class=&quot;tabelCell&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P9_C5_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P9_C6_&quot; class=&quot;tabelCell&quot;&gt;Name :&lt;/td&gt;&lt;td id=&quot;rapid_P9_C7_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P9_C8_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P9_C45_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P9_C46_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P9_C19_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P9_C20_&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P9_C21_&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P9_C23_&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P9_C24_&quot; class=&quot;button&quot;&gt;Import&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
+    <htmlBody>&lt;table id="rapid_P9_C2_" class="table"&gt;&lt;tbody&gt;&lt;tr id="rapid_P9_C3_" class="tableRow"&gt;&lt;td id="rapid_P9_C4_" colspan="2" class="tabelCell"&gt;Import application&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P9_C30_" class="tableRow"&gt;&lt;td id="rapid_P9_C31_" class="tabelCell"&gt;File :&lt;/td&gt;&lt;td id="rapid_P9_C32_" class="tabelCell"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P9_C5_" class="tableRow"&gt;&lt;td id="rapid_P9_C6_" class="tabelCell"&gt;Name :&lt;/td&gt;&lt;td id="rapid_P9_C7_" class="tabelCell"&gt;&lt;input id="rapid_P9_C8_" value="" type="text" class="input"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P9_C45_" class="tableRow"&gt;&lt;td id="rapid_P9_C46_" colspan="2" class="tabelCell"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P9_C19_" class="tableRow"&gt;&lt;td id="rapid_P9_C20_" class="tabelCell"&gt;&lt;button id="rapid_P9_C21_" class="button"&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id="rapid_P9_C23_" class="tabelCell"&gt;&lt;button id="rapid_P9_C24_" class="button"&gt;Import&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
     <id>P9</id>
     <modifiedBy>admin</modifiedBy>
     <modifiedDate>2014-06-13T13:13:06.528+01:00</modifiedDate>
     <name>09_AppImport</name>
     <rolesHtml>
-        <html>&lt;table id=&quot;rapid_P9_C2_&quot; class=&quot;table&quot;&gt;
+        <html>&lt;table id="rapid_P9_C2_" class="table"&gt;
 		&lt;tbody&gt;
-			&lt;tr id=&quot;rapid_P9_C3_&quot; class=&quot;tableRow&quot;&gt;
-				&lt;td id=&quot;rapid_P9_C4_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Import application&lt;/td&gt;
+			&lt;tr id="rapid_P9_C3_" class="tableRow"&gt;
+				&lt;td id="rapid_P9_C4_" colspan="2" class="tabelCell"&gt;Import application&lt;/td&gt;
 			&lt;/tr&gt;
-			&lt;tr id=&quot;rapid_P9_C30_&quot; class=&quot;tableRow&quot;&gt;
-				&lt;td id=&quot;rapid_P9_C31_&quot; class=&quot;tabelCell&quot;&gt;File :&lt;/td&gt;
-				&lt;td id=&quot;rapid_P9_C32_&quot; class=&quot;tabelCell&quot;&gt;&lt;/td&gt;
+			&lt;tr id="rapid_P9_C30_" class="tableRow"&gt;
+				&lt;td id="rapid_P9_C31_" class="tabelCell"&gt;File :&lt;/td&gt;
+				&lt;td id="rapid_P9_C32_" class="tabelCell"&gt;&lt;/td&gt;
 			&lt;/tr&gt;
-			&lt;tr id=&quot;rapid_P9_C5_&quot; class=&quot;tableRow&quot;&gt;
-				&lt;td id=&quot;rapid_P9_C6_&quot; class=&quot;tabelCell&quot;&gt;Name :&lt;/td&gt;
-				&lt;td id=&quot;rapid_P9_C7_&quot; class=&quot;tabelCell&quot;&gt;
-					&lt;input id=&quot;rapid_P9_C8_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
+			&lt;tr id="rapid_P9_C5_" class="tableRow"&gt;
+				&lt;td id="rapid_P9_C6_" class="tabelCell"&gt;Name :&lt;/td&gt;
+				&lt;td id="rapid_P9_C7_" class="tabelCell"&gt;
+					&lt;input id="rapid_P9_C8_" value="" type="text" class="input"&gt;&lt;/td&gt;
 				&lt;/tr&gt;
-				&lt;tr id=&quot;rapid_P9_C45_&quot; class=&quot;tableRow&quot;&gt;
-					&lt;td id=&quot;rapid_P9_C46_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;/td&gt;
+				&lt;tr id="rapid_P9_C45_" class="tableRow"&gt;
+					&lt;td id="rapid_P9_C46_" colspan="2" class="tabelCell"&gt;&lt;/td&gt;
 				&lt;/tr&gt;
-				&lt;tr id=&quot;rapid_P9_C19_&quot; class=&quot;tableRow&quot;&gt;
-					&lt;td id=&quot;rapid_P9_C20_&quot; class=&quot;tabelCell&quot;&gt;
-						&lt;button id=&quot;rapid_P9_C21_&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;
+				&lt;tr id="rapid_P9_C19_" class="tableRow"&gt;
+					&lt;td id="rapid_P9_C20_" class="tabelCell"&gt;
+						&lt;button id="rapid_P9_C21_" class="button"&gt;Cancel&lt;/button&gt;
 					&lt;/td&gt;
-					&lt;td id=&quot;rapid_P9_C23_&quot; class=&quot;tabelCell&quot;&gt;
-						&lt;button id=&quot;rapid_P9_C24_&quot; class=&quot;button&quot;&gt;Import&lt;/button&gt;
+					&lt;td id="rapid_P9_C23_" class="tabelCell"&gt;
+						&lt;button id="rapid_P9_C24_" class="button"&gt;Import&lt;/button&gt;
 					&lt;/td&gt;
 				&lt;/tr&gt;
 			&lt;/tbody&gt;
@@ -951,4 +950,4 @@ if ((r) &amp;&amp; (r != &quot;&quot;)) {
     </rolesHtml>
     <title>Import application</title>
     <version>1</version>
-</page>
+<xmlVersion>1</xmlVersion><XMLVersion>1</XMLVersion></page>

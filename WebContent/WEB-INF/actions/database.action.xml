@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/action.xsd">
     <action>
-        
+    
         <type>database</type>
-        <version>1</version>
         <name>Database</name>	        
 	    <class>com.rapid.actions.Database</class>	
 	    

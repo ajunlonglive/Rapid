@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Node;
 
 import com.rapid.core.Action;
 import com.rapid.server.RapidHttpServlet;
@@ -28,13 +29,23 @@ import com.rapid.server.RapidHttpServlet;
 @XmlRootElement
 @XmlType(namespace="http://rapid-is.co.uk/core")
 public class Control {
+	
+	// the version of this class's xml structure when marshelled (if we have any significant changes down the line we can upgrade the xml files before unmarshalling)	
+	public static final int XML_VERSION = 1;
 			
+	// we can this version to be written into the xml when marshelled so we can upgrade any xml before marshelling
+	private int _xmlVersion;
+	
 	// these are instance variables that all the different controls provide
 	protected HashMap<String,String> _properties;
 	protected Validation _validation;		
 	protected ArrayList<Event> _events;
 	protected ArrayList<Style> _styles;
 	protected ArrayList<Control> _childControls;
+	
+	// the xml version is used to upgrade xml files before unmarshalling (we use a property so it's written ito xml)
+	public int getXMLVersion() { return _xmlVersion; }
+	public void setXMLVersion(int xmlVersion) { _xmlVersion = xmlVersion; }
 	
 	// all properties are stored here (allowing us to define them just in the .control.xml files)
 	public HashMap<String,String> getProperties() { return _properties; }
@@ -61,6 +72,7 @@ public class Control {
 		if (_properties == null) _properties = new HashMap<String,String>();
 		_properties.put(key, value); 
 	}
+	// returns the value of a specific, named property
 	public String getProperty(String key) { return _properties.get(key); }
 	// the type of this object
 	public String getType() { return getProperty("type"); }
@@ -108,12 +120,17 @@ public class Control {
 		if (_styles == null) _styles = new ArrayList<Style>();
 		_styles.add(style);
 	}
-		
+				
 	// a parameterless constructor is required so they can go in the JAXB context and be unmarshalled 
-	public Control() {};
+	public Control() {
+		// set the xml version
+		_xmlVersion = XML_VERSION;
+	};
 	
 	// this constructor is used when saving from the designer
 	public Control(JSONObject jsonControl) throws JSONException {
+		// set the xml version
+		_xmlVersion = XML_VERSION;
 		// save all key/values from the json into the properties, except for class variables such as childControls and eventActions 
 		for (String key : JSONObject.getNames(jsonControl)) {
 			// don't save complex properties such as validation, childControls, events, and styles into simple properties (they are turned into objects in the Designer.java savePage method) 
@@ -253,5 +270,8 @@ public class Control {
 		}				
 		return styles;		
 	}
+	
+	// this method checks the xml versions and upgrades any xml nodes before the xml document is unmarshalled
+	public static Node upgrade(Node actionNode) { return actionNode; }
 	
 }

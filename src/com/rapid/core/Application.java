@@ -57,8 +57,8 @@ import com.rapid.utils.ZipFile.ZipSource;
 @XmlType(namespace="http://rapid-is.co.uk/core")
 public class Application {
 	
-	// the version of this class (if we have any significant changes down the line we can upgrade the xml files before unmarshalling)	
-	public static final int VERSION = 1;
+	// the version of this class's xml structure when marshalled (if we have any significant changes down the line we can upgrade the xml files before unmarshalling)	
+	public static final int XML_VERSION = 1;
 	
 	// public static classes
 	
@@ -157,7 +157,7 @@ public class Application {
 				
 	// instance variables
 	
-	private int _version, _applicationBackupsMaxSize, _pageBackupsMaxSize;
+	private int _xmlVersion, _applicationBackupsMaxSize, _pageBackupsMaxSize;
 	private String _id, _name, _title, _description, _startPageId, _styles, _securityAdapterType, _createdBy, _modifiedBy;
 	private boolean _showConrolIds, _showActionIds;
 	private Date _createdDate, _modifiedDate;
@@ -171,9 +171,9 @@ public class Application {
 	
 	// properties
 	
-	// the version is used to upgrade xml files before unmarshalling
-	public int getVersion() { return _version; }
-	public void setVersion(int version) { _version = version; }
+	// the version is used to upgrade xml files before unmarshalling (we use a property so it's written ito xml)
+	public int getXMLVersion() { return _xmlVersion; }
+	public void setXMLVersion(int xmlVersion) { _xmlVersion = xmlVersion; }
 	
 	// the id uniquely identifies the page (it is produced by taking all unsafe characters out of the name)
 	public String getId() { return _id; }
@@ -258,7 +258,7 @@ public class Application {
 	// constructors
 	
 	public Application() {
-		_version = VERSION;
+		_xmlVersion = XML_VERSION;
 		_pages = new HashMap<String,Page>();
 		_databaseConnections = new ArrayList<DatabaseConnection>();
 		_webservices = new ArrayList<Webservice>();
@@ -1214,16 +1214,16 @@ public class Application {
 		Document appDocument = XML.openDocument(file);
 		
 		// specify the version as -1
-		int version = -1;
+		int xmlVersion = -1;
 		
 		// look for a version node
-		Node versionNode = XML.getChildElement(appDocument.getFirstChild(), "version");
+		Node xmlVersionNode = XML.getChildElement(appDocument.getFirstChild(), "XMLVersion");
 		
 		// if we got one update the version
-		if (versionNode != null) version = Integer.parseInt(versionNode.getTextContent());
+		if (xmlVersionNode != null) xmlVersion = Integer.parseInt(xmlVersionNode.getTextContent());
 				
 		// if the version of this xml isn't the same as this class we have some work to do!
-		if (version != VERSION) {
+		if (xmlVersion != XML_VERSION) {
 			
 			// get the page name
 			String name = XML.getChildElementValue(appDocument.getFirstChild(), "name");
@@ -1232,27 +1232,27 @@ public class Application {
 			Logger logger = (Logger) servletContext.getAttribute("logger");
 			
 			// log the difference
-			logger.debug("Application " + name + " with version " + version + ", current version is " + VERSION);
+			logger.debug("Application " + name + " with version " + xmlVersion + ", current version is " + XML_VERSION);
 			
 			//
-			// Here we would have code to update from known version of the file
+			// Here we would have code to update from known versions of the file to the current version
 			//
 			
 			// check whether there was a version node in the file to start with
-			if (versionNode == null) {
+			if (xmlVersionNode == null) {
 				// create the version node
-				versionNode = appDocument.createElement("version");
+				xmlVersionNode = appDocument.createElement("XMLVersion");
 				// add it to the root of the document
-				appDocument.getFirstChild().appendChild(versionNode);
+				appDocument.getFirstChild().appendChild(xmlVersionNode);
 			}
 			
 			// set the xml to the latest version
-			versionNode.setTextContent(Integer.toString(VERSION));
+			xmlVersionNode.setTextContent(Integer.toString(XML_VERSION));
 			
 			// save it
 			XML.saveDocument(appDocument, file);
 			
-			logger.debug("Updated " + name + " application version to " + VERSION);
+			logger.debug("Updated " + name + " application version to " + XML_VERSION);
 			
 		}
 		

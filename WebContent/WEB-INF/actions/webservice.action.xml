@@ -3,7 +3,6 @@
     <action>
     
         <type>webservice</type>
-        <version>1</version>
         <name>Webservice</name>	        
 	    <class>com.rapid.actions.Webservice</class>
 	    

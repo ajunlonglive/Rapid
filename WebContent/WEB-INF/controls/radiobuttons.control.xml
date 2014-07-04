@@ -2,8 +2,7 @@
 <controls xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/control.xsd">
 	<control>
 	    
-	    <type>radiobuttons</type>
-	    <version>1</version>	 
+	    <type>radiobuttons</type> 
 	    <name>Radio buttons</name>	   
 	    <image>images/radiobutton_24x24.png</image>       
 	    

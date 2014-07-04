@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><page>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<page>
     <controls>
         <childControls>
             <childControls>
@@ -17,7 +18,7 @@
                     </entry>
                     <entry>
                         <key>name</key>
-                        <value/>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>rowSpan</key>
@@ -36,6 +37,7 @@
                     <rules>background:#ccc url(highlight_1x100.png;) 50% 50% repeat-x;</rules>
                     <rules>border-bottom:1px solid #aaa;</rules>
                 </styles>
+                <XMLVersion>1</XMLVersion>
             </childControls>
             <properties>
                 <entry>
@@ -44,13 +46,14 @@
                 </entry>
                 <entry>
                     <key>name</key>
-                    <value/>
+                    <value></value>
                 </entry>
                 <entry>
                     <key>type</key>
                     <value>tableRow</value>
                 </entry>
             </properties>
+            <XMLVersion>1</XMLVersion>
         </childControls>
         <childControls>
             <childControls>
@@ -69,7 +72,7 @@
                     </entry>
                     <entry>
                         <key>name</key>
-                        <value/>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>rowSpan</key>
@@ -86,6 +89,7 @@
                     <rules>padding-left:10px;</rules>
                     <rules>vertical-align:top;</rules>
                 </styles>
+                <XMLVersion>1</XMLVersion>
             </childControls>
             <childControls>
                 <childControls>
@@ -95,6 +99,10 @@
 <entry>
     <key>id</key>
     <value>P2_A44_</value>
+</entry>
+<entry>
+    <key>XMLVersion</key>
+    <value>1</value>
 </entry>
 <entry>
     <key>name</key>
@@ -109,16 +117,17 @@
     <value>existing</value>
 </entry>
                             </properties>
+                            <XMLVersion>1</XMLVersion>
                         </actions>
-                        <filter/>
+                        <filter></filter>
                         <type>keyup</type>
                     </events>
                     <events>
-                        <filter/>
+                        <filter></filter>
                         <type>change</type>
                     </events>
                     <events>
-                        <filter/>
+                        <filter></filter>
                         <type>blur</type>
                     </events>
                     <properties>
@@ -132,7 +141,7 @@
                         </entry>
                         <entry>
                             <key>value</key>
-                            <value/>
+                            <value></value>
                         </entry>
                         <entry>
                             <key>controlType</key>
@@ -145,11 +154,12 @@
                     </properties>
                     <validation>
                         <allowNulls>false</allowNulls>
-                        <javaScript/>
+                        <javaScript></javaScript>
                         <message>Please provide a forename</message>
                         <regEx>[\s\S]</regEx>
                         <type>value</type>
                     </validation>
+                    <XMLVersion>1</XMLVersion>
                 </childControls>
                 <properties>
                     <entry>
@@ -158,7 +168,7 @@
                     </entry>
                     <entry>
                         <key>text</key>
-                        <value/>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -166,7 +176,7 @@
                     </entry>
                     <entry>
                         <key>name</key>
-                        <value/>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>rowSpan</key>
@@ -182,6 +192,7 @@
                     <rules>padding-top:5px;</rules>
                     <rules>padding-right:10px;</rules>
                 </styles>
+                <XMLVersion>1</XMLVersion>
             </childControls>
             <properties>
                 <entry>
@@ -190,13 +201,14 @@
                 </entry>
                 <entry>
                     <key>name</key>
-                    <value/>
+                    <value></value>
                 </entry>
                 <entry>
                     <key>type</key>
                     <value>tableRow</value>
                 </entry>
             </properties>
+            <XMLVersion>1</XMLVersion>
         </childControls>
         <childControls>
             <childControls>
@@ -215,7 +227,7 @@
                     </entry>
                     <entry>
                         <key>name</key>
-                        <value/>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>rowSpan</key>
@@ -232,6 +244,7 @@
                     <rules>padding-left:10px;</rules>
                     <rules>vertical-align:top;</rules>
                 </styles>
+                <XMLVersion>1</XMLVersion>
             </childControls>
             <childControls>
                 <childControls>
@@ -241,6 +254,10 @@
 <entry>
     <key>id</key>
     <value>P2_A45_</value>
+</entry>
+<entry>
+    <key>XMLVersion</key>
+    <value>1</value>
 </entry>
 <entry>
     <key>name</key>
@@ -255,16 +272,17 @@
     <value>existing</value>
 </entry>
                             </properties>
+                            <XMLVersion>1</XMLVersion>
                         </actions>
-                        <filter/>
+                        <filter></filter>
                         <type>keyup</type>
                     </events>
                     <events>
-                        <filter/>
+                        <filter></filter>
                         <type>change</type>
                     </events>
                     <events>
-                        <filter/>
+                        <filter></filter>
                         <type>blur</type>
                     </events>
                     <properties>
@@ -278,7 +296,7 @@
                         </entry>
                         <entry>
                             <key>value</key>
-                            <value/>
+                            <value></value>
                         </entry>
                         <entry>
                             <key>controlType</key>
@@ -291,11 +309,12 @@
                     </properties>
                     <validation>
                         <allowNulls>false</allowNulls>
-                        <javaScript/>
+                        <javaScript></javaScript>
                         <message>Please provide a surname</message>
                         <regEx>[\s\S]</regEx>
                         <type>value</type>
                     </validation>
+                    <XMLVersion>1</XMLVersion>
                 </childControls>
                 <properties>
                     <entry>
@@ -304,7 +323,7 @@
                     </entry>
                     <entry>
                         <key>text</key>
-                        <value/>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -312,7 +331,7 @@
                     </entry>
                     <entry>
                         <key>name</key>
-                        <value/>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>rowSpan</key>
@@ -328,6 +347,7 @@
                     <rules>padding-right:10px;</rules>
                     <rules>padding-top:5px;</rules>
                 </styles>
+                <XMLVersion>1</XMLVersion>
             </childControls>
             <properties>
                 <entry>
@@ -336,13 +356,14 @@
                 </entry>
                 <entry>
                     <key>name</key>
-                    <value/>
+                    <value></value>
                 </entry>
                 <entry>
                     <key>type</key>
                     <value>tableRow</value>
                 </entry>
             </properties>
+            <XMLVersion>1</XMLVersion>
         </childControls>
         <childControls>
             <childControls>
@@ -361,7 +382,7 @@
                     </entry>
                     <entry>
                         <key>name</key>
-                        <value/>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>rowSpan</key>
@@ -378,19 +399,20 @@
                     <rules>padding-left:10px;</rules>
                     <rules>vertical-align:top;</rules>
                 </styles>
+                <XMLVersion>1</XMLVersion>
             </childControls>
             <childControls>
                 <childControls>
                     <events>
-                        <filter/>
+                        <filter></filter>
                         <type>keyup</type>
                     </events>
                     <events>
-                        <filter/>
+                        <filter></filter>
                         <type>change</type>
                     </events>
                     <events>
-                        <filter/>
+                        <filter></filter>
                         <type>blur</type>
                     </events>
                     <properties>
@@ -400,7 +422,7 @@
                         </entry>
                         <entry>
                             <key>details</key>
-                            <value>{"dateFormat":"d/m/Y"}</value>
+                            <value>{&quot;dateFormat&quot;:&quot;d/m/Y&quot;}</value>
                         </entry>
                         <entry>
                             <key>name</key>
@@ -408,7 +430,7 @@
                         </entry>
                         <entry>
                             <key>value</key>
-                            <value/>
+                            <value></value>
                         </entry>
                         <entry>
                             <key>dateFormat</key>
@@ -425,11 +447,12 @@
                     </properties>
                     <validation>
                         <allowNulls>false</allowNulls>
-                        <javaScript/>
-                        <message/>
-                        <regEx/>
-                        <type/>
+                        <javaScript></javaScript>
+                        <message></message>
+                        <regEx></regEx>
+                        <type></type>
                     </validation>
+                    <XMLVersion>1</XMLVersion>
                 </childControls>
                 <properties>
                     <entry>
@@ -438,7 +461,7 @@
                     </entry>
                     <entry>
                         <key>text</key>
-                        <value/>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -446,7 +469,7 @@
                     </entry>
                     <entry>
                         <key>name</key>
-                        <value/>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>rowSpan</key>
@@ -462,6 +485,7 @@
                     <rules>padding-top:5px;</rules>
                     <rules>padding-right:10px;</rules>
                 </styles>
+                <XMLVersion>1</XMLVersion>
             </childControls>
             <properties>
                 <entry>
@@ -470,13 +494,14 @@
                 </entry>
                 <entry>
                     <key>name</key>
-                    <value/>
+                    <value></value>
                 </entry>
                 <entry>
                     <key>type</key>
                     <value>tableRow</value>
                 </entry>
             </properties>
+            <XMLVersion>1</XMLVersion>
         </childControls>
         <childControls>
             <childControls>
@@ -495,7 +520,7 @@
                     </entry>
                     <entry>
                         <key>name</key>
-                        <value/>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>rowSpan</key>
@@ -511,11 +536,12 @@
                     <rules>padding-left:10px;</rules>
                     <rules>padding-top:5px;</rules>
                 </styles>
+                <XMLVersion>1</XMLVersion>
             </childControls>
             <childControls>
                 <childControls>
                     <events>
-                        <filter/>
+                        <filter></filter>
                         <type>change</type>
                     </events>
                     <properties>
@@ -537,7 +563,7 @@
                         </entry>
                         <entry>
                             <key>buttons</key>
-                            <value>[{"value":"F","label":"Female"},{"value":"M","label":"Male"}]</value>
+                            <value>[{&quot;value&quot;:&quot;F&quot;,&quot;label&quot;:&quot;Female&quot;},{&quot;value&quot;:&quot;M&quot;,&quot;label&quot;:&quot;Male&quot;}]</value>
                         </entry>
                         <entry>
                             <key>type</key>
@@ -548,6 +574,7 @@
                             <value>L</value>
                         </entry>
                     </properties>
+                    <XMLVersion>1</XMLVersion>
                 </childControls>
                 <properties>
                     <entry>
@@ -556,7 +583,7 @@
                     </entry>
                     <entry>
                         <key>text</key>
-                        <value/>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -564,7 +591,7 @@
                     </entry>
                     <entry>
                         <key>name</key>
-                        <value/>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>rowSpan</key>
@@ -580,6 +607,7 @@
                     <rules>padding-top:5px;</rules>
                     <rules>padding-right:10px;</rules>
                 </styles>
+                <XMLVersion>1</XMLVersion>
             </childControls>
             <properties>
                 <entry>
@@ -588,13 +616,14 @@
                 </entry>
                 <entry>
                     <key>name</key>
-                    <value/>
+                    <value></value>
                 </entry>
                 <entry>
                     <key>type</key>
                     <value>tableRow</value>
                 </entry>
             </properties>
+            <XMLVersion>1</XMLVersion>
         </childControls>
         <childControls>
             <childControls>
@@ -611,6 +640,10 @@
     <value>P2_C1_</value>
 </entry>
 <entry>
+    <key>XMLVersion</key>
+    <value>1</value>
+</entry>
+<entry>
     <key>name</key>
     <value>Control 35</value>
 </entry>
@@ -623,8 +656,9 @@
     <value>control</value>
 </entry>
                             </properties>
+                            <XMLVersion>1</XMLVersion>
                         </actions>
-                        <filter/>
+                        <filter></filter>
                         <type>click</type>
                     </events>
                     <properties>
@@ -649,6 +683,7 @@
                         <appliesTo>#P2_C29_</appliesTo>
                         <rules>width:60px;</rules>
                     </styles>
+                    <XMLVersion>1</XMLVersion>
                 </childControls>
                 <properties>
                     <entry>
@@ -657,7 +692,7 @@
                     </entry>
                     <entry>
                         <key>text</key>
-                        <value/>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -665,7 +700,7 @@
                     </entry>
                     <entry>
                         <key>name</key>
-                        <value/>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>rowSpan</key>
@@ -682,6 +717,7 @@
                     <rules>padding-bottom:5px;</rules>
                     <rules>padding-top:5px;</rules>
                 </styles>
+                <XMLVersion>1</XMLVersion>
             </childControls>
             <childControls>
                 <childControls>
@@ -697,6 +733,10 @@
     <value>true</value>
 </entry>
 <entry>
+    <key>XMLVersion</key>
+    <value>1</value>
+</entry>
+<entry>
     <key>name</key>
     <value>Validation 41</value>
 </entry>
@@ -709,6 +749,7 @@
     <value>true</value>
 </entry>
                             </properties>
+                            <XMLVersion>1</XMLVersion>
                             <controls>P2_C20_</controls>
                             <controls>P2_C21_</controls>
                             <failActions xsi:type="control">
@@ -720,6 +761,10 @@
     <entry>
         <key>control</key>
         <value>P2_C28_</value>
+    </entry>
+    <entry>
+        <key>XMLVersion</key>
+        <value>1</value>
     </entry>
     <entry>
         <key>name</key>
@@ -734,6 +779,7 @@
         <value>control</value>
     </entry>
 </properties>
+<XMLVersion>1</XMLVersion>
                             </failActions>
                             <passActions xsi:type="control">
 <properties>
@@ -744,6 +790,10 @@
     <entry>
         <key>control</key>
         <value>P2_C28_</value>
+    </entry>
+    <entry>
+        <key>XMLVersion</key>
+        <value>1</value>
     </entry>
     <entry>
         <key>name</key>
@@ -758,6 +808,7 @@
         <value>control</value>
     </entry>
 </properties>
+<XMLVersion>1</XMLVersion>
                             </passActions>
                         </actions>
                         <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="database">
@@ -767,8 +818,12 @@
     <value>P2_A32_</value>
 </entry>
 <entry>
+    <key>XMLVersion</key>
+    <value>1</value>
+</entry>
+<entry>
     <key>childActions</key>
-    <value>[{"id":"P2_A33_","page":"P1","name":"Navigate 33","sessionVariables":[],"type":"navigate"}]</value>
+    <value>[{&quot;id&quot;:&quot;P2_A33_&quot;,&quot;page&quot;:&quot;P1&quot;,&quot;name&quot;:&quot;Navigate 33&quot;,&quot;type&quot;:&quot;navigate&quot;,&quot;sessionVariables&quot;:[]}]</value>
 </entry>
 <entry>
     <key>name</key>
@@ -779,6 +834,7 @@
     <value>database</value>
 </entry>
                             </properties>
+                            <XMLVersion>1</XMLVersion>
                             <errorActions xsi:type="control">
 <properties>
     <entry>
@@ -788,6 +844,10 @@
     <entry>
         <key>control</key>
         <value>P2_C28_</value>
+    </entry>
+    <entry>
+        <key>XMLVersion</key>
+        <value>1</value>
     </entry>
     <entry>
         <key>name</key>
@@ -802,35 +862,36 @@
         <value>control</value>
     </entry>
 </properties>
+<XMLVersion>1</XMLVersion>
                             </errorActions>
                             <query>
 <databaseConnectionIndex>0</databaseConnectionIndex>
 <inputs>
-    <field/>
+    <field></field>
     <itemId>P2_C20_</itemId>
 </inputs>
 <inputs>
-    <field/>
+    <field></field>
     <itemId>P2_C21_</itemId>
 </inputs>
 <inputs>
-    <field/>
+    <field></field>
     <itemId>P2_C49_</itemId>
 </inputs>
 <inputs>
-    <field/>
+    <field></field>
     <itemId>P2_C49_</itemId>
 </inputs>
 <inputs>
-    <field/>
+    <field></field>
     <itemId>P2_C49_</itemId>
 </inputs>
 <inputs>
-    <field/>
+    <field></field>
     <itemId>P2_C23_</itemId>
 </inputs>
 <inputs>
-    <field/>
+    <field></field>
     <itemId>id</itemId>
 </inputs>
 <SQL>update people 
@@ -852,6 +913,10 @@ where id = ?</SQL>
         <value>P2_C1_</value>
     </entry>
     <entry>
+        <key>XMLVersion</key>
+        <value>1</value>
+    </entry>
+    <entry>
         <key>name</key>
         <value>Control 36</value>
     </entry>
@@ -864,9 +929,10 @@ where id = ?</SQL>
         <value>control</value>
     </entry>
 </properties>
+<XMLVersion>1</XMLVersion>
                             </successActions>
                         </actions>
-                        <filter/>
+                        <filter></filter>
                         <type>click</type>
                     </events>
                     <properties>
@@ -891,6 +957,7 @@ where id = ?</SQL>
                         <appliesTo>#P2_C28_</appliesTo>
                         <rules>width:60px;</rules>
                     </styles>
+                    <XMLVersion>1</XMLVersion>
                 </childControls>
                 <properties>
                     <entry>
@@ -899,7 +966,7 @@ where id = ?</SQL>
                     </entry>
                     <entry>
                         <key>text</key>
-                        <value/>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -907,7 +974,7 @@ where id = ?</SQL>
                     </entry>
                     <entry>
                         <key>name</key>
-                        <value/>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>rowSpan</key>
@@ -925,6 +992,7 @@ where id = ?</SQL>
                     <rules>padding-bottom:5px;</rules>
                     <rules>text-align:right;</rules>
                 </styles>
+                <XMLVersion>1</XMLVersion>
             </childControls>
             <properties>
                 <entry>
@@ -933,13 +1001,14 @@ where id = ?</SQL>
                 </entry>
                 <entry>
                     <key>name</key>
-                    <value/>
+                    <value></value>
                 </entry>
                 <entry>
                     <key>type</key>
                     <value>tableRow</value>
                 </entry>
             </properties>
+            <XMLVersion>1</XMLVersion>
         </childControls>
         <properties>
             <entry>
@@ -963,14 +1032,19 @@ where id = ?</SQL>
             <rules>background-color:white;</rules>
             <rules>box-shadow:10px 10px 5px #888;</rules>
         </styles>
+        <XMLVersion>1</XMLVersion>
     </controls>
-    <description/>
+    <description></description>
     <events>
         <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="database">
             <properties>
                 <entry>
                     <key>id</key>
                     <value>P2_A31_</value>
+                </entry>
+                <entry>
+                    <key>XMLVersion</key>
+                    <value>1</value>
                 </entry>
                 <entry>
                     <key>childActions</key>
@@ -985,10 +1059,11 @@ where id = ?</SQL>
                     <value>database</value>
                 </entry>
             </properties>
+            <XMLVersion>1</XMLVersion>
             <query>
                 <databaseConnectionIndex>0</databaseConnectionIndex>
                 <inputs>
-                    <field/>
+                    <field></field>
                     <itemId>id</itemId>
                 </inputs>
                 <outputs>
@@ -1013,19 +1088,62 @@ where id = ?</SQL>
             </query>
             <showLoading>false</showLoading>
         </actions>
-        <filter/>
+        <filter></filter>
         <type>pageload</type>
     </events>
     <events>
-        <filter/>
+        <filter></filter>
         <type>reusable</type>
     </events>
-    <htmlBody>
-
-
-&lt;table id="P2_C1_" class="table"&gt;&lt;tbody&gt;&lt;tr id="P2_C2_" class="tableRow"&gt;&lt;td id="P2_C3_" colspan="2" class="tabelCell"&gt;Person details&lt;/td&gt;&lt;/tr&gt;&lt;tr id="P2_C4_" class="tableRow"&gt;&lt;td id="P2_C5_" class="tabelCell"&gt;Forename&lt;/td&gt;&lt;td id="P2_C6_" class="tabelCell"&gt;&lt;input id="P2_C20_" value="" class="input"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="P2_C14_" class="tableRow"&gt;&lt;td id="P2_C15_" class="tabelCell"&gt;Surname&lt;/td&gt;&lt;td id="P2_C16_" class="tabelCell"&gt;&lt;input id="P2_C21_" value="" class="input"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="P2_C17_" class="tableRow"&gt;&lt;td id="P2_C18_" class="tabelCell"&gt;Birthday&lt;/td&gt;&lt;td id="P2_C19_" class="tabelCell"&gt;&lt;input id="P2_C49_" value="" readonly="readonly" class="date tcal" style="background: url(&amp;quot;images/date_17x15.gif&amp;quot;) 100% 50% no-repeat;"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="P2_C24_" class="tableRow"&gt;&lt;td id="P2_C25_" class="tabelCell"&gt;Gender&lt;/td&gt;&lt;td id="P2_C26_" class="tabelCell"&gt;&lt;span id="P2_C23_"&gt;&lt;input type="radio" name="P2_C23_" value="F"&gt;&lt;span&gt;Female&lt;/span&gt;&lt;input type="radio" name="P2_C23_" value="M"&gt;&lt;span&gt;Male&lt;/span&gt;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="P2_C9_" class="tableRow"&gt;&lt;td id="P2_C10_" class="tabelCell"&gt;&lt;button id="P2_C29_" class="button"&gt;cancel&lt;/button&gt;&lt;/td&gt;&lt;td id="P2_C11_" class="tabelCell"&gt;&lt;button id="P2_C28_" class="button"&gt;save&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
+    <htmlBody>&lt;table id=&quot;P2_C1_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P2_C2_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C3_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Person details&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P2_C4_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C5_&quot; class=&quot;tabelCell&quot;&gt;Forename&lt;/td&gt;&lt;td id=&quot;P2_C6_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C20_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P2_C14_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C15_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;&lt;td id=&quot;P2_C16_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C21_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P2_C17_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C18_&quot; class=&quot;tabelCell&quot;&gt;Birthday&lt;/td&gt;&lt;td id=&quot;P2_C19_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C49_&quot; value=&quot;&quot; readonly=&quot;readonly&quot; class=&quot;date tcal tcalInput&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P2_C24_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C25_&quot; class=&quot;tabelCell&quot;&gt;Gender&lt;/td&gt;&lt;td id=&quot;P2_C26_&quot; class=&quot;tabelCell&quot;&gt;&lt;span id=&quot;P2_C23_&quot; class=&quot;radiobuttons&quot;&gt;&lt;input type=&quot;radio&quot; name=&quot;P2_C23_&quot; value=&quot;F&quot;&gt;&lt;span&gt;Female&lt;/span&gt;&lt;input type=&quot;radio&quot; name=&quot;P2_C23_&quot; value=&quot;M&quot;&gt;&lt;span&gt;Male&lt;/span&gt;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P2_C9_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C10_&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;P2_C29_&quot; class=&quot;button&quot;&gt;cancel&lt;/button&gt;&lt;/td&gt;&lt;td id=&quot;P2_C11_&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;P2_C28_&quot; class=&quot;button&quot;&gt;save&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
     <id>P2</id>
+    <modifiedBy>admin</modifiedBy>
+    <modifiedDate>2014-07-04T10:53:19.755+01:00</modifiedDate>
     <name>02_PersonDetails</name>
+    <rolesHtml>
+        <html>&lt;table id=&quot;P2_C1_&quot; class=&quot;table&quot;&gt;
+		&lt;tbody&gt;
+			&lt;tr id=&quot;P2_C2_&quot; class=&quot;tableRow&quot;&gt;
+				&lt;td id=&quot;P2_C3_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Person details&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr id=&quot;P2_C4_&quot; class=&quot;tableRow&quot;&gt;
+				&lt;td id=&quot;P2_C5_&quot; class=&quot;tabelCell&quot;&gt;Forename&lt;/td&gt;
+				&lt;td id=&quot;P2_C6_&quot; class=&quot;tabelCell&quot;&gt;
+					&lt;input id=&quot;P2_C20_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
+				&lt;/tr&gt;
+				&lt;tr id=&quot;P2_C14_&quot; class=&quot;tableRow&quot;&gt;
+					&lt;td id=&quot;P2_C15_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;
+					&lt;td id=&quot;P2_C16_&quot; class=&quot;tabelCell&quot;&gt;
+						&lt;input id=&quot;P2_C21_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
+					&lt;/tr&gt;
+					&lt;tr id=&quot;P2_C17_&quot; class=&quot;tableRow&quot;&gt;
+						&lt;td id=&quot;P2_C18_&quot; class=&quot;tabelCell&quot;&gt;Birthday&lt;/td&gt;
+						&lt;td id=&quot;P2_C19_&quot; class=&quot;tabelCell&quot;&gt;
+							&lt;input id=&quot;P2_C49_&quot; value=&quot;&quot; readonly=&quot;readonly&quot; class=&quot;date tcal tcalInput&quot;&gt;&lt;/td&gt;
+						&lt;/tr&gt;
+						&lt;tr id=&quot;P2_C24_&quot; class=&quot;tableRow&quot;&gt;
+							&lt;td id=&quot;P2_C25_&quot; class=&quot;tabelCell&quot;&gt;Gender&lt;/td&gt;
+							&lt;td id=&quot;P2_C26_&quot; class=&quot;tabelCell&quot;&gt;
+								&lt;span id=&quot;P2_C23_&quot; class=&quot;radiobuttons&quot;&gt;
+									&lt;input type=&quot;radio&quot; name=&quot;P2_C23_&quot; value=&quot;F&quot;&gt;
+										&lt;span&gt;Female&lt;/span&gt;
+										&lt;input type=&quot;radio&quot; name=&quot;P2_C23_&quot; value=&quot;M&quot;&gt;
+											&lt;span&gt;Male&lt;/span&gt;
+										&lt;/span&gt;
+									&lt;/td&gt;
+								&lt;/tr&gt;
+								&lt;tr id=&quot;P2_C9_&quot; class=&quot;tableRow&quot;&gt;
+									&lt;td id=&quot;P2_C10_&quot; class=&quot;tabelCell&quot;&gt;
+										&lt;button id=&quot;P2_C29_&quot; class=&quot;button&quot;&gt;cancel&lt;/button&gt;
+									&lt;/td&gt;
+									&lt;td id=&quot;P2_C11_&quot; class=&quot;tabelCell&quot;&gt;
+										&lt;button id=&quot;P2_C28_&quot; class=&quot;button&quot;&gt;save&lt;/button&gt;
+									&lt;/td&gt;
+								&lt;/tr&gt;
+							&lt;/tbody&gt;
+						&lt;/table&gt;</html>
+    </rolesHtml>
     <sessionVariables>id</sessionVariables>
     <title>Person details</title>
-<version>1</version></page>
+    <XMLVersion>1</XMLVersion>
+</page>

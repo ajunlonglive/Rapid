@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<application>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><application>
     <actionTypes>ajax</actionTypes>
     <actionTypes>control</actionTypes>
     <actionTypes>custom</actionTypes>
@@ -55,4 +54,4 @@ input { border: 1px solid #999; border-radius: 3px; padding-left: 5px; }
 textarea { border: 1px solid #999; border-radius: 3px; } </styles>
     <title>Rapid application</title>
     <version>1</version>
-</application>
+<xmlVersion>1</xmlVersion><XMLVersion>1</XMLVersion></application>

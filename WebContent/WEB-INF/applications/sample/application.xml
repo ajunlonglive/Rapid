@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<application>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><application>
     <actionTypes>ajax</actionTypes>
     <actionTypes>control</actionTypes>
     <actionTypes>custom</actionTypes>
@@ -31,7 +30,7 @@
         <driverClass>org.sqlite.JDBC</driverClass>
         <name>Sample connection</name>
         <password>N0Sgi3GcduE=</password>
-        <userName></userName>
+        <userName/>
     </databaseConnections>
     <description>This is a sample Rapid application provided to demonstrate many common Rapid features</description>
     <id>sample</id>
@@ -171,4 +170,4 @@ order by surname, birthday
 /* Return at most 10 rows */
 limit 10</SQL>
     </webservices>
-</application>
+<xmlVersion>1</xmlVersion><XMLVersion>1</XMLVersion></application>

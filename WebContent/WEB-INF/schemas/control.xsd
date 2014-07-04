@@ -4,431 +4,528 @@
 		<xs:documentation>The schema for .control.xml files</xs:documentation>
 	</xs:annotation>
 	<xs:element name="controls">
-	  <xs:annotation>
-		<xs:documentation>Each .control.xml file can describe several controls, this is useful so complex controls with childred can be described in a single file</xs:documentation>
-	  </xs:annotation>
-	  <xs:complexType>
-	    <xs:sequence>
-	      <xs:element name="control" maxOccurs="unbounded">
-	        <xs:annotation>
-			  <xs:documentation>The control xml is turned into json and loaded into the designer where it is used to create new objects</xs:documentation>
-	  		</xs:annotation>
-	        <xs:complexType>
-	          <xs:sequence>
-	          <xs:element name="type">
-	          	  <xs:annotation>
-				    <xs:documentation>The control type is used to uniquely identify this control, it should not contain spaces or punctuation</xs:documentation>
-		  		  </xs:annotation>
-		          <xs:simpleType>
-					<xs:restriction base="xs:string">
-					  <xs:pattern value="[a-zA-Z0-9_]{1,}"/>
-					</xs:restriction>
-				  </xs:simpleType>	            
-	            </xs:element>
-	            <xs:element name="version" type="xs:int">
+		<xs:annotation>
+			<xs:documentation>Each .control.xml file can describe several
+				controls, this is useful so complex controls with childred can be
+				described in a single file
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="control" maxOccurs="unbounded">
 					<xs:annotation>
-						<xs:documentation>Each type has it's own version, this will allow 
-						us to write code to update the old way an action is stored to a new way
+						<xs:documentation>The control xml is turned into json and loaded
+							into the designer where it is used to create new objects
 						</xs:documentation>
 					</xs:annotation>
-				</xs:element>
-	            <xs:element name="name">
-	          	  <xs:annotation>
-				    <xs:documentation>The control name is used presented to users when describing, or logging something about this control</xs:documentation>
-		  		  </xs:annotation>	            
-		          <xs:simpleType>
-					<xs:restriction base="xs:string">
-					  <xs:minLength value="1"/>
-					</xs:restriction>
-				  </xs:simpleType>	            
-	            </xs:element>
-	            <xs:element name="image" minOccurs="0">
-	          	  <xs:annotation>
-				    <xs:documentation>A url for the control image relative to the designer.jsp document</xs:documentation>
-		  		  </xs:annotation>	            
-		          <xs:simpleType>
-					<xs:restriction base="xs:string">
-					  <xs:minLength value="1"/>
-					</xs:restriction>
-				  </xs:simpleType>	            
-	            </xs:element>	
-	            <xs:element name="addToNewApplications" type="xs:boolean" minOccurs="0">
-	            	<xs:annotation>
-	            		<xs:documentation>If set to true the control will be added to new applications when they are created</xs:documentation>
-	            	</xs:annotation>
-	            </xs:element>    
-	            <xs:element name="noDefaultName" type="xs:boolean" minOccurs="0">
-	            	<xs:annotation>
-	            		<xs:documentation>If set to true the control will not be given a name so by default it will not appear in lists of controls, this is useful for controls like table cells and rows which are seldom used</xs:documentation>
-	            	</xs:annotation>
-	            </xs:element>     	                           
-	            <xs:element name="canUserAdd" type="xs:boolean"  minOccurs="0">
-	            	<xs:annotation>
-	            		<xs:documentation>Some controls like the table rows, table cells, and tab pages cannot be added by the user dragging from the panel</xs:documentation>
-	            	</xs:annotation>
-	            </xs:element>
-	            <xs:element name="canUserMove" type="xs:boolean"  minOccurs="0"/>
-	            <xs:element name="canUserInsert" type="xs:boolean"  minOccurs="0"/>
-	            <xs:element name="canUserAddPeers" type="xs:boolean"  minOccurs="0"/>
-	            <xs:element name="canValidate" type="xs:boolean"  minOccurs="0"/>
-	            <xs:element name="canBeUsedFromOtherPages" type="xs:boolean"  minOccurs="0">
-	            	<xs:annotation>
-	            		<xs:documentation>Controls like the Data store have getData and setData methods whihc use global objects so they can be used in all pages</xs:documentation>
-	            	</xs:annotation>
-	            </xs:element>	            
-	            <xs:element name="properties" minOccurs="0">
-	            	<xs:complexType>
-	            		<xs:sequence>
-	            			<xs:element name="property" minOccurs="1" maxOccurs="unbounded">
-	            				<xs:complexType>
-	            					<xs:sequence>
-	            						<xs:element name="key">
-	            						  <xs:annotation>
-									        <xs:documentation>The property keys are all copied into the object when saving/restoring so there are some reserved words</xs:documentation>
-							  		      </xs:annotation>
-	            						  <xs:simpleType>
-											<xs:restriction base="xs:string">
-											  <xs:pattern value="([a-zA-Z0-9_]){1,}"/>
-											</xs:restriction>
-										  </xs:simpleType>
-	            						</xs:element>
-	            						<xs:element name="name">
-	            						  <xs:simpleType>
-											<xs:restriction base="xs:string">
-											  <xs:minLength value="1"/>
-											</xs:restriction>
-										  </xs:simpleType>	            						
-	            						</xs:element>
-	            						<xs:element name="visible" type="xs:boolean" minOccurs="0">
-           								  <xs:annotation>
-									        <xs:documentation>Set this optional item to false to not render the property</xs:documentation>
-							  		      </xs:annotation>
-	            						</xs:element>
-	            						<xs:element name="setConstructValueFunction" minOccurs="0">
-	            						  <xs:annotation>
-									        <xs:documentation>Leave this out to not set a property value when the control is constructed</xs:documentation>
-							  		      </xs:annotation>
-	            						  <xs:simpleType>
-											<xs:restriction base="xs:string">
-											  <xs:minLength value="1"/>
-											</xs:restriction>
-										  </xs:simpleType>	            						
-	            						</xs:element>
-	            						<xs:element name="changeValueJavaScript" minOccurs="0">
-	            						  <xs:annotation>
-									        <xs:documentation>This can either be a short known name, such as "text", or a whole function. The designer will search for the known function first before applying all of the element contents as a function</xs:documentation>
-							  		      </xs:annotation>
-	            						  <xs:simpleType>
-											<xs:restriction base="xs:string">
-											  <xs:minLength value="1"/>
-											</xs:restriction>
-										  </xs:simpleType>	            						
-	            						</xs:element>
-	            						<xs:element name="getValuesFunction" minOccurs="0">
-	            						  <xs:annotation>
-									        <xs:documentation>return possible values, either an array of strings ["1","2"], or an array of value/text objects [{"value":"1","text":"Item 1"},{"value":"2","text":"Item 2"}]</xs:documentation>
-							  		      </xs:annotation>
-	            						  <xs:simpleType>
-											<xs:restriction base="xs:string">
-											  <xs:minLength value="1"/>
-											</xs:restriction>
-										  </xs:simpleType>	            						
-	            						</xs:element>
-	            					</xs:sequence>
-	            				</xs:complexType>
-	            			</xs:element>
-	            		</xs:sequence>
-	            	</xs:complexType>
-	            </xs:element>    
-	            <xs:element name="resources" minOccurs="0">
-	            	<xs:complexType>
-	            		<xs:sequence>
-	            			<xs:element name="resource" minOccurs="1" maxOccurs="unbounded">
-	            				<xs:complexType>
-	            					<xs:sequence>
-	            						<xs:element name="type">
-	            						  <xs:annotation>
-										    <xs:documentation>The javascriptFile and cssFile are written into the document includes, the plain javascript is written to the rapid.js file and the plain css is written to the application rapid.css file</xs:documentation>
-								  		  </xs:annotation>
-	            						  <xs:simpleType>
-											<xs:restriction base="xs:string">
-											   <xs:enumeration value="javascriptFile"/>
-											    <xs:enumeration value="cssFile"/>
-											    <xs:enumeration value="javascript"/>
-											    <xs:enumeration value="css"/>
-											</xs:restriction>
-										  </xs:simpleType>
-	            						</xs:element>
-	            						<xs:element name="contents">
-	            						  <xs:simpleType>
-											<xs:restriction base="xs:string">
-											  <xs:minLength value="1"/>
-											</xs:restriction>
-										  </xs:simpleType>	            						
-	            						</xs:element>            					
-	            					</xs:sequence>
-	            				</xs:complexType>
-	            			</xs:element>
-	            		</xs:sequence>
-	            	</xs:complexType>
-	            </xs:element>	  
-	            <xs:element name="getHtmlFunction">
-	              <xs:annotation>
-				    <xs:documentation>This JavaScript appends the html into the parent, and sets it's object</xs:documentation>
-		  		  </xs:annotation>
-		          <xs:simpleType>
-					<xs:restriction base="xs:string">
-					  <xs:minLength value="1"/>
-					</xs:restriction>
-				  </xs:simpleType>	            
-	            </xs:element>
-	            <xs:element name="updateChildObjects" type="xs:boolean"  minOccurs="0">
-		            <xs:annotation>
-					    <xs:documentation>Some controls like the dropdown and radiobuttons must keep the child obejct from an html rebuild, most more complex controls retain their existing child objects</xs:documentation>
-			  		  </xs:annotation>
-	            </xs:element>
-	            
-	            <xs:element name="createJavaScript" minOccurs="0">
-	              <xs:annotation>
-				    <xs:documentation>This optional JavaScript runs after the html is first added, and can change the object or add markup elsewhere</xs:documentation>
-		  		  </xs:annotation>
-		          <xs:simpleType>
-					<xs:restriction base="xs:string">
-					  <xs:minLength value="1"/>
-					</xs:restriction>
-				  </xs:simpleType>	            
-	            </xs:element>
-	            	 
-	            <xs:element name="constructJavaScript" minOccurs="0">
-	              <xs:annotation>
-				    <xs:documentation>This JavaScript runs constructors for new controls, typically adding default child controls</xs:documentation>
-		  		  </xs:annotation>
-		          <xs:simpleType>
-					<xs:restriction base="xs:string">
-					  <xs:minLength value="1"/>
-					</xs:restriction>
-				  </xs:simpleType>	            
-	            </xs:element>    
-	             	                  	            	            
-	            <xs:element name="rebuildJavaScript" minOccurs="0">
-		          <xs:simpleType>
-					<xs:restriction base="xs:string">
-					  <xs:minLength value="1"/>
-					</xs:restriction>
-				  </xs:simpleType>	            
-	            </xs:element> 
-	            
-	            <xs:element name="appendJavaScript" minOccurs="0">
-	              <xs:annotation>
-				    <xs:documentation>This JavaScript appends the html into the parent object, if not specified "this.parentControl.object.append(this._html);" is used</xs:documentation>
-		  		  </xs:annotation>
-		          <xs:simpleType>
-					<xs:restriction base="xs:string">
-					  <xs:minLength value="1"/>
-					</xs:restriction>
-				  </xs:simpleType>	            
-	            </xs:element>	        
-	                
-	            <xs:element name="selectLeftJavaScript" minOccurs="0">
-	              <xs:annotation>
-				    <xs:documentation>Selects the peer to the left</xs:documentation>
-		  		  </xs:annotation>
-		          <xs:simpleType>
-					<xs:restriction base="xs:string">
-					  <xs:minLength value="1"/>
-					</xs:restriction>
-				  </xs:simpleType>	            
-	            </xs:element>
-	            
-	            <xs:element name="selectRightJavaScript" minOccurs="0">
-	              <xs:annotation>
-				    <xs:documentation>Selects the peer to the right</xs:documentation>
-		  		  </xs:annotation>
-		          <xs:simpleType>
-					<xs:restriction base="xs:string">
-					  <xs:minLength value="1"/>
-					</xs:restriction>
-				  </xs:simpleType>	            
-	            </xs:element>
-	            
-	            <xs:element name="swapLeftJavaScript" minOccurs="0">
-	              <xs:annotation>
-				    <xs:documentation>Swaps the selected control with a the peer to the left</xs:documentation>
-		  		  </xs:annotation>
-		          <xs:simpleType>
-					<xs:restriction base="xs:string">
-					  <xs:minLength value="1"/>
-					</xs:restriction>
-				  </xs:simpleType>	            
-	            </xs:element>
-	            
-	            <xs:element name="swapRightJavaScript" minOccurs="0">
-	              <xs:annotation>
-				    <xs:documentation>Swaps the selected control with a the peer to the right</xs:documentation>
-		  		  </xs:annotation>
-		          <xs:simpleType>
-					<xs:restriction base="xs:string">
-					  <xs:minLength value="1"/>
-					</xs:restriction>
-				  </xs:simpleType>	            
-	            </xs:element>
-	            
-	            <xs:element name="insertLeftJavaScript" minOccurs="0">
-	              <xs:annotation>
-				    <xs:documentation>Inserts a peer to the left</xs:documentation>
-		  		  </xs:annotation>
-		          <xs:simpleType>
-					<xs:restriction base="xs:string">
-					  <xs:minLength value="1"/>
-					</xs:restriction>
-				  </xs:simpleType>	            
-	            </xs:element>
-	            
-	            <xs:element name="insertRightJavaScript" minOccurs="0">
-	              <xs:annotation>
-				    <xs:documentation>Inserts a peer to the right</xs:documentation>
-		  		  </xs:annotation>
-		          <xs:simpleType>
-					<xs:restriction base="xs:string">
-					  <xs:minLength value="1"/>
-					</xs:restriction>
-				  </xs:simpleType>	            
-	            </xs:element>
-	            
-	            <xs:element name="removeJavaScript" minOccurs="0">
-	              <xs:annotation>
-				    <xs:documentation>This JavaScript removes any html from the parent object, if not specified "this.object.remove();" is used</xs:documentation>
-		  		  </xs:annotation>
-		          <xs:simpleType>
-					<xs:restriction base="xs:string">
-					  <xs:minLength value="1"/>
-					</xs:restriction>
-				  </xs:simpleType>	            
-	            </xs:element>	   
-	            
-	            <xs:element name="initDesignJavaScript" minOccurs="0">
-		          <xs:simpleType>
-					<xs:restriction base="xs:string">
-					  <xs:minLength value="1"/>
-					</xs:restriction>
-				  </xs:simpleType>	            
-	            </xs:element> 
-	            <xs:element name="saveJavaScript" minOccurs="0">
-	              <xs:annotation>
-				    <xs:documentation>Runs in the designer as the page is saved. Useful for cleaning up any html added for demonstration purposes during design</xs:documentation>
-		  		  </xs:annotation>
-		          <xs:simpleType>
-					<xs:restriction base="xs:string">
-					  <xs:minLength value="1"/>
-					</xs:restriction>
-				  </xs:simpleType>	            
-	            </xs:element>	           	         	            	            	            
-	            <xs:element name="getDetailsFunction" minOccurs="0">
-	            	<xs:annotation>
-				    <xs:documentation>JavaScript that returns an object of details for this control. This is sent when getting or setting data and can specify which fields from the data are rendered into the control as well as any styling, it is produced when the html is refreshed so has access to all the control properties via the "this" parameter</xs:documentation>
-		  		  </xs:annotation>
-		          <xs:simpleType>
-					<xs:restriction base="xs:string">
-					  <xs:minLength value="1"/>
-					</xs:restriction>
-				  </xs:simpleType>	            
-	            </xs:element>  
-	            <xs:element name="getDataFunction" minOccurs="0">
-	              <xs:annotation>
-				    <xs:documentation>A function that returns the value of this control. The event object is available in the "ev" parameter,  The control id is available in the "id" parameter, the field name is in the "field" parameter</xs:documentation>
-		  		  </xs:annotation>
-		          <xs:simpleType>
-					<xs:restriction base="xs:string">
-					  <xs:minLength value="1"/>
-					</xs:restriction>
-				  </xs:simpleType>	            
-	            </xs:element> 	            	            
-	            <xs:element name="setDataJavaScript" minOccurs="0">
-	              <xs:annotation>
-				    <xs:documentation>JavaScript that populates the control with data. The control id is in the "id" parameter, data is is available in the "data" parameter and has the form {fields:["field1","field2"],rows:[["row1field1","row1field2"],["row2field1","row2field2"]]}, any fields are in the "fields" parameter</xs:documentation>
-		  		  </xs:annotation>
-		          <xs:simpleType>
-					<xs:restriction base="xs:string">
-					  <xs:minLength value="1"/>
-					</xs:restriction>
-				  </xs:simpleType>	            
-	            </xs:element> 	            
-	            <xs:element name="events" minOccurs="0">
-	            	<xs:complexType>
-	            		<xs:sequence>
-	            			<xs:element name="event" minOccurs="1" maxOccurs="unbounded">
-	            				<xs:complexType>
-	            					<xs:sequence>
-	            						<xs:element name="type">
-	            						  <xs:simpleType>
-											<xs:restriction base="xs:string">
-											  <xs:minLength value="1"/>
-											</xs:restriction>
-										  </xs:simpleType>
-	            						</xs:element>
-	            						<xs:element name="name">
-	            						  <xs:simpleType>
-											<xs:restriction base="xs:string">
-											  <xs:minLength value="1"/>
-											</xs:restriction>
-										  </xs:simpleType>	            						
-	            						</xs:element>      
-	            						<xs:element name="filterFunction" minOccurs="0">
-	            						 <xs:annotation>
-										    <xs:documentation>This JavaSvript will be placed at the top if the event handler, return false in this JavaScript should you wish the event not to be processed, the event is available in the "ev" variable</xs:documentation>
-								  		  </xs:annotation>
-	            						  <xs:simpleType>
-											<xs:restriction base="xs:string">
-											  <xs:minLength value="1"/>
-											</xs:restriction>
-										  </xs:simpleType>	            						
-	            						</xs:element>        					
-	            					</xs:sequence>
-	            				</xs:complexType>
-	            			</xs:element>
-	            		</xs:sequence>
-	            	</xs:complexType>
-	            </xs:element>     
-	            <xs:element name="styles" minOccurs="0">
-	            	<xs:complexType>
-	            		<xs:sequence>
-	            			<xs:element name="style" minOccurs="1" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="type">
+								<xs:annotation>
+									<xs:documentation>The control type is used to uniquely identify
+										this control, it should not contain spaces or punctuation
+									</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:pattern value="[a-zA-Z0-9_]{1,}" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="name">
+								<xs:annotation>
+									<xs:documentation>The control name is used presented to users
+										when describing, or logging something about this control
+									</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="1" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="image" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>A url for the control image relative to the
+										designer.jsp document
+									</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="1" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="addToNewApplications" type="xs:boolean"
+								minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>If set to true the control will be added to
+										new applications when they are created
+									</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="noDefaultName" type="xs:boolean"
+								minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>If set to true the control will not be given
+										a name so by default it will not appear in lists of controls,
+										this is useful for controls like table cells and rows which
+										are seldom used
+									</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="canUserAdd" type="xs:boolean"
+								minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Some controls like the table rows, table
+										cells, and tab pages cannot be added by the user dragging from
+										the panel
+									</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="canUserMove" type="xs:boolean"
+								minOccurs="0" />
+							<xs:element name="canUserInsert" type="xs:boolean"
+								minOccurs="0" />
+							<xs:element name="canUserAddPeers" type="xs:boolean"
+								minOccurs="0" />
+							<xs:element name="canValidate" type="xs:boolean"
+								minOccurs="0" />
+							<xs:element name="canBeUsedFromOtherPages" type="xs:boolean"
+								minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Controls like the Data store have getData and
+										setData methods whihc use global objects so they can be used
+										in all pages
+									</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="properties" minOccurs="0">
 								<xs:complexType>
-	            					<xs:sequence>
-	            						<xs:element name="name">
-	            						  <xs:simpleType>
-											<xs:restriction base="xs:string">
-											  <xs:minLength value="1"/>
-											</xs:restriction>
-										  </xs:simpleType>
-	            						</xs:element>
-	            						<xs:element name="getAppliesToFunction">	
-	            						  <xs:simpleType>
-											<xs:restriction base="xs:string">
-											  <xs:minLength value="1"/>
-											</xs:restriction>
-										  </xs:simpleType>				
-	            						</xs:element>            					
-	            					</xs:sequence>
-	            				</xs:complexType>
-	            			</xs:element>
-	            		</xs:sequence>
-	            	</xs:complexType>
-	            </xs:element>     
-	           	<xs:element name="initJavaScript" minOccurs="0">
-	           	  <xs:annotation>
-				    <xs:documentation>JavaScript that runs in the page load to initialise any controls. The control id is in the "id" parameter, details are provided in the "details" parameter</xs:documentation>
-		  		  </xs:annotation>
-		          <xs:simpleType>
-					<xs:restriction base="xs:string">
-					  <xs:minLength value="1"/>
-					</xs:restriction>
-				  </xs:simpleType>	            
-	            </xs:element> 
-	          </xs:sequence>
-	        </xs:complexType>
-	      </xs:element>
-	   </xs:sequence>
-	  </xs:complexType>
+									<xs:sequence>
+										<xs:element name="property" minOccurs="1"
+											maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="key">
+														<xs:annotation>
+															<xs:documentation>The property keys are all copied into
+																the object when saving/restoring so there are some
+																reserved words
+															</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:pattern value="([a-zA-Z0-9_]){1,}" />
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="name">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:minLength value="1" />
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="visible" type="xs:boolean"
+														minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Set this optional item to false to not
+																render the property
+															</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="setConstructValueFunction"
+														minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Leave this out to not set a property
+																value when the control is constructed
+															</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:minLength value="1" />
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="changeValueJavaScript"
+														minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>This can either be a short known name,
+																such as "text", or a whole function. The designer will
+																search for the known function first before applying all
+																of the element contents as a function
+															</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:minLength value="1" />
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="getValuesFunction" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>return possible values, either an array
+																of strings ["1","2"], or an array of value/text objects
+																[{"value":"1","text":"Item 1"},{"value":"2","text":"Item
+																2"}]
+															</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:minLength value="1" />
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="resources" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="resource" minOccurs="1"
+											maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="type">
+														<xs:annotation>
+															<xs:documentation>The javascriptFile and cssFile are
+																written into the document includes, the plain javascript
+																is written to the rapid.js file and the plain css is
+																written to the application rapid.css file
+															</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:enumeration value="javascriptFile" />
+																<xs:enumeration value="cssFile" />
+																<xs:enumeration value="javascript" />
+																<xs:enumeration value="css" />
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="contents">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:minLength value="1" />
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="getHtmlFunction">
+								<xs:annotation>
+									<xs:documentation>This JavaScript appends the html into the
+										parent, and sets it's object
+									</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="1" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="updateChildObjects" type="xs:boolean"
+								minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Some controls like the dropdown and
+										radiobuttons must keep the child obejct from an html rebuild,
+										most more complex controls retain their existing child objects
+									</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="createJavaScript" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>This optional JavaScript runs after the html
+										is first added, and can change the object or add markup
+										elsewhere
+									</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="1" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+
+							<xs:element name="constructJavaScript" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>This JavaScript runs constructors for new
+										controls, typically adding default child controls
+									</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="1" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+
+							<xs:element name="rebuildJavaScript" minOccurs="0">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="1" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+
+							<xs:element name="appendJavaScript" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>This JavaScript appends the html into the
+										parent object, if not specified
+										"this.parentControl.object.append(this._html);" is used
+									</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="1" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+
+							<xs:element name="selectLeftJavaScript" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Selects the peer to the left
+									</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="1" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+
+							<xs:element name="selectRightJavaScript" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Selects the peer to the right
+									</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="1" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+
+							<xs:element name="swapLeftJavaScript" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Swaps the selected control with a the peer to
+										the left
+									</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="1" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+
+							<xs:element name="swapRightJavaScript" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Swaps the selected control with a the peer to
+										the right
+									</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="1" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+
+							<xs:element name="insertLeftJavaScript" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Inserts a peer to the left</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="1" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+
+							<xs:element name="insertRightJavaScript" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Inserts a peer to the right
+									</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="1" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+
+							<xs:element name="removeJavaScript" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>This JavaScript removes any html from the
+										parent object, if not specified "this.object.remove();" is
+										used
+									</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="1" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+
+							<xs:element name="initDesignJavaScript" minOccurs="0">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="1" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="saveJavaScript" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Runs in the designer as the page is saved.
+										Useful for cleaning up any html added for demonstration
+										purposes during design
+									</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="1" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="getDetailsFunction" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>JavaScript that returns an object of details
+										for this control. This is sent when getting or setting data
+										and can specify which fields from the data are rendered into
+										the control as well as any styling, it is produced when the
+										html is refreshed so has access to all the control properties
+										via the "this" parameter
+									</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="1" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="getDataFunction" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>A function that returns the value of this
+										control. The event object is available in the "ev" parameter,
+										The control id is available in the "id" parameter, the field
+										name is in the "field" parameter
+									</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="1" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="setDataJavaScript" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>JavaScript that populates the control with
+										data. The control id is in the "id" parameter, data is is
+										available in the "data" parameter and has the form
+										{fields:["field1","field2"],rows:[["row1field1","row1field2"],["row2field1","row2field2"]]},
+										any fields are in the "fields" parameter
+									</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="1" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="events" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="event" minOccurs="1" maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="type">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:minLength value="1" />
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="name">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:minLength value="1" />
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="filterFunction" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>This JavaSvript will be placed at the
+																top if the event handler, return false in this
+																JavaScript should you wish the event not to be
+																processed, the event is available in the "ev" variable
+															</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:minLength value="1" />
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="styles" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="style" minOccurs="1" maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="name">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:minLength value="1" />
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="getAppliesToFunction">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:minLength value="1" />
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="initJavaScript" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>JavaScript that runs in the page load to
+										initialise any controls. The control id is in the "id"
+										parameter, details are provided in the "details" parameter
+									</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="1" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
 	</xs:element>
 </xs:schema>

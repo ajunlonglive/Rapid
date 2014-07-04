@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><page>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><page>
     <controls>
         <childControls>
             <childControls>
@@ -667,4 +667,4 @@
 		&lt;/table&gt;</html>
     </rolesHtml>
     <title>New SOA webservice</title>
-<version>1</version></page>
+<version>1</version><xmlVersion>1</xmlVersion><XMLVersion>1</XMLVersion></page>

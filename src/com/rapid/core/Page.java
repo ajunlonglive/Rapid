@@ -37,8 +37,8 @@ import com.rapid.utils.XML;
 @XmlType(namespace="http://rapid-is.co.uk/core")
 public class Page {
 	
-	// the version of this class (if we have any significant changes down the line we can upgrade the xml files before unmarshalling)	
-	public static final int VERSION = 1;
+	// the version of this class's xml structure when marshelled (if we have any significant changes down the line we can upgrade the xml files before unmarshalling)	
+	public static final int XML_VERSION = 1;
 	
 	// a class for retaining page html for a set of user roles	
 	public static class RoleHtml {
@@ -95,7 +95,7 @@ public class Page {
 			
 	// instance variables
 	
-	private int _version;
+	private int _xmlVersion;
 	private String _id, _name, _title, _description, _createdBy, _modifiedBy, _htmlBody, _cachedStartHtml;
 	private Date _createdDate, _modifiedDate;
 	private List<String> _javascriptFiles, _cssFiles;
@@ -109,10 +109,10 @@ public class Page {
 	
 	// properties
 	
-	// the version is used to upgrade xml files before unmarshalling
-	public int getVersion() { return _version; }
-	public void setVersion(int version) { _version = version; }
-	
+	// the xml version is used to upgrade xml files before unmarshalling (we use a property so it's written ito xml)
+	public int getXMLVersion() { return _xmlVersion; }
+	public void setXMLVersion(int xmlVersion) { _xmlVersion = xmlVersion; }
+		
 	// the id uniquely identifies the page (it is quiet short and is concatinated to control id's so more than one page's control's can be working in a document at one time)
 	public String getId() { return _id; }
 	public void setId(String id) { _id = id; }
@@ -188,7 +188,7 @@ public class Page {
 	// constructor
 	
 	public Page() {
-		_version = VERSION;
+		_xmlVersion = XML_VERSION;
 	};
 		
 	// instance methods
@@ -553,17 +553,17 @@ public class Page {
 		// open the xml file into a document
 		Document pageDocument = XML.openDocument(file);
 		
-		// specify the version as -1
-		int version = -1;
+		// specify the xmlVersion as -1
+		int xmlVersion = -1;
 		
 		// look for a version node
-		Node versionNode = XML.getChildElement(pageDocument.getFirstChild(), "version");
+		Node xmlVersionNode = XML.getChildElement(pageDocument.getFirstChild(), "XMLVersion");
 		
 		// if we got one update the version
-		if (versionNode != null) version = Integer.parseInt(versionNode.getTextContent());
+		if (xmlVersionNode != null) xmlVersion = Integer.parseInt(xmlVersionNode.getTextContent());
 				
 		// if the version of this xml isn't the same as this class we have some work to do!
-		if (version != VERSION) {
+		if (xmlVersion != XML_VERSION) {
 			
 			// get the page name
 			String name = XML.getChildElementValue(pageDocument.getFirstChild(), "name");
@@ -572,29 +572,37 @@ public class Page {
 			Logger logger = (Logger) servletContext.getAttribute("logger");
 			
 			// log the difference
-			logger.debug("Page " + name + " with version " + version + ", current version is " + VERSION);
+			logger.debug("Page " + name + " with version " + xmlVersion + ", current version is " + XML_VERSION);
 			
 			//
-			// Here we would have code to update from known version of the file
+			// Here we would have code to update from known versions of the file to the current version
 			//
 			
 			// check whether there was a version node in the file to start with
-			if (versionNode == null) {
+			if (xmlVersionNode == null) {
 				// create the version node
-				versionNode = pageDocument.createElement("version");
+				xmlVersionNode = pageDocument.createElement("XMLVersion");
 				// add it to the root of the document
-				pageDocument.getFirstChild().appendChild(versionNode);
+				pageDocument.getFirstChild().appendChild(xmlVersionNode);
 			}
 			
 			// set the xml to the latest version
-			versionNode.setTextContent(Integer.toString(VERSION));
+			xmlVersionNode.setTextContent(Integer.toString(XML_VERSION));
 			
-			// now we need to check the versions of all of the controls and actions
+			//
+			// Here we would use xpath to find all controls and run the Control.upgrade method
+			//
+			
+			//
+			// Here we would use xpath to find all actions, each class has it's own upgrade method so
+			// we need to identify the class, instantiate it and call it's upgrade method
+			// it's probably worthwhile maintaining a map of instantiated classes to avoid unnecessary re-instantiation   
+			//
 			
 			// save it
 			XML.saveDocument(pageDocument, file);
 			
-			logger.debug("Updated " + name + " page version to " + VERSION);
+			logger.debug("Updated " + name + " page version to " + XML_VERSION);
 			
 		}
 		
