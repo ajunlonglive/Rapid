@@ -47,9 +47,11 @@ public class Navigate extends Action {
 	public void setSessionVariables(ArrayList<SessionVariable> sessionVariables) { _sessionVariables = sessionVariables; }
 
 	// parameterless constructor for jaxb
-	public Navigate() {}	
+	public Navigate() { super(); }	
 	// json constructor for designer
-	public Navigate(RapidHttpServlet rapidServlet, JSONObject jsonAction) throws JSONException { 
+	public Navigate(RapidHttpServlet rapidServlet, JSONObject jsonAction) throws Exception {
+		// call super constructor to set xml version
+		super();
 		// save all key/values from the json into the properties 
 		for (String key : JSONObject.getNames(jsonAction)) {
 			// add all json properties to our properties (except for sessionVariables)

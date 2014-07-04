@@ -17,11 +17,14 @@ This action runs JQuery against a specified control. Can be entered with or with
 
 public class Control extends Action {
 
-	// parameterless constructor for jaxb
-	public Control() {}
+	// parameterless constructor (required for jaxb)
+	Control() { super(); }
+	// designer constructor
+	public Control(RapidHttpServlet rapidServlet, JSONObject jsonAction) throws Exception { 
+		super(rapidServlet, jsonAction);				
+	}
 	
-	// json constructor for designer - invoked with reflection in Control.getEvents from Desinger.java
-	public Control(RapidHttpServlet rapidServlet, JSONObject jsonAction) throws JSONException {	super(rapidServlet, jsonAction); }	
+	// methods
 		
 	@Override
 	public String getJavaScript(Application application, Page page, com.rapid.core.Control control) {

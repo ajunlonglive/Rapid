@@ -100,8 +100,12 @@ public class Webservice extends Action {
 		
 	// constructors
 	
-	public Webservice() {}	
-	public Webservice(RapidHttpServlet rapidServlet, JSONObject jsonAction) throws JSONException { 
+	// jaxb
+	public Webservice() { super(); }
+	// designer
+	public Webservice(RapidHttpServlet rapidServlet, JSONObject jsonAction) throws Exception { 
+		// set the xml version
+		super();
 		
 		// save all key/values from the json into the properties 
 		for (String key : JSONObject.getNames(jsonAction)) {
@@ -132,32 +136,22 @@ public class Webservice extends Action {
 		JSONArray jsonSuccessActions = jsonAction.optJSONArray("successActions");
 		// if we had some
 		if (jsonSuccessActions != null) {
-			// instantiate our contols collection
-			try {
-				_successActions = Control.getActions(rapidServlet, jsonSuccessActions);
-			} catch (Exception ex) {
-				// rethrow as a JSON error
-				throw new JSONException(ex);
-			}
+			// instantiate our success actions collection
+			_successActions = Control.getActions(rapidServlet, jsonSuccessActions);
 		}
 		
 		// grab any errorActions
 		JSONArray jsonErrorActions = jsonAction.optJSONArray("errorActions");
 		// if we had some
 		if (jsonErrorActions != null) {
-			// instantiate our contols collection
-			try {
-				_errorActions = Control.getActions(rapidServlet, jsonErrorActions);
-			} catch (Exception ex) {
-				// rethrow as a JSON error
-				throw new JSONException(ex);
-			}
+			// instantiate our error actions collection
+			_errorActions = Control.getActions(rapidServlet, jsonErrorActions);
 		}
 				
 	}
 	
 	// this is used to get both input and output parameters
-	private ArrayList<Parameter> getParameters(JSONArray jsonParameters) throws JSONException {
+	private ArrayList<Parameter> getParameters(JSONArray jsonParameters) throws Exception {
 		// prepare return
 		ArrayList<Parameter> parameters = null;
 		// check
@@ -364,7 +358,7 @@ public class Webservice extends Action {
 	}
 	
 	@Override
-	public JSONObject doAction(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, JSONObject jsonAction) throws JSONException, JAXBException, IOException {
+	public JSONObject doAction(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, JSONObject jsonAction) throws Exception {
 				
 		JSONObject jsonData = new JSONObject();
 		
@@ -372,103 +366,96 @@ public class Webservice extends Action {
 		
 		Page page = rapidRequest.getPage();
 		
-		try {
-		
-			if (_request != null && application != null && page != null) {
-						
-				// get the body into a string
-				String body = _request.getBody();
-				// retain the current position
-				int pos = body.indexOf("?");
-				// keep track of the index of the ?
-				int index = 0;
-				// if there are any question marks
-				if (pos > 0) {
-					// check we have some inputs
-					JSONArray jsonInputs = jsonAction.getJSONArray("inputs");
-					// loop, but check condition at the end
-					do {
-						// get the input
-						JSONObject input = jsonInputs.getJSONObject(index);
-						// replace the ? with the input value
-						body = body.substring(0, pos) + input.getString("value") + body.substring(pos + 1);
-						// look for the next question mark
-						pos = body.indexOf("?",pos + 1);
-						// inc the index for the next round
-						index ++;
-						// stop looping if no more ?
-					} while (pos > 0);
-				}
-				
-				// create a placeholder for the request url
-				URL url = null;				
-				// if the given request url starts with http use it as is, otherwise use the soa servlet
-				if (_request.getUrl().startsWith("http")) {
-					url = new URL(_request.getUrl());
-				} else {
-					HttpServletRequest httpRequest = rapidRequest.getRequest();
-					url = new URL(httpRequest.getScheme(), httpRequest.getServerName(), httpRequest.getServerPort(), httpRequest.getContextPath() + "/" + _request.getUrl());
-				}
-				
-				// establish the connection
-				HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-				connection.setDoOutput(true); // Triggers POST.
-				
-				// set the content type and action header accordingly
-				if ("SOAP".equals(_request.getType())) {
-					connection.setRequestProperty("Content-Type", "text/xml");
-					connection.setRequestProperty("SOAPAction", _request.getAction());
-				} else if ("JSON".equals(_request.getType())) {
-					connection.setRequestProperty("Content-Type", "application/json");
-					connection.setRequestProperty("Action", _request.getAction());
-				} else if ("XML".equals(_request.getType())) {
-					connection.setRequestProperty("Content-Type", "text/xml");
-					connection.setRequestProperty("Action", _request.getAction());
-				}
-								
-				// get the output stream from the connection into which we write the request
-				OutputStream output = connection.getOutputStream();		
-				
-				// write the processed body string into the request output stream
-				output.write(body.getBytes("UTF8"));
-				
-				// check the response code
-				int responseCode = connection.getResponseCode();
-				
-				// read input stream if all ok, otherwise something meaningful should be in error stream
-				if (responseCode == 200) {
+		if (_request != null && application != null && page != null) {
 					
-					InputStream response = connection.getInputStream();
-					
-					SOAXMLReader xmlReader = new SOAXMLReader();
-					
-					SOAData soaData = xmlReader.read(response);
-					
-					SOADataWriter jsonWriter = new SOARapidWriter(soaData);
-					
-					String jsonString = jsonWriter.write();
-					
-					jsonData = new JSONObject(jsonString);
-					
-				} else {
-					
-					InputStream response = connection.getErrorStream();
-					
-					BufferedReader rd  = new BufferedReader( new InputStreamReader(response));
-		        
-					throw new JSONException(" response code " + responseCode + " from server : " + rd.readLine());
-										
-				}
-				
-				connection.disconnect();
-																
-			} // got app and page
+			// get the body into a string
+			String body = _request.getBody();
+			// retain the current position
+			int pos = body.indexOf("?");
+			// keep track of the index of the ?
+			int index = 0;
+			// if there are any question marks
+			if (pos > 0) {
+				// check we have some inputs
+				JSONArray jsonInputs = jsonAction.getJSONArray("inputs");
+				// loop, but check condition at the end
+				do {
+					// get the input
+					JSONObject input = jsonInputs.getJSONObject(index);
+					// replace the ? with the input value
+					body = body.substring(0, pos) + input.getString("value") + body.substring(pos + 1);
+					// look for the next question mark
+					pos = body.indexOf("?",pos + 1);
+					// inc the index for the next round
+					index ++;
+					// stop looping if no more ?
+				} while (pos > 0);
+			}
 			
-		} catch (Exception ex) {
-			// rethrow as JSONException
-			throw new JSONException(ex);
-		}
-								
+			// create a placeholder for the request url
+			URL url = null;				
+			// if the given request url starts with http use it as is, otherwise use the soa servlet
+			if (_request.getUrl().startsWith("http")) {
+				url = new URL(_request.getUrl());
+			} else {
+				HttpServletRequest httpRequest = rapidRequest.getRequest();
+				url = new URL(httpRequest.getScheme(), httpRequest.getServerName(), httpRequest.getServerPort(), httpRequest.getContextPath() + "/" + _request.getUrl());
+			}
+			
+			// establish the connection
+			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+			connection.setDoOutput(true); // Triggers POST.
+			
+			// set the content type and action header accordingly
+			if ("SOAP".equals(_request.getType())) {
+				connection.setRequestProperty("Content-Type", "text/xml");
+				connection.setRequestProperty("SOAPAction", _request.getAction());
+			} else if ("JSON".equals(_request.getType())) {
+				connection.setRequestProperty("Content-Type", "application/json");
+				connection.setRequestProperty("Action", _request.getAction());
+			} else if ("XML".equals(_request.getType())) {
+				connection.setRequestProperty("Content-Type", "text/xml");
+				connection.setRequestProperty("Action", _request.getAction());
+			}
+							
+			// get the output stream from the connection into which we write the request
+			OutputStream output = connection.getOutputStream();		
+			
+			// write the processed body string into the request output stream
+			output.write(body.getBytes("UTF8"));
+			
+			// check the response code
+			int responseCode = connection.getResponseCode();
+			
+			// read input stream if all ok, otherwise something meaningful should be in error stream
+			if (responseCode == 200) {
+				
+				InputStream response = connection.getInputStream();
+				
+				SOAXMLReader xmlReader = new SOAXMLReader();
+				
+				SOAData soaData = xmlReader.read(response);
+				
+				SOADataWriter jsonWriter = new SOARapidWriter(soaData);
+				
+				String jsonString = jsonWriter.write();
+				
+				jsonData = new JSONObject(jsonString);
+				
+			} else {
+				
+				InputStream response = connection.getErrorStream();
+				
+				BufferedReader rd  = new BufferedReader( new InputStreamReader(response));
+	        
+				throw new JSONException(" response code " + responseCode + " from server : " + rd.readLine());
+									
+			}
+			
+			connection.disconnect();
+															
+		} // got app and page
+											
 		return jsonData;
 		
 	}

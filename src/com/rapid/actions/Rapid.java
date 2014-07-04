@@ -60,8 +60,13 @@ public class Rapid extends Action {
 	
 	// constructors
 	
-	public Rapid() {}	
-	public Rapid(RapidHttpServlet rapidServlet, JSONObject jsonAction) throws JSONException { 
+	//jaxb
+	public Rapid() { super(); }	
+	// designer
+	public Rapid(RapidHttpServlet rapidServlet, JSONObject jsonAction) throws Exception { 
+		
+		// call the super constructor to the set the xml version
+		super();
 		
 		// save all key/values from the json into the properties 
 		for (String key : JSONObject.getNames(jsonAction)) {
@@ -73,26 +78,14 @@ public class Rapid extends Action {
 		JSONArray jsonSuccessActions = jsonAction.optJSONArray("successActions");
 		// if we had some
 		if (jsonSuccessActions != null) {
-			// instantiate our contols collection
-			try {
-				_successActions = Control.getActions(rapidServlet, jsonSuccessActions);
-			} catch (Exception ex) {
-				// rethrow as a JSON error
-				throw new JSONException(ex);
-			}
+			_successActions = Control.getActions(rapidServlet, jsonSuccessActions);
 		}
 		
 		// grab any errorActions
 		JSONArray jsonErrorActions = jsonAction.optJSONArray("errorActions");
 		// if we had some
 		if (jsonErrorActions != null) {
-			// instantiate our contols collection
-			try {
-				_errorActions = Control.getActions(rapidServlet, jsonErrorActions);
-			} catch (Exception ex) {
-				// rethrow as a JSON error
-				throw new JSONException(ex);
-			}
+			_errorActions = Control.getActions(rapidServlet, jsonErrorActions);
 		}
 						
 	}	
@@ -194,7 +187,7 @@ public class Rapid extends Action {
 	}
 	
 	@Override
-	public JSONObject doAction(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, JSONObject jsonAction) throws JSONException, JAXBException, IOException {
+	public JSONObject doAction(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, JSONObject jsonAction) throws Exception {
 		
 		JSONObject result = new JSONObject();
 		
@@ -557,96 +550,75 @@ public class Rapid extends Action {
 				
 				// if we got one
 				if (security != null) {
+											
+					// add the roles to the response
+					result.put("roles", security.getRoles(rapidRequest));
 					
-					try {
-												
-						// add the roles to the response
-						result.put("roles", security.getRoles(rapidRequest));
-						
-						// add the users to the response
-						result.put("users", security.getUsers(rapidRequest));					
-						
-					} catch (SecurityAdapaterException ex) {
-						rapidServlet.getLogger().error("Rapid security adapter error : " + ex.getMessage(),ex);
-						throw new JSONException(ex);
-					}
-														
+					// add the users to the response
+					result.put("users", security.getUsers(rapidRequest));					
+																				
 				} // got security
 				
 			} else if ("GETUSER".equals(action)) { 
 										
-				try {
-					
-					// get the userName from the incoming json
-					String userName = jsonAction.getString("userName");
-					
-					// get the app security
-					SecurityAdapater security = app.getSecurity();
-					
-					// get the user
-					User user = security.getUser(rapidRequest, userName);
-					
-					// add the user name
-					result.put("userName", userName);
-					
-					// add the user description
-					result.put("description", user.getDescription());
-					
-					// add a masked password
-					result.put("password", "********");
+				// get the userName from the incoming json
+				String userName = jsonAction.getString("userName");
 				
-					// if we got one
-					if (security != null) {
-										
-						// get the users roles
-						List<String> roles = security.getUser(rapidRequest, userName).getRoles();
-						
-						// add the users to the response
-						result.put("roles", roles);											
-													
-					} // got security
+				// get the app security
+				SecurityAdapater security = app.getSecurity();
+				
+				// get the user
+				User user = security.getUser(rapidRequest, userName);
+				
+				// add the user name
+				result.put("userName", userName);
+				
+				// add the user description
+				result.put("description", user.getDescription());
+				
+				// add a masked password
+				result.put("password", "********");
+			
+				// if we got one
+				if (security != null) {
+									
+					// get the users roles
+					List<String> roles = security.getUser(rapidRequest, userName).getRoles();
 					
-				} catch (SecurityAdapaterException ex) {
-					rapidServlet.getLogger().error("Rapid action error : " + ex.getMessage(),ex);
-					throw new JSONException(ex);
-				}
+					// add the users to the response
+					result.put("roles", roles);											
+												
+				} // got security
 								
 			} else if ("RELOADACTIONS".equals(action)) {
 							
 				// load actions and set the result message
-				try { result.put("message", RapidServletContextListener.loadActions(rapidServlet.getServletContext()) + " actions reloaded"); } 
-				catch (Exception ex) { throw new JSONException(ex);	}
-				
+				result.put("message", RapidServletContextListener.loadActions(rapidServlet.getServletContext()) + " actions reloaded");  
+								
 			} else if ("RELOADCONTROLS".equals(action)) {
 				
 				// load controls and set the result message
-				try { result.put("message", RapidServletContextListener.loadControls(rapidServlet.getServletContext()) + " controls reloaded"); } 
-				catch (Exception ex) { throw new JSONException(ex);	}
+				result.put("message", RapidServletContextListener.loadControls(rapidServlet.getServletContext()) + " controls reloaded");  				
 				
 			} else if ("RELOADAPPLICATIONS".equals(action)) {
 				
 				// load applications and set the result message
-				try { result.put("message", RapidServletContextListener.loadApplications(rapidServlet.getServletContext()) + " applications reloaded"); } 
-				catch (Exception ex) { throw new JSONException(ex);	}
-				
+				result.put("message", RapidServletContextListener.loadApplications(rapidServlet.getServletContext()) + " applications reloaded");  
+								
 			} else if ("RELOADADAPTERS".equals(action)) {
 								
 				// load adapters and set the result message
 				int databaseDrivers = 0;
 				int connectionAdapters = 0;
 				int securityAdapters = 0;
+													
+				databaseDrivers = RapidServletContextListener.loadDatabaseDrivers(rapidServlet.getServletContext());
 				
-				try { 
-					
-					databaseDrivers = RapidServletContextListener.loadDatabaseDrivers(rapidServlet.getServletContext());
-					
-					connectionAdapters = RapidServletContextListener.loadConnectionAdapters(rapidServlet.getServletContext());
-					
-					securityAdapters = RapidServletContextListener.loadSecurityAdapters(rapidServlet.getServletContext());
-										
-					result.put("message", databaseDrivers + " database drivers, " + connectionAdapters + " connection adapters, " + securityAdapters + " security adapters");
-					
-				} catch (Exception ex) { throw new JSONException(ex); }
+				connectionAdapters = RapidServletContextListener.loadConnectionAdapters(rapidServlet.getServletContext());
+				
+				securityAdapters = RapidServletContextListener.loadSecurityAdapters(rapidServlet.getServletContext());
+									
+				result.put("message", databaseDrivers + " database drivers, " + connectionAdapters + " connection adapters, " + securityAdapters + " security adapters");
 								
 			} else if ("SAVEAPP".equals(action)) {
 			
@@ -680,8 +652,7 @@ public class Rapid extends Action {
 				app.setStartPageId(startPageId);
 				
 				// save
-				try { app.save(rapidServlet, rapidRequest);	} 
-				catch (Exception ex) { throw new JSONException(ex);	} 
+				app.save(rapidServlet, rapidRequest); 
 				
 				// make sure it's in the collection of apps (may have been moved out if the name was changed)
 				rapidServlet.getApplications().put(app.getId(), app);
@@ -695,8 +666,7 @@ public class Rapid extends Action {
 				
 				app.setStyles(styles);
 				
-				try { app.save(rapidServlet, rapidRequest);	} 
-				catch (Exception ex) { throw new JSONException(ex);	}
+				app.save(rapidServlet, rapidRequest);
 				
 				// add the application to the response
 				result.put("message", "Styles saved");
@@ -730,8 +700,7 @@ public class Rapid extends Action {
 						if (!"********".equals(password)) dbConn.setPassword(password);
 						
 						// save the app
-						try { app.save(rapidServlet, rapidRequest);	} 
-						catch (Exception ex) { throw new JSONException(ex);	}
+						app.save(rapidServlet, rapidRequest);
 						
 						foundConnection = true;
 						
@@ -850,8 +819,7 @@ public class Rapid extends Action {
 							}
 														
 							// save the app
-							try { app.save(rapidServlet, rapidRequest);	} 
-							catch (Exception ex) { throw new JSONException(ex);	}
+							app.save(rapidServlet, rapidRequest);
 							
 							foundWebservice = true;
 							
@@ -869,8 +837,7 @@ public class Rapid extends Action {
 				
 				app.setSecurityAdapterType(securityAdapter);
 				
-				try { app.save(rapidServlet, rapidRequest);	} 
-				catch (Exception ex) { throw new JSONException(ex);	}
+				app.save(rapidServlet, rapidRequest);
 				
 				// add the application to the response
 				result.put("message", "Security adapter saved");
@@ -900,8 +867,7 @@ public class Rapid extends Action {
 				app.setActionTypes(actionTypes);
 				
 				// save it
-				try { app.save(rapidServlet, rapidRequest);	} 
-				catch (Exception ex) { throw new JSONException(ex);	}
+				app.save(rapidServlet, rapidRequest);
 				
 				// add the message to the response
 				result.put("message", actionTypes.size() + " actions");
@@ -931,8 +897,7 @@ public class Rapid extends Action {
 				app.setControlTypes(controlTypes);
 				
 				// save
-				try { app.save(rapidServlet, rapidRequest);	} 
-				catch (Exception ex) { throw new JSONException(ex);	}
+				app.save(rapidServlet, rapidRequest);
 				
 				// add the message to the response
 				result.put("message", controlTypes.size() + " controls");
@@ -964,89 +929,83 @@ public class Rapid extends Action {
 				newApp.setCreatedDate(new Date());
 				newApp.setSecurityAdapterType("rapid");
 								 				
-				try {
-					
-					// initialise the application
-					newApp.initialise(rapidServlet.getServletContext(), true);
-					
-					// initialise the list of action
-					List<String> actionTypes = new ArrayList<String>();
-					
-					// get the JSONArray of controls
-					JSONArray jsonActionTypes = rapidServlet.getJsonActions();
-					
-					// if there were some
-					if (jsonActionTypes != null) {
-						// loop them 
-						for (int i = 0; i < jsonActionTypes.length(); i++) {
-							// get the action
-							JSONObject jsonActionType = jsonActionTypes.getJSONObject(i);
-							// add to list if addToNewApplications is set
-							if (jsonActionType.optBoolean("addToNewApplications")) actionTypes.add(jsonActionType.getString("type"));
-						}
+				
+				// initialise the application
+				newApp.initialise(rapidServlet.getServletContext(), true);
+				
+				// initialise the list of action
+				List<String> actionTypes = new ArrayList<String>();
+				
+				// get the JSONArray of controls
+				JSONArray jsonActionTypes = rapidServlet.getJsonActions();
+				
+				// if there were some
+				if (jsonActionTypes != null) {
+					// loop them 
+					for (int i = 0; i < jsonActionTypes.length(); i++) {
+						// get the action
+						JSONObject jsonActionType = jsonActionTypes.getJSONObject(i);
+						// add to list if addToNewApplications is set
+						if (jsonActionType.optBoolean("addToNewApplications")) actionTypes.add(jsonActionType.getString("type"));
 					}
-										
-					// assign the list to the application
-					newApp.setActionTypes(actionTypes);
-					
-					// initialise the list of controls
-					List<String> controlTypes = new ArrayList<String>();
-					
-					// get the JSONArray of controls
-					JSONArray jsonControlTypes = rapidServlet.getJsonControls();
-					
-					// if there were some
-					if (jsonControlTypes != null) {
-						// loop them 
-						for (int i = 0; i < jsonControlTypes.length(); i++) {
-							// get the control
-							JSONObject jsonControlType = jsonControlTypes.getJSONObject(i);
-							// add to list if addToNewApplications is set
-							if (jsonControlType.optBoolean("addToNewApplications")) controlTypes.add(jsonControlType.getString("type"));
-						}
-					}
-										
-					// assign the list to the application
-					newApp.setControlTypes(controlTypes);
-					
-					// get the security 
-					SecurityAdapater security = newApp.getSecurity();
-					
-					// check there is one
-					if (security != null) {
-						
-						// get the current user's name
-						String userName = rapidRequest.getUserName();
-						
-						// get the current users record from the adapter
-						User user = security.getUser(rapidRequest, userName);
-						
-						// get the rapid application
-						Application rapidApplication = rapidRequest.getRapidServlet().getApplication("rapid");
-						
-						// check the current user is present in the app's security adapter
-						if (user == null) {
-							// get the Rapid user object
-							User rapidUser = rapidApplication.getSecurity().getUser(rapidRequest, userName);
-							// create a new user based on the Rapid user
-							user = new User(userName, rapidUser.getDescription(), rapidUser.getPassword());
-							// add the new user 
-							security.addUser(rapidRequest, user);
-						}
-						
-						// add Admin and Design roles for the new user if required
-						if (!security.checkUserRole(rapidRequest, userName, com.rapid.server.Rapid.ADMIN_ROLE)) security.addUserRole(rapidRequest, userName, com.rapid.server.Rapid.ADMIN_ROLE);
-						if (!security.checkUserRole(rapidRequest, userName, com.rapid.server.Rapid.DESIGN_ROLE)) security.addUserRole(rapidRequest, userName, com.rapid.server.Rapid.DESIGN_ROLE);
-					}
-					
-					// save the application to file
-					newApp.save(rapidServlet, rapidRequest);
-					
-				} catch (Exception ex) {
-					Logger.getLogger(Rapid.class).error(ex);
-					throw new JSONException(ex);
 				}
-								
+									
+				// assign the list to the application
+				newApp.setActionTypes(actionTypes);
+				
+				// initialise the list of controls
+				List<String> controlTypes = new ArrayList<String>();
+				
+				// get the JSONArray of controls
+				JSONArray jsonControlTypes = rapidServlet.getJsonControls();
+				
+				// if there were some
+				if (jsonControlTypes != null) {
+					// loop them 
+					for (int i = 0; i < jsonControlTypes.length(); i++) {
+						// get the control
+						JSONObject jsonControlType = jsonControlTypes.getJSONObject(i);
+						// add to list if addToNewApplications is set
+						if (jsonControlType.optBoolean("addToNewApplications")) controlTypes.add(jsonControlType.getString("type"));
+					}
+				}
+									
+				// assign the list to the application
+				newApp.setControlTypes(controlTypes);
+				
+				// get the security 
+				SecurityAdapater security = newApp.getSecurity();
+				
+				// check there is one
+				if (security != null) {
+					
+					// get the current user's name
+					String userName = rapidRequest.getUserName();
+					
+					// get the current users record from the adapter
+					User user = security.getUser(rapidRequest, userName);
+					
+					// get the rapid application
+					Application rapidApplication = rapidRequest.getRapidServlet().getApplication("rapid");
+					
+					// check the current user is present in the app's security adapter
+					if (user == null) {
+						// get the Rapid user object
+						User rapidUser = rapidApplication.getSecurity().getUser(rapidRequest, userName);
+						// create a new user based on the Rapid user
+						user = new User(userName, rapidUser.getDescription(), rapidUser.getPassword());
+						// add the new user 
+						security.addUser(rapidRequest, user);
+					}
+					
+					// add Admin and Design roles for the new user if required
+					if (!security.checkUserRole(rapidRequest, userName, com.rapid.server.Rapid.ADMIN_ROLE)) security.addUserRole(rapidRequest, userName, com.rapid.server.Rapid.ADMIN_ROLE);
+					if (!security.checkUserRole(rapidRequest, userName, com.rapid.server.Rapid.DESIGN_ROLE)) security.addUserRole(rapidRequest, userName, com.rapid.server.Rapid.DESIGN_ROLE);
+				}
+				
+				// save the application to file
+				newApp.save(rapidServlet, rapidRequest);
+							
 				// set the result message
 				result.put("message", "Application " + app.getTitle() + " created");
 				
@@ -1069,84 +1028,77 @@ public class Rapid extends Action {
 				// derive the new app id based on making the name safe and in lower case
 				newAppId = Files.safeName(name).toLowerCase();
 																				 				
-				try {
+				// create a list of files to ignore
+				List<String> ignoreFiles = new ArrayList<String>();
+				ignoreFiles.add(com.rapid.server.Rapid.BACKUP_FOLDER);
+				
+				// copy any webcontent
+				File oldFolder = new File(rapidServlet.getServletContext().getRealPath("/applications/" + app.getId()));					
+				File newFolder = new File(rapidServlet.getServletContext().getRealPath("/applications/" + newAppId));					
+				Files.copyFolder(oldFolder, newFolder, ignoreFiles);
+				
+				// copy application pages
+				oldFolder = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + app.getId()));					
+				newFolder = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + newAppId));					
+				Files.copyFolder(oldFolder, newFolder, ignoreFiles);
+														
+				// look for page files
+				File pagesFolder = new File(newFolder.getAbsolutePath() + "/pages");
+				if (pagesFolder.exists()) {
 					
-					// create a list of files to ignore
-					List<String> ignoreFiles = new ArrayList<String>();
-					ignoreFiles.add(com.rapid.server.Rapid.BACKUP_FOLDER);
-					
-					// copy any webcontent
-					File oldFolder = new File(rapidServlet.getServletContext().getRealPath("/applications/" + app.getId()));					
-					File newFolder = new File(rapidServlet.getServletContext().getRealPath("/applications/" + newAppId));					
-					Files.copyFolder(oldFolder, newFolder, ignoreFiles);
-					
-					// copy application pages
-					oldFolder = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + app.getId()));					
-					newFolder = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + newAppId));					
-					Files.copyFolder(oldFolder, newFolder, ignoreFiles);
-															
-					// look for page files
-					File pagesFolder = new File(newFolder.getAbsolutePath() + "/pages");
-					if (pagesFolder.exists()) {
-						
-						// create a filter for finding .page.xml files
-						FilenameFilter xmlFilenameFilter = new FilenameFilter() {
-					    	public boolean accept(File dir, String name) {
-					    		return name.toLowerCase().endsWith(".page.xml");
-					    	}
-					    };
-					    
-					    // loop the .page.xml files 
-					    for (File pageFile : pagesFolder.listFiles(xmlFilenameFilter)) {
-					    	
-					    	BufferedReader reader = new BufferedReader(new FileReader(pageFile));
-					        String line = null;
-					        StringBuilder stringBuilder = new StringBuilder();
-					        
-					        while ((line = reader.readLine()) != null ) {
-					            stringBuilder.append(line);
-					            stringBuilder.append("\n");
-					        }
-					        reader.close();
-					        
-					        // retrieve the xml into a string
-					        String fileString = stringBuilder.toString();
+					// create a filter for finding .page.xml files
+					FilenameFilter xmlFilenameFilter = new FilenameFilter() {
+				    	public boolean accept(File dir, String name) {
+				    		return name.toLowerCase().endsWith(".page.xml");
+				    	}
+				    };
+				    
+				    // loop the .page.xml files 
+				    for (File pageFile : pagesFolder.listFiles(xmlFilenameFilter)) {
+				    	
+				    	BufferedReader reader = new BufferedReader(new FileReader(pageFile));
+				        String line = null;
+				        StringBuilder stringBuilder = new StringBuilder();
+				        
+				        while ((line = reader.readLine()) != null ) {
+				            stringBuilder.append(line);
+				            stringBuilder.append("\n");
+				        }
+				        reader.close();
+				        
+				        // retrieve the xml into a string
+				        String fileString = stringBuilder.toString();
 
-					        // replace all properties that appear to have a url, and all created links
-					        String newFileString = fileString
-					        		.replace("applications/" + app.getId() + "/", "applications/" + newAppId + "/")
-					        		.replace("~?a=" + app.getId() + "&amp;", "~?a=" + newAppId + "&amp;");
-					        					        
-					        PrintWriter newFileWriter = new PrintWriter(pageFile);
-					        newFileWriter.print(newFileString);
-					        newFileWriter.close();
-					        								    	
-					    }
-						
-					}
+				        // replace all properties that appear to have a url, and all created links
+				        String newFileString = fileString
+				        		.replace("applications/" + app.getId() + "/", "applications/" + newAppId + "/")
+				        		.replace("~?a=" + app.getId() + "&amp;", "~?a=" + newAppId + "&amp;");
+				        					        
+				        PrintWriter newFileWriter = new PrintWriter(pageFile);
+				        newFileWriter.print(newFileString);
+				        newFileWriter.close();
+				        								    	
+				    }
 					
-					// look for an archive folder
-					File archiveFolder = new File(newFolder.getAbsolutePath() + "/" + com.rapid.server.Rapid.BACKUP_FOLDER);
-					// delete the archive folder if present
-					if (archiveFolder.exists()) Files.deleteRecurring(archiveFolder);
-										
-					// load the new application (but do not regenerate the resources files - this happens on the save)
-					Application newApp = Application.load(rapidServlet.getServletContext(), new File(newFolder.getAbsolutePath() + "/application.xml"), false);
-					
-					// overwrite the properties
-					newApp.setId(newAppId);
-					newApp.setName(name);
-					newApp.setTitle(title);
-					newApp.setDescription(description);
-
-					// save the application to file
-					newApp.save(rapidServlet, rapidRequest);
-															
-				} catch (Exception ex) {
-					Logger.getLogger(Rapid.class).error(ex);
-					throw new JSONException(ex);
 				}
-								
+				
+				// look for an archive folder
+				File archiveFolder = new File(newFolder.getAbsolutePath() + "/" + com.rapid.server.Rapid.BACKUP_FOLDER);
+				// delete the archive folder if present
+				if (archiveFolder.exists()) Files.deleteRecurring(archiveFolder);
+									
+				// load the new application (but do not regenerate the resources files - this happens on the save)
+				Application newApp = Application.load(rapidServlet.getServletContext(), new File(newFolder.getAbsolutePath() + "/application.xml"), false);
+				
+				// overwrite the properties
+				newApp.setId(newAppId);
+				newApp.setName(name);
+				newApp.setTitle(title);
+				newApp.setDescription(description);
+
+				// save the application to file
+				newApp.save(rapidServlet, rapidRequest);
+																		
 				// set the result message
 				result.put("message", "Application " + app.getTitle() + " duplicated");
 				
@@ -1206,8 +1158,7 @@ public class Rapid extends Action {
 				dbConns.add(dbConn);
 				
 				// save the app
-				try { app.save(rapidServlet, rapidRequest);	} 
-				catch (Exception ex) { throw new JSONException(ex);	}				
+				app.save(rapidServlet, rapidRequest);				
 				
 				// add the application to the response
 				result.put("message", "Database connection added");
@@ -1257,8 +1208,7 @@ public class Rapid extends Action {
 				webservices.add(webservice);
 				
 				// save the app
-				try { app.save(rapidServlet, rapidRequest);	} 
-				catch (Exception ex) { throw new JSONException(ex);	}				
+				app.save(rapidServlet, rapidRequest);			
 				
 				// add the application to the response
 				result.put("message", "SOA webservice added");
@@ -1283,8 +1233,7 @@ public class Rapid extends Action {
 						webservices.remove(index);
 						
 						// save the app
-						try { app.save(rapidServlet, rapidRequest);	} 
-						catch (Exception ex) { throw new JSONException(ex);	}
+						app.save(rapidServlet, rapidRequest);
 						
 						// add the application to the response
 						result.put("message", "SOA webservice deleted");
@@ -1295,150 +1244,102 @@ public class Rapid extends Action {
 				if (!foundWebservice) result.put("message", "SOA webservice could not be found");
 				
 			} else if ("NEWROLE".equals(action)) {
+													
+				// get the role name
+				String roleName = jsonAction.getString("role").trim();
+				// get the role descrition
+				String description = jsonAction.getString("description").trim();
 				
-				try {
-					
-					// get the role name
-					String roleName = jsonAction.getString("role").trim();
-					// get the role descrition
-					String description = jsonAction.getString("description").trim();
-					
-					// add the role
-					app.getSecurity().addRole(rapidRequest, new Role(roleName, description));
-					// set the result message
-					result.put("message", "Role added");
-					
-				} catch (SecurityAdapaterException ex) {
-					throw new JSONException(ex);
-				}
-								
+				// add the role
+				app.getSecurity().addRole(rapidRequest, new Role(roleName, description));
+				// set the result message
+				result.put("message", "Role added");
+																	
 			} else if ("DELROLE".equals(action)) {
 				
-				try {
-					
-					// get the role
-					String role = jsonAction.getString("role").trim();
-					// delete the role
-					app.getSecurity().deleteRole(rapidRequest, role);
-					// set the result message
-					result.put("message", "Role deleted");
-					
-				} catch (SecurityAdapaterException ex) {
-					throw new JSONException(ex);
-				}
+				// get the role
+				String role = jsonAction.getString("role").trim();
+				// delete the role
+				app.getSecurity().deleteRole(rapidRequest, role);
+				// set the result message
+				result.put("message", "Role deleted");					
 								
 			} else if ("NEWUSER".equals(action)) {
 				
-				try {
-					
-					// get the userName
-					String userName = jsonAction.getString("userName").trim();
-					// get the userDescription
-					String description = jsonAction.optString("description","").trim();
-					// get the password
-					String password = jsonAction.getString("password");
-					// add the role
-					app.getSecurity().addUser(rapidRequest, new User(userName, description, password));
-					// set the result message
-					result.put("message", "User added");
-					
-				} catch (SecurityAdapaterException ex) {
-					throw new JSONException(ex);
-				}
+				// get the userName
+				String userName = jsonAction.getString("userName").trim();
+				// get the userDescription
+				String description = jsonAction.optString("description","").trim();
+				// get the password
+				String password = jsonAction.getString("password");
+				// add the role
+				app.getSecurity().addUser(rapidRequest, new User(userName, description, password));
+				// set the result message
+				result.put("message", "User added");					
 								
 			} else if ("DELUSER".equals(action)) {
 				
-				try {
-					
-					// get the userName
-					String userName = jsonAction.getString("userName").trim();
-					// delete the user
-					app.getSecurity().deleteUser(rapidRequest, userName);
-					// remove any of their page locks
-					app.removeUserPageLocks(userName);
-					// set the result message
-					result.put("message", "User deleted");
-					
-				} catch (SecurityAdapaterException ex) {
-					throw new JSONException(ex);
-				}
-								
+				// get the userName
+				String userName = jsonAction.getString("userName").trim();
+				// delete the user
+				app.getSecurity().deleteUser(rapidRequest, userName);
+				// remove any of their page locks
+				app.removeUserPageLocks(userName);
+				// set the result message
+				result.put("message", "User deleted");
+													
 			} else if ("SAVEROLE".equals(action)) {
 				
-				try {
-					
-					// get the role
-					String roleName = jsonAction.getString("role").trim();
-					// get the description
-					String roleDescription = jsonAction.getString("description").trim();
-					
-					// update the role
-					app.getSecurity().updateRole(rapidRequest, new Role(roleName, roleDescription));
-					// set the result message
-					result.put("message", "User saved");
-					
-				} catch (SecurityAdapaterException ex) {
-					throw new JSONException(ex);
-				}
-								
+				// get the role
+				String roleName = jsonAction.getString("role").trim();
+				// get the description
+				String roleDescription = jsonAction.getString("description").trim();
+				
+				// update the role
+				app.getSecurity().updateRole(rapidRequest, new Role(roleName, roleDescription));
+				// set the result message
+				result.put("message", "User saved");
+													
 			} else if ("NEWUSERROLE".equals(action)) {
 				
-				try {
-					
-					// get the userName
-					String userName = jsonAction.getString("userName").trim();
-					// get the role
-					String role = jsonAction.getString("role").trim();
-					// add the user role
-					app.getSecurity().addUserRole(rapidRequest, userName, role);
-					// set the result message
-					result.put("message", "User role added");
-					
-				} catch (SecurityAdapaterException ex) {
-					throw new JSONException(ex);
-				}
-								
+				// get the userName
+				String userName = jsonAction.getString("userName").trim();
+				// get the role
+				String role = jsonAction.getString("role").trim();
+				// add the user role
+				app.getSecurity().addUserRole(rapidRequest, userName, role);
+				// set the result message
+				result.put("message", "User role added");
+									
 			} else if ("DELUSERROLE".equals(action)) {
 				
-				try {
-					
-					// get the userName
-					String userName = jsonAction.getString("userName").trim();
-					// get the role
-					String role = jsonAction.getString("role").trim();
-					// add the user role
-					app.getSecurity().deleteUserRole(rapidRequest, userName, role);
-					// set the result message
-					result.put("message", "User role deleted");
-					
-				} catch (SecurityAdapaterException ex) {
-					throw new JSONException(ex);
-				}
-								
+				// get the userName
+				String userName = jsonAction.getString("userName").trim();
+				// get the role
+				String role = jsonAction.getString("role").trim();
+				// add the user role
+				app.getSecurity().deleteUserRole(rapidRequest, userName, role);
+				// set the result message
+				result.put("message", "User role deleted");
+													
 			} else if ("SAVEUSER".equals(action)) {
-				
-				try {
-					
-					// get the userName
-					String userName = jsonAction.getString("userName").trim();
-					// get the description
-					String description = jsonAction.getString("description").trim();
-					// get the password
-					String password = jsonAction.getString("password");
-					// get the user
-					User user = app.getSecurity().getUser(rapidRequest, userName);
-					// update the description
-					user.setDescription(description);
-					// update the password if different from the mask
-					if (!"********".equals(password)) user.setPassword(password);
-					// update the user
-					app.getSecurity().updateUser(rapidRequest, user);
-					// set the result message
-					result.put("message", "User saved");
-					
-				} catch (SecurityAdapaterException ex) {
-					throw new JSONException(ex);
-				}
+			
+				// get the userName
+				String userName = jsonAction.getString("userName").trim();
+				// get the description
+				String description = jsonAction.getString("description").trim();
+				// get the password
+				String password = jsonAction.getString("password");
+				// get the user
+				User user = app.getSecurity().getUser(rapidRequest, userName);
+				// update the description
+				user.setDescription(description);
+				// update the password if different from the mask
+				if (!"********".equals(password)) user.setPassword(password);
+				// update the user
+				app.getSecurity().updateUser(rapidRequest, user);
+				// set the result message
+				result.put("message", "User saved");					
 								
 			} else if ("TESTDBCONN".equals(action)) {
 				
@@ -1466,23 +1367,19 @@ public class Rapid extends Action {
 						// if the password wasn't set retrieve it via the connection index
 						if ("********".equals(password)) password = dbConns.get(index).getPassword();
 						
-						try {
-							
-							// get our class
-							Class classClass = Class.forName(connectionAdapterClass);
-							// initialise a constructor
-							Constructor constructor = classClass.getConstructor(ServletContext.class, String.class, String.class, String.class, String.class);
-							// initialise the class
-							ConnectionAdapter connectionAdapter = (ConnectionAdapter) constructor.newInstance(rapidServlet.getServletContext(), driverClass, connectionString, userName, password) ;
-							
-							// get a data factory
-							DataFactory dataFactory = new DataFactory(connectionAdapter);
-							// get a connection
-							Connection connection = dataFactory.getConnection(rapidRequest);
-							// close it
-							dataFactory.close();
-							
-						} catch (Exception ex) { throw new JSONException(ex); }
+						// get our class
+						Class classClass = Class.forName(connectionAdapterClass);
+						// initialise a constructor
+						Constructor constructor = classClass.getConstructor(ServletContext.class, String.class, String.class, String.class, String.class);
+						// initialise the class
+						ConnectionAdapter connectionAdapter = (ConnectionAdapter) constructor.newInstance(rapidServlet.getServletContext(), driverClass, connectionString, userName, password) ;
+						
+						// get a data factory
+						DataFactory dataFactory = new DataFactory(connectionAdapter);
+						// get a connection
+						Connection connection = dataFactory.getConnection(rapidRequest);
+						// close it
+						dataFactory.close();
 												
 						// add the application to the response
 						result.put("message", "Database connection OK");
@@ -1494,202 +1391,166 @@ public class Rapid extends Action {
 					
 			} else if ("DELAPPBACKUP".equals(action)) {
 				
-				try {
-					
-					// get the id
-					String backupId = jsonAction.getString("backupId");
-					
-					// delete the backup
-					Application.deleteBackup(rapidServlet, backupId);
-					
-					// set the result message
-					result.put("message", "Application backup " + appId + "/" + backupId + " deleted");
-					// pass back a control id from in  the dialogue with which to close it
-					result.put("controlId", "#rapid_P12_C13_");
-					
-				} catch (Exception ex) {
-					throw new JSONException(ex);
-				}
-								
+				// get the id
+				String backupId = jsonAction.getString("backupId");
+				
+				// delete the backup
+				Application.deleteBackup(rapidServlet, backupId);
+				
+				// set the result message
+				result.put("message", "Application backup " + appId + "/" + backupId + " deleted");
+				// pass back a control id from in  the dialogue with which to close it
+				result.put("controlId", "#rapid_P12_C13_");
+													
 			} else if ("DELPAGEBACKUP".equals(action)) {
 				
-				try {
-					
-					// get the id
-					String backupId = jsonAction.getString("backupId");
-					
-					// delete the backup
-					Page.deleteBackup(rapidServlet, appId, backupId);
-					
-					// set the result message
-					result.put("message", "Page backup " + appId + "/" + backupId + " deleted");
-					// pass back a control id from in  the dialogue with which to close it
-					result.put("controlId", "#rapid_P13_C13_");
-					
-				} catch (Exception ex) {
-					throw new JSONException(ex);
-				}
-								
+				// get the id
+				String backupId = jsonAction.getString("backupId");
+				
+				// delete the backup
+				Page.deleteBackup(rapidServlet, appId, backupId);
+				
+				// set the result message
+				result.put("message", "Page backup " + appId + "/" + backupId + " deleted");
+				// pass back a control id from in  the dialogue with which to close it
+				result.put("controlId", "#rapid_P13_C13_");
+				
 			} else if ("RESTOREAPPBACKUP".equals(action)) {
 				
-				try {
-					
-					// get the id
-					String backupId = jsonAction.getString("backupId");
-															
-					// back up the current state of the application
-					app.backup(rapidServlet, rapidRequest);
-					
-					
-					// get this backup folder
-					File applicationBackupFolder = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + com.rapid.server.Rapid.BACKUP_FOLDER + "/" + backupId));
-					
-					// create a file object for restoring the application folder
-				 	File applicationRestoreFolder = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/_" + app.getId() + "_restore"));
-				 	
-				 	// copy the backup into the application reatore folder
-					Files.copyFolder(applicationBackupFolder, applicationRestoreFolder);
-					
-				 	// create a file object for the application folder
-				 	File applicationFolder = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + app.getId()));
-					
-				 	// delete the application folder
-				 	Files.deleteRecurring(applicationFolder);
-				 	
-				 	// rename the restore folder to the application folder
-				 	applicationRestoreFolder.renameTo(applicationFolder);
-				 	
-				 	
-				 	// create a file object for the web content backup folder (which is currently sitting under the application)
-					File webcontentBackupFolder = new File(applicationFolder.getAbsolutePath() + "/WebContent");
-					
-					// create a file object for the web content restore folder
-					File webcontentRestoreFolder = new File(rapidServlet.getServletContext().getRealPath("/applications/_") + app.getId() + "_restore");
-					
-					// copy the webcontent backup folder to the webcontent restore folder
-					Files.copyFolder(webcontentBackupFolder, webcontentRestoreFolder);
-					
-					// create a file object for the webcontent folder
-					File webcontentFolder = new File(rapidServlet.getServletContext().getRealPath("/applications/" + app.getId()));
-					
-					// delete the webcontent folder
-					Files.deleteRecurring(webcontentFolder);
-					
-					// rename the restore folder to the webconten folder
-					webcontentRestoreFolder.renameTo(webcontentFolder);
-					
-					// delete the webcontent backup folder from under the application folder
-					Files.deleteRecurring(webcontentBackupFolder);
-					
-					
-					// get the application file
-					File applicationFile = new File(applicationFolder.getAbsolutePath() + "/application.xml");
-					
-					// reload the application
-					app = Application.load(rapidServlet.getServletContext(), applicationFile);
-					
-					// add it back to the collection
-					rapidServlet.getApplications().put(app.getId(), app);
-					
-					// set the result message
-					result.put("message", "Application backup " + appId + "/" + backupId + " restored");
-					// pass back a control id from in  the dialogue with which to close it
-					result.put("controlId", "#rapid_P14_C13_");
-					
-				} catch (Exception ex) {
-					throw new JSONException(ex);
-				}
+				// get the id
+				String backupId = jsonAction.getString("backupId");
+														
+				// back up the current state of the application
+				app.backup(rapidServlet, rapidRequest);
+				
+				
+				// get this backup folder
+				File applicationBackupFolder = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + com.rapid.server.Rapid.BACKUP_FOLDER + "/" + backupId));
+				
+				// create a file object for restoring the application folder
+			 	File applicationRestoreFolder = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/_" + app.getId() + "_restore"));
+			 	
+			 	// copy the backup into the application reatore folder
+				Files.copyFolder(applicationBackupFolder, applicationRestoreFolder);
+				
+			 	// create a file object for the application folder
+			 	File applicationFolder = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + app.getId()));
+				
+			 	// delete the application folder
+			 	Files.deleteRecurring(applicationFolder);
+			 	
+			 	// rename the restore folder to the application folder
+			 	applicationRestoreFolder.renameTo(applicationFolder);
+			 	
+			 	
+			 	// create a file object for the web content backup folder (which is currently sitting under the application)
+				File webcontentBackupFolder = new File(applicationFolder.getAbsolutePath() + "/WebContent");
+				
+				// create a file object for the web content restore folder
+				File webcontentRestoreFolder = new File(rapidServlet.getServletContext().getRealPath("/applications/_") + app.getId() + "_restore");
+				
+				// copy the webcontent backup folder to the webcontent restore folder
+				Files.copyFolder(webcontentBackupFolder, webcontentRestoreFolder);
+				
+				// create a file object for the webcontent folder
+				File webcontentFolder = new File(rapidServlet.getServletContext().getRealPath("/applications/" + app.getId()));
+				
+				// delete the webcontent folder
+				Files.deleteRecurring(webcontentFolder);
+				
+				// rename the restore folder to the webconten folder
+				webcontentRestoreFolder.renameTo(webcontentFolder);
+				
+				// delete the webcontent backup folder from under the application folder
+				Files.deleteRecurring(webcontentBackupFolder);
+				
+				
+				// get the application file
+				File applicationFile = new File(applicationFolder.getAbsolutePath() + "/application.xml");
+				
+				// reload the application
+				app = Application.load(rapidServlet.getServletContext(), applicationFile);
+				
+				// add it back to the collection
+				rapidServlet.getApplications().put(app.getId(), app);
+				
+				// set the result message
+				result.put("message", "Application backup " + appId + "/" + backupId + " restored");
+				// pass back a control id from in  the dialogue with which to close it
+				result.put("controlId", "#rapid_P14_C13_");
 								
 			} else if ("RESTOREPAGEBACKUP".equals(action)) {
 				
-				try {
-					
-					// get the id
-					String backupId = jsonAction.getString("backupId");
-					
-					// turn the id into parts
-					String[] idParts = backupId.split("_");
-					
-					// start the page name
-					String pageName = idParts[0];
-					// loop the remaining parts and build
-					for (int i = 1; i < idParts.length - 3; i++) {
-						pageName += "_" + idParts[i];
-					}
-					
-					// get the page
-					Page page = app.getPageByName(pageName);
-					
-					// get the page path
-					String pagePath = rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + app.getId() + "/pages");
-					
-					// create a file object for the page
-				 	File pageFile = new File(pagePath + "/" + Files.safeName(page.getName()) + ".page.xml");
-					
-				 	// create a backup for the current state
-					page.backup(rapidServlet, rapidRequest, pageFile);
-					
-					// get this backup file
-					File backupFile = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + app.getId() + "/" + com.rapid.server.Rapid.BACKUP_FOLDER + "/" + backupId));
-					
-					// copy it over the current page file
-					Files.copyFile(backupFile, pageFile);
-					
-					// load the page from the backup 
-					page = Page.load(rapidServlet.getServletContext(), backupFile);
-					
-					// replace the current entry
-					app.addPage(page);
-										
-					// set the result message
-					result.put("message", "Page backup " + appId + "/" + backupId + " restored");
-					// pass back a control id from in  the dialogue with which to close it
-					result.put("controlId", "#rapid_P15_C13_");
-					
-				} catch (Exception ex) {
-					throw new JSONException(ex);
+				// get the id
+				String backupId = jsonAction.getString("backupId");
+				
+				// turn the id into parts
+				String[] idParts = backupId.split("_");
+				
+				// start the page name
+				String pageName = idParts[0];
+				// loop the remaining parts and build
+				for (int i = 1; i < idParts.length - 3; i++) {
+					pageName += "_" + idParts[i];
 				}
+				
+				// get the page
+				Page page = app.getPageByName(pageName);
+				
+				// get the page path
+				String pagePath = rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + app.getId() + "/pages");
+				
+				// create a file object for the page
+			 	File pageFile = new File(pagePath + "/" + Files.safeName(page.getName()) + ".page.xml");
+				
+			 	// create a backup for the current state
+				page.backup(rapidServlet, rapidRequest, pageFile);
+				
+				// get this backup file
+				File backupFile = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + app.getId() + "/" + com.rapid.server.Rapid.BACKUP_FOLDER + "/" + backupId));
+				
+				// copy it over the current page file
+				Files.copyFile(backupFile, pageFile);
+				
+				// load the page from the backup 
+				page = Page.load(rapidServlet.getServletContext(), backupFile);
+				
+				// replace the current entry
+				app.addPage(page);
+									
+				// set the result message
+				result.put("message", "Page backup " + appId + "/" + backupId + " restored");
+				// pass back a control id from in  the dialogue with which to close it
+				result.put("controlId", "#rapid_P15_C13_");
 								
 			} else if ("SAVEAPPBACKUPSIZE".equals(action)) {
 								
-				try {
-					
-					// get the max backup size
-					int backupMaxSize = jsonAction.getInt("backupMaxSize");
-					
-					// pass it to the application
-					app.setApplicationBackupMaxSize(backupMaxSize);
-										
-					// save the application
-					app.save(rapidServlet, rapidRequest);
-					
-					// set the result message
-					result.put("message", "Application backup max size updated to " + backupMaxSize);
-					
-				} catch (Exception ex) {
-					throw new JSONException(ex);
-				}
+				// get the max backup size
+				int backupMaxSize = jsonAction.getInt("backupMaxSize");
 				
+				// pass it to the application
+				app.setApplicationBackupMaxSize(backupMaxSize);
+									
+				// save the application
+				app.save(rapidServlet, rapidRequest);
+				
+				// set the result message
+				result.put("message", "Application backup max size updated to " + backupMaxSize);
+					
 			} else if ("SAVEPAGEBACKUPSIZE".equals(action)) {
 				
-				try {
-					
-					// get the max backup size
-					int backupMaxSize = jsonAction.getInt("backupMaxSize");
-					
-					// pass it to the application
-					app.setPageBackupMaxSize(backupMaxSize);
-					
-					// save the application
-					app.save(rapidServlet, rapidRequest);
-					
-					// set the result message
-					result.put("message", "Page backup max size updated to " + backupMaxSize);
-					
-				} catch (Exception ex) {
-					throw new JSONException(ex);
-				}
+				// get the max backup size
+				int backupMaxSize = jsonAction.getInt("backupMaxSize");
 				
+				// pass it to the application
+				app.setPageBackupMaxSize(backupMaxSize);
+				
+				// save the application
+				app.save(rapidServlet, rapidRequest);
+				
+				// set the result message
+				result.put("message", "Page backup max size updated to " + backupMaxSize);
+									
 			}
 								
 			// sent back the new app id for the callback load

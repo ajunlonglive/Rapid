@@ -1,6 +1,5 @@
 package com.rapid.actions;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.rapid.core.Action;
@@ -11,11 +10,13 @@ import com.rapid.server.RapidHttpServlet;
 
 public class Custom extends Action {
 	
-	// constructors
-	
-	public Custom() {}	
-	public Custom(RapidHttpServlet rapidServlet, JSONObject jsonAction) throws JSONException {	super(rapidServlet, jsonAction); }	
-
+	// parameterless constructor (required for jaxb)
+	Custom() { super(); }
+	// designer constructor
+	public Custom(RapidHttpServlet rapidServlet, JSONObject jsonAction) throws Exception { 
+		super(rapidServlet, jsonAction);				
+	}
+		
 	// methods
 	
 	@Override

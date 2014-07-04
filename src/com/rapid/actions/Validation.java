@@ -32,8 +32,12 @@ public class Validation extends Action {
 	
 	// constructors
 	
-	public Validation() {}	
-	public Validation(RapidHttpServlet rapidServlet, JSONObject jsonAction) throws JSONException {
+	// jaxb
+	public Validation() { super(); }
+	// designer
+	public Validation(RapidHttpServlet rapidServlet, JSONObject jsonAction) throws Exception {
+		// set the xml version
+		super();
 		// save all key/values from the json into the properties 
 		for (String key : JSONObject.getNames(jsonAction)) {
 			// add all json properties to our properties, except for controls
@@ -56,26 +60,16 @@ public class Validation extends Action {
 		JSONArray jsonPassActions = jsonAction.optJSONArray("passActions");
 		// if we had some
 		if (jsonPassActions != null) {
-			// instantiate our contols collection
-			try {
-				_passActions = Control.getActions(rapidServlet, jsonPassActions);
-			} catch (Exception ex) {
-				// rethrow as a JSON error
-				throw new JSONException(ex);
-			}
+			// instantiate our pass actions collection
+			_passActions = Control.getActions(rapidServlet, jsonPassActions);
 		}
 		
 		// grab any failActions
 		JSONArray jsonFailActions = jsonAction.optJSONArray("failActions");
 		// if we had some
 		if (jsonFailActions != null) {
-			// instantiate our contols collection
-			try {
-				_failActions = Control.getActions(rapidServlet, jsonFailActions);
-			} catch (Exception ex) {
-				// rethrow as a JSON error
-				throw new JSONException(ex);
-			}
+			// instantiate our fail actions collection
+			_failActions = Control.getActions(rapidServlet, jsonFailActions);
 		}
 	}
 

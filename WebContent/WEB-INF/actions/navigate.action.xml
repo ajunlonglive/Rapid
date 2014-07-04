@@ -37,8 +37,8 @@ function Action_navigate(url, dialogue) {
 		   	url: url,
 		   	type: "GET",          
 		       data: null,        
-		       error: function(server, status, error) { 
-		       	var bodyHtml = "Error loading page : " + error; 
+		       error: function(error, status, message) { 
+		       		alert("Error loading dialogue : " + error.responseText||message); 
 		       },
 		       success: function(page) {
 		       	

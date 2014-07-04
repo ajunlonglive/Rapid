@@ -116,22 +116,41 @@ public class RapidHttpServlet extends HttpServlet {
 			_request = request;
 		}
 		
-		// good for printing details of the request
+		// good for printing details of the Rapid request into logs and error messages
 		public String getDetails() {
 			
+			// assume there was no application
 			String details = " no application";
 			
+			// if there is one
 			if (_application != null) {
 				
+				// set the details response to the application title and id
 				details = " app = " + _application.getTitle() + " (" + _application.getId() + ")";
 				
+				// if there is a page involved
 				if (_page != null) {
 					
+					// add the page title and id
 					details += "\n page = " + _page.getTitle() + " (" + _page.getId() + ")";
 					
-					if (_control != null) details += "\n control = " + _control.getName() + "(" + _control.getId() + ")";
-											
-					if (_action != null) details += "\n action = (" + _action.getId() + ")";
+					// check whether there was a control
+					if (_control == null) {
+						// no control, probably the page
+						details += "\n control = page";
+					} else {
+						// add details of the control
+						details += "\n control = " + _control.getName() + "(" + _control.getId() + ")";
+					}
+										
+					// check whethe there was an action
+					if (_action == null) {
+						// no action, say so
+						details += "\n action = no action";
+					} else {
+						// add details of the action
+						details += "\n action = (" + _action.getId() + ")";
+					}
 											
 				}
 				
@@ -267,7 +286,7 @@ public class RapidHttpServlet extends HttpServlet {
 		
 		PrintWriter out = response.getWriter();		
 		
-		out.println("Error : " + ex.getLocalizedMessage());
+		out.println(ex.getLocalizedMessage());
 						
 		boolean showStackTrace = Boolean.parseBoolean(getServletContext().getInitParameter("showStackTrace"));
 				
@@ -275,7 +294,7 @@ public class RapidHttpServlet extends HttpServlet {
 			
 			String stackTrace = "";
 			
-			if (rapidRequest != null) stackTrace = rapidRequest.getDetails() + "\n";
+			if (rapidRequest != null) stackTrace = rapidRequest.getDetails() + "\n\n";
 			
 			for (StackTraceElement element : ex.getStackTrace()) stackTrace += element + "\n";
 						

@@ -1,6 +1,5 @@
 package com.rapid.actions;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.rapid.core.Action;
@@ -14,9 +13,13 @@ public class Existing extends Action {
 		
 	// constructors
 	
-	public Existing() {}	
-	public Existing(RapidHttpServlet rapidServlet, JSONObject jsonAction) throws JSONException { super(rapidServlet, jsonAction); }
-
+	// used by jaxb
+	public Existing() { super(); }
+	// used by designer
+	public Existing(RapidHttpServlet rapidServlet, JSONObject jsonAction) throws Exception { 
+		super(rapidServlet, jsonAction);				
+	}
+	
 	// methods
 	
 	@Override

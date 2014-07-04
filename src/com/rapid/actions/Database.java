@@ -79,9 +79,12 @@ public class Database extends Action {
 		
 	// constructors
 	
-	public Database() {}	
-	public Database(RapidHttpServlet rapidServlet, JSONObject jsonAction) throws JSONException { 
-		
+	// used by jaxb
+	public Database() { super(); }
+	// used by designer
+	public Database(RapidHttpServlet rapidServlet, JSONObject jsonAction) throws Exception { 
+		// call the super parameterless constructor which sets the xml version
+		super();
 		// save all key/values from the json into the properties 
 		for (String key : JSONObject.getNames(jsonAction)) {
 			// add all json properties to our properties, except for query
@@ -109,13 +112,7 @@ public class Database extends Action {
 		JSONArray jsonSuccessActions = jsonAction.optJSONArray("successActions");
 		// if we had some
 		if (jsonSuccessActions != null) {
-			// instantiate our contols collection
-			try {
-				_successActions = Control.getActions(rapidServlet, jsonSuccessActions);
-			} catch (Exception ex) {
-				// rethrow as a JSON error
-				throw new JSONException(ex);
-			}
+			_successActions = Control.getActions(rapidServlet, jsonSuccessActions);
 		}
 		
 		// grab any errorActions
@@ -123,12 +120,7 @@ public class Database extends Action {
 		// if we had some
 		if (jsonErrorActions != null) {
 			// instantiate our contols collection
-			try {
-				_errorActions = Control.getActions(rapidServlet, jsonErrorActions);
-			} catch (Exception ex) {
-				// rethrow as a JSON error
-				throw new JSONException(ex);
-			}
+			_errorActions = Control.getActions(rapidServlet, jsonErrorActions);
 		}
 				
 	}
@@ -263,7 +255,7 @@ public class Database extends Action {
 			if (_showLoading) js += "      " + getLoadingJS(page, outputs, false);
 							
 			// this avoids doing the errors if the page is unloading or the back button was pressed
-			js += "      if (!_pageUnloading && error.readyState > 0) {\n";
+			js += "      if (error.readyState > 0) {\n";
 			
 			// retain if error actions
 			boolean errorActions = false;
@@ -344,7 +336,7 @@ public class Database extends Action {
 	}
 	
 	@Override
-	public JSONObject doAction(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, JSONObject jsonAction) throws JSONException, JAXBException, IOException {
+	public JSONObject doAction(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, JSONObject jsonAction) throws Exception {
 		
 		// This code could be optimised to only return required data, according to the outputs collection
 						
@@ -353,186 +345,166 @@ public class Database extends Action {
 		Application application = rapidRequest.getApplication();
 		
 		Page page = rapidRequest.getPage();
-		
-		try {
-		
-			if (_query != null && application != null && page != null) {
 				
-				// retrieve the sql
-				String sql = _query.getSQL();
-				
-				// only if there is some sql is it worth going further
-				if (sql != null) {
-				
-					DatabaseConnection databaseConnection = application.getDatabaseConnections().get(_query.getDatabaseConnectionIndex());
-					
-					ConnectionAdapter ca = databaseConnection.getConnectionAdapter(rapidServlet.getServletContext());			
-					
-					Parameters parameters = new Parameters();
-					
-					// populate the parameters from the inputs collection
-					if (_query.getInputs() != null) {
-						// get any json inputs
-						JSONArray jsonInputs = jsonAction.optJSONArray("inputs");
-						// loop the query inputs
-						for (Parameter input : _query.getInputs()) {
-							// get the input id
-							String id = input.getItemId();
-							// get the input field
-							String field = input.getField();
-							// retain the value
-							String value = null;
-							// if it looks like a control 
-							if ("P".equals(id.substring(0,1)) && id.indexOf("_C") > 0) {
-								// loop the json inputs looking for the value
-								if (jsonInputs != null) {
-									for (int i = 0; i < jsonInputs.length(); i++) {
-										// get this jsonInput
-										JSONObject jsonInput = jsonInputs.getJSONObject(i);
-										// check we got one 
-										if (jsonInput != null) {
-											// if the id we want matches this one 
-											if (id.equals(jsonInput.optString("id"))) {
-												// get the input field
-												String jsonField = jsonInput.optString("field");
-												// field check
-												if ((jsonField == null && "".equals(field)) || jsonField.equals(field)) {
-													// set the value
-													value = jsonInput.getString("value");
-													// no need to keep looking
-													break;
-												}
-											}
-										}																	
-									}
-								}
-							}
-							// if still null try the session
-							if (value == null) value = (String) rapidRequest.getSessionAttribute(input.getItemId());
-							// add the parameter
-							parameters.add(value);
-						}
-					}
-														
-					// instantiate a data factory
-					DataFactory df = new DataFactory(ca);
-					
-					try {
-						
-						// trim the sql
-						sql = sql.trim();
-						
-						// check the verb
-						if (sql.toLowerCase().startsWith("select") || sql.toLowerCase().startsWith("width")) {
-							
-							// set readonly to true
-							df.setReadOnly(true);
-							
-							// get the resultset!
-							ResultSet rs = df.getPreparedResultSet(rapidRequest, sql, parameters);
-							
-							ResultSetMetaData rsmd = rs.getMetaData();
-							
-							// fields collection
-							JSONArray jsonFields = new JSONArray();
-							// got fields indicator
-							boolean gotFields = false;
-							// rows collection can start initialised
-							JSONArray jsonRows = new JSONArray();
-							
-							// loop the result set
-							while (rs.next()) {
-								
-								// initialise the row
-								JSONArray jsonRow = new JSONArray();
-								
-								// loop the columns
-								for (int i = 0; i < rsmd.getColumnCount(); i++) {
-									// add the field name to the fields collection if not done yet
-									if (!gotFields) jsonFields.put(rsmd.getColumnName(i + 1));
-									// add the data to the row according to it's type	
-									switch (rsmd.getColumnType(i + 1)) {
-									case (Types.INTEGER) : 
-										jsonRow.put(rs.getInt(i + 1));
-									break;
-									case (Types.BIGINT) :
-										jsonRow.put(rs.getLong(i + 1));
-									break;
-									case (Types.FLOAT) : 
-										jsonRow.put(rs.getFloat(i + 1));
-									break;
-									case (Types.DOUBLE) : 
-										jsonRow.put(rs.getDouble(i + 1));
-									break;
-									default :
-										jsonRow.put(rs.getString(i + 1));
-									}						
-								}
-								// add the row to the rows collection
-								jsonRows.put(jsonRow);
-								// remember we now have our fields
-								gotFields = true;
-								
-							}
-							
-							// add the fields to the data object
-							jsonData.put("fields", jsonFields);
-							// add the rows to the data object
-							jsonData.put("rows", jsonRows);
-							
-							// close the record set
-							rs.close();
-							
-						} else {
-							
-							// perform an update
-							int rows = df.getPreparedUpdate(rapidRequest, sql, parameters);
-							
-							// create a fields array
-							JSONArray jsonFields = new JSONArray();
-							// add a psuedo field 
-							jsonFields.put("rows");
-							
-							// create a row array
-							JSONArray jsonRow = new JSONArray();
-							// add the rows updated
-							jsonRow.put(rows);
-							
-							// create a rows array
-							JSONArray jsonRows = new JSONArray();
-							// add the row we just made
-							jsonRows.put(jsonRow);
-							
-							// add the fields to the data object
-							jsonData.put("fields", jsonFields);
-							// add the rows to the data object
-							jsonData.put("rows", jsonRows);
-												
-						}
-						
-					} catch (Exception ex) {
-						
-						// rethrow as JSONException
-						throw new JSONException(ex);
-						
-					} finally {
-						
-						df.close();
-						
-					}
-														
-					// close the data factory
-					df.close();
-					
-				} // got sql
-																				
-			} // got query, app, and page
+		if (_query != null && application != null && page != null) {
 			
-		} catch (Exception ex) {
-			// rethrow as JSONException
-			throw new JSONException(ex);
-		}
-								
+			// retrieve the sql
+			String sql = _query.getSQL();
+			
+			// only if there is some sql is it worth going further
+			if (sql != null) {
+			
+				DatabaseConnection databaseConnection = application.getDatabaseConnections().get(_query.getDatabaseConnectionIndex());
+				
+				ConnectionAdapter ca = databaseConnection.getConnectionAdapter(rapidServlet.getServletContext());			
+				
+				Parameters parameters = new Parameters();
+				
+				// populate the parameters from the inputs collection
+				if (_query.getInputs() != null) {
+					// get any json inputs
+					JSONArray jsonInputs = jsonAction.optJSONArray("inputs");
+					// loop the query inputs
+					for (Parameter input : _query.getInputs()) {
+						// get the input id
+						String id = input.getItemId();
+						// get the input field
+						String field = input.getField();
+						// retain the value
+						String value = null;
+						// if it looks like a control 
+						if ("P".equals(id.substring(0,1)) && id.indexOf("_C") > 0) {
+							// loop the json inputs looking for the value
+							if (jsonInputs != null) {
+								for (int i = 0; i < jsonInputs.length(); i++) {
+									// get this jsonInput
+									JSONObject jsonInput = jsonInputs.getJSONObject(i);
+									// check we got one 
+									if (jsonInput != null) {
+										// if the id we want matches this one 
+										if (id.equals(jsonInput.optString("id"))) {
+											// get the input field
+											String jsonField = jsonInput.optString("field");
+											// field check
+											if ((jsonField == null && "".equals(field)) || jsonField.equals(field)) {
+												// set the value
+												value = jsonInput.getString("value");
+												// no need to keep looking
+												break;
+											}
+										}
+									}																	
+								}
+							}
+						}
+						// if still null try the session
+						if (value == null) value = (String) rapidRequest.getSessionAttribute(input.getItemId());
+						// add the parameter
+						parameters.add(value);
+					}
+				}
+													
+				// instantiate a data factory
+				DataFactory df = new DataFactory(ca);
+									
+				// trim the sql
+				sql = sql.trim();
+				
+				// check the verb
+				if (sql.toLowerCase().startsWith("select") || sql.toLowerCase().startsWith("width")) {
+					
+					// set readonly to true
+					df.setReadOnly(true);
+					
+					// get the resultset!
+					ResultSet rs = df.getPreparedResultSet(rapidRequest, sql, parameters);
+					
+					ResultSetMetaData rsmd = rs.getMetaData();
+					
+					// fields collection
+					JSONArray jsonFields = new JSONArray();
+					// got fields indicator
+					boolean gotFields = false;
+					// rows collection can start initialised
+					JSONArray jsonRows = new JSONArray();
+					
+					// loop the result set
+					while (rs.next()) {
+						
+						// initialise the row
+						JSONArray jsonRow = new JSONArray();
+						
+						// loop the columns
+						for (int i = 0; i < rsmd.getColumnCount(); i++) {
+							// add the field name to the fields collection if not done yet
+							if (!gotFields) jsonFields.put(rsmd.getColumnName(i + 1));
+							// add the data to the row according to it's type	
+							switch (rsmd.getColumnType(i + 1)) {
+							case (Types.INTEGER) : 
+								jsonRow.put(rs.getInt(i + 1));
+							break;
+							case (Types.BIGINT) :
+								jsonRow.put(rs.getLong(i + 1));
+							break;
+							case (Types.FLOAT) : 
+								jsonRow.put(rs.getFloat(i + 1));
+							break;
+							case (Types.DOUBLE) : 
+								jsonRow.put(rs.getDouble(i + 1));
+							break;
+							default :
+								jsonRow.put(rs.getString(i + 1));
+							}						
+						}
+						// add the row to the rows collection
+						jsonRows.put(jsonRow);
+						// remember we now have our fields
+						gotFields = true;
+						
+					}
+					
+					// add the fields to the data object
+					jsonData.put("fields", jsonFields);
+					// add the rows to the data object
+					jsonData.put("rows", jsonRows);
+					
+					// close the record set
+					rs.close();
+					
+				} else {
+					
+					// perform an update
+					int rows = df.getPreparedUpdate(rapidRequest, sql, parameters);
+					
+					// create a fields array
+					JSONArray jsonFields = new JSONArray();
+					// add a psuedo field 
+					jsonFields.put("rows");
+					
+					// create a row array
+					JSONArray jsonRow = new JSONArray();
+					// add the rows updated
+					jsonRow.put(rows);
+					
+					// create a rows array
+					JSONArray jsonRows = new JSONArray();
+					// add the row we just made
+					jsonRows.put(jsonRow);
+					
+					// add the fields to the data object
+					jsonData.put("fields", jsonFields);
+					// add the rows to the data object
+					jsonData.put("rows", jsonRows);
+										
+				}
+													
+				// close the data factory
+				df.close();
+				
+			} // got sql
+																			
+		} // got query, app, and page
+											
 		return jsonData;
 		
 	}

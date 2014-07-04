@@ -56,7 +56,7 @@ public abstract class Action {
 	public abstract String getJavaScript(Application application, Page page, Control control);
 
 	// this is where any serverside action happens! (some actions are client side only)
-	public JSONObject doAction(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, JSONObject jsonData) throws JSONException, JAXBException, IOException { return null; };
+	public JSONObject doAction(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, JSONObject jsonData) throws Exception { return null; };
 	
 	// this method can be overridden to check the xml versions, and upgrade any xml nodes representing specific actions before the xml document is unmarshalled
 	public Node upgrade(Node actionNode) { return actionNode; }
@@ -68,7 +68,7 @@ public abstract class Action {
 	}
 	
 	// json constructor allowing properties to be sent in from the designer
-	public Action(RapidHttpServlet rapidServlet, JSONObject jsonAction) throws JSONException {
+	public Action(RapidHttpServlet rapidServlet, JSONObject jsonAction) throws Exception {
 		// set the xml version
 		_xmlVersion = XML_VERSION;
 		// save all key/values from the json into the properties 

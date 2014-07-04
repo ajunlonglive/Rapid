@@ -1,13 +1,5 @@
 package com.rapid.actions;
 
-import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.Types;
-import java.util.ArrayList;
-
-import javax.xml.bind.JAXBException;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,20 +8,17 @@ import com.rapid.core.Action;
 import com.rapid.core.Application;
 import com.rapid.core.Control;
 import com.rapid.core.Page;
-import com.rapid.core.Application.DatabaseConnection;
-import com.rapid.data.ConnectionAdapter;
-import com.rapid.data.DataFactory;
-import com.rapid.data.DataFactory.Parameters;
-import com.rapid.server.RapidHttpServlet;
-import com.rapid.server.RapidHttpServlet.RapidRequest;
 
+import com.rapid.server.RapidHttpServlet;
 
 public class Datacopy extends Action {
 			
 	// constructors
 	
-	public Datacopy() {}	
-	public Datacopy(RapidHttpServlet rapidServlet, JSONObject jsonAction) throws JSONException { 
+	// used by jaxb
+	public Datacopy() { super(); }
+	// used by designer
+	public Datacopy(RapidHttpServlet rapidServlet, JSONObject jsonAction) throws Exception { 
 		super(rapidServlet, jsonAction);				
 	}
 				
