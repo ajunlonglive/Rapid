@@ -226,7 +226,7 @@ public class RapidHttpServlet extends HttpServlet {
 			public int compare(Application app1, Application app2) {
 				return Comparators.AsciiCompare(app1.getId(), app2.getId());
 			}			
-		});
+		});				
 		// return the sorted list
 		return applications;
 	}

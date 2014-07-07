@@ -25,7 +25,7 @@ function Action_database(actionId, data, outputs) {
 	// check we got data and somewhere to put it
 	if (data && outputs) {
 		// check the returned sequence is higher than any others received so far
-		if (data.sequence > getDatabaseActionSequence(actionId)) {
+		if (data.sequence > getDatabaseActionMaxSequence(actionId)) {
 			// retain this sequence as the new highest
 			_databaseActionMaxSequence[actionId] = data.sequence;
 			for (var i in outputs) {
@@ -508,6 +508,42 @@ function Action_webservice(actionId, data, outputs) {
 /* Control initialise methods */
 
 
+function Init_hints(id, details) {
+  var body = $("body");
+  	    	
+  for (var i in details.controlHints) {
+  
+  	var controlHint = details.controlHints[i];
+  	
+  	body.append("<span class='hint' id='" + controlHint.controlId + "_hint'>" + controlHint.text + "</span>");
+  	
+  	$("#" + controlHint.controlId + "_hint").hide();
+  	
+  	$("#" + controlHint.controlId).mouseout({controlId: controlHint.controlId}, function(ev) {
+  		$("#" + ev.data.controlId + "_hint").hide();
+  	});
+  		
+  	switch (controlHint.type) {		
+  		case "click" :
+  			$("#" + controlHint.controlId).click({controlId: controlHint.controlId}, function(ev) { 
+  				$("#" + ev.data.controlId + "_hint").css({
+  					left: ev.clientX + 5,
+  					top: ev.clientY + 5
+  				}).show(); 
+  			});
+  			break;
+  		case "hover" :
+  			$("#" + controlHint.controlId).mouseover({controlId: controlHint.controlId}, function(ev) { 
+  				$("#" + ev.data.controlId + "_hint").css({
+  					left: ev.clientX + 5,
+  					top: ev.clientY + 5
+  				}).show();  
+  			});
+  			break;
+  	}
+  }
+}
+
 function Init_pagePanel(id, details) {
   var bodyHtml = "<center><h1>Page</h1></center>";
   
@@ -927,7 +963,7 @@ function getDatabaseActionSequence(actionId) {
 }		
 
 // this function sets the max to 0 if null
-function getDatabaseActionSequence(actionId) {
+function getDatabaseActionMaxSequence(actionId) {
 	// retrieve the current sequence for the action
 	var sequence = _databaseActionMaxSequence[actionId];
 	// if undefined

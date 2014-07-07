@@ -40,6 +40,7 @@ var _styleRules = {
 "direction" : {"values" : "ltr|rtl"},
 "display" : {"values" : "inline|block|list-item|inline-block|table|inline-table|table-row-group|table-header-group|table-footer-group|table-row|table-column-group|table-column|table-cell|table-caption|none"},
 "empty-cells" : {"values" : "show|hide"},
+"filter" : {"values" : "<anything>"},
 "float" : {"values" : "left|right|none"},
 "font-family" : {"values" : "<anything>"},
 "font-size" : {"values" : "<absolute-size>|<relative-size>|<length>|<percentage>"},
@@ -63,6 +64,7 @@ var _styleRules = {
 "max-width" : {"values" : "<length>|<percentage>|none"},
 "min-height" : {"values" : "<length>|<percentage>"},
 "min-width" : {"values" : "<length>|<percentage>"},
+"opacity" : {"values" : "<number>"},
 "outline" : {"values" : "outline-color|outline-style|outline-width"},
 "outline-color" : {"values" : "<color>|invert"},
 "outline-style" : {"values" : "<border-style>"},
@@ -186,7 +188,7 @@ function styleRule_margin_width_4(value) {
 
 function styleRule_number(value) {
 	// not Not a Number
-	return !isNan(value);
+	return !isNaN(value);
 }
 
 function styleRule_padding_width(value) {

@@ -7,6 +7,13 @@ table.grid {
 	border-collapse:collapse;
 }
 
+/* Hints control resource styles */
+
+.hint {
+	position: absolute;
+	z-index: 102;
+}
+
 /* Page control resource styles */
 
 /* Dialogue cover */

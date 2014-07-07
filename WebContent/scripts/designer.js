@@ -1644,9 +1644,9 @@ $(document).ready( function() {
 	// administration
 	$("#appAdmin").click( function(ev) {
 		if (_app && _app.id) {
-			window.location = "~?a=rapid&p=P0&appId=" + _app.id;
+			window.location = "~?a=rapid&appId=" + _app.id;
 		} else {
-			window.location = "~?a=rapid&p=P0";
+			window.location = "~?a=rapid";
 		}		 
 	});
 	

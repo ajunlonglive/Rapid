@@ -32,6 +32,7 @@
 	                <![CDATA[	                
 .hint {
 	position: absolute;
+	z-index: 102;
 }                
 	                ]]>
 				</contents>

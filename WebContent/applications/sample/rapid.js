@@ -25,7 +25,7 @@ function Action_database(actionId, data, outputs) {
 	// check we got data and somewhere to put it
 	if (data && outputs) {
 		// check the returned sequence is higher than any others received so far
-		if (data.sequence > getDatabaseActionSequence(actionId)) {
+		if (data.sequence > getDatabaseActionMaxSequence(actionId)) {
 			// retain this sequence as the new highest
 			_databaseActionMaxSequence[actionId] = data.sequence;
 			for (var i in outputs) {
@@ -620,7 +620,7 @@ function getDatabaseActionSequence(actionId) {
 }		
 
 // this function sets the max to 0 if null
-function getDatabaseActionSequence(actionId) {
+function getDatabaseActionMaxSequence(actionId) {
 	// retrieve the current sequence for the action
 	var sequence = _databaseActionMaxSequence[actionId];
 	// if undefined
