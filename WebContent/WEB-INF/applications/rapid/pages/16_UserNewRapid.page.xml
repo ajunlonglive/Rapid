@@ -1,0 +1,1504 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<page>
+    <controls>
+        <childControls>
+            <childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P16_C4_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
+                        <key>text</key>
+                        <value>New user</value>
+                    </entry>
+                    <entry>
+                        <key>colSpan</key>
+                        <value>2</value>
+                    </entry>
+                    <entry>
+                        <key>name</key>
+                        <value>Table cell 17</value>
+                    </entry>
+                    <entry>
+                        <key>rowSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableCell</value>
+                    </entry>
+                    <entry>
+                        <key>version</key>
+                        <value>1</value>
+                    </entry>
+                </properties>
+                <styles>
+                    <appliesTo>#rapid_P16_C4_</appliesTo>
+                    <rules>padding:10px;</rules>
+                    <rules>background:#e00 url(highlight_red_1x44.png) 50% 50% repeat-x;</rules>
+                    <rules>text-shadow :-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;</rules>
+                </styles>
+                <XMLVersion>1</XMLVersion>
+            </childControls>
+            <properties>
+                <entry>
+                    <key>id</key>
+                    <value>rapid_P16_C3_</value>
+                </entry>
+                <entry>
+                    <key>name</key>
+                    <value>Table row 8</value>
+                </entry>
+                <entry>
+                    <key>type</key>
+                    <value>tableRow</value>
+                </entry>
+                <entry>
+                    <key>version</key>
+                    <value>1</value>
+                </entry>
+            </properties>
+            <styles>
+                <appliesTo>#rapid_P16_C3_</appliesTo>
+                <rules>background-color:red;</rules>
+                <rules>color:white;</rules>
+                <rules>text-align:center;</rules>
+                <rules>font-weight:bold;</rules>
+            </styles>
+            <XMLVersion>1</XMLVersion>
+        </childControls>
+        <childControls>
+            <childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P16_C6_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
+                        <key>text</key>
+                        <value>User name</value>
+                    </entry>
+                    <entry>
+                        <key>colSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>name</key>
+                        <value></value>
+                    </entry>
+                    <entry>
+                        <key>rowSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableCell</value>
+                    </entry>
+                    <entry>
+                        <key>version</key>
+                        <value>1</value>
+                    </entry>
+                </properties>
+                <styles>
+                    <appliesTo>#rapid_P16_C3_3</appliesTo>
+                    <rules>padding-left:5px;</rules>
+                </styles>
+                <XMLVersion>1</XMLVersion>
+            </childControls>
+            <childControls>
+                <childControls>
+                    <events>
+                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="existing">
+                            <properties>
+<entry>
+    <key>id</key>
+    <value>P16_A9_</value>
+</entry>
+<entry>
+    <key>XMLVersion</key>
+    <value>1</value>
+</entry>
+<entry>
+    <key>name</key>
+    <value>Existing 30</value>
+</entry>
+<entry>
+    <key>action</key>
+    <value>rapid_P3_A29</value>
+</entry>
+<entry>
+    <key>type</key>
+    <value>existing</value>
+</entry>
+<entry>
+    <key>version</key>
+    <value>1</value>
+</entry>
+                            </properties>
+                            <XMLVersion>1</XMLVersion>
+                        </actions>
+                        <filter></filter>
+                        <type>keyup</type>
+                    </events>
+                    <events>
+                        <filter></filter>
+                        <type>change</type>
+                    </events>
+                    <events>
+                        <filter></filter>
+                        <type>blur</type>
+                    </events>
+                    <properties>
+                        <entry>
+                            <key>id</key>
+                            <value>rapid_P16_C8_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
+                        </entry>
+                        <entry>
+                            <key>name</key>
+                            <value>Name</value>
+                        </entry>
+                        <entry>
+                            <key>value</key>
+                            <value></value>
+                        </entry>
+                        <entry>
+                            <key>controlType</key>
+                            <value>N</value>
+                        </entry>
+                        <entry>
+                            <key>type</key>
+                            <value>input</value>
+                        </entry>
+                        <entry>
+                            <key>version</key>
+                            <value>1</value>
+                        </entry>
+                    </properties>
+                    <styles>
+                        <appliesTo>#rapid_P16_C8_</appliesTo>
+                        <rules>width:100%;</rules>
+                    </styles>
+                    <validation>
+                        <allowNulls>false</allowNulls>
+                        <javaScript></javaScript>
+                        <message>User name must be provided</message>
+                        <regEx>[\s\S]</regEx>
+                        <type>value</type>
+                    </validation>
+                    <XMLVersion>1</XMLVersion>
+                </childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P16_C7_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
+                        <key>text</key>
+                        <value></value>
+                    </entry>
+                    <entry>
+                        <key>colSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>name</key>
+                        <value></value>
+                    </entry>
+                    <entry>
+                        <key>rowSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableCell</value>
+                    </entry>
+                    <entry>
+                        <key>version</key>
+                        <value>1</value>
+                    </entry>
+                </properties>
+                <styles>
+                    <appliesTo>#rapid_P16_C7_</appliesTo>
+                    <rules>padding-right:25px;</rules>
+                </styles>
+                <XMLVersion>1</XMLVersion>
+            </childControls>
+            <properties>
+                <entry>
+                    <key>id</key>
+                    <value>rapid_P16_C5_</value>
+                </entry>
+                <entry>
+                    <key>classes</key>
+                    <value>[]</value>
+                </entry>
+                <entry>
+                    <key>name</key>
+                    <value>Table row 4</value>
+                </entry>
+                <entry>
+                    <key>type</key>
+                    <value>tableRow</value>
+                </entry>
+                <entry>
+                    <key>version</key>
+                    <value>1</value>
+                </entry>
+            </properties>
+            <styles>
+                <appliesTo>#rapid_P16_C3_2</appliesTo>
+                <rules>padding-top:5px;</rules>
+            </styles>
+            <XMLVersion>1</XMLVersion>
+        </childControls>
+        <childControls>
+            <childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P16_C11_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
+                        <key>text</key>
+                        <value>Description</value>
+                    </entry>
+                    <entry>
+                        <key>colSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>rowSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableCell</value>
+                    </entry>
+                    <entry>
+                        <key>version</key>
+                        <value>1</value>
+                    </entry>
+                </properties>
+                <XMLVersion>1</XMLVersion>
+            </childControls>
+            <childControls>
+                <childControls>
+                    <events>
+                        <filter></filter>
+                        <type>keyup</type>
+                    </events>
+                    <events>
+                        <filter></filter>
+                        <type>change</type>
+                    </events>
+                    <events>
+                        <filter></filter>
+                        <type>blur</type>
+                    </events>
+                    <properties>
+                        <entry>
+                            <key>id</key>
+                            <value>rapid_P16_C13_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
+                        </entry>
+                        <entry>
+                            <key>name</key>
+                            <value>Description</value>
+                        </entry>
+                        <entry>
+                            <key>value</key>
+                            <value></value>
+                        </entry>
+                        <entry>
+                            <key>controlType</key>
+                            <value>N</value>
+                        </entry>
+                        <entry>
+                            <key>type</key>
+                            <value>input</value>
+                        </entry>
+                        <entry>
+                            <key>version</key>
+                            <value>1</value>
+                        </entry>
+                    </properties>
+                    <styles>
+                        <appliesTo>#rapid_P16_C13_</appliesTo>
+                        <rules>width:100%;</rules>
+                    </styles>
+                    <validation>
+                        <allowNulls>false</allowNulls>
+                        <javaScript></javaScript>
+                        <message></message>
+                        <regEx></regEx>
+                        <type></type>
+                    </validation>
+                    <XMLVersion>1</XMLVersion>
+                </childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P16_C12_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
+                        <key>text</key>
+                        <value></value>
+                    </entry>
+                    <entry>
+                        <key>colSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>rowSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableCell</value>
+                    </entry>
+                    <entry>
+                        <key>version</key>
+                        <value>1</value>
+                    </entry>
+                </properties>
+                <styles>
+                    <appliesTo>#rapid_P16_C12_</appliesTo>
+                    <rules>padding-right:25px;</rules>
+                </styles>
+                <XMLVersion>1</XMLVersion>
+            </childControls>
+            <properties>
+                <entry>
+                    <key>id</key>
+                    <value>rapid_P16_C10_</value>
+                </entry>
+                <entry>
+                    <key>classes</key>
+                    <value>[]</value>
+                </entry>
+                <entry>
+                    <key>type</key>
+                    <value>tableRow</value>
+                </entry>
+                <entry>
+                    <key>version</key>
+                    <value>1</value>
+                </entry>
+            </properties>
+            <XMLVersion>1</XMLVersion>
+        </childControls>
+        <childControls>
+            <childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P16_C15_</value>
+                    </entry>
+                    <entry>
+                        <key>text</key>
+                        <value>Password</value>
+                    </entry>
+                    <entry>
+                        <key>colSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>name</key>
+                        <value></value>
+                    </entry>
+                    <entry>
+                        <key>rowSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableCell</value>
+                    </entry>
+                    <entry>
+                        <key>version</key>
+                        <value>1</value>
+                    </entry>
+                </properties>
+                <styles>
+                    <appliesTo>#rapid_P16_C3_3</appliesTo>
+                    <rules>padding-left:5px;</rules>
+                </styles>
+                <XMLVersion>1</XMLVersion>
+            </childControls>
+            <childControls>
+                <childControls>
+                    <events>
+                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="existing">
+                            <properties>
+<entry>
+    <key>id</key>
+    <value>P16_A18_</value>
+</entry>
+<entry>
+    <key>XMLVersion</key>
+    <value>1</value>
+</entry>
+<entry>
+    <key>name</key>
+    <value>Existing 30</value>
+</entry>
+<entry>
+    <key>action</key>
+    <value>rapid_P3_A29</value>
+</entry>
+<entry>
+    <key>type</key>
+    <value>existing</value>
+</entry>
+<entry>
+    <key>version</key>
+    <value>1</value>
+</entry>
+                            </properties>
+                            <XMLVersion>1</XMLVersion>
+                        </actions>
+                        <filter></filter>
+                        <type>keyup</type>
+                    </events>
+                    <events>
+                        <filter></filter>
+                        <type>change</type>
+                    </events>
+                    <events>
+                        <filter></filter>
+                        <type>blur</type>
+                    </events>
+                    <properties>
+                        <entry>
+                            <key>id</key>
+                            <value>rapid_P16_C17_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
+                        </entry>
+                        <entry>
+                            <key>name</key>
+                            <value>Password</value>
+                        </entry>
+                        <entry>
+                            <key>value</key>
+                            <value></value>
+                        </entry>
+                        <entry>
+                            <key>controlType</key>
+                            <value>P</value>
+                        </entry>
+                        <entry>
+                            <key>type</key>
+                            <value>input</value>
+                        </entry>
+                        <entry>
+                            <key>version</key>
+                            <value>1</value>
+                        </entry>
+                    </properties>
+                    <styles>
+                        <appliesTo>#rapid_P16_C17_</appliesTo>
+                        <rules>width:100%;</rules>
+                    </styles>
+                    <validation>
+                        <allowNulls>false</allowNulls>
+                        <javaScript></javaScript>
+                        <message>User name must be provided</message>
+                        <regEx></regEx>
+                        <type></type>
+                    </validation>
+                    <XMLVersion>1</XMLVersion>
+                </childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P16_C16_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
+                        <key>text</key>
+                        <value></value>
+                    </entry>
+                    <entry>
+                        <key>colSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>name</key>
+                        <value></value>
+                    </entry>
+                    <entry>
+                        <key>rowSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableCell</value>
+                    </entry>
+                    <entry>
+                        <key>version</key>
+                        <value>1</value>
+                    </entry>
+                </properties>
+                <styles>
+                    <appliesTo>#rapid_P16_C16_</appliesTo>
+                    <rules>padding-right:25px;</rules>
+                </styles>
+                <XMLVersion>1</XMLVersion>
+            </childControls>
+            <properties>
+                <entry>
+                    <key>id</key>
+                    <value>rapid_P16_C14_</value>
+                </entry>
+                <entry>
+                    <key>name</key>
+                    <value>Table row 4</value>
+                </entry>
+                <entry>
+                    <key>type</key>
+                    <value>tableRow</value>
+                </entry>
+                <entry>
+                    <key>version</key>
+                    <value>1</value>
+                </entry>
+            </properties>
+            <styles>
+                <appliesTo>#rapid_P16_C3_2</appliesTo>
+                <rules>padding-top:5px;</rules>
+            </styles>
+            <XMLVersion>1</XMLVersion>
+        </childControls>
+        <childControls>
+            <childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P16_C20_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
+                        <key>text</key>
+                        <value>Confirm password</value>
+                    </entry>
+                    <entry>
+                        <key>colSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>name</key>
+                        <value></value>
+                    </entry>
+                    <entry>
+                        <key>rowSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableCell</value>
+                    </entry>
+                    <entry>
+                        <key>version</key>
+                        <value>1</value>
+                    </entry>
+                </properties>
+                <styles>
+                    <appliesTo>#rapid_P16_C3_3</appliesTo>
+                    <rules>padding-left:5px;</rules>
+                </styles>
+                <XMLVersion>1</XMLVersion>
+            </childControls>
+            <childControls>
+                <childControls>
+                    <events>
+                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="existing">
+                            <properties>
+<entry>
+    <key>id</key>
+    <value>P16_A23_</value>
+</entry>
+<entry>
+    <key>XMLVersion</key>
+    <value>1</value>
+</entry>
+<entry>
+    <key>name</key>
+    <value>Existing 30</value>
+</entry>
+<entry>
+    <key>action</key>
+    <value>rapid_P3_A29</value>
+</entry>
+<entry>
+    <key>type</key>
+    <value>existing</value>
+</entry>
+<entry>
+    <key>version</key>
+    <value>1</value>
+</entry>
+                            </properties>
+                            <XMLVersion>1</XMLVersion>
+                        </actions>
+                        <filter></filter>
+                        <type>keyup</type>
+                    </events>
+                    <events>
+                        <filter></filter>
+                        <type>change</type>
+                    </events>
+                    <events>
+                        <filter></filter>
+                        <type>blur</type>
+                    </events>
+                    <properties>
+                        <entry>
+                            <key>id</key>
+                            <value>rapid_P16_C22_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
+                        </entry>
+                        <entry>
+                            <key>name</key>
+                            <value>Confirm</value>
+                        </entry>
+                        <entry>
+                            <key>value</key>
+                            <value></value>
+                        </entry>
+                        <entry>
+                            <key>controlType</key>
+                            <value>P</value>
+                        </entry>
+                        <entry>
+                            <key>type</key>
+                            <value>input</value>
+                        </entry>
+                        <entry>
+                            <key>version</key>
+                            <value>1</value>
+                        </entry>
+                    </properties>
+                    <styles>
+                        <appliesTo>#rapid_P16_C22_</appliesTo>
+                        <rules>width:100%;</rules>
+                    </styles>
+                    <validation>
+                        <allowNulls>false</allowNulls>
+                        <javaScript></javaScript>
+                        <message>User name must be provided</message>
+                        <regEx></regEx>
+                        <type></type>
+                    </validation>
+                    <XMLVersion>1</XMLVersion>
+                </childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P16_C21_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
+                        <key>text</key>
+                        <value></value>
+                    </entry>
+                    <entry>
+                        <key>colSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>name</key>
+                        <value></value>
+                    </entry>
+                    <entry>
+                        <key>rowSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableCell</value>
+                    </entry>
+                    <entry>
+                        <key>version</key>
+                        <value>1</value>
+                    </entry>
+                </properties>
+                <styles>
+                    <appliesTo>#rapid_P16_C21_</appliesTo>
+                    <rules>padding-right:25px;</rules>
+                </styles>
+                <XMLVersion>1</XMLVersion>
+            </childControls>
+            <properties>
+                <entry>
+                    <key>id</key>
+                    <value>rapid_P16_C19_</value>
+                </entry>
+                <entry>
+                    <key>classes</key>
+                    <value>[]</value>
+                </entry>
+                <entry>
+                    <key>name</key>
+                    <value>Table row 4</value>
+                </entry>
+                <entry>
+                    <key>type</key>
+                    <value>tableRow</value>
+                </entry>
+                <entry>
+                    <key>version</key>
+                    <value>1</value>
+                </entry>
+            </properties>
+            <styles>
+                <appliesTo>#rapid_P16_C3_2</appliesTo>
+                <rules>padding-top:5px;</rules>
+            </styles>
+            <XMLVersion>1</XMLVersion>
+        </childControls>
+        <childControls>
+            <childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P16_C33_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
+                        <key>text</key>
+                        <value>Use Rapid Admin</value>
+                    </entry>
+                    <entry>
+                        <key>colSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>rowSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableCell</value>
+                    </entry>
+                </properties>
+                <XMLVersion>1</XMLVersion>
+            </childControls>
+            <childControls>
+                <childControls>
+                    <events>
+                        <filter></filter>
+                        <type>click</type>
+                    </events>
+                    <properties>
+                        <entry>
+                            <key>id</key>
+                            <value>rapid_P16_C38_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
+                        </entry>
+                        <entry>
+                            <key>name</key>
+                            <value></value>
+                        </entry>
+                        <entry>
+                            <key>type</key>
+                            <value>checkbox</value>
+                        </entry>
+                        <entry>
+                            <key>checked</key>
+                            <value>false</value>
+                        </entry>
+                    </properties>
+                    <XMLVersion>1</XMLVersion>
+                </childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P16_C36_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
+                        <key>text</key>
+                        <value></value>
+                    </entry>
+                    <entry>
+                        <key>colSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>rowSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableCell</value>
+                    </entry>
+                </properties>
+                <XMLVersion>1</XMLVersion>
+            </childControls>
+            <properties>
+                <entry>
+                    <key>id</key>
+                    <value>rapid_P16_C32_</value>
+                </entry>
+                <entry>
+                    <key>classes</key>
+                    <value>[]</value>
+                </entry>
+                <entry>
+                    <key>type</key>
+                    <value>tableRow</value>
+                </entry>
+            </properties>
+            <XMLVersion>1</XMLVersion>
+        </childControls>
+        <childControls>
+            <childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P16_C35_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
+                        <key>text</key>
+                        <value>Use Rapid Design</value>
+                    </entry>
+                    <entry>
+                        <key>colSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>rowSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableCell</value>
+                    </entry>
+                </properties>
+                <XMLVersion>1</XMLVersion>
+            </childControls>
+            <childControls>
+                <childControls>
+                    <events>
+                        <filter></filter>
+                        <type>click</type>
+                    </events>
+                    <properties>
+                        <entry>
+                            <key>id</key>
+                            <value>rapid_P16_C39_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
+                        </entry>
+                        <entry>
+                            <key>name</key>
+                            <value></value>
+                        </entry>
+                        <entry>
+                            <key>type</key>
+                            <value>checkbox</value>
+                        </entry>
+                        <entry>
+                            <key>checked</key>
+                            <value>false</value>
+                        </entry>
+                    </properties>
+                    <XMLVersion>1</XMLVersion>
+                </childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P16_C37_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
+                        <key>text</key>
+                        <value></value>
+                    </entry>
+                    <entry>
+                        <key>colSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>rowSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableCell</value>
+                    </entry>
+                </properties>
+                <XMLVersion>1</XMLVersion>
+            </childControls>
+            <properties>
+                <entry>
+                    <key>id</key>
+                    <value>rapid_P16_C34_</value>
+                </entry>
+                <entry>
+                    <key>classes</key>
+                    <value>[]</value>
+                </entry>
+                <entry>
+                    <key>type</key>
+                    <value>tableRow</value>
+                </entry>
+            </properties>
+            <XMLVersion>1</XMLVersion>
+        </childControls>
+        <childControls>
+            <childControls>
+                <childControls>
+                    <events>
+                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="control">
+                            <properties>
+<entry>
+    <key>id</key>
+    <value>P16_A27_</value>
+</entry>
+<entry>
+    <key>control</key>
+    <value>rapid_P16_C2_</value>
+</entry>
+<entry>
+    <key>XMLVersion</key>
+    <value>1</value>
+</entry>
+<entry>
+    <key>name</key>
+    <value>Control 36</value>
+</entry>
+<entry>
+    <key>command</key>
+    <value>hideDialogue();</value>
+</entry>
+<entry>
+    <key>type</key>
+    <value>control</value>
+</entry>
+<entry>
+    <key>version</key>
+    <value>1</value>
+</entry>
+                            </properties>
+                            <XMLVersion>1</XMLVersion>
+                        </actions>
+                        <filter></filter>
+                        <type>click</type>
+                    </events>
+                    <properties>
+                        <entry>
+                            <key>id</key>
+                            <value>rapid_P16_C26_</value>
+                        </entry>
+                        <entry>
+                            <key>name</key>
+                            <value>Cancel</value>
+                        </entry>
+                        <entry>
+                            <key>label</key>
+                            <value>Cancel</value>
+                        </entry>
+                        <entry>
+                            <key>type</key>
+                            <value>button</value>
+                        </entry>
+                        <entry>
+                            <key>version</key>
+                            <value>1</value>
+                        </entry>
+                    </properties>
+                    <styles>
+                        <appliesTo>#rapid_P16_C2_1</appliesTo>
+                        <rules>width:60px;</rules>
+                    </styles>
+                    <XMLVersion>1</XMLVersion>
+                </childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P16_C25_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
+                        <key>text</key>
+                        <value></value>
+                    </entry>
+                    <entry>
+                        <key>colSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>name</key>
+                        <value>Table cell 9</value>
+                    </entry>
+                    <entry>
+                        <key>rowSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableCell</value>
+                    </entry>
+                    <entry>
+                        <key>version</key>
+                        <value>1</value>
+                    </entry>
+                </properties>
+                <styles>
+                    <appliesTo>#rapid_P16_C2_0</appliesTo>
+                    <rules>padding-bottom:10px;</rules>
+                </styles>
+                <XMLVersion>1</XMLVersion>
+            </childControls>
+            <childControls>
+                <childControls>
+                    <events>
+                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="validation">
+                            <properties>
+<entry>
+    <key>id</key>
+    <value>P16_A30_</value>
+</entry>
+<entry>
+    <key>showMessages</key>
+    <value>true</value>
+</entry>
+<entry>
+    <key>XMLVersion</key>
+    <value>1</value>
+</entry>
+<entry>
+    <key>name</key>
+    <value>Validation 29</value>
+</entry>
+<entry>
+    <key>type</key>
+    <value>validation</value>
+</entry>
+<entry>
+    <key>stopActions</key>
+    <value>true</value>
+</entry>
+<entry>
+    <key>version</key>
+    <value>1</value>
+</entry>
+                            </properties>
+                            <XMLVersion>1</XMLVersion>
+                            <failActions xsi:type="control">
+<properties>
+    <entry>
+        <key>id</key>
+        <value>rapid_P3_A33</value>
+    </entry>
+    <entry>
+        <key>control</key>
+        <value>rapid_P16_C2_4</value>
+    </entry>
+    <entry>
+        <key>XMLVersion</key>
+        <value>1</value>
+    </entry>
+    <entry>
+        <key>name</key>
+        <value>Control 33</value>
+    </entry>
+    <entry>
+        <key>command</key>
+        <value>disable();</value>
+    </entry>
+    <entry>
+        <key>type</key>
+        <value>control</value>
+    </entry>
+    <entry>
+        <key>version</key>
+        <value>1</value>
+    </entry>
+</properties>
+<XMLVersion>1</XMLVersion>
+                            </failActions>
+                            <passActions xsi:type="control">
+<properties>
+    <entry>
+        <key>id</key>
+        <value>rapid_P3_A35</value>
+    </entry>
+    <entry>
+        <key>control</key>
+        <value>rapid_P16_C2_4</value>
+    </entry>
+    <entry>
+        <key>XMLVersion</key>
+        <value>1</value>
+    </entry>
+    <entry>
+        <key>name</key>
+        <value>Control 35</value>
+    </entry>
+    <entry>
+        <key>command</key>
+        <value>enable();</value>
+    </entry>
+    <entry>
+        <key>type</key>
+        <value>control</value>
+    </entry>
+    <entry>
+        <key>version</key>
+        <value>1</value>
+    </entry>
+</properties>
+<XMLVersion>1</XMLVersion>
+                            </passActions>
+                        </actions>
+                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="rapid">
+                            <properties>
+<entry>
+    <key>id</key>
+    <value>P16_A31_</value>
+</entry>
+<entry>
+    <key>XMLVersion</key>
+    <value>1</value>
+</entry>
+<entry>
+    <key>childActions</key>
+    <value>[]</value>
+</entry>
+<entry>
+    <key>name</key>
+    <value>Rapid 27</value>
+</entry>
+<entry>
+    <key>rapidApp</key>
+    <value>true</value>
+</entry>
+<entry>
+    <key>actionType</key>
+    <value>NEWUSER</value>
+</entry>
+<entry>
+    <key>type</key>
+    <value>rapid</value>
+</entry>
+<entry>
+    <key>version</key>
+    <value>1</value>
+</entry>
+                            </properties>
+                            <XMLVersion>1</XMLVersion>
+                            <successActions xsi:type="control">
+<properties>
+    <entry>
+        <key>id</key>
+        <value>P6_A37</value>
+    </entry>
+    <entry>
+        <key>control</key>
+        <value>rapid_P16_C2_</value>
+    </entry>
+    <entry>
+        <key>XMLVersion</key>
+        <value>1</value>
+    </entry>
+    <entry>
+        <key>name</key>
+        <value>Control 37</value>
+    </entry>
+    <entry>
+        <key>command</key>
+        <value>hideDialogue();</value>
+    </entry>
+    <entry>
+        <key>type</key>
+        <value>control</value>
+    </entry>
+    <entry>
+        <key>version</key>
+        <value>1</value>
+    </entry>
+</properties>
+<XMLVersion>1</XMLVersion>
+                            </successActions>
+                            <successActions xsi:type="rapid">
+<properties>
+    <entry>
+        <key>id</key>
+        <value>P16_A40_</value>
+    </entry>
+    <entry>
+        <key>name</key>
+        <value>Rapid 40</value>
+    </entry>
+    <entry>
+        <key>actionType</key>
+        <value>GETUSERS</value>
+    </entry>
+    <entry>
+        <key>type</key>
+        <value>rapid</value>
+    </entry>
+</properties>
+<XMLVersion>1</XMLVersion>
+                            </successActions>
+                        </actions>
+                        <filter></filter>
+                        <type>click</type>
+                    </events>
+                    <properties>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
+                        </entry>
+                        <entry>
+                            <key>id</key>
+                            <value>rapid_P16_C29_</value>
+                        </entry>
+                        <entry>
+                            <key>name</key>
+                            <value>Save</value>
+                        </entry>
+                        <entry>
+                            <key>label</key>
+                            <value>Save</value>
+                        </entry>
+                        <entry>
+                            <key>type</key>
+                            <value>button</value>
+                        </entry>
+                        <entry>
+                            <key>version</key>
+                            <value>1</value>
+                        </entry>
+                    </properties>
+                    <styles>
+                        <appliesTo>#rapid_P16_C2_4</appliesTo>
+                        <rules>width:60px;</rules>
+                    </styles>
+                    <XMLVersion>1</XMLVersion>
+                </childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P16_C28_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
+                        <key>text</key>
+                        <value></value>
+                    </entry>
+                    <entry>
+                        <key>colSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>name</key>
+                        <value>Table cell 10</value>
+                    </entry>
+                    <entry>
+                        <key>rowSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableCell</value>
+                    </entry>
+                    <entry>
+                        <key>version</key>
+                        <value>1</value>
+                    </entry>
+                </properties>
+                <styles>
+                    <appliesTo>#rapid_P16_C28_</appliesTo>
+                    <rules>text-align:right;</rules>
+                    <rules>padding-right:20px;</rules>
+                </styles>
+                <XMLVersion>1</XMLVersion>
+            </childControls>
+            <properties>
+                <entry>
+                    <key>id</key>
+                    <value>rapid_P16_C24_</value>
+                </entry>
+                <entry>
+                    <key>name</key>
+                    <value>Table row 6</value>
+                </entry>
+                <entry>
+                    <key>type</key>
+                    <value>tableRow</value>
+                </entry>
+                <entry>
+                    <key>version</key>
+                    <value>1</value>
+                </entry>
+            </properties>
+            <styles>
+                <appliesTo>.</appliesTo>
+                <rules>margin-top:10px</rules>
+            </styles>
+            <XMLVersion>1</XMLVersion>
+        </childControls>
+        <properties>
+            <entry>
+                <key>id</key>
+                <value>rapid_P16_C2_</value>
+            </entry>
+            <entry>
+                <key>name</key>
+                <value>Table 2</value>
+            </entry>
+            <entry>
+                <key>type</key>
+                <value>table</value>
+            </entry>
+            <entry>
+                <key>version</key>
+                <value>1</value>
+            </entry>
+        </properties>
+        <styles>
+            <appliesTo>#rapid_P16_C2_</appliesTo>
+            <rules>border-collapse:collapse;</rules>
+            <rules>border-spacing:0;</rules>
+        </styles>
+        <styles>
+            <appliesTo>#rapid_P16_C2_ td</appliesTo>
+            <rules>padding-left:15px;</rules>
+            <rules>padding-top:10px;</rules>
+        </styles>
+        <XMLVersion>1</XMLVersion>
+    </controls>
+    <description>Create a new Rapid user with checkboxes for use of Rapid Admin and Rapid Design</description>
+    <events>
+        <filter></filter>
+        <type>pageload</type>
+    </events>
+    <events>
+        <filter></filter>
+        <type>reusable</type>
+    </events>
+    <htmlBody>&lt;table id=&quot;rapid_P16_C2_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;rapid_P16_C3_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P16_C4_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;New user&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P16_C5_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P16_C6_&quot; class=&quot;tabelCell&quot;&gt;User name&lt;/td&gt;&lt;td id=&quot;rapid_P16_C7_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P16_C8_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P16_C10_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P16_C11_&quot; class=&quot;tabelCell&quot;&gt;Description&lt;/td&gt;&lt;td id=&quot;rapid_P16_C12_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P16_C13_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P16_C14_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P16_C15_&quot; class=&quot;tabelCell&quot;&gt;Password&lt;/td&gt;&lt;td id=&quot;rapid_P16_C16_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P16_C17_&quot; value=&quot;&quot; type=&quot;password&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P16_C19_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P16_C20_&quot; class=&quot;tabelCell&quot;&gt;Confirm password&lt;/td&gt;&lt;td id=&quot;rapid_P16_C21_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P16_C22_&quot; value=&quot;&quot; type=&quot;password&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P16_C32_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P16_C33_&quot; class=&quot;tabelCell&quot;&gt;Use Rapid Admin&lt;/td&gt;&lt;td id=&quot;rapid_P16_C36_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P16_C38_&quot; type=&quot;checkbox&quot; class=&quot;checkbox&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P16_C34_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P16_C35_&quot; class=&quot;tabelCell&quot;&gt;Use Rapid Design&lt;/td&gt;&lt;td id=&quot;rapid_P16_C37_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P16_C39_&quot; type=&quot;checkbox&quot; class=&quot;checkbox&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P16_C24_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P16_C25_&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P16_C26_&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P16_C28_&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P16_C29_&quot; class=&quot;button&quot;&gt;Save&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
+    <id>P16</id>
+    <modifiedBy>admin</modifiedBy>
+    <modifiedDate>2014-07-08T14:43:17.475+01:00</modifiedDate>
+    <name>16_UserNewRapid</name>
+    <rolesHtml>
+        <html>&lt;table id=&quot;rapid_P16_C2_&quot; class=&quot;table&quot;&gt;
+		&lt;tbody&gt;
+			&lt;tr id=&quot;rapid_P16_C3_&quot; class=&quot;tableRow&quot;&gt;
+				&lt;td id=&quot;rapid_P16_C4_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;New user&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr id=&quot;rapid_P16_C5_&quot; class=&quot;tableRow&quot;&gt;
+				&lt;td id=&quot;rapid_P16_C6_&quot; class=&quot;tabelCell&quot;&gt;User name&lt;/td&gt;
+				&lt;td id=&quot;rapid_P16_C7_&quot; class=&quot;tabelCell&quot;&gt;
+					&lt;input id=&quot;rapid_P16_C8_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
+				&lt;/tr&gt;
+				&lt;tr id=&quot;rapid_P16_C10_&quot; class=&quot;tableRow&quot;&gt;
+					&lt;td id=&quot;rapid_P16_C11_&quot; class=&quot;tabelCell&quot;&gt;Description&lt;/td&gt;
+					&lt;td id=&quot;rapid_P16_C12_&quot; class=&quot;tabelCell&quot;&gt;
+						&lt;input id=&quot;rapid_P16_C13_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
+					&lt;/tr&gt;
+					&lt;tr id=&quot;rapid_P16_C14_&quot; class=&quot;tableRow&quot;&gt;
+						&lt;td id=&quot;rapid_P16_C15_&quot; class=&quot;tabelCell&quot;&gt;Password&lt;/td&gt;
+						&lt;td id=&quot;rapid_P16_C16_&quot; class=&quot;tabelCell&quot;&gt;
+							&lt;input id=&quot;rapid_P16_C17_&quot; value=&quot;&quot; type=&quot;password&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
+						&lt;/tr&gt;
+						&lt;tr id=&quot;rapid_P16_C19_&quot; class=&quot;tableRow&quot;&gt;
+							&lt;td id=&quot;rapid_P16_C20_&quot; class=&quot;tabelCell&quot;&gt;Confirm password&lt;/td&gt;
+							&lt;td id=&quot;rapid_P16_C21_&quot; class=&quot;tabelCell&quot;&gt;
+								&lt;input id=&quot;rapid_P16_C22_&quot; value=&quot;&quot; type=&quot;password&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
+							&lt;/tr&gt;
+							&lt;tr id=&quot;rapid_P16_C32_&quot; class=&quot;tableRow&quot;&gt;
+								&lt;td id=&quot;rapid_P16_C33_&quot; class=&quot;tabelCell&quot;&gt;Use Rapid Admin&lt;/td&gt;
+								&lt;td id=&quot;rapid_P16_C36_&quot; class=&quot;tabelCell&quot;&gt;
+									&lt;input id=&quot;rapid_P16_C38_&quot; type=&quot;checkbox&quot; class=&quot;checkbox&quot;&gt;&lt;/td&gt;
+								&lt;/tr&gt;
+								&lt;tr id=&quot;rapid_P16_C34_&quot; class=&quot;tableRow&quot;&gt;
+									&lt;td id=&quot;rapid_P16_C35_&quot; class=&quot;tabelCell&quot;&gt;Use Rapid Design&lt;/td&gt;
+									&lt;td id=&quot;rapid_P16_C37_&quot; class=&quot;tabelCell&quot;&gt;
+										&lt;input id=&quot;rapid_P16_C39_&quot; type=&quot;checkbox&quot; class=&quot;checkbox&quot;&gt;&lt;/td&gt;
+									&lt;/tr&gt;
+									&lt;tr id=&quot;rapid_P16_C24_&quot; class=&quot;tableRow&quot;&gt;
+										&lt;td id=&quot;rapid_P16_C25_&quot; class=&quot;tabelCell&quot;&gt;
+											&lt;button id=&quot;rapid_P16_C26_&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;
+										&lt;/td&gt;
+										&lt;td id=&quot;rapid_P16_C28_&quot; class=&quot;tabelCell&quot;&gt;
+											&lt;button id=&quot;rapid_P16_C29_&quot; class=&quot;button&quot;&gt;Save&lt;/button&gt;
+										&lt;/td&gt;
+									&lt;/tr&gt;
+								&lt;/tbody&gt;
+							&lt;/table&gt;</html>
+    </rolesHtml>
+    <title>New Rapid User</title>
+    <XMLVersion>1</XMLVersion>
+</page>
