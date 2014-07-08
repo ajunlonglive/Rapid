@@ -254,7 +254,7 @@ public class Application {
 	
 	// number of page backups to keep
 	public int getPageBackupsMaxSize() { return _pageBackupsMaxSize; }
-	public void setPageBackupMaxSize(int pageBackupsMaxSize) { _pageBackupsMaxSize = pageBackupsMaxSize; }
+	public void setPageBackupsMaxSize(int pageBackupsMaxSize) { _pageBackupsMaxSize = pageBackupsMaxSize; }
 		
 	// constructors
 	

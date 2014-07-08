@@ -170,22 +170,38 @@
 	padding-top:2px;
 }
 
+#rapid_P0_C379_ {
+	vertical-align:middle;
+}
+
 #rapid_P0_C380_ {
 	padding-top:5px;
 }
 
+#rapid_P0_C381_ {
+	vertical-align:middle;
+}
+
 #rapid_P0_C805_ {
 	padding-left:10px;
-	padding-top:2px;
+	vertical-align:middle;
+}
+
+#rapid_P0_C376_ {
+	vertical-align:middle;
 }
 
 #rapid_P0_C377_ {
 	padding-top:5px;
 }
 
+#rapid_P0_C382_ {
+	vertical-align:middle;
+}
+
 #rapid_P0_C806_ {
 	padding-left:10px;
-	padding-top:2px;
+	vertical-align:middle;
 }
 
 #rapid_P0_C412_ {
@@ -267,8 +283,13 @@
 	padding-bottom:10px;
 }
 
-#rapid_P0_C120 {
+#rapid_P0_C910_ {
 	padding-top:20px;
+}
+
+#rapid_P0_C911_ {
+	vertical-align:middle;
+	padding-left:10px;
 }
 
 #rapid_P0_C116 {
@@ -906,6 +927,106 @@
 
 #rapid_P0_C700_ {
 	text-align:right;
+}
+
+#rapid_P0_C866_ {
+	margin:10px;
+}
+
+#rapid_P0_C906_ {
+	padding-left:10px;
+	padding-top:2px;
+}
+
+#rapid_P0_C823_ {
+	border:1px solid black;
+}
+
+#rapid_P0_C823_ .rowStyle1 {
+	background-color:#ddd;
+	height:28px;
+}
+
+#rapid_P0_C823_ .rowStyle2 {
+	height:28px;
+}
+
+#rapid_P0_C823_ tr:hover:not(:first-child) {
+	background-color:#aaa;
+}
+
+#rapid_P0_C823_ .rowSelect {
+	background-color:#aaa;
+}
+
+#rapid_P0_C898_ {
+	text-align:right;
+	padding-top:10px;
+}
+
+#rapid_P0_C827_ {
+	margin-left:40px;
+}
+
+#rapid_P0_C828_ {
+	border:1px solid black;
+	border-collapse:collapse;
+}
+
+#rapid_P0_C828_ td {
+	padding:5px 10px;
+}
+
+#rapid_P0_C830_ {
+	background-color:red;
+	color:white;
+	font-weight:bold;
+	text-align:center;
+	padding:5px;
+	border:1px solid black;
+	background:#e00 url(highlight_red_1x44.png) 50% 50% repeat-x;
+	text-shadow :-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+
+#rapid_P0_C832_ {
+	text-align:left;
+	width:140px;
+}
+
+#rapid_P0_C833_ {
+	text-align:left;
+	padding-top:5px;
+	padding-left:5px;
+}
+
+#rapid_P0_C836_ {
+	text-align:left;
+}
+
+#rapid_P0_C838_ {
+	width:90%;
+}
+
+#rapid_P0_C841_ {
+	text-align:left;
+}
+
+#rapid_P0_C843_ {
+	width:90%;
+}
+
+#rapid_P0_C846_ {
+	padding-right:5px;
+	text-align:left;
+}
+
+#rapid_P0_C848_ {
+	width:90%;
+}
+
+#rapid_P0_C851_ {
+	text-align:right;
+	padding-top:0px;
 }
 
 #rapid_P0_C783_ {

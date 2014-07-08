@@ -28,10 +28,12 @@ import com.rapid.core.Page;
 import com.rapid.core.Application.DatabaseConnection;
 import com.rapid.data.ConnectionAdapter;
 import com.rapid.data.DataFactory;
+import com.rapid.security.RapidSecurityAdapter.Security;
 import com.rapid.security.SecurityAdapater;
 import com.rapid.security.SecurityAdapater.Role;
 import com.rapid.security.SecurityAdapater.SecurityAdapaterException;
 import com.rapid.security.SecurityAdapater.User;
+import com.rapid.security.SecurityAdapater.Users;
 import com.rapid.server.RapidHttpServlet;
 import com.rapid.server.RapidServletContextListener;
 import com.rapid.server.RapidHttpServlet.RapidRequest;
@@ -181,7 +183,7 @@ public class Rapid extends Action {
 		if (control != null) controlId = "'" + control.getId() + "'";
 		
 		// return the JavaScript
-		js += "  Action_rapid(ev, '" + application.getId() + "','" + page.getId() + "'," + controlId + ",'" + getId() + "','" + getProperty("actionType") + "', successCallback, errorCallback);";
+		js += "  Action_rapid(ev, '" + application.getId() + "','" + page.getId() + "'," + controlId + ",'" + getId() + "','" + getProperty("actionType") + "', " + getProperty("rapidApp") + ", successCallback, errorCallback);";
 		
 		return js;
 	}
@@ -595,7 +597,29 @@ public class Rapid extends Action {
 					result.put("roles", roles);											
 												
 				} // got security
+				
+				// if this user record is for the logged in user
+				result.put("currentUser", userName.equals(rapidRequest.getUserName()));
 								
+			} else if ("GETUSERS".equals(action)) { 
+							
+				// get the app security
+				SecurityAdapater security = app.getSecurity();
+				
+				// if we got one
+				if (security != null) {
+				
+					// get the users
+					Users users = security.getUsers(rapidRequest);
+					
+					// add the users
+					result.put("users", users);
+					
+					// add the current user
+					result.put("currentUser", rapidRequest.getUserName());
+																						
+				} // got security
+						
 			} else if ("RELOADACTIONS".equals(action)) {
 							
 				// load actions and set the result message
@@ -1278,8 +1302,25 @@ public class Rapid extends Action {
 				String description = jsonAction.optString("description","").trim();
 				// get the password
 				String password = jsonAction.getString("password");
-				// add the role
-				app.getSecurity().addUser(rapidRequest, new User(userName, description, password));
+				
+				// get the security
+				SecurityAdapater security = app.getSecurity();
+				
+				// add the user
+				security.addUser(rapidRequest, new User(userName, description, password));
+				
+				// if this is the rapid app
+				if ("rapid".equals(app.getId())) {
+					// check for useAdmin
+					String useAdmin = jsonAction.optString("useAdmin");
+					// add role if we were given one
+					if ("true".equals(useAdmin)) security.addUserRole(rapidRequest, userName, com.rapid.server.Rapid.ADMIN_ROLE);
+					// check for useDesign
+					String useDesign = jsonAction.optString("useDesign");
+					// add role if we were given one
+					if ("true".equals(useDesign)) security.addUserRole(rapidRequest, userName, com.rapid.server.Rapid.DESIGN_ROLE);
+				}
+				
 				// set the result message
 				result.put("message", "User added");					
 								
@@ -1304,7 +1345,7 @@ public class Rapid extends Action {
 				// update the role
 				app.getSecurity().updateRole(rapidRequest, new Role(roleName, roleDescription));
 				// set the result message
-				result.put("message", "Role saved");
+				result.put("message", "Role details saved");
 													
 			} else if ("NEWUSERROLE".equals(action)) {
 				
@@ -1336,16 +1377,52 @@ public class Rapid extends Action {
 				String description = jsonAction.getString("description").trim();
 				// get the password
 				String password = jsonAction.getString("password");
+				
+				// get the security
+				SecurityAdapater security = app.getSecurity();
 				// get the user
-				User user = app.getSecurity().getUser(rapidRequest, userName);
+				User user = security.getUser(rapidRequest, userName);
 				// update the description
 				user.setDescription(description);
 				// update the password if different from the mask
 				if (!"********".equals(password)) user.setPassword(password);
 				// update the user
-				app.getSecurity().updateUser(rapidRequest, user);
+				security.updateUser(rapidRequest, user);
+				
+				// if we are updating the rapid application we have used checkboxes for the Rapid Admin and Rapid Designer roles
+				if ("rapid".equals(app.getId())) {
+					// get the valud of rapidAdmin
+					String useAdmin = jsonAction.optString("useAdmin");
+					// check useAdmin was sent
+					if (useAdmin != null) {
+						// check the user was given the role
+						if ("true".equals(useAdmin)) {
+							// add the role if the user doesn't have it already
+							if (!security.checkUserRole(rapidRequest, userName, com.rapid.server.Rapid.ADMIN_ROLE))
+								security.addUserRole(rapidRequest, userName, com.rapid.server.Rapid.ADMIN_ROLE);
+						} else {
+							// remove the role
+							security.deleteUserRole(rapidRequest, userName, com.rapid.server.Rapid.ADMIN_ROLE);
+						}
+					}
+					// get the valud of rapidDesign
+					String useDesign = jsonAction.optString("useDesign");
+					// check useAdmin was sent
+					if (useDesign != null) {
+						// check the user was given the role
+						if ("true".equals(useDesign)) {
+							// add the role if the user doesn't have it already
+							if (!security.checkUserRole(rapidRequest, userName, com.rapid.server.Rapid.DESIGN_ROLE))
+								security.addUserRole(rapidRequest, userName, com.rapid.server.Rapid.DESIGN_ROLE);
+						} else {
+							// remove the role
+							security.deleteUserRole(rapidRequest, userName, com.rapid.server.Rapid.DESIGN_ROLE);
+						}
+					}
+				}
+				
 				// set the result message
-				result.put("message", "User saved");					
+				result.put("message", "User details saved");					
 								
 			} else if ("TESTDBCONN".equals(action)) {
 				
@@ -1549,7 +1626,7 @@ public class Rapid extends Action {
 				int backupMaxSize = jsonAction.getInt("backupMaxSize");
 				
 				// pass it to the application
-				app.setPageBackupMaxSize(backupMaxSize);
+				app.setPageBackupsMaxSize(backupMaxSize);
 				
 				// save the application
 				app.save(rapidServlet, rapidRequest);

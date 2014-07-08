@@ -649,7 +649,7 @@ function selectControl(control) {
 }
 
 // this function shows the whole designer to the user, usually after the first page is loaded but possible earlier if there are no applications or pages
-function showDesigner() {
+function showDesigner() {	
 	// hide the loading message
 	$("#loading").hide();
 	// show the control panel and properties panel
@@ -659,7 +659,7 @@ function showDesigner() {
 	// resize the elements on the page
 	windowResize("showDesigner");
 	// arrange any non-visible controls
-	arrangeNonVisibleControls();
+	arrangeNonVisibleControls();	
 }
 
 //this function load the apps into appsSelect
@@ -690,21 +690,13 @@ function loadApps(selectedAppId, forceLoad) {
         	if (!selectedAppId) var urlAppId = $.getUrlVar("a");
         	// build the select options for each app
         	var options = "";
-        	// remember if we have the rapid app and we'll put it last
-        	var gotRapidApp = false;
         	// loop the apps we received
         	for (var i in apps) {        		
         		// get a reference to the app
         		var app = apps[i];
         		// add an option for this page (if not the rapid app itself)
-        		if (app.id == "rapid") {
-        			gotRapidApp = true;
-        		} else {
-        			options += "<option value='" + app.id + "' " + (selectedAppId || urlAppId == app.id ? "selected='true'" : "") + ">" + app.id + " - " + app.title + "</option>";        		        		
-        		}
+        		options += "<option value='" + app.id + "' " + (selectedAppId || urlAppId == app.id ? "selected='true'" : "") + ">" + app.id + " - " + app.title + "</option>";        	
         	}
-        	// only add the Rapid here
-        	if (gotRapidApp) options += "<option value='rapid' " + (selectedAppId || urlAppId == "rapid" ? "selected='true'" : "") + ">RAPID ADMINISTRATION APP</option>"; 
         	// get a reference to apps dropdown
         	var appsDropDown = $("#appSelect");
         	// put the options into the dropdown

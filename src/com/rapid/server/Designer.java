@@ -139,7 +139,7 @@ public class Designer extends RapidHttpServlet {
 								boolean designPermission = application.getSecurity().checkUserRole(rapidRequest, userName, Rapid.DESIGN_ROLE);
 								
 								// if app is rapid do a further check
-								//if (designPermission && "rapid".equals(application.getId())) designPermission = application.getSecurity().checkUserRole(rapidRequest, userName, Rapid.SUPER_ROLE);
+								if (designPermission && "rapid".equals(application.getId())) designPermission = application.getSecurity().checkUserRole(rapidRequest, userName, Rapid.SUPER_ROLE);
 								
 								// check the RapidDesign role is present in the users roles for this application
 								if (designPermission) {												

@@ -83,7 +83,7 @@ if (dataStore) {
 			}
 		}	 
 	} 
-	return null;		
+	return data;		
 }
 			]]>
 	    </getDataFunction>

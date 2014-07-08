@@ -47,8 +47,12 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, use
 	
 	var _userName = "<%=userName %>";
 	
-	</script>
+	</script>	
 	<link rel="stylesheet" type="text/css" href="styles/designer.css"></link>
+<%
+	} else {
+%>
+	<link rel="stylesheet" type="text/css" href="styles/index.css"></link>
 <%
 	}
 %>
@@ -58,10 +62,12 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, use
 	if (designerPermission) {
 %>	
 	<div id="loading">
-		<div><img style="padding: 10px;width: 200px; height:134px; margin-left:-50px;" src="images/RapidLogo_200x134.png" /></div>
-		<div>Rapid <%=com.rapid.server.Rapid.VERSION %></div>		
-		<div><img style="border: 3px solid #aaa; margin-top: 5px; margin-bottom: 5px;" src="images/wait_120x15.gif"></div>		
-		<div>loading...</div>
+		<div id="loadingPanel">
+			<div><img style="padding: 10px;width: 200px; height:134px; margin-left:-50px;" src="images/RapidLogo_200x134.png" /></div>
+			<div><b>Rapid <%=com.rapid.server.Rapid.VERSION %></b></div>		
+			<div><img style="margin-top: 5px; margin-bottom: 5px;" src="images/wait_220x19.gif"></div>		
+			<div>loading...</div>
+		</div>
 	</div>
 	
 	<iframe id="page"></iframe>
@@ -172,7 +178,17 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, use
 <%
 	} else {
 %>
-<center><h3>You do not have permission to access the Rapid Designer - contact your administrator</h3></center>
+
+	<div class="image">
+		<img src="images/RapidLogo_200x134.png" />
+	</div>
+	
+	<div class="title">
+		<span>Rapid - version <%=com.rapid.server.Rapid.VERSION %></span>
+	</div>
+
+	<center><h3>You do not have permission to access the Rapid Designer</h3></center>
+		
 <%		
 	}
 %>			

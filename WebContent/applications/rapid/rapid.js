@@ -119,7 +119,7 @@ function Action_navigate(url, dialogue) {
 	}
 }
 
-function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, successCallback, errorCallback) {
+function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidApp, successCallback, errorCallback) {
 
 	var type = "GET";
 	
@@ -159,10 +159,37 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, succes
 				setData_dataStore('rapid_P0_C469_', data, "security", {storageType:"S", id:"rapidrapid_P0_C469_"});
 			};
 		break;
-		case "GETUSER" :		
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: getData_grid(ev, "rapid_P0_C216", "userName", {columns:[{field:"userName"}]}) };	
+		case "GETUSER" :	
+			if (rapidApp) {
+				data = { actionType: actionType, appId: "rapid", userName: getData_grid(ev, "rapid_P0_C823_", "name", {columns:[{field:"name"}]}) };
+			} else {
+				data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: getData_grid(ev, "rapid_P0_C216", "userName", {columns:[{field:"userName"}]}) };	
+			}
 			callback = function(data) {
 				setData_dataStore('rapid_P0_C243', data, "user", {storageType:"S", id:"rapidrapid_P0_C243"});
+			};
+		break;				
+		case "GETUSERS" :		
+			data = { actionType: actionType, appId: "rapid" };	
+			callback = function(data) {
+				setData_grid('rapid_P0_C823_', data, 'users', {"rowSelect":true,"columns":[{"field":"name","visible":true,"style":"text-align:left;padding-left:10px;"},{"field":"description","visible":true,"style":"text-align:left;padding-left:10px;padding-right:10px;"},{"cellFunction":"","field":"","visible":true,"style":""}]});
+				var rapidUserRows = $("#rapid_P0_C823_").find("tr.rowStyle1,tr.rowStyle2");
+				rapidUserRows.each( function() {
+				  var children = $(this).children("td");
+				  var user = children.first().html();
+				  if (data.currentUser != user) {
+					  var cell = children.last();
+					  cell.html("<button>delete...</button>");
+					  cell.find("button").click( function(ev) {
+					    // confirm
+					    if (confirm("Are you sure?")) {    
+					      Action_rapid(ev, 'rapid', 'P0', null, 'P0_A904_', 'DELUSER', true);
+					    }
+					    // stop bubbling
+					    ev.stopPropagation();
+					  });
+				   }
+				});
 			};
 		break;
 		case "SAVEAPP" :		
@@ -348,20 +375,32 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, succes
 				$("#rapid_P0_C74").click(); 
 			};							
 		break;
-		case "NEWUSER" :		
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: $("#rapid_P6_C7").val(), description: $("#rapid_P6_C42_").val() , password: $("#rapid_P6_C18").val() };
-			callback = function() {
-				Event_change_rapid_P0_C43(ev);
-			};								
+		case "NEWUSER" :	
+			if (rapidApp) {
+				data = { actionType: actionType, appId: "rapid", userName: $("#rapid_P16_C8_").val(), description: $("#rapid_P16_C13_").val() , password: $("#rapid_P16_C17_").val(), useAdmin: $("rapid_P16_C38_").prop("checked"), useDesign: $("rapid_P16_C39_").prop("checked")};
+			} else {	
+				data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: $("#rapid_P6_C7").val(), description: $("#rapid_P6_C42_").val() , password: $("#rapid_P6_C18").val() };
+				callback = function() {
+					Event_change_rapid_P0_C43(ev);
+				};
+			}								
 		break;
 		case "DELUSER" :		
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: $(ev.target).closest("tr").find("td").first().html() };
-			callback = function() {
-				// fake an adapter change
-				$("#rapid_P0_C81").change(); 
-				// fake a tab click
-				$("#rapid_P0_C74").click();    
-			};								
+			if (rapidApp) {
+				data = { actionType: actionType, appId: "rapid", userName: $(ev.target).closest("tr").find("td").first().html() };
+				callback = function() {
+					// reload users
+					Action_rapid(ev, 'rapid', 'P0', null, 'P0_A901_', 'GETUSERS', true);
+				};
+			} else {
+				data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: $(ev.target).closest("tr").find("td").first().html() };
+				callback = function() {
+					// fake an adapter change
+					$("#rapid_P0_C81").change(); 
+					// fake a tab click
+					$("#rapid_P0_C74").click();    
+				};
+			} 											
 		break;
 		case "NEWUSERROLE" : 
 			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: $("#rapid_P0_C216").find("tr.rowSelect").children().first().html(), role: $("#rapid_P0_C254").val() };
@@ -376,13 +415,17 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, succes
 			};																
 		break;
 		case "SAVEUSER" :	
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: $("#rapid_P0_C216").find("tr.rowSelect").children().first().html(), description: $("#rapid_P0_C717_").val(), password: $("#rapid_P0_C231").val() };
-			callback = function() {
-				// fake an adapter change
-				$("#rapid_P0_C81").change(); 
-				// fake a tab click
-				$("#rapid_P0_C74").click();    
-			};																
+			if (rapidApp) {
+				data = { actionType: actionType, appId: "rapid", userName: $("#rapid_P0_C823_").find("tr.rowSelect").children().first().html(), description: $("#rapid_P0_C838_").val(), password: $("#rapid_P0_C843_").val(), useAdmin: $("#rapid_P0_C879_").prop('checked'), useDesign: $("#rapid_P0_C880_").prop('checked') }; 
+			} else {
+				data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: $("#rapid_P0_C216").find("tr.rowSelect").children().first().html(), description: $("#rapid_P0_C717_").val(), password: $("#rapid_P0_C231").val() };
+				callback = function() {
+					// fake an adapter change
+					$("#rapid_P0_C81").change(); 
+					// fake a tab click
+					$("#rapid_P0_C74").click();    
+				};	
+			}															
 		break;
 		case "TESTDBCONN" :	
 			data = { 
@@ -515,7 +558,14 @@ function Init_hints(id, details) {
   
   	var controlHint = details.controlHints[i];
   	
-  	body.append("<span class='hint' id='" + controlHint.controlId + "_hint'>" + controlHint.text + "</span>");
+  	var style = controlHint.style;
+  	if (style) {
+  		style = " style='" + style + "'";
+  	} else {
+  		style = "";
+  	}
+  	
+  	body.append("<span class='hint' id='" + controlHint.controlId + "_hint'" + style + ">" + controlHint.text + "</span>");
   	
   	$("#" + controlHint.controlId + "_hint").hide();
   	
@@ -674,7 +724,7 @@ function getData_dataStore(ev, id, field, details) {
   			}
   		}	 
   	} 
-  	return null;		
+  	return data;		
   }
 }
 

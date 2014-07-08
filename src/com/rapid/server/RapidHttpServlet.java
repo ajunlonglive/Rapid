@@ -224,6 +224,10 @@ public class RapidHttpServlet extends HttpServlet {
 		Collections.sort(applications, new Comparator<Application>() {
 			@Override
 			public int compare(Application app1, Application app2) {
+				// ensure the rapid application appears last in the list
+				if ("rapid".equals(app1.getId())) return 1;
+				if ("rapid".equals(app2.getId())) return -1;
+				// otherwise use an ascii compare
 				return Comparators.AsciiCompare(app1.getId(), app2.getId());
 			}			
 		});				
@@ -278,6 +282,8 @@ public class RapidHttpServlet extends HttpServlet {
 			String stackTrace = "";
 			
 			if (rapidRequest != null) stackTrace = rapidRequest.getDetails() + "\n\n";
+			
+			stackTrace += ex.getClass().getName() + "\n\n";
 			
 			for (StackTraceElement element : ex.getStackTrace()) stackTrace += element + "\n";
 						

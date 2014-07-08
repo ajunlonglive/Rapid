@@ -172,6 +172,49 @@ function Init_date(id, details) {
   f_tcalAdd (id);
 }
 
+function Init_hints(id, details) {
+  var body = $("body");
+  	    	
+  for (var i in details.controlHints) {
+  
+  	var controlHint = details.controlHints[i];
+  	
+  	var style = controlHint.style;
+  	if (style) {
+  		style = " style='" + style + "'";
+  	} else {
+  		style = "";
+  	}
+  	
+  	body.append("<span class='hint' id='" + controlHint.controlId + "_hint'" + style + ">" + controlHint.text + "</span>");
+  	
+  	$("#" + controlHint.controlId + "_hint").hide();
+  	
+  	$("#" + controlHint.controlId).mouseout({controlId: controlHint.controlId}, function(ev) {
+  		$("#" + ev.data.controlId + "_hint").hide();
+  	});
+  		
+  	switch (controlHint.type) {		
+  		case "click" :
+  			$("#" + controlHint.controlId).click({controlId: controlHint.controlId}, function(ev) { 
+  				$("#" + ev.data.controlId + "_hint").css({
+  					left: ev.clientX + 5,
+  					top: ev.clientY + 5
+  				}).show(); 
+  			});
+  			break;
+  		case "hover" :
+  			$("#" + controlHint.controlId).mouseover({controlId: controlHint.controlId}, function(ev) { 
+  				$("#" + ev.data.controlId + "_hint").css({
+  					left: ev.clientX + 5,
+  					top: ev.clientY + 5
+  				}).show();  
+  			});
+  			break;
+  	}
+  }
+}
+
 function Init_pagePanel(id, details) {
   var bodyHtml = "<center><h1>Page</h1></center>";
   
@@ -302,7 +345,7 @@ function getData_dataStore(ev, id, field, details) {
   			}
   		}	 
   	} 
-  	return null;		
+  	return data;		
   }
 }
 

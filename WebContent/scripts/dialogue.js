@@ -66,23 +66,32 @@ function showDialogue(url) {
             		}
             	}
             	
-            	// if this is the login page go to the real thing
-            	if (bodyHtml.indexOf("<input type=\"submit\" value=\"log in\">") > 0) window.location = "login.jsp?requestPath=" + window.location; 
+            	// if this is the login page (usually because our session has expired)
+            	if (bodyHtml.indexOf("<input type=\"submit\" value=\"log in\">") > 0) {
+            		
+            		// stop the save changes onunload prompt
+            		_dirty = false;
+            		// go to the login page
+            		window.location = "login.jsp?requestPath=" + window.location; 
+            		
+            	} else {
             	
-            	// inject the html and JavaScript
-            	dialogue.append(bodyHtml + javaScript);
-            	            	            	
-            	// size the dialogue
-            	dialogue.css({
-            		position : "fixed",
-            		left : (win.width() - dialogue.outerWidth()) / 2,
-            		top : (win.height() - dialogue.outerHeight()) / 3
-            	});
+	            	// inject the html and JavaScript
+	            	dialogue.append(bodyHtml + javaScript);
+	            	            	            	
+	            	// size the dialogue
+	            	dialogue.css({
+	            		position : "fixed",
+	            		left : (win.width() - dialogue.outerWidth()) / 2,
+	            		top : (win.height() - dialogue.outerHeight()) / 3
+	            	});
+	            	
+	            	// this seems to be the best way to avoid the resizing/flicker when showing
+	            	window.setTimeout( function() {
+	            		dialogue.show();
+	            	}, 10);
             	
-            	// this seems to be the best way to avoid the resizing/flicker when showing
-            	window.setTimeout( function() {
-            		dialogue.show();
-            	}, 10);
+            	}
             	
         	}        	        	
         }

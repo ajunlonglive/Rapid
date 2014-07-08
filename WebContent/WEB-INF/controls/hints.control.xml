@@ -77,7 +77,14 @@ for (var i in details.controlHints) {
 
 	var controlHint = details.controlHints[i];
 	
-	body.append("<span class='hint' id='" + controlHint.controlId + "_hint'>" + controlHint.text + "</span>");
+	var style = controlHint.style;
+	if (style) {
+		style = " style='" + style + "'";
+	} else {
+		style = "";
+	}
+	
+	body.append("<span class='hint' id='" + controlHint.controlId + "_hint'" + style + ">" + controlHint.text + "</span>");
 	
 	$("#" + controlHint.controlId + "_hint").hide();
 	

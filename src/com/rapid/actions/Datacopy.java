@@ -76,9 +76,9 @@ public class Datacopy extends Action {
 			// we're going to work with the data destinations in a json array
 			JSONArray jsonDataDestinations = null;
 							
-			// try and get the data destinations from the properties into a json array
+			// try and get the data destinations from the properties into a json array, silently fail if not
 			try { jsonDataDestinations = new JSONArray(getProperty("dataDestinations")); } 
-			catch (JSONException e) {}
+			catch (Exception e) {}
 			
 			if (jsonDataDestinations == null) {
 				

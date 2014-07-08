@@ -81,7 +81,7 @@ if (data) {
 	    
 	    <styles>
 	        <style>
-	            <name>Button</name>  
+	            <name>Checkbox</name>  
 	            <getAppliesToFunction>
 					<![CDATA[	      
 return "#" + this.id;

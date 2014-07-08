@@ -66,8 +66,9 @@ function showProperties(control) {
 					}
 				}
 			}			
-		}
-	}
+		} // visible property
+		
+	} // got properties
 		
 }
 
@@ -155,7 +156,8 @@ function Property_bigtext(cell, propertyObject, property, refreshHtml) {
 	// modify if the text is updated
 	_listeners.push( textarea.keyup( {cell : cell, textarea: textarea}, function(ev) { 
 		updateProperty(propertyObject, property, textarea.val(), refreshHtml);  
-	}));	
+	}));
+	
 }
 
 function Property_select(cell, propertyObject, property, refreshHtml, refreshProperties) {
@@ -1616,7 +1618,7 @@ function Property_controlHints(cell, hints, property, refreshHtml, refreshDialog
 	// retain a reference to the dialogue (if we were passed one)
 	var dialogue = refreshDialogue;
 	// if we weren't passed one - make what we need
-	if (!dialogue) dialogue = createDialogue(cell, 300, "Control hints");		
+	if (!dialogue) dialogue = createDialogue(cell, 400, "Control hints");		
 	// grab a reference to the table
 	var table = dialogue.find("table").first();
 	// make sure table is empty
@@ -1629,7 +1631,7 @@ function Property_controlHints(cell, hints, property, refreshHtml, refreshDialog
 	if (!controlHints || controlHints == "[]") controlHints = [];
 	
 	// add a header
-	table.append("<tr><td><b>Control</b></td><td><b>Action</b></td><td colspan='2'><b>Hint text</b></td></td></tr>");
+	table.append("<tr><td><b>Control</b></td><td><b>Action</b></td><td style='min-width:150px;max-width:150px;'><b>Hint text</b></td><td colspan='2'><b>Style</b></td></td></tr>");
 		
 	// loop the controls
 	for (var i in controlHints) {
@@ -1647,7 +1649,7 @@ function Property_controlHints(cell, hints, property, refreshHtml, refreshDialog
 		var typeOptions = "<option value='hover'" + ((controlHint.type == 'hover') ? " selected": "") + ">hover</option><option value='click'" + ((controlHint.type == 'click') ? " selected": "") + ">click</option>";
 		
 		// add the row
-		table.append("<tr><td><select class='control'><option value=''>Please select...</option>" + getControlOptions(controlHint.controlId) + "</select></td><td><select class='type'>" + typeOptions + "</select></td><td style='min-width:100px;'><span>" + controlHint.text + "</span></td><td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
+		table.append("<tr><td><select class='control'><option value=''>Please select...</option>" + getControlOptions(controlHint.controlId) + "</select></td><td><select class='type'>" + typeOptions + "</select></td><td><span>" + controlHint.text + "</span></td><td><input value='" + controlHint.style + "'/></td><td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
 	
 		// add a seperating comma to the text if not the last hint
 		if (i < controlHints.length - 1) text += ",";
@@ -1686,8 +1688,18 @@ function Property_controlHints(cell, hints, property, refreshHtml, refreshDialog
 		// get a reference to the span
 		var span = $(this);
 		//function Property_bigtext(cell, propertyObject, property, refreshHtml) {
-		Property_bigtext(span.parent(), controlHints[span.parent().parent().index()-1], {key: "text"});		
+		Property_bigtext(span.parent(), controlHints[span.parent().parent().index()-1], {key: "text"}, false);		
 	});
+	
+	// add style listeners
+	var styles = table.find("input");
+	// add a listener
+	_listeners.push( styles.change( {controlHints: controlHints}, function(ev) {
+		// get the input
+		var input = $(ev.target);
+		// update the control id
+		ev.data.controlHints[input.parent().parent().index()-1].style = input.val();
+	}));
 				
 	// add delete listeners
 	var deleteImages = table.find("img.delete");
@@ -1720,7 +1732,7 @@ function Property_controlHints(cell, hints, property, refreshHtml, refreshDialog
 		// instantiate array if need be
 		if (!ev.data.hints.controlHints) ev.data.hints.controlHints = [];
 		// add a blank hint
-		ev.data.hints.controlHints.push({controlId: "", type: "hover", text: ""});
+		ev.data.hints.controlHints.push({controlId: "", type: "hover", text: "", style: ""});
 		// refresh
 		Property_controlHints(ev.data.cell, ev.data.hints, {key: "controlHints"}, ev.data.refreshHtml, ev.data.dialogue);		
 	}));

@@ -216,6 +216,8 @@ function showAction(actionsTable, action, collection, refreshFunction) {
 		for (var i in collection) {
 			// if we've found the object
 			if (action === collection[i]) {
+				// add an undo snapshot
+				addUndo();
 				// remove from collection
 				collection.splice(i,1);
 				// refresh (if provided)
