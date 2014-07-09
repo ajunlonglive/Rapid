@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><page>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<page>
     <controls>
         <childControls>
             <childControls>
@@ -8,16 +9,20 @@
                         <value>rapid_P8_C3_</value>
                     </entry>
                     <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
                         <key>text</key>
                         <value>Duplicate application</value>
                     </entry>
                     <entry>
                         <key>colSpan</key>
-                        <value>2</value>
+                        <value>3</value>
                     </entry>
                     <entry>
                         <key>name</key>
-                        <value>Table cell 17</value>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>rowSpan</key>
@@ -34,6 +39,7 @@
                     <rules>background:#e00 url(highlight_red_1x44.png) 50% 50% repeat-x;</rules>
                     <rules>text-shadow :1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;</rules>
                 </styles>
+                <XMLVersion>1</XMLVersion>
             </childControls>
             <properties>
                 <entry>
@@ -41,8 +47,12 @@
                     <value>rapid_P8_C2_</value>
                 </entry>
                 <entry>
+                    <key>classes</key>
+                    <value>[]</value>
+                </entry>
+                <entry>
                     <key>name</key>
-                    <value>Table row 8</value>
+                    <value></value>
                 </entry>
                 <entry>
                     <key>type</key>
@@ -56,6 +66,7 @@
                 <rules>font-weight:bold;</rules>
                 <rules>text-align:center;</rules>
             </styles>
+            <XMLVersion>1</XMLVersion>
         </childControls>
         <childControls>
             <childControls>
@@ -63,6 +74,10 @@
                     <entry>
                         <key>id</key>
                         <value>rapid_P8_C5_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
                     </entry>
                     <entry>
                         <key>text</key>
@@ -74,7 +89,7 @@
                     </entry>
                     <entry>
                         <key>name</key>
-                        <value>Table cell 9</value>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>rowSpan</key>
@@ -89,6 +104,7 @@
                     <appliesTo>#rapid_P8_C5_</appliesTo>
                     <rules>padding-left:5px;</rules>
                 </styles>
+                <XMLVersion>1</XMLVersion>
             </childControls>
             <childControls>
                 <childControls>
@@ -98,6 +114,10 @@
 <entry>
     <key>id</key>
     <value>P8_A8_</value>
+</entry>
+<entry>
+    <key>XMLVersion</key>
+    <value>1</value>
 </entry>
 <entry>
     <key>name</key>
@@ -112,16 +132,17 @@
     <value>existing</value>
 </entry>
                             </properties>
+                            <XMLVersion>1</XMLVersion>
                         </actions>
-                        <filter/>
+                        <filter></filter>
                         <type>keyup</type>
                     </events>
                     <events>
-                        <filter/>
+                        <filter></filter>
                         <type>change</type>
                     </events>
                     <events>
-                        <filter/>
+                        <filter></filter>
                         <type>blur</type>
                     </events>
                     <properties>
@@ -130,12 +151,16 @@
                             <value>rapid_P8_C7_</value>
                         </entry>
                         <entry>
+                            <key>classes</key>
+                            <value>[]</value>
+                        </entry>
+                        <entry>
                             <key>name</key>
                             <value>Name</value>
                         </entry>
                         <entry>
                             <key>value</key>
-                            <value/>
+                            <value></value>
                         </entry>
                         <entry>
                             <key>controlType</key>
@@ -152,13 +177,13 @@
                     </styles>
                     <validation>
                         <allowNulls>false</allowNulls>
-                        <javaScript>var name = $("#rapid_P8_C7_").val();
-if (!name) return "An application name must be provided";
-if (!name.match(new RegExp("^[0-9A-Za-z_-]+$"))) return "An application name can only contain characters a-z, A-Z, 0-9, -, and _";
+                        <javaScript>var name = $(&quot;#rapid_P8_C7_&quot;).val();
+if (!name) return &quot;An application name must be provided&quot;;
+if (!name.match(new RegExp(&quot;^[0-9A-Za-z_-]+$&quot;))) return &quot;An application name can only contain characters a-z, A-Z, 0-9, -, and _&quot;;
 var exists = false;
 $.ajax({
-    url: "designer?action=checkApp&amp;name=" + name,
-    type: "GET",    
+    url: &quot;designer?action=checkApp&amp;name=&quot; + name,
+    type: &quot;GET&quot;,    
     async: false,                
     success: function(result) {
         if (result) {
@@ -166,11 +191,12 @@ $.ajax({
         }
     }
 });
-if (exists) return "An application with this name already exists";</javaScript>
+if (exists) return &quot;An application with this name already exists&quot;;</javaScript>
                         <message>An application name can only contain characters a-z, A-Z, 0-9, -, and _</message>
-                        <regEx/>
+                        <regEx></regEx>
                         <type>javascript</type>
                     </validation>
+                    <XMLVersion>1</XMLVersion>
                 </childControls>
                 <properties>
                     <entry>
@@ -178,8 +204,12 @@ if (exists) return "An application with this name already exists";</javaScript>
                         <value>rapid_P8_C6_</value>
                     </entry>
                     <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
                         <key>text</key>
-                        <value/>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -187,7 +217,7 @@ if (exists) return "An application with this name already exists";</javaScript>
                     </entry>
                     <entry>
                         <key>name</key>
-                        <value>Table cell 10</value>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>rowSpan</key>
@@ -200,9 +230,71 @@ if (exists) return "An application with this name already exists";</javaScript>
                 </properties>
                 <styles>
                     <appliesTo>#rapid_P8_C6_</appliesTo>
-                    <rules>padding-right:25px;</rules>
                     <rules>width:250px;</rules>
                 </styles>
+                <XMLVersion>1</XMLVersion>
+            </childControls>
+            <childControls>
+                <childControls>
+                    <events>
+                        <filter></filter>
+                        <type>click</type>
+                    </events>
+                    <properties>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
+                        </entry>
+                        <entry>
+                            <key>id</key>
+                            <value>rapid_P8_C27_</value>
+                        </entry>
+                        <entry>
+                            <key>file</key>
+                            <value>help_16x16.png</value>
+                        </entry>
+                        <entry>
+                            <key>name</key>
+                            <value>hintDupName</value>
+                        </entry>
+                        <entry>
+                            <key>type</key>
+                            <value>image</value>
+                        </entry>
+                    </properties>
+                    <XMLVersion>1</XMLVersion>
+                </childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P8_C24_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
+                        <key>text</key>
+                        <value></value>
+                    </entry>
+                    <entry>
+                        <key>colSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>rowSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableCell</value>
+                    </entry>
+                </properties>
+                <styles>
+                    <appliesTo>#rapid_P8_C24_</appliesTo>
+                    <rules>padding-right:10px;</rules>
+                </styles>
+                <XMLVersion>1</XMLVersion>
             </childControls>
             <properties>
                 <entry>
@@ -210,8 +302,12 @@ if (exists) return "An application with this name already exists";</javaScript>
                     <value>rapid_P8_C4_</value>
                 </entry>
                 <entry>
+                    <key>classes</key>
+                    <value>[]</value>
+                </entry>
+                <entry>
                     <key>name</key>
-                    <value>Table row 4</value>
+                    <value></value>
                 </entry>
                 <entry>
                     <key>type</key>
@@ -222,6 +318,7 @@ if (exists) return "An application with this name already exists";</javaScript>
                 <appliesTo>.</appliesTo>
                 <rules>padding:5px</rules>
             </styles>
+            <XMLVersion>1</XMLVersion>
         </childControls>
         <childControls>
             <childControls>
@@ -229,6 +326,10 @@ if (exists) return "An application with this name already exists";</javaScript>
                     <entry>
                         <key>id</key>
                         <value>rapid_P8_C10_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
                     </entry>
                     <entry>
                         <key>text</key>
@@ -240,7 +341,7 @@ if (exists) return "An application with this name already exists";</javaScript>
                     </entry>
                     <entry>
                         <key>name</key>
-                        <value>Table cell 11</value>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>rowSpan</key>
@@ -255,6 +356,7 @@ if (exists) return "An application with this name already exists";</javaScript>
                     <appliesTo>#rapid_P8_C10_</appliesTo>
                     <rules>padding-left:5px;</rules>
                 </styles>
+                <XMLVersion>1</XMLVersion>
             </childControls>
             <childControls>
                 <childControls>
@@ -264,6 +366,10 @@ if (exists) return "An application with this name already exists";</javaScript>
 <entry>
     <key>id</key>
     <value>P8_A13_</value>
+</entry>
+<entry>
+    <key>XMLVersion</key>
+    <value>1</value>
 </entry>
 <entry>
     <key>name</key>
@@ -278,16 +384,17 @@ if (exists) return "An application with this name already exists";</javaScript>
     <value>existing</value>
 </entry>
                             </properties>
+                            <XMLVersion>1</XMLVersion>
                         </actions>
-                        <filter/>
+                        <filter></filter>
                         <type>keyup</type>
                     </events>
                     <events>
-                        <filter/>
+                        <filter></filter>
                         <type>change</type>
                     </events>
                     <events>
-                        <filter/>
+                        <filter></filter>
                         <type>blur</type>
                     </events>
                     <properties>
@@ -301,7 +408,7 @@ if (exists) return "An application with this name already exists";</javaScript>
                         </entry>
                         <entry>
                             <key>value</key>
-                            <value/>
+                            <value></value>
                         </entry>
                         <entry>
                             <key>controlType</key>
@@ -318,11 +425,12 @@ if (exists) return "An application with this name already exists";</javaScript>
                     </styles>
                     <validation>
                         <allowNulls>false</allowNulls>
-                        <javaScript/>
+                        <javaScript></javaScript>
                         <message>An application title must be provided</message>
                         <regEx>[\s\S]</regEx>
                         <type>value</type>
                     </validation>
+                    <XMLVersion>1</XMLVersion>
                 </childControls>
                 <properties>
                     <entry>
@@ -330,8 +438,12 @@ if (exists) return "An application with this name already exists";</javaScript>
                         <value>rapid_P8_C11_</value>
                     </entry>
                     <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
                         <key>text</key>
-                        <value/>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -339,7 +451,65 @@ if (exists) return "An application with this name already exists";</javaScript>
                     </entry>
                     <entry>
                         <key>name</key>
-                        <value>Table cell 12</value>
+                        <value></value>
+                    </entry>
+                    <entry>
+                        <key>rowSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableCell</value>
+                    </entry>
+                </properties>
+                <XMLVersion>1</XMLVersion>
+            </childControls>
+            <childControls>
+                <childControls>
+                    <events>
+                        <filter></filter>
+                        <type>click</type>
+                    </events>
+                    <properties>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
+                        </entry>
+                        <entry>
+                            <key>id</key>
+                            <value>rapid_P8_C28_</value>
+                        </entry>
+                        <entry>
+                            <key>file</key>
+                            <value>help_16x16.png</value>
+                        </entry>
+                        <entry>
+                            <key>name</key>
+                            <value>hintDupTitle</value>
+                        </entry>
+                        <entry>
+                            <key>type</key>
+                            <value>image</value>
+                        </entry>
+                    </properties>
+                    <XMLVersion>1</XMLVersion>
+                </childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P8_C25_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
+                        <key>text</key>
+                        <value></value>
+                    </entry>
+                    <entry>
+                        <key>colSpan</key>
+                        <value>1</value>
                     </entry>
                     <entry>
                         <key>rowSpan</key>
@@ -351,9 +521,10 @@ if (exists) return "An application with this name already exists";</javaScript>
                     </entry>
                 </properties>
                 <styles>
-                    <appliesTo>#rapid_P8_C11_</appliesTo>
-                    <rules>padding-right:25px;</rules>
+                    <appliesTo>#rapid_P8_C25_</appliesTo>
+                    <rules>padding-right:10px;</rules>
                 </styles>
+                <XMLVersion>1</XMLVersion>
             </childControls>
             <properties>
                 <entry>
@@ -361,14 +532,19 @@ if (exists) return "An application with this name already exists";</javaScript>
                     <value>rapid_P8_C9_</value>
                 </entry>
                 <entry>
+                    <key>classes</key>
+                    <value>[]</value>
+                </entry>
+                <entry>
                     <key>name</key>
-                    <value>Table row 5</value>
+                    <value></value>
                 </entry>
                 <entry>
                     <key>type</key>
                     <value>tableRow</value>
                 </entry>
             </properties>
+            <XMLVersion>1</XMLVersion>
         </childControls>
         <childControls>
             <childControls>
@@ -376,6 +552,10 @@ if (exists) return "An application with this name already exists";</javaScript>
                     <entry>
                         <key>id</key>
                         <value>rapid_P8_C15_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
                     </entry>
                     <entry>
                         <key>text</key>
@@ -387,7 +567,7 @@ if (exists) return "An application with this name already exists";</javaScript>
                     </entry>
                     <entry>
                         <key>name</key>
-                        <value>Table cell 13</value>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>rowSpan</key>
@@ -401,20 +581,22 @@ if (exists) return "An application with this name already exists";</javaScript>
                 <styles>
                     <appliesTo>#rapid_P8_C15_</appliesTo>
                     <rules>padding-left:5px;</rules>
+                    <rules>vertical-align:top;</rules>
                 </styles>
+                <XMLVersion>1</XMLVersion>
             </childControls>
             <childControls>
                 <childControls>
                     <events>
-                        <filter/>
+                        <filter></filter>
                         <type>keyup</type>
                     </events>
                     <events>
-                        <filter/>
+                        <filter></filter>
                         <type>change</type>
                     </events>
                     <events>
-                        <filter/>
+                        <filter></filter>
                         <type>blur</type>
                     </events>
                     <properties>
@@ -428,7 +610,7 @@ if (exists) return "An application with this name already exists";</javaScript>
                         </entry>
                         <entry>
                             <key>value</key>
-                            <value/>
+                            <value></value>
                         </entry>
                         <entry>
                             <key>controlType</key>
@@ -446,11 +628,12 @@ if (exists) return "An application with this name already exists";</javaScript>
                     </styles>
                     <validation>
                         <allowNulls>false</allowNulls>
-                        <javaScript/>
-                        <message/>
-                        <regEx/>
-                        <type/>
+                        <javaScript></javaScript>
+                        <message></message>
+                        <regEx></regEx>
+                        <type></type>
                     </validation>
+                    <XMLVersion>1</XMLVersion>
                 </childControls>
                 <properties>
                     <entry>
@@ -458,8 +641,12 @@ if (exists) return "An application with this name already exists";</javaScript>
                         <value>rapid_P8_C16_</value>
                     </entry>
                     <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
                         <key>text</key>
-                        <value/>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -467,7 +654,65 @@ if (exists) return "An application with this name already exists";</javaScript>
                     </entry>
                     <entry>
                         <key>name</key>
-                        <value>Table cell 14</value>
+                        <value></value>
+                    </entry>
+                    <entry>
+                        <key>rowSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableCell</value>
+                    </entry>
+                </properties>
+                <XMLVersion>1</XMLVersion>
+            </childControls>
+            <childControls>
+                <childControls>
+                    <events>
+                        <filter></filter>
+                        <type>click</type>
+                    </events>
+                    <properties>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
+                        </entry>
+                        <entry>
+                            <key>id</key>
+                            <value>rapid_P8_C29_</value>
+                        </entry>
+                        <entry>
+                            <key>file</key>
+                            <value>help_16x16.png</value>
+                        </entry>
+                        <entry>
+                            <key>name</key>
+                            <value>hintDupDescription</value>
+                        </entry>
+                        <entry>
+                            <key>type</key>
+                            <value>image</value>
+                        </entry>
+                    </properties>
+                    <XMLVersion>1</XMLVersion>
+                </childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P8_C26_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
+                        <key>text</key>
+                        <value></value>
+                    </entry>
+                    <entry>
+                        <key>colSpan</key>
+                        <value>1</value>
                     </entry>
                     <entry>
                         <key>rowSpan</key>
@@ -479,9 +724,11 @@ if (exists) return "An application with this name already exists";</javaScript>
                     </entry>
                 </properties>
                 <styles>
-                    <appliesTo>#rapid_P8_C16_</appliesTo>
-                    <rules>padding-right:25px;</rules>
+                    <appliesTo>#rapid_P8_C26_</appliesTo>
+                    <rules>vertical-align:top;</rules>
+                    <rules>padding-right:10px;</rules>
                 </styles>
+                <XMLVersion>1</XMLVersion>
             </childControls>
             <properties>
                 <entry>
@@ -489,14 +736,19 @@ if (exists) return "An application with this name already exists";</javaScript>
                     <value>rapid_P8_C14_</value>
                 </entry>
                 <entry>
+                    <key>classes</key>
+                    <value>[]</value>
+                </entry>
+                <entry>
                     <key>name</key>
-                    <value>Table row 6</value>
+                    <value></value>
                 </entry>
                 <entry>
                     <key>type</key>
                     <value>tableRow</value>
                 </entry>
             </properties>
+            <XMLVersion>1</XMLVersion>
         </childControls>
         <childControls>
             <childControls>
@@ -513,6 +765,10 @@ if (exists) return "An application with this name already exists";</javaScript>
     <value>rapid_P8_C1_</value>
 </entry>
 <entry>
+    <key>XMLVersion</key>
+    <value>1</value>
+</entry>
+<entry>
     <key>name</key>
     <value>Control 24</value>
 </entry>
@@ -525,14 +781,19 @@ if (exists) return "An application with this name already exists";</javaScript>
     <value>control</value>
 </entry>
                             </properties>
+                            <XMLVersion>1</XMLVersion>
                         </actions>
-                        <filter/>
+                        <filter></filter>
                         <type>click</type>
                     </events>
                     <properties>
                         <entry>
                             <key>id</key>
                             <value>rapid_P8_C20_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
                         </entry>
                         <entry>
                             <key>name</key>
@@ -548,9 +809,10 @@ if (exists) return "An application with this name already exists";</javaScript>
                         </entry>
                     </properties>
                     <styles>
-                        <appliesTo>#rapid_P8_C1_9</appliesTo>
+                        <appliesTo>#rapid_P8_C20_</appliesTo>
                         <rules>width:60px;</rules>
                     </styles>
+                    <XMLVersion>1</XMLVersion>
                 </childControls>
                 <properties>
                     <entry>
@@ -558,8 +820,12 @@ if (exists) return "An application with this name already exists";</javaScript>
                         <value>rapid_P8_C19_</value>
                     </entry>
                     <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
                         <key>text</key>
-                        <value/>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -567,7 +833,7 @@ if (exists) return "An application with this name already exists";</javaScript>
                     </entry>
                     <entry>
                         <key>name</key>
-                        <value>Table cell 9</value>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>rowSpan</key>
@@ -583,6 +849,7 @@ if (exists) return "An application with this name already exists";</javaScript>
                     <rules>padding-top:0;</rules>
                     <rules>padding-bottom:10px;</rules>
                 </styles>
+                <XMLVersion>1</XMLVersion>
             </childControls>
             <childControls>
                 <childControls>
@@ -598,6 +865,10 @@ if (exists) return "An application with this name already exists";</javaScript>
     <value>true</value>
 </entry>
 <entry>
+    <key>XMLVersion</key>
+    <value>1</value>
+</entry>
+<entry>
     <key>name</key>
     <value>Validation 25</value>
 </entry>
@@ -610,6 +881,7 @@ if (exists) return "An application with this name already exists";</javaScript>
     <value>true</value>
 </entry>
                             </properties>
+                            <XMLVersion>1</XMLVersion>
                             <controls>rapid_P8_C7_</controls>
                             <controls>rapid_P8_C12_</controls>
                             <failActions xsi:type="control">
@@ -621,6 +893,10 @@ if (exists) return "An application with this name already exists";</javaScript>
     <entry>
         <key>control</key>
         <value>rapid_P8_C23_</value>
+    </entry>
+    <entry>
+        <key>XMLVersion</key>
+        <value>1</value>
     </entry>
     <entry>
         <key>name</key>
@@ -635,6 +911,7 @@ if (exists) return "An application with this name already exists";</javaScript>
         <value>control</value>
     </entry>
 </properties>
+<XMLVersion>1</XMLVersion>
                             </failActions>
                             <passActions xsi:type="control">
 <properties>
@@ -645,6 +922,10 @@ if (exists) return "An application with this name already exists";</javaScript>
     <entry>
         <key>control</key>
         <value>rapid_P8_C23_</value>
+    </entry>
+    <entry>
+        <key>XMLVersion</key>
+        <value>1</value>
     </entry>
     <entry>
         <key>name</key>
@@ -659,6 +940,7 @@ if (exists) return "An application with this name already exists";</javaScript>
         <value>control</value>
     </entry>
 </properties>
+<XMLVersion>1</XMLVersion>
                             </passActions>
                         </actions>
                         <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="rapid">
@@ -666,6 +948,10 @@ if (exists) return "An application with this name already exists";</javaScript>
 <entry>
     <key>id</key>
     <value>P8_A25_</value>
+</entry>
+<entry>
+    <key>XMLVersion</key>
+    <value>1</value>
 </entry>
 <entry>
     <key>childActions</key>
@@ -684,14 +970,19 @@ if (exists) return "An application with this name already exists";</javaScript>
     <value>rapid</value>
 </entry>
                             </properties>
+                            <XMLVersion>1</XMLVersion>
                         </actions>
-                        <filter/>
+                        <filter></filter>
                         <type>click</type>
                     </events>
                     <properties>
                         <entry>
                             <key>id</key>
                             <value>rapid_P8_C23_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
                         </entry>
                         <entry>
                             <key>name</key>
@@ -706,6 +997,11 @@ if (exists) return "An application with this name already exists";</javaScript>
                             <value>button</value>
                         </entry>
                     </properties>
+                    <styles>
+                        <appliesTo>#rapid_P8_C23_</appliesTo>
+                        <rules>width:60px;</rules>
+                    </styles>
+                    <XMLVersion>1</XMLVersion>
                 </childControls>
                 <properties>
                     <entry>
@@ -713,16 +1009,20 @@ if (exists) return "An application with this name already exists";</javaScript>
                         <value>rapid_P8_C22_</value>
                     </entry>
                     <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
                         <key>text</key>
-                        <value/>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>colSpan</key>
-                        <value>1</value>
+                        <value>2</value>
                     </entry>
                     <entry>
                         <key>name</key>
-                        <value>Table cell 10</value>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>rowSpan</key>
@@ -737,8 +1037,9 @@ if (exists) return "An application with this name already exists";</javaScript>
                     <appliesTo>#rapid_P8_C22_</appliesTo>
                     <rules>text-align:right;</rules>
                     <rules>padding-bottom:10px;</rules>
-                    <rules>padding-right:20px;</rules>
+                    <rules>padding-right:15px;</rules>
                 </styles>
+                <XMLVersion>1</XMLVersion>
             </childControls>
             <properties>
                 <entry>
@@ -746,8 +1047,12 @@ if (exists) return "An application with this name already exists";</javaScript>
                     <value>rapid_P8_C18_</value>
                 </entry>
                 <entry>
+                    <key>classes</key>
+                    <value>[]</value>
+                </entry>
+                <entry>
                     <key>name</key>
-                    <value>Table row 6</value>
+                    <value></value>
                 </entry>
                 <entry>
                     <key>type</key>
@@ -758,6 +1063,7 @@ if (exists) return "An application with this name already exists";</javaScript>
                 <appliesTo>.</appliesTo>
                 <rules>margin-top:10px</rules>
             </styles>
+            <XMLVersion>1</XMLVersion>
         </childControls>
         <properties>
             <entry>
@@ -765,8 +1071,12 @@ if (exists) return "An application with this name already exists";</javaScript>
                 <value>rapid_P8_C1_</value>
             </entry>
             <entry>
+                <key>classes</key>
+                <value>[]</value>
+            </entry>
+            <entry>
                 <key>name</key>
-                <value>Table 2</value>
+                <value></value>
             </entry>
             <entry>
                 <key>type</key>
@@ -780,58 +1090,172 @@ if (exists) return "An application with this name already exists";</javaScript>
         </styles>
         <styles>
             <appliesTo>#rapid_P8_C1_ td</appliesTo>
-            <rules>padding-left:15px;</rules>
+            <rules>padding-left:10px;</rules>
             <rules>padding-top:10px;</rules>
         </styles>
+        <XMLVersion>1</XMLVersion>
     </controls>
-    <description/>
+    <controls>
+        <properties>
+            <entry>
+                <key>id</key>
+                <value>rapid_P8_C30_</value>
+            </entry>
+            <entry>
+                <key>classes</key>
+                <value>[]</value>
+            </entry>
+            <entry>
+                <key>details</key>
+                <value>{&quot;controlHints&quot;:[{&quot;text&quot;:&quot;The name of the new application. \nUsed in urls and to create resources. \nBest to keep it short.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P8_C27_&quot;},{&quot;text&quot;:&quot;The title for the new application. \nIt is shown to users.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P8_C28_&quot;},{&quot;text&quot;:&quot;Any further details of the new application.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P8_C29_&quot;}]}</value>
+            </entry>
+            <entry>
+                <key>controlHints</key>
+                <value>[{&quot;text&quot;:&quot;The name of the new application. \nUsed in urls and to create resources. \nBest to keep it short.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P8_C27_&quot;},{&quot;text&quot;:&quot;The title for the new application. \nIt is shown to users.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P8_C28_&quot;},{&quot;text&quot;:&quot;Any further details of the new application.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P8_C29_&quot;}]</value>
+            </entry>
+            <entry>
+                <key>type</key>
+                <value>hints</value>
+            </entry>
+            <entry>
+                <key>initJavaScript</key>
+                <value>true</value>
+            </entry>
+        </properties>
+        <XMLVersion>1</XMLVersion>
+    </controls>
+    <description></description>
     <events>
-        <filter/>
+        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="control">
+            <properties>
+                <entry>
+                    <key>id</key>
+                    <value>P8_A34_</value>
+                </entry>
+                <entry>
+                    <key>control</key>
+                    <value>rapid_P8_C23_</value>
+                </entry>
+                <entry>
+                    <key>name</key>
+                    <value>Control 34</value>
+                </entry>
+                <entry>
+                    <key>command</key>
+                    <value>.disable();</value>
+                </entry>
+                <entry>
+                    <key>type</key>
+                    <value>control</value>
+                </entry>
+            </properties>
+            <XMLVersion>1</XMLVersion>
+        </actions>
+        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="control">
+            <properties>
+                <entry>
+                    <key>id</key>
+                    <value>P8_A32_</value>
+                </entry>
+                <entry>
+                    <key>control</key>
+                    <value>rapid_P8_C12_</value>
+                </entry>
+                <entry>
+                    <key>name</key>
+                    <value>Control 32</value>
+                </entry>
+                <entry>
+                    <key>command</key>
+                    <value>.val($(&quot;#rapid_P0_C392_&quot;).val());</value>
+                </entry>
+                <entry>
+                    <key>type</key>
+                    <value>control</value>
+                </entry>
+            </properties>
+            <XMLVersion>1</XMLVersion>
+        </actions>
+        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="control">
+            <properties>
+                <entry>
+                    <key>id</key>
+                    <value>P8_A33_</value>
+                </entry>
+                <entry>
+                    <key>control</key>
+                    <value>rapid_P8_C17_</value>
+                </entry>
+                <entry>
+                    <key>name</key>
+                    <value>Control 33</value>
+                </entry>
+                <entry>
+                    <key>command</key>
+                    <value>.val($(&quot;#rapid_P0_C393_&quot;).val());</value>
+                </entry>
+                <entry>
+                    <key>type</key>
+                    <value>control</value>
+                </entry>
+            </properties>
+            <XMLVersion>1</XMLVersion>
+        </actions>
+        <filter></filter>
         <type>pageload</type>
     </events>
     <events>
-        <filter/>
+        <filter></filter>
         <type>reusable</type>
     </events>
-    <htmlBody>&lt;table id="rapid_P8_C1_" class="table"&gt;&lt;tbody&gt;&lt;tr id="rapid_P8_C2_" class="tableRow"&gt;&lt;td id="rapid_P8_C3_" colspan="2" class="tabelCell"&gt;Duplicate application&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P8_C4_" class="tableRow"&gt;&lt;td id="rapid_P8_C5_" class="tabelCell"&gt;Name :&lt;/td&gt;&lt;td id="rapid_P8_C6_" class="tabelCell"&gt;&lt;input id="rapid_P8_C7_" value="" class="input"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P8_C9_" class="tableRow"&gt;&lt;td id="rapid_P8_C10_" class="tabelCell"&gt;Title :&lt;/td&gt;&lt;td id="rapid_P8_C11_" class="tabelCell"&gt;&lt;input id="rapid_P8_C12_" value="" class="input"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P8_C14_" class="tableRow"&gt;&lt;td id="rapid_P8_C15_" class="tabelCell"&gt;Description :&lt;/td&gt;&lt;td id="rapid_P8_C16_" class="tabelCell"&gt;&lt;textarea id="rapid_P8_C17_" class="input"&gt;&lt;/textarea&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P8_C18_" class="tableRow"&gt;&lt;td id="rapid_P8_C19_" class="tabelCell"&gt;&lt;button id="rapid_P8_C20_" class="button"&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id="rapid_P8_C22_" class="tabelCell"&gt;&lt;button id="rapid_P8_C23_" class="button"&gt;Save&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
+    <htmlBody>&lt;table id=&quot;rapid_P8_C1_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;rapid_P8_C2_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P8_C3_&quot; colspan=&quot;3&quot; class=&quot;tabelCell&quot;&gt;Duplicate application&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P8_C4_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P8_C5_&quot; class=&quot;tabelCell&quot;&gt;Name :&lt;/td&gt;&lt;td id=&quot;rapid_P8_C6_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P8_C7_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P8_C24_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P8_C27_&quot; src=&quot;applications/rapid/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P8_C9_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P8_C10_&quot; class=&quot;tabelCell&quot;&gt;Title :&lt;/td&gt;&lt;td id=&quot;rapid_P8_C11_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P8_C12_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P8_C25_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P8_C28_&quot; src=&quot;applications/rapid/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P8_C14_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P8_C15_&quot; class=&quot;tabelCell&quot;&gt;Description :&lt;/td&gt;&lt;td id=&quot;rapid_P8_C16_&quot; class=&quot;tabelCell&quot;&gt;&lt;textarea id=&quot;rapid_P8_C17_&quot; class=&quot;input&quot;&gt;&lt;/textarea&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P8_C26_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P8_C29_&quot; src=&quot;applications/rapid/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P8_C18_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P8_C19_&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P8_C20_&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P8_C22_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P8_C23_&quot; class=&quot;button&quot;&gt;Save&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
     <id>P8</id>
+    <modifiedBy>admin</modifiedBy>
+    <modifiedDate>2014-07-09T16:45:40.847+01:00</modifiedDate>
     <name>08_AppDuplicate</name>
     <rolesHtml>
-        <html>&lt;table id="rapid_P8_C1_" class="table"&gt;
+        <html>&lt;table id=&quot;rapid_P8_C1_&quot; class=&quot;table&quot;&gt;
 		&lt;tbody&gt;
-			&lt;tr id="rapid_P8_C2_" class="tableRow"&gt;
-				&lt;td id="rapid_P8_C3_" colspan="2" class="tabelCell"&gt;Duplicate application&lt;/td&gt;
+			&lt;tr id=&quot;rapid_P8_C2_&quot; class=&quot;tableRow&quot;&gt;
+				&lt;td id=&quot;rapid_P8_C3_&quot; colspan=&quot;3&quot; class=&quot;tabelCell&quot;&gt;Duplicate application&lt;/td&gt;
 			&lt;/tr&gt;
-			&lt;tr id="rapid_P8_C4_" class="tableRow"&gt;
-				&lt;td id="rapid_P8_C5_" class="tabelCell"&gt;Name :&lt;/td&gt;
-				&lt;td id="rapid_P8_C6_" class="tabelCell"&gt;
-					&lt;input id="rapid_P8_C7_" value="" class="input"&gt;&lt;/td&gt;
-				&lt;/tr&gt;
-				&lt;tr id="rapid_P8_C9_" class="tableRow"&gt;
-					&lt;td id="rapid_P8_C10_" class="tabelCell"&gt;Title :&lt;/td&gt;
-					&lt;td id="rapid_P8_C11_" class="tabelCell"&gt;
-						&lt;input id="rapid_P8_C12_" value="" class="input"&gt;&lt;/td&gt;
+			&lt;tr id=&quot;rapid_P8_C4_&quot; class=&quot;tableRow&quot;&gt;
+				&lt;td id=&quot;rapid_P8_C5_&quot; class=&quot;tabelCell&quot;&gt;Name :&lt;/td&gt;
+				&lt;td id=&quot;rapid_P8_C6_&quot; class=&quot;tabelCell&quot;&gt;
+					&lt;input id=&quot;rapid_P8_C7_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
+					&lt;td id=&quot;rapid_P8_C24_&quot; class=&quot;tabelCell&quot;&gt;
+						&lt;img id=&quot;rapid_P8_C27_&quot; src=&quot;applications/rapid/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;
 					&lt;/tr&gt;
-					&lt;tr id="rapid_P8_C14_" class="tableRow"&gt;
-						&lt;td id="rapid_P8_C15_" class="tabelCell"&gt;Description :&lt;/td&gt;
-						&lt;td id="rapid_P8_C16_" class="tabelCell"&gt;
-							&lt;textarea id="rapid_P8_C17_" class="input"&gt;&lt;/textarea&gt;
-						&lt;/td&gt;
-					&lt;/tr&gt;
-					&lt;tr id="rapid_P8_C18_" class="tableRow"&gt;
-						&lt;td id="rapid_P8_C19_" class="tabelCell"&gt;
-							&lt;button id="rapid_P8_C20_" class="button"&gt;Cancel&lt;/button&gt;
-						&lt;/td&gt;
-						&lt;td id="rapid_P8_C22_" class="tabelCell"&gt;
-							&lt;button id="rapid_P8_C23_" class="button"&gt;Save&lt;/button&gt;
-						&lt;/td&gt;
-					&lt;/tr&gt;
-				&lt;/tbody&gt;
-			&lt;/table&gt;</html>
+					&lt;tr id=&quot;rapid_P8_C9_&quot; class=&quot;tableRow&quot;&gt;
+						&lt;td id=&quot;rapid_P8_C10_&quot; class=&quot;tabelCell&quot;&gt;Title :&lt;/td&gt;
+						&lt;td id=&quot;rapid_P8_C11_&quot; class=&quot;tabelCell&quot;&gt;
+							&lt;input id=&quot;rapid_P8_C12_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
+							&lt;td id=&quot;rapid_P8_C25_&quot; class=&quot;tabelCell&quot;&gt;
+								&lt;img id=&quot;rapid_P8_C28_&quot; src=&quot;applications/rapid/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;
+							&lt;/tr&gt;
+							&lt;tr id=&quot;rapid_P8_C14_&quot; class=&quot;tableRow&quot;&gt;
+								&lt;td id=&quot;rapid_P8_C15_&quot; class=&quot;tabelCell&quot;&gt;Description :&lt;/td&gt;
+								&lt;td id=&quot;rapid_P8_C16_&quot; class=&quot;tabelCell&quot;&gt;
+									&lt;textarea id=&quot;rapid_P8_C17_&quot; class=&quot;input&quot;&gt;&lt;/textarea&gt;
+								&lt;/td&gt;
+								&lt;td id=&quot;rapid_P8_C26_&quot; class=&quot;tabelCell&quot;&gt;
+									&lt;img id=&quot;rapid_P8_C29_&quot; src=&quot;applications/rapid/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;
+								&lt;/tr&gt;
+								&lt;tr id=&quot;rapid_P8_C18_&quot; class=&quot;tableRow&quot;&gt;
+									&lt;td id=&quot;rapid_P8_C19_&quot; class=&quot;tabelCell&quot;&gt;
+										&lt;button id=&quot;rapid_P8_C20_&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;
+									&lt;/td&gt;
+									&lt;td id=&quot;rapid_P8_C22_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;
+										&lt;button id=&quot;rapid_P8_C23_&quot; class=&quot;button&quot;&gt;Save&lt;/button&gt;
+									&lt;/td&gt;
+								&lt;/tr&gt;
+							&lt;/tbody&gt;
+						&lt;/table&gt;</html>
     </rolesHtml>
     <styles>
         <appliesTo>body</appliesTo>
         <rules>font-size:14px;</rules>
     </styles>
     <title>Duplicate application</title>
-<version>1</version><xmlVersion>1</xmlVersion><XMLVersion>1</XMLVersion></page>
+    <XMLVersion>1</XMLVersion>
+</page>

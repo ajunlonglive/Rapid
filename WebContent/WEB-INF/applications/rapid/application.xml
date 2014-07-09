@@ -29,7 +29,7 @@
     <description>This is the Rapid application and contains all of the pages which the designer and other screens use as dialogues</description>
     <id>rapid</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-07-09T09:40:27.979+01:00</modifiedDate>
+    <modifiedDate>2014-07-09T15:11:54.243+01:00</modifiedDate>
     <name>Rapid</name>
     <pageBackupsMaxSize>5</pageBackupsMaxSize>
     <securityAdapterType>rapid</securityAdapterType>
@@ -55,11 +55,18 @@ tr td { vertical-align: middle; }
 select { border: 1px solid #999; border-radius: 3px; }
 input { 
   border: 1px solid #999; border-radius: 3px; 
-  padding-left: 5px; -webkit-box-sizing: border-box; 
+  padding-left: 5px; 
+  -webkit-box-sizing: border-box; 
   -moz-box-sizing: border-box; 
   box-sizing: order-box;
 }
-textarea { border: 1px solid #999; border-radius: 3px; } </styles>
+textarea { 
+  border: 1px solid #999; 
+  border-radius: 3px; 
+  -webkit-box-sizing: border-box; 
+  -moz-box-sizing: border-box; 
+  box-sizing: order-box;
+} </styles>
     <title>Rapid application</title>
     <XMLVersion>1</XMLVersion>
 </application>

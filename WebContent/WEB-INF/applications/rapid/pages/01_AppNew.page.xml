@@ -5,12 +5,12 @@
             <childControls>
                 <properties>
                     <entry>
-                        <key>classes</key>
-                        <value>[]</value>
-                    </entry>
-                    <entry>
                         <key>id</key>
                         <value>rapid_P1_C3</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
                     </entry>
                     <entry>
                         <key>text</key>
@@ -22,7 +22,7 @@
                     </entry>
                     <entry>
                         <key>name</key>
-                        <value>Table cell 17</value>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>rowSpan</key>
@@ -46,16 +46,16 @@
             </childControls>
             <properties>
                 <entry>
-                    <key>id</key>
-                    <value>rapid_P1_C2</value>
-                </entry>
-                <entry>
                     <key>classes</key>
                     <value>[]</value>
                 </entry>
                 <entry>
+                    <key>id</key>
+                    <value>rapid_P1_C2</value>
+                </entry>
+                <entry>
                     <key>name</key>
-                    <value>Table row 8</value>
+                    <value></value>
                 </entry>
                 <entry>
                     <key>type</key>
@@ -68,12 +68,12 @@
             <childControls>
                 <properties>
                     <entry>
-                        <key>classes</key>
-                        <value>[]</value>
-                    </entry>
-                    <entry>
                         <key>id</key>
                         <value>rapid_P1_C5</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
                     </entry>
                     <entry>
                         <key>text</key>
@@ -143,12 +143,12 @@
                     </events>
                     <properties>
                         <entry>
-                            <key>classes</key>
-                            <value>[]</value>
-                        </entry>
-                        <entry>
                             <key>id</key>
                             <value>rapid_P1_C7</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
                         </entry>
                         <entry>
                             <key>name</key>
@@ -196,12 +196,12 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
                 </childControls>
                 <properties>
                     <entry>
-                        <key>classes</key>
-                        <value>[]</value>
-                    </entry>
-                    <entry>
                         <key>id</key>
                         <value>rapid_P1_C6</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
                     </entry>
                     <entry>
                         <key>text</key>
@@ -238,12 +238,12 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
                     </events>
                     <properties>
                         <entry>
-                            <key>classes</key>
-                            <value>[]</value>
-                        </entry>
-                        <entry>
                             <key>id</key>
                             <value>rapid_P1_C30_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
                         </entry>
                         <entry>
                             <key>file</key>
@@ -262,12 +262,12 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
                 </childControls>
                 <properties>
                     <entry>
-                        <key>classes</key>
-                        <value>[]</value>
-                    </entry>
-                    <entry>
                         <key>id</key>
                         <value>rapid_P1_C31_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
                     </entry>
                     <entry>
                         <key>text</key>
@@ -295,16 +295,16 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
             </childControls>
             <properties>
                 <entry>
-                    <key>classes</key>
-                    <value>[]</value>
-                </entry>
-                <entry>
                     <key>id</key>
                     <value>rapid_P1_C4</value>
                 </entry>
                 <entry>
+                    <key>classes</key>
+                    <value>[]</value>
+                </entry>
+                <entry>
                     <key>name</key>
-                    <value>Table row 4</value>
+                    <value></value>
                 </entry>
                 <entry>
                     <key>type</key>
@@ -321,12 +321,12 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
             <childControls>
                 <properties>
                     <entry>
-                        <key>id</key>
-                        <value>rapid_P1_C9</value>
-                    </entry>
-                    <entry>
                         <key>classes</key>
                         <value>[]</value>
+                    </entry>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P1_C9</value>
                     </entry>
                     <entry>
                         <key>text</key>
@@ -396,12 +396,12 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
                     </events>
                     <properties>
                         <entry>
-                            <key>classes</key>
-                            <value>[]</value>
-                        </entry>
-                        <entry>
                             <key>id</key>
                             <value>rapid_P1_C11</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
                         </entry>
                         <entry>
                             <key>name</key>
@@ -435,12 +435,12 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
                 </childControls>
                 <properties>
                     <entry>
-                        <key>classes</key>
-                        <value>[]</value>
-                    </entry>
-                    <entry>
                         <key>id</key>
                         <value>rapid_P1_C10</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
                     </entry>
                     <entry>
                         <key>text</key>
@@ -473,12 +473,12 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
                     </events>
                     <properties>
                         <entry>
-                            <key>classes</key>
-                            <value>[]</value>
-                        </entry>
-                        <entry>
                             <key>id</key>
                             <value>rapid_P1_C34_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
                         </entry>
                         <entry>
                             <key>file</key>
@@ -497,12 +497,12 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
                 </childControls>
                 <properties>
                     <entry>
-                        <key>classes</key>
-                        <value>[]</value>
-                    </entry>
-                    <entry>
                         <key>id</key>
                         <value>rapid_P1_C32_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
                     </entry>
                     <entry>
                         <key>text</key>
@@ -533,8 +533,12 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
                     <value>rapid_P1_C8</value>
                 </entry>
                 <entry>
+                    <key>classes</key>
+                    <value>[]</value>
+                </entry>
+                <entry>
                     <key>name</key>
-                    <value>Table row 5</value>
+                    <value></value>
                 </entry>
                 <entry>
                     <key>type</key>
@@ -547,12 +551,12 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
             <childControls>
                 <properties>
                     <entry>
-                        <key>id</key>
-                        <value>rapid_P1_C13</value>
-                    </entry>
-                    <entry>
                         <key>classes</key>
                         <value>[]</value>
+                    </entry>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P1_C13</value>
                     </entry>
                     <entry>
                         <key>text</key>
@@ -578,6 +582,7 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
                 <styles>
                     <appliesTo>#rapid_P1_C13</appliesTo>
                     <rules>padding-left:5px;</rules>
+                    <rules>vertical-align:top;</rules>
                 </styles>
                 <XMLVersion>1</XMLVersion>
             </childControls>
@@ -597,12 +602,12 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
                     </events>
                     <properties>
                         <entry>
-                            <key>classes</key>
-                            <value>[]</value>
-                        </entry>
-                        <entry>
                             <key>id</key>
                             <value>rapid_P1_C15</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
                         </entry>
                         <entry>
                             <key>name</key>
@@ -637,12 +642,12 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
                 </childControls>
                 <properties>
                     <entry>
-                        <key>classes</key>
-                        <value>[]</value>
-                    </entry>
-                    <entry>
                         <key>id</key>
                         <value>rapid_P1_C14</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
                     </entry>
                     <entry>
                         <key>text</key>
@@ -675,12 +680,12 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
                     </events>
                     <properties>
                         <entry>
-                            <key>classes</key>
-                            <value>[]</value>
-                        </entry>
-                        <entry>
                             <key>id</key>
                             <value>rapid_P1_C35_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
                         </entry>
                         <entry>
                             <key>file</key>
@@ -699,12 +704,12 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
                 </childControls>
                 <properties>
                     <entry>
-                        <key>classes</key>
-                        <value>[]</value>
-                    </entry>
-                    <entry>
                         <key>id</key>
                         <value>rapid_P1_C33_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
                     </entry>
                     <entry>
                         <key>text</key>
@@ -723,6 +728,10 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
                         <value>tableCell</value>
                     </entry>
                 </properties>
+                <styles>
+                    <appliesTo>#rapid_P1_C33_</appliesTo>
+                    <rules>vertical-align:top;</rules>
+                </styles>
                 <XMLVersion>1</XMLVersion>
             </childControls>
             <properties>
@@ -731,8 +740,12 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
                     <value>rapid_P1_C12</value>
                 </entry>
                 <entry>
+                    <key>classes</key>
+                    <value>[]</value>
+                </entry>
+                <entry>
                     <key>name</key>
-                    <value>Table row 6</value>
+                    <value></value>
                 </entry>
                 <entry>
                     <key>type</key>
@@ -803,12 +816,12 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
                 </childControls>
                 <properties>
                     <entry>
-                        <key>id</key>
-                        <value>rapid_P1_C17</value>
-                    </entry>
-                    <entry>
                         <key>classes</key>
                         <value>[]</value>
+                    </entry>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P1_C17</value>
                     </entry>
                     <entry>
                         <key>text</key>
@@ -965,12 +978,12 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
                     </events>
                     <properties>
                         <entry>
-                            <key>classes</key>
-                            <value>[]</value>
-                        </entry>
-                        <entry>
                             <key>id</key>
                             <value>rapid_P1_C22</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
                         </entry>
                         <entry>
                             <key>name</key>
@@ -993,12 +1006,12 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
                 </childControls>
                 <properties>
                     <entry>
-                        <key>classes</key>
-                        <value>[]</value>
-                    </entry>
-                    <entry>
                         <key>id</key>
                         <value>rapid_P1_C21</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
                     </entry>
                     <entry>
                         <key>text</key>
@@ -1025,22 +1038,22 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
                     <appliesTo>#rapid_P1_C21</appliesTo>
                     <rules>text-align:right;</rules>
                     <rules>padding-bottom:10px;</rules>
-                    <rules>padding-right:10px;</rules>
+                    <rules>padding-right:15px;</rules>
                 </styles>
                 <XMLVersion>1</XMLVersion>
             </childControls>
             <properties>
                 <entry>
-                    <key>classes</key>
-                    <value>[]</value>
-                </entry>
-                <entry>
                     <key>id</key>
                     <value>rapid_P1_C16</value>
                 </entry>
                 <entry>
+                    <key>classes</key>
+                    <value>[]</value>
+                </entry>
+                <entry>
                     <key>name</key>
-                    <value>Table row 6</value>
+                    <value></value>
                 </entry>
                 <entry>
                     <key>type</key>
@@ -1055,12 +1068,12 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
         </childControls>
         <properties>
             <entry>
-                <key>id</key>
-                <value>rapid_P1_C1</value>
-            </entry>
-            <entry>
                 <key>classes</key>
                 <value>[]</value>
+            </entry>
+            <entry>
+                <key>id</key>
+                <value>rapid_P1_C1</value>
             </entry>
             <entry>
                 <key>name</key>
@@ -1078,7 +1091,7 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
         </styles>
         <styles>
             <appliesTo>#rapid_P1_C1 td</appliesTo>
-            <rules>padding-left:15px;</rules>
+            <rules>padding-left:10px;</rules>
             <rules>padding-top:10px;</rules>
         </styles>
         <XMLVersion>1</XMLVersion>
@@ -1086,20 +1099,20 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
     <controls>
         <properties>
             <entry>
-                <key>classes</key>
-                <value>[]</value>
-            </entry>
-            <entry>
                 <key>id</key>
                 <value>rapid_P1_C36_</value>
             </entry>
             <entry>
+                <key>classes</key>
+                <value>[]</value>
+            </entry>
+            <entry>
                 <key>details</key>
-                <value>{&quot;controlHints&quot;:[{&quot;text&quot;:&quot;The application name is used to uniquely identify the application and is used in urls. \nBest to keep it short.&quot;,&quot;controlId&quot;:&quot;rapid_P1_C30_&quot;,&quot;type&quot;:&quot;hover&quot;},{&quot;text&quot;:&quot;The application title is shown to users.&quot;,&quot;controlId&quot;:&quot;rapid_P1_C34_&quot;,&quot;type&quot;:&quot;hover&quot;},{&quot;text&quot;:&quot;Use the description to enter any further information about the application.\nIt is not shown to users.&quot;,&quot;controlId&quot;:&quot;rapid_P1_C35_&quot;,&quot;type&quot;:&quot;hover&quot;}]}</value>
+                <value>{&quot;controlHints&quot;:[{&quot;text&quot;:&quot;The application name is used to uniquely identify the application and is used in urls. \nBest to keep it short.&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P1_C30_&quot;},{&quot;text&quot;:&quot;The application title is shown to users.&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P1_C34_&quot;},{&quot;text&quot;:&quot;Use the description to enter any further information about the application.\nIt is not shown to users.&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P1_C35_&quot;}]}</value>
             </entry>
             <entry>
                 <key>controlHints</key>
-                <value>[{&quot;text&quot;:&quot;The application name is used to uniquely identify the application and is used in urls. \nBest to keep it short.&quot;,&quot;controlId&quot;:&quot;rapid_P1_C30_&quot;,&quot;type&quot;:&quot;hover&quot;},{&quot;text&quot;:&quot;The application title is shown to users.&quot;,&quot;controlId&quot;:&quot;rapid_P1_C34_&quot;,&quot;type&quot;:&quot;hover&quot;},{&quot;text&quot;:&quot;Use the description to enter any further information about the application.\nIt is not shown to users.&quot;,&quot;controlId&quot;:&quot;rapid_P1_C35_&quot;,&quot;type&quot;:&quot;hover&quot;}]</value>
+                <value>[{&quot;text&quot;:&quot;The application name is used to uniquely identify the application and is used in urls. \nBest to keep it short.&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P1_C30_&quot;},{&quot;text&quot;:&quot;The application title is shown to users.&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P1_C34_&quot;},{&quot;text&quot;:&quot;Use the description to enter any further information about the application.\nIt is not shown to users.&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P1_C35_&quot;}]</value>
             </entry>
             <entry>
                 <key>type</key>
@@ -1114,6 +1127,31 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
     </controls>
     <description>Used to create new applications</description>
     <events>
+        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="control">
+            <properties>
+                <entry>
+                    <key>id</key>
+                    <value>P1_A37_</value>
+                </entry>
+                <entry>
+                    <key>control</key>
+                    <value>rapid_P1_C7</value>
+                </entry>
+                <entry>
+                    <key>name</key>
+                    <value>Control 37</value>
+                </entry>
+                <entry>
+                    <key>command</key>
+                    <value>.focus();</value>
+                </entry>
+                <entry>
+                    <key>type</key>
+                    <value>control</value>
+                </entry>
+            </properties>
+            <XMLVersion>1</XMLVersion>
+        </actions>
         <filter></filter>
         <type>pageload</type>
     </events>
@@ -1124,7 +1162,7 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
     <htmlBody>&lt;table id=&quot;rapid_P1_C1&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;rapid_P1_C2&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P1_C3&quot; colspan=&quot;3&quot; class=&quot;tabelCell&quot;&gt;New application&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P1_C4&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P1_C5&quot; class=&quot;tabelCell&quot;&gt;Name&lt;/td&gt;&lt;td id=&quot;rapid_P1_C6&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P1_C7&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P1_C31_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P1_C30_&quot; src=&quot;applications/rapid/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P1_C8&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P1_C9&quot; class=&quot;tabelCell&quot;&gt;Title&lt;/td&gt;&lt;td id=&quot;rapid_P1_C10&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P1_C11&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P1_C32_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P1_C34_&quot; src=&quot;applications/rapid/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P1_C12&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P1_C13&quot; class=&quot;tabelCell&quot;&gt;Description&lt;/td&gt;&lt;td id=&quot;rapid_P1_C14&quot; class=&quot;tabelCell&quot;&gt;&lt;textarea id=&quot;rapid_P1_C15&quot; class=&quot;input&quot;&gt;&lt;/textarea&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P1_C33_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P1_C35_&quot; src=&quot;applications/rapid/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P1_C16&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P1_C17&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P1_C19&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P1_C21&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P1_C22&quot; class=&quot;button&quot;&gt;Save&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
     <id>P1</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-07-07T20:20:24.873+01:00</modifiedDate>
+    <modifiedDate>2014-07-09T16:30:45.153+01:00</modifiedDate>
     <name>01_AppNew</name>
     <rolesHtml>
         <html>&lt;table id=&quot;rapid_P1_C1&quot; class=&quot;table&quot;&gt;

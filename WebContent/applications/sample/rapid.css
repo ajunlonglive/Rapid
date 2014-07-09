@@ -67,7 +67,7 @@ table.grid {
 
 .hint {
 	position: absolute;
-	z-index: 102;
+	z-index: 10009;
 }
 
 /* Tabs control resource styles */

@@ -7,7 +7,7 @@
 }
 
 #rapid_P10_C2_ td {
-	padding-left:15px;
+	padding-left:10px;
 	padding-top:10px;
 }
 
@@ -32,12 +32,12 @@
 	padding-left:5px;
 }
 
-#rapid_P10_C7_ {
-	padding-right:25px;
-}
-
 #rapid_P10_C8_ {
 	width:100%;
+}
+
+#rapid_P10_C38_ {
+	padding-right:10px;
 }
 
 #rapid_P10_C18_ {
@@ -46,6 +46,14 @@
 
 #rapid_P10_C19_ {
 	padding-left:5px;
+}
+
+#rapid_P10_C23_ {
+	width:100%;
+}
+
+#rapid_P10_C39_ {
+	padding-right:10px;
 }
 
 #rapid_P10_C11_ {
@@ -59,7 +67,7 @@
 #rapid_P10_C14_ {
 	text-align:right;
 	padding-bottom:10px;
-	padding-right:20px;
+	padding-right:15px;
 }
 
 #rapid_P10_C15_ {

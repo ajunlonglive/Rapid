@@ -11,7 +11,7 @@ body {
 }
 
 #rapid_P5_C1 td {
-	padding-left:15px;
+	padding-left:10px;
 	padding-top:10px;
 }
 
@@ -32,20 +32,20 @@ body {
 	padding-top:5px;
 }
 
-#rapid_P5_C6 {
-	padding-right:25px;
-}
-
 #rapid_P5_C7 {
 	width:100%;
 }
 
-#rapid_P5_C42_ {
-	padding-right:25px;
+#rapid_P5_C43_ {
+	padding-right:10px;
 }
 
 #rapid_P5_C41_ {
 	width:100%;
+}
+
+#rapid_P5_C44_ {
+	padding-right:10px;
 }
 
 . {
@@ -53,7 +53,7 @@ body {
 }
 
 #rapid_P5_C19 {
-	padding-bottom:20px;
+	padding-bottom:10px;
 }
 
 #rapid_P5_C20 {
@@ -62,8 +62,8 @@ body {
 
 #rapid_P5_C23 {
 	text-align:right;
-	padding-right:20px;
-	padding-bottom:20px;
+	padding-right:15px;
+	padding-bottom:10px;
 }
 
 #rapid_P5_C24 {

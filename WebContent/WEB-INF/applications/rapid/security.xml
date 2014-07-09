@@ -9,7 +9,7 @@
         <name>RapidDesign</name>
     </roles>
     <roles>
-        <description>Design Rapid application</description>
+        <description>Modify Rapid application</description>
         <name>RapidSuper</name>
     </roles>
     <users>
@@ -18,7 +18,7 @@
         <password>admin</password>
         <roles>RapidAdmin</roles>
         <roles>RapidDesign</roles>
-        <roles>RapidSuper</roles>
+        <!--  <roles>RapidSuper</roles>  -->
     </users>
     <users>
         <description>Unprivileged user</description>

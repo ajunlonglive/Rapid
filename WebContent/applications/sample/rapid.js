@@ -192,29 +192,31 @@ function Init_hints(id, details) {
   		
   		$("#" + controlHint.controlId + "hint").hide();
   		
-  		$("#" + controlHint.controlId).mouseout({controlId: controlHint.controlId}, function(ev) {
-  			$("#" + ev.data.controlId + "hint").hide();
-  		});
-  			
-  		switch (controlHint.type) {		
-  			case "click" :
-  				$("#" + controlHint.controlId).click({controlId: controlHint.controlId}, function(ev) { 
-  					$("#" + ev.data.controlId + "hint").css({
-  						left: ev.clientX + 5,
-  						top: ev.clientY + 5
-  					}).show(); 
-  				});
-  				break;
-  			case "hover" :
-  				$("#" + controlHint.controlId).mouseover({controlId: controlHint.controlId}, function(ev) { 
-  					$("#" + ev.data.controlId + "hint").css({
-  						left: ev.clientX + 5,
-  						top: ev.clientY + 5
-  					}).show();  
-  				});
-  			break;
-  		}
   	}
+  		
+  	$("#" + controlHint.controlId).mouseout({controlId: controlHint.controlId}, function(ev) {
+  		$("#" + ev.data.controlId + "hint").hide();
+  	});
+  		
+  	switch (controlHint.type) {		
+  		case "click" :
+  			$("#" + controlHint.controlId).click({controlId: controlHint.controlId}, function(ev) { 
+  				$("#" + ev.data.controlId + "hint").css({
+  					left: ev.clientX + 5,
+  					top: ev.clientY + 5
+  				}).show(); 
+  			});
+  			break;
+  		case "hover" :
+  			$("#" + controlHint.controlId).mouseover({controlId: controlHint.controlId}, function(ev) { 
+  				$("#" + ev.data.controlId + "hint").css({
+  					left: ev.clientX + 5,
+  					top: ev.clientY + 5
+  				}).show();  
+  			});
+  		break;
+  	}
+  	
   }
 }
 

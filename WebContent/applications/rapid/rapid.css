@@ -11,7 +11,7 @@ table.grid {
 
 .hint {
 	position: absolute;
-	z-index: 102;
+	z-index: 10009;
 }
 
 /* Page control resource styles */
@@ -146,8 +146,15 @@ tr td { vertical-align: middle; }
 select { border: 1px solid #999; border-radius: 3px; }
 input { 
   border: 1px solid #999; border-radius: 3px; 
-  padding-left: 5px; -webkit-box-sizing: border-box; 
+  padding-left: 5px; 
+  -webkit-box-sizing: border-box; 
   -moz-box-sizing: border-box; 
   box-sizing: order-box;
 }
-textarea { border: 1px solid #999; border-radius: 3px; } 
+textarea { 
+  border: 1px solid #999; 
+  border-radius: 3px; 
+  -webkit-box-sizing: border-box; 
+  -moz-box-sizing: border-box; 
+  box-sizing: order-box;
+} 
