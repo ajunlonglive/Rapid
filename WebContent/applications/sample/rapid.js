@@ -179,38 +179,41 @@ function Init_hints(id, details) {
   
   	var controlHint = details.controlHints[i];
   	
-  	var style = controlHint.style;
-  	if (style) {
-  		style = " style='" + style + "'";
-  	} else {
-  		style = "";
-  	}
+  	if (!$("#" + controlHint.controlId + "hint")[0]) {
   	
-  	body.append("<span class='hint' id='" + controlHint.controlId + "_hint'" + style + ">" + controlHint.text + "</span>");
-  	
-  	$("#" + controlHint.controlId + "_hint").hide();
-  	
-  	$("#" + controlHint.controlId).mouseout({controlId: controlHint.controlId}, function(ev) {
-  		$("#" + ev.data.controlId + "_hint").hide();
-  	});
+  		var style = controlHint.style;
+  		if (style) {
+  			style = " style='" + style + "'";
+  		} else {
+  			style = "";
+  		}
   		
-  	switch (controlHint.type) {		
-  		case "click" :
-  			$("#" + controlHint.controlId).click({controlId: controlHint.controlId}, function(ev) { 
-  				$("#" + ev.data.controlId + "_hint").css({
-  					left: ev.clientX + 5,
-  					top: ev.clientY + 5
-  				}).show(); 
-  			});
+  		body.append("<span class='hint' id='" + controlHint.controlId + "hint'" + style + ">" + controlHint.text + "</span>");
+  		
+  		$("#" + controlHint.controlId + "hint").hide();
+  		
+  		$("#" + controlHint.controlId).mouseout({controlId: controlHint.controlId}, function(ev) {
+  			$("#" + ev.data.controlId + "hint").hide();
+  		});
+  			
+  		switch (controlHint.type) {		
+  			case "click" :
+  				$("#" + controlHint.controlId).click({controlId: controlHint.controlId}, function(ev) { 
+  					$("#" + ev.data.controlId + "hint").css({
+  						left: ev.clientX + 5,
+  						top: ev.clientY + 5
+  					}).show(); 
+  				});
+  				break;
+  			case "hover" :
+  				$("#" + controlHint.controlId).mouseover({controlId: controlHint.controlId}, function(ev) { 
+  					$("#" + ev.data.controlId + "hint").css({
+  						left: ev.clientX + 5,
+  						top: ev.clientY + 5
+  					}).show();  
+  				});
   			break;
-  		case "hover" :
-  			$("#" + controlHint.controlId).mouseover({controlId: controlHint.controlId}, function(ev) { 
-  				$("#" + ev.data.controlId + "_hint").css({
-  					left: ev.clientX + 5,
-  					top: ev.clientY + 5
-  				}).show();  
-  			});
-  			break;
+  		}
   	}
   }
 }

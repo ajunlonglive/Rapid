@@ -5,15 +5,20 @@ Functions related to control properties
 */
 
 // this holds all the property listeners so they can be properly detached
-var _listeners = new Array();
+var _listeners = [];
 
 // this renders all the control properties in the properties panel
 function showProperties(control) {
 	
+	// remove any listeners
+	for (var i in _listeners) {
+		_listeners[i].unbind();
+	}
+	
 	// grab a reference to any dialogues
 	var propertiesDialogues = $("#propertiesDialogues");
 	// empty any propertyDialogues that we may have used before
-	propertiesDialogues.children().remove();
+	propertiesDialogues.children().remove();		
 		
 	// grab a reference to the properties div
 	var propertiesPanel = $(".propertiesPanelDiv");

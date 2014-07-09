@@ -881,6 +881,7 @@ public class Rapid extends Action {
 						Webservice webservice = webservices.get(index);
 						// check the type
 						if (webservice.getClass() == JavaWebservice.class) {
+							
 							// cast to our type
 							JavaWebservice javaWebservice = (JavaWebservice) webservice;
 							

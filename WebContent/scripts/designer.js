@@ -91,6 +91,8 @@ function addUndo(keepRedo) {
 	var page = JSON.stringify(getDataObject(_page));
 	// if the page is different from the last item on the undo stack push it on
 	if (_undo.length == 0 || (_undo.length > 0 && page != _undo[_undo.length - 1])) _undo.push(page);
+	// remove an item from the bottom of the stack if it's too big
+	if (_undo.length > 50) _undo.splice(0, 1);
 	// enable undo button
 	$("#undo").enable();
 	// undo snapshots from the undo button create a redo snap shotshot if the snapshot request comes from elsewhere remove redo
