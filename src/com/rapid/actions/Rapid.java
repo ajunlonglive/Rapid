@@ -38,6 +38,7 @@ import com.rapid.server.RapidHttpServlet;
 import com.rapid.server.RapidServletContextListener;
 import com.rapid.server.RapidHttpServlet.RapidRequest;
 import com.rapid.server.filter.RapidFilter;
+import com.rapid.soa.JavaWebservice;
 import com.rapid.soa.SOAElementRestriction;
 import com.rapid.soa.SOASchema;
 import com.rapid.soa.SQLWebservice;
@@ -861,6 +862,45 @@ public class Rapid extends Action {
 				
 				if (!foundWebservice) result.put("message", "SQL webservice could not be found");
 				
+			} else if ("SAVESOAJAVA".equals(action)) {
+				
+				// get the index
+				int index = jsonAction.getInt("index");
+				
+				// get the webservices
+				List<Webservice> webservices = app.getWebservices();
+				
+				// remeber whether we found the connection
+				boolean foundWebservice = false;
+				
+				// check we have database connections
+				if (webservices != null) {
+					// check the index we where given will retieve a database connection
+					if (index > -1 && index < webservices.size()) {
+						// get the web service connection
+						Webservice webservice = webservices.get(index);
+						// check the type
+						if (webservice.getClass() == JavaWebservice.class) {
+							// cast to our type
+							JavaWebservice javaWebservice = (JavaWebservice) webservice;
+							
+							// set the webservice properties
+							javaWebservice.setName(jsonAction.getString("name").trim());						
+							javaWebservice.setClassName(jsonAction.getString("className").trim());
+												
+							// save the app
+							app.save(rapidServlet, rapidRequest);
+							
+							foundWebservice = true;
+							
+							// add the application to the response
+							result.put("message", "Java webservice saved");
+						}	
+					}
+				}
+				
+				if (!foundWebservice) result.put("message", "Java webservice could not be found");
+				
 			} else if ("SAVESECURITYADAPT".equals(action)) { 
 				
 				String securityAdapter = jsonAction.getString("securityAdapter").trim();
@@ -1226,22 +1266,39 @@ public class Rapid extends Action {
 				
 			} else if ("NEWSOA".equals(action)) {
 				
-				// get the webservices
-				List<Webservice> webservices = app.getWebservices();
+				// the webservice we are about to make
+				Webservice webservice = null;
 				
-				// make the new database connection
-				Webservice webservice = new SQLWebservice(
-					jsonAction.getString("name").trim()
-				); 
+				// get the type
+				String type = jsonAction.getString("type");
 				
-				// add it to the collection
-				webservices.add(webservice);
+				if ("SQLWebservice".equals(type)) {
+					// make the new database connection
+					webservice = new SQLWebservice( 
+						jsonAction.getString("name").trim()
+					); 
+				} else if ("JavaWebservice".equals(type)) {
+					webservice = new JavaWebservice(
+						jsonAction.getString("name").trim()
+					);
+				}
 				
-				// save the app
-				app.save(rapidServlet, rapidRequest);			
+				// if one was made
+				if (webservice != null) {
+					
+					// add it to the collection
+					app.getWebservices().add(webservice);
 				
-				// add the application to the response
-				result.put("message", "SOA webservice added");
+					// save the app
+					app.save(rapidServlet, rapidRequest);			
+				
+					// add the application to the response
+					result.put("message", "SOA webservice added");
+					
+				} else {
+					// send message
+					result.put("message", "Webservice type not recognised");
+				}
 												
 			} else if ("DELSOA".equals(action)) {
 				
@@ -1465,7 +1522,10 @@ public class Rapid extends Action {
 						dataFactory.close();
 												
 						// add the application to the response
-						result.put("message", "Database connection OK");
+						result.put("message", "Database connection ok");
+						
+						// retain that a connection was found
+						foundConnection = true;
 						
 					}
 				}

@@ -30,8 +30,8 @@ return [
  ["SAVEAPP","Save application details"], 
  ["SAVESTYLES","Save styles"], 
  ["SAVEDBCONN","Save database connection"],
- ["SAVESOASQL","Save SOA SQL webservice"],
- ["SAVESOAOBJ","Save SOA object webservice"],
+ ["SAVESOASQL","Save SQL webservice"],
+ ["SAVESOAJAVA","Save Java webservice"],
  ["SAVESECURITYADAPT","Save security adapter"],
  ["SAVEACTIONS","Save actions"],
  ["SAVECONTROLS","Save controls"],    
@@ -194,7 +194,18 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 				index: $("#rapid_P0_C483_").find("tr.rowSelect").index()-1,
 				name: $("#rapid_P0_C496_").val(), 
 				databaseConnectionIndex: $("#rapid_P0_C536_")[0].selectedIndex,
-				details: _soaDetails
+				details: _soaDetails,
+				type: "SQLWebservice"
+			};	
+		break;
+		case "SAVESOAJAVA" :		
+			data = { 
+				actionType: actionType, 
+				appId: $("#rapid_P0_C43").val(), 
+				index: $("#rapid_P0_C483_").find("tr.rowSelect").index()-1,
+				name: $("#rapid_P0_C944_").val(), 
+				className: $("#rapid_P0_C989_").val(),
+				type: "JavaWebservice"
 			};	
 		break;
 		case "SAVESECURITYADAPT" :		
@@ -402,8 +413,8 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 				userName: $("#rapid_P0_C340").val(),
 				password: $("#rapid_P0_C341").val()
 			};	
-			callback = function() {
-				alert("Database connection OK");
+			callback = function(data) {
+				alert(data.message);
 			};															
 		break;
 		case "DELAPPBACKUP" : case "RESTOREAPPBACKUP" : 

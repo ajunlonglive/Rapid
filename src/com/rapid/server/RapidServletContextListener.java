@@ -675,6 +675,7 @@ public class RapidServletContextListener implements ServletContextListener {
 			_jaxbClasses.add(Class.forName("com.rapid.soa.SOAElementRestriction$EnumerationRestriction"));
 			_jaxbClasses.add(Class.forName("com.rapid.soa.Webservice"));
 			_jaxbClasses.add(Class.forName("com.rapid.soa.SQLWebservice"));
+			_jaxbClasses.add(Class.forName("com.rapid.soa.JavaWebservice"));
 			_jaxbClasses.add(Class.forName("com.rapid.core.Application"));
 			_jaxbClasses.add(Class.forName("com.rapid.core.Validation"));
 			_jaxbClasses.add(Class.forName("com.rapid.core.Action"));

@@ -80,7 +80,7 @@ function getRestrictionLabel(restriction) {
 function showSOARestrictions(collection, control) {
 	
 	// get element from collection
-	var element = collection[control.parent().parent().index() - 1];
+	var element = collection[control.parent().index() - 1];
 	// add restrictions collection if need be
 	if (!element.restrictions) element.restrictions = [];
 	// set restrictions collection
@@ -168,6 +168,12 @@ function showSOARestrictions(collection, control) {
 
 // this function is called from the GETSOA Rapid action
 function loadSOA(details) {
+	
+	// hide the sql webservice panel
+	$("#rapid_P0_C489_").hide();
+	// hide the java class webservice panel
+	$("#rapid_P0_C991_").hide();
+	
 	switch (details.type) {
 	case "SQLWebservice" :			
 		
@@ -218,7 +224,7 @@ function loadSOA(details) {
 					}
 				}
 				// populate child element
-				requestTable.append("<tr><td class='elementName'><input value='" + element.name + "' /></td><td>" + getSOADataTypeSelect(element.dataType) + "</td><td class='restriction'><a href='#'>" + text + "</a></td><td><img class='delete' src='images/bin_16x16.png' /><img class='reorder' src='images/moveUpDown_16x16.png' /></td></tr>");				
+				requestTable.append("<tr><td class='elementName'><input value='" + element.name + "' /></td><td>" + getSOADataTypeSelect(element.dataType) + "</td><td class='restriction'>" + text + "</td><td><img class='delete' src='images/bin_16x16.png' /><img class='reorder' src='images/moveUpDown_16x16.png' /></td></tr>");				
 			}
 			
 			// name
@@ -238,7 +244,7 @@ function loadSOA(details) {
 			});
 			
 			// restrictions
-			requestTable.find("a").click( details, function(ev) {
+			requestTable.find("td.restriction").click( details, function(ev) {
 				// show details
 				showSOARestrictions(requestElement.childElements, $(ev.target));
 			});
@@ -262,9 +268,9 @@ function loadSOA(details) {
 		}
 		
 		// add link
-		requestTable.append("<tr><td colspan='4'><a href='#'>add...</a></td></tr>");
+		requestTable.append("<tr><td colspan='4'>add...</td></tr>");
 		// add click
-		requestTable.find("a").last().click(details, function(ev) {
+		requestTable.find("td").last().click(details, function(ev) {
 			// initialise request object if need be
 			if (!ev.data.requestSchema) ev.data.requestSchema = {}; 
 			// get response object
@@ -312,7 +318,7 @@ function loadSOA(details) {
 					}
 				}
 				// populate child element
-				responseTable.append("<tr><td class='elementName'><input class='elementName' value='" + element.name + "' /></td><td class='elementField'><input class='elementField' value='" + element.field + "' /></td><td>" + getSOADataTypeSelect(element.dataType) + "</td><td class='restriction'><a href='#'>" + text + "</a></td><td><img class='delete' src='images/bin_16x16.png' /><img class='reorder' src='images/moveUpDown_16x16.png' /></td></tr>");				
+				responseTable.append("<tr><td class='elementName'><input class='elementName' value='" + element.name + "' /></td><td class='elementField'><input class='elementField' value='" + element.field + "' /></td><td>" + getSOADataTypeSelect(element.dataType) + "</td><td class='restriction'>" + text + "</td><td><img class='delete' src='images/bin_16x16.png' /><img class='reorder' src='images/moveUpDown_16x16.png' /></td></tr>");				
 			}
 			
 			// name
@@ -340,7 +346,7 @@ function loadSOA(details) {
 			});
 			
 			// restrictions
-			responseTable.find("a").click( details, function(ev) {
+			responseTable.find("td.restriction").click( details, function(ev) {
 				// show details
 				showSOARestrictions(responseElement.childElements, $(ev.target));
 			});
@@ -366,9 +372,9 @@ function loadSOA(details) {
 		}
 		
 		// add child element
-		responseTable.append("<tr><td colspan='4'><a href='#'>add...</a></td></tr>");
+		responseTable.append("<tr><td colspan='4'>add...</td></tr>");
 		// add click
-		responseTable.find("a").last().click(details, function(ev) {
+		responseTable.find("td").last().click(details, function(ev) {
 			// initialise response object if need be
 			if (!ev.data.responseSchema) ev.data.responseSchema = {}; 
 			// get response object
@@ -385,7 +391,24 @@ function loadSOA(details) {
 			loadSOA(ev.data);
 		});
 		
+		// show the updated SQL webservice panel
+		$("#rapid_P0_C489_").show();
+		
 	break;
+	
+	case "JavaWebservice" :
+		
+		// set the name
+		$("#rapid_P0_C944_").val(details.name);
+		
+		// set the class name
+		$("#rapid_P0_C989_").val(details.className);
+		
+		// show the java class webservice panel
+		$("#rapid_P0_C991_").show();
+		
+	break;
+	
 	}
 		
 }

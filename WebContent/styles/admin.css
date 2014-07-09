@@ -21,6 +21,8 @@ td.elementField {
 
 td.restriction {
 	max-width: 60px;
+	font-size: 10px;
+	vertical-align: middle;
 }
 
 table.propertiesPanelTable  {
