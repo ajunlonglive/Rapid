@@ -32,8 +32,7 @@ optgroup {
 #page {
 	border: 0px;
 	position: absolute;
-	display:none;
-	
+	display:none;	
 }
 
 #designerTools {
@@ -43,9 +42,11 @@ optgroup {
 #designCover {
 	opacity:0;
 	filter:alpha(opacity=0); 
-	position:absolute;
-	left:0px;
+	position:fixed;
 	top:0px;
+	left:0px;
+	right:0px;
+	bottom:0px;
 	z-index:10003;
 	background-color:#00f;
 }

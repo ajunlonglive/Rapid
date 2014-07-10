@@ -24,56 +24,62 @@ function showProperties(control) {
 	var propertiesPanel = $(".propertiesPanelDiv");
 	// set the parent height to auto
 	propertiesPanel.parent().css("height","auto");
-	// write the properties heading
-	propertiesPanel.html("<h2>Properties</h2>");
-	// append a table
-	propertiesPanel.append("<table class='propertiesPanelTable'><tbody></tbody></table>");		
-	// get a reference to the table
-	var propertiesTable = propertiesPanel.children().last().children().last();
-	// add the properties header
-	propertiesTable.append("<tr><td colspan='2'><h3>" + control._class.name + "</h3></td></tr>");
-	// add a small break
-	propertiesTable.append("<tr><td colspan='2'></td></tr>");
-	// show the control id if requested
-	if (_app.showControlIds) propertiesTable.append("<tr><td>ID</td><td class='canSelect'>" + control.id + "</td></tr>");
-	// check there are class properties
-	var properties = control._class.properties;
-	if (properties) {
-		// (if a single it's a class not an array due to JSON class conversionf from xml)
-		if ($.isArray(properties.property)) properties = properties.property; 			
-		// loop the class properties
-		for (var i in properties) {
-			// add a row
-			propertiesTable.append("<tr></tr>");
-			// get a reference to the row
-			var propertiesRow = propertiesTable.children().last();
-			// retrieve a property object from the control class
-			var property = properties[i];
-			// check that visibility is not false
-			if (property.visible === undefined || !property.visible === false) {
-				// get the property itself from the control
-				propertiesRow.append("<td>" + property.name + "</td><td></td>");
-				// get the cell the property update control is going in
-				var cell = propertiesRow.children().last();
-				// apply the property function if it starts like a function or look for a known Property_[type] function and call that
-				if (property.changeValueJavaScript.trim().indexOf("function(") == 0) {
-					try {
-						var changeValueFunction = new Function(property.changeValueJavaScript);
-						changeValueFunction.apply(this,[cell, control, property]);
-					} catch (ex) {
-						alert("Error - Couldn't apply changeValueJavaScript for " + control.name + "." + property.name + " " + ex);
-					}
-				} else {
-					if (window["Property_" + property.changeValueJavaScript]) {
-						window["Property_" + property.changeValueJavaScript](cell, control, property, true);
+	
+	// if there was a control
+	if (control) {
+	
+		// write the properties heading
+		propertiesPanel.html("<h2>Properties</h2>");
+		// append a table
+		propertiesPanel.append("<table class='propertiesPanelTable'><tbody></tbody></table>");		
+		// get a reference to the table
+		var propertiesTable = propertiesPanel.children().last().children().last();
+		// add the properties header
+		propertiesTable.append("<tr><td colspan='2'><h3>" + control._class.name + "</h3></td></tr>");
+		// add a small break
+		propertiesTable.append("<tr><td colspan='2'></td></tr>");
+		// show the control id if requested
+		if (_app.showControlIds) propertiesTable.append("<tr><td>ID</td><td class='canSelect'>" + control.id + "</td></tr>");
+		// check there are class properties
+		var properties = control._class.properties;
+		if (properties) {
+			// (if a single it's a class not an array due to JSON class conversionf from xml)
+			if ($.isArray(properties.property)) properties = properties.property; 			
+			// loop the class properties
+			for (var i in properties) {
+				// add a row
+				propertiesTable.append("<tr></tr>");
+				// get a reference to the row
+				var propertiesRow = propertiesTable.children().last();
+				// retrieve a property object from the control class
+				var property = properties[i];
+				// check that visibility is not false
+				if (property.visible === undefined || !property.visible === false) {
+					// get the property itself from the control
+					propertiesRow.append("<td>" + property.name + "</td><td></td>");
+					// get the cell the property update control is going in
+					var cell = propertiesRow.children().last();
+					// apply the property function if it starts like a function or look for a known Property_[type] function and call that
+					if (property.changeValueJavaScript.trim().indexOf("function(") == 0) {
+						try {
+							var changeValueFunction = new Function(property.changeValueJavaScript);
+							changeValueFunction.apply(this,[cell, control, property]);
+						} catch (ex) {
+							alert("Error - Couldn't apply changeValueJavaScript for " + control.name + "." + property.name + " " + ex);
+						}
 					} else {
-						alert("Error - There is no known Property_" + property.changeValueJavaScript + " function");
+						if (window["Property_" + property.changeValueJavaScript]) {
+							window["Property_" + property.changeValueJavaScript](cell, control, property, true);
+						} else {
+							alert("Error - There is no known Property_" + property.changeValueJavaScript + " function");
+						}
 					}
-				}
-			}			
-		} // visible property
+				}			
+			} // visible property
+			
+		} // got properties
 		
-	} // got properties
+	} // got control
 		
 }
 

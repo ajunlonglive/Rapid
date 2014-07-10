@@ -50,8 +50,8 @@ function showValidation(control) {
 	var validationPanel = $(".validationPanelDiv");	
 	// empty it
 	validationPanel.html("");	
-	// only if this control can validate
-	if (control._class.canValidate) {
+	// only if a control and it can validate
+	if (control && control._class.canValidate) {
 		// create a validation object if we don't have one
 		if (!control.validation) {
 			control.validation = {

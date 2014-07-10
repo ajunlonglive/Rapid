@@ -492,6 +492,7 @@ function getDatabaseConnectionOptions(selectIndex) {
 
 // move the border and show properties and actions
 function selectControl(control) {
+	// show all details or cleanup if null
 	if (control) {
 		// store the selection globally
 		_selectedControl = control;
@@ -642,10 +643,22 @@ function selectControl(control) {
 		_selectedControl = null;
 		// hide the selection border
 		_selectionBorder.hide();
+						
 		// hide the properties panel
 		$("#propertiesPanel").hide("slide", {direction: "right"}, 200);
-		// empty any propertyDialogues that we may have used before
-		$("#propertiesDialogues").children().remove();
+		
+		// show null properties
+		showProperties(null);
+		// show null validation
+		showValidation(null);
+		// show null events (and the actions)
+		showEvents(null);
+		// show null styles
+		showStyles(null);
+		
+		// resize the window
+		windowResize("mousedone-nocontrol");
+		
 	}	
 	
 }
@@ -984,7 +997,7 @@ function loadPage() {
 	// check there is a page selected in the dropdown
 	if (pageId) {										
 		// set the page id
-		_page.id = pageId;
+		_page.id = pageId;		
 		// reload the page iFrame with resources for the app and this page
     	_pageIframe[0].contentDocument.location.href = "designpage.jsp?a=" + _app.id + "&p=" + _page.id;	
     	// set dirty to false
@@ -1622,13 +1635,11 @@ $(document).ready( function() {
 		} else { 
 			// not got an object if there are no child controls on the page select it, otherwise clear everything
 			if (_page.childControls && _page.childControls.length == 0 && !$("#propertiesPanel").is(":visible") ) {
+				// select the page
 				selectControl(_page);
 			} else {
-				_selectedControl = null;				
-				// hide the properties			
-				$("#propertiesPanel").hide("slide", {direction: "right"}, 200);
-				// empty any propertyDialogues that we may have used before
-				$("#propertiesDialogues").children().remove();
+				// select a null control (this does a lot of cleanup)
+				selectControl(null);				
 			}
 			// hide the select border
 			_selectionBorder.hide();			
@@ -2059,10 +2070,13 @@ $(document).mousemove( function(ev) {
 	var c = getMouseControl(ev);
 	// if a control is selected and the mouse is down look for the controls new destination
 	if (_selectedControl) {
+		
 		// check the mouse is down (and the selected control has an object)
 		if (_mouseDown && _selectedControl.object[0]) {		
+		
 			// if we have just started moving position the cover
 			if (!_movingControl) {
+				
 				// position the cover
 				_selectionCover.css({
 					"width":_selectedControl.object.outerWidth(), 
@@ -2070,14 +2084,17 @@ $(document).mousemove( function(ev) {
 					"left":_selectedControl.object.offset().left + _panelPinnedOffset, 	
 					"top":_selectedControl.object.offset().top
 				});
+				
 				if (_selectedControl.object.is(":visible")) {
 					// show it if selected object visible
 					_selectionCover.show();				
 					// show the insert
 					_selectionInsert.show();
 				}			
-				// hide the properties			
+				
+				// hide the properties - this can cause the properties panel to bounce
 				$("#propertiesPanel").hide("slide", {direction: "right"}, 200);
+				
 				// remember we are now moving an object
 				_movingControl = true;
 			}
@@ -2314,31 +2331,34 @@ function windowResize(ev) {
 	// get the window height
 	var height = win.height();
 	
-			
+	
+	// reset the page iFrame height so non-visual controls aren't too far down the page
+	_pageIframe.css("height","auto");
+	
 	// get the control panel
-	var controlPanel = $("#controlPanel");
-	// get its current height (less the combined top and bottom padding)
-	var controlPanelHeight = controlPanel.outerHeight(true);
+	var controlPanel = $("#controlPanel");		
+	// set it's height to auto
+	controlPanel.css("height","auto");
 	
 	// get the properties panel
 	var propertiesPanel = $("#propertiesPanel");
-	// get its current height
-	var propertiesPanelHeight = propertiesPanel.outerHeight(true);
+	// set it's height to auto
+	propertiesPanel.css("height","auto");
 	
 	// get the current iframe contents height
 	var iframeHeight =_pageIframe[0].contentWindow.document.body.offsetHeight;
 	
+	// get its current height (less the combined top and bottom padding)
+	var controlPanelHeight = controlPanel.outerHeight(true);
+		
+	// get its current height
+	var propertiesPanelHeight = propertiesPanel.outerHeight(true);
+			
 	// log
 	//console.log("caller = " + caller + ", window = " + height + ", control panel = " + controlPanelHeight + ", properties panel = " + propertiesPanelHeight + ", iframe = " + iframeHeight);
 		
 	// increase height to the tallest of the window, the panels, or the iFrame
 	height = Math.max(height, controlPanelHeight, propertiesPanelHeight, iframeHeight);
-	
-	// cover the entire screen with the design cover
-	_designCover.css({
-		"width": width,
-		"height": height
-	});
 	
 	// adjust controlPanel height if necessary, less it's padding
 	if (controlPanelHeight < height) controlPanel.css({height: height - 20});

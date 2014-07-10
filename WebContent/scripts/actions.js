@@ -147,8 +147,8 @@ function showEvents(control) {
 	var actionsPanel = $("#actionsPanelDiv");	
 	// empty it
 	actionsPanel.html("");	
-	// only if there are events in the control class
-	if (control._class.events) {
+	// only if there is a control and there are events in the control class
+	if (control && control._class.events) {
 		// get a reference to the events
 		var events = control._class.events;
 		// JSON library single member check

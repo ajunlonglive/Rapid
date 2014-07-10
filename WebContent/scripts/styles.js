@@ -693,8 +693,8 @@ function showStyles(control) {
 	// hide the input
 	_styleInput.hide();
 		
-	// check the class for any styling
-	if (control._class.styles && control._class.styles.style) {
+	// check there is a control and the class for any styling
+	if (control && control._class.styles && control._class.styles.style) {
 		
 		// add a heading and table
 		_stylesPanelDiv.append("<h2>Styles</h2>");		
