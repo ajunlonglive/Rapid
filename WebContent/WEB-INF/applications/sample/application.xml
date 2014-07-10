@@ -36,7 +36,7 @@
     <description>This is a sample Rapid application provided to demonstrate many common Rapid features</description>
     <id>sample</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-07-09T11:21:59.111+01:00</modifiedDate>
+    <modifiedDate>2014-07-10T16:40:27.286+01:00</modifiedDate>
     <name>sample</name>
     <pageBackupsMaxSize>3</pageBackupsMaxSize>
     <securityAdapterType>rapid</securityAdapterType>
@@ -170,11 +170,6 @@ and lower(surname) like lower(?)||'%'
 order by surname, birthday
 /* Return at most 10 rows */
 limit 10</SQL>
-    </webservices>
-    <webservices xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="javaWebservice">
-        <id>Test</id>
-        <name>Test</name>
-        <className>com.test</className>
     </webservices>
     <XMLVersion>1</XMLVersion>
 </application>
