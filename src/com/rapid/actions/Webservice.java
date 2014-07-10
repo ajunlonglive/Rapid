@@ -1,22 +1,40 @@
+/*
+
+Copyright (C) 2014 - Gareth Edwards / Rapid Information Systems
+
+gareth.edwards@rapid-is.co.uk
+
+
+This file is part of the Rapid Application Platform
+
+RapidSOA is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version. The terms require you to include
+the original copyright, and the license notice in all redistributions.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
+
+*/
+
 package com.rapid.actions;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.annotation.XmlType;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,18 +45,12 @@ import com.rapid.core.Application;
 import com.rapid.core.Control;
 import com.rapid.core.Page;
 import com.rapid.core.Parameter;
-import com.rapid.core.Application.DatabaseConnection;
-import com.rapid.data.ConnectionAdapter;
-import com.rapid.data.DataFactory;
-import com.rapid.data.DataFactory.Parameters;
 import com.rapid.server.RapidHttpServlet;
 import com.rapid.server.RapidHttpServlet.RapidRequest;
 import com.rapid.soa.SOAData;
 import com.rapid.soa.SOADataWriter;
 import com.rapid.soa.SOADataReader.SOAXMLReader;
-import com.rapid.soa.SOADataWriter.SOAJSONWriter;
 import com.rapid.soa.SOADataWriter.SOARapidWriter;
-import com.rapid.soa.SOADataWriter.SOAXMLWriter;
 
 public class Webservice extends Action {
 	

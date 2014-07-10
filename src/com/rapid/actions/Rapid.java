@@ -1,10 +1,34 @@
+/*
+
+Copyright (C) 2014 - Gareth Edwards / Rapid Information Systems
+
+gareth.edwards@rapid-is.co.uk
+
+
+This file is part of the Rapid Application Platform
+
+RapidSOA is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version. The terms require you to include
+the original copyright, and the license notice in all redistributions.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
+
+*/
+
 package com.rapid.actions;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
 import java.sql.Connection;
@@ -13,9 +37,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.servlet.ServletContext;
-import javax.xml.bind.JAXBException;
 
-import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,7 +50,6 @@ import com.rapid.core.Page;
 import com.rapid.core.Application.DatabaseConnection;
 import com.rapid.data.ConnectionAdapter;
 import com.rapid.data.DataFactory;
-import com.rapid.security.RapidSecurityAdapter.Security;
 import com.rapid.security.SecurityAdapater;
 import com.rapid.security.SecurityAdapater.Role;
 import com.rapid.security.SecurityAdapater.SecurityAdapaterException;
@@ -37,7 +58,6 @@ import com.rapid.security.SecurityAdapater.Users;
 import com.rapid.server.RapidHttpServlet;
 import com.rapid.server.RapidServletContextListener;
 import com.rapid.server.RapidHttpServlet.RapidRequest;
-import com.rapid.server.filter.RapidFilter;
 import com.rapid.soa.JavaWebservice;
 import com.rapid.soa.SOAElementRestriction;
 import com.rapid.soa.SOASchema;
