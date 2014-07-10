@@ -99,7 +99,7 @@ function Action_navigate(url, dialogue) {
 	            	// this seems to be the best way to avoid the resizing/flicker when showing
 	            	window.setTimeout( function() {
 	            		dialogue.show();
-	            	}, 5);
+	            	}, 200);
 		           	           	        	            	            	            
 		    	}        	       	        	        	        	        		
 		    }       	        	        

@@ -89,7 +89,7 @@ function showDialogue(url) {
 	            	// this seems to be the best way to avoid the resizing/flicker when showing
 	            	window.setTimeout( function() {
 	            		dialogue.show();
-	            	}, 10);
+	            	}, 200);
             	
             	}
             	

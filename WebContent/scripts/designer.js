@@ -243,7 +243,29 @@ function getMouseControl(ev, array) {
 		
 		// we use this function recursively so start at the page if no array specified
 		if (array == null) array = _page.childControls;
-		// loop all of our objects
+		
+		// loop all of our objects for non-visual controls
+		for (var i in array) {
+			// get a reference to this control
+			var c = array[i];
+			// get a reference to this object
+			var o = c.object;
+			// only if this object is non-visual
+			if (o.is(".nonVisibleControl")) {
+				// is the mouse below this object
+				if (ev.pageX - _panelPinnedOffset >= o.offset().left && ev.pageY >= o.offset().top) {
+					// get the height of the object
+					var height = o.outerHeight();
+					// does the width and height of this object mean we are inside it
+					if  (ev.pageX - _panelPinnedOffset <= o.offset().left + o.outerWidth() && ev.pageY <= o.offset().top + height) {
+						// return this non-visual control
+						return c;
+					}
+				}
+			}
+		}
+		
+		// loop all of our objects 
 		for (var i in array) {
 			// get a reference to this control
 			var c = array[i];
@@ -492,10 +514,19 @@ function getDatabaseConnectionOptions(selectIndex) {
 
 // move the border and show properties and actions
 function selectControl(control) {
+	
 	// show all details or cleanup if null
 	if (control) {
+		
 		// store the selection globally
 		_selectedControl = control;
+		
+		// get the body into an object
+		var body = $("body");
+		
+		// retain the current scroll positions
+		var scollTop= body.scrollTop();
+		var scrolLeft = body.scrollLeft();
 		
 		// show the properties
 		showProperties(_selectedControl);
@@ -637,6 +668,10 @@ function selectControl(control) {
 						
 		// show the properties panel	
 		showPropertiesPanel();	
+		
+		// revert the scroll positions
+		body.scrollTop(scollTop);
+		body.scrollLeft(scrolLeft);
 		
 	} else {
 		
@@ -2378,7 +2413,7 @@ function windowResize(ev) {
 	var propertiesPanelHeight = propertiesPanel.outerHeight(true);
 			
 	// log
-	console.log("caller = " + caller + ", window = " + height + ", control panel = " + controlPanelHeight + ", properties panel = " + propertiesPanelHeight + ", iframe = " + iframeHeight);
+	//console.log("caller = " + caller + ", window = " + height + ", control panel = " + controlPanelHeight + ", properties panel = " + propertiesPanelHeight + ", iframe = " + iframeHeight);
 		
 	// increase height to the tallest of the window, the panels, or the iFrame
 	height = Math.max(height, controlPanelHeight, propertiesPanelHeight, iframeHeight);

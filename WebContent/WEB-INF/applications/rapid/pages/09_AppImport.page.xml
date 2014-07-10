@@ -975,11 +975,11 @@ form.submit();</value>
             </entry>
             <entry>
                 <key>details</key>
-                <value>{&quot;controlHints&quot;:[{&quot;text&quot;:&quot;Click the button to locate a previously exported Rapid application .zip file.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P9_C50_&quot;,&quot;type&quot;:&quot;hover&quot;},{&quot;text&quot;:&quot;The name to give the application once imported. \nIt is used in urls, and to create resources. \nBest kept short.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P9_C51_&quot;,&quot;type&quot;:&quot;hover&quot;}]}</value>
+                <value>{&quot;controlHints&quot;:[{&quot;text&quot;:&quot;Click the button to locate a previously exported Rapid application .zip file.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P9_C50_&quot;},{&quot;text&quot;:&quot;The name to give the application once imported. \nIt is used in urls, and to create resources. \nBest kept short.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P9_C51_&quot;}]}</value>
             </entry>
             <entry>
                 <key>controlHints</key>
-                <value>[{&quot;text&quot;:&quot;Click the button to locate a previously exported Rapid application .zip file.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P9_C50_&quot;,&quot;type&quot;:&quot;hover&quot;},{&quot;text&quot;:&quot;The name to give the application once imported. \nIt is used in urls, and to create resources. \nBest kept short.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P9_C51_&quot;,&quot;type&quot;:&quot;hover&quot;}]</value>
+                <value>[{&quot;text&quot;:&quot;Click the button to locate a previously exported Rapid application .zip file.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P9_C50_&quot;},{&quot;text&quot;:&quot;The name to give the application once imported. \nIt is used in urls, and to create resources. \nBest kept short.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P9_C51_&quot;}]</value>
             </entry>
             <entry>
                 <key>type</key>
@@ -1133,7 +1133,7 @@ if ((r) &amp;&amp; (r != &quot;&quot;)) {
     <htmlBody>&lt;table id=&quot;rapid_P9_C2_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;rapid_P9_C3_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P9_C4_&quot; colspan=&quot;3&quot; class=&quot;tabelCell&quot;&gt;Import application&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P9_C30_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P9_C31_&quot; class=&quot;tabelCell&quot;&gt;File :&lt;/td&gt;&lt;td id=&quot;rapid_P9_C32_&quot; class=&quot;tabelCell&quot;&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P9_C48_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P9_C50_&quot; src=&quot;applications/rapid/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P9_C5_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P9_C6_&quot; class=&quot;tabelCell&quot;&gt;Name :&lt;/td&gt;&lt;td id=&quot;rapid_P9_C7_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P9_C8_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P9_C49_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P9_C51_&quot; src=&quot;applications/rapid/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P9_C19_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P9_C20_&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P9_C21_&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P9_C23_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P9_C24_&quot; class=&quot;button&quot;&gt;Import&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
     <id>P9</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-07-09T16:57:42.140+01:00</modifiedDate>
+    <modifiedDate>2014-07-10T09:55:58.088+01:00</modifiedDate>
     <name>09_AppImport</name>
     <rolesHtml>
         <html>&lt;table id=&quot;rapid_P9_C2_&quot; class=&quot;table&quot;&gt;
