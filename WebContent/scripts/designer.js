@@ -2318,6 +2318,29 @@ function showPropertiesPanel() {
 				
 }
 
+// gets the height of an object including any children that may have absoloute positioning
+function getAbsoluteHeight(o) {
+	// assume height is 0
+	var height = 0;
+	// get the children
+	var childElements = o.children();
+	// loop them
+	for (var i = 0; i < childElements.length; i++) {
+		// get the child
+		var c = $(childElements[i]);
+		// if position absoloute
+		if (c.css("position") == "absolute") {
+			// get the height from the child's children
+			height += getAbsoluteHeight(c);
+		} else {
+			// add the height normally
+			height += c.outerHeight(true);
+		}
+	}	
+	// return the greatest of calculated and reported height	
+	return Math.max(height, o.outerHeight(true));
+}
+
 // called whenever the page is resized
 function windowResize(ev) {
 	
@@ -2346,7 +2369,7 @@ function windowResize(ev) {
 	propertiesPanel.css("height","auto");
 	
 	// get the current iframe contents height
-	var iframeHeight =_pageIframe[0].contentWindow.document.body.offsetHeight;
+	var iframeHeight = getAbsoluteHeight($(_pageIframe[0].contentWindow.document.body));
 	
 	// get its current height (less the combined top and bottom padding)
 	var controlPanelHeight = controlPanel.outerHeight(true);
@@ -2355,7 +2378,7 @@ function windowResize(ev) {
 	var propertiesPanelHeight = propertiesPanel.outerHeight(true);
 			
 	// log
-	//console.log("caller = " + caller + ", window = " + height + ", control panel = " + controlPanelHeight + ", properties panel = " + propertiesPanelHeight + ", iframe = " + iframeHeight);
+	console.log("caller = " + caller + ", window = " + height + ", control panel = " + controlPanelHeight + ", properties panel = " + propertiesPanelHeight + ", iframe = " + iframeHeight);
 		
 	// increase height to the tallest of the window, the panels, or the iFrame
 	height = Math.max(height, controlPanelHeight, propertiesPanelHeight, iframeHeight);

@@ -32,7 +32,8 @@ optgroup {
 #page {
 	border: 0px;
 	position: absolute;
-	display:none;	
+	overflow: hidden;
+	display: none;	
 }
 
 #designerTools {

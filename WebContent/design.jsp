@@ -70,7 +70,7 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, use
 		</div>
 	</div>
 	
-	<iframe id="page"></iframe>
+	<iframe id="page" scrolling="no"></iframe>
 	
 	<div id="designerTools">	 
 			

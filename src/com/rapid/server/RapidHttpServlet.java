@@ -273,7 +273,7 @@ public class RapidHttpServlet extends HttpServlet {
 		
 		PrintWriter out = response.getWriter();		
 		
-		out.println(ex.getLocalizedMessage());
+		out.println("Error : " + ex.getLocalizedMessage());
 						
 		boolean showStackTrace = Boolean.parseBoolean(getServletContext().getInitParameter("showStackTrace"));
 				

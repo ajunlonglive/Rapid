@@ -1018,7 +1018,7 @@ public class Designer extends RapidHttpServlet {
 											Files.deleteRecurring(unZipFolder);
 											
 											// throw excpetion
-											throw new Exception("Must be a valid Rapid file");
+											throw new Exception("Must be a valid Rapid " + Rapid.VERSION + " file");
 											
 										}
 										
