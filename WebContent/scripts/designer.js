@@ -349,7 +349,7 @@ function positionBorder(x, y) {
 	_selectionBorder.css({
 		"left":x + _panelPinnedOffset + _mouseDownXOffset - 8 , // 8 = padding + border + 1 pixel	
 		"top":y + _mouseDownYOffset - 8 // 8 = padding + border + 1 pixel
-	});
+	});	
 }
 
 // this function returns a flat array of all of the page controls
@@ -521,6 +521,11 @@ function selectControl(control) {
 		// store the selection globally
 		_selectedControl = control;
 		
+		// set background of all controls in map to white
+		$("#pageMap").find("span").css("background-color","white");
+		// highlight selected control
+		$("#pageMap").find("span[data-id=" + control.id + "]").css("background-color","#ccc");
+		
 		// get the body into an object
 		var body = $("body");
 		
@@ -551,10 +556,14 @@ function selectControl(control) {
 			positionBorder(_selectedControl.object.offset().left, _selectedControl.object.offset().top);
 			// size the border
 			sizeBorder(_selectedControl);
-			// show the border 			
-			_selectionBorder.show();
+			// show the border if it has any size to it	and the control is visible		
+			if (_selectionBorder.width() > 5 && _selectedControl.object.is(":visible")) {
+				_selectionBorder.show();
+			} else {
+				_selectionBorder.hide();
+			}
 			
-			// deleteControl
+			// count the number of child controls
 			var contCount = 0;
 
 			// count the controls of this type			
@@ -774,6 +783,8 @@ function loadApp(forceLoad) {
 	var designControls = $("ul.design-controls");
 	// hide the controls panel
 	designControls.hide();
+	// hide the map
+	$("#pageMap").hide();
 	// empty the designControls panel
 	designControls.children().remove();	
 	// empty the action options array
@@ -940,8 +951,14 @@ function loadPages(selectedPageId, forceLoad) {
         error: function(server, status, error) { 
         	// show the designer as there's a small chance it might not be visible yet
         	showDesigner();
-        	// show an error
-        	alert("Error loading pages : " + error);        	
+        	// if it's an authentication thing
+        	if (server && server.status == 403) {
+        		// reload the page from the top
+        		location.reload(true);
+        	} else {
+        		// show an error
+        		alert("Error loading pages : " + error);
+        	}
         },
         success: function(pages) {        	       	
         	
@@ -1514,8 +1531,14 @@ $(document).ready( function() {
 		        error: function(server, status, error) { 
 		        	// ensure the designer is visble
 		        	showDesigner();
-		        	// show the error
-		        	alert("Error loading page : " + error); 
+		        	// if it's an authentication thing
+		        	if (server && server.status == 403) {
+		        		// reload the page from the top
+		        		location.reload(true);
+		        	} else {
+		        		// show an error
+		        		alert("Error loading page : " + error);
+		        	}
 		        },
 		        success: function(page) {       
 		        	
@@ -1544,6 +1567,9 @@ $(document).ready( function() {
 				        		_page.childControls.push(loadControl(control, _page, true));
 				        	}				        					        	
 			        	}
+			        	
+			        	// build the page map
+			        	showPageMap();
 			        	
 			        	// make everything visible
 			        	showDesigner();
@@ -1728,11 +1754,13 @@ $(document).ready( function() {
 	// undo
 	$("#undo").click( function(ev) {
 		doUndo(); 
+		showPageMap();
 	});
 	
 	// redo
 	$("#redo").click( function(ev) {
-		doRedo(); 
+		doRedo();
+		showPageMap();
 	});
 		
 	// save page
@@ -1854,6 +1882,8 @@ $(document).ready( function() {
 			arrangeNonVisibleControls();
 			// re-select the control
 			selectControl(_selectedControl);
+			// rebuild the page map
+			showPageMap();
 		}
 	});
 	
@@ -1883,6 +1913,8 @@ $(document).ready( function() {
 			arrangeNonVisibleControls();
 			// re-select the control
 			selectControl(_selectedControl);
+			// rebuild the page map
+			showPageMap();
 		}
 	});
 	
@@ -1905,6 +1937,8 @@ $(document).ready( function() {
 			}			
 			// select the new one
 			selectControl(newControl);
+			// rebuild the page map
+			showPageMap();
 		}
 		
 	});
@@ -1928,6 +1962,8 @@ $(document).ready( function() {
 			}			
 			// select the new one
 			 selectControl(newControl);
+			// rebuild the page map
+			showPageMap();
 		}
 		
 	});
@@ -1962,7 +1998,9 @@ $(document).ready( function() {
 				}
 				// arrange the non visible page controls
 				arrangeNonVisibleControls();
-			}
+				// rebuild the page map
+				showPageMap();
+			}			
 		} else {
 			showDialogue('~?a=rapid&p=P4');
 		}
@@ -2021,7 +2059,7 @@ $(document).ready( function() {
 					}
 					// select the new one
 					selectControl(newControl);				
-				}	
+				}					
 				
 			} else {
 				
@@ -2076,6 +2114,9 @@ $(document).ready( function() {
 				} // page copy check
 				
 			} // page paste check
+			
+			// rebuild the page map
+			showPageMap();
 					
 		}		
 	});		
@@ -2211,15 +2252,19 @@ $(document).mousemove( function(ev) {
 
 // if the mouse is upped anywhere
 $(document).mouseup( function(ev) {
+	
 	_mouseDown = false;
 	_mouseDownXOffset = 0;
 	_mouseDownYOffset = 0;
 	_reorderDetails = null;
-	if (_selectedControl && _selectedControl.object[0]) {
+	
+	if (_selectedControl && _selectedControl.object[0]) {		
 		// show it in case it was an add
-		_selectedControl.object.show();
+		if (_selectedControl._class.canUserMove) _selectedControl.object.show();
 		// if we were moving a control different from the _selectedControl
 		if (_movingControl && _movedoverControl && _movedoverDirection && _movedoverControl.object[0] !== _selectedControl.object[0]) {
+			// add an undo snapshot
+			addUndo();
 			// remove the object from it's current parent
 			removeControlFromParent(_selectedControl);
 			// move the selectedObject to the left or right of the movedoverObject, or insert if in the centre
@@ -2248,9 +2293,9 @@ $(document).mouseup( function(ev) {
 				// move the object into the right place
 				_movedoverControl.object.append(_selectedControl.object);
 				break;
-			}	
-			// add an undo snapshot
-			addUndo();
+			}				
+			// rebuild the page map
+			showPageMap();
 		}
 		
 		// remember we have only selected (no longer moving)
@@ -2388,8 +2433,7 @@ function windowResize(ev) {
 	var width = win.width();
 	// get the window height
 	var height = win.height();
-	
-	
+		
 	// reset the page iFrame height so non-visual controls aren't too far down the page
 	_pageIframe.css("height","auto");
 	
@@ -2418,11 +2462,11 @@ function windowResize(ev) {
 	// increase height to the tallest of the window, the panels, or the iFrame
 	height = Math.max(height, controlPanelHeight, propertiesPanelHeight, iframeHeight);
 	
-	// adjust controlPanel height if necessary, less it's padding
-	if (controlPanelHeight < height) controlPanel.css({height: height - 20});
+	// adjust controlPanel height, less it's padding
+	controlPanel.css({height: height - 20});
 	
-	// adjust propertiesPanel height if necessary, less it's padding
-	if (propertiesPanelHeight < height) propertiesPanel.css({height: height - 20});
+	// adjust propertiesPanel height, less it's padding
+	propertiesPanel.css({height: height - 20});
 		
 	// adjust iframe position, width and height
 	_pageIframe.css({

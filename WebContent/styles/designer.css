@@ -9,6 +9,12 @@ optgroup {
 	font-style: normal;
 }
 
+hr {
+	height: 1px;
+	color: #777;
+	margin-top: 0px;
+}
+
 #loading {
 	text-align: center;
 	padding-top: 100px;
@@ -113,10 +119,15 @@ optgroup {
 	display:none;
 }
 
+#controlsHeader {
+	cursor: pointer;
+}
+
 ul.design-controls {
 	margin-top: 0px;
 	margin-bottom: 0px;
-	padding-left:0px;
+	padding-left: 0px;
+	text-align: left;
 }
 
 li.design-control {
@@ -157,6 +168,39 @@ li.design-control:hover {
 	margin-left: 40px;
 	margin-top: -19px;
 	padding-left: 15px;
+}
+
+#controlsMap {
+	cursor: pointer;
+}
+
+#pageMap {	
+	text-align: left;	
+	border: 1px solid black;
+	border-radius: 3px;
+	display: none;
+	overflow-x: scroll;
+	overflow-y: scroll;
+	background-color: white;
+	max-height: 500px;
+}
+
+.design-map ul {
+	list-style:none;
+	padding-left:10px;
+}
+
+.design-map li {
+	display: block;
+	cursor: pointer;	
+	vertical-align: middle;
+}
+
+.design-map img {
+	vertical-align: middle;
+	height: 16px;
+	width: 16px;
+	margin-top: -2px;
 }
 
 .controlPanelVersion {

@@ -41,7 +41,8 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, use
 	<script type="text/javascript" src="scripts/validation.js"></script>
 	<script type="text/javascript" src="scripts/actions.js"></script>
 	<script type="text/javascript" src="scripts/styles.js"></script>
-	<script type="text/javascript" src="scripts/dialogue.js"></script>		
+	<script type="text/javascript" src="scripts/dialogue.js"></script>
+	<script type="text/javascript" src="scripts/map.js"></script>		
 	<script type="text/javascript" src="applications/rapid/rapid.js"></script>
 	<script type="text/javascript">
 	
@@ -81,40 +82,55 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, use
 			<div class="buttons">
 				<button id="appAdmin" class="buttonLeft buttonRight" title="Load the Rapid administration screen">Administration</button>
 			</div>
+			
 			<h2>Application</h2>
 			<select id="appSelect">
 				<!-- Applications are added here as options the designer loads -->
 			</select>				
-			<br/>
+			
 			<h2>Page</h2>
 			<select id="pageSelect">
 				<!-- Pages are added here as options the designer loads -->
 			</select>
+			
 			<div id="pageLock">
 				<h3>This page is locked for editing by Gareth Edwards</h3>
 			</div>
+			
 			<div class="buttons">				
 				<button id="pageEdit" class="buttonLeft buttonRight" title="View and edit the page properties">properties</button>
-			</div>						
+			</div>		
+							
 			<div class="buttons">
 				<button id="pageNew" class="buttonLeft" title="Create a new page for this application">new</button>
 				<button id="pageSave" class="" title="Save this page">save</button>
 				<button id="pageView" class="buttonRight" title="View this page in the application">view</button>
-			</div>			
+			</div>	
+					
 			<div class="buttons">
 				<button id="undo" class="buttonLeft" disabled="disabled" title="Undo changes">undo</button>
 				<button id="redo" class="buttonRight" disabled="disabled" title="Redo changes">redo</button>
-			</div>					
+			</div>	
+							
 			<div id="controlControls">
-				<h2>Controls</h2>
-				<ul class="design-controls" >
+				<h2 id="controlsHeader">Controls</h2>
+				<ul id="controlsList" class="design-controls" >
 					<!-- Controls are added here as list items when the designer loads -->
 				</ul>					
 			</div>	
+			
+			<h2 id="controlsMap" style="margin-top:0;">Page controls</h2>
+			<div id="pageMap" class="design-map" >
+				<!-- The control page is added here when the page has loaded -->
+			</div>	
+			
+			<hr/>
+			
 			<div class="controlPanelVersion" >
 				<img src="images/RapidLogo_60x40.png" style="margin-left:-16px;"/>
 				<div id="controlPanelVersion">Rapid<br/><%=com.rapid.server.Rapid.VERSION %></div>
-			</div>												
+			</div>		
+													
 		</div>
 		
 		<div id="propertiesPanel" style="z-index:10005">

@@ -479,6 +479,11 @@ public class Designer extends RapidHttpServlet {
 												
 						} // export
 						
+					} else {
+						
+						// not authenticated
+						response.setStatus(403);
+						
 					} // got design role
 					
 				} // rapidSecurity != null
