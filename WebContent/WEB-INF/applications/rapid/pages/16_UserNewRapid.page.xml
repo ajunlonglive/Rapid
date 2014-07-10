@@ -137,7 +137,7 @@
 </entry>
 <entry>
     <key>action</key>
-    <value>rapid_P3_A29</value>
+    <value>P16_A30_</value>
 </entry>
 <entry>
     <key>type</key>
@@ -850,7 +850,7 @@
 </entry>
 <entry>
     <key>action</key>
-    <value>rapid_P3_A29</value>
+    <value>P16_A30_</value>
 </entry>
 <entry>
     <key>type</key>
@@ -910,10 +910,10 @@
                     </styles>
                     <validation>
                         <allowNulls>false</allowNulls>
-                        <javaScript></javaScript>
+                        <javaScript>if (value != $(&quot;#rapid_P16_C17_&quot;).val()) return &quot;Passwords much match&quot;;</javaScript>
                         <message>User name must be provided</message>
                         <regEx></regEx>
-                        <type></type>
+                        <type>javascript</type>
                     </validation>
                     <XMLVersion>1</XMLVersion>
                 </childControls>
@@ -1441,6 +1441,8 @@
 </entry>
                             </properties>
                             <XMLVersion>1</XMLVersion>
+                            <controls>rapid_P16_C8_</controls>
+                            <controls>rapid_P16_C22_</controls>
                             <failActions xsi:type="control">
 <properties>
     <entry>
@@ -1449,7 +1451,7 @@
     </entry>
     <entry>
         <key>control</key>
-        <value>rapid_P16_C2_4</value>
+        <value>rapid_P16_C29_</value>
     </entry>
     <entry>
         <key>XMLVersion</key>
@@ -1482,7 +1484,7 @@
     </entry>
     <entry>
         <key>control</key>
-        <value>rapid_P16_C2_4</value>
+        <value>rapid_P16_C29_</value>
     </entry>
     <entry>
         <key>XMLVersion</key>
@@ -1758,11 +1760,11 @@
             </entry>
             <entry>
                 <key>details</key>
-                <value>{&quot;controlHints&quot;:[{&quot;text&quot;:&quot;The user name or login that uniquely identifies the user.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P16_C45_&quot;},{&quot;text&quot;:&quot;A longer description of the user. Typically their full name.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P16_C46_&quot;},{&quot;text&quot;:&quot;A password for this user.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P16_C47_&quot;},{&quot;text&quot;:&quot;Determines whether there is a Rapid Admin link on the main menu. \nTo view specific application in Rapid Admin the user will also need the RapidAdmin role for those applications.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P16_C48_&quot;},{&quot;text&quot;:&quot;Determines whether there is a Rapid Design link on the main menu. \nTo view specific applications in Rapid Design the user will also need the RapidDesign role for those applications.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P16_C49_&quot;}]}</value>
+                <value>{&quot;controlHints&quot;:[{&quot;text&quot;:&quot;The user name or login that uniquely identifies the user.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P16_C45_&quot;,&quot;type&quot;:&quot;hover&quot;},{&quot;text&quot;:&quot;A longer description of the user. Typically their full name.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P16_C46_&quot;,&quot;type&quot;:&quot;hover&quot;},{&quot;text&quot;:&quot;A password for this user.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P16_C47_&quot;,&quot;type&quot;:&quot;hover&quot;},{&quot;text&quot;:&quot;Determines whether there is a Rapid Admin link on the main menu. \nTo view specific application in Rapid Admin the user will also need the RapidAdmin role for those applications.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P16_C48_&quot;,&quot;type&quot;:&quot;hover&quot;},{&quot;text&quot;:&quot;Determines whether there is a Rapid Design link on the main menu. \nTo view specific applications in Rapid Design the user will also need the RapidDesign role for those applications.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P16_C49_&quot;,&quot;type&quot;:&quot;hover&quot;}]}</value>
             </entry>
             <entry>
                 <key>controlHints</key>
-                <value>[{&quot;text&quot;:&quot;The user name or login that uniquely identifies the user.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P16_C45_&quot;},{&quot;text&quot;:&quot;A longer description of the user. Typically their full name.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P16_C46_&quot;},{&quot;text&quot;:&quot;A password for this user.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P16_C47_&quot;},{&quot;text&quot;:&quot;Determines whether there is a Rapid Admin link on the main menu. \nTo view specific application in Rapid Admin the user will also need the RapidAdmin role for those applications.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P16_C48_&quot;},{&quot;text&quot;:&quot;Determines whether there is a Rapid Design link on the main menu. \nTo view specific applications in Rapid Design the user will also need the RapidDesign role for those applications.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P16_C49_&quot;}]</value>
+                <value>[{&quot;text&quot;:&quot;The user name or login that uniquely identifies the user.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P16_C45_&quot;,&quot;type&quot;:&quot;hover&quot;},{&quot;text&quot;:&quot;A longer description of the user. Typically their full name.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P16_C46_&quot;,&quot;type&quot;:&quot;hover&quot;},{&quot;text&quot;:&quot;A password for this user.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P16_C47_&quot;,&quot;type&quot;:&quot;hover&quot;},{&quot;text&quot;:&quot;Determines whether there is a Rapid Admin link on the main menu. \nTo view specific application in Rapid Admin the user will also need the RapidAdmin role for those applications.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P16_C48_&quot;,&quot;type&quot;:&quot;hover&quot;},{&quot;text&quot;:&quot;Determines whether there is a Rapid Design link on the main menu. \nTo view specific applications in Rapid Design the user will also need the RapidDesign role for those applications.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P16_C49_&quot;,&quot;type&quot;:&quot;hover&quot;}]</value>
             </entry>
             <entry>
                 <key>type</key>
@@ -1787,7 +1789,7 @@
     <htmlBody>&lt;table id=&quot;rapid_P16_C2_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;rapid_P16_C3_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P16_C4_&quot; colspan=&quot;3&quot; class=&quot;tabelCell&quot;&gt;New user&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P16_C5_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P16_C6_&quot; class=&quot;tabelCell&quot;&gt;User name&lt;/td&gt;&lt;td id=&quot;rapid_P16_C7_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P16_C8_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P16_C41_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P16_C45_&quot; src=&quot;applications/rapid/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P16_C10_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P16_C11_&quot; class=&quot;tabelCell&quot;&gt;Description&lt;/td&gt;&lt;td id=&quot;rapid_P16_C12_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P16_C13_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P16_C42_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P16_C46_&quot; src=&quot;applications/rapid/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P16_C14_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P16_C15_&quot; class=&quot;tabelCell&quot;&gt;Password&lt;/td&gt;&lt;td id=&quot;rapid_P16_C16_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P16_C17_&quot; value=&quot;&quot; type=&quot;password&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P16_C43_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P16_C47_&quot; src=&quot;applications/rapid/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P16_C19_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P16_C20_&quot; class=&quot;tabelCell&quot;&gt;Confirm password&lt;/td&gt;&lt;td id=&quot;rapid_P16_C21_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P16_C22_&quot; value=&quot;&quot; type=&quot;password&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P16_C44_&quot; class=&quot;tabelCell&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P16_C32_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P16_C33_&quot; class=&quot;tabelCell&quot;&gt;Use Rapid Admin&lt;/td&gt;&lt;td id=&quot;rapid_P16_C36_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P16_C38_&quot; type=&quot;checkbox&quot; class=&quot;checkbox&quot;&gt;&lt;img id=&quot;rapid_P16_C48_&quot; src=&quot;applications/rapid/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P16_C34_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P16_C35_&quot; class=&quot;tabelCell&quot;&gt;Use Rapid Design&lt;/td&gt;&lt;td id=&quot;rapid_P16_C37_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P16_C39_&quot; type=&quot;checkbox&quot; class=&quot;checkbox&quot;&gt;&lt;img id=&quot;rapid_P16_C49_&quot; src=&quot;applications/rapid/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P16_C24_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P16_C25_&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P16_C26_&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P16_C28_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P16_C29_&quot; class=&quot;button&quot;&gt;Save&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
     <id>P16</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-07-09T18:19:37.967+01:00</modifiedDate>
+    <modifiedDate>2014-07-10T08:03:56.902+01:00</modifiedDate>
     <name>16_UserNewRapid</name>
     <rolesHtml>
         <html>&lt;table id=&quot;rapid_P16_C2_&quot; class=&quot;table&quot;&gt;

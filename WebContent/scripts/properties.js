@@ -404,6 +404,7 @@ function Property_validationControls(cell, propertyObject, property, refreshHtml
 		} 		
 		if (text && i < controls.length - 1) text += ",";
 	}
+	
 	// add a message if nont
 	if (!text) text = "Click to add";
 	// append the text into the cell
@@ -416,21 +417,26 @@ function Property_validationControls(cell, propertyObject, property, refreshHtml
 		// check we can find the control - we can loose them when pasting
 		if (control) {
 			// add the row for this value
-			table.append("<tr><td>" + control.name + "</td><td style='width:16px'><img src='images/bin_16x16.png' style='float:right;' /></td></tr>");
-			// add a listener the delete image
-			_listeners.push( table.children().last().children().last().children().last().click( function(ev) {
-				// get the row
-				var row = $(this).parent().parent();
-				// remove the control
-				propertyObject.controls.splice(row.index(),1);
-				// remove the row
-				row.remove();
-			}));
+			table.append("<tr><td>" + control.name + "</td><td style='width:32px'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");			
 		} else {
 			// remove this control
 			controls.splice(i,1);
 		}		
 	}	
+	
+	// add listeners to the delete image
+	_listeners.push( table.find("img.delete").click( function(ev) {
+		// get the row
+		var row = $(this).parent().parent();
+		// remove the control
+		propertyObject.controls.splice(row.index(),1);
+		// remove the row
+		row.remove();
+	}));
+	
+	// add reorder listeners
+	addReorder(controls, table.find("img.reorder"), function() { Property_validationControls(cell, propertyObject, property, refreshHtml, dialogue); });
+		
 	// add an add dropdown
 	var addControl = table.append("<tr><td colspan='2'><select><option value=''>Add control...</option>" + getValidationControlOptions() + "</select></td></tr>").children().last().children().last().children().last();
 	_listeners.push( addControl.change( {cell: cell, propertyObject: propertyObject, refreshHtml: refreshHtml, refreshDialogue: dialogue}, function(ev) {
