@@ -196,6 +196,11 @@ li.design-control:hover {
 	vertical-align: middle;
 }
 
+.design-map span {
+	display: block;
+	white-space: nowrap;
+}
+
 .design-map img {
 	vertical-align: middle;
 	height: 16px;

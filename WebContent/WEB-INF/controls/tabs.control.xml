@@ -202,6 +202,11 @@ return values;
 	        		]]>        
 	            </getValuesFunction>	            
 	        </property>
+	        <property>
+	            <key>roles</key>
+	            <name>User roles</name>
+	            <changeValueJavaScript>roles</changeValueJavaScript>	            
+	        </property>
 	    </properties>
 	    
 	    <resources>

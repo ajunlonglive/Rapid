@@ -740,9 +740,15 @@ function loadApps(selectedAppId, forceLoad) {
     	contentType: "application/json",
         dataType: "json",            
         data: null,            
-        error: function(server, status, error) { 
-        	// show the error
-        	alert("Error loading applications : " + error); 
+        error: function(server, status, error) {
+        	// check if there was permission to use rapid
+        	if (server && server.status == 403) {
+        		// reload the whole page (sends user to login)
+        		loaction.reload();
+        	} else {
+        		// show the error
+        		alert("Error loading applications : " + error);
+        	}
         },
         success: function(apps) {        	
         	// if an app is not selected try the url
