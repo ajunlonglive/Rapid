@@ -397,7 +397,7 @@ function renderHints(val) {
 	// apply the list of matching style attributes html
 	_styleList.html(html);
 	// apply the hint class to the first entry in teh list
-	_styleList.children().first().addClass("hint");			
+	_styleList.children().first().addClass("styleHint");			
 	// for each entry add mouse listeners
 	_styleList.children().each( function() {
 		$(this).mouseover( function(ev) { $(this).addClass("mouseover"); });					
@@ -591,8 +591,8 @@ $(document).ready( function() {
 			// arrow down
 			_styleHint.show();
 			if (!_styleList.is(":visible")) renderHints(val);
-			if (_styleList.children(".hint").next()[0]) {
-				var hint = _styleList.children(".hint").removeClass("hint").next().addClass("hint");
+			if (_styleList.children(".styleHint").next()[0]) {
+				var hint = _styleList.children(".styleHint").removeClass("styleHint").next().addClass("styleHint");
 				_styleHint.html(hint.text());					
 				_styleSpan.html(hint.text());
 			}							
@@ -600,8 +600,8 @@ $(document).ready( function() {
 			break;
 		case 38 :
 			// arrow up
-			if (_styleList.children(".hint").prev()[0]) {
-				var hint = _styleList.children(".hint").removeClass("hint").prev().addClass("hint");
+			if (_styleList.children(".styleHint").prev()[0]) {
+				var hint = _styleList.children(".styleHint").removeClass("styleHint").prev().addClass("styleHint");
 				_styleHint.html(hint.text());	
 				_styleSpan.html(hint.text());
 			}
@@ -722,7 +722,9 @@ function showStyles(control) {
 	if (control && control._class.styles && control._class.styles.style) {
 		
 		// add a heading and table
-		_stylesPanelDiv.append("<h2>Styles</h2>");		
+		_stylesPanelDiv.append("<h2>Styles<img id='helpStyles' class='headerHelp' src='images/help_16x16.png' /></h2>");
+		// add the help hint
+		addHelp("helpStyles",true);
 		// get the array of styles classes
 		var styles = control._class.styles.style;
 		// make it an array if the xml to json didn't
@@ -790,7 +792,9 @@ function showStyles(control) {
 		}
 		
 		// add a heading and table
-		_stylesPanelDiv.append("<h2>Style classes</h2>");
+		_stylesPanelDiv.append("<h2>Style classes<img id='helpStyleClasses' class='headerHelp' src='images/help_16x16.png' /></h2>");
+		// add the help hint
+		addHelp("helpStyleClasses",true);
 		
 		// add a table for this rule
 		_stylesPanelDiv.append("<table class='stylesPanelTable'><tbody></tbody></table>");

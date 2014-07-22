@@ -20,11 +20,13 @@
 	padding:40px;
 	font-family:arial;
 	margin-top:10px;
+	min-width:1200px;
 }
 
 #rapid_P0_C650_ {
 	padding:10px;
 	border:1px solid black;
+	min-width:1200px;
 }
 
 #rapid_P0_C779_ li {

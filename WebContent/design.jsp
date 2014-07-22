@@ -67,7 +67,8 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, use
 	<script type="text/javascript" src="scripts/actions.js"></script>
 	<script type="text/javascript" src="scripts/styles.js"></script>
 	<script type="text/javascript" src="scripts/dialogue.js"></script>
-	<script type="text/javascript" src="scripts/map.js"></script>		
+	<script type="text/javascript" src="scripts/map.js"></script>
+	<script type="text/javascript" src="scripts/help.js"></script>			
 	<script type="text/javascript" src="applications/rapid/rapid.js"></script>
 	<script type="text/javascript">
 	
@@ -105,15 +106,15 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, use
 		<div id="controlPanel" style="z-index:10005">
 			<div id="controlPanelPin"><img src="images/pinned_14x14.png" title="unpin" /></div>
 			<div class="buttons">
-				<button id="appAdmin" class="buttonLeft buttonRight" title="Load the Rapid administration screen">Administration</button>
+				<button id="appAdmin" class="buttonLeft buttonRight" title="Load the Rapid administration screen">administration</button>
 			</div>
 			
-			<h2>Application</h2>
+			<h2>Application<img id="helpApplication" class="headerHelp" src="images/help_16x16.png" /></h2>
 			<select id="appSelect">
 				<!-- Applications are added here as options the designer loads -->
 			</select>				
 			
-			<h2>Page</h2>
+			<h2>Page<img id="helpPage" class="headerHelp" src="images/help_16x16.png" /></h2>
 			<select id="pageSelect">
 				<!-- Pages are added here as options the designer loads -->
 			</select>
@@ -138,13 +139,20 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, use
 			</div>	
 							
 			<div id="controlControls">
-				<h2 id="controlsHeader">Controls</h2>
+				<h2 id="controlsHeader">Controls
+					<img class="headerToggle" src="images/triangleUp_8x8.png" />
+					<img id="helpControls" class="headerHelp" src="images/help_16x16.png" />
+				</h2>
+				
 				<ul id="controlsList" class="design-controls" >
 					<!-- Controls are added here as list items when the designer loads -->
 				</ul>					
 			</div>	
 			
-			<h2 id="controlsMap" style="margin-top:0;">Page controls</h2>
+			<h2 id="controlsMap" style="margin-top:0;">Page controls
+				<img class="headerToggle" src="images/triangleUp_8x8.png" />
+				<img id="helpMap" class="headerHelp" src="images/help_16x16.png" />
+			</h2>
 			<div id="pageMap" class="design-map" >
 				<!-- The control page is added here when the page has loaded -->
 			</div>	
@@ -159,9 +167,10 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, use
 		</div>
 		
 		<div id="propertiesPanel" style="z-index:10005">
+		
 			<div class="untilsPanelDiv">
-			
-				<div class="buttons">
+				<img id="helpPropertiesPanel" class="headerHelp" src="images/help_16x16.png" />							
+				<div class="buttons">					
 					<button id="selectPeerLeft" class="buttonLeft"><img src="images/moveLeft_16x16.png" title="Select the control before this one"/></button>
 					<button id="selectParent"><img src="images/moveUp_16x16.png" title="Select the parent of this control"/></button>
 					<button id="selectChild"><img src="images/moveDown_16x16.png" title="Select the first child of this control"/></button>
@@ -179,12 +188,12 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, use
 					<button id="paste" class="buttonRight">paste</button>
 				</div>									
 			</div>			
-			<div class="propertiesPanelDiv">
-				<h2>Properties</h2>
-			</div>			
+			
+			<div class="propertiesPanelDiv"></div>			
 			<div class="validationPanelDiv"></div>
 			<div id="actionsPanelDiv" class="actionsPanelDiv"></div>
-			<div id="stylesPanelDiv"></div>						
+			<div id="stylesPanelDiv"></div>			
+						
 		</div>
 		
 		<div id="propertiesDialogues"></div>

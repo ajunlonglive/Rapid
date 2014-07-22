@@ -52,21 +52,25 @@ function createMapEntry(list, c) {
 // rebuild the page map
 function showPageMap() {	
 	// get the map div
-	var map = $("#pageMap");
-	// only if its visible
-	if (map.is(":visible")) {		
-		// empty the current map
-		map.html("");		
-		// check we have a page and childControls
-		if (_page) {
-			// create the first list
-			map.append("<ul></ul>");
-			// get the list
-			var list = map.find("ul").last();
-			// build the map
-			createMapEntry(list, _page);
-		}		
-	}	
+	var map = $("#pageMap");		
+	// empty the current map
+	map.html("");		
+	// check we have a page and childControls
+	if (_page) {
+		// create the first list
+		map.append("<ul></ul>");
+		// get the list
+		var list = map.find("ul").last();
+		// build the map
+		createMapEntry(list, _page);
+		// highlight the selected control
+		if (_selectedControl) {
+			// highlight selected control
+			$("#pageMap").find("span[data-id=" + _selectedControl.id + "]").css("background-color","#ccc");
+		}
+	}		
+	// show
+	map.show();
 }
 
 
@@ -82,15 +86,22 @@ function toggleMap() {
 		$("#pageMap").hide();	
 		// show controls
 		$("#controlsList").show("slide", {direction: "up"}, 500);
+		// invert the up/down images
+		$("#controlsHeader").children("img.headerToggle").attr("src","images/triangleUp_8x8.png");
+		$("#controlsMap").children("img.headerToggle").attr("src","images/triangleUp_8x8.png");
 		// resize the window
 		windowResize("controlsMap hide");
 	} else {
-		// show controls
-		$("#controlsList").hide();
-		// show the map
-		$("#pageMap").show("slide", {direction: "down"}, 500);
-		// rebuild the controls
-		showPageMap();
+		// hide controls
+		$("#controlsList").hide("slide", {direction: "up"}, 500);
+		// show the map after 500 secs
+		window.setTimeout( function() {
+			// rebuild the controls
+			showPageMap();
+    	}, 500);
+		// invert the up/down images
+		$("#controlsHeader").children("img.headerToggle").attr("src","images/triangleDown_8x8.png");
+		$("#controlsMap").children("img.headerToggle").attr("src","images/triangleDown_8x8.png");		
 		// resize the window
 		windowResize("controlsMap show");
 	}
@@ -110,5 +121,8 @@ $(document).ready( function() {
 		toggleMap();
 		return false;
 	});
+	
+	// hide the map
+	$("#pageMap").hide();
 	
 });	

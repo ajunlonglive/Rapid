@@ -123,6 +123,18 @@ hr {
 	cursor: pointer;
 }
 
+.headerToggle {
+	padding-left: 2px;
+	vertical-align: middle;
+	padding-bottom: 4px;
+	margin-right: -10px;
+}
+
+.headerHelp {
+	float: right;
+	margin-left: -16px;
+}
+
 ul.design-controls {
 	margin-top: 0px;
 	margin-bottom: 0px;
@@ -251,6 +263,10 @@ div#propertiesPanel {
 
 .propertiesPanelDiv {
 	padding-top:0px;
+}
+
+.untilsPanelDiv .headerHelp {
+	padding-top:5px;
 }
 
 div#propertiesPanel h2 {
@@ -579,8 +595,8 @@ Dialogue styles
 }
 
 #dialogue {
-	background-color:white;
 	position:absolute;
+	background-color:white;	
 	left:0px;
 	top:0px;
 	z-index:10008;
@@ -588,3 +604,20 @@ Dialogue styles
 	box-shadow: 0 0 20px;
 }
 
+/*
+
+Hint style
+
+*/
+
+.hint {
+	position:absolute;
+	max-width: 300px;
+	background-color: white;
+	border: 1px solid #888;
+	border-radius: 5px;
+	padding: 10px;
+	opacity: 0.9;
+	box-shadow: 5px 5px 5px #888;
+	z-index:10010;
+}

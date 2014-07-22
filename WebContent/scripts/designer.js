@@ -1599,9 +1599,6 @@ $(document).ready( function() {
 				        	}				        					        	
 			        	}
 			        	
-			        	// build the page map
-			        	showPageMap();
-			        	
 			        	// make everything visible
 			        	showDesigner();
 			        	

@@ -592,16 +592,16 @@ function Init_hints(id, details) {
   		case "click" :
   			$("#" + controlHint.controlId).click({controlId: controlHint.controlId}, function(ev) { 
   				$("#" + ev.data.controlId + "hint").css({
-  					left: ev.clientX + 5,
-  					top: ev.clientY + 5
+  					left: ev.pageX + 5,
+  					top: ev.pageY + 5
   				}).show(); 
   			});
   			break;
   		case "hover" :
   			$("#" + controlHint.controlId).mouseover({controlId: controlHint.controlId}, function(ev) { 
   				$("#" + ev.data.controlId + "hint").css({
-  					left: ev.clientX + 5,
-  					top: ev.clientY + 5
+  					left: ev.pageX + 5,
+  					top: ev.pageY + 5
   				}).show();  
   			});
   		break;

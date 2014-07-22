@@ -54,7 +54,9 @@ function showProperties(control) {
 	if (control) {
 	
 		// write the properties heading
-		propertiesPanel.html("<h2>Properties</h2>");
+		propertiesPanel.html("<h2>Properties<img id='helpProperties' class='headerHelp' src='images/help_16x16.png' /></h2>");
+		// add the help hint
+		addHelp("helpProperties",true);
 		// append a table
 		propertiesPanel.append("<table class='propertiesPanelTable'><tbody></tbody></table>");		
 		// get a reference to the table
