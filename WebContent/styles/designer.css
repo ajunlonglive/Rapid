@@ -474,7 +474,7 @@ td.styleCell.validationFail {
 	z-index:10005;
 }
 
-#styleList li.hint {
+#styleList li.styleHint {
 	background-color: gray;
 }
 

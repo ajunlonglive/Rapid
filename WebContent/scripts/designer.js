@@ -2210,8 +2210,8 @@ $(document).mousemove( function(ev) {
 			if (c && _selectedControl._class.canUserMove) {
 				// retain a reference to the movedoverObject
 				_movedoverControl = c;			
-				// if over the selected object don't show anything
-				if (_movedoverControl === _selectedControl) {
+				// if over the selected object or a descendant don't show anything
+				if (_movedoverControl === _selectedControl || isDecendant(_selectedControl,_movedoverControl)) {
 					_selectionInsert.hide();
 					_selectionMoveLeft.hide();
 					_selectionMoveRight.hide();
@@ -2245,7 +2245,7 @@ $(document).mousemove( function(ev) {
 						// make sure the other selections are hidden						
 						_selectionMoveLeft.hide();
 						_selectionInsert.hide();
-					} else if (_movedoverControl._class.canUserInsert && !isDecendant(_selectedControl,_movedoverControl)) {
+					} else if (_movedoverControl._class.canUserInsert) {
 						// position the insert in the middle
 						_selectionInsert.css({
 							"display": "block",
