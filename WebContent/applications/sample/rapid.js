@@ -25,7 +25,7 @@ function Action_database(actionId, data, outputs) {
 	// check we got data and somewhere to put it
 	if (data && outputs) {
 		// check the returned sequence is higher than any others received so far
-		if (data.sequence > getDatabaseActionSequence(actionId)) {
+		if (data.sequence > getDatabaseActionMaxSequence(actionId)) {
 			// retain this sequence as the new highest
 			_databaseActionMaxSequence[actionId] = data.sequence;
 			for (var i in outputs) {
@@ -108,7 +108,7 @@ function Action_navigate(url, dialogue) {
 	            	// this seems to be the best way to avoid the resizing/flicker when showing
 	            	window.setTimeout( function() {
 	            		dialogue.show();
-	            	}, 5);
+	            	}, 200);
 		           	           	        	            	            	            
 		    	}        	       	        	        	        	        		
 		    }       	        	        
@@ -172,6 +172,54 @@ function Init_date(id, details) {
   f_tcalAdd (id);
 }
 
+function Init_hints(id, details) {
+  var body = $("body");
+  	    	
+  for (var i in details.controlHints) {
+  
+  	var controlHint = details.controlHints[i];
+  	
+  	if (!$("#" + controlHint.controlId + "hint")[0]) {
+  	
+  		var style = controlHint.style;
+  		if (style) {
+  			style = " style='" + style + "'";
+  		} else {
+  			style = "";
+  		}
+  		
+  		body.append("<span class='hint' id='" + controlHint.controlId + "hint'" + style + ">" + controlHint.text + "</span>");
+  		
+  		$("#" + controlHint.controlId + "hint").hide();
+  		
+  	}
+  		
+  	$("#" + controlHint.controlId).mouseout({controlId: controlHint.controlId}, function(ev) {
+  		$("#" + ev.data.controlId + "hint").hide();
+  	});
+  		
+  	switch (controlHint.type) {		
+  		case "click" :
+  			$("#" + controlHint.controlId).click({controlId: controlHint.controlId}, function(ev) { 
+  				$("#" + ev.data.controlId + "hint").css({
+  					left: ev.pageX + 5,
+  					top: ev.pageY + 5
+  				}).show(); 
+  			});
+  			break;
+  		case "hover" :
+  			$("#" + controlHint.controlId).mouseover({controlId: controlHint.controlId}, function(ev) { 
+  				$("#" + ev.data.controlId + "hint").css({
+  					left: ev.pageX + 5,
+  					top: ev.pageY + 5
+  				}).show();  
+  			});
+  		break;
+  	}
+  	
+  }
+}
+
 function Init_pagePanel(id, details) {
   var bodyHtml = "<center><h1>Page</h1></center>";
   
@@ -223,16 +271,18 @@ function Init_pagePanel(id, details) {
 }
 
 function Init_tabGroup(id, details) {
-  $("#" + id).find("li").each( function() {
+  $("#" + id).children("ul").children("li").each( function() {
   	$(this).click( function(ev, index) {
+  		// get a reference to the tabs group
+  		var tabs = $("#" + id);
   		// remove selected from all tab header items
-  		$("#" + id + " li").removeClass("selected");
+  		tabs.children("ul").children("li").removeClass("selected");
   		// remove selected from all tab body items
-  		$("#" + id + " div").removeClass("selected");
+  		tabs.children("div").removeClass("selected");
   		// add selected to the li we just clicked on, also get it's index, plus 2, 1 to go from zero to 1 based, the other 1 because of the headers
   		var index = $(this).addClass("selected").index() + 2;
   		// apply selected to the correct body
-  		$("#" + id + " div:nth-child(" + index + ")").addClass("selected");
+  		tabs.children("div:nth-child(" + index + ")").addClass("selected");
   	});
   });
 }
@@ -300,7 +350,7 @@ function getData_dataStore(ev, id, field, details) {
   			}
   		}	 
   	} 
-  	return null;		
+  	return data;		
   }
 }
 
@@ -618,7 +668,7 @@ function getDatabaseActionSequence(actionId) {
 }		
 
 // this function sets the max to 0 if null
-function getDatabaseActionSequence(actionId) {
+function getDatabaseActionMaxSequence(actionId) {
 	// retrieve the current sequence for the action
 	var sequence = _databaseActionMaxSequence[actionId];
 	// if undefined

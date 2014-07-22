@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><application>
-    <actionTypes>ajax</actionTypes>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<application>
     <actionTypes>control</actionTypes>
     <actionTypes>custom</actionTypes>
     <actionTypes>dataCopy</actionTypes>
@@ -15,6 +15,7 @@
     <controlTypes>date</controlTypes>
     <controlTypes>dropdown</controlTypes>
     <controlTypes>grid</controlTypes>
+    <controlTypes>hints</controlTypes>
     <controlTypes>image</controlTypes>
     <controlTypes>input</controlTypes>
     <controlTypes>link</controlTypes>
@@ -30,16 +31,17 @@
         <driverClass>org.sqlite.JDBC</driverClass>
         <name>Sample connection</name>
         <password>N0Sgi3GcduE=</password>
-        <userName/>
+        <userName></userName>
     </databaseConnections>
     <description>This is a sample Rapid application provided to demonstrate many common Rapid features</description>
     <id>sample</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-06-18T18:42:04.523+01:00</modifiedDate>
+    <modifiedDate>2014-07-10T16:40:27.286+01:00</modifiedDate>
     <name>sample</name>
+    <pageBackupsMaxSize>3</pageBackupsMaxSize>
     <securityAdapterType>rapid</securityAdapterType>
-    <showActionIds>true</showActionIds>
-    <showControlIds>true</showControlIds>
+    <showActionIds>false</showActionIds>
+    <showControlIds>false</showControlIds>
     <startPageId>P1</startPageId>
     <styles>/*
 Styles saved here will be applied to all pages in the application
@@ -74,7 +76,6 @@ input.validation {
 }
 </styles>
     <title>Sample application</title>
-    <version>1</version>
     <webservices xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="sqlWebservice">
         <id>Samplewebservice</id>
         <name>Sample webservice</name>
@@ -170,4 +171,5 @@ order by surname, birthday
 /* Return at most 10 rows */
 limit 10</SQL>
     </webservices>
-<xmlVersion>1</xmlVersion><XMLVersion>1</XMLVersion></application>
+    <XMLVersion>1</XMLVersion>
+</application>

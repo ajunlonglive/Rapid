@@ -1,3 +1,28 @@
+/*
+
+Copyright (C) 2014 - Gareth Edwards / Rapid Information Systems
+
+gareth.edwards@rapid-is.co.uk
+
+
+This file is part of the Rapid Application Platform
+
+RapidSOA is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version. The terms require you to include
+the original copyright, and the license notice in all redistributions.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
+
+*/
+
 package com.rapid.server;
 
 import java.io.ByteArrayInputStream;
@@ -675,6 +700,7 @@ public class RapidServletContextListener implements ServletContextListener {
 			_jaxbClasses.add(Class.forName("com.rapid.soa.SOAElementRestriction$EnumerationRestriction"));
 			_jaxbClasses.add(Class.forName("com.rapid.soa.Webservice"));
 			_jaxbClasses.add(Class.forName("com.rapid.soa.SQLWebservice"));
+			_jaxbClasses.add(Class.forName("com.rapid.soa.JavaWebservice"));
 			_jaxbClasses.add(Class.forName("com.rapid.core.Application"));
 			_jaxbClasses.add(Class.forName("com.rapid.core.Validation"));
 			_jaxbClasses.add(Class.forName("com.rapid.core.Action"));

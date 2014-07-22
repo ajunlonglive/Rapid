@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><application>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<application>
     <actionTypes>ajax</actionTypes>
     <actionTypes>control</actionTypes>
     <actionTypes>custom</actionTypes>
@@ -14,6 +15,7 @@
     <controlTypes>dataStore</controlTypes>
     <controlTypes>dropdown</controlTypes>
     <controlTypes>grid</controlTypes>
+    <controlTypes>hints</controlTypes>
     <controlTypes>image</controlTypes>
     <controlTypes>input</controlTypes>
     <controlTypes>link</controlTypes>
@@ -27,8 +29,9 @@
     <description>This is the Rapid application and contains all of the pages which the designer and other screens use as dialogues</description>
     <id>rapid</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-07-03T17:36:48.725+01:00</modifiedDate>
+    <modifiedDate>2014-07-09T15:11:54.243+01:00</modifiedDate>
     <name>Rapid</name>
+    <pageBackupsMaxSize>5</pageBackupsMaxSize>
     <securityAdapterType>rapid</securityAdapterType>
     <showActionIds>true</showActionIds>
     <showControlIds>true</showControlIds>
@@ -37,7 +40,7 @@
 body { font-family : 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif; font-size : 14px; }
 
 /* this makes all the dialogues look a litter better */
-tr td { vertical-align: top; padding-top: 5px; }
+tr td { vertical-align: middle; }
 
 /* these make buttons in grid rows a little smaller */
 .grid tr button { font-size: 11px; }
@@ -50,8 +53,20 @@ tr td { vertical-align: top; padding-top: 5px; }
 
 /* improve the inputs */
 select { border: 1px solid #999; border-radius: 3px; }
-input { border: 1px solid #999; border-radius: 3px; padding-left: 5px; }
-textarea { border: 1px solid #999; border-radius: 3px; } </styles>
+input { 
+  border: 1px solid #999; border-radius: 3px; 
+  padding-left: 5px; 
+  -webkit-box-sizing: border-box; 
+  -moz-box-sizing: border-box; 
+  box-sizing: order-box;
+}
+textarea { 
+  border: 1px solid #999; 
+  border-radius: 3px; 
+  -webkit-box-sizing: border-box; 
+  -moz-box-sizing: border-box; 
+  box-sizing: order-box;
+} </styles>
     <title>Rapid application</title>
-    <version>1</version>
-<xmlVersion>1</xmlVersion><XMLVersion>1</XMLVersion></application>
+    <XMLVersion>1</XMLVersion>
+</application>

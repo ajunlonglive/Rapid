@@ -1,5 +1,31 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/action.xsd">
+
+<!-- 
+
+Copyright (C) 2014 - Gareth Edwards / Rapid Information Systems
+
+gareth.edwards@rapid-is.co.uk
+
+
+This file is part of the Rapid Application Platform
+
+RapidSOA is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version. The terms require you to include
+the original copyright, and the license notice in all redistributions.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
+
+ -->
+
     <action>
     
         <type>rapid</type>
@@ -21,7 +47,8 @@ return [
  ["GETDBCONN","Get database connection details"],
  ["GETSOA","Get soa webservice details"],
  ["GETSEC","Get security details"],  
- ["GETUSER","Get users details"], 
+ ["GETUSER","Get user details"], 
+ ["GETUSERS","Get all Rapid users"], 
  ["RELOADACTIONS","Reload actions"],
  ["RELOADCONTROLS","Reload controls"],
  ["RELOADAPPLICATIONS","Reload applications"],
@@ -29,8 +56,8 @@ return [
  ["SAVEAPP","Save application details"], 
  ["SAVESTYLES","Save styles"], 
  ["SAVEDBCONN","Save database connection"],
- ["SAVESOASQL","Save SOA SQL webservice"],
- ["SAVESOAOBJ","Save SOA object webservice"],
+ ["SAVESOASQL","Save SQL webservice"],
+ ["SAVESOAJAVA","Save Java webservice"],
  ["SAVESECURITYADAPT","Save security adapter"],
  ["SAVEACTIONS","Save actions"],
  ["SAVECONTROLS","Save controls"],    
@@ -64,6 +91,11 @@ return [
 	            </getValuesFunction>  
 	        </property>
 	        <property>
+	            <key>rapidApp</key>
+	            <name>Rapid application</name>
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>	 
+	        </property>
+	        <property>
 	            <key>successActions</key>
 	            <name>Success actions</name>
 	            <changeValueJavaScript>childActions</changeValueJavaScript>	 
@@ -77,7 +109,7 @@ return [
 	    
 	    <actionJavaScript>
 	        <![CDATA[
-function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, successCallback, errorCallback) {
+function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidApp, successCallback, errorCallback) {
 
 	var type = "GET";
 	
@@ -117,10 +149,37 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, succes
 				setData_dataStore('rapid_P0_C469_', data, "security", {storageType:"S", id:"rapidrapid_P0_C469_"});
 			};
 		break;
-		case "GETUSER" :		
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: getData_grid(ev, "rapid_P0_C216", "userName", {columns:[{field:"userName"}]}) };	
+		case "GETUSER" :	
+			if (rapidApp) {
+				data = { actionType: actionType, appId: "rapid", userName: getData_grid(ev, "rapid_P0_C823_", "name", {columns:[{field:"name"}]}) };
+			} else {
+				data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: getData_grid(ev, "rapid_P0_C216", "userName", {columns:[{field:"userName"}]}) };	
+			}
 			callback = function(data) {
 				setData_dataStore('rapid_P0_C243', data, "user", {storageType:"S", id:"rapidrapid_P0_C243"});
+			};
+		break;				
+		case "GETUSERS" :		
+			data = { actionType: actionType, appId: "rapid" };	
+			callback = function(data) {
+				setData_grid('rapid_P0_C823_', data, 'users', {"rowSelect":true,"columns":[{"field":"name","visible":true,"style":"text-align:left;padding-left:10px;"},{"field":"description","visible":true,"style":"text-align:left;padding-left:10px;padding-right:10px;"},{"cellFunction":"","field":"","visible":true,"style":""}]});
+				var rapidUserRows = $("#rapid_P0_C823_").find("tr.rowStyle1,tr.rowStyle2");
+				rapidUserRows.each( function() {
+				  var children = $(this).children("td");
+				  var user = children.first().html();
+				  if (data.currentUser != user) {
+					  var cell = children.last();
+					  cell.html("<button>delete...</button>");
+					  cell.find("button").click( function(ev) {
+					    // confirm
+					    if (confirm("Are you sure?")) {    
+					      Action_rapid(ev, 'rapid', 'P0', null, 'P0_A904_', 'DELUSER', true);
+					    }
+					    // stop bubbling
+					    ev.stopPropagation();
+					  });
+				   }
+				});
 			};
 		break;
 		case "SAVEAPP" :		
@@ -161,7 +220,18 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, succes
 				index: $("#rapid_P0_C483_").find("tr.rowSelect").index()-1,
 				name: $("#rapid_P0_C496_").val(), 
 				databaseConnectionIndex: $("#rapid_P0_C536_")[0].selectedIndex,
-				details: _soaDetails
+				details: _soaDetails,
+				type: "SQLWebservice"
+			};	
+		break;
+		case "SAVESOAJAVA" :		
+			data = { 
+				actionType: actionType, 
+				appId: $("#rapid_P0_C43").val(), 
+				index: $("#rapid_P0_C483_").find("tr.rowSelect").index()-1,
+				name: $("#rapid_P0_C944_").val(), 
+				className: $("#rapid_P0_C989_").val(),
+				type: "JavaWebservice"
 			};	
 		break;
 		case "SAVESECURITYADAPT" :		
@@ -306,20 +376,32 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, succes
 				$("#rapid_P0_C74").click(); 
 			};							
 		break;
-		case "NEWUSER" :		
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: $("#rapid_P6_C7").val(), description: $("#rapid_P6_C42_").val() , password: $("#rapid_P6_C18").val() };
-			callback = function() {
-				Event_change_rapid_P0_C43(ev);
-			};								
+		case "NEWUSER" :	
+			if (rapidApp) {
+				data = { actionType: actionType, appId: "rapid", userName: $("#rapid_P16_C8_").val(), description: $("#rapid_P16_C13_").val() , password: $("#rapid_P16_C17_").val(), useAdmin: $("rapid_P16_C38_").prop("checked"), useDesign: $("rapid_P16_C39_").prop("checked")};
+			} else {	
+				data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: $("#rapid_P6_C7").val(), description: $("#rapid_P6_C42_").val() , password: $("#rapid_P6_C18").val() };
+				callback = function() {
+					Event_change_rapid_P0_C43(ev);
+				};
+			}								
 		break;
 		case "DELUSER" :		
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: $(ev.target).closest("tr").find("td").first().html() };
-			callback = function() {
-				// fake an adapter change
-				$("#rapid_P0_C81").change(); 
-				// fake a tab click
-				$("#rapid_P0_C74").click();    
-			};								
+			if (rapidApp) {
+				data = { actionType: actionType, appId: "rapid", userName: $(ev.target).closest("tr").find("td").first().html() };
+				callback = function() {
+					// reload users
+					Action_rapid(ev, 'rapid', 'P0', null, 'P0_A901_', 'GETUSERS', true);
+				};
+			} else {
+				data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: $(ev.target).closest("tr").find("td").first().html() };
+				callback = function() {
+					// fake an adapter change
+					$("#rapid_P0_C81").change(); 
+					// fake a tab click
+					$("#rapid_P0_C74").click();    
+				};
+			} 											
 		break;
 		case "NEWUSERROLE" : 
 			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: $("#rapid_P0_C216").find("tr.rowSelect").children().first().html(), role: $("#rapid_P0_C254").val() };
@@ -334,13 +416,17 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, succes
 			};																
 		break;
 		case "SAVEUSER" :	
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: $("#rapid_P0_C216").find("tr.rowSelect").children().first().html(), description: $("#rapid_P0_C717_").val(), password: $("#rapid_P0_C231").val() };
-			callback = function() {
-				// fake an adapter change
-				$("#rapid_P0_C81").change(); 
-				// fake a tab click
-				$("#rapid_P0_C74").click();    
-			};																
+			if (rapidApp) {
+				data = { actionType: actionType, appId: "rapid", userName: $("#rapid_P0_C823_").find("tr.rowSelect").children().first().html(), description: $("#rapid_P0_C838_").val(), password: $("#rapid_P0_C843_").val(), useAdmin: $("#rapid_P0_C879_").prop('checked'), useDesign: $("#rapid_P0_C880_").prop('checked') }; 
+			} else {
+				data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: $("#rapid_P0_C216").find("tr.rowSelect").children().first().html(), description: $("#rapid_P0_C717_").val(), password: $("#rapid_P0_C231").val() };
+				callback = function() {
+					// fake an adapter change
+					$("#rapid_P0_C81").change(); 
+					// fake a tab click
+					$("#rapid_P0_C74").click();    
+				};	
+			}															
 		break;
 		case "TESTDBCONN" :	
 			data = { 
@@ -353,8 +439,8 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, succes
 				userName: $("#rapid_P0_C340").val(),
 				password: $("#rapid_P0_C341").val()
 			};	
-			callback = function() {
-				alert("Database connection OK");
+			callback = function(data) {
+				alert(data.message);
 			};															
 		break;
 		case "DELAPPBACKUP" : case "RESTOREAPPBACKUP" : 

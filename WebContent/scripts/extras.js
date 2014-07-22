@@ -1,3 +1,27 @@
+/*
+
+Copyright (C) 2014 - Gareth Edwards / Rapid Information Systems
+
+gareth.edwards@rapid-is.co.uk
+
+
+This file is part of the Rapid Application Platform
+
+RapidSOA is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version. The terms require you to include
+the original copyright, and the license notice in all redistributions.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
+
+*/
 
 // extend String to have a trim function for IE8
 if (typeof String.prototype.trim !== 'function') {
@@ -39,33 +63,28 @@ $.fn.extend({
     return this;
   },
   showLoading: function() {
-	if (this.is(":visible")) {
-		var body = $("body");
-		var loadingCover = body.find("div[data-id=" + this.attr("id") + "]");
-		if (!loadingCover[0]) {
-			body.append("<div class='loading' data-id='" + this.attr("id") + "'></div><span class='loading' data-id='" + this.attr("id") + "'></span>");
-			loadingCover = body.find("div[data-id=" + this.attr("id") + "]");
-		}				
-		loadingCover.css({
-			left: this.offset().left,
-			top: this.offset().top,
-			width: this.outerWidth(),
-			height: this.outerHeight()
+	var loadingCover = $("div[data-id=" + this.attr("id") + "]");
+	if (!loadingCover[0]) {
+		this.after("<div class='loading' data-id='" + this.attr("id") + "'></div><span class='loading' data-id='" + this.attr("id") + "'></span>");
+		loadingCover = $("div[data-id=" + this.attr("id") + "]");
+	}				
+	loadingCover.css({
+		left: this.offset().left,
+		top: this.offset().top,
+		width: this.outerWidth(),
+		height: this.outerHeight()
+	}).show();
+	if (this.outerWidth() > 0) {
+		var image = loadingCover.next();
+		image.css({
+			left: this.offset().left + (this.outerWidth() - image.outerWidth())/2,
+			top: this.offset().top + (this.outerHeight() - image.outerHeight())/2
 		}).show();
-		if (this.outerWidth() > 0) {
-			var image = loadingCover.next();
-			image.css({
-				left: this.offset().left + (this.outerWidth() - image.outerWidth())/2,
-				top: this.offset().top + (this.outerHeight() - image.outerHeight())/2
-			}).show();
-		}
-	}
+	}	
     return this;
   },
   hideLoading: function() {
-	if (this.is(":visible")) {
-	  $("body").find("div[data-id=" + this.attr("id") + "]").hide().next().hide();
-	}
+	$("body").find("div[data-id=" + this.attr("id") + "]").hide().next().hide();	
     return this;
   },
   hideDialogue: function(reload) {	  

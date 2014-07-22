@@ -1,3 +1,28 @@
+/*
+
+Copyright (C) 2014 - Gareth Edwards / Rapid Information Systems
+
+gareth.edwards@rapid-is.co.uk
+
+
+This file is part of the Rapid Application Platform
+
+RapidSOA is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version. The terms require you to include
+the original copyright, and the license notice in all redistributions.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
+
+*/
+
 package com.rapid.server;
 
 import java.io.BufferedReader;
@@ -134,10 +159,13 @@ public class Designer extends RapidHttpServlet {
 														
 							// loop the list of applications sorted by id (with rapid last)
 							for (Application application : getSortedApplications()) {
-								
+																								
 								// check the users permission to design this application
 								boolean designPermission = application.getSecurity().checkUserRole(rapidRequest, userName, Rapid.DESIGN_ROLE);
-													
+								
+								// if app is rapid do a further check
+								if (designPermission && "rapid".equals(application.getId())) designPermission = application.getSecurity().checkUserRole(rapidRequest, userName, Rapid.SUPER_ROLE);
+								
 								// check the RapidDesign role is present in the users roles for this application
 								if (designPermission) {												
 									
@@ -185,8 +213,8 @@ public class Designer extends RapidHttpServlet {
 											Collections.sort(roleNames);
 											// loop the sorted connections
 											for (String roleName : roleNames) {
-												// if it's not a special Rapid role add it to the list we're sending
-												if (!Rapid.ADMIN_ROLE.equals(roleName) && !Rapid.DESIGN_ROLE.equals(roleName)) jsonRoles.put(roleName);
+												// only add role if this is the rapid app, or it's not a special rapid permission
+												if ("rapid".equals(application.getId()) || (!Rapid.ADMIN_ROLE.equals(roleName) && !Rapid.DESIGN_ROLE.equals(roleName)&& !Rapid.SUPER_ROLE.equals(roleName))) jsonRoles.put(roleName);
 											}
 										}							
 										// add the security roles to the app 
@@ -475,6 +503,11 @@ public class Designer extends RapidHttpServlet {
 							} // got application
 												
 						} // export
+						
+					} else {
+						
+						// not authenticated
+						response.setStatus(403);
 						
 					} // got design role
 					
@@ -1015,7 +1048,7 @@ public class Designer extends RapidHttpServlet {
 											Files.deleteRecurring(unZipFolder);
 											
 											// throw excpetion
-											throw new Exception("Must be a valid Rapid file");
+											throw new Exception("Must be a valid Rapid " + Rapid.VERSION + " file");
 											
 										}
 										

@@ -1,3 +1,27 @@
+/*
+
+Copyright (C) 2014 - Gareth Edwards / Rapid Information Systems
+
+gareth.edwards@rapid-is.co.uk
+
+
+This file is part of the Rapid Application Platform
+
+RapidSOA is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version. The terms require you to include
+the original copyright, and the license notice in all redistributions.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
+
+*/
 
 function showDialogue(url) {
 
@@ -66,23 +90,32 @@ function showDialogue(url) {
             		}
             	}
             	
-            	// if this is the login page go to the real thing
-            	if (bodyHtml.indexOf("<input type=\"submit\" value=\"log in\">") > 0) window.location = "login.jsp?requestPath=" + window.location; 
+            	// if this is the login page (usually because our session has expired)
+            	if (bodyHtml.indexOf("<input type=\"submit\" value=\"log in\">") > 0) {
+            		
+            		// stop the save changes onunload prompt
+            		_dirty = false;
+            		// go to the login page
+            		window.location = "login.jsp?requestPath=" + window.location; 
+            		
+            	} else {
             	
-            	// inject the html and JavaScript
-            	dialogue.append(bodyHtml + javaScript);
-            	            	            	
-            	// size the dialogue
-            	dialogue.css({
-            		position : "fixed",
-            		left : (win.width() - dialogue.outerWidth()) / 2,
-            		top : (win.height() - dialogue.outerHeight()) / 3
-            	});
+	            	// inject the html and JavaScript
+	            	dialogue.append(bodyHtml + javaScript);
+	            	            	            	
+	            	// size the dialogue
+	            	dialogue.css({
+	            		position : "fixed",
+	            		left : (win.width() - dialogue.outerWidth()) / 2,
+	            		top : (win.height() - dialogue.outerHeight()) / 3
+	            	});
+	            	
+	            	// this seems to be the best way to avoid the resizing/flicker when showing
+	            	window.setTimeout( function() {
+	            		dialogue.show();
+	            	}, 200);
             	
-            	// this seems to be the best way to avoid the resizing/flicker when showing
-            	window.setTimeout( function() {
-            		dialogue.show();
-            	}, 10);
+            	}
             	
         	}        	        	
         }

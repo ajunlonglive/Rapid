@@ -1,3 +1,28 @@
+/*
+
+Copyright (C) 2014 - Gareth Edwards / Rapid Information Systems
+
+gareth.edwards@rapid-is.co.uk
+
+
+This file is part of the Rapid Application Platform
+
+RapidSOA is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version. The terms require you to include
+the original copyright, and the license notice in all redistributions.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
+
+*/
+
 package com.rapid.server;
 
 /*
@@ -224,9 +249,13 @@ public class RapidHttpServlet extends HttpServlet {
 		Collections.sort(applications, new Comparator<Application>() {
 			@Override
 			public int compare(Application app1, Application app2) {
+				// ensure the rapid application appears last in the list
+				if ("rapid".equals(app1.getId())) return 1;
+				if ("rapid".equals(app2.getId())) return -1;
+				// otherwise use an ascii compare
 				return Comparators.AsciiCompare(app1.getId(), app2.getId());
 			}			
-		});
+		});				
 		// return the sorted list
 		return applications;
 	}
@@ -269,7 +298,7 @@ public class RapidHttpServlet extends HttpServlet {
 		
 		PrintWriter out = response.getWriter();		
 		
-		out.println(ex.getLocalizedMessage());
+		out.println("Error : " + ex.getLocalizedMessage());
 						
 		boolean showStackTrace = Boolean.parseBoolean(getServletContext().getInitParameter("showStackTrace"));
 				
@@ -278,6 +307,8 @@ public class RapidHttpServlet extends HttpServlet {
 			String stackTrace = "";
 			
 			if (rapidRequest != null) stackTrace = rapidRequest.getDetails() + "\n\n";
+			
+			stackTrace += ex.getClass().getName() + "\n\n";
 			
 			for (StackTraceElement element : ex.getStackTrace()) stackTrace += element + "\n";
 						

@@ -9,17 +9,37 @@ optgroup {
 	font-style: normal;
 }
 
+hr {
+	height: 1px;
+	color: #777;
+	margin-top: 0px;
+}
+
 #loading {
 	text-align: center;
 	padding-top: 100px;
 	font-size: 20px;
 }
 
+#loading b {
+	font-size: 24px;
+}
+
+#loadingPanel {
+	padding: 20px;
+	border: 4px solid black;
+	border-radius: 10px;
+	margin: auto;
+	width: 300px;
+	background: white;
+	box-shadow: 5px 5px 5px #888;
+}
+
 #page {
 	border: 0px;
 	position: absolute;
-	display:none;
-	
+	overflow: hidden;
+	display: none;	
 }
 
 #designerTools {
@@ -29,9 +49,11 @@ optgroup {
 #designCover {
 	opacity:0;
 	filter:alpha(opacity=0); 
-	position:absolute;
-	left:0px;
+	position:fixed;
 	top:0px;
+	left:0px;
+	right:0px;
+	bottom:0px;
 	z-index:10003;
 	background-color:#00f;
 }
@@ -97,10 +119,27 @@ optgroup {
 	display:none;
 }
 
+#controlsHeader {
+	cursor: pointer;
+}
+
+.headerToggle {
+	padding-left: 2px;
+	vertical-align: middle;
+	padding-bottom: 4px;
+	margin-right: -10px;
+}
+
+.headerHelp {
+	float: right;
+	margin-left: -16px;
+}
+
 ul.design-controls {
 	margin-top: 0px;
 	margin-bottom: 0px;
-	padding-left:0px;
+	padding-left: 0px;
+	text-align: left;
 }
 
 li.design-control {
@@ -141,6 +180,44 @@ li.design-control:hover {
 	margin-left: 40px;
 	margin-top: -19px;
 	padding-left: 15px;
+}
+
+#controlsMap {
+	cursor: pointer;
+}
+
+#pageMap {	
+	text-align: left;	
+	border: 1px solid black;
+	border-radius: 3px;
+	display: none;
+	overflow-x: scroll;
+	overflow-y: scroll;
+	background-color: white;
+	max-height: 500px;
+}
+
+.design-map ul {
+	list-style:none;
+	padding-left:10px;
+}
+
+.design-map li {
+	display: block;
+	cursor: pointer;	
+	vertical-align: middle;
+}
+
+.design-map span {
+	display: block;
+	white-space: nowrap;
+}
+
+.design-map img {
+	vertical-align: middle;
+	height: 16px;
+	width: 16px;
+	margin-top: -2px;
 }
 
 .controlPanelVersion {
@@ -186,6 +263,10 @@ div#propertiesPanel {
 
 .propertiesPanelDiv {
 	padding-top:0px;
+}
+
+.untilsPanelDiv .headerHelp {
+	padding-top:5px;
 }
 
 div#propertiesPanel h2 {
@@ -393,7 +474,7 @@ td.styleCell.validationFail {
 	z-index:10005;
 }
 
-#styleList li.hint {
+#styleList li.styleHint {
 	background-color: gray;
 }
 
@@ -514,8 +595,8 @@ Dialogue styles
 }
 
 #dialogue {
-	background-color:white;
 	position:absolute;
+	background-color:white;	
 	left:0px;
 	top:0px;
 	z-index:10008;
@@ -523,3 +604,20 @@ Dialogue styles
 	box-shadow: 0 0 20px;
 }
 
+/*
+
+Hint style
+
+*/
+
+.hint {
+	position:absolute;
+	max-width: 300px;
+	background-color: white;
+	border: 1px solid #888;
+	border-radius: 5px;
+	padding: 10px;
+	opacity: 0.9;
+	box-shadow: 5px 5px 5px #888;
+	z-index:10010;
+}

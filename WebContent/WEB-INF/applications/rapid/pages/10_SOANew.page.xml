@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><page>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<page>
     <controls>
         <childControls>
             <childControls>
@@ -8,16 +9,20 @@
                         <value>rapid_P10_C4_</value>
                     </entry>
                     <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
                         <key>text</key>
-                        <value>New SOA webservice</value>
+                        <value>New webservice</value>
                     </entry>
                     <entry>
                         <key>colSpan</key>
-                        <value>2</value>
+                        <value>3</value>
                     </entry>
                     <entry>
                         <key>name</key>
-                        <value>Table cell 17</value>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>rowSpan</key>
@@ -34,6 +39,7 @@
                     <rules>background:#e00 url(highlight_red_1x44.png) 50% 50% repeat-x;</rules>
                     <rules>text-shadow :-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;</rules>
                 </styles>
+                <XMLVersion>1</XMLVersion>
             </childControls>
             <properties>
                 <entry>
@@ -41,8 +47,12 @@
                     <value>rapid_P10_C3_</value>
                 </entry>
                 <entry>
+                    <key>classes</key>
+                    <value>[]</value>
+                </entry>
+                <entry>
                     <key>name</key>
-                    <value>Table row 8</value>
+                    <value></value>
                 </entry>
                 <entry>
                     <key>type</key>
@@ -56,6 +66,7 @@
                 <rules>text-align:center;</rules>
                 <rules>font-weight:bold;</rules>
             </styles>
+            <XMLVersion>1</XMLVersion>
         </childControls>
         <childControls>
             <childControls>
@@ -63,6 +74,10 @@
                     <entry>
                         <key>id</key>
                         <value>rapid_P10_C6_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
                     </entry>
                     <entry>
                         <key>text</key>
@@ -74,7 +89,7 @@
                     </entry>
                     <entry>
                         <key>name</key>
-                        <value>Table cell 9</value>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>rowSpan</key>
@@ -89,6 +104,7 @@
                     <appliesTo>#rapid_P10_C6_</appliesTo>
                     <rules>padding-left:5px;</rules>
                 </styles>
+                <XMLVersion>1</XMLVersion>
             </childControls>
             <childControls>
                 <childControls>
@@ -98,6 +114,10 @@
 <entry>
     <key>id</key>
     <value>P10_A9_</value>
+</entry>
+<entry>
+    <key>XMLVersion</key>
+    <value>1</value>
 </entry>
 <entry>
     <key>name</key>
@@ -112,16 +132,17 @@
     <value>existing</value>
 </entry>
                             </properties>
+                            <XMLVersion>1</XMLVersion>
                         </actions>
-                        <filter/>
+                        <filter></filter>
                         <type>keyup</type>
                     </events>
                     <events>
-                        <filter/>
+                        <filter></filter>
                         <type>change</type>
                     </events>
                     <events>
-                        <filter/>
+                        <filter></filter>
                         <type>blur</type>
                     </events>
                     <properties>
@@ -130,12 +151,16 @@
                             <value>rapid_P10_C8_</value>
                         </entry>
                         <entry>
+                            <key>classes</key>
+                            <value>[]</value>
+                        </entry>
+                        <entry>
                             <key>name</key>
                             <value>Name</value>
                         </entry>
                         <entry>
                             <key>value</key>
-                            <value/>
+                            <value></value>
                         </entry>
                         <entry>
                             <key>controlType</key>
@@ -152,11 +177,12 @@
                     </styles>
                     <validation>
                         <allowNulls>false</allowNulls>
-                        <javaScript/>
+                        <javaScript></javaScript>
                         <message>SOA webservice name can only contain 0-9, a-z, A-Z, and _</message>
                         <regEx>^[0-9A-Za-z_]+$</regEx>
                         <type>custom</type>
                     </validation>
+                    <XMLVersion>1</XMLVersion>
                 </childControls>
                 <properties>
                     <entry>
@@ -164,8 +190,12 @@
                         <value>rapid_P10_C7_</value>
                     </entry>
                     <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
                         <key>text</key>
-                        <value/>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -173,7 +203,65 @@
                     </entry>
                     <entry>
                         <key>name</key>
-                        <value>Table cell 10</value>
+                        <value></value>
+                    </entry>
+                    <entry>
+                        <key>rowSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableCell</value>
+                    </entry>
+                </properties>
+                <XMLVersion>1</XMLVersion>
+            </childControls>
+            <childControls>
+                <childControls>
+                    <events>
+                        <filter></filter>
+                        <type>click</type>
+                    </events>
+                    <properties>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
+                        </entry>
+                        <entry>
+                            <key>id</key>
+                            <value>rapid_P10_C40_</value>
+                        </entry>
+                        <entry>
+                            <key>file</key>
+                            <value>help_16x16.png</value>
+                        </entry>
+                        <entry>
+                            <key>name</key>
+                            <value>hintWSName</value>
+                        </entry>
+                        <entry>
+                            <key>type</key>
+                            <value>image</value>
+                        </entry>
+                    </properties>
+                    <XMLVersion>1</XMLVersion>
+                </childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P10_C38_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
+                        <key>text</key>
+                        <value></value>
+                    </entry>
+                    <entry>
+                        <key>colSpan</key>
+                        <value>1</value>
                     </entry>
                     <entry>
                         <key>rowSpan</key>
@@ -185,9 +273,10 @@
                     </entry>
                 </properties>
                 <styles>
-                    <appliesTo>#rapid_P10_C7_</appliesTo>
-                    <rules>padding-right:25px;</rules>
+                    <appliesTo>#rapid_P10_C38_</appliesTo>
+                    <rules>padding-right:10px;</rules>
                 </styles>
+                <XMLVersion>1</XMLVersion>
             </childControls>
             <properties>
                 <entry>
@@ -195,8 +284,12 @@
                     <value>rapid_P10_C5_</value>
                 </entry>
                 <entry>
+                    <key>classes</key>
+                    <value>[]</value>
+                </entry>
+                <entry>
                     <key>name</key>
-                    <value>Table row 4</value>
+                    <value></value>
                 </entry>
                 <entry>
                     <key>type</key>
@@ -207,6 +300,7 @@
                 <appliesTo>#rapid_P10_C5_</appliesTo>
                 <rules>padding-top:5px;</rules>
             </styles>
+            <XMLVersion>1</XMLVersion>
         </childControls>
         <childControls>
             <childControls>
@@ -214,6 +308,10 @@
                     <entry>
                         <key>id</key>
                         <value>rapid_P10_C19_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
                     </entry>
                     <entry>
                         <key>text</key>
@@ -225,7 +323,7 @@
                     </entry>
                     <entry>
                         <key>name</key>
-                        <value>Table cell 9</value>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>rowSpan</key>
@@ -240,17 +338,22 @@
                     <appliesTo>#rapid_P10_C19_</appliesTo>
                     <rules>padding-left:5px;</rules>
                 </styles>
+                <XMLVersion>1</XMLVersion>
             </childControls>
             <childControls>
                 <childControls>
                     <events>
-                        <filter/>
+                        <filter></filter>
                         <type>change</type>
                     </events>
                     <properties>
                         <entry>
                             <key>id</key>
                             <value>rapid_P10_C23_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
                         </entry>
                         <entry>
                             <key>name</key>
@@ -266,9 +369,14 @@
                         </entry>
                         <entry>
                             <key>options</key>
-                            <value>[{"text":"SQL","value":"SQLWebservice"},{"text":"Java class","value":"ReflectionWebservice"}]</value>
+                            <value>[{&quot;text&quot;:&quot;SQL&quot;,&quot;value&quot;:&quot;SQLWebservice&quot;},{&quot;text&quot;:&quot;Java class&quot;,&quot;value&quot;:&quot;JavaWebservice&quot;}]</value>
                         </entry>
                     </properties>
+                    <styles>
+                        <appliesTo>#rapid_P10_C23_</appliesTo>
+                        <rules>width:100%;</rules>
+                    </styles>
+                    <XMLVersion>1</XMLVersion>
                 </childControls>
                 <properties>
                     <entry>
@@ -276,8 +384,12 @@
                         <value>rapid_P10_C20_</value>
                     </entry>
                     <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
                         <key>text</key>
-                        <value/>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -285,7 +397,7 @@
                     </entry>
                     <entry>
                         <key>name</key>
-                        <value>Table cell 10</value>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>rowSpan</key>
@@ -296,6 +408,69 @@
                         <value>tableCell</value>
                     </entry>
                 </properties>
+                <XMLVersion>1</XMLVersion>
+            </childControls>
+            <childControls>
+                <childControls>
+                    <events>
+                        <filter></filter>
+                        <type>click</type>
+                    </events>
+                    <properties>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
+                        </entry>
+                        <entry>
+                            <key>id</key>
+                            <value>rapid_P10_C41_</value>
+                        </entry>
+                        <entry>
+                            <key>file</key>
+                            <value>help_16x16.png</value>
+                        </entry>
+                        <entry>
+                            <key>name</key>
+                            <value>hintWSType</value>
+                        </entry>
+                        <entry>
+                            <key>type</key>
+                            <value>image</value>
+                        </entry>
+                    </properties>
+                    <XMLVersion>1</XMLVersion>
+                </childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P10_C39_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
+                        <key>text</key>
+                        <value></value>
+                    </entry>
+                    <entry>
+                        <key>colSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>rowSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableCell</value>
+                    </entry>
+                </properties>
+                <styles>
+                    <appliesTo>#rapid_P10_C39_</appliesTo>
+                    <rules>padding-right:10px;</rules>
+                </styles>
+                <XMLVersion>1</XMLVersion>
             </childControls>
             <properties>
                 <entry>
@@ -303,8 +478,12 @@
                     <value>rapid_P10_C18_</value>
                 </entry>
                 <entry>
+                    <key>classes</key>
+                    <value>[]</value>
+                </entry>
+                <entry>
                     <key>name</key>
-                    <value>Table row 4</value>
+                    <value></value>
                 </entry>
                 <entry>
                     <key>type</key>
@@ -315,6 +494,7 @@
                 <appliesTo>#rapid_P10_C18_</appliesTo>
                 <rules>padding-top:5px;</rules>
             </styles>
+            <XMLVersion>1</XMLVersion>
         </childControls>
         <childControls>
             <childControls>
@@ -331,6 +511,10 @@
     <value>rapid_P10_C2_</value>
 </entry>
 <entry>
+    <key>XMLVersion</key>
+    <value>1</value>
+</entry>
+<entry>
     <key>name</key>
     <value>Control 36</value>
 </entry>
@@ -343,8 +527,9 @@
     <value>control</value>
 </entry>
                             </properties>
+                            <XMLVersion>1</XMLVersion>
                         </actions>
-                        <filter/>
+                        <filter></filter>
                         <type>click</type>
                     </events>
                     <properties>
@@ -369,6 +554,7 @@
                         <appliesTo>#rapid_P10_C12_</appliesTo>
                         <rules>width:60px;</rules>
                     </styles>
+                    <XMLVersion>1</XMLVersion>
                 </childControls>
                 <properties>
                     <entry>
@@ -376,8 +562,12 @@
                         <value>rapid_P10_C11_</value>
                     </entry>
                     <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
                         <key>text</key>
-                        <value/>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -385,7 +575,7 @@
                     </entry>
                     <entry>
                         <key>name</key>
-                        <value>Table cell 9</value>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>rowSpan</key>
@@ -400,6 +590,7 @@
                     <appliesTo>#rapid_P10_C11_</appliesTo>
                     <rules>padding-bottom:10px;</rules>
                 </styles>
+                <XMLVersion>1</XMLVersion>
             </childControls>
             <childControls>
                 <childControls>
@@ -415,6 +606,10 @@
     <value>true</value>
 </entry>
 <entry>
+    <key>XMLVersion</key>
+    <value>1</value>
+</entry>
+<entry>
     <key>name</key>
     <value>Validation 29</value>
 </entry>
@@ -427,6 +622,7 @@
     <value>true</value>
 </entry>
                             </properties>
+                            <XMLVersion>1</XMLVersion>
                             <failActions xsi:type="control">
 <properties>
     <entry>
@@ -436,6 +632,10 @@
     <entry>
         <key>control</key>
         <value>rapid_P10_C3_4</value>
+    </entry>
+    <entry>
+        <key>XMLVersion</key>
+        <value>1</value>
     </entry>
     <entry>
         <key>name</key>
@@ -450,6 +650,7 @@
         <value>control</value>
     </entry>
 </properties>
+<XMLVersion>1</XMLVersion>
                             </failActions>
                             <passActions xsi:type="control">
 <properties>
@@ -460,6 +661,10 @@
     <entry>
         <key>control</key>
         <value>rapid_P10_C3_4</value>
+    </entry>
+    <entry>
+        <key>XMLVersion</key>
+        <value>1</value>
     </entry>
     <entry>
         <key>name</key>
@@ -474,6 +679,7 @@
         <value>control</value>
     </entry>
 </properties>
+<XMLVersion>1</XMLVersion>
                             </passActions>
                         </actions>
                         <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="rapid">
@@ -481,6 +687,10 @@
 <entry>
     <key>id</key>
     <value>P10_A17_</value>
+</entry>
+<entry>
+    <key>XMLVersion</key>
+    <value>1</value>
 </entry>
 <entry>
     <key>childActions</key>
@@ -499,6 +709,7 @@
     <value>rapid</value>
 </entry>
                             </properties>
+                            <XMLVersion>1</XMLVersion>
                             <successActions xsi:type="control">
 <properties>
     <entry>
@@ -508,6 +719,10 @@
     <entry>
         <key>control</key>
         <value>rapid_P10_C2_</value>
+    </entry>
+    <entry>
+        <key>XMLVersion</key>
+        <value>1</value>
     </entry>
     <entry>
         <key>name</key>
@@ -522,15 +737,20 @@
         <value>control</value>
     </entry>
 </properties>
+<XMLVersion>1</XMLVersion>
                             </successActions>
                         </actions>
-                        <filter/>
+                        <filter></filter>
                         <type>click</type>
                     </events>
                     <properties>
                         <entry>
                             <key>id</key>
                             <value>rapid_P10_C15_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
                         </entry>
                         <entry>
                             <key>name</key>
@@ -549,6 +769,7 @@
                         <appliesTo>#rapid_P10_C15_</appliesTo>
                         <rules>width:60px;</rules>
                     </styles>
+                    <XMLVersion>1</XMLVersion>
                 </childControls>
                 <properties>
                     <entry>
@@ -556,16 +777,20 @@
                         <value>rapid_P10_C14_</value>
                     </entry>
                     <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
                         <key>text</key>
-                        <value/>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>colSpan</key>
-                        <value>1</value>
+                        <value>2</value>
                     </entry>
                     <entry>
                         <key>name</key>
-                        <value>Table cell 10</value>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>rowSpan</key>
@@ -580,8 +805,9 @@
                     <appliesTo>#rapid_P10_C14_</appliesTo>
                     <rules>text-align:right;</rules>
                     <rules>padding-bottom:10px;</rules>
-                    <rules>padding-right:20px;</rules>
+                    <rules>padding-right:15px;</rules>
                 </styles>
+                <XMLVersion>1</XMLVersion>
             </childControls>
             <properties>
                 <entry>
@@ -589,14 +815,19 @@
                     <value>rapid_P10_C10_</value>
                 </entry>
                 <entry>
+                    <key>classes</key>
+                    <value>[]</value>
+                </entry>
+                <entry>
                     <key>name</key>
-                    <value>Table row 6</value>
+                    <value></value>
                 </entry>
                 <entry>
                     <key>type</key>
                     <value>tableRow</value>
                 </entry>
             </properties>
+            <XMLVersion>1</XMLVersion>
         </childControls>
         <properties>
             <entry>
@@ -604,8 +835,12 @@
                 <value>rapid_P10_C2_</value>
             </entry>
             <entry>
+                <key>classes</key>
+                <value>[]</value>
+            </entry>
+            <entry>
                 <key>name</key>
-                <value>Table 2</value>
+                <value></value>
             </entry>
             <entry>
                 <key>type</key>
@@ -619,52 +854,89 @@
         </styles>
         <styles>
             <appliesTo>#rapid_P10_C2_ td</appliesTo>
-            <rules>padding-left:15px;</rules>
+            <rules>padding-left:10px;</rules>
             <rules>padding-top:10px;</rules>
         </styles>
+        <XMLVersion>1</XMLVersion>
+    </controls>
+    <controls>
+        <properties>
+            <entry>
+                <key>id</key>
+                <value>rapid_P10_C42_</value>
+            </entry>
+            <entry>
+                <key>classes</key>
+                <value>[]</value>
+            </entry>
+            <entry>
+                <key>details</key>
+                <value>{&quot;controlHints&quot;:[{&quot;text&quot;:&quot;The name of the webservice is used as the operation/webmethod.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P10_C40_&quot;},{&quot;text&quot;:&quot;The webservice request and response are generated with either a database connection, inputs, and SQL statement - \&quot;SQL\&quot;, or by using reflection on a Java class that implements the Rapid Webservice interface - \&quot;Java class\&quot;.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P10_C41_&quot;}]}</value>
+            </entry>
+            <entry>
+                <key>controlHints</key>
+                <value>[{&quot;text&quot;:&quot;The name of the webservice is used as the operation/webmethod.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P10_C40_&quot;},{&quot;text&quot;:&quot;The webservice request and response are generated with either a database connection, inputs, and SQL statement - \&quot;SQL\&quot;, or by using reflection on a Java class that implements the Rapid Webservice interface - \&quot;Java class\&quot;.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P10_C41_&quot;}]</value>
+            </entry>
+            <entry>
+                <key>type</key>
+                <value>hints</value>
+            </entry>
+            <entry>
+                <key>initJavaScript</key>
+                <value>true</value>
+            </entry>
+        </properties>
+        <XMLVersion>1</XMLVersion>
     </controls>
     <description>Allows users to add new webservices to the application</description>
     <events>
-        <filter/>
+        <filter></filter>
         <type>pageload</type>
     </events>
     <events>
-        <filter/>
+        <filter></filter>
         <type>reusable</type>
     </events>
-    <htmlBody>&lt;table id="rapid_P10_C2_" class="table"&gt;&lt;tbody&gt;&lt;tr id="rapid_P10_C3_" class="tableRow"&gt;&lt;td id="rapid_P10_C4_" colspan="2" class="tabelCell"&gt;New SOA webservice&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P10_C5_" class="tableRow"&gt;&lt;td id="rapid_P10_C6_" class="tabelCell"&gt;Name :&lt;/td&gt;&lt;td id="rapid_P10_C7_" class="tabelCell"&gt;&lt;input id="rapid_P10_C8_" value="" class="input"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P10_C18_" class="tableRow"&gt;&lt;td id="rapid_P10_C19_" class="tabelCell"&gt;Type :&lt;/td&gt;&lt;td id="rapid_P10_C20_" class="tabelCell"&gt;&lt;select id="rapid_P10_C23_" value="" class="dropdown"&gt;&lt;option value="SQLWebservice"&gt;SQL&lt;/option&gt;&lt;option value="ReflectionWebservice"&gt;Java class&lt;/option&gt;&lt;/select&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P10_C10_" class="tableRow"&gt;&lt;td id="rapid_P10_C11_" class="tabelCell"&gt;&lt;button id="rapid_P10_C12_" class="button"&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id="rapid_P10_C14_" class="tabelCell"&gt;&lt;button id="rapid_P10_C15_" class="button"&gt;Save&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
+    <htmlBody>&lt;table id=&quot;rapid_P10_C2_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;rapid_P10_C3_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P10_C4_&quot; colspan=&quot;3&quot; class=&quot;tabelCell&quot;&gt;New webservice&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P10_C5_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P10_C6_&quot; class=&quot;tabelCell&quot;&gt;Name :&lt;/td&gt;&lt;td id=&quot;rapid_P10_C7_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P10_C8_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P10_C38_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P10_C40_&quot; src=&quot;applications/rapid/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P10_C18_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P10_C19_&quot; class=&quot;tabelCell&quot;&gt;Type :&lt;/td&gt;&lt;td id=&quot;rapid_P10_C20_&quot; class=&quot;tabelCell&quot;&gt;&lt;select id=&quot;rapid_P10_C23_&quot; value=&quot;&quot; class=&quot;dropdown&quot;&gt;&lt;option value=&quot;SQLWebservice&quot;&gt;SQL&lt;/option&gt;&lt;option value=&quot;JavaWebservice&quot;&gt;Java class&lt;/option&gt;&lt;/select&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P10_C39_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P10_C41_&quot; src=&quot;applications/rapid/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P10_C10_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P10_C11_&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P10_C12_&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P10_C14_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P10_C15_&quot; class=&quot;button&quot;&gt;Save&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
     <id>P10</id>
+    <modifiedBy>admin</modifiedBy>
+    <modifiedDate>2014-07-09T17:10:54.142+01:00</modifiedDate>
     <name>10_SOANew</name>
     <rolesHtml>
-        <html>&lt;table id="rapid_P10_C2_" class="table"&gt;
+        <html>&lt;table id=&quot;rapid_P10_C2_&quot; class=&quot;table&quot;&gt;
 		&lt;tbody&gt;
-			&lt;tr id="rapid_P10_C3_" class="tableRow"&gt;
-				&lt;td id="rapid_P10_C4_" colspan="2" class="tabelCell"&gt;New SOA webservice&lt;/td&gt;
+			&lt;tr id=&quot;rapid_P10_C3_&quot; class=&quot;tableRow&quot;&gt;
+				&lt;td id=&quot;rapid_P10_C4_&quot; colspan=&quot;3&quot; class=&quot;tabelCell&quot;&gt;New webservice&lt;/td&gt;
 			&lt;/tr&gt;
-			&lt;tr id="rapid_P10_C5_" class="tableRow"&gt;
-				&lt;td id="rapid_P10_C6_" class="tabelCell"&gt;Name :&lt;/td&gt;
-				&lt;td id="rapid_P10_C7_" class="tabelCell"&gt;
-					&lt;input id="rapid_P10_C8_" value="" class="input"&gt;&lt;/td&gt;
-				&lt;/tr&gt;
-				&lt;tr id="rapid_P10_C18_" class="tableRow"&gt;
-					&lt;td id="rapid_P10_C19_" class="tabelCell"&gt;Type :&lt;/td&gt;
-					&lt;td id="rapid_P10_C20_" class="tabelCell"&gt;
-						&lt;select id="rapid_P10_C23_" value="" class="dropdown"&gt;
-							&lt;option value="SQLWebservice"&gt;SQL&lt;/option&gt;
-							&lt;option value="ReflectionWebservice"&gt;Java class&lt;/option&gt;
-						&lt;/select&gt;
-					&lt;/td&gt;
-				&lt;/tr&gt;
-				&lt;tr id="rapid_P10_C10_" class="tableRow"&gt;
-					&lt;td id="rapid_P10_C11_" class="tabelCell"&gt;
-						&lt;button id="rapid_P10_C12_" class="button"&gt;Cancel&lt;/button&gt;
-					&lt;/td&gt;
-					&lt;td id="rapid_P10_C14_" class="tabelCell"&gt;
-						&lt;button id="rapid_P10_C15_" class="button"&gt;Save&lt;/button&gt;
-					&lt;/td&gt;
-				&lt;/tr&gt;
-			&lt;/tbody&gt;
-		&lt;/table&gt;</html>
+			&lt;tr id=&quot;rapid_P10_C5_&quot; class=&quot;tableRow&quot;&gt;
+				&lt;td id=&quot;rapid_P10_C6_&quot; class=&quot;tabelCell&quot;&gt;Name :&lt;/td&gt;
+				&lt;td id=&quot;rapid_P10_C7_&quot; class=&quot;tabelCell&quot;&gt;
+					&lt;input id=&quot;rapid_P10_C8_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
+					&lt;td id=&quot;rapid_P10_C38_&quot; class=&quot;tabelCell&quot;&gt;
+						&lt;img id=&quot;rapid_P10_C40_&quot; src=&quot;applications/rapid/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;
+					&lt;/tr&gt;
+					&lt;tr id=&quot;rapid_P10_C18_&quot; class=&quot;tableRow&quot;&gt;
+						&lt;td id=&quot;rapid_P10_C19_&quot; class=&quot;tabelCell&quot;&gt;Type :&lt;/td&gt;
+						&lt;td id=&quot;rapid_P10_C20_&quot; class=&quot;tabelCell&quot;&gt;
+							&lt;select id=&quot;rapid_P10_C23_&quot; value=&quot;&quot; class=&quot;dropdown&quot;&gt;
+								&lt;option value=&quot;SQLWebservice&quot;&gt;SQL&lt;/option&gt;
+								&lt;option value=&quot;JavaWebservice&quot;&gt;Java class&lt;/option&gt;
+							&lt;/select&gt;
+						&lt;/td&gt;
+						&lt;td id=&quot;rapid_P10_C39_&quot; class=&quot;tabelCell&quot;&gt;
+							&lt;img id=&quot;rapid_P10_C41_&quot; src=&quot;applications/rapid/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;
+						&lt;/tr&gt;
+						&lt;tr id=&quot;rapid_P10_C10_&quot; class=&quot;tableRow&quot;&gt;
+							&lt;td id=&quot;rapid_P10_C11_&quot; class=&quot;tabelCell&quot;&gt;
+								&lt;button id=&quot;rapid_P10_C12_&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;
+							&lt;/td&gt;
+							&lt;td id=&quot;rapid_P10_C14_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;
+								&lt;button id=&quot;rapid_P10_C15_&quot; class=&quot;button&quot;&gt;Save&lt;/button&gt;
+							&lt;/td&gt;
+						&lt;/tr&gt;
+					&lt;/tbody&gt;
+				&lt;/table&gt;</html>
     </rolesHtml>
     <title>New SOA webservice</title>
-<version>1</version><xmlVersion>1</xmlVersion><XMLVersion>1</XMLVersion></page>
+    <XMLVersion>1</XMLVersion>
+</page>

@@ -1,5 +1,31 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <controls xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/control.xsd">
+
+<!-- 
+
+Copyright (C) 2014 - Gareth Edwards / Rapid Information Systems
+
+gareth.edwards@rapid-is.co.uk
+
+
+This file is part of the Rapid Application Platform
+
+RapidSOA is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version. The terms require you to include
+the original copyright, and the license notice in all redistributions.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
+
+ -->
+
 	<control>
 	    
 	    <type>hints</type>	 
@@ -32,6 +58,7 @@
 	                <![CDATA[	                
 .hint {
 	position: absolute;
+	z-index: 10009;
 }                
 	                ]]>
 				</contents>
@@ -76,32 +103,44 @@ for (var i in details.controlHints) {
 
 	var controlHint = details.controlHints[i];
 	
-	body.append("<span class='hint' id='" + controlHint.controlId + "_hint'>" + controlHint.text + "</span>");
+	if (!$("#" + controlHint.controlId + "hint")[0]) {
 	
-	$("#" + controlHint.controlId + "_hint").hide();
-	
+		var style = controlHint.style;
+		if (style) {
+			style = " style='" + style + "'";
+		} else {
+			style = "";
+		}
+		
+		body.append("<span class='hint' id='" + controlHint.controlId + "hint'" + style + ">" + controlHint.text + "</span>");
+		
+		$("#" + controlHint.controlId + "hint").hide();
+		
+	}
+		
 	$("#" + controlHint.controlId).mouseout({controlId: controlHint.controlId}, function(ev) {
-		$("#" + ev.data.controlId + "_hint").hide();
+		$("#" + ev.data.controlId + "hint").hide();
 	});
 		
 	switch (controlHint.type) {		
 		case "click" :
 			$("#" + controlHint.controlId).click({controlId: controlHint.controlId}, function(ev) { 
-				$("#" + ev.data.controlId + "_hint").css({
-					left: ev.clientX + 5,
-					top: ev.clientY + 5
+				$("#" + ev.data.controlId + "hint").css({
+					left: ev.pageX + 5,
+					top: ev.pageY + 5
 				}).show(); 
 			});
 			break;
 		case "hover" :
 			$("#" + controlHint.controlId).mouseover({controlId: controlHint.controlId}, function(ev) { 
-				$("#" + ev.data.controlId + "_hint").css({
-					left: ev.clientX + 5,
-					top: ev.clientY + 5
+				$("#" + ev.data.controlId + "hint").css({
+					left: ev.pageX + 5,
+					top: ev.pageY + 5
 				}).show();  
 			});
-			break;
+		break;
 	}
+	
 }   	
 	    	]]>
 	    </initJavaScript>

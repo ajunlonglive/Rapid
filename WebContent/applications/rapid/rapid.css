@@ -7,6 +7,13 @@ table.grid {
 	border-collapse:collapse;
 }
 
+/* Hints control resource styles */
+
+.hint {
+	position: absolute;
+	z-index: 10009;
+}
+
 /* Page control resource styles */
 
 /* Dialogue cover */
@@ -124,7 +131,7 @@ div.tabsPanel.selected {
 body { font-family : 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif; font-size : 14px; }
 
 /* this makes all the dialogues look a litter better */
-tr td { vertical-align: top; padding-top: 5px; }
+tr td { vertical-align: middle; }
 
 /* these make buttons in grid rows a little smaller */
 .grid tr button { font-size: 11px; }
@@ -137,5 +144,17 @@ tr td { vertical-align: top; padding-top: 5px; }
 
 /* improve the inputs */
 select { border: 1px solid #999; border-radius: 3px; }
-input { border: 1px solid #999; border-radius: 3px; padding-left: 5px; }
-textarea { border: 1px solid #999; border-radius: 3px; } 
+input { 
+  border: 1px solid #999; border-radius: 3px; 
+  padding-left: 5px; 
+  -webkit-box-sizing: border-box; 
+  -moz-box-sizing: border-box; 
+  box-sizing: order-box;
+}
+textarea { 
+  border: 1px solid #999; 
+  border-radius: 3px; 
+  -webkit-box-sizing: border-box; 
+  -moz-box-sizing: border-box; 
+  box-sizing: order-box;
+} 

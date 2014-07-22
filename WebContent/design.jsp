@@ -8,6 +8,31 @@
 <%@ page import="com.rapid.server.filter.*" %>
 <%
 
+/*
+
+Copyright (C) 2014 - Gareth Edwards / Rapid Information Systems
+
+gareth.edwards@rapid-is.co.uk
+
+
+This file is part of the Rapid Application Platform
+
+RapidSOA is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version. The terms require you to include
+the original copyright, and the license notice in all redistributions.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
+
+*/
+
 //log that this is loading
 Logger.getLogger(this.getClass()).debug("design.jsp request : " + request.getQueryString());
 //get the applications
@@ -41,14 +66,20 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, use
 	<script type="text/javascript" src="scripts/validation.js"></script>
 	<script type="text/javascript" src="scripts/actions.js"></script>
 	<script type="text/javascript" src="scripts/styles.js"></script>
-	<script type="text/javascript" src="scripts/dialogue.js"></script>		
+	<script type="text/javascript" src="scripts/dialogue.js"></script>
+	<script type="text/javascript" src="scripts/map.js"></script>
+	<script type="text/javascript" src="scripts/help.js"></script>			
 	<script type="text/javascript" src="applications/rapid/rapid.js"></script>
 	<script type="text/javascript">
 	
 	var _userName = "<%=userName %>";
 	
-	</script>
+	</script>	
 	<link rel="stylesheet" type="text/css" href="styles/designer.css"></link>
+<%
+	} else {
+%>
+	<link rel="stylesheet" type="text/css" href="styles/index.css"></link>
 <%
 	}
 %>
@@ -58,13 +89,15 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, use
 	if (designerPermission) {
 %>	
 	<div id="loading">
-		<div><img style="padding: 10px;width: 200px; height:134px; margin-left:-50px;" src="images/RapidLogo_200x134.png" /></div>
-		<div>Rapid <%=com.rapid.server.Rapid.VERSION %></div>		
-		<div><img style="border: 3px solid #aaa; margin-top: 5px; margin-bottom: 5px;" src="images/wait_120x15.gif"></div>		
-		<div>loading...</div>
+		<div id="loadingPanel">
+			<div><img style="padding: 10px;width: 200px; height:134px; margin-left:-50px;" src="images/RapidLogo_200x134.png" /></div>
+			<div><b>Rapid <%=com.rapid.server.Rapid.VERSION %></b></div>		
+			<div><img style="margin-top: 5px; margin-bottom: 5px;" src="images/wait_220x19.gif"></div>		
+			<div>loading...</div>
+		</div>
 	</div>
 	
-	<iframe id="page"></iframe>
+	<iframe id="page" scrolling="no"></iframe>
 	
 	<div id="designerTools">	 
 			
@@ -73,48 +106,71 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, use
 		<div id="controlPanel" style="z-index:10005">
 			<div id="controlPanelPin"><img src="images/pinned_14x14.png" title="unpin" /></div>
 			<div class="buttons">
-				<button id="appAdmin" class="buttonLeft buttonRight" title="Load the Rapid administration screen">Administration</button>
+				<button id="appAdmin" class="buttonLeft buttonRight" title="Load the Rapid administration screen">administration</button>
 			</div>
-			<h2>Application</h2>
+			
+			<h2>Application<img id="helpApplication" class="headerHelp" src="images/help_16x16.png" /></h2>
 			<select id="appSelect">
 				<!-- Applications are added here as options the designer loads -->
 			</select>				
-			<br/>
-			<h2>Page</h2>
+			
+			<h2>Page<img id="helpPage" class="headerHelp" src="images/help_16x16.png" /></h2>
 			<select id="pageSelect">
 				<!-- Pages are added here as options the designer loads -->
 			</select>
+			
 			<div id="pageLock">
 				<h3>This page is locked for editing by Gareth Edwards</h3>
 			</div>
+			
 			<div class="buttons">				
 				<button id="pageEdit" class="buttonLeft buttonRight" title="View and edit the page properties">properties</button>
-			</div>						
+			</div>		
+							
 			<div class="buttons">
 				<button id="pageNew" class="buttonLeft" title="Create a new page for this application">new</button>
 				<button id="pageSave" class="" title="Save this page">save</button>
 				<button id="pageView" class="buttonRight" title="View this page in the application">view</button>
-			</div>			
+			</div>	
+					
 			<div class="buttons">
 				<button id="undo" class="buttonLeft" disabled="disabled" title="Undo changes">undo</button>
 				<button id="redo" class="buttonRight" disabled="disabled" title="Redo changes">redo</button>
-			</div>					
+			</div>	
+							
 			<div id="controlControls">
-				<h2>Controls</h2>
-				<ul class="design-controls" >
+				<h2 id="controlsHeader">Controls
+					<img class="headerToggle" src="images/triangleUp_8x8.png" />
+					<img id="helpControls" class="headerHelp" src="images/help_16x16.png" />
+				</h2>
+				
+				<ul id="controlsList" class="design-controls" >
 					<!-- Controls are added here as list items when the designer loads -->
 				</ul>					
 			</div>	
+			
+			<h2 id="controlsMap" style="margin-top:0;">Page controls
+				<img class="headerToggle" src="images/triangleUp_8x8.png" />
+				<img id="helpMap" class="headerHelp" src="images/help_16x16.png" />
+			</h2>
+			<div id="pageMap" class="design-map" >
+				<!-- The control page is added here when the page has loaded -->
+			</div>	
+			
+			<hr/>
+			
 			<div class="controlPanelVersion" >
 				<img src="images/RapidLogo_60x40.png" style="margin-left:-16px;"/>
 				<div id="controlPanelVersion">Rapid<br/><%=com.rapid.server.Rapid.VERSION %></div>
-			</div>												
+			</div>		
+													
 		</div>
 		
 		<div id="propertiesPanel" style="z-index:10005">
+		
 			<div class="untilsPanelDiv">
-			
-				<div class="buttons">
+				<img id="helpPropertiesPanel" class="headerHelp" src="images/help_16x16.png" />							
+				<div class="buttons">					
 					<button id="selectPeerLeft" class="buttonLeft"><img src="images/moveLeft_16x16.png" title="Select the control before this one"/></button>
 					<button id="selectParent"><img src="images/moveUp_16x16.png" title="Select the parent of this control"/></button>
 					<button id="selectChild"><img src="images/moveDown_16x16.png" title="Select the first child of this control"/></button>
@@ -132,12 +188,12 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, use
 					<button id="paste" class="buttonRight">paste</button>
 				</div>									
 			</div>			
-			<div class="propertiesPanelDiv">
-				<h2>Properties</h2>
-			</div>			
+			
+			<div class="propertiesPanelDiv"></div>			
 			<div class="validationPanelDiv"></div>
 			<div id="actionsPanelDiv" class="actionsPanelDiv"></div>
-			<div id="stylesPanelDiv"></div>						
+			<div id="stylesPanelDiv"></div>			
+						
 		</div>
 		
 		<div id="propertiesDialogues"></div>
@@ -172,7 +228,17 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, use
 <%
 	} else {
 %>
-<center><h3>You do not have permission to access the Rapid Designer - contact your administrator</h3></center>
+
+	<div class="image">
+		<img src="images/RapidLogo_200x134.png" />
+	</div>
+	
+	<div class="title">
+		<span>Rapid - version <%=com.rapid.server.Rapid.VERSION %></span>
+	</div>
+
+	<center><h3>You do not have permission to access the Rapid Designer</h3></center>
+		
 <%		
 	}
 %>			

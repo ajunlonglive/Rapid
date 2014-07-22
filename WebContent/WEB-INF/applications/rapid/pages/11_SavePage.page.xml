@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><page>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<page>
     <controls>
         <childControls>
             <childControls>
@@ -38,6 +39,7 @@
                     <rules>background:#e00 url(highlight_red_1x44.png) 50% 50% repeat-x;</rules>
                     <rules>text-shadow :-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;</rules>
                 </styles>
+                <XMLVersion>1</XMLVersion>
             </childControls>
             <properties>
                 <entry>
@@ -64,16 +66,17 @@
                 <rules>font-weight:bold;</rules>
                 <rules>text-align:center;</rules>
             </styles>
+            <XMLVersion>1</XMLVersion>
         </childControls>
         <childControls>
             <childControls>
                 <childControls>
                     <events>
-                        <filter/>
+                        <filter></filter>
                         <type>mouseover</type>
                     </events>
                     <events>
-                        <filter/>
+                        <filter></filter>
                         <type>click</type>
                     </events>
                     <properties>
@@ -82,8 +85,12 @@
                             <value>rapid_P11_C7_</value>
                         </entry>
                         <entry>
+                            <key>classes</key>
+                            <value>[]</value>
+                        </entry>
+                        <entry>
                             <key>text</key>
-                            <value>Saving page</value>
+                            <value>Saving page...</value>
                         </entry>
                         <entry>
                             <key>name</key>
@@ -102,6 +109,7 @@
                             <value>1</value>
                         </entry>
                     </properties>
+                    <XMLVersion>1</XMLVersion>
                 </childControls>
                 <properties>
                     <entry>
@@ -110,7 +118,7 @@
                     </entry>
                     <entry>
                         <key>text</key>
-                        <value/>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -139,6 +147,7 @@
                     <rules>height:40px;</rules>
                     <rules>vertical-align:middle;</rules>
                 </styles>
+                <XMLVersion>1</XMLVersion>
             </childControls>
             <properties>
                 <entry>
@@ -158,6 +167,7 @@
                     <value>1</value>
                 </entry>
             </properties>
+            <XMLVersion>1</XMLVersion>
         </childControls>
         <childControls>
             <childControls>
@@ -174,6 +184,10 @@
     <value>hideDialogue();</value>
 </entry>
 <entry>
+    <key>XMLVersion</key>
+    <value>1</value>
+</entry>
+<entry>
     <key>name</key>
     <value>Custom 26</value>
 </entry>
@@ -186,22 +200,27 @@
     <value>1</value>
 </entry>
                             </properties>
+                            <XMLVersion>1</XMLVersion>
                         </actions>
-                        <filter/>
+                        <filter></filter>
                         <type>click</type>
                     </events>
                     <properties>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
+                        </entry>
                         <entry>
                             <key>id</key>
                             <value>rapid_P11_C10_</value>
                         </entry>
                         <entry>
                             <key>name</key>
-                            <value>OK</value>
+                            <value>Ok</value>
                         </entry>
                         <entry>
                             <key>label</key>
-                            <value>OK</value>
+                            <value>Ok</value>
                         </entry>
                         <entry>
                             <key>type</key>
@@ -216,6 +235,7 @@
                         <appliesTo>#rapid_P11_C10_</appliesTo>
                         <rules>width:60px;</rules>
                     </styles>
+                    <XMLVersion>1</XMLVersion>
                 </childControls>
                 <properties>
                     <entry>
@@ -224,7 +244,7 @@
                     </entry>
                     <entry>
                         <key>text</key>
-                        <value/>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -253,6 +273,7 @@
                     <rules>padding-bottom:10px;</rules>
                     <rules>padding-top:0px;</rules>
                 </styles>
+                <XMLVersion>1</XMLVersion>
             </childControls>
             <properties>
                 <entry>
@@ -276,6 +297,7 @@
                 <appliesTo>.</appliesTo>
                 <rules>margin-top:10px</rules>
             </styles>
+            <XMLVersion>1</XMLVersion>
         </childControls>
         <properties>
             <entry>
@@ -301,8 +323,9 @@
             <rules>border-collapse:collapse;</rules>
             <rules>border-spacing:0;</rules>
         </styles>
+        <XMLVersion>1</XMLVersion>
     </controls>
-    <description/>
+    <description></description>
     <events>
         <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="control">
             <properties>
@@ -313,6 +336,10 @@
                 <entry>
                     <key>control</key>
                     <value>rapid_P11_C10_</value>
+                </entry>
+                <entry>
+                    <key>XMLVersion</key>
+                    <value>1</value>
                 </entry>
                 <entry>
                     <key>name</key>
@@ -331,36 +358,39 @@
                     <value>1</value>
                 </entry>
             </properties>
+            <XMLVersion>1</XMLVersion>
         </actions>
-        <filter/>
+        <filter></filter>
         <type>pageload</type>
     </events>
     <events>
-        <filter/>
+        <filter></filter>
         <type>reusable</type>
     </events>
-    <htmlBody>&lt;table id="rapid_P11_C2_" class="table"&gt;&lt;tbody&gt;&lt;tr id="rapid_P11_C3_" class="tableRow"&gt;&lt;td id="rapid_P11_C4_" colspan="2" class="tabelCell"&gt;Saving page&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P11_C5_" class="tableRow"&gt;&lt;td id="rapid_P11_C6_" colspan="2" class="tabelCell"&gt;&lt;span id="rapid_P11_C7_" class="text"&gt;Saving page&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P11_C8_" class="tableRow"&gt;&lt;td id="rapid_P11_C9_" class="tabelCell"&gt;&lt;button id="rapid_P11_C10_" class="button"&gt;OK&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
+    <htmlBody>&lt;table id=&quot;rapid_P11_C2_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;rapid_P11_C3_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P11_C4_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Saving page&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P11_C5_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P11_C6_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;span id=&quot;rapid_P11_C7_&quot; class=&quot;text&quot;&gt;Saving page...&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P11_C8_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P11_C9_&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P11_C10_&quot; class=&quot;button&quot;&gt;Ok&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
     <id>P11</id>
+    <modifiedBy>admin</modifiedBy>
+    <modifiedDate>2014-07-07T20:44:08.964+01:00</modifiedDate>
     <name>11_SavePage</name>
     <rolesHtml>
-        <html>&lt;table id="rapid_P11_C2_" class="table"&gt;
+        <html>&lt;table id=&quot;rapid_P11_C2_&quot; class=&quot;table&quot;&gt;
 		&lt;tbody&gt;
-			&lt;tr id="rapid_P11_C3_" class="tableRow"&gt;
-				&lt;td id="rapid_P11_C4_" colspan="2" class="tabelCell"&gt;Saving page&lt;/td&gt;
+			&lt;tr id=&quot;rapid_P11_C3_&quot; class=&quot;tableRow&quot;&gt;
+				&lt;td id=&quot;rapid_P11_C4_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Saving page&lt;/td&gt;
 			&lt;/tr&gt;
-			&lt;tr id="rapid_P11_C5_" class="tableRow"&gt;
-				&lt;td id="rapid_P11_C6_" colspan="2" class="tabelCell"&gt;
-					&lt;span id="rapid_P11_C7_" class="text"&gt;Saving page&lt;/span&gt;
+			&lt;tr id=&quot;rapid_P11_C5_&quot; class=&quot;tableRow&quot;&gt;
+				&lt;td id=&quot;rapid_P11_C6_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;
+					&lt;span id=&quot;rapid_P11_C7_&quot; class=&quot;text&quot;&gt;Saving page...&lt;/span&gt;
 				&lt;/td&gt;
 			&lt;/tr&gt;
-			&lt;tr id="rapid_P11_C8_" class="tableRow"&gt;
-				&lt;td id="rapid_P11_C9_" class="tabelCell"&gt;
-					&lt;button id="rapid_P11_C10_" class="button"&gt;OK&lt;/button&gt;
+			&lt;tr id=&quot;rapid_P11_C8_&quot; class=&quot;tableRow&quot;&gt;
+				&lt;td id=&quot;rapid_P11_C9_&quot; class=&quot;tabelCell&quot;&gt;
+					&lt;button id=&quot;rapid_P11_C10_&quot; class=&quot;button&quot;&gt;Ok&lt;/button&gt;
 				&lt;/td&gt;
 			&lt;/tr&gt;
 		&lt;/tbody&gt;
 	&lt;/table&gt;</html>
     </rolesHtml>
     <title>Saving page</title>
-    <version>1</version>
-<xmlVersion>1</xmlVersion><XMLVersion>1</XMLVersion></page>
+    <XMLVersion>1</XMLVersion>
+</page>

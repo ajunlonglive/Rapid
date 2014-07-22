@@ -63,6 +63,13 @@ table.grid {
 	border-collapse:collapse;
 }
 
+/* Hints control resource styles */
+
+.hint {
+	position: absolute;
+	z-index: 10009;
+}
+
 /* Tabs control resource styles */
 
 ul.tabsHeader {

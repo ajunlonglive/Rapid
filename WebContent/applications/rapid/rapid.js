@@ -25,7 +25,7 @@ function Action_database(actionId, data, outputs) {
 	// check we got data and somewhere to put it
 	if (data && outputs) {
 		// check the returned sequence is higher than any others received so far
-		if (data.sequence > getDatabaseActionSequence(actionId)) {
+		if (data.sequence > getDatabaseActionMaxSequence(actionId)) {
 			// retain this sequence as the new highest
 			_databaseActionMaxSequence[actionId] = data.sequence;
 			for (var i in outputs) {
@@ -108,7 +108,7 @@ function Action_navigate(url, dialogue) {
 	            	// this seems to be the best way to avoid the resizing/flicker when showing
 	            	window.setTimeout( function() {
 	            		dialogue.show();
-	            	}, 5);
+	            	}, 200);
 		           	           	        	            	            	            
 		    	}        	       	        	        	        	        		
 		    }       	        	        
@@ -119,7 +119,7 @@ function Action_navigate(url, dialogue) {
 	}
 }
 
-function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, successCallback, errorCallback) {
+function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidApp, successCallback, errorCallback) {
 
 	var type = "GET";
 	
@@ -159,10 +159,37 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, succes
 				setData_dataStore('rapid_P0_C469_', data, "security", {storageType:"S", id:"rapidrapid_P0_C469_"});
 			};
 		break;
-		case "GETUSER" :		
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: getData_grid(ev, "rapid_P0_C216", "userName", {columns:[{field:"userName"}]}) };	
+		case "GETUSER" :	
+			if (rapidApp) {
+				data = { actionType: actionType, appId: "rapid", userName: getData_grid(ev, "rapid_P0_C823_", "name", {columns:[{field:"name"}]}) };
+			} else {
+				data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: getData_grid(ev, "rapid_P0_C216", "userName", {columns:[{field:"userName"}]}) };	
+			}
 			callback = function(data) {
 				setData_dataStore('rapid_P0_C243', data, "user", {storageType:"S", id:"rapidrapid_P0_C243"});
+			};
+		break;				
+		case "GETUSERS" :		
+			data = { actionType: actionType, appId: "rapid" };	
+			callback = function(data) {
+				setData_grid('rapid_P0_C823_', data, 'users', {"rowSelect":true,"columns":[{"field":"name","visible":true,"style":"text-align:left;padding-left:10px;"},{"field":"description","visible":true,"style":"text-align:left;padding-left:10px;padding-right:10px;"},{"cellFunction":"","field":"","visible":true,"style":""}]});
+				var rapidUserRows = $("#rapid_P0_C823_").find("tr.rowStyle1,tr.rowStyle2");
+				rapidUserRows.each( function() {
+				  var children = $(this).children("td");
+				  var user = children.first().html();
+				  if (data.currentUser != user) {
+					  var cell = children.last();
+					  cell.html("<button>delete...</button>");
+					  cell.find("button").click( function(ev) {
+					    // confirm
+					    if (confirm("Are you sure?")) {    
+					      Action_rapid(ev, 'rapid', 'P0', null, 'P0_A904_', 'DELUSER', true);
+					    }
+					    // stop bubbling
+					    ev.stopPropagation();
+					  });
+				   }
+				});
 			};
 		break;
 		case "SAVEAPP" :		
@@ -203,7 +230,18 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, succes
 				index: $("#rapid_P0_C483_").find("tr.rowSelect").index()-1,
 				name: $("#rapid_P0_C496_").val(), 
 				databaseConnectionIndex: $("#rapid_P0_C536_")[0].selectedIndex,
-				details: _soaDetails
+				details: _soaDetails,
+				type: "SQLWebservice"
+			};	
+		break;
+		case "SAVESOAJAVA" :		
+			data = { 
+				actionType: actionType, 
+				appId: $("#rapid_P0_C43").val(), 
+				index: $("#rapid_P0_C483_").find("tr.rowSelect").index()-1,
+				name: $("#rapid_P0_C944_").val(), 
+				className: $("#rapid_P0_C989_").val(),
+				type: "JavaWebservice"
 			};	
 		break;
 		case "SAVESECURITYADAPT" :		
@@ -348,20 +386,32 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, succes
 				$("#rapid_P0_C74").click(); 
 			};							
 		break;
-		case "NEWUSER" :		
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: $("#rapid_P6_C7").val(), description: $("#rapid_P6_C42_").val() , password: $("#rapid_P6_C18").val() };
-			callback = function() {
-				Event_change_rapid_P0_C43(ev);
-			};								
+		case "NEWUSER" :	
+			if (rapidApp) {
+				data = { actionType: actionType, appId: "rapid", userName: $("#rapid_P16_C8_").val(), description: $("#rapid_P16_C13_").val() , password: $("#rapid_P16_C17_").val(), useAdmin: $("rapid_P16_C38_").prop("checked"), useDesign: $("rapid_P16_C39_").prop("checked")};
+			} else {	
+				data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: $("#rapid_P6_C7").val(), description: $("#rapid_P6_C42_").val() , password: $("#rapid_P6_C18").val() };
+				callback = function() {
+					Event_change_rapid_P0_C43(ev);
+				};
+			}								
 		break;
 		case "DELUSER" :		
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: $(ev.target).closest("tr").find("td").first().html() };
-			callback = function() {
-				// fake an adapter change
-				$("#rapid_P0_C81").change(); 
-				// fake a tab click
-				$("#rapid_P0_C74").click();    
-			};								
+			if (rapidApp) {
+				data = { actionType: actionType, appId: "rapid", userName: $(ev.target).closest("tr").find("td").first().html() };
+				callback = function() {
+					// reload users
+					Action_rapid(ev, 'rapid', 'P0', null, 'P0_A901_', 'GETUSERS', true);
+				};
+			} else {
+				data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: $(ev.target).closest("tr").find("td").first().html() };
+				callback = function() {
+					// fake an adapter change
+					$("#rapid_P0_C81").change(); 
+					// fake a tab click
+					$("#rapid_P0_C74").click();    
+				};
+			} 											
 		break;
 		case "NEWUSERROLE" : 
 			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: $("#rapid_P0_C216").find("tr.rowSelect").children().first().html(), role: $("#rapid_P0_C254").val() };
@@ -376,13 +426,17 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, succes
 			};																
 		break;
 		case "SAVEUSER" :	
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: $("#rapid_P0_C216").find("tr.rowSelect").children().first().html(), description: $("#rapid_P0_C717_").val(), password: $("#rapid_P0_C231").val() };
-			callback = function() {
-				// fake an adapter change
-				$("#rapid_P0_C81").change(); 
-				// fake a tab click
-				$("#rapid_P0_C74").click();    
-			};																
+			if (rapidApp) {
+				data = { actionType: actionType, appId: "rapid", userName: $("#rapid_P0_C823_").find("tr.rowSelect").children().first().html(), description: $("#rapid_P0_C838_").val(), password: $("#rapid_P0_C843_").val(), useAdmin: $("#rapid_P0_C879_").prop('checked'), useDesign: $("#rapid_P0_C880_").prop('checked') }; 
+			} else {
+				data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: $("#rapid_P0_C216").find("tr.rowSelect").children().first().html(), description: $("#rapid_P0_C717_").val(), password: $("#rapid_P0_C231").val() };
+				callback = function() {
+					// fake an adapter change
+					$("#rapid_P0_C81").change(); 
+					// fake a tab click
+					$("#rapid_P0_C74").click();    
+				};	
+			}															
 		break;
 		case "TESTDBCONN" :	
 			data = { 
@@ -395,8 +449,8 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, succes
 				userName: $("#rapid_P0_C340").val(),
 				password: $("#rapid_P0_C341").val()
 			};	
-			callback = function() {
-				alert("Database connection OK");
+			callback = function(data) {
+				alert(data.message);
 			};															
 		break;
 		case "DELAPPBACKUP" : case "RESTOREAPPBACKUP" : 
@@ -508,6 +562,54 @@ function Action_webservice(actionId, data, outputs) {
 /* Control initialise methods */
 
 
+function Init_hints(id, details) {
+  var body = $("body");
+  	    	
+  for (var i in details.controlHints) {
+  
+  	var controlHint = details.controlHints[i];
+  	
+  	if (!$("#" + controlHint.controlId + "hint")[0]) {
+  	
+  		var style = controlHint.style;
+  		if (style) {
+  			style = " style='" + style + "'";
+  		} else {
+  			style = "";
+  		}
+  		
+  		body.append("<span class='hint' id='" + controlHint.controlId + "hint'" + style + ">" + controlHint.text + "</span>");
+  		
+  		$("#" + controlHint.controlId + "hint").hide();
+  		
+  	}
+  		
+  	$("#" + controlHint.controlId).mouseout({controlId: controlHint.controlId}, function(ev) {
+  		$("#" + ev.data.controlId + "hint").hide();
+  	});
+  		
+  	switch (controlHint.type) {		
+  		case "click" :
+  			$("#" + controlHint.controlId).click({controlId: controlHint.controlId}, function(ev) { 
+  				$("#" + ev.data.controlId + "hint").css({
+  					left: ev.pageX + 5,
+  					top: ev.pageY + 5
+  				}).show(); 
+  			});
+  			break;
+  		case "hover" :
+  			$("#" + controlHint.controlId).mouseover({controlId: controlHint.controlId}, function(ev) { 
+  				$("#" + ev.data.controlId + "hint").css({
+  					left: ev.pageX + 5,
+  					top: ev.pageY + 5
+  				}).show();  
+  			});
+  		break;
+  	}
+  	
+  }
+}
+
 function Init_pagePanel(id, details) {
   var bodyHtml = "<center><h1>Page</h1></center>";
   
@@ -559,16 +661,18 @@ function Init_pagePanel(id, details) {
 }
 
 function Init_tabGroup(id, details) {
-  $("#" + id).find("li").each( function() {
+  $("#" + id).children("ul").children("li").each( function() {
   	$(this).click( function(ev, index) {
+  		// get a reference to the tabs group
+  		var tabs = $("#" + id);
   		// remove selected from all tab header items
-  		$("#" + id + " li").removeClass("selected");
+  		tabs.children("ul").children("li").removeClass("selected");
   		// remove selected from all tab body items
-  		$("#" + id + " div").removeClass("selected");
+  		tabs.children("div").removeClass("selected");
   		// add selected to the li we just clicked on, also get it's index, plus 2, 1 to go from zero to 1 based, the other 1 because of the headers
   		var index = $(this).addClass("selected").index() + 2;
   		// apply selected to the correct body
-  		$("#" + id + " div:nth-child(" + index + ")").addClass("selected");
+  		tabs.children("div:nth-child(" + index + ")").addClass("selected");
   	});
   });
 }
@@ -636,7 +740,7 @@ function getData_dataStore(ev, id, field, details) {
   			}
   		}	 
   	} 
-  	return null;		
+  	return data;		
   }
 }
 
@@ -925,7 +1029,7 @@ function getDatabaseActionSequence(actionId) {
 }		
 
 // this function sets the max to 0 if null
-function getDatabaseActionSequence(actionId) {
+function getDatabaseActionMaxSequence(actionId) {
 	// retrieve the current sequence for the action
 	var sequence = _databaseActionMaxSequence[actionId];
 	// if undefined

@@ -1,6 +1,31 @@
 /*
 
-getThis is the core of the designer
+Copyright (C) 2014 - Gareth Edwards / Rapid Information Systems
+
+gareth.edwards@rapid-is.co.uk
+
+
+This file is part of the Rapid Application Platform
+
+RapidSOA is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version. The terms require you to include
+the original copyright, and the license notice in all redistributions.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
+
+*/
+
+/*
+
+This is the core of the designer
 
 Some terms:
 
@@ -91,6 +116,8 @@ function addUndo(keepRedo) {
 	var page = JSON.stringify(getDataObject(_page));
 	// if the page is different from the last item on the undo stack push it on
 	if (_undo.length == 0 || (_undo.length > 0 && page != _undo[_undo.length - 1])) _undo.push(page);
+	// remove an item from the bottom of the stack if it's too big
+	if (_undo.length > 50) _undo.splice(0, 1);
 	// enable undo button
 	$("#undo").enable();
 	// undo snapshots from the undo button create a redo snap shotshot if the snapshot request comes from elsewhere remove redo
@@ -241,7 +268,29 @@ function getMouseControl(ev, array) {
 		
 		// we use this function recursively so start at the page if no array specified
 		if (array == null) array = _page.childControls;
-		// loop all of our objects
+		
+		// loop all of our objects for non-visual controls
+		for (var i in array) {
+			// get a reference to this control
+			var c = array[i];
+			// get a reference to this object
+			var o = c.object;
+			// only if this object is non-visual
+			if (o.is(".nonVisibleControl")) {
+				// is the mouse below this object
+				if (ev.pageX - _panelPinnedOffset >= o.offset().left && ev.pageY >= o.offset().top) {
+					// get the height of the object
+					var height = o.outerHeight();
+					// does the width and height of this object mean we are inside it
+					if  (ev.pageX - _panelPinnedOffset <= o.offset().left + o.outerWidth() && ev.pageY <= o.offset().top + height) {
+						// return this non-visual control
+						return c;
+					}
+				}
+			}
+		}
+		
+		// loop all of our objects 
 		for (var i in array) {
 			// get a reference to this control
 			var c = array[i];
@@ -325,7 +374,7 @@ function positionBorder(x, y) {
 	_selectionBorder.css({
 		"left":x + _panelPinnedOffset + _mouseDownXOffset - 8 , // 8 = padding + border + 1 pixel	
 		"top":y + _mouseDownYOffset - 8 // 8 = padding + border + 1 pixel
-	});
+	});	
 }
 
 // this function returns a flat array of all of the page controls
@@ -490,9 +539,24 @@ function getDatabaseConnectionOptions(selectIndex) {
 
 // move the border and show properties and actions
 function selectControl(control) {
+	
+	// show all details or cleanup if null
 	if (control) {
+		
 		// store the selection globally
 		_selectedControl = control;
+		
+		// set background of all controls in map to white
+		$("#pageMap").find("span").css("background-color","white");
+		// highlight selected control
+		$("#pageMap").find("span[data-id=" + control.id + "]").css("background-color","#ccc");
+		
+		// get the body into an object
+		var body = $("body");
+		
+		// retain the current scroll positions
+		var scollTop= body.scrollTop();
+		var scrolLeft = body.scrollLeft();
 		
 		// show the properties
 		showProperties(_selectedControl);
@@ -517,10 +581,14 @@ function selectControl(control) {
 			positionBorder(_selectedControl.object.offset().left, _selectedControl.object.offset().top);
 			// size the border
 			sizeBorder(_selectedControl);
-			// show the border 			
-			_selectionBorder.show();
+			// show the border if it has any size to it	and the control is visible		
+			if (_selectionBorder.width() > 5 && _selectedControl.object.is(":visible")) {
+				_selectionBorder.show();
+			} else {
+				_selectionBorder.hide();
+			}
 			
-			// deleteControl
+			// count the number of child controls
 			var contCount = 0;
 
 			// count the controls of this type			
@@ -635,21 +703,37 @@ function selectControl(control) {
 		// show the properties panel	
 		showPropertiesPanel();	
 		
+		// revert the scroll positions
+		body.scrollTop(scollTop);
+		body.scrollLeft(scrolLeft);
+		
 	} else {
 		
 		_selectedControl = null;
 		// hide the selection border
 		_selectionBorder.hide();
+						
 		// hide the properties panel
 		$("#propertiesPanel").hide("slide", {direction: "right"}, 200);
-		// empty any propertyDialogues that we may have used before
-		$("#propertiesDialogues").children().remove();
+		
+		// show null properties
+		showProperties(null);
+		// show null validation
+		showValidation(null);
+		// show null events (and the actions)
+		showEvents(null);
+		// show null styles
+		showStyles(null);
+		
+		// resize the window
+		windowResize("mousedone-nocontrol");
+		
 	}	
 	
 }
 
 // this function shows the whole designer to the user, usually after the first page is loaded but possible earlier if there are no applications or pages
-function showDesigner() {
+function showDesigner() {	
 	// hide the loading message
 	$("#loading").hide();
 	// show the control panel and properties panel
@@ -659,7 +743,7 @@ function showDesigner() {
 	// resize the elements on the page
 	windowResize("showDesigner");
 	// arrange any non-visible controls
-	arrangeNonVisibleControls();
+	arrangeNonVisibleControls();	
 }
 
 //this function load the apps into appsSelect
@@ -681,30 +765,28 @@ function loadApps(selectedAppId, forceLoad) {
     	contentType: "application/json",
         dataType: "json",            
         data: null,            
-        error: function(server, status, error) { 
-        	// show the error
-        	alert("Error loading applications : " + error); 
+        error: function(server, status, error) {
+        	// check if there was permission to use rapid
+        	if (server && server.status == 403) {
+        		// reload the whole page (sends user to login)
+        		loaction.reload();
+        	} else {
+        		// show the error
+        		alert("Error loading applications : " + error);
+        	}
         },
         success: function(apps) {        	
         	// if an app is not selected try the url
         	if (!selectedAppId) var urlAppId = $.getUrlVar("a");
         	// build the select options for each app
         	var options = "";
-        	// remember if we have the rapid app and we'll put it last
-        	var gotRapidApp = false;
         	// loop the apps we received
         	for (var i in apps) {        		
         		// get a reference to the app
         		var app = apps[i];
         		// add an option for this page (if not the rapid app itself)
-        		if (app.id == "rapid") {
-        			gotRapidApp = true;
-        		} else {
-        			options += "<option value='" + app.id + "' " + (selectedAppId || urlAppId == app.id ? "selected='true'" : "") + ">" + app.id + " - " + app.title + "</option>";        		        		
-        		}
+        		options += "<option value='" + app.id + "' " + (selectedAppId || urlAppId == app.id ? "selected='true'" : "") + ">" + app.id + " - " + app.title + "</option>";        	
         	}
-        	// only add the Rapid here
-        	if (gotRapidApp) options += "<option value='rapid' " + (selectedAppId || urlAppId == "rapid" ? "selected='true'" : "") + ">RAPID ADMINISTRATION APP</option>"; 
         	// get a reference to apps dropdown
         	var appsDropDown = $("#appSelect");
         	// put the options into the dropdown
@@ -732,6 +814,8 @@ function loadApp(forceLoad) {
 	var designControls = $("ul.design-controls");
 	// hide the controls panel
 	designControls.hide();
+	// hide the map
+	$("#pageMap").hide();
 	// empty the designControls panel
 	designControls.children().remove();	
 	// empty the action options array
@@ -898,8 +982,14 @@ function loadPages(selectedPageId, forceLoad) {
         error: function(server, status, error) { 
         	// show the designer as there's a small chance it might not be visible yet
         	showDesigner();
-        	// show an error
-        	alert("Error loading pages : " + error);        	
+        	// if it's an authentication thing
+        	if (server && server.status == 403) {
+        		// reload the page from the top
+        		location.reload(true);
+        	} else {
+        		// show an error
+        		alert("Error loading pages : " + error);
+        	}
         },
         success: function(pages) {        	       	
         	
@@ -990,7 +1080,7 @@ function loadPage() {
 	// check there is a page selected in the dropdown
 	if (pageId) {										
 		// set the page id
-		_page.id = pageId;
+		_page.id = pageId;		
 		// reload the page iFrame with resources for the app and this page
     	_pageIframe[0].contentDocument.location.href = "designpage.jsp?a=" + _app.id + "&p=" + _page.id;	
     	// set dirty to false
@@ -1472,8 +1562,14 @@ $(document).ready( function() {
 		        error: function(server, status, error) { 
 		        	// ensure the designer is visble
 		        	showDesigner();
-		        	// show the error
-		        	alert("Error loading page : " + error); 
+		        	// if it's an authentication thing
+		        	if (server && server.status == 403) {
+		        		// reload the page from the top
+		        		location.reload(true);
+		        	} else {
+		        		// show an error
+		        		alert("Error loading page : " + error);
+		        	}
 		        },
 		        success: function(page) {       
 		        	
@@ -1628,13 +1724,11 @@ $(document).ready( function() {
 		} else { 
 			// not got an object if there are no child controls on the page select it, otherwise clear everything
 			if (_page.childControls && _page.childControls.length == 0 && !$("#propertiesPanel").is(":visible") ) {
+				// select the page
 				selectControl(_page);
 			} else {
-				_selectedControl = null;				
-				// hide the properties			
-				$("#propertiesPanel").hide("slide", {direction: "right"}, 200);
-				// empty any propertyDialogues that we may have used before
-				$("#propertiesDialogues").children().remove();
+				// select a null control (this does a lot of cleanup)
+				selectControl(null);				
 			}
 			// hide the select border
 			_selectionBorder.hide();			
@@ -1644,9 +1738,9 @@ $(document).ready( function() {
 	// administration
 	$("#appAdmin").click( function(ev) {
 		if (_app && _app.id) {
-			window.location = "~?a=rapid&p=P0&appId=" + _app.id;
+			window.location = "~?a=rapid&appId=" + _app.id;
 		} else {
-			window.location = "~?a=rapid&p=P0";
+			window.location = "~?a=rapid";
 		}		 
 	});
 	
@@ -1688,11 +1782,13 @@ $(document).ready( function() {
 	// undo
 	$("#undo").click( function(ev) {
 		doUndo(); 
+		showPageMap();
 	});
 	
 	// redo
 	$("#redo").click( function(ev) {
-		doRedo(); 
+		doRedo();
+		showPageMap();
 	});
 		
 	// save page
@@ -1814,6 +1910,8 @@ $(document).ready( function() {
 			arrangeNonVisibleControls();
 			// re-select the control
 			selectControl(_selectedControl);
+			// rebuild the page map
+			showPageMap();
 		}
 	});
 	
@@ -1843,6 +1941,8 @@ $(document).ready( function() {
 			arrangeNonVisibleControls();
 			// re-select the control
 			selectControl(_selectedControl);
+			// rebuild the page map
+			showPageMap();
 		}
 	});
 	
@@ -1865,6 +1965,8 @@ $(document).ready( function() {
 			}			
 			// select the new one
 			selectControl(newControl);
+			// rebuild the page map
+			showPageMap();
 		}
 		
 	});
@@ -1888,6 +1990,8 @@ $(document).ready( function() {
 			}			
 			// select the new one
 			 selectControl(newControl);
+			// rebuild the page map
+			showPageMap();
 		}
 		
 	});
@@ -1922,7 +2026,9 @@ $(document).ready( function() {
 				}
 				// arrange the non visible page controls
 				arrangeNonVisibleControls();
-			}
+				// rebuild the page map
+				showPageMap();
+			}			
 		} else {
 			showDialogue('~?a=rapid&p=P4');
 		}
@@ -1981,7 +2087,7 @@ $(document).ready( function() {
 					}
 					// select the new one
 					selectControl(newControl);				
-				}	
+				}					
 				
 			} else {
 				
@@ -2036,6 +2142,9 @@ $(document).ready( function() {
 				} // page copy check
 				
 			} // page paste check
+			
+			// rebuild the page map
+			showPageMap();
 					
 		}		
 	});		
@@ -2065,10 +2174,13 @@ $(document).mousemove( function(ev) {
 	var c = getMouseControl(ev);
 	// if a control is selected and the mouse is down look for the controls new destination
 	if (_selectedControl) {
+		
 		// check the mouse is down (and the selected control has an object)
 		if (_mouseDown && _selectedControl.object[0]) {		
+		
 			// if we have just started moving position the cover
 			if (!_movingControl) {
+				
 				// position the cover
 				_selectionCover.css({
 					"width":_selectedControl.object.outerWidth(), 
@@ -2076,14 +2188,17 @@ $(document).mousemove( function(ev) {
 					"left":_selectedControl.object.offset().left + _panelPinnedOffset, 	
 					"top":_selectedControl.object.offset().top
 				});
+				
 				if (_selectedControl.object.is(":visible")) {
 					// show it if selected object visible
 					_selectionCover.show();				
 					// show the insert
 					_selectionInsert.show();
 				}			
-				// hide the properties			
+				
+				// hide the properties - this can cause the properties panel to bounce
 				$("#propertiesPanel").hide("slide", {direction: "right"}, 200);
+				
 				// remember we are now moving an object
 				_movingControl = true;
 			}
@@ -2095,8 +2210,8 @@ $(document).mousemove( function(ev) {
 			if (c && _selectedControl._class.canUserMove) {
 				// retain a reference to the movedoverObject
 				_movedoverControl = c;			
-				// if over the selected object don't show anything
-				if (_movedoverControl === _selectedControl) {
+				// if over the selected object or a descendant don't show anything
+				if (_movedoverControl === _selectedControl || isDecendant(_selectedControl,_movedoverControl)) {
 					_selectionInsert.hide();
 					_selectionMoveLeft.hide();
 					_selectionMoveRight.hide();
@@ -2130,7 +2245,7 @@ $(document).mousemove( function(ev) {
 						// make sure the other selections are hidden						
 						_selectionMoveLeft.hide();
 						_selectionInsert.hide();
-					} else if (_movedoverControl._class.canUserInsert && !isDecendant(_selectedControl,_movedoverControl)) {
+					} else if (_movedoverControl._class.canUserInsert) {
 						// position the insert in the middle
 						_selectionInsert.css({
 							"display": "block",
@@ -2165,15 +2280,19 @@ $(document).mousemove( function(ev) {
 
 // if the mouse is upped anywhere
 $(document).mouseup( function(ev) {
+	
 	_mouseDown = false;
 	_mouseDownXOffset = 0;
 	_mouseDownYOffset = 0;
 	_reorderDetails = null;
-	if (_selectedControl && _selectedControl.object[0]) {
+	
+	if (_selectedControl && _selectedControl.object[0]) {		
 		// show it in case it was an add
-		_selectedControl.object.show();
+		if (_selectedControl._class.canUserMove) _selectedControl.object.show();
 		// if we were moving a control different from the _selectedControl
 		if (_movingControl && _movedoverControl && _movedoverDirection && _movedoverControl.object[0] !== _selectedControl.object[0]) {
+			// add an undo snapshot
+			addUndo();
 			// remove the object from it's current parent
 			removeControlFromParent(_selectedControl);
 			// move the selectedObject to the left or right of the movedoverObject, or insert if in the centre
@@ -2202,9 +2321,9 @@ $(document).mouseup( function(ev) {
 				// move the object into the right place
 				_movedoverControl.object.append(_selectedControl.object);
 				break;
-			}	
-			// add an undo snapshot
-			addUndo();
+			}				
+			// rebuild the page map
+			showPageMap();
 		}
 		
 		// remember we have only selected (no longer moving)
@@ -2307,6 +2426,29 @@ function showPropertiesPanel() {
 				
 }
 
+// gets the height of an object including any children that may have absoloute positioning
+function getAbsoluteHeight(o) {
+	// assume height is 0
+	var height = 0;
+	// get the children
+	var childElements = o.children();
+	// loop them
+	for (var i = 0; i < childElements.length; i++) {
+		// get the child
+		var c = $(childElements[i]);
+		// if position absoloute
+		if (c.css("position") == "absolute") {
+			// get the height from the child's children
+			height += getAbsoluteHeight(c);
+		} else {
+			// add the height normally
+			height += c.outerHeight(true);
+		}
+	}	
+	// return the greatest of calculated and reported height	
+	return Math.max(height, o.outerHeight(true));
+}
+
 // called whenever the page is resized
 function windowResize(ev) {
 	
@@ -2319,38 +2461,40 @@ function windowResize(ev) {
 	var width = win.width();
 	// get the window height
 	var height = win.height();
+		
+	// reset the page iFrame height so non-visual controls aren't too far down the page
+	_pageIframe.css("height","auto");
 	
-			
 	// get the control panel
-	var controlPanel = $("#controlPanel");
-	// get its current height (less the combined top and bottom padding)
-	var controlPanelHeight = controlPanel.outerHeight(true);
+	var controlPanel = $("#controlPanel");		
+	// set it's height to auto
+	controlPanel.css("height","auto");
 	
 	// get the properties panel
 	var propertiesPanel = $("#propertiesPanel");
-	// get its current height
-	var propertiesPanelHeight = propertiesPanel.outerHeight(true);
+	// set it's height to auto
+	propertiesPanel.css("height","auto");
 	
 	// get the current iframe contents height
-	var iframeHeight =_pageIframe[0].contentWindow.document.body.offsetHeight;
+	var iframeHeight = getAbsoluteHeight($(_pageIframe[0].contentWindow.document.body));
 	
+	// get its current height (less the combined top and bottom padding)
+	var controlPanelHeight = controlPanel.outerHeight(true);
+		
+	// get its current height
+	var propertiesPanelHeight = propertiesPanel.outerHeight(true);
+			
 	// log
 	//console.log("caller = " + caller + ", window = " + height + ", control panel = " + controlPanelHeight + ", properties panel = " + propertiesPanelHeight + ", iframe = " + iframeHeight);
 		
 	// increase height to the tallest of the window, the panels, or the iFrame
 	height = Math.max(height, controlPanelHeight, propertiesPanelHeight, iframeHeight);
 	
-	// cover the entire screen with the design cover
-	_designCover.css({
-		"width": width,
-		"height": height
-	});
+	// adjust controlPanel height, less it's padding
+	controlPanel.css({height: height - 20});
 	
-	// adjust controlPanel height if necessary, less it's padding
-	if (controlPanelHeight < height) controlPanel.css({height: height - 20});
-	
-	// adjust propertiesPanel height if necessary, less it's padding
-	if (propertiesPanelHeight < height) propertiesPanel.css({height: height - 20});
+	// adjust propertiesPanel height, less it's padding
+	propertiesPanel.css({height: height - 20});
 		
 	// adjust iframe position, width and height
 	_pageIframe.css({

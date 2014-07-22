@@ -1,73 +1,112 @@
 /*
 
+Copyright (C) 2014 - Gareth Edwards / Rapid Information Systems
+
+gareth.edwards@rapid-is.co.uk
+
+
+This file is part of the Rapid Application Platform
+
+RapidSOA is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version. The terms require you to include
+the original copyright, and the license notice in all redistributions.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
+
+*/
+
+/*
+
 Functions related to control properties
 
 */
 
 // this holds all the property listeners so they can be properly detached
-var _listeners = new Array();
+var _listeners = [];
 
 // this renders all the control properties in the properties panel
 function showProperties(control) {
 	
+	// remove any listeners
+	for (var i in _listeners) {
+		_listeners[i].unbind();
+	}
+	
 	// grab a reference to any dialogues
 	var propertiesDialogues = $("#propertiesDialogues");
 	// empty any propertyDialogues that we may have used before
-	propertiesDialogues.children().remove();
+	propertiesDialogues.children().remove();		
 		
 	// grab a reference to the properties div
 	var propertiesPanel = $(".propertiesPanelDiv");
 	// set the parent height to auto
 	propertiesPanel.parent().css("height","auto");
-	// write the properties heading
-	propertiesPanel.html("<h2>Properties</h2>");
-	// append a table
-	propertiesPanel.append("<table class='propertiesPanelTable'><tbody></tbody></table>");		
-	// get a reference to the table
-	var propertiesTable = propertiesPanel.children().last().children().last();
-	// add the properties header
-	propertiesTable.append("<tr><td colspan='2'><h3>" + control._class.name + "</h3></td></tr>");
-	// add a small break
-	propertiesTable.append("<tr><td colspan='2'></td></tr>");
-	// show the control id if requested
-	if (_app.showControlIds) propertiesTable.append("<tr><td>ID</td><td class='canSelect'>" + control.id + "</td></tr>");
-	// check there are class properties
-	var properties = control._class.properties;
-	if (properties) {
-		// (if a single it's a class not an array due to JSON class conversionf from xml)
-		if ($.isArray(properties.property)) properties = properties.property; 			
-		// loop the class properties
-		for (var i in properties) {
-			// add a row
-			propertiesTable.append("<tr></tr>");
-			// get a reference to the row
-			var propertiesRow = propertiesTable.children().last();
-			// retrieve a property object from the control class
-			var property = properties[i];
-			// check that visibility is not false
-			if (property.visible === undefined || !property.visible === false) {
-				// get the property itself from the control
-				propertiesRow.append("<td>" + property.name + "</td><td></td>");
-				// get the cell the property update control is going in
-				var cell = propertiesRow.children().last();
-				// apply the property function if it starts like a function or look for a known Property_[type] function and call that
-				if (property.changeValueJavaScript.trim().indexOf("function(") == 0) {
-					try {
-						var changeValueFunction = new Function(property.changeValueJavaScript);
-						changeValueFunction.apply(this,[cell, control, property]);
-					} catch (ex) {
-						alert("Error - Couldn't apply changeValueJavaScript for " + control.name + "." + property.name + " " + ex);
-					}
-				} else {
-					if (window["Property_" + property.changeValueJavaScript]) {
-						window["Property_" + property.changeValueJavaScript](cell, control, property, true);
+	
+	// if there was a control
+	if (control) {
+	
+		// write the properties heading
+		propertiesPanel.html("<h2>Properties<img id='helpProperties' class='headerHelp' src='images/help_16x16.png' /></h2>");
+		// add the help hint
+		addHelp("helpProperties",true);
+		// append a table
+		propertiesPanel.append("<table class='propertiesPanelTable'><tbody></tbody></table>");		
+		// get a reference to the table
+		var propertiesTable = propertiesPanel.children().last().children().last();
+		// add the properties header
+		propertiesTable.append("<tr><td colspan='2'><h3>" + control._class.name + "</h3></td></tr>");
+		// add a small break
+		propertiesTable.append("<tr><td colspan='2'></td></tr>");
+		// show the control id if requested
+		if (_app.showControlIds) propertiesTable.append("<tr><td>ID</td><td class='canSelect'>" + control.id + "</td></tr>");
+		// check there are class properties
+		var properties = control._class.properties;
+		if (properties) {
+			// (if a single it's a class not an array due to JSON class conversionf from xml)
+			if ($.isArray(properties.property)) properties = properties.property; 			
+			// loop the class properties
+			for (var i in properties) {
+				// add a row
+				propertiesTable.append("<tr></tr>");
+				// get a reference to the row
+				var propertiesRow = propertiesTable.children().last();
+				// retrieve a property object from the control class
+				var property = properties[i];
+				// check that visibility is not false
+				if (property.visible === undefined || !property.visible === false) {
+					// get the property itself from the control
+					propertiesRow.append("<td>" + property.name + "</td><td></td>");
+					// get the cell the property update control is going in
+					var cell = propertiesRow.children().last();
+					// apply the property function if it starts like a function or look for a known Property_[type] function and call that
+					if (property.changeValueJavaScript.trim().indexOf("function(") == 0) {
+						try {
+							var changeValueFunction = new Function(property.changeValueJavaScript);
+							changeValueFunction.apply(this,[cell, control, property]);
+						} catch (ex) {
+							alert("Error - Couldn't apply changeValueJavaScript for " + control.name + "." + property.name + " " + ex);
+						}
 					} else {
-						alert("Error - There is no known Property_" + property.changeValueJavaScript + " function");
+						if (window["Property_" + property.changeValueJavaScript]) {
+							window["Property_" + property.changeValueJavaScript](cell, control, property, true);
+						} else {
+							alert("Error - There is no known Property_" + property.changeValueJavaScript + " function");
+						}
 					}
-				}
-			}			
-		}
-	}
+				}			
+			} // visible property
+			
+		} // got properties
+		
+	} // got control
 		
 }
 
@@ -155,7 +194,8 @@ function Property_bigtext(cell, propertyObject, property, refreshHtml) {
 	// modify if the text is updated
 	_listeners.push( textarea.keyup( {cell : cell, textarea: textarea}, function(ev) { 
 		updateProperty(propertyObject, property, textarea.val(), refreshHtml);  
-	}));	
+	}));
+	
 }
 
 function Property_select(cell, propertyObject, property, refreshHtml, refreshProperties) {
@@ -397,6 +437,7 @@ function Property_validationControls(cell, propertyObject, property, refreshHtml
 		} 		
 		if (text && i < controls.length - 1) text += ",";
 	}
+	
 	// add a message if nont
 	if (!text) text = "Click to add";
 	// append the text into the cell
@@ -409,21 +450,26 @@ function Property_validationControls(cell, propertyObject, property, refreshHtml
 		// check we can find the control - we can loose them when pasting
 		if (control) {
 			// add the row for this value
-			table.append("<tr><td>" + control.name + "</td><td style='width:16px'><img src='images/bin_16x16.png' style='float:right;' /></td></tr>");
-			// add a listener the delete image
-			_listeners.push( table.children().last().children().last().children().last().click( function(ev) {
-				// get the row
-				var row = $(this).parent().parent();
-				// remove the control
-				propertyObject.controls.splice(row.index(),1);
-				// remove the row
-				row.remove();
-			}));
+			table.append("<tr><td>" + control.name + "</td><td style='width:32px'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");			
 		} else {
 			// remove this control
 			controls.splice(i,1);
 		}		
 	}	
+	
+	// add listeners to the delete image
+	_listeners.push( table.find("img.delete").click( function(ev) {
+		// get the row
+		var row = $(this).parent().parent();
+		// remove the control
+		propertyObject.controls.splice(row.index(),1);
+		// remove the row
+		row.remove();
+	}));
+	
+	// add reorder listeners
+	addReorder(controls, table.find("img.reorder"), function() { Property_validationControls(cell, propertyObject, property, refreshHtml, dialogue); });
+		
 	// add an add dropdown
 	var addControl = table.append("<tr><td colspan='2'><select><option value=''>Add control...</option>" + getValidationControlOptions() + "</select></td></tr>").children().last().children().last().children().last();
 	_listeners.push( addControl.change( {cell: cell, propertyObject: propertyObject, refreshHtml: refreshHtml, refreshDialogue: dialogue}, function(ev) {
@@ -1616,7 +1662,7 @@ function Property_controlHints(cell, hints, property, refreshHtml, refreshDialog
 	// retain a reference to the dialogue (if we were passed one)
 	var dialogue = refreshDialogue;
 	// if we weren't passed one - make what we need
-	if (!dialogue) dialogue = createDialogue(cell, 300, "Control hints");		
+	if (!dialogue) dialogue = createDialogue(cell, 400, "Control hints");		
 	// grab a reference to the table
 	var table = dialogue.find("table").first();
 	// make sure table is empty
@@ -1629,7 +1675,7 @@ function Property_controlHints(cell, hints, property, refreshHtml, refreshDialog
 	if (!controlHints || controlHints == "[]") controlHints = [];
 	
 	// add a header
-	table.append("<tr><td><b>Control</b></td><td><b>Action</b></td><td colspan='2'><b>Hint text</b></td></td></tr>");
+	table.append("<tr><td><b>Control</b></td><td><b>Action</b></td><td style='min-width:150px;max-width:150px;'><b>Hint text</b></td><td colspan='2'><b>Style</b></td></td></tr>");
 		
 	// loop the controls
 	for (var i in controlHints) {
@@ -1647,7 +1693,7 @@ function Property_controlHints(cell, hints, property, refreshHtml, refreshDialog
 		var typeOptions = "<option value='hover'" + ((controlHint.type == 'hover') ? " selected": "") + ">hover</option><option value='click'" + ((controlHint.type == 'click') ? " selected": "") + ">click</option>";
 		
 		// add the row
-		table.append("<tr><td><select class='control'><option value=''>Please select...</option>" + getControlOptions(controlHint.controlId) + "</select></td><td><select class='type'>" + typeOptions + "</select></td><td style='min-width:100px;'><span>" + controlHint.text + "</span></td><td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
+		table.append("<tr><td><select class='control'><option value=''>Please select...</option>" + getControlOptions(controlHint.controlId) + "</select></td><td><select class='type'>" + typeOptions + "</select></td><td><span>" + controlHint.text + "</span></td><td><input value='" + controlHint.style + "'/></td><td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
 	
 		// add a seperating comma to the text if not the last hint
 		if (i < controlHints.length - 1) text += ",";
@@ -1686,8 +1732,18 @@ function Property_controlHints(cell, hints, property, refreshHtml, refreshDialog
 		// get a reference to the span
 		var span = $(this);
 		//function Property_bigtext(cell, propertyObject, property, refreshHtml) {
-		Property_bigtext(span.parent(), controlHints[span.parent().parent().index()-1], {key: "text"});		
+		Property_bigtext(span.parent(), controlHints[span.parent().parent().index()-1], {key: "text"}, false);		
 	});
+	
+	// add style listeners
+	var styles = table.find("input");
+	// add a listener
+	_listeners.push( styles.change( {controlHints: controlHints}, function(ev) {
+		// get the input
+		var input = $(ev.target);
+		// update the control id
+		ev.data.controlHints[input.parent().parent().index()-1].style = input.val();
+	}));
 				
 	// add delete listeners
 	var deleteImages = table.find("img.delete");
@@ -1720,7 +1776,7 @@ function Property_controlHints(cell, hints, property, refreshHtml, refreshDialog
 		// instantiate array if need be
 		if (!ev.data.hints.controlHints) ev.data.hints.controlHints = [];
 		// add a blank hint
-		ev.data.hints.controlHints.push({controlId: "", type: "hover", text: ""});
+		ev.data.hints.controlHints.push({controlId: "", type: "hover", text: "", style: ""});
 		// refresh
 		Property_controlHints(ev.data.cell, ev.data.hints, {key: "controlHints"}, ev.data.refreshHtml, ev.data.dialogue);		
 	}));
