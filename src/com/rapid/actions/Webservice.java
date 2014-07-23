@@ -45,6 +45,7 @@ import com.rapid.core.Application;
 import com.rapid.core.Control;
 import com.rapid.core.Page;
 import com.rapid.core.Parameter;
+import com.rapid.server.ActionCache;
 import com.rapid.server.RapidHttpServlet;
 import com.rapid.server.RapidHttpServlet.RapidRequest;
 import com.rapid.soa.SOAData;
@@ -113,7 +114,9 @@ public class Webservice extends Action {
 	// constructors
 	
 	// jaxb
-	public Webservice() { super(); }
+	public Webservice() { 
+		super(); 
+	}
 	// designer
 	public Webservice(RapidHttpServlet rapidServlet, JSONObject jsonAction) throws Exception { 
 		// set the xml version
@@ -384,100 +387,127 @@ public class Webservice extends Action {
 		// get the webservice action call sequence
 		int sequence = jsonAction.getInt("sequence");
 				
-		// create the object we're about to return
-		JSONObject jsonData = new JSONObject();
+		// placeholder for the object we're about to return
+		JSONObject jsonData = null;
 			
 		// only proceed if there is a request and application and page
 		if (_request != null && application != null && page != null) {
+			
+			// get any json inputs 
+			JSONArray jsonInputs = jsonAction.optJSONArray("inputs");
+			
+			// placeholder for the action cache
+			ActionCache actionCache = rapidServlet.getActionCache();
+				
+			// if an action cache was found
+			if (actionCache != null) {
+				
+				// attempt to fetch data from the cache
+				jsonData = actionCache.get(application.getId(), getId(), jsonInputs.toString());
+				
+			}
+			
+			// if there is either no cache or we got no data
+			if (jsonData == null) {
+				
+				// get the body into a string
+				String body = _request.getBody();
+				// retain the current position
+				int pos = body.indexOf("?");
+				// keep track of the index of the ?
+				int index = 0;
+				// if there are any question marks
+				if (pos > 0) {				
+					// loop, but check condition at the end
+					do {
+						// get the input
+						JSONObject input = jsonInputs.getJSONObject(index);
+						// replace the ? with the input value
+						body = body.substring(0, pos) + input.getString("value") + body.substring(pos + 1);
+						// look for the next question mark
+						pos = body.indexOf("?",pos + 1);
+						// inc the index for the next round
+						index ++;
+						// stop looping if no more ?
+					} while (pos > 0);
+				}
+				
+				// create a placeholder for the request url
+				URL url = null;				
+				// if the given request url starts with http use it as is, otherwise use the soa servlet
+				if (_request.getUrl().startsWith("http")) {
+					url = new URL(_request.getUrl());
+				} else {
+					HttpServletRequest httpRequest = rapidRequest.getRequest();
+					url = new URL(httpRequest.getScheme(), httpRequest.getServerName(), httpRequest.getServerPort(), httpRequest.getContextPath() + "/" + _request.getUrl());
+				}
+				
+				// establish the connection
+				HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+				connection.setDoOutput(true); // Triggers POST.
+				
+				// set the content type and action header accordingly
+				if ("SOAP".equals(_request.getType())) {
+					connection.setRequestProperty("Content-Type", "text/xml");
+					connection.setRequestProperty("SOAPAction", _request.getAction());
+				} else if ("JSON".equals(_request.getType())) {
+					connection.setRequestProperty("Content-Type", "application/json");
+					connection.setRequestProperty("Action", _request.getAction());
+				} else if ("XML".equals(_request.getType())) {
+					connection.setRequestProperty("Content-Type", "text/xml");
+					connection.setRequestProperty("Action", _request.getAction());
+				}
+								
+				// get the output stream from the connection into which we write the request
+				OutputStream output = connection.getOutputStream();		
+				
+				// write the processed body string into the request output stream
+				output.write(body.getBytes("UTF8"));
+				
+				// check the response code
+				int responseCode = connection.getResponseCode();
+				
+				// read input stream if all ok, otherwise something meaningful should be in error stream
+				if (responseCode == 200) {
 					
-			// get the body into a string
-			String body = _request.getBody();
-			// retain the current position
-			int pos = body.indexOf("?");
-			// keep track of the index of the ?
-			int index = 0;
-			// if there are any question marks
-			if (pos > 0) {
-				// check we have some inputs
-				JSONArray jsonInputs = jsonAction.getJSONArray("inputs");
-				// loop, but check condition at the end
-				do {
-					// get the input
-					JSONObject input = jsonInputs.getJSONObject(index);
-					// replace the ? with the input value
-					body = body.substring(0, pos) + input.getString("value") + body.substring(pos + 1);
-					// look for the next question mark
-					pos = body.indexOf("?",pos + 1);
-					// inc the index for the next round
-					index ++;
-					// stop looping if no more ?
-				} while (pos > 0);
-			}
-			
-			// create a placeholder for the request url
-			URL url = null;				
-			// if the given request url starts with http use it as is, otherwise use the soa servlet
-			if (_request.getUrl().startsWith("http")) {
-				url = new URL(_request.getUrl());
-			} else {
-				HttpServletRequest httpRequest = rapidRequest.getRequest();
-				url = new URL(httpRequest.getScheme(), httpRequest.getServerName(), httpRequest.getServerPort(), httpRequest.getContextPath() + "/" + _request.getUrl());
-			}
-			
-			// establish the connection
-			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-			connection.setDoOutput(true); // Triggers POST.
-			
-			// set the content type and action header accordingly
-			if ("SOAP".equals(_request.getType())) {
-				connection.setRequestProperty("Content-Type", "text/xml");
-				connection.setRequestProperty("SOAPAction", _request.getAction());
-			} else if ("JSON".equals(_request.getType())) {
-				connection.setRequestProperty("Content-Type", "application/json");
-				connection.setRequestProperty("Action", _request.getAction());
-			} else if ("XML".equals(_request.getType())) {
-				connection.setRequestProperty("Content-Type", "text/xml");
-				connection.setRequestProperty("Action", _request.getAction());
-			}
-							
-			// get the output stream from the connection into which we write the request
-			OutputStream output = connection.getOutputStream();		
-			
-			// write the processed body string into the request output stream
-			output.write(body.getBytes("UTF8"));
-			
-			// check the response code
-			int responseCode = connection.getResponseCode();
-			
-			// read input stream if all ok, otherwise something meaningful should be in error stream
-			if (responseCode == 200) {
+					InputStream response = connection.getInputStream();
+					
+					SOAXMLReader xmlReader = new SOAXMLReader();
+					
+					SOAData soaData = xmlReader.read(response);
+					
+					SOADataWriter jsonWriter = new SOARapidWriter(soaData);
+					
+					String jsonString = jsonWriter.write();
+					
+					jsonData = new JSONObject(jsonString);
+					
+					if (actionCache != null) actionCache.put(application.getId(), getId(), jsonInputs.toString(), jsonData);
+					
+				} else {
+					
+					// only if there is no application cache show the error, otherwise it sends an empty response
+					if (actionCache == null) {
+					
+						InputStream response = connection.getErrorStream();
+						
+						BufferedReader rd  = new BufferedReader( new InputStreamReader(response));
+			        
+						throw new JSONException(" response code " + responseCode + " from server : " + rd.readLine());
+						
+					} 
+																		
+				}
 				
-				InputStream response = connection.getInputStream();
+				connection.disconnect();
 				
-				SOAXMLReader xmlReader = new SOAXMLReader();
-				
-				SOAData soaData = xmlReader.read(response);
-				
-				SOADataWriter jsonWriter = new SOARapidWriter(soaData);
-				
-				String jsonString = jsonWriter.write();
-				
-				jsonData = new JSONObject(jsonString);
-				
-			} else {
-				
-				InputStream response = connection.getErrorStream();
-				
-				BufferedReader rd  = new BufferedReader( new InputStreamReader(response));
-	        
-				throw new JSONException(" response code " + responseCode + " from server : " + rd.readLine());
-									
-			}
-			
-			connection.disconnect();
-															
+			} // jsonData == null
+																							
 		} // got app and page
 							
+		// if the jsonData is still null make an empty one
+		if (jsonData == null) jsonData = new JSONObject();
+		
 		// add the sequence
 		jsonData.put("sequence", sequence);
 		

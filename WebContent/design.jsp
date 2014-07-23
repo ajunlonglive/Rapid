@@ -120,7 +120,7 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, use
 			</select>
 			
 			<div id="pageLock">
-				<h3>This page is locked for editing by Gareth Edwards</h3>
+				<h3>This page is locked for editing</h3>
 			</div>
 			
 			<div class="buttons">				
@@ -150,7 +150,7 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, use
 			</div>	
 			
 			<h2 id="controlsMap" style="margin-top:0;">Page controls
-				<img class="headerToggle" src="images/triangleUp_8x8.png" />
+				<img class="headerToggle" src="images/triangleDown_8x8.png" />
 				<img id="helpMap" class="headerHelp" src="images/help_16x16.png" />
 			</h2>
 			<div id="pageMap" class="design-map" >

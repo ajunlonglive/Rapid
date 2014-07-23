@@ -742,6 +742,9 @@ public class RapidServletContextListener implements ServletContextListener {
 			String localDateTimeFormat = servletContext.getInitParameter("localDateTimeFormat");
 			if (localDateTimeFormat == null) localDateTimeFormat = "dd/MM/yyyy HH:mm a";
 			servletContext.setAttribute("localDateTimeFormatter", new SimpleDateFormat(localDateTimeFormat));
+			
+			boolean actionCache = Boolean.parseBoolean(servletContext.getInitParameter("actionCache"));
+			if (actionCache) servletContext.setAttribute("actionCache", new ActionCache(servletContext));
 								    		  									
 		} catch (Exception e) {	
 			

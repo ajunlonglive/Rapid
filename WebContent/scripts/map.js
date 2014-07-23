@@ -91,7 +91,7 @@ function toggleMap() {
 		window.setTimeout( function() {
 			// invert the up/down images
 			$("#controlsHeader").children("img.headerToggle").attr("src","images/triangleUp_8x8.png");
-			$("#controlsMap").children("img.headerToggle").attr("src","images/triangleUp_8x8.png");		
+			$("#controlsMap").children("img.headerToggle").attr("src","images/triangleDown_8x8.png");		
     	}, 500);		
 		// resize the window
 		windowResize("controlsMap hide");
@@ -106,7 +106,7 @@ function toggleMap() {
 			showPageMap();
 			// invert the up/down images
 			$("#controlsHeader").children("img.headerToggle").attr("src","images/triangleDown_8x8.png");
-			$("#controlsMap").children("img.headerToggle").attr("src","images/triangleDown_8x8.png");
+			$("#controlsMap").children("img.headerToggle").attr("src","images/triangleUp_8x8.png");
     	}, 500);				
 		// resize the window
 		windowResize("controlsMap show");
