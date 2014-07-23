@@ -46,7 +46,7 @@ public class RapidFilter implements Filter {
 	private static Logger _logger = Logger.getLogger(RapidFilter.class);
 		
 	private RapidAuthenticationAdapter _authenticationAdapter;
-	private boolean _stopCaching;
+	private boolean _noCaching;
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
@@ -54,7 +54,7 @@ public class RapidFilter implements Filter {
 		try {
 			
 			// set the value from stopCaching from the init parameter in web.xml
-			_stopCaching = Boolean.parseBoolean(filterConfig.getServletContext().getInitParameter("stopCaching"));
+			_noCaching = Boolean.parseBoolean(filterConfig.getServletContext().getInitParameter("noCaching"));
 			
 			// look for a specified authentication adapter
 			String authenticationAdapterClass = filterConfig.getInitParameter("authenticationAdapterClass");
@@ -95,7 +95,7 @@ public class RapidFilter implements Filter {
 		// set all responses as UTF-8
 		response.setCharacterEncoding("utf-8");
 				
-		if (_stopCaching) {
+		if (_noCaching) {
 			
 			// cast response to http
 			HttpServletResponse httpResponse = (HttpServletResponse) response;

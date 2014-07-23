@@ -287,7 +287,12 @@ public class RapidHttpServlet extends HttpServlet {
 	public SimpleDateFormat getLocalDateTimeFormatter() {
 		return (SimpleDateFormat) getServletContext().getAttribute("localDateTimeFormatter");
 	}
-		
+	
+	// this is used is actions such as database and webservice to cache results for off-line demos
+	public ActionCache getActionCache() {
+		return (ActionCache) getServletContext().getAttribute("actionCache");
+	}
+	
 	public void sendException(HttpServletResponse response, Exception ex) throws IOException {
 		sendException(null, response, ex);
 	}
