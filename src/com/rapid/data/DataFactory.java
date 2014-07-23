@@ -84,6 +84,18 @@ public class DataFactory {
 		public int getInteger() { return _int; }		
 		public float getFloat() { return _float; }
 		
+		@Override
+		public String toString() {
+			switch (_type) {
+			case 1 : return "null";
+			case 2 : return _string;
+			case 3 : return _date.toString();
+			case 4 : return Integer.toString(_int);
+			case 5 : return Float.toString(_float);
+			}
+			return "unknown type";
+		}
+		
 	}
 		
 	@SuppressWarnings("serial")
@@ -99,6 +111,15 @@ public class DataFactory {
 		public void add(int value) { this.add(new Parameter(value)); }
 		public void add(Date value) { this.add(new Parameter(value)); }
 		public void add(float value) { this.add(new Parameter(value)); }
+		
+		@Override
+		public String toString() {
+			String parametersString = "";
+			for (Parameter parameter : this) {
+				parametersString += parameter.toString();
+			}
+			return parametersString;
+		}
 		
 	}
 			

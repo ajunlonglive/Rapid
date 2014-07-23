@@ -71,7 +71,7 @@ public class Rapid extends RapidHttpServlet {
 	
 	// this array is used to collect all of the lines needed in the pageload before sorting them
 	private List<String> _pageloadLines;
-	
+		
 	// this includes functions to call any control initJavaScript and set up any event listeners
     private void getPageLoadLines(List<String> pageloadLines, Page page, List<Control> controls) throws JSONException {
     	if (controls != null) {
@@ -339,10 +339,8 @@ public class Rapid extends RapidHttpServlet {
 		
 		PrintWriter out = response.getWriter();
 		
-		response.addHeader("Cache-Control", "no-store");
-		
-		// whether we're trying to avoid caching
-    	boolean noCaching = Boolean.parseBoolean(getServletContext().getInitParameter("noCaching"));
+		// whether we're rebulding the page for each request
+    	boolean rebuildPages = Boolean.parseBoolean(getServletContext().getInitParameter("rebuildPages"));
 						
 		// get a new rapid request passing in this servelet and the http request
 		RapidRequest rapidRequest = new RapidRequest(this, request);
@@ -361,9 +359,9 @@ public class Rapid extends RapidHttpServlet {
 			// check we got one
 			if (page != null) {
 				
-				if (noCaching) {
+				if (rebuildPages) {
 					
-					// generate the page start html
+					// (re)generate the page start html
 					pageHtml = getPageStartHtml(rapidRequest.getApplication(), page);
 					
 				} else {
@@ -473,8 +471,7 @@ public class Rapid extends RapidHttpServlet {
 							
 				// add the remaining elements
 				out.print("  </body>\n</html>");
-				
-																
+																				
 			} // page check
 						
 								
