@@ -385,7 +385,7 @@ public class Webservice extends Action {
 		Page page = rapidRequest.getPage();
 		
 		// get the webservice action call sequence
-		int sequence = jsonAction.getInt("sequence");
+		int sequence = jsonAction.optInt("sequence",1);
 				
 		// placeholder for the object we're about to return
 		JSONObject jsonData = null;

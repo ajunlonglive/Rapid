@@ -401,6 +401,19 @@ public class Application {
 	
 	// an instance of the security adapter used by this class
 	public SecurityAdapater getSecurity() { return _securityAdapter; }
+	// set the security to a given type
+	public void setSecurity(ServletContext servletContext, String securityAdapterType) throws IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
+		_securityAdapterType = securityAdapterType;
+		if (_securityAdapterType == null) {
+			_securityAdapter = new RapidSecurityAdapter(servletContext, this);
+			_securityAdapterType = "rapid";
+		} else {			
+			HashMap<String,Constructor> constructors = (HashMap<String, Constructor>) servletContext.getAttribute("securityConstructors");
+			Constructor<SecurityAdapater> constructor = constructors.get(_securityAdapterType);
+			if (constructor == null) throw new InstantiationException("Security adapter \"" +  _securityAdapterType + "\" can't be found");
+			_securityAdapter = constructor.newInstance(servletContext, this);
+		}
+	}
 	
 	// this is a list of elements to go in the head section of the page for any resources the applications controls or actions may require
 	public List<String> getResourceIncludes() { return _resourceIncludes; }
@@ -535,15 +548,7 @@ public class Application {
 		_resourceIncludes = new ArrayList<String>();
 		
 		// initialise the security adapter 
-		if (_securityAdapterType == null) {
-			_securityAdapter = new RapidSecurityAdapter(servletContext, this);
-			_securityAdapterType = "rapid";
-		} else {			
-			HashMap<String,Constructor> constructors = (HashMap<String, Constructor>) servletContext.getAttribute("securityConstructors");
-			Constructor<SecurityAdapater> constructor = constructors.get(_securityAdapterType);
-			if (constructor == null) throw new InstantiationException("Security adapter \"" +  _securityAdapterType + "\" can't be found");
-			_securityAdapter = constructor.newInstance(servletContext, this);
-		}
+		setSecurity(servletContext, _securityAdapterType);
 		
 		// when importing an application we need to initialise but don't want the resource folders made in the old applications name
 		if (createResources) {

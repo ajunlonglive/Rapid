@@ -76,7 +76,7 @@ public class RapidSecurityAdapter extends SecurityAdapater {
 	private Unmarshaller _unmarshaller;
 	private Security _security;
 			
-	// constructors
+	// constructor
 
 	public RapidSecurityAdapter(ServletContext servletContext, Application application) {
 		// call the super method which retains the context and application
@@ -114,16 +114,37 @@ public class RapidSecurityAdapter extends SecurityAdapater {
 				// initialise the security object
 				_security = new Security();
 				
+			}
+			
+			// initialise roles if necessary
+			if (_security.getRoles() == null) _security.setRoles(new Roles());
+			
+			// initialise users if necessary
+			if (_security.getUsers() == null) _security.setUsers(new Users());
+			
+			// retain whether we added users or roles to the security object
+			boolean modified = false;
+			
+			// check there are any roles, add defaults if not
+			if (_security.getRoles().size() == 0) {
+				
 				// add the default application roles
 				_security.getRoles().add(new Role(Rapid.ADMIN_ROLE, "Manage application in Rapid Admin"));
 				_security.getRoles().add(new Role(Rapid.DESIGN_ROLE, "Design application in Rapid Designer"));
+				
+				// record that we modified
+				modified = true;
+				
+			}
+				
+			if (_security.getUsers().size() == 0) {
 				
 				// create a list of roles we want the user to have
 				UserRoles userRoles = new UserRoles();
 				userRoles.add(Rapid.ADMIN_ROLE);
 				userRoles.add(Rapid.DESIGN_ROLE);
 				
-				// initialise the admin user with all application roles
+				// initialise the current user with all application roles
 				User adminUser = new User("admin", "Admin user", "admin", userRoles);
 				
 				// add the admin user
@@ -134,11 +155,15 @@ public class RapidSecurityAdapter extends SecurityAdapater {
 				
 				// add the simple user
 				_security.getUsers().add(simpleUser);
-								
-				save();
+				
+				// record that we modified
+				modified = true;
 				
 			}
-							    
+			
+			// save the files if we modified it							
+			if (modified) save();
+														    
 		} catch (Exception ex) {
 			_logger.error(ex);
 		}
@@ -196,13 +221,13 @@ public class RapidSecurityAdapter extends SecurityAdapater {
 	
 	@Override
 	public Role getRole(RapidRequest rapidRequest, String roleName)	throws SecurityAdapaterException {
-		for (Role role : _security.getRoles()) if (role.getName().equals(roleName)) return role;
+		for (Role role : _security.getRoles()) if (role.getName().toLowerCase().equals(roleName.toLowerCase())) return role;
 		return null;
 	}
 	
 	@Override
 	public User getUser(RapidRequest rapidRequest, String userName) throws SecurityAdapaterException {
-		for (User user : _security.getUsers()) if (user.getName().equals(userName)) return user;
+		for (User user : _security.getUsers()) if (user.getName().toLowerCase().equals(userName.toLowerCase())) return user;
 		return null;
 	}
 	
