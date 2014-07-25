@@ -13,16 +13,11 @@
         <name>RapidSuper</name>
     </roles>
     <users>
-        <description>Admin user</description>
-        <name>admin</name>
-        <password>admin</password>
+        <description>Gareth Edwards</description>
+        <name>houge01</name>
+        <password></password>
         <roles>RapidAdmin</roles>
         <roles>RapidDesign</roles>
         <!--  <roles>RapidSuper</roles>  -->
-    </users>
-    <users>
-        <description>Unprivileged user</description>
-        <name>user</name>
-        <password>user</password>
     </users>
 </security>

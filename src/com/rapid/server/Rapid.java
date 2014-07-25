@@ -397,6 +397,9 @@ public class Rapid extends RapidHttpServlet {
 					// get the user
 					User user = security.getUser(rapidRequest, userName);
 					
+					// if we didn't get a user work with an empty one
+					if (user == null) user = new User();
+					
 					// get the users roles
 					List<String> userRoles = user.getRoles();
 										
@@ -460,9 +463,13 @@ public class Rapid extends RapidHttpServlet {
 						
 					}
 				
-					// if this user has the design role
-					if (security.checkUserRole(rapidRequest, userName, Rapid.DESIGN_ROLE)) out.print(getAdminLink(app.getId(), page.getId()).trim());
-					
+					// check for the design role, super is required as well if the rapid app
+					if ("rapid".equals(app.getId())) {
+						if (security.checkUserRole(rapidRequest, userName, Rapid.DESIGN_ROLE) && security.checkUserRole(rapidRequest, userName, Rapid.SUPER_ROLE)) out.print(getAdminLink(app.getId(), page.getId()).trim());
+					} else {
+						if (security.checkUserRole(rapidRequest, userName, Rapid.DESIGN_ROLE)) out.print(getAdminLink(app.getId(), page.getId()).trim());
+					}
+										
 				} else {
 					
 					out.print("  " + Html.getPrettyHtml(page.getHtmlBody()).trim());
@@ -533,17 +540,22 @@ public class Rapid extends RapidHttpServlet {
 						
 						SecurityAdapater security = app.getSecurity();
 						
-						User user = security.getUser(rapidRequest, userName);
-												
-						if (user != null) {
+						// fail silently if there was an issue
+						try {
+						
+							User user = security.getUser(rapidRequest, userName);
 							
-							JSONObject jsonApp = new JSONObject();
-							jsonApp.put("id", app.getId());
-							jsonApp.put("title", app.getTitle());
-							jsonApps.put(jsonApp);
+							if (user != null) {
+								
+								JSONObject jsonApp = new JSONObject();
+								jsonApp.put("id", app.getId());
+								jsonApp.put("title", app.getTitle());
+								jsonApps.put(jsonApp);
+								
+							}
 							
-						}
-																			
+						} catch (Exception ex) {}
+																									
 					}
 					
 				}

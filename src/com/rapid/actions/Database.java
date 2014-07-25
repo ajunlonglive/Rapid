@@ -372,7 +372,7 @@ public class Database extends Action {
 		Page page = rapidRequest.getPage();
 		
 		// fetch in the sequence
-		int sequence = jsonAction.getInt("sequence");
+		int sequence = jsonAction.optInt("sequence",1);
 				
 		// place holder for the object we're going to return
 		JSONObject jsonData = null;

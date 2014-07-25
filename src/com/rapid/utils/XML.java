@@ -111,6 +111,48 @@ public class XML {
 		
 	}
 	
+public static String getElementAttributeValue(String xml, String elementName, String attributeName) {
+		
+		String value = null;
+		
+		int startPos = xml.indexOf("<" + elementName);
+	    
+	    if (startPos > 0) {
+	    	
+	    	int endPos = xml.indexOf(">", startPos);
+	    
+	    	if (endPos > startPos) {
+	    		
+	    		startPos = xml.indexOf(attributeName, startPos);
+	    		
+	    		if (startPos > 0) {
+	    			
+	    			startPos = xml.indexOf("=", startPos);
+	    			
+	    			if (startPos > 0) {
+	    				
+	    				String delimiter = xml.substring(startPos + 1, startPos + 2);
+	    				
+	    				endPos = xml.indexOf(delimiter, startPos + 2);
+	    				
+	    				if (endPos > startPos) {
+	    					
+	    					value = xml.substring(startPos + 2, endPos);
+	    					
+	    				}
+	    				
+	    			}
+	    			
+	    		}
+	    		
+	    	}
+	    	
+	    }
+		
+		return value;
+		
+	}
+	
 	public static String escape(String value) {
 		
 		return value.replace("<", "&lt;").replace(">", "&gt;").replace("&", "&amp;").replace("'", "&apos;");

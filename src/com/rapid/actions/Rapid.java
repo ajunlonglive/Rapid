@@ -34,6 +34,7 @@ import java.lang.reflect.Constructor;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -264,8 +265,10 @@ public class Rapid extends Action {
 							jsonApplications.put(jsonApplication);
 						}
 						
-					} catch (SecurityAdapaterException ex) {
-						rapidServlet.getLogger().error("Rapid action error, failed to get permission : " + ex.getMessage(),ex);
+					} catch (Exception ex) {
+						
+						rapidServlet.getLogger().error("Rapid action error, failed to get permission for app " + application.getId() + " : " + ex.getMessage(),ex);
+						
 					}
 									
 				}
@@ -379,6 +382,9 @@ public class Rapid extends Action {
 								
 				// add the applications to the result
 				result.put("applications", jsonApplications);
+				
+				// add the current userName to the result
+				result.put("userName", rapidRequest.getUserName());
 												
 			} else if ("GETAPP".equals(action)) {
 							
@@ -574,11 +580,43 @@ public class Rapid extends Action {
 												
 			} else if ("GETSEC".equals(action)) {
 				
-				// get the app security
-				SecurityAdapater security = app.getSecurity();
+				// get the securityAdapter type from the jsonAction
+				String securityAdapterType = jsonAction.getString("securityAdapter");
 				
+				// assume the current class has not been set				
+				String securityAdapterClass = "";
+				
+				// get all of the available security adapters
+				JSONArray jsonSecurityAdapters = rapidServlet.getJsonSecurityAdapters();				
+				// check we have some security adapters
+				if (jsonSecurityAdapters != null) {
+						// loop what we have
+					for (int i = 0; i < jsonSecurityAdapters.length(); i++) {
+						// get the item
+						JSONObject jsonSecurityAdapter = jsonSecurityAdapters.getJSONObject(i);
+						// if this is the type that came in
+						if (securityAdapterType.equals(jsonSecurityAdapter.getString("type"))) {
+							// retain the name
+							securityAdapterClass = jsonSecurityAdapter.getString("class");
+							// we're done
+							break;
+						}
+					}
+				}	 
+				
+				// get the current app security adapter
+				SecurityAdapater security = app.getSecurity();
+												
 				// if we got one
 				if (security != null) {
+					
+					// if it's different from what came in
+					if (!securityAdapterClass.equals(security.getClass().getCanonicalName())) {						
+						// set the new security adapter
+						app.setSecurity(rapidServlet.getServletContext(), securityAdapterType);
+						// read it back again
+						security = app.getSecurity();
+					}
 											
 					// add the roles to the response
 					result.put("roles", security.getRoles(rapidRequest));
@@ -605,8 +643,14 @@ public class Rapid extends Action {
 				// add the user description
 				result.put("description", user.getDescription());
 				
+				// set the default password mask
+				String password = "********";
+				
+				// if the password is blank reflect this in what we send
+				if ("".equals(user.getPassword())) password = "";
+				
 				// add a masked password
-				result.put("password", "********");
+				result.put("password", password);
 			
 				// if we got one
 				if (security != null) {
@@ -620,7 +664,7 @@ public class Rapid extends Action {
 				} // got security
 				
 				// if this user record is for the logged in user
-				result.put("currentUser", userName.equals(rapidRequest.getUserName()));
+				result.put("currentUser", userName.toLowerCase().equals(rapidRequest.getUserName().toLowerCase()));
 								
 			} else if ("GETUSERS".equals(action)) { 
 							
