@@ -32,6 +32,8 @@ function createMapEntry(list, c) {
 	li.click( c, function(ev) {
 		// select the control
 		selectControl(ev.data);
+		// scroll to it
+		if (ev.data && ev.data.object) $("body").scrollTop(ev.data.object.offset().top);
 		// stop bubbling
 		return false;
 	});	

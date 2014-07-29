@@ -244,7 +244,9 @@ if (data) {
 	            <name>Row click</name>
 	            <filterFunction>
 <![CDATA[
-if ($(ev.target).closest("tr").index() == 0) return false;
+var target = $(ev.target);
+// don't fire if the target is the top row or tbody
+if (target.closest("tr").index() == 0 || target.is("tbody")) return false;
 ]]>	                
 	            </filterFunction>
 	        </event>
