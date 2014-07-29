@@ -31,6 +31,11 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
  -->
      
      <databaseDriver>
+         <name>MySQL</name>
+         <class>com.mysql.jdbc.Driver</class>
+     </databaseDriver>
+     
+     <databaseDriver>
          <name>SQLite</name>
          <class>org.sqlite.JDBC</class>
      </databaseDriver>

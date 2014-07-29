@@ -340,7 +340,7 @@ public class Application {
 		Collections.sort(pages, new Comparator<Page>() {
 			@Override
 			public int compare(Page page1, Page page2) {
-				return Comparators.AsciiCompare(page1.getName(), page2.getName());
+				return Comparators.AsciiCompare(page1.getName(), page2.getName(), false);
 			}
 			
 		});

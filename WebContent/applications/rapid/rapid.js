@@ -119,6 +119,9 @@ function Action_navigate(url, dialogue) {
 	}
 }
 
+// a global for holding the userName which we get when calling GETAPPS	        
+var _userName = "";	        
+	        
 function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidApp, successCallback, errorCallback) {
 
 	var type = "GET";
@@ -130,8 +133,11 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 	switch (actionType) {
 		case "GETAPPS" :		
 			data = { actionType: actionType, appId: "rapid" };	
-			callback = function(data) {
+			callback = function(data) {				
 				setData_dataStore('rapid_P0_C210', data, null, {storageType:"S", id:"rapidrapid_P0_C210"});
+				// retain the userName in our global variable
+				if (data && data.userName) _userName = data.userName;
+				
 			};
 		break;
 		case "GETAPP" :		
@@ -171,19 +177,19 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 		break;				
 		case "GETUSERS" :		
 			data = { actionType: actionType, appId: "rapid" };	
-			callback = function(data) {
+			callback = function(data) {			    				
 				setData_grid('rapid_P0_C823_', data, 'users', {"rowSelect":true,"columns":[{"field":"name","visible":true,"style":"text-align:left;padding-left:10px;"},{"field":"description","visible":true,"style":"text-align:left;padding-left:10px;padding-right:10px;"},{"cellFunction":"","field":"","visible":true,"style":""}]});
 				var rapidUserRows = $("#rapid_P0_C823_").find("tr.rowStyle1,tr.rowStyle2");
 				rapidUserRows.each( function() {
 				  var children = $(this).children("td");
 				  var user = children.first().html();
-				  if (data.currentUser != user) {
+				  if (data.currentUser.toLowerCase() != user.toLowerCase()) {
 					  var cell = children.last();
 					  cell.html("<button>delete...</button>");
 					  cell.find("button").click( function(ev) {
 					    // confirm
 					    if (confirm("Are you sure?")) {    
-					      Action_rapid(ev, 'rapid', 'P0', null, 'P0_A904_', 'DELUSER', true);
+					      Action_rapid(ev, 'rapid', 'P0', null, 'P0_A904_', 'DELUSER', true);					      
 					    }
 					    // stop bubbling
 					    ev.stopPropagation();
@@ -377,6 +383,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 				// fake a tab click
 				$("#rapid_P0_C74").click(); 
 			};	
+		break;
 		case "SAVEROLE" :		
 			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), role: $("#rapid_P0_C222").find("tr.rowSelect").children().first().html(), description: $("#rapid_P0_C735_").val() };
 			callback = function() {
@@ -399,7 +406,9 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 		case "DELUSER" :		
 			if (rapidApp) {
 				data = { actionType: actionType, appId: "rapid", userName: $(ev.target).closest("tr").find("td").first().html() };
-				callback = function() {
+				callback = function() {			
+					// hide any currently displayed user details
+					$("#rapid_P0_C827_").hide();	
 					// reload users
 					Action_rapid(ev, 'rapid', 'P0', null, 'P0_A901_', 'GETUSERS', true);
 				};
@@ -503,9 +512,11 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
         error: function(server, status, error) { 
         	if (server && server.status && server.status == 401) {
         		window.location = "login.jsp";
-        	} else {
+        	} else if (errorCallback) {
         		errorCallback(server, status, error);
-        	} 
+        	} else {
+        		alert(server.responseText || "Error : " + status);
+        	}
         },
         success: function(data) {
        		if (callback) callback(data);

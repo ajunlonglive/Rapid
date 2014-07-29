@@ -20,13 +20,13 @@
 	padding:40px;
 	font-family:arial;
 	margin-top:10px;
-	min-width:1200px;
+	min-width:980px;
 }
 
 #rapid_P0_C650_ {
 	padding:10px;
 	border:1px solid black;
-	min-width:1200px;
+	min-width:1000px;
 }
 
 #rapid_P0_C779_ li {
@@ -36,6 +36,8 @@
 
 #rapid_P0_C779_ .tabsGroup {
 	padding-bottom:10px;
+	margin-left:-4px;
+	margin-right:-4px;
 }
 
 #rapid_P0_C2 {
@@ -152,7 +154,7 @@
 }
 
 #rapid_P0_C393_ {
-	width:200px;
+	width:205px;
 	height:100px;
 }
 
@@ -164,6 +166,7 @@
 
 #rapid_P0_C644_ {
 	vertical-align:middle;
+	max-width:205px;
 }
 
 #rapid_P0_C804_ {

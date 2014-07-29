@@ -13,11 +13,11 @@
         <name>RapidSuper</name>
     </roles>
     <users>
-        <description>Gareth Edwards</description>
-        <name>houge01</name>
+        <description>Administrator</description>
+        <name>admin</name>
         <password></password>
         <roles>RapidAdmin</roles>
         <roles>RapidDesign</roles>
-        <!--  <roles>RapidSuper</roles>  -->
+        <!--  <roles>RapidSuper</roles> -->
     </users>
 </security>
