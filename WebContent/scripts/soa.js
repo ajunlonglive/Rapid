@@ -228,7 +228,7 @@ function loadSOA(details) {
 		// create one if not there
 		if (!requestTable[0]) requestTable = requestCell.append("<table class='propertiesPanelTable'></table>").children("table");
 		// populate the table header row
-		requestTable.html("<tr><td>Child element name</td><td>Data type</td><td>Restrictions</td><td style='width:32px;'>&nbsp;</td></tr>");
+		requestTable.html("<tr><td>Child element name</td><td>Data type</td><td>Restrictions</td><td style='width:32px;min-width:32px;'>&nbsp;</td></tr>");
 		// if there's a request object in the details with a root element
 		if (details.requestSchema && details.requestSchema.rootElement) {
 			// retrieve the request root element
@@ -320,7 +320,7 @@ function loadSOA(details) {
 		// create one if not there
 		if (!responseTable[0]) responseTable = responseCell.append("<table class='propertiesPanelTable'></table>").children("table");
 		// populate the table header row
-		responseTable.html("<tr><td>Child element name</td><td>Field</td><td>Data type</td><td>Restrictions</td><td style='width:32px;'>&nbsp;</td></tr>");
+		responseTable.html("<tr><td>Child element name</td><td>Field</td><td>Data type</td><td>Restrictions</td><td style='width:32px;min-width:32px;'>&nbsp;</td></tr>");
 		// if there's a request object in the details with a root element
 		if (details.responseSchema && details.responseSchema.rootElement) {
 			// retrieve the request root element
