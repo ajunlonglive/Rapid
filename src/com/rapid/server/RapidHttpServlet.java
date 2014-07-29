@@ -252,8 +252,8 @@ public class RapidHttpServlet extends HttpServlet {
 				// ensure the rapid application appears last in the list
 				if ("rapid".equals(app1.getId())) return 1;
 				if ("rapid".equals(app2.getId())) return -1;
-				// otherwise use an ascii compare
-				return Comparators.AsciiCompare(app1.getId(), app2.getId());
+				// otherwise use a case insensitive ascii compare
+				return Comparators.AsciiCompare(app1.getId(), app2.getId(), false);
 			}			
 		});				
 		// return the sorted list

@@ -261,7 +261,7 @@ public class Rapid extends Action {
 						if (appPermission) {							
 							JSONObject jsonApplication = new JSONObject();
 							jsonApplication.put("id", applicationId);
-							jsonApplication.put("title", application.getTitle());
+							jsonApplication.put("title", applicationId + " - " + application.getTitle());
 							jsonApplications.put(jsonApplication);
 						}
 						
