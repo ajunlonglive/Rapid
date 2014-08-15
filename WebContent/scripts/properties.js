@@ -128,7 +128,7 @@ function updateProperty(propertyObject, property, value, refreshHtml) {
 // this is a reusable function for creating dialogue boxes
 function createDialogue(cell, width, title) {	
 	// create a dialogue if we need to
-	var dialogue = $("#propertiesDialogues").append("<div class='actionsPanelDiv' style='position:absolute;display:none;width:" + width + "px;z-index:10006;border:1px solid black;background-color:white;font-size:11px;padding:10px;'></div>").children().last();
+	var dialogue = $("#propertiesDialogues").append("<div class='actionsPanelDiv' style='position:absolute;display:none;width:" + width + "px;z-index:10012;border:1px solid black;background-color:white;font-size:11px;padding:10px;'></div>").children().last();
 	// add a close link
 	var close = dialogue.append("<b style='float:left;margin-top:-5px;'>" + title + "</b><a href='#' style='float:right;margin-top:-5px;'>close</a></div>").children().last();
 	_listeners.push( close.click( function(ev) {
@@ -173,7 +173,7 @@ function Property_bigtext(cell, propertyObject, property, refreshHtml) {
 	// add the visible bit
 	cell.text(value);
 	// append and get a reference to the adjustable form control
-	var textarea = $("#propertiesDialogues").append("<textarea style='position:absolute;display:none;height:300px;width:600px;z-index:10006' wrap='off'></textarea>").children().last();
+	var textarea = $("#propertiesDialogues").append("<textarea style='position:absolute;display:none;height:300px;width:600px;z-index:10012' wrap='off'></textarea>").children().last();
 	// add the text
 	textarea.text(value);
 	// add a listener to update the property

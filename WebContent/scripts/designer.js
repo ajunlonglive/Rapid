@@ -744,6 +744,8 @@ function showDesigner() {
 	windowResize("showDesigner");
 	// arrange any non-visible controls
 	arrangeNonVisibleControls();	
+	// show the first tip, if function is present
+	if (window["showTip"]) showTip(0);
 }
 
 //this function load the apps into appsSelect
@@ -1055,7 +1057,7 @@ function loadPage() {
 	// remove any dialogues or components
 	$("#dialogues").children().remove();	
 	// hide any selection border
-	_selectionBorder.hide();	
+	if (_selectionBorder) _selectionBorder.hide();	
 	// remove any current page html
 	if (_page.object) _page.object.children().remove();
 	// lose the selected control
@@ -1575,16 +1577,22 @@ $(document).ready( function() {
 		        	
 		        	try {
 		        		
-		        		// load the page (control) object
+		        		// get the page (control) object
 			        	_page = new Control(ControlClass_page, null, page, true);
 			        	
 			        	// retain the iframe body element as the page object
 			    		_page.object = $(_pageIframe[0].contentWindow.document.body);
 			    		
+			    		// hide it
+			    		_page.object.hide();
+			    		
 			    		// find the header section
 			    		var head = $(_pageIframe[0].contentWindow.document).find("head");
-			    		// remove any current page style sheet
-			    		head.find("link[rel=stylesheet][href^=applications\\/" + _app.id + "\\/" + _page.name + "]").remove();
+			    		
+			    		// remove any current app or page style sheets
+			    		head.find("link[rel=stylesheet][href^=applications\\/" + _app.id + "]").remove();
+			    		// make sure the app styling is correct (this can go wrong if the back button was clicked which loads the current page but the previous styling)
+			    		head.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"applications/" + _app.id + "/rapid.css\">");
 			    		// make sure the page styling is correct (this can go wrong if the back button was clicked which loads the current page but the previous styling)
 			    		head.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"applications/" + _app.id + "/" + _page.name + ".css\">");
 	     	
@@ -1599,6 +1607,11 @@ $(document).ready( function() {
 				        	}				        					        	
 			        	}
 			        	
+			        	// show it after a pause to allow the new style sheets to apply
+			        	window.setTimeout( function() {
+			        		_page.object.show();
+		            	}, 200);
+			    					        	
 			        	// make everything visible
 			        	showDesigner();
 			        	
@@ -2539,5 +2552,3 @@ function fileuploaded(fileuploadframe) {
     }
 
 }
-
-

@@ -46,6 +46,7 @@ function Action_navigate(url, dialogue) {
 		   	url: url,
 		   	type: "GET",          
 		       data: null,        
+		       async: false,
 		       error: function(error, status, message) { 
 		       		alert("Error loading dialogue : " + error.responseText||message); 
 		       },
@@ -66,7 +67,8 @@ function Action_navigate(url, dialogue) {
 		           		case "#text" : case "TITLE" : // ignore these types
 		           		break;
 		           		case "SCRIPT" :
-		           			if (items[i].innerHTML) {
+		           			// exclude the design link
+		           			if (items[i].innerHTML && items[i].innerHTML.indexOf("/* designLink */") < 0) {
 		           				script += items[i].outerHTML;
 		           			}
 		           		break;

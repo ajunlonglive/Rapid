@@ -47,7 +47,8 @@ function showDialogue(url) {
 	$.ajax({
     	url: url,
     	type: "GET",          
-        data: null,            
+        data: null,           
+        async: false,
         error: function(server, status, error) { 
         	alert("Error loading dialogue : " + error); 
         },
