@@ -9,6 +9,10 @@
                         <value>P1_C3_</value>
                     </entry>
                     <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
                         <key>text</key>
                         <value>Person search</value>
                     </entry>
@@ -38,7 +42,7 @@
                     <rules>text-align:center;</rules>
                     <rules>font-weight:bold;</rules>
                     <rules>padding:5px 5px;</rules>
-                    <rules>background:#ccc url(highlight_1x100.png;) 50% 50% repeat-x;</rules>
+                    <rules>background:#ccc url(highlight_1x100.png) 50% 50% repeat-x;</rules>
                     <rules>border-bottom:1px solid #aaa;</rules>
                 </styles>
                 <XMLVersion>1</XMLVersion>
@@ -138,7 +142,7 @@
                             </properties>
                             <XMLVersion>1</XMLVersion>
                             <request>
-<action>sample.Samplewebservice</action>
+<action>demo.Samplewebservice</action>
 <body>&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot; xmlns:soa=&quot;http://soa.rapid-is.co.uk&quot;&gt;
   &lt;soapenv:Body&gt;
     &lt;soa:personSearchRequest&gt;
@@ -499,7 +503,7 @@
             </entry>
             <entry>
                 <key>details</key>
-                <value>{&quot;id&quot;:&quot;sampleP1_C25_&quot;,&quot;storageType&quot;:&quot;S&quot;}</value>
+                <value>{&quot;id&quot;:&quot;demoP1_C25_&quot;,&quot;storageType&quot;:&quot;S&quot;}</value>
             </entry>
             <entry>
                 <key>storageType</key>
@@ -562,7 +566,7 @@
                     <rules>text-align:center;</rules>
                     <rules>font-weight:bold;</rules>
                     <rules>padding:5px 5px;</rules>
-                    <rules>background:#ccc url(highlight_1x100.png;) 50% 50% repeat-x;</rules>
+                    <rules>background:#ccc url(highlight_1x100.png) 50% 50% repeat-x;</rules>
                     <rules>border:1px solid #aaa;</rules>
                     <rules>border-top-left-radius:5px;</rules>
                     <rules>border-top-right-radius:5px;</rules>
@@ -702,7 +706,9 @@
                             </sessionVariables>
                         </actions>
                         <filter>&#xD;
-if ($(ev.target).closest(&quot;tr&quot;).index() == 0) return false;&#xD;
+var target = $(ev.target);&#xD;
+// don't fire if the target is the top row or tbody&#xD;
+if (target.closest(&quot;tr&quot;).index() == 0 || target.is(&quot;tbody&quot;)) return false;&#xD;
 </filter>
                         <type>click</type>
                     </events>
@@ -1020,7 +1026,7 @@ if ($(&quot;#P1_C11_&quot;).val() || $(&quot;#P1_C12_&quot;).val()) Event_keyup_
     <htmlBody>&lt;table id=&quot;P1_C1_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P1_C2_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C3_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Person search&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C5_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C6_&quot; class=&quot;tabelCell&quot;&gt;Forename&lt;/td&gt;&lt;td id=&quot;P1_C7_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P1_C11_&quot; value=&quot;&quot; type=&quot;text&quot; maxlength=&quot;20&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C8_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C9_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;&lt;td id=&quot;P1_C10_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P1_C12_&quot; value=&quot;&quot; type=&quot;text&quot; maxlength=&quot;20&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;table id=&quot;P1_C13_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P1_C14_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C15_&quot; class=&quot;tabelCell&quot;&gt;Search results&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C17_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C18_&quot; class=&quot;tabelCell&quot;&gt;&lt;table id=&quot;P1_C20_&quot; class=&quot;grid&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td style=&quot;display:none;&quot;&gt;Id&lt;/td&gt;&lt;td style=&quot;padding:2px 5px 2px 10px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Forename&lt;/td&gt;&lt;td style=&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Surname&lt;/td&gt;&lt;td style=&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Birthday&lt;/td&gt;&lt;td style=&quot;padding:2px 10px 2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Gender&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;div id=&quot;P1_C23_&quot; class=&quot;panel&quot;&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;div id=&quot;P1_C40_&quot; class=&quot;panel&quot;&gt;This panel only appears if the user has the &quot;Sample role 1&quot; security role&lt;/div&gt;&lt;div id=&quot;P1_C41_&quot; class=&quot;panel&quot;&gt;This panel only appears if the user has the &quot;Sample role 2&quot; security role&lt;/div&gt;</htmlBody>
     <id>P1</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-07-22T13:25:30.189+01:00</modifiedDate>
+    <modifiedDate>2014-08-13T19:32:18.062+01:00</modifiedDate>
     <name>01_PersonSearch</name>
     <rolesHtml>
         <html>&lt;table id=&quot;P1_C1_&quot; class=&quot;table&quot;&gt;

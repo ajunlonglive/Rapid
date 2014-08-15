@@ -131,7 +131,7 @@ if (data) {
 	    
 	    <styles>
 	        <style>
-	            <name>Input</name>  
+	            <name>Input box</name>  
 	            <getAppliesToFunction>
 					<![CDATA[	      
 return "#" + this.id;

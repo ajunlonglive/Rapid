@@ -311,23 +311,6 @@ function f_getPosition (e_elemRef, s_coord) {
 	return n_pos;
 }
 
-function f_tcalInit () {
-	
-	if (!document.getElementsByTagName)	return;
-
-	/*
-	var e_input, a_inputs = f_tcalGetInputs();
-	for (var n = 0; n < a_inputs.length; n++) {
-		e_input = a_inputs[n];
-		e_input.onclick = f_tcalOnClick;
-		f_tcalAddClass(e_input, A_TCALCONF.cssprefix + 'Input');
-	}
-	*/
-	
-	window.A_TCALTOKENS_IDX = {};
-	for (var n = 0; n < A_TCALTOKENS.length; n++) A_TCALTOKENS_IDX[A_TCALTOKENS[n]['t']] = A_TCALTOKENS[n];
-}
-
 function f_tcalAddOnload (f_func) {
 	if (document.addEventListener) {
 		window.addEventListener('load', f_func, false);
@@ -346,9 +329,11 @@ function f_tcalAddOnload (f_func) {
 	}
 }
 
-f_tcalAddOnload (f_tcalInit);
-
 function f_tcalAdd (id) {
+	if (typeof(window.A_TCALTOKENS_IDX) === "undefined") {
+		window.A_TCALTOKENS_IDX = {};
+		for (var n = 0; n < A_TCALTOKENS.length; n++) A_TCALTOKENS_IDX[A_TCALTOKENS[n]['t']] = A_TCALTOKENS[n];
+	}
 	var e_input = $("#" + id)[0];
 	if (e_input) {
 		e_input.onclick = f_tcalOnClick;

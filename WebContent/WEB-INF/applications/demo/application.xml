@@ -33,11 +33,11 @@
         <password>N0Sgi3GcduE=</password>
         <userName></userName>
     </databaseConnections>
-    <description>This is a sample Rapid application provided to demonstrate many common Rapid features</description>
-    <id>sample</id>
+    <description>This is a demonstration Rapid application provided to showcase many common Rapid features</description>
+    <id>demo</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-07-29T10:41:34.287+01:00</modifiedDate>
-    <name>sample</name>
+    <modifiedDate>2014-08-13T15:55:04.143+01:00</modifiedDate>
+    <name>demo</name>
     <pageBackupsMaxSize>3</pageBackupsMaxSize>
     <securityAdapterType>rapid</securityAdapterType>
     <showActionIds>false</showActionIds>
@@ -75,7 +75,7 @@ input.validation {
   box-shadow: 1px 1px 2px;
 }
 </styles>
-    <title>Sample application</title>
+    <title>Rapid demonstration application</title>
     <webservices xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="sqlWebservice">
         <id>Samplewebservice</id>
         <name>Sample webservice</name>

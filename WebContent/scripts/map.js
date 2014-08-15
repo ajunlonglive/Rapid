@@ -119,7 +119,7 @@ function toggleMap() {
 $(document).ready( function() {
 	
 	// controls are clicked on
-	$("#controlControls").click( function(ev) {
+	$("#controlsHeader").click( function(ev) {
 		toggleMap();		
 		return false;
 	});

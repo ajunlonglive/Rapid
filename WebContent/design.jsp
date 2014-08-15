@@ -106,7 +106,7 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, use
 		<div id="controlPanel" style="z-index:10005">
 			<div id="controlPanelPin"><img src="images/pinned_14x14.png" title="unpin" /></div>
 			<div class="buttons">
-				<button id="appAdmin" class="buttonLeft buttonRight" title="Load the Rapid administration screen">administration</button>
+				<button id="appAdmin" class="buttonLeft buttonRight" title="Load the Rapid Admin screen">Rapid Admin...</button>
 			</div>
 			
 			<h2>Application<img id="helpApplication" class="headerHelp" src="images/help_16x16.png" /></h2>
