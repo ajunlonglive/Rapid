@@ -133,32 +133,35 @@ function Control(controlClass, parentControl, jsonControl, loadComplexObjects, p
 				for (var i in jsonControl) {
 					if (i != "parentControl" && i != "validation" && i != "events" && i != "styles" && (i != "childControls" || !controlClass)) this[i] = jsonControl[i];								
 				}
-				// give this control a new, unique id when pasting
-				if (paste) {					
-					// set a unique ID for this control
-					this.id = _page.id + "_C" + _nextId + "_";
-					// if this is the rapid app, prefix it
-					if (_app.id == "rapid") this.id = "rapid_" + this.id;
-					// check the pasteMap
-					if (_pasteMap[jsonControl.id]) {
-						// if there is an entry for the control we are making this one out of use it's id
-						this.id = jsonControl.id;
-					} else {
-						// add an entry for this control into the paste map so we use this id (not the next one)
-						_pasteMap[this.id] = jsonControl.id;
-					}					
-					// inc the next id
-					_nextId++;	
-				}
-				// make sure the next id is greater than any control when undoing
-				if (undo) {
-					// get the id value into a variable
-					var id = this.id;
-					// the id will be something like P99_C12, find the number after the _C
-					var idInt = parseInt(id.substr(id.indexOf("_C") + 2));
-					// set the next id to one past this if it is less
-					if (idInt >= _nextId) _nextId = idInt + 1;	
-				}
+				// only if not the page
+				if (this.parentControl) {
+					// give this control a new, unique id when pasting
+					if (paste) {					
+						// set a unique ID for this control
+						this.id = _page.id + "_C" + _nextId + "_";
+						// if this is the rapid app, prefix it
+						if (_app.id == "rapid") this.id = "rapid_" + this.id;
+						// check the pasteMap
+						if (_pasteMap[jsonControl.id]) {
+							// if there is an entry for the control we are making this one out of use it's id
+							this.id = jsonControl.id;
+						} else {
+							// add an entry for this control into the paste map so we use this id (not the next one)
+							_pasteMap[this.id] = jsonControl.id;
+						}					
+						// inc the next id
+						_nextId++;	
+					}
+					// make sure the next id is greater than any control when undoing
+					if (undo) {
+						// get the id value into a variable
+						var id = this.id;
+						// the id will be something like P99_C12, find the number after the _C
+						var idInt = parseInt(id.substr(id.indexOf("_C") + 2));
+						// set the next id to one past this if it is less
+						if (idInt >= _nextId) _nextId = idInt + 1;	
+					}
+				}				
 			} else {
 				// the page control doesn't have a properties array
 				if (!jsonControl.properties && !jsonControl.parentControl) {
