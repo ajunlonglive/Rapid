@@ -51,7 +51,7 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, use
 <html>
 <head>
 	
-	<title>Rapid Desktop - Designer</title>
+	<title>Rapid Design - <%=com.rapid.server.Rapid.VERSION %></title>
 	<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
 <%
 	if (designerPermission) {

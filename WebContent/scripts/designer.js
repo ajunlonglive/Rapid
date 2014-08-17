@@ -1086,7 +1086,7 @@ function loadPage() {
 		// reload the page iFrame with resources for the app and this page
     	_pageIframe[0].contentDocument.location.href = "designpage.jsp?a=" + _app.id + "&p=" + _page.id;	
     	// set dirty to false
-    	_dirty = false;
+    	_dirty = false;    	
 	} // drop down val check
 	
 }
@@ -1392,59 +1392,106 @@ function applyStyleForPaste(control, styleSheet) {
 	}
 }
 
-// this function uses the loadControl paste option twice
+// this function will paste an existing control into a specified parent - if no parent is specified we assume we are pasting a whole page
 function doPaste(control, parentControl) {
-	
+		
 	// remove any dialogues or components
 	$("#dialogues").children().remove();
 	
 	// reset the paste map
 	_pasteMap = {};
+	
+	// it's a little different for the page (we can idenitfy it as it doesn't have a parent)
+	if (parentControl) {
+		
+		// create the new control
+		var newControl = loadControl(control, parentControl, true, true);
+		
+		// retain the next id at this point
+		var nextId = _nextId;
+		
+		// retain the control numbers at this point
+		var controlNumbers = JSON.stringify(_controlNumbers);
+		
+		// remove the current object if not the body
+		if (!newControl.object.is("body")) newControl._remove();
+		
+		// remove any items that were placed in dialogues
+		$("#dialogues").children().remove();
+		
+		// clean the control for stringifying
+		var cleanControl = cleanControlForPaste(newControl);
+		
+		// stringify newControl
+		var newControlString = JSON.stringify(cleanControl);
+		
+		// loop all entries in the paste map
+		for (var i in _pasteMap) {
+			// update all references
+			newControlString = newControlString.replaceAll(_pasteMap[i],i);
+		}
+		
+		// turned the replaced string back into an object
+		var mappedControl = JSON.parse(newControlString);
+		
+		// reload the control with all the new references
+		newControl = loadControl(mappedControl, parentControl, true, true);
+		
+		// apply any styling in the new control
+		applyStyleForPaste(newControl, getStyleSheet());
+		
+		// restore the next id
+		_nextId = nextId;
+		
+		// restore the control numbers
+		_controlNumbers = JSON.parse(controlNumbers);
+		
+		// return the updated control
+		return newControl;
+				
+	} else {
 			
-	// create the new control
-	var newControl = loadControl(control, parentControl, true, true);
-	
-	// retain the next id at this point
-	var nextId = _nextId;
-	
-	// retain the control numbers at this point
-	var controlNumbers = JSON.stringify(_controlNumbers);
-	
-	// remove the current object if not the body
-	if (!newControl.object.is("body")) newControl._remove();
-	
-	// remove any items that were placed in dialogues
-	$("#dialogues").children().remove();
-	
-	// clean the control for stringifying
-	var cleanControl = cleanControlForPaste(newControl);
-	
-	// stringify newControl
-	var newControlString = JSON.stringify(cleanControl);
-	
-	// loop all entries in the paste map
-	for (var i in _pasteMap) {
-		// update all references
-		newControlString = newControlString.replaceAll(_pasteMap[i],i);
+		// remove all children
+		_page.object.children().remove();																				
+		// reset the next id at this point
+		_nextId = 1;
+		// reset the control numbers at this point
+		_controlNumbers = {};
+		// retain the page id
+		var id = _page.id;
+		// retain the page name
+		var name = _page.name;
+		// retain the page name
+		var title = _page.title;
+		// retain the page name
+		var description = _page.description;
+		
+		// clean unnessary data from the page control
+		var pageControl = getDataObject(_page);
+		// add back just the page object
+		pageControl.object = _page.object;
+		
+		// reload the page control using the undo functionality (this preserves the control ids)
+		_page = loadControl(pageControl, null, true, false, true);
+
+		// restore the id
+		_page.id = id;
+		// restore the name
+		_page.name = name;
+		// restore the title
+		_page.title = title;
+		// restore the description
+		_page.description = description;
+		// set the page object to the iframe body
+		_page.object = $(_pageIframe[0].contentWindow.document.body);
+		
+		// apply any styling in the new control
+		applyStyleForPaste(_page, getStyleSheet());
+		
+		// return the page
+		return _page;		
+		
 	}
-	
-	// turned the replaced string back into an object
-	var mappedControl = JSON.parse(newControlString);
-	
-	// reload the control with all the new references
-	newControl = loadControl(mappedControl, parentControl, true, true);
-	
-	// apply any styling in the new control
-	applyStyleForPaste(newControl, getStyleSheet());
-	
-	// restore the next id
-	_nextId = nextId;
-	
-	// restore the control numbers
-	_controlNumbers = JSON.parse(controlNumbers);
-	
-	// return the updated control
-	return newControl;
 	
 }
 
@@ -1614,6 +1661,9 @@ $(document).ready( function() {
 			    					        	
 			        	// make everything visible
 			        	showDesigner();
+			        	
+			        	// refresh the page map
+			        	showPageMap();
 			        	
 			        	// get the page lock object
 			        	var lock = _page.lock;
@@ -2112,46 +2162,10 @@ $(document).ready( function() {
 					// select the new control
 					selectControl(newControl);
 				} else {
-					// we're pasting a whole page so start by removing all children
-					_page.object.children().remove();																				
-					// reset the next id at this point
-					_nextId = 1;
-					// reset the control numbers at this point
-					_controlNumbers = {};
-					// retain the page id
-					var id = _page.id;
-					// retain the page name
-					var name = _page.name;
-					// retain the page name
-					var title = _page.title;
-					// retain the page name
-					var description = _page.description;
-					// retain the child control array
-					var childControls = _copyControl.childControls;
-					// reset the child controls
-					_copyControl.childControls = [];
-					// redo the page
-					_page = doPaste(_copyControl, null);
-					// restore the id
-					_page.id = id;
-					// restore the name
-					_page.name = name;
-					// restore the title
-					_page.title = title;
-					// restore the description
-					_page.description = description;
-					// set the page object to the iframe body
-					_page.object = $(_pageIframe[0].contentWindow.document.body);
-					// loop the children of the _copyControl
-					for (var i in childControls) {
-						// get each child control
-						var childControl = childControls[i];
-						// add to the page
-						var newControl = doPaste(childControl, _page);
-						// add to childControl collection of current parent (which is the page)
-						_page.childControls.push(newControl);
-					}
-					
+					// create the new page control with paste
+					var newControl = doPaste(_copyControl);
+					// select the new control
+					selectControl(newControl);
 				} // page copy check
 				
 			} // page paste check
