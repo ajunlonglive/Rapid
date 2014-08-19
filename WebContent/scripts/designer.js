@@ -656,14 +656,14 @@ function selectControl(control) {
 			if (_copyControl) {
 				// find out if there are childControls with the same type with canUserAddPeers			
 				for (i in _selectedControl.childControls) {
-					if (_copyControl._class.type == _selectedControl.childControls[i]._class.type && _selectedControl.childControls[i]._class.canUserAddPeers) {
+					if (_copyControl.parentControl && _copyControl._class.type == _selectedControl.childControls[i]._class.type && _selectedControl.childControls[i]._class.canUserAddPeers) {
 						childCanAddPeers = true;
 						break;
 					}
 				}
 				// find out if there are peers with the same type with canUserAddPeers			
 				for (i in _selectedControl.parentControl.childControls) {
-					if (_copyControl._class.type == _selectedControl.parentControl.childControls[i]._class.type && _selectedControl.parentControl.childControls[i]._class.canUserAddPeers) {
+					if (_copyControl.parentControl && _copyControl._class.type == _selectedControl.parentControl.childControls[i]._class.type && _selectedControl.parentControl.childControls[i]._class.canUserAddPeers) {
 						peerCanAddPeers = true;
 						break;
 					}
@@ -693,7 +693,7 @@ function selectControl(control) {
 			$("#addPeerRight").attr("disabled","disabled");
 			
 			// if the copy control is a canUserAdd or the page we can paste
-			if (_copyControl && (_copyControl._class.canUserAdd || !_copyControl.parentControl)) {
+			if (_copyControl && (!_copyControl.parentControl || _copyControl._class.canUserAdd)) {
 				$("#paste").removeAttr("disabled");
 			} else {
 				$("#paste").attr("disabled","disabled");
@@ -1465,14 +1465,21 @@ function doPaste(control, parentControl) {
 		var title = _page.title;
 		// retain the page name
 		var description = _page.description;
+				
+		// stringify control
+		var controlString = JSON.stringify(control);
 		
-		// clean unnessary data from the page control
-		var pageControl = getDataObject(_page);
-		// add back just the page object
-		pageControl.object = _page.object;
+		// update all references of the page id to this page id
+		controlString = controlString.replaceAll(control.id + "_",id + "_");
+		
+		// turned the replaced string back into an object
+		var mappedControl = JSON.parse(controlString);
+		
+		// add back object from the current page
+		mappedControl.object = _page.object;
 		
 		// reload the page control using the undo functionality (this preserves the control ids)
-		_page = loadControl(pageControl, null, true, false, true);
+		_page = loadControl(mappedControl, null, true, false, true);
 
 		// restore the id
 		_page.id = id;
@@ -2100,7 +2107,15 @@ $(document).ready( function() {
 	
 	// copy
 	$("#copy").click( function(ev) {
-		_copyControl = _selectedControl;
+		// if there is a selected control
+		if (_selectedControl) {
+			// treat the page differently
+			if (_selectedControl.parentControl) {
+				_copyControl = _selectedControl;
+			} else {
+				_copyControl = cleanControlForPaste(_selectedControl);
+			}
+		}
 		if (_copyControl) $("#paste").removeAttr("disabled");
 	});
 	
@@ -2153,8 +2168,8 @@ $(document).ready( function() {
 				}					
 				
 			} else {
-				
-				if (_copyControl._class.canUserAdd) {
+								
+				if (_copyControl.parentControl && _copyControl._class.canUserAdd) {
 					// create the new control and place in child collection of current parent
 					var newControl = doPaste(_copyControl, _selectedControl);
 					// add to childControl collection of current parent (which is the page)

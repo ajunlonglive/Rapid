@@ -67,6 +67,6 @@ textarea {
   -moz-box-sizing: border-box; 
   box-sizing: order-box;
 } </styles>
-    <title>Rapid application</title>
+    <title>Rapid Admin</title>
     <XMLVersion>1</XMLVersion>
 </application>

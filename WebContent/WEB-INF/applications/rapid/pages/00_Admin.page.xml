@@ -23835,6 +23835,6 @@ if (appId) {
 		&lt;div id=&quot;rapid_P0_C650_&quot; class=&quot;panel&quot;&gt;&lt;/div&gt;</html>
     </rolesHtml>
     <sessionVariables>appId</sessionVariables>
-    <title>Administration</title>
+    <title>Rapid Admin</title>
     <XMLVersion>1</XMLVersion>
 </page>
