@@ -53,6 +53,33 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	        	    
 	    <actionJavaScript>
 	        <![CDATA[
+	        
+//JQuery is ready! 
+$(document).ready( function() {
+	
+	$(window).resize(function(ex) {
+	
+		var win = $(window);
+		
+		// resize the cover
+		$(".dialogueCover").css({
+       		width : win.width(),
+       		height : win.height()
+       	});
+       	      	
+       	// ressize the dialogue
+       	$(".dialogue").each(function() {
+       		var dialogue = $(this);
+	       	dialogue.css({
+	       		left : (win.width() - dialogue.outerWidth()) / 2,
+	       		top : (win.height() - dialogue.outerHeight()) / 3
+	       	}); 
+	    });
+	
+	});
+	
+});		        
+	        
 function Action_navigate(url, dialogue) {
 	if (dialogue) {
 	
@@ -101,22 +128,26 @@ function Action_navigate(url, dialogue) {
 		           	// if this is the login page go to the real thing, requesting to come back to this location
             		if (bodyHtml.indexOf("<input type=\"submit\" value=\"log in\">") > 0) window.location = "login.jsp?requestPath=" + window.location; 
             	
-		           	
-		           	var doc = $(document);
+		           	// get a reference to the body		           	
 		           	var body = $("body");
+		           	// add the cover and return reference
 		           	var dialogueCover = body.append("<div class='dialogueCover' style='position:absolute;left:0px;top:0px;z-index:100;'></div>").children().last();
+		           	
+		           	// get a reference to the window for the visible area
+		           	var win = $(window);
+		           	
 		           	// size and show the dialogueCover
 	            	dialogueCover.css({
-	            		width : doc.width(),
-	            		height : doc.height()
+	            		width : win.width(),
+	            		height : win.height()
 	            	}).show();
+	            	
 		           	var dialogue = body.append("<div class='dialogue' style='position:absolute;z-index:101;'></div>").children().last();
 		           	// apply the injected html
 		           	dialogue.hide().html(bodyHtml);
 		           	// add script into the page (if applicable)
 		           	if (script) dialogue.append(script);
-		           	var win = $(window);
-		           	
+		           			           	
 		           	// size the dialogue
 		           	dialogue.css({
 		           		position : "fixed",

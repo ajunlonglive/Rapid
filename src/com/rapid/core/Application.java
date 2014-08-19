@@ -183,7 +183,7 @@ public class Application {
 				
 	// instance variables
 	
-	private int _xmlVersion, _applicationBackupsMaxSize, _pageBackupsMaxSize;
+	private int _version, _xmlVersion, _applicationBackupsMaxSize, _pageBackupsMaxSize;
 	private String _id, _name, _title, _description, _startPageId, _styles, _securityAdapterType, _createdBy, _modifiedBy;
 	private boolean _showConrolIds, _showActionIds;
 	private Date _createdDate, _modifiedDate;
@@ -196,14 +196,18 @@ public class Application {
 	private List<String> _styleClasses;
 	
 	// properties
-	
-	// the version is used to upgrade xml files before unmarshalling (we use a property so it's written ito xml)
+				
+	// the XML version is used to upgrade xml files before unmarshalling (we use a property so it's written ito xml)
 	public int getXMLVersion() { return _xmlVersion; }
 	public void setXMLVersion(int xmlVersion) { _xmlVersion = xmlVersion; }
-	
+				
 	// the id uniquely identifies the page (it is produced by taking all unsafe characters out of the name)
 	public String getId() { return _id; }
 	public void setId(String id) { _id = id; }
+	
+	// the version is used for Rapid Mobile's offline files to work with different published versions of the app
+	public int getVersion() { return _version; }
+	public void setVersion(int version) { _version = version; }
 		
 	// this is expected to be short name, probably even a code that is used by users to simply identify pages (also becomes the file name)
 	public String getName() { return _name; }
@@ -285,6 +289,7 @@ public class Application {
 	
 	public Application() {
 		_xmlVersion = XML_VERSION;
+		_version = 1;
 		_pages = new HashMap<String,Page>();
 		_databaseConnections = new ArrayList<DatabaseConnection>();
 		_webservices = new ArrayList<Webservice>();
