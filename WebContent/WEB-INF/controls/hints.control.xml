@@ -30,7 +30,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    
 	    <type>hints</type>	 
 	    <name>Hints</name>	   
-	    <image>images/tools_24x24.png</image>    
+	    <image>images/hint_24x24.png</image>    
 	    
 	    <addToNewApplications>true</addToNewApplications>    
 	    <noDefaultName>true</noDefaultName>
@@ -68,7 +68,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    <getHtmlFunction>
 	        <![CDATA[	  
 // return our html 
-return "<img id='" + this.id + "' class='nonVisibleControl' src='images/tools_24x24.png'></img>"
+return "<img id='" + this.id + "' class='nonVisibleControl' src='images/hint_24x24.png'></img>"
 	        ]]>
 	    </getHtmlFunction> 
 	    
