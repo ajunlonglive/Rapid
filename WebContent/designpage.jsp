@@ -94,6 +94,8 @@ if (gotAppAndPage && designerPermission) {
 	.nonVisibleControl {
 		position: fixed;
 		bottom: 10px;	
+		width: 24px;
+		height: 24px;
 	}
 	
 	</style>

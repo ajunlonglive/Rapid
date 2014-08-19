@@ -2417,6 +2417,8 @@ function arrangeNonVisibleControls() {
 		pageControls.each( function(i) {
 			// get a reference to this object
 			var o = $(this);		
+			// ensure this control is visible
+			o.show();
 			// ensure this page control is in the right place
 			o.css("left",x);
 			// get the width
