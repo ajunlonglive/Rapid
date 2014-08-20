@@ -642,7 +642,7 @@ $(document).ready( function() {
 				_styleClicked = false;
 				
 			} else {	
-				
+											
 				// get the entry from the editable div
 				var entry = _styleInput.text();
 				// add a semi-colon to the end if there isn't one

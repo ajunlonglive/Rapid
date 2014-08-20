@@ -147,7 +147,7 @@ public class Rapid extends RapidHttpServlet {
 					if (rebuildPages) {
 						
 						// (re)generate the page start html
-						pageHtml = page.getPageStartHtml(rapidRequest.getApplication());
+						pageHtml = page.getStartHtml(rapidRequest.getApplication());
 						
 					} else {
 					

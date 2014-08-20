@@ -220,7 +220,7 @@ public class Page {
 		// check whether the page has been cached yet
 		if (_cachedStartHtml == null) {
 			// generate the page start html
-			_cachedStartHtml = getPageStartHtml(application);																		
+			_cachedStartHtml = getStartHtml(application);																		
 			// have the page cache the generated html for next time
 			cacheStartHtml(_cachedStartHtml);
 		}				
@@ -726,7 +726,29 @@ public class Page {
     	}    	
     }
 	
-	public String getPageStartHtml(Application application) throws JSONException {
+    public String getResourcesHtml(Application application) {
+    	
+    	StringBuilder stringBuilder = new StringBuilder();
+				
+		// loop and add the resources required by this application's controls and actions (created when application loads)
+		if (application.getResources() != null) {
+			for (Resource resource : application.getResources()) {
+				switch (resource.getType()) {
+					case Resource.JAVASCRIPTFILE :
+						stringBuilder.append("<script type='text/javascript' src='" + resource.getContent() + "'></script>\n");
+					break;
+					case Resource.CSSFILE :
+						stringBuilder.append("<link rel='stylesheet' type='text/css' href='" + resource.getContent() + "'></link>\n");
+					break;
+				}				
+			}
+		}
+		
+		return stringBuilder.toString();
+    	
+    }
+    
+	public String getStartHtml(Application application) throws JSONException {
     	
     	StringBuilder stringBuilder = new StringBuilder();
     	    								
@@ -739,27 +761,14 @@ public class Page {
 		
 		stringBuilder.append("    <title>" + _title + " - by Rapid</title>\n");
 		
-		// if you're looking for where the jquery link is added it's the first resource in the page.control.xml file
-		
-		// loop and add the resources required by this application's controls and actions (created when application loads)
-		if (application.getResources() != null) {
-			for (Resource resource : application.getResources()) {
-				switch (resource.getType()) {
-					case Resource.JAVASCRIPTFILE :
-						stringBuilder.append("    <script type='text/javascript' src='" + resource.getContent() + "'></script>\n");
-					break;
-					case Resource.CSSFILE :
-						stringBuilder.append("    <link rel='stylesheet' type='text/css' href='" + resource.getContent() + "'></link>\n");
-					break;
-				}				
-			}
-		}
+		// if you're looking for where the jquery link is added it's the first resource in the page.control.xml file		
+		stringBuilder.append(getResourcesHtml(application));
 		
 		// include the page's css file (generated when the page is saved)
-		stringBuilder.append("    <link rel='stylesheet' type='text/css' href='applications/" + application.getId() +"/" + _name + ".css'></link>\n");
+		stringBuilder.append("<link rel='stylesheet' type='text/css' href='applications/" + application.getId() +"/" + _name + ".css'></link>\n");
 		
 		// start building the inline js for the page				
-		stringBuilder.append("    <script type='text/javascript'>\n\n");
+		stringBuilder.append("<script type='text/javascript'>\n\n");
 										
 		// initialise our pageload lines collections
 		_pageloadLines = new ArrayList<String>();
@@ -795,7 +804,7 @@ public class Page {
 		getEventHandlers(stringBuilder, application, _controls);
 					
 		// close the page inline script block
-		stringBuilder.append("    </script>\n");
+		stringBuilder.append("</script>\n");
 		
 		stringBuilder.append("  <head>\n");
 		
