@@ -473,7 +473,7 @@ public class Designer extends RapidHttpServlet {
 							if (application != null) {
 																		
 								// create the zip file
-								application.zip(this, rapidRequest);
+								application.zip(this, rapidRequest, application.getId() + ".zip");
 								
 								// set the type as a .zip
 								response.setContentType("application/x-zip-compressed");
@@ -615,37 +615,7 @@ public class Designer extends RapidHttpServlet {
 								newPage.setName(jsonPage.optString("name"));
 								newPage.setTitle(jsonPage.optString("title"));
 								newPage.setDescription(jsonPage.optString("description"));
-								
-								// look in the JSON for the javascriptFiles array
-								JSONArray jsonJavaScriptFiles = jsonPage.optJSONArray("javascriptFiles");
-								// if we found one
-								if (jsonJavaScriptFiles != null) {
-									// make the array we're about to populate
-									ArrayList<String> javaScriptFiles = new ArrayList<String>();
-									// loop members
-									for (int i = 0; i < jsonJavaScriptFiles.length(); i++) {
-										// add string
-										javaScriptFiles.add(jsonJavaScriptFiles.getString(i));
-									}
-									// assign to page property
-									newPage.setJavascriptFiles(javaScriptFiles);
-								}
-								
-								// look in the JSON for the cssFiles array
-								JSONArray jsonCSSFiles = jsonPage.optJSONArray("cssFiles");
-								// if we found one
-								if (jsonCSSFiles != null) {
-									// make the array we're about to populate
-									ArrayList<String> cssFiles = new ArrayList<String>();
-									// loop members
-									for (int i = 0; i < jsonCSSFiles.length(); i++) {
-										// add string
-										cssFiles.add(jsonCSSFiles.getString(i));
-									}
-									// assign to page property
-									newPage.setCssFiles(cssFiles);
-								}
-													
+																
 								// look in the JSON for an event array
 								JSONArray jsonEvents = jsonPage.optJSONArray("events");
 								// add the events if we found one
