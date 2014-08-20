@@ -150,7 +150,7 @@ li.design-control {
 	display: block;
 	cursor: pointer;
 	border: 1px solid #191919;	
-	margin: 0px 0px 5px 5px;
+	margin-bottom: 5px;
 	padding: 2px 2px 2px 5px;
 	color: #191919;	
 	font-size: 12px;		
@@ -504,6 +504,10 @@ td.styleCell.validationFail {
 div.button {
 	margin-left: -10px;
 	margin-right: -10px;	
+}
+
+#appAdmin {
+	margin-top: 0;
 }
 
 .buttons button {
