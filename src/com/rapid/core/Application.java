@@ -30,6 +30,7 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
@@ -477,7 +478,7 @@ public class Application {
 		
 	}
 	
-	// this adds resources from either a control or action, they are added to the resources collection for printing in the top of each page if they are files, or ammended to the application .js or .css files
+	// this adds resources from either a control or action, they are added to the resources collection for printing in the top of each page if they are files, or amended to the application .js or .css files
 	private void addResources(JSONObject jsonObject, String jsonObjectType, StringBuilder js, StringBuilder css) throws JSONException {
 		
 		// look for a resources object
@@ -540,10 +541,10 @@ public class Application {
 					
 				} // resource loop
 				
-			} // resource check
-			
-		}
-		
+			} // json resource check
+									
+		} // json resources check
+						
 	}
 		
 	// this function initialises the application when its first loaded, initialises the security adapter and builds the rapid.js and rapid.css files
@@ -681,6 +682,11 @@ public class Application {
 	    		
 	    	} // jsonAction check
 	    	
+	    	// add the application js file as a resource
+			_resourceIncludes.add("<script type='text/javascript' src='applications/" + _id +"/rapid.js'></script>");
+			// add the application css file as a resource
+			_resourceIncludes.add("<link rel='stylesheet' type='text/css' href='applications/" + _id +"/rapid.css'></link>");
+				    	
 	    	// create folders to write the rapid.js file
 			String applicationPath = servletContext.getRealPath("/applications/" + _id);		
 			File applicationFolder = new File(applicationPath);		
@@ -1166,7 +1172,8 @@ public class Application {
 			    	    		
 	}
 	
-	public void zip(RapidHttpServlet rapidServlet, RapidRequest rapidRequest) throws JAXBException, IOException {
+	// create a named .zip file for the app in the /temp folder	
+	public void zip(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, String fileName, boolean webContentOnly) throws JAXBException, IOException, JSONException {
 		
 		// create folders to save locate app file
 		String folderPath = rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + _id);		
@@ -1176,35 +1183,68 @@ public class Application {
 								
 		// if the app file exists
 		if (appFile.exists()) {
-			
-			// create a file object for the application folder
-			File appFolder = new File(folderPath);
+															
+			// create a list of sources for our zip
+			ArrayList<ZipSource> zipSources = new ArrayList<ZipSource>();
 			
 			// create a file object for the webcontent folder
 			File webFolder = new File(rapidServlet.getServletContext().getRealPath("/applications/" + _id));
 			
-			// create a list of sources for our zip
-			ArrayList<ZipSource> zipSources = new ArrayList<ZipSource>();
-			
-			// loop the contents of the appFolder
-			for (File file : appFolder.listFiles()) {
-				// add this file to the WebContent path
-				zipSources.add(new ZipSource(file,"WEB-INF"));
+			// if webContentOnly
+			if (webContentOnly) {
+				
+				// loop the contents of the webFolder and place in root of .zip
+				for (File file : webFolder.listFiles()) {
+					// add this file to the WEB-INF path
+					zipSources.add(new ZipSource(file));
+				}
+				
+				// check we have pages
+				if (_pages != null) {					
+					// loop them
+					for (String pageId : _pages.keySet()) {
+						// get a reference to the page
+						Page page = _pages.get(pageId);
+						// get the html
+						String pageHtml = page.getPageStartHtml(this) + page.getHtmlBody() + "</body></html>";
+						// create a file for it for now
+						File pageFile = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/temp/" + pageId + ".html"));
+						// for now get a printWriter to write the page html
+						PrintWriter pageOut = new PrintWriter(pageFile);
+						// write it to a file for now
+						pageOut.print(pageHtml);
+						pageOut.close();
+						// add the file to the zip
+						zipSources.add(new ZipSource(pageFile));
+					}
+				}
+				
+			} else {
+												
+				// loop the contents of the webFolder and place in WebContent subfolder
+				for (File file : webFolder.listFiles()) {
+					// add this file to the WEB-INF path
+					zipSources.add(new ZipSource(file,"WebContent"));
+				}
+				
+				// create a file object for the application folder
+				File appFolder = new File(folderPath);
+				
+				// loop the contents of the appFolder and place in WEB-INF subfolder
+				for (File file : appFolder.listFiles()) {
+					// add this file to the WebContent path
+					zipSources.add(new ZipSource(file,"WEB-INF"));
+				}
+				
 			}
-			
-			// loop the contents of the webFolder
-			for (File file : webFolder.listFiles()) {
-				// add this file to the WEB-INF path
-				zipSources.add(new ZipSource(file,"WebContent"));
-			}
-			
+									
 			// get a file for the temp directory
 			File tempDir = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/temp"));
 			// create it if not there
 			if (!tempDir.exists()) tempDir.mkdir();
 									
 			// create the zip file object with our destination
-			ZipFile zipFile = new ZipFile(new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/temp/" + _id + ".zip")));
+			ZipFile zipFile = new ZipFile(new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/temp/" + fileName)));
 
 			// create a list of files to ignore
 			ArrayList<String> ignoreFiles = new ArrayList<String>();
@@ -1216,6 +1256,11 @@ public class Application {
 
 		}
 			    	    		
+	}
+	
+	// an overload for the above which will include both sets of files in sub-folders
+	public void zip(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, String fileName) throws JAXBException, IOException, JSONException {
+		zip(rapidServlet, rapidRequest, fileName, false);
 	}
 
 	
