@@ -181,19 +181,76 @@ public class Application {
 		}
 					
 	}
+		
+	// the resource is specified in the control or action xml files
+	public static class Resource {
+		
+		// these are the types defined in the control and action .xsd files
+		public static final int JAVASCRIPTFILE = 1;
+		public static final int CSSFILE = 2;
+		public static final int JAVASCRIPT = 3;
+		public static final int CSS = 4;
+		
+		// private instance variables
+		private int _type;
+		private String _content;
+		
+		// properties
+		public int getType() { return _type; }		
+		public String getContent() { return _content; }
+		
+		// constructor
+		public Resource(int type, String content) {
+			_type = type;
+			_content = content;
+		}
 				
-	// instance variables
+	}
 	
+	// some overridden methods for the Resource collection
+	public static class Resources extends ArrayList<Resource> {
+
+		@Override
+		public boolean contains(Object o) {
+			if (o.getClass() == Resource.class) {
+				Resource r = (Resource) o;
+				for (Resource resource : this) {
+					if (r.getType() == resource.getType() && r.getContent() == resource.getContent()) return true;
+				}
+			}
+			return false;
+		}
+
+		@Override
+		public boolean add(Resource resource) {
+			if (contains(resource)) {
+				return false;
+			} else {
+				return super.add(resource);
+			}
+		}
+
+		@Override
+		public void add(int index, Resource resource) {
+			if (!contains(resource)) {
+				super.add(index, resource);
+			}
+		}
+			
+	}
+	
+	// instance variables	
 	private int _version, _xmlVersion, _applicationBackupsMaxSize, _pageBackupsMaxSize;
 	private String _id, _name, _title, _description, _startPageId, _styles, _securityAdapterType, _createdBy, _modifiedBy;
 	private boolean _showConrolIds, _showActionIds;
 	private Date _createdDate, _modifiedDate;
 	private Map<String,String> _settings;
 	private SecurityAdapater _securityAdapter;
-	private List<String> _controlTypes, _actionTypes, _resourceIncludes;
-	private List<DatabaseConnection> _databaseConnections;
+	private List<String> _controlTypes, _actionTypes;
+	private List<DatabaseConnection> _databaseConnections;	
 	private List<Webservice> _webservices;
 	private HashMap<String,Page> _pages;
+	private Resources _resources;
 	private List<String> _styleClasses;
 	
 	// properties
@@ -422,7 +479,7 @@ public class Application {
 	}
 	
 	// this is a list of elements to go in the head section of the page for any resources the applications controls or actions may require
-	public List<String> getResourceIncludes() { return _resourceIncludes; }
+	public List<Resource> getResources() { return _resources; }
 			
 	// scan the css for classes
 	private List<String> scanStyleClasses(String css) {
@@ -521,24 +578,17 @@ public class Application {
 					// add json object type
 					name += " " + jsonObjectType;
 					
-					// build the resource includes if they're files, or append the string builders
-					String include = null;
+					// add as resources if they're files, or append the string builders (the app .js and .css are added as resources at the end)
 					if ("javascriptFile".equals(resourceType)) {
-						include = "<script type='text/javascript' src='" + resourceContents + "'></script>";
+						_resources.add(new Resource(Resource.JAVASCRIPTFILE,resourceContents));
 					} else if ("cssFile".equals(resourceType)) {
-						include = "<link rel='stylesheet' type='text/css' href='" + resourceContents + "'>";
+						_resources.add(new Resource(Resource.CSSFILE,resourceContents));
 					} else if ("css".equals(resourceType)) {
 						css.append("\n/* " + name + " resource styles */\n\n" + resourceContents + "\n");
 					} else if ("javascript".equals(resourceType)) {
 						js.append("\n/* " + name + " resource JavaScript */\n\n" + resourceContents + "\n");
 					}
-					
-					// check we got something
-					if (include != null) {
-						// add if not there already
-						if (!_resourceIncludes.contains(include)) _resourceIncludes.add(include);
-					}
-					
+										
 				} // resource loop
 				
 			} // json resource check
@@ -551,7 +601,7 @@ public class Application {
 	public void initialise(ServletContext servletContext, boolean createResources) throws JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, InvocationTargetException, SecurityException, NoSuchMethodException, IOException {
 										
 		// initialise the resource includes collection
-		_resourceIncludes = new ArrayList<String>();
+		_resources = new Resources();
 		
 		// initialise the security adapter 
 		setSecurity(servletContext, _securityAdapterType);
@@ -683,9 +733,9 @@ public class Application {
 	    	} // jsonAction check
 	    	
 	    	// add the application js file as a resource
-			_resourceIncludes.add("<script type='text/javascript' src='applications/" + _id +"/rapid.js'></script>");
-			// add the application css file as a resource
-			_resourceIncludes.add("<link rel='stylesheet' type='text/css' href='applications/" + _id +"/rapid.css'></link>");
+	    	_resources.add(new Resource(Resource.JAVASCRIPTFILE, "applications/" + _id +"/rapid.js"));
+			// add the application css file as a resource	    	
+	    	_resources.add(new Resource(Resource.CSSFILE, "applications/" + _id +"/rapid.css"));
 				    	
 	    	// create folders to write the rapid.js file
 			String applicationPath = servletContext.getRealPath("/applications/" + _id);		

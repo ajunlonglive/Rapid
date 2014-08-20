@@ -53,6 +53,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
+import com.rapid.core.Application.Resource;
 import com.rapid.security.SecurityAdapater.User;
 import com.rapid.server.Rapid;
 import com.rapid.server.RapidHttpServlet;
@@ -741,9 +742,16 @@ public class Page {
 		// if you're looking for where the jquery link is added it's the first resource in the page.control.xml file
 		
 		// loop and add the resources required by this application's controls and actions (created when application loads)
-		if (application.getResourceIncludes() != null) {
-			for (String resource : application.getResourceIncludes()) {
-				stringBuilder.append("    " + resource.trim() + "\n");
+		if (application.getResources() != null) {
+			for (Resource resource : application.getResources()) {
+				switch (resource.getType()) {
+					case Resource.JAVASCRIPTFILE :
+						stringBuilder.append("    <script type='text/javascript' src='" + resource.getContent() + "'></script>\n");
+					break;
+					case Resource.CSSFILE :
+						stringBuilder.append("    <link rel='stylesheet' type='text/css' href='" + resource.getContent() + "'></link>\n");
+					break;
+				}				
 			}
 		}
 		
