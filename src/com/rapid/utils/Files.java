@@ -158,4 +158,15 @@ public class Files {
 		return size;
 	}
 	
+	// this function returns the path in a string, removing the file
+	public static String getPath(String fullFilePath) {
+		String path = "";
+		if (fullFilePath != null) {
+			int lastSlashPos = fullFilePath.lastIndexOf("/");
+			if (lastSlashPos > -1) {
+				return fullFilePath.substring(0, lastSlashPos);
+			}
+		}
+		return path;
+	}
 }

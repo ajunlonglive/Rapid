@@ -55,20 +55,26 @@ if (appId != null && pageId != null) {
 	Map<String,Application> applications = (Map<String, Application>) getServletContext().getAttribute("applications");
 	// get the app
 	rapidApp = applications.get(appId);
-	// get the page
-	rapidPage = rapidApp.getPage(pageId);
-	// get the userName
-	String userName = (String) session.getAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME);	
-	// null safety
-	if (userName == null) userName = "";	
-	
-	// we got an app and a page
-	gotAppAndPage = true;	
-	// get a rapid request
-	RapidRequest rapidRequest = new RapidRequest(request); 
-	// check we have the RapidDesign permission in the security provider for this app
-	designerPermission = rapidApp.getSecurity().checkUserRole(rapidRequest, userName, Rapid.DESIGN_ROLE);
-			
+	// check we got an app
+	if (rapidApp != null) {
+		// get the page
+		rapidPage = rapidApp.getPage(pageId);
+		// check we got the page
+		if (rapidPage != null) {
+			// we got an app and a page
+			gotAppAndPage = true;	
+			// get a rapid request
+			RapidRequest rapidRequest = new RapidRequest(request);
+			// get the userName
+			String userName = (String) session.getAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME);	
+			// null safety
+			if (userName == null) userName = "";
+			// check we have the RapidDesign permission in the security provider for this app
+			designerPermission = rapidApp.getSecurity().checkUserRole(rapidRequest, userName, Rapid.DESIGN_ROLE);
+			// if this is the rapid app the super permission is required too
+			if ("rapid".equals(rapidApp.getId())) designerPermission = designerPermission && rapidApp.getSecurity().checkUserRole(rapidRequest, userName, Rapid.SUPER_ROLE);	
+		}							
+	}
 }
 %>
 
@@ -76,19 +82,14 @@ if (appId != null && pageId != null) {
 <head>	
 	<title>Rapid Desktop - Design Page</title>
 	<meta http-equiv="Content-Type" content="text/html;charset=utf-8">	
-	<script type='text/javascript' src='scripts/jquery-1.10.2.js'></script>
-	<script type='text/javascript' src='scripts/extras.js'></script>
-	<script type='text/javascript' src='scripts/json2.js'></script>
 <%
 
 if (gotAppAndPage && designerPermission) {
 
-	for (String resource : rapidApp.getResourceIncludes()) {	
-		out.print("\t" + resource + "\n");	
-	}
+	// add all of the required resource links
+	out.print(rapidPage.getResourcesHtml(rapidApp));	
 %>
-	<link rel="stylesheet" type="text/css" href="applications/<%=rapidApp.getId()%>/rapid.css"></link>
-	<link rel="stylesheet" type="text/css" href="applications/<%=rapidApp.getId()%>/<%=rapidPage.getName()%>.css"></link>
+	<link rel="stylesheet" type="text/css" href="applications/<%=rapidApp.getId()%>/<%=rapidPage.getName()%>.css"></link>	
 	<style type="text/css">
 		
 	.nonVisibleControl {
@@ -100,19 +101,22 @@ if (gotAppAndPage && designerPermission) {
 	
 	</style>
 <%
+} else {
+%>
+	<link rel="stylesheet" type="text/css" href="styles/designer.css"></link>
+<%
 }
-%>	
+%>
 </head>
 <body>
 <%
 if (!gotAppAndPage) {
 %>
-	<center><h3>To load the resources an application and a page must be provided</h3></center>
+	<center><h3>Application and page cannot be found</h3></center>
 <%
-}
-if (!designerPermission) {
+} else if (!designerPermission) {
 %>
-	<center><h3>You do not have permission to access the Rapid Designer - contact your administrator</h3></center>	
+	<center><h3>You do not have permission to load this page in Rapid Design - contact your administrator</h3></center>	
 <%
 }
 %>

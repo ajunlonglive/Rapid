@@ -32,6 +32,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.Deflater;
 import java.util.zip.ZipEntry;
@@ -58,6 +59,61 @@ public class ZipFile {
 		public File getFile() { return _file; }
 		public String getPath() { return _path; }
 		
+	}
+	
+	public static class ZipSources extends ArrayList<ZipSource> {
+
+		// overrides
+		
+		@Override
+		public boolean contains(Object o) {
+			if (o.getClass() == ZipSource.class) {
+				ZipSource zs = (ZipSource) o;
+				return contains(zs);
+			}
+			return false;
+		}
+
+		@Override
+		public boolean add(ZipSource zipSource) {
+			if (contains(zipSource)) {
+				return false;
+			} else {
+				return super.add(zipSource);
+			}
+		}
+
+		@Override
+		public void add(int index, ZipSource zipSource) {
+			if (!contains(zipSource)) super.add(index, zipSource);
+		}
+		
+		// instance methods
+		
+		public boolean contains(ZipSource zipSource) {
+			for (ZipSource zs : this) {
+				if (zipSource.getFile().getName().equals(zs.getFile().getName()) && zipSource.getPath().equals(zs.getPath())) return true;
+			}
+			return false;
+		}
+		
+		public boolean add(File file) {
+			ZipSource zipSource = new ZipSource(file);
+			if (contains(zipSource)) {
+				return false;
+			} else {
+				return add(zipSource);
+			}
+		}
+		
+		public boolean add(File file, String path) {
+			ZipSource zipSource = new ZipSource(file, path);
+			if (contains(zipSource)) {
+				return false;
+			} else {
+				return add(zipSource);
+			}
+		}					
 	}
 	
 	final int BUFFER = 1024;
@@ -106,7 +162,7 @@ public class ZipFile {
         zos.closeEntry();
     }
 	
-    public void zipFiles(List<ZipSource> sources, List<String> ignoreFiles) throws IOException {
+    public void zipFiles(ZipSources sources, List<String> ignoreFiles) throws IOException {
         
     	ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(_file));
         zipOut.setLevel(Deflater.DEFAULT_COMPRESSION);
@@ -140,7 +196,7 @@ public class ZipFile {
         
     }	
     
-    public void zipFiles(List<ZipSource> sources) throws IOException {
+    public void zipFiles(ZipSources sources) throws IOException {
         
     	zipFiles(sources, null);
     	

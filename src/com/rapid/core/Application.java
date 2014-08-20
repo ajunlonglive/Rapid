@@ -79,6 +79,7 @@ import com.rapid.utils.JAXB;
 import com.rapid.utils.XML;
 import com.rapid.utils.ZipFile;
 import com.rapid.utils.ZipFile.ZipSource;
+import com.rapid.utils.ZipFile.ZipSources;
 
 @XmlRootElement
 @XmlType(namespace="http://rapid-is.co.uk/core")
@@ -190,6 +191,7 @@ public class Application {
 		public static final int CSSFILE = 2;
 		public static final int JAVASCRIPT = 3;
 		public static final int CSS = 4;
+		public static final int FILE = 5;
 		
 		// private instance variables
 		private int _type;
@@ -580,14 +582,16 @@ public class Application {
 					
 					// add as resources if they're files, or append the string builders (the app .js and .css are added as resources at the end)
 					if ("javascriptFile".equals(resourceType)) {
-						_resources.add(new Resource(Resource.JAVASCRIPTFILE,resourceContents));
+						_resources.add(new Resource(Resource.JAVASCRIPTFILE, resourceContents));
 					} else if ("cssFile".equals(resourceType)) {
-						_resources.add(new Resource(Resource.CSSFILE,resourceContents));
+						_resources.add(new Resource(Resource.CSSFILE, resourceContents));
+					} else if ("file".equals(resourceType)) {
+						_resources.add(new Resource(Resource.FILE, resourceContents));
 					} else if ("css".equals(resourceType)) {
 						css.append("\n/* " + name + " resource styles */\n\n" + resourceContents + "\n");
 					} else if ("javascript".equals(resourceType)) {
 						js.append("\n/* " + name + " resource JavaScript */\n\n" + resourceContents + "\n");
-					}
+					} 
 										
 				} // resource loop
 				
@@ -1223,7 +1227,7 @@ public class Application {
 	}
 	
 	// create a named .zip file for the app in the /temp folder	
-	public void zip(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, String fileName, boolean webContentOnly) throws JAXBException, IOException, JSONException {
+	public void zip(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, String fileName, boolean offlineUse) throws JAXBException, IOException, JSONException {
 		
 		// create folders to save locate app file
 		String folderPath = rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + _id);		
@@ -1235,18 +1239,18 @@ public class Application {
 		if (appFile.exists()) {
 															
 			// create a list of sources for our zip
-			ArrayList<ZipSource> zipSources = new ArrayList<ZipSource>();
+			ZipSources zipSources = new ZipSources();
 			
 			// create a file object for the webcontent folder
 			File webFolder = new File(rapidServlet.getServletContext().getRealPath("/applications/" + _id));
 			
-			// if webContentOnly
-			if (webContentOnly) {
+			// if for offlineUse
+			if (offlineUse) {
 				
 				// loop the contents of the webFolder and place in root of .zip
 				for (File file : webFolder.listFiles()) {
 					// add this file to the WEB-INF path
-					zipSources.add(new ZipSource(file));
+					zipSources.add(file, "applications/" + _id);
 				}
 				
 				// check we have pages
@@ -1256,7 +1260,7 @@ public class Application {
 						// get a reference to the page
 						Page page = _pages.get(pageId);
 						// get the html
-						String pageHtml = page.getPageStartHtml(this) + page.getHtmlBody() + "</body></html>";
+						String pageHtml = page.getStartHtml(this) + page.getHtmlBody() + "</body></html>";
 						// create a file for it for now
 						File pageFile = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/temp/" + pageId + ".html"));
 						// for now get a printWriter to write the page html
@@ -1265,7 +1269,23 @@ public class Application {
 						pageOut.print(pageHtml);
 						pageOut.close();
 						// add the file to the zip
-						zipSources.add(new ZipSource(pageFile));
+						zipSources.add(pageFile);
+					}
+				}
+				
+				// check we have resources
+				if (_resources != null) {
+					// loop them
+					for (Resource resource : _resources) {
+						// check they're any of our file types
+						if (resource.getType() == Resource.JAVASCRIPTFILE || resource.getType() == Resource.CSSFILE || resource.getType() == Resource.FILE) {
+							// get a file object for them
+							File resourceFile = new File(rapidServlet.getServletContext().getRealPath("") + "/" + resource.getContent());
+							// get the path from the file name
+							String path = Files.getPath(resource.getContent());
+							// add as zip source
+							zipSources.add(resourceFile, path);
+						}
 					}
 				}
 				
@@ -1308,7 +1328,7 @@ public class Application {
 			    	    		
 	}
 	
-	// an overload for the above which will include both sets of files in sub-folders
+	// an overload for the above which will include the for export rather than offlineUse files
 	public void zip(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, String fileName) throws JAXBException, IOException, JSONException {
 		zip(rapidServlet, rapidRequest, fileName, false);
 	}

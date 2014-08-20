@@ -35,6 +35,10 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    <addToNewApplications>true</addToNewApplications> 
 	    
 	    <resources>
+	        <resource>
+	    		<type>file</type>
+	    		<contents>images/wait_120x15.gif</contents>
+	    	</resource>
 	    	<resource>
 	    		<type>javascript</type>
 	    		<contents>
