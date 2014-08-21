@@ -243,40 +243,29 @@ jQuery(function($) {
 
 });
 
-// Graph library uses these feature to detect ie
-jQuery.uaMatch = function( ua ) {
-    ua = ua.toLowerCase();
-
-    var match = /(chrome)[ \/]([\w.]+)/.exec( ua ) ||
-            /(webkit)[ \/]([\w.]+)/.exec( ua ) ||
-            /(opera)(?:.*version|)[ \/]([\w.]+)/.exec( ua ) ||
-            /(msie) ([\w.]+)/.exec( ua ) ||
-            ua.indexOf("compatible") < 0 && /(mozilla)(?:.*? rv:([\w.]+)|)/.exec( ua ) ||
-            [];
-
-    return {
-            browser: match[ 1 ] || "",
-            version: match[ 2 ] || "0"
-    };
-};
-if ( !jQuery.browser ) {
-        matched = jQuery.uaMatch( navigator.userAgent );
-        browser = {};
-
-        if ( matched.browser ) {
-                browser[ matched.browser ] = true;
-                browser.version = matched.version;
-        }
-
-        // Chrome is Webkit, but Webkit is also Safari.
-        if ( browser.chrome ) {
-                browser.webkit = true;
-        } else if ( browser.webkit ) {
-                browser.safari = true;
-        }
-
-        jQuery.browser = browser;
-}
+// if we're in Rapid Mobile direct ajax through the native code
+if (_rapidmobile && _rapidmobile.ajax) $.ajax = function(a,b) { 
+	try {
+		// stringify the 2 parameters and send to the native code
+		var data = _rapidmobile.ajax(JSON.stringify(a),JSON.stringify(b));		
+		// check for error
+		if (data.indexOf('{"error":') == 0) {
+			alert(data);
+			// parse the error
+			var error = JSON.parse(data);			
+			// run the error function with the message and status
+			a.error({responseText:error.error},error.status,error.error);
+		} else {
+			// if the dataType was json parse the response back to an object
+			if (a.dataType == "json") data = JSON.parse(data);
+			// run the success function with the returned data
+			a.success(data);
+		}
+	} catch (ex) {
+		// run the error function with the message
+		a.error({responseText:ex},-1,ex);
+	}
+}; 
 
 function showValidationMessage(controlId, message) {
 	var control = $("#" + controlId);

@@ -147,10 +147,10 @@ return details;
 	    </getDetailsFunction>
 	    	    
 	    <getDataFunction>
-	        <![CDATA[
+	        <![CDATA[       
 var data = null;
 if (details && details.columns) {
-	if (field) {
+	if (field) {		
 		var row = $(ev.target).closest("tr");
 		var rowIndex = row.index() - 1;
 		if (rowIndex >= 0) {

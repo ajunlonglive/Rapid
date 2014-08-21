@@ -44,10 +44,8 @@ import com.rapid.core.Application;
 import com.rapid.server.RapidHttpServlet.RapidRequest;
 
 public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
-	
-	private final static String SESSION_VARIABLE_USER_PASSWORD = "password";
-	
-	private static Logger _logger = Logger.getLogger(RapidFilter.class);
+		
+	private static Logger _logger = Logger.getLogger(RapidAuthenticationAdapter.class);
 	
 	public FormAuthenticationAdapter(ServletContext servletContext) {
 		 super(servletContext);		
@@ -64,6 +62,8 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 		
 		if ("/".equals(requestPath) || requestPath.contains("login.jsp") || requestPath.contains("index.jsp") || requestPath.contains("design.jsp") || requestPath.contains("designpage.jsp") || requestPath.contains("/rapid") || requestPath.contains("/~")) {
 			
+			_logger.trace("RapidAuthenticationAdapter invoked for " + requestPath);
+			
 			String userName = null;
 			String userPassword = null;
 			
@@ -76,6 +76,8 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 			HttpServletResponse response = (HttpServletResponse) res;
 			
 			if (userName == null) {
+				
+				_logger.trace("No userName found in session");
 																				
 				// look for an authorisation attribute in the session
 				String sessionRequestPath = (String) session.getAttribute("requestPath");
@@ -86,19 +88,26 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 				userPassword = request.getParameter("userPassword");
 			
 				if (userName == null) {
+					
+					_logger.trace("No userName found in request");
 																									
 					// if we are attempting to authorise 
 					if (requestPath.contains("login.jsp") && sessionRequestPath != null) {
+												
 						// check the url for a requestPath
 						String urlRequestPath = request.getParameter("requestPath");
 						// overide the session one if so
 						if (urlRequestPath != null) session.setAttribute("requestPath", urlRequestPath);
 						// progress to the next step in the filter
 						return req;
+						
 					}
 					
+					String acceptHeader = request.getHeader("Accept");
+					if (acceptHeader == null) acceptHeader = ""; 
+					
 					// if this is json just send a 401
-					if (request.getHeader("Accept").contains("application/json")) {
+					if (acceptHeader.contains("application/json")) {
 						
 						// set the 401 - access denied
 						response.sendError(401);
@@ -122,6 +131,8 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 					return null;
 					
 				} else {
+					
+					_logger.trace("userName found in request");
 					
 					// remember whether we are authorised for at least one application
 					boolean authorised = false;
@@ -151,6 +162,9 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 						
 						// retain username in the session
 						session.setAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME, userName);
+						
+						// log that authentication was granted
+						_logger.debug("FormAuthenticationAdapter authenticated " + userName);
 						
 						// make the sessionRequest path the root just in case it was null (or login.jsp itself)
 						if (sessionRequestPath == null || "login.jsp".equals(sessionRequestPath)) sessionRequestPath = ".";

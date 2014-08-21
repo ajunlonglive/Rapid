@@ -64,6 +64,13 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	        </property>
 	    </properties>
 	    
+	    <resources>
+	        <resource>
+	            <type>file</type>
+	            <contents>images/alert_16x16.png</contents>
+	        </resource>
+	    </resources>
+	    	    	    
 	    <actionJavaScript>
 	        <![CDATA[   
 function Action_validation(ev, validations, showMessages) {
@@ -94,6 +101,7 @@ function Action_validation(ev, validations, showMessages) {
 	return valid;
 }	        ]]>
 	    </actionJavaScript> 
+	    
     </action> 
     
 </actions>

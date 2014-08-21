@@ -33,6 +33,29 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    <class>com.rapid.actions.Database</class>	
 	    
 	    <addToNewApplications>true</addToNewApplications> 
+	    	    	    	    
+	    <properties>
+	        <property>
+	            <key>query</key>
+	            <name>Query</name>
+	            <changeValueJavaScript>databaseQuery</changeValueJavaScript>	 
+	        </property>	  
+	        <property>
+	            <key>showLoading</key>
+	            <name>Loading animation</name>
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>	 
+	        </property>	
+	        <property>
+	            <key>successActions</key>
+	            <name>Success actions</name>
+	            <changeValueJavaScript>childActions</changeValueJavaScript>	 
+	        </property>
+	        <property>
+	            <key>errorActions</key>
+	            <name>Error actions</name>
+	            <changeValueJavaScript>childActions</changeValueJavaScript>	 
+	        </property>      
+	    </properties>	 
 	    
 	    <resources>
 	        <resource>
@@ -81,29 +104,6 @@ function getDatabaseActionMaxSequence(actionId) {
 	    		</contents>
 	    	</resource>
 	    </resources>
-	    	    
-	    <properties>
-	        <property>
-	            <key>query</key>
-	            <name>Query</name>
-	            <changeValueJavaScript>databaseQuery</changeValueJavaScript>	 
-	        </property>	  
-	        <property>
-	            <key>showLoading</key>
-	            <name>Loading animation</name>
-	            <changeValueJavaScript>checkbox</changeValueJavaScript>	 
-	        </property>	
-	        <property>
-	            <key>successActions</key>
-	            <name>Success actions</name>
-	            <changeValueJavaScript>childActions</changeValueJavaScript>	 
-	        </property>
-	        <property>
-	            <key>errorActions</key>
-	            <name>Error actions</name>
-	            <changeValueJavaScript>childActions</changeValueJavaScript>	 
-	        </property>      
-	    </properties>	 
 	    	    	    	    	     
 	    <actionJavaScript>
 	        <![CDATA[ 
