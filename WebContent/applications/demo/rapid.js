@@ -480,13 +480,16 @@ function setData_dropdown(id, data, field, details) {
 function getData_grid(ev, id, field, details) {
   var data = null;
   if (details && details.columns) {
-  	if (field) {
+  	if (field) {		
   		var row = $(ev.target).closest("tr");
   		var rowIndex = row.index() - 1;
+  		console.log("rowIndex = " + rowIndex);
   		if (rowIndex >= 0) {
+  			console.log("field = " + field + ", details.columns = " + JSON.stringify(details.columns));
   			for (var i in details.columns) {
   				if (details.columns[i].field.toLowerCase() == field.toLowerCase()) {
   					data = row.children(":nth(" + i + ")").html();
+  					console.log("data = " + JSON.stringify(data));
   					break;
   				}
   			}

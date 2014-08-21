@@ -1262,7 +1262,7 @@ public class Application {
 						// get the html
 						String pageHtml = page.getStartHtml(this) + page.getHtmlBody() + "</body></html>";
 						// create a file for it for now
-						File pageFile = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/temp/" + pageId + ".html"));
+						File pageFile = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/temp/" + pageId + ".htm"));
 						// for now get a printWriter to write the page html
 						PrintWriter pageOut = new PrintWriter(pageFile);
 						// write it to a file for now
@@ -1271,6 +1271,23 @@ public class Application {
 						// add the file to the zip
 						zipSources.add(pageFile);
 					}
+					// get the first page
+					Page page = _pages.get(_startPageId);
+					// if we got one add it as index.htm
+					if (page != null) {
+						// get the html
+						String pageHtml = page.getStartHtml(this) + page.getHtmlBody() + "</body></html>";
+						// create a file for it for now
+						File pageFile = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/temp/index.htm"));
+						// for now get a printWriter to write the page html
+						PrintWriter pageOut = new PrintWriter(pageFile);
+						// write it to a file for now
+						pageOut.print(pageHtml);
+						pageOut.close();
+						// add the file to the zip
+						zipSources.add(pageFile);
+					}
+					
 				}
 				
 				// check we have resources
