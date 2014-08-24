@@ -3,6 +3,7 @@ body {
 	font-size: 12px;
 	padding: 0px;
 	margin: 0px;
+	background-color: #ccc;
 }
 
 optgroup {
@@ -40,6 +41,7 @@ hr {
 	position: absolute;
 	overflow: hidden;
 	display: none;	
+	background-color: white;
 }
 
 #designerTools {
