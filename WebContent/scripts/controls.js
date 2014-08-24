@@ -298,8 +298,18 @@ function Control(controlClass, parentControl, jsonControl, loadComplexObjects, p
 			this.parentControl.object.append(this._html);
 		}
 		
-		// grab a reference to the object
-		if (this.parentControl) this.object = this.parentControl.object.children().last();
+		// if this is not the page
+		if (this.parentControl) {
+			// grab a reference to the object
+			this.object = this.parentControl.object.children().last();
+			// if this is a non-visual controls
+			if (this.object.is(".nonVisibleControl")) {
+				// remove from the iframe
+				this.object.remove();
+				// add to designer and update the reference
+				this.object = $("body").append(this._html).children().last();
+			}
+		}
 						
 		// run the create statement if there is one (can reassign the object or add other html)
 		if (controlClass.createJavaScript) {

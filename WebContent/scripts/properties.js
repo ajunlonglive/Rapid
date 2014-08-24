@@ -1783,13 +1783,14 @@ function Property_controlHints(cell, hints, property, refreshHtml, refreshDialog
 
 }
 
+//this is displayed as a page property but is actually held in local storage
 function Property_device(cell, propertyObject, property, refreshHtml, refreshProperties) {
 	// holds the options html
 	var options = "";
 	// loop the array and build the options html
 	for (var i in _devices) {
 		// if the value is matched add selected
-		if (propertyObject[property.key] == i*1) {
+		if (i*1 == _device) {
 			options += "<option value='" + i + "' selected='selected'>" + _devices[i].name + "</option>";
 		} else {
 			options += "<option value='" + i + "'>" + _devices[i].name + "</option>";
@@ -1801,15 +1802,22 @@ function Property_device(cell, propertyObject, property, refreshHtml, refreshPro
 	// get a reference to the object
 	var select = cell.children().last();
 	// add a listener to update the property
-	_listeners.push( select.change( {refreshProperties: refreshProperties}, function(ev) {
+	_listeners.push( select.change( function(ev) {
 		// retain the new value
-		propertyObject[property.key] = $(ev.target).val() * 1;
+		_device = $(ev.target).val() * 1;
+		// store it
+		if (typeof(localStorage) !== "undefined") localStorage.setItem("_device" ,_device);
+		// recalculate scale
+		_scale = _ppi / _devices[_device].ppi * _zoom;
+		// windowResize
+		windowResize("_device");
 	}));
 	// if value is not set, set the top value
 	if (!propertyObject[property.key]) propertyObject[property.key] = select.val()*1;
 	
 }
 
+//this is displayed as a page property but is actually held in local storage
 function Property_zoom(cell, propertyObject, property, refreshHtml, refreshProperties) {
 	// holds the options html
 	var options = "";
@@ -1817,7 +1825,7 @@ function Property_zoom(cell, propertyObject, property, refreshHtml, refreshPrope
 	// loop the array and build the options html
 	for (var i in values) {
 		// if the value is matched add selected
-		if (propertyObject[property.key]*1 == values[i][0]) {
+		if (values[i][0] == _zoom) {
 			options += "<option value='" + values[i][0] + "' selected='selected'>" + values[i][1] + "</option>";
 		} else {
 			options += "<option value='" + values[i][0] + "'>" + values[i][1] + "</option>";
@@ -1829,15 +1837,19 @@ function Property_zoom(cell, propertyObject, property, refreshHtml, refreshPrope
 	// get a reference to the object
 	var select = cell.children().last();
 	// add a listener to update the property
-	_listeners.push( select.change( {refreshProperties: refreshProperties}, function(ev) {
+	_listeners.push( select.change( function(ev) {
 		// retain the new value
-		propertyObject[property.key] = $(ev.target).val() * 1;
-	}));
-	// if value is not set, set the top value
-	if (!propertyObject[property.key]) propertyObject[property.key] = select.val()*1;
-	
+		_zoom = $(ev.target).val() * 1;
+		// store it
+		if (typeof(localStorage) !== "undefined") localStorage.setItem("_zoom" ,_zoom);
+		// recalculate scale
+		_scale = _ppi / _devices[_device].ppi * _zoom;
+		// windowResize
+		windowResize("_zoom");
+	}));	
 }
 
+// this is displayed as a page property but is actually held in local storage
 function Property_orientation(cell, propertyObject, property, refreshHtml, refreshProperties) {
 	// holds the options html
 	var options = "";
@@ -1845,7 +1857,7 @@ function Property_orientation(cell, propertyObject, property, refreshHtml, refre
 	// loop the array and build the options html
 	for (var i in values) {
 		// if the value is matched add selected
-		if (propertyObject[property.key] == values[i][0]) {
+		if (values[i][0] == _orientation) {
 			options += "<option value='" + values[i][0] + "' selected='selected'>" + values[i][1] + "</option>";
 		} else {
 			options += "<option value='" + values[i][0] + "'>" + values[i][1] + "</option>";
@@ -1857,11 +1869,12 @@ function Property_orientation(cell, propertyObject, property, refreshHtml, refre
 	// get a reference to the object
 	var select = cell.children().last();
 	// add a listener to update the property
-	_listeners.push( select.change( {refreshProperties: refreshProperties}, function(ev) {
+	_listeners.push( select.change( function(ev) {
 		// retain the new value
-		propertyObject[property.key] = $(ev.target).val() * 1;
-	}));
-	// if value is not set, set the top value
-	if (!propertyObject[property.key]) propertyObject[property.key] = select.val();
-	
+		_orientation = $(ev.target).val();
+		// store it
+		if (typeof(localStorage) !== "undefined") localStorage.setItem("_orientation" ,_orientation);
+		// windowResize
+		windowResize("_orientation");
+	}));	
 }

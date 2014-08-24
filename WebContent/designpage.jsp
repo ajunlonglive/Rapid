@@ -91,14 +91,11 @@ if (gotAppAndPage && designerPermission) {
 %>
 	<link rel="stylesheet" type="text/css" href="applications/<%=rapidApp.getId()%>/<%=rapidPage.getName()%>.css"></link>	
 	<style type="text/css">
-		
-	.nonVisibleControl {
-		position: fixed;
-		bottom: 10px;	
-		width: 24px;
-		height: 24px;
-	}
 	
+	body {
+		transform-origin: 0 0;
+	}
+		
 	</style>
 <%
 } else {

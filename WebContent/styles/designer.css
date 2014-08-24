@@ -256,7 +256,7 @@ li.design-control:hover {
 }
 
 .controlPanelVersion img {
-	padding-top:20px;
+	padding-top: 15px;
 }
 
 div#propertiesPanel {
@@ -630,6 +630,14 @@ Selection Styles
 	height:5px;
 	bottom:0px;
 	margin-left:-5px;
+}
+
+.nonVisibleControl {
+	position: fixed;
+	bottom: 10px;	
+	width: 24px;
+	height: 24px;
+	z-index: 10002;
 }
 
 /*
