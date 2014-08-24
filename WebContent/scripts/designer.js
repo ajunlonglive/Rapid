@@ -41,7 +41,7 @@ Geometry - the pixel space an object takes up
 var _app = {};
 // details of all the available apps
 var _apps = [];
-// the page of the app we are designer
+// the page of the app we are designing
 var _page = {};
 // a list of available pages
 var _pages = [];
@@ -109,13 +109,19 @@ var _nextPageId = 1;
 var _pasteMap = null;
 
 // a global object for the different devices we are supporting, typically for mobiles
-var _devices = [{name:"Full screen", ppi: 86 },{name:"HTC One X", width: 720, height: 1280, ppi: 312},{name:"HTC One M8", width: 1080, height: 1920, ppi: 441},{name:"Nexus 10", width: 1600, height: 2560, ppi: 300}];
-// a global for the selected device
-var _device = _devices[1];
+var _devices = [{name:"Full screen", ppi: 96, scale: 1 },{name:"HTC One X", width: 720, height: 1280, ppi: 312, scale: 2},{name:"HTC One M8", width: 1080, height: 1920, ppi: 441, scale: 2},{name:"Nexus 10", width: 1600, height: 2560, ppi: 300, scale: 2}];
+// a global for the ppi of the device we've loaded the designer in
+var _ppi = 96;
+// a global for the selected device index
+var _device = 0;
 // the zoom factor at which we want to see the device screen
 var _zoom = 1;
-// the difference in resolution between screen and device
-var _scale = _devices[0].ppi / _device.ppi * _zoom;
+// the orientation we want to see the device screen
+var _orientation = "P";
+// the difference in resolution between screen and device * zoom
+var _scale = 1;
+// the scale * zoom
+var _mouseScale;
 
 // takes a snapshot of the current page and adds it to the undo stack
 function addUndo(keepRedo) {
@@ -258,7 +264,7 @@ function getMouseControl(ev, array) {
 	var debug = false;
 	// only if the mouse is down
 	if (_mouseDown) {
-						
+										
 		// check if we hit the border first		
 		var o = $("#selectionBorder");				
 		// if we didn't find a control but the selection border is visible, return the current control
@@ -287,17 +293,32 @@ function getMouseControl(ev, array) {
 			// only if this object is non-visual
 			if (o.is(".nonVisibleControl")) {
 				// is the mouse below this object
-				if (ev.pageX - _panelPinnedOffset >= o.offset().left && ev.pageY >= o.offset().top) {
+				if (ev.pageX >= o.offset().left && ev.pageY >= o.offset().top) {
 					// get the height of the object
 					var height = o.outerHeight();
 					// does the width and height of this object mean we are inside it
-					if  (ev.pageX - _panelPinnedOffset <= o.offset().left + o.outerWidth() && ev.pageY <= o.offset().top + height) {
+					if  (ev.pageX <= o.offset().left + o.outerWidth() && ev.pageY <= o.offset().top + height) {
 						// return this non-visual control
 						return c;
 					}
 				}
 			}
 		}
+				
+		// now scale the mouse position for in-page controls
+		var mouseX = ev.pageX  - _panelPinnedOffset;
+		var mouseY = ev.pageY;
+		
+		// if the scale has been applied some other adjustments are needed
+		if (_scale != 1) {
+			// get the top and left padding
+			var padLeft = parseInt(_page.object.css("padding-left"));
+			var padTop = parseInt(_page.object.css("padding-top"));
+			mouseX = mouseX / _scale + padLeft * _scale;
+			mouseY = mouseY / _scale + padLeft * _scale;
+		}
+		
+		console.log("X = " + mouseX + " Y = " + mouseY);
 		
 		// loop all of our objects 
 		for (var i in array) {
@@ -308,13 +329,13 @@ function getMouseControl(ev, array) {
 			// only if this object is visible
 			if (o.is(":visible")) {
 				// is the mouse below this object
-				if (ev.pageX - _panelPinnedOffset >= o.offset().left && ev.pageY >= o.offset().top) {
+				if (mouseX >= o.offset().left && mouseY >= o.offset().top) {
 					// get the height of the object
 					var height = o.outerHeight();
 					// if the height is zero, but there are children assume the height of the first child (this is the case with ul elements where the child li elements are floated )
 					if (!height && c.childControls.length > 0) height = c.childControls[0].object.outerHeight(); 
 					// does the width and height of this object mean we are inside it
-					if  (ev.pageX - _panelPinnedOffset <= o.offset().left + o.outerWidth() && ev.pageY <= o.offset().top + height) {
+					if  (mouseX <= o.offset().left + o.outerWidth() && mouseY <= o.offset().top + height) {
 						// if there are childObjects check for a hit on one of them
 						if (c.childControls) {
 							// use this function recursively
@@ -370,20 +391,46 @@ function sizeBorder(control) {
 	var height = control.object.outerHeight();
 	// if the height is zero but there are child controls, assume the height of the first child control
 	if (!height && control.childControls.length > 0) height = control.childControls[0].object.outerHeight();
+	// get the width
+	var width = control.object.outerWidth()
+	// get the device
+	var device = _devices[_device];
+	// check if nonVisualControl
+	if (control.object.is(".nonVisibleControl")) {
+		width += 1;
+		height += 1;
+	} else {
+		width = (width + 2) * _scale * device.scale;
+		height = (height + 2) * _scale * device.scale;
+	}
 	// size the selection border
 	_selectionBorder.css({
-		"width":control.object.outerWidth() + 2, // an extra pixel either side
-		"height":height + 2 // an extra pixel either side
+		"width":width, // an extra pixel either side
+		"height":height // an extra pixel either side
 	});
 }
 
 // this positions the selection border inclduing the mouseDown Offsets which should be zero when the mouse is not moving
 function positionBorder(x, y) {
-	// position the selection border
-	_selectionBorder.css({
-		"left":x + _panelPinnedOffset + _mouseDownXOffset - 8 , // 8 = padding + border + 1 pixel	
-		"top":y + _mouseDownYOffset - 8 // 8 = padding + border + 1 pixel
-	});	
+	// check if if nonVisibleControl
+	if (_selectedControl.object.is(".nonVisibleControl")) {
+		// position the selection border
+		_selectionBorder.css({
+			position: "fixed",
+			left: x + _mouseDownXOffset - 8, // 8 = padding + border + 1 pixel
+			top: "auto",
+			bottom: 3
+		});	
+	} else {
+		// position the selection border
+		_selectionBorder.css({
+			position: "absolute",
+			left: x + _panelPinnedOffset + _mouseDownXOffset - 8 , // 8 = padding + border + 1 pixel	
+			top: y + _mouseDownYOffset - 8, // 8 = padding + border + 1 pixel
+			bottom: "auto"
+		});	
+	}
+	
 }
 
 // this function returns a flat array of all of the page controls
@@ -1069,6 +1116,8 @@ function loadPage() {
 	if (_selectionBorder) _selectionBorder.hide();	
 	// remove any current page html
 	if (_page.object) _page.object.children().remove();
+	// remove any nonVisibleControls
+	$(".nonVisibleControl").remove();
 	// lose the selected control
 	_selectedControl = null;	
 	// lose the property control
@@ -1540,6 +1589,24 @@ $(document).ready( function() {
 	document.body.removeChild(outer);
 
 	_scrollBarWidth = (w1 - w2);
+	
+	// check if we have local storage
+	if (typeof(localStorage) !== "undefined") {
+		// retrieve device index from local storage
+		var device = localStorage.getItem("_device");
+		// if there was one and there's a slot for it in our devices
+		if (device && device * 1 < _devices.length) _device = device*1;
+		// retrieve the orientation
+		var orientation = localStorage.getItem("_orientation");
+		// update global if we got one
+		if (orientation) _orientation = orientation;
+		// retrieve the zoom
+		var zoom = localStorage.getItem("_zoom");
+		// update global if we got one
+		if (zoom) _zoom = zoom*1;
+		// calculate the scale
+		_scale = _ppi / _devices[_device].ppi * _zoom;
+	}
 	
 	// check for unsaved page changes if we move away
 	$(window).on('beforeunload', function(){
@@ -2234,10 +2301,10 @@ $(document).mousemove( function(ev) {
 				
 				// position the cover
 				_selectionCover.css({
-					"width":_selectedControl.object.outerWidth(), 
-					"height":_selectedControl.object.outerHeight(), 
-					"left":_selectedControl.object.offset().left + _panelPinnedOffset, 	
-					"top":_selectedControl.object.offset().top
+					"width":_selectedControl.object.outerWidth() * _scale, 
+					"height":_selectedControl.object.outerHeight() * _scale, 
+					"left":_selectedControl.object.offset().left * _scale + _panelPinnedOffset, 	
+					"top":_selectedControl.object.offset().top * _scale
 				});
 				
 				if (_selectedControl.object.is(":visible")) {
@@ -2419,9 +2486,9 @@ function arrangeNonVisibleControls() {
 	// check there is a page and a page object
 	if (_page && _page.object) {
 		// get existing page controls	         
-		var pageControls = _page.object.children(".nonVisibleControl");
+		var pageControls = $("body").children(".nonVisibleControl");
 		// remember the last x
-		var x = 10;
+		var x = _panelPinnedOffset + 10;
 		// loop each one
 		pageControls.each( function(i) {
 			// get a reference to this object
@@ -2547,23 +2614,43 @@ function windowResize(ev) {
 	
 	// adjust propertiesPanel height, less it's padding
 	propertiesPanel.css({height: height - 20});
-		
+	
+	// get the device
+	var device = _devices[_device];
+			
 	// if the device has a height scale and apply
-	if (_device.height) {
+	if (device.height) {
+		// assume the width and heigth from the device
+		var width = device.width;
+		var height = device.height;
+		// if landscape swap width and height
+		if (_orientation == "L") {
+			width =  device.height;
+			height = device.width;
+		} 
 		// apply it
 		_pageIframe.css({
 			left: _panelPinnedOffset,
-			width: _scale * _device.width,
-			height: _scale * _device.height			
+			width: _scale * width,
+			height: _scale * height,
+			"border-right": "1px solid black",
+			"border-bottom": "1px solid black"
 		});		
+		
 	} else {
 		// adjust iframe position, width and height
 		_pageIframe.css({
 			left: _panelPinnedOffset,
 			width: width - _panelPinnedOffset,
-			height: height
+			height: height,
+			"border-right": "0px",
+			"border-bottom": "0px"
 		});
 	}
+	// adjust the scale
+	_page.object.css("transform","scale(" + _scale * device.scale + ")");
+	// remove it if we can
+	if (_scale * device.scale == 1) _page.object.css("transform", "none");
 				
 }
 
