@@ -1782,3 +1782,86 @@ function Property_controlHints(cell, hints, property, refreshHtml, refreshDialog
 	}));
 
 }
+
+function Property_device(cell, propertyObject, property, refreshHtml, refreshProperties) {
+	// holds the options html
+	var options = "";
+	// loop the array and build the options html
+	for (var i in _devices) {
+		// if the value is matched add selected
+		if (propertyObject[property.key] == i*1) {
+			options += "<option value='" + i + "' selected='selected'>" + _devices[i].name + "</option>";
+		} else {
+			options += "<option value='" + i + "'>" + _devices[i].name + "</option>";
+		}
+	}
+		
+	// add the select object
+	cell.append("<select class='propertiesPanelTable'>" + options + "</select>");
+	// get a reference to the object
+	var select = cell.children().last();
+	// add a listener to update the property
+	_listeners.push( select.change( {refreshProperties: refreshProperties}, function(ev) {
+		// retain the new value
+		propertyObject[property.key] = $(ev.target).val() * 1;
+	}));
+	// if value is not set, set the top value
+	if (!propertyObject[property.key]) propertyObject[property.key] = select.val()*1;
+	
+}
+
+function Property_zoom(cell, propertyObject, property, refreshHtml, refreshProperties) {
+	// holds the options html
+	var options = "";
+	var values = [[0.5,"50%"],[1,"100%"],[1.5,"150%"],[2,"200%"]];
+	// loop the array and build the options html
+	for (var i in values) {
+		// if the value is matched add selected
+		if (propertyObject[property.key]*1 == values[i][0]) {
+			options += "<option value='" + values[i][0] + "' selected='selected'>" + values[i][1] + "</option>";
+		} else {
+			options += "<option value='" + values[i][0] + "'>" + values[i][1] + "</option>";
+		}
+	}
+			
+	// add the select object
+	cell.append("<select class='propertiesPanelTable'>" + options + "</select>");
+	// get a reference to the object
+	var select = cell.children().last();
+	// add a listener to update the property
+	_listeners.push( select.change( {refreshProperties: refreshProperties}, function(ev) {
+		// retain the new value
+		propertyObject[property.key] = $(ev.target).val() * 1;
+	}));
+	// if value is not set, set the top value
+	if (!propertyObject[property.key]) propertyObject[property.key] = select.val()*1;
+	
+}
+
+function Property_orientation(cell, propertyObject, property, refreshHtml, refreshProperties) {
+	// holds the options html
+	var options = "";
+	var values = [["P","Portrait"],["L","Landscape"]];
+	// loop the array and build the options html
+	for (var i in values) {
+		// if the value is matched add selected
+		if (propertyObject[property.key] == values[i][0]) {
+			options += "<option value='" + values[i][0] + "' selected='selected'>" + values[i][1] + "</option>";
+		} else {
+			options += "<option value='" + values[i][0] + "'>" + values[i][1] + "</option>";
+		}
+	}
+			
+	// add the select object
+	cell.append("<select class='propertiesPanelTable'>" + options + "</select>");
+	// get a reference to the object
+	var select = cell.children().last();
+	// add a listener to update the property
+	_listeners.push( select.change( {refreshProperties: refreshProperties}, function(ev) {
+		// retain the new value
+		propertyObject[property.key] = $(ev.target).val() * 1;
+	}));
+	// if value is not set, set the top value
+	if (!propertyObject[property.key]) propertyObject[property.key] = select.val();
+	
+}

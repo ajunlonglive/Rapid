@@ -402,6 +402,11 @@ public class Designer extends RapidHttpServlet {
 									// add a special property to the json
 									jsonPage.getJSONObject("lock").put("formattedDateTime", formattedDateTime);
 								}
+								
+								// add the device as page properties (even though we store this in the app)
+								jsonPage.put("device", 1);
+								jsonPage.put("zoom", 1);
+								jsonPage.put("orientation", "P");
 																															
 								// print it to the output
 								output = jsonPage.toString();

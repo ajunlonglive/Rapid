@@ -243,29 +243,41 @@ jQuery(function($) {
 
 });
 
-// if we're in Rapid Mobile direct ajax through the native code
-if (_rapidmobile && _rapidmobile.ajax) $.ajax = function(a,b) { 
-	try {
-		// stringify the 2 parameters and send to the native code
-		var data = _rapidmobile.ajax(JSON.stringify(a),JSON.stringify(b));		
-		// check for error
-		if (data.indexOf('{"error":') == 0) {
-			alert(data);
-			// parse the error
-			var error = JSON.parse(data);			
-			// run the error function with the message and status
-			a.error({responseText:error.error},error.status,error.error);
-		} else {
-			// if the dataType was json parse the response back to an object
-			if (a.dataType == "json") data = JSON.parse(data);
-			// run the success function with the returned data
-			a.success(data);
+// if we're in Rapid Mobile 
+if (window["_rapidmobile"]) {
+	// direct ajax through the native code
+	if (_rapidmobile.ajax) $.ajax = function(a,b) { 
+		try {
+			// stringify the 2 parameters and send to the native code
+			var data = _rapidmobile.ajax(JSON.stringify(a),JSON.stringify(b));		
+			// if we got some
+			if (data) {
+				// check for error
+				if (data.indexOf('{"error":') == 0) {
+					alert(data);
+					// parse the error
+					var error = JSON.parse(data);			
+					// run the error function with the message and status
+					a.error({responseText:error.error},error.status,error.error);
+				} else {
+					// if the dataType was json parse the response back to an object
+					if (a.dataType == "json") data = JSON.parse(data);
+					// run the success function with the returned data
+					a.success(data);
+				}
+			} else {
+				// alert us that we're offline
+				alert("You're offline.");
+				// stop further actions
+				return false;
+			}
+		} catch (ex) {
+			// run the error function with the message
+			a.error({responseText:ex},-1,ex);
 		}
-	} catch (ex) {
-		// run the error function with the message
-		a.error({responseText:ex},-1,ex);
 	}
-}; 
+}
+
 
 function showValidationMessage(controlId, message) {
 	var control = $("#" + controlId);

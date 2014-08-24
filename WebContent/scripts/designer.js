@@ -108,6 +108,15 @@ var _nextPageId = 1;
 // a map of all former control and action id's and the new ones they get in the paste
 var _pasteMap = null;
 
+// a global object for the different devices we are supporting, typically for mobiles
+var _devices = [{name:"Full screen", ppi: 86 },{name:"HTC One X", width: 720, height: 1280, ppi: 312},{name:"HTC One M8", width: 1080, height: 1920, ppi: 441},{name:"Nexus 10", width: 1600, height: 2560, ppi: 300}];
+// a global for the selected device
+var _device = _devices[1];
+// the zoom factor at which we want to see the device screen
+var _zoom = 1;
+// the difference in resolution between screen and device
+var _scale = _devices[0].ppi / _device.ppi * _zoom;
+
 // takes a snapshot of the current page and adds it to the undo stack
 function addUndo(keepRedo) {
 	// set dirty
@@ -2505,10 +2514,7 @@ function windowResize(ev) {
 	var width = win.width();
 	// get the window height
 	var height = win.height();
-		
-	// reset the page iFrame height so non-visual controls aren't too far down the page
-	_pageIframe.css("height","auto");
-	
+				
 	// get the control panel
 	var controlPanel = $("#controlPanel");		
 	// set it's height to auto
@@ -2518,10 +2524,12 @@ function windowResize(ev) {
 	var propertiesPanel = $("#propertiesPanel");
 	// set it's height to auto
 	propertiesPanel.css("height","auto");
-	
-	// get the current iframe contents height
+			
+	// reset the page iFrame height so non-visual controls aren't too far down the page
+	_pageIframe.css("height","auto");
+	// set the iFrame height by it's contents
 	var iframeHeight = getAbsoluteHeight($(_pageIframe[0].contentWindow.document.body));
-	
+		
 	// get its current height (less the combined top and bottom padding)
 	var controlPanelHeight = controlPanel.outerHeight(true);
 		
@@ -2540,12 +2548,22 @@ function windowResize(ev) {
 	// adjust propertiesPanel height, less it's padding
 	propertiesPanel.css({height: height - 20});
 		
-	// adjust iframe position, width and height
-	_pageIframe.css({
-		left: _panelPinnedOffset,
-		width: width - _panelPinnedOffset,
-		height: height
-	});
+	// if the device has a height scale and apply
+	if (_device.height) {
+		// apply it
+		_pageIframe.css({
+			left: _panelPinnedOffset,
+			width: _scale * _device.width,
+			height: _scale * _device.height			
+		});		
+	} else {
+		// adjust iframe position, width and height
+		_pageIframe.css({
+			left: _panelPinnedOffset,
+			width: width - _panelPinnedOffset,
+			height: height
+		});
+	}
 				
 }
 
