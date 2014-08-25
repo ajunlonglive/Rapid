@@ -1821,7 +1821,7 @@ function Property_device(cell, propertyObject, property, refreshHtml, refreshPro
 function Property_zoom(cell, propertyObject, property, refreshHtml, refreshProperties) {
 	// holds the options html
 	var options = "";
-	var values = [[0.5,"50%"],[1,"100%"],[1.5,"150%"],[2,"200%"]];
+	var values = [[0.5,"50%"],[1,"100%"],[1.5,"150%"],[2,"200%"],[3,"300%"],[4,"400%"]];
 	// loop the array and build the options html
 	for (var i in values) {
 		// if the value is matched add selected

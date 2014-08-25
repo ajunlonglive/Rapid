@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<page>
+    <controls>
+        <events>
+            <filter></filter>
+            <type>click</type>
+        </events>
+        <properties>
+            <entry>
+                <key>id</key>
+                <value>P3_C1_</value>
+            </entry>
+            <entry>
+                <key>classes</key>
+                <value>[]</value>
+            </entry>
+            <entry>
+                <key>name</key>
+                <value>Button 1</value>
+            </entry>
+            <entry>
+                <key>label</key>
+                <value>Button 1</value>
+            </entry>
+            <entry>
+                <key>type</key>
+                <value>button</value>
+            </entry>
+        </properties>
+        <XMLVersion>1</XMLVersion>
+    </controls>
+    <controls>
+        <events>
+            <filter></filter>
+            <type>click</type>
+        </events>
+        <properties>
+            <entry>
+                <key>id</key>
+                <value>P3_C2_</value>
+            </entry>
+            <entry>
+                <key>classes</key>
+                <value>[]</value>
+            </entry>
+            <entry>
+                <key>name</key>
+                <value>Button 2</value>
+            </entry>
+            <entry>
+                <key>label</key>
+                <value>Button 2</value>
+            </entry>
+            <entry>
+                <key>type</key>
+                <value>button</value>
+            </entry>
+        </properties>
+        <XMLVersion>1</XMLVersion>
+    </controls>
+    <description></description>
+    <events>
+        <filter></filter>
+        <type>pageload</type>
+    </events>
+    <events>
+        <filter></filter>
+        <type>reusable</type>
+    </events>
+    <htmlBody>&lt;button id=&quot;P3_C1_&quot; class=&quot;button&quot;&gt;Button 1&lt;/button&gt;&lt;button id=&quot;P3_C2_&quot; class=&quot;button&quot;&gt;Button 2&lt;/button&gt;</htmlBody>
+    <id>P3</id>
+    <modifiedBy>admin</modifiedBy>
+    <modifiedDate>2014-08-25T07:17:20.779+01:00</modifiedDate>
+    <name>00_Test</name>
+    <rolesHtml>
+        <html>&lt;button id=&quot;P3_C1_&quot; class=&quot;button&quot;&gt;Button 1&lt;/button&gt;
+	&lt;button id=&quot;P3_C2_&quot; class=&quot;button&quot;&gt;Button 2&lt;/button&gt;</html>
+    </rolesHtml>
+    <title>Test</title>
+    <XMLVersion>1</XMLVersion>
+</page>
