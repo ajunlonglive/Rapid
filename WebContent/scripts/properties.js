@@ -1851,30 +1851,25 @@ function Property_zoom(cell, propertyObject, property, refreshHtml, refreshPrope
 
 // this is displayed as a page property but is actually held in local storage
 function Property_orientation(cell, propertyObject, property, refreshHtml, refreshProperties) {
-	// holds the options html
-	var options = "";
-	var values = [["P","Portrait"],["L","Landscape"]];
-	// loop the array and build the options html
-	for (var i in values) {
-		// if the value is matched add selected
-		if (values[i][0] == _orientation) {
-			options += "<option value='" + values[i][0] + "' selected='selected'>" + values[i][1] + "</option>";
-		} else {
-			options += "<option value='" + values[i][0] + "'>" + values[i][1] + "</option>";
-		}
+	// if we're holding a P (this defaulted in designerer.js)
+	if (_orientation == "P") {
+		cell.text("Portrait");
+	} else {
+		cell.text("Landscape");
 	}
-			
-	// add the select object
-	cell.append("<select class='propertiesPanelTable'>" + options + "</select>");
-	// get a reference to the object
-	var select = cell.children().last();
-	// add a listener to update the property
-	_listeners.push( select.change( function(ev) {
-		// retain the new value
-		_orientation = $(ev.target).val();
+	// add the listener to the cell
+	_listeners.push( cell.click(function(ev) {
+		// toggle the value
+		if (_orientation == "P") {
+			_orientation = "L";
+			$(ev.target).text("Landscape");
+		} else {
+			_orientation = "P";
+			$(ev.target).text("Portrait");
+		}
 		// store it
 		if (typeof(localStorage) !== "undefined") localStorage.setItem("_orientation" ,_orientation);
 		// windowResize
 		windowResize("_orientation");
-	}));	
+	}));
 }
