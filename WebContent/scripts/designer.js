@@ -109,7 +109,7 @@ var _nextPageId = 1;
 var _pasteMap = null;
 
 // a global object for the different devices we are supporting, typically for mobiles
-var _devices = [{name:"Full screen", ppi: 96, scale: 1 },{name:"HTC One X", width: 720, height: 1280, ppi: 312, scale: 2},{name:"HTC One M8", width: 1080, height: 1920, ppi: 441, scale: 2},{name:"Nexus 10", width: 1600, height: 2560, ppi: 300, scale: 2}];
+var _devices = [{name:"Full screen", ppi: 96, scale: 1 },{name:"HTC One X", width: 720, height: 1280, ppi: 312, scale: 1},{name:"HTC One M8", width: 1080, height: 1920, ppi: 441, scale: 1},{name:"Nexus 10", width: 1600, height: 2560, ppi: 300, scale: 1}];
 // a global for the ppi of the device we've loaded the designer in
 var _ppi = 96;
 // a global for the selected device index
@@ -246,15 +246,30 @@ function checkDirty() {
 }
 
 // this function is useful for calling from the JavaScript terminal to find out why certain objects have not been found
-function debuggMouseControl(ev, array) {
+function debuggMouseControl(ev, array) {	
 	
-	var html = "X: " + ev.pageX - _panelPinnedOffset + ", Y: " + ev.pageY + "<br/>";
+	// now scale the mouse position for in-page controls
+	var mouseX = ev.pageX  - _panelPinnedOffset;
+	var mouseY = ev.pageY;
+	
+	// if the scale has been applied some other adjustments are needed
+	if (_scale != 1) {
+		// get the top and left page padding
+		var padLeft = parseInt(_page.object.css("padding-left"));
+		var padTop = parseInt(_page.object.css("padding-top"));
+		// get the top and left page margin
+		var marginLeft = parseInt(_page.object.css("margin-left"));
+		var marginTop = parseInt(_page.object.css("margin-top"));
+		mouseX = (mouseX + marginLeft) / _scale;
+		mouseY = (mouseY + marginTop) / _scale;
+	}
+		
+	console.log("X: " + mouseX + ", Y: " + mouseY);
+	
 	for (var i in array) {
 		var object = array[i].object;
-		html += "left: " + object.offset().left + ", top: " + object.offset().top + ", width: " + object.outerWidth() + ", height: " + object.outerHeight() + "<br/>";
-	}
-	$("body").append(html);
-	
+		console.log("id = " + object.attr("id") + " x1: " + object.offset().left + ", x2: " + (object.offset().left + object.outerWidth()) + ", y1: " + object.offset().top + ", y2: " + (object.offset().top + object.outerHeight()));
+	}	
 }
 
 // this function finds the lowest control in the tree who's object encloses the ev.pageX and ev.pageY 
@@ -311,14 +326,17 @@ function getMouseControl(ev, array) {
 		
 		// if the scale has been applied some other adjustments are needed
 		if (_scale != 1) {
-			// get the top and left padding
+			// get the top and left page padding
 			var padLeft = parseInt(_page.object.css("padding-left"));
 			var padTop = parseInt(_page.object.css("padding-top"));
-			mouseX = mouseX / _scale + padLeft * _scale;
-			mouseY = mouseY / _scale + padLeft * _scale;
+			// get the top and left page margin
+			var padLeft = parseInt(_page.object.css("margin-left"));
+			var padTop = parseInt(_page.object.css("margin-top"));
+			mouseX = mouseX / _scale + padLeft;
+			mouseY = mouseY / _scale + padLeft;
 		}
 		
-		console.log("X = " + mouseX + " Y = " + mouseY);
+		debuggMouseControl(ev, array);
 		
 		// loop all of our objects 
 		for (var i in array) {
@@ -400,8 +418,8 @@ function sizeBorder(control) {
 		width += 1;
 		height += 1;
 	} else {
-		width = (width + 2) * _scale * device.scale;
-		height = (height + 2) * _scale * device.scale;
+		width = width * _scale * device.scale + 2;
+		height = height * _scale * device.scale + 2;
 	}
 	// size the selection border
 	_selectionBorder.css({

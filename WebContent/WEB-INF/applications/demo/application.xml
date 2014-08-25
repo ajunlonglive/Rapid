@@ -36,7 +36,7 @@
     <description>This is a demonstration Rapid application provided to showcase many common Rapid features</description>
     <id>demo</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-08-13T15:55:04.143+01:00</modifiedDate>
+    <modifiedDate>2014-08-25T06:30:47.633+01:00</modifiedDate>
     <name>demo</name>
     <pageBackupsMaxSize>3</pageBackupsMaxSize>
     <securityAdapterType>rapid</securityAdapterType>
@@ -47,11 +47,13 @@
 Styles saved here will be applied to all pages in the application
 */
 
+/*
 body {
   padding : 10px;
   font-family : 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;
   font-size : 13px;
 }
+*/
 
 .dialogueCover {
   background-color : white;
@@ -76,6 +78,7 @@ input.validation {
 }
 </styles>
     <title>Rapid demonstration application</title>
+    <version>1</version>
     <webservices xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="sqlWebservice">
         <id>Samplewebservice</id>
         <name>Sample webservice</name>

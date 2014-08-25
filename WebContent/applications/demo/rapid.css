@@ -131,11 +131,13 @@ div.tabsPanel.selected {
 Styles saved here will be applied to all pages in the application
 */
 
+/*
 body {
   padding : 10px;
   font-family : 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;
   font-size : 13px;
 }
+*/
 
 .dialogueCover {
   background-color : white;
