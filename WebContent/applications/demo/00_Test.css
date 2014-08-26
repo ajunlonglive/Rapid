@@ -5,10 +5,12 @@ body {
 	margin:0;
 }
 
-#P3_C3_ {
-	height:30px;
-	color:white;
+.slidePanelOpen {
+	margin-left:-15px;
+}
+
+#P3_C11_ {
 	background-color:black;
-	width:100%;
+	height:32px;
 }
 

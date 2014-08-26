@@ -40,6 +40,11 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <name>Name</name>
 	            <changeValueJavaScript>text</changeValueJavaScript>	            
 	        </property>	
+	       	<property>
+	       		<key>panelId</key>
+	       		<name>panelId</name>
+	       		<visible>false</visible>
+	       	</property> 
 	    </properties>
 	    	    
 	    <getHtmlFunction>
@@ -49,43 +54,59 @@ return "<div id='" + this.id + "' class='slidePanelPane' style='display:none;'><
 	        ]]>
 	    </getHtmlFunction> 
 	    
+	    <createJavaScript>
+	    	<![CDATA[
+// retain the slide panel Id once only
+if (!this.slidePanelId) this.slidePanelId = this.object.prev().attr("id");	    	
+	    	]]>
+	    </createJavaScript> 
+	    
+	    <rebuildJavaScript>
+	    	<![CDATA[
+// add the opener id to this control's object
+this.object.attr("data-panel",this.slidePanelId);
+// add this control's id to the opener object	    
+this.parentControl.object.find("#" + this.slidePanelId).attr("data-pane",this.id);	
+	    	]]>
+	    </rebuildJavaScript>
+	    
 	    <removeJavaScript>
 	        <![CDATA[
-var i = 0;
+var slidePanelId = this.object.attr("data-panel");
 // loop the page child controls
-for (i in _page.childControls) {
+for (var i in _page.childControls) {
+	// get the potential slide panel
+	var slidePanel = _page.childControls[i];
 	// break when we find our position amongst the page child controls
-	if (this.id == _page.childControls[i].id) break;
+	if (slidePanel.id == slidePanelId) {		
+		// remove from page childControls
+		_page.childControls.splice(i - 1, 1);
+		// remove object
+		slidePanel.object.remove();
+		// we're done
+		break;
+	}
 } 	
-// convert to a number
-i = i * 1;
-// get the next control
-var slidePanel = _page.childControls[i - 1];        
-// check if the next control is a slidePanelPane
-if (slidePanel.object.is(".slidePanel")) {
-	// remove the object
-	slidePanel.object.remove();
-	// remove the opener
-	_page.childControls.splice(i - 1, 1);
-}
-// remove the closer
+// remove the pane
 this.object.remove();
 	        ]]>
 	    </removeJavaScript>	    
 	    
 <initDesignJavaScript>
 	        <![CDATA[
-// get the page child controls        
-var pageControls = 	_page.childControls;
-// if we have some and there's at least one
-if (pageControls && pageControls.length > 0) {
-	// retrieve the bottom one    
-	var slidePanel = pageControls[pageControls.length - 1];
-	// if it is a slide panel rebuild it now that the panel html is in the page        
-	if (slidePanel.object.is(".slidePanel")) {
+var slidePanelId = this.object.attr("data-panel");
+// loop the page child controls
+for (var i in _page.childControls) {
+	// get the potential slide panel
+	var slidePanel = _page.childControls[i];
+	// break when we find our position amongst the page child controls
+	if (slidePanel.id == slidePanelId) {		
+		// rebuild it
 		rebuildHtml(slidePanel);
+		// we're done
+		break;
 	}
-}      
+}   
 	        ]]>	   	        
 	    </initDesignJavaScript>
  	    	   	    	    
@@ -171,43 +192,46 @@ return "#" + this.id;
 return "<div id='" + this.id + "' class='slidePanel'><img src='images/controls/slidepanel/slidepanel_48x48.png'/></div>";
 	        ]]>
 	    </getHtmlFunction>
-	    
+	    	    
 	    <constructJavaScript>
 	        <![CDATA[	        
 // add the panel next to the opener
 this.parentControl.childControls.push(new Control("slidePanelPane", this.parentControl));
 	        ]]>
 	    </constructJavaScript>	
-	    	    
+	    	    	    
 	    <rebuildJavaScript>
 	        <![CDATA[
+// get the pane id
+var paneId = this.object.attr("data-pane");
+// get the pane
+var pane = this.parentControl.object.find("#" + paneId);	     
+// check the visibilty property   
 if (this.visible) {
-	this.parentControl.object.children(".slidePanelPane").show();
+	pane.show();
 } else {
-	this.parentControl.object.children(".slidePanelPane").hide();
+	pane.hide();
 }
 	        ]]>
 	    </rebuildJavaScript>	
 	    
 	    <removeJavaScript>
 	        <![CDATA[
-var i = 0;
+var slidePaneId = this.object.attr("data-pane");
 // loop the page child controls
-for (i in _page.childControls) {
+for (var i in _page.childControls) {
+	// get the potential slide pane
+	var slidePane = _page.childControls[i];
 	// break when we find our position amongst the page child controls
-	if (this.id == _page.childControls[i].id) break;
+	if (slidePane.id == slidePaneId) {		
+		// remove from page childControls
+		_page.childControls.splice(i - 1, 1);
+		// remove object
+		slidePane.object.remove();
+		// we're done
+		break;
+	}
 } 	
-// convert to a number
-i = i * 1;
-// get the next control
-var slidePanelPane = _page.childControls[i + 1];        
-// check if the next control is a slidePanelPane
-if (slidePanelPane.object.is(".slidePanelPane")) {
-	// remove the object
-	slidePanelPane.object.remove();
-	// remove the pane
-	_page.childControls.splice(i + 1, 1);
-}
 // remove the closer
 this.object.remove();
 	        ]]>
@@ -266,19 +290,32 @@ return ".slidePanelClosed";
 $("#" + id).click( function(ev) {
 	// get a reference to the slidePanel
 	var slidePanel = $("#" + id);
-	// get the slidePanelPane
-	var slidePanelPane = slidePanel.next();
-	// if the next object is a slidePanelPane
-	if (slidePanelPane.is(".slidePanelPane")) {
-		if (slidePanelPane.is(":visible")) {
-			slidePanelPane.hide();
-			slidePanel.addClass("slidePanelOpen");
-			slidePanel.removeClass("slidePanelClosed");
-		} else {
-			slidePanelPane.show();
-			slidePanel.addClass("slidePanelClosed");
-			slidePanel.removeClass("slidePanelOpen");
-		}
+	// get the slidePanelPaneId
+	var slidePanelPaneId = slidePanel.attr("data-pane");
+	// get the pane
+	var slidePanelPane = $("#" + slidePanelPaneId);
+	// check visibility
+	if (slidePanelPane.is(":visible")) {
+		// retain the current (full) width
+		var width = slidePanelPane.css("width");
+		// animate down to zero
+		slidePanelPane.animate({width:"0"}, 500, function() {
+			// hide and reinstate width when complete
+			slidePanelPane.hide().css({width:width});
+		});
+		// toggle open closed
+		slidePanel.addClass("slidePanelOpen");
+		slidePanel.removeClass("slidePanelClosed");
+	} else {
+		// retain the current (full) width
+		var width = slidePanelPane.css("width");
+		// set width to 0 and show
+		slidePanelPane.css({width:"0"}).show();
+		// animate to full width
+		slidePanelPane.animate({width:width}, 500);
+		// toggle open closed
+		slidePanel.addClass("slidePanelClosed");
+		slidePanel.removeClass("slidePanelOpen");
 	}
 });	        
 	        ]]>	        	       	        
