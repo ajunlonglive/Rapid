@@ -2638,15 +2638,14 @@ function windowResize(ev) {
 			width =  device.height;
 			height = device.width;
 		} 
-		// apply it
+		// adjust iframe position, to scalled width and height
 		_pageIframe.css({
 			left: _panelPinnedOffset,
 			width: _scale * width,
 			height: _scale * height,
 			"border-right": "1px solid black",
 			"border-bottom": "1px solid black"
-		});		
-		
+		});				
 	} else {
 		// adjust iframe position, width and height
 		_pageIframe.css({
@@ -2657,10 +2656,20 @@ function windowResize(ev) {
 			"border-bottom": "0px"
 		});
 	}
-	// adjust the scale
-	_page.object.css("transform","scale(" + _scale * device.scale + ")");
-	// remove it if we can
-	if (_scale * device.scale == 1) _page.object.css("transform", "none");
+	
+	// if the scale is 1 remove anything clever
+	if (_scale * device.scale == 1) {
+		_page.object.css({
+			width: "auto",
+			transform: "none"
+		});
+	} else {
+		// adjust the scale
+		_page.object.css({
+			width: 1 / _scale / device.scale * 100 + "%",
+			transform: "scale(" + _scale * device.scale + ")"
+		});	
+	}
 				
 }
 

@@ -1,6 +1,33 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <page>
     <controls>
+        <properties>
+            <entry>
+                <key>id</key>
+                <value>P3_C3_</value>
+            </entry>
+            <entry>
+                <key>classes</key>
+                <value>[]</value>
+            </entry>
+            <entry>
+                <key>text</key>
+                <value>Top banner</value>
+            </entry>
+            <entry>
+                <key>type</key>
+                <value>panel</value>
+            </entry>
+        </properties>
+        <styles>
+            <appliesTo>#P3_C3_</appliesTo>
+            <rules>background-color:black;</rules>
+            <rules>color:white;</rules>
+            <rules>padding:10px;</rules>
+        </styles>
+        <XMLVersion>1</XMLVersion>
+    </controls>
+    <controls>
         <events>
             <filter></filter>
             <type>click</type>
@@ -67,15 +94,20 @@
         <filter></filter>
         <type>reusable</type>
     </events>
-    <htmlBody>&lt;button id=&quot;P3_C1_&quot; class=&quot;button&quot;&gt;Button 1&lt;/button&gt;&lt;button id=&quot;P3_C2_&quot; class=&quot;button&quot;&gt;Button 2&lt;/button&gt;</htmlBody>
+    <htmlBody>&lt;div id=&quot;P3_C3_&quot; class=&quot;panel&quot;&gt;Top banner&lt;/div&gt;&lt;button id=&quot;P3_C1_&quot; class=&quot;button&quot;&gt;Button 1&lt;/button&gt;&lt;button id=&quot;P3_C2_&quot; class=&quot;button&quot;&gt;Button 2&lt;/button&gt;</htmlBody>
     <id>P3</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-08-25T07:17:20.779+01:00</modifiedDate>
+    <modifiedDate>2014-08-26T09:11:40.773+01:00</modifiedDate>
     <name>00_Test</name>
     <rolesHtml>
-        <html>&lt;button id=&quot;P3_C1_&quot; class=&quot;button&quot;&gt;Button 1&lt;/button&gt;
+        <html>&lt;div id=&quot;P3_C3_&quot; class=&quot;panel&quot;&gt;Top banner&lt;/div&gt;
+	&lt;button id=&quot;P3_C1_&quot; class=&quot;button&quot;&gt;Button 1&lt;/button&gt;
 	&lt;button id=&quot;P3_C2_&quot; class=&quot;button&quot;&gt;Button 2&lt;/button&gt;</html>
     </rolesHtml>
+    <styles>
+        <appliesTo>body</appliesTo>
+        <rules>margin:0;</rules>
+    </styles>
     <title>Test</title>
     <XMLVersion>1</XMLVersion>
 </page>
