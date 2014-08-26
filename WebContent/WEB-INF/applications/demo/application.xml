@@ -8,7 +8,6 @@
     <actionTypes>navigate</actionTypes>
     <actionTypes>validation</actionTypes>
     <actionTypes>webservice</actionTypes>
-    <controlTypes>page</controlTypes>
     <controlTypes>button</controlTypes>
     <controlTypes>checkbox</controlTypes>
     <controlTypes>dataStore</controlTypes>
@@ -22,6 +21,7 @@
     <controlTypes>pagePanel</controlTypes>
     <controlTypes>panel</controlTypes>
     <controlTypes>radiobuttons</controlTypes>
+    <controlTypes>slidePanel</controlTypes>
     <controlTypes>tabGroup</controlTypes>
     <controlTypes>table</controlTypes>
     <controlTypes>text</controlTypes>
@@ -36,13 +36,13 @@
     <description>This is a demonstration Rapid application provided to showcase many common Rapid features</description>
     <id>demo</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-08-25T06:30:47.633+01:00</modifiedDate>
+    <modifiedDate>2014-08-26T11:06:17.282+01:00</modifiedDate>
     <name>demo</name>
     <pageBackupsMaxSize>3</pageBackupsMaxSize>
     <securityAdapterType>rapid</securityAdapterType>
     <showActionIds>false</showActionIds>
     <showControlIds>false</showControlIds>
-    <startPageId>P1</startPageId>
+    <startPageId>P3</startPageId>
     <styles>/*
 Styles saved here will be applied to all pages in the application
 */

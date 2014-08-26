@@ -302,6 +302,27 @@ function Init_pagePanel(id, details) {
   });
 }
 
+function Init_slidePanel(id, details) {
+  $("#" + id).click( function(ev) {
+  	// get a reference to the slidePanel
+  	var slidePanel = $("#" + id);
+  	// get the slidePanelPane
+  	var slidePanelPane = slidePanel.next();
+  	// if the next object is a slidePanelPane
+  	if (slidePanelPane.is(".slidePanelPane")) {
+  		if (slidePanelPane.is(":visible")) {
+  			slidePanelPane.hide();
+  			slidePanel.addClass("slidePanelOpen");
+  			slidePanel.removeClass("slidePanelClosed");
+  		} else {
+  			slidePanelPane.show();
+  			slidePanel.addClass("slidePanelClosed");
+  			slidePanel.removeClass("slidePanelOpen");
+  		}
+  	}
+  });
+}
+
 function Init_tabGroup(id, details) {
   $("#" + id).children("ul").children("li").each( function() {
   	$(this).click( function(ev, index) {

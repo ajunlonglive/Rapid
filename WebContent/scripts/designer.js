@@ -98,7 +98,7 @@ var _redo = [];
 // whether there are unsaved changes
 var _dirty;
 // whether this page is locked for editing by another user
-var _locked = true;
+var _locked = false;
 
 // the next control id
 var _nextId = 1;
@@ -303,6 +303,15 @@ function getMouseControl(ev, childControls) {
 		// we use this function recursively so start at the page if no array specified
 		if (childControls == null) childControls = _page.childControls;
 		
+		// sort the controls by z-index
+		childControls.sort(function(a,b) {
+			if (a.object.css("z-index") && b.object.css("z-index")) {
+				return b.object.css("z-index") - a.object.css("z-index");
+			} else {
+				return 0;
+			}
+		});
+						
 		// loop all of our objects for non-visual controls
 		for (var i in childControls) {
 			// get a reference to this control
@@ -323,9 +332,7 @@ function getMouseControl(ev, childControls) {
 				}
 			}
 		}
-								
-		
-		
+												
 		// loop all of our objects 
 		for (var i in childControls) {
 			// get a reference to this control
@@ -418,24 +425,13 @@ function sizeBorder(control) {
 
 // this positions the selection border inclduing the mouseDown Offsets which should be zero when the mouse is not moving
 function positionBorder(x, y) {
-	// check if if nonVisibleControl
-	if (_selectedControl.object.is(".nonVisibleControl")) {
-		// position the selection border
-		_selectionBorder.css({
-			position: "fixed",
-			left: x + _mouseDownXOffset - 8, // 8 = padding + border + 1 pixel
-			top: "auto",
-			bottom: 3
-		});	
-	} else {
-		// position the selection border
-		_selectionBorder.css({
-			position: "absolute",
-			left: x + _panelPinnedOffset + _mouseDownXOffset - 8 , // 8 = padding + border + 1 pixel	
-			top: y + _mouseDownYOffset - 8, // 8 = padding + border + 1 pixel
-			bottom: "auto"
-		});	
-	}	
+	// position the selection border
+	_selectionBorder.css({
+		position: "absolute",
+		left: x + _panelPinnedOffset + _mouseDownXOffset - 8 , // 8 = padding + border + 1 pixel	
+		top: y + _mouseDownYOffset - 8, // 8 = padding + border + 1 pixel
+		bottom: "auto"
+	});		
 }
 
 // this function returns a flat array of all of the page controls
@@ -637,9 +633,16 @@ function selectControl(control) {
 		
 		// if we have a parent control so aren't the page
 		if (_selectedControl.parentControl) {
-			
-			// position the border
-			positionBorder(_selectedControl.object.offset().left, _selectedControl.object.offset().top);
+						
+			// check if nonVisualControl and position the border
+			if (_selectedControl.object.is(".nonVisibleControl")) {
+				positionBorder(_selectedControl.object.offset().left - _panelPinnedOffset, _selectedControl.object.offset().top);
+			} else {
+				// get the device
+				var device = _devices[_device];
+				// scale position
+				positionBorder(_selectedControl.object.offset().left * _scale * device.scale, _selectedControl.object.offset().top * _scale * device.scale);
+			}	
 			// size the border
 			sizeBorder(_selectedControl);
 			// show the border if it has any size to it	and the control is visible		
@@ -930,7 +933,7 @@ function loadApp(forceLoad) {
     		if (c.canUserAdd) {
     			
     			// add button (list item + image if exists)
-    			designControls.append("<li class='design-control' data-control='" + c.type + "'>" + ((c.image) ? "<img src='" + c.image + "'/>" : "") + "<span>" + c.name + "</span></li>");
+    			designControls.append("<li class='design-control' data-control='" + c.type + "'>" + (c.image ? "<img src='" + c.image + "'/>" : "<img src='images/tools_24x24.png'/>") + "<span>" + c.name + "</span></li>");
     			
     			// when the mouse moves down on this component
     			designControls.children().last().mousedown( function(ev) {		
@@ -2416,7 +2419,7 @@ $(document).mouseup( function(ev) {
 	
 	if (_selectedControl && _selectedControl.object[0]) {		
 		// show it in case it was an add
-		if (_selectedControl._class.canUserMove) _selectedControl.object.show();
+		if (_selectedControl._class.canUserAdd) _selectedControl.object.show();
 		// if we were moving a control different from the _selectedControl
 		if (_movingControl && _movedoverControl && _movedoverDirection && _movedoverControl.object[0] !== _selectedControl.object[0]) {
 			// add an undo snapshot
@@ -2471,7 +2474,14 @@ $(document).mouseup( function(ev) {
 			"left": _selectedControl.object.offset().left - 8 , // padding + border + 1 pixel	
 			"top": _selectedControl.object.offset().top - 8 // padding + border + 1 pixel
 		});		
-		positionBorder(_selectedControl.object.offset().left, _selectedControl.object.offset().top);
+		// get the device
+		var device = _devices[_device];
+		// check if nonVisualControl
+		if (_selectedControl.object.is(".nonVisibleControl")) {
+			positionBorder(_selectedControl.object.offset().left - _panelPinnedOffset, _selectedControl.object.offset().top);
+		} else {
+			positionBorder(_selectedControl.object.offset().left * _scale * device.scale, _selectedControl.object.offset().top * _scale * device.scale);
+		}		
 		// size the border in case moving it has changed it's geometery
 		sizeBorder(_selectedControl);		
 		// show the properties panel			
@@ -2661,15 +2671,22 @@ function windowResize(ev) {
 	if (_scale * device.scale == 1) {
 		_page.object.css({
 			width: "auto",
+			height: "auto",
 			transform: "none"
+			//zoom: "normal" 
 		});
 	} else {
 		// adjust the scale
 		_page.object.css({
 			width: 1 / _scale / device.scale * 100 + "%",
+			height: 1 / _scale / device.scale * 100 + "%",
 			transform: "scale(" + _scale * device.scale + ")"
+			//zoom: _scale * device.scale
 		});	
 	}
+	
+	// arrange the non-visual controls
+	arrangeNonVisibleControls();
 				
 }
 
