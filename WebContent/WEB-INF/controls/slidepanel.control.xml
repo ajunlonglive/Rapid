@@ -1,0 +1,289 @@
+<controls xmlVersion="1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/control.xsd">
+
+<!-- 
+
+Copyright (C) 2014 - Gareth Edwards / Rapid Information Systems
+
+gareth.edwards@rapid-is.co.uk
+
+
+This file is part of the Rapid Application Platform
+
+RapidSOA is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version. The terms require you to include
+the original copyright, and the license notice in all redistributions.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
+
+ -->
+	
+	<control>
+	    
+	    <type>slidePanelPane</type>
+	    <name>Slide panel</name>	 
+	    	    
+	    <noDefaultName>true</noDefaultName>
+	      	    
+	    <canUserInsert>true</canUserInsert>    
+
+	    <properties>
+	        <property>
+	            <key>name</key>
+	            <name>Name</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>	            
+	        </property>	
+	    </properties>
+	    	    
+	    <getHtmlFunction>
+	        <![CDATA[
+// return our html 
+return "<div id='" + this.id + "' class='slidePanelPane' style='display:none;'></div>";
+	        ]]>
+	    </getHtmlFunction> 
+	    
+	    <removeJavaScript>
+	        <![CDATA[
+var i = 0;
+// loop the page child controls
+for (i in _page.childControls) {
+	// break when we find our position amongst the page child controls
+	if (this.id == _page.childControls[i].id) break;
+} 	
+// convert to a number
+i = i * 1;
+// get the next control
+var slidePanel = _page.childControls[i - 1];        
+// check if the next control is a slidePanelPane
+if (slidePanel.object.is(".slidePanel")) {
+	// remove the object
+	slidePanel.object.remove();
+	// remove the opener
+	_page.childControls.splice(i - 1, 1);
+}
+// remove the closer
+this.object.remove();
+	        ]]>
+	    </removeJavaScript>	    
+	    
+<initDesignJavaScript>
+	        <![CDATA[
+// get the page child controls        
+var pageControls = 	_page.childControls;
+// if we have some and there's at least one
+if (pageControls && pageControls.length > 0) {
+	// retrieve the bottom one    
+	var slidePanel = pageControls[pageControls.length - 1];
+	// if it is a slide panel rebuild it now that the panel html is in the page        
+	if (slidePanel.object.is(".slidePanel")) {
+		rebuildHtml(slidePanel);
+	}
+}      
+	        ]]>	   	        
+	    </initDesignJavaScript>
+ 	    	   	    	    
+	    <styles>
+	        <style>
+	            <name>Slide panel</name>
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id;
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	    </styles>	    	    	    	    
+	    	        	    
+	</control>
+		
+	<control>
+	    
+	    <type>slidePanel</type>
+	    <name>Slide panel</name>	    
+	    <image>images/slidepanel_24x24.png</image>  	
+	    
+	    <addToNewApplications>true</addToNewApplications>
+	    
+		<noDefaultName>true</noDefaultName>
+			    	    	    	    
+	    <canUserAdd>true</canUserAdd>
+  
+	    <properties>
+	        <property>
+	            <key>visible</key>
+	            <name>Visible</name>
+	            <setConstructValueFunction>return false;</setConstructValueFunction>
+	            <changeValueJavaScript>slidePanelVisibility</changeValueJavaScript>		                       
+	        </property>	
+	        <property>
+	            <key>slidePanelId</key>
+	            <name>slidePanelId</name>
+	            <visible>false</visible>
+	        </property>
+	    </properties>
+	    
+	    <resources>
+	        <resource>
+	            <type>file</type>
+	            <contents>images/controls/slidepanel/slidepanel_48x48.png</contents>
+	        </resource>
+	        <resource>
+	            <type>css</type>
+	            <contents>
+	                <![CDATA[	                
+.slidePanel {
+	position: absolute;
+	padding: 5px;
+	width: 20px;
+	height: 20px;
+	z-index: 101;
+}
+
+.slidePanel img {
+	width: 100%;
+	height: 100%;
+}
+
+.slidePanelPane {
+	position: absolute;
+	float: left;
+	width: 200px;
+	height: 100%;
+	background-color: white;
+	border-right: 1px solid black;
+	z-index: 100;
+}
+	                ]]>
+				</contents>
+	        </resource>
+	    </resources>
+	    
+	    <getHtmlFunction>
+	        <![CDATA[
+// 	        
+// return html for adding to our parent object      
+return "<div id='" + this.id + "' class='slidePanel'><img src='images/controls/slidepanel/slidepanel_48x48.png'/></div>";
+	        ]]>
+	    </getHtmlFunction>
+	    
+	    <constructJavaScript>
+	        <![CDATA[	        
+// add the panel next to the opener
+this.parentControl.childControls.push(new Control("slidePanelPane", this.parentControl));
+	        ]]>
+	    </constructJavaScript>	
+	    	    
+	    <rebuildJavaScript>
+	        <![CDATA[
+if (this.visible) {
+	this.parentControl.object.children(".slidePanelPane").show();
+} else {
+	this.parentControl.object.children(".slidePanelPane").hide();
+}
+	        ]]>
+	    </rebuildJavaScript>	
+	    
+	    <removeJavaScript>
+	        <![CDATA[
+var i = 0;
+// loop the page child controls
+for (i in _page.childControls) {
+	// break when we find our position amongst the page child controls
+	if (this.id == _page.childControls[i].id) break;
+} 	
+// convert to a number
+i = i * 1;
+// get the next control
+var slidePanelPane = _page.childControls[i + 1];        
+// check if the next control is a slidePanelPane
+if (slidePanelPane.object.is(".slidePanelPane")) {
+	// remove the object
+	slidePanelPane.object.remove();
+	// remove the pane
+	_page.childControls.splice(i + 1, 1);
+}
+// remove the closer
+this.object.remove();
+	        ]]>
+	    </removeJavaScript>
+	    
+	   	<initDesignJavaScript>
+	        <![CDATA[
+this.object.mousedown( {slidePanel : this}, function(ev) {
+	// get the slidePanel
+	var slidePanel = ev.data.slidePanel;
+	// toggle visibility
+	slidePanel.visible = !slidePanel.visible
+	// add/remove classes
+	if (slidePanel.visible) {
+		slidePanel.object.addClass("slidePanelOpen");
+		slidePanel.object.removeClass("slidePanelClosed");
+	} else {
+		slidePanel.object.addClass("slidePanelClosed");
+		slidePanel.object.removeClass("slidePanelOpen");
+	}
+	// update html
+	rebuildHtml(slidePanel);
+});       
+	        ]]>	   	        
+	    </initDesignJavaScript>
+	    	    
+	    <styles>
+	        <style>
+	            <name>Opener</name>
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id;
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>   
+	        <style>
+	            <name>Panel open</name>
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return ".slidePanelOpen";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>  
+	        <style>
+	            <name>Panel closed</name>
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return ".slidePanelClosed";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>  
+	    </styles>	
+	    
+	   	<initJavaScript>
+	        <![CDATA[
+$("#" + id).click( function(ev) {
+	// get a reference to the slidePanel
+	var slidePanel = $("#" + id);
+	// get the slidePanelPane
+	var slidePanelPane = slidePanel.next();
+	// if the next object is a slidePanelPane
+	if (slidePanelPane.is(".slidePanelPane")) {
+		if (slidePanelPane.is(":visible")) {
+			slidePanelPane.hide();
+			slidePanel.addClass("slidePanelOpen");
+			slidePanel.removeClass("slidePanelClosed");
+		} else {
+			slidePanelPane.show();
+			slidePanel.addClass("slidePanelClosed");
+			slidePanel.removeClass("slidePanelOpen");
+		}
+	}
+});	        
+	        ]]>	        	       	        
+	    </initJavaScript>
+	    	    	    	            	    	    	        	    	    
+	</control>
+	
+</controls>	
