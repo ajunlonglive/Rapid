@@ -6,8 +6,9 @@ body {
 }
 
 #P3_C3_ {
-	background-color:black;
+	height:30px;
 	color:white;
-	padding:10px;
+	background-color:black;
+	width:100%;
 }
 

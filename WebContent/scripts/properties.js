@@ -211,8 +211,8 @@ function Property_select(cell, propertyObject, property, refreshHtml, refreshPro
 		if ($.isArray(values)) {
 			// loop the array and build the options html
 			for (var i in values) {
-				// if an array of Strings no value attribute
-				if ($.type(values[i]) == "string" || $.type(values[i]) == "number") {
+				// if an array of simple types no value attribute
+				if ($.type(values[i]) == "string" || $.type(values[i]) == "number" || $.type(values[i]) == "boolean") {
 					// if the value is matched add selected
 					if (propertyObject[property.key] == values[i]) {
 						options += "<option selected='selected'>" + values[i] + "</option>";
@@ -1781,6 +1781,30 @@ function Property_controlHints(cell, hints, property, refreshHtml, refreshDialog
 		Property_controlHints(ev.data.cell, ev.data.hints, {key: "controlHints"}, ev.data.refreshHtml, ev.data.dialogue);		
 	}));
 
+}
+
+function Property_slidePanelVisibility(cell, propertyObject, property, refreshHtml, refreshProperties) {
+	// if we're holding a P (this defaulted in designerer.js)
+	cell.text(propertyObject.visible);
+	// add the listener to the cell
+	_listeners.push( cell.click( function(ev) {
+		// get a reference to the slidePanel
+		var slidePanel = propertyObject;
+		// toggle the value
+		slidePanel.visible = !slidePanel.visible;		
+		// add/remove classes
+		if (slidePanel.visible) {
+			slidePanel.object.addClass("slidePanelOpen");
+			slidePanel.object.removeClass("slidePanelClosed");
+		} else {
+			slidePanel.object.addClass("slidePanelClosed");
+			slidePanel.object.removeClass("slidePanelOpen");
+		}
+		// refresh the html
+		rebuildHtml(propertyObject);
+		// update text
+		$(ev.target).text(slidePanel.visible);
+	}));
 }
 
 //this is displayed as a page property but is actually held in local storage

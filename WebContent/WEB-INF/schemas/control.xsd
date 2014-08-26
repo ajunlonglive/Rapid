@@ -405,8 +405,13 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 									</xs:restriction>
 								</xs:simpleType>
 							</xs:element>
-
 							<xs:element name="initDesignJavaScript" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Runs in the designer once the control has
+									been created. Useful for adding functionality that is only
+									used during design such as making child controls visible.
+									</xs:documentation>
+								</xs:annotation>
 								<xs:simpleType>
 									<xs:restriction base="xs:string">
 										<xs:minLength value="1" />
