@@ -296,6 +296,8 @@ function Init_pagePanel(id, details) {
              	$("#" + id).html(bodyHtml);
              	// add script into the page (if applicable)
              	if (script) $("#" + id).append(script);
+             	// fire the window resize event
+             	$(window).resize();
              	           	        	            	            	            
       	}        	       	        	        	        	        		
       }       	        	        
@@ -365,6 +367,24 @@ function Init_slidePanel(id, details) {
   		// show the page cover	
   		pageCover.show();
   	}
+  });	        
+  
+  // add the cover listener
+  pageCover.click({width: slidePanelPane.css("width"),left: slidePanelPane.css("margin-left")}, function(ev){
+  	// get the stored width
+  	var width = ev.data.width
+  	// get any existing left margin
+  	var left = ev.data.left;
+  	// animate off-screen
+  	slidePanelPane.animate({"margin-left": "-" + width}, 500, function() {
+  		// hide when complete
+  		slidePanelPane.hide();
+  		// toggle open closed
+  		slidePanel.removeClass("slidePanelOpen");
+  		slidePanel.addClass("slidePanelClosed");	
+  		// hide the page cover
+  		pageCover.hide();		
+  	});
   });
 }
 

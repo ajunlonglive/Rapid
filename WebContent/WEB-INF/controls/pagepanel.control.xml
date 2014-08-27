@@ -181,6 +181,8 @@ $.ajax({
            	$("#" + id).html(bodyHtml);
            	// add script into the page (if applicable)
            	if (script) $("#" + id).append(script);
+           	// fire the window resize event
+           	$(window).resize();
            	           	        	            	            	            
     	}        	       	        	        	        	        		
     }       	        	        
