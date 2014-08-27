@@ -95,6 +95,15 @@ table.grid {
 	z-index: 100;
 }
 
+.slidePanelCover {
+	position: fixed;
+	top: 0;
+	left: 0;
+	background-color: #ccc;
+	opacity: 0.75;
+	z-index: 99;
+}
+
 /* Tabs control resource styles */
 
 ul.tabsHeader {
@@ -156,13 +165,11 @@ div.tabsPanel.selected {
 Styles saved here will be applied to all pages in the application
 */
 
-/*
 body {
   padding : 10px;
   font-family : 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;
   font-size : 13px;
 }
-*/
 
 .dialogueCover {
   background-color : white;

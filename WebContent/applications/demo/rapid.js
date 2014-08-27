@@ -49,7 +49,7 @@ $(document).ready( function() {
        		height : win.height()
        	});
        	      	
-       	// ressize the dialogue
+       	// resize the dialogue
        	$(".dialogue").each(function() {
        		var dialogue = $(this);
 	       	dialogue.css({
@@ -113,7 +113,7 @@ function Action_navigate(url, dialogue) {
 		           	// get a reference to the body		           	
 		           	var body = $("body");
 		           	// add the cover and return reference
-		           	var dialogueCover = body.append("<div class='dialogueCover' style='position:absolute;left:0px;top:0px;z-index:100;'></div>").children().last();
+		           	var dialogueCover = body.append("<div class='dialogueCover' style='position:absolute;left:0px;top:0px;z-index:99;'></div>").children().last();
 		           	
 		           	// get a reference to the window for the visible area
 		           	var win = $(window);
@@ -303,35 +303,67 @@ function Init_pagePanel(id, details) {
 }
 
 function Init_slidePanel(id, details) {
-  $("#" + id).click( function(ev) {
-  	// get a reference to the slidePanel
-  	var slidePanel = $("#" + id);
-  	// get the slidePanelPaneId
-  	var slidePanelPaneId = slidePanel.attr("data-pane");
-  	// get the pane
-  	var slidePanelPane = $("#" + slidePanelPaneId);
+  // get a reference to the body
+  var body = $("body");
+  // get the pageCover
+  var pageCover = body.find(".slidePanelCover");
+  // if we don't have one
+  if (!pageCover[0]) {
+  	// add one
+  	body.append("<div class='slidePanelCover'></div>");
+  	// set the reference
+  	pageCover = body.find(".slidePanelCover");
+  	// get a reference to the window
+  	var win = $(window);
+  	// size the cover
+  	pageCover.css({
+      	width : win.width(),
+         	height : win.height()
+      });
+  }
+  
+  // get a reference to the slidePanel
+  var slidePanel = $("#" + id);
+  // get the slidePanelPaneId
+  var slidePanelPaneId = slidePanel.attr("data-pane");
+  // get the pane
+  var slidePanelPane = $("#" + slidePanelPaneId);
+  
+  // show or hide the page cover if panel is visible
+  if (slidePanelPane.is(":visible")) {
+  	pageCover.show();
+  } else {
+  	pageCover.hide();
+  }
+  
+  // add the opener listener	       
+  slidePanel.click({width: slidePanelPane.css("width"),left: slidePanelPane.css("margin-left")}, function(ev) {
+  	// get the stored width
+  	var width = ev.data.width
+  	// get any existing left margin
+  	var left = ev.data.left;
   	// check visibility
   	if (slidePanelPane.is(":visible")) {
-  		// retain the current (full) width
-  		var width = slidePanelPane.css("width");
-  		// animate down to zero
-  		slidePanelPane.animate({width:"0"}, 500, function() {
-  			// hide and reinstate width when complete
-  			slidePanelPane.hide().css({width:width});
-  		});
-  		// toggle open closed
-  		slidePanel.addClass("slidePanelOpen");
-  		slidePanel.removeClass("slidePanelClosed");
+  		// animate off-screen
+  		slidePanelPane.animate({"margin-left": "-" + width}, 500, function() {
+  			// hide when complete
+  			slidePanelPane.hide();
+  			// toggle open closed
+  			slidePanel.removeClass("slidePanelOpen");
+  			slidePanel.addClass("slidePanelClosed");	
+  			// hide the page cover
+  			pageCover.hide();		
+  		});		
   	} else {
-  		// retain the current (full) width
-  		var width = slidePanelPane.css("width");
-  		// set width to 0 and show
-  		slidePanelPane.css({width:"0"}).show();
+  		// set off screen
+  		slidePanelPane.css({"margin-left": "-" + width}).show();
   		// animate to full width
-  		slidePanelPane.animate({width:width}, 500);
+  		slidePanelPane.animate({"margin-left": 0}, 500);		
   		// toggle open closed
-  		slidePanel.addClass("slidePanelClosed");
-  		slidePanel.removeClass("slidePanelOpen");
+  		slidePanel.removeClass("slidePanelClosed");
+  		slidePanel.addClass("slidePanelOpen");
+  		// show the page cover	
+  		pageCover.show();
   	}
   });
 }
@@ -710,6 +742,25 @@ function linkClick(url, sessionVariablesString) {
 	window.location = url;
 	
 }
+
+/* Slide panel control resource JavaScript */
+
+//JQuery is ready! 
+$(document).ready( function() {
+	
+	$(window).resize(function(ex) {
+	
+		var win = $(window);
+		
+		// resize the page cover
+		$(".slidePanelCover").css({
+       		width : win.width(),
+       		height : win.height()
+       	});
+       	      		
+	});
+	
+});
 
 /* Database action resource JavaScript */
 
