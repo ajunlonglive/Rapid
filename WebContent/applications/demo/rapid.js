@@ -306,19 +306,32 @@ function Init_slidePanel(id, details) {
   $("#" + id).click( function(ev) {
   	// get a reference to the slidePanel
   	var slidePanel = $("#" + id);
-  	// get the slidePanelPane
-  	var slidePanelPane = slidePanel.next();
-  	// if the next object is a slidePanelPane
-  	if (slidePanelPane.is(".slidePanelPane")) {
-  		if (slidePanelPane.is(":visible")) {
-  			slidePanelPane.hide();
-  			slidePanel.addClass("slidePanelOpen");
-  			slidePanel.removeClass("slidePanelClosed");
-  		} else {
-  			slidePanelPane.show();
-  			slidePanel.addClass("slidePanelClosed");
-  			slidePanel.removeClass("slidePanelOpen");
-  		}
+  	// get the slidePanelPaneId
+  	var slidePanelPaneId = slidePanel.attr("data-pane");
+  	// get the pane
+  	var slidePanelPane = $("#" + slidePanelPaneId);
+  	// check visibility
+  	if (slidePanelPane.is(":visible")) {
+  		// retain the current (full) width
+  		var width = slidePanelPane.css("width");
+  		// animate down to zero
+  		slidePanelPane.animate({width:"0"}, 500, function() {
+  			// hide and reinstate width when complete
+  			slidePanelPane.hide().css({width:width});
+  		});
+  		// toggle open closed
+  		slidePanel.addClass("slidePanelOpen");
+  		slidePanel.removeClass("slidePanelClosed");
+  	} else {
+  		// retain the current (full) width
+  		var width = slidePanelPane.css("width");
+  		// set width to 0 and show
+  		slidePanelPane.css({width:"0"}).show();
+  		// animate to full width
+  		slidePanelPane.animate({width:width}, 500);
+  		// toggle open closed
+  		slidePanel.addClass("slidePanelClosed");
+  		slidePanel.removeClass("slidePanelOpen");
   	}
   });
 }
