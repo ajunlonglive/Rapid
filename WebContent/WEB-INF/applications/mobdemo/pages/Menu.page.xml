@@ -3,12 +3,12 @@
     <controls>
         <properties>
             <entry>
-                <key>classes</key>
-                <value>[]</value>
-            </entry>
-            <entry>
                 <key>id</key>
                 <value>P1_C12_</value>
+            </entry>
+            <entry>
+                <key>classes</key>
+                <value>[]</value>
             </entry>
             <entry>
                 <key>visible</key>
@@ -40,12 +40,12 @@
         </events>
         <properties>
             <entry>
-                <key>classes</key>
-                <value>[]</value>
-            </entry>
-            <entry>
                 <key>id</key>
                 <value>P1_C11_</value>
+            </entry>
+            <entry>
+                <key>classes</key>
+                <value>[]</value>
             </entry>
             <entry>
                 <key>text</key>
@@ -108,12 +108,12 @@
             </events>
             <properties>
                 <entry>
-                    <key>classes</key>
-                    <value>[&quot;menuItem&quot;]</value>
-                </entry>
-                <entry>
                     <key>id</key>
                     <value>P1_C14_</value>
+                </entry>
+                <entry>
+                    <key>classes</key>
+                    <value>[&quot;menuItem&quot;]</value>
                 </entry>
                 <entry>
                     <key>text</key>
@@ -166,12 +166,12 @@
             </events>
             <properties>
                 <entry>
-                    <key>classes</key>
-                    <value>[&quot;menuItem&quot;]</value>
-                </entry>
-                <entry>
                     <key>id</key>
                     <value>P1_C15_</value>
+                </entry>
+                <entry>
+                    <key>classes</key>
+                    <value>[&quot;menuItem&quot;]</value>
                 </entry>
                 <entry>
                     <key>text</key>
@@ -198,15 +198,15 @@
                 <type>hover</type>
             </events>
             <properties>
-                <entry>
-                    <key>classes</key>
-                    <value>[&quot;menuItem&quot;]</value>
-                </entry>
                 <entry>
                     <key>id</key>
                     <value>P1_C16_</value>
                 </entry>
                 <entry>
+                    <key>classes</key>
+                    <value>[&quot;menuItem&quot;]</value>
+                </entry>
+                <entry>
                     <key>text</key>
                     <value>New person</value>
                 </entry>
@@ -232,12 +232,12 @@
             </events>
             <properties>
                 <entry>
-                    <key>classes</key>
-                    <value>[&quot;menuItem&quot;]</value>
-                </entry>
-                <entry>
                     <key>id</key>
                     <value>P1_C17_</value>
+                </entry>
+                <entry>
+                    <key>classes</key>
+                    <value>[&quot;menuItem&quot;]</value>
                 </entry>
                 <entry>
                     <key>text</key>
@@ -256,12 +256,12 @@
         </childControls>
         <properties>
             <entry>
-                <key>classes</key>
-                <value>[]</value>
-            </entry>
-            <entry>
                 <key>id</key>
                 <value>P1_C13_</value>
+            </entry>
+            <entry>
+                <key>classes</key>
+                <value>[]</value>
             </entry>
             <entry>
                 <key>slidePanelId</key>
@@ -288,15 +288,15 @@
         <filter></filter>
         <type>reusable</type>
     </events>
-    <htmlBody>&lt;div id=&quot;P1_C12_&quot; class=&quot;slidePanel slidePanelClosed&quot; data-pane=&quot;P1_C13_&quot;&gt;&lt;img src=&quot;images/controls/slidepanel/slidepanel_48x48.png&quot;&gt;&lt;/div&gt;&lt;div class=&quot;slidePanelCover&quot; style=&quot;width: 1042px; height: 1911px; display: none;&quot;&gt;&lt;/div&gt;&lt;div id=&quot;P1_C11_&quot; class=&quot;panel&quot;&gt;&lt;/div&gt;&lt;div id=&quot;P1_C13_&quot; class=&quot;slidePanelPane&quot; style=&quot;display: none;&quot; data-panel=&quot;P1_C12_&quot;&gt;&lt;div id=&quot;P1_C14_&quot; class=&quot;panel menuItem&quot;&gt;Person search&lt;/div&gt;&lt;div id=&quot;P1_C15_&quot; class=&quot;panel menuItem&quot;&gt;Address search&lt;/div&gt;&lt;div id=&quot;P1_C16_&quot; class=&quot;panel menuItem&quot;&gt;New person&lt;/div&gt;&lt;div id=&quot;P1_C17_&quot; class=&quot;panel menuItem&quot;&gt;New address&lt;/div&gt;&lt;/div&gt;</htmlBody>
+    <htmlBody>&lt;div id=&quot;P1_C12_&quot; class=&quot;slidePanel slidePanelClosed&quot; data-pane=&quot;P1_C13_&quot;&gt;&lt;img src=&quot;images/controls/slidepanel/slidepanel_48x48.png&quot;&gt;&lt;/div&gt;&lt;div class=&quot;slidePanelCover&quot; style=&quot;width: 359.9375px; height: 640.25px; display: none;&quot;&gt;&lt;/div&gt;&lt;div id=&quot;P1_C11_&quot; class=&quot;panel&quot;&gt;&lt;/div&gt;&lt;div id=&quot;P1_C13_&quot; class=&quot;slidePanelPane&quot; style=&quot;display: none;&quot; data-panel=&quot;P1_C12_&quot;&gt;&lt;div id=&quot;P1_C14_&quot; class=&quot;panel menuItem&quot;&gt;Person search&lt;/div&gt;&lt;div id=&quot;P1_C15_&quot; class=&quot;panel menuItem&quot;&gt;Address search&lt;/div&gt;&lt;div id=&quot;P1_C16_&quot; class=&quot;panel menuItem&quot;&gt;New person&lt;/div&gt;&lt;div id=&quot;P1_C17_&quot; class=&quot;panel menuItem&quot;&gt;New address&lt;/div&gt;&lt;/div&gt;</htmlBody>
     <id>P1</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-08-27T13:18:53.041+01:00</modifiedDate>
+    <modifiedDate>2014-08-27T17:36:18.626+01:00</modifiedDate>
     <name>Menu</name>
     <rolesHtml>
         <html>&lt;div id=&quot;P1_C12_&quot; class=&quot;slidePanel slidePanelClosed&quot; data-pane=&quot;P1_C13_&quot;&gt;
 		&lt;img src=&quot;images/controls/slidepanel/slidepanel_48x48.png&quot;&gt;&lt;/div&gt;
-		&lt;div class=&quot;slidePanelCover&quot; style=&quot;width: 1042px; height: 1911px; display: none;&quot;&gt;&lt;/div&gt;
+		&lt;div class=&quot;slidePanelCover&quot; style=&quot;width: 359.9375px; height: 640.25px; display: none;&quot;&gt;&lt;/div&gt;
 		&lt;div id=&quot;P1_C11_&quot; class=&quot;panel&quot;&gt;&lt;/div&gt;
 		&lt;div id=&quot;P1_C13_&quot; class=&quot;slidePanelPane&quot; style=&quot;display: none;&quot; data-panel=&quot;P1_C12_&quot;&gt;
 			&lt;div id=&quot;P1_C14_&quot; class=&quot;panel menuItem&quot;&gt;Person search&lt;/div&gt;

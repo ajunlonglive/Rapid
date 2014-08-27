@@ -1788,6 +1788,8 @@ function Property_slidePanelVisibility(cell, propertyObject, property, refreshHt
 	cell.text(propertyObject.visible);
 	// add the listener to the cell
 	_listeners.push( cell.click( function(ev) {
+		// add an undo snapshot
+		addUndo();
 		// get a reference to the slidePanel
 		var slidePanel = propertyObject;
 		// toggle the value
