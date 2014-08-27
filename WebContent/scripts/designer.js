@@ -259,13 +259,10 @@ function debuggMouseControl(ev, childControls) {
 	
 	console.log("X: " + mouseX + ", Y: " + mouseY);
 	
-	// get the device which we'll use for the scaling
-	var device = _devices[_device];
-	
 	for (var i in childControls) {
 		var o = childControls[i].object;
-		var width = o.outerWidth() * _scale * device.scale;
-		var height = o.outerHeight() * _scale * device.scale;
+		var width = o.outerWidth() * _scale;
+		var height = o.outerHeight() * _scale;
 		console.log("id = " + o.attr("id") + " x1: " + o.offset().left + ", x2: " + (o.offset().left + width) + ", y1: " + o.offset().top + ", y2: " + (o.offset().top + height));
 	}	
 }
@@ -275,9 +272,6 @@ function getMouseControl(ev, childControls) {
 			
 	// only if the mouse is down
 	if (_mouseDown) {
-		
-		// get the device (we'll use this when scaling)
-		var device = _devices[_device];
 		
 		// get the mouse X and Y
 		var mouseX = ev.pageX  - _panelPinnedOffset;
@@ -292,11 +286,11 @@ function getMouseControl(ev, childControls) {
 				// grab the selected object
 				o = _selectedControl.object;
 				// get the height of the object
-				var height = o.outerHeight() * _scale * device.scale;
+				var height = o.outerHeight() * _scale;
 				// if the height is zero, but there are children assume the height of the first child (this is the case with ul elements where the child li elements are floated )
-				if (!height && c.childControls.length > 0) height = c.childControls[0].object.outerHeight() * _scale * device.scale;
+				if (!height && c.childControls.length > 0) height = c.childControls[0].object.outerHeight() * _scale;
 				// get the width
-				var width = o.outerWidth() * _scale * device.scale;
+				var width = o.outerWidth() * _scale;
 				// if we clicked in the object space we skip this section and process the event thoroughly
 				if (!(mouseX >= o.offset().left && mouseY >= o.offset().top && mouseX <= o.offset().left + width && mouseY <= o.offset().top + height)) {					
 					// return the selected control
@@ -349,11 +343,11 @@ function getMouseControl(ev, childControls) {
 				// is the mouse below this object
 				if (mouseX >= o.offset().left && mouseY >= o.offset().top) {
 					// get the height of the object
-					var height = o.outerHeight() * _scale * device.scale;
+					var height = o.outerHeight() * _scale;
 					// if the height is zero, but there are children assume the height of the first child (this is the case with ul elements where the child li elements are floated )
-					if (!height && c.childControls.length > 0) height = c.childControls[0].object.outerHeight() * _scale * device.scale;
+					if (!height && c.childControls.length > 0) height = c.childControls[0].object.outerHeight() * _scale;
 					// get the width
-					var width = o.outerWidth() * _scale * device.scale;
+					var width = o.outerWidth() * _scale;
 					// does the width and height of this object mean we are inside it
 					if  (mouseX <= o.offset().left + width && mouseY <= o.offset().top + height) {
 						// if there are childObjects check for a hit on one of them
@@ -411,15 +405,13 @@ function sizeBorder(control) {
 	if (!height && control.childControls.length > 0) height = control.childControls[0].object.outerHeight();
 	// get the width
 	var width = control.object.outerWidth()
-	// get the device
-	var device = _devices[_device];
 	// check if nonVisualControl
 	if (control.object.is(".nonVisibleControl")) {
 		width += 1;
 		height += 1;
 	} else {
-		width = width * _scale * device.scale + 2;
-		height = height * _scale * device.scale + 2;
+		width = width * _scale + 2;
+		height = height * _scale + 2;
 	}
 	// if the width is greater than the screen reduce by width of border
 	if (width > $(window).width() - _panelPinnedOffset - _scrollBarWidth) width -= 8;
@@ -1615,7 +1607,7 @@ $(document).ready( function() {
 		// update global if we got one
 		if (zoom) _zoom = zoom*1;
 		// calculate the scale
-		_scale = _ppi / _devices[_device].ppi * _zoom;
+		_scale = _ppi / _devices[_device].ppi * _devices[_device].scale * _zoom;
 	}
 	
 	// check for unsaved page changes if we move away
@@ -2305,17 +2297,14 @@ $(document).mousemove( function(ev) {
 		
 		// check the mouse is down (and the selected control has an object)
 		if (_mouseDown && _selectedControl.object[0]) {		
-		
-			// get the device (we'll use this when scaling)
-			var device = _devices[_device];
-			
+					
 			// if we have just started moving position the cover
 			if (!_movingControl) {
 				
 				// position the cover
 				_selectionCover.css({
-					"width": _selectedControl.object.outerWidth() * _scale * device.scale, 
-					"height": _selectedControl.object.outerHeight() * _scale * device.scale, 
+					"width": _selectedControl.object.outerWidth() * _scale, 
+					"height": _selectedControl.object.outerHeight() * _scale, 
 					"left": _selectedControl.object.offset().left + _panelPinnedOffset, 	
 					"top": _selectedControl.object.offset().top
 				});
@@ -2342,7 +2331,7 @@ $(document).mousemove( function(ev) {
 				// retain a reference to the movedoverObject
 				_movedoverControl = c;	
 				// calculate the width
-				var width =  _movedoverControl.object.outerWidth() * _scale * device.scale;
+				var width =  _movedoverControl.object.outerWidth() * _scale;
 				// if over the selected object or a descendant don't show anything
 				if (_movedoverControl === _selectedControl || isDecendant(_selectedControl,_movedoverControl)) {
 					_selectionInsert.hide();
@@ -2350,7 +2339,7 @@ $(document).mousemove( function(ev) {
 					_selectionMoveRight.hide();
 				} else {			
 					// calculate a move threshold which is the number of pixels to the left or right of the object the users needs to be within
-					var moveThreshold = Math.min(50 * _scale * device.scale, width/3);
+					var moveThreshold = Math.min(50 * _scale, width/3);
 					// if it's not possible to insert make the move thresholds half the width to cover the full object
 					if (!_movedoverControl._class.canUserInsert) moveThreshold = width/2;
 					// are we within the move threshold on the left or the right controls that can be moved, or in the middle with an addChildControl method?
@@ -2623,8 +2612,8 @@ function windowResize(ev) {
 		// adjust iframe position, to scalled width and height
 		_pageIframe.css({
 			left: _panelPinnedOffset,
-			width: _scale * width,
-			height: _scale * height,
+			width: _scale / device.scale * width,
+			height: _scale / device.scale * height,
 			"border-right": "1px solid black",
 			"border-bottom": "1px solid black"
 		});				
@@ -2645,15 +2634,13 @@ function windowResize(ev) {
 			width: "auto",
 			height: "auto",
 			transform: "none"
-			//zoom: "normal" 
 		});
 	} else {
 		// adjust the scale
 		_page.object.css({
-			width: 1 / _scale / device.scale * 100 + "%",
-			height: 1 / _scale / device.scale * 100 + "%",
-			transform: "scale(" + _scale * device.scale + ")"
-			//zoom: _scale * device.scale
+			width: 1 / _scale * 100 + "%",
+			height: 1 / _scale * 100 + "%",
+			transform: "scale(" + _scale + ")"
 		});	
 	}
 	

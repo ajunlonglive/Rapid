@@ -1834,7 +1834,7 @@ function Property_device(cell, propertyObject, property, refreshHtml, refreshPro
 		// store it
 		if (typeof(localStorage) !== "undefined") localStorage.setItem("_device" ,_device);
 		// recalculate scale
-		_scale = _ppi / _devices[_device].ppi * _zoom;
+		_scale = _ppi / _devices[_device].ppi * _devices[_device].scale * _zoom;
 		// windowResize
 		windowResize("_device");
 	}));
@@ -1869,7 +1869,7 @@ function Property_zoom(cell, propertyObject, property, refreshHtml, refreshPrope
 		// store it
 		if (typeof(localStorage) !== "undefined") localStorage.setItem("_zoom" ,_zoom);
 		// recalculate scale
-		_scale = _ppi / _devices[_device].ppi * _zoom;
+		_scale = _ppi / _devices[_device].ppi * _devices[_device].scale * _zoom;
 		// windowResize
 		windowResize("_zoom");
 	}));	
