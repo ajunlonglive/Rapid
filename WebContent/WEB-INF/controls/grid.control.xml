@@ -262,6 +262,30 @@ return "#" + this.id;
 	            </getAppliesToFunction>
 	        </style>
 	        <style>
+	            <name>Title row</name>
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id + " tr:first-child";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	        <style>
+	            <name>Title cells</name>
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id + " tr:first-child td";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	        <style>
+	            <name>Row cells</name>
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id + " tr:not(:first-child) td";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	        <style>
 	            <name>Row style 1</name>
 	            <getAppliesToFunction>
 					<![CDATA[	      

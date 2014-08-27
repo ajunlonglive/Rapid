@@ -66,6 +66,17 @@ return "<div id='" + this.id + "' class='panel" + getStyleClasses(this) + "'>" +
 	        ]]>
 	    </getHtmlFunction> 
 	    
+	    <events>
+	        <event>
+	            <type>click</type>
+	            <name>Click</name>
+	        </event>
+	        <event>
+	            <type>hover</type>
+	            <name>Hover</name>
+	        </event>
+	    </events>
+	    
 	    <styles>       
 	        <style>
 	            <name>Panel</name>  

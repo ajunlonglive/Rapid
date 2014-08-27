@@ -8,6 +8,7 @@
     <actionTypes>navigate</actionTypes>
     <actionTypes>validation</actionTypes>
     <actionTypes>webservice</actionTypes>
+    <controlTypes>page</controlTypes>
     <controlTypes>button</controlTypes>
     <controlTypes>checkbox</controlTypes>
     <controlTypes>dataStore</controlTypes>
@@ -29,14 +30,14 @@
         <connectionAdapterClass>com.rapid.data.SimpleConnectionAdapter</connectionAdapterClass>
         <connectionString>jdbc:sqlite:WebContent/WEB-INF/database/rapidsample.db</connectionString>
         <driverClass>org.sqlite.JDBC</driverClass>
-        <name>Sample connection</name>
+        <name>Demo connection</name>
         <password>N0Sgi3GcduE=</password>
         <userName></userName>
     </databaseConnections>
     <description>This is a demonstration Rapid application provided to showcase many common Rapid features</description>
     <id>demo</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-08-26T11:06:17.282+01:00</modifiedDate>
+    <modifiedDate>2014-08-27T11:34:48.118+01:00</modifiedDate>
     <name>demo</name>
     <pageBackupsMaxSize>3</pageBackupsMaxSize>
     <securityAdapterType>rapid</securityAdapterType>
@@ -47,13 +48,11 @@
 Styles saved here will be applied to all pages in the application
 */
 
-/*
 body {
   padding : 10px;
   font-family : 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;
   font-size : 13px;
 }
-*/
 
 .dialogueCover {
   background-color : white;

@@ -49,7 +49,7 @@ $(document).ready( function() {
        		height : win.height()
        	});
        	      	
-       	// ressize the dialogue
+       	// resize the dialogue
        	$(".dialogue").each(function() {
        		var dialogue = $(this);
 	       	dialogue.css({
@@ -113,7 +113,7 @@ function Action_navigate(url, dialogue) {
 		           	// get a reference to the body		           	
 		           	var body = $("body");
 		           	// add the cover and return reference
-		           	var dialogueCover = body.append("<div class='dialogueCover' style='position:absolute;left:0px;top:0px;z-index:100;'></div>").children().last();
+		           	var dialogueCover = body.append("<div class='dialogueCover' style='position:absolute;left:0px;top:0px;z-index:99;'></div>").children().last();
 		           	
 		           	// get a reference to the window for the visible area
 		           	var win = $(window);

@@ -107,6 +107,25 @@ return [
 	        </property>	 
 	    </properties>
 	    
+	    <resources>
+	        <resource>
+	            <type>javascriptFile</type>
+	            <contents>scripts/soa.js</contents>
+	        </resource>
+	        <resource>
+	            <type>javascriptFile</type>
+	            <contents>scripts/reorder.js</contents>
+	        </resource>
+	        <resource>
+	            <type>javascriptFile</type>
+	            <contents>scripts/properties.js</contents>
+	        </resource>
+	        <resource>
+	            <type>cssFile</type>
+	            <contents>styles/properties.css</contents>
+	        </resource>
+	    </resources>
+	    
 	    <actionJavaScript>
 	        <![CDATA[
 

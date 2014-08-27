@@ -76,6 +76,7 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, use
 	
 	</script>	
 	<link rel="stylesheet" type="text/css" href="styles/designer.css"></link>
+	<link rel="stylesheet" type="text/css" href="styles/properties.css"></link>
 <%
 	} else {
 %>
