@@ -237,12 +237,16 @@ this.parentControl.childControls.push(new Control("slidePanelPane", this.parentC
 // get the pane id
 var paneId = this.object.attr("data-pane");
 // get the pane
-var pane = this.parentControl.object.find("#" + paneId);	     
+var pane = this.parentControl.object.find("#" + paneId);	 
+// get the pageCover
+var pageCover = this.parentControl.object.find(".slidePanelCover");    
 // check the visibilty property   
 if (this.visible) {
 	pane.show();
+	pageCover.show();
 } else {
 	pane.hide();
+	pageCover.hide();
 }
 	        ]]>
 	    </rebuildJavaScript>	
@@ -271,16 +275,40 @@ this.object.remove();
 	    
 	   	<initDesignJavaScript>
 	        <![CDATA[
+
+// get a reference to the body
+var body = _page.object;
+// get the pageCover
+var pageCover = body.find(".slidePanelCover");
+// if we don't have one
+if (!pageCover[0]) {
+	// add one
+	body.append("<div class='slidePanelCover'></div>");
+	// set the reference
+	pageCover = body.find(".slidePanelCover");
+	// get a reference to the window
+	var win = $(window);
+	// size the cover
+	pageCover.css({
+    	width : win.width(),
+       	height : win.height()
+    });
+}
+        
 // a function for applying the correct classes to the opener	        
 function setPanelClasses(slidePanel) {	        
 	// add/remove classes
 	if (slidePanel.visible) {
 		slidePanel.object.addClass("slidePanelOpen");
 		slidePanel.object.removeClass("slidePanelClosed");
+		$("body").find(".slidePanelCover").show();
 	} else {
 		slidePanel.object.addClass("slidePanelClosed");
 		slidePanel.object.removeClass("slidePanelOpen");
+		$("body").find(".slidePanelCover").hide();
 	}
+	// update html
+	rebuildHtml(slidePanel);
 }
 
 // a mousedown for toggling and reapplying the classes		        
@@ -290,9 +318,7 @@ this.object.mousedown( {slidePanel : this}, function(ev) {
 	// toggle visibility
 	slidePanel.visible = !slidePanel.visible
 	// add/remove classes
-	setPanelClasses(slidePanel);
-	// update html
-	rebuildHtml(slidePanel);
+	setPanelClasses(slidePanel);	
 });       
 
 // initial application of classes
@@ -401,6 +427,24 @@ slidePanel.click({width: slidePanelPane.css("width"),left: slidePanelPane.css("m
 		pageCover.show();
 	}
 });	        
+
+// add the cover listener
+pageCover.click({width: slidePanelPane.css("width"),left: slidePanelPane.css("margin-left")}, function(ev){
+	// get the stored width
+	var width = ev.data.width
+	// get any existing left margin
+	var left = ev.data.left;
+	// animate off-screen
+	slidePanelPane.animate({"margin-left": "-" + width}, 500, function() {
+		// hide when complete
+		slidePanelPane.hide();
+		// toggle open closed
+		slidePanel.removeClass("slidePanelOpen");
+		slidePanel.addClass("slidePanelClosed");	
+		// hide the page cover
+		pageCover.hide();		
+	});
+});
 	        ]]>	        	       	        
 	    </initJavaScript>
 	    	    	    	            	    	    	        	    	    

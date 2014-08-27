@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<application>
+    <actionTypes>custom</actionTypes>
+    <actionTypes>database</actionTypes>
+    <actionTypes>dataCopy</actionTypes>
+    <actionTypes>existing</actionTypes>
+    <actionTypes>navigate</actionTypes>
+    <actionTypes>validation</actionTypes>
+    <actionTypes>webservice</actionTypes>
+    <controlTypes>button</controlTypes>
+    <controlTypes>checkbox</controlTypes>
+    <controlTypes>dataStore</controlTypes>
+    <controlTypes>date</controlTypes>
+    <controlTypes>dropdown</controlTypes>
+    <controlTypes>grid</controlTypes>
+    <controlTypes>hints</controlTypes>
+    <controlTypes>image</controlTypes>
+    <controlTypes>input</controlTypes>
+    <controlTypes>link</controlTypes>
+    <controlTypes>page</controlTypes>
+    <controlTypes>pagePanel</controlTypes>
+    <controlTypes>panel</controlTypes>
+    <controlTypes>radiobuttons</controlTypes>
+    <controlTypes>slidePanel</controlTypes>
+    <controlTypes>table</controlTypes>
+    <controlTypes>tabGroup</controlTypes>
+    <controlTypes>text</controlTypes>
+    <createdBy>admin</createdBy>
+    <createdDate>2014-08-27T10:45:44.906+01:00</createdDate>
+    <databaseConnections>
+        <connectionAdapterClass>com.rapid.data.SimpleConnectionAdapter</connectionAdapterClass>
+        <connectionString>jdbc:sqlite:WebContent/WEB-INF/database/rapidsample.db</connectionString>
+        <driverClass>com.mysql.jdbc.Driver</driverClass>
+        <name>Demo connection</name>
+        <password>N0Sgi3GcduE=</password>
+        <userName></userName>
+    </databaseConnections>
+    <description>This is a demonstration application provided to showcase many Rapid Mobile features</description>
+    <id>mobdemo</id>
+    <modifiedBy>admin</modifiedBy>
+    <modifiedDate>2014-08-27T12:06:15.958+01:00</modifiedDate>
+    <name>mobdemo</name>
+    <pageBackupsMaxSize>3</pageBackupsMaxSize>
+    <securityAdapterType>rapid</securityAdapterType>
+    <showActionIds>false</showActionIds>
+    <showControlIds>false</showControlIds>
+    <startPageId>P3</startPageId>
+    <styles>/*
+Styles saved here will be applied to all pages in the application
+*/
+
+body {
+  font-family : 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;
+  font-size : 13px;
+}
+
+.menuItem {
+  padding: 10px;
+  border-bottom: 1px solid black;
+  cursor: pointer;
+  background: -moz-linear-gradient(left,  rgba(0,0,0,0) 75%, rgba(0,0,0,0.25) 100%);
+  background: -webkit-gradient(linear, left top, right top, color-stop(75%,rgba(0,0,0,0)), color-stop(100%,rgba(0,0,0,0.25)));
+  background: -webkit-linear-gradient(left,  rgba(0,0,0,0) 75%,rgba(0,0,0,0.25) 100%);
+  background: -o-linear-gradient(left,  rgba(0,0,0,0) 75%,rgba(0,0,0,0.25) 100%);
+  background: -ms-linear-gradient(left,  rgba(0,0,0,0) 75%,rgba(0,0,0,0.25) 100%);
+  background: linear-gradient(to right,  rgba(0,0,0,0) 75%,rgba(0,0,0,0.25) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', endColorstr='#40000000',GradientType=1 );
+}
+
+.dialogueCover {
+  background-color : white;
+  opacity:0.7;
+  filter:alpha(opacity=70);
+}
+
+div.validation {
+ font-size: 12px;
+ margin: 10px 10px 10px 0px;
+ padding: 6px 10px 5px 25px;	
+ background: url(../../images/alert_16x16.png) 5px 5px no-repeat;
+ border: 1px solid red;
+ border-radius: 5px;
+ max-width: 200px;
+}
+
+input.validation {
+  border: 2px solid red;
+  border-radius: 5px;
+  box-shadow: 1px 1px 2px;
+}
+</styles>
+    <title>Rapid Mobile demonstration application</title>
+    <version>1</version>
+    <XMLVersion>1</XMLVersion>
+</application>

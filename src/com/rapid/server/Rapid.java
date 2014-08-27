@@ -63,7 +63,7 @@ public class Rapid extends RapidHttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	// these are held here and referred to globally
-	public static final String VERSION = "2.1.2";
+	public static final String VERSION = "2.2.1";
 	public static final String DESIGN_ROLE = "RapidDesign";
 	public static final String ADMIN_ROLE = "RapidAdmin";
 	public static final String SUPER_ROLE = "RapidSuper";
