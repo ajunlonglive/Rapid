@@ -92,6 +92,10 @@ if (gotAppAndPage && designerPermission) {
 	<link rel="stylesheet" type="text/css" href="applications/<%=rapidApp.getId()%>/<%=rapidPage.getName()%>.css"></link>	
 	<style type="text/css">
 	
+	html {
+		height: 100%;
+	}
+	
 	body {
 		transform-origin: 0 0;
 	}

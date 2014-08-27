@@ -217,8 +217,13 @@ function doUndo() {
 		// apply the undo
 		applyUndoRedo(page);				
 	}
-	// disable undo button if there's nothing more on the stack
-	if (_undo.length == 0) $("#undo").disable();
+	// if there's nothing more on the stack
+	if (_undo.length == 0) {
+		// disable undo button
+		$("#undo").disable();
+		// page can't be dirty either
+		_dirty = false;
+	}
 }
 
 // takes the most recent snapshot off the top of the redo stack and applies it
@@ -416,6 +421,8 @@ function sizeBorder(control) {
 		width = width * _scale * device.scale + 2;
 		height = height * _scale * device.scale + 2;
 	}
+	// if the width is greater than the screen reduce by width of border
+	if (width > $(window).width() - _panelPinnedOffset - _scrollBarWidth) width -= 8;
 	// size the selection border
 	_selectionBorder.css({
 		"width":width, // an extra pixel either side
@@ -427,10 +434,8 @@ function sizeBorder(control) {
 function positionBorder(x, y) {
 	// position the selection border
 	_selectionBorder.css({
-		position: "absolute",
-		left: x + _panelPinnedOffset + _mouseDownXOffset - 8 , // 8 = padding + border + 1 pixel	
-		top: y + _mouseDownYOffset - 8, // 8 = padding + border + 1 pixel
-		bottom: "auto"
+		left: x + _mouseDownXOffset - 8, // 8 = padding + border + 1 pixel	
+		top: y + _mouseDownYOffset - 8 // 8 = padding + border + 1 pixel
 	});		
 }
 
@@ -636,12 +641,9 @@ function selectControl(control) {
 						
 			// check if nonVisualControl and position the border
 			if (_selectedControl.object.is(".nonVisibleControl")) {
-				positionBorder(_selectedControl.object.offset().left - _panelPinnedOffset, _selectedControl.object.offset().top);
+				positionBorder(_selectedControl.object.offset().left, _selectedControl.object.offset().top);
 			} else {
-				// get the device
-				var device = _devices[_device];
-				// scale position
-				positionBorder(_selectedControl.object.offset().left * _scale * device.scale, _selectedControl.object.offset().top * _scale * device.scale);
+				positionBorder(_selectedControl.object.offset().left + _panelPinnedOffset, _selectedControl.object.offset().top);
 			}	
 			// size the border
 			sizeBorder(_selectedControl);
@@ -2333,7 +2335,7 @@ $(document).mousemove( function(ev) {
 			}
 			
 			// position the selection border
-			positionBorder(ev.pageX, ev.pageY);
+			positionBorder(ev.pageX + _panelPinnedOffset, ev.pageY);
 				
 			// if we got a control and it's allowed to be moved by the user (non-visual controls can be added but not moved so this way they remain with their parent control as the page)
 			if (c && _selectedControl._class.canUserMove) {
@@ -2352,7 +2354,7 @@ $(document).mousemove( function(ev) {
 					// if it's not possible to insert make the move thresholds half the width to cover the full object
 					if (!_movedoverControl._class.canUserInsert) moveThreshold = width/2;
 					// are we within the move threshold on the left or the right controls that can be moved, or in the middle with an addChildControl method?
-					if (_movedoverControl._class.canUserMove && ev.pageX - _panelPinnedOffset < _movedoverControl.object.offset().left * _scale * device.scale + moveThreshold) {
+					if (_movedoverControl._class.canUserMove && ev.pageX - _panelPinnedOffset < _movedoverControl.object.offset().left + moveThreshold) {
 						// position the insert left
 						_selectionMoveLeft.css({
 							"display": "block",
@@ -2364,7 +2366,7 @@ $(document).mousemove( function(ev) {
 						// make sure the other selections are hidden					
 						_selectionMoveRight.hide();
 						_selectionInsert.hide();
-					} else if (_movedoverControl._class.canUserMove && ev.pageX - _panelPinnedOffset > _movedoverControl.object.offset().left * _scale * device.scale + width - moveThreshold) {
+					} else if (_movedoverControl._class.canUserMove && ev.pageX - _panelPinnedOffset > _movedoverControl.object.offset().left + width - moveThreshold) {
 						// position the insert right
 						_selectionMoveRight.css({
 							"display": "block",
@@ -2468,19 +2470,12 @@ $(document).mouseup( function(ev) {
 		// hide the insert/moves
 		_selectionInsert.hide();
 		_selectionMoveLeft.hide();
-		_selectionMoveRight.hide();
-		// position the selection border			
-		_selectionBorder.css({
-			"left": _selectedControl.object.offset().left - 8 , // padding + border + 1 pixel	
-			"top": _selectedControl.object.offset().top - 8 // padding + border + 1 pixel
-		});		
-		// get the device
-		var device = _devices[_device];
+		_selectionMoveRight.hide();	
 		// check if nonVisualControl
 		if (_selectedControl.object.is(".nonVisibleControl")) {
-			positionBorder(_selectedControl.object.offset().left - _panelPinnedOffset, _selectedControl.object.offset().top);
+			positionBorder(_selectedControl.object.offset().left, _selectedControl.object.offset().top);
 		} else {
-			positionBorder(_selectedControl.object.offset().left * _scale * device.scale, _selectedControl.object.offset().top * _scale * device.scale);
+			positionBorder(_selectedControl.object.offset().left + _panelPinnedOffset, _selectedControl.object.offset().top);
 		}		
 		// size the border in case moving it has changed it's geometery
 		sizeBorder(_selectedControl);		
@@ -2566,29 +2561,6 @@ function showPropertiesPanel() {
 				
 }
 
-// gets the height of an object including any children that may have absoloute positioning
-function getAbsoluteHeight(o) {
-	// assume height is 0
-	var height = 0;
-	// get the children
-	var childElements = o.children();
-	// loop them
-	for (var i = 0; i < childElements.length; i++) {
-		// get the child
-		var c = $(childElements[i]);
-		// if position absoloute
-		if (c.css("position") == "absolute") {
-			// get the height from the child's children
-			height += getAbsoluteHeight(c);
-		} else {
-			// add the height normally
-			height += c.outerHeight(true);
-		}
-	}	
-	// return the greatest of calculated and reported height	
-	return Math.max(height, o.outerHeight(true));
-}
-
 // called whenever the page is resized
 function windowResize(ev) {
 	
@@ -2614,8 +2586,8 @@ function windowResize(ev) {
 			
 	// reset the page iFrame height so non-visual controls aren't too far down the page
 	_pageIframe.css("height","auto");
-	// set the iFrame height by it's contents
-	var iframeHeight = getAbsoluteHeight($(_pageIframe[0].contentWindow.document.body));
+	// get the iFrame height by it's contents
+	var iframeHeight = $(_pageIframe[0].contentDocument).height();
 		
 	// get its current height (less the combined top and bottom padding)
 	var controlPanelHeight = controlPanel.outerHeight(true);

@@ -309,7 +309,7 @@ function Init_slidePanel(id, details) {
   	// set the reference
   	pageCover = body.find(".slidePanelCover");
   	// get a reference to the window
-  	var win = $(window);
+  	var win = $(window);	
   	// size the cover
   	pageCover.css({
       	width : win.width(),
@@ -763,13 +763,36 @@ $(document).ready( function() {
 	
 	$(window).resize(function(ex) {
 	
-		var win = $(window);
-		
-		// resize the page cover
-		$(".slidePanelCover").css({
-       		width : win.width(),
-       		height : win.height()
-       	});
+		if (typeof(window.parent._pageIframe) === "undefined") {
+	
+			var win = $(window);
+			
+			// resize the page cover
+			$(".slidePanelCover").css({
+	       		width : win.width(),
+	       		height : win.height()
+	       	});
+	       	
+	    } else {
+	    
+	    	// get the page iframe
+	    	var _pageIframe = window.parent._pageIframe;
+	    	// get the scale
+	    	var _scale = window.parent._scale;
+	    	// get the devices
+	    	var _devices = window.parent._devices;
+	    	// get the device index
+	    	var _device =  window.parent._device;
+	    	// get the device
+	    	var device = _devices[_device];
+	    		    		    
+	    	// resize the page cover
+			$(".slidePanelCover").css({
+	       		width : _pageIframe.width() / _scale / device.scale,
+	       		height : _pageIframe.height() / _scale / device.scale
+	       	});
+	    
+	    }
        	      		
 	});
 	
