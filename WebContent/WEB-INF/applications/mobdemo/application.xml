@@ -30,7 +30,7 @@
     <databaseConnections>
         <connectionAdapterClass>com.rapid.data.SimpleConnectionAdapter</connectionAdapterClass>
         <connectionString>jdbc:sqlite:WebContent/WEB-INF/database/rapidsample.db</connectionString>
-        <driverClass>com.mysql.jdbc.Driver</driverClass>
+        <driverClass>org.sqlite.JDBC</driverClass>
         <name>Demo connection</name>
         <password>N0Sgi3GcduE=</password>
         <userName></userName>
@@ -38,7 +38,7 @@
     <description>This is a demonstration application provided to showcase many Rapid Mobile features</description>
     <id>mobdemo</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-08-27T12:06:15.958+01:00</modifiedDate>
+    <modifiedDate>2014-08-28T07:54:31.330+01:00</modifiedDate>
     <name>mobdemo</name>
     <pageBackupsMaxSize>3</pageBackupsMaxSize>
     <securityAdapterType>rapid</securityAdapterType>
