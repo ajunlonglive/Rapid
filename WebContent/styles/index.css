@@ -2,57 +2,161 @@ body {
 	font-family:arial;
 }	
 
-span {
-	font-size:36px;
-	font-weight:bold;
+@media (min-width: 520px) and (min-height: 400px) {
+
+	span {
+		font-size:36px;
+		font-weight:bold;
+	}
+	
+	div.image {
+		height: 100px;
+	}
+	
+	.image img {
+		position:absolute;
+		top:16px;
+		right:30px;
+		width:200px;
+		height:134px;
+	}
+	
+	div.title {
+		background-color:#ccc;
+		padding:40px;
+		margin: 10px 0px 10px 0px;
+	}
+	
+	.body {
+		padding: 20px 0px 0px 100px;
+	}
+	
+	.body img {
+	    vertical-align: middle;   
+	    width: 157px;
+		height: 135px;     
+		border: 1px solid black;
+	}
+	
+	.body a { 
+		display: inline-block; 
+		vertical-align: middle; 
+		padding: 50px;
+		font-size: 36px;
+		font-weight: bold;
+		color: black;
+	}
+	
+	.info {
+		padding: 20px 0px 0px 100px;
+	}
+	
+	.apps {
+		padding-left: 300px;
+	}
+	
+	.apps li {
+		padding: 10px;
+	}
+	
 }
 
-div.image {
-	height: 100px;
-}
-
-.image img {
-	position:absolute;
-	top:16px;
-	right:30px;
-	width:200px;
-	height:134px;
-}
-
-div.title {
-	background-color:#ccc;
-	padding:40px;
-	margin: 10px 0px 10px 0px;
-}
-
-.body {
-	padding: 20px 0px 0px 100px;
-}
-
-.body img {
-    vertical-align: middle;   
-    width: 157px;
-	height: 135px;     
-	border: 1px solid black;
-}
-
-.body a { 
-	display: inline-block; 
-	vertical-align: middle; 
-	padding: 50px;
-	font-size: 36px;
-	font-weight: bold;
-	color: black;
-}
-
-.info {
-	padding: 20px 0px 0px 100px;
-}
-
-.apps {
-	padding-left: 300px;
-}
-
-.apps li {
-	padding: 10px;
+@media (max-width: 519px), (max-height: 399px) {
+	
+	body {
+		font-size: 18px;		
+	}
+	
+	span {
+		font-size:24px;
+		font-weight:bold;
+	}
+	
+	table {
+		min-width: 280px;
+		margin-top:50px;
+		margin-left:auto; 
+    	margin-right:auto;
+	}
+	
+	input {
+		width: 200px;
+		padding: 5px;
+		font-size: 18px;
+	}
+		
+	p {
+		text-align: center;
+		max-width: 250px;
+		margin-left:auto; 
+    	margin-right:auto;
+	}
+	
+	button {
+		font-size: 18px;
+	}
+	
+	.title {
+		min-width: 280px;
+	}
+	
+	div.image {
+		height: 50px;
+	}
+	
+	.image img {
+		position:absolute;
+		top:17px;
+		right:20px;
+		width:100px;
+		height:67px;
+	}
+	
+	div.body {
+		margin-bottom: 50px;
+	}
+	
+	.body img {
+		width: 80px;
+		vertical-align: middle;
+		padding-bottom: 30px;
+	}
+	
+	.body a {
+		display: block; 
+		text-align: center;
+		vertical-align: middle; 
+		font-size: 30px;
+		font-weight: bold;
+		color: black;
+		margin-top: -80px;
+	}
+			
+	div.title {
+		background-color:#ccc;
+		padding:20px;
+		margin: 10px 0px 10px 0px;
+		text-align: center;
+	}
+	
+	.info {
+		margin-top:50px;
+		text-align: center;
+	}
+	
+	.info a {
+		color: black;
+	}
+	
+	ul {
+		list-style-type: none;
+		margin: 0;
+		padding: 5px;
+		text-align: center;
+	}
+	
+	li {
+		margin-top:20px;
+	}
+	
 }

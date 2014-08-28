@@ -109,7 +109,12 @@ var _nextPageId = 1;
 var _pasteMap = null;
 
 // a global object for the different devices we are supporting, typically for mobiles
-var _devices = [{name:"Full screen", ppi: 96, scale: 1 },{name:"HTC One X", width: 720, height: 1280, ppi: 312, scale: 2},{name:"HTC One M8", width: 1080, height: 1920, ppi: 441, scale: 3},{name:"Nexus 10", width: 1600, height: 2560, ppi: 300, scale: 2}];
+var _devices = [
+	{name:"Full screen", ppi: 96, scale: 1 },
+	{name:"HTC One X", width: 720, height: 1280, ppi: 312, scale: 2},
+	{name:"HTC One M8", width: 1080, height: 1920, ppi: 441, scale: 3},
+	{name:"Nexus 10", width: 1600, height: 2560, ppi: 300, scale: 2}
+];
 // a global for the ppi of the device we've loaded the designer in
 var _ppi = 96;
 // a global for the selected device index
