@@ -66,18 +66,18 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <name>Device</name>
 	            <setConstructValueFunction>return 0;</setConstructValueFunction>
 	            <changeValueJavaScript>device</changeValueJavaScript>	            
+	        </property>	        
+	        <property>
+	            <key>orientation</key>
+	            <name>Orientation</name>
+	            <setConstructValueFunction>return "P";</setConstructValueFunction>
+	            <changeValueJavaScript>orientation</changeValueJavaScript>	            
 	        </property>
 	        <property>
 	            <key>zoom</key>
 	            <name>Zoom</name>
 	            <setConstructValueFunction>return 1;</setConstructValueFunction>
 	            <changeValueJavaScript>zoom</changeValueJavaScript>	            
-	        </property>
-	        <property>
-	            <key>orientation</key>
-	            <name>Orientation</name>
-	            <setConstructValueFunction>return "P";</setConstructValueFunction>
-	            <changeValueJavaScript>orientation</changeValueJavaScript>	            
 	        </property>
 	    </properties>
 	    

@@ -88,6 +88,7 @@ if (gotAppAndPage && designerPermission) {
 
 	// add all of the required resource links
 	out.print(rapidPage.getResourcesHtml(rapidApp));	
+	
 %>
 	<link rel="stylesheet" type="text/css" href="applications/<%=rapidApp.getId()%>/<%=rapidPage.getName()%>.css"></link>	
 	<style type="text/css">

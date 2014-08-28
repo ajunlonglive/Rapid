@@ -779,17 +779,11 @@ $(document).ready( function() {
 	    	var _pageIframe = window.parent._pageIframe;
 	    	// get the scale
 	    	var _scale = window.parent._scale;
-	    	// get the devices
-	    	var _devices = window.parent._devices;
-	    	// get the device index
-	    	var _device =  window.parent._device;
-	    	// get the device
-	    	var device = _devices[_device];
 	    		    		    
 	    	// resize the page cover
 			$(".slidePanelCover").css({
-	       		width : _pageIframe.width() / _scale / device.scale,
-	       		height : _pageIframe.height() / _scale / device.scale
+	       		width : _pageIframe.width() / _scale,
+	       		height : _pageIframe.height() / _scale
 	       	});
 	    
 	    }
