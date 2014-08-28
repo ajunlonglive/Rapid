@@ -199,7 +199,7 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 					} else {
 						
 						// retain the authorisation attempt in the session
-						session.setAttribute("Message", "Your user name / login has not been recognised");
+						session.setAttribute("message", "Your user name / password has not been recognised");
 						
 						// send a redirect to load the login page
 						response.sendRedirect("login.jsp");

@@ -38,7 +38,7 @@
     <description>This is a demonstration application provided to showcase many Rapid Mobile features</description>
     <id>mobdemo</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-08-28T07:54:31.330+01:00</modifiedDate>
+    <modifiedDate>2014-08-28T13:31:43.970+01:00</modifiedDate>
     <name>mobdemo</name>
     <pageBackupsMaxSize>3</pageBackupsMaxSize>
     <securityAdapterType>rapid</securityAdapterType>
@@ -89,7 +89,7 @@ input.validation {
   box-shadow: 1px 1px 2px;
 }
 </styles>
-    <title>Rapid Mobile demonstration application</title>
+    <title>Rapid Mobile demo application</title>
     <version>1</version>
     <XMLVersion>1</XMLVersion>
 </application>

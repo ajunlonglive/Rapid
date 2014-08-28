@@ -37,13 +37,13 @@
     <description>This is a demonstration Rapid application provided to showcase many common Rapid features</description>
     <id>demo</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-08-27T11:34:48.118+01:00</modifiedDate>
+    <modifiedDate>2014-08-28T13:31:35.973+01:00</modifiedDate>
     <name>demo</name>
     <pageBackupsMaxSize>3</pageBackupsMaxSize>
     <securityAdapterType>rapid</securityAdapterType>
     <showActionIds>false</showActionIds>
     <showControlIds>false</showControlIds>
-    <startPageId>P3</startPageId>
+    <startPageId></startPageId>
     <styles>/*
 Styles saved here will be applied to all pages in the application
 */
@@ -76,7 +76,7 @@ input.validation {
   box-shadow: 1px 1px 2px;
 }
 </styles>
-    <title>Rapid demonstration application</title>
+    <title>Rapid demo application</title>
     <version>1</version>
     <webservices xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="sqlWebservice">
         <id>Samplewebservice</id>

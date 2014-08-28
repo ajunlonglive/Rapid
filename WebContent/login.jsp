@@ -27,7 +27,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-String message = (String) session.getAttribute("Message");
+String message = (String) session.getAttribute("message");
 
 %>
 <html>
@@ -61,7 +61,7 @@ String message = (String) session.getAttribute("Message");
 				<td>Password</td><td><input name="userPassword" type="password" /></td>
 			</tr>
 			<tr>
-				<td colspan="2" style="text-align:right;"><input type="submit" value="log in"></td>
+				<td colspan="2" style="text-align:right;"><button type="submit">Log in</button></td>
 			</tr>		
 		</table>
 	</form>
