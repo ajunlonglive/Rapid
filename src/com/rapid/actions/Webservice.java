@@ -36,6 +36,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -90,6 +91,9 @@ public class Webservice extends Action {
 		}
 				
 	}
+	
+	// static variables
+	private static Logger _logger = Logger.getLogger(Webservice.class);
 	
 	// instance variables
 	
@@ -378,6 +382,8 @@ public class Webservice extends Action {
 	@Override
 	public JSONObject doAction(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, JSONObject jsonAction) throws Exception {
 		
+		_logger.trace("Webservice action : " + jsonAction);
+		
 		// get the application
 		Application application = rapidRequest.getApplication();
 		
@@ -401,6 +407,9 @@ public class Webservice extends Action {
 				
 			// if an action cache was found
 			if (actionCache != null) {
+				
+				// log that we found action cache
+				_logger.debug("Webservice action cache found");
 				
 				// attempt to fetch data from the cache
 				jsonData = actionCache.get(application.getId(), getId(), jsonInputs.toString());
@@ -484,18 +493,31 @@ public class Webservice extends Action {
 					
 					if (actionCache != null) actionCache.put(application.getId(), getId(), jsonInputs.toString(), jsonData);
 					
+					response.close();
+					
 				} else {
+					
+					InputStream response = connection.getErrorStream();
+					
+					BufferedReader rd  = new BufferedReader( new InputStreamReader(response));
+					
+					String errorMessage = rd.readLine();
+					
+					rd.close();
+					
+					// log the error
+					_logger.error(errorMessage);
 					
 					// only if there is no application cache show the error, otherwise it sends an empty response
 					if (actionCache == null) {
-					
-						InputStream response = connection.getErrorStream();
+														        
+						throw new JSONException(" response code " + responseCode + " from server : " + errorMessage);
 						
-						BufferedReader rd  = new BufferedReader( new InputStreamReader(response));
-			        
-						throw new JSONException(" response code " + responseCode + " from server : " + rd.readLine());
+					} else {
 						
-					} 
+						_logger.debug("Error not shown to user due to cache : " + errorMessage);
+						
+					}
 																		
 				}
 				

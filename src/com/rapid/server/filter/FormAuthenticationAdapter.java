@@ -55,14 +55,20 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 		
 	@Override
 	public ServletRequest process(ServletRequest req, ServletResponse res) throws IOException, ServletException {
-						
+			
+		// cast the ServletRequest to a HttpServletRequest
 		HttpServletRequest request = (HttpServletRequest) req;
 		
-		String requestPath = request.getServletPath();
+		// log the full request
+		_logger.trace("FormAuthenticationAdapter request : " + request.getRequestURL() + (request.getQueryString() == null ? "" : "?" + request.getQueryString()));
 		
-		if ("/".equals(requestPath) || requestPath.contains("login.jsp") || requestPath.contains("index.jsp") || requestPath.contains("design.jsp") || requestPath.contains("designpage.jsp") || requestPath.contains("/rapid") || requestPath.contains("/~")) {
+		// now get just the resource path
+		String requestPath = request.getServletPath();
+						
+		// if it's a resource that requires authentication
+		if (requestPath.contains("/~") || "/".equals(requestPath) || requestPath.contains("login.jsp") || requestPath.contains("index.jsp") || requestPath.contains("/rapid") || requestPath.contains("design.jsp") || requestPath.contains("designpage.jsp")  || requestPath.contains("/designer")) {
 			
-			_logger.trace("RapidAuthenticationAdapter invoked for " + requestPath);
+			_logger.trace("FormAuthenticationAdapter checking authorisation");
 			
 			String userName = null;
 			String userPassword = null;
@@ -79,7 +85,7 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 				
 				_logger.trace("No userName found in session");
 																				
-				// look for an authorisation attribute in the session
+				// look for a sessionRequestPath attribute in the session
 				String sessionRequestPath = (String) session.getAttribute("requestPath");
 				
 				// look in the request for the username
@@ -116,9 +122,10 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 						
 						// retain the request path less the leading /
 						String authorisationRequestPath = requestPath.substring(1);
+						// replace designpage.jsp with design.jsp to get us out of the parent
+						authorisationRequestPath = authorisationRequestPath.replace("designpage.jsp", "design.jsp");
 						// append the query string if there was one
-						if (request.getQueryString() != null) authorisationRequestPath += "?" + request.getQueryString(); 
-						
+						if (request.getQueryString() != null) authorisationRequestPath += "?" + request.getQueryString(); 						
 						// retain the request path in the session
 						session.setAttribute("requestPath", authorisationRequestPath);
 						
@@ -168,6 +175,17 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 						
 						// make the sessionRequest path the root just in case it was null (or login.jsp itself)
 						if (sessionRequestPath == null || "login.jsp".equals(sessionRequestPath)) sessionRequestPath = ".";
+												
+						// if we had a requestApp in the sessionRequestPath, go straight to the app
+						if (sessionRequestPath.indexOf("requestApp") > 0) {
+							// split the parts
+							String[] requestAppParts = sessionRequestPath.split("=");
+							// if we have a second part with the appId in it
+							if (requestAppParts.length > 1) {
+								// set the sessionRequestPath to the appId
+								sessionRequestPath = "~?a=" + requestAppParts[1];
+							}
+ 						}
 						
 						// remove the authorisation session attribute
 						session.setAttribute("requestPath", null);

@@ -753,22 +753,26 @@ public class Page {
     	StringBuilder stringBuilder = new StringBuilder();
     	    								
 		// this doctype is necessary (amongst other things) to stop the "user agent stylesheet" overriding styles
-		stringBuilder.append("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">");
+		stringBuilder.append("<!DOCTYPE html>\n");
 								
 		stringBuilder.append("<html>\n");
 		
 		stringBuilder.append("  <head>\n");
 		
+		stringBuilder.append("    <meta charset=\"utf-8\"/>\n");
+		
+		stringBuilder.append("    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no\" />\n");
+		
 		stringBuilder.append("    <title>" + _title + " - by Rapid</title>\n");
 		
 		// if you're looking for where the jquery link is added it's the first resource in the page.control.xml file		
-		stringBuilder.append(getResourcesHtml(application));
+		stringBuilder.append("    " + getResourcesHtml(application).trim().replace("\n", "\n    ") + "\n");
 		
 		// include the page's css file (generated when the page is saved)
-		stringBuilder.append("<link rel='stylesheet' type='text/css' href='applications/" + application.getId() +"/" + _name + ".css'></link>\n");
+		stringBuilder.append("    <link rel='stylesheet' type='text/css' href='applications/" + application.getId() +"/" + _name + ".css'></link>\n");
 		
 		// start building the inline js for the page				
-		stringBuilder.append("<script type='text/javascript'>\n\n");
+		stringBuilder.append("    <script type='text/javascript'>\n\n");
 										
 		// initialise our pageload lines collections
 		_pageloadLines = new ArrayList<String>();

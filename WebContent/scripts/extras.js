@@ -243,7 +243,7 @@ jQuery(function($) {
 
 });
 
-// if we're in Rapid Mobile 
+// override the much-used ajax call for both normal and Rapid Mobile 
 if (window["_rapidmobile"]) {
 	// direct ajax through the native code
 	if (_rapidmobile.ajax) $.ajax = function(a,b) { 
@@ -275,6 +275,36 @@ if (window["_rapidmobile"]) {
 			// run the error function with the message
 			a.error({responseText:ex},-1,ex);
 		}
+	}
+} else {
+	// retain the original JQuery ajax function
+	var ajax = $.ajax;
+	// substitute our own
+	$.ajax = function(url, settings) {
+		// retain original error handler
+		var error = url.error;
+		// override error
+		url.error = function(jqXHR, textStatus, errorThrown) {
+			// if this is a 401 (unauthorised) redirect the user to the login page and set requestApp so we'll come straight back
+			if (jqXHR.status == 401) {
+				// start with a basic login page url
+				var location = "login.jsp";
+				// if we're viewing an app we want to go back to it once logged in
+				if (window.location.href.indexOf("/~?a=") > -1) {
+					// look for an application parameter
+					var appId = $.getUrlVar("a");
+					// append escaped requestPath if there's an app
+					if (appId) location += "?requestApp=" + appId;
+				}				
+				// redirect to login page
+				window.location = location;
+			} else {
+				// call the original error
+				error(jqXHR, textStatus, errorThrown);
+			}
+		}
+		// call the original
+		ajax(url, settings);
 	}
 }
 

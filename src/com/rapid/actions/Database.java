@@ -31,6 +31,7 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,6 +47,7 @@ import com.rapid.data.DataFactory;
 import com.rapid.data.DataFactory.Parameters;
 import com.rapid.server.ActionCache;
 import com.rapid.server.RapidHttpServlet;
+import com.rapid.server.SOA;
 import com.rapid.server.RapidHttpServlet.RapidRequest;
 
 public class Database extends Action {
@@ -78,6 +80,9 @@ public class Database extends Action {
 		}
 				
 	}
+	
+	// static variables
+	private static Logger _logger = Logger.getLogger(Database.class);
 	
 	// instance variables
 	
@@ -364,6 +369,7 @@ public class Database extends Action {
 	public JSONObject doAction(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, JSONObject jsonAction) throws Exception {
 		
 		// This code could be optimised to only return required data, according to the outputs collection
+		_logger.trace("Database action : " + jsonAction);
 		
 		// fetch the application
 		Application application = rapidRequest.getApplication();
@@ -441,6 +447,9 @@ public class Database extends Action {
 				// if an action cache was found
 				if (actionCache != null) {
 					
+					// log that we found action cache
+					_logger.debug("Database action cache found");
+					
 					// attempt to fetch data from the cache
 					jsonData = actionCache.get(application.getId(), getId(), parameters.toString());
 					
@@ -467,7 +476,7 @@ public class Database extends Action {
 						sql = sql.trim();
 						
 						// check the verb
-						if (sql.toLowerCase().startsWith("select") || sql.toLowerCase().startsWith("width")) {
+						if (sql.toLowerCase().startsWith("select") || sql.toLowerCase().startsWith("with")) {
 							
 							// set readonly to true
 							df.setReadOnly(true);
@@ -561,10 +570,15 @@ public class Database extends Action {
 						df.close();
 						
 					} catch (Exception ex) {
+						
+						// log the error
+						_logger.error(ex);
 
 						// only throw if no action cache
-						if (actionCache != null) {
+						if (actionCache == null) {
 							throw ex;
+						} else {
+							_logger.debug("Error not shown to user due to cache : " + ex.getMessage());
 						}
 						
 					}
