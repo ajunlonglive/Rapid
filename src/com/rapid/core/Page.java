@@ -918,6 +918,8 @@ public class Page {
 		
 		// start building the inline js for the page				
 		stringBuilder.append("    <script type='text/javascript'>\n\n");
+		
+		stringBuilder.append("/*\n\n  This code is minified when in production\n\n*/\n\n");
 										
 		// initialise our pageload lines collections
 		_pageloadLines = new ArrayList<String>();
