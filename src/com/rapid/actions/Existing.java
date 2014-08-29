@@ -25,6 +25,9 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
 package com.rapid.actions;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.json.JSONObject;
 
 import com.rapid.core.Action;
@@ -36,25 +39,46 @@ import com.rapid.server.RapidHttpServlet;
 
 public class Existing extends Action {
 		
+	// a list of redundant actions (in this case just the one existing action we are referring to)
+	private List<String> _redundantActions;
+	
 	// constructors
 	
 	// used by jaxb
-	public Existing() { super(); }
+	public Existing() { 
+		super(); 
+	}
 	// used by designer
 	public Existing(RapidHttpServlet rapidServlet, JSONObject jsonAction) throws Exception { 
-		super(rapidServlet, jsonAction);				
+		super(rapidServlet, jsonAction);;
 	}
+		
+	// overridden methods
 	
-	// methods
+	@Override
+	public List<String> getRedundantActions() {
+		// if the list is still null
+		if (_redundantActions == null) {
+			// get the action id
+			String actionId = getProperty("action");
+			// check it
+			if (actionId != null) {
+				// instantiate if so
+				_redundantActions = new ArrayList<String>();
+				// add this actionId
+				_redundantActions.add(actionId);
+			}
+		}
+		// return the list we made on initialisation
+		return _redundantActions;
+	}
 	
 	@Override
 	public String getJavaScript(Application application, Page page, Control control) {
 		// get the action id
 		String actionId = getProperty("action");
 		// check we got something
-		if (actionId == null) {
-			return "";
-		} else {
+		if (actionId != null) {
 			// get the control for this action
 			Control actionControl = page.getActionControl(actionId);			
 			// if there is no control this is a page event
@@ -62,23 +86,37 @@ public class Existing extends Action {
 				// get the event
 				Event existingEvent = page.getActionEvent(actionId);
 				// if we got an existing event update the type name
-				if (existingEvent == null) {
-					return "";
-				} else {
-					// return
+				if (existingEvent != null) {
 					return "Event_" + existingEvent.getType() + "_" + page.getId() + "(ev)";
 				}								
 			} else {				
-				// get the action property
+				// get the action object
 				Action existingAction = page.getAction(actionId);
 				// check we got something
-				if (existingAction == null) {
-					return "";
-				} else {
-					return "Action_" + actionId + "(ev);";
-				}
-			}
-		}		
+				if (existingAction != null) {
+					// get its JavaScript
+					String existingJavaScript = existingAction.getJavaScript(application, page, actionControl);
+					// check we got some
+					if (existingJavaScript != null) {
+						// trim it
+						existingJavaScript = existingJavaScript.trim();
+						// check it contains something
+						if (!"".equals(existingJavaScript)) {
+							// check if there is redundancy avoidance on this action
+							if (existingAction.getAvoidRedundancy()) {
+								// return a redundancy avoiding call if so
+								return "Action_" + actionId + "(ev);";
+							} else {
+								// redundancy avoidance function will not be created return raw js 
+								return existingJavaScript;
+							}							
+						} // existingJavaScript != ""
+					} // existingJavaScript != null					
+				} // existingAction != null
+			} // actionControl == null
+		}
+		// return an empty string
+		return "";
 	}
 	
 }

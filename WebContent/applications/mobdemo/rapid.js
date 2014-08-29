@@ -615,7 +615,7 @@ function setData_grid(id, data, field, details) {
   				for (var j in details.columns) {
   					var style = "";
   					if (!details.columns[j].visible) style += "display:none;";
-  					if (details.columns[j].fieldStyle) style += details.columns[j].fieldStyle;
+  					if (details.columns[j].style) style += details.columns[j].style;
   					if (style) style = " style='" + style + "'";				
   					var cellObject = rowObject.append("<td" + style + ">" + ((columnMap[j]) ? row[columnMap[j]] : "") + "</td>").find("td:last");
   					if (details.columns[j].cellFunction) 

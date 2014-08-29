@@ -603,13 +603,13 @@ public class Application {
 		
 	// this function initialises the application when its first loaded, initialises the security adapter and builds the rapid.js and rapid.css files
 	public void initialise(ServletContext servletContext, boolean createResources) throws JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, InvocationTargetException, SecurityException, NoSuchMethodException, IOException {
-										
-		// initialise the resource includes collection
-		_resources = new Resources();
 		
 		// initialise the security adapter 
 		setSecurity(servletContext, _securityAdapterType);
 		
+		// initialise the resource includes collection
+		_resources = new Resources();
+						
 		// when importing an application we need to initialise but don't want the resource folders made in the old applications name
 		if (createResources) {
 			

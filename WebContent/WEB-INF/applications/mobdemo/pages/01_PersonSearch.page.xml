@@ -122,6 +122,10 @@
         <value>1</value>
     </entry>
     <entry>
+        <key>avoidRedundancy</key>
+        <value>false</value>
+    </entry>
+    <entry>
         <key>childActions</key>
         <value>[]</value>
     </entry>
@@ -145,6 +149,10 @@
         <field></field>
         <itemId>P3_C11_</itemId>
     </inputs>
+    <inputs>
+        <field></field>
+        <itemId>P3_C15_</itemId>
+    </inputs>
     <outputs>
         <field></field>
         <itemId>P3_C18_</itemId>
@@ -158,6 +166,7 @@ from people
 /* The ifnull function substitutes the wildcard character if forename is not provided */
 where lower(forename) like ifnull(lower(?),'%')||'%'
 and lower(surname) like lower(?)||'%'
+and strftime('%d/%m/%Y', birthday) like '%'||ifnull(?,'%')||'%'
 order by surname, birthday
 /* Return at most 20 rows */
 limit 20</SQL>
@@ -294,6 +303,10 @@ limit 20</SQL>
         <value>1</value>
     </entry>
     <entry>
+        <key>avoidRedundancy</key>
+        <value>false</value>
+    </entry>
+    <entry>
         <key>name</key>
         <value>Existing 21</value>
     </entry>
@@ -304,6 +317,10 @@ limit 20</SQL>
     <entry>
         <key>type</key>
         <value>existing</value>
+    </entry>
+    <entry>
+        <key>redundantActions</key>
+        <value>[&quot;P3_A20_&quot;]</value>
     </entry>
 </properties>
 <XMLVersion>1</XMLVersion>
@@ -431,6 +448,27 @@ limit 20</SQL>
                 <childControls>
                     <childControls>
                         <events>
+                            <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="existing">
+<properties>
+    <entry>
+        <key>id</key>
+        <value>P3_A23_</value>
+    </entry>
+    <entry>
+        <key>name</key>
+        <value>Existing 23</value>
+    </entry>
+    <entry>
+        <key>action</key>
+        <value>P3_A20_</value>
+    </entry>
+    <entry>
+        <key>type</key>
+        <value>existing</value>
+    </entry>
+</properties>
+<XMLVersion>1</XMLVersion>
+                            </actions>
                             <filter></filter>
                             <type>keyup</type>
                         </events>
@@ -548,7 +586,7 @@ if (target.closest(&quot;tr&quot;).index() == 0 || target.is(&quot;tbody&quot;))
 </entry>
 <entry>
     <key>details</key>
-    <value>{&quot;rowSelect&quot;:false,&quot;columns&quot;:[{&quot;field&quot;:&quot;id&quot;},{&quot;field&quot;:&quot;forename&quot;,&quot;visible&quot;:true},{&quot;field&quot;:&quot;surname&quot;,&quot;visible&quot;:true},{&quot;field&quot;:&quot;birthday&quot;,&quot;visible&quot;:true,&quot;fieldStyle&quot;:&quot;text-align:center;&quot;}],&quot;rowHover&quot;:false}</value>
+    <value>{&quot;rowSelect&quot;:false,&quot;columns&quot;:[{&quot;field&quot;:&quot;id&quot;},{&quot;field&quot;:&quot;forename&quot;,&quot;visible&quot;:true},{&quot;field&quot;:&quot;surname&quot;,&quot;visible&quot;:true},{&quot;field&quot;:&quot;birthday&quot;,&quot;style&quot;:&quot;text-align:center;&quot;,&quot;visible&quot;:true}],&quot;rowHover&quot;:false}</value>
 </entry>
 <entry>
     <key>name</key>
@@ -732,7 +770,7 @@ if (target.closest(&quot;tr&quot;).index() == 0 || target.is(&quot;tbody&quot;))
     <htmlBody>&lt;div id=&quot;P3_C1_&quot; class=&quot;pagepanel&quot;&gt;&lt;/div&gt;&lt;div id=&quot;P3_C22_&quot; class=&quot;panel&quot;&gt;Person search&lt;/div&gt;&lt;div id=&quot;P3_C9_&quot; class=&quot;panel&quot;&gt;&lt;table id=&quot;P3_C2_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P3_C3_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P3_C4_&quot; class=&quot;tabelCell&quot;&gt;First name&lt;/td&gt;&lt;td id=&quot;P3_C5_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P3_C10_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P3_C6_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P3_C7_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;&lt;td id=&quot;P3_C8_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P3_C11_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P3_C12_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P3_C13_&quot; class=&quot;tabelCell&quot;&gt;Date of birth&lt;/td&gt;&lt;td id=&quot;P3_C14_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P3_C15_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P3_C16_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P3_C17_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;div id=&quot;P3_C19_&quot; class=&quot;panel&quot;&gt;&lt;table id=&quot;P3_C18_&quot; class=&quot;grid&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td style=&quot;display:none;&quot;&gt;Id&lt;/td&gt;&lt;td&gt;First name&lt;/td&gt;&lt;td&gt;Surname&lt;/td&gt;&lt;td&gt;Date of birth&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;</htmlBody>
     <id>P3</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-08-29T05:56:29.900+01:00</modifiedDate>
+    <modifiedDate>2014-08-29T12:36:32.437+01:00</modifiedDate>
     <name>01_PersonSearch</name>
     <rolesHtml>
         <html>&lt;div id=&quot;P3_C1_&quot; class=&quot;pagepanel&quot;&gt;&lt;/div&gt;
