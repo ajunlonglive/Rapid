@@ -34,12 +34,13 @@ $(document).ready( function() {
 	
 	$(window).resize(function(ex) {
 	
+		var doc = $(document);
 		var win = $(window);
-		
+				
 		// resize the cover
 		$(".dialogueCover").css({
-       		width : win.width(),
-       		height : win.height()
+       		width : doc.width(),
+       		height : doc.height()
        	});
        	      	
        	// resize the dialogue
