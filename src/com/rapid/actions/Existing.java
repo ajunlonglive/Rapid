@@ -75,7 +75,7 @@ public class Existing extends Action {
 				if (existingAction == null) {
 					return "";
 				} else {
-					return existingAction.getJavaScript(application, page, actionControl);
+					return "Action_" + actionId + "(ev);";
 				}
 			}
 		}		

@@ -257,9 +257,15 @@ public class Database extends Action {
 						} else {
 							details = ", " + details;
 						}
+						
+						/*
 						js += "  var input" + i + " = getData_" + inputControl.getType() + "(ev,'" + inputControl.getId() + "'" + (field.length() > 0 ? ", '" + field + "'" : "") + details + ");\n";
 						js += "  if (input" + i + " === undefined) return false;\n";
 						js += "  data.inputs.push({id:'" + inputControl.getId() + "',value:input" + i;
+						*/
+						
+						js += "  data.inputs.push({id:'" + inputControl.getId() + "',value:getData_" + inputControl.getType() + "(ev,'" + inputControl.getId() + "'" + (field.length() > 0 ? ", '" + field + "'" : "") + details + ")";
+						
 						if (field.length() > 0) js += ",field:'" + field + "'";
 						js += "});\n";
 					}

@@ -908,7 +908,11 @@ function setData_grid(id, data, field, details) {
   				var row = data.rows[i];
   				var rowObject = control.append("<tr class='rowStyle" + (i % 2 + 1) + "'></tr>").find("tr:last");
   				for (var j in details.columns) {
-  					var cellObject = rowObject.append("<td style='" + (details.columns[j].visible ? "" : "display:none;") + details.columns[j].style + "'>" + ((columnMap[j]) ? row[columnMap[j]] : "") + "</td>").find("td:last");
+  					var style = "";
+  					if (!details.columns[j].visible) style += "display:none;";
+  					if (details.columns[j].fieldStyle) style += details.columns[j].fieldStyle;
+  					if (style) style = " style='" + style + "'";				
+  					var cellObject = rowObject.append("<td" + style + ">" + ((columnMap[j]) ? row[columnMap[j]] : "") + "</td>").find("td:last");
   					if (details.columns[j].cellFunction) 
   						details.columns[j].cellFunction.apply(cellObject,[id, data, field, details]);
   				}				

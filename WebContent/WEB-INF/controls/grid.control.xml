@@ -130,7 +130,12 @@ if (this.columns && this.columns.length > 0) {
 	details.columns = [];
 	for (var i in this.columns) {
 		var column = this.columns[i];
-		details.columns.push({field: column.field, style: column.fieldStyle, visible: column.visible, cellFunction: column.cellFunction});
+		var c = {};
+		if (column.visible) c.visible = column.visible;
+		if (column.field) c.field = column.field;
+		if (column.fieldStyle) c.fieldStyle = column.fieldStyle;		
+		if (column.cellFunction) c.cellFunction = column.cellFunction;		
+		details.columns.push(c);
 	}
 } 	        
 if (this.styles && this.styles.length > 0) {
@@ -207,7 +212,11 @@ if (data) {
 				var row = data.rows[i];
 				var rowObject = control.append("<tr class='rowStyle" + (i % 2 + 1) + "'></tr>").find("tr:last");
 				for (var j in details.columns) {
-					var cellObject = rowObject.append("<td style='" + (details.columns[j].visible ? "" : "display:none;") + details.columns[j].style + "'>" + ((columnMap[j]) ? row[columnMap[j]] : "") + "</td>").find("td:last");
+					var style = "";
+					if (!details.columns[j].visible) style += "display:none;";
+					if (details.columns[j].fieldStyle) style += details.columns[j].fieldStyle;
+					if (style) style = " style='" + style + "'";				
+					var cellObject = rowObject.append("<td" + style + ">" + ((columnMap[j]) ? row[columnMap[j]] : "") + "</td>").find("td:last");
 					if (details.columns[j].cellFunction) 
 						details.columns[j].cellFunction.apply(cellObject,[id, data, field, details]);
 				}				

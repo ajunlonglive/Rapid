@@ -162,7 +162,7 @@ order by surname, birthday
 /* Return at most 20 rows */
 limit 20</SQL>
 </query>
-<showLoading>false</showLoading>
+<showLoading>true</showLoading>
                             </actions>
                             <filter></filter>
                             <type>keyup</type>
@@ -548,7 +548,7 @@ if (target.closest(&quot;tr&quot;).index() == 0 || target.is(&quot;tbody&quot;))
 </entry>
 <entry>
     <key>details</key>
-    <value>{&quot;rowSelect&quot;:false,&quot;columns&quot;:[{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;id&quot;,&quot;visible&quot;:false,&quot;style&quot;:&quot;&quot;},{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;forename&quot;,&quot;visible&quot;:true,&quot;style&quot;:&quot;&quot;},{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;surname&quot;,&quot;visible&quot;:true,&quot;style&quot;:&quot;&quot;},{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;birthday&quot;,&quot;visible&quot;:true,&quot;style&quot;:&quot;text-align:center;&quot;}],&quot;rowHover&quot;:false}</value>
+    <value>{&quot;rowSelect&quot;:false,&quot;columns&quot;:[{&quot;field&quot;:&quot;id&quot;},{&quot;field&quot;:&quot;forename&quot;,&quot;visible&quot;:true},{&quot;field&quot;:&quot;surname&quot;,&quot;visible&quot;:true},{&quot;field&quot;:&quot;birthday&quot;,&quot;visible&quot;:true,&quot;fieldStyle&quot;:&quot;text-align:center;&quot;}],&quot;rowHover&quot;:false}</value>
 </entry>
 <entry>
     <key>name</key>
@@ -732,7 +732,7 @@ if (target.closest(&quot;tr&quot;).index() == 0 || target.is(&quot;tbody&quot;))
     <htmlBody>&lt;div id=&quot;P3_C1_&quot; class=&quot;pagepanel&quot;&gt;&lt;/div&gt;&lt;div id=&quot;P3_C22_&quot; class=&quot;panel&quot;&gt;Person search&lt;/div&gt;&lt;div id=&quot;P3_C9_&quot; class=&quot;panel&quot;&gt;&lt;table id=&quot;P3_C2_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P3_C3_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P3_C4_&quot; class=&quot;tabelCell&quot;&gt;First name&lt;/td&gt;&lt;td id=&quot;P3_C5_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P3_C10_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P3_C6_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P3_C7_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;&lt;td id=&quot;P3_C8_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P3_C11_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P3_C12_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P3_C13_&quot; class=&quot;tabelCell&quot;&gt;Date of birth&lt;/td&gt;&lt;td id=&quot;P3_C14_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P3_C15_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P3_C16_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P3_C17_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;div id=&quot;P3_C19_&quot; class=&quot;panel&quot;&gt;&lt;table id=&quot;P3_C18_&quot; class=&quot;grid&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td style=&quot;display:none;&quot;&gt;Id&lt;/td&gt;&lt;td&gt;First name&lt;/td&gt;&lt;td&gt;Surname&lt;/td&gt;&lt;td&gt;Date of birth&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;</htmlBody>
     <id>P3</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-08-27T16:03:37.655+01:00</modifiedDate>
+    <modifiedDate>2014-08-29T05:56:29.900+01:00</modifiedDate>
     <name>01_PersonSearch</name>
     <rolesHtml>
         <html>&lt;div id=&quot;P3_C1_&quot; class=&quot;pagepanel&quot;&gt;&lt;/div&gt;

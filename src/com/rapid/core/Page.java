@@ -632,6 +632,74 @@ public class Page {
     		}
     	}    	
     }
+    
+    private void getActions(StringBuilder stringBuilder, Application application, List<Control> controls)  throws JSONException {
+    	if (controls != null) {
+    		// if we're at the root
+    		if (controls.equals(_controls)) {    			
+    			// check for page events
+    			if (_events != null) {
+    				// loop page events
+        			for (Event event : _events) {
+        				// check there are actions
+    					if (event.getActions() != null) {
+    						if (event.getActions().size() > 0) {       							
+    							// loop the actions and produce the handling JavaScript
+        						for (Action action : event.getActions()) {        							
+        							// get the action client-side java script from the action object (it's generated there as it can contain values stored in the object on the server side)
+        							String actionJavaScript = action.getJavaScript(application, this, null).trim();
+        							// if non null
+        							if (actionJavaScript != null) {        								
+        								// only if what we got is not an empty string (once trimmmed)
+        								if (!("").equals(actionJavaScript)) {
+        									// open function
+                							stringBuilder.append("function Action_" + action.getId() + "(ev) {\n");
+                							// function code
+        									stringBuilder.append("  " + actionJavaScript.trim().replace("\n", "  \n") + "\n");
+        									// close function
+                    						stringBuilder.append("}\n\n");
+        								}        								
+        							}    							
+        						}        						
+    						}    						
+    					}
+        			}
+    			}    			
+    		}
+    		for (Control control : controls) {
+    			// check event actions
+    			if (control.getEvents() != null) {
+    				// loop events
+    				for (Event event : control.getEvents()) {
+    					// check there are actions
+    					if (event.getActions() != null) {
+    						if (event.getActions().size() > 0) {    							
+        						// loop the actions and produce the handling JavaScript
+        						for (Action action : event.getActions()) {
+        							// get the action client-side java script from the action object (it's generated there as it can contain values stored in the object on the server side)
+        							String actionJavaScript = action.getJavaScript(application, this, null).trim();
+        							// if non null
+        							if (actionJavaScript != null) {
+        								// only if what we got is not an empty string (once trimmmed)
+        								if (!("").equals(actionJavaScript)) {
+        									// open function
+                							stringBuilder.append("function Action_" + action.getId() + "(ev) {\n");
+                							// function code
+        									stringBuilder.append("  " + actionJavaScript.trim().replace("\n", "  \n") + "\n");
+        									// close function
+                    						stringBuilder.append("}\n\n");
+        								}
+        							}   							
+        						}
+    						}    						
+    					}
+    				}
+    			}
+    			// now call iteratively for child controls (of this [child] control, etc.)
+    			if (control.getChildControls() != null) getActions(stringBuilder, application, control.getChildControls());     				
+    		}
+    	}    	
+    }
             
     // build the event handling page JavaScript iteratively
     private void getEventHandlers(StringBuilder stringBuilder, Application application, List<Control> controls) throws JSONException {
@@ -667,7 +735,7 @@ public class Page {
         							// if non null
         							if (actionJavaScript != null) {
         								// only if what we got is not an empty string (once trimmmed)
-        								if (!("").equals(actionJavaScript)) stringBuilder.append("    " + actionJavaScript.trim().replace("\n", "    \n") + "\n");
+        								if (!("").equals(actionJavaScript)) stringBuilder.append("    Action_" + action.getId() + "(ev);\n");
         							}    							
         						}
         						// close the try/catch
@@ -709,7 +777,7 @@ public class Page {
         							// if non null
         							if (actionJavaScript != null) {
         								// only if what we got is not an empty string (once trimmmed)
-        								if (!("").equals(actionJavaScript)) stringBuilder.append("  " + actionJavaScript + "\n");
+        								if (!("").equals(actionJavaScript)) stringBuilder.append("    Action_" + action.getId() + "(ev);\n");
         							}    							
         						}
         						// close the try/catch
@@ -804,7 +872,10 @@ public class Page {
 		// end of page loaded function
 		stringBuilder.append("});\n\n");
 		
-		// add event handlers
+		// add actions, staring at the root controls
+		getActions(stringBuilder, application, _controls);
+				
+		// add event handlers, staring at the root controls
 		getEventHandlers(stringBuilder, application, _controls);
 					
 		// close the page inline script block
