@@ -1,5 +1,5 @@
 
-/* This file is auto-generated on application load and save */
+/* This file is auto-generated on application load and save - it is minified when in production */
 
 
 /* Action methods */

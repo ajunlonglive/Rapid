@@ -750,7 +750,7 @@ public class Application {
 			FileOutputStream fos = new FileOutputStream (applicationPath + "/rapid.js");
 			PrintStream ps = new PrintStream(fos);
 			
-			ps.print("\n/* This file is auto-generated on application load and save */\n");
+			ps.print("\n/* This file is auto-generated on application load and save - it is minified when in production */\n");
 			ps.print("\n\n/* Action methods */\n\n");
 			ps.print(actionJS.toString());
 			ps.print("\n\n/* Control initialise methods */\n\n");
