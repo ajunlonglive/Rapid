@@ -245,6 +245,9 @@ jQuery(function($) {
 
 // override the much-used ajax call for both normal and Rapid Mobile 
 if (window["_rapidmobile"]) {
+	
+	console.log("Rapid Mobile detected");
+	
 	// direct ajax through the native code
 	if (_rapidmobile.ajax) $.ajax = function(a,b) { 
 		try {
