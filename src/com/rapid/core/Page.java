@@ -53,11 +53,13 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
+import com.rapid.core.Application.Backup;
 import com.rapid.core.Application.Resource;
 import com.rapid.security.SecurityAdapater.User;
 import com.rapid.server.Rapid;
 import com.rapid.server.RapidHttpServlet;
 import com.rapid.server.RapidHttpServlet.RapidRequest;
+import com.rapid.utils.Comparators;
 import com.rapid.utils.Files;
 import com.rapid.utils.XML;
 
@@ -210,6 +212,7 @@ public class Page {
 	// constructor
 	
 	public Page() {
+		// set the xml version
 		_xmlVersion = XML_VERSION;
 	};
 		
@@ -307,6 +310,67 @@ public class Page {
 		}
 		// uses the tree walking function above to the find a particular action
 		return getChildControlAction(_controls, id);
+	}
+	
+	// recursively append to a list of actions
+	public void getChildActions(List<Action> actions, Control control) {
+		// check this control has events
+		if (control.getEvents() != null) {
+			for (Event event : control.getEvents()) {
+				// add any actions to the list
+				if (event.getActions() != null) actions.addAll(event.getActions());
+			}
+		}	
+		// check if we have any child controls
+		if (control.getChildControls() != null) {
+			// loop the child controls
+			for (Control childControl : control.getChildControls()) {
+				// add their actions too
+				getChildActions(actions, childControl);
+			}
+		}
+	}
+	
+	// get all actions in the page
+	public List<Action> getActions() {
+		// instantiate the list we're going to return
+		List<Action> actions = new ArrayList<Action>();
+		// check the page events first
+		if (_events != null) {
+			for (Event event : _events) {
+				// add all event actions if not null
+				if (event.getActions() != null) actions.addAll(event.getActions());
+			}
+		}		
+		// uses the tree walking function above to add all actions
+		if (_controls != null) {
+			for (Control control : _controls) {
+				getChildActions(actions, control);
+			}
+		}		
+		// sort them by action id
+		Collections.sort(actions, new Comparator<Action>() {
+			@Override
+			public int compare(Action obj1, Action obj2) {
+				if (obj1 == null) return -1;
+				if (obj2 == null) return 1;
+				if (obj1.equals(obj2)) return 0;
+				String id1 = obj1.getId();
+				String id2 = obj2.getId();
+				if (id1 == null) return -1;
+				if (id2 == null) return -1;
+				id1 = id1.replace("_", "");
+				id2 = id2.replace("_", "");
+				int pos = id1.indexOf("A");
+				if (pos < 0) return -1;
+				id1 = id1.substring(pos + 1);
+				pos = id2.indexOf("A");
+				if (pos < 0) return 1;
+				id2 = id2.substring(pos + 1);
+				return (Integer.parseInt(id1) - Integer.parseInt(id2));
+			}			
+		});
+		return actions;		
 	}
 	
 	// an iterative function for tree-walking child controls when searching for a specific action's control
@@ -445,7 +509,7 @@ public class Page {
 			} 
 		}
 	}
-		
+				
 	public String getStylesFile() {
 		// the stringbuilder we're going to use
 		StringBuilder stringBuilder = new StringBuilder();
@@ -699,98 +763,111 @@ public class Page {
     			if (control.getChildControls() != null) getActions(stringBuilder, application, control.getChildControls());     				
     		}
     	}    	
+    	    	
+    }
+    
+    private void getEventJavaScriptFunction(StringBuilder stringBuilder, Application application, Control control, Event event) {
+    	// check actions are initialised
+		if (event.getActions() != null) {
+			// check there are some to loop
+			if (event.getActions().size() > 0) {				
+				// create actions separately to avoid redundancy
+				StringBuilder actionStringBuilder = new StringBuilder();
+				StringBuilder eventStringBuilder = new StringBuilder();
+								
+				// start the function name
+				String functionName = "Event_" + event.getType() + "_";
+				// if this is the page (no control) use the page id, otherwise use the controlId
+				if (control == null) {
+					// append the page id
+					functionName += _id;
+				} else {					
+					// append the control id
+					functionName += control.getId();
+				}
+				
+				// create a function for running the actions for this controls events
+				eventStringBuilder.append("function " + functionName + "(ev) {\n");
+				// open a try/catch
+				eventStringBuilder.append("  try {\n");
+				
+				// get any filter javascript
+				String filter = event.getFilter();
+				// if we have any add it now
+				if (filter != null) {
+					// only bother if not an empty string
+					if (!"".equals(filter)) {
+						eventStringBuilder.append("    " + filter.trim().replace("\n", "    \n") + "\n");
+					}
+				}
+				
+				// loop the actions and produce the handling JavaScript
+				for (Action action : event.getActions()) {
+					// get the action client-side java script from the action object (it's generated there as it can contain values stored in the object on the server side)
+					String actionJavaScript = action.getJavaScript(application, this, control);
+					// if non null
+					if (actionJavaScript != null) {
+						// trim it to avoid tabs and line breaks that might sneak in
+						actionJavaScript = actionJavaScript.trim();
+						// only if what we got is not an empty string
+						if (!("").equals(actionJavaScript)) {
+							// if this action has been marked for redundancy avoidance 
+							if (action.getAvoidRedundancy()) {
+								// add the action function to the action stringbuilder so it's before the event
+								actionStringBuilder.append("function Action_" + action.getId() + "(ev) {\n" 
+								+ "  " + actionJavaScript.trim().replace("\n", "  \n") + "\n"
+								+ "}\n\n");	
+								// add an action function call to the event string builder
+								eventStringBuilder.append("    Action_" + action.getId() + "(ev);\n");																
+							} else {
+								// go straight into the event
+								eventStringBuilder.append("    " + actionJavaScript.trim().replace("\n", "\n    ") + "\n");
+							}													
+						}
+						
+					}    							
+				}
+				// close the try/catch
+				if (control == null) {
+					// page
+					eventStringBuilder.append("  } catch(ex) { alert('Error in page." + event.getType() + " event' + ex); }\n");
+				} else {
+					// control
+					eventStringBuilder.append("  } catch(ex) { alert('Error in " + event.getType() + " event for control " + control.getId() +  "' + ex); }\n");
+				}				
+				// close event function
+				eventStringBuilder.append("}\n\n");
+				
+				// add the action functions
+				stringBuilder.append(actionStringBuilder);
+				
+				// add the event function
+				stringBuilder.append(eventStringBuilder);
+			}    						
+		}
     }
             
     // build the event handling page JavaScript iteratively
     private void getEventHandlers(StringBuilder stringBuilder, Application application, List<Control> controls) throws JSONException {
-    	if (controls != null) {
-    		// if we're at the root
+    	// check there are some controls    			
+    	if (controls != null) {    		
+			// if we're at the root of the page
     		if (controls.equals(_controls)) {    			
     			// check for page events
     			if (_events != null) {
-    				// loop page events
-        			for (Event event : _events) {
-        				// check there are actions
-    					if (event.getActions() != null) {
-    						if (event.getActions().size() > 0) {
-    							// derive the function name
-    							String functionName = "Event_" + event.getType() + "_" + _id;
-    							// create a function for running the actions for this controls events
-        						stringBuilder.append("function " + functionName + "(ev) {\n");
-        						// open a try/catch
-        						stringBuilder.append("  try {\n");
-        						// get any filter javascript
-        						String filter = event.getFilter();
-        						// if we have any add it now
-        						if (filter != null) {
-        							// only bother if not an empty string
-        							if (!"".equals(filter)) {
-        								stringBuilder.append("    " + filter.trim().replace("\n", "    \n") + "\n");
-        							}
-        						}
-        						// loop the actions and produce the handling JavaScript
-        						for (Action action : event.getActions()) {
-        							// get the action client-side java script from the action object (it's generated there as it can contain values stored in the object on the server side)
-        							String actionJavaScript = action.getJavaScript(application, this, null).trim();
-        							// if non null
-        							if (actionJavaScript != null) {
-        								// only if what we got is not an empty string (once trimmmed)
-        								if (!("").equals(actionJavaScript)) stringBuilder.append("    Action_" + action.getId() + "(ev);\n");
-        							}    							
-        						}
-        						// close the try/catch
-        						stringBuilder.append("  } catch(ex) { alert('Error in " + functionName + " ' + ex); }\n");
-        						// close function
-        						stringBuilder.append("}\n\n");
-    						}    						
-    					}
-        			}
+    				// loop page events and get js functions
+        			for (Event event : _events) getEventJavaScriptFunction(stringBuilder, application, null, event);        			
     			}    			
     		}
     		for (Control control : controls) {
     			// check event actions
     			if (control.getEvents() != null) {
-    				// loop events
-    				for (Event event : control.getEvents()) {
-    					// check there are actions
-    					if (event.getActions() != null) {
-    						if (event.getActions().size() > 0) {
-    							// derive the function name
-    							String functionName = "Event_" + event.getType() + "_" + control.getId();
-    							// create a function for running the actions for this controls events
-        						stringBuilder.append("function " + functionName + "(ev) {\n");
-        						// open a try/catch
-        						stringBuilder.append("  try {\n");
-        						// get any filter javascript
-        						String filter = event.getFilter();
-        						// if we have any add it now
-        						if (filter != null) {
-        							// only bother if not an empty string
-        							if (!"".equals(filter)) {
-        								stringBuilder.append("    " + filter.trim().replace("\n", "    \n") + "\n");
-        							}
-        						}
-        						// loop the actions and produce the handling JavaScript
-        						for (Action action : event.getActions()) {
-        							// get the action client-side java script from the action object (it's generated there as it can contain values stored in the object on the server side)
-        							String actionJavaScript = action.getJavaScript(application, this, control).trim();
-        							// if non null
-        							if (actionJavaScript != null) {
-        								// only if what we got is not an empty string (once trimmmed)
-        								if (!("").equals(actionJavaScript)) stringBuilder.append("    Action_" + action.getId() + "(ev);\n");
-        							}    							
-        						}
-        						// close the try/catch
-        						stringBuilder.append("  } catch(ex) { alert('Error in " + functionName + " ' + ex); }\n");
-        						// close function
-        						stringBuilder.append("}\n\n");
-    						}    						
-    					}
-    				}
+    				// loop page events and get js functions
+    				for (Event event : control.getEvents()) getEventJavaScriptFunction(stringBuilder, application, control, event);    					    				
     			}
     			// now call iteratively for child controls (of this [child] control, etc.)
     			if (control.getChildControls() != null) getEventHandlers(stringBuilder, application, control.getChildControls());     				
-    		}
+    		}    		 		
     	}    	
     }
 	
@@ -861,23 +938,39 @@ public class Page {
 		// open the page loaded function
 		stringBuilder.append("$(document).ready( function() {\n");
 		
-		// print them
-		for (String line : _pageloadLines) {
-			stringBuilder.append("  " + line);
-		}
-		
+		// print any page load lines such as initialising controls
+		for (String line : _pageloadLines) stringBuilder.append("  " + line);
+				
 		// show the page
 		stringBuilder.append("  $('body').show();\n");
 								
 		// end of page loaded function
 		stringBuilder.append("});\n\n");
 		
-		// add actions, staring at the root controls
-		getActions(stringBuilder, application, _controls);
-				
-		// add event handlers, staring at the root controls
-		getEventHandlers(stringBuilder, application, _controls);
-					
+		// find any redundant actions anywhere in the page, prior to generating JavaScript
+		List<Action> pageActions = getActions();
+		// only proceed if there are actions in this page
+		if (pageActions != null) {
+			// loop the list of actions
+			for (Action action : pageActions) {
+				// if this action adds redundancy to any others 
+				if (action.getRedundantActions() != null) {
+					// loop them
+					for (String actionId : action.getRedundantActions()) {
+						// try and find the action
+						Action redundantAction = getAction(actionId);
+						// if we got one
+						if (redundantAction != null) {
+							// update the redundancy avoidance flag
+							redundantAction.avoidRedundancy(true);
+						} 
+					}										
+				} // redundantActions != null
+			} // action loop			
+			// add event handlers, staring at the root controls
+			getEventHandlers(stringBuilder, application, _controls);
+		}
+																	
 		// close the page inline script block
 		stringBuilder.append("</script>\n");
 		

@@ -49,6 +49,8 @@ public abstract class Action {
 		
 	// all properties are stored here (allowing us to describe just in the .action.xml files)
 	protected HashMap<String,String> _properties;
+	// whether this actions JavaScript should be placed in its own reusable function
+	private boolean _avoidRedundancy;
 			
 	// the xml version is used to upgrade xml files before unmarshalling (we use a property so it's written ito xml)
 	public int getXMLVersion() { return _xmlVersion; }
@@ -57,12 +59,9 @@ public abstract class Action {
 	// properties
 	public HashMap<String,String> getProperties() { return _properties; }
 	public void setProperties(HashMap<String,String> properties) { _properties = properties; }
-		
+				
 	// these are some helper methods for common properties
-	public void addProperty(String key, String value) {
-		if (_properties == null) _properties = new HashMap<String,String>();
-		_properties.put(key, value); 
-	}
+	public void addProperty(String key, String value) {	_properties.put(key, value); }
 	// retrieves a specified property
 	public String getProperty(String key) { return _properties.get(key); }
 	// retrieves the action type
@@ -73,6 +72,14 @@ public abstract class Action {
 	// if any actions have success, fail, or other follow on actions this function must return them all
 	public List<Action> getChildActions() { return null; }	
 	
+	// returns whether this action has been marked for redundancy avoidance and a seperate JavaScript function and reusable calls will be created for it to avoid printing in the whole thing each time 
+	public boolean getAvoidRedundancy() { return _avoidRedundancy; }
+	// this doesn't start with set so it's not marshalled to the xml file
+	public void avoidRedundancy(boolean avoidRedundancy) { _avoidRedundancy = avoidRedundancy; }
+	
+	// if any actions run other actions return their id's when we generate the page JavaScript we will create a special action function which we will reuse to avoid redundantly recreating the js each time
+	public List<String> getRedundantActions() { return null; }	
+		
 	// this generates the clientside javascript for the action to happen (must be implemented as every action is kicked off from the client side [for now anyway])
 	public abstract String getJavaScript(Application application, Page page, Control control);
 
@@ -86,17 +93,26 @@ public abstract class Action {
 	public Action() {
 		// set the xml version
 		_xmlVersion = XML_VERSION;
+		// initialise properties
+		_properties = new HashMap<String,String>();
 	}
 	
 	// json constructor allowing properties to be sent in from the designer
 	public Action(RapidHttpServlet rapidServlet, JSONObject jsonAction) throws Exception {
 		// set the xml version
 		_xmlVersion = XML_VERSION;
+		// initialise properties
+		_properties = new HashMap<String,String>();
 		// save all key/values from the json into the properties 
 		for (String key : JSONObject.getNames(jsonAction)) {
 			// add all json properties to our properties
 			addProperty(key, jsonAction.get(key).toString());
 		}
+	}
+	
+	@Override
+	public String toString() {
+		return getClass().getName() + " - " + getId();
 	}
 	
 }

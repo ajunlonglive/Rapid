@@ -133,7 +133,7 @@ if (this.columns && this.columns.length > 0) {
 		var c = {};
 		if (column.visible) c.visible = column.visible;
 		if (column.field) c.field = column.field;
-		if (column.fieldStyle) c.fieldStyle = column.fieldStyle;		
+		if (column.fieldStyle) c.style = column.fieldStyle;		
 		if (column.cellFunction) c.cellFunction = column.cellFunction;		
 		details.columns.push(c);
 	}
@@ -214,7 +214,7 @@ if (data) {
 				for (var j in details.columns) {
 					var style = "";
 					if (!details.columns[j].visible) style += "display:none;";
-					if (details.columns[j].fieldStyle) style += details.columns[j].fieldStyle;
+					if (details.columns[j].style) style += details.columns[j].style;
 					if (style) style = " style='" + style + "'";				
 					var cellObject = rowObject.append("<td" + style + ">" + ((columnMap[j]) ? row[columnMap[j]] : "") + "</td>").find("td:last");
 					if (details.columns[j].cellFunction) 
