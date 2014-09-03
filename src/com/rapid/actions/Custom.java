@@ -50,14 +50,11 @@ public class Custom extends Action {
 		String javaScript = getProperty("javascript");
 		// if we have some javascript		
 		if (javaScript == null) {
+			// send an empty string if not
 			return "";
 		} else {
-			// get the name of what it's applied to (start with the page as the control can be null)
-			String name = "page \"" + page.getTitle() + "\"";
-			// if the control isn't null add it to the name too
-			if (control != null) name += " control \"" + control.getName() + "\"";
-			// send a the JavaScript wrapped in a try/catch
-			return "try {\n  " + javaScript.trim() + "\n  } catch (ex) { alert('Error with custom action from " + name + " : ' + ex); }\n";
+			// trim and send if so
+			return javaScript.trim();
 		}
 	}
 	

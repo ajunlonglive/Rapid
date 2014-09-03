@@ -81,39 +81,29 @@ public class Existing extends Action {
 		if (actionId != null) {
 			// get the control for this action
 			Control actionControl = page.getActionControl(actionId);			
-			// if there is no control this is a page event
-			if (actionControl == null) {
-				// get the event
-				Event existingEvent = page.getActionEvent(actionId);
-				// if we got an existing event update the type name
-				if (existingEvent != null) {
-					return "Event_" + existingEvent.getType() + "_" + page.getId() + "(ev)";
-				}								
-			} else {				
-				// get the action object
-				Action existingAction = page.getAction(actionId);
-				// check we got something
-				if (existingAction != null) {
-					// get its JavaScript
-					String existingJavaScript = existingAction.getJavaScript(application, page, actionControl);
-					// check we got some
-					if (existingJavaScript != null) {
-						// trim it
-						existingJavaScript = existingJavaScript.trim();
-						// check it contains something
-						if (!"".equals(existingJavaScript)) {
-							// check if there is redundancy avoidance on this action
-							if (existingAction.getAvoidRedundancy()) {
-								// return a redundancy avoiding call if so
-								return "Action_" + actionId + "(ev);";
-							} else {
-								// redundancy avoidance function will not be created return raw js 
-								return existingJavaScript;
-							}							
-						} // existingJavaScript != ""
-					} // existingJavaScript != null					
-				} // existingAction != null
-			} // actionControl == null
+			// get the action object
+			Action existingAction = page.getAction(actionId);
+			// check we got something
+			if (existingAction != null) {
+				// get its JavaScript
+				String existingJavaScript = existingAction.getJavaScript(application, page, actionControl);
+				// check we got some
+				if (existingJavaScript != null) {
+					// trim it
+					existingJavaScript = existingJavaScript.trim();
+					// check it contains something
+					if (!"".equals(existingJavaScript)) {
+						// check if there is redundancy avoidance on this action
+						if (existingAction.getAvoidRedundancy()) {
+							// return a redundancy avoiding call if so
+							return "Action_" + actionId + "(ev);";
+						} else {
+							// redundancy avoidance function will not be created return raw js 
+							return existingJavaScript;
+						}							
+					} // existingJavaScript != ""
+				} // existingJavaScript != null					
+			} // existingAction != null
 		}
 		// return an empty string
 		return "";

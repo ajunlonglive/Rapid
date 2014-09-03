@@ -24,8 +24,16 @@
             </entry>
         </properties>
         <styles>
+            <appliesTo>#P1_C12_</appliesTo>
+            <rules>cursor:pointer;</rules>
+            <rules>width:30px;</rules>
+            <rules>height:30px;</rules>
+            <rules>top:5px;</rules>
+            <rules>left:5px;</rules>
+        </styles>
+        <styles>
             <appliesTo>.slidePanelOpen</appliesTo>
-            <rules>margin-left:-15px;</rules>
+            <rules>margin-left:-20px;</rules>
         </styles>
         <XMLVersion>1</XMLVersion>
     </controls>
@@ -62,7 +70,7 @@
         </properties>
         <styles>
             <appliesTo>#P1_C11_</appliesTo>
-            <rules>height:32px;</rules>
+            <rules>height:50px;</rules>
             <rules>box-shadow:0px 5px #ccc;</rules>
             <rules>border-bottom:1px solid black;</rules>
             <rules>z-index:100;</rules>
@@ -296,15 +304,15 @@
         <filter></filter>
         <type>reusable</type>
     </events>
-    <htmlBody>&lt;div id=&quot;P1_C12_&quot; class=&quot;slidePanel slidePanelClosed&quot; data-pane=&quot;P1_C13_&quot;&gt;&lt;img src=&quot;images/controls/slidepanel/slidepanel_48x48.png&quot;&gt;&lt;/div&gt;&lt;div class=&quot;slidePanelCover&quot; style=&quot;display: none; width: 1042px; height: 1001px;&quot;&gt;&lt;/div&gt;&lt;div id=&quot;P1_C11_&quot; class=&quot;panel&quot;&gt;&lt;/div&gt;&lt;div id=&quot;P1_C13_&quot; class=&quot;slidePanelPane&quot; style=&quot;display: none;&quot; data-panel=&quot;P1_C12_&quot;&gt;&lt;div id=&quot;P1_C14_&quot; class=&quot;panel menuItem&quot;&gt;Person search&lt;/div&gt;&lt;div id=&quot;P1_C15_&quot; class=&quot;panel menuItem&quot;&gt;Address search&lt;/div&gt;&lt;div id=&quot;P1_C16_&quot; class=&quot;panel menuItem&quot;&gt;New person&lt;/div&gt;&lt;div id=&quot;P1_C17_&quot; class=&quot;panel menuItem&quot;&gt;New address&lt;/div&gt;&lt;/div&gt;</htmlBody>
+    <htmlBody>&lt;div id=&quot;P1_C12_&quot; class=&quot;slidePanel slidePanelClosed&quot; data-pane=&quot;P1_C13_&quot;&gt;&lt;img src=&quot;images/controls/slidepanel/slidepanel_48x48.png&quot;&gt;&lt;/div&gt;&lt;div class=&quot;slidePanelCover&quot; style=&quot;display: none; width: 359.84375000000006px; height: 640.0625px;&quot;&gt;&lt;/div&gt;&lt;div id=&quot;P1_C11_&quot; class=&quot;panel&quot;&gt;&lt;/div&gt;&lt;div id=&quot;P1_C13_&quot; class=&quot;slidePanelPane&quot; style=&quot;display: none;&quot; data-panel=&quot;P1_C12_&quot;&gt;&lt;div id=&quot;P1_C14_&quot; class=&quot;panel menuItem&quot;&gt;Person search&lt;/div&gt;&lt;div id=&quot;P1_C15_&quot; class=&quot;panel menuItem&quot;&gt;Address search&lt;/div&gt;&lt;div id=&quot;P1_C16_&quot; class=&quot;panel menuItem&quot;&gt;New person&lt;/div&gt;&lt;div id=&quot;P1_C17_&quot; class=&quot;panel menuItem&quot;&gt;New address&lt;/div&gt;&lt;/div&gt;</htmlBody>
     <id>P1</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-08-29T12:23:25.764+01:00</modifiedDate>
+    <modifiedDate>2014-08-30T17:50:25.832+01:00</modifiedDate>
     <name>Menu</name>
     <rolesHtml>
         <html>&lt;div id=&quot;P1_C12_&quot; class=&quot;slidePanel slidePanelClosed&quot; data-pane=&quot;P1_C13_&quot;&gt;
 		&lt;img src=&quot;images/controls/slidepanel/slidepanel_48x48.png&quot;&gt;&lt;/div&gt;
-		&lt;div class=&quot;slidePanelCover&quot; style=&quot;display: none; width: 1042px; height: 1001px;&quot;&gt;&lt;/div&gt;
+		&lt;div class=&quot;slidePanelCover&quot; style=&quot;display: none; width: 359.84375000000006px; height: 640.0625px;&quot;&gt;&lt;/div&gt;
 		&lt;div id=&quot;P1_C11_&quot; class=&quot;panel&quot;&gt;&lt;/div&gt;
 		&lt;div id=&quot;P1_C13_&quot; class=&quot;slidePanelPane&quot; style=&quot;display: none;&quot; data-panel=&quot;P1_C12_&quot;&gt;
 			&lt;div id=&quot;P1_C14_&quot; class=&quot;panel menuItem&quot;&gt;Person search&lt;/div&gt;

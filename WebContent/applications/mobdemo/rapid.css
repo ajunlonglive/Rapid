@@ -167,7 +167,21 @@ Styles saved here will be applied to all pages in the application
 
 body {
   font-family : 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;
-  font-size : 13px;
+  font-size : 18px;
+}
+
+input {
+	font-size: 18px;
+	padding: 8px;
+	border: 1px solid black;
+	border-radius: 10px;
+	box-shadow: inset -2px 2px 5px 0px #ccc; 
+	width: 90%;
+}
+
+.cellLabel {
+	font-size: 18px;
+	min-width: 120px;	
 }
 
 .menuItem {

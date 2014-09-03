@@ -1,16 +1,12 @@
 
 /* This file is auto-generated on page save */
 
-#P3_C1_ {
-	height:35px;
-}
-
 #P3_C22_ {
 	z-index:100;
 	position:absolute;
 	top:0;
 	left:0;
-	padding-top:7px;
+	padding-top:16px;
 	text-align:center;
 	width:100%;
 }
@@ -39,11 +35,13 @@
 }
 
 #P3_C18_ tr:first-child td {
-	padding:2px;
+	padding:6px;
 }
 
 #P3_C18_ tr:not(:first-child) td {
-	padding-left:5px;
+	padding-left:10px;
+	padding-top:5px;
+	padding-bottom:5px;
 }
 
 #P3_C18_ .rowStyle1 {
