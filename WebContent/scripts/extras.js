@@ -291,7 +291,7 @@ if (window["_rapidmobile"]) {
 			// if this is a 401 (unauthorised) redirect the user to the login page and set requestApp so we'll come straight back
 			if (jqXHR.status == 401) {
 				// start with a basic login page url
-				var location = "login.jsp";
+				var location = "/login.jsp";
 				// if we're viewing an app we want to go back to it once logged in
 				if (window.location.href.indexOf("/~?a=") > -1) {
 					// look for an application parameter

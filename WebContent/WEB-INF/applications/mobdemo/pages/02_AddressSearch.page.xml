@@ -66,7 +66,7 @@
             <rules>position:absolute;</rules>
             <rules>top:0;</rules>
             <rules>left:0;</rules>
-            <rules>padding-top:7px;</rules>
+            <rules>padding-top:16px;</rules>
             <rules>text-align:center;</rules>
             <rules>width:100%;</rules>
         </styles>
@@ -79,7 +79,7 @@
                     <properties>
                         <entry>
                             <key>classes</key>
-                            <value>[]</value>
+                            <value>[&quot;cellLabel&quot;]</value>
                         </entry>
                         <entry>
                             <key>id</key>
@@ -87,7 +87,7 @@
                         </entry>
                         <entry>
                             <key>text</key>
-                            <value>Street number</value>
+                            <value>Number</value>
                         </entry>
                         <entry>
                             <key>colSpan</key>
@@ -198,7 +198,7 @@
                     <properties>
                         <entry>
                             <key>classes</key>
-                            <value>[]</value>
+                            <value>[&quot;cellLabel&quot;]</value>
                         </entry>
                         <entry>
                             <key>id</key>
@@ -206,7 +206,7 @@
                         </entry>
                         <entry>
                             <key>text</key>
-                            <value>Flat / building</value>
+                            <value>Flat</value>
                         </entry>
                         <entry>
                             <key>colSpan</key>
@@ -321,7 +321,7 @@
                     <properties>
                         <entry>
                             <key>classes</key>
-                            <value>[]</value>
+                            <value>[&quot;cellLabel&quot;]</value>
                         </entry>
                         <entry>
                             <key>id</key>
@@ -444,7 +444,7 @@
                     <properties>
                         <entry>
                             <key>classes</key>
-                            <value>[]</value>
+                            <value>[&quot;cellLabel&quot;]</value>
                         </entry>
                         <entry>
                             <key>id</key>
@@ -567,7 +567,7 @@
                     <properties>
                         <entry>
                             <key>classes</key>
-                            <value>[]</value>
+                            <value>[&quot;cellLabel&quot;]</value>
                         </entry>
                         <entry>
                             <key>id</key>
@@ -746,10 +746,10 @@
         <filter></filter>
         <type>reusable</type>
     </events>
-    <htmlBody>&lt;div id=&quot;P2_C1_&quot; class=&quot;pagepanel&quot;&gt;&lt;/div&gt;&lt;div id=&quot;P2_C25_&quot; class=&quot;panel&quot;&gt;Address search&lt;/div&gt;&lt;div id=&quot;P2_C2_&quot; class=&quot;panel&quot;&gt;&lt;table id=&quot;P2_C3_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P2_C4_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C5_&quot; class=&quot;tabelCell&quot;&gt;Street number&lt;/td&gt;&lt;td id=&quot;P2_C6_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C7_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P2_C8_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C9_&quot; class=&quot;tabelCell&quot;&gt;Flat / building&lt;/td&gt;&lt;td id=&quot;P2_C10_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C11_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P2_C12_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C13_&quot; class=&quot;tabelCell&quot;&gt;Street&lt;/td&gt;&lt;td id=&quot;P2_C14_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C15_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P2_C16_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C17_&quot; class=&quot;tabelCell&quot;&gt;Town&lt;/td&gt;&lt;td id=&quot;P2_C18_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C19_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P2_C20_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C21_&quot; class=&quot;tabelCell&quot;&gt;Post code&lt;/td&gt;&lt;td id=&quot;P2_C22_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C23_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;</htmlBody>
+    <htmlBody>&lt;div id=&quot;P2_C1_&quot; class=&quot;pagepanel&quot;&gt;&lt;/div&gt;&lt;div id=&quot;P2_C25_&quot; class=&quot;panel&quot;&gt;Address search&lt;/div&gt;&lt;div id=&quot;P2_C2_&quot; class=&quot;panel&quot;&gt;&lt;table id=&quot;P2_C3_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P2_C4_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C5_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Number&lt;/td&gt;&lt;td id=&quot;P2_C6_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C7_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P2_C8_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C9_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Flat&lt;/td&gt;&lt;td id=&quot;P2_C10_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C11_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P2_C12_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C13_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Street&lt;/td&gt;&lt;td id=&quot;P2_C14_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C15_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P2_C16_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C17_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Town&lt;/td&gt;&lt;td id=&quot;P2_C18_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C19_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P2_C20_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C21_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Post code&lt;/td&gt;&lt;td id=&quot;P2_C22_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C23_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;</htmlBody>
     <id>P2</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-08-29T12:23:20.130+01:00</modifiedDate>
+    <modifiedDate>2014-08-30T17:53:29.683+01:00</modifiedDate>
     <name>02_AddressSearch</name>
     <rolesHtml>
         <html>&lt;div id=&quot;P2_C1_&quot; class=&quot;pagepanel&quot;&gt;&lt;/div&gt;
@@ -758,27 +758,27 @@
 		&lt;table id=&quot;P2_C3_&quot; class=&quot;table&quot;&gt;
 			&lt;tbody&gt;
 				&lt;tr id=&quot;P2_C4_&quot; class=&quot;tableRow&quot;&gt;
-					&lt;td id=&quot;P2_C5_&quot; class=&quot;tabelCell&quot;&gt;Street number&lt;/td&gt;
+					&lt;td id=&quot;P2_C5_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Number&lt;/td&gt;
 					&lt;td id=&quot;P2_C6_&quot; class=&quot;tabelCell&quot;&gt;
 						&lt;input id=&quot;P2_C7_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
 					&lt;/tr&gt;
 					&lt;tr id=&quot;P2_C8_&quot; class=&quot;tableRow&quot;&gt;
-						&lt;td id=&quot;P2_C9_&quot; class=&quot;tabelCell&quot;&gt;Flat / building&lt;/td&gt;
+						&lt;td id=&quot;P2_C9_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Flat&lt;/td&gt;
 						&lt;td id=&quot;P2_C10_&quot; class=&quot;tabelCell&quot;&gt;
 							&lt;input id=&quot;P2_C11_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
 						&lt;/tr&gt;
 						&lt;tr id=&quot;P2_C12_&quot; class=&quot;tableRow&quot;&gt;
-							&lt;td id=&quot;P2_C13_&quot; class=&quot;tabelCell&quot;&gt;Street&lt;/td&gt;
+							&lt;td id=&quot;P2_C13_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Street&lt;/td&gt;
 							&lt;td id=&quot;P2_C14_&quot; class=&quot;tabelCell&quot;&gt;
 								&lt;input id=&quot;P2_C15_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
 							&lt;/tr&gt;
 							&lt;tr id=&quot;P2_C16_&quot; class=&quot;tableRow&quot;&gt;
-								&lt;td id=&quot;P2_C17_&quot; class=&quot;tabelCell&quot;&gt;Town&lt;/td&gt;
+								&lt;td id=&quot;P2_C17_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Town&lt;/td&gt;
 								&lt;td id=&quot;P2_C18_&quot; class=&quot;tabelCell&quot;&gt;
 									&lt;input id=&quot;P2_C19_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
 								&lt;/tr&gt;
 								&lt;tr id=&quot;P2_C20_&quot; class=&quot;tableRow&quot;&gt;
-									&lt;td id=&quot;P2_C21_&quot; class=&quot;tabelCell&quot;&gt;Post code&lt;/td&gt;
+									&lt;td id=&quot;P2_C21_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Post code&lt;/td&gt;
 									&lt;td id=&quot;P2_C22_&quot; class=&quot;tabelCell&quot;&gt;
 										&lt;input id=&quot;P2_C23_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
 									&lt;/tr&gt;

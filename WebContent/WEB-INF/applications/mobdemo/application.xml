@@ -38,7 +38,7 @@
     <description>This is a demonstration application provided to showcase many Rapid Mobile features</description>
     <id>mobdemo</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-08-28T13:31:43.970+01:00</modifiedDate>
+    <modifiedDate>2014-08-31T05:47:24.542+01:00</modifiedDate>
     <name>mobdemo</name>
     <pageBackupsMaxSize>3</pageBackupsMaxSize>
     <securityAdapterType>rapid</securityAdapterType>
@@ -51,7 +51,21 @@ Styles saved here will be applied to all pages in the application
 
 body {
   font-family : 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;
-  font-size : 13px;
+  font-size : 18px;
+}
+
+input {
+	font-size: 18px;
+	padding: 8px;
+	border: 1px solid black;
+	border-radius: 10px;
+	box-shadow: inset -2px 2px 5px 0px #ccc; 
+	width: 90%;
+}
+
+.cellLabel {
+	font-size: 18px;
+	min-width: 120px;	
 }
 
 .menuItem {
