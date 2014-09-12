@@ -3,12 +3,12 @@
     <controls>
         <properties>
             <entry>
-                <key>classes</key>
-                <value>[]</value>
-            </entry>
-            <entry>
                 <key>id</key>
                 <value>P3_C1_</value>
+            </entry>
+            <entry>
+                <key>classes</key>
+                <value>[]</value>
             </entry>
             <entry>
                 <key>details</key>
@@ -27,6 +27,10 @@
                 <value>true</value>
             </entry>
         </properties>
+        <styles>
+            <appliesTo>#P3_C1_</appliesTo>
+            <rules>height:50px;</rules>
+        </styles>
         <XMLVersion>1</XMLVersion>
     </controls>
     <controls>
@@ -40,12 +44,12 @@
         </events>
         <properties>
             <entry>
-                <key>classes</key>
-                <value>[]</value>
-            </entry>
-            <entry>
                 <key>id</key>
                 <value>P3_C22_</value>
+            </entry>
+            <entry>
+                <key>classes</key>
+                <value>[]</value>
             </entry>
             <entry>
                 <key>text</key>
@@ -78,12 +82,12 @@
                 <childControls>
                     <properties>
                         <entry>
-                            <key>classes</key>
-                            <value>[&quot;cellLabel&quot;]</value>
-                        </entry>
-                        <entry>
                             <key>id</key>
                             <value>P3_C4_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[&quot;cellLabel&quot;]</value>
                         </entry>
                         <entry>
                             <key>text</key>
@@ -182,12 +186,12 @@ limit 20</SQL>
                         </events>
                         <properties>
                             <entry>
-<key>classes</key>
-<value>[]</value>
-                            </entry>
-                            <entry>
 <key>id</key>
 <value>P3_C10_</value>
+                            </entry>
+                            <entry>
+<key>classes</key>
+<value>[]</value>
                             </entry>
                             <entry>
 <key>name</key>
@@ -217,12 +221,12 @@ limit 20</SQL>
                     </childControls>
                     <properties>
                         <entry>
-                            <key>classes</key>
-                            <value>[]</value>
-                        </entry>
-                        <entry>
                             <key>id</key>
                             <value>P3_C5_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
                         </entry>
                         <entry>
                             <key>text</key>
@@ -245,12 +249,12 @@ limit 20</SQL>
                 </childControls>
                 <properties>
                     <entry>
-                        <key>classes</key>
-                        <value>[]</value>
-                    </entry>
-                    <entry>
                         <key>id</key>
                         <value>P3_C3_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
                     </entry>
                     <entry>
                         <key>type</key>
@@ -263,12 +267,12 @@ limit 20</SQL>
                 <childControls>
                     <properties>
                         <entry>
-                            <key>classes</key>
-                            <value>[]</value>
-                        </entry>
-                        <entry>
                             <key>id</key>
                             <value>P3_C7_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
                         </entry>
                         <entry>
                             <key>text</key>
@@ -338,12 +342,12 @@ limit 20</SQL>
                         </events>
                         <properties>
                             <entry>
-<key>classes</key>
-<value>[]</value>
-                            </entry>
-                            <entry>
 <key>id</key>
 <value>P3_C11_</value>
+                            </entry>
+                            <entry>
+<key>classes</key>
+<value>[]</value>
                             </entry>
                             <entry>
 <key>name</key>
@@ -373,12 +377,12 @@ limit 20</SQL>
                     </childControls>
                     <properties>
                         <entry>
-                            <key>classes</key>
-                            <value>[]</value>
-                        </entry>
-                        <entry>
                             <key>id</key>
                             <value>P3_C8_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
                         </entry>
                         <entry>
                             <key>text</key>
@@ -401,12 +405,12 @@ limit 20</SQL>
                 </childControls>
                 <properties>
                     <entry>
-                        <key>classes</key>
-                        <value>[]</value>
-                    </entry>
-                    <entry>
                         <key>id</key>
                         <value>P3_C6_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
                     </entry>
                     <entry>
                         <key>type</key>
@@ -419,12 +423,12 @@ limit 20</SQL>
                 <childControls>
                     <properties>
                         <entry>
-                            <key>classes</key>
-                            <value>[]</value>
-                        </entry>
-                        <entry>
                             <key>id</key>
                             <value>P3_C13_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
                         </entry>
                         <entry>
                             <key>text</key>
@@ -494,12 +498,12 @@ limit 20</SQL>
                         </events>
                         <properties>
                             <entry>
-<key>classes</key>
-<value>[]</value>
-                            </entry>
-                            <entry>
 <key>id</key>
 <value>P3_C15_</value>
+                            </entry>
+                            <entry>
+<key>classes</key>
+<value>[]</value>
                             </entry>
                             <entry>
 <key>name</key>
@@ -529,12 +533,12 @@ limit 20</SQL>
                     </childControls>
                     <properties>
                         <entry>
-                            <key>classes</key>
-                            <value>[]</value>
-                        </entry>
-                        <entry>
                             <key>id</key>
                             <value>P3_C14_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
                         </entry>
                         <entry>
                             <key>text</key>
@@ -557,12 +561,12 @@ limit 20</SQL>
                 </childControls>
                 <properties>
                     <entry>
-                        <key>classes</key>
-                        <value>[]</value>
-                    </entry>
-                    <entry>
                         <key>id</key>
                         <value>P3_C12_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
                     </entry>
                     <entry>
                         <key>type</key>
@@ -585,16 +589,16 @@ if (target.closest(&quot;tr&quot;).index() == 0 || target.is(&quot;tbody&quot;))
                             </events>
                             <properties>
 <entry>
-    <key>classes</key>
-    <value>[]</value>
+    <key>id</key>
+    <value>P3_C18_</value>
 </entry>
 <entry>
     <key>columnHeadings</key>
     <value>true</value>
 </entry>
 <entry>
-    <key>id</key>
-    <value>P3_C18_</value>
+    <key>classes</key>
+    <value>[]</value>
 </entry>
 <entry>
     <key>details</key>
@@ -648,12 +652,12 @@ if (target.closest(&quot;tr&quot;).index() == 0 || target.is(&quot;tbody&quot;))
                         </events>
                         <properties>
                             <entry>
-<key>classes</key>
-<value>[]</value>
-                            </entry>
-                            <entry>
 <key>id</key>
 <value>P3_C19_</value>
+                            </entry>
+                            <entry>
+<key>classes</key>
+<value>[]</value>
                             </entry>
                             <entry>
 <key>text</key>
@@ -674,12 +678,12 @@ if (target.closest(&quot;tr&quot;).index() == 0 || target.is(&quot;tbody&quot;))
                     </childControls>
                     <properties>
                         <entry>
-                            <key>classes</key>
-                            <value>[]</value>
-                        </entry>
-                        <entry>
                             <key>id</key>
                             <value>P3_C17_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
                         </entry>
                         <entry>
                             <key>text</key>
@@ -706,12 +710,12 @@ if (target.closest(&quot;tr&quot;).index() == 0 || target.is(&quot;tbody&quot;))
                 </childControls>
                 <properties>
                     <entry>
-                        <key>classes</key>
-                        <value>[]</value>
-                    </entry>
-                    <entry>
                         <key>id</key>
                         <value>P3_C16_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
                     </entry>
                     <entry>
                         <key>type</key>
@@ -722,12 +726,12 @@ if (target.closest(&quot;tr&quot;).index() == 0 || target.is(&quot;tbody&quot;))
             </childControls>
             <properties>
                 <entry>
-                    <key>classes</key>
-                    <value>[]</value>
-                </entry>
-                <entry>
                     <key>id</key>
                     <value>P3_C2_</value>
+                </entry>
+                <entry>
+                    <key>classes</key>
+                    <value>[]</value>
                 </entry>
                 <entry>
                     <key>type</key>
@@ -746,12 +750,12 @@ if (target.closest(&quot;tr&quot;).index() == 0 || target.is(&quot;tbody&quot;))
         </events>
         <properties>
             <entry>
-                <key>classes</key>
-                <value>[]</value>
-            </entry>
-            <entry>
                 <key>id</key>
                 <value>P3_C9_</value>
+            </entry>
+            <entry>
+                <key>classes</key>
+                <value>[]</value>
             </entry>
             <entry>
                 <key>text</key>
@@ -784,7 +788,7 @@ if (target.closest(&quot;tr&quot;).index() == 0 || target.is(&quot;tbody&quot;))
     <htmlBody>&lt;div id=&quot;P3_C1_&quot; class=&quot;pagepanel&quot;&gt;&lt;/div&gt;&lt;div id=&quot;P3_C22_&quot; class=&quot;panel&quot;&gt;Person search&lt;/div&gt;&lt;div id=&quot;P3_C9_&quot; class=&quot;panel&quot;&gt;&lt;table id=&quot;P3_C2_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P3_C3_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P3_C4_&quot; class=&quot;tabelCell cellLabel&quot;&gt;First name&lt;/td&gt;&lt;td id=&quot;P3_C5_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P3_C10_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P3_C6_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P3_C7_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;&lt;td id=&quot;P3_C8_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P3_C11_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P3_C12_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P3_C13_&quot; class=&quot;tabelCell&quot;&gt;Date of birth&lt;/td&gt;&lt;td id=&quot;P3_C14_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P3_C15_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P3_C16_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P3_C17_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;div id=&quot;P3_C19_&quot; class=&quot;panel&quot;&gt;&lt;table id=&quot;P3_C18_&quot; class=&quot;grid&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td style=&quot;display:none;&quot;&gt;Id&lt;/td&gt;&lt;td&gt;First name&lt;/td&gt;&lt;td&gt;Surname&lt;/td&gt;&lt;td&gt;Date of birth&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;</htmlBody>
     <id>P3</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-08-30T17:58:20.211+01:00</modifiedDate>
+    <modifiedDate>2014-09-09T16:13:41.658+01:00</modifiedDate>
     <name>01_PersonSearch</name>
     <rolesHtml>
         <html>&lt;div id=&quot;P3_C1_&quot; class=&quot;pagepanel&quot;&gt;&lt;/div&gt;

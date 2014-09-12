@@ -19,7 +19,7 @@ body {
 
 #P1_C11_ {
 	height:50px;
-	box-shadow:0px 5px #ccc;
+	box-shadow:0px 5px 5px #ccc;
 	border-bottom:1px solid black;
 	z-index:100;
 	background-color:white;
@@ -28,6 +28,6 @@ body {
 
 #P1_C13_ {
 	opacity:0.9;
-	box-shadow:5px 0px #ccc;
+	box-shadow:5px 0px 5px #ccc;
 }
 

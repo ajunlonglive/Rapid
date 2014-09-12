@@ -248,38 +248,62 @@ if (window["_rapidmobile"]) {
 	
 	console.log("Rapid Mobile detected");
 	
-	// direct ajax through the native code
-	if (_rapidmobile.ajax) $.ajax = function(a,b) { 
-		try {
-			// stringify the 2 parameters and send to the native code
-			var data = _rapidmobile.ajax(JSON.stringify(a),JSON.stringify(b));		
-			// if we got some
-			if (data) {
-				// check for error
-				if (data.indexOf('{"error":') == 0) {
-					alert(data);
-					// parse the error
-					var error = JSON.parse(data);			
-					// run the error function with the message and status
-					a.error({responseText:error.error},error.status,error.error);
-				} else {
-					// if the dataType was json parse the response back to an object
-					if (a.dataType == "json") data = JSON.parse(data);
-					// run the success function with the returned data
-					a.success(data);
-				}
-			} else {
-				// alert us that we're offline
-				alert("You're offline.");
-				// stop further actions
-				return false;
-			}
-		} catch (ex) {
-			// run the error function with the message
-			a.error({responseText:ex},-1,ex);
+	// retain the original JQuery ajax function
+	var ajax = $.ajax;
+	
+	// override it
+	$.ajax = function(settings) {
+		// the shouldInterceptRequest method only works for GET, so if there is data add it to the url
+		if (settings.data) {
+			// add data to the url
+			settings.url += "&data=" + encodeURIComponent(settings.data);
+			// remove it from the body
+			settings.data = null;
 		}
+		// retain the original success function
+		var success = settings.success;
+		// override it
+		settings.success = function(data, textStatus, jqXHR) {
+			// if there is a json object in the response
+			if (jqXHR.responseJSON) {
+				// if it contains an error object
+				if (jqXHR.responseJSON.error) {					
+					// get the error object
+					var error = jqXHR.responseJSON.error;
+					// check the status code
+					switch (error.status) {
+					case (401) :
+						// the user failed authentication show them a message in the ui
+						_rapidmobile.showMessage(error.responseText);
+						// bail
+						return false;
+					default :
+						// run the error function
+						settings.error(error, error.status, error.responseText);
+						// bail
+						return false;
+					}					
+				}
+			}
+			// run the original function if all good
+			success(data, textStatus, jqXHR);
+		}
+		// now run the original ajax with our modified settings
+		ajax(settings);
 	}
+		
+	// get page html function for saving
+	$.getSaveHtml = function() {
+		// explicity push each input val in as an attribute
+		$('input').each(function(){
+			$(this).attr('value', $(this).val());
+		});
+		// return the page html 
+		return "<!DOCTYPE html><html>" + $('html').html() + "</html>";
+	}
+	
 } else {
+	
 	// retain the original JQuery ajax function
 	var ajax = $.ajax;
 	// substitute our own
@@ -291,7 +315,7 @@ if (window["_rapidmobile"]) {
 			// if this is a 401 (unauthorised) redirect the user to the login page and set requestApp so we'll come straight back
 			if (jqXHR.status == 401) {
 				// start with a basic login page url
-				var location = "/login.jsp";
+				var location = "login.jsp";
 				// if we're viewing an app we want to go back to it once logged in
 				if (window.location.href.indexOf("/~?a=") > -1) {
 					// look for an application parameter
