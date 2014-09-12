@@ -56,6 +56,7 @@ import com.rapid.core.Page.RoleHtml;
 import com.rapid.security.SecurityAdapater;
 import com.rapid.security.SecurityAdapater.Role;
 import com.rapid.security.SecurityAdapater.User;
+import com.rapid.utils.Files;
 import com.rapid.utils.Html;
 
 public class Rapid extends RapidHttpServlet {
@@ -92,7 +93,7 @@ public class Rapid extends RapidHttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 										
 		getLogger().debug("Rapid GET request : " + request.getQueryString());
-						
+											
 		// whether we're rebulding the page for each request
     	boolean rebuildPages = Boolean.parseBoolean(getServletContext().getInitParameter("rebuildPages"));
 						
@@ -107,158 +108,186 @@ public class Rapid extends RapidHttpServlet {
 			// get the application object
 			Application app = rapidRequest.getApplication();
 			
-			// check if there is a Rapid action
-			if ("download".equals(rapidRequest.getActionName())) {
+			// check app exists
+			if (app == null) {
 				
-				// create the zip file
-				app.zip(this, rapidRequest, app.getId() + ".zip", true);
-				
-				// set the type as a .zip
-				response.setContentType("application/x-zip-compressed");
-				
-				// Shows the download dialog
-				response.setHeader("Content-disposition","attachment; filename=" + app.getId() + ".zip");
-														
-				// get the file for the zip we're about to create
-				File zipFile = new File(getServletContext().getRealPath("/WEB-INF/temp/" + app.getId() + ".zip"));
-				
-				// send the file to browser
-				OutputStream os = response.getOutputStream();
-				FileInputStream in = new FileInputStream(zipFile);
-				byte[] buffer = new byte[1024];
-				int length;
-				while ((length = in.read(buffer)) > 0){
-				  os.write(buffer, 0, length);
-				}
-				in.close();
-				os.flush();
-				
-			} else {
+				// set the status code
+				response.setStatus(404);
 				
 				// create a writer
 				PrintWriter out = response.getWriter();
-						
-				// get the page object
-				Page page = rapidRequest.getPage();
-						
-				// check we got one
-				if (page != null) {
+				
+				// write a friendly message
+				out.print("Application not found on this server");
+				
+				// close
+				out.close();
+				
+				//log
+				getLogger().debug("Rapid GET response : Application not found on this server");
+				
+			} else {
+			
+				// check if there is a Rapid action
+				if ("download".equals(rapidRequest.getActionName())) {
+									
+					// create the zip file
+					app.zip(this, rapidRequest, app.getId() + ".zip", true);
 					
-					if (rebuildPages) {
-						
-						// (re)generate the page start html
-						pageHtml = page.getStartHtml(rapidRequest.getApplication());
-						
-					} else {
+					// set the type as a .zip
+					response.setContentType("application/x-zip-compressed");
 					
-						// get any cached header html from the page object (this will regenerate and cache if not present)
-						pageHtml = page.getCachedStartHtml(rapidRequest.getApplication());
-												
+					// Shows the download dialog
+					response.setHeader("Content-disposition","attachment; filename=" + app.getId() + ".zip");
+															
+					// get the file for the zip we're about to create
+					File zipFile = new File(getServletContext().getRealPath("/WEB-INF/temp/" + app.getId() + ".zip"));
+					
+					// get it's size
+					long fileSize = Files.getSize(zipFile);
+					
+					// add size to response headers if small enough
+					if (fileSize < Integer.MAX_VALUE) response.setContentLength((int) fileSize);
+					
+					// send the file to browser
+					OutputStream os = response.getOutputStream();
+					FileInputStream in = new FileInputStream(zipFile);
+					byte[] buffer = new byte[1024];
+					int length;
+					while ((length = in.read(buffer)) > 0){
+					  os.write(buffer, 0, length);
 					}
+					in.close();
+					os.flush();
 					
-					// output the start of the page
-					out.print(pageHtml);
+				} else {
 					
-					// get the application security
-					SecurityAdapater security = app.getSecurity();
-					
-					// if we have some
-					if (security != null) {
+					// create a writer
+					PrintWriter out = response.getWriter();
+							
+					// get the page object
+					Page page = rapidRequest.getPage();
+							
+					// check we got one
+					if (page != null) {
 						
-						// get the userName
-						String userName = rapidRequest.getUserName();
+						if (rebuildPages) {
+							
+							// (re)generate the page start html
+							pageHtml = page.getStartHtml(rapidRequest.getApplication());
+							
+						} else {
 						
-						// get the user
-						User user = security.getUser(rapidRequest, userName);
+							// get any cached header html from the page object (this will regenerate and cache if not present)
+							pageHtml = page.getCachedStartHtml(rapidRequest.getApplication());
+													
+						}
 						
-						// if we didn't get a user work with an empty one
-						if (user == null) user = new User();
+						// output the start of the page
+						out.print(pageHtml);
 						
-						// get the users roles
-						List<String> userRoles = user.getRoles();
-											
-						// retrieve and rolesHtml for the page
-						List<RoleHtml> rolesHtml = page.getRolesHtml();
-	
-						// check we have userRoles and htmlRoles
-						if (userRoles != null && rolesHtml != null) {
-																				
-							// loop each roles html entry
-							for (RoleHtml roleHtml : rolesHtml) {
-															
-								// get the roles from this combination
-								List<String> roles = roleHtml.getRoles();
-															
-								// keep a running count for the roles we have
-								int gotRoleCount = 0;
-								
-								// if there are roles to check
-								if (roles != null) {
-								
-									// retain how many roles we need our user to have
-									int rolesRequired = roles.size();
+						// get the application security
+						SecurityAdapater security = app.getSecurity();
+						
+						// if we have some
+						if (security != null) {
+							
+							// get the userName
+							String userName = rapidRequest.getUserName();
+							
+							// get the user
+							User user = security.getUser(rapidRequest, userName);
+							
+							// if we didn't get a user work with an empty one
+							if (user == null) user = new User();
+							
+							// get the users roles
+							List<String> userRoles = user.getRoles();
+												
+							// retrieve and rolesHtml for the page
+							List<RoleHtml> rolesHtml = page.getRolesHtml();
+		
+							// check we have userRoles and htmlRoles
+							if (userRoles != null && rolesHtml != null) {
+																					
+								// loop each roles html entry
+								for (RoleHtml roleHtml : rolesHtml) {
+																
+									// get the roles from this combination
+									List<String> roles = roleHtml.getRoles();
+																
+									// keep a running count for the roles we have
+									int gotRoleCount = 0;
 									
-									// check whether we need any roles and that our user has any at all
-									if (rolesRequired > 0) {
-										// check the user has as many roles as this combination requires
-										if (userRoles.size() >= rolesRequired) {
-											// loop the roles we need for this combination
-											for (String role : roleHtml.getRoles()) {
-												// check this role
-												if (userRoles.contains(role)) {
-													// increment the got role count
-													gotRoleCount ++;
+									// if there are roles to check
+									if (roles != null) {
+									
+										// retain how many roles we need our user to have
+										int rolesRequired = roles.size();
+										
+										// check whether we need any roles and that our user has any at all
+										if (rolesRequired > 0) {
+											// check the user has as many roles as this combination requires
+											if (userRoles.size() >= rolesRequired) {
+												// loop the roles we need for this combination
+												for (String role : roleHtml.getRoles()) {
+													// check this role
+													if (userRoles.contains(role)) {
+														// increment the got role count
+														gotRoleCount ++;
+													}
 												}
-											}
-										}									
+											}									
+										}
+																		
+										// if we have all the roles we need
+										if (gotRoleCount == rolesRequired) {
+											// use this html
+											out.print("  " + roleHtml.getHtml());
+											// no need to check any further
+											break;
+										}
+										
+									} else {
+										
+										// no roles to check means we can use this html immediately 
+										out.print("  " + Html.getPrettyHtml(page.getHtmlBody()).trim());
+										
 									}
-																	
-									// if we have all the roles we need
-									if (gotRoleCount == rolesRequired) {
-										// use this html
-										out.print("  " + roleHtml.getHtml());
-										// no need to check any further
-										break;
-									}
-									
-								} else {
-									
-									// no roles to check means we can use this html immediately 
-									out.print("  " + Html.getPrettyHtml(page.getHtmlBody()).trim());
 									
 								}
+									
+																										
+							} else {
+								
+								out.print("  " + Html.getPrettyHtml(page.getHtmlBody()).trim());
 								
 							}
-								
-																									
+						
+							// check for the design role, super is required as well if the rapid app
+							if ("rapid".equals(app.getId())) {
+								if (security.checkUserRole(rapidRequest, userName, Rapid.DESIGN_ROLE) && security.checkUserRole(rapidRequest, userName, Rapid.SUPER_ROLE)) out.print(getAdminLink(app.getId(), page.getId()).trim());
+							} else {
+								if (security.checkUserRole(rapidRequest, userName, Rapid.DESIGN_ROLE)) out.print(getAdminLink(app.getId(), page.getId()).trim());
+							}
+												
 						} else {
 							
 							out.print("  " + Html.getPrettyHtml(page.getHtmlBody()).trim());
 							
-						}
-					
-						// check for the design role, super is required as well if the rapid app
-						if ("rapid".equals(app.getId())) {
-							if (security.checkUserRole(rapidRequest, userName, Rapid.DESIGN_ROLE) && security.checkUserRole(rapidRequest, userName, Rapid.SUPER_ROLE)) out.print(getAdminLink(app.getId(), page.getId()).trim());
-						} else {
-							if (security.checkUserRole(rapidRequest, userName, Rapid.DESIGN_ROLE)) out.print(getAdminLink(app.getId(), page.getId()).trim());
-						}
-											
-					} else {
+						} // security check
+									
+						// add the remaining elements
+						out.print("  </body>\n</html>");
 						
-						out.print("  " + Html.getPrettyHtml(page.getHtmlBody()).trim());
-						
-					} // security check
-								
-					// add the remaining elements
-					out.print("  </body>\n</html>");
-					
-					// close the writer
-					out.close();
-																					
-				} // page check
-						
-			} // action name check
+						// close the writer
+						out.close();
+																						
+					} // page check
+							
+				} // action name check
+				
+			} // app exists check
 								
 		} catch (Exception ex) {
 		
@@ -275,7 +304,7 @@ public class Rapid extends RapidHttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 		PrintWriter out = response.getWriter();
-						
+		
 		// read bytes from request body into our own byte array (this means we can deal with images) 
 		InputStream input = request.getInputStream();
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();												

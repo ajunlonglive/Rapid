@@ -57,7 +57,7 @@ function loadApps() {
 	var appsDiv = $("#apps");
 	
 	$.ajax({
-    	url: "rapid?a=rapid&action=getApps",
+    	url: "~?action=getApps",
     	type: "POST",          
     	dataType: "json",    
     	data: "{}",

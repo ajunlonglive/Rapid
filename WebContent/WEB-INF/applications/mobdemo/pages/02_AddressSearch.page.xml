@@ -3,12 +3,12 @@
     <controls>
         <properties>
             <entry>
-                <key>classes</key>
-                <value>[]</value>
-            </entry>
-            <entry>
                 <key>id</key>
                 <value>P2_C1_</value>
+            </entry>
+            <entry>
+                <key>classes</key>
+                <value>[]</value>
             </entry>
             <entry>
                 <key>details</key>
@@ -27,6 +27,10 @@
                 <value>true</value>
             </entry>
         </properties>
+        <styles>
+            <appliesTo>#P2_C1_</appliesTo>
+            <rules>height:50px;</rules>
+        </styles>
         <XMLVersion>1</XMLVersion>
     </controls>
     <controls>
@@ -40,12 +44,12 @@
         </events>
         <properties>
             <entry>
-                <key>id</key>
-                <value>P2_C25_</value>
-            </entry>
-            <entry>
                 <key>classes</key>
                 <value>[]</value>
+            </entry>
+            <entry>
+                <key>id</key>
+                <value>P2_C25_</value>
             </entry>
             <entry>
                 <key>text</key>
@@ -78,12 +82,12 @@
                 <childControls>
                     <properties>
                         <entry>
-                            <key>classes</key>
-                            <value>[&quot;cellLabel&quot;]</value>
-                        </entry>
-                        <entry>
                             <key>id</key>
                             <value>P2_C5_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[&quot;cellLabel&quot;]</value>
                         </entry>
                         <entry>
                             <key>text</key>
@@ -120,12 +124,12 @@
                         </events>
                         <properties>
                             <entry>
-<key>classes</key>
-<value>[]</value>
-                            </entry>
-                            <entry>
 <key>id</key>
 <value>P2_C7_</value>
+                            </entry>
+                            <entry>
+<key>classes</key>
+<value>[]</value>
                             </entry>
                             <entry>
 <key>name</key>
@@ -155,12 +159,12 @@
                     </childControls>
                     <properties>
                         <entry>
-                            <key>classes</key>
-                            <value>[]</value>
-                        </entry>
-                        <entry>
                             <key>id</key>
                             <value>P2_C6_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
                         </entry>
                         <entry>
                             <key>text</key>
@@ -197,12 +201,12 @@
                 <childControls>
                     <properties>
                         <entry>
-                            <key>classes</key>
-                            <value>[&quot;cellLabel&quot;]</value>
-                        </entry>
-                        <entry>
                             <key>id</key>
                             <value>P2_C9_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[&quot;cellLabel&quot;]</value>
                         </entry>
                         <entry>
                             <key>text</key>
@@ -239,12 +243,12 @@
                         </events>
                         <properties>
                             <entry>
-<key>classes</key>
-<value>[]</value>
-                            </entry>
-                            <entry>
 <key>id</key>
 <value>P2_C11_</value>
+                            </entry>
+                            <entry>
+<key>classes</key>
+<value>[]</value>
                             </entry>
                             <entry>
 <key>name</key>
@@ -274,12 +278,12 @@
                     </childControls>
                     <properties>
                         <entry>
-                            <key>classes</key>
-                            <value>[]</value>
-                        </entry>
-                        <entry>
                             <key>id</key>
                             <value>P2_C10_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
                         </entry>
                         <entry>
                             <key>text</key>
@@ -302,12 +306,12 @@
                 </childControls>
                 <properties>
                     <entry>
-                        <key>classes</key>
-                        <value>[]</value>
-                    </entry>
-                    <entry>
                         <key>id</key>
                         <value>P2_C8_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
                     </entry>
                     <entry>
                         <key>type</key>
@@ -320,12 +324,12 @@
                 <childControls>
                     <properties>
                         <entry>
-                            <key>classes</key>
-                            <value>[&quot;cellLabel&quot;]</value>
-                        </entry>
-                        <entry>
                             <key>id</key>
                             <value>P2_C13_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[&quot;cellLabel&quot;]</value>
                         </entry>
                         <entry>
                             <key>text</key>
@@ -362,12 +366,12 @@
                         </events>
                         <properties>
                             <entry>
-<key>classes</key>
-<value>[]</value>
-                            </entry>
-                            <entry>
 <key>id</key>
 <value>P2_C15_</value>
+                            </entry>
+                            <entry>
+<key>classes</key>
+<value>[]</value>
                             </entry>
                             <entry>
 <key>name</key>
@@ -397,12 +401,12 @@
                     </childControls>
                     <properties>
                         <entry>
-                            <key>classes</key>
-                            <value>[]</value>
-                        </entry>
-                        <entry>
                             <key>id</key>
                             <value>P2_C14_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
                         </entry>
                         <entry>
                             <key>text</key>
@@ -425,12 +429,12 @@
                 </childControls>
                 <properties>
                     <entry>
-                        <key>classes</key>
-                        <value>[]</value>
-                    </entry>
-                    <entry>
                         <key>id</key>
                         <value>P2_C12_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
                     </entry>
                     <entry>
                         <key>type</key>
@@ -443,12 +447,12 @@
                 <childControls>
                     <properties>
                         <entry>
-                            <key>classes</key>
-                            <value>[&quot;cellLabel&quot;]</value>
-                        </entry>
-                        <entry>
                             <key>id</key>
                             <value>P2_C17_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[&quot;cellLabel&quot;]</value>
                         </entry>
                         <entry>
                             <key>text</key>
@@ -485,12 +489,12 @@
                         </events>
                         <properties>
                             <entry>
-<key>classes</key>
-<value>[]</value>
-                            </entry>
-                            <entry>
 <key>id</key>
 <value>P2_C19_</value>
+                            </entry>
+                            <entry>
+<key>classes</key>
+<value>[]</value>
                             </entry>
                             <entry>
 <key>name</key>
@@ -520,12 +524,12 @@
                     </childControls>
                     <properties>
                         <entry>
-                            <key>classes</key>
-                            <value>[]</value>
-                        </entry>
-                        <entry>
                             <key>id</key>
                             <value>P2_C18_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
                         </entry>
                         <entry>
                             <key>text</key>
@@ -548,12 +552,12 @@
                 </childControls>
                 <properties>
                     <entry>
-                        <key>classes</key>
-                        <value>[]</value>
-                    </entry>
-                    <entry>
                         <key>id</key>
                         <value>P2_C16_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
                     </entry>
                     <entry>
                         <key>type</key>
@@ -566,12 +570,12 @@
                 <childControls>
                     <properties>
                         <entry>
-                            <key>classes</key>
-                            <value>[&quot;cellLabel&quot;]</value>
-                        </entry>
-                        <entry>
                             <key>id</key>
                             <value>P2_C21_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[&quot;cellLabel&quot;]</value>
                         </entry>
                         <entry>
                             <key>text</key>
@@ -608,12 +612,12 @@
                         </events>
                         <properties>
                             <entry>
-<key>classes</key>
-<value>[]</value>
-                            </entry>
-                            <entry>
 <key>id</key>
 <value>P2_C23_</value>
+                            </entry>
+                            <entry>
+<key>classes</key>
+<value>[]</value>
                             </entry>
                             <entry>
 <key>name</key>
@@ -643,12 +647,12 @@
                     </childControls>
                     <properties>
                         <entry>
-                            <key>classes</key>
-                            <value>[]</value>
-                        </entry>
-                        <entry>
                             <key>id</key>
                             <value>P2_C22_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
                         </entry>
                         <entry>
                             <key>text</key>
@@ -671,12 +675,12 @@
                 </childControls>
                 <properties>
                     <entry>
-                        <key>classes</key>
-                        <value>[]</value>
-                    </entry>
-                    <entry>
                         <key>id</key>
                         <value>P2_C20_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
                     </entry>
                     <entry>
                         <key>type</key>
@@ -687,12 +691,12 @@
             </childControls>
             <properties>
                 <entry>
-                    <key>classes</key>
-                    <value>[]</value>
-                </entry>
-                <entry>
                     <key>id</key>
                     <value>P2_C3_</value>
+                </entry>
+                <entry>
+                    <key>classes</key>
+                    <value>[]</value>
                 </entry>
                 <entry>
                     <key>type</key>
@@ -711,12 +715,12 @@
         </events>
         <properties>
             <entry>
-                <key>classes</key>
-                <value>[]</value>
-            </entry>
-            <entry>
                 <key>id</key>
                 <value>P2_C2_</value>
+            </entry>
+            <entry>
+                <key>classes</key>
+                <value>[]</value>
             </entry>
             <entry>
                 <key>text</key>
@@ -749,7 +753,7 @@
     <htmlBody>&lt;div id=&quot;P2_C1_&quot; class=&quot;pagepanel&quot;&gt;&lt;/div&gt;&lt;div id=&quot;P2_C25_&quot; class=&quot;panel&quot;&gt;Address search&lt;/div&gt;&lt;div id=&quot;P2_C2_&quot; class=&quot;panel&quot;&gt;&lt;table id=&quot;P2_C3_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P2_C4_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C5_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Number&lt;/td&gt;&lt;td id=&quot;P2_C6_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C7_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P2_C8_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C9_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Flat&lt;/td&gt;&lt;td id=&quot;P2_C10_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C11_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P2_C12_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C13_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Street&lt;/td&gt;&lt;td id=&quot;P2_C14_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C15_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P2_C16_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C17_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Town&lt;/td&gt;&lt;td id=&quot;P2_C18_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C19_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P2_C20_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C21_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Post code&lt;/td&gt;&lt;td id=&quot;P2_C22_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C23_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;</htmlBody>
     <id>P2</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-08-30T17:53:29.683+01:00</modifiedDate>
+    <modifiedDate>2014-09-09T16:13:56.626+01:00</modifiedDate>
     <name>02_AddressSearch</name>
     <rolesHtml>
         <html>&lt;div id=&quot;P2_C1_&quot; class=&quot;pagepanel&quot;&gt;&lt;/div&gt;
