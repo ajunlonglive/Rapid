@@ -638,6 +638,15 @@ public class Page {
 	 		// remove it from the current list of pages
 		 	application.removePage(_id);
 	 	}
+	 	
+	 	// get the web path
+	 	String webPath = rapidServlet.getServletContext().getRealPath("/applications/" + application.getId());		
+	 	
+	 	// create a file object for deleting the page css file
+	 	File delCssFile = new File(webPath + "/" + Files.safeName(getName()) + ".css");
+	 	
+	 	// if it exists
+	 	if (delCssFile.exists()) delCssFile.delete();
 	 		 				
 	}
 	

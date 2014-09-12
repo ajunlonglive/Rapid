@@ -62,8 +62,10 @@ public class Control extends Action {
 		} else {
 			// command can be cleaned up - remove starting dot (we'll add it back later)
 			if (command.charAt(0) == '.') command = command.substring(1);
+			// add brackets if there aren't any at the end
+			if (!command.endsWith(")") && !command.endsWith(");")) command += "();";
 			// add a semi colon if there isn't one on the end
-			if (!(command.charAt(command.length() - 1) == ';')) command += ";";
+			if (!command.endsWith(";")) command += ";";
 			// return the command
 			return "$(\"#" + getProperty("control") + "\")." + command;
 		}		

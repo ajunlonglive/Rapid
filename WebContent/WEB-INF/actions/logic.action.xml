@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<actions xmlVersion="1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/action.xsd">
+
+<!-- 
+
+Copyright (C) 2014 - Gareth Edwards / Rapid Information Systems
+
+gareth.edwards@rapid-is.co.uk
+
+
+This file is part of the Rapid Application Platform
+
+RapidSOA is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version. The terms require you to include
+the original copyright, and the license notice in all redistributions.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
+
+ -->
+
+    <action>
+    
+        <type>logic</type>
+        <name>Logic</name>	        
+	    <class>com.rapid.actions.Logic</class>	
+	    
+	    <addToNewApplications>true</addToNewApplications> 
+	    	    	    	    
+	    <properties>
+	        <property>
+	            <key>value1</key>
+	            <name>Value 1</name>
+	            <changeValueJavaScript>logicValue</changeValueJavaScript>	 
+	        </property>	 
+	        <property>
+	            <key>operation</key>
+	            <name>Operation</name>
+	            <setConstructValueFunction>return "==";</setConstructValueFunction>
+	            <changeValueJavaScript>select</changeValueJavaScript>	
+	            <getValuesFunction>
+	                <![CDATA[
+return [["==","= equals"],["!=","!= doesn't equal"],[">","> greater than"],[">=",">= greater than or equal to"],["<","< less than"],["<=","<= less than or equal to"]];
+					]]>
+	            </getValuesFunction>	 
+	        </property>	 
+	        <property>
+	            <key>value2</key>
+	            <name>Value 2</name>
+	            <changeValueJavaScript>logicValue</changeValueJavaScript>	 
+	        </property>	 
+	        <property>
+	            <key>trueActions</key>
+	            <name>Actions if true</name>
+	            <changeValueJavaScript>childActions</changeValueJavaScript>	 
+	        </property>
+	        <property>
+	            <key>falseActions</key>
+	            <name>Actions if false</name>
+	            <changeValueJavaScript>childActions</changeValueJavaScript>	 
+	        </property>      
+	    </properties>	 
+	    	   	    	    	    	    	     	     	    
+    </action> 
+</actions>
