@@ -5,6 +5,7 @@
     <actionTypes>dataCopy</actionTypes>
     <actionTypes>database</actionTypes>
     <actionTypes>existing</actionTypes>
+    <actionTypes>logic</actionTypes>
     <actionTypes>navigate</actionTypes>
     <actionTypes>validation</actionTypes>
     <actionTypes>webservice</actionTypes>
@@ -37,7 +38,7 @@
     <description>This is a demonstration Rapid application provided to showcase many common Rapid features</description>
     <id>demo</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-09-04T12:29:37.941+01:00</modifiedDate>
+    <modifiedDate>2014-09-12T16:16:53.684+01:00</modifiedDate>
     <name>demo</name>
     <pageBackupsMaxSize>3</pageBackupsMaxSize>
     <securityAdapterType>rapid</securityAdapterType>

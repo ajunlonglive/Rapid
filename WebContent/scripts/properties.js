@@ -1280,6 +1280,93 @@ function Property_radiobuttons(cell, radiobuttons, property, refreshHtml, refres
 	
 }
 
+//this is a dialogue to define radio buttons
+function Property_logicValue(cell, action, property, refreshHtml, refreshDialogue) {
+	
+	// retain a reference to the dialogue (if we were passed one)
+	var dialogue = refreshDialogue;
+	// if we weren't passed one - make what we need
+	if (!dialogue) dialogue = createDialogue(cell, 200, "Value");		
+	// grab a reference to the table
+	var table = dialogue.find("table").first();
+	// make sure table is empty
+	table.children().remove();
+	// get the value
+	var value = action[property.key];
+	// instantiate if required
+	if (!value) value = {};
+	
+	// make some text
+	var text = "";
+	// check the type
+	switch (value.type) {
+		case "CTL" :
+			if (value.controlId) text = getControlById(value.controlId).name;
+			if (value.controlField) text += "/" + value.controlField;
+		break;
+		case "CNT" :
+			if (value.constant) text = value.constant;
+		break;			
+	}
+	// default
+	if (!text) text = "Click to add...";
+	// append the adjustable form control
+	cell.text(text);
+	
+	// add a heading
+	table.append("<tr><td colspan='2'><input type='radio' name='" + action.id + property.key + "' value='CTL' " + (value.type == "CTL" ? "checked='checked'" : "") + "/>Control<input type='radio' name='" + action.id + property.key + "' value='CNT' " + (value.type == "CNT" ? "checked='checked'" : "") + "/>Constant</td></tr>");
+	
+	// add listers
+	_listeners.push( table.find("input").change({cell: cell, action: action, property: property, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {		
+		// instantiate if required
+		if (!ev.data.action[ev.data.property.key]) ev.data.action[ev.data.property.key] = {};
+		// set the new type 
+		ev.data.action[ev.data.property.key].type = $(ev.target).val();
+		// refresh the property
+		Property_logicValue(ev.data.cell, ev.data.action, ev.data.property, ev.data.refreshHtml, ev.data.dialogue); 
+	}));
+	
+	switch (value.type) {
+		case "CTL" :
+			// set the html
+			table.append("<tr><td>Control</td><td><select>" + getDataOptions(value.controlId) + "</select></td></tr>");
+			// get a reference to the select
+			var select = table.find("select");
+			// retain the value if we don't have one yet
+			if (!value.controlId) value.controlId = select.val();			
+			// add the listener
+			_listeners.push( select.change( function(ev) {		
+				// set the new value 
+				value.controlId = $(ev.target).val();
+			}));
+			table.append("<tr><td>Field</td><td><input /></td></tr>");			
+			// get the field
+			var input = table.find("input").last();
+			// set any current value
+			if (value.field) input.val(value.field);
+			// add the listener
+			_listeners.push( input.keyup( function(ev) {		
+				// set the new value 
+				value.controlField = $(ev.target).val();
+			}));
+		break;
+		case "CNT" :
+			// set the html
+			table.append("<tr><td>Constant</td><td><input /></td></tr>");
+			// get the input
+			var input = table.find("input").last();
+			// set any current value
+			if (value.constant) input.val(value.constant);
+			// add the listeners
+			_listeners.push( input.keyup( function(ev) {		
+				// set the new value 
+				value.constant = $(ev.target).val();
+			}));
+		break;
+	}
+	
+}
+
 // this is a dialogue to refine the options available in a dropdown control
 function Property_options(cell, dropdown, property, refreshHtml, refreshDialogue) {
 	

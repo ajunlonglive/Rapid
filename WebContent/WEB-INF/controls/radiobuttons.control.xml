@@ -85,6 +85,8 @@ var radiobuttonHtml = "";
 if (this.buttons) {
 	// if the options are a string turn them in an array
 	if ($.type(this.buttons) == "string") this.buttons = JSON.parse(this.buttons);
+	// if codes is a false string make it a boolean
+	if (this.codes == "false") this.codes = false;
 	// loop the options
 	for (var i in this.buttons) {
 		var button = this.buttons[i];
