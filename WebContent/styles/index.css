@@ -9,6 +9,24 @@ body {
 		font-weight:bold;
 	}
 	
+	input {
+		width: 200px;
+		padding: 5px;
+		font-size: 18px;
+		border: 1px solid black;
+		box-shadow: inset -2px 2px 5px 0px #ccc; 
+	}
+	
+	td {
+		font-size: 16px;
+		padding-left: 5px;
+	}
+	
+	button {
+		font-size: 14px;
+		padding: 5px 20px;
+	}
+	
 	div.image {
 		height: 100px;
 	}
@@ -83,6 +101,8 @@ body {
 		width: 200px;
 		padding: 5px;
 		font-size: 18px;
+		border: 1px solid black;
+		box-shadow: inset -2px 2px 5px 0px #ccc; 
 	}
 		
 	p {
