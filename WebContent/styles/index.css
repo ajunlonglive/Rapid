@@ -1,5 +1,6 @@
 body {
 	font-family:arial;
+	margin:0;
 }	
 
 @media (min-width: 520px) and (min-height: 400px) {
@@ -13,7 +14,7 @@ body {
 		width: 200px;
 		padding: 5px;
 		font-size: 18px;
-		border: 1px solid black;
+		border: 1px solid #888;
 		box-shadow: inset -2px 2px 5px 0px #ccc; 
 	}
 	
@@ -28,13 +29,13 @@ body {
 	}
 	
 	div.image {
-		height: 100px;
+		height: 110px;
 	}
 	
 	.image img {
 		position:absolute;
-		top:16px;
-		right:30px;
+		top:18px;
+		right:18px;
 		width:200px;
 		height:134px;
 	}
@@ -57,12 +58,15 @@ body {
 	}
 	
 	.body a { 
-		display: inline-block; 
-		vertical-align: middle; 
 		padding: 50px;
 		font-size: 36px;
 		font-weight: bold;
 		color: black;
+		text-decoration: none;
+	}
+	
+	.body a:hover { 
+		text-decoration: underline;
 	}
 	
 	.info {
@@ -121,13 +125,13 @@ body {
 	}
 	
 	div.image {
-		height: 50px;
+		height: 51px;
 	}
 	
 	.image img {
 		position:absolute;
-		top:17px;
-		right:20px;
+		top:10px;
+		right:10px;
 		width:100px;
 		height:67px;
 	}
@@ -140,6 +144,7 @@ body {
 		width: 80px;
 		vertical-align: middle;
 		padding-bottom: 30px;
+		margin-left: 10px;
 	}
 	
 	.body a {
