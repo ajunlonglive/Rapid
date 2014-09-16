@@ -30,8 +30,8 @@
             </properties>
             <styles>
                 <appliesTo>#rapid_P0_C651_</appliesTo>
-                <rules>top:16px;</rules>
-                <rules>right:30px;</rules>
+                <rules>top:18px;</rules>
+                <rules>right:20px;</rules>
                 <rules>width:200px;</rules>
                 <rules>height:134px;</rules>
                 <rules>position:absolute;</rules>
@@ -66,7 +66,7 @@
         </properties>
         <styles>
             <appliesTo>#rapid_P0_C654_</appliesTo>
-            <rules>height:100px;</rules>
+            <rules>height:110px;</rules>
         </styles>
         <XMLVersion>1</XMLVersion>
     </controls>
@@ -21927,6 +21927,7 @@ if (value != password &amp;&amp; password != &quot;********&quot;) return &quot;
             <rules>padding:10px;</rules>
             <rules>border:1px solid black;</rules>
             <rules>min-width:1000px;</rules>
+            <rules>margin:10px;</rules>
         </styles>
         <XMLVersion>1</XMLVersion>
     </controls>

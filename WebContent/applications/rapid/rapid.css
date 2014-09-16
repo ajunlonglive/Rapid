@@ -128,7 +128,7 @@ div.tabsPanel.selected {
 /* Application styles */
 
 /* sets font in all pages to arial */
-body { font-family : 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif; font-size : 14px; }
+body { font-family: 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif; font-size: 14px; margin:0; }
 
 /* this makes all the dialogues look a litter better */
 tr td { vertical-align: middle; }
