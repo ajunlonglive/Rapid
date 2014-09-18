@@ -57,8 +57,6 @@ import com.rapid.core.Action;
 import com.rapid.core.Application;
 import com.rapid.core.Control;
 import com.rapid.core.Page;
-import com.rapid.security.SecurityAdapater;
-import com.rapid.security.SecurityAdapater.User;
 import com.rapid.server.filter.RapidFilter;
 import com.rapid.utils.Comparators;
 

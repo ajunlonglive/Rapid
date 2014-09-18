@@ -45,7 +45,7 @@ public class Logic extends Action {
 	public static class Value {
 		
 		// private instance variables
-		private String _type, _controlId, _controlField, _constant;
+		private String _type, _controlId, _controlField, _constant, _system;
 		
 		// public properties
 		public String getType() { return _type; }
@@ -60,12 +60,16 @@ public class Logic extends Action {
 		public String getConstant() { return _constant; }
 		public void setConstant(String constant) { _constant = constant; }
 		
+		public String getSystem() { return _system; }
+		public void setSystem(String system) { _system = system; }
+		
 		public Value() {}
 		public Value(JSONObject jsonValue) {
 			_type = jsonValue.optString("type");
 			_controlId = jsonValue.optString("controlId");
 			_controlField = jsonValue.optString("controlField");
 			_constant = jsonValue.optString("constant");
+			_system = jsonValue.optString("system");
 		}
 		
 		public String getArgument(Application application) {
@@ -78,7 +82,11 @@ public class Logic extends Action {
 					// find the control
 					Control control = application.getControl(_controlId);
 					// check we got one
-					if (control != null) {
+					if (control == null) {
+						// not control found, look in url variables
+						arg = "$.getUrlVar('" + _controlId + "')";
+					} else {
+						// create a getData call
 						String field = "null";
 						if (_controlField != null) field = "'" + _controlField.replace("'", "\'") + "'";
 						String details = "null";
@@ -88,9 +96,19 @@ public class Logic extends Action {
 				}
 			} else if ("CNT".equals(_type)) {
 				if (_constant != null) {
+					// wrap in same quotes
 					arg = "'" + _constant.replace("'", "\'")  + "'";
 				}
-			} 
+			} else if ("SYS".equals(_type)) {
+				if (_system != null) {
+					if ("online".equals(_system)) {
+						arg = "(typeof _rapidmobile == 'undefined' ? true : _rapidmobile.isOnline())";
+					} else {
+						// pass through as literal
+						arg = _system;
+					}
+				}				
+			}
 			
 			return arg;
 			

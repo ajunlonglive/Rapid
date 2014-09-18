@@ -532,7 +532,7 @@ function rebuildStyles() {
 	// resize the selection as the geometry may have changed
 	sizeBorder(_selectedControl);
 	// reposition the select for the same reason
-	positionBorder(_selectedControl.object.offset().left, _selectedControl.object.offset().top);
+	positionBorder(_selectedControl.object.offset().left + _panelPinnedOffset, _selectedControl.object.offset().top);
 }
 
 

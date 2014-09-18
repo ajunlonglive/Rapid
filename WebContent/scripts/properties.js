@@ -29,8 +29,13 @@ Functions related to control properties
 
 */
 
+// possible system values used by the Logic property
+var _systemValues = ["true","false","null","online"];
+
 // this holds all the property listeners so they can be properly detached
 var _listeners = [];
+// this holds all the dialogue listeners for the same reason
+var _dialogueListeners = [];
 
 // this renders all the control properties in the properties panel
 function showProperties(control) {
@@ -40,11 +45,6 @@ function showProperties(control) {
 		_listeners[i].unbind();
 	}
 	
-	// grab a reference to any dialogues
-	var propertiesDialogues = $("#propertiesDialogues");
-	// empty any propertyDialogues that we may have used before
-	propertiesDialogues.children().remove();		
-		
 	// grab a reference to the properties div
 	var propertiesPanel = $(".propertiesPanelDiv");
 	// set the parent height to auto
@@ -128,11 +128,14 @@ function updateProperty(propertyObject, property, value, refreshHtml) {
 // this is a reusable function for creating dialogue boxes
 function createDialogue(cell, width, title) {	
 	// create a dialogue if we need to
-	var dialogue = $("#propertiesDialogues").append("<div class='actionsPanelDiv' style='position:absolute;display:none;width:" + width + "px;z-index:10012;border:1px solid black;background-color:white;font-size:11px;padding:10px;'></div>").children().last();
+	var dialogue = $("#propertiesDialogues").append("<div class='actionsPanelDiv dialogue' style='position:absolute;display:none;width:" + width + "px;z-index:10012;border:1px solid black;background-color:white;font-size:11px;padding:10px;'></div>").children().last();
 	// add a close link
 	var close = dialogue.append("<b style='float:left;margin-top:-5px;'>" + title + "</b><a href='#' style='float:right;margin-top:-5px;'>close</a></div>").children().last();
-	_listeners.push( close.click( function(ev) {
-		// update the properties (this also hides the dialogue)
+	// note that this is not in the listeners collection so it's retained between property updates
+	_dialogueListeners.push( close.click( function(ev) {
+		// hide this dialogue
+		$(ev.target).closest("div.dialogue").remove();
+		// update the properties 
 		showProperties(_selectedControl);
 		// update the events
 		showEvents(_selectedControl);
@@ -152,6 +155,21 @@ function createDialogue(cell, width, title) {
 	dialogue.append("<br/><table style='width:100%' class='propertiesPanelTable'><tbody></tbody></table>");
 	// return
 	return dialogue;	
+}
+
+//this function clears down the property dialogues
+function hideDialogues() {
+		
+	// grab a reference to any dialogues
+	var propertiesDialogues = $("#propertiesDialogues");
+	// empty any propertyDialogues that we may have used before
+	propertiesDialogues.children().remove();		
+	
+	// remove any listeners
+	for (var i in _dialogueListeners) {
+		_dialogueListeners[i].unbind();
+	}
+	
 }
 
 function Property_text(cell, propertyObject, property, refreshHtml) {
@@ -1301,12 +1319,21 @@ function Property_logicValue(cell, action, property, refreshHtml, refreshDialogu
 	// check the type
 	switch (value.type) {
 		case "CTL" :
-			if (value.controlId) text = getControlById(value.controlId).name;
-			if (value.controlField) text += "/" + value.controlField;
+			// assume there is no control
+			var control = null;
+			// look for the control
+			if (value.controlId) getControlById(value.controlId);
+			// if we don't find one just show id (could be page variable)
+			text = (control ? control.name : value.controlId);
+			// add the field if present
+			if (value.controlField) text += "." + value.controlField;
 		break;
 		case "CNT" :
 			if (value.constant) text = value.constant;
-		break;			
+		break;		
+		case "SYS" :
+			if (value.system) text = value.system;
+		break;	
 	}
 	// default
 	if (!text) text = "Click to add...";
@@ -1314,7 +1341,7 @@ function Property_logicValue(cell, action, property, refreshHtml, refreshDialogu
 	cell.text(text);
 	
 	// add a heading
-	table.append("<tr><td colspan='2'><input type='radio' name='" + action.id + property.key + "' value='CTL' " + (value.type == "CTL" ? "checked='checked'" : "") + "/>Control<input type='radio' name='" + action.id + property.key + "' value='CNT' " + (value.type == "CNT" ? "checked='checked'" : "") + "/>Constant</td></tr>");
+	table.append("<tr><td colspan='2'><input type='radio' name='" + action.id + property.key + "' value='CTL' " + (value.type == "CTL" ? "checked='checked'" : "") + "/>Control<input type='radio' name='" + action.id + property.key + "' value='CNT' " + (value.type == "CNT" ? "checked='checked'" : "") + "/>Constant<input type='radio' name='" + action.id + property.key + "' value='SYS' " + (value.type == "SYS" ? "checked='checked'" : "") + "/>System</td></tr>");
 	
 	// add listers
 	_listeners.push( table.find("input").change({cell: cell, action: action, property: property, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {		
@@ -1361,6 +1388,24 @@ function Property_logicValue(cell, action, property, refreshHtml, refreshDialogu
 			_listeners.push( input.keyup( function(ev) {		
 				// set the new value 
 				value.constant = $(ev.target).val();
+			}));
+		break;
+		case "SYS" :
+			// assume there're no sys options
+			var sysOptions = "";
+			// loop those that are available
+			for (var i in _systemValues) {
+				// build the options string
+				sysOptions += "<option" + (value.system == _systemValues[i] ? " select='selected'" : "") + ">" + _systemValues[i] + "</option>";
+			}
+			// set the html
+			table.append("<tr><td>System value</td><td><select>" + sysOptions + "</select></td></tr>");
+			// get the dropdown
+			var dropdown = table.find("select").last();
+			// add the listeners
+			_listeners.push( dropdown.change( function(ev) {		
+				// set the new value 
+				value.system = $(ev.target).val();
 			}));
 		break;
 	}

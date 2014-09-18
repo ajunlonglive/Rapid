@@ -501,6 +501,8 @@ function Control(controlClass, parentControl, jsonControl, loadComplexObjects, p
 function rebuildHtml(control) {
 	// only if the page isn't locked
 	if (!_locked) {
+		// assume the panelpin offset (we set it to 0 for nonVisibleControl)
+		panelPinnedOffset = _panelPinnedOffset;
 		// run any rebuild JavaScript (if present) - and this is not the page
 		if (control._rebuild) {
 			try {
@@ -528,9 +530,18 @@ function rebuildHtml(control) {
 				control.object.after(object); 
 				// remove the old object
 				control.object.remove(); 
+			}			
+			// if it's a nonVisibleControl
+			if (object.is(".nonVisibleControl")) {
+				// remove any possible existing object from the designer
+				$("#" + control.id + ".nonVisibleControl").remove();
+				// add the new one and update the reference
+				object = $("body").append(object).children().last();
+				// drop the panelpin offset as we're now in the page
+				panelPinnedOffset = 0;
 			}
 			// attach the new object
-			control.object = object; 		
+			control.object = object; 
 		}
 		
 		// run any getDetailsJavaScript function (if present) - this creates a "details" object which is passed to the getData and setData calls
@@ -547,7 +558,7 @@ function rebuildHtml(control) {
 		
 		// reposition the border for the same reason
 		var os = control.object.offset();
-		positionBorder(os.left * _scale * device.scale, os.top * _scale * device.scale);
+		positionBorder(os.left * _scale * device.scale + panelPinnedOffset, os.top * _scale * device.scale);
 		
 	} // page lock check
 	
@@ -568,10 +579,25 @@ function getControlById(id, control) {
 				}
 			}
 		}		
-	} else {
+	} else {		
+		// check first level controls
 		for (var i in _page.childControls) {
 			foundControl = getControlById(id, _page.childControls[i]);
 			if (foundControl) break;
+		}
+		// check for other page controls if still not found
+		if (!foundControl && _page && _pages) {
+			for (var i in _pages) {
+				if (_pages[i].id != _page.id && _pages[i].controls) {
+					for (var j in _pages[i].controls) {
+						if (_pages[i].controls[j].id ==  id) {
+							foundControl = _pages[i].controls[j];
+							break;
+						}							
+					}
+				}	
+				if (foundControl) break;
+			}
 		}
 	}
 	return foundControl;

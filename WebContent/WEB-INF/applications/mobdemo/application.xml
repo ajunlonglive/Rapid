@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <application>
+    <actionTypes>control</actionTypes>
     <actionTypes>custom</actionTypes>
-    <actionTypes>database</actionTypes>
     <actionTypes>dataCopy</actionTypes>
+    <actionTypes>database</actionTypes>
+    <actionTypes>event</actionTypes>
     <actionTypes>existing</actionTypes>
+    <actionTypes>logic</actionTypes>
     <actionTypes>navigate</actionTypes>
     <actionTypes>validation</actionTypes>
     <actionTypes>webservice</actionTypes>
@@ -38,7 +41,7 @@
     <description>This is a demonstration application provided to showcase many Rapid Mobile features</description>
     <id>mobdemo</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-09-04T12:29:44.129+01:00</modifiedDate>
+    <modifiedDate>2014-09-18T16:15:22.388+01:00</modifiedDate>
     <name>mobdemo</name>
     <pageBackupsMaxSize>3</pageBackupsMaxSize>
     <securityAdapterType>rapid</securityAdapterType>
@@ -52,7 +55,7 @@ Styles saved here will be applied to all pages in the application
 body {
   font-family : 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;
   font-size : 18px;
-}
+}	
 
 input {
 	font-size: 18px;
@@ -67,6 +70,19 @@ input:focus {
 	border: 1px solid black;
 	border-radius: 10px;
 	box-shadow: inset -2px 2px 5px 0px #aaa; 
+	outline:none;
+}
+
+button {
+	font-size: 18px;
+	padding: 8px;
+	border: 1px solid #888;
+	border-radius: 10px;
+	box-shadow: inset 2px -2px 5px 5px #ccc;
+	width: 90%;
+}
+
+button:focus {
 	outline:none;
 }
 
@@ -89,7 +105,7 @@ input:focus {
 }
 
 .dialogueCover {
-  background-color : white;
+  background-color : #888;
   opacity:0.7;
   filter:alpha(opacity=70);
 }

@@ -5,6 +5,22 @@
 /* Action methods */
 
 
+function Action_control(actions) {
+	for (var i in actions) {
+		var action = actions[i];
+		$("#" + action.id)[action["function"]](action.value);
+	}	
+}
+
+function Action_datacopy(data, outputs) {
+	if (outputs) {
+		for (var i in outputs) {
+			var output = outputs[i];			
+			window["setData_" + output.type](output.id, data, output.field, output.details);
+		}
+	}
+}
+
 function Action_database(actionId, data, outputs) {
 	// check we got data and somewhere to put it
 	if (data && outputs) {
@@ -16,15 +32,6 @@ function Action_database(actionId, data, outputs) {
 				var output = outputs[i];			
 				window["setData_" + output.type](output.id, data, output.field, output.details);
 			}
-		}
-	}
-}
-
-function Action_datacopy(data, outputs) {
-	if (outputs) {
-		for (var i in outputs) {
-			var output = outputs[i];			
-			window["setData_" + output.type](output.id, data, output.field, output.details);
 		}
 	}
 }

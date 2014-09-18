@@ -517,7 +517,7 @@ function getDataOptions(selectId, ignoreId) {
 		options += "</optgroup>";
 	}	
 	if (_page && _page.sessionVariables) {
-		options += "<optgroup label='Session variables'>";
+		options += "<optgroup label='Page variables'>";
 		for (var i in _page.sessionVariables) {
 			if (selectId == _page.sessionVariables[i] && !gotSelected) {
 				options += "<option value='" + _page.sessionVariables[i] + "' selected='selected' >" + _page.sessionVariables[i] + "</option>";
@@ -562,6 +562,28 @@ function getOutputOptions(selectId, ignoreId) {
 	return getDataOptions(selectId, ignoreId);
 }
 
+//this function returns a set of options for a dropdown of existing events from current controls 
+function getEventOptions(selectId) {
+	var options = "";
+	for (var i in _page.events) {
+		var event = _page.events[i];
+		var id = "page." + event.type;
+		options += "<option value='" + id + "' " + (selectId  == id ? "selected='selected'" : "") + ">" + id + "</option>";			
+	}
+	var controls = getControls();	
+	for (var i in controls) {
+		for (var j in controls[i].events) {
+			var event = controls[i].events[j];
+			// only if there are some actions
+			if (event.actions && event.actions.length > 0) {
+				var id = controls[i].id + "." + event.type;
+				var text = controls[i].name + "." + event.type;
+				options += "<option value='" + id + "' " + (selectId  == id ? "selected='selected'" : "") + ">" + text + "</option>";
+			}
+		}
+	}
+	return options;
+}
 
 // this function returns a set of options for a dropdown of existing actions from current controls 
 function getExistingActionOptions(selectId, ignoreId) {
@@ -598,6 +620,9 @@ function getDatabaseConnectionOptions(selectIndex) {
 
 // move the border and show properties and actions
 function selectControl(control) {
+	
+	// clear down property dialogues for good measure
+	hideDialogues();
 	
 	// show all details or cleanup if null
 	if (control) {
@@ -1119,6 +1144,8 @@ function loadPage() {
 	$("#propertiesPanel").hide();	
 	// remove any dialogues or components
 	$("#dialogues").children().remove();	
+	// clear down property dialogues for good measure
+	hideDialogues();
 	// hide any selection border
 	if (_selectionBorder) _selectionBorder.hide();	
 	// remove any current page html
@@ -2169,16 +2196,18 @@ $(document).ready( function() {
 					if (_selectedControl == _selectedControl.parentControl.childControls[i]) break;
 				}
 				// remove from parents child controls
-				_selectedControl.parentControl.childControls.splice(i,1);
-				// hide the selection and properties panel
-				selectControl(null);
+				_selectedControl.parentControl.childControls.splice(i,1);				
 				// if no controls remain reset the nextid and control numbers
 				if (_page.childControls.length == 0) {
 					_nextId = 1;
 					_controlNumbers = {};
 				}
+				// remove any possible non-visible object
+				$("#" + _selectedControl.id + ".nonVisibleControl").remove();
 				// arrange the non visible page controls
 				arrangeNonVisibleControls();
+				// hide the selection and properties panel
+				selectControl(null);
 				// rebuild the page map
 				showPageMap();
 			}			
