@@ -63,10 +63,10 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <changeValueJavaScript>select</changeValueJavaScript>	
 	            <getValuesFunction>
 	                <![CDATA[
-return [["N","Normal"],["L","Large"],["P","Password"]];
+return [["N","Normal"],["L","Large"],["P","Password"],["R","Readonly"]];
 					]]>
 	            </getValuesFunction>               
-	        </property>
+	        </property>	        
 	    </properties>
 	    
 	    <getHtmlFunction>
@@ -78,6 +78,7 @@ switch (this.controlType) {
 	case "N" : return "<input id='" + this.id + "' value='" + value + "' type='text'" + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + " class='input" + getStyleClasses(this) + "'></input>";
 	case "L" : return "<textarea id='" + this.id + "' class='input" + getStyleClasses(this) + "' " + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + ">" + value + "</textarea>";
 	case "P" : return "<input id='" + this.id + "' value='" + value + "' type='password'" + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + " class='input" + getStyleClasses(this) + "'></input>";
+	case "R" : return "<input id='" + this.id + "' value='" + value + "' type='text'" + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + " class='input" + getStyleClasses(this) + "' readonly='readonly'></input>";
 }      
 
 	        ]]>
