@@ -336,4 +336,16 @@ public class RapidHttpServlet extends HttpServlet {
 				
 	}
 	
+	public void sendMessage(RapidRequest rapidRequest, HttpServletResponse response, int status, String message ) throws IOException {
+		
+		response.setStatus(status);
+		
+		PrintWriter out = response.getWriter();		
+		
+		out.println(message);
+										
+		out.close();
+		
+	}
+	
 }

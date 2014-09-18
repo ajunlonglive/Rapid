@@ -111,90 +111,86 @@ public class Rapid extends RapidHttpServlet {
 			// check app exists
 			if (app == null) {
 				
-				// set the status code
-				response.setStatus(404);
-				
-				// create a writer
-				PrintWriter out = response.getWriter();
-				
-				// write a friendly message
-				out.print("Application not found on this server");
-				
-				// close
-				out.close();
-				
+				// send message
+				sendMessage(rapidRequest, response, 404, "Application not found on this server");
+								
 				//log
-				getLogger().debug("Rapid GET response : Application not found on this server");
+				getLogger().debug("Rapid GET response (404) : Application not found on this server");
 				
 			} else {
-			
-				// check if there is a Rapid action
-				if ("download".equals(rapidRequest.getActionName())) {
-									
-					// create the zip file
-					app.zip(this, rapidRequest, app.getId() + ".zip", true);
+				
+				// get the application security
+				SecurityAdapater security = app.getSecurity();
+				
+				// get the userName
+				String userName = rapidRequest.getUserName();
+				
+				// get the user
+				User user = security.getUser(rapidRequest, userName);
+				
+				// check we got a user
+				if (user == null) {
+										
+					// send message
+					sendMessage(rapidRequest, response, 403, "User not authorised for application");
 					
-					// set the type as a .zip
-					response.setContentType("application/x-zip-compressed");
-					
-					// Shows the download dialog
-					response.setHeader("Content-disposition","attachment; filename=" + app.getId() + ".zip");
-															
-					// get the file for the zip we're about to create
-					File zipFile = new File(getServletContext().getRealPath("/WEB-INF/temp/" + app.getId() + ".zip"));
-					
-					// get it's size
-					long fileSize = Files.getSize(zipFile);
-					
-					// add size to response headers if small enough
-					if (fileSize < Integer.MAX_VALUE) response.setContentLength((int) fileSize);
-					
-					// send the file to browser
-					OutputStream os = response.getOutputStream();
-					FileInputStream in = new FileInputStream(zipFile);
-					byte[] buffer = new byte[1024];
-					int length;
-					while ((length = in.read(buffer)) > 0){
-					  os.write(buffer, 0, length);
-					}
-					in.close();
-					os.flush();
+					//log
+					getLogger().debug("Rapid GET response (403) : User " + userName +  " not authorised for application");
 					
 				} else {
-					
-					// create a writer
-					PrintWriter out = response.getWriter();
-					
-					// get the application security
-					SecurityAdapater security = app.getSecurity();
-					
-					// get the userName
-					String userName = rapidRequest.getUserName();
-					
-					// get the user
-					User user = security.getUser(rapidRequest, userName);
-					
-					// check we got a user
-					if (user == null) {
+			
+					// check if there is a Rapid action
+					if ("download".equals(rapidRequest.getActionName())) {
+										
+						// create the zip file
+						app.zip(this, rapidRequest, app.getId() + ".zip", true);
 						
-						// set the forbidden status code
-						response.setStatus(403);
+						// set the type as a .zip
+						response.setContentType("application/x-zip-compressed");
 						
-						// set the response
-						out.print("User not authorised for application");
+						// Shows the download dialog
+						response.setHeader("Content-disposition","attachment; filename=" + app.getId() + ".zip");
+																
+						// get the file for the zip we're about to create
+						File zipFile = new File(getServletContext().getRealPath("/WEB-INF/temp/" + app.getId() + ".zip"));
+						
+						// get it's size
+						long fileSize = Files.getSize(zipFile);
+						
+						// add size to response headers if small enough
+						if (fileSize < Integer.MAX_VALUE) response.setContentLength((int) fileSize);
+						
+						// send the file to browser
+						OutputStream os = response.getOutputStream();
+						FileInputStream in = new FileInputStream(zipFile);
+						byte[] buffer = new byte[1024];
+						int length;
+						while ((length = in.read(buffer)) > 0){
+						  os.write(buffer, 0, length);
+						}
+						in.close();
+						os.flush();
 						
 					} else {
-							
+																	
 						// get the page object
 						Page page = rapidRequest.getPage();
 								
 						// check we got one
 						if (page == null) { 
 							
-							out.print("Page not found");
+							// send message
+							sendMessage(rapidRequest, response, 404, "Page not found");
+							
+							// log
+							getLogger().debug("Rapid GET response (404) : Page not found");
 							
 						} else {
 							
+							// create a writer
+							PrintWriter out = response.getWriter();
+							
+							// check if we are in debug mode
 							if (rebuildPages) {
 								
 								// (re)generate the page start html
@@ -282,15 +278,15 @@ public class Rapid extends RapidHttpServlet {
 							
 							// add the remaining elements
 							out.print("  </body>\n</html>");
+							
+							// close the writer
+							out.close();
 												
 						} // page check
-									
-						// close the writer
-						out.close();
-																						
-					} // security check
+																																					
+					} // action name check
 							
-				} // action name check
+				} // security check
 				
 			} // app exists check
 								
@@ -307,20 +303,17 @@ public class Rapid extends RapidHttpServlet {
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-		PrintWriter out = response.getWriter();
-		
+				
 		// read bytes from request body into our own byte array (this means we can deal with images) 
 		InputStream input = request.getInputStream();
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();												
 		for (int length = 0; (length = input.read(_byteBuffer)) > -1;) outputStream.write(_byteBuffer, 0, length);			
 		byte[] bodyBytes = outputStream.toByteArray();
 		
+		// read the body into  string
 		String bodyString = new String(bodyBytes, "UTF-8");
 				
 		RapidRequest rapidRequest = new RapidRequest(this, request);
-		
-		String responseString = null;
 		
 		getLogger().debug("Rapid POST request : " + request.getQueryString() + " body : " + bodyString);
 					
@@ -340,14 +333,14 @@ public class Rapid extends RapidHttpServlet {
 				// check the user
 				if (user == null) {
 					
-					// set the forbidden status code
-					response.setStatus(403);
+					// send forbidden response			
+					sendMessage(rapidRequest, response, 403, "User not authorised for application");
 					
-					// set the response
-					responseString = "User not authorised for application";
+					// log
+					getLogger().debug("Rapid POST response (403) : Page not found");
 					
 				} else {
-					
+															
 					// assume we weren't passed any json				
 					JSONObject jsonData = null;
 					
@@ -360,69 +353,84 @@ public class Rapid extends RapidHttpServlet {
 					// set response to json
 					response.setContentType("application/json");
 					
-					// retain the response string
-					responseString = jsonResult.toString();	
+					// create a writer
+					PrintWriter out = response.getWriter();
+					
+					// print the results
+					out.print(jsonResult.toString());
+					
+					// close the writer
+					out.close();
 					
 				}
 				
 								
 			} else if ("getApps".equals(rapidRequest.getActionName())) {
 				
+				// create an empty array which we will populate
 				JSONArray jsonApps = new JSONArray();
 				
+				// get all available applications
 				List<Application> apps = getSortedApplications();
 				
+				// if there were some
 				if (apps != null) {
 					
+					// retain the user name 
+					String userName = rapidRequest.getUserName();
+					
+					// loop the apps
 					for (Application app : apps) {
-						
-						String userName = rapidRequest.getUserName();
-						
+									
+						// get the relevant security adapter
 						SecurityAdapater security = app.getSecurity();
 						
 						// fail silently if there was an issue
 						try {
 						
+							// fetch a user object in the name of the current user for the current app
 							User user = security.getUser(rapidRequest, userName);
 							
+							// if we got one
 							if (user != null) {
 								
+								// create a json object for the details of this application
 								JSONObject jsonApp = new JSONObject();
+								// add details
 								jsonApp.put("id", app.getId());
 								jsonApp.put("title", app.getTitle());
+								// add app to our main array
 								jsonApps.put(jsonApp);
 								
-							}
+							} // user check
 							
 						} catch (Exception ex) {}
 																									
-					}
+					} // apps loop
 					
-				}
+				} // apps check
 				
 				// set response to json
 				response.setContentType("application/json");
 				
-				// retain the response string
-				responseString = jsonApps.toString();
+				// create a writer
+				PrintWriter out = response.getWriter();
 				
-			}
+				// print the results
+				out.print(jsonApps.toString());
+				
+				// close the writer
+				out.close();
+								
+			} // action check
 			
 		} catch (Exception ex) {
 		
-			getLogger().error("Rapid POST error : ",ex);
+			getLogger().error("Rapid POST error : ", ex);
 			
 			sendException(rapidRequest, response, ex);
 		
-		} 
-											
-		// print the response (we only do this here in case an error used the output first, and to log)
-		out.print(responseString);
-		// close the output stream
-		out.close();
-		
-		// log
-		getLogger().debug("Rapid POST response : " + responseString);
+		} 											
 		
 	}
 
