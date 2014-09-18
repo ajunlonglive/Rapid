@@ -164,43 +164,52 @@ public class Rapid extends RapidHttpServlet {
 					
 					// create a writer
 					PrintWriter out = response.getWriter();
-							
-					// get the page object
-					Page page = rapidRequest.getPage();
-							
-					// check we got one
-					if (page != null) {
+					
+					// get the application security
+					SecurityAdapater security = app.getSecurity();
+					
+					// get the userName
+					String userName = rapidRequest.getUserName();
+					
+					// get the user
+					User user = security.getUser(rapidRequest, userName);
+					
+					// check we got a user
+					if (user == null) {
 						
-						if (rebuildPages) {
+						// set the forbidden status code
+						response.setStatus(403);
+						
+						// set the response
+						out.print("User not authorised for application");
+						
+					} else {
 							
-							// (re)generate the page start html
-							pageHtml = page.getStartHtml(rapidRequest.getApplication());
+						// get the page object
+						Page page = rapidRequest.getPage();
+								
+						// check we got one
+						if (page == null) { 
+							
+							out.print("Page not found");
 							
 						} else {
-						
-							// get any cached header html from the page object (this will regenerate and cache if not present)
-							pageHtml = page.getCachedStartHtml(rapidRequest.getApplication());
-													
-						}
-						
-						// output the start of the page
-						out.print(pageHtml);
-						
-						// get the application security
-						SecurityAdapater security = app.getSecurity();
-						
-						// if we have some
-						if (security != null) {
 							
-							// get the userName
-							String userName = rapidRequest.getUserName();
+							if (rebuildPages) {
+								
+								// (re)generate the page start html
+								pageHtml = page.getStartHtml(rapidRequest.getApplication());
+								
+							} else {
 							
-							// get the user
-							User user = security.getUser(rapidRequest, userName);
+								// get any cached header html from the page object (this will regenerate and cache if not present)
+								pageHtml = page.getCachedStartHtml(rapidRequest.getApplication());
+														
+							}
 							
-							// if we didn't get a user work with an empty one
-							if (user == null) user = new User();
-							
+							// output the start of the page
+							out.print(pageHtml);
+																										
 							// get the users roles
 							List<String> userRoles = user.getRoles();
 												
@@ -270,20 +279,16 @@ public class Rapid extends RapidHttpServlet {
 							} else {
 								if (security.checkUserRole(rapidRequest, userName, Rapid.DESIGN_ROLE)) out.print(getAdminLink(app.getId(), page.getId()).trim());
 							}
+							
+							// add the remaining elements
+							out.print("  </body>\n</html>");
 												
-						} else {
-							
-							out.print("  " + Html.getPrettyHtml(page.getHtmlBody()).trim());
-							
-						} // security check
+						} // page check
 									
-						// add the remaining elements
-						out.print("  </body>\n</html>");
-						
 						// close the writer
 						out.close();
 																						
-					} // page check
+					} // security check
 							
 				} // action name check
 				
@@ -315,21 +320,51 @@ public class Rapid extends RapidHttpServlet {
 				
 		RapidRequest rapidRequest = new RapidRequest(this, request);
 		
-		StringBuilder stringBuilder = new StringBuilder();
+		String responseString = null;
 		
 		getLogger().debug("Rapid POST request : " + request.getQueryString() + " body : " + bodyString);
 					
 		try {
 			
-			if (rapidRequest.getAction() != null) {								
+			if (rapidRequest.getAction() != null) {			
 				
-				JSONObject jsonData = null;
+				// get the application
+				Application app = rapidRequest.getApplication();
 				
-				if (!"".equals(bodyString)) jsonData = new JSONObject(bodyString);
+				// get the security
+				SecurityAdapater security = app.getSecurity();
+				
+				// get the user
+				User user = security.getUser(rapidRequest, rapidRequest.getUserName());
+				
+				// check the user
+				if (user == null) {
 					
-				JSONObject jsonResult = rapidRequest.getAction().doAction(this, rapidRequest, jsonData);
+					// set the forbidden status code
+					response.setStatus(403);
+					
+					// set the response
+					responseString = "User not authorised for application";
+					
+				} else {
+					
+					// assume we weren't passed any json				
+					JSONObject jsonData = null;
+					
+					// if there is something in the body string it must be json so parse it
+					if (!"".equals(bodyString)) jsonData = new JSONObject(bodyString);
+						
+					// fetch the action result
+					JSONObject jsonResult = rapidRequest.getAction().doAction(this, rapidRequest, jsonData);
+					
+					// set response to json
+					response.setContentType("application/json");
+					
+					// retain the response string
+					responseString = jsonResult.toString();	
+					
+				}
 				
-				stringBuilder.append(jsonResult.toString());	
 								
 			} else if ("getApps".equals(rapidRequest.getActionName())) {
 				
@@ -365,7 +400,11 @@ public class Rapid extends RapidHttpServlet {
 					
 				}
 				
-				stringBuilder.append(jsonApps.toString());
+				// set response to json
+				response.setContentType("application/json");
+				
+				// retain the response string
+				responseString = jsonApps.toString();
 				
 			}
 			
@@ -376,14 +415,14 @@ public class Rapid extends RapidHttpServlet {
 			sendException(rapidRequest, response, ex);
 		
 		} 
-		
-		// all responses are in json
-		response.setContentType("application/json");
-															
-		out.print(stringBuilder.toString());
+											
+		// print the response (we only do this here in case an error used the output first, and to log)
+		out.print(responseString);
+		// close the output stream
 		out.close();
 		
-		getLogger().debug("Rapid POST response : " + stringBuilder.toString());
+		// log
+		getLogger().debug("Rapid POST response : " + responseString);
 		
 	}
 
