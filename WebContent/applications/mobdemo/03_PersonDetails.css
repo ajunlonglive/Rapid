@@ -14,7 +14,12 @@
 	padding:10px;
 }
 
-#P4_C31_.img {
+#P4_C31_ {
 	padding:10px;
+}
+
+#P4_C31_ img {
+	max-height:100px;
+	max-width:100px;
 }
 

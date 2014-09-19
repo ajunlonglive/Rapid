@@ -1,19 +1,6 @@
 
 /* This file is auto-generated on application load and save */
 
-/* Grid control resource styles */
-
-table.grid {
-	border-collapse:collapse;
-}
-
-/* Hints control resource styles */
-
-.hint {
-	position: absolute;
-	z-index: 10009;
-}
-
 /* Page control resource styles */
 
 /* Dialogue cover */
@@ -68,6 +55,19 @@ span.loading {
 	height: 15px;
 	border: 2px solid #777;
 	display: none;
+}
+
+/* Grid control resource styles */
+
+table.grid {
+	border-collapse:collapse;
+}
+
+/* Hints control resource styles */
+
+.hint {
+	position: absolute;
+	z-index: 10009;
 }
 
 /* Slide panel control resource styles */

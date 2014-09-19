@@ -699,8 +699,13 @@ limit 20</SQL>
                             </entry>
                         </properties>
                         <styles>
-                            <appliesTo>#P4_C31_.img</appliesTo>
+                            <appliesTo>#P4_C31_</appliesTo>
                             <rules>padding:10px;</rules>
+                        </styles>
+                        <styles>
+                            <appliesTo>#P4_C31_ img</appliesTo>
+                            <rules>max-height:100px;</rules>
+                            <rules>max-width:100px;</rules>
                         </styles>
                         <XMLVersion>1</XMLVersion>
                     </childControls>
@@ -988,7 +993,7 @@ where id = ?</SQL>
     <htmlBody>&lt;div id=&quot;P4_C1_&quot; class=&quot;pagepanel&quot;&gt;&lt;/div&gt;&lt;div id=&quot;P4_C18_&quot; class=&quot;panel&quot;&gt;&lt;table id=&quot;P4_C2_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P4_C3_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C4_&quot; class=&quot;tabelCell cellLabel&quot;&gt;First name&lt;/td&gt;&lt;td id=&quot;P4_C5_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P4_C6_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot; readonly=&quot;readonly&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C8_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C9_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;&lt;td id=&quot;P4_C10_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P4_C11_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot; readonly=&quot;readonly&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C13_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C14_&quot; class=&quot;tabelCell&quot;&gt;Date of birth&lt;/td&gt;&lt;td id=&quot;P4_C15_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P4_C16_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot; readonly=&quot;readonly&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C19_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C20_&quot; class=&quot;tabelCell&quot;&gt;Picture&lt;/td&gt;&lt;td id=&quot;P4_C21_&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;P4_C22_&quot; class=&quot;button&quot;&gt;Add picture&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C32_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C33_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;div id=&quot;P4_C31_&quot;&gt;&lt;span&gt;No picture currently available&lt;/span&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C29_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C30_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;</htmlBody>
     <id>P4</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-09-19T17:03:16.082+01:00</modifiedDate>
+    <modifiedDate>2014-09-19T18:19:47.467+01:00</modifiedDate>
     <name>03_PersonDetails</name>
     <rolesHtml>
         <html>&lt;div id=&quot;P4_C1_&quot; class=&quot;pagepanel&quot;&gt;&lt;/div&gt;
