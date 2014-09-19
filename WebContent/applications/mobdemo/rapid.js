@@ -592,6 +592,9 @@ function setData_gallery(id, data, field, details) {
   		for (var i in data.rows) {
   			var url = data.rows[i][0];
   			control.append("<img src='" + url  + "'/>");
+  			control.find("img").last().click( function(ev) {
+  				$(ev.target).remove();
+  			});
   		}
   	} 
   }
