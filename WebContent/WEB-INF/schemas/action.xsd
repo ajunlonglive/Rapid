@@ -103,11 +103,23 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 														</xs:simpleType>
 													</xs:element>
 													<xs:element name="name">
+														<xs:annotation>
+															<xs:documentation>This is displayed to the users
+															</xs:documentation>
+														</xs:annotation>
 														<xs:simpleType>
 															<xs:restriction base="xs:string">
 																<xs:minLength value="1" />
-															</xs:restriction>
-														</xs:simpleType>
+															</xs:restriction>															
+														</xs:simpleType>														
+													</xs:element>
+													<xs:element name="visible" type="xs:boolean"
+														minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Set this optional item to false to not
+																render the property
+															</xs:documentation>
+														</xs:annotation>
 													</xs:element>
 													<xs:element name="setConstructValueFunction"
 														minOccurs="0">

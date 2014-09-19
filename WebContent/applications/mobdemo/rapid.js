@@ -36,6 +36,11 @@ function Action_database(actionId, data, outputs) {
 	}
 }
 
+function Action_mobile(actionId, type) {
+	// action callback
+	alert("Callback for " + actionId + "." + type);
+}
+
 //JQuery is ready! 
 $(document).ready( function() {
 	
@@ -562,6 +567,31 @@ function setData_dropdown(id, data, field, details) {
   				if (value || value == "0") value = 	" value='" + value + "'";
   				control.append("<option " + value + ">" + text + "</option>");
   			}	
+  		}
+  	} 
+  }
+}
+
+function getData_gallery(ev, id, field, details) {
+  var urls = "";
+  var control = $("#" + id);
+  var images = control.children();
+  images.each( function(i) {
+  	urls += $(this).attr("src");
+  	if (i < images.length - 1) urls += ",";
+  });
+  return urls;
+}
+
+function setData_gallery(id, data, field, details) {
+  if (data) {
+  	var control = $("#" + id);
+  	data = makeDataObject(data, field);
+  	if (data.rows) {
+  		control.find("span").remove();
+  		for (var i in data.rows) {
+  			var url = data.rows[i][0];
+  			control.append("<img src='" + url  + "'/>");
   		}
   	} 
   }

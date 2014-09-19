@@ -269,25 +269,28 @@ function showAction(actionsTable, action, collection, refreshFunction) {
 			var propertiesRow = actionsTable.children().last();
 			// retrieve a property object from the control class
 			var property = properties[k];
-			// get the property itself from the action
-			propertiesRow.append("<td>" + property.name + "</td><td></td>");
-			// get the cell the property update control is going in
-			var cell = propertiesRow.children().last();
-			// apply the property function if it starts like a function or look for a known Property_[type] function and call that
-			if (property.changeValueJavaScript.trim().indexOf("function(") == 0) {
-				try {
-					var changeValueFunction = new Function(property.changeValueJavaScript);
-					changeValueFunction.apply(this,[cell, action, property]);
-				} catch (ex) {
-					alert("Error - Couldn't apply changeValueJavaScript for " + action.name + "." + property.name + " " + ex);
-				}
-			} else {
-				if (window["Property_" + property.changeValueJavaScript]) {
-					window["Property_" + property.changeValueJavaScript](cell, action, property);
+			// check that visibility is not explicitly false
+			if (property.visible === undefined || !property.visible === false) {
+				// get the property itself from the action
+				propertiesRow.append("<td>" + property.name + "</td><td></td>");
+				// get the cell the property update control is going in
+				var cell = propertiesRow.children().last();
+				// apply the property function if it starts like a function or look for a known Property_[type] function and call that
+				if (property.changeValueJavaScript.trim().indexOf("function(") == 0) {
+					try {
+						var changeValueFunction = new Function(property.changeValueJavaScript);
+						changeValueFunction.apply(this,[cell, action, property]);
+					} catch (ex) {
+						alert("Error - Couldn't apply changeValueJavaScript for " + action.name + "." + property.name + " " + ex);
+					}
 				} else {
-					alert("Error - There is no known Property_" + property.changeValueJavaScript + " function");
-				}
-			}
+					if (window["Property_" + property.changeValueJavaScript]) {
+						window["Property_" + property.changeValueJavaScript](cell, action, property);
+					} else {
+						alert("Error - There is no known Property_" + property.changeValueJavaScript + " function");
+					}
+				}			
+			} // visibility check
 		} // properties loop
 	} // properties check
 }
