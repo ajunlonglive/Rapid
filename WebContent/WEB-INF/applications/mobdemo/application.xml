@@ -7,6 +7,7 @@
     <actionTypes>event</actionTypes>
     <actionTypes>existing</actionTypes>
     <actionTypes>logic</actionTypes>
+    <actionTypes>mobile</actionTypes>
     <actionTypes>navigate</actionTypes>
     <actionTypes>validation</actionTypes>
     <actionTypes>webservice</actionTypes>
@@ -15,18 +16,18 @@
     <controlTypes>dataStore</controlTypes>
     <controlTypes>date</controlTypes>
     <controlTypes>dropdown</controlTypes>
+    <controlTypes>gallery</controlTypes>
     <controlTypes>grid</controlTypes>
     <controlTypes>hints</controlTypes>
     <controlTypes>image</controlTypes>
     <controlTypes>input</controlTypes>
     <controlTypes>link</controlTypes>
-    <controlTypes>page</controlTypes>
     <controlTypes>pagePanel</controlTypes>
     <controlTypes>panel</controlTypes>
     <controlTypes>radiobuttons</controlTypes>
     <controlTypes>slidePanel</controlTypes>
-    <controlTypes>table</controlTypes>
     <controlTypes>tabGroup</controlTypes>
+    <controlTypes>table</controlTypes>
     <controlTypes>text</controlTypes>
     <createdBy>admin</createdBy>
     <createdDate>2014-08-27T10:45:44.906+01:00</createdDate>
@@ -41,7 +42,7 @@
     <description>This is a demonstration application provided to showcase many Rapid Mobile features</description>
     <id>mobdemo</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-09-18T16:15:22.388+01:00</modifiedDate>
+    <modifiedDate>2014-09-19T10:04:13.871+01:00</modifiedDate>
     <name>mobdemo</name>
     <pageBackupsMaxSize>3</pageBackupsMaxSize>
     <securityAdapterType>rapid</securityAdapterType>

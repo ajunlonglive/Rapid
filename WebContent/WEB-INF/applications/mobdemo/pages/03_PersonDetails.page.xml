@@ -1,0 +1,1036 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<page>
+    <controls>
+        <properties>
+            <entry>
+                <key>classes</key>
+                <value>[]</value>
+            </entry>
+            <entry>
+                <key>id</key>
+                <value>P4_C1_</value>
+            </entry>
+            <entry>
+                <key>details</key>
+                <value>{&quot;appId&quot;:&quot;mobdemo&quot;,&quot;pageId&quot;:&quot;P1&quot;}</value>
+            </entry>
+            <entry>
+                <key>pageId</key>
+                <value>P1</value>
+            </entry>
+            <entry>
+                <key>type</key>
+                <value>pagePanel</value>
+            </entry>
+            <entry>
+                <key>initJavaScript</key>
+                <value>true</value>
+            </entry>
+        </properties>
+        <XMLVersion>1</XMLVersion>
+    </controls>
+    <controls>
+        <childControls>
+            <childControls>
+                <childControls>
+                    <properties>
+                        <entry>
+                            <key>id</key>
+                            <value>P4_C4_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[&quot;cellLabel&quot;]</value>
+                        </entry>
+                        <entry>
+                            <key>text</key>
+                            <value>First name</value>
+                        </entry>
+                        <entry>
+                            <key>colSpan</key>
+                            <value>1</value>
+                        </entry>
+                        <entry>
+                            <key>rowSpan</key>
+                            <value>1</value>
+                        </entry>
+                        <entry>
+                            <key>type</key>
+                            <value>tableCell</value>
+                        </entry>
+                    </properties>
+                    <XMLVersion>1</XMLVersion>
+                </childControls>
+                <childControls>
+                    <childControls>
+                        <events>
+                            <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="database">
+<properties>
+    <entry>
+        <key>id</key>
+        <value>P4_A7_</value>
+    </entry>
+    <entry>
+        <key>XMLVersion</key>
+        <value>1</value>
+    </entry>
+    <entry>
+        <key>avoidRedundancy</key>
+        <value>false</value>
+    </entry>
+    <entry>
+        <key>childActions</key>
+        <value>[]</value>
+    </entry>
+    <entry>
+        <key>name</key>
+        <value>Database 20</value>
+    </entry>
+    <entry>
+        <key>type</key>
+        <value>database</value>
+    </entry>
+</properties>
+<XMLVersion>1</XMLVersion>
+<query>
+    <databaseConnectionIndex>0</databaseConnectionIndex>
+    <inputs>
+        <field></field>
+        <itemId>P4_C6_</itemId>
+    </inputs>
+    <inputs>
+        <field></field>
+        <itemId>P4_C11_</itemId>
+    </inputs>
+    <inputs>
+        <field></field>
+        <itemId>P4_C16_</itemId>
+    </inputs>
+    <outputs>
+        <field></field>
+        <itemId>P4_C21_</itemId>
+    </outputs>
+    <SQL>select id, forename,
+surname,
+/* The function below converts an SQLite date into the number of milliseconds since 1 Jan 1970 so the jdbc driver can retrieve it as a proper date object */
+strftime('%d/%m/%Y', birthday) birthday,
+gender
+from people
+/* The ifnull function substitutes the wildcard character if forename is not provided */
+where lower(forename) like ifnull(lower(?),'%')||'%'
+and lower(surname) like lower(?)||'%'
+and strftime('%d/%m/%Y', birthday) like '%'||ifnull(?,'%')||'%'
+order by surname, birthday
+/* Return at most 20 rows */
+limit 20</SQL>
+</query>
+<showLoading>true</showLoading>
+                            </actions>
+                            <filter></filter>
+                            <type>keyup</type>
+                        </events>
+                        <events>
+                            <filter></filter>
+                            <type>change</type>
+                        </events>
+                        <events>
+                            <filter></filter>
+                            <type>blur</type>
+                        </events>
+                        <properties>
+                            <entry>
+<key>id</key>
+<value>P4_C6_</value>
+                            </entry>
+                            <entry>
+<key>classes</key>
+<value>[]</value>
+                            </entry>
+                            <entry>
+<key>name</key>
+<value>inFirstName</value>
+                            </entry>
+                            <entry>
+<key>value</key>
+<value></value>
+                            </entry>
+                            <entry>
+<key>controlType</key>
+<value>R</value>
+                            </entry>
+                            <entry>
+<key>type</key>
+<value>input</value>
+                            </entry>
+                        </properties>
+                        <validation>
+                            <allowNulls>false</allowNulls>
+                            <javaScript></javaScript>
+                            <message></message>
+                            <regEx></regEx>
+                            <type></type>
+                        </validation>
+                        <XMLVersion>1</XMLVersion>
+                    </childControls>
+                    <properties>
+                        <entry>
+                            <key>id</key>
+                            <value>P4_C5_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
+                        </entry>
+                        <entry>
+                            <key>text</key>
+                            <value></value>
+                        </entry>
+                        <entry>
+                            <key>colSpan</key>
+                            <value>1</value>
+                        </entry>
+                        <entry>
+                            <key>rowSpan</key>
+                            <value>1</value>
+                        </entry>
+                        <entry>
+                            <key>type</key>
+                            <value>tableCell</value>
+                        </entry>
+                    </properties>
+                    <XMLVersion>1</XMLVersion>
+                </childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>P4_C3_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableRow</value>
+                    </entry>
+                </properties>
+                <XMLVersion>1</XMLVersion>
+            </childControls>
+            <childControls>
+                <childControls>
+                    <properties>
+                        <entry>
+                            <key>id</key>
+                            <value>P4_C9_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
+                        </entry>
+                        <entry>
+                            <key>text</key>
+                            <value>Surname</value>
+                        </entry>
+                        <entry>
+                            <key>colSpan</key>
+                            <value>1</value>
+                        </entry>
+                        <entry>
+                            <key>rowSpan</key>
+                            <value>1</value>
+                        </entry>
+                        <entry>
+                            <key>type</key>
+                            <value>tableCell</value>
+                        </entry>
+                    </properties>
+                    <XMLVersion>1</XMLVersion>
+                </childControls>
+                <childControls>
+                    <childControls>
+                        <events>
+                            <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="existing">
+<properties>
+    <entry>
+        <key>id</key>
+        <value>P4_A12_</value>
+    </entry>
+    <entry>
+        <key>XMLVersion</key>
+        <value>1</value>
+    </entry>
+    <entry>
+        <key>avoidRedundancy</key>
+        <value>false</value>
+    </entry>
+    <entry>
+        <key>name</key>
+        <value>Existing 21</value>
+    </entry>
+    <entry>
+        <key>action</key>
+        <value>P4_A7_</value>
+    </entry>
+    <entry>
+        <key>type</key>
+        <value>existing</value>
+    </entry>
+    <entry>
+        <key>redundantActions</key>
+        <value>[&quot;P4_A7_&quot;]</value>
+    </entry>
+</properties>
+<XMLVersion>1</XMLVersion>
+                            </actions>
+                            <filter></filter>
+                            <type>keyup</type>
+                        </events>
+                        <events>
+                            <filter></filter>
+                            <type>change</type>
+                        </events>
+                        <events>
+                            <filter></filter>
+                            <type>blur</type>
+                        </events>
+                        <properties>
+                            <entry>
+<key>id</key>
+<value>P4_C11_</value>
+                            </entry>
+                            <entry>
+<key>classes</key>
+<value>[]</value>
+                            </entry>
+                            <entry>
+<key>name</key>
+<value>inSurname</value>
+                            </entry>
+                            <entry>
+<key>value</key>
+<value></value>
+                            </entry>
+                            <entry>
+<key>controlType</key>
+<value>R</value>
+                            </entry>
+                            <entry>
+<key>type</key>
+<value>input</value>
+                            </entry>
+                        </properties>
+                        <validation>
+                            <allowNulls>false</allowNulls>
+                            <javaScript></javaScript>
+                            <message></message>
+                            <regEx></regEx>
+                            <type></type>
+                        </validation>
+                        <XMLVersion>1</XMLVersion>
+                    </childControls>
+                    <properties>
+                        <entry>
+                            <key>id</key>
+                            <value>P4_C10_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
+                        </entry>
+                        <entry>
+                            <key>text</key>
+                            <value></value>
+                        </entry>
+                        <entry>
+                            <key>colSpan</key>
+                            <value>1</value>
+                        </entry>
+                        <entry>
+                            <key>rowSpan</key>
+                            <value>1</value>
+                        </entry>
+                        <entry>
+                            <key>type</key>
+                            <value>tableCell</value>
+                        </entry>
+                    </properties>
+                    <XMLVersion>1</XMLVersion>
+                </childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>P4_C8_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableRow</value>
+                    </entry>
+                </properties>
+                <XMLVersion>1</XMLVersion>
+            </childControls>
+            <childControls>
+                <childControls>
+                    <properties>
+                        <entry>
+                            <key>id</key>
+                            <value>P4_C14_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
+                        </entry>
+                        <entry>
+                            <key>text</key>
+                            <value>Date of birth</value>
+                        </entry>
+                        <entry>
+                            <key>colSpan</key>
+                            <value>1</value>
+                        </entry>
+                        <entry>
+                            <key>rowSpan</key>
+                            <value>1</value>
+                        </entry>
+                        <entry>
+                            <key>type</key>
+                            <value>tableCell</value>
+                        </entry>
+                    </properties>
+                    <XMLVersion>1</XMLVersion>
+                </childControls>
+                <childControls>
+                    <childControls>
+                        <events>
+                            <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="existing">
+<properties>
+    <entry>
+        <key>id</key>
+        <value>P4_A17_</value>
+    </entry>
+    <entry>
+        <key>XMLVersion</key>
+        <value>1</value>
+    </entry>
+    <entry>
+        <key>avoidRedundancy</key>
+        <value>false</value>
+    </entry>
+    <entry>
+        <key>name</key>
+        <value>Existing 23</value>
+    </entry>
+    <entry>
+        <key>action</key>
+        <value>P4_A7_</value>
+    </entry>
+    <entry>
+        <key>type</key>
+        <value>existing</value>
+    </entry>
+    <entry>
+        <key>redundantActions</key>
+        <value>[&quot;P4_A7_&quot;]</value>
+    </entry>
+</properties>
+<XMLVersion>1</XMLVersion>
+                            </actions>
+                            <filter></filter>
+                            <type>keyup</type>
+                        </events>
+                        <events>
+                            <filter></filter>
+                            <type>change</type>
+                        </events>
+                        <events>
+                            <filter></filter>
+                            <type>blur</type>
+                        </events>
+                        <properties>
+                            <entry>
+<key>id</key>
+<value>P4_C16_</value>
+                            </entry>
+                            <entry>
+<key>classes</key>
+<value>[]</value>
+                            </entry>
+                            <entry>
+<key>name</key>
+<value>inDateOfBirth</value>
+                            </entry>
+                            <entry>
+<key>value</key>
+<value></value>
+                            </entry>
+                            <entry>
+<key>controlType</key>
+<value>R</value>
+                            </entry>
+                            <entry>
+<key>type</key>
+<value>input</value>
+                            </entry>
+                        </properties>
+                        <validation>
+                            <allowNulls>false</allowNulls>
+                            <javaScript></javaScript>
+                            <message></message>
+                            <regEx></regEx>
+                            <type></type>
+                        </validation>
+                        <XMLVersion>1</XMLVersion>
+                    </childControls>
+                    <properties>
+                        <entry>
+                            <key>id</key>
+                            <value>P4_C15_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
+                        </entry>
+                        <entry>
+                            <key>text</key>
+                            <value></value>
+                        </entry>
+                        <entry>
+                            <key>colSpan</key>
+                            <value>1</value>
+                        </entry>
+                        <entry>
+                            <key>rowSpan</key>
+                            <value>1</value>
+                        </entry>
+                        <entry>
+                            <key>type</key>
+                            <value>tableCell</value>
+                        </entry>
+                    </properties>
+                    <XMLVersion>1</XMLVersion>
+                </childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>P4_C13_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableRow</value>
+                    </entry>
+                </properties>
+                <XMLVersion>1</XMLVersion>
+            </childControls>
+            <childControls>
+                <childControls>
+                    <properties>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
+                        </entry>
+                        <entry>
+                            <key>id</key>
+                            <value>P4_C20_</value>
+                        </entry>
+                        <entry>
+                            <key>text</key>
+                            <value>Picture</value>
+                        </entry>
+                        <entry>
+                            <key>colSpan</key>
+                            <value>1</value>
+                        </entry>
+                        <entry>
+                            <key>rowSpan</key>
+                            <value>1</value>
+                        </entry>
+                        <entry>
+                            <key>type</key>
+                            <value>tableCell</value>
+                        </entry>
+                    </properties>
+                    <XMLVersion>1</XMLVersion>
+                </childControls>
+                <childControls>
+                    <childControls>
+                        <events>
+                            <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="mobile">
+<properties>
+    <entry>
+        <key>id</key>
+        <value>P4_A28_</value>
+    </entry>
+    <entry>
+        <key>XMLVersion</key>
+        <value>1</value>
+    </entry>
+    <entry>
+        <key>avoidRedundancy</key>
+        <value>false</value>
+    </entry>
+    <entry>
+        <key>name</key>
+        <value>Mobile 28</value>
+    </entry>
+    <entry>
+        <key>galleryControlId</key>
+        <value>P4_C31_</value>
+    </entry>
+    <entry>
+        <key>actionType</key>
+        <value>addImage</value>
+    </entry>
+    <entry>
+        <key>type</key>
+        <value>mobile</value>
+    </entry>
+</properties>
+<XMLVersion>1</XMLVersion>
+                            </actions>
+                            <filter></filter>
+                            <type>click</type>
+                        </events>
+                        <properties>
+                            <entry>
+<key>classes</key>
+<value>[]</value>
+                            </entry>
+                            <entry>
+<key>id</key>
+<value>P4_C22_</value>
+                            </entry>
+                            <entry>
+<key>name</key>
+<value>btnPicture</value>
+                            </entry>
+                            <entry>
+<key>label</key>
+<value>Add picture</value>
+                            </entry>
+                            <entry>
+<key>type</key>
+<value>button</value>
+                            </entry>
+                        </properties>
+                        <styles>
+                            <appliesTo>#P4_C22_</appliesTo>
+                            <rules>width:98%;</rules>
+                        </styles>
+                        <XMLVersion>1</XMLVersion>
+                    </childControls>
+                    <properties>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
+                        </entry>
+                        <entry>
+                            <key>id</key>
+                            <value>P4_C21_</value>
+                        </entry>
+                        <entry>
+                            <key>text</key>
+                            <value></value>
+                        </entry>
+                        <entry>
+                            <key>colSpan</key>
+                            <value>1</value>
+                        </entry>
+                        <entry>
+                            <key>rowSpan</key>
+                            <value>1</value>
+                        </entry>
+                        <entry>
+                            <key>type</key>
+                            <value>tableCell</value>
+                        </entry>
+                    </properties>
+                    <XMLVersion>1</XMLVersion>
+                </childControls>
+                <properties>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
+                        <key>id</key>
+                        <value>P4_C19_</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableRow</value>
+                    </entry>
+                </properties>
+                <XMLVersion>1</XMLVersion>
+            </childControls>
+            <childControls>
+                <childControls>
+                    <childControls>
+                        <properties>
+                            <entry>
+<key>id</key>
+<value>P4_C31_</value>
+                            </entry>
+                            <entry>
+<key>classes</key>
+<value>[]</value>
+                            </entry>
+                            <entry>
+<key>name</key>
+<value>galPictures</value>
+                            </entry>
+                            <entry>
+<key>images</key>
+<value>[]</value>
+                            </entry>
+                            <entry>
+<key>emptyText</key>
+<value>No picture currently available</value>
+                            </entry>
+                            <entry>
+<key>type</key>
+<value>gallery</value>
+                            </entry>
+                        </properties>
+                        <styles>
+                            <appliesTo>#P4_C31_.img</appliesTo>
+                            <rules>padding:10px;</rules>
+                        </styles>
+                        <XMLVersion>1</XMLVersion>
+                    </childControls>
+                    <properties>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
+                        </entry>
+                        <entry>
+                            <key>id</key>
+                            <value>P4_C33_</value>
+                        </entry>
+                        <entry>
+                            <key>text</key>
+                            <value></value>
+                        </entry>
+                        <entry>
+                            <key>colSpan</key>
+                            <value>2</value>
+                        </entry>
+                        <entry>
+                            <key>rowSpan</key>
+                            <value>1</value>
+                        </entry>
+                        <entry>
+                            <key>type</key>
+                            <value>tableCell</value>
+                        </entry>
+                    </properties>
+                    <styles>
+                        <appliesTo>#P4_C33_</appliesTo>
+                        <rules>text-align:center;</rules>
+                        <rules>padding:10px;</rules>
+                    </styles>
+                    <XMLVersion>1</XMLVersion>
+                </childControls>
+                <properties>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
+                        <key>id</key>
+                        <value>P4_C32_</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableRow</value>
+                    </entry>
+                </properties>
+                <XMLVersion>1</XMLVersion>
+            </childControls>
+            <childControls>
+                <childControls>
+                    <properties>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
+                        </entry>
+                        <entry>
+                            <key>id</key>
+                            <value>P4_C30_</value>
+                        </entry>
+                        <entry>
+                            <key>text</key>
+                            <value></value>
+                        </entry>
+                        <entry>
+                            <key>colSpan</key>
+                            <value>2</value>
+                        </entry>
+                        <entry>
+                            <key>rowSpan</key>
+                            <value>1</value>
+                        </entry>
+                        <entry>
+                            <key>type</key>
+                            <value>tableCell</value>
+                        </entry>
+                    </properties>
+                    <XMLVersion>1</XMLVersion>
+                </childControls>
+                <properties>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
+                        <key>id</key>
+                        <value>P4_C29_</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableRow</value>
+                    </entry>
+                </properties>
+                <XMLVersion>1</XMLVersion>
+            </childControls>
+            <properties>
+                <entry>
+                    <key>id</key>
+                    <value>P4_C2_</value>
+                </entry>
+                <entry>
+                    <key>classes</key>
+                    <value>[]</value>
+                </entry>
+                <entry>
+                    <key>type</key>
+                    <value>table</value>
+                </entry>
+            </properties>
+            <XMLVersion>1</XMLVersion>
+        </childControls>
+        <events>
+            <filter></filter>
+            <type>click</type>
+        </events>
+        <events>
+            <filter></filter>
+            <type>hover</type>
+        </events>
+        <properties>
+            <entry>
+                <key>classes</key>
+                <value>[]</value>
+            </entry>
+            <entry>
+                <key>id</key>
+                <value>P4_C18_</value>
+            </entry>
+            <entry>
+                <key>text</key>
+                <value></value>
+            </entry>
+            <entry>
+                <key>type</key>
+                <value>panel</value>
+            </entry>
+        </properties>
+        <styles>
+            <appliesTo>#P4_C18_</appliesTo>
+            <rules>padding:10px;</rules>
+        </styles>
+        <XMLVersion>1</XMLVersion>
+    </controls>
+    <description></description>
+    <events>
+        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="logic">
+            <properties>
+                <entry>
+                    <key>id</key>
+                    <value>P4_A23_</value>
+                </entry>
+                <entry>
+                    <key>XMLVersion</key>
+                    <value>1</value>
+                </entry>
+                <entry>
+                    <key>avoidRedundancy</key>
+                    <value>false</value>
+                </entry>
+                <entry>
+                    <key>childActions</key>
+                    <value>[{&quot;id&quot;:&quot;P4_A24_&quot;,&quot;XMLVersion&quot;:1,&quot;avoidRedundancy&quot;:false,&quot;page&quot;:&quot;P3&quot;,&quot;name&quot;:&quot;Navigate 24&quot;,&quot;type&quot;:&quot;navigate&quot;}]</value>
+                </entry>
+                <entry>
+                    <key>name</key>
+                    <value>Logic 23</value>
+                </entry>
+                <entry>
+                    <key>type</key>
+                    <value>logic</value>
+                </entry>
+            </properties>
+            <XMLVersion>1</XMLVersion>
+            <falseActions xsi:type="database">
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>P4_A25_</value>
+                    </entry>
+                    <entry>
+                        <key>XMLVersion</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>avoidRedundancy</key>
+                        <value>false</value>
+                    </entry>
+                    <entry>
+                        <key>childActions</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
+                        <key>name</key>
+                        <value>Database 25</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>database</value>
+                    </entry>
+                </properties>
+                <XMLVersion>1</XMLVersion>
+                <query>
+                    <databaseConnectionIndex>0</databaseConnectionIndex>
+                    <inputs>
+                        <field></field>
+                        <itemId>personId</itemId>
+                    </inputs>
+                    <outputs>
+                        <field>forename</field>
+                        <itemId>P4_C6_</itemId>
+                    </outputs>
+                    <outputs>
+                        <field>surname</field>
+                        <itemId>P4_C11_</itemId>
+                    </outputs>
+                    <outputs>
+                        <field>birthday</field>
+                        <itemId>P4_C16_</itemId>
+                    </outputs>
+                    <SQL>select forename,
+surname,
+/* The function below converts an SQLite date into the number of milliseconds since 1 Jan 1970 so the jdbc driver can retrieve it as a proper date object */
+strftime('%d/%m/%Y', birthday) birthday,
+gender
+from people
+where id = ?</SQL>
+                </query>
+                <showLoading>false</showLoading>
+            </falseActions>
+            <operation>==</operation>
+            <trueActions xsi:type="navigate">
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>P4_A24_</value>
+                    </entry>
+                    <entry>
+                        <key>XMLVersion</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>avoidRedundancy</key>
+                        <value>false</value>
+                    </entry>
+                    <entry>
+                        <key>page</key>
+                        <value>P3</value>
+                    </entry>
+                    <entry>
+                        <key>name</key>
+                        <value>Navigate 24</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>navigate</value>
+                    </entry>
+                </properties>
+                <XMLVersion>1</XMLVersion>
+            </trueActions>
+            <value1>
+                <constant></constant>
+                <controlField></controlField>
+                <controlId>personId</controlId>
+                <system></system>
+                <type>CTL</type>
+            </value1>
+            <value2>
+                <constant>null</constant>
+                <controlField></controlField>
+                <controlId></controlId>
+                <system>null</system>
+                <type>SYS</type>
+            </value2>
+        </actions>
+        <filter></filter>
+        <type>pageload</type>
+    </events>
+    <events>
+        <filter></filter>
+        <type>reusable</type>
+    </events>
+    <htmlBody>&lt;div id=&quot;P4_C1_&quot; class=&quot;pagepanel&quot;&gt;&lt;/div&gt;&lt;div id=&quot;P4_C18_&quot; class=&quot;panel&quot;&gt;&lt;table id=&quot;P4_C2_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P4_C3_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C4_&quot; class=&quot;tabelCell cellLabel&quot;&gt;First name&lt;/td&gt;&lt;td id=&quot;P4_C5_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P4_C6_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot; readonly=&quot;readonly&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C8_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C9_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;&lt;td id=&quot;P4_C10_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P4_C11_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot; readonly=&quot;readonly&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C13_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C14_&quot; class=&quot;tabelCell&quot;&gt;Date of birth&lt;/td&gt;&lt;td id=&quot;P4_C15_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P4_C16_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot; readonly=&quot;readonly&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C19_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C20_&quot; class=&quot;tabelCell&quot;&gt;Picture&lt;/td&gt;&lt;td id=&quot;P4_C21_&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;P4_C22_&quot; class=&quot;button&quot;&gt;Add picture&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C32_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C33_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;div id=&quot;P4_C31_&quot;&gt;&lt;span&gt;No picture currently available&lt;/span&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C29_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C30_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;</htmlBody>
+    <id>P4</id>
+    <modifiedBy>admin</modifiedBy>
+    <modifiedDate>2014-09-19T17:03:16.082+01:00</modifiedDate>
+    <name>03_PersonDetails</name>
+    <rolesHtml>
+        <html>&lt;div id=&quot;P4_C1_&quot; class=&quot;pagepanel&quot;&gt;&lt;/div&gt;
+	&lt;div id=&quot;P4_C18_&quot; class=&quot;panel&quot;&gt;
+		&lt;table id=&quot;P4_C2_&quot; class=&quot;table&quot;&gt;
+			&lt;tbody&gt;
+				&lt;tr id=&quot;P4_C3_&quot; class=&quot;tableRow&quot;&gt;
+					&lt;td id=&quot;P4_C4_&quot; class=&quot;tabelCell cellLabel&quot;&gt;First name&lt;/td&gt;
+					&lt;td id=&quot;P4_C5_&quot; class=&quot;tabelCell&quot;&gt;
+						&lt;input id=&quot;P4_C6_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot; readonly=&quot;readonly&quot;&gt;&lt;/td&gt;
+					&lt;/tr&gt;
+					&lt;tr id=&quot;P4_C8_&quot; class=&quot;tableRow&quot;&gt;
+						&lt;td id=&quot;P4_C9_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;
+						&lt;td id=&quot;P4_C10_&quot; class=&quot;tabelCell&quot;&gt;
+							&lt;input id=&quot;P4_C11_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot; readonly=&quot;readonly&quot;&gt;&lt;/td&gt;
+						&lt;/tr&gt;
+						&lt;tr id=&quot;P4_C13_&quot; class=&quot;tableRow&quot;&gt;
+							&lt;td id=&quot;P4_C14_&quot; class=&quot;tabelCell&quot;&gt;Date of birth&lt;/td&gt;
+							&lt;td id=&quot;P4_C15_&quot; class=&quot;tabelCell&quot;&gt;
+								&lt;input id=&quot;P4_C16_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot; readonly=&quot;readonly&quot;&gt;&lt;/td&gt;
+							&lt;/tr&gt;
+							&lt;tr id=&quot;P4_C19_&quot; class=&quot;tableRow&quot;&gt;
+								&lt;td id=&quot;P4_C20_&quot; class=&quot;tabelCell&quot;&gt;Picture&lt;/td&gt;
+								&lt;td id=&quot;P4_C21_&quot; class=&quot;tabelCell&quot;&gt;
+									&lt;button id=&quot;P4_C22_&quot; class=&quot;button&quot;&gt;Add picture&lt;/button&gt;
+								&lt;/td&gt;
+							&lt;/tr&gt;
+							&lt;tr id=&quot;P4_C32_&quot; class=&quot;tableRow&quot;&gt;
+								&lt;td id=&quot;P4_C33_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;
+									&lt;div id=&quot;P4_C31_&quot;&gt;
+										&lt;span&gt;No picture currently available&lt;/span&gt;
+									&lt;/div&gt;
+								&lt;/td&gt;
+							&lt;/tr&gt;
+							&lt;tr id=&quot;P4_C29_&quot; class=&quot;tableRow&quot;&gt;
+								&lt;td id=&quot;P4_C30_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;/td&gt;
+							&lt;/tr&gt;
+						&lt;/tbody&gt;
+					&lt;/table&gt;
+				&lt;/div&gt;</html>
+    </rolesHtml>
+    <sessionVariables>personId</sessionVariables>
+    <title>Person details</title>
+    <XMLVersion>1</XMLVersion>
+</page>

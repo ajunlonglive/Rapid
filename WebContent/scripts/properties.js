@@ -29,9 +29,6 @@ Functions related to control properties
 
 */
 
-// possible system values used by the Logic property
-var _systemValues = ["true","false","null","online"];
-
 // this holds all the property listeners so they can be properly detached
 var _listeners = [];
 // this holds all the dialogue listeners for the same reason
@@ -122,6 +119,22 @@ function updateProperty(propertyObject, property, value, refreshHtml) {
 			// in controls.js
 			rebuildHtml(propertyObject);
 		}	
+	}
+}
+
+function setPropertyVisibilty(propertyObject, propertyKey, visibile) {
+	if (propertyObject && propertyObject._class && propertyObject._class.properties) {
+		var properties = propertyObject._class.properties;
+		// (if a single it's a class not an array due to JSON class conversionf from xml)
+		if ($.isArray(properties.property)) properties = properties.property; 
+		// loop them
+		for (var i in properties) {
+			var property = properties[i];
+			if (property.key == propertyKey) {
+				property.visible = visibile;
+				break;
+			}
+		}
 	}
 }
 
@@ -287,6 +300,90 @@ function Property_checkbox(cell, propertyObject, property, refreshHtml) {
 	_listeners.push( input.change( function(ev) { 
 		updateProperty(propertyObject, property, ev.target.checked, refreshHtml); 
 	}));
+}
+
+function Property_galleryImages(cell, gallery, property, refreshHtml, refreshDialogue) {
+	
+	// retain a reference to the dialogue (if we were passed one)
+	var dialogue = refreshDialogue;
+	// if we weren't passed one - make what we need
+	if (!dialogue) dialogue = createDialogue(cell, 200, "Images");		
+	// grab a reference to the table
+	var table = dialogue.find("table").first();
+	// make sure table is empty
+	table.children().remove();
+		
+	// instantiate if need be
+	if (!gallery.images) gallery.images = [];
+	// retain variable for them
+	var images = gallery.images;
+	// assume no text
+	var text = "";
+	// loop images
+	for (var i in images) {
+		// add url;
+		text += images[i].url;
+		// add comma if there are more
+		if (i < images.length - 1) text += ",";
+	}
+	// set the cell
+	if (text) {
+		cell.html(text);
+	} else {
+		cell.html("Click to add...");
+	}
+	
+	// append the drop down for existing images
+	table.append("<tr><td  colspan='3' style='text-align:center;'>Url</td></tr>");
+	
+	// loop the images
+	for (var i in images) {
+		// get this image
+		var image = images[i];
+		// append
+		table.append("<tr><td><input value='" + image.url + "' /></td><td style='width:32px'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
+	}
+	
+	// add the change listeners
+	_listeners.push( table.find("input").keyup( function (ev) {
+		// get the input
+		var input = $(ev.target);
+		// get the image according to the row index, less the header
+		var image = images[input.closest("tr").index() - 1];
+		// update the url
+		image.url = input.val();
+		// update the reference and rebuild the html (this adds an undo)
+		updateProperty(gallery, property, images, refreshHtml); 			
+	}));
+	
+	// add delete listeners
+	_listeners.push( table.find("img.delete").click( function (ev) {
+		// add undo
+		addUndo();
+		// get the image
+		var img = $(ev.target);
+		// remove the image at this location
+		images.splice(img.index() - 1);
+		// update html 
+		rebuildHtml(gallery);
+		// update the dialogue;
+		Property_galleryImages(cell, gallery, property, refreshHtml, dialogue);
+	}));
+	
+	// add reorder listeners
+	addReorder(images, table.find("img.reorder"), function() { rebuildHtml(gallery); Property_galleryImages(cell, gallery, property, refreshHtml, dialogue); });
+		
+	// append add
+	table.append("<tr><td colspan='3'><a href='#'>add...</a></td></tr>");
+	
+	// add listener
+	_listeners.push( table.find("a").click( function (ev) {
+		// add an image
+		images.push({url:""});
+		// refresh dialogue
+		Property_galleryImages(cell, gallery, property, refreshHtml, dialogue);
+	}));
+	
 }
 
 function Property_imageFile(cell, propertyObject, property, refreshHtml, refreshDialogue) {
@@ -1298,6 +1395,9 @@ function Property_radiobuttons(cell, radiobuttons, property, refreshHtml, refres
 	
 }
 
+//possible system values used by the Logic property
+var _systemValues = ["true","false","null","online"];
+
 //this is a dialogue to define radio buttons
 function Property_logicValue(cell, action, property, refreshHtml, refreshDialogue) {
 	
@@ -2029,5 +2129,38 @@ function Property_orientation(cell, propertyObject, property, refreshHtml, refre
 		if (typeof(localStorage) !== "undefined") localStorage.setItem("_orientation" ,_orientation);
 		// windowResize
 		windowResize("_orientation");
+	}));
+}
+
+// possible mobileActionType values used by the mobileActionType property
+var _mobileActionTypes = [["addImage","Add image"],["uploadImages","Upload images"],["showGPS","Send gps position"]];
+
+// this property changes the visibility of other properties according to the chosen type
+function Property_mobileActionType(cell, mobileAction, property, refreshHtml, refreshProperties) {
+	// the selectHtml
+	var selectHtml = "<select>";
+	// loop the mobile action types
+	for (var i in _mobileActionTypes) {
+		selectHtml += "<option value='" + _mobileActionTypes[i][0] + "'" + (mobileAction.actionType == _mobileActionTypes[i][0]? " selected='selected'" : "") + ">" + _mobileActionTypes[i][1] + "</option>";
+	}
+	selectHtml += "</select>";
+	// add the available types and retrieve dropdown
+	var actionTypeSelect = cell.append(selectHtml).find("select");	
+	// assume all other properties invisible
+	setPropertyVisibilty(mobileAction, "galleryControlId", false);
+	// adjust required property visibility accordingly
+	switch (mobileAction.actionType) {
+		case "addImage" :
+			setPropertyVisibilty(mobileAction, "galleryControlId", true);
+		break;
+	}
+	// listener for changing the type
+	_listeners.push( actionTypeSelect.change( function(ev) {
+		// set the new value
+		mobileAction.actionType = $(ev.target).val();
+		// refresh properties (which will update the required visibilities)
+		Property_mobileActionType(cell, mobileAction, property, refreshHtml, refreshProperties);
+		// refresh events which is where these action properties would be
+		showEvents(_selectedControl);		
 	}));
 }

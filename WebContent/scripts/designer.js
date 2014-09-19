@@ -459,13 +459,13 @@ function getPageOptions(selectId, ignoreId) {
 }
 
 // this function returns a set of options for a dropdown of controls
-function getControlOptions(selectId, ignoreId) {
+function getControlOptions(selectId, ignoreId, type) {
 	var controls = getControls();
 	var options = "";
 	for (var i in controls) {
 		var control = controls[i];
-		// note how only control with names are included
-		if (control.id != ignoreId && control.name) options += "<option value='" + control.id + "' " + (control.id == selectId ? "selected='selected'" : "") + ">" + control.name + "</option>"; 
+		// note how only control with names are included, and type is only matched if included
+		if (control.id != ignoreId && control.name && (!type || type == control.type)) options += "<option value='" + control.id + "' " + (control.id == selectId ? "selected='selected'" : "") + ">" + control.name + "</option>"; 
 	}
 	return options;
 }

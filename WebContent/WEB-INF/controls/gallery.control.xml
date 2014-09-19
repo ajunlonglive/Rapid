@@ -28,13 +28,10 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
 	<control>
 	    
-	    <type>image</type>	
-	    <name>Image</name>	   
-	    <image>images/image_24x24.png</image>
-	    
-	    <addToNewApplications>true</addToNewApplications>
-	    <noDefaultName>true</noDefaultName>
-	            
+	    <type>gallery</type>	
+	    <name>Gallery</name>	   
+	    <image>images/gallery_24x24.png</image>
+	    	            
 	    <canUserAdd>true</canUserAdd>
 	    <canUserMove>true</canUserMove>
 	    <canUserAddPeers>true</canUserAddPeers>
@@ -46,40 +43,79 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <changeValueJavaScript>text</changeValueJavaScript>	            
 	        </property>	            
 	        <property>
-	            <key>title</key>
-	            <name>Title</name>
-	            <setConstructValueFunction>return this.name;</setConstructValueFunction>  
-	            <changeValueJavaScript>text</changeValueJavaScript>	     	                 
+	            <key>images</key>
+	            <name>Images</name>
+	            <setConstructValueFunction>return [{url:'images/RapidLogo_60x40.png'},{url:'images/RapidLogo_60x40.png'}]</setConstructValueFunction>  
+	            <changeValueJavaScript>galleryImages</changeValueJavaScript>	     	                 
 	        </property>
 	        <property>
-	            <key>file</key>
-	            <name>File</name>
-	            <setConstructValueFunction>return "../../images/RapidLogo_60x40.png"</setConstructValueFunction>
-	            <changeValueJavaScript>imageFile</changeValueJavaScript>	     	                 
+	            <key>emptyText</key>
+	            <name>Empty text</name>
+	            <setConstructValueFunction>return "No images";</setConstructValueFunction>  
+	            <changeValueJavaScript>text</changeValueJavaScript>	     	                 
 	        </property>
 	    </properties>
 	    
 	    <getHtmlFunction>
 	        <![CDATA[	   	        
-if (this.file && this.file.substr(0,13) == 'applications/') this.file = this.file.substr(this.file.indexOf('/',13) + 1);	 
-var title = (this.title) ? " title='" + this.title + "'": "";         
-return "<img id='" + this.id + "' src='applications/" + _app.id + "/" + this.file + "'" + title + " class='image" + getStyleClasses(this) + "'></img>"
+var html = "<div id='" + this.id + "'>";
+if (this.images && this.images.length > 0) {
+  for (var i in this.images) {
+    html += "<img src='" + this.images[i].url + "'/>";
+  }
+} else {
+	html += "<span>" + this.emptyText + "</span>";
+}
+html += "</div>";
+return html;
 	        ]]>
 	    </getHtmlFunction> 
 	    
-	    <events>
-	        <event>
-	            <type>click</type>
-	            <name>Click</name>
-	        </event>
-	    </events>
+	    <updateChildObjects>true</updateChildObjects>
+	    
+	    <getDataFunction>
+	        <![CDATA[
+var urls = "";
+var control = $("#" + id);
+var images = control.children();
+images.each( function(i) {
+	urls += $(this).attr("src");
+	if (i < images.length - 1) urls += ",";
+});
+return urls;
+			]]>
+	    </getDataFunction>
+	    
+	    <setDataJavaScript>
+	        <![CDATA[       
+if (data) {
+	var control = $("#" + id);
+	data = makeDataObject(data, field);
+	if (data.rows) {
+		control.find("span").remove();
+		for (var i in data.rows) {
+			var url = data.rows[i][0];
+			control.append("<img src='" + url  + "'/>");
+		}
+	} 
+}
+	        ]]>
+	    </setDataJavaScript>
 	    
 	    <styles>
 	        <style>
-	            <name>Image</name>  
+	            <name>Gallery</name>  
 	            <getAppliesToFunction>
 					<![CDATA[	      
 return "#" + this.id;
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	        <style>
+	            <name>Images</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id + " img";
 	       			 ]]>	                
 	            </getAppliesToFunction>
 	        </style>
