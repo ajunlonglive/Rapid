@@ -123,6 +123,14 @@ return "#" + this.id + " img";
 	            </getAppliesToFunction>
 	        </style>
 	    </styles>
+	    
+	   	<initJavaScript>
+	        <![CDATA[
+$("#" + id).children("img").click( function(ev) {
+	$(ev.target).remove();
+});	        
+	        ]]>	        	       	        
+	    </initJavaScript>
 	    	    
 	</control>
 </controls>
