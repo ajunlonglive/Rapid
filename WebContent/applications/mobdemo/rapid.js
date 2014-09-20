@@ -213,6 +213,12 @@ function Init_date(id, details) {
   f_tcalAdd (id);
 }
 
+function Init_gallery(id, details) {
+  $("#" + id).children("img").click( function(ev) {
+  	$(ev.target).remove();
+  });
+}
+
 function Init_hints(id, details) {
   var body = $("body");
   	    	
