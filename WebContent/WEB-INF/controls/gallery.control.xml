@@ -56,6 +56,24 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	        </property>
 	    </properties>
 	    
+	    <resources>
+	        <resource>
+	            <type>javascript</type>
+	            <contents>
+	                <![CDATA[
+function Gallery_removeImage(ev, id) {
+	$(ev.target).remove();
+	// look for our custom imageRemoved handler for this control
+	var imageRemoved = window["Event_imageRemoved_" + id];
+	// fire it if we found it
+	if (imageRemoved) window["Event_imageRemoved_" + id](ev);
+}              	
+
+	                ]]>
+	            </contents>
+	        </resource>
+	    </resources>
+	    
 	    <getHtmlFunction>
 	        <![CDATA[	   	        
 var html = "<div id='" + this.id + "'>";
@@ -70,9 +88,9 @@ html += "</div>";
 return html;
 	        ]]>
 	    </getHtmlFunction> 
-	    
+	    	    	    
 	    <updateChildObjects>true</updateChildObjects>
-	    
+	    	    	    
 	    <getDataFunction>
 	        <![CDATA[
 var urls = "";
@@ -97,13 +115,28 @@ if (data) {
 			var url = data.rows[i][0];
 			control.append("<img src='" + url  + "'/>");
 			control.find("img").last().click( function(ev) {
-				$(ev.target).remove();
+				Gallery_removeImage(ev, id);				
 			});
+			// look for our custom imageAddedEvent handler for this control
+			var imageAdded = window["Event_imageAdded_" + id];
+			// fire it if we found it
+			if (imageAdded) window["Event_imageAdded_" + id](ev);
 		}
 	} 
 }
 	        ]]>
 	    </setDataJavaScript>
+	    
+	    <events>
+	        <event>
+	            <type>imageAdded</type>
+	            <name>Imaged added</name>
+	        </event>
+	        <event>
+	            <type>imageRemoved</type>
+	            <name>Image removed</name>
+	        </event>
+	    </events>
 	    
 	    <styles>
 	        <style>
@@ -127,7 +160,7 @@ return "#" + this.id + " img";
 	   	<initJavaScript>
 	        <![CDATA[
 $("#" + id).children("img").click( function(ev) {
-	$(ev.target).remove();
+	Gallery_removeImage(ev, id);
 });	        
 	        ]]>	        	       	        
 	    </initJavaScript>

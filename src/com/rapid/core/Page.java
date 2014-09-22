@@ -69,7 +69,7 @@ public class Page {
 	
 	// the version of this class's xml structure when marshelled (if we have any significant changes down the line we can upgrade the xml files before unmarshalling)	
 	public static final int XML_VERSION = 1;
-	
+			
 	// a class for retaining page html for a set of user roles	
 	public static class RoleHtml {
 		
@@ -127,7 +127,7 @@ public class Page {
 	
 	private int _xmlVersion;
 	private String _id, _name, _title, _description, _createdBy, _modifiedBy, _htmlBody, _cachedStartHtml;
-	private Date _createdDate, _modifiedDate;
+	private Date _createdDate, _modifiedDate;	
 	private List<Control> _controls;
 	private List<Event> _events;
 	private List<Style> _styles;
@@ -135,7 +135,7 @@ public class Page {
 	private List<String> _roles;
 	private List<RoleHtml> _rolesHtml;
 	private Lock _lock;
-	
+		
 	// this array is used to collect all of the lines needed in the pageload before sorting them
 	private List<String> _pageloadLines;
 	
@@ -213,7 +213,7 @@ public class Page {
 	
 	public Page() {
 		// set the xml version
-		_xmlVersion = XML_VERSION;
+		_xmlVersion = XML_VERSION;				
 	};
 		
 	// instance methods
@@ -691,11 +691,10 @@ public class Page {
     			if (control.getEvents() != null) {
     				// loop events
     				for (Event event : control.getEvents()) {
-    					// only if there are actually some actions to invoke
-    					if (event.getActions() != null) {
+    					// only if event is non-custome and there are actually some actions to invoke
+    					if (!event.isCustomType() && event.getActions() != null) {
     						if (event.getActions().size() > 0) {
-    							// add the line
-    							pageloadLines.add("$('#" + control.getId() + "')." + event.getType() + "(Event_" + event.getType() + "_" + control.getId() + ");\n");    							
+    							pageloadLines.add(event.getPageLoadJavaScript(control));
     						}
     					}    					
     				}
@@ -706,75 +705,28 @@ public class Page {
     	}    	
     }
     
-    private void getActions(StringBuilder stringBuilder, Application application, List<Control> controls)  throws JSONException {
-    	if (controls != null) {
-    		// if we're at the root
-    		if (controls.equals(_controls)) {    			
-    			// check for page events
-    			if (_events != null) {
-    				// loop page events
-        			for (Event event : _events) {
-        				// check there are actions
-    					if (event.getActions() != null) {
-    						if (event.getActions().size() > 0) {       							
-    							// loop the actions and produce the handling JavaScript
-        						for (Action action : event.getActions()) {        							
-        							// get the action client-side java script from the action object (it's generated there as it can contain values stored in the object on the server side)
-        							String actionJavaScript = action.getJavaScript(application, this, null).trim();
-        							// if non null
-        							if (actionJavaScript != null) {        								
-        								// only if what we got is not an empty string (once trimmmed)
-        								if (!("").equals(actionJavaScript)) {
-        									// open function
-                							stringBuilder.append("function Action_" + action.getId() + "(ev) {\n");
-                							// function code
-        									stringBuilder.append("  " + actionJavaScript.trim().replace("\n", "  \n") + "\n");
-        									// close function
-                    						stringBuilder.append("}\n\n");
-        								}        								
-        							}    							
-        						}        						
-    						}    						
-    					}
-        			}
-    			}    			
-    		}
-    		for (Control control : controls) {
-    			// check event actions
-    			if (control.getEvents() != null) {
-    				// loop events
-    				for (Event event : control.getEvents()) {
-    					// check there are actions
-    					if (event.getActions() != null) {
-    						if (event.getActions().size() > 0) {    							
-        						// loop the actions and produce the handling JavaScript
-        						for (Action action : event.getActions()) {
-        							// get the action client-side java script from the action object (it's generated there as it can contain values stored in the object on the server side)
-        							String actionJavaScript = action.getJavaScript(application, this, null).trim();
-        							// if non null
-        							if (actionJavaScript != null) {
-        								// only if what we got is not an empty string (once trimmmed)
-        								if (!("").equals(actionJavaScript)) {
-        									// open function
-                							stringBuilder.append("function Action_" + action.getId() + "(ev) {\n");
-                							// function code
-        									stringBuilder.append("  " + actionJavaScript.trim().replace("\n", "  \n") + "\n");
-        									// close function
-                    						stringBuilder.append("}\n\n");
-        								}
-        							}   							
-        						}
-    						}    						
-    					}
-    				}
-    			}
-    			// now call iteratively for child controls (of this [child] control, etc.)
-    			if (control.getChildControls() != null) getActions(stringBuilder, application, control.getChildControls());     				
-    		}
-    	}    	
-    	    	
+    public String getResourcesHtml(Application application) {
+    	
+    	StringBuilder stringBuilder = new StringBuilder();
+				
+		// loop and add the resources required by this application's controls and actions (created when application loads)
+		if (application.getResources() != null) {
+			for (Resource resource : application.getResources()) {
+				switch (resource.getType()) {
+					case Resource.JAVASCRIPTFILE :
+						stringBuilder.append("<script type='text/javascript' src='" + resource.getContent() + "'></script>\n");
+					break;
+					case Resource.CSSFILE :
+						stringBuilder.append("<link rel='stylesheet' type='text/css' href='" + resource.getContent() + "'></link>\n");
+					break;
+				}				
+			}
+		}
+		
+		return stringBuilder.toString();
+    	
     }
-    
+          
     private void getEventJavaScriptFunction(StringBuilder stringBuilder, Application application, Control control, Event event) {
     	// check actions are initialised
 		if (event.getActions() != null) {
@@ -857,7 +809,7 @@ public class Page {
     }
             
     // build the event handling page JavaScript iteratively
-    private void getEventHandlers(StringBuilder stringBuilder, Application application, List<Control> controls) throws JSONException {
+    private void getEventHandlersJavaScript(StringBuilder stringBuilder, Application application, List<Control> controls) throws JSONException {
     	// check there are some controls    			
     	if (controls != null) {    		
 			// if we're at the root of the page
@@ -875,32 +827,12 @@ public class Page {
     				for (Event event : control.getEvents()) getEventJavaScriptFunction(stringBuilder, application, control, event);    					    				
     			}
     			// now call iteratively for child controls (of this [child] control, etc.)
-    			if (control.getChildControls() != null) getEventHandlers(stringBuilder, application, control.getChildControls());     				
+    			if (control.getChildControls() != null) getEventHandlersJavaScript(stringBuilder, application, control.getChildControls());     				
     		}    		 		
     	}    	
     }
 	
-    public String getResourcesHtml(Application application) {
-    	
-    	StringBuilder stringBuilder = new StringBuilder();
-				
-		// loop and add the resources required by this application's controls and actions (created when application loads)
-		if (application.getResources() != null) {
-			for (Resource resource : application.getResources()) {
-				switch (resource.getType()) {
-					case Resource.JAVASCRIPTFILE :
-						stringBuilder.append("<script type='text/javascript' src='" + resource.getContent() + "'></script>\n");
-					break;
-					case Resource.CSSFILE :
-						stringBuilder.append("<link rel='stylesheet' type='text/css' href='" + resource.getContent() + "'></link>\n");
-					break;
-				}				
-			}
-		}
-		
-		return stringBuilder.toString();
-    	
-    }
+    
     
 	public String getStartHtml(Application application) throws JSONException {
     	
@@ -939,7 +871,9 @@ public class Page {
 		// sort the page load lines
 		Collections.sort(_pageloadLines, new Comparator<String>() {
 			@Override
-			public int compare(String l1, String l2) {
+			public int compare(String l1, String l2) {				
+				if (l1.isEmpty()) return -1;
+				if (l2.isEmpty()) return 1;
 				char i1 = l1.charAt(0);
 				char i2 = l2.charAt(0);
 				return i2 - i1;						
@@ -949,20 +883,28 @@ public class Page {
 		// open the page loaded function
 		stringBuilder.append("$(document).ready( function() {\n");
 		
+		// add a try
+		stringBuilder.append("  try {\n");
+		
 		// print any page load lines such as initialising controls
-		for (String line : _pageloadLines) stringBuilder.append("  " + line);
-				
+		for (String line : _pageloadLines) stringBuilder.append("    " + line);
+								
+		// close the try
+		stringBuilder.append("  } catch(ex) { $('body').html(ex); }\n");
+		
 		// show the page
-		stringBuilder.append("  $('body').show();\n");
+		stringBuilder.append("  $('body').css('visibility','visible');\n");
 								
 		// end of page loaded function
 		stringBuilder.append("});\n\n");
 		
 		// find any redundant actions anywhere in the page, prior to generating JavaScript
 		List<Action> pageActions = getActions();
+		
 		// only proceed if there are actions in this page
 		if (pageActions != null) {
-			// loop the list of actions
+			
+			// loop the list of actions to indentify potential redundancies before we create all the event handling JavaScript
 			for (Action action : pageActions) {
 				// if this action adds redundancy to any others 
 				if (action.getRedundantActions() != null) {
@@ -977,9 +919,10 @@ public class Page {
 						} 
 					}										
 				} // redundantActions != null
-			} // action loop			
+			} // action loop		
+			
 			// add event handlers, staring at the root controls
-			getEventHandlers(stringBuilder, application, _controls);
+			getEventHandlersJavaScript(stringBuilder, application, _controls);
 		}
 																	
 		// close the page inline script block
@@ -987,7 +930,7 @@ public class Page {
 		
 		stringBuilder.append("  <head>\n");
 		
-		stringBuilder.append("  <body id='" + _id + "' style='display:none;'>\n");
+		stringBuilder.append("  <body id='" + _id + "' style='visibility:hidden;'>\n");
 						
 		return stringBuilder.toString();
     	

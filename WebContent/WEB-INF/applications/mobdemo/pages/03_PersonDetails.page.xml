@@ -672,6 +672,56 @@ limit 20</SQL>
             <childControls>
                 <childControls>
                     <childControls>
+                        <events>
+                            <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="custom">
+<properties>
+    <entry>
+        <key>id</key>
+        <value>P4_A34_</value>
+    </entry>
+    <entry>
+        <key>javascript</key>
+        <value>// gallery image added</value>
+    </entry>
+    <entry>
+        <key>name</key>
+        <value>Custom 34</value>
+    </entry>
+    <entry>
+        <key>type</key>
+        <value>custom</value>
+    </entry>
+</properties>
+<XMLVersion>1</XMLVersion>
+                            </actions>
+                            <filter></filter>
+                            <type>imageAdded</type>
+                        </events>
+                        <events>
+                            <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="custom">
+<properties>
+    <entry>
+        <key>id</key>
+        <value>P4_A35_</value>
+    </entry>
+    <entry>
+        <key>javascript</key>
+        <value>alert(&quot;Image removed!&quot;);</value>
+    </entry>
+    <entry>
+        <key>name</key>
+        <value>Custom 35</value>
+    </entry>
+    <entry>
+        <key>type</key>
+        <value>custom</value>
+    </entry>
+</properties>
+<XMLVersion>1</XMLVersion>
+                            </actions>
+                            <filter></filter>
+                            <type>imageRemoved</type>
+                        </events>
                         <properties>
                             <entry>
 <key>id</key>
@@ -1001,7 +1051,7 @@ where id = ?</SQL>
     <htmlBody>&lt;div id=&quot;P4_C1_&quot; class=&quot;pagepanel&quot;&gt;&lt;/div&gt;&lt;div id=&quot;P4_C18_&quot; class=&quot;panel&quot;&gt;&lt;table id=&quot;P4_C2_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P4_C3_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C4_&quot; class=&quot;tabelCell cellLabel&quot;&gt;First name&lt;/td&gt;&lt;td id=&quot;P4_C5_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P4_C6_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot; readonly=&quot;readonly&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C8_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C9_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;&lt;td id=&quot;P4_C10_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P4_C11_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot; readonly=&quot;readonly&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C13_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C14_&quot; class=&quot;tabelCell&quot;&gt;Date of birth&lt;/td&gt;&lt;td id=&quot;P4_C15_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P4_C16_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot; readonly=&quot;readonly&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C19_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C20_&quot; class=&quot;tabelCell&quot;&gt;Picture&lt;/td&gt;&lt;td id=&quot;P4_C21_&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;P4_C22_&quot; class=&quot;button&quot;&gt;Add picture&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C32_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C33_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;div id=&quot;P4_C31_&quot;&gt;&lt;span&gt;No picture currently available&lt;/span&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C29_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C30_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;</htmlBody>
     <id>P4</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-09-20T13:50:37.051+01:00</modifiedDate>
+    <modifiedDate>2014-09-22T10:27:00.434+01:00</modifiedDate>
     <name>03_PersonDetails</name>
     <rolesHtml>
         <html>&lt;div id=&quot;P4_C1_&quot; class=&quot;pagepanel&quot;&gt;&lt;/div&gt;

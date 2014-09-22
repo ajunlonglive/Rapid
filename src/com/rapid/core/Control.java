@@ -243,7 +243,7 @@ public class Control {
 		return events;
 	}
 	
-	// this is here as a static so it used when creating control event actions, or child actions
+	// this is here as a static so it can be used when creating control event actions, or child actions
 	public static ArrayList<Action> getActions(RapidHttpServlet rapidServlet, JSONArray jsonActions) throws JSONException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
 		// the array we are going to return
 		ArrayList<Action> actions = null;		

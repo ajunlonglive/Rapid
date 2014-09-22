@@ -215,7 +215,7 @@ function Init_date(id, details) {
 
 function Init_gallery(id, details) {
   $("#" + id).children("img").click( function(ev) {
-  	$(ev.target).remove();
+  	Gallery_removeImage(ev, id);
   });
 }
 
@@ -599,8 +599,12 @@ function setData_gallery(id, data, field, details) {
   			var url = data.rows[i][0];
   			control.append("<img src='" + url  + "'/>");
   			control.find("img").last().click( function(ev) {
-  				$(ev.target).remove();
+  				Gallery_removeImage(ev, id);				
   			});
+  			// look for our custom imageAddedEvent handler for this control
+  			var imageAdded = window["Event_imageAdded_" + id];
+  			// fire it if we found it
+  			if (imageAdded) window["Event_imageAdded_" + id](ev);
   		}
   	} 
   }
@@ -782,6 +786,16 @@ function setData_text(id, data, field, details) {
 
 /* Control and Action resource JavaScript */
 
+
+/* Gallery control resource JavaScript */
+
+function Gallery_removeImage(ev, id) {
+	$(ev.target).remove();
+	// look for our custom imageRemoved handler for this control
+	var imageRemoved = window["Event_imageRemoved_" + id];
+	// fire it if we found it
+	if (imageRemoved) window["Event_imageRemoved_" + id](ev);
+}
 
 /* Link control resource JavaScript */
 
