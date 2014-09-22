@@ -684,6 +684,14 @@ limit 20</SQL>
         <value>// gallery image added</value>
     </entry>
     <entry>
+        <key>XMLVersion</key>
+        <value>1</value>
+    </entry>
+    <entry>
+        <key>avoidRedundancy</key>
+        <value>false</value>
+    </entry>
+    <entry>
         <key>name</key>
         <value>Custom 34</value>
     </entry>
@@ -707,6 +715,14 @@ limit 20</SQL>
     <entry>
         <key>javascript</key>
         <value>alert(&quot;Image removed!&quot;);</value>
+    </entry>
+    <entry>
+        <key>XMLVersion</key>
+        <value>1</value>
+    </entry>
+    <entry>
+        <key>avoidRedundancy</key>
+        <value>false</value>
     </entry>
     <entry>
         <key>name</key>
@@ -916,7 +932,7 @@ limit 20</SQL>
             <properties>
                 <entry>
                     <key>id</key>
-                    <value>P4_A23_</value>
+                    <value>P4_A36_</value>
                 </entry>
                 <entry>
                     <key>XMLVersion</key>
@@ -928,15 +944,19 @@ limit 20</SQL>
                 </entry>
                 <entry>
                     <key>childActions</key>
-                    <value>[{&quot;id&quot;:&quot;P4_A24_&quot;,&quot;XMLVersion&quot;:1,&quot;avoidRedundancy&quot;:false,&quot;page&quot;:&quot;P3&quot;,&quot;name&quot;:&quot;Navigate 24&quot;,&quot;type&quot;:&quot;navigate&quot;}]</value>
+                    <value>[{&quot;id&quot;:&quot;P4_A37_&quot;,&quot;XMLVersion&quot;:1,&quot;avoidRedundancy&quot;:false,&quot;page&quot;:&quot;P3&quot;,&quot;name&quot;:&quot;Navigate 37&quot;,&quot;sessionVariables&quot;:[],&quot;type&quot;:&quot;navigate&quot;},{&quot;id&quot;:&quot;P4_A38_&quot;,&quot;XMLVersion&quot;:1,&quot;childActions&quot;:[],&quot;avoidRedundancy&quot;:false,&quot;showLoading&quot;:false,&quot;query&quot;:{&quot;SQL&quot;:&quot;&quot;,&quot;inputs&quot;:[{&quot;field&quot;:&quot;&quot;,&quot;itemId&quot;:&quot;personId&quot;}],&quot;databaseConnectionIndex&quot;:0,&quot;outputs&quot;:[{&quot;field&quot;:&quot;&quot;,&quot;itemId&quot;:&quot;P4_C6_&quot;},{&quot;field&quot;:&quot;&quot;,&quot;itemId&quot;:&quot;P4_C11_&quot;},{&quot;field&quot;:&quot;&quot;,&quot;itemId&quot;:&quot;P4_C16_&quot;}]},&quot;name&quot;:&quot;Database 38&quot;,&quot;type&quot;:&quot;database&quot;}]</value>
                 </entry>
                 <entry>
                     <key>name</key>
-                    <value>Logic 23</value>
+                    <value>Logic 36</value>
                 </entry>
                 <entry>
                     <key>type</key>
                     <value>logic</value>
+                </entry>
+                <entry>
+                    <key>conditionsType</key>
+                    <value>and</value>
                 </entry>
             </properties>
             <XMLVersion>1</XMLVersion>
@@ -944,7 +964,7 @@ limit 20</SQL>
                 <properties>
                     <entry>
                         <key>id</key>
-                        <value>P4_A25_</value>
+                        <value>P4_A38_</value>
                     </entry>
                     <entry>
                         <key>XMLVersion</key>
@@ -960,7 +980,7 @@ limit 20</SQL>
                     </entry>
                     <entry>
                         <key>name</key>
-                        <value>Database 25</value>
+                        <value>Database 38</value>
                     </entry>
                     <entry>
                         <key>type</key>
@@ -975,33 +995,33 @@ limit 20</SQL>
                         <itemId>personId</itemId>
                     </inputs>
                     <outputs>
-                        <field>forename</field>
+                        <field></field>
                         <itemId>P4_C6_</itemId>
                     </outputs>
                     <outputs>
-                        <field>surname</field>
+                        <field></field>
                         <itemId>P4_C11_</itemId>
                     </outputs>
                     <outputs>
-                        <field>birthday</field>
+                        <field></field>
                         <itemId>P4_C16_</itemId>
                     </outputs>
-                    <SQL>select forename,
+                    <SQL>select id, forename,
 surname,
 /* The function below converts an SQLite date into the number of milliseconds since 1 Jan 1970 so the jdbc driver can retrieve it as a proper date object */
 strftime('%d/%m/%Y', birthday) birthday,
 gender
 from people
+/* The ifnull function substitutes the wildcard character if forename is not provided */
 where id = ?</SQL>
                 </query>
                 <showLoading>false</showLoading>
             </falseActions>
-            <operation>==</operation>
             <trueActions xsi:type="navigate">
                 <properties>
                     <entry>
                         <key>id</key>
-                        <value>P4_A24_</value>
+                        <value>P4_A37_</value>
                     </entry>
                     <entry>
                         <key>XMLVersion</key>
@@ -1017,7 +1037,7 @@ where id = ?</SQL>
                     </entry>
                     <entry>
                         <key>name</key>
-                        <value>Navigate 24</value>
+                        <value>Navigate 37</value>
                     </entry>
                     <entry>
                         <key>type</key>
@@ -1026,20 +1046,6 @@ where id = ?</SQL>
                 </properties>
                 <XMLVersion>1</XMLVersion>
             </trueActions>
-            <value1>
-                <constant></constant>
-                <controlField></controlField>
-                <controlId>personId</controlId>
-                <system></system>
-                <type>CTL</type>
-            </value1>
-            <value2>
-                <constant>null</constant>
-                <controlField></controlField>
-                <controlId></controlId>
-                <system>null</system>
-                <type>SYS</type>
-            </value2>
         </actions>
         <filter></filter>
         <type>pageload</type>
@@ -1051,7 +1057,7 @@ where id = ?</SQL>
     <htmlBody>&lt;div id=&quot;P4_C1_&quot; class=&quot;pagepanel&quot;&gt;&lt;/div&gt;&lt;div id=&quot;P4_C18_&quot; class=&quot;panel&quot;&gt;&lt;table id=&quot;P4_C2_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P4_C3_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C4_&quot; class=&quot;tabelCell cellLabel&quot;&gt;First name&lt;/td&gt;&lt;td id=&quot;P4_C5_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P4_C6_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot; readonly=&quot;readonly&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C8_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C9_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;&lt;td id=&quot;P4_C10_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P4_C11_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot; readonly=&quot;readonly&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C13_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C14_&quot; class=&quot;tabelCell&quot;&gt;Date of birth&lt;/td&gt;&lt;td id=&quot;P4_C15_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P4_C16_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot; readonly=&quot;readonly&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C19_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C20_&quot; class=&quot;tabelCell&quot;&gt;Picture&lt;/td&gt;&lt;td id=&quot;P4_C21_&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;P4_C22_&quot; class=&quot;button&quot;&gt;Add picture&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C32_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C33_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;div id=&quot;P4_C31_&quot;&gt;&lt;span&gt;No picture currently available&lt;/span&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C29_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C30_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;</htmlBody>
     <id>P4</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-09-22T10:27:00.434+01:00</modifiedDate>
+    <modifiedDate>2014-09-22T17:22:34.360+01:00</modifiedDate>
     <name>03_PersonDetails</name>
     <rolesHtml>
         <html>&lt;div id=&quot;P4_C1_&quot; class=&quot;pagepanel&quot;&gt;&lt;/div&gt;

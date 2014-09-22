@@ -41,7 +41,7 @@ import com.rapid.server.RapidHttpServlet.RapidRequest;
 
 public class Logic extends Action {
 	
-	// static class
+	// static classes
 	public static class Value {
 		
 		// private instance variables
@@ -90,41 +90,89 @@ public class Logic extends Action {
 				if (_system != null) {
 					// the available system values are specified above Property_logicValue in properties.js
 					if ("mobile".equals(_system)) {
+						// whether rapid mobile is present
 						arg = "(typeof _rapidmobile == 'undefined' ? false : true)";
 					} else if ("online".equals(_system)) {
+						// whether we are online (presumed true if no rapid mobile)
 						arg = "(typeof _rapidmobile == 'undefined' ? true : _rapidmobile.isOnline())";
-					} else {
-						// pass through as literal
+					} else if (!"".equals(_system)) {
+						// pass through as literal if not blank
 						arg = _system;
+					} else {
+						// pass blank string
+						arg = "''";
 					}
 				}				
 			}
-			
+						
 			return arg;
 			
 		}
 		
 	}
+	
+	public static class Condition {
 		
+		// private instance variables
+		private Value _value1, _value2;
+		private String _operation;
+		
+		// properties
+		
+		public Value getValue1() { return _value1; }
+		public void setValue1(Value value) { _value1 = value; }
+		
+		public String getOperation() { return _operation; }
+		public void setOperation(String operation) { _operation = operation; }
+		
+		public Value getValue2() { return _value2; }
+		public void setValue2(Value value) { _value2 = value; }
+		
+		// constructors
+		
+		public Condition() {}
+		public Condition(JSONObject jsonCondition) {
+			JSONObject jsonValue1 = jsonCondition.optJSONObject("value1");
+			if (jsonValue1 != null) _value1 = new Value(jsonValue1);
+			_operation = jsonCondition.optString("operation");
+			JSONObject jsonValue2 = jsonCondition.optJSONObject("value2");
+			if (jsonValue2 != null) _value2 = new Value(jsonValue2);
+		}
+		
+		// methods
+		public String getJavaScript(Application application, Page page) {
+			String js = "false";
+			// check we have everything we need to make a condition
+			if (_value1 != null && _operation != null && _value2 != null) {				
+				// construct the condition
+				js = _value1.getArgument(application, page) + " " + _operation + " " + _value2.getArgument(application, page);
+			}
+			return js;
+		}
+		
+	}
+	
 	// static variables
 	private static Logger _logger = Logger.getLogger(Logic.class);
 	
 	// instance variables
-	
-	private Value _value1, _value2;
-	private String _operation;
-	private ArrayList<Action> _trueActions, _falseActions, _childActions;
+	private List<Condition> _conditions;
+	private String _conditionsType;
+	private List<Action> _trueActions, _falseActions, _childActions;
 
 	// properties
-		
-	public ArrayList<Action> getTrueActions() { return _trueActions; }
-	public void setTrueActions(ArrayList<Action> trueActions) { _trueActions = trueActions; }
 	
-	public String getOperation() { return _operation; }
-	public void setOperation(String operation) { _operation = operation; }
+	public List<Condition> getConditions() { return _conditions; }
+	public void setOperation(List<Condition> conditions) { _conditions = conditions; }
 	
-	public ArrayList<Action> getFalseActions() { return _falseActions; }
-	public void setFalseActions(ArrayList<Action> falseActions) { _falseActions = falseActions; }
+	public String getConditionsType() { return _conditionsType; }
+	public void setConditionsType(String conditionsType) { _conditionsType = conditionsType; }
+	
+	public List<Action> getTrueActions() { return _trueActions; }
+	public void setTrueActions(List<Action> trueActions) { _trueActions = trueActions; }
+			
+	public List<Action> getFalseActions() { return _falseActions; }
+	public void setFalseActions(List<Action> falseActions) { _falseActions = falseActions; }
 		
 	// constructors
 	
@@ -138,22 +186,23 @@ public class Logic extends Action {
 		// save all key/values from the json into the properties 
 		for (String key : JSONObject.getNames(jsonAction)) {
 			// add all json properties to our properties, except for the ones we want directly accessible
-			if (!"value1".equals(key) && !"operation".equals(key) && !"value2".equals(key) && !"trueActions".equals(key) && !"falseActions".equals(key)) addProperty(key, jsonAction.get(key).toString());
+			if (!"conditions".equals(key) && !"trueActions".equals(key) && !"falseActions".equals(key)) addProperty(key, jsonAction.get(key).toString());
 		} 
 		
-		// grab value1 from json
-		JSONObject jsonValue1 = jsonAction.optJSONObject("value1");
-		// instantiate if present
-		if (jsonValue1 != null) _value1 = new Value(jsonValue1);
+		// initialise list
+		_conditions = new ArrayList<Condition>();
+		// grab conditions from json
+		JSONArray jsonConditions = jsonAction.optJSONArray("conditions");
 		
-		// grab the operation
-		_operation = jsonAction.getString("operation");
-		
-		// grab value1 from json
-		JSONObject jsonValue2 = jsonAction.optJSONObject("value2");
-		// instantiate if present
-		if (jsonValue2 != null) _value2 = new Value(jsonValue2);
-				
+		// if we got some
+		if (jsonConditions != null) {
+			// loop them
+			for (int i = 0; i < jsonConditions.length(); i++) {
+				// add to our list
+				_conditions.add(new Condition(jsonConditions.getJSONObject(i)));
+			}
+		}
+						
 		// grab any successActions
 		JSONArray jsonTrueActions = jsonAction.optJSONArray("trueActions");
 		// if we had some
@@ -170,15 +219,7 @@ public class Logic extends Action {
 		}
 		
 	}
-	
-	// properties
-	
-	public Value getValue1() { return _value1; }
-	public void setValue1(Value value) { _value1 = value; }
-	
-	public Value getValue2() { return _value2; }
-	public void setValue2(Value value) { _value2 = value; }
-				
+						
 	// overrides
 	
 	@Override
@@ -204,36 +245,50 @@ public class Logic extends Action {
 		
 		String js = "";
 		
-		// asume we couldn't make a condition
-		String condition = null;
+		// assume we couldn't make a condition
+		String conditionsJavaScript = "false";
 		
-		// check we have everything we need to make a condition
-		if (_value1 != null && _operation != null && _value2 != null) {
-			// construct the condition
-			condition = _value1.getArgument(application, page) + " " + _operation + " " + _value2.getArgument(application, page);
+		// check we had some conditions
+		if (_conditions != null) {
+			// reset conditionsJavaScript
+			conditionsJavaScript = "";
+			// loop them
+			for (int i = 0; i < _conditions.size(); i++) {
+				// add the condition
+				conditionsJavaScript += _conditions.get(i).getJavaScript(application, page);
+				// if there is going to be another condition
+				if (i < _conditions.size() - 1) {
+					// add the separator
+					if ("or".equals(_conditionsType)) {
+						conditionsJavaScript += " || ";
+					} else {
+						conditionsJavaScript += " && ";
+					}
+				}
+			}
+		}
+				
+		// create the if statement	
+		js += "if (" + conditionsJavaScript + ") {\n";
+		
+		// add any try actions
+		if (_trueActions != null) {
+			for (Action action : _trueActions) js += "  " + action.getJavaScript(application, page, control).trim().replace("\n", "\n  ") + "\n";
 		}
 		
-		// if we were able to make a condition
-		if (condition != null) {
-			
-			js += "if (" + condition + ") {\n";
-			
-			if (_trueActions != null) {
-				for (Action action : _trueActions) js += "  " + action.getJavaScript(application, page, control).trim().replace("\n", "\n  ") + "\n";
-			}
-			
+		// close the if
+		js += "}";
+		
+		// add any false actions as an else
+		if (_falseActions != null) {
+			js += " else {\n";
+			for (Action action : _falseActions) js += "  " + action.getJavaScript(application, page, control).trim().replace("\n", "\n  ") + "\n";
 			js += "}";
-			
-			if (_falseActions != null) {
-				js += " else {\n";
-				for (Action action : _falseActions) js += "  " + action.getJavaScript(application, page, control).trim().replace("\n", "\n  ") + "\n";
-				js += "}";
-			}
-			
-			js+= "\n";
-			
 		}
-						
+		
+		// final line break
+		js+= "\n";
+											
 		// return what we built			
 		return js;
 	}

@@ -35,27 +35,18 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    <addToNewApplications>true</addToNewApplications> 
 	    	    	    	    
 	    <properties>
+	         <property>
+	            <key>conditions</key>
+	            <name>Conditions</name>
+	            <changeValueJavaScript>logicConditions</changeValueJavaScript>	 
+	        </property>	
 	        <property>
-	            <key>value1</key>
-	            <name>Value 1</name>
-	            <changeValueJavaScript>logicValue</changeValueJavaScript>	 
-	        </property>	 
-	        <property>
-	            <key>operation</key>
-	            <name>Operation</name>
-	            <setConstructValueFunction>return "==";</setConstructValueFunction>
-	            <changeValueJavaScript>select</changeValueJavaScript>	
-	            <getValuesFunction>
-	                <![CDATA[
-return [["==","= equals"],["!=","!= doesn't equal"],[">","> greater than"],[">=",">= greater than or equal to"],["<","< less than"],["<=","<= less than or equal to"]];
-					]]>
-	            </getValuesFunction>	 
-	        </property>	 
-	        <property>
-	            <key>value2</key>
-	            <name>Value 2</name>
-	            <changeValueJavaScript>logicValue</changeValueJavaScript>	 
-	        </property>	 
+	            <key>conditionsType</key>
+	            <name>Type</name>
+	            <visible>false</visible>
+	            <setConstructValueFunction>return "and";</setConstructValueFunction>
+	            <changeValueJavaScript>text</changeValueJavaScript>	
+	        </property>
 	        <property>
 	            <key>trueActions</key>
 	            <name>Actions if true</name>

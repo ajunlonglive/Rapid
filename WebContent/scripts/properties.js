@@ -1395,62 +1395,64 @@ function Property_radiobuttons(cell, radiobuttons, property, refreshHtml, refres
 	
 }
 
-//possible system values used by the Logic property
-var _systemValues = ["true","false","null","mobile","online"];
 
-//this is a dialogue to define radio buttons
-function Property_logicValue(cell, action, property, refreshHtml, refreshDialogue) {
-	
-	// retain a reference to the dialogue (if we were passed one)
-	var dialogue = refreshDialogue;
-	// if we weren't passed one - make what we need
-	if (!dialogue) dialogue = createDialogue(cell, 200, "Value");		
-	// grab a reference to the table
-	var table = dialogue.find("table").first();
-	// make sure table is empty
-	table.children().remove();
-	// get the value
-	var value = action[property.key];
-	// instantiate if required
-	if (!value) value = {};
-	
+
+//possible system values used by the Logic property
+var _logicSystemValues = ["true","false","null","mobile","online"];
+var _logicOperations = [["==","= equals"],["!=","!= doesn't equal"],[">","> greater than"],[">=",">= greater than or equal to"],["<","< less than"],["<=","<= less than or equal to"]];
+
+function logicConditionText(condition) {
 	// make some text
-	var text = "";
+	var text = "Not set";
 	// check the type
-	switch (value.type) {
+	switch (condition.type) {
 		case "CTL" :
 			// assume there is no control
 			var control = null;
 			// look for the control
-			if (value.controlId) getControlById(value.controlId);
+			if (condition.controlId) control = getControlById(condition.controlId);
 			// if we don't find one just show id (could be page variable)
-			text = (control ? control.name : value.controlId);
+			text = (control ? control.name : condition.controlId);
 			// add the field if present
-			if (value.controlField) text += "." + value.controlField;
+			if (condition.controlField) text += "." + condition.controlField;
 		break;
 		case "CNT" :
-			if (value.constant) text = value.constant;
+			if (condition.constant) text = condition.constant;
 		break;		
 		case "SYS" :
-			if (value.system) text = value.system;
+			if (condition.system) text = condition.system;
 		break;	
 	}
-	// default
-	if (!text) text = "Click to add...";
-	// append the adjustable form control
-	cell.text(text);
+	// return
+	return text;
+}
+
+function logicConditionValue(cell, action, conditionIndex, valueId) {
 	
+	// get a reference for the condition
+	if (!action.conditions[conditionIndex]) action.conditions[conditionIndex] = {};
+	// get a reference to the condition
+	var condition = action.conditions[conditionIndex];
+	// instantiate value if required
+	if (!condition.value) condition.value = {};
+	// get a reference for the value
+	var value = condition[valueId];
+		
+	// clear and add a table into the cell for this value
+	cell.html("<table></table>")
+	// get a reference to it
+	var table = cell.find("table").last();
 	// add a heading
-	table.append("<tr><td colspan='2'><input type='radio' name='" + action.id + property.key + "' value='CTL' " + (value.type == "CTL" ? "checked='checked'" : "") + "/>Control<input type='radio' name='" + action.id + property.key + "' value='CNT' " + (value.type == "CNT" ? "checked='checked'" : "") + "/>Constant<input type='radio' name='" + action.id + property.key + "' value='SYS' " + (value.type == "SYS" ? "checked='checked'" : "") + "/>System</td></tr>");
+	table.append("<tr><td colspan='2'><input type='radio' name='" + action.id + conditionIndex + valueId + "' value='CTL' " + (value.type == "CTL" ? "checked='checked'" : "") + "/>Control<input type='radio' name='" + action.id + conditionIndex + valueId + "' value='CNT' " + (value.type == "CNT" ? "checked='checked'" : "") + "/>Constant<input type='radio' name='" + action.id + conditionIndex + valueId + "' value='SYS' " + (value.type == "SYS" ? "checked='checked'" : "") + "/>System</td></tr>");
 	
 	// add listers
-	_listeners.push( table.find("input").change({cell: cell, action: action, property: property, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {		
+	_listeners.push( table.find("input").change( function(ev) {		
 		// instantiate if required
-		if (!ev.data.action[ev.data.property.key]) ev.data.action[ev.data.property.key] = {};
+		if (!action.conditions[conditionIndex][valueId]) action.conditions[conditionIndex][valueId] = {};
 		// set the new type 
-		ev.data.action[ev.data.property.key].type = $(ev.target).val();
+		action.conditions[conditionIndex][valueId].type = $(ev.target).val();
 		// refresh the property
-		Property_logicValue(ev.data.cell, ev.data.action, ev.data.property, ev.data.refreshHtml, ev.data.dialogue); 
+		logicConditionValue(cell, action, conditionIndex, valueId); 
 	}));
 	
 	switch (value.type) {
@@ -1494,14 +1496,16 @@ function Property_logicValue(cell, action, property, refreshHtml, refreshDialogu
 			// assume there're no sys options
 			var sysOptions = "";
 			// loop those that are available
-			for (var i in _systemValues) {
+			for (var i in _logicSystemValues) {
 				// build the options string
-				sysOptions += "<option" + (value.system == _systemValues[i] ? " select='selected'" : "") + ">" + _systemValues[i] + "</option>";
+				sysOptions += "<option" + (value.system == _logicSystemValues[i] ? " selected='selected'" : "") + ">" + _logicSystemValues[i] + "</option>";
 			}
 			// set the html
 			table.append("<tr><td>System value</td><td><select>" + sysOptions + "</select></td></tr>");
 			// get the dropdown
 			var dropdown = table.find("select").last();
+			// retain the value if we don't have one yet
+			if (!value.system) value.system = dropdown.val();
 			// add the listeners
 			_listeners.push( dropdown.change( function(ev) {		
 				// set the new value 
@@ -1509,6 +1513,113 @@ function Property_logicValue(cell, action, property, refreshHtml, refreshDialogu
 			}));
 		break;
 	}
+	
+}
+
+function Property_logicConditions(cell, action, property, refreshHtml, refreshDialogue) {
+	
+	// retain a reference to the dialogue (if we were passed one)
+	var dialogue = refreshDialogue;
+	// if we weren't passed one - make what we need
+	if (!dialogue) dialogue = createDialogue(cell, 500, "Conditions");		
+	// grab a reference to the table
+	var table = dialogue.find("table").first();
+	// add the style that removed the restriction on column widths
+	table.addClass("dialogueTable");
+	// make sure table is empty
+	table.children().remove();
+	// get the conditions
+	var conditions = action[property.key];
+	// instantiate if required
+	if (!conditions) conditions = [];
+	// assume there is no text
+	var text = "";
+		
+	// add headers
+	table.append("<tr><td style='text-align:center;max-width:auto;'>Value</td><td style='text-align:center;max-width:auto;'>Operation</td><td style='text-align:center;max-width:auto;'>Value</td><td style='width:32px;'></td></tr>");
+	
+	// loop the conditions
+	for (var i in conditions) {
+		
+		// get the condition
+		var condition = conditions[i];
+		
+		// add cells
+		table.append("<tr><td style='vertical-align:top;'></td><td></td><td style='vertical-align:top;'></td><td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
+		
+		// get last row
+		var lastrow = table.find("tr").last();
+		
+		// get cell references
+		var value1Cell = lastrow.children("td:nth(0)");		
+		var value2Cell = lastrow.children("td:nth(2)");
+		var operationCell = lastrow.children("td:nth(1)");
+		
+		// add (sub)properties
+		logicConditionValue(value1Cell, action, i, "value1");
+		logicConditionValue(value2Cell, action, i, "value2");
+		
+		var operationHtml = "<select>"
+		for (var j in _logicOperations) {
+			operationHtml += "<option value='" + _logicOperations[j][0] + "'" + (condition.operation == _logicOperations[j][0] ? " selected='selected'" : "") + ">" + _logicOperations[j][1] + "</option>";
+		}
+		operationHtml += "</select>";
+		operationCell.append(operationHtml);
+		
+		// build the text from the conditions, operation
+		text += logicConditionText(condition.value1) + " " + condition.operation  + " " + logicConditionText(condition.value2);
+		// add the type to seperate conditions
+		if (i < conditions.length - 1) text += " " + action.conditionsType + " ";
+		
+	}
+	
+	// update text if not set
+	if (!text) text = "click to add...";
+	// add in the text
+	cell.text(text);
+	
+	// find the deletes
+	var deleteImages = table.find("img.delete");
+	// add a listener
+	_listeners.push( deleteImages.click( {conditions: conditions}, function(ev) {
+		// get the del image
+		var delImage = $(ev.target);
+		// remove from conditions
+		ev.data.conditions.splice(delImage.parent().parent().index()-1,1);
+		// if there are now less than 2 conditions remove and/or row too
+		if (ev.data.conditions.length < 2) $(ev.target).closest("table").find("tr:last").prev().remove();
+		// remove row
+		delImage.parent().parent().remove();		
+	}));
+		
+	// add reorder listeners
+	addReorder(conditions, table.find("img.reorder"), function() { 		
+		// refresh the property
+		Property_logicConditions(cell, action, {key: "conditions"}, refreshHtml, dialogue); 
+	});
+	
+	// only if there are 2 or more conditions
+	if (conditions.length > 1) {		
+		// add type
+		table.append("<tr><td colspan='4' style='padding-left:12px;'><input type='radio' name='" + action.id + "type' value='and'" + (action.conditionsType == "and" ? " checked='checked'" : "") + "/>all conditions must be true (And) <input type='radio' name='" + action.id + "type' value='and'" + (action.conditionsType == "or" ? " checked='checked'" : "") + "/>any condition can be true (Or) </td></tr>");
+		// add change listeners
+		table.find("input[name=" + action.id + "]").change( function(ev){
+			// set the condition type to the new val
+			action.conditionsType = $(ev.target).val();
+		});
+	}
+				
+	// add add
+	table.append("<tr><td colspan='4'><a href='#'>add...</a></td></tr>");
+	// add listener
+	table.find("a").last().click( function(ev) {
+		// instatiate if need be
+		if (!action.conditions) action.conditions = [];
+		// add new condition
+		action.conditions.push({value1:{}, operation: "==", value2: {}});
+		// update this table
+		Property_logicConditions(cell, action, property, refreshHtml, dialogue);
+	})
 	
 }
 
