@@ -680,8 +680,80 @@ public class Application {
 				        			// clean and print! (if not an empty string)
 				        			if (setDataFunction.trim().length() > 0) dataJS.append("\nfunction setData_" + controlType + "(id, data, field, details) {\n  " + setDataFunction.trim().replace("\n", "\n  ") + "\n}\n");
 				        			
-				    			}			    			
-			    				
+				    			}	
+				    			
+				    			// retrieve any runtimeProperties
+				    			JSONObject jsonRuntimePropertyCollection = jsonControl.optJSONObject("runtimeProperties");
+				    			// check we got some
+				    			if (jsonRuntimePropertyCollection != null) {
+				    				
+				    				// get the first one
+				    				JSONObject jsonRuntimeProperty = jsonRuntimePropertyCollection.optJSONObject("runtimeProperty");
+				    				// get an array
+				    				JSONArray jsonRunTimeProperties = jsonRuntimePropertyCollection.optJSONArray("runtimeProperty");
+				    				
+				    				// initialise counters
+				    				int index = 0;
+					    			int count = 0;
+					    			
+					    			// if we got an array
+					    			if (jsonRunTimeProperties != null) {
+					    				// retain the first entry in the object
+					    				jsonRuntimeProperty = jsonRunTimeProperties.getJSONObject(0);
+					    				// retain the size
+					    				count = jsonRunTimeProperties.length();
+					    			}
+					    			
+					    			do {
+					    				
+					    				// get the type
+				    					String type = jsonRuntimeProperty.getString("type");
+				    					// get the function
+				    					String function = jsonRuntimeProperty.getString("getPropertyFunction");
+					    				
+				    					// print the function
+					    				dataJS.append("\nfunction getProperty_" + controlType + "_" + type + "(ev, id, field, details) {\n  " + function.trim().replace("\n", "\n  ") + "\n}\n");
+					    				
+					    				// increment index
+					    				index++;
+					    				
+					    				// get the next one
+					    				if (index < count) jsonRuntimeProperty = jsonRunTimeProperties.getJSONObject(index);
+					    				
+					    			} while (index < count);
+					    			
+				    				/*
+				    				
+				    				 
+				    			
+				    			// the JSON library will add a single key of there is a single class, otherwise an array
+				    			if (jsonRuntimeProperties.optJSONArray("runtimeProperty") == null) {
+				    				jsonRuntimeProperty = jsonRuntimeProperties.getJSONObject("runtimeProperty");				
+				    			} else {
+				    				jsonRuntimeProperty = jsonRuntimeProperties.getJSONArray("action").getJSONObject(index);
+				    				count = jsonRuntimeProperties.getJSONArray("runtimeProperty").length();
+				    			}
+				    			
+				    			// check for runtime properties
+				    			JSONObject jsonRuntimeProperties = jsonControl.optJSONObject("runtimeProperties");
+				    			// if there was something
+				    			if (jsonRuntimeProperties != null) {				    				
+				    				// loop them
+				    				for (int j = 0; j < jsonRuntimeProperties.length(); j++) {
+				    					// get the property
+				    					JSONObject jsonProperty = jsonRuntimeProperties.getJSONObject(i);
+				    					// get the type
+				    					String type = jsonProperty.getString("type");
+				    					// print our function
+				    					dataJS.append("\nfunction getProperty_" + controlType + "_" + type + "(ev) {}\n");				    					
+				    				}
+				    			}
+				    				 
+				    				*/
+				    				 
+				    			}
+				    				 
+				    							    							    						    				
 			    				// we're done with this jsonControl
 			    				break;
 			    			}

@@ -72,27 +72,14 @@ public class Logic extends Action {
 			_system = jsonValue.optString("system");
 		}
 		
-		public String getArgument(Application application) {
+		public String getArgument(Application application, Page page) {
 			
 			String arg = "null";
 			
 			// check the different types (these are in the properties.js file for Property_logicValue
 			if ("CTL".equals(_type)) {
 				if (_controlId != null) {
-					// find the control
-					Control control = application.getControl(_controlId);
-					// check we got one
-					if (control == null) {
-						// not control found, look in url variables
-						arg = "$.getUrlVar('" + _controlId + "')";
-					} else {
-						// create a getData call
-						String field = "null";
-						if (_controlField != null) field = "'" + _controlField.replace("'", "\'") + "'";
-						String details = "null";
-						if (control.getDetails() != null) details = control.getDetails();
-						arg = "getData_" + control.getType() + "(ev,'" + _controlId + "'," + field + "," + details + ")";
-					}
+					arg = Control.getDataJavaScript(application, page, _controlId, _controlField);
 				}
 			} else if ("CNT".equals(_type)) {
 				if (_constant != null) {
@@ -101,7 +88,10 @@ public class Logic extends Action {
 				}
 			} else if ("SYS".equals(_type)) {
 				if (_system != null) {
-					if ("online".equals(_system)) {
+					// the available system values are specified above Property_logicValue in properties.js
+					if ("mobile".equals(_system)) {
+						arg = "(typeof _rapidmobile == 'undefined' ? false : true)";
+					} else if ("online".equals(_system)) {
 						arg = "(typeof _rapidmobile == 'undefined' ? true : _rapidmobile.isOnline())";
 					} else {
 						// pass through as literal
@@ -220,7 +210,7 @@ public class Logic extends Action {
 		// check we have everything we need to make a condition
 		if (_value1 != null && _operation != null && _value2 != null) {
 			// construct the condition
-			condition = _value1.getArgument(application) + " " + _operation + " " + _value2.getArgument(application);
+			condition = _value1.getArgument(application, page) + " " + _operation + " " + _value2.getArgument(application, page);
 		}
 		
 		// if we were able to make a condition

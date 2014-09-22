@@ -265,6 +265,21 @@ public class Page {
 		return getChildControl(_controls, id);
 	}
 	
+	public void getChildControls(List<Control> controls, List<Control> childControls) {
+		if (controls != null) {
+			for (Control control : controls) {
+				childControls.add(control);
+				getChildControls(control.getChildControls(), childControls);
+			}
+		}
+	}
+	
+	public List<Control> getAllControls() {
+		ArrayList<Control> controls = new ArrayList<Control>();
+		getChildControls(_controls, controls);
+		return controls;
+	}
+	
 	public Action getChildAction(List<Action> actions, String actionId) {
 		Action foundAction = null;
 		if (actions != null) {
@@ -897,6 +912,24 @@ public class Page {
 								
 		// end of page loaded function
 		stringBuilder.append("});\n\n");
+		
+		// get all controls
+		List<Control> pageControls = getAllControls();
+		
+		// if we got some
+		if (pageControls != null) {
+			// loop them
+			for (Control control : pageControls) {
+				// get the details
+				String details = control.getDetails();
+				// check if null
+				if (details != null) {
+					// create a gloabl variable for them
+					stringBuilder.append("var " + control.getId() + "details = " + details + ";\n");
+				}
+			}
+			stringBuilder.append("\n");
+		}
 		
 		// find any redundant actions anywhere in the page, prior to generating JavaScript
 		List<Action> pageActions = getActions();

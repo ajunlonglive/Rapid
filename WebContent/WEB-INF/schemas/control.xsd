@@ -556,6 +556,45 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 									</xs:restriction>
 								</xs:simpleType>
 							</xs:element>
+							<xs:element name="runtimeProperties" minOccurs="0">
+								<xs:complexType>
+									<xs:annotation>
+										<xs:documentation>JavaScript that is run to return any special run-time property of
+										the control, such as grid rows, or gallery images, currently used by Logic and CopyData actions.
+										</xs:documentation>
+									</xs:annotation>
+									<xs:sequence>
+										<xs:element name="runtimeProperty" minOccurs="1" maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="type">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:minLength value="1" />
+																<xs:pattern value="[a-zA-Z0-9_]{1,}" />
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="name">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:minLength value="1" />
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="getPropertyFunction">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:minLength value="1" />
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>	
+										</xs:element>
+									</xs:sequence>		
+								</xs:complexType>													
+							</xs:element>
 						</xs:sequence>
 					</xs:complexType>
 				</xs:element>

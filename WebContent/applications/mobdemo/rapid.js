@@ -610,6 +610,10 @@ function setData_gallery(id, data, field, details) {
   }
 }
 
+function getProperty_gallery_imageCount(ev, id, field, details) {
+  return ($("#" + id).children("img").size());
+}
+
 function getData_grid(ev, id, field, details) {
   var data = null;
   if (details && details.columns) {
@@ -701,13 +705,21 @@ function setData_grid(id, data, field, details) {
   }
 }
 
+function getProperty_grid_columnCount(ev, id, field, details) {
+  return ($("#" + id).find("tr").first().children("td").size());
+}
+
+function getProperty_grid_rowCount(ev, id, field, details) {
+  return ($("#" + id).find("tr").size() - 1);
+}
+
 function getData_input(ev, id, field, details) {
   return $("#" + id).val();
 }
 
 function setData_input(id, data, field, details) {
   var control = $("#" + id);
-  if (data) {	
+  if (data !== undefined) {	
   	data = makeDataObject(data, field);
   	if (data.rows && data.rows[0]) {	        		
   		if (field && data.fields) {

@@ -296,7 +296,66 @@ public class Control {
 		return styles;		
 	}
 	
+	public String getDetailsJavaScript(Application application, Page page) {
+		String js = null;
+		String details = getProperty("details");
+		if (details != null) {
+			// get the id
+			String id = getId();
+			// if the control is from this page
+			if (id.startsWith(page.getId())) {
+				// we can safely use the global variable
+				js = id + "details";
+			} else {
+				// print them in full
+				js = details;
+			}			
+		}
+		return js;
+	}
+	
+	// this method returns JavaScript for retrieving a control's data, or runtime property value
+	public static String getDataJavaScript(Application application, Page page, String id, String field) {
+		String js = "";
+		if (id != null) {
+			// split by escaped .
+			String idParts[] = id.split("\\.");
+			// retain first part as control id			
+			String controlId = idParts[0];
+			// find the control in the page
+			Control control = page.getControl(controlId);
+			// if not found have another last go in the whole application
+			if (control == null) control = application.getControl(controlId);
+			// check control
+			if (control == null) {
+				// if still null look for it in page variables
+				return "$.getUrlVar('" + id + "')";				
+			} else {
+				// assume no field
+				String fieldJS = "null";
+				// add if present
+				if (field != null) field = "'" + field + "'";
+				// assume no control details
+				String detailsJS = "";
+				// look for them
+				if (control.getDetails() != null) {
+					detailsJS = "," + control.getDetailsJavaScript(application, page);
+				}
+				// check if there was another
+				if (idParts.length > 1) {
+					// get the runtime property
+					return "getProperty_" + control.getType() + "_" + idParts[1] + "(ev,'" + control.getId() + "'," + fieldJS + detailsJS + ")";
+				} else {
+					// no other parts return getData call
+					return "getData_" + control.getType() + "(ev,'" + control.getId() + "'," + fieldJS + detailsJS + ")";
+				}
+			}
+			
+		}
+		return js;		
+	}
+	
 	// this method checks the xml versions and upgrades any xml nodes before the xml document is unmarshalled
 	public static Node upgrade(Node actionNode) { return actionNode; }
-	
+		
 }

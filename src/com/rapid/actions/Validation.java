@@ -134,7 +134,7 @@ public class Validation extends Action {
 								jsonValidation.put("javaScript", controlValidation.getJavaScript());
 								
 								// add optional properties
-								if (validateControl.getDetails() != null) jsonValidation.put("details", validateControl.getDetails());
+								if (validateControl.getDetails() != null) jsonValidation.put("details", validateControl.getDetailsJavaScript(application, page));
 								
 								// add it to the array
 								jsonValidations.put(jsonValidation);

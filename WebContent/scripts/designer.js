@@ -505,14 +505,40 @@ function getDataOptions(selectId, ignoreId) {
 		options += "<optgroup label='Page controls'>";
 		for (var i in controls) {			
 			var control = controls[i];
-			if (control._class.getDataFunction && control.id != ignoreId && control.name) {
-				if (control.id == selectId && !gotSelected) {
-					options += "<option value='" + control.id + "' selected='selected'>" + control.name + "</option>";
-					gotSelected = true;
-				} else {
-					options += "<option value='" + control.id + "' >" + control.name + "</option>";
-				}				
-			}
+			
+			// if we're not ignoring the control and it has a name
+			if (control.id != ignoreId && control.name) {
+				
+				// if it has a get data function
+				if (control._class.getDataFunction) {
+					if (control.id == selectId && !gotSelected) {
+						options += "<option value='" + control.id + "' selected='selected'>" + control.name + "</option>";
+						gotSelected = true;
+					} else {
+						options += "<option value='" + control.id + "' >" + control.name + "</option>";
+					}				
+				}
+				
+				// get any run time properties
+				var properties = control._class.runtimeProperties;
+				// if there are runtimeProperties in the class
+				if (properties) {
+					// promote if array
+					if ($.isArray(properties.runtimeProperty)) properties = properties.runtimeProperty;
+					// loop them
+					for (var i in properties) {
+						// get the property
+						var property = properties[i];
+						// derive the key
+						var key = control.id + "." + property.type;
+						// add the option
+						options += "<option value='" + key  +  "' " + (key == selectId ? "selected='selected'" : "") + ">" + control.name + "." + property.name + "</option>";
+					}
+					
+				}
+				
+			}												
+			
 		}
 		options += "</optgroup>";
 	}	

@@ -236,38 +236,10 @@ public class Database extends Action {
 			
 			// build the inputs
 			if (_query.getInputs() != null) {
-				int i = 0;
 				for (Parameter parameter : _query.getInputs()) {
-					Control inputControl = page.getControl(parameter.getItemId());
-					if (inputControl != null) {
-						i++;
-						// get the field into a string
-						String field = parameter.getField();
-						// some checks which either don't provide the field or build it properly
-						if (field == null) {
-							field = "";
-						} else if ("".equals(field.trim())) {
-							field = "";
-						} 
-						// get any details we may have
-						String details = inputControl.getDetails();
-						// set to empty string or clean up
-						if (details == null) {
-							details = "";
-						} else {
-							details = ", " + details;
-						}
-						
-						/*
-						js += "  var input" + i + " = getData_" + inputControl.getType() + "(ev,'" + inputControl.getId() + "'" + (field.length() > 0 ? ", '" + field + "'" : "") + details + ");\n";
-						js += "  if (input" + i + " === undefined) return false;\n";
-						js += "  data.inputs.push({id:'" + inputControl.getId() + "',value:input" + i;
-						*/
-						
-						js += "  data.inputs.push({id:'" + inputControl.getId() + "',value:getData_" + inputControl.getType() + "(ev,'" + inputControl.getId() + "'" + (field.length() > 0 ? ", '" + field + "'" : "") + details + ")";
-						
-						if (field.length() > 0) js += ",field:'" + field + "'";
-						js += "});\n";
+					String itemId = parameter.getItemId();
+					if (itemId != null) {
+						js += "  data.inputs.push({id:'" + itemId + "',value:" + Control.getDataJavaScript(application, page, itemId, parameter.getField()) + "});\n";						
 					}
 				}
 			} // got inputs
@@ -334,7 +306,7 @@ public class Database extends Action {
 					// get the control the data is going into
 					Control outputControl = page.getControl(output.getItemId());	
 					// get any mappings we may have
-					String details = outputControl.getDetails();
+					String details = outputControl.getDetailsJavaScript(application, page);
 					// set to empty string or clean up
 					if (details == null) {
 						details = "";

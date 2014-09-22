@@ -328,5 +328,26 @@ return "#" + this.id + " .rowSelect";
 	        </style>       
 	    </styles>
 	    
+	    <runtimeProperties>
+	   	    <runtimeProperty>
+	   	        <type>columnCount</type>
+	   	        <name>Column count</name>
+	   	        <getPropertyFunction>
+			        <![CDATA[
+return ($("#" + id).find("tr").first().children("td").size());     
+			        ]]>	  	   	            
+	   	        </getPropertyFunction>
+	   	    </runtimeProperty>
+	   	    <runtimeProperty>
+	   	        <type>rowCount</type>
+	   	        <name>Row count</name>
+	   	        <getPropertyFunction>
+			        <![CDATA[
+return ($("#" + id).find("tr").size() - 1);     
+			        ]]>	  	   	            
+	   	        </getPropertyFunction>
+	   	    </runtimeProperty>
+	   	</runtimeProperties>
+	    
 	</control>
 </controls>
