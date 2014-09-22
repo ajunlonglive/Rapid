@@ -194,12 +194,12 @@ public class Rapid extends RapidHttpServlet {
 							if (rebuildPages) {
 								
 								// (re)generate the page start html
-								pageHtml = page.getStartHtml(rapidRequest.getApplication());
+								pageHtml = page.getHtmlHead(rapidRequest.getApplication());
 								
 							} else {
 							
 								// get any cached header html from the page object (this will regenerate and cache if not present)
-								pageHtml = page.getCachedStartHtml(rapidRequest.getApplication());
+								pageHtml = page.getHtmlHeadCached(rapidRequest.getApplication());
 														
 							}
 							
