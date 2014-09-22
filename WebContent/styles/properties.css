@@ -67,3 +67,7 @@ table.propertiesPanelTable  {
 .propertiesPanelTable b {
 	padding-left: 5px;
 }
+
+.dialogueTable td {
+	max-width: none;
+}
