@@ -34,6 +34,9 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(namespace="http://rapid-is.co.uk/core")
 public class Event {
 
+	// a list of all jQuery event types which if we recognise we'll add a listener for
+	public static final String _jQueryEventTypes[] = {"bind","blur","change","click","dblclick","delegate","die","error","focus","focusin","focusout","hover","keydown","keypress","keyup","live","load","mousedown","mouseenter","mouseleave","mousemove","mouseout","mouseover","mouseup","off","on","one","ready","resize","scroll","select","submit","toggle","trigger","triggerHandler","unbind","undelegate","unload"};
+	
 	// instance variables
 			
 	private String _type, _filter;
@@ -61,6 +64,35 @@ public class Event {
 		_type = type;
 		_filter = filter;
 		_actions = new ArrayList<Action>();
+	}
+		
+	// methods
+				
+	public boolean isCustomType() {
+		// if we have a list of known types
+		if (_jQueryEventTypes != null) {
+			// loop them
+			for (String jQueryEventType : _jQueryEventTypes) {
+				// check
+				if (jQueryEventType.equals(_type)) {
+					// we've recognised the type so its not custom, return false
+					return false;
+				}
+			}
+		}
+		// failed to find it, must be custom
+		return true;		
+	}
+	
+	public String getPageLoadJavaScript(Control control) {
+		
+		// add the line if a recognised Jquery event type
+		if (isCustomType()) {
+			return "";
+		} else {			
+			return "$('#" + control.getId() + "')." + _type + "(Event_" + _type + "_" + control.getId() + ");\n";
+		}
+				
 	}
 	
 }
