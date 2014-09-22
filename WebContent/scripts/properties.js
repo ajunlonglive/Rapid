@@ -1396,7 +1396,7 @@ function Property_radiobuttons(cell, radiobuttons, property, refreshHtml, refres
 }
 
 //possible system values used by the Logic property
-var _systemValues = ["true","false","null","online"];
+var _systemValues = ["true","false","null","mobile","online"];
 
 //this is a dialogue to define radio buttons
 function Property_logicValue(cell, action, property, refreshHtml, refreshDialogue) {

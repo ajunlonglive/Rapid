@@ -164,6 +164,18 @@ $("#" + id).children("img").click( function(ev) {
 });	        
 	        ]]>	        	       	        
 	    </initJavaScript>
+	    
+	   	<runtimeProperties>
+	   	    <runtimeProperty>
+	   	        <type>imageCount</type>
+	   	        <name>Image count</name>
+	   	        <getPropertyFunction>
+			        <![CDATA[
+return ($("#" + id).children("img").size());     
+			        ]]>	  	   	            
+	   	        </getPropertyFunction>
+	   	    </runtimeProperty>
+	   	</runtimeProperties>
 	    	    
 	</control>
 </controls>

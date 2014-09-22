@@ -66,38 +66,10 @@ public class Datacopy extends Action {
 			
 		} else {
 			
-			// get the data source control
-			Control dataSource = page.getControl(dataSourceId);
+			String dataSourceField = getProperty("dataSourceField");
 			
-			// if we didn't get a control from this page
-			if (dataSource == null) {
-				// look for an underscore to try and find a page id
-				int pageIdPos = dataSourceId.indexOf("_");
-				if (pageIdPos > 0) {
-					// get the potential page id
-					String dataSourcePageId = dataSourceId.substring(0,pageIdPos);
-					// get the potential page
-					Page dataSourcePage = application.getPage(dataSourcePageId);
-					// if we got a page try and get the data source
-					if (dataSourcePage != null) dataSource = dataSourcePage.getControl(dataSourceId) ;
-				}
-			}
-			
-			// we still don't have a control so use the query string
-			if (dataSource == null) {
-				
-				// data source control not found return a comment
-				js += "var data = $.getUrlVar('" + dataSourceId + "');\n";
-				
-			} else {
-			
-				String dataSourceField = getProperty("dataSourceField");
-				if (dataSourceField == null) dataSourceField = "";
-				
-				js += "var data = getData_" + dataSource.getType() + "(ev, '" + dataSource.getId() + "','" + dataSourceField + "', " + dataSource.getDetails() + ");\n";
-				
-			}
-			
+			js = "var data = "  + Control.getDataJavaScript(application, page, dataSourceId, dataSourceField) + "\n";
+									
 			// we're going to work with the data destinations in a json array
 			JSONArray jsonDataDestinations = null;
 							
@@ -127,7 +99,7 @@ public class Datacopy extends Action {
 							// clean up the field								
 							if (dataDestinationField == null) dataDestinationField = "";
 							// get any mappings we may have
-							String details = destinationControl.getDetails();
+							String details = destinationControl.getDetailsJavaScript(application, page);
 							// set to empty string or clean up
 							if (details == null) {
 								details = "";

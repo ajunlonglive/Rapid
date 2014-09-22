@@ -116,8 +116,8 @@ public class Navigate extends Action {
 					// look for a control with this item id
 					Control svControl = page.getControl(sessionVariable.getItemId());
 					// only if we found a control (session variables will move in the session)
-					if (svControl != null) {
-						sessionVariables += "&" + sessionVariable.getName() + "=' + getData_" + svControl.getType() + "(ev, '" + svControl.getId() + "','" + sessionVariable.getField() + "', " + svControl.getDetails() + ") + '";
+					if (svControl != null) {						
+						sessionVariables += "&" + sessionVariable.getName() + "=' + getData_" + svControl.getType() + "(ev, '" + svControl.getId() + "','" + sessionVariable.getField() + "', " + svControl.getDetailsJavaScript(application, page) + ") + '";
 					}					
 				}
 			}
