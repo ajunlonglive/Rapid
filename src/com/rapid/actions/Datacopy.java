@@ -104,19 +104,19 @@ public class Datacopy extends Action {
 							if (details == null) {
 								details = "";
 							} else {
-								details = ", details: " + details;
+								details = ",details: " + details;
 							}
 							// add the properties we need as a js object
-							jsOutputs += "{id: '" + destinationControl.getId() + "', type: '" + destinationControl.getType() + "', field: '" + dataDestinationField + "'" + details + "},";
+							jsOutputs += "{id:'" + destinationControl.getId() + "',type: '" + destinationControl.getType() + "',field:'" + dataDestinationField + "'" + details + "},";
 						}
 					} catch (JSONException e) {}
 				}
 				// trim the last comma
 				if (jsOutputs.length() > 0) jsOutputs = jsOutputs.substring(0, jsOutputs.length() - 1);
 				// add to js as an array
-				js += "  var outputs = [" + jsOutputs + "];\n";
+				js += "var outputs = [" + jsOutputs + "];\n";
 				// add the call
-				js += "  Action_datacopy(data, outputs);\n";
+				js += "Action_datacopy(data, outputs);\n";
 				
 			}
 																								

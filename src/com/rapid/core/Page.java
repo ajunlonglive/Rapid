@@ -219,17 +219,17 @@ public class Page {
 	// instance methods
 	
 	// these two methods have different names to avoid being marshelled to the .xml file by JAXB
-	public String getCachedStartHtml(Application application) throws JSONException {		
+	public String getHtmlHeadCached(Application application) throws JSONException {		
 		// check whether the page has been cached yet
 		if (_cachedStartHtml == null) {
 			// generate the page start html
-			_cachedStartHtml = getStartHtml(application);																		
+			_cachedStartHtml = getHtmlHead(application);																		
 			// have the page cache the generated html for next time
-			cacheStartHtml(_cachedStartHtml);
+			cacheHtmlHead(_cachedStartHtml);
 		}				
 		return _cachedStartHtml;
 	}
-	public void cacheStartHtml(String html) {
+	public void cacheHtmlHead(String html) {
 		_cachedStartHtml = html;
 	}
 	
@@ -849,7 +849,7 @@ public class Page {
 	
     
     
-	public String getStartHtml(Application application) throws JSONException {
+	public String getHtmlHead(Application application) throws JSONException {
     	
     	StringBuilder stringBuilder = new StringBuilder();
     	    								
@@ -860,11 +860,13 @@ public class Page {
 		
 		stringBuilder.append("  <head>\n");
 		
+		stringBuilder.append("    <title>" + _title + " - by Rapid</title>\n");
+		
 		stringBuilder.append("    <meta charset=\"utf-8\"/>\n");
 		
 		stringBuilder.append("    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no\" />\n");
-		
-		stringBuilder.append("    <title>" + _title + " - by Rapid</title>\n");
+						
+		stringBuilder.append("    <link rel=\"icon\" href=\"favicon.ico\"></link>\n");
 		
 		// if you're looking for where the jquery link is added it's the first resource in the page.control.xml file		
 		stringBuilder.append("    " + getResourcesHtml(application).trim().replace("\n", "\n    ") + "\n");
@@ -877,6 +879,24 @@ public class Page {
 		
 		stringBuilder.append("/*\n\n  This code is minified when in production\n\n*/\n\n");
 										
+		// get all controls
+		List<Control> pageControls = getAllControls();
+		
+		// if we got some
+		if (pageControls != null) {
+			// loop them
+			for (Control control : pageControls) {
+				// get the details
+				String details = control.getDetails();
+				// check if null
+				if (details != null) {
+					// create a gloabl variable for it's details
+					stringBuilder.append("var " + control.getId() + "details = " + details + ";\n");
+				}
+			}
+			stringBuilder.append("\n");
+		}
+				
 		// initialise our pageload lines collections
 		_pageloadLines = new ArrayList<String>();
 		
@@ -912,25 +932,7 @@ public class Page {
 								
 		// end of page loaded function
 		stringBuilder.append("});\n\n");
-		
-		// get all controls
-		List<Control> pageControls = getAllControls();
-		
-		// if we got some
-		if (pageControls != null) {
-			// loop them
-			for (Control control : pageControls) {
-				// get the details
-				String details = control.getDetails();
-				// check if null
-				if (details != null) {
-					// create a gloabl variable for them
-					stringBuilder.append("var " + control.getId() + "details = " + details + ";\n");
-				}
-			}
-			stringBuilder.append("\n");
-		}
-		
+						
 		// find any redundant actions anywhere in the page, prior to generating JavaScript
 		List<Action> pageActions = getActions();
 		

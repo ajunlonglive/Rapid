@@ -46,8 +46,9 @@ RapidRequest rapidRequest = new RapidRequest(request);
 <head>
 	
 	<title>Rapid - Welcome</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">	
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+	<link rel="icon" href="favicon.ico"></link>
 	<link rel="stylesheet" type="text/css" href="styles/index.css"></link>
 	<script type="text/javascript" src="scripts/jquery-1.10.2.js"></script>
 	<script type="text/javascript">
@@ -101,21 +102,21 @@ function loadApps() {
 	if (rapid.getSecurity().checkUserRole(rapidRequest, userName, "RapidAdmin")) {
 %>
 <div class="body">
-	<img src="images/administration_157x135.png" /><a href="~?a=rapid">Admin</a>
+	<a href="~?a=rapid"><img src="images/administration_157x135.png" /><span id="admin">Admin</span></a>
 </div>
 <% 
 	}
 	if (rapid.getSecurity().checkUserRole(rapidRequest, userName, "RapidDesign")) {
 %>
 <div class="body">
-	<img src="images/designer_157x135.png" /><a href="design.jsp">Design</a>
+	<a href="design.jsp"><img src="images/designer_157x135.png" /><span id="design">Design</span></a>
 </div>
 <% 
 	}
 %>
 
 <div class="body">
-	<img src="images/application_157x135.png" /><a href="#" onclick="loadApps();">Applications</a>
+	<a href="#" onclick="loadApps();"><img src="images/application_157x135.png" /><span>Applications</span></a>
 </div>
 
 <div class="apps" id="apps">

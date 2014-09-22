@@ -1332,7 +1332,7 @@ public class Application {
 						// get a reference to the page
 						Page page = _pages.get(pageId);
 						// get the html
-						String pageHtml = page.getStartHtml(this) + page.getHtmlBody() + "</body></html>";
+						String pageHtml = page.getHtmlHead(this) + page.getHtmlBody() + "</body></html>";
 						// create a file for it for now
 						File pageFile = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/temp/" + pageId + ".htm"));
 						// for now get a printWriter to write the page html
@@ -1348,7 +1348,7 @@ public class Application {
 					// if we got one add it as index.htm
 					if (page != null) {
 						// get the html
-						String pageHtml = page.getStartHtml(this) + page.getHtmlBody() + "</body></html>";
+						String pageHtml = page.getHtmlHead(this) + page.getHtmlBody() + "</body></html>";
 						// create a file for it for now
 						File pageFile = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/temp/index.htm"));
 						// for now get a printWriter to write the page html

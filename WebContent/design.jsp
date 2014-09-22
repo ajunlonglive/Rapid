@@ -53,6 +53,7 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, use
 	
 	<title>Rapid Design - <%=com.rapid.server.Rapid.VERSION %></title>
 	<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+	<link rel="icon" href="favicon.ico"></link>
 <%
 	if (designerPermission) {
 %>		

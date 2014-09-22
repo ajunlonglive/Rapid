@@ -334,7 +334,7 @@ public class Control {
 				// assume no field
 				String fieldJS = "null";
 				// add if present
-				if (field != null) field = "'" + field + "'";
+				if (field != null) fieldJS = "'" + field + "'";
 				// assume no control details
 				String detailsJS = "";
 				// look for them
