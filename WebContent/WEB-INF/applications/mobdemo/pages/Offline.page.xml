@@ -80,6 +80,14 @@
                             <value>P5_C5_</value>
                         </entry>
                         <entry>
+                            <key>XMLVersion</key>
+                            <value>1</value>
+                        </entry>
+                        <entry>
+                            <key>avoidRedundancy</key>
+                            <value>false</value>
+                        </entry>
+                        <entry>
                             <key>name</key>
                             <value>Control 6</value>
                         </entry>
@@ -153,9 +161,12 @@
         </properties>
         <styles>
             <appliesTo>#P5_C2_</appliesTo>
-            <rules>width:260px;</rules>
+            <rules>width:250px;</rules>
             <rules>text-align:center;</rules>
             <rules>border:1px solid black;</rules>
+            <rules>margin-left:auto;</rules>
+            <rules>margin-right:auto;</rules>
+            <rules>margin-top:50px;</rules>
         </styles>
         <XMLVersion>1</XMLVersion>
     </controls>
@@ -171,7 +182,7 @@
     <htmlBody>&lt;div id=&quot;P5_C2_&quot; class=&quot;panel&quot;&gt;&lt;div id=&quot;P5_C3_&quot; class=&quot;panel&quot;&gt;Your device is offline at the moment.&lt;/div&gt;&lt;div id=&quot;P5_C4_&quot; class=&quot;panel&quot;&gt;Please ensure you have a wifi or mobile data connection and try again.&lt;/div&gt;&lt;button id=&quot;P5_C5_&quot; class=&quot;button&quot;&gt;Close&lt;/button&gt;&lt;/div&gt;</htmlBody>
     <id>P5</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-09-18T14:50:38.196+01:00</modifiedDate>
+    <modifiedDate>2014-09-23T11:41:01.090+01:00</modifiedDate>
     <name>Offline</name>
     <rolesHtml>
         <html>&lt;div id=&quot;P5_C2_&quot; class=&quot;panel&quot;&gt;

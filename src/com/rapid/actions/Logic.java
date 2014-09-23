@@ -144,7 +144,7 @@ public class Logic extends Action {
 	// properties
 	
 	public List<Condition> getConditions() { return _conditions; }
-	public void setOperation(List<Condition> conditions) { _conditions = conditions; }
+	public void setConditions(List<Condition> conditions) { _conditions = conditions; }
 	
 	public String getConditionsType() { return _conditionsType; }
 	public void setConditionsType(String conditionsType) { _conditionsType = conditionsType; }
