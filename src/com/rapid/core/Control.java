@@ -316,41 +316,66 @@ public class Control {
 	
 	// this method returns JavaScript for retrieving a control's data, or runtime property value
 	public static String getDataJavaScript(Application application, Page page, String id, String field) {
+		// assume an empty string
 		String js = "";
+		// if id is not null
 		if (id != null) {
+			
 			// split by escaped .
 			String idParts[] = id.split("\\.");
-			// retain first part as control id			
-			String controlId = idParts[0];
-			// find the control in the page
-			Control control = page.getControl(controlId);
-			// if not found have another last go in the whole application
-			if (control == null) control = application.getControl(controlId);
-			// check control
-			if (control == null) {
-				// if still null look for it in page variables
-				return "$.getUrlVar('" + id + "')";				
-			} else {
-				// assume no field
-				String fieldJS = "null";
-				// add if present
-				if (field != null) fieldJS = "'" + field + "'";
-				// assume no control details
-				String detailsJS = "";
-				// look for them
-				if (control.getDetails() != null) {
-					detailsJS = "," + control.getDetailsJavaScript(application, page);
-				}
-				// check if there was another
-				if (idParts.length > 1) {
-					// get the runtime property
-					return "getProperty_" + control.getType() + "_" + idParts[1] + "(ev,'" + control.getId() + "'," + fieldJS + detailsJS + ")";
-				} else {
-					// no other parts return getData call
-					return "getData_" + control.getType() + "(ev,'" + control.getId() + "'," + fieldJS + detailsJS + ")";
-				}
-			}
 			
+			// if this is a system value
+			if ("System".equals(idParts[0])) {
+				
+				// the available system values are specified above getDataOptions in designer.js
+				if ("mobile".equals(idParts[1])) {
+					// whether rapid mobile is present
+					return "(typeof _rapidmobile == 'undefined' ? false : true)";
+				} else if ("online".equals(idParts[1])) {
+					// whether we are online (presumed true if no rapid mobile)
+					return "(typeof _rapidmobile == 'undefined' ? true : _rapidmobile.isOnline())";
+				} else if (!"".equals(idParts[1])) {
+					// pass through as literal if not blank
+					return idParts[1];
+				} else {
+					// pass blank string
+					return "''";
+				}		
+				
+			} else {
+				
+				// find the control in the page
+				Control control = page.getControl(idParts[0]);
+				// if not found have another last go in the whole application
+				if (control == null) control = application.getControl(idParts[0]);
+				// check control
+				if (control == null) {
+					// if still null look for it in page variables
+					return "$.getUrlVar('" + id + "')";				
+				} else {
+					// assume no field
+					String fieldJS = "null";
+					// add if present
+					if (field != null) fieldJS = "'" + field + "'";
+					// assume no control details
+					String detailsJS = "";
+					// look for them
+					if (control.getDetails() != null) {
+						detailsJS = "," + control.getDetailsJavaScript(application, page);
+					}
+					// check if there was another
+					if (idParts.length > 1) {
+						// get the runtime property
+						return "getProperty_" + control.getType() + "_" + idParts[1] + "(ev,'" + control.getId() + "'," + fieldJS + detailsJS + ")";
+					} else {
+						// no other parts return getData call
+						return "getData_" + control.getType() + "(ev,'" + control.getId() + "'," + fieldJS + detailsJS + ")";
+					}
+					
+				} // control check
+				
+			} // system value check
+						
 		}
 		return js;		
 	}

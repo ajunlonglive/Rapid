@@ -1418,10 +1418,7 @@ function Property_radiobuttons(cell, radiobuttons, property, refreshHtml, refres
 	
 }
 
-
-
 //possible system values used by the Logic property
-var _logicSystemValues = ["true","false","null","mobile","online"];
 var _logicOperations = [["==","= equals"],["!=","!= doesn't equal"],[">","> greater than"],[">=",">= greater than or equal to"],["<","< less than"],["<=","<= less than or equal to"]];
 
 function logicConditionText(condition) {
@@ -1433,18 +1430,18 @@ function logicConditionText(condition) {
 			// assume there is no control
 			var control = null;
 			// look for the control
-			if (condition.controlId) control = getControlById(condition.controlId);
+			if (condition.id) control = getControlById(condition.id);
 			// if we don't find one just show id (could be page variable)
-			text = (control ? control.name : condition.controlId);
+			text = (control ? control.name : condition.id);
 			// add the field if present
-			if (condition.controlField) text += "." + condition.controlField;
+			if (condition.field) text += "." + condition.field;
 		break;
 		case "CNT" :
 			if (condition.constant) text = condition.constant;
-		break;		
 		case "SYS" :
-			if (condition.system) text = condition.system;
-		break;	
+			// the second part of the id
+			text = condition.id.split(".")[1];
+		break;		
 	}
 	// return
 	return text;
@@ -1452,12 +1449,10 @@ function logicConditionText(condition) {
 
 function logicConditionValue(cell, action, conditionIndex, valueId) {
 	
-	// get a reference for the condition
-	if (!action.conditions[conditionIndex]) action.conditions[conditionIndex] = {};
 	// get a reference to the condition
 	var condition = action.conditions[conditionIndex];
-	// instantiate value if required
-	if (!condition.value) condition.value = {};
+	// instantiate the value if need be
+	if (!condition[valueId]) condition[valueId] = {type:"CTL"};
 	// get a reference for the value
 	var value = condition[valueId];
 		
@@ -1465,32 +1460,33 @@ function logicConditionValue(cell, action, conditionIndex, valueId) {
 	cell.html("<table></table>")
 	// get a reference to it
 	var table = cell.find("table").last();
-	// add a heading
-	table.append("<tr><td colspan='2'><input type='radio' name='" + action.id + conditionIndex + valueId + "' value='CTL' " + (value.type == "CTL" ? "checked='checked'" : "") + "/>Control<input type='radio' name='" + action.id + conditionIndex + valueId + "' value='CNT' " + (value.type == "CNT" ? "checked='checked'" : "") + "/>Constant<input type='radio' name='" + action.id + conditionIndex + valueId + "' value='SYS' " + (value.type == "SYS" ? "checked='checked'" : "") + "/>System</td></tr>");
 	
+	table.append("<tr><td>" + (valueId == "value1" ? "Item 1" : "Item 2") + "</td><td><select>" + getDataOptions(value.id) + "<optgroup label='User value'><option value='Constant.Constant'" + (value.id == "Constant.Constant" ? " selected='selected'" : "") + ">User value</option></optgroup></select></td></tr>");
+	// get a reference to the select
+	var select = table.find("select");
+	// retain the value if we don't have one yet
+	if (!value.id) value.id = select.val();			
 	// add listers
-	_listeners.push( table.find("input").change( function(ev) {		
-		// instantiate if required
-		if (!action.conditions[conditionIndex][valueId]) action.conditions[conditionIndex][valueId] = {};
+	_listeners.push( table.find("select").change( function(ev) {		
+		// get the id
+		var id = $(ev.target).val();
+		// derive the new type
+		var type = "CTL";				
+		// check for system value
+		if (id.substr(0,7) == "System.") type = "SYS";
+		// check for constant
+		if (id == "Constant.Constant") type = "CNT"
 		// set the new type 
-		action.conditions[conditionIndex][valueId].type = $(ev.target).val();
+		value.type = type;
+		// set the id
+		value.id = id;
 		// refresh the property
 		logicConditionValue(cell, action, conditionIndex, valueId); 
 	}));
-	
+		
 	switch (value.type) {
 		case "CTL" :
-			// set the html
-			table.append("<tr><td>Control</td><td><select>" + getDataOptions(value.controlId) + "</select></td></tr>");
-			// get a reference to the select
-			var select = table.find("select");
-			// retain the value if we don't have one yet
-			if (!value.controlId) value.controlId = select.val();			
-			// add the listener
-			_listeners.push( select.change( function(ev) {		
-				// set the new value 
-				value.controlId = $(ev.target).val();
-			}));
+			// set the html			
 			table.append("<tr><td>Field</td><td><input /></td></tr>");			
 			// get the field
 			var input = table.find("input").last();
@@ -1499,12 +1495,12 @@ function logicConditionValue(cell, action, conditionIndex, valueId) {
 			// add the listener
 			_listeners.push( input.keyup( function(ev) {		
 				// set the new value 
-				value.controlField = $(ev.target).val();
+				value.field = $(ev.target).val();
 			}));
 		break;
 		case "CNT" :
 			// set the html
-			table.append("<tr><td>Constant</td><td><input /></td></tr>");
+			table.append("<tr><td>Value</td><td><input /></td></tr>");
 			// get the input
 			var input = table.find("input").last();
 			// set any current value
@@ -1513,26 +1509,6 @@ function logicConditionValue(cell, action, conditionIndex, valueId) {
 			_listeners.push( input.keyup( function(ev) {		
 				// set the new value 
 				value.constant = $(ev.target).val();
-			}));
-		break;
-		case "SYS" :
-			// assume there're no sys options
-			var sysOptions = "";
-			// loop those that are available
-			for (var i in _logicSystemValues) {
-				// build the options string
-				sysOptions += "<option" + (value.system == _logicSystemValues[i] ? " selected='selected'" : "") + ">" + _logicSystemValues[i] + "</option>";
-			}
-			// set the html
-			table.append("<tr><td>System value</td><td><select>" + sysOptions + "</select></td></tr>");
-			// get the dropdown
-			var dropdown = table.find("select").last();
-			// retain the value if we don't have one yet
-			if (!value.system) value.system = dropdown.val();
-			// add the listeners
-			_listeners.push( dropdown.change( function(ev) {		
-				// set the new value 
-				value.system = $(ev.target).val();
 			}));
 		break;
 	}
@@ -1558,9 +1534,6 @@ function Property_logicConditions(cell, action, property, refreshHtml, refreshDi
 	// assume there is no text
 	var text = "";
 		
-	// add headers
-	table.append("<tr><td style='text-align:center;max-width:auto;'>Value</td><td style='text-align:center;max-width:auto;'>Operation</td><td style='text-align:center;max-width:auto;'>Value</td><td style='width:32px;'></td></tr>");
-	
 	// loop the conditions
 	for (var i in conditions) {
 		
@@ -1568,7 +1541,7 @@ function Property_logicConditions(cell, action, property, refreshHtml, refreshDi
 		var condition = conditions[i];
 		
 		// add cells
-		table.append("<tr><td style='vertical-align:top;'></td><td></td><td style='vertical-align:top;'></td><td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
+		table.append("<tr><td style='vertical-align:top;'></td><td style='vertical-align:top;'></td><td style='vertical-align:top;'></td><td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
 		
 		// get last row
 		var lastrow = table.find("tr").last();
@@ -1582,15 +1555,15 @@ function Property_logicConditions(cell, action, property, refreshHtml, refreshDi
 		logicConditionValue(value1Cell, action, i, "value1");
 		logicConditionValue(value2Cell, action, i, "value2");
 		
-		var operationHtml = "<select>"
+		var operationHtml = "<select style='margin-top:1px;'>"
 		for (var j in _logicOperations) {
 			operationHtml += "<option value='" + _logicOperations[j][0] + "'" + (condition.operation == _logicOperations[j][0] ? " selected='selected'" : "") + ">" + _logicOperations[j][1] + "</option>";
 		}
 		operationHtml += "</select>";
 		operationCell.append(operationHtml);
 		
-		// build the text from the conditions, operation
-		text += logicConditionText(condition.value1) + " " + condition.operation  + " " + logicConditionText(condition.value2);
+		// build the text from the conditions, operation (== is mapped to =)
+		text += logicConditionText(condition.value1) + " " + (condition.operation == "==" ? "=" : condition.operation)  + " " + logicConditionText(condition.value2);
 		// add the type to seperate conditions
 		if (i < conditions.length - 1) text += " " + action.conditionsType + " ";
 		
@@ -1639,7 +1612,7 @@ function Property_logicConditions(cell, action, property, refreshHtml, refreshDi
 		// instatiate if need be
 		if (!action.conditions) action.conditions = [];
 		// add new condition
-		action.conditions.push({value1:{}, operation: "==", value2: {}});
+		action.conditions.push({value1:{type:"CTL"}, operation: "==", value2: {type:"CTL"}});
 		// update this table
 		Property_logicConditions(cell, action, property, refreshHtml, dialogue);
 	})
