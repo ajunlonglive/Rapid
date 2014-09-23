@@ -604,7 +604,7 @@ function setData_gallery(id, data, field, details) {
   			// look for our custom imageAddedEvent handler for this control
   			var imageAdded = window["Event_imageAdded_" + id];
   			// fire it if we found it
-  			if (imageAdded) window["Event_imageAdded_" + id](ev);
+  			if (imageAdded) window["Event_imageAdded_" + id]();
   		}
   	} 
   }
@@ -802,11 +802,16 @@ function setData_text(id, data, field, details) {
 /* Gallery control resource JavaScript */
 
 function Gallery_removeImage(ev, id) {
-	$(ev.target).remove();
+	// get the image
+	var img = $(ev.target);
+	// tell Rapid Mobile an image has been removed
+	if (typeof _rapidmobile != "undefined") _rapidmobile.removeImage(id, img.attr("src")); 
+	// remove it
+	img.remove();
 	// look for our custom imageRemoved handler for this control
 	var imageRemoved = window["Event_imageRemoved_" + id];
 	// fire it if we found it
-	if (imageRemoved) window["Event_imageRemoved_" + id](ev);
+	if (imageRemoved) window["Event_imageRemoved_" + id]();
 }
 
 /* Link control resource JavaScript */

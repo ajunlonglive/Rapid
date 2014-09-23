@@ -62,11 +62,16 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <contents>
 	                <![CDATA[
 function Gallery_removeImage(ev, id) {
-	$(ev.target).remove();
+	// get the image
+	var img = $(ev.target);
+	// tell Rapid Mobile an image has been removed
+	if (typeof _rapidmobile != "undefined") _rapidmobile.removeImage(id, img.attr("src")); 
+	// remove it
+	img.remove();
 	// look for our custom imageRemoved handler for this control
 	var imageRemoved = window["Event_imageRemoved_" + id];
 	// fire it if we found it
-	if (imageRemoved) window["Event_imageRemoved_" + id](ev);
+	if (imageRemoved) window["Event_imageRemoved_" + id]();
 }              	
 
 	                ]]>
@@ -120,7 +125,7 @@ if (data) {
 			// look for our custom imageAddedEvent handler for this control
 			var imageAdded = window["Event_imageAdded_" + id];
 			// fire it if we found it
-			if (imageAdded) window["Event_imageAdded_" + id](ev);
+			if (imageAdded) window["Event_imageAdded_" + id]();
 		}
 	} 
 }
