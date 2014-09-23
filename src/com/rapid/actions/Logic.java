@@ -248,21 +248,24 @@ public class Logic extends Action {
 		// assume we couldn't make a condition
 		String conditionsJavaScript = "false";
 		
-		// check we had some conditions
+		// check conditions is set
 		if (_conditions != null) {
-			// reset conditionsJavaScript
-			conditionsJavaScript = "";
-			// loop them
-			for (int i = 0; i < _conditions.size(); i++) {
-				// add the condition
-				conditionsJavaScript += _conditions.get(i).getJavaScript(application, page);
-				// if there is going to be another condition
-				if (i < _conditions.size() - 1) {
-					// add the separator
-					if ("or".equals(_conditionsType)) {
-						conditionsJavaScript += " || ";
-					} else {
-						conditionsJavaScript += " && ";
+			// check we have some
+			if (_conditions.size() > 0) {
+				// reset conditionsJavaScript
+				conditionsJavaScript = "";
+				// loop them
+				for (int i = 0; i < _conditions.size(); i++) {
+					// add the condition
+					conditionsJavaScript += _conditions.get(i).getJavaScript(application, page);
+					// if there is going to be another condition
+					if (i < _conditions.size() - 1) {
+						// add the separator
+						if ("or".equals(_conditionsType)) {
+							conditionsJavaScript += " || ";
+						} else {
+							conditionsJavaScript += " && ";
+						}
 					}
 				}
 			}
