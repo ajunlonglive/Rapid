@@ -75,8 +75,15 @@ public class Logic extends Action {
 			if ("CNT".equals(_type)) {
 				// if it's set
 				if (_constant != null) {
-					// wrap in same quotes
-					arg = "'" + _constant.replace("'", "\'")  + "'";
+					// if we can parse it as a float
+					try {
+						float number = Float.parseFloat(_constant);
+						// add it without quotes
+						arg = Float.toString(number);
+					} catch (Exception ex) {
+						// wrap in quotes
+						arg = "'" + _constant.replace("'", "\'")  + "'";
+					}					
 				}
 			} else {
 				// if id is set
@@ -167,7 +174,7 @@ public class Logic extends Action {
 		// save all key/values from the json into the properties 
 		for (String key : JSONObject.getNames(jsonAction)) {
 			// add all json properties to our properties, except for the ones we want directly accessible
-			if (!"conditions".equals(key) && !"trueActions".equals(key) && !"falseActions".equals(key)) addProperty(key, jsonAction.get(key).toString());
+			if (!"conditions".equals(key) && !"conditionsType".equals(key) && !"trueActions".equals(key) && !"falseActions".equals(key)) addProperty(key, jsonAction.get(key).toString());
 		} 
 		
 		// initialise list
@@ -183,6 +190,9 @@ public class Logic extends Action {
 				_conditions.add(new Condition(jsonConditions.getJSONObject(i)));
 			}
 		}
+		
+		// get conditions type
+		_conditionsType = jsonAction.getString("conditionsType");
 						
 		// grab any successActions
 		JSONArray jsonTrueActions = jsonAction.optJSONArray("trueActions");

@@ -681,15 +681,11 @@ limit 20</SQL>
                 <childControls>
                     <childControls>
                         <events>
-                            <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="custom">
+                            <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="event">
 <properties>
     <entry>
         <key>id</key>
-        <value>P4_A34_</value>
-    </entry>
-    <entry>
-        <key>javascript</key>
-        <value>// gallery image added</value>
+        <value>P4_A55_</value>
     </entry>
     <entry>
         <key>XMLVersion</key>
@@ -700,12 +696,16 @@ limit 20</SQL>
         <value>false</value>
     </entry>
     <entry>
+        <key>event</key>
+        <value>page.pageload</value>
+    </entry>
+    <entry>
         <key>name</key>
-        <value>Custom 34</value>
+        <value>Event 55</value>
     </entry>
     <entry>
         <key>type</key>
-        <value>custom</value>
+        <value>event</value>
     </entry>
 </properties>
 <XMLVersion>1</XMLVersion>
@@ -714,15 +714,11 @@ limit 20</SQL>
                             <type>imageAdded</type>
                         </events>
                         <events>
-                            <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="custom">
+                            <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="event">
 <properties>
     <entry>
         <key>id</key>
-        <value>P4_A35_</value>
-    </entry>
-    <entry>
-        <key>javascript</key>
-        <value>alert(&quot;Image removed!&quot;);</value>
+        <value>P4_A56_</value>
     </entry>
     <entry>
         <key>XMLVersion</key>
@@ -733,12 +729,16 @@ limit 20</SQL>
         <value>false</value>
     </entry>
     <entry>
+        <key>event</key>
+        <value>page.pageload</value>
+    </entry>
+    <entry>
         <key>name</key>
-        <value>Custom 35</value>
+        <value>Event 56</value>
     </entry>
     <entry>
         <key>type</key>
-        <value>custom</value>
+        <value>event</value>
     </entry>
 </properties>
 <XMLVersion>1</XMLVersion>
@@ -765,7 +765,7 @@ limit 20</SQL>
                             </entry>
                             <entry>
 <key>emptyText</key>
-<value>No picture currently available</value>
+<value>No pictures currently available</value>
                             </entry>
                             <entry>
 <key>type</key>
@@ -832,6 +832,159 @@ limit 20</SQL>
                     <entry>
                         <key>classes</key>
                         <value>[]</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableRow</value>
+                    </entry>
+                </properties>
+                <XMLVersion>1</XMLVersion>
+            </childControls>
+            <childControls>
+                <childControls>
+                    <properties>
+                        <entry>
+                            <key>id</key>
+                            <value>P4_C40_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
+                        </entry>
+                        <entry>
+                            <key>text</key>
+                            <value>&amp;nbsp;</value>
+                        </entry>
+                        <entry>
+                            <key>colSpan</key>
+                            <value>1</value>
+                        </entry>
+                        <entry>
+                            <key>rowSpan</key>
+                            <value>1</value>
+                        </entry>
+                        <entry>
+                            <key>type</key>
+                            <value>tableCell</value>
+                        </entry>
+                    </properties>
+                    <XMLVersion>1</XMLVersion>
+                </childControls>
+                <childControls>
+                    <childControls>
+                        <events>
+                            <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="mobile">
+<properties>
+    <entry>
+        <key>id</key>
+        <value>P4_A43_</value>
+    </entry>
+    <entry>
+        <key>imageMaxSize</key>
+        <value>500</value>
+    </entry>
+    <entry>
+        <key>XMLVersion</key>
+        <value>1</value>
+    </entry>
+    <entry>
+        <key>avoidRedundancy</key>
+        <value>false</value>
+    </entry>
+    <entry>
+        <key>name</key>
+        <value>Mobile 28</value>
+    </entry>
+    <entry>
+        <key>galleryControlId</key>
+        <value>P4_C31_</value>
+    </entry>
+    <entry>
+        <key>imageQuality</key>
+        <value>50</value>
+    </entry>
+    <entry>
+        <key>actionType</key>
+        <value>uploadImages</value>
+    </entry>
+    <entry>
+        <key>type</key>
+        <value>mobile</value>
+    </entry>
+</properties>
+<XMLVersion>1</XMLVersion>
+                            </actions>
+                            <filter></filter>
+                            <type>click</type>
+                        </events>
+                        <properties>
+                            <entry>
+<key>id</key>
+<value>P4_C42_</value>
+                            </entry>
+                            <entry>
+<key>classes</key>
+<value>[]</value>
+                            </entry>
+                            <entry>
+<key>name</key>
+<value>btnUpload</value>
+                            </entry>
+                            <entry>
+<key>label</key>
+<value>Upload to server</value>
+                            </entry>
+                            <entry>
+<key>type</key>
+<value>button</value>
+                            </entry>
+                        </properties>
+                        <styles>
+                            <appliesTo>#P4_C42_</appliesTo>
+                            <rules>width:98%;</rules>
+                        </styles>
+                        <XMLVersion>1</XMLVersion>
+                    </childControls>
+                    <properties>
+                        <entry>
+                            <key>id</key>
+                            <value>P4_C41_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
+                        </entry>
+                        <entry>
+                            <key>text</key>
+                            <value></value>
+                        </entry>
+                        <entry>
+                            <key>colSpan</key>
+                            <value>1</value>
+                        </entry>
+                        <entry>
+                            <key>rowSpan</key>
+                            <value>1</value>
+                        </entry>
+                        <entry>
+                            <key>type</key>
+                            <value>tableCell</value>
+                        </entry>
+                    </properties>
+                    <XMLVersion>1</XMLVersion>
+                </childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>P4_C39_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
+                        <key>name</key>
+                        <value>rowUpload</value>
                     </entry>
                     <entry>
                         <key>type</key>
@@ -952,7 +1105,7 @@ limit 20</SQL>
                 </entry>
                 <entry>
                     <key>childActions</key>
-                    <value>[{&quot;id&quot;:&quot;P4_A37_&quot;,&quot;XMLVersion&quot;:1,&quot;avoidRedundancy&quot;:false,&quot;page&quot;:&quot;P3&quot;,&quot;name&quot;:&quot;Navigate 37&quot;,&quot;sessionVariables&quot;:[],&quot;type&quot;:&quot;navigate&quot;},{&quot;id&quot;:&quot;P4_A38_&quot;,&quot;XMLVersion&quot;:1,&quot;childActions&quot;:[],&quot;avoidRedundancy&quot;:false,&quot;showLoading&quot;:false,&quot;query&quot;:{&quot;SQL&quot;:&quot;&quot;,&quot;inputs&quot;:[{&quot;field&quot;:&quot;&quot;,&quot;itemId&quot;:&quot;personId&quot;}],&quot;databaseConnectionIndex&quot;:0,&quot;outputs&quot;:[{&quot;field&quot;:&quot;&quot;,&quot;itemId&quot;:&quot;P4_C6_&quot;},{&quot;field&quot;:&quot;&quot;,&quot;itemId&quot;:&quot;P4_C11_&quot;},{&quot;field&quot;:&quot;&quot;,&quot;itemId&quot;:&quot;P4_C16_&quot;}]},&quot;name&quot;:&quot;Database 38&quot;,&quot;type&quot;:&quot;database&quot;}]</value>
+                    <value>[{&quot;id&quot;:&quot;P4_A37_&quot;,&quot;XMLVersion&quot;:1,&quot;avoidRedundancy&quot;:false,&quot;page&quot;:&quot;P3&quot;,&quot;name&quot;:&quot;Navigate 37&quot;,&quot;type&quot;:&quot;navigate&quot;,&quot;sessionVariables&quot;:[]},{&quot;id&quot;:&quot;P4_A38_&quot;,&quot;XMLVersion&quot;:1,&quot;avoidRedundancy&quot;:false,&quot;childActions&quot;:[],&quot;showLoading&quot;:false,&quot;query&quot;:{&quot;SQL&quot;:&quot;&quot;,&quot;inputs&quot;:[{&quot;field&quot;:&quot;&quot;,&quot;itemId&quot;:&quot;personId&quot;}],&quot;databaseConnectionIndex&quot;:0,&quot;outputs&quot;:[{&quot;field&quot;:&quot;&quot;,&quot;itemId&quot;:&quot;P4_C6_&quot;},{&quot;field&quot;:&quot;&quot;,&quot;itemId&quot;:&quot;P4_C11_&quot;},{&quot;field&quot;:&quot;&quot;,&quot;itemId&quot;:&quot;P4_C16_&quot;}]},&quot;name&quot;:&quot;Database 38&quot;,&quot;type&quot;:&quot;database&quot;}]</value>
                 </entry>
                 <entry>
                     <key>name</key>
@@ -961,10 +1114,6 @@ limit 20</SQL>
                 <entry>
                     <key>type</key>
                     <value>logic</value>
-                </entry>
-                <entry>
-                    <key>conditionsType</key>
-                    <value>and</value>
                 </entry>
             </properties>
             <XMLVersion>1</XMLVersion>
@@ -983,6 +1132,7 @@ limit 20</SQL>
                     <type>SYS</type>
                 </value2>
             </conditions>
+            <conditionsType>and</conditionsType>
             <falseActions xsi:type="database">
                 <properties>
                     <entry>
@@ -1069,6 +1219,258 @@ where id = ?</SQL>
                 <XMLVersion>1</XMLVersion>
             </trueActions>
         </actions>
+        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="logic">
+            <properties>
+                <entry>
+                    <key>id</key>
+                    <value>P4_A44_</value>
+                </entry>
+                <entry>
+                    <key>XMLVersion</key>
+                    <value>1</value>
+                </entry>
+                <entry>
+                    <key>avoidRedundancy</key>
+                    <value>false</value>
+                </entry>
+                <entry>
+                    <key>childActions</key>
+                    <value>[{&quot;id&quot;:&quot;P4_A45_&quot;,&quot;control&quot;:&quot;P4_C39_&quot;,&quot;XMLVersion&quot;:1,&quot;avoidRedundancy&quot;:false,&quot;name&quot;:&quot;Control 45&quot;,&quot;command&quot;:&quot;.show();&quot;,&quot;type&quot;:&quot;control&quot;},{&quot;id&quot;:&quot;P4_A46_&quot;,&quot;control&quot;:&quot;P4_C42_&quot;,&quot;XMLVersion&quot;:1,&quot;avoidRedundancy&quot;:false,&quot;name&quot;:&quot;Control 46&quot;,&quot;command&quot;:&quot;.hide();&quot;,&quot;type&quot;:&quot;control&quot;}]</value>
+                </entry>
+                <entry>
+                    <key>name</key>
+                    <value>Logic 44</value>
+                </entry>
+                <entry>
+                    <key>type</key>
+                    <value>logic</value>
+                </entry>
+            </properties>
+            <XMLVersion>1</XMLVersion>
+            <conditions>
+                <operation>&gt;</operation>
+                <value1>
+                    <constant></constant>
+                    <field></field>
+                    <id>P4_C31_.imageCount</id>
+                    <type>CTL</type>
+                </value1>
+                <value2>
+                    <constant>0</constant>
+                    <field></field>
+                    <id>Constant.Constant</id>
+                    <type>CNT</type>
+                </value2>
+            </conditions>
+            <conditions>
+                <operation>==</operation>
+                <value1>
+                    <constant></constant>
+                    <field></field>
+                    <id>System.mobile</id>
+                    <type>SYS</type>
+                </value1>
+                <value2>
+                    <constant></constant>
+                    <field></field>
+                    <id>System.true</id>
+                    <type>SYS</type>
+                </value2>
+            </conditions>
+            <conditionsType>and</conditionsType>
+            <falseActions xsi:type="control">
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>P4_A46_</value>
+                    </entry>
+                    <entry>
+                        <key>control</key>
+                        <value>P4_C42_</value>
+                    </entry>
+                    <entry>
+                        <key>XMLVersion</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>avoidRedundancy</key>
+                        <value>false</value>
+                    </entry>
+                    <entry>
+                        <key>name</key>
+                        <value>Control 46</value>
+                    </entry>
+                    <entry>
+                        <key>command</key>
+                        <value>.hide();</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>control</value>
+                    </entry>
+                </properties>
+                <XMLVersion>1</XMLVersion>
+            </falseActions>
+            <trueActions xsi:type="control">
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>P4_A45_</value>
+                    </entry>
+                    <entry>
+                        <key>control</key>
+                        <value>P4_C39_</value>
+                    </entry>
+                    <entry>
+                        <key>XMLVersion</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>avoidRedundancy</key>
+                        <value>false</value>
+                    </entry>
+                    <entry>
+                        <key>name</key>
+                        <value>Control 45</value>
+                    </entry>
+                    <entry>
+                        <key>command</key>
+                        <value>.show();</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>control</value>
+                    </entry>
+                </properties>
+                <XMLVersion>1</XMLVersion>
+            </trueActions>
+        </actions>
+        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="logic">
+            <properties>
+                <entry>
+                    <key>id</key>
+                    <value>P4_A50_</value>
+                </entry>
+                <entry>
+                    <key>XMLVersion</key>
+                    <value>1</value>
+                </entry>
+                <entry>
+                    <key>avoidRedundancy</key>
+                    <value>false</value>
+                </entry>
+                <entry>
+                    <key>childActions</key>
+                    <value>[{&quot;id&quot;:&quot;P4_A52_&quot;,&quot;control&quot;:&quot;P4_C22_&quot;,&quot;XMLVersion&quot;:1,&quot;avoidRedundancy&quot;:false,&quot;name&quot;:&quot;Control 52&quot;,&quot;command&quot;:&quot;.enable();&quot;,&quot;type&quot;:&quot;control&quot;},{&quot;id&quot;:&quot;P4_A53_&quot;,&quot;control&quot;:&quot;P4_C22_&quot;,&quot;XMLVersion&quot;:1,&quot;avoidRedundancy&quot;:false,&quot;name&quot;:&quot;Control 53&quot;,&quot;command&quot;:&quot;.disable();&quot;,&quot;type&quot;:&quot;control&quot;}]</value>
+                </entry>
+                <entry>
+                    <key>name</key>
+                    <value>Logic 50</value>
+                </entry>
+                <entry>
+                    <key>type</key>
+                    <value>logic</value>
+                </entry>
+            </properties>
+            <XMLVersion>1</XMLVersion>
+            <conditions>
+                <operation>&gt;</operation>
+                <value1>
+                    <constant></constant>
+                    <field></field>
+                    <id>P4_C31_.imageCount</id>
+                    <type>CTL</type>
+                </value1>
+                <value2>
+                    <constant>2</constant>
+                    <field></field>
+                    <id>Constant.Constant</id>
+                    <type>CNT</type>
+                </value2>
+            </conditions>
+            <conditions>
+                <operation>==</operation>
+                <value1>
+                    <constant></constant>
+                    <field></field>
+                    <id>System.mobile</id>
+                    <type>SYS</type>
+                </value1>
+                <value2>
+                    <constant></constant>
+                    <field></field>
+                    <id>System.false</id>
+                    <type>SYS</type>
+                </value2>
+            </conditions>
+            <conditionsType>or</conditionsType>
+            <falseActions xsi:type="control">
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>P4_A53_</value>
+                    </entry>
+                    <entry>
+                        <key>control</key>
+                        <value>P4_C22_</value>
+                    </entry>
+                    <entry>
+                        <key>XMLVersion</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>avoidRedundancy</key>
+                        <value>false</value>
+                    </entry>
+                    <entry>
+                        <key>name</key>
+                        <value>Control 53</value>
+                    </entry>
+                    <entry>
+                        <key>command</key>
+                        <value>.enable();</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>control</value>
+                    </entry>
+                </properties>
+                <XMLVersion>1</XMLVersion>
+            </falseActions>
+            <trueActions xsi:type="control">
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>P4_A52_</value>
+                    </entry>
+                    <entry>
+                        <key>control</key>
+                        <value>P4_C22_</value>
+                    </entry>
+                    <entry>
+                        <key>XMLVersion</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>avoidRedundancy</key>
+                        <value>false</value>
+                    </entry>
+                    <entry>
+                        <key>name</key>
+                        <value>Control 52</value>
+                    </entry>
+                    <entry>
+                        <key>command</key>
+                        <value>.disable();</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>control</value>
+                    </entry>
+                </properties>
+                <XMLVersion>1</XMLVersion>
+            </trueActions>
+        </actions>
         <filter></filter>
         <type>pageload</type>
     </events>
@@ -1076,10 +1478,10 @@ where id = ?</SQL>
         <filter></filter>
         <type>reusable</type>
     </events>
-    <htmlBody>&lt;div id=&quot;P4_C1_&quot; class=&quot;pagepanel&quot;&gt;&lt;/div&gt;&lt;div id=&quot;P4_C18_&quot; class=&quot;panel&quot;&gt;&lt;table id=&quot;P4_C2_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P4_C3_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C4_&quot; class=&quot;tabelCell cellLabel&quot;&gt;First name&lt;/td&gt;&lt;td id=&quot;P4_C5_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P4_C6_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot; readonly=&quot;readonly&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C8_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C9_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;&lt;td id=&quot;P4_C10_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P4_C11_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot; readonly=&quot;readonly&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C13_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C14_&quot; class=&quot;tabelCell&quot;&gt;Date of birth&lt;/td&gt;&lt;td id=&quot;P4_C15_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P4_C16_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot; readonly=&quot;readonly&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C19_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C20_&quot; class=&quot;tabelCell&quot;&gt;Picture&lt;/td&gt;&lt;td id=&quot;P4_C21_&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;P4_C22_&quot; class=&quot;button&quot;&gt;Add picture&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C32_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C33_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;div id=&quot;P4_C31_&quot;&gt;&lt;span&gt;No picture currently available&lt;/span&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C29_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C30_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;</htmlBody>
+    <htmlBody>&lt;div id=&quot;P4_C1_&quot; class=&quot;pagepanel&quot;&gt;&lt;/div&gt;&lt;div id=&quot;P4_C18_&quot; class=&quot;panel&quot;&gt;&lt;table id=&quot;P4_C2_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P4_C3_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C4_&quot; class=&quot;tabelCell cellLabel&quot;&gt;First name&lt;/td&gt;&lt;td id=&quot;P4_C5_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P4_C6_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot; readonly=&quot;readonly&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C8_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C9_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;&lt;td id=&quot;P4_C10_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P4_C11_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot; readonly=&quot;readonly&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C13_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C14_&quot; class=&quot;tabelCell&quot;&gt;Date of birth&lt;/td&gt;&lt;td id=&quot;P4_C15_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P4_C16_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot; readonly=&quot;readonly&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C19_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C20_&quot; class=&quot;tabelCell&quot;&gt;Picture&lt;/td&gt;&lt;td id=&quot;P4_C21_&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;P4_C22_&quot; class=&quot;button&quot;&gt;Add picture&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C32_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C33_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;div id=&quot;P4_C31_&quot;&gt;&lt;span&gt;No pictures currently available&lt;/span&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C39_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C40_&quot; class=&quot;tabelCell&quot;&gt;&amp;nbsp;&lt;/td&gt;&lt;td id=&quot;P4_C41_&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;P4_C42_&quot; class=&quot;button&quot;&gt;Upload to server&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C29_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C30_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;</htmlBody>
     <id>P4</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-09-23T14:39:27.948+01:00</modifiedDate>
+    <modifiedDate>2014-09-23T16:01:59.255+01:00</modifiedDate>
     <name>03_PersonDetails</name>
     <rolesHtml>
         <html>&lt;div id=&quot;P4_C1_&quot; class=&quot;pagepanel&quot;&gt;&lt;/div&gt;
@@ -1110,8 +1512,14 @@ where id = ?</SQL>
 							&lt;tr id=&quot;P4_C32_&quot; class=&quot;tableRow&quot;&gt;
 								&lt;td id=&quot;P4_C33_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;
 									&lt;div id=&quot;P4_C31_&quot;&gt;
-										&lt;span&gt;No picture currently available&lt;/span&gt;
+										&lt;span&gt;No pictures currently available&lt;/span&gt;
 									&lt;/div&gt;
+								&lt;/td&gt;
+							&lt;/tr&gt;
+							&lt;tr id=&quot;P4_C39_&quot; class=&quot;tableRow&quot;&gt;
+								&lt;td id=&quot;P4_C40_&quot; class=&quot;tabelCell&quot;&gt;&amp;nbsp;&lt;/td&gt;
+								&lt;td id=&quot;P4_C41_&quot; class=&quot;tabelCell&quot;&gt;
+									&lt;button id=&quot;P4_C42_&quot; class=&quot;button&quot;&gt;Upload to server&lt;/button&gt;
 								&lt;/td&gt;
 							&lt;/tr&gt;
 							&lt;tr id=&quot;P4_C29_&quot; class=&quot;tableRow&quot;&gt;
