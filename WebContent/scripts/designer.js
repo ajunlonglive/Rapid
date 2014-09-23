@@ -496,6 +496,9 @@ function getRolesOptions(selectRole, ignoreRoles) {
 	return options;
 }
 
+//different system properties for
+var _systemValues = ["true","false","null","mobile","online"];
+
 // this function returns a set of options for a dropdown of sessionVariables and controls with a getData method
 function getDataOptions(selectId, ignoreId) {
 	var options = "";	
@@ -541,7 +544,8 @@ function getDataOptions(selectId, ignoreId) {
 			
 		}
 		options += "</optgroup>";
-	}	
+	}
+	
 	if (_page && _page.sessionVariables) {
 		options += "<optgroup label='Page variables'>";
 		for (var i in _page.sessionVariables) {
@@ -554,6 +558,7 @@ function getDataOptions(selectId, ignoreId) {
 		}
 		options += "</optgroup>";
 	}
+	
 	if (_page && _pages) {
 		var groupOpen = false;
 		var groupClose = false;
@@ -574,6 +579,16 @@ function getDataOptions(selectId, ignoreId) {
 			}			
 		}
 		if (groupOpen && !groupClose) options += "</optgroup>";
+	}
+	
+	// system values - these are defined in an array above this function
+	if (_systemValues) {
+		options += "<optgroup label='System values'>";
+		for (var i in _systemValues) {
+			var val = "System." + _systemValues[i];
+			options += "<option value='" + val + "'" + (val == selectId ? " selected='selected'" : "") + ">" + _systemValues[i] + "</option>";
+		}
+		options += "</optgroup>";
 	}
 	return options;
 }

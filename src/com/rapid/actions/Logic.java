@@ -45,64 +45,45 @@ public class Logic extends Action {
 	public static class Value {
 		
 		// private instance variables
-		private String _type, _controlId, _controlField, _constant, _system;
+		private String _type, _id, _field, _constant;
 		
 		// public properties
 		public String getType() { return _type; }
 		public void setType(String type) { _type = type; }
 		
-		public String getControlId() { return _controlId; }
-		public void setControlId(String controlId) { _controlId = controlId; }
+		public String getId() { return _id; }
+		public void setId(String id) { _id = id; }
 		
-		public String getControlField() { return _controlField; }
-		public void setControlField(String controlField) { _controlField = controlField; }
+		public String getField() { return _field; }
+		public void setField(String field) { _field = field; }
 		
 		public String getConstant() { return _constant; }
 		public void setConstant(String constant) { _constant = constant; }
-		
-		public String getSystem() { return _system; }
-		public void setSystem(String system) { _system = system; }
-		
+				
 		public Value() {}
 		public Value(JSONObject jsonValue) {
 			_type = jsonValue.optString("type");
-			_controlId = jsonValue.optString("controlId");
-			_controlField = jsonValue.optString("controlField");
+			_id = jsonValue.optString("id");
+			_field = jsonValue.optString("field");
 			_constant = jsonValue.optString("constant");
-			_system = jsonValue.optString("system");
 		}
 		
 		public String getArgument(Application application, Page page) {
-			
+			// assume null
 			String arg = "null";
-			
-			// check the different types (these are in the properties.js file for Property_logicValue
-			if ("CTL".equals(_type)) {
-				if (_controlId != null) {
-					arg = Control.getDataJavaScript(application, page, _controlId, _controlField);
-				}
-			} else if ("CNT".equals(_type)) {
+			// constants are unique to this action
+			if ("CNT".equals(_type)) {
+				// if it's set
 				if (_constant != null) {
 					// wrap in same quotes
 					arg = "'" + _constant.replace("'", "\'")  + "'";
 				}
-			} else if ("SYS".equals(_type)) {
-				if (_system != null) {
-					// the available system values are specified above Property_logicValue in properties.js
-					if ("mobile".equals(_system)) {
-						// whether rapid mobile is present
-						arg = "(typeof _rapidmobile == 'undefined' ? false : true)";
-					} else if ("online".equals(_system)) {
-						// whether we are online (presumed true if no rapid mobile)
-						arg = "(typeof _rapidmobile == 'undefined' ? true : _rapidmobile.isOnline())";
-					} else if (!"".equals(_system)) {
-						// pass through as literal if not blank
-						arg = _system;
-					} else {
-						// pass blank string
-						arg = "''";
-					}
-				}				
+			} else {
+				// if id is set
+				if (_id != null) {
+					// use the system-wide method
+					arg = Control.getDataJavaScript(application, page, _id, _field);
+				}
 			}
 						
 			return arg;
