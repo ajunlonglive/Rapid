@@ -1423,16 +1423,24 @@ var _logicOperations = [["==","= equals"],["!=","!= doesn't equal"],[">","> grea
 
 function logicConditionText(condition) {
 	// make some text
-	var text = "Not set";
+	var text = "Not set";	
 	// check the type
 	switch (condition.type) {
 		case "CTL" :
 			// assume there is no control
 			var control = null;
+			// get the id parts
+			var idParts = condition.id.split(".");
+			// get the control id
+			var controlId = idParts;
+			// if  there was more than one part, take the first
+			if (idParts.length > 1) controlId = idParts[0];
 			// look for the control
-			if (condition.id) control = getControlById(condition.id);
+			if (controlId) control = getControlById(controlId);
 			// if we don't find one just show id (could be page variable)
 			text = (control ? control.name : condition.id);
+			// add the property if present
+			if (idParts.length > 1) text += "." + idParts[1];
 			// add the field if present
 			if (condition.field) text += "." + condition.field;
 		break;
@@ -1562,6 +1570,11 @@ function Property_logicConditions(cell, action, property, refreshHtml, refreshDi
 		operationHtml += "</select>";
 		operationCell.append(operationHtml);
 		
+		// add a listener for the operation
+		operationCell.find("select").last().change( function(ev){
+			condition.operation = $(ev.target).val();
+		});
+		
 		// build the text from the conditions, operation (== is mapped to =)
 		text += logicConditionText(condition.value1) + " " + (condition.operation == "==" ? "=" : condition.operation)  + " " + logicConditionText(condition.value2);
 		// add the type to seperate conditions
@@ -1597,9 +1610,9 @@ function Property_logicConditions(cell, action, property, refreshHtml, refreshDi
 	// only if there are 2 or more conditions
 	if (conditions.length > 1) {		
 		// add type
-		table.append("<tr><td colspan='4' style='padding-left:12px;'><input type='radio' name='" + action.id + "type' value='and'" + (action.conditionsType == "and" ? " checked='checked'" : "") + "/>all conditions must be true (And) <input type='radio' name='" + action.id + "type' value='and'" + (action.conditionsType == "or" ? " checked='checked'" : "") + "/>any condition can be true (Or) </td></tr>");
+		table.append("<tr><td colspan='4' style='padding-left:12px;'><input type='radio' name='" + action.id + "type' value='and'" + (action.conditionsType == "and" ? " checked='checked'" : "") + "/>all conditions must be true (And) <input type='radio' name='" + action.id + "type' value='or'" + (action.conditionsType == "or" ? " checked='checked'" : "") + "/>any condition can be true (Or) </td></tr>");
 		// add change listeners
-		table.find("input[name=" + action.id + "]").change( function(ev){
+		table.find("input[name=" + action.id + "type]").change( function(ev){
 			// set the condition type to the new val
 			action.conditionsType = $(ev.target).val();
 		});
