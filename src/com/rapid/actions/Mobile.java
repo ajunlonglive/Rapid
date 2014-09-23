@@ -66,7 +66,9 @@ public class Mobile extends Action {
 				if (galleryControl == null) {
 					js += "  //galleryControl " + galleryControlId + " not found\n";
 				} else {
-					js += "  _rapidmobile.addImage('" + galleryControlId + "');\n";
+					int maxSize = Integer.parseInt(getProperty("imageMaxSize"));
+					int quality = Integer.parseInt(getProperty("imageQuality"));
+					js += "  _rapidmobile.addImage('" + galleryControlId + "'," + maxSize + "," + quality + ");\n";
 				}
 			}
 		}

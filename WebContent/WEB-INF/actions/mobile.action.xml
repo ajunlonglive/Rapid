@@ -56,6 +56,18 @@ return "<option value=''>Please select...</option>" + getControlOptions(this.gal
 	                ]]>
 	            </getValuesFunction>	 	            
 	        </property>
+	        <property>
+	            <key>imageMaxSize</key>
+	            <name>Max width/height (px)</name>
+	            <setConstructValueFunction>return "500";</setConstructValueFunction>
+	            <changeValueJavaScript>integer</changeValueJavaScript>	 
+	        </property>
+	        <property>
+	            <key>imageQuality</key>
+	            <name>Quality (%)</name>
+	            <setConstructValueFunction>return "50";</setConstructValueFunction>
+	            <changeValueJavaScript>integer</changeValueJavaScript>	 
+	        </property>
 	    </properties>
 	    
 		<actionJavaScript>
@@ -68,6 +80,6 @@ function Action_mobile(actionId, type) {
 
 			]]>
 	    </actionJavaScript>
-  
+	    
     </action> 
 </actions>

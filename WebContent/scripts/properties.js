@@ -197,6 +197,29 @@ function Property_text(cell, propertyObject, property, refreshHtml) {
 	_listeners.push( input.keyup( function(ev) { updateProperty(propertyObject, property, ev.target.value, refreshHtml); }));
 }
 
+function Property_integer(cell, propertyObject, property, refreshHtml) {
+	var value = "";
+	// set the value if it exists
+	if (propertyObject[property.key]) value = propertyObject[property.key];
+	// append the adjustable form control
+	cell.append("<input class='propertiesPanelTable' value='" + value + "' />");
+	// get a reference to the form control
+	var input = cell.children().last();
+	// add a listener to update the property
+	_listeners.push( input.keyup( function(ev) {
+		var input = $(ev.target);
+		var val = input.val();    
+		// check integer match
+		if (val.match(new RegExp("^\\d+$"))) {
+			// update value
+			updateProperty(propertyObject, property, ev.target.value, refreshHtml);						
+		} else {
+			// restore value
+			input.val(propertyObject[property.key]);
+		}
+	}));
+}
+
 function Property_bigtext(cell, propertyObject, property, refreshHtml) {
 	var value = "";
 	// set the value if it exists
@@ -2259,10 +2282,14 @@ function Property_mobileActionType(cell, mobileAction, property, refreshHtml, re
 	var actionTypeSelect = cell.append(selectHtml).find("select");	
 	// assume all other properties invisible
 	setPropertyVisibilty(mobileAction, "galleryControlId", false);
+	setPropertyVisibilty(mobileAction, "imageMaxSize", false);
+	setPropertyVisibilty(mobileAction, "imageQuality", false);
 	// adjust required property visibility accordingly
 	switch (mobileAction.actionType) {
 		case "addImage" :
 			setPropertyVisibilty(mobileAction, "galleryControlId", true);
+			setPropertyVisibilty(mobileAction, "imageMaxSize", true);
+			setPropertyVisibilty(mobileAction, "imageQuality", true);
 		break;
 	}
 	// listener for changing the type
