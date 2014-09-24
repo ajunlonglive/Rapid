@@ -50,7 +50,7 @@ public class Existing extends Action {
 	}
 	// used by designer
 	public Existing(RapidHttpServlet rapidServlet, JSONObject jsonAction) throws Exception { 
-		super(rapidServlet, jsonAction);;
+		super(rapidServlet, jsonAction);
 	}
 		
 	// overridden methods

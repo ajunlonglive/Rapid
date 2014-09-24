@@ -79,8 +79,11 @@ public abstract class Action {
 	
 	// if any actions run other actions return their id's when we generate the page JavaScript we will create a special action function which we will reuse to avoid redundantly recreating the js each time
 	public List<String> getRedundantActions() { return null; }	
+	
+	// this generates the clientside javascript at the top of the page for any reusable functions or global callbacks
+	public String getPageJavaScript(Application application, Page page) { return null; }
 		
-	// this generates the clientside javascript for the action to happen (must be implemented as every action is kicked off from the client side [for now anyway])
+	// this generates the clientside javascript inside the events for the action to happen (must be implemented as every action is kicked off from the client side [for now anyway])
 	public abstract String getJavaScript(Application application, Page page, Control control);
 
 	// this is where any serverside action happens! (some actions are client side only)

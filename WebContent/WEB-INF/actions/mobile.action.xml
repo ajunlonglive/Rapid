@@ -59,15 +59,29 @@ return "<option value=''>Please select...</option>" + getControlOptions(this.gal
 	        <property>
 	            <key>imageMaxSize</key>
 	            <name>Max width/height (px)</name>
+	            <visible>false</visible>
 	            <setConstructValueFunction>return "500";</setConstructValueFunction>
 	            <changeValueJavaScript>integer</changeValueJavaScript>	 
 	        </property>
 	        <property>
 	            <key>imageQuality</key>
 	            <name>Quality (%)</name>
+	            <visible>false</visible>
 	            <setConstructValueFunction>return "50";</setConstructValueFunction>
 	            <changeValueJavaScript>integer</changeValueJavaScript>	 
 	        </property>
+	        <property>
+	            <key>successActions</key>
+	            <name>Success actions</name>
+	            <visible>false</visible>
+	            <changeValueJavaScript>childActions</changeValueJavaScript>	 
+	        </property>
+	        <property>
+	            <key>errorActions</key>
+	            <name>Error actions</name>
+	            <visible>false</visible>
+	            <changeValueJavaScript>childActions</changeValueJavaScript>	 
+	        </property> 
 	    </properties>
 	    
 		<actionJavaScript>

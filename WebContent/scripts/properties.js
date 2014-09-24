@@ -1571,8 +1571,8 @@ function Property_logicConditions(cell, action, property, refreshHtml, refreshDi
 		operationCell.append(operationHtml);
 		
 		// add a listener for the operation
-		operationCell.find("select").last().change( function(ev){
-			condition.operation = $(ev.target).val();
+		operationCell.find("select").last().change({condition: condition}, function(ev){
+			ev.data.condition.operation = $(ev.target).val();
 		});
 		
 		// build the text from the conditions, operation (== is mapped to =)
@@ -1594,7 +1594,7 @@ function Property_logicConditions(cell, action, property, refreshHtml, refreshDi
 		// get the del image
 		var delImage = $(ev.target);
 		// remove from conditions
-		ev.data.conditions.splice(delImage.parent().parent().index()-1,1);
+		ev.data.conditions.splice(delImage.parent().parent().index(),1);
 		// if there are now less than 2 conditions remove and/or row too
 		if (ev.data.conditions.length < 2) $(ev.target).closest("table").find("tr:last").prev().remove();
 		// remove row
@@ -2270,12 +2270,19 @@ function Property_mobileActionType(cell, mobileAction, property, refreshHtml, re
 	setPropertyVisibilty(mobileAction, "galleryControlId", false);
 	setPropertyVisibilty(mobileAction, "imageMaxSize", false);
 	setPropertyVisibilty(mobileAction, "imageQuality", false);
+	setPropertyVisibilty(mobileAction, "successActions", false);
+	setPropertyVisibilty(mobileAction, "errorActions", false);
 	// adjust required property visibility accordingly
 	switch (mobileAction.actionType) {
 		case "addImage" :
 			setPropertyVisibilty(mobileAction, "galleryControlId", true);
 			setPropertyVisibilty(mobileAction, "imageMaxSize", true);
 			setPropertyVisibilty(mobileAction, "imageQuality", true);
+		break;
+		case "uploadImages" :
+			setPropertyVisibilty(mobileAction, "galleryControlId", true);
+			setPropertyVisibilty(mobileAction, "successActions", true);
+			setPropertyVisibilty(mobileAction, "errorActions", true);
 		break;
 	}
 	// listener for changing the type

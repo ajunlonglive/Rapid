@@ -579,6 +579,58 @@ function setData_dropdown(id, data, field, details) {
 }
 
 function getData_gallery(ev, id, field, details) {
+  var data = {fields:["url"],rows:[]};
+  var control = $("#" + id);
+  var images = control.children();
+  images.each( function(i) {
+  	data.rows.push([$(this).attr("src")]);
+  });
+  return data;
+}
+
+function setData_gallery(id, data, field, details) {
+  if (data) {
+  	var control = $("#" + id);
+  	data = makeDataObject(data, field);
+  	if (data.rows) {	
+  		// remove the no pictures message
+  		control.find("span").remove();
+  		// look for url or urls in the fields or use the first column if not found	
+  		var urlIndex = 0;
+  		if (data.fields) {
+  			for (var i in data.fields) {
+  				if (data.fields[i] == "url" || data.fields[i] == "urls") {
+  					urlIndex = i;
+  					break;
+  				}
+  			}
+  		}			
+  		// loop the rows
+  		for (var i in data.rows) {
+  			// allow comma seperated list of urls in single field too
+  			var urls = data.rows[i][urlIndex].split(",");
+  			// loop the urls
+  			for (var j in urls) {
+  				var url = urls[j];
+  				control.append("<img src='" + url  + "'/>");
+  				control.find("img").last().click( function(ev) {
+  					Gallery_removeImage(ev, id);				
+  				});
+  				// look for our custom imageAddedEvent handler for this control
+  				var imageAdded = window["Event_imageAdded_" + id];
+  				// fire it if we found it
+  				if (imageAdded) window["Event_imageAdded_" + id]();
+  			}			
+  		}
+  	} 
+  }
+}
+
+function getProperty_gallery_imageCount(ev, id, field, details) {
+  return ($("#" + id).children("img").size());
+}
+
+function getProperty_gallery_urls(ev, id, field, details) {
   var urls = "";
   var control = $("#" + id);
   var images = control.children();
@@ -587,31 +639,6 @@ function getData_gallery(ev, id, field, details) {
   	if (i < images.length - 1) urls += ",";
   });
   return urls;
-}
-
-function setData_gallery(id, data, field, details) {
-  if (data) {
-  	var control = $("#" + id);
-  	data = makeDataObject(data, field);
-  	if (data.rows) {
-  		control.find("span").remove();
-  		for (var i in data.rows) {
-  			var url = data.rows[i][0];
-  			control.append("<img src='" + url  + "'/>");
-  			control.find("img").last().click( function(ev) {
-  				Gallery_removeImage(ev, id);				
-  			});
-  			// look for our custom imageAddedEvent handler for this control
-  			var imageAdded = window["Event_imageAdded_" + id];
-  			// fire it if we found it
-  			if (imageAdded) window["Event_imageAdded_" + id]();
-  		}
-  	} 
-  }
-}
-
-function getProperty_gallery_imageCount(ev, id, field, details) {
-  return ($("#" + id).children("img").size());
 }
 
 function getData_grid(ev, id, field, details) {
