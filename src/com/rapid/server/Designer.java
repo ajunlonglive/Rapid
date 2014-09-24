@@ -158,7 +158,7 @@ public class Designer extends RapidHttpServlet {
 							JSONArray jsonApps = new JSONArray();
 														
 							// loop the list of applications sorted by id (with rapid last)
-							for (Application application : getSortedApplications()) {
+							for (Application application : getApplications().sort()) {
 																								
 								// check the users permission to design this application
 								boolean designPermission = application.getSecurity().checkUserRole(rapidRequest, userName, Rapid.DESIGN_ROLE);
@@ -422,16 +422,8 @@ public class Designer extends RapidHttpServlet {
 							if (appName != null) {
 								
 								// retain whether we have an app with this name
-								boolean appExists = false;
-								
-								// loop the list of applications sorted by id (with rapid last)
-								for (Application application : getSortedApplications()) {
-									if (appName.toLowerCase().equals(application.getName().toLowerCase())) {
-										appExists = true;
-										break;
-									}
-								}
-													
+								boolean appExists =  getApplications().exists(Files.safeName(appName));
+																					
 								// set the response
 								output = Boolean.toString(appExists);
 								// send response as json
@@ -859,11 +851,11 @@ public class Designer extends RapidHttpServlet {
 									// check we were given one
 									if (appName == null) throw new Exception("Name must be provided");
 									
-									// make the name file safe and lower case
-									appName = Files.safeName(appName).toLowerCase();
+									// make the id from the safe and lower case name
+									String appId = Files.safeName(appName).toLowerCase();
 									
 									// look for an existing application of this name
-									Application existingApplication = getApplication(appName); 
+									Application existingApplication = getApplication(appId); 
 									// if we have an existing application back it up first
 									if (existingApplication != null) existingApplication.backup(this, rapidRequest);
 									
@@ -873,7 +865,7 @@ public class Designer extends RapidHttpServlet {
 									if (!tempDir.exists()) tempDir.mkdir();
 									
 									// the path we're saving to is the temp folder
-									String path = getServletContext().getRealPath("/WEB-INF/temp/" + appName + ".zip");
+									String path = getServletContext().getRealPath("/WEB-INF/temp/" + appId + ".zip");
 									// create a file output stream to save the data to
 									FileOutputStream fos = new FileOutputStream (path);
 									// write the file data to the stream
@@ -893,19 +885,19 @@ public class Designer extends RapidHttpServlet {
 									zipFile.delete();
 									
 									// unzip folder (for deletion)
-									File unZipFolder = new File(getServletContext().getRealPath("/WEB-INF/temp/" + appName));
+									File unZipFolder = new File(getServletContext().getRealPath("/WEB-INF/temp/" + appId));
 									// get application folders
-									File appFolderSource = new File(getServletContext().getRealPath("/WEB-INF/temp/" + appName + "/WEB-INF"));						
+									File appFolderSource = new File(getServletContext().getRealPath("/WEB-INF/temp/" + appId + "/WEB-INF"));						
 									// get web content folders
-									File webFolderSource = new File(getServletContext().getRealPath("/WEB-INF/temp/" + appName + "/WebContent" ));																		
+									File webFolderSource = new File(getServletContext().getRealPath("/WEB-INF/temp/" + appId + "/WebContent" ));																		
 																		
 									// check we have the right source folders
 									if (webFolderSource.exists() && appFolderSource.exists()) {
 									
 										// get application destination folder
-										File appFolderDest = new File(getServletContext().getRealPath("/WEB-INF/applications/" + appName));
+										File appFolderDest = new File(getServletContext().getRealPath("/WEB-INF/applications/" + appId));
 										// get web contents destination folder
-										File webFolderDest = new File(getServletContext().getRealPath("/applications/" + appName));							
+										File webFolderDest = new File(getServletContext().getRealPath("/applications/" + appId));							
 										// get application.xml file
 										File appFileSource = new File (appFolderSource + "/application.xml");
 										
@@ -918,13 +910,13 @@ public class Designer extends RapidHttpServlet {
 											Files.copyFolder(appFolderSource, appFolderDest);
 																											
 											// load the new application (but do not generate the resources files)
-											Application appNew = Application.load(getServletContext(), new File (appFolderDest + "/application.xml"), false);
+											Application appNew = Application.load(getServletContext(), new File (appFolderDest + "/application.xml"), 1, false);
 															
 											// get the old id
 											String appOldId = appNew.getId();
 											
 											// make the new id
-											String appId = Files.safeName(appName).toLowerCase();
+											appId = Files.safeName(appName).toLowerCase();
 											
 											// update the id
 											appNew.setId(appId);
@@ -1006,10 +998,10 @@ public class Designer extends RapidHttpServlet {
 											appNew.save(this, rapidRequest);
 											
 											// reload it with the file changes
-											appNew = Application.load(getServletContext(), new File (appFolderDest + "/application.xml"));
+											appNew = Application.load(getServletContext(), new File (appFolderDest + "/application.xml"), 1);
 											
 											// add application to the collection
-											getApplications().put(appNew.getId(), appNew);
+											getApplications().put(appNew);
 											
 											// delete unzip folder
 											Files.deleteRecurring(unZipFolder);

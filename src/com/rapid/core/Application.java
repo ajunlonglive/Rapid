@@ -87,6 +87,10 @@ public class Application {
 	
 	// the version of this class's xml structure when marshalled (if we have any significant changes down the line we can upgrade the xml files before unmarshalling)	
 	public static final int XML_VERSION = 1;
+	// application version status in development
+	public static final int STATUS_DEVELOPMENT = 0;
+	// application version status live
+	public static final int STATUS_LIVE = 1;
 	
 	// public static classes
 	
@@ -242,7 +246,7 @@ public class Application {
 	}
 	
 	// instance variables	
-	private int _version, _xmlVersion, _applicationBackupsMaxSize, _pageBackupsMaxSize;
+	private int _version, _status, _xmlVersion, _applicationBackupsMaxSize, _pageBackupsMaxSize;
 	private String _id, _name, _title, _description, _startPageId, _styles, _securityAdapterType, _createdBy, _modifiedBy;
 	private boolean _showConrolIds, _showActionIds;
 	private Date _createdDate, _modifiedDate;
@@ -268,6 +272,10 @@ public class Application {
 	// the version is used for Rapid Mobile's offline files to work with different published versions of the app
 	public int getVersion() { return _version; }
 	public void setVersion(int version) { _version = version; }
+	
+	// the status is used for Rapid Mobile's offline files to work with different published versions of the app
+	public int getStatus() { return _status; }
+	public void setStatus(int status) { _status = status; }
 		
 	// this is expected to be short name, probably even a code that is used by users to simply identify pages (also becomes the file name)
 	public String getName() { return _name; }
@@ -349,7 +357,6 @@ public class Application {
 	
 	public Application() {
 		_xmlVersion = XML_VERSION;
-		_version = 1;
 		_pages = new HashMap<String,Page>();
 		_databaseConnections = new ArrayList<DatabaseConnection>();
 		_webservices = new ArrayList<Webservice>();
@@ -1262,8 +1269,8 @@ public class Application {
 	    // delete the temp file
 	    tempFile.delete();
 	    
-	    // add this application to the application map
-	    rapidServlet.getApplications().put(_id, this);
+	    // put this application in the collection
+	    rapidServlet.getApplications().put(this);
 	    
 	    // initialise the application
 	    initialise(rapidServlet.getServletContext(), true);
@@ -1293,7 +1300,7 @@ public class Application {
 			// delete the web folder
 			Files.deleteRecurring(webFolder);
 			// remove this application from the collection
-			rapidServlet.getApplications().remove(_id);
+			rapidServlet.getApplications().remove(this);
 		}
 			    	    		
 	}
@@ -1426,14 +1433,14 @@ public class Application {
 	// static methods
 	
 	// this is a simple overload for default loading of applications where the resources are all regenerated
-	public static Application load(ServletContext servletContext, File file) throws JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException, IOException, ParserConfigurationException, SAXException, TransformerFactoryConfigurationError, TransformerException {
+	public static Application load(ServletContext servletContext, File file, int version) throws JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException, IOException, ParserConfigurationException, SAXException, TransformerFactoryConfigurationError, TransformerException {
 				
-		return load(servletContext, file, true); 		
+		return load(servletContext, file, version, true); 		
 		
 	}
 	
 	// this method loads the application by ummarshelling the xml, and then doing the same for all page .xmls, before calling the initialise method
-	public static Application load(ServletContext servletContext, File file, boolean createResources) throws JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException, IOException, ParserConfigurationException, SAXException, TransformerFactoryConfigurationError, TransformerException {
+	public static Application load(ServletContext servletContext, File file, int version, boolean createResources) throws JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException, IOException, ParserConfigurationException, SAXException, TransformerFactoryConfigurationError, TransformerException {
 		
 		// open the xml file into a document
 		Document appDocument = XML.openDocument(file);
@@ -1457,7 +1464,7 @@ public class Application {
 			Logger logger = (Logger) servletContext.getAttribute("logger");
 			
 			// log the difference
-			logger.debug("Application " + name + " with version " + xmlVersion + ", current version is " + XML_VERSION);
+			logger.debug("Application " + name + " with xml version " + xmlVersion + ", current xml version is " + XML_VERSION);
 			
 			//
 			// Here we would have code to update from known versions of the file to the current version
@@ -1477,14 +1484,18 @@ public class Application {
 			// save it
 			XML.saveDocument(appDocument, file);
 			
-			logger.debug("Updated " + name + " application version to " + XML_VERSION);
+			logger.debug("Updated " + name + " application xml version to " + XML_VERSION);
 			
 		}
 		
 		// get the unmarshaller from the context
 		Unmarshaller unmarshallerObj = (Unmarshaller) servletContext.getAttribute("unmarshaller");	
+		
 		// unmarshall the application
 		Application application = (Application) unmarshallerObj.unmarshal(file);
+		
+		// set the version
+		application.setVersion(version);
 		
 		// look for pages
 		File pagesFolder = new File(file.getParent() + "/pages");

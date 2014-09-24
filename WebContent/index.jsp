@@ -31,7 +31,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 */
 
 //get the applications
-Map<String,Application> applications = (Map<String,Application>) getServletContext().getAttribute("applications");
+Applications applications = (Applications) getServletContext().getAttribute("applications");
 // get the rapid app
 Application rapid = applications.get("rapid");
 // get the userName

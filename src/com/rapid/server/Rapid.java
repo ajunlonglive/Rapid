@@ -395,7 +395,7 @@ public class Rapid extends RapidHttpServlet {
 				JSONArray jsonApps = new JSONArray();
 				
 				// get all available applications
-				List<Application> apps = getSortedApplications();
+				List<Application> apps = getApplications().sort();
 				
 				// if there were some
 				if (apps != null) {

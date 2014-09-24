@@ -236,7 +236,7 @@ public class Rapid extends Action {
 				// prepare a json array we're going to include in the result
 				JSONArray jsonApplications = new JSONArray();
 				// fetch all the applications
-				ArrayList<Application> applications = rapidServlet.getSortedApplications();
+				List<Application> applications = rapidServlet.getApplications().sort();
 				
 				// get the userName
 				String userName = rapidRequest.getUserName();
@@ -750,7 +750,7 @@ public class Rapid extends Action {
 				app.save(rapidServlet, rapidRequest); 
 				
 				// make sure it's in the collection of apps (may have been moved out if the name was changed)
-				rapidServlet.getApplications().put(app.getId(), app);
+				rapidServlet.getApplications().put(app);
 							
 				// add the application to the response
 				result.put("message", "Application details saved");
@@ -1223,7 +1223,7 @@ public class Rapid extends Action {
 				if (archiveFolder.exists()) Files.deleteRecurring(archiveFolder);
 									
 				// load the new application (but do not regenerate the resources files - this happens on the save)
-				Application newApp = Application.load(rapidServlet.getServletContext(), new File(newFolder.getAbsolutePath() + "/application.xml"), false);
+				Application newApp = Application.load(rapidServlet.getServletContext(), new File(newFolder.getAbsolutePath() + "/application.xml"), 1, false);
 				
 				// overwrite the properties
 				newApp.setId(newAppId);
@@ -1630,8 +1630,7 @@ public class Rapid extends Action {
 														
 				// back up the current state of the application
 				app.backup(rapidServlet, rapidRequest);
-				
-				
+								
 				// get this backup folder
 				File applicationBackupFolder = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + com.rapid.server.Rapid.BACKUP_FOLDER + "/" + backupId));
 				
@@ -1677,10 +1676,10 @@ public class Rapid extends Action {
 				File applicationFile = new File(applicationFolder.getAbsolutePath() + "/application.xml");
 				
 				// reload the application
-				app = Application.load(rapidServlet.getServletContext(), applicationFile);
+				app = Application.load(rapidServlet.getServletContext(), applicationFile, 1);
 				
 				// add it back to the collection
-				rapidServlet.getApplications().put(app.getId(), app);
+				rapidServlet.getApplications().put(app);
 				
 				// set the result message
 				result.put("message", "Application backup " + appId + "/" + backupId + " restored");
