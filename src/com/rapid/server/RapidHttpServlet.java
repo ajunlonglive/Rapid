@@ -55,6 +55,7 @@ import org.json.JSONArray;
 
 import com.rapid.core.Action;
 import com.rapid.core.Application;
+import com.rapid.core.Applications;
 import com.rapid.core.Control;
 import com.rapid.core.Page;
 import com.rapid.server.filter.RapidFilter;
@@ -233,32 +234,10 @@ public class RapidHttpServlet extends HttpServlet {
 		return (JSONArray) getServletContext().getAttribute("jsonActions");
 	}
 		
-	public Map<String,Application> getApplications() {
-		return (Map<String,Application>) getServletContext().getAttribute("applications");
+	public Applications getApplications() {
+		return (Applications) getServletContext().getAttribute("applications");
 	}
-	
-	public ArrayList<Application> getSortedApplications() {
-		// get our applications
-		Map<String,Application> applicationsMap = getApplications();
-		// prepare the list we are about to sort
-		ArrayList<Application> applications = new ArrayList<Application>();
-		// add each application in the map to the list
-		for (String applicationId : applicationsMap.keySet()) applications.add(applicationsMap.get(applicationId));
-		// sort the list by application id
-		Collections.sort(applications, new Comparator<Application>() {
-			@Override
-			public int compare(Application app1, Application app2) {
-				// ensure the rapid application appears last in the list
-				if ("rapid".equals(app1.getId())) return 1;
-				if ("rapid".equals(app2.getId())) return -1;
-				// otherwise use a case insensitive ascii compare
-				return Comparators.AsciiCompare(app1.getId(), app2.getId(), false);
-			}			
-		});				
-		// return the sorted list
-		return applications;
-	}
-	
+			
 	public Application getApplication(String id) {
 		return getApplications().get(id);
 	}

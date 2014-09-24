@@ -52,7 +52,7 @@ String pageId = request.getParameter("p");
 if (appId != null && pageId != null) {
 	
 	//get the applications
-	Map<String,Application> applications = (Map<String, Application>) getServletContext().getAttribute("applications");
+	Applications applications = (Applications) getServletContext().getAttribute("applications");
 	// get the app
 	rapidApp = applications.get(appId);
 	// check we got an app

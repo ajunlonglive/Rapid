@@ -41,6 +41,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 
 import com.rapid.core.Application;
+import com.rapid.core.Applications;
 import com.rapid.server.RapidHttpServlet.RapidRequest;
 
 public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
@@ -144,16 +145,14 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 					// remember whether we are authorised for at least one application
 					boolean authorised = false;
 					
-					// get the map of applications
-					Map<String,Application> applications = (Map<String,Application>) getServletContext().getAttribute("applications");
+					// get the applications collection
+					Applications applications = (Applications) getServletContext().getAttribute("applications");
 					
 					// if there are some applications
 					if (applications != null) {
 						// loop them
-						for (String key : applications.keySet()) {
+						for (Application application : applications.get()) {
 							try {
-								// get the application
-								Application application = applications.get(key);
 								// get a Rapid request
 								RapidRequest rapidRequest = new RapidRequest(request);
 								// see if the user is known to this application

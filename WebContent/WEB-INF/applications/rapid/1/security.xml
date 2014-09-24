@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<security>
+    <roles>
+        <description>Use Rapid administrator</description>
+        <name>RapidAdmin</name>
+    </roles>
+    <roles>
+        <description>Use Rapid designer</description>
+        <name>RapidDesign</name>
+    </roles>
+    <roles>
+        <description>Modify Rapid application</description>
+        <name>RapidSuper</name>
+    </roles>
+    <users>
+        <description>Administrator</description>
+        <name>admin</name>
+        <password></password>
+        <roles>RapidAdmin</roles>
+        <roles>RapidDesign</roles>
+        <!--  <roles>RapidSuper</roles> -->
+    </users>
+</security>
