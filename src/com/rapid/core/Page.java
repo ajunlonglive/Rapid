@@ -791,7 +791,7 @@ public class Page {
 							if (action.getAvoidRedundancy()) {
 								// add the action function to the action stringbuilder so it's before the event
 								actionStringBuilder.append("function Action_" + action.getId() + "(ev) {\n" 
-								+ "  " + actionJavaScript.trim().replace("\n", "  \n") + "\n"
+								+ "  " + actionJavaScript.trim().replace("\n", "\n  ") + "\n"
 								+ "}\n\n");	
 								// add an action function call to the event string builder
 								eventStringBuilder.append("    Action_" + action.getId() + "(ev);\n");																
@@ -941,6 +941,10 @@ public class Page {
 			
 			// loop the list of actions to indentify potential redundancies before we create all the event handling JavaScript
 			for (Action action : pageActions) {
+				// look for any page javascript that this action may have
+				String actionPageJavaScript = action.getPageJavaScript(application, this);
+				// print it here if so
+				if (actionPageJavaScript != null) stringBuilder.append(actionPageJavaScript.trim() + "\n\n");
 				// if this action adds redundancy to any others 
 				if (action.getRedundantActions() != null) {
 					// loop them

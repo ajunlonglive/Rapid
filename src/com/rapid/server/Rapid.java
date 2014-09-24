@@ -28,6 +28,7 @@ package com.rapid.server;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -309,62 +310,85 @@ public class Rapid extends RapidHttpServlet {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();												
 		for (int length = 0; (length = input.read(_byteBuffer)) > -1;) outputStream.write(_byteBuffer, 0, length);			
 		byte[] bodyBytes = outputStream.toByteArray();
-		
-		// read the body into  string
-		String bodyString = new String(bodyBytes, "UTF-8");
 				
+		// create a Rapid request				
 		RapidRequest rapidRequest = new RapidRequest(this, request);
 		
-		getLogger().debug("Rapid POST request : " + request.getQueryString() + " body : " + bodyString);
+		// log
+		getLogger().debug("Rapid POST request : " + request.getQueryString() + " mimetype : " + request.getContentType());
 					
 		try {
 			
+			// if an application action was found in the request						
 			if (rapidRequest.getAction() != null) {			
-				
+			
 				// get the application
 				Application app = rapidRequest.getApplication();
 				
-				// get the security
-				SecurityAdapater security = app.getSecurity();
-				
-				// get the user
-				User user = security.getUser(rapidRequest, rapidRequest.getUserName());
-				
-				// check the user
-				if (user == null) {
+				// check we got one
+				if (app == null) {
 					
 					// send forbidden response			
-					sendMessage(rapidRequest, response, 403, "User not authorised for application");
+					sendMessage(rapidRequest, response, 403, "Application not found");
 					
 					// log
-					getLogger().debug("Rapid POST response (403) : Page not found");
+					getLogger().debug("Rapid POST response (403) : Application not found");
 					
 				} else {
-															
-					// assume we weren't passed any json				
-					JSONObject jsonData = null;
 					
-					// if there is something in the body string it must be json so parse it
-					if (!"".equals(bodyString)) jsonData = new JSONObject(bodyString);
+					// get the security
+					SecurityAdapater security = app.getSecurity();
+					
+					// get the user
+					User user = security.getUser(rapidRequest, rapidRequest.getUserName());
+					
+					// check the user
+					if (user == null) {
 						
-					// fetch the action result
-					JSONObject jsonResult = rapidRequest.getAction().doAction(this, rapidRequest, jsonData);
+						// send forbidden response			
+						sendMessage(rapidRequest, response, 403, "User not authorised for application");
+						
+						// log
+						getLogger().debug("Rapid POST response (403) : User not authorised for application");
+						
+					} else {
+							
+						// assume we weren't passed any json				
+						JSONObject jsonData = null;
+						
+						// read the body into a string
+						String bodyString = new String(bodyBytes, "UTF-8");
+						
+						// log the body string
+						getLogger().debug(bodyString);
+						
+						// if there is something in the body string it must be json so parse it
+						if (!"".equals(bodyString)) jsonData = new JSONObject(bodyString);
+						
+						// if we got some data
+						if (jsonData != null) {
+							
+							// fetch the action result
+							JSONObject jsonResult = rapidRequest.getAction().doAction(this, rapidRequest, jsonData);
+							
+							// set response to json
+							response.setContentType("application/json");
+							
+							// create a writer
+							PrintWriter out = response.getWriter();
+							
+							// print the results
+							out.print(jsonResult.toString());
+							
+							// close the writer
+							out.close();
+							
+						}
+																																																												
+					}
 					
-					// set response to json
-					response.setContentType("application/json");
-					
-					// create a writer
-					PrintWriter out = response.getWriter();
-					
-					// print the results
-					out.print(jsonResult.toString());
-					
-					// close the writer
-					out.close();
-					
-				}
-				
-								
+				}				
+											
 			} else if ("getApps".equals(rapidRequest.getActionName())) {
 				
 				// create an empty array which we will populate
@@ -421,7 +445,98 @@ public class Rapid extends RapidHttpServlet {
 				
 				// close the writer
 				out.close();
+				
+			} else if ("uploadImage".equals(rapidRequest.getActionName())) {
+				
+				// get the application
+				Application app = rapidRequest.getApplication();
+				
+				// check we got one
+				if (app == null) {
+					
+					// send forbidden response			
+					sendMessage(rapidRequest, response, 403, "Application not found");
+					
+					// log
+					getLogger().debug("Rapid POST response (403) : Application not found");
+					
+				} else {
+					
+					// get the security
+					SecurityAdapater security = app.getSecurity();
+					
+					// get the user
+					User user = security.getUser(rapidRequest, rapidRequest.getUserName());
+					
+					// check the user
+					if (user == null) {
+						
+						// send forbidden response			
+						sendMessage(rapidRequest, response, 403, "User not authorised for application");
+						
+						// log
+						getLogger().debug("Rapid POST response (403) : User not authorised for application");
+						
+					} else {					
+					
+						// get the name
+						String imageName = request.getParameter("name");
+						
+						// if we got one
+						if (imageName == null) {
+							
+							// send forbidden response			
+							sendMessage(rapidRequest, response, 403, "Name must be provided");
+							
+							// log
+							getLogger().debug("Rapid POST response (403) : Name must be provided");
+							
+						} else {
+														
+							// check the jpg file signature (from http://en.wikipedia.org/wiki/List_of_file_signatures)
+							if (bodyBytes[0] == (byte)0xFF && bodyBytes[1] == (byte)0xD8 && bodyBytes[2] == (byte)0xFF) {
 								
+								// create the paht
+								String imagePath = "uploads/" +  app.getId() + "/" + imageName;
+								// create a file
+								File imageFile = new File(getServletContext().getRealPath(imagePath));
+								// create app folder if need be
+								imageFile.getParentFile().mkdir();
+								// create a file output stream to save the data to
+								FileOutputStream fos = new FileOutputStream(imageFile);
+								// write the body bytes to the stream
+								fos.write(bodyBytes);
+								// close the stream
+								fos.close();
+								
+								// log the file creation
+								getLogger().debug("Saved image file " + imageFile);
+								
+								// create a writer
+								PrintWriter out = response.getWriter();
+								
+								// print the results
+								out.print(imagePath);
+								
+								// close the writer
+								out.close();
+								
+							} else {
+								
+								// send forbidden response			
+								sendMessage(rapidRequest, response, 403, "Unrecognised file type");
+								
+								// log
+								getLogger().debug("Rapid POST response (403) : Unrecognised file type");
+								
+							} // signature check
+							
+						} // name check
+						
+					} // user check
+					
+				} // app check
+																
 			} // action check
 			
 		} catch (Exception ex) {

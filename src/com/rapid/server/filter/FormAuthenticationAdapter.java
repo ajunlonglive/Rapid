@@ -66,7 +66,7 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 		String requestPath = request.getServletPath();
 						
 		// if it's a resource that requires authentication
-		if (requestPath.contains("/~") || "/".equals(requestPath) || requestPath.contains("login.jsp") || requestPath.contains("index.jsp") || requestPath.contains("/rapid") || requestPath.contains("design.jsp") || requestPath.contains("designpage.jsp")  || requestPath.contains("/designer")) {
+		if ("/".equals(requestPath) || requestPath.contains("/~") || requestPath.contains("/rapid") || requestPath.contains("/designer") || requestPath.contains("/applications/") || requestPath.contains("/uploads/") || requestPath.contains("login.jsp") || requestPath.contains("index.jsp") || requestPath.contains("design.jsp") || requestPath.contains("designpage.jsp")) {
 			
 			_logger.trace("FormAuthenticationAdapter checking authorisation");
 			
