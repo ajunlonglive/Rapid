@@ -634,34 +634,24 @@ public class RapidServletContextListener implements ServletContextListener {
 					
 					// if it exists, it's in the wrong (non-versioned) place!
 					if (applicationFile.exists()) {
-						
-						// assume the highest known version is 0
-						int version = 0;						
-						// loop all of what should be any version folders
-						for (File versionFolder : applicationFolders) {
-							if (versionFolder.isDirectory()) {
-								// get the folder name
-								String versionName = versionFolder.getName();								
-								try {
-									// convert to int - fail silently if we can't
-									int v = Integer.parseInt(versionName);
-									// if it's higher then what we have retain it
-									if (v > version) version = v;
-								} catch (Exception ex) {}
-							}
-						}
-						// increment the version
-						version ++;
+								
+						// create a version for this app
+						String version = "1";						
 						// create a file for the new version folder
 						File versionFolder = new File(applicationFolder + "/" + version);
+						// keep appending the version if the folder already exists
+						while (versionFolder.exists()) {
+							// append .1 to the version 1, 1.1, 1.1.1, etc
+							version += ".1";
+							versionFolder = new File(applicationFolder + "/" + version);
+						}
+						
 						// make the dir
 						versionFolder.mkdir();
-						// copy in any other non-numeric items
+						_logger.info(versionFolder + " created");
+						// copy in all files and pages folder
 						for (File file : applicationFolders) {
-							try {
-								// convert to int - copy if we can't (not the best way but it'll do)
-								Integer.parseInt(file.getName());
-							} catch (Exception ex) {
+							if (!file.isDirectory() || "pages".equals(file.getName())) {
 								// make a desintation file
 								File destFile = new File(versionFolder + "/" + file.getName());
 								// this is not a version folder itself, copy it to the new version folder
@@ -670,6 +660,7 @@ public class RapidServletContextListener implements ServletContextListener {
 								Files.deleteRecurring(file);
 								_logger.info(file + " moved to " + destFile);
 							}
+							
 						}
 						
 					}	// application.xml non-versioned check
@@ -678,23 +669,20 @@ public class RapidServletContextListener implements ServletContextListener {
 					File[] versionFolders = applicationFolder.listFiles();
 					// loop them
 					for (File versionFolder : versionFolders) {
-						int version = 0;
-						// get the version number
-						try {
-							version = Integer.parseInt(versionFolder.getName());							
-						} catch (Exception ex) {
-							_logger.info(versionFolder + " is not a version folder");
-						}
-						// look for an application file in the version folder
-						applicationFile = new File(versionFolder + "/application.xml");
-						// if it exists
-						if (applicationFile.exists()) {
-							// load the application
-							Application application = Application.load(servletContext, applicationFile, version);
-							// put it in our collection
-							applications.put(application);
-						}
-												
+						// check is folder
+						if (versionFolder.isDirectory()) {
+							// look for an application file in the version folder
+							applicationFile = new File(versionFolder + "/application.xml");
+							// if it exists
+							if (applicationFile.exists()) {
+								// load the application
+								Application application = Application.load(servletContext, applicationFile);
+								// put it in our collection
+								applications.put(application);
+							}
+							
+						} // folder check
+																		
 					} // version folder loop		
 					
 				} // application folders check

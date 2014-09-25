@@ -246,8 +246,8 @@ public class Application {
 	}
 	
 	// instance variables	
-	private int _version, _status, _xmlVersion, _applicationBackupsMaxSize, _pageBackupsMaxSize;
-	private String _id, _name, _title, _description, _startPageId, _styles, _securityAdapterType, _createdBy, _modifiedBy;
+	private int _xmlVersion, _status, _applicationBackupsMaxSize, _pageBackupsMaxSize;
+	private String _id, _version, _name, _title, _description, _startPageId, _styles, _securityAdapterType, _createdBy, _modifiedBy;
 	private boolean _showConrolIds, _showActionIds;
 	private Date _createdDate, _modifiedDate;
 	private Map<String,String> _settings;
@@ -270,8 +270,8 @@ public class Application {
 	public void setId(String id) { _id = id; }
 	
 	// the version is used for Rapid Mobile's offline files to work with different published versions of the app
-	public int getVersion() { return _version; }
-	public void setVersion(int version) { _version = version; }
+	public String getVersion() { return _version; }
+	public void setVersion(String version) { _version = version; }
 	
 	// the status is used for Rapid Mobile's offline files to work with different published versions of the app
 	public int getStatus() { return _status; }
@@ -366,6 +366,14 @@ public class Application {
 		
 	// instance methods
 	
+	public String getConfigFolder(ServletContext servletContext) {
+		return servletContext.getRealPath("/WEB-INF/applications/" + _id + "/" + _version);		
+	}
+	
+	public String getReourcesFolder(ServletContext servletContext) {
+		return servletContext.getRealPath("/" + _id + "/" + _version);
+	}
+		
 	public Page getStartPage() {
 		// retain an instance to the page we are about to return
 		Page startPage = null;
@@ -616,6 +624,9 @@ public class Application {
 		
 		// initialise the resource includes collection
 		_resources = new Resources();
+		
+		// if the created date is null set to today
+		if (_createdDate == null) _createdDate = new Date();
 						
 		// when importing an application we need to initialise but don't want the resource folders made in the old applications name
 		if (createResources) {
@@ -728,39 +739,9 @@ public class Application {
 					    				if (index < count) jsonRuntimeProperty = jsonRunTimeProperties.getJSONObject(index);
 					    				
 					    			} while (index < count);
-					    			
-				    				/*
-				    				
-				    				 
-				    			
-				    			// the JSON library will add a single key of there is a single class, otherwise an array
-				    			if (jsonRuntimeProperties.optJSONArray("runtimeProperty") == null) {
-				    				jsonRuntimeProperty = jsonRuntimeProperties.getJSONObject("runtimeProperty");				
-				    			} else {
-				    				jsonRuntimeProperty = jsonRuntimeProperties.getJSONArray("action").getJSONObject(index);
-				    				count = jsonRuntimeProperties.getJSONArray("runtimeProperty").length();
+					    							    				 
 				    			}
-				    			
-				    			// check for runtime properties
-				    			JSONObject jsonRuntimeProperties = jsonControl.optJSONObject("runtimeProperties");
-				    			// if there was something
-				    			if (jsonRuntimeProperties != null) {				    				
-				    				// loop them
-				    				for (int j = 0; j < jsonRuntimeProperties.length(); j++) {
-				    					// get the property
-				    					JSONObject jsonProperty = jsonRuntimeProperties.getJSONObject(i);
-				    					// get the type
-				    					String type = jsonProperty.getString("type");
-				    					// print our function
-				    					dataJS.append("\nfunction getProperty_" + controlType + "_" + type + "(ev) {}\n");				    					
-				    				}
-				    			}
-				    				 
-				    				*/
-				    				 
-				    			}
-				    				 
-				    							    							    						    				
+				    				 				    							    							    						    				
 			    				// we're done with this jsonControl
 			    				break;
 			    			}
@@ -1433,14 +1414,14 @@ public class Application {
 	// static methods
 	
 	// this is a simple overload for default loading of applications where the resources are all regenerated
-	public static Application load(ServletContext servletContext, File file, int version) throws JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException, IOException, ParserConfigurationException, SAXException, TransformerFactoryConfigurationError, TransformerException {
+	public static Application load(ServletContext servletContext, File file) throws JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException, IOException, ParserConfigurationException, SAXException, TransformerFactoryConfigurationError, TransformerException {
 				
-		return load(servletContext, file, version, true); 		
+		return load(servletContext, file, true); 		
 		
 	}
 	
 	// this method loads the application by ummarshelling the xml, and then doing the same for all page .xmls, before calling the initialise method
-	public static Application load(ServletContext servletContext, File file, int version, boolean createResources) throws JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException, IOException, ParserConfigurationException, SAXException, TransformerFactoryConfigurationError, TransformerException {
+	public static Application load(ServletContext servletContext, File file, boolean createResources) throws JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException, IOException, ParserConfigurationException, SAXException, TransformerFactoryConfigurationError, TransformerException {
 		
 		// open the xml file into a document
 		Document appDocument = XML.openDocument(file);
@@ -1494,8 +1475,8 @@ public class Application {
 		// unmarshall the application
 		Application application = (Application) unmarshallerObj.unmarshal(file);
 		
-		// set the version
-		application.setVersion(version);
+		// set the version from the parent foler
+		application.setVersion(file.getParentFile().getName());
 		
 		// look for pages
 		File pagesFolder = new File(file.getParent() + "/pages");

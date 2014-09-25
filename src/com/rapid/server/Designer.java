@@ -85,10 +85,17 @@ public class Designer extends RapidHttpServlet {
     	// set response as json
 		response.setContentType("application/json");
 		
-		// send the response
+		// get a writer from the response
 		PrintWriter out = response.getWriter();
+		
+		// write the output into the response
 		out.print(output);
+		
+		// close the writer
 		out.close();
+		
+		// send it immediately
+		out.flush();
     	
     }
     
@@ -101,6 +108,7 @@ public class Designer extends RapidHttpServlet {
 			getLogger().debug("Designer GET request : " + request.getQueryString());
 											
 			String actionName = rapidRequest.getActionName();
+			
 			String output = "";
 			
 			// get the rapid application
@@ -384,7 +392,7 @@ public class Designer extends RapidHttpServlet {
 								
 								// if there is no current lock add a fresh one for the current user
 								if (page.getLock() == null)	page.setLock(new Lock(userName, userDescription, new Date()));
-																																																											
+											
 								// turn it into json
 								JSONObject jsonPage = new JSONObject(page);
 								
@@ -410,8 +418,12 @@ public class Designer extends RapidHttpServlet {
 																															
 								// print it to the output
 								output = jsonPage.toString();
+								
 								// send as json response
 								sendJsonOutput(response, output);
+								
+								// override for now as logging seems really slow
+								output = "[json object - " + output.length() + " characters ]";
 								
 							}
 															
@@ -514,6 +526,8 @@ public class Designer extends RapidHttpServlet {
 																					
 			// log the response
 			getLogger().debug("Designer GET response : " + output);
+			
+			getLogger().debug("Logged!");
 																
 		} catch (Exception ex) {
 			
@@ -910,7 +924,7 @@ public class Designer extends RapidHttpServlet {
 											Files.copyFolder(appFolderSource, appFolderDest);
 																											
 											// load the new application (but do not generate the resources files)
-											Application appNew = Application.load(getServletContext(), new File (appFolderDest + "/application.xml"), 1, false);
+											Application appNew = Application.load(getServletContext(), new File (appFolderDest + "/application.xml"), false);
 															
 											// get the old id
 											String appOldId = appNew.getId();
@@ -998,7 +1012,7 @@ public class Designer extends RapidHttpServlet {
 											appNew.save(this, rapidRequest);
 											
 											// reload it with the file changes
-											appNew = Application.load(getServletContext(), new File (appFolderDest + "/application.xml"), 1);
+											appNew = Application.load(getServletContext(), new File (appFolderDest + "/application.xml"));
 											
 											// add application to the collection
 											getApplications().put(appNew);

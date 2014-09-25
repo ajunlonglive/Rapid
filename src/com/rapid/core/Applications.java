@@ -26,7 +26,10 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 package com.rapid.core;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Comparator;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -35,27 +38,42 @@ import org.mozilla.javascript.edu.emory.mathcs.backport.java.util.Collections;
 import com.rapid.utils.Comparators;
 
 public class Applications {
+	
+	public static class Versions extends HashMap<String, Application> {
+				
+	}
 
 	// private instance variables
-	private HashMap<String, HashMap<Integer, Application>> _applications;
+	private HashMap<String, Versions> _applications;
 	
 	// constructor
 	public Applications() {
-		_applications = new HashMap<String, HashMap<Integer, Application>>();
+		_applications = new HashMap<String, Versions>();
 	}
 	
 	// methods
 	
+	private Versions getVersions(String id, boolean createIfNull) {
+		Versions versions = _applications.get(id);
+		if (createIfNull && versions == null) {
+			versions = new Versions();
+			_applications.put(id, versions);
+		}
+		return versions;
+	}
+	
+	public Versions getVersions(String id) {
+		return getVersions(id, false);
+	}
+	
 	// add an application with a known version
-	public void put(String id, int version, Application application) {
+	public void put(String id, String version, Application application) {
 		// get the versions of this app
-		HashMap<Integer, Application> appVersions = _applications.get(id);
-		// instantiate if need be
-		if (appVersions == null) appVersions = new HashMap<Integer, Application>();
+		Versions versions = getVersions(id, true);
 		// put the application amongst the appVersions
-		appVersions.put(version, application);
+		versions.put(version, application);
 		// put the versions amongst the applications
-		_applications.put(id, appVersions);
+		_applications.put(id, versions);
 	}
 	
 	// add an application using it's own id and version
@@ -64,11 +82,14 @@ public class Applications {
 	}
 	
 	// remove an application by id an version
-	public void remove(String id, int version) {
+	public void remove(String id, String version) {
 		// get the versions of this app
-		HashMap<Integer, Application> appVersions = _applications.get(id);
-		// if we have some
-		if (appVersions != null) appVersions.remove(version);
+		Versions versions = getVersions(id);
+		// if we have some versions
+		if (versions != null) {
+			// remove if the app is present
+			if (versions.containsKey(version)) versions.remove(version);
+		}
 	}
 	
 	// remove an application using it's own id and version
@@ -79,41 +100,76 @@ public class Applications {
 	// fetch an application with a known version
 	public Application get(String id, int version) {
 		// get the versions of this app
-		HashMap<Integer, Application> appVersions = _applications.get(id);
+		Versions versions = getVersions(id);
 		// return null if we don't have any
-		if (appVersions == null) return null;
+		if (versions == null) return null;
 		// return version
-		return appVersions.get(id);
+		return versions.get(version);
+	}
+	
+	// fetch the highest version for an id by status
+	public Application getLatestVersion(String id, int status) {
+		// assume there are no applications
+		Application application = null;
+		// start with a very old date!
+		Date oldestDate = new Date(1);
+		// get the versions of this app
+		Versions versions = getVersions(id);
+		// if we got some
+		if (versions != null) {
+			// loop them and retain highest version
+			for (String appId : versions.keySet()) {
+				// get the application version
+				Application applicationVersion = versions.get(appId);
+				// if this application created date is later and the right status
+				if (applicationVersion.getCreatedDate().after(oldestDate) && (applicationVersion.getStatus() == status || status < 0)) {
+					// update oldest date
+					oldestDate = application.getCreatedDate();
+					// retain version
+					application = applicationVersion;
+				}
+			}
+		}
+		return application;
 	}
 	
 	// fetch the highest version for an id
-	public int getHighestVersion(String id) {
-		int version = 0;
-		// get the versions of this app
-		HashMap<Integer, Application> appVersions = _applications.get(id);
-		// if we got some
-		if (appVersions != null) {
-			// loop them and retain highest version
-			for (int v : appVersions.keySet()) if (v > version) version = v;
-		}
-		return version;
+	public Application getLatestVersion(String id) {
+		return getLatestVersion(id, -1);
 	}
 	
-	// fetch the highest live version, or first
-	public Application get(String id) {
+	// fetch the highest version for an id
+	public Application getEarliestVersion(String id) {
+		// assume there are no applications
+		Application application = null;
+		// start with a very recent date!
+		Date earliestDate = new GregorianCalendar(3000, 1, 1, 0, 0).getTime();
 		// get the versions of this app
-		HashMap<Integer, Application> appVersions = _applications.get(id);
-		// return null if we don't have any
-		if (appVersions == null) return null;
-		// assume version 1
-		Application application = appVersions.get(1);
-		// loop the keys
-		for (int version : appVersions.keySet()) {
-			// fetch this version
-			Application versionApplication = appVersions.get(version);
-			// assign if higher and live
-			if (versionApplication.getVersion() > application.getVersion() && versionApplication.getStatus() == Application.STATUS_LIVE) application = versionApplication;
+		Versions versions = getVersions(id);
+		// if we got some
+		if (versions != null) {
+			// loop them and retain highest version
+			for (String appId : versions.keySet()) {
+				// get the application
+				Application applicationVersion = versions.get(appId);
+				// if this application created date is later
+				if (applicationVersion.getCreatedDate().before(earliestDate)) {
+					// update oldest date
+					earliestDate = applicationVersion.getCreatedDate();
+					// retain version
+					application = applicationVersion;
+				}
+			}
 		}
+		return application;
+	}
+	
+	// fetch the most recent live version, or first
+	public Application get(String id) {
+		// get the latest live application
+		Application application = getLatestVersion(id, Application.STATUS_LIVE);
+		// set to earliest if no versions are live
+		if (application == null) application = getEarliestVersion(id);
 		// return our highest application
 		return application;
 	}
@@ -136,8 +192,8 @@ public class Applications {
 
 			@Override
 			public int compare(Application a1, Application a2) {
-				if ("rapid".equals(a1.getId())) return -1;
-				if ("rapid".equals(a2.getId())) return 1;
+				if ("rapid".equals(a1.getId())) return 1;
+				if ("rapid".equals(a2.getId())) return -1;
 				return Comparators.AsciiCompare(a1.getId(), a2.getId());
 			}
 			

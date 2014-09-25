@@ -101,7 +101,7 @@ public class RapidSecurityAdapter extends SecurityAdapater {
 		try {
 			
 			// create a file object for the security.xml file
-			File securityFile = new File(_servletContext.getRealPath("/WEB-INF/applications/" + _application.getId() + "/security.xml"));
+			File securityFile = new File(_application.getConfigFolder(_servletContext) + "/security.xml");
 			
 			// check the file exists
 			if (securityFile.exists()) {
@@ -173,17 +173,12 @@ public class RapidSecurityAdapter extends SecurityAdapater {
 	private void save() {
 		
 		try {
-		
-			// get the folder in which the file is saved
-			File folderDir = new File(_servletContext.getRealPath("/WEB-INF/applications/" + _application.getId()));		
-			// create the folder if it doesn't exist
-			if (!folderDir.exists()) folderDir.mkdirs();
-						
+								
 			// create a file object for the security.xml file
-			File securityFile = new File(folderDir.getAbsolutePath() + "/security.xml");
+			File securityFile = new File(_application.getConfigFolder(_servletContext) + "/security.xml");
 	
 			// create a temp file for saving the application to
-			File tempFile = new File(folderDir.getAbsolutePath() + "/security-saving.xml");
+			File tempFile = new File(_application.getConfigFolder(_servletContext) + "/security-saving.xml");
 			
 			// get a file output stream to write the data to
 			FileOutputStream fos = new FileOutputStream(tempFile.getAbsolutePath());		
