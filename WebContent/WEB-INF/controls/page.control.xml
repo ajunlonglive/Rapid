@@ -145,7 +145,7 @@ div.loading {
 
 span.loading {
 	position: absolute;
-	background: url("../../images/wait_120x15.gif");
+	background: url("../../../images/wait_120x15.gif");
 	background-repeat : no-repeat;
 	width: 120px;
 	height: 15px;

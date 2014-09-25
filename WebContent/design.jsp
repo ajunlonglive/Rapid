@@ -70,7 +70,7 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, use
 	<script type="text/javascript" src="scripts/dialogue.js"></script>
 	<script type="text/javascript" src="scripts/map.js"></script>
 	<script type="text/javascript" src="scripts/help.js"></script>			
-	<script type="text/javascript" src="applications/rapid/rapid.js"></script>
+	<script type="text/javascript" src="<%=rapid.getWebFolder()%>/rapid.js"></script>
 	<script type="text/javascript">
 	
 	var _userName = "<%=userName %>";
@@ -114,7 +114,12 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, use
 			<h2>Application<img id="helpApplication" class="headerHelp" src="images/help_16x16.png" /></h2>
 			<select id="appSelect">
 				<!-- Applications are added here as options the designer loads -->
-			</select>				
+			</select>
+			
+			<h2>Version<img id="helpVersion" class="headerHelp" src="images/help_16x16.png" /></h2>
+			<select id="versionSelect">
+				<!-- Application versions are added here as options the designer loads -->
+			</select>					
 			
 			<h2>Page<img id="helpPage" class="headerHelp" src="images/help_16x16.png" /></h2>
 			<select id="pageSelect">

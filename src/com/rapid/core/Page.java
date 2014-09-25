@@ -561,7 +561,7 @@ public class Page {
 		String userName = Files.safeName(rapidRequest.getUserName());		
 		
 		// create folders to archive the pages
-		String archivePath = rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + application.getId() + "/" + Rapid.BACKUP_FOLDER);		
+		String archivePath = application.getBackupFolder(rapidServlet.getServletContext());		
 		File archiveFolder = new File(archivePath);		
 		if (!archiveFolder.exists()) archiveFolder.mkdirs();
 		
@@ -582,7 +582,7 @@ public class Page {
 		Application application = rapidRequest.getApplication();
 		
 		// create folders to save the pages
-		String pagePath = rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + application.getId() + "/pages");		
+		String pagePath = application.getConfigFolder(rapidServlet.getServletContext()) + "/pages";		
 		File pageFolder = new File(pagePath);		
 		if (!pageFolder.exists()) pageFolder.mkdirs();
 										
@@ -619,7 +619,7 @@ public class Page {
 		_cachedStartHtml = null;
 		
 		// set the fos to the css file
-		fos = new FileOutputStream(rapidServlet.getServletContext().getRealPath("/applications/" + application.getId() + "/" + Files.safeName(getName()) + ".css"));
+		fos = new FileOutputStream(application.getResourcesFolder(rapidServlet.getServletContext()) + "/" + Files.safeName(getName()) + ".css");
 		// get a print stream
 		PrintStream ps = new PrintStream(fos);		
 		ps.print("\n/* This file is auto-generated on page save */\n\n");
@@ -636,7 +636,7 @@ public class Page {
 		Application application = rapidRequest.getApplication();
 				
 		// create folders to delete the page
-		String pagePath = rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + application.getId() + "/pages");		
+		String pagePath = application.getConfigFolder(rapidServlet.getServletContext()) + "/pages";		
 														
 		// create a file object for the delete file
 	 	File delFile = new File(pagePath + "/" + Files.safeName(getName()) + ".page.xml");
@@ -651,11 +651,11 @@ public class Page {
 		 	application.removePage(_id);
 	 	}
 	 	
-	 	// get the web path
-	 	String webPath = rapidServlet.getServletContext().getRealPath("/applications/" + application.getId());		
+	 	// get the resources path
+	 	String resourcesPath = application.getResourcesFolder(rapidServlet.getServletContext()) + application.getId();		
 	 	
 	 	// create a file object for deleting the page css file
-	 	File delCssFile = new File(webPath + "/" + Files.safeName(getName()) + ".css");
+	 	File delCssFile = new File(resourcesPath + "/" + Files.safeName(getName()) + ".css");
 	 	
 	 	// if it exists
 	 	if (delCssFile.exists()) delCssFile.delete();
@@ -869,7 +869,7 @@ public class Page {
 		stringBuilder.append("    " + getResourcesHtml(application).trim().replace("\n", "\n    ") + "\n");
 		
 		// include the page's css file (generated when the page is saved)
-		stringBuilder.append("    <link rel='stylesheet' type='text/css' href='applications/" + application.getId() +"/" + _name + ".css'></link>\n");
+		stringBuilder.append("    <link rel='stylesheet' type='text/css' href='" + application.getWebFolder() + "/" + _name + ".css'></link>\n");
 		
 		// start building the inline js for the page				
 		stringBuilder.append("    <script type='text/javascript'>\n\n");
@@ -1038,12 +1038,4 @@ public class Page {
 				
 	}
 	
-	// delete a page backup
-	public static void deleteBackup(RapidHttpServlet rapidServlet, String appId, String backupId) {
-		// get the backup folder into a file object
-		File backup = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + appId + "/" + Rapid.BACKUP_FOLDER + "/" + backupId));
-		// delete
-		backup.delete();
-	}
-
 }

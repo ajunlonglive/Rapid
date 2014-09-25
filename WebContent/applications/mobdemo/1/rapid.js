@@ -13,7 +13,7 @@ function Action_control(actions) {
 }
 
 function Action_datacopy(data, outputs) {
-	if (outputs) {
+	if (data && outputs) {
 		for (var i in outputs) {
 			var output = outputs[i];			
 			window["setData_" + output.type](output.id, data, output.field, output.details);
@@ -34,6 +34,11 @@ function Action_database(actionId, data, outputs) {
 			}
 		}
 	}
+}
+
+function Action_mobile(actionId, type) {
+	// action callback
+	alert("Callback for " + actionId + "." + type);
 }
 
 //JQuery is ready! 
@@ -155,412 +160,6 @@ function Action_navigate(url, dialogue) {
 	}
 }
 
-// a global for holding the userName which we get when calling GETAPPS	        
-var _userName = "";	        
-	        
-function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidApp, successCallback, errorCallback) {
-
-	var type = "GET";
-	
-	var data = null;
-	var callback = null;
-
-	// some special types require data and callbacks	
-	switch (actionType) {
-		case "GETAPPS" :		
-			data = { actionType: actionType, appId: "rapid" };	
-			callback = function(data) {				
-				setData_dataStore('rapid_P0_C210', data, null, {storageType:"S", id:"rapidrapid_P0_C210"});
-				// retain the userName in our global variable
-				if (data && data.userName) _userName = data.userName;
-				
-			};
-		break;
-		case "GETAPP" :		
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val() };	
-			callback = function(data) {
-				setData_dataStore('rapid_P0_C127', data, "application", {storageType:"S", id:"rapidrapid_P0_C127"});
-			};
-		break;	
-		case "GETDBCONN" :		
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), index: $("#rapid_P0_C311").find("tr.rowSelect").index()-1 };	
-			callback = function(data) {
-				setData_dataStore('rapid_P0_C361', data, "databaseConnection", {storageType:"S", id:"rapidrapid_P0_C361"});
-			};
-		break;
-		case "GETSOA" :		
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), index: $("#rapid_P0_C483_").find("tr.rowSelect").index()-1 };	
-			callback = function(data) {
-				setData_dataStore('rapid_P0_C528_', data, "webservice", {storageType:"S", id:"rapidrapid_P0_C528_"});
-				loadSOA(data.webservice);
-			};
-		break;
-		case "GETSEC" :		
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), securityAdapter: $("#rapid_P0_C81").val() };	
-			callback = function(data) {
-				setData_dataStore('rapid_P0_C469_', data, "security", {storageType:"S", id:"rapidrapid_P0_C469_"});
-			};
-		break;
-		case "GETUSER" :	
-			if (rapidApp) {
-				data = { actionType: actionType, appId: "rapid", userName: getData_grid(ev, "rapid_P0_C823_", "name", {columns:[{field:"name"}]}) };
-			} else {
-				data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: getData_grid(ev, "rapid_P0_C216", "userName", {columns:[{field:"userName"}]}) };	
-			}
-			callback = function(data) {
-				setData_dataStore('rapid_P0_C243', data, "user", {storageType:"S", id:"rapidrapid_P0_C243"});
-			};
-		break;				
-		case "GETUSERS" :		
-			data = { actionType: actionType, appId: "rapid" };	
-			callback = function(data) {			    				
-				setData_grid('rapid_P0_C823_', data, 'users', {"rowSelect":true,"columns":[{"field":"name","visible":true,"style":"text-align:left;padding-left:10px;"},{"field":"description","visible":true,"style":"text-align:left;padding-left:10px;padding-right:10px;"},{"cellFunction":"","field":"","visible":true,"style":""}]});
-				var rapidUserRows = $("#rapid_P0_C823_").find("tr.rowStyle1,tr.rowStyle2");
-				rapidUserRows.each( function() {
-				  var children = $(this).children("td");
-				  var user = children.first().html();
-				  if (data.currentUser.toLowerCase() != user.toLowerCase()) {
-					  var cell = children.last();
-					  cell.html("<button>delete...</button>");
-					  cell.find("button").click( function(ev) {
-					    // confirm
-					    if (confirm("Are you sure?")) {    
-					      Action_rapid(ev, 'rapid', 'P0', null, 'P0_A904_', 'DELUSER', true);					      
-					    }
-					    // stop bubbling
-					    ev.stopPropagation();
-					  });
-				   }
-				});
-			};
-		break;
-		case "SAVEAPP" :		
-			data = { 
-				actionType: actionType, 
-				appId: $("#rapid_P0_C43").val(), 
-				name: $("#rapid_P0_C392_").val(),
-				title: $("#rapid_P0_C394_").val(),
-				description: $("#rapid_P0_C393_").val(),
-				showControlIds: $("#rapid_P0_C381_").prop("checked"),
-				showActionIds: $("#rapid_P0_C382_").prop("checked"),
-				startPageId: $("#rapid_P0_C644_").val()
-			};	
-		break;
-		case "SAVESTYLES" :		
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), styles: $("#rapid_P0_C116").val() };	
-		break;		
-		case "SAVEDBCONN" :		
-			data = { 
-				actionType: actionType, 
-				appId: $("#rapid_P0_C43").val(), 
-				index: $("#rapid_P0_C311").find("tr.rowSelect").index()-1,
-				name: $("#rapid_P0_C360").val(),
-				driver: $("#rapid_P0_C338").val(),
-				connectionString: $("#rapid_P0_C374").val(),
-				connectionAdapter: $("#rapid_P0_C339").val(),
-				userName: $("#rapid_P0_C340").val(),
-				password: $("#rapid_P0_C341").val()
-			};	
-			callback = function() {
-				Event_click_rapid_P0_C311({target: $("#rapid_P0_C311").find("tr.rowSelect").children().first()[0] });
-			};
-		break;
-		case "SAVESOASQL" :		
-			data = { 
-				actionType: actionType, 
-				appId: $("#rapid_P0_C43").val(), 
-				index: $("#rapid_P0_C483_").find("tr.rowSelect").index()-1,
-				name: $("#rapid_P0_C496_").val(), 
-				databaseConnectionIndex: $("#rapid_P0_C536_")[0].selectedIndex,
-				details: _soaDetails,
-				type: "SQLWebservice"
-			};	
-		break;
-		case "SAVESOAJAVA" :		
-			data = { 
-				actionType: actionType, 
-				appId: $("#rapid_P0_C43").val(), 
-				index: $("#rapid_P0_C483_").find("tr.rowSelect").index()-1,
-				name: $("#rapid_P0_C944_").val(), 
-				className: $("#rapid_P0_C989_").val(),
-				type: "JavaWebservice"
-			};	
-		break;
-		case "SAVESECURITYADAPT" :		
-			data = { 
-				actionType: actionType, 
-				appId: $("#rapid_P0_C43").val(), 
-				securityAdapter: $("#rapid_P0_C81").val()
-			};	
-		break;
-		case "SAVEACTIONS" :
-			var actionTypes = [];
-			$("#rapid_P0_C288").find("input:checked").each( function(){
-				actionTypes.push($(this).closest("tr").children().first().html());
-			});		
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), actionTypes: actionTypes };	
-		break;
-		case "SAVECONTROLS" :	
-			var controlTypes = [];
-			$("#rapid_P0_C289").find("input:checked").each( function(){
-				controlTypes.push($(this).closest("tr").children().first().html());
-			});		
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), controlTypes: controlTypes };	
-		break;
-		case "REBUILDPAGES" :		
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val() };	
-		break;
-		case "NEWAPP" :
-			data = {
-				actionType: actionType,
-				appId: "rapid",
-				name: $("#rapid_P1_C7").val(),
-				title: $("#rapid_P1_C11").val(),
-				description: $("#rapid_P1_C15").val()
-			}
-			callback = function(response) {
-				window.location = "~?a=rapid&p=P0&appId=" + response.appId;
-			}; 
-		break;
-		case "DELAPP" :		
-			data = { 
-				actionType: actionType, 
-				appId: $("#rapid_P0_C43").val() 
-			};	
-			callback = function() {
-				window.location = "~?a=rapid&p=P0";
-			}; 			
-		break;		
-		case "DUPAPP" :		
-			data = {
-				actionType: actionType,
-				appId: $("#rapid_P0_C43").val(),
-				name: $("#rapid_P8_C7_").val(),
-				title: $("#rapid_P8_C12_").val(),
-				description: $("#rapid_P8_C17_").val()
-			}
-			callback = function(response) {
-				location.reload();
-			}; 			
-		break;
-		case "NEWPAGE" :	
-			data = {
-				actionType: actionType,
-				appId: _app.id,
-				id: "P" + _nextPageId, 
-				name: $("#rapid_P3_C17").val(),
-				title: $("#rapid_P3_C18").val(),
-				description: $("#rapid_P3_C19").val()
-			}
-			callback = function(data) {
-				hideDialogue();
-				loadPages(data.id, true);
-			}; 
-		break;
-		case "DELPAGE" :
-			data = { actionType: actionType, appId: _app.id, id: _page.id }; 
-			callback = function() {
-				hideDialogue();
-				loadPages(null, true);
-			}; 
-		break;	
-		case "NEWDBCONN" :		
-			data = { 
-				actionType: actionType, 
-				appId: $("#rapid_P0_C43").val(), 
-				name: $("#rapid_P7_C7").val(),
-				driver: $("#rapid_P7_C37").val(),
-				connectionString: $("#rapid_P7_C44").val(),
-				connectionAdapter: $("#rapid_P7_C38").val(),
-				userName: $("#rapid_P7_C30").val(),
-				password: $("#rapid_P7_C35").val()
-			};	
-			callback = function() {
-				Event_change_rapid_P0_C43(ev);
-			};	
-		break;
-		case "DELDBCONN" :		
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), index: $(ev.target).parent().parent().index()-1 };
-			callback = function() {
-				Event_change_rapid_P0_C43(ev);
-			};	
-		break;
-		case "NEWSOA" :		
-			data = { 
-				actionType: actionType, 
-				appId: $("#rapid_P0_C43").val(), 
-				name: $("#rapid_P10_C8_").val(),
-				type: $("#rapid_P10_C23_").val()
-			};	
-			callback = function() {
-				Event_change_rapid_P0_C43(ev);
-			};	
-		break;
-		case "DELSOA" :		
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), index: $(ev.target).parent().parent().index()-1 };
-			callback = function() {
-				Event_change_rapid_P0_C43(ev);
-			};	
-		break;
-		case "NEWROLE" :		
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), role: $("#rapid_P5_C7").val(), description: $("#rapid_P5_C41_").val() };
-			callback = function() {
-				// fake an adapter change
-				$("#rapid_P0_C81").change();
-				// fake a tab click
-				$("#rapid_P0_C74").click(); 
-			};								
-		break;
-		case "DELROLE" :		
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), role: $(ev.target).closest("tr").find("td").first().html() };
-			callback = function() {
-				// fake an adapter change
-				$("#rapid_P0_C81").change(); 
-				// fake a tab click
-				$("#rapid_P0_C74").click(); 
-			};	
-		break;
-		case "SAVEROLE" :		
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), role: $("#rapid_P0_C222").find("tr.rowSelect").children().first().html(), description: $("#rapid_P0_C735_").val() };
-			callback = function() {
-				// fake an adapter change
-				$("#rapid_P0_C81").change(); 
-				// fake a tab click
-				$("#rapid_P0_C74").click(); 
-			};							
-		break;
-		case "NEWUSER" :	
-			if (rapidApp) {
-				data = { actionType: actionType, appId: "rapid", userName: $("#rapid_P16_C8_").val(), description: $("#rapid_P16_C13_").val() , password: $("#rapid_P16_C17_").val(), useAdmin: $("rapid_P16_C38_").prop("checked"), useDesign: $("rapid_P16_C39_").prop("checked")};
-			} else {	
-				data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: $("#rapid_P6_C7").val(), description: $("#rapid_P6_C42_").val() , password: $("#rapid_P6_C18").val() };
-				callback = function() {
-					Event_change_rapid_P0_C43(ev);
-				};
-			}								
-		break;
-		case "DELUSER" :		
-			if (rapidApp) {
-				data = { actionType: actionType, appId: "rapid", userName: $(ev.target).closest("tr").find("td").first().html() };
-				callback = function() {			
-					// hide any currently displayed user details
-					$("#rapid_P0_C827_").hide();	
-					// reload users
-					Action_rapid(ev, 'rapid', 'P0', null, 'P0_A901_', 'GETUSERS', true);
-				};
-			} else {
-				data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: $(ev.target).closest("tr").find("td").first().html() };
-				callback = function() {
-					// fake an adapter change
-					$("#rapid_P0_C81").change(); 
-					// fake a tab click
-					$("#rapid_P0_C74").click();    
-				};
-			} 											
-		break;
-		case "NEWUSERROLE" : 
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: $("#rapid_P0_C216").find("tr.rowSelect").children().first().html(), role: $("#rapid_P0_C254").val() };
-			callback = function() {
-				Event_click_rapid_P0_C216({target: $("#rapid_P0_C216").find("tr.rowSelect").children().first()[0] });
-			};																
-		break;
-		case "DELUSERROLE" :	
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: $("#rapid_P0_C216").find("tr.rowSelect").children().first().html(), role: $(ev.target).parent().prev().html() };
-			callback = function() {
-				Event_click_rapid_P0_C216({target: $("#rapid_P0_C216").find("tr.rowSelect").children().first()[0] });
-			};																
-		break;
-		case "SAVEUSER" :	
-			if (rapidApp) {
-				data = { actionType: actionType, appId: "rapid", userName: $("#rapid_P0_C823_").find("tr.rowSelect").children().first().html(), description: $("#rapid_P0_C838_").val(), password: $("#rapid_P0_C843_").val(), useAdmin: $("#rapid_P0_C879_").prop('checked'), useDesign: $("#rapid_P0_C880_").prop('checked') }; 
-			} else {
-				data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: $("#rapid_P0_C216").find("tr.rowSelect").children().first().html(), description: $("#rapid_P0_C717_").val(), password: $("#rapid_P0_C231").val() };
-				callback = function() {
-					// fake an adapter change
-					$("#rapid_P0_C81").change(); 
-					// fake a tab click
-					$("#rapid_P0_C74").click();    
-				};	
-			}															
-		break;
-		case "TESTDBCONN" :	
-			data = { 
-				actionType: actionType, 
-				appId: $("#rapid_P0_C43").val(), 
-				index: $("#rapid_P0_C311").find("tr.rowSelect").index()-1,
-				driver: $("#rapid_P0_C338").val(),
-				connectionString: $("#rapid_P0_C374").val(),
-				connectionAdapter: $("#rapid_P0_C339").val(),
-				userName: $("#rapid_P0_C340").val(),
-				password: $("#rapid_P0_C341").val()
-			};	
-			callback = function(data) {
-				alert(data.message);
-			};															
-		break;
-		case "DELAPPBACKUP" : case "RESTOREAPPBACKUP" : 
-			data = { actionType: actionType, 
-				appId: $("#rapid_P0_C43").val(), 
-				backupId: $("#rapid_P0_C663_").find("tr.rowSelect").children("td").first().text() 
-			};	
-			callback = function(data) {
-				$(data.controlId).hideDialogue();
-				Event_change_rapid_P0_C43();
-				$("#rapid_P0_C662_").click();
-			};														
-		break;
-		case "DELPAGEBACKUP" : case "RESTOREPAGEBACKUP" :	
-			data = { actionType: actionType, 
-				appId: $("#rapid_P0_C43").val(), 
-				backupId: $("#rapid_P0_C678_").find("tr.rowSelect").children("td").first().text()  
-			};	
-			callback = function(data) {
-				$(data.controlId).hideDialogue();
-				Event_change_rapid_P0_C43();
-				$("#rapid_P0_C662_").click();
-			};															
-		break;
-		case "SAVEAPPBACKUPSIZE" :			
-			data = { actionType: actionType, 
-				appId: $("#rapid_P0_C43").val(), 
-				backupMaxSize: $("#rapid_P0_C685_").val()  
-			};
-		break;
-		case "SAVEPAGEBACKUPSIZE" :
-			data = { actionType: actionType, 
-				appId: $("#rapid_P0_C43").val(), 
-				backupMaxSize: $("#rapid_P0_C686_").val()  
-			};
-		break;
-		default :
-			data = { actionType: actionType, appId: "rapid" };
-	}
-	
-	// stringify any data
-	if (data) data = JSON.stringify(data);
-	
-	// run the action on the server	
-	$.ajax({
-    	url: "~?a=rapid&p=" + pageId + "&act=" + actionId,
-    	type: "POST",          
-    	dataType: "json",
-        data: data,            
-        error: function(server, status, error) { 
-        	if (server && server.status && server.status == 401) {
-        		window.location = "login.jsp";
-        	} else if (errorCallback) {
-        		errorCallback(server, status, error);
-        	} else {
-        		alert(server.responseText || "Error : " + status);
-        	}
-        },
-        success: function(data) {
-       		if (callback) callback(data);
-       		if (successCallback) successCallback(data);        	
-        }
-	});
-}
-
 function Action_validation(ev, validations, showMessages) {
 	var valid = true;
 	for (var i in validations) {
@@ -608,6 +207,17 @@ function Action_webservice(actionId, data, outputs) {
 
 /* Control initialise methods */
 
+
+function Init_date(id, details) {
+  A_TCALCONF.format = details.dateFormat;	     
+  f_tcalAdd (id);
+}
+
+function Init_gallery(id, details) {
+  $("#" + id).children("img").click( function(ev) {
+  	Gallery_removeImage(ev, id);
+  });
+}
 
 function Init_hints(id, details) {
   var body = $("body");
@@ -706,6 +316,90 @@ function Init_pagePanel(id, details) {
              	           	        	            	            	            
       	}        	       	        	        	        	        		
       }       	        	        
+  });
+}
+
+function Init_slidePanel(id, details) {
+  // get a reference to the body
+  var body = $("body");
+  // get the pageCover
+  var pageCover = body.find(".slidePanelCover");
+  // if we don't have one
+  if (!pageCover[0]) {
+  	// add one
+  	body.append("<div class='slidePanelCover'></div>");
+  	// set the reference
+  	pageCover = body.find(".slidePanelCover");
+  	// get a reference to the window
+  	var win = $(window);	
+  	// size the cover
+  	pageCover.css({
+      	width : win.width(),
+         	height : win.height()
+      });
+  }
+  
+  // get a reference to the slidePanel
+  var slidePanel = $("#" + id);
+  // get the slidePanelPaneId
+  var slidePanelPaneId = slidePanel.attr("data-pane");
+  // get the pane
+  var slidePanelPane = $("#" + slidePanelPaneId);
+  
+  // show or hide the page cover if panel is visible
+  if (slidePanelPane.is(":visible")) {
+  	pageCover.show();
+  } else {
+  	pageCover.hide();
+  }
+  
+  // add the opener listener	       
+  slidePanel.click({width: slidePanelPane.css("width"),left: slidePanelPane.css("margin-left")}, function(ev) {
+  	// get the stored width
+  	var width = ev.data.width
+  	// get any existing left margin
+  	var left = ev.data.left;
+  	// check visibility
+  	if (slidePanelPane.is(":visible")) {
+  		// animate off-screen
+  		slidePanelPane.animate({"margin-left": "-" + width}, 500, function() {
+  			// hide when complete
+  			slidePanelPane.hide();
+  			// toggle open closed
+  			slidePanel.removeClass("slidePanelOpen");
+  			slidePanel.addClass("slidePanelClosed");	
+  			// hide the page cover
+  			pageCover.hide();		
+  		});		
+  	} else {
+  		// set off screen
+  		slidePanelPane.css({"margin-left": "-" + width}).show();
+  		// animate to full width
+  		slidePanelPane.animate({"margin-left": 0}, 500);		
+  		// toggle open closed
+  		slidePanel.removeClass("slidePanelClosed");
+  		slidePanel.addClass("slidePanelOpen");
+  		// show the page cover	
+  		pageCover.show();
+  	}
+  });	        
+  
+  // add the cover listener
+  pageCover.click({width: slidePanelPane.css("width"),left: slidePanelPane.css("margin-left")}, function(ev){
+  	// get the stored width
+  	var width = ev.data.width
+  	// get any existing left margin
+  	var left = ev.data.left;
+  	// animate off-screen
+  	slidePanelPane.animate({"margin-left": "-" + width}, 500, function() {
+  		// hide when complete
+  		slidePanelPane.hide();
+  		// toggle open closed
+  		slidePanel.removeClass("slidePanelOpen");
+  		slidePanel.addClass("slidePanelClosed");	
+  		// hide the page cover
+  		pageCover.hide();		
+  	});
   });
 }
 
@@ -815,6 +509,35 @@ function setData_dataStore(id, data, field, details) {
   }
 }
 
+function getData_date(ev, id, field, details) {
+  return $("#" + id).val();
+}
+
+function setData_date(id, data, field, details) {
+  var control = $("#" + id);
+  var value = "";
+  if (data) {	
+  	data = makeDataObject(data, field);
+  	if (data.rows && data.rows[0]) {	        		
+  		if (field && data.fields) {
+  			for (var i in data.fields) {
+  				if (data.fields[i].toLowerCase() == field.toLowerCase()) {
+  					value = data.rows[0][i];
+  					break;
+  				}
+  			}
+  		} else {
+  			value = data.rows[0][0];
+  		}
+  	} 
+  }      
+  if (value) {
+  	var date = f_tcalParseDate(value,'Y-m-d');
+  	if (date) value = f_tcalGenerateDate(date, details.dateFormat);
+  }
+  control.val(value);
+}
+
 function getData_dropdown(ev, id, field, details) {
   return $("#" + id).val();
 }
@@ -853,6 +576,69 @@ function setData_dropdown(id, data, field, details) {
   		}
   	} 
   }
+}
+
+function getData_gallery(ev, id, field, details) {
+  var data = {fields:["url"],rows:[]};
+  var control = $("#" + id);
+  var images = control.children();
+  images.each( function(i) {
+  	data.rows.push([$(this).attr("src")]);
+  });
+  return data;
+}
+
+function setData_gallery(id, data, field, details) {
+  if (data) {
+  	var control = $("#" + id);
+  	data = makeDataObject(data, field);
+  	if (data.rows) {	
+  		// remove the no pictures message
+  		control.find("span").remove();
+  		// look for url or urls in the fields or use the first column if not found	
+  		var urlIndex = 0;
+  		if (data.fields) {
+  			for (var i in data.fields) {
+  				if (data.fields[i] == "url" || data.fields[i] == "urls") {
+  					urlIndex = i;
+  					break;
+  				}
+  			}
+  		}			
+  		// loop the rows
+  		for (var i in data.rows) {
+  			// allow comma seperated list of urls in single field too
+  			var urls = data.rows[i][urlIndex].split(",");
+  			// loop the urls
+  			for (var j in urls) {
+  				var url = urls[j];
+  				control.append("<img src='" + url  + "'/>");
+  				control.find("img").last().click( function(ev) {
+  					Gallery_removeImage(ev, id);				
+  				});
+  				// look for our custom imageAddedEvent handler for this control
+  				var imageAdded = window["Event_imageAdded_" + id];
+  				// fire it if we found it
+  				if (imageAdded) window["Event_imageAdded_" + id]();
+  			}			
+  		}
+  	} 
+  }
+}
+
+function getProperty_gallery_imageCount(ev, id, field, details) {
+  return ($("#" + id).children("img").size());
+}
+
+function getProperty_gallery_urls(ev, id, field, details) {
+  var urls = "";
+  var control = $("#" + id);
+  var images = control.children();
+  images.each( function(i) {
+  	urls += $(this).attr("src");
+  	if (i < images.length - 1) urls += ",";
+  });
+  return urls;
 }
 
 function getData_grid(ev, id, field, details) {
@@ -1040,6 +826,21 @@ function setData_text(id, data, field, details) {
 /* Control and Action resource JavaScript */
 
 
+/* Gallery control resource JavaScript */
+
+function Gallery_removeImage(ev, id) {
+	// get the image
+	var img = $(ev.target);
+	// tell Rapid Mobile an image has been removed
+	if (typeof _rapidmobile != "undefined") _rapidmobile.removeImage(id, img.attr("src")); 
+	// remove it
+	img.remove();
+	// look for our custom imageRemoved handler for this control
+	var imageRemoved = window["Event_imageRemoved_" + id];
+	// fire it if we found it
+	if (imageRemoved) window["Event_imageRemoved_" + id]();
+}
+
 /* Link control resource JavaScript */
 
 function linkClick(url, sessionVariablesString) {
@@ -1066,6 +867,42 @@ function linkClick(url, sessionVariablesString) {
 	window.location = url;
 	
 }
+
+/* Slide panel control resource JavaScript */
+
+//JQuery is ready! 
+$(document).ready( function() {
+	
+	$(window).resize(function(ex) {
+	
+		if (typeof(window.parent._pageIframe) === "undefined") {
+	
+			var win = $(window);
+			
+			// resize the page cover
+			$(".slidePanelCover").css({
+	       		width : win.width(),
+	       		height : win.height()
+	       	});
+	       	
+	    } else {
+	    
+	    	// get the page iframe
+	    	var _pageIframe = window.parent._pageIframe;
+	    	// get the scale
+	    	var _scale = window.parent._scale;
+	    		    		    
+	    	// resize the page cover
+			$(".slidePanelCover").css({
+	       		width : _pageIframe.width() / _scale,
+	       		height : _pageIframe.height() / _scale
+	       	});
+	    
+	    }
+       	      		
+	});
+	
+});
 
 /* Database action resource JavaScript */
 

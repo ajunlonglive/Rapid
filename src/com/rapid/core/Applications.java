@@ -32,6 +32,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import org.mozilla.javascript.edu.emory.mathcs.backport.java.util.Collections;
 
@@ -52,10 +53,10 @@ public class Applications {
 				versions.add(get(version));
 			}
 			// sort the collection
-			Collections.sort(versions, new Comparator<Date>() {
+			Collections.sort(versions, new Comparator<Application>() {
 				@Override
-				public int compare(Date v1, Date v2) {					
-					return (int) (v1.getTime() - v2.getTime());
+				public int compare(Application a1, Application a2) {					
+					return (int) (a1.getCreatedDate().getTime() - a2.getCreatedDate().getTime());
 				}				
 			});
 			// return the list
@@ -73,7 +74,7 @@ public class Applications {
 	}
 	
 	// methods
-	
+			
 	private Versions getVersions(String id, boolean createIfNull) {
 		// return null if id is null
 		if (id == null) return null;
@@ -91,6 +92,10 @@ public class Applications {
 	public Versions getVersions(String id) {
 		// get the versions without creating an entry
 		return getVersions(id, false);
+	}
+	
+	public Set<String> getIds() {
+		return _applications.keySet();
 	}
 	
 	// add an application with a known version

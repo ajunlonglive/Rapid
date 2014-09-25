@@ -65,7 +65,7 @@ if (this.pageId) {
 
 	// request the page		
 	$.ajax({
-    	url: "~?a=" + _app.id + "&p=" + this.pageId,
+    	url: "~?a=" + _version.id + "&v=" + _version.version + "&p=" + this.pageId,
     	type: "GET",          
         data: null,   
         async: false,         
@@ -120,7 +120,7 @@ this.object.html("");
 	    
 	    <getDetailsFunction>
 	        <![CDATA[
-return {appId: _app.id, pageId: this.pageId};	        
+return {appId: _version.id, version: _version.version, pageId: this.pageId};	        
 	        ]]>
 	    </getDetailsFunction>
 	    

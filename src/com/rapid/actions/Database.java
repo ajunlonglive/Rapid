@@ -256,7 +256,7 @@ public class Database extends Action {
 			if (_showLoading) js += "  " + getLoadingJS(page, outputs, true);
 						
 			// open the ajax call
-			js += "  $.ajax({ url : '~?a=" + application.getId() + "&p=" + page.getId() + controlParam + "&act=" + getId() + "', type: 'POST', dataType: 'json',\n";
+			js += "  $.ajax({ url : '~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + page.getId() + controlParam + "&act=" + getId() + "', type: 'POST', dataType: 'json',\n";
 			js += "    data: JSON.stringify(data),\n";
 			js += "    error: function(error, status, message) {\n";
 			

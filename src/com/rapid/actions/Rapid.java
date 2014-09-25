@@ -1165,7 +1165,7 @@ public class Rapid extends Action {
 																				 				
 				// create a list of files to ignore
 				List<String> ignoreFiles = new ArrayList<String>();
-				ignoreFiles.add(com.rapid.server.Rapid.BACKUP_FOLDER);
+				ignoreFiles.add(Application.BACKUP_FOLDER);
 				
 				// copy any webcontent
 				File oldFolder = new File(rapidServlet.getServletContext().getRealPath("/applications/" + app.getId()));					
@@ -1218,7 +1218,7 @@ public class Rapid extends Action {
 				}
 				
 				// look for an archive folder
-				File archiveFolder = new File(newFolder.getAbsolutePath() + "/" + com.rapid.server.Rapid.BACKUP_FOLDER);
+				File archiveFolder = new File(newFolder.getAbsolutePath() + "/" + Application.BACKUP_FOLDER);
 				// delete the archive folder if present
 				if (archiveFolder.exists()) Files.deleteRecurring(archiveFolder);
 									
@@ -1603,7 +1603,7 @@ public class Rapid extends Action {
 				String backupId = jsonAction.getString("backupId");
 				
 				// delete the backup
-				Application.deleteBackup(rapidServlet, backupId);
+				//Application.deleteBackup(rapidServlet, backupId);
 				
 				// set the result message
 				result.put("message", "Application backup " + appId + "/" + backupId + " deleted");
@@ -1616,7 +1616,7 @@ public class Rapid extends Action {
 				String backupId = jsonAction.getString("backupId");
 				
 				// delete the backup
-				Page.deleteBackup(rapidServlet, appId, backupId);
+				//Page.deleteBackup(rapidServlet, appId, backupId);
 				
 				// set the result message
 				result.put("message", "Page backup " + appId + "/" + backupId + " deleted");
@@ -1632,13 +1632,13 @@ public class Rapid extends Action {
 				app.backup(rapidServlet, rapidRequest);
 								
 				// get this backup folder
-				File applicationBackupFolder = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + com.rapid.server.Rapid.BACKUP_FOLDER + "/" + backupId));
+				//File applicationBackupFolder = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + com.rapid.server.Rapid.BACKUP_FOLDER + "/" + backupId));
 				
 				// create a file object for restoring the application folder
 			 	File applicationRestoreFolder = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/_" + app.getId() + "_restore"));
 			 	
 			 	// copy the backup into the application reatore folder
-				Files.copyFolder(applicationBackupFolder, applicationRestoreFolder);
+				//Files.copyFolder(applicationBackupFolder, applicationRestoreFolder);
 				
 			 	// create a file object for the application folder
 			 	File applicationFolder = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + app.getId()));
@@ -1714,13 +1714,13 @@ public class Rapid extends Action {
 				page.backup(rapidServlet, rapidRequest, pageFile);
 				
 				// get this backup file
-				File backupFile = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + app.getId() + "/" + com.rapid.server.Rapid.BACKUP_FOLDER + "/" + backupId));
+				//File backupFile = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + app.getId() + "/" + com.rapid.server.Rapid.BACKUP_FOLDER + "/" + backupId));
 				
 				// copy it over the current page file
-				Files.copyFile(backupFile, pageFile);
+				//Files.copyFile(backupFile, pageFile);
 				
 				// load the page from the backup 
-				page = Page.load(rapidServlet.getServletContext(), backupFile);
+				//page = Page.load(rapidServlet.getServletContext(), backupFile);
 				
 				// replace the current entry
 				app.addPage(page);

@@ -1,6 +1,19 @@
 
 /* This file is auto-generated on application load and save */
 
+/* Grid control resource styles */
+
+table.grid {
+	border-collapse:collapse;
+}
+
+/* Hints control resource styles */
+
+.hint {
+	position: absolute;
+	z-index: 10009;
+}
+
 /* Page control resource styles */
 
 /* Dialogue cover */
@@ -49,59 +62,12 @@ div.loading {
 
 span.loading {
 	position: absolute;
-	background: url("../../images/wait_120x15.gif");
+	background: url("../../../images/wait_120x15.gif");
 	background-repeat : no-repeat;
 	width: 120px;
 	height: 15px;
 	border: 2px solid #777;
 	display: none;
-}
-
-/* Grid control resource styles */
-
-table.grid {
-	border-collapse:collapse;
-}
-
-/* Hints control resource styles */
-
-.hint {
-	position: absolute;
-	z-index: 10009;
-}
-
-/* Slide panel control resource styles */
-
-.slidePanel {
-	position: absolute;
-	padding: 5px;
-	width: 20px;
-	height: 20px;
-	z-index: 101;
-}
-
-.slidePanel img {
-	width: 100%;
-	height: 100%;
-}
-
-.slidePanelPane {
-	position: absolute;
-	float: left;
-	width: 200px;
-	height: 100%;
-	background-color: white;
-	border-right: 1px solid black;
-	z-index: 100;
-}
-
-.slidePanelCover {
-	position: fixed;
-	top: 0;
-	left: 0;
-	background-color: #ccc;
-	opacity: 0.75;
-	z-index: 99;
 }
 
 /* Tabs control resource styles */
@@ -161,34 +127,34 @@ div.tabsPanel.selected {
 
 /* Application styles */
 
-/*
-Styles saved here will be applied to all pages in the application
-*/
+/* sets font in all pages to arial */
+body { font-family: 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif; font-size: 14px; margin:0; }
 
-body {
-  padding : 10px;
-  font-family : 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;
-  font-size : 13px;
-}
+/* this makes all the dialogues look a litter better */
+tr td { vertical-align: middle; }
 
-.dialogueCover {
-  background-color : white;
-  opacity:0.7;
-  filter:alpha(opacity=70);
-}
+/* these make buttons in grid rows a little smaller */
+.grid tr button { font-size: 11px; }
 
-div.validation {
- font-size: 12px;
- margin: 10px 10px 10px 0px;
- padding: 6px 10px 5px 25px;	
- background: url(../../images/alert_16x16.png) 5px 5px no-repeat;
- border: 1px solid red;
- border-radius: 5px;
- max-width: 200px;
-}
+/* make the dialogue cover white */
+.dialogueCover { background-color: white; }
 
-input.validation {
-  border: 2px solid red;
-  border-radius: 5px;
-  box-shadow: 1px 1px 2px;
+/* improve the dialogue */
+.dialogue  { border: 1px solid black; box-shadow: 0 0 20px; }
+
+/* improve the inputs */
+select { border: 1px solid #999; border-radius: 3px; }
+input { 
+  border: 1px solid #999; border-radius: 3px; 
+  padding-left: 5px; 
+  -webkit-box-sizing: border-box; 
+  -moz-box-sizing: border-box; 
+  box-sizing: order-box;
 }
+textarea { 
+  border: 1px solid #999; 
+  border-radius: 3px; 
+  -webkit-box-sizing: border-box; 
+  -moz-box-sizing: border-box; 
+  box-sizing: order-box;
+} 

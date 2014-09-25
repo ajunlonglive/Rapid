@@ -69,12 +69,11 @@ public class Rapid extends RapidHttpServlet {
 	public static final String DESIGN_ROLE = "RapidDesign";
 	public static final String ADMIN_ROLE = "RapidAdmin";
 	public static final String SUPER_ROLE = "RapidSuper";
-	public static final String BACKUP_FOLDER = "_backups";
-					
-	// this byte buffer is used for reading the post data
+						
+	// this byte buffer is used for reading the post data - maybe we'll use streams one day...
 	private byte[] _byteBuffer = new byte[1024];
 					     
-    private String getAdminLink(String appId, String pageId) {
+    private String getAdminLink(Application application, Page page) {
     	
     	String html = "<div id='designShow' style='position:fixed;left:0px;bottom:0px;width:30px;height:30px;z-index:1000;'></div>\n"
     	+ "<img id='designLink' style='position:fixed;left:6px;bottom:6px;z-index:1001;display: none;' src='images/gear_24x24.png'></img>\n"
@@ -83,7 +82,7 @@ public class Rapid extends RapidHttpServlet {
     	+ "$(document).ready( function() {\n"
     	+ "  $('#designShow').mouseover ( function(ev) { $('#designLink').show(); });\n"
     	+ "  $('#designLink').mouseout ( function(ev) { $('#designLink').hide(); });\n"
-    	+ "  $('#designLink').click ( function(ev) { window.location='design.jsp?a=" + appId + "&p=" + pageId + "' });\n"
+    	+ "  $('#designLink').click ( function(ev) { window.location='design.jsp?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + page.getId() + "' });\n"
     	+ "})\n"
     	+ "</script>\n";
     	
@@ -272,9 +271,9 @@ public class Rapid extends RapidHttpServlet {
 						
 							// check for the design role, super is required as well if the rapid app
 							if ("rapid".equals(app.getId())) {
-								if (security.checkUserRole(rapidRequest, userName, Rapid.DESIGN_ROLE) && security.checkUserRole(rapidRequest, userName, Rapid.SUPER_ROLE)) out.print(getAdminLink(app.getId(), page.getId()).trim());
+								if (security.checkUserRole(rapidRequest, userName, Rapid.DESIGN_ROLE) && security.checkUserRole(rapidRequest, userName, Rapid.SUPER_ROLE)) out.print(getAdminLink(app, page).trim());
 							} else {
-								if (security.checkUserRole(rapidRequest, userName, Rapid.DESIGN_ROLE)) out.print(getAdminLink(app.getId(), page.getId()).trim());
+								if (security.checkUserRole(rapidRequest, userName, Rapid.DESIGN_ROLE)) out.print(getAdminLink(app, page).trim());
 							}
 							
 							// add the remaining elements

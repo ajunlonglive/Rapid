@@ -320,7 +320,8 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 		case "NEWPAGE" :	
 			data = {
 				actionType: actionType,
-				appId: _app.id,
+				appId: _version.id,
+				version: _version.version,
 				id: "P" + _nextPageId, 
 				name: $("#rapid_P3_C17").val(),
 				title: $("#rapid_P3_C18").val(),
@@ -332,7 +333,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 			}; 
 		break;
 		case "DELPAGE" :
-			data = { actionType: actionType, appId: _app.id, id: _page.id }; 
+			data = { actionType: actionType, appId: _version.id, version: _version.version, id: _page.id }; 
 			callback = function() {
 				hideDialogue();
 				loadPages(null, true);
