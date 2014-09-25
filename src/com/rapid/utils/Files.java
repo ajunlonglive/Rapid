@@ -130,8 +130,8 @@ public class Files {
 		for (int i = 0; i < name.length(); i ++) {
 			// get the char at the position
 			char c = name.charAt(i);
-			// append to return if a safe character (0-9, A-Z, a-z, -, _)
-			if ((c >= 48 && c <= 57) || (c >= 65 && c <= 90) || (c >= 97 && c <= 122) || c == 45 || c == 95 ) {
+			// append to return if a safe character (0-9, A-Z, a-z, -, ., _)
+			if ((c >= 48 && c <= 57) || (c >= 65 && c <= 90) || (c >= 97 && c <= 122) || c == 45 || c == 46 || c == 95 ) {
 				safeName += c;
 			}
 		}

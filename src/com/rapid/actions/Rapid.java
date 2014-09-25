@@ -1223,7 +1223,7 @@ public class Rapid extends Action {
 				if (archiveFolder.exists()) Files.deleteRecurring(archiveFolder);
 									
 				// load the new application (but do not regenerate the resources files - this happens on the save)
-				Application newApp = Application.load(rapidServlet.getServletContext(), new File(newFolder.getAbsolutePath() + "/application.xml"), 1, false);
+				Application newApp = Application.load(rapidServlet.getServletContext(), new File(newFolder.getAbsolutePath() + "/application.xml"), false);
 				
 				// overwrite the properties
 				newApp.setId(newAppId);
@@ -1676,7 +1676,7 @@ public class Rapid extends Action {
 				File applicationFile = new File(applicationFolder.getAbsolutePath() + "/application.xml");
 				
 				// reload the application
-				app = Application.load(rapidServlet.getServletContext(), applicationFile, 1);
+				app = Application.load(rapidServlet.getServletContext(), applicationFile);
 				
 				// add it back to the collection
 				rapidServlet.getApplications().put(app);

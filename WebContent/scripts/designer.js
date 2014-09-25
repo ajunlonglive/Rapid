@@ -1189,8 +1189,8 @@ function loadPage() {
 	hideDialogues();
 	// hide any selection border
 	if (_selectionBorder) _selectionBorder.hide();	
-	// remove any current page html
-	if (_page.object) _page.object.children().remove();
+	// replace any current page html with loading
+	if (_page.object) _page.object.html("<center><h1>Loading...</h1></center>");
 	// remove any nonVisibleControls
 	$(".nonVisibleControl").remove();
 	// lose the selected control
