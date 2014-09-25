@@ -36,7 +36,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import com.rapid.data.ConnectionAdapter.ConnectionAdapterException;
-import com.rapid.server.RapidHttpServlet.RapidRequest;
+import com.rapid.server.RapidRequest;
 
 public class DataFactory {
 	

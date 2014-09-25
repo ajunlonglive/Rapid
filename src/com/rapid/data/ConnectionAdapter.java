@@ -30,7 +30,7 @@ import java.sql.SQLException;
 
 import javax.servlet.ServletContext;
 
-import com.rapid.server.RapidHttpServlet.RapidRequest;
+import com.rapid.server.RapidRequest;
 
 /*
 

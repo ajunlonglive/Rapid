@@ -31,8 +31,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlType;
 
 import com.rapid.core.Application;
-import com.rapid.server.RapidHttpServlet;
-import com.rapid.server.RapidHttpServlet.RapidRequest;
+import com.rapid.server.RapidRequest;
 import com.rapid.soa.SOAElementRestriction.*;
 import com.rapid.soa.SOASchema.SOASchemaElement;
 import com.rapid.utils.Files;

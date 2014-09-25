@@ -26,7 +26,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 package com.rapid.soa;
 
 import com.rapid.core.Application;
-import com.rapid.server.RapidHttpServlet.RapidRequest;
+import com.rapid.server.RapidRequest;
 
 public class JavaWebservice extends Webservice {
 	

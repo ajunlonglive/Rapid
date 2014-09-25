@@ -2,7 +2,7 @@
 <%@ page import="java.util.Map" %>
 <%@ page import="com.rapid.core.*" %>
 <%@ page import="com.rapid.server.filter.*" %>
-<%@ page import="com.rapid.server.RapidHttpServlet.RapidRequest" %>
+<%@ page import="com.rapid.server.RapidRequest" %>
 <%
 
 /*

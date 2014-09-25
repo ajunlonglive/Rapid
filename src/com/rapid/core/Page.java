@@ -53,13 +53,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-import com.rapid.core.Application.Backup;
 import com.rapid.core.Application.Resource;
-import com.rapid.security.SecurityAdapater.User;
 import com.rapid.server.Rapid;
 import com.rapid.server.RapidHttpServlet;
-import com.rapid.server.RapidHttpServlet.RapidRequest;
-import com.rapid.utils.Comparators;
+import com.rapid.server.RapidRequest;
 import com.rapid.utils.Files;
 import com.rapid.utils.XML;
 
