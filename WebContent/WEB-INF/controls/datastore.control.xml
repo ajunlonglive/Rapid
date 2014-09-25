@@ -72,7 +72,7 @@ this.object.remove();
 	    
 	   	<getDetailsFunction>	        
 	        <![CDATA[
-return {id : _app.id + this.id, storageType: this.storageType};
+return {id : _version.id + _version.version + this.id, storageType: this.storageType};
 			]]>	        	        
 	    </getDetailsFunction>
 	    

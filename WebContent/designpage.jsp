@@ -90,7 +90,7 @@ if (gotAppAndPage && designerPermission) {
 	out.print(rapidPage.getResourcesHtml(rapidApp));	
 	
 %>
-	<link rel="stylesheet" type="text/css" href="applications/<%=rapidApp.getId()%>/<%=rapidPage.getName()%>.css"></link>	
+	<link rel="stylesheet" type="text/css" href="<%=rapidApp.getWebFolder()%>/<%=rapidPage.getName()%>.css"></link>	
 	<style type="text/css">
 	
 	html {

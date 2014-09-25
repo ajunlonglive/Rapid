@@ -37,10 +37,12 @@ Geometry - the pixel space an object takes up
  
 */
 
-// the application we are designing
-var _app = {};
 // details of all the available apps
 var _apps = [];
+// details of all the available application versions
+var _versions = [];
+// the version we are designing
+var _version = {};
 // the page of the app we are designing
 var _page = {};
 // a list of available pages
@@ -473,7 +475,7 @@ function getControlOptions(selectId, ignoreId, type) {
 //this function returns a set of options for a dropdown of security roles
 function getRolesOptions(selectRole, ignoreRoles) {
 	var options = "";
-	var roles = _app.roles;
+	var roles = _version.roles;
 	if (roles) {		
 		for (var i in roles) {
 			// retrieve this role			
@@ -651,9 +653,9 @@ function getExistingActionOptions(selectId, ignoreId) {
 
 function getDatabaseConnectionOptions(selectIndex) {
 	var options = "";
-	if (_app.databaseConnections) {
-		for (var i in _app.databaseConnections) {
-			options += "<option value='" + i + "' " + (i == selectIndex ? "selected='selected'" : "") + ">" + _app.databaseConnections[i] + "</option>";
+	if (_version.databaseConnections) {
+		for (var i in _version.databaseConnections) {
+			options += "<option value='" + i + "' " + (i == selectIndex ? "selected='selected'" : "") + ">" + _version.databaseConnections[i] + "</option>";
 		}
 	}
 	return options;
@@ -923,23 +925,86 @@ function loadApps(selectedAppId, forceLoad) {
         	// put the options into the dropdown
         	appsDropDown.html(options);
         	// retain all the apps data
-        	_apps = apps;
-        	// set the selected app
-        	_app = _apps[appsDropDown[0].selectedIndex];        	
+        	_apps = apps;        	       	
         	// load the app and its pages in the drop down if we weren't handed one
         	if (!selectedAppId || forceLoad) {
-        		loadApp();
+        		loadVersions();
         	} else {
         		// show the designer
         		showDesigner();
         	}
+        	
         }
 	});
 }
 
+//this function loads the versions into versionSelect
+function loadVersions(selectedVersion, forceLoad) {
+	// hide the properties panel
+	$("#propertiesPanel").hide();
+	// remove all current page html
+	$("#page").children().remove();
+	// remove any dialogues or components
+	$("#dialogues").children().remove();
+	// remove any current versions
+	$("#versionSelect").children().remove();
+	
+	// do the ajax
+	$.ajax({
+    	url: "designer?a=" + $("#appSelect").val() + "&action=getVersions",
+    	type: "GET",
+    	contentType: "application/json",
+        dataType: "json",            
+        data: null,            
+        error: function(server, status, error) {
+        	// check if there was permission to use rapid
+        	if (server && server.status == 403) {
+        		// reload the whole page (sends user to login)
+        		loaction.reload();
+        	} else {
+        		// show the error
+        		alert("Error loading versions : " + error);
+        	}
+        },
+        success: function(versions) {        	
+        	// if an app is not selected try the url
+        	if (!selectedVersion) var urlVersion = $.getUrlVar("v");
+        	// build the select options for each app
+        	var options = "";
+        	// loop the apps we received
+        	for (var i in versions) {        		
+        		// get a reference to the app
+        		var version = versions[i];
+        		// derived the status text (these must match final ints at the top of Application.java)
+        		var status = "";
+        		// live = 1
+        		if (version.status == 1) status = " - (live)"
+        		// add an option for this page (if not the rapid app itself)
+        		options += "<option value='" + version.version + "' " + (selectedVersion || urlVersion == version.version ? "selected='true'" : "") + ">" + version.version + status + "</option>";        	
+        	}
+        	// get a reference to apps dropdown
+        	var versionsDropDown = $("#versionSelect");
+        	// put the options into the dropdown
+        	versionsDropDown.html(options);
+        	// retain all the versions data
+        	_versions = versions;        	
+        	// set the selected _version
+        	_version = _versions[versionsDropDown[0].selectedIndex];
+        	// set the s
+        	// load the app and its pages in the drop down if we weren't handed one
+        	if (!selectedVersion || forceLoad) {
+        		loadVersion();
+        	} else {
+        		// show the designer
+        		showDesigner();
+        	}
+        	
+        }
+	});
+}
 
-// this function loads the apps pages into pagesSelect
-function loadApp(forceLoad) {
+// this function loads the version pages into pagesSelect
+function loadVersion(forceLoad) {
 	
 	// grab a reference to the ul where the canUserAdd controls will be added
 	var designControls = $("ul.design-controls");
@@ -958,41 +1023,41 @@ function loadApp(forceLoad) {
 	// empty the pages list
 	_pages = [];
 	
-	// check we have some apps
-	if (_apps) {
-		// get the selected app
-		var appId = $("#appSelect").val();
+	// check we have some versions
+	if (_versions) {
+		// get the selected version Id
+		_versionId = $("#versionSelect").val();
 		// loop all the apps
-    	for (var i in _apps) {    		
+    	for (var i in _versions) {    		
     		// if this app matches what's in the dropdown
-    		if (_apps[i].id == appId) {
+    		if (_versions[i].version == _versionId) {
     			// set the global to this one
-    			_app = _apps[i];
+    			_version = _versions[i];
     			// we're done
         		break;
     		}    		
     	}
 	}
 			
-	// check there is an app
-	if (_app) {		
+	// check there is a version
+	if (_version) {		
 					
-		// loop the app actions
-		for (var j in _app.actions) {
+		// loop the actions
+		for (var j in _version.actions) {
 			// get a reference to the action
-			var action = _app.actions[j];
+			var action = _version.actions[j];
 			// add to our _actionOptions excluding the rapid action unless this is the rapid app
-			if (action.type != "rapid" || _app.id == "rapid") _actionOptions += "<option value='" + action.type + "'>" + action.name + "</option>";
+			if (action.type != "rapid" || _version.id == "rapid") _actionOptions += "<option value='" + action.type + "'>" + action.name + "</option>";
 		}
 		
 		// retain the app styleclasses
-		_styleClasses = _app.styleClasses;
+		_styleClasses = _version.styleClasses;
 		
-		// loop the app controls
-    	for (var j in _app.controls) {	    	    		
+		// loop the controls
+    	for (var j in _version.controls) {	    	    		
     		
     		// get a reference to a single control
-    		var c = _app.controls[j];      		
+    		var c = _version.controls[j];      		
     		
     		// if the control can be added by the user
     		if (c.canUserAdd) {
@@ -1076,7 +1141,7 @@ function loadApp(forceLoad) {
     	loadPages(null, true);
 		
 		// disable the delete button if no rapid app or this is the rapid app
-		if (_app.id == "rapid") {
+		if (_version.id == "rapid") {
 			$("#appDelete").attr("disabled","disabled");
 		} else {
 			$("#appDelete").removeAttr("disabled");
@@ -1105,7 +1170,7 @@ function loadApp(forceLoad) {
 function loadPages(selectedPageId, forceLoad) {
 	
 	$.ajax({
-    	url: "designer?action=getPages&a=" + _app.id,
+    	url: "designer?action=getPages&a=" + _version.id + "&v=" + _version.version,
     	type: "GET",
     	contentType: "application/json",
         dataType: "json",            
@@ -1190,7 +1255,7 @@ function loadPage() {
 	// hide any selection border
 	if (_selectionBorder) _selectionBorder.hide();	
 	// replace any current page html with loading
-	if (_page.object) _page.object.html("<center><h1>Loading...</h1></center>");
+	if (_page.object) _page.object.html("<center><p><img src='images/wait_120x15.gif'/></p></center>");
 	// remove any nonVisibleControls
 	$(".nonVisibleControl").remove();
 	// lose the selected control
@@ -1217,7 +1282,7 @@ function loadPage() {
 		// set the page id
 		_page.id = pageId;		
 		// reload the page iFrame with resources for the app and this page
-    	_pageIframe[0].contentDocument.location.href = "designpage.jsp?a=" + _app.id + "&p=" + _page.id;	
+    	_pageIframe[0].contentDocument.location.href = "designpage.jsp?a=" + _version.id + "&v=" + _version.version + "&p=" + _page.id;	
     	// set dirty to false
     	_dirty = false;    	
 	} // drop down val check
@@ -1308,7 +1373,7 @@ function getSavePageData() {
 	var pageObject = getDataObject(_page);
 			
 	// get the roles from the app
-	var roles = _app.roles;	
+	var roles = _version.roles;	
 	// get all possible combinations of the roles in this page
     var combinations = []; 
     
@@ -1757,11 +1822,11 @@ $(document).ready( function() {
 	_pageIframe.load( function () {										
 		
 		// only if the app and page id's have been set
-		if (_app.id && _page.id) {
+		if (_version.id && _page.id) {
 			
 			// now load the page definition with ajax
 			$.ajax({
-		    	url: "designer?action=getPage&a=" + _app.id + "&p=" + _page.id,
+		    	url: "designer?action=getPage&a=" + _version.id + "&v=" + _version.version + "&p=" + _page.id,
 		    	type: "GET",
 		    	contentType: "application/json",
 		        dataType: "json",            
@@ -1795,11 +1860,11 @@ $(document).ready( function() {
 			    		var head = $(_pageIframe[0].contentWindow.document).find("head");
 			    		
 			    		// remove any current app or page style sheets
-			    		head.find("link[rel=stylesheet][href^=applications\\/" + _app.id + "]").remove();
+			    		head.find("link[rel=stylesheet][href^=applications\\/" + _version.id + "]").remove();
 			    		// make sure the app styling is correct (this can go wrong if the back button was clicked which loads the current page but the previous styling)
-			    		head.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"applications/" + _app.id + "/rapid.css\">");
+			    		head.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"" + _version.webFolder + "/rapid.css\">");
 			    		// make sure the page styling is correct (this can go wrong if the back button was clicked which loads the current page but the previous styling)
-			    		head.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"applications/" + _app.id + "/" + _page.name + ".css\">");
+			    		head.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"" + _version.webFolder + "/" + _page.name + ".css\">");
 	     	
 			        	// if we have childControls
 			        	if (page.controls) {
@@ -1958,8 +2023,8 @@ $(document).ready( function() {
 	
 	// administration
 	$("#appAdmin").click( function(ev) {
-		if (_app && _app.id) {
-			window.location = "~?a=rapid&appId=" + _app.id;
+		if (_version && _version.id) {
+			window.location = "~?a=rapid&appId=" + _version.id + "&version=" + _version.version;
 		} else {
 			window.location = "~?a=rapid";
 		}		 
@@ -1969,10 +2034,21 @@ $(document).ready( function() {
 	$("#appSelect").change( function() {
     	// load the selected app and its pages in the drop down 
     	if (checkDirty()) {
-    		loadApp();
+    		loadVersions();
     	} else {
     		// revert the drop down on cancel
-    		$("#appSelect").val(_app.id);
+    		$("#appSelect").val(_version.id);
+    	}
+	});
+	
+	// load version
+	$("#versionSelect").change( function() {
+    	// load the selected app and its pages in the drop down 
+    	if (checkDirty()) {
+    		loadVersion();
+    	} else {
+    		// revert the drop down on cancel
+    		$("#versionSelect").val(_version.version);
     	}
 	});
 			
@@ -1999,19 +2075,7 @@ $(document).ready( function() {
 		// set the selected control to the page
 		selectControl(_page);		
 	});
-	
-	// undo
-	$("#undo").click( function(ev) {
-		doUndo(); 
-		showPageMap();
-	});
-	
-	// redo
-	$("#redo").click( function(ev) {
-		doRedo();
-		showPageMap();
-	});
-		
+			
 	// save page
 	$("#pageSave").click( function() {
 		// show the saving page dialogue
@@ -2020,7 +2084,7 @@ $(document).ready( function() {
 		$("#rapid_P11_C7_").html("Saving page");
 		// send the data to the backend
 		$.ajax({
-	    	url: "designer?action=savePage&a=" + _app.id,
+	    	url: "designer?action=savePage&a=" + _version.id + "&v=" + _version.version,
 	    	type: "POST",
 	    	contentType: "application/json",
 	        dataType: "json",            
@@ -2049,7 +2113,19 @@ $(document).ready( function() {
 	// view page
 	$("#pageView").click( function(ev) {
 		// prompet the user if the page is dirty
-		if (checkDirty()) window.location = "~?a=" + _app.id + "&p=" + _page.id;
+		if (checkDirty()) window.location = "~?a=" + _version.id + "&v=" + _version.version + "&p=" + _page.id;
+	});
+	
+	// undo
+	$("#undo").click( function(ev) {
+		doUndo(); 
+		showPageMap();
+	});
+	
+	// redo
+	$("#redo").click( function(ev) {
+		doRedo();
+		showPageMap();
 	});
 							
 	// select parent
@@ -2745,10 +2821,10 @@ function fileuploaded(fileuploadframe) {
         	case "uploadImage" :
         		// update file property in control
         		_selectedControl.file = response.file;
-        		// init the ap images array if need be
-        		if (!_app.images) _app.images = [];
+        		// init the images array if need be
+        		if (!_version.images) _version.images = [];
         		// add to array
-        		_app.images.push(response.file);
+        		_version.images.push(response.file);
         		// rebuild html
         		rebuildHtml(_selectedControl);        		
         	}

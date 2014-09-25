@@ -63,7 +63,7 @@ function showProperties(control) {
 		// add a small break
 		propertiesTable.append("<tr><td colspan='2'></td></tr>");
 		// show the control id if requested
-		if (_app.showControlIds) propertiesTable.append("<tr><td>ID</td><td class='canSelect'>" + control.id + "</td></tr>");
+		if (_version.showControlIds) propertiesTable.append("<tr><td>ID</td><td class='canSelect'>" + control.id + "</td></tr>");
 		// check there are class properties
 		var properties = control._class.properties;
 		if (properties) {
@@ -431,7 +431,7 @@ function Property_imageFile(cell, propertyObject, property, refreshHtml, refresh
 	}
 	
 	// check we have some images
-	if (_app.images) {
+	if (_version.images) {
 		
 		// append the drop down for existing images
 		table.append("<tr><td><select><option>Please select...</option></select></td></tr>");
@@ -440,10 +440,10 @@ function Property_imageFile(cell, propertyObject, property, refreshHtml, refresh
 		var dropdown = table.find("select");
 		
 		// loop the images and add to select
-		for (var i in _app.images) {
+		for (var i in _version.images) {
 			var selected = "";
-			if (_app.images[i] == propertyObject.file) selected = " selected='selected'";
-			dropdown.append("<option" + selected + ">" + _app.images[i] + "</option>");
+			if (_version.images[i] == propertyObject.file) selected = " selected='selected'";
+			dropdown.append("<option" + selected + ">" + _version.images[i] + "</option>");
 		}
 		
 		// add change listener
@@ -457,7 +457,7 @@ function Property_imageFile(cell, propertyObject, property, refreshHtml, refresh
 	}
 	
 	// append the  form control and the submit button
-	table.append("<tr><td><form id='form_" + propertyObject.id + "' method='post' enctype='multipart/form-data' target='uploadIFrame' action='designer?action=uploadImage&a=" + _app.id + "&p=" + _page.id + "&c=" + propertyObject.id + "'><input id='file_" + propertyObject.id + "' name='file' type='file'></input></form></td></tr><tr><td><input type='submit' value='Upload' /></td></tr>");
+	table.append("<tr><td><form id='form_" + propertyObject.id + "' method='post' enctype='multipart/form-data' target='uploadIFrame' action='designer?action=uploadImage&a=" + _version.id + "&v=" + _version.id.version + "&p=" + _page.id + "&c=" + propertyObject.id + "'><input id='file_" + propertyObject.id + "' name='file' type='file'></input></form></td></tr><tr><td><input type='submit' value='Upload' /></td></tr>");
 	
 	// get a reference to the submit button
 	_listeners.push( table.find("input[type=submit]").click( {id : propertyObject.id}, function (ev) {
@@ -865,7 +865,7 @@ function Property_databaseQuery(cell, propertyObject, property, refreshHtml, ref
 		var data = JSON.stringify(ev.data.query);
 		
 		$.ajax({
-	    	url: "designer?a=" + _app.id + "&action=testSQL",
+	    	url: "designer?a=" + _version.id.id + "&v=" + _version.id.version + "&action=testSQL",
 	    	type: "POST",          
 	    	contentType: "application/json",
 	    	dataType: "json",    

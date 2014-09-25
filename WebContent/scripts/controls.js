@@ -142,7 +142,7 @@ function Control(controlClass, parentControl, jsonControl, loadComplexObjects, p
 						// set a unique ID for this control
 						this.id = _page.id + "_C" + _nextId + "_";
 						// if this is the rapid app, prefix it
-						if (_app.id == "rapid") this.id = "rapid_" + this.id;
+						if (_version.id == "rapid") this.id = "rapid_" + this.id;
 						// check the pasteMap
 						if (_pasteMap[jsonControl.id]) {
 							// if there is an entry for the control we are making this one out of use it's id
@@ -234,7 +234,7 @@ function Control(controlClass, parentControl, jsonControl, loadComplexObjects, p
 			// inc the next id
 			_nextId++;
 			// if this is the rapid app append a prefix so as not to be affected by any app they are used with
-			if (_app.id == "rapid") this.id = "rapid_" + this.id;
+			if (_version.id == "rapid") this.id = "rapid_" + this.id;
 			
 			// if required set a name for this control, using our store of numbers of this control type
 			if (!controlClass.noDefaultName) this.name = controlClass.name + " " + _controlNumbers[controlClass.type];	

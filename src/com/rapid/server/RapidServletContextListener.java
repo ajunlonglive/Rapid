@@ -626,6 +626,9 @@ public class RapidServletContextListener implements ServletContextListener {
 				// get the list of files in this folder - should be all version folders
 				File[] applicationFolders = applicationFolder.listFiles();
 				
+				// assume we didn't need to version
+				boolean versionCreated = false;
+				
 				// if we got some
 				if (applicationFolders != null) {
 					
@@ -662,6 +665,8 @@ public class RapidServletContextListener implements ServletContextListener {
 							}
 							
 						}
+						// record that we created a version
+						versionCreated = true;
 						
 					}	// application.xml non-versioned check
 					
@@ -679,6 +684,28 @@ public class RapidServletContextListener implements ServletContextListener {
 								Application application = Application.load(servletContext, applicationFile);
 								// put it in our collection
 								applications.put(application);
+								// if we had to create a version for it
+								if (versionCreated) {
+									// make a dir for it's resources
+									File resourcesDir = new File(application.getResourcesFolder(servletContext));
+									resourcesDir.mkdir();
+									_logger.info(resourcesDir + " created");
+									// loop all the files in the parent
+									for (File file : resourcesDir.getParentFile().listFiles()) {
+										// check not dir
+										if (!file.isDirectory()) {
+											// copy this file into the resources
+											File destFile = new File(resourcesDir + "/" + file.getName());
+											// this is not a version folder itself, copy it to the new version folder
+											Files.copyFile(file, destFile);
+											// delete the file or folder
+											file.delete();
+											_logger.info(file + " moved to " + destFile);
+										}
+									}
+									
+								}
+								
 							}
 							
 						} // folder check

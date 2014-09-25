@@ -157,11 +157,11 @@ if (this.linkType == "P") {
 			sessionVariables = sessionVariables.replace(/\"/g,'&quot;');
 		
 			// return the link
-			return "<a id='" + this.id + "' href='#' class='link" + getStyleClasses(this) + "' onclick=\"linkClick('~?a=" + _app.id + "&p=" + this.page + "','" + sessionVariables + "');\">" + text + "</a>";
+			return "<a id='" + this.id + "' href='#' class='link" + getStyleClasses(this) + "' onclick=\"linkClick('~?a=" + _version.id + "&v=" + _version.version + "&p=" + this.page + "','" + sessionVariables + "');\">" + text + "</a>";
 			
 		} else {
 		
-			return "<a id='" + this.id + "' href='~?a=" + _app.id + "&p=" + this.page + "' class='link" + getStyleClasses(this) + "'>" + text + "</a>";
+			return "<a id='" + this.id + "' href='~?a=" + _version.id + "&v=" + _version.version + "&p=" + this.page + "' class='link" + getStyleClasses(this) + "'>" + text + "</a>";
 							
 		}
 								

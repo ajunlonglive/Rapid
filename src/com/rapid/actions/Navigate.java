@@ -122,7 +122,7 @@ public class Navigate extends Action {
 				}
 			}
 			// build the action string 
-			String action = "Action_navigate('~?a=" + application.getId() + "&p=" + pageId + sessionVariables + "'," + Boolean.parseBoolean(getProperty("dialogue")) + ");";
+			String action = "Action_navigate('~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + pageId + sessionVariables + "'," + Boolean.parseBoolean(getProperty("dialogue")) + ");";
 			// replace any unnecessary characters
 			action = action.replace(" + ''", "");
 			// return it into the page!

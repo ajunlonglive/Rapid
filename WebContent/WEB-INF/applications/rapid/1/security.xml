@@ -18,6 +18,6 @@
         <password></password>
         <roles>RapidAdmin</roles>
         <roles>RapidDesign</roles>
-        <!--  <roles>RapidSuper</roles> -->
+        <roles>RapidSuper</roles>
     </users>
 </security>

@@ -164,17 +164,35 @@ public class Designer extends RapidHttpServlet {
 							JSONArray jsonApps = new JSONArray();
 							
 							// get a sorted list of the applications
-							for (Application application : getApplications().sort()) {
+							for (String id : getApplications().getIds()) {
 								
-								// create a json object
-								JSONObject jsonApplication = new JSONObject();
-								// add the details we want
-								jsonApplication.put("id", application.getId());
-								jsonApplication.put("name", application.getName());
-								jsonApplication.put("title", application.getTitle());
-								// add the object to the collection
-								jsonApps.put(jsonApplication);
-								
+								// loop the versions
+								for (String version : getApplications().getVersions(id).keySet()) {
+									// get the this application version
+									Application application = getApplications().get(id, version);
+
+									// check the users permission to design this application
+									boolean designPermission = application.getSecurity().checkUserRole(rapidRequest, userName, Rapid.DESIGN_ROLE);
+									
+									// if app is rapid do a further check
+									if (designPermission && "rapid".equals(application.getId())) designPermission = application.getSecurity().checkUserRole(rapidRequest, userName, Rapid.SUPER_ROLE);
+									
+									// if we got permssion - add this application to the list 
+									if (designPermission) {
+										// create a json object
+										JSONObject jsonApplication = new JSONObject();
+										// add the details we want
+										jsonApplication.put("id", application.getId());
+										jsonApplication.put("name", application.getName());
+										jsonApplication.put("title", application.getTitle());
+										// add the object to the collection
+										jsonApps.put(jsonApplication);
+										// no need to check any further versions
+										break;
+									}
+									
+								}
+																									
 							}
 							
 							output = jsonApps.toString();
@@ -207,16 +225,20 @@ public class Designer extends RapidHttpServlet {
 									// check the RapidDesign role is present in the users roles for this application
 									if (designPermission) {												
 										
-										// make a json object for this app
-										JSONObject jsonApp = new JSONObject();
-										// add the if
-										jsonApp.put("id", application.getId());
+										// make a json object for this version
+										JSONObject jsonVersion = new JSONObject();
+										// add the app id
+										jsonVersion.put("id", application.getId());
+										// add the version
+										jsonVersion.put("version", application.getVersion());
 										// add the title
-										jsonApp.put("title", application.getTitle());
+										jsonVersion.put("title", application.getTitle());
 										// add whether to show control Ids
-										jsonApp.put("showControlIds", application.getShowControlIds());
+										jsonVersion.put("showControlIds", application.getShowControlIds());
 										// add whether to show action Ids
-										jsonApp.put("showActionIds", application.getShowActionIds());
+										jsonVersion.put("showActionIds", application.getShowActionIds());
+										// add the web folder so we can update the iframe style sheets
+										jsonVersion.put("webFolder", application.getWebFolder());
 										
 										// get the database connections
 										List<DatabaseConnection> databaseConnections = application.getDatabaseConnections();
@@ -230,7 +252,7 @@ public class Designer extends RapidHttpServlet {
 												jsonDatabaseConnections.put(databaseConnection.getName());
 											}
 											// add the connections to the app 
-											jsonApp.put("databaseConnections", jsonDatabaseConnections);
+											jsonVersion.put("databaseConnections", jsonDatabaseConnections);
 										}
 										
 										// get the security roles
@@ -256,7 +278,7 @@ public class Designer extends RapidHttpServlet {
 												}
 											}							
 											// add the security roles to the app 
-											jsonApp.put("roles", jsonRoles);
+											jsonVersion.put("roles", jsonRoles);
 										}
 																
 										// get all the possible json actions
@@ -289,7 +311,7 @@ public class Designer extends RapidHttpServlet {
 											}
 										}						
 										// put the app actions we've just built into the app
-										jsonApp.put("actions", jsonAppActions);						
+										jsonVersion.put("actions", jsonAppActions);						
 										
 										// get all the possible json controls
 										JSONArray jsonControls = getJsonControls();
@@ -323,7 +345,7 @@ public class Designer extends RapidHttpServlet {
 											}
 										}						
 										// put the app controls we've just built into the app
-										jsonApp.put("controls", jsonAppControls);
+										jsonVersion.put("controls", jsonAppControls);
 										
 										
 										// create a json object for the images
@@ -341,7 +363,7 @@ public class Designer extends RapidHttpServlet {
 											jsonImages.put(imageFile.getName());
 										}
 										// put the images collection we've just built into the app
-										jsonApp.put("images", jsonImages);
+										jsonVersion.put("images", jsonImages);
 										
 										// create a json array for our style classes
 										JSONArray jsonStyleClasses = new JSONArray();
@@ -353,10 +375,10 @@ public class Designer extends RapidHttpServlet {
 											for (String styleClass : styleClasses) jsonStyleClasses.put(styleClass);
 										}
 										// put them into our application object
-										jsonApp.put("styleClasses", jsonStyleClasses);
+										jsonVersion.put("styleClasses", jsonStyleClasses);
 										
 										// put the app into the collection
-										jsonVersions.put(jsonApp);	
+										jsonVersions.put(jsonVersion);	
 										
 									} // design permission
 																			
@@ -456,7 +478,7 @@ public class Designer extends RapidHttpServlet {
 								sendJsonOutput(response, output);
 								
 								// override for now as logging seems really slow
-								output = "[json object - " + output.length() + " characters ]";
+								//output = "[json object - " + output.length() + " characters ]";
 								
 							}
 															
@@ -559,9 +581,7 @@ public class Designer extends RapidHttpServlet {
 																					
 			// log the response
 			getLogger().debug("Designer GET response : " + output);
-			
-			getLogger().debug("Logged!");
-																
+															
 		} catch (Exception ex) {
 			
 			getLogger().debug("Designer GET error : " + ex.getMessage(), ex); 

@@ -87,10 +87,14 @@ public class Application {
 	
 	// the version of this class's xml structure when marshalled (if we have any significant changes down the line we can upgrade the xml files before unmarshalling)	
 	public static final int XML_VERSION = 1;
+
 	// application version status in development
 	public static final int STATUS_DEVELOPMENT = 0;
 	// application version status live
 	public static final int STATUS_LIVE = 1;
+	
+	// the name of the folder in which to store backups
+	public static final String BACKUP_FOLDER = "_backups";
 	
 	// public static classes
 	
@@ -370,8 +374,16 @@ public class Application {
 		return servletContext.getRealPath("/WEB-INF/applications/" + _id + "/" + _version);		
 	}
 	
-	public String getReourcesFolder(ServletContext servletContext) {
-		return servletContext.getRealPath("/" + _id + "/" + _version);
+	public String getResourcesFolder(ServletContext servletContext) {
+		return servletContext.getRealPath("/applications/" + _id + "/" + _version);
+	}
+	
+	public String getWebFolder() {
+		return "applications/" + _id + "/" + _version;
+	}
+	
+	public String getBackupFolder(ServletContext servletContext) {
+		return servletContext.getRealPath("/WEB-INF/applications/" + _id + "/" + _version + "/" + BACKUP_FOLDER);
 	}
 		
 	public Page getStartPage() {
@@ -797,12 +809,12 @@ public class Application {
 	    	} // jsonAction check
 	    	
 	    	// add the application js file as a resource
-	    	_resources.add(new Resource(Resource.JAVASCRIPTFILE, "applications/" + _id +"/rapid.js"));
+	    	_resources.add(new Resource(Resource.JAVASCRIPTFILE, getWebFolder() + "/rapid.js"));
 			// add the application css file as a resource	    	
-	    	_resources.add(new Resource(Resource.CSSFILE, "applications/" + _id +"/rapid.css"));
+	    	_resources.add(new Resource(Resource.CSSFILE, getWebFolder() + "/rapid.css"));
 				    	
 	    	// create folders to write the rapid.js file
-			String applicationPath = servletContext.getRealPath("/applications/" + _id);		
+			String applicationPath = getResourcesFolder(servletContext);		
 			File applicationFolder = new File(applicationPath);		
 			if (!applicationFolder.exists()) applicationFolder.mkdirs();
 			
@@ -981,7 +993,7 @@ public class Application {
 		
 		List<Backup> backups = new ArrayList<Backup>();
 				
-		File backupFolder = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + Rapid.BACKUP_FOLDER + "/"));
+		File backupFolder = new File(getBackupFolder(rapidServlet.getServletContext()));
 		
 		if (backupFolder.exists()) {
 			
@@ -1040,7 +1052,7 @@ public class Application {
 			// check if we have too many
 			while (backups.size() > _applicationBackupsMaxSize) {
 				// get the top backup folder into a file object
-				backupFolder = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + Rapid.BACKUP_FOLDER + "/" + backups.get(0).getId()));
+				backupFolder = new File(getBackupFolder(rapidServlet.getServletContext()) + "/" + backups.get(0).getId());
 				// delete it
 				Files.deleteRecurring(backupFolder);
 				// remove it
@@ -1057,7 +1069,7 @@ public class Application {
 		
 		List<Backup> backups = new ArrayList<Backup>();
 				
-		File backupFolder = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + _id + "/" + Rapid.BACKUP_FOLDER + "/"));
+		File backupFolder = new File(getBackupFolder(rapidServlet.getServletContext()));
 		
 		if (backupFolder.exists()) {
 			
@@ -1163,10 +1175,10 @@ public class Application {
 		String dateString = formatter.format(new Date());
 		
 		// create a fileName for the archive
-		String fileName = _id + "_" + dateString + "_" + Files.safeName(userName);
+		String fileName = _id + _version + "_" + dateString + "_" + Files.safeName(userName);
 								
 		// create folders to backup the app
-		String backupPath = rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + Rapid.BACKUP_FOLDER + "/" + fileName);		
+		String backupPath = getBackupFolder(rapidServlet.getServletContext()) + "/" + fileName;		
 		File backupFolder = new File(backupPath);		
 		if (!backupFolder.exists()) backupFolder.mkdirs();
 
@@ -1175,7 +1187,7 @@ public class Application {
 		
 		// create a list of files to ignore
 		List<String> ignoreFiles = new ArrayList<String>();
-		ignoreFiles.add(com.rapid.server.Rapid.BACKUP_FOLDER);
+		ignoreFiles.add(BACKUP_FOLDER);
 	 	
 	 	// copy the existing files and folders to the backup folder    
 	    Files.copyFolder(appFolder, backupFolder, ignoreFiles);
@@ -1203,7 +1215,7 @@ public class Application {
 		
 		// create a list of files to ignore
 		List<String> ignoreFiles = new ArrayList<String>();
-		ignoreFiles.add(com.rapid.server.Rapid.BACKUP_FOLDER);
+		ignoreFiles.add(BACKUP_FOLDER);
 				
 		// copy the application folders
 		Files.copyFolder(sourceFolder, destFolder, ignoreFiles);
@@ -1396,7 +1408,7 @@ public class Application {
 			// create a list of files to ignore
 			ArrayList<String> ignoreFiles = new ArrayList<String>();
 			// don't include any files or folders from the back in the .zip
-			ignoreFiles.add(Rapid.BACKUP_FOLDER);
+			ignoreFiles.add(BACKUP_FOLDER);
 			
 			// zip the sources into the file
 			zipFile.zipFiles(zipSources, ignoreFiles);
@@ -1502,13 +1514,5 @@ public class Application {
 		return application; 		
 		
 	}
-	
-	// delete an application backup
-	public static void deleteBackup(RapidHttpServlet rapidServlet, String backupId) {
-		// get the backup folder into a file object
-		File backup = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + Rapid.BACKUP_FOLDER + "/" + backupId));
-		// delete
-		Files.deleteRecurring(backup);
-	}
-	
+		
 }
