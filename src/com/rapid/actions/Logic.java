@@ -37,7 +37,7 @@ import com.rapid.core.Application;
 import com.rapid.core.Control;
 import com.rapid.core.Page;
 import com.rapid.server.RapidHttpServlet;
-import com.rapid.server.RapidHttpServlet.RapidRequest;
+import com.rapid.server.RapidRequest;
 
 public class Logic extends Action {
 	

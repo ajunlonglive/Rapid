@@ -71,7 +71,7 @@ import com.rapid.security.RapidSecurityAdapter;
 import com.rapid.security.SecurityAdapater;
 import com.rapid.server.Rapid;
 import com.rapid.server.RapidHttpServlet;
-import com.rapid.server.RapidHttpServlet.RapidRequest;
+import com.rapid.server.RapidRequest;
 import com.rapid.soa.Webservice;
 import com.rapid.utils.Comparators;
 import com.rapid.utils.Files;

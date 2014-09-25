@@ -48,7 +48,7 @@ import com.rapid.core.Page;
 import com.rapid.core.Parameter;
 import com.rapid.server.ActionCache;
 import com.rapid.server.RapidHttpServlet;
-import com.rapid.server.RapidHttpServlet.RapidRequest;
+import com.rapid.server.RapidRequest;
 import com.rapid.soa.SOAData;
 import com.rapid.soa.SOADataWriter;
 import com.rapid.soa.SOADataReader.SOAXMLReader;

@@ -4,7 +4,7 @@
 <%@ page import="org.apache.log4j.Logger" %>
 <%@ page import="com.rapid.core.*" %>
 <%@ page import="com.rapid.server.Rapid" %>
-<%@ page import="com.rapid.server.RapidHttpServlet.RapidRequest" %>
+<%@ page import="com.rapid.server.RapidRequest" %>
 <%@ page import="com.rapid.server.filter.*" %>
 <%
 

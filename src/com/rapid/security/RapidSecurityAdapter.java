@@ -39,7 +39,7 @@ import org.apache.log4j.Logger;
 
 import com.rapid.core.Application;
 import com.rapid.server.Rapid;
-import com.rapid.server.RapidHttpServlet.RapidRequest;
+import com.rapid.server.RapidRequest;
 import com.rapid.utils.Files;
 
 public class RapidSecurityAdapter extends SecurityAdapater {

@@ -47,8 +47,9 @@ import com.rapid.data.DataFactory;
 import com.rapid.data.DataFactory.Parameters;
 import com.rapid.server.ActionCache;
 import com.rapid.server.RapidHttpServlet;
+import com.rapid.server.RapidRequest;
 import com.rapid.server.SOA;
-import com.rapid.server.RapidHttpServlet.RapidRequest;
+
 
 public class Database extends Action {
 	

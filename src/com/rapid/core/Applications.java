@@ -40,6 +40,27 @@ import com.rapid.utils.Comparators;
 public class Applications {
 	
 	public static class Versions extends HashMap<String, Application> {
+
+		private static final long serialVersionUID = 5010L;
+		
+		public List<Application> sort() {
+			// create the list we're going to return
+			List<Application> versions = new ArrayList<Application>();
+			// loop the versions
+			for (String version : keySet()) {
+				// add version to collection
+				versions.add(get(version));
+			}
+			// sort the collection
+			Collections.sort(versions, new Comparator<Date>() {
+				@Override
+				public int compare(Date v1, Date v2) {					
+					return (int) (v1.getTime() - v2.getTime());
+				}				
+			});
+			// return the list
+			return versions;			
+		}
 				
 	}
 
@@ -54,15 +75,21 @@ public class Applications {
 	// methods
 	
 	private Versions getVersions(String id, boolean createIfNull) {
+		// return null if id is null
+		if (id == null) return null;
+		// get the versions
 		Versions versions = _applications.get(id);
+		// create an entry if required 
 		if (createIfNull && versions == null) {
 			versions = new Versions();
 			_applications.put(id, versions);
 		}
+		// return
 		return versions;
 	}
 	
 	public Versions getVersions(String id) {
+		// get the versions without creating an entry
 		return getVersions(id, false);
 	}
 	
@@ -96,17 +123,7 @@ public class Applications {
 	public void remove(Application application) {
 		remove(application.getId(), application.getVersion());
 	}
-	
-	// fetch an application with a known version
-	public Application get(String id, int version) {
-		// get the versions of this app
-		Versions versions = getVersions(id);
-		// return null if we don't have any
-		if (versions == null) return null;
-		// return version
-		return versions.get(version);
-	}
-	
+		
 	// fetch the highest version for an id by status
 	public Application getLatestVersion(String id, int status) {
 		// assume there are no applications
@@ -133,7 +150,7 @@ public class Applications {
 		return application;
 	}
 	
-	// fetch the highest version for an id
+	// fetch the highest version for an id regardless of status
 	public Application getLatestVersion(String id) {
 		return getLatestVersion(id, -1);
 	}
@@ -172,6 +189,24 @@ public class Applications {
 		if (application == null) application = getEarliestVersion(id);
 		// return our highest application
 		return application;
+	}
+	
+	// fetch an application with a known version, resorting to highest live if not version provided
+	public Application get(String id, String version) {
+		// return null if not app id
+		if (id == null) return null;		
+		// get the versions of this app
+		Versions versions = getVersions(id);
+		// return null if we don't have any
+		if (versions == null) return null;
+		// check we were given a version
+		if (version == null) {
+			// if not return highest live version
+			return get(id);
+		} else {
+			// return version
+			return versions.get(version);
+		}		
 	}
 	
 	// get the highest live version of each application

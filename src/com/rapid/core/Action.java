@@ -35,7 +35,7 @@ import org.json.JSONObject;
 import org.w3c.dom.Node;
 
 import com.rapid.server.RapidHttpServlet;
-import com.rapid.server.RapidHttpServlet.RapidRequest;
+import com.rapid.server.RapidRequest;
 
 @XmlRootElement
 @XmlType(namespace="http://rapid-is.co.uk/core")

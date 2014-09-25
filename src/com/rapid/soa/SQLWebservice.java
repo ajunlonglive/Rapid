@@ -28,14 +28,13 @@ package com.rapid.soa;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
-import java.util.List;
 
 import com.rapid.core.Application;
 import com.rapid.core.Application.DatabaseConnection;
 import com.rapid.data.ConnectionAdapter;
 import com.rapid.data.DataFactory;
 import com.rapid.data.DataFactory.Parameters;
-import com.rapid.server.RapidHttpServlet.RapidRequest;
+import com.rapid.server.RapidRequest;
 import com.rapid.soa.SOASchema.SOASchemaElement;
 
 public class SQLWebservice extends Webservice {
