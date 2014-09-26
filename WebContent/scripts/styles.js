@@ -858,12 +858,12 @@ function showStyles(control) {
 				// add the selected class to the list
 				classes.push(newClass);
 				// sort the array
-				classes.sort();
-				// rebuild the html
-				rebuildHtml(ev.data.control);
+				classes.sort();				
 				// rebuild the styles
 				showStyles(ev.data.control);
 			}
+			// rebuild the html
+			rebuildHtml(ev.data.control);
 		}));
 						
 	} // end of styling check

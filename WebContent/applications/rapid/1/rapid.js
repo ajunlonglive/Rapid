@@ -169,48 +169,41 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 	switch (actionType) {
 		case "GETAPPS" :		
 			data = { actionType: actionType, appId: "rapid" };	
-			callback = function(data) {				
-				setData_dataStore('rapid_P0_C210', data, null, {storageType:"S", id:"rapidrapid_P0_C210"});
-				// retain the userName in our global variable
-				if (data && data.userName) _userName = data.userName;
-				
+			callback = function(data) {			
+				setData_dataStore('rapid_P0_C210', data, null, {storageType:"S"});									
 			};
 		break;
-		case "GETAPP" :		
+		case "GETVERSIONS" :		
 			data = { actionType: actionType, appId: $("#rapid_P0_C43").val() };	
 			callback = function(data) {
-				setData_dataStore('rapid_P0_C127', data, "application", {storageType:"S", id:"rapidrapid_P0_C127"});
+				setData_dataStore('rapid_P0_C1063_', data, "versions", {storageType:"S"});
+			};
+		break;
+		case "GETVERSION" :		
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val() };	
+			callback = function(data) {
+				setData_dataStore('rapid_P0_C1072_', data, "version", {storageType:"S"});
 			};
 		break;	
 		case "GETDBCONN" :		
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), index: $("#rapid_P0_C311").find("tr.rowSelect").index()-1 };	
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), index: $("#rapid_P0_C311").find("tr.rowSelect").index()-1 };	
 			callback = function(data) {
-				setData_dataStore('rapid_P0_C361', data, "databaseConnection", {storageType:"S", id:"rapidrapid_P0_C361"});
+				setData_dataStore('rapid_P0_C361', data, "databaseConnection", {storageType:"S"});
 			};
 		break;
 		case "GETSOA" :		
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), index: $("#rapid_P0_C483_").find("tr.rowSelect").index()-1 };	
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), index: $("#rapid_P0_C483_").find("tr.rowSelect").index()-1 };	
 			callback = function(data) {
-				setData_dataStore('rapid_P0_C528_', data, "webservice", {storageType:"S", id:"rapidrapid_P0_C528_"});
+				setData_dataStore('rapid_P0_C528_', data, "webservice", {storageType:"S"});
 				loadSOA(data.webservice);
 			};
 		break;
 		case "GETSEC" :		
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), securityAdapter: $("#rapid_P0_C81").val() };	
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), securityAdapter: $("#rapid_P0_C81").val() };	
 			callback = function(data) {
-				setData_dataStore('rapid_P0_C469_', data, "security", {storageType:"S", id:"rapidrapid_P0_C469_"});
+				setData_dataStore('rapid_P0_C469_', data, "security", {storageType:"S"});
 			};
-		break;
-		case "GETUSER" :	
-			if (rapidApp) {
-				data = { actionType: actionType, appId: "rapid", userName: getData_grid(ev, "rapid_P0_C823_", "name", {columns:[{field:"name"}]}) };
-			} else {
-				data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: getData_grid(ev, "rapid_P0_C216", "userName", {columns:[{field:"userName"}]}) };	
-			}
-			callback = function(data) {
-				setData_dataStore('rapid_P0_C243', data, "user", {storageType:"S", id:"rapidrapid_P0_C243"});
-			};
-		break;				
+		break;					
 		case "GETUSERS" :		
 			data = { actionType: actionType, appId: "rapid" };	
 			callback = function(data) {			    				
@@ -234,10 +227,21 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 				});
 			};
 		break;
+		case "GETUSER" :	
+			if (rapidApp) {
+				data = { actionType: actionType, appId: "rapid", userName: getData_grid(ev, "rapid_P0_C823_", "name", {columns:[{field:"name"}]}) };
+			} else {
+				data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), userName: getData_grid(ev, "rapid_P0_C216", "userName", {columns:[{field:"userName"}]}) };	
+			}
+			callback = function(data) {
+				setData_dataStore('rapid_P0_C243', data, "user", {storageType:"S"});
+			};
+		break;	
 		case "SAVEAPP" :		
 			data = { 
 				actionType: actionType, 
 				appId: $("#rapid_P0_C43").val(), 
+				version: $("#rapid_P0_C1044_").val(),
 				name: $("#rapid_P0_C392_").val(),
 				title: $("#rapid_P0_C394_").val(),
 				description: $("#rapid_P0_C393_").val(),
@@ -247,12 +251,13 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 			};	
 		break;
 		case "SAVESTYLES" :		
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), styles: $("#rapid_P0_C116").val() };	
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), styles: $("#rapid_P0_C116").val() };	
 		break;		
 		case "SAVEDBCONN" :		
 			data = { 
 				actionType: actionType, 
 				appId: $("#rapid_P0_C43").val(), 
+				version: $("#rapid_P0_C1044_").val(),
 				index: $("#rapid_P0_C311").find("tr.rowSelect").index()-1,
 				name: $("#rapid_P0_C360").val(),
 				driver: $("#rapid_P0_C338").val(),
@@ -269,6 +274,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 			data = { 
 				actionType: actionType, 
 				appId: $("#rapid_P0_C43").val(), 
+				version: $("#rapid_P0_C1044_").val(),
 				index: $("#rapid_P0_C483_").find("tr.rowSelect").index()-1,
 				name: $("#rapid_P0_C496_").val(), 
 				databaseConnectionIndex: $("#rapid_P0_C536_")[0].selectedIndex,
@@ -280,6 +286,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 			data = { 
 				actionType: actionType, 
 				appId: $("#rapid_P0_C43").val(), 
+				version: $("#rapid_P0_C1044_").val(),
 				index: $("#rapid_P0_C483_").find("tr.rowSelect").index()-1,
 				name: $("#rapid_P0_C944_").val(), 
 				className: $("#rapid_P0_C989_").val(),
@@ -290,6 +297,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 			data = { 
 				actionType: actionType, 
 				appId: $("#rapid_P0_C43").val(), 
+				version: $("#rapid_P0_C1044_").val(),
 				securityAdapter: $("#rapid_P0_C81").val()
 			};	
 		break;
@@ -298,17 +306,17 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 			$("#rapid_P0_C288").find("input:checked").each( function(){
 				actionTypes.push($(this).closest("tr").children().first().html());
 			});		
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), actionTypes: actionTypes };	
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), actionTypes: actionTypes };	
 		break;
 		case "SAVECONTROLS" :	
 			var controlTypes = [];
 			$("#rapid_P0_C289").find("input:checked").each( function(){
 				controlTypes.push($(this).closest("tr").children().first().html());
 			});		
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), controlTypes: controlTypes };	
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), controlTypes: controlTypes };	
 		break;
 		case "REBUILDPAGES" :		
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val() };	
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val() };	
 		break;
 		case "NEWAPP" :
 			data = {
@@ -335,6 +343,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 			data = {
 				actionType: actionType,
 				appId: $("#rapid_P0_C43").val(),
+				version: $("#rapid_P0_C1044_").val(),
 				name: $("#rapid_P8_C7_").val(),
 				title: $("#rapid_P8_C12_").val(),
 				description: $("#rapid_P8_C17_").val()
@@ -369,6 +378,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 			data = { 
 				actionType: actionType, 
 				appId: $("#rapid_P0_C43").val(), 
+				version: $("#rapid_P0_C1044_").val(),
 				name: $("#rapid_P7_C7").val(),
 				driver: $("#rapid_P7_C37").val(),
 				connectionString: $("#rapid_P7_C44").val(),
@@ -381,7 +391,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 			};	
 		break;
 		case "DELDBCONN" :		
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), index: $(ev.target).parent().parent().index()-1 };
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), index: $(ev.target).parent().parent().index()-1 };
 			callback = function() {
 				Event_change_rapid_P0_C43(ev);
 			};	
@@ -390,6 +400,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 			data = { 
 				actionType: actionType, 
 				appId: $("#rapid_P0_C43").val(), 
+				version: $("#rapid_P0_C1044_").val(),
 				name: $("#rapid_P10_C8_").val(),
 				type: $("#rapid_P10_C23_").val()
 			};	
@@ -398,13 +409,13 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 			};	
 		break;
 		case "DELSOA" :		
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), index: $(ev.target).parent().parent().index()-1 };
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), index: $(ev.target).parent().parent().index()-1 };
 			callback = function() {
 				Event_change_rapid_P0_C43(ev);
 			};	
 		break;
 		case "NEWROLE" :		
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), role: $("#rapid_P5_C7").val(), description: $("#rapid_P5_C41_").val() };
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), role: $("#rapid_P5_C7").val(), description: $("#rapid_P5_C41_").val() };
 			callback = function() {
 				// fake an adapter change
 				$("#rapid_P0_C81").change();
@@ -413,7 +424,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 			};								
 		break;
 		case "DELROLE" :		
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), role: $(ev.target).closest("tr").find("td").first().html() };
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), role: $(ev.target).closest("tr").find("td").first().html() };
 			callback = function() {
 				// fake an adapter change
 				$("#rapid_P0_C81").change(); 
@@ -422,7 +433,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 			};	
 		break;
 		case "SAVEROLE" :		
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), role: $("#rapid_P0_C222").find("tr.rowSelect").children().first().html(), description: $("#rapid_P0_C735_").val() };
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), role: $("#rapid_P0_C222").find("tr.rowSelect").children().first().html(), description: $("#rapid_P0_C735_").val() };
 			callback = function() {
 				// fake an adapter change
 				$("#rapid_P0_C81").change(); 
@@ -434,7 +445,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 			if (rapidApp) {
 				data = { actionType: actionType, appId: "rapid", userName: $("#rapid_P16_C8_").val(), description: $("#rapid_P16_C13_").val() , password: $("#rapid_P16_C17_").val(), useAdmin: $("rapid_P16_C38_").prop("checked"), useDesign: $("rapid_P16_C39_").prop("checked")};
 			} else {	
-				data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: $("#rapid_P6_C7").val(), description: $("#rapid_P6_C42_").val() , password: $("#rapid_P6_C18").val() };
+				data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), userName: $("#rapid_P6_C7").val(), description: $("#rapid_P6_C42_").val() , password: $("#rapid_P6_C18").val() };
 				callback = function() {
 					Event_change_rapid_P0_C43(ev);
 				};
@@ -450,7 +461,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 					Action_rapid(ev, 'rapid', 'P0', null, 'P0_A901_', 'GETUSERS', true);
 				};
 			} else {
-				data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: $(ev.target).closest("tr").find("td").first().html() };
+				data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), userName: $(ev.target).closest("tr").find("td").first().html() };
 				callback = function() {
 					// fake an adapter change
 					$("#rapid_P0_C81").change(); 
@@ -460,20 +471,20 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 			} 											
 		break;
 		case "NEWUSERROLE" : 
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: $("#rapid_P0_C216").find("tr.rowSelect").children().first().html(), role: $("#rapid_P0_C254").val() };
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), userName: $("#rapid_P0_C216").find("tr.rowSelect").children().first().html(), role: $("#rapid_P0_C254").val() };
 			callback = function() {
 				Event_click_rapid_P0_C216({target: $("#rapid_P0_C216").find("tr.rowSelect").children().first()[0] });
 			};																
 		break;
 		case "DELUSERROLE" :	
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: $("#rapid_P0_C216").find("tr.rowSelect").children().first().html(), role: $(ev.target).parent().prev().html() };
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), userName: $("#rapid_P0_C216").find("tr.rowSelect").children().first().html(), role: $(ev.target).parent().prev().html() };
 			callback = function() {
 				Event_click_rapid_P0_C216({target: $("#rapid_P0_C216").find("tr.rowSelect").children().first()[0] });
 			};																
 		break;
 		case "SAVEUSER" :	
 			if (rapidApp) {
-				data = { actionType: actionType, appId: "rapid", userName: $("#rapid_P0_C823_").find("tr.rowSelect").children().first().html(), description: $("#rapid_P0_C838_").val(), password: $("#rapid_P0_C843_").val(), useAdmin: $("#rapid_P0_C879_").prop('checked'), useDesign: $("#rapid_P0_C880_").prop('checked') }; 
+				data = { actionType: actionType, appId: "rapid", version: $("#rapid_P0_C1044_").val(), userName: $("#rapid_P0_C823_").find("tr.rowSelect").children().first().html(), description: $("#rapid_P0_C838_").val(), password: $("#rapid_P0_C843_").val(), useAdmin: $("#rapid_P0_C879_").prop('checked'), useDesign: $("#rapid_P0_C880_").prop('checked') }; 
 			} else {
 				data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: $("#rapid_P0_C216").find("tr.rowSelect").children().first().html(), description: $("#rapid_P0_C717_").val(), password: $("#rapid_P0_C231").val() };
 				callback = function() {
@@ -488,6 +499,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 			data = { 
 				actionType: actionType, 
 				appId: $("#rapid_P0_C43").val(), 
+				version: $("#rapid_P0_C1044_").val(),
 				index: $("#rapid_P0_C311").find("tr.rowSelect").index()-1,
 				driver: $("#rapid_P0_C338").val(),
 				connectionString: $("#rapid_P0_C374").val(),
@@ -502,6 +514,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 		case "DELAPPBACKUP" : case "RESTOREAPPBACKUP" : 
 			data = { actionType: actionType, 
 				appId: $("#rapid_P0_C43").val(), 
+				version: $("#rapid_P0_C1044_").val(),
 				backupId: $("#rapid_P0_C663_").find("tr.rowSelect").children("td").first().text() 
 			};	
 			callback = function(data) {
@@ -513,6 +526,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 		case "DELPAGEBACKUP" : case "RESTOREPAGEBACKUP" :	
 			data = { actionType: actionType, 
 				appId: $("#rapid_P0_C43").val(), 
+				version: $("#rapid_P0_C1044_").val(),
 				backupId: $("#rapid_P0_C678_").find("tr.rowSelect").children("td").first().text()  
 			};	
 			callback = function(data) {
@@ -524,12 +538,14 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 		case "SAVEAPPBACKUPSIZE" :			
 			data = { actionType: actionType, 
 				appId: $("#rapid_P0_C43").val(), 
+				version: $("#rapid_P0_C1044_").val(),
 				backupMaxSize: $("#rapid_P0_C685_").val()  
 			};
 		break;
 		case "SAVEPAGEBACKUPSIZE" :
 			data = { actionType: actionType, 
 				appId: $("#rapid_P0_C43").val(), 
+				version: $("#rapid_P0_C1044_").val(),
 				backupMaxSize: $("#rapid_P0_C686_").val()  
 			};
 		break;
@@ -808,7 +824,7 @@ function setData_dataStore(id, data, field, details) {
   	if (details.id) id = details.id;
   	if (data != null && data !== undefined) {
   		data = makeDataObject(data, field);
-  		if (dataStore[id]) data = mergeDataObjects(data, JSON.parse(dataStore[id]));		
+  		if (details.merge && dataStore[id]) data = mergeDataObjects(data, JSON.parse(dataStore[id]));		
   		dataStore[id] = JSON.stringify(data);
   	} else {
   		dataStore[id] = null;
@@ -899,7 +915,7 @@ function setData_grid(id, data, field, details) {
   			var columnMap = [];
   			for (var i in details.columns) {				
   				for (var j in data.fields) {
-  					if (details.columns[i].field.toLowerCase() == data.fields[j].toLowerCase()) {
+  					if (details.columns[i].field && details.columns[i].field.toLowerCase() == data.fields[j].toLowerCase()) {
   						columnMap.push(j);
   						break;
   					}

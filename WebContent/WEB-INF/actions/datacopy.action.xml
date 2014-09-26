@@ -58,9 +58,10 @@ return "<option value=''>None</option>" + getInputOptions(this.dataSource);
 	            <key>dataDestinations</key>
 	            <name>Destinations</name>
 	            <changeValueJavaScript>dataDestinations</changeValueJavaScript> 
-	        </property>  
-	          
-	    </properties>	    
+	        </property>
+	        	        	          
+	    </properties>
+	    	    
 	    <actionJavaScript>
 	        <![CDATA[ 
 function Action_datacopy(data, outputs) {
@@ -72,6 +73,6 @@ function Action_datacopy(data, outputs) {
 	}
 }	        ]]>
 	    </actionJavaScript>
-	       
+	    
     </action>     
 </actions>

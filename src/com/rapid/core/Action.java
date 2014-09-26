@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2014 - Gareth Edwards / Rapid Information Systems
+ Copyright (C) 2014 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -60,8 +60,11 @@ public abstract class Action {
 	public HashMap<String,String> getProperties() { return _properties; }
 	public void setProperties(HashMap<String,String> properties) { _properties = properties; }
 				
-	// these are some helper methods for common properties
-	public void addProperty(String key, String value) {	_properties.put(key, value); }
+	// these are some helper methods for common properties, ignoring some common ones that will always have their own getters/setters
+	public void addProperty(String key, String value) {	
+		if (!"childActions".equals(key) && !"successActions".equals(key) && !"errorActions".equals(key)) 
+			_properties.put(key, value); 
+	}
 	// retrieves a specified property
 	public String getProperty(String key) { return _properties.get(key); }
 	// retrieves the action type

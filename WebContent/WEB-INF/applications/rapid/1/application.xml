@@ -26,18 +26,40 @@
     <controlTypes>tabGroup</controlTypes>
     <controlTypes>table</controlTypes>
     <controlTypes>text</controlTypes>
+    <createdDate>2014-09-26T19:12:07.404+01:00</createdDate>
     <description>This is the Rapid application and contains all of the pages which the designer and other screens use as dialogues</description>
     <id>rapid</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-07-09T15:11:54.243+01:00</modifiedDate>
+    <modifiedDate>2014-09-26T19:32:50.486+01:00</modifiedDate>
     <name>Rapid</name>
     <pageBackupsMaxSize>5</pageBackupsMaxSize>
     <securityAdapterType>rapid</securityAdapterType>
     <showActionIds>true</showActionIds>
     <showControlIds>true</showControlIds>
     <startPageId>P0</startPageId>
+    <status>0</status>
     <styles>/* sets font in all pages to arial */
 body { font-family: 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif; font-size: 14px; margin:0; }
+
+.glossyTitle tr:first-child td {
+  font-weight: bold;
+  background-color: red;
+  color: white;
+  padding: 5px;
+  text-align: center;
+  background: red url(highlight_red_1x44.png) 50% 50% repeat-x;
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+
+.normalTitle tr:first-child td {
+  font-weight: normal;
+  background-color: transparent;
+  color: initial;
+  padding: 0;
+  text-align: center;
+  background: initial;
+  text-shadow: none;
+}
 
 /* this makes all the dialogues look a litter better */
 tr td { vertical-align: middle; }
@@ -68,5 +90,6 @@ textarea {
   box-sizing: order-box;
 } </styles>
     <title>Rapid Admin</title>
+    <version>1</version>
     <XMLVersion>1</XMLVersion>
 </application>

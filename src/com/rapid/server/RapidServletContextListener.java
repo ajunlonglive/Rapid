@@ -692,20 +692,23 @@ public class RapidServletContextListener implements ServletContextListener {
 								if (versionCreated) {
 									// make a dir for the pages
 									File pageDir = new File(versionFolder + "/pages");
-									// loop the pages files
-									for (File pageFile : pageDir.listFiles()) {
-										// read the contents of the file
-										String pageContent = Strings.getString(pageFile);
-										// replace all old file references
-										pageContent = pageContent.replace("/" + application.getId() + "/", "/" + application.getId() + "/" + application.getVersion() + "/");
-										// create a file writer
-										FileWriter fs = new FileWriter(pageFile);
-										// save the changes
-										fs.write(pageContent);
-										// close the writer
-										fs.close();
-										_logger.info(pageFile + " updated with new references");
-									}									
+									// check it exists
+									if (pageDir.exists()) {
+										// loop the pages files
+										for (File pageFile : pageDir.listFiles()) {
+											// read the contents of the file
+											String pageContent = Strings.getString(pageFile);
+											// replace all old file references
+											pageContent = pageContent.replace("/" + application.getId() + "/", "/" + application.getId() + "/" + application.getVersion() + "/");
+											// create a file writer
+											FileWriter fs = new FileWriter(pageFile);
+											// save the changes
+											fs.write(pageContent);
+											// close the writer
+											fs.close();
+											_logger.info(pageFile + " updated with new references");
+										}
+									}																		
 									// make a dir for it's web resources
 									File webDir = new File(application.getWebFolder(servletContext));
 									webDir.mkdir();
