@@ -370,14 +370,17 @@ public class Application {
 		
 	// instance methods
 	
+	// this is where the application configuration will be stored
 	public String getConfigFolder(ServletContext servletContext) {
 		return servletContext.getRealPath("/WEB-INF/applications/" + _id + "/" + _version);		
 	}
 	
-	public String getResourcesFolder(ServletContext servletContext) {
+	// this is the web folder with the full system path
+	public String getWebFolder(ServletContext servletContext) {
 		return servletContext.getRealPath("/applications/" + _id + "/" + _version);
 	}
 	
+	// this is the web folder as seen externally
 	public String getWebFolder() {
 		return "applications/" + _id + "/" + _version;
 	}
@@ -814,7 +817,7 @@ public class Application {
 	    	_resources.add(new Resource(Resource.CSSFILE, getWebFolder() + "/rapid.css"));
 				    	
 	    	// create folders to write the rapid.js file
-			String applicationPath = getResourcesFolder(servletContext);		
+			String applicationPath = getWebFolder(servletContext);		
 			File applicationFolder = new File(applicationPath);		
 			if (!applicationFolder.exists()) applicationFolder.mkdirs();
 			

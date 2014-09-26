@@ -28,6 +28,7 @@ package com.rapid.server;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -75,6 +76,7 @@ import com.rapid.core.Application.DatabaseConnection;
 import com.rapid.core.Applications;
 import com.rapid.data.ConnectionAdapter;
 import com.rapid.utils.Files;
+import com.rapid.utils.Strings;
 import com.rapid.utils.ZipFile;
 
 public class RapidServletContextListener implements ServletContextListener {
@@ -654,15 +656,17 @@ public class RapidServletContextListener implements ServletContextListener {
 						_logger.info(versionFolder + " created");
 						// copy in all files and pages folder
 						for (File file : applicationFolders) {
-							if (!file.isDirectory() || "pages".equals(file.getName())) {
+							// copy all files and the pages folder
+							if (!file.isDirectory() || (file.isDirectory() && "pages".equals(file.getName()))) {
 								// make a desintation file
 								File destFile = new File(versionFolder + "/" + file.getName());
 								// this is not a version folder itself, copy it to the new version folder
 								Files.copyFolder(file, destFile);
 								// delete the file or folder
 								Files.deleteRecurring(file);
+								// log
 								_logger.info(file + " moved to " + destFile);
-							}
+							}							
 							
 						}
 						// record that we created a version
@@ -686,24 +690,42 @@ public class RapidServletContextListener implements ServletContextListener {
 								applications.put(application);
 								// if we had to create a version for it
 								if (versionCreated) {
-									// make a dir for it's resources
-									File resourcesDir = new File(application.getResourcesFolder(servletContext));
-									resourcesDir.mkdir();
-									_logger.info(resourcesDir + " created");
+									// make a dir for the pages
+									File pageDir = new File(versionFolder + "/pages");
+									// loop the pages files
+									for (File pageFile : pageDir.listFiles()) {
+										// read the contents of the file
+										String pageContent = Strings.getString(pageFile);
+										// replace all old file references
+										pageContent = pageContent.replace("/" + application.getId() + "/", "/" + application.getId() + "/" + application.getVersion() + "/");
+										// create a file writer
+										FileWriter fs = new FileWriter(pageFile);
+										// save the changes
+										fs.write(pageContent);
+										// close the writer
+										fs.close();
+										_logger.info(pageFile + " updated with new references");
+									}									
+									// make a dir for it's web resources
+									File webDir = new File(application.getWebFolder(servletContext));
+									webDir.mkdir();
+									_logger.info(webDir + " created");
 									// loop all the files in the parent
-									for (File file : resourcesDir.getParentFile().listFiles()) {
+									for (File file : webDir.getParentFile().listFiles()) {
 										// check not dir
 										if (!file.isDirectory()) {
-											// copy this file into the resources
-											File destFile = new File(resourcesDir + "/" + file.getName());
-											// this is not a version folder itself, copy it to the new version folder
+											// create a destination file for the new location
+											File destFile = new File(webDir + "/" + file.getName());
+											// copy it to the new destination
 											Files.copyFile(file, destFile);
 											// delete the file or folder
 											file.delete();
 											_logger.info(file + " moved to " + destFile);
 										}
+										
 									}
-									
+									// reload the application with the new references
+									application = Application.load(servletContext, applicationFile);									
 								}
 								
 							}
