@@ -619,7 +619,7 @@ public class Page {
 		_cachedStartHtml = null;
 		
 		// set the fos to the css file
-		fos = new FileOutputStream(application.getResourcesFolder(rapidServlet.getServletContext()) + "/" + Files.safeName(getName()) + ".css");
+		fos = new FileOutputStream(application.getWebFolder(rapidServlet.getServletContext()) + "/" + Files.safeName(getName()) + ".css");
 		// get a print stream
 		PrintStream ps = new PrintStream(fos);		
 		ps.print("\n/* This file is auto-generated on page save */\n\n");
@@ -652,7 +652,7 @@ public class Page {
 	 	}
 	 	
 	 	// get the resources path
-	 	String resourcesPath = application.getResourcesFolder(rapidServlet.getServletContext()) + application.getId();		
+	 	String resourcesPath = application.getWebFolder(rapidServlet.getServletContext()) + application.getId();		
 	 	
 	 	// create a file object for deleting the page css file
 	 	File delCssFile = new File(resourcesPath + "/" + Files.safeName(getName()) + ".css");
