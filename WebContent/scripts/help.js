@@ -26,7 +26,8 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 // a global array to hold the help text
 var _helpText = [];
 // various help messages - these could be defined elsewhere for multiple language support
-_helpText["helpApplication"] = "These are the application you have permission to design. They are sorted by name and description. To create a new application go to Rapid Admin by clicking the \"administration\" button above.";
+_helpText["helpApplication"] = "These are the applications you have permission to design. They are sorted by name and description. To create or manage applications go to Rapid Admin by clicking the \"administration\" button above.";
+_helpText["helpVersion"] = "These are the version of the application you have permission to design. They are sorted by creation date. To create or manange application versions go to Rapid Admin by clicking the \"administration\" button above.";
 _helpText["helpPage"] = "The pages in the application sorted by name and title. Click the \"properties\" button to edit the page properties. To create a new page click \"new\", \"save\" to save, \"view\" will leave the designer and take you to the working page. Undo or redo any changes with \"undo\" and \"redo\".";
 _helpText["helpControls"] = "To add controls drag them from the panel below to the position you want in your page. You will see different left or right arrows for placing the control to the left or right of an existing control, or a down arrow to add the new control within an existing control. To move controls already in the page select them and drag to the new position. Not all controls can be moved so you might need to select their parent control. Click on the controls header to hide the controls and show the page controls. Use Rapid Admin / Actions and controls to add or remove from the list.";
 _helpText["helpMap"] = "A map of all controls on the page. Click on the page controls header to show. Controls can be selected from the page controls list.";
@@ -69,8 +70,10 @@ function addHelp(id, property, right) {
 $(document).ready( function() {
 	
 	addHelp("helpApplication");
+	addHelp("helpVersion");
 	addHelp("helpPage");
 	addHelp("helpControls");
 	addHelp("helpMap");
 	addHelp("helpPropertiesPanel", null, true);	
+	
 });	

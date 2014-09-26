@@ -172,10 +172,10 @@ public class Designer extends RapidHttpServlet {
 									Application application = getApplications().get(id, version);
 
 									// check the users permission to design this application
-									boolean designPermission = application.getSecurity().checkUserRole(rapidRequest, userName, Rapid.DESIGN_ROLE);
+									boolean designPermission = application.getSecurity().checkUserRole(rapidRequest, rapidRequest.getUserName(), Rapid.DESIGN_ROLE);
 									
 									// if app is rapid do a further check
-									if (designPermission && "rapid".equals(application.getId())) designPermission = application.getSecurity().checkUserRole(rapidRequest, userName, Rapid.SUPER_ROLE);
+									if (designPermission && "rapid".equals(application.getId())) designPermission = application.getSecurity().checkUserRole(rapidRequest, rapidRequest.getUserName(), Rapid.SUPER_ROLE);
 									
 									// if we got permssion - add this application to the list 
 									if (designPermission) {
@@ -201,7 +201,7 @@ public class Designer extends RapidHttpServlet {
 							
 						} else if ("getVersions".equals(actionName)) {
 							
-							// create a json array for holding our versions
+							// create a json array for holding our apps
 							JSONArray jsonVersions = new JSONArray();
 							
 							// get the app id
@@ -217,10 +217,10 @@ public class Designer extends RapidHttpServlet {
 								for (Application application : versions.sort()) {
 																									
 									// check the users permission to design this application
-									boolean designPermission = application.getSecurity().checkUserRole(rapidRequest, userName, Rapid.DESIGN_ROLE);
+									boolean designPermission = application.getSecurity().checkUserRole(rapidRequest, rapidRequest.getUserName(), Rapid.DESIGN_ROLE);
 									
 									// if app is rapid do a further check
-									if (designPermission && "rapid".equals(application.getId())) designPermission = application.getSecurity().checkUserRole(rapidRequest, userName, Rapid.SUPER_ROLE);
+									if (designPermission && "rapid".equals(application.getId())) designPermission = application.getSecurity().checkUserRole(rapidRequest, rapidRequest.getUserName(), Rapid.SUPER_ROLE);
 									
 									// check the RapidDesign role is present in the users roles for this application
 									if (designPermission) {												
@@ -383,10 +383,10 @@ public class Designer extends RapidHttpServlet {
 									} // design permission
 																			
 								} // versions loop
-								
-								output = jsonVersions.toString();
-								
+									
 							} // got versions check
+							
+							output = jsonVersions.toString();
 							
 							sendJsonOutput(response, output);
 							

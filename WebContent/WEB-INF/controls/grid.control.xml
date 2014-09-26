@@ -198,7 +198,7 @@ if (data) {
 			var columnMap = [];
 			for (var i in details.columns) {				
 				for (var j in data.fields) {
-					if (details.columns[i].field.toLowerCase() == data.fields[j].toLowerCase()) {
+					if (details.columns[i].field && details.columns[i].field.toLowerCase() == data.fields[j].toLowerCase()) {
 						columnMap.push(j);
 						break;
 					}

@@ -116,7 +116,7 @@ public class Database extends Action {
 		// save all key/values from the json into the properties 
 		for (String key : JSONObject.getNames(jsonAction)) {
 			// add all json properties to our properties, except for query
-			if (!"query".equals(key) && !"showLoading".equals(key) && !"successActions".equals(key) && !"errorActions".equals(key)) addProperty(key, jsonAction.get(key).toString());
+			if (!"query".equals(key) && !"showLoading".equals(key) && !"successActions".equals(key) && !"errorActions".equals(key)  && !"childActions".equals(key)) addProperty(key, jsonAction.get(key).toString());
 		} 
 		
 		// try and build the query object

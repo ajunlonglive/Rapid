@@ -501,7 +501,7 @@ function setData_dataStore(id, data, field, details) {
   	if (details.id) id = details.id;
   	if (data != null && data !== undefined) {
   		data = makeDataObject(data, field);
-  		if (dataStore[id]) data = mergeDataObjects(data, JSON.parse(dataStore[id]));		
+  		if (details.merge && dataStore[id]) data = mergeDataObjects(data, JSON.parse(dataStore[id]));		
   		dataStore[id] = JSON.stringify(data);
   	} else {
   		dataStore[id] = null;
@@ -684,7 +684,7 @@ function setData_grid(id, data, field, details) {
   			var columnMap = [];
   			for (var i in details.columns) {				
   				for (var j in data.fields) {
-  					if (details.columns[i].field.toLowerCase() == data.fields[j].toLowerCase()) {
+  					if (details.columns[i].field && details.columns[i].field.toLowerCase() == data.fields[j].toLowerCase()) {
   						columnMap.push(j);
   						break;
   					}

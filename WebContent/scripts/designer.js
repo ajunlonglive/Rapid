@@ -134,6 +134,7 @@ var _mouseScale;
 function addUndo(keepRedo) {
 	// set dirty
 	_dirty = true;
+	/*
 	// grab the page
 	var page = JSON.stringify(getDataObject(_page));
 	// if the page is different from the last item on the undo stack push it on
@@ -149,6 +150,7 @@ function addUndo(keepRedo) {
 		// disable the redo button
 		$("#redo").disable();
 	}
+	*/
 }
 
 // takes a snapshot of the current page and adds it to the redo stack
@@ -918,7 +920,7 @@ function loadApps(selectedAppId, forceLoad) {
         		// get a reference to the app
         		var app = apps[i];
         		// add an option for this page (if not the rapid app itself)
-        		options += "<option value='" + app.id + "' " + (selectedAppId || urlAppId == app.id ? "selected='true'" : "") + ">" + app.id + " - " + app.title + "</option>";        	
+        		options += "<option value='" + app.id + "' " + (selectedAppId || urlAppId == app.id ? "selected='true'" : "") + ">" + app.name + " - " + app.title + "</option>";        	
         	}
         	// get a reference to apps dropdown
         	var appsDropDown = $("#appSelect");

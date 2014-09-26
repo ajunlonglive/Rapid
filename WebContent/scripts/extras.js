@@ -350,14 +350,14 @@ function hideValidationMessage(controlId) {
 
 function makeDataObject(data, field) {
 	// return immediately if all well
-	if (data.rows && data.fields) return data;		
+	if (data.rows && data.fields && !field) return data;		
 	// initialise fields
 	var fields = [];
 	// initialise rows
 	var rows = [];
 	// initialise a fieldmap (as properties aren't always in the same position each time)
 	var fieldMap = [];
-	// if the field if what we're after move it into the data
+	// if the field is what we're after move it into the data
 	if (field && data[field]) data = data[field];
 	// if the data is an array
 	if ($.isArray(data)) {

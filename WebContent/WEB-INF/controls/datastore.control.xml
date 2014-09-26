@@ -39,11 +39,13 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    <canBeUsedFromOtherPages>true</canBeUsedFromOtherPages>
 	    
 	    <properties>
+	        
 	        <property>
 	            <key>name</key>
 	            <name>Name</name>
 	            <changeValueJavaScript>text</changeValueJavaScript>	            
-	        </property>	       
+	        </property>	  
+	             
 	        <property>
 	            <key>storageType</key>
 	            <name>Type</name>
@@ -54,7 +56,16 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 return [["S","Session storage"],["L","Local storage"]];
 					]]>
 	            </getValuesFunction>               
-	        </property>     
+	        </property>    
+	        
+	        <property>
+	            <key>mergeData</key>
+	            <name>Merge data</name>
+	            <setConstructValueFunction>return false;</setConstructValueFunction>
+	            <changeValueJavaScript>select</changeValueJavaScript>	
+	            <getValuesFunction>return [[false,"false"],["true","true"]]</getValuesFunction>
+	        </property>  
+	         
 	    </properties>
 	    
 	    <getHtmlFunction>
@@ -72,7 +83,7 @@ this.object.remove();
 	    
 	   	<getDetailsFunction>	        
 	        <![CDATA[
-return {id : _version.id + _version.version + this.id, storageType: this.storageType};
+return {storageType: this.storageType, merge: this.mergeData};
 			]]>	        	        
 	    </getDetailsFunction>
 	    
@@ -129,7 +140,7 @@ if (dataStore) {
 	if (details.id) id = details.id;
 	if (data != null && data !== undefined) {
 		data = makeDataObject(data, field);
-		if (dataStore[id]) data = mergeDataObjects(data, JSON.parse(dataStore[id]));		
+		if (details.merge && dataStore[id]) data = mergeDataObjects(data, JSON.parse(dataStore[id]));		
 		dataStore[id] = JSON.stringify(data);
 	} else {
 		dataStore[id] = null;

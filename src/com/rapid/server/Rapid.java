@@ -314,7 +314,7 @@ public class Rapid extends RapidHttpServlet {
 		RapidRequest rapidRequest = new RapidRequest(this, request);
 		
 		// log
-		getLogger().debug("Rapid POST request : " + request.getQueryString() + " mimetype : " + request.getContentType());
+		getLogger().debug("Rapid POST request : " + request.getQueryString());
 					
 		try {
 			
@@ -382,6 +382,9 @@ public class Rapid extends RapidHttpServlet {
 							// close the writer
 							out.close();
 							
+							// log response
+							getLogger().debug("Rapid POST response : " + jsonResult);
+							
 						}
 																																																												
 					}
@@ -444,6 +447,9 @@ public class Rapid extends RapidHttpServlet {
 				
 				// close the writer
 				out.close();
+				
+				// log response
+				getLogger().debug("Rapid POST response : " + jsonApps.toString());
 				
 			} else if ("uploadImage".equals(rapidRequest.getActionName())) {
 				

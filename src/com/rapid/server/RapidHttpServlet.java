@@ -32,6 +32,8 @@ Mostly getters that retrieve from the servlet context
 
  */
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
@@ -41,6 +43,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServlet;
@@ -52,12 +55,19 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.rapid.core.Action;
 import com.rapid.core.Application;
 import com.rapid.core.Applications;
 import com.rapid.core.Control;
 import com.rapid.core.Page;
+import com.rapid.core.Application.DatabaseConnection;
+import com.rapid.core.Applications.Versions;
+import com.rapid.security.SecurityAdapater;
+import com.rapid.security.SecurityAdapater.Role;
+import com.rapid.security.SecurityAdapater.SecurityAdapaterException;
 import com.rapid.server.filter.RapidFilter;
 import com.rapid.utils.Comparators;
 
@@ -119,7 +129,7 @@ public class RapidHttpServlet extends HttpServlet {
 	public Application getApplication(String id) {
 		return getApplications().get(id);
 	}
-	
+		
 	public String getSecureInitParameter(String name) {
 		return getInitParameter(name);
 	}

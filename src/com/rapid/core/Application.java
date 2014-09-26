@@ -385,6 +385,7 @@ public class Application {
 		return "applications/" + _id + "/" + _version;
 	}
 	
+	// this is the backup folder
 	public String getBackupFolder(ServletContext servletContext) {
 		return servletContext.getRealPath("/WEB-INF/applications/" + _id + "/" + _version + "/" + BACKUP_FOLDER);
 	}
@@ -1186,7 +1187,7 @@ public class Application {
 		if (!backupFolder.exists()) backupFolder.mkdirs();
 
 		// create a file object for the application data folder
-		File appFolder = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + _id));
+		File appFolder = new File(getConfigFolder(rapidServlet.getServletContext()));
 		
 		// create a list of files to ignore
 		List<String> ignoreFiles = new ArrayList<String>();
@@ -1238,7 +1239,7 @@ public class Application {
 	public void save(RapidHttpServlet rapidServlet, RapidRequest rapidRequest) throws JAXBException, IOException, IllegalArgumentException, SecurityException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException {
 						
 		// create folders to save the app
-		String folderPath = rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + _id);		
+		String folderPath = getConfigFolder(rapidServlet.getServletContext());		
 		File folder = new File(folderPath);		
 		if (!folder.exists()) folder.mkdirs();
 		
