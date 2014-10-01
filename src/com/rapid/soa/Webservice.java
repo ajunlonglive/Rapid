@@ -247,7 +247,7 @@ public abstract class Webservice {
 			
 	// produce the WSDL for this webservice
 	
-	public String getWSDL(String appId, String endPoint) {
+	public String getWSDL(String appId, String appVersion, String endPoint) {
 		
 		_wsdl = new StringBuilder();
 		
@@ -284,7 +284,7 @@ public abstract class Webservice {
 		_wsdl.append("<wsdl:binding name=\"" + getId() + "Binding\" type=\"tns:PortType\">");
 		_wsdl.append("<soap:binding style=\"document\" transport=\"http://schemas.xmlsoap.org/soap/http\"/>");
 		_wsdl.append("<wsdl:operation name=\"" + getId() + "\">");
-		_wsdl.append("<soap:operation soapAction=\"" + appId + "." + getId() + "\"/>");
+		_wsdl.append("<soap:operation soapAction=\"" + appId + " " + appVersion + " " + getId() + "\"/>");
 		_wsdl.append("<wsdl:input>");
 		_wsdl.append("<soap:body use=\"literal\"/>");
 		_wsdl.append("</wsdl:input>");

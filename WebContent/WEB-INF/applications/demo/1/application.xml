@@ -27,6 +27,7 @@
     <controlTypes>tabGroup</controlTypes>
     <controlTypes>table</controlTypes>
     <controlTypes>text</controlTypes>
+    <createdDate>2014-01-01T00:00:00Z</createdDate>
     <databaseConnections>
         <connectionAdapterClass>com.rapid.data.SimpleConnectionAdapter</connectionAdapterClass>
         <connectionString>jdbc:sqlite:WebContent/WEB-INF/database/rapidsample.db</connectionString>
@@ -38,13 +39,14 @@
     <description>This is a demonstration Rapid application provided to showcase many common Rapid features</description>
     <id>demo</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-09-12T16:16:53.684+01:00</modifiedDate>
+    <modifiedDate>2014-01-01T00:00:00Z</modifiedDate>
     <name>demo</name>
     <pageBackupsMaxSize>3</pageBackupsMaxSize>
     <securityAdapterType>rapid</securityAdapterType>
     <showActionIds>false</showActionIds>
     <showControlIds>false</showControlIds>
     <startPageId>P1</startPageId>
+    <status>0</status>
     <styles>/*
 Styles saved here will be applied to all pages in the application
 */

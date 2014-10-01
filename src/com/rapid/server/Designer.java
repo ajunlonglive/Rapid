@@ -110,7 +110,7 @@ public class Designer extends RapidHttpServlet {
 			String output = "";
 			
 			// get the rapid application
-			Application rapidApplication = getApplication("rapid");
+			Application rapidApplication = getApplications().get("rapid");
 			
 			// check we got one
 			if (rapidApplication != null) {
@@ -641,7 +641,7 @@ public class Designer extends RapidHttpServlet {
 			byte[] bodyBytes = outputStream.toByteArray();
 												
 			// get the rapid application
-			Application rapidApplication = getApplication("rapid");
+			Application rapidApplication = getApplications().get("rapid");
 			
 			// check we got one
 			if (rapidApplication != null) {
@@ -776,7 +776,7 @@ public class Designer extends RapidHttpServlet {
 								}
 																
 								// save the new page to file
-								newPage.save(this, rapidRequest);					
+								newPage.save(this, rapidRequest, true);					
 								
 								// send a positive message
 								output = "{\"message\":\"Saved!\"}";
@@ -922,7 +922,7 @@ public class Designer extends RapidHttpServlet {
 									String appId = Files.safeName(appName).toLowerCase();
 									
 									// look for an existing application of this name
-									Application existingApplication = getApplication(appId); 
+									Application existingApplication = getApplications().get(appId); 
 									// if we have an existing application back it up first
 									if (existingApplication != null) existingApplication.backup(this, rapidRequest);
 									
@@ -1062,7 +1062,7 @@ public class Designer extends RapidHttpServlet {
 											}
 											
 											// save application
-											appNew.save(this, rapidRequest);
+											appNew.save(this, rapidRequest, true);
 											
 											// reload it with the file changes
 											appNew = Application.load(getServletContext(), new File (appFolderDest + "/application.xml"));

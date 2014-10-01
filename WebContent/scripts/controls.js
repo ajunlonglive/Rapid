@@ -32,8 +32,6 @@ Functions used to create an modify controls are here so they can be loaded by th
 // this keeps a count of controls of each type in order to produce label 1, label 2, table 1, etc
 var _controlNumbers = {};
 
-var _test;
-
 //this function is called iteratively when loading in the controls (used by both designer and script engine)
 function loadControl(jsonControl, parentControl, loadActions, paste, undo) {	
 	// we need to init the control
@@ -439,8 +437,6 @@ function Control(controlClass, parentControl, jsonControl, loadComplexObjects, p
 				this._initDesign = f;
 				// run it
 				f.apply(this, []);
-				// retain a reference for debuggin
-				_test = f;
 			} catch (ex) {
 				alert("initDesignJavaScript failed for " + this.type + ". " + ex + "\r\r" + js);
 				// remember there is an error (stops properties and styles being rendered)
