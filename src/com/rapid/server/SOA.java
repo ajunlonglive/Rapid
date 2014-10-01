@@ -62,9 +62,10 @@ public class SOA extends RapidHttpServlet {
 		PrintWriter out = response.getWriter();
 		
 		String appId = request.getParameter("a");
+		String appVersion = request.getParameter("v");
 		String serviceId = request.getParameter("s");
 		
-		Application app = getApplication(appId);
+		Application app = getApplications().get(appId, appVersion);
 						
 		if (app == null) {
 			
@@ -120,7 +121,7 @@ public class SOA extends RapidHttpServlet {
 				
 				URL url = new URL(request.getScheme(), request.getServerName(), request.getServerPort(), request.getRequestURI());
 				
-				out.print(webservice.getWSDL(appId, url.toString()));
+				out.print(webservice.getWSDL(appId, appVersion, url.toString()));
 								
 			}
 			
@@ -130,7 +131,6 @@ public class SOA extends RapidHttpServlet {
 			
 	}
 		
-
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -152,14 +152,15 @@ public class SOA extends RapidHttpServlet {
 					
 				} else {
 					
-					// split the soapAction using a RegEx escaped . 
-					String[] actionParts = soapAction.replace("\"", "").split("\\.");
-					if (actionParts.length == 2) {
+					// split the soapAction using spaces
+					String[] actionParts = soapAction.replace("\"", "").split(" ");
+					if (actionParts.length == 3) {
 						
 						String appId = actionParts[0];
-						String serviceId = actionParts[1];
+						String versionId = actionParts[1];
+						String serviceId = actionParts[2];
 						
-						Application application = getApplication(appId);
+						Application application = getApplications().get(appId, versionId);
 						
 						if (application == null) {
 							
@@ -234,14 +235,15 @@ public class SOA extends RapidHttpServlet {
 					
 				} else {
 					
-					// split the soapAction using a RegEx escaped . 
-					String[] actionParts = action.replace("\"", "").split("\\.");
-					if (actionParts.length == 2) {
+					// split the soapAction using spaces 
+					String[] actionParts = action.replace("\"", "").split(" ");
+					if (actionParts.length == 3) {
 						
 						String appId = actionParts[0];
-						String serviceId = actionParts[1];
+						String appVersion = actionParts[1];
+						String serviceId = actionParts[2];
 						
-						Application application = getApplication(appId);
+						Application application = getApplications().get(appId, appVersion);
 						
 						if (application == null) {
 							

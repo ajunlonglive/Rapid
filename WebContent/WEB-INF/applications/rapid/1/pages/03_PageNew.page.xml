@@ -120,8 +120,8 @@
     <value>P3_A30</value>
 </entry>
 <entry>
-    <key>XMLVersion</key>
-    <value>1</value>
+    <key>avoidRedundancy</key>
+    <value>false</value>
 </entry>
 <entry>
     <key>name</key>
@@ -138,6 +138,10 @@
 <entry>
     <key>version</key>
     <value>1</value>
+</entry>
+<entry>
+    <key>redundantActions</key>
+    <value>[&quot;P3_A29&quot;]</value>
 </entry>
                             </properties>
                             <XMLVersion>1</XMLVersion>
@@ -194,7 +198,7 @@ if (!name) return &quot;A page name must be provided&quot;;
 if (!name.match(new RegExp(&quot;^[0-9A-Za-z_-]+$&quot;))) return &quot;A page name can only contain characters a-z, A-Z, 0-9, -, and _&quot;;
 var exists = false;
 $.ajax({
-    url: &quot;designer?a=&quot; + _app.id + &quot;&amp;action=checkPage&amp;name=&quot; + name,
+    url: &quot;designer?a=&quot; + _version.id + &quot;&amp;v=&quot; + _version.version + &quot;&amp;action=checkPage&amp;name=&quot; + name,
     type: &quot;GET&quot;,    
     async: false,                
     success: function(result) {
@@ -380,8 +384,8 @@ if (exists) return &quot;A page with this name already exists&quot;;</javaScript
     <value>P3_A31</value>
 </entry>
 <entry>
-    <key>XMLVersion</key>
-    <value>1</value>
+    <key>avoidRedundancy</key>
+    <value>false</value>
 </entry>
 <entry>
     <key>name</key>
@@ -398,6 +402,10 @@ if (exists) return &quot;A page with this name already exists&quot;;</javaScript
 <entry>
     <key>version</key>
     <value>1</value>
+</entry>
+<entry>
+    <key>redundantActions</key>
+    <value>[&quot;P3_A29&quot;]</value>
 </entry>
                             </properties>
                             <XMLVersion>1</XMLVersion>
@@ -815,8 +823,8 @@ if (exists) return &quot;A page with this name already exists&quot;;</javaScript
     <value>hideDialogue();</value>
 </entry>
 <entry>
-    <key>XMLVersion</key>
-    <value>1</value>
+    <key>avoidRedundancy</key>
+    <value>false</value>
 </entry>
 <entry>
     <key>name</key>
@@ -918,8 +926,8 @@ if (exists) return &quot;A page with this name already exists&quot;;</javaScript
     <value>true</value>
 </entry>
 <entry>
-    <key>XMLVersion</key>
-    <value>1</value>
+    <key>avoidRedundancy</key>
+    <value>true</value>
 </entry>
 <entry>
     <key>name</key>
@@ -952,8 +960,8 @@ if (exists) return &quot;A page with this name already exists&quot;;</javaScript
         <value>rapid_P3_C24</value>
     </entry>
     <entry>
-        <key>XMLVersion</key>
-        <value>1</value>
+        <key>avoidRedundancy</key>
+        <value>false</value>
     </entry>
     <entry>
         <key>name</key>
@@ -985,8 +993,8 @@ if (exists) return &quot;A page with this name already exists&quot;;</javaScript
         <value>rapid_P3_C24</value>
     </entry>
     <entry>
-        <key>XMLVersion</key>
-        <value>1</value>
+        <key>avoidRedundancy</key>
+        <value>false</value>
     </entry>
     <entry>
         <key>name</key>
@@ -1015,12 +1023,8 @@ if (exists) return &quot;A page with this name already exists&quot;;</javaScript
     <value>P1_A27</value>
 </entry>
 <entry>
-    <key>XMLVersion</key>
-    <value>1</value>
-</entry>
-<entry>
-    <key>childActions</key>
-    <value>[]</value>
+    <key>avoidRedundancy</key>
+    <value>false</value>
 </entry>
 <entry>
     <key>name</key>
@@ -1192,11 +1196,11 @@ if (exists) return &quot;A page with this name already exists&quot;;</javaScript
             </entry>
             <entry>
                 <key>details</key>
-                <value>{&quot;controlHints&quot;:[{&quot;text&quot;:&quot;The page name uniquely identifies the page. \nSince pages are sorted alphabetically by name in Rapid Design a naming convention that groups pages by function or purpose is recommended. \nPage names can be changed at any time.\n&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P3_C45_&quot;,&quot;type&quot;:&quot;hover&quot;},{&quot;text&quot;:&quot;The page title is shown to users in the title bar of the browser&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P3_C46_&quot;,&quot;type&quot;:&quot;hover&quot;},{&quot;text&quot;:&quot;Use the description to add any further details about the page.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P3_C47_&quot;,&quot;type&quot;:&quot;hover&quot;}]}</value>
+                <value>{&quot;controlHints&quot;:[{&quot;text&quot;:&quot;The page name uniquely identifies the page. \nSince pages are sorted alphabetically by name in Rapid Design a naming convention that groups pages by function or purpose is recommended. \nPage names can be changed at any time.\n&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P3_C45_&quot;},{&quot;text&quot;:&quot;The page title is shown to users in the title bar of the browser&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P3_C46_&quot;},{&quot;text&quot;:&quot;Use the description to add any further details about the page.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P3_C47_&quot;}]}</value>
             </entry>
             <entry>
                 <key>controlHints</key>
-                <value>[{&quot;text&quot;:&quot;The page name uniquely identifies the page. \nSince pages are sorted alphabetically by name in Rapid Design a naming convention that groups pages by function or purpose is recommended. \nPage names can be changed at any time.\n&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P3_C45_&quot;,&quot;type&quot;:&quot;hover&quot;},{&quot;text&quot;:&quot;The page title is shown to users in the title bar of the browser&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P3_C46_&quot;,&quot;type&quot;:&quot;hover&quot;},{&quot;text&quot;:&quot;Use the description to add any further details about the page.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P3_C47_&quot;,&quot;type&quot;:&quot;hover&quot;}]</value>
+                <value>[{&quot;text&quot;:&quot;The page name uniquely identifies the page. \nSince pages are sorted alphabetically by name in Rapid Design a naming convention that groups pages by function or purpose is recommended. \nPage names can be changed at any time.\n&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P3_C45_&quot;},{&quot;text&quot;:&quot;The page title is shown to users in the title bar of the browser&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P3_C46_&quot;},{&quot;text&quot;:&quot;Use the description to add any further details about the page.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P3_C47_&quot;}]</value>
             </entry>
             <entry>
                 <key>type</key>
@@ -1232,8 +1236,8 @@ if (exists) return &quot;A page with this name already exists&quot;;</javaScript
                     <value>rapid_P3_C17</value>
                 </entry>
                 <entry>
-                    <key>XMLVersion</key>
-                    <value>1</value>
+                    <key>avoidRedundancy</key>
+                    <value>false</value>
                 </entry>
                 <entry>
                     <key>name</key>
@@ -1265,8 +1269,8 @@ if (exists) return &quot;A page with this name already exists&quot;;</javaScript
                     <value>if (_undo.length &gt; 0) $(&quot;#rapid_P3_C39_&quot;).text(&quot;You have unsaved changes which you will lose if you create this new page&quot;);</value>
                 </entry>
                 <entry>
-                    <key>XMLVersion</key>
-                    <value>1</value>
+                    <key>avoidRedundancy</key>
+                    <value>false</value>
                 </entry>
                 <entry>
                     <key>name</key>
@@ -1293,7 +1297,7 @@ if (exists) return &quot;A page with this name already exists&quot;;</javaScript
     <htmlBody>&lt;table id=&quot;rapid_P3_C1&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;rapid_P3_C14&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P3_C15&quot; colspan=&quot;3&quot; class=&quot;tabelCell&quot;&gt;New page&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P3_C2&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P3_C3&quot; class=&quot;tabelCell&quot;&gt;Name&lt;/td&gt;&lt;td id=&quot;rapid_P3_C4&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P3_C17&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P3_C41_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P3_C45_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P3_C5&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P3_C6&quot; class=&quot;tabelCell&quot;&gt;Title&lt;/td&gt;&lt;td id=&quot;rapid_P3_C7&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P3_C18&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P3_C43_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P3_C46_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P3_C8&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P3_C9&quot; class=&quot;tabelCell&quot;&gt;Description&lt;/td&gt;&lt;td id=&quot;rapid_P3_C10&quot; class=&quot;tabelCell&quot;&gt;&lt;textarea id=&quot;rapid_P3_C19&quot; class=&quot;input&quot;&gt;&lt;/textarea&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P3_C44_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P3_C47_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P3_C21&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P3_C22&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P3_C20&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P3_C28&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P3_C24&quot; class=&quot;button&quot;&gt;Create&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
     <id>P3</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-07-09T15:39:27.060+01:00</modifiedDate>
+    <modifiedDate>2014-09-30T16:17:59.200+01:00</modifiedDate>
     <name>03_PageNew</name>
     <rolesHtml>
         <html>&lt;table id=&quot;rapid_P3_C1&quot; class=&quot;table&quot;&gt;

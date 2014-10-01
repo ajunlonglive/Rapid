@@ -119,6 +119,14 @@ function updateProperty(propertyObject, property, value, refreshHtml) {
 			// in controls.js
 			rebuildHtml(propertyObject);
 		}	
+		// if this is the name
+		if (property.key == "name") {
+			// if the property map is visible
+			if ($("#pageMap").is(":visible")) {
+				// update the name
+				$("#pageMap").find("span[data-id=" + propertyObject.id + "]").html(((propertyObject._class.image) ? "<img src='" + propertyObject._class.image + "'/>" : "") + propertyObject.type + (propertyObject.name ? " - " + propertyObject.name: ""));
+			}
+		}
 	}
 }
 

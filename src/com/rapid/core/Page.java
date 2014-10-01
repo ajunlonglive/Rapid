@@ -576,7 +576,7 @@ public class Page {
 		
 	}
 	
-	public void save(RapidHttpServlet rapidServlet, RapidRequest rapidRequest) throws JAXBException, IOException {
+	public void save(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, boolean backup) throws JAXBException, IOException {
 		
 		// get the application
 		Application application = rapidRequest.getApplication();
@@ -589,8 +589,8 @@ public class Page {
 		// create a file object for the new file
 	 	File newFile = new File(pagePath + "/" + Files.safeName(getName()) + ".page.xml");
 	 	
-	 	// if the new file already exists it needs archiving
-	 	if (newFile.exists()) backup(rapidServlet, rapidRequest, newFile);	 			 	
+	 	// if we want a backup and the new file already exists it needs archiving
+	 	if (backup && newFile.exists()) backup(rapidServlet, rapidRequest, newFile);	 			 	
 				
 	 	// create a file for the temp file
 	    File tempFile = new File(pagePath + "/" + Files.safeName(getName()) + "-saving.page.xml");	
@@ -803,10 +803,10 @@ public class Page {
 				// close the try/catch
 				if (control == null) {
 					// page
-					eventStringBuilder.append("  } catch(ex) { alert('Error in page." + event.getType() + " event' + ex); }\n");
+					eventStringBuilder.append("  } catch(ex) { alert('Error in page." + event.getType() + " event ' + ex); }\n");
 				} else {
 					// control
-					eventStringBuilder.append("  } catch(ex) { alert('Error in " + event.getType() + " event for control " + control.getId() +  "' + ex); }\n");
+					eventStringBuilder.append("  } catch(ex) { alert('Error in " + event.getType() + " event for control " + control.getId() +  " ' + ex); }\n");
 				}				
 				// close event function
 				eventStringBuilder.append("}\n\n");

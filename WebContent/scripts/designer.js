@@ -1298,7 +1298,7 @@ function getDataObject(object) {
 	// loop the properties
 	for (var i in object) {
 		// ignore "static" properties, or those that create circular references
-		if (i.indexOf("_") != 0 && i != "object" && i != "parentControl") {
+		if (i.indexOf("_") != 0 && i != "XMLVersion" && i!= "canBeUsedFromOtherPages" && i != "object" && i != "parentControl") {
 			// grab a property
 			var p = object[i];
 			// if a blank space, or not a null

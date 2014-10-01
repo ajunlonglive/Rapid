@@ -218,10 +218,12 @@ public class Rapid extends Action {
 		
 		String newAppId = null;
 		
-		// get the if of the app we're about to manipulate
+		// get the id of the app we're about to manipulate
 		String appId = jsonAction.getString("appId");	
+		// get the version of the app we're about to manipulate
+		String appVersion = jsonAction.optString("version", null);	
 		// get the application we're about to manipulate
-		Application app = rapidServlet.getApplication(appId);
+		Application app = rapidServlet.getApplications().get(appId, appVersion);
 		
 		// only if we had an application
 		if (app != null) {
@@ -437,6 +439,8 @@ public class Rapid extends Action {
 					
 					// add the name
 					result.put("name", app.getName());
+					// add the version
+					result.put("version", app.getVersion());
 					// add the title
 					result.put("title", app.getTitle());
 					// add the description
@@ -766,6 +770,8 @@ public class Rapid extends Action {
 			} else if ("SAVEAPP".equals(action)) {
 			
 				// get the new values
+				String id = Files.safeName(jsonAction.getString("name")).toLowerCase();
+				String version = Files.safeName(jsonAction.getString("saveVersion"));
 				String name = jsonAction.getString("name");
 				String title = jsonAction.getString("title");
 				String description = jsonAction.getString("description");
@@ -773,21 +779,19 @@ public class Rapid extends Action {
 				boolean showActionIds = jsonAction.optBoolean("showActionIds");
 				String startPageId = jsonAction.optString("startPageId","");
 				
-				String id = Files.safeName(name).toLowerCase();
+				// assume we do not need to update the applications drop down
+				boolean appUpdated = false;				
 				
-				// if the name is now different the derived id will be too
-				if (!app.getName().equals(name)) {
-					// archive the app as is
-					app.backup(rapidServlet, rapidRequest);
-					// copy the app to the id location
-					app.copy(rapidServlet, rapidRequest, id);
-					// delete it
-					app.delete(rapidServlet, rapidRequest);
+				// if the id or version is now different we need to move it, rebuilding all the resources as we go
+				if (!app.getId().equals(id) || !app.getVersion().equals(version)) {
+					// copy the app to the id/version, returning the new one for saving
+					app = app.copy(rapidServlet, rapidRequest, id, version, true);
+					// mark that it has been updated
+					appUpdated = true;
 				}
 				
 				// update the values
 				app.setName(name);
-				app.setId(id);
 				app.setTitle(title);
 				app.setDescription(description);
 				app.setShowControlIds(showControlIds);
@@ -795,13 +799,12 @@ public class Rapid extends Action {
 				app.setStartPageId(startPageId);
 				
 				// save
-				app.save(rapidServlet, rapidRequest); 
-				
-				// make sure it's in the collection of apps (may have been moved out if the name was changed)
-				rapidServlet.getApplications().put(app);
-							
+				app.save(rapidServlet, rapidRequest, true); 
+											
 				// add the application to the response
 				result.put("message", "Application details saved");
+				result.put("update", appUpdated);
+
 				
 			} else if ("SAVESTYLES".equals(action)) {
 							
@@ -809,7 +812,7 @@ public class Rapid extends Action {
 				
 				app.setStyles(styles);
 				
-				app.save(rapidServlet, rapidRequest);
+				app.save(rapidServlet, rapidRequest, true);
 				
 				// add the application to the response
 				result.put("message", "Styles saved");
@@ -843,7 +846,7 @@ public class Rapid extends Action {
 						if (!"********".equals(password)) dbConn.setPassword(password);
 						
 						// save the app
-						app.save(rapidServlet, rapidRequest);
+						app.save(rapidServlet, rapidRequest, true);
 						
 						foundConnection = true;
 						
@@ -962,7 +965,7 @@ public class Rapid extends Action {
 							}
 														
 							// save the app
-							app.save(rapidServlet, rapidRequest);
+							app.save(rapidServlet, rapidRequest, true);
 							
 							foundWebservice = true;
 							
@@ -1002,7 +1005,7 @@ public class Rapid extends Action {
 							javaWebservice.setClassName(jsonAction.getString("className").trim());
 												
 							// save the app
-							app.save(rapidServlet, rapidRequest);
+							app.save(rapidServlet, rapidRequest, true);
 							
 							foundWebservice = true;
 							
@@ -1020,7 +1023,7 @@ public class Rapid extends Action {
 				
 				app.setSecurityAdapterType(securityAdapter);
 				
-				app.save(rapidServlet, rapidRequest);
+				app.save(rapidServlet, rapidRequest, true);
 				
 				// add the application to the response
 				result.put("message", "Security adapter saved");
@@ -1050,7 +1053,7 @@ public class Rapid extends Action {
 				app.setActionTypes(actionTypes);
 				
 				// save it
-				app.save(rapidServlet, rapidRequest);
+				app.save(rapidServlet, rapidRequest, true);
 				
 				// add the message to the response
 				result.put("message", actionTypes.size() + " actions");
@@ -1080,7 +1083,7 @@ public class Rapid extends Action {
 				app.setControlTypes(controlTypes);
 				
 				// save
-				app.save(rapidServlet, rapidRequest);
+				app.save(rapidServlet, rapidRequest, true);
 				
 				// add the message to the response
 				result.put("message", controlTypes.size() + " controls");
@@ -1169,7 +1172,7 @@ public class Rapid extends Action {
 					User user = security.getUser(rapidRequest, userName);
 					
 					// get the rapid application
-					Application rapidApplication = rapidRequest.getRapidServlet().getApplication("rapid");
+					Application rapidApplication = rapidServlet.getApplications().get("rapid");
 					
 					// check the current user is present in the app's security adapter
 					if (user == null) {
@@ -1187,7 +1190,7 @@ public class Rapid extends Action {
 				}
 				
 				// save the application to file
-				newApp.save(rapidServlet, rapidRequest);
+				newApp.save(rapidServlet, rapidRequest, false);
 							
 				// set the result message
 				result.put("message", "Application " + app.getTitle() + " created");
@@ -1203,84 +1206,13 @@ public class Rapid extends Action {
 				result.put("message", "Application " + app.getName() + " deleted");
 				
 			} else if ("DUPAPP".equals(action)) {
-				
+								
 				String name = jsonAction.getString("name").trim();
+				String version = jsonAction.getString("version").trim();
 				String title = jsonAction.optString("title").trim();
 				String description = jsonAction.optString("description").trim();
 				
-				// derive the new app id based on making the name safe and in lower case
-				newAppId = Files.safeName(name).toLowerCase();
-																				 				
-				// create a list of files to ignore
-				List<String> ignoreFiles = new ArrayList<String>();
-				ignoreFiles.add(Application.BACKUP_FOLDER);
-				
-				// copy any webcontent
-				File oldFolder = new File(rapidServlet.getServletContext().getRealPath("/applications/" + app.getId()));					
-				File newFolder = new File(rapidServlet.getServletContext().getRealPath("/applications/" + newAppId));					
-				Files.copyFolder(oldFolder, newFolder, ignoreFiles);
-				
-				// copy application pages
-				oldFolder = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + app.getId()));					
-				newFolder = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + newAppId));					
-				Files.copyFolder(oldFolder, newFolder, ignoreFiles);
-														
-				// look for page files
-				File pagesFolder = new File(newFolder.getAbsolutePath() + "/pages");
-				if (pagesFolder.exists()) {
-					
-					// create a filter for finding .page.xml files
-					FilenameFilter xmlFilenameFilter = new FilenameFilter() {
-				    	public boolean accept(File dir, String name) {
-				    		return name.toLowerCase().endsWith(".page.xml");
-				    	}
-				    };
-				    
-				    // loop the .page.xml files 
-				    for (File pageFile : pagesFolder.listFiles(xmlFilenameFilter)) {
-				    	
-				    	BufferedReader reader = new BufferedReader(new FileReader(pageFile));
-				        String line = null;
-				        StringBuilder stringBuilder = new StringBuilder();
-				        
-				        while ((line = reader.readLine()) != null ) {
-				            stringBuilder.append(line);
-				            stringBuilder.append("\n");
-				        }
-				        reader.close();
-				        
-				        // retrieve the xml into a string
-				        String fileString = stringBuilder.toString();
-
-				        // replace all properties that appear to have a url, and all created links
-				        String newFileString = fileString
-				        		.replace("applications/" + app.getId() + "/", "applications/" + newAppId + "/")
-				        		.replace("~?a=" + app.getId() + "&amp;", "~?a=" + newAppId + "&amp;");
-				        					        
-				        PrintWriter newFileWriter = new PrintWriter(pageFile);
-				        newFileWriter.print(newFileString);
-				        newFileWriter.close();
-				        								    	
-				    }
-					
-				}
-				
-				// look for an archive folder
-				File archiveFolder = new File(newFolder.getAbsolutePath() + "/" + Application.BACKUP_FOLDER);
-				// delete the archive folder if present
-				if (archiveFolder.exists()) Files.deleteRecurring(archiveFolder);
-									
-				// load the new application (but do not regenerate the resources files - this happens on the save)
-				Application newApp = Application.load(rapidServlet.getServletContext(), new File(newFolder.getAbsolutePath() + "/application.xml"), false);
-				
-				// overwrite the properties
-				newApp.setId(newAppId);
-				newApp.setName(name);
-				newApp.setTitle(title);
-				newApp.setDescription(description);
-
-				// save the application to file
-				newApp.save(rapidServlet, rapidRequest);
+				// use the application.copy routine
 																		
 				// set the result message
 				result.put("message", "Application " + app.getTitle() + " duplicated");
@@ -1301,7 +1233,7 @@ public class Rapid extends Action {
 				newPage.setCreatedDate(new Date());
 				
 				// save the page to file
-				newPage.save(rapidServlet, rapidActionRequest);
+				newPage.save(rapidServlet, rapidActionRequest, false);
 				
 				// put the id in the result
 				result.put("id", id);
@@ -1341,7 +1273,7 @@ public class Rapid extends Action {
 				dbConns.add(dbConn);
 				
 				// save the app
-				app.save(rapidServlet, rapidRequest);				
+				app.save(rapidServlet, rapidRequest, true);				
 				
 				// add the application to the response
 				result.put("message", "Database connection added");
@@ -1366,7 +1298,7 @@ public class Rapid extends Action {
 						dbConns.remove(index);
 						
 						// save the app
-						try { app.save(rapidServlet, rapidRequest);	} 
+						try { app.save(rapidServlet, rapidRequest, true);	} 
 						catch (Exception ex) { throw new JSONException(ex);	}
 						
 						// add the application to the response
@@ -1403,7 +1335,7 @@ public class Rapid extends Action {
 					app.getWebservices().add(webservice);
 				
 					// save the app
-					app.save(rapidServlet, rapidRequest);			
+					app.save(rapidServlet, rapidRequest, true);			
 				
 					// add the application to the response
 					result.put("message", "SOA webservice added");
@@ -1433,7 +1365,7 @@ public class Rapid extends Action {
 						webservices.remove(index);
 						
 						// save the app
-						app.save(rapidServlet, rapidRequest);
+						app.save(rapidServlet, rapidRequest, true);
 						
 						// add the application to the response
 						result.put("message", "SOA webservice deleted");
@@ -1787,7 +1719,7 @@ public class Rapid extends Action {
 				app.setApplicationBackupMaxSize(backupMaxSize);
 									
 				// save the application
-				app.save(rapidServlet, rapidRequest);
+				app.save(rapidServlet, rapidRequest, false);
 				
 				// set the result message
 				result.put("message", "Application backup max size updated to " + backupMaxSize);
@@ -1801,7 +1733,7 @@ public class Rapid extends Action {
 				app.setPageBackupsMaxSize(backupMaxSize);
 				
 				// save the application
-				app.save(rapidServlet, rapidRequest);
+				app.save(rapidServlet, rapidRequest, false);
 				
 				// set the result message
 				result.put("message", "Page backup max size updated to " + backupMaxSize);

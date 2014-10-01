@@ -349,8 +349,8 @@ function hideValidationMessage(controlId) {
 }
 
 function makeDataObject(data, field) {
-	// return immediately if all well
-	if (data.rows && data.fields && !field) return data;		
+	// return immediately if all well (we have rows and fields already and there is nothing to promote)
+	if (data.rows && data.fields && !(field && data[field])) return data;		
 	// initialise fields
 	var fields = [];
 	// initialise rows

@@ -126,10 +126,12 @@ public class RapidHttpServlet extends HttpServlet {
 		return (Applications) getServletContext().getAttribute("applications");
 	}
 			
+	/*
 	public Application getApplication(String id) {
 		return getApplications().get(id);
 	}
-		
+	*/
+	
 	public String getSecureInitParameter(String name) {
 		return getInitParameter(name);
 	}

@@ -27,6 +27,7 @@ package com.rapid.core;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -43,6 +44,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.xml.bind.JAXBException;
@@ -76,6 +78,7 @@ import com.rapid.soa.Webservice;
 import com.rapid.utils.Comparators;
 import com.rapid.utils.Files;
 import com.rapid.utils.JAXB;
+import com.rapid.utils.Strings;
 import com.rapid.utils.XML;
 import com.rapid.utils.ZipFile;
 import com.rapid.utils.ZipFile.ZipSource;
@@ -423,7 +426,11 @@ public class Application {
 		DatabaseConnection databaseConnection = getDatabaseConnection(name);
 		if (databaseConnection != null) _databaseConnections.remove(databaseConnection);
 	}
-			
+	
+	// get a single page by it's id
+	public Page getPage(String id) { return _pages.get(id);	}
+	// get all page id's
+	public Set<String> getPagsIds() { return _pages.keySet(); }
 	// we don't want the pages in the application.xml so no setPages to avoid the marshaler
 	public ArrayList<Page> getSortedPages() {
 		// prepare the list we are going to send back
@@ -442,10 +449,7 @@ public class Application {
 		});
 		// return the pages
 		return pages; 
-	}
-	
-	// get a single page by it's id
-	public Page getPage(String id) { return _pages.get(id);	}
+	}	
 	// get a single page by it's name
 	public Page getPageByName(String name) {
 		// loop the page keyset
@@ -945,7 +949,7 @@ public class Application {
                         page.setHtmlBody(resultLoadPage.toString());
                         
                         // save the page
-                        page.save(rapidServlet, rapidRequest);
+                        page.save(rapidServlet, rapidRequest, true);
                         
                         // log that the page was rebuilt ok
                         rapidServlet.getLogger().debug("Rebuilt page " + page.getName());
@@ -1208,35 +1212,100 @@ public class Application {
 	    	
 	}
 	
-	public void copy(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, String newId) throws IOException {
+	public Application copy(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, String newId, String newVersion, boolean backups) throws IOException, IllegalArgumentException, SecurityException, JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, SAXException, TransformerFactoryConfigurationError, TransformerException {
 		
-		// get the application source folder
-		File sourceFolder = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + _id));	
+		// retain the ServletContext
+		ServletContext servletContext = rapidServlet.getServletContext();
 				
-		// create folders to copy the app to
-		File destFolder = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + newId));		
-		if (!destFolder.exists()) destFolder.mkdirs();
+		// load the app into a copy
+		Application appCopy = Application.load(servletContext, new File(getConfigFolder(servletContext) + "/application.xml"));
 		
-		// create a list of files to ignore
-		List<String> ignoreFiles = new ArrayList<String>();
-		ignoreFiles.add(BACKUP_FOLDER);
+		// update the copy id and version
+		appCopy.setId(newId);
+		appCopy.setVersion(newVersion);
+		// update the created date
+		appCopy.setCreatedDate(new Date());
 				
-		// copy the application folders
-		Files.copyFolder(sourceFolder, destFolder, ignoreFiles);
+		// save the copy to create the folder and application.xml file
+		appCopy.save(rapidServlet, rapidRequest, false);
+				
+		// get the copy of the application.xml file
+		File appCopyFile = new File(appCopy.getConfigFolder(servletContext) + "/application.xml");
+		// read the copy to a string
+		String appCopyXML = Strings.getString(appCopyFile);
+		// replace all app/version references
+		appCopyXML = appCopyXML.replace("/" + _id + "/" + _version + "/", "/" + newId + "/" + newVersion + "/");
+		// save it back
+		FileWriter fs = new FileWriter(appCopyFile);
+		fs.write(appCopyXML);
+		fs.close();
 		
-		// get the resources source folder
-		sourceFolder = new File(rapidServlet.getServletContext().getRealPath("/applications/" + _id));
+		// get the pages config folder
+		File appPagesFolder = new File(getConfigFolder(servletContext) + "/pages");		
+		// check it exists
+		if (appPagesFolder.exists()) {
+			// the folder we are copying to
+			File appPagesCopyFolder = new File(appCopy.getConfigFolder(servletContext) + "/pages");
+			// make the dirs
+			appPagesCopyFolder.mkdirs();
+			// loop the files
+			for (File appCopyPageFile : appPagesFolder.listFiles()) {
+				// if this is a page.xml file
+				if (appCopyPageFile.getName().endsWith(".page.xml")) {
+					// read the copy to a string
+					String pageCopyXML = Strings.getString(appCopyPageFile);
+					// replace all app/version references
+					pageCopyXML = pageCopyXML
+							.replace("/" + _id + "/" + _version + "/", "/" + newId + "/" + newVersion + "/")
+							.replace("~?a=" + _id + "&amp;" + _version + "&amp;", "~?a=" + newId + "&amp;" + newVersion + "&amp;");
+					// save it back to it's new location
+					fs = new FileWriter(new File(appPagesCopyFolder + "/" + appCopyPageFile.getName()));
+					fs.write(pageCopyXML);
+					fs.close();
+				}
+			}
+		}
 		
-		// create folders to copy the resources to
-		destFolder = new File(rapidServlet.getServletContext().getRealPath("/applications/" + newId));		
-		if (!destFolder.exists()) destFolder.mkdirs();
+		// get the web folder
+		File appWebFolder = new File(getWebFolder(servletContext));	
+		// if it exists
+		if (appWebFolder.exists()) {
+			// get a folder for the new location
+			File appWebCopyFolder = new File(appCopy.getWebFolder(servletContext));
+			// copy everything
+			Files.copyFolder(appWebFolder, appWebCopyFolder);
+		}
 		
-		// copy the resource folders
-		Files.copyFolder(sourceFolder, destFolder, ignoreFiles);
+		// if we want to copy the backups too
+		if (backups) {
+			// get the backups folder
+			File appBackupFolder = new File(getBackupFolder(servletContext));
+			// check it exists
+			if (appBackupFolder.exists()) {
+				// create a folder to copy to
+				File appBackupCopyFolder = new File(appCopy.getBackupFolder(servletContext));
+				// make the dirs
+				appBackupCopyFolder.mkdirs();
+				// copy the folder
+				Files.copyFolder(appBackupFolder, appBackupCopyFolder);
+			}
+		}
+						
+		// reload the application with the new app and page references
+		appCopy = Application.load(servletContext, appCopyFile);
+										
+		// add this one to the applications collection
+		rapidServlet.getApplications().put(appCopy);
+				
+		// delete this one
+		delete(rapidServlet, rapidRequest);
+		
+		// return the copy
+		return appCopy;
 	    		
 	}
 		
-	public void save(RapidHttpServlet rapidServlet, RapidRequest rapidRequest) throws JAXBException, IOException, IllegalArgumentException, SecurityException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException {
+	public void save(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, boolean backup) throws JAXBException, IOException, IllegalArgumentException, SecurityException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException {
 						
 		// create folders to save the app
 		String folderPath = getConfigFolder(rapidServlet.getServletContext());		
@@ -1246,7 +1315,7 @@ public class Application {
 		// create a file object for the application
 		File appFile = new File(folderPath + "/application.xml");
 		// backup the app if it already exists
-		if (appFile.exists()) backup(rapidServlet, rapidRequest);
+		if (backup && appFile.exists()) backup(rapidServlet, rapidRequest);
 		
 		// create a temp file for saving the application to
 		File tempFile = new File(folderPath + "/application-saving.xml");
@@ -1269,27 +1338,21 @@ public class Application {
 	    // put this application in the collection
 	    rapidServlet.getApplications().put(this);
 	    
-	    // initialise the application
+	    // initialise the application, rebuilding the resources
 	    initialise(rapidServlet.getServletContext(), true);
 	    		
 	}
 	
 	public void delete(RapidHttpServlet rapidServlet, RapidRequest rapidRequest) throws JAXBException, IOException {
 		
-		// get folders to save locate app file
-		String folderPath = rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + _id);		
-		
 		// create a file object for the application folder
-		File appFolder = new File(folderPath);
+		File appFolder = new File(getConfigFolder(rapidServlet.getServletContext()));
 		
 		// create a file object for the webcontent folder
-		File webFolder = new File(rapidServlet.getServletContext().getRealPath("/applications/" + _id));
-				
-		// create a file object for the application
-		File appFile = new File(folderPath + "/application.xml");
-						
-		// if the app file exists
-		if (appFile.exists()) {
+		File webFolder = new File (getWebFolder(rapidServlet.getServletContext()));
+							
+		// if the app folder exists
+		if (appFolder.exists()) {
 			// backup the application
 			backup(rapidServlet, rapidRequest);
 			// delete the app folder
