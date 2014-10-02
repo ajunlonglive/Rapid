@@ -39,9 +39,17 @@
     <description>This is a demonstration Rapid application provided to showcase many common Rapid features</description>
     <id>demo</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-01-01T00:00:00Z</modifiedDate>
+    <modifiedDate>2014-10-02T18:25:16.567+01:00</modifiedDate>
     <name>demo</name>
     <pageBackupsMaxSize>3</pageBackupsMaxSize>
+    <parameters>
+        <name>optiUrl</name>
+        <value>1</value>
+    </parameters>
+    <parameters>
+        <name>optiUserName</name>
+        <value></value>
+    </parameters>
     <securityAdapterType>rapid</securityAdapterType>
     <showActionIds>false</showActionIds>
     <showControlIds>false</showControlIds>

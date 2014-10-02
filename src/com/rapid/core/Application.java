@@ -161,6 +161,30 @@ public class Application {
 		
 	}
 	
+	// application parameters which will can access in some of our actions
+	@XmlType(namespace="http://rapid-is.co.uk/core")
+	public static class Parameter {
+		
+		// private instance variables
+		
+		private String _name, _value;
+		
+		// properties
+		
+		public String getName() { return _name; }
+		public void setName(String name) { _name = name; }
+		
+		public String getValue() { return _value; }
+		public void setValue(String value) { _value = value; }
+		
+		// constructor
+		public Parameter() {
+			_name = "";
+			_value = "";
+		}
+		
+	}
+	
 	// application and page backups
 	public static class Backup {
 		
@@ -257,11 +281,11 @@ public class Application {
 	private String _id, _version, _name, _title, _description, _startPageId, _styles, _securityAdapterType, _createdBy, _modifiedBy;
 	private boolean _showConrolIds, _showActionIds;
 	private Date _createdDate, _modifiedDate;
-	private Map<String,String> _settings;
-	private SecurityAdapater _securityAdapter;
-	private List<String> _controlTypes, _actionTypes;
+	private SecurityAdapater _securityAdapter;	
 	private List<DatabaseConnection> _databaseConnections;	
 	private List<Webservice> _webservices;
+	private List<Parameter> _parameters;
+	private List<String> _controlTypes, _actionTypes;
 	private HashMap<String,Page> _pages;
 	private Resources _resources;
 	private List<String> _styleClasses;
@@ -323,11 +347,7 @@ public class Application {
 	// the application start page which will be supplied if no page is explicitly provided
 	public String getStartPageId() { return _startPageId; }
 	public void setStartPageId(String startPageId) { _startPageId = startPageId; }
-		
-	// the settings map - can be edited in the application.xml file
-	public Map<String,String> getSettings() { return _settings; }
-	public void setSettings(Map<String,String> settings) { _settings = settings; }
-	
+			
 	// the styles used to generate the application rapid.css file
 	public String getStyles() { return _styles; }
 	public void setStyles(String styles) { _styles = styles; }
@@ -343,6 +363,10 @@ public class Application {
 	// the class name of the security adapter this application uses
 	public String getSecurityAdapterType() { return _securityAdapterType; }
 	public void setSecurityAdapterType(String securityAdapterType) { _securityAdapterType = securityAdapterType; }
+	
+	// a collection of parameters for this application
+	public List<Parameter> getParameters() { return _parameters; }
+	public void setParameters(List<Parameter> parameters) { _parameters = parameters; }
 	
 	// control types used in this application
 	public List<String> getControlTypes() { return _controlTypes; }
@@ -367,6 +391,7 @@ public class Application {
 		_pages = new HashMap<String,Page>();
 		_databaseConnections = new ArrayList<DatabaseConnection>();
 		_webservices = new ArrayList<Webservice>();
+		_parameters = new ArrayList<Parameter>();
 		_applicationBackupsMaxSize = 3;
 		_pageBackupsMaxSize = 3;
 	};

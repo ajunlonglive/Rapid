@@ -45,6 +45,7 @@ import org.mozilla.javascript.edu.emory.mathcs.backport.java.util.Collections;
 
 import com.rapid.core.Action;
 import com.rapid.core.Application;
+import com.rapid.core.Application.Parameter;
 import com.rapid.core.Control;
 import com.rapid.core.Page;
 import com.rapid.core.Application.DatabaseConnection;
@@ -517,6 +518,19 @@ public class Rapid extends Action {
 					// add webservices connections
 					result.put("webservices", jsonWebservices);
 					
+					// create an array for the parameters
+					JSONArray jsonParameters = new JSONArray();
+									
+					// check we have some webservices
+					if (app.getParameters() != null) {
+						// loop and add to jsonArray
+						for (Parameter parameter : app.getParameters()) {
+							jsonParameters.put(parameter.getName());
+						}					
+					}	
+					// add webservices connections
+					result.put("parameters", jsonParameters);
+					
 					
 					// create an array for the app backups
 					JSONArray jsonAppBackups = new JSONArray();
@@ -736,6 +750,24 @@ public class Rapid extends Action {
 					result.put("currentUser", rapidRequest.getUserName());
 																						
 				} // got security
+				
+			} else if ("GETPARAM".equals(action)) {
+				
+				// retrieve the index
+				int index = jsonAction.getInt("index");
+				
+				// get the parameter
+				Parameter parameter = app.getParameters().get(index);
+				
+				// create the json object
+				JSONObject jsonParameter = new JSONObject();
+				
+				// add the name and value
+				jsonParameter.put("name", parameter.getName());
+				jsonParameter.put("value", parameter.getValue());
+				
+				// add the parameter to the result
+				result.put("parameter", jsonParameter);
 						
 			} else if ("RELOADACTIONS".equals(action)) {
 							
@@ -1525,7 +1557,43 @@ public class Rapid extends Action {
 				
 				// set the result message
 				result.put("message", "User details saved");					
+			
+			} else if ("NEWPARAM".equals(action)) {
+				
+				// add a new parameter to the collection
+				app.getParameters().add(new Parameter());
+				
+			} else if ("DELPARAM".equals(action)) {
+				
+				// get the index
+				int index = jsonAction.getInt("index");
+				
+				// remove the parameter
+				app.getParameters().remove(index);
+
+				// save the app
+				app.save(rapidServlet, rapidRequest, true);
 								
+				// set the result message
+				result.put("message", "Parameter deleted");
+				
+			} else if ("SAVEPARAM".equals(action)) {	
+				
+				int index = jsonAction.getInt("index");
+				String name = jsonAction.getString("name");
+				String value = jsonAction.getString("value");
+				
+				// fetch the parameter
+				Parameter parameter = app.getParameters().get(index);
+				// update it
+				parameter.setName(name);
+				parameter.setValue(value);
+				// save the app
+				app.save(rapidServlet, rapidRequest, true);
+								
+				// set the result message
+				result.put("message", "Parameter details saved");
+												
 			} else if ("TESTDBCONN".equals(action)) {
 				
 				// get the index

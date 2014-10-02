@@ -49,7 +49,8 @@ return [
  ["GETSOA","Get soa webservice details"],
  ["GETSEC","Get security details"],  
  ["GETUSERS","Get users"],
- ["GETUSER","Get user details"],   
+ ["GETUSER","Get user details"],
+ ["GETPARAM","Get parameter details"],   
  ["RELOADACTIONS","Reload actions"],
  ["RELOADCONTROLS","Reload controls"],
  ["RELOADAPPLICATIONS","Reload applications"],
@@ -79,6 +80,9 @@ return [
  ["NEWUSERROLE","New user role"],
  ["DELUSERROLE","Delete user role"],
  ["SAVEUSER","Save user descrition, password, and roles"],
+ ["NEWPARAM","New parameter"],
+ ["DELPARAM","Delete parameter"],
+ ["SAVEPARAM","Save parameter"],
  ["REBUILDPAGES","Rebuild application pages"],
  ["TESTDBCONN","Test database connection"],
  ["DELAPPBACKUP","Delete application backup"],
@@ -223,6 +227,12 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 				setData_dataStore('rapid_P0_C243', data, "user", {storageType:"S"});
 			};
 		break;	
+		case "GETPARAM" :	
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), index: $("#rapid_P0_C1108_").find("tr.rowSelect").index()-1 };
+			callback = function(data) {
+				setData_dataStore('rapid_P0_C1145_', data, "parameter", {storageType:"S"});
+			};
+		break;
 		case "SAVEAPP" :		
 			data = { 
 				actionType: actionType, 
@@ -481,6 +491,21 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 					$("#rapid_P0_C74").click();    
 				};	
 			}															
+		break;
+		case "NEWPARAM" :
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val() };
+		break;
+		case "DELPARAM" :
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), index: $(ev.target).closest("tr").index()-1 };
+			callback = function() {
+					// hide the panel
+					$("#rapid_P0_C1141_").hide();
+					// remove the row
+					$("#rapid_P0_C1108_").find("tr.rowSelect").remove();					  
+				};
+		break;
+		case "SAVEPARAM" :
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), index: $("#rapid_P0_C1108_").find("tr.rowSelect").index()-1, name: $("#rapid_P0_C1134_").val(), value: $("#rapid_P0_C1123_").val()};
 		break;
 		case "TESTDBCONN" :	
 			data = { 
