@@ -684,7 +684,13 @@ function setData_grid(id, data, field, details) {
   			var columnMap = [];
   			for (var i in details.columns) {				
   				for (var j in data.fields) {
-  					if (details.columns[i].field && details.columns[i].field.toLowerCase() == data.fields[j].toLowerCase()) {
+  					var found = false;
+  					if (details.columns[i].field) {
+  						if (details.columns[i].field.toLowerCase() == data.fields[j].toLowerCase()) found = true;
+  					} else {
+  						if (!data.fields[j]) found = true;
+  					}
+  					if (found) {
   						columnMap.push(j);
   						break;
   					}

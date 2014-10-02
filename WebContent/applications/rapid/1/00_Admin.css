@@ -115,7 +115,7 @@
 }
 
 #rapid_P0_C44 li {
-	padding-top:0px;
+	padding-top:2px;
 	padding-bottom:0;
 	height:40px;
 }
@@ -152,6 +152,15 @@
 }
 
 #rapid_P0_C1079_ {
+	vertical-align:middle;
+	padding-left:10px;
+}
+
+#rapid_P0_C1098_ {
+	width:205px;
+}
+
+#rapid_P0_C1099_ {
 	vertical-align:middle;
 	padding-left:10px;
 }
