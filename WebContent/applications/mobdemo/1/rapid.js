@@ -755,7 +755,7 @@ function setData_input(id, data, field, details) {
   if (data !== undefined) {	
   	data = makeDataObject(data, field);
   	if (data.rows && data.rows[0]) {	        		
-  		if (field && data.fields) {
+  		if (field && data.fields && data.fields.length > 0) {
   			for (var i in data.fields) {
   				if (data.fields[i].toLowerCase() == field.toLowerCase()) {
   					control.val(data.rows[0][i]);
@@ -763,7 +763,11 @@ function setData_input(id, data, field, details) {
   				}
   			}
   		} else {
-  			control.val(data.rows[0][0]);
+  			if (data.rows[0][0]) {
+  				control.val(data.rows[0][0]);
+  			} else {
+  				control.val("");
+  			}
   		}
   	} else {
   		control.val("");

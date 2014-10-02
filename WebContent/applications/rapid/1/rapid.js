@@ -248,6 +248,12 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 				setData_dataStore('rapid_P0_C243', data, "user", {storageType:"S"});
 			};
 		break;	
+		case "GETPARAM" :	
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), index: $("#rapid_P0_C1108_").find("tr.rowSelect").index()-1 };
+			callback = function(data) {
+				setData_dataStore('rapid_P0_C1145_', data, "parameter", {storageType:"S"});
+			};
+		break;
 		case "SAVEAPP" :		
 			data = { 
 				actionType: actionType, 
@@ -506,6 +512,21 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 					$("#rapid_P0_C74").click();    
 				};	
 			}															
+		break;
+		case "NEWPARAM" :
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val() };
+		break;
+		case "DELPARAM" :
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), index: $(ev.target).closest("tr").index()-1 };
+			callback = function() {
+					// hide the panel
+					$("#rapid_P0_C1141_").hide();
+					// remove the row
+					$("#rapid_P0_C1108_").find("tr.rowSelect").remove();					  
+				};
+		break;
+		case "SAVEPARAM" :
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), index: $("#rapid_P0_C1108_").find("tr.rowSelect").index()-1, name: $("#rapid_P0_C1134_").val(), value: $("#rapid_P0_C1123_").val()};
 		break;
 		case "TESTDBCONN" :	
 			data = { 
@@ -998,7 +1019,7 @@ function setData_input(id, data, field, details) {
   if (data !== undefined) {	
   	data = makeDataObject(data, field);
   	if (data.rows && data.rows[0]) {	        		
-  		if (field && data.fields) {
+  		if (field && data.fields && data.fields.length > 0) {
   			for (var i in data.fields) {
   				if (data.fields[i].toLowerCase() == field.toLowerCase()) {
   					control.val(data.rows[0][i]);
@@ -1006,7 +1027,11 @@ function setData_input(id, data, field, details) {
   				}
   			}
   		} else {
-  			control.val(data.rows[0][0]);
+  			if (data.rows[0][0]) {
+  				control.val(data.rows[0][0]);
+  			} else {
+  				control.val("");
+  			}
   		}
   	} else {
   		control.val("");
