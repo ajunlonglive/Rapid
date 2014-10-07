@@ -191,7 +191,7 @@ return data;
 	        <![CDATA[
 var control = $("#" + id);
 control.find("tr:not(:first)").remove();	        
-if (data !== undefined) {	
+if (data != null && data !== undefined) {	
 	data = makeDataObject(data, field);
 	if (data.rows) {	        		
 		if (details && details.columns && data.fields) {

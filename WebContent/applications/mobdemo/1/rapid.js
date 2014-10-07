@@ -13,7 +13,7 @@ function Action_control(actions) {
 }
 
 function Action_datacopy(data, outputs) {
-	if (data !== undefined && outputs) {
+	if (data != null && data !== undefined && outputs) {
 		for (var i in outputs) {
 			var output = outputs[i];			
 			window["setData_" + output.type](output.id, data, output.field, output.details);
