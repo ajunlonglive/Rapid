@@ -70,7 +70,7 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, use
 	<script type="text/javascript" src="scripts/dialogue.js"></script>
 	<script type="text/javascript" src="scripts/map.js"></script>
 	<script type="text/javascript" src="scripts/help.js"></script>			
-	<script type="text/javascript" src="<%=rapid.getWebFolder()%>/rapid.js"></script>
+	<script type="text/javascript" src="<%=Application.getWebFolder(rapid)%>/rapid.js"></script>
 	<script type="text/javascript">
 	
 	var _userName = "<%=userName %>";

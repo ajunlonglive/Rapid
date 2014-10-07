@@ -117,7 +117,7 @@ return $("#" + id).children("input[type=radio]:checked").val();
 	    
 	    <setDataJavaScript>
 	        <![CDATA[
-if (data != null) {
+if (data != null && data !== undefined) {
 	var radiobuttons = $("#" + id);
 	radiobuttons.children("input[type=radio]").prop('checked',false);
 	data = makeDataObject(data, field);

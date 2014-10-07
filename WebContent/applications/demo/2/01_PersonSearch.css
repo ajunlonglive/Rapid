@@ -1,0 +1,83 @@
+
+/* This file is auto-generated on page save */
+
+#P1_C1_ {
+	border-spacing:0px;
+	border:1px solid #aaa;
+	border-radius:5px;
+}
+
+#P1_C3_ {
+	text-align:center;
+	font-weight:bold;
+	padding:5px 5px;
+	background:#ccc url(highlight_1x100.png) 50% 50% repeat-x;
+	border-bottom:1px solid #aaa;
+}
+
+#P1_C6_ {
+	padding-left:10px;
+	padding-top:5px;
+}
+
+#P1_C7_ {
+	padding-right:10px;
+	padding-top:5px;
+}
+
+#P1_C9_ {
+	padding-left:10px;
+	padding-bottom:5px;
+}
+
+#P1_C10_ {
+	padding-right:10px;
+	padding-bottom:5px;
+}
+
+#P1_C13_ {
+	margin-top:20px;
+	border-spacing:0px;
+}
+
+#P1_C15_ {
+	text-align:center;
+	font-weight:bold;
+	padding:5px 5px;
+	background:#ccc url(highlight_1x100.png) 50% 50% repeat-x;
+	border:1px solid #aaa;
+	border-top-left-radius:5px;
+	border-top-right-radius:5px;
+}
+
+#P1_C18_ {
+	background-color:#eee;
+	border-left:1px solid #aaa;
+	border-bottom-left-radius:5px;
+	border-bottom-right-radius:5px;
+	border-right:1px solid #aaa;
+	border-bottom:1px solid #aaa;
+}
+
+#P1_C20_ .rowStyle1 {
+	background-color:white;
+}
+
+#P1_C20_ .rowStyle2 {
+	background-color:#fdd;
+}
+
+#P1_C20_ tr:hover:not(:first-child) {
+	background-color:#faa;
+}
+
+#P1_C40_ {
+	width:200px;
+	padding:10px;
+}
+
+#P1_C41_ {
+	width:200px;
+	padding:10px;
+}
+

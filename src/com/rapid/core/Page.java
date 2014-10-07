@@ -26,6 +26,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 package com.rapid.core;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -214,6 +215,14 @@ public class Page {
 	};
 		
 	// instance methods
+	
+	public String getFile(ServletContext servletContext, Application application) {
+		return application.getConfigFolder(servletContext) + "/" + "/pages/" + Files.safeName(_name) + ".page.xml";
+	}
+	
+	public String getCSSFile(ServletContext servletContext, Application application) {
+		return application.getWebFolder(servletContext) + "/" + Files.safeName(_name) + ".css";
+	}
 	
 	// these two methods have different names to avoid being marshelled to the .xml file by JAXB
 	public String getHtmlHeadCached(Application application) throws JSONException {		
@@ -522,7 +531,7 @@ public class Page {
 		}
 	}
 				
-	public String getStylesFile() {
+	public String getAllStyles() {
 		// the stringbuilder we're going to use
 		StringBuilder stringBuilder = new StringBuilder();
 		// check if the page has styles
@@ -552,11 +561,8 @@ public class Page {
 		}
 	}
 								
-	public void backup(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, File pageFile) throws IOException {
-		
-		// get the application
-		Application application = rapidRequest.getApplication();
-			
+	public void backup(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, Application application, File pageFile) throws IOException {
+					
 		// get the user name
 		String userName = Files.safeName(rapidRequest.getUserName());		
 		
@@ -576,10 +582,35 @@ public class Page {
 		
 	}
 	
-	public void save(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, boolean backup) throws JAXBException, IOException {
+	public void deleteBackup(RapidHttpServlet rapidServlet, Application application, String backupId) {
 		
-		// get the application
-		Application application = rapidRequest.getApplication();
+		// create the path
+		String backupPath = application.getBackupFolder(rapidServlet.getServletContext()) + "/" + backupId;
+		// create the file
+		File backupFile = new File(backupPath);
+		// delete 
+		Files.deleteRecurring(backupFile);
+		
+	}
+			
+	public void saveCSSFile(ServletContext servletContext, Application application) throws IOException {
+
+		// get the file
+		String cssFile = getCSSFile(servletContext, application);
+		
+		// set the fos to the css file
+		FileOutputStream fos = new FileOutputStream(cssFile);
+		
+		// get a print stream
+		PrintStream ps = new PrintStream(fos);		
+		ps.print("\n/* This file is auto-generated on page save */\n\n");
+		ps.print(getAllStyles());
+		// close
+		ps.close();
+		fos.close();		
+	}
+	
+	public void save(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, Application application, boolean backup) throws JAXBException, IOException {
 		
 		// create folders to save the pages
 		String pagePath = application.getConfigFolder(rapidServlet.getServletContext()) + "/pages";		
@@ -590,7 +621,7 @@ public class Page {
 	 	File newFile = new File(pagePath + "/" + Files.safeName(getName()) + ".page.xml");
 	 	
 	 	// if we want a backup and the new file already exists it needs archiving
-	 	if (backup && newFile.exists()) backup(rapidServlet, rapidRequest, newFile);	 			 	
+	 	if (backup && newFile.exists()) backup(rapidServlet, rapidRequest, application, newFile);	 			 	
 				
 	 	// create a file for the temp file
 	    File tempFile = new File(pagePath + "/" + Files.safeName(getName()) + "-saving.page.xml");	
@@ -618,15 +649,8 @@ public class Page {
 		// empty the cached header html
 		_cachedStartHtml = null;
 		
-		// set the fos to the css file
-		fos = new FileOutputStream(application.getWebFolder(rapidServlet.getServletContext()) + "/" + Files.safeName(getName()) + ".css");
-		// get a print stream
-		PrintStream ps = new PrintStream(fos);		
-		ps.print("\n/* This file is auto-generated on page save */\n\n");
-		ps.print(getStylesFile());
-		// close
-		ps.close();
-		fos.close();
+		// re-create the css file
+		saveCSSFile(rapidServlet.getServletContext(), application);
 				
 	}
 	
@@ -644,7 +668,7 @@ public class Page {
 	 	// if the new file already exists it needs archiving
 	 	if (delFile.exists()) {
 	 		// archive the page file
-	 		backup(rapidServlet, rapidRequest, delFile);
+	 		backup(rapidServlet, rapidRequest, application, delFile);
 	 		// delete the page file
 	 		delFile.delete();
 	 		// remove it from the current list of pages
@@ -869,7 +893,7 @@ public class Page {
 		stringBuilder.append("    " + getResourcesHtml(application).trim().replace("\n", "\n    ") + "\n");
 		
 		// include the page's css file (generated when the page is saved)
-		stringBuilder.append("    <link rel='stylesheet' type='text/css' href='" + application.getWebFolder() + "/" + _name + ".css'></link>\n");
+		stringBuilder.append("    <link rel='stylesheet' type='text/css' href='" + Application.getWebFolder(application) + "/" + _name + ".css'></link>\n");
 		
 		// start building the inline js for the page				
 		stringBuilder.append("    <script type='text/javascript'>\n\n");
@@ -1034,7 +1058,10 @@ public class Page {
 		// get the unmarshaller from the context
 		Unmarshaller unmarshaller = (Unmarshaller) servletContext.getAttribute("unmarshaller");	
 		// unmarshall the page
-		return (Page) unmarshaller.unmarshal(file);
+		Page page = (Page) unmarshaller.unmarshal(file);
+		
+		// return it		
+		return page;
 				
 	}
 	

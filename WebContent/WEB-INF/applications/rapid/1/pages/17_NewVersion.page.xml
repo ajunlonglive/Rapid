@@ -5,16 +5,16 @@
             <childControls>
                 <properties>
                     <entry>
+                        <key>id</key>
+                        <value>rapid_P17_C3_</value>
+                    </entry>
+                    <entry>
                         <key>classes</key>
                         <value>[]</value>
                     </entry>
                     <entry>
-                        <key>id</key>
-                        <value>rapid_P9_C4_</value>
-                    </entry>
-                    <entry>
                         <key>text</key>
-                        <value>Import application version</value>
+                        <value>New version</value>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -32,27 +32,23 @@
                         <key>type</key>
                         <value>tableCell</value>
                     </entry>
-                    <entry>
-                        <key>version</key>
-                        <value>1</value>
-                    </entry>
                 </properties>
                 <styles>
-                    <appliesTo>#rapid_P9_C4_</appliesTo>
-                    <rules>background:#e00 url(highlight_red_1x44.png) 50% 50% repeat-x;</rules>
+                    <appliesTo>#rapid_P17_C3_</appliesTo>
                     <rules>padding:10px;</rules>
-                    <rules>text-shadow :-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;</rules>
+                    <rules>background:#e00 url(highlight_red_1x44.png) 50% 50% repeat-x;</rules>
+                    <rules>text-shadow :1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;</rules>
                 </styles>
                 <XMLVersion>1</XMLVersion>
             </childControls>
             <properties>
                 <entry>
-                    <key>classes</key>
-                    <value>[]</value>
+                    <key>id</key>
+                    <value>rapid_P17_C2_</value>
                 </entry>
                 <entry>
-                    <key>id</key>
-                    <value>rapid_P9_C3_</value>
+                    <key>classes</key>
+                    <value>[]</value>
                 </entry>
                 <entry>
                     <key>name</key>
@@ -62,13 +58,9 @@
                     <key>type</key>
                     <value>tableRow</value>
                 </entry>
-                <entry>
-                    <key>version</key>
-                    <value>1</value>
-                </entry>
             </properties>
             <styles>
-                <appliesTo>#rapid_P9_C3_</appliesTo>
+                <appliesTo>#rapid_P17_C2_</appliesTo>
                 <rules>background-color:red;</rules>
                 <rules>color:white;</rules>
                 <rules>font-weight:bold;</rules>
@@ -78,81 +70,11 @@
         </childControls>
         <childControls>
             <childControls>
-                <properties>
-                    <entry>
-                        <key>classes</key>
-                        <value>[]</value>
-                    </entry>
-                    <entry>
-                        <key>id</key>
-                        <value>rapid_P9_C31_</value>
-                    </entry>
-                    <entry>
-                        <key>text</key>
-                        <value>File :</value>
-                    </entry>
-                    <entry>
-                        <key>colSpan</key>
-                        <value>1</value>
-                    </entry>
-                    <entry>
-                        <key>name</key>
-                        <value></value>
-                    </entry>
-                    <entry>
-                        <key>rowSpan</key>
-                        <value>1</value>
-                    </entry>
-                    <entry>
-                        <key>type</key>
-                        <value>tableCell</value>
-                    </entry>
-                    <entry>
-                        <key>version</key>
-                        <value>1</value>
-                    </entry>
-                </properties>
-                <XMLVersion>1</XMLVersion>
-            </childControls>
-            <childControls>
-                <properties>
-                    <entry>
-                        <key>classes</key>
-                        <value>[]</value>
-                    </entry>
-                    <entry>
-                        <key>id</key>
-                        <value>rapid_P9_C32_</value>
-                    </entry>
-                    <entry>
-                        <key>text</key>
-                        <value></value>
-                    </entry>
-                    <entry>
-                        <key>colSpan</key>
-                        <value>1</value>
-                    </entry>
-                    <entry>
-                        <key>name</key>
-                        <value></value>
-                    </entry>
-                    <entry>
-                        <key>rowSpan</key>
-                        <value>1</value>
-                    </entry>
-                    <entry>
-                        <key>type</key>
-                        <value>tableCell</value>
-                    </entry>
-                    <entry>
-                        <key>version</key>
-                        <value>1</value>
-                    </entry>
-                </properties>
-                <XMLVersion>1</XMLVersion>
-            </childControls>
-            <childControls>
                 <childControls>
+                    <events>
+                        <filter></filter>
+                        <type>mouseover</type>
+                    </events>
                     <events>
                         <filter></filter>
                         <type>click</type>
@@ -160,101 +82,47 @@
                     <properties>
                         <entry>
                             <key>id</key>
-                            <value>rapid_P9_C50_</value>
+                            <value>rapid_P17_C35_</value>
                         </entry>
                         <entry>
                             <key>classes</key>
                             <value>[]</value>
                         </entry>
                         <entry>
-                            <key>file</key>
-                            <value>help_16x16.png</value>
+                            <key>text</key>
+                            <value>New version :</value>
                         </entry>
                         <entry>
                             <key>name</key>
-                            <value>hintImpFile</value>
+                            <value></value>
+                        </entry>
+                        <entry>
+                            <key>format</key>
+                            <value>N</value>
                         </entry>
                         <entry>
                             <key>type</key>
-                            <value>image</value>
+                            <value>text</value>
                         </entry>
                     </properties>
+                    <styles>
+                        <appliesTo>#rapid_P17_C35_</appliesTo>
+                        <rules>padding-top:2px;</rules>
+                    </styles>
                     <XMLVersion>1</XMLVersion>
                 </childControls>
                 <properties>
                     <entry>
-                        <key>classes</key>
-                        <value>[]</value>
+                        <key>id</key>
+                        <value>rapid_P17_C5_</value>
                     </entry>
                     <entry>
-                        <key>id</key>
-                        <value>rapid_P9_C48_</value>
+                        <key>classes</key>
+                        <value>[]</value>
                     </entry>
                     <entry>
                         <key>text</key>
                         <value></value>
-                    </entry>
-                    <entry>
-                        <key>colSpan</key>
-                        <value>1</value>
-                    </entry>
-                    <entry>
-                        <key>rowSpan</key>
-                        <value>1</value>
-                    </entry>
-                    <entry>
-                        <key>type</key>
-                        <value>tableCell</value>
-                    </entry>
-                </properties>
-                <styles>
-                    <appliesTo>#rapid_P9_C48_</appliesTo>
-                    <rules>padding-right:10px;</rules>
-                </styles>
-                <XMLVersion>1</XMLVersion>
-            </childControls>
-            <properties>
-                <entry>
-                    <key>classes</key>
-                    <value>[]</value>
-                </entry>
-                <entry>
-                    <key>id</key>
-                    <value>rapid_P9_C30_</value>
-                </entry>
-                <entry>
-                    <key>name</key>
-                    <value></value>
-                </entry>
-                <entry>
-                    <key>type</key>
-                    <value>tableRow</value>
-                </entry>
-                <entry>
-                    <key>version</key>
-                    <value>1</value>
-                </entry>
-            </properties>
-            <styles>
-                <appliesTo>.</appliesTo>
-                <rules>padding:5px</rules>
-            </styles>
-            <XMLVersion>1</XMLVersion>
-        </childControls>
-        <childControls>
-            <childControls>
-                <properties>
-                    <entry>
-                        <key>classes</key>
-                        <value>[]</value>
-                    </entry>
-                    <entry>
-                        <key>id</key>
-                        <value>rapid_P9_C6_</value>
-                    </entry>
-                    <entry>
-                        <key>text</key>
-                        <value>Name :</value>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -272,13 +140,10 @@
                         <key>type</key>
                         <value>tableCell</value>
                     </entry>
-                    <entry>
-                        <key>version</key>
-                        <value>1</value>
-                    </entry>
                 </properties>
                 <styles>
-                    <appliesTo>#rapid_P9_C6_</appliesTo>
+                    <appliesTo>#rapid_P17_C5_</appliesTo>
+                    <rules>padding-left:5px;</rules>
                     <rules>vertical-align:top;</rules>
                 </styles>
                 <XMLVersion>1</XMLVersion>
@@ -290,7 +155,7 @@
                             <properties>
 <entry>
     <key>id</key>
-    <value>P9_A9_</value>
+    <value>P17_A8_</value>
 </entry>
 <entry>
     <key>avoidRedundancy</key>
@@ -302,63 +167,15 @@
 </entry>
 <entry>
     <key>action</key>
-    <value>P9_A25_</value>
+    <value>P17_A24_</value>
 </entry>
 <entry>
     <key>type</key>
     <value>existing</value>
 </entry>
 <entry>
-    <key>version</key>
-    <value>1</value>
-</entry>
-<entry>
     <key>redundantActions</key>
-    <value>[&quot;P9_A25_&quot;]</value>
-</entry>
-                            </properties>
-                            <XMLVersion>1</XMLVersion>
-                        </actions>
-                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="custom">
-                            <properties>
-<entry>
-    <key>id</key>
-    <value>P9_A47_</value>
-</entry>
-<entry>
-    <key>javascript</key>
-    <value>var exists = false;
-$.ajax({
-    url: &quot;designer?action=checkApp&amp;name=&quot; + $(&quot;#rapid_P9_C8_&quot;).val(),
-    type: &quot;GET&quot;,    
-    async: false,                
-    success: function(result) {
-        if (result) {
-            exists = true;
-        }
-    }
-});
-if (exists) {
-  $(&quot;#rapid_P9_C46_&quot;).html(&quot;An application with this name already exists.&lt;br/&gt;Continue with the import only if you wish to overwrite it&quot;);
-} else {
-  $(&quot;#rapid_P9_C46_&quot;).html(&quot;&quot;);
-}</value>
-</entry>
-<entry>
-    <key>avoidRedundancy</key>
-    <value>false</value>
-</entry>
-<entry>
-    <key>name</key>
-    <value>Custom 47</value>
-</entry>
-<entry>
-    <key>type</key>
-    <value>custom</value>
-</entry>
-<entry>
-    <key>version</key>
-    <value>1</value>
+    <value>[&quot;P17_A24_&quot;]</value>
 </entry>
                             </properties>
                             <XMLVersion>1</XMLVersion>
@@ -376,12 +193,12 @@ if (exists) {
                     </events>
                     <properties>
                         <entry>
-                            <key>classes</key>
-                            <value>[]</value>
+                            <key>id</key>
+                            <value>rapid_P17_C7_</value>
                         </entry>
                         <entry>
-                            <key>id</key>
-                            <value>rapid_P9_C8_</value>
+                            <key>classes</key>
+                            <value>[]</value>
                         </entry>
                         <entry>
                             <key>name</key>
@@ -399,32 +216,43 @@ if (exists) {
                             <key>type</key>
                             <value>input</value>
                         </entry>
-                        <entry>
-                            <key>version</key>
-                            <value>1</value>
-                        </entry>
                     </properties>
                     <styles>
-                        <appliesTo>#rapid_P9_C8_</appliesTo>
+                        <appliesTo>#rapid_P17_C7_</appliesTo>
                         <rules>width:100%;</rules>
                     </styles>
                     <validation>
                         <allowNulls>false</allowNulls>
-                        <javaScript></javaScript>
+                        <javaScript>var name = $(&quot;#rapid_P0_C43&quot;).val();
+var version = $(&quot;#rapid_P17_C7_&quot;).val();
+if (!version) return &quot;A new version must be provided&quot;;
+if (!version.match(new RegExp(&quot;^[0-9A-Za-z\._-]+$&quot;))) return &quot;An application version can only contain characters a-z, A-Z, 0-9, ., -, and _&quot;;
+var exists = false;
+$.ajax({
+    url: &quot;designer?action=checkVersion&amp;name=&quot; + name + &quot;&amp;version=&quot; + version,
+    type: &quot;GET&quot;,    
+    async: false,                
+    success: function(result) {
+        if (result) {
+            exists = true;
+        }
+    }
+});
+if (exists) return &quot;A version with this name already exists&quot;;</javaScript>
                         <message>An application name can only contain characters a-z, A-Z, 0-9, -, and _</message>
-                        <regEx>^[0-9A-Za-z\._-]+$</regEx>
-                        <type>custom</type>
+                        <regEx></regEx>
+                        <type>javascript</type>
                     </validation>
                     <XMLVersion>1</XMLVersion>
                 </childControls>
                 <properties>
                     <entry>
-                        <key>classes</key>
-                        <value>[]</value>
+                        <key>id</key>
+                        <value>rapid_P17_C6_</value>
                     </entry>
                     <entry>
-                        <key>id</key>
-                        <value>rapid_P9_C7_</value>
+                        <key>classes</key>
+                        <value>[]</value>
                     </entry>
                     <entry>
                         <key>text</key>
@@ -446,11 +274,11 @@ if (exists) {
                         <key>type</key>
                         <value>tableCell</value>
                     </entry>
-                    <entry>
-                        <key>version</key>
-                        <value>1</value>
-                    </entry>
                 </properties>
+                <styles>
+                    <appliesTo>#rapid_P17_C6_</appliesTo>
+                    <rules>width:250px;</rules>
+                </styles>
                 <XMLVersion>1</XMLVersion>
             </childControls>
             <childControls>
@@ -461,12 +289,12 @@ if (exists) {
                     </events>
                     <properties>
                         <entry>
-                            <key>id</key>
-                            <value>rapid_P9_C51_</value>
-                        </entry>
-                        <entry>
                             <key>classes</key>
                             <value>[]</value>
+                        </entry>
+                        <entry>
+                            <key>id</key>
+                            <value>rapid_P17_C27_</value>
                         </entry>
                         <entry>
                             <key>file</key>
@@ -474,7 +302,7 @@ if (exists) {
                         </entry>
                         <entry>
                             <key>name</key>
-                            <value>hintImpName</value>
+                            <value>hintDupName</value>
                         </entry>
                         <entry>
                             <key>type</key>
@@ -482,19 +310,19 @@ if (exists) {
                         </entry>
                     </properties>
                     <styles>
-                        <appliesTo>#rapid_P9_C51_</appliesTo>
+                        <appliesTo>#rapid_P17_C27_</appliesTo>
                         <rules>padding-top:2px;</rules>
                     </styles>
                     <XMLVersion>1</XMLVersion>
                 </childControls>
                 <properties>
                     <entry>
-                        <key>classes</key>
-                        <value>[]</value>
+                        <key>id</key>
+                        <value>rapid_P17_C24_</value>
                     </entry>
                     <entry>
-                        <key>id</key>
-                        <value>rapid_P9_C49_</value>
+                        <key>classes</key>
+                        <value>[]</value>
                     </entry>
                     <entry>
                         <key>text</key>
@@ -514,7 +342,7 @@ if (exists) {
                     </entry>
                 </properties>
                 <styles>
-                    <appliesTo>#rapid_P9_C49_</appliesTo>
+                    <appliesTo>#rapid_P17_C24_</appliesTo>
                     <rules>padding-right:10px;</rules>
                     <rules>vertical-align:top;</rules>
                 </styles>
@@ -522,12 +350,12 @@ if (exists) {
             </childControls>
             <properties>
                 <entry>
-                    <key>classes</key>
-                    <value>[]</value>
+                    <key>id</key>
+                    <value>rapid_P17_C4_</value>
                 </entry>
                 <entry>
-                    <key>id</key>
-                    <value>rapid_P9_C5_</value>
+                    <key>classes</key>
+                    <value>[]</value>
                 </entry>
                 <entry>
                     <key>name</key>
@@ -536,10 +364,6 @@ if (exists) {
                 <entry>
                     <key>type</key>
                     <value>tableRow</value>
-                </entry>
-                <entry>
-                    <key>version</key>
-                    <value>1</value>
                 </entry>
             </properties>
             <styles>
@@ -552,16 +376,16 @@ if (exists) {
             <childControls>
                 <properties>
                     <entry>
+                        <key>id</key>
+                        <value>rapid_P17_C10_</value>
+                    </entry>
+                    <entry>
                         <key>classes</key>
                         <value>[]</value>
                     </entry>
                     <entry>
-                        <key>id</key>
-                        <value>rapid_P9_C55_</value>
-                    </entry>
-                    <entry>
                         <key>text</key>
-                        <value>Version :</value>
+                        <value>Title :</value>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -579,15 +403,10 @@ if (exists) {
                         <key>type</key>
                         <value>tableCell</value>
                     </entry>
-                    <entry>
-                        <key>version</key>
-                        <value>1</value>
-                    </entry>
                 </properties>
                 <styles>
-                    <appliesTo>#rapid_P9_C55_</appliesTo>
-                    <rules>min-width:70px;</rules>
-                    <rules>vertical-align:top;</rules>
+                    <appliesTo>#rapid_P17_C10_</appliesTo>
+                    <rules>padding-left:5px;</rules>
                 </styles>
                 <XMLVersion>1</XMLVersion>
             </childControls>
@@ -598,7 +417,7 @@ if (exists) {
                             <properties>
 <entry>
     <key>id</key>
-    <value>P9_A58_</value>
+    <value>P17_A13_</value>
 </entry>
 <entry>
     <key>avoidRedundancy</key>
@@ -606,67 +425,19 @@ if (exists) {
 </entry>
 <entry>
     <key>name</key>
-    <value>Existing 26</value>
+    <value>Existing 27</value>
 </entry>
 <entry>
     <key>action</key>
-    <value>P9_A25_</value>
+    <value>P17_A24_</value>
 </entry>
 <entry>
     <key>type</key>
     <value>existing</value>
 </entry>
 <entry>
-    <key>version</key>
-    <value>1</value>
-</entry>
-<entry>
     <key>redundantActions</key>
-    <value>[&quot;P9_A25_&quot;]</value>
-</entry>
-                            </properties>
-                            <XMLVersion>1</XMLVersion>
-                        </actions>
-                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="custom">
-                            <properties>
-<entry>
-    <key>id</key>
-    <value>P9_A59_</value>
-</entry>
-<entry>
-    <key>javascript</key>
-    <value>var exists = false;
-$.ajax({
-    url: &quot;designer?action=checkApp&amp;name=&quot; + $(&quot;#rapid_P9_C57_&quot;).val(),
-    type: &quot;GET&quot;,    
-    async: false,                
-    success: function(result) {
-        if (result) {
-            exists = true;
-        }
-    }
-});
-if (exists) {
-  $(&quot;#rapid_P9_C46_&quot;).html(&quot;An application with this name already exists.&lt;br/&gt;Continue with the import only if you wish to overwrite it&quot;);
-} else {
-  $(&quot;#rapid_P9_C46_&quot;).html(&quot;&quot;);
-}</value>
-</entry>
-<entry>
-    <key>avoidRedundancy</key>
-    <value>false</value>
-</entry>
-<entry>
-    <key>name</key>
-    <value>Custom 47</value>
-</entry>
-<entry>
-    <key>type</key>
-    <value>custom</value>
-</entry>
-<entry>
-    <key>version</key>
-    <value>1</value>
+    <value>[&quot;P17_A24_&quot;]</value>
 </entry>
                             </properties>
                             <XMLVersion>1</XMLVersion>
@@ -684,16 +455,12 @@ if (exists) {
                     </events>
                     <properties>
                         <entry>
-                            <key>classes</key>
-                            <value>[]</value>
-                        </entry>
-                        <entry>
                             <key>id</key>
-                            <value>rapid_P9_C57_</value>
+                            <value>rapid_P17_C12_</value>
                         </entry>
                         <entry>
                             <key>name</key>
-                            <value>Version</value>
+                            <value>Title</value>
                         </entry>
                         <entry>
                             <key>value</key>
@@ -707,52 +474,28 @@ if (exists) {
                             <key>type</key>
                             <value>input</value>
                         </entry>
-                        <entry>
-                            <key>version</key>
-                            <value>1</value>
-                        </entry>
                     </properties>
                     <styles>
-                        <appliesTo>#rapid_P9_C57_</appliesTo>
+                        <appliesTo>#rapid_P17_C12_</appliesTo>
                         <rules>width:100%;</rules>
                     </styles>
                     <validation>
                         <allowNulls>false</allowNulls>
-                        <javaScript>var file = $(&quot;#file&quot;).val();
-if (!file) return &quot;A file must be chosen using the button above&quot;;
-if (file.toLowerCase().indexOf(&quot;.zip&quot;) != file.length - 4) return &quot;File must be a .zip&quot;;
-var name = $(&quot;#rapid_P9_C8_&quot;).val();
-if (!name) return &quot;An application name must be provided&quot;;
-if (!name.match(new RegExp(&quot;^[0-9A-Za-z\._-]+$&quot;))) return &quot;An application name can only contain characters a-z, A-Z, 0-9, ., -, and _&quot;;
-var version = $(&quot;#rapid_P9_C57_&quot;).val();
-if (!version) return &quot;An application version must be provided&quot;;
-if (!version.match(new RegExp(&quot;^[0-9A-Za-z\._-]+$&quot;))) return &quot;An application version can only contain characters a-z, A-Z, 0-9, ., -, and _&quot;;
-var exists = false;
-$.ajax({
-    url: &quot;designer?action=checkVersion&amp;name=&quot; + name + &quot;&amp;version=&quot; + version,
-    type: &quot;GET&quot;,    
-    async: false,                
-    success: function(result) {
-        if (result) {
-            exists = true;
-        }
-    }
-});
-if (exists) return &quot;An application with this version already exists&quot;;</javaScript>
-                        <message>An application name can only contain characters a-z, A-Z, 0-9, -, and _</message>
-                        <regEx></regEx>
-                        <type>javascript</type>
+                        <javaScript></javaScript>
+                        <message>An application title must be provided</message>
+                        <regEx>[\s\S]</regEx>
+                        <type>value</type>
                     </validation>
                     <XMLVersion>1</XMLVersion>
                 </childControls>
                 <properties>
                     <entry>
-                        <key>classes</key>
-                        <value>[]</value>
+                        <key>id</key>
+                        <value>rapid_P17_C11_</value>
                     </entry>
                     <entry>
-                        <key>id</key>
-                        <value>rapid_P9_C56_</value>
+                        <key>classes</key>
+                        <value>[]</value>
                     </entry>
                     <entry>
                         <key>text</key>
@@ -774,10 +517,6 @@ if (exists) return &quot;An application with this version already exists&quot;;<
                         <key>type</key>
                         <value>tableCell</value>
                     </entry>
-                    <entry>
-                        <key>version</key>
-                        <value>1</value>
-                    </entry>
                 </properties>
                 <XMLVersion>1</XMLVersion>
             </childControls>
@@ -789,12 +528,12 @@ if (exists) return &quot;An application with this version already exists&quot;;<
                     </events>
                     <properties>
                         <entry>
-                            <key>id</key>
-                            <value>rapid_P9_C61_</value>
-                        </entry>
-                        <entry>
                             <key>classes</key>
                             <value>[]</value>
+                        </entry>
+                        <entry>
+                            <key>id</key>
+                            <value>rapid_P17_C28_</value>
                         </entry>
                         <entry>
                             <key>file</key>
@@ -802,27 +541,23 @@ if (exists) return &quot;An application with this version already exists&quot;;<
                         </entry>
                         <entry>
                             <key>name</key>
-                            <value>hintImpVersion</value>
+                            <value>hintDupTitle</value>
                         </entry>
                         <entry>
                             <key>type</key>
                             <value>image</value>
                         </entry>
                     </properties>
-                    <styles>
-                        <appliesTo>#rapid_P9_C61_</appliesTo>
-                        <rules>padding-top:2px;</rules>
-                    </styles>
                     <XMLVersion>1</XMLVersion>
                 </childControls>
                 <properties>
                     <entry>
-                        <key>classes</key>
-                        <value>[]</value>
+                        <key>id</key>
+                        <value>rapid_P17_C25_</value>
                     </entry>
                     <entry>
-                        <key>id</key>
-                        <value>rapid_P9_C60_</value>
+                        <key>classes</key>
+                        <value>[]</value>
                     </entry>
                     <entry>
                         <key>text</key>
@@ -842,20 +577,19 @@ if (exists) return &quot;An application with this version already exists&quot;;<
                     </entry>
                 </properties>
                 <styles>
-                    <appliesTo>#rapid_P9_C60_</appliesTo>
+                    <appliesTo>#rapid_P17_C25_</appliesTo>
                     <rules>padding-right:10px;</rules>
-                    <rules>vertical-align:top;</rules>
                 </styles>
                 <XMLVersion>1</XMLVersion>
             </childControls>
             <properties>
                 <entry>
-                    <key>classes</key>
-                    <value>[]</value>
+                    <key>id</key>
+                    <value>rapid_P17_C9_</value>
                 </entry>
                 <entry>
-                    <key>id</key>
-                    <value>rapid_P9_C54_</value>
+                    <key>classes</key>
+                    <value>[]</value>
                 </entry>
                 <entry>
                     <key>name</key>
@@ -865,15 +599,211 @@ if (exists) return &quot;An application with this version already exists&quot;;<
                     <key>type</key>
                     <value>tableRow</value>
                 </entry>
+            </properties>
+            <XMLVersion>1</XMLVersion>
+        </childControls>
+        <childControls>
+            <childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P17_C15_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
+                        <key>text</key>
+                        <value>Description :</value>
+                    </entry>
+                    <entry>
+                        <key>colSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>name</key>
+                        <value></value>
+                    </entry>
+                    <entry>
+                        <key>rowSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableCell</value>
+                    </entry>
+                </properties>
+                <styles>
+                    <appliesTo>#rapid_P17_C15_</appliesTo>
+                    <rules>padding-left:5px;</rules>
+                    <rules>vertical-align:top;</rules>
+                </styles>
+                <XMLVersion>1</XMLVersion>
+            </childControls>
+            <childControls>
+                <childControls>
+                    <events>
+                        <filter></filter>
+                        <type>keyup</type>
+                    </events>
+                    <events>
+                        <filter></filter>
+                        <type>change</type>
+                    </events>
+                    <events>
+                        <filter></filter>
+                        <type>blur</type>
+                    </events>
+                    <properties>
+                        <entry>
+                            <key>id</key>
+                            <value>rapid_P17_C17_</value>
+                        </entry>
+                        <entry>
+                            <key>name</key>
+                            <value>Description</value>
+                        </entry>
+                        <entry>
+                            <key>value</key>
+                            <value></value>
+                        </entry>
+                        <entry>
+                            <key>controlType</key>
+                            <value>L</value>
+                        </entry>
+                        <entry>
+                            <key>type</key>
+                            <value>input</value>
+                        </entry>
+                    </properties>
+                    <styles>
+                        <appliesTo>#rapid_P17_C17_</appliesTo>
+                        <rules>width:100%;</rules>
+                        <rules>height:70px;</rules>
+                    </styles>
+                    <validation>
+                        <allowNulls>false</allowNulls>
+                        <javaScript></javaScript>
+                        <message></message>
+                        <regEx></regEx>
+                        <type></type>
+                    </validation>
+                    <XMLVersion>1</XMLVersion>
+                </childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P17_C16_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
+                        <key>text</key>
+                        <value></value>
+                    </entry>
+                    <entry>
+                        <key>colSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>name</key>
+                        <value></value>
+                    </entry>
+                    <entry>
+                        <key>rowSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableCell</value>
+                    </entry>
+                </properties>
+                <XMLVersion>1</XMLVersion>
+            </childControls>
+            <childControls>
+                <childControls>
+                    <events>
+                        <filter></filter>
+                        <type>click</type>
+                    </events>
+                    <properties>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
+                        </entry>
+                        <entry>
+                            <key>id</key>
+                            <value>rapid_P17_C29_</value>
+                        </entry>
+                        <entry>
+                            <key>file</key>
+                            <value>help_16x16.png</value>
+                        </entry>
+                        <entry>
+                            <key>name</key>
+                            <value>hintDupDescription</value>
+                        </entry>
+                        <entry>
+                            <key>type</key>
+                            <value>image</value>
+                        </entry>
+                    </properties>
+                    <XMLVersion>1</XMLVersion>
+                </childControls>
+                <properties>
+                    <entry>
+                        <key>id</key>
+                        <value>rapid_P17_C26_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
+                    </entry>
+                    <entry>
+                        <key>text</key>
+                        <value></value>
+                    </entry>
+                    <entry>
+                        <key>colSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>rowSpan</key>
+                        <value>1</value>
+                    </entry>
+                    <entry>
+                        <key>type</key>
+                        <value>tableCell</value>
+                    </entry>
+                </properties>
+                <styles>
+                    <appliesTo>#rapid_P17_C26_</appliesTo>
+                    <rules>vertical-align:top;</rules>
+                    <rules>padding-right:10px;</rules>
+                </styles>
+                <XMLVersion>1</XMLVersion>
+            </childControls>
+            <properties>
                 <entry>
-                    <key>version</key>
-                    <value>1</value>
+                    <key>id</key>
+                    <value>rapid_P17_C14_</value>
+                </entry>
+                <entry>
+                    <key>classes</key>
+                    <value>[]</value>
+                </entry>
+                <entry>
+                    <key>name</key>
+                    <value></value>
+                </entry>
+                <entry>
+                    <key>type</key>
+                    <value>tableRow</value>
                 </entry>
             </properties>
-            <styles>
-                <appliesTo>.</appliesTo>
-                <rules>padding:5px</rules>
-            </styles>
             <XMLVersion>1</XMLVersion>
         </childControls>
         <childControls>
@@ -884,11 +814,11 @@ if (exists) return &quot;An application with this version already exists&quot;;<
                             <properties>
 <entry>
     <key>id</key>
-    <value>P9_A22_</value>
+    <value>P17_A21_</value>
 </entry>
 <entry>
     <key>control</key>
-    <value>rapid_P9_C2_</value>
+    <value>rapid_P17_C1_</value>
 </entry>
 <entry>
     <key>avoidRedundancy</key>
@@ -906,39 +836,6 @@ if (exists) return &quot;An application with this version already exists&quot;;<
     <key>type</key>
     <value>control</value>
 </entry>
-<entry>
-    <key>version</key>
-    <value>1</value>
-</entry>
-                            </properties>
-                            <XMLVersion>1</XMLVersion>
-                        </actions>
-                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="custom">
-                            <properties>
-<entry>
-    <key>id</key>
-    <value>P9_A38_</value>
-</entry>
-<entry>
-    <key>javascript</key>
-    <value>return false;</value>
-</entry>
-<entry>
-    <key>avoidRedundancy</key>
-    <value>false</value>
-</entry>
-<entry>
-    <key>name</key>
-    <value>Custom 38</value>
-</entry>
-<entry>
-    <key>type</key>
-    <value>custom</value>
-</entry>
-<entry>
-    <key>version</key>
-    <value>1</value>
-</entry>
                             </properties>
                             <XMLVersion>1</XMLVersion>
                         </actions>
@@ -948,7 +845,11 @@ if (exists) return &quot;An application with this version already exists&quot;;<
                     <properties>
                         <entry>
                             <key>id</key>
-                            <value>rapid_P9_C21_</value>
+                            <value>rapid_P17_C20_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
                         </entry>
                         <entry>
                             <key>name</key>
@@ -962,25 +863,21 @@ if (exists) return &quot;An application with this version already exists&quot;;<
                             <key>type</key>
                             <value>button</value>
                         </entry>
-                        <entry>
-                            <key>version</key>
-                            <value>1</value>
-                        </entry>
                     </properties>
                     <styles>
-                        <appliesTo>#rapid_P9_C2_9</appliesTo>
+                        <appliesTo>#rapid_P17_C20_</appliesTo>
                         <rules>width:60px;</rules>
                     </styles>
                     <XMLVersion>1</XMLVersion>
                 </childControls>
                 <properties>
                     <entry>
-                        <key>classes</key>
-                        <value>[]</value>
+                        <key>id</key>
+                        <value>rapid_P17_C19_</value>
                     </entry>
                     <entry>
-                        <key>id</key>
-                        <value>rapid_P9_C20_</value>
+                        <key>classes</key>
+                        <value>[]</value>
                     </entry>
                     <entry>
                         <key>text</key>
@@ -1002,13 +899,10 @@ if (exists) return &quot;An application with this version already exists&quot;;<
                         <key>type</key>
                         <value>tableCell</value>
                     </entry>
-                    <entry>
-                        <key>version</key>
-                        <value>1</value>
-                    </entry>
                 </properties>
                 <styles>
-                    <appliesTo>#rapid_P9_C20_</appliesTo>
+                    <appliesTo>#rapid_P17_C19_</appliesTo>
+                    <rules>padding-top:0;</rules>
                     <rules>padding-bottom:10px;</rules>
                 </styles>
                 <XMLVersion>1</XMLVersion>
@@ -1020,7 +914,7 @@ if (exists) return &quot;An application with this version already exists&quot;;<
                             <properties>
 <entry>
     <key>id</key>
-    <value>P9_A25_</value>
+    <value>P17_A24_</value>
 </entry>
 <entry>
     <key>showMessages</key>
@@ -1042,14 +936,10 @@ if (exists) return &quot;An application with this version already exists&quot;;<
     <key>stopActions</key>
     <value>true</value>
 </entry>
-<entry>
-    <key>version</key>
-    <value>1</value>
-</entry>
                             </properties>
                             <XMLVersion>1</XMLVersion>
-                            <controls>rapid_P9_C8_</controls>
-                            <controls>rapid_P9_C57_</controls>
+                            <controls>rapid_P17_C7_</controls>
+                            <controls>rapid_P17_C12_</controls>
                             <failActions xsi:type="control">
 <properties>
     <entry>
@@ -1058,7 +948,7 @@ if (exists) return &quot;An application with this version already exists&quot;;<
     </entry>
     <entry>
         <key>control</key>
-        <value>rapid_P9_C24_</value>
+        <value>rapid_P17_C23_</value>
     </entry>
     <entry>
         <key>avoidRedundancy</key>
@@ -1076,10 +966,6 @@ if (exists) return &quot;An application with this version already exists&quot;;<
         <key>type</key>
         <value>control</value>
     </entry>
-    <entry>
-        <key>version</key>
-        <value>1</value>
-    </entry>
 </properties>
 <XMLVersion>1</XMLVersion>
                             </failActions>
@@ -1091,7 +977,7 @@ if (exists) return &quot;An application with this version already exists&quot;;<
     </entry>
     <entry>
         <key>control</key>
-        <value>rapid_P9_C24_</value>
+        <value>rapid_P17_C23_</value>
     </entry>
     <entry>
         <key>avoidRedundancy</key>
@@ -1109,25 +995,15 @@ if (exists) return &quot;An application with this version already exists&quot;;<
         <key>type</key>
         <value>control</value>
     </entry>
-    <entry>
-        <key>version</key>
-        <value>1</value>
-    </entry>
 </properties>
 <XMLVersion>1</XMLVersion>
                             </passActions>
                         </actions>
-                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="custom">
+                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="rapid">
                             <properties>
 <entry>
     <key>id</key>
-    <value>P9_A37_</value>
-</entry>
-<entry>
-    <key>javascript</key>
-    <value>var form = $(&quot;#form&quot;);
-form[0].action = 'designer?a=rapid&amp;action=import&amp;name=' + $(&quot;#rapid_P9_C8_&quot;).val() + '&amp;version=' + $(&quot;#rapid_P9_C57_&quot;).val();
-form.submit();</value>
+    <value>P17_A25_</value>
 </entry>
 <entry>
     <key>avoidRedundancy</key>
@@ -1135,15 +1011,15 @@ form.submit();</value>
 </entry>
 <entry>
     <key>name</key>
-    <value>Custom 37</value>
+    <value>Rapid 27</value>
+</entry>
+<entry>
+    <key>actionType</key>
+    <value>NEWVERSION</value>
 </entry>
 <entry>
     <key>type</key>
-    <value>custom</value>
-</entry>
-<entry>
-    <key>version</key>
-    <value>1</value>
+    <value>rapid</value>
 </entry>
                             </properties>
                             <XMLVersion>1</XMLVersion>
@@ -1153,44 +1029,40 @@ form.submit();</value>
                     </events>
                     <properties>
                         <entry>
+                            <key>id</key>
+                            <value>rapid_P17_C23_</value>
+                        </entry>
+                        <entry>
                             <key>classes</key>
                             <value>[]</value>
                         </entry>
                         <entry>
-                            <key>id</key>
-                            <value>rapid_P9_C24_</value>
-                        </entry>
-                        <entry>
                             <key>name</key>
-                            <value>Import</value>
+                            <value>Save</value>
                         </entry>
                         <entry>
                             <key>label</key>
-                            <value>Import</value>
+                            <value>Save</value>
                         </entry>
                         <entry>
                             <key>type</key>
                             <value>button</value>
                         </entry>
-                        <entry>
-                            <key>version</key>
-                            <value>1</value>
-                        </entry>
                     </properties>
                     <styles>
-                        <appliesTo>#rapid_P9_C24_</appliesTo>
-                        <rules>margin-right:-5px;</rules>
+                        <appliesTo>#rapid_P17_C23_</appliesTo>
+                        <rules>width:60px;</rules>
                     </styles>
                     <XMLVersion>1</XMLVersion>
                 </childControls>
                 <properties>
                     <entry>
-                        <key>classes</key>
-                        <value>[]</value>
+                        <key>id</key>
+                        <value>rapid_P17_C22_</value>
                     </entry>
                     <entry>
-                        <key>id</key>
-                        <value>rapid_P9_C23_</value>
+                        <key>classes</key>
+                        <value>[]</value>
                     </entry>
                     <entry>
                         <key>text</key>
@@ -1212,13 +1084,9 @@ form.submit();</value>
                         <key>type</key>
                         <value>tableCell</value>
                     </entry>
-                    <entry>
-                        <key>version</key>
-                        <value>1</value>
-                    </entry>
                 </properties>
                 <styles>
-                    <appliesTo>#rapid_P9_C23_</appliesTo>
+                    <appliesTo>#rapid_P17_C22_</appliesTo>
                     <rules>text-align:right;</rules>
                     <rules>padding-bottom:10px;</rules>
                     <rules>padding-right:15px;</rules>
@@ -1227,12 +1095,12 @@ form.submit();</value>
             </childControls>
             <properties>
                 <entry>
-                    <key>classes</key>
-                    <value>[]</value>
+                    <key>id</key>
+                    <value>rapid_P17_C18_</value>
                 </entry>
                 <entry>
-                    <key>id</key>
-                    <value>rapid_P9_C19_</value>
+                    <key>classes</key>
+                    <value>[]</value>
                 </entry>
                 <entry>
                     <key>name</key>
@@ -1241,10 +1109,6 @@ form.submit();</value>
                 <entry>
                     <key>type</key>
                     <value>tableRow</value>
-                </entry>
-                <entry>
-                    <key>version</key>
-                    <value>1</value>
                 </entry>
             </properties>
             <styles>
@@ -1255,12 +1119,12 @@ form.submit();</value>
         </childControls>
         <properties>
             <entry>
-                <key>classes</key>
-                <value>[]</value>
+                <key>id</key>
+                <value>rapid_P17_C1_</value>
             </entry>
             <entry>
-                <key>id</key>
-                <value>rapid_P9_C2_</value>
+                <key>classes</key>
+                <value>[]</value>
             </entry>
             <entry>
                 <key>name</key>
@@ -1270,19 +1134,14 @@ form.submit();</value>
                 <key>type</key>
                 <value>table</value>
             </entry>
-            <entry>
-                <key>version</key>
-                <value>1</value>
-            </entry>
         </properties>
         <styles>
-            <appliesTo>#rapid_P9_C2_</appliesTo>
+            <appliesTo>#rapid_P17_C1_</appliesTo>
             <rules>border-spacing:0;</rules>
             <rules>border-collapse:collapse;</rules>
-            <rules>width:300px;</rules>
         </styles>
         <styles>
-            <appliesTo>#rapid_P9_C2_ td</appliesTo>
+            <appliesTo>#rapid_P17_C1_ td</appliesTo>
             <rules>padding-left:10px;</rules>
             <rules>padding-top:10px;</rules>
         </styles>
@@ -1291,20 +1150,20 @@ form.submit();</value>
     <controls>
         <properties>
             <entry>
+                <key>id</key>
+                <value>rapid_P17_C30_</value>
+            </entry>
+            <entry>
                 <key>classes</key>
                 <value>[]</value>
             </entry>
             <entry>
-                <key>id</key>
-                <value>rapid_P9_C53_</value>
-            </entry>
-            <entry>
                 <key>details</key>
-                <value>{&quot;controlHints&quot;:[{&quot;text&quot;:&quot;Click the button to locate a previously exported Rapid application .zip file.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P9_C50_&quot;,&quot;type&quot;:&quot;hover&quot;},{&quot;text&quot;:&quot;The name of the application we are importing this version into. \nIt will be created if it does not exist.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P9_C51_&quot;,&quot;type&quot;:&quot;hover&quot;},{&quot;text&quot;:&quot;The version we are importing into. It must not exist already.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P9_C61_&quot;}]}</value>
+                <value>{&quot;controlHints&quot;:[{&quot;text&quot;:&quot;The version of the new application that will be created by duplicating this one.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P17_C27_&quot;,&quot;type&quot;:&quot;hover&quot;},{&quot;text&quot;:&quot;The title for the new application. \nIt is shown to users.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P17_C28_&quot;,&quot;type&quot;:&quot;hover&quot;},{&quot;text&quot;:&quot;Any further details of the new application.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P17_C29_&quot;,&quot;type&quot;:&quot;hover&quot;}]}</value>
             </entry>
             <entry>
                 <key>controlHints</key>
-                <value>[{&quot;text&quot;:&quot;Click the button to locate a previously exported Rapid application .zip file.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P9_C50_&quot;,&quot;type&quot;:&quot;hover&quot;},{&quot;text&quot;:&quot;The name of the application we are importing this version into. \nIt will be created if it does not exist.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P9_C51_&quot;,&quot;type&quot;:&quot;hover&quot;},{&quot;text&quot;:&quot;The version we are importing into. It must not exist already.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P9_C61_&quot;}]</value>
+                <value>[{&quot;text&quot;:&quot;The version of the new application that will be created by duplicating this one.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P17_C27_&quot;,&quot;type&quot;:&quot;hover&quot;},{&quot;text&quot;:&quot;The title for the new application. \nIt is shown to users.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P17_C28_&quot;,&quot;type&quot;:&quot;hover&quot;},{&quot;text&quot;:&quot;Any further details of the new application.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P17_C29_&quot;,&quot;type&quot;:&quot;hover&quot;}]</value>
             </entry>
             <entry>
                 <key>type</key>
@@ -1317,17 +1176,17 @@ form.submit();</value>
         </properties>
         <XMLVersion>1</XMLVersion>
     </controls>
-    <description>Allows an application to be imported from a .zip file</description>
+    <description>Create a new, blank, version for an existing application</description>
     <events>
         <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="control">
             <properties>
                 <entry>
                     <key>id</key>
-                    <value>P9_A52_</value>
+                    <value>P17_A34_</value>
                 </entry>
                 <entry>
                     <key>control</key>
-                    <value>rapid_P9_C24_</value>
+                    <value>rapid_P17_C23_</value>
                 </entry>
                 <entry>
                     <key>avoidRedundancy</key>
@@ -1335,7 +1194,7 @@ form.submit();</value>
                 </entry>
                 <entry>
                     <key>name</key>
-                    <value>Control 52</value>
+                    <value>Control 34</value>
                 </entry>
                 <entry>
                     <key>command</key>
@@ -1348,15 +1207,15 @@ form.submit();</value>
             </properties>
             <XMLVersion>1</XMLVersion>
         </actions>
-        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="custom">
+        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="control">
             <properties>
                 <entry>
                     <key>id</key>
-                    <value>P9_A43_</value>
+                    <value>P17_A32_</value>
                 </entry>
                 <entry>
-                    <key>javascript</key>
-                    <value>$(&quot;body&quot;).append(&quot;&lt;iframe id='importIFrame' name='importIFrame' width='0' height='0' style='width:0;height:0;border:0px hidden 'fff;' onload='Event_reusable_P9(this);'&gt;&lt;/iframe&gt;&quot;);</value>
+                    <key>control</key>
+                    <value>rapid_P17_C12_</value>
                 </entry>
                 <entry>
                     <key>avoidRedundancy</key>
@@ -1364,15 +1223,15 @@ form.submit();</value>
                 </entry>
                 <entry>
                     <key>name</key>
-                    <value>Custom 43</value>
+                    <value>Control 32</value>
+                </entry>
+                <entry>
+                    <key>command</key>
+                    <value>.val($(&quot;#rapid_P0_C392_&quot;).val());</value>
                 </entry>
                 <entry>
                     <key>type</key>
-                    <value>custom</value>
-                </entry>
-                <entry>
-                    <key>version</key>
-                    <value>1</value>
+                    <value>control</value>
                 </entry>
             </properties>
             <XMLVersion>1</XMLVersion>
@@ -1381,11 +1240,11 @@ form.submit();</value>
             <properties>
                 <entry>
                     <key>id</key>
-                    <value>P9_A44_</value>
+                    <value>P17_A33_</value>
                 </entry>
                 <entry>
                     <key>control</key>
-                    <value>rapid_P9_C32_</value>
+                    <value>rapid_P17_C17_</value>
                 </entry>
                 <entry>
                     <key>avoidRedundancy</key>
@@ -1393,19 +1252,15 @@ form.submit();</value>
                 </entry>
                 <entry>
                     <key>name</key>
-                    <value>Control 44</value>
+                    <value>Control 33</value>
                 </entry>
                 <entry>
                     <key>command</key>
-                    <value>.html(&quot;&lt;form id='form' method='post' target='importIFrame' enctype='multipart/form-data'&gt;&lt;input type='file' id='file' name='file'&gt;&lt;/input&gt;&lt;/form&gt;&quot;);</value>
+                    <value>.val($(&quot;#rapid_P0_C393_&quot;).val());</value>
                 </entry>
                 <entry>
                     <key>type</key>
                     <value>control</value>
-                </entry>
-                <entry>
-                    <key>version</key>
-                    <value>1</value>
                 </entry>
             </properties>
             <XMLVersion>1</XMLVersion>
@@ -1414,89 +1269,59 @@ form.submit();</value>
         <type>pageload</type>
     </events>
     <events>
-        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="custom">
-            <properties>
-                <entry>
-                    <key>id</key>
-                    <value>P9_A39_</value>
-                </entry>
-                <entry>
-                    <key>javascript</key>
-                    <value>var f = window.frames[&quot;importIFrame&quot;];
-if (!f) f = document.getElementById(&quot;importIFrame&quot;).contentDocument;
-var r = $(f.document.body).text();
-if ((r) &amp;&amp; (r != &quot;&quot;)) {
-  if (r.indexOf(&quot;Error&quot;) == 0) {
-    alert(r);		
-  } else {    		
-    location.reload();
-  }
-}</value>
-                </entry>
-                <entry>
-                    <key>avoidRedundancy</key>
-                    <value>false</value>
-                </entry>
-                <entry>
-                    <key>name</key>
-                    <value>Custom 39</value>
-                </entry>
-                <entry>
-                    <key>type</key>
-                    <value>custom</value>
-                </entry>
-                <entry>
-                    <key>version</key>
-                    <value>1</value>
-                </entry>
-            </properties>
-            <XMLVersion>1</XMLVersion>
-        </actions>
         <filter></filter>
         <type>reusable</type>
     </events>
-    <htmlBody>&lt;table id=&quot;rapid_P9_C2_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;rapid_P9_C3_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P9_C4_&quot; colspan=&quot;3&quot; class=&quot;tabelCell&quot;&gt;Import application version&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P9_C30_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P9_C31_&quot; class=&quot;tabelCell&quot;&gt;File :&lt;/td&gt;&lt;td id=&quot;rapid_P9_C32_&quot; class=&quot;tabelCell&quot;&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P9_C48_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P9_C50_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P9_C5_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P9_C6_&quot; class=&quot;tabelCell&quot;&gt;Name :&lt;/td&gt;&lt;td id=&quot;rapid_P9_C7_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P9_C8_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P9_C49_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P9_C51_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P9_C54_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P9_C55_&quot; class=&quot;tabelCell&quot;&gt;Version :&lt;/td&gt;&lt;td id=&quot;rapid_P9_C56_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P9_C57_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P9_C60_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P9_C61_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P9_C19_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P9_C20_&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P9_C21_&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P9_C23_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P9_C24_&quot; class=&quot;button&quot;&gt;Import&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
-    <id>P9</id>
+    <htmlBody>&lt;table id=&quot;rapid_P17_C1_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;rapid_P17_C2_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P17_C3_&quot; colspan=&quot;3&quot; class=&quot;tabelCell&quot;&gt;New version&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P17_C4_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P17_C5_&quot; class=&quot;tabelCell&quot;&gt;&lt;span id=&quot;rapid_P17_C35_&quot; class=&quot;text&quot;&gt;New version :&lt;/span&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P17_C6_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P17_C7_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P17_C24_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P17_C27_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P17_C9_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P17_C10_&quot; class=&quot;tabelCell&quot;&gt;Title :&lt;/td&gt;&lt;td id=&quot;rapid_P17_C11_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P17_C12_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P17_C25_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P17_C28_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P17_C14_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P17_C15_&quot; class=&quot;tabelCell&quot;&gt;Description :&lt;/td&gt;&lt;td id=&quot;rapid_P17_C16_&quot; class=&quot;tabelCell&quot;&gt;&lt;textarea id=&quot;rapid_P17_C17_&quot; class=&quot;input&quot;&gt;&lt;/textarea&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P17_C26_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P17_C29_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P17_C18_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P17_C19_&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P17_C20_&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P17_C22_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P17_C23_&quot; class=&quot;button&quot;&gt;Save&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
+    <id>P17</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-10-06T11:39:03.299+01:00</modifiedDate>
-    <name>09_AppImport</name>
+    <modifiedDate>2014-10-06T14:37:34.992+01:00</modifiedDate>
+    <name>17_NewVersion</name>
     <rolesHtml>
-        <html>&lt;table id=&quot;rapid_P9_C2_&quot; class=&quot;table&quot;&gt;
+        <html>&lt;table id=&quot;rapid_P17_C1_&quot; class=&quot;table&quot;&gt;
 		&lt;tbody&gt;
-			&lt;tr id=&quot;rapid_P9_C3_&quot; class=&quot;tableRow&quot;&gt;
-				&lt;td id=&quot;rapid_P9_C4_&quot; colspan=&quot;3&quot; class=&quot;tabelCell&quot;&gt;Import application version&lt;/td&gt;
+			&lt;tr id=&quot;rapid_P17_C2_&quot; class=&quot;tableRow&quot;&gt;
+				&lt;td id=&quot;rapid_P17_C3_&quot; colspan=&quot;3&quot; class=&quot;tabelCell&quot;&gt;New version&lt;/td&gt;
 			&lt;/tr&gt;
-			&lt;tr id=&quot;rapid_P9_C30_&quot; class=&quot;tableRow&quot;&gt;
-				&lt;td id=&quot;rapid_P9_C31_&quot; class=&quot;tabelCell&quot;&gt;File :&lt;/td&gt;
-				&lt;td id=&quot;rapid_P9_C32_&quot; class=&quot;tabelCell&quot;&gt;&lt;/td&gt;
-				&lt;td id=&quot;rapid_P9_C48_&quot; class=&quot;tabelCell&quot;&gt;
-					&lt;img id=&quot;rapid_P9_C50_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;
-				&lt;/tr&gt;
-				&lt;tr id=&quot;rapid_P9_C5_&quot; class=&quot;tableRow&quot;&gt;
-					&lt;td id=&quot;rapid_P9_C6_&quot; class=&quot;tabelCell&quot;&gt;Name :&lt;/td&gt;
-					&lt;td id=&quot;rapid_P9_C7_&quot; class=&quot;tabelCell&quot;&gt;
-						&lt;input id=&quot;rapid_P9_C8_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
-						&lt;td id=&quot;rapid_P9_C49_&quot; class=&quot;tabelCell&quot;&gt;
-							&lt;img id=&quot;rapid_P9_C51_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;
-						&lt;/tr&gt;
-						&lt;tr id=&quot;rapid_P9_C54_&quot; class=&quot;tableRow&quot;&gt;
-							&lt;td id=&quot;rapid_P9_C55_&quot; class=&quot;tabelCell&quot;&gt;Version :&lt;/td&gt;
-							&lt;td id=&quot;rapid_P9_C56_&quot; class=&quot;tabelCell&quot;&gt;
-								&lt;input id=&quot;rapid_P9_C57_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
-								&lt;td id=&quot;rapid_P9_C60_&quot; class=&quot;tabelCell&quot;&gt;
-									&lt;img id=&quot;rapid_P9_C61_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;
+			&lt;tr id=&quot;rapid_P17_C4_&quot; class=&quot;tableRow&quot;&gt;
+				&lt;td id=&quot;rapid_P17_C5_&quot; class=&quot;tabelCell&quot;&gt;
+					&lt;span id=&quot;rapid_P17_C35_&quot; class=&quot;text&quot;&gt;New version :&lt;/span&gt;
+				&lt;/td&gt;
+				&lt;td id=&quot;rapid_P17_C6_&quot; class=&quot;tabelCell&quot;&gt;
+					&lt;input id=&quot;rapid_P17_C7_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
+					&lt;td id=&quot;rapid_P17_C24_&quot; class=&quot;tabelCell&quot;&gt;
+						&lt;img id=&quot;rapid_P17_C27_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;
+					&lt;/tr&gt;
+					&lt;tr id=&quot;rapid_P17_C9_&quot; class=&quot;tableRow&quot;&gt;
+						&lt;td id=&quot;rapid_P17_C10_&quot; class=&quot;tabelCell&quot;&gt;Title :&lt;/td&gt;
+						&lt;td id=&quot;rapid_P17_C11_&quot; class=&quot;tabelCell&quot;&gt;
+							&lt;input id=&quot;rapid_P17_C12_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
+							&lt;td id=&quot;rapid_P17_C25_&quot; class=&quot;tabelCell&quot;&gt;
+								&lt;img id=&quot;rapid_P17_C28_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;
+							&lt;/tr&gt;
+							&lt;tr id=&quot;rapid_P17_C14_&quot; class=&quot;tableRow&quot;&gt;
+								&lt;td id=&quot;rapid_P17_C15_&quot; class=&quot;tabelCell&quot;&gt;Description :&lt;/td&gt;
+								&lt;td id=&quot;rapid_P17_C16_&quot; class=&quot;tabelCell&quot;&gt;
+									&lt;textarea id=&quot;rapid_P17_C17_&quot; class=&quot;input&quot;&gt;&lt;/textarea&gt;
+								&lt;/td&gt;
+								&lt;td id=&quot;rapid_P17_C26_&quot; class=&quot;tabelCell&quot;&gt;
+									&lt;img id=&quot;rapid_P17_C29_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;
 								&lt;/tr&gt;
-								&lt;tr id=&quot;rapid_P9_C19_&quot; class=&quot;tableRow&quot;&gt;
-									&lt;td id=&quot;rapid_P9_C20_&quot; class=&quot;tabelCell&quot;&gt;
-										&lt;button id=&quot;rapid_P9_C21_&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;
+								&lt;tr id=&quot;rapid_P17_C18_&quot; class=&quot;tableRow&quot;&gt;
+									&lt;td id=&quot;rapid_P17_C19_&quot; class=&quot;tabelCell&quot;&gt;
+										&lt;button id=&quot;rapid_P17_C20_&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;
 									&lt;/td&gt;
-									&lt;td id=&quot;rapid_P9_C23_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;
-										&lt;button id=&quot;rapid_P9_C24_&quot; class=&quot;button&quot;&gt;Import&lt;/button&gt;
+									&lt;td id=&quot;rapid_P17_C22_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;
+										&lt;button id=&quot;rapid_P17_C23_&quot; class=&quot;button&quot;&gt;Save&lt;/button&gt;
 									&lt;/td&gt;
 								&lt;/tr&gt;
 							&lt;/tbody&gt;
 						&lt;/table&gt;</html>
     </rolesHtml>
-    <title>Import application</title>
+    <styles>
+        <appliesTo>body</appliesTo>
+        <rules>font-size:14px;</rules>
+    </styles>
+    <title>New version</title>
     <XMLVersion>1</XMLVersion>
 </page>

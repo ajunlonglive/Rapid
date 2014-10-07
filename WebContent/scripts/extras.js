@@ -339,7 +339,12 @@ if (window["_rapidmobile"]) {
 function showValidationMessage(controlId, message) {
 	var control = $("#" + controlId);
 	control.addClass("validation");
-	if (!control.next("div.validation")[0]) control.after("<div class='validation'>" + message + "</div>");
+	var element = control.next("div.validation")[0];
+	if (element) {
+		$(element).html(message);
+	} else {
+		control.after("<div class='validation'>" + message + "</div>");
+	}
 }
 
 function hideValidationMessage(controlId) {

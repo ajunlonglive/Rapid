@@ -97,7 +97,7 @@ return $("#" + id).val();
 	    
 	    <setDataJavaScript>
 	        <![CDATA[
-if (data) {
+if (data !== undefined) {
 	var control = $("#" + id);
 	data = makeDataObject(data, field);
 	if (data.rows && data.fields) {
