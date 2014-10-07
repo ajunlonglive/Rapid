@@ -435,11 +435,17 @@ function sizeBorder(control) {
 		_selectionBorder.removeClass("selectionBorderNoMove");
 		_selectionBorder.children().addClass("selectionBorderInnerMove");
 		_selectionBorder.children().removeClass("selectionBorderNoInnerMove");
+		if (control.childControls.length == 0) {
+			_selectionBorder.addClass("selectionBorderInnerMove");
+		} else {
+			_selectionBorder.removeClass("selectionBorderNoInnerMove");
+		}
 	} else {
 		_selectionBorder.addClass("selectionBorderNoMove");
 		_selectionBorder.removeClass("selectionBorderMove");
 		_selectionBorder.children().addClass("selectionBorderNoInnerMove");
 		_selectionBorder.children().removeClass("selectionBorderInnerMove");
+		_selectionBorder.removeClass("selectionBorderInnerMove");
 	}
 }
 
