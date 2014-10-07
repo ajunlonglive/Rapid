@@ -14,7 +14,7 @@
                     </entry>
                     <entry>
                         <key>text</key>
-                        <value>Duplicate application</value>
+                        <value>Duplicate version</value>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -70,6 +70,47 @@
         </childControls>
         <childControls>
             <childControls>
+                <childControls>
+                    <events>
+                        <filter></filter>
+                        <type>mouseover</type>
+                    </events>
+                    <events>
+                        <filter></filter>
+                        <type>click</type>
+                    </events>
+                    <properties>
+                        <entry>
+                            <key>id</key>
+                            <value>rapid_P8_C35_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
+                        </entry>
+                        <entry>
+                            <key>text</key>
+                            <value>New version :</value>
+                        </entry>
+                        <entry>
+                            <key>name</key>
+                            <value></value>
+                        </entry>
+                        <entry>
+                            <key>format</key>
+                            <value>N</value>
+                        </entry>
+                        <entry>
+                            <key>type</key>
+                            <value>text</value>
+                        </entry>
+                    </properties>
+                    <styles>
+                        <appliesTo>#rapid_P8_C35_</appliesTo>
+                        <rules>padding-top:2px;</rules>
+                    </styles>
+                    <XMLVersion>1</XMLVersion>
+                </childControls>
                 <properties>
                     <entry>
                         <key>id</key>
@@ -81,7 +122,7 @@
                     </entry>
                     <entry>
                         <key>text</key>
-                        <value>Name :</value>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -103,6 +144,7 @@
                 <styles>
                     <appliesTo>#rapid_P8_C5_</appliesTo>
                     <rules>padding-left:5px;</rules>
+                    <rules>vertical-align:top;</rules>
                 </styles>
                 <XMLVersion>1</XMLVersion>
             </childControls>
@@ -116,8 +158,8 @@
     <value>P8_A8_</value>
 </entry>
 <entry>
-    <key>XMLVersion</key>
-    <value>1</value>
+    <key>avoidRedundancy</key>
+    <value>false</value>
 </entry>
 <entry>
     <key>name</key>
@@ -130,6 +172,10 @@
 <entry>
     <key>type</key>
     <value>existing</value>
+</entry>
+<entry>
+    <key>redundantActions</key>
+    <value>[&quot;P8_A24_&quot;]</value>
 </entry>
                             </properties>
                             <XMLVersion>1</XMLVersion>
@@ -177,12 +223,13 @@
                     </styles>
                     <validation>
                         <allowNulls>false</allowNulls>
-                        <javaScript>var name = $(&quot;#rapid_P8_C7_&quot;).val();
-if (!name) return &quot;An application name must be provided&quot;;
-if (!name.match(new RegExp(&quot;^[0-9A-Za-z_-]+$&quot;))) return &quot;An application name can only contain characters a-z, A-Z, 0-9, -, and _&quot;;
+                        <javaScript>var name = $(&quot;#rapid_P0_C43&quot;).val();
+var version = $(&quot;#rapid_P8_C7_&quot;).val();
+if (!version) return &quot;A new version must be provided&quot;;
+if (!version.match(new RegExp(&quot;^[0-9A-Za-z\._-]+$&quot;))) return &quot;An application version can only contain characters a-z, A-Z, 0-9, ., -, and _&quot;;
 var exists = false;
 $.ajax({
-    url: &quot;designer?action=checkApp&amp;name=&quot; + name,
+    url: &quot;designer?action=checkVersion&amp;name=&quot; + name + &quot;&amp;version=&quot; + version,
     type: &quot;GET&quot;,    
     async: false,                
     success: function(result) {
@@ -191,7 +238,7 @@ $.ajax({
         }
     }
 });
-if (exists) return &quot;An application with this name already exists&quot;;</javaScript>
+if (exists) return &quot;A version with this name already exists&quot;;</javaScript>
                         <message>An application name can only contain characters a-z, A-Z, 0-9, -, and _</message>
                         <regEx></regEx>
                         <type>javascript</type>
@@ -262,6 +309,10 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
                             <value>image</value>
                         </entry>
                     </properties>
+                    <styles>
+                        <appliesTo>#rapid_P8_C27_</appliesTo>
+                        <rules>padding-top:2px;</rules>
+                    </styles>
                     <XMLVersion>1</XMLVersion>
                 </childControls>
                 <properties>
@@ -293,6 +344,7 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
                 <styles>
                     <appliesTo>#rapid_P8_C24_</appliesTo>
                     <rules>padding-right:10px;</rules>
+                    <rules>vertical-align:top;</rules>
                 </styles>
                 <XMLVersion>1</XMLVersion>
             </childControls>
@@ -368,8 +420,8 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
     <value>P8_A13_</value>
 </entry>
 <entry>
-    <key>XMLVersion</key>
-    <value>1</value>
+    <key>avoidRedundancy</key>
+    <value>false</value>
 </entry>
 <entry>
     <key>name</key>
@@ -382,6 +434,10 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
 <entry>
     <key>type</key>
     <value>existing</value>
+</entry>
+<entry>
+    <key>redundantActions</key>
+    <value>[&quot;P8_A24_&quot;]</value>
 </entry>
                             </properties>
                             <XMLVersion>1</XMLVersion>
@@ -765,8 +821,8 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
     <value>rapid_P8_C1_</value>
 </entry>
 <entry>
-    <key>XMLVersion</key>
-    <value>1</value>
+    <key>avoidRedundancy</key>
+    <value>false</value>
 </entry>
 <entry>
     <key>name</key>
@@ -865,8 +921,8 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
     <value>true</value>
 </entry>
 <entry>
-    <key>XMLVersion</key>
-    <value>1</value>
+    <key>avoidRedundancy</key>
+    <value>true</value>
 </entry>
 <entry>
     <key>name</key>
@@ -895,8 +951,8 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
         <value>rapid_P8_C23_</value>
     </entry>
     <entry>
-        <key>XMLVersion</key>
-        <value>1</value>
+        <key>avoidRedundancy</key>
+        <value>false</value>
     </entry>
     <entry>
         <key>name</key>
@@ -924,8 +980,8 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
         <value>rapid_P8_C23_</value>
     </entry>
     <entry>
-        <key>XMLVersion</key>
-        <value>1</value>
+        <key>avoidRedundancy</key>
+        <value>false</value>
     </entry>
     <entry>
         <key>name</key>
@@ -950,12 +1006,8 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
     <value>P8_A25_</value>
 </entry>
 <entry>
-    <key>XMLVersion</key>
-    <value>1</value>
-</entry>
-<entry>
-    <key>childActions</key>
-    <value>[]</value>
+    <key>avoidRedundancy</key>
+    <value>false</value>
 </entry>
 <entry>
     <key>name</key>
@@ -1107,11 +1159,11 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
             </entry>
             <entry>
                 <key>details</key>
-                <value>{&quot;controlHints&quot;:[{&quot;text&quot;:&quot;The name of the new application. \nUsed in urls and to create resources. \nBest to keep it short.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P8_C27_&quot;},{&quot;text&quot;:&quot;The title for the new application. \nIt is shown to users.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P8_C28_&quot;},{&quot;text&quot;:&quot;Any further details of the new application.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P8_C29_&quot;}]}</value>
+                <value>{&quot;controlHints&quot;:[{&quot;text&quot;:&quot;The version of the new application that will be created by duplicating this one.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P8_C27_&quot;,&quot;type&quot;:&quot;hover&quot;},{&quot;text&quot;:&quot;The title for the new application. \nIt is shown to users.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P8_C28_&quot;,&quot;type&quot;:&quot;hover&quot;},{&quot;text&quot;:&quot;Any further details of the new application.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P8_C29_&quot;,&quot;type&quot;:&quot;hover&quot;}]}</value>
             </entry>
             <entry>
                 <key>controlHints</key>
-                <value>[{&quot;text&quot;:&quot;The name of the new application. \nUsed in urls and to create resources. \nBest to keep it short.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P8_C27_&quot;},{&quot;text&quot;:&quot;The title for the new application. \nIt is shown to users.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P8_C28_&quot;},{&quot;text&quot;:&quot;Any further details of the new application.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P8_C29_&quot;}]</value>
+                <value>[{&quot;text&quot;:&quot;The version of the new application that will be created by duplicating this one.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P8_C27_&quot;,&quot;type&quot;:&quot;hover&quot;},{&quot;text&quot;:&quot;The title for the new application. \nIt is shown to users.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P8_C28_&quot;,&quot;type&quot;:&quot;hover&quot;},{&quot;text&quot;:&quot;Any further details of the new application.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P8_C29_&quot;,&quot;type&quot;:&quot;hover&quot;}]</value>
             </entry>
             <entry>
                 <key>type</key>
@@ -1135,6 +1187,10 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
                 <entry>
                     <key>control</key>
                     <value>rapid_P8_C23_</value>
+                </entry>
+                <entry>
+                    <key>avoidRedundancy</key>
+                    <value>false</value>
                 </entry>
                 <entry>
                     <key>name</key>
@@ -1162,6 +1218,10 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
                     <value>rapid_P8_C12_</value>
                 </entry>
                 <entry>
+                    <key>avoidRedundancy</key>
+                    <value>false</value>
+                </entry>
+                <entry>
                     <key>name</key>
                     <value>Control 32</value>
                 </entry>
@@ -1187,6 +1247,10 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
                     <value>rapid_P8_C17_</value>
                 </entry>
                 <entry>
+                    <key>avoidRedundancy</key>
+                    <value>false</value>
+                </entry>
+                <entry>
                     <key>name</key>
                     <value>Control 33</value>
                 </entry>
@@ -1208,19 +1272,21 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
         <filter></filter>
         <type>reusable</type>
     </events>
-    <htmlBody>&lt;table id=&quot;rapid_P8_C1_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;rapid_P8_C2_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P8_C3_&quot; colspan=&quot;3&quot; class=&quot;tabelCell&quot;&gt;Duplicate application&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P8_C4_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P8_C5_&quot; class=&quot;tabelCell&quot;&gt;Name :&lt;/td&gt;&lt;td id=&quot;rapid_P8_C6_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P8_C7_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P8_C24_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P8_C27_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P8_C9_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P8_C10_&quot; class=&quot;tabelCell&quot;&gt;Title :&lt;/td&gt;&lt;td id=&quot;rapid_P8_C11_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P8_C12_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P8_C25_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P8_C28_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P8_C14_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P8_C15_&quot; class=&quot;tabelCell&quot;&gt;Description :&lt;/td&gt;&lt;td id=&quot;rapid_P8_C16_&quot; class=&quot;tabelCell&quot;&gt;&lt;textarea id=&quot;rapid_P8_C17_&quot; class=&quot;input&quot;&gt;&lt;/textarea&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P8_C26_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P8_C29_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P8_C18_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P8_C19_&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P8_C20_&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P8_C22_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P8_C23_&quot; class=&quot;button&quot;&gt;Save&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
+    <htmlBody>&lt;table id=&quot;rapid_P8_C1_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;rapid_P8_C2_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P8_C3_&quot; colspan=&quot;3&quot; class=&quot;tabelCell&quot;&gt;Duplicate version&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P8_C4_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P8_C5_&quot; class=&quot;tabelCell&quot;&gt;&lt;span id=&quot;rapid_P8_C35_&quot; class=&quot;text&quot;&gt;New version :&lt;/span&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P8_C6_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P8_C7_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P8_C24_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P8_C27_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P8_C9_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P8_C10_&quot; class=&quot;tabelCell&quot;&gt;Title :&lt;/td&gt;&lt;td id=&quot;rapid_P8_C11_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P8_C12_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P8_C25_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P8_C28_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P8_C14_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P8_C15_&quot; class=&quot;tabelCell&quot;&gt;Description :&lt;/td&gt;&lt;td id=&quot;rapid_P8_C16_&quot; class=&quot;tabelCell&quot;&gt;&lt;textarea id=&quot;rapid_P8_C17_&quot; class=&quot;input&quot;&gt;&lt;/textarea&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P8_C26_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P8_C29_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P8_C18_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P8_C19_&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P8_C20_&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P8_C22_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P8_C23_&quot; class=&quot;button&quot;&gt;Save&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
     <id>P8</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-07-09T16:45:40.847+01:00</modifiedDate>
-    <name>08_AppDuplicate</name>
+    <modifiedDate>2014-10-06T12:23:37.402+01:00</modifiedDate>
+    <name>08_Duplicate</name>
     <rolesHtml>
         <html>&lt;table id=&quot;rapid_P8_C1_&quot; class=&quot;table&quot;&gt;
 		&lt;tbody&gt;
 			&lt;tr id=&quot;rapid_P8_C2_&quot; class=&quot;tableRow&quot;&gt;
-				&lt;td id=&quot;rapid_P8_C3_&quot; colspan=&quot;3&quot; class=&quot;tabelCell&quot;&gt;Duplicate application&lt;/td&gt;
+				&lt;td id=&quot;rapid_P8_C3_&quot; colspan=&quot;3&quot; class=&quot;tabelCell&quot;&gt;Duplicate version&lt;/td&gt;
 			&lt;/tr&gt;
 			&lt;tr id=&quot;rapid_P8_C4_&quot; class=&quot;tableRow&quot;&gt;
-				&lt;td id=&quot;rapid_P8_C5_&quot; class=&quot;tabelCell&quot;&gt;Name :&lt;/td&gt;
+				&lt;td id=&quot;rapid_P8_C5_&quot; class=&quot;tabelCell&quot;&gt;
+					&lt;span id=&quot;rapid_P8_C35_&quot; class=&quot;text&quot;&gt;New version :&lt;/span&gt;
+				&lt;/td&gt;
 				&lt;td id=&quot;rapid_P8_C6_&quot; class=&quot;tabelCell&quot;&gt;
 					&lt;input id=&quot;rapid_P8_C7_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
 					&lt;td id=&quot;rapid_P8_C24_&quot; class=&quot;tabelCell&quot;&gt;
@@ -1256,6 +1322,6 @@ if (exists) return &quot;An application with this name already exists&quot;;</ja
         <appliesTo>body</appliesTo>
         <rules>font-size:14px;</rules>
     </styles>
-    <title>Duplicate application</title>
+    <title>Duplicate version</title>
     <XMLVersion>1</XMLVersion>
 </page>

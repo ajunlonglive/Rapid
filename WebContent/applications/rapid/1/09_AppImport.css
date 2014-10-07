@@ -4,7 +4,7 @@
 #rapid_P9_C2_ {
 	border-spacing:0;
 	border-collapse:collapse;
-	width:280px;
+	width:300px;
 }
 
 #rapid_P9_C2_ td {
@@ -37,12 +37,43 @@
 	padding:5px
 }
 
+#rapid_P9_C6_ {
+	vertical-align:top;
+}
+
 #rapid_P9_C8_ {
 	width:100%;
 }
 
 #rapid_P9_C49_ {
 	padding-right:10px;
+	vertical-align:top;
+}
+
+#rapid_P9_C51_ {
+	padding-top:2px;
+}
+
+. {
+	padding:5px
+}
+
+#rapid_P9_C55_ {
+	min-width:70px;
+	vertical-align:top;
+}
+
+#rapid_P9_C57_ {
+	width:100%;
+}
+
+#rapid_P9_C60_ {
+	padding-right:10px;
+	vertical-align:top;
+}
+
+#rapid_P9_C61_ {
+	padding-top:2px;
 }
 
 . {

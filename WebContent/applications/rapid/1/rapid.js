@@ -13,7 +13,7 @@ function Action_control(actions) {
 }
 
 function Action_datacopy(data, outputs) {
-	if (data && outputs) {
+	if (data !== undefined && outputs) {
 		for (var i in outputs) {
 			var output = outputs[i];			
 			window["setData_" + output.type](output.id, data, output.field, output.details);
@@ -258,7 +258,8 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 			data = { 
 				actionType: actionType, 
 				appId: $("#rapid_P0_C43").val(), 
-				version: $("#rapid_P0_C1044_").val(),				
+				version: $("#rapid_P0_C1044_").val(),
+				status: $("#rapid_P0_C1098_").val(),					
 				name: $("#rapid_P0_C392_").val(),
 				saveVersion: $("#rapid_P0_C1077_").val(),
 				title: $("#rapid_P0_C394_").val(),
@@ -341,11 +342,12 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 				actionType: actionType,
 				appId: "rapid",
 				name: $("#rapid_P1_C7").val(),
+				version: $("#rapid_P1_C48_").val(),
 				title: $("#rapid_P1_C11").val(),
 				description: $("#rapid_P1_C15").val()
 			}
 			callback = function(response) {
-				window.location = "~?a=rapid&p=P0&appId=" + response.appId;
+				window.location = "~?a=rapid&p=P0&appId=" + response.appId + "&version=" + response.version;
 			}; 
 		break;
 		case "DELAPP" :		
@@ -362,14 +364,37 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 				actionType: actionType,
 				appId: $("#rapid_P0_C43").val(),
 				version: $("#rapid_P0_C1044_").val(),
-				name: $("#rapid_P8_C7_").val(),
+				newVersion: $("#rapid_P8_C7_").val(),
 				title: $("#rapid_P8_C12_").val(),
 				description: $("#rapid_P8_C17_").val()
 			}
 			callback = function(response) {
 				location.reload();
 			}; 			
-		break;
+		break;				
+		case "NEWVERSION" :		
+			data = {
+				actionType: actionType,
+				appId: $("#rapid_P0_C43").val(),
+				version: $("#rapid_P0_C1044_").val(),
+				newVersion: $("#rapid_P17_C7_").val(),
+				title: $("#rapid_P17_C12_").val(),
+				description: $("#rapid_P17_C17_").val()
+			}
+			callback = function(response) {
+				location.reload();
+			}; 			
+		break;		
+		case "DELVERSION" :		
+			data = {
+				actionType: actionType,
+				appId: $("#rapid_P0_C43").val(),
+				version: $("#rapid_P0_C1044_").val()
+			}
+			callback = function(response) {
+				location.reload();
+			}; 			
+		break;				
 		case "NEWPAGE" :	
 			data = {
 				actionType: actionType,
@@ -518,12 +543,6 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 		break;
 		case "DELPARAM" :
 			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), index: $(ev.target).closest("tr").index()-1 };
-			callback = function() {
-					// hide the panel
-					$("#rapid_P0_C1141_").hide();
-					// remove the row
-					$("#rapid_P0_C1108_").find("tr.rowSelect").remove();					  
-				};
 		break;
 		case "SAVEPARAM" :
 			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), index: $("#rapid_P0_C1108_").find("tr.rowSelect").index()-1, name: $("#rapid_P0_C1134_").val(), value: $("#rapid_P0_C1123_").val()};
@@ -870,7 +889,7 @@ function getData_dropdown(ev, id, field, details) {
 }
 
 function setData_dropdown(id, data, field, details) {
-  if (data) {
+  if (data !== undefined) {
   	var control = $("#" + id);
   	data = makeDataObject(data, field);
   	if (data.rows && data.fields) {

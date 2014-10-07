@@ -55,8 +55,14 @@ public class Applications {
 			// sort the collection
 			Collections.sort(versions, new Comparator<Application>() {
 				@Override
-				public int compare(Application a1, Application a2) {					
-					return (int) (a1.getCreatedDate().getTime() - a2.getCreatedDate().getTime());
+				public int compare(Application a1, Application a2) {		
+					if (a1.getCreatedDate().after(a2.getCreatedDate())) {
+						return 1;
+					} else if (a2.getCreatedDate().after(a1.getCreatedDate())) {
+						return -1;
+					} else {
+						return 0;
+					}					
 				}				
 			});
 			// return the list
@@ -146,7 +152,7 @@ public class Applications {
 				// if this application created date is later and the right status
 				if (applicationVersion.getCreatedDate().after(oldestDate) && (applicationVersion.getStatus() == status || status < 0)) {
 					// update oldest date
-					oldestDate = application.getCreatedDate();
+					oldestDate = applicationVersion.getCreatedDate();
 					// retain version
 					application = applicationVersion;
 				}
@@ -244,6 +250,14 @@ public class Applications {
 	// return whether an application exists
 	public boolean exists(String id) {
 		return _applications.containsKey(id);
+	}
+	
+	// return whether an application and version exists
+	public boolean exists(String id, String version) {
+		if (_applications.containsKey(id)) {
+			if (_applications.get(id).containsKey(version)) return true;
+		}
+		return false;
 	}
 		
 	// return the number of applications

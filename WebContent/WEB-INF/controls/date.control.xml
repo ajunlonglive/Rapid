@@ -125,7 +125,7 @@ return $("#" + id).val();
 	        <![CDATA[
 var control = $("#" + id);
 var value = "";
-if (data) {	
+if (data !== undefined) {	
 	data = makeDataObject(data, field);
 	if (data.rows && data.rows[0]) {	        		
 		if (field && data.fields) {

@@ -6,11 +6,15 @@
                 <properties>
                     <entry>
                         <key>id</key>
-                        <value>rapid_P2_C3</value>
+                        <value>rapid_P18_C3</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
                     </entry>
                     <entry>
                         <key>text</key>
-                        <value>Delete application</value>
+                        <value>Delete version</value>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -18,7 +22,7 @@
                     </entry>
                     <entry>
                         <key>name</key>
-                        <value>Table cell 17</value>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>rowSpan</key>
@@ -30,7 +34,7 @@
                     </entry>
                 </properties>
                 <styles>
-                    <appliesTo>#rapid_P2_C3</appliesTo>
+                    <appliesTo>#rapid_P18_C3</appliesTo>
                     <rules>padding:10px;</rules>
                     <rules>background:#e00 url(highlight_red_1x44.png) 50% 50% repeat-x;</rules>
                     <rules>color:white;</rules>
@@ -43,7 +47,7 @@
             <properties>
                 <entry>
                     <key>id</key>
-                    <value>rapid_P2_C2</value>
+                    <value>rapid_P18_C2</value>
                 </entry>
                 <entry>
                     <key>name</key>
@@ -70,7 +74,7 @@
                     <properties>
                         <entry>
                             <key>id</key>
-                            <value>rapid_P2_C6</value>
+                            <value>rapid_P18_C6</value>
                         </entry>
                         <entry>
                             <key>classes</key>
@@ -78,12 +82,12 @@
                         </entry>
                         <entry>
                             <key>text</key>
-                            <value>Are you sure you want to delete the current application?
+                            <value>Are you sure you want to delete this version?
 </value>
                         </entry>
                         <entry>
                             <key>name</key>
-                            <value>Text 1</value>
+                            <value></value>
                         </entry>
                         <entry>
                             <key>format</key>
@@ -94,53 +98,12 @@
                             <value>text</value>
                         </entry>
                     </properties>
-                    <XMLVersion>1</XMLVersion>
-                </childControls>
-                <childControls>
-                    <events>
-                        <filter></filter>
-                        <type>mouseover</type>
-                    </events>
-                    <events>
-                        <filter></filter>
-                        <type>click</type>
-                    </events>
-                    <properties>
-                        <entry>
-                            <key>id</key>
-                            <value>rapid_P2_C15_</value>
-                        </entry>
-                        <entry>
-                            <key>classes</key>
-                            <value>[]</value>
-                        </entry>
-                        <entry>
-                            <key>text</key>
-                            <value>This will remove all versions and can't be undone.</value>
-                        </entry>
-                        <entry>
-                            <key>name</key>
-                            <value>Text 2</value>
-                        </entry>
-                        <entry>
-                            <key>format</key>
-                            <value>P</value>
-                        </entry>
-                        <entry>
-                            <key>type</key>
-                            <value>text</value>
-                        </entry>
-                    </properties>
-                    <styles>
-                        <appliesTo>#rapid_P2_C15_</appliesTo>
-                        <rules>text-align:center;</rules>
-                    </styles>
                     <XMLVersion>1</XMLVersion>
                 </childControls>
                 <properties>
                     <entry>
                         <key>id</key>
-                        <value>rapid_P2_C5</value>
+                        <value>rapid_P18_C5</value>
                     </entry>
                     <entry>
                         <key>classes</key>
@@ -168,7 +131,7 @@
                     </entry>
                 </properties>
                 <styles>
-                    <appliesTo>#rapid_P2_C5</appliesTo>
+                    <appliesTo>#rapid_P18_C5</appliesTo>
                     <rules>padding-left:20px;</rules>
                     <rules>padding-right:20px;</rules>
                 </styles>
@@ -177,7 +140,7 @@
             <properties>
                 <entry>
                     <key>id</key>
-                    <value>rapid_P2_C4</value>
+                    <value>rapid_P18_C4</value>
                 </entry>
                 <entry>
                     <key>name</key>
@@ -198,11 +161,11 @@
                             <properties>
 <entry>
     <key>id</key>
-    <value>P2_A14</value>
+    <value>P18_A14</value>
 </entry>
 <entry>
     <key>control</key>
-    <value>rapid_P2_C9</value>
+    <value>rapid_P18_C9</value>
 </entry>
 <entry>
     <key>avoidRedundancy</key>
@@ -229,7 +192,7 @@
                     <properties>
                         <entry>
                             <key>id</key>
-                            <value>rapid_P2_C9</value>
+                            <value>rapid_P18_C9</value>
                         </entry>
                         <entry>
                             <key>name</key>
@@ -245,7 +208,7 @@
                         </entry>
                     </properties>
                     <styles>
-                        <appliesTo>#rapid_P2_C9</appliesTo>
+                        <appliesTo>#rapid_P18_C9</appliesTo>
                         <rules>width:60px;</rules>
                     </styles>
                     <XMLVersion>1</XMLVersion>
@@ -253,7 +216,7 @@
                 <properties>
                     <entry>
                         <key>id</key>
-                        <value>rapid_P2_C8</value>
+                        <value>rapid_P18_C8</value>
                     </entry>
                     <entry>
                         <key>text</key>
@@ -277,7 +240,7 @@
                     </entry>
                 </properties>
                 <styles>
-                    <appliesTo>#rapid_P2_C8</appliesTo>
+                    <appliesTo>#rapid_P18_C8</appliesTo>
                     <rules>padding-left:10px;</rules>
                     <rules>padding-bottom:10px;</rules>
                 </styles>
@@ -302,7 +265,7 @@
 </entry>
 <entry>
     <key>actionType</key>
-    <value>DELAPP</value>
+    <value>DELVERSION</value>
 </entry>
 <entry>
     <key>type</key>
@@ -317,7 +280,11 @@
                     <properties>
                         <entry>
                             <key>id</key>
-                            <value>rapid_P2_C12</value>
+                            <value>rapid_P18_C12</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
                         </entry>
                         <entry>
                             <key>name</key>
@@ -333,7 +300,7 @@
                         </entry>
                     </properties>
                     <styles>
-                        <appliesTo>#rapid_P2_C12</appliesTo>
+                        <appliesTo>#rapid_P18_C12</appliesTo>
                         <rules>width:60px;</rules>
                     </styles>
                     <XMLVersion>1</XMLVersion>
@@ -341,7 +308,7 @@
                 <properties>
                     <entry>
                         <key>id</key>
-                        <value>rapid_P2_C11</value>
+                        <value>rapid_P18_C11</value>
                     </entry>
                     <entry>
                         <key>text</key>
@@ -365,7 +332,7 @@
                     </entry>
                 </properties>
                 <styles>
-                    <appliesTo>#rapid_P2_C11</appliesTo>
+                    <appliesTo>#rapid_P18_C11</appliesTo>
                     <rules>text-align:right;</rules>
                     <rules>padding-right:10px;</rules>
                     <rules>padding-bottom:10px;</rules>
@@ -375,7 +342,7 @@
             <properties>
                 <entry>
                     <key>id</key>
-                    <value>rapid_P2_C7</value>
+                    <value>rapid_P18_C7</value>
                 </entry>
                 <entry>
                     <key>name</key>
@@ -395,7 +362,7 @@
         <properties>
             <entry>
                 <key>id</key>
-                <value>rapid_P2_C1</value>
+                <value>rapid_P18_C1</value>
             </entry>
             <entry>
                 <key>name</key>
@@ -407,12 +374,12 @@
             </entry>
         </properties>
         <styles>
-            <appliesTo>#rapid_P2_C1</appliesTo>
+            <appliesTo>#rapid_P18_C1</appliesTo>
             <rules>border-spacing:0;</rules>
         </styles>
         <XMLVersion>1</XMLVersion>
     </controls>
-    <description>Prompts as to whether the user is sure they want to deletes the current application</description>
+    <description>Delete the current application version</description>
     <events>
         <filter></filter>
         <type>pageload</type>
@@ -421,31 +388,30 @@
         <filter></filter>
         <type>reusable</type>
     </events>
-    <htmlBody>&lt;table id=&quot;rapid_P2_C1&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;rapid_P2_C2&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P2_C3&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Delete application&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P2_C4&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P2_C5&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;p id=&quot;rapid_P2_C6&quot; class=&quot;text&quot;&gt;Are you sure you want to delete the current application?
-&lt;/p&gt;&lt;p id=&quot;rapid_P2_C15_&quot; class=&quot;text&quot;&gt;This will remove all versions and can't be undone.&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P2_C7&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P2_C8&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P2_C9&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P2_C11&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P2_C12&quot; class=&quot;button&quot;&gt;Delete&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
-    <id>P2</id>
+    <htmlBody>&lt;table id=&quot;rapid_P18_C1&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;rapid_P18_C2&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P18_C3&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Delete version&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P18_C4&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P18_C5&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;p id=&quot;rapid_P18_C6&quot; class=&quot;text&quot;&gt;Are you sure you want to delete this version?
+&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P18_C7&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P18_C8&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P18_C9&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P18_C11&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P18_C12&quot; class=&quot;button&quot;&gt;Delete&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
+    <id>P18</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-10-06T14:41:10.511+01:00</modifiedDate>
-    <name>02_AppDelete</name>
+    <modifiedDate>2014-10-06T14:40:51.257+01:00</modifiedDate>
+    <name>18_VersionDelete</name>
     <rolesHtml>
-        <html>&lt;table id=&quot;rapid_P2_C1&quot; class=&quot;table&quot;&gt;
+        <html>&lt;table id=&quot;rapid_P18_C1&quot; class=&quot;table&quot;&gt;
 		&lt;tbody&gt;
-			&lt;tr id=&quot;rapid_P2_C2&quot; class=&quot;tableRow&quot;&gt;
-				&lt;td id=&quot;rapid_P2_C3&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Delete application&lt;/td&gt;
+			&lt;tr id=&quot;rapid_P18_C2&quot; class=&quot;tableRow&quot;&gt;
+				&lt;td id=&quot;rapid_P18_C3&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Delete version&lt;/td&gt;
 			&lt;/tr&gt;
-			&lt;tr id=&quot;rapid_P2_C4&quot; class=&quot;tableRow&quot;&gt;
-				&lt;td id=&quot;rapid_P2_C5&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;
-					&lt;p id=&quot;rapid_P2_C6&quot; class=&quot;text&quot;&gt;Are you sure you want to delete the current application?
+			&lt;tr id=&quot;rapid_P18_C4&quot; class=&quot;tableRow&quot;&gt;
+				&lt;td id=&quot;rapid_P18_C5&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;
+					&lt;p id=&quot;rapid_P18_C6&quot; class=&quot;text&quot;&gt;Are you sure you want to delete this version?
 &lt;/p&gt;
-					&lt;p id=&quot;rapid_P2_C15_&quot; class=&quot;text&quot;&gt;This will remove all versions and can't be undone.&lt;/p&gt;
 				&lt;/td&gt;
 			&lt;/tr&gt;
-			&lt;tr id=&quot;rapid_P2_C7&quot; class=&quot;tableRow&quot;&gt;
-				&lt;td id=&quot;rapid_P2_C8&quot; class=&quot;tabelCell&quot;&gt;
-					&lt;button id=&quot;rapid_P2_C9&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;
+			&lt;tr id=&quot;rapid_P18_C7&quot; class=&quot;tableRow&quot;&gt;
+				&lt;td id=&quot;rapid_P18_C8&quot; class=&quot;tabelCell&quot;&gt;
+					&lt;button id=&quot;rapid_P18_C9&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;
 				&lt;/td&gt;
-				&lt;td id=&quot;rapid_P2_C11&quot; class=&quot;tabelCell&quot;&gt;
-					&lt;button id=&quot;rapid_P2_C12&quot; class=&quot;button&quot;&gt;Delete&lt;/button&gt;
+				&lt;td id=&quot;rapid_P18_C11&quot; class=&quot;tabelCell&quot;&gt;
+					&lt;button id=&quot;rapid_P18_C12&quot; class=&quot;button&quot;&gt;Delete&lt;/button&gt;
 				&lt;/td&gt;
 			&lt;/tr&gt;
 		&lt;/tbody&gt;
@@ -455,6 +421,6 @@
         <appliesTo>body</appliesTo>
         <rules>font-size:14px;</rules>
     </styles>
-    <title>Delete application</title>
+    <title>Delete version</title>
     <XMLVersion>1</XMLVersion>
 </page>

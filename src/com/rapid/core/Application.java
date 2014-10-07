@@ -400,22 +400,17 @@ public class Application {
 	
 	// this is where the application configuration will be stored
 	public String getConfigFolder(ServletContext servletContext) {
-		return servletContext.getRealPath("/WEB-INF/applications/" + _id + "/" + _version);		
+		return getConfigFolder(servletContext, _id, _version);		
 	}
 	
 	// this is the web folder with the full system path
 	public String getWebFolder(ServletContext servletContext) {
-		return servletContext.getRealPath("/applications/" + _id + "/" + _version);
+		return getWebFolder(servletContext, _id, _version);
 	}
-	
-	// this is the web folder as seen externally
-	public String getWebFolder() {
-		return "applications/" + _id + "/" + _version;
-	}
-	
+			
 	// this is the backup folder
 	public String getBackupFolder(ServletContext servletContext) {
-		return servletContext.getRealPath("/WEB-INF/applications/" + _id + "/" + _version + "/" + BACKUP_FOLDER);
+		return getBackupFolder(servletContext, _id, _version);
 	}
 		
 	public Page getStartPage() {
@@ -842,9 +837,9 @@ public class Application {
 	    	} // jsonAction check
 	    	
 	    	// add the application js file as a resource
-	    	_resources.add(new Resource(Resource.JAVASCRIPTFILE, getWebFolder() + "/rapid.js"));
+	    	_resources.add(new Resource(Resource.JAVASCRIPTFILE, getWebFolder(this) + "/rapid.js"));
 			// add the application css file as a resource	    	
-	    	_resources.add(new Resource(Resource.CSSFILE, getWebFolder() + "/rapid.css"));
+	    	_resources.add(new Resource(Resource.CSSFILE, getWebFolder(this) + "/rapid.css"));
 				    	
 	    	// create folders to write the rapid.js file
 			String applicationPath = getWebFolder(servletContext);		
@@ -878,6 +873,19 @@ public class Application {
 			ps.close();
 			fos.close();
 			
+		}
+		
+		// check pages
+		if (_pages != null) {
+			// loop them
+			for (String pageId : _pages.keySet()) {
+				// get the page
+				Page page = _pages.get(pageId);
+				// get the css file
+				File cssFile = new File(page.getCSSFile(servletContext, this));
+				// make it if not exists
+				if (!cssFile.exists()) page.saveCSSFile(servletContext, this);
+			}
 		}
 										
 		// populate the list of style classes by scanning the rapid.css
@@ -974,7 +982,7 @@ public class Application {
                         page.setHtmlBody(resultLoadPage.toString());
                         
                         // save the page
-                        page.save(rapidServlet, rapidRequest, true);
+                        page.save(rapidServlet, rapidRequest, this, true);
                         
                         // log that the page was rebuilt ok
                         rapidServlet.getLogger().debug("Rebuilt page " + page.getName());
@@ -1108,50 +1116,54 @@ public class Application {
 			
 			for (File backup : backupFolder.listFiles()) {
 				
-				String id = backup.getName();
+				String fileName = backup.getName();
 				
-				String[] nameParts = id.split("_");
-				
-				if (nameParts.length >= 3) {
+				if (fileName.endsWith(".page.xml")) {
 					
-					String name = nameParts[0];
+					String[] nameParts = fileName.split("_");
 					
-					for (int i = 1; i < nameParts.length - 3; i++) {
-						name += "_" + nameParts[i];
-					}
+					if (nameParts.length >= 3) {
+						
+						String name = nameParts[0];
+						
+						for (int i = 1; i < nameParts.length - 3; i++) {
+							name += "_" + nameParts[i];
+						}
+						
+						long sizeBytes = Files.getSize(backup);
+						
+						String size = "0b";
+										
+						if (sizeBytes < 1024) {
+							size = sizeBytes + " bytes";
+						} else if (sizeBytes < 1024 * 1024) {
+							size = Math.floor(sizeBytes / 1024d * 100) / 100d + " KB";
+						} else if (sizeBytes  < 1024 * 1024 * 1024) {
+							size =  Math.floor(sizeBytes / 1024d / 1024d * 100) / 100d + " MB";
+						} else if (sizeBytes < 1024 * 1024 * 1024 * 1024) {
+							size =  Math.floor(sizeBytes / 1024d / 1024d / 1024d * 100) / 100d + " GB";
+						} else {
+							size = "huge!";
+						}
+						
+						SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd HHmmss");
+						
+						Date date = new Date();
+						
+						try { 
+							date = df.parse(nameParts[nameParts.length - 3] + " " + nameParts[nameParts.length - 2]); 
+						} catch (ParseException ex) {
+							throw new JSONException(ex);
+						}
+						
+						String[] userParts = nameParts[nameParts.length - 1].split("\\.");
+						
+						backups.add(new Backup(fileName, name, date, userParts[0], size));
+																
+					} // name parts > 3
 					
-					long sizeBytes = Files.getSize(backup);
-					
-					String size = "0b";
-									
-					if (sizeBytes < 1024) {
-						size = sizeBytes + " bytes";
-					} else if (sizeBytes < 1024 * 1024) {
-						size = Math.floor(sizeBytes / 1024d * 100) / 100d + " KB";
-					} else if (sizeBytes  < 1024 * 1024 * 1024) {
-						size =  Math.floor(sizeBytes / 1024d / 1024d * 100) / 100d + " MB";
-					} else if (sizeBytes < 1024 * 1024 * 1024 * 1024) {
-						size =  Math.floor(sizeBytes / 1024d / 1024d / 1024d * 100) / 100d + " GB";
-					} else {
-						size = "huge!";
-					}
-					
-					SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd HHmmss");
-					
-					Date date = new Date();
-					
-					try { 
-						date = df.parse(nameParts[nameParts.length - 3] + " " + nameParts[nameParts.length - 2]); 
-					} catch (ParseException ex) {
-						throw new JSONException(ex);
-					}
-					
-					String[] userParts = nameParts[nameParts.length - 1].split("\\.");
-					
-					backups.add(new Backup(id, name, date, userParts[0], size));
-															
-				} // name parts > 3
-				
+				} // ends .page.xml
+												
 			} // file loop
 			
 			// sort the list by date
@@ -1230,13 +1242,13 @@ public class Application {
 	    if (!backupFolder.exists()) backupFolder.mkdirs();
 	    
 	    // create a file object for the application web folder
-	    appFolder = new File(rapidServlet.getServletContext().getRealPath("/applications/" + _id));
+	    appFolder = new File(getWebFolder(rapidServlet.getServletContext()));
 	 		    	    
-	 	// copy the existing web content files and folders to the webcontent archive folder    
+	 	// copy the existing web content files and folders to the webcontent backup folder    
 	    Files.copyFolder(appFolder, backupFolder, ignoreFiles);
 	    	
 	}
-	
+		
 	public Application copy(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, String newId, String newVersion, boolean backups) throws IOException, IllegalArgumentException, SecurityException, JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, SAXException, TransformerFactoryConfigurationError, TransformerException {
 		
 		// retain the ServletContext
@@ -1394,7 +1406,7 @@ public class Application {
 	public void zip(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, String fileName, boolean offlineUse) throws JAXBException, IOException, JSONException {
 		
 		// create folders to save locate app file
-		String folderPath = rapidServlet.getServletContext().getRealPath("/WEB-INF/applications/" + _id);		
+		String folderPath = getConfigFolder(rapidServlet.getServletContext());		
 		
 		// create a file object for the application
 		File appFile = new File(folderPath + "/application.xml");
@@ -1406,7 +1418,7 @@ public class Application {
 			ZipSources zipSources = new ZipSources();
 			
 			// create a file object for the webcontent folder
-			File webFolder = new File(rapidServlet.getServletContext().getRealPath("/applications/" + _id));
+			File webFolder = new File(getWebFolder(rapidServlet.getServletContext()));
 			
 			// if for offlineUse
 			if (offlineUse) {
@@ -1513,9 +1525,29 @@ public class Application {
 	public void zip(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, String fileName) throws JAXBException, IOException, JSONException {
 		zip(rapidServlet, rapidRequest, fileName, false);
 	}
-
+	
 	
 	// static methods
+	
+	// this is where the application configuration will be stored
+	public static String getConfigFolder(ServletContext servletContext, String id, String version) {
+		return servletContext.getRealPath("/WEB-INF/applications/" + id + "/" + version);		
+	}
+	
+	// this is the web folder with the full system path
+	public static String getWebFolder(ServletContext servletContext, String id, String version) {
+		return servletContext.getRealPath("/applications/" + id + "/" + version);
+	}
+	
+	// this is the web folder as seen externally
+	public static String getWebFolder(Application application) {
+		return "applications/" + application.getId() + "/" + application.getVersion();
+	}
+	
+	// this is the backup folder
+	public static String getBackupFolder(ServletContext servletContext, String id, String version) {
+		return servletContext.getRealPath("/WEB-INF/applications/" + id + "/" + version + "/" + BACKUP_FOLDER);
+	}
 	
 	// this is a simple overload for default loading of applications where the resources are all regenerated
 	public static Application load(ServletContext servletContext, File file) throws JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException, IOException, ParserConfigurationException, SAXException, TransformerFactoryConfigurationError, TransformerException {

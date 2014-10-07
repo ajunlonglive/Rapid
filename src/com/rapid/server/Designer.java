@@ -238,7 +238,7 @@ public class Designer extends RapidHttpServlet {
 										// add whether to show action Ids
 										jsonVersion.put("showActionIds", application.getShowActionIds());
 										// add the web folder so we can update the iframe style sheets
-										jsonVersion.put("webFolder", application.getWebFolder());
+										jsonVersion.put("webFolder", Application.getWebFolder(application));
 										
 										// get the database connections
 										List<DatabaseConnection> databaseConnections = application.getDatabaseConnections();
@@ -489,10 +489,27 @@ public class Designer extends RapidHttpServlet {
 							if (appName != null) {
 								
 								// retain whether we have an app with this name
-								boolean appExists =  getApplications().exists(Files.safeName(appName));
+								boolean exists =  getApplications().exists(Files.safeName(appName));
 																					
 								// set the response
-								output = Boolean.toString(appExists);
+								output = Boolean.toString(exists);
+								// send response as json
+								sendJsonOutput(response, output);
+								
+							}
+															
+						} else if ("checkVersion".equals(actionName)) {
+							
+							String appName = request.getParameter("name");
+							String appVersion = request.getParameter("version");
+							
+							if (appName != null && appVersion != null ) {
+								
+								// retain whether we have an app with this name
+								boolean exists =  getApplications().exists(Files.safeName(appName), Files.safeName(appVersion));
+																					
+								// set the response
+								output = Boolean.toString(exists);
 								// send response as json
 								sendJsonOutput(response, output);
 								
@@ -776,7 +793,7 @@ public class Designer extends RapidHttpServlet {
 								}
 																
 								// save the new page to file
-								newPage.save(this, rapidRequest, true);					
+								newPage.save(this, rapidRequest, application, true);					
 								
 								// send a positive message
 								output = "{\"message\":\"Saved!\"}";
@@ -918,8 +935,17 @@ public class Designer extends RapidHttpServlet {
 									// check we were given one
 									if (appName == null) throw new Exception("Name must be provided");
 									
+									// get the version
+									String appVersion = request.getParameter("version");
+									
+									// check we were given one
+									if (appVersion == null) throw new Exception("Version must be provided");
+									
 									// make the id from the safe and lower case name
 									String appId = Files.safeName(appName).toLowerCase();
+									
+									// make the version from the safe and lower case name
+									appVersion = Files.safeName(appVersion);
 									
 									// look for an existing application of this name
 									Application existingApplication = getApplications().get(appId); 
@@ -962,14 +988,15 @@ public class Designer extends RapidHttpServlet {
 									if (webFolderSource.exists() && appFolderSource.exists()) {
 									
 										// get application destination folder
-										File appFolderDest = new File(getServletContext().getRealPath("/WEB-INF/applications/" + appId));
+										File appFolderDest = new File(Application.getConfigFolder(getServletContext(), appId, appVersion));
 										// get web contents destination folder
-										File webFolderDest = new File(getServletContext().getRealPath("/applications/" + appId));							
+										File webFolderDest = new File(Application.getWebFolder(getServletContext(), appId, appVersion));
+										
 										// get application.xml file
 										File appFileSource = new File (appFolderSource + "/application.xml");
 										
-										if (appFileSource.exists()) {											
-											
+										if (appFileSource.exists()) {		
+																						
 											// copy web content
 											Files.copyFolder(webFolderSource, webFolderDest);
 											
@@ -987,6 +1014,18 @@ public class Designer extends RapidHttpServlet {
 											
 											// update the id
 											appNew.setId(appId);
+											
+											// get the old version
+											String appOldVersion = appNew.getVersion();
+											
+											// make the new version
+											appVersion = Files.safeName(appVersion);
+											
+											// update the version
+											appNew.setVersion(appVersion);
+											
+											// update the created date
+											appNew.setCreatedDate(new Date());
 											
 											// re-intialise with the new id (this loads in the security adapater, amongst other things)
 											appNew.initialise(getServletContext(), false);
@@ -1020,8 +1059,8 @@ public class Designer extends RapidHttpServlet {
 
 											        // replace all properties that appear to have a url, and all created links
 											        String newFileString = fileString
-											        		.replace("applications/" + appOldId + "/", "applications/" + appId + "/")
-											        		.replace("~?a=" + appOldId + "&amp;", "~?a=" + appId + "&amp;");
+											        		.replace("applications/" + appOldId + "/" + appOldVersion + "/", "applications/" + appId + "/" + appVersion  + "/")
+											        		.replace("~?a=" + appOldId + "&amp;v=" + appOldVersion + "&amp;", "~?a=" + appId + "&amp;" + "&amp;v=" + appOldVersion);
 											        
 											        PrintWriter newFileWriter = new PrintWriter(pageFile);
 											        newFileWriter.print(newFileString);
@@ -1036,6 +1075,9 @@ public class Designer extends RapidHttpServlet {
 											
 											// update the application id
 											appNew.setId(appId);
+											
+											// update the version
+											appNew.setVersion(appVersion);
 											
 											// get the security
 											SecurityAdapater security = appNew.getSecurity();
@@ -1062,7 +1104,7 @@ public class Designer extends RapidHttpServlet {
 											}
 											
 											// save application
-											appNew.save(this, rapidRequest, true);
+											appNew.save(this, rapidRequest, false);
 											
 											// reload it with the file changes
 											appNew = Application.load(getServletContext(), new File (appFolderDest + "/application.xml"));
