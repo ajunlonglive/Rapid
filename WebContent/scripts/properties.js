@@ -36,7 +36,7 @@ var _dialogueListeners = [];
 
 // this renders all the control properties in the properties panel
 function showProperties(control) {
-	
+			
 	// remove any listeners
 	for (var i in _listeners) {
 		_listeners[i].unbind();
@@ -110,7 +110,7 @@ function showProperties(control) {
 function updateProperty(propertyObject, property, value, refreshHtml) {
 	// if the page isn't locked
 	if (!_locked) {
-		// create an undo snapshot just before we apply the change
+		// add an undo snapshot
 		addUndo();
 		// update the object property value
 		propertyObject[property.key] = value;
@@ -1477,7 +1477,7 @@ function logicConditionValue(cell, action, conditionIndex, valueId) {
 	// get a reference to it
 	var table = cell.find("table").last();
 	
-	table.append("<tr><td>" + (valueId == "value1" ? "Item 1" : "Item 2") + "</td><td><select>" + getDataOptions(value.id) + "<optgroup label='User value'><option value='Constant.Constant'" + (value.id == "Constant.Constant" ? " selected='selected'" : "") + ">User value</option></optgroup></select></td></tr>");
+	table.append("<tr><td>" + (valueId == "value1" ? "Item 1" : "Item 2") + "</td><td><select>" + getInputOptions(value.id) + "<optgroup label='User value'><option value='Constant.Constant'" + (value.id == "Constant.Constant" ? " selected='selected'" : "") + ">User value</option></optgroup></select></td></tr>");
 	// get a reference to the select
 	var select = table.find("select");
 	// retain the value if we don't have one yet

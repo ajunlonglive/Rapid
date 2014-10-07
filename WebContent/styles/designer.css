@@ -519,20 +519,34 @@ Selection Styles
 
 */
 
-
 #selectionBorder {
 	display:none;
 	position:absolute;
 	left:0px;
 	top:0px;
-	z-index:10001;
-	border:2px dashed #6a94dc;
+	z-index:10004;
 	padding:5px;
+}
+
+.selectionBorderMove {
+	border:2px dashed #6a94dc;
+}
+
+.selectionBorderNoMove {
+	border:2px solid #6a94dc;
 }
 
 .selectionBorderInner {
 	background-color:#d3e1ee;
 	position:absolute;			
+}
+
+.selectionBorderInnerMove {
+	cursor: move;		
+}
+
+.selectionBorderInnerNoMove {
+	cursor: initial;		
 }
 
 .selectionBorderInner#selectionBorderLeft {

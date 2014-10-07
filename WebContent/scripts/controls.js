@@ -507,12 +507,14 @@ function rebuildHtml(control) {
 				alert("rebuildJavaScript failed for " + control.type + ". " + ex);
 			}
 		} else if (control.parentControl) {
+			// get the new html
+			var html = control._getHtml();
 			// append the new html to the page object 
-			_page.object.append(control._getHtml());
+			_page.object.append(html);
 			// get a reference to the new object
 			var object = _page.object.children().last();
 			// controls like dropdown and radiobuttons must replace the existing child controls from the new control, others must keep them
-			if (!control._class.updateChildObjects) {
+			if (!control._class.updateChildObjects && control.childControls.length > 0) {
 				// remove any child elements from this new object as we're about to copy in the old ones
 				object.children().remove();
 				// move in any child elements
