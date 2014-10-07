@@ -134,7 +134,7 @@ var _mouseScale;
 function addUndo(keepRedo) {
 	// set dirty
 	_dirty = true;
-	/*
+
 	// grab the page
 	var page = JSON.stringify(getDataObject(_page));
 	// if the page is different from the last item on the undo stack push it on
@@ -150,7 +150,7 @@ function addUndo(keepRedo) {
 		// disable the redo button
 		$("#redo").disable();
 	}
-	*/
+
 }
 
 // takes a snapshot of the current page and adds it to the redo stack
@@ -429,6 +429,18 @@ function sizeBorder(control) {
 		"width":width, // an extra pixel either side
 		"height":height // an extra pixel either side
 	});
+	// set the css according to move / no move
+	if (control._class.canUserMove) {
+		_selectionBorder.addClass("selectionBorderMove");
+		_selectionBorder.removeClass("selectionBorderNoMove");
+		_selectionBorder.children().addClass("selectionBorderInnerMove");
+		_selectionBorder.children().removeClass("selectionBorderNoInnerMove");
+	} else {
+		_selectionBorder.addClass("selectionBorderNoMove");
+		_selectionBorder.removeClass("selectionBorderMove");
+		_selectionBorder.children().addClass("selectionBorderNoInnerMove");
+		_selectionBorder.children().removeClass("selectionBorderInnerMove");
+	}
 }
 
 // this positions the selection border inclduing the mouseDown Offsets which should be zero when the mouse is not moving
@@ -503,8 +515,8 @@ function getRolesOptions(selectRole, ignoreRoles) {
 //different system properties for
 var _systemValues = ["true","false","null","mobile","online"];
 
-// this function returns a set of options for a dropdown of sessionVariables and controls with a getData method
-function getDataOptions(selectId, ignoreId) {
+// this function returns a set of options for a dropdown for inputs or outputs (depending on input true/false), can be controls, control properties (input only), other page controls, page variables (input only), system values (input only)
+function getDataOptions(selectId, ignoreId, input) {
 	var options = "";	
 	var controls = getControls();
 	var gotSelected = false;
@@ -516,8 +528,8 @@ function getDataOptions(selectId, ignoreId) {
 			// if we're not ignoring the control and it has a name
 			if (control.id != ignoreId && control.name) {
 				
-				// if it has a get data function
-				if (control._class.getDataFunction) {
+				// if it has a get data function (for input), or a setDataJavaScript
+				if ((input && control._class.getDataFunction) || control._class.setDataJavaScript) {
 					if (control.id == selectId && !gotSelected) {
 						options += "<option value='" + control.id + "' selected='selected'>" + control.name + "</option>";
 						gotSelected = true;
@@ -526,31 +538,36 @@ function getDataOptions(selectId, ignoreId) {
 					}				
 				}
 				
-				// get any run time properties
-				var properties = control._class.runtimeProperties;
-				// if there are runtimeProperties in the class
-				if (properties) {
-					// promote if array
-					if ($.isArray(properties.runtimeProperty)) properties = properties.runtimeProperty;
-					// loop them
-					for (var i in properties) {
-						// get the property
-						var property = properties[i];
-						// derive the key
-						var key = control.id + "." + property.type;
-						// add the option
-						options += "<option value='" + key  +  "' " + (key == selectId ? "selected='selected'" : "") + ">" + control.name + "." + property.name + "</option>";
+				// control runtime properties can also be inputs
+				if (input) {
+					// get any run time properties
+					var properties = control._class.runtimeProperties;
+					// if there are runtimeProperties in the class
+					if (properties) {
+						// promote if array
+						if ($.isArray(properties.runtimeProperty)) properties = properties.runtimeProperty;
+						// loop them
+						for (var i in properties) {
+							// get the property
+							var property = properties[i];
+							// derive the key
+							var key = control.id + "." + property.type;
+							// add the option
+							options += "<option value='" + key  +  "' " + (key == selectId ? "selected='selected'" : "") + ">" + control.name + "." + property.name + "</option>";
+						}
+						
 					}
 					
 				}
-				
+								
 			}												
 			
 		}
 		options += "</optgroup>";
 	}
 	
-	if (_page && _page.sessionVariables) {
+	// page variables are for input only
+	if (input && _page && _page.sessionVariables) {
 		options += "<optgroup label='Page variables'>";
 		for (var i in _page.sessionVariables) {
 			if (selectId == _page.sessionVariables[i] && !gotSelected) {
@@ -563,6 +580,7 @@ function getDataOptions(selectId, ignoreId) {
 		options += "</optgroup>";
 	}
 	
+	// other page controls can be used for input for output
 	if (_page && _pages) {
 		var groupOpen = false;
 		var groupClose = false;
@@ -585,8 +603,8 @@ function getDataOptions(selectId, ignoreId) {
 		if (groupOpen && !groupClose) options += "</optgroup>";
 	}
 	
-	// system values - these are defined in an array above this function
-	if (_systemValues) {
+	// system values, only for inputs - these are defined in an array above this function
+	if (input && _systemValues) {
 		options += "<optgroup label='System values'>";
 		for (var i in _systemValues) {
 			var val = "System." + _systemValues[i];
@@ -599,12 +617,12 @@ function getDataOptions(selectId, ignoreId) {
 
 // this function returns a set of options for a dropdown of sessionVariables and controls with a getData method
 function getInputOptions(selectId, ignoreId) {
-	return getDataOptions(selectId, ignoreId);
+	return getDataOptions(selectId, ignoreId, true);
 }
 
 //this function returns a set of options for a dropdown of sessionVariables and controls with a setData method
 function getOutputOptions(selectId, ignoreId) {
-	return getDataOptions(selectId, ignoreId);
+	return getDataOptions(selectId, ignoreId, false);
 }
 
 //this function returns a set of options for a dropdown of existing events from current controls 
@@ -1298,7 +1316,7 @@ function getDataObject(object) {
 	// loop the properties
 	for (var i in object) {
 		// ignore "static" properties, or those that create circular references
-		if (i.indexOf("_") != 0 && i != "XMLVersion" && i!= "canBeUsedFromOtherPages" && i != "object" && i != "parentControl") {
+		if (i.indexOf("_") != 0 && i != "XMLVersion" && i != "object" && i != "parentControl") {
 			// grab a property
 			var p = object[i];
 			// if a blank space, or not a null
@@ -1948,6 +1966,8 @@ $(document).ready( function() {
 	// the div which we place to show where an insert would occur
 	_selectionInsert = $("#selectionInsert");
 	
+	_selectionBorder.mousedown( coverMouseDown );
+	
 	// the div into which all the styles go
 	_stylesPanelDiv = $("#stylesPanelDiv");
 	// the editiable div in which we input the style rule name or value
@@ -1989,39 +2009,7 @@ $(document).ready( function() {
 	});
 
 	// if we click on the cover (have we hit a control)
-	$("#designCover").mousedown( function(ev) {				
-		// remember that the mouse is down
-		_mouseDown = true;
-		// hide the control panel (sometimes it's mouseout isn't hit)
-		if (!_panelPinned) $("#controlPanel").hide("slide", {direction: "left"}, 200);
-		// get the control under the mouse X/Y
-		var c = getMouseControl(ev);
-		// if we got one
-		if (c) {
-			// retain reference to the selected object
-			_selectedControl = c;									
-			// stop mousemove if canMove is not a property of the control class
-			if (!_selectedControl._class.canUserMove) _mouseDown = false;
-			// fire the mousedown event for the object
-			c.object.trigger("mousedown", ev);			
-			// select control
-			selectControl(c);
-			// calculate the mouse offsets, for moving later, note the adding page of the pinned Offset as we removed it when calling the object event
-			_mouseDownXOffset = _selectedControl.object.offset().left - ev.pageX;
-			_mouseDownYOffset = _selectedControl.object.offset().top - ev.pageY;
-		} else { 
-			// not got an object if there are no child controls on the page select it, otherwise clear everything
-			if (_page.childControls && _page.childControls.length == 0 && !$("#propertiesPanel").is(":visible") ) {
-				// select the page
-				selectControl(_page);
-			} else {
-				// select a null control (this does a lot of cleanup)
-				selectControl(null);				
-			}
-			// hide the select border
-			_selectionBorder.hide();			
-		}				
-	}); // cover mouseDown	
+	$("#designCover").mousedown( coverMouseDown ); // cover mouseDown	
 	
 	// administration
 	$("#appAdmin").click( function(ev) {
@@ -2423,6 +2411,43 @@ $(document).ready( function() {
 	});		
 							
 });
+
+//reusable function for when there is a mousedown on the cover or selection box
+function coverMouseDown(ev) {
+	
+	// remember that the mouse is down
+	_mouseDown = true;
+	// hide the control panel (sometimes it's mouseout isn't hit)
+	if (!_panelPinned) $("#controlPanel").hide("slide", {direction: "left"}, 200);
+	// get the control under the mouse X/Y
+	var c = getMouseControl(ev);
+	// if we got one
+	if (c) {
+		// retain reference to the selected object
+		_selectedControl = c;									
+		// stop mousemove if canMove is not a property of the control class
+		if (!_selectedControl._class.canUserMove) _mouseDown = false;
+		// fire the mousedown event for the object
+		c.object.trigger("mousedown", ev);			
+		// select control
+		selectControl(c);
+		// calculate the mouse offsets, for moving later, note the adding page of the pinned Offset as we removed it when calling the object event
+		_mouseDownXOffset = _selectedControl.object.offset().left - ev.pageX;
+		_mouseDownYOffset = _selectedControl.object.offset().top - ev.pageY;
+	} else { 
+		// not got an object if there are no child controls on the page select it, otherwise clear everything
+		if (_page.childControls && _page.childControls.length == 0 && !$("#propertiesPanel").is(":visible") ) {
+			// select the page
+			selectControl(_page);
+		} else {
+			// select a null control (this does a lot of cleanup)
+			selectControl(null);				
+		}
+		// hide the select border
+		_selectionBorder.hide();			
+	}				
+	
+}
 
 // stop controls being inserted into their pass children for example pass a table cell and a table
 function isDecendant(control1, control2) {	

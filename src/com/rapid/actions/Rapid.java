@@ -560,7 +560,7 @@ public class Rapid extends Action {
 					if (pages != null) {
 						for (Page page : pages) {
 							JSONObject jsonPage = new JSONObject();						
-							jsonPage.put("text", page.getTitle());
+							jsonPage.put("text", page.getName() + " - " + page.getTitle());
 							jsonPage.put("value", page.getId());
 							jsonPages.put(jsonPage);
 						}
