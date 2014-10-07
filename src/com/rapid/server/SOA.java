@@ -152,8 +152,8 @@ public class SOA extends RapidHttpServlet {
 					
 				} else {
 					
-					// split the soapAction using spaces
-					String[] actionParts = soapAction.replace("\"", "").split(" ");
+					// split the soapAction using forward slashes
+					String[] actionParts = soapAction.trim().split("/");
 					if (actionParts.length == 3) {
 						
 						String appId = actionParts[0];
@@ -219,7 +219,7 @@ public class SOA extends RapidHttpServlet {
 						
 					} else {
 						
-						 throw new Exception("SOAPAction must contain app id and SOA webservice id, seperated by \".\"");
+						 throw new Exception("SOAPAction must contain app id, version, and SOA webservice id, seperated by forward slashes. Received " + soapAction);
 						 
 					}
 					

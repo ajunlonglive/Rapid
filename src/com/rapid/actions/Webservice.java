@@ -428,6 +428,13 @@ public class Webservice extends Action {
 					url = new URL(httpRequest.getScheme(), httpRequest.getServerName(), httpRequest.getServerPort(), httpRequest.getContextPath() + "/" + _request.getUrl());
 				}
 				
+				// retrieve the action
+				String action = _request.getAction();
+				// check whether we have any id / version seperators
+				String[] actionParts = action.split("/");
+				// add them if none
+				if (actionParts.length < 2) action = application.getId() + "/" + application.getVersion() +  "/" + action;
+				
 				// establish the connection
 				HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 				connection.setDoOutput(true); // Triggers POST.
@@ -435,13 +442,13 @@ public class Webservice extends Action {
 				// set the content type and action header accordingly
 				if ("SOAP".equals(_request.getType())) {
 					connection.setRequestProperty("Content-Type", "text/xml");
-					connection.setRequestProperty("SOAPAction", _request.getAction());
+					connection.setRequestProperty("SOAPAction", action);
 				} else if ("JSON".equals(_request.getType())) {
 					connection.setRequestProperty("Content-Type", "application/json");
-					connection.setRequestProperty("Action", _request.getAction());
+					connection.setRequestProperty("Action", action);
 				} else if ("XML".equals(_request.getType())) {
 					connection.setRequestProperty("Content-Type", "text/xml");
-					connection.setRequestProperty("Action", _request.getAction());
+					connection.setRequestProperty("Action", action);
 				}
 								
 				// get the output stream from the connection into which we write the request
