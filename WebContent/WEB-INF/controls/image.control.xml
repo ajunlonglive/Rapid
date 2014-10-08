@@ -54,7 +54,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	        <property>
 	            <key>file</key>
 	            <name>File</name>
-	            <setConstructValueFunction>return "../../images/RapidLogo_60x40.png"</setConstructValueFunction>
+	            <setConstructValueFunction>return "../../../images/RapidLogo_60x40.png"</setConstructValueFunction>
 	            <changeValueJavaScript>imageFile</changeValueJavaScript>	     	                 
 	        </property>
 	    </properties>

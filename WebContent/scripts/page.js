@@ -42,7 +42,7 @@ function loadControls(controlsString) {
 		// create a new control ControlClass object/function (this is a closure)
 		var f = new ControlClass(c);        		        		     			
 		// assign the control controlClass function function globally
-		window["ControlClass_" + c.type] = f; 
+		_controlTypes[c.type] = f; 
 		
 		// inc counter
 		count ++;

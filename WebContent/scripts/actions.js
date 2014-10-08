@@ -36,10 +36,10 @@ function ActionClass(actionClass) {
 }
 
 //this object function will create the control as specified in the controlClass
-function Action(actionClass, jsonAction, paste, undo) {
+function Action(actionType, jsonAction, paste, undo) {
 			
-	// if controlClass is a string find the object (so bespoke contructJavaScript can avoid the "ActionClass_" prefix and use code like: this.childControls.push(new Control("tableRow", this));)
-	if ($.type(actionClass) == "string") actionClass = window["ActionClass_" + actionClass];
+	// get the action class from the type
+	var actionClass = _actionTypes[actionType];
 	// check controlClass exists
 	if (actionClass) {
 		
@@ -88,15 +88,15 @@ function Action(actionClass, jsonAction, paste, undo) {
 					// these three properties are special and are ignored
 					if (i != "id" && i != "type" && i != "properties") {				
 						// check whether we have a Rapid Object 
-						if (jsonAction[i].type && window["ActionClass_" + jsonAction[i].type]) {
+						if (jsonAction[i].type && _actionTypes[jsonAction[i].type]) {
 							// this is a simple object, instantiate here
-							this[i] = new Action(window["ActionClass_" + jsonAction[i].type], jsonAction[i]);
-						} else if ($.isArray(jsonAction[i]) && jsonAction[i].length > 0 && jsonAction[i][0].type && window["ActionClass_" + jsonAction[i][0].type]) {
+							this[i] = new Action(jsonAction[i].type, jsonAction[i]);
+						} else if ($.isArray(jsonAction[i]) && jsonAction[i].length > 0 && jsonAction[i][0].type && _actionTypes[jsonAction[i][0].type]) {
 							// this is an array of objects
 							this[i] = [];
 							// loop array
 							for (var j in jsonAction[i]) {
-								this[i].push(new Action(window["ActionClass_" + jsonAction[i][j].type], jsonAction[i][j]) );
+								this[i].push(new Action(jsonAction[i][j].type, jsonAction[i][j]) );
 							}
 						} else {							
 							// simple property copy
@@ -208,7 +208,7 @@ function showEvents(control) {
 						// get the type of action we selected
 						var actionType = $(ev.target).val();
 						// add a new action of this type to the event
-						control.events[i].actions.push( new Action(window["ActionClass_" + actionType]));
+						control.events[i].actions.push( new Action(actionType) );
 						// rebuild actions
 						showEvents(_selectedControl);
 						// we're done
@@ -227,11 +227,11 @@ function showAction(actionsTable, action, collection, refreshFunction) {
 	
 	// for some reason actions can lose their class, for now we'll just look them up and but the class back
 	if (!action._class && action.type) {
-		action._class = window["ActionClass_" + action.type];
+		action._class = _actionTypes[action.type];
 	}
 	
 	// write action name into the table						
-	actionsTable.append("<tr><td colspan='2'><h4>" + window["ActionClass_"+ action._class.type].name + " action</h4><img class='delete' src='images/bin_16x16.png' title='Delete this action'/><img class='reorder' src='images/moveUpDown_16x16.png' title='Reorder this action'/></td></tr>");
+	actionsTable.append("<tr><td colspan='2'><h4>" + _actionTypes[action._class.type].name + " action</h4><img class='delete' src='images/bin_16x16.png' title='Delete this action'/><img class='reorder' src='images/moveUpDown_16x16.png' title='Reorder this action'/></td></tr>");
 	// get a reference to the delete image
 	var deleteImage = actionsTable.find("img.delete").last(); 
 	// add a click listener to the delete image

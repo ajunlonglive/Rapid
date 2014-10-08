@@ -430,7 +430,7 @@ function getData_checkbox(ev, id, field, details) {
 
 function setData_checkbox(id, data, field, details) {
   var control = $("#" + id);	        
-  if (data) {	
+  if (data != null && data !== undefined) {	
   	data = makeDataObject(data, field);
   	if (data.rows && data.rows[0]) {	        		
   		if (field && data.fields) {
@@ -516,7 +516,7 @@ function getData_date(ev, id, field, details) {
 function setData_date(id, data, field, details) {
   var control = $("#" + id);
   var value = "";
-  if (data) {	
+  if (data != null && data !== undefined) {	
   	data = makeDataObject(data, field);
   	if (data.rows && data.rows[0]) {	        		
   		if (field && data.fields) {
@@ -543,7 +543,7 @@ function getData_dropdown(ev, id, field, details) {
 }
 
 function setData_dropdown(id, data, field, details) {
-  if (data !== undefined) {
+  if (data != null && data !== undefined) {
   	var control = $("#" + id);
   	data = makeDataObject(data, field);
   	if (data.rows && data.fields) {
@@ -589,7 +589,7 @@ function getData_gallery(ev, id, field, details) {
 }
 
 function setData_gallery(id, data, field, details) {
-  if (data) {
+  if (data != null && data !== undefined) {
   	var control = $("#" + id);
   	data = makeDataObject(data, field);
   	if (data.rows) {	
@@ -677,7 +677,7 @@ function getData_grid(ev, id, field, details) {
 function setData_grid(id, data, field, details) {
   var control = $("#" + id);
   control.find("tr:not(:first)").remove();	        
-  if (data) {	
+  if (data != null && data !== undefined) {	
   	data = makeDataObject(data, field);
   	if (data.rows) {	        		
   		if (details && details.columns && data.fields) {
@@ -752,7 +752,7 @@ function getData_input(ev, id, field, details) {
 
 function setData_input(id, data, field, details) {
   var control = $("#" + id);
-  if (data !== undefined) {	
+  if (data != null && data !== undefined) {	
   	data = makeDataObject(data, field);
   	if (data.rows && data.rows[0]) {	        		
   		if (field && data.fields && data.fields.length > 0) {
@@ -782,7 +782,7 @@ function getData_radiobuttons(ev, id, field, details) {
 }
 
 function setData_radiobuttons(id, data, field, details) {
-  if (data != null) {
+  if (data != null && data !== undefined) {
   	var radiobuttons = $("#" + id);
   	radiobuttons.children("input[type=radio]").prop('checked',false);
   	data = makeDataObject(data, field);
@@ -811,7 +811,7 @@ function getData_text(ev, id, field, details) {
 
 function setData_text(id, data, field, details) {
   var control = $("#" + id);	        
-  if (data) {	
+  if (data != null && data !== undefined) {	
   	data = makeDataObject(data, field);
   	if (data.rows && data.rows[0]) {	        		
   		if (field && data.fields) {
