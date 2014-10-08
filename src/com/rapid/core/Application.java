@@ -873,21 +873,21 @@ public class Application {
 			ps.close();
 			fos.close();
 			
-		}
-		
-		// check pages
-		if (_pages != null) {
-			// loop them
-			for (String pageId : _pages.keySet()) {
-				// get the page
-				Page page = _pages.get(pageId);
-				// get the css file
-				File cssFile = new File(page.getCSSFile(servletContext, this));
-				// make it if not exists
-				if (!cssFile.exists()) page.saveCSSFile(servletContext, this);
+			// check pages
+			if (_pages != null) {
+				// loop them
+				for (String pageId : _pages.keySet()) {
+					// get the page
+					Page page = _pages.get(pageId);
+					// get the css file
+					File cssFile = new File(page.getCSSFile(servletContext, this));
+					// make it if not exists
+					if (!cssFile.exists()) page.saveCSSFile(servletContext, this);
+				}
 			}
-		}
-										
+			
+		} // create resources
+														
 		// populate the list of style classes by scanning the rapid.css
 		_styleClasses = scanStyleClasses(_styles);
 								
@@ -1343,7 +1343,7 @@ public class Application {
 		rapidServlet.getApplications().put(appCopy);
 				
 		// delete this one
-		if (delete) delete(rapidServlet, rapidRequest);
+		if (delete) delete(rapidServlet, rapidRequest, false);
 		
 		// return the copy
 		return appCopy;
@@ -1388,14 +1388,18 @@ public class Application {
 	    		
 	}
 	
-	public void delete(RapidHttpServlet rapidServlet, RapidRequest rapidRequest) throws JAXBException, IOException {
+	public void delete(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, boolean allVersions) throws JAXBException, IOException {
 		
-		// create a file object for the application folder
+		// create a file object for the config folder
 		File appFolder = new File(getConfigFolder(rapidServlet.getServletContext()));
+		// if this is all versions promote from version to app
+		if (allVersions) appFolder = appFolder.getParentFile();
 		
 		// create a file object for the webcontent folder
 		File webFolder = new File (getWebFolder(rapidServlet.getServletContext()));
-							
+		// if this is all versions promote from version to app
+		if (allVersions) webFolder = webFolder.getParentFile();
+				
 		// if the app folder exists
 		if (appFolder.exists()) {
 			// backup the application
