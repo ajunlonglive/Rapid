@@ -717,156 +717,163 @@ function showStyles(control) {
 	
 	// hide the input
 	_styleInput.hide();
-		
+				
 	// check there is a control and the class for any styling
-	if (control && control._class.styles && control._class.styles.style) {
+	if (control) {
 		
-		// add a heading and table
-		_stylesPanelDiv.append("<h2>Styles<img id='helpStyles' class='headerHelp' src='images/help_16x16.png' /></h2>");
-		// add the help hint
-		addHelp("helpStyles",true);
-		// get the array of styles classes
-		var styles = control._class.styles.style;
-		// make it an array if the xml to json didn't
-		if (!$.isArray(styles)) styles = [ styles ];
+		// get the control class
+		var controlClass = _controlTypes[control.type];
 		
-		// loop styles
-		for (var i in styles) {
-			// get a reference to this style
-			var style = styles[i];
-			// get the applies to function
-			var f = new Function(style.getAppliesToFunction);
-			// invoke and return applies to with the control as the context
-			var appliesTo = f.apply(control);
+		// check there are styles
+		if (controlClass.styles && controlClass.styles.style) {				
+			// add a heading and table
+			_stylesPanelDiv.append("<h2>Styles<img id='helpStyles' class='headerHelp' src='images/help_16x16.png' /></h2>");
+			// add the help hint
+			addHelp("helpStyles",true);
+			// get the array of styles classes
+			var styles = controlClass.styles.style;
+			// make it an array if the xml to json didn't
+			if (!$.isArray(styles)) styles = [ styles ];
+			
+			// loop styles
+			for (var i in styles) {
+				// get a reference to this style
+				var style = styles[i];
+				// get the applies to function
+				var f = new Function(style.getAppliesToFunction);
+				// invoke and return applies to with the control as the context
+				var appliesTo = f.apply(control);
+				// add a table for this rule
+				_stylesPanelDiv.append("<table class='stylesPanelTable'><tbody></tbody></table>");
+				// grab a refrence to the table
+				var stylesTable = _stylesPanelDiv.find("tbody").last();			
+				// write it to the table;
+				stylesTable.append("<tr><td  colspan='2' data-appliesTo='" + appliesTo + "'><b>" + style.name + "</b></td></tr><tr><td colspan='2'></td></tr>");
+				// look for any style rules for this style in the control
+				if (control.styles) {
+					// loop them
+					for (var j in control.styles) {
+						// get a reference
+						var controlStyle = control.styles[j];
+						// is this the one we want, and are there rules?
+						if (appliesTo == controlStyle.appliesTo && controlStyle.rules && controlStyle.rules.length > 0) {
+							// loop the rules
+							for (var k in controlStyle.rules) {
+								// get a reference to the rule
+								var rule = controlStyle.rules[k];
+								// get the parts
+								var parts = rule.split(":");
+								// add this rule
+								stylesTable.append("<tr><td class='styleCell'><span class='styleAttr'>" + parts[0] + "</span><span class='styleColon'>:</span><span class='styleValue'>" + parts[1] + "</span></td><td><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
+							}		
+							// attach a delete listener to each row
+							stylesTable.find("img.delete").each( function() {
+								_listeners.push( $(this).click( function(ev) {
+									// add an undo snapshot
+									addUndo();
+									// remove the row
+									$(this).parent().parent().remove();
+									// rebuild the styles (and assign to control)
+									rebuildStyles();				
+								}));
+							});	
+							// add reorder listeners
+							addReorder(controlStyle.rules, stylesTable.find("img.reorder"), function() { showStyles(control); });
+							// we're done with this style
+							break;
+						}
+					}
+				}
+				
+				// add an empty row for adding a new style
+				stylesTable.append("<tr><td class='styleCell' colspan='2'></td></tr>");
+				// attach a click listener to each row
+				stylesTable.find("td.styleCell").each( function() {
+					_listeners.push( $(this).click( function(ev) {
+						styleClick(ev);					
+					}));
+				});
+															
+			}
+			
+			// add a heading and table
+			_stylesPanelDiv.append("<h2>Style classes<img id='helpStyleClasses' class='headerHelp' src='images/help_16x16.png' /></h2>");
+			// add the help hint
+			addHelp("helpStyleClasses",true);
+			
 			// add a table for this rule
 			_stylesPanelDiv.append("<table class='stylesPanelTable'><tbody></tbody></table>");
 			// grab a refrence to the table
-			var stylesTable = _stylesPanelDiv.find("tbody").last();			
-			// write it to the table;
-			stylesTable.append("<tr><td  colspan='2' data-appliesTo='" + appliesTo + "'><b>" + style.name + "</b></td></tr><tr><td colspan='2'></td></tr>");
-			// look for any style rules for this style in the control
-			if (control.styles) {
-				// loop them
-				for (var j in control.styles) {
-					// get a reference
-					var controlStyle = control.styles[j];
-					// is this the one we want, and are there rules?
-					if (appliesTo == controlStyle.appliesTo && controlStyle.rules && controlStyle.rules.length > 0) {
-						// loop the rules
-						for (var k in controlStyle.rules) {
-							// get a reference to the rule
-							var rule = controlStyle.rules[k];
-							// get the parts
-							var parts = rule.split(":");
-							// add this rule
-							stylesTable.append("<tr><td class='styleCell'><span class='styleAttr'>" + parts[0] + "</span><span class='styleColon'>:</span><span class='styleValue'>" + parts[1] + "</span></td><td><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
-						}		
-						// attach a delete listener to each row
-						stylesTable.find("img.delete").each( function() {
-							_listeners.push( $(this).click( function(ev) {
-								// add an undo snapshot
-								addUndo();
-								// remove the row
-								$(this).parent().parent().remove();
-								// rebuild the styles (and assign to control)
-								rebuildStyles();				
-							}));
-						});	
-						// add reorder listeners
-						addReorder(controlStyle.rules, stylesTable.find("img.reorder"), function() { showStyles(control); });
-						// we're done with this style
+			var classesTable = _stylesPanelDiv.find("tbody").last();	
+			
+			// instantiate array if doesn't exist
+			if (!control.classes) control.classes = [];
+			// loop array
+			for (var i in control.classes) {
+				classesTable.append("<tr><td>" + control.classes[i] + "<img src='images/bin_16x16.png' style='float:right;' /></td></tr>");
+			}
+			// find the delete
+			var deletes = classesTable.find("img");
+			// add a listener
+			_listeners.push( deletes.click( {control: control}, function(ev) {
+				// create an undo snapshot just before we apply the change
+				addUndo();
+				// get the del image
+				var delImage = $(this);
+				// get the index
+				var index = delImage.parent().parent().index();
+				// remove from collection
+				ev.data.control.classes.splice(index,1);	
+				// rebuild the html
+				rebuildHtml(ev.data.control);
+				// rebuild the styles
+				showStyles(ev.data.control);
+			}));
+			
+			classesTable.append("<tr><td colspan='2'><select class='propertiesPanelTable'></select></td></tr>");
+			// get a reference to the select
+			var addClass = classesTable.find("select").last();
+			// retain a string for the class options
+			var classOptions = "<option>add...</option>";
+			// loop any stye classes
+			for (var i in _styleClasses) {
+				classOptions += "<option>" + _styleClasses[i] + "</option>";
+			}
+			// add the known options
+			addClass.append(classOptions);
+			// change listener
+			_listeners.push( addClass.change( {control : control}, function(ev) {			
+				// get the potential new class
+				var newClass = $(this).val();
+				// get the classes
+				var classes = ev.data.control.classes;
+				// whether we have it already
+				var gotClass = false;
+				// check collection for this new one
+				for (var i in classes) {
+					if (classes[i] == newClass) {
+						gotClass = true;
 						break;
 					}
 				}
-			}
-			
-			// add an empty row for adding a new style
-			stylesTable.append("<tr><td class='styleCell' colspan='2'></td></tr>");
-			// attach a click listener to each row
-			stylesTable.find("td.styleCell").each( function() {
-				_listeners.push( $(this).click( function(ev) {
-					styleClick(ev);					
-				}));
-			});
-														
-		}
-		
-		// add a heading and table
-		_stylesPanelDiv.append("<h2>Style classes<img id='helpStyleClasses' class='headerHelp' src='images/help_16x16.png' /></h2>");
-		// add the help hint
-		addHelp("helpStyleClasses",true);
-		
-		// add a table for this rule
-		_stylesPanelDiv.append("<table class='stylesPanelTable'><tbody></tbody></table>");
-		// grab a refrence to the table
-		var classesTable = _stylesPanelDiv.find("tbody").last();	
-		
-		// instantiate array if doesn't exist
-		if (!control.classes) control.classes = [];
-		// loop array
-		for (var i in control.classes) {
-			classesTable.append("<tr><td>" + control.classes[i] + "<img src='images/bin_16x16.png' style='float:right;' /></td></tr>");
-		}
-		// find the delete
-		var deletes = classesTable.find("img");
-		// add a listener
-		_listeners.push( deletes.click( {control: control}, function(ev) {
-			// create an undo snapshot just before we apply the change
-			addUndo();
-			// get the del image
-			var delImage = $(this);
-			// get the index
-			var index = delImage.parent().parent().index();
-			// remove from collection
-			ev.data.control.classes.splice(index,1);	
-			// rebuild the html
-			rebuildHtml(ev.data.control);
-			// rebuild the styles
-			showStyles(ev.data.control);
-		}));
-		
-		classesTable.append("<tr><td colspan='2'><select class='propertiesPanelTable'></select></td></tr>");
-		// get a reference to the select
-		var addClass = classesTable.find("select").last();
-		// retain a string for the class options
-		var classOptions = "<option>add...</option>";
-		// loop any stye classes
-		for (var i in _styleClasses) {
-			classOptions += "<option>" + _styleClasses[i] + "</option>";
-		}
-		// add the known options
-		addClass.append(classOptions);
-		// change listener
-		_listeners.push( addClass.change( {control : control}, function(ev) {			
-			// get the potential new class
-			var newClass = $(this).val();
-			// get the classes
-			var classes = ev.data.control.classes;
-			// whether we have it already
-			var gotClass = false;
-			// check collection for this new one
-			for (var i in classes) {
-				if (classes[i] == newClass) {
-					gotClass = true;
-					break;
+				// only if not got
+				if (!gotClass) {
+					// create an undo snapshot just before we apply the change
+					addUndo();
+					// add the selected class to the list
+					classes.push(newClass);
+					// sort the array
+					classes.sort();				
+					// rebuild the styles
+					showStyles(ev.data.control);
 				}
-			}
-			// only if not got
-			if (!gotClass) {
-				// create an undo snapshot just before we apply the change
-				addUndo();
-				// add the selected class to the list
-				classes.push(newClass);
-				// sort the array
-				classes.sort();				
-				// rebuild the styles
-				showStyles(ev.data.control);
-			}
-			// rebuild the html
-			rebuildHtml(ev.data.control);
-		}));
-						
-	} // end of styling check
+				// rebuild the html
+				rebuildHtml(ev.data.control);
+			}));
+							
+		} // styles check
+		
+	} // control check
 	
 }
 

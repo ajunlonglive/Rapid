@@ -181,7 +181,7 @@ div.validation {
  font-size: 12px;
  margin: 10px 10px 10px 0px;
  padding: 6px 10px 5px 25px;	
- background: url(../../images/alert_16x16.png) 5px 5px no-repeat;
+ background: url(../../../images/alert_16x16.png) 5px 5px no-repeat;
  border: 1px solid red;
  border-radius: 5px;
  max-width: 200px;

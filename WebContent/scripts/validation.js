@@ -75,7 +75,7 @@ function showValidation(control) {
 	// empty it
 	validationPanel.html("");	
 	// only if a control and it can validate
-	if (control && control._class.canValidate) {
+	if (control && _controlTypes[control.type].canValidate) {
 		// create a validation object if we don't have one
 		if (!control.validation) {
 			control.validation = {
