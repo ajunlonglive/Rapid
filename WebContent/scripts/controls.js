@@ -299,13 +299,6 @@ function Control(controlType, parentControl, jsonControl, loadComplexObjects, pa
 		if (this.parentControl) {
 			// grab a reference to the object
 			this.object = this.parentControl.object.children().last();
-			// if this is a non-visual controls
-			if (this.object.is(".nonVisibleControl")) {
-				// remove from the iframe
-				this.object.remove();
-				// add to designer and update the reference
-				this.object = $("body").append(this._html).children().last();
-			}
 		}
 						
 		// run the create statement if there is one (can reassign the object or add other html)
@@ -496,7 +489,7 @@ function rebuildHtml(control) {
 	if (!_locked) {
 		// get the control class
 		var controlClass = _controlTypes[control.type];
-		// assume the panelpin offset (we set it to 0 for nonVisibleControl)
+		// assume the panelpin offset 
 		panelPinnedOffset = _panelPinnedOffset;
 		// run any rebuild JavaScript (if present) - and this is not the page
 		if (control._rebuild) {
@@ -528,15 +521,6 @@ function rebuildHtml(control) {
 				// remove the old object
 				control.object.remove(); 
 			}			
-			// if it's a nonVisibleControl
-			if (object.is(".nonVisibleControl")) {
-				// remove any possible existing object from the designer
-				$("#" + control.id + ".nonVisibleControl").remove();
-				// add the new one and update the reference
-				object = $("body").append(object).children().last();
-				// drop the panelpin offset as we're now in the page
-				panelPinnedOffset = 0;
-			}
 			// attach the new object
 			control.object = object; 
 		}

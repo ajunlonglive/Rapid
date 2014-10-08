@@ -1249,7 +1249,7 @@ public class Application {
 	    	
 	}
 		
-	public Application copy(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, String newId, String newVersion, boolean backups) throws IOException, IllegalArgumentException, SecurityException, JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, SAXException, TransformerFactoryConfigurationError, TransformerException {
+	public Application copy(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, String newId, String newVersion, boolean backups, boolean delete) throws IOException, IllegalArgumentException, SecurityException, JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, SAXException, TransformerFactoryConfigurationError, TransformerException {
 		
 		// retain the ServletContext
 		ServletContext servletContext = rapidServlet.getServletContext();
@@ -1257,12 +1257,15 @@ public class Application {
 		// load the app into a copy
 		Application appCopy = Application.load(servletContext, new File(getConfigFolder(servletContext) + "/application.xml"));
 		
-		// update the copy id and version
+		// update the copy id 
 		appCopy.setId(newId);
+		// update the copy version
 		appCopy.setVersion(newVersion);
+		// update the copy status to in developement
+		appCopy.setStatus(Application.STATUS_DEVELOPMENT);
 		// update the created date
 		appCopy.setCreatedDate(new Date());
-				
+						
 		// save the copy to create the folder and application.xml file
 		appCopy.save(rapidServlet, rapidRequest, false);
 				
@@ -1276,6 +1279,11 @@ public class Application {
 		FileWriter fs = new FileWriter(appCopyFile);
 		fs.write(appCopyXML);
 		fs.close();
+		
+		// look for a security.xml file
+		File appSecurityFile = new File(getConfigFolder(servletContext) + "/security.xml");
+		// if we have one, copy it
+		if (appSecurityFile.exists()) Files.copyFile(appSecurityFile, new File(appCopy.getConfigFolder(servletContext) + "/security.xml"));
 		
 		// get the pages config folder
 		File appPagesFolder = new File(getConfigFolder(servletContext) + "/pages");		
@@ -1335,7 +1343,7 @@ public class Application {
 		rapidServlet.getApplications().put(appCopy);
 				
 		// delete this one
-		delete(rapidServlet, rapidRequest);
+		if (delete) delete(rapidServlet, rapidRequest);
 		
 		// return the copy
 		return appCopy;

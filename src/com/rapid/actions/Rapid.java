@@ -919,7 +919,7 @@ public class Rapid extends Action {
 				// if the id or version is now different we need to move it, rebuilding all the resources as we go
 				if (!app.getId().equals(id) || !app.getVersion().equals(version)) {
 					// copy the app to the id/version, returning the new one for saving
-					app = app.copy(rapidServlet, rapidRequest, id, version, true);
+					app = app.copy(rapidServlet, rapidRequest, id, version, true, true);
 					// mark that it has been updated
 					appUpdated = true;
 				}
@@ -1264,7 +1264,7 @@ public class Rapid extends Action {
 				String description = jsonAction.optString("description").trim();
 				
 				// use the application.copy routine
-				app.copy(rapidServlet, rapidRequest, app.getId(), version, false);
+				app.copy(rapidServlet, rapidRequest, app.getId(), version, false, false);
 				
 				// set the new title
 				app.setTitle(title);

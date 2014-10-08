@@ -455,6 +455,8 @@ public class Designer extends RapidHttpServlet {
 								jsonPage.remove("htmlBody");
 								// remove the rolesHtml property as it is rebuilt in the designer
 								jsonPage.remove("rolesHtml");
+								// remove allControls (the single all-control list) it is not required
+								jsonPage.remove("allControls");
 								// remove the otherPageControls property as it is sent with getApplication
 								jsonPage.remove("otherPageControls");
 								

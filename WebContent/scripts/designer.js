@@ -136,8 +136,9 @@ var _mouseScale;
 
 // takes a snapshot of the current page and adds it to the undo stack
 function addUndo(usePage, keepRedo) {	
-	// must have a selected control
-	if (_selectedControl) {	
+	
+	// must have a selected control or page
+	if (_selectedControl || usePage) {	
 		
 		// set dirty
 		_dirty = true;		
@@ -148,7 +149,7 @@ function addUndo(usePage, keepRedo) {
 		// stringify either selected or whole page
 		if (usePage) {
 			// snapshot the whole page
-			undoControl = JSON.stringify(getDataObject(_page));
+			undoControl = JSON.stringify(getDataObject(_page));			
 		} else {
 			// retain childControls
 			var childControls = _selectedControl.childControls;
@@ -178,16 +179,6 @@ function addUndo(usePage, keepRedo) {
 		} // keep redo
 		
 	} // control check
-}
-
-// takes a snapshot of the whole page and adds it to the redo stack
-function addRedo() {	
-	// grab the page
-	var page = JSON.stringify(getDataObject(_page));
-	// only called in doUndo so less checking
-	_redo.push(page);
-	// enable undo button
-	$("#redo").enable();
 }
 
 // used by both undo and redo to apply their snapshot
@@ -229,18 +220,22 @@ function applyUndoRedo(snapshot) {
 				
 				// retain reference to page object
 				var pageObject = _page.object;
-				// retain a reference to the child controls
-				var childControls = _page.childControls;
-				
+								
 				// if it's the whole page
 				if (undoredoControl.childControls) {
+					
+					// retain a reference to the child controls
+					var childControls = undoredoControl.childControls;
+					
+					// remove the children from the undoredo object
+					delete undoredoControl.childControls;
 					
 					// remove all current page html
 					pageObject.children().remove();
 					
 					// remove all non-visible controls
 					$("img.nonVisibleControl").remove();
-															
+													
 					// load the page object from the undo snapshot
 					_page = new Control("page", null, undoredoControl, true, false, true);
 					
@@ -251,15 +246,21 @@ function applyUndoRedo(snapshot) {
 					_nextId = 1;
 					_controlNumbers = {};
 					
-					// loop the page childControls and create
-			    	for (var i = 0; i < undoredoControl.childControls.length; i++) {
+					// loop the retained childControls and create
+			    	for (var i = 0; i < childControls.length; i++) {
 			    		// get an instance of the control properties (which is what we really need from the JSON)
-			    		var childControl = undoredoControl.childControls[i];
+			    		var childControl = childControls[i];
 			    		// create and add
 			    		_page.childControls.push(loadControl(childControl, _page, true, false, true));
 			    	}
+			    	
+			    	// arrange any non-visible controls
+			    	arrangeNonVisibleControls();
 										
 				} else {
+					
+					// retain a reference to the child controls
+					var childControls = _page.childControls;
 					
 					// load the page object from the undo snapshot
 					_page = new Control("page", null, undoredoControl, true, false, true);
@@ -313,9 +314,13 @@ function doUndo() {
 	// retrieve the last page from the top of the undo stack
 	var undoSnapshot = _undo.pop();
 	// if there was one
-	if (undoSnapshot) {				
-		// add a redo snapshot, just before we undo
-		addRedo();
+	if (undoSnapshot) {		
+		// grab the page snapshot
+		var pageSnapshot = JSON.stringify(getDataObject(_page));
+		// only called in doUndo so less checking
+		_redo.push(pageSnapshot);
+		// enable undo button
+		$("#redo").enable();
 		// apply the undo
 		applyUndoRedo(undoSnapshot);				
 	}
@@ -404,15 +409,8 @@ function getMouseControl(ev, childControls) {
 		// we use this function recursively so start at the page if no array specified
 		if (childControls == null) childControls = _page.childControls;
 		
-		// sort the controls by z-index
-		childControls.sort(function(a,b) {
-			if (a.object.css("z-index") && b.object.css("z-index")) {
-				return b.object.css("z-index") - a.object.css("z-index");
-			} else {
-				return 0;
-			}
-		});
-						
+		// don't be tempted to sort the controls unless it's done very carefully as the object/control order can get out of sync and objects will move on saves and undos
+		
 		// loop all of our objects for non-visual controls
 		for (var i in childControls) {
 			// get a reference to this control
@@ -1971,6 +1969,12 @@ $(document).ready( function() {
 		        	
 		        	try {
 		        		
+		        		// retain the childControls
+		        		var childControls = page.controls;
+		        		
+		        		// remove them from the page object
+		        		delete page.controls;
+		        		
 		        		// create the page (control) object
 			        	_page = new Control("page", null, page, true);
 			        	
@@ -1994,14 +1998,14 @@ $(document).ready( function() {
 			    		head.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"" + _version.webFolder + "/" + _page.name + ".css\">");
 	     	
 			        	// if we have childControls
-			        	if (page.controls) {
+			        	if (childControls) {
 				        	// loop the page childControls and create
-				        	for (var i = 0; i < page.controls.length; i++) {
+				        	for (var i = 0; i < childControls.length; i++) {
 				        		// get an instance of the control properties (which is what we really need from the JSON)
-				        		var control = page.controls[i];
+				        		var childControl = childControls[i];
 				        		// create and add
-				        		_page.childControls.push(loadControl(control, _page, true));
-				        	}				        					        	
+				        		_page.childControls.push(loadControl(childControl, _page, true));
+				        	}
 			        	}
 			        	
 			        	// show it after a pause to allow the new style sheets to apply
@@ -2575,6 +2579,10 @@ function isDecendant(control1, control2) {
 
 //if the mouse moves anywhere
 $(document).mousemove( function(ev) {
+	
+	// log
+	if (_page && _page.childControls) console.log("mousemove : " + _page.childControls[1].id);
+	
 	// get a reference to the control
 	var c = getMouseControl(ev);
 	// if a control is selected and the mouse is down look for the controls new destination
@@ -2692,7 +2700,7 @@ $(document).mouseup( function(ev) {
 	_mouseDownXOffset = 0;
 	_mouseDownYOffset = 0;
 	_reorderDetails = null;
-	
+		
 	if (_selectedControl && _selectedControl.object[0]) {		
 		// show it in case it was an add
 		if (_controlTypes[_selectedControl.type].canUserAdd) _selectedControl.object.show();
@@ -2737,8 +2745,6 @@ $(document).mouseup( function(ev) {
 		selectedState = 1;
 		// null the moveedoverObject
 		_movedoverControl = null;
-		// arrange the non-visible controls if our selected control looks like one
-		if (!_controlTypes[_selectedControl.type].canUserMove) arrangeNonVisibleControls();
 		// hide the cover
 		_selectionCover.hide();
 		// hide the insert/moves
@@ -2774,46 +2780,43 @@ $(document).mouseup( function(ev) {
 function arrangeNonVisibleControls() {	
 	// check there is a page and a page object
 	if (_page && _page.object && _page.childControls) {
+				
 		// start at first x position
 		var x = _panelPinnedOffset + 10;
+		
 		// loop the page child controls
 		for (var i in _page.childControls) {
+			
 			// get the child control
 			var childControl = _page.childControls[i]
-			// get it's object
-			var o = childControl.object;
+			// get the class
+			var childControlClass = _controlTypes[childControl.type];
+			
 			// if it is nonVisible
-			if (o.is(".nonVisibleControl")) {
-				// ensure this control is visible
+			if (childControlClass.getHtmlFunction.indexOf("nonVisibleControl") > 0) {
+				
+				// get the object
+				var	o = childControl.object;
+				
+				// check if in the page
+				if (o.parent().is(_page.object)) {
+					// move into the designer and update the reference
+					o = $("body").append(o).children().last();
+					// add back to the control
+					childControl.object = o;
+				} 
+				
+				// ensure the object is visible
 				o.show();
-				// ensure this page control is in the right place
-				o.css("left",x);
+				// ensure the object is in the right place
+				o.css({"position":"fixed","bottom":"10px","left":x});
 				// get the width
 				var w = Math.max(o.outerWidth(),25);
 				// add to the growing x value
 				x += (5 + w);
+				
 			}
-		}
-		
-		/*
-		// get existing page controls	         
-		var pageControls = $("body").children(".nonVisibleControl");
-		// remember the last x
-		var x = _panelPinnedOffset + 10;
-		// loop each one
-		pageControls.each( function(i) {
-			// get a reference to this object
-			var o = $(this);		
-			// ensure this control is visible
-			o.show();
-			// ensure this page control is in the right place
-			o.css("left",x);
-			// get the width
-			var w = Math.max(o.outerWidth(),25);
-			// add to the growing x value
-			x += (5 + w);
-		});
-		*/
+		}		
 	}	
 }
 
@@ -2951,10 +2954,7 @@ function windowResize(ev) {
 			transform: "scale(" + _scale + ")"
 		});	
 	}
-	
-	// arrange the non-visual controls
-	arrangeNonVisibleControls();
-				
+			
 }
 
 function fileuploaded(fileuploadframe) {
