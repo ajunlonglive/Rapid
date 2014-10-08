@@ -100,7 +100,23 @@ if (gotAppAndPage && designerPermission) {
 	body {
 		transform-origin: 0 0;
 	}
-		
+	
+	.pageLoading {
+		text-align: center;	
+		margin-top: 50px;
+		font-size: 20px;		
+		padding: 20px;
+		border: 4px solid black;
+		border-radius: 10px;
+		width: 300px;
+		background: white;
+		box-shadow: 5px 5px 5px #888;
+	}
+	
+	.pageLoading p {	
+		margin: 5px;
+	}
+			
 	</style>
 <%
 } else {
@@ -120,7 +136,11 @@ if (!gotAppAndPage) {
 %>
 	<center><h3>You do not have permission to load this page in Rapid Design - contact your administrator</h3></center>	
 <%
-}
+} else {
+%>
+	<center><div class="pageLoading"><p><img src="images/wait_220x19.gif" /></p><p style='margin-left:20px;'>loading...</p></div></center>
+<%
+} 
 %>
 </body>
 </html>

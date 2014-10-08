@@ -49,6 +49,9 @@ function showProperties(control) {
 	
 	// if there was a control
 	if (control) {
+		
+		// get the contro class
+		var controlClass = _controlTypes[control.type];
 	
 		// write the properties heading
 		propertiesPanel.html("<h2>Properties<img id='helpProperties' class='headerHelp' src='images/help_16x16.png' /></h2>");
@@ -59,13 +62,13 @@ function showProperties(control) {
 		// get a reference to the table
 		var propertiesTable = propertiesPanel.children().last().children().last();
 		// add the properties header
-		propertiesTable.append("<tr><td colspan='2'><h3>" + control._class.name + "</h3></td></tr>");
+		propertiesTable.append("<tr><td colspan='2'><h3>" + controlClass.name + "</h3></td></tr>");
 		// add a small break
 		propertiesTable.append("<tr><td colspan='2'></td></tr>");
 		// show the control id if requested
 		if (_version.showControlIds) propertiesTable.append("<tr><td>ID</td><td class='canSelect'>" + control.id + "</td></tr>");
 		// check there are class properties
-		var properties = control._class.properties;
+		var properties = controlClass.properties;
 		if (properties) {
 			// (if a single it's a class not an array due to JSON class conversionf from xml)
 			if ($.isArray(properties.property)) properties = properties.property; 			
@@ -123,16 +126,23 @@ function updateProperty(propertyObject, property, value, refreshHtml) {
 		if (property.key == "name") {
 			// if the property map is visible
 			if ($("#pageMap").is(":visible")) {
+				// get the control class
+				var controlClass = _controlTypes[propertyObject.type];
 				// update the name
-				$("#pageMap").find("span[data-id=" + propertyObject.id + "]").html(((propertyObject._class.image) ? "<img src='" + propertyObject._class.image + "'/>" : "") + propertyObject.type + (propertyObject.name ? " - " + propertyObject.name: ""));
+				$("#pageMap").find("span[data-id=" + propertyObject.id + "]").html(((controlClass.image) ? "<img src='" + controlClass.image + "'/>" : "") + propertyObject.type + (propertyObject.name ? " - " + propertyObject.name: ""));
 			}
 		}
 	}
 }
 
 function setPropertyVisibilty(propertyObject, propertyKey, visibile) {
-	if (propertyObject && propertyObject._class && propertyObject._class.properties) {
-		var properties = propertyObject._class.properties;
+	// get the class from controls
+	var objectClass = _controlTypes[propertyObject.type];
+	// try actions if not found
+	if (!objectClass) objectClass = _actionTypes[propertyObject.type];
+	
+	if (propertyObject && objectClass && objectClass.properties) {
+		var properties = objectClass.properties;
 		// (if a single it's a class not an array due to JSON class conversionf from xml)
 		if ($.isArray(properties.property)) properties = properties.property; 
 		// loop them

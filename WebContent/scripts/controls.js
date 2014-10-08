@@ -75,9 +75,6 @@ function Control(controlType, parentControl, jsonControl, loadComplexObjects, pa
 	// check controlClass exists
 	if (controlClass) {
 								
-		// retain the control class
-		this._class = controlClass;
-						
 		// retain the type
 		this.type = controlClass.type;
 		
@@ -100,7 +97,7 @@ function Control(controlType, parentControl, jsonControl, loadComplexObjects, pa
 		// if we're loading complex object like validation, actions, and events (the Rhino page renderer doesn't need them)
 		if (loadComplexObjects) {
 			// get the class events
-			var classEvents = this._class.events;
+			var classEvents = controlClass.events;
 			// only if this control has them
 			if (classEvents) {
 				if ($.isArray(classEvents.event)) classEvents = classEvents.event;
@@ -495,6 +492,8 @@ function Control(controlType, parentControl, jsonControl, loadComplexObjects, pa
 function rebuildHtml(control) {
 	// only if the page isn't locked
 	if (!_locked) {
+		// get the control class
+		var controlClass = _controlTypes[control.type];
 		// assume the panelpin offset (we set it to 0 for nonVisibleControl)
 		panelPinnedOffset = _panelPinnedOffset;
 		// run any rebuild JavaScript (if present) - and this is not the page
@@ -512,7 +511,7 @@ function rebuildHtml(control) {
 			// get a reference to the new object
 			var object = _page.object.children().last();
 			// controls like dropdown and radiobuttons must replace the existing child controls from the new control, others must keep them
-			if (!control._class.updateChildObjects && control.childControls.length > 0) {
+			if (!controlClass.updateChildObjects && control.childControls.length > 0) {
 				// remove any child elements from this new object as we're about to copy in the old ones
 				object.children().remove();
 				// move in any child elements
@@ -544,7 +543,7 @@ function rebuildHtml(control) {
 		if (control._getDetails) control.details = control._getDetails();
 		
 		// arrange the non-visible controls if our control looks like one
-		if (!control._class.canUserMove) arrangeNonVisibleControls();
+		if (!controlClass.canUserMove) arrangeNonVisibleControls();
 		
 		// resize the selection as the geometry may have changed
 		sizeBorder(control);	

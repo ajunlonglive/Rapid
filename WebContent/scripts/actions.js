@@ -42,10 +42,7 @@ function Action(actionType, jsonAction, paste, undo) {
 	var actionClass = _actionTypes[actionType];
 	// check controlClass exists
 	if (actionClass) {
-		
-		// retain the action class
-		this._class = actionClass;
-		
+				
 		// retain the type
 		this.type = actionClass.type;
 		
@@ -166,72 +163,78 @@ function Action(actionType, jsonAction, paste, undo) {
 }
 
 // this shows the events for the control and eventually the actions
-function showEvents(control) {	
+function showEvents(control) {		
 	// get a reference to the div we are writing in to
 	var actionsPanel = $("#actionsPanelDiv");	
 	// empty it
 	actionsPanel.html("");	
 	// only if there is a control and there are events in the control class
-	if (control && control._class.events) {
+	if (control) {
+		// get a reference to the control class
+		var controlClass = _controlTypes[control.type];
 		// get a reference to the events
-		var events = control._class.events;
-		// JSON library single member check
-		if ($.isArray(control._class.events.event)) events = control._class.events.event;		
-		// loop them
-		for (var i in events) {
-			// get a reference
-			var event = events[i];
-			// append a table
-			actionsPanel.append("<table class='propertiesPanelTable'><tbody></tbody></table>");	
-			// get a reference to the table
-			var actionsTable = actionsPanel.children().last().children().last();
-			// add a heading for the event
-			actionsTable.append("<tr><td colspan='2'><h3>" + event.name + " event</h3></td></tr>");
-			// show any actions
-			showActions(control, event);	
-			// add a small break
-			actionsTable.append("<tr><td colspan='2'></td></tr>");
-			// add an add facility
-			actionsTable.append("<tr><td>Add action : </td><td><select data-event='" + event.type + "'><option value='_'>Please select...</option>" + _actionOptions + "</select></td></tr>");
-			// get a reference to the select
-			var addAction = actionsTable.children().last().children().last().children().last();
-			// add a change listener
-			_listeners.push( addAction.change( { control: control, event: event }, function(ev) {
-				// get a reference to the control
-				var control = ev.data.control;
-				// get a reference to the eventType
-				var eventType = ev.data.event.type;
-				// look for the events collection in the control
-				for (var i in control.events) {
-					// check whether this is the event we want
-					if (control.events[i].type == eventType) {
-						// get the type of action we selected
-						var actionType = $(ev.target).val();
-						// add a new action of this type to the event
-						control.events[i].actions.push( new Action(actionType) );
-						// rebuild actions
-						showEvents(_selectedControl);
-						// we're done
-						break;
+		var events = controlClass.events;
+		// check we have some
+		if (events) {
+			// JSON library single member check
+			if ($.isArray(controlClass.events.event)) events = controlClass.events.event;		
+			// loop them
+			for (var i in events) {
+				// get a reference
+				var event = events[i];
+				// append a table
+				actionsPanel.append("<table class='propertiesPanelTable'><tbody></tbody></table>");	
+				// get a reference to the table
+				var actionsTable = actionsPanel.children().last().children().last();
+				// add a heading for the event
+				actionsTable.append("<tr><td colspan='2'><h3>" + event.name + " event</h3></td></tr>");
+				// show any actions
+				showActions(control, event);	
+				// add a small break
+				actionsTable.append("<tr><td colspan='2'></td></tr>");
+				// add an add facility
+				actionsTable.append("<tr><td>Add action : </td><td><select data-event='" + event.type + "'><option value='_'>Please select...</option>" + _actionOptions + "</select></td></tr>");
+				// get a reference to the select
+				var addAction = actionsTable.children().last().children().last().children().last();
+				// add a change listener
+				_listeners.push( addAction.change( { control: control, event: event }, function(ev) {
+					// get a reference to the control
+					var control = ev.data.control;
+					// get a reference to the eventType
+					var eventType = ev.data.event.type;
+					// look for the events collection in the control
+					for (var i in control.events) {
+						// check whether this is the event we want
+						if (control.events[i].type == eventType) {
+							// get the type of action we selected
+							var actionType = $(ev.target).val();
+							// add a new action of this type to the event
+							control.events[i].actions.push( new Action(actionType) );
+							// rebuild actions
+							showEvents(_selectedControl);
+							// we're done
+							break;
+						}
 					}
-				}				
-			}));
-		}			
+					
+				}));
+				
+			} // event loop	
+			
+		} // event check
 		
-	}
+	} // control check
 	
 }
 
 // this renders a single action into a table (used by events and childActions)
 function showAction(actionsTable, action, collection, refreshFunction) {
 	
-	// for some reason actions can lose their class, for now we'll just look them up and but the class back
-	if (!action._class && action.type) {
-		action._class = _actionTypes[action.type];
-	}
+	// get  the action class
+	var actionClass = _actionTypes[action.type];
 	
 	// write action name into the table						
-	actionsTable.append("<tr><td colspan='2'><h4>" + _actionTypes[action._class.type].name + " action</h4><img class='delete' src='images/bin_16x16.png' title='Delete this action'/><img class='reorder' src='images/moveUpDown_16x16.png' title='Reorder this action'/></td></tr>");
+	actionsTable.append("<tr><td colspan='2'><h4>" + actionClass.name + " action</h4><img class='delete' src='images/bin_16x16.png' title='Delete this action'/><img class='reorder' src='images/moveUpDown_16x16.png' title='Reorder this action'/></td></tr>");
 	// get a reference to the delete image
 	var deleteImage = actionsTable.find("img.delete").last(); 
 	// add a click listener to the delete image
@@ -256,7 +259,7 @@ function showAction(actionsTable, action, collection, refreshFunction) {
 	// show the id if requested
 	if (_version.showActionIds) actionsTable.append("<tr><td>ID</td><td class='canSelect'>" + action.id + "</td></tr>");
 	// get the action class properties
-	var properties = action._class.properties;
+	var properties = actionClass.properties;
 	// check
 	if (properties) {
 		// (if a single it's a class not an array due to JSON class conversionf from xml)

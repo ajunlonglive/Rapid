@@ -433,8 +433,10 @@ function sizeBorder(control) {
 		"width":width, // an extra pixel either side
 		"height":height // an extra pixel either side
 	});
+	// get the control class
+	var controlClass = _controlTypes[control.type];
 	// set the css according to move / no move
-	if (control._class.canUserMove) {
+	if (controlClass && controlClass.canUserMove) {
 		_selectionBorder.addClass("selectionBorderMove");
 		_selectionBorder.removeClass("selectionBorderNoMove");
 		_selectionBorder.children().addClass("selectionBorderInnerMove");
@@ -532,14 +534,16 @@ function getDataOptions(selectId, ignoreId, input) {
 	var gotSelected = false;
 	if (controls) {
 		options += "<optgroup label='Page controls'>";
-		for (var i in controls) {			
+		for (var i in controls) {	
+			// retrieve the control
 			var control = controls[i];
-			
+			// get the control class
+			var controlClass = _controlTypes[control.type];
 			// if we're not ignoring the control and it has a name
 			if (control.id != ignoreId && control.name) {
 				
 				// if it has a get data function (for input), or a setDataJavaScript
-				if ((input && control._class.getDataFunction) || control._class.setDataJavaScript) {
+				if ((input && controlClass.getDataFunction) || controlClass.setDataJavaScript) {
 					if (control.id == selectId && !gotSelected) {
 						options += "<option value='" + control.id + "' selected='selected'>" + control.name + "</option>";
 						gotSelected = true;
@@ -551,7 +555,7 @@ function getDataOptions(selectId, ignoreId, input) {
 				// control runtime properties can also be inputs
 				if (input) {
 					// get any run time properties
-					var properties = control._class.runtimeProperties;
+					var properties = controlClass.runtimeProperties;
 					// if there are runtimeProperties in the class
 					if (properties) {
 						// promote if array
@@ -723,7 +727,8 @@ function selectControl(control) {
 		showEvents(_selectedControl);
 		// show the styles
 		showStyles(_selectedControl);
-										
+		
+		
 		// selectChild
 		if (_selectedControl.childControls.length > 0) {
 			$("#selectChild").removeAttr("disabled");
@@ -749,23 +754,27 @@ function selectControl(control) {
 				_selectionBorder.hide();
 			}
 			
+			// get the control class
+			var controlClass = _controlTypes[_selectedControl.type];
+			// get the parent control class
+			var parentControlClass = _controlTypes[_selectedControl.parentControl.type];
 			// count the number of child controls
 			var contCount = 0;
 
 			// count the controls of this type			
 			for (var i in _selectedControl.parentControl.childControls) {
-				if (_selectedControl._class.type == _selectedControl.parentControl.childControls[i]._class.type) contCount ++;
+				if (_selectedControl.type == _selectedControl.parentControl.childControls[i].type) contCount ++;
 			}
 
 			// can delete if no parent class (page control), can insert into parent, or canUserAddPeers and more than 1 peer of this type
-			if (!_selectedControl.parentControl._class || _selectedControl.parentControl._class.canUserInsert || (_selectedControl._class.canUserAddPeers && contCount > 1)) {
+			if (!parentControlClass || parentControlClass.canUserInsert || (controlClass.canUserAddPeers && contCount > 1)) {
 				$("#deleteControl").removeAttr("disabled");
 			} else {
 				$("#deleteControl").attr("disabled","disabled");
 			}
 			
 			// addPeerLeft and addPeerRight
-			if (_selectedControl._class.canUserAddPeers) {
+			if (controlClass.canUserAddPeers) {
 				$("#addPeerLeft").removeAttr("disabled");
 				$("#addPeerRight").removeAttr("disabled");
 			} else {
@@ -817,21 +826,21 @@ function selectControl(control) {
 			if (_copyControl) {
 				// find out if there are childControls with the same type with canUserAddPeers			
 				for (i in _selectedControl.childControls) {
-					if (_copyControl.parentControl && _copyControl._class.type == _selectedControl.childControls[i]._class.type && _selectedControl.childControls[i]._class.canUserAddPeers) {
+					if (_copyControl.parentControl && _copyControl.type == _selectedControl.childControls[i].type && _controlTypes[_selectedControl.childControls[i].type].canUserAddPeers) {
 						childCanAddPeers = true;
 						break;
 					}
 				}
 				// find out if there are peers with the same type with canUserAddPeers			
 				for (i in _selectedControl.parentControl.childControls) {
-					if (_copyControl.parentControl && _copyControl._class.type == _selectedControl.parentControl.childControls[i]._class.type && _selectedControl.parentControl.childControls[i]._class.canUserAddPeers) {
+					if (_copyControl.parentControl && _copyControl.type == _selectedControl.parentControl.childControls[i].type && _controlTypes[_selectedControl.parentControl.childControls[i].type].canUserAddPeers) {
 						peerCanAddPeers = true;
 						break;
 					}
 				}
 			}		
 			// once we know if something allowed enabling/disabling is a lot easier
-			if (_copyControl && (_selectedControl._class.canUserInsert || childCanAddPeers || peerCanAddPeers)) {
+			if (_copyControl && (controlClass.canUserInsert || childCanAddPeers || peerCanAddPeers)) {
 				$("#paste").removeAttr("disabled");
 			} else {
 				$("#paste").attr("disabled","disabled");
@@ -854,7 +863,7 @@ function selectControl(control) {
 			$("#addPeerRight").attr("disabled","disabled");
 			
 			// if the copy control is a canUserAdd or the page we can paste
-			if (_copyControl && (!_copyControl.parentControl || _copyControl._class.canUserAdd)) {
+			if (_copyControl && (!_copyControl.parentControl || _controlTypes[_copyControl.type].canUserAdd)) {
 				$("#paste").removeAttr("disabled");
 			} else {
 				$("#paste").attr("disabled","disabled");
@@ -1284,8 +1293,6 @@ function loadPage() {
 	hideDialogues();
 	// hide any selection border
 	if (_selectionBorder) _selectionBorder.hide();	
-	// replace any current page html with loading
-	if (_page.object) _page.object.html("<center><p><img src='images/wait_120x15.gif'/></p></center>");
 	// remove any nonVisibleControls
 	$(".nonVisibleControl").remove();
 	// lose the selected control
@@ -1344,8 +1351,6 @@ function getDataObject(object) {
 					// simple copy
 					o[i] = p;
 				}
-				// copy the type in from _class  (page "control" doesn't have one)
-				if (object._class) o.type = object._class.type;
 			}
 		}
 	}
@@ -1882,9 +1887,12 @@ $(document).ready( function() {
 			        	
 			        	// retain the iframe body element as the page object
 			    		_page.object = $(_pageIframe[0].contentWindow.document.body);
-			    		
+			    					    					    					    		
 			    		// hide it
 			    		_page.object.hide();
+			    		
+			    		// empty it
+			    		_page.object.children().remove();
 			    		
 			    		// find the header section
 			    		var head = $(_pageIframe[0].contentWindow.document).find("head");
@@ -2242,11 +2250,11 @@ $(document).ready( function() {
 			showPageMap();
 		}
 	});
-	
+		
 	// add peer left
 	$("#addPeerLeft").click( function(ev) {
 		// check whether adding of peers is allowed
-		if (_selectedControl._class.canUserAddPeers) {
+		if (_selectedControl && _controlTypes[_selectedControl.type].canUserAddPeers) {
 			// add an undo snapshot
 			addUndo();
 			// create a new control of the selected class
@@ -2271,7 +2279,7 @@ $(document).ready( function() {
 	// add peer right
 	$("#addPeerRight").click( function(ev) {
 		// check whether adding of peers is allowed
-		if (_selectedControl._class.canUserAddPeers) {
+		if (_selectedControl && _controlTypes[_selectedControl.type].canUserAddPeers) {
 			// add an undo snapshot
 			addUndo();
 			// create a new control of the selected class
@@ -2300,10 +2308,10 @@ $(document).ready( function() {
 			var contCount = 0;
 			// count the controls of this type
 			for (var i in _selectedControl.parentControl.childControls) {
-				if (_selectedControl._class.type == _selectedControl.parentControl.childControls[i]._class.type) contCount ++;
+				if (_selectedControl.type == _selectedControl.parentControl.childControls[i].type) contCount ++;
 			}
 			// can delete if no parent class (page control), can insert into parent, or canUserAddPeers and more than 1 peer of this type
-			if (!_selectedControl.parentControl._class || _selectedControl.parentControl._class.canUserInsert || (_selectedControl._class.canUserAddPeers && contCount > 1)) {				
+			if (!_selectedControl.parentControl || _controlTypes[_selectedControl.parentControl.type].canUserInsert || (controlClass.canUserAddPeers && contCount > 1)) {				
 				// add an undo snapshot
 				addUndo();
 				// call the remove routine
@@ -2359,7 +2367,7 @@ $(document).ready( function() {
 				// find out if there are childControls with the same type with canUserAddPeers
 				var childCanAddPeers = false;
 				for (i in _selectedControl.childControls) {
-					if (_copyControl.type == _selectedControl.childControls[i]._class.type && _selectedControl.childControls[i]._class.canUserAddPeers) {
+					if (_copyControl.type == _selectedControl.childControls[i].type && _controlTypes[_selectedControl.childControls[i].type].canUserAddPeers) {
 						childCanAddPeers = true;
 						break;
 					}
@@ -2367,20 +2375,20 @@ $(document).ready( function() {
 				// find out if there are peers with the same type with canUserAddPeers
 				var peerCanAddPeers = false;
 				for (i in _selectedControl.parentControl.childControls) {
-					if (_copyControl.type == _selectedControl.parentControl.childControls[i]._class.type && _selectedControl.parentControl.childControls[i]._class.canUserAddPeers) {
+					if (_copyControl.type == _selectedControl.parentControl.childControls[i].type && _controlTypes[_selectedControl.parentControl.childControls[i].type].canUserAddPeers) {
 						peerCanAddPeers = true;
 						break;
 					}
 				}
 				// can we do an insert, or add as a peer
-				if (_selectedControl._class.canUserInsert && (_copyControl._class.canUserAdd || childCanAddPeers)) {
+				if (controlClass.canUserInsert && (_controlTypes[_copyControl.type].canUserAdd || childCanAddPeers)) {
 					// create the new control and place in child collection of current parent
 					var newControl = doPaste(_copyControl, _selectedControl);
 					// add to childControl collection of current parent
 					_selectedControl.childControls.push(newControl);
 					// move the html to the right place
 					_selectedControl.object.append(newControl.object);
-				} else if (_copyControl._class.canUserAdd || peerCanAddPeers) {
+				} else if (_controlTypes[_copyControl.type].canUserAdd || peerCanAddPeers) {
 					// create the new control as peer of current selection
 					var newControl = doPaste(_copyControl, _selectedControl.parentControl);
 					// use the insert right routine if we've got one
@@ -2398,7 +2406,7 @@ $(document).ready( function() {
 				
 			} else {
 								
-				if (_copyControl.parentControl && _copyControl._class.canUserAdd) {
+				if (_copyControl.parentControl && _controlTypes[_copyControl.type].canUserAdd) {
 					// create the new control and place in child collection of current parent
 					var newControl = doPaste(_copyControl, _selectedControl);
 					// add to childControl collection of current parent (which is the page)
@@ -2436,7 +2444,7 @@ function coverMouseDown(ev) {
 		// retain reference to the selected object
 		_selectedControl = c;									
 		// stop mousemove if canMove is not a property of the control class
-		if (!_selectedControl._class.canUserMove) _mouseDown = false;
+		if (!_controlTypes[_selectedControl.type].canUserMove) _mouseDown = false;
 		// fire the mousedown event for the object
 		c.object.trigger("mousedown", ev);			
 		// select control
@@ -2515,7 +2523,7 @@ $(document).mousemove( function(ev) {
 			positionBorder(ev.pageX + _panelPinnedOffset, ev.pageY);
 				
 			// if we got a control and it's allowed to be moved by the user (non-visual controls can be added but not moved so this way they remain with their parent control as the page)
-			if (c && _selectedControl._class.canUserMove) {
+			if (c && _controlTypes[_selectedControl.type].canUserMove) {
 				// retain a reference to the movedoverObject
 				_movedoverControl = c;	
 				// calculate the width
@@ -2529,9 +2537,9 @@ $(document).mousemove( function(ev) {
 					// calculate a move threshold which is the number of pixels to the left or right of the object the users needs to be within
 					var moveThreshold = Math.min(50 * _scale, width/3);
 					// if it's not possible to insert make the move thresholds half the width to cover the full object
-					if (!_movedoverControl._class.canUserInsert) moveThreshold = width/2;
+					if (!_controlTypes[_movedoverControl.type].canUserInsert) moveThreshold = width/2;
 					// are we within the move threshold on the left or the right controls that can be moved, or in the middle with an addChildControl method?
-					if (_movedoverControl._class.canUserMove && ev.pageX - _panelPinnedOffset < _movedoverControl.object.offset().left + moveThreshold) {
+					if (_controlTypes[_movedoverControl.type].canUserMove && ev.pageX - _panelPinnedOffset < _movedoverControl.object.offset().left + moveThreshold) {
 						// position the insert left
 						_selectionMoveLeft.css({
 							"display": "block",
@@ -2543,7 +2551,7 @@ $(document).mousemove( function(ev) {
 						// make sure the other selections are hidden					
 						_selectionMoveRight.hide();
 						_selectionInsert.hide();
-					} else if (_movedoverControl._class.canUserMove && ev.pageX - _panelPinnedOffset > _movedoverControl.object.offset().left + width - moveThreshold) {
+					} else if (_controlTypes[_movedoverControl.type].canUserMove && ev.pageX - _panelPinnedOffset > _movedoverControl.object.offset().left + width - moveThreshold) {
 						// position the insert right
 						_selectionMoveRight.css({
 							"display": "block",
@@ -2555,7 +2563,7 @@ $(document).mousemove( function(ev) {
 						// make sure the other selections are hidden						
 						_selectionMoveLeft.hide();
 						_selectionInsert.hide();
-					} else if (_movedoverControl._class.canUserInsert) {
+					} else if (_controlTypes[_movedoverControl.type].canUserInsert) {
 						// position the insert in the middle
 						_selectionInsert.css({
 							"display": "block",
@@ -2598,7 +2606,7 @@ $(document).mouseup( function(ev) {
 	
 	if (_selectedControl && _selectedControl.object[0]) {		
 		// show it in case it was an add
-		if (_selectedControl._class.canUserAdd) _selectedControl.object.show();
+		if (_controlTypes[_selectedControl.type].canUserAdd) _selectedControl.object.show();
 		// if we were moving a control different from the _selectedControl
 		if (_movingControl && _movedoverControl && _movedoverDirection && _movedoverControl.object[0] !== _selectedControl.object[0]) {
 			// add an undo snapshot
@@ -2641,7 +2649,7 @@ $(document).mouseup( function(ev) {
 		// null the moveedoverObject
 		_movedoverControl = null;
 		// arrange the non-visible controls if our selected control looks like one
-		if (!_selectedControl._class.canUserMove) arrangeNonVisibleControls();
+		if (!_controlTypes[_selectedControl.type].canUserMove) arrangeNonVisibleControls();
 		// hide the cover
 		_selectionCover.hide();
 		// hide the insert/moves

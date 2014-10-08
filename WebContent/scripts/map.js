@@ -24,8 +24,10 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 */
 
 function createMapEntry(list, c) {
+	// get the control class
+	var controlClass = _controlTypes[c.type];
 	// create the list entry
-	list.append("<li><span data-id='" + c.id + "'>" + ((c._class.image) ? "<img src='" + c._class.image + "'/>" : "") + c.type + (c.name ? " - " + c.name: "") + "</span></li>");
+	list.append("<li><span data-id='" + c.id + "'>" + ((controlClass.image) ? "<img src='" + controlClass.image + "'/>" : "") + c.type + (c.name ? " - " + c.name: "") + "</span></li>");
 	// get the list entry
 	var li = list.children("li").last();
 	// add an onclick listener if the object is visible
