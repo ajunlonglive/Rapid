@@ -1253,7 +1253,7 @@ public class Rapid extends Action {
 			} else if ("DELAPP".equals(action)) {
 						
 				// delete the application
-				if (app != null) app.delete(rapidServlet, rapidActionRequest);
+				if (app != null) app.delete(rapidServlet, rapidActionRequest, true);
 				// set the result message
 				result.put("message", "Application " + app.getName() + " deleted");
 				
@@ -1300,7 +1300,7 @@ public class Rapid extends Action {
 			} else if ("DELVERSION".equals(action)) {
 				
 				// delete the application version
-				if (app != null) app.delete(rapidServlet, rapidActionRequest);
+				if (app != null) app.delete(rapidServlet, rapidActionRequest, false);
 				// set the result message
 				result.put("message", "Version " + app.getVersion() + " deleted");
 				
