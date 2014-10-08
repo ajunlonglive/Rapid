@@ -143,6 +143,7 @@ public class Application {
 		
 		// instance methods
 		
+		// get the connection adapter, instantiating if null as this is quite expensive
 		public synchronized ConnectionAdapter getConnectionAdapter(ServletContext servletContext) throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
 			
 			// only if the connection adapter has not already been initialised
@@ -157,6 +158,11 @@ public class Application {
 			
 			return _connectionAdapter;
 			
+		}
+		
+		// set the connection adapter to null to for it to be re-initialised
+		public synchronized void reset() {
+			_connectionAdapter = null;
 		}
 		
 	}
@@ -661,7 +667,7 @@ public class Application {
 		
 		// initialise the security adapter 
 		setSecurity(servletContext, _securityAdapterType);
-		
+				
 		// initialise the resource includes collection
 		_resources = new Resources();
 		

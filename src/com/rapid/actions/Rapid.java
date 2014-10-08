@@ -980,6 +980,9 @@ public class Rapid extends Action {
 						// only set the password if it's different from the default
 						if (!"********".equals(password)) dbConn.setPassword(password);
 						
+						// reset the dbconn so the adapter is re-initialised with any changes
+						dbConn.reset();
+						
 						// save the app
 						app.save(rapidServlet, rapidRequest, true);
 						
