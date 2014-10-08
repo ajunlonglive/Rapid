@@ -32,10 +32,10 @@ Functions used to create an modify controls are here so they can be loaded by th
 // this keeps a count of controls of each type in order to produce label 1, label 2, table 1, etc
 var _controlNumbers = {};
 
-//this function is called iteratively when loading in the controls (used by both designer and script engine)
+// this function is called iteratively when loading in the controls (used by both designer and script engine)
 function loadControl(jsonControl, parentControl, loadActions, paste, undo) {	
 	// we need to init the control
-	var control = new Control(window["ControlClass_" + jsonControl.type], parentControl, jsonControl, loadActions, paste, undo);
+	var control = new Control(jsonControl.type, parentControl, jsonControl, loadActions, paste, undo);
 	// if we have child controls
 	if (jsonControl.childControls) {
 		// loop and add
@@ -68,10 +68,10 @@ function ControlClass(controlClass) {
 }
 
 // this object function will create the control as specified in the controlClass, jsonControl is from a previously saved control, or paste, loadActions can avoid loading the action objects into the control (the page renderer doesn't need them), and paste can generate new id's
-function Control(controlClass, parentControl, jsonControl, loadComplexObjects, paste, undo) {
+function Control(controlType, parentControl, jsonControl, loadComplexObjects, paste, undo) {
 			
-	// if controlClass is a string find the object (so bespoke contructJavaScript can avoid the "Control_" prefix and use code like: this.childControls.push(new Control("tableRow", this));)
-	if ($.type(controlClass) == "string") controlClass = window["ControlClass_" + controlClass];
+	// get the type into the "class"
+	var controlClass = _controlTypes[controlType];
 	// check controlClass exists
 	if (controlClass) {
 								
@@ -210,10 +210,8 @@ function Control(controlClass, parentControl, jsonControl, loadComplexObjects, p
 								for (var k in jsonControl.events[i].actions) {
 									// get our jsonAction
 									var jsonAction = jsonControl.events[i].actions[k];
-									// get our actionClass
-									var actionClass = window["ActionClass_" + jsonAction.type];
 									// add new action object into event
-									event.actions.push(new Action(actionClass, jsonAction, paste, undo));
+									event.actions.push(new Action(jsonAction.type, jsonAction, paste, undo));
 								}
 								// we're finished with this event
 								break;

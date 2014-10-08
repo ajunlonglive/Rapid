@@ -37,6 +37,10 @@ Geometry - the pixel space an object takes up
  
 */
 
+// details of all available action types
+var _actionTypes = {};
+// details of all available control types;
+var _controlTypes = {};
 // details of all the available apps
 var _apps = [];
 // details of all the available application versions
@@ -186,7 +190,7 @@ function applyUndoRedo(page) {
 	_propertiesControl = null;		
 	
 	// load the page object from the undo snapshot
-	_page = new Control(ControlClass_page, null, page, true, false, true);
+	_page = new Control(page.type, null, page, true, false, true);
 		       	
 	// put the object back
 	_page.object = pageObject;
@@ -1118,12 +1122,12 @@ function loadVersion(forceLoad) {
     				if (!className) className = $(ev.target).parent().attr("data-control");
     				
 					// get the control constructor
-					var controlClass = window["ControlClass_" + className];
+					var controlClass = _controlTypes[className];
 					
 					// there is a function to create this control
 					if (controlClass) {    						
 						// instantiate the control with the _page as the parent
-						var control = new Control(controlClass, _page, null, true);										
+						var control = new Control(className, _page, null, true);										
 						// size the border for the control while it is still visible		
 						sizeBorder(control);
 						// set the mouseDown offsets so when we drag the mouse is in the center
@@ -1328,10 +1332,10 @@ function getDataObject(object) {
 			// if a blank space, or not a null
 			if (p === "" || p != null) {
 				// child controls and actions need cleaning up recursively 
-				if (p.type && (window["ControlClass_" + p.type] || window["ActionClass_" + p.type])) {
+				if (p.type && (_actionTypes[p.type] || _controlTypes[p.type])) {
 					// get an object
 					o[i] = getDataObject(p);
-				} else if ($.isArray(p) && p.length > 0 && p[0].type && (window["ControlClass_" + p[0].type] || window["ActionClass_" + p[0].type] || i == "events" )) {
+				} else if ($.isArray(p) && p.length > 0 && p[0].type && (_actionTypes[p[0].type] || _controlTypes[p[0].type] || i == "events" )) {
 					// make an array
 					o[i] = [];
 					// loop to clean up childControls
@@ -1806,8 +1810,8 @@ $(document).ready( function() {
 	    		var a = actions[i];
 	    		// create a new action class object/function (this is a closure)
 	    		var f = new ActionClass(a);        		        		     			
-				// assign the action class object/function globally
-				window["ActionClass_" + a.type] = f; 	    		
+				// retain the action class object/function globally
+	    		_actionTypes[a.type] = f; 	    		
 	    	} // action loop
 	    	
 	    	// load the controls classes	
@@ -1829,8 +1833,8 @@ $(document).ready( function() {
 	    	    		var c = controls[i];
 	    	    		// create a new control ControlClass object/function (this is a closure)
 	    	    		var f = new ControlClass(c);        		        		     			
-	    				// assign the control controlClass function function globally
-	    				window["ControlClass_" + c.type] = f; 		    	    		
+	    				// retain the control controlClass function function globally
+	    				_controlTypes[c.type] = f; 	
 	    	    	}
 	    	    	
 	    	    	// now load the other apps
@@ -1873,8 +1877,8 @@ $(document).ready( function() {
 		        	
 		        	try {
 		        		
-		        		// get the page (control) object
-			        	_page = new Control(ControlClass_page, null, page, true);
+		        		// create the page (control) object
+			        	_page = new Control("page", null, page, true);
 			        	
 			        	// retain the iframe body element as the page object
 			    		_page.object = $(_pageIframe[0].contentWindow.document.body);
@@ -2246,7 +2250,7 @@ $(document).ready( function() {
 			// add an undo snapshot
 			addUndo();
 			// create a new control of the selected class
-			var newControl = new Control(_selectedControl._class, _selectedControl.parentControl, null, true);						
+			var newControl = new Control(_selectedControl.type, _selectedControl.parentControl, null, true);						
 			// run any control insertion code - for complex controls that may need to update their parent
 			if (newControl._insertLeft) {
 				newControl._insertLeft();
@@ -2271,7 +2275,7 @@ $(document).ready( function() {
 			// add an undo snapshot
 			addUndo();
 			// create a new control of the selected class
-			var newControl = new Control(_selectedControl._class, _selectedControl.parentControl, null, true);					
+			var newControl = new Control(_selectedControl.type, _selectedControl.parentControl, null, true);					
 			// run any control insertion code - for complex controls that may need to update their parent
 			if (newControl._insertRight) {
 				newControl._insertRight();

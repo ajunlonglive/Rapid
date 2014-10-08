@@ -695,7 +695,7 @@ function Property_childActions(cell, propertyObject, property, refreshHtml, refr
 			// initilise the array if need be
 			if (!propertyObject[property.key]) propertyObject[property.key] = [];
 			// initialise this action
-			var action = new Action(window["ActionClass_" + actionType]);
+			var action = new Action(actionType);
 			// add it to the array
 			propertyObject[property.key].push(action);
 			// set the drop down back to "Please select..."
