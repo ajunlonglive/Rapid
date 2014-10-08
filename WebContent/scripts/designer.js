@@ -135,29 +135,52 @@ var _scale = 1;
 var _mouseScale;
 
 // takes a snapshot of the current page and adds it to the undo stack
-function addUndo(keepRedo) {
-	// set dirty
-	_dirty = true;
-
-	// grab the page
-	var page = JSON.stringify(getDataObject(_page));
-	// if the page is different from the last item on the undo stack push it on
-	if (_undo.length == 0 || (_undo.length > 0 && page != _undo[_undo.length - 1])) _undo.push(page);
-	// remove an item from the bottom of the stack if it's too big
-	if (_undo.length > 50) _undo.splice(0, 1);
-	// enable undo button
-	$("#undo").enable();
-	// undo snapshots from the undo button create a redo snap shotshot if the snapshot request comes from elsewhere remove redo
-	if (!keepRedo && _redo.length > 0) {
-		// empty the redo stack
-		_redo = [];
-		// disable the redo button
-		$("#redo").disable();
-	}
-
+function addUndo(usePage, keepRedo) {	
+	// must have a selected control
+	if (_selectedControl) {	
+		
+		// set dirty
+		_dirty = true;		
+		
+		// the undo control
+		var undoControl = null;
+		
+		// stringify either selected or whole page
+		if (usePage) {
+			// snapshot the whole page
+			undoControl = JSON.stringify(getDataObject(_page));
+		} else {
+			// retain childControls
+			var childControls = _selectedControl.childControls;
+			// remove them temporarily
+			_selectedControl.childControls = null;
+			// stringify the selected control
+			undoControl = JSON.stringify(getDataObject(_selectedControl));
+			// add back the child controls
+			_selectedControl.childControls = childControls;
+		}
+		
+		// if the control is different from the last item on the undo stack push it on
+		if (_undo.length == 0 || (_undo.length > 0 && undoControl != _undo[_undo.length - 1])) _undo.push(undoControl);
+		
+		// remove an item from the bottom of the stack if it's too big
+		if (_undo.length > 50) _undo.splice(0, 1);
+		
+		// enable undo button
+		$("#undo").enable();
+		
+		// undo snapshots from the undo button create a redo snap shotshot if the snapshot request comes from elsewhere remove redo
+		if (!keepRedo && _redo.length > 0) {
+			// empty the redo stack
+			_redo = [];
+			// disable the redo button
+			$("#redo").disable();
+		} // keep redo
+		
+	} // control check
 }
 
-// takes a snapshot of the current page and adds it to the redo stack
+// takes a snapshot of the whole page and adds it to the redo stack
 function addRedo() {	
 	// grab the page
 	var page = JSON.stringify(getDataObject(_page));
@@ -168,67 +191,133 @@ function addRedo() {
 }
 
 // used by both undo and redo to apply their snapshot
-function applyUndoRedo(page) {
+function applyUndoRedo(snapshot) {
 	
-	// hide the selection border
-	$("#selectionBorder").hide();
-	// remove any dialogues or components
-	$("#dialogues").children().remove();
+	// check we were passed something to re-apply
+	if (snapshot) {		
+		
+		// parse the snapshot
+		var undoredoControl = JSON.parse(snapshot);
+		
+		// hide the selection border
+		$("#selectionBorder").hide();
+		// remove any dialogues or components
+		$("#dialogues").children().remove();
+		
+		// find the control we are applying the undo to
+		var applyControl = getControlById(undoredoControl.id);
+		// make sure we got one
+		if (applyControl) {
+				
+			// retain the selected control id
+			var selectedControlId = null;
+			// if we have a selected control
+			if (_selectedControl) {
+				// get it's the id
+				selectedControlId = _selectedControl.id;
+				// lose the current selected object
+				_selectedControl = null;
+			}						
+			// lose the property control
+			_propertiesControl = null;
+			
+			// retain reference to the object we are applying
+			var applyObject = applyControl.object;			
+			
+			// if we're apply a page snapshot
+			if (undoredoControl.type == "page") {
+				
+				// retain reference to page object
+				var pageObject = _page.object;
+				// retain a reference to the child controls
+				var childControls = _page.childControls;
+				
+				// if it's the whole page
+				if (undoredoControl.childControls) {
+					
+					// remove all current page html
+					pageObject.children().remove();
+					
+					// remove all non-visible controls
+					$("img.nonVisibleControl").remove();
+															
+					// load the page object from the undo snapshot
+					_page = new Control("page", null, undoredoControl, true, false, true);
+					
+					// put the page object back
+					_page.object = pageObject;
+					
+					// we're re-doing the whole page so reset the next control id and control numbers 
+					_nextId = 1;
+					_controlNumbers = {};
+					
+					// loop the page childControls and create
+			    	for (var i = 0; i < undoredoControl.childControls.length; i++) {
+			    		// get an instance of the control properties (which is what we really need from the JSON)
+			    		var childControl = undoredoControl.childControls[i];
+			    		// create and add
+			    		_page.childControls.push(loadControl(childControl, _page, true, false, true));
+			    	}
+										
+				} else {
+					
+					// load the page object from the undo snapshot
+					_page = new Control("page", null, undoredoControl, true, false, true);
+					
+					// put the page object back
+					_page.object = pageObject;     	
+									
+					// put the child controls back
+					_page.childControls = childControls;
+					
+				}
+																															
+			} else {
+				
+				// remove the object this snapshot is being applied to
+				applyObject.remove();
+				
+				// loop the parent child controls
+				for (var i in applyControl.parentControl.childControls) {
+					// get a reference to the applychild
+					var applyChildControl = applyControl.parentControl.childControls[i];
+					// check if it's the one to replace
+					if (applyChildControl.id == undoredoControl.id) {
+						// copy in the child controls
+						undoredoControl.childControls = applyChildControl.childControls;
+						// update this child control
+						applyControl.parentControl.childControls[i] = loadControl(undoredoControl, applyControl.parentControl, true, false, true);						
+						// we're done
+						break;
+					}
+				}
+												
+			}
+									
+			// if there was a control selected
+			if (selectedControlId) {
+				// re-select the initial control
+				_selectedControl = getControlById(selectedControlId);
+				// rebuild any properties
+				selectControl(_selectedControl);
+			}
+			
+		} // apply control check
+		
+	} // undo control check
 	
-	// retain reference to page object
-	var pageObject = _page.object;
-	// remove all current page html
-	pageObject.children().remove();
-	// retain the selected control id
-	var selectedControlId = null;
-	// if we have a selected control
-	if (_selectedControl) selectedControlId = _selectedControl.id; 
-	
-	// lose the current selected object
-	_selectedControl = null;
-	// lose the property control
-	_propertiesControl = null;		
-	
-	// load the page object from the undo snapshot
-	_page = new Control(page.type, null, page, true, false, true);
-		       	
-	// put the object back
-	_page.object = pageObject;
-	
-	// reset the next control id and control numbers 
-	_nextId = 1;
-	_controlNumbers = {};
-	
-	// load the child controls
-	if (page.childControls) {
-    	// loop the page childControls and create
-    	for (var i = 0; i < page.childControls.length; i++) {
-    		// get an instance of the control properties (which is what we really need from the JSON)
-    		var childControl = page.childControls[i];
-    		// create and add
-    		_page.childControls.push(loadControl(childControl, _page, true, false, true));
-    	}
-	}
-	
-	// if there was a control selected
-	if (selectedControlId) {
-		// re-select the initial control
-		_selectedControl = getControlById(selectedControlId);
-		// rebuild any properties
-		selectControl(_selectedControl);
-	}
 }
 
 // takes the most recent snapshot off the top of the undo stack and applies it
 function doUndo() {
 	// retrieve the last page from the top of the undo stack
-	var page = JSON.parse(_undo.pop());
+	var undoSnapshot = _undo.pop();
 	// if there was one
-	if (page) {				
+	if (undoSnapshot) {				
 		// add a redo snapshot, just before we undo
 		addRedo();
 		// apply the undo
-		applyUndoRedo(page);				
+		applyUndoRedo(undoSnapshot);				
 	}
 	// if there's nothing more on the stack
 	if (_undo.length == 0) {
@@ -242,13 +331,13 @@ function doUndo() {
 // takes the most recent snapshot off the top of the redo stack and applies it
 function doRedo() {
 	// retrieve the last page from the top of the redo stack
-	var page = JSON.parse(_redo.pop());
+	var redoSnapshot = _redo.pop();
 	// if there was one
-	if (page) {
-		// add an undo snapshot, just before we redo with the keep redo set to true
-		addUndo(true);
+	if (redoSnapshot) {
+		// add an undo snapshot for the whole page, just before we redo with the keep redo set to true
+		addUndo(true, true);
 		// apply the redo
-		applyUndoRedo(page);		
+		applyUndoRedo(redoSnapshot);		
 	}
 	// disable redo button if there's nothing more on the stack
 	if (_redo.length == 0) $("#redo").disable();
@@ -1107,8 +1196,8 @@ function loadVersion(forceLoad) {
     			// when the mouse moves down on this component
     			designControls.children().last().mousedown( function(ev) {		
     				
-    				// add an undo position
-    				addUndo();
+    				// add an undo for the whole page
+    				addUndo(true);
     				
     				// stop text selection as we are moving the new object
     				$("body").css({
@@ -2193,8 +2282,8 @@ $(document).ready( function() {
 	$("#swapPeerLeft").click( function(ev) {
 		// maker sure there we've not got the left most control already
 		if (_selectedControl != _selectedControl.parentControl.childControls[0]) {
-			// add an undo snapshot
-			addUndo();
+			// add an undo snapshot for the whole page
+			addUndo(true);
 			// find our position
 			for (var i in _selectedControl.parentControl.childControls) {
 				if (_selectedControl == _selectedControl.parentControl.childControls[i]) break;
@@ -2224,8 +2313,8 @@ $(document).ready( function() {
 	$("#swapPeerRight").click( function(ev) {
 		// maker sure there we've not got the right most control already
 		if (_selectedControl != _selectedControl.parentControl.childControls[_selectedControl.parentControl.childControls.length - 1]) {
-			// add an undo snapshot
-			addUndo();
+			// add an undo snapshot for the whole page
+			addUndo(true);
 			// find our position
 			for (var i in _selectedControl.parentControl.childControls) {
 				if (_selectedControl == _selectedControl.parentControl.childControls[i]) break;
@@ -2255,8 +2344,8 @@ $(document).ready( function() {
 	$("#addPeerLeft").click( function(ev) {
 		// check whether adding of peers is allowed
 		if (_selectedControl && _controlTypes[_selectedControl.type].canUserAddPeers) {
-			// add an undo snapshot
-			addUndo();
+			// add an undo snapshot for the whole page
+			addUndo(true);
 			// create a new control of the selected class
 			var newControl = new Control(_selectedControl.type, _selectedControl.parentControl, null, true);						
 			// run any control insertion code - for complex controls that may need to update their parent
@@ -2280,8 +2369,8 @@ $(document).ready( function() {
 	$("#addPeerRight").click( function(ev) {
 		// check whether adding of peers is allowed
 		if (_selectedControl && _controlTypes[_selectedControl.type].canUserAddPeers) {
-			// add an undo snapshot
-			addUndo();
+			// add an undo snapshot for the whole page
+			addUndo(true);
 			// create a new control of the selected class
 			var newControl = new Control(_selectedControl.type, _selectedControl.parentControl, null, true);					
 			// run any control insertion code - for complex controls that may need to update their parent
@@ -2312,8 +2401,8 @@ $(document).ready( function() {
 			}
 			// can delete if no parent class (page control), can insert into parent, or canUserAddPeers and more than 1 peer of this type
 			if (!_selectedControl.parentControl || _controlTypes[_selectedControl.parentControl.type].canUserInsert || (controlClass.canUserAddPeers && contCount > 1)) {				
-				// add an undo snapshot
-				addUndo();
+				// add an undo snapshot for the whole page
+				addUndo(true);
 				// call the remove routine
 				_selectedControl._remove();
 				// find our position
@@ -2360,8 +2449,8 @@ $(document).ready( function() {
 	$("#paste").click( function(ev) {
 		// see the enable/disable rules for the past button to see all the rules but basically we're working out whether we can insert into the selected control, into the parent, or not at all
 		if (_selectedControl && _copyControl) {
-			// add an undo snapshot
-			addUndo();
+			// add an undo snapshot for the whole page
+			addUndo(true);
 			// if no parent it's the page
 			if (_selectedControl.parentControl) {
 				// find out if there are childControls with the same type with canUserAddPeers
@@ -2608,11 +2697,11 @@ $(document).mouseup( function(ev) {
 		// show it in case it was an add
 		if (_controlTypes[_selectedControl.type].canUserAdd) _selectedControl.object.show();
 		// if we were moving a control different from the _selectedControl
-		if (_movingControl && _movedoverControl && _movedoverDirection && _movedoverControl.object[0] !== _selectedControl.object[0]) {
-			// add an undo snapshot
-			addUndo();
+		if (_movingControl && _movedoverControl && _movedoverDirection && _movedoverControl.object[0] !== _selectedControl.object[0]) {			
 			// remove the object from it's current parent
 			removeControlFromParent(_selectedControl);
+			// add an undo snapshot for the whole page 
+			addUndo(true);
 			// move the selectedObject to the left or right of the movedoverObject, or insert if in the centre
 			switch (_movedoverDirection) {
 			case "L" : 
@@ -2623,7 +2712,7 @@ $(document).mouseup( function(ev) {
 				// add to childControls at correct position
 				_movedoverControl.parentControl.childControls.splice(_movedoverControl.object.index(),0,_selectedControl);				
 				break;		
-			case "R" :
+			case "R" :				
 				// retain the same parent control as the moved over control
 				_selectedControl.parentControl = _movedoverControl.parentControl;
 				// move the markup object after the moved over object
@@ -2684,7 +2773,29 @@ $(document).mouseup( function(ev) {
 // called whenever a control is added or deleted in case one was a non-visible control and needs rearranging
 function arrangeNonVisibleControls() {	
 	// check there is a page and a page object
-	if (_page && _page.object) {
+	if (_page && _page.object && _page.childControls) {
+		// start at first x position
+		var x = _panelPinnedOffset + 10;
+		// loop the page child controls
+		for (var i in _page.childControls) {
+			// get the child control
+			var childControl = _page.childControls[i]
+			// get it's object
+			var o = childControl.object;
+			// if it is nonVisible
+			if (o.is(".nonVisibleControl")) {
+				// ensure this control is visible
+				o.show();
+				// ensure this page control is in the right place
+				o.css("left",x);
+				// get the width
+				var w = Math.max(o.outerWidth(),25);
+				// add to the growing x value
+				x += (5 + w);
+			}
+		}
+		
+		/*
 		// get existing page controls	         
 		var pageControls = $("body").children(".nonVisibleControl");
 		// remember the last x
@@ -2702,6 +2813,7 @@ function arrangeNonVisibleControls() {
 			// add to the growing x value
 			x += (5 + w);
 		});
+		*/
 	}	
 }
 
