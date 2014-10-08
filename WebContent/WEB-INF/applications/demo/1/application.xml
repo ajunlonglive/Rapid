@@ -39,12 +39,12 @@
     <description>This is a demonstration Rapid application provided to showcase many common Rapid features</description>
     <id>demo</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-10-08T07:14:01.368+01:00</modifiedDate>
+    <modifiedDate>2014-10-08T11:35:05.635+01:00</modifiedDate>
     <name>demo</name>
     <pageBackupsMaxSize>3</pageBackupsMaxSize>
     <securityAdapterType>rapid</securityAdapterType>
     <showActionIds>false</showActionIds>
-    <showControlIds>false</showControlIds>
+    <showControlIds>true</showControlIds>
     <startPageId>P1</startPageId>
     <status>1</status>
     <styles>/*

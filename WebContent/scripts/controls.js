@@ -81,11 +81,13 @@ function Control(controlType, parentControl, jsonControl, loadComplexObjects, pa
 		// retain the version
 		this.version = controlClass.version;
 		
-		// store a count for number of controls of this type
-		if (!_controlNumbers[controlClass.type]) {
-			_controlNumbers[controlClass.type] = 1;
-		} else {
-			_controlNumbers[controlClass.type] ++;
+		// store a count for number of controls of this type if not undoing
+		if (!undo) {
+			if (!_controlNumbers[controlClass.type]) {
+				_controlNumbers[controlClass.type] = 1;
+			} else {
+				_controlNumbers[controlClass.type] ++;
+			}
 		}
 		
 		// retain the parentControl
