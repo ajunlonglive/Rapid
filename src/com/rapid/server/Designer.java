@@ -124,10 +124,10 @@ public class Designer extends RapidHttpServlet {
 					String userName = rapidRequest.getUserName();
 					
 					// get the user
-					User user = rapidSecurity.getUser(rapidRequest, userName);
+					User user = rapidSecurity.getUser(rapidRequest);
 
 					// check permission
-					if (rapidSecurity.checkUserRole(rapidRequest, userName, Rapid.DESIGN_ROLE)) {
+					if (rapidSecurity.checkUserRole(rapidRequest, Rapid.DESIGN_ROLE)) {
 						
 						// whether we're trying to avoid caching
 				    	boolean noCaching = Boolean.parseBoolean(getServletContext().getInitParameter("noCaching"));
@@ -174,10 +174,10 @@ public class Designer extends RapidHttpServlet {
 									Application application = getApplications().get(id, version);
 
 									// check the users permission to design this application
-									boolean designPermission = application.getSecurity().checkUserRole(rapidRequest, rapidRequest.getUserName(), Rapid.DESIGN_ROLE);
+									boolean designPermission = application.getSecurity().checkUserRole(rapidRequest, Rapid.DESIGN_ROLE);
 									
 									// if app is rapid do a further check
-									if (designPermission && "rapid".equals(application.getId())) designPermission = application.getSecurity().checkUserRole(rapidRequest, rapidRequest.getUserName(), Rapid.SUPER_ROLE);
+									if (designPermission && "rapid".equals(application.getId())) designPermission = application.getSecurity().checkUserRole(rapidRequest, Rapid.SUPER_ROLE);
 									
 									// if we got permssion - add this application to the list 
 									if (designPermission) {
@@ -219,10 +219,10 @@ public class Designer extends RapidHttpServlet {
 								for (Application application : versions.sort()) {
 																									
 									// check the users permission to design this application
-									boolean designPermission = application.getSecurity().checkUserRole(rapidRequest, rapidRequest.getUserName(), Rapid.DESIGN_ROLE);
+									boolean designPermission = application.getSecurity().checkUserRole(rapidRequest, Rapid.DESIGN_ROLE);
 									
 									// if app is rapid do a further check
-									if (designPermission && "rapid".equals(application.getId())) designPermission = application.getSecurity().checkUserRole(rapidRequest, rapidRequest.getUserName(), Rapid.SUPER_ROLE);
+									if (designPermission && "rapid".equals(application.getId())) designPermission = application.getSecurity().checkUserRole(rapidRequest, Rapid.SUPER_ROLE);
 									
 									// check the RapidDesign role is present in the users roles for this application
 									if (designPermission) {												
@@ -438,7 +438,7 @@ public class Designer extends RapidHttpServlet {
 							if (page != null) {
 								
 								// get user description
-								String userDescription = application.getSecurity().getUser(rapidRequest, userName).getDescription();
+								String userDescription = application.getSecurity().getUser(rapidRequest).getDescription();
 								if (userDescription == null) userDescription = "unknown";
 																								
 								// remove any existing page locks for this user
@@ -678,7 +678,7 @@ public class Designer extends RapidHttpServlet {
 					if (userName == null) userName = "";
 					
 					// check permission
-					if (rapidSecurity.checkUserRole(rapidRequest, userName, Rapid.DESIGN_ROLE)) {
+					if (rapidSecurity.checkUserRole(rapidRequest, Rapid.DESIGN_ROLE)) {
 						
 						Application application = rapidRequest.getApplication();
 						
@@ -1090,12 +1090,12 @@ public class Designer extends RapidHttpServlet {
 											if (security != null) {									
 												
 												// get the current users record from the adapter
-												User user = security.getUser(rapidRequest, userName);
+												User user = security.getUser(rapidRequest);
 												
 												// check the current user is present in the app's security adapter
 												if (user == null) {
 													// get the Rapid user object
-													User rapidUser = rapidApplication.getSecurity().getUser(rapidRequest, userName);
+													User rapidUser = rapidApplication.getSecurity().getUser(rapidRequest);
 													// create a new user based on the Rapid user
 													user = new User(userName, rapidUser.getDescription(), rapidUser.getPassword());
 													// add the new user 
@@ -1103,8 +1103,8 @@ public class Designer extends RapidHttpServlet {
 												}
 												
 												// add Admin and Design roles for the new user if required
-												if (!security.checkUserRole(rapidRequest, userName, com.rapid.server.Rapid.ADMIN_ROLE)) security.addUserRole(rapidRequest, userName, com.rapid.server.Rapid.ADMIN_ROLE);
-												if (!security.checkUserRole(rapidRequest, userName, com.rapid.server.Rapid.DESIGN_ROLE)) security.addUserRole(rapidRequest, userName, com.rapid.server.Rapid.DESIGN_ROLE);									
+												if (!security.checkUserRole(rapidRequest, com.rapid.server.Rapid.ADMIN_ROLE)) security.addUserRole(rapidRequest, com.rapid.server.Rapid.ADMIN_ROLE);
+												if (!security.checkUserRole(rapidRequest, com.rapid.server.Rapid.DESIGN_ROLE)) security.addUserRole(rapidRequest, com.rapid.server.Rapid.DESIGN_ROLE);									
 											}
 											
 											// save application

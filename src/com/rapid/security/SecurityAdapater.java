@@ -231,7 +231,7 @@ public abstract class SecurityAdapater {
 	}
 	
 	// abstract methods
-		
+			
 	// all roles available to the application
 	public abstract Roles getRoles(RapidRequest rapidRequest) throws SecurityAdapaterException;
 	
@@ -243,8 +243,9 @@ public abstract class SecurityAdapater {
 	public abstract Role getRole(RapidRequest rapidRequest, String roleName) throws SecurityAdapaterException;
 		
 	// details of a single user
-	public abstract User getUser(RapidRequest rapidRequest, String userName) throws SecurityAdapaterException;
+	public abstract User getUser(RapidRequest rapidRequest) throws SecurityAdapaterException;
 	
+		
 		
 	// add a role to the application (the adapter will need to ensure that the role is not present already)
 	public abstract void addRole(RapidRequest rapidRequest, Role role) throws SecurityAdapaterException;
@@ -257,20 +258,17 @@ public abstract class SecurityAdapater {
 	public abstract void addUser(RapidRequest rapidRequest, User user) throws SecurityAdapaterException;
 		
 	// delete a user from the application
-	public abstract void deleteUser(RapidRequest rapidRequest, String userName) throws SecurityAdapaterException;
+	public abstract void deleteUser(RapidRequest rapidRequest) throws SecurityAdapaterException;
 	
 	
 	// add a named role to a named user (the adapter will need to ensure that the role is not present already)
-	public abstract void addUserRole(RapidRequest rapidRequest, String userName, String roleName) throws SecurityAdapaterException;
+	public abstract void addUserRole(RapidRequest rapidRequest, String roleName) throws SecurityAdapaterException;
 	
 	// remove a named role from a named user
-	public abstract void deleteUserRole(RapidRequest rapidRequest, String userName, String roleName) throws SecurityAdapaterException;
-
-	// check a named userName/password combination
-	public abstract boolean checkUserPassword(RapidRequest rapidRequest, String userName, String password) throws SecurityAdapaterException;
+	public abstract void deleteUserRole(RapidRequest rapidRequest, String roleName) throws SecurityAdapaterException;
 	
 	// check a named userName/roleName combination
-	public abstract boolean checkUserRole(RapidRequest rapidRequest, String userName, String roleName) throws SecurityAdapaterException;
+	public abstract boolean checkUserRole(RapidRequest rapidRequest, String roleName) throws SecurityAdapaterException;
 	
 	
 	// update a role description
@@ -278,5 +276,8 @@ public abstract class SecurityAdapater {
 		
 	// update a user's details
 	public abstract void updateUser(RapidRequest rapidRequest, User user) throws SecurityAdapaterException;
+	
+	// check a named userName/password combination
+	public abstract boolean checkUserPassword(RapidRequest rapidRequest, String userName, String password) throws SecurityAdapaterException;
 		
 }

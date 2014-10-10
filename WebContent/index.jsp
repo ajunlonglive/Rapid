@@ -34,10 +34,6 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 Applications applications = (Applications) getServletContext().getAttribute("applications");
 // get the rapid app
 Application rapid = applications.get("rapid");
-// get the userName
-String userName = (String) session.getAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME);
-// null safety
-if (userName == null) userName = "";
 //get a rapid request
 RapidRequest rapidRequest = new RapidRequest(request); 
 %>
@@ -99,14 +95,14 @@ function loadApps() {
 </div>
 
 <% 
-	if (rapid.getSecurity().checkUserRole(rapidRequest, userName, "RapidAdmin")) {
+	if (rapid.getSecurity().checkUserRole(rapidRequest, "RapidAdmin")) {
 %>
 <div class="body">
 	<a href="~?a=rapid"><img src="images/administration_157x135.png" /><span id="admin">Admin</span></a>
 </div>
 <% 
 	}
-	if (rapid.getSecurity().checkUserRole(rapidRequest, userName, "RapidDesign")) {
+	if (rapid.getSecurity().checkUserRole(rapidRequest, "RapidDesign")) {
 %>
 <div class="body">
 	<a href="design.jsp"><img src="images/designer_157x135.png" /><span id="design">Design</span></a>

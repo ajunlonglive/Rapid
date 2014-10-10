@@ -95,7 +95,7 @@ public class Rapid extends RapidHttpServlet {
 				String userName = rapidRequest.getUserName();
 				
 				// get the user
-				User user = security.getUser(rapidRequest, userName);
+				User user = security.getUser(rapidRequest);
 				
 				// check we got a user
 				if (user == null) {
@@ -225,7 +225,7 @@ public class Rapid extends RapidHttpServlet {
 					SecurityAdapater security = app.getSecurity();
 					
 					// get the user
-					User user = security.getUser(rapidRequest, rapidRequest.getUserName());
+					User user = security.getUser(rapidRequest);
 					
 					// check the user
 					if (user == null) {
@@ -301,7 +301,7 @@ public class Rapid extends RapidHttpServlet {
 						try {
 						
 							// fetch a user object in the name of the current user for the current app
-							User user = security.getUser(rapidRequest, userName);
+							User user = security.getUser(rapidRequest);
 							
 							// if we got one
 							if (user != null) {
@@ -357,7 +357,7 @@ public class Rapid extends RapidHttpServlet {
 					SecurityAdapater security = app.getSecurity();
 					
 					// get the user
-					User user = security.getUser(rapidRequest, rapidRequest.getUserName());
+					User user = security.getUser(rapidRequest);
 					
 					// check the user
 					if (user == null) {

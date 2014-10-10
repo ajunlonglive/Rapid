@@ -65,14 +65,10 @@ if (appId != null && pageId != null) {
 			gotAppAndPage = true;	
 			// get a rapid request
 			RapidRequest rapidRequest = new RapidRequest(request);
-			// get the userName
-			String userName = (String) session.getAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME);	
-			// null safety
-			if (userName == null) userName = "";
 			// check we have the RapidDesign permission in the security provider for this app
-			designerPermission = rapidApp.getSecurity().checkUserRole(rapidRequest, userName, Rapid.DESIGN_ROLE);
+			designerPermission = rapidApp.getSecurity().checkUserRole(rapidRequest, Rapid.DESIGN_ROLE);
 			// if this is the rapid app the super permission is required too
-			if ("rapid".equals(rapidApp.getId())) designerPermission = designerPermission && rapidApp.getSecurity().checkUserRole(rapidRequest, userName, Rapid.SUPER_ROLE);	
+			if ("rapid".equals(rapidApp.getId())) designerPermission = designerPermission && rapidApp.getSecurity().checkUserRole(rapidRequest, Rapid.SUPER_ROLE);	
 		}							
 	}
 }

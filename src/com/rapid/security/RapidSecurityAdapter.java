@@ -221,11 +221,11 @@ public class RapidSecurityAdapter extends SecurityAdapater {
 	}
 	
 	@Override
-	public User getUser(RapidRequest rapidRequest, String userName) throws SecurityAdapaterException {
-		for (User user : _security.getUsers()) if (user.getName().toLowerCase().equals(userName.toLowerCase())) return user;
+	public User getUser(RapidRequest rapidRequest) throws SecurityAdapaterException {
+		for (User user : _security.getUsers()) if (user.getName().toLowerCase().equals(rapidRequest.getUserName().toLowerCase())) return user;
 		return null;
 	}
-	
+			
 	@Override
 	public void addRole(RapidRequest rapidRequest, Role role) throws SecurityAdapaterException {
 		_security.getRoles().add(role);
@@ -251,8 +251,8 @@ public class RapidSecurityAdapter extends SecurityAdapater {
 	}
 	
 	@Override
-	public void deleteUser(RapidRequest rapidRequest, String userName) throws SecurityAdapaterException {
-		for (User user : _security.getUsers()) if (user.getName().equals(userName)){
+	public void deleteUser(RapidRequest rapidRequest) throws SecurityAdapaterException {
+		for (User user : _security.getUsers()) if (user.getName().equals(rapidRequest.getUserName())){
 			_security.getUsers().remove(user);
 			_security.getUsers().sort();
 			save();
@@ -261,36 +261,26 @@ public class RapidSecurityAdapter extends SecurityAdapater {
 	}
 	
 	@Override
-	public void addUserRole(RapidRequest rapidRequest, String userName,	String roleName) throws SecurityAdapaterException {
-		User user = getUser(rapidRequest, userName);
-		if (user == null) throw new SecurityAdapaterException("User " + userName + " cannot be found");
+	public void addUserRole(RapidRequest rapidRequest, String roleName) throws SecurityAdapaterException {
+		User user = getUser(rapidRequest);
+		if (user == null) throw new SecurityAdapaterException("User " + rapidRequest.getUserName() + " cannot be found");
 		user.getRoles().add(roleName);
 		user.getRoles().sort();
 		save();		
 	}
 	
 	@Override
-	public void deleteUserRole(RapidRequest rapidRequest, String userName, String roleName) throws SecurityAdapaterException {
-		User user = getUser(rapidRequest, userName);
-		if (user == null) throw new SecurityAdapaterException("User " + userName + " cannot be found");
+	public void deleteUserRole(RapidRequest rapidRequest, String roleName) throws SecurityAdapaterException {
+		User user = getUser(rapidRequest);
+		if (user == null) throw new SecurityAdapaterException("User " + rapidRequest.getUserName() + " cannot be found");
 		user.getRoles().remove(roleName);
 		user.getRoles().sort();
 		save();
 	}
-	
-	
+				
 	@Override
-	public boolean checkUserPassword(RapidRequest rapidRequest, String userName, String password) throws SecurityAdapaterException {
-		User user = getUser(rapidRequest, userName);
-		if (user != null) {
-			if (password.equals(user.getPassword())) return true;
-		}
-		return false;
-	}
-	
-	@Override
-	public boolean checkUserRole(RapidRequest rapidRequest, String userName, String roleName) throws SecurityAdapaterException {
-		User user = getUser(rapidRequest, userName);
+	public boolean checkUserRole(RapidRequest rapidRequest, String roleName) throws SecurityAdapaterException {
+		User user = getUser(rapidRequest);
 		if (user != null) {
 			return user.getRoles().contains(roleName);
 		}
@@ -307,10 +297,25 @@ public class RapidSecurityAdapter extends SecurityAdapater {
 	
 	@Override
 	public void updateUser(RapidRequest rapidRequest, User user) throws SecurityAdapaterException {
-		deleteUser(rapidRequest, user.getName());
+		deleteUser(rapidRequest);
 		_security.getUsers().add(user);
 		_security.getUsers().sort();
 		save();
+	}
+	
+	@Override
+	public boolean checkUserPassword(RapidRequest rapidRequest, String userName, String password) throws SecurityAdapaterException {
+		User user = null;
+		for (User u : _security.getUsers()) {
+			if (u.getName().toLowerCase().equals(userName.toLowerCase())) {
+				user = u;
+				break;
+			}
+		}
+		if (user != null) {
+			if (password.equals(user.getPassword())) return true;
+		}
+		return false;
 	}
 						
 }
