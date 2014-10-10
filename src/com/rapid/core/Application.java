@@ -1402,15 +1402,14 @@ public class Application {
 					for (String pageId : _pages.keySet()) {
 						// get a reference to the page
 						Page page = _pages.get(pageId);
-						// get the html
-						String pageHtml = page.getHtml(rapidServlet, rapidRequest, this, user);
-						// create a file for it for now
+						// create a file for it 
 						File pageFile = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/temp/" + pageId + ".htm"));
+						// create a file writer for it for now
+						FileWriter pageFileWriter = new FileWriter(pageFile);
 						// for now get a printWriter to write the page html
-						PrintWriter pageOut = new PrintWriter(pageFile);
-						// write it to a file for now
-						pageOut.print(pageHtml);
-						pageOut.close();
+						page.writeHtml(rapidServlet, rapidRequest, this, user, pageFileWriter);
+						// close it
+						pageFileWriter.close();
 						// add the file to the zip
 						zipSources.add(pageFile);
 					}
@@ -1418,15 +1417,14 @@ public class Application {
 					Page page = _pages.get(_startPageId);
 					// if we got one add it as index.htm
 					if (page != null) {
-						// get the html
-						String pageHtml = page.getHtml(rapidServlet, rapidRequest, this, user);
 						// create a file for it for now
 						File pageFile = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/temp/index.htm"));
+						// create a file writer for it for now
+						FileWriter pageFileWriter = new FileWriter(pageFile);
 						// for now get a printWriter to write the page html
-						PrintWriter pageOut = new PrintWriter(pageFile);
-						// write it to a file for now
-						pageOut.print(pageHtml);
-						pageOut.close();
+						page.writeHtml(rapidServlet, rapidRequest, this, user, pageFileWriter);
+						// close it
+						pageFileWriter.close();
 						// add the file to the zip
 						zipSources.add(pageFile);
 					}

@@ -159,8 +159,8 @@ public class Rapid extends RapidHttpServlet {
 							// create a writer
 							PrintWriter out = response.getWriter();
 							
-							// get the page html
-							pageHtml = page.getHtml(this, rapidRequest, app, user);
+							// write the page html
+							page.writeHtml(this, rapidRequest, app, user, out);
 														
 							// output the page
 							out.print(pageHtml);
