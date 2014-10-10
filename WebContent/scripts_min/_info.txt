@@ -1,0 +1,9 @@
+These files are minified from JavaScript resource files on application initilisation.
+
+They are placed here as they need to have the same relative path depth as the original resource files.
+
+There are some rules:
+- they must be of type "javascriptFile"
+- their "contents" must start with "scripts/" and end with ".js"
+- they must not exist already (since resources are updated so seldom and shared between applications there is no point constantly rebuilding them)
+

@@ -32,6 +32,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.io.StringReader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
@@ -75,11 +76,13 @@ import com.rapid.soa.Webservice;
 import com.rapid.utils.Comparators;
 import com.rapid.utils.Files;
 import com.rapid.utils.JAXB;
+import com.rapid.utils.Minify;
 import com.rapid.utils.Strings;
 import com.rapid.utils.XML;
 import com.rapid.utils.ZipFile;
 import com.rapid.utils.ZipFile.ZipSource;
 import com.rapid.utils.ZipFile.ZipSources;
+import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
 
 @XmlRootElement
 @XmlType(namespace="http://rapid-is.co.uk/core")
@@ -238,6 +241,7 @@ public class Application {
 		// properties
 		public int getType() { return _type; }		
 		public String getContent() { return _content; }
+		public void setContent(String content) { _content = content; }
 		
 		// constructor
 		public Resource(int type, String content) {
@@ -838,12 +842,7 @@ public class Application {
 	    		} // action types check
 	    		
 	    	} // jsonAction check
-	    	
-	    	// add the application js file as a resource
-	    	_resources.add(new Resource(Resource.JAVASCRIPTFILE, getWebFolder(this) + "/rapid.js"));
-			// add the application css file as a resource	    	
-	    	_resources.add(new Resource(Resource.CSSFILE, getWebFolder(this) + "/rapid.css"));
-				    	
+	    		    					    	
 	    	// create folders to write the rapid.js file
 			String applicationPath = getWebFolder(servletContext);		
 			File applicationFolder = new File(applicationPath);		
@@ -866,6 +865,9 @@ public class Application {
 			ps.close();
 			fos.close();
 			
+			// minify it to a file
+			Minify.toFile(actionJS.toString() + initJS.toString() + dataJS.toString() + resourceJS.toString(), applicationPath + "/rapid.min.js", Minify.JAVASCRIPT);
+			
 			// write the rapid.css file
 			fos = new FileOutputStream (applicationPath + "/rapid.css");
 			ps = new PrintStream(fos);
@@ -876,6 +878,71 @@ public class Application {
 			ps.close();
 			fos.close();
 			
+			// minify it to a rapid.min.css file
+			Minify.toFile(resourceCSS.toString() + _styles, applicationPath + "/rapid.min.css", Minify.CSS);
+			
+			// check the status
+	    	if (_status == STATUS_LIVE) {
+	    		// add the application js min file as a resource
+	    		_resources.add(new Resource(Resource.JAVASCRIPTFILE, getWebFolder(this) + "/rapid.min.js"));
+	    		// add the application css min file as a resource	    	
+	    		_resources.add(new Resource(Resource.CSSFILE, getWebFolder(this) + "/rapid.min.css"));
+	    	} else {
+	    		// add the application js file as a resource
+	    		_resources.add(new Resource(Resource.JAVASCRIPTFILE, getWebFolder(this) + "/rapid.js"));
+	    		// add the application css file as a resource	    	
+	    		_resources.add(new Resource(Resource.CSSFILE, getWebFolder(this) + "/rapid.css"));
+	    	}
+			
+	    	// loop all resources and minify js and css files
+			for (Resource resource : _resources) {
+				// get the content (which is the filename)
+				String fileName = resource.getContent();
+				// only interested in js and css files
+				switch (resource.getType()) {
+					case Resource.JAVASCRIPTFILE :						
+						// get a file for this
+						File jsFile = new File(servletContext.getRealPath(fileName));
+						// if the file exists, and it's in the scripts folder and ends with .js
+						if (jsFile.exists() && fileName.startsWith("scripts/") && fileName.endsWith(".js")) {
+							// derive the min file name by modifying the start and end
+							String fileNameMin = "scripts_min/" + fileName.substring(8, fileName.length() - 3) + ".min.js";
+							// get a file for minifying 
+							File jsFileMin = new File(servletContext.getRealPath(fileNameMin));
+							// if this file does not exist
+							if (!jsFileMin.exists()) {
+								// make any dirs it may need
+								jsFileMin.getParentFile().mkdirs();
+								// minify to it
+								Minify.toFile(jsFile, jsFileMin, Minify.JAVASCRIPT);
+							}
+							// if this application is live, update the resource to the min file
+							if (_status == STATUS_LIVE) resource.setContent(fileNameMin);
+						}
+					break;
+					case Resource.CSSFILE :
+						// get a file for this
+						File cssFile = new File(servletContext.getRealPath(fileName));
+						// if the file exists, and it's in the scripts folder and ends with .js
+						if (cssFile.exists() && fileName.startsWith("styles/") && fileName.endsWith(".css")) {
+							// derive the min file name by modifying the start and end
+							String fileNameMin = "styles_min/" + fileName.substring(7, fileName.length() - 4) + ".min.css";
+							// get a file for minifying 
+							File cssFileMin = new File(servletContext.getRealPath(fileNameMin));
+							// if this file does not exist
+							if (!cssFileMin.exists()) {
+								// make any dirs it may need
+								cssFileMin.getParentFile().mkdirs();
+								// minify to it
+								Minify.toFile(cssFile, cssFileMin, Minify.CSS);
+							}
+							// if this application is live, update the resource to the min file
+							if (_status == STATUS_LIVE) resource.setContent(fileNameMin);
+						}
+					break;
+				}
+	    	}
+			
 			// check pages
 			if (_pages != null) {
 				// loop them
@@ -883,9 +950,11 @@ public class Application {
 					// get the page
 					Page page = _pages.get(pageId);
 					// get the css file
-					File cssFile = new File(page.getCSSFile(servletContext, this));
-					// make it if not exists
-					if (!cssFile.exists()) page.saveCSSFile(servletContext, this);
+					File cssFile = new File(page.getCSSFile(servletContext, this, false));
+					// get the css file min
+					File cssFileMin = new File(page.getCSSFile(servletContext, this, true));
+					// make them if either doesn't exist
+					if (!cssFile.exists() || !cssFileMin.exists()) page.saveCSSFiles(servletContext, this);
 				}
 			}
 			
@@ -1447,10 +1516,8 @@ public class Application {
 	}
 	
 	// this is a simple overload for default loading of applications where the resources are all regenerated
-	public static Application load(ServletContext servletContext, File file) throws JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException, IOException, ParserConfigurationException, SAXException, TransformerFactoryConfigurationError, TransformerException {
-				
-		return load(servletContext, file, true); 		
-		
+	public static Application load(ServletContext servletContext, File file) throws JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException, IOException, ParserConfigurationException, SAXException, TransformerFactoryConfigurationError, TransformerException {				
+		return load(servletContext, file, true); 				
 	}
 	
 	// this method loads the application by ummarshelling the xml, and then doing the same for all page .xmls, before calling the initialise method

@@ -201,6 +201,9 @@ public class Rapid extends RapidHttpServlet {
 												
 							// retrieve and rolesHtml for the page
 							List<RoleHtml> rolesHtml = page.getRolesHtml();
+							
+							// reset the page html
+							pageHtml = null;
 		
 							// check we have userRoles and htmlRoles
 							if (userRoles != null && rolesHtml != null) {
@@ -238,7 +241,7 @@ public class Rapid extends RapidHttpServlet {
 										// if we have all the roles we need
 										if (gotRoleCount == rolesRequired) {
 											// use this html
-											out.print("  " + roleHtml.getHtml());
+											pageHtml = roleHtml.getHtml();
 											// no need to check any further
 											break;
 										}
@@ -246,7 +249,7 @@ public class Rapid extends RapidHttpServlet {
 									} else {
 										
 										// no roles to check means we can use this html immediately 
-										out.print("  " + Html.getPrettyHtml(page.getHtmlBody()).trim());
+										pageHtml = page.getHtmlBody();
 										
 									}
 									
@@ -254,9 +257,21 @@ public class Rapid extends RapidHttpServlet {
 									
 																										
 							} else {
+								// no user roles or no html roles, go with the lot
+								pageHtml = page.getHtmlBody();
 								
-								out.print("  " + Html.getPrettyHtml(page.getHtmlBody()).trim());
-								
+							}
+							
+							// if we got some pageHtml
+							if (pageHtml != null) {
+								// check the status of the application
+								if (app.getStatus() == Application.STATUS_DEVELOPMENT) {
+									// pretty print
+									out.print(Html.getPrettyHtml(pageHtml.trim()));
+								} else {
+									// no pretty print
+									out.print(pageHtml.trim());
+								}
 							}
 						
 							// check for the design role, super is required as well if the rapid app
