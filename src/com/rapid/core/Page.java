@@ -28,10 +28,12 @@ package com.rapid.core;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -49,7 +51,6 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.mozilla.javascript.edu.emory.mathcs.backport.java.util.Collections;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -642,14 +643,14 @@ public class Page {
 	    
 	    // delete the temp file
 	    tempFile.delete();
-	    
+	    	    	  	    
 		// replace the old page with the new page
 		application.addPage(this);
 		
 		// empty the cached header html
 		_cachedStartHtml = null;
 		
-		// re-create the css file
+		// re-create the css file too
 		saveCSSFile(rapidServlet.getServletContext(), application);
 				
 	}

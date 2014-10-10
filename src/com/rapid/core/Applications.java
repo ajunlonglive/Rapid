@@ -26,15 +26,13 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 package com.rapid.core;
 
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-
-import org.mozilla.javascript.edu.emory.mathcs.backport.java.util.Collections;
 
 import com.rapid.utils.Comparators;
 

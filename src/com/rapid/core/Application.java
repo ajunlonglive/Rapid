@@ -60,9 +60,6 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.Function;
-import org.mozilla.javascript.Scriptable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -898,125 +895,7 @@ public class Application {
 		_styleClasses = scanStyleClasses(_styles);
 								
 	}
-	
-	public int rebuildPages(RapidHttpServlet rapidServlet, RapidRequest rapidRequest) throws JSONException {
-		
-		// how many pages were rebuilt
-		int pages = 0;
-		
-		// log that the script was loaded ok
-        rapidServlet.getLogger().debug("Initilising script engine to rebuild pages for " + rapidRequest.getApplication().getTitle());
-		
-        // get script engine context
-        Context cx = Context.enter();
-        
-        // stop it complaining about the large size of env.js
-        cx.setOptimizationLevel(-1);
-        
-        try {
-        	        	        	
-            // Initialize the standard objects (Object, Function, etc.)
-            // This must be done before scripts can be executed. Returns
-            // a scope object that we use in later calls.
-            Scriptable scope = cx.initStandardObjects();
-            
-            // get the path of the scripts folder
-            String scriptsFolder = rapidServlet.getServletContext().getRealPath("/scripts/");
-            
-            // these are the scripts we want to load (in order)
-            String[] scripts = {"env.js", "jquery-1.10.2.js", "jquery-ui-1.10.3.js", "controls.js", "page.js"};
-            
-            // loops our script files, reads and loads
-            for (String script : scripts) {
-            	
-            	File scriptFile = new File(scriptsFolder + "/" + script);
-            	
-            	// get a scanner to read the file
-    			Scanner fileScanner = new Scanner(scriptFile).useDelimiter("\\A");
-    			
-    			// read the xml into a string
-    			String js = fileScanner.next();
-    			
-    			// close the scanner (and file)
-    			fileScanner.close();
-    			
-    			// add the the js to the script engine
-                cx.evaluateString(scope, js, script, 1, null);
-                
-                // log that the script was loaded ok
-                rapidServlet.getLogger().debug("Loaded script " + script);
-            	
-            }
-            
-            // add a function for getting the alerts that jquery may throw back as errors (there is no alert function in envJs)
-            cx.evaluateString(scope, "function alert(message) {	throw new Error('Alert - ' + message); }", "alert", 1, null);
-            
-            // get the controls to load the class object/functions            
-            JSONArray jsonControls = (JSONArray) rapidServlet.getJsonControls();
-                     
-            // create an args array containing the controls
-            Object argsControls[] = { jsonControls };
-            
-            // get a reference to the loadControls function (in the page.js file)
-            Function functionLoadControls = (Function) scope.get("loadControls", scope);
-            
-            // get a result when calling the function
-            functionLoadControls.call(cx, scope, scope, argsControls);            
-            
-            // check we have pages
-            if (_pages != null) {
-            	
-            	// loop the sorted pages
-            	for (Page page : getSortedPages()) {
-            		            		
-            		// only if it has controls
-                    if (page.getControls() != null) {
-
-                    	// get a json object for the page controls
-                        JSONArray jsonPageControls = new JSONArray(page.getControls());
-                        
-                        // create an args array containing the page
-                        Object argsPage[] = { jsonPageControls };
-                        
-                        // get a reference to the loadControls function (in the page.js file)
-                        Function functionHtmlBody = (Function) scope.get("getHtmlBody", scope);
-                        
-                        // get a result when calling the function
-                        Object resultLoadPage = functionHtmlBody.call(cx, scope, scope, argsPage);
-                        
-                        // this the page html
-                        page.setHtmlBody(resultLoadPage.toString());
-                        
-                        // save the page
-                        page.save(rapidServlet, rapidRequest, this, true);
-                        
-                        // log that the page was rebuilt ok
-                        rapidServlet.getLogger().debug("Rebuilt page " + page.getName());
-                        
-                        // increment pages counter
-                        pages ++;
-                        
-                    }             		
-            		
-            	}
-            	
-            }      
-            
-        } catch (Exception ex) {
-        	
-        	rapidServlet.getLogger().error("Rebuilding page ERROR : " + ex.getMessage(), ex);
-        	
-        	throw new JSONException(ex);
-                        
-        } finally {
-            // Exit from the context.
-            Context.exit();
-        }
-        
-        return pages;
-	                       
-	}
-	
+			
 	// remove any page locks for a given user
 	public void removeUserPageLocks(String userName) {
 		// check there are pages

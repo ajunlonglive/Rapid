@@ -31,6 +31,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -40,7 +41,6 @@ import javax.xml.bind.JAXBException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.mozilla.javascript.edu.emory.mathcs.backport.java.util.Collections;
 
 import com.rapid.core.Action;
 import com.rapid.core.Application;
@@ -1228,10 +1228,8 @@ public class Rapid extends Action {
 				
 			} else if ("REBUILDPAGES".equals(action)) {
 			
-				int pages = app.rebuildPages(rapidServlet, rapidRequest);
-								
 				// add the application to the response
-				result.put("message", pages + " pages rebuilt");
+				result.put("message", "This feature is not supported");
 				
 			} else if ("NEWAPP".equals(action)) {
 				

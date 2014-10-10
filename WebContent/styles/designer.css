@@ -70,8 +70,8 @@ hr {
 
 #controlPanelPin {
 	position: absolute;
-	right: 5px;
-	top: 5px;
+	right: 7px;
+	top: 7px;
 	cursor: pointer;
 	width: 14px;
 	height: 14px;
@@ -288,6 +288,15 @@ div#propertiesPanel {
 
 .untilsPanelDiv .headerHelp {
 	padding-top:5px;
+}
+
+#propertiesPanelPin {
+	position: absolute;
+	left: 7px;
+	top: 7px;
+	cursor: pointer;
+	width: 14px;
+	height: 14px;
 }
 
 div#propertiesPanel h2 {
