@@ -2265,6 +2265,14 @@ $(document).ready( function() {
 		doRedo();
 		showPageMap();
 	});
+	
+	// properties panel pin (for now just hide)
+	$("#propertiesPanelPin").click( function(ev) {
+		// select a null control (this does a lot of cleanup)
+		selectControl(null);				
+		// hide the select border
+		_selectionBorder.hide();
+	});
 							
 	// select parent
 	$("#selectParent").click( function(ev) {

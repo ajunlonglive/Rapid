@@ -176,7 +176,8 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, use
 		<div id="propertiesPanel" style="z-index:10005">
 		
 			<div class="untilsPanelDiv">
-				<img id="helpPropertiesPanel" class="headerHelp" src="images/help_16x16.png" />							
+				<div id="propertiesPanelPin"><img src="images/pinned_14x14.png" title="hide" /></div>
+				<img id="helpPropertiesPanel" class="headerHelp" src="images/help_16x16.png" />									
 				<div class="buttons">					
 					<button id="selectPeerLeft" class="buttonLeft"><img src="images/moveLeft_16x16.png" title="Select the control before this one"/></button>
 					<button id="selectParent"><img src="images/moveUp_16x16.png" title="Select the parent of this control"/></button>
@@ -193,14 +194,16 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, use
 				<div class="buttons">
 					<button id="copy" class="buttonLeft">&nbsp;copy</button>
 					<button id="paste" class="buttonRight">paste</button>
-				</div>									
-			</div>			
+				</div>								
+			</div>		
+			
+				
 			
 			<div class="propertiesPanelDiv"></div>			
 			<div class="validationPanelDiv"></div>
 			<div id="actionsPanelDiv" class="actionsPanelDiv"></div>
-			<div id="stylesPanelDiv"></div>			
-						
+			<div id="stylesPanelDiv"></div>		
+														
 		</div>
 		
 		<div id="propertiesDialogues"></div>
