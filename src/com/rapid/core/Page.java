@@ -56,10 +56,14 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import com.rapid.core.Application.Resource;
+import com.rapid.security.SecurityAdapater;
+import com.rapid.security.SecurityAdapater.SecurityAdapaterException;
+import com.rapid.security.SecurityAdapater.User;
 import com.rapid.server.Rapid;
 import com.rapid.server.RapidHttpServlet;
 import com.rapid.server.RapidRequest;
 import com.rapid.utils.Files;
+import com.rapid.utils.Html;
 import com.rapid.utils.Minify;
 import com.rapid.utils.XML;
 
@@ -890,17 +894,11 @@ public class Page {
     	}    	
     }
 	
-    
-    
-	public String getHtmlHead(Application application) throws JSONException {
+    // this private method produces the head of the page which is often cached    
+	private String getHtmlHead(Application application) throws JSONException {
     	
     	StringBuilder stringBuilder = new StringBuilder();
-    	    								
-		// this doctype is necessary (amongst other things) to stop the "user agent stylesheet" overriding styles
-		stringBuilder.append("<!DOCTYPE html>\n");
-								
-		stringBuilder.append("<html>\n");
-		
+    	    												
 		stringBuilder.append("  <head>\n");
 		
 		stringBuilder.append("    <title>" + _title + " - by Rapid</title>\n");
@@ -1027,12 +1025,145 @@ public class Page {
 		stringBuilder.append("</script>\n");
 		
 		stringBuilder.append("  <head>\n");
-		
-		stringBuilder.append("  <body id='" + _id + "' style='visibility:hidden;'>\n");
-						
+														
 		return stringBuilder.toString();
     	
     }
+		
+	// this routing produced the entire page
+	public String getHtml(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, Application application, User user) throws JSONException {
+		
+		// a string builder for all of the html
+		StringBuilder stringBuilder = new StringBuilder();
+		
+		// this doctype is necessary (amongst other things) to stop the "user agent stylesheet" overriding styles
+		stringBuilder.append("<!DOCTYPE html>\n");
+								
+		stringBuilder.append("<html>\n");
+		
+		// whether we're rebulding the page for each request
+    	boolean rebuildPages = Boolean.parseBoolean(rapidServlet.getServletContext().getInitParameter("rebuildPages"));
+		
+    	// check whether or not we rebuild
+    	if (rebuildPages) {
+    		// get the cached head html
+    		stringBuilder.append(getHtmlHead(application));
+    	} else {
+    		// get the cached head html
+    		stringBuilder.append(getHtmlHeadCached(application));
+    	}
+				
+		stringBuilder.append("  <body id='" + _id + "' style='visibility:hidden;'>\n");
+		
+		// a reference for the body html
+		String bodyHtml = null;
+		
+		// get the users roles
+		List<String> userRoles = user.getRoles();
+									
+		// check we have userRoles and htmlRoles
+		if (userRoles != null && _rolesHtml != null) {
+																
+			// loop each roles html entry
+			for (RoleHtml roleHtml : _rolesHtml) {
+											
+				// get the roles from this combination
+				List<String> roles = roleHtml.getRoles();
+											
+				// keep a running count for the roles we have
+				int gotRoleCount = 0;
+				
+				// if there are roles to check
+				if (roles != null) {
+				
+					// retain how many roles we need our user to have
+					int rolesRequired = roles.size();
+					
+					// check whether we need any roles and that our user has any at all
+					if (rolesRequired > 0) {
+						// check the user has as many roles as this combination requires
+						if (userRoles.size() >= rolesRequired) {
+							// loop the roles we need for this combination
+							for (String role : roleHtml.getRoles()) {
+								// check this role
+								if (userRoles.contains(role)) {
+									// increment the got role count
+									gotRoleCount ++;
+								}
+							}
+						}									
+					}
+													
+					// if we have all the roles we need
+					if (gotRoleCount == rolesRequired) {
+						// use this html
+						bodyHtml = roleHtml.getHtml();
+						// no need to check any further
+						break;
+					}
+					
+				} 
+				
+			}
+																									
+		} 
+		
+		// if haven't got any body html yet use the full version
+		if (bodyHtml == null) bodyHtml = _htmlBody;
+		
+		// check the status of the application
+		if (application.getStatus() == Application.STATUS_DEVELOPMENT) {
+			// pretty print
+			stringBuilder.append(Html.getPrettyHtml(bodyHtml.trim()));
+		} else {
+			// no pretty print
+			stringBuilder.append(bodyHtml.trim());
+		}
+		
+		try {
+			
+			// get the security
+			SecurityAdapater security = application.getSecurity();
+			
+			// assume not admin link
+			boolean adminLink = false;
+				
+			// check for the design role, super is required as well if the rapid app
+			if ("rapid".equals(application.getId())) {
+				if (security.checkUserRole(rapidRequest, rapidRequest.getUserName(), Rapid.DESIGN_ROLE) && security.checkUserRole(rapidRequest, rapidRequest.getUserName(), Rapid.SUPER_ROLE)) adminLink = true;
+			} else {
+				if (security.checkUserRole(rapidRequest, rapidRequest.getUserName(), Rapid.DESIGN_ROLE)) adminLink = true;
+			}
+			
+			// if we had the admin link
+			if (adminLink) {
+				
+				stringBuilder.append("<div id='designShow' style='position:fixed;left:0px;bottom:0px;width:30px;height:30px;z-index:1000;'></div>\n"
+		    	+ "<img id='designLink' style='position:fixed;left:6px;bottom:6px;z-index:1001;display: none;' src='images/gear_24x24.png'></img>\n"
+		    	+ "<script type='text/javascript'>\n"
+		    	+ "/* designLink */\n"
+		    	+ "$(document).ready( function() {\n"
+		    	+ "  $('#designShow').mouseover ( function(ev) { $('#designLink').show(); });\n"
+		    	+ "  $('#designLink').mouseout ( function(ev) { $('#designLink').hide(); });\n"
+		    	+ "  $('#designLink').click ( function(ev) { window.location='design.jsp?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + _id + "' });\n"
+		    	+ "})\n"
+		    	+ "</script>\n");
+								
+			}
+			
+		} catch (SecurityAdapaterException ex) {
+
+			rapidServlet.getLogger().error("Error checking for the designer link", ex);
+			
+		}
+				
+		// add the remaining elements
+		stringBuilder.append("  </body>\n</html>");
+		
+		// return it
+		return stringBuilder.toString();
+		
+	}
 		
 	// static function to load a new page
 	public static Page load(ServletContext servletContext, File file) throws JAXBException, ParserConfigurationException, SAXException, IOException, TransformerFactoryConfigurationError, TransformerException {
@@ -1102,5 +1233,5 @@ public class Page {
 		return page;
 				
 	}
-	
+		
 }

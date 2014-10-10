@@ -69,6 +69,7 @@ import com.rapid.core.Page.Lock;
 import com.rapid.data.ConnectionAdapter;
 import com.rapid.security.RapidSecurityAdapter;
 import com.rapid.security.SecurityAdapater;
+import com.rapid.security.SecurityAdapater.User;
 import com.rapid.server.Rapid;
 import com.rapid.server.RapidHttpServlet;
 import com.rapid.server.RapidRequest;
@@ -1369,7 +1370,7 @@ public class Application {
 	}
 	
 	// create a named .zip file for the app in the /temp folder	
-	public void zip(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, String fileName, boolean offlineUse) throws JAXBException, IOException, JSONException {
+	public void zip(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, User user, String fileName, boolean offlineUse) throws JAXBException, IOException, JSONException {
 		
 		// create folders to save locate app file
 		String folderPath = getConfigFolder(rapidServlet.getServletContext());		
@@ -1402,7 +1403,7 @@ public class Application {
 						// get a reference to the page
 						Page page = _pages.get(pageId);
 						// get the html
-						String pageHtml = page.getHtmlHead(this) + page.getHtmlBody() + "</body></html>";
+						String pageHtml = page.getHtml(rapidServlet, rapidRequest, this, user);
 						// create a file for it for now
 						File pageFile = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/temp/" + pageId + ".htm"));
 						// for now get a printWriter to write the page html
@@ -1418,7 +1419,7 @@ public class Application {
 					// if we got one add it as index.htm
 					if (page != null) {
 						// get the html
-						String pageHtml = page.getHtmlHead(this) + page.getHtmlBody() + "</body></html>";
+						String pageHtml = page.getHtml(rapidServlet, rapidRequest, this, user);
 						// create a file for it for now
 						File pageFile = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/temp/index.htm"));
 						// for now get a printWriter to write the page html
@@ -1488,11 +1489,10 @@ public class Application {
 	}
 	
 	// an overload for the above which will include the for export rather than offlineUse files
-	public void zip(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, String fileName) throws JAXBException, IOException, JSONException {
-		zip(rapidServlet, rapidRequest, fileName, false);
+	public void zip(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, User user, String fileName) throws JAXBException, IOException, JSONException {
+		zip(rapidServlet, rapidRequest, user, fileName, false);
 	}
-	
-	
+		
 	// static methods
 	
 	// this is where the application configuration will be stored

@@ -120,8 +120,11 @@ public class Designer extends RapidHttpServlet {
 				// check we got some
 				if (rapidSecurity != null) {
 					
+					// get the user name
+					String userName = rapidRequest.getUserName();
+					
 					// get the user
-					String userName = rapidRequest.getUserName();		
+					User user = rapidSecurity.getUser(rapidRequest, userName);
 
 					// check permission
 					if (rapidSecurity.checkUserRole(rapidRequest, userName, Rapid.DESIGN_ROLE)) {
@@ -555,7 +558,7 @@ public class Designer extends RapidHttpServlet {
 							if (application != null) {
 																		
 								// create the zip file
-								application.zip(this, rapidRequest, application.getId() + ".zip");
+								application.zip(this, rapidRequest, user, application.getId() + ".zip");
 								
 								// set the type as a .zip
 								response.setContentType("application/x-zip-compressed");

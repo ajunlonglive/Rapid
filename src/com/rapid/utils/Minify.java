@@ -139,7 +139,7 @@ public class Minify {
 					// the error reporter is only used with js
 					JavaScriptCompressor jsCompressor = new JavaScriptCompressor(sr, errorReporter);
 					// compress
-					jsCompressor.compress(writer, 1000, false, false, false, false);
+					jsCompressor.compress(writer, 1000, true, false, false, false);
 					// check for any errors
 					if (errorReporter.getErrors().size() > 0) {
 						// write the original string
