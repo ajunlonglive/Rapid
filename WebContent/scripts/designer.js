@@ -454,8 +454,45 @@ function getMouseControl(ev, childControls) {
 						if (c.childControls) {
 							// use this function recursively
 							var childControl = getMouseControl(ev, c.childControls);
-							// if we got a hit on a child object return that instead
-							if (childControl) c = childControl;
+							// if we got a hit on a child object
+							if (childControl) {
+								// if the childControl is a table row we need to make sure that any cell or row spans are not interfering, there is a lot overhead but
+								if (childControl.object.is("tr")) {
+									// get the table
+									var t = childControl.parentControl;
+									// loop all of the rows
+									for (var i in t.childControls) {
+										// get a reference to the row
+										var row = t.childControls[i];
+										// only if this row is not the one already returned to us
+										if (row.id != childControl.id) {
+											// assume we couldn't find a cell control
+											var cellControl = null;
+											// loop all of the cells
+											for (var j in row.childControls) {
+												// get the cell
+												var cell = t.childControls[i].childControls[j];
+												// if the cell has a col or row span
+												if (cell.colSpan > 1 || cell.rowSpan > 1) {
+													// look for a hit in this row
+													cellControl = getMouseControl(ev, row.childControls);
+													// if we got one 
+													if (cellControl) {
+														// retain as childControl
+														childControl = cellControl;
+														// bail from the cell loop
+														break;
+													}
+												}
+											}
+											// bail from the row loop if we got something ealier
+											if (cellControl) break;
+										} // different row check										
+									} // table row loop
+								} // row check
+								// retain the child control
+								c = childControl;
+							}
 						}
 						// if the mousedover control is different from the one before
 						if (!_mousedOverControl || _mousedOverControl.object[0] !== c.object[0]) {
@@ -2396,43 +2433,45 @@ $(document).ready( function() {
 	
 	// delete control
 	$("#deleteControl").click( function(ev) {
-		// check this control isn't the page (shows dialogue if so)
-		if (_selectedControl.parentControl) {
-			var contCount = 0;
-			// count the controls of this type
-			for (var i in _selectedControl.parentControl.childControls) {
-				if (_selectedControl.type == _selectedControl.parentControl.childControls[i].type) contCount ++;
-			}
-			// can delete if no parent class (page control), can insert into parent, or canUserAddPeers and more than 1 peer of this type
-			if (!_selectedControl.parentControl || _controlTypes[_selectedControl.parentControl.type].canUserInsert || (controlClass.canUserAddPeers && contCount > 1)) {				
-				// add an undo snapshot for the whole page
-				addUndo(true);
-				// call the remove routine
-				_selectedControl._remove();
-				// find our position
+		// there must be a selected control
+		if (_selectedControl) {
+			// check this control isn't the page (shows dialogue if so)
+			if (_selectedControl.parentControl) {
+				var contCount = 0;
+				// count the controls of this type
 				for (var i in _selectedControl.parentControl.childControls) {
-					if (_selectedControl == _selectedControl.parentControl.childControls[i]) break;
+					if (_selectedControl.type == _selectedControl.parentControl.childControls[i].type) contCount ++;
 				}
-				// remove from parents child controls
-				_selectedControl.parentControl.childControls.splice(i,1);				
-				// if no controls remain reset the nextid and control numbers
-				if (_page.childControls.length == 0) {
-					_nextId = 1;
-					_controlNumbers = {};
-				}
-				// remove any possible non-visible object
-				$("#" + _selectedControl.id + ".nonVisibleControl").remove();
-				// arrange the non visible page controls
-				arrangeNonVisibleControls();
-				// hide the selection and properties panel
-				selectControl(null);
-				// rebuild the page map
-				showPageMap();
-			}			
-		} else {
-			showDialogue('~?a=rapid&p=P4');
-		}
-		 		
+				// can delete if no parent class (page control), can insert into parent, or canUserAddPeers and more than 1 peer of this type
+				if (_controlTypes[_selectedControl.parentControl.type].canUserInsert || (_controlTypes[_selectedControl.type].canUserAddPeers && contCount > 1)) {				
+					// add an undo snapshot for the whole page
+					addUndo(true);
+					// call the remove routine
+					_selectedControl._remove();
+					// find our position
+					for (var i in _selectedControl.parentControl.childControls) {
+						if (_selectedControl == _selectedControl.parentControl.childControls[i]) break;
+					}
+					// remove from parents child controls
+					_selectedControl.parentControl.childControls.splice(i,1);				
+					// if no controls remain reset the nextid and control numbers
+					if (_page.childControls.length == 0) {
+						_nextId = 1;
+						_controlNumbers = {};
+					}
+					// remove any possible non-visible object
+					$("#" + _selectedControl.id + ".nonVisibleControl").remove();
+					// arrange the non visible page controls
+					arrangeNonVisibleControls();
+					// hide the selection and properties panel
+					selectControl(null);
+					// rebuild the page map
+					showPageMap();
+				}			
+			} else {
+				showDialogue('~?a=rapid&p=P4');
+			}
+		} 		
 	});
 	
 	// copy
@@ -2579,9 +2618,6 @@ function isDecendant(control1, control2) {
 
 //if the mouse moves anywhere
 $(document).mousemove( function(ev) {
-	
-	// log
-	if (_page && _page.childControls) console.log("mousemove : " + _page.childControls[1].id);
 	
 	// get a reference to the control
 	var c = getMouseControl(ev);
