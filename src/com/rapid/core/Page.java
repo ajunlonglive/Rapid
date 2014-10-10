@@ -1129,9 +1129,9 @@ public class Page {
 				
 			// check for the design role, super is required as well if the rapid app
 			if ("rapid".equals(application.getId())) {
-				if (security.checkUserRole(rapidRequest, rapidRequest.getUserName(), Rapid.DESIGN_ROLE) && security.checkUserRole(rapidRequest, rapidRequest.getUserName(), Rapid.SUPER_ROLE)) adminLink = true;
+				if (security.checkUserRole(rapidRequest, Rapid.DESIGN_ROLE) && security.checkUserRole(rapidRequest, Rapid.SUPER_ROLE)) adminLink = true;
 			} else {
-				if (security.checkUserRole(rapidRequest, rapidRequest.getUserName(), Rapid.DESIGN_ROLE)) adminLink = true;
+				if (security.checkUserRole(rapidRequest, Rapid.DESIGN_ROLE)) adminLink = true;
 			}
 			
 			// if we had the admin link

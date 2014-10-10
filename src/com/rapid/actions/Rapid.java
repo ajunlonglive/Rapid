@@ -186,7 +186,7 @@ public class Rapid extends Action {
 			String userName = rapidRequest.getUserName();
 			
 			// get the current users record from the adapter
-			User user = security.getUser(rapidRequest, userName);
+			User user = security.getUser(rapidRequest);
 			
 			// get the rapid application
 			Application rapidApplication = rapidServlet.getApplications().get("rapid");
@@ -194,7 +194,7 @@ public class Rapid extends Action {
 			// check the current user is present in the app's security adapter
 			if (user == null) {
 				// get the Rapid user object
-				User rapidUser = rapidApplication.getSecurity().getUser(rapidRequest, userName);
+				User rapidUser = rapidApplication.getSecurity().getUser(rapidRequest);
 				// create a new user based on the Rapid user
 				user = new User(userName, rapidUser.getDescription(), rapidUser.getPassword());
 				// add the new user 
@@ -202,8 +202,8 @@ public class Rapid extends Action {
 			}
 			
 			// add Admin and Design roles for the new user if required
-			if (!security.checkUserRole(rapidRequest, userName, com.rapid.server.Rapid.ADMIN_ROLE)) security.addUserRole(rapidRequest, userName, com.rapid.server.Rapid.ADMIN_ROLE);
-			if (!security.checkUserRole(rapidRequest, userName, com.rapid.server.Rapid.DESIGN_ROLE)) security.addUserRole(rapidRequest, userName, com.rapid.server.Rapid.DESIGN_ROLE);
+			if (!security.checkUserRole(rapidRequest, com.rapid.server.Rapid.ADMIN_ROLE)) security.addUserRole(rapidRequest, com.rapid.server.Rapid.ADMIN_ROLE);
+			if (!security.checkUserRole(rapidRequest, com.rapid.server.Rapid.DESIGN_ROLE)) security.addUserRole(rapidRequest, com.rapid.server.Rapid.DESIGN_ROLE);
 		}
 		
 		// save the application to file
@@ -346,10 +346,10 @@ public class Rapid extends Action {
 						Application application = rapidServlet.getApplications().get(id, version);
 
 						// check the users permission to design this application
-						boolean designPermission = application.getSecurity().checkUserRole(rapidRequest, rapidRequest.getUserName(), com.rapid.server.Rapid.DESIGN_ROLE);
+						boolean designPermission = application.getSecurity().checkUserRole(rapidRequest, com.rapid.server.Rapid.DESIGN_ROLE);
 						
 						// if app is rapid do a further check
-						if (designPermission && "rapid".equals(application.getId())) designPermission = application.getSecurity().checkUserRole(rapidRequest, rapidRequest.getUserName(), com.rapid.server.Rapid.SUPER_ROLE);
+						if (designPermission && "rapid".equals(application.getId())) designPermission = application.getSecurity().checkUserRole(rapidRequest, com.rapid.server.Rapid.SUPER_ROLE);
 						
 						// if we got permssion - add this application to the list 
 						if (designPermission) {
@@ -495,10 +495,10 @@ public class Rapid extends Action {
 					for (Application application : versions.sort()) {
 																						
 						// check the users permission to design this application
-						boolean designPermission = application.getSecurity().checkUserRole(rapidRequest, rapidRequest.getUserName(), com.rapid.server.Rapid.DESIGN_ROLE);
+						boolean designPermission = application.getSecurity().checkUserRole(rapidRequest, com.rapid.server.Rapid.DESIGN_ROLE);
 						
 						// if app is rapid do a further check
-						if (designPermission && "rapid".equals(application.getId())) designPermission = application.getSecurity().checkUserRole(rapidRequest, rapidRequest.getUserName(), com.rapid.server.Rapid.SUPER_ROLE);
+						if (designPermission && "rapid".equals(application.getId())) designPermission = application.getSecurity().checkUserRole(rapidRequest, com.rapid.server.Rapid.SUPER_ROLE);
 						
 						// check the RapidDesign role is present in the users roles for this application
 						if (designPermission) {												
@@ -530,10 +530,10 @@ public class Rapid extends Action {
 				// get the security
 				
 				// check the users permission to design this application
-				boolean designPermission = app.getSecurity().checkUserRole(rapidRequest, rapidRequest.getUserName(), com.rapid.server.Rapid.DESIGN_ROLE);
+				boolean designPermission = app.getSecurity().checkUserRole(rapidRequest, com.rapid.server.Rapid.DESIGN_ROLE);
 				
 				// if app is rapid do a further check
-				if (designPermission && "rapid".equals(app.getId())) designPermission = app.getSecurity().checkUserRole(rapidRequest, rapidRequest.getUserName(), com.rapid.server.Rapid.SUPER_ROLE);
+				if (designPermission && "rapid".equals(app.getId())) designPermission = app.getSecurity().checkUserRole(rapidRequest, com.rapid.server.Rapid.SUPER_ROLE);
 				
 				if (designPermission) {
 					
@@ -802,7 +802,7 @@ public class Rapid extends Action {
 				SecurityAdapater security = app.getSecurity();
 				
 				// get the user
-				User user = security.getUser(rapidRequest, userName);
+				User user = security.getUser(rapidRequest);
 				
 				// add the user name
 				result.put("userName", userName);
@@ -823,7 +823,7 @@ public class Rapid extends Action {
 				if (security != null) {
 									
 					// get the users roles
-					List<String> roles = security.getUser(rapidRequest, userName).getRoles();
+					List<String> roles = security.getUser(rapidRequest).getRoles();
 					
 					// add the users to the response
 					result.put("roles", roles);											
@@ -1504,11 +1504,11 @@ public class Rapid extends Action {
 					// check for useAdmin
 					String useAdmin = jsonAction.optString("useAdmin");
 					// add role if we were given one
-					if ("true".equals(useAdmin)) security.addUserRole(rapidRequest, userName, com.rapid.server.Rapid.ADMIN_ROLE);
+					if ("true".equals(useAdmin)) security.addUserRole(rapidRequest, com.rapid.server.Rapid.ADMIN_ROLE);
 					// check for useDesign
 					String useDesign = jsonAction.optString("useDesign");
 					// add role if we were given one
-					if ("true".equals(useDesign)) security.addUserRole(rapidRequest, userName, com.rapid.server.Rapid.DESIGN_ROLE);
+					if ("true".equals(useDesign)) security.addUserRole(rapidRequest, com.rapid.server.Rapid.DESIGN_ROLE);
 				}
 				
 				// set the result message
@@ -1519,7 +1519,7 @@ public class Rapid extends Action {
 				// get the userName
 				String userName = jsonAction.getString("userName").trim();
 				// delete the user
-				app.getSecurity().deleteUser(rapidRequest, userName);
+				app.getSecurity().deleteUser(rapidRequest);
 				// remove any of their page locks
 				app.removeUserPageLocks(userName);
 				// set the result message
@@ -1544,7 +1544,7 @@ public class Rapid extends Action {
 				// get the role
 				String role = jsonAction.getString("role").trim();
 				// add the user role
-				app.getSecurity().addUserRole(rapidRequest, userName, role);
+				app.getSecurity().addUserRole(rapidRequest, role);
 				// set the result message
 				result.put("message", "User role added");
 									
@@ -1555,7 +1555,7 @@ public class Rapid extends Action {
 				// get the role
 				String role = jsonAction.getString("role").trim();
 				// add the user role
-				app.getSecurity().deleteUserRole(rapidRequest, userName, role);
+				app.getSecurity().deleteUserRole(rapidRequest, role);
 				// set the result message
 				result.put("message", "User role deleted");
 													
@@ -1571,7 +1571,7 @@ public class Rapid extends Action {
 				// get the security
 				SecurityAdapater security = app.getSecurity();
 				// get the user
-				User user = security.getUser(rapidRequest, userName);
+				User user = security.getUser(rapidRequest);
 				// update the description
 				user.setDescription(description);
 				// update the password if different from the mask
@@ -1588,11 +1588,11 @@ public class Rapid extends Action {
 						// check the user was given the role
 						if ("true".equals(useAdmin)) {
 							// add the role if the user doesn't have it already
-							if (!security.checkUserRole(rapidRequest, userName, com.rapid.server.Rapid.ADMIN_ROLE))
-								security.addUserRole(rapidRequest, userName, com.rapid.server.Rapid.ADMIN_ROLE);
+							if (!security.checkUserRole(rapidRequest, com.rapid.server.Rapid.ADMIN_ROLE))
+								security.addUserRole(rapidRequest, com.rapid.server.Rapid.ADMIN_ROLE);
 						} else {
 							// remove the role
-							security.deleteUserRole(rapidRequest, userName, com.rapid.server.Rapid.ADMIN_ROLE);
+							security.deleteUserRole(rapidRequest, com.rapid.server.Rapid.ADMIN_ROLE);
 						}
 					}
 					// get the valud of rapidDesign
@@ -1602,11 +1602,11 @@ public class Rapid extends Action {
 						// check the user was given the role
 						if ("true".equals(useDesign)) {
 							// add the role if the user doesn't have it already
-							if (!security.checkUserRole(rapidRequest, userName, com.rapid.server.Rapid.DESIGN_ROLE))
-								security.addUserRole(rapidRequest, userName, com.rapid.server.Rapid.DESIGN_ROLE);
+							if (!security.checkUserRole(rapidRequest, com.rapid.server.Rapid.DESIGN_ROLE))
+								security.addUserRole(rapidRequest, com.rapid.server.Rapid.DESIGN_ROLE);
 						} else {
 							// remove the role
-							security.deleteUserRole(rapidRequest, userName, com.rapid.server.Rapid.DESIGN_ROLE);
+							security.deleteUserRole(rapidRequest, com.rapid.server.Rapid.DESIGN_ROLE);
 						}
 					}
 				}

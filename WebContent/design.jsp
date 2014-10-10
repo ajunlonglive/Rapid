@@ -41,12 +41,10 @@ Applications applications = (Applications) getServletContext().getAttribute("app
 Application rapid = applications.get("rapid");
 // get the userName
 String userName = (String) session.getAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME);
-// null safety
-if (userName == null) userName = "";
 // get a rapid request
 RapidRequest rapidRequest = new RapidRequest(request); 
 // check permission
-boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, userName, Rapid.DESIGN_ROLE);
+boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, Rapid.DESIGN_ROLE);
 %>
 <html>
 <head>

@@ -156,7 +156,10 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 								authorised = application.getSecurity().checkUserPassword(rapidRequest, userName, userPassword);
 								// we can exit if so as we only need one
 								if (authorised) break;								
-							} catch (Exception ex) {}
+							} catch (Exception ex) {
+								// log the error
+								_logger.error("FormAuthenticationAdapter error checking user", ex);
+							}
 						}
 					}
 					
