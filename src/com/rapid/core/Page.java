@@ -31,6 +31,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -1024,22 +1025,20 @@ public class Page {
 		// close the page inline script block
 		stringBuilder.append("</script>\n");
 		
-		stringBuilder.append("  <head>\n");
+		// close the head
+		stringBuilder.append("  </head>\n");
 														
 		return stringBuilder.toString();
     	
     }
 		
-	// this routing produced the entire page
-	public String getHtml(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, Application application, User user) throws JSONException {
-		
-		// a string builder for all of the html
-		StringBuilder stringBuilder = new StringBuilder();
+	// this routine produces the entire page
+	public void writeHtml(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, Application application, User user, Writer writer) throws JSONException, IOException {
 		
 		// this doctype is necessary (amongst other things) to stop the "user agent stylesheet" overriding styles
-		stringBuilder.append("<!DOCTYPE html>\n");
+		writer.write("<!DOCTYPE html>\n");
 								
-		stringBuilder.append("<html>\n");
+		writer.write("<html>\n");
 		
 		// whether we're rebulding the page for each request
     	boolean rebuildPages = Boolean.parseBoolean(rapidServlet.getServletContext().getInitParameter("rebuildPages"));
@@ -1047,13 +1046,13 @@ public class Page {
     	// check whether or not we rebuild
     	if (rebuildPages) {
     		// get the cached head html
-    		stringBuilder.append(getHtmlHead(application));
+    		writer.write(getHtmlHead(application));
     	} else {
     		// get the cached head html
-    		stringBuilder.append(getHtmlHeadCached(application));
+    		writer.write(getHtmlHeadCached(application));
     	}
 				
-		stringBuilder.append("  <body id='" + _id + "' style='visibility:hidden;'>\n");
+    	writer.write("  <body id='" + _id + "' style='visibility:hidden;'>\n");
 		
 		// a reference for the body html
 		String bodyHtml = null;
@@ -1114,10 +1113,10 @@ public class Page {
 		// check the status of the application
 		if (application.getStatus() == Application.STATUS_DEVELOPMENT) {
 			// pretty print
-			stringBuilder.append(Html.getPrettyHtml(bodyHtml.trim()));
+			writer.write(Html.getPrettyHtml(bodyHtml.trim()));
 		} else {
 			// no pretty print
-			stringBuilder.append(bodyHtml.trim());
+			writer.write(bodyHtml.trim());
 		}
 		
 		try {
@@ -1138,7 +1137,7 @@ public class Page {
 			// if we had the admin link
 			if (adminLink) {
 				
-				stringBuilder.append("<div id='designShow' style='position:fixed;left:0px;bottom:0px;width:30px;height:30px;z-index:1000;'></div>\n"
+				writer.write("<div id='designShow' style='position:fixed;left:0px;bottom:0px;width:30px;height:30px;z-index:1000;'></div>\n"
 		    	+ "<img id='designLink' style='position:fixed;left:6px;bottom:6px;z-index:1001;display: none;' src='images/gear_24x24.png'></img>\n"
 		    	+ "<script type='text/javascript'>\n"
 		    	+ "/* designLink */\n"
@@ -1158,11 +1157,8 @@ public class Page {
 		}
 				
 		// add the remaining elements
-		stringBuilder.append("  </body>\n</html>");
-		
-		// return it
-		return stringBuilder.toString();
-		
+		writer.write("  </body>\n</html>");
+				
 	}
 		
 	// static function to load a new page
