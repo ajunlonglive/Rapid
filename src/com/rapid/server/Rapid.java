@@ -44,11 +44,9 @@ import org.json.JSONObject;
 
 import com.rapid.core.Application;
 import com.rapid.core.Page;
-import com.rapid.core.Page.RoleHtml;
 import com.rapid.security.SecurityAdapater;
 import com.rapid.security.SecurityAdapater.User;
 import com.rapid.utils.Files;
-import com.rapid.utils.Html;
 
 public class Rapid extends RapidHttpServlet {
 	
@@ -62,31 +60,12 @@ public class Rapid extends RapidHttpServlet {
 						
 	// this byte buffer is used for reading the post data - maybe we'll use streams one day...
 	private byte[] _byteBuffer = new byte[1024];
-					     
-    private String getAdminLink(Application application, Page page) {
-    	
-    	String html = "<div id='designShow' style='position:fixed;left:0px;bottom:0px;width:30px;height:30px;z-index:1000;'></div>\n"
-    	+ "<img id='designLink' style='position:fixed;left:6px;bottom:6px;z-index:1001;display: none;' src='images/gear_24x24.png'></img>\n"
-    	+ "<script type='text/javascript'>\n"
-    	+ "/* designLink */\n"
-    	+ "$(document).ready( function() {\n"
-    	+ "  $('#designShow').mouseover ( function(ev) { $('#designLink').show(); });\n"
-    	+ "  $('#designLink').mouseout ( function(ev) { $('#designLink').hide(); });\n"
-    	+ "  $('#designLink').click ( function(ev) { window.location='design.jsp?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + page.getId() + "' });\n"
-    	+ "})\n"
-    	+ "</script>\n";
-    	
-    	return html;
-    	
-    }
-                
+					                        
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-										
+				
+		// get a logger
 		getLogger().debug("Rapid GET request : " + request.getQueryString());
-											
-		// whether we're rebulding the page for each request
-    	boolean rebuildPages = Boolean.parseBoolean(getServletContext().getInitParameter("rebuildPages"));
-						
+														
 		// get a new rapid request passing in this servelet and the http request
 		RapidRequest rapidRequest = new RapidRequest(this, request);
 		
@@ -133,7 +112,7 @@ public class Rapid extends RapidHttpServlet {
 					if ("download".equals(rapidRequest.getActionName())) {
 										
 						// create the zip file
-						app.zip(this, rapidRequest, app.getId() + ".zip", true);
+						app.zip(this, rapidRequest, user, app.getId() + ".zip", true);
 						
 						// set the type as a .zip
 						response.setContentType("application/x-zip-compressed");
@@ -180,110 +159,12 @@ public class Rapid extends RapidHttpServlet {
 							// create a writer
 							PrintWriter out = response.getWriter();
 							
-							// check if we are in debug mode
-							if (rebuildPages) {
-								
-								// (re)generate the page start html
-								pageHtml = page.getHtmlHead(rapidRequest.getApplication());
-								
-							} else {
-							
-								// get any cached header html from the page object (this will regenerate and cache if not present)
-								pageHtml = page.getHtmlHeadCached(rapidRequest.getApplication());
+							// get the page html
+							pageHtml = page.getHtml(this, rapidRequest, app, user);
 														
-							}
-							
-							// output the start of the page
+							// output the page
 							out.print(pageHtml);
 																										
-							// get the users roles
-							List<String> userRoles = user.getRoles();
-												
-							// retrieve and rolesHtml for the page
-							List<RoleHtml> rolesHtml = page.getRolesHtml();
-							
-							// reset the page html
-							pageHtml = null;
-		
-							// check we have userRoles and htmlRoles
-							if (userRoles != null && rolesHtml != null) {
-																					
-								// loop each roles html entry
-								for (RoleHtml roleHtml : rolesHtml) {
-																
-									// get the roles from this combination
-									List<String> roles = roleHtml.getRoles();
-																
-									// keep a running count for the roles we have
-									int gotRoleCount = 0;
-									
-									// if there are roles to check
-									if (roles != null) {
-									
-										// retain how many roles we need our user to have
-										int rolesRequired = roles.size();
-										
-										// check whether we need any roles and that our user has any at all
-										if (rolesRequired > 0) {
-											// check the user has as many roles as this combination requires
-											if (userRoles.size() >= rolesRequired) {
-												// loop the roles we need for this combination
-												for (String role : roleHtml.getRoles()) {
-													// check this role
-													if (userRoles.contains(role)) {
-														// increment the got role count
-														gotRoleCount ++;
-													}
-												}
-											}									
-										}
-																		
-										// if we have all the roles we need
-										if (gotRoleCount == rolesRequired) {
-											// use this html
-											pageHtml = roleHtml.getHtml();
-											// no need to check any further
-											break;
-										}
-										
-									} else {
-										
-										// no roles to check means we can use this html immediately 
-										pageHtml = page.getHtmlBody();
-										
-									}
-									
-								}
-									
-																										
-							} else {
-								// no user roles or no html roles, go with the lot
-								pageHtml = page.getHtmlBody();
-								
-							}
-							
-							// if we got some pageHtml
-							if (pageHtml != null) {
-								// check the status of the application
-								if (app.getStatus() == Application.STATUS_DEVELOPMENT) {
-									// pretty print
-									out.print(Html.getPrettyHtml(pageHtml.trim()));
-								} else {
-									// no pretty print
-									out.print(pageHtml.trim());
-								}
-							}
-						
-							// check for the design role, super is required as well if the rapid app
-							if ("rapid".equals(app.getId())) {
-								if (security.checkUserRole(rapidRequest, userName, Rapid.DESIGN_ROLE) && security.checkUserRole(rapidRequest, userName, Rapid.SUPER_ROLE)) out.print(getAdminLink(app, page).trim());
-							} else {
-								if (security.checkUserRole(rapidRequest, userName, Rapid.DESIGN_ROLE)) out.print(getAdminLink(app, page).trim());
-							}
-							
-							// add the remaining elements
-							out.print("  </body>\n</html>");
-							
 							// close the writer
 							out.close();
 												
