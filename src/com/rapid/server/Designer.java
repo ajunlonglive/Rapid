@@ -57,7 +57,6 @@ import com.rapid.security.SecurityAdapater.Role;
 import com.rapid.security.SecurityAdapater.User;
 import com.rapid.utils.Bytes;
 import com.rapid.utils.Files;
-import com.rapid.utils.Html;
 import com.rapid.utils.ZipFile;
 import com.rapid.core.Application;
 import com.rapid.core.Application.DatabaseConnection;
@@ -762,8 +761,8 @@ public class Designer extends RapidHttpServlet {
 										JSONObject jsonRoleHtml = jsonRolesHtml.getJSONObject(i);
 										// retain the html
 										String html = jsonRoleHtml.optString("html");
-										// pretty print and trim it if there is one
-										if (html != null) html = Html.getPrettyHtml(html).trim();
+										// trim it if there is one
+										if (html != null) html = html.trim();
 										// create an array to hold the roles
 										ArrayList<String> roles = new ArrayList<String>(); 
 										// get the roles

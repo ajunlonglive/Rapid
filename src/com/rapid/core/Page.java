@@ -60,6 +60,7 @@ import com.rapid.server.Rapid;
 import com.rapid.server.RapidHttpServlet;
 import com.rapid.server.RapidRequest;
 import com.rapid.utils.Files;
+import com.rapid.utils.Minify;
 import com.rapid.utils.XML;
 
 @XmlRootElement
@@ -221,8 +222,12 @@ public class Page {
 		return application.getConfigFolder(servletContext) + "/" + "/pages/" + Files.safeName(_name) + ".page.xml";
 	}
 	
-	public String getCSSFile(ServletContext servletContext, Application application) {
-		return application.getWebFolder(servletContext) + "/" + Files.safeName(_name) + ".css";
+	public String getCSSFile(ServletContext servletContext, Application application, boolean min) {
+		if (min) {
+			return application.getWebFolder(servletContext) + "/" + Files.safeName(_name) + ".min.css";
+		} else {
+			return application.getWebFolder(servletContext) + "/" + Files.safeName(_name) + ".css";
+		}
 	}
 	
 	// these two methods have different names to avoid being marshelled to the .xml file by JAXB
@@ -594,10 +599,13 @@ public class Page {
 		
 	}
 			
-	public void saveCSSFile(ServletContext servletContext, Application application) throws IOException {
+	public void saveCSSFiles(ServletContext servletContext, Application application) throws IOException {
 
+		// get the css
+		String css = getAllStyles();
+		
 		// get the file
-		String cssFile = getCSSFile(servletContext, application);
+		String cssFile = getCSSFile(servletContext, application, false);
 		
 		// set the fos to the css file
 		FileOutputStream fos = new FileOutputStream(cssFile);
@@ -605,10 +613,16 @@ public class Page {
 		// get a print stream
 		PrintStream ps = new PrintStream(fos);		
 		ps.print("\n/* This file is auto-generated on page save */\n\n");
-		ps.print(getAllStyles());
+		ps.print(css);
 		// close
 		ps.close();
-		fos.close();		
+		fos.close();	
+		
+		// get the min file
+		String cssFileMin = getCSSFile(servletContext, application, true);
+		
+		// minify
+		Minify.toFile(css, cssFileMin, Minify.CSS);
 	}
 	
 	public void save(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, Application application, boolean backup) throws JAXBException, IOException {
@@ -650,8 +664,8 @@ public class Page {
 		// empty the cached header html
 		_cachedStartHtml = null;
 		
-		// re-create the css file too
-		saveCSSFile(rapidServlet.getServletContext(), application);
+		// re-create the css files too
+		saveCSSFiles(rapidServlet.getServletContext(), application);
 				
 	}
 	
@@ -758,6 +772,13 @@ public class Page {
 					break;
 				}				
 			}
+		}
+		
+		// check the application status and include this page's css file
+		if (application.getStatus() == Application.STATUS_LIVE) {
+			stringBuilder.append("<link rel='stylesheet' type='text/css' href='" + Application.getWebFolder(application) + "/" + _name + ".min.css'></link>\n");
+		} else {
+			stringBuilder.append("<link rel='stylesheet' type='text/css' href='" + Application.getWebFolder(application) + "/" + _name + ".css'></link>\n");
 		}
 		
 		return stringBuilder.toString();
@@ -890,16 +911,16 @@ public class Page {
 						
 		stringBuilder.append("    <link rel=\"icon\" href=\"favicon.ico\"></link>\n");
 		
-		// if you're looking for where the jquery link is added it's the first resource in the page.control.xml file		
+		// if you're looking for where the jquery link is added it's the first resource in the page.control.xml file	
 		stringBuilder.append("    " + getResourcesHtml(application).trim().replace("\n", "\n    ") + "\n");
-		
-		// include the page's css file (generated when the page is saved)
-		stringBuilder.append("    <link rel='stylesheet' type='text/css' href='" + Application.getWebFolder(application) + "/" + _name + ".css'></link>\n");
-		
+												
 		// start building the inline js for the page				
-		stringBuilder.append("    <script type='text/javascript'>\n\n");
+		stringBuilder.append("    <script type='text/javascript'>");
 		
-		stringBuilder.append("/*\n\n  This code is minified when in production\n\n*/\n\n");
+		// make a new string builder just for the js (so we can minify it independently)
+		StringBuilder jsStringBuilder = new StringBuilder(); 
+		
+		jsStringBuilder.append("/*\n\n  This code is minified for live applications\n\n*/\n\n");
 										
 		// get all controls
 		List<Control> pageControls = getAllControls();
@@ -913,10 +934,10 @@ public class Page {
 				// check if null
 				if (details != null) {
 					// create a gloabl variable for it's details
-					stringBuilder.append("var " + control.getId() + "details = " + details + ";\n");
+					jsStringBuilder.append("var " + control.getId() + "details = " + details + ";\n");
 				}
 			}
-			stringBuilder.append("\n");
+			jsStringBuilder.append("\n");
 		}
 				
 		// initialise our pageload lines collections
@@ -938,22 +959,22 @@ public class Page {
 		);
 		
 		// open the page loaded function
-		stringBuilder.append("$(document).ready( function() {\n");
+		jsStringBuilder.append("$(document).ready( function() {\n");
 		
 		// add a try
-		stringBuilder.append("  try {\n");
+		jsStringBuilder.append("  try {\n");
 		
 		// print any page load lines such as initialising controls
-		for (String line : _pageloadLines) stringBuilder.append("    " + line);
+		for (String line : _pageloadLines) jsStringBuilder.append("    " + line);
 								
 		// close the try
-		stringBuilder.append("  } catch(ex) { $('body').html(ex); }\n");
+		jsStringBuilder.append("  } catch(ex) { $('body').html(ex); }\n");
 		
 		// show the page
-		stringBuilder.append("  $('body').css('visibility','visible');\n");
+		jsStringBuilder.append("  $('body').css('visibility','visible');\n");
 								
 		// end of page loaded function
-		stringBuilder.append("});\n\n");
+		jsStringBuilder.append("});\n\n");
 						
 		// find any redundant actions anywhere in the page, prior to generating JavaScript
 		List<Action> pageActions = getActions();
@@ -966,7 +987,7 @@ public class Page {
 				// look for any page javascript that this action may have
 				String actionPageJavaScript = action.getPageJavaScript(application, this);
 				// print it here if so
-				if (actionPageJavaScript != null) stringBuilder.append(actionPageJavaScript.trim() + "\n\n");
+				if (actionPageJavaScript != null) jsStringBuilder.append(actionPageJavaScript.trim() + "\n\n");
 				// if this action adds redundancy to any others 
 				if (action.getRedundantActions() != null) {
 					// loop them
@@ -983,7 +1004,23 @@ public class Page {
 			} // action loop		
 			
 			// add event handlers, staring at the root controls
-			getEventHandlersJavaScript(stringBuilder, application, _controls);
+			getEventHandlersJavaScript(jsStringBuilder, application, _controls);
+		}
+		
+		// check the application status
+		if (application.getStatus() == Application.STATUS_LIVE) {			
+			try {
+				// minify the js before adding
+				stringBuilder.append(Minify.toString(jsStringBuilder.toString(),Minify.JAVASCRIPT));
+			} catch (IOException ex) {
+				// add the error
+				stringBuilder.append("\n\n/* Failed to minify JavaScript : " + ex.getMessage() + " */\n\n");
+				// add the js as is
+				stringBuilder.append(jsStringBuilder);
+			}
+		} else {
+			// add the js as is
+			stringBuilder.append("\n\n" + jsStringBuilder + "\n\n");
 		}
 																	
 		// close the page inline script block

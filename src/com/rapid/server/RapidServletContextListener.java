@@ -862,11 +862,11 @@ public class RapidServletContextListener implements ServletContextListener {
 			boolean actionCache = Boolean.parseBoolean(servletContext.getInitParameter("actionCache"));
 			if (actionCache) servletContext.setAttribute("actionCache", new ActionCache(servletContext));
 								    		  									
-		} catch (Exception e) {	
+		} catch (Exception ex) {	
 			
-			_logger.error("Error loading applications : " + e.getMessage());
+			_logger.error("Error loading applications : " + ex.getMessage());
 			
-			e.printStackTrace();
+			ex.printStackTrace();
 		}
 							
 	}
