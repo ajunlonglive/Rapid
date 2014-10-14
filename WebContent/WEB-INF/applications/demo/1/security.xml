@@ -20,6 +20,7 @@
         <description>Admin user</description>
         <name>admin</name>
         <password>admin</password>
+        <roles>Demo role 1</roles>
         <roles>RapidAdmin</roles>
         <roles>RapidDesign</roles>
     </users>

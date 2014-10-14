@@ -345,7 +345,7 @@ public class Database extends Action {
 	}
 	
 	@Override
-	public JSONObject doAction(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, JSONObject jsonAction) throws Exception {
+	public JSONObject doAction(RapidRequest rapidRequest, JSONObject jsonAction) throws Exception {
 		
 		// This code could be optimised to only return required data, according to the outputs collection
 		_logger.trace("Database action : " + jsonAction);
@@ -421,7 +421,7 @@ public class Database extends Action {
 				}
 				
 				// placeholder for the action cache
-				ActionCache actionCache = rapidServlet.getActionCache();
+				ActionCache actionCache = rapidRequest.getRapidServlet().getActionCache();
 					
 				// if an action cache was found
 				if (actionCache != null) {
@@ -446,7 +446,7 @@ public class Database extends Action {
 						DatabaseConnection databaseConnection = application.getDatabaseConnections().get(_query.getDatabaseConnectionIndex());
 						
 						// get the connection adpater
-						ConnectionAdapter ca = databaseConnection.getConnectionAdapter(rapidServlet.getServletContext());			
+						ConnectionAdapter ca = databaseConnection.getConnectionAdapter(rapidRequest.getRapidServlet().getServletContext());			
 										
 						// instantiate a data factory
 						DataFactory df = new DataFactory(ca);

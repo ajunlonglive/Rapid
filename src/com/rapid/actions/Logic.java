@@ -286,15 +286,5 @@ public class Logic extends Action {
 		// return what we built			
 		return js;
 	}
-	
-	@Override
-	public JSONObject doAction(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, JSONObject jsonAction) throws Exception {
 		
-		// This code could be optimised to only return required data, according to the outputs collection
-		_logger.trace("Logic action : " + jsonAction);
-				
-		return null;
-		
-	}
-	
 }

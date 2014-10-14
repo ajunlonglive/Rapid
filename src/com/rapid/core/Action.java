@@ -90,7 +90,7 @@ public abstract class Action {
 	public abstract String getJavaScript(Application application, Page page, Control control);
 
 	// this is where any serverside action happens! (some actions are client side only)
-	public JSONObject doAction(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, JSONObject jsonData) throws Exception { return null; };
+	public JSONObject doAction(RapidRequest rapidRequest, JSONObject jsonData) throws Exception { return null; };
 	
 	// this method can be overridden to check the xml versions, and upgrade any xml nodes representing specific actions before the xml document is unmarshalled
 	public Node upgrade(Node actionNode) { return actionNode; }

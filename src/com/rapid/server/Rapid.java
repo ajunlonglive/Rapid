@@ -260,7 +260,7 @@ public class Rapid extends RapidHttpServlet {
 						if (jsonData != null) {
 							
 							// fetch the action result
-							JSONObject jsonResult = rapidRequest.getAction().doAction(this, rapidRequest, jsonData);
+							JSONObject jsonResult = rapidRequest.getAction().doAction(rapidRequest, jsonData);
 							
 							// set response to json
 							response.setContentType("application/json");

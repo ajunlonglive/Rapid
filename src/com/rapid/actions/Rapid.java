@@ -312,11 +312,13 @@ public class Rapid extends Action {
 	}
 	
 	@Override
-	public JSONObject doAction(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, JSONObject jsonAction) throws Exception {
+	public JSONObject doAction(RapidRequest rapidRequest, JSONObject jsonAction) throws Exception {
 		
 		JSONObject result = new JSONObject();
 		
 		String action = jsonAction.getString("actionType");
+		
+		RapidHttpServlet rapidServlet = rapidRequest.getRapidServlet();
 		
 		String newAppId = null;
 		
