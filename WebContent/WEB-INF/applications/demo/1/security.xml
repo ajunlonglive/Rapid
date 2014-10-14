@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <security>
     <roles>
+        <description>Demo security role 1</description>
+        <name>Demo role 1</name>
+    </roles>
+    <roles>
+        <description>Demo security role 2</description>
+        <name>Demo role 2</name>
+    </roles>
+    <roles>
         <description>Manage application in Rapid Admin</description>
         <name>RapidAdmin</name>
     </roles>
@@ -12,6 +20,7 @@
         <description>Admin user</description>
         <name>admin</name>
         <password>admin</password>
+        <roles>Demo role 1</roles>
         <roles>RapidAdmin</roles>
         <roles>RapidDesign</roles>
     </users>

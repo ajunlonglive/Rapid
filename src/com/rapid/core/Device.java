@@ -82,8 +82,8 @@ public class Device {
 			
 			// get the marshaller from the context
 			Marshaller marshaller = (Marshaller) servletContext.getAttribute("marshaller");	
-			// marshall the devices
-			marshaller.marshal(devices, new FileOutputStream(file));
+			// marshall the devices to the file
+			marshaller.marshal(devices, file);
 					
 		}
 		

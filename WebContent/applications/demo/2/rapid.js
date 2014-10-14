@@ -665,10 +665,6 @@ function setData_grid(id, data, field, details) {
   }
 }
 
-function getProperty_grid_columnCount(ev, id, field, details) {
-  return ($("#" + id).find("tr").first().children("td").size());
-}
-
 function getProperty_grid_rowCount(ev, id, field, details) {
   return ($("#" + id).find("tr").size() - 1);
 }

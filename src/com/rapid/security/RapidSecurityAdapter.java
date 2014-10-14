@@ -27,6 +27,7 @@ package com.rapid.security;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.xml.bind.JAXBContext;
@@ -283,6 +284,17 @@ public class RapidSecurityAdapter extends SecurityAdapater {
 		User user = getUser(rapidRequest);
 		if (user != null) {
 			return user.getRoles().contains(roleName);
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean checkUserRole(RapidRequest rapidRequest, List<String> roleNames) throws SecurityAdapaterException {
+		User user = getUser(rapidRequest);
+		if (user != null) {
+			for (String roleName : roleNames) {
+				if (user.getRoles().contains(roleName)) return true;
+			}
 		}
 		return false;
 	}

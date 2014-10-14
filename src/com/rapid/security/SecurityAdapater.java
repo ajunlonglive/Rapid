@@ -270,6 +270,8 @@ public abstract class SecurityAdapater {
 	// check a named userName/roleName combination
 	public abstract boolean checkUserRole(RapidRequest rapidRequest, String roleName) throws SecurityAdapaterException;
 	
+	// check a named userName for any of a list of roles (faster then looping them all)
+	public abstract boolean checkUserRole(RapidRequest rapidRequest, List<String> roleNames) throws SecurityAdapaterException;
 	
 	// update a role description
 	public abstract void updateRole(RapidRequest rapidRequest, Role role) throws SecurityAdapaterException;
