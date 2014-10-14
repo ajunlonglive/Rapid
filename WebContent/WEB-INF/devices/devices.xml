@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<devices>
+    <devices>
+        <height>0</height>
+        <name>Desktop</name>
+        <PPI>96</PPI>
+        <scale>1.0</scale>
+        <width>0</width>
+    </devices>
+    <devices>
+        <height>0</height>
+        <name>Full screen</name>
+        <PPI>96</PPI>
+        <scale>1.0</scale>
+        <width>0</width>
+    </devices>
+</devices>

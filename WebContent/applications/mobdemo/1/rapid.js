@@ -697,8 +697,9 @@ function setData_grid(id, data, field, details) {
   				}
   				if (columnMap.length == i)
   					columnMap.push("");
-  				if (details.columns[i].cellFunction) 
-  					details.columns[i].cellFunction = new Function(details.columns[i].cellFunction);
+  				// if we have cellFunction JavaScript, and it hasn't been turned into a function object yet
+  				if (details.columns[i].cellFunction && !details.columns[i].f) 
+  					details.columns[i].f = new Function(details.columns[i].cellFunction);
   			}
   			for (var i in data.rows) {
   				var row = data.rows[i];
@@ -709,8 +710,8 @@ function setData_grid(id, data, field, details) {
   					if (details.columns[j].style) style += details.columns[j].style;
   					if (style) style = " style='" + style + "'";				
   					var cellObject = rowObject.append("<td" + style + ">" + ((columnMap[j]) ? row[columnMap[j]] : "") + "</td>").find("td:last");
-  					if (details.columns[j].cellFunction) 
-  						details.columns[j].cellFunction.apply(cellObject,[id, data, field, details]);
+  					if (details.columns[j].f) 
+  						details.columns[j].f.apply(cellObject,[id, data, field, details]);
   				}				
   			}
   		} else {
@@ -763,7 +764,7 @@ function setData_input(id, data, field, details) {
   				}
   			}
   		} else {
-  			if (data.rows[0][0]) {
+  			if (data.rows[0][0] != null && data.rows[0][0] !== undefined) {
   				control.val(data.rows[0][0]);
   			} else {
   				control.val("");

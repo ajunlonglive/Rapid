@@ -46,6 +46,8 @@ import com.rapid.core.Action;
 import com.rapid.core.Application;
 import com.rapid.core.Application.Parameter;
 import com.rapid.core.Control;
+import com.rapid.core.Device;
+import com.rapid.core.Device.Devices;
 import com.rapid.core.Page;
 import com.rapid.core.Application.DatabaseConnection;
 import com.rapid.core.Applications.Versions;
@@ -475,7 +477,10 @@ public class Rapid extends Action {
 					}					
 				}				
 				// add the controls to the result
-				result.put("controls", jsonSendControls);												
+				result.put("controls", jsonSendControls);			
+				
+				// add the devices
+				result.put("devices", rapidServlet.getDevices());
 				
 				// add the current userName to the result
 				result.put("userName", rapidRequest.getUserName());
@@ -857,18 +862,59 @@ public class Rapid extends Action {
 				// retrieve the index
 				int index = jsonAction.getInt("index");
 				
-				// get the parameter
-				Parameter parameter = app.getParameters().get(index);
-				
 				// create the json object
 				JSONObject jsonParameter = new JSONObject();
 				
-				// add the name and value
-				jsonParameter.put("name", parameter.getName());
-				jsonParameter.put("value", parameter.getValue());
+				// check the parameters
+				if (app.getParameters() != null) {
+					
+					// check we have the one requested
+					if (index >= 0 && index < app.getParameters().size()) {
+						
+						// get the parameter
+						Parameter parameter = app.getParameters().get(index);
+																		
+						// add the name and value
+						jsonParameter.put("name", parameter.getName());
+						jsonParameter.put("value", parameter.getValue());
+																		
+					}
+				}
 				
 				// add the parameter to the result
 				result.put("parameter", jsonParameter);
+						
+			} else if ("GETDEVICE".equals(action)) {
+				
+				// retrieve the index
+				int index = jsonAction.getInt("index");
+				
+				// create the json object
+				JSONObject jsonDevice = new JSONObject();
+				
+				// reference to all devices
+				Devices devices = rapidServlet.getDevices();
+				
+				// check we have devices				
+				if (devices != null) {
+					// check the index is ok
+					if (index >= 0 && index < devices.size()) {
+						
+						// get the device
+						Device device = rapidServlet.getDevices().get(index);
+						
+						// add the name and value
+						jsonDevice.put("name", device.getName());
+						jsonDevice.put("width", device.getWidth());
+						jsonDevice.put("height", device.getHeight());
+						jsonDevice.put("ppi", device.getPPI());
+						jsonDevice.put("scale", device.getScale());
+						
+					}
+				}
+				
+				// add the parameter to the result
+				result.put("device", jsonDevice);
 						
 			} else if ("RELOADACTIONS".equals(action)) {
 							
@@ -1540,7 +1586,7 @@ public class Rapid extends Action {
 			} else if ("NEWUSERROLE".equals(action)) {
 				
 				// get the userName
-				String userName = jsonAction.getString("userName").trim();
+				String userName = jsonAction.getString("userName").trim();								
 				// get the role
 				String role = jsonAction.getString("role").trim();
 				// add the user role
@@ -1649,6 +1695,48 @@ public class Rapid extends Action {
 								
 				// set the result message
 				result.put("message", "Parameter details saved");
+												
+			} else if ("NEWDEVICE".equals(action)) {
+				
+				// add a new device to the collection
+				rapidServlet.getDevices().add(new Device("New device", 500, 500, 200, 1d));
+				
+			} else if ("DELDEVICE".equals(action)) {
+				
+				// get the index
+				int index = jsonAction.getInt("index");
+				
+				// remove the parameter
+				rapidServlet.getDevices().remove(index);
+
+				// save the app
+				app.save(rapidServlet, rapidRequest, true);
+								
+				// set the result message
+				result.put("message", "Device deleted");
+				
+			} else if ("SAVEDEVICE".equals(action)) {	
+				
+				int index = jsonAction.getInt("index");
+				String name = jsonAction.getString("name");
+				int width = jsonAction.getInt("width");
+				int height = jsonAction.getInt("height");
+				int ppi = jsonAction.getInt("ppi");
+				double scale = jsonAction.getDouble("scale");
+				
+				// fetch the device
+				Device device = rapidServlet.getDevices().get(index);
+				// update it
+				device.setName(name);
+				device.setWidth(width);
+				device.setHeight(height);
+				device.setPPI(ppi);
+				device.setScale(scale);
+				// save the app
+				app.save(rapidServlet, rapidRequest, true);
+								
+				// set the result message
+				result.put("message", "Device details saved");
 												
 			} else if ("TESTDBCONN".equals(action)) {
 				

@@ -74,6 +74,8 @@ import com.rapid.core.Action;
 import com.rapid.core.Application;
 import com.rapid.core.Application.DatabaseConnection;
 import com.rapid.core.Applications;
+import com.rapid.core.Device;
+import com.rapid.core.Device.Devices;
 import com.rapid.data.ConnectionAdapter;
 import com.rapid.utils.Files;
 import com.rapid.utils.Strings;
@@ -751,7 +753,7 @@ public class RapidServletContextListener implements ServletContextListener {
 		return applications.size();
 		
 	}
-	
+		
 	@Override
 	public void contextInitialized(ServletContextEvent event) {   
 		
@@ -807,24 +809,25 @@ public class RapidServletContextListener implements ServletContextListener {
 			loadControls(servletContext);						
 			
 			// add some classes manually
-			_jaxbClasses.add(Class.forName("com.rapid.soa.SOAElementRestriction"));
-			_jaxbClasses.add(Class.forName("com.rapid.soa.SOAElementRestriction$NameRestriction"));
-			_jaxbClasses.add(Class.forName("com.rapid.soa.SOAElementRestriction$MinOccursRestriction"));
-			_jaxbClasses.add(Class.forName("com.rapid.soa.SOAElementRestriction$MaxOccursRestriction"));
-			_jaxbClasses.add(Class.forName("com.rapid.soa.SOAElementRestriction$MaxLengthRestriction"));
-			_jaxbClasses.add(Class.forName("com.rapid.soa.SOAElementRestriction$MinLengthRestriction"));
-			_jaxbClasses.add(Class.forName("com.rapid.soa.SOAElementRestriction$EnumerationRestriction"));
-			_jaxbClasses.add(Class.forName("com.rapid.soa.Webservice"));
-			_jaxbClasses.add(Class.forName("com.rapid.soa.SQLWebservice"));
-			_jaxbClasses.add(Class.forName("com.rapid.soa.JavaWebservice"));
-			_jaxbClasses.add(Class.forName("com.rapid.core.Application"));
-			_jaxbClasses.add(Class.forName("com.rapid.core.Validation"));
-			_jaxbClasses.add(Class.forName("com.rapid.core.Action"));
-			_jaxbClasses.add(Class.forName("com.rapid.core.Event"));
-			_jaxbClasses.add(Class.forName("com.rapid.core.Style"));			
-			_jaxbClasses.add(Class.forName("com.rapid.core.Control"));			
-			_jaxbClasses.add(Class.forName("com.rapid.core.Page"));
-			_jaxbClasses.add(Class.forName("com.rapid.core.Application"));
+			_jaxbClasses.add(com.rapid.soa.SOAElementRestriction.class);
+			_jaxbClasses.add(com.rapid.soa.SOAElementRestriction.NameRestriction.class);
+			_jaxbClasses.add(com.rapid.soa.SOAElementRestriction.MinOccursRestriction.class);
+			_jaxbClasses.add(com.rapid.soa.SOAElementRestriction.MaxOccursRestriction.class);
+			_jaxbClasses.add(com.rapid.soa.SOAElementRestriction.MaxLengthRestriction.class);
+			_jaxbClasses.add(com.rapid.soa.SOAElementRestriction.MinLengthRestriction.class);
+			_jaxbClasses.add(com.rapid.soa.SOAElementRestriction.EnumerationRestriction.class);
+			_jaxbClasses.add(com.rapid.soa.Webservice.class);
+			_jaxbClasses.add(com.rapid.soa.SQLWebservice.class);
+			_jaxbClasses.add(com.rapid.soa.JavaWebservice.class);			
+			_jaxbClasses.add(com.rapid.core.Validation.class);
+			_jaxbClasses.add(com.rapid.core.Action.class);
+			_jaxbClasses.add(com.rapid.core.Event.class);
+			_jaxbClasses.add(com.rapid.core.Style.class);			
+			_jaxbClasses.add(com.rapid.core.Control.class);			
+			_jaxbClasses.add(com.rapid.core.Page.class);
+			_jaxbClasses.add(com.rapid.core.Application.class);
+			_jaxbClasses.add(com.rapid.core.Device.class);
+			_jaxbClasses.add(com.rapid.core.Device.Devices.class);
 									
 			// convert arraylist to array
 			Class[] classes = _jaxbClasses.toArray(new Class[_jaxbClasses.size()]);			
@@ -846,6 +849,9 @@ public class RapidServletContextListener implements ServletContextListener {
 			
 			// load the applications!
 			loadApplications(servletContext);	
+			
+			// load the devices
+			Devices.load(servletContext);
 			
 			// add some useful global objects 
 			servletContext.setAttribute("xmlDateFormatter", new SimpleDateFormat("yyyy-MM-dd"));

@@ -115,12 +115,15 @@ var _nextPageId = 1;
 var _pasteMap = null;
 
 // a global object for the different devices we are supporting, typically for mobiles
-var _devices = [
+var _devices = null;
+/*
+[
 	{name:"Full screen", ppi: 96, scale: 1 },
 	{name:"HTC One X", width: 720, height: 1280, ppi: 312, scale: 2},
 	{name:"HTC One M8", width: 1080, height: 1920, ppi: 441, scale: 3},
 	{name:"Nexus 10", width: 1600, height: 2560, ppi: 300, scale: 2}
 ];
+*/
 // a global for the ppi of the device we've loaded the designer in
 var _ppi = 96;
 // a global for the selected device index
@@ -1496,7 +1499,7 @@ function getSavePageData() {
 	
 	// show message
 	$("#rapid_P11_C7_").html("Checking controls");
-	
+		
 	// loop them looking for roles and getDetails functions to run 
 	for (var i in controls) {
 		// get the control
@@ -1888,31 +1891,12 @@ $(document).ready( function() {
 	document.body.removeChild(outer);
 
 	_scrollBarWidth = (w1 - w2);
-	
-	// check if we have local storage
-	if (typeof(localStorage) !== "undefined") {
-		// retrieve device index from local storage
-		var device = localStorage.getItem("_device");
-		// if there was one and there's a slot for it in our devices
-		if (device && device * 1 < _devices.length) _device = device*1;
-		// retrieve the orientation
-		var orientation = localStorage.getItem("_orientation");
-		// update global if we got one
-		if (orientation) _orientation = orientation;
-		// retrieve the zoom
-		var zoom = localStorage.getItem("_zoom");
-		// update global if we got one
-		if (zoom) _zoom = zoom*1;
-		// calculate the scale
-		_scale = _ppi / _devices[_device].ppi * _devices[_device].scale * _zoom;
-	}
-	
+			
 	// check for unsaved page changes if we move away
 	$(window).on('beforeunload', function(){
 		  if (_dirty) return 'You have unsaved changes.';
 	});
-	
-		
+			
 	// the iframe in which we load the page
 	_pageIframe = $("#page");
 	// the div that covers all of the components in design mode so they don't react to clicks
@@ -1922,57 +1906,80 @@ $(document).ready( function() {
 	
 	// load the action classes
 	$.ajax({
-    	url: "designer?action=getActions",
+    	url: "designer?action=getSystemData",
     	type: "GET",
     	contentType: "application/json",
         dataType: "json",       
         data: null,            
         error: function(server, status, error) {
         	// just show an error        	
-        	alert("Error loading actions : " + error); 
+        	alert("Error loading system data : " + error); 
         },
-        success: function(actions) {         	        	
-	    	
-        	// loop the actions we got back
-	    	for (var i in actions) {
-	    		// get a reference to a single action
-	    		var a = actions[i];
-	    		// create a new action class object/function (this is a closure)
-	    		var f = new ActionClass(a);        		        		     			
-				// retain the action class object/function globally
-	    		_actionTypes[a.type] = f; 	    		
-	    	} // action loop
-	    	
-	    	// load the controls classes	
-	    	$.ajax({
-	        	url: "designer?action=getControls",
-	        	type: "GET",
-	        	contentType: "application/json",
-	            dataType: "json",            
-	            data: null,            
-	            error: function(server, status, error) { 
-	            	// just show an error
-	            	alert("Error loading controls : " + error); 
-	            },
-	            success: function(controls) { 
-	            	        			    	    			    	    	
-	    	    	// loop the controls we got back
-	    	    	for (var i in controls) {
-	    	    		// get a reference to a single control
-	    	    		var c = controls[i];
-	    	    		// create a new control ControlClass object/function (this is a closure)
-	    	    		var f = new ControlClass(c);        		        		     			
-	    				// retain the control controlClass function function globally
-	    				_controlTypes[c.type] = f; 	
-	    	    	}
-	    	    	
-	    	    	// now load the other apps
-	    	    	loadApps();		    	
-	            			            	
-	            } // success function
-	            
-	        }); // load controls ajax
-	    	
+        success: function(systemData) {        
+        	
+        	// check we got some
+        	if (systemData) {
+        		
+        		// get the actions
+        		var actions = systemData.actions;
+        		
+        		// loop the actions we got back
+    	    	for (var i in actions) {
+    	    		// get a reference to a single action
+    	    		var a = actions[i];
+    	    		// create a new action class object/function (this is a closure)
+    	    		var f = new ActionClass(a);        		        		     			
+    				// retain the action class object/function globally
+    	    		_actionTypes[a.type] = f; 	    		
+    	    	} // action loop
+        		
+        		// get the controls
+        		var controls = systemData.controls;
+        		
+        		// loop the controls we got back
+    	    	for (var i in controls) {
+    	    		// get a reference to a single control
+    	    		var c = controls[i];
+    	    		// create a new control ControlClass object/function (this is a closure)
+    	    		var f = new ControlClass(c);        		        		     			
+    				// retain the control controlClass function function globally
+    				_controlTypes[c.type] = f; 	
+    	    	}
+        		
+        		// get the devices
+        		var devices = systemData.devices;
+        		// check them
+        		if (devices == null) {
+        			// make the desktop
+        			_devices = [{name:"Desktop",width:0,height:0,ppi:96,scale:1}];
+        		} else {
+        			// store them globally
+        			_devices = devices;
+        		}
+        		
+        		// check if we have local storage
+        		if (typeof(localStorage) !== "undefined") {
+        			// retrieve device index from local storage
+        			var device = localStorage.getItem("_device");
+        			// if there was one and there's a slot for it in our devices
+        			if (device && device * 1 < _devices.length) _device = device*1;
+        			// retrieve the orientation
+        			var orientation = localStorage.getItem("_orientation");
+        			// update global if we got one
+        			if (orientation) _orientation = orientation;
+        			// retrieve the zoom
+        			var zoom = localStorage.getItem("_zoom");
+        			// update global if we got one
+        			if (zoom) _zoom = zoom*1;
+        			// calculate the scale
+        			_scale = _ppi / _devices[_device].PPI * _devices[_device].scale * _zoom;
+        		}
+        		
+        		// now load the apps
+    	    	loadApps();	
+        		
+        	} // got system data
+	    	        		    		    		    	
         } // load actions success function
         
     }); // load actions ajax
@@ -2129,31 +2136,53 @@ $(document).ready( function() {
 	$("#controlPanelPin").click( function(ev) {
 		// check pinned
 		if (_panelPinned) {
-			_panelPinned = false;
-			_panelPinnedOffset = 0;
-			$("#controlPanelPin").html("<img src='images/unpinned_14x14.png' title='pin'>");
-			windowResize("pin");
-			selectControl(_selectedControl);
-			$("#controlPanel").hide("slide", {direction: "left"}, 200);
+			_panelPinned = false;			
+			$("#controlPanelPin").html("<img src='images/unpinned_14x14.png' title='pin'>");			
+			$("#controlPanel").hide("slide", {direction: "left"}, 200, function() {
+				// set the panel pin offset
+				_panelPinnedOffset = 0;
+				// resize the window
+				windowResize("pin");
+				// reselect control
+				selectControl(_selectedControl);
+				// arrange the non visible controls due to the shift in the panel
+				arrangeNonVisibleControls();				
+			});
 		} else {
 			_panelPinned = true;
 			_panelPinnedOffset = 221;
 			$("#controlPanelPin").html("<img src='images/pinned_14x14.png' title='unpin'>");
+			// resize the window
 			windowResize("unpin");
+			// reselect control
 			selectControl(_selectedControl);
+			// arrange the non visible controls due to the shift in the panel
+			arrangeNonVisibleControls();
 		}
 	});
 	
 	// panel slide out
 	$("#controlPanelShow").mouseenter( function(ev){
 		// show the panel if we're not moving a control
-		if (!_movingControl) showControlPanel();
+		if (!_movingControl) {
+			// show the panel
+			$("#controlPanel").show("slide", {direction: "left"}, 200, function() {
+				// set the panel pin offset
+				_panelPinnedOffset = 221;
+			});			
+		}
 	});
 	
 	// panel slide in
 	$("#controlPanel").mouseleave( function(ev){		
-		// slide the control panel back in
-		if (!_panelPinned && !$(ev.target).is("select")) $("#controlPanel").hide("slide", {direction: "left"}, 200);		
+		// if the panel isn't pinned and this not the selected control
+		if (!_panelPinned && !$(ev.target).is("select")) {
+			// slide the control panel back in
+			$("#controlPanel").hide("slide", {direction: "left"}, 200, function() {
+				// set the panel pin offset
+				_panelPinnedOffset = 0;
+			});			
+		}
 	});
 
 	// if we click on the cover (have we hit a control)
@@ -2216,36 +2245,45 @@ $(document).ready( function() {
 			
 	// save page
 	$("#pageSave").click( function() {
-		// show the saving page dialogue
-		showDialogue('~?action=page&a=rapid&p=P11');
-		// show message
-		$("#rapid_P11_C7_").html("Saving page");
-		// send the data to the backend
-		$.ajax({
-	    	url: "designer?action=savePage&a=" + _version.id + "&v=" + _version.version,
-	    	type: "POST",
-	    	contentType: "application/json",
-	        dataType: "json",            
-	        data: getSavePageData(),            
-	        error: function(server, status, error) { 
-	        	// show error
-	        	$("#rapid_P11_C7_").html(error);
-	        	// enable close button
-	        	$("#rapid_P11_C10_").enable();
-	        },
-	        success: function(controls) {
-	        	// show message
-	        	$("#rapid_P11_C7_").html("Page saved!");
-	        	// enable close button
-	        	$("#rapid_P11_C10_").enable();
-	        	// set dirty to false
-	        	_dirty = false;
-	        	// reload the pages as the order may have changed, but keep the current one selected
-	        	loadPages(_page.id);
-	        	// arrange any non-visible controls
-	        	arrangeNonVisibleControls();	        		        	
-	        }
+		
+		// hide all dialogues
+		hideDialogues();
+		
+		// show the saving page dialogue with 
+		showDialogue('~?action=page&a=rapid&p=P11', function() {
+			
+			// show message
+			$("#rapid_P11_C7_").html("Saving page...");
+			
+			// send the data to the backend
+			$.ajax({
+		    	url: "designer?action=savePage&a=" + _version.id + "&v=" + _version.version,
+		    	type: "POST",
+		    	contentType: "application/json",
+		        dataType: "json",            
+		        data: getSavePageData(),            
+		        error: function(server, status, error) { 
+		        	// show error
+		        	$("#rapid_P11_C7_").html(error);
+		        	// enable close button
+		        	$("#rapid_P11_C10_").enable();
+		        },
+		        success: function(controls) {
+		        	// show message
+		        	$("#rapid_P11_C7_").html("Page saved!");
+		        	// enable close button
+		        	$("#rapid_P11_C10_").enable();
+		        	// set dirty to false
+		        	_dirty = false;
+		        	// reload the pages as the order may have changed, but keep the current one selected
+		        	loadPages(_page.id);
+		        	// arrange any non-visible controls
+		        	arrangeNonVisibleControls();	        		        	
+		        }
+			});
+			
 		});
+		
 	});
 	
 	// view page
@@ -2521,7 +2559,7 @@ $(document).ready( function() {
 					}
 				}
 				// can we do an insert, or add as a peer
-				if (controlClass.canUserInsert && (_controlTypes[_copyControl.type].canUserAdd || childCanAddPeers)) {
+				if (_controlTypes[_selectedControl.type].canUserInsert && (_controlTypes[_copyControl.type].canUserAdd || childCanAddPeers)) {
 					// create the new control and place in child collection of current parent
 					var newControl = doPaste(_copyControl, _selectedControl);
 					// add to childControl collection of current parent
@@ -2862,13 +2900,6 @@ function arrangeNonVisibleControls() {
 			}
 		}		
 	}	
-}
-
-//this makes sure the control panel is visible and tall enough for all properties
-function showControlPanel() {
-	
-	$("#controlPanel").show("slide", {direction: "left"}, 200);
-		
 }
 
 // this makes sure the properties panel is visible and tall enough for all properties

@@ -148,17 +148,25 @@ public class Designer extends RapidHttpServlet {
 							
 				    	}
 															
-						if ("getControls".equals(actionName)) {
+						if ("getSystemData".equals(actionName)) {
 							
-							output = getJsonControls().toString();
+							// create a system data object
+							JSONObject jsonSystemData = new JSONObject();
 							
-							sendJsonOutput(response, output);
+							// add the controls
+							jsonSystemData.put("controls", getJsonControls());
 							
-						} else if ("getActions".equals(actionName)) {
+							// add the actions
+							jsonSystemData.put("actions", getJsonActions());
 							
-							output = getJsonActions().toString();
+							// add the devices
+							jsonSystemData.put("devices", getDevices());
 							
-							sendJsonOutput(response, output);
+							// put into output string
+							output = jsonSystemData.toString();
+							
+							// send output as json
+							sendJsonOutput(response, output);							
 						
 						} else if ("getApps".equals(actionName)) {
 							

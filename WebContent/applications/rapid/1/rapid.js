@@ -240,7 +240,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 		break;
 		case "GETUSER" :	
 			if (rapidApp) {
-				data = { actionType: actionType, appId: "rapid", userName: getData_grid(ev, "rapid_P0_C823_", "name", {columns:[{field:"name"}]}) };
+				data = { actionType: actionType, appId: "rapid", version: _appVersion, userName: getData_grid(ev, "rapid_P0_C823_", "name", {columns:[{field:"name"}]}) };
 			} else {
 				data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), userName: getData_grid(ev, "rapid_P0_C216", "userName", {columns:[{field:"userName"}]}) };	
 			}
@@ -252,6 +252,12 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), index: $("#rapid_P0_C1108_").find("tr.rowSelect").index()-1 };
 			callback = function(data) {
 				setData_dataStore('rapid_P0_C1145_', data, "parameter", {storageType:"S"});
+			};
+		break;
+		case "GETDEVICE" :	
+			data = { actionType: actionType, appId: "rapid", version: _appVersion, index: $("#rapid_P0_C1199_").find("tr.rowSelect").index()-1 };
+			callback = function(data) {
+				setData_dataStore('rapid_P0_C1269_', data, "device", {storageType:"S"});
 			};
 		break;
 		case "SAVEAPP" :		
@@ -486,7 +492,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 		break;
 		case "NEWUSER" :	
 			if (rapidApp) {
-				data = { actionType: actionType, appId: "rapid", userName: $("#rapid_P16_C8_").val(), description: $("#rapid_P16_C13_").val() , password: $("#rapid_P16_C17_").val(), useAdmin: $("rapid_P16_C38_").prop("checked"), useDesign: $("rapid_P16_C39_").prop("checked")};
+				data = { actionType: actionType, appId: "rapid", version : _appVersion, userName: $("#rapid_P16_C8_").val(), description: $("#rapid_P16_C13_").val() , password: $("#rapid_P16_C17_").val(), useAdmin: $("rapid_P16_C38_").prop("checked"), useDesign: $("rapid_P16_C39_").prop("checked")};
 			} else {	
 				data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), userName: $("#rapid_P6_C7").val(), description: $("#rapid_P6_C42_").val() , password: $("#rapid_P6_C18").val() };
 				callback = function() {
@@ -527,9 +533,9 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 		break;
 		case "SAVEUSER" :	
 			if (rapidApp) {
-				data = { actionType: actionType, appId: "rapid", version: $("#rapid_P0_C1044_").val(), userName: $("#rapid_P0_C823_").find("tr.rowSelect").children().first().html(), description: $("#rapid_P0_C838_").val(), password: $("#rapid_P0_C843_").val(), useAdmin: $("#rapid_P0_C879_").prop('checked'), useDesign: $("#rapid_P0_C880_").prop('checked') }; 
+				data = { actionType: actionType, appId: "rapid", version: _appVersion, userName: $("#rapid_P0_C823_").find("tr.rowSelect").children().first().html(), description: $("#rapid_P0_C838_").val(), password: $("#rapid_P0_C843_").val(), useAdmin: $("#rapid_P0_C879_").prop('checked'), useDesign: $("#rapid_P0_C880_").prop('checked') }; 
 			} else {
-				data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), userName: $("#rapid_P0_C216").find("tr.rowSelect").children().first().html(), description: $("#rapid_P0_C717_").val(), password: $("#rapid_P0_C231").val() };
+				data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), userName: $("#rapid_P0_C216").find("tr.rowSelect").children().first().html(), description: $("#rapid_P0_C717_").val(), password: $("#rapid_P0_C231").val() };
 				callback = function() {
 					// fake an adapter change
 					$("#rapid_P0_C81").change(); 
@@ -546,6 +552,21 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 		break;
 		case "SAVEPARAM" :
 			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), index: $("#rapid_P0_C1108_").find("tr.rowSelect").index()-1, name: $("#rapid_P0_C1134_").val(), value: $("#rapid_P0_C1123_").val()};
+		break;
+		case "NEWDEVICE" :
+			data = { actionType: actionType, appId: "rapid", version: _appVersion };
+		break;
+		case "DELDEVICE" :
+			data = { actionType: actionType, appId: "rapid", version: _appVersion, index: $(ev.target).closest("tr").index()-1 };
+		break;
+		case "SAVEDEVICE" :
+			data = { actionType: actionType, appId: "rapid", version: _appVersion, index: $("#rapid_P0_C1199_").find("tr.rowSelect").index()-1, 
+			name: $("#rapid_P0_C1243_").val(), 
+			width: $("#rapid_P0_C1217_").val(),
+			height: $("#rapid_P0_C1248_").val(),
+			ppi: $("#rapid_P0_C1253_").val(),
+			scale: $("#rapid_P0_C1258_").val()
+		};
 		break;
 		case "TESTDBCONN" :	
 			data = { 
@@ -980,8 +1001,9 @@ function setData_grid(id, data, field, details) {
   				}
   				if (columnMap.length == i)
   					columnMap.push("");
-  				if (details.columns[i].cellFunction) 
-  					details.columns[i].cellFunction = new Function(details.columns[i].cellFunction);
+  				// if we have cellFunction JavaScript, and it hasn't been turned into a function object yet
+  				if (details.columns[i].cellFunction && !details.columns[i].f) 
+  					details.columns[i].f = new Function(details.columns[i].cellFunction);
   			}
   			for (var i in data.rows) {
   				var row = data.rows[i];
@@ -992,8 +1014,8 @@ function setData_grid(id, data, field, details) {
   					if (details.columns[j].style) style += details.columns[j].style;
   					if (style) style = " style='" + style + "'";				
   					var cellObject = rowObject.append("<td" + style + ">" + ((columnMap[j]) ? row[columnMap[j]] : "") + "</td>").find("td:last");
-  					if (details.columns[j].cellFunction) 
-  						details.columns[j].cellFunction.apply(cellObject,[id, data, field, details]);
+  					if (details.columns[j].f) 
+  						details.columns[j].f.apply(cellObject,[id, data, field, details]);
   				}				
   			}
   		} else {
@@ -1046,7 +1068,7 @@ function setData_input(id, data, field, details) {
   				}
   			}
   		} else {
-  			if (data.rows[0][0]) {
+  			if (data.rows[0][0] != null && data.rows[0][0] !== undefined) {
   				control.val(data.rows[0][0]);
   			} else {
   				control.val("");

@@ -23,7 +23,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-function showDialogue(url) {
+function showDialogue(url, onShow) {
 
 	// hide the control panel
 	if (!_panelPinned) $("#controlPanel").hide();
@@ -113,13 +113,24 @@ function showDialogue(url) {
 	            	
 	            	// this seems to be the best way to avoid the resizing/flicker when showing
 	            	window.setTimeout( function() {
-	            		dialogue.show();
+	            		// show the dialogue
+	            		dialogue.show();	            		
 	            	}, 200);
+	            	
+	            	// if any wait half a sec
+                	if (onShow) {
+                		window.setTimeout( function() {
+    	            		// run the onshow
+                			onShow();            		
+    	            	}, 500);                		
+                	}
             	
-            	}
+            	} // login page check
             	
-        	}        	        	
-        }
+        	} // page check   
+        	
+        } // success
+        
 	});
 }
 
