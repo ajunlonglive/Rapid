@@ -82,8 +82,8 @@ if (appId != null && pageId != null) {
 
 if (gotAppAndPage && designerPermission) {
 
-	// add all of the required resource links
-	out.print(rapidPage.getResourcesHtml(rapidApp));	
+	// add the required resource links, but not the css
+	out.print(rapidPage.getResourcesHtml(rapidApp, false));	
 	
 %>
 	<link rel="stylesheet" type="text/css" href="<%=Application.getWebFolder(rapidApp)%>/<%=rapidPage.getName()%>.css"></link>	

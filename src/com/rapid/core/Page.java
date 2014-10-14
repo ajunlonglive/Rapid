@@ -240,7 +240,7 @@ public class Page {
 		// check whether the page has been cached yet
 		if (_cachedStartHtml == null) {
 			// generate the page start html
-			_cachedStartHtml = getHtmlHead(application);																		
+			_cachedStartHtml = getHtmlHead(application, false);																		
 			// have the page cache the generated html for next time
 			cacheHtmlHead(_cachedStartHtml);
 		}				
@@ -761,7 +761,8 @@ public class Page {
     	}    	
     }
     
-    public String getResourcesHtml(Application application) {
+    // the resources for the page, and whether we want the css (we might like to override it in the designer or for no permission, etc)
+    public String getResourcesHtml(Application application, boolean includeCss) {
     	
     	StringBuilder stringBuilder = new StringBuilder();
 				
@@ -773,19 +774,22 @@ public class Page {
 						stringBuilder.append("<script type='text/javascript' src='" + resource.getContent() + "'></script>\n");
 					break;
 					case Resource.CSSFILE :
-						stringBuilder.append("<link rel='stylesheet' type='text/css' href='" + resource.getContent() + "'></link>\n");
+						if (includeCss) stringBuilder.append("<link rel='stylesheet' type='text/css' href='" + resource.getContent() + "'></link>\n");
 					break;
 				}				
 			}
 		}
 		
-		// check the application status and include this page's css file
-		if (application.getStatus() == Application.STATUS_LIVE) {
-			stringBuilder.append("<link rel='stylesheet' type='text/css' href='" + Application.getWebFolder(application) + "/" + _name + ".min.css'></link>\n");
-		} else {
-			stringBuilder.append("<link rel='stylesheet' type='text/css' href='" + Application.getWebFolder(application) + "/" + _name + ".css'></link>\n");
+		// only if css is to be included
+		if (includeCss) {
+			// check the application status and include this page's css file
+			if (application.getStatus() == Application.STATUS_LIVE) {
+				stringBuilder.append("<link rel='stylesheet' type='text/css' href='" + Application.getWebFolder(application) + "/" + _name + ".min.css'></link>\n");
+			} else {
+				stringBuilder.append("<link rel='stylesheet' type='text/css' href='" + Application.getWebFolder(application) + "/" + _name + ".css'></link>\n");
+			}
 		}
-		
+				
 		return stringBuilder.toString();
     	
     }
@@ -895,8 +899,8 @@ public class Page {
     	}    	
     }
 	
-    // this private method produces the head of the page which is often cached    
-	private String getHtmlHead(Application application) throws JSONException {
+    // this private method produces the head of the page which is often cached, if resourcesOnly is true only page resources are included which is used when sending no permission
+	private String getHtmlHead(Application application, boolean includeJSandCSS) throws JSONException {
     	
     	StringBuilder stringBuilder = new StringBuilder();
     	    												
@@ -913,126 +917,136 @@ public class Page {
 		stringBuilder.append("    <link rel=\"icon\" href=\"favicon.ico\"></link>\n");
 		
 		// if you're looking for where the jquery link is added it's the first resource in the page.control.xml file	
-		stringBuilder.append("    " + getResourcesHtml(application).trim().replace("\n", "\n    ") + "\n");
+		stringBuilder.append("    " + getResourcesHtml(application, includeJSandCSS).trim().replace("\n", "\n    ") + "\n");
 												
-		// start building the inline js for the page				
-		stringBuilder.append("    <script type='text/javascript'>\n\n");
-		
-		stringBuilder.append("var _appId = '" + application.getId() + "';\n");
-		
-		stringBuilder.append("var _appVersion = '" + application.getVersion() + "';\n");
-		
-		stringBuilder.append("var _pageId = '" + _id + "';\n\n");
-		
-		// make a new string builder just for the js (so we can minify it independently)
-		StringBuilder jsStringBuilder = new StringBuilder(); 
-		
-		jsStringBuilder.append("/*\n\n  This code is minified for live applications\n\n*/\n\n");
-										
-		// get all controls
-		List<Control> pageControls = getAllControls();
-		
-		// if we got some
-		if (pageControls != null) {
-			// loop them
-			for (Control control : pageControls) {
-				// get the details
-				String details = control.getDetails();
-				// check if null
-				if (details != null) {
-					// create a gloabl variable for it's details
-					jsStringBuilder.append("var " + control.getId() + "details = " + details + ";\n");
+		// if we want the full contents
+		if (includeJSandCSS) {
+									
+			// if we have requested more than just the resources so start building the inline js for the page				
+			stringBuilder.append("    <script type='text/javascript'>\n\n");
+			
+			stringBuilder.append("var _appId = '" + application.getId() + "';\n");
+			
+			stringBuilder.append("var _appVersion = '" + application.getVersion() + "';\n");
+			
+			stringBuilder.append("var _pageId = '" + _id + "';\n\n");
+			
+			// make a new string builder just for the js (so we can minify it independently)
+			StringBuilder jsStringBuilder = new StringBuilder(); 
+			
+			jsStringBuilder.append("/*\n\n  This code is minified for live applications\n\n*/\n\n");
+											
+			// get all controls
+			List<Control> pageControls = getAllControls();
+			
+			// if we got some
+			if (pageControls != null) {
+				// loop them
+				for (Control control : pageControls) {
+					// get the details
+					String details = control.getDetails();
+					// check if null
+					if (details != null) {
+						// create a gloabl variable for it's details
+						jsStringBuilder.append("var " + control.getId() + "details = " + details + ";\n");
+					}
 				}
+				jsStringBuilder.append("\n");
 			}
-			jsStringBuilder.append("\n");
-		}
+					
+			// initialise our pageload lines collections
+			_pageloadLines = new ArrayList<String>();
+			
+			// get any control initJavaScript event listeners into he pageloadLine (goes into $(document).ready function)
+			getPageLoadLines(_pageloadLines, _controls);
+			
+			// sort the page load lines
+			Collections.sort(_pageloadLines, new Comparator<String>() {
+				@Override
+				public int compare(String l1, String l2) {				
+					if (l1.isEmpty()) return -1;
+					if (l2.isEmpty()) return 1;
+					char i1 = l1.charAt(0);
+					char i2 = l2.charAt(0);
+					return i2 - i1;						
+				}}
+			);
+			
+			// open the page loaded function
+			jsStringBuilder.append("$(document).ready( function() {\n");
+			
+			// add a try
+			jsStringBuilder.append("  try {\n");
+			
+			// print any page load lines such as initialising controls
+			for (String line : _pageloadLines) jsStringBuilder.append("    " + line);
+									
+			// close the try
+			jsStringBuilder.append("  } catch(ex) { $('body').html(ex); }\n");
+			
+			// show the page
+			jsStringBuilder.append("  $('body').css('visibility','visible');\n");
+									
+			// end of page loaded function
+			jsStringBuilder.append("});\n\n");
+							
+			// find any redundant actions anywhere in the page, prior to generating JavaScript
+			List<Action> pageActions = getActions();
+			
+			// only proceed if there are actions in this page
+			if (pageActions != null) {
 				
-		// initialise our pageload lines collections
-		_pageloadLines = new ArrayList<String>();
-		
-		// get any control initJavaScript event listeners into he pageloadLine (goes into $(document).ready function)
-		getPageLoadLines(_pageloadLines, _controls);
-		
-		// sort the page load lines
-		Collections.sort(_pageloadLines, new Comparator<String>() {
-			@Override
-			public int compare(String l1, String l2) {				
-				if (l1.isEmpty()) return -1;
-				if (l2.isEmpty()) return 1;
-				char i1 = l1.charAt(0);
-				char i2 = l2.charAt(0);
-				return i2 - i1;						
-			}}
-		);
-		
-		// open the page loaded function
-		jsStringBuilder.append("$(document).ready( function() {\n");
-		
-		// add a try
-		jsStringBuilder.append("  try {\n");
-		
-		// print any page load lines such as initialising controls
-		for (String line : _pageloadLines) jsStringBuilder.append("    " + line);
-								
-		// close the try
-		jsStringBuilder.append("  } catch(ex) { $('body').html(ex); }\n");
-		
-		// show the page
-		jsStringBuilder.append("  $('body').css('visibility','visible');\n");
-								
-		// end of page loaded function
-		jsStringBuilder.append("});\n\n");
-						
-		// find any redundant actions anywhere in the page, prior to generating JavaScript
-		List<Action> pageActions = getActions();
-		
-		// only proceed if there are actions in this page
-		if (pageActions != null) {
-			
-			// loop the list of actions to indentify potential redundancies before we create all the event handling JavaScript
-			for (Action action : pageActions) {
-				// look for any page javascript that this action may have
-				String actionPageJavaScript = action.getPageJavaScript(application, this);
-				// print it here if so
-				if (actionPageJavaScript != null) jsStringBuilder.append(actionPageJavaScript.trim() + "\n\n");
-				// if this action adds redundancy to any others 
-				if (action.getRedundantActions() != null) {
-					// loop them
-					for (String actionId : action.getRedundantActions()) {
-						// try and find the action
-						Action redundantAction = getAction(actionId);
-						// if we got one
-						if (redundantAction != null) {
-							// update the redundancy avoidance flag
-							redundantAction.avoidRedundancy(true);
-						} 
-					}										
-				} // redundantActions != null
-			} // action loop		
-			
-			// add event handlers, staring at the root controls
-			getEventHandlersJavaScript(jsStringBuilder, application, _controls);
-		}
-		
-		// check the application status
-		if (application.getStatus() == Application.STATUS_LIVE) {			
-			try {
-				// minify the js before adding
-				stringBuilder.append(Minify.toString(jsStringBuilder.toString(),Minify.JAVASCRIPT));
-			} catch (IOException ex) {
-				// add the error
-				stringBuilder.append("\n\n/* Failed to minify JavaScript : " + ex.getMessage() + " */\n\n");
-				// add the js as is
-				stringBuilder.append(jsStringBuilder);
+				// loop the list of actions to indentify potential redundancies before we create all the event handling JavaScript
+				for (Action action : pageActions) {
+					// look for any page javascript that this action may have
+					String actionPageJavaScript = action.getPageJavaScript(application, this);
+					// print it here if so
+					if (actionPageJavaScript != null) jsStringBuilder.append(actionPageJavaScript.trim() + "\n\n");
+					// if this action adds redundancy to any others 
+					if (action.getRedundantActions() != null) {
+						// loop them
+						for (String actionId : action.getRedundantActions()) {
+							// try and find the action
+							Action redundantAction = getAction(actionId);
+							// if we got one
+							if (redundantAction != null) {
+								// update the redundancy avoidance flag
+								redundantAction.avoidRedundancy(true);
+							} 
+						}										
+					} // redundantActions != null
+				} // action loop		
+				
+				// add event handlers, staring at the root controls
+				getEventHandlersJavaScript(jsStringBuilder, application, _controls);
 			}
+			
+			// check the application status
+			if (application.getStatus() == Application.STATUS_LIVE) {			
+				try {
+					// minify the js before adding
+					stringBuilder.append(Minify.toString(jsStringBuilder.toString(),Minify.JAVASCRIPT));
+				} catch (IOException ex) {
+					// add the error
+					stringBuilder.append("\n\n/* Failed to minify JavaScript : " + ex.getMessage() + " */\n\n");
+					// add the js as is
+					stringBuilder.append(jsStringBuilder);
+				}
+			} else {
+				// add the js as is
+				stringBuilder.append("\n\n" + jsStringBuilder + "\n\n");
+			}
+																		
+			// close the page inline script block
+			stringBuilder.append("</script>\n");
+			
 		} else {
-			// add the js as is
-			stringBuilder.append("\n\n" + jsStringBuilder + "\n\n");
-		}
-																	
-		// close the page inline script block
-		stringBuilder.append("</script>\n");
-		
+			
+			// just add the index style sheet
+			stringBuilder.append("    <link rel=\"stylesheet\" type=\"text/css\" href=\"styles/index.css\"></link>\n");
+											
+		} // include JavaScript and CSS
+						
 		// close the head
 		stringBuilder.append("  </head>\n");
 														
@@ -1043,107 +1057,142 @@ public class Page {
 	// this routine produces the entire page
 	public void writeHtml(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, Application application, User user, Writer writer) throws JSONException, IOException {
 		
+		// get the security
+		SecurityAdapater security = application.getSecurity();
+		
+		// assume the user has permission to access the page
+		boolean gotPagePermission = true;
+		
+		try {
+			
+			// if this page has roles
+			if (_roles != null) {
+				if (_roles.size() > 0) {
+					// check if the user has any of them
+					gotPagePermission = security.checkUserRole(rapidRequest, _roles);
+				}
+			}
+			
+		} catch (SecurityAdapaterException ex) {
+
+			rapidServlet.getLogger().error("Error checking for the designer link", ex);
+			
+		}
+		
+		
 		// this doctype is necessary (amongst other things) to stop the "user agent stylesheet" overriding styles
 		writer.write("<!DOCTYPE html>\n");
 								
 		writer.write("<html>\n");
 		
-		// whether we're rebulding the page for each request
-    	boolean rebuildPages = Boolean.parseBoolean(rapidServlet.getServletContext().getInitParameter("rebuildPages"));
+		if (gotPagePermission) {
 		
-    	// check whether or not we rebuild
-    	if (rebuildPages) {
-    		// get the cached head html
-    		writer.write(getHtmlHead(application));
-    	} else {
-    		// get the cached head html
-    		writer.write(getHtmlHeadCached(application));
-    	}
-				
-    	writer.write("  <body id='" + _id + "' style='visibility:hidden;'>\n");
-		
-		// a reference for the body html
-		String bodyHtml = null;
-		
-		// get the users roles
-		List<String> userRoles = user.getRoles();
-									
-		// check we have userRoles and htmlRoles
-		if (userRoles != null && _rolesHtml != null) {
-																
-			// loop each roles html entry
-			for (RoleHtml roleHtml : _rolesHtml) {
-											
-				// get the roles from this combination
-				List<String> roles = roleHtml.getRoles();
-											
-				// keep a running count for the roles we have
-				int gotRoleCount = 0;
-				
-				// if there are roles to check
-				if (roles != null) {
-				
-					// retain how many roles we need our user to have
-					int rolesRequired = roles.size();
+			// whether we're rebulding the page for each request
+	    	boolean rebuildPages = Boolean.parseBoolean(rapidServlet.getServletContext().getInitParameter("rebuildPages"));
+			
+	    	// check whether or not we rebuild
+	    	if (rebuildPages) {
+	    		// get the cached head html
+	    		writer.write(getHtmlHead(application, true));
+	    	} else {
+	    		// get the cached head html
+	    		writer.write(getHtmlHeadCached(application));
+	    	}
 					
-					// check whether we need any roles and that our user has any at all
-					if (rolesRequired > 0) {
-						// check the user has as many roles as this combination requires
-						if (userRoles.size() >= rolesRequired) {
-							// loop the roles we need for this combination
-							for (String role : roleHtml.getRoles()) {
-								// check this role
-								if (userRoles.contains(role)) {
-									// increment the got role count
-									gotRoleCount ++;
+	    	writer.write("  <body id='" + _id + "' style='visibility:hidden;'>\n");
+			
+			// a reference for the body html
+			String bodyHtml = null;
+			
+			// get the users roles
+			List<String> userRoles = user.getRoles();
+										
+			// check we have userRoles and htmlRoles
+			if (userRoles != null && _rolesHtml != null) {
+																	
+				// loop each roles html entry
+				for (RoleHtml roleHtml : _rolesHtml) {
+												
+					// get the roles from this combination
+					List<String> roles = roleHtml.getRoles();
+												
+					// keep a running count for the roles we have
+					int gotRoleCount = 0;
+					
+					// if there are roles to check
+					if (roles != null) {
+					
+						// retain how many roles we need our user to have
+						int rolesRequired = roles.size();
+						
+						// check whether we need any roles and that our user has any at all
+						if (rolesRequired > 0) {
+							// check the user has as many roles as this combination requires
+							if (userRoles.size() >= rolesRequired) {
+								// loop the roles we need for this combination
+								for (String role : roleHtml.getRoles()) {
+									// check this role
+									if (userRoles.contains(role)) {
+										// increment the got role count
+										gotRoleCount ++;
+									}
 								}
-							}
-						}									
-					}
-													
-					// if we have all the roles we need
-					if (gotRoleCount == rolesRequired) {
-						// use this html
-						bodyHtml = roleHtml.getHtml();
-						// no need to check any further
-						break;
-					}
+							}									
+						}
+														
+						// if we have all the roles we need
+						if (gotRoleCount == rolesRequired) {
+							// use this html
+							bodyHtml = roleHtml.getHtml();
+							// no need to check any further
+							break;
+						}
+						
+					} 
 					
-				} 
-				
+				}
+																										
+			} 
+			
+			// if haven't got any body html yet use the full version
+			if (bodyHtml == null) bodyHtml = _htmlBody;
+			
+			// check the status of the application
+			if (application.getStatus() == Application.STATUS_DEVELOPMENT) {
+				// pretty print
+				writer.write(Html.getPrettyHtml(bodyHtml.trim()));
+			} else {
+				// no pretty print
+				writer.write(bodyHtml.trim());
 			}
-																									
-		} 
-		
-		// if haven't got any body html yet use the full version
-		if (bodyHtml == null) bodyHtml = _htmlBody;
-		
-		// check the status of the application
-		if (application.getStatus() == Application.STATUS_DEVELOPMENT) {
-			// pretty print
-			writer.write(Html.getPrettyHtml(bodyHtml.trim()));
+									
 		} else {
-			// no pretty print
-			writer.write(bodyHtml.trim());
-		}
+			
+			// write the head html without the JavaScript and CSS (index.css is substituted for us)
+			writer.write(getHtmlHead(application, false));
+						
+			// open the body
+			writer.write("  <body>\n");
+			
+			// write no permission
+			writer.write("<div class=\"image\"><img src=\"images/RapidLogo_200x134.png\" /></div><div class=\"title\"><span>Rapid - No permssion</span></div><div class=\"info\"><p>You do not have permssion to view this page</p></div>\n");
+			
+		} // page permission check		
 		
 		try {
 			
-			// get the security
-			SecurityAdapater security = application.getSecurity();
-			
 			// assume not admin link
-			boolean adminLink = false;
+			boolean adminLinkPermission = false;
 				
 			// check for the design role, super is required as well if the rapid app
 			if ("rapid".equals(application.getId())) {
-				if (security.checkUserRole(rapidRequest, Rapid.DESIGN_ROLE) && security.checkUserRole(rapidRequest, Rapid.SUPER_ROLE)) adminLink = true;
+				if (security.checkUserRole(rapidRequest, Rapid.DESIGN_ROLE) && security.checkUserRole(rapidRequest, Rapid.SUPER_ROLE)) adminLinkPermission = true;
 			} else {
-				if (security.checkUserRole(rapidRequest, Rapid.DESIGN_ROLE)) adminLink = true;
+				if (security.checkUserRole(rapidRequest, Rapid.DESIGN_ROLE)) adminLinkPermission = true;
 			}
 			
 			// if we had the admin link
-			if (adminLink) {
+			if (adminLinkPermission) {
 				
 				writer.write("<div id='designShow' style='position:fixed;left:0px;bottom:0px;width:30px;height:30px;z-index:1000;'></div>\n"
 		    	+ "<img id='designLink' style='position:fixed;left:6px;bottom:6px;z-index:1001;display: none;' src='images/gear_24x24.png'></img>\n"
