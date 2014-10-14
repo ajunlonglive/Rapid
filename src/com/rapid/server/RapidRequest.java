@@ -119,7 +119,7 @@ public class RapidRequest {
 			if (values != null) _request.getSession().setAttribute(name, values[0]);
 		}
 	}	
-							
+				
 	// can also instantiate a rapid request with just an application object (this is used by the rapid action)
 	public RapidRequest(RapidHttpServlet rapidServlet, HttpServletRequest request, Application application) {
 		_rapidServlet = rapidServlet;
@@ -129,6 +129,9 @@ public class RapidRequest {
 	
 	// can also instantiate a rapid request with just an HttpServletRequest
 	public RapidRequest(HttpServletRequest request) {
+		// store the user name from the session
+		_userName = (String) request.getSession().getAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME);
+		// store the request
 		_request = request;
 	}
 	

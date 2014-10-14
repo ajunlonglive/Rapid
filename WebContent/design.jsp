@@ -39,8 +39,6 @@ Logger.getLogger(this.getClass()).debug("design.jsp request : " + request.getQue
 Applications applications = (Applications) getServletContext().getAttribute("applications");
 // retain a ref to rapid app
 Application rapid = applications.get("rapid");
-// get the userName
-String userName = (String) session.getAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME);
 // get a rapid request
 RapidRequest rapidRequest = new RapidRequest(request); 
 // check permission
@@ -71,7 +69,7 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, Rap
 	<script type="text/javascript" src="<%=Application.getWebFolder(rapid)%>/rapid.js"></script>
 	<script type="text/javascript">
 	
-	var _userName = "<%=userName %>";
+	var _userName = "<%=rapidRequest.getUserName() %>";
 	
 	</script>	
 	<link rel="stylesheet" type="text/css" href="styles/designer.css"></link>

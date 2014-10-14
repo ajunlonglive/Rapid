@@ -357,7 +357,7 @@ public class Webservice extends Action {
 	}
 	
 	@Override
-	public JSONObject doAction(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, JSONObject jsonAction) throws Exception {
+	public JSONObject doAction(RapidRequest rapidRequest, JSONObject jsonAction) throws Exception {
 		
 		_logger.trace("Webservice action : " + jsonAction);
 		
@@ -380,7 +380,7 @@ public class Webservice extends Action {
 			JSONArray jsonInputs = jsonAction.optJSONArray("inputs");
 			
 			// placeholder for the action cache
-			ActionCache actionCache = rapidServlet.getActionCache();
+			ActionCache actionCache = rapidRequest.getRapidServlet().getActionCache();
 				
 			// if an action cache was found
 			if (actionCache != null) {
