@@ -1700,9 +1700,11 @@ public class Rapid extends Action {
 				
 				// fetch the parameter
 				Parameter parameter = app.getParameters().get(index);
+				
 				// update it
 				parameter.setName(name);
 				parameter.setValue(value);
+				
 				// save the app
 				app.save(rapidServlet, rapidRequest, true);
 								
@@ -1737,16 +1739,20 @@ public class Rapid extends Action {
 				int ppi = jsonAction.getInt("ppi");
 				double scale = jsonAction.getDouble("scale");
 				
+				// fetch the devices
+				Devices devices = rapidServlet.getDevices();
 				// fetch the device
-				Device device = rapidServlet.getDevices().get(index);
-				// update it
+				Device device = devices.get(index);
+				
+				// update the device
 				device.setName(name);
 				device.setWidth(width);
 				device.setHeight(height);
 				device.setPPI(ppi);
 				device.setScale(scale);
-				// save the app
-				app.save(rapidServlet, rapidRequest, true);
+				
+				// save the devices
+				Devices.save(rapidServlet.getServletContext(), devices);
 								
 				// set the result message
 				result.put("message", "Device details saved");
