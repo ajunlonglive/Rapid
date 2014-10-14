@@ -8,10 +8,24 @@
         <width>0</width>
     </devices>
     <devices>
-        <height>0</height>
-        <name>Full screen</name>
-        <PPI>96</PPI>
-        <scale>1.0</scale>
-        <width>0</width>
+        <height>1280</height>
+        <name>HTC One X</name>
+        <PPI>312</PPI>
+        <scale>2.0</scale>
+        <width>720</width>
+    </devices>
+    <devices>
+        <height>1920</height>
+        <name>HTC One M8</name>
+        <PPI>441</PPI>
+        <scale>3.0</scale>
+        <width>1080</width>
+    </devices>
+    <devices>
+        <height>2560</height>
+        <name>Nexus 10</name>
+        <PPI>300</PPI>
+        <scale>2.0</scale>
+        <width>1600</width>
     </devices>
 </devices>
