@@ -110,9 +110,12 @@ public class Rapid extends RapidHttpServlet {
 			
 					// check if there is a Rapid action
 					if ("download".equals(rapidRequest.getActionName())) {
+						
+						// set the file name
+						String fileName = app.getId() + "_" + rapidRequest.getUserName() + ".zip";
 										
 						// create the zip file
-						app.zip(this, rapidRequest, user, app.getId() + ".zip", true);
+						app.zip(this, rapidRequest, user, fileName, true);
 						
 						// set the type as a .zip
 						response.setContentType("application/x-zip-compressed");
@@ -121,7 +124,7 @@ public class Rapid extends RapidHttpServlet {
 						response.setHeader("Content-disposition","attachment; filename=" + app.getId() + ".zip");
 																
 						// get the file for the zip we're about to create
-						File zipFile = new File(getServletContext().getRealPath("/WEB-INF/temp/" + app.getId() + ".zip"));
+						File zipFile = new File(getServletContext().getRealPath("/WEB-INF/temp/" + fileName));
 						
 						// get it's size
 						long fileSize = Files.getSize(zipFile);
@@ -139,6 +142,9 @@ public class Rapid extends RapidHttpServlet {
 						}
 						in.close();
 						os.flush();
+						
+						// delete the file
+						zipFile.delete();
 						
 					} else {
 																	
