@@ -904,6 +904,8 @@ public class Page {
 		
 		stringBuilder.append("    <title>" + _title + " - by Rapid</title>\n");
 		
+		stringBuilder.append("    <meta description=\"Created using Rapid - www.rapid-is.co.uk\"/>\n");
+		
 		stringBuilder.append("    <meta charset=\"utf-8\"/>\n");
 		
 		stringBuilder.append("    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no\" />\n");
@@ -914,7 +916,13 @@ public class Page {
 		stringBuilder.append("    " + getResourcesHtml(application).trim().replace("\n", "\n    ") + "\n");
 												
 		// start building the inline js for the page				
-		stringBuilder.append("    <script type='text/javascript'>");
+		stringBuilder.append("    <script type='text/javascript'>\n\n");
+		
+		stringBuilder.append("var _appId = '" + application.getId() + "';\n");
+		
+		stringBuilder.append("var _appVersion = '" + application.getVersion() + "';\n");
+		
+		stringBuilder.append("var _pageId = '" + _id + "';\n\n");
 		
 		// make a new string builder just for the js (so we can minify it independently)
 		StringBuilder jsStringBuilder = new StringBuilder(); 

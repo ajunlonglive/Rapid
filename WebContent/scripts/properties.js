@@ -41,7 +41,7 @@ function showProperties(control) {
 	for (var i in _listeners) {
 		_listeners[i].unbind();
 	}
-	
+		
 	// grab a reference to the properties div
 	var propertiesPanel = $(".propertiesPanelDiv");
 	// set the parent height to auto
@@ -173,8 +173,8 @@ function createDialogue(cell, width, title) {
 		// update the screen layout
 		windowResize("PropertyDialogue");
 	}));	
-	// listener to show the dialogue
-	_listeners.push( cell.click( function(ev) { 
+	// listener to show the dialogue also retained between property updates
+	_dialogueListeners.push( cell.click( function(ev) { 
 		dialogue.css({
 			"left": cell.offset().left + cell.outerWidth() - dialogue.outerWidth() + 1, 
 			"top": cell.offset().top			
@@ -188,7 +188,7 @@ function createDialogue(cell, width, title) {
 	return dialogue;	
 }
 
-//this function clears down the property dialogues
+// this function clears down the property dialogues
 function hideDialogues() {
 		
 	// grab a reference to any dialogues
@@ -2204,7 +2204,7 @@ function Property_device(cell, propertyObject, property, refreshHtml, refreshPro
 		// store it
 		if (typeof(localStorage) !== "undefined") localStorage.setItem("_device" ,_device);
 		// recalculate scale
-		_scale = _ppi / _devices[_device].ppi * _devices[_device].scale * _zoom;
+		_scale = _ppi / _devices[_device].PPI * _devices[_device].scale * _zoom;
 		// windowResize
 		windowResize("_device");
 	}));
@@ -2239,7 +2239,7 @@ function Property_zoom(cell, propertyObject, property, refreshHtml, refreshPrope
 		// store it
 		if (typeof(localStorage) !== "undefined") localStorage.setItem("_zoom" ,_zoom);
 		// recalculate scale
-		_scale = _ppi / _devices[_device].ppi * _devices[_device].scale * _zoom;
+		_scale = _ppi / _devices[_device].PPI * _devices[_device].scale * _zoom;
 		// windowResize
 		windowResize("_zoom");
 	}));	
