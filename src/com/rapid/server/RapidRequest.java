@@ -47,7 +47,7 @@ public class RapidRequest {
 	
 	private RapidHttpServlet _rapidServlet;
 	private HttpServletRequest _request;
-	private String _actionName, _appId, _version;
+	private String _actionName, _appId, _version, _userName;
 	private Application _application;		
 	private Page _page;
 	private Control _control;
@@ -56,8 +56,7 @@ public class RapidRequest {
 	// useful get methods
 	
 	public RapidHttpServlet getRapidServlet() { return _rapidServlet; }
-	public HttpServletRequest getRequest() { return _request; }
-	public String getUserName() { return (String) _request.getSession().getAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME); }
+	public HttpServletRequest getRequest() { return _request; }	
 	public String getActionName() { return _actionName; }
 	public String getAppId() { return _appId; }
 	public String getVersion() { return _version; }
@@ -67,10 +66,19 @@ public class RapidRequest {
 	public Action getAction() { return _action; }
 	public Object getSessionAttribute(String name) { return _request.getSession().getAttribute(name); }
 	
+	// property
+	public String getUserName() { return _userName; }
+	public void setUserName(String userName) { _userName = userName; }
+	
 	// most likely to construct a rapidRequest from a servlet and an http request
 	public RapidRequest(RapidHttpServlet rapidServlet, HttpServletRequest request) {
+		// retain the servlet
 		_rapidServlet = rapidServlet;
+		// retain the http request
 		_request = request;
+		// store the user name from the session
+		_userName = (String) _request.getSession().getAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME);
+		// look for an action parameter
 		_actionName = request.getParameter("action");			
 		// look for an appId
 		_appId = request.getParameter("a");
