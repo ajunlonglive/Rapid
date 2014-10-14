@@ -803,6 +803,9 @@ public class Rapid extends Action {
 				// get the userName from the incoming json
 				String userName = jsonAction.getString("userName");
 				
+				// set the request user
+				rapidRequest.setUserName(userName);
+				
 				// get the app security
 				SecurityAdapater security = app.getSecurity();
 				
@@ -1564,6 +1567,8 @@ public class Rapid extends Action {
 				
 				// get the userName
 				String userName = jsonAction.getString("userName").trim();
+				// override the standard request user
+				rapidRequest.setUserName(userName);
 				// delete the user
 				app.getSecurity().deleteUser(rapidRequest);
 				// remove any of their page locks
@@ -1586,7 +1591,9 @@ public class Rapid extends Action {
 			} else if ("NEWUSERROLE".equals(action)) {
 				
 				// get the userName
-				String userName = jsonAction.getString("userName").trim();								
+				String userName = jsonAction.getString("userName").trim();		
+				// override the standard request user
+				rapidRequest.setUserName(userName);
 				// get the role
 				String role = jsonAction.getString("role").trim();
 				// add the user role
@@ -1598,6 +1605,8 @@ public class Rapid extends Action {
 				
 				// get the userName
 				String userName = jsonAction.getString("userName").trim();
+				// override the standard request user
+				rapidRequest.setUserName(userName);
 				// get the role
 				String role = jsonAction.getString("role").trim();
 				// add the user role
@@ -1609,6 +1618,8 @@ public class Rapid extends Action {
 			
 				// get the userName
 				String userName = jsonAction.getString("userName").trim();
+				// override the standard request user
+				rapidRequest.setUserName(userName);
 				// get the description
 				String description = jsonAction.getString("description").trim();
 				// get the password

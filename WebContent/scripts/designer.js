@@ -115,15 +115,7 @@ var _nextPageId = 1;
 var _pasteMap = null;
 
 // a global object for the different devices we are supporting, typically for mobiles
-var _devices = null;
-/*
-[
-	{name:"Full screen", ppi: 96, scale: 1 },
-	{name:"HTC One X", width: 720, height: 1280, ppi: 312, scale: 2},
-	{name:"HTC One M8", width: 1080, height: 1920, ppi: 441, scale: 3},
-	{name:"Nexus 10", width: 1600, height: 2560, ppi: 300, scale: 2}
-];
-*/
+var _devices = [{name:"Desktop", width: 0, height: 0, ppi: 96, scale: 1 }];
 // a global for the ppi of the device we've loaded the designer in
 var _ppi = 96;
 // a global for the selected device index
@@ -562,23 +554,26 @@ function sizeBorder(control) {
 	});
 	// get the control class
 	var controlClass = _controlTypes[control.type];
+	// remove all move classes
+	_selectionBorder.removeClass("selectionBorderMove");
+	_selectionBorder.removeClass("selectionBorderNoMove");
+	_selectionBorder.removeClass("selectionBorderInnerMove");
+	_selectionBorder.removeClass("selectionBorderNoInnerMove");
+	_selectionBorder.children().removeClass("selectionBorderInnerMove");	
+	_selectionBorder.children().removeClass("selectionBorderNoInnerMove");
+		
 	// set the css according to move / no move
 	if (controlClass && controlClass.canUserMove) {
 		_selectionBorder.addClass("selectionBorderMove");
-		_selectionBorder.removeClass("selectionBorderNoMove");
-		_selectionBorder.children().addClass("selectionBorderInnerMove");
-		_selectionBorder.children().removeClass("selectionBorderNoInnerMove");
+		_selectionBorder.children().addClass("selectionBorderInnerMove");	
 		if (control.childControls.length == 0) {
-			_selectionBorder.addClass("selectionBorderInnerMove");
+			_selectionBorder.addClass("selectionBorderInnerMove");		
 		} else {
-			_selectionBorder.removeClass("selectionBorderNoInnerMove");
+			_selectionBorder.addClass("selectionBorderNoInnerMove");	
 		}
 	} else {
-		_selectionBorder.addClass("selectionBorderNoMove");
-		_selectionBorder.removeClass("selectionBorderMove");
+		_selectionBorder.addClass("selectionBorderNoMove");		
 		_selectionBorder.children().addClass("selectionBorderNoInnerMove");
-		_selectionBorder.children().removeClass("selectionBorderInnerMove");
-		_selectionBorder.removeClass("selectionBorderInnerMove");
 	}
 }
 
@@ -1948,17 +1943,9 @@ $(document).ready( function() {
     				_controlTypes[c.type] = f; 	
     	    	}
         		
-        		// get the devices
-        		var devices = systemData.devices;
-        		// check them
-        		if (devices == null) {
-        			// make the desktop
-        			_devices = [{name:"Desktop",width:0,height:0,ppi:96,scale:1}];
-        		} else {
-        			// store them globally
-        			_devices = devices;
-        		}
-        		
+        		// if we got devices store them globally
+        		if (systemData.devices) _devices = systemData.devices;
+        		        		
         		// check if we have local storage
         		if (typeof(localStorage) !== "undefined") {
         			// retrieve device index from local storage
