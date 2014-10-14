@@ -1384,17 +1384,25 @@ public class Application {
 			// create a list of sources for our zip
 			ZipSources zipSources = new ZipSources();
 			
+			// deleteable folder
+			File deleteFolder = null;
+			
 			// create a file object for the webcontent folder
 			File webFolder = new File(getWebFolder(rapidServlet.getServletContext()));
 			
 			// if for offlineUse
 			if (offlineUse) {
-				
+												
 				// loop the contents of the webFolder and place in root of .zip
 				for (File file : webFolder.listFiles()) {
 					// add this file to the WEB-INF path
 					zipSources.add(file, "applications/" + _id);
 				}
+				
+				// set the delete folder
+				deleteFolder = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/temp/" + rapidRequest.getUserName() + "_" + _id));
+				// create it
+				deleteFolder.mkdirs();
 				
 				// check we have pages
 				if (_pages != null) {					
@@ -1402,31 +1410,31 @@ public class Application {
 					for (String pageId : _pages.keySet()) {
 						// get a reference to the page
 						Page page = _pages.get(pageId);
-						// create a file for it 
-						File pageFile = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/temp/" + pageId + ".htm"));
+						// create a file for it in the delete folder
+						File pageFile = new File(deleteFolder + "/" + pageId + ".htm");
 						// create a file writer for it for now
 						FileWriter pageFileWriter = new FileWriter(pageFile);
 						// for now get a printWriter to write the page html
 						page.writeHtml(rapidServlet, rapidRequest, this, user, pageFileWriter);
 						// close it
 						pageFileWriter.close();
-						// add the file to the zip
-						zipSources.add(pageFile);
+						// add the file to the zip with a root path
+						zipSources.add(pageFile, "");
 					}
 					// get the first page
 					Page page = _pages.get(_startPageId);
 					// if we got one add it as index.htm
 					if (page != null) {
-						// create a file for it for now
-						File pageFile = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/temp/index.htm"));
+						// create a file for it for it in the delete folder
+						File pageFile = new File(deleteFolder + "/" + "index.htm");
 						// create a file writer for it for now
 						FileWriter pageFileWriter = new FileWriter(pageFile);
 						// for now get a printWriter to write the page html
 						page.writeHtml(rapidServlet, rapidRequest, this, user, pageFileWriter);
 						// close it
 						pageFileWriter.close();
-						// add the file to the zip
-						zipSources.add(pageFile);
+						// add the file to the zip with a root path
+						zipSources.add(pageFile, "");
 					}
 					
 				}
@@ -1471,7 +1479,7 @@ public class Application {
 			// create it if not there
 			if (!tempDir.exists()) tempDir.mkdir();
 									
-			// create the zip file object with our destination
+			// create the zip file object with our destination, always in the temp folder
 			ZipFile zipFile = new ZipFile(new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/temp/" + fileName)));
 
 			// create a list of files to ignore
@@ -1481,6 +1489,18 @@ public class Application {
 			
 			// zip the sources into the file
 			zipFile.zipFiles(zipSources, ignoreFiles);
+			
+			// loop the deleteable files
+			if (deleteFolder != null) {
+				try {
+					// delete the folder and all contents
+					Files.deleteRecurring(deleteFolder);
+				} catch (Exception ex) {
+					// log exception
+					Logger.getLogger(this.getClass()).error("Error deleting temp file " + deleteFolder, ex);
+				}
+								
+			}
 
 		}
 			    	    		

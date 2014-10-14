@@ -86,7 +86,6 @@ if (gotAppAndPage && designerPermission) {
 	out.print(rapidPage.getResourcesHtml(rapidApp, false));	
 	
 %>
-	<link rel="stylesheet" type="text/css" href="<%=Application.getWebFolder(rapidApp)%>/<%=rapidPage.getName()%>.css"></link>	
 	<style type="text/css">
 	
 	html {
@@ -107,6 +106,7 @@ if (gotAppAndPage && designerPermission) {
 		width: 300px;
 		background: white;
 		box-shadow: 5px 5px 5px #888;
+		font-family: Arial;
 	}
 	
 	.pageLoading p {	
