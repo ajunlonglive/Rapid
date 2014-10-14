@@ -1287,6 +1287,8 @@ function loadVersion(forceLoad) {
 						showEvents(_selectedControl);
 						// show the styles
 						showStyles(_selectedControl);
+						// arrange the non-visible controls if our control looks like one
+						if (!controlClass.canUserMove) arrangeNonVisibleControls();
 						// set the _mouseDown so the moving kicks in
 						_mouseDown = true;    						
 					} else {
@@ -2788,10 +2790,10 @@ $(document).mouseup( function(ev) {
 		if (_controlTypes[_selectedControl.type].canUserAdd) _selectedControl.object.show();
 		// if we were moving a control different from the _selectedControl
 		if (_movingControl && _movedoverControl && _movedoverDirection && _movedoverControl.object[0] !== _selectedControl.object[0]) {			
-			// remove the object from it's current parent
-			removeControlFromParent(_selectedControl);
 			// add an undo snapshot for the whole page 
 			addUndo(true);
+			// remove the object from it's current parent
+			removeControlFromParent(_selectedControl);			
 			// move the selectedObject to the left or right of the movedoverObject, or insert if in the centre
 			switch (_movedoverDirection) {
 			case "L" : 

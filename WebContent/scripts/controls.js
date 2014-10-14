@@ -475,7 +475,7 @@ function Control(controlType, parentControl, jsonControl, loadComplexObjects, pa
 		
 		// retain that this control can be used from other pages, if applicable
 		if (controlClass.canBeUsedFromOtherPages) this.canBeUsedFromOtherPages = true; 
-				
+								
 	} else {
 		var parentType = parentControl.type;
 		if (!parentType) parentType = "page";
