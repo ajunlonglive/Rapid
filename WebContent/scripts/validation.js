@@ -106,7 +106,7 @@ function showValidation(control) {
 		// get a reference to the type drop down
 		var typeDropDown = validationTable.children().last().children().last().children().last();
 		// add a listener
-		_listeners.push( typeDropDown.change( function(ev) {
+		addListener( typeDropDown.change( function(ev) {
 			// get the selected type
 			var type = $(ev.target).val();
 			// set the validation type

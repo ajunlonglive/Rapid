@@ -2604,10 +2604,12 @@ function coverMouseDown(ev) {
 	_mouseDown = true;
 	// hide the control panel (sometimes it's mouseout isn't hit)
 	if (!_panelPinned) $("#controlPanel").hide("slide", {direction: "left"}, 200);
+	// if there is a selected control with unapplied styles, apply now before wiping everything out
+	if (_selectedControl && !_stylesApplied) applyStyles();
 	// get the control under the mouse X/Y
 	var c = getMouseControl(ev);
 	// if we got one
-	if (c) {
+	if (c) {		
 		// retain reference to the selected object
 		_selectedControl = c;									
 		// stop mousemove if canMove is not a property of the control class

@@ -654,7 +654,6 @@ public class Designer extends RapidHttpServlet {
 		return control;		
 	}
 
-
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 		RapidRequest rapidRequest = new RapidRequest(this, request);
@@ -800,7 +799,7 @@ public class Designer extends RapidHttpServlet {
 								// if the page's name changed we need to remove it
 								if (oldPage != null) {
 									if (!oldPage.getName().equals(newPage.getName())) {
-										oldPage.delete(this, rapidRequest);
+										oldPage.delete(this, rapidRequest, application);
 									}
 								}
 																

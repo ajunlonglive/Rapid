@@ -483,6 +483,10 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 											<xs:complexType>
 												<xs:sequence>
 													<xs:element name="type">
+														<xs:annotation>
+															<xs:documentation>See Event.java for the list of events that Rapid recognises
+															</xs:documentation>
+														</xs:annotation>
 														<xs:simpleType>
 															<xs:restriction base="xs:string">
 																<xs:minLength value="1" />

@@ -61,8 +61,8 @@ function addHelp(id, property, right) {
 	
 	// if this is a hint for a property add the listeners to the array for deregistration
 	if (property) {
-		_listeners.push(outListener);
-		_listeners.push(overListener);
+		addListener(outListener);
+		addListener(overListener);
 	}
 }
 

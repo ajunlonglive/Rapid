@@ -197,7 +197,7 @@ function showEvents(control) {
 				// get a reference to the select
 				var addAction = actionsTable.children().last().children().last().children().last();
 				// add a change listener
-				_listeners.push( addAction.change( { control: control, event: event }, function(ev) {
+				addListener( addAction.change( { control: control, event: event }, function(ev) {
 					// get a reference to the control
 					var control = ev.data.control;
 					// get a reference to the eventType
@@ -238,7 +238,7 @@ function showAction(actionsTable, action, collection, refreshFunction) {
 	// get a reference to the delete image
 	var deleteImage = actionsTable.find("img.delete").last(); 
 	// add a click listener to the delete image
-	_listeners.push( deleteImage.click( {action: action, collection: collection, refreshFunction: refreshFunction}, function(ev) {
+	addListener( deleteImage.click( {action: action, collection: collection, refreshFunction: refreshFunction}, function(ev) {
 		// loop the collection
 		for (var i in collection) {
 			// if we've found the object

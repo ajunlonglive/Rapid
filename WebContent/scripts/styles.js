@@ -135,6 +135,8 @@ var _styleHint;
 var _styleList;
 // whether we had just clicked on the style (so unfocus knows)
 var _styleClicked = false;
+// whether the styles have been applied yet (selecting another control can leave them unapplied)
+var _stylesApplied = false;
 
 function styleRule_mutliCheck(name, value, number) {
 	var f = window["styleRule_" + name]; 
@@ -535,6 +537,95 @@ function rebuildStyles() {
 	positionBorder(_selectedControl.object.offset().left + _panelPinnedOffset, _selectedControl.object.offset().top);
 }
 
+// applys the styles in the panel to the control
+function applyStyles() {
+	
+	// only if a control is currently selected
+	if (_selectedControl) {
+		
+		// if we lost the focus due to a style being selected with the mouse get the selection back
+		if (_styleClicked) {
+			
+			// if we'd just chosen an attribute, now jump to the value
+			if (!_styleSpan.hasClass("styleValue")) {
+				// set the edit span to the value
+				_styleSpan = _styleCell.children("span").last();
+				// edit the style value
+				styleEdit();
+			}
+			// mark the click over
+			_styleClicked = false;
+			
+		} else {	
+										
+			// get the entry from the editable div
+			var entry = _styleInput.text();
+			// add a semi-colon to the end if there isn't one
+			if (_styleSpan.is(".styleValue") && entry.lastIndexOf(";") != entry.length - 1) entry += ";";
+			// write the entry to the span
+			_styleSpan.html(entry);
+			// hide the input
+			_styleInput.hide();
+			// get the name
+			var name = _styleCell.children("span").first().text();
+			// get the value
+			var value = _styleCell.children("span").last().text();
+			// remove the semi-colon from the value for validation checking
+			value = value.substr(0, value.length - 1);
+			// check the style for validity
+			if (validateStyle(name, value)) {
+				_styleCell.removeClass("validationFail");
+			} else {
+				_styleCell.addClass("validationFail");
+			}									
+			// if we've edited the attribute class remove if the doesn't exist
+			if (!_styleSpan.hasClass("styleValue")) {
+				var exists = false;
+				for (var i in _styleRules) {
+					// match the value to the style attribute (name)
+					if (name == i) {
+						exists = true;
+						break;
+					}
+				}
+				// remove the row if we failed to find the attribute in the list
+				if (!exists) _styleCell.parent().remove();
+			}
+			// make sure reorder and delete are present				
+			if (_styleCell.attr("colspan")) {
+				_styleCell.removeAttr("colspan");
+				_styleCell.after("<td><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td>");
+				// attach a delete listener 
+				addListener( _styleCell.parent().find("img.delete").click( function(ev) {
+					// add an undo snapshot
+					addUndo();
+					// remove the row
+					$(this).parent().parent().remove();
+					// rebuild the styles (and assign to control)
+					rebuildStyles();										
+				}));	
+			}
+			
+			// make sure there's always one empty row at the bottom
+			if (_styleTable.find("td.styleCell").length == 0 || _styleTable.find("td.styleCell").last().text()) {
+				_styleTable.append("<tr><td class='styleCell' colspan='2'></td></tr>");
+				_styleTable.find("td.styleCell").last().click( function(ev) { 
+					styleClick(ev); 
+				});
+			}
+
+		} // style from list clicked
+		
+		// rebuild the styles (and assign to control)
+		rebuildStyles();		
+		
+	}
+	
+	// remember we have applied the styles
+	_stylesApplied = true;
+	
+}
+
 
 $(document).ready( function() {
 	
@@ -542,7 +633,10 @@ $(document).ready( function() {
 	_styleInput = $("#styleInput");
 	
 	// add a keyup listener
-	_styleInput.keyup( function(ev){				
+	_styleInput.keyup( function(ev) {
+		// retain that the styles have not been reapplied yet
+		_stylesApplied = false;
+		// get the value
 		var val = _styleInput.text();
 		// remove any linebreaks, or tabs, if required
 		if (val != val.replace(/(\r\n|\n|\r|\t)/gm,"")) {
@@ -621,91 +715,12 @@ $(document).ready( function() {
 			} // style value				
 		} // key switch		
 	});
-	
+		
 	// add a blur listener
 	_styleInput.blur( function(ev) {		
 		_styleHint.hide();
 		_styleList.hide();
-		// only if a control is currently selected
-		if (_selectedControl) {
-			// if we lost the focus due to a style being selected with the mouse get the selection back
-			if (_styleClicked) {
-				
-				// if we'd just chosen an attribute, now jump to the value
-				if (!_styleSpan.hasClass("styleValue")) {
-					// set the edit span to the value
-					_styleSpan = _styleCell.children("span").last();
-					// edit the style value
-					styleEdit();
-				}
-				// mark the click over
-				_styleClicked = false;
-				
-			} else {	
-											
-				// get the entry from the editable div
-				var entry = _styleInput.text();
-				// add a semi-colon to the end if there isn't one
-				if (_styleSpan.is(".styleValue") && entry.lastIndexOf(";") != entry.length - 1) entry += ";";
-				// write the entry to the span
-				_styleSpan.html(entry);
-				// hide the input
-				_styleInput.hide();
-				// get the name
-				var name = _styleCell.children("span").first().text();
-				// get the value
-				var value = _styleCell.children("span").last().text();
-				// remove the semi-colon from the value for validation checking
-				value = value.substr(0, value.length - 1);
-				// check the style for validity
-				if (validateStyle(name, value)) {
-					_styleCell.removeClass("validationFail");
-				} else {
-					_styleCell.addClass("validationFail");
-				}									
-				// if we've edited the attribute class remove if the doesn't exist
-				if (!_styleSpan.hasClass("styleValue")) {
-					var exists = false;
-					for (var i in _styleRules) {
-						// match the value to the style attribute (name)
-						if (name == i) {
-							exists = true;
-							break;
-						}
-					}
-					// remove the row if we failed to find the attribute in the list
-					if (!exists) _styleCell.parent().remove();
-				}
-				// make sure reorder and delete are present				
-				if (_styleCell.attr("colspan")) {
-					_styleCell.removeAttr("colspan");
-					_styleCell.after("<td><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td>");
-					// attach a delete listener 
-					_listeners.push( _styleCell.parent().find("img.delete").click( function(ev) {
-						// add an undo snapshot
-						addUndo();
-						// remove the row
-						$(this).parent().parent().remove();
-						// rebuild the styles (and assign to control)
-						rebuildStyles();										
-					}));	
-				}
-				
-				// make sure there's always one empty row at the bottom
-				if (_styleTable.find("td.styleCell").length == 0 || _styleTable.find("td.styleCell").last().text()) {
-					_styleTable.append("<tr><td class='styleCell' colspan='2'></td></tr>");
-					_styleTable.find("td.styleCell").last().click( function(ev) { 
-						styleClick(ev); 
-					});
-				}
-
-			} // style from list clicked
-			
-			// rebuild the styles (and assign to control)
-			rebuildStyles();		
-			
-		}
-		
+		applyStyles();		
 	});
 			
 });
@@ -768,7 +783,7 @@ function showStyles(control) {
 							}		
 							// attach a delete listener to each row
 							stylesTable.find("img.delete").each( function() {
-								_listeners.push( $(this).click( function(ev) {
+								addListener( $(this).click( function(ev) {
 									// add an undo snapshot
 									addUndo();
 									// remove the row
@@ -789,7 +804,7 @@ function showStyles(control) {
 				stylesTable.append("<tr><td class='styleCell' colspan='2'></td></tr>");
 				// attach a click listener to each row
 				stylesTable.find("td.styleCell").each( function() {
-					_listeners.push( $(this).click( function(ev) {
+					addListener( $(this).click( function(ev) {
 						styleClick(ev);					
 					}));
 				});
@@ -815,7 +830,7 @@ function showStyles(control) {
 			// find the delete
 			var deletes = classesTable.find("img");
 			// add a listener
-			_listeners.push( deletes.click( {control: control}, function(ev) {
+			addListener( deletes.click( {control: control}, function(ev) {
 				// create an undo snapshot just before we apply the change
 				addUndo();
 				// get the del image
@@ -842,7 +857,7 @@ function showStyles(control) {
 			// add the known options
 			addClass.append(classOptions);
 			// change listener
-			_listeners.push( addClass.change( {control : control}, function(ev) {			
+			addListener( addClass.change( {control : control}, function(ev) {			
 				// get the potential new class
 				var newClass = $(this).val();
 				// get the classes
@@ -874,6 +889,9 @@ function showStyles(control) {
 		} // styles check
 		
 	} // control check
+	
+	// retain that styles have been applied
+	_stylesApplied = true;
 	
 }
 

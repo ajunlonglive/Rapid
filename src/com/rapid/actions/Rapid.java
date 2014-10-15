@@ -1387,7 +1387,7 @@ public class Rapid extends Action {
 				// retrieve the page
 				Page delPage = app.getPage(id);
 				// delete it if we got one
-				if (delPage != null) delPage.delete(rapidServlet, rapidActionRequest);
+				if (delPage != null) delPage.delete(rapidServlet, rapidActionRequest, app);
 				// set the result message
 				result.put("message", "Page " + delPage.getName() + " delete");
 				
