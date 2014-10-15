@@ -29,18 +29,54 @@ Functions related to control properties
 
 */
 
-// this holds all the property listeners so they can be properly detached
-var _listeners = [];
-// this holds all the dialogue listeners for the same reason
-var _dialogueListeners = [];
+// an id to unqiuely identify each property dialogue as we create them
+var _dialogueId = 0;
+// this holds all the property listeners by dialogue id so they can be properly detached
+var _dialogueListeners = {};
+
+// this finds the dialogue each listener is in and stores it so the relevant ones can be detached when the dialogue is closed
+function addListener(listener) {
+	// get the listener dialogue
+	var dialogue = listener.closest("div[data-dialogueId]");
+	// get the id
+	dialogueId = dialogue.attr("data-dialogueId");
+	// instantiate array if need be
+	if (!_dialogueListeners[dialogueId]) _dialogueListeners[dialogueId] = [];
+	// add the listener
+	_dialogueListeners[dialogueId].push(listener);
+}
+
+function removeListeners(dialogueId) {
+	// if we were given a dialogueId
+	if (dialogueId) {
+		// loop all the listeners
+		for (var i in _dialogueListeners[dialogueId]) {
+			// remove all dialogues
+			_dialogueListeners[dialogueId][i].unbind();
+		}
+		// remove the dialogue
+		delete _dialogueListeners[dialogueId];
+	} else {
+		// loop all the dialogues
+		for (var i in _dialogueListeners) {
+			// loop all the listeners
+			for (var j in _dialogueListeners[i]) {
+				// remove all dialogues
+				_dialogueListeners[i][j].unbind();
+			}
+			// remove the dialogue
+			delete _dialogueListeners[i];
+		}
+		// reset the dialogueId
+		_dialogueId = 0;
+	}
+}
 
 // this renders all the control properties in the properties panel
 function showProperties(control) {
 			
-	// remove any listeners
-	for (var i in _listeners) {
-		_listeners[i].unbind();
-	}
+	// remove all listeners for this panel
+	removeListeners("propertiesPanel");
 		
 	// grab a reference to the properties div
 	var propertiesPanel = $(".propertiesPanelDiv");
@@ -158,12 +194,16 @@ function setPropertyVisibilty(propertyObject, propertyKey, visibile) {
 
 // this is a reusable function for creating dialogue boxes
 function createDialogue(cell, width, title) {	
+	// increment the dialogue id counter
+	_dialogueId ++;
 	// create a dialogue if we need to
-	var dialogue = $("#propertiesDialogues").append("<div class='actionsPanelDiv dialogue' style='position:absolute;display:none;width:" + width + "px;z-index:10012;border:1px solid black;background-color:white;font-size:11px;padding:10px;'></div>").children().last();
+	var dialogue = $("#propertiesDialogues").append("<div data-dialogueId='" + _dialogueId + "' class='actionsPanelDiv dialogue' style='position:absolute;display:none;width:" + width + "px;z-index:10012;border:1px solid black;background-color:white;font-size:11px;padding:10px;'></div>").children().last();
 	// add a close link
 	var close = dialogue.append("<b style='float:left;margin-top:-5px;'>" + title + "</b><a href='#' style='float:right;margin-top:-5px;'>close</a></div>").children().last();
 	// note that this is not in the listeners collection so it's retained between property updates
-	_dialogueListeners.push( close.click( function(ev) {
+	addListener(close.click({dialogueId: _dialogueId}, function(ev) {
+		// remove listeners for this dialogue
+		removeListeners(ev.data.dialogueId);
 		// hide this dialogue
 		$(ev.target).closest("div.dialogue").remove();
 		// update the properties 
@@ -174,7 +214,7 @@ function createDialogue(cell, width, title) {
 		windowResize("PropertyDialogue");
 	}));	
 	// listener to show the dialogue also retained between property updates
-	_dialogueListeners.push( cell.click( function(ev) { 
+	addListener(cell.click( function(ev) { 
 		dialogue.css({
 			"left": cell.offset().left + cell.outerWidth() - dialogue.outerWidth() + 1, 
 			"top": cell.offset().top			
@@ -188,19 +228,14 @@ function createDialogue(cell, width, title) {
 	return dialogue;	
 }
 
-// this function clears down the property dialogues
-function hideDialogues() {
-		
+// this function clears down all of the property dialogues
+function hideDialogues() {		
+	// remove all listeners
+	removeListeners();	
 	// grab a reference to any dialogues
 	var propertiesDialogues = $("#propertiesDialogues");
 	// empty any propertyDialogues that we may have used before
-	propertiesDialogues.children().remove();		
-	
-	// remove any listeners
-	for (var i in _dialogueListeners) {
-		_dialogueListeners[i].unbind();
-	}
-	
+	propertiesDialogues.children().remove();				
 }
 
 function Property_text(cell, propertyObject, property, refreshHtml) {
@@ -212,7 +247,7 @@ function Property_text(cell, propertyObject, property, refreshHtml) {
 	// get a reference to the form control
 	var input = cell.children().last();
 	// add a listener to update the property
-	_listeners.push( input.keyup( function(ev) { updateProperty(propertyObject, property, ev.target.value, refreshHtml); }));
+	addListener( input.keyup( function(ev) { updateProperty(propertyObject, property, ev.target.value, refreshHtml); }));
 }
 
 function Property_integer(cell, propertyObject, property, refreshHtml) {
@@ -224,7 +259,7 @@ function Property_integer(cell, propertyObject, property, refreshHtml) {
 	// get a reference to the form control
 	var input = cell.children().last();
 	// add a listener to update the property
-	_listeners.push( input.keyup( function(ev) {
+	addListener( input.keyup( function(ev) {
 		var input = $(ev.target);
 		var val = input.val();    
 		// check integer match
@@ -249,7 +284,7 @@ function Property_bigtext(cell, propertyObject, property, refreshHtml) {
 	// add the text
 	textarea.text(value);
 	// add a listener to update the property
-	_listeners.push( cell.click( {textarea: textarea}, function(ev) { 
+	addListener( cell.click( {textarea: textarea}, function(ev) { 
 		textarea.css({
 			"left": cell.offset().left + cell.outerWidth() - 605, 
 			"top": cell.offset().top			
@@ -259,12 +294,12 @@ function Property_bigtext(cell, propertyObject, property, refreshHtml) {
 		textarea.focus();
 	}));	
 	// hide the textarea and update the cell on unfocus
-	_listeners.push( textarea.blur( {cell : cell, textarea: textarea}, function(ev) {
+	addListener( textarea.blur( {cell : cell, textarea: textarea}, function(ev) {
 		cell.text(textarea.val());
 		textarea.hide(); 
 	}));
 	// modify if the text is updated
-	_listeners.push( textarea.keyup( {cell : cell, textarea: textarea}, function(ev) { 
+	addListener( textarea.keyup( {cell : cell, textarea: textarea}, function(ev) { 
 		updateProperty(propertyObject, property, textarea.val(), refreshHtml);  
 	}));
 	
@@ -318,7 +353,7 @@ function Property_select(cell, propertyObject, property, refreshHtml, refreshPro
 	// get a reference to the object
 	var select = cell.children().last();
 	// add a listener to update the property
-	_listeners.push( select.change( {refreshProperties: refreshProperties}, function(ev) {
+	addListener( select.change( {refreshProperties: refreshProperties}, function(ev) {
 		// apply the property update
 		updateProperty(propertyObject, property, ev.target.value, refreshHtml);
 		// refresh the properties if requested
@@ -338,7 +373,7 @@ function Property_checkbox(cell, propertyObject, property, refreshHtml) {
 	// get a reference to the form control
 	var input = cell.children().last();
 	// add a listener to update the property
-	_listeners.push( input.change( function(ev) { 
+	addListener( input.change( function(ev) { 
 		updateProperty(propertyObject, property, ev.target.checked, refreshHtml); 
 	}));
 }
@@ -386,7 +421,7 @@ function Property_galleryImages(cell, gallery, property, refreshHtml, refreshDia
 	}
 	
 	// add the change listeners
-	_listeners.push( table.find("input").keyup( function (ev) {
+	addListener( table.find("input").keyup( function (ev) {
 		// get the input
 		var input = $(ev.target);
 		// get the image according to the row index, less the header
@@ -398,7 +433,7 @@ function Property_galleryImages(cell, gallery, property, refreshHtml, refreshDia
 	}));
 	
 	// add delete listeners
-	_listeners.push( table.find("img.delete").click( function (ev) {
+	addListener( table.find("img.delete").click( function (ev) {
 		// add undo
 		addUndo();
 		// get the image
@@ -418,7 +453,7 @@ function Property_galleryImages(cell, gallery, property, refreshHtml, refreshDia
 	table.append("<tr><td colspan='3'><a href='#'>add...</a></td></tr>");
 	
 	// add listener
-	_listeners.push( table.find("a").click( function (ev) {
+	addListener( table.find("a").click( function (ev) {
 		// add an image
 		images.push({url:""});
 		// refresh dialogue
@@ -465,7 +500,7 @@ function Property_imageFile(cell, propertyObject, property, refreshHtml, refresh
 		}
 		
 		// add change listener
-		_listeners.push( dropdown.change( function (ev) {
+		addListener( dropdown.change( function (ev) {
 			// get the file
 			var file = $(this).val();
 			// update the reference and rebuild the html
@@ -478,7 +513,7 @@ function Property_imageFile(cell, propertyObject, property, refreshHtml, refresh
 	table.append("<tr><td><form id='form_" + propertyObject.id + "' method='post' enctype='multipart/form-data' target='uploadIFrame' action='designer?action=uploadImage&a=" + _version.id + "&v=" + _version.id.version + "&p=" + _page.id + "&c=" + propertyObject.id + "'><input id='file_" + propertyObject.id + "' name='file' type='file'></input></form></td></tr><tr><td><input type='submit' value='Upload' /></td></tr>");
 	
 	// get a reference to the submit button
-	_listeners.push( table.find("input[type=submit]").click( {id : propertyObject.id}, function (ev) {
+	addListener( table.find("input[type=submit]").click( {id : propertyObject.id}, function (ev) {
 		// get the file value
 		var file = $("#file_" + ev.data.id).val();
 		// submit form if something provided
@@ -532,7 +567,7 @@ function Property_pageName(cell, page, property, refreshHtml, refreshDialogue) {
 	// get a reference to the form control
 	var input = cell.children().last();
 	// add a listener to update the property
-	_listeners.push( input.keyup( function(ev) {
+	addListener( input.keyup( function(ev) {
 		// get the input into a jquery object
 		var input = $(ev.target);
 		// get the current value
@@ -614,7 +649,7 @@ function Property_validationControls(cell, propertyObject, property, refreshHtml
 	}	
 	
 	// add listeners to the delete image
-	_listeners.push( table.find("img.delete").click( function(ev) {
+	addListener( table.find("img.delete").click( function(ev) {
 		// get the row
 		var row = $(this).parent().parent();
 		// remove the control
@@ -628,7 +663,7 @@ function Property_validationControls(cell, propertyObject, property, refreshHtml
 		
 	// add an add dropdown
 	var addControl = table.append("<tr><td colspan='2'><select><option value=''>Add control...</option>" + getValidationControlOptions() + "</select></td></tr>").children().last().children().last().children().last();
-	_listeners.push( addControl.change( {cell: cell, propertyObject: propertyObject, refreshHtml: refreshHtml, refreshDialogue: dialogue}, function(ev) {
+	addListener( addControl.change( {cell: cell, propertyObject: propertyObject, refreshHtml: refreshHtml, refreshDialogue: dialogue}, function(ev) {
 		// get a reference to the dropdown
 		var dropdown = $(ev.target);
 		// get the controlId
@@ -691,7 +726,7 @@ function Property_childActions(cell, propertyObject, property, refreshHtml, refr
 	// add an add dropdown
 	var addAction = table.append("<tr><td colspan='2'><select><option value=''>Add action...</option>" + _actionOptions + "</select></td></tr>").children().last().children().last().children().last();
 	
-	_listeners.push( addAction.change( { cell: cell, propertyObject : propertyObject, property : property, refreshHtml : refreshHtml, dialogue: dialogue }, function(ev) {
+	addListener( addAction.change( { cell: cell, propertyObject : propertyObject, property : property, refreshHtml : refreshHtml, dialogue: dialogue }, function(ev) {
 		// get a reference to the dropdown
 		var dropdown = $(ev.target);
 		// get the controlId
@@ -762,7 +797,7 @@ function Property_databaseQuery(cell, propertyObject, property, refreshHtml, ref
 		// get the field input
 		var fieldInput = inputsTable.find("tr").last().children(":nth(1)").last().children().last();
 		// add a listener
-		_listeners.push( fieldInput.keyup( {parameters: query.inputs}, function(ev) {
+		addListener( fieldInput.keyup( {parameters: query.inputs}, function(ev) {
 			// get the input
 			var input = $(ev.target);
 			// update field value
@@ -771,7 +806,7 @@ function Property_databaseQuery(cell, propertyObject, property, refreshHtml, ref
 		// get the delete
 		var fieldDelete = inputsTable.find("tr").last().children().last().children("img.delete");
 		// add a listener
-		_listeners.push( fieldDelete.click( {parameters: query.inputs}, function(ev) {
+		addListener( fieldDelete.click( {parameters: query.inputs}, function(ev) {
 			// get the input
 			var input = $(ev.target);
 			// remove from parameters
@@ -789,7 +824,7 @@ function Property_databaseQuery(cell, propertyObject, property, refreshHtml, ref
 	// find the input add
 	var inputAdd = inputsTable.find("tr").last().children().first().children().first();
 	// listener to add input
-	_listeners.push( inputAdd.change( {cell: cell, propertyObject: propertyObject, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
+	addListener( inputAdd.change( {cell: cell, propertyObject: propertyObject, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
 		// initialise array if need be
 		if (!ev.data.propertyObject.query.inputs) ev.data.propertyObject.query.inputs = [];
 		// get the parameters (inputs or outputs)
@@ -804,7 +839,7 @@ function Property_databaseQuery(cell, propertyObject, property, refreshHtml, ref
 	var sqlControl = table.find("textarea").first();
 	sqlControl.text(query.SQL);
 	// listener for the sql
-	_listeners.push( sqlControl.keyup( {query: query}, function(ev) {
+	addListener( sqlControl.keyup( {query: query}, function(ev) {
 		query.SQL = $(ev.target).val();
 	}));
 	
@@ -827,7 +862,7 @@ function Property_databaseQuery(cell, propertyObject, property, refreshHtml, ref
 		// get the field input
 		var fieldOutput = outputsTable.find("tr").last().children().first().children().last();
 		// add a listener
-		_listeners.push( fieldOutput.keyup( {parameters: query.outputs}, function(ev) {
+		addListener( fieldOutput.keyup( {parameters: query.outputs}, function(ev) {
 			// get the input
 			var input = $(ev.target);
 			// update field value
@@ -836,7 +871,7 @@ function Property_databaseQuery(cell, propertyObject, property, refreshHtml, ref
 		// get the delete
 		var fieldDelete = outputsTable.find("tr").last().children().last().children("img.delete");
 		// add a listener
-		_listeners.push( fieldDelete.click( {parameters: query.outputs}, function(ev) {
+		addListener( fieldDelete.click( {parameters: query.outputs}, function(ev) {
 			// get the input
 			var input = $(ev.target);
 			// remove from parameters
@@ -854,7 +889,7 @@ function Property_databaseQuery(cell, propertyObject, property, refreshHtml, ref
 	// find the output add
 	var outputAdd = outputsTable.find("tr").last().children(":nth(1)").last().children().last();
 	// listener to add output
-	_listeners.push( outputAdd.change( {cell: cell, propertyObject: propertyObject, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
+	addListener( outputAdd.change( {cell: cell, propertyObject: propertyObject, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
 		// initialise array if need be
 		if (!ev.data.propertyObject.query.outputs) ev.data.propertyObject.query.outputs = [];
 		// get the parameters (inputs or outputs)
@@ -870,7 +905,7 @@ function Property_databaseQuery(cell, propertyObject, property, refreshHtml, ref
 	// get a reference to the db connection
 	var dbConnection = table.find("tr").last().find("select");
 	// add a listener for the database connection
-	_listeners.push( dbConnection.change( {query: query}, function(ev) {
+	addListener( dbConnection.change( {query: query}, function(ev) {
 		// set the index value
 		ev.data.query.databaseConnectionIndex = ev.target.selectedIndex;
 	}));
@@ -878,7 +913,7 @@ function Property_databaseQuery(cell, propertyObject, property, refreshHtml, ref
 	// get a reference to the test button
 	var testSQL = table.find("tr").last().find("button");
 	// add a listener for the database connection
-	_listeners.push( testSQL.click( {query: query}, function(ev) {
+	addListener( testSQL.click( {query: query}, function(ev) {
 		
 		var data = JSON.stringify(ev.data.query);
 		
@@ -944,7 +979,7 @@ function Property_webserviceRequest(cell, propertyObject, property, refreshHtml,
 		// get the field input
 		var fieldInput = inputsTable.find("tr").last().children(":nth(1)").last().children().last();
 		// add a listener
-		_listeners.push( fieldInput.keyup( {parameters: request.inputs}, function(ev) {
+		addListener( fieldInput.keyup( {parameters: request.inputs}, function(ev) {
 			// get the input
 			var input = $(ev.target);
 			// update field value
@@ -953,7 +988,7 @@ function Property_webserviceRequest(cell, propertyObject, property, refreshHtml,
 		// get the delete
 		var fieldDelete = inputsTable.find("tr").last().children().last().children("img.delete");
 		// add a listener
-		_listeners.push( fieldDelete.click( {parameters: request.inputs}, function(ev) {
+		addListener( fieldDelete.click( {parameters: request.inputs}, function(ev) {
 			// get the input
 			var input = $(ev.target);
 			// remove from parameters
@@ -971,7 +1006,7 @@ function Property_webserviceRequest(cell, propertyObject, property, refreshHtml,
 	// find the input add
 	var inputAdd = inputsTable.find("tr").last().children().first().children().first();
 	// listener to add input
-	_listeners.push( inputAdd.change( {cell: cell, propertyObject: propertyObject, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
+	addListener( inputAdd.change( {cell: cell, propertyObject: propertyObject, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
 		// initialise array if need be
 		if (!ev.data.propertyObject.request.inputs) ev.data.propertyObject.request.inputs = [];
 		// get the parameters (inputs or outputs)
@@ -986,7 +1021,7 @@ function Property_webserviceRequest(cell, propertyObject, property, refreshHtml,
 	var typeControls = table.find("input[type=radio]");
 	typeControls.filter("[value=" + request.type + "]").prop("checked","true");
 	// listener for the action
-	_listeners.push( typeControls.click( {request: request}, function(ev) {
+	addListener( typeControls.click( {request: request}, function(ev) {
 		request.type = $(ev.target).val();
 	}));
 	
@@ -994,7 +1029,7 @@ function Property_webserviceRequest(cell, propertyObject, property, refreshHtml,
 	var actionControl = table.find("input.WSUrl");
 	actionControl.val(request.url);
 	// listener for the action
-	_listeners.push( actionControl.keyup( {request: request}, function(ev) {
+	addListener( actionControl.keyup( {request: request}, function(ev) {
 		request.url = $(ev.target).val();
 	}));
 	
@@ -1002,7 +1037,7 @@ function Property_webserviceRequest(cell, propertyObject, property, refreshHtml,
 	var actionControl = table.find("input.WSAction");
 	actionControl.val(request.action);
 	// listener for the action
-	_listeners.push( actionControl.keyup( {request: request}, function(ev) {
+	addListener( actionControl.keyup( {request: request}, function(ev) {
 		request.action = $(ev.target).val();
 	}));
 	
@@ -1010,7 +1045,7 @@ function Property_webserviceRequest(cell, propertyObject, property, refreshHtml,
 	var bodyControl = table.find("textarea");
 	bodyControl.text(request.body);
 	// listener for the body
-	_listeners.push( bodyControl.keyup( {request: request}, function(ev) {
+	addListener( bodyControl.keyup( {request: request}, function(ev) {
 		request.body = $(ev.target).val();
 	}));
 	
@@ -1033,7 +1068,7 @@ function Property_webserviceRequest(cell, propertyObject, property, refreshHtml,
 		// get the field input
 		var fieldOutput = outputsTable.find("tr").last().children().first().children().last();
 		// add a listener
-		_listeners.push( fieldOutput.keyup( {parameters: request.outputs}, function(ev) {
+		addListener( fieldOutput.keyup( {parameters: request.outputs}, function(ev) {
 			// get the input
 			var input = $(ev.target);
 			// update field value
@@ -1042,7 +1077,7 @@ function Property_webserviceRequest(cell, propertyObject, property, refreshHtml,
 		// get the delete
 		var fieldDelete = outputsTable.find("tr").last().children().last().children("img.delete");
 		// add a listener
-		_listeners.push( fieldDelete.click( {parameters: request.outputs}, function(ev) {
+		addListener( fieldDelete.click( {parameters: request.outputs}, function(ev) {
 			// get the input
 			var input = $(ev.target);
 			// remove from parameters
@@ -1060,7 +1095,7 @@ function Property_webserviceRequest(cell, propertyObject, property, refreshHtml,
 	// find the output add
 	var outputAdd = outputsTable.find("tr").last().children(":nth(1)").last().children().last();
 	// listener to add output
-	_listeners.push( outputAdd.change( {cell: cell, propertyObject: propertyObject, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
+	addListener( outputAdd.change( {cell: cell, propertyObject: propertyObject, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
 		// initialise array if need be
 		if (!ev.data.propertyObject.request.outputs) ev.data.propertyObject.request.outputs = [];
 		// get the parameters (inputs or outputs)
@@ -1081,7 +1116,7 @@ function Property_navigationPage(cell, navigationAction, property, refreshHtml, 
 	// get a reference to the drop down
 	var pageDropDown = cell.find("select").last();
 	// add a listener
-	_listeners.push( pageDropDown.change( {navigationAction: navigationAction}, function(ev) {
+	addListener( pageDropDown.change( {navigationAction: navigationAction}, function(ev) {
 		// update the page value
 		ev.data.navigationAction.page = $(ev.target).val();
 		// rebuild all events/actions
@@ -1124,7 +1159,7 @@ function Property_pageSessionVariables(cell, page, property, refreshHtml, refres
 		// find the text
 		var valueEdit = table.find("input.variable").last();
 		// add a listener
-		_listeners.push( valueEdit.keyup( {variables: variables}, function(ev) {
+		addListener( valueEdit.keyup( {variables: variables}, function(ev) {
 			// get the input
 			var input = $(ev.target);
 			// update value
@@ -1134,7 +1169,7 @@ function Property_pageSessionVariables(cell, page, property, refreshHtml, refres
 		// find the delete
 		var optionDelete = table.find("tr").last().children().last().children().last();
 		// add a listener
-		_listeners.push( optionDelete.click( {variables: variables}, function(ev) {
+		addListener( optionDelete.click( {variables: variables}, function(ev) {
 			// get the input
 			var input = $(ev.target);
 			// remove from parameters
@@ -1149,7 +1184,7 @@ function Property_pageSessionVariables(cell, page, property, refreshHtml, refres
 	// get a reference to the add
 	var add = table.find("tr").last().children().last().children().last();
 	// add a listener
-	_listeners.push( add.click( {cell: cell, page: page, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
+	addListener( add.click( {cell: cell, page: page, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
 		// initialise if required
 		if (!ev.data.page.sessionVariables) ev.data.page.sessionVariables = [];
 		// add a blank option
@@ -1194,7 +1229,7 @@ function Property_roles(cell, control, property, refreshHtml, refreshDialogue) {
 		// find the delete
 		var optionDelete = table.find("tr").last().children().last().children().last();
 		// add a listener
-		_listeners.push( optionDelete.click( {roles: roles, cell: cell, control: control, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
+		addListener( optionDelete.click( {roles: roles, cell: cell, control: control, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
 			// get the input
 			var input = $(ev.target);
 			// remove from parameters
@@ -1211,7 +1246,7 @@ function Property_roles(cell, control, property, refreshHtml, refreshDialogue) {
 	// get a reference to the add
 	var add = table.find("tr").last().children().last().children().last();
 	// add a listener
-	_listeners.push( add.change( {cell: cell, control: control, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
+	addListener( add.change( {cell: cell, control: control, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
 		// initialise if required
 		if (!ev.data.control.roles) ev.data.control.roles = [];
 		// get the role
@@ -1298,7 +1333,7 @@ function Property_navigationSessionVariables(cell, navigation, property, refresh
 			// find the dropdown
 			var itemEdit = table.find("select").last();
 			// add a listener
-			_listeners.push( itemEdit.change( {sessionVariables: sessionVariables}, function(ev) {
+			addListener( itemEdit.change( {sessionVariables: sessionVariables}, function(ev) {
 				// get the input
 				var input = $(ev.target);
 				// update value
@@ -1308,7 +1343,7 @@ function Property_navigationSessionVariables(cell, navigation, property, refresh
 			// find the input
 			var fieldEdit = table.find("input").last();
 			// add a listener
-			_listeners.push( fieldEdit.keyup( {sessionVariables: sessionVariables}, function(ev) {
+			addListener( fieldEdit.keyup( {sessionVariables: sessionVariables}, function(ev) {
 				// get the input
 				var input = $(ev.target);
 				// update value
@@ -1366,7 +1401,7 @@ function Property_radiobuttons(cell, radiobuttons, property, refreshHtml, refres
 		// find the code
 		var valueEdit = table.find("input.value").last();
 		// add a listener
-		_listeners.push( valueEdit.keyup( {radiobuttons : radiobuttons, buttons: buttons}, function(ev) {
+		addListener( valueEdit.keyup( {radiobuttons : radiobuttons, buttons: buttons}, function(ev) {
 			// get the input
 			var input = $(ev.target);
 			// update value
@@ -1378,7 +1413,7 @@ function Property_radiobuttons(cell, radiobuttons, property, refreshHtml, refres
 		// find the label
 		var textEdit = table.find("input.label").last();
 		// add a listener
-		_listeners.push( textEdit.keyup( {radiobuttons : radiobuttons, buttons: buttons}, function(ev) {
+		addListener( textEdit.keyup( {radiobuttons : radiobuttons, buttons: buttons}, function(ev) {
 			// get the input
 			var input = $(ev.target);
 			// update text
@@ -1391,7 +1426,7 @@ function Property_radiobuttons(cell, radiobuttons, property, refreshHtml, refres
 		// find the delete
 		var buttonDelete = table.find("tr").last().children().last().children().last();
 		// add a listener
-		_listeners.push( buttonDelete.click( {cell: cell, radiobuttons: radiobuttons, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
+		addListener( buttonDelete.click( {cell: cell, radiobuttons: radiobuttons, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
 			// get the del image
 			var delImage = $(ev.target);
 			// remove from parameters
@@ -1410,7 +1445,7 @@ function Property_radiobuttons(cell, radiobuttons, property, refreshHtml, refres
 	// get a reference to the add
 	var add = table.find("tr").last().children().last().children().last();
 	// add a listener
-	_listeners.push( add.click( {cell: cell, radiobuttons: radiobuttons, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
+	addListener( add.click( {cell: cell, radiobuttons: radiobuttons, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
 		// add a blank option
 		ev.data.radiobuttons.buttons.push({value: "", label: ""});
 		// refresh
@@ -1424,7 +1459,7 @@ function Property_radiobuttons(cell, radiobuttons, property, refreshHtml, refres
 		// get a reference
 		var optionsCodes = dialogue.children().last();
 		// add a listener
-		_listeners.push( optionsCodes.change( {cell: cell, radiobuttons: radiobuttons, buttons: buttons, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
+		addListener( optionsCodes.change( {cell: cell, radiobuttons: radiobuttons, buttons: buttons, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
 			// get the value
 			ev.data.radiobuttons.codes = ev.target.checked;
 			// refresh
@@ -1493,7 +1528,7 @@ function logicConditionValue(cell, action, conditionIndex, valueId) {
 	// retain the value if we don't have one yet
 	if (!value.id) value.id = select.val();			
 	// add listers
-	_listeners.push( table.find("select").change( function(ev) {		
+	addListener( table.find("select").change( function(ev) {		
 		// get the id
 		var id = $(ev.target).val();
 		// derive the new type
@@ -1519,7 +1554,7 @@ function logicConditionValue(cell, action, conditionIndex, valueId) {
 			// set any current value
 			if (value.field) input.val(value.field);
 			// add the listener
-			_listeners.push( input.keyup( function(ev) {		
+			addListener( input.keyup( function(ev) {		
 				// set the new value 
 				value.field = $(ev.target).val();
 			}));
@@ -1532,7 +1567,7 @@ function logicConditionValue(cell, action, conditionIndex, valueId) {
 			// set any current value
 			if (value.constant) input.val(value.constant);
 			// add the listeners
-			_listeners.push( input.keyup( function(ev) {		
+			addListener( input.keyup( function(ev) {		
 				// set the new value 
 				value.constant = $(ev.target).val();
 			}));
@@ -1608,7 +1643,7 @@ function Property_logicConditions(cell, action, property, refreshHtml, refreshDi
 	// find the deletes
 	var deleteImages = table.find("img.delete");
 	// add a listener
-	_listeners.push( deleteImages.click( {conditions: conditions}, function(ev) {
+	addListener( deleteImages.click( {conditions: conditions}, function(ev) {
 		// get the del image
 		var delImage = $(ev.target);
 		// remove from conditions
@@ -1688,7 +1723,7 @@ function Property_options(cell, dropdown, property, refreshHtml, refreshDialogue
 		// find the text
 		var textEdit = table.find("input.text").last();
 		// add a listener
-		_listeners.push( textEdit.keyup( {dropdown : dropdown, options: options}, function(ev) {
+		addListener( textEdit.keyup( {dropdown : dropdown, options: options}, function(ev) {
 			// get the input
 			var input = $(ev.target);
 			// update text
@@ -1700,7 +1735,7 @@ function Property_options(cell, dropdown, property, refreshHtml, refreshDialogue
 		// find the code
 		var valueEdit = table.find("input.value").last();
 		// add a listener
-		_listeners.push( valueEdit.keyup( {options: options}, function(ev) {
+		addListener( valueEdit.keyup( {options: options}, function(ev) {
 			// get the input
 			var input = $(ev.target);
 			// update value
@@ -1712,7 +1747,7 @@ function Property_options(cell, dropdown, property, refreshHtml, refreshDialogue
 	// find the deletes
 	var deleteImages = table.find("img.delete");
 	// add a listener
-	_listeners.push( deleteImages.click( {options: options}, function(ev) {
+	addListener( deleteImages.click( {options: options}, function(ev) {
 		// get the del image
 		var delImage = $(ev.target);
 		// remove from parameters
@@ -1736,7 +1771,7 @@ function Property_options(cell, dropdown, property, refreshHtml, refreshDialogue
 	// get a reference to the add
 	var add = table.find("tr").last().children().last().children().last();
 	// add a listener
-	_listeners.push( add.click( {cell: cell, dropdown: dropdown, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
+	addListener( add.click( {cell: cell, dropdown: dropdown, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
 		// add a blank option
 		ev.data.dropdown.options.push({value: "", text: ""});
 		// refresh
@@ -1750,7 +1785,7 @@ function Property_options(cell, dropdown, property, refreshHtml, refreshDialogue
 		// get a reference
 		var optionsCodes = dialogue.children().last();
 		// add a listener
-		_listeners.push( optionsCodes.change( {cell: cell, dropdown: dropdown, options: options, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
+		addListener( optionsCodes.change( {cell: cell, dropdown: dropdown, options: options, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
 			// get the value
 			dropdown.codes = ev.target.checked;
 			// refresh
@@ -1804,7 +1839,7 @@ function Property_gridColumns(cell, grid, property, refreshHtml, refreshDialogue
 		// find the checkbox
 		var visibleEdit = table.find("tr").last().children(":nth(0)").first().children().first();
 		// add a listener
-		_listeners.push( visibleEdit.change( {grid: grid}, function(ev) {
+		addListener( visibleEdit.change( {grid: grid}, function(ev) {
 			// get the input
 			var input = $(ev.target);
 			// update value
@@ -1816,7 +1851,7 @@ function Property_gridColumns(cell, grid, property, refreshHtml, refreshDialogue
 		// find the title
 		var titleEdit = table.find("tr").last().children(":nth(1)").first().children().first();
 		// add a listener
-		_listeners.push( titleEdit.keyup( {grid: grid}, function(ev) {
+		addListener( titleEdit.keyup( {grid: grid}, function(ev) {
 			// get the input
 			var input = $(ev.target);
 			// update value
@@ -1828,7 +1863,7 @@ function Property_gridColumns(cell, grid, property, refreshHtml, refreshDialogue
 		// find the titleStyle
 		var titleStyleEdit = table.find("tr").last().children(":nth(2)").first().children().first();
 		// add a listener
-		_listeners.push( titleStyleEdit.keyup( {grid: grid}, function(ev) {
+		addListener( titleStyleEdit.keyup( {grid: grid}, function(ev) {
 			// get the input
 			var input = $(ev.target);
 			// update value
@@ -1840,7 +1875,7 @@ function Property_gridColumns(cell, grid, property, refreshHtml, refreshDialogue
 		// find the field
 		var fieldEdit = table.find("tr").last().children(":nth(3)").first().children().first();
 		// add a listener
-		_listeners.push( fieldEdit.keyup( {grid: grid}, function(ev) {
+		addListener( fieldEdit.keyup( {grid: grid}, function(ev) {
 			// get the input
 			var input = $(ev.target);
 			// update value
@@ -1852,7 +1887,7 @@ function Property_gridColumns(cell, grid, property, refreshHtml, refreshDialogue
 		// find the fieldStyle
 		var fieldStyleEdit = table.find("tr").last().children(":nth(4)").first().children().first();
 		// add a listener
-		_listeners.push( fieldStyleEdit.keyup( {grid: grid}, function(ev) {
+		addListener( fieldStyleEdit.keyup( {grid: grid}, function(ev) {
 			// get the input
 			var input = $(ev.target);
 			// update value
@@ -1864,7 +1899,7 @@ function Property_gridColumns(cell, grid, property, refreshHtml, refreshDialogue
 		// find the cellFunction
 		var fieldStyleEdit = table.find("tr").last().children(":nth(5)").first();
 		// add a listener
-		_listeners.push( fieldStyleEdit.click( {grid: grid}, function(ev) {
+		addListener( fieldStyleEdit.click( {grid: grid}, function(ev) {
 			// get the td
 			var td = $(ev.target);
 			// get the index
@@ -1884,7 +1919,7 @@ function Property_gridColumns(cell, grid, property, refreshHtml, refreshDialogue
 	// add the cell function text area
 	var cellFunctionTextArea = dialogue.append("<textarea data-index='-1' style='position:absolute;display:none;width:500px;height:300px;top:26px;right:10px;'  wrap='off'></textarea>").find("textarea:first");
 	// hide it on unfocus
-	_listeners.push( cellFunctionTextArea.blur( function(ev) {		
+	addListener( cellFunctionTextArea.blur( function(ev) {		
 		// get the value
 		var value = cellFunctionTextArea.val();
 		// update to elipses if nothing
@@ -1900,7 +1935,7 @@ function Property_gridColumns(cell, grid, property, refreshHtml, refreshDialogue
 	}));
 	
 	// update the applicable cellFunction
-	_listeners.push( cellFunctionTextArea.keyup( {grid: grid}, function(ev) {
+	addListener( cellFunctionTextArea.keyup( {grid: grid}, function(ev) {
 		// get the index
 		var index = cellFunctionTextArea.attr("data-index")*1;
 		// update the object value
@@ -1910,7 +1945,7 @@ function Property_gridColumns(cell, grid, property, refreshHtml, refreshDialogue
 	// add delete listeners
 	var deleteImages = table.find("img.delete");
 	// add a listener
-	_listeners.push( deleteImages.click( {columns: columns}, function(ev) {
+	addListener( deleteImages.click( {columns: columns}, function(ev) {
 		// get the input
 		var input = $(ev.target);
 		// remove from parameters
@@ -1934,7 +1969,7 @@ function Property_gridColumns(cell, grid, property, refreshHtml, refreshDialogue
 	// get a reference to the add
 	var add = table.find("tr").last().children().last().children().last();
 	// add a listener
-	_listeners.push( add.click( {cell: cell, grid: grid, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
+	addListener( add.click( {cell: cell, grid: grid, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
 		// add a blank option
 		ev.data.grid.columns.push({visible: true, title: "", titleStyle: "", field: "", fieldStyle: "", cellFunction: ""});
 		// refresh
@@ -1985,7 +2020,7 @@ function Property_dataDestinations(cell, propertyObject, property, refreshHtml, 
 		// get the field
 		var editField = table.find("tr").last().children("td:nth(1)").children("input");
 		// add a listener
-		_listeners.push( editField.keyup( {dataDestinations: dataDestinations}, function(ev) {
+		addListener( editField.keyup( {dataDestinations: dataDestinations}, function(ev) {
 			// get the input
 			var editField = $(ev.target);
 			// update the field
@@ -1994,7 +2029,7 @@ function Property_dataDestinations(cell, propertyObject, property, refreshHtml, 
 		// get the delete image
 		var imgDelete = table.find("tr").last().children().last().children("img.delete");
 		// add a listener
-		_listeners.push( imgDelete.click( {dataDestinations: dataDestinations}, function(ev) {
+		addListener( imgDelete.click( {dataDestinations: dataDestinations}, function(ev) {
 			// get the input
 			var imgDelete = $(ev.target);
 			// remove from parameters
@@ -2014,7 +2049,7 @@ function Property_dataDestinations(cell, propertyObject, property, refreshHtml, 
 	// find the add
 	var destinationAdd = table.find("tr").last().children().last().children().last();
 	// listener to add output
-	_listeners.push( destinationAdd.change( {cell: cell, propertyObject: propertyObject, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
+	addListener( destinationAdd.change( {cell: cell, propertyObject: propertyObject, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
 		// initialise array if need be
 		if (!ev.data.propertyObject.dataDestinations) ev.data.propertyObject.dataDestinations = [];
 		// get the parameters (inputs or outputs)
@@ -2078,7 +2113,7 @@ function Property_controlHints(cell, hints, property, refreshHtml, refreshDialog
 	// add control listeners
 	var controlSelects = table.find("select.control");
 	// add a listener
-	_listeners.push( controlSelects.change( {controlHints: controlHints}, function(ev) {
+	addListener( controlSelects.change( {controlHints: controlHints}, function(ev) {
 		// get the select
 		var select = $(ev.target);
 		// update the control id
@@ -2088,7 +2123,7 @@ function Property_controlHints(cell, hints, property, refreshHtml, refreshDialog
 	// add type listeners
 	var typeSelects = table.find("select.type");
 	// add a listener
-	_listeners.push( typeSelects.change( {controlHints: controlHints}, function(ev) {
+	addListener( typeSelects.change( {controlHints: controlHints}, function(ev) {
 		// get the select
 		var select = $(ev.target);
 		// update the control id
@@ -2108,7 +2143,7 @@ function Property_controlHints(cell, hints, property, refreshHtml, refreshDialog
 	// add style listeners
 	var styles = table.find("input");
 	// add a listener
-	_listeners.push( styles.change( {controlHints: controlHints}, function(ev) {
+	addListener( styles.change( {controlHints: controlHints}, function(ev) {
 		// get the input
 		var input = $(ev.target);
 		// update the control id
@@ -2118,7 +2153,7 @@ function Property_controlHints(cell, hints, property, refreshHtml, refreshDialog
 	// add delete listeners
 	var deleteImages = table.find("img.delete");
 	// add a listener
-	_listeners.push( deleteImages.click( {controlHints: controlHints}, function(ev) {
+	addListener( deleteImages.click( {controlHints: controlHints}, function(ev) {
 		// get the input
 		var input = $(ev.target);
 		// remove from parameters
@@ -2142,7 +2177,7 @@ function Property_controlHints(cell, hints, property, refreshHtml, refreshDialog
 	// get a reference to the add
 	var add = table.find("tr").last().children().last().children().last();
 	// add a listener
-	_listeners.push( add.click( {cell: cell, hints: hints, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
+	addListener( add.click( {cell: cell, hints: hints, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
 		// instantiate array if need be
 		if (!ev.data.hints.controlHints) ev.data.hints.controlHints = [];
 		// add a blank hint
@@ -2157,7 +2192,7 @@ function Property_slidePanelVisibility(cell, propertyObject, property, refreshHt
 	// if we're holding a P (this defaulted in designerer.js)
 	cell.text(propertyObject.visible);
 	// add the listener to the cell
-	_listeners.push( cell.click( function(ev) {
+	addListener( cell.click( function(ev) {
 		// add an undo snapshot
 		addUndo();
 		// get a reference to the slidePanel
@@ -2198,7 +2233,7 @@ function Property_device(cell, propertyObject, property, refreshHtml, refreshPro
 	// get a reference to the object
 	var select = cell.children().last();
 	// add a listener to update the property
-	_listeners.push( select.change( function(ev) {
+	addListener( select.change( function(ev) {
 		// retain the new value
 		_device = $(ev.target).val() * 1;
 		// store it
@@ -2233,7 +2268,7 @@ function Property_zoom(cell, propertyObject, property, refreshHtml, refreshPrope
 	// get a reference to the object
 	var select = cell.children().last();
 	// add a listener to update the property
-	_listeners.push( select.change( function(ev) {
+	addListener( select.change( function(ev) {
 		// retain the new value
 		_zoom = $(ev.target).val() * 1;
 		// store it
@@ -2254,7 +2289,7 @@ function Property_orientation(cell, propertyObject, property, refreshHtml, refre
 		cell.text("Landscape");
 	}
 	// add the listener to the cell
-	_listeners.push( cell.click(function(ev) {
+	addListener( cell.click(function(ev) {
 		// toggle the value
 		if (_orientation == "P") {
 			_orientation = "L";
@@ -2304,7 +2339,7 @@ function Property_mobileActionType(cell, mobileAction, property, refreshHtml, re
 		break;
 	}
 	// listener for changing the type
-	_listeners.push( actionTypeSelect.change( function(ev) {
+	addListener( actionTypeSelect.change( function(ev) {
 		// set the new value
 		mobileAction.actionType = $(ev.target).val();
 		// refresh properties (which will update the required visibilities)

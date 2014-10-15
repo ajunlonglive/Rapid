@@ -195,14 +195,14 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, Rap
 			
 				
 			
-			<div class="propertiesPanelDiv"></div>			
-			<div class="validationPanelDiv"></div>
-			<div id="actionsPanelDiv" class="actionsPanelDiv"></div>
-			<div id="stylesPanelDiv"></div>		
+			<div class="propertiesPanelDiv" data-dialogueId="propertiesPanel"></div>			
+			<div class="validationPanelDiv" data-dialogueId="validationPanel"></div>
+			<div id="actionsPanelDiv" class="actionsPanelDiv" data-dialogueId="actionsPanel"></div>
+			<div id="stylesPanelDiv" data-dialogueId="stylesPanel"></div>		
 														
 		</div>
 		
-		<div id="propertiesDialogues"></div>
+		<div id="propertiesDialogues" data-dialogueId="propertiesDialogues"></div>
 		
 		<span id="styleInput" contenteditable="true"></span>
 		<span id="styleHint"></span>

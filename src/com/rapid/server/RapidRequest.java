@@ -66,7 +66,7 @@ public class RapidRequest {
 	public Action getAction() { return _action; }
 	public Object getSessionAttribute(String name) { return _request.getSession().getAttribute(name); }
 	
-	// property
+	// allow overriding the user name in the rare event we want to do something in the name of someone else (like modifying another users details in the Security Adapter)
 	public String getUserName() { return _userName; }
 	public void setUserName(String userName) { _userName = userName; }
 	
@@ -122,8 +122,13 @@ public class RapidRequest {
 				
 	// can also instantiate a rapid request with just an application object (this is used by the rapid action)
 	public RapidRequest(RapidHttpServlet rapidServlet, HttpServletRequest request, Application application) {
+		// store the user name from the session
+		_userName = (String) request.getSession().getAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME);
+		// store the servlet
 		_rapidServlet = rapidServlet;
+		// store the request
 		_request = request;
+		// store the application
 		_application = application;
 	}
 	

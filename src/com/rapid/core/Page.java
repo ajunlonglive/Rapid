@@ -674,11 +674,8 @@ public class Page {
 				
 	}
 	
-	public void delete(RapidHttpServlet rapidServlet, RapidRequest rapidRequest) throws JAXBException, IOException {
-		
-		// get the application
-		Application application = rapidRequest.getApplication();
-				
+	public void delete(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, Application application) throws JAXBException, IOException {
+						
 		// create folders to delete the page
 		String pagePath = application.getConfigFolder(rapidServlet.getServletContext()) + "/pages";		
 														

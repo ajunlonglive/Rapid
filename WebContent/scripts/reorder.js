@@ -37,7 +37,7 @@ function addReorder(collection, items, rerender) {
 		img.on('dragstart', function(event) { event.preventDefault(); });
 		
 		// add mousedown
-		_listeners.push( img.mousedown( {collection: collection, index: index}, function(ev){
+		addListener( img.mousedown( {collection: collection, index: index}, function(ev){
 			// get a reference to the image
 			var img = $(ev.target);
 			// retain a reference to the image we have selected
@@ -45,7 +45,7 @@ function addReorder(collection, items, rerender) {
 		}));
 		
 		// add mousemove
-		_listeners.push( img.mouseover( {collection: collection, index: index, rerender: rerender}, function(ev){
+		addListener( img.mouseover( {collection: collection, index: index, rerender: rerender}, function(ev){
 			// get a reference to the potential reorder to image
 			var reorderTo = $(this);
 			// if there are reorder details from mousing down on a different image

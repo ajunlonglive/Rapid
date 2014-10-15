@@ -293,10 +293,7 @@ public class Rapid extends RapidHttpServlet {
 				
 				// if there were some
 				if (apps != null) {
-					
-					// retain the user name 
-					String userName = rapidRequest.getUserName();
-					
+						
 					// loop the apps
 					for (Application app : apps) {
 									
