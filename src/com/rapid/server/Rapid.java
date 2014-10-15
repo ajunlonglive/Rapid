@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -40,6 +41,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.rapid.core.Application;
@@ -193,6 +195,26 @@ public class Rapid extends RapidHttpServlet {
 		getLogger().trace("Rapid GET response : " + pageHtml);
 					
 	}
+	
+	private JSONObject getJSONObject(byte[] bodyBytes) throws UnsupportedEncodingException, JSONException {
+		
+		// assume we weren't passed any json				
+		JSONObject jsonData = null;
+		
+		// read the body into a string
+		String bodyString = new String(bodyBytes, "UTF-8");
+						
+		// if there is something in the body string it must be json so parse it
+		if (!"".equals(bodyString)) {
+			// log the body string
+			getLogger().debug(bodyString);
+			// get the data
+			jsonData = new JSONObject(bodyString);
+		}
+		
+		return jsonData;
+		
+	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 				
@@ -206,7 +228,7 @@ public class Rapid extends RapidHttpServlet {
 		RapidRequest rapidRequest = new RapidRequest(this, request);
 		
 		// log
-		getLogger().debug("Rapid POST request : " + request.getQueryString());
+		getLogger().debug("Rapid POST request : " + request.getQueryString() + " bytes=" + bodyBytes.length);
 					
 		try {
 			
@@ -245,17 +267,8 @@ public class Rapid extends RapidHttpServlet {
 					} else {
 							
 						// assume we weren't passed any json				
-						JSONObject jsonData = null;
-						
-						// read the body into a string
-						String bodyString = new String(bodyBytes, "UTF-8");
-						
-						// log the body string
-						getLogger().debug(bodyString);
-						
-						// if there is something in the body string it must be json so parse it
-						if (!"".equals(bodyString)) jsonData = new JSONObject(bodyString);
-						
+						JSONObject jsonData = getJSONObject(bodyBytes);
+																		
 						// if we got some data
 						if (jsonData != null) {
 							
@@ -293,7 +306,16 @@ public class Rapid extends RapidHttpServlet {
 				
 				// if there were some
 				if (apps != null) {
-						
+					
+					// assume the request wasn't for testing
+					boolean forTesting = false;
+					
+					// assume we weren't passed any json				
+					JSONObject jsonData = getJSONObject(bodyBytes);
+																	
+					// if we got some data, look for a test = true entry
+					if (jsonData != null) forTesting = jsonData.optBoolean("test");
+											
 					// loop the apps
 					for (Application app : apps) {
 									
@@ -313,9 +335,34 @@ public class Rapid extends RapidHttpServlet {
 								JSONObject jsonApp = new JSONObject();
 								// add details
 								jsonApp.put("id", app.getId());
-								jsonApp.put("title", app.getTitle());
+								jsonApp.put("version", app.getVersion());
+								jsonApp.put("title", app.getTitle());								
 								// add app to our main array
 								jsonApps.put(jsonApp);
+								
+								// check if we are testing
+								if (forTesting) {
+									
+									// if the user has Rapid Design for this application
+									if (security.checkUserRole(rapidRequest, Rapid.DESIGN_ROLE)) {
+										
+										// loop the versions
+										for (Application version :	getApplications().getVersions(app.getId()).sort()) {
+											// create a json object for the details of this version
+											jsonApp = new JSONObject();
+											// add details
+											jsonApp.put("id", version.getId());
+											jsonApp.put("version", version.getVersion());
+											jsonApp.put("status", version.getStatus());										
+											jsonApp.put("title", version.getTitle());
+											jsonApp.put("test", true);
+											// add app to our main array
+											jsonApps.put(jsonApp);
+										}
+										
+									} // got design role
+																		
+								} // forTesting check
 								
 							} // user check
 							
@@ -339,7 +386,7 @@ public class Rapid extends RapidHttpServlet {
 				
 				// log response
 				getLogger().debug("Rapid POST response : " + jsonApps.toString());
-				
+											
 			} else if ("uploadImage".equals(rapidRequest.getActionName())) {
 				
 				// get the application
