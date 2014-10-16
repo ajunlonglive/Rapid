@@ -12,7 +12,7 @@
             </entry>
             <entry>
                 <key>details</key>
-                <value>{&quot;appId&quot;:&quot;mobdemo&quot;,&quot;pageId&quot;:&quot;P1&quot;}</value>
+                <value>{&quot;appId&quot;:&quot;mobdemo&quot;,&quot;pageId&quot;:&quot;P1&quot;,&quot;version&quot;:&quot;1&quot;}</value>
             </entry>
             <entry>
                 <key>pageId</key>
@@ -71,16 +71,8 @@
         <value>P4_A7_</value>
     </entry>
     <entry>
-        <key>XMLVersion</key>
-        <value>1</value>
-    </entry>
-    <entry>
         <key>avoidRedundancy</key>
         <value>false</value>
-    </entry>
-    <entry>
-        <key>childActions</key>
-        <value>[]</value>
     </entry>
     <entry>
         <key>name</key>
@@ -256,10 +248,6 @@ limit 20</SQL>
         <value>P4_A12_</value>
     </entry>
     <entry>
-        <key>XMLVersion</key>
-        <value>1</value>
-    </entry>
-    <entry>
         <key>avoidRedundancy</key>
         <value>false</value>
     </entry>
@@ -410,10 +398,6 @@ limit 20</SQL>
     <entry>
         <key>id</key>
         <value>P4_A17_</value>
-    </entry>
-    <entry>
-        <key>XMLVersion</key>
-        <value>1</value>
     </entry>
     <entry>
         <key>avoidRedundancy</key>
@@ -572,16 +556,8 @@ limit 20</SQL>
         <value>500</value>
     </entry>
     <entry>
-        <key>XMLVersion</key>
-        <value>1</value>
-    </entry>
-    <entry>
         <key>avoidRedundancy</key>
         <value>false</value>
-    </entry>
-    <entry>
-        <key>childActions</key>
-        <value>[]</value>
     </entry>
     <entry>
         <key>name</key>
@@ -692,10 +668,6 @@ limit 20</SQL>
         <value>P4_A57_</value>
     </entry>
     <entry>
-        <key>XMLVersion</key>
-        <value>1</value>
-    </entry>
-    <entry>
         <key>avoidRedundancy</key>
         <value>false</value>
     </entry>
@@ -723,10 +695,6 @@ limit 20</SQL>
     <entry>
         <key>id</key>
         <value>P4_A58_</value>
-    </entry>
-    <entry>
-        <key>XMLVersion</key>
-        <value>1</value>
     </entry>
     <entry>
         <key>avoidRedundancy</key>
@@ -762,10 +730,6 @@ limit 20</SQL>
         <value>P4_A59_</value>
     </entry>
     <entry>
-        <key>XMLVersion</key>
-        <value>1</value>
-    </entry>
-    <entry>
         <key>avoidRedundancy</key>
         <value>false</value>
     </entry>
@@ -793,10 +757,6 @@ limit 20</SQL>
     <entry>
         <key>id</key>
         <value>P4_A60_</value>
-    </entry>
-    <entry>
-        <key>XMLVersion</key>
-        <value>1</value>
     </entry>
     <entry>
         <key>avoidRedundancy</key>
@@ -962,16 +922,8 @@ limit 20</SQL>
         <value>500</value>
     </entry>
     <entry>
-        <key>XMLVersion</key>
-        <value>1</value>
-    </entry>
-    <entry>
         <key>avoidRedundancy</key>
         <value>false</value>
-    </entry>
-    <entry>
-        <key>childActions</key>
-        <value>[]</value>
     </entry>
     <entry>
         <key>name</key>
@@ -1004,6 +956,10 @@ limit 20</SQL>
         <entry>
             <key>javascript</key>
             <value>alert(&quot;Uploaded!&quot;);</value>
+        </entry>
+        <entry>
+            <key>avoidRedundancy</key>
+            <value>false</value>
         </entry>
         <entry>
             <key>name</key>
@@ -1199,16 +1155,8 @@ limit 20</SQL>
                     <value>P4_A36_</value>
                 </entry>
                 <entry>
-                    <key>XMLVersion</key>
-                    <value>1</value>
-                </entry>
-                <entry>
                     <key>avoidRedundancy</key>
                     <value>false</value>
-                </entry>
-                <entry>
-                    <key>childActions</key>
-                    <value>[{&quot;id&quot;:&quot;P4_A37_&quot;,&quot;XMLVersion&quot;:1,&quot;avoidRedundancy&quot;:false,&quot;page&quot;:&quot;P3&quot;,&quot;name&quot;:&quot;Navigate 37&quot;,&quot;type&quot;:&quot;navigate&quot;,&quot;sessionVariables&quot;:[]},{&quot;id&quot;:&quot;P4_A38_&quot;,&quot;XMLVersion&quot;:1,&quot;avoidRedundancy&quot;:false,&quot;childActions&quot;:[],&quot;showLoading&quot;:false,&quot;query&quot;:{&quot;SQL&quot;:&quot;&quot;,&quot;inputs&quot;:[{&quot;field&quot;:&quot;&quot;,&quot;itemId&quot;:&quot;personId&quot;}],&quot;databaseConnectionIndex&quot;:0,&quot;outputs&quot;:[{&quot;field&quot;:&quot;&quot;,&quot;itemId&quot;:&quot;P4_C6_&quot;},{&quot;field&quot;:&quot;&quot;,&quot;itemId&quot;:&quot;P4_C11_&quot;},{&quot;field&quot;:&quot;&quot;,&quot;itemId&quot;:&quot;P4_C16_&quot;}]},&quot;name&quot;:&quot;Database 38&quot;,&quot;type&quot;:&quot;database&quot;}]</value>
                 </entry>
                 <entry>
                     <key>name</key>
@@ -1243,16 +1191,8 @@ limit 20</SQL>
                         <value>P4_A38_</value>
                     </entry>
                     <entry>
-                        <key>XMLVersion</key>
-                        <value>1</value>
-                    </entry>
-                    <entry>
                         <key>avoidRedundancy</key>
                         <value>false</value>
-                    </entry>
-                    <entry>
-                        <key>childActions</key>
-                        <value>[]</value>
                     </entry>
                     <entry>
                         <key>name</key>
@@ -1299,10 +1239,6 @@ where id = ?</SQL>
                         <value>P4_A37_</value>
                     </entry>
                     <entry>
-                        <key>XMLVersion</key>
-                        <value>1</value>
-                    </entry>
-                    <entry>
                         <key>avoidRedundancy</key>
                         <value>false</value>
                     </entry>
@@ -1329,16 +1265,8 @@ where id = ?</SQL>
                     <value>P4_A44_</value>
                 </entry>
                 <entry>
-                    <key>XMLVersion</key>
-                    <value>1</value>
-                </entry>
-                <entry>
                     <key>avoidRedundancy</key>
                     <value>false</value>
-                </entry>
-                <entry>
-                    <key>childActions</key>
-                    <value>[{&quot;id&quot;:&quot;P4_A45_&quot;,&quot;control&quot;:&quot;P4_C39_&quot;,&quot;XMLVersion&quot;:1,&quot;avoidRedundancy&quot;:false,&quot;name&quot;:&quot;Control 45&quot;,&quot;command&quot;:&quot;.show();&quot;,&quot;type&quot;:&quot;control&quot;},{&quot;id&quot;:&quot;P4_A46_&quot;,&quot;control&quot;:&quot;P4_C42_&quot;,&quot;XMLVersion&quot;:1,&quot;avoidRedundancy&quot;:false,&quot;name&quot;:&quot;Control 46&quot;,&quot;command&quot;:&quot;.hide();&quot;,&quot;type&quot;:&quot;control&quot;}]</value>
                 </entry>
                 <entry>
                     <key>name</key>
@@ -1392,10 +1320,6 @@ where id = ?</SQL>
                         <value>P4_C42_</value>
                     </entry>
                     <entry>
-                        <key>XMLVersion</key>
-                        <value>1</value>
-                    </entry>
-                    <entry>
                         <key>avoidRedundancy</key>
                         <value>false</value>
                     </entry>
@@ -1425,10 +1349,6 @@ where id = ?</SQL>
                         <value>P4_C42_</value>
                     </entry>
                     <entry>
-                        <key>XMLVersion</key>
-                        <value>1</value>
-                    </entry>
-                    <entry>
                         <key>avoidRedundancy</key>
                         <value>false</value>
                     </entry>
@@ -1455,16 +1375,8 @@ where id = ?</SQL>
                     <value>P4_A50_</value>
                 </entry>
                 <entry>
-                    <key>XMLVersion</key>
-                    <value>1</value>
-                </entry>
-                <entry>
                     <key>avoidRedundancy</key>
                     <value>false</value>
-                </entry>
-                <entry>
-                    <key>childActions</key>
-                    <value>[{&quot;id&quot;:&quot;P4_A52_&quot;,&quot;control&quot;:&quot;P4_C22_&quot;,&quot;XMLVersion&quot;:1,&quot;avoidRedundancy&quot;:false,&quot;name&quot;:&quot;Control 52&quot;,&quot;command&quot;:&quot;.enable();&quot;,&quot;type&quot;:&quot;control&quot;},{&quot;id&quot;:&quot;P4_A53_&quot;,&quot;control&quot;:&quot;P4_C22_&quot;,&quot;XMLVersion&quot;:1,&quot;avoidRedundancy&quot;:false,&quot;name&quot;:&quot;Control 53&quot;,&quot;command&quot;:&quot;.disable();&quot;,&quot;type&quot;:&quot;control&quot;}]</value>
                 </entry>
                 <entry>
                     <key>name</key>
@@ -1485,7 +1397,7 @@ where id = ?</SQL>
                     <type>CTL</type>
                 </value1>
                 <value2>
-                    <constant>2</constant>
+                    <constant>3</constant>
                     <field></field>
                     <id>Constant.Constant</id>
                     <type>CNT</type>
@@ -1518,10 +1430,6 @@ where id = ?</SQL>
                         <value>P4_C22_</value>
                     </entry>
                     <entry>
-                        <key>XMLVersion</key>
-                        <value>1</value>
-                    </entry>
-                    <entry>
                         <key>avoidRedundancy</key>
                         <value>false</value>
                     </entry>
@@ -1549,10 +1457,6 @@ where id = ?</SQL>
                     <entry>
                         <key>control</key>
                         <value>P4_C22_</value>
-                    </entry>
-                    <entry>
-                        <key>XMLVersion</key>
-                        <value>1</value>
                     </entry>
                     <entry>
                         <key>avoidRedundancy</key>
@@ -1584,53 +1488,10 @@ where id = ?</SQL>
     <htmlBody>&lt;div id=&quot;P4_C1_&quot; class=&quot;pagepanel&quot;&gt;&lt;/div&gt;&lt;div id=&quot;P4_C18_&quot; class=&quot;panel&quot;&gt;&lt;table id=&quot;P4_C2_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P4_C3_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C4_&quot; class=&quot;tabelCell cellLabel&quot;&gt;First name&lt;/td&gt;&lt;td id=&quot;P4_C5_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P4_C6_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot; readonly=&quot;readonly&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C8_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C9_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;&lt;td id=&quot;P4_C10_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P4_C11_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot; readonly=&quot;readonly&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C13_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C14_&quot; class=&quot;tabelCell&quot;&gt;Date of birth&lt;/td&gt;&lt;td id=&quot;P4_C15_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P4_C16_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot; readonly=&quot;readonly&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C19_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C20_&quot; class=&quot;tabelCell&quot;&gt;Picture&lt;/td&gt;&lt;td id=&quot;P4_C21_&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;P4_C22_&quot; class=&quot;button&quot;&gt;Add picture&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C32_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C33_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;div id=&quot;P4_C31_&quot;&gt;&lt;span&gt;No pictures currently available&lt;/span&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C39_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C40_&quot; class=&quot;tabelCell&quot;&gt;&amp;nbsp;&lt;/td&gt;&lt;td id=&quot;P4_C41_&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;P4_C42_&quot; class=&quot;button&quot;&gt;Upload to server&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C29_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C30_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;</htmlBody>
     <id>P4</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-09-24T11:53:32.039+01:00</modifiedDate>
+    <modifiedDate>2014-10-16T12:45:45.789+01:00</modifiedDate>
     <name>03_PersonDetails</name>
     <rolesHtml>
-        <html>&lt;div id=&quot;P4_C1_&quot; class=&quot;pagepanel&quot;&gt;&lt;/div&gt;
-	&lt;div id=&quot;P4_C18_&quot; class=&quot;panel&quot;&gt;
-		&lt;table id=&quot;P4_C2_&quot; class=&quot;table&quot;&gt;
-			&lt;tbody&gt;
-				&lt;tr id=&quot;P4_C3_&quot; class=&quot;tableRow&quot;&gt;
-					&lt;td id=&quot;P4_C4_&quot; class=&quot;tabelCell cellLabel&quot;&gt;First name&lt;/td&gt;
-					&lt;td id=&quot;P4_C5_&quot; class=&quot;tabelCell&quot;&gt;
-						&lt;input id=&quot;P4_C6_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot; readonly=&quot;readonly&quot;&gt;&lt;/td&gt;
-					&lt;/tr&gt;
-					&lt;tr id=&quot;P4_C8_&quot; class=&quot;tableRow&quot;&gt;
-						&lt;td id=&quot;P4_C9_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;
-						&lt;td id=&quot;P4_C10_&quot; class=&quot;tabelCell&quot;&gt;
-							&lt;input id=&quot;P4_C11_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot; readonly=&quot;readonly&quot;&gt;&lt;/td&gt;
-						&lt;/tr&gt;
-						&lt;tr id=&quot;P4_C13_&quot; class=&quot;tableRow&quot;&gt;
-							&lt;td id=&quot;P4_C14_&quot; class=&quot;tabelCell&quot;&gt;Date of birth&lt;/td&gt;
-							&lt;td id=&quot;P4_C15_&quot; class=&quot;tabelCell&quot;&gt;
-								&lt;input id=&quot;P4_C16_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot; readonly=&quot;readonly&quot;&gt;&lt;/td&gt;
-							&lt;/tr&gt;
-							&lt;tr id=&quot;P4_C19_&quot; class=&quot;tableRow&quot;&gt;
-								&lt;td id=&quot;P4_C20_&quot; class=&quot;tabelCell&quot;&gt;Picture&lt;/td&gt;
-								&lt;td id=&quot;P4_C21_&quot; class=&quot;tabelCell&quot;&gt;
-									&lt;button id=&quot;P4_C22_&quot; class=&quot;button&quot;&gt;Add picture&lt;/button&gt;
-								&lt;/td&gt;
-							&lt;/tr&gt;
-							&lt;tr id=&quot;P4_C32_&quot; class=&quot;tableRow&quot;&gt;
-								&lt;td id=&quot;P4_C33_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;
-									&lt;div id=&quot;P4_C31_&quot;&gt;
-										&lt;span&gt;No pictures currently available&lt;/span&gt;
-									&lt;/div&gt;
-								&lt;/td&gt;
-							&lt;/tr&gt;
-							&lt;tr id=&quot;P4_C39_&quot; class=&quot;tableRow&quot;&gt;
-								&lt;td id=&quot;P4_C40_&quot; class=&quot;tabelCell&quot;&gt;&amp;nbsp;&lt;/td&gt;
-								&lt;td id=&quot;P4_C41_&quot; class=&quot;tabelCell&quot;&gt;
-									&lt;button id=&quot;P4_C42_&quot; class=&quot;button&quot;&gt;Upload to server&lt;/button&gt;
-								&lt;/td&gt;
-							&lt;/tr&gt;
-							&lt;tr id=&quot;P4_C29_&quot; class=&quot;tableRow&quot;&gt;
-								&lt;td id=&quot;P4_C30_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;/td&gt;
-							&lt;/tr&gt;
-						&lt;/tbody&gt;
-					&lt;/table&gt;
-				&lt;/div&gt;</html>
+        <html>&lt;div id=&quot;P4_C1_&quot; class=&quot;pagepanel&quot;&gt;&lt;/div&gt;&lt;div id=&quot;P4_C18_&quot; class=&quot;panel&quot;&gt;&lt;table id=&quot;P4_C2_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P4_C3_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C4_&quot; class=&quot;tabelCell cellLabel&quot;&gt;First name&lt;/td&gt;&lt;td id=&quot;P4_C5_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P4_C6_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot; readonly=&quot;readonly&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C8_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C9_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;&lt;td id=&quot;P4_C10_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P4_C11_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot; readonly=&quot;readonly&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C13_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C14_&quot; class=&quot;tabelCell&quot;&gt;Date of birth&lt;/td&gt;&lt;td id=&quot;P4_C15_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P4_C16_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot; readonly=&quot;readonly&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C19_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C20_&quot; class=&quot;tabelCell&quot;&gt;Picture&lt;/td&gt;&lt;td id=&quot;P4_C21_&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;P4_C22_&quot; class=&quot;button&quot;&gt;Add picture&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C32_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C33_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;div id=&quot;P4_C31_&quot;&gt;&lt;span&gt;No pictures currently available&lt;/span&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C39_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C40_&quot; class=&quot;tabelCell&quot;&gt;&amp;nbsp;&lt;/td&gt;&lt;td id=&quot;P4_C41_&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;P4_C42_&quot; class=&quot;button&quot;&gt;Upload to server&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C29_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C30_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;</html>
     </rolesHtml>
     <sessionVariables>personId</sessionVariables>
     <title>Person details</title>

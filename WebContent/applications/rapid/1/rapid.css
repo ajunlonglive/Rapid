@@ -129,6 +129,7 @@ div.tabsPanel.selected {
 
 /* sets font in all pages to arial */
 body { font-family: 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif; font-size: 14px; margin:0; }
+table { font-family: 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif; font-size: 14px; margin:0; }
 
 .glossyTitle tr:first-child td {
   font-weight: bold;
