@@ -1393,10 +1393,10 @@ public class Application {
 			// if for offlineUse
 			if (offlineUse) {
 												
-				// loop the contents of the webFolder and place in root of .zip
+				// loop the contents of the webFolder 
 				for (File file : webFolder.listFiles()) {
-					// add this file to the WEB-INF path
-					zipSources.add(file, "applications/" + _id);
+					// add this file to the zip using the web folder path
+					zipSources.add(file, getWebFolder(this));
 				}
 				
 				// set the delete folder
@@ -1409,9 +1409,11 @@ public class Application {
 				// get a file writer
 				FileWriter fw = new FileWriter(detailsFile);
 				// write the details
-				fw.write(_id + "\n" + _version + "\n" + _title);
+				fw.write(_id + "\r\n" + _version + "\r\n" + _title);
 				// close the file writer
 				fw.close();
+				// add the file to the zip with a root path
+				zipSources.add(detailsFile, "");
 				
 				// check we have pages
 				if (_pages != null) {					
