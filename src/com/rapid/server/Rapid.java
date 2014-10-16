@@ -366,7 +366,10 @@ public class Rapid extends RapidHttpServlet {
 								
 							} // user check
 							
-						} catch (Exception ex) {}
+						} catch (Exception ex) {
+							// only log
+							getLogger().error("Error geting apps : ", ex);
+						}
 																									
 					} // apps loop
 					
@@ -386,6 +389,46 @@ public class Rapid extends RapidHttpServlet {
 				
 				// log response
 				getLogger().debug("Rapid POST response : " + jsonApps.toString());
+				
+			} else if ("checkVersion".equals(rapidRequest.getActionName())) {
+				
+				// get the application
+				Application app = rapidRequest.getApplication();
+				
+				// create a json version object
+				JSONObject jsonVersion = new JSONObject();
+				
+				// get the relevant security adapter
+				SecurityAdapater security = app.getSecurity();
+				
+				// fail silently if there was an issue
+				try {
+				
+					// fetch a user object in the name of the current user for the current app
+					User user = security.getUser(rapidRequest);
+					
+					// if there was one
+					if (user != null) {
+						// add the version
+						jsonVersion.put("version", app.getVersion());
+					}
+					
+				} catch (Exception ex) {
+					// only log
+					getLogger().error("Error checking version : ", ex);
+				}
+				
+				// create a writer
+				PrintWriter out = response.getWriter();
+				
+				// print the results
+				out.print(jsonVersion.toString());
+				
+				// close the writer
+				out.close();
+				
+				// log response
+				getLogger().debug("Rapid POST response : " + jsonVersion.toString());
 											
 			} else if ("uploadImage".equals(rapidRequest.getActionName())) {
 				
