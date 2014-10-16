@@ -1404,6 +1404,15 @@ public class Application {
 				// create it
 				deleteFolder.mkdirs();
 				
+				// make a details.txt file
+				File detailsFile = new File(deleteFolder + "/details.txt");
+				// get a file writer
+				FileWriter fw = new FileWriter(detailsFile);
+				// write the details
+				fw.write(_id + "\n" + _version + "\n" + _title);
+				// close the file writer
+				fw.close();
+				
 				// check we have pages
 				if (_pages != null) {					
 					// loop them
@@ -1413,11 +1422,11 @@ public class Application {
 						// create a file for it in the delete folder
 						File pageFile = new File(deleteFolder + "/" + pageId + ".htm");
 						// create a file writer for it for now
-						FileWriter pageFileWriter = new FileWriter(pageFile);
+						fw = new FileWriter(pageFile);
 						// for now get a printWriter to write the page html
-						page.writeHtml(rapidServlet, rapidRequest, this, user, pageFileWriter);
+						page.writeHtml(rapidServlet, rapidRequest, this, user, fw);
 						// close it
-						pageFileWriter.close();
+						fw.close();
 						// add the file to the zip with a root path
 						zipSources.add(pageFile, "");
 					}
@@ -1428,11 +1437,11 @@ public class Application {
 						// create a file for it for it in the delete folder
 						File pageFile = new File(deleteFolder + "/" + "index.htm");
 						// create a file writer for it for now
-						FileWriter pageFileWriter = new FileWriter(pageFile);
+						fw = new FileWriter(pageFile);
 						// for now get a printWriter to write the page html
-						page.writeHtml(rapidServlet, rapidRequest, this, user, pageFileWriter);
+						page.writeHtml(rapidServlet, rapidRequest, this, user, fw);
 						// close it
-						pageFileWriter.close();
+						fw.close();
 						// add the file to the zip with a root path
 						zipSources.add(pageFile, "");
 					}
