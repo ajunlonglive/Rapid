@@ -836,16 +836,19 @@ function setData_text(id, data, field, details) {
 /* Gallery control resource JavaScript */
 
 function Gallery_removeImage(ev, id) {
-	// get the image
-	var img = $(ev.target);
-	// tell Rapid Mobile an image has been removed
-	if (typeof _rapidmobile != "undefined") _rapidmobile.removeImage(id, img.attr("src")); 
-	// remove it
-	img.remove();
-	// look for our custom imageRemoved handler for this control
-	var imageRemoved = window["Event_imageRemoved_" + id];
-	// fire it if we found it
-	if (imageRemoved) window["Event_imageRemoved_" + id]();
+	// confirm
+	if (confirm("Remove image?")) {
+		// get the image
+		var img = $(ev.target);
+		// tell Rapid Mobile an image has been removed
+		if (typeof _rapidmobile != "undefined") _rapidmobile.removeImage(id, img.attr("src")); 
+		// remove it
+		img.remove();
+		// look for our custom imageRemoved handler for this control
+		var imageRemoved = window["Event_imageRemoved_" + id];
+		// fire it if we found it
+		if (imageRemoved) window["Event_imageRemoved_" + id]();
+	}
 }
 
 /* Link control resource JavaScript */

@@ -1518,7 +1518,7 @@ function logicConditionValue(cell, action, conditionIndex, valueId) {
 	var value = condition[valueId];
 		
 	// clear and add a table into the cell for this value
-	cell.html("<table></table>")
+	cell.html("<table class='propertiesPanelTable'></table>")
 	// get a reference to it
 	var table = cell.find("table").last();
 	

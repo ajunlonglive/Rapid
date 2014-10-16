@@ -12,7 +12,7 @@
             </entry>
             <entry>
                 <key>details</key>
-                <value>{&quot;appId&quot;:&quot;mobdemo&quot;,&quot;pageId&quot;:&quot;P1&quot;}</value>
+                <value>{&quot;appId&quot;:&quot;mobdemo&quot;,&quot;pageId&quot;:&quot;P1&quot;,&quot;version&quot;:&quot;1&quot;}</value>
             </entry>
             <entry>
                 <key>pageId</key>
@@ -118,16 +118,8 @@
         <value>P3_A20_</value>
     </entry>
     <entry>
-        <key>XMLVersion</key>
-        <value>1</value>
-    </entry>
-    <entry>
         <key>avoidRedundancy</key>
         <value>false</value>
-    </entry>
-    <entry>
-        <key>childActions</key>
-        <value>[]</value>
     </entry>
     <entry>
         <key>name</key>
@@ -303,10 +295,6 @@ limit 20</SQL>
         <value>P3_A21_</value>
     </entry>
     <entry>
-        <key>XMLVersion</key>
-        <value>1</value>
-    </entry>
-    <entry>
         <key>avoidRedundancy</key>
         <value>false</value>
     </entry>
@@ -459,10 +447,6 @@ limit 20</SQL>
         <value>P3_A23_</value>
     </entry>
     <entry>
-        <key>XMLVersion</key>
-        <value>1</value>
-    </entry>
-    <entry>
         <key>avoidRedundancy</key>
         <value>false</value>
     </entry>
@@ -591,10 +575,6 @@ limit 20</SQL>
             <value>P3_C18_</value>
         </entry>
         <entry>
-            <key>XMLVersion</key>
-            <value>1</value>
-        </entry>
-        <entry>
             <key>avoidRedundancy</key>
             <value>false</value>
         </entry>
@@ -624,16 +604,8 @@ limit 20</SQL>
             <value>P3_A31_</value>
         </entry>
         <entry>
-            <key>XMLVersion</key>
-            <value>1</value>
-        </entry>
-        <entry>
             <key>avoidRedundancy</key>
             <value>false</value>
-        </entry>
-        <entry>
-            <key>childActions</key>
-            <value>[{&quot;id&quot;:&quot;P3_A32_&quot;,&quot;XMLVersion&quot;:1,&quot;avoidRedundancy&quot;:false,&quot;page&quot;:&quot;P4&quot;,&quot;name&quot;:&quot;Navigate 32&quot;,&quot;sessionVariables&quot;:[{&quot;field&quot;:&quot;&quot;,&quot;name&quot;:&quot;personId&quot;,&quot;itemId&quot;:&quot;&quot;}],&quot;type&quot;:&quot;navigate&quot;},{&quot;id&quot;:&quot;P3_A33_&quot;,&quot;XMLVersion&quot;:1,&quot;avoidRedundancy&quot;:false,&quot;page&quot;:&quot;P5&quot;,&quot;name&quot;:&quot;Navigate 33&quot;,&quot;dialogue&quot;:&quot;true&quot;,&quot;type&quot;:&quot;navigate&quot;}]</value>
         </entry>
         <entry>
             <key>name</key>
@@ -642,10 +614,6 @@ limit 20</SQL>
         <entry>
             <key>type</key>
             <value>logic</value>
-        </entry>
-        <entry>
-            <key>conditionsType</key>
-            <value>and</value>
         </entry>
     </properties>
     <XMLVersion>1</XMLVersion>
@@ -664,15 +632,12 @@ limit 20</SQL>
             <type>SYS</type>
         </value2>
     </conditions>
+    <conditionsType>and</conditionsType>
     <falseActions xsi:type="navigate">
         <properties>
             <entry>
                 <key>id</key>
                 <value>P3_A33_</value>
-            </entry>
-            <entry>
-                <key>XMLVersion</key>
-                <value>1</value>
             </entry>
             <entry>
                 <key>avoidRedundancy</key>
@@ -702,10 +667,6 @@ limit 20</SQL>
             <entry>
                 <key>id</key>
                 <value>P3_A32_</value>
-            </entry>
-            <entry>
-                <key>XMLVersion</key>
-                <value>1</value>
             </entry>
             <entry>
                 <key>avoidRedundancy</key>
@@ -762,7 +723,7 @@ if (target.closest(&quot;tr&quot;).index() == 0 || target.is(&quot;tbody&quot;))
 </entry>
 <entry>
     <key>columns</key>
-    <value>[{&quot;field&quot;:&quot;id&quot;,&quot;cellFunction&quot;:&quot;&quot;,&quot;title&quot;:&quot;Id&quot;,&quot;visible&quot;:false,&quot;titleStyle&quot;:&quot;&quot;,&quot;fieldStyle&quot;:&quot;&quot;},{&quot;field&quot;:&quot;forename&quot;,&quot;cellFunction&quot;:&quot;&quot;,&quot;title&quot;:&quot;First name&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;&quot;,&quot;fieldStyle&quot;:&quot;&quot;},{&quot;field&quot;:&quot;surname&quot;,&quot;cellFunction&quot;:&quot;&quot;,&quot;title&quot;:&quot;Surname&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;&quot;,&quot;fieldStyle&quot;:&quot;&quot;},{&quot;field&quot;:&quot;birthday&quot;,&quot;cellFunction&quot;:&quot;&quot;,&quot;title&quot;:&quot;Date of birth&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;&quot;,&quot;fieldStyle&quot;:&quot;text-align:center;padding-right:10px;&quot;}]</value>
+    <value>[{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;id&quot;,&quot;title&quot;:&quot;Id&quot;,&quot;visible&quot;:false,&quot;titleStyle&quot;:&quot;&quot;,&quot;fieldStyle&quot;:&quot;&quot;},{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;forename&quot;,&quot;title&quot;:&quot;First name&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;&quot;,&quot;fieldStyle&quot;:&quot;&quot;},{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;surname&quot;,&quot;title&quot;:&quot;Surname&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;&quot;,&quot;fieldStyle&quot;:&quot;&quot;},{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;birthday&quot;,&quot;title&quot;:&quot;Date of birth&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;&quot;,&quot;fieldStyle&quot;:&quot;text-align:center;padding-right:10px;&quot;}]</value>
 </entry>
 <entry>
     <key>type</key>
@@ -940,48 +901,10 @@ if (target.closest(&quot;tr&quot;).index() == 0 || target.is(&quot;tbody&quot;))
     <htmlBody>&lt;div id=&quot;P3_C1_&quot; class=&quot;pagepanel&quot;&gt;&lt;/div&gt;&lt;div id=&quot;P3_C22_&quot; class=&quot;panel&quot;&gt;Person search&lt;/div&gt;&lt;div id=&quot;P3_C9_&quot; class=&quot;panel&quot;&gt;&lt;table id=&quot;P3_C2_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P3_C3_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P3_C4_&quot; class=&quot;tabelCell cellLabel&quot;&gt;First name&lt;/td&gt;&lt;td id=&quot;P3_C5_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P3_C10_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P3_C6_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P3_C7_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;&lt;td id=&quot;P3_C8_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P3_C11_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P3_C12_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P3_C13_&quot; class=&quot;tabelCell&quot;&gt;Date of birth&lt;/td&gt;&lt;td id=&quot;P3_C14_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P3_C15_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P3_C16_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P3_C17_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;div id=&quot;P3_C19_&quot; class=&quot;panel&quot;&gt;&lt;table id=&quot;P3_C18_&quot; class=&quot;grid&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td style=&quot;display:none;&quot;&gt;Id&lt;/td&gt;&lt;td&gt;First name&lt;/td&gt;&lt;td&gt;Surname&lt;/td&gt;&lt;td&gt;Date of birth&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;</htmlBody>
     <id>P3</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-09-23T14:41:17.877+01:00</modifiedDate>
+    <modifiedDate>2014-10-16T13:23:08.721+01:00</modifiedDate>
     <name>01_PersonSearch</name>
     <rolesHtml>
-        <html>&lt;div id=&quot;P3_C1_&quot; class=&quot;pagepanel&quot;&gt;&lt;/div&gt;
-	&lt;div id=&quot;P3_C22_&quot; class=&quot;panel&quot;&gt;Person search&lt;/div&gt;
-	&lt;div id=&quot;P3_C9_&quot; class=&quot;panel&quot;&gt;
-		&lt;table id=&quot;P3_C2_&quot; class=&quot;table&quot;&gt;
-			&lt;tbody&gt;
-				&lt;tr id=&quot;P3_C3_&quot; class=&quot;tableRow&quot;&gt;
-					&lt;td id=&quot;P3_C4_&quot; class=&quot;tabelCell cellLabel&quot;&gt;First name&lt;/td&gt;
-					&lt;td id=&quot;P3_C5_&quot; class=&quot;tabelCell&quot;&gt;
-						&lt;input id=&quot;P3_C10_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
-					&lt;/tr&gt;
-					&lt;tr id=&quot;P3_C6_&quot; class=&quot;tableRow&quot;&gt;
-						&lt;td id=&quot;P3_C7_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;
-						&lt;td id=&quot;P3_C8_&quot; class=&quot;tabelCell&quot;&gt;
-							&lt;input id=&quot;P3_C11_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
-						&lt;/tr&gt;
-						&lt;tr id=&quot;P3_C12_&quot; class=&quot;tableRow&quot;&gt;
-							&lt;td id=&quot;P3_C13_&quot; class=&quot;tabelCell&quot;&gt;Date of birth&lt;/td&gt;
-							&lt;td id=&quot;P3_C14_&quot; class=&quot;tabelCell&quot;&gt;
-								&lt;input id=&quot;P3_C15_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
-							&lt;/tr&gt;
-							&lt;tr id=&quot;P3_C16_&quot; class=&quot;tableRow&quot;&gt;
-								&lt;td id=&quot;P3_C17_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;
-									&lt;div id=&quot;P3_C19_&quot; class=&quot;panel&quot;&gt;
-										&lt;table id=&quot;P3_C18_&quot; class=&quot;grid&quot;&gt;
-											&lt;tbody&gt;
-												&lt;tr&gt;
-													&lt;td style=&quot;display:none;&quot;&gt;Id&lt;/td&gt;
-													&lt;td&gt;First name&lt;/td&gt;
-													&lt;td&gt;Surname&lt;/td&gt;
-													&lt;td&gt;Date of birth&lt;/td&gt;
-												&lt;/tr&gt;
-											&lt;/tbody&gt;
-										&lt;/table&gt;
-									&lt;/div&gt;
-								&lt;/td&gt;
-							&lt;/tr&gt;
-						&lt;/tbody&gt;
-					&lt;/table&gt;
-				&lt;/div&gt;</html>
+        <html>&lt;div id=&quot;P3_C1_&quot; class=&quot;pagepanel&quot;&gt;&lt;/div&gt;&lt;div id=&quot;P3_C22_&quot; class=&quot;panel&quot;&gt;Person search&lt;/div&gt;&lt;div id=&quot;P3_C9_&quot; class=&quot;panel&quot;&gt;&lt;table id=&quot;P3_C2_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P3_C3_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P3_C4_&quot; class=&quot;tabelCell cellLabel&quot;&gt;First name&lt;/td&gt;&lt;td id=&quot;P3_C5_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P3_C10_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P3_C6_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P3_C7_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;&lt;td id=&quot;P3_C8_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P3_C11_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P3_C12_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P3_C13_&quot; class=&quot;tabelCell&quot;&gt;Date of birth&lt;/td&gt;&lt;td id=&quot;P3_C14_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P3_C15_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P3_C16_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P3_C17_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;div id=&quot;P3_C19_&quot; class=&quot;panel&quot;&gt;&lt;table id=&quot;P3_C18_&quot; class=&quot;grid&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td style=&quot;display:none;&quot;&gt;Id&lt;/td&gt;&lt;td&gt;First name&lt;/td&gt;&lt;td&gt;Surname&lt;/td&gt;&lt;td&gt;Date of birth&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;</html>
     </rolesHtml>
     <title>Person search</title>
     <XMLVersion>1</XMLVersion>
