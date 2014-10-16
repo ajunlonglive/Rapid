@@ -1,3 +1,4 @@
+<!DOCTYPE html encoding="utf-8">
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.util.Map" %>
 <%@ page import="com.rapid.core.*" %>
@@ -37,7 +38,6 @@ Application rapid = applications.get("rapid");
 //get a rapid request
 RapidRequest rapidRequest = new RapidRequest(request); 
 %>
-<!DOCTYPE html>
 <html>
 <head>
 	
