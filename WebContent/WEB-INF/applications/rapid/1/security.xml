@@ -14,11 +14,6 @@
         <password>admin</password>
         <roles>RapidAdmin</roles>
         <roles>RapidDesign</roles>
-        <roles>RapidSuper</roles>
-    </users>
-    <users>
-        <description>Unprivileged user</description>
-        <name>user</name>
-        <password>user</password>
+        <!-- <roles>RapidSuper</roles> -->
     </users>
 </security>

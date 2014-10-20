@@ -563,18 +563,29 @@ function sizeBorder(control) {
 	_selectionBorder.children().removeClass("selectionBorderNoInnerMove");
 		
 	// set the css according to move / no move
-	if (controlClass && controlClass.canUserMove) {
-		_selectionBorder.addClass("selectionBorderMove");
-		_selectionBorder.children().addClass("selectionBorderInnerMove");	
-		if (control.childControls.length == 0) {
-			_selectionBorder.addClass("selectionBorderInnerMove");		
+	if (controlClass) {
+		// move / no move dotted/fixed border
+		if (controlClass.canUserMove) {
+			_selectionBorder.addClass("selectionBorderMove");
+			_selectionBorder.children().addClass("selectionBorderInnerMove");	
+			if (control.childControls.length == 0) {
+				_selectionBorder.addClass("selectionBorderInnerMove");		
+			} else {
+				_selectionBorder.addClass("selectionBorderNoInnerMove");	
+			}
 		} else {
-			_selectionBorder.addClass("selectionBorderNoInnerMove");	
+			_selectionBorder.addClass("selectionBorderNoMove");		
+			_selectionBorder.children().addClass("selectionBorderNoInnerMove");
 		}
-	} else {
-		_selectionBorder.addClass("selectionBorderNoMove");		
-		_selectionBorder.children().addClass("selectionBorderNoInnerMove");
+		// set absolute/fixed
+		if (controlClass.getHtmlFunction.indexOf("nonVisibleControl") > 0) {
+			_selectionBorder.css("position","fixed");
+		} else {
+			_selectionBorder.css("position","absolute");
+		}
+	
 	}
+
 }
 
 // this positions the selection border inclduing the mouseDown Offsets which should be zero when the mouse is not moving
@@ -860,15 +871,17 @@ function selectControl(control) {
 		
 		// if we have a parent control so aren't the page
 		if (_selectedControl.parentControl) {
-						
+			
+			// size the border
+			sizeBorder(_selectedControl);
+			
 			// check if nonVisualControl and position the border
 			if (_selectedControl.object.is(".nonVisibleControl")) {
-				positionBorder(_selectedControl.object.offset().left, _selectedControl.object.offset().top);
+				positionBorder(_selectedControl.object.offset().left, _selectedControl.object.offset().top - $(window).scrollTop());
 			} else {
 				positionBorder(_selectedControl.object.offset().left + _panelPinnedOffset, _selectedControl.object.offset().top);
 			}	
-			// size the border
-			sizeBorder(_selectedControl);
+			
 			// show the border if it has any size to it	and the control is visible		
 			if (_selectionBorder.width() > 5 && _selectedControl.object.is(":visible")) {
 				_selectionBorder.show();
@@ -1139,7 +1152,7 @@ function loadVersions(selectedVersion, forceLoad) {
         		// derived the status text (these must match final ints at the top of Application.java)
         		var status = "";
         		// live = 1
-        		if (version.status == 1) status = " - (live)"
+        		if (version.status == 1) status = " - (Live)"
         		// add an option for this page (if not the rapid app itself)
         		options += "<option value='" + version.version + "' " + (selectedVersion || urlVersion == version.version ? "selected='true'" : "") + ">" + version.version + status + "</option>";        	
         	}
@@ -2126,16 +2139,16 @@ $(document).ready( function() {
 		// check pinned
 		if (_panelPinned) {
 			_panelPinned = false;			
-			$("#controlPanelPin").html("<img src='images/unpinned_14x14.png' title='pin'>");			
+			$("#controlPanelPin").html("<img src='images/unpinned_14x14.png' title='pin'>");
+			// set the panel pin offset
+			_panelPinnedOffset = 0;			
+			// arrange the non visible controls due to the shift in the panel
+			arrangeNonVisibleControls();	
+			// reselect control
+			selectControl(_selectedControl);
 			$("#controlPanel").hide("slide", {direction: "left"}, 200, function() {
-				// set the panel pin offset
-				_panelPinnedOffset = 0;
 				// resize the window
-				windowResize("pin");
-				// reselect control
-				selectControl(_selectedControl);
-				// arrange the non visible controls due to the shift in the panel
-				arrangeNonVisibleControls();				
+				windowResize("pin");		
 			});
 		} else {
 			_panelPinned = true;
@@ -2143,10 +2156,10 @@ $(document).ready( function() {
 			$("#controlPanelPin").html("<img src='images/pinned_14x14.png' title='unpin'>");
 			// resize the window
 			windowResize("unpin");
-			// reselect control
-			selectControl(_selectedControl);
 			// arrange the non visible controls due to the shift in the panel
 			arrangeNonVisibleControls();
+			// reselect control
+			selectControl(_selectedControl);			
 		}
 	});
 	
@@ -2155,10 +2168,7 @@ $(document).ready( function() {
 		// show the panel if we're not moving a control
 		if (!_movingControl) {
 			// show the panel
-			$("#controlPanel").show("slide", {direction: "left"}, 200, function() {
-				// set the panel pin offset
-				_panelPinnedOffset = 221;
-			});			
+			$("#controlPanel").show("slide", {direction: "left"}, 200);			
 		}
 	});
 	
@@ -2826,7 +2836,7 @@ $(document).mouseup( function(ev) {
 		_selectionMoveRight.hide();	
 		// check if nonVisualControl
 		if (_selectedControl.object.is(".nonVisibleControl")) {
-			positionBorder(_selectedControl.object.offset().left, _selectedControl.object.offset().top);
+			positionBorder(_selectedControl.object.offset().left, _selectedControl.object.offset().top - $(window).scrollTop());
 		} else {
 			positionBorder(_selectedControl.object.offset().left + _panelPinnedOffset, _selectedControl.object.offset().top);
 		}		

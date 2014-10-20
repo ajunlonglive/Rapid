@@ -7,10 +7,6 @@ div.loading{position:absolute;background-color:black;opacity:.2;filter:alpha(opa
 span.loading{position:absolute;background:url("../../../images/wait_120x15.gif");background-repeat:no-repeat;width:120px;height:15px;border:2px solid #777;display:none}
 table.grid{border-collapse:collapse}
 .hint{position:absolute;z-index:10009}
-.slidePanel{position:absolute;padding:5px;width:20px;height:20px;z-index:101}
-.slidePanel img{width:100%;height:100%}
-.slidePanelPane{position:absolute;float:left;width:200px;height:100%;background-color:white;border-right:1px solid black;z-index:100}
-.slidePanelCover{position:fixed;top:0;left:0;background-color:#ccc;opacity:.75;z-index:99}
 ul.tabsHeader{list-style:none;padding:0;margin:0}
 .tabsHeader li{float:left;border:1px solid #bbb;border-top-left-radius:5px;border-top-right-radius:5px;border-bottom-width:0;margin:0;text-decoration:none;display:block;background:#eee;color:#00c;width:8em;text-align:center;cursor:pointer}
 .tabsHeader li:hover{background:#ddf}
@@ -19,6 +15,7 @@ div.tabsGroup{clear:both}
 div.tabsPanel{display:none;min-height:2em}
 div.tabsPanel.selected{border:1px solid black;clear:both;padding:0 1em;display:block}
 body{padding:10px;font-family:'Lucida Grande',Verdana,Arial,Helvetica,sans-serif;font-size:13px}
+table{font-family:'Lucida Grande',Verdana,Arial,Helvetica,sans-serif;font-size:13px}
 .dialogueCover{background-color:white;opacity:.7;filter:alpha(opacity=70)}
 div.validation{font-size:12px;margin:10px 10px 10px 0;padding:6px 10px 5px 25px;background:url(../../../images/alert_16x16.png) 5px 5px no-repeat;border:1px solid red;border-radius:5px;max-width:200px}
 input.validation{border:2px solid red;border-radius:5px;box-shadow:1px 1px 2px}

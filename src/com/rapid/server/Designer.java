@@ -241,6 +241,8 @@ public class Designer extends RapidHttpServlet {
 										jsonVersion.put("id", application.getId());
 										// add the version
 										jsonVersion.put("version", application.getVersion());
+										// add the status
+										jsonVersion.put("status", application.getStatus());
 										// add the title
 										jsonVersion.put("title", application.getTitle());
 										// add whether to show control Ids
