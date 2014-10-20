@@ -11,6 +11,7 @@
     <actionTypes>navigate</actionTypes>
     <actionTypes>validation</actionTypes>
     <actionTypes>webservice</actionTypes>
+    <controlTypes>page</controlTypes>
     <controlTypes>button</controlTypes>
     <controlTypes>checkbox</controlTypes>
     <controlTypes>dataStore</controlTypes>
@@ -42,13 +43,14 @@
     <description>This is a demonstration application provided to showcase many Rapid Mobile features</description>
     <id>mobdemo</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-09-19T10:04:13.871+01:00</modifiedDate>
+    <modifiedDate>2014-10-16T14:38:35.952+01:00</modifiedDate>
     <name>mobdemo</name>
     <pageBackupsMaxSize>3</pageBackupsMaxSize>
     <securityAdapterType>rapid</securityAdapterType>
     <showActionIds>false</showActionIds>
     <showControlIds>false</showControlIds>
     <startPageId>P3</startPageId>
+    <status>0</status>
     <styles>/*
 Styles saved here will be applied to all pages in the application
 */
@@ -57,6 +59,11 @@ body {
   font-family : 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;
   font-size : 18px;
 }	
+
+table {
+  font-family : 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;
+  font-size : 18px;
+}
 
 input {
 	font-size: 18px;

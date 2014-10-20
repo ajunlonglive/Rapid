@@ -308,90 +308,6 @@ function Init_pagePanel(id, details) {
   });
 }
 
-function Init_slidePanel(id, details) {
-  // get a reference to the body
-  var body = $("body");
-  // get the pageCover
-  var pageCover = body.find(".slidePanelCover");
-  // if we don't have one
-  if (!pageCover[0]) {
-  	// add one
-  	body.append("<div class='slidePanelCover'></div>");
-  	// set the reference
-  	pageCover = body.find(".slidePanelCover");
-  	// get a reference to the window
-  	var win = $(window);	
-  	// size the cover
-  	pageCover.css({
-      	width : win.width(),
-         	height : win.height()
-      });
-  }
-  
-  // get a reference to the slidePanel
-  var slidePanel = $("#" + id);
-  // get the slidePanelPaneId
-  var slidePanelPaneId = slidePanel.attr("data-pane");
-  // get the pane
-  var slidePanelPane = $("#" + slidePanelPaneId);
-  
-  // show or hide the page cover if panel is visible
-  if (slidePanelPane.is(":visible")) {
-  	pageCover.show();
-  } else {
-  	pageCover.hide();
-  }
-  
-  // add the opener listener	       
-  slidePanel.click({width: slidePanelPane.css("width"),left: slidePanelPane.css("margin-left")}, function(ev) {
-  	// get the stored width
-  	var width = ev.data.width
-  	// get any existing left margin
-  	var left = ev.data.left;
-  	// check visibility
-  	if (slidePanelPane.is(":visible")) {
-  		// animate off-screen
-  		slidePanelPane.animate({"margin-left": "-" + width}, 500, function() {
-  			// hide when complete
-  			slidePanelPane.hide();
-  			// toggle open closed
-  			slidePanel.removeClass("slidePanelOpen");
-  			slidePanel.addClass("slidePanelClosed");	
-  			// hide the page cover
-  			pageCover.hide();		
-  		});		
-  	} else {
-  		// set off screen
-  		slidePanelPane.css({"margin-left": "-" + width}).show();
-  		// animate to full width
-  		slidePanelPane.animate({"margin-left": 0}, 500);		
-  		// toggle open closed
-  		slidePanel.removeClass("slidePanelClosed");
-  		slidePanel.addClass("slidePanelOpen");
-  		// show the page cover	
-  		pageCover.show();
-  	}
-  });	        
-  
-  // add the cover listener
-  pageCover.click({width: slidePanelPane.css("width"),left: slidePanelPane.css("margin-left")}, function(ev){
-  	// get the stored width
-  	var width = ev.data.width
-  	// get any existing left margin
-  	var left = ev.data.left;
-  	// animate off-screen
-  	slidePanelPane.animate({"margin-left": "-" + width}, 500, function() {
-  		// hide when complete
-  		slidePanelPane.hide();
-  		// toggle open closed
-  		slidePanel.removeClass("slidePanelOpen");
-  		slidePanel.addClass("slidePanelClosed");	
-  		// hide the page cover
-  		pageCover.hide();		
-  	});
-  });
-}
-
 function Init_tabGroup(id, details) {
   $("#" + id).children("ul").children("li").each( function() {
   	$(this).click( function(ev, index) {
@@ -785,42 +701,6 @@ function linkClick(url, sessionVariablesString) {
 	window.location = url;
 	
 }
-
-/* Slide panel control resource JavaScript */
-
-//JQuery is ready! 
-$(document).ready( function() {
-	
-	$(window).resize(function(ex) {
-	
-		if (typeof(window.parent._pageIframe) === "undefined") {
-	
-			var win = $(window);
-			
-			// resize the page cover
-			$(".slidePanelCover").css({
-	       		width : win.width(),
-	       		height : win.height()
-	       	});
-	       	
-	    } else {
-	    
-	    	// get the page iframe
-	    	var _pageIframe = window.parent._pageIframe;
-	    	// get the scale
-	    	var _scale = window.parent._scale;
-	    		    		    
-	    	// resize the page cover
-			$(".slidePanelCover").css({
-	       		width : _pageIframe.width() / _scale,
-	       		height : _pageIframe.height() / _scale
-	       	});
-	    
-	    }
-       	      		
-	});
-	
-});
 
 /* Database action resource JavaScript */
 

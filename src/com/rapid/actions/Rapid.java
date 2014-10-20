@@ -517,9 +517,9 @@ public class Rapid extends Action {
 							// derive the text
 							String text = application.getVersion();
 							// if live add some
-							if (application.getStatus() == 1) text += " - (live)";
+							if (application.getStatus() == 1) text += " - (Live)";
 							// add the title
-							jsonVersion.put("text", application.getVersion());																					
+							jsonVersion.put("text", text);																					
 							// put the entry into the collection
 							jsonVersions.put(jsonVersion);	
 							

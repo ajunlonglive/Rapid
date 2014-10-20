@@ -23,7 +23,6 @@
     <controlTypes>pagePanel</controlTypes>
     <controlTypes>panel</controlTypes>
     <controlTypes>radiobuttons</controlTypes>
-    <controlTypes>slidePanel</controlTypes>
     <controlTypes>tabGroup</controlTypes>
     <controlTypes>table</controlTypes>
     <controlTypes>text</controlTypes>
@@ -39,7 +38,7 @@
     <description>This is a demonstration Rapid application provided to showcase many common Rapid features - version 2</description>
     <id>demo</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-10-08T07:14:12.560+01:00</modifiedDate>
+    <modifiedDate>2014-10-16T14:38:17.083+01:00</modifiedDate>
     <name>demo</name>
     <pageBackupsMaxSize>3</pageBackupsMaxSize>
     <securityAdapterType>rapid</securityAdapterType>
@@ -53,6 +52,11 @@ Styles saved here will be applied to all pages in the application
 
 body {
   padding : 10px;
+  font-family : 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;
+  font-size : 13px;
+}
+
+table {
   font-family : 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;
   font-size : 13px;
 }

@@ -19,6 +19,7 @@ div.tabsGroup{clear:both}
 div.tabsPanel{display:none;min-height:2em}
 div.tabsPanel.selected{border:1px solid black;clear:both;padding:0 1em;display:block}
 body{font-family:'Lucida Grande',Verdana,Arial,Helvetica,sans-serif;font-size:18px}
+table{font-family:'Lucida Grande',Verdana,Arial,Helvetica,sans-serif;font-size:18px}
 input{font-size:18px;padding:8px;border:1px solid #888;border-radius:10px;box-shadow:inset -2px 2px 5px 0 #ccc;width:90%}
 input:focus{border:1px solid black;border-radius:10px;box-shadow:inset -2px 2px 5px 0 #aaa;outline:0}
 button{font-size:18px;padding:8px;border:1px solid #888;border-radius:10px;box-shadow:inset 2px -2px 5px 5px #ccc;width:90%}
