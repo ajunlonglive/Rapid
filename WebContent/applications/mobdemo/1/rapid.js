@@ -90,6 +90,7 @@ function Action_navigate(url, dialogue) {
 		       		// empty the body html
 		       		bodyHtml = "";
 		       		script = "";
+		       		links = "";
 		       		
 		           	// loop the items
 		           	var items = $(page);
@@ -102,7 +103,25 @@ function Action_navigate(url, dialogue) {
 		           			// exclude the design link
 		           			if (items[i].innerHTML && items[i].innerHTML.indexOf("/* designLink */") < 0) {
 		           				script += items[i].outerHTML;
-		           			}
+		           			}		           			
+		           		break;
+		           		case "LINK" :
+		           			// assume we can include this
+		           			var include = true;
+		           			// fetch the text
+		           			var text = items[i].outerHTML;	           			
+		           			// look for an href="
+		           			if (!items[i].innerHTML && text.indexOf("href=\"") > 0) {
+		           				var startPos = text.indexOf("href=\"")+6;
+		           				var href = text.substr(startPos,text.indexOf("\"", startPos) - startPos);
+		           				// exclude if we already have an element in the head with with href
+		           				if ($("head").find("link[href='" + href + "']")[0]) include = false;
+		           			}		           			
+		           			// if still safe to include
+		           			if (include) links += text;		           			
+		           		break;
+		           		case "META" :
+		           			// meta tags can be ignored
 		           		break;
 		           		default :
 		           			if (items[i].outerHTML) {
@@ -119,7 +138,7 @@ function Action_navigate(url, dialogue) {
 		           	// get a reference to the body		           	
 		           	var body = $("body");
 		           	// add the cover and return reference
-		           	var dialogueCover = body.append("<div class='dialogueCover' style='position:absolute;left:0px;top:0px;z-index:99;'></div>").children().last();
+		           	var dialogueCover = body.append("<div class='dialogueCover' style='position:absolute;left:0px;top:0px;z-index:100;'></div>").children().last();
 		           			      
 		           	// get a reference to the document for the entire height and width     	
 		           	var doc = $(document);
@@ -130,12 +149,17 @@ function Action_navigate(url, dialogue) {
 	            		height : doc.height()
 	            	}).show();
 	            	
+	            	// find the dialogue container div
 		           	var dialogue = body.append("<div class='dialogue' style='position:absolute;z-index:101;'></div>").children().last();
-		           	// apply the injected html
-		           	dialogue.hide().html(bodyHtml);
-		           	// add script into the page (if applicable)
+		           	// make sure it's hidden
+		           	dialogue.hide();
+					// add any links into the page (if applicable)
+		           	if (links) dialogue.append(links);		           			           	
+		           	// append the injected html
+		           	dialogue.append(bodyHtml);
+		           	// add any scripts into the page (if applicable)
 		           	if (script) dialogue.append(script);
-		           	
+		           			           	
 		           	// get a reference to the window for the visible area
 		           	var win = $(window);
 		           			           	
