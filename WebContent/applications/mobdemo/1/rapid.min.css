@@ -22,7 +22,9 @@ body{font-family:'Lucida Grande',Verdana,Arial,Helvetica,sans-serif;font-size:18
 table{font-family:'Lucida Grande',Verdana,Arial,Helvetica,sans-serif;font-size:18px}
 input{font-size:18px;padding:8px;border:1px solid #888;border-radius:10px;box-shadow:inset -2px 2px 5px 0 #ccc;width:90%}
 input:focus{border:1px solid black;border-radius:10px;box-shadow:inset -2px 2px 5px 0 #aaa;outline:0}
-button{font-size:18px;padding:8px;border:1px solid #888;border-radius:10px;box-shadow:inset 2px -2px 5px 5px #ccc;width:90%}
+button{font-size:18px;font-family:'Lucida Grande',Verdana,Arial,Helvetica,sans-serif;box-shadow:inset 2px -2px 10px 0 #aaa;background:linear-gradient(to bottom,#ededed 5%,#bab1ba 100%);background-color:#ededed;border-radius:10px;border:1px solid #7d7d7d;display:inline-block;cursor:pointer;color:#000;padding:7px 25px;text-decoration:none;text-shadow:0 1px 0 #e1e2ed}
+button:hover{background:linear-gradient(to bottom,#bab1ba 5%,#ededed 100%);background-color:#bab1ba}
+button:active{position:relative;top:1px}
 button:focus{outline:0}
 .cellLabel{font-size:18px;min-width:120px}
 .menuItem{padding:10px;border-bottom:1px solid black;cursor:pointer;background:-moz-linear-gradient(left,rgba(0,0,0,0) 75%,rgba(0,0,0,0.25) 100%);background:-webkit-gradient(linear,left top,right top,color-stop(75%,rgba(0,0,0,0)),color-stop(100%,rgba(0,0,0,0.25)));background:-webkit-linear-gradient(left,rgba(0,0,0,0) 75%,rgba(0,0,0,0.25) 100%);background:-o-linear-gradient(left,rgba(0,0,0,0) 75%,rgba(0,0,0,0.25) 100%);background:-ms-linear-gradient(left,rgba(0,0,0,0) 75%,rgba(0,0,0,0.25) 100%);background:linear-gradient(to right,rgba(0,0,0,0) 75%,rgba(0,0,0,0.25) 100%);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#00000000',endColorstr='#40000000',GradientType=1)}

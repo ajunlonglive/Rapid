@@ -32,7 +32,7 @@
     <description>This is the Rapid application and contains all of the pages which the designer and other screens use as dialogues</description>
     <id>rapid</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-10-16T12:34:38.476+01:00</modifiedDate>
+    <modifiedDate>2014-10-21T10:27:59.054+01:00</modifiedDate>
     <name>Rapid</name>
     <pageBackupsMaxSize>5</pageBackupsMaxSize>
     <securityAdapterType>rapid</securityAdapterType>
@@ -62,6 +62,21 @@ table { font-family: 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif; fon
   text-align: center;
   background: initial;
   text-shadow: none;
+}
+
+.niceTablePadding tr:not(:first-child) td:not(:last-child) {
+  text-align:left;
+  padding-left:10px;
+  padding-top:5px;
+  padding-bottom:5px;
+}
+
+.niceTablePadding tr:not(:first-child) td:last-child {
+  text-align:center;
+  padding-left:10px;
+  padding-right:10px;
+  padding-top:5px;
+  padding-bottom:5px;
 }
 
 /* this makes all the dialogues look a litter better */

@@ -142,17 +142,11 @@ function Action_navigate(url, dialogue) {
 		           			      
 		           	// get a reference to the document for the entire height and width     	
 		           	var doc = $(document);
-		           	
-		           	// size and show the dialogueCover
-	            	dialogueCover.css({
-	            		width : doc.width(),
-	            		height : doc.height()
-	            	}).show();
-	            	
+		           		            	
 	            	// find the dialogue container div
 		           	var dialogue = body.append("<div class='dialogue' style='position:absolute;z-index:101;'></div>").children().last();
 		           	// make sure it's hidden
-		           	dialogue.hide();
+		           	dialogue.css("visibility","hidden");
 					// add any links into the page (if applicable)
 		           	if (links) dialogue.append(links);		           			           	
 		           	// append the injected html
@@ -162,17 +156,16 @@ function Action_navigate(url, dialogue) {
 		           			           	
 		           	// get a reference to the window for the visible area
 		           	var win = $(window);
-		           			           	
-		           	// size the dialogue
-		           	dialogue.css({
-		           		position : "fixed",
-	            		left : (win.width() - dialogue.outerWidth()) / 2,
-	            		top : (win.height() - dialogue.outerHeight()) / 3
-	            	}); 
+		           	
+		           	// apply the resizing	
+	            	$(window).resize(); 
 	            	
 	            	// this seems to be the best way to avoid the resizing/flicker when showing
 	            	window.setTimeout( function() {
-	            		dialogue.show();
+	            		// make the dialogue visible
+	            		dialogue.css("visibility","visible");
+	            		// apply the resizing again (for mobile)	
+	            		if (window["_rapidmobile"]) $(window).resize(); 
 	            	}, 200);
 		           	           	        	            	            	            
 		    	}        	       	        	        	        	        		

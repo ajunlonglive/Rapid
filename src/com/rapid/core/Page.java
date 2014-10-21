@@ -693,13 +693,19 @@ public class Page {
 	 	}
 	 	
 	 	// get the resources path
-	 	String resourcesPath = application.getWebFolder(rapidServlet.getServletContext()) + application.getId();		
+	 	String resourcesPath = application.getWebFolder(rapidServlet.getServletContext());		
 	 	
 	 	// create a file object for deleting the page css file
 	 	File delCssFile = new File(resourcesPath + "/" + Files.safeName(getName()) + ".css");
 	 	
-	 	// if it exists
+	 	// delete if it exists
 	 	if (delCssFile.exists()) delCssFile.delete();
+	 	
+	 	// create a file object for deleting the page css file
+	 	File delCssFileMin = new File(resourcesPath + "/" + Files.safeName(getName()) + ".min.css");
+	 	 	
+	 	// delete if it exists
+	 	if (delCssFileMin.exists()) delCssFileMin.delete();
 	 		 				
 	}
 	
