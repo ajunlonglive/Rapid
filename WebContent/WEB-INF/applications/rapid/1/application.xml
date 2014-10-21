@@ -33,7 +33,7 @@
     <id>rapid</id>
     <modifiedBy>admin</modifiedBy>
     <modifiedDate>2014-10-21T10:27:59.054+01:00</modifiedDate>
-    <name>Rapid</name>
+    <name>Rapid Admin</name>
     <pageBackupsMaxSize>5</pageBackupsMaxSize>
     <securityAdapterType>rapid</securityAdapterType>
     <showActionIds>true</showActionIds>

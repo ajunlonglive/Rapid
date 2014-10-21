@@ -123,8 +123,8 @@ public class Designer extends RapidHttpServlet {
 					// get the user name
 					String userName = rapidRequest.getUserName();
 					
-					// get the user
-					User user = rapidSecurity.getUser(rapidRequest);
+					// get the rapid user
+					User rapidUser = rapidSecurity.getUser(rapidRequest);
 
 					// check permission
 					if (rapidSecurity.checkUserRole(rapidRequest, Rapid.DESIGN_ROLE)) {
@@ -447,9 +447,12 @@ public class Designer extends RapidHttpServlet {
 							
 							if (page != null) {
 								
-								// get user description
-								String userDescription = application.getSecurity().getUser(rapidRequest).getDescription();
-								if (userDescription == null) userDescription = "unknown";
+								// assume we can't find the user
+								String userDescription = "unknown";
+								// get the user 
+								User user = application.getSecurity().getUser(rapidRequest);
+								// if we had one and they have a description use it
+								if (user != null) if (user.getDescription() != null) userDescription = user.getDescription();
 																								
 								// remove any existing page locks for this user
 								application.removeUserPageLocks(userName);
@@ -568,7 +571,7 @@ public class Designer extends RapidHttpServlet {
 							if (application != null) {
 																		
 								// create the zip file
-								application.zip(this, rapidRequest, user, application.getId() + ".zip");
+								application.zip(this, rapidRequest, rapidUser, application.getId() + ".zip");
 								
 								// set the type as a .zip
 								response.setContentType("application/x-zip-compressed");

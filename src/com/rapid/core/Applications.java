@@ -98,8 +98,21 @@ public class Applications {
 		return getVersions(id, false);
 	}
 	
-	public Set<String> getIds() {
-		return _applications.keySet();
+	public List<String> getIds() {
+		// create the array we're going to return
+		ArrayList<String> ids = new ArrayList<String>();
+		// loop the id keys
+		for (String id : _applications.keySet()) ids.add(id);
+		// sort them by case insensitive id
+		Collections.sort(ids, new Comparator<String>() {
+			@Override
+			public int compare(String id1, String id2) {
+				if ("rapid".equals(id1)) return 1;
+				if ("rapid".equals(id2)) return -1;
+				return Comparators.AsciiCompare(id1, id2, false);
+			}			
+		});
+		return ids;
 	}
 	
 	// add an application with a known version
@@ -238,7 +251,7 @@ public class Applications {
 			public int compare(Application a1, Application a2) {
 				if ("rapid".equals(a1.getId())) return 1;
 				if ("rapid".equals(a2.getId())) return -1;
-				return Comparators.AsciiCompare(a1.getId(), a2.getId());
+				return Comparators.AsciiCompare(a1.getId(), a2.getId(), false);
 			}
 			
 		});
