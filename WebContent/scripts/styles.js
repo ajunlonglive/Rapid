@@ -839,10 +839,10 @@ function showStyles(control) {
 				var index = delImage.parent().parent().index();
 				// remove from collection
 				ev.data.control.classes.splice(index,1);	
-				// rebuild the html
-				rebuildHtml(ev.data.control);
 				// rebuild the styles
 				showStyles(ev.data.control);
+				// rebuild the html
+				rebuildHtml(ev.data.control);				
 			}));
 			
 			classesTable.append("<tr><td colspan='2'><select class='propertiesPanelTable'></select></td></tr>");

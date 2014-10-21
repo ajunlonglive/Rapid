@@ -43,7 +43,7 @@
     <description>This is a demonstration application provided to showcase many Rapid Mobile features</description>
     <id>mobdemo</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-10-16T14:38:35.952+01:00</modifiedDate>
+    <modifiedDate>2014-10-21T10:01:41.792+01:00</modifiedDate>
     <name>mobdemo</name>
     <pageBackupsMaxSize>3</pageBackupsMaxSize>
     <securityAdapterType>rapid</securityAdapterType>
@@ -82,14 +82,32 @@ input:focus {
 }
 
 button {
-	font-size: 18px;
-	padding: 8px;
-	border: 1px solid #888;
-	border-radius: 10px;
-	box-shadow: inset 2px -2px 5px 5px #ccc;
-	width: 90%;
+  font-size: 18px;
+  font-family : 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;
+  box-shadow: inset 2px -2px 10px 0px #aaa;
+  background:linear-gradient(to bottom, #ededed 5%, #bab1ba 100%);	
+  background-color:#ededed;	
+  border-radius:10px;	
+  border:1px solid #7d7d7d;	
+  display:inline-block;	
+  cursor:pointer;
+  color:#000000;	
+  padding:7px 25px;	
+  text-decoration:none;	
+  text-shadow:0px 1px 0px #e1e2ed;
 }
 
+
+button:hover {	
+  background:linear-gradient(to bottom, #bab1ba 5%, #ededed 100%);	
+  background-color:#bab1ba;
+}
+
+
+button:active {	
+  position:relative;	
+  top:1px;
+}
 button:focus {
 	outline:none;
 }

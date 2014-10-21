@@ -81,6 +81,8 @@ return "<table id='" + this.id + "' class='grid" + getStyleClasses(this) + "'></
 	    <rebuildJavaScript>
 	        <![CDATA[        
 var table = this.object;
+table.removeClass();
+table.addClass("grid" + getStyleClasses(this));
 table.children().remove();
 if (this.columns.length > 0) {
 	var headerHtml = "<tr>";

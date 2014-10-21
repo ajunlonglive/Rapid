@@ -18,6 +18,8 @@ body{font-family:'Lucida Grande',Verdana,Arial,Helvetica,sans-serif;font-size:14
 table{font-family:'Lucida Grande',Verdana,Arial,Helvetica,sans-serif;font-size:14px;margin:0}
 .glossyTitle tr:first-child td{font-weight:bold;background-color:red;color:white;padding:5px;text-align:center;background:red url(highlight_red_1x44.png) 50% 50% repeat-x;text-shadow:-1px 0 black,0 1px black,1px 0 black,0 -1px black}
 .normalTitle tr:first-child td{font-weight:normal;background-color:transparent;color:initial;padding:0;text-align:center;background:initial;text-shadow:none}
+.niceTablePadding tr:not(:first-child) td:not(:last-child){text-align:left;padding-left:10px;padding-top:5px;padding-bottom:5px}
+.niceTablePadding tr:not(:first-child) td:last-child{text-align:center;padding-left:10px;padding-right:10px;padding-top:5px;padding-bottom:5px}
 tr td{vertical-align:middle}
 .grid tr button{font-size:11px}
 .dialogueCover{background-color:white}
