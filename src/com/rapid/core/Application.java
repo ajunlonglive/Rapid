@@ -455,6 +455,20 @@ public class Application {
 		if (databaseConnection != null) _databaseConnections.remove(databaseConnection);
 	}
 	
+	// get a parameter value by name
+	public String getParameterValue(String parameterName) {
+		// if there are parameters
+		if (_parameters != null) {
+			// loop them
+			for (Parameter parameter : _parameters) {
+				// check the name and return if match
+				if (parameterName.equals(parameter.getName())) return parameter.getValue();
+			}
+		}
+		// return null if nothing found
+		return null;
+	}
+	
 	// get a single page by it's id
 	public Page getPage(String id) { return _pages.get(id);	}
 	// get all page id's
