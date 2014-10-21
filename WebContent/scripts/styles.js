@@ -461,8 +461,8 @@ function rebuildStyles() {
 		var _styleTable = $(this);
 		// the applies to is in the first td
 		var appliesTo = _styleTable.find("td[data-appliesTo]").attr("data-appliesTo");
-		// check we have a style sheet object
-		if (styleSheet) {
+		// check we have a style sheet object and an appliesTo
+		if (styleSheet && appliesTo) {
 			// get rules
 			var rules = styleSheet.cssRules;
 			
@@ -479,8 +479,8 @@ function rebuildStyles() {
 					if (rule.cssText) {
 						// get what the rule applies to
 						ruleAppliesTo = rule.cssText.substr(0, rule.cssText.indexOf("{") - 1);
-						// remove if matches our applies to
-						if (ruleAppliesTo == appliesTo) {
+						// remove if matches our applies to (case insensitive)
+						if (ruleAppliesTo.toLowerCase() == appliesTo.toLowerCase()) {
 							styleSheet.deleteRule(j);
 						} else {
 							j++;
