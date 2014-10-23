@@ -98,7 +98,7 @@ if (gotAppAndPage && designerPermission) {
 	
 	.pageLoading {
 		text-align: center;	
-		margin-top: 50px;
+		margin: 100px auto;
 		font-size: 20px;		
 		padding: 20px;
 		border: 4px solid black;
@@ -126,15 +126,15 @@ if (gotAppAndPage && designerPermission) {
 <%
 if (!gotAppAndPage) {
 %>
-	<center><h3>Application and page cannot be found</h3></center>
+	<div><h3>Application and page cannot be found</h3></div>
 <%
 } else if (!designerPermission) {
 %>
-	<center><h3>You do not have permission to load this page in Rapid Design - contact your administrator</h3></center>	
+	<div><h3>You do not have permission to load this page in Rapid Design - contact your administrator</h3></div>	
 <%
 } else {
 %>
-	<center><div class="pageLoading"><p><img src="images/wait_220x19.gif" /></p><p style='margin-left:20px;'>loading...</p></div></center>
+	<div><div class="pageLoading"><p><img src="images/wait_220x19.gif" /></p><p style='margin-left:20px;'>loading...</p></div></div>
 <%
 } 
 %>
