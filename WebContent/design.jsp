@@ -243,7 +243,7 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, Rap
 		<span>Rapid - version <%=com.rapid.server.Rapid.VERSION %></span>
 	</div>
 
-	<center><h3>You do not have permission to access the Rapid Designer</h3></center>
+	<div style="text-align:center;"><h3>You do not have permission to access the Rapid Designer</h3></div>
 		
 <%		
 	}

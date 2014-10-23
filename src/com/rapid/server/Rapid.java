@@ -83,7 +83,7 @@ public class Rapid extends RapidHttpServlet {
 			if (app == null) {
 				
 				// send message
-				sendMessage(rapidRequest, response, 404, "Application not found on this server");
+				sendMessage(rapidRequest, response, 404, "Application not found", "The application you requested can't be found");
 								
 				//log
 				getLogger().debug("Rapid GET response (404) : Application not found on this server");
@@ -103,7 +103,7 @@ public class Rapid extends RapidHttpServlet {
 				if (user == null) {
 										
 					// send message
-					sendMessage(rapidRequest, response, 403, "User not authorised for application");
+					sendMessage(rapidRequest, response, 403, "No permission", "You do not have permission to use this application");
 					
 					//log
 					getLogger().debug("Rapid GET response (403) : User " + userName +  " not authorised for application");
@@ -157,7 +157,7 @@ public class Rapid extends RapidHttpServlet {
 						if (page == null) { 
 							
 							// send message
-							sendMessage(rapidRequest, response, 404, "Page not found");
+							sendMessage(rapidRequest, response, 404, "Page not found", "The page you requested can't be found");
 							
 							// log
 							getLogger().debug("Rapid GET response (404) : Page not found");
@@ -242,7 +242,7 @@ public class Rapid extends RapidHttpServlet {
 				if (app == null) {
 					
 					// send forbidden response			
-					sendMessage(rapidRequest, response, 403, "Application not found");
+					sendMessage(rapidRequest, response, 403, "Application not found", "The application you requested can't be found");
 					
 					// log
 					getLogger().debug("Rapid POST response (403) : Application not found");
@@ -259,7 +259,7 @@ public class Rapid extends RapidHttpServlet {
 					if (user == null) {
 						
 						// send forbidden response			
-						sendMessage(rapidRequest, response, 403, "User not authorised for application");
+						sendMessage(rapidRequest, response, 403, "No permisssion", "You do not have permssion to use this application");
 						
 						// log
 						getLogger().debug("Rapid POST response (403) : User not authorised for application");
@@ -439,7 +439,7 @@ public class Rapid extends RapidHttpServlet {
 				if (app == null) {
 					
 					// send forbidden response			
-					sendMessage(rapidRequest, response, 403, "Application not found");
+					sendMessage(rapidRequest, response, 403, "Application not found", "Application not found on this server");
 					
 					// log
 					getLogger().debug("Rapid POST response (403) : Application not found");
@@ -456,7 +456,7 @@ public class Rapid extends RapidHttpServlet {
 					if (user == null) {
 						
 						// send forbidden response			
-						sendMessage(rapidRequest, response, 403, "User not authorised for application");
+						sendMessage(rapidRequest, response, 403, "No permisssion", "You do not have permssion to use this application");
 						
 						// log
 						getLogger().debug("Rapid POST response (403) : User not authorised for application");
@@ -470,7 +470,7 @@ public class Rapid extends RapidHttpServlet {
 						if (imageName == null) {
 							
 							// send forbidden response			
-							sendMessage(rapidRequest, response, 403, "Name must be provided");
+							sendMessage(rapidRequest, response, 403, "Name required", "Image name must be provided");
 							
 							// log
 							getLogger().debug("Rapid POST response (403) : Name must be provided");
@@ -508,7 +508,7 @@ public class Rapid extends RapidHttpServlet {
 							} else {
 								
 								// send forbidden response			
-								sendMessage(rapidRequest, response, 403, "Unrecognised file type");
+								sendMessage(rapidRequest, response, 403, "Unrecognised", "Unrecognised file type");
 								
 								// log
 								getLogger().debug("Rapid POST response (403) : Unrecognised file type");

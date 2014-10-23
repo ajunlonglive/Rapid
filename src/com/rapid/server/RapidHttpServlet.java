@@ -193,13 +193,19 @@ public class RapidHttpServlet extends HttpServlet {
 				
 	}
 	
-	public void sendMessage(RapidRequest rapidRequest, HttpServletResponse response, int status, String message ) throws IOException {
+	public void sendMessage(RapidRequest rapidRequest, HttpServletResponse response, int status, String title, String message ) throws IOException {
 		
 		response.setStatus(status);
 		
 		PrintWriter out = response.getWriter();		
 		
-		out.println(message);
+		// write a header
+		out.write("<html><head><title>Rapid - " + title + "</title><meta charset=\"utf-8\"/><link rel='stylesheet' type='text/css' href='styles/index.css'></link>");
+					
+		// write no permission
+		out.write("<body><div class=\"image\"><img src=\"images/RapidLogo_200x134.png\" /></div><div class=\"title\"><span>Rapid - " + title + "</span></div><div class=\"info\"><p>" + message + "</p></div></body>");
+		
+		out.println();
 										
 		out.close();
 		

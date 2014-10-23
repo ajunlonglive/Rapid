@@ -1078,7 +1078,7 @@ public class Page {
 			
 		} catch (SecurityAdapaterException ex) {
 
-			rapidServlet.getLogger().error("Error checking for the designer link", ex);
+			rapidServlet.getLogger().error("Error checking for page roles", ex);
 			
 		}
 		
