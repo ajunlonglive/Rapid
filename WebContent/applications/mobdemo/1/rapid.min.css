@@ -22,7 +22,7 @@ body{font-family:'Lucida Grande',Verdana,Arial,Helvetica,sans-serif;font-size:18
 table{font-family:'Lucida Grande',Verdana,Arial,Helvetica,sans-serif;font-size:18px}
 input{font-size:18px;padding:8px;border:1px solid #888;border-radius:10px;box-shadow:inset -2px 2px 5px 0 #ccc;width:90%}
 input:focus{border:1px solid black;border-radius:10px;box-shadow:inset -2px 2px 5px 0 #aaa;outline:0}
-button{font-size:18px;font-family:'Lucida Grande',Verdana,Arial,Helvetica,sans-serif;box-shadow:inset 2px -2px 10px 0 #aaa;background:linear-gradient(to bottom,#ededed 5%,#bab1ba 100%);background-color:#ededed;border-radius:10px;border:1px solid #7d7d7d;display:inline-block;cursor:pointer;color:#000;padding:7px 25px;text-decoration:none;text-shadow:0 1px 0 #e1e2ed}
+button{font-size:18px;font-family:'Lucida Grande',Verdana,Arial,Helvetica,sans-serif;box-shadow:inset 2px -2px 10px 0 #888;background:linear-gradient(to bottom,#ededed 5%,#bab1ba 100%);background-color:#ededed;border-radius:10px;border:1px solid #888;display:inline-block;cursor:pointer;color:#000;padding:7px 25px;text-decoration:none;text-shadow:0 1px 0 #e1e2ed}
 button:hover{background:linear-gradient(to bottom,#bab1ba 5%,#ededed 100%);background-color:#bab1ba}
 button:active{position:relative;top:1px}
 button:focus{outline:0}
