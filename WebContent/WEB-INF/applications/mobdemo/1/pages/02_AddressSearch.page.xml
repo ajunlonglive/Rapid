@@ -12,7 +12,7 @@
             </entry>
             <entry>
                 <key>details</key>
-                <value>{&quot;appId&quot;:&quot;mobdemo&quot;,&quot;pageId&quot;:&quot;P1&quot;}</value>
+                <value>{&quot;appId&quot;:&quot;mobdemo&quot;,&quot;pageId&quot;:&quot;P1&quot;,&quot;version&quot;:&quot;1&quot;}</value>
             </entry>
             <entry>
                 <key>pageId</key>
@@ -70,7 +70,7 @@
             <rules>position:absolute;</rules>
             <rules>top:0;</rules>
             <rules>left:0;</rules>
-            <rules>padding-top:16px;</rules>
+            <rules>padding-top:15px;</rules>
             <rules>text-align:center;</rules>
             <rules>width:100%;</rules>
         </styles>
@@ -753,42 +753,10 @@
     <htmlBody>&lt;div id=&quot;P2_C1_&quot; class=&quot;pagepanel&quot;&gt;&lt;/div&gt;&lt;div id=&quot;P2_C25_&quot; class=&quot;panel&quot;&gt;Address search&lt;/div&gt;&lt;div id=&quot;P2_C2_&quot; class=&quot;panel&quot;&gt;&lt;table id=&quot;P2_C3_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P2_C4_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C5_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Number&lt;/td&gt;&lt;td id=&quot;P2_C6_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C7_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P2_C8_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C9_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Flat&lt;/td&gt;&lt;td id=&quot;P2_C10_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C11_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P2_C12_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C13_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Street&lt;/td&gt;&lt;td id=&quot;P2_C14_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C15_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P2_C16_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C17_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Town&lt;/td&gt;&lt;td id=&quot;P2_C18_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C19_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P2_C20_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C21_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Post code&lt;/td&gt;&lt;td id=&quot;P2_C22_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C23_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;</htmlBody>
     <id>P2</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-09-09T16:13:56.626+01:00</modifiedDate>
+    <modifiedDate>2014-10-24T11:55:43.694+01:00</modifiedDate>
     <name>02_AddressSearch</name>
     <rolesHtml>
-        <html>&lt;div id=&quot;P2_C1_&quot; class=&quot;pagepanel&quot;&gt;&lt;/div&gt;
-	&lt;div id=&quot;P2_C25_&quot; class=&quot;panel&quot;&gt;Address search&lt;/div&gt;
-	&lt;div id=&quot;P2_C2_&quot; class=&quot;panel&quot;&gt;
-		&lt;table id=&quot;P2_C3_&quot; class=&quot;table&quot;&gt;
-			&lt;tbody&gt;
-				&lt;tr id=&quot;P2_C4_&quot; class=&quot;tableRow&quot;&gt;
-					&lt;td id=&quot;P2_C5_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Number&lt;/td&gt;
-					&lt;td id=&quot;P2_C6_&quot; class=&quot;tabelCell&quot;&gt;
-						&lt;input id=&quot;P2_C7_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
-					&lt;/tr&gt;
-					&lt;tr id=&quot;P2_C8_&quot; class=&quot;tableRow&quot;&gt;
-						&lt;td id=&quot;P2_C9_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Flat&lt;/td&gt;
-						&lt;td id=&quot;P2_C10_&quot; class=&quot;tabelCell&quot;&gt;
-							&lt;input id=&quot;P2_C11_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
-						&lt;/tr&gt;
-						&lt;tr id=&quot;P2_C12_&quot; class=&quot;tableRow&quot;&gt;
-							&lt;td id=&quot;P2_C13_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Street&lt;/td&gt;
-							&lt;td id=&quot;P2_C14_&quot; class=&quot;tabelCell&quot;&gt;
-								&lt;input id=&quot;P2_C15_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
-							&lt;/tr&gt;
-							&lt;tr id=&quot;P2_C16_&quot; class=&quot;tableRow&quot;&gt;
-								&lt;td id=&quot;P2_C17_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Town&lt;/td&gt;
-								&lt;td id=&quot;P2_C18_&quot; class=&quot;tabelCell&quot;&gt;
-									&lt;input id=&quot;P2_C19_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
-								&lt;/tr&gt;
-								&lt;tr id=&quot;P2_C20_&quot; class=&quot;tableRow&quot;&gt;
-									&lt;td id=&quot;P2_C21_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Post code&lt;/td&gt;
-									&lt;td id=&quot;P2_C22_&quot; class=&quot;tabelCell&quot;&gt;
-										&lt;input id=&quot;P2_C23_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
-									&lt;/tr&gt;
-								&lt;/tbody&gt;
-							&lt;/table&gt;
-						&lt;/div&gt;</html>
+        <html>&lt;div id=&quot;P2_C1_&quot; class=&quot;pagepanel&quot;&gt;&lt;/div&gt;&lt;div id=&quot;P2_C25_&quot; class=&quot;panel&quot;&gt;Address search&lt;/div&gt;&lt;div id=&quot;P2_C2_&quot; class=&quot;panel&quot;&gt;&lt;table id=&quot;P2_C3_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P2_C4_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C5_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Number&lt;/td&gt;&lt;td id=&quot;P2_C6_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C7_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P2_C8_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C9_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Flat&lt;/td&gt;&lt;td id=&quot;P2_C10_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C11_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P2_C12_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C13_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Street&lt;/td&gt;&lt;td id=&quot;P2_C14_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C15_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P2_C16_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C17_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Town&lt;/td&gt;&lt;td id=&quot;P2_C18_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C19_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P2_C20_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C21_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Post code&lt;/td&gt;&lt;td id=&quot;P2_C22_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C23_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;</html>
     </rolesHtml>
     <title>Address search</title>
     <XMLVersion>1</XMLVersion>

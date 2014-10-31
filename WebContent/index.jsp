@@ -80,6 +80,11 @@ function loadApps() {
 	});
 	
 }	
+
+//JQuery is ready! 
+$(document).ready( function() { 
+	loadApps();
+});
 	
 	</script>
 	
