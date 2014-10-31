@@ -1,6 +1,16 @@
 
 /* This file is auto-generated on page save */
 
+#P4_C64_ {
+	z-index:100;
+	position:absolute;
+	top:0;
+	left:0;
+	padding-top:15px;
+	text-align:center;
+	width:100%;
+}
+
 #P4_C18_ {
 	padding:10px;
 }

@@ -30,6 +30,49 @@
         <XMLVersion>1</XMLVersion>
     </controls>
     <controls>
+        <events>
+            <filter></filter>
+            <type>click</type>
+        </events>
+        <events>
+            <filter></filter>
+            <type>hover</type>
+        </events>
+        <properties>
+            <entry>
+                <key>id</key>
+                <value>P4_C64_</value>
+            </entry>
+            <entry>
+                <key>classes</key>
+                <value>[]</value>
+            </entry>
+            <entry>
+                <key>text</key>
+                <value>Person details</value>
+            </entry>
+            <entry>
+                <key>name</key>
+                <value>Page title</value>
+            </entry>
+            <entry>
+                <key>type</key>
+                <value>panel</value>
+            </entry>
+        </properties>
+        <styles>
+            <appliesTo>#P4_C64_</appliesTo>
+            <rules>z-index:100;</rules>
+            <rules>position:absolute;</rules>
+            <rules>top:0;</rules>
+            <rules>left:0;</rules>
+            <rules>padding-top:15px;</rules>
+            <rules>text-align:center;</rules>
+            <rules>width:100%;</rules>
+        </styles>
+        <XMLVersion>1</XMLVersion>
+    </controls>
+    <controls>
         <childControls>
             <childControls>
                 <childControls>
@@ -1148,6 +1191,10 @@ limit 20</SQL>
                 <value></value>
             </entry>
             <entry>
+                <key>name</key>
+                <value>Page panel</value>
+            </entry>
+            <entry>
                 <key>type</key>
                 <value>panel</value>
             </entry>
@@ -1223,6 +1270,10 @@ limit 20</SQL>
                             <value>P4_A62_</value>
                         </entry>
                         <entry>
+                            <key>avoidRedundancy</key>
+                            <value>false</value>
+                        </entry>
+                        <entry>
                             <key>name</key>
                             <value>Logic 62</value>
                         </entry>
@@ -1253,6 +1304,10 @@ limit 20</SQL>
                             <entry>
 <key>id</key>
 <value>P4_A63_</value>
+                            </entry>
+                            <entry>
+<key>avoidRedundancy</key>
+<value>false</value>
                             </entry>
                             <entry>
 <key>page</key>
@@ -1555,13 +1610,13 @@ where id = ?</SQL>
         <filter></filter>
         <type>reusable</type>
     </events>
-    <htmlBody>&lt;div id=&quot;P4_C1_&quot; class=&quot;pagepanel&quot;&gt;&lt;/div&gt;&lt;div id=&quot;P4_C18_&quot; class=&quot;panel&quot;&gt;&lt;table id=&quot;P4_C2_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P4_C3_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C4_&quot; class=&quot;tabelCell cellLabel&quot;&gt;First name&lt;/td&gt;&lt;td id=&quot;P4_C5_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P4_C6_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot; readonly=&quot;readonly&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C8_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C9_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;&lt;td id=&quot;P4_C10_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P4_C11_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot; readonly=&quot;readonly&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C13_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C14_&quot; class=&quot;tabelCell&quot;&gt;Date of birth&lt;/td&gt;&lt;td id=&quot;P4_C15_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P4_C16_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot; readonly=&quot;readonly&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C19_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C20_&quot; class=&quot;tabelCell&quot;&gt;Picture&lt;/td&gt;&lt;td id=&quot;P4_C21_&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;P4_C22_&quot; class=&quot;button&quot;&gt;Add picture&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C32_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C33_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;div id=&quot;P4_C31_&quot;&gt;&lt;span&gt;No pictures&lt;/span&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C39_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C40_&quot; class=&quot;tabelCell&quot;&gt;&amp;nbsp;&lt;/td&gt;&lt;td id=&quot;P4_C41_&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;P4_C42_&quot; class=&quot;button&quot;&gt;Upload to server&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C29_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C30_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;</htmlBody>
+    <htmlBody>&lt;div id=&quot;P4_C1_&quot; class=&quot;pagepanel&quot;&gt;&lt;/div&gt;&lt;div id=&quot;P4_C64_&quot; class=&quot;panel&quot;&gt;Person details&lt;/div&gt;&lt;div id=&quot;P4_C18_&quot; class=&quot;panel&quot;&gt;&lt;table id=&quot;P4_C2_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P4_C3_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C4_&quot; class=&quot;tabelCell cellLabel&quot;&gt;First name&lt;/td&gt;&lt;td id=&quot;P4_C5_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P4_C6_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot; readonly=&quot;readonly&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C8_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C9_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;&lt;td id=&quot;P4_C10_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P4_C11_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot; readonly=&quot;readonly&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C13_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C14_&quot; class=&quot;tabelCell&quot;&gt;Date of birth&lt;/td&gt;&lt;td id=&quot;P4_C15_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P4_C16_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot; readonly=&quot;readonly&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C19_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C20_&quot; class=&quot;tabelCell&quot;&gt;Picture&lt;/td&gt;&lt;td id=&quot;P4_C21_&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;P4_C22_&quot; class=&quot;button&quot;&gt;Add picture&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C32_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C33_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;div id=&quot;P4_C31_&quot;&gt;&lt;span&gt;No pictures&lt;/span&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C39_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C40_&quot; class=&quot;tabelCell&quot;&gt;&amp;nbsp;&lt;/td&gt;&lt;td id=&quot;P4_C41_&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;P4_C42_&quot; class=&quot;button&quot;&gt;Upload to server&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C29_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C30_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;</htmlBody>
     <id>P4</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-10-21T09:44:53.376+01:00</modifiedDate>
+    <modifiedDate>2014-10-24T11:57:21.716+01:00</modifiedDate>
     <name>03_PersonDetails</name>
     <rolesHtml>
-        <html>&lt;div id=&quot;P4_C1_&quot; class=&quot;pagepanel&quot;&gt;&lt;/div&gt;&lt;div id=&quot;P4_C18_&quot; class=&quot;panel&quot;&gt;&lt;table id=&quot;P4_C2_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P4_C3_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C4_&quot; class=&quot;tabelCell cellLabel&quot;&gt;First name&lt;/td&gt;&lt;td id=&quot;P4_C5_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P4_C6_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot; readonly=&quot;readonly&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C8_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C9_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;&lt;td id=&quot;P4_C10_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P4_C11_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot; readonly=&quot;readonly&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C13_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C14_&quot; class=&quot;tabelCell&quot;&gt;Date of birth&lt;/td&gt;&lt;td id=&quot;P4_C15_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P4_C16_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot; readonly=&quot;readonly&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C19_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C20_&quot; class=&quot;tabelCell&quot;&gt;Picture&lt;/td&gt;&lt;td id=&quot;P4_C21_&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;P4_C22_&quot; class=&quot;button&quot;&gt;Add picture&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C32_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C33_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;div id=&quot;P4_C31_&quot;&gt;&lt;span&gt;No pictures&lt;/span&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C39_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C40_&quot; class=&quot;tabelCell&quot;&gt;&amp;nbsp;&lt;/td&gt;&lt;td id=&quot;P4_C41_&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;P4_C42_&quot; class=&quot;button&quot;&gt;Upload to server&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C29_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C30_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;</html>
+        <html>&lt;div id=&quot;P4_C1_&quot; class=&quot;pagepanel&quot;&gt;&lt;/div&gt;&lt;div id=&quot;P4_C64_&quot; class=&quot;panel&quot;&gt;Person details&lt;/div&gt;&lt;div id=&quot;P4_C18_&quot; class=&quot;panel&quot;&gt;&lt;table id=&quot;P4_C2_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P4_C3_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C4_&quot; class=&quot;tabelCell cellLabel&quot;&gt;First name&lt;/td&gt;&lt;td id=&quot;P4_C5_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P4_C6_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot; readonly=&quot;readonly&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C8_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C9_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;&lt;td id=&quot;P4_C10_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P4_C11_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot; readonly=&quot;readonly&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C13_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C14_&quot; class=&quot;tabelCell&quot;&gt;Date of birth&lt;/td&gt;&lt;td id=&quot;P4_C15_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P4_C16_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot; readonly=&quot;readonly&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C19_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C20_&quot; class=&quot;tabelCell&quot;&gt;Picture&lt;/td&gt;&lt;td id=&quot;P4_C21_&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;P4_C22_&quot; class=&quot;button&quot;&gt;Add picture&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C32_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C33_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;div id=&quot;P4_C31_&quot;&gt;&lt;span&gt;No pictures&lt;/span&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C39_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C40_&quot; class=&quot;tabelCell&quot;&gt;&amp;nbsp;&lt;/td&gt;&lt;td id=&quot;P4_C41_&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;P4_C42_&quot; class=&quot;button&quot;&gt;Upload to server&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P4_C29_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P4_C30_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;</html>
     </rolesHtml>
     <sessionVariables>personId</sessionVariables>
     <title>Person details</title>

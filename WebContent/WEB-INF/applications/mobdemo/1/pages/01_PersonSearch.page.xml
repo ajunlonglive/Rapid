@@ -3,12 +3,12 @@
     <controls>
         <properties>
             <entry>
-                <key>classes</key>
-                <value>[]</value>
-            </entry>
-            <entry>
                 <key>id</key>
                 <value>P3_C1_</value>
+            </entry>
+            <entry>
+                <key>classes</key>
+                <value>[]</value>
             </entry>
             <entry>
                 <key>details</key>
@@ -44,12 +44,12 @@
         </events>
         <properties>
             <entry>
-                <key>classes</key>
-                <value>[]</value>
-            </entry>
-            <entry>
                 <key>id</key>
                 <value>P3_C22_</value>
+            </entry>
+            <entry>
+                <key>classes</key>
+                <value>[]</value>
             </entry>
             <entry>
                 <key>text</key>
@@ -70,7 +70,7 @@
             <rules>position:absolute;</rules>
             <rules>top:0;</rules>
             <rules>left:0;</rules>
-            <rules>padding-top:16px;</rules>
+            <rules>padding-top:15px;</rules>
             <rules>text-align:center;</rules>
             <rules>width:100%;</rules>
         </styles>
@@ -82,12 +82,12 @@
                 <childControls>
                     <properties>
                         <entry>
-                            <key>classes</key>
-                            <value>[&quot;cellLabel&quot;]</value>
-                        </entry>
-                        <entry>
                             <key>id</key>
                             <value>P3_C4_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[&quot;cellLabel&quot;]</value>
                         </entry>
                         <entry>
                             <key>text</key>
@@ -138,6 +138,10 @@
             <value>P3_A34_</value>
         </entry>
         <entry>
+            <key>avoidRedundancy</key>
+            <value>false</value>
+        </entry>
+        <entry>
             <key>name</key>
             <value>Logic 34</value>
         </entry>
@@ -168,6 +172,10 @@
             <entry>
                 <key>id</key>
                 <value>P3_A35_</value>
+            </entry>
+            <entry>
+                <key>avoidRedundancy</key>
+                <value>false</value>
             </entry>
             <entry>
                 <key>page</key>
@@ -222,6 +230,31 @@ order by surname, birthday
 limit 20</SQL>
 </query>
 <showLoading>true</showLoading>
+<successActions xsi:type="datacopy">
+    <properties>
+        <entry>
+            <key>id</key>
+            <value>P3_A38_</value>
+        </entry>
+        <entry>
+            <key>dataSource</key>
+            <value>P3_C36_</value>
+        </entry>
+        <entry>
+            <key>name</key>
+            <value>Data copy 38</value>
+        </entry>
+        <entry>
+            <key>dataDestinations</key>
+            <value>[{&quot;field&quot;:&quot;Search results&quot;,&quot;itemId&quot;:&quot;P3_C36_&quot;}]</value>
+        </entry>
+        <entry>
+            <key>type</key>
+            <value>dataCopy</value>
+        </entry>
+    </properties>
+    <XMLVersion>1</XMLVersion>
+</successActions>
                             </actions>
                             <filter></filter>
                             <type>keyup</type>
@@ -236,12 +269,12 @@ limit 20</SQL>
                         </events>
                         <properties>
                             <entry>
-<key>classes</key>
-<value>[]</value>
-                            </entry>
-                            <entry>
 <key>id</key>
 <value>P3_C10_</value>
+                            </entry>
+                            <entry>
+<key>classes</key>
+<value>[]</value>
                             </entry>
                             <entry>
 <key>name</key>
@@ -271,12 +304,12 @@ limit 20</SQL>
                     </childControls>
                     <properties>
                         <entry>
-                            <key>classes</key>
-                            <value>[]</value>
-                        </entry>
-                        <entry>
                             <key>id</key>
                             <value>P3_C5_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
                         </entry>
                         <entry>
                             <key>text</key>
@@ -299,12 +332,12 @@ limit 20</SQL>
                 </childControls>
                 <properties>
                     <entry>
-                        <key>classes</key>
-                        <value>[]</value>
-                    </entry>
-                    <entry>
                         <key>id</key>
                         <value>P3_C3_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
                     </entry>
                     <entry>
                         <key>type</key>
@@ -317,12 +350,12 @@ limit 20</SQL>
                 <childControls>
                     <properties>
                         <entry>
-                            <key>classes</key>
-                            <value>[]</value>
-                        </entry>
-                        <entry>
                             <key>id</key>
                             <value>P3_C7_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
                         </entry>
                         <entry>
                             <key>text</key>
@@ -388,12 +421,12 @@ limit 20</SQL>
                         </events>
                         <properties>
                             <entry>
-<key>classes</key>
-<value>[]</value>
-                            </entry>
-                            <entry>
 <key>id</key>
 <value>P3_C11_</value>
+                            </entry>
+                            <entry>
+<key>classes</key>
+<value>[]</value>
                             </entry>
                             <entry>
 <key>name</key>
@@ -423,12 +456,12 @@ limit 20</SQL>
                     </childControls>
                     <properties>
                         <entry>
-                            <key>classes</key>
-                            <value>[]</value>
-                        </entry>
-                        <entry>
                             <key>id</key>
                             <value>P3_C8_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
                         </entry>
                         <entry>
                             <key>text</key>
@@ -451,12 +484,12 @@ limit 20</SQL>
                 </childControls>
                 <properties>
                     <entry>
-                        <key>classes</key>
-                        <value>[]</value>
-                    </entry>
-                    <entry>
                         <key>id</key>
                         <value>P3_C6_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
                     </entry>
                     <entry>
                         <key>type</key>
@@ -469,12 +502,12 @@ limit 20</SQL>
                 <childControls>
                     <properties>
                         <entry>
-                            <key>classes</key>
-                            <value>[]</value>
-                        </entry>
-                        <entry>
                             <key>id</key>
                             <value>P3_C13_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
                         </entry>
                         <entry>
                             <key>text</key>
@@ -540,12 +573,12 @@ limit 20</SQL>
                         </events>
                         <properties>
                             <entry>
-<key>classes</key>
-<value>[]</value>
-                            </entry>
-                            <entry>
 <key>id</key>
 <value>P3_C15_</value>
+                            </entry>
+                            <entry>
+<key>classes</key>
+<value>[]</value>
                             </entry>
                             <entry>
 <key>name</key>
@@ -575,12 +608,12 @@ limit 20</SQL>
                     </childControls>
                     <properties>
                         <entry>
-                            <key>classes</key>
-                            <value>[]</value>
-                        </entry>
-                        <entry>
                             <key>id</key>
                             <value>P3_C14_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
                         </entry>
                         <entry>
                             <key>text</key>
@@ -603,12 +636,12 @@ limit 20</SQL>
                 </childControls>
                 <properties>
                     <entry>
-                        <key>classes</key>
-                        <value>[]</value>
-                    </entry>
-                    <entry>
                         <key>id</key>
                         <value>P3_C12_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
                     </entry>
                     <entry>
                         <key>type</key>
@@ -642,7 +675,7 @@ limit 20</SQL>
         </entry>
         <entry>
             <key>dataDestinations</key>
-            <value>[{&quot;field&quot;:&quot;id&quot;,&quot;itemId&quot;:&quot;P3_C24_&quot;}]</value>
+            <value>[{&quot;field&quot;:&quot;id&quot;,&quot;itemId&quot;:&quot;P3_C36_&quot;}]</value>
         </entry>
         <entry>
             <key>dataSourceField</key>
@@ -760,16 +793,16 @@ if (target.closest(&quot;tr&quot;).index() == 0 || target.is(&quot;tbody&quot;))
                             </events>
                             <properties>
 <entry>
-    <key>classes</key>
-    <value>[]</value>
+    <key>id</key>
+    <value>P3_C18_</value>
 </entry>
 <entry>
     <key>columnHeadings</key>
     <value>true</value>
 </entry>
 <entry>
-    <key>id</key>
-    <value>P3_C18_</value>
+    <key>classes</key>
+    <value>[]</value>
 </entry>
 <entry>
     <key>details</key>
@@ -823,12 +856,12 @@ if (target.closest(&quot;tr&quot;).index() == 0 || target.is(&quot;tbody&quot;))
                         </events>
                         <properties>
                             <entry>
-<key>classes</key>
-<value>[]</value>
-                            </entry>
-                            <entry>
 <key>id</key>
 <value>P3_C19_</value>
+                            </entry>
+                            <entry>
+<key>classes</key>
+<value>[]</value>
                             </entry>
                             <entry>
 <key>text</key>
@@ -849,12 +882,12 @@ if (target.closest(&quot;tr&quot;).index() == 0 || target.is(&quot;tbody&quot;))
                     </childControls>
                     <properties>
                         <entry>
-                            <key>classes</key>
-                            <value>[]</value>
-                        </entry>
-                        <entry>
                             <key>id</key>
                             <value>P3_C17_</value>
+                        </entry>
+                        <entry>
+                            <key>classes</key>
+                            <value>[]</value>
                         </entry>
                         <entry>
                             <key>text</key>
@@ -881,12 +914,12 @@ if (target.closest(&quot;tr&quot;).index() == 0 || target.is(&quot;tbody&quot;))
                 </childControls>
                 <properties>
                     <entry>
-                        <key>classes</key>
-                        <value>[]</value>
-                    </entry>
-                    <entry>
                         <key>id</key>
                         <value>P3_C16_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
                     </entry>
                     <entry>
                         <key>type</key>
@@ -897,12 +930,12 @@ if (target.closest(&quot;tr&quot;).index() == 0 || target.is(&quot;tbody&quot;))
             </childControls>
             <properties>
                 <entry>
-                    <key>classes</key>
-                    <value>[]</value>
-                </entry>
-                <entry>
                     <key>id</key>
                     <value>P3_C2_</value>
+                </entry>
+                <entry>
+                    <key>classes</key>
+                    <value>[]</value>
                 </entry>
                 <entry>
                     <key>type</key>
@@ -921,12 +954,12 @@ if (target.closest(&quot;tr&quot;).index() == 0 || target.is(&quot;tbody&quot;))
         </events>
         <properties>
             <entry>
-                <key>classes</key>
-                <value>[]</value>
-            </entry>
-            <entry>
                 <key>id</key>
                 <value>P3_C9_</value>
+            </entry>
+            <entry>
+                <key>classes</key>
+                <value>[]</value>
             </entry>
             <entry>
                 <key>text</key>
@@ -947,8 +980,70 @@ if (target.closest(&quot;tr&quot;).index() == 0 || target.is(&quot;tbody&quot;))
         </styles>
         <XMLVersion>1</XMLVersion>
     </controls>
+    <controls>
+        <properties>
+            <entry>
+                <key>id</key>
+                <value>P3_C36_</value>
+            </entry>
+            <entry>
+                <key>canBeUsedFromOtherPages</key>
+                <value>true</value>
+            </entry>
+            <entry>
+                <key>details</key>
+                <value>{&quot;storageType&quot;:&quot;S&quot;,&quot;merge&quot;:&quot;false&quot;}</value>
+            </entry>
+            <entry>
+                <key>storageType</key>
+                <value>S</value>
+            </entry>
+            <entry>
+                <key>mergeData</key>
+                <value>false</value>
+            </entry>
+            <entry>
+                <key>name</key>
+                <value>Search results</value>
+            </entry>
+            <entry>
+                <key>type</key>
+                <value>dataStore</value>
+            </entry>
+        </properties>
+        <XMLVersion>1</XMLVersion>
+    </controls>
     <description></description>
     <events>
+        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="datacopy">
+            <properties>
+                <entry>
+                    <key>id</key>
+                    <value>P3_A39_</value>
+                </entry>
+                <entry>
+                    <key>dataSource</key>
+                    <value>P3_C36_</value>
+                </entry>
+                <entry>
+                    <key>name</key>
+                    <value>Data copy 39</value>
+                </entry>
+                <entry>
+                    <key>dataDestinations</key>
+                    <value>[{&quot;field&quot;:&quot;&quot;,&quot;itemId&quot;:&quot;P3_C36_&quot;}]</value>
+                </entry>
+                <entry>
+                    <key>dataSourceField</key>
+                    <value>Search results</value>
+                </entry>
+                <entry>
+                    <key>type</key>
+                    <value>dataCopy</value>
+                </entry>
+            </properties>
+            <XMLVersion>1</XMLVersion>
+        </actions>
         <filter></filter>
         <type>pageload</type>
     </events>
@@ -959,7 +1054,7 @@ if (target.closest(&quot;tr&quot;).index() == 0 || target.is(&quot;tbody&quot;))
     <htmlBody>&lt;div id=&quot;P3_C1_&quot; class=&quot;pagepanel&quot;&gt;&lt;/div&gt;&lt;div id=&quot;P3_C22_&quot; class=&quot;panel&quot;&gt;Person search&lt;/div&gt;&lt;div id=&quot;P3_C9_&quot; class=&quot;panel&quot;&gt;&lt;table id=&quot;P3_C2_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P3_C3_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P3_C4_&quot; class=&quot;tabelCell cellLabel&quot;&gt;First name&lt;/td&gt;&lt;td id=&quot;P3_C5_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P3_C10_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P3_C6_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P3_C7_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;&lt;td id=&quot;P3_C8_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P3_C11_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P3_C12_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P3_C13_&quot; class=&quot;tabelCell&quot;&gt;Date of birth&lt;/td&gt;&lt;td id=&quot;P3_C14_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P3_C15_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P3_C16_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P3_C17_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;div id=&quot;P3_C19_&quot; class=&quot;panel&quot;&gt;&lt;table id=&quot;P3_C18_&quot; class=&quot;grid&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td style=&quot;display:none;&quot;&gt;Id&lt;/td&gt;&lt;td&gt;First name&lt;/td&gt;&lt;td&gt;Surname&lt;/td&gt;&lt;td&gt;Date of birth&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;</htmlBody>
     <id>P3</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-10-20T19:53:36.963+01:00</modifiedDate>
+    <modifiedDate>2014-10-24T12:21:45.796+01:00</modifiedDate>
     <name>01_PersonSearch</name>
     <rolesHtml>
         <html>&lt;div id=&quot;P3_C1_&quot; class=&quot;pagepanel&quot;&gt;&lt;/div&gt;&lt;div id=&quot;P3_C22_&quot; class=&quot;panel&quot;&gt;Person search&lt;/div&gt;&lt;div id=&quot;P3_C9_&quot; class=&quot;panel&quot;&gt;&lt;table id=&quot;P3_C2_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P3_C3_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P3_C4_&quot; class=&quot;tabelCell cellLabel&quot;&gt;First name&lt;/td&gt;&lt;td id=&quot;P3_C5_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P3_C10_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P3_C6_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P3_C7_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;&lt;td id=&quot;P3_C8_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P3_C11_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P3_C12_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P3_C13_&quot; class=&quot;tabelCell&quot;&gt;Date of birth&lt;/td&gt;&lt;td id=&quot;P3_C14_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P3_C15_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P3_C16_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P3_C17_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;div id=&quot;P3_C19_&quot; class=&quot;panel&quot;&gt;&lt;table id=&quot;P3_C18_&quot; class=&quot;grid&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td style=&quot;display:none;&quot;&gt;Id&lt;/td&gt;&lt;td&gt;First name&lt;/td&gt;&lt;td&gt;Surname&lt;/td&gt;&lt;td&gt;Date of birth&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;</html>
