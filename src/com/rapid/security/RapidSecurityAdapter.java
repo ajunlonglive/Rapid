@@ -229,19 +229,17 @@ public class RapidSecurityAdapter extends SecurityAdapater {
 			
 	@Override
 	public void addRole(RapidRequest rapidRequest, Role role) throws SecurityAdapaterException {
-		_security.getRoles().add(role);
-		_security.getRoles().sort();
+		Roles roles = _security.getRoles();
+		if (!roles.contains(role)) roles.add(role);
+		roles.sort();
 		save();
 	}
 	
 	@Override
 	public void deleteRole(RapidRequest rapidRequest, String roleName) throws SecurityAdapaterException {
-		for (Role role : _security.getRoles()) if (role.getName().equals(roleName)) {
-			_security.getRoles().remove(role);
-			_security.getRoles().sort();
-			save();
-			break;
-		};	
+		Roles roles = _security.getRoles();
+		roles.remove(roleName);		
+		save();
 	}
 	
 	@Override

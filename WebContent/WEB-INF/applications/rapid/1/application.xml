@@ -32,14 +32,14 @@
     <description>This is the Rapid application and contains all of the pages which the designer and other screens use as dialogues</description>
     <id>rapid</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-10-21T10:27:59.054+01:00</modifiedDate>
-    <name>Rapid Admin</name>
+    <modifiedDate>2014-11-04T10:36:01.680Z</modifiedDate>
+    <name>Rapid</name>
     <pageBackupsMaxSize>5</pageBackupsMaxSize>
     <securityAdapterType>rapid</securityAdapterType>
     <showActionIds>true</showActionIds>
     <showControlIds>true</showControlIds>
     <startPageId>P0</startPageId>
-    <status>1</status>
+    <status>0</status>
     <styles>/* sets font in all pages to arial */
 body { font-family: 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif; font-size: 14px; margin:0; }
 table { font-family: 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif; font-size: 14px; margin:0; }
@@ -107,7 +107,7 @@ textarea {
   -moz-box-sizing: border-box; 
   box-sizing: order-box;
 } </styles>
-    <title>Rapid</title>
+    <title>Rapid Admin</title>
     <version>1</version>
     <XMLVersion>1</XMLVersion>
 </application>

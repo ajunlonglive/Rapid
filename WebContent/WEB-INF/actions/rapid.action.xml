@@ -477,7 +477,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 		break;
 		case "NEWUSER" :	
 			if (rapidApp) {
-				data = { actionType: actionType, appId: "rapid", version : _appVersion, userName: $("#rapid_P16_C8_").val(), description: $("#rapid_P16_C13_").val() , password: $("#rapid_P16_C17_").val(), useAdmin: $("rapid_P16_C38_").prop("checked"), useDesign: $("rapid_P16_C39_").prop("checked")};
+				data = { actionType: actionType, appId: "rapid", version : _appVersion, userName: $("#rapid_P16_C8_").val(), description: $("#rapid_P16_C13_").val() , password: $("#rapid_P16_C17_").val(), useAdmin: $("#rapid_P16_C38_").prop("checked"), useDesign: $("#rapid_P16_C39_").prop("checked")};
 			} else {	
 				data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), userName: $("#rapid_P6_C7").val(), description: $("#rapid_P6_C42_").val() , password: $("#rapid_P6_C18").val() };
 				callback = function() {

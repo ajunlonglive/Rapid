@@ -81,12 +81,27 @@ public abstract class SecurityAdapater {
 			// a list of strings
 			List<String> names = new ArrayList<String>();
 			// loop entries and add names
-			for (Role role : this) names.add(role.getName());
+			for (Role role : this) {
+				// get the role name
+				String roleName = role.getName();
+				// add it to the collection we're returning if not already there
+				if (!names.contains(roleName)) names.add(roleName);
+			}
 			// return
 			return names;			
 		}
 		
+		// remove a role by name
+		public boolean remove(String roleName) {
+			boolean removed = false;
+			for (Role role : this) if (role.getName().equals(roleName)) {
+				this.remove(role);
+				removed = true;
+			};	
+			return removed;
+		}
 		
+		// sort the roles case - not case sensitive
 		public Roles sort() {
 			// sort the roles alphabetically by the name
 			Collections.sort(this, new Comparator<Role>() {
@@ -96,6 +111,14 @@ public abstract class SecurityAdapater {
 				}				
 			});			
 			return this;			
+		}
+		
+		// return true if the list of roles contains one by name
+		public boolean contains(String roleName) {
+			// loop the roles returning true as soon as there's a match
+			for (Role role : this) if (role.getName().equals(roleName)) return true;
+			// not found return false
+			return false;
 		}
 						
 	}
@@ -108,7 +131,7 @@ public abstract class SecurityAdapater {
 			Collections.sort(this);			
 			return this;			
 		}
-		
+						
 	}
 	
 	
@@ -175,6 +198,14 @@ public abstract class SecurityAdapater {
 				}				
 			});			
 			return this;			
+		}
+		
+		// return true if the list of users contains one by name
+		public boolean contains(String userName) {
+			// loop the roles returning true as soon as there's a match
+			for (User user : this) if (user.getName().equals(userName)) return true;
+			// not found return false
+			return false;
 		}
 						
 	}

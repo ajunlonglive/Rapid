@@ -165,6 +165,10 @@ span.loading {
                 <type>file</type>
                 <contents>images/gear_24x24.png</contents>
             </resource>   
+            <resource>
+                <type>file</type>
+                <contents>images/RapidLogo_60x40.png</contents>
+            </resource>  
         </resources>
 	    
 	    <getHtmlFunction>
