@@ -805,7 +805,10 @@ public class Rapid extends Action {
 				// get the userName from the incoming json
 				String userName = jsonAction.getString("userName");
 				
-				// set the request user
+				// derive whether this is the current user
+				boolean currentUser = userName.toLowerCase().equals(rapidRequest.getUserName().toLowerCase());
+				
+				// now set the rapid request user to the user we want
 				rapidRequest.setUserName(userName);
 				
 				// get the app security
@@ -841,7 +844,7 @@ public class Rapid extends Action {
 				} // got security
 				
 				// if this user record is for the logged in user
-				result.put("currentUser", userName.toLowerCase().equals(rapidRequest.getUserName().toLowerCase()));
+				result.put("currentUser", currentUser);
 								
 			} else if ("GETUSERS".equals(action)) { 
 							
@@ -1546,20 +1549,23 @@ public class Rapid extends Action {
 				
 				// get the security
 				SecurityAdapater security = app.getSecurity();
-				
+												
 				// add the user
 				security.addUser(rapidRequest, new User(userName, description, password));
+				
+				// update the Rapid Request to have the new user name
+				rapidRequest.setUserName(userName);
 				
 				// if this is the rapid app
 				if ("rapid".equals(app.getId())) {
 					// check for useAdmin
-					String useAdmin = jsonAction.optString("useAdmin");
+					boolean useAdmin = jsonAction.optBoolean("useAdmin");
 					// add role if we were given one
-					if ("true".equals(useAdmin)) security.addUserRole(rapidRequest, com.rapid.server.Rapid.ADMIN_ROLE);
+					if (useAdmin) security.addUserRole(rapidRequest, com.rapid.server.Rapid.ADMIN_ROLE);
 					// check for useDesign
-					String useDesign = jsonAction.optString("useDesign");
+					boolean useDesign = jsonAction.optBoolean("useDesign");
 					// add role if we were given one
-					if ("true".equals(useDesign)) security.addUserRole(rapidRequest, com.rapid.server.Rapid.DESIGN_ROLE);
+					if (useDesign) security.addUserRole(rapidRequest, com.rapid.server.Rapid.DESIGN_ROLE);
 				}
 				
 				// set the result message
