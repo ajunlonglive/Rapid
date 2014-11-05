@@ -729,7 +729,7 @@ public class Page {
     						}
     					}         				
         			}
-    			}    			
+    			}    
     		}
     		// loop controls
     		for (Control control : controls) {
@@ -983,12 +983,12 @@ public class Page {
 			
 			// print any page load lines such as initialising controls
 			for (String line : _pageloadLines) jsStringBuilder.append("    " + line);
-									
+															
 			// close the try
 			jsStringBuilder.append("  } catch(ex) { $('body').html(ex); }\n");
 			
-			// show the page
-			jsStringBuilder.append("  $('body').css('visibility','visible');\n");
+			// after 200 milliseconds show and trigger a window resize for any controls that might be listening (this also cuts out any flicker)
+			jsStringBuilder.append("  window.setTimeout( function() {\n    $(window).resize();\n    $('body').css('visibility','visible');\n  }, 200);\n");
 									
 			// end of page loaded function
 			jsStringBuilder.append("});\n\n");
@@ -1196,18 +1196,18 @@ public class Page {
 			
 			// if we had the admin link
 			if (adminLinkPermission) {
-				
+												
+				// using attr href was the weirdest thing. Some part of jQuery seemed to be setting the url back to v=1&p=P1 when v=2&p=P2 was printed in the html
 				writer.write("<div id='designShow' style='position:fixed;left:0px;bottom:0px;width:30px;height:30px;z-index:1000;'></div>\n"
-		    	+ "<img id='designLink' style='position:fixed;left:6px;bottom:6px;z-index:1001;display: none;' src='images/gear_24x24.png'></img>\n"
+		    	+ "<a id='designLink' style='position:fixed;left:6px;bottom:6px;z-index:1001;display:none;' href='#'><img src='images/gear_24x24.png'/></a>\n"
 		    	+ "<script type='text/javascript'>\n"
 		    	+ "/* designLink */\n"
 		    	+ "$(document).ready( function() {\n"
-		    	+ "  $('#designShow').mouseover ( function(ev) { $('#designLink').show(); });\n"
-		    	+ "  $('#designLink').mouseout ( function(ev) { $('#designLink').hide(); });\n"
-		    	+ "  $('#designLink').click ( function(ev) { window.location='design.jsp?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + _id + "' });\n"
+		    	+ "  $('#designShow').mouseover ( function(ev) {\n     $('#designLink').attr('href','design.jsp?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + _id + "').show();\n  });\n"
+		    	+ "  $('#designLink').mouseout ( function(ev) {\n     $('#designLink').hide();\n  });\n"
 		    	+ "});\n"
 		    	+ "</script>\n");
-								
+										    			    	
 			}
 			
 		} catch (SecurityAdapaterException ex) {

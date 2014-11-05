@@ -769,7 +769,7 @@ function Init_pagePanel(id, details) {
   
   // request the page		
   $.ajax({
-     	url: "~?a=" + details.appId + "&p=" + details.pageId,
+     	url: "~?a=" + details.appId + "&p=" + details.pageId + "&v=" + details.version,
      	type: "GET",          
          data: null,        
          error: function(server, status, error) { 

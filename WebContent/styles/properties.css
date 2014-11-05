@@ -21,6 +21,7 @@ table.propertiesPanelTable  {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	width: 50%;
+	max-width: 50px;
 }
 
 .propertiesPanelTable input {
