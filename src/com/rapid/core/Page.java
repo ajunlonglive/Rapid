@@ -1224,6 +1224,12 @@ public class Page {
 	// static function to load a new page
 	public static Page load(ServletContext servletContext, File file) throws JAXBException, ParserConfigurationException, SAXException, IOException, TransformerFactoryConfigurationError, TransformerException {
 		
+		// get the logger
+		Logger logger = (Logger) servletContext.getAttribute("logger");
+		
+		// trace log that we're about to load a page
+		logger.trace("Loading page from " + file);
+		
 		// open the xml file into a document
 		Document pageDocument = XML.openDocument(file);
 		
@@ -1240,10 +1246,7 @@ public class Page {
 		if (xmlVersion != XML_VERSION) {
 			
 			// get the page name
-			String name = XML.getChildElementValue(pageDocument.getFirstChild(), "name");
-			
-			// get the logger
-			Logger logger = (Logger) servletContext.getAttribute("logger");
+			String name = XML.getChildElementValue(pageDocument.getFirstChild(), "name");						
 			
 			// log the difference
 			logger.debug("Page " + name + " with version " + xmlVersion + ", current version is " + XML_VERSION);
@@ -1284,6 +1287,9 @@ public class Page {
 		Unmarshaller unmarshaller = (Unmarshaller) servletContext.getAttribute("unmarshaller");	
 		// unmarshall the page
 		Page page = (Page) unmarshaller.unmarshal(file);
+		
+		// log that the application was loaded
+		logger.trace("Loaded page " + page.getId() + " - " + page.getName());
 		
 		// return it		
 		return page;
