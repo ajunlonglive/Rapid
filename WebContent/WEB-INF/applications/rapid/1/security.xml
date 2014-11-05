@@ -1,24 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <security>
     <roles>
-        <description>Manage application in Rapid Admin</description>
+        <description>Use Rapid Admin to manager applications</description>
         <name>RapidAdmin</name>
     </roles>
     <roles>
-        <description>Design application in Rapid Designer</description>
+        <description>Use Rapid Design to design applications</description>
         <name>RapidDesign</name>
     </roles>
+    <!-- 
+    <roles>
+        <description>Manage and design Rapid Admin application</description>
+        <name>RapidSuper</name>
+    </roles>
+     -->
     <users>
         <description>Admin user</description>
         <name>admin</name>
         <password>admin</password>
         <roles>RapidAdmin</roles>
         <roles>RapidDesign</roles>
+        <!-- 
         <roles>RapidSuper</roles>
-    </users>
-    <users>
-        <description>test</description>
-        <name>test</name>
-        <password>test</password>
+         -->
     </users>
 </security>

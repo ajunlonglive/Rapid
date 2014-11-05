@@ -1566,6 +1566,12 @@ public class Application {
 	// this method loads the application by ummarshelling the xml, and then doing the same for all page .xmls, before calling the initialise method
 	public static Application load(ServletContext servletContext, File file, boolean createResources) throws JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException, IOException, ParserConfigurationException, SAXException, TransformerFactoryConfigurationError, TransformerException {
 		
+		// get the logger
+		Logger logger = (Logger) servletContext.getAttribute("logger");
+		
+		// trace log that we're about to load a page
+		logger.trace("Loading application from " + file);
+					
 		// open the xml file into a document
 		Document appDocument = XML.openDocument(file);
 		
@@ -1583,10 +1589,7 @@ public class Application {
 			
 			// get the page name
 			String name = XML.getChildElementValue(appDocument.getFirstChild(), "name");
-			
-			// get the logger
-			Logger logger = (Logger) servletContext.getAttribute("logger");
-			
+									
 			// log the difference
 			logger.debug("Application " + name + " with xml version " + xmlVersion + ", current xml version is " + XML_VERSION);
 			
@@ -1638,9 +1641,15 @@ public class Application {
 		    }
 			
 		}
+		
+		// trace log that we're initialising
+		logger.trace("Initialising application " + application.getName() + "/" + application.getVersion());
 										
 		// initialise the application
 		application.initialise(servletContext, createResources);
+		
+		// log that the application was loaded
+		logger.info("Loaded application " + application.getName() + "/" + application.getVersion());
 		
 		return application; 		
 		
