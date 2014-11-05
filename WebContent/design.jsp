@@ -141,7 +141,7 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, Rap
 				<button id="redo" class="buttonRight" disabled="disabled" title="Redo changes">redo</button>
 			</div>	
 							
-			<div id="controlControls">
+			<div id="controlControls" style="margin-top:5px;">
 				<h2 id="controlsHeader">Controls
 					<img class="headerToggle" src="images/triangleUp_8x8.png" />
 					<img id="helpControls" class="headerHelp" src="images/help_16x16.png" />
@@ -152,7 +152,7 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, Rap
 				</ul>					
 			</div>	
 			
-			<h2 id="controlsMap" style="margin-top:0;">Page controls
+			<h2 id="controlsMap" style="margin-top:5px;">Page controls
 				<img class="headerToggle" src="images/triangleDown_8x8.png" />
 				<img id="helpMap" class="headerHelp" src="images/help_16x16.png" />
 			</h2>

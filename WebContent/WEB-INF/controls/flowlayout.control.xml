@@ -1,0 +1,200 @@
+<controls xmlVersion="1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/control.xsd">
+
+<!-- 
+
+Copyright (C) 2014 - Gareth Edwards / Rapid Information Systems
+
+gareth.edwards@rapid-is.co.uk
+
+
+This file is part of the Rapid Application Platform
+
+RapidSOA is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version. The terms require you to include
+the original copyright, and the license notice in all redistributions.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
+
+ -->
+	
+	<control>
+	    
+	    <type>flowLayoutCell</type>
+	    <name>Flow layout cell</name>	 
+	    	    
+	    <noDefaultName>true</noDefaultName>
+	      	    
+	    <canUserInsert>true</canUserInsert>   
+	    <canUserAddPeers>true</canUserAddPeers> 
+	    
+	    <properties>
+	        <property>
+	            <key>text</key>
+	            <name>Text</name>
+	            <setConstructValueFunction>return "Flow layout cell";</setConstructValueFunction>
+	            <changeValueJavaScript>bigtext</changeValueJavaScript>		                       
+	        </property>	
+	    </properties>
+	    	    
+	    <getHtmlFunction>
+	        <![CDATA[
+// return our html 
+return "<div id='" + this.id + "' class='flowLayoutCell'>" + this.text + "</div>";
+	        ]]>
+	    </getHtmlFunction> 
+	    	    	    	    	   	    	        	    
+	</control>
+		
+	<control>
+	    
+	    <type>flowLayout</type>
+	    <name>Flow layout</name>	    
+	    <image>images/slidepanel_24x24.png</image>  	
+	    
+		<noDefaultName>true</noDefaultName>
+			    	    	    	    
+	    <canUserAdd>true</canUserAdd>
+	    <canUserMove>true</canUserMove>
+  
+	    <properties>
+	        <property>
+	            <key>cellWidth</key>
+	            <name>Cell width</name>
+	            <setConstructValueFunction>return "300px";</setConstructValueFunction>
+	            <changeValueJavaScript>flowLayoutCellWidth</changeValueJavaScript>		                       
+	        </property>	
+	    </properties>
+	    
+	    <resources>
+	        <resource>
+	            <type>css</type>
+	            <contents>
+<![CDATA[
+.flowLayoutCell {
+	float: left;
+}
+]]>	                
+	            </contents>
+	        </resource>
+	        <resource>
+	            <type>javascript</type>
+	            <contents>
+	                <![CDATA[
+
+$(document).ready( function() {
+			
+	$(window).resize(function(ex) {
+
+		sizeFlowLayouts();
+
+    });
+    
+    sizeFlowLayouts();
+			
+});
+
+function sizeFlowLayouts() {
+	
+	// loop the layouts
+	$(".flowLayout").each(function() {
+		// get the id
+		var id = $(this).attr("id");
+		// get the layout
+		var layout = $("#" + id);
+		// find the width (in pixels)
+		var width = layout.width();
+		// get all of the children
+		var cells = layout.children(".flowLayoutCell");
+		// get the details
+		var details = window[id + "details"];
+		// set their width to the start width (however it was provided)
+		cells.css("width", details.cellWidth);
+		// get the first cell 
+		var cell = layout.children(".flowLayoutCell").first();
+		// get it's width in pixels
+		var cellWidth = cell.width();
+		// get it's with-affecting padding 
+		var cellPaddingWidth = toPixels(cell.css("padding-left")) + toPixels(cell.css("padding-right")); 
+		// get it's width-affecting borders
+		var cellBorderWidth = toPixels(cell.css("border-left-width")) + toPixels(cell.css("border-right-width")); 
+		// calculate the max number of whole cells across (can't be more than cells we have)
+		var cellsWide = Math.min(Math.floor(width / cellWidth), cells.length);	
+		// adjust the cell width to include equal amounts of the white space, and adjust for padding and border
+		cellWidth += (width - cellsWide * cellWidth) / cellsWide - cellPaddingWidth - cellBorderWidth;
+		// if there is a transform in place
+		if ($("body").css("transform") && $("body").css("transform") != "auto") {
+			// if the new size exceeds (or equals) the available width reduce by 1 pixel divided by number of cells
+			if (width <= (cellWidth + cellPaddingWidth + cellBorderWidth) * cellsWide) cellWidth -= 1 / cellsWide;
+		}
+		// update the widths
+		layout.children(".flowLayoutCell").css("width", cellWidth);				
+	});
+				
+}
+	                
+	                ]]>
+	            </contents>
+	        </resource>
+	    </resources>
+	    
+	    <getHtmlFunction>
+	        <![CDATA[      
+// return html for adding to our parent object      
+return "<div id='" + this.id + "' class='flowLayout'></div>";
+	        ]]>
+	    </getHtmlFunction>
+	    
+	    <constructJavaScript>
+	        <![CDATA[
+// create the child control array 
+this.childControls = new Array();
+// add two child cells
+this.childControls.push(new Control("flowLayoutCell", this));
+this.childControls.push(new Control("flowLayoutCell", this));
+	        ]]>
+	    </constructJavaScript>
+	    	    	    	  	    
+	   	<initDesignJavaScript>
+	        <![CDATA[       
+var pageWindow =  _pageIframe[0].contentWindow || _pageIframe[0];
+// add the design-time details object into the page
+pageWindow[this.id + "details"] = {};
+// set the cell width
+pageWindow[this.id + "details"].cellWidth = this.cellWidth;
+	        ]]>	   	        
+	    </initDesignJavaScript>
+	    
+	   	<getDetailsFunction>
+return { cellWidth: this.cellWidth };	        
+	    </getDetailsFunction>
+	   		    
+	    <styles>
+	        <style>
+	            <name>Layout</name>
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id;
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>   
+	        <style>
+	            <name>Layout cells</name>
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id + " div.flowLayoutCell";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>  
+	    </styles>	
+	    	    	    	    	            	    	    	        	    	    
+	</control>
+	
+</controls>	

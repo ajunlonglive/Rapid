@@ -174,10 +174,18 @@ public class Minify {
 	}
 	
 	public static String toString(String string, int type) throws IOException {
-		// get the string writer
-		StringWriter sw = (StringWriter) toWriter(string, new StringWriter(), type);
-		// turn to string
-		return sw.toString();
+		// check the input string for non-null
+		if (string != null) {
+			// check the input string for any content
+			if (string.length() > 0) {
+				// get the string writer
+				StringWriter sw = (StringWriter) toWriter(string, new StringWriter(), type);
+				// turn to string and return
+				return sw.toString();
+			}
+		}
+		// return input as-is
+		return string;
 	}
 	
 	public static void toFile(File fromFile, File toFile, int type) throws IOException {		

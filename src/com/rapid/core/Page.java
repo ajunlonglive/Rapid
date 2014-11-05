@@ -1205,7 +1205,7 @@ public class Page {
 		    	+ "  $('#designShow').mouseover ( function(ev) { $('#designLink').show(); });\n"
 		    	+ "  $('#designLink').mouseout ( function(ev) { $('#designLink').hide(); });\n"
 		    	+ "  $('#designLink').click ( function(ev) { window.location='design.jsp?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + _id + "' });\n"
-		    	+ "})\n"
+		    	+ "});\n"
 		    	+ "</script>\n");
 								
 			}

@@ -156,7 +156,7 @@ function updateProperty(propertyObject, property, value, refreshHtml) {
 		// if an html refresh is requested
 		if (refreshHtml) {
 			// in controls.js
-			rebuildHtml(propertyObject);
+			rebuildHtml(propertyObject);			
 		}	
 		// if this is the name
 		if (property.key == "name") {
@@ -2214,6 +2214,30 @@ function Property_slidePanelVisibility(cell, propertyObject, property, refreshHt
 	}));
 }
 
+
+function Property_flowLayoutCellWidth(cell, flowLayout, property, refreshHtml, refreshProperties) {
+	var value = "";
+	// set the value if it exists
+	if (flowLayout[property.key]) value = flowLayout[property.key];
+	// append the adjustable form control
+	cell.append("<input class='propertiesPanelTable' value='" + value + "' />");
+	// get a reference to the form control
+	var input = cell.children().last();
+	// add a listener to update the property
+	addListener( input.keyup( function(ev) {
+		// update the property
+		updateProperty(flowLayout, property, ev.target.value, refreshHtml);
+		// update the iFrame control details
+		var pageWindow =  _pageIframe[0].contentWindow || _pageIframe[0];
+		// add the design-time details object into the page
+		pageWindow[flowLayout.id + "details"] = {};
+		// set the cell width
+		pageWindow[flowLayout.id + "details"].cellWidth = ev.target.value;
+		// iframe resize
+		_pageIframe.resize();		
+	}));
+}
+
 //this is displayed as a page property but is actually held in local storage
 function Property_device(cell, propertyObject, property, refreshHtml, refreshProperties) {
 	// holds the options html
@@ -2242,6 +2266,8 @@ function Property_device(cell, propertyObject, property, refreshHtml, refreshPro
 		_scale = _ppi / _devices[_device].PPI * _devices[_device].scale * _zoom;
 		// windowResize
 		windowResize("_device");
+		// iframe resize
+		_pageIframe.resize();
 	}));
 	// if value is not set, set the top value
 	if (!propertyObject[property.key]) propertyObject[property.key] = select.val()*1;
@@ -2302,6 +2328,8 @@ function Property_orientation(cell, propertyObject, property, refreshHtml, refre
 		if (typeof(localStorage) !== "undefined") localStorage.setItem("_orientation" ,_orientation);
 		// windowResize
 		windowResize("_orientation");
+		// iframe resize
+		_pageIframe.resize();
 	}));
 }
 

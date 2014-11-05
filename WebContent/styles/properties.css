@@ -20,7 +20,7 @@ table.propertiesPanelTable  {
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	max-width: 50px;
+	width: 50%;
 }
 
 .propertiesPanelTable input {

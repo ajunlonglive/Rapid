@@ -352,6 +352,47 @@ function checkDirty() {
 	}
 }
 
+// this function returns a controls height after taking into account floating children
+function getControlHeight(control) {
+	// get the object
+	var o = control.object;
+	// assume the height is straight-forward
+	var height = o.height();		
+	// assume no children are floating
+	var floatLeftHeight = 0;
+	var floatRightHeight = 0;
+	// loop the child controls looking for floating objects
+	for (var i in control.childControls) {
+		// get the parent position
+		var pos = control.object.position();
+		// get the child control
+		var c = control.childControls[i];
+		// get the child control position
+		var cpos = c.object.position();
+		// check for a left float the same amount left as the parent
+		if (c.object.css("float") == "left" && pos.left == cpos.left) {
+			floatLeftHeight += c.object.outerHeight();
+		}
+		// check for a right float the same amount right as the parent
+		if (c.object.css("float") == "right" && pos.left + c.object.outerWidth() == cpos.left + cc.object.outerWidth()) {
+			floatRightHeight += c.object.outerHeight();
+		}
+	}
+	// if float heights are 0 so far check the children again
+	if (floatLeftHeight + floatRightHeight == 0) {
+		// loop the child controls 
+		for (var i in control.childControls) {
+			// use each child to get the height
+			height += getControlHeight(control.childControls[i]);
+		}
+	}
+	// take the greatest of these 4 heights
+	height = Math.max(height, o.outerHeight(), floatLeftHeight, floatRightHeight);
+	// return it
+	return height;
+
+}
+
 // this function is useful for calling from the JavaScript terminal to find out why certain objects have not been found
 function debuggMouseControl(ev, childControls) {	
 	
@@ -384,13 +425,11 @@ function getMouseControl(ev, childControls) {
 		// if we didn't find a control but the selection border is visible, return the current control
 		if (o.is(":visible") && !_movingControl) {						
 			// did we click on the border (it's position already has the pinned panel taken into account so no need to offset)
-			if (ev.pageX >= o.offset().left && ev.pageY >= o.offset().top && ev.pageX <= o.offset().left + o.outerWidth() && ev.pageY <= o.offset().top + o.outerHeight()) {
+			if (ev.pageX >= o.offset().left && ev.pageY >= o.offset().top && ev.pageX <= o.offset().left + o.outerWidth() && ev.pageY <= o.offset().top + o.outerHeight()) {				
+				// get the height of the object
+				var height = getControlHeight(_selectedControl) * _scale;
 				// grab the selected object
 				o = _selectedControl.object;
-				// get the height of the object
-				var height = o.outerHeight() * _scale;
-				// if the height is zero, but there are children assume the height of the first child (this is the case with ul elements where the child li elements are floated )
-				if (!height && c.childControls.length > 0) height = c.childControls[0].object.outerHeight() * _scale;
 				// get the width
 				var width = o.outerWidth() * _scale;
 				// if we clicked in the object space we skip this section and process the event thoroughly
@@ -438,9 +477,7 @@ function getMouseControl(ev, childControls) {
 				// is the mouse below this object
 				if (mouseX >= o.offset().left && mouseY >= o.offset().top) {
 					// get the height of the object
-					var height = o.outerHeight() * _scale;
-					// if the height is zero, but there are children assume the height of the first child (this is the case with ul elements where the child li elements are floated )
-					if (!height && c.childControls.length > 0) height = c.childControls[0].object.outerHeight() * _scale;
+					var height = getControlHeight(c) * _scale;				
 					// get the width
 					var width = o.outerWidth() * _scale;
 					// does the width and height of this object mean we are inside it
@@ -532,9 +569,7 @@ function removeControlFromParent(control) {
 // this sizes a border around the geometry of a control (it must be visible at the time, however briefly)
 function sizeBorder(control) {
 	// get the height of the control's object
-	var height = control.object.outerHeight();
-	// if the height is zero but there are child controls, assume the height of the first child control
-	if (!height && control.childControls.length > 0) height = control.childControls[0].object.outerHeight();
+	var height = getControlHeight(control);
 	// get the width
 	var width = control.object.outerWidth()
 	// check if nonVisualControl
@@ -2056,7 +2091,10 @@ $(document).ready( function() {
 			        	
 			        	// show it after a pause to allow the new style sheets to apply
 			        	window.setTimeout( function() {
-			        		_page.object.show();
+			        		// fire an iframe resize
+			        		_pageIframe.resize();
+			        		// show the page object
+			        		_page.object.show();			        		
 		            	}, 200);
 			    					        	
 			        	// make everything visible
@@ -2277,7 +2315,9 @@ $(document).ready( function() {
 		        	// reload the pages as the order may have changed, but keep the current one selected
 		        	loadPages(_page.id);
 		        	// arrange any non-visible controls
-		        	arrangeNonVisibleControls();	        		        	
+		        	arrangeNonVisibleControls();	   
+		        	// iframe resize
+		    		_pageIframe.resize();
 		        }
 			});
 			
@@ -3015,22 +3055,24 @@ function windowResize(ev) {
 		});
 	}
 	
-	// if the scale is 1 remove anything clever
-	if (_scale * device.scale == 1) {
-		_page.object.css({
-			width: "auto",
-			height: "auto",
-			transform: "none"
-		});
-	} else {
-		// adjust the scale
-		_page.object.css({
-			width: 1 / _scale * 100 + "%",
-			height: 1 / _scale * 100 + "%",
-			transform: "scale(" + _scale + ")"
-		});	
-	}
-			
+	// only if we have a page and it's object
+	if (_page && _page.object) {
+		// if the scale is 1 remove anything clever
+		if (_scale * device.scale == 1) {
+			_page.object.css({
+				width: "auto",
+				height: "auto",
+				transform: "none"
+			});
+		} else {
+			// adjust the scale
+			_page.object.css({
+				width: 1 / _scale * 100 + "%",
+				height: 1 / _scale * 100 + "%",
+				transform: "scale(" + _scale + ")"
+			});	
+		} // scale check
+	} // page check	
 }
 
 function fileuploaded(fileuploadframe) {
