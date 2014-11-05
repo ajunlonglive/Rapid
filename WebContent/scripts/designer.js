@@ -357,7 +357,7 @@ function getControlHeight(control) {
 	// get the object
 	var o = control.object;
 	// assume the height is straight-forward
-	var height = o.height();		
+	var height = o.outerHeight();		
 	// assume no children are floating
 	var floatLeftHeight = 0;
 	var floatRightHeight = 0;
@@ -370,24 +370,21 @@ function getControlHeight(control) {
 		// get the child control position
 		var cpos = c.object.position();
 		// check for a left float the same amount left as the parent
-		if (c.object.css("float") == "left" && pos.left == cpos.left) {
-			floatLeftHeight += c.object.outerHeight();
+		if (c.object.css("float") == "left" && pos.left >= cpos.left) {
+			floatLeftHeight += c.object.outerHeight() + toPixels(c.object.css("margin-top")) + toPixels(c.object.css("margin-bottom"));
 		}
 		// check for a right float the same amount right as the parent
-		if (c.object.css("float") == "right" && pos.left + c.object.outerWidth() == cpos.left + cc.object.outerWidth()) {
-			floatRightHeight += c.object.outerHeight();
+		if (c.object.css("float") == "right" && pos.left + c.object.outerWidth() >= cpos.left + cc.object.outerWidth()) {
+			floatRightHeight += c.object.outerHeight() + toPixels(c.object.css("margin-top")) + toPixels(c.object.css("margin-bottom"));
 		}
 	}
-	// if float heights are 0 so far check the children again
-	if (floatLeftHeight + floatRightHeight == 0) {
-		// loop the child controls 
-		for (var i in control.childControls) {
-			// use each child to get the height
-			height += getControlHeight(control.childControls[i]);
-		}
+	// if all heights are zero and there are child controls
+	if (height + floatLeftHeight + floatRightHeight == 0 && control.childControls.length > 0) {
+		// set height to the first child control
+		height = getControlHeight(control.childControls[0]);
 	}
-	// take the greatest of these 4 heights
-	height = Math.max(height, o.outerHeight(), floatLeftHeight, floatRightHeight);
+	// take the greatest of these 3 heights
+	height = Math.max(height, floatLeftHeight, floatRightHeight);
 	// return it
 	return height;
 
@@ -630,6 +627,18 @@ function positionBorder(x, y) {
 		left: x + _mouseDownXOffset - 8, // 8 = padding + border + 1 pixel	
 		top: y + _mouseDownYOffset - 8 // 8 = padding + border + 1 pixel
 	});		
+}
+
+// this uses both the above functions for a specific control
+function positionAndSizeBorder(control) {
+	// check if nonVisualControl
+	if (_selectedControl.object.is(".nonVisibleControl")) {
+		positionBorder(_selectedControl.object.offset().left, _selectedControl.object.offset().top - $(window).scrollTop());
+	} else {
+		positionBorder(_selectedControl.object.offset().left + _panelPinnedOffset, _selectedControl.object.offset().top);
+	}		
+	// size the border in case moving it has changed it's geometery
+	sizeBorder(_selectedControl);
 }
 
 // this function returns a flat array of all of the page controls
@@ -907,15 +916,8 @@ function selectControl(control) {
 		// if we have a parent control so aren't the page
 		if (_selectedControl.parentControl) {
 			
-			// size the border
-			sizeBorder(_selectedControl);
-			
-			// check if nonVisualControl and position the border
-			if (_selectedControl.object.is(".nonVisibleControl")) {
-				positionBorder(_selectedControl.object.offset().left, _selectedControl.object.offset().top - $(window).scrollTop());
-			} else {
-				positionBorder(_selectedControl.object.offset().left + _panelPinnedOffset, _selectedControl.object.offset().top);
-			}	
+			// position and size the border
+			positionAndSizeBorder(_selectedControl);
 			
 			// show the border if it has any size to it	and the control is visible		
 			if (_selectionBorder.width() > 5 && _selectedControl.object.is(":visible")) {
@@ -1850,6 +1852,9 @@ function doPaste(control, parentControl) {
 		
 		// restore the control numbers
 		_controlNumbers = JSON.parse(controlNumbers);
+						
+		// re-position and resize the selection as it may have changed
+		positionAndSizeBorder(_selectedControl);
 		
 		// return the updated control
 		return newControl;
@@ -2874,14 +2879,8 @@ $(document).mouseup( function(ev) {
 		_selectionInsert.hide();
 		_selectionMoveLeft.hide();
 		_selectionMoveRight.hide();	
-		// check if nonVisualControl
-		if (_selectedControl.object.is(".nonVisibleControl")) {
-			positionBorder(_selectedControl.object.offset().left, _selectedControl.object.offset().top - $(window).scrollTop());
-		} else {
-			positionBorder(_selectedControl.object.offset().left + _panelPinnedOffset, _selectedControl.object.offset().top);
-		}		
-		// size the border in case moving it has changed it's geometery
-		sizeBorder(_selectedControl);		
+		// size and position the border in case moving it has changed it's geometery
+		positionAndSizeBorder(_selectedControl);		
 		// show the properties panel			
 		showPropertiesPanel();
 		// show a normal cursor

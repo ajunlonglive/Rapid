@@ -45,6 +45,8 @@ boolean gotAppAndPage = false;
 boolean designerPermission = false;
 // get the app parameter
 String appId = request.getParameter("a");
+//get the version parameter
+String version = request.getParameter("v");
 //get the page parameter
 String pageId = request.getParameter("p");
 
@@ -53,8 +55,8 @@ if (appId != null && pageId != null) {
 	
 	//get the applications
 	Applications applications = (Applications) getServletContext().getAttribute("applications");
-	// get the app
-	rapidApp = applications.get(appId);
+	// get the app version
+	rapidApp = applications.get(appId, version);
 	// check we got an app
 	if (rapidApp != null) {
 		// get the page
