@@ -23,6 +23,5 @@
         <!-- 
         <roles>RapidSuper</roles>
          -->
-         <roles>RapidSuper</roles>
     </users>
 </security>

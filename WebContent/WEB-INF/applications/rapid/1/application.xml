@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<application>
+<application> 
     <actionTypes>ajax</actionTypes>
     <actionTypes>control</actionTypes>
     <actionTypes>custom</actionTypes>
