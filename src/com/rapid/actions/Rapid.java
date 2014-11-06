@@ -1307,11 +1307,23 @@ public class Rapid extends Action {
 				
 			} else if ("DELAPP".equals(action)) {
 						
-				// delete the application
-				if (app != null) app.delete(rapidServlet, rapidActionRequest, true);
-				// set the result message
-				result.put("message", "Application " + app.getName() + " deleted");
-				
+				// check we have an app
+				if (app != null)  {						
+					// get all versions of this application
+					Versions versions = rapidServlet.getApplications().getVersions(app.getId());
+					// get the number
+					int versionCount = versions.size();
+					// loop the versions
+					for (String version : versions.keySet()) {
+						// get this version
+						Application v = rapidServlet.getApplications().get(app.getId(), version);
+						// delete it
+						v.delete(rapidServlet, rapidActionRequest, true);						
+					}
+					// set the result message
+					result.put("message", versionCount + " application version" + (versionCount == 1 ? "" : "s") + " deleted for " + app.getName());					
+				}
+								
 			} else if ("DUPAPP".equals(action)) {
 				
 				String version = jsonAction.getString("newVersion").trim();			

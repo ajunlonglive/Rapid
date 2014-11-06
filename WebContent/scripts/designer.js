@@ -356,35 +356,40 @@ function checkDirty() {
 function getControlHeight(control) {
 	// get the object
 	var o = control.object;
-	// assume the height is straight-forward
-	var height = o.outerHeight();		
-	// assume no children are floating
-	var floatLeftHeight = 0;
-	var floatRightHeight = 0;
-	// loop the child controls looking for floating objects
-	for (var i in control.childControls) {
-		// get the parent position
-		var pos = control.object.position();
-		// get the child control
-		var c = control.childControls[i];
-		// get the child control position
-		var cpos = c.object.position();
-		// check for a left float the same amount left as the parent
-		if (c.object.css("float") == "left" && pos.left >= cpos.left) {
-			floatLeftHeight += c.object.outerHeight() + toPixels(c.object.css("margin-top")) + toPixels(c.object.css("margin-bottom"));
+	// assume height is straightforwards
+	var height = o.outerHeight();	
+	// if the height is less than or equal to the sum of the padding check further
+	if (height <= toPixels(o.css("padding-top")) + toPixels(o.css("padding-bottom"))) {
+		// assume no children are floating
+		var floatLeftHeight = 0;
+		var floatRightHeight = 0;
+		// assume children are 0 left
+		var left = 0;
+		// loop the child controls looking for floating objects
+		for (var i in control.childControls) {
+			// get the child control
+			var c = control.childControls[i];
+			// get the child control position
+			var cpos = c.object.position();
+			// if this is the first child update the left
+			if (i == 0) left = cpos.left;
+			// check for a left float the same amount left as the parent
+			if (c.object.css("float") == "left" && cpos.left == left) {
+				floatLeftHeight += c.object.outerHeight() + toPixels(c.object.css("margin-top")) + toPixels(c.object.css("margin-bottom"));
+			}
+			// check for a right float the same amount right as the parent
+			if (c.object.css("float") == "right" && cpos.left == left) {
+				floatRightHeight += c.object.outerHeight() + toPixels(c.object.css("margin-top")) + toPixels(c.object.css("margin-bottom"));
+			}
 		}
-		// check for a right float the same amount right as the parent
-		if (c.object.css("float") == "right" && pos.left + c.object.outerWidth() >= cpos.left + cc.object.outerWidth()) {
-			floatRightHeight += c.object.outerHeight() + toPixels(c.object.css("margin-top")) + toPixels(c.object.css("margin-bottom"));
+		// if all heights are still zero and there are child controls
+		if (height + floatLeftHeight + floatRightHeight == 0 && control.childControls.length > 0) {
+			// set height to the first child control
+			height = getControlHeight(control.childControls[0]);
 		}
+		// take the greatest of these 3 heights
+		height = Math.max(o.outerHeight(), floatLeftHeight, floatRightHeight);
 	}
-	// if all heights are zero and there are child controls
-	if (height + floatLeftHeight + floatRightHeight == 0 && control.childControls.length > 0) {
-		// set height to the first child control
-		height = getControlHeight(control.childControls[0]);
-	}
-	// take the greatest of these 3 heights
-	height = Math.max(height, floatLeftHeight, floatRightHeight);
 	// return it
 	return height;
 

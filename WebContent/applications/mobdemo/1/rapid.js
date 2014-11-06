@@ -427,12 +427,20 @@ function Init_tabGroup(id, details) {
   		var tabs = $("#" + id);
   		// remove selected from all tab header items
   		tabs.children("ul").children("li").removeClass("selected");
-  		// remove selected from all tab body items
-  		tabs.children("div").removeClass("selected");
+  		// remove selected from all tab body items and hide
+  		tabs.children("div").removeClass("selected").css("display","none");
   		// add selected to the li we just clicked on, also get it's index, plus 2, 1 to go from zero to 1 based, the other 1 because of the headers
   		var index = $(this).addClass("selected").index() + 2;
   		// apply selected to the correct body
   		tabs.children("div:nth-child(" + index + ")").addClass("selected");
+  		// check the type
+  		if (window[id + "details"] && window[id + "details"].tabType == "V") {
+  			// vertical if there are details that say so
+  			tabs.children("div.selected").css("display","inline-block");
+  		} else {
+  			// default to horizontal
+  			tabs.children("div.selected").css("display","block");
+  		}
   	});
   });
 }
