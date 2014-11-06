@@ -490,10 +490,14 @@ function mergeDataObjects(data1, data2) {
 
 //assume css values are in pixels but if em is recognised convert (other units to follow)
 function toPixels(size) {
-	if (size.indexOf("em") == size.length - 2) {
-		var emSize = parseFloat($("body").css("font-size"));
-	    return (emSize * parseFloat(size));
+	if (size) {
+		if (size.indexOf("em") == size.length - 2) {
+			var emSize = parseFloat($("body").css("font-size"));
+		    return (emSize * parseFloat(size));
+		} else {
+			return parseFloat(size);
+		}	
 	} else {
-		return parseFloat(size);
-	}	
+		return 0;
+	}
 }

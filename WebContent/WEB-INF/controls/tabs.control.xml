@@ -47,6 +47,11 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <setConstructValueFunction>return "Tab panel"</setConstructValueFunction>
 	            <changeValueJavaScript>text</changeValueJavaScript>	            
 	        </property>
+	        <property>
+	            <key>roles</key>
+	            <name>User roles</name>
+	            <changeValueJavaScript>roles</changeValueJavaScript>	            
+	        </property>
 	    </properties>
 	    
 	    <getHtmlFunction>
@@ -58,8 +63,8 @@ return "<li id='" + this.id + "' class='tabsPanel'>" + this.label + "</li>";
 
 	    <createJavaScript>
 	        <![CDATA[
-// add a div for the panel into the tab group div	           
-this.parentControl.object.append("<div class='tabsPanel'></div>");
+// add a div for the panel into the tab group div (that leading space is important for creating the same gap we see at runtime)	           
+this.parentControl.object.append(" <div class='tabsPanel'></div>");
 // set this object to the div
 this.object = this.parentControl.object.children().last();
 	        ]]>
@@ -228,6 +233,17 @@ return values;
 	            </getValuesFunction>	            
 	        </property>
 	        <property>
+	            <key>tabType</key>
+	            <name>Direction</name> 
+	            <setConstructValueFunction>return "H";</setConstructValueFunction>
+	            <changeValueJavaScript>select</changeValueJavaScript>	
+	            <getValuesFunction>
+	                <![CDATA[
+return [["H","Horizontal"],["V","Vertical"]];
+					]]>
+	            </getValuesFunction>     
+	        </property>	  
+	        <property>
 	            <key>roles</key>
 	            <name>User roles</name>
 	            <changeValueJavaScript>roles</changeValueJavaScript>	            
@@ -243,10 +259,10 @@ ul.tabsHeader {
 	list-style: none;
 	padding: 0;
 	margin: 0;
+	vertical-align:top;
 }
    
 .tabsHeader li {
-	float: left;
 	border: 1px solid #bbb;
 	border-top-left-radius: 5px;
 	border-top-right-radius: 5px;
@@ -282,13 +298,13 @@ div.tabsGroup {
 div.tabsPanel {
 	display: none;
 	min-height: 2em;
+	vertical-align:top;
 }
 
 div.tabsPanel.selected {
 	border: 1px solid black;
 	clear: both;
-	padding: 0 1em;
-	display: block;
+	padding: 0 1em;	
 }	                
 	                ]]>
 				</contents>
@@ -297,7 +313,7 @@ div.tabsPanel.selected {
 	    
 	    <getHtmlFunction>
 	        <![CDATA[
-// return html for adding to our parent object      
+// return html for adding to our parent object    
 this.parentControl.object.append("<div id='" + this.id + "' class='tabsGroup'><ul class='tabsHeader'></ul></div>");
 	        ]]>
 	    </getHtmlFunction>
@@ -311,17 +327,35 @@ this.childControls.push(new Control("tabsPanel", this));
 	    </constructJavaScript>	
 	    	    
 	    <rebuildJavaScript>
-	        <![CDATA[
+	        <![CDATA[        
 try {	                
-
+		
 	// remove selected from all ul items
 	this.object.children("ul").children("li").removeClass("selected");
 	// remove selected from all tab body items
-	this.object.children("div").removeClass("selected");
+	this.object.children("div").removeClass("selected").css("display","none");
+	
 	// add selected to the relevant li
 	this.object.children("ul").children("li:nth(" + (this.selectedPanel - 1) + ")").addClass("selected");
 	// apply selected to the relevant div (note we need the second node as we are already a div)
 	this.object.children("div:nth(" + (this.selectedPanel - 1) + ")").addClass("selected");
+	
+	// check for vertical or revert to horizontal (default)
+	if (this.tabType == "V") {
+		// immediate child ul inline-block
+		this.object.children("ul").css("display","inline-block");
+		// unfloat the immediate li
+		this.object.children("ul").children("li").css({float:""});	
+		// selected div is inline-block
+		this.object.children("div.selected").css("display","inline-block");		
+	} else {
+		// immediate child ul inline-block
+		this.object.children("ul").css("display","block");
+		// float the immediate li
+		this.object.children("ul").children("li").css({float:"left"});	
+		// immediate child divs are block
+		this.object.children("div.selected").css("display","block");	
+	}
 	
 	// add a click event the object
 	this.object.mousedown( {tabs: this}, function(ev) {
@@ -352,12 +386,20 @@ try {
 					tabs.selectedPanel = (i*1 + 1);
 					// remove selected from all ul items
 					tabs.object.children("ul").children("li").removeClass("selected");
-					// remove selected from all tab body items
-					tabs.object.children("div").removeClass("selected");
+					// remove selected from all tab body items and hide
+					tabs.object.children("div").removeClass("selected").css("display","none");
 					// add selected to the relevant li
 					tabs.object.children("ul").children("li:nth(" + (tabs.selectedPanel - 1) + ")").addClass("selected");
 					// apply selected to the relevant div (note we need the second node as we are already a div)
-					tabs.object.children("div:nth(" + (tabs.selectedPanel - 1) + ")").addClass("selected");
+					tabs.object.children("div:nth(" + (tabs.selectedPanel - 1) + ")").addClass("selected");					
+					// check the type
+					if (tabs.details && tabs.details.tabType == "V") {
+						// vertical if there are details that say so
+						tabs.object.children("div.selected").css("display","inline-block");
+					} else {
+						// default to horizontal
+						tabs.object.children("div.selected").css("display","block");
+					}
 					// update the properties
 					showProperties(tabs);
 			    	// bail
@@ -372,6 +414,12 @@ try {
 }	
 	        ]]>
 	    </rebuildJavaScript>	 
+	    
+	    <getDetailsFunction>
+	        <![CDATA[
+return {tabType:this.tabType};	        
+	        ]]>
+	    </getDetailsFunction>
 	    
 	    <styles>
 	        <style>
@@ -394,12 +442,12 @@ return "#" + this.id + " li";
 	            <name>Tabs panels</name>
 	            <getAppliesToFunction>
 					<![CDATA[	      
-return "#" + this.id + " .tabsGroup";
+return "#" + this.id + " div.tabsPanel";
 	       			 ]]>	                
 	            </getAppliesToFunction>
 	        </style>  
 	    </styles>	
-	    
+	    	    	    	    	    
 	    <initJavaScript>
 	        <![CDATA[
 $("#" + id).children("ul").children("li").each( function() {
@@ -408,18 +456,25 @@ $("#" + id).children("ul").children("li").each( function() {
 		var tabs = $("#" + id);
 		// remove selected from all tab header items
 		tabs.children("ul").children("li").removeClass("selected");
-		// remove selected from all tab body items
-		tabs.children("div").removeClass("selected");
+		// remove selected from all tab body items and hide
+		tabs.children("div").removeClass("selected").css("display","none");
 		// add selected to the li we just clicked on, also get it's index, plus 2, 1 to go from zero to 1 based, the other 1 because of the headers
 		var index = $(this).addClass("selected").index() + 2;
 		// apply selected to the correct body
 		tabs.children("div:nth-child(" + index + ")").addClass("selected");
+		// check the type
+		if (window[id + "details"] && window[id + "details"].tabType == "V") {
+			// vertical if there are details that say so
+			tabs.children("div.selected").css("display","inline-block");
+		} else {
+			// default to horizontal
+			tabs.children("div.selected").css("display","block");
+		}
 	});
 });	        
 	        ]]>	        	       	        
 	    </initJavaScript>	
-	    	    	            	    
-	    	        	    	    
+	    	    	    	    	            	    	    	        	    	    
 	</control>
 	
 </controls>	

@@ -11,13 +11,13 @@ table.grid{border-collapse:collapse}
 .slidePanel img{width:100%;height:100%}
 .slidePanelPane{position:absolute;float:left;width:200px;height:100%;background-color:white;border-right:1px solid black;z-index:100}
 .slidePanelCover{position:fixed;top:0;left:0;background-color:#ccc;opacity:.75;z-index:99}
-ul.tabsHeader{list-style:none;padding:0;margin:0}
-.tabsHeader li{float:left;border:1px solid #bbb;border-top-left-radius:5px;border-top-right-radius:5px;border-bottom-width:0;margin:0;text-decoration:none;display:block;background:#eee;color:#00c;width:8em;text-align:center;cursor:pointer}
+ul.tabsHeader{list-style:none;padding:0;margin:0;vertical-align:top}
+.tabsHeader li{border:1px solid #bbb;border-top-left-radius:5px;border-top-right-radius:5px;border-bottom-width:0;margin:0;text-decoration:none;display:block;background:#eee;color:#00c;width:8em;text-align:center;cursor:pointer}
 .tabsHeader li:hover{background:#ddf}
 .tabsHeader li.selected{border-color:black;position:relative;top:1px;background:white;color:black;font-weight:bold;cursor:auto}
 div.tabsGroup{clear:both}
-div.tabsPanel{display:none;min-height:2em}
-div.tabsPanel.selected{border:1px solid black;clear:both;padding:0 1em;display:block}
+div.tabsPanel{display:none;min-height:2em;vertical-align:top}
+div.tabsPanel.selected{border:1px solid black;clear:both;padding:0 1em}
 body{font-family:'Lucida Grande',Verdana,Arial,Helvetica,sans-serif;font-size:18px}
 table{font-family:'Lucida Grande',Verdana,Arial,Helvetica,sans-serif;font-size:18px}
 input{font-size:18px;padding:8px;border:1px solid #888;border-radius:10px;box-shadow:inset -2px 2px 5px 0 #ccc;width:90%}

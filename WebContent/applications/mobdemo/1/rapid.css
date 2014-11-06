@@ -110,10 +110,10 @@ ul.tabsHeader {
 	list-style: none;
 	padding: 0;
 	margin: 0;
+	vertical-align:top;
 }
    
 .tabsHeader li {
-	float: left;
 	border: 1px solid #bbb;
 	border-top-left-radius: 5px;
 	border-top-right-radius: 5px;
@@ -149,13 +149,13 @@ div.tabsGroup {
 div.tabsPanel {
 	display: none;
 	min-height: 2em;
+	vertical-align:top;
 }
 
 div.tabsPanel.selected {
 	border: 1px solid black;
 	clear: both;
-	padding: 0 1em;
-	display: block;
+	padding: 0 1em;	
 }
 
 

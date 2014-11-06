@@ -132,8 +132,7 @@
                 </properties>
                 <styles>
                     <appliesTo>#rapid_P18_C5</appliesTo>
-                    <rules>padding-left:20px;</rules>
-                    <rules>padding-right:20px;</rules>
+                    <rules>padding:20px;</rules>
                 </styles>
                 <XMLVersion>1</XMLVersion>
             </childControls>
@@ -392,30 +391,11 @@
 &lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P18_C7&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P18_C8&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P18_C9&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P18_C11&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P18_C12&quot; class=&quot;button&quot;&gt;Delete&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
     <id>P18</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-10-06T14:40:51.257+01:00</modifiedDate>
+    <modifiedDate>2014-11-06T15:19:18.768Z</modifiedDate>
     <name>18_VersionDelete</name>
     <rolesHtml>
-        <html>&lt;table id=&quot;rapid_P18_C1&quot; class=&quot;table&quot;&gt;
-		&lt;tbody&gt;
-			&lt;tr id=&quot;rapid_P18_C2&quot; class=&quot;tableRow&quot;&gt;
-				&lt;td id=&quot;rapid_P18_C3&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Delete version&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr id=&quot;rapid_P18_C4&quot; class=&quot;tableRow&quot;&gt;
-				&lt;td id=&quot;rapid_P18_C5&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;
-					&lt;p id=&quot;rapid_P18_C6&quot; class=&quot;text&quot;&gt;Are you sure you want to delete this version?
-&lt;/p&gt;
-				&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr id=&quot;rapid_P18_C7&quot; class=&quot;tableRow&quot;&gt;
-				&lt;td id=&quot;rapid_P18_C8&quot; class=&quot;tabelCell&quot;&gt;
-					&lt;button id=&quot;rapid_P18_C9&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;
-				&lt;/td&gt;
-				&lt;td id=&quot;rapid_P18_C11&quot; class=&quot;tabelCell&quot;&gt;
-					&lt;button id=&quot;rapid_P18_C12&quot; class=&quot;button&quot;&gt;Delete&lt;/button&gt;
-				&lt;/td&gt;
-			&lt;/tr&gt;
-		&lt;/tbody&gt;
-	&lt;/table&gt;</html>
+        <html>&lt;table id=&quot;rapid_P18_C1&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;rapid_P18_C2&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P18_C3&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Delete version&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P18_C4&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P18_C5&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;p id=&quot;rapid_P18_C6&quot; class=&quot;text&quot;&gt;Are you sure you want to delete this version?
+&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P18_C7&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P18_C8&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P18_C9&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P18_C11&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P18_C12&quot; class=&quot;button&quot;&gt;Delete&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</html>
     </rolesHtml>
     <styles>
         <appliesTo>body</appliesTo>

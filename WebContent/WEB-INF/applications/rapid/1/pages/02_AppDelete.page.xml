@@ -169,8 +169,7 @@
                 </properties>
                 <styles>
                     <appliesTo>#rapid_P2_C5</appliesTo>
-                    <rules>padding-left:20px;</rules>
-                    <rules>padding-right:20px;</rules>
+                    <rules>padding:20px;</rules>
                 </styles>
                 <XMLVersion>1</XMLVersion>
             </childControls>
@@ -425,31 +424,11 @@
 &lt;/p&gt;&lt;p id=&quot;rapid_P2_C15_&quot; class=&quot;text&quot;&gt;This will remove all versions and can't be undone.&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P2_C7&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P2_C8&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P2_C9&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P2_C11&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P2_C12&quot; class=&quot;button&quot;&gt;Delete&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
     <id>P2</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-10-06T14:41:10.511+01:00</modifiedDate>
+    <modifiedDate>2014-11-06T15:19:03.604Z</modifiedDate>
     <name>02_AppDelete</name>
     <rolesHtml>
-        <html>&lt;table id=&quot;rapid_P2_C1&quot; class=&quot;table&quot;&gt;
-		&lt;tbody&gt;
-			&lt;tr id=&quot;rapid_P2_C2&quot; class=&quot;tableRow&quot;&gt;
-				&lt;td id=&quot;rapid_P2_C3&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Delete application&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr id=&quot;rapid_P2_C4&quot; class=&quot;tableRow&quot;&gt;
-				&lt;td id=&quot;rapid_P2_C5&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;
-					&lt;p id=&quot;rapid_P2_C6&quot; class=&quot;text&quot;&gt;Are you sure you want to delete the current application?
-&lt;/p&gt;
-					&lt;p id=&quot;rapid_P2_C15_&quot; class=&quot;text&quot;&gt;This will remove all versions and can't be undone.&lt;/p&gt;
-				&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr id=&quot;rapid_P2_C7&quot; class=&quot;tableRow&quot;&gt;
-				&lt;td id=&quot;rapid_P2_C8&quot; class=&quot;tabelCell&quot;&gt;
-					&lt;button id=&quot;rapid_P2_C9&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;
-				&lt;/td&gt;
-				&lt;td id=&quot;rapid_P2_C11&quot; class=&quot;tabelCell&quot;&gt;
-					&lt;button id=&quot;rapid_P2_C12&quot; class=&quot;button&quot;&gt;Delete&lt;/button&gt;
-				&lt;/td&gt;
-			&lt;/tr&gt;
-		&lt;/tbody&gt;
-	&lt;/table&gt;</html>
+        <html>&lt;table id=&quot;rapid_P2_C1&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;rapid_P2_C2&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P2_C3&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Delete application&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P2_C4&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P2_C5&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;p id=&quot;rapid_P2_C6&quot; class=&quot;text&quot;&gt;Are you sure you want to delete the current application?
+&lt;/p&gt;&lt;p id=&quot;rapid_P2_C15_&quot; class=&quot;text&quot;&gt;This will remove all versions and can't be undone.&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P2_C7&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P2_C8&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P2_C9&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P2_C11&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P2_C12&quot; class=&quot;button&quot;&gt;Delete&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</html>
     </rolesHtml>
     <styles>
         <appliesTo>body</appliesTo>
