@@ -11,6 +11,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.mozilla.javascript.ErrorReporter;
 import org.mozilla.javascript.EvaluatorException;
 
@@ -130,10 +131,72 @@ public class Minify {
 			// check the type
 			switch (type) {
 				case CSS :
+					/*
 					// get the css compressor
 					CssCompressor cssCompressor = new CssCompressor(sr);
 					// compress
-					cssCompressor.compress(writer, 0);
+					cssCompressor.compress(writer, 0)
+					*/
+					
+					// The css compression is maxing out memory and requiring a higher, non standard, stack size so for now we'll make do with the simple techniques below
+					
+					// the string we're going to compress everything into
+					String compressed = string;
+					
+					// get a logger
+					Logger logger = Logger.getLogger(Minify.class);
+					
+					// detailed logging
+					logger.trace("Starting css minify");
+					
+					// remove all comments
+					int start = compressed.indexOf("/*");
+					int end = 0;
+					while (start > -1) {												
+						end = compressed.indexOf("*/", start);
+						if (end > -1) {
+							compressed = compressed.substring(0, start) + compressed.substring(end + 2);
+						}						
+						start = compressed.indexOf("/*");
+					}
+					
+					// detailed logging
+					logger.trace("CSS comments stripped");
+					
+					// replace all double spaces with a single until none are left
+					start = compressed.indexOf("  ");
+					while (start > -1) {												
+						compressed = compressed.substring(0, start) + compressed.substring(start + 1);						
+						start = compressed.indexOf("  ");
+					}
+					
+					// detailed logging
+					logger.trace("CSS double spaces removed");
+					
+					// now do the simple patterns
+					compressed = compressed.replace("\t", "")
+					.replace("\r", "")
+					.replace("\n", "")										
+					.replace("\n ", "")
+					.replace(" { ", "{")
+					.replace(" {", "{")
+					.replace("{ ", "{")
+					.replace(" }", "}")
+					.replace("} ", "}")
+					.replace(";}", "}")
+					.replace(" ; ", ";")
+					.replace("; ", ";")
+					.replace(" ;", ";")
+					.replace(" : ", ":")
+					.replace(" :", ":")
+					.replace(": ", ":")
+					.replace("}", "}\n");
+					
+					logger.trace("CSS minified");
+															
+					// write the result
+					writer.write(compressed);
+					
 				break;
 				default :
 					// the error reporter is only used with js

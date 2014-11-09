@@ -196,8 +196,8 @@ return "#" + this.id;
 	       			 ]]>	                
 	            </getAppliesToFunction>
 	        </style>   
-	    </styles>	    	    	    	    
-	    	        	    
+	    </styles>	    
+	    	    	    	   	    	        	    
 	</control>
 		
 	<control>

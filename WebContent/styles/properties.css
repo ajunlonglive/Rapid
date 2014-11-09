@@ -71,4 +71,5 @@ table.propertiesPanelTable  {
 
 .dialogueTable td {
 	max-width: none;
+	width: auto;
 }
