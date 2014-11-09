@@ -223,7 +223,7 @@ function createDialogue(cell, width, title) {
 		dialogue.slideDown(500);			
 	}));
 	// add an options table
-	dialogue.append("<br/><table style='width:100%' class='propertiesPanelTable'><tbody></tbody></table>");
+	dialogue.append("<br/><table style='width:100%' class='propertiesPanelTable dialogueTable'><tbody></tbody></table>");
 	// return
 	return dialogue;	
 }
@@ -1170,6 +1170,8 @@ function Property_pageSessionVariables(cell, page, property, refreshHtml, refres
 		var optionDelete = table.find("tr").last().children().last().children().last();
 		// add a listener
 		addListener( optionDelete.click( {variables: variables}, function(ev) {
+			// add an undo snapshot
+			addUndo();
 			// get the input
 			var input = $(ev.target);
 			// remove from parameters
@@ -1185,6 +1187,8 @@ function Property_pageSessionVariables(cell, page, property, refreshHtml, refres
 	var add = table.find("tr").last().children().last().children().last();
 	// add a listener
 	addListener( add.click( {cell: cell, page: page, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
+		// add an undo snapshot
+		addUndo();
 		// initialise if required
 		if (!ev.data.page.sessionVariables) ev.data.page.sessionVariables = [];
 		// add a blank option
@@ -1571,7 +1575,7 @@ function logicConditionValue(cell, action, conditionIndex, valueId) {
 				// set the new value 
 				value.constant = $(ev.target).val();
 			}));
-		break;
+		break;		
 	}
 	
 }

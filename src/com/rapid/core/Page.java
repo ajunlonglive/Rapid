@@ -26,9 +26,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 package com.rapid.core;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.Writer;
@@ -1157,9 +1155,16 @@ public class Page {
 																										
 			} 
 			
-			// if haven't got any body html yet use the full version
-			if (bodyHtml == null) bodyHtml = _htmlBody;
-			
+			// if haven't got any body html 
+			if (bodyHtml == null) {
+				// use the full version or empty string
+				if (_htmlBody == null) {
+					bodyHtml = "";
+				} else {					
+					bodyHtml = _htmlBody;
+				}
+			}
+						
 			// check the status of the application
 			if (application.getStatus() == Application.STATUS_DEVELOPMENT) {
 				// pretty print

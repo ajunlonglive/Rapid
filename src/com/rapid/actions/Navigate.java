@@ -112,17 +112,15 @@ public class Navigate extends Action {
 			// check we have some
 			if (_sessionVariables != null) {
 				// loop
-				for (SessionVariable sessionVariable : _sessionVariables) {
-					// look for a control with this item id
-					Control svControl = page.getControl(sessionVariable.getItemId());
-					// only if we found a control (session variables will move in the session)
-					if (svControl != null) {						
-						sessionVariables += "&" + sessionVariable.getName() + "=' + getData_" + svControl.getType() + "(ev, '" + svControl.getId() + "','" + sessionVariable.getField() + "', " + svControl.getDetailsJavaScript(application, page) + ") + '";
-					}					
+				for (SessionVariable sessionVariable : _sessionVariables) {					
+					// get the data getter command
+					String getter = Control.getDataJavaScript(application, page, sessionVariable.getItemId(), sessionVariable.getField());
+					// build the concatinating string
+					sessionVariables += "&" + sessionVariable.getName() + "=' + " +  getter + " + '";									
 				}
 			}
 			// build the action string 
-			String action = "Action_navigate('~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + pageId + sessionVariables + "'," + Boolean.parseBoolean(getProperty("dialogue")) + ");";
+			String action = "Action_navigate('~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + pageId + sessionVariables + "'," + Boolean.parseBoolean(getProperty("dialogue")) + ");\nev.stopPropagation();";
 			// replace any unnecessary characters
 			action = action.replace(" + ''", "");
 			// return it into the page!

@@ -663,7 +663,7 @@ function getPageOptions(selectId, ignoreId) {
 	var options = "";
 	for (var i in _pages) {
 		var page = _pages[i];
-		if (page.id != ignoreId) options += "<option value='" + page.id + "' " + (page.id == selectId ? "selected='selected'" : "") + ">" + page.title + "</option>"; 
+		if (page.id != ignoreId) options += "<option value='" + page.id + "' " + (page.id == selectId ? "selected='selected'" : "") + ">" + page.name + " - "  +page.title + "</option>"; 
 	}
 	return options;
 }
@@ -706,8 +706,8 @@ function getRolesOptions(selectRole, ignoreRoles) {
 	return options;
 }
 
-//different system properties for
-var _systemValues = ["true","false","null","mobile","online"];
+// different system properties for inputs
+var _systemValues = ["true","false","field","null","mobile","online"];
 
 // this function returns a set of options for a dropdown for inputs or outputs (depending on input true/false), can be controls, control properties (input only), other page controls, page variables (input only), system values (input only)
 function getDataOptions(selectId, ignoreId, input) {

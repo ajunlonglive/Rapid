@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<application> 
+<application>
     <actionTypes>ajax</actionTypes>
     <actionTypes>control</actionTypes>
     <actionTypes>custom</actionTypes>
@@ -32,14 +32,14 @@
     <description>This is the Rapid application and contains all of the pages which the designer and other screens use as dialogues</description>
     <id>rapid</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-11-05T11:54:09.263Z</modifiedDate>
+    <modifiedDate>2014-11-09T13:58:31.891Z</modifiedDate>
     <name>Rapid</name>
     <pageBackupsMaxSize>5</pageBackupsMaxSize>
     <securityAdapterType>rapid</securityAdapterType>
     <showActionIds>true</showActionIds>
     <showControlIds>true</showControlIds>
     <startPageId>P0</startPageId>
-    <status>0</status>
+    <status>1</status>
     <styles>/* sets font in all pages to arial */
 body { font-family: 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif; font-size: 14px; margin:0; }
 table { font-family: 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif; font-size: 14px; margin:0; }

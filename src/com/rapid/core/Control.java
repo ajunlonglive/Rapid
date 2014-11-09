@@ -334,6 +334,9 @@ public class Control {
 				} else if ("online".equals(idParts[1])) {
 					// whether we are online (presumed true if no rapid mobile)
 					return "(typeof _rapidmobile == 'undefined' ? true : _rapidmobile.isOnline())";
+				} else if ("field".equals(idParts[1])) {
+					// pass the field as a value
+					return "'" + field + "'";
 				} else if (!"".equals(idParts[1])) {
 					// pass through as literal if not blank
 					return idParts[1];

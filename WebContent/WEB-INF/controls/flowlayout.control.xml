@@ -37,19 +37,48 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    
 	    <properties>
 	        <property>
+	            <key>name</key>
+	            <name>Name</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>	            
+	        </property>	
+	        <property>
 	            <key>text</key>
 	            <name>Text</name>
 	            <setConstructValueFunction>return "Flow layout cell";</setConstructValueFunction>
 	            <changeValueJavaScript>bigtext</changeValueJavaScript>		                       
 	        </property>	
 	    </properties>
-	    	    
+	    	    	    
 	    <getHtmlFunction>
 	        <![CDATA[
 // return our html 
 return "<div id='" + this.id + "' class='flowLayoutCell'>" + this.text + "</div>";
 	        ]]>
 	    </getHtmlFunction> 
+	    
+	    <events>
+	        <event>
+	            <type>click</type>
+	            <name>Click</name>
+	        </event>
+	    </events>
+	    
+	    <runtimeProperties>
+	   	    <runtimeProperty>
+	   	        <type>cellIndex</type>
+	   	        <name>Selected cell</name>
+	   	        <getPropertyFunction>
+			        <![CDATA[
+var selectedCell = $("#" + id).children("div.selected");
+if (selectedCell[0]) {
+	return selectedCell.index();
+} else {		        
+	return -1;
+}     
+			        ]]>	  	   	            
+	   	        </getPropertyFunction>
+	   	    </runtimeProperty>
+	   	</runtimeProperties>
 	    	    	    	    	   	    	        	    
 	</control>
 		
@@ -193,8 +222,31 @@ return "#" + this.id + " div.flowLayoutCell";
 	       			 ]]>	                
 	            </getAppliesToFunction>
 	        </style>  
+	        <style>
+	            <name>Selected cell</name>
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id + " div.flowLayoutCell.selected";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style> 
 	    </styles>	
-	    	    	    	    	            	    	    	        	    	    
+	    
+	    <initJavaScript>
+	        <![CDATA[
+$("#" + id).children("div").click( function(ev) {
+	// get a reference to the flow layout
+	var layout = $("#" + id);
+	// remove selected from all child divs
+	layout.children("div").removeClass("selected");
+	// add selected to the div we just clicked on, also get it's index, plus 1, to go from zero to 1 based
+	var index = $(this).addClass("selected").index() + 1;
+	// apply selected to the correct body
+	layout.children("div:nth-child(" + index + ")").addClass("selected");
+});	        
+	        ]]>	        	       	        
+	    </initJavaScript>
+	    	    	    	    	    	            	    	    	        	    	    
 	</control>
 	
 </controls>	
