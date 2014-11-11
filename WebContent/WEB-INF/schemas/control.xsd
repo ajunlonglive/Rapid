@@ -57,7 +57,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 										<xs:pattern value="[a-zA-Z0-9_]{1,}" />
 									</xs:restriction>
 								</xs:simpleType>
-							</xs:element>
+							</xs:element>							
 							<xs:element name="name">
 								<xs:annotation>
 									<xs:documentation>The control name is used presented to users
@@ -81,6 +81,24 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 										<xs:minLength value="1" />
 									</xs:restriction>
 								</xs:simpleType>
+							</xs:element>
+							<xs:element name="dependentTypes" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Further control types that this control depends on.
+									This will ensure that all necessary resources are created.
+									</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="dependentType" maxOccurs="unbounded">								
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:minLength value="1" />
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+									</xs:sequence>									
+								</xs:complexType>							
 							</xs:element>
 							<xs:element name="addToNewApplications" type="xs:boolean"
 								minOccurs="0">

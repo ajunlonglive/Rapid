@@ -717,6 +717,52 @@ public class Application {
 					// make sure the page is included as we hide it from the users in the admin
 					if (!_controlTypes.contains("page")) _controlTypes.add(0, "page");
 					
+					// collection of dependent controls that need adding
+					ArrayList<String> dependentControls = new ArrayList<String>();
+					
+					// loop control types used by this application
+					for (String controlType : _controlTypes) {
+						
+						// loop all available controls
+			    		for (int i = 0; i < jsonControls.length(); i++) {
+			    			
+			    			// get the control
+			    			JSONObject jsonControl = jsonControls.getJSONObject(i);
+			    			
+			    			// check if we're on the type we need
+			    			if (controlType.equals(jsonControl.optString("type"))) {
+			    				
+			    				// look for any dependant control types
+			    				JSONObject dependantTypes = jsonControl.optJSONObject("dependentTypes");
+			    				// if we got some
+			    				if (dependantTypes != null) {
+			    					// look for an array
+			    					JSONArray dependantTypesArray = dependantTypes.optJSONArray("dependentType");
+			    					// if we got one
+			    					if (dependantTypesArray != null) {
+			    						// loop the array
+			    						for (int j = 0; j < dependantTypesArray.length(); j++) {
+			    							String dependantType = dependantTypesArray.getString(j);
+				    						if (!_controlTypes.contains(dependantType) && !dependentControls.contains(dependantType)) dependentControls.add(dependantType);
+			    						}
+			    					} else {
+			    						// just use the object
+			    						String dependantType = dependantTypes.getString("dependentType");
+			    						if (!_controlTypes.contains(dependantType) && !dependentControls.contains(dependantType)) dependentControls.add(dependantType);
+			    					}
+			    				}
+			    				
+			    				// we're done
+			    				break;
+			    			}
+			    						    			
+			    		}
+			    		
+					}
+					
+					// now add all of the dependent controls
+					_controlTypes.addAll(dependentControls);
+					
 					// loop control types used by this application
 					for (String controlType : _controlTypes) {
 						
@@ -821,6 +867,52 @@ public class Application {
 	    		
 	    		// check action types
 	    		if (_actionTypes != null) {
+	    				    			
+	    			// collection of dependent controls that need adding
+					ArrayList<String> dependentActions = new ArrayList<String>();
+					
+					// loop control types used by this application
+					for (String actionType : _actionTypes) {
+						
+						// loop all available controls
+			    		for (int i = 0; i < jsonActions.length(); i++) {
+			    			
+			    			// get the action
+			    			JSONObject jsonAction = jsonActions.getJSONObject(i);
+			    			
+			    			// check if we're on the type we need
+			    			if (actionType.equals(jsonAction.optString("type"))) {
+			    				
+			    				// look for any dependant control types
+			    				JSONObject dependantTypes = jsonAction.optJSONObject("dependentTypes");
+			    				// if we got some
+			    				if (dependantTypes != null) {
+			    					// look for an array
+			    					JSONArray dependantTypesArray = dependantTypes.optJSONArray("dependentType");
+			    					// if we got one
+			    					if (dependantTypesArray != null) {
+			    						// loop the array
+			    						for (int j = 0; j < dependantTypesArray.length(); j++) {
+			    							String dependantType = dependantTypesArray.getString(j);
+				    						if (!_actionTypes.contains(dependantType) && !dependentActions.contains(dependantType)) dependentActions.add(dependantType);
+			    						}
+			    					} else {
+			    						// just use the object
+			    						String dependantType = dependantTypes.getString("dependentType");
+			    						if (!_actionTypes.contains(dependantType) && !dependentActions.contains(dependantType)) dependentActions.add(dependantType);
+			    					}
+			    				}
+			    				
+			    				// we're done
+			    				break;
+			    			}
+			    						    			
+			    		}
+			    		
+					}
+					
+					// now add all of the dependent controls
+					_controlTypes.addAll(dependentActions);
 	    			
 	    			// loop action types used by this application
 					for (String actionType : _actionTypes) {

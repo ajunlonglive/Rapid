@@ -202,9 +202,13 @@ return "#" + this.id;
 		
 	<control>
 	    
-	    <type>tabGroup</type>
+	    <type>tabGroup</type>	    
 	    <name>Tabs</name>	    
 	    <image>images/tabs_24x24.png</image>  	
+	    
+	    <dependentTypes>
+	        <dependentType>tabPanel</dependentType>
+	    </dependentTypes>
 	    
 	    <addToNewApplications>true</addToNewApplications>
 	    

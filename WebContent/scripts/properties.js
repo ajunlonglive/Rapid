@@ -2242,6 +2242,52 @@ function Property_flowLayoutCellWidth(cell, flowLayout, property, refreshHtml, r
 	}));
 }
 
+function Property_controlActionType(cell, controlAction, property, refreshHtml, refreshProperties) {
+	// if this property has not been set yet
+	if (!controlAction.actionType) {
+		// update to custom if there is a command property (this is for backwards compatibility)
+		if (controlAction.command && controlAction.command != "// Enter JQuery command here. The event object is passed in as \"ev\"") {
+			controlAction.actionType = "custom";
+		} else {
+			controlAction.actionType = "hide";
+		}
+	}
+	// build the options
+	Property_select(cell, controlAction, property, refreshHtml, refreshProperties);
+	// get a reference
+	var select = cell.children().last();
+	// add a listener to update the property
+	addListener( select.change( function(ev) {
+		// get the value
+		var value = ev.target.value;
+		// update the property
+		updateProperty(controlAction, property, value, refreshHtml);
+		// rebuild all events/actions
+		showEvents(_selectedControl);
+	}));
+}
+
+function Property_controlActionDuration(cell, controlAction, property, refreshHtml, refreshProperties) {
+	// only if controlAction is custom
+	if (controlAction.actionType == "slideDown" || controlAction.actionType == "slideUp" || controlAction.actionType == "slideToggle") {
+		// show the duration
+		Property_integer(cell, controlAction, property, refreshHtml);
+	} else {
+		// remove this row
+		cell.closest("tr").remove();
+	}
+}
+function Property_controlActionCommand(cell, controlAction, property, refreshHtml, refreshProperties) {
+	// only if controlAction is custom
+	if (controlAction.actionType == "custom") {
+		// add the bigtext
+		Property_bigtext(cell, controlAction, property, refreshHtml);
+	} else {
+		// remove this row
+		cell.closest("tr").remove();
+	}
+}
+
 //this is displayed as a page property but is actually held in local storage
 function Property_device(cell, propertyObject, property, refreshHtml, refreshProperties) {
 	// holds the options html

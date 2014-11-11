@@ -53,22 +53,34 @@ public class Control extends Action {
 	public String getJavaScript(Application application, Page page, com.rapid.core.Control control) {
 		// get the control Id and command
 		String controlId = getProperty("control");
-		String command = getProperty("command").trim();
-		// if either is null it's not going to work
-		if (controlId == null || command == null) {
-			return "";
-		} else if ("".equals(controlId) || "".equals(command)) {
-			return "";
-		} else {
-			// command can be cleaned up - remove starting dot (we'll add it back later)
-			if (command.charAt(0) == '.') command = command.substring(1);
-			// add brackets if there aren't any at the end
-			if (!command.endsWith(")") && !command.endsWith(");")) command += "();";
-			// add a semi colon if there isn't one on the end
-			if (!command.endsWith(";")) command += ";";
-			// return the command
-			return "$(\"#" + getProperty("control") + "\")." + command;
-		}		
+		// get the action type
+		String actionType = getProperty("actionType");
+		// prepare the js
+		String js = "";
+		// if we have a control id
+		if (controlId != null && !"".equals(controlId)) {
+			// update the js to use the control
+			js = "$(\"#" + getProperty("control") + "\").";
+			// check the type
+			if ("custom".equals(actionType) || actionType == null) {
+				String command = getProperty("command").trim();			
+				// command can be cleaned up - remove starting dot (we've already got it above)
+				if (command.charAt(0) == '.') command = command.substring(1);
+				// add brackets if there aren't any at the end
+				if (!command.endsWith(")") && !command.endsWith(");")) command += "();";
+				// add a semi colon if there isn't one on the end
+				if (!command.endsWith(";")) command += ";";
+				// add the command
+				js += command;		
+			} else if ("slideDown".equals(actionType) || "slideUp".equals(actionType) || "slideToggle".equals(actionType)) {
+				js += actionType + "(" + getProperty("duration") + ");";
+			} else {
+				// just call the action type (hide/show/toggle)
+				js += actionType + "();";
+			}
+		}
+		// return the js
+		return js;
 	}
 				
 }

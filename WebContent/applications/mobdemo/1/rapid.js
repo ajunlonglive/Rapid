@@ -153,10 +153,13 @@ function Action_navigate(url, dialogue, id) {
 		           	
 		           	// make sure it's hidden
 		           	dialogue.css("visibility","hidden");
+					
 					// add any links into the page (if applicable)
 		           	if (links) dialogue.append(links);		           			           	
+		           	
 		           	// append the injected html
 		           	dialogue.append(bodyHtml);
+		           	
 		           	// add any scripts into the page (if applicable)
 		           	if (script) dialogue.append(script);
 		           			           	

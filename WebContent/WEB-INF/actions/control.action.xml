@@ -38,19 +38,34 @@ This action runs JQuery functions against specific controls
 		
 -->	    	
 	    <properties>
+	        
 		    <property>
 	            <key>control</key>
 	            <name>Control</name>
 	            <changeValueJavaScript>select</changeValueJavaScript>	 
 	            <getValuesFunction>return getControlOptions(this.control);</getValuesFunction>
 	        </property>
+	        <property>
+	            <key>actionType</key>
+	            <name>Action</name>
+	            <changeValueJavaScript>controlActionType</changeValueJavaScript>	 
+	            <getValuesFunction>return ["hide","show","toggle","slideDown","slideUp","slideToggle","custom"];</getValuesFunction>	            
+	        </property>
+	        <property>
+	            <key>duration</key>
+	            <name>Duration</name>
+	            <setConstructValueFunction>return 1000;</setConstructValueFunction>
+	            <changeValueJavaScript>controlActionDuration</changeValueJavaScript>	 	            
+	        </property>
 		    <property>
 	            <key>command</key>
 	            <name>Command</name>
 	            <setConstructValueFunction>return "// Enter JQuery command here. The event object is passed in as \"ev\"";</setConstructValueFunction>
-	            <changeValueJavaScript>bigtext</changeValueJavaScript>	 
+	            <changeValueJavaScript>controlActionCommand</changeValueJavaScript>	 
 	        </property>
+	        
 	    </properties>
+	    
 	    <actionJavaScript>
 function Action_control(actions) {
 	for (var i in actions) {
@@ -58,6 +73,7 @@ function Action_control(actions) {
 		$("#" + action.id)[action["function"]](action.value);
 	}	
 }	        
-	    </actionJavaScript>    
+	    </actionJavaScript>
+	        
     </action> 
 </actions>
