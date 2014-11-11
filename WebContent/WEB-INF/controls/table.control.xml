@@ -183,6 +183,11 @@ return "#" + this.id;
 	    <type>table</type>
 	    <name>Table</name>	    
 	    <image>images/table_24x24.png</image>  
+	    
+	    <dependentTypes>
+	        <dependentType>tableCell</dependentType>
+	        <dependentType>tableRow</dependentType>
+	    </dependentTypes>
 	    	    
 	   	<addToNewApplications>true</addToNewApplications>
 	   	

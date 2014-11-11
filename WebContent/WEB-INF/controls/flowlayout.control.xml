@@ -88,6 +88,10 @@ if (selectedCell[0]) {
 	    <name>Flow layout</name>	    
 	    <image>images/slidepanel_24x24.png</image>  	
 	    
+	    <dependentTypes>
+	        <dependentType>flowLayoutCell</dependentType>
+	    </dependentTypes>
+	    
 		<noDefaultName>true</noDefaultName>
 			    	    	    	    
 	    <canUserAdd>true</canUserAdd>

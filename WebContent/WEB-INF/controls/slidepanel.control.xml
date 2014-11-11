@@ -129,6 +129,10 @@ return "#" + this.id;
 	    <name>Slide panel</name>	    
 	    <image>images/slidepanel_24x24.png</image>  	
 	    
+	    <dependentTypes>
+	        <dependentType>slidePanelPane</dependentType>
+	    </dependentTypes>
+	    
 	    <addToNewApplications>true</addToNewApplications>
 	    
 		<noDefaultName>true</noDefaultName>
