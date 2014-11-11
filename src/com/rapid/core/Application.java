@@ -1440,7 +1440,7 @@ public class Application {
 						// create a file writer for it for now
 						fw = new FileWriter(pageFile);
 						// for now get a printWriter to write the page html
-						page.writeHtml(rapidServlet, rapidRequest, this, user, fw);
+						page.writeHtml(rapidServlet, rapidRequest, this, user, fw, false);
 						// close it
 						fw.close();
 						// add the file to the zip with a root path
@@ -1455,7 +1455,7 @@ public class Application {
 						// create a file writer for it for now
 						fw = new FileWriter(pageFile);
 						// for now get a printWriter to write the page html
-						page.writeHtml(rapidServlet, rapidRequest, this, user, fw);
+						page.writeHtml(rapidServlet, rapidRequest, this, user, fw, false);
 						// close it
 						fw.close();
 						// add the file to the zip with a root path

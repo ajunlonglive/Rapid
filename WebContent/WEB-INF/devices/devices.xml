@@ -28,11 +28,4 @@
         <scale>2.0</scale>
         <width>1600</width>
     </devices>
-    <devices>
-        <height>500</height>
-        <name>New device</name>
-        <PPI>200</PPI>
-        <scale>1.0</scale>
-        <width>500</width>
-    </devices>
 </devices>

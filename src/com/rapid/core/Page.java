@@ -1056,7 +1056,7 @@ public class Page {
     }
 		
 	// this routine produces the entire page
-	public void writeHtml(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, Application application, User user, Writer writer) throws JSONException, IOException {
+	public void writeHtml(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, Application application, User user, Writer writer, boolean includeDesignLink) throws JSONException, IOException {
 		
 		// get the security
 		SecurityAdapater security = application.getSecurity();
@@ -1189,30 +1189,35 @@ public class Page {
 		
 		try {
 			
-			// assume not admin link
-			boolean adminLinkPermission = false;
-				
-			// check for the design role, super is required as well if the rapid app
-			if ("rapid".equals(application.getId())) {
-				if (security.checkUserRole(rapidRequest, Rapid.DESIGN_ROLE) && security.checkUserRole(rapidRequest, Rapid.SUPER_ROLE)) adminLinkPermission = true;
-			} else {
-				if (security.checkUserRole(rapidRequest, Rapid.DESIGN_ROLE)) adminLinkPermission = true;
-			}
+			// only if we want to include the design link
+			if (includeDesignLink) {
 			
-			// if we had the admin link
-			if (adminLinkPermission) {
-												
-				// using attr href was the weirdest thing. Some part of jQuery seemed to be setting the url back to v=1&p=P1 when v=2&p=P2 was printed in the html
-				writer.write("<div id='designShow' style='position:fixed;left:0px;bottom:0px;width:30px;height:30px;z-index:1000;'></div>\n"
-		    	+ "<a id='designLink' style='position:fixed;left:6px;bottom:6px;z-index:1001;display:none;' href='#'><img src='images/gear_24x24.png'/></a>\n"
-		    	+ "<script type='text/javascript'>\n"
-		    	+ "/* designLink */\n"
-		    	+ "$(document).ready( function() {\n"
-		    	+ "  $('#designShow').mouseover ( function(ev) {\n     $('#designLink').attr('href','design.jsp?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + _id + "').show();\n  });\n"
-		    	+ "  $('#designLink').mouseout ( function(ev) {\n     $('#designLink').hide();\n  });\n"
-		    	+ "});\n"
-		    	+ "</script>\n");
-										    			    	
+				// assume not admin link
+				boolean adminLinkPermission = false;
+					
+				// check for the design role, super is required as well if the rapid app
+				if ("rapid".equals(application.getId())) {
+					if (security.checkUserRole(rapidRequest, Rapid.DESIGN_ROLE) && security.checkUserRole(rapidRequest, Rapid.SUPER_ROLE)) adminLinkPermission = true;
+				} else {
+					if (security.checkUserRole(rapidRequest, Rapid.DESIGN_ROLE)) adminLinkPermission = true;
+				}
+				
+				// if we had the admin link
+				if (adminLinkPermission) {
+													
+					// using attr href was the weirdest thing. Some part of jQuery seemed to be setting the url back to v=1&p=P1 when v=2&p=P2 was printed in the html
+					writer.write("<div id='designShow' style='position:fixed;left:0px;bottom:0px;width:30px;height:30px;z-index:1000;'></div>\n"
+			    	+ "<a id='designLink' style='position:fixed;left:6px;bottom:6px;z-index:1001;display:none;' href='#'><img src='images/gear_24x24.png'/></a>\n"
+			    	+ "<script type='text/javascript'>\n"
+			    	+ "/* designLink */\n"
+			    	+ "$(document).ready( function() {\n"
+			    	+ "  $('#designShow').mouseover ( function(ev) {\n     $('#designLink').attr('href','design.jsp?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + _id + "').show();\n  });\n"
+			    	+ "  $('#designLink').mouseout ( function(ev) {\n     $('#designLink').hide();\n  });\n"
+			    	+ "});\n"
+			    	+ "</script>\n");
+											    			    	
+				}
+				
 			}
 			
 		} catch (SecurityAdapaterException ex) {

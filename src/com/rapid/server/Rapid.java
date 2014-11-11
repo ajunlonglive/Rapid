@@ -167,8 +167,14 @@ public class Rapid extends RapidHttpServlet {
 							// create a writer
 							PrintWriter out = response.getWriter();
 							
-							// write the page html
-							page.writeHtml(this, rapidRequest, app, user, out);
+							// assume we want the design links
+							boolean includeDesignLinks = true;
+							
+							// set to false if action is dialogue
+							if ("dialogue".equals(rapidRequest.getAction())) includeDesignLinks = false;
+							
+							// write the page html excluding the design link
+							page.writeHtml(this, rapidRequest, app, user, out, includeDesignLinks);
 														
 							// output the page
 							out.print(pageHtml);
