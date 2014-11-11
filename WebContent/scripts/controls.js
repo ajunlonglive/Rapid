@@ -531,15 +531,8 @@ function rebuildHtml(control) {
 		// arrange the non-visible controls if our control looks like one
 		if (!controlClass.canUserMove) arrangeNonVisibleControls();
 		
-		// resize the selection as the geometry may have changed
-		sizeBorder(control);	
-		
-		// get the device
-		var device = _devices[_device];
-		
-		// reposition the border for the same reason
-		var os = control.object.offset();
-		positionBorder(os.left * _scale * device.scale + panelPinnedOffset, os.top * _scale * device.scale);
+		// resize and reposition the selection as the geometry may have changed
+		positionAndSizeBorder(control);
 		
 	} // page lock check
 	

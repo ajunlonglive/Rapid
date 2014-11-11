@@ -81,10 +81,11 @@ $(document).ready( function() {
 	
 });		        
 	        
-function Action_navigate(url, dialogue) {
+function Action_navigate(url, dialogue, id) {
+
 	if (dialogue) {
 	
-		var bodyHtml = "<center><h1>Page</h1></center>";
+		var bodyHtml = "<div><h1 style='margin-left:auto;margin-right:auto;'>Page</h1></div>";
 		
 		// request the page		
 		$.ajax({
@@ -113,8 +114,8 @@ function Action_navigate(url, dialogue) {
 		           		case "#text" : case "TITLE" : // ignore these types
 		           		break;
 		           		case "SCRIPT" :
-		           			// exclude the design link
-		           			if (items[i].innerHTML && items[i].innerHTML.indexOf("/* designLink */") < 0) {
+		           			// exclude any links as we should have them all already
+		           			if (items[i].innerHTML) {
 		           				script += items[i].outerHTML;
 		           			}		           			
 		           		break;
@@ -146,18 +147,23 @@ function Action_navigate(url, dialogue) {
 		           	}   
 		           	
 		           	// if this is the login page go to the real thing, requesting to come back to this location
-            		if (bodyHtml.indexOf("<input type=\"submit\" value=\"log in\">") > 0) window.location = "login.jsp?requestPath=" + window.location; 
+            		if (bodyHtml.indexOf("<form name=\"login\" id=\"RapidLogin\">") > 0) window.location = "login.jsp?requestPath=" + window.location; 
             	
+            		// get a reference to the document for the entire height and width     	
+		           	var doc = $(document);
 		           	// get a reference to the body		           	
 		           	var body = $("body");
+		           	
+		           	// look for an existing cover
+		           	var dialogueCover = $("#" + id + "cover");
 		           	// add the cover and return reference
-		           	var dialogueCover = body.append("<div class='dialogueCover' style='position:absolute;left:0px;top:0px;z-index:100;'></div>").children().last();
-		           			      
-		           	// get a reference to the document for the entire height and width     	
-		           	var doc = $(document);
-		           		            	
+		           	if (!dialogueCover[0]) dialogueCover = body.append("<div id='" + id + "cover' class='dialogueCover' style='position:absolute;left:0px;top:0px;z-index:100;'></div>").children().last();
+		           			      		           			           		            	
 	            	// find the dialogue container div
-		           	var dialogue = body.append("<div class='dialogue' style='position:absolute;z-index:101;'></div>").children().last();
+		           	var dialogue =  $("#" + id + "dialogue");
+		           	// create one if need be
+		           	if (!dialogue[0]) dialogue = body.append("<div id='" + id + "dialogue' class='dialogue' style='position:absolute;z-index:101;'></div>").children().last(); 
+		           	
 		           	// make sure it's hidden
 		           	dialogue.css("visibility","hidden");
 					// add any links into the page (if applicable)
