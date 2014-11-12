@@ -73,3 +73,7 @@ table.propertiesPanelTable  {
 	max-width: none;
 	width: auto;
 }
+
+.dialogueTable input {
+	max-width: 100px;
+}

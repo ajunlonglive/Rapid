@@ -141,15 +141,15 @@ function Action_navigate(url, dialogue, id) {
 		           	// get a reference to the body		           	
 		           	var body = $("body");
 		           	
-		           	// look for an existing cover
-		           	var dialogueCover = $("#" + id + "cover");
+		           	// remove any existing dialogue cover for this action
+		           	$("#" + id + "cover").remove();
 		           	// add the cover and return reference
-		           	if (!dialogueCover[0]) dialogueCover = body.append("<div id='" + id + "cover' class='dialogueCover' style='position:absolute;left:0px;top:0px;z-index:100;'></div>").children().last();
+		           	dialogueCover = body.append("<div id='" + id + "cover' class='dialogueCover' style='position:absolute;left:0px;top:0px;z-index:100;'></div>").children().last();
 		           			      		           			           		            	
-	            	// find the dialogue container div
-		           	var dialogue =  $("#" + id + "dialogue");
-		           	// create one if need be
-		           	if (!dialogue[0]) dialogue = body.append("<div id='" + id + "dialogue' class='dialogue' style='position:absolute;z-index:101;'></div>").children().last(); 
+	            	// remove any existing dialogue container for this action
+		           	$("#" + id + "dialogue").remove();
+		           	// add the dialogue container and remove the reference
+		           	dialogue = body.append("<div id='" + id + "dialogue' class='dialogue' style='position:absolute;z-index:101;'></div>").children().last(); 
 		           	
 		           	// make sure it's hidden
 		           	dialogue.css("visibility","hidden");
@@ -431,9 +431,21 @@ function Init_slidePanel(id, details) {
 
 function Init_tabGroup(id, details) {
   $("#" + id).children("ul").children("li").each( function() {
-  	$(this).click( function(ev, index) {
-  		// get a reference to the tabs group
-  		var tabs = $("#" + id);
+  
+  	// get a reference to the tabs group
+  	var tabs = $("#" + id);
+  	// assume horizontal
+  	horizontal = true;
+  	// check for vertical
+  	if (window[id + "details"] && window[id + "details"].tabType == "V") horizontal = false;
+  	// apply extra class if horizontal
+  	if (horizontal) {
+  		tabs.children("ul").addClass("tabsHeaderH");
+  	} else {
+  		tabs.children("ul").addClass("tabsHeaderV");
+  	}
+  
+  	$(this).click( function(ev, index) {		
   		// remove selected from all tab header items
   		tabs.children("ul").children("li").removeClass("selected");
   		// remove selected from all tab body items and hide
@@ -443,12 +455,12 @@ function Init_tabGroup(id, details) {
   		// apply selected to the correct body
   		tabs.children("div:nth-child(" + index + ")").addClass("selected");
   		// check the type
-  		if (window[id + "details"] && window[id + "details"].tabType == "V") {
-  			// vertical if there are details that say so
-  			tabs.children("div.selected").css("display","inline-block");
+  		if (horizontal) {
+  			// selected tab is display block
+  			tabs.children("div.selected").css("display","block");			
   		} else {
-  			// default to horizontal
-  			tabs.children("div.selected").css("display","block");
+  			// selected tab is table cell
+  			tabs.children("div.selected").css("display","table-cell");
   		}
   	});
   });
@@ -488,11 +500,19 @@ function setData_checkbox(id, data, field, details) {
 function getData_dataStore(ev, id, field, details) {
   var dataStore;
   switch (details.storageType) {
-  	case "S": 
-  	dataStore = sessionStorage;
-  	break;
   	case "L":
-  	dataStore = localStorage;
+  		// use localStorage
+  		dataStore = localStorage;
+  	break;
+  	case "S": 
+  		// use sessionStorage
+  		dataStore = sessionStorage;
+  	break;
+  	case "P": 
+  		// instansiate an object in the page if there isn't one
+  		if (!window[details.id + "datastore"]) window[details.id + "datastore"] = {};
+  		// use the in page object
+  		dataStore = window[details.id + "datastore"];
   	break;
   }  
   if (dataStore) {
@@ -524,11 +544,19 @@ function getData_dataStore(ev, id, field, details) {
 function setData_dataStore(id, data, field, details) {
   var dataStore;
   switch (details.storageType) {
-  	case "S": 
-  	dataStore = sessionStorage;
-  	break;
   	case "L":
-  	dataStore = localStorage;
+  		// use localStorage
+  		dataStore = localStorage;
+  	break;
+  	case "S": 
+  		// use sessionStorage
+  		dataStore = sessionStorage;
+  	break;	
+  	case "P": 
+  		// instansiate an object in the page if there isn't one
+  		if (!window[details.id + "datastore"]) window[details.id + "datastore"] = {};
+  		// use the in page object
+  		dataStore = window[details.id + "datastore"];
   	break;
   } 	   
   if (dataStore) {
@@ -866,6 +894,16 @@ function setData_text(id, data, field, details) {
 
 /* Control and Action resource JavaScript */
 
+
+/* Page control resource JavaScript */
+
+function Event_error(eventName, controlId, ex) {
+	if (controlId) {
+		alert("Error in " + eventName + " event for control " + controlId + "  " + ex);
+	} else {
+		alert("Error in " + eventName + " event for page " + ex);
+	}
+}
 
 /* Gallery control resource JavaScript */
 

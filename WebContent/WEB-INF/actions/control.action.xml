@@ -31,6 +31,8 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
         <type>control</type>        
         <name>Control</name>	        
 	    <class>com.rapid.actions.Control</class>
+	    
+	    <addToNewApplications>true</addToNewApplications>
 	     
 <!-- 
 
@@ -43,19 +45,29 @@ This action runs JQuery functions against specific controls
 	            <key>control</key>
 	            <name>Control</name>
 	            <changeValueJavaScript>select</changeValueJavaScript>	 
-	            <getValuesFunction>return getControlOptions(this.control);</getValuesFunction>
+	            <getValuesFunction>return getControlOptions(this.control ? this.control : _selectedControl.id);</getValuesFunction>
 	        </property>
 	        <property>
 	            <key>actionType</key>
 	            <name>Action</name>
 	            <changeValueJavaScript>controlActionType</changeValueJavaScript>	 
-	            <getValuesFunction>return ["hide","show","toggle","slideDown","slideUp","slideToggle","custom"];</getValuesFunction>	            
+	            <getValuesFunction>return ["hide","show","toggle","slideDown","slideUp","slideToggle","addClass","removeClass","custom"];</getValuesFunction>	            
 	        </property>
 	        <property>
 	            <key>duration</key>
 	            <name>Duration</name>
 	            <setConstructValueFunction>return 1000;</setConstructValueFunction>
 	            <changeValueJavaScript>controlActionDuration</changeValueJavaScript>	 	            
+	        </property>
+	        <property>
+	            <key>styleClass</key>
+	            <name>Class</name>
+	            <changeValueJavaScript>controlActionClasses</changeValueJavaScript>	 
+	            <getValuesFunction>
+	                <![CDATA[
+	                return "<option value=''>Please select...</option>" + getStyleClassesOptions(this.styleClass);
+	               	]]>
+	            </getValuesFunction>
 	        </property>
 		    <property>
 	            <key>command</key>

@@ -53,7 +53,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <changeValueJavaScript>select</changeValueJavaScript>	
 	            <getValuesFunction>
 	                <![CDATA[
-return [["S","Session storage"],["L","Local storage"]];
+return [["L","Local storage"],["S","Session storage"],["P","Page storage"]];
 					]]>
 	            </getValuesFunction>               
 	        </property>    
@@ -83,7 +83,7 @@ this.object.remove();
 	    
 	   	<getDetailsFunction>	        
 	        <![CDATA[
-return {storageType: this.storageType, merge: this.mergeData};
+return {storageType: this.storageType, merge: this.mergeData, id: this.id};
 			]]>	        	        
 	    </getDetailsFunction>
 	    
@@ -91,11 +91,19 @@ return {storageType: this.storageType, merge: this.mergeData};
 	        <![CDATA[        
 var dataStore;
 switch (details.storageType) {
-	case "S": 
-	dataStore = sessionStorage;
-	break;
 	case "L":
-	dataStore = localStorage;
+		// use localStorage
+		dataStore = localStorage;
+	break;
+	case "S": 
+		// use sessionStorage
+		dataStore = sessionStorage;
+	break;
+	case "P": 
+		// instansiate an object in the page if there isn't one
+		if (!window[details.id + "datastore"]) window[details.id + "datastore"] = {};
+		// use the in page object
+		dataStore = window[details.id + "datastore"];
 	break;
 }  
 if (dataStore) {
@@ -129,11 +137,19 @@ if (dataStore) {
 	        <![CDATA[	  
 var dataStore;
 switch (details.storageType) {
-	case "S": 
-	dataStore = sessionStorage;
-	break;
 	case "L":
-	dataStore = localStorage;
+		// use localStorage
+		dataStore = localStorage;
+	break;
+	case "S": 
+		// use sessionStorage
+		dataStore = sessionStorage;
+	break;	
+	case "P": 
+		// instansiate an object in the page if there isn't one
+		if (!window[details.id + "datastore"]) window[details.id + "datastore"] = {};
+		// use the in page object
+		dataStore = window[details.id + "datastore"];
 	break;
 } 	   
 if (dataStore) {

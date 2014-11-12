@@ -68,13 +68,17 @@ return "<div id='" + this.id + "' class='panel" + getStyleClasses(this) + "'>" +
 	    
 	    <events>
 	        <event>
-	            <type>click</type>
-	            <name>Click</name>
+	            <type>mouseover</type>
+	            <name>Mouse over</name>
 	        </event>
 	        <event>
-	            <type>hover</type>
-	            <name>Hover</name>
+	            <type>mouseout</type>
+	            <name>Mouse out</name>
 	        </event>
+	        <event>
+	            <type>click</type>
+	            <name>Click</name>
+	        </event>	        
 	    </events>
 	    
 	    <styles>       

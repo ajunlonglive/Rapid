@@ -859,10 +859,10 @@ public class Page {
 				// close the try/catch
 				if (control == null) {
 					// page
-					eventStringBuilder.append("  } catch(ex) { alert('Error in page." + event.getType() + " event ' + ex); }\n");
+					eventStringBuilder.append("  } catch(ex) { Event_error('" + event.getType() + "',null,ex); }\n");
 				} else {
 					// control
-					eventStringBuilder.append("  } catch(ex) { alert('Error in " + event.getType() + " event for control " + control.getId() +  " ' + ex); }\n");
+					eventStringBuilder.append("  } catch(ex) { Event_error('" + event.getType() + "','" + control.getId() +  "',ex); }\n");
 				}				
 				// close event function
 				eventStringBuilder.append("}\n\n");

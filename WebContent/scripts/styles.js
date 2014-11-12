@@ -643,6 +643,8 @@ $(document).ready( function() {
 			val = val.replace(/(\r\n|\n|\r|\t)/gm,"");
 			_styleInput.text(val);
 		}
+		// remove any :
+		val = val.replace(":","");
 		// update the span with the value
 		_styleSpan.html(val);
 		// check which key was hit
@@ -656,6 +658,8 @@ $(document).ready( function() {
 				if (hinttext != hinttext.replace(/(\r\n|\n|\r|\t)/gm,"")) {
 					hinttext = hinttext.replace(/(\r\n|\n|\r|\t)/gm,"");
 				}
+				// remove any :
+				hinttext = hinttext.replace(":","");
 				// assign hinttext to val
 				val = hinttext;
 				// assing to span
@@ -849,11 +853,7 @@ function showStyles(control) {
 			// get a reference to the select
 			var addClass = classesTable.find("select").last();
 			// retain a string for the class options
-			var classOptions = "<option>add...</option>";
-			// loop any stye classes
-			for (var i in _styleClasses) {
-				classOptions += "<option>" + _styleClasses[i] + "</option>";
-			}
+			var classOptions = "<option>add...</option>" + getStyleClassesOptions();			
 			// add the known options
 			addClass.append(classOptions);
 			// change listener

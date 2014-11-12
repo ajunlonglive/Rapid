@@ -94,6 +94,20 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <type>javascriptFile</type>
 	            <contents>scripts/json2.js</contents>
 	        </resource>
+	        <resource>
+	            <type>javascript</type>
+	            <contents>
+                    <![CDATA[
+function Event_error(eventName, controlId, ex) {
+	if (controlId) {
+		alert("Error in " + eventName + " event for control " + controlId + "  " + ex);
+	} else {
+		alert("Error in " + eventName + " event for page " + ex);
+	}
+}                    
+                    ]]>
+                </contents>
+	        </resource>
             <resource>
                 <type>css</type>
                 <contents>

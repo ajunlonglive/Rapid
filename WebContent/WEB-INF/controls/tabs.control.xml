@@ -270,7 +270,6 @@ ul.tabsHeader {
 	border: 1px solid #bbb;
 	border-top-left-radius: 5px;
 	border-top-right-radius: 5px;
-	border-bottom-width: 0;
 	margin: 0;
 	text-decoration: none;
 	display: block;
@@ -287,12 +286,32 @@ ul.tabsHeader {
 
 .tabsHeader li.selected {
 	border-color: black;
-	position: relative;
-	top: 1px;
+	position: relative;	
 	background: white;
 	color: black;
 	font-weight: bold;
 	cursor: auto;
+}
+
+ul.tabsHeaderH li {
+	border-bottom-width: 0;
+}
+
+ul.tabsHeaderH li.selected{
+	position:relative;
+	top:1px;
+	z-index:1;
+}
+
+ul.tabsHeaderV li {
+	border-right-width: 0;
+}
+
+ul.tabsHeaderV li.selected{
+	position:relative;
+	left:1px;
+	z-index:1;
+	margin-left: -1px;
 }
 
 div.tabsGroup {
@@ -346,19 +365,23 @@ try {
 	
 	// check for vertical or revert to horizontal (default)
 	if (this.tabType == "V") {
-		// immediate child ul inline-block
-		this.object.children("ul").css("display","inline-block");
+		// this is table row
+		this.object.css("display","table-row");
+		// immediate child ul table-cell
+		this.object.children("ul").css("display","table-cell").addClass("tabsHeaderV");
 		// unfloat the immediate li
 		this.object.children("ul").children("li").css({float:""});	
-		// selected div is inline-block
-		this.object.children("div.selected").css("display","inline-block");		
+		// selected div is table-cell
+		this.object.children("div.selected").css("display","table-cell");		
 	} else {
-		// immediate child ul inline-block
-		this.object.children("ul").css("display","block");
+		// remove any special display from container
+		this.object.css("display","");
+		// immediate child ul is block and add the special tabsHeaderH to avoid the line underneath the selected tab
+		this.object.children("ul").css("display","block").addClass("tabsHeaderH");
 		// float the immediate li
 		this.object.children("ul").children("li").css({float:"left"});	
 		// immediate child divs are block
-		this.object.children("div.selected").css("display","block");	
+		this.object.children("div.selected").css("display","block");
 	}
 	
 	// add a click event the object
@@ -443,6 +466,14 @@ return "#" + this.id + " li";
 	            </getAppliesToFunction>
 	        </style>  
 	        <style>
+	            <name>Tabs selected header</name>
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id + " li.selected";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style> 
+	        <style>
 	            <name>Tabs panels</name>
 	            <getAppliesToFunction>
 					<![CDATA[	      
@@ -455,9 +486,21 @@ return "#" + this.id + " div.tabsPanel";
 	    <initJavaScript>
 	        <![CDATA[
 $("#" + id).children("ul").children("li").each( function() {
-	$(this).click( function(ev, index) {
-		// get a reference to the tabs group
-		var tabs = $("#" + id);
+
+	// get a reference to the tabs group
+	var tabs = $("#" + id);
+	// assume horizontal
+	horizontal = true;
+	// check for vertical
+	if (window[id + "details"] && window[id + "details"].tabType == "V") horizontal = false;
+	// apply extra class if horizontal
+	if (horizontal) {
+		tabs.children("ul").addClass("tabsHeaderH");
+	} else {
+		tabs.children("ul").addClass("tabsHeaderV");
+	}
+
+	$(this).click( function(ev, index) {		
 		// remove selected from all tab header items
 		tabs.children("ul").children("li").removeClass("selected");
 		// remove selected from all tab body items and hide
@@ -467,12 +510,12 @@ $("#" + id).children("ul").children("li").each( function() {
 		// apply selected to the correct body
 		tabs.children("div:nth-child(" + index + ")").addClass("selected");
 		// check the type
-		if (window[id + "details"] && window[id + "details"].tabType == "V") {
-			// vertical if there are details that say so
-			tabs.children("div.selected").css("display","inline-block");
+		if (horizontal) {
+			// selected tab is display block
+			tabs.children("div.selected").css("display","block");			
 		} else {
-			// default to horizontal
-			tabs.children("div.selected").css("display","block");
+			// selected tab is table cell
+			tabs.children("div.selected").css("display","table-cell");
 		}
 	});
 });	        

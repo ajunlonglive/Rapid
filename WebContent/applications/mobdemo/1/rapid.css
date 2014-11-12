@@ -117,7 +117,6 @@ ul.tabsHeader {
 	border: 1px solid #bbb;
 	border-top-left-radius: 5px;
 	border-top-right-radius: 5px;
-	border-bottom-width: 0;
 	margin: 0;
 	text-decoration: none;
 	display: block;
@@ -134,12 +133,32 @@ ul.tabsHeader {
 
 .tabsHeader li.selected {
 	border-color: black;
-	position: relative;
-	top: 1px;
+	position: relative;	
 	background: white;
 	color: black;
 	font-weight: bold;
 	cursor: auto;
+}
+
+ul.tabsHeaderH li {
+	border-bottom-width: 0;
+}
+
+ul.tabsHeaderH li.selected{
+	position:relative;
+	top:1px;
+	z-index:1;
+}
+
+ul.tabsHeaderV li {
+	border-right-width: 0;
+}
+
+ul.tabsHeaderV li.selected{
+	position:relative;
+	left:1px;
+	z-index:1;
+	margin-left: -1px;
 }
 
 div.tabsGroup {
