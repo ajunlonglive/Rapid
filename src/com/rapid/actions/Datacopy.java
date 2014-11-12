@@ -104,7 +104,7 @@ public class Datacopy extends Action {
 							if (details == null) {
 								details = "";
 							} else {
-								details = ",details: " + details;
+								details = ",details:" + destinationControl.getId() + "details";
 							}
 							// add the properties we need as a js object
 							jsOutputs += "{id:'" + destinationControl.getId() + "',type: '" + destinationControl.getType() + "',field:'" + dataDestinationField + "'" + details + "},";

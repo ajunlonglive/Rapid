@@ -2020,7 +2020,7 @@ function Property_dataDestinations(cell, propertyObject, property, refreshHtml, 
 		// derive the name
 		var itemControl = getControlById(dataDestination.itemId);
 		// add a row
-		table.append("<tr><td>" + (itemControl ? itemControl.name : dataDestination.itemId) + "</td><td><input value='" + dataDestination.field + "' /></td><td><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
+		table.append("<tr><td>" + (itemControl ? itemControl.name : dataDestination.itemId) + "</td><td><input value='" + dataDestination.field + "' /></td><td style='width:32px'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
 		// get the field
 		var editField = table.find("tr").last().children("td:nth(1)").children("input");
 		// add a listener
@@ -2277,6 +2277,18 @@ function Property_controlActionDuration(cell, controlAction, property, refreshHt
 		cell.closest("tr").remove();
 	}
 }
+
+function Property_controlActionClasses(cell, controlAction, property, refreshHtml, refreshProperties) {
+	// only if controlAction is custom
+	if (controlAction.actionType == "addClass" || controlAction.actionType == "removeClass") {
+		// add thegtext
+		Property_select(cell, controlAction, property, refreshHtml);
+	} else {
+		// remove this row
+		cell.closest("tr").remove();
+	}
+}
+
 function Property_controlActionCommand(cell, controlAction, property, refreshHtml, refreshProperties) {
 	// only if controlAction is custom
 	if (controlAction.actionType == "custom") {

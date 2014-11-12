@@ -171,7 +171,7 @@ public class Rapid extends RapidHttpServlet {
 							boolean includeDesignLinks = true;
 							
 							// set to false if action is dialogue
-							if ("dialogue".equals(rapidRequest.getAction())) includeDesignLinks = false;
+							if ("dialogue".equals(rapidRequest.getActionName())) includeDesignLinks = false;
 							
 							// write the page html excluding the design link
 							page.writeHtml(this, rapidRequest, app, user, out, includeDesignLinks);

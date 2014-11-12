@@ -33,6 +33,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
         <image>images/text_24x24.png</image>
         
         <addToNewApplications>true</addToNewApplications>
+        <noDefaultName>true</noDefaultName>
         
 	    <canUserAdd>true</canUserAdd>
 	    <canUserMove>true</canUserMove>
@@ -107,6 +108,10 @@ if (data != null && data !== undefined) {
 	        <event>
 	            <type>mouseover</type>
 	            <name>Mouse over</name>
+	        </event>
+	        <event>
+	            <type>mouseout</type>
+	            <name>Mouse out</name>
 	        </event>
 	        <event>
 	            <type>click</type>

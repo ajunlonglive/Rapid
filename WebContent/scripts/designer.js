@@ -296,6 +296,8 @@ function applyUndoRedo(snapshot) {
 				_selectedControl = getControlById(selectedControlId);
 				// rebuild any properties
 				selectControl(_selectedControl);
+				// re apply any styles
+				rebuildStyles();
 			}
 			
 		} // apply control check
@@ -636,14 +638,17 @@ function positionBorder(x, y) {
 
 // this uses both the above functions for a specific control
 function positionAndSizeBorder(control) {
-	// check if nonVisualControl
-	if (_selectedControl.object.is(".nonVisibleControl")) {
-		positionBorder(_selectedControl.object.offset().left, _selectedControl.object.offset().top - $(window).scrollTop());
-	} else {
-		positionBorder(_selectedControl.object.offset().left + _panelPinnedOffset, _selectedControl.object.offset().top);
-	}		
-	// size the border in case moving it has changed it's geometery
-	sizeBorder(_selectedControl);
+	// check we were given a control
+	if (control) {
+		// check if nonVisualControl
+		if (_selectedControl.object.is(".nonVisibleControl")) {
+			positionBorder(_selectedControl.object.offset().left, _selectedControl.object.offset().top - $(window).scrollTop());
+		} else {
+			positionBorder(_selectedControl.object.offset().left + _panelPinnedOffset, _selectedControl.object.offset().top);
+		}		
+		// size the border in case moving it has changed it's geometery
+		sizeBorder(_selectedControl);
+	}
 }
 
 // this function returns a flat array of all of the page controls
@@ -875,6 +880,16 @@ function getDatabaseConnectionOptions(selectIndex) {
 		}
 	}
 	return options;
+}
+
+function getStyleClassesOptions(selected) {
+	var classOptions = "";
+	// loop any stye classes
+	for (var i in _styleClasses) {
+		classOptions += "<option" + (_styleClasses[i] == selected ? " selected='selected'" : "") + ">" + _styleClasses[i] + "</option>";
+	}
+	// return
+	return classOptions;
 }
 
 // move the border and show properties and actions
@@ -3077,6 +3092,10 @@ function windowResize(ev) {
 			});	
 		} // scale check
 	} // page check	
+	
+	// resize / reposition the selection
+	positionAndSizeBorder(_selectedControl);
+	
 }
 
 function fileuploaded(fileuploadframe) {

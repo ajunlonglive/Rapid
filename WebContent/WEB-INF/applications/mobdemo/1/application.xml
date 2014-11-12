@@ -30,6 +30,10 @@
     <controlTypes>tabGroup</controlTypes>
     <controlTypes>table</controlTypes>
     <controlTypes>text</controlTypes>
+    <controlTypes>slidePanelPane</controlTypes>
+    <controlTypes>tabPanel</controlTypes>
+    <controlTypes>tableCell</controlTypes>
+    <controlTypes>tableRow</controlTypes>
     <createdBy>admin</createdBy>
     <createdDate>2014-08-27T10:45:44.906+01:00</createdDate>
     <databaseConnections>
@@ -43,7 +47,7 @@
     <description>This is a demonstration application provided to showcase many Rapid Mobile features</description>
     <id>mobdemo</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-11-06T19:39:36.185Z</modifiedDate>
+    <modifiedDate>2014-11-12T12:02:27.733Z</modifiedDate>
     <name>mobdemo</name>
     <pageBackupsMaxSize>3</pageBackupsMaxSize>
     <securityAdapterType>rapid</securityAdapterType>
@@ -152,7 +156,7 @@ input.validation {
   box-shadow: 1px 1px 2px;
 }
 </styles>
-    <title>mobdemo</title>
+    <title>Rapid Mobile demo</title>
     <version>1</version>
     <XMLVersion>1</XMLVersion>
 </application>
