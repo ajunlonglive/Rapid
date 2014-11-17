@@ -178,6 +178,9 @@ public class Rapid extends Action {
 		// assign the list to the application
 		newApp.setControlTypes(controlTypes);
 		
+		// save the application to file
+		newApp.save(rapidServlet, rapidRequest, false);
+		
 		// get the security 
 		SecurityAdapater security = newApp.getSecurity();
 		
@@ -187,7 +190,7 @@ public class Rapid extends Action {
 			// get the current user's name
 			String userName = rapidRequest.getUserName();
 			
-			// get the current users record from the adapter
+			// get the current user's record from the adapter
 			User user = security.getUser(rapidRequest);
 			
 			// get the rapid application
@@ -197,7 +200,7 @@ public class Rapid extends Action {
 			if (user == null) {
 				// get the Rapid user object
 				User rapidUser = rapidApplication.getSecurity().getUser(rapidRequest);
-				// create a new user based on the Rapid user
+				// create a new user based on the current user
 				user = new User(userName, rapidUser.getDescription(), rapidUser.getPassword());
 				// add the new user 
 				security.addUser(rapidRequest, user);
@@ -207,10 +210,7 @@ public class Rapid extends Action {
 			if (!security.checkUserRole(rapidRequest, com.rapid.server.Rapid.ADMIN_ROLE)) security.addUserRole(rapidRequest, com.rapid.server.Rapid.ADMIN_ROLE);
 			if (!security.checkUserRole(rapidRequest, com.rapid.server.Rapid.DESIGN_ROLE)) security.addUserRole(rapidRequest, com.rapid.server.Rapid.DESIGN_ROLE);
 		}
-		
-		// save the application to file
-		newApp.save(rapidServlet, rapidRequest, false);
-		
+						
 		return newApp;
 		
 	}
