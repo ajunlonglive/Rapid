@@ -59,15 +59,34 @@ return "<option value=''>None</option>" + getInputOptions(this.dataSource);
 	            <name>Destinations</name>
 	            <changeValueJavaScript>dataDestinations</changeValueJavaScript> 
 	        </property>
+	        
+	        <property>
+	            <key>mergeType</key>
+	            <name>Merge type</name>
+	            <setConstructValueFunction>return false;</setConstructValueFunction>
+	            <changeValueJavaScript>select</changeValueJavaScript>	
+	            <getValuesFunction>return [[false,"no merge"],["row","row merge"],["child","child merge"]]</getValuesFunction>
+	        </property>  
+	        
+	        <property>
+	            <key>mergeField</key>
+	            <name>Merge field</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <getValuesFunction>return "";</getValuesFunction>
+	        </property>	 
 	        	        	          
 	    </properties>
 	    	    
 	    <actionJavaScript>
 	        <![CDATA[ 
-function Action_datacopy(data, outputs) {
+function Action_datacopy(data, outputs, mergeType, mergeField) {
 	if (data != null && data !== undefined && outputs) {
 		for (var i in outputs) {
-			var output = outputs[i];			
+			var output = outputs[i];		
+			if (mergeType) {
+				var mergeData = window["getData_" + output.type](output.id, data, output.field, output.details);
+				data = mergeDataObjects(mergeData, data, mergeType, mergeField);
+			}	
 			window["setData_" + output.type](output.id, data, output.field, output.details);
 		}
 	}

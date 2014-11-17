@@ -102,7 +102,7 @@ public class RapidRequest {
 				_control = _page.getControl(request.getParameter("c"));
 				// if we've found the control and have an action parameter
 				if (_control != null && request.getParameter("act") != null) {
-					// get action from the control
+					// get action from the page
 					_action = _control.getAction(request.getParameter("act"));						
 				}	
 			}

@@ -232,15 +232,15 @@ public class Database extends Action {
 			// get the sequence for this action requests so long-running early ones don't overwrite fast later ones (defined in databaseaction.xml)
 			js += "  var sequence = getDatabaseActionSequence('" + getId() + "');\n";
 						
-			// drop in the data variable used to collect the inputs, and hold the sequence
-			js += "  var data = { inputs:[], sequence:sequence };\n";
+			// drop in the query variable used to collect the inputs, and hold the sequence
+			js += "  var query = { inputs:[], sequence:sequence };\n";
 			
 			// build the inputs
 			if (_query.getInputs() != null) {
 				for (Parameter parameter : _query.getInputs()) {
 					String itemId = parameter.getItemId();
 					if (itemId != null) {
-						js += "  data.inputs.push({id:'" + itemId + "',value:" + Control.getDataJavaScript(application, page, itemId, parameter.getField()) + "});\n";						
+						js += "  query.inputs.push({id:'" + itemId + "',value:" + Control.getDataJavaScript(application, page, itemId, parameter.getField()) + "});\n";						
 					}
 				}
 			} // got inputs
@@ -253,18 +253,21 @@ public class Database extends Action {
 			ArrayList<Parameter> outputs = _query.getOutputs();
 			
 			// get the js to hide the loading (if applicable)
-			if (_showLoading) js += "  " + getLoadingJS(page, outputs, true);
+			if (_showLoading) js += getLoadingJS(page, outputs, true);
 						
+			// stringify the query
+			js += "  query = JSON.stringify(query);\n";
+			
 			// open the ajax call
-			js += "  $.ajax({ url : '~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + page.getId() + controlParam + "&act=" + getId() + "', type: 'POST', dataType: 'json',\n";
-			js += "    data: JSON.stringify(data),\n";
-			js += "    error: function(error, status, message) {\n";
+			js += "  $.ajax({ url : '~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + page.getId() + controlParam + "&act=" + getId() + "', type: 'POST', contentType: 'application/json', dataType: 'json',\n";
+			js += "    data: query,\n";
+			js += "    error: function(server, status, message) {\n";
 			
 			// hide the loading javascript (if applicable)
 			if (_showLoading) js += "      " + getLoadingJS(page, outputs, false);
 							
 			// this avoids doing the errors if the page is unloading or the back button was pressed
-			js += "      if (error.readyState > 0) {\n";
+			js += "      if (server.readyState > 0) {\n";
 			
 			// retain if error actions
 			boolean errorActions = false;
@@ -278,7 +281,7 @@ public class Database extends Action {
 			}
 			// add manual if not in collection
 			if (!errorActions) {
-				js += "        alert('Error with database action : ' + error.responseText||message);\n";
+				js += "        alert('Error with database action : ' + message||server.responseText);\n";
 			}
 			
 			// close unloading check
@@ -291,7 +294,7 @@ public class Database extends Action {
 			js += "    success: function(data) {\n";	
 			
 			// hide the loading javascript (if applicable)
-			if (_showLoading) js += "      " + getLoadingJS(page, outputs, false);
+			if (_showLoading) js += "    " + getLoadingJS(page, outputs, false);
 			
 			// open if data check
 			js += "      if (data) {\n";
@@ -312,7 +315,7 @@ public class Database extends Action {
 					if (details == null) {
 						details = "";
 					} else {
-						details = ", details: " + details;
+						details = ", details: " + outputControl.getId() + "details";
 					}
 					// append the javascript outputs
 					jsOutputs += "{id: '" + outputControl.getId() + "', type: '" + outputControl.getType() + "', field: '" + output.getField() + "'" + details + "}";

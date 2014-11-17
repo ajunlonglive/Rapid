@@ -115,8 +115,28 @@ public class Datacopy extends Action {
 				if (jsOutputs.length() > 0) jsOutputs = jsOutputs.substring(0, jsOutputs.length() - 1);
 				// add to js as an array
 				js += "var outputs = [" + jsOutputs + "];\n";
+				// get any merge type
+				String mergeType = getProperty("mergeType");
+				// check if we got one
+				if (mergeType == null) {
+					// if not update to empty string
+					mergeType = "";
+				} else {
+					// if so wrap with inverted commas
+					mergeType = ", '" + mergeType + "'";
+					// look for a merge field
+					String mergeField = getProperty("mergeField");
+					// if we got one
+					if (mergeField == null) {
+						 // add it
+						mergeType += ", '" + mergeField + "'";
+					} else {
+						// or just call it child if not
+						mergeType += ", 'child'";
+					}
+				}
 				// add the call
-				js += "Action_datacopy(data, outputs);\n";
+				js += "Action_datacopy(data, outputs" + mergeType + ");\n";
 				
 			}
 																								
