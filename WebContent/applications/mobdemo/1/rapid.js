@@ -293,6 +293,20 @@ function Init_hints(id, details) {
   }
 }
 
+function Init_map(id, details) {
+  // make the zoom a number
+  var zoom = parseInt(details.zoom);	        
+  
+  // create a map in our control object
+  var map = new google.maps.Map($("#" + id)[0], {
+     	zoom: zoom,
+  	center: new google.maps.LatLng(details.lat, details.lng)
+  });
+  
+  // add it to the collections
+  _maps[id] = map;
+}
+
 function Init_pagePanel(id, details) {
   var bodyHtml = "<center><h1>Page</h1></center>";
   
@@ -949,6 +963,11 @@ function linkClick(url, sessionVariablesString) {
 	window.location = url;
 	
 }
+
+/* Map control resource JavaScript */
+
+// an array to manage the in-page maps	                
+_maps = [];
 
 /* Slide panel control resource JavaScript */
 

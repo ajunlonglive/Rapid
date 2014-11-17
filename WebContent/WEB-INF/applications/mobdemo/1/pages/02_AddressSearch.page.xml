@@ -36,11 +36,15 @@
     <controls>
         <events>
             <filter></filter>
-            <type>click</type>
+            <type>mouseover</type>
         </events>
         <events>
             <filter></filter>
-            <type>hover</type>
+            <type>mouseout</type>
+        </events>
+        <events>
+            <filter></filter>
+            <type>click</type>
         </events>
         <properties>
             <entry>
@@ -707,11 +711,15 @@
         </childControls>
         <events>
             <filter></filter>
-            <type>click</type>
+            <type>mouseover</type>
         </events>
         <events>
             <filter></filter>
-            <type>hover</type>
+            <type>mouseout</type>
+        </events>
+        <events>
+            <filter></filter>
+            <type>click</type>
         </events>
         <properties>
             <entry>
@@ -741,6 +749,55 @@
         </styles>
         <XMLVersion>1</XMLVersion>
     </controls>
+    <controls>
+        <properties>
+            <entry>
+                <key>id</key>
+                <value>P2_C26_</value>
+            </entry>
+            <entry>
+                <key>classes</key>
+                <value>[]</value>
+            </entry>
+            <entry>
+                <key>error</key>
+                <value>true</value>
+            </entry>
+            <entry>
+                <key>details</key>
+                <value>{&quot;zoom&quot;:8,&quot;lng&quot;:&quot;-0.1275&quot;,&quot;lat&quot;:&quot;51.50722&quot;}</value>
+            </entry>
+            <entry>
+                <key>zoom</key>
+                <value>8</value>
+            </entry>
+            <entry>
+                <key>name</key>
+                <value>Map 1</value>
+            </entry>
+            <entry>
+                <key>lng</key>
+                <value>-0.1275</value>
+            </entry>
+            <entry>
+                <key>type</key>
+                <value>map</value>
+            </entry>
+            <entry>
+                <key>lat</key>
+                <value>51.50722</value>
+            </entry>
+            <entry>
+                <key>initJavaScript</key>
+                <value>true</value>
+            </entry>
+        </properties>
+        <styles>
+            <appliesTo>#P2_C26_</appliesTo>
+            <rules>width:100%;</rules>
+        </styles>
+        <XMLVersion>1</XMLVersion>
+    </controls>
     <description></description>
     <events>
         <filter></filter>
@@ -750,13 +807,13 @@
         <filter></filter>
         <type>reusable</type>
     </events>
-    <htmlBody>&lt;div id=&quot;P2_C1_&quot; class=&quot;pagepanel&quot;&gt;&lt;/div&gt;&lt;div id=&quot;P2_C25_&quot; class=&quot;panel&quot;&gt;Address search&lt;/div&gt;&lt;div id=&quot;P2_C2_&quot; class=&quot;panel&quot;&gt;&lt;table id=&quot;P2_C3_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P2_C4_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C5_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Number&lt;/td&gt;&lt;td id=&quot;P2_C6_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C7_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P2_C8_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C9_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Flat&lt;/td&gt;&lt;td id=&quot;P2_C10_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C11_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P2_C12_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C13_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Street&lt;/td&gt;&lt;td id=&quot;P2_C14_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C15_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P2_C16_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C17_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Town&lt;/td&gt;&lt;td id=&quot;P2_C18_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C19_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P2_C20_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C21_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Post code&lt;/td&gt;&lt;td id=&quot;P2_C22_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C23_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;</htmlBody>
+    <htmlBody>&lt;div id=&quot;P2_C1_&quot; class=&quot;pagepanel&quot;&gt;&lt;/div&gt;&lt;div id=&quot;P2_C25_&quot; class=&quot;panel&quot;&gt;Address search&lt;/div&gt;&lt;div id=&quot;P2_C2_&quot; class=&quot;panel&quot;&gt;&lt;table id=&quot;P2_C3_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P2_C4_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C5_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Number&lt;/td&gt;&lt;td id=&quot;P2_C6_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C7_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P2_C8_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C9_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Flat&lt;/td&gt;&lt;td id=&quot;P2_C10_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C11_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P2_C12_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C13_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Street&lt;/td&gt;&lt;td id=&quot;P2_C14_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C15_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P2_C16_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C17_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Town&lt;/td&gt;&lt;td id=&quot;P2_C18_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C19_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P2_C20_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C21_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Post code&lt;/td&gt;&lt;td id=&quot;P2_C22_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C23_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;&lt;div id=&quot;P2_C26_&quot; style=&quot;position: relative; overflow: hidden; transform: translateZ(0px) translateZ(0px); background-color: rgb(229, 227, 223);&quot; class=&quot;map&quot;&gt;Map not available&lt;/div&gt;</htmlBody>
     <id>P2</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-10-24T11:55:43.694+01:00</modifiedDate>
+    <modifiedDate>2014-11-17T10:33:13.136Z</modifiedDate>
     <name>02_AddressSearch</name>
     <rolesHtml>
-        <html>&lt;div id=&quot;P2_C1_&quot; class=&quot;pagepanel&quot;&gt;&lt;/div&gt;&lt;div id=&quot;P2_C25_&quot; class=&quot;panel&quot;&gt;Address search&lt;/div&gt;&lt;div id=&quot;P2_C2_&quot; class=&quot;panel&quot;&gt;&lt;table id=&quot;P2_C3_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P2_C4_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C5_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Number&lt;/td&gt;&lt;td id=&quot;P2_C6_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C7_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P2_C8_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C9_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Flat&lt;/td&gt;&lt;td id=&quot;P2_C10_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C11_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P2_C12_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C13_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Street&lt;/td&gt;&lt;td id=&quot;P2_C14_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C15_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P2_C16_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C17_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Town&lt;/td&gt;&lt;td id=&quot;P2_C18_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C19_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P2_C20_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C21_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Post code&lt;/td&gt;&lt;td id=&quot;P2_C22_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C23_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;</html>
+        <html>&lt;div id=&quot;P2_C1_&quot; class=&quot;pagepanel&quot;&gt;&lt;/div&gt;&lt;div id=&quot;P2_C25_&quot; class=&quot;panel&quot;&gt;Address search&lt;/div&gt;&lt;div id=&quot;P2_C2_&quot; class=&quot;panel&quot;&gt;&lt;table id=&quot;P2_C3_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P2_C4_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C5_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Number&lt;/td&gt;&lt;td id=&quot;P2_C6_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C7_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P2_C8_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C9_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Flat&lt;/td&gt;&lt;td id=&quot;P2_C10_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C11_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P2_C12_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C13_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Street&lt;/td&gt;&lt;td id=&quot;P2_C14_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C15_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P2_C16_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C17_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Town&lt;/td&gt;&lt;td id=&quot;P2_C18_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C19_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P2_C20_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C21_&quot; class=&quot;tabelCell cellLabel&quot;&gt;Post code&lt;/td&gt;&lt;td id=&quot;P2_C22_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C23_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;&lt;div id=&quot;P2_C26_&quot; style=&quot;position: relative; overflow: hidden; transform: translateZ(0px) translateZ(0px); background-color: rgb(229, 227, 223);&quot; class=&quot;map&quot;&gt;Map not available&lt;/div&gt;</html>
     </rolesHtml>
     <title>Address search</title>
     <XMLVersion>1</XMLVersion>

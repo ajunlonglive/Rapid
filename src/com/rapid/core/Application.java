@@ -229,11 +229,13 @@ public class Application {
 	public static class Resource {
 		
 		// these are the types defined in the control and action .xsd files
-		public static final int JAVASCRIPTFILE = 1;
-		public static final int CSSFILE = 2;
-		public static final int JAVASCRIPT = 3;
-		public static final int CSS = 4;
-		public static final int FILE = 5;
+		public static final int JAVASCRIPT = 1;
+		public static final int CSS = 2;
+		public static final int JAVASCRIPTFILE = 3;
+		public static final int CSSFILE = 4;				
+		public static final int JAVASCRIPTLINK = 5;
+		public static final int CSSLINK = 6;
+		public static final int FILE = 7;
 		
 		// private instance variables
 		private int _type;
@@ -658,16 +660,20 @@ public class Application {
 					name += " " + jsonObjectType;
 					
 					// add as resources if they're files, or append the string builders (the app .js and .css are added as resources at the end)
-					if ("javascriptFile".equals(resourceType)) {
+					if ("javascript".equals(resourceType)) {
+						js.append("\n/* " + name + " resource JavaScript */\n\n" + resourceContents + "\n");
+					} else if ("css".equals(resourceType)) {
+						css.append("\n/* " + name + " resource styles */\n\n" + resourceContents + "\n");
+					} else if ("javascriptFile".equals(resourceType)) {
 						_resources.add(new Resource(Resource.JAVASCRIPTFILE, resourceContents));
 					} else if ("cssFile".equals(resourceType)) {
 						_resources.add(new Resource(Resource.CSSFILE, resourceContents));
+					} else if ("javascriptLink".equals(resourceType)) {
+						_resources.add(new Resource(Resource.JAVASCRIPTLINK, resourceContents));
+					} else if ("cssLink".equals(resourceType)) {
+						_resources.add(new Resource(Resource.CSSLINK, resourceContents));
 					} else if ("file".equals(resourceType)) {
 						_resources.add(new Resource(Resource.FILE, resourceContents));
-					} else if ("css".equals(resourceType)) {
-						css.append("\n/* " + name + " resource styles */\n\n" + resourceContents + "\n");
-					} else if ("javascript".equals(resourceType)) {
-						js.append("\n/* " + name + " resource JavaScript */\n\n" + resourceContents + "\n");
 					} 
 										
 				} // resource loop

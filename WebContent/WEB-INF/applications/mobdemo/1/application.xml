@@ -11,7 +11,6 @@
     <actionTypes>navigate</actionTypes>
     <actionTypes>validation</actionTypes>
     <actionTypes>webservice</actionTypes>
-    <controlTypes>page</controlTypes>
     <controlTypes>button</controlTypes>
     <controlTypes>checkbox</controlTypes>
     <controlTypes>dataStore</controlTypes>
@@ -23,6 +22,7 @@
     <controlTypes>image</controlTypes>
     <controlTypes>input</controlTypes>
     <controlTypes>link</controlTypes>
+    <controlTypes>map</controlTypes>
     <controlTypes>pagePanel</controlTypes>
     <controlTypes>panel</controlTypes>
     <controlTypes>radiobuttons</controlTypes>
@@ -30,10 +30,6 @@
     <controlTypes>tabGroup</controlTypes>
     <controlTypes>table</controlTypes>
     <controlTypes>text</controlTypes>
-    <controlTypes>slidePanelPane</controlTypes>
-    <controlTypes>tabPanel</controlTypes>
-    <controlTypes>tableCell</controlTypes>
-    <controlTypes>tableRow</controlTypes>
     <createdBy>admin</createdBy>
     <createdDate>2014-08-27T10:45:44.906+01:00</createdDate>
     <databaseConnections>
@@ -47,7 +43,7 @@
     <description>This is a demonstration application provided to showcase many Rapid Mobile features</description>
     <id>mobdemo</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-11-12T12:02:27.733Z</modifiedDate>
+    <modifiedDate>2014-11-17T07:18:25.402Z</modifiedDate>
     <name>mobdemo</name>
     <pageBackupsMaxSize>3</pageBackupsMaxSize>
     <securityAdapterType>rapid</securityAdapterType>

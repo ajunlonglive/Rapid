@@ -252,8 +252,8 @@ function Property_text(cell, propertyObject, property, refreshHtml) {
 
 function Property_integer(cell, propertyObject, property, refreshHtml) {
 	var value = "";
-	// set the value if it exists
-	if (propertyObject[property.key]) value = propertyObject[property.key];
+	// set the value if it exists (or is 0)
+	if (propertyObject[property.key] || parseInt(propertyObject[property.key]) == 0) value = propertyObject[property.key];
 	// append the adjustable form control
 	cell.append("<input class='propertiesPanelTable' value='" + value + "' />");
 	// get a reference to the form control
@@ -2298,6 +2298,68 @@ function Property_controlActionCommand(cell, controlAction, property, refreshHtm
 		// remove this row
 		cell.closest("tr").remove();
 	}
+}
+
+// this is used by the maps for changing the lat/lng
+function Property_mapLatLng(cell, propertyObject, property, refreshHtml, refreshProperties) {
+	var value = "";
+	// set the value if it exists
+	if (propertyObject[property.key] || parseInt(propertyObject[property.key]) == 0) value = propertyObject[property.key];
+	// append the adjustable form control
+	cell.append("<input class='propertiesPanelTable' value='" + value + "' />");
+	// get a reference to the form control
+	var input = cell.children().last();
+	// add a listener to update the property
+	addListener( input.keyup( function(ev) {
+		var input = $(ev.target);
+		var val = input.val();    
+		// check decimal match
+		if (val.match(new RegExp("^-?((\\d+(\\.\\d*)?)|(\\.\\d+))$"))) {
+			// update value (but don't update the html)
+			updateProperty(propertyObject, property, ev.target.value, false);
+			// get a reference to the iFrame window
+			var w = _pageIframe[0].contentWindow;  
+			// get the map
+			var map = w._maps[propertyObject.id];
+			// move the centre
+			map.setCenter(new w.google.maps.LatLng(propertyObject.lat, propertyObject.lng));
+		} else {
+			// restore value
+			input.val(propertyObject[property.key]);
+		}
+	}));
+}
+
+function Property_mapZoom(cell, propertyObject, property, refreshHtml, refreshProperties) {
+	var value = "";
+	// set the value if it exists (or is 0)
+	if (propertyObject[property.key] || parseInt(propertyObject[property.key]) == 0) value = propertyObject[property.key];
+	// append the adjustable form control
+	cell.append("<input class='propertiesPanelTable' value='" + value + "' />");
+	// get a reference to the form control
+	var input = cell.children().last();
+	// add a listener to update the property
+	addListener( input.keyup( function(ev) {
+		var input = $(ev.target);
+		var val = input.val();    
+		// check integer match
+		if (val.match(new RegExp("^\\d+$"))) {
+			// make a number
+			val = parseInt(val);
+			// update value but not the html
+			updateProperty(propertyObject, property, val, false);
+			// update the zoom
+			// get a reference to the iFrame window
+			var w = _pageIframe[0].contentWindow;  
+			// get the map
+			var map = w._maps[propertyObject.id];
+			// move the centre
+			map.setZoom(val);
+		} else {
+			// restore value
+			input.val(propertyObject[property.key]);
+		}
+	}));
 }
 
 //this is displayed as a page property but is actually held in local storage

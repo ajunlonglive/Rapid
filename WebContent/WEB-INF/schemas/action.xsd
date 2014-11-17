@@ -186,19 +186,21 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 												<xs:sequence>
 													<xs:element name="type">
 														<xs:annotation>
-															<xs:documentation>The javascriptFile and cssFile are
-																written into the html head section includes, the plain javascript
-																is written to the rapid.js file and the plain css is
-																written to the application rapid.css file. The file type resources
-																are included in the off-line download
+															<xs:documentation>
+																The contents of the plain javascript is written to the rapid.js file and the plain css is written to the application rapid.css file. 
+																The javascriptFile and cssFile are written into the html head section includes as links, these are replaced with minified versions for live applications.
+																The javascriptLink and cssLink are written into the html head section includes as links, but no minified version are made. 
+																The file type resources	are included in the off-line download
 															</xs:documentation>
 														</xs:annotation>
 														<xs:simpleType>
 															<xs:restriction base="xs:string">
-																<xs:enumeration value="javascriptFile" />
-																<xs:enumeration value="cssFile" />
 																<xs:enumeration value="javascript" />
-																<xs:enumeration value="css" />
+																<xs:enumeration value="css" />																
+																<xs:enumeration value="javascriptFile" />
+																<xs:enumeration value="cssFile" />																
+																<xs:enumeration value="javascriptLink" />
+																<xs:enumeration value="cssLink" />
 																<xs:enumeration value="file" />
 															</xs:restriction>
 														</xs:simpleType>
