@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<controls xmlVersion="1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/control.xsd">
+
+<!-- 
+
+Copyright (C) 2014 - Gareth Edwards / Rapid Information Systems
+
+gareth.edwards@rapid-is.co.uk
+
+
+This file is part of the Rapid Application Platform
+
+RapidSOA is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version. The terms require you to include
+the original copyright, and the license notice in all redistributions.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
+
+ -->
+
+	<control>
+	    
+	    <type>map</type>	 
+	    <name>Map</name>	   
+	    <image>images/tools_24x24.png</image>   
+	    
+	    <addToNewApplications>true</addToNewApplications>
+	         
+	    <canUserAdd>true</canUserAdd>
+	    <canUserMove>true</canUserMove>
+	    <canUserAddPeers>true</canUserAddPeers>
+	    
+	    <properties>
+	        <property>
+	            <key>name</key>
+	            <name>Name</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>	            
+	        </property>	            
+	        <property>
+	            <key>lat</key>
+	            <name>Centre lattitude</name>
+	            <setConstructValueFunction>return 51.50722;</setConstructValueFunction>  
+	            <changeValueJavaScript>mapLatLng</changeValueJavaScript>	     	                 
+	        </property>
+	        <property>
+	            <key>lng</key>
+	            <name>Centre longditude</name>
+	            <setConstructValueFunction>return -0.12750;</setConstructValueFunction>  
+	            <changeValueJavaScript>mapLatLng</changeValueJavaScript>	     	                 
+	        </property>
+	        <property>
+	            <key>zoom</key>
+	            <name>Zoom</name>
+	            <setConstructValueFunction>return 8;</setConstructValueFunction>  
+	            <changeValueJavaScript>mapZoom</changeValueJavaScript>	     	                 
+	        </property>
+	    </properties>
+	    
+	    <resources>
+	        <resource>
+	            <type>javascriptLink</type>
+	            <contents>
+	                https://maps.googleapis.com/maps/api/js?v=3.exp
+	            </contents>
+	        </resource>
+	        <resource>
+	            <type>css</type>
+	            <contents>
+	                <![CDATA[
+.map {
+	width: 300px;
+	height: 300px;
+	text-align: center;	
+}	                
+	                ]]>
+	            </contents>
+	        </resource>
+	        <resource>
+	            <type>javascript</type>
+	            <contents>
+	                <![CDATA[
+// an array to manage the in-page maps	                
+_maps = [];	                
+	                ]]>
+	            </contents>
+	        </resource>
+	    </resources>
+	    
+	    <getHtmlFunction>
+	        <![CDATA[	      
+return "<div id='" + this.id + "' style='width:" + this.width + ";height:" + this.height + "' class='map" + getStyleClasses(this) + "'>Map not available</div>"
+	        ]]>
+	    </getHtmlFunction> 
+	    	    	    	    	    	    	    
+	    <rebuildJavaScript>
+	        <![CDATA[        
+        
+// get a reference to the iFrame window
+var w = _pageIframe[0].contentWindow;     
+
+// get a reference to the google object loaded in the iFrame
+var google = w.google;
+
+// turn the zoom into a number
+var zoom = parseInt(this.zoom);
+
+// create a map in our control object
+var map = new google.maps.Map(this.object[0], {
+   	zoom: zoom,
+	center: new google.maps.LatLng(this.lat, this.lng)
+});
+
+// add it to the collections
+w._maps[this.id] = map;        
+        
+	        ]]>
+	    </rebuildJavaScript>
+	    	    
+	    <saveJavaScript>
+	        <![CDATA[ 
+// remove any objects google as put in our div	        
+this.object.html("Map not available");       
+	        ]]>
+	    </saveJavaScript>
+	    
+	    <getDetailsFunction>
+	        <![CDATA[
+return {lat:this.lat, lng:this.lng, zoom:this.zoom};	        
+	        ]]>
+	    </getDetailsFunction>	
+	  	    	    
+	    <styles>
+	        <style>
+	            <name>Map</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id;
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	    </styles>
+
+	    <initJavaScript>
+	        <![CDATA[
+
+// make the zoom a number
+var zoom = parseInt(details.zoom);	        
+
+// create a map in our control object
+var map = new google.maps.Map($("#" + id)[0], {
+   	zoom: zoom,
+	center: new google.maps.LatLng(details.lat, details.lng)
+});
+
+// add it to the collections
+_maps[id] = map;
+	        
+	        ]]>	        
+	    </initJavaScript>	    
+	    	        	    
+	</control>
+</controls>

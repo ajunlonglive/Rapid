@@ -739,7 +739,7 @@ public class Page {
 					if (details == null) {
 						details = "";
 					} else {
-						details = ", " + details;
+						details = ", " + control.getId() + "details";
 					}    				
     				// write an init call method
     				pageloadLines.add("Init_" + control.getType() + "('" + control.getId() + "'" + details + ");\n");
@@ -771,10 +771,10 @@ public class Page {
 		if (application.getResources() != null) {
 			for (Resource resource : application.getResources()) {
 				switch (resource.getType()) {
-					case Resource.JAVASCRIPTFILE :
+					case Resource.JAVASCRIPTFILE : case Resource.JAVASCRIPTLINK :
 						stringBuilder.append("<script type='text/javascript' src='" + resource.getContent() + "'></script>\n");
 					break;
-					case Resource.CSSFILE :
+					case Resource.CSSFILE : case Resource.CSSLINK :
 						if (includeCss) stringBuilder.append("<link rel='stylesheet' type='text/css' href='" + resource.getContent() + "'></link>\n");
 					break;
 				}				
