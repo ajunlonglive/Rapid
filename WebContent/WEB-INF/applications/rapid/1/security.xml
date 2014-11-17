@@ -8,20 +8,11 @@
         <description>Use Rapid Design to design applications</description>
         <name>RapidDesign</name>
     </roles>
-    <!-- 
-    <roles>
-        <description>Manage and design Rapid Admin application</description>
-        <name>RapidSuper</name>
-    </roles>
-     -->
     <users>
         <description>Admin user</description>
         <name>admin</name>
         <password>admin</password>
         <roles>RapidAdmin</roles>
         <roles>RapidDesign</roles>
-        <!-- 
-        <roles>RapidSuper</roles>
-         -->
     </users>
 </security>

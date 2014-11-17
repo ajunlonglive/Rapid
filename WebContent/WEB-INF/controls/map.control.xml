@@ -46,13 +46,13 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	        </property>	            
 	        <property>
 	            <key>lat</key>
-	            <name>Centre lattitude</name>
+	            <name>Centre latitude</name>
 	            <setConstructValueFunction>return 51.50722;</setConstructValueFunction>  
 	            <changeValueJavaScript>mapLatLng</changeValueJavaScript>	     	                 
 	        </property>
 	        <property>
 	            <key>lng</key>
-	            <name>Centre longditude</name>
+	            <name>Centre longitude</name>
 	            <setConstructValueFunction>return -0.12750;</setConstructValueFunction>  
 	            <changeValueJavaScript>mapLatLng</changeValueJavaScript>	     	                 
 	        </property>
