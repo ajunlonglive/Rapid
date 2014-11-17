@@ -641,13 +641,13 @@ function positionAndSizeBorder(control) {
 	// check we were given a control
 	if (control) {
 		// check if nonVisualControl
-		if (_selectedControl.object.is(".nonVisibleControl")) {
-			positionBorder(_selectedControl.object.offset().left, _selectedControl.object.offset().top - $(window).scrollTop());
+		if (control.object.is(".nonVisibleControl")) {
+			positionBorder(control.object.offset().left, control.object.offset().top - $(window).scrollTop());
 		} else {
-			positionBorder(_selectedControl.object.offset().left + _panelPinnedOffset, _selectedControl.object.offset().top);
+			positionBorder(control.object.offset().left + _panelPinnedOffset, control.object.offset().top);
 		}		
 		// size the border in case moving it has changed it's geometery
-		sizeBorder(_selectedControl);
+		sizeBorder(control);
 	}
 }
 

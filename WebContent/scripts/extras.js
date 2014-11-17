@@ -248,6 +248,16 @@ if (window["_rapidmobile"]) {
 	
 	console.log("Rapid Mobile detected");
 	
+	// add save page html function for saving
+	$.getSaveHtml = function() {
+		// explicity push each input val in as an attribute
+		$('input').each(function(){
+			$(this).attr('value', $(this).val());
+		});
+		// return the page html 
+		return "<!DOCTYPE html encoding=\"utf-8\"><html>" + $('html').html() + "</html>";
+	}
+		
 	// retain the original JQuery ajax function
 	var ajax = $.ajax;
 	
@@ -291,17 +301,7 @@ if (window["_rapidmobile"]) {
 		// now run the original ajax with our modified settings
 		ajax(settings);
 	}
-		
-	// get page html function for saving
-	$.getSaveHtml = function() {
-		// explicity push each input val in as an attribute
-		$('input').each(function(){
-			$(this).attr('value', $(this).val());
-		});
-		// return the page html 
-		return "<!DOCTYPE html><html>" + $('html').html() + "</html>";
-	}
-	
+				
 } else {
 	
 	// retain the original JQuery ajax function
