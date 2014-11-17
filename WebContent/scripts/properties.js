@@ -691,6 +691,8 @@ function Property_childActions(cell, propertyObject, property, refreshHtml, refr
 	if (!dialogue) dialogue = createDialogue(cell, 200, "Actions");		
 	// grab a reference to the table
 	var table = dialogue.children().last().children().last();
+	// remove the dialogue class so it looks like the properties
+	table.parent().removeClass("dialogueTable");
 	// make sure its empty
 	table.children().remove();
 	
@@ -915,14 +917,14 @@ function Property_databaseQuery(cell, propertyObject, property, refreshHtml, ref
 	// add a listener for the database connection
 	addListener( testSQL.click( {query: query}, function(ev) {
 		
-		var data = JSON.stringify(ev.data.query);
+		var query = JSON.stringify(ev.data.query);
 		
 		$.ajax({
-	    	url: "designer?a=" + _version.id.id + "&v=" + _version.id.version + "&action=testSQL",
-	    	type: "POST",          
+	    	url: "designer?a=" + _version.id + "&v=" + _version.version + "&action=testSQL",
+	    	type: "POST",
 	    	contentType: "application/json",
-	    	dataType: "json",    
-	    	data: data,
+		    dataType: "json",  
+	    	data: query,
 	        error: function(server, status, error) { 
 	        	alert(error + " : " + server.responseText); 
 	        },
@@ -1838,7 +1840,7 @@ function Property_gridColumns(cell, grid, property, refreshHtml, refreshDialogue
 		if (columns[i].cellFunction) cellFunctionText = columns[i].cellFunction;
 		
 		// add the line
-		table.append("<tr><td style='text-align:center;'><input type='checkbox' " + (columns[i].visible ? "checked='checked'" : "")  + " /></td><td style='padding-left:0px'><input class='text' value='" + columns[i].title + "' /></td><td style='padding-left:0px'><input class='text' value='" + columns[i].titleStyle + "' /></td><td style='padding-left:0px'><input class='text' value='" + columns[i].field + "' /></td><td style='padding-left:0px'><input class='text' value='" + columns[i].fieldStyle + "' /></td><td style='width:20px;padding-left:5px'>" + cellFunctionText.replaceAll("<","&lt;") + "</td><td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
+		table.append("<tr><td style='text-align:center;'><input type='checkbox' " + (columns[i].visible ? "checked='checked'" : "")  + " /></td><td style='padding-left:0px'><input style='max-width:none;' value='" + columns[i].title + "' /></td><td style='padding-left:0px'><input style='max-width:none;' value='" + columns[i].titleStyle + "' /></td><td style='padding-left:0px'><input style='max-width:none;' value='" + columns[i].field + "' /></td><td style='padding-left:0px'><input style='max-width:none;' value='" + columns[i].fieldStyle + "' /></td><td style='width:20px;padding-left:5px'>" + cellFunctionText.replaceAll("<","&lt;") + "</td><td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
 		
 		// find the checkbox
 		var visibleEdit = table.find("tr").last().children(":nth(0)").first().children().first();

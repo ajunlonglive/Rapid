@@ -12,10 +12,14 @@ function Action_control(actions) {
 	}	
 }
 
-function Action_datacopy(data, outputs) {
+function Action_datacopy(data, outputs, mergeType, mergeField) {
 	if (data != null && data !== undefined && outputs) {
 		for (var i in outputs) {
-			var output = outputs[i];			
+			var output = outputs[i];		
+			if (mergeType) {
+				var mergeData = window["getData_" + output.type](output.id, data, output.field, output.details);
+				data = mergeDataObjects(mergeData, data, mergeType, mergeField);
+			}	
 			window["setData_" + output.type](output.id, data, output.field, output.details);
 		}
 	}
@@ -423,7 +427,7 @@ function getData_dataStore(ev, id, field, details) {
   if (dataStore) {
   	if (details.id) id = details.id;
   	var data = null;
-  	var dataString = dataStore[id];
+  	var dataString = dataStore[_appId + "_" + id];
   	if (dataString) {
   		var data = JSON.parse(dataString);
   		if (data) {		
@@ -468,10 +472,9 @@ function setData_dataStore(id, data, field, details) {
   	if (details.id) id = details.id;
   	if (data != null && data !== undefined) {
   		data = makeDataObject(data, field);
-  		if (details.merge && dataStore[id]) data = mergeDataObjects(data, JSON.parse(dataStore[id]));		
-  		dataStore[id] = JSON.stringify(data);
+  		dataStore[_appId + "_" + id] = JSON.stringify(data);
   	} else {
-  		dataStore[id] = null;
+  		dataStore[_appId + "_" + id] = null;
   	}
   }
 }
@@ -599,11 +602,10 @@ function setData_grid(id, data, field, details) {
   						break;
   					}
   				}
-  				if (columnMap.length == i)
-  					columnMap.push("");
+  				// added the column to the map
+  				if (columnMap.length == i) columnMap.push("");
   				// if we have cellFunction JavaScript, and it hasn't been turned into a function object yet
-  				if (details.columns[i].cellFunction && !details.columns[i].f) 
-  					details.columns[i].f = new Function(details.columns[i].cellFunction);
+  				if (details.columns[i].cellFunction && !details.columns[i].f) details.columns[i].f = new Function(details.columns[i].cellFunction);
   			}
   			for (var i in data.rows) {
   				var row = data.rows[i];
@@ -612,10 +614,17 @@ function setData_grid(id, data, field, details) {
   					var style = "";
   					if (!details.columns[j].visible) style += "display:none;";
   					if (details.columns[j].style) style += details.columns[j].style;
-  					if (style) style = " style='" + style + "'";				
-  					var cellObject = rowObject.append("<td" + style + ">" + ((columnMap[j]) ? row[columnMap[j]] : "") + "</td>").find("td:last");
-  					if (details.columns[j].f) 
-  						details.columns[j].f.apply(cellObject,[id, data, field, details]);
+  					if (style) style = " style='" + style + "'";
+  					// assume the cell has no value
+  					var value = "";				
+  					// get the position of this column in the data object
+  					var mappedCol = columnMap[j];
+  					// if we can find the column and it has data use it as the value
+  					if (mappedCol && row[mappedCol]) value = row[columnMap[j]];
+  					// add the cell with the value and return a reference
+  					var cellObject = rowObject.append("<td" + style + ">" + value + "</td>").find("td:last");
+  					// apply any cell function
+  					if (details.columns[j].f) details.columns[j].f.apply(cellObject,[id, data, field, details]);
   				}				
   			}
   		} else {

@@ -238,7 +238,7 @@ public class Page {
 		// check whether the page has been cached yet
 		if (_cachedStartHtml == null) {
 			// generate the page start html
-			_cachedStartHtml = getHtmlHead(application, false);																		
+			_cachedStartHtml = getHtmlHead(application, false, null);																		
 			// have the page cache the generated html for next time
 			cacheHtmlHead(_cachedStartHtml);
 		}				
@@ -901,7 +901,7 @@ public class Page {
     }
 	
     // this private method produces the head of the page which is often cached, if resourcesOnly is true only page resources are included which is used when sending no permission
-	private String getHtmlHead(Application application, boolean includeJSandCSS) throws JSONException {
+	private String getHtmlHead(Application application, boolean includeJSandCSS, String userName) throws JSONException {
     	
     	StringBuilder stringBuilder = new StringBuilder();
     	    												
@@ -930,7 +930,9 @@ public class Page {
 			
 			stringBuilder.append("var _appVersion = '" + application.getVersion() + "';\n");
 			
-			stringBuilder.append("var _pageId = '" + _id + "';\n\n");
+			stringBuilder.append("var _pageId = '" + _id + "';\n");
+			
+			stringBuilder.append("var _userName = '" + userName + "';\n\n");
 			
 			// make a new string builder just for the js (so we can minify it independently)
 			StringBuilder jsStringBuilder = new StringBuilder(); 
@@ -1094,7 +1096,7 @@ public class Page {
 	    	// check whether or not we rebuild
 	    	if (rebuildPages) {
 	    		// get the cached head html
-	    		writer.write(getHtmlHead(application, true));
+	    		writer.write(getHtmlHead(application, true, user.getName()));
 	    	} else {
 	    		// get the cached head html
 	    		writer.write(getHtmlHeadCached(application));
@@ -1177,7 +1179,7 @@ public class Page {
 		} else {
 			
 			// write the head html without the JavaScript and CSS (index.css is substituted for us)
-			writer.write(getHtmlHead(application, false));
+			writer.write(getHtmlHead(application, false, null));
 						
 			// open the body
 			writer.write("  <body>\n");

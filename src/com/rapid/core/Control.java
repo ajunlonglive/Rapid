@@ -39,6 +39,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -50,6 +51,7 @@ import org.w3c.dom.Node;
 
 import com.rapid.core.Action;
 import com.rapid.server.RapidHttpServlet;
+import com.rapid.server.RapidRequest;
 
 @XmlRootElement
 @XmlType(namespace="http://rapid-is.co.uk/core")
@@ -127,17 +129,32 @@ public class Control {
 		}
 		return null;
 	}
+	private Action getActionRecursive(String actionId, List<Action> actions) {
+		Action returnAction = null;
+		for (Action action : actions) {
+			// return the action if it matches
+			if (actionId.equals(action.getId())) return action;
+			// if the action has child actions
+			if (action.getChildActions() != null) {
+				// check them too
+				returnAction = getActionRecursive(actionId, action.getChildActions());
+				// bail here if we got one
+				if (returnAction != null) break;
+			}
+		}
+		return returnAction;
+	}
 	public Action getAction(String actionId) {
+		Action action = null;
 		if (_events != null) {
 			for (Event event : _events) {
-				if (event.getActions() != null) {
-					for (Action action : event.getActions()) {
-						if (actionId.equals(action.getId())) return action;
-					}
+				if (event.getActions() != null) {					
+					action = getActionRecursive(actionId, event.getActions());
+					if (action != null) break;
 				}
 			}
 		}
-		return null;
+		return action;
 	}
 	
 	// helper method for styles
@@ -334,9 +351,12 @@ public class Control {
 				} else if ("online".equals(idParts[1])) {
 					// whether we are online (presumed true if no rapid mobile)
 					return "(typeof _rapidmobile == 'undefined' ? true : _rapidmobile.isOnline())";
+				} else if ("user".equals(idParts[1])) {
+					// pass the field as a value
+					return "_userName";
 				} else if ("field".equals(idParts[1])) {
 					// pass the field as a value
-					return "'" + field + "'";
+					return "'" + field.replace("'", "\\'") + "'";
 				} else if (!"".equals(idParts[1])) {
 					// pass through as literal if not blank
 					return idParts[1];

@@ -432,53 +432,103 @@ function makeDataObject(data, field) {
 	return data;
 }
 
-function mergeDataObjects(data1, data2) {
+function mergeDataObjects(data1, data2, mergeType, field) {
 	var data = null;
 	if (data1) {
-		if (!data1.fields || !data1.rows) data1 = makeDataObject(data1);
+		data1 = makeDataObject(data1);
 		if (data2) {
-			if (!data2.fields || !data2.rows) data2 = makeDataObject(data2);
-			var fields = [];
-			for (var i in data2.fields) fields.push(data2.fields[i]);
-			for (var i in data1.fields) {
-				var gotField = false;
-				for (var j in fields) {
-					if (data1.fields[i] == fields[j]) {
-						gotField = true;
-						break;
+			data2 = makeDataObject(data2);
+			switch (mergeType) {
+				case "row" :
+					var fields = [];
+					for (var i in data2.fields) fields.push(data2.fields[i]);
+					for (var i in data1.fields) {
+						var gotField = false;
+						for (var j in fields) {
+							if (data1.fields[i] == fields[j]) {
+								gotField = true;
+								break;
+							}
+						}
+						if (!gotField) fields.push(data1.fields[i]);
 					}
-				}
-				if (!gotField) fields.push(data1.fields[i]);
+					data = {};
+					data.fields = fields;
+					data.rows = [];
+					var totalRows = data1.rows.length;
+					if (data2.rows.length > totalRows) totalRows = data2.rows.length;			
+					for (var i = 0; i < totalRows; i++) {
+						var row = [];
+						for (var j in fields) {
+							var value = null;
+							if (i < data1.rows.length) {
+								for (var k in data1.fields) {
+									if (fields[j] == data1.fields[k]) {
+										value = data1.rows[i][k];
+										break;
+									}
+								}
+							}
+							if (i < data2.rows.length && value == null) {
+								for (var k in data2.fields) {
+									if (fields[j] == data2.fields[k]) {
+										value = data2.rows[i][k];
+										break;
+									}
+								}
+							}
+							row.push(value);
+						}
+						data.rows.push(row);
+					}					
+				break;
+				case "child" :
+					var fieldMap = {};
+					var fieldCount = 0;
+					for (var i in data1.fields) {
+						for (var j in data2.fields) {
+							if (data1.fields[i] == data2.fields[j]) {
+								fieldMap[i] = j;
+								fieldCount ++;
+							}
+						}
+					}
+					var fields = data2.fields;
+					for (var j in fieldMap) {
+						fields.splice(fieldMap[j],1); 
+					}
+					if (fieldCount > 0) {
+						data1.fields.push(field);
+						for (var i in data1.rows) {
+							var r1 = data1.rows[i];						
+							for (var j in data2.rows) {
+								var r2 = data2.rows[j];
+								var matches = 0;
+								for (var k in fieldMap) {
+									if (r1[k] == r2[fieldMap[k]]) matches ++; 
+								}
+								if (matches == fieldCount) {
+									var child;
+									if (data1.rows[i].length < data1.fields.length) {
+										child = {fields:fields,rows:[]};
+									} else {
+										child = data1.rows[i][data1.fields.length - 1];
+									}
+									var row = data2.rows[j];
+									for (var k in fieldMap) {
+										if (r1[k] == r2[fieldMap[k]]) row.splice(fieldMap[k],1); 
+									}
+									child.rows.push(row);
+									r1.push(child);
+								}
+							}
+						}
+					}
+					data = data1;
+					
+				break;
 			}
-			data = {};
-			data.fields = fields;
-			data.rows = [];
-			var totalRows = data1.rows.length;
-			if (data2.rows.length > totalRows) totalRows = data2.rows.length;			
-			for (var i = 0; i < totalRows; i++) {
-				var row = [];
-				for (var j in fields) {
-					var value = null;
-					if (i < data1.rows.length) {
-						for (var k in data1.fields) {
-							if (fields[j] == data1.fields[k]) {
-								value = data1.rows[i][k];
-								break;
-							}
-						}
-					}
-					if (i < data2.rows.length && value == null) {
-						for (var k in data2.fields) {
-							if (fields[j] == data2.fields[k]) {
-								value = data2.rows[i][k];
-								break;
-							}
-						}
-					}
-					row.push(value);
-				}
-				data.rows.push(row);
-			}			
+							
 		} else {
 			data = data1;
 		}
