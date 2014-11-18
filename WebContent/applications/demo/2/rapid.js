@@ -12,13 +12,18 @@ function Action_control(actions) {
 	}	
 }
 
-function Action_datacopy(data, outputs, mergeType, mergeField) {
+function Action_datacopy(data, outputs, copyType, copyData, field) {
 	if (data != null && data !== undefined && outputs) {
 		for (var i in outputs) {
 			var output = outputs[i];		
-			if (mergeType) {
-				var mergeData = window["getData_" + output.type](output.id, data, output.field, output.details);
-				data = mergeDataObjects(mergeData, data, mergeType, mergeField);
+			switch (copyType) {
+				case "child" :
+					var mergeData = window["getData_" + output.type](output.id, data, output.field, output.details);
+					data = mergeDataObjects(mergeData, data, copyType, field);
+				break;
+				case "search" :
+					data = mergeDataObjects(copyData, data, copyType, field);
+				break;
 			}	
 			window["setData_" + output.type](output.id, data, output.field, output.details);
 		}

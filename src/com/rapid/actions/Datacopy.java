@@ -115,28 +115,47 @@ public class Datacopy extends Action {
 				if (jsOutputs.length() > 0) jsOutputs = jsOutputs.substring(0, jsOutputs.length() - 1);
 				// add to js as an array
 				js += "var outputs = [" + jsOutputs + "];\n";
-				// get any merge type
-				String mergeType = getProperty("mergeType");
+				// add the start of the call
+				js += "Action_datacopy(data, outputs";
+				// get any copy type
+				String copyType = getProperty("copyType");
 				// check if we got one
-				if (mergeType == null) {
+				if (copyType == null) {
 					// if not update to empty string
-					mergeType = "";
+					copyType = "";
 				} else {
-					// if so wrap with inverted commas
-					mergeType = ", '" + mergeType + "'";
-					// look for a merge field
-					String mergeField = getProperty("mergeField");
-					// if we got one
-					if (mergeField == null) {
-						 // add it
-						mergeType += ", '" + mergeField + "'";
-					} else {
-						// or just call it child if not
-						mergeType += ", 'child'";
+					// add the copy type to the js
+					js += ", '" + copyType + "'";
+					// check the copy type
+					if ("child".equals(copyType)) {
+						
+						js += ", null";
+						
+						// look for a merge field
+						String childField = getProperty("childField");
+						// check if got we got one
+						if (childField == null) {
+							// call it child if not
+							js += ", 'child'";						 
+						} else {
+							// add it
+							js += ", '" + childField + "'";
+						}
+					} else if ("search".equals(copyType)) {
+						// get the search data
+						js += ", " + Control.getDataJavaScript(application, page, getProperty("searchSource"), getProperty("searchSourceField"));
+						// look for a search field
+						String searchField = getProperty("searchField");
+						// add it if present
+						if (searchField != null) {
+							js += ", '" + searchField + "'";
+						}
+						
 					}
+					
 				}
-				// add the call
-				js += "Action_datacopy(data, outputs" + mergeType + ");\n";
+				// close the call
+				js += ");\n";
 				
 			}
 																								

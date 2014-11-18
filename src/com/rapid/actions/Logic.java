@@ -45,7 +45,7 @@ public class Logic extends Action {
 	public static class Value {
 		
 		// private instance variables
-		private String _type, _id, _field, _constant;
+		private String _type, _id, _field;
 		
 		// public properties
 		public String getType() { return _type; }
@@ -56,43 +56,23 @@ public class Logic extends Action {
 		
 		public String getField() { return _field; }
 		public void setField(String field) { _field = field; }
-		
-		public String getConstant() { return _constant; }
-		public void setConstant(String constant) { _constant = constant; }
-				
+						
 		public Value() {}
 		public Value(JSONObject jsonValue) {
 			_type = jsonValue.optString("type");
 			_id = jsonValue.optString("id");
 			_field = jsonValue.optString("field");
-			_constant = jsonValue.optString("constant");
 		}
 		
 		public String getArgument(Application application, Page page) {
 			// assume null
 			String arg = "null";
-			// constants are unique to this action
-			if ("CNT".equals(_type)) {
-				// if it's set
-				if (_constant != null) {
-					// if we can parse it as a float
-					try {
-						float number = Float.parseFloat(_constant);
-						// add it without quotes
-						arg = Float.toString(number);
-					} catch (Exception ex) {
-						// wrap in quotes
-						arg = "'" + _constant.replace("'", "\'")  + "'";
-					}					
-				}
-			} else {
-				// if id is set
-				if (_id != null) {
-					// use the system-wide method
-					arg = Control.getDataJavaScript(application, page, _id, _field);
-				}
+			// if id is set
+			if (_id != null) {
+				// use the system-wide method
+				arg = Control.getDataJavaScript(application, page, _id, _field);
 			}
-						
+			// return it	
 			return arg;
 			
 		}

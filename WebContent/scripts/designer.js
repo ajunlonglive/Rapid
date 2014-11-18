@@ -1513,7 +1513,7 @@ function loadPage() {
 		// set the page id
 		_page.id = pageId;		
 		// reload the page iFrame with resources for the app and this page
-    	_pageIframe[0].contentDocument.location.href = "designpage.jsp?a=" + _version.id + "&v=" + _version.version + "&p=" + _page.id;	
+    	_pageIframe[0].contentDocument.location.href = "designpage.jsp?a=" + _version.id + "&v=" + _version.version + "&p=" + _page.id;    	
     	// set dirty to false
     	_dirty = false;    	
 	} // drop down val check
@@ -2047,7 +2047,16 @@ $(document).ready( function() {
     }); // load actions ajax
 	
 	// when we load an app the iframe is refreshed with the resources for that app and page
-	_pageIframe.load( function () {										
+	_pageIframe.load( function () {	
+		
+		// scale the page so the loading message fits
+		if (_scale != 1) {
+			$(_pageIframe[0].contentWindow.document.body).css({
+				width: 1 / _scale * 100 + "%",
+				height: 1 / _scale * 100 + "%",
+				transform: "scale(" + _scale + ")"
+			});	
+		}
 		
 		// only if the app and page id's have been set
 		if (_version.id && _page.id) {
@@ -2742,13 +2751,20 @@ $(document).mousemove( function(ev) {
 			// if we have just started moving position the cover
 			if (!_movingControl) {
 				
-				// position the cover
-				_selectionCover.css({
-					"width": _selectedControl.object.outerWidth() * _scale, 
-					"height": _selectedControl.object.outerHeight() * _scale, 
-					"left": _selectedControl.object.offset().left + _panelPinnedOffset, 	
-					"top": _selectedControl.object.offset().top
-				});
+				var controlClass = _controlTypes[_selectedControl.type];
+				
+				// if it is not nonVisible
+				if (controlClass.getHtmlFunction.indexOf("nonVisibleControl") < 0) {
+				
+					// position the cover
+					_selectionCover.css({
+						"width": _selectedControl.object.outerWidth() * _scale, 
+						"height": _selectedControl.object.outerHeight() * _scale, 
+						"left": _selectedControl.object.offset().left + _panelPinnedOffset, 	
+						"top": _selectedControl.object.offset().top
+					});
+				
+				}
 				
 				if (_selectedControl.object.is(":visible")) {
 					// show it if selected object visible
