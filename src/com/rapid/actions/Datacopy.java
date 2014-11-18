@@ -90,10 +90,24 @@ public class Datacopy extends Action {
 				for (int i = 0; i < jsonDataDestinations.length(); i++) {
 					// try and make an output for this destination
 					try {
+						// retrieve this data destination
 						JSONObject jsonDataDesintation = jsonDataDestinations.getJSONObject(i);
-						Control destinationControl = page.getControl(jsonDataDesintation.getString("itemId"));
+						// get the control id
+						String destinationId = jsonDataDesintation.getString("itemId");
+						// first try and look for the control in the page
+						Control destinationControl = page.getControl(destinationId);
+						// assume we found it
+						boolean pageControl = true;
 						// check we got a control
-						if (destinationControl != null) {								
+						if (destinationControl == null) {
+							// now look for the control in the application
+							destinationControl = application.getControl(destinationId);
+							// set page control to false
+							pageControl = false;
+						} 
+						
+						// check we got one from either location
+						if (destinationControl != null) {
 							// get the field
 							String dataDestinationField = jsonDataDesintation.optString("field");
 							// clean up the field								
@@ -104,11 +118,20 @@ public class Datacopy extends Action {
 							if (details == null) {
 								details = "";
 							} else {
-								details = ",details:" + destinationControl.getId() + "details";
+								// if this is a page control
+								if (pageControl) {
+									// the details will already be in the page so we can use the short form
+									details = ",details:" + destinationControl.getId() + "details";
+								} else {
+									// write the full details
+									details = ",details:" + details;
+								}
 							}
 							// add the properties we need as a js object
 							jsOutputs += "{id:'" + destinationControl.getId() + "',type: '" + destinationControl.getType() + "',field:'" + dataDestinationField + "'" + details + "},";
 						}
+						
+						
 					} catch (JSONException e) {}
 				}
 				// trim the last comma

@@ -17,6 +17,12 @@ function Action_datacopy(data, outputs, copyType, copyData, field) {
 		for (var i in outputs) {
 			var output = outputs[i];		
 			switch (copyType) {
+				case "row" :
+					var mergeData = window["getData_" + output.type](output.id, data, null, output.details);
+					if (!mergeData) mergeData = window["getData_" + output.type](output.id, data, null, output.details);
+					if (data && !data.fields) data = {fields:[output.field],rows:[[data]]};
+					data = mergeDataObjects(mergeData, data, copyType, field); 
+				break;
 				case "child" :
 					var mergeData = window["getData_" + output.type](output.id, data, output.field, output.details);
 					data = mergeDataObjects(mergeData, data, copyType, field);
@@ -443,6 +449,7 @@ function getData_dataStore(ev, id, field, details) {
   							return data.rows[0][i];
   						}
   					}
+  					return null;
   				} else {
   					return data;
   				}
@@ -655,6 +662,20 @@ function setData_grid(id, data, field, details) {
   	});
   	
   }
+}
+
+function getProperty_grid_selectedRow(ev, id, field, details) {
+  var data = null;
+  var row = $(ev.target).closest("tr");
+  var rowIndex = row.index() - 1;
+  if (rowIndex >= 0) {
+  	data = {fields:["field"],rows:[[]]};
+  	for (var i in details.columns) {
+  		data.fields.push(details.columns[i].field);
+  		data.rows[0].push(row.children(":nth(" + i + ")").html());
+  	}
+  }  
+  return data;
 }
 
 function getProperty_grid_rowCount(ev, id, field, details) {

@@ -65,7 +65,7 @@ return "<option value=''>None</option>" + getInputOptions(this.dataSource);
 	            <name>Copy type</name>
 	            <setConstructValueFunction>return false;</setConstructValueFunction>
 	            <changeValueJavaScript>datacopyType</changeValueJavaScript>	
-	            <getValuesFunction>return [[false,"copy"],["row","row merge"],["child","child merge"],["search","search"]]</getValuesFunction>	            
+	            <getValuesFunction>return [[false,"copy"],["row","merge"],["child","child merge"],["search","search"]]</getValuesFunction>	            
 	        </property>  
 	        
 	        <property>
@@ -109,6 +109,12 @@ function Action_datacopy(data, outputs, copyType, copyData, field) {
 		for (var i in outputs) {
 			var output = outputs[i];		
 			switch (copyType) {
+				case "row" :
+					var mergeData = window["getData_" + output.type](output.id, data, null, output.details);
+					if (!mergeData) mergeData = window["getData_" + output.type](output.id, data, null, output.details);
+					if (data && !data.fields) data = {fields:[output.field],rows:[[data]]};
+					data = mergeDataObjects(mergeData, data, copyType, field); 
+				break;
 				case "child" :
 					var mergeData = window["getData_" + output.type](output.id, data, output.field, output.details);
 					data = mergeDataObjects(mergeData, data, copyType, field);

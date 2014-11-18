@@ -441,35 +441,27 @@ function mergeDataObjects(data1, data2, mergeType, field) {
 			switch (mergeType) {
 				case "row" :
 					var fields = [];
-					for (var i in data2.fields) fields.push(data2.fields[i]);
-					for (var i in data1.fields) {
+					for (var i in data1.fields) fields.push(data1.fields[i]);
+					for (var i in data2.fields) {
 						var gotField = false;
 						for (var j in fields) {
-							if (data1.fields[i] == fields[j]) {
+							if (data2.fields[i] == fields[j]) {
 								gotField = true;
 								break;
 							}
 						}
-						if (!gotField) fields.push(data1.fields[i]);
+						if (!gotField) fields.push(data2.fields[i]);
 					}
 					data = {};
 					data.fields = fields;
 					data.rows = [];
-					var totalRows = data1.rows.length;
-					if (data2.rows.length > totalRows) totalRows = data2.rows.length;			
+					var totalRows = data2.rows.length;
+					if (data1.rows.length > totalRows) totalRows = data1.rows.length;			
 					for (var i = 0; i < totalRows; i++) {
 						var row = [];
 						for (var j in fields) {
 							var value = null;
-							if (i < data1.rows.length) {
-								for (var k in data1.fields) {
-									if (fields[j] == data1.fields[k]) {
-										value = data1.rows[i][k];
-										break;
-									}
-								}
-							}
-							if (i < data2.rows.length && value == null) {
+							if (i < data2.rows.length) {
 								for (var k in data2.fields) {
 									if (fields[j] == data2.fields[k]) {
 										value = data2.rows[i][k];
@@ -477,10 +469,18 @@ function mergeDataObjects(data1, data2, mergeType, field) {
 									}
 								}
 							}
+							if (i < data1.rows.length && value == null) {
+								for (var k in data1.fields) {
+									if (fields[j] == data1.fields[k]) {
+										value = data1.rows[i][k];
+										break;
+									}
+								}
+							}
 							row.push(value);
 						}
 						data.rows.push(row);
-					}					
+					}			
 				break;
 				case "child" :
 					var fieldMap = {};
@@ -523,15 +523,31 @@ function mergeDataObjects(data1, data2, mergeType, field) {
 								}
 							}
 						}
+					} else {
+						var fieldIndex = -1;
+						for (var i in data1.fields) {
+							if (field.toLowerCase() == data1.fields[i].toLowerCase()) {
+								fieldIndex = i;
+								break;
+							}
+						}
+						if (fieldIndex < 0) {
+							data1.fields.push(field);
+							data1.rows[0].push(data2);
+						} else {
+							data1.rows[0][fieldIndex] = data2;
+						}												
 					}
-					data = data1;
-					
+					data = data1;					
 				break;
 				case "search" :
 					var fieldIndex = 0;
 					if (field) {
 						for (var i in data2.fields) {
-							if (field.toLowerCase() == data2.fields[i].toLowerCase()) fieldIndex = i;
+							if (field.toLowerCase() == data2.fields[i].toLowerCase()) {
+								fieldIndex = i;
+								break;
+							}
 						}
 					}
 					var value = data1.rows[0][fieldIndex];

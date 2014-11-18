@@ -37,7 +37,6 @@ div.validation {
 	padding: 10px;
 	color: red;
 	font-weight: bold;
-	max-width: 200px;
 }
 
 input.validation {
