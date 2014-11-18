@@ -487,7 +487,7 @@ function mergeDataObjects(data1, data2, mergeType, field) {
 					var fieldCount = 0;
 					for (var i in data1.fields) {
 						for (var j in data2.fields) {
-							if (data1.fields[i] == data2.fields[j]) {
+							if (data1.fields[i].toLowerCase() == data2.fields[j].toLowerCase()) {
 								fieldMap[i] = j;
 								fieldCount ++;
 							}
@@ -526,6 +526,22 @@ function mergeDataObjects(data1, data2, mergeType, field) {
 					}
 					data = data1;
 					
+				break;
+				case "search" :
+					var fieldIndex = 0;
+					if (field) {
+						for (var i in data2.fields) {
+							if (field.toLowerCase() == data2.fields[i].toLowerCase()) fieldIndex = i;
+						}
+					}
+					var value = data1.rows[0][fieldIndex];
+					var data = {fields: data2.fields, rows: []}					
+					for (var i in data2.rows) {
+						var v = data2.rows[i][0];
+						if (typeof v !== "undefined") {
+							if (v.toLowerCase().indexOf(value) > -1) data.rows.push(data2.rows[i]);
+						}
+					}										
 				break;
 			}
 							

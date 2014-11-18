@@ -357,7 +357,9 @@ function Property_select(cell, propertyObject, property, refreshHtml, refreshPro
 		// apply the property update
 		updateProperty(propertyObject, property, ev.target.value, refreshHtml);
 		// refresh the properties if requested
-		if (ev.data.refreshProperties) showProperties(_selectedControl);
+		if (ev.data.refreshProperties) {
+			showProperties(_selectedControl);
+		}		
 	}));
 	// if value is not set, set the top value
 	if (!propertyObject[property.key]) propertyObject[property.key] = select.val();
@@ -1503,8 +1505,6 @@ function logicConditionText(condition) {
 			// add the field if present
 			if (condition.field) text += "." + condition.field;
 		break;
-		case "CNT" :
-			if (condition.constant) text = condition.constant;
 		case "SYS" :
 			// the second part of the id
 			text = condition.id.split(".")[1];
@@ -1541,8 +1541,6 @@ function logicConditionValue(cell, action, conditionIndex, valueId) {
 		var type = "CTL";				
 		// check for system value
 		if (id.substr(0,7) == "System.") type = "SYS";
-		// check for constant
-		if (id == "Constant.Constant") type = "CNT"
 		// set the new type 
 		value.type = type;
 		// set the id
@@ -1565,18 +1563,20 @@ function logicConditionValue(cell, action, conditionIndex, valueId) {
 				value.field = $(ev.target).val();
 			}));
 		break;
-		case "CNT" :
-			// set the html
-			table.append("<tr><td>Value</td><td><input /></td></tr>");
-			// get the input
-			var input = table.find("input").last();
-			// set any current value
-			if (value.constant) input.val(value.constant);
-			// add the listeners
-			addListener( input.keyup( function(ev) {		
-				// set the new value 
-				value.constant = $(ev.target).val();
-			}));
+		case "SYS" :
+			if (value.id == "System.field") {
+				// set the html
+				table.append("<tr><td>Value</td><td><input /></td></tr>");
+				// get the input
+				var input = table.find("input").last();
+				// set any current value
+				if (value.field) input.val(value.field);
+				// add the listeners
+				addListener( input.keyup( function(ev) {		
+					// set the new value into the field
+					value.field = $(ev.target).val();
+				}));
+			}
 		break;		
 	}
 	
@@ -2242,6 +2242,44 @@ function Property_flowLayoutCellWidth(cell, flowLayout, property, refreshHtml, r
 		// iframe resize
 		_pageIframe.resize();		
 	}));
+}
+
+function Property_datacopyType(cell, datacopyAction, property, refreshHtml, refreshProperties) {
+	// show the type and allow the refreshing of properties
+	Property_select(cell, datacopyAction, property, refreshHtml, true);
+}
+
+function Property_datacopyChildField(cell, datacopyAction, property, refreshHtml, refreshProperties) {
+	// only if datacopyAction type is child
+	if (datacopyAction.copyType == "child") {
+		// show the duration
+		Property_text(cell, datacopyAction, property, refreshHtml);
+	} else {
+		// remove this row
+		cell.closest("tr").remove();
+	}
+}
+
+function Property_datacopySearchField(cell, datacopyAction, property, refreshHtml, refreshProperties) {
+	// only if datacopyAction is search
+	if (datacopyAction.copyType == "search") {
+		// show the duration
+		Property_text(cell, datacopyAction, property, refreshHtml);
+	} else {
+		// remove this row
+		cell.closest("tr").remove();
+	}
+}
+
+function Property_datacopySearchSource(cell, datacopyAction, property, refreshHtml, refreshProperties) {
+	// only if datacopyAction is search
+	if (datacopyAction.copyType == "search") {
+		// show the duration
+		Property_select(cell, datacopyAction, property, refreshHtml, refreshProperties);
+	} else {
+		// remove this row
+		cell.closest("tr").remove();
+	}
 }
 
 function Property_controlActionType(cell, controlAction, property, refreshHtml, refreshProperties) {
