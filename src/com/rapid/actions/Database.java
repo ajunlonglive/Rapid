@@ -240,7 +240,16 @@ public class Database extends Action {
 				for (Parameter parameter : _query.getInputs()) {
 					String itemId = parameter.getItemId();
 					if (itemId != null) {
-						js += "  query.inputs.push({id:'" + itemId + "',value:" + Control.getDataJavaScript(application, page, itemId, parameter.getField()) + "});\n";						
+						// get any parameter field
+						String field = parameter.getField();
+						// check if there was one
+						if (field == null) {
+							// no field
+							js += "  query.inputs.push({id:'" + itemId + "',value:" + Control.getDataJavaScript(application, page, itemId, null) + "});\n";
+						} else {
+							// got field so let in appear in the inputs for matching later
+							js += "  query.inputs.push({id:'" + itemId + "',value:" + Control.getDataJavaScript(application, page, itemId, field) + ",field:'" + field + "'});\n";
+						}
 					}
 				}
 			} // got inputs

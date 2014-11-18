@@ -369,8 +369,15 @@ public class Control {
 				
 				// find the control in the page
 				Control control = page.getControl(idParts[0]);
-				// if not found have another last go in the whole application
-				if (control == null) control = application.getControl(idParts[0]);
+				// assume it is in the page
+				boolean pageControl = true;
+				// if not found 
+				if (control == null) {
+					// have another last go in the whole application
+					control = application.getControl(idParts[0]);
+					// mark as not in the page
+					pageControl = false;
+				}
 				// check control
 				if (control == null) {
 					// if still null look for it in page variables
@@ -381,10 +388,20 @@ public class Control {
 					// add if present
 					if (field != null) fieldJS = "'" + field + "'";
 					// assume no control details
-					String detailsJS = "";
+					String detailsJS = control.getDetailsJavaScript(application, page);
 					// look for them
-					if (control.getDetails() != null) {
-						detailsJS = "," + control.getDetailsJavaScript(application, page);
+					if (control.getDetails() == null) {
+						// update to empty string
+						detailsJS = "";
+					} else {
+						// check if control is in the page
+						if (pageControl) {
+							// use the abbreviated details
+							detailsJS = ", " + control.getId() + "details";
+						} else {
+							// use the long details
+							detailsJS = ", " + detailsJS;
+						}
 					}
 					// check if there was another
 					if (idParts.length > 1) {

@@ -248,15 +248,24 @@ public class Webservice extends Action {
 			// get the most recent sequence number for this action to stop slow-running early requests overwriting the results of fast later requests
 			js += "  var sequence = getWebserviceActionSequence('" + getId() + "');\n";
 			
-			// drop in the data varibable which holds our inputs and sequence
-			js += "  var data = { inputs:[], sequence:sequence };\n";
-			
+			// drop in the query variable which holds our inputs and sequence
+			js += "  var query = { inputs:[], sequence:sequence };\n";
+						
 			// build the inputs
 			if (_request.getInputs() != null) {
 				for (Parameter parameter : _request.getInputs()) {
 					String itemId = parameter.getItemId();
 					if (itemId != null) {
-						js += "  data.inputs.push({id:'" + itemId + "',value:" + Control.getDataJavaScript(application, page, itemId, parameter.getField()) + "});\n";						
+						// get any parameter field
+						String field = parameter.getField();
+						// check if there was one
+						if (field == null) {
+							// no field
+							js += "  query.inputs.push({id:'" + itemId + "',value:" + Control.getDataJavaScript(application, page, itemId, null) + "});\n";
+						} else {
+							// got field so let in appear in the inputs for matching later
+							js += "  query.inputs.push({id:'" + itemId + "',value:" + Control.getDataJavaScript(application, page, itemId, field) + ",field:'" + field + "'});\n";
+						}
 					}
 				}
 			} // got inputs
@@ -270,10 +279,13 @@ public class Webservice extends Action {
 			
 			// get the js to show the loading (if applicable)
 			if (_showLoading) js += "  " + getLoadingJS(page, outputs, true);
+			
+			// stringify the query
+			js += "  query = JSON.stringify(query);\n";
 									
 			// open the ajax call
 			js += "  $.ajax({ url : '~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + page.getId() + controlParam + "&act=" + getId() + "', type: 'POST', dataType: 'json',\n";
-			js += "    data: JSON.stringify(data),\n";
+			js += "    data: query,\n";
 			js += "    error: function(error, status, message) {\n";
 			
 			// get the js to hide the loading (if applicable)

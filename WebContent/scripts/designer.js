@@ -739,18 +739,18 @@ function getDataOptions(selectId, ignoreId, input) {
 					}				
 				}
 				
-				// control runtime properties can also be inputs
-				if (input) {
-					// get any run time properties
-					var properties = controlClass.runtimeProperties;
-					// if there are runtimeProperties in the class
-					if (properties) {
-						// promote if array
-						if ($.isArray(properties.runtimeProperty)) properties = properties.runtimeProperty;
-						// loop them
-						for (var i in properties) {
-							// get the property
-							var property = properties[i];
+				// get any run time properties
+				var properties = controlClass.runtimeProperties;
+				// if there are runtimeProperties in the class
+				if (properties) {
+					// promote if array
+					if ($.isArray(properties.runtimeProperty)) properties = properties.runtimeProperty;
+					// loop them
+					for (var i in properties) {
+						// get the property
+						var property = properties[i];
+						// if we want inputs and there's is a get function, or outputs and there's set javascript
+						if ((input && property.getPropertyFunction) || (!input && property.setPropertyJavaScript)) {
 							// derive the key
 							var key = control.id + "." + property.type;
 							// add the option

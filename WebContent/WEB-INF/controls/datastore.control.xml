@@ -112,6 +112,7 @@ if (dataStore) {
 							return data.rows[0][i];
 						}
 					}
+					return null;
 				} else {
 					return data;
 				}

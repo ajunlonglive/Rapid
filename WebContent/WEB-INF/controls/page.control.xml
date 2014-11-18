@@ -134,7 +134,6 @@ div.validation {
 	padding: 10px;
 	color: red;
 	font-weight: bold;
-	max-width: 200px;
 }
 
 input.validation {
@@ -178,7 +177,11 @@ span.loading {
             <resource>
                 <type>file</type>
                 <contents>images/gear_24x24.png</contents>
-            </resource>   
+            </resource>
+            <resource>
+                <type>file</type>
+                <contents>images/alert_16x16.png</contents>
+            </resource>    
             <resource>
                 <type>file</type>
                 <contents>images/RapidLogo_60x40.png</contents>
