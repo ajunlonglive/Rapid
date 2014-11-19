@@ -250,6 +250,19 @@ function Property_text(cell, propertyObject, property, refreshHtml) {
 	addListener( input.keyup( function(ev) { updateProperty(propertyObject, property, ev.target.value, refreshHtml); }));
 }
 
+// this function will re-render the propertyObject's table, or dialogue (at some point in the future)
+function refreshPropertyObject(ev, propertyObject) {
+	// only if we got an event and it has refresh
+	if (ev && ev.data.refreshProperties) {
+		// get the target
+		var target = $(ev.target);
+		// refresh properties if appropriate
+		if (target.closest(".propertiesPanelDiv")[0]) showProperties(_selectedControl);
+		// refresh events and actions if appropriate
+		if (target.closest(".actionsPanelDiv")[0]) showEvents(_selectedControl);		
+	}		
+}
+
 function Property_integer(cell, propertyObject, property, refreshHtml) {
 	var value = "";
 	// set the value if it exists (or is 0)
@@ -357,16 +370,14 @@ function Property_select(cell, propertyObject, property, refreshHtml, refreshPro
 		// apply the property update
 		updateProperty(propertyObject, property, ev.target.value, refreshHtml);
 		// refresh the properties if requested
-		if (ev.data.refreshProperties) {
-			showProperties(_selectedControl);
-		}		
+		refreshPropertyObject(ev, propertyObject);	
 	}));
 	// if value is not set, set the top value
 	if (!propertyObject[property.key]) propertyObject[property.key] = select.val();
 	
 }
 
-function Property_checkbox(cell, propertyObject, property, refreshHtml) {
+function Property_checkbox(cell, propertyObject, property, refreshHtml, refreshProperties) {
 	var checked = "";
 	// set the value if it exists
 	if (propertyObject[property.key] && propertyObject[property.key] != "false") checked = "checked='checked'";
@@ -375,8 +386,11 @@ function Property_checkbox(cell, propertyObject, property, refreshHtml) {
 	// get a reference to the form control
 	var input = cell.children().last();
 	// add a listener to update the property
-	addListener( input.change( function(ev) { 
-		updateProperty(propertyObject, property, ev.target.checked, refreshHtml); 
+	addListener( input.change(  {refreshProperties: refreshProperties}, function(ev) {
+		// update the property
+		updateProperty(propertyObject, property, ev.target.checked, refreshHtml);
+		// refresh the property object if requested
+		refreshPropertyObject(ev, propertyObject);
 	}));
 }
 
