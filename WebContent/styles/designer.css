@@ -259,7 +259,7 @@ li.design-control:hover {
 }
 
 div#propertiesPanel {
-	position: fixed;
+	position: absolute;
 	right: 0px;
 	top: 0px;
 	width: 200px;	
@@ -408,7 +408,7 @@ td.styleCell.validationFail {
 	font-size: 11px;
 	display: none;
 	padding-left: 3px;	
-	z-index:10006;
+	z-index:10016;
 }
 
 #styleHint {
@@ -418,7 +418,7 @@ td.styleCell.validationFail {
 	font-size: 11px;
 	display: none;
 	padding-left: 3px;	
-	z-index:10005;
+	z-index:10015;
 }
 
 #styleList {
@@ -431,7 +431,7 @@ td.styleCell.validationFail {
 	font-size: 11px;	
 	list-style-type: none;
 	display: none;
-	z-index:10005;
+	z-index:10015;
 }
 
 #styleList li.styleHint {
