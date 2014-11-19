@@ -394,6 +394,17 @@ function Property_checkbox(cell, propertyObject, property, refreshHtml, refreshP
 	}));
 }
 
+function Property_inputAutoHeight(cell, input, property, refreshHtml, refreshDialogue) {
+	// check if the input control type is large
+	if (input.controlType == "L") {
+		// add a checkbox
+		Property_checkbox(cell, input, property, refreshHtml);
+	} else {
+		// remove this row
+		cell.closest("tr").remove();
+	}
+}
+
 function Property_galleryImages(cell, gallery, property, refreshHtml, refreshDialogue) {
 	
 	// retain a reference to the dialogue (if we were passed one)
