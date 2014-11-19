@@ -721,7 +721,7 @@ public class Page {
     						if (event.getActions().size() > 0) {
     							// page is a special animal so we need to do each of it's event types differently
     							if ("pageload".equals(event.getType())) {
-    								pageloadLines.add("Event_" + event.getType() + "_" + _id + "();\n");
+    								pageloadLines.add("Event_" + event.getType() + "_" + _id + "($.Event('pageload'));\n");
     	        				}    			
     							// reusable action is only invoked via reusable actions on other events - there is no listener
     						}
