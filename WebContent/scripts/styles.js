@@ -531,10 +531,8 @@ function rebuildStyles() {
 	});			
 	// asign the collection to the control
 	_selectedControl.styles = styles;	
-	// resize the selection as the geometry may have changed
-	sizeBorder(_selectedControl);
-	// reposition the select for the same reason
-	positionBorder(_selectedControl.object.offset().left + _panelPinnedOffset, _selectedControl.object.offset().top);
+	// resize and reposition the selection as the geometry may have changed
+	positionAndSizeBorder(_selectedControl);	
 }
 
 // applys the styles in the panel to the control

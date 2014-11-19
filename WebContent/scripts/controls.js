@@ -475,6 +475,14 @@ function Control(controlType, parentControl, jsonControl, loadComplexObjects, pa
 		
 		// retain that this control can be used from other pages, if applicable
 		if (controlClass.canBeUsedFromOtherPages) this.canBeUsedFromOtherPages = true; 
+		
+		// if our control looks like a non visible
+		if (this.object && this.object.is(".nonVisibleControl")) {
+			// add a selection listener
+			this.object.click( function(ev) {
+				selectControl(getControlById($(ev.target).attr("id")));
+			});
+		}
 								
 	} else {
 		var parentType = parentControl.type;
@@ -528,8 +536,15 @@ function rebuildHtml(control) {
 		// run any getDetailsJavaScript function (if present) - this creates a "details" object which is passed to the getData and setData calls
 		if (control._getDetails) control.details = control._getDetails();
 		
-		// arrange the non-visible controls if our control looks like one
-		if (!controlClass.canUserMove) arrangeNonVisibleControls();
+		// if our control looks like a non visible
+		if (control.object.is(".nonVisibleControl")) {
+			// add a selection listener
+			control.object.click( function(ev) {
+				selectControl(getControlById($(ev.target).attr("id")));
+			});
+			// arrange the controls
+			arrangeNonVisibleControls();
+		}
 		
 		// resize and reposition the selection as the geometry may have changed
 		positionAndSizeBorder(control);

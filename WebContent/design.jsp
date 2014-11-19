@@ -95,13 +95,13 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, Rap
 		</div>
 	</div>
 	
-	<iframe id="page" scrolling="no"></iframe>
+	<iframe id="page"></iframe>
 	
 	<div id="designerTools">	 
 			
-		<div id="controlPanelShow" style="z-index:10004"></div>
+		<div id="controlPanelShow" style="z-index:10010"></div>
 		
-		<div id="controlPanel" style="z-index:10005">
+		<div id="controlPanel" style="z-index:10011">
 			<div id="controlPanelPin"><img src="images/pinned_14x14.png" title="unpin" /></div>
 			<div class="buttons">
 				<button id="appAdmin" class="buttonLeft buttonRight" title="Load the Rapid Admin screen">Rapid Admin...</button>
@@ -169,7 +169,7 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, Rap
 													
 		</div>
 		
-		<div id="propertiesPanel" style="z-index:10005">
+		<div id="propertiesPanel" style="z-index:10011">
 		
 			<div class="untilsPanelDiv">
 				<div id="propertiesPanelPin"><img src="images/pinned_14x14.png" title="hide" /></div>
@@ -208,6 +208,8 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, Rap
 		<span id="styleHint"></span>
 		<ul id="styleList"></ul>
 		
+		<div id="designCover"></div>
+		
 		<div id="selectionCover" style="display:none;position:absolute;left:0px;top:0px;z-index:10000;">
 			<div style="background-color:white;width:100%;height:100%;opacity:0.5;" ></div>
 		</div>
@@ -223,7 +225,8 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, Rap
 		<img id="selectionMoveRight" style="display:none;position:absolute;left:0px;top:0px;z-index:10002;" src="images/moveRight_32x32.png" />
 		<img id="selectionInsert" style="display:none;position:absolute;left:0px;top:0px;z-index:10002;" src="images/insert_32x32.png" />
 	
-		<div id="designCover"></div>
+		<div id="desktopCoverBottom" class="desktopCover"></div>
+		<div id="desktopCoverRight" class="desktopCover"></div>
 											
 	</div>	
 	

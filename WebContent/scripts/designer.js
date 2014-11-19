@@ -56,8 +56,12 @@ var _actions = [];
 // a list of available style classes
 var _styleClasses = [];
 
+// the document window
+var _window;
 // the iframe that contains the page we are working on
 var _pageIframe;
+// the iframe window
+var _pageIframeWindow;
 // the div that covers all of the components in design mode so they don't react to clicks
 var _designCover;
 // track whether the mouse is up or down
@@ -401,8 +405,8 @@ function getControlHeight(control) {
 function debuggMouseControl(ev, childControls) {	
 	
 	// calculate the mouseX and mouseY from the event
-	var mouseX = ev.pageX  - _panelPinnedOffset;
-	var mouseY = ev.pageY;
+	var mouseX = ev.pageX  - _panelPinnedOffset + _pageIframeWindow.scrollLeft();
+	var mouseY = ev.pageY + _pageIframeWindow.scrollTop();
 	
 	console.log("X: " + mouseX + ", Y: " + mouseY);
 	
@@ -421,8 +425,8 @@ function getMouseControl(ev, childControls) {
 	if (_mouseDown) {
 		
 		// get the mouse X and Y
-		var mouseX = ev.pageX  - _panelPinnedOffset;
-		var mouseY = ev.pageY;
+		var mouseX = ev.pageX  - _panelPinnedOffset + _pageIframeWindow.scrollLeft();
+		var mouseY = ev.pageY + _pageIframeWindow.scrollTop();
 										
 		// check if we hit the border first		
 		var o = $("#selectionBorder");				
@@ -580,12 +584,14 @@ function sizeBorder(control) {
 	if (control.object.is(".nonVisibleControl")) {
 		width += 1;
 		height += 1;
+		_selectionBorder.css("z-index","10010");
 	} else {
 		width = width * _scale + 2;
 		height = height * _scale + 2;
+		_selectionBorder.css("z-index","10004");
 	}
 	// if the width is greater than the screen reduce by width of border
-	if (width > $(window).width() - _panelPinnedOffset - _scrollBarWidth) width -= 8;
+	if (width > _window.width() - _panelPinnedOffset - _scrollBarWidth) width -= 8;
 	// size the selection border
 	_selectionBorder.css({
 		"width":width, // an extra pixel either side
@@ -629,23 +635,35 @@ function sizeBorder(control) {
 
 // this positions the selection border inclduing the mouseDown Offsets which should be zero when the mouse is not moving
 function positionBorder(x, y) {
-	// position the selection border
-	_selectionBorder.css({
-		left: x + _mouseDownXOffset - 8, // 8 = padding + border + 1 pixel	
-		top: y + _mouseDownYOffset - 8 // 8 = padding + border + 1 pixel
-	});		
+	// check we got something
+	if (x != null) {
+		// if x is actually a control
+		if (typeof x === "object" && x.object) {
+			// check if nonVisualControl
+			if (x.object.is(".nonVisibleControl")) {
+				positionBorder(x.object.offset().left, x.object.offset().top);
+			} else {
+				positionBorder(
+					x.object.offset().left - _pageIframeWindow.scrollLeft() + _panelPinnedOffset, 
+					x.object.offset().top - _pageIframeWindow.scrollTop()
+				);
+			}	
+		} else {			
+			// position the selection border
+			_selectionBorder.css({
+				left: x + _mouseDownXOffset - 8, // 8 = padding + border + 1 pixel	
+				top: y + _mouseDownYOffset - 8 // 8 = padding + border + 1 pixel
+			});				
+		}
+	}
 }
 
 // this uses both the above functions for a specific control
 function positionAndSizeBorder(control) {
 	// check we were given a control
 	if (control) {
-		// check if nonVisualControl
-		if (control.object.is(".nonVisibleControl")) {
-			positionBorder(control.object.offset().left, control.object.offset().top - $(window).scrollTop());
-		} else {
-			positionBorder(control.object.offset().left + _panelPinnedOffset, control.object.offset().top);
-		}		
+		// position border
+		positionBorder(control);
 		// size the border in case moving it has changed it's geometery
 		sizeBorder(control);
 	}
@@ -1559,6 +1577,9 @@ function getSavePageData() {
 	var selectedControlId = null;
 	if (_selectedControl) selectedControlId = _selectedControl.id;
 	
+	// remove the in-page iframe resize lister
+	_page.object.find("#hacky-scrollbar-resize-listener").remove();
+	
 	// get all of the controls
 	var controls = getControls();
 	// create a list of roles used on this page
@@ -1600,7 +1621,7 @@ function getSavePageData() {
 	
 	// get a page object based on the page "control" (this creates a single property array called childControls)
 	var pageObject = getDataObject(_page);
-			
+					
 	// get the roles from the app
 	var roles = _version.roles;	
 	// get all possible combinations of the roles in this page
@@ -1738,7 +1759,7 @@ function getSavePageData() {
     		    		    	
     }
     
-    // add the page html this is used by the designed and is always the html for the combination with the most roles
+    // add the page html this is used by the designer and is always the html for the combination with the most roles
 	pageObject.htmlBody = pageObject.rolesHtml[0].html;
 		
 	// stringify the page control object and add to the page (this creates an array called childControls)
@@ -1754,6 +1775,9 @@ function getSavePageData() {
 	
 	// show message
 	$("#rapid_P11_C7_").html("Sending html");
+	
+	// re-instate the iframe resize listener
+	addIFrameResizeListener();
 	
 	// return it
 	return pageData;	
@@ -1962,18 +1986,28 @@ $(document).ready( function() {
 
 	_scrollBarWidth = (w1 - w2);
 			
-	// check for unsaved page changes if we move away
-	$(window).on('beforeunload', function(){
-		  if (_dirty) return 'You have unsaved changes.';
+	// the window we are working in
+	_window = $(window);	
+	// attach a call to the window resize function to the window resize event listener
+	_window.resize("windowResize", windowResize);	
+	// reposition the selection if there's a scroll
+	_window.scroll( function(ev) {
+		positionAndSizeBorder(_selectedControl);
 	});
-			
+	// check for unsaved page changes if we move away
+	_window.on('beforeunload', function(){
+		if (_dirty) return 'You have unsaved changes.';
+	});
+	
+	
 	// the iframe in which we load the page
-	_pageIframe = $("#page");
+	_pageIframe = $("#page");		
+	// the iframe window that tells us about it's scroll positions
+	_pageIframeWindow = $(_pageIframe[0].contentWindow);
+			
 	// the div that covers all of the components in design mode so they don't react to clicks
 	_designCover = $("#designCover");
-	// attach a call to the window resize function to the window resize event listener
-	$(window).resize("windowResize",windowResize);
-	
+			
 	// load the action classes
 	$.ajax({
     	url: "designer?action=getSystemData",
@@ -2049,6 +2083,11 @@ $(document).ready( function() {
 	// when we load an app the iframe is refreshed with the resources for that app and page
 	_pageIframe.load( function () {	
 		
+		// reposition any selection if the iframe is scrolled
+		_pageIframeWindow.scroll( function(ev){
+			positionBorder(_selectedControl);
+		});
+						
 		// scale the page so the loading message fits
 		if (_scale != 1) {
 			$(_pageIframe[0].contentWindow.document.body).css({
@@ -2124,11 +2163,11 @@ $(document).ready( function() {
 			        	}
 			        	
 			        	// show it after a pause to allow the new style sheets to apply
-			        	window.setTimeout( function() {
-			        		// fire an iframe resize
-			        		_pageIframe.resize();
+			        	window.setTimeout( function() {			        		
 			        		// show the page object
-			        		_page.object.show();			        		
+			        		_page.object.show();	
+			        		// resize the screen
+			        		windowResize("page loaded");
 		            	}, 200);
 			    					        	
 			        	// make everything visible
@@ -2164,7 +2203,9 @@ $(document).ready( function() {
 			        		$("#controlControls").show();
 			        	}
 			        	
-			        	
+			        	// listener for resizes in the iFrame
+			        	addIFrameResizeListener();
+			        				        	
 		        	} catch (ex) {
 		        		
 		        		// ensure the designer is visible
@@ -2173,7 +2214,7 @@ $(document).ready( function() {
 		        		alert("Error loading page : " + ex);	
 		        		
 		        	}
-		       		        		        		        			        			        		
+		        			       		        		        		        			        			        		
 		        } // success function
 		        
 			}); // ajax
@@ -3018,12 +3059,10 @@ function windowResize(ev) {
 	// get the caller of this function
 	var caller = ev.data || ev;
 	
-	// get the window object
-	var win = $(window);
 	// get the window width
-	var width = win.width();
+	var width = _window.width();
 	// get the window height
-	var height = win.height();
+	var height = _window.height();
 				
 	// get the control panel
 	var controlPanel = $("#controlPanel");		
@@ -3039,7 +3078,9 @@ function windowResize(ev) {
 	_pageIframe.css("height","auto");
 	// get the iFrame height by it's contents
 	var iframeHeight = $(_pageIframe[0].contentDocument).height();
-		
+	// get the iFrame width by it's contents
+	var iframeWidth = $(_pageIframe[0].contentDocument).width();
+	
 	// get its current height (less the combined top and bottom padding)
 	var controlPanelHeight = controlPanel.outerHeight(true);
 		
@@ -3063,22 +3104,49 @@ function windowResize(ev) {
 			
 	// if the device has a height scale and apply
 	if (device.height) {
-		// assume the width and heigth from the device
-		var width = device.width;
-		var height = device.height;
+		// get the width and heigth from the device and scale
+		var devWidth = device.width * _scale / device.scale;
+		var devHeight = device.height * _scale / device.scale;
 		// if landscape swap width and height
 		if (_orientation == "L") {
-			width =  device.height;
-			height = device.width;
+			var tempHeight = devHeight;
+			devHeight = devWidth;
+			devWidth = tempHeight;
 		} 
-		// adjust iframe position, to scalled width and height
+		// assign the dev width and height to the cover
+		var coverWidth = devWidth;
+		var coverHeight = devHeight;
+		// adjust the dev width and height by any scroll bars
+		devWidth = devWidth + (iframeHeight > devHeight ? _scrollBarWidth : 0);
+		devHeight = devHeight + (iframeWidth > devWidth ? _scrollBarWidth : 0);		
+		// adjust iframe position, to scalled width and height, allowing extra if scroll bars are required
 		_pageIframe.css({
 			left: _panelPinnedOffset,
-			width: _scale / device.scale * width,
-			height: _scale / device.scale * height,
+			width: devWidth,
+			height: devHeight,
 			"border-right": "1px solid black",
 			"border-bottom": "1px solid black"
 		});				
+		// adjust the cover
+		_designCover.css({
+			top: 0,
+			left: _panelPinnedOffset,
+			right: "auto",
+			bottom: "auto",			
+			width: coverWidth,
+			height: coverHeight
+		});
+		// position the desktop covers
+		$("#desktopCoverBottom").css({
+			height: height - devHeight - 1,
+			width: width,
+			top: devHeight + 1
+		}).show();		
+		$("#desktopCoverRight").css({
+			height: height,
+			width: width - devWidth - 1 - _panelPinnedOffset,
+			left: _panelPinnedOffset + devWidth + 1
+		}).show();
 	} else {
 		// adjust iframe position, width and height
 		_pageIframe.css({
@@ -3088,6 +3156,17 @@ function windowResize(ev) {
 			"border-right": "0px",
 			"border-bottom": "0px"
 		});
+		// adjust the cover to be full-screen
+		_designCover.css({
+			top: 0,
+			left: 0,
+			right: 0,
+			bottom: 0,
+			width: "auto",
+			height: "auto"
+		});
+		// hide the desktop covers
+		$(".desktopCover").hide();
 	}
 	
 	// only if we have a page and it's object
@@ -3112,6 +3191,29 @@ function windowResize(ev) {
 	// resize / reposition the selection
 	positionAndSizeBorder(_selectedControl);
 	
+}
+
+function addIFrameResizeListener() {
+
+	//thanks to https://gist.github.com/OrganicPanda/8222636
+	
+	// Create an invisible iframe
+	var iframe = _pageIframe[0].contentWindow.document.createElement('iframe');
+	iframe.id = "hacky-scrollbar-resize-listener";
+	iframe.style.cssText = 'height: 0; background-color: transparent; margin: 0; padding: 0; overflow: hidden; border-width: 0; position: absolute; width: 100%;';
+	 
+	// Register our event when the iframe loads
+	iframe.onload = function() {
+		// The trick here is that because this iframe has 100% width 
+		// it should fire a window resize event when anything causes it to 
+		// resize (even scrollbars on the outer document)
+		iframe.contentWindow.addEventListener('resize', function() {
+			windowResize("iframe");
+		});
+	};
+	 
+	// Stick the iframe somewhere out of the way
+	_pageIframe[0].contentWindow.document.body.appendChild(iframe);
 }
 
 function fileuploaded(fileuploadframe) {
