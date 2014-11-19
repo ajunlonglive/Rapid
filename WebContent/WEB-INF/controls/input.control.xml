@@ -66,6 +66,12 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 return [["N","Normal"],["L","Large"],["P","Password"],["R","Readonly"]];
 					]]>
 	            </getValuesFunction>               
+	        </property>
+	        <property>
+	            <key>autoHeight</key>
+	            <name>Auto height</name>
+	            <setConstructValueFunction>return false;</setConstructValueFunction>
+	            <changeValueJavaScript>inputAutoHeight</changeValueJavaScript>	               
 	        </property>	        
 	    </properties>
 	    
@@ -76,7 +82,7 @@ var value = "";
 if (this.value) value = this.value  
 switch (this.controlType) {
 	case "N" : return "<input id='" + this.id + "' value='" + value + "' type='text'" + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + " class='input" + getStyleClasses(this) + "'></input>";
-	case "L" : return "<textarea id='" + this.id + "' class='input" + getStyleClasses(this) + "' " + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + ">" + value + "</textarea>";
+	case "L" : return "<textarea id='" + this.id + "' class='input" + getStyleClasses(this) + (this.autoHeight ? " autoheight" : "")  + "' " + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + ">" + value + "</textarea>";
 	case "P" : return "<input id='" + this.id + "' value='" + value + "' type='password'" + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + " class='input" + getStyleClasses(this) + "'></input>";
 	case "R" : return "<input id='" + this.id + "' value='" + value + "' type='text'" + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + " class='input" + getStyleClasses(this) + "' readonly='readonly'></input>";
 }      

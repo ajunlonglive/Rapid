@@ -212,15 +212,12 @@ jQuery(function($) {
   // ignore these keys
   var ignore = [8,9,13,33,34,35,36,37,38,39,40,46];
 
-  // use keypress instead of keydown as that's the only
-  // place keystrokes could be canceled in Opera
-  var eventName = 'keypress';
-
   // handle textareas with maxlength attribute
   $('textarea[maxlength]')
 
-    // this is where the magic happens
-    .on(eventName, function(event) {
+    // use keypress instead of keydown as that's the only
+  	// place keystrokes could be canceled in Opera
+    .on('keypress', function(event) {
       var self = $(this),
           maxlength = self.attr('maxlength'),
           code = $.data(this, 'keycode');
@@ -240,7 +237,23 @@ jQuery(function($) {
     .on('keydown', function(event) {
       $.data(this, 'keycode', event.keyCode || event.which);
     });
+  
+});
 
+// this applies and enforces the autoheight on textareas
+jQuery(function($) {
+
+	// handle textareas with autoheight class
+	$('textarea.autoheight')
+  
+    // use keypress instead of keydown as that's the only
+  	// place keystrokes could be canceled in Opera
+    .on('keypress', function(ev) {
+    	while($(this).outerHeight() < this.scrollHeight + parseFloat($(this).css("borderTopWidth")) + parseFloat($(this).css("borderBottomWidth"))) {
+            $(this).height($(this).height()+1);
+        };
+    })
+  
 });
 
 // override the much-used ajax call for both normal and Rapid Mobile 
