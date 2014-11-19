@@ -641,7 +641,10 @@ function positionBorder(x, y) {
 		if (typeof x === "object" && x.object) {
 			// check if nonVisualControl
 			if (x.object.is(".nonVisibleControl")) {
-				positionBorder(x.object.offset().left, x.object.offset().top);
+				positionBorder(
+					x.object.offset().left - _window.scrollLeft(), 
+					x.object.offset().top - _window.scrollTop()
+				);
 			} else {
 				positionBorder(
 					x.object.offset().left - _pageIframeWindow.scrollLeft() + _panelPinnedOffset, 
@@ -1576,10 +1579,7 @@ function getSavePageData() {
 	// retain the id of any selected control
 	var selectedControlId = null;
 	if (_selectedControl) selectedControlId = _selectedControl.id;
-	
-	// remove the in-page iframe resize lister
-	_page.object.find("#hacky-scrollbar-resize-listener").remove();
-	
+		
 	// get all of the controls
 	var controls = getControls();
 	// create a list of roles used on this page
@@ -1775,10 +1775,7 @@ function getSavePageData() {
 	
 	// show message
 	$("#rapid_P11_C7_").html("Sending html");
-	
-	// re-instate the iframe resize listener
-	addIFrameResizeListener();
-	
+		
 	// return it
 	return pageData;	
 }
@@ -2202,9 +2199,6 @@ $(document).ready( function() {
 			        		$("#pageSave").removeAttr("disabled");
 			        		$("#controlControls").show();
 			        	}
-			        	
-			        	// listener for resizes in the iFrame
-			        	addIFrameResizeListener();
 			        				        	
 		        	} catch (ex) {
 		        		
@@ -3191,29 +3185,6 @@ function windowResize(ev) {
 	// resize / reposition the selection
 	positionAndSizeBorder(_selectedControl);
 	
-}
-
-function addIFrameResizeListener() {
-
-	//thanks to https://gist.github.com/OrganicPanda/8222636
-	
-	// Create an invisible iframe
-	var iframe = _pageIframe[0].contentWindow.document.createElement('iframe');
-	iframe.id = "hacky-scrollbar-resize-listener";
-	iframe.style.cssText = 'height: 0; background-color: transparent; margin: 0; padding: 0; overflow: hidden; border-width: 0; position: absolute; width: 100%;';
-	 
-	// Register our event when the iframe loads
-	iframe.onload = function() {
-		// The trick here is that because this iframe has 100% width 
-		// it should fire a window resize event when anything causes it to 
-		// resize (even scrollbars on the outer document)
-		iframe.contentWindow.addEventListener('resize', function() {
-			windowResize("iframe");
-		});
-	};
-	 
-	// Stick the iframe somewhere out of the way
-	_pageIframe[0].contentWindow.document.body.appendChild(iframe);
 }
 
 function fileuploaded(fileuploadframe) {
