@@ -147,13 +147,13 @@ public class Datacopy extends Action {
 					// if not update to empty string
 					copyType = "";
 				} else {
+					
 					// add the copy type to the js
 					js += ", '" + copyType + "'";
 					// check the copy type
 					if ("child".equals(copyType)) {
-						
-						js += ", null";
-						
+						// no merge data object
+						js += ", null";						
 						// look for a merge field
 						String childField = getProperty("childField");
 						// check if got we got one
@@ -164,7 +164,16 @@ public class Datacopy extends Action {
 							// add it
 							js += ", '" + childField + "'";
 						}
+						
+					} else if ("position".equals(copyType)) {	
+						
+						// no merge data object
+						js += ", null";						
+						// look for a search field
+						js += ", " + Control.getDataJavaScript(application, page, getProperty("positionControl"), getProperty("positionField"));
+						
 					} else if ("search".equals(copyType)) {
+						
 						// get the search data
 						js += ", " + Control.getDataJavaScript(application, page, getProperty("searchSource"), getProperty("searchSourceField"));
 						// look for a search field

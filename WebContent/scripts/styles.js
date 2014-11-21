@@ -117,6 +117,7 @@ var _styleRules = {
 "top" : {"values" : "<length>|<percentage>|auto"},
 "vertical-align" : {"values" : "baseline|sub|super|top|text-top|middle|bottom|text-bottom|<percentage>|<length>"},
 "visibility" : {"values" : "visible|hidden|collapse"},
+"white-space" : {"values" : "normal|nowrap|pre|pre-line|pre-wrap|initial|inherit"},
 "width" : {"values" : "<length>|<percentage>|auto"},
 "z-index" : {"values" : "auto|<integer>"}
 };

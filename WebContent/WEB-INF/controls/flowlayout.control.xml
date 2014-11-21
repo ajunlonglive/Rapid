@@ -63,6 +63,17 @@ return "<div id='" + this.id + "' class='flowLayoutCell'>" + this.text + "</div>
 	        </event>
 	    </events>
 	    
+	    <styles>
+	        <style>
+	            <name>Flow layout cell</name>
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id + " div.flowLayoutCell";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>   
+	    </styles>
+	    
 	    <runtimeProperties>
 	   	    <runtimeProperty>
 	   	        <type>cellIndex</type>
@@ -111,6 +122,9 @@ if (selectedCell[0]) {
 	            <type>css</type>
 	            <contents>
 <![CDATA[
+.flowLayout {
+	clear: both;
+}
 .flowLayoutCell {
 	float: left;
 }
@@ -215,7 +229,7 @@ return { cellWidth: this.cellWidth };
 	   		    
 	    <styles>
 	        <style>
-	            <name>Layout</name>
+	            <name>Flow layout</name>
 	            <getAppliesToFunction>
 					<![CDATA[	      
 return "#" + this.id;
@@ -223,7 +237,7 @@ return "#" + this.id;
 	            </getAppliesToFunction>
 	        </style>   
 	        <style>
-	            <name>Layout cells</name>
+	            <name>Flow layout cells</name>
 	            <getAppliesToFunction>
 					<![CDATA[	      
 return "#" + this.id + " div.flowLayoutCell";

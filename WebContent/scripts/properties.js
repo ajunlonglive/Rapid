@@ -1323,6 +1323,8 @@ function Property_navigationSessionVariables(cell, navigation, property, refresh
 	
 		// initialise the collection if need be
 		if (!navigation.sessionVariables || navigation.sessionVariables == "[]") navigation.sessionVariables = [];
+		// reset if there are no page session variables
+		if (page.sessionVariables.length == 0) navigation.sessionVariables = [];
 		// retrieve the collection
 		var sessionVariables = navigation.sessionVariables;
 		
@@ -1339,7 +1341,7 @@ function Property_navigationSessionVariables(cell, navigation, property, refresh
 		
 		// add a header
 		table.append("<tr><td><b>Variable</b></td><td><b>Input</b></td><td><b>Field</b></td></tr>");
-	
+						
 		// show all session parameters in the target page
 		for (var i in page.sessionVariables) {
 			
@@ -2277,6 +2279,28 @@ function Property_datacopyType(cell, datacopyAction, property, refreshHtml, refr
 function Property_datacopyChildField(cell, datacopyAction, property, refreshHtml, refreshProperties) {
 	// only if datacopyAction type is child
 	if (datacopyAction.copyType == "child") {
+		// show the duration
+		Property_text(cell, datacopyAction, property, refreshHtml);
+	} else {
+		// remove this row
+		cell.closest("tr").remove();
+	}
+}
+
+function Property_datacopyPositionControl(cell, datacopyAction, property, refreshHtml, refreshProperties) {
+	// only if datacopyAction type is child
+	if (datacopyAction.copyType == "position") {
+		// show the duration
+		Property_select(cell, datacopyAction, property, refreshHtml);
+	} else {
+		// remove this row
+		cell.closest("tr").remove();
+	}
+}
+
+function Property_datacopyPositionField(cell, datacopyAction, property, refreshHtml, refreshProperties) {
+	// only if datacopyAction type is child
+	if (datacopyAction.copyType == "position") {
 		// show the duration
 		Property_text(cell, datacopyAction, property, refreshHtml);
 	} else {
