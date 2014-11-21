@@ -242,15 +242,30 @@ jQuery(function($) {
 
 // this applies and enforces the autoheight on textareas
 jQuery(function($) {
-
+		
 	// handle textareas with autoheight class
 	$('textarea.autoheight')
-  
+	
+	.each( function() {
+		// retain original height
+		$.data(this, 'height', $(this).height());
+	})
+	  	
     // use keypress instead of keydown as that's the only
   	// place keystrokes could be canceled in Opera
     .on('keypress', function(ev) {
+    	// grow
     	while($(this).outerHeight() < this.scrollHeight + parseFloat($(this).css("borderTopWidth")) + parseFloat($(this).css("borderBottomWidth"))) {
-            $(this).height($(this).height()+1);
+            $(this).height($(this).height() + 1);
+        };
+    })
+    
+    .on('blur', function(ev) {
+    	// reset the height
+    	$(this).height($.data(this, 'height'));
+    	// grow again
+    	while($(this).outerHeight() < this.scrollHeight + parseFloat($(this).css("borderTopWidth")) + parseFloat($(this).css("borderBottomWidth"))) {
+            $(this).height($(this).height() + 1);
         };
     })
   

@@ -2162,11 +2162,11 @@ $(document).ready( function() {
 			        	// show it after a pause to allow the new style sheets to apply
 			        	window.setTimeout( function() {			        		
 			        		// show the page object
-			        		_page.object.show();	
+			        		_page.object.show();				        		
 			        		// resize the screen
 			        		windowResize("page loaded");
 		            	}, 200);
-			    					        	
+			        	
 			        	// make everything visible
 			        	showDesigner();
 			        	
@@ -3013,11 +3013,36 @@ function arrangeNonVisibleControls() {
 	}	
 }
 
+// this gets the working height from the max of the control panel, iframe, properties panel, and screen 
+function getHeight() {
+		
+	// get the window height
+	var height = _window.height();
+				
+	// get the control panel
+	var controlPanel = $("#controlPanel");		
+	
+	// get the properties panel
+	var propertiesPanel = $("#propertiesPanel");
+				
+	// get its current height (less the combined top and bottom padding)
+	var controlPanelHeight = controlPanel.outerHeight(true);
+		
+	// get its current height
+	var propertiesPanelHeight = propertiesPanel.outerHeight(true);
+	
+	// get the iFrame height by it's contents
+	var iframeHeight = $(_pageIframe[0].contentDocument).height();	
+
+	// increase height to the tallest of the window, the panels, or the iFrame
+	height = Math.max(height, controlPanelHeight, propertiesPanelHeight, iframeHeight);
+	
+	return height;
+	
+}
+
 // this makes sure the properties panel is visible and tall enough for all properties
 function showPropertiesPanel() {
-	
-	// resize the window to accomodate the panel
-	windowResize("showPropertiesPanel");
 	
 	// set all controls to readonly if the page is locked
 	if (_locked) {		
@@ -3042,8 +3067,8 @@ function showPropertiesPanel() {
 		propertiesDialogues.find("img").off("mousedown");
 	}
 	
-	// show the panel
-	$("#propertiesPanel").show("slide", {direction: "right"}, 200);
+	// size the panel (less padding) and show
+	$("#propertiesPanel").css("height",getHeight() - 20).show("slide", {direction: "right"}, 200);
 				
 }
 
@@ -3055,9 +3080,9 @@ function windowResize(ev) {
 	
 	// get the window width
 	var width = _window.width();
-	// get the window height
-	var height = _window.height();
-				
+	// use the function to get our working height
+	var height = getHeight();
+	
 	// get the control panel
 	var controlPanel = $("#controlPanel");		
 	// set it's height to auto
@@ -3067,25 +3092,11 @@ function windowResize(ev) {
 	var propertiesPanel = $("#propertiesPanel");
 	// set it's height to auto
 	propertiesPanel.css("height","auto");
-			
-	// reset the page iFrame height so non-visual controls aren't too far down the page
-	_pageIframe.css("height","auto");
+		
 	// get the iFrame height by it's contents
 	var iframeHeight = $(_pageIframe[0].contentDocument).height();
 	// get the iFrame width by it's contents
 	var iframeWidth = $(_pageIframe[0].contentDocument).width();
-	
-	// get its current height (less the combined top and bottom padding)
-	var controlPanelHeight = controlPanel.outerHeight(true);
-		
-	// get its current height
-	var propertiesPanelHeight = propertiesPanel.outerHeight(true);
-			
-	// log
-	//console.log("caller = " + caller + ", window = " + height + ", control panel = " + controlPanelHeight + ", properties panel = " + propertiesPanelHeight + ", iframe = " + iframeHeight);
-		
-	// increase height to the tallest of the window, the panels, or the iFrame
-	height = Math.max(height, controlPanelHeight, propertiesPanelHeight, iframeHeight);
 	
 	// adjust controlPanel height, less it's padding
 	controlPanel.css({height: height - 20});
@@ -3181,7 +3192,7 @@ function windowResize(ev) {
 			});	
 		} // scale check
 	} // page check	
-	
+		
 	// resize / reposition the selection
 	positionAndSizeBorder(_selectedControl);
 	
