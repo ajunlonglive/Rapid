@@ -709,26 +709,7 @@ public class Page {
 	
 	// this includes functions to iteratively call any control initJavaScript and set up any event listeners
     private void getPageLoadLines(List<String> pageloadLines, List<Control> controls) throws JSONException {
-    	if (controls != null) {
-    		// if we're at the root (look through the page events)
-    		if (controls.equals(_controls)) {
-    			// check for page events
-    			if (_events != null) {
-    				// loop page events
-        			for (Event event : _events) {        				
-        				// only if there are actually some actions to invoke
-    					if (event.getActions() != null) {
-    						if (event.getActions().size() > 0) {
-    							// page is a special animal so we need to do each of it's event types differently
-    							if ("pageload".equals(event.getType())) {
-    								pageloadLines.add("Event_" + event.getType() + "_" + _id + "($.Event('pageload'));\n");
-    	        				}    			
-    							// reusable action is only invoked via reusable actions on other events - there is no listener
-    						}
-    					}         				
-        			}
-    			}    
-    		}
+    	if (controls != null) {    		
     		// loop controls
     		for (Control control : controls) {
     			// check for any initJavaScript to call
@@ -758,7 +739,7 @@ public class Page {
     			}
     			// now call iteratively for child controls (of this [child] control, etc.)
     			if (control.getChildControls() != null) getPageLoadLines(pageloadLines, control.getChildControls());     				
-    		}
+    		}    		
     	}    	
     }
     
@@ -962,7 +943,7 @@ public class Page {
 			
 			// get any control initJavaScript event listeners into he pageloadLine (goes into $(document).ready function)
 			getPageLoadLines(_pageloadLines, _controls);
-			
+									      					
 			// sort the page load lines
 			Collections.sort(_pageloadLines, new Comparator<String>() {
 				@Override
@@ -974,6 +955,23 @@ public class Page {
 					return i2 - i1;						
 				}}
 			);
+			
+			// check for page events (this is here so all listeners are registered by now)
+			if (_events != null) {
+				// loop page events
+    			for (Event event : _events) {        				
+    				// only if there are actually some actions to invoke
+					if (event.getActions() != null) {
+						if (event.getActions().size() > 0) {
+							// page is a special animal so we need to do each of it's event types differently
+							if ("pageload".equals(event.getType())) {
+								_pageloadLines.add("Event_" + event.getType() + "_" + _id + "($.Event('pageload'));\n");
+	        				}    			
+							// reusable action is only invoked via reusable actions on other events - there is no listener
+						}
+					}         				
+    			}
+			}  
 			
 			// open the page loaded function
 			jsStringBuilder.append("$(document).ready( function() {\n");

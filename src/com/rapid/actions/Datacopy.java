@@ -165,7 +165,7 @@ public class Datacopy extends Action {
 							js += ", '" + childField + "'";
 						}
 						
-					} else if ("position".equals(copyType)) {	
+					} else if ("position".equals(copyType) || "replace".equals(copyType)) {	
 						
 						// no merge data object
 						js += ", null";						

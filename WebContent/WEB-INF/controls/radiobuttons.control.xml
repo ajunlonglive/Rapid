@@ -93,7 +93,7 @@ if (this.buttons) {
 		var label = button.label;
 		var value = (this.codes ? button.value : label);
 		if (this.buttonposition == 'R') radiobuttonHtml += "<span>" + label + "</span>";
-		radiobuttonHtml += "<input type='radio' name='" + this.id + "' value='" + value + "' " + (this.value == value ? "checked='checked'" :  "") + " />";
+		radiobuttonHtml += "<input type='radio' name='" + this.id + "' value='" + value + "' " + (this.value == value ? "checked='checked'" :  "") + "></input>";
 		if (this.buttonposition == 'L') radiobuttonHtml += "<span>" + label + "</span>";
 		if (this.layout == 'V') radiobuttonHtml += "<br/>";
 	}
@@ -135,7 +135,11 @@ if (data != null && data !== undefined) {
 		}
 	} 
 	if (value) {
-		radiobuttons.children("input[type=radio][value=" + value + "]").prop('checked',true);
+		var button = radiobuttons.children("input[type=radio][value=" + value + "]");
+		if (button[0]) {
+			button.prop('checked',true);	
+			button.trigger("change");		
+		}		
 	}
 }		        
         
