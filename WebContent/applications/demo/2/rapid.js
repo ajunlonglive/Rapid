@@ -18,8 +18,10 @@ function Action_datacopy(data, outputs, copyType, copyData, field) {
 			var output = outputs[i];	
 			var outputData = null;	
 			switch (copyType) {
-				case "append" :
-					
+				case "append" :					
+					if (!output.details) output.details = {};						
+					output.details.append = true;
+					outputData = data;					
 				break;
 				case "row" :
 					var mergeData = window["getData_" + output.type](output.id, data, null, output.details);
@@ -32,9 +34,17 @@ function Action_datacopy(data, outputs, copyType, copyData, field) {
 					outputData = mergeDataObjects(mergeData, data, copyType, field);
 				break;
 				case "position" :
-					if (parseInt(field)) {
-						outputData = {fields:data.fields, rows:[data.rows[field - 1]], selectedRow: field * 1};
+					if (parseInt(field)) {						
+						data.selectedRow = field;				
+						outputData = {fields:data.fields, rows:[data.rows[field - 1]], selectedRow: field};
 					} 				
+				break;
+				case "replace" :
+					if (parseInt(field)) {	
+						if (!output.details) output.details = {};						
+						output.details.position = parseInt(field);
+						outputData = data;
+					} 
 				break;
 				case "search" :
 					outputData = mergeDataObjects(copyData, data, copyType, field);
@@ -430,7 +440,7 @@ function setData_checkbox(id, data, field, details) {
 
 function getData_dataStore(ev, id, field, details) {
   var data = null;
-  var dataStore = getDataStore(id,details);
+  var dataStore = getDataStore(id, details);
   if (dataStore) {
   	if (details.id) id = details.id;	
   	var dataString = dataStore[_appId + "_" + id];
@@ -458,32 +468,31 @@ function getData_dataStore(ev, id, field, details) {
 }
 
 function setData_dataStore(id, data, field, details) {
-  var dataStore = getDataStore(id,details);
+  var dataStore = getDataStore(id, details);
   if (dataStore) {
   	if (details.id) id = details.id;
   	if (data != null && data !== undefined) {
   		data = makeDataObject(data, field);
+  		if (details.append) {
+  			var dataString = dataStore[_appId + "_" + id];
+  			if (dataString) {
+  				var sourceData = JSON.parse(dataString);
+  				sourceData.rows.push(data.rows[0]);
+  				data = sourceData;
+  			}
+  		} else if (parseInt(details.position)) {
+  			var dataString = dataStore[_appId + "_" + id];
+  			if (dataString) {
+  				var sourceData = JSON.parse(dataString);
+  				sourceData.rows[details.position - 1] = data.rows[0];
+  				data = sourceData;
+  			} 
+  		}
   		dataStore[_appId + "_" + id] = JSON.stringify(data);
   	} else {
   		dataStore[_appId + "_" + id] = null;
   	}
   }
-}
-
-function getProperty_dataStore_selectedRowNumber(ev, id, field, details) {
-  var data = null;
-  var dataStore = getDataStore(id,details);
-  if (dataStore) {
-  	if (details.id) id = details.id;	
-  	var dataString = dataStore[_appId + "_" + id];
-  	if (dataString) {
-  		var data = JSON.parse(dataString);
-  		if (data) {		
-  			return data.selectedRow;
-  		}	 
-  	} 			
-  }
-  return data;
 }
 
 function getData_date(ev, id, field, details) {
@@ -735,7 +744,12 @@ function setData_radiobuttons(id, data, field, details) {
   		}
   	} 
   	if (value) {
-  		radiobuttons.children("input[type=radio][value=" + value + "]").prop('checked',true);
+  		var button = radiobuttons.children("input[type=radio][value=" + value + "]");
+  		if (button[0]) {
+  			button.prop('checked',true);	
+  			button.trigger("change");		
+  			//window["Event_change_" + id]();
+  		}		
   	}
   }
 }

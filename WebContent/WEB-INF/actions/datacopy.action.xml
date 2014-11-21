@@ -65,7 +65,7 @@ return "<option value=''>None</option>" + getInputOptions(this.dataSource);
 	            <name>Copy type</name>
 	            <setConstructValueFunction>return false;</setConstructValueFunction>
 	            <changeValueJavaScript>datacopyType</changeValueJavaScript>	
-	            <getValuesFunction>return [[false,"copy"],["row","row merge"],["child","child merge"],["position","position"],["search","search"]]</getValuesFunction>	            
+	            <getValuesFunction>return [[false,"copy"],["append","append"],["row","row merge"],["child","child merge"],["position","position fetch"],["replace","position replace"],["search","search"]]</getValuesFunction>	            
 	        </property>  
 	        
 	        <property>
@@ -128,8 +128,10 @@ function Action_datacopy(data, outputs, copyType, copyData, field) {
 			var output = outputs[i];	
 			var outputData = null;	
 			switch (copyType) {
-				case "append" :
-					
+				case "append" :					
+					if (!output.details) output.details = {};						
+					output.details.append = true;
+					outputData = data;					
 				break;
 				case "row" :
 					var mergeData = window["getData_" + output.type](output.id, data, null, output.details);
@@ -142,19 +144,17 @@ function Action_datacopy(data, outputs, copyType, copyData, field) {
 					outputData = mergeDataObjects(mergeData, data, copyType, field);
 				break;
 				case "position" :
-					if (parseInt(field)) {
-						
-						data.selectedRow = field;
-						
-						/*
-						
-						Need to write the above back to the source data object and set! maybe...
-						
-						*/
-						
-												
+					if (parseInt(field)) {						
+						data.selectedRow = field;				
 						outputData = {fields:data.fields, rows:[data.rows[field - 1]], selectedRow: field};
 					} 				
+				break;
+				case "replace" :
+					if (parseInt(field)) {	
+						if (!output.details) output.details = {};						
+						output.details.position = parseInt(field);
+						outputData = data;
+					} 
 				break;
 				case "search" :
 					outputData = mergeDataObjects(copyData, data, copyType, field);

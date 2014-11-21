@@ -112,7 +112,7 @@ return {storageType: this.storageType, merge: this.mergeData, id: this.id};
 	    <getDataFunction>
 	        <![CDATA[        
 var data = null;
-var dataStore = getDataStore(id,details);
+var dataStore = getDataStore(id, details);
 if (dataStore) {
 	if (details.id) id = details.id;	
 	var dataString = dataStore[_appId + "_" + id];
@@ -142,11 +142,26 @@ return data;
 	    
 	    <setDataJavaScript>
 	        <![CDATA[	  
-var dataStore = getDataStore(id,details);
+var dataStore = getDataStore(id, details);
 if (dataStore) {
 	if (details.id) id = details.id;
 	if (data != null && data !== undefined) {
 		data = makeDataObject(data, field);
+		if (details.append) {
+			var dataString = dataStore[_appId + "_" + id];
+			if (dataString) {
+				var sourceData = JSON.parse(dataString);
+				sourceData.rows.push(data.rows[0]);
+				data = sourceData;
+			}
+		} else if (parseInt(details.position)) {
+			var dataString = dataStore[_appId + "_" + id];
+			if (dataString) {
+				var sourceData = JSON.parse(dataString);
+				sourceData.rows[details.position - 1] = data.rows[0];
+				data = sourceData;
+			} 
+		}
 		dataStore[_appId + "_" + id] = JSON.stringify(data);
 	} else {
 		dataStore[_appId + "_" + id] = null;
@@ -155,30 +170,6 @@ if (dataStore) {
 
 			]]>
 	    </setDataJavaScript>
-	    
-	    <runtimeProperties>
-	   	    <runtimeProperty>
-	   	        <type>selectedRowNumber</type>
-	   	        <name>Selected row number</name>
-	   	        <getPropertyFunction>
-			        <![CDATA[
-var data = null;
-var dataStore = getDataStore(id,details);
-if (dataStore) {
-	if (details.id) id = details.id;	
-	var dataString = dataStore[_appId + "_" + id];
-	if (dataString) {
-		var data = JSON.parse(dataString);
-		if (data) {		
-			return data.selectedRow;
-		}	 
-	} 			
-}
-return data;
-			        ]]>	  	   	            
-	   	        </getPropertyFunction>	   	        
-	   	    </runtimeProperty>
-	   	</runtimeProperties>
 	    
 	</control>
 </controls>
