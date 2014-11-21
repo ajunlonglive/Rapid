@@ -60,6 +60,36 @@ return [["L","Local storage"],["S","Session storage"],["P","Page storage"]];
 	        
 	    </properties>
 	    
+	    <resources>
+	        <resource>
+	            <type>javascript</type>
+	            <contents>
+	                <![CDATA[
+function getDataStore(id, details) {
+	var dataStore;
+	switch (details.storageType) {
+		case "L":
+			// use localStorage
+			dataStore = localStorage;
+		break;
+		case "S": 
+			// use sessionStorage
+			dataStore = sessionStorage;
+		break;
+		case "P": 
+			// instansiate an object in the page if there isn't one
+			if (!window[details.id + "datastore"]) window[details.id + "datastore"] = {};
+			// use the in page object
+			dataStore = window[details.id + "datastore"];
+		break;
+	}  
+	return dataStore;
+}	                
+	                ]]>
+	            </contents>
+	        </resource>
+	    </resources>
+	    
 	    <getHtmlFunction>
 	        <![CDATA[	  
 // return our html 
@@ -81,26 +111,10 @@ return {storageType: this.storageType, merge: this.mergeData, id: this.id};
 	    
 	    <getDataFunction>
 	        <![CDATA[        
-var dataStore;
-switch (details.storageType) {
-	case "L":
-		// use localStorage
-		dataStore = localStorage;
-	break;
-	case "S": 
-		// use sessionStorage
-		dataStore = sessionStorage;
-	break;
-	case "P": 
-		// instansiate an object in the page if there isn't one
-		if (!window[details.id + "datastore"]) window[details.id + "datastore"] = {};
-		// use the in page object
-		dataStore = window[details.id + "datastore"];
-	break;
-}  
+var data = null;
+var dataStore = getDataStore(id,details);
 if (dataStore) {
-	if (details.id) id = details.id;
-	var data = null;
+	if (details.id) id = details.id;	
 	var dataString = dataStore[_appId + "_" + id];
 	if (dataString) {
 		var data = JSON.parse(dataString);
@@ -120,31 +134,15 @@ if (dataStore) {
 				return data[field];
 			}
 		}	 
-	} 
-	return data;		
+	} 		
 }
+return data;
 			]]>
 	    </getDataFunction>
 	    
 	    <setDataJavaScript>
 	        <![CDATA[	  
-var dataStore;
-switch (details.storageType) {
-	case "L":
-		// use localStorage
-		dataStore = localStorage;
-	break;
-	case "S": 
-		// use sessionStorage
-		dataStore = sessionStorage;
-	break;	
-	case "P": 
-		// instansiate an object in the page if there isn't one
-		if (!window[details.id + "datastore"]) window[details.id + "datastore"] = {};
-		// use the in page object
-		dataStore = window[details.id + "datastore"];
-	break;
-} 	   
+var dataStore = getDataStore(id,details);
 if (dataStore) {
 	if (details.id) id = details.id;
 	if (data != null && data !== undefined) {
@@ -157,6 +155,30 @@ if (dataStore) {
 
 			]]>
 	    </setDataJavaScript>
-
+	    
+	    <runtimeProperties>
+	   	    <runtimeProperty>
+	   	        <type>selectedRowNumber</type>
+	   	        <name>Selected row number</name>
+	   	        <getPropertyFunction>
+			        <![CDATA[
+var data = null;
+var dataStore = getDataStore(id,details);
+if (dataStore) {
+	if (details.id) id = details.id;	
+	var dataString = dataStore[_appId + "_" + id];
+	if (dataString) {
+		var data = JSON.parse(dataString);
+		if (data) {		
+			return data.selectedRow;
+		}	 
+	} 			
+}
+return data;
+			        ]]>	  	   	            
+	   	        </getPropertyFunction>	   	        
+	   	    </runtimeProperty>
+	   	</runtimeProperties>
+	    
 	</control>
 </controls>

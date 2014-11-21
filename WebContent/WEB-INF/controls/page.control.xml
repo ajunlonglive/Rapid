@@ -62,6 +62,11 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <changeValueJavaScript>roles</changeValueJavaScript>	            
 	        </property>
 	        <property>
+	            <key>notes</key>
+	            <name>Notes</name>
+	            <changeValueJavaScript>bigtext</changeValueJavaScript>	            
+	        </property>	
+	        <property>
 	            <key>device</key>
 	            <name>Device</name>
 	            <setConstructValueFunction>return 0;</setConstructValueFunction>

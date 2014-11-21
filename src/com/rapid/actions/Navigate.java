@@ -84,7 +84,10 @@ public class Navigate extends Action {
 		// get the inputs collections
 		JSONArray jsonInputs = jsonAction.optJSONArray("sessionVariables");
 		// check it
-		if (jsonInputs != null) {
+		if (jsonInputs == null) {
+			// empty down the collection
+			_sessionVariables = null;
+		} else {
 			// initialise the collection
 			_sessionVariables = new ArrayList<SessionVariable>();
 			// loop it

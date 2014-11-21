@@ -15,23 +15,34 @@ function Action_control(actions) {
 function Action_datacopy(data, outputs, copyType, copyData, field) {
 	if (data != null && data !== undefined && outputs) {
 		for (var i in outputs) {
-			var output = outputs[i];		
+			var output = outputs[i];	
+			var outputData = null;	
 			switch (copyType) {
+				case "append" :
+					
+				break;
 				case "row" :
 					var mergeData = window["getData_" + output.type](output.id, data, null, output.details);
 					if (!mergeData) mergeData = window["getData_" + output.type](output.id, data, null, output.details);
 					if (data && !data.fields) data = {fields:[output.field],rows:[[data]]};
-					data = mergeDataObjects(mergeData, data, copyType, field); 
+					outputData = mergeDataObjects(mergeData, data, copyType, field); 
 				break;
 				case "child" :
 					var mergeData = window["getData_" + output.type](output.id, data, output.field, output.details);
-					data = mergeDataObjects(mergeData, data, copyType, field);
+					outputData = mergeDataObjects(mergeData, data, copyType, field);
+				break;
+				case "position" :
+					if (parseInt(field)) {
+						outputData = {fields:data.fields, rows:[data.rows[field - 1]], selectedRow: field * 1};
+					} 				
 				break;
 				case "search" :
-					data = mergeDataObjects(copyData, data, copyType, field);
+					outputData = mergeDataObjects(copyData, data, copyType, field);
 				break;
+				default:
+					outputData = data;
 			}	
-			window["setData_" + output.type](output.id, data, output.field, output.details);
+			window["setData_" + output.type](output.id, outputData, output.field, output.details);
 		}
 	}
 }
@@ -418,26 +429,10 @@ function setData_checkbox(id, data, field, details) {
 }
 
 function getData_dataStore(ev, id, field, details) {
-  var dataStore;
-  switch (details.storageType) {
-  	case "L":
-  		// use localStorage
-  		dataStore = localStorage;
-  	break;
-  	case "S": 
-  		// use sessionStorage
-  		dataStore = sessionStorage;
-  	break;
-  	case "P": 
-  		// instansiate an object in the page if there isn't one
-  		if (!window[details.id + "datastore"]) window[details.id + "datastore"] = {};
-  		// use the in page object
-  		dataStore = window[details.id + "datastore"];
-  	break;
-  }  
+  var data = null;
+  var dataStore = getDataStore(id,details);
   if (dataStore) {
-  	if (details.id) id = details.id;
-  	var data = null;
+  	if (details.id) id = details.id;	
   	var dataString = dataStore[_appId + "_" + id];
   	if (dataString) {
   		var data = JSON.parse(dataString);
@@ -457,29 +452,13 @@ function getData_dataStore(ev, id, field, details) {
   				return data[field];
   			}
   		}	 
-  	} 
-  	return data;		
+  	} 		
   }
+  return data;
 }
 
 function setData_dataStore(id, data, field, details) {
-  var dataStore;
-  switch (details.storageType) {
-  	case "L":
-  		// use localStorage
-  		dataStore = localStorage;
-  	break;
-  	case "S": 
-  		// use sessionStorage
-  		dataStore = sessionStorage;
-  	break;	
-  	case "P": 
-  		// instansiate an object in the page if there isn't one
-  		if (!window[details.id + "datastore"]) window[details.id + "datastore"] = {};
-  		// use the in page object
-  		dataStore = window[details.id + "datastore"];
-  	break;
-  } 	   
+  var dataStore = getDataStore(id,details);
   if (dataStore) {
   	if (details.id) id = details.id;
   	if (data != null && data !== undefined) {
@@ -489,6 +468,22 @@ function setData_dataStore(id, data, field, details) {
   		dataStore[_appId + "_" + id] = null;
   	}
   }
+}
+
+function getProperty_dataStore_selectedRowNumber(ev, id, field, details) {
+  var data = null;
+  var dataStore = getDataStore(id,details);
+  if (dataStore) {
+  	if (details.id) id = details.id;	
+  	var dataString = dataStore[_appId + "_" + id];
+  	if (dataString) {
+  		var data = JSON.parse(dataString);
+  		if (data) {		
+  			return data.selectedRow;
+  		}	 
+  	} 			
+  }
+  return data;
 }
 
 function getData_date(ev, id, field, details) {
@@ -664,12 +659,12 @@ function setData_grid(id, data, field, details) {
   }
 }
 
-function getProperty_grid_selectedRow(ev, id, field, details) {
+function getProperty_grid_selectedRowData(ev, id, field, details) {
   var data = null;
   var row = $(ev.target).closest("tr");
   var rowIndex = row.index() - 1;
   if (rowIndex >= 0) {
-  	data = {fields:["field"],rows:[[]]};
+  	data = {fields:[],rows:[[]]};
   	for (var i in details.columns) {
   		data.fields.push(details.columns[i].field);
   		data.rows[0].push(row.children(":nth(" + i + ")").html());
@@ -678,8 +673,12 @@ function getProperty_grid_selectedRow(ev, id, field, details) {
   return data;
 }
 
+function getProperty_grid_selectedRowNumber(ev, id, field, details) {
+  return $(ev.target).closest("tr").index();
+}
+
 function getProperty_grid_rowCount(ev, id, field, details) {
-  return ($("#" + id).find("tr").size() - 1);
+  return $("#" + id).find("tr").size() - 1;
 }
 
 function getData_input(ev, id, field, details) {
@@ -780,6 +779,29 @@ function Event_error(eventName, controlId, ex) {
 	} else {
 		alert("Error in " + eventName + " event for page " + ex);
 	}
+}
+
+/* Data store control resource JavaScript */
+
+function getDataStore(id, details) {
+	var dataStore;
+	switch (details.storageType) {
+		case "L":
+			// use localStorage
+			dataStore = localStorage;
+		break;
+		case "S": 
+			// use sessionStorage
+			dataStore = sessionStorage;
+		break;
+		case "P": 
+			// instansiate an object in the page if there isn't one
+			if (!window[details.id + "datastore"]) window[details.id + "datastore"] = {};
+			// use the in page object
+			dataStore = window[details.id + "datastore"];
+		break;
+	}  
+	return dataStore;
 }
 
 /* Link control resource JavaScript */
