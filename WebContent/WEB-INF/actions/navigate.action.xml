@@ -166,13 +166,29 @@ function Action_navigate(url, dialogue, id) {
 		           	
 		           	// make sure it's hidden
 		           	dialogue.css("visibility","hidden");
-					
+		           			           						
 					// add any links into the page (if applicable)
 		           	if (links) dialogue.append(links);		           			           	
 		           	
 		           	// append the injected html
 		           	dialogue.append(bodyHtml);
 		           	
+		           	// add custom hide listener to children and event
+		           	dialogue.children().on("hide", function() {
+		           		var dialogue = $(this).closest("div.dialogue");	  
+						dialogue.prev("div.dialogueCover").remove();
+						dialogue.remove(); 
+		           	});
+		           	
+		           	// thanks to http://viralpatel.net/blogs/jquery-trigger-custom-event-show-hide-element/						
+					$.each(['show', 'hide'], function (i, ev) {
+						var el = $.fn[ev];
+						$.fn[ev] = function () {
+							this.trigger(ev);
+							return el.apply(this, arguments);
+						};
+					});
+							           	
 		           	// add any scripts into the page (if applicable)
 		           	if (script) dialogue.append(script);
 		           			           	

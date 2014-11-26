@@ -370,11 +370,10 @@ function Property_select(cell, propertyObject, property, refreshHtml, refreshPro
 		// apply the property update
 		updateProperty(propertyObject, property, ev.target.value, refreshHtml);
 		// refresh the properties if requested
-		refreshPropertyObject(ev, propertyObject);	
+		if (ev.data.refreshProperties) refreshPropertyObject(ev, propertyObject);	
 	}));
-	// if value is not set, set the top value
-	if (!propertyObject[property.key]) propertyObject[property.key] = select.val();
-	
+	// set the property
+	select.val(propertyObject[property.key]);	
 }
 
 function Property_checkbox(cell, propertyObject, property, refreshHtml, refreshProperties) {
@@ -2011,13 +2010,12 @@ function Property_gridColumns(cell, grid, property, refreshHtml, refreshDialogue
 
 }
 
-
 function Property_dataDestinations(cell, propertyObject, property, refreshHtml, refreshDialogue) {
 	
 	// retain a reference to the dialogue (if we were passed one)
 	var dialogue = refreshDialogue;
 	// if we weren't passed one - make what we need
-	if (!dialogue) dialogue = createDialogue(cell, 200, "Destinations");		
+	if (!dialogue) dialogue = createDialogue(cell, 300, "Destinations");		
 	// grab a reference to the table
 	var table = dialogue.find("table").first();
 	// make sure table is empty
@@ -2027,17 +2025,8 @@ function Property_dataDestinations(cell, propertyObject, property, refreshHtml, 
 	var dataDestinations = [];
 	// get the value if it exists
 	if (propertyObject[property.key]) dataDestinations = propertyObject[property.key];	
-	// make some text
+	// make some text for our cell (we're going to build in in the loop)
 	var text = "";
-	for (var i = 0; i < dataDestinations.length; i++) {
-		var itemControl = getControlById(dataDestinations[i].itemId);
-		text += (itemControl ? itemControl.name : dataDestinations[i].itemId);
-		if (i < dataDestinations.length - 1) text += ",";
-	}
-	// if nothing add friendly message
-	if (!text) text = "Click to add...";
-	// put the text into the cell
-	cell.text(text);
 	
 	// add a header
 	table.append("<tr><td><b>Control</b></td><td colspan='2'><b>Field</b></td></tr>");
@@ -2046,10 +2035,51 @@ function Property_dataDestinations(cell, propertyObject, property, refreshHtml, 
 	for (var i = 0; i < dataDestinations.length; i++) {
 		// get a single reference
 		var dataDestination = dataDestinations[i];
-		// derive the name
-		var itemControl = getControlById(dataDestination.itemId);
+		// get the id parts
+		var dataDestinationIdParts = dataDestination.itemId.split(".");
+		// derive the id
+		var dataDestinationId = dataDestinationIdParts[0];
+		// assume the name is the entire id
+		var itemName = dataDestination.itemId
+		// get the control
+		var itemControl = getControlById(dataDestinationId);
+		// if we got one
+		if (itemControl) {
+			// look for a "other" page name
+			if (itemControl._pageName) {
+				// use the page name and control name
+				itemName = itemControl._pageName + "." + itemControl.name;
+			} else {
+				// take just the control name
+				itemName = itemControl.name;
+			}
+			// if there's a complex key
+			if (dataDestinationIdParts.length > 1) {
+				// get the class
+				var controlClass = _controlTypes[itemControl.type];
+				// get any run time properties
+				var properties = controlClass.runtimeProperties;
+				// if there are runtimeProperties in the class
+				if (properties) {
+					// promote if array
+					if ($.isArray(properties.runtimeProperty)) properties = properties.runtimeProperty;
+					// loop them
+					for (var i in properties) {
+						// get the property
+						var property = properties[i];
+						// if there's set javascript (so it can be a destination)
+						if (property.setPropertyJavaScript) {
+							// append the property name if the key matches
+							if (dataDestinationIdParts[1] == property.type) itemName += "." + property.name;
+						}						
+					}					
+				}
+			} 
+		}
+		// apend to the text
+		text += itemName + ",";
 		// add a row
-		table.append("<tr><td>" + (itemControl ? itemControl.name : dataDestination.itemId) + "</td><td><input value='" + dataDestination.field + "' /></td><td style='width:32px'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
+		table.append("<tr><td>" + itemName + "</td><td><input value='" + dataDestination.field + "' /></td><td style='width:32px'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
 		// get the field
 		var editField = table.find("tr").last().children("td:nth(1)").children("input");
 		// add a listener
@@ -2071,7 +2101,7 @@ function Property_dataDestinations(cell, propertyObject, property, refreshHtml, 
 			imgDelete.parent().parent().remove();
 		}));
 	}
-	
+			
 	// add reorder listeners
 	addReorder(dataDestinations, table.find("img.reorder"), function() { 
 		Property_dataDestinations(cell, propertyObject, property, refreshHtml, dialogue); 
@@ -2092,6 +2122,17 @@ function Property_dataDestinations(cell, propertyObject, property, refreshHtml, 
 		// rebuild the dialgue
 		Property_dataDestinations(ev.data.cell, ev.data.propertyObject, {key: "dataDestinations"}, ev.data.refreshHtml, ev.data.dialogue);	
 	}));
+	
+	// if we got text 
+	if (text) {
+		// remove the trailing comma
+		text = text.substring(0,text.length - 1);
+	} else {
+		// add friendly message
+		text = "Click to add...";
+	}
+	// put the text into the cell
+	cell.text(text);
 }
 
 // this is a dialogue to choose controls and specify their hints
@@ -2279,28 +2320,6 @@ function Property_datacopyType(cell, datacopyAction, property, refreshHtml, refr
 function Property_datacopyChildField(cell, datacopyAction, property, refreshHtml, refreshProperties) {
 	// only if datacopyAction type is child
 	if (datacopyAction.copyType == "child") {
-		// show the duration
-		Property_text(cell, datacopyAction, property, refreshHtml);
-	} else {
-		// remove this row
-		cell.closest("tr").remove();
-	}
-}
-
-function Property_datacopyPositionControl(cell, datacopyAction, property, refreshHtml, refreshProperties) {
-	// only if datacopyAction type is child
-	if (datacopyAction.copyType == "position") {
-		// show the duration
-		Property_select(cell, datacopyAction, property, refreshHtml);
-	} else {
-		// remove this row
-		cell.closest("tr").remove();
-	}
-}
-
-function Property_datacopyPositionField(cell, datacopyAction, property, refreshHtml, refreshProperties) {
-	// only if datacopyAction type is child
-	if (datacopyAction.copyType == "position") {
 		// show the duration
 		Property_text(cell, datacopyAction, property, refreshHtml);
 	} else {

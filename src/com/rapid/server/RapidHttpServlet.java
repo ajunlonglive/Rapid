@@ -47,6 +47,8 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.rapid.core.Action;
 import com.rapid.core.Application;
@@ -110,8 +112,28 @@ public class RapidHttpServlet extends HttpServlet {
 		return (JSONArray) getServletContext().getAttribute("jsonControls");
 	}
 	
+	public JSONObject getJsonControl(String type) throws JSONException {
+		JSONArray jsonControls = getJsonControls();
+		if (jsonControls != null) {
+			for (int i = 0; i < jsonControls.length(); i++) {
+				if (type.equals(jsonControls.getJSONObject(i).getString("type"))) return jsonControls.getJSONObject(i);
+			}
+		}
+		return null;
+	}
+	
 	public JSONArray getJsonActions() {
 		return (JSONArray) getServletContext().getAttribute("jsonActions");
+	}
+	
+	public JSONObject getJsonAction(String type) throws JSONException {
+		JSONArray jsonActions = getJsonActions();
+		if (jsonActions != null) {
+			for (int i = 0; i < jsonActions.length(); i++) {
+				if (type.equals(jsonActions.getJSONObject(i).getString("type"))) return jsonActions.getJSONObject(i);
+			}
+		}
+		return null;
 	}
 		
 	public Applications getApplications() {

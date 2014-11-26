@@ -42,7 +42,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <changeValueJavaScript>select</changeValueJavaScript>
 	            <getValuesFunction>
 	                <![CDATA[
-return "<option value=''>None</option>" + getInputOptions(this.dataSource);         
+return "<option value=''>Please select...</option>" + getInputOptions(this.dataSource);         
 	                ]]>
 	            </getValuesFunction>	
 	        </property>
@@ -65,7 +65,7 @@ return "<option value=''>None</option>" + getInputOptions(this.dataSource);
 	            <name>Copy type</name>
 	            <setConstructValueFunction>return false;</setConstructValueFunction>
 	            <changeValueJavaScript>datacopyType</changeValueJavaScript>	
-	            <getValuesFunction>return [[false,"copy"],["append","append"],["row","row merge"],["child","child merge"],["position","position fetch"],["replace","position replace"],["search","search"]]</getValuesFunction>	            
+	            <getValuesFunction>return [[false,"replace"],["append","append"],["row","row merge"],["child","child merge"],["search","search"]]</getValuesFunction>	            
 	        </property>  
 	        
 	        <property>
@@ -74,25 +74,7 @@ return "<option value=''>None</option>" + getInputOptions(this.dataSource);
 	            <changeValueJavaScript>datacopyChildField</changeValueJavaScript>
 	            <getValuesFunction>return "";</getValuesFunction>
 	        </property>	
-	        
-	        <property>
-	            <key>positionControl</key>
-	            <name>Position control</name>
-	            <changeValueJavaScript>datacopyPositionControl</changeValueJavaScript>
-	            <getValuesFunction>
-	                <![CDATA[
-return "<option value=''>Please select</option>" + getInputOptions(this.positionControl);         
-	                ]]>
-	            </getValuesFunction>
-	        </property>	
-	        
-	        <property>
-	            <key>positionField</key>
-	            <name>Position field</name>
-	            <changeValueJavaScript>datacopyPositionField</changeValueJavaScript>
-	            <getValuesFunction>return "";</getValuesFunction>
-	        </property>	
-	        
+	        	        
 	        <property>
 	            <key>searchField</key>
 	            <name>Search field</name>
@@ -122,7 +104,7 @@ return "<option value=''>None</option>" + getInputOptions(this.dataSource);
 	    	    
 	    <actionJavaScript>
 	        <![CDATA[ 
-function Action_datacopy(data, outputs, copyType, copyData, field) {
+function Action_datacopy(ev, data, outputs, copyType, copyData, field) {
 	if (data != null && data !== undefined && outputs) {
 		for (var i in outputs) {
 			var output = outputs[i];	
@@ -133,28 +115,13 @@ function Action_datacopy(data, outputs, copyType, copyData, field) {
 					output.details.append = true;
 					outputData = data;					
 				break;
-				case "row" :
-					var mergeData = window["getData_" + output.type](output.id, data, null, output.details);
-					if (!mergeData) mergeData = window["getData_" + output.type](output.id, data, null, output.details);
-					if (data && !data.fields) data = {fields:[output.field],rows:[[data]]};
+				case "row" : 
+					var mergeData = window["getData_" + output.type](ev, output.id, null, output.details);
+					data = makeDataObject(data, output.field);
 					outputData = mergeDataObjects(mergeData, data, copyType, field); 
-				break;
-				case "child" :
-					var mergeData = window["getData_" + output.type](output.id, data, output.field, output.details);
+				break;				
+					var mergeData = window["getData_" + output.type](ev, output.id, null, output.details);
 					outputData = mergeDataObjects(mergeData, data, copyType, field);
-				break;
-				case "position" :
-					if (parseInt(field)) {						
-						data.selectedRow = field;				
-						outputData = {fields:data.fields, rows:[data.rows[field - 1]], selectedRow: field};
-					} 				
-				break;
-				case "replace" :
-					if (parseInt(field)) {	
-						if (!output.details) output.details = {};						
-						output.details.position = parseInt(field);
-						outputData = data;
-					} 
 				break;
 				case "search" :
 					outputData = mergeDataObjects(copyData, data, copyType, field);

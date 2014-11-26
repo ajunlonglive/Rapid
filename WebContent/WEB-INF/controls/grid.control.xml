@@ -56,6 +56,17 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <setConstructValueFunction>return [];</setConstructValueFunction>
 	            <changeValueJavaScript>gridColumns</changeValueJavaScript>	              
 	        </property>
+	        <property>
+	            <key>dataStorageType</key>
+	            <name>Data store type</name>
+	            <setConstructValueFunction>return "";</setConstructValueFunction>
+	            <changeValueJavaScript>select</changeValueJavaScript>	
+	            <getValuesFunction>
+	                <![CDATA[
+return [["","None"],["L","Local storage"],["S","Session storage"]];
+					]]>
+	            </getValuesFunction>               
+	        </property>  
 	    </properties>
 	    
 	    <resources>
@@ -68,6 +79,38 @@ table.grid {
 }           
 	                ]]>
 				</contents>
+	        </resource>
+	        <resource>
+	            <type>javascript</type>
+	            <contents>
+	                <![CDATA[
+function getGridDataStoreData(id, details) {
+	data = null;
+	switch (details.dataStorageType) {
+		case "L" :
+			var dataString = localStorage[_appId + id];
+			if (dataString) data = JSON.parse(dataString);
+		break;
+		case "S" :
+			var dataString = sessionStorage[_appId + id];
+			if (dataString) data = JSON.parse(dataString);
+		break;
+	}
+	return data;
+}
+
+function saveGridDataStoreData(id, details, data) {
+	switch (details.dataStorageType) {
+		case "L" :
+			localStorage[_appId + id] = JSON.stringify(data);
+		break;
+		case "S" :
+			sessionStorage[_appId + id] = JSON.stringify(data);
+		break;
+	}
+}	                	
+	                ]]>
+	            </contents>
 	        </resource>
 	    </resources>
 	    
@@ -149,40 +192,50 @@ if (this.styles && this.styles.length > 0) {
 		if (style.appliesTo && style.appliesTo.indexOf("rowSelect") > 0) details.rowSelect = true;
 	}
 }
+if (this.dataStorageType) {
+	this.canBeUsedFromOtherPages = true;
+	details.dataStorageType = this.dataStorageType;
+} else {
+	this.canBeUsedFromOtherPages = false;
+}
 return details;
 			]]>	        	        
 	    </getDetailsFunction>
 	    	    
 	    <getDataFunction>
-	        <![CDATA[       
+	        <![CDATA[
 var data = null;
-if (details && details.columns) {
-	if (field) {		
-		var row = $(ev.target).closest("tr");
-		var rowIndex = row.index() - 1;
-		if (rowIndex >= 0) {
-			for (var i in details.columns) {
-				if (details.columns[i].field.toLowerCase() == field.toLowerCase()) {
-					data = row.children(":nth(" + i + ")").html();
-					break;
+if (details) {
+	if (details.dataStorageType) {
+		data = getGridDataStoreData(id, details);
+	} else if (details.columns) {
+		if (field) {		
+			var row = $(ev.target).closest("tr");
+			var rowIndex = row.index() - 1;
+			if (rowIndex >= 0) {
+				for (var i in details.columns) {
+					if (details.columns[i].field.toLowerCase() == field.toLowerCase()) {
+						data = row.children(":nth(" + i + ")").html();
+						break;
+					}
 				}
+			}	    
+		} else {
+			var data = {};
+			data.fields = [];		
+			for (var i in details.columns) {	
+				data.fields.push(details.columns[i].field);		
 			}
-		}	    
-	} else {
-		var data = {};
-		data.fields = [];		
-		for (var i in details.columns) {	
-			data.fields.push(details.columns[i].field);		
-		}
-		data.rows = [];
-		$("#" + id).find("tr:not(:first)").each(function(i) {
-			var row = [];
-			$(this).children().each(function(i) {
-				row.push($(this).html());
+			data.rows = [];
+			$("#" + id).find("tr:not(:first)").each(function(i) {
+				var row = [];
+				$(this).children().each(function(i) {
+					row.push($(this).html());
+				});
+				data.rows.push(row);
 			});
-			data.rows.push(row);
-		});
-	}	
+		}	
+	}
 }
 return data;
 
@@ -247,6 +300,7 @@ if (data != null && data !== undefined) {
 				control.append(rowHtml);
 			}
 		}	
+		if (details.dataStorageType) saveGridDataStoreData(id, details, data);					
 	} 
 	
 	control.children().last().children("tr:not(:first)").click( function() { 
@@ -343,6 +397,20 @@ return "#" + this.id + " .rowSelect";
 	        </style>       
 	    </styles>
 	    
+	    <initJavaScript>
+	        <![CDATA[
+if (details && details.dataStorageType) {
+	var data = getGridDataStoreData(id, details);
+	if (data) setData_grid(id, data, null, details);
+	$("#" + id).click(function(ev) {
+		var data = getGridDataStoreData(id, details);
+		data.selectedRowNumber = $(ev.target).closest("tr").index();
+		saveGridDataStoreData(id, details, data);
+	});
+} 
+	        ]]>	        
+	    </initJavaScript>
+	    
 	    <runtimeProperties>
 	        <runtimeProperty>
 	   	        <type>selectedRowData</type>
@@ -350,27 +418,83 @@ return "#" + this.id + " .rowSelect";
 	   	        <getPropertyFunction>
 			        <![CDATA[
 var data = null;
-var row = $(ev.target).closest("tr");
-var rowIndex = row.index() - 1;
-if (rowIndex >= 0) {
-	data = {fields:[],rows:[[]]};
-	for (var i in details.columns) {
-		data.fields.push(details.columns[i].field);
-		data.rows[0].push(row.children(":nth(" + i + ")").html());
+if (details.dataStorageType) {
+	data = getGridDataStoreData(id, details);
+	data.rows = [data.rows[data.selectedRowNumber - 1]];
+} else {
+	var row = $(ev.target).closest("tr");
+	var rowNumber = row.index();
+	if (rowNumber > 0) {
+		data = {fields:[],rows:[[]]};
+		for (var i in details.columns) {
+			data.fields.push(details.columns[i].field);
+			data.rows[0].push(row.children(":nth(" + i + ")").html());
+		}
 	}
-}  
+}
 return data;
 			        ]]>	  	   	            
-	   	        </getPropertyFunction>	   	        
+	   	        </getPropertyFunction>	   
+	   	        <setPropertyJavaScript>
+	   	            <![CDATA[
+gridData = getGridDataStoreData(id, details);
+if (!gridData) gridData = {};
+data = makeDataObject(data, field);
+if (gridData.selectedRowNumber) {
+	// replace or remove selected row	
+	if (data) {
+		// put top row of what we were passed into selected row
+		gridData.rows[gridData.selectedRowNumber - 1] = data.rows[0];
+	} else {
+		// remove the selected row 
+		gridData.rows.splice(gridData.selectedRowNumber - 1, 1);
+		// remove the selection
+		gridData.selectedRowNumber = null;
+	}
+	// save the grid
+	saveGridDataStoreData(id, details, gridData);
+} else {
+	// append if no selected row
+	if (data) {
+		// get the fields from the data if not present
+		if (!gridData.fields) gridData.fields = data.fields;
+		// create a rows array if not present
+		if (!gridData.rows) gridData.rows = [];
+		// add the top row of what we were given
+		gridData.rows.push(data.rows[0]);
+		// set the selected row number
+		gridData.selectedRowNumber = gridData.rows.length;
+		// save the grid
+		saveGridDataStoreData(id, details, gridData);	
+	}	
+}	   	            
+	   	            ]]>
+	   	        </setPropertyJavaScript>	        
 	   	    </runtimeProperty>
 	   	    <runtimeProperty>
 	   	        <type>selectedRowNumber</type>
 	   	        <name>Selected row number</name>
 	   	        <getPropertyFunction>
 			        <![CDATA[
-return $(ev.target).closest("tr").index();
+if (details && details.dataStorageType) {
+	var gridData = getGridDataStoreData(id, details);
+	return gridData.selectedRowNumber;
+} else {
+	return $(ev.target).closest("tr").index();
+}
 			        ]]>	  	   	            
-	   	        </getPropertyFunction>	   	        
+	   	        </getPropertyFunction>	   	
+	   	        <setPropertyJavaScript>
+	   	            <![CDATA[
+gridData = getGridDataStoreData(id, details);
+if (!gridData) gridData = {};
+data = makeDataObject(data, field);
+var selectedRowNumber = null;
+if (data) selectedRowNumber = data.rows[0][0];
+gridData.selectedRowNumber = selectedRowNumber;	
+saveGridDataStoreData(id, details, gridData);	            
+	   	            ]]>
+	   	        </setPropertyJavaScript>		   	                
 	   	    </runtimeProperty>
 	   	    <runtimeProperty>
 	   	        <type>rowCount</type>
@@ -382,6 +506,6 @@ return $("#" + id).find("tr").size() - 1;
 	   	        </getPropertyFunction>	   	        
 	   	    </runtimeProperty>
 	   	</runtimeProperties>
-	    
+	   		    
 	</control>
 </controls>

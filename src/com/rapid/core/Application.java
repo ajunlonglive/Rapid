@@ -31,8 +31,6 @@ import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.StringReader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
@@ -44,7 +42,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.Set;
 
 import javax.servlet.ServletContext;
@@ -70,7 +67,6 @@ import com.rapid.data.ConnectionAdapter;
 import com.rapid.security.RapidSecurityAdapter;
 import com.rapid.security.SecurityAdapater;
 import com.rapid.security.SecurityAdapater.User;
-import com.rapid.server.Rapid;
 import com.rapid.server.RapidHttpServlet;
 import com.rapid.server.RapidRequest;
 import com.rapid.soa.Webservice;
@@ -83,7 +79,6 @@ import com.rapid.utils.XML;
 import com.rapid.utils.ZipFile;
 import com.rapid.utils.ZipFile.ZipSource;
 import com.rapid.utils.ZipFile.ZipSources;
-import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
 
 @XmlRootElement
 @XmlType(namespace="http://rapid-is.co.uk/core")
@@ -706,11 +701,11 @@ public class Application {
 			JSONArray jsonActions = (JSONArray) servletContext.getAttribute("jsonActions");
 							
 			// string builders for the different sections in our rapid.js file
+			StringBuilder resourceJS = new StringBuilder();
 			StringBuilder initJS = new StringBuilder();
 			StringBuilder dataJS = new StringBuilder();
 			StringBuilder actionJS = new StringBuilder();
-			StringBuilder resourceJS = new StringBuilder();
-			
+						
 			// string builder for our rapid.css file
 			StringBuilder resourceCSS = new StringBuilder();
 			
@@ -840,11 +835,16 @@ public class Application {
 					    				
 					    				// get the type
 				    					String type = jsonRuntimeProperty.getString("type");
-				    					// get the function
-				    					String function = jsonRuntimeProperty.getString("getPropertyFunction");
+				    					
+				    					// get the get function
+				    					String getFunction = jsonRuntimeProperty.optString("getPropertyFunction", null);					    				
+				    					// print the get function if there was one
+					    				if (getFunction != null) dataJS.append("\nfunction getProperty_" + controlType + "_" + type + "(ev, id, field, details) {\n  " + getFunction.trim().replace("\n", "\n  ") + "\n}\n");
 					    				
-				    					// print the function
-					    				dataJS.append("\nfunction getProperty_" + controlType + "_" + type + "(ev, id, field, details) {\n  " + function.trim().replace("\n", "\n  ") + "\n}\n");
+					    				// get the set function
+				    					String setFunction = jsonRuntimeProperty.optString("setPropertyJavaScript", null);					    				
+				    					// print the get function if there was one
+					    				if (setFunction != null) dataJS.append("\nfunction setProperty_" + controlType + "_" + type + "(ev, id, field, details, data) {\n  " + setFunction.trim().replace("\n", "\n  ") + "\n}\n");
 					    				
 					    				// increment index
 					    				index++;
@@ -966,15 +966,15 @@ public class Application {
 			PrintStream ps = new PrintStream(fos);
 			
 			ps.print("\n/* This file is auto-generated on application load and save - it is minified when in production */\n");
-			ps.print("\n\n/* Action methods */\n\n");
-			ps.print(actionJS.toString());
+			ps.print("\n\n/* Control and Action resource JavaScript */\n\n");
+			ps.print(resourceJS.toString());
 			ps.print("\n\n/* Control initialise methods */\n\n");
 			ps.print(initJS.toString());
 			ps.print("\n\n/* Control getData and setData methods */\n\n");
 			ps.print(dataJS.toString());
-			ps.print("\n\n/* Control and Action resource JavaScript */\n\n");
-			ps.print(resourceJS.toString());
-
+			ps.print("\n\n/* Action methods */\n\n");
+			ps.print(actionJS.toString());
+						
 			ps.close();
 			fos.close();
 			

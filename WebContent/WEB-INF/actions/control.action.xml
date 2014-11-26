@@ -45,7 +45,11 @@ This action runs JQuery functions against specific controls
 	            <key>control</key>
 	            <name>Control</name>
 	            <changeValueJavaScript>select</changeValueJavaScript>	 
-	            <getValuesFunction>return getControlOptions(this.control ? this.control : _selectedControl.id);</getValuesFunction>
+	            <getValuesFunction>
+	                 <![CDATA[
+	                return "<option value=''>Please select...</option>" + getControlOptions(this.control ? this.control : _selectedControl.id);
+	               	]]>
+	            </getValuesFunction>
 	        </property>
 	        <property>
 	            <key>actionType</key>
