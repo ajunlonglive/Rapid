@@ -613,7 +613,7 @@ Dialogue styles
 	position:absolute;
 	left:0px;
 	top:0px;
-	z-index:10007;
+	z-index:10100;
 }
 
 #dialogue {
@@ -621,7 +621,7 @@ Dialogue styles
 	background-color:white;	
 	left:0px;
 	top:0px;
-	z-index:10008;
+	z-index:10101;
 	border: 1px solid black; 
 	box-shadow: 0 0 20px;
 }

@@ -94,8 +94,7 @@ $.fn.extend({
 	  if (reload) {
 		  var pageId = $("body").attr("id");
 		  if (window["Event_pageload_" + pageId]) window["Event_pageload_" + pageId]();		  
-	  }
-	  
+	  }	  
   }
 });
 
@@ -382,81 +381,84 @@ function hideValidationMessage(controlId) {
 }
 
 function makeDataObject(data, field) {
-	// return immediately if all well (we have rows and fields already and there is nothing to promote)
-	if (data.rows && data.fields && !(field && data[field])) return data;		
-	// initialise fields
-	var fields = [];
-	// initialise rows
-	var rows = [];
-	// initialise a fieldmap (as properties aren't always in the same position each time)
-	var fieldMap = [];
-	// if the field is what we're after move it into the data
-	if (field && data[field]) data = data[field];
-	// if the data is an array
-	if ($.isArray(data)) {
-		// loop the array
-		for (var i in data) {
-			// retrieve the item
-			var item = data[i];
-			// prepare a row
-			var row = [];
-			// if it's an object build data object from it's properties
-			if ($.isPlainObject(item)) {				
-				var fieldPos = 0;				
-				for (var j in item) {
-					// check for a field mapping				 
-					if (fieldMap[fieldPos]) {
-						// if the mapping is different 
-						if (fieldMap[fieldPos] != j) {						
-							// assume field isn't there
-							fieldPos = -1;
-							for (var k in fieldMap) {
-								if (j == fieldMap[k]) {
-									fieldPos =k;
-									break;
+	// check we were passed something to work with
+	if (data) {
+		// return immediately if all well (we have rows and fields already and there is nothing to promote)
+		if (data.rows && data.fields && !(field && data[field])) return data;		
+		// initialise fields
+		var fields = [];
+		// initialise rows
+		var rows = [];
+		// initialise a fieldmap (as properties aren't always in the same position each time)
+		var fieldMap = [];
+		// if the field is what we're after move it into the data
+		if (field && data[field]) data = data[field];
+		// if the data is an array
+		if ($.isArray(data)) {
+			// loop the array
+			for (var i in data) {
+				// retrieve the item
+				var item = data[i];
+				// prepare a row
+				var row = [];
+				// if it's an object build data object from it's properties
+				if ($.isPlainObject(item)) {				
+					var fieldPos = 0;				
+					for (var j in item) {
+						// check for a field mapping				 
+						if (fieldMap[fieldPos]) {
+							// if the mapping is different 
+							if (fieldMap[fieldPos] != j) {						
+								// assume field isn't there
+								fieldPos = -1;
+								for (var k in fieldMap) {
+									if (j == fieldMap[k]) {
+										fieldPos =k;
+										break;
+									}
+								}
+								// field pos wasn't found
+								if (fieldPos == -1) {
+									fieldMap.push(j);
+									fields.push(j);
+									fieldPos = fields.length - 1;
 								}
 							}
-							// field pos wasn't found
-							if (fieldPos == -1) {
-								fieldMap.push(j);
-								fields.push(j);
-								fieldPos = fields.length - 1;
-							}
+						} else {
+							// we don't have a mapping for this field (this is good, store field at this position in map and fields array)
+							fieldMap.push(j);
+							fields.push(j);
+							fieldPos = fields.length - 1;
 						}
-					} else {
-						// we don't have a mapping for this field (this is good, store field at this position in map and fields array)
-						fieldMap.push(j);
-						fields.push(j);
-						fieldPos = fields.length - 1;
-					}
-					// store the data in the row at the field position 
-					row[fieldPos] = item[j];
-					// all being well the next property is in the next position, if it wraps it'll assume it's an unseen field
-					if (fieldPos < fields.length - 1) fieldPos++;
-				}								
-			} else {
-				// retain the field
-				if (i == 0) fields.push(field);
-				// make a row with the item
-				row = [ item ];
-			}
-			// add the row
-			rows.push(row);
-		}				
-	} else {
-		var row = [];
-		if ($.isPlainObject(data)) {
-			for (var i in data) {
-				fields.push(i);
-				row.push(data[i]);
-			}
+						// store the data in the row at the field position 
+						row[fieldPos] = item[j];
+						// all being well the next property is in the next position, if it wraps it'll assume it's an unseen field
+						if (fieldPos < fields.length - 1) fieldPos++;
+					}								
+				} else {
+					// retain the field
+					if (i == 0) fields.push(field);
+					// make a row with the item
+					row = [ item ];
+				}
+				// add the row
+				rows.push(row);
+			}				
 		} else {
-			fields.push(field);
-			row.push(data);
-		}		
-		rows.push(row);
+			var row = [];
+			if ($.isPlainObject(data)) {
+				for (var i in data) {
+					fields.push(i);
+					row.push(data[i]);
+				}
+			} else {
+				fields.push(field);
+				row.push(data);
+			}		
+			rows.push(row);
+		}
+		data = { fields: fields, rows: rows};
 	}
-	data = { fields: fields, rows: rows};
 	return data;
 }
 

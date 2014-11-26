@@ -468,32 +468,88 @@ public class Page {
 	}
 			
 	// iterative function for building a flat JSONArray of controls that can be used on other pages
-	private void getOtherPageChildControls(JSONArray jsonControls, List<Control> controls) throws JSONException {
+	private void getOtherPageChildControls(RapidHttpServlet rapidServlet, JSONArray jsonControls, List<Control> controls) throws JSONException {
 		// check we were given some controls
 		if (controls != null) {
 			// loop the controls
 			for (Control control : controls) {
 				// if this control can be used from other pages
 				if (control.getCanBeUsedFromOtherPages()) {
-					// make a simple JSON object with what we need about this control
-					JSONObject jsonControl = new JSONObject();
-					jsonControl.put("id", control.getId());
-					jsonControl.put("type", control.getType());
-					jsonControl.put("name", control.getName());
-					jsonControls.put(jsonControl);
+					
+					// get the control details
+					JSONObject jsonControlClass = rapidServlet.getJsonControl(control.getType());
+					
+					// check we got one
+					if (jsonControlClass != null) {
+					
+						// make a JSON object with what we need about this control
+						JSONObject jsonControl = new JSONObject();
+						jsonControl.put("id", control.getId());
+						jsonControl.put("type", control.getType());
+						jsonControl.put("name", control.getName());
+						if (jsonControlClass.optString("getDataFunction", null) != null) jsonControl.put("input", true);
+						if (jsonControlClass.optString("setDataJavaScript", null) != null) jsonControl.put("output", true);
+						
+						// look for any runtimeProperties
+						JSONObject jsonProperty = jsonControlClass.optJSONObject("runtimeProperties");
+						// if we got some
+						if (jsonProperty != null) {
+							// create an array to hold the properties
+							JSONArray jsonRunTimeProperties = new JSONArray();
+							// look for an array too
+							JSONArray jsonProperties = jsonProperty.optJSONArray("runtimeProperty");
+							// assume
+							int index = 0;
+							int count = 0;
+							// if an array 
+							if (jsonProperties != null) {
+								// get the first item
+								jsonProperty = jsonProperties.getJSONObject(index);
+								// set the count
+								count = jsonProperties.length();
+							}
+							
+							// do once and loop until no more left 
+							do {
+								
+								// create a json object for this runtime property
+								JSONObject jsonRuntimeProperty = new JSONObject();
+								jsonRuntimeProperty.put("type", jsonProperty.get("type"));
+								jsonRuntimeProperty.put("name", jsonProperty.get("name"));
+								if (jsonProperty.optString("getPropertyFunction", null) != null) jsonRuntimeProperty.put("input", true);
+								if (jsonProperty.optString("setPropertyJavaScript", null) != null) jsonRuntimeProperty.put("output", true);
+								
+								// add to the collection
+								jsonRunTimeProperties.put(jsonRuntimeProperty);
+								
+								// increment the index
+								index ++;
+								
+								// get the next item if there's one there
+								if (index < count) jsonProperty = jsonProperties.getJSONObject(index);
+								
+							} while (index < count);
+							// add the properties to what we're returning
+							jsonControl.put("runtimeProperties", jsonRunTimeProperties);
+						}
+						
+						// add it to the collection we are returning
+						jsonControls.put(jsonControl);
+						
+					}
 				}
 				// run for any child controls
-				getOtherPageChildControls(jsonControls, control.getChildControls());				
+				getOtherPageChildControls(rapidServlet, jsonControls, control.getChildControls());				
 			}			
 		}
 	}
 		
 	// uses the above iterative method to return a flat array of controls in this page that can be used from other pages, for use in the designer
-	public JSONArray getOtherPageControls() throws JSONException {
+	public JSONArray getOtherPageControls(RapidHttpServlet rapidServlet) throws JSONException {
 		// the array we're about to return
 		JSONArray jsonControls = new JSONArray();
 		// start building the array using the page controls
-		getOtherPageChildControls(jsonControls, _controls);
+		getOtherPageChildControls(rapidServlet, jsonControls, _controls);
 		// return the controls
 		return jsonControls;		
 	}
@@ -913,13 +969,11 @@ public class Page {
 			
 			stringBuilder.append("var _pageId = '" + _id + "';\n");
 			
-			stringBuilder.append("var _userName = '" + userName + "';\n\n");
+			stringBuilder.append("var _userName = '" + userName + "';\n");
 			
 			// make a new string builder just for the js (so we can minify it independently)
-			StringBuilder jsStringBuilder = new StringBuilder(); 
+			StringBuilder jsStringBuilder = new StringBuilder("/*\n\n  The following code is minified for live applications\n\n*/\n\n"); 
 			
-			jsStringBuilder.append("/*\n\n  This code is minified for live applications\n\n*/\n\n");
-											
 			// get all controls
 			List<Control> pageControls = getAllControls();
 			
@@ -1035,7 +1089,7 @@ public class Page {
 				}
 			} else {
 				// add the js as is
-				stringBuilder.append("\n\n" + jsStringBuilder + "\n\n");
+				stringBuilder.append("\n" + jsStringBuilder.toString().trim() + "\n\n");
 			}
 																		
 			// close the page inline script block

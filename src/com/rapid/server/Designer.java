@@ -423,7 +423,7 @@ public class Designer extends RapidHttpServlet {
 									jsonPage.put("title", page.getTitle());
 									jsonPage.put("sessionVariables", page.getSessionVariables());
 									// get a collection of other page controls in this page
-									JSONArray jsonOtherPageControls = page.getOtherPageControls();
+									JSONArray jsonOtherPageControls = page.getOtherPageControls(this);
 									// only add the property if there are some
 									if (jsonOtherPageControls.length() > 0) jsonPage.put("controls", jsonOtherPageControls);
 									// check if the start page and add property if so
@@ -472,7 +472,7 @@ public class Designer extends RapidHttpServlet {
 								jsonPage.remove("rolesHtml");
 								// remove allControls (the single all-control list) it is not required
 								jsonPage.remove("allControls");
-								// remove the otherPageControls property as it is sent with getApplication
+								// remove the otherPageControls property as it is sent with getPages
 								jsonPage.remove("otherPageControls");
 								
 								// add a nicely formatted lock time

@@ -580,7 +580,10 @@ function getControlById(id, control) {
 				if (_pages[i].id != _page.id && _pages[i].controls) {
 					for (var j in _pages[i].controls) {
 						if (_pages[i].controls[j].id ==  id) {
+							// set the found control
 							foundControl = _pages[i].controls[j];
+							// add the page name
+							foundControl._pageName = _pages[i].name;
 							break;
 						}							
 					}

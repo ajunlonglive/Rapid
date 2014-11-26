@@ -2,263 +2,195 @@
 /* This file is auto-generated on application load and save - it is minified when in production */
 
 
-/* Action methods */
+/* Control and Action resource JavaScript */
 
 
-function Action_control(actions) {
-	for (var i in actions) {
-		var action = actions[i];
-		$("#" + action.id)[action["function"]](action.value);
-	}	
-}
+/* Page control resource JavaScript */
 
-function Action_datacopy(data, outputs, copyType, copyData, field) {
-	if (data != null && data !== undefined && outputs) {
-		for (var i in outputs) {
-			var output = outputs[i];	
-			var outputData = null;	
-			switch (copyType) {
-				case "append" :					
-					if (!output.details) output.details = {};						
-					output.details.append = true;
-					outputData = data;					
-				break;
-				case "row" :
-					var mergeData = window["getData_" + output.type](output.id, data, null, output.details);
-					if (!mergeData) mergeData = window["getData_" + output.type](output.id, data, null, output.details);
-					if (data && !data.fields) data = {fields:[output.field],rows:[[data]]};
-					outputData = mergeDataObjects(mergeData, data, copyType, field); 
-				break;
-				case "child" :
-					var mergeData = window["getData_" + output.type](output.id, data, output.field, output.details);
-					outputData = mergeDataObjects(mergeData, data, copyType, field);
-				break;
-				case "position" :
-					if (parseInt(field)) {						
-						data.selectedRow = field;				
-						outputData = {fields:data.fields, rows:[data.rows[field - 1]], selectedRow: field};
-					} 				
-				break;
-				case "replace" :
-					if (parseInt(field)) {	
-						if (!output.details) output.details = {};						
-						output.details.position = parseInt(field);
-						outputData = data;
-					} 
-				break;
-				case "search" :
-					outputData = mergeDataObjects(copyData, data, copyType, field);
-				break;
-				default:
-					outputData = data;
-			}	
-			window["setData_" + output.type](output.id, outputData, output.field, output.details);
-		}
-	}
-}
-
-function Action_database(actionId, data, outputs) {
-	// check we got data and somewhere to put it
-	if (data && outputs) {
-		// check the returned sequence is higher than any others received so far
-		if (data.sequence > getDatabaseActionMaxSequence(actionId)) {
-			// retain this sequence as the new highest
-			_databaseActionMaxSequence[actionId] = data.sequence;
-			for (var i in outputs) {
-				var output = outputs[i];			
-				window["setData_" + output.type](output.id, data, output.field, output.details);
-			}
-		}
-	}
-}
-
-//JQuery is ready! 
-$(document).ready( function() {
-	
-	$(window).resize(function(ex) {
-	
-		var doc = $(document);
-		var win = $(window);
-				
-		// resize the cover
-		$(".dialogueCover").css({
-       		width : doc.width(),
-       		height : doc.height()
-       	});
-       	      	
-       	// resize the dialogues
-       	$(".dialogue").each(function() {
-       		var dialogue = $(this);
-	       	dialogue.css({
-	       		left : (win.width() - dialogue.outerWidth()) / 2,
-	       		top : (win.height() - dialogue.outerHeight()) / 3
-	       	}); 
-	    });
-	
-	});
-	
-});		        
-	        
-function Action_navigate(url, dialogue, id) {
-
-	if (dialogue) {
-	
-		var bodyHtml = "<div><h1 style='margin-left:auto;margin-right:auto;'>Page</h1></div>";
-		
-		// request the page		
-		$.ajax({
-		   	url: url,
-		   	type: "GET",          
-		       data: null,        
-		       async: false,
-		       error: function(error, status, message) { 
-		       		alert("Error loading dialogue : " + error.responseText||message); 
-		       },
-		       success: function(page) {
-		       	
-		       // if the page can't be found a blank response is sent, so only show if we got something
-		       if (page) {
-		       	
-		       		// empty the body html
-		       		bodyHtml = "";
-		       		script = "";
-		       		links = "";
-		       		
-		           	// loop the items
-		           	var items = $(page);
-		           	for (var i in items) {
-		           		// check for a script node
-		           		switch (items[i].nodeName) {
-		           		case "#text" : case "TITLE" : // ignore these types
-		           		break;
-		           		case "SCRIPT" :
-		           			// exclude any links as we should have them all already
-		           			if (items[i].innerHTML) {
-		           				script += items[i].outerHTML;
-		           			}		           			
-		           		break;
-		           		case "LINK" :
-		           			// assume we can include this
-		           			var include = true;
-		           			// fetch the text
-		           			var text = items[i].outerHTML;	           			
-		           			// look for an href="
-		           			if (!items[i].innerHTML && text.indexOf("href=\"") > 0) {
-		           				var startPos = text.indexOf("href=\"")+6;
-		           				var href = text.substr(startPos,text.indexOf("\"", startPos) - startPos);
-		           				// exclude if we already have an element in the head with with href
-		           				if ($("head").find("link[href='" + href + "']")[0]) include = false;
-		           			}		           			
-		           			// if still safe to include
-		           			if (include) links += text;		           			
-		           		break;
-		           		case "META" :
-		           			// meta tags can be ignored
-		           		break;
-		           		default :
-		           			if (items[i].outerHTML) {
-		           				// retain the script in our body html
-		           				bodyHtml += items[i].outerHTML;        				
-		           			}
-		           		break;
-		           		}
-		           	}   
-		           	
-		           	// if this is the login page go to the real thing, requesting to come back to this location
-            		if (bodyHtml.indexOf("<form name=\"login\" id=\"RapidLogin\">") > 0) window.location = "login.jsp?requestPath=" + window.location; 
-            	
-            		// get a reference to the document for the entire height and width     	
-		           	var doc = $(document);
-		           	// get a reference to the body		           	
-		           	var body = $("body");
-		           	
-		           	// remove any existing dialogue cover for this action
-		           	$("#" + id + "cover").remove();
-		           	// add the cover and return reference
-		           	dialogueCover = body.append("<div id='" + id + "cover' class='dialogueCover' style='position:absolute;left:0px;top:0px;z-index:100;'></div>").children().last();
-		           			      		           			           		            	
-	            	// remove any existing dialogue container for this action
-		           	$("#" + id + "dialogue").remove();
-		           	// add the dialogue container and remove the reference
-		           	dialogue = body.append("<div id='" + id + "dialogue' class='dialogue' style='position:absolute;z-index:101;'></div>").children().last(); 
-		           	
-		           	// make sure it's hidden
-		           	dialogue.css("visibility","hidden");
-					
-					// add any links into the page (if applicable)
-		           	if (links) dialogue.append(links);		           			           	
-		           	
-		           	// append the injected html
-		           	dialogue.append(bodyHtml);
-		           	
-		           	// add any scripts into the page (if applicable)
-		           	if (script) dialogue.append(script);
-		           			           	
-		           	// get a reference to the window for the visible area
-		           	var win = $(window);
-		           	
-		           	// apply the resizing	
-	            	$(window).resize(); 
-	            	
-	            	// this seems to be the best way to avoid the resizing/flicker when showing
-	            	window.setTimeout( function() {
-	            		// make the dialogue visible
-	            		dialogue.css("visibility","visible");
-	            		// apply the resizing again (for mobile)	
-	            		if (window["_rapidmobile"]) $(window).resize(); 
-	            	}, 200);
-		           	           	        	            	            	            
-		    	}        	       	        	        	        	        		
-		    }       	        	        
-		});	      
-	
+function Event_error(eventName, controlId, ex) {
+	if (controlId) {
+		alert("Error in " + eventName + " event for control " + controlId + "  " + ex);
 	} else {
-		window.location = url;
+		alert("Error in " + eventName + " event for page " + ex);
 	}
 }
 
-function Action_validation(ev, validations, showMessages) {
-	var valid = true;
-	for (var i in validations) {
-		var validation = validations[i];
-		var value = window["getData_" + validation.controlType](ev, validation.controlId, validation.field, validation.details);
-		if (validation.validationType == "javascript") {						
-			var validationFunction = new Function("value", validation.javaScript);
-			var failMessage = validationFunction.apply(this, [value]);
-			if (failMessage) {
-				if (showMessages) showValidationMessage(validation.controlId, failMessage);
-				valid = false;
-			} else {
-				if (showMessages) hideValidationMessage(validation.controlId);
-			}
+/* Data store control resource JavaScript */
+
+function getDataStoreData(id, details, field) {
+	var data;
+	switch (details.storageType) {
+		case "L":
+			// use localStorage
+			if (!localStorage[_appId + "_" + id]) localStorage[_appId + "_" + id] = "{}";
+			// get the data string
+			var dataString = localStorage[_appId + "_" + id];
+			// get data
+			data = JSON.parse(dataString);				
+		break;
+		case "S": 
+			// use sessionStorage
+			if (!sessionStorage[_appId + "_" + id]) sessionStorage[_appId + "_" + id] = "{}";
+			// get the data string
+			var dataString = sessionStorage[_appId + "_" + id];
+			// get data
+			data = JSON.parse(dataString);
+		break;
+		case "P": 
+			// instansiate an object in the page if there isn't one
+			if (!window[id + "datastore"]) window[id + "datastore"] = {};
+			// use the in page object
+			data = window[id + "datastore"];
+		break;
+	}  
+	// return it	
+	return data;
+}	                
+
+function saveDataStoreData(id, details, data) {
+	switch (details.storageType) {
+		case "L":
+			// use localStorage
+			localStorage[_appId + "_" + id] = JSON.stringify(data);			
+		break;
+		case "S": 
+			// use sessionStorage
+			sessionStorage[_appId + "_" + id] = JSON.stringify(data);
+		break;
+		case "P": 
+			// instansiate an object in the page if there isn't one
+			window[id + "datastore"] = data;
+		break;
+	}
+}
+
+/* Grid control resource JavaScript */
+
+function getGridDataStoreData(id, details) {
+	data = null;
+	switch (details.dataStorageType) {
+		case "L" :
+			var dataString = localStorage[_appId + id];
+			if (dataString) data = JSON.parse(dataString);
+		break;
+		case "S" :
+			var dataString = sessionStorage[_appId + id];
+			if (dataString) data = JSON.parse(dataString);
+		break;
+	}
+	return data;
+}
+
+function saveGridDataStoreData(id, details, data) {
+	switch (details.dataStorageType) {
+		case "L" :
+			localStorage[_appId + id] = JSON.stringify(data);
+		break;
+		case "S" :
+			sessionStorage[_appId + id] = JSON.stringify(data);
+		break;
+	}
+}
+
+/* Link control resource JavaScript */
+
+function linkClick(url, sessionVariablesString) {
+	
+	var sessionVariables = JSON.parse(sessionVariablesString);
+	
+	for (var i in sessionVariables) {
+	
+		var item = sessionVariables[i];
+		
+		if (item.type) {
+		
+			var value = window["getData_" + item.type](null, item.itemId, item.field, item.details);
+			
 		} else {
-			if ((value && value.match(new RegExp(validation.regEx)))||(!value && validation.allowNulls)) {
-				// passed
-				if (showMessages) hideValidationMessage(validation.controlId);				
-			} else {
-				// failed
-				if (showMessages) showValidationMessage(validation.controlId, validation.message);
-				valid = false;					
-			}	
-		}	
-	}	
-	return valid;
+		
+			var value = $.getUrlVar(item.itemId);
+		
+		}
+	
+		if (value !== undefined) url += "&" + item.name + "=" + value;
+	}
+	
+	window.location = url;
+	
 }
 
-function Action_webservice(actionId, data, outputs) {
-	// only if there are data and outputs
-	if (data && outputs) {
-		// only if this is the latest sequence
-		if (data.sequence > getWebserviceActionMaxSequence(actionId)) {
-			// retain this as the lastest sequence
-			_webserviceActionMaxSequence[actionId] = data.sequence;
-			// loop the outputs
-			for (var i in outputs) {
-				var output = outputs[i];			
-				window["setData_" + output.type](output.id, data, output.field, output.details);
-			}
-		}
+/* Database action resource JavaScript */
+
+// this global associative array tracks the databaseAction call sequences for each action	    			
+var _databaseActionSequence = [];	    
+
+// this global associative array holds the greates sequence received back     			
+var _databaseActionMaxSequence = [];	
+
+// this function returns an incrementing sequence for each database action call so long-running slow queries don't overrwrite fast later queries
+function getDatabaseActionSequence(actionId) {
+	// retrieve the current sequence for the action
+	var sequence = _databaseActionSequence[actionId];
+	// if null set to 0
+	if (!sequence) sequence = 0
+	// increment
+	sequence++;
+	// store
+	_databaseActionSequence[actionId] = sequence;
+	// pass back
+	return sequence;
+}		
+
+// this function sets the max to 0 if null
+function getDatabaseActionMaxSequence(actionId) {
+	// retrieve the current sequence for the action
+	var sequence = _databaseActionMaxSequence[actionId];
+	// if undefined
+	if (sequence === undefined) {
+		// set to 0
+		sequence = 0;
+		// retain for next time
+		_databaseActionMaxSequence[actionId] = sequence;
 	}
+	// pass back
+	return sequence;
+}
+
+/* Webservice action resource JavaScript */
+
+// this global associative array tracks the webserviceAction call sequences for each action	    			
+var _webserviceActionSequence = [];	    
+
+// this global associative array holds the greates sequence received back     			
+var _webserviceActionMaxSequence = [];	
+
+// this function returns an incrementing sequence for each database action call so long-running slow queries don't overrwrite fast later queries
+function getWebserviceActionSequence(actionId) {
+	// retrieve the current sequence for the action
+	var sequence = _webserviceActionSequence[actionId];
+	// if null set to 0
+	if (!sequence) sequence = 0
+	// increment
+	sequence++;
+	// store
+	_webserviceActionSequence[actionId] = sequence;
+	// pass back
+	return sequence;
+}	
+
+// this function sets the max to 0 if null
+function getWebserviceActionMaxSequence(actionId) {
+	// retrieve the current sequence for the action
+	var sequence = _webserviceActionMaxSequence[actionId];
+	// if undefined
+	if (sequence === undefined) {
+		// set to 0
+		sequence = 0;
+		// retain for next time
+		_webserviceActionMaxSequence[actionId] = sequence;
+	}
+	// pass back
+	return sequence;
 }
 
 
@@ -268,6 +200,18 @@ function Action_webservice(actionId, data, outputs) {
 function Init_date(id, details) {
   A_TCALCONF.format = details.dateFormat;	     
   f_tcalAdd (id);
+}
+
+function Init_grid(id, details) {
+  if (details && details.dataStorageType) {
+  	var data = getGridDataStoreData(id, details);
+  	if (data) setData_grid(id, data, null, details);
+  	$("#" + id).click(function(ev) {
+  		var data = getGridDataStoreData(id, details);
+  		data.selectedRowNumber = $(ev.target).closest("tr").index();
+  		saveGridDataStoreData(id, details, data);
+  	});
+  }
 }
 
 function Init_hints(id, details) {
@@ -439,59 +383,85 @@ function setData_checkbox(id, data, field, details) {
 }
 
 function getData_dataStore(ev, id, field, details) {
-  var data = null;
-  var dataStore = getDataStore(id, details);
-  if (dataStore) {
-  	if (details.id) id = details.id;	
-  	var dataString = dataStore[_appId + "_" + id];
-  	if (dataString) {
-  		var data = JSON.parse(dataString);
-  		if (data) {		
-  			if (data.rows && data.fields) {
-  				if (data.rows[0] && field) {
-  					for (var i in data.fields) {
-  						if (data.fields[i].toLowerCase() == field.toLowerCase()) {
-  							return data.rows[0][i];
-  						}
-  					}
-  					return null;
-  				} else {
-  					return data;
+  var data = getDataStoreData(id, details, field);
+  if (data) {		
+  	if (data.rows && data.fields) {
+  		if (data.rows[0] && field) {
+  			for (var i in data.fields) {
+  				if (data.fields[i].toLowerCase() == field.toLowerCase()) {
+  					return data.rows[0][i];
   				}
-  			} else if (field && data[field]) {
-  				return data[field];
   			}
-  		}	 
-  	} 		
-  }
+  			return null;
+  		} else {
+  			return data;
+  		}
+  	} else if (field && data[field]) {
+  		return data[field];
+  	}
+  }	 
   return data;
 }
 
 function setData_dataStore(id, data, field, details) {
-  var dataStore = getDataStore(id, details);
-  if (dataStore) {
-  	if (details.id) id = details.id;
-  	if (data != null && data !== undefined) {
-  		data = makeDataObject(data, field);
-  		if (details.append) {
-  			var dataString = dataStore[_appId + "_" + id];
-  			if (dataString) {
-  				var sourceData = JSON.parse(dataString);
-  				sourceData.rows.push(data.rows[0]);
-  				data = sourceData;
-  			}
-  		} else if (parseInt(details.position)) {
-  			var dataString = dataStore[_appId + "_" + id];
-  			if (dataString) {
-  				var sourceData = JSON.parse(dataString);
-  				sourceData.rows[details.position - 1] = data.rows[0];
-  				data = sourceData;
-  			} 
-  		}
-  		dataStore[_appId + "_" + id] = JSON.stringify(data);
-  	} else {
-  		dataStore[_appId + "_" + id] = null;
+  if (details.id) id = details.id;
+  if (data != null && data !== undefined) {
+  	data = makeDataObject(data, field);
+  	saveDataStoreData(id, details, data);
+  } else {
+  	saveDataStoreData(id, details, null);
+  }
+}
+
+function getProperty_dataStore_selectedRowData(ev, id, field, details) {
+  var data = getDataStoreData(id, details);
+  if (data && data.selectedRowNumber && data.rows && data.rows[data.selectedRowNumber - 1]) {
+  	return {fields:data.fields,rows:[data.rows[data.selectedRowNumber - 1]]};
+  }
+}
+
+function setProperty_dataStore_selectedRowData(ev, id, field, details, data) {
+  var dataStoreData = getDataStoreData(id, details);	                
+  if (dataStoreData && dataStoreData.selectedRowNumber) {	
+  	data = makeDataObject(data, field);
+  	if (data && data.rows) {
+  		dataStoreData.rows[dataStoreData.selectedRowNumber] = data.rows[0][0];
+  		saveDataStoreData(id, details, dataStoreData);
   	}
+  }
+}
+
+function getProperty_dataStore_selectedRowNumber(ev, id, field, details) {
+  var data = getDataStoreData(id, details);
+  if (data) return data.selectedRowNumber;
+}
+
+function setProperty_dataStore_selectedRowNumber(ev, id, field, details, data) {
+  var dataStoreData = getDataStoreData(id, details);	                
+  if (dataStoreData) {	
+  	data = makeDataObject(data, field);
+  	if (data && data.rows) {
+  		dataStoreData.selectedRowNumber = data.rows[0][0];
+  		saveDataStoreData(id, details, dataStoreData);
+  	}
+  }
+}
+
+function getProperty_dataStore_rowCount(ev, id, field, details) {
+  var dataStoreData = getDataStoreData(id, details);
+  if (dataStoreData && dataStoreData.rows) return dataStoreData.rows.length;
+}
+
+function setProperty_dataStore_append(ev, id, field, details, data) {
+  var dataStoreData = getDataStoreData(id, details);
+  if (dataStoreData) {
+  	data = makeDataObject(data, field);
+  	if (data && data.rows) {
+  		if (!dataStoreData.fields) dataStoreData.fields = data.fields;
+  		if (!dataStoreData.rows) dataStoreData.rows = []; 
+  		for (var i in data.rows) dataStoreData.rows.push(data.rows[i]);
+  		saveDataStoreData(id, details, dataStoreData);
+  	}	
   }
 }
 
@@ -566,33 +536,37 @@ function setData_dropdown(id, data, field, details) {
 
 function getData_grid(ev, id, field, details) {
   var data = null;
-  if (details && details.columns) {
-  	if (field) {		
-  		var row = $(ev.target).closest("tr");
-  		var rowIndex = row.index() - 1;
-  		if (rowIndex >= 0) {
-  			for (var i in details.columns) {
-  				if (details.columns[i].field.toLowerCase() == field.toLowerCase()) {
-  					data = row.children(":nth(" + i + ")").html();
-  					break;
+  if (details) {
+  	if (details.dataStorageType) {
+  		data = getGridDataStoreData(id, details);
+  	} else if (details.columns) {
+  		if (field) {		
+  			var row = $(ev.target).closest("tr");
+  			var rowIndex = row.index() - 1;
+  			if (rowIndex >= 0) {
+  				for (var i in details.columns) {
+  					if (details.columns[i].field.toLowerCase() == field.toLowerCase()) {
+  						data = row.children(":nth(" + i + ")").html();
+  						break;
+  					}
   				}
+  			}	    
+  		} else {
+  			var data = {};
+  			data.fields = [];		
+  			for (var i in details.columns) {	
+  				data.fields.push(details.columns[i].field);		
   			}
-  		}	    
-  	} else {
-  		var data = {};
-  		data.fields = [];		
-  		for (var i in details.columns) {	
-  			data.fields.push(details.columns[i].field);		
-  		}
-  		data.rows = [];
-  		$("#" + id).find("tr:not(:first)").each(function(i) {
-  			var row = [];
-  			$(this).children().each(function(i) {
-  				row.push($(this).html());
+  			data.rows = [];
+  			$("#" + id).find("tr:not(:first)").each(function(i) {
+  				var row = [];
+  				$(this).children().each(function(i) {
+  					row.push($(this).html());
+  				});
+  				data.rows.push(row);
   			});
-  			data.rows.push(row);
-  		});
-  	}	
+  		}	
+  	}
   }
   return data;
 }
@@ -654,6 +628,7 @@ function setData_grid(id, data, field, details) {
   				control.append(rowHtml);
   			}
   		}	
+  		if (details.dataStorageType) saveGridDataStoreData(id, details, data);					
   	} 
   	
   	control.children().last().children("tr:not(:first)").click( function() { 
@@ -670,20 +645,74 @@ function setData_grid(id, data, field, details) {
 
 function getProperty_grid_selectedRowData(ev, id, field, details) {
   var data = null;
-  var row = $(ev.target).closest("tr");
-  var rowIndex = row.index() - 1;
-  if (rowIndex >= 0) {
-  	data = {fields:[],rows:[[]]};
-  	for (var i in details.columns) {
-  		data.fields.push(details.columns[i].field);
-  		data.rows[0].push(row.children(":nth(" + i + ")").html());
+  if (details.dataStorageType) {
+  	data = getGridDataStoreData(id, details);
+  	data.rows = [data.rows[data.selectedRowNumber - 1]];
+  } else {
+  	var row = $(ev.target).closest("tr");
+  	var rowNumber = row.index();
+  	if (rowNumber > 0) {
+  		data = {fields:[],rows:[[]]};
+  		for (var i in details.columns) {
+  			data.fields.push(details.columns[i].field);
+  			data.rows[0].push(row.children(":nth(" + i + ")").html());
+  		}
   	}
-  }  
+  }
   return data;
 }
 
+function setProperty_grid_selectedRowData(ev, id, field, details, data) {
+  gridData = getGridDataStoreData(id, details);
+  if (!gridData) gridData = {};
+  data = makeDataObject(data, field);
+  if (gridData.selectedRowNumber) {
+  	// replace or remove selected row	
+  	if (data) {
+  		// put top row of what we were passed into selected row
+  		gridData.rows[gridData.selectedRowNumber - 1] = data.rows[0];
+  	} else {
+  		// remove the selected row 
+  		gridData.rows.splice(gridData.selectedRowNumber - 1, 1);
+  		// remove the selection
+  		gridData.selectedRowNumber = null;
+  	}
+  	// save the grid
+  	saveGridDataStoreData(id, details, gridData);
+  } else {
+  	// append if no selected row
+  	if (data) {
+  		// get the fields from the data if not present
+  		if (!gridData.fields) gridData.fields = data.fields;
+  		// create a rows array if not present
+  		if (!gridData.rows) gridData.rows = [];
+  		// add the top row of what we were given
+  		gridData.rows.push(data.rows[0]);
+  		// set the selected row number
+  		gridData.selectedRowNumber = gridData.rows.length;
+  		// save the grid
+  		saveGridDataStoreData(id, details, gridData);	
+  	}	
+  }
+}
+
 function getProperty_grid_selectedRowNumber(ev, id, field, details) {
-  return $(ev.target).closest("tr").index();
+  if (details && details.dataStorageType) {
+  	var gridData = getGridDataStoreData(id, details);
+  	return gridData.selectedRowNumber;
+  } else {
+  	return $(ev.target).closest("tr").index();
+  }
+}
+
+function setProperty_grid_selectedRowNumber(ev, id, field, details, data) {
+  gridData = getGridDataStoreData(id, details);
+  if (!gridData) gridData = {};
+  data = makeDataObject(data, field);
+  var selectedRowNumber = null;
+  if (data) selectedRowNumber = data.rows[0][0];
+  gridData.selectedRowNumber = selectedRowNumber;	
+  saveGridDataStoreData(id, details, gridData);
 }
 
 function getProperty_grid_rowCount(ev, id, field, details) {
@@ -748,7 +777,6 @@ function setData_radiobuttons(id, data, field, details) {
   		if (button[0]) {
   			button.prop('checked',true);	
   			button.trigger("change");		
-  			//window["Event_change_" + id]();
   		}		
   	}
   }
@@ -782,139 +810,262 @@ function setData_text(id, data, field, details) {
 }
 
 
-/* Control and Action resource JavaScript */
+/* Action methods */
 
 
-/* Page control resource JavaScript */
-
-function Event_error(eventName, controlId, ex) {
-	if (controlId) {
-		alert("Error in " + eventName + " event for control " + controlId + "  " + ex);
-	} else {
-		alert("Error in " + eventName + " event for page " + ex);
-	}
+function Action_control(actions) {
+	for (var i in actions) {
+		var action = actions[i];
+		$("#" + action.id)[action["function"]](action.value);
+	}	
 }
 
-/* Data store control resource JavaScript */
-
-function getDataStore(id, details) {
-	var dataStore;
-	switch (details.storageType) {
-		case "L":
-			// use localStorage
-			dataStore = localStorage;
-		break;
-		case "S": 
-			// use sessionStorage
-			dataStore = sessionStorage;
-		break;
-		case "P": 
-			// instansiate an object in the page if there isn't one
-			if (!window[details.id + "datastore"]) window[details.id + "datastore"] = {};
-			// use the in page object
-			dataStore = window[details.id + "datastore"];
-		break;
-	}  
-	return dataStore;
-}
-
-/* Link control resource JavaScript */
-
-function linkClick(url, sessionVariablesString) {
-	
-	var sessionVariables = JSON.parse(sessionVariablesString);
-	
-	for (var i in sessionVariables) {
-	
-		var item = sessionVariables[i];
-		
-		if (item.type) {
-		
-			var value = window["getData_" + item.type](null, item.itemId, item.field, item.details);
-			
-		} else {
-		
-			var value = $.getUrlVar(item.itemId);
-		
+function Action_datacopy(ev, data, outputs, copyType, copyData, field) {
+	if (data != null && data !== undefined && outputs) {
+		for (var i in outputs) {
+			var output = outputs[i];	
+			var outputData = null;	
+			switch (copyType) {
+				case "append" :					
+					if (!output.details) output.details = {};						
+					output.details.append = true;
+					outputData = data;					
+				break;
+				case "row" : 
+					var mergeData = window["getData_" + output.type](ev, output.id, null, output.details);
+					data = makeDataObject(data, output.field);
+					outputData = mergeDataObjects(mergeData, data, copyType, field); 
+				break;				
+					var mergeData = window["getData_" + output.type](ev, output.id, null, output.details);
+					outputData = mergeDataObjects(mergeData, data, copyType, field);
+				break;
+				case "search" :
+					outputData = mergeDataObjects(copyData, data, copyType, field);
+				break;
+				default:
+					outputData = data;
+			}	
+			window["setData_" + output.type](output.id, outputData, output.field, output.details);
 		}
-	
-		if (value !== undefined) url += "&" + item.name + "=" + value;
 	}
-	
-	window.location = url;
-	
 }
 
-/* Database action resource JavaScript */
-
-// this global associative array tracks the databaseAction call sequences for each action	    			
-var _databaseActionSequence = [];	    
-
-// this global associative array holds the greates sequence received back     			
-var _databaseActionMaxSequence = [];	
-
-// this function returns an incrementing sequence for each database action call so long-running slow queries don't overrwrite fast later queries
-function getDatabaseActionSequence(actionId) {
-	// retrieve the current sequence for the action
-	var sequence = _databaseActionSequence[actionId];
-	// if null set to 0
-	if (!sequence) sequence = 0
-	// increment
-	sequence++;
-	// store
-	_databaseActionSequence[actionId] = sequence;
-	// pass back
-	return sequence;
-}		
-
-// this function sets the max to 0 if null
-function getDatabaseActionMaxSequence(actionId) {
-	// retrieve the current sequence for the action
-	var sequence = _databaseActionMaxSequence[actionId];
-	// if undefined
-	if (sequence === undefined) {
-		// set to 0
-		sequence = 0;
-		// retain for next time
-		_databaseActionMaxSequence[actionId] = sequence;
+function Action_database(actionId, data, outputs) {
+	// check we got data and somewhere to put it
+	if (data && outputs) {
+		// check the returned sequence is higher than any others received so far
+		if (data.sequence > getDatabaseActionMaxSequence(actionId)) {
+			// retain this sequence as the new highest
+			_databaseActionMaxSequence[actionId] = data.sequence;
+			for (var i in outputs) {
+				var output = outputs[i];			
+				window["setData_" + output.type](output.id, data, output.field, output.details);
+			}
+		}
 	}
-	// pass back
-	return sequence;
 }
 
-/* Webservice action resource JavaScript */
+//JQuery is ready! 
+$(document).ready( function() {
+	
+	$(window).resize(function(ex) {
+	
+		var doc = $(document);
+		var win = $(window);
+				
+		// resize the cover
+		$(".dialogueCover").css({
+       		width : doc.width(),
+       		height : doc.height()
+       	});
+       	      	
+       	// resize the dialogues
+       	$(".dialogue").each(function() {
+       		var dialogue = $(this);
+	       	dialogue.css({
+	       		left : (win.width() - dialogue.outerWidth()) / 2,
+	       		top : (win.height() - dialogue.outerHeight()) / 3
+	       	}); 
+	    });
+	
+	});
+	
+});		        
+	        
+function Action_navigate(url, dialogue, id) {
 
-// this global associative array tracks the webserviceAction call sequences for each action	    			
-var _webserviceActionSequence = [];	    
-
-// this global associative array holds the greates sequence received back     			
-var _webserviceActionMaxSequence = [];	
-
-// this function returns an incrementing sequence for each database action call so long-running slow queries don't overrwrite fast later queries
-function getWebserviceActionSequence(actionId) {
-	// retrieve the current sequence for the action
-	var sequence = _webserviceActionSequence[actionId];
-	// if null set to 0
-	if (!sequence) sequence = 0
-	// increment
-	sequence++;
-	// store
-	_webserviceActionSequence[actionId] = sequence;
-	// pass back
-	return sequence;
-}	
-
-// this function sets the max to 0 if null
-function getWebserviceActionMaxSequence(actionId) {
-	// retrieve the current sequence for the action
-	var sequence = _webserviceActionMaxSequence[actionId];
-	// if undefined
-	if (sequence === undefined) {
-		// set to 0
-		sequence = 0;
-		// retain for next time
-		_webserviceActionMaxSequence[actionId] = sequence;
+	if (dialogue) {
+	
+		var bodyHtml = "<div><h1 style='margin-left:auto;margin-right:auto;'>Page</h1></div>";
+		
+		// request the page		
+		$.ajax({
+		   	url: url,
+		   	type: "GET",          
+		       data: null,        
+		       async: false,
+		       error: function(error, status, message) { 
+		       		alert("Error loading dialogue : " + error.responseText||message); 
+		       },
+		       success: function(page) {
+		       	
+		       // if the page can't be found a blank response is sent, so only show if we got something
+		       if (page) {
+		       	
+		       		// empty the body html
+		       		bodyHtml = "";
+		       		script = "";
+		       		links = "";
+		       		
+		           	// loop the items
+		           	var items = $(page);
+		           	for (var i in items) {
+		           		// check for a script node
+		           		switch (items[i].nodeName) {
+		           		case "#text" : case "TITLE" : // ignore these types
+		           		break;
+		           		case "SCRIPT" :
+		           			// exclude any links as we should have them all already
+		           			if (items[i].innerHTML) {
+		           				script += items[i].outerHTML;
+		           			}		           			
+		           		break;
+		           		case "LINK" :
+		           			// assume we can include this
+		           			var include = true;
+		           			// fetch the text
+		           			var text = items[i].outerHTML;	           			
+		           			// look for an href="
+		           			if (!items[i].innerHTML && text.indexOf("href=\"") > 0) {
+		           				var startPos = text.indexOf("href=\"")+6;
+		           				var href = text.substr(startPos,text.indexOf("\"", startPos) - startPos);
+		           				// exclude if we already have an element in the head with with href
+		           				if ($("head").find("link[href='" + href + "']")[0]) include = false;
+		           			}		           			
+		           			// if still safe to include
+		           			if (include) links += text;		           			
+		           		break;
+		           		case "META" :
+		           			// meta tags can be ignored
+		           		break;
+		           		default :
+		           			if (items[i].outerHTML) {
+		           				// retain the script in our body html
+		           				bodyHtml += items[i].outerHTML;        				
+		           			}
+		           		break;
+		           		}
+		           	}   
+		           	
+		           	// if this is the login page go to the real thing, requesting to come back to this location
+            		if (bodyHtml.indexOf("<form name=\"login\" id=\"RapidLogin\">") > 0) window.location = "login.jsp?requestPath=" + window.location; 
+            	
+            		// get a reference to the document for the entire height and width     	
+		           	var doc = $(document);
+		           	// get a reference to the body		           	
+		           	var body = $("body");
+		           	
+		           	// remove any existing dialogue cover for this action
+		           	$("#" + id + "cover").remove();
+		           	// add the cover and return reference
+		           	dialogueCover = body.append("<div id='" + id + "cover' class='dialogueCover' style='position:absolute;left:0px;top:0px;z-index:100;'></div>").children().last();
+		           			      		           			           		            	
+	            	// remove any existing dialogue container for this action
+		           	$("#" + id + "dialogue").remove();
+		           	// add the dialogue container and remove the reference
+		           	dialogue = body.append("<div id='" + id + "dialogue' class='dialogue' style='position:absolute;z-index:101;'></div>").children().last(); 
+		           	
+		           	// make sure it's hidden
+		           	dialogue.css("visibility","hidden");
+		           			           						
+					// add any links into the page (if applicable)
+		           	if (links) dialogue.append(links);		           			           	
+		           	
+		           	// append the injected html
+		           	dialogue.append(bodyHtml);
+		           	
+		           	// add custom hide listener to children and event
+		           	dialogue.children().on("hide", function() {
+		           		var dialogue = $(this).closest("div.dialogue");	  
+						dialogue.prev("div.dialogueCover").remove();
+						dialogue.remove(); 
+		           	});
+		           	
+		           	// thanks to http://viralpatel.net/blogs/jquery-trigger-custom-event-show-hide-element/						
+					$.each(['show', 'hide'], function (i, ev) {
+						var el = $.fn[ev];
+						$.fn[ev] = function () {
+							this.trigger(ev);
+							return el.apply(this, arguments);
+						};
+					});
+							           	
+		           	// add any scripts into the page (if applicable)
+		           	if (script) dialogue.append(script);
+		           			           	
+		           	// get a reference to the window for the visible area
+		           	var win = $(window);
+		           	
+		           	// apply the resizing	
+	            	$(window).resize(); 
+	            	
+	            	// this seems to be the best way to avoid the resizing/flicker when showing
+	            	window.setTimeout( function() {
+	            		// make the dialogue visible
+	            		dialogue.css("visibility","visible");
+	            		// apply the resizing again (for mobile)	
+	            		if (window["_rapidmobile"]) $(window).resize(); 
+	            	}, 200);
+		           	           	        	            	            	            
+		    	}        	       	        	        	        	        		
+		    }       	        	        
+		});	      
+	
+	} else {
+		window.location = url;
 	}
-	// pass back
-	return sequence;
+}
+
+function Action_validation(ev, validations, showMessages) {
+	var valid = true;
+	for (var i in validations) {
+		var validation = validations[i];
+		var value = window["getData_" + validation.controlType](ev, validation.controlId, validation.field, validation.details);
+		if (validation.validationType == "javascript") {						
+			var validationFunction = new Function("value", validation.javaScript);
+			var failMessage = validationFunction.apply(this, [value]);
+			if (failMessage) {
+				if (showMessages) showValidationMessage(validation.controlId, failMessage);
+				valid = false;
+			} else {
+				if (showMessages) hideValidationMessage(validation.controlId);
+			}
+		} else {
+			if ((value && value.match(new RegExp(validation.regEx)))||(!value && validation.allowNulls)) {
+				// passed
+				if (showMessages) hideValidationMessage(validation.controlId);				
+			} else {
+				// failed
+				if (showMessages) showValidationMessage(validation.controlId, validation.message);
+				valid = false;					
+			}	
+		}	
+	}	
+	return valid;
+}
+
+function Action_webservice(actionId, data, outputs) {
+	// only if there are data and outputs
+	if (data && outputs) {
+		// only if this is the latest sequence
+		if (data.sequence > getWebserviceActionMaxSequence(actionId)) {
+			// retain this as the lastest sequence
+			_webserviceActionMaxSequence[actionId] = data.sequence;
+			// loop the outputs
+			for (var i in outputs) {
+				var output = outputs[i];			
+				window["setData_" + output.type](output.id, data, output.field, output.details);
+			}
+		}
+	}
 }

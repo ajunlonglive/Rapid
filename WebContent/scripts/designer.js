@@ -804,25 +804,44 @@ function getDataOptions(selectId, ignoreId, input) {
 	
 	// other page controls can be used for input for output
 	if (_page && _pages) {
-		var groupOpen = false;
-		var groupClose = false;
+
 		for (var i in _pages) {
+			
 			if (_pages[i].id != _page.id && _pages[i].controls) {
-				if (!groupOpen) {
-					options += "<optgroup label='Other page controls'>";
-					groupOpen = true;
-				}
+				
+				var pageControlOptions = "";
+												
 				for (var j in _pages[i].controls) {
-					if (selectId == _pages[i].controls[j].id && !gotSelected) {
-						options += "<option value='" + _pages[i].controls[j].id + "' selected='selected' >" +  _pages[i].title + "." + _pages[i].controls[j].name + "</option>";
-						gotSelected = true;
-					} else {
-						options += "<option value='" + _pages[i].controls[j].id + "' >" +  _pages[i].title + "." + _pages[i].controls[j].name + "</option>";
-					}					
+					
+					var control = _pages[i].controls[j];
+											
+					if ((input && control.input) || (!input && control.output)) {
+						if (selectId == control.id && !gotSelected) {
+							pageControlOptions += "<option value='" + control.id + "' selected='selected' >" +  control.name + "</option>";
+							gotSelected = true;
+						} else {
+							pageControlOptions += "<option value='" + control.id + "' >" + control.name + "</option>";
+						}
+					}
+					
+					if (control.runtimeProperties) {						
+						for (var k in control.runtimeProperties) {
+							if ((input && control.runtimeProperties[k].input) || (!input && control.runtimeProperties[k].output)) {
+								if (selectId == control.id + "." + control.runtimeProperties[k].type && !gotSelected) {
+									pageControlOptions += "<option value='" + control.id + "." + control.runtimeProperties[k].type + "' selected='selected' >" + control.name + "." + control.runtimeProperties[k].name + "</option>";
+								} else {
+									pageControlOptions += "<option value='" + control.id + "." + control.runtimeProperties[k].type + "' >" + control.name + "." + control.runtimeProperties[k].name + "</option>";
+								}	
+							}
+						}						
+					}
+					
 				}
+				
+				if (pageControlOptions) options += "<optgroup label='" + _pages[i].name + " - " + _pages[i].title + "'>" + pageControlOptions + "</optgroup>";
+			
 			}			
 		}
-		if (groupOpen && !groupClose) options += "</optgroup>";
 	}
 	
 	// system values, only for inputs - these are defined in an array above this function
@@ -2122,7 +2141,7 @@ $(document).ready( function() {
 		        		
 		        		// retain the childControls
 		        		var childControls = page.controls;
-		        		
+		        				        		
 		        		// remove them from the page object
 		        		delete page.controls;
 		        		
@@ -3184,7 +3203,8 @@ function windowResize(ev) {
 				transform: "none"
 			});
 		} else {
-			// adjust the scale
+			// the page scale needs ajusting when there is a page margin
+			// adjust the page scale
 			_page.object.css({
 				width: 1 / _scale * 100 + "%",
 				height: 1 / _scale * 100 + "%",

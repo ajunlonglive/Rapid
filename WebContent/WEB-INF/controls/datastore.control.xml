@@ -65,26 +65,52 @@ return [["L","Local storage"],["S","Session storage"],["P","Page storage"]];
 	            <type>javascript</type>
 	            <contents>
 	                <![CDATA[
-function getDataStore(id, details) {
-	var dataStore;
+function getDataStoreData(id, details, field) {
+	var data;
 	switch (details.storageType) {
 		case "L":
 			// use localStorage
-			dataStore = localStorage;
+			if (!localStorage[_appId + "_" + id]) localStorage[_appId + "_" + id] = "{}";
+			// get the data string
+			var dataString = localStorage[_appId + "_" + id];
+			// get data
+			data = JSON.parse(dataString);				
 		break;
 		case "S": 
 			// use sessionStorage
-			dataStore = sessionStorage;
+			if (!sessionStorage[_appId + "_" + id]) sessionStorage[_appId + "_" + id] = "{}";
+			// get the data string
+			var dataString = sessionStorage[_appId + "_" + id];
+			// get data
+			data = JSON.parse(dataString);
 		break;
 		case "P": 
 			// instansiate an object in the page if there isn't one
-			if (!window[details.id + "datastore"]) window[details.id + "datastore"] = {};
+			if (!window[id + "datastore"]) window[id + "datastore"] = {};
 			// use the in page object
-			dataStore = window[details.id + "datastore"];
+			data = window[id + "datastore"];
 		break;
 	}  
-	return dataStore;
+	// return it	
+	return data;
 }	                
+
+function saveDataStoreData(id, details, data) {
+	switch (details.storageType) {
+		case "L":
+			// use localStorage
+			localStorage[_appId + "_" + id] = JSON.stringify(data);			
+		break;
+		case "S": 
+			// use sessionStorage
+			sessionStorage[_appId + "_" + id] = JSON.stringify(data);
+		break;
+		case "P": 
+			// instansiate an object in the page if there isn't one
+			window[id + "datastore"] = data;
+		break;
+	}
+}
 	                ]]>
 	            </contents>
 	        </resource>
@@ -105,71 +131,121 @@ this.object.remove();
 	    
 	   	<getDetailsFunction>	        
 	        <![CDATA[
-return {storageType: this.storageType, merge: this.mergeData, id: this.id};
+return {storageType: this.storageType};
 			]]>	        	        
 	    </getDetailsFunction>
 	    
 	    <getDataFunction>
 	        <![CDATA[        
-var data = null;
-var dataStore = getDataStore(id, details);
-if (dataStore) {
-	if (details.id) id = details.id;	
-	var dataString = dataStore[_appId + "_" + id];
-	if (dataString) {
-		var data = JSON.parse(dataString);
-		if (data) {		
-			if (data.rows && data.fields) {
-				if (data.rows[0] && field) {
-					for (var i in data.fields) {
-						if (data.fields[i].toLowerCase() == field.toLowerCase()) {
-							return data.rows[0][i];
-						}
-					}
-					return null;
-				} else {
-					return data;
+var data = getDataStoreData(id, details, field);
+if (data) {		
+	if (data.rows && data.fields) {
+		if (data.rows[0] && field) {
+			for (var i in data.fields) {
+				if (data.fields[i].toLowerCase() == field.toLowerCase()) {
+					return data.rows[0][i];
 				}
-			} else if (field && data[field]) {
-				return data[field];
 			}
-		}	 
-	} 		
-}
+			return null;
+		} else {
+			return data;
+		}
+	} else if (field && data[field]) {
+		return data[field];
+	}
+}	 
 return data;
 			]]>
 	    </getDataFunction>
 	    
 	    <setDataJavaScript>
 	        <![CDATA[	  
-var dataStore = getDataStore(id, details);
-if (dataStore) {
-	if (details.id) id = details.id;
-	if (data != null && data !== undefined) {
-		data = makeDataObject(data, field);
-		if (details.append) {
-			var dataString = dataStore[_appId + "_" + id];
-			if (dataString) {
-				var sourceData = JSON.parse(dataString);
-				sourceData.rows.push(data.rows[0]);
-				data = sourceData;
-			}
-		} else if (parseInt(details.position)) {
-			var dataString = dataStore[_appId + "_" + id];
-			if (dataString) {
-				var sourceData = JSON.parse(dataString);
-				sourceData.rows[details.position - 1] = data.rows[0];
-				data = sourceData;
-			} 
-		}
-		dataStore[_appId + "_" + id] = JSON.stringify(data);
-	} else {
-		dataStore[_appId + "_" + id] = null;
-	}
-} 
-
+if (details.id) id = details.id;
+if (data != null && data !== undefined) {
+	data = makeDataObject(data, field);
+	saveDataStoreData(id, details, data);
+} else {
+	saveDataStoreData(id, details, null);
+}
 			]]>
 	    </setDataJavaScript>
+	    
+	    <runtimeProperties>
+	        <runtimeProperty>
+	            <type>selectedRowData</type>
+	            <name>Selected row data</name>
+	            <getPropertyFunction>
+	                <![CDATA[	                
+var data = getDataStoreData(id, details);
+if (data && data.selectedRowNumber && data.rows && data.rows[data.selectedRowNumber - 1]) {
+	return {fields:data.fields,rows:[data.rows[data.selectedRowNumber - 1]]};
+}	     	                
+	                ]]>
+	            </getPropertyFunction>
+	            <setPropertyJavaScript>
+	                <![CDATA[	
+var dataStoreData = getDataStoreData(id, details);	                
+if (dataStoreData && dataStoreData.selectedRowNumber) {	
+	data = makeDataObject(data, field);
+	if (data && data.rows) {
+		dataStoreData.rows[dataStoreData.selectedRowNumber] = data.rows[0][0];
+		saveDataStoreData(id, details, dataStoreData);
+	}
+}            
+	                ]]>
+	            </setPropertyJavaScript>
+	        </runtimeProperty>
+	       	<runtimeProperty>
+	            <type>selectedRowNumber</type>
+	            <name>Selected row number</name>
+	            <getPropertyFunction>
+	                <![CDATA[
+var data = getDataStoreData(id, details);
+if (data) return data.selectedRowNumber;                       
+	                ]]>
+	            </getPropertyFunction>
+	            <setPropertyJavaScript>
+	                <![CDATA[	
+var dataStoreData = getDataStoreData(id, details);	                
+if (dataStoreData) {	
+	data = makeDataObject(data, field);
+	if (data && data.rows) {
+		dataStoreData.selectedRowNumber = data.rows[0][0];
+		saveDataStoreData(id, details, dataStoreData);
+	}
+}              
+	                ]]>
+	            </setPropertyJavaScript>
+	        </runtimeProperty>
+	        <runtimeProperty>
+	   	        <type>rowCount</type>
+	   	        <name>Row count</name>
+	   	        <getPropertyFunction>
+			        <![CDATA[
+var dataStoreData = getDataStoreData(id, details);
+if (dataStoreData && dataStoreData.rows) return dataStoreData.rows.length;
+			        ]]>	  	   	            
+	   	        </getPropertyFunction>	   	        
+	   	    </runtimeProperty>
+	        <runtimeProperty>
+	            <type>append</type>
+	            <name>Append data</name>
+	            <setPropertyJavaScript>
+	                <![CDATA[	 
+var dataStoreData = getDataStoreData(id, details);
+if (dataStoreData) {
+	data = makeDataObject(data, field);
+	if (data && data.rows) {
+		if (!dataStoreData.fields) dataStoreData.fields = data.fields;
+		if (!dataStoreData.rows) dataStoreData.rows = []; 
+		for (var i in data.rows) dataStoreData.rows.push(data.rows[i]);
+		saveDataStoreData(id, details, dataStoreData);
+	}	
+}                 
+	                ]]>
+	            </setPropertyJavaScript>
+	        </runtimeProperty>
+	    </runtimeProperties>
 	    
 	</control>
 </controls>

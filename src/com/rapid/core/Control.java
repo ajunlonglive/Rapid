@@ -397,10 +397,10 @@ public class Control {
 						// check if control is in the page
 						if (pageControl) {
 							// use the abbreviated details
-							detailsJS = ", " + control.getId() + "details";
+							detailsJS = "," + control.getId() + "details";
 						} else {
 							// use the long details
-							detailsJS = ", " + detailsJS;
+							detailsJS = "," + detailsJS;
 						}
 					}
 					// check if there was another
