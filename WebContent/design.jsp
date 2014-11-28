@@ -95,8 +95,16 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, Rap
 		</div>
 	</div>
 	
-	<iframe id="page"></iframe>
+	<iframe id="page" scrolling="no"></iframe>
 	
+	<div id="scrollV" style="position:absolute;top:0;left:622px;height:618px;width:17px;overflow:scroll;z-index:10006;display:none;">
+		<p id="scrollVInner" style="margin:0;width:100%;height:0px;">&nbsp;</p>
+	</div>
+	
+	<div id="scrollH" style="position:absolute;top:601;left:221px;height:17px;width:418px;overflow:scroll;z-index:10006;display:none;">
+		<p id="scrollHInner" style="margin:0;width:0;height:100%;">&nbsp;</p>
+	</div>
+		
 	<div id="designerTools">	 
 			
 		<div id="controlPanelShow" style="z-index:10010"></div>

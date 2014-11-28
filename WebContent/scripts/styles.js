@@ -534,6 +534,8 @@ function rebuildStyles() {
 	_selectedControl.styles = styles;	
 	// resize and reposition the selection as the geometry may have changed
 	positionAndSizeBorder(_selectedControl);	
+	// check the iFrame scroll bars for the same reason
+	windowResize("rebuildStyles");
 }
 
 // applys the styles in the panel to the control

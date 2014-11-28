@@ -2099,8 +2099,14 @@ $(document).ready( function() {
 	// when we load an app the iframe is refreshed with the resources for that app and page
 	_pageIframe.load( function () {	
 		
-		// reposition any selection if the iframe is scrolled
-		_pageIframeWindow.scroll( function(ev){
+		// scroll the iFrame top if it's outer scroll bar is used
+		$("#scrollV").scroll( function(ev) {
+			_pageIframeWindow.scrollTop($(ev.target).scrollTop());
+			positionBorder(_selectedControl);
+		});
+		// scroll the iFrame left if it's outer scroll bar is used
+		$("#scrollH").scroll( function(ev) {
+			_pageIframeWindow.scrollLeft($(ev.target).scrollLeft());
 			positionBorder(_selectedControl);
 		});
 						
@@ -2181,9 +2187,9 @@ $(document).ready( function() {
 			        	// show it after a pause to allow the new style sheets to apply
 			        	window.setTimeout( function() {			        		
 			        		// show the page object
-			        		_page.object.show();				        		
-			        		// resize the screen
-			        		windowResize("page loaded");
+			        		_page.object.show();	
+			        		// resize
+			        		windowResize("pageLoad");
 		            	}, 200);
 			        	
 			        	// make everything visible
@@ -3128,6 +3134,7 @@ function windowResize(ev) {
 			
 	// if the device has a height scale and apply
 	if (device.height) {
+		
 		// get the width and heigth from the device and scale
 		var devWidth = device.width * _scale / device.scale;
 		var devHeight = device.height * _scale / device.scale;
@@ -3136,30 +3143,24 @@ function windowResize(ev) {
 			var tempHeight = devHeight;
 			devHeight = devWidth;
 			devWidth = tempHeight;
-		} 
-		// assign the dev width and height to the cover
-		var coverWidth = devWidth;
-		var coverHeight = devHeight;
-		// adjust the dev width and height by any scroll bars
-		devWidth = devWidth + (iframeHeight > devHeight ? _scrollBarWidth : 0);
-		devHeight = devHeight + (iframeWidth > devWidth ? _scrollBarWidth : 0);		
-		// adjust iframe position, to scalled width and height, allowing extra if scroll bars are required
+		} 		
+		// adjust iframe position, to default scalled width and height, allowing extra if scroll bars are required
 		_pageIframe.css({
 			left: _panelPinnedOffset,
 			width: devWidth,
 			height: devHeight,
 			"border-right": "1px solid black",
 			"border-bottom": "1px solid black"
-		});				
+		});			
 		// adjust the cover
 		_designCover.css({
 			top: 0,
 			left: _panelPinnedOffset,
 			right: "auto",
 			bottom: "auto",			
-			width: coverWidth,
-			height: coverHeight
-		});
+			width: devWidth,
+			height: devHeight
+		});						
 		// position the desktop covers
 		$("#desktopCoverBottom").css({
 			height: height - devHeight - 1,
@@ -3171,6 +3172,22 @@ function windowResize(ev) {
 			width: width - devWidth - 1 - _panelPinnedOffset,
 			left: _panelPinnedOffset + devWidth + 1
 		}).show();
+		// show and position the scroll bars
+		$("#scrollV").css({
+			display: "block",
+			left: _panelPinnedOffset + devWidth + 1,
+			height: devHeight + 1 + _scrollBarWidth
+		});
+		$("#scrollH").css({
+			display: "block",
+			left: _panelPinnedOffset,
+			top: devHeight + 1,
+			width: devWidth + 1 + _scrollBarWidth			
+		});
+		// size the scroll bars
+		$("#scrollVInner").css("height",iframeHeight);
+		$("#scrollHInner").css("width",iframeWidth);
+		
 	} else {
 		// adjust iframe position, width and height
 		_pageIframe.css({
@@ -3191,6 +3208,9 @@ function windowResize(ev) {
 		});
 		// hide the desktop covers
 		$(".desktopCover").hide();
+		// hide the scroll bars
+		$("#scrollV").hide();
+		$("#scrollH").hide();
 	}
 	
 	// only if we have a page and it's object

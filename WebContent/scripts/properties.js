@@ -2560,8 +2560,6 @@ function Property_orientation(cell, propertyObject, property, refreshHtml, refre
 		if (typeof(localStorage) !== "undefined") localStorage.setItem("_orientation" ,_orientation);
 		// windowResize
 		windowResize("_orientation");
-		// iframe resize
-		_pageIframe.resize();
 	}));
 }
 
