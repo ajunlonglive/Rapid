@@ -2504,8 +2504,11 @@ function Property_device(cell, propertyObject, property, refreshHtml, refreshPro
 		if (typeof(localStorage) !== "undefined") localStorage.setItem("_device" ,_device);
 		// recalculate scale
 		_scale = _ppi / _devices[_device].PPI * _devices[_device].scale * _zoom;
+		// hide the scroll bars to avoid artifacts during resizing
+		$("#scrollV").hide();
+		$("#scrollH").hide();
 		// windowResize
-		windowResize("_device");
+		windowResize("_device");		
 		// iframe resize
 		_pageIframe.resize();
 	}));
@@ -2541,6 +2544,9 @@ function Property_zoom(cell, propertyObject, property, refreshHtml, refreshPrope
 		if (typeof(localStorage) !== "undefined") localStorage.setItem("_zoom" ,_zoom);
 		// recalculate scale
 		_scale = _ppi / _devices[_device].PPI * _devices[_device].scale * _zoom;
+		// hide the scroll bars to avoid artifacts during resizing
+		$("#scrollV").hide();
+		$("#scrollH").hide();
 		// windowResize
 		windowResize("_zoom");
 	}));	
@@ -2566,6 +2572,9 @@ function Property_orientation(cell, propertyObject, property, refreshHtml, refre
 		}
 		// store it
 		if (typeof(localStorage) !== "undefined") localStorage.setItem("_orientation" ,_orientation);
+		// hide the scroll bars to avoid artifacts during resizing
+		$("#scrollV").hide();
+		$("#scrollH").hide();
 		// windowResize
 		windowResize("_orientation");
 	}));

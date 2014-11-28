@@ -3132,16 +3132,32 @@ function windowResize(ev) {
 	
 	// adjust propertiesPanel height, less it's padding
 	propertiesPanel.css({height: height - 20});
-	
-	// hide the scroll bars to avoid artifacts during resizing
-	$("#scrollV").hide();
-	$("#scrollH").hide();
-	
+			
 	// get the device
 	var device = _devices[_device];
-			
-	// if the device has a height scale and apply
-	if (device.height && _scale == 1) {
+	
+	// only if we have a page and it's object
+	if (_page && _page.object) {
+		// if the scale is 1 remove anything clever
+		if (_scale * device.scale == 1) {
+			_page.object.css({
+				width: "auto",
+				height: "auto",
+				transform: "none"
+			});
+		} else {
+			// the page scale needs ajusting when there is a page margin
+			// adjust the page scale
+			_page.object.css({
+				width: 1 / _scale * 100 + "%",
+				height: 1 / _scale * 100 + "%",
+				transform: "scale(" + _scale + ")"
+			});	
+		} // scale check
+	} // page check	
+	
+	// if the device has a height, or we're scalling
+	if (device.height) {
 		
 		// get the width and heigth from the device and scale
 		var devWidth = device.width * _scale / device.scale;
@@ -3183,16 +3199,21 @@ function windowResize(ev) {
 		
 		// give the iframe reszie time to apply
     	window.setTimeout( function() {
-    		    		    		
-    		// get the iFrame height by it's contents
-    		var contentHeight = $(_pageIframe[0].contentDocument).height();
-    		// get the iFrame width by it's contents
-    		var contentWidth = $(_pageIframe[0].contentDocument).width();
+    		
     		// assume no v scrollling
     		var scrollV = false;
     		// assume no h scrolling
     		var scrollH = false;
-    		 
+    		
+    		// get the iFrame height by it's contents
+    		//var contentHeight = $(_pageIframe[0].contentDocument).height();
+    		// get the iFrame width by it's contents
+    		//var contentWidth = $(_pageIframe[0].contentDocument).width();
+    		
+    		var contentHeight = $(_pageIframe[0].contentDocument).find("body")[0].scrollHeight;
+    		var contentWidth = $(_pageIframe[0].contentDocument).find("body")[0].scrollWidth;
+    		
+    		    		 
     		// if the contents are taller than the device height we need vertical scrolling
     		if (contentHeight > Math.round(devHeight)) {
 	    		// set the scroll bar height to the content height
@@ -3205,6 +3226,8 @@ function windowResize(ev) {
 	    		});
 	    		// remember V is showing
 	    		scrollV = true;
+    		} else {
+    			$("#scrollV").hide();
     		}
     		
     		// if the contents are wider than the device width we need horizontal scrolling
@@ -3220,7 +3243,9 @@ function windowResize(ev) {
 	    		});	    	
 	    		// remember H is showing
 	    		scrollH = true;
-    		} 
+    		}  else {
+    			$("#scrollH").hide();
+    		}
     		
     		// if both scrolls push back covers
     		if (scrollV && scrollH) {
@@ -3234,8 +3259,8 @@ function windowResize(ev) {
     		}
     		
     		// check properties panel position, the iframe may be jutting out of the body
-    		if (_panelPinnedOffset +  devWidth > width) {
-    			$("#propertiesPanel").css("right", -$("#propertiesPanel").width());
+    		if (_panelPinnedOffset + devWidth > width) {
+    			$("#propertiesPanel").css("right", -_window[0].scrollWidth + _panelPinnedOffset + devWidth);
     		} else {
     			$("#propertiesPanel").css("right", 0);
     		}
@@ -3260,30 +3285,13 @@ function windowResize(ev) {
 			width: "auto",
 			height: "auto"
 		});
+		// hide the scroll bars
+		$("#scrollV").hide();
+		$("#scrollV").hide();
 		// hide the desktop covers
-		$(".desktopCover").hide();		
+		$(".desktopCover").hide();				
 	}
-	
-	// only if we have a page and it's object
-	if (_page && _page.object) {
-		// if the scale is 1 remove anything clever
-		if (_scale * device.scale == 1) {
-			_page.object.css({
-				width: "auto",
-				height: "auto",
-				transform: "none"
-			});
-		} else {
-			// the page scale needs ajusting when there is a page margin
-			// adjust the page scale
-			_page.object.css({
-				width: 1 / _scale * 100 + "%",
-				height: 1 / _scale * 100 + "%",
-				transform: "scale(" + _scale + ")"
-			});	
-		} // scale check
-	} // page check	
-			
+					
 	// resize / reposition the selection
 	positionAndSizeBorder(_selectedControl);
 	
