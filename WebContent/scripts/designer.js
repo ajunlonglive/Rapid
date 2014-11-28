@@ -3264,7 +3264,14 @@ function fileuploaded(fileuploadframe) {
         		// add to array
         		_version.images.push(response.file);
         		// rebuild html
-        		rebuildHtml(_selectedControl);        		
+        		rebuildHtml(_selectedControl);        	
+        		// all some time for the page to load in the image before re-establishing the selection border
+            	window.setTimeout( function() {
+            		// show the dialogue
+            		positionAndSizeBorder(_selectedControl);        
+            		// resize the window and check for any required scroll bars
+            		windowResize("fileuploaded");
+            	}, 200);
         	}
     		
     	}

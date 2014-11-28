@@ -362,8 +362,8 @@ public class Designer extends RapidHttpServlet {
 										
 										// create a json object for the images
 										JSONArray jsonImages = new JSONArray();									
-										// get the directory in which the control xml files are stored
-										File dir = new File(getServletContext().getRealPath("/applications/" + application.getId()));									
+										// get the directory in which the control xml files are stored	
+										File dir = new File (application.getWebFolder(getServletContext()));
 										// create a filter for finding image files
 										FilenameFilter xmlFilenameFilter = new FilenameFilter() {
 									    	public boolean accept(File dir, String name) {
@@ -925,10 +925,10 @@ public class Designer extends RapidHttpServlet {
 									// check the file type
 									if (!fileType.equals("image/jpeg") && !fileType.equals("image/gif") && !fileType.equals("image/png")) throw new Exception("Unsupported file type");
 									
-									// the path we're saving to is the applications WebContent folder
-									String path = getServletContext().getRealPath("/applications/" + application.getId()) + "/";
+									// get the web folder from the application
+									String path = rapidRequest.getApplication().getWebFolder(getServletContext());
 									// create a file output stream to save the data to
-									FileOutputStream fos = new FileOutputStream (path + filename);
+									FileOutputStream fos = new FileOutputStream (path + "/" +  filename);
 									// write the file data to the stream
 									fos.write(bodyBytes, dataPosition + pattern.length, bodyBytes.length - dataPosition - pattern.length - boundary.length() - 9);
 									// close the stream

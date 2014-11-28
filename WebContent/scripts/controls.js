@@ -547,8 +547,7 @@ function rebuildHtml(control) {
 		}
 		
 		// resize and reposition the selection as the geometry may have changed
-		positionAndSizeBorder(control);
-		
+		positionAndSizeBorder(control);		
 	} // page lock check
 	
 }
