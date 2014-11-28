@@ -3259,8 +3259,8 @@ function windowResize(ev) {
     		}
     		
     		// check properties panel position, the iframe may be jutting out of the body
-    		if (_panelPinnedOffset + devWidth > width) {
-    			$("#propertiesPanel").css("right", -_window[0].scrollWidth + _panelPinnedOffset + devWidth);
+    		if (_panelPinnedOffset + devWidth + 1 > width) {
+    			$("#propertiesPanel").css("right", -$("body")[0].scrollWidth + width - _scrollBarWidth);
     		} else {
     			$("#propertiesPanel").css("right", 0);
     		}
