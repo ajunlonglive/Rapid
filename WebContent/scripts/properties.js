@@ -513,7 +513,7 @@ function Property_imageFile(cell, propertyObject, property, refreshHtml, refresh
 	if (_version.images) {
 		
 		// append the drop down for existing images
-		table.append("<tr><td><select><option>Please select...</option></select></td></tr>");
+		table.append("<tr><td><select><option value=''>Please select...</option></select></td></tr>");
 		
 		// get a reference to the drop down
 		var dropdown = table.find("select");
@@ -530,13 +530,21 @@ function Property_imageFile(cell, propertyObject, property, refreshHtml, refresh
 			// get the file
 			var file = $(this).val();
 			// update the reference and rebuild the html
-			updateProperty(propertyObject, property, file, refreshHtml); 			
+			updateProperty(propertyObject, property, file, true);
+			// all some time for the page to load in the image before re-establishing the selection border
+        	window.setTimeout( function() {
+        		// show the dialogue
+        		positionAndSizeBorder(_selectedControl);        
+        		// resize the window and check for any required scroll bars
+        		windowResize("Image file dropdown change");
+        	}, 200);
+				
 		}));
 		
 	}
 	
 	// append the  form control and the submit button
-	table.append("<tr><td><form id='form_" + propertyObject.id + "' method='post' enctype='multipart/form-data' target='uploadIFrame' action='designer?action=uploadImage&a=" + _version.id + "&v=" + _version.id.version + "&p=" + _page.id + "&c=" + propertyObject.id + "'><input id='file_" + propertyObject.id + "' name='file' type='file'></input></form></td></tr><tr><td><input type='submit' value='Upload' /></td></tr>");
+	table.append("<tr><td><form id='form_" + propertyObject.id + "' method='post' enctype='multipart/form-data' target='uploadIFrame' action='designer?action=uploadImage&a=" + _version.id + "&v=" + _version.version + "&p=" + _page.id + "&c=" + propertyObject.id + "'><input id='file_" + propertyObject.id + "' name='file' type='file'></input></form></td></tr><tr><td><input type='submit' value='Upload' /></td></tr>");
 	
 	// get a reference to the submit button
 	addListener( table.find("input[type=submit]").click( {id : propertyObject.id}, function (ev) {

@@ -77,3 +77,16 @@ table.propertiesPanelTable  {
 .dialogueTable input {
 	max-width: 100px;
 }
+
+.dialogueTable input[type=file] {
+	max-width: none;
+	margin-left: -3px;
+	margin-bottom: -13px;
+}
+
+.dialogueTable input[type=submit] {
+	max-width: none;
+	margin-top: 3px;
+	margin-bottom: 3px;
+	margin-left: -1px;
+}
