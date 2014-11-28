@@ -28,4 +28,11 @@
         <scale>2.0</scale>
         <width>1600</width>
     </devices>
+    <devices>
+        <height>1200</height>
+        <name>Test</name>
+        <PPI>96</PPI>
+        <scale>2.0</scale>
+        <width>800</width>
+    </devices>
 </devices>
