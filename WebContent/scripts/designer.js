@@ -2004,17 +2004,31 @@ $(document).ready( function() {
 			
 	// the window we are working in
 	_window = $(window);	
-	// attach a call to the window resize function to the window resize event listener
-	_window.resize("windowResize", windowResize);	
-	// reposition the selection if there's a scroll
-	_window.scroll( function(ev) {
-		positionAndSizeBorder(_selectedControl);
-	});
+	
 	// check for unsaved page changes if we move away
 	_window.on('beforeunload', function(){
 		if (_dirty) return 'You have unsaved changes.';
 	});
+	// attach a call to the window resize function to the window resize event listener
+	_window.resize("windowResize", windowResize);		
+	// reposition the selection if there's a scroll
+	_window.scroll( function(ev) {
+		positionAndSizeBorder(_selectedControl);
+	});
 	
+	// scroll the iFrame top if it's outer scroll bar is used
+	$("#scrollV").scroll( function(ev) {
+		_pageIframeWindow.scrollTop($(ev.target).scrollTop());
+		positionBorder(_selectedControl);
+		
+	});
+	// scroll the iFrame left if it's outer scroll bar is used
+	$("#scrollH").scroll( function(ev) {
+		// get the device
+		var device = _devices[_device];
+		_pageIframeWindow.scrollLeft($(ev.target).scrollLeft());
+		positionBorder(_selectedControl);
+	});
 	
 	// the iframe in which we load the page
 	_pageIframe = $("#page");		
@@ -2098,18 +2112,7 @@ $(document).ready( function() {
 	
 	// when we load an app the iframe is refreshed with the resources for that app and page
 	_pageIframe.load( function () {	
-		
-		// scroll the iFrame top if it's outer scroll bar is used
-		$("#scrollV").scroll( function(ev) {
-			_pageIframeWindow.scrollTop($(ev.target).scrollTop());
-			positionBorder(_selectedControl);
-		});
-		// scroll the iFrame left if it's outer scroll bar is used
-		$("#scrollH").scroll( function(ev) {
-			_pageIframeWindow.scrollLeft($(ev.target).scrollLeft());
-			positionBorder(_selectedControl);
-		});
-						
+										
 		// scale the page so the loading message fits
 		if (_scale != 1) {
 			$(_pageIframe[0].contentWindow.document.body).css({
@@ -3057,11 +3060,17 @@ function getHeight() {
 	var propertiesPanelHeight = propertiesPanel.outerHeight(true);
 	
 	// get the iFrame height by it's contents
-	var iframeHeight = $(_pageIframe[0].contentDocument).height();	
+	var iframeHeight = $(_pageIframe[0].contentDocument).height();
+	
+	// get the device
+	var device = _devices[_device];
+	
+	// if there is a device with height use this scaled height instead of the iframe content
+	if (device.height) iframeHeight = device.height * _scale / device.scale + _scrollBarWidth;
 
 	// increase height to the tallest of the window, the panels, or the iFrame
 	height = Math.max(height, controlPanelHeight, propertiesPanelHeight, iframeHeight);
-	
+			
 	return height;
 	
 }
@@ -3117,23 +3126,22 @@ function windowResize(ev) {
 	var propertiesPanel = $("#propertiesPanel");
 	// set it's height to auto
 	propertiesPanel.css("height","auto");
-		
-	// get the iFrame height by it's contents
-	var iframeHeight = $(_pageIframe[0].contentDocument).height();
-	// get the iFrame width by it's contents
-	var iframeWidth = $(_pageIframe[0].contentDocument).width();
-	
+				
 	// adjust controlPanel height, less it's padding
 	controlPanel.css({height: height - 20});
 	
 	// adjust propertiesPanel height, less it's padding
 	propertiesPanel.css({height: height - 20});
 	
+	// hide the scroll bars to avoid artifacts during resizing
+	$("#scrollV").hide();
+	$("#scrollH").hide();
+	
 	// get the device
 	var device = _devices[_device];
 			
 	// if the device has a height scale and apply
-	if (device.height) {
+	if (device.height && _scale == 1) {
 		
 		// get the width and heigth from the device and scale
 		var devWidth = device.width * _scale / device.scale;
@@ -3144,7 +3152,7 @@ function windowResize(ev) {
 			devHeight = devWidth;
 			devWidth = tempHeight;
 		} 		
-		// adjust iframe position, to default scalled width and height, allowing extra if scroll bars are required
+		// adjust iframe position width and height, to default scalled width and height, allowing extra if scroll bars are required
 		_pageIframe.css({
 			left: _panelPinnedOffset,
 			width: devWidth,
@@ -3172,21 +3180,67 @@ function windowResize(ev) {
 			width: width - devWidth - 1 - _panelPinnedOffset,
 			left: _panelPinnedOffset + devWidth + 1
 		}).show();
-		// show and position the scroll bars
-		$("#scrollV").css({
-			display: "block",
-			left: _panelPinnedOffset + devWidth + 1,
-			height: devHeight + 1 + _scrollBarWidth
-		});
-		$("#scrollH").css({
-			display: "block",
-			left: _panelPinnedOffset,
-			top: devHeight + 1,
-			width: devWidth + 1 + _scrollBarWidth			
-		});
-		// size the scroll bars
-		$("#scrollVInner").css("height",iframeHeight);
-		$("#scrollHInner").css("width",iframeWidth);
+		
+		// give the iframe reszie time to apply
+    	window.setTimeout( function() {
+    		    		    		
+    		// get the iFrame height by it's contents
+    		var contentHeight = $(_pageIframe[0].contentDocument).height();
+    		// get the iFrame width by it's contents
+    		var contentWidth = $(_pageIframe[0].contentDocument).width();
+    		// assume no v scrollling
+    		var scrollV = false;
+    		// assume no h scrolling
+    		var scrollH = false;
+    		 
+    		// if the contents are taller than the device height we need vertical scrolling
+    		if (contentHeight > Math.round(devHeight)) {
+	    		// set the scroll bar height to the content height
+	    		$("#scrollVInner").css("height", contentHeight);    		    		
+	    		// show and position the scroll bars
+	    		$("#scrollV").css({
+	    			display: "block",
+	    			left: _panelPinnedOffset + devWidth + 1,
+	    			height: devHeight + 1 + _scrollBarWidth
+	    		});
+	    		// remember V is showing
+	    		scrollV = true;
+    		}
+    		
+    		// if the contents are wider than the device width we need horizontal scrolling
+    		if (contentWidth > Math.round(devWidth)) {
+    			// set the scroll bar width
+    			$("#scrollHInner").css("width", contentWidth);
+    			// show and position the scroll bar
+	    		$("#scrollH").css({
+	    			display: "block",
+	    			left: _panelPinnedOffset,
+	    			top: devHeight + 1,
+	    			width: devWidth + 1 + _scrollBarWidth			
+	    		});	    	
+	    		// remember H is showing
+	    		scrollH = true;
+    		} 
+    		
+    		// if both scrolls push back covers
+    		if (scrollV && scrollH) {
+    			$("#desktopCoverRight").css("z-index",10005);
+    			$("#desktopCoverBottom").css("z-index",10005);
+    		} else {
+    			// if just V cover H with bottom
+    			if (scrollV) $("#desktopCoverBottom").css("z-index",10006);
+    			// if just H cover V with right
+    			if (scrollH) $("#desktopCoverRight").css("z-index",10006);
+    		}
+    		
+    		// check properties panel position, the iframe may be jutting out of the body
+    		if (_panelPinnedOffset +  devWidth > width) {
+    			$("#propertiesPanel").css("right", -$("#propertiesPanel").width());
+    		} else {
+    			$("#propertiesPanel").css("right", 0);
+    		}
+
+    	}, 500);
 		
 	} else {
 		// adjust iframe position, width and height
@@ -3207,10 +3261,7 @@ function windowResize(ev) {
 			height: "auto"
 		});
 		// hide the desktop covers
-		$(".desktopCover").hide();
-		// hide the scroll bars
-		$("#scrollV").hide();
-		$("#scrollH").hide();
+		$(".desktopCover").hide();		
 	}
 	
 	// only if we have a page and it's object
@@ -3232,7 +3283,7 @@ function windowResize(ev) {
 			});	
 		} // scale check
 	} // page check	
-		
+			
 	// resize / reposition the selection
 	positionAndSizeBorder(_selectedControl);
 	
