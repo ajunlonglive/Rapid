@@ -205,6 +205,26 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   }
 })(jQuery)
 
+// this function can be used on the keydown of textareas to prevent changing to the next control
+function textareaOverride(ev) {
+	// get the text area
+	var textarea = $(ev.target);
+	// if this is the tab key
+	if (textarea.is("textarea") && ev.keyCode == 9) {
+		// get the current cursor position
+		var pos = textarea.caret();
+		// get the current value
+		var val = textarea.val();
+		// add a tab at the current postion and re-assign to the textarea
+		textarea.val(val.substr(0,pos) + "\t" + val.substr(pos));
+		// advance the cursor position by 1
+		textarea.caret(pos + 1);
+		// stop any further behaviour from the tab key, like loosing focus
+		return false;
+	}
+}
+
+
 //this applies and enforces the maxlength attribute on textareas
 jQuery(function($) {
 

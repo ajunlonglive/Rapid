@@ -1161,6 +1161,9 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 		case "SAVESTYLES" :		
 			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), styles: $("#rapid_P0_C116").val() };	
 		break;		
+		case "SAVEFUNCTIONS" :		
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), functions: $("#rapid_P0_C1292_").val() };	
+		break;	
 		case "SAVEDBCONN" :		
 			data = { 
 				actionType: actionType, 

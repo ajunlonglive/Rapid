@@ -580,6 +580,8 @@ public class Rapid extends Action {
 					
 					// add the styles
 					result.put("styles", app.getStyles());
+					// add the functions
+					result.put("functions", app.getFunctions());
 					// add the security adapter
 					result.put("securityAdapter", app.getSecurityAdapterType());	
 					// add action types
@@ -1005,6 +1007,17 @@ public class Rapid extends Action {
 				
 				// add the application to the response
 				result.put("message", "Styles saved");
+				
+			} else if ("SAVEFUNCTIONS".equals(action)) {
+				
+				String functions = jsonAction.getString("functions");
+				
+				app.setFunctions(functions);
+				
+				app.save(rapidServlet, rapidRequest, true);
+				
+				// add the application to the response
+				result.put("message", "Functions saved");
 				
 			} else if ("SAVEDBCONN".equals(action)) {
 				
