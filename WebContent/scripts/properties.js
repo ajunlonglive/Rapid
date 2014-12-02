@@ -312,21 +312,7 @@ function Property_bigtext(cell, propertyObject, property, refreshHtml) {
 		textarea.hide(); 
 	}));
 	// listen for key's we don't want to affect behaviour
-	addListener( textarea.keydown( function(ev) {
-		// if this is the tab key
-		if (ev.keyCode == 9) {
-			// get the current cursor position
-			var pos = textarea.caret();
-			// get the current value
-			var val = textarea.val();
-			// add a tab at the current postion and re-assign to the textarea
-			textarea.val(val.substr(0,pos) + "\t" + val.substr(pos));
-			// advance the cursor position by 1
-			textarea.caret(pos + 1);
-			// stop any further behaviour from the tab key, like loosing focus
-			return false;
-		}
-	}));
+	addListener( textarea.keydown( textAreaOverride ));
 	// modify if the text is updated
 	addListener( textarea.keyup( function(ev) { 
 		updateProperty(propertyObject, property, textarea.val(), refreshHtml);  
@@ -2047,7 +2033,7 @@ function Property_controlHints(cell, hints, property, refreshHtml, refreshDialog
 	// retain a reference to the dialogue (if we were passed one)
 	var dialogue = refreshDialogue;
 	// if we weren't passed one - make what we need
-	if (!dialogue) dialogue = createDialogue(cell, 400, "Control hints");		
+	if (!dialogue) dialogue = createDialogue(cell, 500, "Control hints");		
 	// grab a reference to the table
 	var table = dialogue.find("table").first();
 	// make sure table is empty
@@ -2078,7 +2064,7 @@ function Property_controlHints(cell, hints, property, refreshHtml, refreshDialog
 		var typeOptions = "<option value='hover'" + ((controlHint.type == 'hover') ? " selected": "") + ">hover</option><option value='click'" + ((controlHint.type == 'click') ? " selected": "") + ">click</option>";
 		
 		// add the row
-		table.append("<tr><td><select class='control'><option value=''>Please select...</option>" + getControlOptions(controlHint.controlId) + "</select></td><td><select class='type'>" + typeOptions + "</select></td><td><span>" + controlHint.text + "</span></td><td><input value='" + controlHint.style + "'/></td><td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
+		table.append("<tr class='nopadding'><td><select class='control'><option value=''>Please select...</option>" + getControlOptions(controlHint.controlId) + "</select></td><td><select class='type'>" + typeOptions + "</select></td><td style='max-width:150px;'><span>" + controlHint.text + "</span></td><td><input value='" + controlHint.style + "'/></td><td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
 	
 		// add a seperating comma to the text if not the last hint
 		if (i < controlHints.length - 1) text += ",";
@@ -2391,7 +2377,7 @@ function Property_datacopyDestinations(cell, propertyObject, property, refreshHt
 				
 		// add reorder listeners
 		addReorder(dataDestinations, table.find("img.reorder"), function() { 
-			Property_dataDestinations(cell, propertyObject, property, refreshHtml, dialogue); 
+			Property_datacopyDestinations(cell, propertyObject, property, refreshHtml, dialogue); 
 		});
 		
 		// add the add
@@ -2406,8 +2392,8 @@ function Property_datacopyDestinations(cell, propertyObject, property, refreshHt
 			var dataDestinations = ev.data.propertyObject.dataDestinations;
 			// add a new one
 			dataDestinations.push({itemId: $(ev.target).val(), field: ""});
-			// rebuild the dialgue
-			Property_dataDestinations(ev.data.cell, ev.data.propertyObject, {key: "dataDestinations"}, ev.data.refreshHtml, ev.data.dialogue);	
+			// rebuild the dialogue
+			Property_datacopyDestinations(ev.data.cell, ev.data.propertyObject, {key: "dataDestinations"}, ev.data.refreshHtml, ev.data.dialogue);	
 		}));
 		
 		// if we got text 

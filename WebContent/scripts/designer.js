@@ -1793,7 +1793,7 @@ function getSavePageData() {
 	}
 	
 	// show message
-	$("#rapid_P11_C7_").html("Sending html");
+	$("#rapid_P11_C7_").html("Sending html...");
 		
 	// return it
 	return pageData;	
