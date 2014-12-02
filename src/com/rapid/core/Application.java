@@ -283,7 +283,7 @@ public class Application {
 	
 	// instance variables	
 	private int _xmlVersion, _status, _applicationBackupsMaxSize, _pageBackupsMaxSize;
-	private String _id, _version, _name, _title, _description, _startPageId, _styles, _securityAdapterType, _createdBy, _modifiedBy;
+	private String _id, _version, _name, _title, _description, _startPageId, _styles, _functions, _securityAdapterType, _createdBy, _modifiedBy;
 	private boolean _showConrolIds, _showActionIds;
 	private Date _createdDate, _modifiedDate;
 	private SecurityAdapater _securityAdapter;	
@@ -353,9 +353,13 @@ public class Application {
 	public String getStartPageId() { return _startPageId; }
 	public void setStartPageId(String startPageId) { _startPageId = startPageId; }
 			
-	// the styles used to generate the application rapid.css file
+	// the CSS styles added to the generated application rapid.css file
 	public String getStyles() { return _styles; }
 	public void setStyles(String styles) { _styles = styles; }
+	
+	// the JavaScript functions added to the generated application rapid.js file
+	public String getFunctions() { return _functions; }
+	public void setFunctions(String functions) { _functions = functions; }
 	
 	// a collection of database connections used via the connection adapter class to produce database connections 
 	public List<DatabaseConnection> getDatabaseConnections() { return _databaseConnections; }
@@ -965,15 +969,27 @@ public class Application {
 			FileOutputStream fos = new FileOutputStream (applicationPath + "/rapid.js");
 			PrintStream ps = new PrintStream(fos);
 			
-			ps.print("\n/* This file is auto-generated on application load and save - it is minified when in production */\n");
-			ps.print("\n\n/* Control and Action resource JavaScript */\n\n");
-			ps.print(resourceJS.toString());
-			ps.print("\n\n/* Control initialise methods */\n\n");
-			ps.print(initJS.toString());
-			ps.print("\n\n/* Control getData and setData methods */\n\n");
-			ps.print(dataJS.toString());
-			ps.print("\n\n/* Action methods */\n\n");
-			ps.print(actionJS.toString());
+			ps.print("\n/* This file is auto-generated on application load and save - it is minified when the application status is live */\n");
+			if (_functions != null) {
+				ps.print("\n\n/* Application functions JavaScript */\n\n");
+				ps.print(_functions);
+			}
+			if (resourceJS.length() > 0) {
+				ps.print("\n\n/* Control and Action resource JavaScript */\n\n");
+				ps.print(resourceJS.toString());
+			}
+			if (initJS.length() > 0) {
+				ps.print("\n\n/* Control initialisation methods */\n\n");
+				ps.print(initJS.toString());
+			}
+			if (dataJS.length() > 0) {
+				ps.print("\n\n/* Control getData and setData methods */\n\n");
+				ps.print(dataJS.toString());
+			}
+			if (actionJS.length() > 0) {
+				ps.print("\n\n/* Action methods */\n\n");
+				ps.print(actionJS.toString());
+			}
 						
 			ps.close();
 			fos.close();
@@ -984,7 +1000,7 @@ public class Application {
 			// write the rapid.css file
 			fos = new FileOutputStream (applicationPath + "/rapid.css");
 			ps = new PrintStream(fos);
-			ps.print("\n/* This file is auto-generated on application load and save */\n");		
+			ps.print("\n/* This file is auto-generated on application load and save - it is minified when the application status is live */\n");		
 			ps.print(resourceCSS.toString());
 			ps.print("\n\n/* Application styles */\n\n");
 			ps.print(_styles);

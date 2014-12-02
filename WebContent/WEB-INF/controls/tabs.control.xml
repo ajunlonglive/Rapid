@@ -186,6 +186,13 @@ this.parentControl.selectedPanel = "1";
 this.parentControl._rebuild();
 	        ]]>
 	    </removeJavaScript> 
+	    
+	    <events>
+	        <event>
+	            <type>click</type>
+	            <name>Click</name>
+	        </event>
+	    </events>
 	    	    
 	    <styles>
 	        <style>
@@ -384,9 +391,9 @@ try {
 		this.object.children("div.selected").css("display","block");
 	}
 	
-	// add a click event the object
+	// add a click event to the object
 	this.object.mousedown( {tabs: this}, function(ev) {
-
+	
 		// only if the target had the tabGroup class
 		if ($(ev.target).is(".tabsGroup")) {
 
@@ -406,7 +413,7 @@ try {
 				// get the offset
 				var os = li.offset();
 				// check if the mouse is over it
-				if (winEvent.clientY < os.top + li.outerHeight() && winEvent.clientX - _panelPinnedOffset > os.left && winEvent.clientX - _panelPinnedOffset < os.left + li.outerWidth()) {
+				if (winEvent.clientY + _pageIframeWindow.scrollTop() < os.top + li.outerHeight() && winEvent.clientX - _panelPinnedOffset > os.left && winEvent.clientX - _panelPinnedOffset < os.left + li.outerWidth()) {
 					// add an undo snapshot
 					addUndo();
 					// update selected tab
@@ -429,10 +436,15 @@ try {
 					}
 					// update the properties
 					showProperties(tabs);
+					
+					// size any flow layouts if function is present
+					if (_pageIframeWindow[0]["sizeFlowLayouts"]) _pageIframeWindow[0]["sizeFlowLayouts"]();
+					
 			    	// bail
 					return false;
 				}
-			}
+			}	
+							
 		}
 	});
 	
@@ -516,7 +528,7 @@ $("#" + id).children("ul").children("li").each( function() {
 		} else {
 			// selected tab is table cell
 			tabs.children("div.selected").css("display","table-cell");
-		}
+		}		
 	});
 });	        
 	        ]]>	        	       	        

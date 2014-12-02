@@ -90,3 +90,7 @@ table.propertiesPanelTable  {
 	margin-bottom: 3px;
 	margin-left: -1px;
 }
+
+.nopadding td {
+	padding: 0;
+}

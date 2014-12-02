@@ -137,54 +137,59 @@ if (selectedCell[0]) {
 	                <![CDATA[
 
 $(document).ready( function() {
-				
+								
 	$(window).resize(function(ex) {
 
 		sizeFlowLayouts();
 
     });
-    			
+    	    			
 });
 
 function sizeFlowLayouts() {
 	
 	// loop the layouts
 	$(".flowLayout").each(function() {
-		// get the id
-		var id = $(this).attr("id");
 		// get the layout
-		var layout = $("#" + id);
-		// find the width (in pixels)
-		var width = layout.width();
-		// get all of the children
-		var cells = layout.children(".flowLayoutCell");
-		// get the details
-		var details = window[id + "details"];
-		// set their width to the start width (however it was provided)
-		cells.css("width", details.cellWidth);
-		// get the first cell 
-		var cell = layout.children(".flowLayoutCell").first();
-		// get it's width in pixels
-		var cellWidth = cell.width();
-		// get it's width-affecting margin
-		var cellMarginWidth = toPixels(cell.css("margin-left")) + toPixels(cell.css("margin-right"));
-		// get it's with-affecting padding 
-		var cellPaddingWidth = toPixels(cell.css("padding-left")) + toPixels(cell.css("padding-right")); 
-		// get it's width-affecting borders
-		var cellBorderWidth = toPixels(cell.css("border-left-width")) + toPixels(cell.css("border-right-width")); 		 
-		// calculate the max number of whole cells across (can't be more than cells we have)
-		var cellsWide = Math.min(Math.floor(width / cellWidth), cells.length);	
-		// adjust the cell width to include equal amounts of the white space, and adjust for padding and border
-		cellWidth += (width - cellsWide * cellWidth) / cellsWide - cellMarginWidth - cellPaddingWidth - cellBorderWidth;
-		// if there is a transform in place
-		if ($("body").css("transform") && $("body").css("transform") != "auto") {
-			// if the new size exceeds (or equals) the available width reduce by 1 pixel divided by number of cells
-			if (width <= (cellWidth + cellMarginWidth + cellPaddingWidth + cellBorderWidth) * cellsWide) cellWidth -= 1 / cellsWide;
-		}
-		// update the widths
-		layout.children(".flowLayoutCell").css("width", cellWidth);				
+		var layout = $(this);
+		// size it if visible (it'll have no size if not)
+		if (layout.is(":visible")) sizeFlowLayout(layout);
 	});
 				
+}
+
+function sizeFlowLayout(layout) {
+
+	// find the width (in pixels)
+	var width = layout.width();
+	// get all of the children
+	var cells = layout.children(".flowLayoutCell");
+	// get the details
+	var details = window[layout.attr("id") + "details"];
+	// set their width to the start width (however it was provided)
+	cells.css("width", details.cellWidth);
+	// get the first cell 
+	var cell = layout.children(".flowLayoutCell").first();
+	// get it's width in pixels
+	var cellWidth = cell.width();
+	// get it's width-affecting margin
+	var cellMarginWidth = toPixels(cell.css("margin-left")) + toPixels(cell.css("margin-right"));
+	// get it's with-affecting padding 
+	var cellPaddingWidth = toPixels(cell.css("padding-left")) + toPixels(cell.css("padding-right")); 
+	// get it's width-affecting borders
+	var cellBorderWidth = toPixels(cell.css("border-left-width")) + toPixels(cell.css("border-right-width")); 		 
+	// calculate the max number of whole cells across (can't be more than cells we have)
+	var cellsWide = Math.min(Math.floor(width / cellWidth), cells.length);	
+	// adjust the cell width to include equal amounts of the white space, and adjust for padding and border
+	cellWidth += (width - cellsWide * cellWidth) / cellsWide - cellMarginWidth - cellPaddingWidth - cellBorderWidth;
+	// if there is a transform in place
+	if ($("body").css("transform") && $("body").css("transform") != "auto") {
+		// if the new size exceeds (or equals) the available width reduce by 1 pixel divided by number of cells
+		if (width <= (cellWidth + cellMarginWidth + cellPaddingWidth + cellBorderWidth) * cellsWide) cellWidth -= 1 / cellsWide;
+	}
+	// update the widths
+	layout.children(".flowLayoutCell").css("width", cellWidth);			
+	
 }
 	                
 	                ]]>

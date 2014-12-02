@@ -72,7 +72,9 @@ public class Control extends Action {
 				if (!command.endsWith(";")) command += ";";
 				// add the command
 				js += command;		
-			} else if ("slideDown".equals(actionType) || "slideUp".equals(actionType) || "slideToggle".equals(actionType)) {
+			} else if ("slideUp".equals(actionType) || "slideDown".equals(actionType) || "slideToggle".equals(actionType)) {
+				js += actionType + "(" + getProperty("duration") + ");";
+			} else if ("fadeOut".equals(actionType) || "fadeIn".equals(actionType) || "fadeToggle".equals(actionType)) {
 				js += actionType + "(" + getProperty("duration") + ");";
 			} else if ("addClass".equals(actionType)) {
 				js += "addClass('" + getProperty("styleClass") + "');";
