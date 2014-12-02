@@ -35,53 +35,33 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    <addToNewApplications>true</addToNewApplications>
 	    
 	    <properties>
-	    
-	        <property>
-	            <key>dataSource</key>
-	            <name>Source</name>
-	            <changeValueJavaScript>select</changeValueJavaScript>
-	            <getValuesFunction>
-	                <![CDATA[
-return "<option value=''>Please select...</option>" + getInputOptions(this.dataSource);         
-	                ]]>
-	            </getValuesFunction>	
-	        </property>
-	        
-	        <property>
-	            <key>dataSourceField</key>
-	            <name>Source field</name>
-	            <changeValueJavaScript>text</changeValueJavaScript>
-	            <getValuesFunction>return "";</getValuesFunction>
-	        </property>	  
-	        
-	        <property>
-	            <key>dataDestinations</key>
-	            <name>Destinations</name>
-	            <changeValueJavaScript>dataDestinations</changeValueJavaScript> 
-	        </property>
 	        
 	        <property>
 	            <key>copyType</key>
 	            <name>Copy type</name>
 	            <setConstructValueFunction>return false;</setConstructValueFunction>
 	            <changeValueJavaScript>datacopyType</changeValueJavaScript>	
-	            <getValuesFunction>return [[false,"replace"],["append","append"],["row","row merge"],["child","child merge"],["search","search"]]</getValuesFunction>	            
-	        </property>  
-	        
+	            <getValuesFunction>return [[false,"replace"],["append","append"],["row","row merge"],["child","child merge"],["search","search"],["bulk","bulk"]]</getValuesFunction>	            
+	        </property> 
+	    
 	        <property>
-	            <key>childField</key>
-	            <name>Child field</name>
-	            <changeValueJavaScript>datacopyChildField</changeValueJavaScript>
-	            <getValuesFunction>return "";</getValuesFunction>
-	        </property>	
-	        	        
+	            <key>dataSource</key>
+	            <name>Source</name>
+	            <changeValueJavaScript>datacopySource</changeValueJavaScript>
+	            <getValuesFunction>
+	                <![CDATA[
+return "<option value=''>Please select...</option>" + getInputOptions(this.dataSource);         
+	                ]]>
+	            </getValuesFunction>	
+	        </property>
+	        	        	      
 	        <property>
-	            <key>searchField</key>
-	            <name>Search field</name>
-	            <changeValueJavaScript>datacopySearchField</changeValueJavaScript>
+	            <key>dataSourceField</key>
+	            <name>Source field</name>
+	            <changeValueJavaScript>datacopySourceField</changeValueJavaScript>
 	            <getValuesFunction>return "";</getValuesFunction>
-	        </property>	
-	        
+	        </property>	 
+	        	        	        
 	        <property>
 	            <key>searchSource</key>
 	            <name>Search source</name>
@@ -98,8 +78,34 @@ return "<option value=''>None</option>" + getInputOptions(this.dataSource);
 	            <name>Search source field</name>
 	            <changeValueJavaScript>datacopySearchField</changeValueJavaScript>
 	            <getValuesFunction>return "";</getValuesFunction>
-	        </property>	 
-	        	        	          
+	        </property>
+	        
+	        <property>
+	            <key>searchField</key>
+	            <name>Search field</name>
+	            <changeValueJavaScript>datacopySearchField</changeValueJavaScript>
+	            <getValuesFunction>return "";</getValuesFunction>
+	        </property>	
+	        
+	        <property>
+	            <key>dataDestinations</key>
+	            <name>Destinations</name>
+	            <changeValueJavaScript>datacopyDestinations</changeValueJavaScript> 
+	        </property>
+	        	         	        
+	        <property>
+	            <key>childField</key>
+	            <name>Child field</name>
+	            <changeValueJavaScript>datacopyChildField</changeValueJavaScript>
+	            <getValuesFunction>return "";</getValuesFunction>
+	        </property>	
+	        
+	        <property>
+	            <key>dataCopies</key>
+	            <name>Bulk data copies</name>
+	            <changeValueJavaScript>datacopyCopies</changeValueJavaScript>
+	        </property>	
+	        	        	        	 	        	        	          
 	    </properties>
 	    	    
 	    <actionJavaScript>
@@ -119,7 +125,8 @@ function Action_datacopy(ev, data, outputs, copyType, copyData, field) {
 					var mergeData = window["getData_" + output.type](ev, output.id, null, output.details);
 					data = makeDataObject(data, output.field);
 					outputData = mergeDataObjects(mergeData, data, copyType, field); 
-				break;				
+				break;
+				case "child" :				
 					var mergeData = window["getData_" + output.type](ev, output.id, null, output.details);
 					outputData = mergeDataObjects(mergeData, data, copyType, field);
 				break;

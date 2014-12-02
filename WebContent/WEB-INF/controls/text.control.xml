@@ -87,7 +87,7 @@ if (data != null && data !== undefined) {
 	if (data.rows && data.rows[0]) {	        		
 		if (field && data.fields) {
 			for (var i in data.fields) {
-				if (data.fields[i].toLowerCase() == field.toLowerCase()) {
+				if (data.fields[i] && data.fields[i].toLowerCase() == field.toLowerCase()) {
 					control.html(data.rows[0][i]);
 					break;
 				}

@@ -307,12 +307,28 @@ function Property_bigtext(cell, propertyObject, property, refreshHtml) {
 		textarea.focus();
 	}));	
 	// hide the textarea and update the cell on unfocus
-	addListener( textarea.blur( {cell : cell, textarea: textarea}, function(ev) {
+	addListener( textarea.blur( function(ev) {
 		cell.text(textarea.val());
 		textarea.hide(); 
 	}));
+	// listen for key's we don't want to affect behaviour
+	addListener( textarea.keydown( function(ev) {
+		// if this is the tab key
+		if (ev.keyCode == 9) {
+			// get the current cursor position
+			var pos = textarea.caret();
+			// get the current value
+			var val = textarea.val();
+			// add a tab at the current postion and re-assign to the textarea
+			textarea.val(val.substr(0,pos) + "\t" + val.substr(pos));
+			// advance the cursor position by 1
+			textarea.caret(pos + 1);
+			// stop any further behaviour from the tab key, like loosing focus
+			return false;
+		}
+	}));
 	// modify if the text is updated
-	addListener( textarea.keyup( {cell : cell, textarea: textarea}, function(ev) { 
+	addListener( textarea.keyup( function(ev) { 
 		updateProperty(propertyObject, property, textarea.val(), refreshHtml);  
 	}));
 	
@@ -372,8 +388,15 @@ function Property_select(cell, propertyObject, property, refreshHtml, refreshPro
 		// refresh the properties if requested
 		if (ev.data.refreshProperties) refreshPropertyObject(ev, propertyObject);	
 	}));
-	// set the property
-	select.val(propertyObject[property.key]);	
+	// read the property
+	var val = propertyObject[property.key];
+	// update from any primitive values to string values
+	switch (val) {
+		case (true) : val = "true"; break;
+		case (false) : val = "false"; break;
+	}
+	// set the value
+	select.val(val);	
 }
 
 function Property_checkbox(cell, propertyObject, property, refreshHtml, refreshProperties) {
@@ -2018,131 +2041,6 @@ function Property_gridColumns(cell, grid, property, refreshHtml, refreshDialogue
 
 }
 
-function Property_dataDestinations(cell, propertyObject, property, refreshHtml, refreshDialogue) {
-	
-	// retain a reference to the dialogue (if we were passed one)
-	var dialogue = refreshDialogue;
-	// if we weren't passed one - make what we need
-	if (!dialogue) dialogue = createDialogue(cell, 300, "Destinations");		
-	// grab a reference to the table
-	var table = dialogue.find("table").first();
-	// make sure table is empty
-	table.children().remove();
-	
-	// build what we show in the parent cell
-	var dataDestinations = [];
-	// get the value if it exists
-	if (propertyObject[property.key]) dataDestinations = propertyObject[property.key];	
-	// make some text for our cell (we're going to build in in the loop)
-	var text = "";
-	
-	// add a header
-	table.append("<tr><td><b>Control</b></td><td colspan='2'><b>Field</b></td></tr>");
-		
-	// show current choices (with delete and move)
-	for (var i = 0; i < dataDestinations.length; i++) {
-		// get a single reference
-		var dataDestination = dataDestinations[i];
-		// get the id parts
-		var dataDestinationIdParts = dataDestination.itemId.split(".");
-		// derive the id
-		var dataDestinationId = dataDestinationIdParts[0];
-		// assume the name is the entire id
-		var itemName = dataDestination.itemId
-		// get the control
-		var itemControl = getControlById(dataDestinationId);
-		// if we got one
-		if (itemControl) {
-			// look for a "other" page name
-			if (itemControl._pageName) {
-				// use the page name and control name
-				itemName = itemControl._pageName + "." + itemControl.name;
-			} else {
-				// take just the control name
-				itemName = itemControl.name;
-			}
-			// if there's a complex key
-			if (dataDestinationIdParts.length > 1) {
-				// get the class
-				var controlClass = _controlTypes[itemControl.type];
-				// get any run time properties
-				var properties = controlClass.runtimeProperties;
-				// if there are runtimeProperties in the class
-				if (properties) {
-					// promote if array
-					if ($.isArray(properties.runtimeProperty)) properties = properties.runtimeProperty;
-					// loop them
-					for (var i in properties) {
-						// get the property
-						var property = properties[i];
-						// if there's set javascript (so it can be a destination)
-						if (property.setPropertyJavaScript) {
-							// append the property name if the key matches
-							if (dataDestinationIdParts[1] == property.type) itemName += "." + property.name;
-						}						
-					}					
-				}
-			} 
-		}
-		// apend to the text
-		text += itemName + ",";
-		// add a row
-		table.append("<tr><td>" + itemName + "</td><td><input value='" + dataDestination.field + "' /></td><td style='width:32px'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
-		// get the field
-		var editField = table.find("tr").last().children("td:nth(1)").children("input");
-		// add a listener
-		addListener( editField.keyup( {dataDestinations: dataDestinations}, function(ev) {
-			// get the input
-			var editField = $(ev.target);
-			// update the field
-			ev.data.dataDestinations[editField.parent().parent().index()-1].field = editField.val();
-		}));
-		// get the delete image
-		var imgDelete = table.find("tr").last().children().last().children("img.delete");
-		// add a listener
-		addListener( imgDelete.click( {dataDestinations: dataDestinations}, function(ev) {
-			// get the input
-			var imgDelete = $(ev.target);
-			// remove from parameters
-			ev.data.dataDestinations.splice(imgDelete.parent().parent().index()-1,1);
-			// remove row
-			imgDelete.parent().parent().remove();
-		}));
-	}
-			
-	// add reorder listeners
-	addReorder(dataDestinations, table.find("img.reorder"), function() { 
-		Property_dataDestinations(cell, propertyObject, property, refreshHtml, dialogue); 
-	});
-	
-	// add the add
-	table.append("<tr><td colspan='3' style='padding:0px;'><select style='margin:0px'><option value=''>Add destination...</option>" + getOutputOptions() + "</select></td></tr>");
-	// find the add
-	var destinationAdd = table.find("tr").last().children().last().children().last();
-	// listener to add output
-	addListener( destinationAdd.change( {cell: cell, propertyObject: propertyObject, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
-		// initialise array if need be
-		if (!ev.data.propertyObject.dataDestinations) ev.data.propertyObject.dataDestinations = [];
-		// get the parameters (inputs or outputs)
-		var dataDestinations = ev.data.propertyObject.dataDestinations;
-		// add a new one
-		dataDestinations.push({itemId: $(ev.target).val(), field: ""});
-		// rebuild the dialgue
-		Property_dataDestinations(ev.data.cell, ev.data.propertyObject, {key: "dataDestinations"}, ev.data.refreshHtml, ev.data.dialogue);	
-	}));
-	
-	// if we got text 
-	if (text) {
-		// remove the trailing comma
-		text = text.substring(0,text.length - 1);
-	} else {
-		// add friendly message
-		text = "Click to add...";
-	}
-	// put the text into the cell
-	cell.text(text);
-}
-
 // this is a dialogue to choose controls and specify their hints
 function Property_controlHints(cell, hints, property, refreshHtml, refreshDialogue) {
 	
@@ -2325,6 +2223,28 @@ function Property_datacopyType(cell, datacopyAction, property, refreshHtml, refr
 	Property_select(cell, datacopyAction, property, refreshHtml, true);
 }
 
+function Property_datacopySource(cell, datacopyAction, property, refreshHtml, refreshProperties) {
+	// only if datacopyAction type is child
+	if (datacopyAction.copyType == "bulk") {
+		// remove this row
+		cell.closest("tr").remove();		
+	} else {
+		// show the source drop down		
+		Property_select(cell, datacopyAction, property, refreshHtml);
+	}
+}
+
+function Property_datacopySourceField(cell, datacopyAction, property, refreshHtml, refreshProperties) {
+	// only if datacopyAction type is child
+	if (datacopyAction.copyType == "bulk") {
+		// remove this row
+		cell.closest("tr").remove();
+	} else {
+		// show the source field text		
+		Property_text(cell, datacopyAction, property, refreshHtml);
+	}
+}
+
 function Property_datacopyChildField(cell, datacopyAction, property, refreshHtml, refreshProperties) {
 	// only if datacopyAction type is child
 	if (datacopyAction.copyType == "child") {
@@ -2358,6 +2278,300 @@ function Property_datacopySearchSource(cell, datacopyAction, property, refreshHt
 	}
 }
 
+function getDataItemDetails(id) {
+	
+	// if we got an id
+	if (id) {
+		// get the id parts
+		var idParts = id.split(".");
+		// derive the id
+		var itemId = idParts[0];
+		// assume the name is the entire id
+		var itemName = id
+		// get the control
+		var itemControl = getControlById(itemId);
+		// if we got one
+		if (itemControl) {
+			// look for a "other" page name
+			if (itemControl._pageName) {
+				// use the page name and control name
+				itemName = itemControl._pageName + "." + itemControl.name;
+			} else {
+				// take just the control name
+				itemName = itemControl.name;
+			}
+			// if there's a complex key
+			if (idParts.length > 1) {
+				// get the class
+				var controlClass = _controlTypes[itemControl.type];
+				// get any run time properties
+				var properties = controlClass.runtimeProperties;
+				// if there are runtimeProperties in the class
+				if (properties) {
+					// promote if array
+					if ($.isArray(properties.runtimeProperty)) properties = properties.runtimeProperty;
+					// loop them
+					for (var i in properties) {
+						// get the property
+						var property = properties[i];
+						// if there's set javascript (so it can be a destination)
+						if (property.setPropertyJavaScript) {
+							// append the property name if the key matches
+							if (idParts[1] == property.type) itemName += "." + property.name;
+						}						
+					}					
+				}
+			} 
+		}
+		// return an object with the name and id
+		return {id:itemId, name:itemName};
+	} else {
+		// return an empty object
+		return {id:"",name:""};
+	}
+}
+
+function Property_datacopyDestinations(cell, propertyObject, property, refreshHtml, refreshDialogue) {
+	
+	// only if datacopyAction type is not bulk
+	if (propertyObject.copyType == "bulk") {
+		// remove this row
+		cell.closest("tr").remove();
+	} else {
+		// retain a reference to the dialogue (if we were passed one)
+		var dialogue = refreshDialogue;
+		// if we weren't passed one - make what we need
+		if (!dialogue) dialogue = createDialogue(cell, 300, "Destinations");		
+		// grab a reference to the table
+		var table = dialogue.find("table").first();
+		// make sure table is empty
+		table.children().remove();
+		
+		// build what we show in the parent cell
+		var dataDestinations = [];
+		// get the value if it exists
+		if (propertyObject[property.key]) dataDestinations = propertyObject[property.key];	
+		// make some text for our cell (we're going to build in in the loop)
+		var text = "";
+		
+		// add a header
+		table.append("<tr><td><b>Control</b></td><td colspan='2'><b>Field</b></td></tr>");
+			
+		// show current choices (with delete and move)
+		for (var i = 0; i < dataDestinations.length; i++) {
+			// get a single reference
+			var dataDestination = dataDestinations[i];			
+			// get a data item object for this
+			var dataItem = getDataItemDetails(dataDestination.itemId);
+			// apend to the text
+			text += dataItem.name + ",";
+			// add a row
+			table.append("<tr><td>" + dataItem.name + "</td><td><input value='" + dataDestination.field + "' /></td><td style='width:32px'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
+			// get the field
+			var editField = table.find("tr").last().children("td:nth(1)").children("input");
+			// add a listener
+			addListener( editField.keyup( {dataDestinations: dataDestinations}, function(ev) {
+				// get the input
+				var editField = $(ev.target);
+				// update the field
+				ev.data.dataDestinations[editField.parent().parent().index()-1].field = editField.val();
+			}));
+			// get the delete image
+			var imgDelete = table.find("tr").last().children().last().children("img.delete");
+			// add a listener
+			addListener( imgDelete.click( {dataDestinations: dataDestinations}, function(ev) {
+				// get the input
+				var imgDelete = $(ev.target);
+				// remove from parameters
+				ev.data.dataDestinations.splice(imgDelete.parent().parent().index()-1,1);
+				// remove row
+				imgDelete.parent().parent().remove();
+			}));
+		}
+				
+		// add reorder listeners
+		addReorder(dataDestinations, table.find("img.reorder"), function() { 
+			Property_dataDestinations(cell, propertyObject, property, refreshHtml, dialogue); 
+		});
+		
+		// add the add
+		table.append("<tr><td colspan='3' style='padding:0px;'><select style='margin:0px'><option value=''>Add destination...</option>" + getOutputOptions() + "</select></td></tr>");
+		// find the add
+		var destinationAdd = table.find("tr").last().children().last().children().last();
+		// listener to add output
+		addListener( destinationAdd.change( {cell: cell, propertyObject: propertyObject, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
+			// initialise array if need be
+			if (!ev.data.propertyObject.dataDestinations) ev.data.propertyObject.dataDestinations = [];
+			// get the parameters (inputs or outputs)
+			var dataDestinations = ev.data.propertyObject.dataDestinations;
+			// add a new one
+			dataDestinations.push({itemId: $(ev.target).val(), field: ""});
+			// rebuild the dialgue
+			Property_dataDestinations(ev.data.cell, ev.data.propertyObject, {key: "dataDestinations"}, ev.data.refreshHtml, ev.data.dialogue);	
+		}));
+		
+		// if we got text 
+		if (text) {
+			// remove the trailing comma
+			text = text.substring(0,text.length - 1);
+		} else {
+			// add friendly message
+			text = "Click to add...";
+		}
+		// put the text into the cell
+		cell.text(text);
+	}
+	
+}
+
+var _dataCopyTypes = [[false,"replace"],["append","append"],["row","row merge"]];
+
+function getCopyTypeOptions(type) {
+	var options = "";
+	for (var i in _dataCopyTypes) {
+		options += "<option value='" + _dataCopyTypes[i][0] + "'" + (type == _dataCopyTypes[i][0] ? " selected='selected'" : "") + ">" + _dataCopyTypes[i][1] + "</option>"
+	}
+	return options;
+}
+
+function Property_datacopyCopies(cell, datacopyAction, property, refreshHtml, refreshDialogue) {
+
+	// only if datacopyAction type is bulk
+	if (datacopyAction.copyType == "bulk") {	
+		
+		// retain a reference to the dialogue (if we were passed one)
+		var dialogue = refreshDialogue;
+		// if we weren't passed one - make what we need
+		if (!dialogue) dialogue = createDialogue(cell, 700, "Bulk data copies");		
+		// grab a reference to the table
+		var table = dialogue.find("table").first();
+		// make sure table is empty
+		table.children().remove();
+		
+		// build what we show in the parent cell
+		var dataCopies = [];
+		// get the value if it exists
+		if (datacopyAction[property.key]) dataCopies = datacopyAction[property.key];	
+		// make some text for our cell (we're going to build in in the loop)
+		var text = "";
+		
+		// add a header
+		table.append("<tr><td><b>Source</b></td><td><b>Source field</b></td><td><b>Destination</b></td><td><b>Destination field</b></td><td colspan='2'><b>Copy type</b></td></tr>");
+			
+		// show current choices (with delete and move)
+		for (var i = 0; i < dataCopies.length; i++) {
+			
+			// get this data copy
+			var dataCopy = dataCopies[i];
+						
+			// add a row
+			table.append("<tr class='nopadding'><td><select class='source'><option value=''>Please select...</option>" + getInputOptions(dataCopy.source) + "</select></td><td><input  class='source' value='" + dataCopy.sourceField + "' /></td><td><select class='destination'><option value=''>Please select...</option>" + getOutputOptions(dataCopy.destination) + "</select></td><td><input class='destination' value='" + dataCopy.destinationField + "' /></td><td><select class='type' style='min-width:60px;'>" + getCopyTypeOptions(dataCopy.type) + "</select></td><td style='width:32px'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
+			
+			// get the source data item
+			var source = getDataItemDetails(dataCopy.source);
+			// get the destination data item
+			var destination = getDataItemDetails(dataCopy.destination);
+			// apend to the text
+			text += source.name + " to " + destination.name + ",";
+			
+		}
+		
+		// source listeners
+		addListener( table.find("select.source").change( {dataCopies: dataCopies}, function(ev) {
+			// get the target
+			var target = $(ev.target);
+			// get the index
+			var i = target.closest("tr").index() - 1;
+			// update the source
+			ev.data.dataCopies[i].source = target.val();
+		}));		
+		// source field listeners
+		addListener( table.find("input.source").keyup( {dataCopies: dataCopies}, function(ev) {
+			// get the target
+			var target = $(ev.target);
+			// get the index
+			var i = target.closest("tr").index() - 1;
+			// update the source
+			ev.data.dataCopies[i].sourceField = target.val();
+		}));
+		// destination listeners
+		addListener( table.find("select.destination").change( {dataCopies: dataCopies}, function(ev) {
+			// get the target
+			var target = $(ev.target);
+			// get the index
+			var i = target.closest("tr").index() - 1;
+			// update the source
+			ev.data.dataCopies[i].destination = target.val();
+		}));
+		// destination field listeners
+		addListener( table.find("input.destination").change( {dataCopies: dataCopies}, function(ev) {
+			// get the target
+			var target = $(ev.target);
+			// get the index
+			var i = target.closest("tr").index() - 1;
+			// update the source
+			ev.data.dataCopies[i].destinationField = target.val();
+		}));
+		// source listeners
+		addListener( table.find("select.type").change( {dataCopies: dataCopies}, function(ev) {
+			// get the target
+			var target = $(ev.target);
+			// get the index
+			var i = target.closest("tr").index() - 1;
+			// update the source
+			ev.data.dataCopies[i].type = target.val();
+		}));
+		
+		// get the delete images
+		var imgDelete = table.find("img.delete");
+		// add a listener
+		addListener( imgDelete.click( {dataCopies: dataCopies}, function(ev) {
+			// get the input
+			var imgDelete = $(ev.target);
+			// remove from parameters
+			ev.data.dataCopies.splice(imgDelete.parent().parent().index()-1,1);
+			// remove row
+			imgDelete.parent().parent().remove();
+		}));
+			
+		// add reorder listeners
+		addReorder(dataCopies, table.find("img.reorder"), function() { 
+			Property_datacopyCopies(cell, datacopyAction, property, refreshHtml, dialogue); 
+		});
+		
+		// add the add
+		table.append("<tr><td colspan='8'><a href='#' style='margin-left:5px;'>add...</a></td></tr>");
+		// find the add
+		var destinationAdd = table.find("a").last();
+		// listener to add output
+		addListener( destinationAdd.click( {cell: cell, datacopyAction: datacopyAction, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
+			// initialise array if need be
+			if (!ev.data.datacopyAction.dataCopies) ev.data.datacopyAction.dataCopies = [];
+			// get the parameters (inputs or outputs)
+			var dataCopies = ev.data.datacopyAction.dataCopies;
+			// add a new one
+			dataCopies.push({source:"",sourceField:"",destination:"",destinationField:""});
+			// rebuild the dialogue
+			Property_datacopyCopies(ev.data.cell, ev.data.datacopyAction, {key: "dataCopies"}, ev.data.refreshHtml, ev.data.dialogue);	
+		}));
+		
+		// if we got text 
+		if (text) {
+			// remove the trailing comma
+			text = text.substring(0,text.length - 1);
+		} else {
+			// add friendly message
+			text = "Click to add...";
+		}
+		// put the text into the cell
+		cell.text(text);
+	} else {
+		// remove this row
+		cell.closest("tr").remove();
+	}
+
+}
+
 function Property_controlActionType(cell, controlAction, property, refreshHtml, refreshProperties) {
 	// if this property has not been set yet
 	if (!controlAction.actionType) {
@@ -2384,8 +2598,8 @@ function Property_controlActionType(cell, controlAction, property, refreshHtml, 
 }
 
 function Property_controlActionDuration(cell, controlAction, property, refreshHtml, refreshProperties) {
-	// only if controlAction is custom
-	if (controlAction.actionType == "slideDown" || controlAction.actionType == "slideUp" || controlAction.actionType == "slideToggle") {
+	// only if controlAction is slide or fade
+	if (controlAction.actionType.indexOf("slide") == 0 || controlAction.actionType.indexOf("fade") == 0) {
 		// show the duration
 		Property_integer(cell, controlAction, property, refreshHtml);
 	} else {

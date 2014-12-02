@@ -524,9 +524,6 @@ function mergeDataObjects(data1, data2, mergeType, field) {
 						}
 					}
 					var fields = data2.fields;
-					for (var j in fieldMap) {
-						fields.splice(fieldMap[j],1); 
-					}
 					if (fieldCount > 0) {
 						data1.fields.push(field);
 						for (var i in data1.rows) {
@@ -545,9 +542,6 @@ function mergeDataObjects(data1, data2, mergeType, field) {
 										child = data1.rows[i][data1.fields.length - 1];
 									}
 									var row = data2.rows[j];
-									for (var k in fieldMap) {
-										if (r1[k] == r2[fieldMap[k]]) row.splice(fieldMap[k],1); 
-									}
 									child.rows.push(row);
 									r1.push(child);
 								}

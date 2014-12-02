@@ -1,5 +1,5 @@
 
-/* This file is auto-generated on application load and save - it is minified when in production */
+/* This file is auto-generated on application load and save - it is minified when the application status is live */
 
 
 /* Control and Action resource JavaScript */
@@ -194,7 +194,7 @@ function getWebserviceActionMaxSequence(actionId) {
 }
 
 
-/* Control initialise methods */
+/* Control initialisation methods */
 
 
 function Init_date(id, details) {
@@ -346,7 +346,7 @@ function Init_tabGroup(id, details) {
   		} else {
   			// selected tab is table cell
   			tabs.children("div.selected").css("display","table-cell");
-  		}
+  		}		
   	});
   });
 }
@@ -669,8 +669,53 @@ function setProperty_grid_selectedRowData(ev, id, field, details, data) {
   if (gridData.selectedRowNumber) {
   	// replace or remove selected row	
   	if (data) {
-  		// put top row of what we were passed into selected row
-  		gridData.rows[gridData.selectedRowNumber - 1] = data.rows[0];
+  		// get the gridData fields
+  		var gridDataFields = gridData.fields;
+  		// check there are some
+  		if (gridDataFields) {
+  			
+  			// set up a field map which will hold the location of the incoming fields in the grid fields
+  			var fieldMap = {};
+  			// loop the incoming fields
+  			for (var i in data.fields) {
+  				// get it's name
+  				var field = data.fields[i];
+  				// assume it wasn't found in the grid's list of fields	
+  				var foundField = false;							
+  				// loop the grid's fields
+  				for (var j in gridData.fields) {
+  					// if there's a match					
+  					if (field.toLowerCase() == gridData.fields[j].toLowerCase()) {
+  						// store it's position
+  						fieldMap[field] = j;
+  						foundField = true;
+  						break;
+  					}
+  				}
+  				// if the field wasn't found in the grid
+  				if (!foundField) {
+  					// add it to the grid's fields
+  					gridData.fields.push(field);
+  					// retain the position
+  					fieldMap[field] = gridData.fields.length - 1;
+  				}				
+  			}
+  			
+  			// loop the incoming fields one more time
+  			for (var i in data.fields) {
+  				// add an entry at this position if we need one
+  				if (gridData.rows[gridData.selectedRowNumber - 1].length < data.fields.length) gridData.rows[gridData.selectedRowNumber - 1].push(null);
+  				// update the selected row field from the map
+  				gridData.rows[gridData.selectedRowNumber - 1][fieldMap[data.fields[i]]] = data.rows[0][i];
+  			}
+  			
+  			
+  		} else {
+  			// take them from the incoming data object
+  			gridData.fields = data.fields;
+  			// put top row of what we were passed into selected row
+  			gridData.rows[gridData.selectedRowNumber - 1] = data.rows[0];
+  		}		
   	} else {
   		// remove the selected row 
   		gridData.rows.splice(gridData.selectedRowNumber - 1, 1);
@@ -730,7 +775,7 @@ function setData_input(id, data, field, details) {
   	if (data.rows && data.rows[0]) {	        		
   		if (field && data.fields && data.fields.length > 0) {
   			for (var i in data.fields) {
-  				if (data.fields[i].toLowerCase() == field.toLowerCase()) {
+  				if (data.fields[i] && data.fields[i].toLowerCase() == field.toLowerCase()) {
   					control.val(data.rows[0][i]);
   					break;
   				}
@@ -793,7 +838,7 @@ function setData_text(id, data, field, details) {
   	if (data.rows && data.rows[0]) {	        		
   		if (field && data.fields) {
   			for (var i in data.fields) {
-  				if (data.fields[i].toLowerCase() == field.toLowerCase()) {
+  				if (data.fields[i] && data.fields[i].toLowerCase() == field.toLowerCase()) {
   					control.html(data.rows[0][i]);
   					break;
   				}
@@ -835,7 +880,8 @@ function Action_datacopy(ev, data, outputs, copyType, copyData, field) {
 					var mergeData = window["getData_" + output.type](ev, output.id, null, output.details);
 					data = makeDataObject(data, output.field);
 					outputData = mergeDataObjects(mergeData, data, copyType, field); 
-				break;				
+				break;
+				case "child" :				
 					var mergeData = window["getData_" + output.type](ev, output.id, null, output.details);
 					outputData = mergeDataObjects(mergeData, data, copyType, field);
 				break;

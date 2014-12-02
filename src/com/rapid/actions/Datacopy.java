@@ -25,6 +25,9 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
 package com.rapid.actions;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,6 +39,53 @@ import com.rapid.core.Page;
 import com.rapid.server.RapidHttpServlet;
 
 public class Datacopy extends Action {
+	
+	// public static class
+	public static class DataCopy {
+		
+		// private instance variables
+		private String _source;
+		private String _sourceField;
+		private String _destination;
+		private String _destinationField;
+		private String _type;
+		
+		// properties
+		public String getSource() { return _source; }
+		public void setSource(String source) { _source = source; }
+		
+		public String getSourceField() { return _sourceField; }
+		public void setSourceField(String sourceField) { _sourceField = sourceField; }
+		
+		public String getDestination() { return _destination; }
+		public void setDestination(String destination) { _destination = destination; }
+		
+		public String getDestinationField() { return _destinationField; }
+		public void setDestinationField(String destinationField) { _destinationField = destinationField; }
+		
+		public String getType() { return _type; }
+		public void setType(String type) { _type = type; }
+		
+		// constructors
+		// used by jaxb
+		public DataCopy() { super(); }
+		// used by designer
+		public DataCopy(JSONObject jsonCopy) throws Exception { 
+			_source = jsonCopy.optString("source", null);
+			_sourceField = jsonCopy.optString("sourceField", null);
+			_destination = jsonCopy.optString("destination", null);
+			_destinationField = jsonCopy.optString("destinationField", null);
+			_type = jsonCopy.optString("type", null);
+		}
+		
+	}
+	
+	// private instance variables
+	private List<DataCopy> _dataCopies;
+	
+	// properties
+	public List<DataCopy> getDataCopies() { return _dataCopies; }
+	public void setDataCopies(List<DataCopy> dataCopies) { _dataCopies = dataCopies; }
 			
 	// constructors
 	
@@ -43,7 +93,25 @@ public class Datacopy extends Action {
 	public Datacopy() { super(); }
 	// used by designer
 	public Datacopy(RapidHttpServlet rapidServlet, JSONObject jsonAction) throws Exception { 
-		super(rapidServlet, jsonAction);				
+		// call the super parameterless constructor which sets the xml version
+		super();
+		// save all key/values from the json into the properties 
+		for (String key : JSONObject.getNames(jsonAction)) {
+			// add all json properties to our properties, except for dataCopies
+			if (!"dataCopies".equals(key)) addProperty(key, jsonAction.get(key).toString());
+		} 		
+		// look for a dataCopies array
+		JSONArray jsonDataCopies = jsonAction.optJSONArray("dataCopies");
+		// if we got one
+		if (jsonDataCopies != null) {
+			// instantiate our collection
+			_dataCopies = new ArrayList<DataCopy>();
+			// loop it
+			for (int i = 0; i < jsonDataCopies.length(); i++) {
+				// add this one
+				_dataCopies.add(new DataCopy(jsonDataCopies.getJSONObject(i)));
+			}
+		}
 	}
 				
 	// overrides
@@ -54,173 +122,279 @@ public class Datacopy extends Action {
 		// the javascript we're making
 		String js = "";
 		
-		// get the data source
-		String dataSourceId = getProperty("dataSource");
+		// get any copy type
+		String copyType = getProperty("copyType");
 		
-		// check there is a datasource
-		if (dataSourceId == null) {
+		// bulk copy is a special animal
+		if ("bulk".equals(copyType)) {
 			
-			// no data source return a comment
-			js = "// no data source for action " + getId();
-			
-		} else {
-			
-			String dataSourceField = getProperty("dataSourceField");
-			
-			js = "var data = "  + Control.getDataJavaScript(application, page, dataSourceId, dataSourceField) + ";\n";
-									
-			// we're going to work with the data destinations in a json array
-			JSONArray jsonDataDestinations = null;
-			
-			// assume we have no need for an outputs array
-			boolean outputsArray = false;
-							
-			// try and get the data destinations from the properties into a json array, silently fail if not
-			try { jsonDataDestinations = new JSONArray(getProperty("dataDestinations")); } 
-			catch (Exception e) {}
-			
-			if (jsonDataDestinations == null) {
+			// check we have some data copies
+			if (_dataCopies == null) {
 				
-				// data source destinations not found return a comment
-				js = "// data source destinations not found for " + getId();
+				// data copies not found return a comment
+				js = "// data copies not found for " + getId();
 				
 			} else {
 				
-				// prepare a string for the outputs array
-				String jsOutputs = "";
-				// loop the json data destination collection
-				for (int i = 0; i < jsonDataDestinations.length(); i++) {
+				// loop them
+				for (DataCopy dataCopy : _dataCopies) {
 					
-					// try and make an output for this destination
-					try {
-						
-						// retrieve this data destination
-						JSONObject jsonDataDesintation = jsonDataDestinations.getJSONObject(i);
-						// get the control id
-						String destinationId = jsonDataDesintation.getString("itemId");
-						
-						// split by escaped .
-						String idParts[] = destinationId.split("\\.");
-						// if there is more than 1 part we are dealing with set properties, for now just update the destintation id
-						if (idParts.length > 1) destinationId = idParts[0];
-													
-						// first try and look for the control in the page
-						Control destinationControl = page.getControl(destinationId);
-						// assume we found it
-						boolean pageControl = true;
-						// check we got a control
-						if (destinationControl == null) {
-							// now look for the control in the application
-							destinationControl = application.getControl(destinationId);
-							// set page control to false
-							pageControl = false;
-						} 
-						
-						// check we got one from either location
-						if (destinationControl != null) {
-							
-							// get the field
-							String destinationField = jsonDataDesintation.optString("field");
-							// clean up the field								
-							if (destinationField == null) destinationField = "";
-							
-							// get any details we may have
-							String details = destinationControl.getDetailsJavaScript(application, page);
-														
-							// if the idParts is greater then 1 this is a set property
-							if (idParts.length > 1) {
-								// get the property from the second id part
-								String property = idParts[1];
-								// append the set property call
-								js += "setProperty_" + destinationControl.getType() +  "_" + property + "(ev,'" + destinationControl.getId() + "','" + destinationField + "'," + details + ",data);\n";
-							} else {
-								// we will need an outputs array
-								outputsArray = true;
-								// set details to empty string or clean up
-								if (details == null) {
-									details = "";
-								} else {
-									// if this is a page control
-									if (pageControl) {
-										// the details will already be in the page so we can use the short form
-										details = ",details:" + destinationControl.getId() + "details";
-									} else {
-										// write the full details
-										details = ",details:" + details;
-									}
-								}
-								// add the properties we need as a js object it will go into the array
-								jsOutputs += "{id:'" + destinationControl.getId() + "',type: '" + destinationControl.getType() + "',field:'" + destinationField + "'" + details + "},";
-							}
-							
-						}
-																									
-					} catch (JSONException e) {
-						
-					}
-				}
-				
-				// if there was an outputs array 
-				if (outputsArray) {
+					// get the data
+					js += "var data = "  + Control.getDataJavaScript(application, page, dataCopy.getSource(), dataCopy.getSourceField()) + ";\n";
 					
-					// trim the last comma
-					if (jsOutputs.length() > 0) jsOutputs = jsOutputs.substring(0, jsOutputs.length() - 1);
+					// get the destination id
+					String destinationId = dataCopy.getDestination();
+					// split by escaped .
+					String idParts[] = destinationId.split("\\.");
+					// if there is more than 1 part we are dealing with set properties, for now just update the destintation id
+					if (idParts.length > 1) destinationId = idParts[0];
 					
-					// add to js as an array
-					js += "var outputs = [" + jsOutputs + "];\n";
-					// add the start of the call
-					js += "Action_datacopy(ev, data, outputs";
+					// first try and look for the control in the page
+					Control destinationControl = page.getControl(destinationId);
+					// assume we found it
+					boolean pageControl = true;
+					// check we got a control
+					if (destinationControl == null) {
+						// now look for the control in the application
+						destinationControl = application.getControl(destinationId);
+						// set page control to false
+						pageControl = false;
+					} 
 					
-					// get any copy type
-					String copyType = getProperty("copyType");
-					// check if we got one
-					if (copyType == null) {
+					// check we got one from either location
+					if (destinationControl == null) {
 						
-						// if not update to empty string
-						copyType = "";
+						// data copies not found return a comment
+						js = "// data destination not found for " + destinationId;
 						
 					} else {
 						
-						// add the copy type to the js
-						js += ", '" + copyType + "'";
-						// check the copy type
-						if ("child".equals(copyType)) {
-							// no merge data object
-							js += ", null";						
-							// look for a merge field
-							String childField = getProperty("childField");
-							// check if got we got one
-							if (childField == null) {
-								// call it child if not
-								js += ", 'child'";						 
-							} else {
-								// add it
-								js += ", '" + childField + "'";
-							}
-							
-						} else if ("search".equals(copyType)) {
-							
-							// get the search data
-							js += ", " + Control.getDataJavaScript(application, page, getProperty("searchSource"), getProperty("searchSourceField"));
-							// look for a search field
-							String searchField = getProperty("searchField");
-							// add it if present
-							if (searchField != null) {
-								js += ", '" + searchField + "'";
-							}
-							
-						} // copy type
+						// get the field
+						String destinationField = dataCopy.getDestinationField();
+						// clean up the field								
+						if (destinationField == null) destinationField = "";
 						
-					} // copy type check
+						// get any details we may have
+						String details = destinationControl.getDetailsJavaScript(application, page);
+													
+						// if the idParts is greater then 1 this is a set property
+						if (idParts.length > 1) {
+							
+							// get the property from the second id part
+							String property = idParts[1];
+							// append the set property call
+							js += "setProperty_" + destinationControl.getType() +  "_" + property + "(ev,'" + destinationControl.getId() + "','" + destinationField + "'," + details + ",data);\n";
+						
+						} else {
+							
+							// set details to empty string or clean up
+							if (details == null) {
+								details = "";
+							} else {
+								// if this is a page control
+								if (pageControl) {
+									// the details will already be in the page so we can use the short form
+									details = ",details:" + destinationControl.getId() + "details";
+								} else {
+									// write the full details
+									details = ",details:" + details;
+								}
+							}
+							
+							// try and get the type
+							String type = dataCopy.getType();
+							// check it
+							if (type == null || "false".equals(type)) {
+								// update to empty string
+								type = "";
+							} else {
+								// update to comma-prefixed, string escaped
+								type = ",'" + type + "'";
+							}
+							
+							// do the data copy
+							js += "Action_datacopy(ev, data, [{id:'" + destinationControl.getId() + "',type: '" + destinationControl.getType() + "',field:'" + destinationField + "'" + details + "}]" + type + ");\n";
+							
+						} // copy / set property check
+						
+					} // destination control check					
 					
-					// close the copy data call
-					js += ");\n";
+				} // data copies loop
+				
+			} // data copies check
+			
+		} else {
+		
+			// get the data source
+			String dataSourceId = getProperty("dataSource");
+			
+			// check there is a datasource
+			if (dataSourceId == null) {
+				
+				// no data source return a comment
+				js = "// no data source for action " + getId();
+				
+			} else {
+				
+				String dataSourceField = getProperty("dataSourceField");
+				
+				js = "var data = "  + Control.getDataJavaScript(application, page, dataSourceId, dataSourceField) + ";\n";
+										
+				// we're going to work with the data destinations in a json array
+				JSONArray jsonDataDestinations = null;
+				
+				// assume we have no need for an outputs array
+				boolean outputsArray = false;
+								
+				// try and get the data destinations from the properties into a json array, silently fail if not
+				try { jsonDataDestinations = new JSONArray(getProperty("dataDestinations")); } 
+				catch (Exception e) {}
+				
+				if (jsonDataDestinations == null) {
 					
-				} // outputs array
-												
-			}
-																								
-		}
+					// data source destinations not found return a comment
+					js = "// data source destinations not found for " + getId();
+					
+				} else {
+					
+					// prepare a string for the outputs array
+					String jsOutputs = "";
+					// loop the json data destination collection
+					for (int i = 0; i < jsonDataDestinations.length(); i++) {
+						
+						// try and make an output for this destination
+						try {
+							
+							// retrieve this data destination
+							JSONObject jsonDataDesintation = jsonDataDestinations.getJSONObject(i);
+							// get the control id
+							String destinationId = jsonDataDesintation.getString("itemId");
+							
+							// split by escaped .
+							String idParts[] = destinationId.split("\\.");
+							// if there is more than 1 part we are dealing with set properties, for now just update the destintation id
+							if (idParts.length > 1) destinationId = idParts[0];
+														
+							// first try and look for the control in the page
+							Control destinationControl = page.getControl(destinationId);
+							// assume we found it
+							boolean pageControl = true;
+							// check we got a control
+							if (destinationControl == null) {
+								// now look for the control in the application
+								destinationControl = application.getControl(destinationId);
+								// set page control to false
+								pageControl = false;
+							} 
+							
+							// check we got one from either location
+							if (destinationControl != null) {
+								
+								// get the field
+								String destinationField = jsonDataDesintation.optString("field");
+								// clean up the field								
+								if (destinationField == null) destinationField = "";
+								
+								// get any details we may have
+								String details = destinationControl.getDetailsJavaScript(application, page);
+															
+								// if the idParts is greater then 1 this is a set property
+								if (idParts.length > 1) {
+									// get the property from the second id part
+									String property = idParts[1];
+									// append the set property call
+									js += "setProperty_" + destinationControl.getType() +  "_" + property + "(ev,'" + destinationControl.getId() + "','" + destinationField + "'," + details + ",data);\n";
+								} else {
+									// we will need an outputs array
+									outputsArray = true;
+									// set details to empty string or clean up
+									if (details == null) {
+										details = "";
+									} else {
+										// if this is a page control
+										if (pageControl) {
+											// the details will already be in the page so we can use the short form
+											details = ",details:" + destinationControl.getId() + "details";
+										} else {
+											// write the full details
+											details = ",details:" + details;
+										}
+									}
+									// add the properties we need as a js object it will go into the array
+									jsOutputs += "{id:'" + destinationControl.getId() + "',type: '" + destinationControl.getType() + "',field:'" + destinationField + "'" + details + "},";
+								}
+								
+							}
+																										
+						} catch (JSONException ex) {
+							
+							// data source destinations not found return a comment
+							js = "// error creating data output for " + getId() + " : " + ex.getMessage();
+							
+						}
+					}
+					
+					// if there was an outputs array 
+					if (outputsArray) {
+						
+						// trim the last comma
+						if (jsOutputs.length() > 0) jsOutputs = jsOutputs.substring(0, jsOutputs.length() - 1);
+						
+						// add to js as an array
+						js += "var outputs = [" + jsOutputs + "];\n";
+						// add the start of the call
+						js += "Action_datacopy(ev, data, outputs";
+											
+						// check if we got one
+						if (copyType == null) {
+							
+							// if not update to empty string
+							copyType = "";
+							
+						} else {
+							
+							// add the copy type to the js
+							js += ", '" + copyType + "'";
+							// check the copy type
+							if ("child".equals(copyType)) {
+								// no merge data object
+								js += ", null";						
+								// look for a merge field
+								String childField = getProperty("childField");
+								// check if got we got one
+								if (childField == null) {
+									// call it child if not
+									js += ", 'child'";						 
+								} else {
+									// add it
+									js += ", '" + childField + "'";
+								}
+								
+							} else if ("search".equals(copyType)) {
+								
+								// get the search data
+								js += ", " + Control.getDataJavaScript(application, page, getProperty("searchSource"), getProperty("searchSourceField"));
+								// look for a search field
+								String searchField = getProperty("searchField");
+								// add it if present
+								if (searchField != null) {
+									js += ", '" + searchField + "'";
+								}
+								
+							} // copy type
+							
+						} // copy type check
+						
+						// close the copy data call
+						js += ");\n";
+						
+					} // outputs array
+													
+				} // data destinations check
+																									
+			} // data source check
+			
+		} // bulk copy check
 		
 		return js;
 				
