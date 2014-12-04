@@ -531,17 +531,21 @@ function setData_checkbox(id, data, field, details) {
   			for (var i in data.fields) {
   				if (data.fields[i].toLowerCase() == field.toLowerCase()) {
   					control.prop('checked', data.rows[0][i]);
+  					control.trigger("change");
   					break;
   				}
   			}
   		} else {
   			control.prop('checked', data.rows[0][0]);
+  			control.trigger("change");
   		}
   	} else {
   		control.prop('checked', false);
+  		control.trigger("change");
   	}
   } else {
   	control.prop('checked', false);
+  	control.trigger("change");
   }
 }
 
@@ -655,6 +659,7 @@ function setData_date(id, data, field, details) {
   	if (date) value = f_tcalGenerateDate(date, details.dateFormat);
   }
   control.val(value);
+  control.trigger("change");
 }
 
 function getData_dropdown(ev, id, field, details) {
@@ -671,6 +676,7 @@ function setData_dropdown(id, data, field, details) {
   			for (var i in data.fields) {
   				if (field.toLowerCase() == data.fields[i].toLowerCase()) {
   					control.val(data.rows[0][i]);
+  					control.trigger("change");
   					foundField = true;
   					break;
   				}
@@ -1063,21 +1069,26 @@ function setData_input(id, data, field, details) {
   			for (var i in data.fields) {
   				if (data.fields[i] && data.fields[i].toLowerCase() == field.toLowerCase()) {
   					control.val(data.rows[0][i]);
+  					control.trigger("change");
   					break;
   				}
   			}
   		} else {
   			if (data.rows[0][0] != null && data.rows[0][0] !== undefined) {
   				control.val(data.rows[0][0]);
+  				control.trigger("change");
   			} else {
   				control.val("");
+  				control.trigger("change");
   			}
   		}
   	} else {
   		control.val("");
+  		control.trigger("change");
   	}
   } else {
   	control.val("");
+  	control.trigger("change");
   }
 }
 
@@ -1367,26 +1378,31 @@ function Action_validation(ev, validations, showMessages) {
 	var valid = true;
 	for (var i in validations) {
 		var validation = validations[i];
-		var value = window["getData_" + validation.controlType](ev, validation.controlId, validation.field, validation.details);
-		if (validation.validationType == "javascript") {						
-			var validationFunction = new Function("value", validation.javaScript);
-			var failMessage = validationFunction.apply(this, [value]);
-			if (failMessage) {
-				if (showMessages) showValidationMessage(validation.controlId, failMessage);
-				valid = false;
-			} else {
-				if (showMessages) hideValidationMessage(validation.controlId);
+		var validationControl = $("#" + validation.controlId);
+		if (validationControl[0]) {
+			if (!validationControl.is(":hidden") || !validation.passHidden) {
+				var value = window["getData_" + validation.controlType](ev, validation.controlId, validation.field, validation.details);
+				if (validation.validationType == "javascript") {						
+					var validationFunction = new Function(["ev","id","value"], validation.javaScript);
+					var failMessage = validationFunction.apply(this, [ev,validation.controlId,value]);
+					if (failMessage != null && failMessage !== false && failMessage !== undefined) {
+						if (showMessages) showValidation(validation.controlId, failMessage);
+						valid = false;
+					} else {
+						if (showMessages) hideValidation(validation.controlId);
+					}
+				} else {
+					if ((value && value.match(new RegExp(validation.regEx)))||(!value && validation.allowNulls)) {
+						// passed
+						if (showMessages) hideValidation(validation.controlId);				
+					} else {
+						// failed, and there is a message to show
+						if (showMessages) showValidation(validation.controlId, validation.message);
+						valid = false;					
+					}	
+				}	
 			}
-		} else {
-			if ((value && value.match(new RegExp(validation.regEx)))||(!value && validation.allowNulls)) {
-				// passed
-				if (showMessages) hideValidationMessage(validation.controlId);				
-			} else {
-				// failed
-				if (showMessages) showValidationMessage(validation.controlId, validation.message);
-				valid = false;					
-			}	
-		}	
+		}
 	}	
 	return valid;
 }

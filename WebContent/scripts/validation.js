@@ -134,7 +134,7 @@ function showValidation(control) {
 				// get a reference to  the cell
 				var cell = validationTable.children().last().children().last();
 				// set a helpful default value for the
-				if (!validation.javaScript) validation.javaScript = "// Enter your JavaScript here, return a message if the validation fails. The control value is available through the \"value\" variable";
+				if (!validation.javaScript) validation.javaScript = "// Enter your JavaScript here, return a message if the validation fails. The control value is available through the \"value\" variable, the event is \"ev\" and the control id is \"id\"";
 				// add a bigtext property listener	
 				Property_bigtext(cell, validation, {key: "javaScript"});
 			break;
@@ -146,11 +146,17 @@ function showValidation(control) {
 				// get a reference to  the cell
 				var cell = validationTable.children().last().children().last();
 				// add a bigtext property listener	
-				window["Property_bigtext"](cell, validation, {key: "message"});
+				Property_bigtext(cell, validation, {key: "message"});
 				// add a allowNulls checkbox
-				validationTable.append("<tr><td>Allow empty value</td><td></td></tr>");
+				validationTable.append("<tr><td>Pass if hidden</td><td></td></tr>");
 				// get a reference to  the cell
-				var cell = validationTable.children().last().children().last();
+				cell = validationTable.children().last().children().last();
+				// add a checkbox property listener	
+				Property_checkbox(cell, validation, {key: "passHidden"});
+				// add a allowNulls checkbox
+				validationTable.append("<tr><td>Pass if empty</td><td></td></tr>");
+				// get a reference to  the cell
+				cell = validationTable.children().last().children().last();
 				// add a checkbox property listener	
 				Property_checkbox(cell, validation, {key: "allowNulls"});
 			}

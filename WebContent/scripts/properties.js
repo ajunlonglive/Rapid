@@ -2346,33 +2346,41 @@ function Property_datacopyDestinations(cell, propertyObject, property, refreshHt
 		// show current choices (with delete and move)
 		for (var i = 0; i < dataDestinations.length; i++) {
 			// get a single reference
-			var dataDestination = dataDestinations[i];			
-			// get a data item object for this
-			var dataItem = getDataItemDetails(dataDestination.itemId);
-			// apend to the text
-			text += dataItem.name + ",";
-			// add a row
-			table.append("<tr><td>" + dataItem.name + "</td><td><input value='" + dataDestination.field + "' /></td><td style='width:32px'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
-			// get the field
-			var editField = table.find("tr").last().children("td:nth(1)").children("input");
-			// add a listener
-			addListener( editField.keyup( {dataDestinations: dataDestinations}, function(ev) {
-				// get the input
-				var editField = $(ev.target);
-				// update the field
-				ev.data.dataDestinations[editField.parent().parent().index()-1].field = editField.val();
-			}));
-			// get the delete image
-			var imgDelete = table.find("tr").last().children().last().children("img.delete");
-			// add a listener
-			addListener( imgDelete.click( {dataDestinations: dataDestinations}, function(ev) {
-				// get the input
-				var imgDelete = $(ev.target);
-				// remove from parameters
-				ev.data.dataDestinations.splice(imgDelete.parent().parent().index()-1,1);
-				// remove row
-				imgDelete.parent().parent().remove();
-			}));
+			var dataDestination = dataDestinations[i];	
+			// if we got one
+			if (dataDestination) {
+				// get a data item object for this
+				var dataItem = getDataItemDetails(dataDestination.itemId);
+				// apend to the text
+				text += dataItem.name + ",";
+				// add a row
+				table.append("<tr><td>" + dataItem.name + "</td><td><input value='" + dataDestination.field + "' /></td><td style='width:32px'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
+				// get the field
+				var editField = table.find("tr").last().children("td:nth(1)").children("input");
+				// add a listener
+				addListener( editField.keyup( {dataDestinations: dataDestinations}, function(ev) {
+					// get the input
+					var editField = $(ev.target);
+					// update the field
+					ev.data.dataDestinations[editField.parent().parent().index()-1].field = editField.val();
+				}));
+				// get the delete image
+				var imgDelete = table.find("tr").last().children().last().children("img.delete");
+				// add a listener
+				addListener( imgDelete.click( {dataDestinations: dataDestinations}, function(ev) {
+					// get the input
+					var imgDelete = $(ev.target);
+					// remove from parameters
+					ev.data.dataDestinations.splice(imgDelete.parent().parent().index()-1,1);
+					// remove row
+					imgDelete.parent().parent().remove();
+				}));
+			} else {
+				// remove this entry from the collection
+				dataDestinations.splice(i,1);
+				// set i back 1 position
+				i--;
+			}			
 		}
 				
 		// add reorder listeners

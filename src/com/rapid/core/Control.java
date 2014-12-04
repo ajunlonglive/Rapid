@@ -205,6 +205,7 @@ public class Control {
 			// make a validation object from the json
 			Validation validation = new Validation(
 				jsonValidation.optString("type"),
+				jsonValidation.optBoolean("passHidden"),
 				jsonValidation.optBoolean("allowNulls"),
 				jsonValidation.optString("regEx"),				
 				jsonValidation.optString("message"),

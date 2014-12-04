@@ -106,38 +106,47 @@ if (data != null && data !== undefined) {
 			for (var i in data.fields) {
 				if (data.fields[i] && data.fields[i].toLowerCase() == field.toLowerCase()) {
 					control.val(data.rows[0][i]);
+					control.trigger("change");
 					break;
 				}
 			}
 		} else {
 			if (data.rows[0][0] != null && data.rows[0][0] !== undefined) {
 				control.val(data.rows[0][0]);
+				control.trigger("change");
 			} else {
 				control.val("");
+				control.trigger("change");
 			}
 		}
 	} else {
 		control.val("");
+		control.trigger("change");
 	}
 } else {
 	control.val("");
+	control.trigger("change");
 }       
 			]]>
 	    </setDataJavaScript>
 	    
 	    <events>
 	        <event>
-	            <type>keyup</type>
-	            <name>Key up</name>
+	            <type>blur</type>
+	            <name>Blur</name>
 	        </event>
 	        <event>
 	            <type>change</type>
 	            <name>Change</name>
 	        </event>
 	        <event>
-	            <type>blur</type>
-	            <name>Blur</name>
+	            <type>click</type>
+	            <name>Click</name>
 	        </event>
+	        <event>
+	            <type>keyup</type>
+	            <name>Key up</name>
+	        </event>	        	        	        
 	    </events> 
 	    
 	    <styles>

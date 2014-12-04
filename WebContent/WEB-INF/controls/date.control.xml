@@ -145,6 +145,7 @@ if (value) {
 	if (date) value = f_tcalGenerateDate(date, details.dateFormat);
 }
 control.val(value);
+control.trigger("change");
 
 			]]>
 	    </setDataJavaScript>
