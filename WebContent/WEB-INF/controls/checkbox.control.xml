@@ -83,17 +83,21 @@ if (data != null && data !== undefined) {
 			for (var i in data.fields) {
 				if (data.fields[i].toLowerCase() == field.toLowerCase()) {
 					control.prop('checked', data.rows[0][i]);
+					control.trigger("change");
 					break;
 				}
 			}
 		} else {
 			control.prop('checked', data.rows[0][0]);
+			control.trigger("change");
 		}
 	} else {
 		control.prop('checked', false);
+		control.trigger("change");
 	}
 } else {
 	control.prop('checked', false);
+	control.trigger("change");
 }       
 			]]>
 	    </setDataJavaScript>

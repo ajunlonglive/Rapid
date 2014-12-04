@@ -219,6 +219,8 @@ function textareaOverride(ev) {
 		textarea.val(val.substr(0,pos) + "\t" + val.substr(pos));
 		// advance the cursor position by 1
 		textarea.caret(pos + 1);
+		// stop any further events
+		ev.stopPropagation();
 		// stop any further behaviour from the tab key, like loosing focus
 		return false;
 	}
@@ -383,18 +385,20 @@ if (window["_rapidmobile"]) {
 }
 
 
-function showValidationMessage(controlId, message) {
+function showValidation(controlId, message) {
 	var control = $("#" + controlId);
 	control.addClass("validation");
-	var element = control.next("div.validation")[0];
-	if (element) {
-		$(element).html(message);
-	} else {
-		control.after("<div class='validation'>" + message + "</div>");
+	if (message) {
+		var element = control.next("div.validation")[0];
+		if (element) {
+			$(element).html(message);
+		} else {
+			control.after("<div class='validation'>" + message + "</div>");
+		}
 	}
 }
 
-function hideValidationMessage(controlId) {
+function hideValidation(controlId) {
 	var control = $("#" + controlId);
 	control.removeClass("validation");
 	control.next("div.validation").remove();

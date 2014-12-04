@@ -651,40 +651,42 @@ $(document).ready( function() {
 		// check which key was hit
 		switch(ev.keyCode) {
 		case 13: case 39 : case 59: case 186 :
-			// enter, arrow right, ";", ":"  - get the value from the hint  				
-			var hinttext = _styleHint.text();
-			// if we were using the hint
-			if (hinttext) {
-				// remove any linebreaks, or tabs, if required
-				if (hinttext != hinttext.replace(/(\r\n|\n|\r|\t)/gm,"")) {
-					hinttext = hinttext.replace(/(\r\n|\n|\r|\t)/gm,"");
+			// enter, arrow right, ";", ":"  - get the value from the hint, only apply arrow right if hints are in use  
+			if (ev.keyCode != 39 || _styleHint.is(":visible")) {
+				var hinttext = _styleHint.text();
+				// if we were using the hint
+				if (hinttext) {
+					// remove any linebreaks, or tabs, if required
+					if (hinttext != hinttext.replace(/(\r\n|\n|\r|\t)/gm,"")) {
+						hinttext = hinttext.replace(/(\r\n|\n|\r|\t)/gm,"");
+					}
+					// remove any :
+					hinttext = hinttext.replace(":","");
+					// assign hinttext to val
+					val = hinttext;
+					// assing to span
+					_styleSpan.text(val);
 				}
-				// remove any :
-				hinttext = hinttext.replace(":","");
-				// assign hinttext to val
-				val = hinttext;
-				// assing to span
-				_styleSpan.text(val);
-			}
-			// hide the hint and list
-			_styleHint.hide();
-			_styleList.hide();
-			// if we've edited the attribute class move to the value
-			if (_styleSpan.hasClass("styleValue")) {
-				// semi-colon, or enter
-				if (!ev.shiftKey && (ev.keyCode == 13 || ev.keyCode == 59 || ev.keyCode == 186)) {
-					// fire the blur event to validate and apply the style in this row (also adds a new row)
-					_styleInput.blur();
-					// fire the click event in the last cell to set up our next style
-					_styleTable.find("tr").last().find("td").first().click();
+				// hide the hint and list
+				_styleHint.hide();
+				_styleList.hide();
+				// if we've edited the attribute class move to the value
+				if (_styleSpan.hasClass("styleValue")) {
+					// semi-colon, or enter
+					if (!ev.shiftKey && (ev.keyCode == 13 || ev.keyCode == 59 || ev.keyCode == 186)) {
+						// fire the blur event to validate and apply the style in this row (also adds a new row)
+						_styleInput.blur();
+						// fire the click event in the last cell to set up our next style
+						_styleTable.find("tr").last().find("td").first().click();
+					}
+				} else {
+					// set the edit span to the value
+					_styleSpan = _styleCell.children("span").last();
+					// edit the style value
+					styleEdit();
 				}
-			} else {
-				// set the edit span to the value
-				_styleSpan = _styleCell.children("span").last();
-				// edit the style value
-				styleEdit();
+				cursorToEnd(_styleInput[0]);	
 			}
-			cursorToEnd(_styleInput[0]);					
 			break;
 		case 40 :
 			// arrow down

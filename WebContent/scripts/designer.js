@@ -893,20 +893,26 @@ function getEventOptions(selectId) {
 function getExistingActionOptions(selectId, ignoreId) {
 	var options = "";
 	for (var i in _page.events) {
+		var eventJS = "";
 		var event = _page.events[i];
 		for (var j in event.actions) {
 			var action = event.actions[j];
-			if (action.id != ignoreId) options += "<option value='" + action.id + "' " + (action.id == selectId ? "selected='selected'" : "") + ">" + _page.name + "." + event.type + "." + action.type + " " + (j*1+1) + "</option>";
+			if (action.id != ignoreId) eventJS += "<option value='" + action.id + "' " + (action.id == selectId ? "selected='selected'" : "") + ">" + action.type + " " + (j*1+1) + "</option>";
 		}			
+		if (eventJS) options += "<optgroup label='" + _page.name + "." + event.type + "'>" + eventJS + "</optgroup>";
 	}
 	var controls = getControls();	
 	for (var i in controls) {
 		for (var j in controls[i].events) {
+			var eventJS = "";
 			var event = controls[i].events[j];
 			for (var k in event.actions) {
 				var action = event.actions[k];
-				if (action.id != ignoreId) options += "<option value='" + action.id + "' " + (action.id == selectId ? "selected='selected'" : "") + ">" + controls[i].name + "." + event.type + "." + action.type + " " + (k*1+1) + "</option>";
-			}			
+				if (action.id != ignoreId && controls[i].name) {
+					eventJS += "<option value='" + action.id + "' " + (action.id == selectId ? "selected='selected'" : "") + ">" + action.type + " " + (k*1+1) + "</option>";
+				}
+			}	
+			if (eventJS) options += "<optgroup label='" + controls[i].name + "." + event.type + "'>" + eventJS + "</optgroup>";
 		}
 	}
 	return options;

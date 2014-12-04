@@ -130,8 +130,10 @@ public class Validation extends Action {
 								jsonValidation.put("controlType", validateControl.getType());
 								jsonValidation.put("validationType", controlValidation.getType());
 								jsonValidation.put("message", controlValidation.getMessage());
-								jsonValidation.put("regEx", controlValidation.getRegEx());
-								jsonValidation.put("javaScript", controlValidation.getJavaScript());
+								if (!"".equals(controlValidation.getRegEx())) jsonValidation.put("regEx", controlValidation.getRegEx());
+								if (!"".equals(controlValidation.getJavaScript())) jsonValidation.put("javaScript", controlValidation.getJavaScript());
+								if (controlValidation.getPassHidden()) jsonValidation.put("passHidden", true);
+								if (controlValidation.getAllowNulls()) jsonValidation.put("allowNulls", true);
 								
 								// add optional properties
 								if (validateControl.getDetails() != null) jsonValidation.put("details", validateControl.getDetailsJavaScript(application, page));

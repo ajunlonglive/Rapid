@@ -35,12 +35,15 @@ public class Validation {
 	// instance variables
 	
 	private String _type, _regEx, _message, _javaScript;
-	private boolean _allowNulls;
+	private boolean _passHidden, _allowNulls;
 	
 	// properties
 	
 	public String getType() { return _type; }
 	public void setType(String type) { _type = type; }
+	
+	public boolean getPassHidden() { return _passHidden; }
+	public void setPassHidden(boolean passHidden) { _passHidden = passHidden; }
 	
 	public boolean getAllowNulls() { return _allowNulls; }
 	public void setAllowNulls(boolean allowNulls) { _allowNulls = allowNulls; }
@@ -59,8 +62,9 @@ public class Validation {
 	
 	public Validation() {};
 	
-	public Validation(String type, boolean allowNulls, String regEx, String message, String javaScript) {
+	public Validation(String type, boolean passHidden, boolean allowNulls, String regEx, String message, String javaScript) {
 		_type = type;
+		_passHidden = passHidden;
 		_allowNulls = allowNulls;
 		_regEx = regEx;
 		_message = message;
