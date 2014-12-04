@@ -402,7 +402,7 @@ function hideValidationMessage(controlId) {
 
 function makeDataObject(data, field) {
 	// check we were passed something to work with
-	if (data) {
+	if (data != null && data !== undefined) {
 		// return immediately if all well (we have rows and fields already and there is nothing to promote)
 		if (data.rows && data.fields && !(field && data[field])) return data;		
 		// initialise fields

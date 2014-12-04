@@ -581,8 +581,14 @@ function setData_grid(id, data, field, details) {
   					var cellObject = rowObject.append("<td" + style + ">" + value + "</td>").find("td:last");
   					// apply any cell function
   					if (details.columns[j].f) details.columns[j].f.apply(cellObject,[id, data, field, details]);
-  				}				
+  				}		
+  				// if there is a rowValidation collection
+  				if (data.rowValidation && i < data.rowValidation.length) {
+  					if (!data.rowValidation[i]) rowObject.addClass("validation");
+  				}		
   			}
+  			// if there is a selected row
+  			if (data.selectedRowNumber) control.find("tr:nth(" + data.selectedRowNumber + ")").addClass("rowSelect");
   		} else {
   			for (var i in data.rows) {
   				var row = data.rows[i];
@@ -685,6 +691,8 @@ function setProperty_grid_selectedRowData(ev, id, field, details, data) {
   	} else {
   		// remove the selected row 
   		gridData.rows.splice(gridData.selectedRowNumber - 1, 1);
+  		// remove the validation entry if present
+  		if (gridData.rowValidation) gridData.rowValidation.splice(gridData.selectedRowNumber - 1, 1); 
   		// remove the selection
   		gridData.selectedRowNumber = null;
   	}
@@ -704,6 +712,58 @@ function setProperty_grid_selectedRowData(ev, id, field, details, data) {
   		// save the grid
   		saveGridDataStoreData(id, details, gridData);	
   	}	
+  }
+}
+
+function getProperty_grid_selectedRowValidation(ev, id, field, details) {
+  if (details && details.dataStorageType) {
+  	var gridData = getGridDataStoreData(id, details);
+  	if (gridData.rowValidation && gridData.selectedRowNumber) {
+  		return gridData.rowValidation[gridData.selectedRowNumber - 1];
+  	} 
+  } else {
+  	return $(ev.target).closest("tr").index();
+  }
+}
+
+function setProperty_grid_selectedRowValidation(ev, id, field, details, data) {
+  var data = makeDataObject(data, field);
+  var selectedRowNumber = null;
+  
+  // look for the grid on this page
+  var grid = $("#" + id);
+  // if it's present
+  if (grid[0]) {
+  	// get the selected row number
+  	selectedRowNumber = grid.find("tr.rowSelect").index();
+  	// check the incoming data for a positive
+  	if (data[0][0]) {
+  		// remove validation class from row if true
+  		grid.find("tr.rowSelect").removeClass("validation");
+  	} else {
+  		// add validation class to row if false
+  		grid.find("tr.rowSelect").addClass("validation");
+  	}
+  }
+  	            	   	            
+  if (details && details.dataStorageType) {
+  	// get the grid data
+  	gridData = getGridDataStoreData(id, details);
+  	// make an object if there isn't one
+  	if (!gridData) gridData = {};
+  	// if we got a row number from the grid put it into the grid now
+  	if (selectedRowNumber) gridData.selectedRowNumber = selectedRowNumber;
+  	// if there are rows and one is selected
+  	if (gridData.rows && gridData.selectedRowNumber) {
+  		// add a rowValidation collection if there isn't one
+  		if (!gridData.rowValidation) gridData.rowValidation = [];
+  		// ensure the rowValidation collection is the same size as the row collection
+  		while (gridData.rows.length > gridData.rowValidation) gridData.rowValidation.push(true);
+  		// set the validation
+  		gridData.rowValidation[gridData.selectedRowNumber - 1] = data.rows[0][0];
+  		// save the grid
+  		saveGridDataStoreData(id, details, gridData);
+  	}
   }
 }
 

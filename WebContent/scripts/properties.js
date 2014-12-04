@@ -312,7 +312,7 @@ function Property_bigtext(cell, propertyObject, property, refreshHtml) {
 		textarea.hide(); 
 	}));
 	// listen for key's we don't want to affect behaviour
-	addListener( textarea.keydown( textAreaOverride ));
+	addListener( textarea.keydown( textareaOverride ));
 	// modify if the text is updated
 	addListener( textarea.keyup( function(ev) { 
 		updateProperty(propertyObject, property, textarea.val(), refreshHtml);  
