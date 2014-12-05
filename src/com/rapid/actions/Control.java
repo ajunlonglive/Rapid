@@ -83,8 +83,10 @@ public class Control extends Action {
 			} else if ("addClass".equals(actionType)) {
 				js += "addClass('" + getProperty("styleClass") + "');";
 			} else if ("removeClass".equals(actionType)) {
+				js += "removeClass('" + getProperty("styleClass") + "');";
+			} else if ("removeChildClasses".equals(actionType)) {
 				String styleClass = getProperty("styleClass");
-				js += "removeClass('" + styleClass + "').find('." + styleClass + "').removeClass('" + styleClass + "');";
+				js += "find('." + styleClass + "').removeClass('" + styleClass + "');";
 			} else {
 				// just call the action type (hide/show/toggle)
 				js += actionType + "();";

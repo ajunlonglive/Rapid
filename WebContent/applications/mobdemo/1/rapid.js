@@ -522,31 +522,26 @@ function getData_checkbox(ev, id, field, details) {
   return $("#" + id).prop("checked") ? "true" : "false";
 }
 
-function setData_checkbox(id, data, field, details) {
-  var control = $("#" + id);	        
+function setData_checkbox(id, data, field, details, changeEvents) {
+  var control = $("#" + id);	      
+  var value = false;  
   if (data != null && data !== undefined) {	
   	data = makeDataObject(data, field);
   	if (data.rows && data.rows[0]) {	        		
   		if (field && data.fields) {
   			for (var i in data.fields) {
   				if (data.fields[i].toLowerCase() == field.toLowerCase()) {
-  					control.prop('checked', data.rows[0][i]);
-  					control.trigger("change");
+  					value = data.rows[0][i];
   					break;
   				}
   			}
   		} else {
-  			control.prop('checked', data.rows[0][0]);
-  			control.trigger("change");
+  			value = data.rows[0][0];
   		}
-  	} else {
-  		control.prop('checked', false);
-  		control.trigger("change");
-  	}
-  } else {
-  	control.prop('checked', false);
-  	control.trigger("change");
+  	} 
   }
+  control.prop('checked', value);
+  if (changeEvents) control.trigger("change");
 }
 
 function getData_dataStore(ev, id, field, details) {
@@ -570,7 +565,7 @@ function getData_dataStore(ev, id, field, details) {
   return data;
 }
 
-function setData_dataStore(id, data, field, details) {
+function setData_dataStore(id, data, field, details, changeEvents) {
   if (details.id) id = details.id;
   if (data != null && data !== undefined) {
   	data = makeDataObject(data, field);
@@ -587,7 +582,7 @@ function getProperty_dataStore_selectedRowData(ev, id, field, details) {
   }
 }
 
-function setProperty_dataStore_selectedRowData(ev, id, field, details, data) {
+function setProperty_dataStore_selectedRowData(ev, id, field, details, data, changeEvents) {
   var dataStoreData = getDataStoreData(id, details);	                
   if (dataStoreData && dataStoreData.selectedRowNumber) {	
   	data = makeDataObject(data, field);
@@ -603,7 +598,7 @@ function getProperty_dataStore_selectedRowNumber(ev, id, field, details) {
   if (data) return data.selectedRowNumber;
 }
 
-function setProperty_dataStore_selectedRowNumber(ev, id, field, details, data) {
+function setProperty_dataStore_selectedRowNumber(ev, id, field, details, data, changeEvents) {
   var dataStoreData = getDataStoreData(id, details);	                
   if (dataStoreData) {	
   	data = makeDataObject(data, field);
@@ -619,7 +614,7 @@ function getProperty_dataStore_rowCount(ev, id, field, details) {
   if (dataStoreData && dataStoreData.rows) return dataStoreData.rows.length;
 }
 
-function setProperty_dataStore_append(ev, id, field, details, data) {
+function setProperty_dataStore_append(ev, id, field, details, data, changeEvents) {
   var dataStoreData = getDataStoreData(id, details);
   if (dataStoreData) {
   	data = makeDataObject(data, field);
@@ -636,7 +631,7 @@ function getData_date(ev, id, field, details) {
   return $("#" + id).val();
 }
 
-function setData_date(id, data, field, details) {
+function setData_date(id, data, field, details, changeEvents) {
   var control = $("#" + id);
   var value = "";
   if (data != null && data !== undefined) {	
@@ -659,14 +654,14 @@ function setData_date(id, data, field, details) {
   	if (date) value = f_tcalGenerateDate(date, details.dateFormat);
   }
   control.val(value);
-  control.trigger("change");
+  if (changeEvents) control.trigger("change");
 }
 
 function getData_dropdown(ev, id, field, details) {
   return $("#" + id).val();
 }
 
-function setData_dropdown(id, data, field, details) {
+function setData_dropdown(id, data, field, details, changeEvents) {
   if (data != null && data !== undefined) {
   	var control = $("#" + id);
   	data = makeDataObject(data, field);
@@ -676,7 +671,7 @@ function setData_dropdown(id, data, field, details) {
   			for (var i in data.fields) {
   				if (field.toLowerCase() == data.fields[i].toLowerCase()) {
   					control.val(data.rows[0][i]);
-  					control.trigger("change");
+  					if (changeEvents) control.trigger("change");
   					foundField = true;
   					break;
   				}
@@ -713,7 +708,7 @@ function getData_gallery(ev, id, field, details) {
   return data;
 }
 
-function setData_gallery(id, data, field, details) {
+function setData_gallery(id, data, field, details, changeEvents) {
   if (data != null && data !== undefined) {
   	var control = $("#" + id);
   	data = makeDataObject(data, field);
@@ -803,7 +798,7 @@ function getData_grid(ev, id, field, details) {
   return data;
 }
 
-function setData_grid(id, data, field, details) {
+function setData_grid(id, data, field, details, changeEvents) {
   var control = $("#" + id);
   control.find("tr:not(:first)").remove();	        
   if (data != null && data !== undefined) {	
@@ -900,7 +895,7 @@ function getProperty_grid_selectedRowData(ev, id, field, details) {
   return data;
 }
 
-function setProperty_grid_selectedRowData(ev, id, field, details, data) {
+function setProperty_grid_selectedRowData(ev, id, field, details, data, changeEvents) {
   gridData = getGridDataStoreData(id, details);
   if (!gridData) gridData = {};
   data = makeDataObject(data, field);
@@ -967,12 +962,63 @@ function setProperty_grid_selectedRowData(ev, id, field, details, data) {
   } else {
   	// append if no selected row
   	if (data) {
-  		// get the fields from the data if not present
-  		if (!gridData.fields) gridData.fields = data.fields;
   		// create a rows array if not present
   		if (!gridData.rows) gridData.rows = [];
-  		// add the top row of what we were given
-  		gridData.rows.push(data.rows[0]);
+  		// look for existing fields
+  		if (gridData.fields) {
+  		
+  			// set up a field map which will hold the location of the incoming fields in the grid fields
+  			var fieldMap = {};
+  			// loop the incoming fields
+  			for (var i in data.fields) {
+  				// get it's name
+  				var field = data.fields[i];
+  				// assume it wasn't found in the grid's list of fields	
+  				var foundField = false;							
+  				// loop the grid's fields
+  				for (var j in gridData.fields) {
+  					// if there's a match					
+  					if (field.toLowerCase() == gridData.fields[j].toLowerCase()) {
+  						// store it's position
+  						fieldMap[field] = j;
+  						foundField = true;
+  						break;
+  					}
+  				}
+  				// if the field wasn't found in the grid
+  				if (!foundField) {
+  					// add it to the grid's fields
+  					gridData.fields.push(field);
+  					// retain the position
+  					fieldMap[field] = gridData.fields.length - 1;
+  				}				
+  			}
+  			
+  			// make a row
+  			var row = [];
+  			// add the cells
+  			while (row.length < gridData.fields.length) row.push(null);
+  			// loop the data fields and use the map to get the correct position
+  			for (var i in data.fields) {
+  				// get the field
+  				var field = data.fields[i];
+  				// get the position
+  				var pos = fieldMap[field];
+  				// add it to the correct place in the row
+  				row[pos] = data.rows[0][i];
+  			}
+  			// add the row to the gridData
+  			gridData.rows.push(row);
+  		
+  		} else {
+  			
+  			// assume the incomming fields		
+  			gridData.fields = data.fields;
+  			// add the top row of what we were given
+  			gridData.rows.push(data.rows[0]);
+  		
+  		}
+  		
   		// set the selected row number
   		gridData.selectedRowNumber = gridData.rows.length;
   		// save the grid
@@ -992,7 +1038,7 @@ function getProperty_grid_selectedRowValidation(ev, id, field, details) {
   }
 }
 
-function setProperty_grid_selectedRowValidation(ev, id, field, details, data) {
+function setProperty_grid_selectedRowValidation(ev, id, field, details, data, changeEvents) {
   var data = makeDataObject(data, field);
   var selectedRowNumber = null;
   
@@ -1042,7 +1088,7 @@ function getProperty_grid_selectedRowNumber(ev, id, field, details) {
   }
 }
 
-function setProperty_grid_selectedRowNumber(ev, id, field, details, data) {
+function setProperty_grid_selectedRowNumber(ev, id, field, details, data, changeEvents) {
   gridData = getGridDataStoreData(id, details);
   if (!gridData) gridData = {};
   data = makeDataObject(data, field);
@@ -1060,43 +1106,35 @@ function getData_input(ev, id, field, details) {
   return $("#" + id).val();
 }
 
-function setData_input(id, data, field, details) {
+function setData_input(id, data, field, details, changeEvents) {
   var control = $("#" + id);
+  var value = "";
   if (data != null && data !== undefined) {	
   	data = makeDataObject(data, field);
   	if (data.rows && data.rows[0]) {	        		
   		if (field && data.fields && data.fields.length > 0) {
   			for (var i in data.fields) {
   				if (data.fields[i] && data.fields[i].toLowerCase() == field.toLowerCase()) {
-  					control.val(data.rows[0][i]);
-  					control.trigger("change");
+  					value = data.rows[0][i];
   					break;
   				}
   			}
   		} else {
   			if (data.rows[0][0] != null && data.rows[0][0] !== undefined) {
-  				control.val(data.rows[0][0]);
-  				control.trigger("change");
-  			} else {
-  				control.val("");
-  				control.trigger("change");
-  			}
+  				value = data.rows[0][0];
+  			} 			
   		}
-  	} else {
-  		control.val("");
-  		control.trigger("change");
-  	}
-  } else {
-  	control.val("");
-  	control.trigger("change");
-  }
+  	} 
+  } 
+  control.val(value);
+  if (changeEvents) control.trigger("change");
 }
 
 function getData_radiobuttons(ev, id, field, details) {
   return $("#" + id).children("input[type=radio]:checked").val();
 }
 
-function setData_radiobuttons(id, data, field, details) {
+function setData_radiobuttons(id, data, field, details, changeEvents) {
   if (data != null && data !== undefined) {
   	var radiobuttons = $("#" + id);
   	radiobuttons.children("input[type=radio]").prop('checked',false);
@@ -1118,7 +1156,7 @@ function setData_radiobuttons(id, data, field, details) {
   		var button = radiobuttons.children("input[type=radio][value=" + value + "]");
   		if (button[0]) {
   			button.prop('checked',true);	
-  			button.trigger("change");		
+  			if (changeEvents) button.trigger("change");		
   		}		
   	}
   }
@@ -1128,7 +1166,7 @@ function getData_text(ev, id, field, details) {
   return $("#" + id).html();
 }
 
-function setData_text(id, data, field, details) {
+function setData_text(id, data, field, details, changeEvents) {
   var control = $("#" + id);	        
   if (data != null && data !== undefined) {	
   	data = makeDataObject(data, field);
@@ -1162,7 +1200,7 @@ function Action_control(actions) {
 	}	
 }
 
-function Action_datacopy(ev, data, outputs, copyType, copyData, field) {
+function Action_datacopy(ev, data, outputs, changeEvents, copyType, copyData, field) {
 	if (data != null && data !== undefined && outputs) {
 		for (var i in outputs) {
 			var output = outputs[i];	
@@ -1178,9 +1216,13 @@ function Action_datacopy(ev, data, outputs, copyType, copyData, field) {
 					data = makeDataObject(data, output.field);
 					outputData = mergeDataObjects(mergeData, data, copyType, field); 
 				break;
-				case "child" :				
-					var mergeData = window["getData_" + output.type](ev, output.id, null, output.details);
-					outputData = mergeDataObjects(mergeData, data, copyType, field);
+				case "child" :		
+					if (data && data.rows && data.rows.length > 0) {		
+						var mergeData = window["getData_" + output.type](ev, output.id, null, output.details);
+						outputData = mergeDataObjects(mergeData, data, copyType, field);
+					} else {
+						outputData = data;
+					}
 				break;
 				case "search" :
 					outputData = mergeDataObjects(copyData, data, copyType, field);
@@ -1188,7 +1230,7 @@ function Action_datacopy(ev, data, outputs, copyType, copyData, field) {
 				default:
 					outputData = data;
 			}	
-			window["setData_" + output.type](output.id, outputData, output.field, output.details);
+			window["setData_" + output.type](output.id, outputData, output.field, output.details, changeEvents);
 		}
 	}
 }

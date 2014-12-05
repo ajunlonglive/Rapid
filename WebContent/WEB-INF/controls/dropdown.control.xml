@@ -106,7 +106,7 @@ if (data != null && data !== undefined) {
 			for (var i in data.fields) {
 				if (field.toLowerCase() == data.fields[i].toLowerCase()) {
 					control.val(data.rows[0][i]);
-					control.trigger("change");
+					if (changeEvents) control.trigger("change");
 					foundField = true;
 					break;
 				}

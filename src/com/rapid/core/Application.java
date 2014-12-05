@@ -811,7 +811,7 @@ public class Application {
 				    			// if there was something
 				    			if (setDataFunction != null) {
 				        			// clean and print! (if not an empty string)
-				        			if (setDataFunction.trim().length() > 0) dataJS.append("\nfunction setData_" + controlType + "(id, data, field, details) {\n  " + setDataFunction.trim().replace("\n", "\n  ") + "\n}\n");
+				        			if (setDataFunction.trim().length() > 0) dataJS.append("\nfunction setData_" + controlType + "(id, data, field, details, changeEvents) {\n  " + setDataFunction.trim().replace("\n", "\n  ") + "\n}\n");
 				        			
 				    			}	
 				    			
@@ -850,7 +850,7 @@ public class Application {
 					    				// get the set function
 				    					String setFunction = jsonRuntimeProperty.optString("setPropertyJavaScript", null);					    				
 				    					// print the get function if there was one
-					    				if (setFunction != null) dataJS.append("\nfunction setProperty_" + controlType + "_" + type + "(ev, id, field, details, data) {\n  " + setFunction.trim().replace("\n", "\n  ") + "\n}\n");
+					    				if (setFunction != null) dataJS.append("\nfunction setProperty_" + controlType + "_" + type + "(ev, id, field, details, data, changeEvents) {\n  " + setFunction.trim().replace("\n", "\n  ") + "\n}\n");
 					    				
 					    				// increment index
 					    				index++;

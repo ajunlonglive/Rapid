@@ -105,12 +105,19 @@ return "<option value=''>None</option>" + getInputOptions(this.dataSource);
 	            <name>Bulk data copies</name>
 	            <changeValueJavaScript>datacopyCopies</changeValueJavaScript>
 	        </property>	
+	        
+	        <property>
+	            <key>changeEvents</key>
+	            <name>Trigger change events</name>
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>
+	            <getValuesFunction>return false;</getValuesFunction>
+	        </property>
 	        	        	        	 	        	        	          
 	    </properties>
 	    	    
 	    <actionJavaScript>
 	        <![CDATA[ 
-function Action_datacopy(ev, data, outputs, copyType, copyData, field) {
+function Action_datacopy(ev, data, outputs, changeEvents, copyType, copyData, field) {
 	if (data != null && data !== undefined && outputs) {
 		for (var i in outputs) {
 			var output = outputs[i];	
@@ -126,9 +133,13 @@ function Action_datacopy(ev, data, outputs, copyType, copyData, field) {
 					data = makeDataObject(data, output.field);
 					outputData = mergeDataObjects(mergeData, data, copyType, field); 
 				break;
-				case "child" :				
-					var mergeData = window["getData_" + output.type](ev, output.id, null, output.details);
-					outputData = mergeDataObjects(mergeData, data, copyType, field);
+				case "child" :		
+					if (data && data.rows && data.rows.length > 0) {		
+						var mergeData = window["getData_" + output.type](ev, output.id, null, output.details);
+						outputData = mergeDataObjects(mergeData, data, copyType, field);
+					} else {
+						outputData = data;
+					}
 				break;
 				case "search" :
 					outputData = mergeDataObjects(copyData, data, copyType, field);
@@ -136,7 +147,7 @@ function Action_datacopy(ev, data, outputs, copyType, copyData, field) {
 				default:
 					outputData = data;
 			}	
-			window["setData_" + output.type](output.id, outputData, output.field, output.details);
+			window["setData_" + output.type](output.id, outputData, output.field, output.details, changeEvents);
 		}
 	}
 }	        ]]>
