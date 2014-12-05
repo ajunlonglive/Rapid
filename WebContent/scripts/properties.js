@@ -312,7 +312,7 @@ function Property_bigtext(cell, propertyObject, property, refreshHtml) {
 		textarea.hide(); 
 	}));
 	// listen for key's we don't want to affect behaviour
-	addListener( textarea.one( "keydown", textareaOverride ));
+	addListener( textarea.keydown( textareaOverride ));
 	// modify if the text is updated
 	addListener( textarea.keyup( function(ev) { 
 		updateProperty(propertyObject, property, textarea.val(), refreshHtml);  
@@ -2604,7 +2604,7 @@ function Property_controlActionDuration(cell, controlAction, property, refreshHt
 
 function Property_controlActionClasses(cell, controlAction, property, refreshHtml, refreshProperties) {
 	// only if controlAction is custom
-	if (controlAction.actionType == "addClass" || controlAction.actionType == "removeClass") {
+	if (controlAction.actionType == "addClass" || controlAction.actionType == "removeClass" || controlAction.actionType == "removeChildClasses") {
 		// add thegtext
 		Property_select(cell, controlAction, property, refreshHtml);
 	} else {

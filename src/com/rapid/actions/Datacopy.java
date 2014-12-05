@@ -183,7 +183,7 @@ public class Datacopy extends Action {
 							// get the property from the second id part
 							String property = idParts[1];
 							// append the set property call
-							js += "setProperty_" + destinationControl.getType() +  "_" + property + "(ev,'" + destinationControl.getId() + "','" + destinationField + "'," + details + ",data);\n";
+							js += "setProperty_" + destinationControl.getType() +  "_" + property + "(ev, '" + destinationControl.getId() + "', '" + destinationField + "', " + details + ", data, " + Boolean.parseBoolean("changeEvents") + ");\n";
 						
 						} else {
 							
@@ -213,7 +213,7 @@ public class Datacopy extends Action {
 							}
 							
 							// do the data copy
-							js += "Action_datacopy(ev, data, [{id:'" + destinationControl.getId() + "',type: '" + destinationControl.getType() + "',field:'" + destinationField + "'" + details + "}]" + type + ",{triggerChange:false});\n";
+							js += "Action_datacopy(ev, data, [{id:'" + destinationControl.getId() + "',type: '" + destinationControl.getType() + "',field:'" + destinationField + "'" + details + "}], " + Boolean.parseBoolean(getProperty("changeEvents")) + type + ");\n";
 							
 						} // copy / set property check
 						
@@ -343,7 +343,7 @@ public class Datacopy extends Action {
 						// add to js as an array
 						js += "var outputs = [" + jsOutputs + "];\n";
 						// add the start of the call
-						js += "Action_datacopy(ev, data, outputs";
+						js += "Action_datacopy(ev, data, outputs, " + Boolean.parseBoolean(getProperty("changeEvents"));
 											
 						// check if we got one
 						if (copyType == null) {

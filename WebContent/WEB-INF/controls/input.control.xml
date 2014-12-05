@@ -99,34 +99,26 @@ return $("#" + id).val();
 	    <setDataJavaScript>
 	        <![CDATA[
 var control = $("#" + id);
+var value = "";
 if (data != null && data !== undefined) {	
 	data = makeDataObject(data, field);
 	if (data.rows && data.rows[0]) {	        		
 		if (field && data.fields && data.fields.length > 0) {
 			for (var i in data.fields) {
 				if (data.fields[i] && data.fields[i].toLowerCase() == field.toLowerCase()) {
-					control.val(data.rows[0][i]);
-					control.trigger("change");
+					value = data.rows[0][i];
 					break;
 				}
 			}
 		} else {
 			if (data.rows[0][0] != null && data.rows[0][0] !== undefined) {
-				control.val(data.rows[0][0]);
-				control.trigger("change");
-			} else {
-				control.val("");
-				control.trigger("change");
-			}
+				value = data.rows[0][0];
+			} 			
 		}
-	} else {
-		control.val("");
-		control.trigger("change");
-	}
-} else {
-	control.val("");
-	control.trigger("change");
-}       
+	} 
+} 
+control.val(value);
+if (changeEvents) control.trigger("change");    
 			]]>
 	    </setDataJavaScript>
 	    

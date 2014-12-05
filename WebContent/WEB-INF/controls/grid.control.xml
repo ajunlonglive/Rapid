@@ -510,12 +510,63 @@ if (gridData.selectedRowNumber) {
 } else {
 	// append if no selected row
 	if (data) {
-		// get the fields from the data if not present
-		if (!gridData.fields) gridData.fields = data.fields;
 		// create a rows array if not present
 		if (!gridData.rows) gridData.rows = [];
-		// add the top row of what we were given
-		gridData.rows.push(data.rows[0]);
+		// look for existing fields
+		if (gridData.fields) {
+		
+			// set up a field map which will hold the location of the incoming fields in the grid fields
+			var fieldMap = {};
+			// loop the incoming fields
+			for (var i in data.fields) {
+				// get it's name
+				var field = data.fields[i];
+				// assume it wasn't found in the grid's list of fields	
+				var foundField = false;							
+				// loop the grid's fields
+				for (var j in gridData.fields) {
+					// if there's a match					
+					if (field.toLowerCase() == gridData.fields[j].toLowerCase()) {
+						// store it's position
+						fieldMap[field] = j;
+						foundField = true;
+						break;
+					}
+				}
+				// if the field wasn't found in the grid
+				if (!foundField) {
+					// add it to the grid's fields
+					gridData.fields.push(field);
+					// retain the position
+					fieldMap[field] = gridData.fields.length - 1;
+				}				
+			}
+			
+			// make a row
+			var row = [];
+			// add the cells
+			while (row.length < gridData.fields.length) row.push(null);
+			// loop the data fields and use the map to get the correct position
+			for (var i in data.fields) {
+				// get the field
+				var field = data.fields[i];
+				// get the position
+				var pos = fieldMap[field];
+				// add it to the correct place in the row
+				row[pos] = data.rows[0][i];
+			}
+			// add the row to the gridData
+			gridData.rows.push(row);
+		
+		} else {
+			
+			// assume the incomming fields		
+			gridData.fields = data.fields;
+			// add the top row of what we were given
+			gridData.rows.push(data.rows[0]);
+		
+		}
+		
 		// set the selected row number
 		gridData.selectedRowNumber = gridData.rows.length;
 		// save the grid

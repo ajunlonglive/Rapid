@@ -75,30 +75,25 @@ return $("#" + id).prop("checked") ? "true" : "false";
 	    
 	    <setDataJavaScript>
 	        <![CDATA[
-var control = $("#" + id);	        
+var control = $("#" + id);	      
+var value = false;  
 if (data != null && data !== undefined) {	
 	data = makeDataObject(data, field);
 	if (data.rows && data.rows[0]) {	        		
 		if (field && data.fields) {
 			for (var i in data.fields) {
 				if (data.fields[i].toLowerCase() == field.toLowerCase()) {
-					control.prop('checked', data.rows[0][i]);
-					control.trigger("change");
+					value = data.rows[0][i];
 					break;
 				}
 			}
 		} else {
-			control.prop('checked', data.rows[0][0]);
-			control.trigger("change");
+			value = data.rows[0][0];
 		}
-	} else {
-		control.prop('checked', false);
-		control.trigger("change");
-	}
-} else {
-	control.prop('checked', false);
-	control.trigger("change");
-}       
+	} 
+}
+control.prop('checked', value);
+if (changeEvents) control.trigger("change");    
 			]]>
 	    </setDataJavaScript>
 	    
