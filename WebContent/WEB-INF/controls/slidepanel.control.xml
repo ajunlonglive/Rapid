@@ -147,6 +147,17 @@ return "#" + this.id;
 	            <changeValueJavaScript>slidePanelVisibility</changeValueJavaScript>		                       
 	        </property>	
 	        <property>
+	            <key>colour</key>
+	            <name>Colour</name>
+	            <setConstructValueFunction>return "grey";</setConstructValueFunction>
+	            <changeValueJavaScript>slidePanelColour</changeValueJavaScript>	
+	            <getValuesFunction>
+	                <![CDATA[
+return ["grey","white","black"];
+					]]>
+	            </getValuesFunction>               
+	        </property>    
+	        <property>
 	            <key>slidePanelId</key>
 	            <name>slidePanelId</name>
 	            <visible>false</visible>
@@ -240,7 +251,6 @@ $(document).ready( function() {
 	    
 	    <getHtmlFunction>
 	        <![CDATA[
-// 	        
 // return html for adding to our parent object      
 return "<div id='" + this.id + "' class='slidePanel'><img src='images/controls/slidepanel/slidepanel_48x48.png'/></div>";
 	        ]]>
@@ -275,6 +285,15 @@ if (this.visible) {
 	this.object.addClass("slidePanelClosed");
 	this.object.removeClass("slidePanelOpen");
 }
+
+var image = "slidepanel_48x48.png";
+switch (this.colour) {
+	case "white": image = "slidepanel_white_48x48.png"; break;
+	case "black": image = "slidepanel_black_48x48.png"; break;
+}
+this.object.children("img").attr("src","images/controls/slidepanel/" + image);
+
+
 	        ]]>
 	    </rebuildJavaScript>	
 	    

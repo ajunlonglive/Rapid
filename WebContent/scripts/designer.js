@@ -897,7 +897,7 @@ function getExistingActionOptions(selectId, ignoreId) {
 		var event = _page.events[i];
 		for (var j in event.actions) {
 			var action = event.actions[j];
-			if (action.id != ignoreId) eventJS += "<option value='" + action.id + "' " + (action.id == selectId ? "selected='selected'" : "") + ">" + action.type + " " + (j*1+1) + "</option>";
+			if (action.id != ignoreId) eventJS += "<option value='" + action.id + "' " + (action.id == selectId ? "selected='selected'" : "") + ">" + (j*1+1) + " - "  + action.type + "</option>";
 		}			
 		if (eventJS) options += "<optgroup label='" + _page.name + "." + event.type + "'>" + eventJS + "</optgroup>";
 	}
@@ -909,7 +909,7 @@ function getExistingActionOptions(selectId, ignoreId) {
 			for (var k in event.actions) {
 				var action = event.actions[k];
 				if (action.id != ignoreId && controls[i].name) {
-					eventJS += "<option value='" + action.id + "' " + (action.id == selectId ? "selected='selected'" : "") + ">" + action.type + " " + (k*1+1) + "</option>";
+					eventJS += "<option value='" + action.id + "' " + (action.id == selectId ? "selected='selected'" : "") + ">" + (k*1+1) + " - " + action.type + "</option>";
 				}
 			}	
 			if (eventJS) options += "<optgroup label='" + controls[i].name + "." + event.type + "'>" + eventJS + "</optgroup>";
