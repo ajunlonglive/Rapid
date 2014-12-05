@@ -416,7 +416,7 @@ function makeDataObject(data, field) {
 		// initialise a fieldmap (as properties aren't always in the same position each time)
 		var fieldMap = [];
 		// if the field is what we're after move it into the data
-		if (field && data[field]) data = data[field];
+		if (field && data[field] && !$.isFunction(data[field])) data = data[field];
 		// if the data is an array
 		if ($.isArray(data)) {
 			// loop the array

@@ -267,7 +267,7 @@ function Init_pagePanel(id, details) {
   
   // request the page		
   $.ajax({
-     	url: "~?a=" + details.appId + "&p=" + details.pageId + "&v=" + details.version,
+     	url: "~?a=" + details.appId + "&v=" + details.version + "&p=" + details.pageId,
      	type: "GET",          
          data: null,        
          error: function(server, status, error) { 

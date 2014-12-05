@@ -312,7 +312,7 @@ function Property_bigtext(cell, propertyObject, property, refreshHtml) {
 		textarea.hide(); 
 	}));
 	// listen for key's we don't want to affect behaviour
-	addListener( textarea.keydown( textareaOverride ));
+	addListener( textarea.one( "keydown", textareaOverride ));
 	// modify if the text is updated
 	addListener( textarea.keyup( function(ev) { 
 		updateProperty(propertyObject, property, textarea.val(), refreshHtml);  
@@ -1571,7 +1571,7 @@ function logicConditionValue(cell, action, conditionIndex, valueId) {
 	// get a reference to it
 	var table = cell.find("table").last();
 	
-	table.append("<tr><td>" + (valueId == "value1" ? "Item 1" : "Item 2") + "</td><td><select>" + getInputOptions(value.id) + "<optgroup label='User value'><option value='Constant.Constant'" + (value.id == "Constant.Constant" ? " selected='selected'" : "") + ">User value</option></optgroup></select></td></tr>");
+	table.append("<tr><td>" + (valueId == "value1" ? "Item 1" : "Item 2") + "</td><td><select>" + getInputOptions(value.id) + "</select></td></tr>");
 	// get a reference to the select
 	var select = table.find("select");
 	// retain the value if we don't have one yet
@@ -2622,6 +2622,11 @@ function Property_controlActionCommand(cell, controlAction, property, refreshHtm
 		// remove this row
 		cell.closest("tr").remove();
 	}
+}
+
+function Property_slidePanelColour(cell, controlAction, property, refreshHtml, refreshProperties) {
+	// add the select with refresh html = true
+	Property_select(cell, controlAction, property, true);
 }
 
 // this is used by the maps for changing the lat/lng

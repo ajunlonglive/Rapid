@@ -213,7 +213,7 @@ public class Datacopy extends Action {
 							}
 							
 							// do the data copy
-							js += "Action_datacopy(ev, data, [{id:'" + destinationControl.getId() + "',type: '" + destinationControl.getType() + "',field:'" + destinationField + "'" + details + "}]" + type + ");\n";
+							js += "Action_datacopy(ev, data, [{id:'" + destinationControl.getId() + "',type: '" + destinationControl.getType() + "',field:'" + destinationField + "'" + details + "}]" + type + ",{triggerChange:false});\n";
 							
 						} // copy / set property check
 						

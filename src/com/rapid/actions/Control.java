@@ -76,6 +76,10 @@ public class Control extends Action {
 				js += actionType + "(" + getProperty("duration") + ");";
 			} else if ("fadeOut".equals(actionType) || "fadeIn".equals(actionType) || "fadeToggle".equals(actionType)) {
 				js += actionType + "(" + getProperty("duration") + ");";
+			} else if ("enable".equals(actionType)) {
+				js += "enable();";
+			} else if ("disable".equals(actionType)) {
+				js += "disable();";
 			} else if ("addClass".equals(actionType)) {
 				js += "addClass('" + getProperty("styleClass") + "');";
 			} else if ("removeClass".equals(actionType)) {
