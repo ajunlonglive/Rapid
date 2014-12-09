@@ -320,7 +320,7 @@ function Property_bigtext(cell, propertyObject, property, refreshHtml) {
 	
 }
 
-function Property_select(cell, propertyObject, property, refreshHtml, refreshProperties) {
+function Property_select(cell, propertyObject, property, refreshHtml, refreshProperties, details) {
 	// holds the options html
 	var options = "";
 	var js = property.getValuesFunction;
@@ -385,7 +385,7 @@ function Property_select(cell, propertyObject, property, refreshHtml, refreshPro
 	select.val(val);	
 }
 
-function Property_checkbox(cell, propertyObject, property, refreshHtml, refreshProperties) {
+function Property_checkbox(cell, propertyObject, property, refreshHtml, refreshProperties, details) {
 	var checked = "";
 	// set the value if it exists
 	if (propertyObject[property.key] && propertyObject[property.key] != "false") checked = "checked='checked'";
@@ -402,7 +402,7 @@ function Property_checkbox(cell, propertyObject, property, refreshHtml, refreshP
 	}));
 }
 
-function Property_inputAutoHeight(cell, input, property, refreshHtml, refreshDialogue) {
+function Property_inputAutoHeight(cell, input, property, refreshHtml, refreshDialogue, details) {
 	// check if the input control type is large
 	if (input.controlType == "L") {
 		// add a checkbox
@@ -413,7 +413,7 @@ function Property_inputAutoHeight(cell, input, property, refreshHtml, refreshDia
 	}
 }
 
-function Property_galleryImages(cell, gallery, property, refreshHtml, refreshDialogue) {
+function Property_galleryImages(cell, gallery, property, refreshHtml, refreshDialogue, details) {
 	
 	// retain a reference to the dialogue (if we were passed one)
 	var dialogue = refreshDialogue;
@@ -497,7 +497,7 @@ function Property_galleryImages(cell, gallery, property, refreshHtml, refreshDia
 	
 }
 
-function Property_imageFile(cell, propertyObject, property, refreshHtml, refreshDialogue) {
+function Property_imageFile(cell, propertyObject, property, refreshHtml, refreshDialogue, details) {
 	
 	// retain a reference to the dialogue (if we were passed one)
 	var dialogue = refreshDialogue;
@@ -602,7 +602,7 @@ function Property_linkPopup(cell, propertyObject, property, refreshHtml) {
 	}
 }
 
-function Property_pageName(cell, page, property, refreshHtml, refreshDialogue) {
+function Property_pageName(cell, page, property, refreshHtml, refreshDialogue, details) {
 	// get the value from the page name
 	var value = page.name;
 	// append the adjustable form control
@@ -647,7 +647,7 @@ function Property_pageName(cell, page, property, refreshHtml, refreshDialogue) {
 
 }
 
-function Property_validationControls(cell, propertyObject, property, refreshHtml, refreshDialogue) {
+function Property_validationControls(cell, propertyObject, property, refreshHtml, refreshDialogue, details) {
 		
 	// retain a reference to the dialogue (if we were passed one)
 	var dialogue = refreshDialogue;
@@ -726,7 +726,7 @@ function Property_validationControls(cell, propertyObject, property, refreshHtml
 	
 }
 
-function Property_childActions(cell, propertyObject, property, refreshHtml, refreshDialogue) {
+function Property_childActions(cell, propertyObject, property, refreshHtml, refreshDialogue, details) {
 	
 	// retain a reference to the dialogue (if we were passed one)
 	var dialogue = refreshDialogue;
@@ -797,8 +797,96 @@ function Property_childActions(cell, propertyObject, property, refreshHtml, refr
 			
 }
 
+function Property_childActionsForType(cell, propertyObject, property, refreshHtml, refreshDialogue, details) {
+	
+	// check we have what we need
+	if (details && details.type) {
+		
+		// find the action class
+		var actionClass = _actionTypes[details.type];
+		
+		// check we have one
+		if (actionClass) {
+			
+			// retain a reference to the dialogue (if we were passed one)
+			var dialogue = refreshDialogue;
+			// if we weren't passed one - make what we need
+			if (!dialogue) dialogue = createDialogue(cell, 200, "Child " + actionClass.name + " actions");		
+			// grab a reference to the table
+			var table = dialogue.children().last().children().last();
+			// remove the dialogue class so it looks like the properties
+			table.parent().removeClass("dialogueTable");
+			// make sure its empty
+			table.children().remove();
+			
+			// build what we show in the parent cell
+			var actions = [];
+			// get the value if it exists
+			if (propertyObject[property.key]) actions = propertyObject[property.key];	
+			// make some text
+			var text = "";
+			for (var i = 0; i < actions.length; i++) {
+				text += actions[i].type;
+				if (i < actions.length - 1) text += ",";
+			}
+			// if nothing add friendly message
+			if (!text) text = "Click to add...";
+			// put the text into the cell
+			cell.text(text);
+			
+			// add the current options
+			for (var i in actions) {
+				// retrieve this action
+				var action = actions[i];
+				// show the action (in actions.js)
+				showAction(table, action, actions, function() { Property_childActionsForType(cell, propertyObject, property, refreshHtml, dialogue, details); });
+			}	
+			
+			// add reorder listeners
+			addReorder(actions, table.find("img.reorder"), function() { Property_childActionsForType(cell, propertyObject, property, refreshHtml, dialogue, details); });
+			
+			// add a small space
+			if (actions.length > 0) table.append("<tr><td colspan='2'></td></tr>");
+			
+			// add an add dropdown
+			var addAction = table.append("<tr><td colspan='2'><a href='#'>add...</a></td></tr>").children().last().children().last().children().last();
+			
+			addListener( addAction.click( { details: details, cell: cell, propertyObject : propertyObject, property : property, refreshHtml : refreshHtml, dialogue: dialogue }, function(ev) {
+				// initialise this action
+				var action = new Action(ev.data.details.type);
+				// if we got one
+				if (action) {			
+					// retrieve the propertyObject
+					var propertyObject = ev.data.propertyObject;
+					// retrieve the property
+					var property = ev.data.property;
+					// initilise the array if need be
+					if (!propertyObject[property.key]) propertyObject[property.key] = [];
+					// add it to the array
+					propertyObject[property.key].push(action);
+					// rebuild the dialgue
+					Property_childActionsForType(ev.data.cell, propertyObject, property, ev.data.refreshHtml, ev.data.dialogue, ev.data.details);			
+				}		
+			}));
+			
+		} else {
+			
+			// put a message into the cell
+			cell.text("Action " + details.type + " not found");
+			
+		}
+		
+	} else {
+		
+		// put a message into the cell
+		cell.text("Action type not provided");
+		
+	}
+						
+}
+
 // this is a dialogue to specify the inputs, sql, and outputs for the database action
-function Property_databaseQuery(cell, propertyObject, property, refreshHtml, refreshDialogue) {
+function Property_databaseQuery(cell, propertyObject, property, refreshHtml, refreshDialogue, details) {
 	
 	// retain a reference to the dialogue (if we were passed one)
 	var dialogue = refreshDialogue;
@@ -977,6 +1065,11 @@ function Property_databaseQuery(cell, propertyObject, property, refreshHtml, ref
 		});
 		
 	}));
+}
+
+// reuse the generic childActionsForType but set the details with type = database
+function Property_databaseChildActions(cell, propertyObject, property, refreshHtml, refreshDialogue, details) {
+	Property_childActionsForType(cell, propertyObject, property, refreshHtml, refreshDialogue, {type:"database"});
 }
 
 //this is a dialogue to specify the inputs, post body, and outputs for the webservice action

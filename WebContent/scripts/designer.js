@@ -300,13 +300,13 @@ function applyUndoRedo(snapshot) {
 				_selectedControl = getControlById(selectedControlId);
 				// rebuild any properties
 				selectControl(_selectedControl);
-				// re apply any styles
+				// re apply any styles (this will call window resize)
 				rebuildStyles();
 			}
 			
 		} // apply control check
 		
-	} // undo control check
+	} // undo snapshot check
 	
 }
 
@@ -404,8 +404,8 @@ function getControlHeight(control) {
 // this function is useful for calling from the JavaScript terminal to find out why certain objects have not been found
 function debuggMouseControl(ev, childControls) {	
 	
-	// calculate the mouseX and mouseY from the event
-	var mouseX = ev.pageX  - _panelPinnedOffset + _pageIframeWindow.scrollLeft();
+	// get the mouse X and Y, relative to what's visible in the iframe
+	var mouseX = ev.pageX + _pageIframeWindow.scrollLeft() - _panelPinnedOffset;
 	var mouseY = ev.pageY + _pageIframeWindow.scrollTop();
 	
 	console.log("X: " + mouseX + ", Y: " + mouseY);
@@ -424,10 +424,12 @@ function getMouseControl(ev, childControls) {
 	// only if the mouse is down
 	if (_mouseDown) {
 		
-		// get the mouse X and Y
-		var mouseX = ev.pageX  - _panelPinnedOffset + _pageIframeWindow.scrollLeft();
+		// get the mouse X and Y, relative to what's visible in the iframe
+		var mouseX = ev.pageX + _pageIframeWindow.scrollLeft() - _panelPinnedOffset;
 		var mouseY = ev.pageY + _pageIframeWindow.scrollTop();
-										
+		
+		console.log("X: " + mouseX + ", Y: " + mouseY);
+												
 		// check if we hit the border first		
 		var o = $("#selectionBorder");				
 		// if we didn't find a control but the selection border is visible, return the current control
@@ -594,8 +596,10 @@ function sizeBorder(control) {
 	if (width > _window.width() - _panelPinnedOffset - _scrollBarWidth) width -= 8;
 	// size the selection border
 	_selectionBorder.css({
-		"width":width, // an extra pixel either side
-		"height":height // an extra pixel either side
+		"width": width, // an extra pixel either side
+		"height": height, // an extra pixel either side
+		"margin-right": -width, // with overflow stop additional horizontal scroll bars
+		"margin-bottom": - height // with overflow stop additional vertical scroll bars
 	});
 	// get the control class
 	var controlClass = _controlTypes[control.type];
@@ -1975,6 +1979,9 @@ function doPaste(control, parentControl) {
 		return _page;		
 		
 	}
+	
+	// fire window resize in case scroll bars need adjusting, etc.
+	windowResize("paste");
 	
 }
 

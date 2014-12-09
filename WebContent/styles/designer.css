@@ -533,6 +533,7 @@ Selection Styles
 #selectionBorder {
 	display:none;
 	position:absolute;
+	overflow:hidden;
 	left:0px;
 	top:0px;
 	z-index:10004;
