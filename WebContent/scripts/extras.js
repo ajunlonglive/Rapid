@@ -385,7 +385,7 @@ if (window["_rapidmobile"]) {
 }
 
 
-function showValidation(controlId, message) {
+function showControlValidation(controlId, message) {
 	var control = $("#" + controlId);
 	control.addClass("validation");
 	if (message) {
@@ -398,7 +398,7 @@ function showValidation(controlId, message) {
 	}
 }
 
-function hideValidation(controlId) {
+function hideControlValidation(controlId) {
 	var control = $("#" + controlId);
 	control.removeClass("validation");
 	control.next("div.validation").remove();

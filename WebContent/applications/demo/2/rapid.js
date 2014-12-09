@@ -1055,8 +1055,8 @@ $(document).ready( function() {
        	$(".dialogue").each(function() {
        		var dialogue = $(this);
 	       	dialogue.css({
-	       		left : (win.width() - dialogue.outerWidth()) / 2,
-	       		top : (win.height() - dialogue.outerHeight()) / 3
+	       		left : ((window.innerWidth ? window.innerWidth : win.width()) - dialogue.outerWidth(true)) / 2,
+	       		top : ((window.innerHeight ? window.innerHeight : win.height()) - dialogue.outerHeight(true)) / 2
 	       	}); 
 	    });
 	
@@ -1145,7 +1145,7 @@ function Action_navigate(url, dialogue, id) {
 	            	// remove any existing dialogue container for this action
 		           	$("#" + id + "dialogue").remove();
 		           	// add the dialogue container and remove the reference
-		           	dialogue = body.append("<div id='" + id + "dialogue' class='dialogue' style='position:absolute;z-index:101;'></div>").children().last(); 
+		           	dialogue = body.append("<div id='" + id + "dialogue' class='dialogue' style='position:fixed;z-index:101;'></div>").children().last(); 
 		           	
 		           	// make sure it's hidden
 		           	dialogue.css("visibility","hidden");
@@ -1210,18 +1210,18 @@ function Action_validation(ev, validations, showMessages) {
 					var validationFunction = new Function(["ev","id","value"], validation.javaScript);
 					var failMessage = validationFunction.apply(this, [ev,validation.controlId,value]);
 					if (failMessage != null && failMessage !== false && failMessage !== undefined) {
-						if (showMessages) showValidation(validation.controlId, failMessage);
+						if (showMessages) showControlValidation(validation.controlId, failMessage);
 						valid = false;
 					} else {
-						if (showMessages) hideValidation(validation.controlId);
+						if (showMessages) hideControlValidation(validation.controlId);
 					}
 				} else {
 					if ((value && value.match(new RegExp(validation.regEx)))||(!value && validation.allowNulls)) {
 						// passed
-						if (showMessages) hideValidation(validation.controlId);				
+						if (showMessages) hideControlValidation(validation.controlId);				
 					} else {
 						// failed, and there is a message to show
-						if (showMessages) showValidation(validation.controlId, validation.message);
+						if (showMessages) showControlValidation(validation.controlId, validation.message);
 						valid = false;					
 					}	
 				}	
