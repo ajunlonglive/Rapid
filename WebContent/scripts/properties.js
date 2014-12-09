@@ -2722,6 +2722,14 @@ function Property_slidePanelColour(cell, controlAction, property, refreshHtml, r
 	Property_select(cell, controlAction, property, true);
 }
 
+function Property_glyphCode(cell, controlAction, property, refreshHtml, refreshProperties) {
+	
+	controlAction.getValuesFunction = "return ['&#xf1fe;','&#xf080;','&#xf17b;','&#xf179;']";
+	
+	// add the select with refresh html = true
+	Property_select(cell, controlAction, property, true);
+}
+
 // this is used by the maps for changing the lat/lng
 function Property_mapLatLng(cell, propertyObject, property, refreshHtml, refreshProperties) {
 	var value = "";
