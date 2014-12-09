@@ -821,7 +821,11 @@ function setProperty_grid_selectedRowValidation(ev, id, field, details, data, ch
 function getProperty_grid_selectedRowNumber(ev, id, field, details) {
   if (details && details.dataStorageType) {
   	var gridData = getGridDataStoreData(id, details);
-  	return gridData.selectedRowNumber;
+  	if (gridData && gridData.selectedRowNumber) {
+  		return gridData.selectedRowNumber;
+  	} else {
+  		return null;
+  	}
   } else {
   	return $(ev.target).closest("tr").index();
   }
@@ -838,7 +842,16 @@ function setProperty_grid_selectedRowNumber(ev, id, field, details, data, change
 }
 
 function getProperty_grid_rowCount(ev, id, field, details) {
-  return $("#" + id).find("tr").size() - 1;
+  if (details && details.dataStorageType) {
+  	var gridData = getGridDataStoreData(id, details);
+  	if (gridData && gridData.rows) {
+  		return gridData.rows.length;
+  	} else {
+  		return 0;
+  	}
+  } else {
+  	return $("#" + id).find("tr").size() - 1;
+  }
 }
 
 function getData_input(ev, id, field, details) {

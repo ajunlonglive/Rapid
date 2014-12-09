@@ -646,7 +646,11 @@ if (details && details.dataStorageType) {
 			        <![CDATA[
 if (details && details.dataStorageType) {
 	var gridData = getGridDataStoreData(id, details);
-	return gridData.selectedRowNumber;
+	if (gridData && gridData.selectedRowNumber) {
+		return gridData.selectedRowNumber;
+	} else {
+		return null;
+	}
 } else {
 	return $(ev.target).closest("tr").index();
 }
@@ -670,7 +674,17 @@ saveGridDataStoreData(id, details, gridData);
 	   	        <name>Row count</name>
 	   	        <getPropertyFunction>
 			        <![CDATA[
-return $("#" + id).find("tr").size() - 1;     
+if (details && details.dataStorageType) {
+	var gridData = getGridDataStoreData(id, details);
+	if (gridData && gridData.rows) {
+		return gridData.rows.length;
+	} else {
+		return 0;
+	}
+} else {
+	return $("#" + id).find("tr").size() - 1;
+}
+     
 			        ]]>	  	   	            
 	   	        </getPropertyFunction>	   	        
 	   	    </runtimeProperty>
