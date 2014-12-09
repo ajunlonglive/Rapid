@@ -408,7 +408,7 @@ function debuggMouseControl(ev, childControls) {
 	var mouseX = ev.pageX + _pageIframeWindow.scrollLeft() - _panelPinnedOffset;
 	var mouseY = ev.pageY + _pageIframeWindow.scrollTop();
 	
-	console.log("X: " + mouseX + ", Y: " + mouseY);
+	//console.log("X: " + mouseX + ", Y: " + mouseY);
 	
 	for (var i in childControls) {
 		var o = childControls[i].object;
@@ -428,7 +428,7 @@ function getMouseControl(ev, childControls) {
 		var mouseX = ev.pageX + _pageIframeWindow.scrollLeft() - _panelPinnedOffset;
 		var mouseY = ev.pageY + _pageIframeWindow.scrollTop();
 		
-		console.log("X: " + mouseX + ", Y: " + mouseY);
+		//console.log("X: " + mouseX + ", Y: " + mouseY);
 												
 		// check if we hit the border first		
 		var o = $("#selectionBorder");				
