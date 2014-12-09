@@ -170,6 +170,14 @@ return ["grey","white","black"];
 	            <contents>images/controls/slidepanel/slidepanel_48x48.png</contents>
 	        </resource>
 	        <resource>
+	            <type>file</type>
+	            <contents>images/controls/slidepanel/slidepanel_black_48x48.png</contents>
+	        </resource>
+	        <resource>
+	            <type>file</type>
+	            <contents>images/controls/slidepanel/slidepanel_white_48x48.png</contents>
+	        </resource>
+	        <resource>
 	            <type>css</type>
 	            <contents>
 	                <![CDATA[	                
