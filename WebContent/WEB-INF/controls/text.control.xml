@@ -106,17 +106,17 @@ if (data != null && data !== undefined) {
 	    
 	    <events>
 	        <event>
+	            <type>click</type>
+	            <name>Click</name>
+	        </event>
+	        <event>
 	            <type>mouseover</type>
 	            <name>Mouse over</name>
 	        </event>
 	        <event>
 	            <type>mouseout</type>
 	            <name>Mouse out</name>
-	        </event>
-	        <event>
-	            <type>click</type>
-	            <name>Click</name>
-	        </event>
+	        </event>	        
 	    </events> 
 	    
 	    <styles>
