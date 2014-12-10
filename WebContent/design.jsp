@@ -74,6 +74,7 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, Rap
 	</script>	
 	<link rel="stylesheet" type="text/css" href="styles/designer.css"></link>
 	<link rel="stylesheet" type="text/css" href="styles/properties.css"></link>
+	<link rel="stylesheet" type="text/css" href="styles/fonts/fontawesome/css/font-awesome.min.css"></link>
 <%
 	} else {
 %>
