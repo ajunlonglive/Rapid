@@ -3191,6 +3191,7 @@ function windowResize(ev) {
 		});			
 		// adjust the cover
 		_designCover.css({
+			position: "absolute",
 			top: 0,
 			left: _panelPinnedOffset,
 			right: "auto",
@@ -3291,6 +3292,7 @@ function windowResize(ev) {
 		});
 		// adjust the cover to be full-screen
 		_designCover.css({
+			position: "fixed",
 			top: 0,
 			left: 0,
 			right: 0,

@@ -56,6 +56,12 @@ span.loading {
 	display: none;
 }
 
+/* Button control resource styles */
+
+.buttonGlyphWithBackground {
+	font-size: 0.5em;
+}
+
 /* Grid control resource styles */
 
 table.grid {
