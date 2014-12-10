@@ -51,11 +51,75 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <setConstructValueFunction>return "button";</setConstructValueFunction>  
 	            <changeValueJavaScript>text</changeValueJavaScript>	     	                 
 	        </property>
+	        <property>
+	            <key>glyphCode</key>
+	            <name>Glyph</name>
+	            <setConstructValueFunction>
+	                <![CDATA[
+	                return ""
+	                ]]>
+	            </setConstructValueFunction>  
+	            <changeValueJavaScript>glyphCode</changeValueJavaScript>	 	                     
+	        </property>
+	        <property>
+	            <key>glyphPosition</key>
+	            <name>Glyph position</name>
+	            <setConstructValueFunction>return "left";</setConstructValueFunction>
+	            <changeValueJavaScript>buttonGlyphPosition</changeValueJavaScript>	
+	            <getValuesFunction>
+	                <![CDATA[
+return ["left","right","top","bottom"];
+					]]>
+	            </getValuesFunction>               
+	        </property>    
+	        <property>
+	            <key>glyphBackground</key>
+	            <name>Glyph background</name>
+	            <setConstructValueFunction>return "none";</setConstructValueFunction>
+	            <changeValueJavaScript>buttonGlyphBackground</changeValueJavaScript>	
+	            <getValuesFunction>
+	                <![CDATA[
+return ["none","circle","circle-o","square","square-o"];
+					]]>
+	            </getValuesFunction>               
+	        </property> 
 	    </properties>
 	    
+	    <resources>
+	        <resource>
+	            <type>css</type>
+	            <contents>
+.buttonGlyphWithBackground {
+	font-size: 0.5em;
+}	                
+	            </contents>
+	        </resource>
+	    </resources>
+	    	    
 	    <getHtmlFunction>
-	        <![CDATA[	      
-return "<button id='" + this.id + "' class='button" + getStyleClasses(this) + "'>" + this.label + "</button>"
+	        <![CDATA[	  
+var html = "";	            
+if (this.glyphCode) {	
+
+	var glyph = "<span class='fa buttonGlyph'>" + this.glyphCode + "</span>";	 
+
+	if (this.glyphBackground && this.glyphBackground != "none") {
+		glyph = "<span class='fa-stack fa-lg buttonGlyphWithBackground buttonGlyph'><i class='fa fa-" + this.glyphBackground + " fa-stack-2x buttonGlyphBackground'></i><i class='fa fa-stack-1x'>" + this.glyphCode + "</i></span>";
+	}
+		       
+	var html = "<button id='" + this.id + "' class='button" + getStyleClasses(this) + "'>";
+	if (this.glyphPosition == "left" || this.glyphPosition == "top") html += glyph;
+	if (this.glyphPosition == "left") html += "&nbsp;";
+	if (this.glyphPosition == "top") html += "<br/>";
+	html += this.label;
+	if (this.glyphPosition == "bottom") html += "<br/>";
+	if (this.glyphPosition == "right") html += "&nbsp;";
+	if (this.glyphPosition == "right" || this.glyphPosition == "bottom") html += glyph;
+	html += "</button>";
+} else {
+	html = "<button id='" + this.id + "' class='button" + getStyleClasses(this) + "'>" + this.label + "</button>";
+}
+return html
 	        ]]>
 	    </getHtmlFunction> 
 	    
@@ -72,6 +136,22 @@ return "<button id='" + this.id + "' class='button" + getStyleClasses(this) + "'
 	            <getAppliesToFunction>
 					<![CDATA[	      
 return "#" + this.id;
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	        <style>
+	            <name>Button glyph</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id + " .buttonGlyph";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	        <style>
+	            <name>Button glyph background</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id + " .buttonGlyphBackground";
 	       			 ]]>	                
 	            </getAppliesToFunction>
 	        </style>

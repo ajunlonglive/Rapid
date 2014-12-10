@@ -529,7 +529,11 @@ div.button {
 }
 
 .hover:hover {
-	background-color: #eee;
+	background-color: #ccc;
+}
+
+.selected {
+	background-color: #aaa;
 }
 
 /*

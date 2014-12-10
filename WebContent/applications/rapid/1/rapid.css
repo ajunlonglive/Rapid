@@ -1,6 +1,12 @@
 
 /* This file is auto-generated on application load and save - it is minified when the application status is live */
 
+/* Button control resource styles */
+
+.buttonGlyphWithBackground {
+	font-size: 0.5em;
+}
+
 /* Grid control resource styles */
 
 table.grid {
