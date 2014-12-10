@@ -84,7 +84,7 @@ if (appId != null && pageId != null) {
 
 if (gotAppAndPage && designerPermission) {
 
-	// add the required resource links, but not the css
+	// add the required resource links, but not the page.css rapid.css file
 	out.print(rapidPage.getResourcesHtml(rapidApp, false));	
 	
 %>

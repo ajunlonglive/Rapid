@@ -800,7 +800,7 @@ public class Page {
     }
     
     // the resources for the page, and whether we want the css (we might like to override it in the designer or for no permission, etc)
-    public String getResourcesHtml(Application application, boolean includeCss) {
+    public String getResourcesHtml(Application application, boolean includeRapidCss) {
     	
     	StringBuilder stringBuilder = new StringBuilder();
 				
@@ -812,14 +812,14 @@ public class Page {
 						stringBuilder.append("<script type='text/javascript' src='" + resource.getContent() + "'></script>\n");
 					break;
 					case Resource.CSSFILE : case Resource.CSSLINK :
-						if (includeCss) stringBuilder.append("<link rel='stylesheet' type='text/css' href='" + resource.getContent() + "'></link>\n");
+						stringBuilder.append("<link rel='stylesheet' type='text/css' href='" + resource.getContent() + "'></link>\n");
 					break;
 				}				
 			}
 		}
 		
 		// only if css is to be included
-		if (includeCss) {
+		if (includeRapidCss) {
 			// check the application status and include this page's css file
 			if (application.getStatus() == Application.STATUS_LIVE) {
 				stringBuilder.append("<link rel='stylesheet' type='text/css' href='" + Application.getWebFolder(application) + "/" + _name + ".min.css'></link>\n");
