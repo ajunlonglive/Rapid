@@ -212,7 +212,7 @@ public class Logic extends Action {
 	}
 		
 	@Override
-	public String getJavaScript(Application application, Page page, Control control) {
+	public String getJavaScript(Application application, Page page, Control control, JSONObject jsonDetails) throws Exception {
 		
 		String js = "";
 		
@@ -247,16 +247,30 @@ public class Logic extends Action {
 		
 		// add any try actions
 		if (_trueActions != null) {
-			for (Action action : _trueActions) js += "  " + action.getJavaScript(application, page, control).trim().replace("\n", "\n  ") + "\n";
+			for (Action action : _trueActions) js += "  " + action.getJavaScript(application, page, control, jsonDetails).trim().replace("\n", "\n  ") + "\n";
 		}
 		
 		// close the if
 		js += "}";
 		
-		// add any false actions as an else
-		if (_falseActions != null) {
+		// check for false actions
+		if (_falseActions == null) {
+			// if we got some details
+			if (jsonDetails != null) {
+				// check the details for a defaultErrorHandler
+				String defaultErrorHandler = jsonDetails.optString("defaultErrorHandler", null);
+				// if we got one
+				if (defaultErrorHandler != null) {
+					// print it
+					js += " else {\n  " + defaultErrorHandler + "\n}";
+					// remove it from the jsonObject to stop it re-appearing elsewhere
+					jsonDetails.remove("defaultErrorHandler");
+				}
+			}
+		} else {
+			// add any false actions as an else
 			js += " else {\n";
-			for (Action action : _falseActions) js += "  " + action.getJavaScript(application, page, control).trim().replace("\n", "\n  ") + "\n";
+			for (Action action : _falseActions) js += "  " + action.getJavaScript(application, page, control, jsonDetails).trim().replace("\n", "\n  ") + "\n";
 			js += "}";
 		}
 		

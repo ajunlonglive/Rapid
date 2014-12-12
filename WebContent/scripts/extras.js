@@ -369,8 +369,10 @@ if (window["_rapidmobile"]) {
 				if (window.location.href.indexOf("/~?a=") > -1) {
 					// look for an application parameter
 					var appId = $.getUrlVar("a");
-					// append escaped requestPath if there's an app
-					if (appId) location += "?requestApp=" + appId;
+					// look for an application version parameter
+					var appVersion = $.getUrlVar("v");
+					// append escaped requestPath if there's an app, and version if it exists
+					if (appId) location += "?requestApp=" + appId + (appVersion ? "&requestVersion=" + appVersion : "");
 				}				
 				// redirect to login page
 				window.location = location;

@@ -882,29 +882,39 @@ public class Page {
 				
 				// loop the actions and produce the handling JavaScript
 				for (Action action : event.getActions()) {
-					// get the action client-side java script from the action object (it's generated there as it can contain values stored in the object on the server side)
-					String actionJavaScript = action.getJavaScript(application, this, control);
-					// if non null
-					if (actionJavaScript != null) {
-						// trim it to avoid tabs and line breaks that might sneak in
-						actionJavaScript = actionJavaScript.trim();
-						// only if what we got is not an empty string
-						if (!("").equals(actionJavaScript)) {
-							// if this action has been marked for redundancy avoidance 
-							if (action.getAvoidRedundancy()) {
-								// add the action function to the action stringbuilder so it's before the event
-								actionStringBuilder.append("function Action_" + action.getId() + "(ev) {\n" 
-								+ "  " + actionJavaScript.trim().replace("\n", "\n  ") + "\n"
-								+ "}\n\n");	
-								// add an action function call to the event string builder
-								eventStringBuilder.append("    Action_" + action.getId() + "(ev);\n");																
-							} else {
-								// go straight into the event
-								eventStringBuilder.append("    " + actionJavaScript.trim().replace("\n", "\n    ") + "\n");
-							}													
-						}
+					
+					try {						
+						// get the action client-side java script from the action object (it's generated there as it can contain values stored in the object on the server side)
+						String actionJavaScript = action.getJavaScript(application, this, control, null);
+						// if non null
+						if (actionJavaScript != null) {
+							// trim it to avoid tabs and line breaks that might sneak in
+							actionJavaScript = actionJavaScript.trim();
+							// only if what we got is not an empty string
+							if (!("").equals(actionJavaScript)) {
+								// if this action has been marked for redundancy avoidance 
+								if (action.getAvoidRedundancy()) {
+									// add the action function to the action stringbuilder so it's before the event
+									actionStringBuilder.append("function Action_" + action.getId() + "(ev) {\n" 
+									+ "  " + actionJavaScript.trim().replace("\n", "\n  ") + "\n"
+									+ "}\n\n");	
+									// add an action function call to the event string builder
+									eventStringBuilder.append("    Action_" + action.getId() + "(ev);\n");																
+								} else {
+									// go straight into the event
+									eventStringBuilder.append("    " + actionJavaScript.trim().replace("\n", "\n    ") + "\n");
+								}													
+							}
+							
+						}  
 						
-					}    							
+					} catch (Exception ex) {
+						
+						// print a commented message
+						eventStringBuilder.append("//    Error creating JavaScript for action " + action.getId() + " : " + ex.getMessage() + "\n");
+						
+					}
+					  							
 				}
 				// close the try/catch
 				if (control == null) {
@@ -1066,23 +1076,29 @@ public class Page {
 				
 				// loop the list of actions to indentify potential redundancies before we create all the event handling JavaScript
 				for (Action action : pageActions) {
-					// look for any page javascript that this action may have
-					String actionPageJavaScript = action.getPageJavaScript(application, this);
-					// print it here if so
-					if (actionPageJavaScript != null) jsStringBuilder.append(actionPageJavaScript.trim() + "\n\n");
-					// if this action adds redundancy to any others 
-					if (action.getRedundantActions() != null) {
-						// loop them
-						for (String actionId : action.getRedundantActions()) {
-							// try and find the action
-							Action redundantAction = getAction(actionId);
-							// if we got one
-							if (redundantAction != null) {
-								// update the redundancy avoidance flag
-								redundantAction.avoidRedundancy(true);
-							} 
-						}										
-					} // redundantActions != null
+					try {
+						// look for any page javascript that this action may have
+						String actionPageJavaScript = action.getPageJavaScript(application, this, null);
+						// print it here if so
+						if (actionPageJavaScript != null) jsStringBuilder.append(actionPageJavaScript.trim() + "\n\n");
+						// if this action adds redundancy to any others 
+						if (action.getRedundantActions() != null) {
+							// loop them
+							for (String actionId : action.getRedundantActions()) {
+								// try and find the action
+								Action redundantAction = getAction(actionId);
+								// if we got one
+								if (redundantAction != null) {
+									// update the redundancy avoidance flag
+									redundantAction.avoidRedundancy(true);
+								} 
+							}										
+						} // redundantActions != null
+					} catch (Exception ex) {
+						// print the exception as a comment
+						jsStringBuilder.append("// Error producing page JavaScript : " + ex.getMessage() + "\n\n");
+					}					
+					
 				} // action loop		
 				
 				// add event handlers, staring at the root controls

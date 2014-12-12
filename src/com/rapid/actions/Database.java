@@ -271,7 +271,7 @@ public class Database extends Action {
 	}
 	
 	@Override
-	public String getJavaScript(Application application, Page page, Control control) {
+	public String getJavaScript(Application application, Page page, Control control, JSONObject jsonDetails) throws Exception {
 		
 		String js = "";
 		
@@ -332,18 +332,30 @@ public class Database extends Action {
 			// retain if error actions
 			boolean errorActions = false;
 			
+			// prepare a default error hander we'll show if no error actions, or pass to child actions for them to use
+			String defaultErrorHandler = "alert('Error with database action : ' + server.responseText||message);";
+			
 			// add any error actions
 			if (_errorActions != null) {
+				// instantiate the jsonDetails if required
+				if (jsonDetails == null) jsonDetails = new JSONObject();
+				// count the actions
+				int i = 0;
+				// loop the actions
 				for (Action action : _errorActions) {
+					// retain that we have custom error actions
 					errorActions = true;
-					js += "         " + action.getJavaScript(application, page, control).trim().replace("\n", "\n         ") + "\n";
+					// if this is the last error action add in the default error handler
+					if (i == _errorActions.size() - 1) jsonDetails.put("defaultErrorHandler", defaultErrorHandler);						
+					// add the js
+					js += "         " + action.getJavaScript(application, page, control, jsonDetails).trim().replace("\n", "\n         ") + "\n";					
+					// increase the count
+					i++;
 				}
 			}
-			// add manual if not in collection
-			if (!errorActions) {
-				js += "        alert('Error with database action : ' + server.responseText||message);\n";
-			}
-			
+			// add default error handler if none in collection
+			if (!errorActions) js += "        " + defaultErrorHandler + "\n";
+						
 			// close unloading check
 			js += "      }\n";
 			
@@ -395,7 +407,7 @@ public class Database extends Action {
 			// add any sucess actions
 			if (_successActions != null) {
 				for (Action action : _successActions) {
-					js += "       " + action.getJavaScript(application, page, control).trim().replace("\n", "\n       ") + "\n";
+					js += "       " + action.getJavaScript(application, page, control, jsonDetails).trim().replace("\n", "\n       ") + "\n";
 				}
 			}
 			

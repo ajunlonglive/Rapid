@@ -45,7 +45,7 @@ public class Custom extends Action {
 	// methods
 	
 	@Override
-	public String getJavaScript(Application application, Page page, Control control) {
+	public String getJavaScript(Application application, Page page, Control control, JSONObject jsonDetails) {
 		// get the JavaScript
 		String javaScript = getProperty("javascript");
 		// if we have some javascript		

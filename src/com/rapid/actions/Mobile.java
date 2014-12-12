@@ -100,7 +100,7 @@ public class Mobile extends Action {
 	}
 	
 	@Override
-	public String getPageJavaScript(Application application, Page page) {
+	public String getPageJavaScript(Application application, Page page, JSONObject jsonDetails) throws Exception {
 		
 		if (_successActions == null && _errorActions == null) {
 			return null;
@@ -114,7 +114,7 @@ public class Mobile extends Action {
 			if (_successActions != null) {
 				js += "function " + id + "success(ev) {\n";
 				for (Action action : _successActions) {
-					js += "  " + action.getJavaScript(application, page, control).trim().replace("\n", "\n  ") + "\n";
+					js += "  " + action.getJavaScript(application, page, control, jsonDetails).trim().replace("\n", "\n  ") + "\n";
 				}
 				js += "}\n";
 			}
@@ -122,7 +122,7 @@ public class Mobile extends Action {
 			if (_errorActions != null) {
 				js += "function " + id + "_error(ev) {\n";
 				for (Action action : _errorActions) {
-					js += "  " + action.getJavaScript(application, page, control).trim().replace("\n", "\n  ") + "\n";
+					js += "  " + action.getJavaScript(application, page, control, jsonDetails).trim().replace("\n", "\n  ") + "\n";
 				}
 				js += "}\n";
 			}
@@ -132,7 +132,7 @@ public class Mobile extends Action {
 	}
 			
 	@Override
-	public String getJavaScript(Application application, Page page, Control control) {
+	public String getJavaScript(Application application, Page page, Control control, JSONObject jsonDetails) {
 		// prepare the js
 		String js = "if (typeof _rapidmobile == 'undefined') {\n  alert('This action is only available in Rapid Mobile'); \n} else {\n";
 		// get the type
