@@ -253,8 +253,21 @@ public class Logic extends Action {
 		// close the if
 		js += "}";
 		
+		// assume no false actions
+		boolean gotFalseActions = false;
+		// if there is a collection
+		if (_falseActions != null) {
+			// if there are some in the collection we have false actions
+			if (_falseActions.size() > 0) gotFalseActions = true;
+		}
+		
 		// check for false actions
-		if (_falseActions == null) {
+		if (gotFalseActions) {
+			// add any false actions as an else
+			js += " else {\n";
+			for (Action action : _falseActions) js += "  " + action.getJavaScript(application, page, control, jsonDetails).trim().replace("\n", "\n  ") + "\n";
+			js += "}";			
+		} else {
 			// if we got some details
 			if (jsonDetails != null) {
 				// check the details for a defaultErrorHandler
@@ -267,11 +280,6 @@ public class Logic extends Action {
 					jsonDetails.remove("defaultErrorHandler");
 				}
 			}
-		} else {
-			// add any false actions as an else
-			js += " else {\n";
-			for (Action action : _falseActions) js += "  " + action.getJavaScript(application, page, control, jsonDetails).trim().replace("\n", "\n  ") + "\n";
-			js += "}";
 		}
 		
 		// final line break
