@@ -2760,7 +2760,7 @@ function Property_glyphCode(cell, controlAction, property, refreshHtml, refreshP
 	
 	addListener( table.find("td").click( function(ev) {
 		// get the cell
-		var cell = $(ev.target);
+		var cell = $(ev.target).closest("td");
 		// remove selected from others
 		cell.closest("table").find("td").removeClass("selected");
 		// apply selected to this

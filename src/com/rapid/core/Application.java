@@ -25,12 +25,15 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
 package com.rapid.core;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
+import java.io.Writer;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
@@ -1530,14 +1533,14 @@ public class Application {
 				}
 				
 				// set the delete folder
-				deleteFolder = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/temp/" + rapidRequest.getUserName() + "_" + _id));
+				deleteFolder = new File(rapidServlet.getServletContext().getRealPath("/WEB-INF/temp/" + _id + "_" + rapidRequest.getUserName()));
 				// create it
 				deleteFolder.mkdirs();
 				
 				// make a details.txt file
 				File detailsFile = new File(deleteFolder + "/details.txt");
 				// get a file writer
-				FileWriter fw = new FileWriter(detailsFile);
+				Writer fw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(detailsFile), "UTF-8"));
 				// write the details
 				fw.write(_id + "\r\n" + _version + "\r\n" + _title);
 				// close the file writer
@@ -1554,7 +1557,7 @@ public class Application {
 						// create a file for it in the delete folder
 						File pageFile = new File(deleteFolder + "/" + pageId + ".htm");
 						// create a file writer for it for now
-						fw = new FileWriter(pageFile);
+						fw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(pageFile), "UTF-8"));
 						// for now get a printWriter to write the page html
 						page.writeHtml(rapidServlet, rapidRequest, this, user, fw, false);
 						// close it
@@ -1569,7 +1572,7 @@ public class Application {
 						// create a file for it for it in the delete folder
 						File pageFile = new File(deleteFolder + "/" + "index.htm");
 						// create a file writer for it for now
-						fw = new FileWriter(pageFile);
+						fw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(pageFile), "UTF-8"));
 						// for now get a printWriter to write the page html
 						page.writeHtml(rapidServlet, rapidRequest, this, user, fw, false);
 						// close it

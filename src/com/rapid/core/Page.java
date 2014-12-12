@@ -1290,7 +1290,7 @@ public class Page {
 													
 					// using attr href was the weirdest thing. Some part of jQuery seemed to be setting the url back to v=1&p=P1 when v=2&p=P2 was printed in the html
 					writer.write("<div id='designShow' style='position:fixed;left:0px;bottom:0px;width:30px;height:30px;z-index:1000;'></div>\n"
-			    	+ "<a id='designLink' style='position:fixed;left:6px;bottom:6px;z-index:1001;display:none;' href='#'><img src='images/gear_24x24.png'/></a>\n"
+			    	+ "<a id='designLink' style='position:fixed;left:6px;bottom:6px;z-index:1001;display:none;' href='#'><img src='images/gear_24x24.png' style='border:0;'/></a>\n"
 			    	+ "<script type='text/javascript'>\n"
 			    	+ "/* designLink */\n"
 			    	+ "$(document).ready( function() {\n"

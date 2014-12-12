@@ -88,12 +88,12 @@ return ["none","circle","circle-o","square","square-o"];
 	    <resources>
 	        <resource>
 	            <type>cssFile</type>
-	            <contents>styles/fonts/fontawesome/css/font-awesome.min.css</contents>
+	            <contents>styles/fonts/fontawesome/css/font-awesome.css</contents>
 	        </resource>
 	        <resource>
 	            <type>file</type>
-	            <contents>styles/fonts/fontawesome/fonts/fontawesome-webfont.ttf</contents>
-	        </resource>	
+	            <contents>styles/fonts/fontawesome/fonts/fontawesome-webfont.woff</contents>
+	        </resource>
 	        <resource>
 	            <type>css</type>
 	            <contents>
