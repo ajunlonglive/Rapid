@@ -868,7 +868,7 @@ function getProperty_grid_selectedRowNumber(ev, id, field, details) {
 
 function setProperty_grid_selectedRowNumber(ev, id, field, details, data, changeEvents) {
   gridData = getGridDataStoreData(id, details);
-  if (!gridData) gridData = {};
+  if (!gridData) gridData = {fields:[],rows:[]};
   data = makeDataObject(data, field);
   var selectedRowNumber = null;
   if (data) selectedRowNumber = data.rows[0][0];

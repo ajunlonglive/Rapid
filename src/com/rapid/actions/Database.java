@@ -341,7 +341,7 @@ public class Database extends Action {
 			}
 			// add manual if not in collection
 			if (!errorActions) {
-				js += "        alert('Error with database action : ' + message||server.responseText);\n";
+				js += "        alert('Error with database action : ' + server.responseText||message);\n";
 			}
 			
 			// close unloading check
@@ -368,19 +368,24 @@ public class Database extends Action {
 					// get the parameter
 					Parameter output = outputs.get(i);
 					// get the control the data is going into
-					Control outputControl = page.getControl(output.getItemId());	
-					// get any mappings we may have
-					String details = outputControl.getDetailsJavaScript(application, page);
-					// set to empty string or clean up
-					if (details == null) {
-						details = "";
-					} else {
-						details = ", details: " + outputControl.getId() + "details";
-					}
-					// append the javascript outputs
-					jsOutputs += "{id: '" + outputControl.getId() + "', type: '" + outputControl.getType() + "', field: '" + output.getField() + "'" + details + "}";
-					// add a comma if not the last
-					if (i < outputs.size() - 1) jsOutputs += ","; 
+					Control outputControl = page.getControl(output.getItemId());
+					// try the application if still null
+					if (outputControl == null) outputControl = application.getControl(output.getItemId());
+					// check we got one
+					if (outputControl != null) {
+						// get any mappings we may have
+						String details = outputControl.getDetailsJavaScript(application, page);
+						// set to empty string or clean up
+						if (details == null) {
+							details = "";
+						} else {
+							details = ", details: " + outputControl.getId() + "details";
+						}
+						// append the javascript outputs
+						jsOutputs += "{id: '" + outputControl.getId() + "', type: '" + outputControl.getType() + "', field: '" + output.getField() + "'" + details + "}";
+						// add a comma if not the last
+						if (i < outputs.size() - 1) jsOutputs += ","; 
+					}					
 				}			
 				js += "       var outputs = [" + jsOutputs + "];\n";
 				// send them them and the data to the database action				

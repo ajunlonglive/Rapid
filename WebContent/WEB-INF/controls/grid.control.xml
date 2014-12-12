@@ -659,7 +659,7 @@ if (details && details.dataStorageType) {
 	   	        <setPropertyJavaScript>
 	   	            <![CDATA[
 gridData = getGridDataStoreData(id, details);
-if (!gridData) gridData = {};
+if (!gridData) gridData = {fields:[],rows:[]};
 data = makeDataObject(data, field);
 var selectedRowNumber = null;
 if (data) selectedRowNumber = data.rows[0][0];

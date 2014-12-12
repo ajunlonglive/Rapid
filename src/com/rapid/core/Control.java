@@ -358,7 +358,7 @@ public class Control {
 					return "_userName";
 				} else if ("field".equals(idParts[1])) {
 					// pass the field as a value
-					return "'" + field.replace("'", "\\'") + "'";
+					return "'" + (field == null ? "" : field.replace("'", "\\'")) + "'";
 				} else if (!"".equals(idParts[1])) {
 					// pass through as literal if not blank
 					return idParts[1];
