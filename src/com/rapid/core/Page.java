@@ -803,18 +803,31 @@ public class Page {
     public String getResourcesHtml(Application application, boolean includeRapidCss) {
     	
     	StringBuilder stringBuilder = new StringBuilder();
+    	
+    	// manage the resources links added already so we don't add twice
+    	ArrayList<String> addedLinks = new ArrayList<String>(); 
 				
 		// loop and add the resources required by this application's controls and actions (created when application loads)
 		if (application.getResources() != null) {
 			for (Resource resource : application.getResources()) {
+				// the link we're hoping to get
+				String link = null;
+				// set the link according to the type
 				switch (resource.getType()) {
 					case Resource.JAVASCRIPTFILE : case Resource.JAVASCRIPTLINK :
-						stringBuilder.append("<script type='text/javascript' src='" + resource.getContent() + "'></script>\n");
+						link = "<script type='text/javascript' src='" + resource.getContent() + "'></script>";
 					break;
 					case Resource.CSSFILE : case Resource.CSSLINK :
-						stringBuilder.append("<link rel='stylesheet' type='text/css' href='" + resource.getContent() + "'></link>\n");
+						link = "<link rel='stylesheet' type='text/css' href='" + resource.getContent() + "'></link>";
 					break;
 				}				
+				// if we got a link and don't have it already 
+				if (link != null && !addedLinks.contains(link)) {
+					// append it
+					stringBuilder.append(link + "\n");
+					// rememeber it
+					addedLinks.add(link);
+				}
 			}
 		}
 		
