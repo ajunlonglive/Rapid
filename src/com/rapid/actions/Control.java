@@ -50,7 +50,7 @@ public class Control extends Action {
 	// methods
 		
 	@Override
-	public String getJavaScript(Application application, Page page, com.rapid.core.Control control) {
+	public String getJavaScript(Application application, Page page, com.rapid.core.Control control, JSONObject jsonDetails) {
 		// get the control Id and command
 		String controlId = getProperty("control");
 		// get the action type

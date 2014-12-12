@@ -100,7 +100,7 @@ public class Validation extends Action {
 	// methods
 	
 	@Override
-	public String getJavaScript(Application application, Page page, Control control) {
+	public String getJavaScript(Application application, Page page, Control control, JSONObject jsonDetails) throws Exception {
 		
 		String js = "";
 						
@@ -150,14 +150,14 @@ public class Validation extends Action {
 			
 			// insert pass actions
 			if (_passActions != null) {
-				for (Action action : _passActions) js += "    " + action.getJavaScript(application, page, control) + "\n";
+				for (Action action : _passActions) js += "    " + action.getJavaScript(application, page, control, jsonDetails) + "\n";
 			}
 			
 			js += "  } else {\n";
 			
 			// insert fail actions
 			if (_failActions != null) {
-				for (Action action : _failActions) js += "    " + action.getJavaScript(application, page, control) + "\n";
+				for (Action action : _failActions) js += "    " + action.getJavaScript(application, page, control, jsonDetails) + "\n";
 			}
 			
 			// check whether to stop further actions

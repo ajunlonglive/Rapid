@@ -49,7 +49,7 @@ public class Event extends Action {
 	// overridden methods
 			
 	@Override
-	public String getJavaScript(Application application, Page page, Control control) {
+	public String getJavaScript(Application application, Page page, Control control, JSONObject jsonDetails) {
 		// get the event id
 		String eventId = getProperty("event");
 		// check we got something
