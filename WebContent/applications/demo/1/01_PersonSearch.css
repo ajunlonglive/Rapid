@@ -81,3 +81,15 @@
 	padding:10px;
 }
 
+#P1_C42_ {
+	padding:5px;
+}
+
+#P1_C42_ input[type=radio] {
+	vertical-align:middle;
+}
+
+#P1_C42_ span {
+	vertical-align:middle;
+}
+

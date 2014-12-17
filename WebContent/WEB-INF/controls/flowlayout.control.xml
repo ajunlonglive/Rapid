@@ -68,7 +68,7 @@ return "<div id='" + this.id + "' class='flowLayoutCell'>" + this.text + "</div>
 	            <name>Flow layout cell</name>
 	            <getAppliesToFunction>
 					<![CDATA[	      
-return "#" + this.id + " div.flowLayoutCell";
+return "div#" + this.id + ".flowLayoutCell";
 	       			 ]]>	                
 	            </getAppliesToFunction>
 	        </style>   

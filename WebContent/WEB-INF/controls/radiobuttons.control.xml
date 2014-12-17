@@ -164,6 +164,14 @@ return "#" + this.id;
 	            </getAppliesToFunction>
 	        </style>
 	        <style>
+	            <name>Radio buttons</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id + " input[type=radio]";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	        <style>
 	            <name>Labels</name>  
 	            <getAppliesToFunction>
 					<![CDATA[	      
