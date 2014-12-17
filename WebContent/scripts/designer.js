@@ -1922,10 +1922,10 @@ function doPaste(control, parentControl) {
 		
 		// restore the control numbers
 		_controlNumbers = JSON.parse(controlNumbers);
-						
-		// re-position and resize the selection as it may have changed
-		positionAndSizeBorder(_selectedControl);
 		
+		// fire window resize in case scroll bars need adjusting, etc. (this will re-select)
+		windowResize("paste");
+								
 		// return the updated control
 		return newControl;
 				
@@ -1975,14 +1975,14 @@ function doPaste(control, parentControl) {
 		// apply any styling in the new control
 		applyStyleForPaste(_page, getStyleSheet());
 		
+		// fire window resize in case scroll bars need adjusting, etc.
+		windowResize("paste");
+		
 		// return the page
 		return _page;		
 		
 	}
-	
-	// fire window resize in case scroll bars need adjusting, etc.
-	windowResize("paste");
-	
+			
 }
 
 // JQuery is ready! 
@@ -3218,16 +3218,12 @@ function windowResize(ev) {
     		var scrollV = false;
     		// assume no h scrolling
     		var scrollH = false;
-    		
-    		// get the iFrame height by it's contents
-    		//var contentHeight = $(_pageIframe[0].contentDocument).height();
-    		// get the iFrame width by it's contents
-    		//var contentWidth = $(_pageIframe[0].contentDocument).width();
-    		
-    		var contentHeight = $(_pageIframe[0].contentDocument).find("body")[0].scrollHeight;
-    		var contentWidth = $(_pageIframe[0].contentDocument).find("body")[0].scrollWidth;
-    		
-    		    		 
+    		    		
+    		// get the page object height by it's contents less it's margin left and right margins
+    		var contentHeight = _page.object[0].scrollHeight - parseInt(_page.object.css("margin-left")) - parseInt(_page.object.css("margin-right"));
+    		// get the page object width by it's contents less it's top and bottom margins
+    		var contentWidth = _page.object[0].scrollWidth - parseInt(_page.object.css("margin-top")) - parseInt(_page.object.css("margin-bottom"));
+    	    		    		 
     		// if the contents are taller than the device height we need vertical scrolling
     		if (contentHeight > Math.round(devHeight)) {
 	    		// set the scroll bar height to the content height
