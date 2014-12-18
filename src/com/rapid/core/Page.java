@@ -25,9 +25,15 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
 package com.rapid.core;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.Writer;
 import java.text.SimpleDateFormat;
@@ -703,13 +709,22 @@ public class Page {
 	    // update the modified by and date
 	    _modifiedBy = rapidRequest.getUserName();
 	    _modifiedDate = new Date();
+				
+		// get a buffered writer for our page with UTF-8 file format
+		BufferedWriter bw = new BufferedWriter( new OutputStreamWriter( new FileOutputStream(tempFile), "UTF-8"));
 		
-		// create a file output stream for the temp file
-		FileOutputStream fos = new FileOutputStream(tempFile.getAbsolutePath());
-		// marshall the page object into the temp file
-		rapidServlet.getMarshaller().marshal(this, fos);
+		try {
+			// marshall the page object into the temp file
+			rapidServlet.getMarshaller().marshal(this, bw);
+		} catch (JAXBException ex) {
+			// close the file writer
+		    bw.close();
+		    // re throw the exception
+		    throw ex;
+		}
+
 		// close the file writer
-	    fos.close();
+	    bw.close();
 	    	        	    	    	    	 	 		   	 	
 	 	// copy the tempFile to the newFile
 	    Files.copyFile(tempFile, newFile);
@@ -1378,14 +1393,34 @@ public class Page {
 		
 		// get the unmarshaller from the context
 		Unmarshaller unmarshaller = (Unmarshaller) servletContext.getAttribute("unmarshaller");	
-		// unmarshall the page
-		Page page = (Page) unmarshaller.unmarshal(file);
 		
-		// log that the application was loaded
-		logger.trace("Loaded page " + page.getId() + " - " + page.getName());
+		// get a buffered reader for our page with UTF-8 file format
+		BufferedReader br = new BufferedReader( new InputStreamReader( new FileInputStream(file), "UTF-8"));
 		
-		// return it		
-		return page;
+		// try the unmarshalling
+		try {
+			
+			// unmarshall the page
+			Page page = (Page) unmarshaller.unmarshal(br);
+			
+			// log that the application was loaded
+			logger.trace("Loaded page " + page.getId() + " - " + page.getName());
+			
+			// close the buffered reader
+			br.close();
+			
+			// return the page		
+			return page;
+			
+		} catch (JAXBException ex) {
+			
+			// close the buffered reader
+			br.close();
+			
+			// re-throw
+			throw ex;
+			
+		}
 				
 	}
 		

@@ -1827,8 +1827,8 @@ function Property_logicConditions(cell, action, property, refreshHtml, refreshDi
 	
 }
 
-// this is a dialogue to refine the options available in a dropdown control
-function Property_options(cell, dropdown, property, refreshHtml, refreshDialogue) {
+// this is a dialogue to refine the options available in dropdown and list controls
+function Property_options(cell, control, property, refreshHtml, refreshDialogue) {
 	
 	// retain a reference to the dialogue (if we were passed one)
 	var dialogue = refreshDialogue;
@@ -1841,12 +1841,12 @@ function Property_options(cell, dropdown, property, refreshHtml, refreshDialogue
 	
 	var options = [];
 	// set the value if it exists
-	if (dropdown.options) options = dropdown.options;
+	if (control.options) options = control.options;
 	// make some text
 	var text = "";
 	for (var i = 0; i < options.length; i++) {
 		text += options[i].text;
-		if (dropdown.codes) text += " (" + options[i].value + ")";	
+		if (control.codes) text += " (" + options[i].value + ")";	
 		if (i < options.length - 1) text += ",";
 	}
 	// add a descrption if nothing yet
@@ -1855,23 +1855,23 @@ function Property_options(cell, dropdown, property, refreshHtml, refreshDialogue
 	cell.text(text);
 	
 	// add a heading
-	table.append("<tr><td><b>Text</b></td>" + (dropdown.codes ? "<td colspan='2'><b>Code</b></td>" : "") + "</tr>");
+	table.append("<tr><td><b>Text</b></td>" + (control.codes ? "<td colspan='2'><b>Code</b></td>" : "") + "</tr>");
 	
 	// show options
 	for (var i in options) {
 		// add the line
-		table.append("<tr><td style='padding-left:0px'><input class='text' value='" + options[i].text + "' /></td>" + (dropdown.codes ? "<td style='padding-left:0px'><input class='value' value='" + options[i].value + "' /></td>" : "") + "<td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
+		table.append("<tr><td style='padding-left:0px'><input class='text' value='" + options[i].text + "' /></td>" + (control.codes ? "<td style='padding-left:0px'><input class='value' value='" + options[i].value + "' /></td>" : "") + "<td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
 						
 		// find the text
 		var textEdit = table.find("input.text").last();
 		// add a listener
-		addListener( textEdit.keyup( {dropdown : dropdown, options: options}, function(ev) {
+		addListener( textEdit.keyup( {control : control, options: options}, function(ev) {
 			// get the input
 			var input = $(ev.target);
 			// update text
 			ev.data.options[input.parent().parent().index()-1].text = input.val();
 			// update html if top row
-			if (input.parent().parent().index() == 1) rebuildHtml(dropdown);
+			if (input.parent().parent().index() == 1 || control.type != "dropdown") rebuildHtml(control);
 		}));
 		
 		// find the code
@@ -1897,41 +1897,41 @@ function Property_options(cell, dropdown, property, refreshHtml, refreshDialogue
 		// remove row
 		delImage.parent().parent().remove();
 		// update html if top row
-		if (delImage.parent().index() == 1) rebuildHtml(dropdown);
+		if (delImage.parent().index() == 1) rebuildHtml(control);
 	}));
 		
 	// add reorder listeners
 	addReorder(options, table.find("img.reorder"), function() { 
 		// refresh the html and regenerate the mappings
-		rebuildHtml(dropdown);
+		rebuildHtml(control);
 		// refresh the property
-		Property_options(cell, dropdown, {key: "options"}, refreshHtml, dialogue); 
+		Property_options(cell, control, {key: "options"}, refreshHtml, dialogue); 
 	});
 		
 	// have an add row
-	table.append("<tr><td colspan='" + (dropdown.codes ? "3" : "2") + "'><a href='#'>add...</a></td></tr>");
+	table.append("<tr><td colspan='" + (control.codes ? "3" : "2") + "'><a href='#'>add...</a></td></tr>");
 	// get a reference to the add
 	var add = table.find("tr").last().children().last().children().last();
 	// add a listener
-	addListener( add.click( {cell: cell, dropdown: dropdown, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
+	addListener( add.click( {cell: cell, control: control, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
 		// add a blank option
-		ev.data.dropdown.options.push({value: "", text: ""});
+		ev.data.control.options.push({value: "", text: ""});
 		// refresh
-		Property_options(ev.data.cell, ev.data.dropdown, {key: "options"}, ev.data.refreshHtml, ev.data.dialogue);		
+		Property_options(ev.data.cell, ev.data.control, {key: "options"}, ev.data.refreshHtml, ev.data.dialogue);		
 	}));
 	
 	// check we don't have a checkbox already
 	if (!dialogue.find("input[type=checkbox]")[0]) {
 		// add checkbox
-		dialogue.append("Use codes <input type='checkbox' " + (dropdown.codes ? "checked='checked'" : "") + " />");
+		dialogue.append("Use codes <input type='checkbox' " + (control.codes ? "checked='checked'" : "") + " />");
 		// get a reference
 		var optionsCodes = dialogue.children().last();
 		// add a listener
-		addListener( optionsCodes.change( {cell: cell, dropdown: dropdown, options: options, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
+		addListener( optionsCodes.change( {cell: cell, control: control, options: options, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
 			// get the value
-			dropdown.codes = ev.target.checked;
+			control.codes = ev.target.checked;
 			// refresh
-			Property_options(ev.data.cell, ev.data.dropdown, {key: "options"}, ev.data.refreshHtml, ev.data.dialogue);
+			Property_options(ev.data.cell, ev.data.control, {key: "options"}, ev.data.refreshHtml, ev.data.dialogue);
 		
 		}));
 		
@@ -1939,7 +1939,7 @@ function Property_options(cell, dropdown, property, refreshHtml, refreshDialogue
 	
 }
 
-//this is a dialogue to refine the options available in a dropdown control
+//this is a dialogue to refine the options available in a grid control
 function Property_gridColumns(cell, grid, property, refreshHtml, refreshDialogue) {
 	
 	// retain a reference to the dialogue (if we were passed one)

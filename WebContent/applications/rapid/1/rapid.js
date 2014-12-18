@@ -262,7 +262,7 @@ function Init_pagePanel(id, details) {
   
   // request the page		
   $.ajax({
-     	url: "~?a=" + details.appId + "&v=" + details.version + "&p=" + details.pageId,
+     	url: "~?a=" + details.appId + "&v=" + details.version + "&p=" + details.pageId + "&action=dialogue",  // reuse the design link hiding from dialogues
      	type: "GET",          
          data: null,        
          error: function(server, status, error) { 
@@ -282,12 +282,18 @@ function Init_pagePanel(id, details) {
              	for (var i in items) {
              		// check for a script node
              		switch (items[i].nodeName) {
-             		case "#text" : case "TITLE" : // ignore these types
+             		case "#text" : case "TITLE" : case "META" : // ignore these types
              		break;
              		case "SCRIPT" :
              			if (items[i].innerHTML) {
-             				script += items[i].outerHTML;
+             				script += items[i].outerHTML; // ignore SCRIPT links
              			}
+             		break;
+             		case "LINK" :
+             			var href = $(items[i].outerHTML).attr("href");
+             			if (!$("head").children("[href='" + href + "']")[0]) { // ignore if link already present in document head
+             				bodyHtml += items[i].outerHTML;
+             			}           			
              		break;
              		default :
              			if (items[i].outerHTML) {
