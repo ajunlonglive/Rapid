@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<controls xmlVersion="1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/control.xsd">
+
+<!-- 
+
+Copyright (C) 2014 - Gareth Edwards / Rapid Information Systems
+
+gareth.edwards@rapid-is.co.uk
+
+
+This file is part of the Rapid Application Platform
+
+RapidSOA is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version. The terms require you to include
+the original copyright, and the license notice in all redistributions.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
+
+ -->
+
+	<control>
+	    
+	    <type>list</type>	
+	    <name>List</name>	   
+	    <image>images/penknife_24x24.png</image>    
+	    
+	    <addToNewApplications>true</addToNewApplications>
+	        
+	    <canUserAdd>true</canUserAdd>
+	    <canUserMove>true</canUserMove>
+	    <canUserAddPeers>true</canUserAddPeers>
+	    <canValidate>true</canValidate>
+	    <validationProperty>value</validationProperty>
+	    
+	    <properties>
+	        
+	        <property>
+	            <key>name</key>
+	            <name>Name</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>	            
+	        </property>	
+	        
+	        <property>
+	            <key>codes</key>
+	            <name>Codes</name>
+	            <visible>false</visible>
+	        </property> 
+	                   
+	        <property>
+	            <key>options</key>
+	            <name>Options</name>
+	            <setConstructValueFunction>return [{value:"", text:"Value 1"}, {value:"", text:"Value 2"}, {value:"", text:"Value 3"}];</setConstructValueFunction>
+	            <changeValueJavaScript>options</changeValueJavaScript>	            
+	        </property>
+	        
+	        <property>
+	            <key>value</key>
+	            <name>Initial value</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>	            
+	        </property>	
+	        	        
+	        <property>
+	            <key>header</key>
+	            <name>Header text</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>	            
+	        </property>	
+	        
+	        <property>
+	            <key>slide</key>
+	            <name>Slide down</name>
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>	
+	        </property> 
+	        
+	        <property>
+	            <key>multi</key>
+	            <name>Multi select</name>
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>	
+	        </property> 
+	              
+	    </properties>
+	    
+	    <resources>
+	        <resource>
+	            <type>css</type>
+	            <contents>
+	                <![CDATA[
+ul.list {
+	list-style-type: none;
+	display: inline-block;
+    padding: 0px;
+    margin: 0px;
+}	    
+
+li.listOption {
+	cursor: pointer;
+}           
+
+span.listSelectedCount {
+	float: right;
+} 
+	                ]]>
+	            </contents>
+	        </resource>
+	    </resources>
+	    
+	    <getHtmlFunction>
+	        <![CDATA[
+// assume we have no initial values	
+var values = [];
+// if an initial value was given split on comma
+if (this.value) values = this.value.split(",");
+// assume there is no header text
+var headerText = "";
+// assume there are no options
+var options = "";
+// assume no entries have been selected
+var selectedCount = 0;
+// check we have options
+if (this.options) {
+	// if the options are a string turn them in an array
+	if ($.type(this.options) == "string") this.options = JSON.parse(this.options);
+	// loop the options
+	for (var i in this.options) {
+		// get the value
+		var value = this.codes ? this.options[i].value : this.options[i].text;
+		// assume not selected
+		var selected = false;
+		// loop the initial values
+		for (var j in values) {
+			if (values[j].trim() == value.trim()) {
+				selected = true;
+				headerText += this.options[i].text + ", ";
+				selectedCount ++;
+			}
+		}
+		// append the options
+		options += "<li class='listOption" + (selected ? " listSelected" : "") + "'" + (this.slide ? " style='display:none'" : "") + " data-value='" + value + "'>" + this.options[i].text + "</li>";
+	}
+}
+// check we have a header or can slide
+if (this.header || this.slide) {
+	if (this.slide && headerText) {
+		headerText = headerText.substr(0, headerText.length - 2);
+		options = "<span class='listSelectedCount'>" + selectedCount + "</span><li class='listHeader" + (this.slide ? "" : " listVisible") + "'>" + headerText + "</li>" + options;
+	} else {
+		options = "<span class='listSelectedCount' style='display:none;'></span><li class='listHeader" + (this.slide ? "" : " listVisible") + "'>" + this.header + "</li>" + options;
+	}
+}
+// place into the list
+var html = "<ul id='" + this.id + "' class='list" + getStyleClasses(this) + "'>" + options + "</ul>";
+// return
+return html;
+	        ]]>
+	    </getHtmlFunction> 
+	    
+	    <updateChildObjects>true</updateChildObjects>
+	    
+	    <getDetailsFunction>
+	        <![CDATA[
+return {header: this.header, slide: this.slide, multi:this.multi};	        
+	        ]]>
+	    </getDetailsFunction>
+	    	    	    
+	    <setDataJavaScript>
+	        <![CDATA[
+if (data != null && data !== undefined) {
+	var list = $("#" + id);
+	data = makeDataObject(data, field);
+	if (data.rows && data.fields) {
+		var hide = list.children("li.listOption").first().is(":hidden");
+		for (var i in data.rows) {
+			var row = data.rows[i];		
+			var text = "";
+			var value = "";
+			if (data.fields) {
+				for (var j in data.fields) {
+					if (data.fields[j].toLowerCase() == "text") text = data.rows[i][j];
+					if (data.fields[j].toLowerCase() == "value") value = data.rows[i][j];
+				}
+			}
+			if (!text) text = row[0];
+			if (!value && row[1]) value = row[1];
+			list.append("<li class='listOption'" + (hide ? " style='display:none;'" : "") + " data-value='" + value + "'>" + text + "</li>");
+			list.children().last().click( details, function(ev) {
+				if (!ev.data.multi) list.children().removeClass("listSelected");
+				$(ev.target).toggleClass("listSelected");
+				if (ev.data.slide) {
+					var text = "";
+					var header = list.children("li.listHeader");
+					var count = 0;
+					var selectedCount = list.children("span.listSelectedCount");
+					list.children("li.listSelected").each( function() { 
+							text += $(this).html() + ", "; 
+							count ++;
+					});				
+					if (count > 0) {
+						text = text.substr(0, text.length - 2);
+						selectedCount.text(count).show();
+					} else {
+						text = ev.data.header;
+						selectedCount.hide();
+					}					
+					if (!details.multi) selectedCount.hide();									
+					header.html(text);		
+				}
+				list.trigger("change");
+			});
+		}
+	} 
+}
+        
+	        ]]>
+	    </setDataJavaScript>
+	    	    
+	    <events>
+	        <event>
+	            <type>change</type>
+	            <name>Change</name>
+	        </event>
+	    </events>
+	    	    	    
+	    <styles>
+	        <style>
+	            <name>List</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id;
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	        <style>
+	            <name>List header</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id + " li.listHeader";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	        <style>
+	            <name>List options</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id + " li.listOption";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	        <style>
+	            <name>Selected options</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id + " li.listSelected";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	        <style>
+	            <name>Selected count</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id + " span.listSelectedCount";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	    </styles>
+	    
+	    <initJavaScript>
+	        <![CDATA[
+var list = $("#" + id); 	        
+if (details.slide) {
+	var header = list.children("li.listHeader");
+	var selectedCount = list.children("span.listSelectedCount");
+	header.click( function(ev) {
+		header.toggleClass("listVisible");
+		list.children("li.listOption").slideToggle();  		
+	});	
+}		
+list.children("li.listOption").click( details, function(ev) {
+	if (!ev.data.multi) list.children().removeClass("listSelected");
+	$(ev.target).toggleClass("listSelected");
+	if (ev.data.slide) {
+		var text = "";
+		var count = 0;
+		list.children("li.listSelected").each( function() { 
+				text += $(this).html() + ", "; 
+				count ++;
+		});
+		if (count > 0) {
+			text = text.substr(0, text.length - 2);
+			selectedCount.text(count).show();
+		} else {
+			text = ev.data.header;
+			selectedCount.hide();
+		}
+		header.html(text);	
+	}
+	list.trigger("change");	
+});
+	        
+	        ]]>
+	    </initJavaScript>
+	    
+		<runtimeProperties>
+	        <runtimeProperty>
+	   	        <type>value</type>
+	   	        <name>Selected values</name>
+	   	        <getPropertyFunction>
+	   	            <![CDATA[
+var value = "";
+$("#" + id).children("li.listSelected").each( function() { 
+	value += $(this).attr("data-value") + ","; 
+});	        
+if (value) {
+	return value.substring(0, value.length - 1);
+} else {
+	return null;
+}	   	            
+	   	            ]]>
+	   	        </getPropertyFunction>
+	   	        <setPropertyJavaScript>
+			        <![CDATA[
+var data = makeDataObject(data);			        
+var values = [];
+if (data.rows[0][0]) {
+	values = data.rows[0][0].split(",");
+} else {
+	values = null;
+}
+var list = $("#" + id);
+var header = list.children("li.listHeader");
+var selectedCount = list.children("span.listSelectedCount");
+if (!details.multi || values == null) list.children().removeClass("listSelected");
+if (values) {	
+	var headerText = "";
+	var selectCount = 0;
+	list.children("li.listOption").each( function() {		
+		var option = $(this);
+		var match = false;
+		for (var i in values) {			
+			if (values[i].trim() == option.attr("data-value")) {
+				option.addClass("listSelected");
+				headerText += option.text() + ", ";
+				selectCount ++;
+				match = true;
+				break;
+			} 
+			option.removeClass("listSelected");
+		}
+	});
+	if (selectCount > 0) {
+		headerText = headerText.substring(0,headerText.length - 2);			
+		if (details.multi && details.slide) selectedCount.text(selectCount).show();
+	} else {			
+		headerText = details.header;
+		selectedCount.hide();
+	}
+	header.html(headerText);	
+} else {
+	header.html(details.header);
+	selectedCount.hide();
+}
+				    ]]>	  	   	            
+	   	        </setPropertyJavaScript>	   	        
+	   	    </runtimeProperty>
+	    </runtimeProperties>
+	    	    
+	</control>
+</controls>

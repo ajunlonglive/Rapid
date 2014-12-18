@@ -74,8 +74,11 @@ function showValidation(control) {
 	var validationPanel = $(".validationPanelDiv");	
 	// empty it
 	validationPanel.html("");	
+	// get the control class
+	var controlClass = _controlTypes[control.type];
 	// only if a control and it can validate
-	if (control && _controlTypes[control.type].canValidate) {
+	if (control && controlClass && controlClass.canValidate) {
+		
 		// create a validation object if we don't have one
 		if (!control.validation) {
 			control.validation = {
@@ -86,6 +89,7 @@ function showValidation(control) {
 				javaScript: null
 			};
 		}
+		
 		// retain a reference to the validation object
 		var validation = control.validation;
 		// retrieve the type
@@ -141,24 +145,28 @@ function showValidation(control) {
 			}
 			// message is in the javascript so no need for it here (can null check there too)
 			if (type != "javascript") {
+				
 				// add a message box
 				validationTable.append("<tr><td>Message</td><td></td></tr>");
 				// get a reference to  the cell
 				var cell = validationTable.children().last().children().last();
 				// add a bigtext property listener	
 				Property_bigtext(cell, validation, {key: "message"});
+				
+				// add a allowNulls checkbox
+				validationTable.append("<tr><td>Pass if no value</td><td></td></tr>");
+				// get a reference to  the cell
+				cell = validationTable.children().last().children().last();
+				// add a checkbox property listener	
+				Property_checkbox(cell, validation, {key: "allowNulls"});
+				
 				// add a allowNulls checkbox
 				validationTable.append("<tr><td>Pass if hidden</td><td></td></tr>");
 				// get a reference to  the cell
 				cell = validationTable.children().last().children().last();
 				// add a checkbox property listener	
 				Property_checkbox(cell, validation, {key: "passHidden"});
-				// add a allowNulls checkbox
-				validationTable.append("<tr><td>Pass if empty</td><td></td></tr>");
-				// get a reference to  the cell
-				cell = validationTable.children().last().children().last();
-				// add a checkbox property listener	
-				Property_checkbox(cell, validation, {key: "allowNulls"});
+				
 			}
 			
 		}

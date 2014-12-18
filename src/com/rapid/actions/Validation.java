@@ -100,7 +100,7 @@ public class Validation extends Action {
 	// methods
 	
 	@Override
-	public String getJavaScript(Application application, Page page, Control control, JSONObject jsonDetails) throws Exception {
+	public String getJavaScript(RapidHttpServlet rapidServlet, Application application, Page page, Control control, JSONObject jsonDetails) throws Exception {
 		
 		String js = "";
 						
@@ -109,19 +109,24 @@ public class Validation extends Action {
 			// the validations is a JavaScript array
 			JSONArray jsonValidations = new JSONArray();
 			// loop the controls (which are actually controlIds)
-			for (String controlId : _controls) {
+			for (String controlId : _controls) {				
 				// find the control proper
-				Control validateControl = page.getControl(controlId);
+				Control validateControl = page.getControl(controlId);								
 				// check we have a control
 				if (validateControl != null) {
 					// get the control validation
 					com.rapid.core.Validation controlValidation = validateControl.getValidation();
 					// check there is control validation
 					if (controlValidation != null) {
-						// check a type has been specified
-						if (!"".equals(controlValidation.getType())) {
+						
+						// find the control class
+						JSONObject jsonControl = rapidServlet.getJsonControl(validateControl.getType());
+						
+						// check a type has been specified and we could find it
+						if (jsonControl != null && !"".equals(controlValidation.getType())) {
 							// this method can't throw so catch here					
 							try {
+								
 								// build the validations object
 								JSONObject jsonValidation = new JSONObject();
 							
@@ -130,6 +135,7 @@ public class Validation extends Action {
 								jsonValidation.put("controlType", validateControl.getType());
 								jsonValidation.put("validationType", controlValidation.getType());
 								jsonValidation.put("message", controlValidation.getMessage());
+								jsonValidation.put("validationProperty", jsonControl.opt("validationProperty"));
 								if (!"".equals(controlValidation.getRegEx())) jsonValidation.put("regEx", controlValidation.getRegEx());
 								if (!"".equals(controlValidation.getJavaScript())) jsonValidation.put("javaScript", controlValidation.getJavaScript());
 								if (controlValidation.getPassHidden()) jsonValidation.put("passHidden", true);
@@ -150,14 +156,14 @@ public class Validation extends Action {
 			
 			// insert pass actions
 			if (_passActions != null) {
-				for (Action action : _passActions) js += "    " + action.getJavaScript(application, page, control, jsonDetails) + "\n";
+				for (Action action : _passActions) js += "    " + action.getJavaScript(rapidServlet, application, page, control, jsonDetails) + "\n";
 			}
 			
 			js += "  } else {\n";
 			
 			// insert fail actions
 			if (_failActions != null) {
-				for (Action action : _failActions) js += "    " + action.getJavaScript(application, page, control, jsonDetails) + "\n";
+				for (Action action : _failActions) js += "    " + action.getJavaScript(rapidServlet, application, page, control, jsonDetails) + "\n";
 			}
 			
 			// check whether to stop further actions

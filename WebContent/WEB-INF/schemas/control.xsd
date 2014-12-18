@@ -133,8 +133,6 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 								minOccurs="0" />
 							<xs:element name="canUserAddPeers" type="xs:boolean"
 								minOccurs="0" />
-							<xs:element name="canValidate" type="xs:boolean"
-								minOccurs="0" />
 							<xs:element name="canBeUsedFromOtherPages" type="xs:boolean"
 								minOccurs="0">
 								<xs:annotation>
@@ -144,6 +142,20 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 									</xs:documentation>
 								</xs:annotation>
 							</xs:element>
+							<xs:element name="canValidate" type="xs:boolean"
+								minOccurs="0" />	
+							<xs:element name="validationProperty" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>By default the getData method is used to retrieve the value for validation.
+									Specify a property type with a getPropertyFunction to use that instead
+									</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="1" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>						
 							<xs:element name="properties" minOccurs="0">
 								<xs:complexType>
 									<xs:sequence>

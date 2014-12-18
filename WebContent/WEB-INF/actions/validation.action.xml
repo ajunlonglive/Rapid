@@ -80,26 +80,37 @@ function Action_validation(ev, validations, showMessages) {
 		var validationControl = $("#" + validation.controlId);
 		if (validationControl[0]) {
 			if (!validationControl.is(":hidden") || !validation.passHidden) {
-				var value = window["getData_" + validation.controlType](ev, validation.controlId, validation.field, validation.details);
-				if (validation.validationType == "javascript") {						
-					var validationFunction = new Function(["ev","id","value"], validation.javaScript);
-					var failMessage = validationFunction.apply(this, [ev,validation.controlId,value]);
-					if (failMessage != null && failMessage !== false && failMessage !== undefined) {
-						if (showMessages) showControlValidation(validation.controlId, failMessage);
-						valid = false;
-					} else {
-						if (showMessages) hideControlValidation(validation.controlId);
-					}
+				var getValueFunction = null;
+				if (validation.validationProperty) {
+					getValueFunction = window["getProperty_" + validation.controlType + "_" + validation.validationProperty];
 				} else {
-					if ((value && value.match(new RegExp(validation.regEx)))||(!value && validation.allowNulls)) {
-						// passed
-						if (showMessages) hideControlValidation(validation.controlId);				
+					getValueFunction = window["getData_" + validation.controlType];
+				}
+				if (getValueFunction) {
+					var value = getValueFunction(ev, validation.controlId, validation.field, validation.details);
+					if (validation.validationType == "javascript") {						
+						var validationFunction = new Function(["ev","id","value"], validation.javaScript);
+						var failMessage = validationFunction.apply(this, [ev,validation.controlId,value]);
+						if (failMessage != null && failMessage !== false && failMessage !== undefined) {
+							if (showMessages) showControlValidation(validation.controlId, failMessage);
+							valid = false;
+						} else {
+							if (showMessages) hideControlValidation(validation.controlId);
+						}
 					} else {
-						// failed, and there is a message to show
-						if (showMessages) showControlValidation(validation.controlId, validation.message);
-						valid = false;					
+						if ((value && value.match(new RegExp(validation.regEx)))||(!value && validation.allowNulls)) {
+							// passed
+							if (showMessages) hideControlValidation(validation.controlId);				
+						} else {
+							// failed, and there is a message to show
+							if (showMessages) showControlValidation(validation.controlId, validation.message);
+							valid = false;					
+						}	
 					}	
-				}	
+				} else {
+					if (showMessages) showControlValidation(validation.controlId, validation.message);
+					valid = false;
+				}
 			}
 		}
 	}	

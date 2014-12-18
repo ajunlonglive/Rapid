@@ -117,7 +117,7 @@ public class Datacopy extends Action {
 	// overrides
 	
 	@Override
-	public String getJavaScript(Application application, Page page, Control control, JSONObject jsonDetails) {
+	public String getJavaScript(RapidHttpServlet rapidServlet, Application application, Page page, Control control, JSONObject jsonDetails) {
 		
 		// the javascript we're making
 		String js = "";

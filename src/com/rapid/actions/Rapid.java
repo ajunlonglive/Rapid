@@ -266,7 +266,7 @@ public class Rapid extends Action {
 	}
 	
 	@Override
-	public String getJavaScript(Application application, Page page, Control control, JSONObject jsonDetails) throws Exception {
+	public String getJavaScript(RapidHttpServlet rapidServlet, Application application, Page page, Control control, JSONObject jsonDetails) throws Exception {
 		
 		// the javascript we're about to build
 		String js = "";
@@ -277,7 +277,7 @@ public class Rapid extends Action {
 		if (_successActions != null) {
 			if (_successActions.size() > 0) {
 				for (Action action : _successActions) {
-					js += "    " + action.getJavaScript(application, page, control, jsonDetails).trim().replace("\n", "\n    ") + "\n";
+					js += "    " + action.getJavaScript(rapidServlet, application, page, control, jsonDetails).trim().replace("\n", "\n    ") + "\n";
 				}				
 			}
 		}
@@ -292,7 +292,7 @@ public class Rapid extends Action {
 			if (_errorActions.size() > 0) {
 				gotErrorHandler = true;
 				for (Action action : _errorActions) {
-					js += "    " + action.getJavaScript(application, page, control, jsonDetails).trim().replace("\n", "\n    ") + "\n";
+					js += "    " + action.getJavaScript(rapidServlet, application, page, control, jsonDetails).trim().replace("\n", "\n    ") + "\n";
 				}				
 			}
 		}

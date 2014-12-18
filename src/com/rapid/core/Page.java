@@ -240,11 +240,11 @@ public class Page {
 	}
 	
 	// these two methods have different names to avoid being marshelled to the .xml file by JAXB
-	public String getHtmlHeadCached(Application application) throws JSONException {		
+	public String getHtmlHeadCached(RapidHttpServlet rapidServlet, Application application) throws JSONException {		
 		// check whether the page has been cached yet
 		if (_cachedStartHtml == null) {
 			// generate the page start html
-			_cachedStartHtml = getHtmlHead(application, false, null);																		
+			_cachedStartHtml = getHtmlHead(rapidServlet, application, false, null);																		
 			// have the page cache the generated html for next time
 			cacheHtmlHead(_cachedStartHtml);
 		}				
@@ -860,7 +860,7 @@ public class Page {
     	
     }
           
-    private void getEventJavaScriptFunction(StringBuilder stringBuilder, Application application, Control control, Event event) {
+    private void getEventJavaScriptFunction(RapidHttpServlet rapidServlet, StringBuilder stringBuilder, Application application, Control control, Event event) {
     	// check actions are initialised
 		if (event.getActions() != null) {
 			// check there are some to loop
@@ -900,7 +900,7 @@ public class Page {
 					
 					try {						
 						// get the action client-side java script from the action object (it's generated there as it can contain values stored in the object on the server side)
-						String actionJavaScript = action.getJavaScript(application, this, control, null);
+						String actionJavaScript = action.getJavaScript(rapidServlet, application, this, control, null);
 						// if non null
 						if (actionJavaScript != null) {
 							// trim it to avoid tabs and line breaks that might sneak in
@@ -952,7 +952,7 @@ public class Page {
     }
             
     // build the event handling page JavaScript iteratively
-    private void getEventHandlersJavaScript(StringBuilder stringBuilder, Application application, List<Control> controls) throws JSONException {
+    private void getEventHandlersJavaScript(RapidHttpServlet rapidServlet, StringBuilder stringBuilder, Application application, List<Control> controls) throws JSONException {
     	// check there are some controls    			
     	if (controls != null) {    		
 			// if we're at the root of the page
@@ -960,23 +960,23 @@ public class Page {
     			// check for page events
     			if (_events != null) {
     				// loop page events and get js functions
-        			for (Event event : _events) getEventJavaScriptFunction(stringBuilder, application, null, event);        			
+        			for (Event event : _events) getEventJavaScriptFunction(rapidServlet, stringBuilder, application, null, event);        			
     			}    			
     		}
     		for (Control control : controls) {
     			// check event actions
     			if (control.getEvents() != null) {
     				// loop page events and get js functions
-    				for (Event event : control.getEvents()) getEventJavaScriptFunction(stringBuilder, application, control, event);    					    				
+    				for (Event event : control.getEvents()) getEventJavaScriptFunction(rapidServlet, stringBuilder, application, control, event);    					    				
     			}
     			// now call iteratively for child controls (of this [child] control, etc.)
-    			if (control.getChildControls() != null) getEventHandlersJavaScript(stringBuilder, application, control.getChildControls());     				
+    			if (control.getChildControls() != null) getEventHandlersJavaScript(rapidServlet, stringBuilder, application, control.getChildControls());     				
     		}    		 		
     	}    	
     }
 	
     // this private method produces the head of the page which is often cached, if resourcesOnly is true only page resources are included which is used when sending no permission
-	private String getHtmlHead(Application application, boolean includeJSandCSS, String userName) throws JSONException {
+	private String getHtmlHead(RapidHttpServlet rapidServlet, Application application, boolean includeJSandCSS, String userName) throws JSONException {
     	
     	StringBuilder stringBuilder = new StringBuilder();
     	    												
@@ -1093,7 +1093,7 @@ public class Page {
 				for (Action action : pageActions) {
 					try {
 						// look for any page javascript that this action may have
-						String actionPageJavaScript = action.getPageJavaScript(application, this, null);
+						String actionPageJavaScript = action.getPageJavaScript(rapidServlet, application, this, null);
 						// print it here if so
 						if (actionPageJavaScript != null) jsStringBuilder.append(actionPageJavaScript.trim() + "\n\n");
 						// if this action adds redundancy to any others 
@@ -1117,7 +1117,7 @@ public class Page {
 				} // action loop		
 				
 				// add event handlers, staring at the root controls
-				getEventHandlersJavaScript(jsStringBuilder, application, _controls);
+				getEventHandlersJavaScript(rapidServlet, jsStringBuilder, application, _controls);
 			}
 			
 			// check the application status
@@ -1192,10 +1192,10 @@ public class Page {
 	    	// check whether or not we rebuild
 	    	if (rebuildPages) {
 	    		// get the cached head html
-	    		writer.write(getHtmlHead(application, true, user.getName()));
+	    		writer.write(getHtmlHead(rapidServlet, application, true, user.getName()));
 	    	} else {
 	    		// get the cached head html
-	    		writer.write(getHtmlHeadCached(application));
+	    		writer.write(getHtmlHeadCached(rapidServlet, application));
 	    	}
 					
 	    	writer.write("  <body id='" + _id + "' style='visibility:hidden;'>\n");
@@ -1275,7 +1275,7 @@ public class Page {
 		} else {
 			
 			// write the head html without the JavaScript and CSS (index.css is substituted for us)
-			writer.write(getHtmlHead(application, false, null));
+			writer.write(getHtmlHead(rapidServlet, application, false, null));
 						
 			// open the body
 			writer.write("  <body>\n");
