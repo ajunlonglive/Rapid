@@ -752,10 +752,10 @@ function getDataOptions(selectId, ignoreId, input) {
 			// get the control class
 			var controlClass = _controlTypes[control.type];
 			// if we're not ignoring the control and it has a name
-			if (control.id != ignoreId && control.name) {
+			if (controlClass && control.id != ignoreId && control.name) {
 				
 				// if it has a get data function (for input), or a setDataJavaScript
-				if ((input && controlClass.getDataFunction) || controlClass.setDataJavaScript) {
+				if ((input && controlClass.getDataFunction) || (!input && controlClass.setDataJavaScript)) {
 					if (control.id == selectId && !gotSelected) {
 						options += "<option value='" + control.id + "' selected='selected'>" + control.name + "</option>";
 						gotSelected = true;
@@ -3218,12 +3218,15 @@ function windowResize(ev) {
     		var scrollV = false;
     		// assume no h scrolling
     		var scrollH = false;
-    		    		
-    		// get the page object height by it's contents less it's margin left and right margins
-    		var contentHeight = _page.object[0].scrollHeight - parseInt(_page.object.css("margin-left")) - parseInt(_page.object.css("margin-right"));
-    		// get the page object width by it's contents less it's top and bottom margins
-    		var contentWidth = _page.object[0].scrollWidth - parseInt(_page.object.css("margin-top")) - parseInt(_page.object.css("margin-bottom"));
-    	    		    		 
+    		
+    		// get the iframe body
+    		var iframeBody = $(_pageIframe[0].contentDocument).find("body");
+    		
+    		// measure the height of the iframe body contents
+    		var contentHeight = iframeBody[0].scrollHeight - (parseInt(iframeBody.css("margin-top")) + parseInt(iframeBody.css("margin-bottom")) + parseInt(iframeBody.css("padding-top")) + parseInt(iframeBody.css("padding-bottom")));
+    		// measure the width of the iframe body contents
+    		var contentWidth = iframeBody[0].scrollWidth - (parseInt(iframeBody.css("margin-left")) + parseInt(iframeBody.css("margin-right")) + parseInt(iframeBody.css("padding-left")) + parseInt(iframeBody.css("padding-right")));
+    		    		    		    	
     		// if the contents are taller than the device height we need vertical scrolling
     		if (contentHeight > Math.round(devHeight)) {
 	    		// set the scroll bar height to the content height

@@ -5,12 +5,12 @@
             <childControls>
                 <properties>
                     <entry>
-                        <key>classes</key>
-                        <value>[]</value>
-                    </entry>
-                    <entry>
                         <key>id</key>
                         <value>P1_C3_</value>
+                    </entry>
+                    <entry>
+                        <key>classes</key>
+                        <value>[]</value>
                     </entry>
                     <entry>
                         <key>text</key>
@@ -71,12 +71,12 @@
             <childControls>
                 <properties>
                     <entry>
-                        <key>id</key>
-                        <value>P1_C6_</value>
-                    </entry>
-                    <entry>
                         <key>classes</key>
                         <value>[]</value>
+                    </entry>
+                    <entry>
+                        <key>id</key>
+                        <value>P1_C6_</value>
                     </entry>
                     <entry>
                         <key>text</key>
@@ -181,12 +181,12 @@
                     </events>
                     <properties>
                         <entry>
-                            <key>id</key>
-                            <value>P1_C11_</value>
-                        </entry>
-                        <entry>
                             <key>classes</key>
                             <value>[]</value>
+                        </entry>
+                        <entry>
+                            <key>id</key>
+                            <value>P1_C11_</value>
                         </entry>
                         <entry>
                             <key>maxLength</key>
@@ -262,12 +262,12 @@
             </childControls>
             <properties>
                 <entry>
-                    <key>id</key>
-                    <value>P1_C5_</value>
-                </entry>
-                <entry>
                     <key>classes</key>
                     <value>[]</value>
+                </entry>
+                <entry>
+                    <key>id</key>
+                    <value>P1_C5_</value>
                 </entry>
                 <entry>
                     <key>name</key>
@@ -473,12 +473,12 @@
         </childControls>
         <properties>
             <entry>
-                <key>id</key>
-                <value>P1_C1_</value>
-            </entry>
-            <entry>
                 <key>classes</key>
                 <value>[]</value>
+            </entry>
+            <entry>
+                <key>id</key>
+                <value>P1_C1_</value>
             </entry>
             <entry>
                 <key>name</key>
@@ -539,12 +539,12 @@
             <childControls>
                 <properties>
                     <entry>
-                        <key>id</key>
-                        <value>P1_C15_</value>
-                    </entry>
-                    <entry>
                         <key>classes</key>
                         <value>[]</value>
+                    </entry>
+                    <entry>
+                        <key>id</key>
+                        <value>P1_C15_</value>
                     </entry>
                     <entry>
                         <key>text</key>
@@ -585,12 +585,12 @@
             </childControls>
             <properties>
                 <entry>
-                    <key>id</key>
-                    <value>P1_C14_</value>
-                </entry>
-                <entry>
                     <key>classes</key>
                     <value>[]</value>
+                </entry>
+                <entry>
+                    <key>id</key>
+                    <value>P1_C14_</value>
                 </entry>
                 <entry>
                     <key>name</key>
@@ -749,7 +749,7 @@ if (target.closest(&quot;tr&quot;).index() == 0 || target.is(&quot;tbody&quot;))
                         </entry>
                         <entry>
                             <key>columns</key>
-                            <value>[{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;id&quot;,&quot;title&quot;:&quot;Id&quot;,&quot;visible&quot;:false,&quot;titleStyle&quot;:&quot;&quot;,&quot;fieldStyle&quot;:&quot;&quot;},{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;forename&quot;,&quot;title&quot;:&quot;Forename&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;padding:2px 5px 2px 10px;text-align:center;border-bottom:1px solid #aaa;&quot;,&quot;fieldStyle&quot;:&quot;padding:2px 5px 2px 10px;&quot;},{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;surname&quot;,&quot;title&quot;:&quot;Surname&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;,&quot;fieldStyle&quot;:&quot;padding:2px;&quot;},{&quot;cellFunction&quot;:&quot;var value = this.html();\nif (value) {\n  var parts = value.split(\&quot;-\&quot;);\n  if (parts.length == 3) {\n    value = parts[2] + \&quot;/\&quot; + parts[1] + \&quot;/\&quot; + parts[0];\n    this.html(value);\n  }\n}&quot;,&quot;field&quot;:&quot;birthday&quot;,&quot;title&quot;:&quot;Birthday&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;,&quot;fieldStyle&quot;:&quot;padding:2px;text-align:center;&quot;},{&quot;cellFunction&quot;:&quot;&quot;,&quot;field&quot;:&quot;gender&quot;,&quot;title&quot;:&quot;Gender&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;padding:2px 10px 2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;,&quot;fieldStyle&quot;:&quot;padding:2px 10px 2px 5px;text-align:center;&quot;}]</value>
+                            <value>[{&quot;field&quot;:&quot;id&quot;,&quot;cellFunction&quot;:&quot;&quot;,&quot;title&quot;:&quot;Id&quot;,&quot;visible&quot;:false,&quot;titleStyle&quot;:&quot;&quot;,&quot;fieldStyle&quot;:&quot;&quot;},{&quot;field&quot;:&quot;forename&quot;,&quot;cellFunction&quot;:&quot;&quot;,&quot;title&quot;:&quot;Forename&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;padding:2px 5px 2px 10px;text-align:center;border-bottom:1px solid #aaa;&quot;,&quot;fieldStyle&quot;:&quot;padding:2px 5px 2px 10px;&quot;},{&quot;field&quot;:&quot;surname&quot;,&quot;cellFunction&quot;:&quot;&quot;,&quot;title&quot;:&quot;Surname&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;,&quot;fieldStyle&quot;:&quot;padding:2px;&quot;},{&quot;field&quot;:&quot;birthday&quot;,&quot;cellFunction&quot;:&quot;var value = this.html();\nif (value) {\n  var parts = value.split(\&quot;-\&quot;);\n  if (parts.length == 3) {\n    value = parts[2] + \&quot;/\&quot; + parts[1] + \&quot;/\&quot; + parts[0];\n    this.html(value);\n  }\n}&quot;,&quot;title&quot;:&quot;Birthday&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;,&quot;fieldStyle&quot;:&quot;padding:2px;text-align:center;&quot;},{&quot;field&quot;:&quot;gender&quot;,&quot;cellFunction&quot;:&quot;&quot;,&quot;title&quot;:&quot;Gender&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;padding:2px 10px 2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;,&quot;fieldStyle&quot;:&quot;padding:2px 10px 2px 5px;text-align:center;&quot;}]</value>
                         </entry>
                         <entry>
                             <key>type</key>
@@ -817,12 +817,12 @@ if (target.closest(&quot;tr&quot;).index() == 0 || target.is(&quot;tbody&quot;))
                 </childControls>
                 <properties>
                     <entry>
-                        <key>id</key>
-                        <value>P1_C18_</value>
-                    </entry>
-                    <entry>
                         <key>classes</key>
                         <value>[]</value>
+                    </entry>
+                    <entry>
+                        <key>id</key>
+                        <value>P1_C18_</value>
                     </entry>
                     <entry>
                         <key>text</key>
@@ -882,12 +882,12 @@ if (target.closest(&quot;tr&quot;).index() == 0 || target.is(&quot;tbody&quot;))
         </childControls>
         <properties>
             <entry>
-                <key>id</key>
-                <value>P1_C13_</value>
-            </entry>
-            <entry>
                 <key>classes</key>
                 <value>[]</value>
+            </entry>
+            <entry>
+                <key>id</key>
+                <value>P1_C13_</value>
             </entry>
             <entry>
                 <key>name</key>
@@ -924,24 +924,24 @@ if (target.closest(&quot;tr&quot;).index() == 0 || target.is(&quot;tbody&quot;))
         </events>
         <properties>
             <entry>
-                <key>id</key>
-                <value>P1_C40_</value>
-            </entry>
-            <entry>
                 <key>classes</key>
                 <value>[]</value>
+            </entry>
+            <entry>
+                <key>id</key>
+                <value>P1_C40_</value>
             </entry>
             <entry>
                 <key>text</key>
                 <value>This panel only appears if the user has the &quot;Demo role 1&quot; security role</value>
             </entry>
             <entry>
-                <key>name</key>
-                <value>Role 1 panel</value>
-            </entry>
-            <entry>
                 <key>roles</key>
                 <value>[&quot;Demo role 1&quot;]</value>
+            </entry>
+            <entry>
+                <key>name</key>
+                <value>Role 1 panel</value>
             </entry>
             <entry>
                 <key>type</key>
@@ -974,24 +974,24 @@ if (target.closest(&quot;tr&quot;).index() == 0 || target.is(&quot;tbody&quot;))
         </events>
         <properties>
             <entry>
-                <key>id</key>
-                <value>P1_C41_</value>
-            </entry>
-            <entry>
                 <key>classes</key>
                 <value>[]</value>
+            </entry>
+            <entry>
+                <key>id</key>
+                <value>P1_C41_</value>
             </entry>
             <entry>
                 <key>text</key>
                 <value>This panel only appears if the user has the &quot;Demo role 2&quot; security role</value>
             </entry>
             <entry>
-                <key>name</key>
-                <value>Role 2 panel</value>
-            </entry>
-            <entry>
                 <key>roles</key>
                 <value>[&quot;Demo role 2&quot;]</value>
+            </entry>
+            <entry>
+                <key>name</key>
+                <value>Role 2 panel</value>
             </entry>
             <entry>
                 <key>type</key>
@@ -1007,63 +1007,6 @@ if (target.closest(&quot;tr&quot;).index() == 0 || target.is(&quot;tbody&quot;))
             <rules>width:200px;</rules>
             <rules>padding:10px;</rules>
         </styles>
-        <XMLVersion>1</XMLVersion>
-    </controls>
-    <controls>
-        <events>
-            <filter></filter>
-            <type>change</type>
-        </events>
-        <properties>
-            <entry>
-                <key>id</key>
-                <value>P1_C42_</value>
-            </entry>
-            <entry>
-                <key>classes</key>
-                <value>[]</value>
-            </entry>
-            <entry>
-                <key>name</key>
-                <value>Radio buttons 1</value>
-            </entry>
-            <entry>
-                <key>layout</key>
-                <value>H</value>
-            </entry>
-            <entry>
-                <key>buttons</key>
-                <value>[{&quot;value&quot;:&quot;&quot;,&quot;label&quot;:&quot;Radio button 1&quot;},{&quot;value&quot;:&quot;&quot;,&quot;label&quot;:&quot;Radio button 2&quot;}]</value>
-            </entry>
-            <entry>
-                <key>type</key>
-                <value>radiobuttons</value>
-            </entry>
-            <entry>
-                <key>buttonposition</key>
-                <value>L</value>
-            </entry>
-        </properties>
-        <styles>
-            <appliesTo>#P1_C42_</appliesTo>
-            <rules>padding:5px;</rules>
-        </styles>
-        <styles>
-            <appliesTo>#P1_C42_ input[type=radio]</appliesTo>
-            <rules>vertical-align:middle;</rules>
-        </styles>
-        <styles>
-            <appliesTo>#P1_C42_ span</appliesTo>
-            <rules>vertical-align:middle;</rules>
-        </styles>
-        <validation>
-            <allowNulls>false</allowNulls>
-            <javaScript></javaScript>
-            <message></message>
-            <passHidden>false</passHidden>
-            <regEx></regEx>
-            <type></type>
-        </validation>
         <XMLVersion>1</XMLVersion>
     </controls>
     <description></description>
@@ -1138,26 +1081,26 @@ if ($(&quot;#P1_C11_&quot;).val() || $(&quot;#P1_C12_&quot;).val()) Event_keyup_
         <filter></filter>
         <type>reusable</type>
     </events>
-    <htmlBody>&lt;table id=&quot;P1_C1_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P1_C2_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C3_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Person search&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C5_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C6_&quot; class=&quot;tabelCell&quot;&gt;Forename&lt;/td&gt;&lt;td id=&quot;P1_C7_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P1_C11_&quot; value=&quot;&quot; type=&quot;text&quot; maxlength=&quot;20&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C8_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C9_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;&lt;td id=&quot;P1_C10_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P1_C12_&quot; value=&quot;&quot; type=&quot;text&quot; maxlength=&quot;20&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;table id=&quot;P1_C13_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P1_C14_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C15_&quot; class=&quot;tabelCell&quot;&gt;Search results&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C17_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C18_&quot; class=&quot;tabelCell&quot;&gt;&lt;table id=&quot;P1_C20_&quot; class=&quot;grid&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td style=&quot;display:none;&quot;&gt;Id&lt;/td&gt;&lt;td style=&quot;padding:2px 5px 2px 10px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Forename&lt;/td&gt;&lt;td style=&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Surname&lt;/td&gt;&lt;td style=&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Birthday&lt;/td&gt;&lt;td style=&quot;padding:2px 10px 2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Gender&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;div id=&quot;P1_C23_&quot; class=&quot;panel&quot;&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;div id=&quot;P1_C40_&quot; class=&quot;panel&quot;&gt;This panel only appears if the user has the &quot;Demo role 1&quot; security role&lt;/div&gt;&lt;div id=&quot;P1_C41_&quot; class=&quot;panel&quot;&gt;This panel only appears if the user has the &quot;Demo role 2&quot; security role&lt;/div&gt;&lt;span id=&quot;P1_C42_&quot; class=&quot;radiobuttons&quot; style=&quot;display: inline;&quot;&gt;&lt;input type=&quot;radio&quot; name=&quot;P1_C42_&quot; value=&quot;Radio button 1&quot;&gt;&lt;span&gt;Radio button 1&lt;/span&gt;&lt;input type=&quot;radio&quot; name=&quot;P1_C42_&quot; value=&quot;Radio button 2&quot;&gt;&lt;span&gt;Radio button 2&lt;/span&gt;&lt;/span&gt;</htmlBody>
+    <htmlBody>&lt;table id=&quot;P1_C1_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P1_C2_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C3_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Person search&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C5_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C6_&quot; class=&quot;tabelCell&quot;&gt;Forename&lt;/td&gt;&lt;td id=&quot;P1_C7_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P1_C11_&quot; value=&quot;&quot; type=&quot;text&quot; maxlength=&quot;20&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C8_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C9_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;&lt;td id=&quot;P1_C10_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P1_C12_&quot; value=&quot;&quot; type=&quot;text&quot; maxlength=&quot;20&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;table id=&quot;P1_C13_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P1_C14_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C15_&quot; class=&quot;tabelCell&quot;&gt;Search results&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C17_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C18_&quot; class=&quot;tabelCell&quot;&gt;&lt;table id=&quot;P1_C20_&quot; class=&quot;grid&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td style=&quot;display:none;&quot;&gt;Id&lt;/td&gt;&lt;td style=&quot;padding:2px 5px 2px 10px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Forename&lt;/td&gt;&lt;td style=&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Surname&lt;/td&gt;&lt;td style=&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Birthday&lt;/td&gt;&lt;td style=&quot;padding:2px 10px 2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Gender&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;div id=&quot;P1_C23_&quot; class=&quot;panel&quot;&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;div id=&quot;P1_C40_&quot; class=&quot;panel&quot;&gt;This panel only appears if the user has the &quot;Demo role 1&quot; security role&lt;/div&gt;&lt;div id=&quot;P1_C41_&quot; class=&quot;panel&quot;&gt;This panel only appears if the user has the &quot;Demo role 2&quot; security role&lt;/div&gt;</htmlBody>
     <id>P1</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-12-17T10:15:47.300Z</modifiedDate>
+    <modifiedDate>2014-12-17T11:53:51.116Z</modifiedDate>
     <name>01_PersonSearch</name>
     <rolesHtml>
-        <html>&lt;table id=&quot;P1_C1_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P1_C2_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C3_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Person search&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C5_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C6_&quot; class=&quot;tabelCell&quot;&gt;Forename&lt;/td&gt;&lt;td id=&quot;P1_C7_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P1_C11_&quot; value=&quot;&quot; type=&quot;text&quot; maxlength=&quot;20&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C8_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C9_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;&lt;td id=&quot;P1_C10_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P1_C12_&quot; value=&quot;&quot; type=&quot;text&quot; maxlength=&quot;20&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;table id=&quot;P1_C13_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P1_C14_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C15_&quot; class=&quot;tabelCell&quot;&gt;Search results&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C17_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C18_&quot; class=&quot;tabelCell&quot;&gt;&lt;table id=&quot;P1_C20_&quot; class=&quot;grid&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td style=&quot;display:none;&quot;&gt;Id&lt;/td&gt;&lt;td style=&quot;padding:2px 5px 2px 10px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Forename&lt;/td&gt;&lt;td style=&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Surname&lt;/td&gt;&lt;td style=&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Birthday&lt;/td&gt;&lt;td style=&quot;padding:2px 10px 2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Gender&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;div id=&quot;P1_C23_&quot; class=&quot;panel&quot;&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;div id=&quot;P1_C40_&quot; class=&quot;panel&quot;&gt;This panel only appears if the user has the &quot;Demo role 1&quot; security role&lt;/div&gt;&lt;div id=&quot;P1_C41_&quot; class=&quot;panel&quot;&gt;This panel only appears if the user has the &quot;Demo role 2&quot; security role&lt;/div&gt;&lt;span id=&quot;P1_C42_&quot; class=&quot;radiobuttons&quot; style=&quot;display: inline;&quot;&gt;&lt;input type=&quot;radio&quot; name=&quot;P1_C42_&quot; value=&quot;Radio button 1&quot;&gt;&lt;span&gt;Radio button 1&lt;/span&gt;&lt;input type=&quot;radio&quot; name=&quot;P1_C42_&quot; value=&quot;Radio button 2&quot;&gt;&lt;span&gt;Radio button 2&lt;/span&gt;&lt;/span&gt;</html>
+        <html>&lt;table id=&quot;P1_C1_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P1_C2_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C3_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Person search&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C5_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C6_&quot; class=&quot;tabelCell&quot;&gt;Forename&lt;/td&gt;&lt;td id=&quot;P1_C7_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P1_C11_&quot; value=&quot;&quot; type=&quot;text&quot; maxlength=&quot;20&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C8_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C9_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;&lt;td id=&quot;P1_C10_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P1_C12_&quot; value=&quot;&quot; type=&quot;text&quot; maxlength=&quot;20&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;table id=&quot;P1_C13_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P1_C14_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C15_&quot; class=&quot;tabelCell&quot;&gt;Search results&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C17_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C18_&quot; class=&quot;tabelCell&quot;&gt;&lt;table id=&quot;P1_C20_&quot; class=&quot;grid&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td style=&quot;display:none;&quot;&gt;Id&lt;/td&gt;&lt;td style=&quot;padding:2px 5px 2px 10px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Forename&lt;/td&gt;&lt;td style=&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Surname&lt;/td&gt;&lt;td style=&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Birthday&lt;/td&gt;&lt;td style=&quot;padding:2px 10px 2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Gender&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;div id=&quot;P1_C23_&quot; class=&quot;panel&quot;&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;div id=&quot;P1_C40_&quot; class=&quot;panel&quot;&gt;This panel only appears if the user has the &quot;Demo role 1&quot; security role&lt;/div&gt;&lt;div id=&quot;P1_C41_&quot; class=&quot;panel&quot;&gt;This panel only appears if the user has the &quot;Demo role 2&quot; security role&lt;/div&gt;</html>
         <roles>Demo role 1</roles>
         <roles>Demo role 2</roles>
     </rolesHtml>
     <rolesHtml>
-        <html>&lt;table id=&quot;P1_C1_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P1_C2_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C3_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Person search&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C5_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C6_&quot; class=&quot;tabelCell&quot;&gt;Forename&lt;/td&gt;&lt;td id=&quot;P1_C7_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P1_C11_&quot; value=&quot;&quot; type=&quot;text&quot; maxlength=&quot;20&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C8_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C9_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;&lt;td id=&quot;P1_C10_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P1_C12_&quot; value=&quot;&quot; type=&quot;text&quot; maxlength=&quot;20&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;table id=&quot;P1_C13_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P1_C14_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C15_&quot; class=&quot;tabelCell&quot;&gt;Search results&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C17_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C18_&quot; class=&quot;tabelCell&quot;&gt;&lt;table id=&quot;P1_C20_&quot; class=&quot;grid&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td style=&quot;display:none;&quot;&gt;Id&lt;/td&gt;&lt;td style=&quot;padding:2px 5px 2px 10px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Forename&lt;/td&gt;&lt;td style=&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Surname&lt;/td&gt;&lt;td style=&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Birthday&lt;/td&gt;&lt;td style=&quot;padding:2px 10px 2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Gender&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;div id=&quot;P1_C23_&quot; class=&quot;panel&quot;&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;div id=&quot;P1_C40_&quot; class=&quot;panel&quot;&gt;This panel only appears if the user has the &quot;Demo role 1&quot; security role&lt;/div&gt;&lt;span id=&quot;P1_C42_&quot; class=&quot;radiobuttons&quot;&gt;&lt;input type=&quot;radio&quot; name=&quot;P1_C42_&quot; value=&quot;Radio button 1&quot;&gt;&lt;span&gt;Radio button 1&lt;/span&gt;&lt;input type=&quot;radio&quot; name=&quot;P1_C42_&quot; value=&quot;Radio button 2&quot;&gt;&lt;span&gt;Radio button 2&lt;/span&gt;&lt;/span&gt;</html>
+        <html>&lt;table id=&quot;P1_C1_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P1_C2_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C3_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Person search&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C5_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C6_&quot; class=&quot;tabelCell&quot;&gt;Forename&lt;/td&gt;&lt;td id=&quot;P1_C7_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P1_C11_&quot; value=&quot;&quot; type=&quot;text&quot; maxlength=&quot;20&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C8_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C9_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;&lt;td id=&quot;P1_C10_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P1_C12_&quot; value=&quot;&quot; type=&quot;text&quot; maxlength=&quot;20&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;table id=&quot;P1_C13_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P1_C14_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C15_&quot; class=&quot;tabelCell&quot;&gt;Search results&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C17_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C18_&quot; class=&quot;tabelCell&quot;&gt;&lt;table id=&quot;P1_C20_&quot; class=&quot;grid&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td style=&quot;display:none;&quot;&gt;Id&lt;/td&gt;&lt;td style=&quot;padding:2px 5px 2px 10px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Forename&lt;/td&gt;&lt;td style=&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Surname&lt;/td&gt;&lt;td style=&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Birthday&lt;/td&gt;&lt;td style=&quot;padding:2px 10px 2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Gender&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;div id=&quot;P1_C23_&quot; class=&quot;panel&quot;&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;div id=&quot;P1_C40_&quot; class=&quot;panel&quot;&gt;This panel only appears if the user has the &quot;Demo role 1&quot; security role&lt;/div&gt;</html>
         <roles>Demo role 1</roles>
     </rolesHtml>
     <rolesHtml>
-        <html>&lt;table id=&quot;P1_C1_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P1_C2_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C3_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Person search&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C5_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C6_&quot; class=&quot;tabelCell&quot;&gt;Forename&lt;/td&gt;&lt;td id=&quot;P1_C7_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P1_C11_&quot; value=&quot;&quot; type=&quot;text&quot; maxlength=&quot;20&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C8_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C9_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;&lt;td id=&quot;P1_C10_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P1_C12_&quot; value=&quot;&quot; type=&quot;text&quot; maxlength=&quot;20&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;table id=&quot;P1_C13_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P1_C14_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C15_&quot; class=&quot;tabelCell&quot;&gt;Search results&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C17_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C18_&quot; class=&quot;tabelCell&quot;&gt;&lt;table id=&quot;P1_C20_&quot; class=&quot;grid&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td style=&quot;display:none;&quot;&gt;Id&lt;/td&gt;&lt;td style=&quot;padding:2px 5px 2px 10px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Forename&lt;/td&gt;&lt;td style=&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Surname&lt;/td&gt;&lt;td style=&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Birthday&lt;/td&gt;&lt;td style=&quot;padding:2px 10px 2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Gender&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;div id=&quot;P1_C23_&quot; class=&quot;panel&quot;&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;div id=&quot;P1_C41_&quot; class=&quot;panel&quot;&gt;This panel only appears if the user has the &quot;Demo role 2&quot; security role&lt;/div&gt;&lt;span id=&quot;P1_C42_&quot; class=&quot;radiobuttons&quot;&gt;&lt;input type=&quot;radio&quot; name=&quot;P1_C42_&quot; value=&quot;Radio button 1&quot;&gt;&lt;span&gt;Radio button 1&lt;/span&gt;&lt;input type=&quot;radio&quot; name=&quot;P1_C42_&quot; value=&quot;Radio button 2&quot;&gt;&lt;span&gt;Radio button 2&lt;/span&gt;&lt;/span&gt;</html>
+        <html>&lt;table id=&quot;P1_C1_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P1_C2_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C3_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Person search&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C5_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C6_&quot; class=&quot;tabelCell&quot;&gt;Forename&lt;/td&gt;&lt;td id=&quot;P1_C7_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P1_C11_&quot; value=&quot;&quot; type=&quot;text&quot; maxlength=&quot;20&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C8_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C9_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;&lt;td id=&quot;P1_C10_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P1_C12_&quot; value=&quot;&quot; type=&quot;text&quot; maxlength=&quot;20&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;table id=&quot;P1_C13_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P1_C14_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C15_&quot; class=&quot;tabelCell&quot;&gt;Search results&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C17_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C18_&quot; class=&quot;tabelCell&quot;&gt;&lt;table id=&quot;P1_C20_&quot; class=&quot;grid&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td style=&quot;display:none;&quot;&gt;Id&lt;/td&gt;&lt;td style=&quot;padding:2px 5px 2px 10px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Forename&lt;/td&gt;&lt;td style=&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Surname&lt;/td&gt;&lt;td style=&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Birthday&lt;/td&gt;&lt;td style=&quot;padding:2px 10px 2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Gender&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;div id=&quot;P1_C23_&quot; class=&quot;panel&quot;&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;div id=&quot;P1_C41_&quot; class=&quot;panel&quot;&gt;This panel only appears if the user has the &quot;Demo role 2&quot; security role&lt;/div&gt;</html>
         <roles>Demo role 2</roles>
     </rolesHtml>
     <rolesHtml>
-        <html>&lt;table id=&quot;P1_C1_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P1_C2_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C3_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Person search&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C5_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C6_&quot; class=&quot;tabelCell&quot;&gt;Forename&lt;/td&gt;&lt;td id=&quot;P1_C7_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P1_C11_&quot; value=&quot;&quot; type=&quot;text&quot; maxlength=&quot;20&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C8_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C9_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;&lt;td id=&quot;P1_C10_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P1_C12_&quot; value=&quot;&quot; type=&quot;text&quot; maxlength=&quot;20&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;table id=&quot;P1_C13_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P1_C14_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C15_&quot; class=&quot;tabelCell&quot;&gt;Search results&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C17_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C18_&quot; class=&quot;tabelCell&quot;&gt;&lt;table id=&quot;P1_C20_&quot; class=&quot;grid&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td style=&quot;display:none;&quot;&gt;Id&lt;/td&gt;&lt;td style=&quot;padding:2px 5px 2px 10px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Forename&lt;/td&gt;&lt;td style=&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Surname&lt;/td&gt;&lt;td style=&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Birthday&lt;/td&gt;&lt;td style=&quot;padding:2px 10px 2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Gender&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;div id=&quot;P1_C23_&quot; class=&quot;panel&quot;&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;span id=&quot;P1_C42_&quot; class=&quot;radiobuttons&quot;&gt;&lt;input type=&quot;radio&quot; name=&quot;P1_C42_&quot; value=&quot;Radio button 1&quot;&gt;&lt;span&gt;Radio button 1&lt;/span&gt;&lt;input type=&quot;radio&quot; name=&quot;P1_C42_&quot; value=&quot;Radio button 2&quot;&gt;&lt;span&gt;Radio button 2&lt;/span&gt;&lt;/span&gt;</html>
+        <html>&lt;table id=&quot;P1_C1_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P1_C2_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C3_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Person search&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C5_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C6_&quot; class=&quot;tabelCell&quot;&gt;Forename&lt;/td&gt;&lt;td id=&quot;P1_C7_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P1_C11_&quot; value=&quot;&quot; type=&quot;text&quot; maxlength=&quot;20&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C8_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C9_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;&lt;td id=&quot;P1_C10_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P1_C12_&quot; value=&quot;&quot; type=&quot;text&quot; maxlength=&quot;20&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;table id=&quot;P1_C13_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P1_C14_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C15_&quot; class=&quot;tabelCell&quot;&gt;Search results&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C17_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C18_&quot; class=&quot;tabelCell&quot;&gt;&lt;table id=&quot;P1_C20_&quot; class=&quot;grid&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td style=&quot;display:none;&quot;&gt;Id&lt;/td&gt;&lt;td style=&quot;padding:2px 5px 2px 10px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Forename&lt;/td&gt;&lt;td style=&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Surname&lt;/td&gt;&lt;td style=&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Birthday&lt;/td&gt;&lt;td style=&quot;padding:2px 10px 2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Gender&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;div id=&quot;P1_C23_&quot; class=&quot;panel&quot;&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</html>
     </rolesHtml>
     <title>Person search</title>
     <XMLVersion>1</XMLVersion>
