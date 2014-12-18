@@ -74,7 +74,7 @@ public class Existing extends Action {
 	}
 	
 	@Override
-	public String getJavaScript(Application application, Page page, Control control, JSONObject jsonDetails) throws Exception {
+	public String getJavaScript(RapidHttpServlet rapidServlet, Application application, Page page, Control control, JSONObject jsonDetails) throws Exception {
 		// get the action id
 		String actionId = getProperty("action");
 		// check we got something
@@ -86,7 +86,7 @@ public class Existing extends Action {
 			// check we got something
 			if (existingAction != null) {
 				// get its JavaScript
-				String existingJavaScript = existingAction.getJavaScript(application, page, actionControl, jsonDetails);
+				String existingJavaScript = existingAction.getJavaScript(rapidServlet, application, page, actionControl, jsonDetails);
 				// check we got some
 				if (existingJavaScript != null) {
 					// trim it

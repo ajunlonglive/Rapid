@@ -105,7 +105,7 @@ public class Navigate extends Action {
 	}
 	
 	@Override
-	public String getJavaScript(Application application, Page page, Control control, JSONObject jsonDetails) {
+	public String getJavaScript(RapidHttpServlet rapidServlet, Application application, Page page, Control control, JSONObject jsonDetails) {
 		String pageId = getProperty("page");
 		if (pageId == null) {
 			return "";

@@ -271,7 +271,7 @@ public class Database extends Action {
 	}
 	
 	@Override
-	public String getJavaScript(Application application, Page page, Control control, JSONObject jsonDetails) throws Exception {
+	public String getJavaScript(RapidHttpServlet rapidServlet, Application application, Page page, Control control, JSONObject jsonDetails) throws Exception {
 		
 		String js = "";
 		
@@ -348,7 +348,7 @@ public class Database extends Action {
 					// if this is the last error action add in the default error handler
 					if (i == _errorActions.size() - 1) jsonDetails.put("defaultErrorHandler", defaultErrorHandler);						
 					// add the js
-					js += "         " + action.getJavaScript(application, page, control, jsonDetails).trim().replace("\n", "\n         ") + "\n";					
+					js += "         " + action.getJavaScript(rapidServlet, application, page, control, jsonDetails).trim().replace("\n", "\n         ") + "\n";					
 					// increase the count
 					i++;
 				}
@@ -407,7 +407,7 @@ public class Database extends Action {
 			// add any sucess actions
 			if (_successActions != null) {
 				for (Action action : _successActions) {
-					js += "       " + action.getJavaScript(application, page, control, jsonDetails).trim().replace("\n", "\n       ") + "\n";
+					js += "       " + action.getJavaScript(rapidServlet, application, page, control, jsonDetails).trim().replace("\n", "\n       ") + "\n";
 				}
 			}
 			

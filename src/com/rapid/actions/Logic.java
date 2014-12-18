@@ -212,7 +212,7 @@ public class Logic extends Action {
 	}
 		
 	@Override
-	public String getJavaScript(Application application, Page page, Control control, JSONObject jsonDetails) throws Exception {
+	public String getJavaScript(RapidHttpServlet rapidServlet, Application application, Page page, Control control, JSONObject jsonDetails) throws Exception {
 		
 		String js = "";
 		
@@ -247,7 +247,7 @@ public class Logic extends Action {
 		
 		// add any try actions
 		if (_trueActions != null) {
-			for (Action action : _trueActions) js += "  " + action.getJavaScript(application, page, control, jsonDetails).trim().replace("\n", "\n  ") + "\n";
+			for (Action action : _trueActions) js += "  " + action.getJavaScript(rapidServlet, application, page, control, jsonDetails).trim().replace("\n", "\n  ") + "\n";
 		}
 		
 		// close the if
@@ -265,7 +265,7 @@ public class Logic extends Action {
 		if (gotFalseActions) {
 			// add any false actions as an else
 			js += " else {\n";
-			for (Action action : _falseActions) js += "  " + action.getJavaScript(application, page, control, jsonDetails).trim().replace("\n", "\n  ") + "\n";
+			for (Action action : _falseActions) js += "  " + action.getJavaScript(rapidServlet, application, page, control, jsonDetails).trim().replace("\n", "\n  ") + "\n";
 			js += "}";			
 		} else {
 			// if we got some details

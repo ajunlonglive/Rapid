@@ -256,11 +256,7 @@ function Control(controlType, parentControl, jsonControl, loadComplexObjects, pa
 			}																				
 							 																						
 		} // json control
-		
-		if (this.id == "P18_C430_") {
-			var stop = true;
-		}
-		
+				
 		// set and run the getHtml statement
 		try {			
 			// create a function from this text and retain a refence to it
