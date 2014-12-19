@@ -238,6 +238,62 @@ function hideDialogues() {
 	propertiesDialogues.children().remove();				
 }
 
+// this function returns an object with id and name for inputs and outputs, including looking up run-time property details (used by dataCopy, database, and webservice)
+function getDataItemDetails(id) {
+	
+	// if we got an id
+	if (id) {
+		// get the id parts
+		var idParts = id.split(".");
+		// derive the id
+		var itemId = idParts[0];
+		// assume the name is the entire id
+		var itemName = id
+		// get the control
+		var itemControl = getControlById(itemId);
+		// if we got one
+		if (itemControl) {
+			// look for a "other" page name
+			if (itemControl._pageName) {
+				// use the page name and control name
+				itemName = itemControl._pageName + "." + itemControl.name;
+			} else {
+				// take just the control name
+				itemName = itemControl.name;
+			}
+			// if there's a complex key
+			if (idParts.length > 1) {
+				// get the class
+				var controlClass = _controlTypes[itemControl.type];
+				// get any run time properties
+				var properties = controlClass.runtimeProperties;
+				// if there are runtimeProperties in the class
+				if (properties) {
+					// promote if array
+					if ($.isArray(properties.runtimeProperty)) properties = properties.runtimeProperty;
+					// loop them
+					for (var i in properties) {
+						// get the property
+						var property = properties[i];
+						// if the key matches
+						if (idParts[1] == property.type) {
+							// append the property name
+							itemName += "." + property.name;
+							// we're done
+							break;
+						}
+					}					
+				}
+			} 
+		}
+		// return an object with the name and id
+		return {id:itemId, name:itemName};
+	} else {
+		// return an empty object
+		return {id:"",name:""};
+	}
+}
+
 function Property_text(cell, propertyObject, property, refreshHtml) {
 	var value = "";
 	// set the value if it exists
@@ -914,13 +970,13 @@ function Property_databaseQuery(cell, propertyObject, property, refreshHtml, ref
 	// find the inputs table
 	var inputsTable = table.children().last().children().first().children().last();
 	// loop input parameters
-	for (var i in query.inputs) {
+	for (var i in query.inputs) {		
 		// get the input name
 		var itemName = query.inputs[i].itemId;
 		// look for a control with an item of this item
-		var control = getControlById(itemName);
+		var control = getDataItemDetails(itemName);
 		// if we found a control use this as the name
-		if (control) itemName = control.name;
+		if (control && control.name) itemName = control.name;		
 		// get the field
 		var field = query.inputs[i].field;
 		// make it an empty space if null
@@ -980,12 +1036,12 @@ function Property_databaseQuery(cell, propertyObject, property, refreshHtml, ref
 	var outputsTable = table.children().last().children().last().children().last();
 	// loop output parameters
 	for (var i in query.outputs) {
-		// get the output name
+		// get the output id
 		var itemName = query.outputs[i].itemId;
 		// look for a control with an item of this item
-		var control = getControlById(itemName);
+		var control = getDataItemDetails(itemName);
 		// if we found a control use this as the name
-		if (control) itemName = control.name;
+		if (control && control.name) itemName = control.name;
 		// get the field
 		var field = query.outputs[i].field;
 		// make it an empty space if null
@@ -1104,10 +1160,10 @@ function Property_webserviceRequest(cell, propertyObject, property, refreshHtml,
 	for (var i in request.inputs) {
 		// get the input name
 		var itemName = request.inputs[i].itemId;
-		// look for a control with an item of this item
-		var control = getControlById(itemName);
+		// look for the details of this item
+		var control = getDataItemDetails(itemName);
 		// if we found a control use this as the name
-		if (control) itemName = control.name;
+		if (control && control.name) itemName = control.name;
 		// get the field
 		var field = request.inputs[i].field;
 		// make it an empty space if null
@@ -1194,9 +1250,9 @@ function Property_webserviceRequest(cell, propertyObject, property, refreshHtml,
 		// get the output name
 		var itemName = request.outputs[i].itemId;
 		// look for a control with an item of this item
-		var control = getControlById(itemName);
+		var control = getDataItemDetails(itemName);
 		// if we found a control use this as the name
-		if (control) itemName = control.name;
+		if (control && control.name) itemName = control.name;
 		// get the field
 		var field = request.outputs[i].field;
 		// make it an empty space if null
@@ -2354,59 +2410,6 @@ function Property_datacopySearchSource(cell, datacopyAction, property, refreshHt
 	} else {
 		// remove this row
 		cell.closest("tr").remove();
-	}
-}
-
-function getDataItemDetails(id) {
-	
-	// if we got an id
-	if (id) {
-		// get the id parts
-		var idParts = id.split(".");
-		// derive the id
-		var itemId = idParts[0];
-		// assume the name is the entire id
-		var itemName = id
-		// get the control
-		var itemControl = getControlById(itemId);
-		// if we got one
-		if (itemControl) {
-			// look for a "other" page name
-			if (itemControl._pageName) {
-				// use the page name and control name
-				itemName = itemControl._pageName + "." + itemControl.name;
-			} else {
-				// take just the control name
-				itemName = itemControl.name;
-			}
-			// if there's a complex key
-			if (idParts.length > 1) {
-				// get the class
-				var controlClass = _controlTypes[itemControl.type];
-				// get any run time properties
-				var properties = controlClass.runtimeProperties;
-				// if there are runtimeProperties in the class
-				if (properties) {
-					// promote if array
-					if ($.isArray(properties.runtimeProperty)) properties = properties.runtimeProperty;
-					// loop them
-					for (var i in properties) {
-						// get the property
-						var property = properties[i];
-						// if there's set javascript (so it can be a destination)
-						if (property.setPropertyJavaScript) {
-							// append the property name if the key matches
-							if (idParts[1] == property.type) itemName += "." + property.name;
-						}						
-					}					
-				}
-			} 
-		}
-		// return an object with the name and id
-		return {id:itemId, name:itemName};
-	} else {
-		// return an empty object
-		return {id:"",name:""};
 	}
 }
 

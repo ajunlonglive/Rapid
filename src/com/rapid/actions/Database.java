@@ -469,7 +469,7 @@ public class Database extends Action {
 										// field check
 										if ((jsonField == null && "".equals(field)) || jsonField.equals(field)) {
 											// set the value
-											value = jsonInput.getString("value");
+											value = jsonInput.optString("value", null);
 											// no need to keep looking
 											break;
 										}

@@ -2032,13 +2032,10 @@ $(document).ready( function() {
 	// scroll the iFrame top if it's outer scroll bar is used
 	$("#scrollV").scroll( function(ev) {
 		_pageIframeWindow.scrollTop($(ev.target).scrollTop());
-		positionBorder(_selectedControl);
-		
+		positionBorder(_selectedControl);		
 	});
 	// scroll the iFrame left if it's outer scroll bar is used
 	$("#scrollH").scroll( function(ev) {
-		// get the device
-		var device = _devices[_device];
 		_pageIframeWindow.scrollLeft($(ev.target).scrollLeft());
 		positionBorder(_selectedControl);
 	});
@@ -2125,15 +2122,10 @@ $(document).ready( function() {
 	
 	// when we load an app the iframe is refreshed with the resources for that app and page
 	_pageIframe.load( function () {	
-										
-		// scale the page so the loading message fits
-		if (_scale != 1) {
-			$(_pageIframe[0].contentWindow.document.body).css({
-				width: 1 / _scale * 100 + "%",
-				height: 1 / _scale * 100 + "%",
-				transform: "scale(" + _scale + ")"
-			});	
-		}
+								
+		// scroll to the top left
+		$("#scrollV").scrollTop(0);
+		$("#scrollH").scrollLeft(0);
 		
 		// only if the app and page id's have been set
 		if (_version.id && _page.id) {
@@ -3239,6 +3231,8 @@ function windowResize(ev) {
 	    		});
 	    		// remember V is showing
 	    		scrollV = true;
+	    		// trigger a scroll to ensure contents are in sync
+	    		$("#scrollV").scroll();
     		} else {
     			$("#scrollV").hide();
     		}
@@ -3256,6 +3250,8 @@ function windowResize(ev) {
 	    		});	    	
 	    		// remember H is showing
 	    		scrollH = true;
+	    		// trigger a scroll to ensure contents are in sync
+	    		$("#scrollH").scroll();
     		}  else {
     			$("#scrollH").hide();
     		}

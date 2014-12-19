@@ -348,13 +348,38 @@ public class Page {
 		return getChildControlAction(_controls, id);
 	}
 	
-	// recursively append to a list of actions
+	// recursively append to a list of actions from an action and it's children
+	public void getChildActions(List<Action> actions, Action action) {
+		// add this one action
+		actions.add(action);
+		// check there are child actions
+		if (action.getChildActions() != null) {
+			// loop them
+			for (Action childAction : action.getChildActions()) {
+				// add their actions too
+				getChildActions(actions, childAction);
+			}
+		}
+	}
+	
+	// recursively append to a list of actions from a control and it's children
 	public void getChildActions(List<Action> actions, Control control) {
+		
+		if ("P9_C28_".equals(control.getId())) {
+			boolean test = true;
+		}
+		
 		// check this control has events
 		if (control.getEvents() != null) {
 			for (Event event : control.getEvents()) {
 				// add any actions to the list
-				if (event.getActions() != null) actions.addAll(event.getActions());
+				if (event.getActions() != null) {
+					// loop the actions
+					for (Action action : event.getActions()) {						
+						// add any child actions too
+						getChildActions(actions, action);
+					}
+				}
 			}
 		}	
 		// check if we have any child controls

@@ -298,15 +298,26 @@ if (window["_rapidmobile"]) {
 	console.log("Rapid Mobile detected");
 	
 	// add save page html function for saving
-	$.getSaveHtml = function() {
+	_rapidmobile.savePage = function() {
 		// explicity push each input val in as an attribute
-		$('input').each(function(){
-			$(this).attr('value', $(this).val());
+		$("input").each( function() {
+			$(this).attr("value", $(this).val());
 		});
-		// return the page html 
-		return "<!DOCTYPE html encoding=\"utf-8\"><html>" + $('html').html() + "</html>";
+		// explicitly push textarea value into it's html
+		$("textarea").each( function() {
+			$(this).html($(this).val());
+		});
+		// get the html
+		var html = $('html').html();
+		// now call into the bridge
+		_rapidmobile.savePageToDevice(html);		
 	}
+	
+	// controls can be restored here, or in the control init function, if present 
+	$(document).ready( function() {
 		
+	});
+			
 	// retain the original JQuery ajax function
 	var ajax = $.ajax;
 	

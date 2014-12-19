@@ -1,6 +1,5 @@
 /*
 
-Copyright (C) 2014 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -439,7 +438,7 @@ public class Webservice extends Action {
 						// get the input
 						JSONObject input = jsonInputs.getJSONObject(index);
 						// replace the ? with the input value
-						body = body.substring(0, pos) + input.getString("value") + body.substring(pos + 1);
+						body = body.substring(0, pos) + input.optString("value") + body.substring(pos + 1);
 						// look for the next question mark
 						pos = body.indexOf("?",pos + 1);
 						// inc the index for the next round
