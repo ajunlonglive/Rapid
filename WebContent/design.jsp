@@ -201,9 +201,7 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, Rap
 					<button id="paste" class="buttonRight">paste</button>
 				</div>								
 			</div>		
-			
-				
-			
+							
 			<div class="propertiesPanelDiv" data-dialogueId="propertiesPanel"></div>			
 			<div class="validationPanelDiv" data-dialogueId="validationPanel"></div>
 			<div id="actionsPanelDiv" class="actionsPanelDiv" data-dialogueId="actionsPanel"></div>
@@ -218,26 +216,26 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, Rap
 		<ul id="styleList"></ul>
 		
 		<div id="designCover"></div>
-		
-		<div id="selectionCover" style="display:none;position:absolute;left:0px;top:0px;z-index:10000;">
-			<div style="background-color:white;width:100%;height:100%;opacity:0.5;" ></div>
-		</div>
-		
-		<div id="selectionBorder">
-			<div id="selectionBorderLeft" class="selectionBorderInner"></div>
-			<div id="selectionBorderTop" class="selectionBorderInner"></div>
-			<div id="selectionBorderRight" class="selectionBorderInner"></div>
-			<div id="selectionBorderBottom" class="selectionBorderInner"></div>
-		</div>
-		
-		<img id="selectionMoveLeft" style="display:none;position:absolute;left:0px;top:0px;z-index:10002;" src="images/moveLeft_32x32.png" />
-		<img id="selectionMoveRight" style="display:none;position:absolute;left:0px;top:0px;z-index:10002;" src="images/moveRight_32x32.png" />
-		<img id="selectionInsert" style="display:none;position:absolute;left:0px;top:0px;z-index:10002;" src="images/insert_32x32.png" />
-	
+				
 		<div id="desktopCoverBottom" class="desktopCover"></div>
 		<div id="desktopCoverRight" class="desktopCover"></div>
 											
 	</div>	
+	
+	<div id="selectionBorder">
+		<div id="selectionBorderLeft" class="selectionBorderInner"></div>
+		<div id="selectionBorderTop" class="selectionBorderInner"></div>
+		<div id="selectionBorderRight" class="selectionBorderInner"></div>
+		<div id="selectionBorderBottom" class="selectionBorderInner"></div>
+	</div>
+	
+	<div id="selectionCover" style="display:none;position:absolute;left:0px;top:0px;z-index:10000;">
+		<div style="background-color:white;width:100%;height:100%;opacity:0.5;" ></div>
+	</div>
+					
+	<img id="selectionMoveLeft" style="display:none;position:absolute;left:0px;top:0px;z-index:10002;" src="images/moveLeft_32x32.png" />
+	<img id="selectionMoveRight" style="display:none;position:absolute;left:0px;top:0px;z-index:10002;" src="images/moveRight_32x32.png" />
+	<img id="selectionInsert" style="display:none;position:absolute;left:0px;top:0px;z-index:10002;" src="images/insert_32x32.png" />
 	
 	<iframe id="uploadIFrame" name="uploadIFrame" width="0" height="0" style="width:0;height:0;border:0px hidden #fff;" onload="fileuploaded(this);"></iframe>
 	

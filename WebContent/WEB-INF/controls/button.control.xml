@@ -90,9 +90,14 @@ return ["none","circle","circle-o","square","square-o"];
 	            <type>cssFile</type>
 	            <contents>styles/fonts/fontawesome/css/font-awesome.css</contents>
 	        </resource>
+	        <!-- Some browsers choose the tff instead of the woff so both are included -->
 	        <resource>
 	            <type>file</type>
 	            <contents>styles/fonts/fontawesome/fonts/fontawesome-webfont.woff</contents>
+	        </resource>
+	        <resource>
+	            <type>file</type>
+	            <contents>styles/fonts/fontawesome/fonts/fontawesome-webfont.ttf</contents>
 	        </resource>
 	        <resource>
 	            <type>css</type>

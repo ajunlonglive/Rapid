@@ -120,7 +120,7 @@ public class Mobile extends Action {
 			}
 			// check if we have any success actions
 			if (_errorActions != null) {
-				js += "function " + id + "_error(ev) {\n";
+				js += "function " + id + "error(ev, server, status, message) {\n";
 				for (Action action : _errorActions) {
 					js += "  " + action.getJavaScript(rapidServlet, application, page, control, jsonDetails).trim().replace("\n", "\n  ") + "\n";
 				}
@@ -133,8 +133,15 @@ public class Mobile extends Action {
 			
 	@Override
 	public String getJavaScript(RapidHttpServlet rapidServlet, Application application, Page page, Control control, JSONObject jsonDetails) {
-		// prepare the js
-		String js = "if (typeof _rapidmobile == 'undefined') {\n  alert('This action is only available in Rapid Mobile'); \n} else {\n";
+		// check that rapidmobile is available
+		String js = "if (typeof _rapidmobile == 'undefined') {\n  ";
+		// check we have errorActions
+		if (_errorActions == null) {
+			js += "  alert('This action is only available in Rapid Mobile');\n";
+		} else {
+			js += "  " + getId() + "error(ev, {}, 1, 'This action is only available in Rapid Mobile');\n";
+		}
+		js += "} else {\n";
 		// get the type
 		String type = getProperty("actionType");
 		// check we got something

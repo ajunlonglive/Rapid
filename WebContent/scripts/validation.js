@@ -68,109 +68,113 @@ function getValidationControlOptions(control) {
 	return options;
 }
 
-function showValidation(control) {
-	
+function showValidation(control) {	
 	// get a reference to the div we are writing in to
 	var validationPanel = $(".validationPanelDiv");	
 	// empty it
-	validationPanel.html("");	
-	// get the control class
-	var controlClass = _controlTypes[control.type];
-	// only if a control and it can validate
-	if (control && controlClass && controlClass.canValidate) {
+	validationPanel.html("");		
+	// if there is a control
+	if (control) {		
+		// get the control class
+		var controlClass = _controlTypes[control.type];
 		
-		// create a validation object if we don't have one
-		if (!control.validation) {
-			control.validation = {
-				type: "",
-				allowNulls: false,
-				regEx: "",
-				message: "",
-				javaScript: null
-			};
-		}
-		
-		// retain a reference to the validation object
-		var validation = control.validation;
-		// retrieve the type
-		var type = validation.type;
-		// set the regEx just for good measure (as long as not custom)
-		if (type != "custom") validation.regEx = getRegEx(type);
-				
-		// append a table
-		validationPanel.append("<table class='propertiesPanelTable'><tbody></tbody></table>");	
-		// get a reference to the table
-		var validationTable = validationPanel.children().last().children().last();
-		// add a heading for the event
-		validationTable.append("<tr><td colspan='2'><h3>Validation</h3></td></tr>");
-		// add a small break
-		validationTable.append("<tr><td colspan='2'></td></tr>");
-		// add a type drop down
-		validationTable.append("<tr><td>Type</td><td><select>" + getValidationOptions(type) + "</select></td></tr>");
-		// get a reference to the type drop down
-		var typeDropDown = validationTable.children().last().children().last().children().last();
-		// add a listener
-		addListener( typeDropDown.change( function(ev) {
-			// get the selected type
-			var type = $(ev.target).val();
-			// set the validation type
-			_selectedControl.validation.type = type;
-			// set the regex (this takes into account custom and javascript have no regex)
-			_selectedControl.validation.regEx = getRegEx(type); 			
-			// refresh the validation
-			showValidation(_selectedControl);
-			}
-		));		
-		// if the type is not "none"
-		if (type) {
-			switch (type) {
-			case "custom" :
-				// add a javascript box
-				validationTable.append("<tr><td>RegEx</td><td>" + validation.regEx + "</td></tr>");
-				// get a reference to  the cell
-				var cell = validationTable.children().last().children().last();
-				// add a bigtext property listener	
-				Property_bigtext(cell, validation, {key: "regEx"});
-			break;			
-			case "javascript" :
-				// add a javascript box
-				validationTable.append("<tr><td>JavaScript</td><td></td></tr>");
-				// get a reference to  the cell
-				var cell = validationTable.children().last().children().last();
-				// set a helpful default value for the
-				if (!validation.javaScript) validation.javaScript = "// Enter your JavaScript here, return a message if the validation fails. The control value is available through the \"value\" variable, the event is \"ev\" and the control id is \"id\"";
-				// add a bigtext property listener	
-				Property_bigtext(cell, validation, {key: "javaScript"});
-			break;
-			}
-			// message is in the javascript so no need for it here (can null check there too)
-			if (type != "javascript") {
-				
-				// add a message box
-				validationTable.append("<tr><td>Message</td><td></td></tr>");
-				// get a reference to  the cell
-				var cell = validationTable.children().last().children().last();
-				// add a bigtext property listener	
-				Property_bigtext(cell, validation, {key: "message"});
-				
-				// add a allowNulls checkbox
-				validationTable.append("<tr><td>Pass if no value</td><td></td></tr>");
-				// get a reference to  the cell
-				cell = validationTable.children().last().children().last();
-				// add a checkbox property listener	
-				Property_checkbox(cell, validation, {key: "allowNulls"});
-				
-				// add a allowNulls checkbox
-				validationTable.append("<tr><td>Pass if hidden</td><td></td></tr>");
-				// get a reference to  the cell
-				cell = validationTable.children().last().children().last();
-				// add a checkbox property listener	
-				Property_checkbox(cell, validation, {key: "passHidden"});
-				
+		// only if a control and it can validate
+		if (controlClass && controlClass.canValidate) {
+			
+			// create a validation object if we don't have one
+			if (!control.validation) {
+				control.validation = {
+					type: "",
+					allowNulls: false,
+					regEx: "",
+					message: "",
+					javaScript: null
+				};
 			}
 			
-		}
-							
-	}
+			// retain a reference to the validation object
+			var validation = control.validation;
+			// retrieve the type
+			var type = validation.type;
+			// set the regEx just for good measure (as long as not custom)
+			if (type != "custom") validation.regEx = getRegEx(type);
+					
+			// append a table
+			validationPanel.append("<table class='propertiesPanelTable'><tbody></tbody></table>");	
+			// get a reference to the table
+			var validationTable = validationPanel.children().last().children().last();
+			// add a heading for the event
+			validationTable.append("<tr><td colspan='2'><h3>Validation</h3></td></tr>");
+			// add a small break
+			validationTable.append("<tr><td colspan='2'></td></tr>");
+			// add a type drop down
+			validationTable.append("<tr><td>Type</td><td><select>" + getValidationOptions(type) + "</select></td></tr>");
+			// get a reference to the type drop down
+			var typeDropDown = validationTable.children().last().children().last().children().last();
+			// add a listener
+			addListener( typeDropDown.change( function(ev) {
+				// get the selected type
+				var type = $(ev.target).val();
+				// set the validation type
+				_selectedControl.validation.type = type;
+				// set the regex (this takes into account custom and javascript have no regex)
+				_selectedControl.validation.regEx = getRegEx(type); 			
+				// refresh the validation
+				showValidation(_selectedControl);
+				}
+			));		
+			// if the type is not "none"
+			if (type) {
+				switch (type) {
+				case "custom" :
+					// add a javascript box
+					validationTable.append("<tr><td>RegEx</td><td>" + validation.regEx + "</td></tr>");
+					// get a reference to  the cell
+					var cell = validationTable.children().last().children().last();
+					// add a bigtext property listener	
+					Property_bigtext(cell, validation, {key: "regEx"});
+				break;			
+				case "javascript" :
+					// add a javascript box
+					validationTable.append("<tr><td>JavaScript</td><td></td></tr>");
+					// get a reference to  the cell
+					var cell = validationTable.children().last().children().last();
+					// set a helpful default value for the
+					if (!validation.javaScript) validation.javaScript = "// Enter your JavaScript here, return a message if the validation fails. The control value is available through the \"value\" variable, the event is \"ev\" and the control id is \"id\"";
+					// add a bigtext property listener	
+					Property_bigtext(cell, validation, {key: "javaScript"});
+				break;
+				}
+				// message is in the javascript so no need for it here (can null check there too)
+				if (type != "javascript") {
+					
+					// add a message box
+					validationTable.append("<tr><td>Message</td><td></td></tr>");
+					// get a reference to  the cell
+					var cell = validationTable.children().last().children().last();
+					// add a bigtext property listener	
+					Property_bigtext(cell, validation, {key: "message"});
+					
+					// add a allowNulls checkbox
+					validationTable.append("<tr><td>Pass if no value</td><td></td></tr>");
+					// get a reference to  the cell
+					cell = validationTable.children().last().children().last();
+					// add a checkbox property listener	
+					Property_checkbox(cell, validation, {key: "allowNulls"});
+					
+					// add a allowNulls checkbox
+					validationTable.append("<tr><td>Pass if hidden</td><td></td></tr>");
+					// get a reference to  the cell
+					cell = validationTable.children().last().children().last();
+					// add a checkbox property listener	
+					Property_checkbox(cell, validation, {key: "passHidden"});
+					
+				}
+				
+			} // type check
+								
+		} // control class check
 		
+	} // control check
+			
 }

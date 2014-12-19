@@ -325,45 +325,47 @@ if (value) {
 	   	        </getPropertyFunction>
 	   	        <setPropertyJavaScript>
 			        <![CDATA[
-var data = makeDataObject(data);			        
-var values = [];
-if (data.rows[0][0]) {
-	values = data.rows[0][0].split(",");
-} else {
-	values = null;
-}
-var list = $("#" + id);
-var header = list.children("li.listHeader");
-var selectedCount = list.children("span.listSelectedCount");
-if (!details.multi || values == null) list.children().removeClass("listSelected");
-if (values) {	
-	var headerText = "";
-	var selectCount = 0;
-	list.children("li.listOption").each( function() {		
-		var option = $(this);
-		var match = false;
-		for (var i in values) {			
-			if (values[i].trim() == option.attr("data-value")) {
-				option.addClass("listSelected");
-				headerText += option.text() + ", ";
-				selectCount ++;
-				match = true;
-				break;
-			} 
-			option.removeClass("listSelected");
+if (data != null && data !== undefined) {
+	var data = makeDataObject(data);			        
+	var values = [];
+	if (data && data.rows[0][0]) {
+		values = data.rows[0][0].split(",");
+	} else {
+		values = null;
+	}
+	var list = $("#" + id);
+	var header = list.children("li.listHeader");
+	var selectedCount = list.children("span.listSelectedCount");
+	if (!details.multi || values == null) list.children().removeClass("listSelected");
+	if (values) {	
+		var headerText = "";
+		var selectCount = 0;
+		list.children("li.listOption").each( function() {		
+			var option = $(this);
+			var match = false;
+			for (var i in values) {			
+				if (values[i].trim() == option.attr("data-value")) {
+					option.addClass("listSelected");
+					headerText += option.text() + ", ";
+					selectCount ++;
+					match = true;
+					break;
+				} 
+				option.removeClass("listSelected");
+			}
+		});
+		if (selectCount > 0) {
+			headerText = headerText.substring(0,headerText.length - 2);			
+			if (details.multi && details.slide) selectedCount.text(selectCount).show();
+		} else {			
+			headerText = details.header;
+			selectedCount.hide();
 		}
-	});
-	if (selectCount > 0) {
-		headerText = headerText.substring(0,headerText.length - 2);			
-		if (details.multi && details.slide) selectedCount.text(selectCount).show();
-	} else {			
-		headerText = details.header;
+		header.html(headerText);	
+	} else {
+		header.html(details.header);
 		selectedCount.hide();
 	}
-	header.html(headerText);	
-} else {
-	header.html(details.header);
-	selectedCount.hide();
 }
 				    ]]>	  	   	            
 	   	        </setPropertyJavaScript>	   	        

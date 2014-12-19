@@ -707,9 +707,10 @@ function setData_dropdown(id, data, field, details, changeEvents) {
 function getData_gallery(ev, id, field, details) {
   var data = {fields:["url"],rows:[]};
   var control = $("#" + id);
-  var images = control.children();
+  var images = control.children("img");
   images.each( function(i) {
-  	data.rows.push([$(this).attr("src")]);
+  	var url = $(this).attr("src");
+  	data.rows.push([url]);
   });
   return data;
 }
@@ -738,7 +739,7 @@ function setData_gallery(id, data, field, details, changeEvents) {
   			// loop the urls
   			for (var j in urls) {
   				var url = urls[j];
-  				control.append("<img src='" + url  + "'/>");
+  				control.append("<img src='" + url  + "'></img>");
   				control.find("img").last().click( function(ev) {
   					Gallery_removeImage(ev, id);				
   				});
@@ -759,12 +760,19 @@ function getProperty_gallery_imageCount(ev, id, field, details) {
 function getProperty_gallery_urls(ev, id, field, details) {
   var urls = "";
   var control = $("#" + id);
-  var images = control.children();
+  var images = control.children("img");
   images.each( function(i) {
-  	urls += $(this).attr("src");
-  	if (i < images.length - 1) urls += ",";
+  	var url = $(this).attr("src");
+  	if (url) {
+  		urls += url.replace("http://cache/","");
+  		if (i < images.length - 1) urls += ",";
+  	}
   });
-  return urls;
+  if (urls) {
+  	return urls;
+  } else {
+  	return null;
+  }
 }
 
 function getData_grid(ev, id, field, details) {
