@@ -182,6 +182,16 @@ public class Mobile extends Action {
 					// call it!
 					js += "  _rapidmobile.uploadImages('" + galleryControlId + "', urls, " + successCallback + ", " + errorCallback + ");\n";
 				}
+			}  else if ("message".equals(type)) {
+				// retrieve the message
+				String message = getProperty("message");
+				// update to empty string if null
+				if (message == null) message = "";
+				// add js, replacing any dodgy inverted commas
+				js += "  _rapidmobile.showMessage('" + message.replace("'", "\\'") + "');\n";
+			} else if ("disableBackButton".equals(type)) {
+				// add js
+				js += "  _rapidmobile.disableBackButton();\n";
 			}
 		}
 		// close checkRapidMobile
