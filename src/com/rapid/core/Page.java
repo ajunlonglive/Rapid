@@ -1034,6 +1034,8 @@ public class Page {
 			
 			stringBuilder.append("var _userName = '" + userName + "';\n");
 			
+			stringBuilder.append("var _mobileResume = false;\n");
+			
 			// make a new string builder just for the js (so we can minify it independently)
 			StringBuilder jsStringBuilder = new StringBuilder("/*\n\n  The following code is minified for live applications\n\n*/\n\n"); 
 			
@@ -1082,7 +1084,7 @@ public class Page {
 						if (event.getActions().size() > 0) {
 							// page is a special animal so we need to do each of it's event types differently
 							if ("pageload".equals(event.getType())) {
-								_pageloadLines.add("Event_" + event.getType() + "_" + _id + "($.Event('pageload'));\n");
+								_pageloadLines.add("if (!_mobileResume) Event_pageload_" + _id + "($.Event('pageload'));\n");
 	        				}    			
 							// reusable action is only invoked via reusable actions on other events - there is no listener
 						}

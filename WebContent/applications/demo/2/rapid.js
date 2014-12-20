@@ -1009,12 +1009,12 @@ function Action_datacopy(ev, data, outputs, changeEvents, copyType, copyData, fi
 					data = makeDataObject(data, output.field);
 					outputData = mergeDataObjects(mergeData, data, copyType, field); 
 				break;
-				case "child" :		
-					if (data && data.rows && data.rows.length > 0) {		
-						var mergeData = window["getData_" + output.type](ev, output.id, null, output.details);
+				case "child" :
+					var mergeData = window["getData_" + output.type](ev, output.id, null, output.details);		
+					if (data && data.rows && data.rows.length > 0) {								
 						outputData = mergeDataObjects(mergeData, data, copyType, field);
 					} else {
-						outputData = data;
+						outputData = mergeData;
 					}
 				break;
 				case "search" :

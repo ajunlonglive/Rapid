@@ -82,6 +82,12 @@ return "<option value=''>Please select...</option>" + getControlOptions(this.gal
 	            <visible>false</visible>
 	            <changeValueJavaScript>childActions</changeValueJavaScript>	 
 	        </property> 
+	        <property>
+	            <key>message</key>
+	            <name>Message</name>
+	            <visible>false</visible>
+	            <changeValueJavaScript>bigtext</changeValueJavaScript>	 
+	        </property> 
 	    </properties>
 	    
 		<actionJavaScript>

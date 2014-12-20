@@ -106,7 +106,7 @@ function showProperties(control) {
 		// check there are class properties
 		var properties = controlClass.properties;
 		if (properties) {
-			// (if a single it's a class not an array due to JSON class conversionf from xml)
+			// (if a single it's a class not an array due to JSON class conversion from xml)
 			if ($.isArray(properties.property)) properties = properties.property; 			
 			// loop the class properties
 			for (var i in properties) {
@@ -315,7 +315,7 @@ function refreshPropertyObject(ev, propertyObject) {
 		// refresh properties if appropriate
 		if (target.closest(".propertiesPanelDiv")[0]) showProperties(_selectedControl);
 		// refresh events and actions if appropriate
-		if (target.closest(".actionsPanelDiv")[0]) showEvents(_selectedControl);		
+		if (target.closest(".actionsPanelDiv")[0]) showEvents(_selectedControl);				
 	}		
 }
 
@@ -2963,7 +2963,7 @@ function Property_orientation(cell, propertyObject, property, refreshHtml, refre
 }
 
 // possible mobileActionType values used by the mobileActionType property
-var _mobileActionTypes = [["addImage","Add image"],["uploadImages","Upload images"],["showGPS","Send gps position"]];
+var _mobileActionTypes = [["addImage","Add image"],["uploadImages","Upload images"],["getGPS","Get gps position"],["message","Status bar message"],["disableBackButton","Disable back button"]];
 
 // this property changes the visibility of other properties according to the chosen type
 function Property_mobileActionType(cell, mobileAction, property, refreshHtml, refreshProperties) {
@@ -2977,13 +2977,14 @@ function Property_mobileActionType(cell, mobileAction, property, refreshHtml, re
 	// add the available types and retrieve dropdown
 	var actionTypeSelect = cell.append(selectHtml).find("select");	
 	// assume all other properties invisible
+	setPropertyVisibilty(mobileAction, "message", false);
 	setPropertyVisibilty(mobileAction, "galleryControlId", false);
 	setPropertyVisibilty(mobileAction, "imageMaxSize", false);
 	setPropertyVisibilty(mobileAction, "imageQuality", false);
 	setPropertyVisibilty(mobileAction, "successActions", false);
 	setPropertyVisibilty(mobileAction, "errorActions", false);
 	// adjust required property visibility accordingly
-	switch (mobileAction.actionType) {
+	switch (mobileAction.actionType) {		
 		case "addImage" :
 			setPropertyVisibilty(mobileAction, "galleryControlId", true);
 			setPropertyVisibilty(mobileAction, "imageMaxSize", true);
@@ -2993,6 +2994,9 @@ function Property_mobileActionType(cell, mobileAction, property, refreshHtml, re
 			setPropertyVisibilty(mobileAction, "galleryControlId", true);
 			setPropertyVisibilty(mobileAction, "successActions", true);
 			setPropertyVisibilty(mobileAction, "errorActions", true);
+		break;
+		case "message" :
+			setPropertyVisibilty(mobileAction, "message", true);
 		break;
 	}
 	// listener for changing the type

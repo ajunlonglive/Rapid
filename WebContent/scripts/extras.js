@@ -564,6 +564,7 @@ function mergeDataObjects(data1, data2, mergeType, field) {
 					if (fieldCount > 0) {
 						data1.fields.push(field);
 						for (var i in data1.rows) {
+							var match = false;
 							var r1 = data1.rows[i];						
 							for (var j in data2.rows) {
 								var r2 = data2.rows[j];
@@ -572,6 +573,7 @@ function mergeDataObjects(data1, data2, mergeType, field) {
 									if (r1[k] == r2[fieldMap[k]]) matches ++; 
 								}
 								if (matches == fieldCount) {
+									match = true;
 									var child;
 									if (data1.rows[i].length < data1.fields.length) {
 										child = {fields:fields,rows:[]};
@@ -583,6 +585,7 @@ function mergeDataObjects(data1, data2, mergeType, field) {
 									r1.push(child);
 								}
 							}
+							if (!match) r1.push(null);
 						}
 					} else {
 						var fieldIndex = -1;
