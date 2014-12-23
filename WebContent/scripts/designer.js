@@ -963,7 +963,7 @@ function selectControl(control) {
 		var body = $("body");
 		
 		// retain the current scroll positions
-		var scollTop= body.scrollTop();
+		var scollTop = body.scrollTop();
 		var scrolLeft = body.scrollLeft();
 		
 		// show the properties
@@ -3122,6 +3122,9 @@ function windowResize(ev) {
 	// use the function to get our working height
 	var height = getHeight();
 	
+	// get the current scroll position
+	var scrollTop = _window.scrollTop();
+	
 	// get the control panel
 	var controlPanel = $("#controlPanel");		
 	// set it's height to auto
@@ -3203,7 +3206,7 @@ function windowResize(ev) {
 			left: _panelPinnedOffset + devWidth + 1
 		}).show();
 		
-		// give the iframe reszie time to apply
+		// give the iframe resize time to apply
     	window.setTimeout( function() {
     		
     		// assume no v scrollling

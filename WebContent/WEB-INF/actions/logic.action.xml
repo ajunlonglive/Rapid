@@ -35,11 +35,13 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    <addToNewApplications>true</addToNewApplications> 
 	    	    	    	    
 	    <properties>
+	        
 	         <property>
 	            <key>conditions</key>
 	            <name>Conditions</name>
 	            <changeValueJavaScript>logicConditions</changeValueJavaScript>	 
 	        </property>	
+	        
 	        <property>
 	            <key>conditionsType</key>
 	            <name>Type</name>
@@ -47,16 +49,19 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <setConstructValueFunction>return "and";</setConstructValueFunction>
 	            <changeValueJavaScript>text</changeValueJavaScript>	
 	        </property>
+	        
 	        <property>
 	            <key>trueActions</key>
 	            <name>Actions if true</name>
 	            <changeValueJavaScript>childActions</changeValueJavaScript>	 
 	        </property>
+	        
 	        <property>
 	            <key>falseActions</key>
 	            <name>Actions if false</name>
 	            <changeValueJavaScript>childActions</changeValueJavaScript>	 
-	        </property>      
+	        </property>  
+	            
 	    </properties>	 
 	    	   	    	    	    	    	     	     	    
     </action> 
