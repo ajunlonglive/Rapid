@@ -307,15 +307,15 @@ function showAction(actionsTable, action, collection, refreshFunction) {
 			} // visibility check
 		} // properties loop
 	} // properties check
+	
 }
 
 // this renders the actions for a control's event into a properties panel
 function showActions(control, eventType) {
 	
-	console.log("showActions" + control.id + "/" + eventType);
-	
 	// if this control has events
 	if (control.events) {
+		
 		// get a reference to the div we are writing in to
 		var actionsPanel = $("#actionsPanelDiv");		
 		// loop control events

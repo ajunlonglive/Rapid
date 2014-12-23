@@ -1324,14 +1324,20 @@ public class Rapid extends Action {
 				if (app != null)  {						
 					// get all versions of this application
 					Versions versions = rapidServlet.getApplications().getVersions(app.getId());
-					// get the number
+					// get the number of version
 					int versionCount = versions.size();
+					// make a list of versions
+					ArrayList<String> versionNumbers = new ArrayList<String>();
 					// loop the versions
 					for (String version : versions.keySet()) {
+						versionNumbers.add(version);						
+					}
+					// loop the versionNumbers
+					for (String versionNumber: versionNumbers) {
 						// get this version
-						Application v = rapidServlet.getApplications().get(app.getId(), version);
+						Application v = rapidServlet.getApplications().get(app.getId(), versionNumber);
 						// delete it
-						v.delete(rapidServlet, rapidActionRequest, true);						
+						v.delete(rapidServlet, rapidActionRequest, true);
 					}
 					// set the result message
 					result.put("message", versionCount + " application version" + (versionCount == 1 ? "" : "s") + " deleted for " + app.getName());					
@@ -1845,7 +1851,7 @@ public class Rapid extends Action {
 				String backupId = jsonAction.getString("backupId");
 				
 				// get the folder into a file object
-				File backup = new File (app.getBackupFolder(rapidServlet.getServletContext()) + "/" + backupId);
+				File backup = new File (app.getBackupFolder(rapidServlet.getServletContext(), false) + "/" + backupId);
 				// delete it
 				Files.deleteRecurring(backup);
 				
@@ -1860,7 +1866,7 @@ public class Rapid extends Action {
 				String backupId = jsonAction.getString("backupId");
 				
 				// get the folder into a file object
-				File backup = new File (app.getBackupFolder(rapidServlet.getServletContext()) + "/" + backupId);
+				File backup = new File (app.getBackupFolder(rapidServlet.getServletContext(), false) + "/" + backupId);
 				// delete it
 				Files.deleteRecurring(backup);
 				
@@ -1875,13 +1881,13 @@ public class Rapid extends Action {
 				String backupId = jsonAction.getString("backupId");
 				
 				// get this backup folder
-				File backupFolder = new File(app.getBackupFolder(rapidServlet.getServletContext()) + "/" + backupId);
+				File backupFolder = new File(app.getBackupFolder(rapidServlet.getServletContext(), false) + "/" + backupId);
 				
 				// check it exists
 				if (backupFolder.exists()) {
 					
 					// back up the current state of the application
-					app.backup(rapidServlet, rapidRequest);
+					app.backup(rapidServlet, rapidRequest, false);
 					
 					
 					// get the config folder
@@ -1891,7 +1897,7 @@ public class Rapid extends Action {
 					File webFolder = new File(app.getWebFolder(rapidServlet.getServletContext()));
 					
 					// get the backups folder
-					File backupsFolder = new File(app.getBackupFolder(rapidServlet.getServletContext()));
+					File backupsFolder = new File(app.getBackupFolder(rapidServlet.getServletContext(), false));
 					
 															
 					
@@ -1918,7 +1924,7 @@ public class Rapid extends Action {
 									
 					
 					// get the backups destination folder
-					File backupsRestoreFolder = new File(Application.getBackupFolder(rapidServlet.getServletContext(), app.getId(), "_restore"));
+					File backupsRestoreFolder = new File(Application.getBackupFolder(rapidServlet.getServletContext(), app.getId(), "_restore", false));
 					
 					// copy in the backups
 					Files.copyFolder(backupsFolder, backupsRestoreFolder);
@@ -1986,10 +1992,10 @@ public class Rapid extends Action {
 			 	File pageFile = new File(page.getFile(rapidServlet.getServletContext(), app));
 				
 			 	// create a backup for the current state
-				page.backup(rapidServlet, rapidRequest, app, pageFile);
+				page.backup(rapidServlet, rapidRequest, app, pageFile, false);
 				
 				// get this backup file
-				File backupFile = new File(app.getBackupFolder(rapidServlet.getServletContext()) + "/" + backupId);
+				File backupFile = new File(app.getBackupFolder(rapidServlet.getServletContext(), false) + "/" + backupId);
 				
 				// copy it over the current page file
 				Files.copyFile(backupFile, pageFile);

@@ -421,8 +421,8 @@ public class Application {
 	}
 			
 	// this is the backup folder
-	public String getBackupFolder(ServletContext servletContext) {
-		return getBackupFolder(servletContext, _id, _version);
+	public String getBackupFolder(ServletContext servletContext, boolean allVersions) {
+		return getBackupFolder(servletContext, _id, _version, allVersions);
 	}
 		
 	public Page getStartPage() {
@@ -1122,7 +1122,7 @@ public class Application {
 		
 		List<Backup> backups = new ArrayList<Backup>();
 				
-		File backupFolder = new File(getBackupFolder(rapidServlet.getServletContext()));
+		File backupFolder = new File(getBackupFolder(rapidServlet.getServletContext(), false));
 		
 		if (backupFolder.exists()) {
 			
@@ -1181,7 +1181,7 @@ public class Application {
 			// check if we have too many
 			while (backups.size() > _applicationBackupsMaxSize) {
 				// get the top backup folder into a file object
-				backupFolder = new File(getBackupFolder(rapidServlet.getServletContext()) + "/" + backups.get(0).getId());
+				backupFolder = new File(getBackupFolder(rapidServlet.getServletContext(), false) + "/" + backups.get(0).getId());
 				// delete it
 				Files.deleteRecurring(backupFolder);
 				// remove it
@@ -1198,7 +1198,7 @@ public class Application {
 		
 		List<Backup> backups = new ArrayList<Backup>();
 				
-		File backupFolder = new File(getBackupFolder(rapidServlet.getServletContext()));
+		File backupFolder = new File(getBackupFolder(rapidServlet.getServletContext(), false));
 		
 		if (backupFolder.exists()) {
 			
@@ -1297,7 +1297,7 @@ public class Application {
 		
 	}
 	
-	public void backup(RapidHttpServlet rapidServlet, RapidRequest rapidRequest) throws IOException {
+	public void backup(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, boolean allVersions) throws IOException {
 		
 		// get the username
 		String userName = rapidRequest.getUserName();
@@ -1311,7 +1311,7 @@ public class Application {
 		String fileName = _id + _version + "_" + dateString + "_" + Files.safeName(userName);
 								
 		// create folders to backup the app
-		String backupPath = getBackupFolder(rapidServlet.getServletContext()) + "/" + fileName;		
+		String backupPath = getBackupFolder(rapidServlet.getServletContext(), allVersions) + "/" + fileName;		
 		File backupFolder = new File(backupPath);		
 		if (!backupFolder.exists()) backupFolder.mkdirs();
 
@@ -1412,11 +1412,11 @@ public class Application {
 		// if we want to copy the backups too
 		if (backups) {
 			// get the backups folder
-			File appBackupFolder = new File(getBackupFolder(servletContext));
+			File appBackupFolder = new File(getBackupFolder(servletContext, false));
 			// check it exists
 			if (appBackupFolder.exists()) {
 				// create a folder to copy to
-				File appBackupCopyFolder = new File(appCopy.getBackupFolder(servletContext));
+				File appBackupCopyFolder = new File(appCopy.getBackupFolder(servletContext, false));
 				// make the dirs
 				appBackupCopyFolder.mkdirs();
 				// copy the folder
@@ -1448,7 +1448,7 @@ public class Application {
 		// create a file object for the application
 		File appFile = new File(folderPath + "/application.xml");
 		// backup the app if it already exists
-		if (backup && appFile.exists()) backup(rapidServlet, rapidRequest);
+		if (backup && appFile.exists()) backup(rapidServlet, rapidRequest, false);
 		
 		// create a temp file for saving the application to
 		File tempFile = new File(folderPath + "/application-saving.xml");
@@ -1491,7 +1491,7 @@ public class Application {
 		// if the app folder exists
 		if (appFolder.exists()) {
 			// backup the application
-			backup(rapidServlet, rapidRequest);
+			backup(rapidServlet, rapidRequest, allVersions);
 			// delete the app folder
 			Files.deleteRecurring(appFolder);
 			// delete the web folder
@@ -1673,8 +1673,12 @@ public class Application {
 	}
 	
 	// this is the backup folder
-	public static String getBackupFolder(ServletContext servletContext, String id, String version) {
-		return servletContext.getRealPath("/WEB-INF/applications/" + id + "/" + version + "/" + BACKUP_FOLDER);
+	public static String getBackupFolder(ServletContext servletContext, String id, String version, boolean allVersions) {
+		if (allVersions) {
+			return servletContext.getRealPath("/WEB-INF/applications/" +  BACKUP_FOLDER + "/" + id + "/" + version);
+		} else {
+			return servletContext.getRealPath("/WEB-INF/applications/" + id + "/" + version + "/" + BACKUP_FOLDER);
+		}
 	}
 	
 	// this is a simple overload for default loading of applications where the resources are all regenerated

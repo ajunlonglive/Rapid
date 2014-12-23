@@ -966,7 +966,7 @@ public class Designer extends RapidHttpServlet {
 									// look for an existing application of this name
 									Application existingApplication = getApplications().get(appId); 
 									// if we have an existing application back it up first
-									if (existingApplication != null) existingApplication.backup(this, rapidRequest);
+									if (existingApplication != null) existingApplication.backup(this, rapidRequest, false);
 									
 									// get a file for the temp directory
 									File tempDir = new File(getServletContext().getRealPath("/WEB-INF/temp"));

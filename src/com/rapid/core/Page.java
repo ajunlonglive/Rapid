@@ -657,13 +657,13 @@ public class Page {
 		}
 	}
 								
-	public void backup(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, Application application, File pageFile) throws IOException {
+	public void backup(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, Application application, File pageFile, boolean delete) throws IOException {
 					
 		// get the user name
 		String userName = Files.safeName(rapidRequest.getUserName());		
 		
 		// create folders to archive the pages
-		String archivePath = application.getBackupFolder(rapidServlet.getServletContext());		
+		String archivePath = application.getBackupFolder(rapidServlet.getServletContext(), delete);		
 		File archiveFolder = new File(archivePath);		
 		if (!archiveFolder.exists()) archiveFolder.mkdirs();
 		
@@ -681,7 +681,7 @@ public class Page {
 	public void deleteBackup(RapidHttpServlet rapidServlet, Application application, String backupId) {
 		
 		// create the path
-		String backupPath = application.getBackupFolder(rapidServlet.getServletContext()) + "/" + backupId;
+		String backupPath = application.getBackupFolder(rapidServlet.getServletContext(), false) + "/" + backupId;
 		// create the file
 		File backupFile = new File(backupPath);
 		// delete 
@@ -726,7 +726,7 @@ public class Page {
 	 	File newFile = new File(pagePath + "/" + Files.safeName(getName()) + ".page.xml");
 	 	
 	 	// if we want a backup and the new file already exists it needs archiving
-	 	if (backup && newFile.exists()) backup(rapidServlet, rapidRequest, application, newFile);	 			 	
+	 	if (backup && newFile.exists()) backup(rapidServlet, rapidRequest, application, newFile, false);	 			 	
 				
 	 	// create a file for the temp file
 	    File tempFile = new File(pagePath + "/" + Files.safeName(getName()) + "-saving.page.xml");	
@@ -779,7 +779,7 @@ public class Page {
 	 	// if the new file already exists it needs archiving
 	 	if (delFile.exists()) {
 	 		// archive the page file
-	 		backup(rapidServlet, rapidRequest, application, delFile);
+	 		backup(rapidServlet, rapidRequest, application, delFile, false);
 	 		// delete the page file
 	 		delFile.delete();
 	 		// remove it from the current list of pages

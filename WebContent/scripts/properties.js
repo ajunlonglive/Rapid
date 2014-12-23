@@ -108,9 +108,7 @@ function showProperties(control) {
 		
 	// grab a reference to the properties div
 	var propertiesPanel = $(".propertiesPanelDiv");
-	// set the parent height to auto
-	propertiesPanel.parent().css("height","auto");
-	
+		
 	// if there was a control
 	if (control) {
 		
@@ -171,6 +169,9 @@ function showProperties(control) {
 		} // got properties
 		
 	} // got control
+	
+	// set the parent height to auto
+	propertiesPanel.parent().css("height","auto");
 		
 }
 
@@ -189,7 +190,7 @@ function updateProperty(cell, propertyObject, property, details, value) {
 		}	
 		// if a property refresh is requested
 		if (property.refreshProperties) {
-									
+								
 			// if these are events
 			if (cell.closest("div.actionsPanelDiv")[0]) {
 						
@@ -233,7 +234,7 @@ function updateProperty(cell, propertyObject, property, details, value) {
 			
 			// resize the page
 			windowResize("updateProperty");
-			
+									
 		}
 		
 		// if this is the name
@@ -279,26 +280,52 @@ function getDialogue(cell, propertyObject, property, details, width, title) {
 	// derive the id for this dialogue
 	var dialogueId = propertyObject.id + property.key;
 	
+	// add the data-dialogueId to the cell
+	cell.attr("data-dialogueId", dialogueId);
+	
 	// retrieve the dialogue
 	var dialogue = $("#propertiesDialogues").find("#" + dialogueId);
-	
+			
 	// get the name of the function that requested this dialogue
 	var propertyFunction = arguments.callee.caller.name;
 			
 	// if we couldn't retrieve one, make it now
-	if (!dialogue[0]) {
-		// add the data-dialogueId to the cell
-		cell.attr("data-dialogueId", dialogueId);
+	if (!dialogue[0]) {		
 		// add the div
 		dialogue = $("#propertiesDialogues").append("<div id='" + dialogueId + "' class='actionsPanelDiv dialogue' style='position:absolute;display:none;width:" + width + "px;z-index:10012;border:1px solid black;background-color:white;font-size:11px;padding:10px;'></div>").children().last();
 		// add a close link
-		var close = dialogue.append("<b style='float:left;margin-top:-5px;'>" + title + "</b><a href='#' style='float:right;margin-top:-5px;'>close</a></div>").children().last();
-		// note that this is not in the listeners collection so it's retained between property updates
+		var close = dialogue.append("<b style='float:left;margin-top:-5px;'>" + title + "</b><a href='#' class='closeDialogue' style='float:right;margin-top:-5px;'>close</a></div>").children().last();
+	
+		// add the close listener (it's put in the listener collection above)
 		addListener(close.click({dialogueId: dialogueId}, function(ev) {
+			
+			// get this dialogue
+			var dialogue = $("#" + ev.data.dialogueId);
+			
+			// look for any child dialogue cells
+			var childDialogueCells = dialogue.find("td[data-dialogueId]");
+			// loop them
+			childDialogueCells.each( function() {
+				// get the id
+				var childDialogueId = $(this).attr("data-dialogueId");
+				// get the child dialogue (if visible)
+				var childDialogue = $("#" + childDialogueId + ":visible");
+				// if we got one
+				if (childDialogue[0]) {
+					// find the close link
+					var close = childDialogue.find("a.closeDialogue");
+					// click it
+					close.click();
+				}
+				
+			});
+						
 			// remove this dialogue
-			$("#" + ev.data.dialogueId).remove();
-			// update the screen layout
-			windowResize("PropertyDialogue");
+			dialogue.remove();
+			
+			// call an update on the master property to set the calling cell text
+			updateProperty(cell, propertyObject, property, details, propertyObject[property.key]);
+
 		}));			
 		// add an options table
 		dialogue.append("<br/><table style='width:100%' class='propertiesPanelTable dialogueTable'><tbody></tbody></table>");
@@ -322,7 +349,9 @@ function getDialogue(cell, propertyObject, property, details, width, title) {
 			"z-index": _dialogueZindex++
 		});
 		// show this drop down
-		dialogue.slideDown(500);			
+		dialogue.slideDown(500, function() {
+			windowResize("PropertyDialogue show");
+		});			
 	}));
 	
 	// return
@@ -444,7 +473,8 @@ function Property_bigtext(cell, propertyObject, property, details) {
 	addListener( cell.click( {textarea: textarea}, function(ev) { 
 		textarea.css({
 			"left": cell.offset().left + cell.outerWidth() - 605, 
-			"top": cell.offset().top			
+			"top": cell.offset().top,
+			"z-index" : _dialogueZindex ++
 		});
 		textarea.slideDown(500);
 		// focus it so a click anywhere else fires the unfocus and hides the textbox
@@ -454,6 +484,7 @@ function Property_bigtext(cell, propertyObject, property, details) {
 	addListener( textarea.blur( function(ev) {
 		cell.text(textarea.val());
 		textarea.hide(); 
+		windowResize("Property_bigtext hide");
 	}));
 	// listen for key's we don't want to affect behaviour
 	addListener( textarea.keydown( textareaOverride ));
@@ -1387,11 +1418,11 @@ function Property_navigationPage(cell, navigationAction, property, details) {
 	// get a reference to the drop down
 	var pageDropDown = cell.find("select").last();
 	// add a listener
-	addListener( pageDropDown.change( {navigationAction: navigationAction}, function(ev) {
+	addListener( pageDropDown.change( {cell: cell, navigationAction: navigationAction, property: property, details: details}, function(ev) {
 		// get the value
 		value = $(ev.target).val();
 		// update it
-		updateProperty(cell, propertyObject, property, details, value);
+		updateProperty(ev.data.cell, ev.data.navigationAction, ev.data.property, ev.data.details, value);
 	}));
 	
 }

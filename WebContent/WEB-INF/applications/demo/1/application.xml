@@ -42,7 +42,7 @@
     <description>This is a demonstration Rapid application provided to showcase many common Rapid features</description>
     <id>demo</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-12-17T12:59:57.344Z</modifiedDate>
+    <modifiedDate>2014-12-23T09:47:20.434Z</modifiedDate>
     <name>demo</name>
     <pageBackupsMaxSize>3</pageBackupsMaxSize>
     <securityAdapterType>rapid</securityAdapterType>
@@ -88,7 +88,7 @@ input.validation {
 }
 
 </styles>
-    <title>Rapid demo</title>
+    <title>demo</title>
     <version>1</version>
     <webservices xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="sqlWebservice">
         <id>Samplewebservice</id>
