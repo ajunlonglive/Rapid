@@ -40,11 +40,13 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    <canUserAddPeers>true</canUserAddPeers>	    
 	    
 	    <properties>
+	        
 	        <property>
 	            <key>name</key>
 	            <name>Name</name>
 	            <changeValueJavaScript>text</changeValueJavaScript>	            
-	        </property>	            
+	        </property>	
+	                    
 	        <property>
 	            <key>code</key>
 	            <name>Glyph</name>
@@ -53,13 +55,17 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	                return "&#xf042;"
 	                ]]>
 	            </setConstructValueFunction>  
-	            <changeValueJavaScript>glyphCode</changeValueJavaScript>	 	                     
+	            <changeValueJavaScript>glyphCode</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>	 	                     
 	        </property>
+	        
 	        <property>
 	            <key>spin</key>
 	            <name>Spin</name>
-	            <changeValueJavaScript>checkbox</changeValueJavaScript>	            
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>	            
 	        </property>
+	        
 	    </properties>
 	    
 	    <resources>	        

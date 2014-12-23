@@ -40,17 +40,21 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    <canUserAddPeers>true</canUserAddPeers>	    
 	    
 	    <properties>
+	        
 	        <property>
 	            <key>name</key>
 	            <name>Name</name>
 	            <changeValueJavaScript>text</changeValueJavaScript>	            
-	        </property>	            
+	        </property>	
+	                    
 	        <property>
 	            <key>text</key>
 	            <name>Text</name>
 	            <setConstructValueFunction>return "Text"</setConstructValueFunction>
-	            <changeValueJavaScript>bigtext</changeValueJavaScript>	            
+	            <changeValueJavaScript>bigtext</changeValueJavaScript>	
+	            <refreshHtml>true</refreshHtml>            
 	        </property>
+	        
 	        <property>
 	            <key>format</key>
 	            <name>Format</name>
@@ -60,8 +64,10 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	                <![CDATA[
 return [{"value":"N","text":"None"},{"value":"P","text":"Paragraph"},{"value":"BF","text":"Line break"}];
 					]]>
-	            </getValuesFunction>               
+	            </getValuesFunction>         
+	            <refreshHtml>true</refreshHtml>      
 	        </property>
+	        
 	    </properties>
 	    
 	    <getHtmlFunction>

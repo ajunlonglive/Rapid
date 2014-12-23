@@ -37,23 +37,29 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    <canUserAddPeers>true</canUserAddPeers>
 	    	    
 	    <properties>
+	        
 	        <property>
 	            <key>name</key>
 	            <name>Name</name>
 	            <changeValueJavaScript>text</changeValueJavaScript>	            
-	        </property>	            
+	        </property>
+	        	            
 	        <property>
 	            <key>images</key>
 	            <name>Images</name>
 	            <setConstructValueFunction>return [{url:'images/RapidLogo_60x40.png'},{url:'images/RapidLogo_60x40.png'}]</setConstructValueFunction>  
-	            <changeValueJavaScript>galleryImages</changeValueJavaScript>	     	                 
+	            <changeValueJavaScript>galleryImages</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>	     	                 
 	        </property>
+	        
 	        <property>
 	            <key>emptyText</key>
 	            <name>Empty text</name>
 	            <setConstructValueFunction>return "No images";</setConstructValueFunction>  
-	            <changeValueJavaScript>text</changeValueJavaScript>	     	                 
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>	     	                 
 	        </property>
+	        
 	    </properties>
 	    
 	    <resources>

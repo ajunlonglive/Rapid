@@ -35,33 +35,39 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    <addToNewApplications>true</addToNewApplications>    
 	    
 	    <properties>
+	        
 	        <property>
 	            <key>controls</key>
 	            <name>Controls</name>
 	            <changeValueJavaScript>validationControls</changeValueJavaScript>	 
 	        </property>
+	        
 	        <property>
 	            <key>showMessages</key>
 	            <name>Apply styling</name>
 	            <setConstructValueFunction>return true;</setConstructValueFunction>
 	            <changeValueJavaScript>checkbox</changeValueJavaScript>	 
 	        </property>
+	        
 	        <property>
 	            <key>stopActions</key>
 	            <name>Stop actions</name>
 	            <setConstructValueFunction>return true;</setConstructValueFunction>
 	            <changeValueJavaScript>checkbox</changeValueJavaScript>	 
 	        </property>
+	        
 	        <property>
 	            <key>passActions</key>
 	            <name>Pass actions</name>
 	            <changeValueJavaScript>childActions</changeValueJavaScript>	 
 	        </property>
+	        
 	        <property>
 	            <key>failActions</key>
 	            <name>Fail actions</name>
 	            <changeValueJavaScript>childActions</changeValueJavaScript>	 
 	        </property>
+	        
 	    </properties>
 	    
 	    <resources>

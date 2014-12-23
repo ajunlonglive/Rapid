@@ -40,22 +40,27 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    <canValidate>true</canValidate>
 	    
 	    <properties>
+	        
 	        <property>
 	            <key>name</key>
 	            <name>Name</name>
 	            <changeValueJavaScript>text</changeValueJavaScript>	            
-	        </property>	            
+	        </property>	
+	                    
 	        <property>
 	            <key>value</key>
 	            <name>Value</name>
 	            <setConstructValueFunction>return "";</setConstructValueFunction>
 	            <changeValueJavaScript>text</changeValueJavaScript>	            
 	        </property>
+	        
 	        <property>
 	            <key>maxLength</key>
 	            <name>Character limit</name>
-	            <changeValueJavaScript>text</changeValueJavaScript>	            
+	            <changeValueJavaScript>text</changeValueJavaScript>	
+	            <refreshHtml>true</refreshHtml>            
 	        </property>	 
+	        
 	        <property>
 	            <key>controlType</key>
 	            <name>Type</name>
@@ -65,14 +70,18 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	                <![CDATA[
 return [["N","Normal"],["L","Large"],["P","Password"],["R","Readonly"]];
 					]]>
-	            </getValuesFunction>               
+	            </getValuesFunction>           
+	            <refreshHtml>true</refreshHtml>
+	            <refreshProperties>true</refreshProperties>    
 	        </property>
+	        
 	        <property>
 	            <key>autoHeight</key>
 	            <name>Auto height</name>
 	            <setConstructValueFunction>return false;</setConstructValueFunction>
 	            <changeValueJavaScript>inputAutoHeight</changeValueJavaScript>	               
-	        </property>	        
+	        </property>	 
+	               
 	    </properties>
 	    
 	    <getHtmlFunction>

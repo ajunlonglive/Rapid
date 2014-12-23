@@ -39,16 +39,19 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    <canUserAddPeers>true</canUserAddPeers>
 	    
 	    <properties>
+	        
 	        <property>
 	            <key>name</key>
 	            <name>Name</name>
 	            <changeValueJavaScript>text</changeValueJavaScript>	            
-	        </property>	       
+	        </property>	
+	               
 	        <property>
 	            <key>controlHints</key>
 	            <name>Hints</name>
 	            <changeValueJavaScript>controlHints</changeValueJavaScript>	             
-	        </property>     
+	        </property> 
+	            
 	    </properties>
 	    
 	    <resources>

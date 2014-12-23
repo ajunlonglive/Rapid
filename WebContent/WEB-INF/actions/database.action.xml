@@ -35,31 +35,37 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    <addToNewApplications>true</addToNewApplications> 
 	    	    	    	    
 	    <properties>
+	        
 	        <property>
 	            <key>query</key>
 	            <name>Query</name>
 	            <changeValueJavaScript>databaseQuery</changeValueJavaScript>	 
-	        </property>	  
+	        </property>	
+	          
 	        <property>
 	            <key>showLoading</key>
 	            <name>Loading animation</name>
 	            <changeValueJavaScript>checkbox</changeValueJavaScript>	 
 	        </property>	
+	        
 	        <property>
 	            <key>childDatabaseActions</key>
 	            <name>Child actions</name>
 	            <changeValueJavaScript>databaseChildActions</changeValueJavaScript>	 
 	        </property>
+	        
 	        <property>
 	            <key>successActions</key>
 	            <name>Success actions</name>
 	            <changeValueJavaScript>childActions</changeValueJavaScript>	 
 	        </property>
+	        
 	        <property>
 	            <key>errorActions</key>
 	            <name>Error actions</name>
 	            <changeValueJavaScript>childActions</changeValueJavaScript>	 
-	        </property>      
+	        </property>     
+	         
 	    </properties>	 
 	    
 	    <resources>

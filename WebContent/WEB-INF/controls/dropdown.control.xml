@@ -57,13 +57,15 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <key>options</key>
 	            <name>Options</name>
 	            <setConstructValueFunction>return [{value:"", text:"Value 1"}, {value:"", text:"Value 2"}, {value:"", text:"Value 3"}];</setConstructValueFunction>
-	            <changeValueJavaScript>options</changeValueJavaScript>	            
+	            <changeValueJavaScript>options</changeValueJavaScript>	
+	            <refreshHtml>true</refreshHtml>            
 	        </property>
 	        
 	        <property>
 	            <key>value</key>
 	            <name>Initial value</name>
-	            <changeValueJavaScript>text</changeValueJavaScript>	            
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>	            
 	        </property>
 	         	        
 	    </properties>

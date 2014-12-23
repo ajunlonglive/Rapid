@@ -35,4 +35,11 @@
         <scale>2.0</scale>
         <width>800</width>
     </devices>
+    <devices>
+        <height>1280</height>
+        <name>Samsung Galaxy Tab 3</name>
+        <PPI>189</PPI>
+        <scale>2.0</scale>
+        <width>800</width>
+    </devices>
 </devices>

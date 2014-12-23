@@ -47,23 +47,18 @@ function addHelp(id, property, right) {
 	}
 		
 	// hide hint on mouseout
-	var outListener = $("#" + id).mouseout({id: id}, function(ev) {
+	$("#" + id).mouseout({id: id}, function(ev) {
 		$("#" + id + "hint").hide();
 	});
 	
 	// show the hint on mouseover
-	var overListener = $("#" + id).mouseover({id: id}, function(ev) { 
+	$("#" + id).mouseover({id: id}, function(ev) { 
 		$("#" + ev.data.id + "hint").css({
 			left: ev.pageX + 5 - (property || right ? $("#" + id + "hint").outerWidth() + 10 : 0),
 			top: ev.pageY + 5
 		}).show();  
 	});
 	
-	// if this is a hint for a property add the listeners to the array for deregistration
-	if (property) {
-		addListener(outListener);
-		addListener(overListener);
-	}
 }
 
 //JQuery is ready! 

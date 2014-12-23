@@ -40,23 +40,28 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    <canUserAddPeers>true</canUserAddPeers>
 	    	    
 	    <properties>
+	        
 	        <property>
 	            <key>name</key>
 	            <name>Name</name>
 	            <changeValueJavaScript>text</changeValueJavaScript>	            
-	        </property>	            
+	        </property>	  
+	                  
 	        <property>
 	            <key>title</key>
 	            <name>Title</name>
 	            <setConstructValueFunction>return this.name;</setConstructValueFunction>  
 	            <changeValueJavaScript>text</changeValueJavaScript>	     	                 
 	        </property>
+	        
 	        <property>
 	            <key>file</key>
 	            <name>File</name>
 	            <setConstructValueFunction>return "../../../images/RapidLogo_60x40.png"</setConstructValueFunction>
-	            <changeValueJavaScript>imageFile</changeValueJavaScript>	     	                 
+	            <changeValueJavaScript>imageFile</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>	     	                 
 	        </property>
+	        
 	    </properties>
 	    
 	    <getHtmlFunction>

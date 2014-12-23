@@ -40,42 +40,53 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    <canValidate>true</canValidate>
 	    
 	    <properties>
+	        
 	        <property>
 	            <key>name</key>
 	            <name>Name</name>
 	            <changeValueJavaScript>text</changeValueJavaScript>	            
 	        </property>	
+	        
 	        <property>
 	            <key>codes</key>
 	            <name>Codes</name>
 	            <visible>false</visible>
 	        </property> 
+	        
 	        <property>
 	            <key>buttons</key>
 	            <name>Buttons</name>
 	            <visible>true</visible>
 	            <setConstructValueFunction>return [{value:"", label:"Radio button 1"}, {value:"", label:"Radio button 2"}];</setConstructValueFunction>
-	            <changeValueJavaScript>radiobuttons</changeValueJavaScript>		            
-	        </property>      
+	            <changeValueJavaScript>radiobuttons</changeValueJavaScript>	
+	            <refreshHtml>true</refreshHtml>	            
+	        </property>  
+	            
 	        <property>
 	            <key>value</key>
 	            <name>Inital value</name>
-	            <changeValueJavaScript>text</changeValueJavaScript>	            
-	        </property>	      
+	            <changeValueJavaScript>text</changeValueJavaScript>	     
+	            <refreshHtml>true</refreshHtml>       
+	        </property>	  
+	            
 	        <property>
 	            <key>buttonposition</key>
 	            <name>Button position</name>	            
 	            <setConstructValueFunction>return "L";</setConstructValueFunction>	            
 	            <changeValueJavaScript>select</changeValueJavaScript>	
-	            <getValuesFunction>return [{value:"L", text:"left"}, {value:"R", text:"right"}];</getValuesFunction>            
+	            <getValuesFunction>return [{value:"L", text:"left"}, {value:"R", text:"right"}];</getValuesFunction>    
+	            <refreshHtml>true</refreshHtml>        
 	        </property>
+	        
 	        <property>
 	            <key>layout</key>
 	            <name>Layout</name>
 	            <setConstructValueFunction>return "H";</setConstructValueFunction>  	            
 	            <changeValueJavaScript>select</changeValueJavaScript>	            
 	            <getValuesFunction>return [{value:"H", text:"horizontal"}, {value:"V", text:"vertical"}];</getValuesFunction>
+	            <refreshHtml>true</refreshHtml>
 	        </property>
+	        
 	    </properties>
 	    
 	    <getHtmlFunction>

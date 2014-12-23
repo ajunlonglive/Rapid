@@ -59,29 +59,32 @@ function addReorder(collection, items, rerender) {
 						// retain the position we are moving to
 						var toIndex = ev.data.index;
 						// retain the position we are moving from
-						var fromIndex = _reorderDetails.index;						
-						// retain the object we are moving as the "from"
-						var fromObject = collection[fromIndex];
-						// check whether we're replacing up or down
-						if (fromIndex > toIndex) {
-							// a lower object has been moved up - shift all objects above from down one
-							for (var i = fromIndex; i > toIndex ; i--) {
-								collection[i] = collection[i - 1];
+						var fromIndex = _reorderDetails.index;		
+						// if the from and to are different
+						if (toIndex != fromIndex) {
+							// retain the object we are moving as the "from"
+							var fromObject = collection[fromIndex];
+							// check whether we're replacing up or down
+							if (fromIndex > toIndex) {
+								// a lower object has been moved up - shift all objects above from down one
+								for (var i = fromIndex; i > toIndex ; i--) {
+									collection[i] = collection[i - 1];
+								}
+								// put the from into the to
+								collection[toIndex] = fromObject;
+							} else {
+								// a high object has been moved down - shift all objects below to up one
+								for (var i = fromIndex; i < toIndex; i++) {
+									collection[i] = collection[i + 1];
+								}
+								// put the from into the to
+								collection[toIndex] = fromObject;
 							}
-							// put the from into the to
-							collection[toIndex] = fromObject;
-						} else {
-							// a high object has been moved down - shift all objects below to up one
-							for (var i = fromIndex; i < toIndex; i++) {
-								collection[i] = collection[i + 1];
-							}
-							// put the from into the to
-							collection[toIndex] = fromObject;
+							// make the to object the from in the _reorderDetails to stop constant swapping
+							_reorderDetails = { object: $(ev.target), collection: collection, index: ev.data.index };
+							// re-render 
+							ev.data.rerender();
 						}
-						// make the to object the from in the _reorderDetails to stop constant swapping
-						_reorderDetails = { object: $(ev.target), collection: collection, index: ev.data.index };
-						// re-render 
-						ev.data.rerender();
 					}
 				}
 			}

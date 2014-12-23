@@ -35,18 +35,22 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    <canUserInsert>true</canUserInsert>    
 	    <canUserAddPeers>true</canUserAddPeers>
 	    
-	    <properties>         
+	    <properties>    
+	             
 	        <property>
 	            <key>name</key>
 	            <name>Name</name>
 	            <changeValueJavaScript>text</changeValueJavaScript>	            
-	        </property>	            
+	        </property>	
+	                    
 	        <property>
 	            <key>text</key>
 	            <name>Text</name>
 	            <setConstructValueFunction>return "Cell";</setConstructValueFunction>
-	            <changeValueJavaScript>bigtext</changeValueJavaScript>	            
+	            <changeValueJavaScript>bigtext</changeValueJavaScript>	
+	            <refreshHtml>true</refreshHtml>            
 	        </property>
+	        
 	        <property>
 	            <key>colSpan</key>
 	            <name>Column span</name>
@@ -57,9 +61,9 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 var values=[];
 var maxCols = 1;
 // loop the rows in this table
-for (var i in this.parentControl.parentControl.childControls) {
+for (var i in this._parent._parent.childControls) {
 	// increase the maxCols if greater
-	if (this.parentControl.parentControl.childControls[i].childControls.length > maxCols) maxCols = this.parentControl.parentControl.childControls[i].childControls.length;
+	if (this._parent._parent.childControls[i].childControls.length > maxCols) maxCols = this._parent._parent.childControls[i].childControls.length;
 }
 // add an entry up to the maxCols
 for (var i = 1; i < maxCols; i++) values.push(i);
@@ -67,21 +71,25 @@ values.push(i);
 return values;
 					]]>      
 				</getValuesFunction>  
+				<refreshHtml>true</refreshHtml>
 	        </property>
+	        
 	        <property>
 	            <key>rowSpan</key>
 	            <name>Row span</name>
 	            <setConstructValueFunction>return "1";</setConstructValueFunction>
 	            <changeValueJavaScript>select</changeValueJavaScript>	
-	            	            <getValuesFunction>
+	            <getValuesFunction>
 	                <![CDATA[
 var values=[];
 // loop the rows in the table
-for (var i = 1; i <= this.parentControl.parentControl.childControls.length; i++) values.push(i);
+for (var i = 1; i <= this._parent._parent.childControls.length; i++) values.push(i);
 return values;
 					]]>      
-				</getValuesFunction>              
+				</getValuesFunction>    
+				<refreshHtml>true</refreshHtml>          
 	        </property>
+	        
 	    </properties>
 	    
 	    <getHtmlFunction>
@@ -114,11 +122,13 @@ return "#" + this.id;
 	    <canUserAddPeers>true</canUserAddPeers>
 	    
 	    <properties>
+	        
 	        <property>
 	            <key>name</key>
 	            <name>Name</name>
 	            <changeValueJavaScript>text</changeValueJavaScript>	            
-	        </property>	            
+	        </property>	 
+	                   
 	    </properties>
 	    
 	    <getHtmlFunction>
@@ -131,7 +141,7 @@ return "<tr id='" + this.id + "' class='tableRow" + getStyleClasses(this) + "'><
 	    <createJavaScript>
 	        <![CDATA[
 // set this object to the tr (which is under the tbody)
-this.object = this.parentControl.object.children().last().children().last();
+this.object = this._parent.object.children().last().children().last();
 	        ]]>
 	    </createJavaScript> 
 	        
@@ -140,12 +150,12 @@ this.object = this.parentControl.object.children().last().children().last();
 // make an array to hold the cells in this row	        
 this.childControls = new Array();
 // check if the table object already has rows
-if (this.parentControl.childControls.length > 0) {
+if (this._parent.childControls.length > 0) {
 	// if so make cells in this row for as many cells as there are in the top row
 	var maxCells = 1;
 	// get the widest row
-	for (var i in this.parentControl.childControls[0].childControls) {
-		if (this.parentControl.childControls[0].childControls.length > maxCells) maxCells = this.parentControl.childControls[0].childControls.length;
+	for (var i in this._parent.childControls[0].childControls) {
+		if (this._parent.childControls[0].childControls.length > maxCells) maxCells = this._parent.childControls[0].childControls.length;
 	}
 	for (var i = 0; i < maxCells; i++) {
 		this.childControls.push(new Control("tableCell", this));
@@ -161,7 +171,7 @@ if (this.parentControl.childControls.length > 0) {
 	    <appendJavaScript>
 	        <![CDATA[        
 // this makes sure the row is added to the tbody
-this.parentControl.object.children().last().append(this._html);
+this._parent.object.children().last().append(this._html);
 	        ]]>
 	    </appendJavaScript> 
 	    

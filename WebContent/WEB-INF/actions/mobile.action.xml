@@ -39,12 +39,15 @@ This action runs actions that already exist on other controls
 		
 -->	    	
 		<properties>
+		    
 	        <property>
 	            <key>actionType</key>
 	            <name>Type</name>
 	            <setConstructValueFunction>return "addImage";</setConstructValueFunction>
 	            <changeValueJavaScript>mobileActionType</changeValueJavaScript>	 
+	            <refreshProperties>true</refreshProperties>
 	        </property>
+	        
 	        <property>
 	            <key>galleryControlId</key>
 	            <name>Gallery control</name>
@@ -56,6 +59,7 @@ return "<option value=''>Please select...</option>" + getControlOptions(this.gal
 	                ]]>
 	            </getValuesFunction>	 	            
 	        </property>
+	        
 	        <property>
 	            <key>imageMaxSize</key>
 	            <name>Max width/height (px)</name>
@@ -63,6 +67,7 @@ return "<option value=''>Please select...</option>" + getControlOptions(this.gal
 	            <setConstructValueFunction>return "500";</setConstructValueFunction>
 	            <changeValueJavaScript>integer</changeValueJavaScript>	 
 	        </property>
+	        
 	        <property>
 	            <key>imageQuality</key>
 	            <name>Quality (%)</name>
@@ -70,24 +75,28 @@ return "<option value=''>Please select...</option>" + getControlOptions(this.gal
 	            <setConstructValueFunction>return "50";</setConstructValueFunction>
 	            <changeValueJavaScript>integer</changeValueJavaScript>	 
 	        </property>
+	        
 	        <property>
 	            <key>successActions</key>
 	            <name>Success actions</name>
 	            <visible>false</visible>
 	            <changeValueJavaScript>childActions</changeValueJavaScript>	 
 	        </property>
+	        
 	        <property>
 	            <key>errorActions</key>
 	            <name>Error actions</name>
 	            <visible>false</visible>
 	            <changeValueJavaScript>childActions</changeValueJavaScript>	 
 	        </property> 
+	        
 	        <property>
 	            <key>message</key>
 	            <name>Message</name>
 	            <visible>false</visible>
 	            <changeValueJavaScript>bigtext</changeValueJavaScript>	 
 	        </property> 
+	        
 	    </properties>
 	    
 		<actionJavaScript>

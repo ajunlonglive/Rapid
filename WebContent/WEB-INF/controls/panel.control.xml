@@ -40,23 +40,28 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    <canUserInsert>true</canUserInsert>
 	    <canUserAddPeers>true</canUserAddPeers>
 	    
-	    <properties>      
+	    <properties>  
+	            
 	        <property>
 	            <key>name</key>
 	            <name>Name</name>
 	            <changeValueJavaScript>text</changeValueJavaScript>	            
-	        </property>     
+	        </property>
+	             
 	        <property>
 	            <key>text</key>
 	            <name>Text</name>
 	            <setConstructValueFunction>return "Panel"</setConstructValueFunction>
-	            <changeValueJavaScript>bigtext</changeValueJavaScript>	            
+	            <changeValueJavaScript>bigtext</changeValueJavaScript>	   
+	            <refreshHtml>true</refreshHtml>         
 	        </property>
+	        
 	        <property>
 	            <key>roles</key>
 	            <name>User roles</name>
 	            <changeValueJavaScript>roles</changeValueJavaScript>	            
 	        </property>
+	        
 	    </properties>
 	    
 	    <getHtmlFunction>
