@@ -35,16 +35,19 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    <canUserInsert>true</canUserInsert>    
 
 	    <properties>
+	        
 	        <property>
 	            <key>name</key>
 	            <name>Name</name>
 	            <changeValueJavaScript>text</changeValueJavaScript>	            
 	        </property>	
+	        
 	       	<property>
 	       		<key>panelId</key>
 	       		<name>panelId</name>
 	       		<visible>false</visible>
 	       	</property> 
+	       	
 	    </properties>
 	    	    
 	    <getHtmlFunction>
@@ -66,7 +69,7 @@ if (!this.slidePanelId) this.slidePanelId = this.object.prev().attr("id");
 // add the opener id to this control's object
 this.object.attr("data-panel",this.slidePanelId);
 // add this control's id to the opener object	    
-this.parentControl.object.find("#" + this.slidePanelId).attr("data-pane",this.id);	
+this._parent.object.find("#" + this.slidePanelId).attr("data-pane",this.id);	
 	    	]]>
 	    </rebuildJavaScript>
 	    
@@ -140,28 +143,33 @@ return "#" + this.id;
 	    <canUserAdd>true</canUserAdd>
   
 	    <properties>
+	        
 	        <property>
 	            <key>visible</key>
 	            <name>Visible</name>
 	            <setConstructValueFunction>return false;</setConstructValueFunction>
 	            <changeValueJavaScript>slidePanelVisibility</changeValueJavaScript>		                       
 	        </property>	
+	        
 	        <property>
 	            <key>colour</key>
 	            <name>Colour</name>
 	            <setConstructValueFunction>return "grey";</setConstructValueFunction>
-	            <changeValueJavaScript>slidePanelColour</changeValueJavaScript>	
+	            <changeValueJavaScript>select</changeValueJavaScript>	
 	            <getValuesFunction>
 	                <![CDATA[
 return ["grey","white","black"];
 					]]>
-	            </getValuesFunction>               
+	            </getValuesFunction>         
+	            <refreshHtml>true</refreshHtml>     
 	        </property>    
+	        
 	        <property>
 	            <key>slidePanelId</key>
 	            <name>slidePanelId</name>
 	            <visible>false</visible>
 	        </property>
+	        
 	    </properties>
 	    
 	    <resources>
@@ -267,7 +275,7 @@ return "<div id='" + this.id + "' class='slidePanel'><img src='images/controls/s
 	    <constructJavaScript>
 	        <![CDATA[	        
 // add the panel next to the opener
-this.parentControl.childControls.push(new Control("slidePanelPane", this.parentControl));
+this._parent.childControls.push(new Control("slidePanelPane", this._parent));
 	        ]]>
 	    </constructJavaScript>	
 	    	    	    
@@ -278,9 +286,9 @@ if (this.visible == "false") this.visible = false;
 // get the pane id
 var paneId = this.object.attr("data-pane");
 // get the pane
-var pane = this.parentControl.object.find("#" + paneId);	 
+var pane = this._parent.object.find("#" + paneId);	 
 // get the pageCover
-var pageCover = this.parentControl.object.find(".slidePanelCover");    
+var pageCover = this._parent.object.find(".slidePanelCover");    
 // check the visibilty property   
 if (this.visible) {
 	pane.show();

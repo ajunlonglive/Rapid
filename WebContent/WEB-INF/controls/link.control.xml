@@ -39,38 +39,53 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    <canUserMove>true</canUserMove>
 	    
 	    <properties>
+	        
 	        <property>
 	            <key>text</key>
 	            <name>Text</name>
 	            <setConstructValueFunction>return this.name;</setConstructValueFunction>  
-	            <changeValueJavaScript>text</changeValueJavaScript>	            
-	        </property>    
+	            <changeValueJavaScript>text</changeValueJavaScript>	  
+	            <refreshHtml>true</refreshHtml>          
+	        </property> 
+	           
 	        <property>
 	            <key>linkType</key>
 	            <name>Type</name>
 	            <setConstructValueFunction>return "P";</setConstructValueFunction>
-	            <changeValueJavaScript>linkType</changeValueJavaScript>	              
-	        </property>  	                
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	            <getValuesFunction>return [["P","Page"],["U","URL"]];</getValuesFunction>
+	            <refreshProperties>true</refreshProperties>	              
+	        </property>  
+	        	                
 	        <property>
 	            <key>page</key>
 	            <name>Page</name>
-	           	<changeValueJavaScript>linkPage</changeValueJavaScript>	 	            
+	           	<changeValueJavaScript>select</changeValueJavaScript>
+	           	<getValuesFunction>
+	           	    <![CDATA[
+	           	    	return "<option value=\'\'>Please select...</option>" + getPageOptions(this.page, _page.id);
+	           	    ]]>
+	           	</getValuesFunction>	 	            
 	        </property>
+	        
 	        <property>
 	            <key>url</key>
 	            <name>URL</name>  
 	            <changeValueJavaScript>linkURL</changeValueJavaScript>	            
 	        </property>
+	        
 	        <property>
 	            <key>sessionVariables</key>
 	            <name>Page variables</name>
 	            <changeValueJavaScript>navigationSessionVariables</changeValueJavaScript>	
 	        </property>
+	        
 	        <property>
 	            <key>popup</key>
 	            <name>Popup</name>
 	            <changeValueJavaScript>linkPopup</changeValueJavaScript>	
 	        </property>
+	        
 	    </properties>
 	    
 	    <resources>

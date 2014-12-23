@@ -40,17 +40,21 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    <canUserAddPeers>true</canUserAddPeers>
 	    
 	    <properties>
+	        
 	        <property>
 	            <key>name</key>
 	            <name>Name</name>
 	            <changeValueJavaScript>text</changeValueJavaScript>	            
-	        </property>	            
+	        </property>	 
+	                   
 	        <property>
 	            <key>label</key>
 	            <name>Label</name>
 	            <setConstructValueFunction>return "button";</setConstructValueFunction>  
-	            <changeValueJavaScript>text</changeValueJavaScript>	     	                 
+	            <changeValueJavaScript>text</changeValueJavaScript>	    
+	            <refreshHtml>true</refreshHtml> 	                 
 	        </property>
+	        
 	        <property>
 	            <key>glyphCode</key>
 	            <name>Glyph</name>
@@ -59,8 +63,10 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	                return ""
 	                ]]>
 	            </setConstructValueFunction>  
-	            <changeValueJavaScript>glyphCode</changeValueJavaScript>	 	                     
+	            <changeValueJavaScript>glyphCode</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>	 	                   
 	        </property>
+	        
 	        <property>
 	            <key>glyphPosition</key>
 	            <name>Glyph position</name>
@@ -70,8 +76,10 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	                <![CDATA[
 return ["left","right","top","bottom"];
 					]]>
-	            </getValuesFunction>               
-	        </property>    
+	            </getValuesFunction>          
+	            <refreshHtml>true</refreshHtml>     
+	        </property> 
+	           
 	        <property>
 	            <key>glyphBackground</key>
 	            <name>Glyph background</name>
@@ -81,8 +89,10 @@ return ["left","right","top","bottom"];
 	                <![CDATA[
 return ["none","circle","circle-o","square","square-o"];
 					]]>
-	            </getValuesFunction>               
+	            </getValuesFunction>    
+	            <refreshHtml>true</refreshHtml>           
 	        </property> 
+	        
 	    </properties>
 	    
 	    <resources>

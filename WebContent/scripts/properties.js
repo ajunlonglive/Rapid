@@ -29,33 +29,63 @@ Functions related to control properties
 
 */
 
-// an id to unqiuely identify each property dialogue as we create them
-var _dialogueId = 0;
 // this holds all the property listeners by dialogue id so they can be properly detached
 var _dialogueListeners = {};
+// a global for ensuring more recently shown dialogues are on top of later shown ones
+var _dialogueZindex = 10012;
+// this holds the cell, propertyObject, property, and details by dialogue id for refeshing child actions
+var _dialogueRefeshProperties = {};
 
 // this finds the dialogue each listener is in and stores it so the relevant ones can be detached when the dialogue is closed
 function addListener(listener) {
-	// get the listener dialogue
-	var dialogue = listener.closest("div[data-dialogueId]");
-	// get the id
-	dialogueId = dialogue.attr("data-dialogueId");
+	// assume we're not able to find the listener id
+	var listenerId = "unknown";
+	// get the listener object
+	var listenerObject = $(listener);
+	// get the nearest dialogue
+	var dialogue = listener.closest("div.dialogue");
+	// if we didn't get a dialogue
+	if (dialogue[0]) {
+		// set the listener object to the dialogue id
+		listenerId = dialogue.attr("id");
+	} else {
+		// find the closest div with a data-dialogueid
+		dialogue = listener.closest("div[data-dialogueid]");
+		// set the listener id to the dialogue id
+		listenerId = dialogue.attr("data-dialogueid");
+	}
+	
 	// instantiate array if need be
-	if (!_dialogueListeners[dialogueId]) _dialogueListeners[dialogueId] = [];
+	if (!_dialogueListeners[listenerId]) _dialogueListeners[listenerId] = [];
 	// add the listener
-	_dialogueListeners[dialogueId].push(listener);
+	_dialogueListeners[listenerId].push(listener);
+	
 }
 
-function removeListeners(dialogueId) {
-	// if we were given a dialogueId
-	if (dialogueId) {
+function removeListeners(listenerId) {
+	
+	// if we were given a listenerId
+	if (listenerId) {
 		// loop all the listeners
-		for (var i in _dialogueListeners[dialogueId]) {
+		for (var i in _dialogueListeners[listenerId]) {
 			// remove all dialogues
-			_dialogueListeners[dialogueId][i].unbind();
+			_dialogueListeners[listenerId][i].unbind();
 		}
-		// remove the dialogue
-		delete _dialogueListeners[dialogueId];
+		// remove the  listeners for good
+		delete _dialogueListeners[listenerId];		
+		// append "Div" if propertiesPanel
+		if (listenerId == "propertiesPanel") listenerId += "Div";
+		// update "Div" if actionsPanel
+		if (listenerId == "actionsPanel") listenerId += "Div";
+		// check for any children
+		var childDialogues = $("#" + listenerId).find("td[data-dialogueId]");
+		// if we got some
+		if (childDialogues.length > 0) {
+			// loop and remove
+			childDialogues.each( function() {
+				removeListeners($(this).attr("data-dialogueId"));
+			});
+		}
 	} else {
 		// loop all the dialogues
 		for (var i in _dialogueListeners) {
@@ -64,17 +94,15 @@ function removeListeners(dialogueId) {
 				// remove all dialogues
 				_dialogueListeners[i][j].unbind();
 			}
-			// remove the dialogue
+			// remove the dialogue listeners for good
 			delete _dialogueListeners[i];
 		}
-		// reset the dialogueId
-		_dialogueId = 0;
 	}
 }
 
 // this renders all the control properties in the properties panel
 function showProperties(control) {
-			
+		
 	// remove all listeners for this panel
 	removeListeners("propertiesPanel");
 		
@@ -132,7 +160,7 @@ function showProperties(control) {
 						}
 					} else {
 						if (window["Property_" + property.changeValueJavaScript]) {
-							window["Property_" + property.changeValueJavaScript](cell, control, property, true);
+							window["Property_" + property.changeValueJavaScript](cell, control, property);
 						} else {
 							alert("Error - There is no known Property_" + property.changeValueJavaScript + " function");
 						}
@@ -146,7 +174,8 @@ function showProperties(control) {
 		
 }
 
-function updateProperty(propertyObject, property, value, refreshHtml) {
+function updateProperty(cell, propertyObject, property, details, value) {
+	
 	// if the page isn't locked
 	if (!_locked) {
 		// add an undo snapshot
@@ -154,10 +183,59 @@ function updateProperty(propertyObject, property, value, refreshHtml) {
 		// update the object property value
 		propertyObject[property.key] = value;
 		// if an html refresh is requested
-		if (refreshHtml) {
+		if (property.refreshHtml) {
 			// in controls.js
 			rebuildHtml(propertyObject);			
 		}	
+		// if a property refresh is requested
+		if (property.refreshProperties) {
+									
+			// if these are events
+			if (cell.closest("div.actionsPanelDiv")[0]) {
+						
+				// get the event type
+				var eventType = cell.closest("table[data-eventType]").attr("data-eventType");
+				
+				// get the dialogue id
+				var dialogueId = cell.closest("div.dialogue").attr("id");
+				
+				// if we're in a dialogue
+				if (dialogueId) {
+					
+					// get the refresh properties from the global store
+					var refreshProperties = _dialogueRefeshProperties[dialogueId];
+					
+					// get the parts
+					var cell = refreshProperties.cell;
+					var propertyObject = refreshProperties.propertyObject;
+					var property = refreshProperties.property;
+					
+					// check for the property function (it wouldn't have made a dialogue unless it was custom)
+					if (window["Property_" + property.changeValueJavaScript]) {
+						window["Property_" + property.changeValueJavaScript](cell, propertyObject, property);
+					} else {
+						alert("Error - There is no known Property_" + property.changeValueJavaScript + " function");
+					}
+					
+				} else {
+					
+					// update this event's actions using the control
+					showActions(_selectedControl, eventType);
+									
+				}
+								
+			} else {
+				
+				// re-show the properties
+				showProperties(_selectedControl);				
+				
+			}
+			
+			// resize the page
+			windowResize("updateProperty");
+			
+		}
+		
 		// if this is the name
 		if (property.key == "name") {
 			// if the property map is visible
@@ -193,37 +271,60 @@ function setPropertyVisibilty(propertyObject, propertyKey, visibile) {
 }
 
 // this is a reusable function for creating dialogue boxes
-function createDialogue(cell, width, title) {	
-	// increment the dialogue id counter
-	_dialogueId ++;
-	// create a dialogue if we need to
-	var dialogue = $("#propertiesDialogues").append("<div data-dialogueId='" + _dialogueId + "' class='actionsPanelDiv dialogue' style='position:absolute;display:none;width:" + width + "px;z-index:10012;border:1px solid black;background-color:white;font-size:11px;padding:10px;'></div>").children().last();
-	// add a close link
-	var close = dialogue.append("<b style='float:left;margin-top:-5px;'>" + title + "</b><a href='#' style='float:right;margin-top:-5px;'>close</a></div>").children().last();
-	// note that this is not in the listeners collection so it's retained between property updates
-	addListener(close.click({dialogueId: _dialogueId}, function(ev) {
-		// remove listeners for this dialogue
-		removeListeners(ev.data.dialogueId);
-		// hide this dialogue
-		$(ev.target).closest("div.dialogue").remove();
-		// update the properties 
-		showProperties(_selectedControl);
-		// update the events
-		showEvents(_selectedControl);
-		// update the screen layout
-		windowResize("PropertyDialogue");
-	}));	
-	// listener to show the dialogue also retained between property updates
-	addListener(cell.click( function(ev) { 
+function getDialogue(cell, propertyObject, property, details, width, title) {	
+	
+	// any property that show's a dialogue will cause a refresh
+	property.refreshProperties = true;
+	
+	// derive the id for this dialogue
+	var dialogueId = propertyObject.id + property.key;
+	
+	// retrieve the dialogue
+	var dialogue = $("#propertiesDialogues").find("#" + dialogueId);
+	
+	// get the name of the function that requested this dialogue
+	var propertyFunction = arguments.callee.caller.name;
+			
+	// if we couldn't retrieve one, make it now
+	if (!dialogue[0]) {
+		// add the data-dialogueId to the cell
+		cell.attr("data-dialogueId", dialogueId);
+		// add the div
+		dialogue = $("#propertiesDialogues").append("<div id='" + dialogueId + "' class='actionsPanelDiv dialogue' style='position:absolute;display:none;width:" + width + "px;z-index:10012;border:1px solid black;background-color:white;font-size:11px;padding:10px;'></div>").children().last();
+		// add a close link
+		var close = dialogue.append("<b style='float:left;margin-top:-5px;'>" + title + "</b><a href='#' style='float:right;margin-top:-5px;'>close</a></div>").children().last();
+		// note that this is not in the listeners collection so it's retained between property updates
+		addListener(close.click({dialogueId: dialogueId}, function(ev) {
+			// remove this dialogue
+			$("#" + ev.data.dialogueId).remove();
+			// update the screen layout
+			windowResize("PropertyDialogue");
+		}));			
+		// add an options table
+		dialogue.append("<br/><table style='width:100%' class='propertiesPanelTable dialogueTable'><tbody></tbody></table>");
+	}	
+	
+	// listener to show the dialogue 
+	addListener(cell.click({dialogueId: dialogueId, propertyFunction: propertyFunction}, function(ev) {
+		// retrieve the dialogue using the id
+		var dialogue = $("#propertiesDialogues").find("#" + ev.data.dialogueId);
+		// if it doesn't exist 
+		if (!dialogue[0]) {
+			//call the original property function
+			window[ev.data.propertyFunction](cell, propertyObject, property, details);
+			// get it again
+			dialogue = $("#propertiesDialogues").find("#" + ev.data.dialogueId);
+		}		
+		// position the dialogue
 		dialogue.css({
 			"left": cell.offset().left + cell.outerWidth() - dialogue.outerWidth() + 1, 
-			"top": cell.offset().top			
+			"top": cell.offset().top,
+			"z-index": _dialogueZindex++
 		});
 		// show this drop down
 		dialogue.slideDown(500);			
 	}));
-	// add an options table
-	dialogue.append("<br/><table style='width:100%' class='propertiesPanelTable dialogueTable'><tbody></tbody></table>");
+	
 	// return
 	return dialogue;	
 }
@@ -294,7 +395,7 @@ function getDataItemDetails(id) {
 	}
 }
 
-function Property_text(cell, propertyObject, property, refreshHtml) {
+function Property_text(cell, propertyObject, property, details) {
 	var value = "";
 	// set the value if it exists
 	if (propertyObject[property.key]) value = propertyObject[property.key];
@@ -303,23 +404,10 @@ function Property_text(cell, propertyObject, property, refreshHtml) {
 	// get a reference to the form control
 	var input = cell.children().last();
 	// add a listener to update the property
-	addListener( input.keyup( function(ev) { updateProperty(propertyObject, property, ev.target.value, refreshHtml); }));
+	addListener( input.keyup( function(ev) { updateProperty(cell, propertyObject, property, details, ev.target.value); }));
 }
 
-// this function will re-render the propertyObject's table, or dialogue (at some point in the future)
-function refreshPropertyObject(ev, propertyObject) {
-	// only if we got an event and it has refresh
-	if (ev && ev.data.refreshProperties) {
-		// get the target
-		var target = $(ev.target);
-		// refresh properties if appropriate
-		if (target.closest(".propertiesPanelDiv")[0]) showProperties(_selectedControl);
-		// refresh events and actions if appropriate
-		if (target.closest(".actionsPanelDiv")[0]) showEvents(_selectedControl);				
-	}		
-}
-
-function Property_integer(cell, propertyObject, property, refreshHtml) {
+function Property_integer(cell, propertyObject, property, details) {
 	var value = "";
 	// set the value if it exists (or is 0)
 	if (propertyObject[property.key] || parseInt(propertyObject[property.key]) == 0) value = propertyObject[property.key];
@@ -334,7 +422,7 @@ function Property_integer(cell, propertyObject, property, refreshHtml) {
 		// check integer match
 		if (val.match(new RegExp("^\\d+$"))) {
 			// update value
-			updateProperty(propertyObject, property, ev.target.value, refreshHtml);						
+			updateProperty(cell, propertyObject, property, details, ev.target.value);						
 		} else {
 			// restore value
 			input.val(propertyObject[property.key]);
@@ -342,7 +430,7 @@ function Property_integer(cell, propertyObject, property, refreshHtml) {
 	}));
 }
 
-function Property_bigtext(cell, propertyObject, property, refreshHtml) {
+function Property_bigtext(cell, propertyObject, property, details) {
 	var value = "";
 	// set the value if it exists
 	if (propertyObject[property.key]) value = propertyObject[property.key];
@@ -371,12 +459,12 @@ function Property_bigtext(cell, propertyObject, property, refreshHtml) {
 	addListener( textarea.keydown( textareaOverride ));
 	// modify if the text is updated
 	addListener( textarea.keyup( function(ev) { 
-		updateProperty(propertyObject, property, textarea.val(), refreshHtml);  
+		updateProperty(cell, propertyObject, property, details, textarea.val());  
 	}));
 	
 }
 
-function Property_select(cell, propertyObject, property, refreshHtml, refreshProperties, details) {
+function Property_select(cell, propertyObject, property, details) {
 	// holds the options html
 	var options = "";
 	var js = property.getValuesFunction;
@@ -424,11 +512,9 @@ function Property_select(cell, propertyObject, property, refreshHtml, refreshPro
 	// get a reference to the object
 	var select = cell.children().last();
 	// add a listener to update the property
-	addListener( select.change( {refreshProperties: refreshProperties}, function(ev) {
+	addListener( select.change({cell: cell, propertyObject: propertyObject, property: property, details: details}, function(ev) {
 		// apply the property update
-		updateProperty(propertyObject, property, ev.target.value, refreshHtml);
-		// refresh the properties if requested
-		if (ev.data.refreshProperties) refreshPropertyObject(ev, propertyObject);	
+		updateProperty(ev.data.cell, ev.data.propertyObject, ev.data.property, ev.data.details, ev.target.value);
 	}));
 	// read the property
 	var val = propertyObject[property.key];
@@ -441,7 +527,7 @@ function Property_select(cell, propertyObject, property, refreshHtml, refreshPro
 	select.val(val);	
 }
 
-function Property_checkbox(cell, propertyObject, property, refreshHtml, refreshProperties, details) {
+function Property_checkbox(cell, propertyObject, property, details) {
 	var checked = "";
 	// set the value if it exists
 	if (propertyObject[property.key] && propertyObject[property.key] != "false") checked = "checked='checked'";
@@ -450,31 +536,27 @@ function Property_checkbox(cell, propertyObject, property, refreshHtml, refreshP
 	// get a reference to the form control
 	var input = cell.children().last();
 	// add a listener to update the property
-	addListener( input.change(  {refreshProperties: refreshProperties}, function(ev) {
+	addListener( input.change({cell: cell, propertyObject: propertyObject, property: property, details: details}, function(ev) {
 		// update the property
-		updateProperty(propertyObject, property, ev.target.checked, refreshHtml);
-		// refresh the property object if requested
-		refreshPropertyObject(ev, propertyObject);
+		updateProperty(ev.data.cell, ev.data.propertyObject, ev.data.property, ev.data.details, ev.target.checked);
 	}));
 }
 
-function Property_inputAutoHeight(cell, input, property, refreshHtml, refreshDialogue, details) {
+function Property_inputAutoHeight(cell, input, property, details) {
 	// check if the input control type is large
 	if (input.controlType == "L") {
 		// add a checkbox
-		Property_checkbox(cell, input, property, refreshHtml);
+		Property_checkbox(cell, input, property);
 	} else {
 		// remove this row
 		cell.closest("tr").remove();
 	}
 }
 
-function Property_galleryImages(cell, gallery, property, refreshHtml, refreshDialogue, details) {
+function Property_galleryImages(cell, gallery, property, details) {
 	
-	// retain a reference to the dialogue (if we were passed one)
-	var dialogue = refreshDialogue;
-	// if we weren't passed one - make what we need
-	if (!dialogue) dialogue = createDialogue(cell, 200, "Images");		
+	// retrieve or create the dialogue
+	var dialogue = getDialogue(cell, gallery, property, details, 200, "Images");		
 	// grab a reference to the table
 	var table = dialogue.find("table").first();
 	// make sure table is empty
@@ -520,7 +602,7 @@ function Property_galleryImages(cell, gallery, property, refreshHtml, refreshDia
 		// update the url
 		image.url = input.val();
 		// update the reference and rebuild the html (this adds an undo)
-		updateProperty(gallery, property, images, refreshHtml); 			
+		updateProperty(cell, gallery, property, details, images); 			
 	}));
 	
 	// add delete listeners
@@ -534,11 +616,11 @@ function Property_galleryImages(cell, gallery, property, refreshHtml, refreshDia
 		// update html 
 		rebuildHtml(gallery);
 		// update the dialogue;
-		Property_galleryImages(cell, gallery, property, refreshHtml, dialogue);
+		Property_galleryImages(cell, gallery, property, details);
 	}));
 	
 	// add reorder listeners
-	addReorder(images, table.find("img.reorder"), function() { rebuildHtml(gallery); Property_galleryImages(cell, gallery, property, refreshHtml, dialogue); });
+	addReorder(images, table.find("img.reorder"), function() { rebuildHtml(gallery); Property_galleryImages(cell, gallery, property); });
 		
 	// append add
 	table.append("<tr><td colspan='3'><a href='#'>add...</a></td></tr>");
@@ -548,17 +630,15 @@ function Property_galleryImages(cell, gallery, property, refreshHtml, refreshDia
 		// add an image
 		images.push({url:""});
 		// refresh dialogue
-		Property_galleryImages(cell, gallery, property, refreshHtml, dialogue);
+		Property_galleryImages(cell, gallery, property, details);
 	}));
 	
 }
 
-function Property_imageFile(cell, propertyObject, property, refreshHtml, refreshDialogue, details) {
+function Property_imageFile(cell, propertyObject, property, details) {
 	
-	// retain a reference to the dialogue (if we were passed one)
-	var dialogue = refreshDialogue;
-	// if we weren't passed one - make what we need
-	if (!dialogue) dialogue = createDialogue(cell, 200, "Image file");		
+	// retrieve or create the dialogue
+	var dialogue = getDialogue(cell, propertyObject, property, details, 200, "Image file");		
 	// grab a reference to the table
 	var table = dialogue.find("table").first();
 	// make sure table is empty
@@ -595,7 +675,7 @@ function Property_imageFile(cell, propertyObject, property, refreshHtml, refresh
 			// get the file
 			var file = $(this).val();
 			// update the reference and rebuild the html
-			updateProperty(propertyObject, property, file, true);
+			updateProperty(cell, propertyObject, property, details, file);
 			// all some time for the page to load in the image before re-establishing the selection border
         	window.setTimeout( function() {
         		// show the dialogue
@@ -620,45 +700,40 @@ function Property_imageFile(cell, propertyObject, property, refreshHtml, refresh
 	}));
 }
 
-function Property_linkType(cell, propertyObject, property, refreshHtml) {
-	// generate a select with refreshProperties = true
-	Property_select(cell, propertyObject, { key : "linkType", getValuesFunction : 'return [["P","Page"],["U","URL"]];' }, refreshHtml, true);
-}
-
-function Property_linkPage(cell, propertyObject, property, refreshHtml) {
+function Property_linkPage(cell, propertyObject, property, details) {
 	// if the type is a page
 	if (propertyObject.linkType == "P") {
 		// generate a select with refreshProperties = true
-		Property_select(cell, propertyObject, { key : "page", getValuesFunction : 'return "<option value=\'\'>Please select...</option>" + getPageOptions(this.page, _page.id);' }, refreshHtml, true);
+		Property_select(cell, propertyObject, property, details);
 	} else {
 		// remove the row
 		cell.parent().remove();
 	}
 }
 
-function Property_linkURL(cell, propertyObject, property, refreshHtml) {
+function Property_linkURL(cell, propertyObject, property, details) {
 	// if the type is a url
 	if (propertyObject.linkType == "U")	{
 		// add a big text
-		Property_bigtext(cell, propertyObject, property, refreshHtml);
+		Property_bigtext(cell, propertyObject, property, details);
 	} else {
 		// remove the row
 		cell.parent().remove();
 	}
 }
 
-function Property_linkPopup(cell, propertyObject, property, refreshHtml) {
+function Property_linkPopup(cell, propertyObject, property, details) {
 	// if the type is a url
 	if (propertyObject.linkType == "U")	{
 		// add a big text
-		Property_checkbox(cell, propertyObject, property, refreshHtml);
+		Property_checkbox(cell, propertyObject, property, details);
 	} else {
 		// remove the row
 		cell.parent().remove();
 	}
 }
 
-function Property_pageName(cell, page, property, refreshHtml, refreshDialogue, details) {
+function Property_pageName(cell, page, property, details) {
 	// get the value from the page name
 	var value = page.name;
 	// append the adjustable form control
@@ -698,17 +773,15 @@ function Property_pageName(cell, page, property, refreshHtml, refreshDialogue, d
 			val = safeVal;
 		} 
 		// update the property
-		updateProperty(page, {key:"name"}, val, refreshHtml);
+		updateProperty(cell, page, property, details, val);
 	}));
 
 }
 
-function Property_validationControls(cell, propertyObject, property, refreshHtml, refreshDialogue, details) {
+function Property_validationControls(cell, propertyObject, property, details) {
 		
-	// retain a reference to the dialogue (if we were passed one)
-	var dialogue = refreshDialogue;
-	// if we weren't passed one - make what we need
-	if (!dialogue) dialogue = createDialogue(cell, 200, "Controls");		
+	// retrieve or create the dialogue
+	var dialogue = getDialogue(cell, propertyObject, property, details, 200, "Controls");		
 	// grab a reference to the table
 	var table = dialogue.find("table").first();
 	// make sure table is empty
@@ -758,11 +831,11 @@ function Property_validationControls(cell, propertyObject, property, refreshHtml
 	}));
 	
 	// add reorder listeners
-	addReorder(controls, table.find("img.reorder"), function() { Property_validationControls(cell, propertyObject, property, refreshHtml, dialogue); });
+	addReorder(controls, table.find("img.reorder"), function() { Property_validationControls(cell, propertyObject, property); });
 		
 	// add an add dropdown
 	var addControl = table.append("<tr><td colspan='2'><select><option value=''>Add control...</option>" + getValidationControlOptions() + "</select></td></tr>").children().last().children().last().children().last();
-	addListener( addControl.change( {cell: cell, propertyObject: propertyObject, refreshHtml: refreshHtml, refreshDialogue: dialogue}, function(ev) {
+	addListener( addControl.change( {cell: cell, propertyObject: propertyObject, property: property, details: details}, function(ev) {
 		// get a reference to the dropdown
 		var dropdown = $(ev.target);
 		// get the controlId
@@ -776,18 +849,16 @@ function Property_validationControls(cell, propertyObject, property, refreshHtml
 			// set the drop down back to "Please select..."
 			dropdown.val("");		
 			// re-render the dialogue
-			Property_validationControls(ev.data.cell, ev.data.propertyObject, {key: "controls"}, ev.data.refreshHtml, ev.data.refreshDialogue);
+			Property_validationControls(ev.data.cell, ev.data.propertyObject, ev.data.property, ev.data.details);
 		}
 	}));
 	
 }
 
-function Property_childActions(cell, propertyObject, property, refreshHtml, refreshDialogue, details) {
+function Property_childActions(cell, propertyObject, property, details) {
 	
-	// retain a reference to the dialogue (if we were passed one)
-	var dialogue = refreshDialogue;
-	// if we weren't passed one - make what we need
-	if (!dialogue) dialogue = createDialogue(cell, 200, "Actions");		
+	// retrieve or create the dialogue
+	var dialogue = getDialogue(cell, propertyObject, property, details, 200, "Actions");		
 	// grab a reference to the table
 	var table = dialogue.children().last().children().last();
 	// remove the dialogue class so it looks like the properties
@@ -810,24 +881,13 @@ function Property_childActions(cell, propertyObject, property, refreshHtml, refr
 	// put the text into the cell
 	cell.text(text);
 	
-	// add the current options
-	for (var i in actions) {
-		// retrieve this action
-		var action = actions[i];
-		// show the action (in actions.js)
-		showAction(table, action, actions, function() { Property_childActions(cell, propertyObject, property, refreshHtml, dialogue); });
-	}	
-	
-	// add reorder listeners
-	addReorder(actions, table.find("img.reorder"), function() { Property_childActions(cell, propertyObject, property, refreshHtml, dialogue); });
-	
 	// add a small space
 	if (actions.length > 0) table.append("<tr><td colspan='2'></td></tr>");
 	
 	// add an add dropdown
 	var addAction = table.append("<tr><td colspan='2'><select><option value=''>Add action...</option>" + _actionOptions + "</select></td></tr>").children().last().children().last().children().last();
 	
-	addListener( addAction.change( { cell: cell, propertyObject : propertyObject, property : property, refreshHtml : refreshHtml, dialogue: dialogue }, function(ev) {
+	addListener( addAction.change( { cell: cell, propertyObject : propertyObject, property : property, details: details }, function(ev) {
 		// get a reference to the dropdown
 		var dropdown = $(ev.target);
 		// get the controlId
@@ -846,14 +906,31 @@ function Property_childActions(cell, propertyObject, property, refreshHtml, refr
 			propertyObject[property.key].push(action);
 			// set the drop down back to "Please select..."
 			dropdown.val("");
-			// rebuild the dialgue
-			Property_childActions(ev.data.cell, propertyObject, property, ev.data.refreshHtml, ev.data.dialogue);			
+			// rebuild the dialogue
+			Property_childActions(ev.data.cell, ev.data.propertyObject, ev.data.property, ev.data.details);			
 		}		
 	}));
-			
+	
+	// add the current options
+	for (var i in actions) {
+		// retrieve this action
+		var action = actions[i];
+		// show the action (in actions.js)
+		showAction(table, action, actions, function() { Property_childActions(cell, propertyObject, property); });
+	}	
+	
+	// add reorder listeners
+	addReorder(actions, table.find("img.reorder"), function() { Property_childActions(cell, propertyObject, property); });
+	
+	// get the dialogue id
+	var dialogueId = dialogue.attr("id");
+	
+	// store what we need when refreshing inside this dialogue
+	_dialogueRefeshProperties[dialogueId] = {cell: cell, propertyObject: propertyObject, property: property};
+					
 }
 
-function Property_childActionsForType(cell, propertyObject, property, refreshHtml, refreshDialogue, details) {
+function Property_childActionsForType(cell, propertyObject, property, details) {
 	
 	// check we have what we need
 	if (details && details.type) {
@@ -864,10 +941,8 @@ function Property_childActionsForType(cell, propertyObject, property, refreshHtm
 		// check we have one
 		if (actionClass) {
 			
-			// retain a reference to the dialogue (if we were passed one)
-			var dialogue = refreshDialogue;
-			// if we weren't passed one - make what we need
-			if (!dialogue) dialogue = createDialogue(cell, 200, "Child " + actionClass.name + " actions");		
+			// retrieve or create the dialogue
+			var dialogue = getDialogue(cell, propertyObject, property, details, 200, "Child " + actionClass.name + " actions");		
 			// grab a reference to the table
 			var table = dialogue.children().last().children().last();
 			// remove the dialogue class so it looks like the properties
@@ -890,24 +965,13 @@ function Property_childActionsForType(cell, propertyObject, property, refreshHtm
 			// put the text into the cell
 			cell.text(text);
 			
-			// add the current options
-			for (var i in actions) {
-				// retrieve this action
-				var action = actions[i];
-				// show the action (in actions.js)
-				showAction(table, action, actions, function() { Property_childActionsForType(cell, propertyObject, property, refreshHtml, dialogue, details); });
-			}	
-			
-			// add reorder listeners
-			addReorder(actions, table.find("img.reorder"), function() { Property_childActionsForType(cell, propertyObject, property, refreshHtml, dialogue, details); });
-			
 			// add a small space
 			if (actions.length > 0) table.append("<tr><td colspan='2'></td></tr>");
 			
 			// add an add dropdown
 			var addAction = table.append("<tr><td colspan='2'><a href='#'>add...</a></td></tr>").children().last().children().last().children().last();
 			
-			addListener( addAction.click( { details: details, cell: cell, propertyObject : propertyObject, property : property, refreshHtml : refreshHtml, dialogue: dialogue }, function(ev) {
+			addListener( addAction.click( { details: details, cell: cell, propertyObject : propertyObject, property : property, details: details }, function(ev) {
 				// initialise this action
 				var action = new Action(ev.data.details.type);
 				// if we got one
@@ -921,10 +985,27 @@ function Property_childActionsForType(cell, propertyObject, property, refreshHtm
 					// add it to the array
 					propertyObject[property.key].push(action);
 					// rebuild the dialgue
-					Property_childActionsForType(ev.data.cell, propertyObject, property, ev.data.refreshHtml, ev.data.dialogue, ev.data.details);			
+					Property_childActionsForType(ev.data.cell, propertyObject, property, ev.data.details);			
 				}		
 			}));
 			
+			// add the current options
+			for (var i in actions) {
+				// retrieve this action
+				var action = actions[i];
+				// show the action (in actions.js)
+				showAction(table, action, actions, function() { Property_childActionsForType(cell, propertyObject, property, details); });
+			}	
+			
+			// add reorder listeners
+			addReorder(actions, table.find("img.reorder"), function() { Property_childActionsForType(cell, propertyObject, property, details); });
+			
+			// get the dialogue id
+			var dialogueId = dialogue.attr("id");
+			
+			// store what we need when refreshing inside this dialogue
+			_dialogueRefeshProperties[dialogueId] = {cell: cell, propertyObject: propertyObject, property: property};
+									
 		} else {
 			
 			// put a message into the cell
@@ -942,12 +1023,10 @@ function Property_childActionsForType(cell, propertyObject, property, refreshHtm
 }
 
 // this is a dialogue to specify the inputs, sql, and outputs for the database action
-function Property_databaseQuery(cell, propertyObject, property, refreshHtml, refreshDialogue, details) {
+function Property_databaseQuery(cell, propertyObject, property, details) {
 	
-	// retain a reference to the dialogue (if we were passed one)
-	var dialogue = refreshDialogue;
-	// if we weren't passed one - make what we need
-	if (!dialogue) dialogue = createDialogue(cell, 1000, "Query");		
+	// retrieve or create the dialogue
+	var dialogue = getDialogue(cell, propertyObject, property, details, 1000, "Query");		
 	// grab a reference to the table
 	var table = dialogue.children().last().children().last();
 	// make sure its empty
@@ -1006,14 +1085,14 @@ function Property_databaseQuery(cell, propertyObject, property, refreshHtml, ref
 	}
 	// add reorder listeners
 	addReorder(query.inputs, inputsTable.find("img.reorder"), function() { 
-		Property_databaseQuery(cell, propertyObject, {key: "query"}, refreshHtml, dialogue); 
+		Property_databaseQuery(cell, propertyObject, property); 
 	});
 	// add the add input
 	inputsTable.append("<tr><td style='padding:0px;'><select style='margin:0px'><option value=''>Add input...</option>" + getInputOptions() + "</select></td><td>&nbsp;</td><td>&nbsp;</td></tr>");
 	// find the input add
 	var inputAdd = inputsTable.find("tr").last().children().first().children().first();
 	// listener to add input
-	addListener( inputAdd.change( {cell: cell, propertyObject: propertyObject, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
+	addListener( inputAdd.change( {cell: cell, propertyObject: propertyObject, property: property, details: details}, function(ev) {
 		// initialise array if need be
 		if (!ev.data.propertyObject.query.inputs) ev.data.propertyObject.query.inputs = [];
 		// get the parameters (inputs or outputs)
@@ -1021,7 +1100,7 @@ function Property_databaseQuery(cell, propertyObject, property, refreshHtml, ref
 		// add a new one
 		parameters.push({itemId: $(ev.target).val(), field: ""});
 		// rebuild the dialgue
-		Property_databaseQuery(ev.data.cell, ev.data.propertyObject, {key: "query"}, ev.data.refreshHtml, ev.data.dialogue);
+		Property_databaseQuery(ev.data.cell, ev.data.propertyObject, ev.data.property, ev.data.details);
 	}));
 	
 	// find the sql textarea
@@ -1071,14 +1150,14 @@ function Property_databaseQuery(cell, propertyObject, property, refreshHtml, ref
 	}
 	// add reorder listeners
 	addReorder(query.outputs, outputsTable.find("img.reorder"), function() { 
-		Property_databaseQuery(cell, propertyObject, {key: "query"}, refreshHtml, dialogue); 
+		Property_databaseQuery(cell, propertyObject, property); 
 	});
 	// add the add
 	outputsTable.append("<tr><td>&nbsp;</td><td style='padding:0px;'><select style='margin:0px'><option value=''>Add output...</option>" + getOutputOptions() + "</select></td><td>&nbsp;</td></tr>");
 	// find the output add
 	var outputAdd = outputsTable.find("tr").last().children(":nth(1)").last().children().last();
 	// listener to add output
-	addListener( outputAdd.change( {cell: cell, propertyObject: propertyObject, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
+	addListener( outputAdd.change( {cell: cell, propertyObject: propertyObject, property: property, details: details}, function(ev) {
 		// initialise array if need be
 		if (!ev.data.propertyObject.query.outputs) ev.data.propertyObject.query.outputs = [];
 		// get the parameters (inputs or outputs)
@@ -1086,7 +1165,7 @@ function Property_databaseQuery(cell, propertyObject, property, refreshHtml, ref
 		// add a new one
 		parameters.push({itemId: $(ev.target).val(), field: ""});
 		// rebuild the dialgue
-		Property_databaseQuery(ev.data.cell, ev.data.propertyObject, {key: "query"}, ev.data.refreshHtml, ev.data.dialogue);	
+		Property_databaseQuery(ev.data.cell, ev.data.propertyObject, ev.data.property, ev.data.details);	
 	}));
 	
 	table.append("<tr><td>Database connection <select style='width:auto;'>" + getDatabaseConnectionOptions(query.databaseConnectionIndex) + "</select></td><td style='text-align:right;'><button>Test SQL</button></td></tr>");
@@ -1124,17 +1203,15 @@ function Property_databaseQuery(cell, propertyObject, property, refreshHtml, ref
 }
 
 // reuse the generic childActionsForType but set the details with type = database
-function Property_databaseChildActions(cell, propertyObject, property, refreshHtml, refreshDialogue, details) {
-	Property_childActionsForType(cell, propertyObject, property, refreshHtml, refreshDialogue, {type:"database"});
+function Property_databaseChildActions(cell, propertyObject, property, details) {
+	Property_childActionsForType(cell, propertyObject, property, {type:"database"});
 }
 
 //this is a dialogue to specify the inputs, post body, and outputs for the webservice action
-function Property_webserviceRequest(cell, propertyObject, property, refreshHtml, refreshDialogue) {
+function Property_webserviceRequest(cell, propertyObject, property, details) {
 	
-	// retain a reference to the dialogue (if we were passed one)
-	var dialogue = refreshDialogue;
-	// if we weren't passed one - make what we need
-	if (!dialogue) dialogue = createDialogue(cell, 1000, "Webservice request");		
+	// retrieve or create the dialogue
+	var dialogue = getDialogue(cell, propertyObject, property, details, 1000, "Webservice request");		
 	// grab a reference to the table
 	var table = dialogue.children().last().children().last();
 	// make sure its empty
@@ -1193,14 +1270,14 @@ function Property_webserviceRequest(cell, propertyObject, property, refreshHtml,
 	}
 	// add reorder listeners
 	addReorder(request.inputs, inputsTable.find("img.reorder"), function() { 
-		Property_webserviceRequest(cell, propertyObject, {key: "request"}, refreshHtml, dialogue); 
+		Property_webserviceRequest(cell, propertyObject, property); 
 	});
 	// add the add input
 	inputsTable.append("<tr><td style='padding:0px;'><select style='margin:0px'><option value=''>Add input...</option>" + getInputOptions() + "</select></td><td>&nbsp;</td><td>&nbsp;</td></tr>");
 	// find the input add
 	var inputAdd = inputsTable.find("tr").last().children().first().children().first();
 	// listener to add input
-	addListener( inputAdd.change( {cell: cell, propertyObject: propertyObject, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
+	addListener( inputAdd.change( {cell: cell, propertyObject: propertyObject, property: property, details: details}, function(ev) {
 		// initialise array if need be
 		if (!ev.data.propertyObject.request.inputs) ev.data.propertyObject.request.inputs = [];
 		// get the parameters (inputs or outputs)
@@ -1208,7 +1285,7 @@ function Property_webserviceRequest(cell, propertyObject, property, refreshHtml,
 		// add a new one
 		parameters.push({itemId: $(ev.target).val(), field: ""});
 		// rebuild the dialgue
-		Property_webserviceRequest(ev.data.cell, ev.data.propertyObject, {key: "request"}, ev.data.refreshHtml, ev.data.dialogue);
+		Property_webserviceRequest(ev.data.cell, ev.data.propertyObject, ev.data.property, ev.data.details);
 	}));
 	
 	// find the type radios
@@ -1282,14 +1359,14 @@ function Property_webserviceRequest(cell, propertyObject, property, refreshHtml,
 	}
 	// add reorder listeners
 	addReorder(request.outputs, outputsTable.find("img.reorder"), function() { 
-		Property_webserviceRequest(cell, propertyObject, {key: "request"}, refreshHtml, dialogue); 
+		Property_webserviceRequest(cell, propertyObject, property, details); 
 	});
 	// add the add
 	outputsTable.append("<tr><td>&nbsp;</td><td style='padding:0px;'><select style='margin:0px'><option value=''>Add output...</option>" + getOutputOptions() + "</select></td><td>&nbsp;</td></tr>");
 	// find the output add
 	var outputAdd = outputsTable.find("tr").last().children(":nth(1)").last().children().last();
 	// listener to add output
-	addListener( outputAdd.change( {cell: cell, propertyObject: propertyObject, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
+	addListener( outputAdd.change( {cell: cell, propertyObject: propertyObject, property: property, details: details}, function(ev) {
 		// initialise array if need be
 		if (!ev.data.propertyObject.request.outputs) ev.data.propertyObject.request.outputs = [];
 		// get the parameters (inputs or outputs)
@@ -1297,13 +1374,13 @@ function Property_webserviceRequest(cell, propertyObject, property, refreshHtml,
 		// add a new one
 		parameters.push({itemId: $(ev.target).val(), field: ""});
 		// rebuild the dialgue
-		Property_webserviceRequest(ev.data.cell, ev.data.propertyObject, {key: "request"}, ev.data.refreshHtml, ev.data.dialogue);	
+		Property_webserviceRequest(ev.data.cell, ev.data.propertyObject, ev.data.property, ev.data.details);	
 	}));
 		
 }
 
 // this is a special drop down that can make the property below visible
-function Property_navigationPage(cell, navigationAction, property, refreshHtml, refreshDialogue) {
+function Property_navigationPage(cell, navigationAction, property, details) {
 	
 	// add the drop down with it's values
 	cell.append("<select><option value=''>Please select...</option>" + getPageOptions(navigationAction.page) + "</select>");
@@ -1311,21 +1388,19 @@ function Property_navigationPage(cell, navigationAction, property, refreshHtml, 
 	var pageDropDown = cell.find("select").last();
 	// add a listener
 	addListener( pageDropDown.change( {navigationAction: navigationAction}, function(ev) {
-		// update the page value
-		ev.data.navigationAction.page = $(ev.target).val();
-		// rebuild all events/actions
-		showEvents(_selectedControl);
+		// get the value
+		value = $(ev.target).val();
+		// update it
+		updateProperty(cell, propertyObject, property, details, value);
 	}));
 	
 }
 
 // this is a dialogue to specify the session variables of the current page
-function Property_pageSessionVariables(cell, page, property, refreshHtml, refreshDialogue) {
+function Property_pageSessionVariables(cell, page, property, details) {
 	
-	// retain a reference to the dialogue (if we were passed one)
-	var dialogue = refreshDialogue;
-	// if we weren't passed one - make what we need
-	if (!dialogue) dialogue = createDialogue(cell, 200, "Page variables");		
+	// retrieve or create the dialogue
+	var dialogue = getDialogue(cell, page, property, details, 200, "Page variables");		
 	// grab a reference to the table
 	var table = dialogue.find("table").first();
 	// make sure table is empty
@@ -1354,10 +1429,10 @@ function Property_pageSessionVariables(cell, page, property, refreshHtml, refres
 		var valueEdit = table.find("input.variable").last();
 		// add a listener
 		addListener( valueEdit.keyup( {variables: variables}, function(ev) {
-			// get the input
-			var input = $(ev.target);
+			// get the value
+			var value = $(ev.target).val();
 			// update value
-			ev.data.variables[input.parent().parent().index()] = input.val();
+			updateProperty(cell, propertyObject, property, details, value);
 		}));
 				
 		// find the delete
@@ -1380,7 +1455,7 @@ function Property_pageSessionVariables(cell, page, property, refreshHtml, refres
 	// get a reference to the add
 	var add = table.find("tr").last().children().last().children().last();
 	// add a listener
-	addListener( add.click( {cell: cell, page: page, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
+	addListener( add.click( {cell: cell, page: page, property: property, details: details}, function(ev) {
 		// add an undo snapshot
 		addUndo();
 		// initialise if required
@@ -1388,18 +1463,16 @@ function Property_pageSessionVariables(cell, page, property, refreshHtml, refres
 		// add a blank option
 		ev.data.page.sessionVariables.push("");
 		// refresh
-		Property_pageSessionVariables(ev.data.cell, ev.data.page, {key: "sessionVariables"}, ev.data.refreshHtml, ev.data.dialogue);		
+		Property_pageSessionVariables(ev.data.cell, ev.data.page, ev.data.property, ev.data.details);		
 	}));
 	
 }
 
 // this is a dalogue which allows for the adding of user roles
-function Property_roles(cell, control, property, refreshHtml, refreshDialogue) {
+function Property_roles(cell, control, property, details) {
 	
-	// retain a reference to the dialogue (if we were passed one)
-	var dialogue = refreshDialogue;
-	// if we weren't passed one - make what we need
-	if (!dialogue) dialogue = createDialogue(cell, 200, "User roles");		
+	// retrieve or create the dialogue
+	var dialogue = getDialogue(cell, control, property, details, 200, "User roles");		
 	// grab a reference to the table
 	var table = dialogue.find("table").first();
 	// make sure table is empty
@@ -1427,7 +1500,7 @@ function Property_roles(cell, control, property, refreshHtml, refreshDialogue) {
 		// find the delete
 		var optionDelete = table.find("tr").last().children().last().children().last();
 		// add a listener
-		addListener( optionDelete.click( {roles: roles, cell: cell, control: control, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
+		addListener( optionDelete.click( {roles: roles, cell: cell, control: control, property: property, details: details}, function(ev) {
 			// get the input
 			var input = $(ev.target);
 			// remove from parameters
@@ -1435,7 +1508,7 @@ function Property_roles(cell, control, property, refreshHtml, refreshDialogue) {
 			// remove row
 			input.parent().parent().remove();
 			// refresh
-			Property_roles(ev.data.cell, ev.data.control, {key: "roles"}, ev.data.refreshHtml, ev.data.dialogue);
+			Property_roles(ev.data.cell, ev.data.control, ev.data.property, ev.data.details);
 		}));
 	}
 		
@@ -1444,7 +1517,7 @@ function Property_roles(cell, control, property, refreshHtml, refreshDialogue) {
 	// get a reference to the add
 	var add = table.find("tr").last().children().last().children().last();
 	// add a listener
-	addListener( add.change( {cell: cell, control: control, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
+	addListener( add.change( {cell: cell, control: control, property: property, details: details}, function(ev) {
 		// initialise if required
 		if (!ev.data.control.roles) ev.data.control.roles = [];
 		// get the role
@@ -1452,13 +1525,13 @@ function Property_roles(cell, control, property, refreshHtml, refreshDialogue) {
 		// add the selected role if one was chosen
 		if (role) ev.data.control.roles.push(role);
 		// refresh
-		Property_roles(ev.data.cell, ev.data.control, {key: "roles"}, ev.data.refreshHtml, ev.data.dialogue);		
+		Property_roles(ev.data.cell, ev.data.control, ev.data.property, ev.data.details);		
 	}));
 
 }
 
 // this is a dialogue to specify the session variables to set when navigating
-function Property_navigationSessionVariables(cell, navigation, property, refreshHtml, refreshDialogue) {
+function Property_navigationSessionVariables(cell, navigation, property, details) {
 	
 	// this is some reuse in the link control - if it's type isn't P for page
 	if (navigation.linkType && navigation.linkType != "P") {
@@ -1468,10 +1541,8 @@ function Property_navigationSessionVariables(cell, navigation, property, refresh
 		return false;
 	}
 	
-	// retain a reference to the dialogue (if we were passed one)
-	var dialogue = refreshDialogue;
-	// if we weren't passed one - make what we need
-	if (!dialogue) dialogue = createDialogue(cell, 300, "Set page variables");		
+	// retrieve or create the dialogue
+	var dialogue = getDialogue(cell, navigation, property, details, 300, "Set page variables");		
 	// grab a reference to the table
 	var table = dialogue.find("table").first();
 	// make sure table is empty
@@ -1564,12 +1635,10 @@ function Property_navigationSessionVariables(cell, navigation, property, refresh
 }
 
 //this is a dialogue to define radio buttons
-function Property_radiobuttons(cell, radiobuttons, property, refreshHtml, refreshDialogue) {
+function Property_radiobuttons(cell, radiobuttons, property, details) {
 	
-	// retain a reference to the dialogue (if we were passed one)
-	var dialogue = refreshDialogue;
-	// if we weren't passed one - make what we need
-	if (!dialogue) dialogue = createDialogue(cell, 200, "Radio buttons");		
+	// retrieve or create the dialogue
+	var dialogue = getDialogue(cell, radiobuttons, property, details, 200, "Radio buttons");		
 	// grab a reference to the table
 	var table = dialogue.find("table").first();
 	// make sure table is empty
@@ -1626,7 +1695,7 @@ function Property_radiobuttons(cell, radiobuttons, property, refreshHtml, refres
 		// find the delete
 		var buttonDelete = table.find("tr").last().children().last().children().last();
 		// add a listener
-		addListener( buttonDelete.click( {cell: cell, radiobuttons: radiobuttons, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
+		addListener( buttonDelete.click( {cell: cell, radiobuttons: radiobuttons, property: property, details: details}, function(ev) {
 			// get the del image
 			var delImage = $(ev.target);
 			// remove from parameters
@@ -1636,7 +1705,7 @@ function Property_radiobuttons(cell, radiobuttons, property, refreshHtml, refres
 			// update html if top row
 			if (delImage.parent().index() == 1) rebuildHtml(ev.data.radiobuttons);
 			// refresh
-			Property_radiobuttons(ev.data.cell, ev.data.radiobuttons, {key: "buttons"}, ev.data.refreshHtml, ev.data.dialogue);
+			Property_radiobuttons(ev.data.cell, ev.data.radiobuttons, ev.data.property, ev.data.details);
 		}));
 	}
 		
@@ -1645,11 +1714,11 @@ function Property_radiobuttons(cell, radiobuttons, property, refreshHtml, refres
 	// get a reference to the add
 	var add = table.find("tr").last().children().last().children().last();
 	// add a listener
-	addListener( add.click( {cell: cell, radiobuttons: radiobuttons, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
+	addListener( add.click( {cell: cell, radiobuttons: radiobuttons, property: property, details: details}, function(ev) {
 		// add a blank option
 		ev.data.radiobuttons.buttons.push({value: "", label: ""});
 		// refresh
-		Property_radiobuttons(ev.data.cell, ev.data.radiobuttons, {key: "buttons"}, ev.data.refreshHtml, ev.data.dialogue);		
+		Property_radiobuttons(ev.data.cell, ev.data.radiobuttons, ev.data.property, ev.data.details);		
 	}));
 	
 	// check we don't have a checkbox already
@@ -1659,11 +1728,11 @@ function Property_radiobuttons(cell, radiobuttons, property, refreshHtml, refres
 		// get a reference
 		var optionsCodes = dialogue.children().last();
 		// add a listener
-		addListener( optionsCodes.change( {cell: cell, radiobuttons: radiobuttons, buttons: buttons, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
+		addListener( optionsCodes.change( {cell: cell, radiobuttons: radiobuttons, buttons: buttons, property: property, details: details}, function(ev) {
 			// get the value
 			ev.data.radiobuttons.codes = ev.target.checked;
 			// refresh
-			Property_radiobuttons(ev.data.cell, ev.data.radiobuttons, {key: "buttons"}, ev.data.refreshHtml, ev.data.dialogue);
+			Property_radiobuttons(ev.data.cell, ev.data.radiobuttons, ev.data.property, ev.data.details);
 		
 		}));
 		
@@ -1774,12 +1843,10 @@ function logicConditionValue(cell, action, conditionIndex, valueId) {
 	
 }
 
-function Property_logicConditions(cell, action, property, refreshHtml, refreshDialogue) {
+function Property_logicConditions(cell, action, property, details) {
 	
-	// retain a reference to the dialogue (if we were passed one)
-	var dialogue = refreshDialogue;
-	// if we weren't passed one - make what we need
-	if (!dialogue) dialogue = createDialogue(cell, 500, "Conditions");		
+	// retrieve or create the dialogue
+	var dialogue = getDialogue(cell, action, property, details, 500, "Conditions");		
 	// grab a reference to the table
 	var table = dialogue.find("table").first();
 	// add the style that removed the restriction on column widths
@@ -1855,7 +1922,7 @@ function Property_logicConditions(cell, action, property, refreshHtml, refreshDi
 	// add reorder listeners
 	addReorder(conditions, table.find("img.reorder"), function() { 		
 		// refresh the property
-		Property_logicConditions(cell, action, {key: "conditions"}, refreshHtml, dialogue); 
+		Property_logicConditions(cell, action, property, details); 
 	});
 	
 	// only if there are 2 or more conditions
@@ -1878,18 +1945,16 @@ function Property_logicConditions(cell, action, property, refreshHtml, refreshDi
 		// add new condition
 		action.conditions.push({value1:{type:"CTL"}, operation: "==", value2: {type:"CTL"}});
 		// update this table
-		Property_logicConditions(cell, action, property, refreshHtml, dialogue);
+		Property_logicConditions(cell, action, property, details);
 	})
 	
 }
 
 // this is a dialogue to refine the options available in dropdown and list controls
-function Property_options(cell, control, property, refreshHtml, refreshDialogue) {
+function Property_options(cell, control, property, details) {
 	
-	// retain a reference to the dialogue (if we were passed one)
-	var dialogue = refreshDialogue;
-	// if we weren't passed one - make what we need
-	if (!dialogue) dialogue = createDialogue(cell, 200, "Options");		
+	// retrieve or create the dialogue
+	var dialogue = getDialogue(cell, control, property, details, 200, "Options");		
 	// grab a reference to the table
 	var table = dialogue.find("table").first();
 	// make sure table is empty
@@ -1961,7 +2026,7 @@ function Property_options(cell, control, property, refreshHtml, refreshDialogue)
 		// refresh the html and regenerate the mappings
 		rebuildHtml(control);
 		// refresh the property
-		Property_options(cell, control, {key: "options"}, refreshHtml, dialogue); 
+		Property_options(cell, control, property, details); 
 	});
 		
 	// have an add row
@@ -1969,11 +2034,11 @@ function Property_options(cell, control, property, refreshHtml, refreshDialogue)
 	// get a reference to the add
 	var add = table.find("tr").last().children().last().children().last();
 	// add a listener
-	addListener( add.click( {cell: cell, control: control, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
+	addListener( add.click( {cell: cell, control: control, property: property, details: details}, function(ev) {
 		// add a blank option
 		ev.data.control.options.push({value: "", text: ""});
 		// refresh
-		Property_options(ev.data.cell, ev.data.control, {key: "options"}, ev.data.refreshHtml, ev.data.dialogue);		
+		Property_options(ev.data.cell, ev.data.control, ev.data.property, ev.data.details);		
 	}));
 	
 	// check we don't have a checkbox already
@@ -1983,11 +2048,11 @@ function Property_options(cell, control, property, refreshHtml, refreshDialogue)
 		// get a reference
 		var optionsCodes = dialogue.children().last();
 		// add a listener
-		addListener( optionsCodes.change( {cell: cell, control: control, options: options, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
+		addListener( optionsCodes.change( {cell: cell, control: control, options: options, property: property, details: details}, function(ev) {
 			// get the value
 			control.codes = ev.target.checked;
 			// refresh
-			Property_options(ev.data.cell, ev.data.control, {key: "options"}, ev.data.refreshHtml, ev.data.dialogue);
+			Property_options(ev.data.cell, ev.data.control, ev.data.property, ev.data.details);
 		
 		}));
 		
@@ -1996,12 +2061,10 @@ function Property_options(cell, control, property, refreshHtml, refreshDialogue)
 }
 
 //this is a dialogue to refine the options available in a grid control
-function Property_gridColumns(cell, grid, property, refreshHtml, refreshDialogue) {
+function Property_gridColumns(cell, grid, property, details) {
 	
-	// retain a reference to the dialogue (if we were passed one)
-	var dialogue = refreshDialogue;
-	// if we weren't passed one - make what we need
-	if (!dialogue) dialogue = createDialogue(cell, 650, "Columns");		
+	// retrieve or create the dialogue
+	var dialogue = getDialogue(cell, grid, property, details, 650, "Columns");		
 	// grab a reference to the table
 	var table = dialogue.find("table").first();
 	// make sure table is empty
@@ -2159,7 +2222,7 @@ function Property_gridColumns(cell, grid, property, refreshHtml, refreshDialogue
 		// refresh the html and regenerate the mappings
 		rebuildHtml(grid);
 		// refresh the property
-		Property_gridColumns(cell, grid, {key: "columns"}, refreshHtml, dialogue); 
+		Property_gridColumns(cell, grid, property, details); 
 	});
 	
 	// have an add row
@@ -2167,22 +2230,20 @@ function Property_gridColumns(cell, grid, property, refreshHtml, refreshDialogue
 	// get a reference to the add
 	var add = table.find("tr").last().children().last().children().last();
 	// add a listener
-	addListener( add.click( {cell: cell, grid: grid, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
+	addListener( add.click( {cell: cell, grid: grid, property: property, details: details}, function(ev) {
 		// add a blank option
 		ev.data.grid.columns.push({visible: true, title: "", titleStyle: "", field: "", fieldStyle: "", cellFunction: ""});
 		// refresh
-		Property_gridColumns(ev.data.cell, ev.data.grid, {key: "columns"}, ev.data.refreshHtml, ev.data.dialogue);		
+		Property_gridColumns(ev.data.cell, ev.data.grid, ev.data.property, ev.data.details);		
 	}));
 
 }
 
 // this is a dialogue to choose controls and specify their hints
-function Property_controlHints(cell, hints, property, refreshHtml, refreshDialogue) {
+function Property_controlHints(cell, hints, property, details) {
 	
-	// retain a reference to the dialogue (if we were passed one)
-	var dialogue = refreshDialogue;
-	// if we weren't passed one - make what we need
-	if (!dialogue) dialogue = createDialogue(cell, 500, "Control hints");		
+	// retrieve or create the dialogue
+	var dialogue = getDialogue(cell, hints, property, details, 500, "Control hints");		
 	// grab a reference to the table
 	var table = dialogue.find("table").first();
 	// make sure table is empty
@@ -2252,7 +2313,7 @@ function Property_controlHints(cell, hints, property, refreshHtml, refreshDialog
 		// get a reference to the span
 		var span = $(this);
 		//function Property_bigtext(cell, propertyObject, property, refreshHtml) {
-		Property_bigtext(span.parent(), controlHints[span.parent().parent().index()-1], {key: "text"}, false);		
+		Property_bigtext(span.parent(), controlHints[span.parent().parent().index()-1], {key: "text"});		
 	});
 	
 	// add style listeners
@@ -2284,7 +2345,7 @@ function Property_controlHints(cell, hints, property, refreshHtml, refreshDialog
 		// refresh the html and regenerate the mappings
 		rebuildHtml(hints);
 		// refresh the property
-		Property_controlHints(cell, hints, {key: "controlHints"}, refreshHtml, dialogue); 
+		Property_controlHints(cell, hints, property, details); 
 	});
 		
 	// have an add row
@@ -2292,18 +2353,18 @@ function Property_controlHints(cell, hints, property, refreshHtml, refreshDialog
 	// get a reference to the add
 	var add = table.find("tr").last().children().last().children().last();
 	// add a listener
-	addListener( add.click( {cell: cell, hints: hints, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
+	addListener( add.click( {cell: cell, hints: hints, property: property, details: details}, function(ev) {
 		// instantiate array if need be
 		if (!ev.data.hints.controlHints) ev.data.hints.controlHints = [];
 		// add a blank hint
 		ev.data.hints.controlHints.push({controlId: "", type: "hover", text: "", style: ""});
 		// refresh
-		Property_controlHints(ev.data.cell, ev.data.hints, {key: "controlHints"}, ev.data.refreshHtml, ev.data.dialogue);		
+		Property_controlHints(ev.data.cell, ev.data.hints, ev.data.property, ev.data.details);		
 	}));
 
 }
 
-function Property_slidePanelVisibility(cell, propertyObject, property, refreshHtml, refreshProperties) {
+function Property_slidePanelVisibility(cell, propertyObject, property, details) {
 	// if we're holding a P (this defaulted in designerer.js)
 	cell.text(propertyObject.visible);
 	// add the listener to the cell
@@ -2330,7 +2391,7 @@ function Property_slidePanelVisibility(cell, propertyObject, property, refreshHt
 }
 
 
-function Property_flowLayoutCellWidth(cell, flowLayout, property, refreshHtml, refreshProperties) {
+function Property_flowLayoutCellWidth(cell, flowLayout, property, details) {
 	var value = "";
 	// set the value if it exists
 	if (flowLayout[property.key]) value = flowLayout[property.key];
@@ -2341,7 +2402,7 @@ function Property_flowLayoutCellWidth(cell, flowLayout, property, refreshHtml, r
 	// add a listener to update the property
 	addListener( input.keyup( function(ev) {
 		// update the property
-		updateProperty(flowLayout, property, ev.target.value, refreshHtml);
+		updateProperty(cell, flowLayout, property, details, ev.target.value);
 		// update the iFrame control details
 		var pageWindow =  _pageIframe[0].contentWindow || _pageIframe[0];
 		// add the design-time details object into the page
@@ -2353,77 +2414,70 @@ function Property_flowLayoutCellWidth(cell, flowLayout, property, refreshHtml, r
 	}));
 }
 
-function Property_datacopyType(cell, datacopyAction, property, refreshHtml, refreshProperties) {
-	// show the type and allow the refreshing of properties
-	Property_select(cell, datacopyAction, property, refreshHtml, true);
-}
-
-function Property_datacopySource(cell, datacopyAction, property, refreshHtml, refreshProperties) {
+function Property_datacopySource(cell, datacopyAction, property, details) {
 	// only if datacopyAction type is child
 	if (datacopyAction.copyType == "bulk") {
 		// remove this row
 		cell.closest("tr").remove();		
 	} else {
 		// show the source drop down		
-		Property_select(cell, datacopyAction, property, refreshHtml);
+		Property_select(cell, datacopyAction, property, details);
 	}
 }
 
-function Property_datacopySourceField(cell, datacopyAction, property, refreshHtml, refreshProperties) {
+function Property_datacopySourceField(cell, datacopyAction, property, details) {
 	// only if datacopyAction type is child
 	if (datacopyAction.copyType == "bulk") {
 		// remove this row
 		cell.closest("tr").remove();
 	} else {
 		// show the source field text		
-		Property_text(cell, datacopyAction, property, refreshHtml);
+		Property_text(cell, datacopyAction, property, details);
 	}
 }
 
-function Property_datacopyChildField(cell, datacopyAction, property, refreshHtml, refreshProperties) {
+function Property_datacopyChildField(cell, datacopyAction, property, details) {
 	// only if datacopyAction type is child
 	if (datacopyAction.copyType == "child") {
 		// show the duration
-		Property_text(cell, datacopyAction, property, refreshHtml);
+		Property_text(cell, datacopyAction, property, details);
 	} else {
 		// remove this row
 		cell.closest("tr").remove();
 	}
 }
 
-function Property_datacopySearchField(cell, datacopyAction, property, refreshHtml, refreshProperties) {
+function Property_datacopySearchField(cell, datacopyAction, property, details) {
 	// only if datacopyAction is search
 	if (datacopyAction.copyType == "search") {
 		// show the duration
-		Property_text(cell, datacopyAction, property, refreshHtml);
+		Property_text(cell, datacopyAction, property, details);
 	} else {
 		// remove this row
 		cell.closest("tr").remove();
 	}
 }
 
-function Property_datacopySearchSource(cell, datacopyAction, property, refreshHtml, refreshProperties) {
+function Property_datacopySearchSource(cell, datacopyAction, property, details) {
 	// only if datacopyAction is search
 	if (datacopyAction.copyType == "search") {
 		// show the duration
-		Property_select(cell, datacopyAction, property, refreshHtml, refreshProperties);
+		Property_select(cell, datacopyAction, property, details);
 	} else {
 		// remove this row
 		cell.closest("tr").remove();
 	}
 }
 
-function Property_datacopyDestinations(cell, propertyObject, property, refreshHtml, refreshDialogue) {
+function Property_datacopyDestinations(cell, propertyObject, property, details) {
 	
 	// only if datacopyAction type is not bulk
 	if (propertyObject.copyType == "bulk") {
 		// remove this row
 		cell.closest("tr").remove();
 	} else {
-		// retain a reference to the dialogue (if we were passed one)
-		var dialogue = refreshDialogue;
-		// if we weren't passed one - make what we need
-		if (!dialogue) dialogue = createDialogue(cell, 300, "Destinations");		
+		// retrieve or create the dialogue
+		var dialogue = getDialogue(cell, propertyObject, property, details, 300, "Destinations");		
 		// grab a reference to the table
 		var table = dialogue.find("table").first();
 		// make sure table is empty
@@ -2481,7 +2535,7 @@ function Property_datacopyDestinations(cell, propertyObject, property, refreshHt
 				
 		// add reorder listeners
 		addReorder(dataDestinations, table.find("img.reorder"), function() { 
-			Property_datacopyDestinations(cell, propertyObject, property, refreshHtml, dialogue); 
+			Property_datacopyDestinations(cell, propertyObject, property, details); 
 		});
 		
 		// add the add
@@ -2489,7 +2543,7 @@ function Property_datacopyDestinations(cell, propertyObject, property, refreshHt
 		// find the add
 		var destinationAdd = table.find("tr").last().children().last().children().last();
 		// listener to add output
-		addListener( destinationAdd.change( {cell: cell, propertyObject: propertyObject, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
+		addListener( destinationAdd.change( {cell: cell, propertyObject: propertyObject, property: property, details: details}, function(ev) {
 			// initialise array if need be
 			if (!ev.data.propertyObject.dataDestinations) ev.data.propertyObject.dataDestinations = [];
 			// get the parameters (inputs or outputs)
@@ -2497,7 +2551,7 @@ function Property_datacopyDestinations(cell, propertyObject, property, refreshHt
 			// add a new one
 			dataDestinations.push({itemId: $(ev.target).val(), field: ""});
 			// rebuild the dialogue
-			Property_datacopyDestinations(ev.data.cell, ev.data.propertyObject, {key: "dataDestinations"}, ev.data.refreshHtml, ev.data.dialogue);	
+			Property_datacopyDestinations(ev.data.cell, ev.data.propertyObject, ev.data.property, ev.data.details);	
 		}));
 		
 		// if we got text 
@@ -2524,15 +2578,13 @@ function getCopyTypeOptions(type) {
 	return options;
 }
 
-function Property_datacopyCopies(cell, datacopyAction, property, refreshHtml, refreshDialogue) {
+function Property_datacopyCopies(cell, datacopyAction, property, details) {
 
 	// only if datacopyAction type is bulk
 	if (datacopyAction.copyType == "bulk") {	
 		
-		// retain a reference to the dialogue (if we were passed one)
-		var dialogue = refreshDialogue;
-		// if we weren't passed one - make what we need
-		if (!dialogue) dialogue = createDialogue(cell, 700, "Bulk data copies");		
+		// retrieve or create the dialogue
+		var dialogue = getDialogue(cell, datacopyAction, property, details, 700, "Bulk data copies");		
 		// grab a reference to the table
 		var table = dialogue.find("table").first();
 		// make sure table is empty
@@ -2626,7 +2678,7 @@ function Property_datacopyCopies(cell, datacopyAction, property, refreshHtml, re
 			
 		// add reorder listeners
 		addReorder(dataCopies, table.find("img.reorder"), function() { 
-			Property_datacopyCopies(cell, datacopyAction, property, refreshHtml, dialogue); 
+			Property_datacopyCopies(cell, datacopyAction, property); 
 		});
 		
 		// add the add
@@ -2634,7 +2686,7 @@ function Property_datacopyCopies(cell, datacopyAction, property, refreshHtml, re
 		// find the add
 		var destinationAdd = table.find("a").last();
 		// listener to add output
-		addListener( destinationAdd.click( {cell: cell, datacopyAction: datacopyAction, refreshHtml: refreshHtml, dialogue: dialogue}, function(ev) {
+		addListener( destinationAdd.click( {cell: cell, datacopyAction: datacopyAction, property: property, details: details}, function(ev) {
 			// initialise array if need be
 			if (!ev.data.datacopyAction.dataCopies) ev.data.datacopyAction.dataCopies = [];
 			// get the parameters (inputs or outputs)
@@ -2642,7 +2694,7 @@ function Property_datacopyCopies(cell, datacopyAction, property, refreshHtml, re
 			// add a new one
 			dataCopies.push({source:"",sourceField:"",destination:"",destinationField:""});
 			// rebuild the dialogue
-			Property_datacopyCopies(ev.data.cell, ev.data.datacopyAction, {key: "dataCopies"}, ev.data.refreshHtml, ev.data.dialogue);	
+			Property_datacopyCopies(ev.data.cell, ev.data.datacopyAction, ev.data.property, ev.data.details);	
 		}));
 		
 		// if we got text 
@@ -2662,7 +2714,7 @@ function Property_datacopyCopies(cell, datacopyAction, property, refreshHtml, re
 
 }
 
-function Property_controlActionType(cell, controlAction, property, refreshHtml, refreshProperties) {
+function Property_controlActionType(cell, controlAction, property, details) {
 	// if this property has not been set yet
 	if (!controlAction.actionType) {
 		// update to custom if there is a command property (this is for backwards compatibility)
@@ -2672,57 +2724,41 @@ function Property_controlActionType(cell, controlAction, property, refreshHtml, 
 			controlAction.actionType = "hide";
 		}
 	}
-	// build the options
-	Property_select(cell, controlAction, property, refreshHtml, refreshProperties);
-	// get a reference
-	var select = cell.children().last();
-	// add a listener to update the property
-	addListener( select.change( function(ev) {
-		// get the value
-		var value = ev.target.value;
-		// update the property
-		updateProperty(controlAction, property, value, refreshHtml);
-		// rebuild all events/actions
-		showEvents(_selectedControl);
-	}));
+	// build the select
+	Property_select(cell, controlAction, property);
 }
 
-function Property_controlActionDuration(cell, controlAction, property, refreshHtml, refreshProperties) {
+function Property_controlActionDuration(cell, controlAction, property, details) {
 	// only if controlAction is slide or fade
 	if (controlAction.actionType.indexOf("slide") == 0 || controlAction.actionType.indexOf("fade") == 0) {
 		// show the duration
-		Property_integer(cell, controlAction, property, refreshHtml);
+		Property_integer(cell, controlAction, property);
 	} else {
 		// remove this row
 		cell.closest("tr").remove();
 	}
 }
 
-function Property_controlActionClasses(cell, controlAction, property, refreshHtml, refreshProperties) {
+function Property_controlActionClasses(cell, controlAction, property, details) {
 	// only if controlAction is custom
 	if (controlAction.actionType == "addClass" || controlAction.actionType == "removeClass" || controlAction.actionType == "removeChildClasses") {
 		// add thegtext
-		Property_select(cell, controlAction, property, refreshHtml);
+		Property_select(cell, controlAction, property, details);
 	} else {
 		// remove this row
 		cell.closest("tr").remove();
 	}
 }
 
-function Property_controlActionCommand(cell, controlAction, property, refreshHtml, refreshProperties) {
+function Property_controlActionCommand(cell, controlAction, property, details) {
 	// only if controlAction is custom
 	if (controlAction.actionType == "custom") {
 		// add the bigtext
-		Property_bigtext(cell, controlAction, property, refreshHtml);
+		Property_bigtext(cell, controlAction, property, details);
 	} else {
 		// remove this row
 		cell.closest("tr").remove();
 	}
-}
-
-function Property_slidePanelColour(cell, controlAction, property, refreshHtml, refreshProperties) {
-	// add the select with refresh html = true
-	Property_select(cell, controlAction, property, true);
 }
 
 var _fontawesomeGlyphs = [["","none"],["&#xf042;","adjust"],["&#xf170;","adn"],["&#xf037;","align-center"],["&#xf039;","align-justify"],["&#xf036;","align-left"],["&#xf038;","align-right"],["&#xf0f9;","ambulance"],["&#xf13d;","anchor"],["&#xf17b;","android"],["&#xf209;","angellist"],["&#xf103;","angle-double-down"],["&#xf100;","angle-double-left"],["&#xf101;","angle-double-right"],["&#xf102;","angle-double-up"],["&#xf107;","angle-down"],["&#xf104;","angle-left"],["&#xf105;","angle-right"],["&#xf106;","angle-up"],["&#xf179;","apple"],["&#xf187;","archive"],["&#xf1fe;","area-chart"],["&#xf0ab;","arrow-circle-down"],["&#xf0a8;","arrow-circle-left"],["&#xf01a;","arrow-circle-o-down"],["&#xf190;","arrow-circle-o-left"],["&#xf18e;","arrow-circle-o-right"],["&#xf01b;","arrow-circle-o-up"],["&#xf0a9;","arrow-circle-right"],["&#xf0aa;","arrow-circle-up"],["&#xf063;","arrow-down"],["&#xf060;","arrow-left"],["&#xf061;","arrow-right"],["&#xf047;","arrows"],["&#xf0b2;","arrows-alt"],["&#xf07e;","arrows-h"],["&#xf07d;","arrows-v"],["&#xf062;","arrow-up"],["&#xf069;","asterisk"],["&#xf1fa;","at"],["&#xf04a;","backward"],["&#xf05e;","ban"],["&#xf080;","bar-chart"],["&#xf02a;","barcode"],["&#xf0c9;","bars"],["&#xf0fc;","beer"],["&#xf1b4;","behance"],["&#xf1b5;","behance-square"],["&#xf0f3;","bell"],["&#xf0a2;","bell-o"],["&#xf1f6;","bell-slash"],["&#xf1f7;","bell-slash-o"],["&#xf206;","bicycle"],["&#xf1e5;","binoculars"],["&#xf1fd;","birthday-cake"],["&#xf171;","bitbucket"],["&#xf172;","bitbucket-square"],["&#xf032;","bold"],["&#xf0e7;","bolt"],["&#xf1e2;","bomb"],["&#xf02d;","book"],["&#xf02e;","bookmark"],["&#xf097;","bookmark-o"],["&#xf0b1;","briefcase"],["&#xf15a;","btc"],["&#xf188;","bug"],["&#xf1ad;","building"],["&#xf0f7;","building-o"],["&#xf0a1;","bullhorn"],["&#xf140;","bullseye"],["&#xf207;","bus"],["&#xf1ec;","calculator"],["&#xf073;","calendar"],["&#xf133;","calendar-o"],["&#xf030;","camera"],["&#xf083;","camera-retro"],["&#xf1b9;","car"],["&#xf0d7;","caret-down"],["&#xf0d9;","caret-left"],["&#xf0da;","caret-right"],["&#xf150;","caret-square-o-down"],["&#xf191;","caret-square-o-left"],["&#xf152;","caret-square-o-right"],["&#xf151;","caret-square-o-up"],["&#xf0d8;","caret-up"],["&#xf20a;","cc"],["&#xf1f3;","cc-amex"],["&#xf1f2;","cc-discover"],["&#xf1f1;","cc-mastercard"],["&#xf1f4;","cc-paypal"],["&#xf1f5;","cc-stripe"],["&#xf1f0;","cc-visa"],["&#xf0a3;","certificate"],["&#xf127;","chain-broken"],["&#xf00c;","check"],["&#xf058;","check-circle"],["&#xf05d;","check-circle-o"],["&#xf14a;","check-square"],["&#xf046;","check-square-o"],["&#xf13a;","chevron-circle-down"],["&#xf137;","chevron-circle-left"],["&#xf138;","chevron-circle-right"],["&#xf139;","chevron-circle-up"],["&#xf078;","chevron-down"],["&#xf053;","chevron-left"],["&#xf054;","chevron-right"],["&#xf077;","chevron-up"],["&#xf1ae;","child"],["&#xf111;","circle"],["&#xf10c;","circle-o"],["&#xf1ce;","circle-o-notch"],["&#xf1db;","circle-thin"],["&#xf0ea;","clipboard"],["&#xf017;","clock-o"],["&#xf0c2;","cloud"],["&#xf0ed;","cloud-download"],["&#xf0ee;","cloud-upload"],["&#xf121;","code"],["&#xf126;","code-fork"],["&#xf1cb;","codepen"],["&#xf0f4;","coffee"],["&#xf013;","cog"],["&#xf085;","cogs"],["&#xf0db;","columns"],["&#xf075;","comment"],["&#xf0e5;","comment-o"],["&#xf086;","comments"],["&#xf0e6;","comments-o"],["&#xf14e;","compass"],["&#xf066;","compress"],["&#xf1f9;","copyright"],["&#xf09d;","credit-card"],["&#xf125;","crop"],["&#xf05b;","crosshairs"],["&#xf13c;","css3"],["&#xf1b2;","cube"],["&#xf1b3;","cubes"],["&#xf0f5;","cutlery"],["&#xf1c0;","database"],["&#xf1a5;","delicious"],["&#xf108;","desktop"],["&#xf1bd;","deviantart"],["&#xf1a6;","digg"],["&#xf192;","dot-circle-o"],["&#xf019;","download"],["&#xf17d;","dribbble"],["&#xf16b;","dropbox"],["&#xf1a9;","drupal"],["&#xf052;","eject"],["&#xf141;","ellipsis-h"],["&#xf142;","ellipsis-v"],["&#xf1d1;","empire"],["&#xf0e0;","envelope"],["&#xf003;","envelope-o"],["&#xf199;","envelope-square"],["&#xf12d;","eraser"],["&#xf153;","eur"],["&#xf0ec;","exchange"],["&#xf12a;","exclamation"],["&#xf06a;","exclamation-circle"],["&#xf071;","exclamation-triangle"],["&#xf065;","expand"],["&#xf08e;","external-link"],["&#xf14c;","external-link-square"],["&#xf06e;","eye"],["&#xf1fb;","eyedropper"],["&#xf070;","eye-slash"],["&#xf09a;","facebook"],["&#xf082;","facebook-square"],["&#xf049;","fast-backward"],["&#xf050;","fast-forward"],["&#xf1ac;","fax"],["&#xf182;","female"],["&#xf0fb;","fighter-jet"],["&#xf15b;","file"],["&#xf1c6;","file-archive-o"],["&#xf1c7;","file-audio-o"],["&#xf1c9;","file-code-o"],["&#xf1c3;","file-excel-o"],["&#xf1c5;","file-image-o"],["&#xf016;","file-o"],["&#xf1c1;","file-pdf-o"],["&#xf1c4;","file-powerpoint-o"],["&#xf0c5;","files-o"],["&#xf15c;","file-text"],["&#xf0f6;","file-text-o"],["&#xf1c8;","file-video-o"],["&#xf1c2;","file-word-o"],["&#xf008;","film"],["&#xf0b0;","filter"],["&#xf06d;","fire"],["&#xf134;","fire-extinguisher"],["&#xf024;","flag"],["&#xf11e;","flag-checkered"],["&#xf11d;","flag-o"],["&#xf0c3;","flask"],["&#xf16e;","flickr"],["&#xf0c7;","floppy-o"],["&#xf07b;","folder"],["&#xf114;","folder-o"],["&#xf07c;","folder-open"],["&#xf115;","folder-open-o"],["&#xf031;","font"],["&#xf04e;","forward"],["&#xf180;","foursquare"],["&#xf119;","frown-o"],["&#xf1e3;","futbol-o"],["&#xf11b;","gamepad"],["&#xf0e3;","gavel"],["&#xf154;","gbp"],["&#xf06b;","gift"],["&#xf1d3;","git"],["&#xf09b;","github"],["&#xf113;","github-alt"],["&#xf092;","github-square"],["&#xf1d2;","git-square"],["&#xf184;","gittip"],["&#xf000;","glass"],["&#xf0ac;","globe"],["&#xf1a0;","google"],["&#xf0d5;","google-plus"],["&#xf0d4;","google-plus-square"],["&#xf1ee;","google-wallet"],["&#xf19d;","graduation-cap"],["&#xf1d4;","hacker-news"],["&#xf0a7;","hand-o-down"],["&#xf0a5;","hand-o-left"],["&#xf0a4;","hand-o-right"],["&#xf0a6;","hand-o-up"],["&#xf0a0;","hdd-o"],["&#xf1dc;","header"],["&#xf025;","headphones"],["&#xf004;","heart"],["&#xf08a;","heart-o"],["&#xf1da;","history"],["&#xf015;","home"],["&#xf0f8;","hospital-o"],["&#xf0fd;","h-square"],["&#xf13b;","html5"],["&#xf20b;","ils"],["&#xf01c;","inbox"],["&#xf03c;","indent"],["&#xf129;","info"],["&#xf05a;","info-circle"],["&#xf156;","inr"],["&#xf16d;","instagram"],["&#xf208;","ioxhost"],["&#xf033;","italic"],["&#xf1aa;","joomla"],["&#xf157;","jpy"],["&#xf1cc;","jsfiddle"],["&#xf084;","key"],["&#xf11c;","keyboard-o"],["&#xf159;","krw"],["&#xf1ab;","language"],["&#xf109;","laptop"],["&#xf202;","lastfm"],["&#xf203;","lastfm-square"],["&#xf06c;","leaf"],["&#xf094;","lemon-o"],["&#xf149;","level-down"],["&#xf148;","level-up"],["&#xf1cd;","life-ring"],["&#xf0eb;","lightbulb-o"],["&#xf201;","line-chart"],["&#xf0c1;","link"],["&#xf0e1;","linkedin"],["&#xf08c;","linkedin-square"],["&#xf17c;","linux"],["&#xf03a;","list"],["&#xf022;","list-alt"],["&#xf0cb;","list-ol"],["&#xf0ca;","list-ul"],["&#xf124;","location-arrow"],["&#xf023;","lock"],["&#xf175;","long-arrow-down"],["&#xf177;","long-arrow-left"],["&#xf178;","long-arrow-right"],["&#xf176;","long-arrow-up"],["&#xf0d0;","magic"],["&#xf076;","magnet"],["&#xf183;","male"],["&#xf041;","map-marker"],["&#xf136;","maxcdn"],["&#xf20c;","meanpath"],["&#xf0fa;","medkit"],["&#xf11a;","meh-o"],["&#xf130;","microphone"],["&#xf131;","microphone-slash"],["&#xf068;","minus"],["&#xf056;","minus-circle"],["&#xf146;","minus-square"],["&#xf147;","minus-square-o"],["&#xf10b;","mobile"],["&#xf0d6;","money"],["&#xf186;","moon-o"],["&#xf001;","music"],["&#xf1ea;","newspaper-o"],["&#xf19b;","openid"],["&#xf03b;","outdent"],["&#xf18c;","pagelines"],["&#xf1fc;","paint-brush"],["&#xf0c6;","paperclip"],["&#xf1d8;","paper-plane"],["&#xf1d9;","paper-plane-o"],["&#xf1dd;","paragraph"],["&#xf04c;","pause"],["&#xf1b0;","paw"],["&#xf1ed;","paypal"],["&#xf040;","pencil"],["&#xf14b;","pencil-square"],["&#xf044;","pencil-square-o"],["&#xf095;","phone"],["&#xf098;","phone-square"],["&#xf03e;","picture-o"],["&#xf200;","pie-chart"],["&#xf1a7;","pied-piper"],["&#xf1a8;","pied-piper-alt"],["&#xf0d2;","pinterest"],["&#xf0d3;","pinterest-square"],["&#xf072;","plane"],["&#xf04b;","play"],["&#xf144;","play-circle"],["&#xf01d;","play-circle-o"],["&#xf1e6;","plug"],["&#xf067;","plus"],["&#xf055;","plus-circle"],["&#xf0fe;","plus-square"],["&#xf196;","plus-square-o"],["&#xf011;","power-off"],["&#xf02f;","print"],["&#xf12e;","puzzle-piece"],["&#xf1d6;","qq"],["&#xf029;","qrcode"],["&#xf128;","question"],["&#xf059;","question-circle"],["&#xf10d;","quote-left"],["&#xf10e;","quote-right"],["&#xf074;","random"],["&#xf1d0;","rebel"],["&#xf1b8;","recycle"],["&#xf1a1;","reddit"],["&#xf1a2;","reddit-square"],["&#xf021;","refresh"],["&#xf18b;","renren"],["&#xf01e;","repeat"],["&#xf112;","reply"],["&#xf122;","reply-all"],["&#xf079;","retweet"],["&#xf018;","road"],["&#xf135;","rocket"],["&#xf09e;","rss"],["&#xf143;","rss-square"],["&#xf158;","rub"],["&#xf0c4;","scissors"],["&#xf002;","search"],["&#xf010;","search-minus"],["&#xf00e;","search-plus"],["&#xf064;","share"],["&#xf1e0;","share-alt"],["&#xf1e1;","share-alt-square"],["&#xf14d;","share-square"],["&#xf045;","share-square-o"],["&#xf132;","shield"],["&#xf07a;","shopping-cart"],["&#xf012;","signal"],["&#xf090;","sign-in"],["&#xf08b;","sign-out"],["&#xf0e8;","sitemap"],["&#xf17e;","skype"],["&#xf198;","slack"],["&#xf1de;","sliders"],["&#xf1e7;","slideshare"],["&#xf118;","smile-o"],["&#xf0dc;","sort"],["&#xf15d;","sort-alpha-asc"],["&#xf15e;","sort-alpha-desc"],["&#xf160;","sort-amount-asc"],["&#xf161;","sort-amount-desc"],["&#xf0de;","sort-asc"],["&#xf0dd;","sort-desc"],["&#xf162;","sort-numeric-asc"],["&#xf163;","sort-numeric-desc"],["&#xf1be;","soundcloud"],["&#xf197;","space-shuttle"],["&#xf110;","spinner"],["&#xf1b1;","spoon"],["&#xf1bc;","spotify"],["&#xf0c8;","square"],["&#xf096;","square-o"],["&#xf18d;","stack-exchange"],["&#xf16c;","stack-overflow"],["&#xf005;","star"],["&#xf089;","star-half"],["&#xf123;","star-half-o"],["&#xf006;","star-o"],["&#xf1b6;","steam"],["&#xf1b7;","steam-square"],["&#xf048;","step-backward"],["&#xf051;","step-forward"],["&#xf0f1;","stethoscope"],["&#xf04d;","stop"],["&#xf0cc;","strikethrough"],["&#xf1a4;","stumbleupon"],["&#xf1a3;","stumbleupon-circle"],["&#xf12c;","subscript"],["&#xf0f2;","suitcase"],["&#xf185;","sun-o"],["&#xf12b;","superscript"],["&#xf0ce;","table"],["&#xf10a;","tablet"],["&#xf0e4;","tachometer"],["&#xf02b;","tag"],["&#xf02c;","tags"],["&#xf0ae;","tasks"],["&#xf1ba;","taxi"],["&#xf1d5;","tencent-weibo"],["&#xf120;","terminal"],["&#xf034;","text-height"],["&#xf035;","text-width"],["&#xf00a;","th"],["&#xf009;","th-large"],["&#xf00b;","th-list"],["&#xf165;","thumbs-down"],["&#xf088;","thumbs-o-down"],["&#xf087;","thumbs-o-up"],["&#xf164;","thumbs-up"],["&#xf08d;","thumb-tack"],["&#xf145;","ticket"],["&#xf00d;","times"],["&#xf057;","times-circle"],["&#xf05c;","times-circle-o"],["&#xf043;","tint"],["&#xf204;","toggle-off"],["&#xf205;","toggle-on"],["&#xf1f8;","trash"],["&#xf014;","trash-o"],["&#xf1bb;","tree"],["&#xf181;","trello"],["&#xf091;","trophy"],["&#xf0d1;","truck"],["&#xf195;","try"],["&#xf1e4;","tty"],["&#xf173;","tumblr"],["&#xf174;","tumblr-square"],["&#xf1e8;","twitch"],["&#xf099;","twitter"],["&#xf081;","twitter-square"],["&#xf0e9;","umbrella"],["&#xf0cd;","underline"],["&#xf0e2;","undo"],["&#xf19c;","university"],["&#xf09c;","unlock"],["&#xf13e;","unlock-alt"],["&#xf093;","upload"],["&#xf155;","usd"],["&#xf007;","user"],["&#xf0f0;","user-md"],["&#xf0c0;","users"],["&#xf03d;","video-camera"],["&#xf194;","vimeo-square"],["&#xf1ca;","vine"],["&#xf189;","vk"],["&#xf027;","volume-down"],["&#xf026;","volume-off"],["&#xf028;","volume-up"],["&#xf18a;","weibo"],["&#xf1d7;","weixin"],["&#xf193;","wheelchair"],["&#xf1eb;","wifi"],["&#xf17a;","windows"],["&#xf19a;","wordpress"],["&#xf0ad;","wrench"],["&#xf168;","xing"],["&#xf169;","xing-square"],["&#xf19e;","yahoo"],["&#xf1e9;","yelp"],["&#xf167;","youtube"],["&#xf16a;","youtube-play"],["&#xf166;","youtube-square"]];
@@ -2733,7 +2769,7 @@ function getGlyphNameByCode(code) {
 	}
 }
 
-function Property_glyphCode(cell, controlAction, property, refreshHtml, refreshProperties, refreshDialogue) {
+function Property_glyphCode(cell, controlAction, property, details) {
 	
 	// retieve the glyph code
 	var code = controlAction[property.key];
@@ -2746,10 +2782,8 @@ function Property_glyphCode(cell, controlAction, property, refreshHtml, refreshP
 		cell.append("Please select...");
 	}
 	
-	// retain a reference to the dialogue (if we were passed one)
-	var dialogue = refreshDialogue;
-	// if we weren't passed one - make what we need
-	if (!dialogue) dialogue = createDialogue(cell, 200, "Glyphs");		
+	// retrieve or create the dialogue
+	var dialogue = getDialogue(cell, controlAction, property, details, 200, "Glyphs");		
 	// remove the standard table
 	dialogue.find("table").first().remove();
 	// add a scrolling div with the table inside
@@ -2761,7 +2795,7 @@ function Property_glyphCode(cell, controlAction, property, refreshHtml, refreshP
 		table.append("<tr><td data-code='" + _fontawesomeGlyphs[i][0].replace("&","&amp;") + "' class='hover" + (code == _fontawesomeGlyphs[i][0]? "' selected" : "") + "'><span class='fa'>" + _fontawesomeGlyphs[i][0] + "</span>&nbsp;" + _fontawesomeGlyphs[i][1] + "</td></tr>")
 	}
 	
-	addListener( table.find("td").click( function(ev) {
+	addListener( table.find("td").click({cell: cell, controlAction: controlAction, property: property, details: details}, function(ev) {
 		// get the cell
 		var cell = $(ev.target).closest("td");
 		// remove selected from others
@@ -2771,27 +2805,27 @@ function Property_glyphCode(cell, controlAction, property, refreshHtml, refreshP
 		// get the code
 		var code = cell.attr("data-code");
 		// update the property
-		updateProperty(controlAction, property, code, refreshHtml);
+		updateProperty(ev.data.cell, ev.data.controlAction, ev.data.property, ev.data.details, code);
 	}));
 	
 }
 
-function Property_buttonGlyphPosition(cell, propertyObject, property, refreshHtml, refreshProperties) {
+function Property_buttonGlyphPosition(cell, propertyObject, property, details) {
 	// only if glyph code is specified
 	if (propertyObject.glyphCode) {
 		// add the bigtext
-		Property_select(cell, propertyObject, property, refreshHtml);
+		Property_select(cell, propertyObject, property, details);
 	} else {
 		// remove this row
 		cell.closest("tr").remove();
 	}
 }
 
-function Property_buttonGlyphBackground(cell, propertyObject, property, refreshHtml, refreshProperties) {
+function Property_buttonGlyphBackground(cell, propertyObject, property, details) {
 	// only if glyph code is specified
 	if (propertyObject.glyphCode) {
 		// add the bigtext
-		Property_select(cell, propertyObject, property, refreshHtml);
+		Property_select(cell, propertyObject, property, details);
 	} else {
 		// remove this row
 		cell.closest("tr").remove();
@@ -2799,7 +2833,7 @@ function Property_buttonGlyphBackground(cell, propertyObject, property, refreshH
 }
 
 // this is used by the maps for changing the lat/lng
-function Property_mapLatLng(cell, propertyObject, property, refreshHtml, refreshProperties) {
+function Property_mapLatLng(cell, propertyObject, property, details) {
 	var value = "";
 	// set the value if it exists
 	if (propertyObject[property.key] || parseInt(propertyObject[property.key]) == 0) value = propertyObject[property.key];
@@ -2814,7 +2848,7 @@ function Property_mapLatLng(cell, propertyObject, property, refreshHtml, refresh
 		// check decimal match
 		if (val.match(new RegExp("^-?((\\d+(\\.\\d*)?)|(\\.\\d+))$"))) {
 			// update value (but don't update the html)
-			updateProperty(propertyObject, property, ev.target.value, false);
+			updateProperty(cell, propertyObject, property, details, ev.target.value);
 			// get a reference to the iFrame window
 			var w = _pageIframe[0].contentWindow;  
 			// get the map
@@ -2828,7 +2862,7 @@ function Property_mapLatLng(cell, propertyObject, property, refreshHtml, refresh
 	}));
 }
 
-function Property_mapZoom(cell, propertyObject, property, refreshHtml, refreshProperties) {
+function Property_mapZoom(cell, propertyObject, property, details) {
 	var value = "";
 	// set the value if it exists (or is 0)
 	if (propertyObject[property.key] || parseInt(propertyObject[property.key]) == 0) value = propertyObject[property.key];
@@ -2845,7 +2879,7 @@ function Property_mapZoom(cell, propertyObject, property, refreshHtml, refreshPr
 			// make a number
 			val = parseInt(val);
 			// update value but not the html
-			updateProperty(propertyObject, property, val, false);
+			updateProperty(cell, propertyObject, property, details, val);
 			// update the zoom
 			// get a reference to the iFrame window
 			var w = _pageIframe[0].contentWindow;  
@@ -2861,7 +2895,7 @@ function Property_mapZoom(cell, propertyObject, property, refreshHtml, refreshPr
 }
 
 //this is displayed as a page property but is actually held in local storage
-function Property_device(cell, propertyObject, property, refreshHtml, refreshProperties) {
+function Property_device(cell, propertyObject, property, details) {
 	// holds the options html
 	var options = "";
 	// loop the array and build the options html
@@ -2900,7 +2934,7 @@ function Property_device(cell, propertyObject, property, refreshHtml, refreshPro
 }
 
 //this is displayed as a page property but is actually held in local storage
-function Property_zoom(cell, propertyObject, property, refreshHtml, refreshProperties) {
+function Property_zoom(cell, propertyObject, property, details) {
 	// holds the options html
 	var options = "";
 	var values = [[0.5,"50%"],[1,"100%"],[1.5,"150%"],[2,"200%"],[3,"300%"],[4,"400%"]];
@@ -2935,7 +2969,7 @@ function Property_zoom(cell, propertyObject, property, refreshHtml, refreshPrope
 }
 
 // this is displayed as a page property but is actually held in local storage
-function Property_orientation(cell, propertyObject, property, refreshHtml, refreshProperties) {
+function Property_orientation(cell, propertyObject, property, details) {
 	// if we're holding a P (this defaulted in designerer.js)
 	if (_orientation == "P") {
 		cell.text("Portrait");
@@ -2966,7 +3000,7 @@ function Property_orientation(cell, propertyObject, property, refreshHtml, refre
 var _mobileActionTypes = [["addImage","Add image"],["uploadImages","Upload images"],["getGPS","Get gps position"],["message","Status bar message"],["disableBackButton","Disable back button"]];
 
 // this property changes the visibility of other properties according to the chosen type
-function Property_mobileActionType(cell, mobileAction, property, refreshHtml, refreshProperties) {
+function Property_mobileActionType(cell, mobileAction, property, details) {
 	// the selectHtml
 	var selectHtml = "<select>";
 	// loop the mobile action types
@@ -3000,12 +3034,10 @@ function Property_mobileActionType(cell, mobileAction, property, refreshHtml, re
 		break;
 	}
 	// listener for changing the type
-	addListener( actionTypeSelect.change( function(ev) {
-		// set the new value
-		mobileAction.actionType = $(ev.target).val();
-		// refresh properties (which will update the required visibilities)
-		Property_mobileActionType(cell, mobileAction, property, refreshHtml, refreshProperties);
-		// refresh events which is where these action properties would be
-		showEvents(_selectedControl);		
+	addListener( actionTypeSelect.change({cell: cell, mobileAction: mobileAction, property: property, details: details}, function(ev) {
+		// get the new value
+		value = $(ev.target).val();
+		// update the property (which will update the required visibilities)
+		updateProperty(ev.data.cell, ev.data.mobileAction, ev.data.property, ev.data.details, value);	
 	}));
 }

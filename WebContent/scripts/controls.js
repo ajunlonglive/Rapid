@@ -91,7 +91,7 @@ function Control(controlType, parentControl, jsonControl, loadComplexObjects, pa
 		}
 		
 		// retain the parentControl
-		this.parentControl = parentControl;
+		this._parent = parentControl;
 		
 		// create an empty childControl array
 		this.childControls = new Array();
@@ -113,6 +113,8 @@ function Control(controlType, parentControl, jsonControl, loadComplexObjects, pa
 					event.type = classEvents[i].type;
 					// set the filterFunction
 					event.filterFunction = classEvents[i].filterFunction;
+					// set the parent to the control
+					event._parent = this;
 					// make an actions array
 					event.actions = new Array();						
 					// add event 
@@ -128,12 +130,12 @@ function Control(controlType, parentControl, jsonControl, loadComplexObjects, pa
 					
 			// check paste/undo/normal
 			if (paste || undo) {
-				// copy all properties into this control (expect for complex objects: parentControl, roles, validation, childControls, events, and styles - [we've set them already and don't want them overwritten, unless it's the page child controls])
+				// copy all properties into this control (expect for complex objects: _parent, roles, validation, childControls, events, and styles - [we've set them already and don't want them overwritten, unless it's the page child controls])
 				for (var i in jsonControl) {
-					if (i != "parentControl" && i != "validation" && i != "events" && i != "styles" && (i != "childControls" || !controlClass)) this[i] = jsonControl[i];								
+					if (i != "_parent" && i != "validation" && i != "events" && i != "styles" && (i != "childControls" || !controlClass)) this[i] = jsonControl[i];								
 				}
 				// only if not the page
-				if (this.parentControl) {
+				if (this._parent) {
 					// give this control a new, unique id when pasting
 					if (paste) {					
 						// set a unique ID for this control
@@ -163,7 +165,7 @@ function Control(controlType, parentControl, jsonControl, loadComplexObjects, pa
 				}				
 			} else {
 				// the page control doesn't have a properties array
-				if (!jsonControl.properties && !jsonControl.parentControl) {
+				if (!jsonControl.properties && !jsonControl._parent) {
 					// copy all properties in from the page control
 					for (var i in jsonControl) {	
 						// retain the property in the control class, unless events
@@ -288,13 +290,13 @@ function Control(controlType, parentControl, jsonControl, loadComplexObjects, pa
 				this.error = true;
 			}
 		} else {
-			this.parentControl.object.append(this._html);
+			this._parent.object.append(this._html);
 		}
 		
 		// if this is not the page
-		if (this.parentControl) {
+		if (this._parent) {
 			// grab a reference to the object
-			this.object = this.parentControl.object.children().last();
+			this.object = this._parent.object.children().last();
 		}
 						
 		// run the create statement if there is one (can reassign the object or add other html)
@@ -481,7 +483,7 @@ function Control(controlType, parentControl, jsonControl, loadComplexObjects, pa
 		}
 								
 	} else {
-		var parentType = parentControl.type;
+		var parentType = _parent.type;
 		if (!parentType) parentType = "page";
 		alert("ControlClass could not be found when called from " + parentType);
 	}
@@ -502,7 +504,7 @@ function rebuildHtml(control) {
 			} catch(ex) {
 				alert("rebuildJavaScript failed for " + control.type + ". " + ex);
 			}
-		} else if (control.parentControl) {
+		} else if (control._parent) {
 			// get the new html
 			var html = control._getHtml();
 			// append the new html to the page object 

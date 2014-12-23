@@ -39,11 +39,13 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    <canUserAddPeers>true</canUserAddPeers>
 	    
 	    <properties>
+	        
 	        <property>
 	            <key>name</key>
 	            <name>Name</name>
 	            <changeValueJavaScript>text</changeValueJavaScript>	            
-	        </property>	       
+	        </property>	
+	               
 	        <property>
 	            <key>checked</key>
 	            <name>Checked</name> 
@@ -53,8 +55,10 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	                <![CDATA[
 return ["false","true"];
 					]]>
-	            </getValuesFunction>     
-	        </property>	      
+	            </getValuesFunction>   
+	            <refreshHtml>true</refreshHtml>  
+	        </property>	
+	              
 	    </properties>
 	    
 	    <getHtmlFunction>

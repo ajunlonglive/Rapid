@@ -29,13 +29,13 @@ var _eventsControl = null;
 // this holds the option values with all available options for adding to selects
 var _actionOptions = "";
 
-//this object function serves as a closure for holding the static values required to construct each type of action - they're created and assigned globally when the designer loads and originate from the .action.xml files
+// this object function serves as a closure for holding the static values required to construct each type of action - they're created and assigned globally when the designer loads and originate from the .action.xml files
 function ActionClass(actionClass) {
 	// retain all values passed in the json for the action (from the .action.xml file)
 	for (var i in actionClass) this[i] = actionClass[i];	
 }
 
-//this object function will create the control as specified in the controlClass
+// this object function will create the action as specified in the actionType
 function Action(actionType, jsonAction, paste, undo) {
 			
 	// get the action class from the type
@@ -164,10 +164,14 @@ function Action(actionType, jsonAction, paste, undo) {
 
 // this shows the events for the control and eventually the actions
 function showEvents(control) {		
+	
 	// get a reference to the div we are writing in to
 	var actionsPanel = $("#actionsPanelDiv");	
-	// empty it
+	// remove any listeners
+	removeListeners("actionsPanel");
+	// empty the panel
 	actionsPanel.html("");	
+	
 	// only if there is a control and there are events in the control class
 	if (control) {
 		// get a reference to the control class
@@ -183,13 +187,12 @@ function showEvents(control) {
 				// get a reference
 				var event = events[i];
 				// append a table
-				actionsPanel.append("<table class='propertiesPanelTable'><tbody></tbody></table>");	
+				actionsPanel.append("<table class='propertiesPanelTable' data-eventType='" + event.type + "'><tbody></tbody></table>");	
 				// get a reference to the table
 				var actionsTable = actionsPanel.children().last().children().last();
 				// add a heading for the event
 				actionsTable.append("<tr><td colspan='2'><h3>" + event.name + " event</h3></td></tr>");
-				// show any actions
-				showActions(control, event);	
+													
 				// add a small break
 				actionsTable.append("<tr><td colspan='2'></td></tr>");
 				// add an add facility
@@ -219,6 +222,9 @@ function showEvents(control) {
 					
 				}));
 				
+				// show any actions
+				showActions(control, event.type);
+				
 			} // event loop	
 			
 		} // event check
@@ -233,8 +239,13 @@ function showAction(actionsTable, action, collection, refreshFunction) {
 	// get  the action class
 	var actionClass = _actionTypes[action.type];
 	
+	// the position we want to start inserting
+	var insertRow = actionsTable.children("tr:nth-last-child(2)");
+	
+	// add a small break
+	insertRow.before("<tr><td colspan='2'></td></tr>");
 	// write action name into the table						
-	actionsTable.append("<tr><td colspan='2'><h4>" + actionClass.name + " action</h4><img class='delete' src='images/bin_16x16.png' title='Delete this action'/><img class='reorder' src='images/moveUpDown_16x16.png' title='Reorder this action'/></td></tr>");
+	insertRow.before("<tr><td colspan='2'><h4>" + actionClass.name + " action</h4><img class='delete' src='images/bin_16x16.png' title='Delete this action'/><img class='reorder' src='images/moveUpDown_16x16.png' title='Reorder this action'/></td></tr>");
 	// get a reference to the delete image
 	var deleteImage = actionsTable.find("img.delete").last(); 
 	// add a click listener to the delete image
@@ -257,7 +268,7 @@ function showAction(actionsTable, action, collection, refreshFunction) {
 		}		
 	}));
 	// show the id if requested
-	if (_version.showActionIds) actionsTable.append("<tr><td>ID</td><td class='canSelect'>" + action.id + "</td></tr>");
+	if (_version.showActionIds) insertRow.before("<tr><td>ID</td><td class='canSelect'>" + action.id + "</td></tr>");
 	// get the action class properties
 	var properties = actionClass.properties;
 	// check
@@ -267,9 +278,9 @@ function showAction(actionsTable, action, collection, refreshFunction) {
 		// loop them
 		for (var k in properties) {
 			// add a row
-			actionsTable.append("<tr></tr>");
+			insertRow.before("<tr></tr>");
 			// get a reference to the row
-			var propertiesRow = actionsTable.children().last();
+			var propertiesRow = actionsTable.children("tr:nth-last-child(3)");
 			// retrieve a property object from the control class
 			var property = properties[k];
 			// check that visibility is not explicitly false
@@ -299,7 +310,10 @@ function showAction(actionsTable, action, collection, refreshFunction) {
 }
 
 // this renders the actions for a control's event into a properties panel
-function showActions(control, event) {
+function showActions(control, eventType) {
+	
+	console.log("showActions" + control.id + "/" + eventType);
+	
 	// if this control has events
 	if (control.events) {
 		// get a reference to the div we are writing in to
@@ -307,30 +321,38 @@ function showActions(control, event) {
 		// loop control events
 		for (var i in control.events) {
 			// if we've found the event we want
-			if (control.events[i].type == event.type) {
+			if (control.events[i].type == eventType) {
 				// get actions
 				var actions = control.events[i].actions;
+				
 				// check there are actions				
 				if (actions) {
+					
 					// get a reference to the table
 					var actionsTable = actionsPanel.children().last().children().last();
+					
+					// remove the lines we don't want
+					actionsTable.children("tr:not(:first-child):not(:last-child):not(:nth-last-child(2))").remove();
+
 					// remember how many actions we have
 					var actionsCount = 0;
 					// loop the actions
 					for (var j in actions) {
+						
 						// inc the count
 						actionsCount ++;
 						// get the action
 						var action = actions[j];											
-						// add a small break
-						actionsTable.append("<tr><td colspan='2'></td></tr>");
+						
 						// show the action
 						showAction(actionsTable, action, actions);
+						
 					} // actions loop
+					
 					// if there was more than 1 action
 					if (actionsCount > 1) {
 						// add reorder listeners
-						addReorder(actions, actionsTable.find("img.reorder"), function() { showEvents(control); });
+						addReorder(actions, actionsTable.find("img.reorder"), function() { showActions(control, eventType); });
 					}
 				}						
 				// no need to keep looping events

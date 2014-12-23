@@ -278,15 +278,15 @@ function applyUndoRedo(snapshot) {
 				applyObject.remove();
 				
 				// loop the parent child controls
-				for (var i in applyControl.parentControl.childControls) {
+				for (var i in applyControl._parent.childControls) {
 					// get a reference to the applychild
-					var applyChildControl = applyControl.parentControl.childControls[i];
+					var applyChildControl = applyControl._parent.childControls[i];
 					// check if it's the one to replace
 					if (applyChildControl.id == undoredoControl.id) {
 						// copy in the child controls
 						undoredoControl.childControls = applyChildControl.childControls;
 						// update this child control
-						applyControl.parentControl.childControls[i] = loadControl(undoredoControl, applyControl.parentControl, true, false, true);						
+						applyControl._parent.childControls[i] = loadControl(undoredoControl, applyControl._parent, true, false, true);						
 						// we're done
 						break;
 					}
@@ -501,7 +501,7 @@ function getMouseControl(ev, childControls) {
 								// if the childControl is a table row we need to make sure that any cell or row spans are not interfering, there is a lot overhead but
 								if (childControl.object.is("tr")) {
 									// get the table
-									var t = childControl.parentControl;
+									var t = childControl._parent;
 									// loop all of the rows
 									for (var i in t.childControls) {
 										// get a reference to the row
@@ -561,15 +561,15 @@ function getMouseControl(ev, childControls) {
 // before controls are positioned their parent's are removed as they could be placed anywhere in tree
 function removeControlFromParent(control) {
 	// loop all of our objects
-	for (var i in control.parentControl.childControls) {
+	for (var i in control._parent.childControls) {
 		// get a reference to this control
-		var c = control.parentControl.childControls[i];
+		var c = control._parent.childControls[i];
 		// do we have a hit on this object?
 		if (c === control) {
 			// remove that object
-			control.parentControl.childControls.splice(i,1);
+			control._parent.childControls.splice(i,1);
 			// set the parent to null
-			control.parentControl = null;
+			control._parent = null;
 			// bail
 			break;
 		}
@@ -984,7 +984,7 @@ function selectControl(control) {
 		}
 		
 		// if we have a parent control so aren't the page
-		if (_selectedControl.parentControl) {
+		if (_selectedControl._parent) {
 			
 			// position and size the border
 			positionAndSizeBorder(_selectedControl);
@@ -999,17 +999,17 @@ function selectControl(control) {
 			// get the control class
 			var controlClass = _controlTypes[_selectedControl.type];
 			// get the parent control class
-			var parentControlClass = _controlTypes[_selectedControl.parentControl.type];
+			var _parentClass = _controlTypes[_selectedControl._parent.type];
 			// count the number of child controls
 			var contCount = 0;
 
 			// count the controls of this type			
-			for (var i in _selectedControl.parentControl.childControls) {
-				if (_selectedControl.type == _selectedControl.parentControl.childControls[i].type) contCount ++;
+			for (var i in _selectedControl._parent.childControls) {
+				if (_selectedControl.type == _selectedControl._parent.childControls[i].type) contCount ++;
 			}
 
 			// can delete if no parent class (page control), can insert into parent, or canUserAddPeers and more than 1 peer of this type
-			if (!parentControlClass || parentControlClass.canUserInsert || (controlClass.canUserAddPeers && contCount > 1)) {
+			if (!_parentClass || _parentClass.canUserInsert || (controlClass.canUserAddPeers && contCount > 1)) {
 				$("#deleteControl").removeAttr("disabled");
 			} else {
 				$("#deleteControl").attr("disabled","disabled");
@@ -1026,8 +1026,8 @@ function selectControl(control) {
 			
 			
 			// get position in parents
-			for (var i in _selectedControl.parentControl.childControls) {
-				if (_selectedControl == _selectedControl.parentControl.childControls[i]) break;
+			for (var i in _selectedControl._parent.childControls) {
+				if (_selectedControl == _selectedControl._parent.childControls[i]) break;
 			}
 			// turn into a number
 			i = i*1;		
@@ -1041,7 +1041,7 @@ function selectControl(control) {
 			}
 			
 			// selectPeerRight
-			if (i == _selectedControl.parentControl.childControls.length - 1) {
+			if (i == _selectedControl._parent.childControls.length - 1) {
 				$("#selectPeerRight").attr("disabled","disabled");
 				$("#swapPeerRight").attr("disabled","disabled");
 			} else {
@@ -1050,7 +1050,7 @@ function selectControl(control) {
 			}
 			
 			// selectParent
-			if (_selectedControl.parentControl) {
+			if (_selectedControl._parent) {
 				$("#selectParent").removeAttr("disabled");
 			} else {
 				$("#selectParent").attr("disabled","disabled");
@@ -1068,14 +1068,14 @@ function selectControl(control) {
 			if (_copyControl) {
 				// find out if there are childControls with the same type with canUserAddPeers			
 				for (i in _selectedControl.childControls) {
-					if (_copyControl.parentControl && _copyControl.type == _selectedControl.childControls[i].type && _controlTypes[_selectedControl.childControls[i].type].canUserAddPeers) {
+					if (_copyControl._parent && _copyControl.type == _selectedControl.childControls[i].type && _controlTypes[_selectedControl.childControls[i].type].canUserAddPeers) {
 						childCanAddPeers = true;
 						break;
 					}
 				}
 				// find out if there are peers with the same type with canUserAddPeers			
-				for (i in _selectedControl.parentControl.childControls) {
-					if (_copyControl.parentControl && _copyControl.type == _selectedControl.parentControl.childControls[i].type && _controlTypes[_selectedControl.parentControl.childControls[i].type].canUserAddPeers) {
+				for (i in _selectedControl._parent.childControls) {
+					if (_copyControl._parent && _copyControl.type == _selectedControl._parent.childControls[i].type && _controlTypes[_selectedControl._parent.childControls[i].type].canUserAddPeers) {
 						peerCanAddPeers = true;
 						break;
 					}
@@ -1105,7 +1105,7 @@ function selectControl(control) {
 			$("#addPeerRight").attr("disabled","disabled");
 			
 			// if the copy control is a canUserAdd or the page we can paste
-			if (_copyControl && (!_copyControl.parentControl || _controlTypes[_copyControl.type].canUserAdd)) {
+			if (_copyControl && (!_copyControl._parent || _controlTypes[_copyControl.type].canUserAdd)) {
 				$("#paste").removeAttr("disabled");
 			} else {
 				$("#paste").attr("disabled","disabled");
@@ -1389,7 +1389,7 @@ function loadVersion(forceLoad) {
 						// show the selection border
 						_selectionBorder.show();	
 						// set its parent to the _page
-						control.parentControl = _page;
+						control._parent = _page;
 						// add it to the _page childControls collection
 						_page.childControls.push(control);					
 						// retain a reference to the selected control					
@@ -1577,7 +1577,7 @@ function getDataObject(object) {
 	// loop the properties
 	for (var i in object) {
 		// ignore "static" properties, or those that create circular references
-		if (i.indexOf("_") != 0 && i != "XMLVersion" && i != "object" && i != "parentControl") {
+		if (i.indexOf("_") != 0 && i != "XMLVersion" && i != "object") {
 			// grab a property
 			var p = object[i];
 			// if a blank space, or not a null
@@ -1814,7 +1814,7 @@ function cleanControlForPaste(control) {
 	var cleanControl = {};	
 	// loop the properties, ignoring certain ones
 	for (var i in control) {
-		if (i.indexOf("_") != 0 && i != "object" && i != "parentControl" && i != "childControls") {
+		if (i.indexOf("_") != 0 && i != "object" && i != "childControls") {
 			cleanControl[i] = control[i];
 		}
 	}
@@ -1870,7 +1870,7 @@ function applyStyleForPaste(control, styleSheet) {
 }
 
 // this function will paste an existing control into a specified parent - if no parent is specified we assume we are pasting a whole page
-function doPaste(control, parentControl) {
+function doPaste(control, _parent) {
 		
 	// remove any dialogues or components
 	$("#dialogues").children().remove();
@@ -1879,10 +1879,10 @@ function doPaste(control, parentControl) {
 	_pasteMap = {};
 	
 	// it's a little different for the page (we can idenitfy it as it doesn't have a parent)
-	if (parentControl) {
+	if (_parent) {
 		
 		// create the new control
-		var newControl = loadControl(control, parentControl, true, true);
+		var newControl = loadControl(control, _parent, true, true);
 		
 		// retain the next id at this point
 		var nextId = _nextId;
@@ -1912,7 +1912,7 @@ function doPaste(control, parentControl) {
 		var mappedControl = JSON.parse(newControlString);
 		
 		// reload the control with all the new references
-		newControl = loadControl(mappedControl, parentControl, true, true);
+		newControl = loadControl(mappedControl, _parent, true, true);
 		
 		// apply any styling in the new control
 		applyStyleForPaste(newControl, getStyleSheet());
@@ -2455,10 +2455,10 @@ $(document).ready( function() {
 							
 	// select parent
 	$("#selectParent").click( function(ev) {
-		// if we have a parentControl
-		if (_selectedControl.parentControl) {			 
+		// if we have a _parent
+		if (_selectedControl._parent) {			 
 			// select the parent
-			selectControl(_selectedControl.parentControl);
+			selectControl(_selectedControl._parent);
 		}
 	});
 	
@@ -2479,54 +2479,54 @@ $(document).ready( function() {
 	// select left peer
 	$("#selectPeerLeft").click( function(ev) {
 		// maker sure there we've not got the left most control already
-		if (_selectedControl != _selectedControl.parentControl.childControls[0]) {
+		if (_selectedControl != _selectedControl._parent.childControls[0]) {
 			// find our position
-			for (var i in _selectedControl.parentControl.childControls) {
-				if (_selectedControl == _selectedControl.parentControl.childControls[i]) break;
+			for (var i in _selectedControl._parent.childControls) {
+				if (_selectedControl == _selectedControl._parent.childControls[i]) break;
 			}
 			// run any control selection code - for complex controls that may need to update their parent
 			if (_selectedControl._selectLeft) _selectedControl._selectLeft();
 			// select the childControl before this one 
-			selectControl(_selectedControl.parentControl.childControls[i*1-1]);
+			selectControl(_selectedControl._parent.childControls[i*1-1]);
 		}
 	});
 	
 	// select right peer
 	$("#selectPeerRight").click( function(ev) {
 		// maker sure there we've not got the right most control already
-		if (_selectedControl != _selectedControl.parentControl.childControls[_selectedControl.parentControl.childControls.length - 1]) {
+		if (_selectedControl != _selectedControl._parent.childControls[_selectedControl._parent.childControls.length - 1]) {
 			// find our position
-			for (var i in _selectedControl.parentControl.childControls) {
-				if (_selectedControl == _selectedControl.parentControl.childControls[i]) break;
+			for (var i in _selectedControl._parent.childControls) {
+				if (_selectedControl == _selectedControl._parent.childControls[i]) break;
 			}
 			// run any control selection code - for complex controls that may need to update their parent
 			if (_selectedControl._selectRight) _selectedControl._selectRight();
 			// select the childControl before this one if it's visible
-			selectControl(_selectedControl.parentControl.childControls[i*1+1]);
+			selectControl(_selectedControl._parent.childControls[i*1+1]);
 		}
 	});
 			
 	// swap peer left
 	$("#swapPeerLeft").click( function(ev) {
 		// maker sure there we've not got the left most control already
-		if (_selectedControl != _selectedControl.parentControl.childControls[0]) {
+		if (_selectedControl != _selectedControl._parent.childControls[0]) {
 			// add an undo snapshot for the whole page
 			addUndo(true);
 			// find our position
-			for (var i in _selectedControl.parentControl.childControls) {
-				if (_selectedControl == _selectedControl.parentControl.childControls[i]) break;
+			for (var i in _selectedControl._parent.childControls) {
+				if (_selectedControl == _selectedControl._parent.childControls[i]) break;
 			}
 			// remove control from parent childControls
-			_selectedControl.parentControl.childControls.splice(i,1);
+			_selectedControl._parent.childControls.splice(i,1);
 			// add back one position earlier
-			_selectedControl.parentControl.childControls.splice(i*1-1,0,_selectedControl);
+			_selectedControl._parent.childControls.splice(i*1-1,0,_selectedControl);
 			// check if there is a routine for the swap
 			if (_selectedControl._swapLeft) {
 				// run the function
 				_selectedControl._swapLeft();
 			} else {				
 				// move object
-				_selectedControl.object.insertBefore(_selectedControl.parentControl.childControls[i*1].object);
+				_selectedControl.object.insertBefore(_selectedControl._parent.childControls[i*1].object);
 			}
 			// arrange any non visible controls
 			arrangeNonVisibleControls();
@@ -2540,24 +2540,24 @@ $(document).ready( function() {
 	// swap peer right
 	$("#swapPeerRight").click( function(ev) {
 		// maker sure there we've not got the right most control already
-		if (_selectedControl != _selectedControl.parentControl.childControls[_selectedControl.parentControl.childControls.length - 1]) {
+		if (_selectedControl != _selectedControl._parent.childControls[_selectedControl._parent.childControls.length - 1]) {
 			// add an undo snapshot for the whole page
 			addUndo(true);
 			// find our position
-			for (var i in _selectedControl.parentControl.childControls) {
-				if (_selectedControl == _selectedControl.parentControl.childControls[i]) break;
+			for (var i in _selectedControl._parent.childControls) {
+				if (_selectedControl == _selectedControl._parent.childControls[i]) break;
 			}
 			// remove control from parent childControls
-			_selectedControl.parentControl.childControls.splice(i,1);
+			_selectedControl._parent.childControls.splice(i,1);
 			// add back one position later
-			_selectedControl.parentControl.childControls.splice(i*1+1,0,_selectedControl);
+			_selectedControl._parent.childControls.splice(i*1+1,0,_selectedControl);
 			// check if there is a routine for the swap
 			if (_selectedControl._swapRight) {
 				// run the function
 				_selectedControl._swapRight();
 			} else {
 				// just move the object
-				_selectedControl.object.insertAfter(_selectedControl.parentControl.childControls[i*1].object);
+				_selectedControl.object.insertAfter(_selectedControl._parent.childControls[i*1].object);
 			}			
 			// arrange any non visible controls
 			arrangeNonVisibleControls();
@@ -2575,13 +2575,13 @@ $(document).ready( function() {
 			// add an undo snapshot for the whole page
 			addUndo(true);
 			// create a new control of the selected class
-			var newControl = new Control(_selectedControl.type, _selectedControl.parentControl, null, true);						
+			var newControl = new Control(_selectedControl.type, _selectedControl._parent, null, true);						
 			// run any control insertion code - for complex controls that may need to update their parent
 			if (newControl._insertLeft) {
 				newControl._insertLeft();
 			} else {
 				// add it to the parent in the correct position
-				_selectedControl.parentControl.childControls.splice(_selectedControl.object.index(), 0, newControl);	
+				_selectedControl._parent.childControls.splice(_selectedControl.object.index(), 0, newControl);	
 				// move the object
 				newControl.object.insertBefore(_selectedControl.object);							
 			}			
@@ -2600,13 +2600,13 @@ $(document).ready( function() {
 			// add an undo snapshot for the whole page
 			addUndo(true);
 			// create a new control of the selected class
-			var newControl = new Control(_selectedControl.type, _selectedControl.parentControl, null, true);					
+			var newControl = new Control(_selectedControl.type, _selectedControl._parent, null, true);					
 			// run any control insertion code - for complex controls that may need to update their parent
 			if (newControl._insertRight) {
 				newControl._insertRight();
 			} else {
 				// add it to the parent in the correct position
-				_selectedControl.parentControl.childControls.splice(_selectedControl.object.index() + 1, 0, newControl);
+				_selectedControl._parent.childControls.splice(_selectedControl.object.index() + 1, 0, newControl);
 				// move the object
 				newControl.object.insertAfter(_selectedControl.object);				
 			}			
@@ -2623,24 +2623,24 @@ $(document).ready( function() {
 		// there must be a selected control
 		if (_selectedControl) {
 			// check this control isn't the page (shows dialogue if so)
-			if (_selectedControl.parentControl) {
+			if (_selectedControl._parent) {
 				var contCount = 0;
 				// count the controls of this type
-				for (var i in _selectedControl.parentControl.childControls) {
-					if (_selectedControl.type == _selectedControl.parentControl.childControls[i].type) contCount ++;
+				for (var i in _selectedControl._parent.childControls) {
+					if (_selectedControl.type == _selectedControl._parent.childControls[i].type) contCount ++;
 				}
 				// can delete if no parent class (page control), can insert into parent, or canUserAddPeers and more than 1 peer of this type
-				if (_controlTypes[_selectedControl.parentControl.type].canUserInsert || (_controlTypes[_selectedControl.type].canUserAddPeers && contCount > 1)) {				
+				if (_controlTypes[_selectedControl._parent.type].canUserInsert || (_controlTypes[_selectedControl.type].canUserAddPeers && contCount > 1)) {				
 					// add an undo snapshot for the whole page
 					addUndo(true);
 					// call the remove routine
 					_selectedControl._remove();
 					// find our position
-					for (var i in _selectedControl.parentControl.childControls) {
-						if (_selectedControl == _selectedControl.parentControl.childControls[i]) break;
+					for (var i in _selectedControl._parent.childControls) {
+						if (_selectedControl == _selectedControl._parent.childControls[i]) break;
 					}
 					// remove from parents child controls
-					_selectedControl.parentControl.childControls.splice(i,1);				
+					_selectedControl._parent.childControls.splice(i,1);				
 					// if no controls remain reset the nextid and control numbers
 					if (_page.childControls.length == 0) {
 						_nextId = 1;
@@ -2666,7 +2666,7 @@ $(document).ready( function() {
 		// if there is a selected control
 		if (_selectedControl) {
 			// treat the page differently
-			if (_selectedControl.parentControl) {
+			if (_selectedControl._parent) {
 				_copyControl = _selectedControl;
 			} else {
 				_copyControl = cleanControlForPaste(_selectedControl);
@@ -2682,7 +2682,7 @@ $(document).ready( function() {
 			// add an undo snapshot for the whole page
 			addUndo(true);
 			// if no parent it's the page
-			if (_selectedControl.parentControl) {
+			if (_selectedControl._parent) {
 				// find out if there are childControls with the same type with canUserAddPeers
 				var childCanAddPeers = false;
 				for (i in _selectedControl.childControls) {
@@ -2693,8 +2693,8 @@ $(document).ready( function() {
 				}
 				// find out if there are peers with the same type with canUserAddPeers
 				var peerCanAddPeers = false;
-				for (i in _selectedControl.parentControl.childControls) {
-					if (_copyControl.type == _selectedControl.parentControl.childControls[i].type && _controlTypes[_selectedControl.parentControl.childControls[i].type].canUserAddPeers) {
+				for (i in _selectedControl._parent.childControls) {
+					if (_copyControl.type == _selectedControl._parent.childControls[i].type && _controlTypes[_selectedControl._parent.childControls[i].type].canUserAddPeers) {
 						peerCanAddPeers = true;
 						break;
 					}
@@ -2709,15 +2709,15 @@ $(document).ready( function() {
 					_selectedControl.object.append(newControl.object);
 				} else if (_controlTypes[_copyControl.type].canUserAdd || peerCanAddPeers) {
 					// create the new control as peer of current selection
-					var newControl = doPaste(_copyControl, _selectedControl.parentControl);
+					var newControl = doPaste(_copyControl, _selectedControl._parent);
 					// use the insert right routine if we've got one
 					if (newControl._insertRight) {
 						newControl._insertRight();
 					} else {						
 						// move the object (if the parent isn't the page)
-						if (_selectedControl.parentControl.parentControl) newControl.object.insertAfter(_selectedControl.object);
+						if (_selectedControl._parent._parent) newControl.object.insertAfter(_selectedControl.object);
 						// add it to the parent at the correct position
-						 _selectedControl.parentControl.childControls.splice(_selectedControl.object.index()+1,0,newControl);
+						 _selectedControl._parent.childControls.splice(_selectedControl.object.index()+1,0,newControl);
 					}
 					// select the new one
 					selectControl(newControl);				
@@ -2725,7 +2725,7 @@ $(document).ready( function() {
 				
 			} else {
 								
-				if (_copyControl.parentControl && _controlTypes[_copyControl.type].canUserAdd) {
+				if (_copyControl._parent && _controlTypes[_copyControl.type].canUserAdd) {
 					// create the new control and place in child collection of current parent
 					var newControl = doPaste(_copyControl, _selectedControl);
 					// add to childControl collection of current parent (which is the page)
@@ -2946,23 +2946,23 @@ $(document).mouseup( function(ev) {
 			switch (_movedoverDirection) {
 			case "L" : 
 				// retain the same parent control as the moved over control
-				_selectedControl.parentControl = _movedoverControl.parentControl;
+				_selectedControl._parent = _movedoverControl._parent;
 				// move the markup object before the moved over object
 				_selectedControl.object.insertBefore(_movedoverControl.object);
 				// add to childControls at correct position
-				_movedoverControl.parentControl.childControls.splice(_movedoverControl.object.index(),0,_selectedControl);				
+				_movedoverControl._parent.childControls.splice(_movedoverControl.object.index(),0,_selectedControl);				
 				break;		
 			case "R" :				
 				// retain the same parent control as the moved over control
-				_selectedControl.parentControl = _movedoverControl.parentControl;
+				_selectedControl._parent = _movedoverControl._parent;
 				// move the markup object after the moved over object
 				_selectedControl.object.insertAfter(_movedoverControl.object);
 				// add to childControls at correct position
-				_movedoverControl.parentControl.childControls.splice(_movedoverControl.object.index()+1,0,_selectedControl);								
+				_movedoverControl._parent.childControls.splice(_movedoverControl.object.index()+1,0,_selectedControl);								
 				break;	
 			case "C" :
 				// assign the correct parent
-				_selectedControl.parentControl = _movedoverControl;
+				_selectedControl._parent = _movedoverControl;
 				// add the selected control into the moved over control  
 				_movedoverControl.childControls.push(_selectedControl);				
 				// move the object into the right place

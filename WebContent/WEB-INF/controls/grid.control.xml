@@ -39,23 +39,29 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    <canUserAddPeers>true</canUserAddPeers>
 	    
 	    <properties>
+	        
 	        <property>
 	            <key>name</key>
 	            <name>Name</name>
 	            <changeValueJavaScript>text</changeValueJavaScript>	            
-	        </property>	            
+	        </property>	
+	                    
 	        <property>
 	            <key>columnHeadings</key>
 	            <name>Column headings</name>
 	            <setConstructValueFunction>return true;</setConstructValueFunction>
-	            <changeValueJavaScript>checkbox</changeValueJavaScript>	            
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>	        
+	            <refreshHtml>true</refreshHtml>    
 	        </property>
+	        
 	        <property>
 	            <key>columns</key>
 	            <name>Columns</name>
 	            <setConstructValueFunction>return [];</setConstructValueFunction>
-	            <changeValueJavaScript>gridColumns</changeValueJavaScript>	              
+	            <changeValueJavaScript>gridColumns</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>	              
 	        </property>
+	        
 	        <property>
 	            <key>dataStorageType</key>
 	            <name>Data store type</name>
@@ -66,7 +72,8 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 return [["","None"],["L","Local storage"],["S","Session storage"]];
 					]]>
 	            </getValuesFunction>               
-	        </property>  
+	        </property> 
+	         
 	    </properties>
 	    
 	    <resources>

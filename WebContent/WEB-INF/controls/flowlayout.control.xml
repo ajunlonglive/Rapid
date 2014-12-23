@@ -36,17 +36,21 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    <canUserAddPeers>true</canUserAddPeers> 
 	    
 	    <properties>
+	        
 	        <property>
 	            <key>name</key>
 	            <name>Name</name>
 	            <changeValueJavaScript>text</changeValueJavaScript>	            
 	        </property>	
+	        
 	        <property>
 	            <key>text</key>
 	            <name>Text</name>
 	            <setConstructValueFunction>return "Flow layout cell";</setConstructValueFunction>
-	            <changeValueJavaScript>bigtext</changeValueJavaScript>		                       
+	            <changeValueJavaScript>bigtext</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>		                       
 	        </property>	
+	        
 	    </properties>
 	    	    	    
 	    <getHtmlFunction>
@@ -109,12 +113,15 @@ if (selectedCell[0]) {
 	    <canUserMove>true</canUserMove>
   
 	    <properties>
+	        
 	        <property>
 	            <key>cellWidth</key>
 	            <name>Cell width</name>
 	            <setConstructValueFunction>return "300px";</setConstructValueFunction>
-	            <changeValueJavaScript>flowLayoutCellWidth</changeValueJavaScript>		                       
+	            <changeValueJavaScript>flowLayoutCellWidth</changeValueJavaScript>	
+	            <refreshHtml>true</refreshHtml>	                       
 	        </property>	
+	        
 	    </properties>
 	    
 	    <resources>

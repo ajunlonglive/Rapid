@@ -36,54 +36,64 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
         <canUserInsert>true</canUserInsert>
                 	    
 	    <properties>
+	        
 	        <property>
 	            <key>name</key>
 	            <name>Name</name>
 	            <changeValueJavaScript>pageName</changeValueJavaScript>	            
-	        </property>	            
+	        </property>
+	        	            
 	        <property>
 	            <key>title</key>
 	            <name>Title</name>
 	            <changeValueJavaScript>text</changeValueJavaScript>	            
 	        </property>
+	        
 	        <property>
 	            <key>description</key>
 	            <name>Description</name>
 	            <changeValueJavaScript>bigtext</changeValueJavaScript>	            
 	        </property>
+	        
 	        <property>
 	            <key>sessionVariables</key>
 	            <name>Variables</name>
 	            <changeValueJavaScript>pageSessionVariables</changeValueJavaScript>	            
 	        </property>
+	        
 	        <property>
 	            <key>roles</key>
 	            <name>User roles</name>
 	            <changeValueJavaScript>roles</changeValueJavaScript>	            
 	        </property>
+	        
 	        <property>
 	            <key>notes</key>
 	            <name>Notes</name>
 	            <changeValueJavaScript>bigtext</changeValueJavaScript>	            
 	        </property>	
+	        
 	        <property>
 	            <key>device</key>
 	            <name>Device</name>
 	            <setConstructValueFunction>return 0;</setConstructValueFunction>
 	            <changeValueJavaScript>device</changeValueJavaScript>	            
-	        </property>	        
+	        </property>	 
+	               
 	        <property>
 	            <key>orientation</key>
 	            <name>Orientation</name>
 	            <setConstructValueFunction>return "P";</setConstructValueFunction>
 	            <changeValueJavaScript>orientation</changeValueJavaScript>	            
 	        </property>
+	        
 	        <property>
 	            <key>zoom</key>
 	            <name>Zoom</name>
 	            <setConstructValueFunction>return 1;</setConstructValueFunction>
 	            <changeValueJavaScript>zoom</changeValueJavaScript>	            
 	        </property>
+	        
 	    </properties>
 	    
 	    <resources>
