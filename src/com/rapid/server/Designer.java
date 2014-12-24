@@ -279,8 +279,8 @@ public class Designer extends RapidHttpServlet {
 											if (roles != null) {			
 												// create a collection of names
 												ArrayList<String> roleNames = new ArrayList<String>();
-												// copy the names in
-												for (Role role : roles) roleNames.add(role.getName());
+												// copy the names in if non-null
+												for (Role role : roles) if (role.getName() != null) roleNames.add(role.getName());
 												// sort them
 												Collections.sort(roleNames);
 												// loop the sorted connections
@@ -963,10 +963,18 @@ public class Designer extends RapidHttpServlet {
 									// make the version from the safe and lower case name
 									appVersion = Files.safeName(appVersion);
 									
+									// get application destination folder
+									File appFolderDest = new File(Application.getConfigFolder(getServletContext(), appId, appVersion));
+									// get web contents destination folder
+									File webFolderDest = new File(Application.getWebFolder(getServletContext(), appId, appVersion));
+									
 									// look for an existing application of this name
 									Application existingApplication = getApplications().get(appId); 
-									// if we have an existing application back it up first
-									if (existingApplication != null) existingApplication.backup(this, rapidRequest, false);
+									// if we have an existing application 
+									if (existingApplication != null) {
+										// back it up first
+										existingApplication.backup(this, rapidRequest, false);										
+									}
 									
 									// get a file for the temp directory
 									File tempDir = new File(getServletContext().getRealPath("/WEB-INF/temp"));
@@ -987,8 +995,9 @@ public class Designer extends RapidHttpServlet {
 									
 									// get a file object for the zip file
 									File zipFile = new File(path);
-									// unzip the file
+									// load it into a zip file object
 									ZipFile zip = new ZipFile(zipFile);
+									// unzip the file
 									zip.unZip();
 									// delete the zip file
 									zipFile.delete();
@@ -1002,24 +1011,24 @@ public class Designer extends RapidHttpServlet {
 																		
 									// check we have the right source folders
 									if (webFolderSource.exists() && appFolderSource.exists()) {
-									
-										// get application destination folder
-										File appFolderDest = new File(Application.getConfigFolder(getServletContext(), appId, appVersion));
-										// get web contents destination folder
-										File webFolderDest = new File(Application.getWebFolder(getServletContext(), appId, appVersion));
-										
+																												
 										// get application.xml file
 										File appFileSource = new File (appFolderSource + "/application.xml");
 										
 										if (appFileSource.exists()) {		
+											
+											// delete the appFolder if it exists
+											if (appFolderDest.exists()) Files.deleteRecurring(appFolderDest);
+											// delete the webFolder if it exists
+											if (webFolderDest.exists()) Files.deleteRecurring(webFolderDest);
+																						
+											// copy application content
+											Files.copyFolder(appFolderSource, appFolderDest);
 																						
 											// copy web content
 											Files.copyFolder(webFolderSource, webFolderDest);
-											
-											// copy application content
-											Files.copyFolder(appFolderSource, appFolderDest);
-																											
-											// load the new application (but do not generate the resources files)
+																																																	
+											// load the new application (but don't initialise)
 											Application appNew = Application.load(getServletContext(), new File (appFolderDest + "/application.xml"), false);
 															
 											// get the old id
@@ -1043,7 +1052,7 @@ public class Designer extends RapidHttpServlet {
 											// update the created date
 											appNew.setCreatedDate(new Date());
 											
-											// re-intialise with the new id (this loads in the security adapater, amongst other things)
+											// now initialise with the new id but don't make the resource files (this sets up the security adapter)
 											appNew.initialise(getServletContext(), false);
 											
 											// look for page files
@@ -1103,7 +1112,6 @@ public class Designer extends RapidHttpServlet {
 												
 												// get the current users record from the adapter
 												User user = security.getUser(rapidRequest);
-												
 												// check the current user is present in the app's security adapter
 												if (user == null) {
 													// get the Rapid user object
@@ -1115,16 +1123,16 @@ public class Designer extends RapidHttpServlet {
 												}
 												
 												// add Admin and Design roles for the new user if required
-												if (!security.checkUserRole(rapidRequest, com.rapid.server.Rapid.ADMIN_ROLE)) security.addUserRole(rapidRequest, com.rapid.server.Rapid.ADMIN_ROLE);
-												if (!security.checkUserRole(rapidRequest, com.rapid.server.Rapid.DESIGN_ROLE)) security.addUserRole(rapidRequest, com.rapid.server.Rapid.DESIGN_ROLE);									
+												if (!security.checkUserRole(rapidRequest, com.rapid.server.Rapid.ADMIN_ROLE)) 
+													security.addUserRole(rapidRequest, com.rapid.server.Rapid.ADMIN_ROLE);
+												
+												if (!security.checkUserRole(rapidRequest, com.rapid.server.Rapid.DESIGN_ROLE)) 
+													security.addUserRole(rapidRequest, com.rapid.server.Rapid.DESIGN_ROLE);									
 											}
 											
-											// save application
+											// save application (this will also initialise and rebuild the resources)
 											appNew.save(this, rapidRequest, false);
-											
-											// reload it with the file changes
-											appNew = Application.load(getServletContext(), new File (appFolderDest + "/application.xml"));
-											
+																						
 											// add application to the collection
 											getApplications().put(appNew);
 											

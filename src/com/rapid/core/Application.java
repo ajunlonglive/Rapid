@@ -36,6 +36,7 @@ import java.io.PrintStream;
 import java.io.Writer;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.rmi.UnmarshalException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -99,6 +100,31 @@ public class Application {
 	public static final String BACKUP_FOLDER = "_backups";
 	
 	// public static classes
+	
+	// an exception class when loading
+	public static class RapidLoadingException extends Exception {
+
+		private static final long serialVersionUID = 5010L;
+		
+		private String _message;
+		private JAXBException _jaxbException;
+		
+		public RapidLoadingException(String message, JAXBException ex) {
+			_message = message;
+			_jaxbException = ex;
+		}
+
+		@Override
+		public String getMessage() {
+			return _message;
+		}
+
+		@Override
+		public StackTraceElement[] getStackTrace() {
+			return _jaxbException.getStackTrace();
+		}
+		
+	}
 	
 	// the details of a database connection (WebService is defined in its own class as its extendable)
 	public static class DatabaseConnection {
@@ -691,6 +717,12 @@ public class Application {
 	// this function initialises the application when its first loaded, initialises the security adapter and builds the rapid.js and rapid.css files
 	public void initialise(ServletContext servletContext, boolean createResources) throws JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, InvocationTargetException, SecurityException, NoSuchMethodException, IOException {
 		
+		// get the logger
+		Logger logger = (Logger) servletContext.getAttribute("logger");
+		
+		// trace log that we're initialising
+		logger.trace("Initialising application " + _name + "/" + _version);
+		
 		// initialise the security adapter 
 		setSecurity(servletContext, _securityAdapterType);
 				
@@ -1096,6 +1128,9 @@ public class Application {
 														
 		// populate the list of style classes by scanning the rapid.css
 		_styleClasses = scanStyleClasses(_styles);
+		
+		// debug log that we initialised
+		logger.debug("Initialised application " + _name + "/" + _version + (createResources ? "" : " (no resources)"));
 								
 	}
 			
@@ -1337,13 +1372,13 @@ public class Application {
 	    	
 	}
 		
-	public Application copy(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, String newId, String newVersion, boolean backups, boolean delete) throws IOException, IllegalArgumentException, SecurityException, JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, SAXException, TransformerFactoryConfigurationError, TransformerException {
+	public Application copy(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, String newId, String newVersion, boolean backups, boolean delete) throws IOException, IllegalArgumentException, SecurityException, JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, SAXException, TransformerFactoryConfigurationError, TransformerException, RapidLoadingException {
 		
 		// retain the ServletContext
 		ServletContext servletContext = rapidServlet.getServletContext();
 				
-		// load the app into a copy
-		Application appCopy = Application.load(servletContext, new File(getConfigFolder(servletContext) + "/application.xml"));
+		// load the app into a copy without initialising
+		Application appCopy = Application.load(servletContext, new File(getConfigFolder(servletContext) + "/application.xml"), false);
 		
 		// update the copy id 
 		appCopy.setId(newId);
@@ -1354,7 +1389,7 @@ public class Application {
 		// update the created date
 		appCopy.setCreatedDate(new Date());
 						
-		// save the copy to create the folder and application.xml file
+		// save the copy to create the folder and, application.xml and page.xml files
 		appCopy.save(rapidServlet, rapidRequest, false);
 				
 		// get the copy of the application.xml file
@@ -1682,12 +1717,12 @@ public class Application {
 	}
 	
 	// this is a simple overload for default loading of applications where the resources are all regenerated
-	public static Application load(ServletContext servletContext, File file) throws JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException, IOException, ParserConfigurationException, SAXException, TransformerFactoryConfigurationError, TransformerException {				
+	public static Application load(ServletContext servletContext, File file) throws JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException, IOException, ParserConfigurationException, SAXException, TransformerFactoryConfigurationError, TransformerException, RapidLoadingException {				
 		return load(servletContext, file, true); 				
 	}
 	
 	// this method loads the application by ummarshelling the xml, and then doing the same for all page .xmls, before calling the initialise method
-	public static Application load(ServletContext servletContext, File file, boolean createResources) throws JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException, IOException, ParserConfigurationException, SAXException, TransformerFactoryConfigurationError, TransformerException {
+	public static Application load(ServletContext servletContext, File file, boolean initialise) throws JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException, IOException, ParserConfigurationException, SAXException, TransformerFactoryConfigurationError, TransformerException, RapidLoadingException {
 		
 		// get the logger
 		Logger logger = (Logger) servletContext.getAttribute("logger");
@@ -1741,41 +1776,62 @@ public class Application {
 		// get the unmarshaller from the context
 		Unmarshaller unmarshallerObj = (Unmarshaller) servletContext.getAttribute("unmarshaller");	
 		
-		// unmarshall the application
-		Application application = (Application) unmarshallerObj.unmarshal(file);
+		try {
 		
-		// set the version from the parent foler
-		application.setVersion(file.getParentFile().getName());
-		
-		// look for pages
-		File pagesFolder = new File(file.getParent() + "/pages");
-		if (pagesFolder.exists()) {
+			// unmarshall the application
+			Application application = (Application) unmarshallerObj.unmarshal(file);
 			
-			// create a filter for finding .page.xml files
-			FilenameFilter xmlFilenameFilter = new FilenameFilter() {
-		    	public boolean accept(File dir, String name) {
-		    		return name.toLowerCase().endsWith(".page.xml");
-		    	}
-		    };
-		    
-		    // loop the .page.xml files and add to the application
-		    for (File pageFile : pagesFolder.listFiles(xmlFilenameFilter)) {
-		    	application.addPage(Page.load(servletContext, pageFile));
-		    }
+			// set the version from the parent foler
+			application.setVersion(file.getParentFile().getName());
+			
+			// look for pages
+			File pagesFolder = new File(file.getParent() + "/pages");
+			if (pagesFolder.exists()) {
+				
+				// create a filter for finding .page.xml files
+				FilenameFilter xmlFilenameFilter = new FilenameFilter() {
+			    	public boolean accept(File dir, String name) {
+			    		return name.toLowerCase().endsWith(".page.xml");
+			    	}
+			    };
+			    
+			    // loop the .page.xml files and add to the application
+			    for (File pageFile : pagesFolder.listFiles(xmlFilenameFilter)) {
+			    	
+			    	try {
+			    	
+			    		application.addPage(Page.load(servletContext, pageFile));
+			    		
+			    	} catch (JAXBException ex) {		    	
+			    		
+			    		throw new RapidLoadingException("Error loading page from " + pageFile, ex);
+			    		
+			    	}
+			    	
+			    }
+				
+			}
+			
+			// if we don't want resource generation skip initilisation too
+			if (initialise) {
+																						
+				// initialise the application and create the resources
+				application.initialise(servletContext, true);
+				
+			}
+			
+			// log that the application was loaded
+			logger.info("Loaded application " + application.getName() + "/" + application.getVersion() + (initialise ? "" : " (no itialise)"));
+			
+			return application; 		
+			
+			
+		} catch (JAXBException ex) {
+			
+			throw new RapidLoadingException("Error loading application file at " + file, ex);
 			
 		}
-		
-		// trace log that we're initialising
-		logger.trace("Initialising application " + application.getName() + "/" + application.getVersion());
-										
-		// initialise the application
-		application.initialise(servletContext, createResources);
-		
-		// log that the application was loaded
-		logger.info("Loaded application " + application.getName() + "/" + application.getVersion());
-		
-		return application; 		
-		
+						
 	}
 		
 }
