@@ -73,6 +73,7 @@ import org.xml.sax.SAXException;
 import com.rapid.core.Action;
 import com.rapid.core.Application;
 import com.rapid.core.Application.DatabaseConnection;
+import com.rapid.core.Application.RapidLoadingException;
 import com.rapid.core.Applications;
 import com.rapid.core.Device;
 import com.rapid.core.Device.Devices;
@@ -616,7 +617,7 @@ public class RapidServletContextListener implements ServletContextListener {
 	}
 	
 	// Here we loop all of the folders under "applications" looking for a application.xml file, copying to the latest version if found before loading the versions
-	public static int loadApplications(ServletContext servletContext) throws JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException, IOException, ParserConfigurationException, SAXException, TransformerFactoryConfigurationError, TransformerException {
+	public static int loadApplications(ServletContext servletContext) throws JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException, IOException, ParserConfigurationException, SAXException, TransformerFactoryConfigurationError, TransformerException, RapidLoadingException {
 		
 		// instatiate a new applications collection which allows us to retrieve by id and version
 		Applications applications = new Applications();

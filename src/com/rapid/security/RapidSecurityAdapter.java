@@ -126,32 +126,60 @@ public class RapidSecurityAdapter extends SecurityAdapater {
 			// retain whether we added users or roles to the security object
 			boolean modified = false;
 			
-			// check there are any roles, add defaults if not
-			if (_security.getRoles().size() == 0) {
-				
-				// add the default application roles
+			// some old versions of rapid did not have roles with separate names and descriptions check them here
+			for (int i = 0; i < _security.getRoles().size(); i ++) {
+				// we're using a for loop as we will later the collection
+				Role role = _security.getRoles().get(i);
+				// if the role has no name
+				if (role.getName() == null) {
+					// remove it
+					_security.getRoles().remove(i);
+					// record that we modified
+					modified = true;
+					// set i back one as we've shrunk the collection
+					i--;
+				}
+			}
+						
+			// assume we don't have the admin role
+			boolean gotAdminRole = false;
+			// assume we don't have the design role
+			boolean gotDesignRole = false;
+			// loop all the roles
+			for (Role role : _security.getRoles()) {
+				if (Rapid.ADMIN_ROLE.equals(role.getName())) gotAdminRole = true;
+				if (Rapid.DESIGN_ROLE.equals(role.getName())) gotDesignRole = true;
+			}
+			// if no admin role
+			if (!gotAdminRole) {
+				// add it
 				_security.getRoles().add(new Role(Rapid.ADMIN_ROLE, "Manage application in Rapid Admin"));
-				_security.getRoles().add(new Role(Rapid.DESIGN_ROLE, "Design application in Rapid Designer"));
-				
 				// record that we modified
 				modified = true;
-				
+			}
+			// if no design role
+			if (!gotDesignRole) {
+				// add it
+				_security.getRoles().add(new Role(Rapid.DESIGN_ROLE, "Design application in Rapid Designer"));
+				// record that we modified
+				modified = true;
 			}
 				
+			// add default users if there aren't any
 			if (_security.getUsers().size() == 0) {
 				
-				// create a list of roles we want the user to have
-				UserRoles userRoles = new UserRoles();
-				userRoles.add(Rapid.ADMIN_ROLE);
-				userRoles.add(Rapid.DESIGN_ROLE);
+				// create a list of roles we want the new user to have
+				UserRoles adminUserRoles = new UserRoles();
+				adminUserRoles.add(Rapid.ADMIN_ROLE);
+				adminUserRoles.add(Rapid.DESIGN_ROLE);
 				
-				// initialise the current user with all application roles
-				User adminUser = new User("admin", "Admin user", "admin", userRoles);
+				// initialise the an "admin" user with the roles above
+				User adminUser = new User("admin", "Admin user", "admin", adminUserRoles);
 				
 				// add the admin user
 				_security.getUsers().add(adminUser);
 				
-				// initialise the simple users with no application roles
+				// initialise a simple user with no roles
 				User simpleUser = new User("user", "Unprivileged user", "user");
 				
 				// add the simple user
@@ -223,7 +251,11 @@ public class RapidSecurityAdapter extends SecurityAdapater {
 	
 	@Override
 	public User getUser(RapidRequest rapidRequest) throws SecurityAdapaterException {
-		for (User user : _security.getUsers()) if (user.getName().toLowerCase().equals(rapidRequest.getUserName().toLowerCase())) return user;
+		for (User user : _security.getUsers()) {
+			if (user.getName() != null) {
+				if (user.getName().toLowerCase().equals(rapidRequest.getUserName().toLowerCase())) return user;
+			}
+		}
 		return null;
 	}
 			

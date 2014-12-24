@@ -268,6 +268,8 @@ public class ZipFile {
 		if (rootFolderName.toLowerCase().lastIndexOf(".zip") == rootFolderName.length() - 4) rootFolderName = rootFolderName.substring(0,rootFolderName.length() - 4 );  
 		// create a file for the folder
 		File rootFolder = new File(rootFolderName);
+		// delete the folder if it exists
+		if (rootFolder.exists()) Files.deleteRecurring(rootFolder);
 		// unzip to this root folder
 		unZip(rootFolder);
 		                	        
