@@ -500,6 +500,8 @@ function rebuildStyles() {
 				var rule = $(this).text();
 				// if we got something 
 				if (rule) {
+					// replace the webfolder parameter if present
+					rule = rule.replace("[[webfolder]]", "applications/" + _version.id + "/" + _version.version);
 					// add it to the list
 					style.rules.push(rule);
 					// add it to the styleSheetRule

@@ -421,7 +421,7 @@ public class Designer extends RapidHttpServlet {
 									// add simple properties
 									jsonPage.put("id", page.getId());
 									jsonPage.put("name", page.getName());
-									jsonPage.put("title", page.getTitle());
+									jsonPage.put("title", page.getTitle());									
 									jsonPage.put("sessionVariables", page.getSessionVariables());
 									// get a collection of other page controls in this page
 									JSONArray jsonOtherPageControls = page.getOtherPageControls(this);
@@ -483,6 +483,9 @@ public class Designer extends RapidHttpServlet {
 									// add a special property to the json
 									jsonPage.getJSONObject("lock").put("formattedDateTime", formattedDateTime);
 								}
+								
+								// add the css
+								jsonPage.put("css", page.getAllCSS(application));
 								
 								// add the device as page properties (even though we store this in the app)
 								jsonPage.put("device", 1);
