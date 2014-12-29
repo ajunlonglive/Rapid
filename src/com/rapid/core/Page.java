@@ -230,15 +230,7 @@ public class Page {
 	public String getFile(ServletContext servletContext, Application application) {
 		return application.getConfigFolder(servletContext) + "/" + "/pages/" + Files.safeName(_name) + ".page.xml";
 	}
-	
-	public String getCSSFile(ServletContext servletContext, Application application, boolean min) {
-		if (min) {
-			return application.getWebFolder(servletContext) + "/" + Files.safeName(_name) + ".min.css";
-		} else {
-			return application.getWebFolder(servletContext) + "/" + Files.safeName(_name) + ".css";
-		}
-	}
-	
+		
 	// these two methods have different names to avoid being marshelled to the .xml file by JAXB
 	public String getHtmlHeadCached(RapidHttpServlet rapidServlet, Application application) throws JSONException {		
 		// check whether the page has been cached yet
@@ -364,10 +356,6 @@ public class Page {
 	
 	// recursively append to a list of actions from a control and it's children
 	public void getChildActions(List<Action> actions, Control control) {
-		
-		if ("P9_C28_".equals(control.getId())) {
-			boolean test = true;
-		}
 		
 		// check this control has events
 		if (control.getEvents() != null) {
@@ -688,33 +676,7 @@ public class Page {
 		Files.deleteRecurring(backupFile);
 		
 	}
-			
-	public void saveCSSFiles(ServletContext servletContext, Application application) throws IOException {
-
-		// get the css
-		String css = getAllStyles();
-		
-		// get the file
-		String cssFile = getCSSFile(servletContext, application, false);
-		
-		// set the fos to the css file
-		FileOutputStream fos = new FileOutputStream(cssFile);
-		
-		// get a print stream
-		PrintStream ps = new PrintStream(fos);		
-		ps.print("\n/* This file is auto-generated on page save */\n\n");
-		ps.print(css);
-		// close
-		ps.close();
-		fos.close();	
-		
-		// get the min file
-		String cssFileMin = getCSSFile(servletContext, application, true);
-		
-		// minify
-		Minify.toFile(css, cssFileMin, Minify.CSS);
-	}
-	
+				
 	public void save(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, Application application, boolean backup) throws JAXBException, IOException {
 		
 		// create folders to save the pages
@@ -760,11 +722,8 @@ public class Page {
 		// replace the old page with the new page
 		application.addPage(this);
 		
-		// empty the cached header html
+		// empty the cached page html
 		_cachedStartHtml = null;
-		
-		// re-create the css files too
-		saveCSSFiles(rapidServlet.getServletContext(), application);
 				
 	}
 	
@@ -840,15 +799,16 @@ public class Page {
     }
     
     // the resources for the page, and whether we want the css (we might like to override it in the designer or for no permission, etc)
-    public String getResourcesHtml(Application application, boolean includeRapidCss) {
+    public String getResourcesHtml(Application application) {
     	
     	StringBuilder stringBuilder = new StringBuilder();
     	
     	// manage the resources links added already so we don't add twice
     	ArrayList<String> addedLinks = new ArrayList<String>(); 
 				
-		// loop and add the resources required by this application's controls and actions (created when application loads)
+		// if this application has resources
 		if (application.getResources() != null) {
+			// loop and add the resources required by this application's controls and actions (created when application loads)
 			for (Resource resource : application.getResources()) {
 				// the link we're hoping to get
 				String link = null;
@@ -865,22 +825,12 @@ public class Page {
 				if (link != null && !addedLinks.contains(link)) {
 					// append it
 					stringBuilder.append(link + "\n");
-					// rememeber it
+					// remember we've added it
 					addedLinks.add(link);
 				}
 			}
 		}
-		
-		// only if css is to be included
-		if (includeRapidCss) {
-			// check the application status and include this page's css file
-			if (application.getStatus() == Application.STATUS_LIVE) {
-				stringBuilder.append("<link rel='stylesheet' type='text/css' href='" + Application.getWebFolder(application) + "/" + _name + ".min.css'></link>\n");
-			} else {
-				stringBuilder.append("<link rel='stylesheet' type='text/css' href='" + Application.getWebFolder(application) + "/" + _name + ".css'></link>\n");
-			}
-		}
-				
+					
 		return stringBuilder.toString();
     	
     }
@@ -1018,26 +968,50 @@ public class Page {
 		stringBuilder.append("    <link rel=\"icon\" href=\"favicon.ico\"></link>\n");
 		
 		// if you're looking for where the jquery link is added it's the first resource in the page.control.xml file	
-		stringBuilder.append("    " + getResourcesHtml(application, includeJSandCSS).trim().replace("\n", "\n    ") + "\n");
+		stringBuilder.append("    " + getResourcesHtml(application).trim().replace("\n", "\n    ") + "\n");
 												
 		// if we want the full contents
 		if (includeJSandCSS) {
-									
+			
+			// add a JavaScript block with important global variables			
+			stringBuilder.append("    <script type='text/javascript'>\n\n");			
+			stringBuilder.append("var _appId = '" + application.getId() + "';\n");			
+			stringBuilder.append("var _appVersion = '" + application.getVersion() + "';\n");			
+			stringBuilder.append("var _pageId = '" + _id + "';\n");			
+			stringBuilder.append("var _userName = '" + userName + "';\n");			
+			stringBuilder.append("var _mobileResume = false;\n\n");
+			stringBuilder.append("    </script>\n");
+						
+			// open style blocks			
+			stringBuilder.append("    <style>\n");
+			
+			// fetch all page control styles
+			String pageCss = getAllStyles();
+			
+			// if live we're going to try and minify
+			if (application.getStatus() == Application.STATUS_LIVE) {				
+				try {
+					// get string to itself minified
+					pageCss = Minify.toString(pageCss, Minify.CSS); 
+				} catch (IOException ex) {			
+					// add error and resort to unminified
+					pageCss = "\n/*\n\n Failed to minify the css : " + ex.getMessage() + "\n\n*/\n\n" + pageCss;
+				}				
+			} else {
+				// prefix with minify message
+				pageCss = "\n/* The code below is minified for live applications */\n\n" + pageCss;
+				
+			}
+			// add it to the page
+			stringBuilder.append(pageCss);
+			// close the style block
+			stringBuilder.append("    </style>\n");
+												
 			// if we have requested more than just the resources so start building the inline js for the page				
-			stringBuilder.append("    <script type='text/javascript'>\n\n");
-			
-			stringBuilder.append("var _appId = '" + application.getId() + "';\n");
-			
-			stringBuilder.append("var _appVersion = '" + application.getVersion() + "';\n");
-			
-			stringBuilder.append("var _pageId = '" + _id + "';\n");
-			
-			stringBuilder.append("var _userName = '" + userName + "';\n");
-			
-			stringBuilder.append("var _mobileResume = false;\n");
-			
+			stringBuilder.append("    <script type='text/javascript'>\n");
+									
 			// make a new string builder just for the js (so we can minify it independently)
-			StringBuilder jsStringBuilder = new StringBuilder("/*\n\n  The following code is minified for live applications\n\n*/\n\n"); 
+			StringBuilder jsStringBuilder = new StringBuilder("/* The code below is minified for live applications */\n\n"); 
 			
 			// get all controls
 			List<Control> pageControls = getAllControls();

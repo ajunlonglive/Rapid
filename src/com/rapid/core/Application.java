@@ -1102,23 +1102,9 @@ public class Application {
 						}
 					break;
 				}
-	    	}
-			
-			// check pages
-			if (_pages != null) {
-				// loop them
-				for (String pageId : _pages.keySet()) {
-					// get the page
-					Page page = _pages.get(pageId);
-					// get the css file
-					File cssFile = new File(page.getCSSFile(servletContext, this, false));
-					// get the css file min
-					File cssFileMin = new File(page.getCSSFile(servletContext, this, true));
-					// make them if either doesn't exist
-					if (!cssFile.exists() || !cssFileMin.exists()) page.saveCSSFiles(servletContext, this);
-				}
-			}
-			
+				
+	    	} // loop resources
+								
 		} // create resources
 														
 		// populate the list of style classes by scanning the rapid.css
