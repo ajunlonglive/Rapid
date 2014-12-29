@@ -27,24 +27,21 @@ package com.rapid.server;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -55,6 +52,9 @@ import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.ValidationEvent;
+import javax.xml.bind.ValidationEventHandler;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
@@ -75,7 +75,6 @@ import com.rapid.core.Application;
 import com.rapid.core.Application.DatabaseConnection;
 import com.rapid.core.Application.RapidLoadingException;
 import com.rapid.core.Applications;
-import com.rapid.core.Device;
 import com.rapid.core.Device.Devices;
 import com.rapid.data.ConnectionAdapter;
 import com.rapid.utils.Files;
@@ -92,6 +91,9 @@ public class RapidServletContextListener implements ServletContextListener {
 	
 	// all of the classes we are going to put into our jaxb context
 	private static ArrayList<Class> _jaxbClasses;
+	
+	// the marshaller is used to save any versioned applications
+	private static	Marshaller _marshaller;
 	
 	public static void logFileNames(File dir, String rootPath) {
 		
@@ -135,7 +137,7 @@ public class RapidServletContextListener implements ServletContextListener {
 			// if it contains any .jar files
 			if (customFiles.length > 0) {
 				
-				// the reason we want all custom stuff in a .jar is so that it can all be compiled in a seperate java project and easily exported
+				// the reason we want all custom stuff in a .jar is so that it can all be compiled in a separate java project and easily exported
 				_logger.info("Custom .jar files found");
 				
 				// loop the jar files
@@ -640,11 +642,12 @@ public class RapidServletContextListener implements ServletContextListener {
 					// look for an application file in the root of the application folder
 					File applicationFile = new File(applicationFolder.getAbsoluteFile() + "/application.xml");
 					
-					// if it exists, it's in the wrong (non-versioned) place!
+					// set a version for this app (just in case it doesn't have one)
+					String version = "1";
+					
+					// if it exists here, it's in the wrong (non-versioned) place!
 					if (applicationFile.exists()) {
-								
-						// create a version for this app
-						String version = "1";						
+																				
 						// create a file for the new version folder
 						File versionFolder = new File(applicationFolder + "/" + version);
 						// keep appending the version if the folder already exists
@@ -686,14 +689,29 @@ public class RapidServletContextListener implements ServletContextListener {
 							// look for an application file in the version folder
 							applicationFile = new File(versionFolder + "/application.xml");
 							// if it exists
-							if (applicationFile.exists()) {
-								// load the application
-								Application application = Application.load(servletContext, applicationFile);
-								// put it in our collection
-								applications.put(application);
+							if (applicationFile.exists()) {								
+								
+								// placeholder for the application we're going to version up or just load
+								Application application = null;								
+								
 								// if we had to create a version for it
 								if (versionCreated) {
-									// make a dir for the pages
+									
+									// load without resources
+									application = Application.load(servletContext, applicationFile, false);
+									
+									// set the new version
+									application.setVersion(version);
+									
+									// re-initialise it without resources (for the security adapter)
+									application.initialise(servletContext, false);
+									
+									// marshal the updated application object to it's file
+									FileOutputStream fos = new FileOutputStream(applicationFile);		
+									_marshaller.marshal(application, fos);	    
+								    fos.close();
+								    
+									// get a dir for the pages
 									File pageDir = new File(versionFolder + "/pages");
 									// check it exists
 									if (pageDir.exists()) {
@@ -702,7 +720,9 @@ public class RapidServletContextListener implements ServletContextListener {
 											// read the contents of the file
 											String pageContent = Strings.getString(pageFile);
 											// replace all old file references
-											pageContent = pageContent.replace("/" + application.getId() + "/", "/" + application.getId() + "/" + application.getVersion() + "/");
+											pageContent = pageContent
+												.replace("/" + application.getId() + "/", "/" + application.getId() + "/" + application.getVersion() + "/")
+												.replace("~?a=" + application.getId() + "&amp;", "~?a=" + application.getId() + "&amp;" + application.getVersion() + "&amp;");
 											// create a file writer
 											FileWriter fs = new FileWriter(pageFile);
 											// save the changes
@@ -730,9 +750,14 @@ public class RapidServletContextListener implements ServletContextListener {
 										}
 										
 									}
-									// reload the application with the new references
-									application = Application.load(servletContext, applicationFile);									
-								}
+																		
+								} 
+									
+								// (re)load the application
+								application = Application.load(servletContext, applicationFile);
+
+								// put it in our collection
+								applications.put(application);
 								
 							}
 							
@@ -757,6 +782,9 @@ public class RapidServletContextListener implements ServletContextListener {
 		
 	@Override
 	public void contextInitialized(ServletContextEvent event) {   
+		
+		// request windows line breaks to make the files easier to edit (in particular the marshalled .xml files)
+		System.setProperty("line.separator", "\r\n");
 		
 		// get a reference to the servlet context
 		ServletContext servletContext = event.getServletContext();						 		
@@ -837,16 +865,32 @@ public class RapidServletContextListener implements ServletContextListener {
 			// store as context attribute (this is available via the getJAXBContext method in the RapidHttpServlet)
 			servletContext.setAttribute("jaxbContext", jaxbContext);
 			
-			// initialise the marshallers
-			Marshaller marshaller = jaxbContext.createMarshaller();
+			// initialise the marshaller
+			_marshaller = jaxbContext.createMarshaller();
 			// request formatted output
-			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			// request windows line breaks to make the files easier to edit
-			System.setProperty("line.separator", "\r\n");
+			_marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+			
+			// initialise the unmarshaller
+			Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+			
+			// add a validation listener (this makes for better error messages)
+			unmarshaller.setEventHandler(new ValidationEventHandler() {
+				@Override
+				public boolean handleEvent(ValidationEvent event) {
+					// messages with "unrecognized type name" are very useful they're not sever themselves must almost always followed by a severe with a less meaningful message 
+					if (event.getMessage().contains("unrecognized type name") || event.getSeverity() == ValidationEvent.FATAL_ERROR) {
+						return false;
+					} else {						
+						return true;
+					}
+				}				
+			});
+
+			
 			// store marshaller (this is available via the getMarshaller method in the RapidHttpServlet)
-			servletContext.setAttribute("marshaller", marshaller);
+			servletContext.setAttribute("marshaller", _marshaller);
 			// store unmarshaller (this is available via the getUnmarshaller method in the RapidHttpServlet)
-			servletContext.setAttribute("unmarshaller", jaxbContext.createUnmarshaller());
+			servletContext.setAttribute("unmarshaller", unmarshaller);
 			
 			// load the applications!
 			loadApplications(servletContext);	

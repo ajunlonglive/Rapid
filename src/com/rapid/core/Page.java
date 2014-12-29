@@ -46,6 +46,8 @@ import java.util.List;
 import javax.servlet.ServletContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.ValidationEvent;
+import javax.xml.bind.ValidationEventHandler;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.parsers.ParserConfigurationException;
@@ -131,7 +133,7 @@ public class Page {
 		}
 		
 	}
-			
+	
 	// instance variables
 	
 	private int _xmlVersion;
@@ -144,7 +146,7 @@ public class Page {
 	private List<String> _roles;
 	private List<RoleHtml> _rolesHtml;
 	private Lock _lock;
-		
+				
 	// this array is used to collect all of the lines needed in the pageload before sorting them
 	private List<String> _pageloadLines;
 	
@@ -1394,7 +1396,7 @@ public class Page {
 		
 		// get the unmarshaller from the context
 		Unmarshaller unmarshaller = (Unmarshaller) servletContext.getAttribute("unmarshaller");	
-		
+				
 		// get a buffered reader for our page with UTF-8 file format
 		BufferedReader br = new BufferedReader( new InputStreamReader( new FileInputStream(file), "UTF-8"));
 		
