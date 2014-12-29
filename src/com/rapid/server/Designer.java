@@ -60,6 +60,7 @@ import com.rapid.utils.Files;
 import com.rapid.utils.ZipFile;
 import com.rapid.core.Application;
 import com.rapid.core.Application.DatabaseConnection;
+import com.rapid.core.Application.RapidLoadingException;
 import com.rapid.core.Applications.Versions;
 import com.rapid.core.Page;
 import com.rapid.core.Page.Lock;
@@ -968,8 +969,8 @@ public class Designer extends RapidHttpServlet {
 									// get web contents destination folder
 									File webFolderDest = new File(Application.getWebFolder(getServletContext(), appId, appVersion));
 									
-									// look for an existing application of this name
-									Application existingApplication = getApplications().get(appId); 
+									// look for an existing application of this name and version
+									Application existingApplication = getApplications().get(appId, appVersion); 
 									// if we have an existing application 
 									if (existingApplication != null) {
 										// back it up first
@@ -1027,121 +1028,151 @@ public class Designer extends RapidHttpServlet {
 																						
 											// copy web content
 											Files.copyFolder(webFolderSource, webFolderDest);
-																																																	
-											// load the new application (but don't initialise)
-											Application appNew = Application.load(getServletContext(), new File (appFolderDest + "/application.xml"), false);
+													
+											try {
+											
+												// load the new application (but don't initialise, nor load pages)
+												Application appNew = Application.load(getServletContext(), new File (appFolderDest + "/application.xml"), false);
 															
-											// get the old id
-											String appOldId = appNew.getId();
-											
-											// make the new id
-											appId = Files.safeName(appName).toLowerCase();
-											
-											// update the id
-											appNew.setId(appId);
-											
-											// get the old version
-											String appOldVersion = appNew.getVersion();
-											
-											// make the new version
-											appVersion = Files.safeName(appVersion);
-											
-											// update the version
-											appNew.setVersion(appVersion);
-											
-											// update the created date
-											appNew.setCreatedDate(new Date());
-											
-											// now initialise with the new id but don't make the resource files (this sets up the security adapter)
-											appNew.initialise(getServletContext(), false);
-											
-											// look for page files
-											File pagesFolder = new File(appFolderDest.getAbsolutePath() + "/pages");
-											if (pagesFolder.exists()) {
+												// update application name
+												appNew.setName(appName);
 												
-												// create a filter for finding .page.xml files
-												FilenameFilter xmlFilenameFilter = new FilenameFilter() {
-											    	public boolean accept(File dir, String name) {
-											    		return name.toLowerCase().endsWith(".page.xml");
-											    	}
-											    };
-											    
-											    // loop the .page.xml files 
-											    for (File pageFile : pagesFolder.listFiles(xmlFilenameFilter)) {
-											    	
-											    	BufferedReader reader = new BufferedReader(new FileReader(pageFile));
-											        String line = null;
-											        StringBuilder stringBuilder = new StringBuilder();
-											        
-											        while ((line = reader.readLine()) != null ) {
-											            stringBuilder.append(line);
-											            stringBuilder.append("\n");
-											        }
-											        reader.close();
-											        
-											        // retrieve the xml into a string
-											        String fileString = stringBuilder.toString();
+												// get the old id
+												String appOldId = appNew.getId();
+												
+												// make the new id
+												appId = Files.safeName(appName).toLowerCase();
+												
+												// update the id
+												appNew.setId(appId);
+												
+												// get the old version
+												String appOldVersion = appNew.getVersion();
+												
+												// make the new version
+												appVersion = Files.safeName(appVersion);
+												
+												// update the version
+												appNew.setVersion(appVersion);
+																																		
+												// update the created date
+												appNew.setCreatedDate(new Date());																																								
+																																		
+												// look for page files
+												File pagesFolder = new File(appFolderDest.getAbsolutePath() + "/pages");
+												// if the folder is there
+												if (pagesFolder.exists()) {
+													
+													// create a filter for finding .page.xml files
+													FilenameFilter xmlFilenameFilter = new FilenameFilter() {
+												    	public boolean accept(File dir, String name) {
+												    		return name.toLowerCase().endsWith(".page.xml");
+												    	}
+												    };
+												    
+												    // loop the .page.xml files 
+												    for (File pageFile : pagesFolder.listFiles(xmlFilenameFilter)) {
+												    	
+												    	BufferedReader reader = new BufferedReader(new FileReader(pageFile));
+												        String line = null;
+												        StringBuilder stringBuilder = new StringBuilder();
+												        
+												        while ((line = reader.readLine()) != null ) {
+												            stringBuilder.append(line);
+												            stringBuilder.append("\n");
+												        }
+												        reader.close();
+												        
+												        // retrieve the xml into a string
+												        String fileString = stringBuilder.toString();
+												        
+												        // prepare a new file string which will update into
+												        String newFileString = null;
 
-											        // replace all properties that appear to have a url, and all created links
-											        String newFileString = fileString
-											        		.replace("applications/" + appOldId + "/" + appOldVersion + "/", "applications/" + appId + "/" + appVersion  + "/")
-											        		.replace("~?a=" + appOldId + "&amp;v=" + appOldVersion + "&amp;", "~?a=" + appId + "&amp;" + "&amp;v=" + appOldVersion);
-											        
-											        PrintWriter newFileWriter = new PrintWriter(pageFile);
-											        newFileWriter.print(newFileString);
-											        newFileWriter.close();
-											        								    	
-											    }
-												
-											}
-											
-											// update application name
-											appNew.setName(appName);
-											
-											// update the application id
-											appNew.setId(appId);
-											
-											// update the version
-											appNew.setVersion(appVersion);
-											
-											// get the security
-											SecurityAdapater security = appNew.getSecurity();
-											
-											// if we have one
-											if (security != null) {									
-												
-												// get the current users record from the adapter
-												User user = security.getUser(rapidRequest);
-												// check the current user is present in the app's security adapter
-												if (user == null) {
-													// get the Rapid user object
-													User rapidUser = rapidApplication.getSecurity().getUser(rapidRequest);
-													// create a new user based on the Rapid user
-													user = new User(userName, rapidUser.getDescription(), rapidUser.getPassword());
-													// add the new user 
-													security.addUser(rapidRequest, user);
+												        // if the old app did not have a version (for backwards compatibility)
+												        if (appOldVersion == null) {
+												        	
+												        	// replace all properties that appear to have a url, and all created links
+													        newFileString = fileString
+													        	.replace("applications/" + appOldId + "/", "applications/" + appId + "/" + appVersion  + "/")
+													        	.replace("~?a=" + appOldId + "&amp;", "~?a=" + appId + "&amp;v=" + appVersion + "&amp;");
+												        	
+												        } else {
+												        	
+												        	// replace all properties that appear to have a url, and all created links
+													        newFileString = fileString
+													        	.replace("applications/" + appOldId + "/" + appOldVersion + "/", "applications/" + appId + "/" + appVersion  + "/")
+													        	.replace("~?a=" + appOldId + "&amp;v=" + appOldVersion + "&amp;", "~?a=" + appId + "&amp;v=" + appVersion + "&amp;");	
+												        	
+												        }
+												        									
+												        // get a print writer for the page file
+												        PrintWriter newFileWriter = new PrintWriter(pageFile);
+												        // print the string to the file
+												        newFileWriter.print(newFileString);
+												        // close the file
+												        newFileWriter.close();
+												        								    	
+												    }
+													
 												}
 												
-												// add Admin and Design roles for the new user if required
-												if (!security.checkUserRole(rapidRequest, com.rapid.server.Rapid.ADMIN_ROLE)) 
-													security.addUserRole(rapidRequest, com.rapid.server.Rapid.ADMIN_ROLE);
+												// load the pages
+												appNew.loadPages(getServletContext(), pagesFolder);
+																																	
+												// now initialise with the new id but don't make the resource files (this reloads the pages and sets up the security adapter)
+												appNew.initialise(getServletContext(), false);
 												
-												if (!security.checkUserRole(rapidRequest, com.rapid.server.Rapid.DESIGN_ROLE)) 
-													security.addUserRole(rapidRequest, com.rapid.server.Rapid.DESIGN_ROLE);									
+												// get the security
+												SecurityAdapater security = appNew.getSecurity();
+												
+												// if we have one
+												if (security != null) {									
+													
+													// get the current users record from the adapter
+													User user = security.getUser(rapidRequest);
+													// check the current user is present in the app's security adapter
+													if (user == null) {
+														// get the Rapid user object
+														User rapidUser = rapidApplication.getSecurity().getUser(rapidRequest);
+														// create a new user based on the Rapid user
+														user = new User(userName, rapidUser.getDescription(), rapidUser.getPassword());
+														// add the new user 
+														security.addUser(rapidRequest, user);
+													}
+													
+													// add Admin and Design roles for the new user if required
+													if (!security.checkUserRole(rapidRequest, com.rapid.server.Rapid.ADMIN_ROLE)) 
+														security.addUserRole(rapidRequest, com.rapid.server.Rapid.ADMIN_ROLE);
+													
+													if (!security.checkUserRole(rapidRequest, com.rapid.server.Rapid.DESIGN_ROLE)) 
+														security.addUserRole(rapidRequest, com.rapid.server.Rapid.DESIGN_ROLE);									
+												}
+												
+												// save application (this will also initialise and rebuild the resources)
+												appNew.save(this, rapidRequest, false);
+																				
+												// add application to the collection
+												getApplications().put(appNew);
+												
+												// delete unzip folder
+												Files.deleteRecurring(unZipFolder);
+																								
+												// send a positive message
+												output = "Import successful";
+												
+											} catch (Exception ex) {
+												
+												// delete the appFolder if it exists
+												if (appFolderDest.exists()) Files.deleteRecurring(appFolderDest);
+												// delete the webFolder if it exists
+												if (webFolderDest.exists()) Files.deleteRecurring(webFolderDest);
+												
+												// rethrow exception
+												throw ex;
+												
 											}
-											
-											// save application (this will also initialise and rebuild the resources)
-											appNew.save(this, rapidRequest, false);
 																						
-											// add application to the collection
-											getApplications().put(appNew);
-											
-											// delete unzip folder
-											Files.deleteRecurring(unZipFolder);
-																							
-											// send a positive message
-											output = "Import successful";
-											
 										} else {
 											
 											// delete unzip folder

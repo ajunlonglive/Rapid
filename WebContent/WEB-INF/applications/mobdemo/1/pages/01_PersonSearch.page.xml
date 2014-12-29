@@ -154,13 +154,11 @@
     <conditions>
         <operation>==</operation>
         <value1>
-            <constant></constant>
             <field></field>
             <id>System.online</id>
             <type>SYS</type>
         </value1>
         <value2>
-            <constant></constant>
             <field></field>
             <id>System.false</id>
             <type>SYS</type>
@@ -711,13 +709,11 @@ limit 20</SQL>
     <conditions>
         <operation>==</operation>
         <value1>
-            <constant></constant>
             <field></field>
             <id>System.online</id>
             <type>SYS</type>
         </value1>
         <value2>
-            <constant></constant>
             <field></field>
             <id>System.true</id>
             <type>SYS</type>

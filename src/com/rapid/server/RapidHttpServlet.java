@@ -183,15 +183,15 @@ public class RapidHttpServlet extends HttpServlet {
 		
 		PrintWriter out = response.getWriter();		
 		
-		out.println("Error : " + ex.getLocalizedMessage());
+		out.print("Error : " + ex.getLocalizedMessage());
 						
 		boolean showStackTrace = Boolean.parseBoolean(getServletContext().getInitParameter("showStackTrace"));
 				
 		if (showStackTrace) {
 			
-			String stackTrace = "";
+			String stackTrace = "\n\n";
 			
-			if (rapidRequest != null) stackTrace = rapidRequest.getDetails() + "\n\n";
+			if (rapidRequest != null) stackTrace += rapidRequest.getDetails() + "\n\n";
 			
 			stackTrace += ex.getClass().getName() + "\n\n";
 			

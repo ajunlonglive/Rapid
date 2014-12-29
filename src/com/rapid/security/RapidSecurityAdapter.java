@@ -140,6 +140,21 @@ public class RapidSecurityAdapter extends SecurityAdapater {
 					i--;
 				}
 			}
+			
+			// some old versions of rapid held the users in a hashtable since we are now using a list we need to remove invalid entries
+			for (int i = 0; i < _security.getUsers().size(); i ++) {
+				// we're using a for loop as we will later the collection
+				User user = _security.getUsers().get(i);
+				// if the user has no name
+				if (user.getName() == null) {
+					// remove it
+					_security.getUsers().remove(i);
+					// record that we modified
+					modified = true;
+					// set i back one as we've shrunk the collection
+					i--;
+				}
+			}
 						
 			// assume we don't have the admin role
 			boolean gotAdminRole = false;

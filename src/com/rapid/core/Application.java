@@ -36,7 +36,6 @@ import java.io.PrintStream;
 import java.io.Writer;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.rmi.UnmarshalException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -107,11 +106,15 @@ public class Application {
 		private static final long serialVersionUID = 5010L;
 		
 		private String _message;
-		private JAXBException _jaxbException;
+		private Exception _exception;
 		
-		public RapidLoadingException(String message, JAXBException ex) {
-			_message = message;
-			_jaxbException = ex;
+		public RapidLoadingException(String message, Exception ex) {
+			_message = message + " - " + ex.getMessage();
+			_exception = ex;
+			// clean up the jaxb suggestion
+			if (_message.contains(". Did you mean")) {
+				_message = _message.substring(0, _message.indexOf(". Did you mean"));
+			}
 		}
 
 		@Override
@@ -121,7 +124,7 @@ public class Application {
 
 		@Override
 		public StackTraceElement[] getStackTrace() {
-			return _jaxbException.getStackTrace();
+			return _exception.getStackTrace();
 		}
 		
 	}
@@ -707,6 +710,46 @@ public class Application {
 									
 		} // json resources check
 						
+	}
+	
+	public void loadPages(ServletContext servletContext, File pagesFolder) throws RapidLoadingException {
+		
+		// empty the collection
+		_pages.clear();
+		
+		if (pagesFolder.exists()) {
+			
+			// create a filter for finding .page.xml files
+			FilenameFilter xmlFilenameFilter = new FilenameFilter() {
+		    	public boolean accept(File dir, String name) {
+		    		return name.toLowerCase().endsWith(".page.xml");
+		    	}
+		    };
+		    
+		    // loop the .page.xml files and add to the application
+		    for (File pageFile : pagesFolder.listFiles(xmlFilenameFilter)) {
+		    	
+		    	try {
+		    	
+		    		addPage(Page.load(servletContext, pageFile));
+		    		
+		    	} catch (Exception ex) {	
+
+		    		// assume the page name is the whole path
+		    		String pageName = pageFile.getPath();
+		    		// if it contains the pages folder start from there
+		    		if (pageName.contains(File.separator + "pages" + File.separator)) pageName = pageName.substring(pageName.indexOf(File.separator + "pages" + File.separator) + 7);		    					    		
+		    		// remove any .page.xml
+		    		if (pageName.contains(".page.xml")) pageName = pageName.substring(0, pageName.indexOf(".page.xml"));
+		    		// throw the exception
+		    		throw new RapidLoadingException("Error loading page " + pageName, ex);
+		    		
+				}
+		    	
+		    }
+			
+		}
+		
 	}
 		
 	// this function initialises the application when its first loaded, initialises the security adapter and builds the rapid.js and rapid.css files
@@ -1453,7 +1496,7 @@ public class Application {
 		return appCopy;
 	    		
 	}
-		
+				
 	public void save(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, boolean backup) throws JAXBException, IOException, IllegalArgumentException, SecurityException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException {
 						
 		// create folders to save the app
@@ -1464,7 +1507,7 @@ public class Application {
 		// create a file object for the application
 		File appFile = new File(folderPath + "/application.xml");
 		// backup the app if it already exists
-		if (backup && appFile.exists()) backup(rapidServlet, rapidRequest, false);
+		if (appFile.exists() && backup) backup(rapidServlet, rapidRequest, false);
 		
 		// create a temp file for saving the application to
 		File tempFile = new File(folderPath + "/application-saving.xml");
@@ -1755,47 +1798,22 @@ public class Application {
 		}
 		
 		// get the unmarshaller from the context
-		Unmarshaller unmarshallerObj = (Unmarshaller) servletContext.getAttribute("unmarshaller");	
-		
+		Unmarshaller unmarshaller = (Unmarshaller) servletContext.getAttribute("unmarshaller");
+										
 		try {
 		
 			// unmarshall the application
-			Application application = (Application) unmarshallerObj.unmarshal(file);
-			
-			// set the version from the parent foler
-			application.setVersion(file.getParentFile().getName());
-			
+			Application application = (Application) unmarshaller.unmarshal(file);
+									
 			// look for pages
 			File pagesFolder = new File(file.getParent() + "/pages");
-			if (pagesFolder.exists()) {
-				
-				// create a filter for finding .page.xml files
-				FilenameFilter xmlFilenameFilter = new FilenameFilter() {
-			    	public boolean accept(File dir, String name) {
-			    		return name.toLowerCase().endsWith(".page.xml");
-			    	}
-			    };
-			    
-			    // loop the .page.xml files and add to the application
-			    for (File pageFile : pagesFolder.listFiles(xmlFilenameFilter)) {
-			    	
-			    	try {
-			    	
-			    		application.addPage(Page.load(servletContext, pageFile));
-			    		
-			    	} catch (JAXBException ex) {		    	
-			    		
-			    		throw new RapidLoadingException("Error loading page from " + pageFile, ex);
-			    		
-			    	}
-			    	
-			    }
-				
-			}
-			
-			// if we don't want resource generation skip initilisation too
+												
+			// if we don't want pages loaded or resource generation skip this
 			if (initialise) {
-																						
+				
+				// load the pages
+				application.loadPages(servletContext, pagesFolder);
+																										
 				// initialise the application and create the resources
 				application.initialise(servletContext, true);
 				
