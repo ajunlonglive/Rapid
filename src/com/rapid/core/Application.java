@@ -451,6 +451,7 @@ public class Application {
 		return getBackupFolder(servletContext, _id, _version, allVersions);
 	}
 		
+	// get the first page the users want to see (set in Rapid Admin on first save)
 	public Page getStartPage() {
 		// retain an instance to the page we are about to return
 		Page startPage = null;
@@ -458,14 +459,8 @@ public class Application {
 		if (_pages != null) {
 			// if there is a retained _startPageId try and use that
 			if (_startPageId != null) startPage = getPage(_startPageId);
-			// if we don't have a page yet
-			if (startPage == null) {
-				// this seems the only way to retrieve the top map from the map
-				for (String pageId : _pages.keySet()) {
-					startPage = _pages.get(pageId);
-					break;
-				}				
-			}
+			// if we don't have a start page set yet, get the first entry from the map
+			if (startPage == null && _pages.keySet().iterator().hasNext()) startPage = _pages.get(_pages.keySet().iterator().next());
 		}
 		return startPage;
 	}
@@ -1600,8 +1595,8 @@ public class Application {
 						// add the file to the zip with a root path
 						zipSources.add(pageFile, "");
 					}
-					// get the first page
-					Page page = _pages.get(_startPageId);
+					// get the start page
+					Page page = getStartPage();
 					// if we got one add it as index.htm
 					if (page != null) {
 						// create a file for it for it in the delete folder
