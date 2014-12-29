@@ -1165,8 +1165,13 @@ public class Designer extends RapidHttpServlet {
 												
 												// delete the appFolder if it exists
 												if (appFolderDest.exists()) Files.deleteRecurring(appFolderDest);
+												// if the parent is empty delete it too
+												if (appFolderDest.getParentFile().list().length <= 1) Files.deleteRecurring(appFolderDest.getParentFile());
+												
 												// delete the webFolder if it exists
 												if (webFolderDest.exists()) Files.deleteRecurring(webFolderDest);
+												// if the parent is empty delete it too
+												if (webFolderDest.getParentFile().list().length <= 1) Files.deleteRecurring(webFolderDest.getParentFile());
 												
 												// rethrow exception
 												throw ex;
