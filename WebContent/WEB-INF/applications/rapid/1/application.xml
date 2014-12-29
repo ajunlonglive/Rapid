@@ -35,7 +35,7 @@
     <description>This is the Rapid application and contains all of the pages which the designer and other screens use as dialogues</description>
     <id>rapid</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-11-17T15:43:10.500Z</modifiedDate>
+    <modifiedDate>2014-12-29T17:56:35.005Z</modifiedDate>
     <name>Rapid</name>
     <pageBackupsMaxSize>5</pageBackupsMaxSize>
     <securityAdapterType>rapid</securityAdapterType>
@@ -51,7 +51,7 @@ table { font-family: 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif; fon
   font-weight: bold;
   background-color: red;
   color: white;
-  padding: 5px;
+  padding: 10px;
   text-align: center;
   background: red url(highlight_red_1x44.png) 50% 50% repeat-x;
   text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;

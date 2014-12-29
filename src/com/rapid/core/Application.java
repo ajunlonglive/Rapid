@@ -453,6 +453,25 @@ public class Application {
 	public String getBackupFolder(ServletContext servletContext, boolean allVersions) {
 		return getBackupFolder(servletContext, _id, _version, allVersions);
 	}
+	
+	// this replaces [[xxx]] in a string where xxx is a known system or application parameter
+	public String insertParameters(String string) {
+		// update commmon known system parameters
+		string = string
+			.replace("[[webfolder]]", getWebFolder(this));
+		// if we have parameters
+		if (_parameters != null) {
+			// loop them
+			for (Parameter parameter : _parameters) {
+				// define the match string
+				String matchString = "[[" + parameter.getName() + "]]";
+				// if the match string is present replace it with the value
+				if (string.contains(matchString)) string = string.replace(matchString, parameter.getValue());
+			}
+		}
+		// return it
+		return string;
+	}
 		
 	// get the first page the users want to see (set in Rapid Admin on first save)
 	public Page getStartPage() {
@@ -1043,7 +1062,7 @@ public class Application {
 			// write the rapid.js file
 			FileOutputStream fos = new FileOutputStream (applicationPath + "/rapid.js");
 			PrintStream ps = new PrintStream(fos);
-			
+						
 			ps.print("\n/* This file is auto-generated on application load and save - it is minified when the application status is live */\n");
 			if (_functions != null) {
 				ps.print("\n\n/* Application functions JavaScript */\n\n");
@@ -1069,21 +1088,26 @@ public class Application {
 			ps.close();
 			fos.close();
 			
+						
 			// minify it to a file
 			Minify.toFile(actionJS.toString() + initJS.toString() + dataJS.toString() + resourceJS.toString(), applicationPath + "/rapid.min.js", Minify.JAVASCRIPT);
+			
+			// get the rapid CSS into a string and insert parameters
+			String resourceCSSWithParams = insertParameters(resourceCSS.toString());
+			String appCSSWithParams = insertParameters(_styles);
 			
 			// write the rapid.css file
 			fos = new FileOutputStream (applicationPath + "/rapid.css");
 			ps = new PrintStream(fos);
 			ps.print("\n/* This file is auto-generated on application load and save - it is minified when the application status is live */\n");		
-			ps.print(resourceCSS.toString());
+			ps.print(resourceCSSWithParams);
 			ps.print("\n\n/* Application styles */\n\n");
-			ps.print(_styles);
+			ps.print(appCSSWithParams);
 			ps.close();
 			fos.close();
 			
 			// minify it to a rapid.min.css file
-			Minify.toFile(resourceCSS.toString() + _styles, applicationPath + "/rapid.min.css", Minify.CSS);
+			Minify.toFile(resourceCSSWithParams + appCSSWithParams, applicationPath + "/rapid.min.css", Minify.CSS);
 			
 			// check the status
 	    	if (_status == STATUS_LIVE) {

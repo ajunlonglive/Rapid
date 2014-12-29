@@ -2179,7 +2179,7 @@ $(document).ready( function() {
 			    		// make sure the app styling is correct (this can go wrong if the back button was clicked which loads the current page but the previous styling)
 			    		head.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"" + _version.webFolder + "/rapid.css\">");
 			    		// make sure the page styling is correct (this can go wrong if the back button was clicked which loads the current page but the previous styling)
-			    		head.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"" + _version.webFolder + "/" + _page.name + ".css\">");
+			    		head.append("<style>" + page.css + "</style>");
 	     	
 			        	// if we have childControls
 			        	if (childControls) {

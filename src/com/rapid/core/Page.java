@@ -617,7 +617,7 @@ public class Page {
 		}
 	}
 				
-	public String getAllStyles() {
+	public String getAllCSS(Application application) {
 		// the stringbuilder we're going to use
 		StringBuilder stringBuilder = new StringBuilder();
 		// check if the page has styles
@@ -628,10 +628,9 @@ public class Page {
 			}
 		}
 		// use the iterative tree-walking function to add all of the control styles
-		getChildControlStyles(_controls, stringBuilder);		
-		
-		// return it
-		return stringBuilder.toString();		
+		getChildControlStyles(_controls, stringBuilder);				
+		// return it with inserted parameters
+		return application.insertParameters(stringBuilder.toString());		
 	}
 	
 	// removes the page lock if it is more than 1 hour old
@@ -988,7 +987,7 @@ public class Page {
 			stringBuilder.append("    <style>\n");
 			
 			// fetch all page control styles
-			String pageCss = getAllStyles();
+			String pageCss = getAllCSS(application);
 			
 			// if live we're going to try and minify
 			if (application.getStatus() == Application.STATUS_LIVE) {				
