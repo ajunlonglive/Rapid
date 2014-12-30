@@ -54,8 +54,9 @@ return [
  ["GETDEVICE","Get device details"],    
  ["RELOADACTIONS","Reload actions"],
  ["RELOADCONTROLS","Reload controls"],
- ["RELOADAPPLICATIONS","Reload applications"],
+ ["RELOADAPPLICATIONS","Reload applications"], 
  ["RELOADADAPTERS","Reload adapters"],
+ ["RELOADVERSION","Reload version"],
  ["SAVEAPP","Save application details"], 
  ["SAVESTYLES","Save styles"],
  ["SAVEFUNCTIONS","Save functions"],  
@@ -245,6 +246,13 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 			callback = function(data) {
 				setData_dataStore('rapid_P0_C1269_', data, "device", {storageType:"S"});
 			};
+		break;
+		case "RELOADVERSION" :		
+			data = { 
+				actionType: actionType, 
+				appId: $("#rapid_P0_C43").val(), 
+				version: $("#rapid_P0_C1044_").val()
+			};	
 		break;
 		case "SAVEAPP" :		
 			data = { 

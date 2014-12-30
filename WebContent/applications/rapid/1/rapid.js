@@ -1274,6 +1274,13 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 				setData_dataStore('rapid_P0_C1269_', data, "device", {storageType:"S"});
 			};
 		break;
+		case "RELOADVERSION" :		
+			data = { 
+				actionType: actionType, 
+				appId: $("#rapid_P0_C43").val(), 
+				version: $("#rapid_P0_C1044_").val()
+			};	
+		break;
 		case "SAVEAPP" :		
 			data = { 
 				actionType: actionType, 
