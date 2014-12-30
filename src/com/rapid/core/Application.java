@@ -33,6 +33,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.io.Writer;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -1062,36 +1063,78 @@ public class Application {
 			// write the rapid.js file
 			FileOutputStream fos = new FileOutputStream (applicationPath + "/rapid.js");
 			PrintStream ps = new PrintStream(fos);
+			
+			// write the rapid.min.js file
+			FileOutputStream fosMin = new FileOutputStream (applicationPath + "/rapid.min.js");
+			PrintWriter pw = new PrintWriter(fosMin);
 						
+			// file header
 			ps.print("\n/* This file is auto-generated on application load and save - it is minified when the application status is live */\n");
+			// check functions
 			if (_functions != null) {
-				ps.print("\n\n/* Application functions JavaScript */\n\n");
-				ps.print(_functions);
+				if (_functions.length() > 0) {
+					// header (this is removed by minify)
+					ps.print("\n\n/* Application functions JavaScript */\n\n");
+					// insert params
+					String functionsParamsInserted = insertParameters(_functions);				
+					// print
+					ps.print(functionsParamsInserted);
+					// print minify 
+					Minify.toWriter(functionsParamsInserted, pw, Minify.JAVASCRIPT);
+				}
 			}
+			// check resource js
 			if (resourceJS.length() > 0) {
+				// header
 				ps.print("\n\n/* Control and Action resource JavaScript */\n\n");
+				// insert params
+				String resourceJSParamsInserted = insertParameters(resourceJS.toString());
+				// print
 				ps.print(resourceJS.toString());
+				// print minify 
+				Minify.toWriter(resourceJSParamsInserted, pw, Minify.JAVASCRIPT);
 			}
+			// check init js
 			if (initJS.length() > 0) {
+				// header
 				ps.print("\n\n/* Control initialisation methods */\n\n");
+				// insert params
+				String initJSParamsInserted = insertParameters(initJS.toString());
+				// print
 				ps.print(initJS.toString());
+				// print minify 
+				Minify.toWriter(initJSParamsInserted, pw, Minify.JAVASCRIPT);
 			}
+			// check datajs
 			if (dataJS.length() > 0) {
+				// header
 				ps.print("\n\n/* Control getData and setData methods */\n\n");
+				// insert params
+				String dataJSParamsInserted = insertParameters(dataJS.toString());
+				// print
 				ps.print(dataJS.toString());
+				// print minify 
+				Minify.toWriter(dataJSParamsInserted, pw, Minify.JAVASCRIPT);
 			}
+			// check action js
 			if (actionJS.length() > 0) {
+				// header
 				ps.print("\n\n/* Action methods */\n\n");
+				// insert params
+				String actionParamsInserted = insertParameters(actionJS.toString());
+				// print
 				ps.print(actionJS.toString());
+				// print minify 
+				Minify.toWriter(actionParamsInserted, pw, Minify.JAVASCRIPT);
 			}
 						
+			// close debug writer and stream
 			ps.close();
 			fos.close();
-			
-						
-			// minify it to a file
-			Minify.toFile(actionJS.toString() + initJS.toString() + dataJS.toString() + resourceJS.toString(), applicationPath + "/rapid.min.js", Minify.JAVASCRIPT);
-			
+			// close min writer and stream
+			pw.close();
+			fosMin.close();
+								
 			// get the rapid CSS into a string and insert parameters
 			String resourceCSSWithParams = insertParameters(resourceCSS.toString());
 			String appCSSWithParams = insertParameters(_styles);

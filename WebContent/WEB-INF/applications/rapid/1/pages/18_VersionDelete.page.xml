@@ -33,21 +33,16 @@
                         <value>tableCell</value>
                     </entry>
                 </properties>
-                <styles>
-                    <appliesTo>#rapid_P18_C3</appliesTo>
-                    <rules>padding:10px;</rules>
-                    <rules>background:#e00 url(highlight_red_1x44.png) 50% 50% repeat-x;</rules>
-                    <rules>color:white;</rules>
-                    <rules>text-align:center;</rules>
-                    <rules>font-weight:bold;</rules>
-                    <rules>text-shadow :-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;</rules>
-                </styles>
                 <XMLVersion>1</XMLVersion>
             </childControls>
             <properties>
                 <entry>
                     <key>id</key>
                     <value>rapid_P18_C2</value>
+                </entry>
+                <entry>
+                    <key>classes</key>
+                    <value>[]</value>
                 </entry>
                 <entry>
                     <key>name</key>
@@ -65,11 +60,15 @@
                 <childControls>
                     <events>
                         <filter></filter>
+                        <type>click</type>
+                    </events>
+                    <events>
+                        <filter></filter>
                         <type>mouseover</type>
                     </events>
                     <events>
                         <filter></filter>
-                        <type>click</type>
+                        <type>mouseout</type>
                     </events>
                     <properties>
                         <entry>
@@ -156,32 +155,32 @@
             <childControls>
                 <childControls>
                     <events>
-                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="control">
+                        <actions xsi:type="control" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                             <properties>
-<entry>
-    <key>id</key>
-    <value>P18_A14</value>
-</entry>
-<entry>
-    <key>control</key>
-    <value>rapid_P18_C9</value>
-</entry>
-<entry>
-    <key>avoidRedundancy</key>
-    <value>false</value>
-</entry>
-<entry>
-    <key>name</key>
-    <value>Control 14</value>
-</entry>
-<entry>
-    <key>command</key>
-    <value>hideDialogue();</value>
-</entry>
-<entry>
-    <key>type</key>
-    <value>control</value>
-</entry>
+                                <entry>
+                                    <key>id</key>
+                                    <value>P18_A14</value>
+                                </entry>
+                                <entry>
+                                    <key>control</key>
+                                    <value>rapid_P18_C9</value>
+                                </entry>
+                                <entry>
+                                    <key>avoidRedundancy</key>
+                                    <value>false</value>
+                                </entry>
+                                <entry>
+                                    <key>name</key>
+                                    <value>Control 14</value>
+                                </entry>
+                                <entry>
+                                    <key>command</key>
+                                    <value>hideDialogue();</value>
+                                </entry>
+                                <entry>
+                                    <key>type</key>
+                                    <value>control</value>
+                                </entry>
                             </properties>
                             <XMLVersion>1</XMLVersion>
                         </actions>
@@ -248,28 +247,28 @@
             <childControls>
                 <childControls>
                     <events>
-                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="rapid">
+                        <actions xsi:type="rapid" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                             <properties>
-<entry>
-    <key>id</key>
-    <value>P4_A13</value>
-</entry>
-<entry>
-    <key>avoidRedundancy</key>
-    <value>false</value>
-</entry>
-<entry>
-    <key>name</key>
-    <value>Rapid 27</value>
-</entry>
-<entry>
-    <key>actionType</key>
-    <value>DELVERSION</value>
-</entry>
-<entry>
-    <key>type</key>
-    <value>rapid</value>
-</entry>
+                                <entry>
+                                    <key>id</key>
+                                    <value>P4_A13</value>
+                                </entry>
+                                <entry>
+                                    <key>avoidRedundancy</key>
+                                    <value>false</value>
+                                </entry>
+                                <entry>
+                                    <key>name</key>
+                                    <value>Rapid 27</value>
+                                </entry>
+                                <entry>
+                                    <key>actionType</key>
+                                    <value>DELVERSION</value>
+                                </entry>
+                                <entry>
+                                    <key>type</key>
+                                    <value>rapid</value>
+                                </entry>
                             </properties>
                             <XMLVersion>1</XMLVersion>
                         </actions>
@@ -364,6 +363,10 @@
                 <value>rapid_P18_C1</value>
             </entry>
             <entry>
+                <key>classes</key>
+                <value>["glossyTitle"]</value>
+            </entry>
+            <entry>
                 <key>name</key>
                 <value>Table 2</value>
             </entry>
@@ -387,15 +390,15 @@
         <filter></filter>
         <type>reusable</type>
     </events>
-    <htmlBody>&lt;table id=&quot;rapid_P18_C1&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;rapid_P18_C2&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P18_C3&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Delete version&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P18_C4&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P18_C5&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;p id=&quot;rapid_P18_C6&quot; class=&quot;text&quot;&gt;Are you sure you want to delete this version?
-&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P18_C7&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P18_C8&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P18_C9&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P18_C11&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P18_C12&quot; class=&quot;button&quot;&gt;Delete&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
+    <htmlBody>&lt;table id="rapid_P18_C1" class="table glossyTitle"&gt;&lt;tbody&gt;&lt;tr id="rapid_P18_C2" class="tableRow"&gt;&lt;td id="rapid_P18_C3" colspan="2" class="tabelCell"&gt;Delete version&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P18_C4" class="tableRow"&gt;&lt;td id="rapid_P18_C5" colspan="2" class="tabelCell"&gt;&lt;p id="rapid_P18_C6" class="text"&gt;Are you sure you want to delete this version?
+&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P18_C7" class="tableRow"&gt;&lt;td id="rapid_P18_C8" class="tabelCell"&gt;&lt;button id="rapid_P18_C9" class="button"&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id="rapid_P18_C11" class="tabelCell"&gt;&lt;button id="rapid_P18_C12" class="button"&gt;Delete&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
     <id>P18</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-11-06T15:19:18.768Z</modifiedDate>
+    <modifiedDate>2014-12-30T06:52:57.455Z</modifiedDate>
     <name>18_VersionDelete</name>
     <rolesHtml>
-        <html>&lt;table id=&quot;rapid_P18_C1&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;rapid_P18_C2&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P18_C3&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Delete version&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P18_C4&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P18_C5&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;p id=&quot;rapid_P18_C6&quot; class=&quot;text&quot;&gt;Are you sure you want to delete this version?
-&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P18_C7&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P18_C8&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P18_C9&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P18_C11&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P18_C12&quot; class=&quot;button&quot;&gt;Delete&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</html>
+        <html>&lt;table id="rapid_P18_C1" class="table glossyTitle"&gt;&lt;tbody&gt;&lt;tr id="rapid_P18_C2" class="tableRow"&gt;&lt;td id="rapid_P18_C3" colspan="2" class="tabelCell"&gt;Delete version&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P18_C4" class="tableRow"&gt;&lt;td id="rapid_P18_C5" colspan="2" class="tabelCell"&gt;&lt;p id="rapid_P18_C6" class="text"&gt;Are you sure you want to delete this version?
+&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P18_C7" class="tableRow"&gt;&lt;td id="rapid_P18_C8" class="tabelCell"&gt;&lt;button id="rapid_P18_C9" class="button"&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id="rapid_P18_C11" class="tabelCell"&gt;&lt;button id="rapid_P18_C12" class="button"&gt;Delete&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</html>
     </rolesHtml>
     <styles>
         <appliesTo>body</appliesTo>
