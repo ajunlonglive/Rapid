@@ -956,6 +956,17 @@ public class Rapid extends Action {
 									
 				result.put("message", databaseDrivers + " database drivers, " + connectionAdapters + " connection adapters, " + securityAdapters + " security adapters");
 								
+			} else if ("RELOADVERSION".equals(action)) {
+				
+				// look for an application file in the application folder
+				File applicationFile = new File(app.getConfigFolder(rapidServlet.getServletContext()) + "/application.xml");
+				
+				// reload the application from file
+				app = Application.load(rapidServlet.getServletContext(), applicationFile);
+				
+				// load applications and set the result message
+				result.put("message", "Reloaded version");  
+								
 			} else if ("SAVEAPP".equals(action)) {
 			
 				// get the new values
