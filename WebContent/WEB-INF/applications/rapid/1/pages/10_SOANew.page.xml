@@ -33,12 +33,6 @@
                         <value>tableCell</value>
                     </entry>
                 </properties>
-                <styles>
-                    <appliesTo>#rapid_P10_C4_</appliesTo>
-                    <rules>padding:10px;</rules>
-                    <rules>background:#e00 url(highlight_red_1x44.png) 50% 50% repeat-x;</rules>
-                    <rules>text-shadow :-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;</rules>
-                </styles>
                 <XMLVersion>1</XMLVersion>
             </childControls>
             <properties>
@@ -109,33 +103,8 @@
             <childControls>
                 <childControls>
                     <events>
-                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="existing">
-                            <properties>
-<entry>
-    <key>id</key>
-    <value>P10_A9_</value>
-</entry>
-<entry>
-    <key>XMLVersion</key>
-    <value>1</value>
-</entry>
-<entry>
-    <key>name</key>
-    <value>Existing 30</value>
-</entry>
-<entry>
-    <key>action</key>
-    <value>rapid_P3_A29</value>
-</entry>
-<entry>
-    <key>type</key>
-    <value>existing</value>
-</entry>
-                            </properties>
-                            <XMLVersion>1</XMLVersion>
-                        </actions>
                         <filter></filter>
-                        <type>keyup</type>
+                        <type>blur</type>
                     </events>
                     <events>
                         <filter></filter>
@@ -143,7 +112,40 @@
                     </events>
                     <events>
                         <filter></filter>
-                        <type>blur</type>
+                        <type>click</type>
+                    </events>
+                    <events>
+                        <actions xsi:type="existing" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                            <properties>
+                                <entry>
+                                    <key>id</key>
+                                    <value>P10_A9_</value>
+                                </entry>
+                                <entry>
+                                    <key>avoidRedundancy</key>
+                                    <value>false</value>
+                                </entry>
+                                <entry>
+                                    <key>name</key>
+                                    <value>Existing 30</value>
+                                </entry>
+                                <entry>
+                                    <key>action</key>
+                                    <value>rapid_P3_A29</value>
+                                </entry>
+                                <entry>
+                                    <key>type</key>
+                                    <value>existing</value>
+                                </entry>
+                                <entry>
+                                    <key>redundantActions</key>
+                                    <value>["rapid_P3_A29"]</value>
+                                </entry>
+                            </properties>
+                            <XMLVersion>1</XMLVersion>
+                        </actions>
+                        <filter></filter>
+                        <type>keyup</type>
                     </events>
                     <properties>
                         <entry>
@@ -179,6 +181,7 @@
                         <allowNulls>false</allowNulls>
                         <javaScript></javaScript>
                         <message>SOA webservice name can only contain 0-9, a-z, A-Z, and _</message>
+                        <passHidden>false</passHidden>
                         <regEx>^[0-9A-Za-z_]+$</regEx>
                         <type>custom</type>
                     </validation>
@@ -369,7 +372,7 @@
                         </entry>
                         <entry>
                             <key>options</key>
-                            <value>[{&quot;text&quot;:&quot;SQL&quot;,&quot;value&quot;:&quot;SQLWebservice&quot;},{&quot;text&quot;:&quot;Java class&quot;,&quot;value&quot;:&quot;JavaWebservice&quot;}]</value>
+                            <value>[{"text":"SQL","value":"SQLWebservice"},{"text":"Java class","value":"JavaWebservice"}]</value>
                         </entry>
                     </properties>
                     <styles>
@@ -500,32 +503,32 @@
             <childControls>
                 <childControls>
                     <events>
-                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="control">
+                        <actions xsi:type="control" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                             <properties>
-<entry>
-    <key>id</key>
-    <value>P10_A13_</value>
-</entry>
-<entry>
-    <key>control</key>
-    <value>rapid_P10_C2_</value>
-</entry>
-<entry>
-    <key>XMLVersion</key>
-    <value>1</value>
-</entry>
-<entry>
-    <key>name</key>
-    <value>Control 36</value>
-</entry>
-<entry>
-    <key>command</key>
-    <value>hideDialogue();</value>
-</entry>
-<entry>
-    <key>type</key>
-    <value>control</value>
-</entry>
+                                <entry>
+                                    <key>id</key>
+                                    <value>P10_A13_</value>
+                                </entry>
+                                <entry>
+                                    <key>control</key>
+                                    <value>rapid_P10_C2_</value>
+                                </entry>
+                                <entry>
+                                    <key>avoidRedundancy</key>
+                                    <value>false</value>
+                                </entry>
+                                <entry>
+                                    <key>name</key>
+                                    <value>Control 36</value>
+                                </entry>
+                                <entry>
+                                    <key>command</key>
+                                    <value>hideDialogue();</value>
+                                </entry>
+                                <entry>
+                                    <key>type</key>
+                                    <value>control</value>
+                                </entry>
                             </properties>
                             <XMLVersion>1</XMLVersion>
                         </actions>
@@ -595,149 +598,145 @@
             <childControls>
                 <childControls>
                     <events>
-                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="validation">
+                        <actions xsi:type="validation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                             <properties>
-<entry>
-    <key>id</key>
-    <value>P10_A16_</value>
-</entry>
-<entry>
-    <key>showMessages</key>
-    <value>true</value>
-</entry>
-<entry>
-    <key>XMLVersion</key>
-    <value>1</value>
-</entry>
-<entry>
-    <key>name</key>
-    <value>Validation 29</value>
-</entry>
-<entry>
-    <key>type</key>
-    <value>validation</value>
-</entry>
-<entry>
-    <key>stopActions</key>
-    <value>true</value>
-</entry>
+                                <entry>
+                                    <key>id</key>
+                                    <value>P10_A16_</value>
+                                </entry>
+                                <entry>
+                                    <key>showMessages</key>
+                                    <value>true</value>
+                                </entry>
+                                <entry>
+                                    <key>avoidRedundancy</key>
+                                    <value>false</value>
+                                </entry>
+                                <entry>
+                                    <key>name</key>
+                                    <value>Validation 29</value>
+                                </entry>
+                                <entry>
+                                    <key>type</key>
+                                    <value>validation</value>
+                                </entry>
+                                <entry>
+                                    <key>stopActions</key>
+                                    <value>true</value>
+                                </entry>
                             </properties>
                             <XMLVersion>1</XMLVersion>
                             <failActions xsi:type="control">
-<properties>
-    <entry>
-        <key>id</key>
-        <value>rapid_P3_A33</value>
-    </entry>
-    <entry>
-        <key>control</key>
-        <value>rapid_P10_C3_4</value>
-    </entry>
-    <entry>
-        <key>XMLVersion</key>
-        <value>1</value>
-    </entry>
-    <entry>
-        <key>name</key>
-        <value>Control 33</value>
-    </entry>
-    <entry>
-        <key>command</key>
-        <value>disable();</value>
-    </entry>
-    <entry>
-        <key>type</key>
-        <value>control</value>
-    </entry>
-</properties>
-<XMLVersion>1</XMLVersion>
+                                <properties>
+                                    <entry>
+                                        <key>id</key>
+                                        <value>rapid_P3_A33</value>
+                                    </entry>
+                                    <entry>
+                                        <key>control</key>
+                                        <value>rapid_P10_C3_4</value>
+                                    </entry>
+                                    <entry>
+                                        <key>avoidRedundancy</key>
+                                        <value>false</value>
+                                    </entry>
+                                    <entry>
+                                        <key>name</key>
+                                        <value>Control 33</value>
+                                    </entry>
+                                    <entry>
+                                        <key>command</key>
+                                        <value>disable();</value>
+                                    </entry>
+                                    <entry>
+                                        <key>type</key>
+                                        <value>control</value>
+                                    </entry>
+                                </properties>
+                                <XMLVersion>1</XMLVersion>
                             </failActions>
                             <passActions xsi:type="control">
-<properties>
-    <entry>
-        <key>id</key>
-        <value>rapid_P3_A35</value>
-    </entry>
-    <entry>
-        <key>control</key>
-        <value>rapid_P10_C3_4</value>
-    </entry>
-    <entry>
-        <key>XMLVersion</key>
-        <value>1</value>
-    </entry>
-    <entry>
-        <key>name</key>
-        <value>Control 35</value>
-    </entry>
-    <entry>
-        <key>command</key>
-        <value>enable();</value>
-    </entry>
-    <entry>
-        <key>type</key>
-        <value>control</value>
-    </entry>
-</properties>
-<XMLVersion>1</XMLVersion>
+                                <properties>
+                                    <entry>
+                                        <key>id</key>
+                                        <value>rapid_P3_A35</value>
+                                    </entry>
+                                    <entry>
+                                        <key>control</key>
+                                        <value>rapid_P10_C3_4</value>
+                                    </entry>
+                                    <entry>
+                                        <key>avoidRedundancy</key>
+                                        <value>false</value>
+                                    </entry>
+                                    <entry>
+                                        <key>name</key>
+                                        <value>Control 35</value>
+                                    </entry>
+                                    <entry>
+                                        <key>command</key>
+                                        <value>enable();</value>
+                                    </entry>
+                                    <entry>
+                                        <key>type</key>
+                                        <value>control</value>
+                                    </entry>
+                                </properties>
+                                <XMLVersion>1</XMLVersion>
                             </passActions>
                         </actions>
-                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="rapid">
+                        <actions xsi:type="rapid" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                             <properties>
-<entry>
-    <key>id</key>
-    <value>P10_A17_</value>
-</entry>
-<entry>
-    <key>XMLVersion</key>
-    <value>1</value>
-</entry>
-<entry>
-    <key>childActions</key>
-    <value>[]</value>
-</entry>
-<entry>
-    <key>name</key>
-    <value>Rapid 27</value>
-</entry>
-<entry>
-    <key>actionType</key>
-    <value>NEWSOA</value>
-</entry>
-<entry>
-    <key>type</key>
-    <value>rapid</value>
-</entry>
+                                <entry>
+                                    <key>id</key>
+                                    <value>P10_A17_</value>
+                                </entry>
+                                <entry>
+                                    <key>avoidRedundancy</key>
+                                    <value>false</value>
+                                </entry>
+                                <entry>
+                                    <key>name</key>
+                                    <value>Rapid 27</value>
+                                </entry>
+                                <entry>
+                                    <key>actionType</key>
+                                    <value>NEWSOA</value>
+                                </entry>
+                                <entry>
+                                    <key>type</key>
+                                    <value>rapid</value>
+                                </entry>
                             </properties>
                             <XMLVersion>1</XMLVersion>
                             <successActions xsi:type="control">
-<properties>
-    <entry>
-        <key>id</key>
-        <value>P5_A37</value>
-    </entry>
-    <entry>
-        <key>control</key>
-        <value>rapid_P10_C2_</value>
-    </entry>
-    <entry>
-        <key>XMLVersion</key>
-        <value>1</value>
-    </entry>
-    <entry>
-        <key>name</key>
-        <value>Control 37</value>
-    </entry>
-    <entry>
-        <key>command</key>
-        <value>hideDialogue();</value>
-    </entry>
-    <entry>
-        <key>type</key>
-        <value>control</value>
-    </entry>
-</properties>
-<XMLVersion>1</XMLVersion>
+                                <properties>
+                                    <entry>
+                                        <key>id</key>
+                                        <value>P5_A37</value>
+                                    </entry>
+                                    <entry>
+                                        <key>control</key>
+                                        <value>rapid_P10_C2_</value>
+                                    </entry>
+                                    <entry>
+                                        <key>avoidRedundancy</key>
+                                        <value>false</value>
+                                    </entry>
+                                    <entry>
+                                        <key>name</key>
+                                        <value>Control 37</value>
+                                    </entry>
+                                    <entry>
+                                        <key>command</key>
+                                        <value>hideDialogue();</value>
+                                    </entry>
+                                    <entry>
+                                        <key>type</key>
+                                        <value>control</value>
+                                    </entry>
+                                </properties>
+                                <XMLVersion>1</XMLVersion>
                             </successActions>
                         </actions>
                         <filter></filter>
@@ -836,7 +835,7 @@
             </entry>
             <entry>
                 <key>classes</key>
-                <value>[]</value>
+                <value>["glossyTitle"]</value>
             </entry>
             <entry>
                 <key>name</key>
@@ -871,11 +870,11 @@
             </entry>
             <entry>
                 <key>details</key>
-                <value>{&quot;controlHints&quot;:[{&quot;text&quot;:&quot;The name of the webservice is used as the operation/webmethod.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P10_C40_&quot;},{&quot;text&quot;:&quot;The webservice request and response are generated with either a database connection, inputs, and SQL statement - \&quot;SQL\&quot;, or by using reflection on a Java class that implements the Rapid Webservice interface - \&quot;Java class\&quot;.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P10_C41_&quot;}]}</value>
+                <value>{"controlHints":[{"text":"The name of the webservice is used as the operation/webmethod.","style":"","controlId":"rapid_P10_C40_","type":"hover"},{"text":"The webservice request and response are generated with either a database connection, inputs, and SQL statement - \"SQL\", or by using reflection on a Java class that implements the Rapid Webservice interface - \"Java class\".","style":"","controlId":"rapid_P10_C41_","type":"hover"}]}</value>
             </entry>
             <entry>
                 <key>controlHints</key>
-                <value>[{&quot;text&quot;:&quot;The name of the webservice is used as the operation/webmethod.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P10_C40_&quot;},{&quot;text&quot;:&quot;The webservice request and response are generated with either a database connection, inputs, and SQL statement - \&quot;SQL\&quot;, or by using reflection on a Java class that implements the Rapid Webservice interface - \&quot;Java class\&quot;.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P10_C41_&quot;}]</value>
+                <value>[{"text":"The name of the webservice is used as the operation/webmethod.","style":"","controlId":"rapid_P10_C40_","type":"hover"},{"text":"The webservice request and response are generated with either a database connection, inputs, and SQL statement - \"SQL\", or by using reflection on a Java class that implements the Rapid Webservice interface - \"Java class\".","style":"","controlId":"rapid_P10_C41_","type":"hover"}]</value>
             </entry>
             <entry>
                 <key>type</key>
@@ -897,45 +896,13 @@
         <filter></filter>
         <type>reusable</type>
     </events>
-    <htmlBody>&lt;table id=&quot;rapid_P10_C2_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;rapid_P10_C3_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P10_C4_&quot; colspan=&quot;3&quot; class=&quot;tabelCell&quot;&gt;New webservice&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P10_C5_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P10_C6_&quot; class=&quot;tabelCell&quot;&gt;Name :&lt;/td&gt;&lt;td id=&quot;rapid_P10_C7_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P10_C8_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P10_C38_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P10_C40_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P10_C18_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P10_C19_&quot; class=&quot;tabelCell&quot;&gt;Type :&lt;/td&gt;&lt;td id=&quot;rapid_P10_C20_&quot; class=&quot;tabelCell&quot;&gt;&lt;select id=&quot;rapid_P10_C23_&quot; value=&quot;&quot; class=&quot;dropdown&quot;&gt;&lt;option value=&quot;SQLWebservice&quot;&gt;SQL&lt;/option&gt;&lt;option value=&quot;JavaWebservice&quot;&gt;Java class&lt;/option&gt;&lt;/select&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P10_C39_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P10_C41_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P10_C10_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P10_C11_&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P10_C12_&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P10_C14_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P10_C15_&quot; class=&quot;button&quot;&gt;Save&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
+    <htmlBody>&lt;table id="rapid_P10_C2_" class="table glossyTitle"&gt;&lt;tbody&gt;&lt;tr id="rapid_P10_C3_" class="tableRow"&gt;&lt;td id="rapid_P10_C4_" colspan="3" class="tabelCell"&gt;New webservice&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P10_C5_" class="tableRow"&gt;&lt;td id="rapid_P10_C6_" class="tabelCell"&gt;Name :&lt;/td&gt;&lt;td id="rapid_P10_C7_" class="tabelCell"&gt;&lt;input id="rapid_P10_C8_" value="" type="text" class="input"&gt;&lt;/td&gt;&lt;td id="rapid_P10_C38_" class="tabelCell"&gt;&lt;img id="rapid_P10_C40_" src="applications/rapid/1/help_16x16.png" class="image"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P10_C18_" class="tableRow"&gt;&lt;td id="rapid_P10_C19_" class="tabelCell"&gt;Type :&lt;/td&gt;&lt;td id="rapid_P10_C20_" class="tabelCell"&gt;&lt;select id="rapid_P10_C23_" value="" class="dropdown"&gt;&lt;option value="SQLWebservice"&gt;SQL&lt;/option&gt;&lt;option value="JavaWebservice"&gt;Java class&lt;/option&gt;&lt;/select&gt;&lt;/td&gt;&lt;td id="rapid_P10_C39_" class="tabelCell"&gt;&lt;img id="rapid_P10_C41_" src="applications/rapid/1/help_16x16.png" class="image"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P10_C10_" class="tableRow"&gt;&lt;td id="rapid_P10_C11_" class="tabelCell"&gt;&lt;button id="rapid_P10_C12_" class="button"&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id="rapid_P10_C14_" colspan="2" class="tabelCell"&gt;&lt;button id="rapid_P10_C15_" class="button"&gt;Save&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
     <id>P10</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-07-09T17:10:54.142+01:00</modifiedDate>
+    <modifiedDate>2014-12-30T06:50:44.047Z</modifiedDate>
     <name>10_SOANew</name>
     <rolesHtml>
-        <html>&lt;table id=&quot;rapid_P10_C2_&quot; class=&quot;table&quot;&gt;
-		&lt;tbody&gt;
-			&lt;tr id=&quot;rapid_P10_C3_&quot; class=&quot;tableRow&quot;&gt;
-				&lt;td id=&quot;rapid_P10_C4_&quot; colspan=&quot;3&quot; class=&quot;tabelCell&quot;&gt;New webservice&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr id=&quot;rapid_P10_C5_&quot; class=&quot;tableRow&quot;&gt;
-				&lt;td id=&quot;rapid_P10_C6_&quot; class=&quot;tabelCell&quot;&gt;Name :&lt;/td&gt;
-				&lt;td id=&quot;rapid_P10_C7_&quot; class=&quot;tabelCell&quot;&gt;
-					&lt;input id=&quot;rapid_P10_C8_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
-					&lt;td id=&quot;rapid_P10_C38_&quot; class=&quot;tabelCell&quot;&gt;
-						&lt;img id=&quot;rapid_P10_C40_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;
-					&lt;/tr&gt;
-					&lt;tr id=&quot;rapid_P10_C18_&quot; class=&quot;tableRow&quot;&gt;
-						&lt;td id=&quot;rapid_P10_C19_&quot; class=&quot;tabelCell&quot;&gt;Type :&lt;/td&gt;
-						&lt;td id=&quot;rapid_P10_C20_&quot; class=&quot;tabelCell&quot;&gt;
-							&lt;select id=&quot;rapid_P10_C23_&quot; value=&quot;&quot; class=&quot;dropdown&quot;&gt;
-								&lt;option value=&quot;SQLWebservice&quot;&gt;SQL&lt;/option&gt;
-								&lt;option value=&quot;JavaWebservice&quot;&gt;Java class&lt;/option&gt;
-							&lt;/select&gt;
-						&lt;/td&gt;
-						&lt;td id=&quot;rapid_P10_C39_&quot; class=&quot;tabelCell&quot;&gt;
-							&lt;img id=&quot;rapid_P10_C41_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;
-						&lt;/tr&gt;
-						&lt;tr id=&quot;rapid_P10_C10_&quot; class=&quot;tableRow&quot;&gt;
-							&lt;td id=&quot;rapid_P10_C11_&quot; class=&quot;tabelCell&quot;&gt;
-								&lt;button id=&quot;rapid_P10_C12_&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;
-							&lt;/td&gt;
-							&lt;td id=&quot;rapid_P10_C14_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;
-								&lt;button id=&quot;rapid_P10_C15_&quot; class=&quot;button&quot;&gt;Save&lt;/button&gt;
-							&lt;/td&gt;
-						&lt;/tr&gt;
-					&lt;/tbody&gt;
-				&lt;/table&gt;</html>
+        <html>&lt;table id="rapid_P10_C2_" class="table glossyTitle"&gt;&lt;tbody&gt;&lt;tr id="rapid_P10_C3_" class="tableRow"&gt;&lt;td id="rapid_P10_C4_" colspan="3" class="tabelCell"&gt;New webservice&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P10_C5_" class="tableRow"&gt;&lt;td id="rapid_P10_C6_" class="tabelCell"&gt;Name :&lt;/td&gt;&lt;td id="rapid_P10_C7_" class="tabelCell"&gt;&lt;input id="rapid_P10_C8_" value="" type="text" class="input"&gt;&lt;/td&gt;&lt;td id="rapid_P10_C38_" class="tabelCell"&gt;&lt;img id="rapid_P10_C40_" src="applications/rapid/1/help_16x16.png" class="image"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P10_C18_" class="tableRow"&gt;&lt;td id="rapid_P10_C19_" class="tabelCell"&gt;Type :&lt;/td&gt;&lt;td id="rapid_P10_C20_" class="tabelCell"&gt;&lt;select id="rapid_P10_C23_" value="" class="dropdown"&gt;&lt;option value="SQLWebservice"&gt;SQL&lt;/option&gt;&lt;option value="JavaWebservice"&gt;Java class&lt;/option&gt;&lt;/select&gt;&lt;/td&gt;&lt;td id="rapid_P10_C39_" class="tabelCell"&gt;&lt;img id="rapid_P10_C41_" src="applications/rapid/1/help_16x16.png" class="image"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P10_C10_" class="tableRow"&gt;&lt;td id="rapid_P10_C11_" class="tabelCell"&gt;&lt;button id="rapid_P10_C12_" class="button"&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id="rapid_P10_C14_" colspan="2" class="tabelCell"&gt;&lt;button id="rapid_P10_C15_" class="button"&gt;Save&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</html>
     </rolesHtml>
     <title>New SOA webservice</title>
     <XMLVersion>1</XMLVersion>

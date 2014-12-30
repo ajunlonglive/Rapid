@@ -1150,8 +1150,12 @@ public class Page {
 						
 		// close the head
 		stringBuilder.append("  </head>\n");
-														
-		return stringBuilder.toString();
+		
+		// get it into a string and insert any parameters
+		String htmlHead = application.insertParameters(stringBuilder.toString());
+					
+		// return it
+		return htmlHead;
     	
     }
 		

@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><page>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<page>
     <controls>
         <childControls>
             <childControls>
@@ -36,17 +37,16 @@
                         <value>1</value>
                     </entry>
                 </properties>
-                <styles>
-                    <appliesTo>#rapid_P13_C4_</appliesTo>
-                    <rules>padding:10px;</rules>
-                    <rules>background:#e00 url(highlight_red_1x44.png) 50% 50% repeat-x;</rules>
-                    <rules>text-shadow :-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;</rules>
-                </styles>
+                <XMLVersion>1</XMLVersion>
             </childControls>
             <properties>
                 <entry>
                     <key>id</key>
                     <value>rapid_P13_C3_</value>
+                </entry>
+                <entry>
+                    <key>classes</key>
+                    <value>[]</value>
                 </entry>
                 <entry>
                     <key>name</key>
@@ -68,17 +68,22 @@
                 <rules>font-weight:bold;</rules>
                 <rules>text-align:center;</rules>
             </styles>
+            <XMLVersion>1</XMLVersion>
         </childControls>
         <childControls>
             <childControls>
                 <childControls>
                     <events>
-                        <filter/>
+                        <filter></filter>
+                        <type>click</type>
+                    </events>
+                    <events>
+                        <filter></filter>
                         <type>mouseover</type>
                     </events>
                     <events>
-                        <filter/>
-                        <type>click</type>
+                        <filter></filter>
+                        <type>mouseout</type>
                     </events>
                     <properties>
                         <entry>
@@ -110,6 +115,7 @@
                             <value>1</value>
                         </entry>
                     </properties>
+                    <XMLVersion>1</XMLVersion>
                 </childControls>
                 <properties>
                     <entry>
@@ -122,7 +128,7 @@
                     </entry>
                     <entry>
                         <key>text</key>
-                        <value/>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -149,6 +155,7 @@
                     <appliesTo>#rapid_P13_C6_</appliesTo>
                     <rules>padding:20px;</rules>
                 </styles>
+                <XMLVersion>1</XMLVersion>
             </childControls>
             <properties>
                 <entry>
@@ -172,36 +179,42 @@
                     <value>1</value>
                 </entry>
             </properties>
+            <XMLVersion>1</XMLVersion>
         </childControls>
         <childControls>
             <childControls>
                 <childControls>
                     <events>
-                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="custom">
+                        <actions xsi:type="custom" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                             <properties>
-<entry>
-    <key>id</key>
-    <value>P13_A11_</value>
-</entry>
-<entry>
-    <key>javascript</key>
-    <value>$(ev.target).hideDialogue();</value>
-</entry>
-<entry>
-    <key>name</key>
-    <value>Custom 26</value>
-</entry>
-<entry>
-    <key>type</key>
-    <value>custom</value>
-</entry>
-<entry>
-    <key>version</key>
-    <value>1</value>
-</entry>
+                                <entry>
+                                    <key>id</key>
+                                    <value>P13_A11_</value>
+                                </entry>
+                                <entry>
+                                    <key>javascript</key>
+                                    <value>$(ev.target).hideDialogue();</value>
+                                </entry>
+                                <entry>
+                                    <key>avoidRedundancy</key>
+                                    <value>false</value>
+                                </entry>
+                                <entry>
+                                    <key>name</key>
+                                    <value>Custom 26</value>
+                                </entry>
+                                <entry>
+                                    <key>type</key>
+                                    <value>custom</value>
+                                </entry>
+                                <entry>
+                                    <key>version</key>
+                                    <value>1</value>
+                                </entry>
                             </properties>
+                            <XMLVersion>1</XMLVersion>
                         </actions>
-                        <filter/>
+                        <filter></filter>
                         <type>click</type>
                     </events>
                     <properties>
@@ -234,6 +247,7 @@
                         <appliesTo>.</appliesTo>
                         <rules>width:80px</rules>
                     </styles>
+                    <XMLVersion>1</XMLVersion>
                 </childControls>
                 <properties>
                     <entry>
@@ -246,7 +260,7 @@
                     </entry>
                     <entry>
                         <key>text</key>
-                        <value/>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -274,39 +288,41 @@
                     <rules>padding-left:10px;</rules>
                     <rules>padding-bottom:10px;</rules>
                 </styles>
+                <XMLVersion>1</XMLVersion>
             </childControls>
             <childControls>
                 <childControls>
                     <events>
-                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="rapid">
+                        <actions xsi:type="rapid" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                             <properties>
-<entry>
-    <key>id</key>
-    <value>P13_A14_</value>
-</entry>
-<entry>
-    <key>childActions</key>
-    <value>[]</value>
-</entry>
-<entry>
-    <key>name</key>
-    <value>Rapid 27</value>
-</entry>
-<entry>
-    <key>actionType</key>
-    <value>DELPAGEBACKUP</value>
-</entry>
-<entry>
-    <key>type</key>
-    <value>rapid</value>
-</entry>
-<entry>
-    <key>version</key>
-    <value>1</value>
-</entry>
+                                <entry>
+                                    <key>id</key>
+                                    <value>P13_A14_</value>
+                                </entry>
+                                <entry>
+                                    <key>avoidRedundancy</key>
+                                    <value>false</value>
+                                </entry>
+                                <entry>
+                                    <key>name</key>
+                                    <value>Rapid 27</value>
+                                </entry>
+                                <entry>
+                                    <key>actionType</key>
+                                    <value>DELPAGEBACKUP</value>
+                                </entry>
+                                <entry>
+                                    <key>type</key>
+                                    <value>rapid</value>
+                                </entry>
+                                <entry>
+                                    <key>version</key>
+                                    <value>1</value>
+                                </entry>
                             </properties>
+                            <XMLVersion>1</XMLVersion>
                         </actions>
-                        <filter/>
+                        <filter></filter>
                         <type>click</type>
                     </events>
                     <properties>
@@ -339,6 +355,7 @@
                         <appliesTo>.</appliesTo>
                         <rules>width:80px</rules>
                     </styles>
+                    <XMLVersion>1</XMLVersion>
                 </childControls>
                 <properties>
                     <entry>
@@ -351,7 +368,7 @@
                     </entry>
                     <entry>
                         <key>text</key>
-                        <value/>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>colSpan</key>
@@ -380,6 +397,7 @@
                     <rules>padding-right:10px;</rules>
                     <rules>padding-bottom:10px;</rules>
                 </styles>
+                <XMLVersion>1</XMLVersion>
             </childControls>
             <properties>
                 <entry>
@@ -407,11 +425,12 @@
                 <appliesTo>.</appliesTo>
                 <rules>margin-top:10px</rules>
             </styles>
+            <XMLVersion>1</XMLVersion>
         </childControls>
         <properties>
             <entry>
                 <key>classes</key>
-                <value>[]</value>
+                <value>["glossyTitle"]</value>
             </entry>
             <entry>
                 <key>id</key>
@@ -435,43 +454,25 @@
             <rules>border-collapse:collapse;</rules>
             <rules>border-spacing:0;</rules>
         </styles>
+        <XMLVersion>1</XMLVersion>
     </controls>
     <description>Delete page backup</description>
     <events>
-        <filter/>
+        <filter></filter>
         <type>pageload</type>
     </events>
     <events>
-        <filter/>
+        <filter></filter>
         <type>reusable</type>
     </events>
-    <htmlBody>&lt;table id="rapid_P13_C2_" class="table"&gt;&lt;tbody&gt;&lt;tr id="rapid_P13_C3_" class="tableRow"&gt;&lt;td id="rapid_P13_C4_" colspan="2" class="tabelCell"&gt;Delete page backup&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P13_C5_" class="tableRow"&gt;&lt;td id="rapid_P13_C6_" colspan="2" class="tabelCell"&gt;&lt;span id="rapid_P13_C7_" class="text"&gt;Are you sure you want to delete the page backup?&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P13_C8_" class="tableRow"&gt;&lt;td id="rapid_P13_C9_" class="tabelCell"&gt;&lt;button id="rapid_P13_C10_" class="button"&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id="rapid_P13_C12_" class="tabelCell"&gt;&lt;button id="rapid_P13_C13_" class="button"&gt;Delete&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
+    <htmlBody>&lt;table id="rapid_P13_C2_" class="table glossyTitle"&gt;&lt;tbody&gt;&lt;tr id="rapid_P13_C3_" class="tableRow"&gt;&lt;td id="rapid_P13_C4_" colspan="2" class="tabelCell"&gt;Delete page backup&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P13_C5_" class="tableRow"&gt;&lt;td id="rapid_P13_C6_" colspan="2" class="tabelCell"&gt;&lt;span id="rapid_P13_C7_" class="text"&gt;Are you sure you want to delete the page backup?&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P13_C8_" class="tableRow"&gt;&lt;td id="rapid_P13_C9_" class="tabelCell"&gt;&lt;button id="rapid_P13_C10_" class="button"&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id="rapid_P13_C12_" class="tabelCell"&gt;&lt;button id="rapid_P13_C13_" class="button"&gt;Delete&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
     <id>P13</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-06-12T14:37:43.925+01:00</modifiedDate>
+    <modifiedDate>2014-12-30T06:51:31.508Z</modifiedDate>
     <name>13_DeletePageBackup</name>
     <rolesHtml>
-        <html>&lt;table id="rapid_P13_C2_" class="table"&gt;
-		&lt;tbody&gt;
-			&lt;tr id="rapid_P13_C3_" class="tableRow"&gt;
-				&lt;td id="rapid_P13_C4_" colspan="2" class="tabelCell"&gt;Delete page backup&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr id="rapid_P13_C5_" class="tableRow"&gt;
-				&lt;td id="rapid_P13_C6_" colspan="2" class="tabelCell"&gt;
-					&lt;span id="rapid_P13_C7_" class="text"&gt;Are you sure you want to delete the page backup?&lt;/span&gt;
-				&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr id="rapid_P13_C8_" class="tableRow"&gt;
-				&lt;td id="rapid_P13_C9_" class="tabelCell"&gt;
-					&lt;button id="rapid_P13_C10_" class="button"&gt;Cancel&lt;/button&gt;
-				&lt;/td&gt;
-				&lt;td id="rapid_P13_C12_" class="tabelCell"&gt;
-					&lt;button id="rapid_P13_C13_" class="button"&gt;Delete&lt;/button&gt;
-				&lt;/td&gt;
-			&lt;/tr&gt;
-		&lt;/tbody&gt;
-	&lt;/table&gt;</html>
+        <html>&lt;table id="rapid_P13_C2_" class="table glossyTitle"&gt;&lt;tbody&gt;&lt;tr id="rapid_P13_C3_" class="tableRow"&gt;&lt;td id="rapid_P13_C4_" colspan="2" class="tabelCell"&gt;Delete page backup&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P13_C5_" class="tableRow"&gt;&lt;td id="rapid_P13_C6_" colspan="2" class="tabelCell"&gt;&lt;span id="rapid_P13_C7_" class="text"&gt;Are you sure you want to delete the page backup?&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P13_C8_" class="tableRow"&gt;&lt;td id="rapid_P13_C9_" class="tabelCell"&gt;&lt;button id="rapid_P13_C10_" class="button"&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id="rapid_P13_C12_" class="tabelCell"&gt;&lt;button id="rapid_P13_C13_" class="button"&gt;Delete&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</html>
     </rolesHtml>
     <title>Delete page backup</title>
-    <version>1</version>
-<xmlVersion>1</xmlVersion><XMLVersion>1</XMLVersion></page>
+    <XMLVersion>1</XMLVersion>
+</page>

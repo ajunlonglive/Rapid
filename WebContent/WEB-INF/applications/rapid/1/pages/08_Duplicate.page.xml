@@ -33,12 +33,6 @@
                         <value>tableCell</value>
                     </entry>
                 </properties>
-                <styles>
-                    <appliesTo>#rapid_P8_C3_</appliesTo>
-                    <rules>padding:10px;</rules>
-                    <rules>background:#e00 url(highlight_red_1x44.png) 50% 50% repeat-x;</rules>
-                    <rules>text-shadow :1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;</rules>
-                </styles>
                 <XMLVersion>1</XMLVersion>
             </childControls>
             <properties>
@@ -73,11 +67,15 @@
                 <childControls>
                     <events>
                         <filter></filter>
+                        <type>click</type>
+                    </events>
+                    <events>
+                        <filter></filter>
                         <type>mouseover</type>
                     </events>
                     <events>
                         <filter></filter>
-                        <type>click</type>
+                        <type>mouseout</type>
                     </events>
                     <properties>
                         <entry>
@@ -151,37 +149,8 @@
             <childControls>
                 <childControls>
                     <events>
-                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="existing">
-                            <properties>
-<entry>
-    <key>id</key>
-    <value>P8_A8_</value>
-</entry>
-<entry>
-    <key>avoidRedundancy</key>
-    <value>false</value>
-</entry>
-<entry>
-    <key>name</key>
-    <value>Existing 26</value>
-</entry>
-<entry>
-    <key>action</key>
-    <value>P8_A24_</value>
-</entry>
-<entry>
-    <key>type</key>
-    <value>existing</value>
-</entry>
-<entry>
-    <key>redundantActions</key>
-    <value>[&quot;P8_A24_&quot;]</value>
-</entry>
-                            </properties>
-                            <XMLVersion>1</XMLVersion>
-                        </actions>
                         <filter></filter>
-                        <type>keyup</type>
+                        <type>blur</type>
                     </events>
                     <events>
                         <filter></filter>
@@ -189,7 +158,40 @@
                     </events>
                     <events>
                         <filter></filter>
-                        <type>blur</type>
+                        <type>click</type>
+                    </events>
+                    <events>
+                        <actions xsi:type="existing" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                            <properties>
+                                <entry>
+                                    <key>id</key>
+                                    <value>P8_A8_</value>
+                                </entry>
+                                <entry>
+                                    <key>avoidRedundancy</key>
+                                    <value>false</value>
+                                </entry>
+                                <entry>
+                                    <key>name</key>
+                                    <value>Existing 26</value>
+                                </entry>
+                                <entry>
+                                    <key>action</key>
+                                    <value>P8_A24_</value>
+                                </entry>
+                                <entry>
+                                    <key>type</key>
+                                    <value>existing</value>
+                                </entry>
+                                <entry>
+                                    <key>redundantActions</key>
+                                    <value>["P8_A24_"]</value>
+                                </entry>
+                            </properties>
+                            <XMLVersion>1</XMLVersion>
+                        </actions>
+                        <filter></filter>
+                        <type>keyup</type>
                     </events>
                     <properties>
                         <entry>
@@ -223,14 +225,14 @@
                     </styles>
                     <validation>
                         <allowNulls>false</allowNulls>
-                        <javaScript>var name = $(&quot;#rapid_P0_C43&quot;).val();
-var version = $(&quot;#rapid_P8_C7_&quot;).val();
-if (!version) return &quot;A new version must be provided&quot;;
-if (!version.match(new RegExp(&quot;^[0-9A-Za-z\._-]+$&quot;))) return &quot;An application version can only contain characters a-z, A-Z, 0-9, ., -, and _&quot;;
+                        <javaScript>var name = $("#rapid_P0_C43").val();
+var version = $("#rapid_P8_C7_").val();
+if (!version) return "A new version must be provided";
+if (!version.match(new RegExp("^[0-9A-Za-z\._-]+$"))) return "An application version can only contain characters a-z, A-Z, 0-9, ., -, and _";
 var exists = false;
 $.ajax({
-    url: &quot;designer?action=checkVersion&amp;name=&quot; + name + &quot;&amp;version=&quot; + version,
-    type: &quot;GET&quot;,    
+    url: "designer?action=checkVersion&amp;name=" + name + "&amp;version=" + version,
+    type: "GET",    
     async: false,                
     success: function(result) {
         if (result) {
@@ -238,8 +240,9 @@ $.ajax({
         }
     }
 });
-if (exists) return &quot;A version with this name already exists&quot;;</javaScript>
+if (exists) return "A version with this name already exists";</javaScript>
                         <message>An application name can only contain characters a-z, A-Z, 0-9, -, and _</message>
+                        <passHidden>false</passHidden>
                         <regEx></regEx>
                         <type>javascript</type>
                     </validation>
@@ -413,37 +416,8 @@ if (exists) return &quot;A version with this name already exists&quot;;</javaScr
             <childControls>
                 <childControls>
                     <events>
-                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="existing">
-                            <properties>
-<entry>
-    <key>id</key>
-    <value>P8_A13_</value>
-</entry>
-<entry>
-    <key>avoidRedundancy</key>
-    <value>false</value>
-</entry>
-<entry>
-    <key>name</key>
-    <value>Existing 27</value>
-</entry>
-<entry>
-    <key>action</key>
-    <value>P8_A24_</value>
-</entry>
-<entry>
-    <key>type</key>
-    <value>existing</value>
-</entry>
-<entry>
-    <key>redundantActions</key>
-    <value>[&quot;P8_A24_&quot;]</value>
-</entry>
-                            </properties>
-                            <XMLVersion>1</XMLVersion>
-                        </actions>
                         <filter></filter>
-                        <type>keyup</type>
+                        <type>blur</type>
                     </events>
                     <events>
                         <filter></filter>
@@ -451,7 +425,40 @@ if (exists) return &quot;A version with this name already exists&quot;;</javaScr
                     </events>
                     <events>
                         <filter></filter>
-                        <type>blur</type>
+                        <type>click</type>
+                    </events>
+                    <events>
+                        <actions xsi:type="existing" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                            <properties>
+                                <entry>
+                                    <key>id</key>
+                                    <value>P8_A13_</value>
+                                </entry>
+                                <entry>
+                                    <key>avoidRedundancy</key>
+                                    <value>false</value>
+                                </entry>
+                                <entry>
+                                    <key>name</key>
+                                    <value>Existing 27</value>
+                                </entry>
+                                <entry>
+                                    <key>action</key>
+                                    <value>P8_A24_</value>
+                                </entry>
+                                <entry>
+                                    <key>type</key>
+                                    <value>existing</value>
+                                </entry>
+                                <entry>
+                                    <key>redundantActions</key>
+                                    <value>["P8_A24_"]</value>
+                                </entry>
+                            </properties>
+                            <XMLVersion>1</XMLVersion>
+                        </actions>
+                        <filter></filter>
+                        <type>keyup</type>
                     </events>
                     <properties>
                         <entry>
@@ -483,6 +490,7 @@ if (exists) return &quot;A version with this name already exists&quot;;</javaScr
                         <allowNulls>false</allowNulls>
                         <javaScript></javaScript>
                         <message>An application title must be provided</message>
+                        <passHidden>false</passHidden>
                         <regEx>[\s\S]</regEx>
                         <type>value</type>
                     </validation>
@@ -645,7 +653,7 @@ if (exists) return &quot;A version with this name already exists&quot;;</javaScr
                 <childControls>
                     <events>
                         <filter></filter>
-                        <type>keyup</type>
+                        <type>blur</type>
                     </events>
                     <events>
                         <filter></filter>
@@ -653,7 +661,11 @@ if (exists) return &quot;A version with this name already exists&quot;;</javaScr
                     </events>
                     <events>
                         <filter></filter>
-                        <type>blur</type>
+                        <type>click</type>
+                    </events>
+                    <events>
+                        <filter></filter>
+                        <type>keyup</type>
                     </events>
                     <properties>
                         <entry>
@@ -686,6 +698,7 @@ if (exists) return &quot;A version with this name already exists&quot;;</javaScr
                         <allowNulls>false</allowNulls>
                         <javaScript></javaScript>
                         <message></message>
+                        <passHidden>false</passHidden>
                         <regEx></regEx>
                         <type></type>
                     </validation>
@@ -810,32 +823,32 @@ if (exists) return &quot;A version with this name already exists&quot;;</javaScr
             <childControls>
                 <childControls>
                     <events>
-                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="control">
+                        <actions xsi:type="control" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                             <properties>
-<entry>
-    <key>id</key>
-    <value>P8_A21_</value>
-</entry>
-<entry>
-    <key>control</key>
-    <value>rapid_P8_C1_</value>
-</entry>
-<entry>
-    <key>avoidRedundancy</key>
-    <value>false</value>
-</entry>
-<entry>
-    <key>name</key>
-    <value>Control 24</value>
-</entry>
-<entry>
-    <key>command</key>
-    <value>hideDialogue();</value>
-</entry>
-<entry>
-    <key>type</key>
-    <value>control</value>
-</entry>
+                                <entry>
+                                    <key>id</key>
+                                    <value>P8_A21_</value>
+                                </entry>
+                                <entry>
+                                    <key>control</key>
+                                    <value>rapid_P8_C1_</value>
+                                </entry>
+                                <entry>
+                                    <key>avoidRedundancy</key>
+                                    <value>false</value>
+                                </entry>
+                                <entry>
+                                    <key>name</key>
+                                    <value>Control 24</value>
+                                </entry>
+                                <entry>
+                                    <key>command</key>
+                                    <value>hideDialogue();</value>
+                                </entry>
+                                <entry>
+                                    <key>type</key>
+                                    <value>control</value>
+                                </entry>
                             </properties>
                             <XMLVersion>1</XMLVersion>
                         </actions>
@@ -910,117 +923,117 @@ if (exists) return &quot;A version with this name already exists&quot;;</javaScr
             <childControls>
                 <childControls>
                     <events>
-                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="validation">
+                        <actions xsi:type="validation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                             <properties>
-<entry>
-    <key>id</key>
-    <value>P8_A24_</value>
-</entry>
-<entry>
-    <key>showMessages</key>
-    <value>true</value>
-</entry>
-<entry>
-    <key>avoidRedundancy</key>
-    <value>true</value>
-</entry>
-<entry>
-    <key>name</key>
-    <value>Validation 25</value>
-</entry>
-<entry>
-    <key>type</key>
-    <value>validation</value>
-</entry>
-<entry>
-    <key>stopActions</key>
-    <value>true</value>
-</entry>
+                                <entry>
+                                    <key>id</key>
+                                    <value>P8_A24_</value>
+                                </entry>
+                                <entry>
+                                    <key>showMessages</key>
+                                    <value>true</value>
+                                </entry>
+                                <entry>
+                                    <key>avoidRedundancy</key>
+                                    <value>true</value>
+                                </entry>
+                                <entry>
+                                    <key>name</key>
+                                    <value>Validation 25</value>
+                                </entry>
+                                <entry>
+                                    <key>type</key>
+                                    <value>validation</value>
+                                </entry>
+                                <entry>
+                                    <key>stopActions</key>
+                                    <value>true</value>
+                                </entry>
                             </properties>
                             <XMLVersion>1</XMLVersion>
                             <controls>rapid_P8_C7_</controls>
                             <controls>rapid_P8_C12_</controls>
                             <failActions xsi:type="control">
-<properties>
-    <entry>
-        <key>id</key>
-        <value>P1_A29</value>
-    </entry>
-    <entry>
-        <key>control</key>
-        <value>rapid_P8_C23_</value>
-    </entry>
-    <entry>
-        <key>avoidRedundancy</key>
-        <value>false</value>
-    </entry>
-    <entry>
-        <key>name</key>
-        <value>Control 29</value>
-    </entry>
-    <entry>
-        <key>command</key>
-        <value>disable();</value>
-    </entry>
-    <entry>
-        <key>type</key>
-        <value>control</value>
-    </entry>
-</properties>
-<XMLVersion>1</XMLVersion>
+                                <properties>
+                                    <entry>
+                                        <key>id</key>
+                                        <value>P1_A29</value>
+                                    </entry>
+                                    <entry>
+                                        <key>control</key>
+                                        <value>rapid_P8_C23_</value>
+                                    </entry>
+                                    <entry>
+                                        <key>avoidRedundancy</key>
+                                        <value>false</value>
+                                    </entry>
+                                    <entry>
+                                        <key>name</key>
+                                        <value>Control 29</value>
+                                    </entry>
+                                    <entry>
+                                        <key>command</key>
+                                        <value>disable();</value>
+                                    </entry>
+                                    <entry>
+                                        <key>type</key>
+                                        <value>control</value>
+                                    </entry>
+                                </properties>
+                                <XMLVersion>1</XMLVersion>
                             </failActions>
                             <passActions xsi:type="control">
-<properties>
-    <entry>
-        <key>id</key>
-        <value>P1_A28</value>
-    </entry>
-    <entry>
-        <key>control</key>
-        <value>rapid_P8_C23_</value>
-    </entry>
-    <entry>
-        <key>avoidRedundancy</key>
-        <value>false</value>
-    </entry>
-    <entry>
-        <key>name</key>
-        <value>Control 28</value>
-    </entry>
-    <entry>
-        <key>command</key>
-        <value>enable();</value>
-    </entry>
-    <entry>
-        <key>type</key>
-        <value>control</value>
-    </entry>
-</properties>
-<XMLVersion>1</XMLVersion>
+                                <properties>
+                                    <entry>
+                                        <key>id</key>
+                                        <value>P1_A28</value>
+                                    </entry>
+                                    <entry>
+                                        <key>control</key>
+                                        <value>rapid_P8_C23_</value>
+                                    </entry>
+                                    <entry>
+                                        <key>avoidRedundancy</key>
+                                        <value>false</value>
+                                    </entry>
+                                    <entry>
+                                        <key>name</key>
+                                        <value>Control 28</value>
+                                    </entry>
+                                    <entry>
+                                        <key>command</key>
+                                        <value>enable();</value>
+                                    </entry>
+                                    <entry>
+                                        <key>type</key>
+                                        <value>control</value>
+                                    </entry>
+                                </properties>
+                                <XMLVersion>1</XMLVersion>
                             </passActions>
                         </actions>
-                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="rapid">
+                        <actions xsi:type="rapid" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                             <properties>
-<entry>
-    <key>id</key>
-    <value>P8_A25_</value>
-</entry>
-<entry>
-    <key>avoidRedundancy</key>
-    <value>false</value>
-</entry>
-<entry>
-    <key>name</key>
-    <value>Rapid 27</value>
-</entry>
-<entry>
-    <key>actionType</key>
-    <value>DUPAPP</value>
-</entry>
-<entry>
-    <key>type</key>
-    <value>rapid</value>
-</entry>
+                                <entry>
+                                    <key>id</key>
+                                    <value>P8_A25_</value>
+                                </entry>
+                                <entry>
+                                    <key>avoidRedundancy</key>
+                                    <value>false</value>
+                                </entry>
+                                <entry>
+                                    <key>name</key>
+                                    <value>Rapid 27</value>
+                                </entry>
+                                <entry>
+                                    <key>actionType</key>
+                                    <value>DUPAPP</value>
+                                </entry>
+                                <entry>
+                                    <key>type</key>
+                                    <value>rapid</value>
+                                </entry>
                             </properties>
                             <XMLVersion>1</XMLVersion>
                         </actions>
@@ -1124,7 +1137,7 @@ if (exists) return &quot;A version with this name already exists&quot;;</javaScr
             </entry>
             <entry>
                 <key>classes</key>
-                <value>[]</value>
+                <value>["glossyTitle"]</value>
             </entry>
             <entry>
                 <key>name</key>
@@ -1159,11 +1172,11 @@ if (exists) return &quot;A version with this name already exists&quot;;</javaScr
             </entry>
             <entry>
                 <key>details</key>
-                <value>{&quot;controlHints&quot;:[{&quot;text&quot;:&quot;The version of the new application that will be created by duplicating this one.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P8_C27_&quot;,&quot;type&quot;:&quot;hover&quot;},{&quot;text&quot;:&quot;The title for the new application. \nIt is shown to users.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P8_C28_&quot;,&quot;type&quot;:&quot;hover&quot;},{&quot;text&quot;:&quot;Any further details of the new application.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P8_C29_&quot;,&quot;type&quot;:&quot;hover&quot;}]}</value>
+                <value>{"controlHints":[{"text":"The version of the new application that will be created by duplicating this one.","style":"","type":"hover","controlId":"rapid_P8_C27_"},{"text":"The title for the new application. \nIt is shown to users.","style":"","type":"hover","controlId":"rapid_P8_C28_"},{"text":"Any further details of the new application.","style":"","type":"hover","controlId":"rapid_P8_C29_"}]}</value>
             </entry>
             <entry>
                 <key>controlHints</key>
-                <value>[{&quot;text&quot;:&quot;The version of the new application that will be created by duplicating this one.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P8_C27_&quot;,&quot;type&quot;:&quot;hover&quot;},{&quot;text&quot;:&quot;The title for the new application. \nIt is shown to users.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P8_C28_&quot;,&quot;type&quot;:&quot;hover&quot;},{&quot;text&quot;:&quot;Any further details of the new application.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P8_C29_&quot;,&quot;type&quot;:&quot;hover&quot;}]</value>
+                <value>[{"text":"The version of the new application that will be created by duplicating this one.","style":"","type":"hover","controlId":"rapid_P8_C27_"},{"text":"The title for the new application. \nIt is shown to users.","style":"","type":"hover","controlId":"rapid_P8_C28_"},{"text":"Any further details of the new application.","style":"","type":"hover","controlId":"rapid_P8_C29_"}]</value>
             </entry>
             <entry>
                 <key>type</key>
@@ -1178,7 +1191,7 @@ if (exists) return &quot;A version with this name already exists&quot;;</javaScr
     </controls>
     <description></description>
     <events>
-        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="control">
+        <actions xsi:type="control" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <properties>
                 <entry>
                     <key>id</key>
@@ -1207,7 +1220,7 @@ if (exists) return &quot;A version with this name already exists&quot;;</javaScr
             </properties>
             <XMLVersion>1</XMLVersion>
         </actions>
-        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="control">
+        <actions xsi:type="control" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <properties>
                 <entry>
                     <key>id</key>
@@ -1227,7 +1240,7 @@ if (exists) return &quot;A version with this name already exists&quot;;</javaScr
                 </entry>
                 <entry>
                     <key>command</key>
-                    <value>.val($(&quot;#rapid_P0_C392_&quot;).val());</value>
+                    <value>.val($("#rapid_P0_C392_").val());</value>
                 </entry>
                 <entry>
                     <key>type</key>
@@ -1236,7 +1249,7 @@ if (exists) return &quot;A version with this name already exists&quot;;</javaScr
             </properties>
             <XMLVersion>1</XMLVersion>
         </actions>
-        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="control">
+        <actions xsi:type="control" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <properties>
                 <entry>
                     <key>id</key>
@@ -1256,7 +1269,7 @@ if (exists) return &quot;A version with this name already exists&quot;;</javaScr
                 </entry>
                 <entry>
                     <key>command</key>
-                    <value>.val($(&quot;#rapid_P0_C393_&quot;).val());</value>
+                    <value>.val($("#rapid_P0_C393_").val());</value>
                 </entry>
                 <entry>
                     <key>type</key>
@@ -1272,51 +1285,13 @@ if (exists) return &quot;A version with this name already exists&quot;;</javaScr
         <filter></filter>
         <type>reusable</type>
     </events>
-    <htmlBody>&lt;table id=&quot;rapid_P8_C1_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;rapid_P8_C2_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P8_C3_&quot; colspan=&quot;3&quot; class=&quot;tabelCell&quot;&gt;Duplicate version&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P8_C4_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P8_C5_&quot; class=&quot;tabelCell&quot;&gt;&lt;span id=&quot;rapid_P8_C35_&quot; class=&quot;text&quot;&gt;New version :&lt;/span&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P8_C6_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P8_C7_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P8_C24_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P8_C27_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P8_C9_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P8_C10_&quot; class=&quot;tabelCell&quot;&gt;Title :&lt;/td&gt;&lt;td id=&quot;rapid_P8_C11_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P8_C12_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P8_C25_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P8_C28_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P8_C14_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P8_C15_&quot; class=&quot;tabelCell&quot;&gt;Description :&lt;/td&gt;&lt;td id=&quot;rapid_P8_C16_&quot; class=&quot;tabelCell&quot;&gt;&lt;textarea id=&quot;rapid_P8_C17_&quot; class=&quot;input&quot;&gt;&lt;/textarea&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P8_C26_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P8_C29_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P8_C18_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P8_C19_&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P8_C20_&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P8_C22_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P8_C23_&quot; class=&quot;button&quot;&gt;Save&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
+    <htmlBody>&lt;table id="rapid_P8_C1_" class="table glossyTitle"&gt;&lt;tbody&gt;&lt;tr id="rapid_P8_C2_" class="tableRow"&gt;&lt;td id="rapid_P8_C3_" colspan="3" class="tabelCell"&gt;Duplicate version&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P8_C4_" class="tableRow"&gt;&lt;td id="rapid_P8_C5_" class="tabelCell"&gt;&lt;span id="rapid_P8_C35_" class="text"&gt;New version :&lt;/span&gt;&lt;/td&gt;&lt;td id="rapid_P8_C6_" class="tabelCell"&gt;&lt;input id="rapid_P8_C7_" value="" type="text" class="input"&gt;&lt;/td&gt;&lt;td id="rapid_P8_C24_" class="tabelCell"&gt;&lt;img id="rapid_P8_C27_" src="applications/rapid/1/help_16x16.png" class="image"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P8_C9_" class="tableRow"&gt;&lt;td id="rapid_P8_C10_" class="tabelCell"&gt;Title :&lt;/td&gt;&lt;td id="rapid_P8_C11_" class="tabelCell"&gt;&lt;input id="rapid_P8_C12_" value="" type="text" class="input"&gt;&lt;/td&gt;&lt;td id="rapid_P8_C25_" class="tabelCell"&gt;&lt;img id="rapid_P8_C28_" src="applications/rapid/1/help_16x16.png" class="image"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P8_C14_" class="tableRow"&gt;&lt;td id="rapid_P8_C15_" class="tabelCell"&gt;Description :&lt;/td&gt;&lt;td id="rapid_P8_C16_" class="tabelCell"&gt;&lt;textarea id="rapid_P8_C17_" class="input"&gt;&lt;/textarea&gt;&lt;/td&gt;&lt;td id="rapid_P8_C26_" class="tabelCell"&gt;&lt;img id="rapid_P8_C29_" src="applications/rapid/1/help_16x16.png" class="image"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P8_C18_" class="tableRow"&gt;&lt;td id="rapid_P8_C19_" class="tabelCell"&gt;&lt;button id="rapid_P8_C20_" class="button"&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id="rapid_P8_C22_" colspan="2" class="tabelCell"&gt;&lt;button id="rapid_P8_C23_" class="button"&gt;Save&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
     <id>P8</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-10-06T12:23:37.402+01:00</modifiedDate>
+    <modifiedDate>2014-12-30T06:50:14.024Z</modifiedDate>
     <name>08_Duplicate</name>
     <rolesHtml>
-        <html>&lt;table id=&quot;rapid_P8_C1_&quot; class=&quot;table&quot;&gt;
-		&lt;tbody&gt;
-			&lt;tr id=&quot;rapid_P8_C2_&quot; class=&quot;tableRow&quot;&gt;
-				&lt;td id=&quot;rapid_P8_C3_&quot; colspan=&quot;3&quot; class=&quot;tabelCell&quot;&gt;Duplicate version&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr id=&quot;rapid_P8_C4_&quot; class=&quot;tableRow&quot;&gt;
-				&lt;td id=&quot;rapid_P8_C5_&quot; class=&quot;tabelCell&quot;&gt;
-					&lt;span id=&quot;rapid_P8_C35_&quot; class=&quot;text&quot;&gt;New version :&lt;/span&gt;
-				&lt;/td&gt;
-				&lt;td id=&quot;rapid_P8_C6_&quot; class=&quot;tabelCell&quot;&gt;
-					&lt;input id=&quot;rapid_P8_C7_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
-					&lt;td id=&quot;rapid_P8_C24_&quot; class=&quot;tabelCell&quot;&gt;
-						&lt;img id=&quot;rapid_P8_C27_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;
-					&lt;/tr&gt;
-					&lt;tr id=&quot;rapid_P8_C9_&quot; class=&quot;tableRow&quot;&gt;
-						&lt;td id=&quot;rapid_P8_C10_&quot; class=&quot;tabelCell&quot;&gt;Title :&lt;/td&gt;
-						&lt;td id=&quot;rapid_P8_C11_&quot; class=&quot;tabelCell&quot;&gt;
-							&lt;input id=&quot;rapid_P8_C12_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
-							&lt;td id=&quot;rapid_P8_C25_&quot; class=&quot;tabelCell&quot;&gt;
-								&lt;img id=&quot;rapid_P8_C28_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;
-							&lt;/tr&gt;
-							&lt;tr id=&quot;rapid_P8_C14_&quot; class=&quot;tableRow&quot;&gt;
-								&lt;td id=&quot;rapid_P8_C15_&quot; class=&quot;tabelCell&quot;&gt;Description :&lt;/td&gt;
-								&lt;td id=&quot;rapid_P8_C16_&quot; class=&quot;tabelCell&quot;&gt;
-									&lt;textarea id=&quot;rapid_P8_C17_&quot; class=&quot;input&quot;&gt;&lt;/textarea&gt;
-								&lt;/td&gt;
-								&lt;td id=&quot;rapid_P8_C26_&quot; class=&quot;tabelCell&quot;&gt;
-									&lt;img id=&quot;rapid_P8_C29_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;
-								&lt;/tr&gt;
-								&lt;tr id=&quot;rapid_P8_C18_&quot; class=&quot;tableRow&quot;&gt;
-									&lt;td id=&quot;rapid_P8_C19_&quot; class=&quot;tabelCell&quot;&gt;
-										&lt;button id=&quot;rapid_P8_C20_&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;
-									&lt;/td&gt;
-									&lt;td id=&quot;rapid_P8_C22_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;
-										&lt;button id=&quot;rapid_P8_C23_&quot; class=&quot;button&quot;&gt;Save&lt;/button&gt;
-									&lt;/td&gt;
-								&lt;/tr&gt;
-							&lt;/tbody&gt;
-						&lt;/table&gt;</html>
+        <html>&lt;table id="rapid_P8_C1_" class="table glossyTitle"&gt;&lt;tbody&gt;&lt;tr id="rapid_P8_C2_" class="tableRow"&gt;&lt;td id="rapid_P8_C3_" colspan="3" class="tabelCell"&gt;Duplicate version&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P8_C4_" class="tableRow"&gt;&lt;td id="rapid_P8_C5_" class="tabelCell"&gt;&lt;span id="rapid_P8_C35_" class="text"&gt;New version :&lt;/span&gt;&lt;/td&gt;&lt;td id="rapid_P8_C6_" class="tabelCell"&gt;&lt;input id="rapid_P8_C7_" value="" type="text" class="input"&gt;&lt;/td&gt;&lt;td id="rapid_P8_C24_" class="tabelCell"&gt;&lt;img id="rapid_P8_C27_" src="applications/rapid/1/help_16x16.png" class="image"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P8_C9_" class="tableRow"&gt;&lt;td id="rapid_P8_C10_" class="tabelCell"&gt;Title :&lt;/td&gt;&lt;td id="rapid_P8_C11_" class="tabelCell"&gt;&lt;input id="rapid_P8_C12_" value="" type="text" class="input"&gt;&lt;/td&gt;&lt;td id="rapid_P8_C25_" class="tabelCell"&gt;&lt;img id="rapid_P8_C28_" src="applications/rapid/1/help_16x16.png" class="image"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P8_C14_" class="tableRow"&gt;&lt;td id="rapid_P8_C15_" class="tabelCell"&gt;Description :&lt;/td&gt;&lt;td id="rapid_P8_C16_" class="tabelCell"&gt;&lt;textarea id="rapid_P8_C17_" class="input"&gt;&lt;/textarea&gt;&lt;/td&gt;&lt;td id="rapid_P8_C26_" class="tabelCell"&gt;&lt;img id="rapid_P8_C29_" src="applications/rapid/1/help_16x16.png" class="image"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P8_C18_" class="tableRow"&gt;&lt;td id="rapid_P8_C19_" class="tabelCell"&gt;&lt;button id="rapid_P8_C20_" class="button"&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id="rapid_P8_C22_" colspan="2" class="tabelCell"&gt;&lt;button id="rapid_P8_C23_" class="button"&gt;Save&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</html>
     </rolesHtml>
     <styles>
         <appliesTo>body</appliesTo>

@@ -37,12 +37,6 @@
                         <value>1</value>
                     </entry>
                 </properties>
-                <styles>
-                    <appliesTo>#rapid_P6_C3</appliesTo>
-                    <rules>padding:10px;</rules>
-                    <rules>background:#e00 url(highlight_red_1x44.png) 50% 50% repeat-x;</rules>
-                    <rules>text-shadow :-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;</rules>
-                </styles>
                 <XMLVersion>1</XMLVersion>
             </childControls>
             <properties>
@@ -122,37 +116,8 @@
             <childControls>
                 <childControls>
                     <events>
-                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="existing">
-                            <properties>
-<entry>
-    <key>id</key>
-    <value>rapid_P6_A8</value>
-</entry>
-<entry>
-    <key>XMLVersion</key>
-    <value>1</value>
-</entry>
-<entry>
-    <key>name</key>
-    <value>Existing 30</value>
-</entry>
-<entry>
-    <key>action</key>
-    <value>rapid_P6_A15</value>
-</entry>
-<entry>
-    <key>type</key>
-    <value>existing</value>
-</entry>
-<entry>
-    <key>version</key>
-    <value>1</value>
-</entry>
-                            </properties>
-                            <XMLVersion>1</XMLVersion>
-                        </actions>
                         <filter></filter>
-                        <type>keyup</type>
+                        <type>blur</type>
                     </events>
                     <events>
                         <filter></filter>
@@ -160,7 +125,44 @@
                     </events>
                     <events>
                         <filter></filter>
-                        <type>blur</type>
+                        <type>click</type>
+                    </events>
+                    <events>
+                        <actions xsi:type="existing" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                            <properties>
+                                <entry>
+                                    <key>id</key>
+                                    <value>rapid_P6_A8</value>
+                                </entry>
+                                <entry>
+                                    <key>avoidRedundancy</key>
+                                    <value>false</value>
+                                </entry>
+                                <entry>
+                                    <key>name</key>
+                                    <value>Existing 30</value>
+                                </entry>
+                                <entry>
+                                    <key>action</key>
+                                    <value>rapid_P6_A15</value>
+                                </entry>
+                                <entry>
+                                    <key>type</key>
+                                    <value>existing</value>
+                                </entry>
+                                <entry>
+                                    <key>version</key>
+                                    <value>1</value>
+                                </entry>
+                                <entry>
+                                    <key>redundantActions</key>
+                                    <value>["rapid_P6_A15"]</value>
+                                </entry>
+                            </properties>
+                            <XMLVersion>1</XMLVersion>
+                        </actions>
+                        <filter></filter>
+                        <type>keyup</type>
                     </events>
                     <properties>
                         <entry>
@@ -200,6 +202,7 @@
                         <allowNulls>false</allowNulls>
                         <javaScript></javaScript>
                         <message>User name must be provided</message>
+                        <passHidden>false</passHidden>
                         <regEx>[\s\S]</regEx>
                         <type>value</type>
                     </validation>
@@ -369,7 +372,7 @@
                 <childControls>
                     <events>
                         <filter></filter>
-                        <type>keyup</type>
+                        <type>blur</type>
                     </events>
                     <events>
                         <filter></filter>
@@ -377,7 +380,11 @@
                     </events>
                     <events>
                         <filter></filter>
-                        <type>blur</type>
+                        <type>click</type>
+                    </events>
+                    <events>
+                        <filter></filter>
+                        <type>keyup</type>
                     </events>
                     <properties>
                         <entry>
@@ -417,6 +424,7 @@
                         <allowNulls>false</allowNulls>
                         <javaScript></javaScript>
                         <message></message>
+                        <passHidden>false</passHidden>
                         <regEx></regEx>
                         <type></type>
                     </validation>
@@ -581,37 +589,8 @@
             <childControls>
                 <childControls>
                     <events>
-                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="existing">
-                            <properties>
-<entry>
-    <key>id</key>
-    <value>rapid_P6_A19</value>
-</entry>
-<entry>
-    <key>XMLVersion</key>
-    <value>1</value>
-</entry>
-<entry>
-    <key>name</key>
-    <value>Existing 30</value>
-</entry>
-<entry>
-    <key>action</key>
-    <value>rapid_P3_A29</value>
-</entry>
-<entry>
-    <key>type</key>
-    <value>existing</value>
-</entry>
-<entry>
-    <key>version</key>
-    <value>1</value>
-</entry>
-                            </properties>
-                            <XMLVersion>1</XMLVersion>
-                        </actions>
                         <filter></filter>
-                        <type>keyup</type>
+                        <type>blur</type>
                     </events>
                     <events>
                         <filter></filter>
@@ -619,7 +598,44 @@
                     </events>
                     <events>
                         <filter></filter>
-                        <type>blur</type>
+                        <type>click</type>
+                    </events>
+                    <events>
+                        <actions xsi:type="existing" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                            <properties>
+                                <entry>
+                                    <key>id</key>
+                                    <value>rapid_P6_A19</value>
+                                </entry>
+                                <entry>
+                                    <key>avoidRedundancy</key>
+                                    <value>false</value>
+                                </entry>
+                                <entry>
+                                    <key>name</key>
+                                    <value>Existing 30</value>
+                                </entry>
+                                <entry>
+                                    <key>action</key>
+                                    <value>rapid_P3_A29</value>
+                                </entry>
+                                <entry>
+                                    <key>type</key>
+                                    <value>existing</value>
+                                </entry>
+                                <entry>
+                                    <key>version</key>
+                                    <value>1</value>
+                                </entry>
+                                <entry>
+                                    <key>redundantActions</key>
+                                    <value>["rapid_P3_A29"]</value>
+                                </entry>
+                            </properties>
+                            <XMLVersion>1</XMLVersion>
+                        </actions>
+                        <filter></filter>
+                        <type>keyup</type>
                     </events>
                     <properties>
                         <entry>
@@ -659,6 +675,7 @@
                         <allowNulls>false</allowNulls>
                         <javaScript></javaScript>
                         <message>User name must be provided</message>
+                        <passHidden>false</passHidden>
                         <regEx></regEx>
                         <type></type>
                     </validation>
@@ -837,37 +854,8 @@
             <childControls>
                 <childControls>
                     <events>
-                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="existing">
-                            <properties>
-<entry>
-    <key>id</key>
-    <value>rapid_P6_A26</value>
-</entry>
-<entry>
-    <key>XMLVersion</key>
-    <value>1</value>
-</entry>
-<entry>
-    <key>name</key>
-    <value>Existing 30</value>
-</entry>
-<entry>
-    <key>action</key>
-    <value>rapid_P6_A15</value>
-</entry>
-<entry>
-    <key>type</key>
-    <value>existing</value>
-</entry>
-<entry>
-    <key>version</key>
-    <value>1</value>
-</entry>
-                            </properties>
-                            <XMLVersion>1</XMLVersion>
-                        </actions>
                         <filter></filter>
-                        <type>keyup</type>
+                        <type>blur</type>
                     </events>
                     <events>
                         <filter></filter>
@@ -875,7 +863,44 @@
                     </events>
                     <events>
                         <filter></filter>
-                        <type>blur</type>
+                        <type>click</type>
+                    </events>
+                    <events>
+                        <actions xsi:type="existing" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                            <properties>
+                                <entry>
+                                    <key>id</key>
+                                    <value>rapid_P6_A26</value>
+                                </entry>
+                                <entry>
+                                    <key>avoidRedundancy</key>
+                                    <value>false</value>
+                                </entry>
+                                <entry>
+                                    <key>name</key>
+                                    <value>Existing 30</value>
+                                </entry>
+                                <entry>
+                                    <key>action</key>
+                                    <value>rapid_P6_A15</value>
+                                </entry>
+                                <entry>
+                                    <key>type</key>
+                                    <value>existing</value>
+                                </entry>
+                                <entry>
+                                    <key>version</key>
+                                    <value>1</value>
+                                </entry>
+                                <entry>
+                                    <key>redundantActions</key>
+                                    <value>["rapid_P6_A15"]</value>
+                                </entry>
+                            </properties>
+                            <XMLVersion>1</XMLVersion>
+                        </actions>
+                        <filter></filter>
+                        <type>keyup</type>
                     </events>
                     <properties>
                         <entry>
@@ -913,8 +938,9 @@
                     </styles>
                     <validation>
                         <allowNulls>false</allowNulls>
-                        <javaScript>if (value != $(&quot;#rapid_P6_C18&quot;).val()) return &quot;Passwords must match&quot;;</javaScript>
+                        <javaScript>if (value != $("#rapid_P6_C18").val()) return "Passwords must match";</javaScript>
                         <message>User name must be provided</message>
+                        <passHidden>false</passHidden>
                         <regEx></regEx>
                         <type>javascript</type>
                     </validation>
@@ -1017,36 +1043,36 @@
             <childControls>
                 <childControls>
                     <events>
-                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="control">
+                        <actions xsi:type="control" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                             <properties>
-<entry>
-    <key>id</key>
-    <value>rapid_P6_A36</value>
-</entry>
-<entry>
-    <key>control</key>
-    <value>rapid_P6_C1</value>
-</entry>
-<entry>
-    <key>XMLVersion</key>
-    <value>1</value>
-</entry>
-<entry>
-    <key>name</key>
-    <value>Control 36</value>
-</entry>
-<entry>
-    <key>command</key>
-    <value>hideDialogue();</value>
-</entry>
-<entry>
-    <key>type</key>
-    <value>control</value>
-</entry>
-<entry>
-    <key>version</key>
-    <value>1</value>
-</entry>
+                                <entry>
+                                    <key>id</key>
+                                    <value>rapid_P6_A36</value>
+                                </entry>
+                                <entry>
+                                    <key>control</key>
+                                    <value>rapid_P6_C1</value>
+                                </entry>
+                                <entry>
+                                    <key>avoidRedundancy</key>
+                                    <value>false</value>
+                                </entry>
+                                <entry>
+                                    <key>name</key>
+                                    <value>Control 36</value>
+                                </entry>
+                                <entry>
+                                    <key>command</key>
+                                    <value>hideDialogue();</value>
+                                </entry>
+                                <entry>
+                                    <key>type</key>
+                                    <value>control</value>
+                                </entry>
+                                <entry>
+                                    <key>version</key>
+                                    <value>1</value>
+                                </entry>
                             </properties>
                             <XMLVersion>1</XMLVersion>
                         </actions>
@@ -1124,203 +1150,199 @@
             <childControls>
                 <childControls>
                     <events>
-                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="validation">
+                        <actions xsi:type="validation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                             <properties>
-<entry>
-    <key>id</key>
-    <value>rapid_P6_A15</value>
-</entry>
-<entry>
-    <key>showMessages</key>
-    <value>true</value>
-</entry>
-<entry>
-    <key>XMLVersion</key>
-    <value>1</value>
-</entry>
-<entry>
-    <key>name</key>
-    <value>Validation 29</value>
-</entry>
-<entry>
-    <key>type</key>
-    <value>validation</value>
-</entry>
-<entry>
-    <key>stopActions</key>
-    <value>true</value>
-</entry>
-<entry>
-    <key>version</key>
-    <value>1</value>
-</entry>
+                                <entry>
+                                    <key>id</key>
+                                    <value>rapid_P6_A15</value>
+                                </entry>
+                                <entry>
+                                    <key>showMessages</key>
+                                    <value>true</value>
+                                </entry>
+                                <entry>
+                                    <key>avoidRedundancy</key>
+                                    <value>false</value>
+                                </entry>
+                                <entry>
+                                    <key>name</key>
+                                    <value>Validation 29</value>
+                                </entry>
+                                <entry>
+                                    <key>type</key>
+                                    <value>validation</value>
+                                </entry>
+                                <entry>
+                                    <key>stopActions</key>
+                                    <value>true</value>
+                                </entry>
+                                <entry>
+                                    <key>version</key>
+                                    <value>1</value>
+                                </entry>
                             </properties>
                             <XMLVersion>1</XMLVersion>
                             <controls>rapid_P6_C7</controls>
                             <controls>rapid_P6_C25</controls>
                             <failActions xsi:type="control">
-<properties>
-    <entry>
-        <key>id</key>
-        <value>rapid_P3_A33</value>
-    </entry>
-    <entry>
-        <key>control</key>
-        <value>rapid_P6_C14</value>
-    </entry>
-    <entry>
-        <key>XMLVersion</key>
-        <value>1</value>
-    </entry>
-    <entry>
-        <key>name</key>
-        <value>Control 33</value>
-    </entry>
-    <entry>
-        <key>command</key>
-        <value>disable();</value>
-    </entry>
-    <entry>
-        <key>type</key>
-        <value>control</value>
-    </entry>
-    <entry>
-        <key>version</key>
-        <value>1</value>
-    </entry>
-</properties>
-<XMLVersion>1</XMLVersion>
+                                <properties>
+                                    <entry>
+                                        <key>id</key>
+                                        <value>rapid_P3_A33</value>
+                                    </entry>
+                                    <entry>
+                                        <key>control</key>
+                                        <value>rapid_P6_C14</value>
+                                    </entry>
+                                    <entry>
+                                        <key>avoidRedundancy</key>
+                                        <value>false</value>
+                                    </entry>
+                                    <entry>
+                                        <key>name</key>
+                                        <value>Control 33</value>
+                                    </entry>
+                                    <entry>
+                                        <key>command</key>
+                                        <value>disable();</value>
+                                    </entry>
+                                    <entry>
+                                        <key>type</key>
+                                        <value>control</value>
+                                    </entry>
+                                    <entry>
+                                        <key>version</key>
+                                        <value>1</value>
+                                    </entry>
+                                </properties>
+                                <XMLVersion>1</XMLVersion>
                             </failActions>
                             <passActions xsi:type="control">
-<properties>
-    <entry>
-        <key>id</key>
-        <value>rapid_P3_A35</value>
-    </entry>
-    <entry>
-        <key>control</key>
-        <value>rapid_P6_C14</value>
-    </entry>
-    <entry>
-        <key>XMLVersion</key>
-        <value>1</value>
-    </entry>
-    <entry>
-        <key>name</key>
-        <value>Control 35</value>
-    </entry>
-    <entry>
-        <key>command</key>
-        <value>enable();</value>
-    </entry>
-    <entry>
-        <key>type</key>
-        <value>control</value>
-    </entry>
-    <entry>
-        <key>version</key>
-        <value>1</value>
-    </entry>
-</properties>
-<XMLVersion>1</XMLVersion>
+                                <properties>
+                                    <entry>
+                                        <key>id</key>
+                                        <value>rapid_P3_A35</value>
+                                    </entry>
+                                    <entry>
+                                        <key>control</key>
+                                        <value>rapid_P6_C14</value>
+                                    </entry>
+                                    <entry>
+                                        <key>avoidRedundancy</key>
+                                        <value>false</value>
+                                    </entry>
+                                    <entry>
+                                        <key>name</key>
+                                        <value>Control 35</value>
+                                    </entry>
+                                    <entry>
+                                        <key>command</key>
+                                        <value>enable();</value>
+                                    </entry>
+                                    <entry>
+                                        <key>type</key>
+                                        <value>control</value>
+                                    </entry>
+                                    <entry>
+                                        <key>version</key>
+                                        <value>1</value>
+                                    </entry>
+                                </properties>
+                                <XMLVersion>1</XMLVersion>
                             </passActions>
                         </actions>
-                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="rapid">
+                        <actions xsi:type="rapid" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                             <properties>
-<entry>
-    <key>id</key>
-    <value>rapid_P6_A16</value>
-</entry>
-<entry>
-    <key>XMLVersion</key>
-    <value>1</value>
-</entry>
-<entry>
-    <key>childActions</key>
-    <value>[]</value>
-</entry>
-<entry>
-    <key>name</key>
-    <value>Rapid 27</value>
-</entry>
-<entry>
-    <key>actionType</key>
-    <value>NEWUSER</value>
-</entry>
-<entry>
-    <key>type</key>
-    <value>rapid</value>
-</entry>
-<entry>
-    <key>version</key>
-    <value>1</value>
-</entry>
+                                <entry>
+                                    <key>id</key>
+                                    <value>rapid_P6_A16</value>
+                                </entry>
+                                <entry>
+                                    <key>avoidRedundancy</key>
+                                    <value>false</value>
+                                </entry>
+                                <entry>
+                                    <key>name</key>
+                                    <value>Rapid 27</value>
+                                </entry>
+                                <entry>
+                                    <key>actionType</key>
+                                    <value>NEWUSER</value>
+                                </entry>
+                                <entry>
+                                    <key>type</key>
+                                    <value>rapid</value>
+                                </entry>
+                                <entry>
+                                    <key>version</key>
+                                    <value>1</value>
+                                </entry>
                             </properties>
                             <XMLVersion>1</XMLVersion>
                             <successActions xsi:type="control">
-<properties>
-    <entry>
-        <key>id</key>
-        <value>P6_A37</value>
-    </entry>
-    <entry>
-        <key>control</key>
-        <value>rapid_P6_C1</value>
-    </entry>
-    <entry>
-        <key>XMLVersion</key>
-        <value>1</value>
-    </entry>
-    <entry>
-        <key>name</key>
-        <value>Control 37</value>
-    </entry>
-    <entry>
-        <key>command</key>
-        <value>hideDialogue();</value>
-    </entry>
-    <entry>
-        <key>type</key>
-        <value>control</value>
-    </entry>
-    <entry>
-        <key>version</key>
-        <value>1</value>
-    </entry>
-</properties>
-<XMLVersion>1</XMLVersion>
+                                <properties>
+                                    <entry>
+                                        <key>id</key>
+                                        <value>P6_A37</value>
+                                    </entry>
+                                    <entry>
+                                        <key>control</key>
+                                        <value>rapid_P6_C1</value>
+                                    </entry>
+                                    <entry>
+                                        <key>avoidRedundancy</key>
+                                        <value>false</value>
+                                    </entry>
+                                    <entry>
+                                        <key>name</key>
+                                        <value>Control 37</value>
+                                    </entry>
+                                    <entry>
+                                        <key>command</key>
+                                        <value>hideDialogue();</value>
+                                    </entry>
+                                    <entry>
+                                        <key>type</key>
+                                        <value>control</value>
+                                    </entry>
+                                    <entry>
+                                        <key>version</key>
+                                        <value>1</value>
+                                    </entry>
+                                </properties>
+                                <XMLVersion>1</XMLVersion>
                             </successActions>
                             <successActions xsi:type="custom">
-<properties>
-    <entry>
-        <key>id</key>
-        <value>P6_A38_</value>
-    </entry>
-    <entry>
-        <key>javascript</key>
-        <value>// reload security details
-$(&quot;#rapid_P0_C81&quot;).change();
+                                <properties>
+                                    <entry>
+                                        <key>id</key>
+                                        <value>P6_A38_</value>
+                                    </entry>
+                                    <entry>
+                                        <key>javascript</key>
+                                        <value>// reload security details
+$("#rapid_P0_C81").change();
 // fake a click on the security tab
-$(&quot;#rapid_P0_C47&quot;).click();</value>
-    </entry>
-    <entry>
-        <key>XMLVersion</key>
-        <value>1</value>
-    </entry>
-    <entry>
-        <key>name</key>
-        <value>Custom 38</value>
-    </entry>
-    <entry>
-        <key>type</key>
-        <value>custom</value>
-    </entry>
-    <entry>
-        <key>version</key>
-        <value>1</value>
-    </entry>
-</properties>
-<XMLVersion>1</XMLVersion>
+$("#rapid_P0_C47").click();</value>
+                                    </entry>
+                                    <entry>
+                                        <key>avoidRedundancy</key>
+                                        <value>false</value>
+                                    </entry>
+                                    <entry>
+                                        <key>name</key>
+                                        <value>Custom 38</value>
+                                    </entry>
+                                    <entry>
+                                        <key>type</key>
+                                        <value>custom</value>
+                                    </entry>
+                                    <entry>
+                                        <key>version</key>
+                                        <value>1</value>
+                                    </entry>
+                                </properties>
+                                <XMLVersion>1</XMLVersion>
                             </successActions>
                         </actions>
                         <filter></filter>
@@ -1435,7 +1457,7 @@ $(&quot;#rapid_P0_C47&quot;).click();</value>
             </entry>
             <entry>
                 <key>classes</key>
-                <value>[]</value>
+                <value>["glossyTitle"]</value>
             </entry>
             <entry>
                 <key>name</key>
@@ -1474,11 +1496,11 @@ $(&quot;#rapid_P0_C47&quot;).click();</value>
             </entry>
             <entry>
                 <key>details</key>
-                <value>{&quot;controlHints&quot;:[{&quot;text&quot;:&quot;The user name or login that uniquely identifies the user.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P6_C47_&quot;},{&quot;text&quot;:&quot;A longer description of the user. Typically their fully name.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P6_C48_&quot;},{&quot;text&quot;:&quot;The password may be left blank depending on the security adapter.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P6_C49_&quot;}]}</value>
+                <value>{"controlHints":[{"text":"The user name or login that uniquely identifies the user.","style":"","controlId":"rapid_P6_C47_","type":"hover"},{"text":"A longer description of the user. Typically their fully name.","style":"","controlId":"rapid_P6_C48_","type":"hover"},{"text":"The password may be left blank depending on the security adapter.","style":"","controlId":"rapid_P6_C49_","type":"hover"}]}</value>
             </entry>
             <entry>
                 <key>controlHints</key>
-                <value>[{&quot;text&quot;:&quot;The user name or login that uniquely identifies the user.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P6_C47_&quot;},{&quot;text&quot;:&quot;A longer description of the user. Typically their fully name.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P6_C48_&quot;},{&quot;text&quot;:&quot;The password may be left blank depending on the security adapter.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P6_C49_&quot;}]</value>
+                <value>[{"text":"The user name or login that uniquely identifies the user.","style":"","controlId":"rapid_P6_C47_","type":"hover"},{"text":"A longer description of the user. Typically their fully name.","style":"","controlId":"rapid_P6_C48_","type":"hover"},{"text":"The password may be left blank depending on the security adapter.","style":"","controlId":"rapid_P6_C49_","type":"hover"}]</value>
             </entry>
             <entry>
                 <key>type</key>
@@ -1500,54 +1522,13 @@ $(&quot;#rapid_P0_C47&quot;).click();</value>
         <filter></filter>
         <type>reusable</type>
     </events>
-    <htmlBody>&lt;table id=&quot;rapid_P6_C1&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;rapid_P6_C2&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P6_C3&quot; colspan=&quot;3&quot; class=&quot;tabelCell&quot;&gt;New user&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P6_C4&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P6_C5&quot; class=&quot;tabelCell&quot;&gt;User name&lt;/td&gt;&lt;td id=&quot;rapid_P6_C6&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P6_C7&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P6_C43_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P6_C47_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P6_C39_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P6_C40_&quot; class=&quot;tabelCell&quot;&gt;Description&lt;/td&gt;&lt;td id=&quot;rapid_P6_C41_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P6_C42_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P6_C44_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P6_C48_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P6_C15&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P6_C16&quot; class=&quot;tabelCell&quot;&gt;Password&lt;/td&gt;&lt;td id=&quot;rapid_P6_C17&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P6_C18&quot; value=&quot;&quot; type=&quot;password&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P6_C45_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P6_C49_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P6_C22&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P6_C23&quot; class=&quot;tabelCell&quot;&gt;Confirm password&lt;/td&gt;&lt;td id=&quot;rapid_P6_C24&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P6_C25&quot; value=&quot;&quot; type=&quot;password&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P6_C46_&quot; class=&quot;tabelCell&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P6_C9&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P6_C10&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P6_C11&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P6_C13&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P6_C14&quot; class=&quot;button&quot;&gt;Save&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
+    <htmlBody>&lt;table id="rapid_P6_C1" class="table glossyTitle"&gt;&lt;tbody&gt;&lt;tr id="rapid_P6_C2" class="tableRow"&gt;&lt;td id="rapid_P6_C3" colspan="3" class="tabelCell"&gt;New user&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P6_C4" class="tableRow"&gt;&lt;td id="rapid_P6_C5" class="tabelCell"&gt;User name&lt;/td&gt;&lt;td id="rapid_P6_C6" class="tabelCell"&gt;&lt;input id="rapid_P6_C7" value="" type="text" class="input"&gt;&lt;/td&gt;&lt;td id="rapid_P6_C43_" class="tabelCell"&gt;&lt;img id="rapid_P6_C47_" src="applications/rapid/1/help_16x16.png" class="image"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P6_C39_" class="tableRow"&gt;&lt;td id="rapid_P6_C40_" class="tabelCell"&gt;Description&lt;/td&gt;&lt;td id="rapid_P6_C41_" class="tabelCell"&gt;&lt;input id="rapid_P6_C42_" value="" type="text" class="input"&gt;&lt;/td&gt;&lt;td id="rapid_P6_C44_" class="tabelCell"&gt;&lt;img id="rapid_P6_C48_" src="applications/rapid/1/help_16x16.png" class="image"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P6_C15" class="tableRow"&gt;&lt;td id="rapid_P6_C16" class="tabelCell"&gt;Password&lt;/td&gt;&lt;td id="rapid_P6_C17" class="tabelCell"&gt;&lt;input id="rapid_P6_C18" value="" type="password" class="input"&gt;&lt;/td&gt;&lt;td id="rapid_P6_C45_" class="tabelCell"&gt;&lt;img id="rapid_P6_C49_" src="applications/rapid/1/help_16x16.png" class="image"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P6_C22" class="tableRow"&gt;&lt;td id="rapid_P6_C23" class="tabelCell"&gt;Confirm password&lt;/td&gt;&lt;td id="rapid_P6_C24" class="tabelCell"&gt;&lt;input id="rapid_P6_C25" value="" type="password" class="input"&gt;&lt;/td&gt;&lt;td id="rapid_P6_C46_" class="tabelCell"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P6_C9" class="tableRow"&gt;&lt;td id="rapid_P6_C10" class="tabelCell"&gt;&lt;button id="rapid_P6_C11" class="button"&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id="rapid_P6_C13" colspan="2" class="tabelCell"&gt;&lt;button id="rapid_P6_C14" class="button"&gt;Save&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
     <id>P6</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-07-09T16:15:57.115+01:00</modifiedDate>
+    <modifiedDate>2014-12-30T06:49:34.812Z</modifiedDate>
     <name>06_UserNew</name>
     <rolesHtml>
-        <html>&lt;table id=&quot;rapid_P6_C1&quot; class=&quot;table&quot;&gt;
-		&lt;tbody&gt;
-			&lt;tr id=&quot;rapid_P6_C2&quot; class=&quot;tableRow&quot;&gt;
-				&lt;td id=&quot;rapid_P6_C3&quot; colspan=&quot;3&quot; class=&quot;tabelCell&quot;&gt;New user&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr id=&quot;rapid_P6_C4&quot; class=&quot;tableRow&quot;&gt;
-				&lt;td id=&quot;rapid_P6_C5&quot; class=&quot;tabelCell&quot;&gt;User name&lt;/td&gt;
-				&lt;td id=&quot;rapid_P6_C6&quot; class=&quot;tabelCell&quot;&gt;
-					&lt;input id=&quot;rapid_P6_C7&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
-					&lt;td id=&quot;rapid_P6_C43_&quot; class=&quot;tabelCell&quot;&gt;
-						&lt;img id=&quot;rapid_P6_C47_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;
-					&lt;/tr&gt;
-					&lt;tr id=&quot;rapid_P6_C39_&quot; class=&quot;tableRow&quot;&gt;
-						&lt;td id=&quot;rapid_P6_C40_&quot; class=&quot;tabelCell&quot;&gt;Description&lt;/td&gt;
-						&lt;td id=&quot;rapid_P6_C41_&quot; class=&quot;tabelCell&quot;&gt;
-							&lt;input id=&quot;rapid_P6_C42_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
-							&lt;td id=&quot;rapid_P6_C44_&quot; class=&quot;tabelCell&quot;&gt;
-								&lt;img id=&quot;rapid_P6_C48_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;
-							&lt;/tr&gt;
-							&lt;tr id=&quot;rapid_P6_C15&quot; class=&quot;tableRow&quot;&gt;
-								&lt;td id=&quot;rapid_P6_C16&quot; class=&quot;tabelCell&quot;&gt;Password&lt;/td&gt;
-								&lt;td id=&quot;rapid_P6_C17&quot; class=&quot;tabelCell&quot;&gt;
-									&lt;input id=&quot;rapid_P6_C18&quot; value=&quot;&quot; type=&quot;password&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
-									&lt;td id=&quot;rapid_P6_C45_&quot; class=&quot;tabelCell&quot;&gt;
-										&lt;img id=&quot;rapid_P6_C49_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;
-									&lt;/tr&gt;
-									&lt;tr id=&quot;rapid_P6_C22&quot; class=&quot;tableRow&quot;&gt;
-										&lt;td id=&quot;rapid_P6_C23&quot; class=&quot;tabelCell&quot;&gt;Confirm password&lt;/td&gt;
-										&lt;td id=&quot;rapid_P6_C24&quot; class=&quot;tabelCell&quot;&gt;
-											&lt;input id=&quot;rapid_P6_C25&quot; value=&quot;&quot; type=&quot;password&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
-											&lt;td id=&quot;rapid_P6_C46_&quot; class=&quot;tabelCell&quot;&gt;&lt;/td&gt;
-										&lt;/tr&gt;
-										&lt;tr id=&quot;rapid_P6_C9&quot; class=&quot;tableRow&quot;&gt;
-											&lt;td id=&quot;rapid_P6_C10&quot; class=&quot;tabelCell&quot;&gt;
-												&lt;button id=&quot;rapid_P6_C11&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;
-											&lt;/td&gt;
-											&lt;td id=&quot;rapid_P6_C13&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;
-												&lt;button id=&quot;rapid_P6_C14&quot; class=&quot;button&quot;&gt;Save&lt;/button&gt;
-											&lt;/td&gt;
-										&lt;/tr&gt;
-									&lt;/tbody&gt;
-								&lt;/table&gt;</html>
+        <html>&lt;table id="rapid_P6_C1" class="table glossyTitle"&gt;&lt;tbody&gt;&lt;tr id="rapid_P6_C2" class="tableRow"&gt;&lt;td id="rapid_P6_C3" colspan="3" class="tabelCell"&gt;New user&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P6_C4" class="tableRow"&gt;&lt;td id="rapid_P6_C5" class="tabelCell"&gt;User name&lt;/td&gt;&lt;td id="rapid_P6_C6" class="tabelCell"&gt;&lt;input id="rapid_P6_C7" value="" type="text" class="input"&gt;&lt;/td&gt;&lt;td id="rapid_P6_C43_" class="tabelCell"&gt;&lt;img id="rapid_P6_C47_" src="applications/rapid/1/help_16x16.png" class="image"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P6_C39_" class="tableRow"&gt;&lt;td id="rapid_P6_C40_" class="tabelCell"&gt;Description&lt;/td&gt;&lt;td id="rapid_P6_C41_" class="tabelCell"&gt;&lt;input id="rapid_P6_C42_" value="" type="text" class="input"&gt;&lt;/td&gt;&lt;td id="rapid_P6_C44_" class="tabelCell"&gt;&lt;img id="rapid_P6_C48_" src="applications/rapid/1/help_16x16.png" class="image"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P6_C15" class="tableRow"&gt;&lt;td id="rapid_P6_C16" class="tabelCell"&gt;Password&lt;/td&gt;&lt;td id="rapid_P6_C17" class="tabelCell"&gt;&lt;input id="rapid_P6_C18" value="" type="password" class="input"&gt;&lt;/td&gt;&lt;td id="rapid_P6_C45_" class="tabelCell"&gt;&lt;img id="rapid_P6_C49_" src="applications/rapid/1/help_16x16.png" class="image"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P6_C22" class="tableRow"&gt;&lt;td id="rapid_P6_C23" class="tabelCell"&gt;Confirm password&lt;/td&gt;&lt;td id="rapid_P6_C24" class="tabelCell"&gt;&lt;input id="rapid_P6_C25" value="" type="password" class="input"&gt;&lt;/td&gt;&lt;td id="rapid_P6_C46_" class="tabelCell"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P6_C9" class="tableRow"&gt;&lt;td id="rapid_P6_C10" class="tabelCell"&gt;&lt;button id="rapid_P6_C11" class="button"&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id="rapid_P6_C13" colspan="2" class="tabelCell"&gt;&lt;button id="rapid_P6_C14" class="button"&gt;Save&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</html>
     </rolesHtml>
     <title>New user</title>
     <XMLVersion>1</XMLVersion>

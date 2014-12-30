@@ -965,7 +965,7 @@ public class Rapid extends Action {
 				app = Application.load(rapidServlet.getServletContext(), applicationFile);
 				
 				// load applications and set the result message
-				result.put("message", "Reloaded version");  
+				result.put("message", "Version reloaded");  
 								
 			} else if ("SAVEAPP".equals(action)) {
 			

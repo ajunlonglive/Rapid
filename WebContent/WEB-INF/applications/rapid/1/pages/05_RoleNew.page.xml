@@ -37,12 +37,6 @@
                         <value>1</value>
                     </entry>
                 </properties>
-                <styles>
-                    <appliesTo>#rapid_P5_C3</appliesTo>
-                    <rules>padding:10px;</rules>
-                    <rules>background:#e00 url(highlight_red_1x44.png) 50% 50% repeat-x;</rules>
-                    <rules>text-shadow :-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;</rules>
-                </styles>
                 <XMLVersion>1</XMLVersion>
             </childControls>
             <properties>
@@ -117,37 +111,8 @@
             <childControls>
                 <childControls>
                     <events>
-                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="existing">
-                            <properties>
-<entry>
-    <key>id</key>
-    <value>rapid_P5_A8</value>
-</entry>
-<entry>
-    <key>XMLVersion</key>
-    <value>1</value>
-</entry>
-<entry>
-    <key>name</key>
-    <value>Existing 30</value>
-</entry>
-<entry>
-    <key>action</key>
-    <value>rapid_P5_A25</value>
-</entry>
-<entry>
-    <key>type</key>
-    <value>existing</value>
-</entry>
-<entry>
-    <key>version</key>
-    <value>1</value>
-</entry>
-                            </properties>
-                            <XMLVersion>1</XMLVersion>
-                        </actions>
                         <filter></filter>
-                        <type>keyup</type>
+                        <type>blur</type>
                     </events>
                     <events>
                         <filter></filter>
@@ -155,7 +120,44 @@
                     </events>
                     <events>
                         <filter></filter>
-                        <type>blur</type>
+                        <type>click</type>
+                    </events>
+                    <events>
+                        <actions xsi:type="existing" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                            <properties>
+                                <entry>
+                                    <key>id</key>
+                                    <value>rapid_P5_A8</value>
+                                </entry>
+                                <entry>
+                                    <key>avoidRedundancy</key>
+                                    <value>false</value>
+                                </entry>
+                                <entry>
+                                    <key>name</key>
+                                    <value>Existing 30</value>
+                                </entry>
+                                <entry>
+                                    <key>action</key>
+                                    <value>rapid_P5_A25</value>
+                                </entry>
+                                <entry>
+                                    <key>type</key>
+                                    <value>existing</value>
+                                </entry>
+                                <entry>
+                                    <key>version</key>
+                                    <value>1</value>
+                                </entry>
+                                <entry>
+                                    <key>redundantActions</key>
+                                    <value>["rapid_P5_A25"]</value>
+                                </entry>
+                            </properties>
+                            <XMLVersion>1</XMLVersion>
+                        </actions>
+                        <filter></filter>
+                        <type>keyup</type>
                     </events>
                     <properties>
                         <entry>
@@ -195,6 +197,7 @@
                         <allowNulls>false</allowNulls>
                         <javaScript></javaScript>
                         <message>User name must be provided</message>
+                        <passHidden>false</passHidden>
                         <regEx>[\s\S]</regEx>
                         <type>value</type>
                     </validation>
@@ -364,7 +367,7 @@
                 <childControls>
                     <events>
                         <filter></filter>
-                        <type>keyup</type>
+                        <type>blur</type>
                     </events>
                     <events>
                         <filter></filter>
@@ -372,7 +375,11 @@
                     </events>
                     <events>
                         <filter></filter>
-                        <type>blur</type>
+                        <type>click</type>
+                    </events>
+                    <events>
+                        <filter></filter>
+                        <type>keyup</type>
                     </events>
                     <properties>
                         <entry>
@@ -412,6 +419,7 @@
                         <allowNulls>false</allowNulls>
                         <javaScript></javaScript>
                         <message></message>
+                        <passHidden>false</passHidden>
                         <regEx></regEx>
                         <type></type>
                     </validation>
@@ -535,36 +543,36 @@
             <childControls>
                 <childControls>
                     <events>
-                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="control">
+                        <actions xsi:type="control" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                             <properties>
-<entry>
-    <key>id</key>
-    <value>rapid_P5_A36</value>
-</entry>
-<entry>
-    <key>control</key>
-    <value>rapid_P5_C1</value>
-</entry>
-<entry>
-    <key>XMLVersion</key>
-    <value>1</value>
-</entry>
-<entry>
-    <key>name</key>
-    <value>Control 36</value>
-</entry>
-<entry>
-    <key>command</key>
-    <value>hideDialogue();</value>
-</entry>
-<entry>
-    <key>type</key>
-    <value>control</value>
-</entry>
-<entry>
-    <key>version</key>
-    <value>1</value>
-</entry>
+                                <entry>
+                                    <key>id</key>
+                                    <value>rapid_P5_A36</value>
+                                </entry>
+                                <entry>
+                                    <key>control</key>
+                                    <value>rapid_P5_C1</value>
+                                </entry>
+                                <entry>
+                                    <key>avoidRedundancy</key>
+                                    <value>false</value>
+                                </entry>
+                                <entry>
+                                    <key>name</key>
+                                    <value>Control 36</value>
+                                </entry>
+                                <entry>
+                                    <key>command</key>
+                                    <value>hideDialogue();</value>
+                                </entry>
+                                <entry>
+                                    <key>type</key>
+                                    <value>control</value>
+                                </entry>
+                                <entry>
+                                    <key>version</key>
+                                    <value>1</value>
+                                </entry>
                             </properties>
                             <XMLVersion>1</XMLVersion>
                         </actions>
@@ -642,170 +650,166 @@
             <childControls>
                 <childControls>
                     <events>
-                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="validation">
+                        <actions xsi:type="validation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                             <properties>
-<entry>
-    <key>id</key>
-    <value>rapid_P5_A25</value>
-</entry>
-<entry>
-    <key>showMessages</key>
-    <value>true</value>
-</entry>
-<entry>
-    <key>XMLVersion</key>
-    <value>1</value>
-</entry>
-<entry>
-    <key>name</key>
-    <value>Validation 29</value>
-</entry>
-<entry>
-    <key>type</key>
-    <value>validation</value>
-</entry>
-<entry>
-    <key>stopActions</key>
-    <value>true</value>
-</entry>
-<entry>
-    <key>version</key>
-    <value>1</value>
-</entry>
+                                <entry>
+                                    <key>id</key>
+                                    <value>rapid_P5_A25</value>
+                                </entry>
+                                <entry>
+                                    <key>showMessages</key>
+                                    <value>true</value>
+                                </entry>
+                                <entry>
+                                    <key>avoidRedundancy</key>
+                                    <value>false</value>
+                                </entry>
+                                <entry>
+                                    <key>name</key>
+                                    <value>Validation 29</value>
+                                </entry>
+                                <entry>
+                                    <key>type</key>
+                                    <value>validation</value>
+                                </entry>
+                                <entry>
+                                    <key>stopActions</key>
+                                    <value>true</value>
+                                </entry>
+                                <entry>
+                                    <key>version</key>
+                                    <value>1</value>
+                                </entry>
                             </properties>
                             <XMLVersion>1</XMLVersion>
                             <controls>rapid_P5_C7</controls>
                             <failActions xsi:type="control">
-<properties>
-    <entry>
-        <key>id</key>
-        <value>rapid_P3_A33</value>
-    </entry>
-    <entry>
-        <key>control</key>
-        <value>rapid_P5_C24</value>
-    </entry>
-    <entry>
-        <key>XMLVersion</key>
-        <value>1</value>
-    </entry>
-    <entry>
-        <key>name</key>
-        <value>Control 33</value>
-    </entry>
-    <entry>
-        <key>command</key>
-        <value>disable();</value>
-    </entry>
-    <entry>
-        <key>type</key>
-        <value>control</value>
-    </entry>
-    <entry>
-        <key>version</key>
-        <value>1</value>
-    </entry>
-</properties>
-<XMLVersion>1</XMLVersion>
+                                <properties>
+                                    <entry>
+                                        <key>id</key>
+                                        <value>rapid_P3_A33</value>
+                                    </entry>
+                                    <entry>
+                                        <key>control</key>
+                                        <value>rapid_P5_C24</value>
+                                    </entry>
+                                    <entry>
+                                        <key>avoidRedundancy</key>
+                                        <value>false</value>
+                                    </entry>
+                                    <entry>
+                                        <key>name</key>
+                                        <value>Control 33</value>
+                                    </entry>
+                                    <entry>
+                                        <key>command</key>
+                                        <value>disable();</value>
+                                    </entry>
+                                    <entry>
+                                        <key>type</key>
+                                        <value>control</value>
+                                    </entry>
+                                    <entry>
+                                        <key>version</key>
+                                        <value>1</value>
+                                    </entry>
+                                </properties>
+                                <XMLVersion>1</XMLVersion>
                             </failActions>
                             <passActions xsi:type="control">
-<properties>
-    <entry>
-        <key>id</key>
-        <value>rapid_P3_A35</value>
-    </entry>
-    <entry>
-        <key>control</key>
-        <value>rapid_P5_C24</value>
-    </entry>
-    <entry>
-        <key>XMLVersion</key>
-        <value>1</value>
-    </entry>
-    <entry>
-        <key>name</key>
-        <value>Control 35</value>
-    </entry>
-    <entry>
-        <key>command</key>
-        <value>enable();</value>
-    </entry>
-    <entry>
-        <key>type</key>
-        <value>control</value>
-    </entry>
-    <entry>
-        <key>version</key>
-        <value>1</value>
-    </entry>
-</properties>
-<XMLVersion>1</XMLVersion>
+                                <properties>
+                                    <entry>
+                                        <key>id</key>
+                                        <value>rapid_P3_A35</value>
+                                    </entry>
+                                    <entry>
+                                        <key>control</key>
+                                        <value>rapid_P5_C24</value>
+                                    </entry>
+                                    <entry>
+                                        <key>avoidRedundancy</key>
+                                        <value>false</value>
+                                    </entry>
+                                    <entry>
+                                        <key>name</key>
+                                        <value>Control 35</value>
+                                    </entry>
+                                    <entry>
+                                        <key>command</key>
+                                        <value>enable();</value>
+                                    </entry>
+                                    <entry>
+                                        <key>type</key>
+                                        <value>control</value>
+                                    </entry>
+                                    <entry>
+                                        <key>version</key>
+                                        <value>1</value>
+                                    </entry>
+                                </properties>
+                                <XMLVersion>1</XMLVersion>
                             </passActions>
                         </actions>
-                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="rapid">
+                        <actions xsi:type="rapid" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                             <properties>
-<entry>
-    <key>id</key>
-    <value>rapid_P5_A26</value>
-</entry>
-<entry>
-    <key>XMLVersion</key>
-    <value>1</value>
-</entry>
-<entry>
-    <key>childActions</key>
-    <value>[]</value>
-</entry>
-<entry>
-    <key>name</key>
-    <value>Rapid 27</value>
-</entry>
-<entry>
-    <key>actionType</key>
-    <value>NEWROLE</value>
-</entry>
-<entry>
-    <key>type</key>
-    <value>rapid</value>
-</entry>
-<entry>
-    <key>version</key>
-    <value>1</value>
-</entry>
+                                <entry>
+                                    <key>id</key>
+                                    <value>rapid_P5_A26</value>
+                                </entry>
+                                <entry>
+                                    <key>avoidRedundancy</key>
+                                    <value>false</value>
+                                </entry>
+                                <entry>
+                                    <key>name</key>
+                                    <value>Rapid 27</value>
+                                </entry>
+                                <entry>
+                                    <key>actionType</key>
+                                    <value>NEWROLE</value>
+                                </entry>
+                                <entry>
+                                    <key>type</key>
+                                    <value>rapid</value>
+                                </entry>
+                                <entry>
+                                    <key>version</key>
+                                    <value>1</value>
+                                </entry>
                             </properties>
                             <XMLVersion>1</XMLVersion>
                             <successActions xsi:type="control">
-<properties>
-    <entry>
-        <key>id</key>
-        <value>P5_A37</value>
-    </entry>
-    <entry>
-        <key>control</key>
-        <value>rapid_P5_C1</value>
-    </entry>
-    <entry>
-        <key>XMLVersion</key>
-        <value>1</value>
-    </entry>
-    <entry>
-        <key>name</key>
-        <value>Control 37</value>
-    </entry>
-    <entry>
-        <key>command</key>
-        <value>hideDialogue();</value>
-    </entry>
-    <entry>
-        <key>type</key>
-        <value>control</value>
-    </entry>
-    <entry>
-        <key>version</key>
-        <value>1</value>
-    </entry>
-</properties>
-<XMLVersion>1</XMLVersion>
+                                <properties>
+                                    <entry>
+                                        <key>id</key>
+                                        <value>P5_A37</value>
+                                    </entry>
+                                    <entry>
+                                        <key>control</key>
+                                        <value>rapid_P5_C1</value>
+                                    </entry>
+                                    <entry>
+                                        <key>avoidRedundancy</key>
+                                        <value>false</value>
+                                    </entry>
+                                    <entry>
+                                        <key>name</key>
+                                        <value>Control 37</value>
+                                    </entry>
+                                    <entry>
+                                        <key>command</key>
+                                        <value>hideDialogue();</value>
+                                    </entry>
+                                    <entry>
+                                        <key>type</key>
+                                        <value>control</value>
+                                    </entry>
+                                    <entry>
+                                        <key>version</key>
+                                        <value>1</value>
+                                    </entry>
+                                </properties>
+                                <XMLVersion>1</XMLVersion>
                             </successActions>
                         </actions>
                         <filter></filter>
@@ -921,7 +925,7 @@
             </entry>
             <entry>
                 <key>classes</key>
-                <value>[]</value>
+                <value>["glossyTitle"]</value>
             </entry>
             <entry>
                 <key>name</key>
@@ -960,11 +964,11 @@
             </entry>
             <entry>
                 <key>details</key>
-                <value>{&quot;controlHints&quot;:[{&quot;text&quot;:&quot;The short name of the role. Used to uniquely identify it.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P5_C45_&quot;},{&quot;text&quot;:&quot;The description should contain further details about what the role allows.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P5_C46_&quot;}]}</value>
+                <value>{"controlHints":[{"text":"The short name of the role. Used to uniquely identify it.","style":"","controlId":"rapid_P5_C45_","type":"hover"},{"text":"The description should contain further details about what the role allows.","style":"","controlId":"rapid_P5_C46_","type":"hover"}]}</value>
             </entry>
             <entry>
                 <key>controlHints</key>
-                <value>[{&quot;text&quot;:&quot;The short name of the role. Used to uniquely identify it.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P5_C45_&quot;},{&quot;text&quot;:&quot;The description should contain further details about what the role allows.&quot;,&quot;style&quot;:&quot;&quot;,&quot;type&quot;:&quot;hover&quot;,&quot;controlId&quot;:&quot;rapid_P5_C46_&quot;}]</value>
+                <value>[{"text":"The short name of the role. Used to uniquely identify it.","style":"","controlId":"rapid_P5_C45_","type":"hover"},{"text":"The description should contain further details about what the role allows.","style":"","controlId":"rapid_P5_C46_","type":"hover"}]</value>
             </entry>
             <entry>
                 <key>type</key>
@@ -979,7 +983,7 @@
     </controls>
     <description>Allows a new security role to be added to an application</description>
     <events>
-        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="control">
+        <actions xsi:type="control" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <properties>
                 <entry>
                     <key>id</key>
@@ -988,6 +992,10 @@
                 <entry>
                     <key>control</key>
                     <value>rapid_P5_C24</value>
+                </entry>
+                <entry>
+                    <key>avoidRedundancy</key>
+                    <value>false</value>
                 </entry>
                 <entry>
                     <key>name</key>
@@ -1004,7 +1012,7 @@
             </properties>
             <XMLVersion>1</XMLVersion>
         </actions>
-        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="control">
+        <actions xsi:type="control" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <properties>
                 <entry>
                     <key>id</key>
@@ -1015,8 +1023,8 @@
                     <value>rapid_P5_C7</value>
                 </entry>
                 <entry>
-                    <key>XMLVersion</key>
-                    <value>1</value>
+                    <key>avoidRedundancy</key>
+                    <value>false</value>
                 </entry>
                 <entry>
                     <key>name</key>
@@ -1044,41 +1052,13 @@
         <filter></filter>
         <type>reusable</type>
     </events>
-    <htmlBody>&lt;table id=&quot;rapid_P5_C1&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;rapid_P5_C2&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P5_C3&quot; colspan=&quot;3&quot; class=&quot;tabelCell&quot;&gt;New role&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P5_C4&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P5_C5&quot; class=&quot;tabelCell&quot;&gt;Name&lt;/td&gt;&lt;td id=&quot;rapid_P5_C6&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P5_C7&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P5_C43_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P5_C45_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P5_C39_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P5_C40_&quot; class=&quot;tabelCell&quot;&gt;Description&lt;/td&gt;&lt;td id=&quot;rapid_P5_C42_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P5_C41_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P5_C44_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P5_C46_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P5_C18&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P5_C19&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P5_C20&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P5_C23&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P5_C24&quot; class=&quot;button&quot;&gt;Save&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
+    <htmlBody>&lt;table id="rapid_P5_C1" class="table glossyTitle"&gt;&lt;tbody&gt;&lt;tr id="rapid_P5_C2" class="tableRow"&gt;&lt;td id="rapid_P5_C3" colspan="3" class="tabelCell"&gt;New role&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P5_C4" class="tableRow"&gt;&lt;td id="rapid_P5_C5" class="tabelCell"&gt;Name&lt;/td&gt;&lt;td id="rapid_P5_C6" class="tabelCell"&gt;&lt;input id="rapid_P5_C7" value="" type="text" class="input"&gt;&lt;/td&gt;&lt;td id="rapid_P5_C43_" class="tabelCell"&gt;&lt;img id="rapid_P5_C45_" src="applications/rapid/1/help_16x16.png" class="image"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P5_C39_" class="tableRow"&gt;&lt;td id="rapid_P5_C40_" class="tabelCell"&gt;Description&lt;/td&gt;&lt;td id="rapid_P5_C42_" class="tabelCell"&gt;&lt;input id="rapid_P5_C41_" value="" type="text" class="input"&gt;&lt;/td&gt;&lt;td id="rapid_P5_C44_" class="tabelCell"&gt;&lt;img id="rapid_P5_C46_" src="applications/rapid/1/help_16x16.png" class="image"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P5_C18" class="tableRow"&gt;&lt;td id="rapid_P5_C19" class="tabelCell"&gt;&lt;button id="rapid_P5_C20" class="button"&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id="rapid_P5_C23" colspan="2" class="tabelCell"&gt;&lt;button id="rapid_P5_C24" class="button"&gt;Save&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
     <id>P5</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-07-09T16:27:25.367+01:00</modifiedDate>
+    <modifiedDate>2014-12-30T06:49:19.346Z</modifiedDate>
     <name>05_RoleNew</name>
     <rolesHtml>
-        <html>&lt;table id=&quot;rapid_P5_C1&quot; class=&quot;table&quot;&gt;
-		&lt;tbody&gt;
-			&lt;tr id=&quot;rapid_P5_C2&quot; class=&quot;tableRow&quot;&gt;
-				&lt;td id=&quot;rapid_P5_C3&quot; colspan=&quot;3&quot; class=&quot;tabelCell&quot;&gt;New role&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr id=&quot;rapid_P5_C4&quot; class=&quot;tableRow&quot;&gt;
-				&lt;td id=&quot;rapid_P5_C5&quot; class=&quot;tabelCell&quot;&gt;Name&lt;/td&gt;
-				&lt;td id=&quot;rapid_P5_C6&quot; class=&quot;tabelCell&quot;&gt;
-					&lt;input id=&quot;rapid_P5_C7&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
-					&lt;td id=&quot;rapid_P5_C43_&quot; class=&quot;tabelCell&quot;&gt;
-						&lt;img id=&quot;rapid_P5_C45_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;
-					&lt;/tr&gt;
-					&lt;tr id=&quot;rapid_P5_C39_&quot; class=&quot;tableRow&quot;&gt;
-						&lt;td id=&quot;rapid_P5_C40_&quot; class=&quot;tabelCell&quot;&gt;Description&lt;/td&gt;
-						&lt;td id=&quot;rapid_P5_C42_&quot; class=&quot;tabelCell&quot;&gt;
-							&lt;input id=&quot;rapid_P5_C41_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
-							&lt;td id=&quot;rapid_P5_C44_&quot; class=&quot;tabelCell&quot;&gt;
-								&lt;img id=&quot;rapid_P5_C46_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;
-							&lt;/tr&gt;
-							&lt;tr id=&quot;rapid_P5_C18&quot; class=&quot;tableRow&quot;&gt;
-								&lt;td id=&quot;rapid_P5_C19&quot; class=&quot;tabelCell&quot;&gt;
-									&lt;button id=&quot;rapid_P5_C20&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;
-								&lt;/td&gt;
-								&lt;td id=&quot;rapid_P5_C23&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;
-									&lt;button id=&quot;rapid_P5_C24&quot; class=&quot;button&quot;&gt;Save&lt;/button&gt;
-								&lt;/td&gt;
-							&lt;/tr&gt;
-						&lt;/tbody&gt;
-					&lt;/table&gt;</html>
+        <html>&lt;table id="rapid_P5_C1" class="table glossyTitle"&gt;&lt;tbody&gt;&lt;tr id="rapid_P5_C2" class="tableRow"&gt;&lt;td id="rapid_P5_C3" colspan="3" class="tabelCell"&gt;New role&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P5_C4" class="tableRow"&gt;&lt;td id="rapid_P5_C5" class="tabelCell"&gt;Name&lt;/td&gt;&lt;td id="rapid_P5_C6" class="tabelCell"&gt;&lt;input id="rapid_P5_C7" value="" type="text" class="input"&gt;&lt;/td&gt;&lt;td id="rapid_P5_C43_" class="tabelCell"&gt;&lt;img id="rapid_P5_C45_" src="applications/rapid/1/help_16x16.png" class="image"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P5_C39_" class="tableRow"&gt;&lt;td id="rapid_P5_C40_" class="tabelCell"&gt;Description&lt;/td&gt;&lt;td id="rapid_P5_C42_" class="tabelCell"&gt;&lt;input id="rapid_P5_C41_" value="" type="text" class="input"&gt;&lt;/td&gt;&lt;td id="rapid_P5_C44_" class="tabelCell"&gt;&lt;img id="rapid_P5_C46_" src="applications/rapid/1/help_16x16.png" class="image"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P5_C18" class="tableRow"&gt;&lt;td id="rapid_P5_C19" class="tabelCell"&gt;&lt;button id="rapid_P5_C20" class="button"&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id="rapid_P5_C23" colspan="2" class="tabelCell"&gt;&lt;button id="rapid_P5_C24" class="button"&gt;Save&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</html>
     </rolesHtml>
     <styles>
         <appliesTo>body</appliesTo>

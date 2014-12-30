@@ -33,12 +33,6 @@
                         <value>tableCell</value>
                     </entry>
                 </properties>
-                <styles>
-                    <appliesTo>#rapid_P7_C3</appliesTo>
-                    <rules>padding:10px;</rules>
-                    <rules>background:#e00 url(highlight_red_1x44.png) 50% 50% repeat-x;</rules>
-                    <rules>text-shadow :-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;</rules>
-                </styles>
                 <XMLVersion>1</XMLVersion>
             </childControls>
             <properties>
@@ -105,37 +99,8 @@
             <childControls>
                 <childControls>
                     <events>
-                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="existing">
-                            <properties>
-<entry>
-    <key>id</key>
-    <value>P7_A55</value>
-</entry>
-<entry>
-    <key>avoidRedundancy</key>
-    <value>false</value>
-</entry>
-<entry>
-    <key>name</key>
-    <value>Existing 55</value>
-</entry>
-<entry>
-    <key>action</key>
-    <value>P7_A48</value>
-</entry>
-<entry>
-    <key>type</key>
-    <value>existing</value>
-</entry>
-<entry>
-    <key>redundantActions</key>
-    <value>[&quot;P7_A48&quot;]</value>
-</entry>
-                            </properties>
-                            <XMLVersion>1</XMLVersion>
-                        </actions>
                         <filter></filter>
-                        <type>keyup</type>
+                        <type>blur</type>
                     </events>
                     <events>
                         <filter></filter>
@@ -143,7 +108,40 @@
                     </events>
                     <events>
                         <filter></filter>
-                        <type>blur</type>
+                        <type>click</type>
+                    </events>
+                    <events>
+                        <actions xsi:type="existing" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                            <properties>
+                                <entry>
+                                    <key>id</key>
+                                    <value>P7_A55</value>
+                                </entry>
+                                <entry>
+                                    <key>avoidRedundancy</key>
+                                    <value>false</value>
+                                </entry>
+                                <entry>
+                                    <key>name</key>
+                                    <value>Existing 55</value>
+                                </entry>
+                                <entry>
+                                    <key>action</key>
+                                    <value>P7_A48</value>
+                                </entry>
+                                <entry>
+                                    <key>type</key>
+                                    <value>existing</value>
+                                </entry>
+                                <entry>
+                                    <key>redundantActions</key>
+                                    <value>["P7_A48"]</value>
+                                </entry>
+                            </properties>
+                            <XMLVersion>1</XMLVersion>
+                        </actions>
+                        <filter></filter>
+                        <type>keyup</type>
                     </events>
                     <properties>
                         <entry>
@@ -179,6 +177,7 @@
                         <allowNulls>false</allowNulls>
                         <javaScript></javaScript>
                         <message>Name must be provided</message>
+                        <passHidden>false</passHidden>
                         <regEx>[\s\S]</regEx>
                         <type>value</type>
                     </validation>
@@ -530,7 +529,7 @@
                 <childControls>
                     <events>
                         <filter></filter>
-                        <type>keyup</type>
+                        <type>blur</type>
                     </events>
                     <events>
                         <filter></filter>
@@ -538,7 +537,11 @@
                     </events>
                     <events>
                         <filter></filter>
-                        <type>blur</type>
+                        <type>click</type>
+                    </events>
+                    <events>
+                        <filter></filter>
+                        <type>keyup</type>
                     </events>
                     <properties>
                         <entry>
@@ -574,6 +577,7 @@
                         <allowNulls>false</allowNulls>
                         <javaScript></javaScript>
                         <message></message>
+                        <passHidden>false</passHidden>
                         <regEx></regEx>
                         <type></type>
                     </validation>
@@ -921,7 +925,7 @@
                 <childControls>
                     <events>
                         <filter></filter>
-                        <type>keyup</type>
+                        <type>blur</type>
                     </events>
                     <events>
                         <filter></filter>
@@ -929,7 +933,11 @@
                     </events>
                     <events>
                         <filter></filter>
-                        <type>blur</type>
+                        <type>click</type>
+                    </events>
+                    <events>
+                        <filter></filter>
+                        <type>keyup</type>
                     </events>
                     <properties>
                         <entry>
@@ -965,6 +973,7 @@
                         <allowNulls>false</allowNulls>
                         <javaScript></javaScript>
                         <message>User name must be provided</message>
+                        <passHidden>false</passHidden>
                         <regEx></regEx>
                         <type></type>
                     </validation>
@@ -1130,7 +1139,7 @@
                 <childControls>
                     <events>
                         <filter></filter>
-                        <type>keyup</type>
+                        <type>blur</type>
                     </events>
                     <events>
                         <filter></filter>
@@ -1138,7 +1147,11 @@
                     </events>
                     <events>
                         <filter></filter>
-                        <type>blur</type>
+                        <type>click</type>
+                    </events>
+                    <events>
+                        <filter></filter>
+                        <type>keyup</type>
                     </events>
                     <properties>
                         <entry>
@@ -1174,6 +1187,7 @@
                         <allowNulls>false</allowNulls>
                         <javaScript></javaScript>
                         <message>User name must be provided</message>
+                        <passHidden>false</passHidden>
                         <regEx></regEx>
                         <type></type>
                     </validation>
@@ -1301,32 +1315,32 @@
             <childControls>
                 <childControls>
                     <events>
-                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="control">
+                        <actions xsi:type="control" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                             <properties>
-<entry>
-    <key>id</key>
-    <value>P7_A40</value>
-</entry>
-<entry>
-    <key>control</key>
-    <value>rapid_P7_C1</value>
-</entry>
-<entry>
-    <key>avoidRedundancy</key>
-    <value>false</value>
-</entry>
-<entry>
-    <key>name</key>
-    <value>Control 40</value>
-</entry>
-<entry>
-    <key>command</key>
-    <value>.hideDialogue();</value>
-</entry>
-<entry>
-    <key>type</key>
-    <value>control</value>
-</entry>
+                                <entry>
+                                    <key>id</key>
+                                    <value>P7_A40</value>
+                                </entry>
+                                <entry>
+                                    <key>control</key>
+                                    <value>rapid_P7_C1</value>
+                                </entry>
+                                <entry>
+                                    <key>avoidRedundancy</key>
+                                    <value>false</value>
+                                </entry>
+                                <entry>
+                                    <key>name</key>
+                                    <value>Control 40</value>
+                                </entry>
+                                <entry>
+                                    <key>command</key>
+                                    <value>.hideDialogue();</value>
+                                </entry>
+                                <entry>
+                                    <key>type</key>
+                                    <value>control</value>
+                                </entry>
                             </properties>
                             <XMLVersion>1</XMLVersion>
                         </actions>
@@ -1396,146 +1410,146 @@
             <childControls>
                 <childControls>
                     <events>
-                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="validation">
+                        <actions xsi:type="validation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                             <properties>
-<entry>
-    <key>id</key>
-    <value>P7_A48</value>
-</entry>
-<entry>
-    <key>showMessages</key>
-    <value>true</value>
-</entry>
-<entry>
-    <key>avoidRedundancy</key>
-    <value>true</value>
-</entry>
-<entry>
-    <key>name</key>
-    <value>Validation 48</value>
-</entry>
-<entry>
-    <key>type</key>
-    <value>validation</value>
-</entry>
-<entry>
-    <key>stopActions</key>
-    <value>true</value>
-</entry>
+                                <entry>
+                                    <key>id</key>
+                                    <value>P7_A48</value>
+                                </entry>
+                                <entry>
+                                    <key>showMessages</key>
+                                    <value>true</value>
+                                </entry>
+                                <entry>
+                                    <key>avoidRedundancy</key>
+                                    <value>true</value>
+                                </entry>
+                                <entry>
+                                    <key>name</key>
+                                    <value>Validation 48</value>
+                                </entry>
+                                <entry>
+                                    <key>type</key>
+                                    <value>validation</value>
+                                </entry>
+                                <entry>
+                                    <key>stopActions</key>
+                                    <value>true</value>
+                                </entry>
                             </properties>
                             <XMLVersion>1</XMLVersion>
                             <controls>rapid_P7_C7</controls>
                             <failActions xsi:type="control">
-<properties>
-    <entry>
-        <key>id</key>
-        <value>P7_A54</value>
-    </entry>
-    <entry>
-        <key>control</key>
-        <value>rapid_P7_C24</value>
-    </entry>
-    <entry>
-        <key>avoidRedundancy</key>
-        <value>false</value>
-    </entry>
-    <entry>
-        <key>name</key>
-        <value>Control 54</value>
-    </entry>
-    <entry>
-        <key>command</key>
-        <value>disable();</value>
-    </entry>
-    <entry>
-        <key>type</key>
-        <value>control</value>
-    </entry>
-</properties>
-<XMLVersion>1</XMLVersion>
+                                <properties>
+                                    <entry>
+                                        <key>id</key>
+                                        <value>P7_A54</value>
+                                    </entry>
+                                    <entry>
+                                        <key>control</key>
+                                        <value>rapid_P7_C24</value>
+                                    </entry>
+                                    <entry>
+                                        <key>avoidRedundancy</key>
+                                        <value>false</value>
+                                    </entry>
+                                    <entry>
+                                        <key>name</key>
+                                        <value>Control 54</value>
+                                    </entry>
+                                    <entry>
+                                        <key>command</key>
+                                        <value>disable();</value>
+                                    </entry>
+                                    <entry>
+                                        <key>type</key>
+                                        <value>control</value>
+                                    </entry>
+                                </properties>
+                                <XMLVersion>1</XMLVersion>
                             </failActions>
                             <passActions xsi:type="control">
-<properties>
-    <entry>
-        <key>id</key>
-        <value>P7_A49</value>
-    </entry>
-    <entry>
-        <key>control</key>
-        <value>rapid_P7_C24</value>
-    </entry>
-    <entry>
-        <key>avoidRedundancy</key>
-        <value>false</value>
-    </entry>
-    <entry>
-        <key>name</key>
-        <value>Control 49</value>
-    </entry>
-    <entry>
-        <key>command</key>
-        <value>.enable();</value>
-    </entry>
-    <entry>
-        <key>type</key>
-        <value>control</value>
-    </entry>
-</properties>
-<XMLVersion>1</XMLVersion>
+                                <properties>
+                                    <entry>
+                                        <key>id</key>
+                                        <value>P7_A49</value>
+                                    </entry>
+                                    <entry>
+                                        <key>control</key>
+                                        <value>rapid_P7_C24</value>
+                                    </entry>
+                                    <entry>
+                                        <key>avoidRedundancy</key>
+                                        <value>false</value>
+                                    </entry>
+                                    <entry>
+                                        <key>name</key>
+                                        <value>Control 49</value>
+                                    </entry>
+                                    <entry>
+                                        <key>command</key>
+                                        <value>.enable();</value>
+                                    </entry>
+                                    <entry>
+                                        <key>type</key>
+                                        <value>control</value>
+                                    </entry>
+                                </properties>
+                                <XMLVersion>1</XMLVersion>
                             </passActions>
                         </actions>
-                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="rapid">
+                        <actions xsi:type="rapid" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                             <properties>
-<entry>
-    <key>id</key>
-    <value>P7_A46</value>
-</entry>
-<entry>
-    <key>avoidRedundancy</key>
-    <value>false</value>
-</entry>
-<entry>
-    <key>name</key>
-    <value>Rapid 46</value>
-</entry>
-<entry>
-    <key>actionType</key>
-    <value>NEWDBCONN</value>
-</entry>
-<entry>
-    <key>type</key>
-    <value>rapid</value>
-</entry>
+                                <entry>
+                                    <key>id</key>
+                                    <value>P7_A46</value>
+                                </entry>
+                                <entry>
+                                    <key>avoidRedundancy</key>
+                                    <value>false</value>
+                                </entry>
+                                <entry>
+                                    <key>name</key>
+                                    <value>Rapid 46</value>
+                                </entry>
+                                <entry>
+                                    <key>actionType</key>
+                                    <value>NEWDBCONN</value>
+                                </entry>
+                                <entry>
+                                    <key>type</key>
+                                    <value>rapid</value>
+                                </entry>
                             </properties>
                             <XMLVersion>1</XMLVersion>
                             <successActions xsi:type="control">
-<properties>
-    <entry>
-        <key>id</key>
-        <value>P7_A47</value>
-    </entry>
-    <entry>
-        <key>control</key>
-        <value>rapid_P7_C1</value>
-    </entry>
-    <entry>
-        <key>avoidRedundancy</key>
-        <value>false</value>
-    </entry>
-    <entry>
-        <key>name</key>
-        <value>Control 47</value>
-    </entry>
-    <entry>
-        <key>command</key>
-        <value>.hideDialogue();</value>
-    </entry>
-    <entry>
-        <key>type</key>
-        <value>control</value>
-    </entry>
-</properties>
-<XMLVersion>1</XMLVersion>
+                                <properties>
+                                    <entry>
+                                        <key>id</key>
+                                        <value>P7_A47</value>
+                                    </entry>
+                                    <entry>
+                                        <key>control</key>
+                                        <value>rapid_P7_C1</value>
+                                    </entry>
+                                    <entry>
+                                        <key>avoidRedundancy</key>
+                                        <value>false</value>
+                                    </entry>
+                                    <entry>
+                                        <key>name</key>
+                                        <value>Control 47</value>
+                                    </entry>
+                                    <entry>
+                                        <key>command</key>
+                                        <value>.hideDialogue();</value>
+                                    </entry>
+                                    <entry>
+                                        <key>type</key>
+                                        <value>control</value>
+                                    </entry>
+                                </properties>
+                                <XMLVersion>1</XMLVersion>
                             </successActions>
                         </actions>
                         <filter></filter>
@@ -1634,7 +1648,7 @@
             </entry>
             <entry>
                 <key>classes</key>
-                <value>[]</value>
+                <value>["glossyTitle"]</value>
             </entry>
             <entry>
                 <key>name</key>
@@ -1669,11 +1683,11 @@
             </entry>
             <entry>
                 <key>details</key>
-                <value>{&quot;controlHints&quot;:[{&quot;text&quot;:&quot;The connection name will appear in dropdowns. \nChanging the name will not break any actions.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P7_C64_&quot;,&quot;type&quot;:&quot;hover&quot;},{&quot;text&quot;:&quot;Choose the driver appropriate to your database. \nDifferent drivers can be added by advanced users.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P7_C65_&quot;,&quot;type&quot;:&quot;hover&quot;},{&quot;text&quot;:&quot;The JDBC connection string appropriate to the selected driver.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P7_C66_&quot;,&quot;type&quot;:&quot;hover&quot;},{&quot;text&quot;:&quot;Connection adapters can provide advanced functionality when database connections are established. \nSuch as pass-through authentication, and connection pooling.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P7_C67_&quot;,&quot;type&quot;:&quot;hover&quot;},{&quot;text&quot;:&quot;The user name to use with the database connection, if required.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P7_C68_&quot;,&quot;type&quot;:&quot;hover&quot;},{&quot;text&quot;:&quot;The password to use with the database connection, if required.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P7_C69_&quot;,&quot;type&quot;:&quot;hover&quot;}]}</value>
+                <value>{"controlHints":[{"text":"The connection name will appear in dropdowns. \nChanging the name will not break any actions.","style":"","type":"hover","controlId":"rapid_P7_C64_"},{"text":"Choose the driver appropriate to your database. \nDifferent drivers can be added by advanced users.","style":"","type":"hover","controlId":"rapid_P7_C65_"},{"text":"The JDBC connection string appropriate to the selected driver.","style":"","type":"hover","controlId":"rapid_P7_C66_"},{"text":"Connection adapters can provide advanced functionality when database connections are established. \nSuch as pass-through authentication, and connection pooling.","style":"","type":"hover","controlId":"rapid_P7_C67_"},{"text":"The user name to use with the database connection, if required.","style":"","type":"hover","controlId":"rapid_P7_C68_"},{"text":"The password to use with the database connection, if required.","style":"","type":"hover","controlId":"rapid_P7_C69_"}]}</value>
             </entry>
             <entry>
                 <key>controlHints</key>
-                <value>[{&quot;text&quot;:&quot;The connection name will appear in dropdowns. \nChanging the name will not break any actions.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P7_C64_&quot;,&quot;type&quot;:&quot;hover&quot;},{&quot;text&quot;:&quot;Choose the driver appropriate to your database. \nDifferent drivers can be added by advanced users.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P7_C65_&quot;,&quot;type&quot;:&quot;hover&quot;},{&quot;text&quot;:&quot;The JDBC connection string appropriate to the selected driver.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P7_C66_&quot;,&quot;type&quot;:&quot;hover&quot;},{&quot;text&quot;:&quot;Connection adapters can provide advanced functionality when database connections are established. \nSuch as pass-through authentication, and connection pooling.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P7_C67_&quot;,&quot;type&quot;:&quot;hover&quot;},{&quot;text&quot;:&quot;The user name to use with the database connection, if required.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P7_C68_&quot;,&quot;type&quot;:&quot;hover&quot;},{&quot;text&quot;:&quot;The password to use with the database connection, if required.&quot;,&quot;style&quot;:&quot;&quot;,&quot;controlId&quot;:&quot;rapid_P7_C69_&quot;,&quot;type&quot;:&quot;hover&quot;}]</value>
+                <value>[{"text":"The connection name will appear in dropdowns. \nChanging the name will not break any actions.","style":"","type":"hover","controlId":"rapid_P7_C64_"},{"text":"Choose the driver appropriate to your database. \nDifferent drivers can be added by advanced users.","style":"","type":"hover","controlId":"rapid_P7_C65_"},{"text":"The JDBC connection string appropriate to the selected driver.","style":"","type":"hover","controlId":"rapid_P7_C66_"},{"text":"Connection adapters can provide advanced functionality when database connections are established. \nSuch as pass-through authentication, and connection pooling.","style":"","type":"hover","controlId":"rapid_P7_C67_"},{"text":"The user name to use with the database connection, if required.","style":"","type":"hover","controlId":"rapid_P7_C68_"},{"text":"The password to use with the database connection, if required.","style":"","type":"hover","controlId":"rapid_P7_C69_"}]</value>
             </entry>
             <entry>
                 <key>type</key>
@@ -1688,7 +1702,7 @@
     </controls>
     <description>Allows users to add new database connections</description>
     <events>
-        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="custom">
+        <actions xsi:type="custom" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <properties>
                 <entry>
                     <key>id</key>
@@ -1696,10 +1710,10 @@
                 </entry>
                 <entry>
                     <key>javascript</key>
-                    <value>var data = getData_dataStore(ev, 'rapid_P0_C210','databaseDrivers', {&quot;storageType&quot;:&quot;S&quot;});    
+                    <value>var data = getData_dataStore(ev, 'rapid_P0_C210','databaseDrivers', {"storageType":"S"});    
 var outputs = [{id: 'rapid_P7_C37', type: 'dropdown', field: ''}];    
 Action_datacopy(data, outputs);    
-var data = getData_dataStore(ev, 'rapid_P0_C210','connectionAdapters', {&quot;storageType&quot;:&quot;S&quot;});    
+var data = getData_dataStore(ev, 'rapid_P0_C210','connectionAdapters', {"storageType":"S"});    
 var outputs = [{id: 'rapid_P7_C38', type: 'dropdown', field: ''}]; 
 Action_datacopy(data, outputs);  </value>
                 </entry>
@@ -1718,7 +1732,7 @@ Action_datacopy(data, outputs);  </value>
             </properties>
             <XMLVersion>1</XMLVersion>
         </actions>
-        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="control">
+        <actions xsi:type="control" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <properties>
                 <entry>
                     <key>id</key>
@@ -1751,7 +1765,7 @@ Action_datacopy(data, outputs);  </value>
             </properties>
             <XMLVersion>1</XMLVersion>
         </actions>
-        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="control">
+        <actions xsi:type="control" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <properties>
                 <entry>
                     <key>id</key>
@@ -1791,13 +1805,13 @@ Action_datacopy(data, outputs);  </value>
         <filter></filter>
         <type>reusable</type>
     </events>
-    <htmlBody>&lt;table id=&quot;rapid_P7_C1&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;rapid_P7_C2&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P7_C3&quot; colspan=&quot;3&quot; class=&quot;tabelCell&quot;&gt;New database conection&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P7_C4&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P7_C5&quot; class=&quot;tabelCell&quot;&gt;Name&lt;/td&gt;&lt;td id=&quot;rapid_P7_C6&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P7_C7&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P7_C58_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P7_C64_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P7_C9&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P7_C10&quot; class=&quot;tabelCell&quot;&gt;Driver&lt;/td&gt;&lt;td id=&quot;rapid_P7_C11&quot; class=&quot;tabelCell&quot;&gt;&lt;select id=&quot;rapid_P7_C37&quot; value=&quot;&quot; class=&quot;dropdown&quot;&gt;&lt;/select&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P7_C59_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P7_C65_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P7_C42&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P7_C43&quot; class=&quot;tabelCell&quot;&gt;Connection string&lt;/td&gt;&lt;td id=&quot;rapid_P7_C45&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P7_C44&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P7_C60_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P7_C66_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P7_C14&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P7_C15&quot; class=&quot;tabelCell&quot;&gt;Connection adapter&lt;/td&gt;&lt;td id=&quot;rapid_P7_C16&quot; class=&quot;tabelCell&quot;&gt;&lt;select id=&quot;rapid_P7_C38&quot; value=&quot;&quot; class=&quot;dropdown&quot;&gt;&lt;/select&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P7_C61_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P7_C67_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P7_C27&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P7_C28&quot; class=&quot;tabelCell&quot;&gt;User name&lt;/td&gt;&lt;td id=&quot;rapid_P7_C29&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P7_C30&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P7_C62_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P7_C68_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P7_C32&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P7_C33&quot; class=&quot;tabelCell&quot;&gt;Password&lt;/td&gt;&lt;td id=&quot;rapid_P7_C34&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P7_C35&quot; value=&quot;&quot; type=&quot;password&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P7_C63_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P7_C69_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P7_C19&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P7_C20&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P7_C21&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P7_C23&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P7_C24&quot; class=&quot;button&quot;&gt;Save&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
+    <htmlBody>&lt;table id="rapid_P7_C1" class="table glossyTitle"&gt;&lt;tbody&gt;&lt;tr id="rapid_P7_C2" class="tableRow"&gt;&lt;td id="rapid_P7_C3" colspan="3" class="tabelCell"&gt;New database conection&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P7_C4" class="tableRow"&gt;&lt;td id="rapid_P7_C5" class="tabelCell"&gt;Name&lt;/td&gt;&lt;td id="rapid_P7_C6" class="tabelCell"&gt;&lt;input id="rapid_P7_C7" value="" type="text" class="input"&gt;&lt;/td&gt;&lt;td id="rapid_P7_C58_" class="tabelCell"&gt;&lt;img id="rapid_P7_C64_" src="applications/rapid/1/help_16x16.png" class="image"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P7_C9" class="tableRow"&gt;&lt;td id="rapid_P7_C10" class="tabelCell"&gt;Driver&lt;/td&gt;&lt;td id="rapid_P7_C11" class="tabelCell"&gt;&lt;select id="rapid_P7_C37" value="" class="dropdown"&gt;&lt;/select&gt;&lt;/td&gt;&lt;td id="rapid_P7_C59_" class="tabelCell"&gt;&lt;img id="rapid_P7_C65_" src="applications/rapid/1/help_16x16.png" class="image"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P7_C42" class="tableRow"&gt;&lt;td id="rapid_P7_C43" class="tabelCell"&gt;Connection string&lt;/td&gt;&lt;td id="rapid_P7_C45" class="tabelCell"&gt;&lt;input id="rapid_P7_C44" value="" type="text" class="input"&gt;&lt;/td&gt;&lt;td id="rapid_P7_C60_" class="tabelCell"&gt;&lt;img id="rapid_P7_C66_" src="applications/rapid/1/help_16x16.png" class="image"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P7_C14" class="tableRow"&gt;&lt;td id="rapid_P7_C15" class="tabelCell"&gt;Connection adapter&lt;/td&gt;&lt;td id="rapid_P7_C16" class="tabelCell"&gt;&lt;select id="rapid_P7_C38" value="" class="dropdown"&gt;&lt;/select&gt;&lt;/td&gt;&lt;td id="rapid_P7_C61_" class="tabelCell"&gt;&lt;img id="rapid_P7_C67_" src="applications/rapid/1/help_16x16.png" class="image"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P7_C27" class="tableRow"&gt;&lt;td id="rapid_P7_C28" class="tabelCell"&gt;User name&lt;/td&gt;&lt;td id="rapid_P7_C29" class="tabelCell"&gt;&lt;input id="rapid_P7_C30" value="" type="text" class="input"&gt;&lt;/td&gt;&lt;td id="rapid_P7_C62_" class="tabelCell"&gt;&lt;img id="rapid_P7_C68_" src="applications/rapid/1/help_16x16.png" class="image"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P7_C32" class="tableRow"&gt;&lt;td id="rapid_P7_C33" class="tabelCell"&gt;Password&lt;/td&gt;&lt;td id="rapid_P7_C34" class="tabelCell"&gt;&lt;input id="rapid_P7_C35" value="" type="password" class="input"&gt;&lt;/td&gt;&lt;td id="rapid_P7_C63_" class="tabelCell"&gt;&lt;img id="rapid_P7_C69_" src="applications/rapid/1/help_16x16.png" class="image"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P7_C19" class="tableRow"&gt;&lt;td id="rapid_P7_C20" class="tabelCell"&gt;&lt;button id="rapid_P7_C21" class="button"&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id="rapid_P7_C23" colspan="2" class="tabelCell"&gt;&lt;button id="rapid_P7_C24" class="button"&gt;Save&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
     <id>P7</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-11-17T15:50:31.971Z</modifiedDate>
+    <modifiedDate>2014-12-30T06:49:57.829Z</modifiedDate>
     <name>07_DbConnNew</name>
     <rolesHtml>
-        <html>&lt;table id=&quot;rapid_P7_C1&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;rapid_P7_C2&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P7_C3&quot; colspan=&quot;3&quot; class=&quot;tabelCell&quot;&gt;New database conection&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P7_C4&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P7_C5&quot; class=&quot;tabelCell&quot;&gt;Name&lt;/td&gt;&lt;td id=&quot;rapid_P7_C6&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P7_C7&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P7_C58_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P7_C64_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P7_C9&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P7_C10&quot; class=&quot;tabelCell&quot;&gt;Driver&lt;/td&gt;&lt;td id=&quot;rapid_P7_C11&quot; class=&quot;tabelCell&quot;&gt;&lt;select id=&quot;rapid_P7_C37&quot; value=&quot;&quot; class=&quot;dropdown&quot;&gt;&lt;/select&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P7_C59_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P7_C65_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P7_C42&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P7_C43&quot; class=&quot;tabelCell&quot;&gt;Connection string&lt;/td&gt;&lt;td id=&quot;rapid_P7_C45&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P7_C44&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P7_C60_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P7_C66_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P7_C14&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P7_C15&quot; class=&quot;tabelCell&quot;&gt;Connection adapter&lt;/td&gt;&lt;td id=&quot;rapid_P7_C16&quot; class=&quot;tabelCell&quot;&gt;&lt;select id=&quot;rapid_P7_C38&quot; value=&quot;&quot; class=&quot;dropdown&quot;&gt;&lt;/select&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P7_C61_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P7_C67_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P7_C27&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P7_C28&quot; class=&quot;tabelCell&quot;&gt;User name&lt;/td&gt;&lt;td id=&quot;rapid_P7_C29&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P7_C30&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P7_C62_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P7_C68_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P7_C32&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P7_C33&quot; class=&quot;tabelCell&quot;&gt;Password&lt;/td&gt;&lt;td id=&quot;rapid_P7_C34&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;rapid_P7_C35&quot; value=&quot;&quot; type=&quot;password&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P7_C63_&quot; class=&quot;tabelCell&quot;&gt;&lt;img id=&quot;rapid_P7_C69_&quot; src=&quot;applications/rapid/1/help_16x16.png&quot; class=&quot;image&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;rapid_P7_C19&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;rapid_P7_C20&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P7_C21&quot; class=&quot;button&quot;&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id=&quot;rapid_P7_C23&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;rapid_P7_C24&quot; class=&quot;button&quot;&gt;Save&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</html>
+        <html>&lt;table id="rapid_P7_C1" class="table glossyTitle"&gt;&lt;tbody&gt;&lt;tr id="rapid_P7_C2" class="tableRow"&gt;&lt;td id="rapid_P7_C3" colspan="3" class="tabelCell"&gt;New database conection&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P7_C4" class="tableRow"&gt;&lt;td id="rapid_P7_C5" class="tabelCell"&gt;Name&lt;/td&gt;&lt;td id="rapid_P7_C6" class="tabelCell"&gt;&lt;input id="rapid_P7_C7" value="" type="text" class="input"&gt;&lt;/td&gt;&lt;td id="rapid_P7_C58_" class="tabelCell"&gt;&lt;img id="rapid_P7_C64_" src="applications/rapid/1/help_16x16.png" class="image"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P7_C9" class="tableRow"&gt;&lt;td id="rapid_P7_C10" class="tabelCell"&gt;Driver&lt;/td&gt;&lt;td id="rapid_P7_C11" class="tabelCell"&gt;&lt;select id="rapid_P7_C37" value="" class="dropdown"&gt;&lt;/select&gt;&lt;/td&gt;&lt;td id="rapid_P7_C59_" class="tabelCell"&gt;&lt;img id="rapid_P7_C65_" src="applications/rapid/1/help_16x16.png" class="image"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P7_C42" class="tableRow"&gt;&lt;td id="rapid_P7_C43" class="tabelCell"&gt;Connection string&lt;/td&gt;&lt;td id="rapid_P7_C45" class="tabelCell"&gt;&lt;input id="rapid_P7_C44" value="" type="text" class="input"&gt;&lt;/td&gt;&lt;td id="rapid_P7_C60_" class="tabelCell"&gt;&lt;img id="rapid_P7_C66_" src="applications/rapid/1/help_16x16.png" class="image"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P7_C14" class="tableRow"&gt;&lt;td id="rapid_P7_C15" class="tabelCell"&gt;Connection adapter&lt;/td&gt;&lt;td id="rapid_P7_C16" class="tabelCell"&gt;&lt;select id="rapid_P7_C38" value="" class="dropdown"&gt;&lt;/select&gt;&lt;/td&gt;&lt;td id="rapid_P7_C61_" class="tabelCell"&gt;&lt;img id="rapid_P7_C67_" src="applications/rapid/1/help_16x16.png" class="image"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P7_C27" class="tableRow"&gt;&lt;td id="rapid_P7_C28" class="tabelCell"&gt;User name&lt;/td&gt;&lt;td id="rapid_P7_C29" class="tabelCell"&gt;&lt;input id="rapid_P7_C30" value="" type="text" class="input"&gt;&lt;/td&gt;&lt;td id="rapid_P7_C62_" class="tabelCell"&gt;&lt;img id="rapid_P7_C68_" src="applications/rapid/1/help_16x16.png" class="image"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P7_C32" class="tableRow"&gt;&lt;td id="rapid_P7_C33" class="tabelCell"&gt;Password&lt;/td&gt;&lt;td id="rapid_P7_C34" class="tabelCell"&gt;&lt;input id="rapid_P7_C35" value="" type="password" class="input"&gt;&lt;/td&gt;&lt;td id="rapid_P7_C63_" class="tabelCell"&gt;&lt;img id="rapid_P7_C69_" src="applications/rapid/1/help_16x16.png" class="image"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="rapid_P7_C19" class="tableRow"&gt;&lt;td id="rapid_P7_C20" class="tabelCell"&gt;&lt;button id="rapid_P7_C21" class="button"&gt;Cancel&lt;/button&gt;&lt;/td&gt;&lt;td id="rapid_P7_C23" colspan="2" class="tabelCell"&gt;&lt;button id="rapid_P7_C24" class="button"&gt;Save&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</html>
     </rolesHtml>
     <title>New database connection</title>
     <XMLVersion>1</XMLVersion>
