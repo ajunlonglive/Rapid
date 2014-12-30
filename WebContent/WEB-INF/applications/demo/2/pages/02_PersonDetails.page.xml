@@ -38,7 +38,7 @@
                     <rules>text-align:center;</rules>
                     <rules>font-weight:bold;</rules>
                     <rules>padding:5px 5px;</rules>
-                    <rules>background:#ccc url(highlight_1x100.png) 50% 50% repeat-x;</rules>
+                    <rules>background:#ccc url([[webfolder]]/highlight_1x100.png) 50% 50% repeat-x;</rules>
                     <rules>border-bottom:1px solid #aaa;</rules>
                 </styles>
                 <XMLVersion>1</XMLVersion>
@@ -98,37 +98,8 @@
             <childControls>
                 <childControls>
                     <events>
-                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="existing">
-                            <properties>
-<entry>
-    <key>id</key>
-    <value>P2_A44_</value>
-</entry>
-<entry>
-    <key>avoidRedundancy</key>
-    <value>false</value>
-</entry>
-<entry>
-    <key>name</key>
-    <value>Existing 44</value>
-</entry>
-<entry>
-    <key>action</key>
-    <value>P2_A41_</value>
-</entry>
-<entry>
-    <key>type</key>
-    <value>existing</value>
-</entry>
-<entry>
-    <key>redundantActions</key>
-    <value>[&quot;P2_A41_&quot;]</value>
-</entry>
-                            </properties>
-                            <XMLVersion>1</XMLVersion>
-                        </actions>
                         <filter></filter>
-                        <type>keyup</type>
+                        <type>blur</type>
                     </events>
                     <events>
                         <filter></filter>
@@ -136,7 +107,40 @@
                     </events>
                     <events>
                         <filter></filter>
-                        <type>blur</type>
+                        <type>click</type>
+                    </events>
+                    <events>
+                        <actions xsi:type="existing" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                            <properties>
+                                <entry>
+                                    <key>id</key>
+                                    <value>P2_A44_</value>
+                                </entry>
+                                <entry>
+                                    <key>avoidRedundancy</key>
+                                    <value>false</value>
+                                </entry>
+                                <entry>
+                                    <key>name</key>
+                                    <value>Existing 44</value>
+                                </entry>
+                                <entry>
+                                    <key>action</key>
+                                    <value>P2_A41_</value>
+                                </entry>
+                                <entry>
+                                    <key>type</key>
+                                    <value>existing</value>
+                                </entry>
+                                <entry>
+                                    <key>redundantActions</key>
+                                    <value>["P2_A41_"]</value>
+                                </entry>
+                            </properties>
+                            <XMLVersion>1</XMLVersion>
+                        </actions>
+                        <filter></filter>
+                        <type>keyup</type>
                     </events>
                     <properties>
                         <entry>
@@ -164,6 +168,7 @@
                         <allowNulls>false</allowNulls>
                         <javaScript></javaScript>
                         <message>Please provide a forename</message>
+                        <passHidden>false</passHidden>
                         <regEx>[\s\S]</regEx>
                         <type>value</type>
                     </validation>
@@ -257,37 +262,8 @@
             <childControls>
                 <childControls>
                     <events>
-                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="existing">
-                            <properties>
-<entry>
-    <key>id</key>
-    <value>P2_A45_</value>
-</entry>
-<entry>
-    <key>avoidRedundancy</key>
-    <value>false</value>
-</entry>
-<entry>
-    <key>name</key>
-    <value>Existing 45</value>
-</entry>
-<entry>
-    <key>action</key>
-    <value>P2_A41_</value>
-</entry>
-<entry>
-    <key>type</key>
-    <value>existing</value>
-</entry>
-<entry>
-    <key>redundantActions</key>
-    <value>[&quot;P2_A41_&quot;]</value>
-</entry>
-                            </properties>
-                            <XMLVersion>1</XMLVersion>
-                        </actions>
                         <filter></filter>
-                        <type>keyup</type>
+                        <type>blur</type>
                     </events>
                     <events>
                         <filter></filter>
@@ -295,7 +271,40 @@
                     </events>
                     <events>
                         <filter></filter>
-                        <type>blur</type>
+                        <type>click</type>
+                    </events>
+                    <events>
+                        <actions xsi:type="existing" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                            <properties>
+                                <entry>
+                                    <key>id</key>
+                                    <value>P2_A45_</value>
+                                </entry>
+                                <entry>
+                                    <key>avoidRedundancy</key>
+                                    <value>false</value>
+                                </entry>
+                                <entry>
+                                    <key>name</key>
+                                    <value>Existing 45</value>
+                                </entry>
+                                <entry>
+                                    <key>action</key>
+                                    <value>P2_A41_</value>
+                                </entry>
+                                <entry>
+                                    <key>type</key>
+                                    <value>existing</value>
+                                </entry>
+                                <entry>
+                                    <key>redundantActions</key>
+                                    <value>["P2_A41_"]</value>
+                                </entry>
+                            </properties>
+                            <XMLVersion>1</XMLVersion>
+                        </actions>
+                        <filter></filter>
+                        <type>keyup</type>
                     </events>
                     <properties>
                         <entry>
@@ -323,6 +332,7 @@
                         <allowNulls>false</allowNulls>
                         <javaScript></javaScript>
                         <message>Please provide a surname</message>
+                        <passHidden>false</passHidden>
                         <regEx>[\s\S]</regEx>
                         <type>value</type>
                     </validation>
@@ -434,7 +444,7 @@
                         </entry>
                         <entry>
                             <key>details</key>
-                            <value>{&quot;dateFormat&quot;:&quot;d/m/Y&quot;}</value>
+                            <value>{"dateFormat":"d/m/Y"}</value>
                         </entry>
                         <entry>
                             <key>name</key>
@@ -461,6 +471,7 @@
                         <allowNulls>false</allowNulls>
                         <javaScript></javaScript>
                         <message></message>
+                        <passHidden>false</passHidden>
                         <regEx></regEx>
                         <type></type>
                     </validation>
@@ -575,7 +586,7 @@
                         </entry>
                         <entry>
                             <key>buttons</key>
-                            <value>[{&quot;value&quot;:&quot;F&quot;,&quot;label&quot;:&quot;Female&quot;},{&quot;value&quot;:&quot;M&quot;,&quot;label&quot;:&quot;Male&quot;}]</value>
+                            <value>[{"value":"F","label":"Female"},{"value":"M","label":"Male"}]</value>
                         </entry>
                         <entry>
                             <key>type</key>
@@ -641,32 +652,32 @@
             <childControls>
                 <childControls>
                     <events>
-                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="control">
+                        <actions xsi:type="control" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                             <properties>
-<entry>
-    <key>id</key>
-    <value>P2_A35_</value>
-</entry>
-<entry>
-    <key>control</key>
-    <value>P2_C1_</value>
-</entry>
-<entry>
-    <key>avoidRedundancy</key>
-    <value>false</value>
-</entry>
-<entry>
-    <key>name</key>
-    <value>Control 35</value>
-</entry>
-<entry>
-    <key>command</key>
-    <value>.hideDialogue();</value>
-</entry>
-<entry>
-    <key>type</key>
-    <value>control</value>
-</entry>
+                                <entry>
+                                    <key>id</key>
+                                    <value>P2_A35_</value>
+                                </entry>
+                                <entry>
+                                    <key>control</key>
+                                    <value>P2_C1_</value>
+                                </entry>
+                                <entry>
+                                    <key>avoidRedundancy</key>
+                                    <value>false</value>
+                                </entry>
+                                <entry>
+                                    <key>name</key>
+                                    <value>Control 35</value>
+                                </entry>
+                                <entry>
+                                    <key>command</key>
+                                    <value>.hideDialogue();</value>
+                                </entry>
+                                <entry>
+                                    <key>type</key>
+                                    <value>control</value>
+                                </entry>
                             </properties>
                             <XMLVersion>1</XMLVersion>
                         </actions>
@@ -734,175 +745,175 @@
             <childControls>
                 <childControls>
                     <events>
-                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="validation">
+                        <actions xsi:type="validation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                             <properties>
-<entry>
-    <key>id</key>
-    <value>P2_A41_</value>
-</entry>
-<entry>
-    <key>showMessages</key>
-    <value>true</value>
-</entry>
-<entry>
-    <key>avoidRedundancy</key>
-    <value>false</value>
-</entry>
-<entry>
-    <key>name</key>
-    <value>Validation 41</value>
-</entry>
-<entry>
-    <key>type</key>
-    <value>validation</value>
-</entry>
-<entry>
-    <key>stopActions</key>
-    <value>true</value>
-</entry>
+                                <entry>
+                                    <key>id</key>
+                                    <value>P2_A41_</value>
+                                </entry>
+                                <entry>
+                                    <key>showMessages</key>
+                                    <value>true</value>
+                                </entry>
+                                <entry>
+                                    <key>avoidRedundancy</key>
+                                    <value>false</value>
+                                </entry>
+                                <entry>
+                                    <key>name</key>
+                                    <value>Validation 41</value>
+                                </entry>
+                                <entry>
+                                    <key>type</key>
+                                    <value>validation</value>
+                                </entry>
+                                <entry>
+                                    <key>stopActions</key>
+                                    <value>true</value>
+                                </entry>
                             </properties>
                             <XMLVersion>1</XMLVersion>
                             <controls>P2_C20_</controls>
                             <controls>P2_C21_</controls>
                             <failActions xsi:type="control">
-<properties>
-    <entry>
-        <key>id</key>
-        <value>P2_A48_</value>
-    </entry>
-    <entry>
-        <key>control</key>
-        <value>P2_C28_</value>
-    </entry>
-    <entry>
-        <key>avoidRedundancy</key>
-        <value>false</value>
-    </entry>
-    <entry>
-        <key>name</key>
-        <value>Control 48</value>
-    </entry>
-    <entry>
-        <key>command</key>
-        <value>.disable();</value>
-    </entry>
-    <entry>
-        <key>type</key>
-        <value>control</value>
-    </entry>
-</properties>
-<XMLVersion>1</XMLVersion>
+                                <properties>
+                                    <entry>
+                                        <key>id</key>
+                                        <value>P2_A48_</value>
+                                    </entry>
+                                    <entry>
+                                        <key>control</key>
+                                        <value>P2_C28_</value>
+                                    </entry>
+                                    <entry>
+                                        <key>avoidRedundancy</key>
+                                        <value>false</value>
+                                    </entry>
+                                    <entry>
+                                        <key>name</key>
+                                        <value>Control 48</value>
+                                    </entry>
+                                    <entry>
+                                        <key>command</key>
+                                        <value>.disable();</value>
+                                    </entry>
+                                    <entry>
+                                        <key>type</key>
+                                        <value>control</value>
+                                    </entry>
+                                </properties>
+                                <XMLVersion>1</XMLVersion>
                             </failActions>
                             <passActions xsi:type="control">
-<properties>
-    <entry>
-        <key>id</key>
-        <value>P2_A42_</value>
-    </entry>
-    <entry>
-        <key>control</key>
-        <value>P2_C28_</value>
-    </entry>
-    <entry>
-        <key>avoidRedundancy</key>
-        <value>false</value>
-    </entry>
-    <entry>
-        <key>name</key>
-        <value>Control 42</value>
-    </entry>
-    <entry>
-        <key>command</key>
-        <value>.enable();</value>
-    </entry>
-    <entry>
-        <key>type</key>
-        <value>control</value>
-    </entry>
-</properties>
-<XMLVersion>1</XMLVersion>
+                                <properties>
+                                    <entry>
+                                        <key>id</key>
+                                        <value>P2_A42_</value>
+                                    </entry>
+                                    <entry>
+                                        <key>control</key>
+                                        <value>P2_C28_</value>
+                                    </entry>
+                                    <entry>
+                                        <key>avoidRedundancy</key>
+                                        <value>false</value>
+                                    </entry>
+                                    <entry>
+                                        <key>name</key>
+                                        <value>Control 42</value>
+                                    </entry>
+                                    <entry>
+                                        <key>command</key>
+                                        <value>.enable();</value>
+                                    </entry>
+                                    <entry>
+                                        <key>type</key>
+                                        <value>control</value>
+                                    </entry>
+                                </properties>
+                                <XMLVersion>1</XMLVersion>
                             </passActions>
                         </actions>
-                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="database">
+                        <actions xsi:type="database" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                             <properties>
-<entry>
-    <key>id</key>
-    <value>P2_A32_</value>
-</entry>
-<entry>
-    <key>avoidRedundancy</key>
-    <value>false</value>
-</entry>
-<entry>
-    <key>name</key>
-    <value>Database 32</value>
-</entry>
-<entry>
-    <key>type</key>
-    <value>database</value>
-</entry>
+                                <entry>
+                                    <key>id</key>
+                                    <value>P2_A32_</value>
+                                </entry>
+                                <entry>
+                                    <key>avoidRedundancy</key>
+                                    <value>false</value>
+                                </entry>
+                                <entry>
+                                    <key>name</key>
+                                    <value>Database 32</value>
+                                </entry>
+                                <entry>
+                                    <key>type</key>
+                                    <value>database</value>
+                                </entry>
                             </properties>
                             <XMLVersion>1</XMLVersion>
                             <errorActions xsi:type="control">
-<properties>
-    <entry>
-        <key>id</key>
-        <value>P2_A43_</value>
-    </entry>
-    <entry>
-        <key>control</key>
-        <value>P2_C28_</value>
-    </entry>
-    <entry>
-        <key>avoidRedundancy</key>
-        <value>false</value>
-    </entry>
-    <entry>
-        <key>name</key>
-        <value>Control 43</value>
-    </entry>
-    <entry>
-        <key>command</key>
-        <value>.disable();</value>
-    </entry>
-    <entry>
-        <key>type</key>
-        <value>control</value>
-    </entry>
-</properties>
-<XMLVersion>1</XMLVersion>
+                                <properties>
+                                    <entry>
+                                        <key>id</key>
+                                        <value>P2_A43_</value>
+                                    </entry>
+                                    <entry>
+                                        <key>control</key>
+                                        <value>P2_C28_</value>
+                                    </entry>
+                                    <entry>
+                                        <key>avoidRedundancy</key>
+                                        <value>false</value>
+                                    </entry>
+                                    <entry>
+                                        <key>name</key>
+                                        <value>Control 43</value>
+                                    </entry>
+                                    <entry>
+                                        <key>command</key>
+                                        <value>.disable();</value>
+                                    </entry>
+                                    <entry>
+                                        <key>type</key>
+                                        <value>control</value>
+                                    </entry>
+                                </properties>
+                                <XMLVersion>1</XMLVersion>
                             </errorActions>
                             <query>
-<databaseConnectionIndex>0</databaseConnectionIndex>
-<inputs>
-    <field></field>
-    <itemId>P2_C20_</itemId>
-</inputs>
-<inputs>
-    <field></field>
-    <itemId>P2_C21_</itemId>
-</inputs>
-<inputs>
-    <field></field>
-    <itemId>P2_C49_</itemId>
-</inputs>
-<inputs>
-    <field></field>
-    <itemId>P2_C49_</itemId>
-</inputs>
-<inputs>
-    <field></field>
-    <itemId>P2_C49_</itemId>
-</inputs>
-<inputs>
-    <field></field>
-    <itemId>P2_C23_</itemId>
-</inputs>
-<inputs>
-    <field></field>
-    <itemId>id</itemId>
-</inputs>
-<SQL>update people 
+                                <databaseConnectionIndex>0</databaseConnectionIndex>
+                                <inputs>
+                                    <field></field>
+                                    <itemId>P2_C20_</itemId>
+                                </inputs>
+                                <inputs>
+                                    <field></field>
+                                    <itemId>P2_C21_</itemId>
+                                </inputs>
+                                <inputs>
+                                    <field></field>
+                                    <itemId>P2_C49_</itemId>
+                                </inputs>
+                                <inputs>
+                                    <field></field>
+                                    <itemId>P2_C49_</itemId>
+                                </inputs>
+                                <inputs>
+                                    <field></field>
+                                    <itemId>P2_C49_</itemId>
+                                </inputs>
+                                <inputs>
+                                    <field></field>
+                                    <itemId>P2_C23_</itemId>
+                                </inputs>
+                                <inputs>
+                                    <field></field>
+                                    <itemId>id</itemId>
+                                </inputs>
+                                <SQL>update people 
 set forename = ?,
 surname = ?,
 birthday = date(substr(?,7)||'-'||substr(?,4,2)||'-'||substr(?,1,2)),
@@ -911,33 +922,33 @@ where id = ?</SQL>
                             </query>
                             <showLoading>false</showLoading>
                             <successActions xsi:type="control">
-<properties>
-    <entry>
-        <key>id</key>
-        <value>P2_A36_</value>
-    </entry>
-    <entry>
-        <key>control</key>
-        <value>P2_C1_</value>
-    </entry>
-    <entry>
-        <key>avoidRedundancy</key>
-        <value>false</value>
-    </entry>
-    <entry>
-        <key>name</key>
-        <value>Control 36</value>
-    </entry>
-    <entry>
-        <key>command</key>
-        <value>hideDialogue(true);</value>
-    </entry>
-    <entry>
-        <key>type</key>
-        <value>control</value>
-    </entry>
-</properties>
-<XMLVersion>1</XMLVersion>
+                                <properties>
+                                    <entry>
+                                        <key>id</key>
+                                        <value>P2_A36_</value>
+                                    </entry>
+                                    <entry>
+                                        <key>control</key>
+                                        <value>P2_C1_</value>
+                                    </entry>
+                                    <entry>
+                                        <key>avoidRedundancy</key>
+                                        <value>false</value>
+                                    </entry>
+                                    <entry>
+                                        <key>name</key>
+                                        <value>Control 36</value>
+                                    </entry>
+                                    <entry>
+                                        <key>command</key>
+                                        <value>hideDialogue(true);</value>
+                                    </entry>
+                                    <entry>
+                                        <key>type</key>
+                                        <value>control</value>
+                                    </entry>
+                                </properties>
+                                <XMLVersion>1</XMLVersion>
                             </successActions>
                         </actions>
                         <filter></filter>
@@ -1044,7 +1055,7 @@ where id = ?</SQL>
     </controls>
     <description></description>
     <events>
-        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="database">
+        <actions xsi:type="database" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <properties>
                 <entry>
                     <key>id</key>
@@ -1099,53 +1110,13 @@ where id = ?</SQL>
         <filter></filter>
         <type>reusable</type>
     </events>
-    <htmlBody>&lt;table id=&quot;P2_C1_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P2_C2_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C3_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Person details&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P2_C4_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C5_&quot; class=&quot;tabelCell&quot;&gt;Forename&lt;/td&gt;&lt;td id=&quot;P2_C6_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C20_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P2_C14_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C15_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;&lt;td id=&quot;P2_C16_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C21_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P2_C17_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C18_&quot; class=&quot;tabelCell&quot;&gt;Birthday&lt;/td&gt;&lt;td id=&quot;P2_C19_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P2_C49_&quot; value=&quot;&quot; readonly=&quot;readonly&quot; class=&quot;date tcal tcalInput&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P2_C24_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C25_&quot; class=&quot;tabelCell&quot;&gt;Gender&lt;/td&gt;&lt;td id=&quot;P2_C26_&quot; class=&quot;tabelCell&quot;&gt;&lt;span id=&quot;P2_C23_&quot; class=&quot;radiobuttons&quot;&gt;&lt;input type=&quot;radio&quot; name=&quot;P2_C23_&quot; value=&quot;F&quot;&gt;&lt;span&gt;Female&lt;/span&gt;&lt;input type=&quot;radio&quot; name=&quot;P2_C23_&quot; value=&quot;M&quot;&gt;&lt;span&gt;Male&lt;/span&gt;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P2_C9_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P2_C10_&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;P2_C29_&quot; class=&quot;button&quot;&gt;cancel&lt;/button&gt;&lt;/td&gt;&lt;td id=&quot;P2_C11_&quot; class=&quot;tabelCell&quot;&gt;&lt;button id=&quot;P2_C28_&quot; class=&quot;button&quot;&gt;save&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
+    <htmlBody>&lt;table id="P2_C1_" class="table"&gt;&lt;tbody&gt;&lt;tr id="P2_C2_" class="tableRow"&gt;&lt;td id="P2_C3_" colspan="2" class="tabelCell"&gt;Person details&lt;/td&gt;&lt;/tr&gt;&lt;tr id="P2_C4_" class="tableRow"&gt;&lt;td id="P2_C5_" class="tabelCell"&gt;Forename&lt;/td&gt;&lt;td id="P2_C6_" class="tabelCell"&gt;&lt;input id="P2_C20_" value="" type="text" class="input"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="P2_C14_" class="tableRow"&gt;&lt;td id="P2_C15_" class="tabelCell"&gt;Surname&lt;/td&gt;&lt;td id="P2_C16_" class="tabelCell"&gt;&lt;input id="P2_C21_" value="" type="text" class="input"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="P2_C17_" class="tableRow"&gt;&lt;td id="P2_C18_" class="tabelCell"&gt;Birthday&lt;/td&gt;&lt;td id="P2_C19_" class="tabelCell"&gt;&lt;input id="P2_C49_" value="" readonly="readonly" class="date tcal tcalInput"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="P2_C24_" class="tableRow"&gt;&lt;td id="P2_C25_" class="tabelCell"&gt;Gender&lt;/td&gt;&lt;td id="P2_C26_" class="tabelCell"&gt;&lt;span id="P2_C23_" class="radiobuttons"&gt;&lt;input type="radio" name="P2_C23_" value="F"&gt;&lt;span&gt;Female&lt;/span&gt;&lt;input type="radio" name="P2_C23_" value="M"&gt;&lt;span&gt;Male&lt;/span&gt;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="P2_C9_" class="tableRow"&gt;&lt;td id="P2_C10_" class="tabelCell"&gt;&lt;button id="P2_C29_" class="button"&gt;cancel&lt;/button&gt;&lt;/td&gt;&lt;td id="P2_C11_" class="tabelCell"&gt;&lt;button id="P2_C28_" class="button"&gt;save&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</htmlBody>
     <id>P2</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-10-06T16:56:38.842+01:00</modifiedDate>
+    <modifiedDate>2014-12-30T13:31:40.321Z</modifiedDate>
     <name>02_PersonDetails</name>
     <rolesHtml>
-        <html>&lt;table id=&quot;P2_C1_&quot; class=&quot;table&quot;&gt;
-		&lt;tbody&gt;
-			&lt;tr id=&quot;P2_C2_&quot; class=&quot;tableRow&quot;&gt;
-				&lt;td id=&quot;P2_C3_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Person details&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr id=&quot;P2_C4_&quot; class=&quot;tableRow&quot;&gt;
-				&lt;td id=&quot;P2_C5_&quot; class=&quot;tabelCell&quot;&gt;Forename&lt;/td&gt;
-				&lt;td id=&quot;P2_C6_&quot; class=&quot;tabelCell&quot;&gt;
-					&lt;input id=&quot;P2_C20_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
-				&lt;/tr&gt;
-				&lt;tr id=&quot;P2_C14_&quot; class=&quot;tableRow&quot;&gt;
-					&lt;td id=&quot;P2_C15_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;
-					&lt;td id=&quot;P2_C16_&quot; class=&quot;tabelCell&quot;&gt;
-						&lt;input id=&quot;P2_C21_&quot; value=&quot;&quot; type=&quot;text&quot; class=&quot;input&quot;&gt;&lt;/td&gt;
-					&lt;/tr&gt;
-					&lt;tr id=&quot;P2_C17_&quot; class=&quot;tableRow&quot;&gt;
-						&lt;td id=&quot;P2_C18_&quot; class=&quot;tabelCell&quot;&gt;Birthday&lt;/td&gt;
-						&lt;td id=&quot;P2_C19_&quot; class=&quot;tabelCell&quot;&gt;
-							&lt;input id=&quot;P2_C49_&quot; value=&quot;&quot; readonly=&quot;readonly&quot; class=&quot;date tcal tcalInput&quot;&gt;&lt;/td&gt;
-						&lt;/tr&gt;
-						&lt;tr id=&quot;P2_C24_&quot; class=&quot;tableRow&quot;&gt;
-							&lt;td id=&quot;P2_C25_&quot; class=&quot;tabelCell&quot;&gt;Gender&lt;/td&gt;
-							&lt;td id=&quot;P2_C26_&quot; class=&quot;tabelCell&quot;&gt;
-								&lt;span id=&quot;P2_C23_&quot; class=&quot;radiobuttons&quot;&gt;
-									&lt;input type=&quot;radio&quot; name=&quot;P2_C23_&quot; value=&quot;F&quot;&gt;
-										&lt;span&gt;Female&lt;/span&gt;
-										&lt;input type=&quot;radio&quot; name=&quot;P2_C23_&quot; value=&quot;M&quot;&gt;
-											&lt;span&gt;Male&lt;/span&gt;
-										&lt;/span&gt;
-									&lt;/td&gt;
-								&lt;/tr&gt;
-								&lt;tr id=&quot;P2_C9_&quot; class=&quot;tableRow&quot;&gt;
-									&lt;td id=&quot;P2_C10_&quot; class=&quot;tabelCell&quot;&gt;
-										&lt;button id=&quot;P2_C29_&quot; class=&quot;button&quot;&gt;cancel&lt;/button&gt;
-									&lt;/td&gt;
-									&lt;td id=&quot;P2_C11_&quot; class=&quot;tabelCell&quot;&gt;
-										&lt;button id=&quot;P2_C28_&quot; class=&quot;button&quot;&gt;save&lt;/button&gt;
-									&lt;/td&gt;
-								&lt;/tr&gt;
-							&lt;/tbody&gt;
-						&lt;/table&gt;</html>
+        <html>&lt;table id="P2_C1_" class="table"&gt;&lt;tbody&gt;&lt;tr id="P2_C2_" class="tableRow"&gt;&lt;td id="P2_C3_" colspan="2" class="tabelCell"&gt;Person details&lt;/td&gt;&lt;/tr&gt;&lt;tr id="P2_C4_" class="tableRow"&gt;&lt;td id="P2_C5_" class="tabelCell"&gt;Forename&lt;/td&gt;&lt;td id="P2_C6_" class="tabelCell"&gt;&lt;input id="P2_C20_" value="" type="text" class="input"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="P2_C14_" class="tableRow"&gt;&lt;td id="P2_C15_" class="tabelCell"&gt;Surname&lt;/td&gt;&lt;td id="P2_C16_" class="tabelCell"&gt;&lt;input id="P2_C21_" value="" type="text" class="input"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="P2_C17_" class="tableRow"&gt;&lt;td id="P2_C18_" class="tabelCell"&gt;Birthday&lt;/td&gt;&lt;td id="P2_C19_" class="tabelCell"&gt;&lt;input id="P2_C49_" value="" readonly="readonly" class="date tcal tcalInput"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="P2_C24_" class="tableRow"&gt;&lt;td id="P2_C25_" class="tabelCell"&gt;Gender&lt;/td&gt;&lt;td id="P2_C26_" class="tabelCell"&gt;&lt;span id="P2_C23_" class="radiobuttons"&gt;&lt;input type="radio" name="P2_C23_" value="F"&gt;&lt;span&gt;Female&lt;/span&gt;&lt;input type="radio" name="P2_C23_" value="M"&gt;&lt;span&gt;Male&lt;/span&gt;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="P2_C9_" class="tableRow"&gt;&lt;td id="P2_C10_" class="tabelCell"&gt;&lt;button id="P2_C29_" class="button"&gt;cancel&lt;/button&gt;&lt;/td&gt;&lt;td id="P2_C11_" class="tabelCell"&gt;&lt;button id="P2_C28_" class="button"&gt;save&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</html>
     </rolesHtml>
     <sessionVariables>id</sessionVariables>
     <title>Person details</title>

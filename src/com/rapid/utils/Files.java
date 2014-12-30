@@ -158,6 +158,31 @@ public class Files {
 		return size;
 	}
 	
+	// 
+	public static String getSizeName(File file) {
+		// assume there is no file
+		String sizeName = "unknown";
+		// if there is a file
+		if (file != null) {
+			// get the size in bytes
+			long sizeBytes = getSize(file);
+			// check each power of 1024
+			if (sizeBytes < 1024) {
+				sizeName = sizeBytes + " bytes";
+			} else if (sizeBytes < 1024 * 1024) {
+				sizeName = Math.floor(sizeBytes / 1024d * 100) / 100d + " KB";
+			} else if (sizeBytes  < 1024 * 1024 * 1024) {
+				sizeName =  Math.floor(sizeBytes / 1024d / 1024d * 100) / 100d + " MB";
+			} else if (sizeBytes < 1024 * 1024 * 1024 * 1024) {
+				sizeName =  Math.floor(sizeBytes / 1024d / 1024d / 1024d * 100) / 100d + " GB";
+			} else {
+				sizeName = "huge!";
+			}
+		}
+		// return
+		return sizeName;
+	}
+	
 	// this function returns the path in a string, removing the file
 	public static String getPath(String fullFilePath) {
 		String path = "";

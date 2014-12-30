@@ -962,7 +962,10 @@ public class Rapid extends Action {
 				File applicationFile = new File(app.getConfigFolder(rapidServlet.getServletContext()) + "/application.xml");
 				
 				// reload the application from file
-				app = Application.load(rapidServlet.getServletContext(), applicationFile);
+				Application reloadedApplication = Application.load(rapidServlet.getServletContext(), applicationFile);
+				
+				// replace it into the applications collection
+				rapidServlet.getApplications().put(reloadedApplication);
 				
 				// load applications and set the result message
 				result.put("message", "Version reloaded");  

@@ -41,6 +41,8 @@ Geometry - the pixel space an object takes up
 var _actionTypes = {};
 // details of all available control types;
 var _controlTypes = {};
+// the option values with all available actions for adding to selects
+var _actionOptions = "";
 // details of all the available apps
 var _apps = [];
 // details of all the available application versions
@@ -101,6 +103,8 @@ var _scrollBarWidth = 0;
 
 // retain the copied control
 var _copyControl;
+// retain the copied action(s)
+var _copyAction;
 // undo stack
 var _undo = [];
 // redo stack
@@ -116,7 +120,7 @@ var _nextId = 1;
 var _nextPageId = 1;
 
 // a map of all former control and action id's and the new ones they get in the paste
-var _pasteMap = null;
+var _pasteMap = {};
 
 // a global object for the different devices we are supporting, typically for mobiles
 var _devices = [{name:"Desktop", width: 0, height: 0, ppi: 96, scale: 1 }];
@@ -865,12 +869,12 @@ function getInputOptions(selectId, ignoreId) {
 	return getDataOptions(selectId, ignoreId, true);
 }
 
-//this function returns a set of options for a dropdown of sessionVariables and controls with a setData method
+// this function returns a set of options for a dropdown of sessionVariables and controls with a setData method
 function getOutputOptions(selectId, ignoreId) {
 	return getDataOptions(selectId, ignoreId, false);
 }
 
-//this function returns a set of options for a dropdown of existing events from current controls 
+// this function returns a set of options for a dropdown of existing events from current controls 
 function getEventOptions(selectId) {
 	var options = "";
 	for (var i in _page.events) {
@@ -1295,8 +1299,8 @@ function loadVersion(forceLoad) {
 	$("#pageMap").hide();
 	// empty the designControls panel
 	designControls.children().remove();	
-	// empty the action options array
-	_actionOptions = [];
+	// empty the action options global
+	_actionOptions = "";
 	// empty the style classes array
 	_styleClasses = [];
 	// remove any dialogues or components

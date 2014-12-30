@@ -42,7 +42,7 @@
                     <rules>text-align:center;</rules>
                     <rules>font-weight:bold;</rules>
                     <rules>padding:5px 5px;</rules>
-                    <rules>background:#ccc url(highlight_1x100.png) 50% 50% repeat-x;</rules>
+                    <rules>background:#ccc url([[webfolder]]/highlight_1x100.png) 50% 50% repeat-x;</rules>
                     <rules>border-bottom:1px solid #aaa;</rules>
                 </styles>
                 <XMLVersion>1</XMLVersion>
@@ -125,33 +125,33 @@
                         <type>click</type>
                     </events>
                     <events>
-                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="webservice">
+                        <actions xsi:type="webservice" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                             <properties>
-<entry>
-    <key>id</key>
-    <value>P1_A21_</value>
-</entry>
-<entry>
-    <key>avoidRedundancy</key>
-    <value>false</value>
-</entry>
-<entry>
-    <key>name</key>
-    <value>Webservice 21</value>
-</entry>
-<entry>
-    <key>type</key>
-    <value>webservice</value>
-</entry>
-<entry>
-    <key>version</key>
-    <value>1</value>
-</entry>
+                                <entry>
+                                    <key>id</key>
+                                    <value>P1_A21_</value>
+                                </entry>
+                                <entry>
+                                    <key>avoidRedundancy</key>
+                                    <value>false</value>
+                                </entry>
+                                <entry>
+                                    <key>name</key>
+                                    <value>Webservice 21</value>
+                                </entry>
+                                <entry>
+                                    <key>type</key>
+                                    <value>webservice</value>
+                                </entry>
+                                <entry>
+                                    <key>version</key>
+                                    <value>1</value>
+                                </entry>
                             </properties>
                             <XMLVersion>1</XMLVersion>
                             <request>
-<action>Samplewebservice</action>
-<body>&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot; xmlns:soa=&quot;http://soa.rapid-is.co.uk&quot;&gt;
+                                <action>Samplewebservice</action>
+                                <body>&lt;soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soa="http://soa.rapid-is.co.uk"&gt;
   &lt;soapenv:Body&gt;
     &lt;soa:personSearchRequest&gt;
       &lt;soa:forename&gt;?&lt;/soa:forename&gt;
@@ -159,20 +159,20 @@
     &lt;/soa:personSearchRequest&gt;
   &lt;/soapenv:Body&gt;
 &lt;/soapenv:Envelope&gt;</body>
-<inputs>
-    <field></field>
-    <itemId>P1_C11_</itemId>
-</inputs>
-<inputs>
-    <field></field>
-    <itemId>P1_C12_</itemId>
-</inputs>
-<outputs>
-    <field>personSearchResponseArray</field>
-    <itemId>P1_C20_</itemId>
-</outputs>
-<type>SOAP</type>
-<url>soa</url>
+                                <inputs>
+                                    <field></field>
+                                    <itemId>P1_C11_</itemId>
+                                </inputs>
+                                <inputs>
+                                    <field></field>
+                                    <itemId>P1_C12_</itemId>
+                                </inputs>
+                                <outputs>
+                                    <field>personSearchResponseArray</field>
+                                    <itemId>P1_C20_</itemId>
+                                </outputs>
+                                <type>SOAP</type>
+                                <url>soa</url>
                             </request>
                             <showLoading>true</showLoading>
                         </actions>
@@ -338,36 +338,36 @@
                         <type>click</type>
                     </events>
                     <events>
-                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="existing">
+                        <actions xsi:type="existing" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                             <properties>
-<entry>
-    <key>id</key>
-    <value>P1_A22_</value>
-</entry>
-<entry>
-    <key>avoidRedundancy</key>
-    <value>false</value>
-</entry>
-<entry>
-    <key>name</key>
-    <value>Existing 22</value>
-</entry>
-<entry>
-    <key>action</key>
-    <value>P1_A21_</value>
-</entry>
-<entry>
-    <key>type</key>
-    <value>existing</value>
-</entry>
-<entry>
-    <key>version</key>
-    <value>1</value>
-</entry>
-<entry>
-    <key>redundantActions</key>
-    <value>[&quot;P1_A21_&quot;]</value>
-</entry>
+                                <entry>
+                                    <key>id</key>
+                                    <value>P1_A22_</value>
+                                </entry>
+                                <entry>
+                                    <key>avoidRedundancy</key>
+                                    <value>false</value>
+                                </entry>
+                                <entry>
+                                    <key>name</key>
+                                    <value>Existing 22</value>
+                                </entry>
+                                <entry>
+                                    <key>action</key>
+                                    <value>P1_A21_</value>
+                                </entry>
+                                <entry>
+                                    <key>type</key>
+                                    <value>existing</value>
+                                </entry>
+                                <entry>
+                                    <key>version</key>
+                                    <value>1</value>
+                                </entry>
+                                <entry>
+                                    <key>redundantActions</key>
+                                    <value>["P1_A21_"]</value>
+                                </entry>
                             </properties>
                             <XMLVersion>1</XMLVersion>
                         </actions>
@@ -513,7 +513,7 @@
             </entry>
             <entry>
                 <key>details</key>
-                <value>{&quot;storageType&quot;:&quot;L&quot;}</value>
+                <value>{"storageType":"L"}</value>
             </entry>
             <entry>
                 <key>storageType</key>
@@ -576,7 +576,7 @@
                     <rules>text-align:center;</rules>
                     <rules>font-weight:bold;</rules>
                     <rules>padding:5px 5px;</rules>
-                    <rules>background:#ccc url(highlight_1x100.png) 50% 50% repeat-x;</rules>
+                    <rules>background:#ccc url([[webfolder]]/highlight_1x100.png) 50% 50% repeat-x;</rules>
                     <rules>border:1px solid #aaa;</rules>
                     <rules>border-top-left-radius:5px;</rules>
                     <rules>border-top-right-radius:5px;</rules>
@@ -611,114 +611,114 @@
             <childControls>
                 <childControls>
                     <events>
-                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="datacopy">
+                        <actions xsi:type="datacopy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                             <properties>
-<entry>
-    <key>id</key>
-    <value>P1_A28_</value>
-</entry>
-<entry>
-    <key>dataSource</key>
-    <value>P1_C11_</value>
-</entry>
-<entry>
-    <key>avoidRedundancy</key>
-    <value>false</value>
-</entry>
-<entry>
-    <key>name</key>
-    <value>Data copy 28</value>
-</entry>
-<entry>
-    <key>dataDestinations</key>
-    <value>[{&quot;field&quot;:&quot;forename&quot;,&quot;itemId&quot;:&quot;P1_C25_&quot;}]</value>
-</entry>
-<entry>
-    <key>type</key>
-    <value>dataCopy</value>
-</entry>
-<entry>
-    <key>version</key>
-    <value>1</value>
-</entry>
+                                <entry>
+                                    <key>id</key>
+                                    <value>P1_A28_</value>
+                                </entry>
+                                <entry>
+                                    <key>dataSource</key>
+                                    <value>P1_C11_</value>
+                                </entry>
+                                <entry>
+                                    <key>avoidRedundancy</key>
+                                    <value>false</value>
+                                </entry>
+                                <entry>
+                                    <key>name</key>
+                                    <value>Data copy 28</value>
+                                </entry>
+                                <entry>
+                                    <key>dataDestinations</key>
+                                    <value>[{"field":"forename","itemId":"P1_C25_"}]</value>
+                                </entry>
+                                <entry>
+                                    <key>type</key>
+                                    <value>dataCopy</value>
+                                </entry>
+                                <entry>
+                                    <key>version</key>
+                                    <value>1</value>
+                                </entry>
                             </properties>
                             <XMLVersion>1</XMLVersion>
                         </actions>
-                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="datacopy">
+                        <actions xsi:type="datacopy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                             <properties>
-<entry>
-    <key>id</key>
-    <value>P1_A33_</value>
-</entry>
-<entry>
-    <key>dataSource</key>
-    <value>P1_C12_</value>
-</entry>
-<entry>
-    <key>avoidRedundancy</key>
-    <value>false</value>
-</entry>
-<entry>
-    <key>name</key>
-    <value>Data copy 33</value>
-</entry>
-<entry>
-    <key>dataDestinations</key>
-    <value>[{&quot;field&quot;:&quot;surname&quot;,&quot;itemId&quot;:&quot;P1_C25_&quot;}]</value>
-</entry>
-<entry>
-    <key>type</key>
-    <value>dataCopy</value>
-</entry>
-<entry>
-    <key>version</key>
-    <value>1</value>
-</entry>
+                                <entry>
+                                    <key>id</key>
+                                    <value>P1_A33_</value>
+                                </entry>
+                                <entry>
+                                    <key>dataSource</key>
+                                    <value>P1_C12_</value>
+                                </entry>
+                                <entry>
+                                    <key>avoidRedundancy</key>
+                                    <value>false</value>
+                                </entry>
+                                <entry>
+                                    <key>name</key>
+                                    <value>Data copy 33</value>
+                                </entry>
+                                <entry>
+                                    <key>dataDestinations</key>
+                                    <value>[{"field":"surname","itemId":"P1_C25_"}]</value>
+                                </entry>
+                                <entry>
+                                    <key>type</key>
+                                    <value>dataCopy</value>
+                                </entry>
+                                <entry>
+                                    <key>version</key>
+                                    <value>1</value>
+                                </entry>
                             </properties>
                             <XMLVersion>1</XMLVersion>
                         </actions>
-                        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="navigate">
+                        <actions xsi:type="navigate" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                             <properties>
-<entry>
-    <key>id</key>
-    <value>P1_A24_</value>
-</entry>
-<entry>
-    <key>avoidRedundancy</key>
-    <value>false</value>
-</entry>
-<entry>
-    <key>page</key>
-    <value>P2</value>
-</entry>
-<entry>
-    <key>name</key>
-    <value>Navigate 24</value>
-</entry>
-<entry>
-    <key>dialogue</key>
-    <value>true</value>
-</entry>
-<entry>
-    <key>type</key>
-    <value>navigate</value>
-</entry>
-<entry>
-    <key>version</key>
-    <value>1</value>
-</entry>
+                                <entry>
+                                    <key>id</key>
+                                    <value>P1_A24_</value>
+                                </entry>
+                                <entry>
+                                    <key>avoidRedundancy</key>
+                                    <value>false</value>
+                                </entry>
+                                <entry>
+                                    <key>page</key>
+                                    <value>P2</value>
+                                </entry>
+                                <entry>
+                                    <key>name</key>
+                                    <value>Navigate 24</value>
+                                </entry>
+                                <entry>
+                                    <key>dialogue</key>
+                                    <value>true</value>
+                                </entry>
+                                <entry>
+                                    <key>type</key>
+                                    <value>navigate</value>
+                                </entry>
+                                <entry>
+                                    <key>version</key>
+                                    <value>1</value>
+                                </entry>
                             </properties>
                             <XMLVersion>1</XMLVersion>
                             <sessionVariables>
-<field>id</field>
-<itemId>P1_C20_</itemId>
-<name>id</name>
+                                <field>id</field>
+                                <itemId>P1_C20_</itemId>
+                                <name>id</name>
                             </sessionVariables>
                         </actions>
-                        <filter>&#xD;
-var target = $(ev.target);&#xD;
-// don't fire if the target is the top row or tbody&#xD;
-if (target.closest(&quot;tr&quot;).index() == 0 || target.is(&quot;tbody&quot;)) return false;&#xD;
+                        <filter>
+var target = $(ev.target);
+// don't fire if the target is the top row or tbody
+if (target.closest("tr").index() == 0 || target.is("tbody")) return false;
 </filter>
                         <type>click</type>
                     </events>
@@ -728,12 +728,12 @@ if (target.closest(&quot;tr&quot;).index() == 0 || target.is(&quot;tbody&quot;))
                             <value>P1_C20_</value>
                         </entry>
                         <entry>
-                            <key>columnHeadings</key>
-                            <value>true</value>
-                        </entry>
-                        <entry>
                             <key>classes</key>
                             <value>[]</value>
+                        </entry>
+                        <entry>
+                            <key>columnHeadings</key>
+                            <value>true</value>
                         </entry>
                         <entry>
                             <key>canBeUsedFromOtherPages</key>
@@ -741,7 +741,7 @@ if (target.closest(&quot;tr&quot;).index() == 0 || target.is(&quot;tbody&quot;))
                         </entry>
                         <entry>
                             <key>details</key>
-                            <value>{&quot;rowSelect&quot;:false,&quot;columns&quot;:[{&quot;field&quot;:&quot;id&quot;},{&quot;field&quot;:&quot;forename&quot;,&quot;style&quot;:&quot;padding:2px 5px 2px 10px;&quot;,&quot;visible&quot;:true},{&quot;field&quot;:&quot;surname&quot;,&quot;style&quot;:&quot;padding:2px;&quot;,&quot;visible&quot;:true},{&quot;cellFunction&quot;:&quot;var value = this.html();\nif (value) {\n  var parts = value.split(\&quot;-\&quot;);\n  if (parts.length == 3) {\n    value = parts[2] + \&quot;/\&quot; + parts[1] + \&quot;/\&quot; + parts[0];\n    this.html(value);\n  }\n}&quot;,&quot;field&quot;:&quot;birthday&quot;,&quot;style&quot;:&quot;padding:2px;text-align:center;&quot;,&quot;visible&quot;:true},{&quot;field&quot;:&quot;gender&quot;,&quot;style&quot;:&quot;padding:2px 10px 2px 5px;text-align:center;&quot;,&quot;visible&quot;:true}],&quot;rowHover&quot;:false}</value>
+                            <value>{"rowSelect":false,"columns":[{"field":"id"},{"field":"forename","style":"padding:2px 5px 2px 10px;","visible":true},{"field":"surname","style":"padding:2px;","visible":true},{"cellFunction":"var value = this.html();\nif (value) {\n  var parts = value.split(\"-\");\n  if (parts.length == 3) {\n    value = parts[2] + \"/\" + parts[1] + \"/\" + parts[0];\n    this.html(value);\n  }\n}","field":"birthday","style":"padding:2px;text-align:center;","visible":true},{"field":"gender","style":"padding:2px 10px 2px 5px;text-align:center;","visible":true}],"rowHover":false}</value>
                         </entry>
                         <entry>
                             <key>name</key>
@@ -749,7 +749,7 @@ if (target.closest(&quot;tr&quot;).index() == 0 || target.is(&quot;tbody&quot;))
                         </entry>
                         <entry>
                             <key>columns</key>
-                            <value>[{&quot;field&quot;:&quot;id&quot;,&quot;cellFunction&quot;:&quot;&quot;,&quot;title&quot;:&quot;Id&quot;,&quot;visible&quot;:false,&quot;titleStyle&quot;:&quot;&quot;,&quot;fieldStyle&quot;:&quot;&quot;},{&quot;field&quot;:&quot;forename&quot;,&quot;cellFunction&quot;:&quot;&quot;,&quot;title&quot;:&quot;Forename&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;padding:2px 5px 2px 10px;text-align:center;border-bottom:1px solid #aaa;&quot;,&quot;fieldStyle&quot;:&quot;padding:2px 5px 2px 10px;&quot;},{&quot;field&quot;:&quot;surname&quot;,&quot;cellFunction&quot;:&quot;&quot;,&quot;title&quot;:&quot;Surname&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;,&quot;fieldStyle&quot;:&quot;padding:2px;&quot;},{&quot;field&quot;:&quot;birthday&quot;,&quot;cellFunction&quot;:&quot;var value = this.html();\nif (value) {\n  var parts = value.split(\&quot;-\&quot;);\n  if (parts.length == 3) {\n    value = parts[2] + \&quot;/\&quot; + parts[1] + \&quot;/\&quot; + parts[0];\n    this.html(value);\n  }\n}&quot;,&quot;title&quot;:&quot;Birthday&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;,&quot;fieldStyle&quot;:&quot;padding:2px;text-align:center;&quot;},{&quot;field&quot;:&quot;gender&quot;,&quot;cellFunction&quot;:&quot;&quot;,&quot;title&quot;:&quot;Gender&quot;,&quot;visible&quot;:true,&quot;titleStyle&quot;:&quot;padding:2px 10px 2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;,&quot;fieldStyle&quot;:&quot;padding:2px 10px 2px 5px;text-align:center;&quot;}]</value>
+                            <value>[{"cellFunction":"","field":"id","title":"Id","visible":false,"titleStyle":"","fieldStyle":""},{"cellFunction":"","field":"forename","title":"Forename","visible":true,"titleStyle":"padding:2px 5px 2px 10px;text-align:center;border-bottom:1px solid #aaa;","fieldStyle":"padding:2px 5px 2px 10px;"},{"cellFunction":"","field":"surname","title":"Surname","visible":true,"titleStyle":"padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;","fieldStyle":"padding:2px;"},{"cellFunction":"var value = this.html();\nif (value) {\n  var parts = value.split(\"-\");\n  if (parts.length == 3) {\n    value = parts[2] + \"/\" + parts[1] + \"/\" + parts[0];\n    this.html(value);\n  }\n}","field":"birthday","title":"Birthday","visible":true,"titleStyle":"padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;","fieldStyle":"padding:2px;text-align:center;"},{"cellFunction":"","field":"gender","title":"Gender","visible":true,"titleStyle":"padding:2px 10px 2px 5px;text-align:center;border-bottom:1px solid #aaa;","fieldStyle":"padding:2px 10px 2px 5px;text-align:center;"}]</value>
                         </entry>
                         <entry>
                             <key>type</key>
@@ -933,11 +933,11 @@ if (target.closest(&quot;tr&quot;).index() == 0 || target.is(&quot;tbody&quot;))
             </entry>
             <entry>
                 <key>text</key>
-                <value>This panel only appears if the user has the &quot;Demo role 1&quot; security role</value>
+                <value>This panel only appears if the user has the "Demo role 1" security role</value>
             </entry>
             <entry>
                 <key>roles</key>
-                <value>[&quot;Demo role 1&quot;]</value>
+                <value>["Demo role 1"]</value>
             </entry>
             <entry>
                 <key>name</key>
@@ -983,11 +983,11 @@ if (target.closest(&quot;tr&quot;).index() == 0 || target.is(&quot;tbody&quot;))
             </entry>
             <entry>
                 <key>text</key>
-                <value>This panel only appears if the user has the &quot;Demo role 2&quot; security role</value>
+                <value>This panel only appears if the user has the "Demo role 2" security role</value>
             </entry>
             <entry>
                 <key>roles</key>
-                <value>[&quot;Demo role 2&quot;]</value>
+                <value>["Demo role 2"]</value>
             </entry>
             <entry>
                 <key>name</key>
@@ -1011,7 +1011,7 @@ if (target.closest(&quot;tr&quot;).index() == 0 || target.is(&quot;tbody&quot;))
     </controls>
     <description></description>
     <events>
-        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="datacopy">
+        <actions xsi:type="datacopy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <properties>
                 <entry>
                     <key>id</key>
@@ -1031,7 +1031,7 @@ if (target.closest(&quot;tr&quot;).index() == 0 || target.is(&quot;tbody&quot;))
                 </entry>
                 <entry>
                     <key>dataDestinations</key>
-                    <value>[{&quot;field&quot;:&quot;forename&quot;,&quot;itemId&quot;:&quot;P1_C11_&quot;},{&quot;field&quot;:&quot;surname&quot;,&quot;itemId&quot;:&quot;P1_C12_&quot;}]</value>
+                    <value>[{"field":"forename","itemId":"P1_C11_"},{"field":"surname","itemId":"P1_C12_"}]</value>
                 </entry>
                 <entry>
                     <key>type</key>
@@ -1044,7 +1044,7 @@ if (target.closest(&quot;tr&quot;).index() == 0 || target.is(&quot;tbody&quot;))
             </properties>
             <XMLVersion>1</XMLVersion>
         </actions>
-        <actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="custom">
+        <actions xsi:type="custom" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <properties>
                 <entry>
                     <key>id</key>
@@ -1053,7 +1053,7 @@ if (target.closest(&quot;tr&quot;).index() == 0 || target.is(&quot;tbody&quot;))
                 <entry>
                     <key>javascript</key>
                     <value>// only (re)run the search if there is a forename or surname value
-if ($(&quot;#P1_C11_&quot;).val() || $(&quot;#P1_C12_&quot;).val()) Event_keyup_P1_C11_(ev);</value>
+if ($("#P1_C11_").val() || $("#P1_C12_").val()) Event_keyup_P1_C11_(ev);</value>
                 </entry>
                 <entry>
                     <key>avoidRedundancy</key>
@@ -1081,26 +1081,26 @@ if ($(&quot;#P1_C11_&quot;).val() || $(&quot;#P1_C12_&quot;).val()) Event_keyup_
         <filter></filter>
         <type>reusable</type>
     </events>
-    <htmlBody>&lt;table id=&quot;P1_C1_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P1_C2_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C3_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Person search&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C5_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C6_&quot; class=&quot;tabelCell&quot;&gt;Forename&lt;/td&gt;&lt;td id=&quot;P1_C7_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P1_C11_&quot; value=&quot;&quot; type=&quot;text&quot; maxlength=&quot;20&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C8_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C9_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;&lt;td id=&quot;P1_C10_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P1_C12_&quot; value=&quot;&quot; type=&quot;text&quot; maxlength=&quot;20&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;table id=&quot;P1_C13_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P1_C14_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C15_&quot; class=&quot;tabelCell&quot;&gt;Search results&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C17_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C18_&quot; class=&quot;tabelCell&quot;&gt;&lt;table id=&quot;P1_C20_&quot; class=&quot;grid&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td style=&quot;display:none;&quot;&gt;Id&lt;/td&gt;&lt;td style=&quot;padding:2px 5px 2px 10px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Forename&lt;/td&gt;&lt;td style=&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Surname&lt;/td&gt;&lt;td style=&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Birthday&lt;/td&gt;&lt;td style=&quot;padding:2px 10px 2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Gender&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;div id=&quot;P1_C23_&quot; class=&quot;panel&quot;&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;div id=&quot;P1_C40_&quot; class=&quot;panel&quot;&gt;This panel only appears if the user has the &quot;Demo role 1&quot; security role&lt;/div&gt;&lt;div id=&quot;P1_C41_&quot; class=&quot;panel&quot;&gt;This panel only appears if the user has the &quot;Demo role 2&quot; security role&lt;/div&gt;</htmlBody>
+    <htmlBody>&lt;table id="P1_C1_" class="table"&gt;&lt;tbody&gt;&lt;tr id="P1_C2_" class="tableRow"&gt;&lt;td id="P1_C3_" colspan="2" class="tabelCell"&gt;Person search&lt;/td&gt;&lt;/tr&gt;&lt;tr id="P1_C5_" class="tableRow"&gt;&lt;td id="P1_C6_" class="tabelCell"&gt;Forename&lt;/td&gt;&lt;td id="P1_C7_" class="tabelCell"&gt;&lt;input id="P1_C11_" value="" type="text" maxlength="20" class="input"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="P1_C8_" class="tableRow"&gt;&lt;td id="P1_C9_" class="tabelCell"&gt;Surname&lt;/td&gt;&lt;td id="P1_C10_" class="tabelCell"&gt;&lt;input id="P1_C12_" value="" type="text" maxlength="20" class="input"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;table id="P1_C13_" class="table"&gt;&lt;tbody&gt;&lt;tr id="P1_C14_" class="tableRow"&gt;&lt;td id="P1_C15_" class="tabelCell"&gt;Search results&lt;/td&gt;&lt;/tr&gt;&lt;tr id="P1_C17_" class="tableRow"&gt;&lt;td id="P1_C18_" class="tabelCell"&gt;&lt;table id="P1_C20_" class="grid"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td style="display:none;"&gt;Id&lt;/td&gt;&lt;td style="padding:2px 5px 2px 10px;text-align:center;border-bottom:1px solid #aaa;"&gt;Forename&lt;/td&gt;&lt;td style="padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;"&gt;Surname&lt;/td&gt;&lt;td style="padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;"&gt;Birthday&lt;/td&gt;&lt;td style="padding:2px 10px 2px 5px;text-align:center;border-bottom:1px solid #aaa;"&gt;Gender&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;div id="P1_C23_" class="panel"&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;div id="P1_C40_" class="panel"&gt;This panel only appears if the user has the "Demo role 1" security role&lt;/div&gt;&lt;div id="P1_C41_" class="panel"&gt;This panel only appears if the user has the "Demo role 2" security role&lt;/div&gt;</htmlBody>
     <id>P1</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-12-17T11:53:51.116Z</modifiedDate>
+    <modifiedDate>2014-12-30T13:31:14.853Z</modifiedDate>
     <name>01_PersonSearch</name>
     <rolesHtml>
-        <html>&lt;table id=&quot;P1_C1_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P1_C2_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C3_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Person search&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C5_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C6_&quot; class=&quot;tabelCell&quot;&gt;Forename&lt;/td&gt;&lt;td id=&quot;P1_C7_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P1_C11_&quot; value=&quot;&quot; type=&quot;text&quot; maxlength=&quot;20&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C8_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C9_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;&lt;td id=&quot;P1_C10_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P1_C12_&quot; value=&quot;&quot; type=&quot;text&quot; maxlength=&quot;20&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;table id=&quot;P1_C13_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P1_C14_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C15_&quot; class=&quot;tabelCell&quot;&gt;Search results&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C17_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C18_&quot; class=&quot;tabelCell&quot;&gt;&lt;table id=&quot;P1_C20_&quot; class=&quot;grid&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td style=&quot;display:none;&quot;&gt;Id&lt;/td&gt;&lt;td style=&quot;padding:2px 5px 2px 10px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Forename&lt;/td&gt;&lt;td style=&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Surname&lt;/td&gt;&lt;td style=&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Birthday&lt;/td&gt;&lt;td style=&quot;padding:2px 10px 2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Gender&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;div id=&quot;P1_C23_&quot; class=&quot;panel&quot;&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;div id=&quot;P1_C40_&quot; class=&quot;panel&quot;&gt;This panel only appears if the user has the &quot;Demo role 1&quot; security role&lt;/div&gt;&lt;div id=&quot;P1_C41_&quot; class=&quot;panel&quot;&gt;This panel only appears if the user has the &quot;Demo role 2&quot; security role&lt;/div&gt;</html>
+        <html>&lt;table id="P1_C1_" class="table"&gt;&lt;tbody&gt;&lt;tr id="P1_C2_" class="tableRow"&gt;&lt;td id="P1_C3_" colspan="2" class="tabelCell"&gt;Person search&lt;/td&gt;&lt;/tr&gt;&lt;tr id="P1_C5_" class="tableRow"&gt;&lt;td id="P1_C6_" class="tabelCell"&gt;Forename&lt;/td&gt;&lt;td id="P1_C7_" class="tabelCell"&gt;&lt;input id="P1_C11_" value="" type="text" maxlength="20" class="input"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="P1_C8_" class="tableRow"&gt;&lt;td id="P1_C9_" class="tabelCell"&gt;Surname&lt;/td&gt;&lt;td id="P1_C10_" class="tabelCell"&gt;&lt;input id="P1_C12_" value="" type="text" maxlength="20" class="input"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;table id="P1_C13_" class="table"&gt;&lt;tbody&gt;&lt;tr id="P1_C14_" class="tableRow"&gt;&lt;td id="P1_C15_" class="tabelCell"&gt;Search results&lt;/td&gt;&lt;/tr&gt;&lt;tr id="P1_C17_" class="tableRow"&gt;&lt;td id="P1_C18_" class="tabelCell"&gt;&lt;table id="P1_C20_" class="grid"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td style="display:none;"&gt;Id&lt;/td&gt;&lt;td style="padding:2px 5px 2px 10px;text-align:center;border-bottom:1px solid #aaa;"&gt;Forename&lt;/td&gt;&lt;td style="padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;"&gt;Surname&lt;/td&gt;&lt;td style="padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;"&gt;Birthday&lt;/td&gt;&lt;td style="padding:2px 10px 2px 5px;text-align:center;border-bottom:1px solid #aaa;"&gt;Gender&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;div id="P1_C23_" class="panel"&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;div id="P1_C40_" class="panel"&gt;This panel only appears if the user has the "Demo role 1" security role&lt;/div&gt;&lt;div id="P1_C41_" class="panel"&gt;This panel only appears if the user has the "Demo role 2" security role&lt;/div&gt;</html>
         <roles>Demo role 1</roles>
         <roles>Demo role 2</roles>
     </rolesHtml>
     <rolesHtml>
-        <html>&lt;table id=&quot;P1_C1_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P1_C2_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C3_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Person search&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C5_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C6_&quot; class=&quot;tabelCell&quot;&gt;Forename&lt;/td&gt;&lt;td id=&quot;P1_C7_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P1_C11_&quot; value=&quot;&quot; type=&quot;text&quot; maxlength=&quot;20&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C8_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C9_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;&lt;td id=&quot;P1_C10_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P1_C12_&quot; value=&quot;&quot; type=&quot;text&quot; maxlength=&quot;20&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;table id=&quot;P1_C13_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P1_C14_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C15_&quot; class=&quot;tabelCell&quot;&gt;Search results&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C17_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C18_&quot; class=&quot;tabelCell&quot;&gt;&lt;table id=&quot;P1_C20_&quot; class=&quot;grid&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td style=&quot;display:none;&quot;&gt;Id&lt;/td&gt;&lt;td style=&quot;padding:2px 5px 2px 10px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Forename&lt;/td&gt;&lt;td style=&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Surname&lt;/td&gt;&lt;td style=&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Birthday&lt;/td&gt;&lt;td style=&quot;padding:2px 10px 2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Gender&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;div id=&quot;P1_C23_&quot; class=&quot;panel&quot;&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;div id=&quot;P1_C40_&quot; class=&quot;panel&quot;&gt;This panel only appears if the user has the &quot;Demo role 1&quot; security role&lt;/div&gt;</html>
+        <html>&lt;table id="P1_C1_" class="table"&gt;&lt;tbody&gt;&lt;tr id="P1_C2_" class="tableRow"&gt;&lt;td id="P1_C3_" colspan="2" class="tabelCell"&gt;Person search&lt;/td&gt;&lt;/tr&gt;&lt;tr id="P1_C5_" class="tableRow"&gt;&lt;td id="P1_C6_" class="tabelCell"&gt;Forename&lt;/td&gt;&lt;td id="P1_C7_" class="tabelCell"&gt;&lt;input id="P1_C11_" value="" type="text" maxlength="20" class="input"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="P1_C8_" class="tableRow"&gt;&lt;td id="P1_C9_" class="tabelCell"&gt;Surname&lt;/td&gt;&lt;td id="P1_C10_" class="tabelCell"&gt;&lt;input id="P1_C12_" value="" type="text" maxlength="20" class="input"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;table id="P1_C13_" class="table"&gt;&lt;tbody&gt;&lt;tr id="P1_C14_" class="tableRow"&gt;&lt;td id="P1_C15_" class="tabelCell"&gt;Search results&lt;/td&gt;&lt;/tr&gt;&lt;tr id="P1_C17_" class="tableRow"&gt;&lt;td id="P1_C18_" class="tabelCell"&gt;&lt;table id="P1_C20_" class="grid"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td style="display:none;"&gt;Id&lt;/td&gt;&lt;td style="padding:2px 5px 2px 10px;text-align:center;border-bottom:1px solid #aaa;"&gt;Forename&lt;/td&gt;&lt;td style="padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;"&gt;Surname&lt;/td&gt;&lt;td style="padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;"&gt;Birthday&lt;/td&gt;&lt;td style="padding:2px 10px 2px 5px;text-align:center;border-bottom:1px solid #aaa;"&gt;Gender&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;div id="P1_C23_" class="panel"&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;div id="P1_C40_" class="panel"&gt;This panel only appears if the user has the "Demo role 1" security role&lt;/div&gt;</html>
         <roles>Demo role 1</roles>
     </rolesHtml>
     <rolesHtml>
-        <html>&lt;table id=&quot;P1_C1_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P1_C2_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C3_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Person search&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C5_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C6_&quot; class=&quot;tabelCell&quot;&gt;Forename&lt;/td&gt;&lt;td id=&quot;P1_C7_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P1_C11_&quot; value=&quot;&quot; type=&quot;text&quot; maxlength=&quot;20&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C8_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C9_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;&lt;td id=&quot;P1_C10_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P1_C12_&quot; value=&quot;&quot; type=&quot;text&quot; maxlength=&quot;20&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;table id=&quot;P1_C13_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P1_C14_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C15_&quot; class=&quot;tabelCell&quot;&gt;Search results&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C17_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C18_&quot; class=&quot;tabelCell&quot;&gt;&lt;table id=&quot;P1_C20_&quot; class=&quot;grid&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td style=&quot;display:none;&quot;&gt;Id&lt;/td&gt;&lt;td style=&quot;padding:2px 5px 2px 10px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Forename&lt;/td&gt;&lt;td style=&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Surname&lt;/td&gt;&lt;td style=&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Birthday&lt;/td&gt;&lt;td style=&quot;padding:2px 10px 2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Gender&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;div id=&quot;P1_C23_&quot; class=&quot;panel&quot;&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;div id=&quot;P1_C41_&quot; class=&quot;panel&quot;&gt;This panel only appears if the user has the &quot;Demo role 2&quot; security role&lt;/div&gt;</html>
+        <html>&lt;table id="P1_C1_" class="table"&gt;&lt;tbody&gt;&lt;tr id="P1_C2_" class="tableRow"&gt;&lt;td id="P1_C3_" colspan="2" class="tabelCell"&gt;Person search&lt;/td&gt;&lt;/tr&gt;&lt;tr id="P1_C5_" class="tableRow"&gt;&lt;td id="P1_C6_" class="tabelCell"&gt;Forename&lt;/td&gt;&lt;td id="P1_C7_" class="tabelCell"&gt;&lt;input id="P1_C11_" value="" type="text" maxlength="20" class="input"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="P1_C8_" class="tableRow"&gt;&lt;td id="P1_C9_" class="tabelCell"&gt;Surname&lt;/td&gt;&lt;td id="P1_C10_" class="tabelCell"&gt;&lt;input id="P1_C12_" value="" type="text" maxlength="20" class="input"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;table id="P1_C13_" class="table"&gt;&lt;tbody&gt;&lt;tr id="P1_C14_" class="tableRow"&gt;&lt;td id="P1_C15_" class="tabelCell"&gt;Search results&lt;/td&gt;&lt;/tr&gt;&lt;tr id="P1_C17_" class="tableRow"&gt;&lt;td id="P1_C18_" class="tabelCell"&gt;&lt;table id="P1_C20_" class="grid"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td style="display:none;"&gt;Id&lt;/td&gt;&lt;td style="padding:2px 5px 2px 10px;text-align:center;border-bottom:1px solid #aaa;"&gt;Forename&lt;/td&gt;&lt;td style="padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;"&gt;Surname&lt;/td&gt;&lt;td style="padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;"&gt;Birthday&lt;/td&gt;&lt;td style="padding:2px 10px 2px 5px;text-align:center;border-bottom:1px solid #aaa;"&gt;Gender&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;div id="P1_C23_" class="panel"&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;div id="P1_C41_" class="panel"&gt;This panel only appears if the user has the "Demo role 2" security role&lt;/div&gt;</html>
         <roles>Demo role 2</roles>
     </rolesHtml>
     <rolesHtml>
-        <html>&lt;table id=&quot;P1_C1_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P1_C2_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C3_&quot; colspan=&quot;2&quot; class=&quot;tabelCell&quot;&gt;Person search&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C5_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C6_&quot; class=&quot;tabelCell&quot;&gt;Forename&lt;/td&gt;&lt;td id=&quot;P1_C7_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P1_C11_&quot; value=&quot;&quot; type=&quot;text&quot; maxlength=&quot;20&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C8_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C9_&quot; class=&quot;tabelCell&quot;&gt;Surname&lt;/td&gt;&lt;td id=&quot;P1_C10_&quot; class=&quot;tabelCell&quot;&gt;&lt;input id=&quot;P1_C12_&quot; value=&quot;&quot; type=&quot;text&quot; maxlength=&quot;20&quot; class=&quot;input&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;table id=&quot;P1_C13_&quot; class=&quot;table&quot;&gt;&lt;tbody&gt;&lt;tr id=&quot;P1_C14_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C15_&quot; class=&quot;tabelCell&quot;&gt;Search results&lt;/td&gt;&lt;/tr&gt;&lt;tr id=&quot;P1_C17_&quot; class=&quot;tableRow&quot;&gt;&lt;td id=&quot;P1_C18_&quot; class=&quot;tabelCell&quot;&gt;&lt;table id=&quot;P1_C20_&quot; class=&quot;grid&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td style=&quot;display:none;&quot;&gt;Id&lt;/td&gt;&lt;td style=&quot;padding:2px 5px 2px 10px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Forename&lt;/td&gt;&lt;td style=&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Surname&lt;/td&gt;&lt;td style=&quot;padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Birthday&lt;/td&gt;&lt;td style=&quot;padding:2px 10px 2px 5px;text-align:center;border-bottom:1px solid #aaa;&quot;&gt;Gender&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;div id=&quot;P1_C23_&quot; class=&quot;panel&quot;&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</html>
+        <html>&lt;table id="P1_C1_" class="table"&gt;&lt;tbody&gt;&lt;tr id="P1_C2_" class="tableRow"&gt;&lt;td id="P1_C3_" colspan="2" class="tabelCell"&gt;Person search&lt;/td&gt;&lt;/tr&gt;&lt;tr id="P1_C5_" class="tableRow"&gt;&lt;td id="P1_C6_" class="tabelCell"&gt;Forename&lt;/td&gt;&lt;td id="P1_C7_" class="tabelCell"&gt;&lt;input id="P1_C11_" value="" type="text" maxlength="20" class="input"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr id="P1_C8_" class="tableRow"&gt;&lt;td id="P1_C9_" class="tabelCell"&gt;Surname&lt;/td&gt;&lt;td id="P1_C10_" class="tabelCell"&gt;&lt;input id="P1_C12_" value="" type="text" maxlength="20" class="input"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;table id="P1_C13_" class="table"&gt;&lt;tbody&gt;&lt;tr id="P1_C14_" class="tableRow"&gt;&lt;td id="P1_C15_" class="tabelCell"&gt;Search results&lt;/td&gt;&lt;/tr&gt;&lt;tr id="P1_C17_" class="tableRow"&gt;&lt;td id="P1_C18_" class="tabelCell"&gt;&lt;table id="P1_C20_" class="grid"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td style="display:none;"&gt;Id&lt;/td&gt;&lt;td style="padding:2px 5px 2px 10px;text-align:center;border-bottom:1px solid #aaa;"&gt;Forename&lt;/td&gt;&lt;td style="padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;"&gt;Surname&lt;/td&gt;&lt;td style="padding:2px 5px;text-align:center;border-bottom:1px solid #aaa;"&gt;Birthday&lt;/td&gt;&lt;td style="padding:2px 10px 2px 5px;text-align:center;border-bottom:1px solid #aaa;"&gt;Gender&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;div id="P1_C23_" class="panel"&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</html>
     </rolesHtml>
     <title>Person search</title>
     <XMLVersion>1</XMLVersion>
