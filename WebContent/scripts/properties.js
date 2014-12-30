@@ -40,16 +40,14 @@ var _dialogueRefeshProperties = {};
 function addListener(listener) {
 	// assume we're not able to find the listener id
 	var listenerId = "unknown";
-	// get the listener object
-	var listenerObject = $(listener);
 	// get the nearest dialogue
 	var dialogue = listener.closest("div.dialogue");
-	// if we didn't get a dialogue
-	if (dialogue[0]) {
+	// if we got get a dialogue, but not the close link (the close links are attached to the panel then which could cause a mini leak)
+	if (dialogue[0] && !listener.is("a.closeDialogue")) {
 		// set the listener object to the dialogue id
 		listenerId = dialogue.attr("id");
 	} else {
-		// find the closest div with a data-dialogueid
+		// find the closest div with a data-dialogueid (this will be one of the panels)
 		dialogue = listener.closest("div[data-dialogueid]");
 		// set the listener id to the dialogue id
 		listenerId = dialogue.attr("data-dialogueid");
