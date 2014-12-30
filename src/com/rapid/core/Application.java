@@ -457,17 +457,20 @@ public class Application {
 	
 	// this replaces [[xxx]] in a string where xxx is a known system or application parameter
 	public String insertParameters(String string) {
-		// update commmon known system parameters
-		string = string
-			.replace("[[webfolder]]", getWebFolder(this));
-		// if we have parameters
-		if (_parameters != null) {
-			// loop them
-			for (Parameter parameter : _parameters) {
-				// define the match string
-				String matchString = "[[" + parameter.getName() + "]]";
-				// if the match string is present replace it with the value
-				if (string.contains(matchString)) string = string.replace(matchString, parameter.getValue());
+		// check for non-null
+		if (string != null) {
+			// update commmon known system parameters
+			string = string
+				.replace("[[webfolder]]", getWebFolder(this));
+			// if we have parameters
+			if (_parameters != null) {
+				// loop them
+				for (Parameter parameter : _parameters) {
+					// define the match string
+					String matchString = "[[" + parameter.getName() + "]]";
+					// if the match string is present replace it with the value
+					if (string.contains(matchString)) string = string.replace(matchString, parameter.getValue());
+				}
 			}
 		}
 		// return it
