@@ -197,8 +197,8 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, Rap
 					<button id="swapPeerRight" class="buttonRight"><img src="images/swapRight_16x16.png" title="Swap position with control after this one"/></button>
 				</div>						
 				<div class="buttons">
-					<button id="copy" class="buttonLeft">&nbsp;copy</button>
-					<button id="paste" class="buttonRight">paste</button>
+					<button id="copy" class="buttonLeft" title="copy this control">&nbsp;copy</button>
+					<button id="paste" class="buttonRight" title="paste this control">paste</button>
 				</div>								
 			</div>		
 							

@@ -23,12 +23,6 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// a reference to the control we're currently seeing the actions for
-var _eventsControl = null;
-
-// this holds the option values with all available options for adding to selects
-var _actionOptions = "";
-
 // this object function serves as a closure for holding the static values required to construct each type of action - they're created and assigned globally when the designer loads and originate from the .action.xml files
 function ActionClass(actionClass) {
 	// retain all values passed in the json for the action (from the .action.xml file)
@@ -69,6 +63,23 @@ function Action(actionType, jsonAction, paste, undo) {
 					}
 					// inc the next id
 					_nextId++;
+					// loop properties
+					for (var i in this) {
+						// look for "actions" collections
+						if (i.toLowerCase().indexOf("actions") > -1 && $.isArray(this[i])) {
+							// make a new collection
+							var childActions = [];
+							// loop this collection
+							for (var j in this[i]) {
+								// get a new childAction based on this one
+								var childAction = new Action(this[i][j].type, this[i][j], true);
+								// add it to the new collection
+								childActions.push(childAction);
+							}		
+							// replace the property with our new array of new child actions
+							this[i] = childActions;
+						}
+					}
 				}
 				// when undoing make sure the next id is higher than all others
 				if (undo) {
@@ -125,10 +136,7 @@ function Action(actionType, jsonAction, paste, undo) {
 			
 			// set a unique ID for this action (with the final underscore the stops C12 being replaced by C1)
 			this.id = _page.id + "_A" + _nextId + "_";
-			
-			// set a name for this action (eventually we will count the number of each type and use that)
-			this.name = actionClass.name + " " + _nextId;	
-			
+						
 			// if the action class has properties set them here
 			if (actionClass.properties) {
 				// get a reference to the properties
@@ -191,12 +199,43 @@ function showEvents(control) {
 				// get a reference to the table
 				var actionsTable = actionsPanel.children().last().children().last();
 				// add a heading for the event
-				actionsTable.append("<tr><td colspan='2'><h3>" + event.name + " event</h3></td></tr>");
-													
+				actionsTable.append("<tr><td colspan='2'><h3>" + event.name + " event</h3><img class='copyEvent' src='images/copy_16x16.png' title='Copy all event actions'/></td></tr>");
+																	
 				// add a small break
 				actionsTable.append("<tr><td colspan='2'></td></tr>");
-				// add an add facility
-				actionsTable.append("<tr><td>Add action : </td><td><select data-event='" + event.type + "'><option value='_'>Please select...</option>" + _actionOptions + "</select></td></tr>");
+				// check if copyAction
+				if (_copyAction) {
+					// start the action name
+					var actionName = "unknown";
+					// look for an actions collection
+					if (_copyAction.actions) {
+						// get the source control class
+						var sourceControlClass = _controlTypes[_copyAction.controlType];
+						// JSON library single member check
+						if ($.isArray(sourceControlClass.events.event)) sourceControlClass.events = sourceControlClass.events.event;
+						// loop the source control events
+						for (var j in sourceControlClass.events) {
+							// look for a match
+							if (sourceControlClass.events[j].type == _copyAction.event.type) {
+								// use the event name and the number of actions
+								actionName = sourceControlClass.events[j].name + " event (" + _copyAction.actions.length + ")";
+								// we're done
+								break;
+							}
+						}
+						
+					} else {
+						// get the action class
+						var actionClass = _actionTypes[_copyAction.type];
+						// get the name
+						actionName = actionClass.name;
+					}				 
+					// add an add facility
+					actionsTable.append("<tr><td>Add action : </td><td><select data-event='" + event.type + "'><option value='_'>Please select...</option><optgroup label='New action'>" + _actionOptions + "</optgroup><optgroup label='Paste action'><option value='pasteActions'>" + actionName + "</option></optgroup></select></td></tr>");
+				} else {
+					// add an add facility
+					actionsTable.append("<tr><td>Add action : </td><td><select data-event='" + event.type + "'><option value='_'>Please select...</option>" + _actionOptions + "</select></td></tr>");
+				}				
 				// get a reference to the select
 				var addAction = actionsTable.children().last().children().last().children().last();
 				// add a change listener
@@ -211,8 +250,31 @@ function showEvents(control) {
 						if (control.events[i].type == eventType) {
 							// get the type of action we selected
 							var actionType = $(ev.target).val();
-							// add a new action of this type to the event
-							control.events[i].actions.push( new Action(actionType) );
+							// check if pasteActions
+							if (actionType == "pasteActions") {
+								// if _copyAction
+								if (_copyAction) {
+									// reset the paste map
+									_pasteMap = {};
+									// check for actions collection
+									if (_copyAction.actions) {
+										// loop them
+										for (var j in _copyAction.actions) {
+											// get the action
+											var action = _copyAction.actions[j];
+											// add the action using the paste functionality
+											control.events[i].actions.push( new Action(action.type, action, true) );
+										}										
+									} else {
+										// add the action using the paste functionality
+										control.events[i].actions.push( new Action(_copyAction.type, _copyAction, true) );
+									}
+								}
+								
+							} else {
+								// add a new action of this type to the event
+								control.events[i].actions.push( new Action(actionType, _copyAction, true) );
+							}							
 							// rebuild actions
 							showEvents(_selectedControl);
 							// we're done
@@ -226,14 +288,84 @@ function showEvents(control) {
 				showActions(control, event.type);
 				
 			} // event loop	
-			
+												
 		} // event check
 		
 	} // control check
 	
 }
 
-// this renders a single action into a table (used by events and childActions)
+// this renders the actions for a control's event into a properties panel
+function showActions(control, eventType) {
+	
+	// if this control has events
+	if (control.events) {
+		
+		// get a reference to the div we are writing in to
+		var actionsPanel = $("#actionsPanelDiv");		
+		
+		// loop control events
+		for (var i in control.events) {
+			
+			// if we've found the event we want
+			if (control.events[i].type == eventType) {
+				
+				// get actions
+				var actions = control.events[i].actions;
+				
+				// get a reference to the table
+				var actionsTable = actionsPanel.children().last().children().last();
+				
+				// check there are actions under this event				
+				if (actions && actions.length > 0) {
+															
+					// remove the lines we don't want
+					actionsTable.children("tr:not(:first-child):not(:last-child):not(:nth-last-child(2))").remove();
+
+					// remember how many actions we have
+					var actionsCount = 0;
+					// loop the actions
+					for (var j in actions) {
+						
+						// inc the count
+						actionsCount ++;
+						// get the action
+						var action = actions[j];											
+						
+						// show the action
+						showAction(actionsTable, action, actions);
+						
+					} // actions loop
+					
+					// if there was more than 1 action
+					if (actionsCount > 1) {
+						// add reorder listeners
+						addReorder(actions, actionsTable.find("img.reorder"), function() { showActions(control, eventType); });
+					}
+					
+					// get a reference to the copy image
+					var copyImage = actionsTable.find("img.copyEvent").last(); 
+					// add a click listener to the copy image
+					addListener( copyImage.click( {controlType: control.type, event: control.events[i], actions: actions}, function(ev) {
+						_copyAction = ev.data;		
+					}));
+														
+				} else {
+					
+					// remove the copyEvent image
+					actionsTable.find("img.copyEvent").remove();
+					
+				} // got actions		
+				
+				// no need to keep looping events
+				break;
+			} // event match
+		} // event loop		
+	} //events
+
+}
+
+//this renders a single action into a table (used by events and childActions)
 function showAction(actionsTable, action, collection, refreshFunction) {
 	
 	// get  the action class
@@ -245,7 +377,7 @@ function showAction(actionsTable, action, collection, refreshFunction) {
 	// add a small break
 	insertRow.before("<tr><td colspan='2'></td></tr>");
 	// write action name into the table						
-	insertRow.before("<tr><td colspan='2'><h4>" + actionClass.name + " action</h4><img class='delete' src='images/bin_16x16.png' title='Delete this action'/><img class='reorder' src='images/moveUpDown_16x16.png' title='Reorder this action'/></td></tr>");
+	insertRow.before("<tr><td colspan='2'><h4>" + actionClass.name + " action</h4><img class='delete' src='images/bin_16x16.png' title='Delete this action'/><img class='reorder' src='images/moveUpDown_16x16.png' title='Reorder this action'/><img class='copyAction' src='images/copy_16x16.png' title='Copy this action'/></td></tr>");
 	// get a reference to the delete image
 	var deleteImage = actionsTable.find("img.delete").last(); 
 	// add a click listener to the delete image
@@ -266,6 +398,12 @@ function showAction(actionsTable, action, collection, refreshFunction) {
 				break;
 			}
 		}		
+	}));
+	// get a reference to the copy image
+	var copyImage = actionsTable.find("img.copyAction").last(); 
+	// add a click listener to the copy image
+	addListener( copyImage.click( {action: action}, function(ev) {
+		_copyAction = ev.data.action;		
 	}));
 	// show the id if requested
 	if (_version.showActionIds) insertRow.before("<tr><td>ID</td><td class='canSelect'>" + action.id + "</td></tr>");
@@ -308,57 +446,4 @@ function showAction(actionsTable, action, collection, refreshFunction) {
 		} // properties loop
 	} // properties check
 	
-}
-
-// this renders the actions for a control's event into a properties panel
-function showActions(control, eventType) {
-	
-	// if this control has events
-	if (control.events) {
-		
-		// get a reference to the div we are writing in to
-		var actionsPanel = $("#actionsPanelDiv");		
-		// loop control events
-		for (var i in control.events) {
-			// if we've found the event we want
-			if (control.events[i].type == eventType) {
-				// get actions
-				var actions = control.events[i].actions;
-				
-				// check there are actions				
-				if (actions) {
-					
-					// get a reference to the table
-					var actionsTable = actionsPanel.children().last().children().last();
-					
-					// remove the lines we don't want
-					actionsTable.children("tr:not(:first-child):not(:last-child):not(:nth-last-child(2))").remove();
-
-					// remember how many actions we have
-					var actionsCount = 0;
-					// loop the actions
-					for (var j in actions) {
-						
-						// inc the count
-						actionsCount ++;
-						// get the action
-						var action = actions[j];											
-						
-						// show the action
-						showAction(actionsTable, action, actions);
-						
-					} // actions loop
-					
-					// if there was more than 1 action
-					if (actionsCount > 1) {
-						// add reorder listeners
-						addReorder(actions, actionsTable.find("img.reorder"), function() { showActions(control, eventType); });
-					}
-				}						
-				// no need to keep looping events
-				break;
-			} // event match
-		} // event loop		
-	} //events
-
 }

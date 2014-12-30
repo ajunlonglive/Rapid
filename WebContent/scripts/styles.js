@@ -499,13 +499,11 @@ function rebuildStyles() {
 				// get the rule 
 				var rule = $(this).text();
 				// if we got something 
-				if (rule) {
-					// replace the webfolder parameter if present
-					rule = rule.replace("[[webfolder]]", "applications/" + _version.id + "/" + _version.version);
+				if (rule) {					
 					// add it to the list
 					style.rules.push(rule);
-					// add it to the styleSheetRule
-					styleSheetRule += rule;
+					// replace the webfolder parameter if present and add it to the styleSheetRule
+					styleSheetRule += rule.replace("[[webfolder]]", "applications/" + _version.id + "/" + _version.version);
 				}
 			});
 			// if there are rules
@@ -545,10 +543,10 @@ function applyStyles() {
 	
 	// only if a control is currently selected
 	if (_selectedControl) {
-		
+				
 		// if we lost the focus due to a style being selected with the mouse get the selection back
 		if (_styleClicked) {
-			
+						
 			// if we'd just chosen an attribute, now jump to the value
 			if (!_styleSpan.hasClass("styleValue")) {
 				// set the edit span to the value

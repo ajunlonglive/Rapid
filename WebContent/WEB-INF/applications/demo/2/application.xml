@@ -26,6 +26,9 @@
     <controlTypes>tabGroup</controlTypes>
     <controlTypes>table</controlTypes>
     <controlTypes>text</controlTypes>
+    <controlTypes>tabPanel</controlTypes>
+    <controlTypes>tableCell</controlTypes>
+    <controlTypes>tableRow</controlTypes>
     <createdDate>2014-10-06T16:59:27.862+01:00</createdDate>
     <databaseConnections>
         <connectionAdapterClass>com.rapid.data.SimpleConnectionAdapter</connectionAdapterClass>
@@ -38,11 +41,11 @@
     <description>This is a demonstration Rapid application provided to showcase many common Rapid features - version 2</description>
     <id>demo</id>
     <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-10-16T14:38:17.083+01:00</modifiedDate>
+    <modifiedDate>2014-12-30T17:39:56.708Z</modifiedDate>
     <name>demo</name>
     <pageBackupsMaxSize>3</pageBackupsMaxSize>
     <securityAdapterType>rapid</securityAdapterType>
-    <showActionIds>false</showActionIds>
+    <showActionIds>true</showActionIds>
     <showControlIds>false</showControlIds>
     <startPageId>P1</startPageId>
     <status>0</status>

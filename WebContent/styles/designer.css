@@ -310,8 +310,8 @@ div#propertiesPanel h2 {
 }
 
 .propertiesPanelDiv h3 {
-	margin-top: 0px;
-	margin-bottom: 2px;
+	margin-top: 3px;
+	margin-bottom: 3px;
 	font-size: 11px;
 }
 
@@ -324,19 +324,20 @@ div#propertiesPanel h2 {
 }
 
 .validationPanelDiv h3 {
-	margin-top: 0px;
-	margin-bottom: 2px;
+	margin-top: 3px;
+	margin-bottom: 3px;
 	font-size: 11px;
 }
 
 .actionsPanelDiv h3 {
-	margin-top: 0px;
+	margin-top: 2px;
 	margin-bottom: 2px;
 	font-size: 11px;
+	float: left;
 }
 
 .actionsPanelDiv h4 {
-	margin-top: 0px;
+	margin-top: 2px;
 	margin-bottom: 2px;
 	font-size: 11px;
 	float: left;

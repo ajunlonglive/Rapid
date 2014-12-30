@@ -1263,21 +1263,7 @@ public class Application {
 				
 				if (id.contains(_id) && nameParts.length >= 3) {
 					
-					long sizeBytes = Files.getSize(backup);
-					
-					String size = "0b";
-									
-					if (sizeBytes < 1024) {
-						size = sizeBytes + " bytes";
-					} else if (sizeBytes < 1024 * 1024) {
-						size = Math.floor(sizeBytes / 1024d * 100) / 100d + " KB";
-					} else if (sizeBytes  < 1024 * 1024 * 1024) {
-						size =  Math.floor(sizeBytes / 1024d / 1024d * 100) / 100d + " MB";
-					} else if (sizeBytes < 1024 * 1024 * 1024 * 1024) {
-						size =  Math.floor(sizeBytes / 1024d / 1024d / 1024d * 100) / 100d + " GB";
-					} else {
-						size = "huge!";
-					}
+					String size = Files.getSizeName(backup);
 					
 					SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd HHmmss");
 					
@@ -1347,21 +1333,7 @@ public class Application {
 							name += "_" + nameParts[i];
 						}
 						
-						long sizeBytes = Files.getSize(backup);
-						
-						String size = "0b";
-										
-						if (sizeBytes < 1024) {
-							size = sizeBytes + " bytes";
-						} else if (sizeBytes < 1024 * 1024) {
-							size = Math.floor(sizeBytes / 1024d * 100) / 100d + " KB";
-						} else if (sizeBytes  < 1024 * 1024 * 1024) {
-							size =  Math.floor(sizeBytes / 1024d / 1024d * 100) / 100d + " MB";
-						} else if (sizeBytes < 1024 * 1024 * 1024 * 1024) {
-							size =  Math.floor(sizeBytes / 1024d / 1024d / 1024d * 100) / 100d + " GB";
-						} else {
-							size = "huge!";
-						}
+						String size = Files.getSizeName(backup);
 						
 						SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd HHmmss");
 						
