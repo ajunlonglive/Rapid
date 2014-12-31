@@ -374,7 +374,10 @@ function showActions(control, eventType) {
 					var copyImage = actionsTable.find("img.copyEvent").last(); 
 					// add a click listener to the copy image
 					addListener( copyImage.click( {controlType: control.type, event: control.events[i], actions: actions}, function(ev) {
+						// retain all of the event data in copyAction
 						_copyAction = ev.data;		
+						// rebuild the dialogues
+						showEvents(_selectedControl);
 					}));
 														
 				} else {
@@ -429,8 +432,11 @@ function showAction(actionsTable, action, collection, refreshFunction) {
 	// get a reference to the copy image
 	var copyImage = actionsTable.find("img.copyAction").last(); 
 	// add a click listener to the copy image
-	addListener( copyImage.click( {action: action}, function(ev) {
+	addListener( copyImage.click( { action: action }, function(ev) {
+		// copy the action
 		_copyAction = ev.data.action;		
+		// rebuild actions
+		showEvents(_selectedControl);
 	}));
 	// show the id if requested
 	if (_version.showActionIds) insertRow.before("<tr><td>ID</td><td class='canSelect'>" + action.id + "</td></tr>");
