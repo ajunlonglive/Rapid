@@ -442,8 +442,8 @@ function Property_integer(cell, propertyObject, property, details) {
 	cell.append("<input class='propertiesPanelTable' value='" + value + "' />");
 	// get a reference to the form control
 	var input = cell.children().last();
-	// add a listener to update the property
-	addListener( input.keyup( function(ev) {
+	// add a listener to set the property back if not an integer
+	addListener( input.change( function(ev) {
 		var input = $(ev.target);
 		var val = input.val();    
 		// check integer match
@@ -695,7 +695,7 @@ function Property_imageFile(cell, propertyObject, property, details) {
 		// loop the images and add to select
 		for (var i in _version.images) {
 			var selected = "";
-			if (_version.images[i] == propertyObject.file) selected = " selected='selected'";
+			if (_version.images[i] == propertyObject[property.key]) selected = " selected='selected'";
 			dropdown.append("<option" + selected + ">" + _version.images[i] + "</option>");
 		}
 		
@@ -2648,10 +2648,11 @@ function Property_datacopyDestinations(cell, propertyObject, property, details) 
 		var destinationAdd = table.find("tr").last().children().last().children().last();
 		// listener to add output
 		addListener( destinationAdd.change( {cell: cell, propertyObject: propertyObject, property: property, details: details}, function(ev) {
+			
 			// initialise array if need be
-			if (!ev.data.propertyObject.dataDestinations) ev.data.propertyObject.dataDestinations = [];
+			if (!ev.data.propertyObject[ev.data.property.key]) ev.data.propertyObject[ev.data.property.key] = [];
 			// get the parameters (inputs or outputs)
-			var dataDestinations = ev.data.propertyObject.dataDestinations;
+			var dataDestinations = ev.data.propertyObject[ev.data.property.key];
 			// add a new one
 			dataDestinations.push({itemId: $(ev.target).val(), field: ""});
 			// rebuild the dialogue
@@ -2945,8 +2946,8 @@ function Property_mapLatLng(cell, propertyObject, property, details) {
 	cell.append("<input class='propertiesPanelTable' value='" + value + "' />");
 	// get a reference to the form control
 	var input = cell.children().last();
-	// add a listener to update the property
-	addListener( input.keyup( function(ev) {
+	// add a listener to return the property value if not a number
+	addListener( input.change( function(ev) {
 		var input = $(ev.target);
 		var val = input.val();    
 		// check decimal match
@@ -2975,7 +2976,7 @@ function Property_mapZoom(cell, propertyObject, property, details) {
 	// get a reference to the form control
 	var input = cell.children().last();
 	// add a listener to update the property
-	addListener( input.keyup( function(ev) {
+	addListener( input.change( function(ev) {
 		var input = $(ev.target);
 		var val = input.val();    
 		// check integer match
@@ -3101,7 +3102,7 @@ function Property_orientation(cell, propertyObject, property, details) {
 }
 
 // possible mobileActionType values used by the mobileActionType property
-var _mobileActionTypes = [["addImage","Add image"],["uploadImages","Upload images"],["getGPS","Get gps position"],["message","Status bar message"],["disableBackButton","Disable back button"]];
+var _mobileActionTypes = [["addImage","Add image"],["uploadImages","Upload images"],["sendGPS","Send gps position"],["message","Status bar message"],["disableBackButton","Disable back button"]];
 
 // this property changes the visibility of other properties according to the chosen type
 function Property_mobileActionType(cell, mobileAction, property, details) {
@@ -3114,13 +3115,14 @@ function Property_mobileActionType(cell, mobileAction, property, details) {
 	selectHtml += "</select>";
 	// add the available types and retrieve dropdown
 	var actionTypeSelect = cell.append(selectHtml).find("select");	
-	// assume all other properties invisible
-	setPropertyVisibilty(mobileAction, "message", false);
+	// assume all other properties invisible		
 	setPropertyVisibilty(mobileAction, "galleryControlId", false);
 	setPropertyVisibilty(mobileAction, "imageMaxSize", false);
 	setPropertyVisibilty(mobileAction, "imageQuality", false);
 	setPropertyVisibilty(mobileAction, "successActions", false);
 	setPropertyVisibilty(mobileAction, "errorActions", false);
+	setPropertyVisibilty(mobileAction, "gpsDestinations", false);
+	setPropertyVisibilty(mobileAction, "message", false);
 	// adjust required property visibility accordingly
 	switch (mobileAction.actionType) {		
 		case "addImage" :
@@ -3132,6 +3134,9 @@ function Property_mobileActionType(cell, mobileAction, property, details) {
 			setPropertyVisibilty(mobileAction, "galleryControlId", true);
 			setPropertyVisibilty(mobileAction, "successActions", true);
 			setPropertyVisibilty(mobileAction, "errorActions", true);
+		break;
+		case "sendGPS" :
+			setPropertyVisibilty(mobileAction, "gpsDestinations", true);
 		break;
 		case "message" :
 			setPropertyVisibilty(mobileAction, "message", true);

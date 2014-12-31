@@ -136,8 +136,6 @@ return "#" + this.id;
 	        <dependentType>slidePanelPane</dependentType>
 	    </dependentTypes>
 	    
-	    <addToNewApplications>true</addToNewApplications>
-	    
 		<noDefaultName>true</noDefaultName>
 			    	    	    	    
 	    <canUserAdd>true</canUserAdd>

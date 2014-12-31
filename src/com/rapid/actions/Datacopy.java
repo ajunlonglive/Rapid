@@ -136,11 +136,20 @@ public class Datacopy extends Action {
 				
 			} else {
 				
+				// compare against last getData call to avoid recalling
+				String lastGetDataFunction = null;
+				
 				// loop them
 				for (DataCopy dataCopy : _dataCopies) {
 					
-					// get the data
-					js += "var data = "  + Control.getDataJavaScript(application, page, dataCopy.getSource(), dataCopy.getSourceField()) + ";\n";
+					// get the get data function
+					String getDataFunction = Control.getDataJavaScript(application, page, dataCopy.getSource(), dataCopy.getSourceField());
+					
+					// add the getData if different from the last one
+					if (!getDataFunction.equals(lastGetDataFunction)) js += "var data = "  + Control.getDataJavaScript(application, page, dataCopy.getSource(), dataCopy.getSourceField()) + ";\n";
+					
+					// remember this one
+					lastGetDataFunction = getDataFunction;
 					
 					// get the destination id
 					String destinationId = dataCopy.getDestination();

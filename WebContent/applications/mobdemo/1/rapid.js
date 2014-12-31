@@ -62,6 +62,8 @@ function saveDataStoreData(id, details, data) {
 			window[id + "datastore"] = data;
 		break;
 	}
+	var f = window["Event_change_" + id];
+	if (f) f($.Event("change"));
 }
 
 /* Gallery control resource JavaScript */
@@ -140,7 +142,58 @@ function linkClick(url, sessionVariablesString) {
 /* Map control resource JavaScript */
 
 // an array to manage the in-page maps	                
-_maps = [];
+_maps = [];	    
+
+// adds markers to a map, used by add markers and replace markers
+function addMapMarkers(map, data, details) {
+	map.markerData = data;
+	map.markerSelectedIndex = -1;
+	var latIndex = -1;
+	var lngIndex = -1;
+	var titleIndex = -1;
+	var infoIndex = -1;
+	for (var i in data.fields) {
+		if (data.fields[i].toLowerCase().indexOf("lat") == 0) {
+			latIndex = i; 
+		} else if (data.fields[i].toLowerCase().indexOf("lng") == 0 || data.fields[i].toLowerCase().indexOf("lon") == 0 ) {
+			 lngIndex = i;
+		} else if (data.fields[i].toLowerCase().indexOf("title") == 0) {
+			 titleIndex = i;
+		} else if (data.fields[i].toLowerCase().indexOf("info") == 0) {
+			 infoIndex = i;
+		}
+	}
+	if (latIndex > -1 && lngIndex > -1) {
+		for (var i in data.rows) {
+			var row = data.rows[i];
+			var lat = row[latIndex];
+			var lng = row[lngIndex];
+			var markerOptions = {
+				map: map,
+				position: new google.maps.LatLng(lat, lng)				
+			};
+			if (titleIndex > -1) markerOptions.title = row[titleIndex];
+			if (details.markerImage) markerOptions.icon = "applications/" + _appId + "/" + _appVersion + "/" + details.markerImage;
+			var marker = new google.maps.Marker(markerOptions);	
+			marker.index = i;
+			map.markers.push(marker);					
+			if (infoIndex > -1) {
+				var markerInfoWindow = new google.maps.InfoWindow({
+					content: row[infoIndex]
+				});
+				google.maps.event.addListener(marker, 'click', function() {
+				    markerInfoWindow.open(map,marker);
+				});
+			}
+			if (details.markerClickFunction) {
+				google.maps.event.addListener(marker, 'click', function() {
+					map.markerSelectedIndex = marker.index;
+				    window[details.markerClickFunction]($.Event('markerclick'));
+				});
+			}
+		}
+	}
+}
 
 /* Slide panel control resource JavaScript */
 
@@ -329,12 +382,32 @@ function Init_hints(id, details) {
 
 function Init_map(id, details) {
   // make the zoom a number
-  var zoom = parseInt(details.zoom);	        
+  var zoom = parseInt(details.zoom);	 
+  
+  // assume we want a roadmap
+  var mapTypeId =  google.maps.MapTypeId.ROADMAP;
+  
+  // update if one provided
+  switch (details.mapType) {
+  	case ("R") :
+  		mapTypeId =  google.maps.MapTypeId.ROADMAP;
+  	break;
+  	case ("S") :
+  		mapTypeId =  google.maps.MapTypeId.SATELLITE;
+  	break;
+  } 
   
   // create a map in our control object
   var map = new google.maps.Map($("#" + id)[0], {
      	zoom: zoom,
-  	center: new google.maps.LatLng(details.lat, details.lng)
+  	center: new google.maps.LatLng(details.lat, details.lng),
+  	mapTypeControlOptions: {mapTypeIds:[google.maps.MapTypeId.ROADMAP, google.maps.MapTypeId.SATELLITE]},
+  	mapTypeId: mapTypeId,
+  	mapTypeControl: details.showMapType,
+  	zoomControl: details.showZoom,	   	
+     	panControl: details.showPan,
+     	streetViewControl: details.showStreetView,
+     	scaleControl: details.showScale
   });
   
   // add it to the collections
@@ -1155,6 +1228,103 @@ function setData_input(id, data, field, details, changeEvents) {
   } 
   control.val(value);
   if (changeEvents) control.trigger("change");
+}
+
+function getProperty_map_mapCentre(ev, id, field, details) {
+  // make the data object
+  var data = {fields:["lat","lng"],rows:[[]]};
+  // get the map
+  var map = _maps[id];
+  // if there was a map
+  if (map) {
+  	// get the centre
+  	var centre = map.getCenter();
+  	// add lat to the data object
+  	data.rows[0].push(centre.lat());
+  	// add lng to the data object
+  	data.rows[0].push(centre.lng());	
+  }
+  // return what we got
+  return data;
+}
+
+function setProperty_map_mapCentre(ev, id, field, details, data, changeEvents) {
+  // get the map
+  var map = _maps[id];
+  // get the latlng
+  var data = makeDataObject(data);
+  // if we got a map and data
+  if (map && data && data.fields && data.rows && data.fields.length > 1 && data.rows.length > 0) {
+  	var lat = 0;
+  	var lng = 0;
+  	for (var i in data.fields) {
+  		if (data.fields[i].toLowerCase().indexOf("lat") == 0) lat = data.rows[0][i];
+  		if (data.fields[i].toLowerCase().indexOf("lng") == 0 || data.fields[i].toLowerCase().indexOf("lon")) lng = data.rows[0][i];
+  	}
+  	map.panTo( new google.maps.LatLng(lat, lng) );
+  }
+}
+
+function setProperty_map_addMarkers(ev, id, field, details, data, changeEvents) {
+  // get the map
+  var map = _maps[id];
+  // get the latlng
+  var data = makeDataObject(data);
+  // if we got a map and data
+  if (map && data && data.fields && data.rows && data.fields.length > 1 && data.rows.length > 0) {
+  	// create a markers array if there isn't one
+  	if (!map.markers) map.markers = [];
+  	// add the markers
+  	addMapMarkers(map, data, details);
+  }
+}
+
+function setProperty_map_replaceMarkers(ev, id, field, details, data, changeEvents) {
+  // get the map
+  var map = _maps[id];
+  // get the latlng
+  var data = makeDataObject(data);
+  // if we got a map and data
+  if (map && data && data.fields && data.rows && data.fields.length > 1 && data.rows.length > 0) {
+  	// if there are any current markers
+  	if (map.markers) {
+  		// loop them
+  		for (var i in map.markers) {
+  			map.markers[i].setMap(null);
+  		}
+  		// empty array
+  		map.markers = [];
+  	} 
+  	// empty array
+  	map.markers = [];	
+  	// add the markers
+  	addMapMarkers(map, data, details);
+  }
+}
+
+function getProperty_map_selectedMarker(ev, id, field, details) {
+  // get the map
+  var map = _maps[id];
+  // get the selectedIndex
+  var selectedIndex = map.markerSelectedIndex;
+  // if we got a map and data
+  if (map && map.markerSelectedIndex > -1 && map.markerData) {
+  	var fields = map.markerData.fields;
+  	var row = map.markerData.rows[map.markerSelectedIndex];
+  	if (field) {
+  		var fieldIndex = -1;
+  		for (var i in fields) {
+  			if (field == fields[i]) {
+  				return row[i];
+  			}
+  		}	
+  		return null;
+  	} else {
+  		return {fields:fields,rows:[row]};
+  	}	
+  } else {
+  	return null;
+  }
 }
 
 function getData_radiobuttons(ev, id, field, details) {

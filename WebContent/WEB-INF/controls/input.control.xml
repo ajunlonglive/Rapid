@@ -51,7 +51,8 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <key>value</key>
 	            <name>Value</name>
 	            <setConstructValueFunction>return "";</setConstructValueFunction>
-	            <changeValueJavaScript>text</changeValueJavaScript>	            
+	            <changeValueJavaScript>text</changeValueJavaScript>	  
+	            <refreshHtml>true</refreshHtml>          
 	        </property>
 	        
 	        <property>

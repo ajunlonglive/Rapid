@@ -91,6 +91,13 @@ return "<option value=''>Please select...</option>" + getControlOptions(this.gal
 	        </property> 
 	        
 	        <property>
+	            <key>gpsDestinations</key>
+	            <name>Destinations</name>
+	            <visible>false</visible>
+	            <changeValueJavaScript>datacopyDestinations</changeValueJavaScript>	 
+	        </property> 
+	        
+	        <property>
 	            <key>message</key>
 	            <name>Message</name>
 	            <visible>false</visible>
