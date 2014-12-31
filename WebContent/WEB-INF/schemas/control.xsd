@@ -549,8 +549,8 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 													</xs:element>
 													<xs:element name="filterFunction" minOccurs="0">
 														<xs:annotation>
-															<xs:documentation>This JavaSvript will be placed at the
-																top if the event handler, return false in this
+															<xs:documentation>This JavaScript will be placed at the
+																top of the event handler, return false in this
 																JavaScript should you wish the event not to be
 																processed, the event is available in the "ev" variable
 															</xs:documentation>

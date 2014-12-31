@@ -341,7 +341,7 @@ function showActions(control, eventType) {
 				var actions = control.events[i].actions;
 				
 				// get a reference to the table
-				var actionsTable = actionsPanel.children().last().children().last();
+				var actionsTable = actionsPanel.find("table[data-eventtype=" + eventType + "]").children().first();
 				
 				// check there are actions under this event				
 				if (actions && actions.length > 0) {

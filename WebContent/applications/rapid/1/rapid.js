@@ -52,6 +52,8 @@ function saveDataStoreData(id, details, data) {
 			window[id + "datastore"] = data;
 		break;
 	}
+	var f = window["Event_change_" + id];
+	if (f) f($.Event("change"));
 }
 
 /* Grid control resource JavaScript */

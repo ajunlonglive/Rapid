@@ -65,6 +65,7 @@ return [["L","Local storage"],["S","Session storage"],["P","Page storage"]];
 	            <type>javascript</type>
 	            <contents>
 	                <![CDATA[
+	                                
 function getDataStoreData(id, details, field) {
 	var data;
 	switch (details.storageType) {
@@ -110,7 +111,11 @@ function saveDataStoreData(id, details, data) {
 			window[id + "datastore"] = data;
 		break;
 	}
+	var f = window["Event_change_" + id];
+	if (f) f($.Event("change"));
 }
+
+
 	                ]]>
 	            </contents>
 	        </resource>
@@ -122,13 +127,7 @@ function saveDataStoreData(id, details, data) {
 return "<img id='" + this.id + "' class='nonVisibleControl' src='images/datastore_24x24.png'></img>"
 	        ]]>
 	    </getHtmlFunction> 
-	    
-	    <saveJavaScript>
-	        <![CDATA[
-this.object.remove();     
-	        ]]>	        	        
-	    </saveJavaScript>
-	    
+	    	    
 	   	<getDetailsFunction>	        
 	        <![CDATA[
 return {storageType: this.storageType};
@@ -170,7 +169,15 @@ if (data != null && data !== undefined) {
 			]]>
 	    </setDataJavaScript>
 	    
+	    <events>
+	        <event>
+	            <type>change</type>
+	            <name>Change</name>
+	        </event>
+	    </events>
+	    
 	    <runtimeProperties>
+	        
 	        <runtimeProperty>
 	            <type>selectedRowData</type>
 	            <name>Selected row data</name>
@@ -195,6 +202,7 @@ if (dataStoreData && dataStoreData.selectedRowNumber) {
 	                ]]>
 	            </setPropertyJavaScript>
 	        </runtimeProperty>
+	        
 	       	<runtimeProperty>
 	            <type>selectedRowNumber</type>
 	            <name>Selected row number</name>
@@ -213,10 +221,11 @@ if (dataStoreData) {
 		dataStoreData.selectedRowNumber = data.rows[0][0];
 		saveDataStoreData(id, details, dataStoreData);
 	}
-}              
+}            
 	                ]]>
 	            </setPropertyJavaScript>
 	        </runtimeProperty>
+	        
 	        <runtimeProperty>
 	   	        <type>rowCount</type>
 	   	        <name>Row count</name>
@@ -227,6 +236,7 @@ if (dataStoreData && dataStoreData.rows) return dataStoreData.rows.length;
 			        ]]>	  	   	            
 	   	        </getPropertyFunction>	   	        
 	   	    </runtimeProperty>
+	   	    
 	        <runtimeProperty>
 	            <type>append</type>
 	            <name>Append data</name>
@@ -241,7 +251,7 @@ if (dataStoreData) {
 		for (var i in data.rows) dataStoreData.rows.push(data.rows[i]);
 		saveDataStoreData(id, details, dataStoreData);
 	}	
-}                 
+}               
 	                ]]>
 	            </setPropertyJavaScript>
 	        </runtimeProperty>
