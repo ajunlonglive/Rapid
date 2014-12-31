@@ -885,9 +885,9 @@ function Property_validationControls(cell, propertyObject, property, details) {
 }
 
 function Property_childActions(cell, propertyObject, property, details) {
-	
+		
 	// retrieve or create the dialogue
-	var dialogue = getDialogue(cell, propertyObject, property, details, 200, "Actions");		
+	var dialogue = getDialogue(cell, propertyObject, property, details, 200, property.name);		
 	// grab a reference to the table
 	var table = dialogue.children().last().children().last();
 	// remove the dialogue class so it looks like the properties
@@ -910,29 +910,72 @@ function Property_childActions(cell, propertyObject, property, details) {
 	// put the text into the cell
 	cell.text(text);
 	
-	// add a small space
-	if (actions.length > 0) table.append("<tr><td colspan='2'></td></tr>");
+	// if there are actions
+	if (actions.length > 0) {
+		// add the copy row and image
+		table.append("<tr><td colspan='2'><img class='copyActions' src='images/copy_16x16.png' title='Copy all actions'/></td></tr>");
+		// add the listener
+		addListener( table.find("img.copyActions").last().click( { actionType:propertyObject.type, propertyName:property.name, actions:actions, cell: cell, propertyObject: propertyObject, property: property, details: details }, function(ev) {
+			// copy the actions
+			_copyAction = ev.data;
+			// rebuild the dialogue so the paste is available immediately
+			Property_childActions(ev.data.cell, ev.data.propertyObject, ev.data.property, ev.data.details);	
+		}));
+		// add a small space
+		table.append("<tr><td colspan='2'></td></tr>");
+	}
 	
+	// assume we will use the default action options
+	var actionOptions = _actionOptions;
+	// if there is a a copied item add it in
+	if (_copyAction) actionOptions = "<optgroup label='New action'>" + _actionOptions + "</optgroup><optgroup label='Paste action'><option value='pasteActions'>" + getCopyActionName(propertyObject.id) + "</option></optgroup>";
+		
 	// add an add dropdown
-	var addAction = table.append("<tr><td colspan='2'><select><option value=''>Add action...</option>" + _actionOptions + "</select></td></tr>").children().last().children().last().children().last();
+	var addAction = table.append("<tr><td colspan='2'><select><option value=''>Add action...</option>" + actionOptions + "</select></td></tr>").children().last().children().last().children().last();
 	
-	addListener( addAction.change( { cell: cell, propertyObject : propertyObject, property : property, details: details }, function(ev) {
+	addListener( addAction.change( { cell: cell, propertyObject: propertyObject, property: property, details: details }, function(ev) {
 		// get a reference to the dropdown
 		var dropdown = $(ev.target);
 		// get the controlId
 		var actionType = dropdown.val();
 		// if we got one
 		if (actionType) {			
+		
 			// retrieve the propertyObject
 			var propertyObject = ev.data.propertyObject;
 			// retrieve the property
 			var property = ev.data.property;
+						
 			// initilise the array if need be
 			if (!propertyObject[property.key]) propertyObject[property.key] = [];
-			// initialise this action
-			var action = new Action(actionType);
-			// add it to the array
-			propertyObject[property.key].push(action);
+			// get a reference to the actions
+			var actions = propertyObject[property.key];
+			
+			if (actionType == "pasteActions") {
+				// if _copyAction
+				if (_copyAction) {
+					// reset the paste map
+					_pasteMap = {};
+					// check for actions collection
+					if (_copyAction.actions) {
+						// loop them
+						for (var j in _copyAction.actions) {
+							// get the action
+							var action = _copyAction.actions[j];
+							// add the action using the paste functionality if it's not going to be it's own parent
+							if (ev.data.propertyObject.id != action.id) actions.push( new Action(action.type, action, true) );
+						}										
+					} else {
+						// add the action using the paste functionality
+						actions.push( new Action(_copyAction.type, _copyAction, true) );
+					}
+				}
+				
+			} else {				
+				// add a new action of this type to the event
+				actions.push( new Action(actionType) );
+			}
+						
 			// set the drop down back to "Please select..."
 			dropdown.val("");
 			// rebuild the dialogue

@@ -170,6 +170,57 @@ function Action(actionType, jsonAction, paste, undo) {
 	return this;
 }
 
+// used by showEvents and property_childActions
+function getCopyActionName(sourceId) {
+	// assume we're not going to find it
+	var actionName = "unknown";
+	// look for an actions collection
+	if (_copyAction.actions) {
+		// assume number of actions is simple
+		var actionsCount = _copyAction.actions.length;
+		// if there is a source id
+		if (sourceId) {
+			// loop the actions
+			for (var i in _copyAction.actions) {
+				// if there's a match on the source id
+				if (sourceId == _copyAction.actions[i].id) {
+					// lose an action as we don't want to paste our own parent 
+					actionsCount --;
+					// bail
+					break;
+				}
+			}
+		}
+		// look for a controlType
+		if (_copyAction.controlType) {
+			// get the source control class
+			var sourceControlClass = _controlTypes[_copyAction.controlType];
+			// JSON library single member check
+			if ($.isArray(sourceControlClass.events.event)) sourceControlClass.events = sourceControlClass.events.event;
+			// loop the source control events
+			for (var j in sourceControlClass.events) {
+				// look for a match
+				if (sourceControlClass.events[j].type == _copyAction.event.type) {
+					// use the event name and the number of actions
+					actionName = sourceControlClass.events[j].name + " event (" + actionsCount + ")";
+					// we're done
+					break;
+				}
+			}
+		} else if (_copyAction.actionType) {
+			// use the property name
+			actionName = _copyAction.propertyName + " (" + actionsCount + ")";
+		}
+								
+	} else {
+		// get the action class
+		var actionClass = _actionTypes[_copyAction.type];
+		// get the name
+		actionName = actionClass.name;
+	}
+	return actionName;
+}
+
 // this shows the events for the control and eventually the actions
 function showEvents(control) {		
 	
@@ -199,37 +250,13 @@ function showEvents(control) {
 				// get a reference to the table
 				var actionsTable = actionsPanel.children().last().children().last();
 				// add a heading for the event
-				actionsTable.append("<tr><td colspan='2'><h3>" + event.name + " event</h3><img class='copyEvent' src='images/copy_16x16.png' title='Copy all event actions'/></td></tr>");
-																	
+				actionsTable.append("<tr><td colspan='2'><h3>" + event.name + " event</h3><img class='copyEvent' src='images/copy_16x16.png' title='Copy all event actions'/></td></tr>");																	
 				// add a small break
 				actionsTable.append("<tr><td colspan='2'></td></tr>");
 				// check if copyAction
 				if (_copyAction) {
 					// start the action name
-					var actionName = "unknown";
-					// look for an actions collection
-					if (_copyAction.actions) {
-						// get the source control class
-						var sourceControlClass = _controlTypes[_copyAction.controlType];
-						// JSON library single member check
-						if ($.isArray(sourceControlClass.events.event)) sourceControlClass.events = sourceControlClass.events.event;
-						// loop the source control events
-						for (var j in sourceControlClass.events) {
-							// look for a match
-							if (sourceControlClass.events[j].type == _copyAction.event.type) {
-								// use the event name and the number of actions
-								actionName = sourceControlClass.events[j].name + " event (" + _copyAction.actions.length + ")";
-								// we're done
-								break;
-							}
-						}
-						
-					} else {
-						// get the action class
-						var actionClass = _actionTypes[_copyAction.type];
-						// get the name
-						actionName = actionClass.name;
-					}				 
+					var actionName = getCopyActionName();									 
 					// add an add facility
 					actionsTable.append("<tr><td>Add action : </td><td><select data-event='" + event.type + "'><option value='_'>Please select...</option><optgroup label='New action'>" + _actionOptions + "</optgroup><optgroup label='Paste action'><option value='pasteActions'>" + actionName + "</option></optgroup></select></td></tr>");
 				} else {
@@ -273,7 +300,7 @@ function showEvents(control) {
 								
 							} else {
 								// add a new action of this type to the event
-								control.events[i].actions.push( new Action(actionType, _copyAction, true) );
+								control.events[i].actions.push( new Action(actionType) );
 							}							
 							// rebuild actions
 							showEvents(_selectedControl);
