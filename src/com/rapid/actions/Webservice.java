@@ -260,10 +260,10 @@ public class Webservice extends Action {
 						// check if there was one
 						if (field == null) {
 							// no field
-							js += "  query.inputs.push({id:'" + itemId + "',value:" + Control.getDataJavaScript(application, page, itemId, null) + "});\n";
+							js += "  query.inputs.push({id:'" + itemId + "',value:" + Control.getDataJavaScript(rapidServlet.getServletContext(), application, page, itemId, null) + "});\n";
 						} else {
 							// got field so let in appear in the inputs for matching later
-							js += "  query.inputs.push({id:'" + itemId + "',value:" + Control.getDataJavaScript(application, page, itemId, field) + ",field:'" + field + "'});\n";
+							js += "  query.inputs.push({id:'" + itemId + "',value:" + Control.getDataJavaScript(rapidServlet.getServletContext(), application, page, itemId, field) + ",field:'" + field + "'});\n";
 						}
 					}
 				}
@@ -346,6 +346,8 @@ public class Webservice extends Action {
 					Parameter output = outputs.get(i);
 					// get the control the data is going into
 					Control outputControl = page.getControl(output.getItemId());
+					// try the application if still null
+					if (outputControl == null) outputControl = application.getControl(rapidServlet.getServletContext(), output.getItemId());
 					// check the control is still on the page
 					if (outputControl != null) {
 						// get any mappings we may have

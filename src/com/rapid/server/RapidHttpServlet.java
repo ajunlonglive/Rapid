@@ -42,8 +42,11 @@ import java.util.List;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.ValidationEvent;
+import javax.xml.bind.ValidationEventHandler;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -69,22 +72,41 @@ import com.rapid.utils.Comparators;
 public class RapidHttpServlet extends HttpServlet {
 	
 	private static Logger _logger = Logger.getLogger(RapidHttpServlet.class);
-
-	public Logger getLogger() {
-		return (Logger) getServletContext().getAttribute("logger");
+	private static JAXBContext _jaxbContext;
+		
+	public static JAXBContext getJAXBContext() { return _jaxbContext; }
+	public static void setJAXBContext(JAXBContext jaxbContext) { _jaxbContext = jaxbContext; }
+	
+	public static Marshaller getMarshaller() throws JAXBException {
+		// marshaller is not thread safe so we need to create a new one each time
+		Marshaller marshaller = _jaxbContext.createMarshaller();
+		// return
+		return marshaller;		
 	}
 	
-	public JAXBContext getJAXBContext() {
-		return (JAXBContext) getServletContext().getAttribute("jaxbContext");
+	public static Unmarshaller getUnmarshaller() throws JAXBException {
+		
+		// initialise the unmarshaller
+		Unmarshaller unmarshaller = _jaxbContext.createUnmarshaller();
+		
+		// add a validation listener (this makes for better error messages)
+		unmarshaller.setEventHandler(new ValidationEventHandler() {
+			@Override
+			public boolean handleEvent(ValidationEvent event) {
+				// messages with "unrecognized type name" are very useful they're not sever themselves must almost always followed by a severe with a less meaningful message 
+				if (event.getMessage().contains("unrecognized type name") || event.getSeverity() == ValidationEvent.FATAL_ERROR) {
+					return false;
+				} else {						
+					return true;
+				}
+			}				
+		});
+		
+		// return
+		return unmarshaller;
 	}
 	
-	public Marshaller getMarshaller() {
-		return (Marshaller) getServletContext().getAttribute("marshaller");
-	}
-	
-	public Unmarshaller getUnmarshaller() {
-		return (Unmarshaller) getServletContext().getAttribute("unmarshaller");
-	}
+	public Logger getLogger() {	return (Logger) getServletContext().getAttribute("logger");	}
 	
 	public Constructor getSecurityConstructor(String type) {
 		HashMap<String,Constructor> constructors = (HashMap<String, Constructor>) getServletContext().getAttribute("securityConstructors");

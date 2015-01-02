@@ -31,6 +31,7 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.ServletContext;
 import javax.xml.bind.JAXBException;
 
 import org.apache.log4j.Logger;
@@ -239,7 +240,7 @@ public class Database extends Action {
 	}
 	
 	// private function to get inputs into the query object, reused by child database actions
-	private String getInputsJavaScript(Application application, Page page, ArrayList<Parameter> inputs, String jsInputCollection) {
+	private String getInputsJavaScript(ServletContext servletContext, Application application, Page page, ArrayList<Parameter> inputs, String jsInputCollection) {
 		
 		// assume it'll be an empty string
 		String js = "";
@@ -257,10 +258,10 @@ public class Database extends Action {
 					// check if there was one
 					if (field == null) {
 						// no field
-						js += jsInputCollection + ".push({id:'" + itemId + "',value:" + Control.getDataJavaScript(application, page, itemId, null) + "});\n";
+						js += jsInputCollection + ".push({id:'" + itemId + "',value:" + Control.getDataJavaScript(servletContext, application, page, itemId, null) + "});\n";
 					} else {
 						// got field so let in appear in the inputs for matching later
-						js += jsInputCollection + ".push({id:'" + itemId + "',value:" + Control.getDataJavaScript(application, page, itemId, field) + ",field:'" + field + "'});\n";
+						js += jsInputCollection + ".push({id:'" + itemId + "',value:" + Control.getDataJavaScript(servletContext, application, page, itemId, field) + ",field:'" + field + "'});\n";
 					}
 				}
 			}
@@ -284,7 +285,7 @@ public class Database extends Action {
 			js += "  var query = { inputs:[], sequence:sequence };\n";
 			
 			// get the inputs
-			js += "  " + getInputsJavaScript(application, page, _query.getInputs(), "query.inputs").trim().replace("\n", "\n  ") + "\n";
+			js += "  " + getInputsJavaScript(rapidServlet.getServletContext(), application, page, _query.getInputs(), "query.inputs").trim().replace("\n", "\n  ") + "\n";
 			
 			// look for any _childDatabaseActions
 			if (_childDatabaseActions != null) {
@@ -297,7 +298,7 @@ public class Database extends Action {
 					// create object
 					js += "  var childQuery" + i + " = {index:" + (i - 1) + ",inputs:[]};\n";					
 					// add inputs
-					js += "  " + getInputsJavaScript(application, page, childDatabaseAction.getQuery().getInputs(), "childQuery" + i + ".inputs").trim().replace("\n", "\n  ") + "\n";
+					js += "  " + getInputsJavaScript(rapidServlet.getServletContext(), application, page, childDatabaseAction.getQuery().getInputs(), "childQuery" + i + ".inputs").trim().replace("\n", "\n  ") + "\n";
 					// add to query
 					js += "  query.childQueries.push(childQuery" + i + ");\n";			
 					// increment the counter
@@ -384,7 +385,7 @@ public class Database extends Action {
 					// get the control the data is going into
 					Control outputControl = page.getControl(output.getItemId());
 					// try the application if still null
-					if (outputControl == null) outputControl = application.getControl(output.getItemId());
+					if (outputControl == null) outputControl = application.getControl(rapidServlet.getServletContext(), output.getItemId());
 					// check we got one
 					if (outputControl != null) {
 						// get any mappings we may have

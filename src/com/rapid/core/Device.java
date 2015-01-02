@@ -13,6 +13,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.log4j.Logger;
 
+import com.rapid.server.RapidHttpServlet;
+
 public class Device {
 
 	@XmlRootElement
@@ -35,7 +37,7 @@ public class Device {
 			if (file.exists()) {
 				try {
 					// get the unmarshaller from the context
-					Unmarshaller unmarshaller = (Unmarshaller) servletContext.getAttribute("unmarshaller");	
+					Unmarshaller unmarshaller = RapidHttpServlet.getUnmarshaller();	
 					// unmarshall the devices
 					devices = (Devices) unmarshaller.unmarshal(file);
 				} catch (JAXBException ex) {
@@ -81,7 +83,7 @@ public class Device {
 			if (!file.exists()) file.getParentFile().mkdirs();
 			
 			// get the marshaller from the context
-			Marshaller marshaller = (Marshaller) servletContext.getAttribute("marshaller");	
+			Marshaller marshaller = RapidHttpServlet.getMarshaller();
 			// marshall the devices to the file
 			marshaller.marshal(devices, file);
 					

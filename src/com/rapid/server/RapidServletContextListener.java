@@ -40,6 +40,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -62,6 +63,7 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
+import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -86,14 +88,79 @@ public class RapidServletContextListener implements ServletContextListener {
 	// the logger which we will initialise
 	private static Logger _logger;
 	
+	// this monitor class runs on it's own thread and removed pages from memory that have not been accessed in more than a specified time
+	private static class Monitor extends Thread {
+
+		// private instance variables
+		private ServletContext _servletContext;
+		private int _interval, _maxPageAge;
+		private boolean _stopped;
+		
+		// constructor
+		public Monitor(ServletContext servletContext, int interval, int maxPageAge) {
+			_servletContext = servletContext;
+			_interval = interval;
+			_maxPageAge = maxPageAge;
+		}
+		
+		// worker method
+		@Override
+		public void run() {
+			
+			// log that we've started
+			_logger.info("Monitor has started, checking every " + _interval + " seconds for pages not accessed in the last " + _maxPageAge + " seconds");
+			
+			// loop until stopped
+			while (!_stopped) {
+								
+				// sleep for set interval
+				try {
+					Thread.sleep(_interval * 1000);
+				} catch (InterruptedException ex) {
+					_stopped = true;
+				}
+				
+				// if we're still running
+				if (!_stopped) {
+					
+					// log start of checking
+					_logger.debug("Monitor is checking for stale pages");
+					
+					// get the current date / time
+					Date now = new Date();
+					
+					// get the applications
+					Applications applications = (Applications) _servletContext.getAttribute("applications");
+					
+					// loop them
+					for (Application application : applications.get()) {
+						// get old pages
+						application.getPages().clearOldPages(now, _maxPageAge);						
+					}										
+				}
+			}
+			
+			_logger.info("Monitor has stopped");
+						
+		}
+
+		// interrupt
+		@Override
+		public void interrupt() {
+			_stopped = true;
+			super.interrupt();
+		}
+		
+	}
+	
 	// the schema factory that we will load the actions and controls schemas into
 	private static SchemaFactory _schemaFactory;
 	
 	// all of the classes we are going to put into our jaxb context
 	private static ArrayList<Class> _jaxbClasses;
 	
-	// the marshaller is used to save any versioned applications
-	private static	Marshaller _marshaller;
+	// our monitor class
+	private Monitor _monitor;
 	
 	public static void logFileNames(File dir, String rootPath) {
 		
@@ -619,7 +686,7 @@ public class RapidServletContextListener implements ServletContextListener {
 	}
 	
 	// Here we loop all of the folders under "applications" looking for a application.xml file, copying to the latest version if found before loading the versions
-	public static int loadApplications(ServletContext servletContext) throws JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException, IOException, ParserConfigurationException, SAXException, TransformerFactoryConfigurationError, TransformerException, RapidLoadingException {
+	public static int loadApplications(ServletContext servletContext) throws JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException, IOException, ParserConfigurationException, SAXException, TransformerFactoryConfigurationError, TransformerException, RapidLoadingException, XPathExpressionException {
 		
 		// instatiate a new applications collection which allows us to retrieve by id and version
 		Applications applications = new Applications();
@@ -682,6 +749,8 @@ public class RapidServletContextListener implements ServletContextListener {
 					
 					// get the version folders
 					File[] versionFolders = applicationFolder.listFiles();
+					// get a marsheller
+					Marshaller marsheller = RapidHttpServlet.getMarshaller();
 					// loop them
 					for (File versionFolder : versionFolders) {
 						// check is folder
@@ -708,7 +777,7 @@ public class RapidServletContextListener implements ServletContextListener {
 									
 									// marshal the updated application object to it's file
 									FileOutputStream fos = new FileOutputStream(applicationFile);		
-									_marshaller.marshal(application, fos);	    
+									marsheller.marshal(application, fos);	    
 								    fos.close();
 								    
 									// get a dir for the pages
@@ -779,7 +848,7 @@ public class RapidServletContextListener implements ServletContextListener {
 		return applications.size();
 		
 	}
-		
+					
 	@Override
 	public void contextInitialized(ServletContextEvent event) {   
 		
@@ -862,36 +931,10 @@ public class RapidServletContextListener implements ServletContextListener {
 			Class[] classes = _jaxbClasses.toArray(new Class[_jaxbClasses.size()]);			
 			// re-init the JAXB context to include our injectable classes					
 			JAXBContext jaxbContext = JAXBContext.newInstance(classes);
-			// store as context attribute (this is available via the getJAXBContext method in the RapidHttpServlet)
-			servletContext.setAttribute("jaxbContext", jaxbContext);
 			
-			// initialise the marshaller
-			_marshaller = jaxbContext.createMarshaller();
-			// request formatted output
-			_marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			
-			// initialise the unmarshaller
-			Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-			
-			// add a validation listener (this makes for better error messages)
-			unmarshaller.setEventHandler(new ValidationEventHandler() {
-				@Override
-				public boolean handleEvent(ValidationEvent event) {
-					// messages with "unrecognized type name" are very useful they're not sever themselves must almost always followed by a severe with a less meaningful message 
-					if (event.getMessage().contains("unrecognized type name") || event.getSeverity() == ValidationEvent.FATAL_ERROR) {
-						return false;
-					} else {						
-						return true;
-					}
-				}				
-			});
-
-			
-			// store marshaller (this is available via the getMarshaller method in the RapidHttpServlet)
-			servletContext.setAttribute("marshaller", _marshaller);
-			// store unmarshaller (this is available via the getUnmarshaller method in the RapidHttpServlet)
-			servletContext.setAttribute("unmarshaller", unmarshaller);
-			
+			// store the jaxb context in RapidHttpServlet
+			RapidHttpServlet.setJAXBContext(jaxbContext);
+												
 			// load the applications!
 			loadApplications(servletContext);	
 			
@@ -912,6 +955,26 @@ public class RapidServletContextListener implements ServletContextListener {
 			
 			boolean actionCache = Boolean.parseBoolean(servletContext.getInitParameter("actionCache"));
 			if (actionCache) servletContext.setAttribute("actionCache", new ActionCache(servletContext));
+			
+			int pageAgeCheckInterval = 1800; 
+			try { 
+				String pageAgeCheckIntervalString = servletContext.getInitParameter("pageAgeCheckInterval");
+				if (pageAgeCheckIntervalString != null) pageAgeCheckInterval = Integer.parseInt(pageAgeCheckIntervalString);	
+			} catch (Exception ex) {
+				_logger.error("pageAgeCheckInterval is not an integer");
+			}
+						
+			int pageMaxAge = 1800;
+			try { 
+				String pageMaxAgeString = servletContext.getInitParameter("pageMaxAge");
+				if (pageMaxAgeString != null) pageAgeCheckInterval = Integer.parseInt(pageMaxAgeString);	
+			} catch (Exception ex) {
+				_logger.error("pageMaxAge is not an integer");
+			}
+
+			// start the monitor
+			_monitor = new Monitor(servletContext, pageAgeCheckInterval, pageMaxAge);
+			_monitor.start();
 								    		  									
 		} catch (Exception ex) {	
 			
@@ -926,6 +989,9 @@ public class RapidServletContextListener implements ServletContextListener {
 	public void contextDestroyed(ServletContextEvent event){
 			
 		_logger.info("Shutting down...");
+		
+		// interrupt the monitor
+		_monitor.interrupt();
 		
 		// get all of the applications
 		Map<String, Application> applications = (Map<String, Application>) event.getServletContext().getAttribute("applications");
@@ -964,8 +1030,7 @@ public class RapidServletContextListener implements ServletContextListener {
             	_logger.error(String.format("Error deregistering driver %s", driver), e);
             }
         }
-        
-        
+                
         // last log
 		_logger.info("Logger shutdown");
 		// shutdown logger

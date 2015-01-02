@@ -721,7 +721,7 @@ public class Page {
 	    tempFile.delete();
 	    	    	  	    
 		// replace the old page with the new page
-		application.addPage(this);
+		application.getPages().addPage(this);
 		
 		// empty the cached page html
 		_cachedStartHtml = null;
@@ -743,7 +743,7 @@ public class Page {
 	 		// delete the page file
 	 		delFile.delete();
 	 		// remove it from the current list of pages
-		 	application.removePage(_id);
+		 	application.getPages().removePage(_id);
 	 	}
 	 	
 	 	// get the resources path
@@ -1398,7 +1398,7 @@ public class Page {
 		}
 		
 		// get the unmarshaller from the context
-		Unmarshaller unmarshaller = (Unmarshaller) servletContext.getAttribute("unmarshaller");	
+		Unmarshaller unmarshaller = RapidHttpServlet.getUnmarshaller();
 				
 		// get a buffered reader for our page with UTF-8 file format
 		BufferedReader br = new BufferedReader( new InputStreamReader( new FileInputStream(file), "UTF-8"));
@@ -1410,7 +1410,7 @@ public class Page {
 			Page page = (Page) unmarshaller.unmarshal(br);
 			
 			// log that the application was loaded
-			logger.debug("Loaded page " + page.getId() + " - " + page.getName());
+			logger.debug("Loaded page " + page.getId() + " - " + page.getName() + " from " + file);
 			
 			// close the buffered reader
 			br.close();

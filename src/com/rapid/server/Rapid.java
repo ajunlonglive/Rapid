@@ -223,19 +223,19 @@ public class Rapid extends RapidHttpServlet {
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-				
+			
 		// read bytes from request body into our own byte array (this means we can deal with images) 
 		InputStream input = request.getInputStream();
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();												
 		for (int length = 0; (length = input.read(_byteBuffer)) > -1;) outputStream.write(_byteBuffer, 0, length);			
 		byte[] bodyBytes = outputStream.toByteArray();
-				
-		// create a Rapid request				
-		RapidRequest rapidRequest = new RapidRequest(this, request);
 		
 		// log
 		getLogger().debug("Rapid POST request : " + request.getQueryString() + " bytes=" + bodyBytes.length);
-					
+				
+		// create a Rapid request				
+		RapidRequest rapidRequest = new RapidRequest(this, request);
+				
 		try {
 			
 			// if an application action was found in the request						

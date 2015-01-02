@@ -36,6 +36,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
+
 import com.rapid.core.Action;
 import com.rapid.core.Application;
 import com.rapid.core.Application.RapidLoadingException;
@@ -99,26 +101,30 @@ public class RapidRequest {
 					_page = _application.getStartPage(rapidServlet.getServletContext());
 				} else {
 					// get the requested page
-					_page = _application.getPage(rapidServlet.getServletContext(), pageId);
-				}				
-			} catch (RapidLoadingException ex) {
-				// fail silently
-			}
-			// if there is no control parameter could still have a page action
-			if (request.getParameter("c") == null) {
-				if (request.getParameter("act") != null) {
-					// get action from the page
-					_action = _page.getAction(request.getParameter("act"));						
+					_page = _application.getPages().getPage(rapidServlet.getServletContext(), pageId);
 				}
-			} else {
-				_control = _page.getControl(request.getParameter("c"));
-				// if we've found the control and have an action parameter
-				if (_control != null && request.getParameter("act") != null) {
-					// get action from the page
-					_action = _control.getAction(request.getParameter("act"));						
-				}	
+				// if there is no control parameter could still have a page action
+				if (request.getParameter("c") == null) {
+					if (request.getParameter("act") != null) {
+						// get action from the page
+						_action = _page.getAction(request.getParameter("act"));						
+					}
+				} else {
+					_control = _page.getControl(request.getParameter("c"));
+					// if we've found the control and have an action parameter
+					if (_control != null && request.getParameter("act") != null) {
+						// get action from the page
+						_action = _control.getAction(request.getParameter("act"));						
+					}	
+				}
+			} catch (RapidLoadingException ex) {
+				
+				// get the logger
+				Logger logger = rapidServlet.getLogger();
+				// log the exception
+				logger.error("Failed to load page when creating request", ex);
 			}
-			
+						
 		}
 		// retain all the query string parameter values in the session
 		Enumeration<String> names = _request.getParameterNames();

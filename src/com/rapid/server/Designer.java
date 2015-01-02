@@ -65,6 +65,7 @@ import com.rapid.core.Applications.Versions;
 import com.rapid.core.Page;
 import com.rapid.core.Page.Lock;
 import com.rapid.core.Control;
+import com.rapid.core.Pages.PageHeader;
 import com.rapid.data.ConnectionAdapter;
 import com.rapid.data.DataFactory;
 import com.rapid.data.DataFactory.Parameters;
@@ -415,7 +416,10 @@ public class Designer extends RapidHttpServlet {
 								Page startPage = application.getStartPage(getServletContext());
 								if (startPage != null) startPageId = startPage.getId();
 								
-								for (Page page : application.getSortedPages()) {
+								// loop the page headers
+								for (PageHeader pageHeader : application.getPages().getSortedPages()) {
+									// get the page - yip this means that apps loaded in the designer load all of their pages
+									Page page = application.getPages().getPage(getServletContext(), pageHeader.getId());
 									// create a simple json object for the page
 									JSONObject jsonPage = new JSONObject();
 									// add simple properties
@@ -456,7 +460,7 @@ public class Designer extends RapidHttpServlet {
 								if (user != null) if (user.getDescription() != null) userDescription = user.getDescription();
 																								
 								// remove any existing page locks for this user
-								application.removeUserPageLocks(userName);
+								application.removeUserPageLocks(getServletContext(), userName);
 								
 								// check the page lock (which removes it if it has expired)
 								page.checkLock();
@@ -550,7 +554,7 @@ public class Designer extends RapidHttpServlet {
 								
 								if (application != null) {
 									
-									for (Page page : application.getSortedPages()) {
+									for (PageHeader page : application.getPages().getSortedPages()) {
 										if (pageName.toLowerCase().equals(page.getName().toLowerCase())) {
 											pageExists = true;
 											break;
@@ -804,7 +808,7 @@ public class Designer extends RapidHttpServlet {
 								}
 								
 								// fetch a copy of the old page (if there is one)
-								Page oldPage = application.getPage(getServletContext(), newPage.getId());
+								Page oldPage = application.getPages().getPage(getServletContext(), newPage.getId());
 								// if the page's name changed we need to remove it
 								if (oldPage != null) {
 									if (!oldPage.getName().equals(newPage.getName())) {

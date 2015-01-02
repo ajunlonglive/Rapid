@@ -68,6 +68,7 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import com.rapid.core.Page.Lock;
+import com.rapid.core.Pages.PageHeader;
 import com.rapid.data.ConnectionAdapter;
 import com.rapid.security.RapidSecurityAdapter;
 import com.rapid.security.SecurityAdapater;
@@ -109,10 +110,13 @@ public class Application {
 		
 		private String _message;
 		private Exception _exception;
-		
+		private Throwable _cause;
+				
 		public RapidLoadingException(String message, Exception ex) {
-			_message = message + " - " + ex.getMessage();
-			_exception = ex;
+			_message = message;			
+			_cause = ex.getCause();
+			if (ex.getMessage() != null) _message += " - " + ex.getMessage();
+			if (ex.getCause() != null) _message += " - " + ex.getCause().getMessage();						
 			// clean up the jaxb suggestion
 			if (_message.contains(". Did you mean")) {
 				_message = _message.substring(0, _message.indexOf(". Did you mean"));
@@ -127,6 +131,11 @@ public class Application {
 		@Override
 		public StackTraceElement[] getStackTrace() {
 			return _exception.getStackTrace();
+		}
+		
+		@Override
+		public Throwable getCause() {
+			return _cause;
 		}
 		
 	}
@@ -429,7 +438,7 @@ public class Application {
 		
 	// constructors
 	
-	public Application() throws ParserConfigurationException, XPathExpressionException {
+	public Application() throws ParserConfigurationException, XPathExpressionException, RapidLoadingException, SAXException, IOException {
 		_xmlVersion = XML_VERSION;
 		_pages = new Pages(this);
 		_databaseConnections = new ArrayList<DatabaseConnection>();
@@ -481,7 +490,7 @@ public class Application {
 	// get the first page the users want to see (set in Rapid Admin on first save)
 	public Page getStartPage(ServletContext servletContext) throws RapidLoadingException {
 		// retain an instance to the page we are about to return
-		Page startPage = _pages.getStartPage(servletContext);
+		Page startPage = _pages.getPage(servletContext, _startPageId);
 		// return
 		return startPage;
 	}
@@ -515,58 +524,29 @@ public class Application {
 		return null;
 	}
 	
-	// get a single page by it's id
-	public Page getPage(ServletContext servletContext, String id) throws RapidLoadingException { return _pages.get(servletContext, id);	}
-	// we don't want the pages in the application.xml so no setPages to avoid the marshaler
-	public ArrayList<Page> getSortedPages() {
-		// prepare the list we are going to send back
-		ArrayList<Page> pages = new ArrayList<Page>();
-		// add each page to the list
-		for (String pageId : _pages.keySet()) {
-			pages.add(_pages.get(pageId));
-		}
-		// sort the list by the page name
-		Collections.sort(pages, new Comparator<Page>() {
-			@Override
-			public int compare(Page page1, Page page2) {
-				return Comparators.AsciiCompare(page1.getName(), page2.getName(), false);
-			}
-			
-		});
-		// return the pages
-		return pages; 
-	}	
-	// get a single page by it's name
-	public Page getPageByName(String name) {
-		// loop the page keyset
-		for (String pageId : _pages.keySet()) {
-			// get this page
-			Page page = _pages.get(pageId);
-			// return immediately  with the matching page
-			if (name.equals(page.getName())) return page;
-		}
-		// return if we got here
-		return null;	
-	}
-	// add them singly 
-	public void addPage(Page page) { _pages.put(page.getId(), page); }	
-	// remove them one by one too
-	public void removePage(String id) {	_pages.remove(id); }
-	// clear them all so they're rebuild
-	public void clearPages() { _pages.clear(); }
-	
+	// get pages
+	public Pages getPages() { return _pages; }
+		
 	// get a control by it's id
-	public Control getControl(String id) {
+	public Control getControl(ServletContext servletContext, String id) {
 		Control control = null;
 		// check we have pages
 		if (_pages != null) {
 			for (String pageId : _pages.keySet()) {
-				// fetch this page
-				Page page = _pages.get(pageId);
-				// look for the control
-				control = page.getControl(id);
-				// if we found it we can stop looping
-				if (control != null) break;
+				try {
+					// fetch this page
+					Page page = _pages.getPage(servletContext, pageId);
+					// look for the control
+					control = page.getControl(id);
+					// if we found it we can stop looping
+					if (control != null) break;
+				} catch (Exception ex) {
+					// get the logger
+					Logger logger = (Logger) servletContext.getAttribute("logger");
+					// log this exception
+					logger.error("Error loading page when getting control", ex);
+				}
+				
 			}
 		}
 		return control;
@@ -1184,13 +1164,13 @@ public class Application {
 	}
 			
 	// remove any page locks for a given user
-	public void removeUserPageLocks(String userName) {
+	public void removeUserPageLocks(ServletContext servletContext, String userName) throws RapidLoadingException {
 		// check there are pages
 		if (_pages != null) {
 			// loop them
 			for (String pageId : _pages.keySet()) {
 				// get the page
-				Page page = _pages.get(pageId);
+				Page page = _pages.getPage(servletContext, pageId);
 				// get the page lock
 				Lock pageLock = page.getLock();
 				// if there was one
@@ -1393,7 +1373,7 @@ public class Application {
 	    	
 	}
 		
-	public Application copy(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, String newId, String newVersion, boolean backups, boolean delete) throws IOException, IllegalArgumentException, SecurityException, JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, SAXException, TransformerFactoryConfigurationError, TransformerException, RapidLoadingException {
+	public Application copy(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, String newId, String newVersion, boolean backups, boolean delete) throws IOException, IllegalArgumentException, SecurityException, JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, ParserConfigurationException, SAXException, TransformerFactoryConfigurationError, TransformerException, RapidLoadingException, XPathExpressionException {
 		
 		// retain the ServletContext
 		ServletContext servletContext = rapidServlet.getServletContext();
@@ -1607,9 +1587,11 @@ public class Application {
 				// check we have pages
 				if (_pages != null) {					
 					// loop them
-					for (String pageId : _pages.keySet()) {
+					for (PageHeader pageHeader : _pages.getSortedPages()) {
+						// get the page id
+						String pageId = pageHeader.getId();
 						// get a reference to the page
-						Page page = _pages.get(pageId);
+						Page page = _pages.getPage(rapidServlet.getServletContext(), pageId);
 						// create a file for it in the delete folder
 						File pageFile = new File(deleteFolder + "/" + pageId + ".htm");
 						// create a file writer for it for now
@@ -1738,12 +1720,12 @@ public class Application {
 	}
 	
 	// this is a simple overload for default loading of applications where the resources are all regenerated
-	public static Application load(ServletContext servletContext, File file) throws JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException, IOException, ParserConfigurationException, SAXException, TransformerFactoryConfigurationError, TransformerException, RapidLoadingException {				
+	public static Application load(ServletContext servletContext, File file) throws JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException, IOException, ParserConfigurationException, SAXException, TransformerFactoryConfigurationError, TransformerException, RapidLoadingException, XPathExpressionException {				
 		return load(servletContext, file, true); 				
 	}
 	
 	// this method loads the application by ummarshelling the xml, and then doing the same for all page .xmls, before calling the initialise method
-	public static Application load(ServletContext servletContext, File file, boolean initialise) throws JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException, IOException, ParserConfigurationException, SAXException, TransformerFactoryConfigurationError, TransformerException, RapidLoadingException {
+	public static Application load(ServletContext servletContext, File file, boolean initialise) throws JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException, IOException, ParserConfigurationException, SAXException, TransformerFactoryConfigurationError, TransformerException, RapidLoadingException, XPathExpressionException {
 		
 		// get the logger
 		Logger logger = (Logger) servletContext.getAttribute("logger");
@@ -1794,8 +1776,8 @@ public class Application {
 			
 		}
 		
-		// get the unmarshaller from the context
-		Unmarshaller unmarshaller = (Unmarshaller) servletContext.getAttribute("unmarshaller");
+		// get the unmarshaller 
+		Unmarshaller unmarshaller = RapidHttpServlet.getUnmarshaller();
 										
 		try {
 		
@@ -1805,8 +1787,8 @@ public class Application {
 			// if we don't want pages loaded or resource generation skip this
 			if (initialise) {
 				
-				// clear the pages so they reload
-				application.clearPages();
+				// load the pages (actually clears down the pages collection and reloads the headers)
+				application.getPages().loadpages(servletContext);
 																										
 				// initialise the application and create the resources
 				application.initialise(servletContext, true);

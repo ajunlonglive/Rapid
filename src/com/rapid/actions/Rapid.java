@@ -43,16 +43,19 @@ import javax.xml.xpath.XPathExpressionException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.xml.sax.SAXException;
 
 import com.rapid.core.Action;
 import com.rapid.core.Application;
 import com.rapid.core.Application.Parameter;
+import com.rapid.core.Application.RapidLoadingException;
 import com.rapid.core.Control;
 import com.rapid.core.Device;
 import com.rapid.core.Device.Devices;
 import com.rapid.core.Page;
 import com.rapid.core.Application.DatabaseConnection;
 import com.rapid.core.Applications.Versions;
+import com.rapid.core.Pages.PageHeader;
 import com.rapid.data.ConnectionAdapter;
 import com.rapid.data.DataFactory;
 import com.rapid.security.SecurityAdapater;
@@ -120,7 +123,7 @@ public class Rapid extends Action {
 	
 	// internal methods
 	
-	private Application createApplication(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, String name, String version, String title, String description) throws IllegalArgumentException, SecurityException, JAXBException, IOException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, SecurityAdapaterException, ParserConfigurationException, XPathExpressionException {
+	private Application createApplication(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, String name, String version, String title, String description) throws IllegalArgumentException, SecurityException, JAXBException, IOException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, SecurityAdapaterException, ParserConfigurationException, XPathExpressionException, RapidLoadingException, SAXException {
 		
 		String newAppId = Files.safeName(name).toLowerCase();
 		String newAppVersion = Files.safeName(version);
@@ -564,10 +567,10 @@ public class Rapid extends Action {
 					// create a simplified array to hold the pages
 					JSONArray jsonPages = new JSONArray();
 					// retrieve the pages
-					List<Page> pages = app.getSortedPages();
+					List<PageHeader> pages = app.getPages().getSortedPages();
 					// check we have some
 					if (pages != null) {
-						for (Page page : pages) {
+						for (PageHeader page : pages) {
 							JSONObject jsonPage = new JSONObject();						
 							jsonPage.put("text", page.getName() + " - " + page.getTitle());
 							jsonPage.put("value", page.getId());
@@ -1435,7 +1438,7 @@ public class Rapid extends Action {
 				// get the id
 				String id = jsonAction.getString("id").trim();			
 				// retrieve the page
-				Page delPage = app.getPage(rapidRequest.getRapidServlet().getServletContext(), id);
+				Page delPage = app.getPages().getPage(rapidRequest.getRapidServlet().getServletContext(), id);
 				// delete it if we got one
 				if (delPage != null) delPage.delete(rapidServlet, rapidActionRequest, app);
 				// set the result message
@@ -1627,7 +1630,7 @@ public class Rapid extends Action {
 				// delete the user
 				app.getSecurity().deleteUser(rapidRequest);
 				// remove any of their page locks
-				app.removeUserPageLocks(userName);
+				app.removeUserPageLocks(rapidServlet.getServletContext(), userName);
 				// set the result message
 				result.put("message", "User deleted");
 													
@@ -2002,7 +2005,7 @@ public class Rapid extends Action {
 				}
 				
 				// get the page
-				Page page = app.getPageByName(pageName);
+				Page page = app.getPages().getPageByName(rapidServlet.getServletContext(), pageName);
 				
 				// create a file object for the page
 			 	File pageFile = new File(page.getFile(rapidServlet.getServletContext(), app));
@@ -2020,7 +2023,7 @@ public class Rapid extends Action {
 				page = Page.load(rapidServlet.getServletContext(), backupFile);
 				
 				// replace the current entry
-				app.addPage(page);
+				app.getPages().addPage(page);
 									
 				// set the result message
 				result.put("message", "Page backup " + appId + "/" + backupId + " restored");
