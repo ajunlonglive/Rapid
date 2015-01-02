@@ -38,6 +38,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.rapid.core.Action;
 import com.rapid.core.Application;
+import com.rapid.core.Application.RapidLoadingException;
 import com.rapid.core.Control;
 import com.rapid.core.Page;
 import com.rapid.server.filter.RapidFilter;
@@ -88,11 +89,22 @@ public class RapidRequest {
 		_application = _rapidServlet.getApplications().get(_appId, _version);
 		// if we've found the application look for the page
 		if (_application != null) {
-			// try and get the specified page
-			_page = _application.getPage(request.getParameter("p"));
-			// if no page was found resort to the start page
-			if (_page == null) _page = _application.getStartPage();
-			// if there is no control paramter could still have a page action
+			// get the requested page id
+			String pageId = request.getParameter("p");
+			// try and get the specified page 
+			try {				
+				// if no page was specifically requested
+				if (pageId == null) {
+					// get the start page
+					_page = _application.getStartPage(rapidServlet.getServletContext());
+				} else {
+					// get the requested page
+					_page = _application.getPage(rapidServlet.getServletContext(), pageId);
+				}				
+			} catch (RapidLoadingException ex) {
+				// fail silently
+			}
+			// if there is no control parameter could still have a page action
 			if (request.getParameter("c") == null) {
 				if (request.getParameter("act") != null) {
 					// get action from the page

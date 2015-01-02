@@ -57,6 +57,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -324,7 +325,7 @@ public class Application {
 	private List<Webservice> _webservices;
 	private List<Parameter> _parameters;
 	private List<String> _controlTypes, _actionTypes;
-	private HashMap<String,Page> _pages;
+	private Pages _pages;
 	private Resources _resources;
 	private List<String> _styleClasses;
 	
@@ -428,9 +429,9 @@ public class Application {
 		
 	// constructors
 	
-	public Application() {
+	public Application() throws ParserConfigurationException, XPathExpressionException {
 		_xmlVersion = XML_VERSION;
-		_pages = new HashMap<String,Page>();
+		_pages = new Pages(this);
 		_databaseConnections = new ArrayList<DatabaseConnection>();
 		_webservices = new ArrayList<Webservice>();
 		_parameters = new ArrayList<Parameter>();
@@ -478,16 +479,10 @@ public class Application {
 	}
 		
 	// get the first page the users want to see (set in Rapid Admin on first save)
-	public Page getStartPage() {
+	public Page getStartPage(ServletContext servletContext) throws RapidLoadingException {
 		// retain an instance to the page we are about to return
-		Page startPage = null;
-		// check we have some pages
-		if (_pages != null) {
-			// if there is a retained _startPageId try and use that
-			if (_startPageId != null) startPage = getPage(_startPageId);
-			// if we don't have a start page set yet, get the first entry from the map
-			if (startPage == null && _pages.keySet().iterator().hasNext()) startPage = _pages.get(_pages.keySet().iterator().next());
-		}
+		Page startPage = _pages.getStartPage(servletContext);
+		// return
 		return startPage;
 	}
 	
@@ -521,9 +516,7 @@ public class Application {
 	}
 	
 	// get a single page by it's id
-	public Page getPage(String id) { return _pages.get(id);	}
-	// get all page id's
-	public Set<String> getPagsIds() { return _pages.keySet(); }
+	public Page getPage(ServletContext servletContext, String id) throws RapidLoadingException { return _pages.get(servletContext, id);	}
 	// we don't want the pages in the application.xml so no setPages to avoid the marshaler
 	public ArrayList<Page> getSortedPages() {
 		// prepare the list we are going to send back
@@ -559,6 +552,8 @@ public class Application {
 	public void addPage(Page page) { _pages.put(page.getId(), page); }	
 	// remove them one by one too
 	public void removePage(String id) {	_pages.remove(id); }
+	// clear them all so they're rebuild
+	public void clearPages() { _pages.clear(); }
 	
 	// get a control by it's id
 	public Control getControl(String id) {
@@ -733,47 +728,7 @@ public class Application {
 									
 		} // json resources check
 						
-	}
-	
-	public void loadPages(ServletContext servletContext, File pagesFolder) throws RapidLoadingException {
-		
-		// empty the collection
-		_pages.clear();
-		
-		if (pagesFolder.exists()) {
-			
-			// create a filter for finding .page.xml files
-			FilenameFilter xmlFilenameFilter = new FilenameFilter() {
-		    	public boolean accept(File dir, String name) {
-		    		return name.toLowerCase().endsWith(".page.xml");
-		    	}
-		    };
-		    
-		    // loop the .page.xml files and add to the application
-		    for (File pageFile : pagesFolder.listFiles(xmlFilenameFilter)) {
-		    	
-		    	try {
-		    	
-		    		addPage(Page.load(servletContext, pageFile));
-		    		
-		    	} catch (Exception ex) {	
-
-		    		// assume the page name is the whole path
-		    		String pageName = pageFile.getPath();
-		    		// if it contains the pages folder start from there
-		    		if (pageName.contains(File.separator + "pages" + File.separator)) pageName = pageName.substring(pageName.indexOf(File.separator + "pages" + File.separator) + 7);		    					    		
-		    		// remove any .page.xml
-		    		if (pageName.contains(".page.xml")) pageName = pageName.substring(0, pageName.indexOf(".page.xml"));
-		    		// throw the exception
-		    		throw new RapidLoadingException("Error loading page " + pageName, ex);
-		    		
-				}
-		    	
-		    }
-			
-		}
-		
-	}
+	}	
 		
 	// this function initialises the application when its first loaded, initialises the security adapter and builds the rapid.js and rapid.css files
 	public void initialise(ServletContext servletContext, boolean createResources) throws JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, InvocationTargetException, SecurityException, NoSuchMethodException, IOException {
@@ -1604,7 +1559,7 @@ public class Application {
 	}
 	
 	// create a named .zip file for the app in the /temp folder	
-	public void zip(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, User user, String fileName, boolean offlineUse) throws JAXBException, IOException, JSONException {
+	public void zip(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, User user, String fileName, boolean offlineUse) throws JAXBException, IOException, JSONException, RapidLoadingException {
 		
 		// create folders to save locate app file
 		String folderPath = getConfigFolder(rapidServlet.getServletContext());		
@@ -1667,7 +1622,7 @@ public class Application {
 						zipSources.add(pageFile, "");
 					}
 					// get the start page
-					Page page = getStartPage();
+					Page page = getStartPage(rapidServlet.getServletContext());
 					// if we got one add it as index.htm
 					if (page != null) {
 						// create a file for it for it in the delete folder
@@ -1752,7 +1707,7 @@ public class Application {
 	}
 	
 	// an overload for the above which will include the for export rather than offlineUse files
-	public void zip(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, User user, String fileName) throws JAXBException, IOException, JSONException {
+	public void zip(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, User user, String fileName) throws JAXBException, IOException, JSONException, RapidLoadingException {
 		zip(rapidServlet, rapidRequest, user, fileName, false);
 	}
 		
@@ -1846,15 +1801,12 @@ public class Application {
 		
 			// unmarshall the application
 			Application application = (Application) unmarshaller.unmarshal(file);
-									
-			// look for pages
-			File pagesFolder = new File(file.getParent() + "/pages");
-												
+															
 			// if we don't want pages loaded or resource generation skip this
 			if (initialise) {
 				
-				// load the pages
-				application.loadPages(servletContext, pagesFolder);
+				// clear the pages so they reload
+				application.clearPages();
 																										
 				// initialise the application and create the resources
 				application.initialise(servletContext, true);
