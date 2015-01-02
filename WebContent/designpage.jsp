@@ -60,7 +60,7 @@ if (appId != null && pageId != null) {
 	// check we got an app
 	if (rapidApp != null) {
 		// get the page
-		rapidPage = rapidApp.getPage(pageId);
+		rapidPage = rapidApp.getPages().getPage(getServletContext(), pageId);
 		// check we got the page
 		if (rapidPage != null) {
 			// we got an app and a page

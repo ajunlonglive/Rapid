@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.servlet.ServletContext;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -334,7 +335,7 @@ public class Control {
 	}
 	
 	// this method returns JavaScript for retrieving a control's data, or runtime property value
-	public static String getDataJavaScript(Application application, Page page, String id, String field) {
+	public static String getDataJavaScript(ServletContext servletContext, Application application, Page page, String id, String field) {
 		// assume an empty string
 		String js = "";
 		// if id is not null
@@ -376,7 +377,7 @@ public class Control {
 				// if not found 
 				if (control == null) {
 					// have another last go in the whole application
-					control = application.getControl(idParts[0]);
+					control = application.getControl(servletContext, idParts[0]);
 					// mark as not in the page
 					pageControl = false;
 				}

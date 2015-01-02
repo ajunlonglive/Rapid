@@ -28,6 +28,8 @@ package com.rapid.actions;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.ServletContext;
+
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -64,13 +66,13 @@ public class Logic extends Action {
 			_field = jsonValue.optString("field");
 		}
 		
-		public String getArgument(Application application, Page page) {
+		public String getArgument(ServletContext servletContext, Application application, Page page) {
 			// assume null
 			String arg = "null";
 			// if id is set
 			if (_id != null) {
 				// use the system-wide method
-				arg = Control.getDataJavaScript(application, page, _id, _field);
+				arg = Control.getDataJavaScript(servletContext, application, page, _id, _field);
 			}
 			// return it	
 			return arg;
@@ -108,12 +110,12 @@ public class Logic extends Action {
 		}
 		
 		// methods
-		public String getJavaScript(Application application, Page page) {
+		public String getJavaScript(ServletContext servletContext, Application application, Page page) {
 			String js = "false";
 			// check we have everything we need to make a condition
 			if (_value1 != null && _operation != null && _value2 != null) {				
 				// construct the condition
-				js = _value1.getArgument(application, page) + " " + _operation + " " + _value2.getArgument(application, page);
+				js = _value1.getArgument(servletContext, application, page) + " " + _operation + " " + _value2.getArgument(servletContext, application, page);
 			}
 			return js;
 		}
@@ -228,7 +230,7 @@ public class Logic extends Action {
 				// loop them
 				for (int i = 0; i < _conditions.size(); i++) {
 					// add the condition
-					conditionsJavaScript += _conditions.get(i).getJavaScript(application, page);
+					conditionsJavaScript += _conditions.get(i).getJavaScript(rapidServlet.getServletContext(), application, page);
 					// if there is going to be another condition
 					if (i < _conditions.size() - 1) {
 						// add the separator

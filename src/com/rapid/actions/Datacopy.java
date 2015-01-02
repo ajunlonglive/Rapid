@@ -143,10 +143,10 @@ public class Datacopy extends Action {
 				for (DataCopy dataCopy : _dataCopies) {
 					
 					// get the get data function
-					String getDataFunction = Control.getDataJavaScript(application, page, dataCopy.getSource(), dataCopy.getSourceField());
+					String getDataFunction = Control.getDataJavaScript(rapidServlet.getServletContext(), application, page, dataCopy.getSource(), dataCopy.getSourceField());
 					
 					// add the getData if different from the last one
-					if (!getDataFunction.equals(lastGetDataFunction)) js += "var data = "  + Control.getDataJavaScript(application, page, dataCopy.getSource(), dataCopy.getSourceField()) + ";\n";
+					if (!getDataFunction.equals(lastGetDataFunction)) js += "var data = "  + Control.getDataJavaScript(rapidServlet.getServletContext(), application, page, dataCopy.getSource(), dataCopy.getSourceField()) + ";\n";
 					
 					// remember this one
 					lastGetDataFunction = getDataFunction;
@@ -165,7 +165,7 @@ public class Datacopy extends Action {
 					// check we got a control
 					if (destinationControl == null) {
 						// now look for the control in the application
-						destinationControl = application.getControl(destinationId);
+						destinationControl = application.getControl(rapidServlet.getServletContext(), destinationId);
 						// set page control to false
 						pageControl = false;
 					} 
@@ -247,7 +247,7 @@ public class Datacopy extends Action {
 				
 				String dataSourceField = getProperty("dataSourceField");
 				
-				js = "var data = "  + Control.getDataJavaScript(application, page, dataSourceId, dataSourceField) + ";\n";
+				js = "var data = "  + Control.getDataJavaScript(rapidServlet.getServletContext(), application, page, dataSourceId, dataSourceField) + ";\n";
 										
 				// we're going to work with the data destinations in a json array
 				JSONArray jsonDataDestinations = null;
@@ -291,7 +291,7 @@ public class Datacopy extends Action {
 							// check we got a control
 							if (destinationControl == null) {
 								// now look for the control in the application
-								destinationControl = application.getControl(destinationId);
+								destinationControl = application.getControl(rapidServlet.getServletContext(), destinationId);
 								// set page control to false
 								pageControl = false;
 							} 
@@ -382,7 +382,7 @@ public class Datacopy extends Action {
 							} else if ("search".equals(copyType)) {
 								
 								// get the search data
-								js += ", " + Control.getDataJavaScript(application, page, getProperty("searchSource"), getProperty("searchSourceField"));
+								js += ", " + Control.getDataJavaScript(rapidServlet.getServletContext(), application, page, getProperty("searchSource"), getProperty("searchSourceField"));
 								// look for a search field
 								String searchField = getProperty("searchField");
 								// add it if present
