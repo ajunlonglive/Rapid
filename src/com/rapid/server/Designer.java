@@ -412,7 +412,7 @@ public class Designer extends RapidHttpServlet {
 								JSONArray jsonPages = new JSONArray();
 								
 								String startPageId = "";
-								Page startPage = application.getStartPage();
+								Page startPage = application.getStartPage(getServletContext());
 								if (startPage != null) startPageId = startPage.getId();
 								
 								for (Page page : application.getSortedPages()) {
@@ -804,7 +804,7 @@ public class Designer extends RapidHttpServlet {
 								}
 								
 								// fetch a copy of the old page (if there is one)
-								Page oldPage = application.getPage(newPage.getId());
+								Page oldPage = application.getPage(getServletContext(), newPage.getId());
 								// if the page's name changed we need to remove it
 								if (oldPage != null) {
 									if (!oldPage.getName().equals(newPage.getName())) {
@@ -1119,10 +1119,7 @@ public class Designer extends RapidHttpServlet {
 												    }
 													
 												}
-												
-												// load the pages
-												appNew.loadPages(getServletContext(), pagesFolder);
-																																	
+																						
 												// now initialise with the new id but don't make the resource files (this reloads the pages and sets up the security adapter)
 												appNew.initialise(getServletContext(), false);
 												

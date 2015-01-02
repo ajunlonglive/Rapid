@@ -37,6 +37,8 @@ import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -118,7 +120,7 @@ public class Rapid extends Action {
 	
 	// internal methods
 	
-	private Application createApplication(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, String name, String version, String title, String description) throws IllegalArgumentException, SecurityException, JAXBException, IOException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, SecurityAdapaterException {
+	private Application createApplication(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, String name, String version, String title, String description) throws IllegalArgumentException, SecurityException, JAXBException, IOException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, SecurityAdapaterException, ParserConfigurationException, XPathExpressionException {
 		
 		String newAppId = Files.safeName(name).toLowerCase();
 		String newAppVersion = Files.safeName(version);
@@ -1433,7 +1435,7 @@ public class Rapid extends Action {
 				// get the id
 				String id = jsonAction.getString("id").trim();			
 				// retrieve the page
-				Page delPage = app.getPage(id);
+				Page delPage = app.getPage(rapidRequest.getRapidServlet().getServletContext(), id);
 				// delete it if we got one
 				if (delPage != null) delPage.delete(rapidServlet, rapidActionRequest, app);
 				// set the result message

@@ -1410,7 +1410,7 @@ public class Page {
 			Page page = (Page) unmarshaller.unmarshal(br);
 			
 			// log that the application was loaded
-			logger.trace("Loaded page " + page.getId() + " - " + page.getName());
+			logger.debug("Loaded page " + page.getId() + " - " + page.getName());
 			
 			// close the buffered reader
 			br.close();
