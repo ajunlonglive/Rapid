@@ -189,6 +189,15 @@ public class Datacopy extends Action {
 						// if the idParts is greater then 1 this is a set property
 						if (idParts.length > 1) {
 							
+							// if we have some details
+							if (details != null) {
+								// if this is a page control
+								if (pageControl) {
+									// the details will already be in the page so we can use the short form
+									details = destinationControl.getId() + "details";
+								} 
+							}
+							
 							// get the property from the second id part
 							String property = idParts[1];
 							// append the set property call
@@ -306,16 +315,29 @@ public class Datacopy extends Action {
 								
 								// get any details we may have
 								String details = destinationControl.getDetailsJavaScript(application, page);
-															
+																															
 								// if the idParts is greater then 1 this is a set property
 								if (idParts.length > 1) {
+									
+									// if we have some details
+									if (details != null) {
+										// if this is a page control
+										if (pageControl) {
+											// the details will already be in the page so we can use the short form
+											details = destinationControl.getId() + "details";
+										} 
+									}
+									
 									// get the property from the second id part
 									String property = idParts[1];
 									// append the set property call
 									js += "setProperty_" + destinationControl.getType() +  "_" + property + "(ev,'" + destinationControl.getId() + "','" + destinationField + "'," + details + ",data);\n";
+									
 								} else {
+									
 									// we will need an outputs array
 									outputsArray = true;
+									
 									// set details to empty string or clean up
 									if (details == null) {
 										details = "";
@@ -329,8 +351,10 @@ public class Datacopy extends Action {
 											details = ",details:" + details;
 										}
 									}
+									
 									// add the properties we need as a js object it will go into the array
 									jsOutputs += "{id:'" + destinationControl.getId() + "',type: '" + destinationControl.getType() + "',field:'" + destinationField + "'" + details + "},";
+									
 								}
 								
 							}

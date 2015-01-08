@@ -404,7 +404,7 @@ public class Database extends Action {
 				}			
 				js += "       var outputs = [" + jsOutputs + "];\n";
 				// send them them and the data to the database action				
-				js += "       Action_database('" + getId() + "', data, outputs);\n";				
+				js += "       Action_database(ev,'" + getId() + "', data, outputs);\n";				
 			}
 			
 			// add any sucess actions

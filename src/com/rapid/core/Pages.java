@@ -59,7 +59,7 @@ public class Pages {
 			_title = title;
 			_file = file;
 		}
-				
+						
 	}
 	
 	// instance variables
@@ -124,6 +124,11 @@ public class Pages {
 	
 	// remove them one by one too
 	public void removePage(String id) {	_pages.remove(id); }
+	
+	// the number of pages
+	public int size() {
+		return _pageHeaders.size();
+	}
 		
 	// the keyset for loaded pages
 	public Set<String> keySet() {

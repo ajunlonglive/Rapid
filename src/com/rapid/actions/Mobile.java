@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.rapid.core.Action;
@@ -167,7 +168,7 @@ public class Mobile extends Action {
 				Control galleryControl = page.getControl(galleryControlId);
 				// check if we got one
 				if (galleryControl == null) {
-					js += "  //galleryControl " + galleryControlId + " not found\n";
+					js += "  // galleryControl " + galleryControlId + " not found\n";
 				} else {
 					js += "  var urls = '';\n";
 					js += "  $('#" + galleryControlId + "').find('img').each( function() { urls += $(this).attr('src') + ',' });\n";
@@ -192,6 +193,88 @@ public class Mobile extends Action {
 			} else if ("disableBackButton".equals(type)) {
 				// add js
 				js += "  _rapidmobile.disableBackButton();\n";
+			} else if ("sendGPS".equals(type)) {
+				// get whether to check if gps is enabled
+				boolean checkGPS = Boolean.parseBoolean(getProperty("gpsCheck"));
+				if (checkGPS) js += "  _rapidmobile.checkGPS();\n";
+				// get the gps destinations
+				String gpsDestionationsString = getProperty("gpsDestinations");
+				// if we had some
+				if (gpsDestionationsString != null) {					
+					try {
+						// read into json Array
+						JSONArray jsonGpsDestinations = new JSONArray(gpsDestionationsString);
+						// loop
+						for (int i = 0; i < jsonGpsDestinations.length(); i++) {
+							
+							// get the gps desintation
+							JSONObject jsonGpsDestination = jsonGpsDestinations.getJSONObject(i);
+							
+							// get the itemId
+							String itemId = jsonGpsDestination.getString("itemId");
+							// split by escaped .
+							String idParts[] = itemId.split("\\.");
+							// if there is more than 1 part we are dealing with set properties, for now just update the destintation id
+							if (idParts.length > 1) itemId = idParts[0];
+							
+							// get the field
+							String field = jsonGpsDestination.optString("field","");
+							
+							// first try and look for the control in the page
+							Control destinationControl = page.getControl(itemId);
+							// assume we found it
+							boolean pageControl = true;
+							// check we got a control
+							if (destinationControl == null) {
+								// now look for the control in the application
+								destinationControl = application.getControl(rapidServlet.getServletContext(), itemId);
+								// set page control to false
+								pageControl = false;
+							} 
+							
+							// check we got one from either location
+							if (destinationControl == null) {
+								
+								// data copies not found return a comment
+								js = "// data destination not found for " + itemId;
+								
+							} else {
+																
+								// get any details we may have
+								String details = destinationControl.getDetailsJavaScript(application, page);
+									
+								// if we have some details
+								if (details != null) {
+									// if this is a page control
+									if (pageControl) {
+										// the details will already be in the page so we can use the short form
+										details = destinationControl.getId() + "details";
+									} 
+								}
+								
+								// if the idParts is greater then 1 this is a set property
+								if (idParts.length > 1) {
+									
+									// get the property from the second id part
+									String property = idParts[1];
+
+									// make the getGps call to the bridge
+									js += "  _rapidmobile.getGPS(\"[{f:'setProperty_" + destinationControl.getType() +  "_" + property + "',id:'" + itemId + "',field:'" + field + "',details:'" + details + "'}]\");\n";
+								
+								} else {
+									
+									js += "  _rapidmobile.getGPS(\"[{f:'setData_" + destinationControl.getType() + "',id:'" + itemId + "',field:'" + field + "',details:'" + details + "'}]\");\n";
+									
+								} // copy / set property check
+								
+							} // destination control check	
+																																			
+						}
+						
+					} catch (JSONException ex) {
+						js += "  // error reading gpsDestinations : " + ex.getMessage();
+					}
+				}				
 			}
 		}
 		// close checkRapidMobile
