@@ -77,23 +77,40 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	        </property>	
 	        
 	        <property>
+	            <key>multi</key>
+	            <name>Multi select</name>
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>	
+	            <refreshHtml>true</refreshHtml>
+	        </property> 
+	        
+	        <property>
 	            <key>slide</key>
 	            <name>Slide down</name>
 	            <changeValueJavaScript>checkbox</changeValueJavaScript>	
 	            <refreshHtml>true</refreshHtml>
 	            <refreshProperties>true</refreshProperties>
 	        </property> 
-	        
-	        <property>
-	            <key>multi</key>
-	            <name>Multi select</name>
-	            <changeValueJavaScript>checkbox</changeValueJavaScript>	
-	            <refreshHtml>true</refreshHtml>
-	        </property> 
-	              
+	             
 	    </properties>
 	    
 	    <resources>
+	        
+	        <resource>	            
+	            <type>cssFile</type>
+	            <contents>styles/fonts/fontawesome/css/font-awesome.css</contents>
+	        </resource>
+	        
+	        <!-- Some browsers choose the tff instead of the woff so both are included -->
+	        <resource>	            
+	            <type>file</type>
+	            <contents>styles/fonts/fontawesome/fonts/fontawesome-webfont.woff</contents>
+	        </resource>
+	        
+	        <resource>
+	            <type>file</type>
+	            <contents>styles/fonts/fontawesome/fonts/fontawesome-webfont.ttf</contents>
+	        </resource>
+	        
 	        <resource>
 	            <type>css</type>
 	            <contents>
@@ -110,7 +127,12 @@ li.listOption {
 }           
 
 span.listSelectedCount {
+	float: left;
+} 
+
+span.listSlider {
 	float: right;
+	font-family: FontAwesome;
 } 
 	                ]]>
 	            </contents>
@@ -155,9 +177,9 @@ if (this.options) {
 if (this.header || this.slide) {
 	if (this.slide && headerText) {
 		headerText = headerText.substr(0, headerText.length - 2);
-		options = "<span class='listSelectedCount'>" + selectedCount + "</span><li class='listHeader" + (this.slide ? "" : " listVisible") + "'>" + headerText + "</li>" + options;
+		options = "<span class='listSelectedCount'>" + selectedCount + "</span><span class='listSlider'>&#xf078;</span><li class='listHeader" + (this.slide ? "" : " listVisible") + "'>" + headerText + "</li>" + options;
 	} else {
-		options = "<span class='listSelectedCount' style='display:none;'></span><li class='listHeader" + (this.slide ? "" : " listVisible") + "'>" + this.header + "</li>" + options;
+		options = "<span class='listSelectedCount' style='display:none;'></span><span class='listSlider'>&#xf078;</span><li class='listHeader" + (this.slide ? "" : " listVisible") + "'>" + this.header + "</li>" + options;
 	}
 }
 // place into the list
@@ -274,6 +296,14 @@ return "#" + this.id + " span.listSelectedCount";
 	       			 ]]>	                
 	            </getAppliesToFunction>
 	        </style>
+	        <style>
+	            <name>Slide indicator</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id + " span.listSlider";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
 	    </styles>
 	    
 	    <initJavaScript>
@@ -284,7 +314,13 @@ if (details.slide) {
 	var selectedCount = list.children("span.listSelectedCount");
 	header.click( function(ev) {
 		header.toggleClass("listVisible");
-		list.children("li.listOption").slideToggle();  		
+		list.children("li.listOption").slideToggle(500, function() {
+			if (header.hasClass("listVisible")) {
+				list.children("span.listSlider").html("&#xf077;");
+			} else {
+				list.children("span.listSlider").html("&#xf078;");
+			}
+		});  				
 	});	
 }		
 list.children("li.listOption").click( details, function(ev) {

@@ -2179,11 +2179,11 @@ $(document).ready( function() {
 			    		var head = $(_pageIframe[0].contentWindow.document).find("head");
 			    		
 			    		// remove any current app or page style sheets
-			    		head.find("link[rel=stylesheet][href^=applications\\/" + _version.id + "]").remove();
+			    		head.find("link[rel=stylesheet][href^=applications\\/" + _version.id + "]").remove();			    					    		
 			    		// make sure the app styling is correct (this can go wrong if the back button was clicked which loads the current page but the previous styling)
 			    		head.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"" + _version.webFolder + "/rapid.css\">");
 			    		// make sure the page styling is correct (this can go wrong if the back button was clicked which loads the current page but the previous styling)
-			    		head.append("<style>" + page.css + "</style>");
+			    		head.append("<style type=\"text/css\">" + page.css + "</style>");
 	     	
 			        	// if we have childControls
 			        	if (childControls) {
@@ -2195,6 +2195,11 @@ $(document).ready( function() {
 				        		_page.childControls.push(loadControl(childControl, _page, true));
 				        	}
 			        	}
+			        	
+			        	// the page style rules seem to be overridden (especially page backgrounds) for now this is the best way to get them back
+			        	selectControl(_page);
+			        	rebuildStyles();
+			        	selectControl(null);
 			        	
 			        	// show it after a pause to allow the new style sheets to apply
 			        	window.setTimeout( function() {			        		

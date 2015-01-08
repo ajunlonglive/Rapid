@@ -135,7 +135,7 @@ table.removeClass();
 table.addClass("grid" + getStyleClasses(this));
 table.children().remove();
 if (this.columns.length > 0) {
-	var headerHtml = "<tr>";
+	var headerHtml = "<tr" + (this.columnHeadings ? "" : " style='display:none;'") + ">";
 	var rowHtml = "<tr>";
 	var columnCount = 0;
 	for (var i in this.columns) {

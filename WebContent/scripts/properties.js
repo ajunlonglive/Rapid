@@ -271,10 +271,7 @@ function setPropertyVisibilty(propertyObject, propertyKey, visibile) {
 
 // this is a reusable function for creating dialogue boxes
 function getDialogue(cell, propertyObject, property, details, width, title) {	
-	
-	// any property that show's a dialogue will cause a refresh
-	property.refreshProperties = true;
-	
+		
 	// derive the id for this dialogue
 	var dialogueId = propertyObject.id + property.key;
 	
@@ -2846,7 +2843,7 @@ function Property_controlActionDuration(cell, controlAction, property, details) 
 
 function Property_controlActionClasses(cell, controlAction, property, details) {
 	// only if controlAction is custom
-	if (controlAction.actionType == "addClass" || controlAction.actionType == "removeClass" || controlAction.actionType == "removeChildClasses") {
+	if (controlAction.actionType == "addClass" || controlAction.actionType == "removeClass" || controlAction.actionType == "toggleClass" || controlAction.actionType == "removeChildClasses") {
 		// add thegtext
 		Property_select(cell, controlAction, property, details);
 	} else {
