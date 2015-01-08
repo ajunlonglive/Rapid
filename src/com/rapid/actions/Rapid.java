@@ -1854,7 +1854,7 @@ public class Rapid extends Action {
 						dataFactory.close();
 												
 						// add the application to the response
-						result.put("message", "Database connection ok");
+						result.put("message", "Database connection OK");
 						
 						// retain that a connection was found
 						foundConnection = true;

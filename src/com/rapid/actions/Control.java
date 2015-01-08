@@ -84,6 +84,8 @@ public class Control extends Action {
 				js += "addClass('" + getProperty("styleClass") + "');";
 			} else if ("removeClass".equals(actionType)) {
 				js += "removeClass('" + getProperty("styleClass") + "');";
+			} else if ("toggleClass".equals(actionType)) {
+				js += "toggleClass('" + getProperty("styleClass") + "');";
 			} else if ("removeChildClasses".equals(actionType)) {
 				String styleClass = getProperty("styleClass");
 				js += "find('." + styleClass + "').removeClass('" + styleClass + "');";

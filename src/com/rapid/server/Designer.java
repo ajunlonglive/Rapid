@@ -26,6 +26,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 package com.rapid.server;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,7 +35,9 @@ import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.ResultSet;
@@ -900,7 +903,7 @@ public class Designer extends RapidHttpServlet {
 								}
 																		
 								// send a positive message
-								output = "{\"message\":\"Ok\"}";
+								output = "{\"message\":\"OK\"}";
 								
 								// set the response type to json
 								response.setContentType("application/json");
@@ -1080,7 +1083,7 @@ public class Designer extends RapidHttpServlet {
 												    // loop the .page.xml files 
 												    for (File pageFile : pagesFolder.listFiles(xmlFilenameFilter)) {
 												    	
-												    	BufferedReader reader = new BufferedReader(new FileReader(pageFile));
+												    	BufferedReader reader = new BufferedReader( new InputStreamReader( new FileInputStream(pageFile), "UTF-8"));
 												        String line = null;
 												        StringBuilder stringBuilder = new StringBuilder();
 												        
@@ -1112,13 +1115,13 @@ public class Designer extends RapidHttpServlet {
 													        	.replace("~?a=" + appOldId + "&amp;v=" + appOldVersion + "&amp;", "~?a=" + appId + "&amp;v=" + appVersion + "&amp;");	
 												        	
 												        }
-												        									
-												        // get a print writer for the page file
-												        PrintWriter newFileWriter = new PrintWriter(pageFile);
-												        // print the string to the file
-												        newFileWriter.print(newFileString);
-												        // close the file
-												        newFileWriter.close();
+												        
+												        // get a writer for the new page file
+												        BufferedWriter writer = new BufferedWriter( new OutputStreamWriter( new FileOutputStream(pageFile), "UTF-8"));
+												        // write the string to the file
+												        writer.write(newFileString);
+												        // close the writer and file
+												        writer.close();
 												        								    	
 												    }
 													

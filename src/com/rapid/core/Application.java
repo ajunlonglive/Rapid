@@ -618,7 +618,9 @@ public class Application {
 						// fetch the class
 						String styleClass = css.substring(startPos + 1, endPos).trim();
 						// remove any closing brackets
-						if (styleClass.indexOf(")") > 0) styleClass = styleClass.substring(0, styleClass.indexOf(")"));						
+						if (styleClass.indexOf(")") > 0) styleClass = styleClass.substring(0, styleClass.indexOf(")"));	
+						// remove any colons
+						if (styleClass.indexOf(":") > 0) styleClass = styleClass.substring(0, styleClass.indexOf(":"));	
 						// check we don't have it already and add it if ok
 						if (!classes.contains(styleClass)) classes.add(styleClass);					
 					}

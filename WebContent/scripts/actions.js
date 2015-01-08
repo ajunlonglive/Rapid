@@ -374,8 +374,8 @@ function showActions(control, eventType) {
 					var copyImage = actionsTable.find("img.copyEvent").last(); 
 					// add a click listener to the copy image
 					addListener( copyImage.click( {controlType: control.type, event: control.events[i], actions: actions}, function(ev) {
-						// retain all of the event data in copyAction
-						_copyAction = ev.data;		
+						// retain a copy of the event data in copyAction
+						_copyAction = JSON.parse(JSON.stringify(ev.data));		
 						// rebuild the dialogues
 						showEvents(_selectedControl);
 					}));
@@ -434,7 +434,7 @@ function showAction(actionsTable, action, collection, refreshFunction) {
 	// add a click listener to the copy image
 	addListener( copyImage.click( { action: action }, function(ev) {
 		// copy the action
-		_copyAction = ev.data.action;		
+		_copyAction = JSON.parse(JSON.stringify(ev.data.action));		
 		// rebuild actions
 		showEvents(_selectedControl);
 	}));
