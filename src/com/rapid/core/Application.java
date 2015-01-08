@@ -488,9 +488,22 @@ public class Application {
 	}
 		
 	// get the first page the users want to see (set in Rapid Admin on first save)
-	public Page getStartPage(ServletContext servletContext) throws RapidLoadingException {
+	public Page getStartPage(ServletContext servletContext) throws RapidLoadingException {		
 		// retain an instance to the page we are about to return
-		Page startPage = _pages.getPage(servletContext, _startPageId);
+		Page startPage = null;
+		// check whether we have a _startPageId set 
+		if (_startPageId == null) {
+			// check for any pages
+			if (_pages.size() > 0) {
+				// get the id of the first page alphabetically
+				String firstPageId = _pages.getSortedPages().get(0).getId();
+				// get this page
+				startPage = _pages.getPage(servletContext, firstPageId);
+			}
+		} else {
+			// get the start page from the id
+			startPage = _pages.getPage(servletContext, _startPageId);
+		}
 		// return
 		return startPage;
 	}
@@ -844,7 +857,7 @@ public class Application {
 				    			// if there was something
 				    			if (setDataFunction != null) {
 				        			// clean and print! (if not an empty string)
-				        			if (setDataFunction.trim().length() > 0) dataJS.append("\nfunction setData_" + controlType + "(id, data, field, details, changeEvents) {\n  " + setDataFunction.trim().replace("\n", "\n  ") + "\n}\n");
+				        			if (setDataFunction.trim().length() > 0) dataJS.append("\nfunction setData_" + controlType + "(ev, id, field, details, data, changeEvents) {\n  " + setDataFunction.trim().replace("\n", "\n  ") + "\n}\n");
 				        			
 				    			}	
 				    			

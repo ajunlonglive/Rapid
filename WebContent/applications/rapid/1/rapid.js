@@ -362,7 +362,7 @@ function getData_checkbox(ev, id, field, details) {
   return $("#" + id).prop("checked") ? "true" : "false";
 }
 
-function setData_checkbox(id, data, field, details, changeEvents) {
+function setData_checkbox(ev, id, field, details, data, changeEvents) {
   var control = $("#" + id);	      
   var value = false;  
   if (data != null && data !== undefined) {	
@@ -405,7 +405,7 @@ function getData_dataStore(ev, id, field, details) {
   return data;
 }
 
-function setData_dataStore(id, data, field, details, changeEvents) {
+function setData_dataStore(ev, id, field, details, data, changeEvents) {
   if (details.id) id = details.id;
   if (data != null && data !== undefined) {
   	data = makeDataObject(data, field);
@@ -471,7 +471,7 @@ function getData_dropdown(ev, id, field, details) {
   return $("#" + id).val();
 }
 
-function setData_dropdown(id, data, field, details, changeEvents) {
+function setData_dropdown(ev, id, field, details, data, changeEvents) {
   if (data != null && data !== undefined) {
   	var control = $("#" + id);
   	data = makeDataObject(data, field);
@@ -545,7 +545,7 @@ function getData_grid(ev, id, field, details) {
   return data;
 }
 
-function setData_grid(id, data, field, details, changeEvents) {
+function setData_grid(ev, id, field, details, data, changeEvents) {
   var control = $("#" + id);
   control.find("tr:not(:first)").remove();	        
   if (data != null && data !== undefined) {	
@@ -866,7 +866,7 @@ function getData_input(ev, id, field, details) {
   return $("#" + id).val();
 }
 
-function setData_input(id, data, field, details, changeEvents) {
+function setData_input(ev, id, field, details, data, changeEvents) {
   var control = $("#" + id);
   var value = "";
   if (data != null && data !== undefined) {	
@@ -894,7 +894,7 @@ function getData_radiobuttons(ev, id, field, details) {
   return $("#" + id).children("input[type=radio]:checked").val();
 }
 
-function setData_radiobuttons(id, data, field, details, changeEvents) {
+function setData_radiobuttons(ev, id, field, details, data, changeEvents) {
   if (data != null && data !== undefined) {
   	var radiobuttons = $("#" + id);
   	radiobuttons.children("input[type=radio]").prop('checked',false);
@@ -926,7 +926,7 @@ function getData_text(ev, id, field, details) {
   return $("#" + id).html();
 }
 
-function setData_text(id, data, field, details, changeEvents) {
+function setData_text(ev, id, field, details, data, changeEvents) {
   var control = $("#" + id);	        
   if (data != null && data !== undefined) {	
   	data = makeDataObject(data, field);
@@ -990,12 +990,12 @@ function Action_datacopy(ev, data, outputs, changeEvents, copyType, copyData, fi
 				default:
 					outputData = data;
 			}	
-			window["setData_" + output.type](output.id, outputData, output.field, output.details, changeEvents);
+			window["setData_" + output.type](ev, output.id, output.field, output.details, outputData, changeEvents);
 		}
 	}
 }
 
-function Action_database(actionId, data, outputs) {
+function Action_database(ev, actionId, data, outputs) {
 	// check we got data and somewhere to put it
 	if (data && outputs) {
 		// check the returned sequence is higher than any others received so far
@@ -1004,7 +1004,7 @@ function Action_database(actionId, data, outputs) {
 			_databaseActionMaxSequence[actionId] = data.sequence;
 			for (var i in outputs) {
 				var output = outputs[i];			
-				window["setData_" + output.type](output.id, data, output.field, output.details);
+				window["setData_" + output.type](ev, output.id, output.field, output.details, data);
 			}
 		}
 	}
@@ -1186,7 +1186,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 		case "GETAPPS" :		
 			data = { actionType: actionType, appId: "rapid" };	
 			callback = function(data) {			
-				setData_dataStore('rapid_P0_C210', data, null, {storageType:"S"});									
+				setData_dataStore(ev,'rapid_P0_C210', null, {storageType:"S"}, data);									
 			};
 		break;
 		case "GETVERSIONS" :	
@@ -1194,7 +1194,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 			if (appId) {
 				data = { actionType: actionType, appId: appId  };	
 				callback = function(data) {
-					setData_dataStore('rapid_P0_C1063_', data, "versions", {storageType:"S"});
+					setData_dataStore(ev, 'rapid_P0_C1063_', "versions", {storageType:"S"}, data);
 				};
 			} else {
 				return false;
@@ -1206,7 +1206,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 			if (appId && version) {
 				data = { actionType: actionType, appId: appId, version: version };	
 				callback = function(data) {
-					setData_dataStore('rapid_P0_C1072_', data, null, {storageType:"S"});
+					setData_dataStore(ev, 'rapid_P0_C1072_', null, {storageType:"S"}, data);
 				};
 			} else {
 				return false;
@@ -1215,26 +1215,26 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 		case "GETDBCONN" :		
 			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), index: $("#rapid_P0_C311").find("tr.rowSelect").index()-1 };	
 			callback = function(data) {
-				setData_dataStore('rapid_P0_C361', data, "databaseConnection", {storageType:"S"});
+				setData_dataStore(ev, 'rapid_P0_C361', "databaseConnection", {storageType:"S"}, data);
 			};
 		break;
 		case "GETSOA" :		
 			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), index: $("#rapid_P0_C483_").find("tr.rowSelect").index()-1 };	
 			callback = function(data) {
-				setData_dataStore('rapid_P0_C528_', data, "webservice", {storageType:"S"});
+				setData_dataStore(ev, 'rapid_P0_C528_', "webservice", {storageType:"S"}, data);
 				loadSOA(data.webservice);
 			};
 		break;
 		case "GETSEC" :		
 			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), securityAdapter: $("#rapid_P0_C81").val() };	
 			callback = function(data) {
-				setData_dataStore('rapid_P0_C469_', data, "security", {storageType:"S"});
+				setData_dataStore(ev, 'rapid_P0_C469_', "security", {storageType:"S"}, data);
 			};
 		break;					
 		case "GETUSERS" :		
 			data = { actionType: actionType, appId: "rapid" };	
 			callback = function(data) {			    				
-				setData_grid('rapid_P0_C823_', data, 'users', {"rowSelect":true,"columns":[{"field":"name","visible":true,"style":"text-align:left;padding-left:10px;"},{"field":"description","visible":true,"style":"text-align:left;padding-left:10px;padding-right:10px;"},{"cellFunction":"","field":"","visible":true,"style":""}]});
+				setData_grid(ev, 'rapid_P0_C823_', 'users', {"rowSelect":true,"columns":[{"field":"name","visible":true,"style":"text-align:left;padding-left:10px;"},{"field":"description","visible":true,"style":"text-align:left;padding-left:10px;padding-right:10px;"},{"cellFunction":"","field":"","visible":true,"style":""}]}, data);
 				var rapidUserRows = $("#rapid_P0_C823_").find("tr.rowStyle1,tr.rowStyle2");
 				rapidUserRows.each( function() {
 				  var children = $(this).children("td");
@@ -1261,19 +1261,19 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 				data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), userName: getData_grid(ev, "rapid_P0_C216", "userName", {columns:[{field:"userName"}]}) };	
 			}
 			callback = function(data) {
-				setData_dataStore('rapid_P0_C243', data, "user", {storageType:"S"});
+				setData_dataStore(ev, 'rapid_P0_C243', "user", {storageType:"S"}, data);
 			};
 		break;	
 		case "GETPARAM" :	
 			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), index: $("#rapid_P0_C1108_").find("tr.rowSelect").index()-1 };
 			callback = function(data) {
-				setData_dataStore('rapid_P0_C1145_', data, "parameter", {storageType:"S"});
+				setData_dataStore(ev, 'rapid_P0_C1145_', "parameter", {storageType:"S"}, data);
 			};
 		break;
 		case "GETDEVICE" :	
 			data = { actionType: actionType, appId: "rapid", version: _appVersion, index: $("#rapid_P0_C1199_").find("tr.rowSelect").index()-1 };
 			callback = function(data) {
-				setData_dataStore('rapid_P0_C1269_', data, "device", {storageType:"S"});
+				setData_dataStore(ev, 'rapid_P0_C1269_', "device", {storageType:"S"}, data);
 			};
 		break;
 		case "RELOADVERSION" :		
@@ -1721,7 +1721,7 @@ function Action_validation(ev, validations, showMessages) {
 	return valid;
 }
 
-function Action_webservice(actionId, data, outputs) {
+function Action_webservice(ev, actionId, data, outputs) {
 	// only if there are data and outputs
 	if (data && outputs) {
 		// only if this is the latest sequence
@@ -1731,7 +1731,7 @@ function Action_webservice(actionId, data, outputs) {
 			// loop the outputs
 			for (var i in outputs) {
 				var output = outputs[i];			
-				window["setData_" + output.type](output.id, data, output.field, output.details);
+				window["setData_" + output.type](ev, output.id, output.field, output.details, data);
 			}
 		}
 	}

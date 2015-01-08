@@ -386,9 +386,10 @@ if (map && data && data.fields && data.rows && data.fields.length > 1 && data.ro
 	var lng = 0;
 	for (var i in data.fields) {
 		if (data.fields[i].toLowerCase().indexOf("lat") == 0) lat = data.rows[0][i];
-		if (data.fields[i].toLowerCase().indexOf("lng") == 0 || data.fields[i].toLowerCase().indexOf("lon")) lng = data.rows[0][i];
+		if (data.fields[i].toLowerCase().indexOf("lng") == 0 || data.fields[i].toLowerCase().indexOf("lon") == 0) lng = data.rows[0][i];
 	}
-	map.panTo( new google.maps.LatLng(lat, lng) );
+	var latlng = new google.maps.LatLng(lat, lng);
+	map.panTo( latlng );
 }	                
 					]]>
 	            </setPropertyJavaScript>

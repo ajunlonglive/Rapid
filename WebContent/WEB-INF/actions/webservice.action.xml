@@ -112,7 +112,7 @@ function getWebserviceActionMaxSequence(actionId) {
 	    	 
 	    <actionJavaScript>
 	        <![CDATA[ 
-function Action_webservice(actionId, data, outputs) {
+function Action_webservice(ev, actionId, data, outputs) {
 	// only if there are data and outputs
 	if (data && outputs) {
 		// only if this is the latest sequence
@@ -122,7 +122,7 @@ function Action_webservice(actionId, data, outputs) {
 			// loop the outputs
 			for (var i in outputs) {
 				var output = outputs[i];			
-				window["setData_" + output.type](output.id, data, output.field, output.details);
+				window["setData_" + output.type](ev, output.id, output.field, output.details, data);
 			}
 		}
 	}

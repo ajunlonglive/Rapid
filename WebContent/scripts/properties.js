@@ -3099,7 +3099,7 @@ function Property_orientation(cell, propertyObject, property, details) {
 }
 
 // possible mobileActionType values used by the mobileActionType property
-var _mobileActionTypes = [["addImage","Add image"],["uploadImages","Upload images"],["sendGPS","Send gps position"],["message","Status bar message"],["disableBackButton","Disable back button"]];
+var _mobileActionTypes = [["addImage","Add image"],["uploadImages","Upload images"],["sendGPS","Send GPS position"],["message","Status bar message"],["disableBackButton","Disable back button"]];
 
 // this property changes the visibility of other properties according to the chosen type
 function Property_mobileActionType(cell, mobileAction, property, details) {
@@ -3119,6 +3119,8 @@ function Property_mobileActionType(cell, mobileAction, property, details) {
 	setPropertyVisibilty(mobileAction, "successActions", false);
 	setPropertyVisibilty(mobileAction, "errorActions", false);
 	setPropertyVisibilty(mobileAction, "gpsDestinations", false);
+	setPropertyVisibilty(mobileAction, "gpsFrequency", false);	
+	setPropertyVisibilty(mobileAction, "gpsCheck", false);
 	setPropertyVisibilty(mobileAction, "message", false);
 	// adjust required property visibility accordingly
 	switch (mobileAction.actionType) {		
@@ -3132,8 +3134,10 @@ function Property_mobileActionType(cell, mobileAction, property, details) {
 			setPropertyVisibilty(mobileAction, "successActions", true);
 			setPropertyVisibilty(mobileAction, "errorActions", true);
 		break;
-		case "sendGPS" :
+		case "sendGPS" :						
 			setPropertyVisibilty(mobileAction, "gpsDestinations", true);
+			setPropertyVisibilty(mobileAction, "gpsFrequency", true);
+			setPropertyVisibilty(mobileAction, "gpsCheck", true);
 		break;
 		case "message" :
 			setPropertyVisibilty(mobileAction, "message", true);

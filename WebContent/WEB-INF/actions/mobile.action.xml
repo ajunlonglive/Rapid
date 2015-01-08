@@ -91,18 +91,33 @@ return "<option value=''>Please select...</option>" + getControlOptions(this.gal
 	        </property> 
 	        
 	        <property>
+	            <key>message</key>
+	            <name>Message</name>
+	            <visible>false</visible>
+	            <changeValueJavaScript>bigtext</changeValueJavaScript>	 
+	        </property>
+	        	        	        
+	        <property>
 	            <key>gpsDestinations</key>
 	            <name>Destinations</name>
 	            <visible>false</visible>
 	            <changeValueJavaScript>datacopyDestinations</changeValueJavaScript>	 
 	        </property> 
+         	        
+	        <property>
+	            <key>gpsFrequency</key>
+	            <name>Update frequency</name>
+	            <visible>false</visible>
+	            <setConstructValueFunction>return 0;</setConstructValueFunction>
+	            <changeValueJavaScript>integer</changeValueJavaScript>	 
+	        </property>
 	        
 	        <property>
-	            <key>message</key>
-	            <name>Message</name>
+	            <key>gpsCheck</key>
+	            <name>Check GPS enabled</name>
 	            <visible>false</visible>
-	            <changeValueJavaScript>bigtext</changeValueJavaScript>	 
-	        </property> 
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>	 
+	        </property>
 	        
 	    </properties>
 	    

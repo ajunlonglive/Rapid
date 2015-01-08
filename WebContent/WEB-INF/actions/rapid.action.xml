@@ -157,7 +157,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 		case "GETAPPS" :		
 			data = { actionType: actionType, appId: "rapid" };	
 			callback = function(data) {			
-				setData_dataStore('rapid_P0_C210', data, null, {storageType:"S"});									
+				setData_dataStore(ev,'rapid_P0_C210', null, {storageType:"S"}, data);									
 			};
 		break;
 		case "GETVERSIONS" :	
@@ -165,7 +165,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 			if (appId) {
 				data = { actionType: actionType, appId: appId  };	
 				callback = function(data) {
-					setData_dataStore('rapid_P0_C1063_', data, "versions", {storageType:"S"});
+					setData_dataStore(ev, 'rapid_P0_C1063_', "versions", {storageType:"S"}, data);
 				};
 			} else {
 				return false;
@@ -177,7 +177,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 			if (appId && version) {
 				data = { actionType: actionType, appId: appId, version: version };	
 				callback = function(data) {
-					setData_dataStore('rapid_P0_C1072_', data, null, {storageType:"S"});
+					setData_dataStore(ev, 'rapid_P0_C1072_', null, {storageType:"S"}, data);
 				};
 			} else {
 				return false;
@@ -186,26 +186,26 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 		case "GETDBCONN" :		
 			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), index: $("#rapid_P0_C311").find("tr.rowSelect").index()-1 };	
 			callback = function(data) {
-				setData_dataStore('rapid_P0_C361', data, "databaseConnection", {storageType:"S"});
+				setData_dataStore(ev, 'rapid_P0_C361', "databaseConnection", {storageType:"S"}, data);
 			};
 		break;
 		case "GETSOA" :		
 			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), index: $("#rapid_P0_C483_").find("tr.rowSelect").index()-1 };	
 			callback = function(data) {
-				setData_dataStore('rapid_P0_C528_', data, "webservice", {storageType:"S"});
+				setData_dataStore(ev, 'rapid_P0_C528_', "webservice", {storageType:"S"}, data);
 				loadSOA(data.webservice);
 			};
 		break;
 		case "GETSEC" :		
 			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), securityAdapter: $("#rapid_P0_C81").val() };	
 			callback = function(data) {
-				setData_dataStore('rapid_P0_C469_', data, "security", {storageType:"S"});
+				setData_dataStore(ev, 'rapid_P0_C469_', "security", {storageType:"S"}, data);
 			};
 		break;					
 		case "GETUSERS" :		
 			data = { actionType: actionType, appId: "rapid" };	
 			callback = function(data) {			    				
-				setData_grid('rapid_P0_C823_', data, 'users', {"rowSelect":true,"columns":[{"field":"name","visible":true,"style":"text-align:left;padding-left:10px;"},{"field":"description","visible":true,"style":"text-align:left;padding-left:10px;padding-right:10px;"},{"cellFunction":"","field":"","visible":true,"style":""}]});
+				setData_grid(ev, 'rapid_P0_C823_', 'users', {"rowSelect":true,"columns":[{"field":"name","visible":true,"style":"text-align:left;padding-left:10px;"},{"field":"description","visible":true,"style":"text-align:left;padding-left:10px;padding-right:10px;"},{"cellFunction":"","field":"","visible":true,"style":""}]}, data);
 				var rapidUserRows = $("#rapid_P0_C823_").find("tr.rowStyle1,tr.rowStyle2");
 				rapidUserRows.each( function() {
 				  var children = $(this).children("td");
@@ -232,19 +232,19 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 				data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), userName: getData_grid(ev, "rapid_P0_C216", "userName", {columns:[{field:"userName"}]}) };	
 			}
 			callback = function(data) {
-				setData_dataStore('rapid_P0_C243', data, "user", {storageType:"S"});
+				setData_dataStore(ev, 'rapid_P0_C243', "user", {storageType:"S"}, data);
 			};
 		break;	
 		case "GETPARAM" :	
 			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), index: $("#rapid_P0_C1108_").find("tr.rowSelect").index()-1 };
 			callback = function(data) {
-				setData_dataStore('rapid_P0_C1145_', data, "parameter", {storageType:"S"});
+				setData_dataStore(ev, 'rapid_P0_C1145_', "parameter", {storageType:"S"}, data);
 			};
 		break;
 		case "GETDEVICE" :	
 			data = { actionType: actionType, appId: "rapid", version: _appVersion, index: $("#rapid_P0_C1199_").find("tr.rowSelect").index()-1 };
 			callback = function(data) {
-				setData_dataStore('rapid_P0_C1269_', data, "device", {storageType:"S"});
+				setData_dataStore(ev, 'rapid_P0_C1269_', "device", {storageType:"S"}, data);
 			};
 		break;
 		case "RELOADVERSION" :		

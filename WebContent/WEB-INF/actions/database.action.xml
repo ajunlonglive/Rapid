@@ -118,7 +118,7 @@ function getDatabaseActionMaxSequence(actionId) {
 	    	    	    	    	     
 	    <actionJavaScript>
 	        <![CDATA[ 
-function Action_database(actionId, data, outputs) {
+function Action_database(ev, actionId, data, outputs) {
 	// check we got data and somewhere to put it
 	if (data && outputs) {
 		// check the returned sequence is higher than any others received so far
@@ -127,7 +127,7 @@ function Action_database(actionId, data, outputs) {
 			_databaseActionMaxSequence[actionId] = data.sequence;
 			for (var i in outputs) {
 				var output = outputs[i];			
-				window["setData_" + output.type](output.id, data, output.field, output.details);
+				window["setData_" + output.type](ev, output.id, output.field, output.details, data);
 			}
 		}
 	}

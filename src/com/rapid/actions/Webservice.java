@@ -367,7 +367,7 @@ public class Webservice extends Action {
 				}			
 				js += "       var outputs = [" + jsOutputs + "];\n";
 				// send them them and the data to the database action				
-				js += "       Action_webservice('" + getId() + "', data, outputs);\n";
+				js += "       Action_webservice(ev, '" + getId() + "', data, outputs);\n";
 				// add any sucess actions
 				if (_successActions != null) {
 					for (Action action : _successActions) {

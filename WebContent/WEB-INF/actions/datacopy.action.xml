@@ -148,7 +148,7 @@ function Action_datacopy(ev, data, outputs, changeEvents, copyType, copyData, fi
 				default:
 					outputData = data;
 			}	
-			window["setData_" + output.type](output.id, outputData, output.field, output.details, changeEvents);
+			window["setData_" + output.type](ev, output.id, output.field, output.details, outputData, changeEvents);
 		}
 	}
 }	        ]]>

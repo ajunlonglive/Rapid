@@ -601,7 +601,7 @@ function getData_checkbox(ev, id, field, details) {
   return $("#" + id).prop("checked") ? "true" : "false";
 }
 
-function setData_checkbox(id, data, field, details, changeEvents) {
+function setData_checkbox(ev, id, field, details, data, changeEvents) {
   var control = $("#" + id);	      
   var value = false;  
   if (data != null && data !== undefined) {	
@@ -644,7 +644,7 @@ function getData_dataStore(ev, id, field, details) {
   return data;
 }
 
-function setData_dataStore(id, data, field, details, changeEvents) {
+function setData_dataStore(ev, id, field, details, data, changeEvents) {
   if (details.id) id = details.id;
   if (data != null && data !== undefined) {
   	data = makeDataObject(data, field);
@@ -710,7 +710,7 @@ function getData_date(ev, id, field, details) {
   return $("#" + id).val();
 }
 
-function setData_date(id, data, field, details, changeEvents) {
+function setData_date(ev, id, field, details, data, changeEvents) {
   var control = $("#" + id);
   var value = "";
   if (data != null && data !== undefined) {	
@@ -740,7 +740,7 @@ function getData_dropdown(ev, id, field, details) {
   return $("#" + id).val();
 }
 
-function setData_dropdown(id, data, field, details, changeEvents) {
+function setData_dropdown(ev, id, field, details, data, changeEvents) {
   if (data != null && data !== undefined) {
   	var control = $("#" + id);
   	data = makeDataObject(data, field);
@@ -788,7 +788,7 @@ function getData_gallery(ev, id, field, details) {
   return data;
 }
 
-function setData_gallery(id, data, field, details, changeEvents) {
+function setData_gallery(ev, id, field, details, data, changeEvents) {
   if (data != null && data !== undefined) {
   	var control = $("#" + id);
   	data = makeDataObject(data, field);
@@ -885,7 +885,7 @@ function getData_grid(ev, id, field, details) {
   return data;
 }
 
-function setData_grid(id, data, field, details, changeEvents) {
+function setData_grid(ev, id, field, details, data, changeEvents) {
   var control = $("#" + id);
   control.find("tr:not(:first)").remove();	        
   if (data != null && data !== undefined) {	
@@ -1206,7 +1206,7 @@ function getData_input(ev, id, field, details) {
   return $("#" + id).val();
 }
 
-function setData_input(id, data, field, details, changeEvents) {
+function setData_input(ev, id, field, details, data, changeEvents) {
   var control = $("#" + id);
   var value = "";
   if (data != null && data !== undefined) {	
@@ -1259,9 +1259,10 @@ function setProperty_map_mapCentre(ev, id, field, details, data, changeEvents) {
   	var lng = 0;
   	for (var i in data.fields) {
   		if (data.fields[i].toLowerCase().indexOf("lat") == 0) lat = data.rows[0][i];
-  		if (data.fields[i].toLowerCase().indexOf("lng") == 0 || data.fields[i].toLowerCase().indexOf("lon")) lng = data.rows[0][i];
+  		if (data.fields[i].toLowerCase().indexOf("lng") == 0 || data.fields[i].toLowerCase().indexOf("lon") == 0) lng = data.rows[0][i];
   	}
-  	map.panTo( new google.maps.LatLng(lat, lng) );
+  	var latlng = new google.maps.LatLng(lat, lng);
+  	map.panTo( latlng );
   }
 }
 
@@ -1331,7 +1332,7 @@ function getData_radiobuttons(ev, id, field, details) {
   return $("#" + id).children("input[type=radio]:checked").val();
 }
 
-function setData_radiobuttons(id, data, field, details, changeEvents) {
+function setData_radiobuttons(ev, id, field, details, data, changeEvents) {
   if (data != null && data !== undefined) {
   	var radiobuttons = $("#" + id);
   	radiobuttons.children("input[type=radio]").prop('checked',false);
@@ -1363,7 +1364,7 @@ function getData_text(ev, id, field, details) {
   return $("#" + id).html();
 }
 
-function setData_text(id, data, field, details, changeEvents) {
+function setData_text(ev, id, field, details, data, changeEvents) {
   var control = $("#" + id);	        
   if (data != null && data !== undefined) {	
   	data = makeDataObject(data, field);
@@ -1427,12 +1428,12 @@ function Action_datacopy(ev, data, outputs, changeEvents, copyType, copyData, fi
 				default:
 					outputData = data;
 			}	
-			window["setData_" + output.type](output.id, outputData, output.field, output.details, changeEvents);
+			window["setData_" + output.type](ev, output.id, output.field, output.details, outputData, changeEvents);
 		}
 	}
 }
 
-function Action_database(actionId, data, outputs) {
+function Action_database(ev, actionId, data, outputs) {
 	// check we got data and somewhere to put it
 	if (data && outputs) {
 		// check the returned sequence is higher than any others received so far
@@ -1441,7 +1442,7 @@ function Action_database(actionId, data, outputs) {
 			_databaseActionMaxSequence[actionId] = data.sequence;
 			for (var i in outputs) {
 				var output = outputs[i];			
-				window["setData_" + output.type](output.id, data, output.field, output.details);
+				window["setData_" + output.type](ev, output.id, output.field, output.details, data);
 			}
 		}
 	}
@@ -1657,7 +1658,7 @@ function Action_validation(ev, validations, showMessages) {
 	return valid;
 }
 
-function Action_webservice(actionId, data, outputs) {
+function Action_webservice(ev, actionId, data, outputs) {
 	// only if there are data and outputs
 	if (data && outputs) {
 		// only if this is the latest sequence
@@ -1667,7 +1668,7 @@ function Action_webservice(actionId, data, outputs) {
 			// loop the outputs
 			for (var i in outputs) {
 				var output = outputs[i];			
-				window["setData_" + output.type](output.id, data, output.field, output.details);
+				window["setData_" + output.type](ev, output.id, output.field, output.details, data);
 			}
 		}
 	}
