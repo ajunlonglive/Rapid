@@ -52,12 +52,19 @@ public class Pages {
 		public Date getLastGetDateTime() { return _lastGetDateTime; }
 		public void setLastGetDateTime(Date lastGetDateTime) { _lastGetDateTime = lastGetDateTime; }
 		
-		// constructor
+		// constructors
 		public PageHeader(String id, String name, String title, File file) {
 			_id = id;
 			_name = name;
 			_title = title;
 			_file = file;
+		}
+		
+		public PageHeader(Page page, File pageFile) {
+			_id = page.getId();
+			_name = page.getName();
+			_title = page.getTitle();
+			_file = pageFile;
 		}
 						
 	}
@@ -120,10 +127,20 @@ public class Pages {
 	// public methods
 	
 	// add them singly 
-	public void addPage(Page page) { _pages.put(page.getId(), page); }
+	public void addPage(Page page, File pageFile) {
+		// add to page headers
+		_pageHeaders.put(page.getId(), new PageHeader(page, pageFile));
+		// add to pages collection
+		_pages.put(page.getId(), page); 
+	}
 	
 	// remove them one by one too
-	public void removePage(String id) {	_pages.remove(id); }
+	public void removePage(String id) {
+		// remove from pages
+		_pageHeaders.remove(id);
+		// remove from page headers
+		_pages.remove(id); 
+	}
 	
 	// the number of pages
 	public int size() {

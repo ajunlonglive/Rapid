@@ -62,7 +62,7 @@ This action runs JQuery functions against specific controls
 	        
 	        <property>
 	            <key>duration</key>
-	            <name>Duration</name>
+	            <name>Duration (milliseconds)</name>
 	            <setConstructValueFunction>return 1000;</setConstructValueFunction>
 	            <changeValueJavaScript>controlActionDuration</changeValueJavaScript>	 	            
 	        </property>

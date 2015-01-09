@@ -194,16 +194,29 @@ public class Mobile extends Action {
 				// add js
 				js += "  _rapidmobile.disableBackButton();\n";
 			} else if ("sendGPS".equals(type)) {
+				
 				// get whether to check if gps is enabled
 				boolean checkGPS = Boolean.parseBoolean(getProperty("gpsCheck"));
+				// if we had one call it
 				if (checkGPS) js += "  _rapidmobile.checkGPS();\n";
+				
+				// get the gps frequency into an int
+				int gpsFrequency = Integer.parseInt(getProperty("gpsFrequency"));
+				
 				// get the gps destinations
 				String gpsDestionationsString = getProperty("gpsDestinations");
+				
 				// if we had some
 				if (gpsDestionationsString != null) {					
+															
 					try {
+						
+						// start the getGPS string
+						String getGPSjs = "  _rapidmobile.getGPS(" + gpsFrequency + ",\"[";
+						
 						// read into json Array
 						JSONArray jsonGpsDestinations = new JSONArray(gpsDestionationsString);
+						
 						// loop
 						for (int i = 0; i < jsonGpsDestinations.length(); i++) {
 							
@@ -259,23 +272,41 @@ public class Mobile extends Action {
 									String property = idParts[1];
 
 									// make the getGps call to the bridge
-									js += "  _rapidmobile.getGPS(\"[{f:'setProperty_" + destinationControl.getType() +  "_" + property + "',id:'" + itemId + "',field:'" + field + "',details:'" + details + "'}]\");\n";
+									getGPSjs += "{f:'setProperty_" + destinationControl.getType() +  "_" + property + "',id:'" + itemId + "',field:'" + field + "',details:'" + details + "'}";
 								
 								} else {
 									
-									js += "  _rapidmobile.getGPS(\"[{f:'setData_" + destinationControl.getType() + "',id:'" + itemId + "',field:'" + field + "',details:'" + details + "'}]\");\n";
+									getGPSjs += "{f:'setData_" + destinationControl.getType() + "',id:'" + itemId + "',field:'" + field + "',details:'" + details + "'}";
 									
 								} // copy / set property check
 								
+								// add a comma if more are to come
+								if (i < jsonGpsDestinations.length() - 1) getGPSjs += ", ";
+								
 							} // destination control check	
 																																			
-						}
+						} // destination loop
+						
+						// close the get gps string
+						getGPSjs += "]\");\n";
+						
+						// add it into the js
+						js += getGPSjs;
 						
 					} catch (JSONException ex) {
+						
+						// print an error into the js instead
 						js += "  // error reading gpsDestinations : " + ex.getMessage();
+						
 					}
-				}				
-			}
+					
+				} // gps destinations check			
+				
+			} else if ("stopGPS".equals(type)) {
+				
+				js += "  _rapidmobile.stopGPS();\n";
+				
+			} // mobile action type check
 		}
 		// close checkRapidMobile
 		js += "}\n";

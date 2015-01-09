@@ -106,7 +106,7 @@ return "<option value=''>Please select...</option>" + getControlOptions(this.gal
          	        
 	        <property>
 	            <key>gpsFrequency</key>
-	            <name>Update frequency</name>
+	            <name>Update frequency (seconds)</name>
 	            <visible>false</visible>
 	            <setConstructValueFunction>return 0;</setConstructValueFunction>
 	            <changeValueJavaScript>integer</changeValueJavaScript>	 
