@@ -3099,7 +3099,7 @@ function Property_orientation(cell, propertyObject, property, details) {
 }
 
 // possible mobileActionType values used by the mobileActionType property
-var _mobileActionTypes = [["addImage","Add image"],["uploadImages","Upload images"],["sendGPS","Send GPS position"],["message","Status bar message"],["disableBackButton","Disable back button"]];
+var _mobileActionTypes = [["addImage","Add image"],["uploadImages","Upload images"],["sendGPS","Send GPS position"],["stopGPS","Stop GPS updates"],["message","Status bar message"],["disableBackButton","Disable back button"]];
 
 // this property changes the visibility of other properties according to the chosen type
 function Property_mobileActionType(cell, mobileAction, property, details) {

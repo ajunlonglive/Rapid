@@ -721,7 +721,7 @@ public class Page {
 	    tempFile.delete();
 	    	    	  	    
 		// replace the old page with the new page
-		application.getPages().addPage(this);
+		application.getPages().addPage(this, newFile);
 		
 		// empty the cached page html
 		_cachedStartHtml = null;
@@ -1061,6 +1061,11 @@ public class Page {
 							if ("pageload".equals(event.getType())) {
 								_pageloadLines.add("if (!_mobileResume) Event_pageload_" + _id + "($.Event('pageload'));\n");
 	        				}    			
+							// resume is also a special animal
+							if ("resume".equals(event.getType())) {
+								// fire the resume event immediately if there is no rapidMobile (it will be done by the Rapid Mobile app if present)
+								_pageloadLines.add("if (!window['_rapidmobile']) Event_resume_" + _id + "($.Event('resume'));\n");
+							}
 							// reusable action is only invoked via reusable actions on other events - there is no listener
 						}
 					}         				

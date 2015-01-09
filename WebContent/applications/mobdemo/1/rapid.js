@@ -381,37 +381,57 @@ function Init_hints(id, details) {
 }
 
 function Init_map(id, details) {
-  // make the zoom a number
-  var zoom = parseInt(details.zoom);	 
+  // if google has loaded - might not if offline
+  if (window["google"]) {
   
-  // assume we want a roadmap
-  var mapTypeId =  google.maps.MapTypeId.ROADMAP;
+  	// make the zoom a number
+  	var zoom = parseInt(details.zoom);	 
+  	
+  	// assume we want a roadmap
+  	var mapTypeId =  google.maps.MapTypeId.ROADMAP;
+  	
+  	// update if one provided
+  	switch (details.mapType) {
+  		case ("R") :
+  			mapTypeId =  google.maps.MapTypeId.ROADMAP;
+  		break;
+  		case ("S") :
+  			mapTypeId =  google.maps.MapTypeId.SATELLITE;
+  		break;
+  	} 
+  	
+  	// create a map in our control object
+  	var map = new google.maps.Map($("#" + id)[0], {
+  	   	zoom: zoom,
+  		center: new google.maps.LatLng(details.lat, details.lng),
+  		mapTypeControlOptions: {mapTypeIds:[google.maps.MapTypeId.ROADMAP, google.maps.MapTypeId.SATELLITE]},
+  		mapTypeId: mapTypeId,
+  		mapTypeControl: details.showMapType,
+  		zoomControl: details.showZoom,	   	
+  	   	panControl: details.showPan,
+  	   	streetViewControl: details.showStreetView,
+  	   	scaleControl: details.showScale
+  	});
+  	
+  	// add it to the collections
+  	_maps[id] = map;
+  	
+  	// if there is a map click event listener
+  	if (window["Event_click_" + id]) {
+  		// attach a listener to the dragstart event
+  		google.maps.event.addListener(map, 'dragstart', function() {
+  			// fire click event
+      		window["Event_click_" + id]($.Event("center_changed"));
+      		// stop the original click event from firing too
+      		return false;
+  		});
+  	}
+  	
+  } else {
   
-  // update if one provided
-  switch (details.mapType) {
-  	case ("R") :
-  		mapTypeId =  google.maps.MapTypeId.ROADMAP;
-  	break;
-  	case ("S") :
-  		mapTypeId =  google.maps.MapTypeId.SATELLITE;
-  	break;
-  } 
+  	$("#" + id).html("Map not available");
   
-  // create a map in our control object
-  var map = new google.maps.Map($("#" + id)[0], {
-     	zoom: zoom,
-  	center: new google.maps.LatLng(details.lat, details.lng),
-  	mapTypeControlOptions: {mapTypeIds:[google.maps.MapTypeId.ROADMAP, google.maps.MapTypeId.SATELLITE]},
-  	mapTypeId: mapTypeId,
-  	mapTypeControl: details.showMapType,
-  	zoomControl: details.showZoom,	   	
-     	panControl: details.showPan,
-     	streetViewControl: details.showStreetView,
-     	scaleControl: details.showScale
-  });
-  
-  // add it to the collections
-  _maps[id] = map;
+  }
 }
 
 function Init_pagePanel(id, details) {

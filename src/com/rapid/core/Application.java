@@ -1186,13 +1186,16 @@ public class Application {
 			for (String pageId : _pages.keySet()) {
 				// get the page
 				Page page = _pages.getPage(servletContext, pageId);
-				// get the page lock
-				Lock pageLock = page.getLock();
-				// if there was one
-				if (pageLock != null) {
-					// if it matches the user name remove the lock
-					if (userName.equals(pageLock.getUserName())) page.setLock(null);
-				}
+				// if the page is still in memory
+				if (page != null) {
+					// get the page lock
+					Lock pageLock = page.getLock();
+					// if there was one
+					if (pageLock != null) {
+						// if it matches the user name remove the lock
+						if (userName.equals(pageLock.getUserName())) page.setLock(null);
+					}
+				}				
 			}
 		}
 	}

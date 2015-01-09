@@ -307,6 +307,13 @@ if (window["_rapidmobile"]) {
 		$("textarea").each( function() {
 			$(this).html($(this).val());
 		});
+		// remove any script reference to the google maps api as they cause problems on reload
+		$("head").find("script[src*='//maps.gstatic.com']").remove();
+		// on this one we want to keep the first node so remove all but index = 0
+		$("head").find("script[src*='googleapis.com/']").filter( function(idx) {
+			return idx > 0;
+		}).remove();		
+								
 		// get the html
 		var html = $('html').html();
 		// now call into the bridge

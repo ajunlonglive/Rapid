@@ -219,6 +219,10 @@ span.loading {
 	            <name>Load</name>
 	        </event>
 	        <event>
+	            <type>resume</type>
+	            <name>Resume</name>
+	        </event>
+	        <event>
 	            <type>reusable</type>
 	            <name>Reusable</name>
 	        </event>

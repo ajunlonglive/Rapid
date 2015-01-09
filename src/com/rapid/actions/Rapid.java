@@ -1426,7 +1426,7 @@ public class Rapid extends Action {
 				
 				// save the page to file
 				newPage.save(rapidServlet, rapidActionRequest, app, false);
-				
+								
 				// put the id in the result
 				result.put("id", id);
 				
@@ -2023,7 +2023,7 @@ public class Rapid extends Action {
 				page = Page.load(rapidServlet.getServletContext(), backupFile);
 				
 				// replace the current entry
-				app.getPages().addPage(page);
+				app.getPages().addPage(page, pageFile);
 									
 				// set the result message
 				result.put("message", "Page backup " + appId + "/" + backupId + " restored");
