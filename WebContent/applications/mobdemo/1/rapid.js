@@ -204,8 +204,13 @@ $(document).ready( function() {
 	
 		if (typeof(window.parent._pageIframe) === "undefined") {
 	
-			var win = $(window);
+			var doc = $(document);
+			var panel = $(".slidePanelPane");
 			
+			panel.css("height",doc.height() - panel.offset().top);
+			
+			var win = $(window);
+						
 			// resize the page cover
 			$(".slidePanelCover").css({
 	       		width : win.width(),
