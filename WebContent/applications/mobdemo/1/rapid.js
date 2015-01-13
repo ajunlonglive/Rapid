@@ -204,8 +204,15 @@ $(document).ready( function() {
 	
 		if (typeof(window.parent._pageIframe) === "undefined") {
 	
-			var win = $(window);
+			// get a reference to the document for the full height
+			var doc = $(document);
+			// get a reference to the slidePanelPane if it's there yet
+			var panel = $(".slidePanelPane");
+			// if we got a panel resize it
+			if (panel[0]) panel.css("height",doc.height() - panel.offset().top);
 			
+			// get a reference to the window for the viewport size
+			var win = $(window);			
 			// resize the page cover
 			$(".slidePanelCover").css({
 	       		width : win.width(),
@@ -323,7 +330,7 @@ function Init_gallery(id, details) {
 function Init_grid(id, details) {
   if (details && details.dataStorageType) {
   	var data = getGridDataStoreData(id, details);
-  	if (data) setData_grid(id, data, null, details);
+  	if (data) setData_grid($.Event('gridinit'), id, null, details, data);
   	$("#" + id).click(function(ev) {
   		var data = getGridDataStoreData(id, details);
   		data.selectedRowNumber = $(ev.target).closest("tr").index();
@@ -503,12 +510,12 @@ function Init_slidePanel(id, details) {
   	body.append("<div class='slidePanelCover'></div>");
   	// set the reference
   	pageCover = body.find(".slidePanelCover");
-  	// get a reference to the window
-  	var win = $(window);	
+  	// get a reference to the document
+  	var doc = $(document);	
   	// size the cover
   	pageCover.css({
-      	width : win.width(),
-         	height : win.height()
+      	width : doc.width(),
+         	height : doc.height()
       });
   }
   
@@ -1576,12 +1583,12 @@ function Action_navigate(url, dialogue, id) {
 		           	// remove any existing dialogue cover for this action
 		           	$("#" + id + "cover").remove();
 		           	// add the cover and return reference
-		           	dialogueCover = body.append("<div id='" + id + "cover' class='dialogueCover' style='position:absolute;left:0px;top:0px;z-index:100;'></div>").children().last();
+		           	dialogueCover = body.append("<div id='" + id + "cover' class='dialogueCover' style='position:absolute;left:0px;top:0px;z-index:1000;'></div>").children().last();
 		           			      		           			           		            	
 	            	// remove any existing dialogue container for this action
 		           	$("#" + id + "dialogue").remove();
 		           	// add the dialogue container and remove the reference
-		           	dialogue = body.append("<div id='" + id + "dialogue' class='dialogue' style='position:fixed;z-index:101;'></div>").children().last(); 
+		           	dialogue = body.append("<div id='" + id + "dialogue' class='dialogue' style='position:fixed;z-index:1001;'></div>").children().last(); 
 		           	
 		           	// make sure it's hidden
 		           	dialogue.css("visibility","hidden");

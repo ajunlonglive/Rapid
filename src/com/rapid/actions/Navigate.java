@@ -126,15 +126,16 @@ public class Navigate extends Action {
 			String action = "Action_navigate('~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + pageId; 
 			// check if this is a dialogue
 			if (Boolean.parseBoolean(getProperty("dialogue"))) {
-				action += "&action=dialogue" + sessionVariables + "',true,'" + getId() + "');";
+				action += "&action=dialogue" + sessionVariables + "',true,'" + pageId + "');";				
+				// return false if we're stopping further actions
+				if (Boolean.parseBoolean(getProperty("stopActions"))) action += "return false;\n";
 			} else {
-				action += sessionVariables + "');";
-			}
-			// end the action js
-			action += "\nev.stopPropagation();";
-			
+				action += sessionVariables + "');\n";
+			}									
 			// replace any unnecessary characters
 			action = action.replace(" + ''", "");
+			// stop event bubbling (both navigation types need this)
+			action += "ev.stopPropagation();\n";
 			// return it into the page!
 			return action;
 		}
