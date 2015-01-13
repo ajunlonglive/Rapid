@@ -137,7 +137,7 @@ public class Page {
 	// instance variables
 	
 	private int _xmlVersion;
-	private String _id, _name, _title, _description, _createdBy, _modifiedBy, _htmlBody, _cachedStartHtml;
+	private String _id, _name, _title, _description, _createdBy, _modifiedBy, _htmlBody, _cachedStartHtml, _cachedStartHtmlDialogue;
 	private Date _createdDate, _modifiedDate;	
 	private List<Control> _controls;
 	private List<Event> _events;
@@ -234,18 +234,25 @@ public class Page {
 	}
 		
 	// these two methods have different names to avoid being marshelled to the .xml file by JAXB
-	public String getHtmlHeadCached(RapidHttpServlet rapidServlet, Application application) throws JSONException {		
-		// check whether the page has been cached yet
-		if (_cachedStartHtml == null) {
-			// generate the page start html
-			_cachedStartHtml = getHtmlHead(rapidServlet, application, false, null);																		
-			// have the page cache the generated html for next time
-			cacheHtmlHead(_cachedStartHtml);
-		}				
-		return _cachedStartHtml;
-	}
-	public void cacheHtmlHead(String html) {
-		_cachedStartHtml = html;
+	public String getHtmlHeadCached(RapidHttpServlet rapidServlet, Application application, boolean dialogue) throws JSONException {
+		// different if a dialogue
+		if (dialogue) {
+			// check whether the page has been cached yet
+			if (_cachedStartHtmlDialogue == null) {
+				// generate the page start html
+				_cachedStartHtmlDialogue = getHtmlHead(rapidServlet, application, dialogue, null);																		
+			}	
+			// return the dialogue start html
+			return _cachedStartHtmlDialogue;
+		} else {
+			// check whether the page has been cached yet
+			if (_cachedStartHtml == null) {
+				// generate the page start html
+				_cachedStartHtml = getHtmlHead(rapidServlet, application, dialogue, null);																		
+			}	
+			// return the regular
+			return _cachedStartHtml;
+		}					
 	}
 	
 	public void addControl(Control control) {
@@ -950,29 +957,28 @@ public class Page {
     		}    		 		
     	}    	
     }
+    
+    // this method produced the start of the head (which is shared by the no permission respone)
+    private String getHtmlHeadStart() {
+    	return 
+    	"  <head>\n" +		
+		"    <title>" + _title + " - by Rapid</title>\n" +		
+		"    <meta description=\"Created using Rapid - www.rapid-is.co.uk\"/>\n" +		
+		"    <meta charset=\"utf-8\"/>\n" +		
+		"    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no\" />\n" +						
+		"    <link rel=\"icon\" href=\"favicon.ico\"></link>\n";    			
+    }
 	
     // this private method produces the head of the page which is often cached, if resourcesOnly is true only page resources are included which is used when sending no permission
-	private String getHtmlHead(RapidHttpServlet rapidServlet, Application application, boolean includeJSandCSS, String userName) throws JSONException {
+	private String getHtmlHead(RapidHttpServlet rapidServlet, Application application, boolean dialogue, String userName) throws JSONException {
     	
-    	StringBuilder stringBuilder = new StringBuilder();
-    	    												
-		stringBuilder.append("  <head>\n");
-		
-		stringBuilder.append("    <title>" + _title + " - by Rapid</title>\n");
-		
-		stringBuilder.append("    <meta description=\"Created using Rapid - www.rapid-is.co.uk\"/>\n");
-		
-		stringBuilder.append("    <meta charset=\"utf-8\"/>\n");
-		
-		stringBuilder.append("    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no\" />\n");
-						
-		stringBuilder.append("    <link rel=\"icon\" href=\"favicon.ico\"></link>\n");
-		
+    	StringBuilder stringBuilder = new StringBuilder(getHtmlHeadStart());
+    	    															
 		// if you're looking for where the jquery link is added it's the first resource in the page.control.xml file	
 		stringBuilder.append("    " + getResourcesHtml(application).trim().replace("\n", "\n    ") + "\n");
 												
-		// if we want the full contents
-		if (includeJSandCSS) {
+		// dialogues do not include this block
+		if (!dialogue) {
 			
 			// add a JavaScript block with important global variables			
 			stringBuilder.append("    <script type='text/javascript'>\n\n");			
@@ -982,176 +988,173 @@ public class Page {
 			stringBuilder.append("var _userName = '" + userName + "';\n");			
 			stringBuilder.append("var _mobileResume = false;\n\n");
 			stringBuilder.append("    </script>\n");
-						
-			// open style blocks			
-			stringBuilder.append("    <style>\n");
-			
-			// fetch all page control styles
-			String pageCss = getAllCSS(application);
-			
-			// if live we're going to try and minify
-			if (application.getStatus() == Application.STATUS_LIVE) {				
-				try {
-					// get string to itself minified
-					pageCss = Minify.toString(pageCss, Minify.CSS); 
-				} catch (IOException ex) {			
-					// add error and resort to unminified
-					pageCss = "\n/*\n\n Failed to minify the css : " + ex.getMessage() + "\n\n*/\n\n" + pageCss;
-				}				
-			} else {
-				// prefix with minify message
-				pageCss = "\n/* The code below is minified for live applications */\n\n" + pageCss;
 				
-			}
-			// add it to the page
-			stringBuilder.append(pageCss);
-			// close the style block
-			stringBuilder.append("    </style>\n");
-												
-			// if we have requested more than just the resources so start building the inline js for the page				
-			stringBuilder.append("    <script type='text/javascript'>\n");
-									
-			// make a new string builder just for the js (so we can minify it independently)
-			StringBuilder jsStringBuilder = new StringBuilder("/* The code below is minified for live applications */\n\n"); 
-			
-			// get all controls
-			List<Control> pageControls = getAllControls();
-			
-			// if we got some
-			if (pageControls != null) {
-				// loop them
-				for (Control control : pageControls) {
-					// get the details
-					String details = control.getDetails();
-					// check if null
-					if (details != null) {
-						// create a gloabl variable for it's details
-						jsStringBuilder.append("var " + control.getId() + "details = " + details + ";\n");
-					}
-				}
-				jsStringBuilder.append("\n");
-			}
-					
-			// initialise our pageload lines collections
-			_pageloadLines = new ArrayList<String>();
-			
-			// get any control initJavaScript event listeners into he pageloadLine (goes into $(document).ready function)
-			getPageLoadLines(_pageloadLines, _controls);
-									      					
-			// sort the page load lines
-			Collections.sort(_pageloadLines, new Comparator<String>() {
-				@Override
-				public int compare(String l1, String l2) {				
-					if (l1.isEmpty()) return -1;
-					if (l2.isEmpty()) return 1;
-					char i1 = l1.charAt(0);
-					char i2 = l2.charAt(0);
-					return i2 - i1;						
-				}}
-			);
-			
-			// check for page events (this is here so all listeners are registered by now)
-			if (_events != null) {
-				// loop page events
-    			for (Event event : _events) {        				
-    				// only if there are actually some actions to invoke
-					if (event.getActions() != null) {
-						if (event.getActions().size() > 0) {
-							// page is a special animal so we need to do each of it's event types differently
-							if ("pageload".equals(event.getType())) {
-								_pageloadLines.add("if (!_mobileResume) Event_pageload_" + _id + "($.Event('pageload'));\n");
-	        				}    			
-							// resume is also a special animal
-							if ("resume".equals(event.getType())) {
-								// fire the resume event immediately if there is no rapidMobile (it will be done by the Rapid Mobile app if present)
-								_pageloadLines.add("if (!window['_rapidmobile']) Event_resume_" + _id + "($.Event('resume'));\n");
-							}
-							// reusable action is only invoked via reusable actions on other events - there is no listener
-						}
-					}         				
-    			}
-			}  
-			
-			// open the page loaded function
-			jsStringBuilder.append("$(document).ready( function() {\n");
-			
-			// add a try
-			jsStringBuilder.append("  try {\n");
-			
-			// print any page load lines such as initialising controls
-			for (String line : _pageloadLines) jsStringBuilder.append("    " + line);
-															
-			// close the try
-			jsStringBuilder.append("  } catch(ex) { $('body').html(ex); }\n");
-			
-			// after 200 milliseconds show and trigger a window resize for any controls that might be listening (this also cuts out any flicker)
-			jsStringBuilder.append("  window.setTimeout( function() {\n    $(window).resize();\n    $('body').css('visibility','visible');\n  }, 200);\n");
-									
-			// end of page loaded function
-			jsStringBuilder.append("});\n\n");
-							
-			// find any redundant actions anywhere in the page, prior to generating JavaScript
-			List<Action> pageActions = getActions();
-			
-			// only proceed if there are actions in this page
-			if (pageActions != null) {
-				
-				// loop the list of actions to indentify potential redundancies before we create all the event handling JavaScript
-				for (Action action : pageActions) {
-					try {
-						// look for any page javascript that this action may have
-						String actionPageJavaScript = action.getPageJavaScript(rapidServlet, application, this, null);
-						// print it here if so
-						if (actionPageJavaScript != null) jsStringBuilder.append(actionPageJavaScript.trim() + "\n\n");
-						// if this action adds redundancy to any others 
-						if (action.getRedundantActions() != null) {
-							// loop them
-							for (String actionId : action.getRedundantActions()) {
-								// try and find the action
-								Action redundantAction = getAction(actionId);
-								// if we got one
-								if (redundantAction != null) {
-									// update the redundancy avoidance flag
-									redundantAction.avoidRedundancy(true);
-								} 
-							}										
-						} // redundantActions != null
-					} catch (Exception ex) {
-						// print the exception as a comment
-						jsStringBuilder.append("// Error producing page JavaScript : " + ex.getMessage() + "\n\n");
-					}					
-					
-				} // action loop		
-				
-				// add event handlers, staring at the root controls
-				getEventHandlersJavaScript(rapidServlet, jsStringBuilder, application, _controls);
-			}
-			
-			// check the application status
-			if (application.getStatus() == Application.STATUS_LIVE) {			
-				try {
-					// minify the js before adding
-					stringBuilder.append(Minify.toString(jsStringBuilder.toString(),Minify.JAVASCRIPT));
-				} catch (IOException ex) {
-					// add the error
-					stringBuilder.append("\n\n/* Failed to minify JavaScript : " + ex.getMessage() + " */\n\n");
-					// add the js as is
-					stringBuilder.append(jsStringBuilder);
-				}
-			} else {
-				// add the js as is
-				stringBuilder.append("\n" + jsStringBuilder.toString().trim() + "\n\n");
-			}
-																		
-			// close the page inline script block
-			stringBuilder.append("</script>\n");
-			
+		}
+		
+		// open style blocks			
+		stringBuilder.append("    <style>\n");
+		
+		// fetch all page control styles
+		String pageCss = getAllCSS(application);
+		
+		// if live we're going to try and minify
+		if (application.getStatus() == Application.STATUS_LIVE) {				
+			try {
+				// get string to itself minified
+				pageCss = Minify.toString(pageCss, Minify.CSS); 
+			} catch (IOException ex) {			
+				// add error and resort to unminified
+				pageCss = "\n/*\n\n Failed to minify the css : " + ex.getMessage() + "\n\n*/\n\n" + pageCss;
+			}				
 		} else {
+			// prefix with minify message
+			pageCss = "\n/* The code below is minified for live applications */\n\n" + pageCss;
 			
-			// just add the index style sheet
-			stringBuilder.append("    <link rel=\"stylesheet\" type=\"text/css\" href=\"styles/index.css\"></link>\n");
+		}
+		// add it to the page
+		stringBuilder.append(pageCss);
+		// close the style block
+		stringBuilder.append("    </style>\n");
 											
-		} // include JavaScript and CSS
+		// if we have requested more than just the resources so start building the inline js for the page				
+		stringBuilder.append("    <script type='text/javascript'>\n");
+								
+		// make a new string builder just for the js (so we can minify it independently)
+		StringBuilder jsStringBuilder = new StringBuilder("/* The code below is minified for live applications */\n\n"); 
+		
+		// get all controls
+		List<Control> pageControls = getAllControls();
+		
+		// if we got some
+		if (pageControls != null) {
+			// loop them
+			for (Control control : pageControls) {
+				// get the details
+				String details = control.getDetails();
+				// check if null
+				if (details != null) {
+					// create a gloabl variable for it's details
+					jsStringBuilder.append("var " + control.getId() + "details = " + details + ";\n");
+				}
+			}
+			jsStringBuilder.append("\n");
+		}
+				
+		// initialise our pageload lines collections
+		_pageloadLines = new ArrayList<String>();
+		
+		// get any control initJavaScript event listeners into he pageloadLine (goes into $(document).ready function)
+		getPageLoadLines(_pageloadLines, _controls);
+								      					
+		// sort the page load lines
+		Collections.sort(_pageloadLines, new Comparator<String>() {
+			@Override
+			public int compare(String l1, String l2) {				
+				if (l1.isEmpty()) return -1;
+				if (l2.isEmpty()) return 1;
+				char i1 = l1.charAt(0);
+				char i2 = l2.charAt(0);
+				return i2 - i1;						
+			}}
+		);
+		
+		// check for page events (this is here so all listeners are registered by now)
+		if (_events != null) {
+			// loop page events
+			for (Event event : _events) {        				
+				// only if there are actually some actions to invoke
+				if (event.getActions() != null) {
+					if (event.getActions().size() > 0) {
+						// page is a special animal so we need to do each of it's event types differently
+						if ("pageload".equals(event.getType())) {
+							_pageloadLines.add("if (!_mobileResume) Event_pageload_" + _id + "($.Event('pageload'));\n");
+        				}    			
+						// resume is also a special animal
+						if ("resume".equals(event.getType())) {
+							// fire the resume event immediately if there is no rapidMobile (it will be done by the Rapid Mobile app if present)
+							_pageloadLines.add("if (!window['_rapidmobile']) Event_resume_" + _id + "($.Event('resume'));\n");
+						}
+						// reusable action is only invoked via reusable actions on other events - there is no listener
+					}
+				}         				
+			}
+		}  
+		
+		// open the page loaded function
+		jsStringBuilder.append("$(document).ready( function() {\n");
+		
+		// add a try
+		jsStringBuilder.append("  try {\n");
+		
+		// print any page load lines such as initialising controls
+		for (String line : _pageloadLines) jsStringBuilder.append("    " + line);
+														
+		// close the try
+		jsStringBuilder.append("  } catch(ex) { $('body').html(ex); }\n");
+		
+		// after 200 milliseconds show and trigger a window resize for any controls that might be listening (this also cuts out any flicker)
+		jsStringBuilder.append("  window.setTimeout( function() {\n    $(window).resize();\n    $('body').css('visibility','visible');\n  }, 200);\n");
+								
+		// end of page loaded function
+		jsStringBuilder.append("});\n\n");
+						
+		// find any redundant actions anywhere in the page, prior to generating JavaScript
+		List<Action> pageActions = getActions();
+		
+		// only proceed if there are actions in this page
+		if (pageActions != null) {
+			
+			// loop the list of actions to indentify potential redundancies before we create all the event handling JavaScript
+			for (Action action : pageActions) {
+				try {
+					// look for any page javascript that this action may have
+					String actionPageJavaScript = action.getPageJavaScript(rapidServlet, application, this, null);
+					// print it here if so
+					if (actionPageJavaScript != null) jsStringBuilder.append(actionPageJavaScript.trim() + "\n\n");
+					// if this action adds redundancy to any others 
+					if (action.getRedundantActions() != null) {
+						// loop them
+						for (String actionId : action.getRedundantActions()) {
+							// try and find the action
+							Action redundantAction = getAction(actionId);
+							// if we got one
+							if (redundantAction != null) {
+								// update the redundancy avoidance flag
+								redundantAction.avoidRedundancy(true);
+							} 
+						}										
+					} // redundantActions != null
+				} catch (Exception ex) {
+					// print the exception as a comment
+					jsStringBuilder.append("// Error producing page JavaScript : " + ex.getMessage() + "\n\n");
+				}					
+				
+			} // action loop		
+			
+			// add event handlers, staring at the root controls
+			getEventHandlersJavaScript(rapidServlet, jsStringBuilder, application, _controls);
+		}
+		
+		// check the application status
+		if (application.getStatus() == Application.STATUS_LIVE) {			
+			try {
+				// minify the js before adding
+				stringBuilder.append(Minify.toString(jsStringBuilder.toString(),Minify.JAVASCRIPT));
+			} catch (IOException ex) {
+				// add the error
+				stringBuilder.append("\n\n/* Failed to minify JavaScript : " + ex.getMessage() + " */\n\n");
+				// add the js as is
+				stringBuilder.append(jsStringBuilder);
+			}
+		} else {
+			// add the js as is
+			stringBuilder.append("\n" + jsStringBuilder.toString().trim() + "\n\n");
+		}
+																	
+		// close the page inline script block
+		stringBuilder.append("</script>\n");
+			
+
 						
 		// close the head
 		stringBuilder.append("  </head>\n");
@@ -1165,7 +1168,7 @@ public class Page {
     }
 		
 	// this routine produces the entire page
-	public void writeHtml(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, Application application, User user, Writer writer, boolean includeDesignLink) throws JSONException, IOException {
+	public void writeHtml(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, Application application, User user, Writer writer, boolean dialogue) throws JSONException, IOException {
 		
 		// get the security
 		SecurityAdapater security = application.getSecurity();
@@ -1202,11 +1205,11 @@ public class Page {
 			
 	    	// check whether or not we rebuild
 	    	if (rebuildPages) {
-	    		// get the cached head html
-	    		writer.write(getHtmlHead(rapidServlet, application, true, user.getName()));
+	    		// get fresh head html
+	    		writer.write(getHtmlHead(rapidServlet, application, dialogue, user.getName()));
 	    	} else {
 	    		// get the cached head html
-	    		writer.write(getHtmlHeadCached(rapidServlet, application));
+	    		writer.write(getHtmlHeadCached(rapidServlet, application, dialogue));
 	    	}
 					
 	    	writer.write("  <body id='" + _id + "' style='visibility:hidden;'>\n");
@@ -1286,20 +1289,26 @@ public class Page {
 		} else {
 			
 			// write the head html without the JavaScript and CSS (index.css is substituted for us)
-			writer.write(getHtmlHead(rapidServlet, application, false, null));
+			writer.write(getHtmlHeadStart());
+			
+			// add the index.css
+			writer.write("    <link rel='stylesheet' type='text/css' href='index.css'></link>\n");
+			
+			// close the head
+			writer.write("</head>\n");
 						
 			// open the body
 			writer.write("  <body>\n");
 			
-			// write no permission
+			// write no permission (body is closed at the end of this method)
 			writer.write("<div class=\"image\"><img src=\"images/RapidLogo_200x134.png\" /></div><div class=\"title\"><span>Rapid - No permssion</span></div><div class=\"info\"><p>You do not have permssion to view this page</p></div>\n");
-			
+						
 		} // page permission check		
 		
 		try {
 			
-			// only if we want to include the design link
-			if (includeDesignLink) {
+			// dialogues do not have a designer link so no point checking
+			if (!dialogue) {
 			
 				// assume not admin link
 				boolean adminLinkPermission = false;
@@ -1315,8 +1324,8 @@ public class Page {
 				if (adminLinkPermission) {
 													
 					// using attr href was the weirdest thing. Some part of jQuery seemed to be setting the url back to v=1&p=P1 when v=2&p=P2 was printed in the html
-					writer.write("<div id='designShow' style='position:fixed;left:0px;bottom:0px;width:30px;height:30px;z-index:1000;'></div>\n"
-			    	+ "<a id='designLink' style='position:fixed;left:6px;bottom:6px;z-index:1001;display:none;' href='#'><img src='images/gear_24x24.png' style='border:0;'/></a>\n"
+					writer.write("<div id='designShow' style='position:fixed;left:0px;bottom:0px;width:30px;height:30px;z-index:10000;'></div>\n"
+			    	+ "<a id='designLink' style='position:fixed;left:6px;bottom:6px;z-index:10001;display:none;' href='#'><img src='images/gear_24x24.png' style='border:0;'/></a>\n"
 			    	+ "<script type='text/javascript'>\n"
 			    	+ "/* designLink */\n"
 			    	+ "$(document).ready( function() {\n"

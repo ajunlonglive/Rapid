@@ -414,7 +414,7 @@ return "#" + this.id + " .rowSelect";
 	        <![CDATA[
 if (details && details.dataStorageType) {
 	var data = getGridDataStoreData(id, details);
-	if (data) setData_grid(id, data, null, details);
+	if (data) setData_grid($.Event('gridinit'), id, null, details, data);
 	$("#" + id).click(function(ev) {
 		var data = getGridDataStoreData(id, details);
 		data.selectedRowNumber = $(ev.target).closest("tr").index();
