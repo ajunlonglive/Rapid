@@ -543,26 +543,43 @@ public class Application {
 	// get a control by it's id
 	public Control getControl(ServletContext servletContext, String id) {
 		Control control = null;
-		// check we have pages
-		if (_pages != null) {
-			for (String pageId : _pages.keySet()) {
+		// check we have pages and an id
+		if (_pages != null && id != null) {
+			// if the id is not a zero length string
+			if (id.length() > 0) {
+				// split the id parts on the underscore
+				String[] idParts = id.split("_");
+				// get the first part into a page id
+				String pageId = idParts[0];
 				try {
-					// fetch this page
+					// get the specified page
 					Page page = _pages.getPage(servletContext, pageId);
-					// look for the control
-					control = page.getControl(id);
-					// if we found it we can stop looping
-					if (control != null) break;
+					// if we got a page
+					if (page != null) {
+						// look for the control
+						control = page.getControl(id);
+						// return it if we found it!
+						if (control != null) return control;
+					}
+					// didn't find it in the specified page so loop all pages
+					for (String loopPageId : _pages.getPageIds()) {
+						// fetch this page
+						page = _pages.getPage(servletContext, loopPageId);
+						// look for the control
+						control = page.getControl(id);
+						// if we found it return it!
+						if (control != null) return control;
+					}	
 				} catch (Exception ex) {
 					// get the logger
 					Logger logger = (Logger) servletContext.getAttribute("logger");
 					// log this exception
 					logger.error("Error loading page when getting control", ex);
 				}
-				
-			}
-		}
-		return control;
+			} // id length > 0 check					
+		} // id and page non-null check
+		// couldn't find it either in specified page, or all pages
+		return null;
 	}
 	
 	// get a webservice by it's id
@@ -1183,7 +1200,7 @@ public class Application {
 		// check there are pages
 		if (_pages != null) {
 			// loop them
-			for (String pageId : _pages.keySet()) {
+			for (String pageId : _pages.getPageIds()) {
 				// get the page
 				Page page = _pages.getPage(servletContext, pageId);
 				// if the page is still in memory
