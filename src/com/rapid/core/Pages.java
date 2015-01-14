@@ -147,11 +147,11 @@ public class Pages {
 		return _pageHeaders.size();
 	}
 		
-	// the keyset for all pages
-	public Set<String> keySet() {
-		return _pageHeaders.keySet();
+	// a list of page id's sorted by rank, the idea is that pages that are used more often will move higher up the rank and lower ranked pages will not be required in memory
+	public Set<String> getPageIds() {
+		return _pageHeaders.keySet();				
 	}
-	
+			
 	// return a specific page (or the start page if pageId is null)
 	public Page getPage(ServletContext servletContext, String pageId) throws RapidLoadingException {
 		
@@ -238,7 +238,7 @@ public class Pages {
 		_pages.clear();
 		
 		// create a new map for caching page files by id's
-	    _pageHeaders = new HashMap<String,PageHeader>();	 
+	    _pageHeaders = new HashMap<String,PageHeader>();		   
 	    
 	    // initiate pages folder 
 		File pagesFolder = new File(_application.getConfigFolder(servletContext) + "/pages");
