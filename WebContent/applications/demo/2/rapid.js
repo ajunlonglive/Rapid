@@ -1119,7 +1119,7 @@ function Action_navigate(url, dialogue, id) {
 		           			if (!items[i].innerHTML && text.indexOf("href=\"") > 0) {
 		           				var startPos = text.indexOf("href=\"")+6;
 		           				var href = text.substr(startPos,text.indexOf("\"", startPos) - startPos);
-		           				// exclude if we already have an element in the head with with href
+		           				// exclude if we already have an element in the head with this href
 		           				if ($("head").find("link[href='" + href + "']")[0]) include = false;
 		           			}		           			
 		           			// if still safe to include
