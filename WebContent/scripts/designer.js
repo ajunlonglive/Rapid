@@ -916,8 +916,8 @@ function getExistingActionOptions(selectId, ignoreId) {
 			var event = controls[i].events[j];
 			for (var k in event.actions) {
 				var action = event.actions[k];
-				if (action.id != ignoreId && controls[i].name) {
-					eventJS += "<option value='" + action.id + "' " + (action.id == selectId ? "selected='selected'" : "") + ">" + (k*1+1) + " - " + action.type + "</option>";
+				if (controls[i].name) {
+					if (action.id != ignoreId) eventJS += "<option value='" + action.id + "' " + (action.id == selectId ? "selected='selected'" : "") + ">" + (k*1+1) + " - " + action.type + "</option>";
 				}
 			}	
 			if (eventJS) options += "<optgroup label='" + controls[i].name + "." + event.type + "'>" + eventJS + "</optgroup>";
@@ -3062,11 +3062,11 @@ function getHeight() {
 	var height = _window.height();
 				
 	// get the control panel
-	var controlPanel = $("#controlPanel");		
-	
+	var controlPanel = $("#controlPanel");
+		
 	// get the properties panel
 	var propertiesPanel = $("#propertiesPanel");
-				
+			
 	// get its current height (less the combined top and bottom padding)
 	var controlPanelHeight = controlPanel.outerHeight(true);
 		
@@ -3128,9 +3128,7 @@ function windowResize(ev) {
 	
 	// get the window width
 	var width = _window.width();
-	// use the function to get our working height
-	var height = getHeight();
-	
+		
 	// get the current scroll position
 	var scrollTop = _window.scrollTop();
 	
@@ -3143,6 +3141,9 @@ function windowResize(ev) {
 	var propertiesPanel = $("#propertiesPanel");
 	// set it's height to auto
 	propertiesPanel.css("height","auto");
+	
+	// use the function to get our working height
+	var height = getHeight();
 				
 	// adjust controlPanel height, less it's padding
 	controlPanel.css({height: height - 20});

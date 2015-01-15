@@ -92,6 +92,7 @@ return "<option value=''>None</option>" + getInputOptions(this.dataSource);
 	            <key>dataDestinations</key>
 	            <name>Destinations</name>
 	            <changeValueJavaScript>datacopyDestinations</changeValueJavaScript> 
+	            <refreshProperties>true</refreshProperties>
 	        </property>
 	        	         	        
 	        <property>

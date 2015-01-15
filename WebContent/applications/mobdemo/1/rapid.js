@@ -146,7 +146,6 @@ _maps = [];
 
 // adds markers to a map, used by add markers and replace markers
 function addMapMarkers(map, data, details) {
-	map.markerData = data;
 	map.markerSelectedIndex = -1;
 	var latIndex = -1;
 	var lngIndex = -1;
@@ -175,7 +174,8 @@ function addMapMarkers(map, data, details) {
 			if (titleIndex > -1) markerOptions.title = row[titleIndex];
 			if (details.markerImage) markerOptions.icon = "applications/" + _appId + "/" + _appVersion + "/" + details.markerImage;
 			var marker = new google.maps.Marker(markerOptions);	
-			marker.index = i;
+			marker.index = map.markers.length + i*1;
+			marker.data = {fields:data.fields,rows:[data.rows[i]]};
 			map.markers.push(marker);					
 			if (infoIndex > -1) {
 				var markerInfoWindow = new google.maps.InfoWindow({
@@ -423,14 +423,39 @@ function Init_map(id, details) {
   	// add it to the collections
   	_maps[id] = map;
   	
-  	// if there is a map click event listener
-  	if (window["Event_click_" + id]) {
+  	// turn off the labels for all points of interest
+  	map.setOptions({'styles':[{featureType:"poi",elementType: "labels",stylers:[{visibility:"off"}]}]});
+  	
+  	// get any map click event listener
+  	var f_click = window["Event_mapClick_" + id];
+  	// if there is a map click event listner
+  	if (f_click) {
+  		// attach a listener to the mapClick event
+  		google.maps.event.addListener(map, 'click', function() {
+  			// fire mapClick event
+      		f_click($.Event("mapClick"));
+  		});
+  	}
+  	
+  	// get any map drag start event listener
+  	var f_dragStart = window["Event_dragStart_" + id];
+  	// if there is a map drag event listener
+  	if (f_dragStart) {
   		// attach a listener to the dragstart event
   		google.maps.event.addListener(map, 'dragstart', function() {
-  			// fire click event
-      		window["Event_click_" + id]($.Event("center_changed"));
-      		// stop the original click event from firing too
-      		return false;
+  			// fire touch event
+      		f_dragStart($.Event("drag"));
+  		});
+  	}
+  	
+  	// get any map drag end event listener
+  	var f_dragEnd = window["Event_dragEnd_" + id];
+  	// if there is a map drag event listener
+  	if (f_dragEnd) {
+  		// attach a listener to the dragstart event
+  		google.maps.event.addListener(map, 'dragend', function() {
+  			// fire touch event
+      		f_dragEnd($.Event("drag"));
   		});
   	}
   	
@@ -1312,19 +1337,19 @@ function setProperty_map_replaceMarkers(ev, id, field, details, data, changeEven
   var map = _maps[id];
   // get the latlng
   var data = makeDataObject(data);
-  // if we got a map and data
-  if (map && data && data.fields && data.rows && data.fields.length > 1 && data.rows.length > 0) {
-  	// if there are any current markers
-  	if (map.markers) {
-  		// loop them
-  		for (var i in map.markers) {
-  			map.markers[i].setMap(null);
-  		}
-  		// empty array
-  		map.markers = [];
-  	} 
+  // if there are any current markers
+  if (map.markers) {
+  	// loop them
+  	for (var i in map.markers) {
+  		map.markers[i].setMap(null);
+  	}
   	// empty array
-  	map.markers = [];	
+  	map.markers = [];
+  } 
+  // empty markers array
+  map.markers = [];
+  // if we got a map and data
+  if (map && data && data.fields && data.rows && data.fields.length > 1 && data.rows.length > 0) {		
   	// add the markers
   	addMapMarkers(map, data, details);
   }
@@ -1336,19 +1361,19 @@ function getProperty_map_selectedMarker(ev, id, field, details) {
   // get the selectedIndex
   var selectedIndex = map.markerSelectedIndex;
   // if we got a map and data
-  if (map && map.markerSelectedIndex > -1 && map.markerData) {
-  	var fields = map.markerData.fields;
-  	var row = map.markerData.rows[map.markerSelectedIndex];
+  if (map && selectedIndex > -1 && map.markers.length > selectedIndex) {
+  	var marker = map.markers[selectedIndex];
+  	var data = marker.data;
   	if (field) {
   		var fieldIndex = -1;
-  		for (var i in fields) {
-  			if (field == fields[i]) {
-  				return row[i];
+  		for (var i in data.fields) {
+  			if (field == data.fields[i]) {
+  				return data.row[0][i];
   			}
   		}	
   		return null;
   	} else {
-  		return {fields:fields,rows:[row]};
+  		return data;
   	}	
   } else {
   	return null;
@@ -1554,7 +1579,7 @@ function Action_navigate(url, dialogue, id) {
 		           			if (!items[i].innerHTML && text.indexOf("href=\"") > 0) {
 		           				var startPos = text.indexOf("href=\"")+6;
 		           				var href = text.substr(startPos,text.indexOf("\"", startPos) - startPos);
-		           				// exclude if we already have an element in the head with with href
+		           				// exclude if we already have an element in the head with this href
 		           				if ($("head").find("link[href='" + href + "']")[0]) include = false;
 		           			}		           			
 		           			// if still safe to include

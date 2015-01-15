@@ -1712,10 +1712,10 @@
                     <key>javascript</key>
                     <value>var data = getData_dataStore(ev, 'rapid_P0_C210','databaseDrivers', {"storageType":"S"});    
 var outputs = [{id: 'rapid_P7_C37', type: 'dropdown', field: ''}];    
-Action_datacopy(data, outputs);    
+Action_datacopy(ev, data, outputs);    
 var data = getData_dataStore(ev, 'rapid_P0_C210','connectionAdapters', {"storageType":"S"});    
 var outputs = [{id: 'rapid_P7_C38', type: 'dropdown', field: ''}]; 
-Action_datacopy(data, outputs);  </value>
+Action_datacopy(ev, data, outputs);  </value>
                 </entry>
                 <entry>
                     <key>avoidRedundancy</key>
