@@ -73,6 +73,12 @@ public class RapidRequest {
 	public String getUserName() { return _userName; }
 	public void setUserName(String userName) { _userName = userName; }
 	
+	// decrypt the password
+	public String getUserPassword() {
+		String raw = (String) _request.getSession().getAttribute(RapidFilter.SESSION_VARIABLE_USER_PASSWORD);
+		return RapidHttpServlet.getEncryptedXmlAdapter().unmarshal(raw);
+	}
+	
 	// most likely to construct a rapidRequest from a servlet and an http request
 	public RapidRequest(RapidHttpServlet rapidServlet, HttpServletRequest request) {
 		// retain the servlet
