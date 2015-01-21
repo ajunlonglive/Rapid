@@ -25,9 +25,11 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
 package com.rapid.server;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -80,6 +82,8 @@ import com.rapid.core.Applications;
 import com.rapid.core.Device.Devices;
 import com.rapid.data.ConnectionAdapter;
 import com.rapid.utils.Files;
+import com.rapid.utils.JAXB.EncryptedXmlAdapter;
+import com.rapid.utils.Encryption;
 import com.rapid.utils.Strings;
 import com.rapid.utils.ZipFile;
 
@@ -182,92 +186,7 @@ public class RapidServletContextListener implements ServletContextListener {
 		
 	}
 	
-	// copy files placed in WEB-INF/custom into position in the application
-	public static void copyCustomFiles(ServletContext servletContext) throws IOException {
 		
-		// get the custom directory into a file object
-		File customDir = new File(servletContext.getRealPath("/WEB-INF/custom/"));
-		
-		// if it exists
-		if (customDir.exists()) {
-			
-			// create a filter for finding .jar or .zip files
-			FilenameFilter customFilenameFilter = new FilenameFilter() {
-		    	public boolean accept(File dir, String name) {
-		    		return name.toLowerCase().endsWith(".jar") || name.toLowerCase().endsWith(".zip");
-		    	}
-		    };
-		    
-		    // filter the files in the custom folder
-		    File[] customFiles = customDir.listFiles(customFilenameFilter);
-			
-			// if it contains any .jar files
-			if (customFiles.length > 0) {
-				
-				// the reason we want all custom stuff in a .jar is so that it can all be compiled in a separate java project and easily exported
-				_logger.info("Custom .jar files found");
-				
-				// loop the jar files
-				for (File customFile : customFiles) {
-					
-					_logger.info("Uncompressing " + customFile.getName());
-					
-					// unzip the .jar
-					ZipFile zipFile = new ZipFile(customFile);
-					
-					// create a File dir in which to unzip this file
-					File dirCustomRoot = new File(customDir.getAbsolutePath() + "/" + customFile.getName().replace(".jar", "").replace(".zip", ""));
-					
-					// unzip to this location
-					zipFile.unZip(dirCustomRoot);
-					
-					// create a File dir where custom classes would be - always "com"
-					File dirCustomClasses = new File(dirCustomRoot.getAbsolutePath() + "/com");
-					
-					// check exists
-					if (dirCustomClasses.exists()) {
-						
-						// get a dir for where we're going to copy these to
-						File dirClasses = new File(servletContext.getRealPath("/") + "/WEB-INF/classes/com");
-						
-						// copy them
-						Files.copyFolder(dirCustomClasses, dirClasses);
-						
-						_logger.info("Custom classes copied to server");
-						
-						logFileNames(dirCustomClasses, dirCustomRoot.getAbsolutePath());
-						
-					}
-					
-					// create a File dir for any WebContent - for now if any new filters are added into the web.xml the server will just need to be restarted a second time as it seems too late to re-load the contents
-					File dirCustomWebContent = new File(dirCustomRoot.getAbsolutePath() + "/WebContent");
-					
-					// check exists
-					if (dirCustomWebContent.exists()) {
-						
-						// get a dir for where we're going to copy these to
-						File dirWebContent = new File(servletContext.getRealPath("/"));
-						
-						// copy them
-						Files.copyFolder(dirCustomWebContent, dirWebContent);
-						
-						_logger.info("Custom WebContent copied to server");
-						
-						logFileNames(dirCustomWebContent, dirCustomWebContent.getAbsolutePath());
-						
-					}
-					
-					// rename file to stop it being processed the next time the server loads
-					customFile.renameTo(new File(customFile.getAbsoluteFile() + ".done"));
-					
-				}
-												
-			}
-			
-		}
-		
-	}
-	
 	public static int loadDatabaseDrivers(ServletContext servletContext) throws Exception {
 		
 		// create a schema object for the xsd
@@ -882,13 +801,34 @@ public class RapidServletContextListener implements ServletContextListener {
 			
 		try {
 			
-			// copy any files from the WEB-INF/custom folder into the application
-			copyCustomFiles(servletContext);
+			// we're looking for a password and salt for the encryption
+			char[] password = null;			
+			byte[] salt = null;
+			// look for the rapid.txt file with the saved password and salt
+			File secretsFile = new File(servletContext.getRealPath("/") + "/WEB-INF/security/rapid.txt");
+			// if it exists
+			if (secretsFile.exists()) {
+				// get a file reader
+				BufferedReader br = new BufferedReader(new FileReader(secretsFile));
+				// read the first line
+				String p = br.readLine();
+				// read the next line
+				String s = br.readLine();
+				// close the reader
+				br.close();
+				// set the password
+				password = p.toCharArray();
+				// set the salt
+				salt = Encryption.base64Decode(s);
+			} 
+			
+			// create the encypted xml adapter (if the file above is not found there no encryption will occur)
+			RapidHttpServlet.setEncryptedXmlAdapter(new EncryptedXmlAdapter(password, salt));
 			
 			// initialise the schema factory (we'll reuse it in the various loaders)
 			_schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 			
-			// initialise the list of classes
+			// initialise the list of classes we're going to want in the JAXB context (the loaders will start adding to it)
 			_jaxbClasses = new ArrayList<Class>();	
 			
 			// load the database drivers first
@@ -904,8 +844,8 @@ public class RapidServletContextListener implements ServletContextListener {
 			loadActions(servletContext);
 						
 			// load the controls 
-			loadControls(servletContext);						
-			
+			loadControls(servletContext);	
+									
 			// add some classes manually
 			_jaxbClasses.add(com.rapid.soa.SOAElementRestriction.class);
 			_jaxbClasses.add(com.rapid.soa.SOAElementRestriction.NameRestriction.class);

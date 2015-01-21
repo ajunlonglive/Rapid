@@ -79,6 +79,7 @@ import com.rapid.soa.Webservice;
 import com.rapid.utils.Comparators;
 import com.rapid.utils.Files;
 import com.rapid.utils.JAXB;
+import com.rapid.utils.JAXB.EncryptedXmlAdapter;
 import com.rapid.utils.Minify;
 import com.rapid.utils.Strings;
 import com.rapid.utils.XML;
@@ -165,7 +166,7 @@ public class Application {
 		public String getUserName() { return _userName; }
 		public void setUserName(String userName) { _userName = userName; }
 		
-		@XmlJavaTypeAdapter( JAXB.SecureAdapter.class )
+		@XmlJavaTypeAdapter( EncryptedXmlAdapter.class )
 		public String getPassword() { return _password; }
 		public void setPassword(String password) { _password = password; }
 		
