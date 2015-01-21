@@ -29,26 +29,44 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 public class JAXB {
 	
-	public static class SecureAdapter extends XmlAdapter<String, String>
-	{
+	public static class EncryptedXmlAdapter extends XmlAdapter<String, String> {
+		
+		private char[] _password;
+		private byte[] _salt;
+		
+		public EncryptedXmlAdapter(char[] password, byte[] salt) {
+			_password = password;			
+			_salt = salt;		
+		}
+		
 	    @Override
-	    public String unmarshal( String s )
-	    {
+	    public String unmarshal(String s) {
 	        try {
-				return s == null ? null : Encryption.decrypt(s);
-			} catch (Exception e) {
-				return null;
+	        	if (s == null) {
+	        		return null;
+	        	} else if (_password == null || _salt == null) {
+	        		return s;
+	        	} else {
+	        		return Encryption.decrypt(s, _password, _salt);
+	        	}
+			} catch (Exception ex) {
+				return s;
 			}
 			
 	    }
 
 	    @Override
-	    public String marshal( String s )
-	    {
+	    public String marshal(String s) {
 	        try {
-				return s == null ? null : Encryption.encrypt(s);
-			} catch (Exception e) {
-				return null;
+	        	if (s == null) {
+	        		return null;
+	        	} else if (_password == null || _salt == null) {
+	        		return s;
+	        	} else {
+	        		return Encryption.encrypt(s, _password, _salt);
+	        	}
+			} catch (Exception ex) {
+				return s;
 			}
 	    }
 	}

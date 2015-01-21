@@ -3,6 +3,7 @@ package com.rapid.core;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.servlet.ServletContext;
@@ -25,7 +26,7 @@ public class Device {
 		public void setDevices(Devices devices) { this.addAll(devices); }
 		
 		// static methods
-		public static Devices load(ServletContext servletContext) throws FileNotFoundException, JAXBException {
+		public static Devices load(ServletContext servletContext) throws JAXBException, IOException {
 			
 			// create the list
 			Devices devices = null;
@@ -40,7 +41,7 @@ public class Device {
 					Unmarshaller unmarshaller = RapidHttpServlet.getUnmarshaller();	
 					// unmarshall the devices
 					devices = (Devices) unmarshaller.unmarshal(file);
-				} catch (JAXBException ex) {
+				} catch (Exception ex) {
 					// log
 					Logger.getLogger(Device.class).error("Error loading devices", ex);
 				}
@@ -75,7 +76,7 @@ public class Device {
 			
 		}
 		
-		public static void save(ServletContext servletContext, Devices devices) throws FileNotFoundException, JAXBException {
+		public static void save(ServletContext servletContext, Devices devices) throws JAXBException, IOException {
 			
 			// get the file in which the control xml files are stored
 			File file = new File(servletContext.getRealPath("/WEB-INF/devices/devices.xml"));
