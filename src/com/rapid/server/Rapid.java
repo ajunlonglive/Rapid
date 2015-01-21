@@ -46,8 +46,8 @@ import org.json.JSONObject;
 
 import com.rapid.core.Application;
 import com.rapid.core.Page;
-import com.rapid.security.SecurityAdapater;
-import com.rapid.security.SecurityAdapater.User;
+import com.rapid.security.SecurityAdapter;
+import com.rapid.security.SecurityAdapter.User;
 import com.rapid.utils.Files;
 
 public class Rapid extends RapidHttpServlet {
@@ -91,24 +91,13 @@ public class Rapid extends RapidHttpServlet {
 			} else {
 				
 				// get the application security
-				SecurityAdapater security = app.getSecurity();
-				
-				// get the userName
-				String userName = rapidRequest.getUserName();
-				
-				// get the user
-				User user = security.getUser(rapidRequest);
-				
-				// check we got a user
-				if (user == null) {
-										
-					// send message
-					sendMessage(rapidRequest, response, 403, "No permission", "You do not have permission to use this application");
-					
-					//log
-					getLogger().debug("Rapid GET response (403) : User " + userName +  " not authorised for application");
-					
-				} else {
+				SecurityAdapter security = app.getSecurity();
+																							
+				// check the password
+				if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRequest.getUserPassword())) {
+																			
+					// get the user
+					User user = security.getUser(rapidRequest);
 			
 					// check if there is a Rapid action
 					if ("download".equals(rapidRequest.getActionName())) {
@@ -188,8 +177,16 @@ public class Rapid extends RapidHttpServlet {
 						} // page check
 																																					
 					} // action name check
-							
-				} // security check
+					
+				} else {
+					
+					// send message
+					sendMessage(rapidRequest, response, 403, "No permission", "You do not have permission to use this application");
+					
+					//log
+					getLogger().debug("Rapid GET response (403) : User " + rapidRequest.getUserName() +  " not authorised for application");
+																
+				} // password check
 				
 			} // app exists check
 								
@@ -259,22 +256,11 @@ public class Rapid extends RapidHttpServlet {
 				} else {
 					
 					// get the security
-					SecurityAdapater security = app.getSecurity();
-					
-					// get the user
-					User user = security.getUser(rapidRequest);
-					
-					// check the user
-					if (user == null) {
+					SecurityAdapter security = app.getSecurity();
+										
+					// check the user password
+					if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRequest.getUserPassword())) {
 						
-						// send forbidden response			
-						sendMessage(rapidRequest, response, 403, "No permisssion", "You do not have permssion to use this application");
-						
-						// log
-						getLogger().debug("Rapid POST response (403) : User not authorised for application");
-						
-					} else {
-							
 						// assume we weren't passed any json				
 						JSONObject jsonData = getJSONObject(bodyBytes);
 																		
@@ -301,6 +287,14 @@ public class Rapid extends RapidHttpServlet {
 							
 						}
 																																																												
+					} else {
+						
+						// send forbidden response			
+						sendMessage(rapidRequest, response, 403, "No permisssion", "You do not have permssion to use this application");
+						
+						// log
+						getLogger().debug("Rapid POST response (403) : User not authorised for application");
+						
 					}
 					
 				}				
@@ -329,16 +323,13 @@ public class Rapid extends RapidHttpServlet {
 					for (Application app : apps) {
 									
 						// get the relevant security adapter
-						SecurityAdapater security = app.getSecurity();
+						SecurityAdapter security = app.getSecurity();
 						
 						// fail silently if there was an issue
 						try {
-						
-							// fetch a user object in the name of the current user for the current app
-							User user = security.getUser(rapidRequest);
-							
-							// if we got one
-							if (user != null) {
+													
+							// check the user password
+							if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRequest.getUserPassword())) {
 								
 								// create a json object for the details of this application
 								JSONObject jsonApp = new JSONObject();
@@ -357,6 +348,7 @@ public class Rapid extends RapidHttpServlet {
 										
 										// loop the versions
 										for (Application version :	getApplications().getVersions(app.getId()).sort()) {
+											
 											// create a json object for the details of this version
 											jsonApp = new JSONObject();
 											// add details
@@ -408,7 +400,7 @@ public class Rapid extends RapidHttpServlet {
 				JSONObject jsonVersion = new JSONObject();
 				
 				// get the relevant security adapter
-				SecurityAdapater security = app.getSecurity();
+				SecurityAdapter security = app.getSecurity();
 				
 				// fail silently if there was an issue
 				try {
@@ -456,22 +448,11 @@ public class Rapid extends RapidHttpServlet {
 				} else {
 					
 					// get the security
-					SecurityAdapater security = app.getSecurity();
+					SecurityAdapter security = app.getSecurity();
 					
-					// get the user
-					User user = security.getUser(rapidRequest);
-					
-					// check the user
-					if (user == null) {
+					// check the user password
+					if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRequest.getUserPassword())) {
 						
-						// send forbidden response			
-						sendMessage(rapidRequest, response, 403, "No permisssion", "You do not have permssion to use this application");
-						
-						// log
-						getLogger().debug("Rapid POST response (403) : User not authorised for application");
-						
-					} else {					
-					
 						// get the name
 						String imageName = request.getParameter("name");
 						
@@ -525,6 +506,14 @@ public class Rapid extends RapidHttpServlet {
 							} // signature check
 							
 						} // name check
+												
+					} else {
+						
+						// send forbidden response			
+						sendMessage(rapidRequest, response, 403, "No permisssion", "You do not have permssion to use this application");
+						
+						// log
+						getLogger().debug("Rapid POST response (403) : User not authorised for application");
 						
 					} // user check
 					

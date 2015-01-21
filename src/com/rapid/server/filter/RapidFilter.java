@@ -40,8 +40,9 @@ import org.apache.log4j.Logger;
 
 public class RapidFilter implements Filter {
 
-	// we only store the user name in the session, different applications' security adapters will retrieve different user objects
+	// different applications' security adapters will retrieve different user objects
 	public static final String SESSION_VARIABLE_USER_NAME = "user";
+	public static final String SESSION_VARIABLE_USER_PASSWORD = "password";
 	
 	private static Logger _logger = Logger.getLogger(RapidFilter.class);
 		

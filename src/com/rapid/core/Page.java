@@ -63,9 +63,9 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import com.rapid.core.Application.Resource;
-import com.rapid.security.SecurityAdapater;
-import com.rapid.security.SecurityAdapater.SecurityAdapaterException;
-import com.rapid.security.SecurityAdapater.User;
+import com.rapid.security.SecurityAdapter;
+import com.rapid.security.SecurityAdapter.SecurityAdapaterException;
+import com.rapid.security.SecurityAdapter.User;
 import com.rapid.server.Rapid;
 import com.rapid.server.RapidHttpServlet;
 import com.rapid.server.RapidRequest;
@@ -1171,7 +1171,7 @@ public class Page {
 	public void writeHtml(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, Application application, User user, Writer writer, boolean dialogue) throws JSONException, IOException {
 		
 		// get the security
-		SecurityAdapater security = application.getSecurity();
+		SecurityAdapter security = application.getSecurity();
 		
 		// assume the user has permission to access the page
 		boolean gotPagePermission = true;

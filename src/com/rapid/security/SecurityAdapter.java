@@ -31,10 +31,12 @@ import java.util.Comparator;
 import java.util.List;
 
 import javax.servlet.ServletContext;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import com.rapid.core.Application;
 import com.rapid.server.RapidRequest;
 import com.rapid.utils.Comparators;
+import com.rapid.utils.JAXB.EncryptedXmlAdapter;
 
 /*
 
@@ -49,7 +51,7 @@ are required in the rapid application security provider
 
 */
 
-public abstract class SecurityAdapater {
+public abstract class SecurityAdapter {
 
 	// this class holds a roles details
 	public static class Role {
@@ -149,6 +151,7 @@ public abstract class SecurityAdapater {
 		public String getDescription() { return _description; }
 		public void setDescription(String description) { _description = description; }
 		
+		@XmlJavaTypeAdapter( EncryptedXmlAdapter.class )
 		public String getPassword() { return _password; }
 		public void setPassword(String password) { _password = password; }
 		
@@ -256,7 +259,7 @@ public abstract class SecurityAdapater {
 		
 	// constructor
 	
-	public SecurityAdapater(ServletContext servletContext, Application application) {
+	public SecurityAdapter(ServletContext servletContext, Application application) {
 		_servletContext = servletContext;
 		_application = application;
 	}

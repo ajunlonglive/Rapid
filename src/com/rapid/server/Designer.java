@@ -55,9 +55,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.rapid.security.SecurityAdapater;
-import com.rapid.security.SecurityAdapater.Role;
-import com.rapid.security.SecurityAdapater.User;
+import com.rapid.security.SecurityAdapter;
+import com.rapid.security.SecurityAdapter.Role;
+import com.rapid.security.SecurityAdapter.User;
 import com.rapid.utils.Bytes;
 import com.rapid.utils.Files;
 import com.rapid.utils.ZipFile;
@@ -120,7 +120,7 @@ public class Designer extends RapidHttpServlet {
 			if (rapidApplication != null) {
 				
 				// get rapid security
-				SecurityAdapater rapidSecurity = rapidApplication.getSecurity();
+				SecurityAdapter rapidSecurity = rapidApplication.getSecurity();
 				
 				// check we got some
 				if (rapidSecurity != null) {
@@ -183,27 +183,36 @@ public class Designer extends RapidHttpServlet {
 								
 								// loop the versions
 								for (String version : getApplications().getVersions(id).keySet()) {
+									
 									// get the this application version
 									Application application = getApplications().get(id, version);
-
-									// check the users permission to design this application
-									boolean designPermission = application.getSecurity().checkUserRole(rapidRequest, Rapid.DESIGN_ROLE);
 									
-									// if app is rapid do a further check
-									if (designPermission && "rapid".equals(application.getId())) designPermission = application.getSecurity().checkUserRole(rapidRequest, Rapid.SUPER_ROLE);
+									// get the security									
+									SecurityAdapter security = application.getSecurity();
 									
-									// if we got permssion - add this application to the list 
-									if (designPermission) {
-										// create a json object
-										JSONObject jsonApplication = new JSONObject();
-										// add the details we want
-										jsonApplication.put("id", application.getId());
-										jsonApplication.put("name", application.getName());
-										jsonApplication.put("title", application.getTitle());
-										// add the object to the collection
-										jsonApps.put(jsonApplication);
-										// no need to check any further versions
-										break;
+									// check the users password
+									if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRequest.getUserPassword())) {
+										
+										// check the users permission to design this application
+										boolean designPermission = security.checkUserRole(rapidRequest, Rapid.DESIGN_ROLE);
+										
+										// if app is rapid do a further check
+										if (designPermission && "rapid".equals(application.getId())) designPermission = application.getSecurity().checkUserRole(rapidRequest, Rapid.SUPER_ROLE);
+										
+										// if we got permssion - add this application to the list 
+										if (designPermission) {
+											// create a json object
+											JSONObject jsonApplication = new JSONObject();
+											// add the details we want
+											jsonApplication.put("id", application.getId());
+											jsonApplication.put("name", application.getName());
+											jsonApplication.put("title", application.getTitle());
+											// add the object to the collection
+											jsonApps.put(jsonApplication);
+											// no need to check any further versions
+											break;
+										}
+										
 									}
 									
 								}
@@ -230,52 +239,54 @@ public class Designer extends RapidHttpServlet {
 																													
 								// loop the list of applications sorted by id (with rapid last)
 								for (Application application : versions.sort()) {
-																									
-									// check the users permission to design this application
-									boolean designPermission = application.getSecurity().checkUserRole(rapidRequest, Rapid.DESIGN_ROLE);
 									
-									// if app is rapid do a further check
-									if (designPermission && "rapid".equals(application.getId())) designPermission = application.getSecurity().checkUserRole(rapidRequest, Rapid.SUPER_ROLE);
+									// get the security									
+									SecurityAdapter security = application.getSecurity();
 									
-									// check the RapidDesign role is present in the users roles for this application
-									if (designPermission) {												
+									// check the users password
+									if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRequest.getUserPassword())) {
 										
-										// make a json object for this version
-										JSONObject jsonVersion = new JSONObject();
-										// add the app id
-										jsonVersion.put("id", application.getId());
-										// add the version
-										jsonVersion.put("version", application.getVersion());
-										// add the status
-										jsonVersion.put("status", application.getStatus());
-										// add the title
-										jsonVersion.put("title", application.getTitle());
-										// add whether to show control Ids
-										jsonVersion.put("showControlIds", application.getShowControlIds());
-										// add whether to show action Ids
-										jsonVersion.put("showActionIds", application.getShowActionIds());
-										// add the web folder so we can update the iframe style sheets
-										jsonVersion.put("webFolder", Application.getWebFolder(application));
+										// check the users permission to design this application
+										boolean designPermission = application.getSecurity().checkUserRole(rapidRequest, Rapid.DESIGN_ROLE);
 										
-										// get the database connections
-										List<DatabaseConnection> databaseConnections = application.getDatabaseConnections();
-										// check we have any
-										if (databaseConnections != null) {
-											// make an object we're going to return
-											JSONArray jsonDatabaseConnections = new JSONArray();
-											// loop the connections
-											for (DatabaseConnection databaseConnection : databaseConnections) {
-												// add the connection name
-												jsonDatabaseConnections.put(databaseConnection.getName());
+										// if app is rapid do a further check
+										if (designPermission && "rapid".equals(application.getId())) designPermission = application.getSecurity().checkUserRole(rapidRequest, Rapid.SUPER_ROLE);
+										
+										// check the RapidDesign role is present in the users roles for this application
+										if (designPermission) {												
+											
+											// make a json object for this version
+											JSONObject jsonVersion = new JSONObject();
+											// add the app id
+											jsonVersion.put("id", application.getId());
+											// add the version
+											jsonVersion.put("version", application.getVersion());
+											// add the status
+											jsonVersion.put("status", application.getStatus());
+											// add the title
+											jsonVersion.put("title", application.getTitle());
+											// add whether to show control Ids
+											jsonVersion.put("showControlIds", application.getShowControlIds());
+											// add whether to show action Ids
+											jsonVersion.put("showActionIds", application.getShowActionIds());
+											// add the web folder so we can update the iframe style sheets
+											jsonVersion.put("webFolder", Application.getWebFolder(application));
+											
+											// get the database connections
+											List<DatabaseConnection> databaseConnections = application.getDatabaseConnections();
+											// check we have any
+											if (databaseConnections != null) {
+												// make an object we're going to return
+												JSONArray jsonDatabaseConnections = new JSONArray();
+												// loop the connections
+												for (DatabaseConnection databaseConnection : databaseConnections) {
+													// add the connection name
+													jsonDatabaseConnections.put(databaseConnection.getName());
+												}
+												// add the connections to the app 
+												jsonVersion.put("databaseConnections", jsonDatabaseConnections);
 											}
-											// add the connections to the app 
-											jsonVersion.put("databaseConnections", jsonDatabaseConnections);
-										}
-										
-										// get the security roles
-										SecurityAdapater security = application.getSecurity();
-										// check we have any
-										if (security != null) {
+											
 											// make an object we're going to return
 											JSONArray jsonRoles = new JSONArray();
 											// retrieve the roles
@@ -296,109 +307,110 @@ public class Designer extends RapidHttpServlet {
 											}							
 											// add the security roles to the app 
 											jsonVersion.put("roles", jsonRoles);
-										}
-																
-										// get all the possible json actions
-										JSONArray jsonActions = getJsonActions();
-										// make an array for the actions in this app
-										JSONArray jsonAppActions = new JSONArray();
-										// get the types used in this app
-										List<String> actionTypes = application.getActionTypes();
-										// if we have some
-										if (actionTypes != null) {
-											// loop the types used in this app						
-											for (String actionType : actionTypes) {
-												// loop all the possible actions
-												for (int i = 0; i < jsonActions.length(); i++) {
-													// get an instance to the json action
-													JSONObject jsonAction = jsonActions.getJSONObject(i);
-													// if this is the type we've been looking for
-													if (actionType.equals(jsonAction.getString("type"))) {
-														// create a simple json object for thi action
-														JSONObject jsonAppAction = new JSONObject();
-														// add just what we need
-														jsonAppAction.put("type", jsonAction.getString("type"));
-														jsonAppAction.put("name", jsonAction.getString("name"));
-														// add it to the app actions collection
-														jsonAppActions.put(jsonAppAction);
-														// start on the next app action
-														break;
+																												
+											// get all the possible json actions
+											JSONArray jsonActions = getJsonActions();
+											// make an array for the actions in this app
+											JSONArray jsonAppActions = new JSONArray();
+											// get the types used in this app
+											List<String> actionTypes = application.getActionTypes();
+											// if we have some
+											if (actionTypes != null) {
+												// loop the types used in this app						
+												for (String actionType : actionTypes) {
+													// loop all the possible actions
+													for (int i = 0; i < jsonActions.length(); i++) {
+														// get an instance to the json action
+														JSONObject jsonAction = jsonActions.getJSONObject(i);
+														// if this is the type we've been looking for
+														if (actionType.equals(jsonAction.getString("type"))) {
+															// create a simple json object for thi action
+															JSONObject jsonAppAction = new JSONObject();
+															// add just what we need
+															jsonAppAction.put("type", jsonAction.getString("type"));
+															jsonAppAction.put("name", jsonAction.getString("name"));
+															// add it to the app actions collection
+															jsonAppActions.put(jsonAppAction);
+															// start on the next app action
+															break;
+														}
 													}
 												}
-											}
-										}						
-										// put the app actions we've just built into the app
-										jsonVersion.put("actions", jsonAppActions);						
-										
-										// get all the possible json controls
-										JSONArray jsonControls = getJsonControls();
-										// make an array for the controls in this app
-										JSONArray jsonAppControls = new JSONArray();
-										// get the control types used by this app
-										List<String> controlTypes = application.getControlTypes();
-										// if we have some
-										if (controlTypes != null) {
-											// loop the types used in this app						
-											for (String controlType : controlTypes) {
-												// loop all the possible controls
-												for (int i = 0; i < jsonControls.length(); i++) {
-													// get an instance to the json control
-													JSONObject jsonControl = jsonControls.getJSONObject(i);
-													// if this is the type we've been looking for
-													if (controlType.equals(jsonControl.getString("type"))) {
-														// create a simple json object for this control
-														JSONObject jsonAppControl = new JSONObject();
-														// add just what we need
-														jsonAppControl.put("type", jsonControl.getString("type"));
-														jsonAppControl.put("name", jsonControl.getString("name"));
-														jsonAppControl.put("image", jsonControl.optString("image"));
-														jsonAppControl.put("canUserAdd", jsonControl.optString("canUserAdd"));
-														// add it to the app controls collection
-														jsonAppControls.put(jsonAppControl);
-														// start on the next app control
-														break;
+											}						
+											// put the app actions we've just built into the app
+											jsonVersion.put("actions", jsonAppActions);						
+											
+											// get all the possible json controls
+											JSONArray jsonControls = getJsonControls();
+											// make an array for the controls in this app
+											JSONArray jsonAppControls = new JSONArray();
+											// get the control types used by this app
+											List<String> controlTypes = application.getControlTypes();
+											// if we have some
+											if (controlTypes != null) {
+												// loop the types used in this app						
+												for (String controlType : controlTypes) {
+													// loop all the possible controls
+													for (int i = 0; i < jsonControls.length(); i++) {
+														// get an instance to the json control
+														JSONObject jsonControl = jsonControls.getJSONObject(i);
+														// if this is the type we've been looking for
+														if (controlType.equals(jsonControl.getString("type"))) {
+															// create a simple json object for this control
+															JSONObject jsonAppControl = new JSONObject();
+															// add just what we need
+															jsonAppControl.put("type", jsonControl.getString("type"));
+															jsonAppControl.put("name", jsonControl.getString("name"));
+															jsonAppControl.put("image", jsonControl.optString("image"));
+															jsonAppControl.put("canUserAdd", jsonControl.optString("canUserAdd"));
+															// add it to the app controls collection
+															jsonAppControls.put(jsonAppControl);
+															// start on the next app control
+															break;
+														}
 													}
 												}
+											}						
+											// put the app controls we've just built into the app
+											jsonVersion.put("controls", jsonAppControls);
+											
+											
+											// create a json object for the images
+											JSONArray jsonImages = new JSONArray();									
+											// get the directory in which the control xml files are stored	
+											File dir = new File (application.getWebFolder(getServletContext()));
+											// create a filter for finding image files
+											FilenameFilter xmlFilenameFilter = new FilenameFilter() {
+										    	public boolean accept(File dir, String name) {
+										    		return name.toLowerCase().endsWith(".png") || name.toLowerCase().endsWith(".gif") || name.toLowerCase().endsWith(".jpg") || name.toLowerCase().endsWith(".jpeg");
+										    	}
+										    };								    
+											// loop the image files in the folder
+											for (File imageFile : dir.listFiles(xmlFilenameFilter)) {
+												jsonImages.put(imageFile.getName());
 											}
-										}						
-										// put the app controls we've just built into the app
-										jsonVersion.put("controls", jsonAppControls);
+											// put the images collection we've just built into the app
+											jsonVersion.put("images", jsonImages);
+											
+											// create a json array for our style classes
+											JSONArray jsonStyleClasses = new JSONArray();
+											// get all of the possible style classes
+											List<String> styleClasses = application.getStyleClasses();
+											// if we had some
+											if (styleClasses != null) {
+												// loop and add to json array
+												for (String styleClass : styleClasses) jsonStyleClasses.put(styleClass);
+											}
+											// put them into our application object
+											jsonVersion.put("styleClasses", jsonStyleClasses);
+											
+											// put the app into the collection
+											jsonVersions.put(jsonVersion);	
+											
+										} // design permission
 										
-										
-										// create a json object for the images
-										JSONArray jsonImages = new JSONArray();									
-										// get the directory in which the control xml files are stored	
-										File dir = new File (application.getWebFolder(getServletContext()));
-										// create a filter for finding image files
-										FilenameFilter xmlFilenameFilter = new FilenameFilter() {
-									    	public boolean accept(File dir, String name) {
-									    		return name.toLowerCase().endsWith(".png") || name.toLowerCase().endsWith(".gif") || name.toLowerCase().endsWith(".jpg") || name.toLowerCase().endsWith(".jpeg");
-									    	}
-									    };								    
-										// loop the image files in the folder
-										for (File imageFile : dir.listFiles(xmlFilenameFilter)) {
-											jsonImages.put(imageFile.getName());
-										}
-										// put the images collection we've just built into the app
-										jsonVersion.put("images", jsonImages);
-										
-										// create a json array for our style classes
-										JSONArray jsonStyleClasses = new JSONArray();
-										// get all of the possible style classes
-										List<String> styleClasses = application.getStyleClasses();
-										// if we had some
-										if (styleClasses != null) {
-											// loop and add to json array
-											for (String styleClass : styleClasses) jsonStyleClasses.put(styleClass);
-										}
-										// put them into our application object
-										jsonVersion.put("styleClasses", jsonStyleClasses);
-										
-										// put the app into the collection
-										jsonVersions.put(jsonVersion);	
-										
-									} // design permission
-																			
+									} // check user password
+																																																					
 								} // versions loop
 									
 							} // got versions check
@@ -691,7 +703,7 @@ public class Designer extends RapidHttpServlet {
 			if (rapidApplication != null) {
 				
 				// get rapid security
-				SecurityAdapater rapidSecurity = rapidApplication.getSecurity();
+				SecurityAdapter rapidSecurity = rapidApplication.getSecurity();
 				
 				// check we got some
 				if (rapidSecurity != null) {
@@ -1131,7 +1143,7 @@ public class Designer extends RapidHttpServlet {
 												appNew.initialise(getServletContext(), false);
 												
 												// get the security
-												SecurityAdapater security = appNew.getSecurity();
+												SecurityAdapter security = appNew.getSecurity();
 												
 												// if we have one
 												if (security != null) {									

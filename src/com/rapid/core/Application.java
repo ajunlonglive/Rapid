@@ -71,8 +71,8 @@ import com.rapid.core.Page.Lock;
 import com.rapid.core.Pages.PageHeader;
 import com.rapid.data.ConnectionAdapter;
 import com.rapid.security.RapidSecurityAdapter;
-import com.rapid.security.SecurityAdapater;
-import com.rapid.security.SecurityAdapater.User;
+import com.rapid.security.SecurityAdapter;
+import com.rapid.security.SecurityAdapter.User;
 import com.rapid.server.RapidHttpServlet;
 import com.rapid.server.RapidRequest;
 import com.rapid.soa.Webservice;
@@ -330,7 +330,7 @@ public class Application {
 	private String _id, _version, _name, _title, _description, _startPageId, _styles, _functions, _securityAdapterType, _createdBy, _modifiedBy;
 	private boolean _showConrolIds, _showActionIds;
 	private Date _createdDate, _modifiedDate;
-	private SecurityAdapater _securityAdapter;	
+	private SecurityAdapter _securityAdapter;	
 	private List<DatabaseConnection> _databaseConnections;	
 	private List<Webservice> _webservices;
 	private List<Parameter> _parameters;
@@ -599,16 +599,16 @@ public class Application {
 	}
 	
 	// an instance of the security adapter used by this class
-	public SecurityAdapater getSecurity() { return _securityAdapter; }
+	public SecurityAdapter getSecurity() { return _securityAdapter; }
 	// set the security to a given type
-	public void setSecurity(ServletContext servletContext, String securityAdapterType) throws IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
+	public void setSecurity(ServletContext servletContext, String securityAdapterType) throws IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException, IOException {
 		_securityAdapterType = securityAdapterType;
 		if (_securityAdapterType == null) {
 			_securityAdapter = new RapidSecurityAdapter(servletContext, this);
 			_securityAdapterType = "rapid";
 		} else {			
 			HashMap<String,Constructor> constructors = (HashMap<String, Constructor>) servletContext.getAttribute("securityConstructors");
-			Constructor<SecurityAdapater> constructor = constructors.get(_securityAdapterType);
+			Constructor<SecurityAdapter> constructor = constructors.get(_securityAdapterType);
 			if (constructor == null) throw new InstantiationException("Security adapter \"" +  _securityAdapterType + "\" can't be found");
 			_securityAdapter = constructor.newInstance(servletContext, this);
 		}
