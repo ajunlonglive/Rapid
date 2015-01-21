@@ -37,7 +37,6 @@ import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
-import java.util.List;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletResponse;
@@ -53,41 +52,44 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.rapid.core.Action;
-import com.rapid.core.Application;
 import com.rapid.core.Applications;
-import com.rapid.core.Control;
-import com.rapid.core.Device;
 import com.rapid.core.Device.Devices;
-import com.rapid.core.Page;
-import com.rapid.core.Application.DatabaseConnection;
-import com.rapid.core.Applications.Versions;
-import com.rapid.security.SecurityAdapater;
-import com.rapid.security.SecurityAdapater.Role;
-import com.rapid.security.SecurityAdapater.SecurityAdapaterException;
-import com.rapid.server.filter.RapidFilter;
-import com.rapid.utils.Comparators;
+import com.rapid.utils.JAXB;
+import com.rapid.utils.JAXB.EncryptedXmlAdapter;
 
 @SuppressWarnings({"serial", "unchecked", "rawtypes"})
 public class RapidHttpServlet extends HttpServlet {
 	
+	// private static variables
+	
 	private static Logger _logger = Logger.getLogger(RapidHttpServlet.class);
-	private static JAXBContext _jaxbContext;
+	private static JAXBContext _jaxbContext;	
+	private static EncryptedXmlAdapter _encryptedXmlAdapter;
 		
+	// properties
+	
 	public static JAXBContext getJAXBContext() { return _jaxbContext; }
 	public static void setJAXBContext(JAXBContext jaxbContext) { _jaxbContext = jaxbContext; }
 	
-	public static Marshaller getMarshaller() throws JAXBException {
+	public static void setEncryptedXmlAdapter(EncryptedXmlAdapter encryptedXmlAdapter) { _encryptedXmlAdapter = encryptedXmlAdapter; }
+		
+	// public methods
+	
+	public static Marshaller getMarshaller() throws JAXBException, IOException {
 		// marshaller is not thread safe so we need to create a new one each time
-		Marshaller marshaller = _jaxbContext.createMarshaller();
+		Marshaller marshaller = _jaxbContext.createMarshaller();		
+		// add the encrypted xml adapter
+		marshaller.setAdapter(_encryptedXmlAdapter);
 		// return
 		return marshaller;		
 	}
 	
-	public static Unmarshaller getUnmarshaller() throws JAXBException {
+	public static Unmarshaller getUnmarshaller() throws JAXBException, IOException {
 		
 		// initialise the unmarshaller
 		Unmarshaller unmarshaller = _jaxbContext.createUnmarshaller();
+		// add the encrypted xml adapter
+		unmarshaller.setAdapter(_encryptedXmlAdapter);
 		
 		// add a validation listener (this makes for better error messages)
 		unmarshaller.setEventHandler(new ValidationEventHandler() {

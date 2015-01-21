@@ -39,35 +39,29 @@ import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
 public class Encryption {
-
-    private static final char[] PASSWORD = "rapiddesktop123".toCharArray();
-    private static final byte[] SALT = {
-        (byte) 0xde, (byte) 0x33, (byte) 0x10, (byte) 0x12,
-        (byte) 0xde, (byte) 0x33, (byte) 0x10, (byte) 0x12,
-    };
-    
-    private static String base64Encode(byte[] bytes) {
+        
+    public static String base64Encode(byte[] bytes) {
         return new BASE64Encoder().encode(bytes);
     }
     
-    private static byte[] base64Decode(String property) throws IOException {
-        return new BASE64Decoder().decodeBuffer(property);
+    public static byte[] base64Decode(String value) throws IOException {
+        return new BASE64Decoder().decodeBuffer(value);
     }
 
-    public static String encrypt(String property) throws GeneralSecurityException, UnsupportedEncodingException {
+    public static String encrypt(String value, char[] password, byte[] salt) throws GeneralSecurityException, UnsupportedEncodingException {
         SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("PBEWithMD5AndDES");
-        SecretKey key = keyFactory.generateSecret(new PBEKeySpec(PASSWORD));
+        SecretKey key = keyFactory.generateSecret(new PBEKeySpec(password));
         Cipher pbeCipher = Cipher.getInstance("PBEWithMD5AndDES");
-        pbeCipher.init(Cipher.ENCRYPT_MODE, key, new PBEParameterSpec(SALT, 20));
-        return base64Encode(pbeCipher.doFinal(property.getBytes("UTF-8")));
+        pbeCipher.init(Cipher.ENCRYPT_MODE, key, new PBEParameterSpec(salt, 20));
+        return base64Encode(pbeCipher.doFinal(value.getBytes("UTF-8")));
     }
     
-    public static String decrypt(String property) throws GeneralSecurityException, IOException {
+    public static String decrypt(String value, char[] password, byte[] salt) throws GeneralSecurityException, IOException {
         SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("PBEWithMD5AndDES");
-        SecretKey key = keyFactory.generateSecret(new PBEKeySpec(PASSWORD));
+        SecretKey key = keyFactory.generateSecret(new PBEKeySpec(password));
         Cipher pbeCipher = Cipher.getInstance("PBEWithMD5AndDES");
-        pbeCipher.init(Cipher.DECRYPT_MODE, key, new PBEParameterSpec(SALT, 20));
-        return new String(pbeCipher.doFinal(base64Decode(property)), "UTF-8");
+        pbeCipher.init(Cipher.DECRYPT_MODE, key, new PBEParameterSpec(salt, 20));
+        return new String(pbeCipher.doFinal(base64Decode(value)), "UTF-8");
     }
 
 }
