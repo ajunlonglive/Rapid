@@ -58,11 +58,11 @@ import com.rapid.core.Applications.Versions;
 import com.rapid.core.Pages.PageHeader;
 import com.rapid.data.ConnectionAdapter;
 import com.rapid.data.DataFactory;
-import com.rapid.security.SecurityAdapater;
-import com.rapid.security.SecurityAdapater.Role;
-import com.rapid.security.SecurityAdapater.SecurityAdapaterException;
-import com.rapid.security.SecurityAdapater.User;
-import com.rapid.security.SecurityAdapater.Users;
+import com.rapid.security.SecurityAdapter;
+import com.rapid.security.SecurityAdapter.Role;
+import com.rapid.security.SecurityAdapter.SecurityAdapaterException;
+import com.rapid.security.SecurityAdapter.User;
+import com.rapid.security.SecurityAdapter.Users;
 import com.rapid.server.RapidHttpServlet;
 import com.rapid.server.RapidRequest;
 import com.rapid.server.RapidServletContextListener;
@@ -187,7 +187,7 @@ public class Rapid extends Action {
 		newApp.save(rapidServlet, rapidRequest, false);
 		
 		// get the security 
-		SecurityAdapater security = newApp.getSecurity();
+		SecurityAdapter security = newApp.getSecurity();
 		
 		// check there is one
 		if (security != null) {
@@ -351,143 +351,159 @@ public class Rapid extends Action {
 					
 					// loop the versions
 					for (String version : rapidServlet.getApplications().getVersions(id).keySet()) {
+						
 						// get the this application version
 						Application application = rapidServlet.getApplications().get(id, version);
+						
+						// get the security
+						SecurityAdapter security = application.getSecurity();
+						
+						// check the user password
+						if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRequest.getUserPassword())) {
+							
+							// check the users permission to design this application
+							boolean designPermission = security.checkUserRole(rapidRequest, com.rapid.server.Rapid.DESIGN_ROLE);
+							
+							// if app is rapid do a further check
+							if (designPermission && "rapid".equals(application.getId())) designPermission = application.getSecurity().checkUserRole(rapidRequest, com.rapid.server.Rapid.SUPER_ROLE);
+							
+							// if we got permssion - add this application to the list 
+							if (designPermission) {
+								// create a json object
+								JSONObject jsonApplication = new JSONObject();
+								// add the details we want
+								jsonApplication.put("value", application.getId());
+								jsonApplication.put("text", application.getName() + " - " + application.getTitle());
+								// add the object to the collection
+								jsonApps.put(jsonApplication);
+								// no need to check any further versions
+								break;
+							}
+							
+							
+						} // password check
 
-						// check the users permission to design this application
-						boolean designPermission = application.getSecurity().checkUserRole(rapidRequest, com.rapid.server.Rapid.DESIGN_ROLE);
-						
-						// if app is rapid do a further check
-						if (designPermission && "rapid".equals(application.getId())) designPermission = application.getSecurity().checkUserRole(rapidRequest, com.rapid.server.Rapid.SUPER_ROLE);
-						
-						// if we got permssion - add this application to the list 
-						if (designPermission) {
-							// create a json object
-							JSONObject jsonApplication = new JSONObject();
-							// add the details we want
-							jsonApplication.put("value", application.getId());
-							jsonApplication.put("text", application.getName() + " - " + application.getTitle());
-							// add the object to the collection
-							jsonApps.put(jsonApplication);
-							// no need to check any further versions
-							break;
-						}
-						
-					}
+					} // version loop
 																						
-				}
+				} // app loop
+				
 				// add the actions to the result
 				result.put("applications", jsonApps);	
 				
-				// fetch the database drivers
-				JSONArray jsonDatabaseDrivers = rapidServlet.getJsonDatabaseDrivers();				
-				// check we have some database drivers
-				if (jsonDatabaseDrivers != null) {
-					// prepare the database driver collection we'll send
-					JSONArray jsonSendDatabaseDrivers = new JSONArray();
-					// loop what we have
-					for (int i = 0; i < jsonDatabaseDrivers.length(); i++) {
-						// get the item
-						JSONObject jsonDatabaseDriver = jsonDatabaseDrivers.getJSONObject(i);
-						// make a simpler send item
-						JSONObject jsonSendDatabaseDriver = new JSONObject();
-						// add type
-						jsonSendDatabaseDriver.put("value", jsonDatabaseDriver.get("class"));
-						// add name
-						jsonSendDatabaseDriver.put("text", jsonDatabaseDriver.get("name"));
-						// add to collection
-						jsonSendDatabaseDrivers.put(jsonSendDatabaseDriver);
+				// if there was at least one app
+				if (jsonApps.length() > 0) {
+				
+					// fetch the database drivers
+					JSONArray jsonDatabaseDrivers = rapidServlet.getJsonDatabaseDrivers();				
+					// check we have some database drivers
+					if (jsonDatabaseDrivers != null) {
+						// prepare the database driver collection we'll send
+						JSONArray jsonSendDatabaseDrivers = new JSONArray();
+						// loop what we have
+						for (int i = 0; i < jsonDatabaseDrivers.length(); i++) {
+							// get the item
+							JSONObject jsonDatabaseDriver = jsonDatabaseDrivers.getJSONObject(i);
+							// make a simpler send item
+							JSONObject jsonSendDatabaseDriver = new JSONObject();
+							// add type
+							jsonSendDatabaseDriver.put("value", jsonDatabaseDriver.get("class"));
+							// add name
+							jsonSendDatabaseDriver.put("text", jsonDatabaseDriver.get("name"));
+							// add to collection
+							jsonSendDatabaseDrivers.put(jsonSendDatabaseDriver);
+						}
+						// add the database drivers to the result
+						result.put("databaseDrivers", jsonSendDatabaseDrivers);
 					}
-					// add the database drivers to the result
-					result.put("databaseDrivers", jsonSendDatabaseDrivers);
-				}
-				
-				// fetch the connection adapters
-				JSONArray jsonConnectionAdapters = rapidServlet.getJsonConnectionAdapters();				
-				// check we have some database drivers
-				if (jsonConnectionAdapters != null) {
-					// prepare the database driver collection we'll send
-					JSONArray jsonSendConnectionAdapters = new JSONArray();
-					// loop what we have
-					for (int i = 0; i < jsonConnectionAdapters.length(); i++) {
-						// get the item
-						JSONObject jsonConnectionAdapter = jsonConnectionAdapters.getJSONObject(i);
-						// make a simpler send item
-						JSONObject jsonSendConnectionAdapter = new JSONObject();
-						// add type
-						jsonSendConnectionAdapter.put("value", jsonConnectionAdapter.get("class"));
-						// add name
-						jsonSendConnectionAdapter.put("text", jsonConnectionAdapter.get("name"));
-						// add to collection
-						jsonSendConnectionAdapters.put(jsonSendConnectionAdapter);
-					}
-					// add the database drivers to the result
-					result.put("connectionAdapters", jsonSendConnectionAdapters);
-				}	
-				
-				// fetch the security adapters
-				JSONArray jsonSecurityAdapters = rapidServlet.getJsonSecurityAdapters();				
-				// check we have some security adapters
-				if (jsonSecurityAdapters != null) {
-					// prepare the security adapter collection we'll send
-					JSONArray jsonSendSecurityAdapters = new JSONArray();
-					// loop what we have
-					for (int i = 0; i < jsonSecurityAdapters.length(); i++) {
-						// get the item
-						JSONObject jsonSecurityAdapter = jsonSecurityAdapters.getJSONObject(i);
-						// make a simpler send item
-						JSONObject jsonSendSecurityAdapter = new JSONObject();
-						// add type
-						jsonSendSecurityAdapter.put("value", jsonSecurityAdapter.get("type"));
-						// add name
-						jsonSendSecurityAdapter.put("text", jsonSecurityAdapter.get("name"));
-						// add canManageRoles
-						jsonSendSecurityAdapter.put("canManageRoles", jsonSecurityAdapter.get("canManageRoles"));
-						// add canManageUsers
-						jsonSendSecurityAdapter.put("canManageUsers", jsonSecurityAdapter.get("canManageUsers"));
-						// add canManageUserRoles
-						jsonSendSecurityAdapter.put("canManageUserRoles", jsonSecurityAdapter.get("canManageUserRoles"));
-						// add to collection
-						jsonSendSecurityAdapters.put(jsonSendSecurityAdapter);
-					}
-					// add the security adapters to the result
-					result.put("securityAdapters", jsonSendSecurityAdapters);
-				}									
-				
-				// process the actions and only send the name and type
-				JSONArray jsonSendActions = new JSONArray();
-				JSONArray jsonActions = rapidServlet.getJsonActions();
-				for (int i = 0; i < jsonActions.length(); i++) {
-					JSONObject jsonSysAction = jsonActions.getJSONObject(i);
-					// do not send the rapid action
-					if (!"rapid".equals(jsonSysAction.getString("type"))) {
-						JSONObject jsonSendAction = new JSONObject();
-						jsonSendAction.put("name", jsonSysAction.get("name"));
-						jsonSendAction.put("type", jsonSysAction.get("type"));
-						jsonSendActions.put(jsonSendAction);
-					}					
-				}				
-				// add the actions to the result
-				result.put("actions", jsonSendActions);	
-				
-				// process the controls and only send the name and type for canUserAdd
-				JSONArray jsonSendControls = new JSONArray();
-				JSONArray jsonControls = rapidServlet.getJsonControls();
-				for (int i = 0; i < jsonControls.length(); i++) {
-					JSONObject jsonSysControl = jsonControls.getJSONObject(i);
-					// only present controls users can add
-					if (jsonSysControl.optBoolean("canUserAdd")) {
-						JSONObject jsonSendControl = new JSONObject();
-						jsonSendControl.put("name", jsonSysControl.get("name"));
-						jsonSendControl.put("type", jsonSysControl.get("type"));
-						jsonSendControls.put(jsonSendControl);
-					}					
-				}				
-				// add the controls to the result
-				result.put("controls", jsonSendControls);			
-				
-				// add the devices
-				result.put("devices", rapidServlet.getDevices());
+					
+					// fetch the connection adapters
+					JSONArray jsonConnectionAdapters = rapidServlet.getJsonConnectionAdapters();				
+					// check we have some database drivers
+					if (jsonConnectionAdapters != null) {
+						// prepare the database driver collection we'll send
+						JSONArray jsonSendConnectionAdapters = new JSONArray();
+						// loop what we have
+						for (int i = 0; i < jsonConnectionAdapters.length(); i++) {
+							// get the item
+							JSONObject jsonConnectionAdapter = jsonConnectionAdapters.getJSONObject(i);
+							// make a simpler send item
+							JSONObject jsonSendConnectionAdapter = new JSONObject();
+							// add type
+							jsonSendConnectionAdapter.put("value", jsonConnectionAdapter.get("class"));
+							// add name
+							jsonSendConnectionAdapter.put("text", jsonConnectionAdapter.get("name"));
+							// add to collection
+							jsonSendConnectionAdapters.put(jsonSendConnectionAdapter);
+						}
+						// add the database drivers to the result
+						result.put("connectionAdapters", jsonSendConnectionAdapters);
+					}	
+					
+					// fetch the security adapters
+					JSONArray jsonSecurityAdapters = rapidServlet.getJsonSecurityAdapters();				
+					// check we have some security adapters
+					if (jsonSecurityAdapters != null) {
+						// prepare the security adapter collection we'll send
+						JSONArray jsonSendSecurityAdapters = new JSONArray();
+						// loop what we have
+						for (int i = 0; i < jsonSecurityAdapters.length(); i++) {
+							// get the item
+							JSONObject jsonSecurityAdapter = jsonSecurityAdapters.getJSONObject(i);
+							// make a simpler send item
+							JSONObject jsonSendSecurityAdapter = new JSONObject();
+							// add type
+							jsonSendSecurityAdapter.put("value", jsonSecurityAdapter.get("type"));
+							// add name
+							jsonSendSecurityAdapter.put("text", jsonSecurityAdapter.get("name"));
+							// add canManageRoles
+							jsonSendSecurityAdapter.put("canManageRoles", jsonSecurityAdapter.get("canManageRoles"));
+							// add canManageUsers
+							jsonSendSecurityAdapter.put("canManageUsers", jsonSecurityAdapter.get("canManageUsers"));
+							// add canManageUserRoles
+							jsonSendSecurityAdapter.put("canManageUserRoles", jsonSecurityAdapter.get("canManageUserRoles"));
+							// add to collection
+							jsonSendSecurityAdapters.put(jsonSendSecurityAdapter);
+						}
+						// add the security adapters to the result
+						result.put("securityAdapters", jsonSendSecurityAdapters);
+					}									
+					
+					// process the actions and only send the name and type
+					JSONArray jsonSendActions = new JSONArray();
+					JSONArray jsonActions = rapidServlet.getJsonActions();
+					for (int i = 0; i < jsonActions.length(); i++) {
+						JSONObject jsonSysAction = jsonActions.getJSONObject(i);
+						// do not send the rapid action
+						if (!"rapid".equals(jsonSysAction.getString("type"))) {
+							JSONObject jsonSendAction = new JSONObject();
+							jsonSendAction.put("name", jsonSysAction.get("name"));
+							jsonSendAction.put("type", jsonSysAction.get("type"));
+							jsonSendActions.put(jsonSendAction);
+						}					
+					}				
+					// add the actions to the result
+					result.put("actions", jsonSendActions);	
+					
+					// process the controls and only send the name and type for canUserAdd
+					JSONArray jsonSendControls = new JSONArray();
+					JSONArray jsonControls = rapidServlet.getJsonControls();
+					for (int i = 0; i < jsonControls.length(); i++) {
+						JSONObject jsonSysControl = jsonControls.getJSONObject(i);
+						// only present controls users can add
+						if (jsonSysControl.optBoolean("canUserAdd")) {
+							JSONObject jsonSendControl = new JSONObject();
+							jsonSendControl.put("name", jsonSysControl.get("name"));
+							jsonSendControl.put("type", jsonSysControl.get("type"));
+							jsonSendControls.put(jsonSendControl);
+						}					
+					}				
+					// add the controls to the result
+					result.put("controls", jsonSendControls);			
+					
+					// add the devices
+					result.put("devices", rapidServlet.getDevices());
+					
+				} // at least one app check
 				
 				// add the current userName to the result
 				result.put("userName", rapidRequest.getUserName());
@@ -505,31 +521,39 @@ public class Rapid extends Action {
 																										
 					// loop the list of applications sorted by id (with rapid last)
 					for (Application application : versions.sort()) {
-																						
-						// check the users permission to design this application
-						boolean designPermission = application.getSecurity().checkUserRole(rapidRequest, com.rapid.server.Rapid.DESIGN_ROLE);
 						
-						// if app is rapid do a further check
-						if (designPermission && "rapid".equals(application.getId())) designPermission = application.getSecurity().checkUserRole(rapidRequest, com.rapid.server.Rapid.SUPER_ROLE);
+						// get the security
+						SecurityAdapter security = application.getSecurity();
 						
-						// check the RapidDesign role is present in the users roles for this application
-						if (designPermission) {												
+						// check the user password
+						if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRequest.getUserPassword())) {
 							
-							// make a json object for this version
-							JSONObject jsonVersion = new JSONObject();
-							// add the version
-							jsonVersion.put("value", application.getVersion());
-							// derive the text
-							String text = application.getVersion();
-							// if live add some
-							if (application.getStatus() == 1) text += " - (Live)";
-							// add the title
-							jsonVersion.put("text", text);																					
-							// put the entry into the collection
-							jsonVersions.put(jsonVersion);	
+							// check the users permission to design this application
+							boolean designPermission = security.checkUserRole(rapidRequest, com.rapid.server.Rapid.DESIGN_ROLE);
 							
-						} // design permission
-																
+							// if app is rapid do a further check
+							if (designPermission && "rapid".equals(application.getId())) designPermission = application.getSecurity().checkUserRole(rapidRequest, com.rapid.server.Rapid.SUPER_ROLE);
+							
+							// check the RapidDesign role is present in the users roles for this application
+							if (designPermission) {												
+								
+								// make a json object for this version
+								JSONObject jsonVersion = new JSONObject();
+								// add the version
+								jsonVersion.put("value", application.getVersion());
+								// derive the text
+								String text = application.getVersion();
+								// if live add some
+								if (application.getStatus() == 1) text += " - (Live)";
+								// add the title
+								jsonVersion.put("text", text);																					
+								// put the entry into the collection
+								jsonVersions.put(jsonVersion);	
+								
+							} // design permission
+							
+						} // password check
+																																												
 					} // versions loop
 						
 				} // got versions check
@@ -540,165 +564,171 @@ public class Rapid extends Action {
 			} else if ("GETVERSION".equals(action)) {
 				
 				// get the security
+				SecurityAdapter security = app.getSecurity();
 				
-				// check the users permission to design this application
-				boolean designPermission = app.getSecurity().checkUserRole(rapidRequest, com.rapid.server.Rapid.DESIGN_ROLE);
-				
-				// if app is rapid do a further check
-				if (designPermission && "rapid".equals(app.getId())) designPermission = app.getSecurity().checkUserRole(rapidRequest, com.rapid.server.Rapid.SUPER_ROLE);
-				
-				if (designPermission) {
+				// password check
+				if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRequest.getUserPassword())) {
 					
-					// add the name
-					result.put("name", app.getName());
-					// add the version
-					result.put("version", app.getVersion());
-					// add the status
-					result.put("status", app.getStatus());
-					// add the title
-					result.put("title", app.getTitle());
-					// add the description
-					result.put("description", app.getDescription());
-					// add whether to show control ids
-					result.put("showControlIds", app.getShowControlIds());
-					// add whether to show action ids
-					result.put("showActionIds", app.getShowActionIds());
+					// check the users permission to design this application
+					boolean designPermission = security.checkUserRole(rapidRequest, com.rapid.server.Rapid.DESIGN_ROLE);
 					
-					// create a simplified array to hold the pages
-					JSONArray jsonPages = new JSONArray();
-					// retrieve the pages
-					List<PageHeader> pages = app.getPages().getSortedPages();
-					// check we have some
-					if (pages != null) {
-						for (PageHeader page : pages) {
-							JSONObject jsonPage = new JSONObject();						
-							jsonPage.put("text", page.getName() + " - " + page.getTitle());
-							jsonPage.put("value", page.getId());
-							jsonPages.put(jsonPage);
-						}
-					}				
-					// add the pages
-					result.put("pages", jsonPages);
+					// if app is rapid do a further check
+					if (designPermission && "rapid".equals(app.getId())) designPermission = app.getSecurity().checkUserRole(rapidRequest, com.rapid.server.Rapid.SUPER_ROLE);
 					
-					// add the start page Id
-					result.put("startPageId", app.getStartPageId());
-					
-					// add the styles
-					result.put("styles", app.getStyles());
-					// add the functions
-					result.put("functions", app.getFunctions());
-					// add the security adapter
-					result.put("securityAdapter", app.getSecurityAdapterType());	
-					// add action types
-					result.put("actionTypes", app.getActionTypes());				
-					// add control types
-					result.put("controlTypes", app.getControlTypes());
-					
-					// create an array for the database connections
-					JSONArray jsonDatabaseConnections = new JSONArray();
-					
-					
-					// check we have some database connections
-					if (app.getDatabaseConnections() != null) {
-						// remember the index
-						int index = 0;
-						// loop and add to jsonArray
-						for (DatabaseConnection dbConnection : app.getDatabaseConnections()) {
-							// create an object for the database connection
-							JSONObject jsonDBConnection = new JSONObject();
-							// set the index as the value
-							jsonDBConnection.put("value", index);
-							// set the name as the text
-							jsonDBConnection.put("text", dbConnection.getName());
-							// add to our collection
-							jsonDatabaseConnections.put(jsonDBConnection);
-							// inc the index
-							index ++;
-						}					
-					}
-					// add database connections
-					result.put("databaseConnections", jsonDatabaseConnections);
-					
-					
-					// create an array for the soa webservices
-					JSONArray jsonWebservices = new JSONArray();
-									
-					// check we have some webservices
-					if (app.getWebservices() != null) {
-						// loop and add to jsonArray
-						for (Webservice webservice : app.getWebservices()) {
-							jsonWebservices.put(webservice.getName());
-						}					
-					}	
-					// add webservices connections
-					result.put("webservices", jsonWebservices);
-					
-					// create an array for the parameters
-					JSONArray jsonParameters = new JSONArray();
-									
-					// check we have some webservices
-					if (app.getParameters() != null) {
-						// loop and add to jsonArray
-						for (Parameter parameter : app.getParameters()) {
-							jsonParameters.put(parameter.getName());
-						}					
-					}	
-					// add webservices connections
-					result.put("parameters", jsonParameters);
-					
-					
-					// create an array for the app backups
-					JSONArray jsonAppBackups = new JSONArray();
-					
-					// check we have some app backups
-					if (app.getApplicationBackups(rapidServlet) != null) {
-						// loop and add to jsonArray
-						for (Application.Backup appBackup : app.getApplicationBackups(rapidServlet)) {
-							// create the backup json object
-							JSONObject jsonBackup = new JSONObject();
-							// create a date formatter
-							//SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-							// populate it
-							jsonBackup.append("id", appBackup.getId());
-							jsonBackup.append("date", rapidServlet.getLocalDateTimeFormatter().format(appBackup.getDate()));
-							jsonBackup.append("user", appBackup.getUser());
-							jsonBackup.append("size", appBackup.getSize());
-							// add it
-							jsonAppBackups.put(jsonBackup);
-						}					
-					}	
-					// add webservices connections
-					result.put("appbackups", jsonAppBackups);
-					
-					// add the max number of application backups
-					result.put("appBackupsMaxSize", app.getApplicationBackupsMaxSize());
-									
-					// create an array for the page backups
-					JSONArray jsonPageBackups = new JSONArray();
-					
-					// check we have some app backups
-					if (app.getPageBackups(rapidServlet) != null) {
-						// loop and add to jsonArray
-						for (Application.Backup appBackup : app.getPageBackups(rapidServlet)) {
-							// create the backup json object
-							JSONObject jsonBackup = new JSONObject();						
-							// populate it
-							jsonBackup.append("id", appBackup.getId());
-							jsonBackup.append("page", appBackup.getName());
-							jsonBackup.append("date", rapidServlet.getLocalDateTimeFormatter().format(appBackup.getDate()));
-							jsonBackup.append("user", appBackup.getUser());
-							jsonBackup.append("size", appBackup.getSize());
-							// add it
-							jsonPageBackups.put(jsonBackup);
-						}					
-					}	
-					// add webservices connections
-					result.put("pagebackups", jsonPageBackups);
-
-					// add the max number of page backups
-					result.put("pageBackupsMaxSize", app.getPageBackupsMaxSize());
+					if (designPermission) {
 						
-				}
+						// add the name
+						result.put("name", app.getName());
+						// add the version
+						result.put("version", app.getVersion());
+						// add the status
+						result.put("status", app.getStatus());
+						// add the title
+						result.put("title", app.getTitle());
+						// add the description
+						result.put("description", app.getDescription());
+						// add whether to show control ids
+						result.put("showControlIds", app.getShowControlIds());
+						// add whether to show action ids
+						result.put("showActionIds", app.getShowActionIds());
+						
+						// create a simplified array to hold the pages
+						JSONArray jsonPages = new JSONArray();
+						// retrieve the pages
+						List<PageHeader> pages = app.getPages().getSortedPages();
+						// check we have some
+						if (pages != null) {
+							for (PageHeader page : pages) {
+								JSONObject jsonPage = new JSONObject();						
+								jsonPage.put("text", page.getName() + " - " + page.getTitle());
+								jsonPage.put("value", page.getId());
+								jsonPages.put(jsonPage);
+							}
+						}				
+						// add the pages
+						result.put("pages", jsonPages);
+						
+						// add the start page Id
+						result.put("startPageId", app.getStartPageId());
+						
+						// add the styles
+						result.put("styles", app.getStyles());
+						// add the functions
+						result.put("functions", app.getFunctions());
+						// add the security adapter
+						result.put("securityAdapter", app.getSecurityAdapterType());	
+						// add action types
+						result.put("actionTypes", app.getActionTypes());				
+						// add control types
+						result.put("controlTypes", app.getControlTypes());
+						
+						// create an array for the database connections
+						JSONArray jsonDatabaseConnections = new JSONArray();
+						
+						
+						// check we have some database connections
+						if (app.getDatabaseConnections() != null) {
+							// remember the index
+							int index = 0;
+							// loop and add to jsonArray
+							for (DatabaseConnection dbConnection : app.getDatabaseConnections()) {
+								// create an object for the database connection
+								JSONObject jsonDBConnection = new JSONObject();
+								// set the index as the value
+								jsonDBConnection.put("value", index);
+								// set the name as the text
+								jsonDBConnection.put("text", dbConnection.getName());
+								// add to our collection
+								jsonDatabaseConnections.put(jsonDBConnection);
+								// inc the index
+								index ++;
+							}					
+						}
+						// add database connections
+						result.put("databaseConnections", jsonDatabaseConnections);
+						
+						
+						// create an array for the soa webservices
+						JSONArray jsonWebservices = new JSONArray();
+										
+						// check we have some webservices
+						if (app.getWebservices() != null) {
+							// loop and add to jsonArray
+							for (Webservice webservice : app.getWebservices()) {
+								jsonWebservices.put(webservice.getName());
+							}					
+						}	
+						// add webservices connections
+						result.put("webservices", jsonWebservices);
+						
+						// create an array for the parameters
+						JSONArray jsonParameters = new JSONArray();
+										
+						// check we have some webservices
+						if (app.getParameters() != null) {
+							// loop and add to jsonArray
+							for (Parameter parameter : app.getParameters()) {
+								jsonParameters.put(parameter.getName());
+							}					
+						}	
+						// add webservices connections
+						result.put("parameters", jsonParameters);
+						
+						
+						// create an array for the app backups
+						JSONArray jsonAppBackups = new JSONArray();
+						
+						// check we have some app backups
+						if (app.getApplicationBackups(rapidServlet) != null) {
+							// loop and add to jsonArray
+							for (Application.Backup appBackup : app.getApplicationBackups(rapidServlet)) {
+								// create the backup json object
+								JSONObject jsonBackup = new JSONObject();
+								// create a date formatter
+								//SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+								// populate it
+								jsonBackup.append("id", appBackup.getId());
+								jsonBackup.append("date", rapidServlet.getLocalDateTimeFormatter().format(appBackup.getDate()));
+								jsonBackup.append("user", appBackup.getUser());
+								jsonBackup.append("size", appBackup.getSize());
+								// add it
+								jsonAppBackups.put(jsonBackup);
+							}					
+						}	
+						// add webservices connections
+						result.put("appbackups", jsonAppBackups);
+						
+						// add the max number of application backups
+						result.put("appBackupsMaxSize", app.getApplicationBackupsMaxSize());
+										
+						// create an array for the page backups
+						JSONArray jsonPageBackups = new JSONArray();
+						
+						// check we have some app backups
+						if (app.getPageBackups(rapidServlet) != null) {
+							// loop and add to jsonArray
+							for (Application.Backup appBackup : app.getPageBackups(rapidServlet)) {
+								// create the backup json object
+								JSONObject jsonBackup = new JSONObject();						
+								// populate it
+								jsonBackup.append("id", appBackup.getId());
+								jsonBackup.append("page", appBackup.getName());
+								jsonBackup.append("date", rapidServlet.getLocalDateTimeFormatter().format(appBackup.getDate()));
+								jsonBackup.append("user", appBackup.getUser());
+								jsonBackup.append("size", appBackup.getSize());
+								// add it
+								jsonPageBackups.put(jsonBackup);
+							}					
+						}	
+						// add webservices connections
+						result.put("pagebackups", jsonPageBackups);
+
+						// add the max number of page backups
+						result.put("pageBackupsMaxSize", app.getPageBackupsMaxSize());
+							
+					} // permission check
+					
+				} // password check
 							
 			} else if ("GETDBCONN".equals(action)) {
 				
@@ -786,7 +816,7 @@ public class Rapid extends Action {
 				}	 
 				
 				// get the current app security adapter
-				SecurityAdapater security = app.getSecurity();
+				SecurityAdapter security = app.getSecurity();
 												
 				// if we got one
 				if (security != null) {
@@ -819,7 +849,7 @@ public class Rapid extends Action {
 				rapidRequest.setUserName(userName);
 				
 				// get the app security
-				SecurityAdapater security = app.getSecurity();
+				SecurityAdapter security = app.getSecurity();
 				
 				// get the user
 				User user = security.getUser(rapidRequest);
@@ -856,7 +886,7 @@ public class Rapid extends Action {
 			} else if ("GETUSERS".equals(action)) { 
 							
 				// get the app security
-				SecurityAdapater security = app.getSecurity();
+				SecurityAdapter security = app.getSecurity();
 				
 				// if we got one
 				if (security != null) {
@@ -1598,7 +1628,7 @@ public class Rapid extends Action {
 				String password = jsonAction.getString("password");
 				
 				// get the security
-				SecurityAdapater security = app.getSecurity();
+				SecurityAdapter security = app.getSecurity();
 												
 				// add the user
 				security.addUser(rapidRequest, new User(userName, description, password));
@@ -1684,7 +1714,7 @@ public class Rapid extends Action {
 				String password = jsonAction.getString("password");
 				
 				// get the security
-				SecurityAdapater security = app.getSecurity();
+				SecurityAdapter security = app.getSecurity();
 				// get the user
 				User user = security.getUser(rapidRequest);
 				// update the description

@@ -39,6 +39,7 @@ import org.apache.log4j.Logger;
 
 import com.rapid.core.Application;
 import com.rapid.core.Applications;
+import com.rapid.server.RapidHttpServlet;
 import com.rapid.server.RapidRequest;
 
 public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
@@ -166,8 +167,11 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 					// we passed authorisation so redirect the client to the resource they wanted
 					if (authorised) {
 						
-						// retain username in the session
+						// retain user name in the session
 						session.setAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME, userName);
+						
+						// retain encrypted user password in the session
+						session.setAttribute(RapidFilter.SESSION_VARIABLE_USER_PASSWORD, RapidHttpServlet.getEncryptedXmlAdapter().marshal(userPassword));
 						
 						// log that authentication was granted
 						_logger.debug("FormAuthenticationAdapter authenticated " + userName);

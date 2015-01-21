@@ -11,7 +11,7 @@
     <users>
         <description>Admin user</description>
         <name>admin</name>
-        <password>admin</password>
+        <password>DKxPp+2vy4E=</password>
         <roles>RapidAdmin</roles>
         <roles>RapidDesign</roles>
         <!-- <roles>RapidSuper</roles> -->
