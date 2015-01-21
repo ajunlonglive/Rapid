@@ -40,10 +40,11 @@ import org.apache.log4j.Logger;
 
 import com.rapid.core.Application;
 import com.rapid.server.Rapid;
+import com.rapid.server.RapidHttpServlet;
 import com.rapid.server.RapidRequest;
 import com.rapid.utils.Files;
 
-public class RapidSecurityAdapter extends SecurityAdapater {
+public class RapidSecurityAdapter extends SecurityAdapter {
 	
 	// security object which is marshalled and unmarshalled
 	
@@ -87,7 +88,9 @@ public class RapidSecurityAdapter extends SecurityAdapater {
 			JAXBContext jaxb = JAXBContext.newInstance(Security.class);
 			_marshaller = jaxb.createMarshaller(); 
 			_marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+			_marshaller.setAdapter(RapidHttpServlet.getEncryptedXmlAdapter());
 			_unmarshaller = jaxb.createUnmarshaller();
+			_unmarshaller.setAdapter(RapidHttpServlet.getEncryptedXmlAdapter());
 		} catch (JAXBException ex) {
 			_logger.error(ex);
 		}

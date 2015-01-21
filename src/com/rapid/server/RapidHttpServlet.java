@@ -71,6 +71,7 @@ public class RapidHttpServlet extends HttpServlet {
 	public static JAXBContext getJAXBContext() { return _jaxbContext; }
 	public static void setJAXBContext(JAXBContext jaxbContext) { _jaxbContext = jaxbContext; }
 	
+	public static EncryptedXmlAdapter getEncryptedXmlAdapter() { return _encryptedXmlAdapter; }
 	public static void setEncryptedXmlAdapter(EncryptedXmlAdapter encryptedXmlAdapter) { _encryptedXmlAdapter = encryptedXmlAdapter; }
 		
 	// public methods

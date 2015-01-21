@@ -394,7 +394,7 @@ public class RapidServletContextListener implements ServletContextListener {
 			// get the class 
 			Class classClass = Class.forName(className);
 			// check the class extends com.rapid.Action
-			if (!com.rapid.security.SecurityAdapater.class.equals(classClass.getSuperclass())) throw new Exception(type + " security adapter class must extend " + classClass.getCanonicalName()); 
+			if (!com.rapid.security.SecurityAdapter.class.equals(classClass.getSuperclass())) throw new Exception(type + " security adapter class must extend " + classClass.getCanonicalName()); 
 			// check this type is unique
 			if (securityConstructors.get(type) != null) throw new Exception(type + " security adapter already loaded. Type names must be unique.");
 			// add to constructors hashmap referenced by type
