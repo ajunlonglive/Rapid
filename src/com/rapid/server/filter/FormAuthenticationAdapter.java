@@ -26,6 +26,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 package com.rapid.server.filter;
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -171,7 +172,12 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 						session.setAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME, userName);
 						
 						// retain encrypted user password in the session
-						session.setAttribute(RapidFilter.SESSION_VARIABLE_USER_PASSWORD, RapidHttpServlet.getEncryptedXmlAdapter().marshal(userPassword));
+						try {
+							session.setAttribute(RapidFilter.SESSION_VARIABLE_USER_PASSWORD, RapidHttpServlet.getEncryptedXmlAdapter().marshal(userPassword));
+						} catch (GeneralSecurityException ex) {
+							// log the error
+							_logger.error("FormAuthenticationAdapter error storing encrypted password", ex);
+						}
 						
 						// log that authentication was granted
 						_logger.debug("FormAuthenticationAdapter authenticated " + userName);
