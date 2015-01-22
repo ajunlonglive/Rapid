@@ -176,76 +176,80 @@ function showProperties(control) {
 function updateProperty(cell, propertyObject, property, details, value) {
 	
 	// if the page isn't locked
-	if (!_locked) {
-		// add an undo snapshot
-		addUndo();
-		// update the object property value
-		propertyObject[property.key] = value;
-		// if an html refresh is requested
-		if (property.refreshHtml) {
-			// in controls.js
-			rebuildHtml(propertyObject);			
-		}	
-		// if a property refresh is requested
-		if (property.refreshProperties) {
-								
-			// if these are events
-			if (cell.closest("div.actionsPanelDiv")[0]) {
+	if (!_locked) {		
+		// only if the property is actually different
+		if (propertyObject[property.key] != value) {
+			// add an undo snapshot
+			addUndo();
+			// update the object property value
+			propertyObject[property.key] = value;
+			// if an html refresh is requested
+			if (property.refreshHtml) {
+				// in controls.js
+				rebuildHtml(propertyObject);			
+			}	
+			// if a property refresh is requested
+			if (property.refreshProperties) {
+									
+				// if these are events
+				if (cell.closest("div.actionsPanelDiv")[0]) {
+							
+					// get the event type
+					var eventType = cell.closest("table[data-eventType]").attr("data-eventType");
+					
+					// get the dialogue id
+					var dialogueId = cell.closest("div.dialogue").attr("id");
+					
+					// if we're in a dialogue
+					if (dialogueId) {
 						
-				// get the event type
-				var eventType = cell.closest("table[data-eventType]").attr("data-eventType");
-				
-				// get the dialogue id
-				var dialogueId = cell.closest("div.dialogue").attr("id");
-				
-				// if we're in a dialogue
-				if (dialogueId) {
-					
-					// get the refresh properties from the global store
-					var refreshProperties = _dialogueRefeshProperties[dialogueId];
-					
-					// get the parts
-					var cell = refreshProperties.cell;
-					var propertyObject = refreshProperties.propertyObject;
-					var property = refreshProperties.property;
-					
-					// check for the property function (it wouldn't have made a dialogue unless it was custom)
-					if (window["Property_" + property.changeValueJavaScript]) {
-						window["Property_" + property.changeValueJavaScript](cell, propertyObject, property);
+						// get the refresh properties from the global store
+						var refreshProperties = _dialogueRefeshProperties[dialogueId];
+						
+						// get the parts
+						var cell = refreshProperties.cell;
+						var propertyObject = refreshProperties.propertyObject;
+						var property = refreshProperties.property;
+						
+						// check for the property function (it wouldn't have made a dialogue unless it was custom)
+						if (window["Property_" + property.changeValueJavaScript]) {
+							window["Property_" + property.changeValueJavaScript](cell, propertyObject, property);
+						} else {
+							alert("Error - There is no known Property_" + property.changeValueJavaScript + " function");
+						}
+						
 					} else {
-						alert("Error - There is no known Property_" + property.changeValueJavaScript + " function");
+						
+						// update this event's actions using the control
+						showActions(_selectedControl, eventType);
+										
 					}
-					
+									
 				} else {
 					
-					// update this event's actions using the control
-					showActions(_selectedControl, eventType);
-									
+					// re-show the properties
+					showProperties(_selectedControl);				
+					
 				}
-								
-			} else {
 				
-				// re-show the properties
-				showProperties(_selectedControl);				
-				
+				// resize the page
+				windowResize("updateProperty");
+										
 			}
 			
-			// resize the page
-			windowResize("updateProperty");
-									
-		}
-		
-		// if this is the name
-		if (property.key == "name") {
-			// if the property map is visible
-			if ($("#pageMap").is(":visible")) {
-				// get the control class
-				var controlClass = _controlTypes[propertyObject.type];
-				// update the name
-				$("#pageMap").find("span[data-id=" + propertyObject.id + "]").html(((controlClass.image) ? "<img src='" + controlClass.image + "'/>" : "") + propertyObject.type + (propertyObject.name ? " - " + propertyObject.name: ""));
+			// if this is the name
+			if (property.key == "name") {
+				// if the property map is visible
+				if ($("#pageMap").is(":visible")) {
+					// get the control class
+					var controlClass = _controlTypes[propertyObject.type];
+					// update the name
+					$("#pageMap").find("span[data-id=" + propertyObject.id + "]").html(((controlClass.image) ? "<img src='" + controlClass.image + "'/>" : "") + propertyObject.type + (propertyObject.name ? " - " + propertyObject.name: ""));
+				}
 			}
-		}
-	}
+			
+		} // property value changed check		
+	} // page lock check	
 }
 
 function setPropertyVisibilty(propertyObject, propertyKey, visibile) {
