@@ -3,37 +3,6 @@
 
 /* Page control resource styles */
 
-/* Dialogue cover */
-
-.dialogueCover {
-	background-color: white;
-	opacity:0.8;
-	filter:alpha(opacity=80); 
-}
-
-/* Dialogue */
-
-.dialogue {
-	background-color: white;
-	padding: 0px;
-}
-
-/* Validation */
-
-div.validation {
-	padding: 10px;
-	color: red;
-	font-weight: bold;
-}
-
-input.validation {
-	border: 2px solid red;
-}
-
-textarea.validation {
-	border: 2px solid red;
-}                    
-
 /* Loading */
 
 div.loading {
@@ -146,6 +115,39 @@ div.tabsPanel.selected {
 	border: 1px solid black;
 	clear: both;
 	padding: 0 1em;	
+}
+
+/* Navigate action resource styles */
+
+.dialogueCover {
+	background-color: white;
+	opacity:0.8;
+	filter:alpha(opacity=80); 
+}
+
+.dialogue {
+	background-color: white;
+	padding: 0px;
+}
+
+/* Validation action resource styles */
+
+div.validation {
+	padding: 10px;
+	color: red !important;
+	font-weight: bold;
+}
+
+input.validation {
+	border: 2px solid red !important;
+}
+
+textarea.validation {
+	border: 2px solid red !important;
+}  
+
+li.validation {
+  color:red !important;
 }
 
 

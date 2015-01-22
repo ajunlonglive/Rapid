@@ -1,8 +1,3 @@
-.dialogueCover{background-color:white;opacity:0.8;filter:alpha(opacity=80)}
-.dialogue{background-color:white;padding:0px}
-div.validation{padding:10px;color:red;font-weight:bold}
-input.validation{border:2px solid red}
-textarea.validation{border:2px solid red}
 div.loading{position:absolute;background-color:black;opacity:0.2;filter:alpha(opacity=20);text-align:center;vertical-align:middle;display:none}
 span.loading{position:absolute;background:url("../../../images/wait_120x15.gif");background-repeat:no-repeat;width:120px;height:15px;border:2px solid #777;display:none}
 .buttonGlyphWithBackground{font-size:0.5em}
@@ -19,6 +14,12 @@ ul.tabsHeaderV li.selected{position:relative;left:1px;z-index:1;margin-left:-1px
 div.tabsGroup{clear:both}
 div.tabsPanel{display:none;min-height:2em;vertical-align:top}
 div.tabsPanel.selected{border:1px solid black;clear:both;padding:0 1em}
+.dialogueCover{background-color:white;opacity:0.8;filter:alpha(opacity=80)}
+.dialogue{background-color:white;padding:0px}
+div.validation{padding:10px;color:red !important;font-weight:bold}
+input.validation{border:2px solid red !important}
+textarea.validation{border:2px solid red !important}
+li.validation{color:red !important}
 body{padding:10px;font-family:'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;font-size:13px}
 table{font-family:'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;font-size:13px}
 .dialogueCover{background-color:white;opacity:0.7;filter:alpha(opacity=70)}
