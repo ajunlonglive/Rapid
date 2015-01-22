@@ -31,6 +31,8 @@ This class wraps an HttpRequest and provides a number of useful methods for retr
 
 */
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -74,7 +76,7 @@ public class RapidRequest {
 	public void setUserName(String userName) { _userName = userName; }
 	
 	// decrypt the password
-	public String getUserPassword() {
+	public String getUserPassword() throws GeneralSecurityException, IOException {
 		String raw = (String) _request.getSession().getAttribute(RapidFilter.SESSION_VARIABLE_USER_PASSWORD);
 		return RapidHttpServlet.getEncryptedXmlAdapter().unmarshal(raw);
 	}
