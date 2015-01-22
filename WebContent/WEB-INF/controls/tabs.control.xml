@@ -69,7 +69,7 @@ return "<li id='" + this.id + "' class='tabsPanel'>" + this.label + "</li>";
 	    <createJavaScript>
 	        <![CDATA[
 // add a div for the panel into the tab group div (that leading space is important for creating the same gap we see at runtime)	           
-this._parent.object.append(" <div class='tabsPanel'></div>");
+this._parent.object.append(" <div class='tabsPanel' data-id='" + this.id + "'></div>");
 // set this object to the div
 this.object = this._parent.object.children().last();
 	        ]]>
@@ -204,7 +204,7 @@ this._parent._rebuild();
 	            <name>Tab header</name>
 	            <getAppliesToFunction>
 					<![CDATA[	      
-return "#" + this.id;
+return "#" + this.id + ".tabsPanel";
 	       			 ]]>	                
 	            </getAppliesToFunction>
 	        </style>   
@@ -417,7 +417,7 @@ try {
 			
 			// get the real mouse positions from the windows event
 			var winEvent = window.event;	
-			
+						
 			// loop the tab headers	
 			for (var i = 0; i < tabs.childControls.length; i++) {
 				// get the li
@@ -425,7 +425,7 @@ try {
 				// get the offset
 				var os = li.offset();
 				// check if the mouse is over it
-				if (winEvent.clientY + _pageIframeWindow.scrollTop() < os.top + li.outerHeight() && winEvent.clientX - _panelPinnedOffset > os.left && winEvent.clientX - _panelPinnedOffset < os.left + li.outerWidth()) {
+				if (winEvent.clientY + _pageIframeWindow.scrollTop() + _window.scrollTop() < os.top + li.outerHeight() && winEvent.clientX - _panelPinnedOffset > os.left && winEvent.clientX - _panelPinnedOffset < os.left + li.outerWidth()) {
 					// add an undo snapshot
 					addUndo();
 					// update selected tab
