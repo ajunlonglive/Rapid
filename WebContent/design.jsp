@@ -6,6 +6,7 @@
 <%@ page import="com.rapid.server.Rapid" %>
 <%@ page import="com.rapid.server.RapidRequest" %>
 <%@ page import="com.rapid.server.filter.*" %>
+<%@ page import="com.rapid.security.SecurityAdapter" %>
 <%
 
 /*
@@ -41,8 +42,16 @@ Applications applications = (Applications) getServletContext().getAttribute("app
 Application rapid = applications.get("rapid");
 // get a rapid request
 RapidRequest rapidRequest = new RapidRequest(request); 
-// check permission
-boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, Rapid.DESIGN_ROLE);
+// get the rapid application security
+SecurityAdapter security = rapid.getSecurity();
+// assume no permission
+boolean designerPermission = false;
+// check the user password
+if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRequest.getUserPassword())) {
+	// check design permission
+	designerPermission = security.checkUserRole(rapidRequest, Rapid.DESIGN_ROLE);	
+}
+
 %>
 <html>
 <head>
@@ -253,7 +262,7 @@ boolean designerPermission = rapid.getSecurity().checkUserRole(rapidRequest, Rap
 		<span>Rapid - version <%=com.rapid.server.Rapid.VERSION %></span>
 	</div>
 
-	<div style="text-align:center;"><h3>You do not have permission to access the Rapid Designer</h3></div>
+	<div style="text-align:center;"><h3>You do not have permission to use the Rapid Designer</h3></div>
 		
 <%		
 	}
