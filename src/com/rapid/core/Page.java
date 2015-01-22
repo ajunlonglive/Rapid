@@ -895,10 +895,11 @@ public class Page {
 									// add the action function to the action stringbuilder so it's before the event
 									actionStringBuilder.append("function Action_" + action.getId() + "(ev) {\n" 
 									+ "  " + actionJavaScript.trim().replace("\n", "\n  ") + "\n"
-									+ "  return true;\n"
+									//+ "  return true;\n"
 									+ "}\n\n");	
 									// add an action function call to the event string builder
-									eventStringBuilder.append("    if (!Action_" + action.getId() + "(ev)) return false;\n");																
+									//eventStringBuilder.append("    if (!Action_" + action.getId() + "(ev)) return false;\n");																
+									eventStringBuilder.append("    Action_" + action.getId() + "(ev);\n");
 								} else {
 									// go straight into the event
 									eventStringBuilder.append("    " + actionJavaScript.trim().replace("\n", "\n    ") + "\n");

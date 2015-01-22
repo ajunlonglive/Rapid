@@ -4,6 +4,7 @@
 <%@ page import="com.rapid.core.*" %>
 <%@ page import="com.rapid.server.filter.*" %>
 <%@ page import="com.rapid.server.RapidRequest" %>
+<%@ page import="com.rapid.security.SecurityAdapter" %>
 <%
 
 /*
@@ -100,19 +101,29 @@ $(document).ready( function() {
 </div>
 
 <% 
-	if (rapid.getSecurity().checkUserRole(rapidRequest, "RapidAdmin")) {
+	// get the rapid application security
+	SecurityAdapter security = rapid.getSecurity();
+	
+	// check the user password in the rapid application
+	if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRequest.getUserPassword())) {
+
+		// check for the admin role	
+		if (security.checkUserRole(rapidRequest, "RapidAdmin")) {
 %>
 <div class="body">
 	<a href="~?a=rapid"><img src="images/administration_157x135.png" /><span id="admin">Admin</span></a>
 </div>
 <% 
-	}
-	if (rapid.getSecurity().checkUserRole(rapidRequest, "RapidDesign")) {
+		}
+		
+		// check for the design role
+		if (security.checkUserRole(rapidRequest, "RapidDesign")) {
 %>
 <div class="body">
 	<a href="design.jsp"><img src="images/designer_157x135.png" /><span id="design">Design</span></a>
 </div>
 <% 
+		}
 	}
 %>
 
