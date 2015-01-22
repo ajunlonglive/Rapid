@@ -25,6 +25,10 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
 package com.rapid.utils;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.GeneralSecurityException;
+
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 public class JAXB {
@@ -40,34 +44,25 @@ public class JAXB {
 		}
 		
 	    @Override
-	    public String unmarshal(String s) {
-	        try {
-	        	if (s == null) {
-	        		return null;
-	        	} else if (_password == null || _salt == null) {
-	        		return s;
-	        	} else {
-	        		return Encryption.decrypt(s, _password, _salt);
-	        	}
-			} catch (Exception ex) {
-				return s;
-			}
-			
+	    public String unmarshal(String s) throws GeneralSecurityException, IOException {
+	    	if (s == null) {
+        		return null;
+        	} else if (_password == null || _salt == null) {
+        		return s;
+        	} else {
+        		return Encryption.decrypt(s, _password, _salt);
+        	}			
 	    }
 
 	    @Override
-	    public String marshal(String s) {
-	        try {
-	        	if (s == null) {
-	        		return null;
-	        	} else if (_password == null || _salt == null) {
-	        		return s;
-	        	} else {
-	        		return Encryption.encrypt(s, _password, _salt);
-	        	}
-			} catch (Exception ex) {
-				return s;
-			}
+	    public String marshal(String s) throws UnsupportedEncodingException, GeneralSecurityException {
+	    	if (s == null) {
+        		return null;
+        	} else if (_password == null || _salt == null) {
+        		return s;
+        	} else {
+        		return Encryption.encrypt(s, _password, _salt);
+        	}
 	    }
 	}
 
