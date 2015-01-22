@@ -127,38 +127,7 @@ function Event_error(eventName, controlId, ex) {
                 <type>css</type>
                 <contents>
                     <![CDATA[
-                                     
-/* Dialogue cover */
-
-.dialogueCover {
-	background-color: white;
-	opacity:0.8;
-	filter:alpha(opacity=80); 
-}
-
-/* Dialogue */
-
-.dialogue {
-	background-color: white;
-	padding: 0px;
-}
-
-/* Validation */
-
-div.validation {
-	padding: 10px;
-	color: red;
-	font-weight: bold;
-}
-
-input.validation {
-	border: 2px solid red;
-}
-
-textarea.validation {
-	border: 2px solid red;
-}                    
-
+                                                 
 /* Loading */
 
 div.loading {
@@ -180,7 +149,6 @@ span.loading {
 	border: 2px solid #777;
 	display: none;
 }
-
 
                     ]]>
                 </contents>                

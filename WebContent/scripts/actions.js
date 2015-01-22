@@ -65,8 +65,8 @@ function Action(actionType, jsonAction, paste, undo) {
 					_nextId++;
 					// loop properties
 					for (var i in this) {
-						// look for "actions" collections
-						if (i.toLowerCase().indexOf("actions") > -1 && $.isArray(this[i])) {
+						// look for "*actions" collections (but not redundantActions)
+						if ($.isArray(this[i]) && i.toLowerCase().indexOf("actions") > 0 && i != "redundantActions") {
 							// make a new collection
 							var childActions = [];
 							// loop this collection
@@ -164,7 +164,7 @@ function Action(actionType, jsonAction, paste, undo) {
 		} 
 						
 	} else {
-		alert("ActionClass could not be found");
+		alert("ActionClass " + actionType + " could not be found");
 	}
 	
 	return this;

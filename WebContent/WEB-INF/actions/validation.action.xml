@@ -75,6 +75,32 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <type>file</type>
 	            <contents>images/alert_16x16.png</contents>
 	        </resource>
+	                    <resource>
+                <type>css</type>
+                <contents>
+                    <![CDATA[
+                                     
+div.validation {
+	padding: 10px;
+	color: red !important;
+	font-weight: bold;
+}
+
+input.validation {
+	border: 2px solid red !important;
+}
+
+textarea.validation {
+	border: 2px solid red !important;
+}  
+
+li.validation {
+  color:red !important;
+}                  
+
+                    ]]>
+                </contents>                
+            </resource> 
 	    </resources>
 	    	    	    
 	    <actionJavaScript>
