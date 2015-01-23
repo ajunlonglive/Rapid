@@ -1149,10 +1149,10 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 	cell.text(text);
 	
 	// add inputs table, sql, and outputs table
-	table.append("<tr><td colspan='2' rowspan='3' style='padding:0px;vertical-align: top;'><table style='width:100%'  class='propertiesPanelTable'><tr><td><b>Input</b></td><td colspan='2'><b>Field</b></td></tr></table></td><td colspan='2' style='width:500px;padding:0px 6px 0px 0px;'><b>SQL</b><br/><textarea style='width:100%;min-height:300px;'></textarea></td><td colspan='2' rowspan='3' style='padding:0px;vertical-align: top;'><table style='width:100%' class='propertiesPanelTable'><tr><td><b>Field</b></td><td colspan='2'><b>Output</b></td></tr></table></td></tr>");
+	table.append("<tr><td colspan='2' rowspan='3' style='padding:0px;vertical-align: top;'><table style='width:100%' class='propertiesPanelTable'><tr><td><b>Input</b></td><td colspan='2'><b>Field</b></td></tr></table></td><td colspan='3' style='width:500px;padding:0px 6px 0px 0px;'><b>SQL</b><br/><textarea style='width:100%;min-height:300px;'></textarea></td><td colspan='2' rowspan='3' style='padding:0px;vertical-align: top;'><table style='width:100%' class='propertiesPanelTable'><tr><td><b>Field</b></td><td colspan='2'><b>Output</b></td></tr></table></td></tr>");
 	
 	// find the inputs table
-	var inputsTable = table.children().last().children().first().children().last();
+	var inputsTable = table.children().last().children().first().children("table");
 	// loop input parameters
 	for (var i in query.inputs) {		
 		// get the input name
@@ -1166,7 +1166,7 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 		// make it an empty space if null
 		if (!field) field = "";
 		// add the row
-		inputsTable.append("<tr><td>" + itemName + "</td><td><input value='" + field + "' /></td><td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
+		inputsTable.append("<tr><td style='min-width:100px;'>" + (query.multiRow && i > 0 ? "&nbsp;" : itemName) + "</td><td><input value='" + field + "' /></td><td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
 		// get the field input
 		var fieldInput = inputsTable.find("tr").last().children(":nth(1)").last().children().last();
 		// add a listener
@@ -1192,21 +1192,39 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 	addReorder(query.inputs, inputsTable.find("img.reorder"), function() { 
 		Property_databaseQuery(cell, propertyObject, property); 
 	});
-	// add the add input
-	inputsTable.append("<tr><td style='padding:0px;'><select style='margin:0px'><option value=''>Add input...</option>" + getInputOptions() + "</select></td><td>&nbsp;</td><td>&nbsp;</td></tr>");
-	// find the input add
-	var inputAdd = inputsTable.find("tr").last().children().first().children().first();
-	// listener to add input
-	addListener( inputAdd.change( {cell: cell, propertyObject: propertyObject, property: property, details: details}, function(ev) {
-		// initialise array if need be
-		if (!ev.data.propertyObject.query.inputs) ev.data.propertyObject.query.inputs = [];
-		// get the parameters (inputs or outputs)
-		var parameters = ev.data.propertyObject.query.inputs;
-		// add a new one
-		parameters.push({itemId: $(ev.target).val(), field: ""});
-		// rebuild the dialgue
-		Property_databaseQuery(ev.data.cell, ev.data.propertyObject, ev.data.property, ev.data.details);
-	}));
+	
+	// if multi row and at least one input
+	if (query.multiRow && query.inputs.length > 0) {
+		// add the add input linke
+		inputsTable.append("<tr><td style='padding:0px;' colspan='2'><a href='#' style='padding-left:5px;'>add input</a></td><td>&nbsp;</td></tr>");
+		// find the input add
+		var inputAdd = inputsTable.find("tr").last().children().first().children("a");
+		// listener to add input
+		addListener( inputAdd.click( {cell: cell, propertyObject: propertyObject, property: property, details: details}, function(ev) {
+			// get the input parameters
+			var inputs = ev.data.propertyObject.query.inputs;
+			// add a new one
+			inputs.push({itemId: inputs[0].itemId, field: ""});
+			// rebuild the dialgue
+			Property_databaseQuery(ev.data.cell, ev.data.propertyObject, ev.data.property, ev.data.details);
+		}));
+	} else {
+		// add the add input select
+		inputsTable.append("<tr><td style='padding:0px;' colspan='2'><select style='margin:0px'><option value=''>add input...</option>" + getInputOptions() + "</select></td><td>&nbsp;</td></tr>");
+		// find the input add
+		var inputAdd = inputsTable.find("tr").last().children().first().children("select");
+		// listener to add input
+		addListener( inputAdd.change( {cell: cell, propertyObject: propertyObject, property: property, details: details}, function(ev) {
+			// initialise array if need be
+			if (!ev.data.propertyObject.query.inputs) ev.data.propertyObject.query.inputs = [];
+			// get the parameters (inputs or outputs)
+			var parameters = ev.data.propertyObject.query.inputs;
+			// add a new one
+			parameters.push({itemId: $(ev.target).val(), field: ""});
+			// rebuild the dialgue
+			Property_databaseQuery(ev.data.cell, ev.data.propertyObject, ev.data.property, ev.data.details);
+		}));
+	}
 	
 	// find the sql textarea
 	var sqlControl = table.find("textarea").first();
@@ -1258,7 +1276,7 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 		Property_databaseQuery(cell, propertyObject, property); 
 	});
 	// add the add
-	outputsTable.append("<tr><td>&nbsp;</td><td style='padding:0px;'><select style='margin:0px'><option value=''>Add output...</option>" + getOutputOptions() + "</select></td><td>&nbsp;</td></tr>");
+	outputsTable.append("<tr><td>&nbsp;</td><td style='padding:0px;'><select style='margin:0px'><option value=''>add output...</option>" + getOutputOptions() + "</select></td><td>&nbsp;</td></tr>");
 	// find the output add
 	var outputAdd = outputsTable.find("tr").last().children(":nth(1)").last().children().last();
 	// listener to add output
@@ -1273,7 +1291,17 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 		Property_databaseQuery(ev.data.cell, ev.data.propertyObject, ev.data.property, ev.data.details);	
 	}));
 	
-	table.append("<tr><td>Database connection <select style='width:auto;'>" + getDatabaseConnectionOptions(query.databaseConnectionIndex) + "</select></td><td style='text-align:right;'><button>Test SQL</button></td></tr>");
+	table.append("<tr><td>Multi-row data? <input type='checkbox'" + (query.multiRow ? "checked='checked'" : "" ) + " style='vertical-align: middle;margin-top: -3px;'/></td><td style='text-align: center;'>Database connection <select style='width:auto;'>" + getDatabaseConnectionOptions(query.databaseConnectionIndex) + "</select></td><td style='text-align:right;'><button>Test SQL</button></td></tr>");
+	
+	// get a reference to the multi-data check box
+	var multiRow = table.find("tr").last().find("input");
+	// add a listener for if it changes
+	addListener( multiRow.change( {cell: cell, propertyObject: propertyObject, property: property, details: details, query: query}, function(ev) {
+		// set the multiData value
+		ev.data.query.multiRow = $(ev.target).is(":checked");
+		// refresh the dialogue
+		Property_databaseQuery(ev.data.cell, ev.data.propertyObject, ev.data.property, ev.data.details)
+	}));
 	
 	// get a reference to the db connection
 	var dbConnection = table.find("tr").last().find("select");
