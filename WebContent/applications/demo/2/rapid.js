@@ -156,6 +156,76 @@ function getDatabaseActionMaxSequence(actionId) {
 	}
 	// pass back
 	return sequence;
+}	
+
+// this function creates input data for the database action
+function getDatabaseActionInputData(multiRow, inputs, sourceId, sourceData) {
+	// start data object
+	var data = {};
+	// check multirow
+	if (multiRow) {
+		// check there are sourceData rows
+		if (sourceData && sourceData.fields && sourceData.rows && sourceData.fields.length > 0 && sourceData.rows.length > 0) {
+			// add a fields collection
+			data.fields = [];
+			// loop the inputs
+			for (var i in inputs) {
+				// the field we want to send is the source id plus the field, this matches how we do non multi row queries
+				data.fields.push(sourceId + "." + inputs[i]);
+			}
+			// add a rows collection
+			data.rows = [];
+			// loop the sourceData rows
+			for (var i in sourceData.rows) {
+				// get the source row
+				var sourceRow = sourceData.rows[i];
+				// make a row for our return
+				var row = [];
+				// now loop the inputs
+				for (var j in inputs) {
+					// get the input field
+					var field = inputs[j];
+					// assume we can't find the field we want
+					var fieldIndex = -1;
+					// loop the source fields looking for the position of the field we want
+					for (var k in sourceData.fields) {
+						if (field.toLowerCase() == sourceData.fields[k].toLowerCase()) {
+							// set the fieldIndex
+							fieldIndex = k;
+							// we're done
+							break;
+						}
+					}
+					// if we found the field
+					if (fieldIndex > -1) {
+						row.push(sourceRow[fieldIndex]);
+					} else {
+						row.push(null);
+					}
+				}
+				// add the row
+				data.rows.push(row);
+			}
+		} else {
+			// add a dummy row 
+			data.rows = [];
+			data.rows.push([]);
+		}
+	} else {
+		// not multirow so add fields 
+		data.fields = [];
+		// add a single row for the values
+		data.rows = [];
+		data.rows.push([]);
+		// loop the inputs and add id as field, value as row
+		for (var i in inputs) {
+			var input = inputs[i];
+			data.fields.push(input.id);
+			data.rows[0].push(input.value);
+		}
+	}
+	// return data
+	return data
 }
 
 /* Webservice action resource JavaScript */
