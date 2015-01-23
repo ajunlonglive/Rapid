@@ -1832,7 +1832,7 @@ public class Application {
 			}
 			
 			// log that the application was loaded
-			logger.info("Loaded application " + application.getName() + "/" + application.getVersion() + (initialise ? "" : " (no itialise)"));
+			logger.info("Loaded application " + application.getName() + "/" + application.getVersion() + (initialise ? "" : " (no initialisation)"));
 			
 			return application; 		
 			

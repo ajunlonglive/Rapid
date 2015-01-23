@@ -78,7 +78,12 @@ public class RapidRequest {
 	// decrypt the password
 	public String getUserPassword() throws GeneralSecurityException, IOException {
 		String raw = (String) _request.getSession().getAttribute(RapidFilter.SESSION_VARIABLE_USER_PASSWORD);
-		return RapidHttpServlet.getEncryptedXmlAdapter().unmarshal(raw);
+		String password = RapidHttpServlet.getEncryptedXmlAdapter().unmarshal(raw);
+		if (password == null) {
+			return "";
+		} else {
+			return password;
+		}
 	}
 	
 	// most likely to construct a rapidRequest from a servlet and an http request

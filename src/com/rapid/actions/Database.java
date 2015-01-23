@@ -333,6 +333,9 @@ public class Database extends Action {
 			} // got inputs
 			
 		} // got query
+		
+		// if we got no inputs set to null
+		if (!js.startsWith("[")) js = "null";
 				
 		// return
 		return js;
@@ -525,7 +528,12 @@ public class Database extends Action {
 			ArrayList<Parameters> parametersList = new ArrayList<Parameters>();
 			
 			// populate the parameters from the inputs collection (we do this first as we use them as the cache key due to getting values from the session)
-			if (_query.getInputs() != null) {
+			if (_query.getInputs() == null) {
+				
+				// just add an empty parameters member if no inputs
+				parametersList.add(new Parameters());
+				
+			} else {
 				
 				// if there is input data
 				if (jsonInputData != null) {
@@ -566,7 +574,7 @@ public class Database extends Action {
 											// if the id we want matches this one 
 											if (id.toLowerCase().equals(jsonId.toLowerCase())) {
 												// get the value
-												value = jsonRow.getString(j);
+												value = jsonRow.optString(j,null);
 												// no need to keep looking
 												break;
 											}																												
