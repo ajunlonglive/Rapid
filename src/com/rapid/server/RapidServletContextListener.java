@@ -79,6 +79,7 @@ import com.rapid.core.Application;
 import com.rapid.core.Application.DatabaseConnection;
 import com.rapid.core.Application.RapidLoadingException;
 import com.rapid.core.Applications;
+import com.rapid.core.Applications.Versions;
 import com.rapid.core.Device.Devices;
 import com.rapid.data.ConnectionAdapter;
 import com.rapid.utils.Files;
@@ -393,8 +394,8 @@ public class RapidServletContextListener implements ServletContextListener {
 			String className = jsonSecurityAdapter.getString("class");
 			// get the class 
 			Class classClass = Class.forName(className);
-			// check the class extends com.rapid.Action
-			if (!com.rapid.security.SecurityAdapter.class.equals(classClass.getSuperclass())) throw new Exception(type + " security adapter class must extend " + classClass.getCanonicalName()); 
+			// check the class extends com.rapid.security.SecurityAdapter
+			if (!com.rapid.security.SecurityAdapter.class.equals(classClass.getSuperclass())) throw new Exception(type + " security adapter class must extend com.rapid.security.SecurityAdapter"); 
 			// check this type is unique
 			if (securityConstructors.get(type) != null) throw new Exception(type + " security adapter already loaded. Type names must be unique.");
 			// add to constructors hashmap referenced by type
@@ -820,7 +821,11 @@ public class RapidServletContextListener implements ServletContextListener {
 				password = p.toCharArray();
 				// set the salt
 				salt = Encryption.base64Decode(s);
-			} 
+				// log
+				_logger.info("Encyption initialised");
+			} else {
+				_logger.info("Encyption not initialised");
+			}
 			
 			// create the encypted xml adapter (if the file above is not found there no encryption will occur)
 			RapidHttpServlet.setEncryptedXmlAdapter(new EncryptedXmlAdapter(password, salt));
@@ -930,30 +935,35 @@ public class RapidServletContextListener implements ServletContextListener {
 			
 		_logger.info("Shutting down...");
 		
-		// interrupt the monitor
+		// interrupt the page monitor
 		_monitor.interrupt();
 		
 		// get all of the applications
-		Map<String, Application> applications = (Map<String, Application>) event.getServletContext().getAttribute("applications");
-		// loop them
-		for (String key : applications.keySet()) {
+		Applications applications = (Applications) event.getServletContext().getAttribute("applications");
+		// loop the application ids
+		for (String id : applications.getIds()) {
 			// get the application
-			Application application = applications.get(key);
-			// check for any connections
-			if (application.getDatabaseConnections() != null) {
-				// loop them
-				for (DatabaseConnection databaseConnection : application.getDatabaseConnections()) {
-					// check adapter
-					try {
-						// get adapter
-						ConnectionAdapter connectionAdapter = databaseConnection.getConnectionAdapter(event.getServletContext());
-						// if we got one try and close it
-						if (connectionAdapter != null) connectionAdapter.close();						
-					} catch (Exception ex) {						
-						_logger.error("Error closing database adapter for " + application.getName(), ex);						
+			Versions versions = applications.getVersions(id);
+			// loop the versions of each app
+			for (String version : versions.keySet()) {
+				// get the application
+				Application application = applications.get(id, version);
+				// check for any connections
+				if (application.getDatabaseConnections() != null) {
+					// loop them
+					for (DatabaseConnection databaseConnection : application.getDatabaseConnections()) {
+						// check adapter
+						try {
+							// get adapter
+							ConnectionAdapter connectionAdapter = databaseConnection.getConnectionAdapter(event.getServletContext());
+							// if we got one try and close it
+							if (connectionAdapter != null) connectionAdapter.close();						
+						} catch (Exception ex) {						
+							_logger.error("Error closing database adapter for " + application.getName(), ex);						
+						}
 					}
-				}
-			}			
+				}	
+			}					
 		}
 		
 		// sleep for 2 seconds to allow any database connection cleanup to complete

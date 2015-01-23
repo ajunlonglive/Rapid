@@ -151,6 +151,8 @@ if (data) {
 		}
 	} else if (field && data[field]) {
 		return data[field];
+	} else {
+		return null;
 	}
 }	 
 return data;
