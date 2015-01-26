@@ -39,6 +39,13 @@ import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
 public class Encryption {
+	
+	public interface EncryptionProvider {
+		
+		public char[] getPassword();		
+		public byte[] getSalt();
+		
+	}
         
     public static String base64Encode(byte[] bytes) {
         return new BASE64Encoder().encode(bytes);
