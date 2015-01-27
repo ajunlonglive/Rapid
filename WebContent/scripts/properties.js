@@ -1735,7 +1735,24 @@ function Property_navigationSessionVariables(cell, navigation, property, details
 					
 }
 
-//this is a dialogue to define radio buttons
+// this property only appears if the navigation type is dialogue
+function Property_navigationStopActions(cell, navigation, property, details) {
+	
+	if (navigation.dialogue) {
+		
+		// create a checkbox for the property
+		Property_checkbox(cell, navigation, property, details);
+		
+	} else {
+		
+		// hide this row 
+		cell.parent().hide();
+		
+	}
+	
+}
+
+//this is a dialogue to define radio buttons for the radio buttons control
 function Property_radiobuttons(cell, radiobuttons, property, details) {
 	
 	// retrieve or create the dialogue

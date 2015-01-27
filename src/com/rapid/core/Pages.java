@@ -147,9 +147,9 @@ public class Pages {
 		return _pageHeaders.size();
 	}
 		
-	// the keyset for loaded pages
+	// the keyset for all pages
 	public Set<String> keySet() {
-		return _pages.keySet();
+		return _pageHeaders.keySet();
 	}
 	
 	// return a specific page (or the start page if pageId is null)
