@@ -372,7 +372,7 @@ public class RapidSecurityAdapter extends SecurityAdapter {
 				break;
 			}
 		}
-		if (user != null) {
+		if (user != null && password != null) {
 			if (password.equals(user.getPassword())) return true;
 		}
 		return false;

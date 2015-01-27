@@ -1168,9 +1168,12 @@ public class Designer extends RapidHttpServlet {
 														security.addUserRole(rapidRequest, com.rapid.server.Rapid.DESIGN_ROLE);									
 												}
 												
+												// reload the pages (actually clears down the pages collection and reloads the headers)
+												appNew.getPages().loadpages(getServletContext());
+												
 												// save application (this will also initialise and rebuild the resources)
 												appNew.save(this, rapidRequest, false);
-																				
+																																												
 												// add application to the collection
 												getApplications().put(appNew);
 												

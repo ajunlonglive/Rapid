@@ -79,8 +79,10 @@ import com.rapid.core.Application;
 import com.rapid.core.Application.DatabaseConnection;
 import com.rapid.core.Application.RapidLoadingException;
 import com.rapid.core.Applications;
+import com.rapid.core.Applications.Versions;
 import com.rapid.core.Device.Devices;
 import com.rapid.data.ConnectionAdapter;
+import com.rapid.utils.Encryption.EncryptionProvider;
 import com.rapid.utils.Files;
 import com.rapid.utils.JAXB.EncryptedXmlAdapter;
 import com.rapid.utils.Encryption;
@@ -393,8 +395,8 @@ public class RapidServletContextListener implements ServletContextListener {
 			String className = jsonSecurityAdapter.getString("class");
 			// get the class 
 			Class classClass = Class.forName(className);
-			// check the class extends com.rapid.Action
-			if (!com.rapid.security.SecurityAdapter.class.equals(classClass.getSuperclass())) throw new Exception(type + " security adapter class must extend " + classClass.getCanonicalName()); 
+			// check the class extends com.rapid.security.SecurityAdapter
+			if (!com.rapid.security.SecurityAdapter.class.equals(classClass.getSuperclass())) throw new Exception(type + " security adapter class must extend com.rapid.security.SecurityAdapter"); 
 			// check this type is unique
 			if (securityConstructors.get(type) != null) throw new Exception(type + " security adapter already loaded. Type names must be unique.");
 			// add to constructors hashmap referenced by type
@@ -805,22 +807,73 @@ public class RapidServletContextListener implements ServletContextListener {
 			char[] password = null;			
 			byte[] salt = null;
 			// look for the rapid.txt file with the saved password and salt
-			File secretsFile = new File(servletContext.getRealPath("/") + "/WEB-INF/security/rapid.txt");
+			File secretsFile = new File(servletContext.getRealPath("/") + "/WEB-INF/security/encryption.txt");
 			// if it exists
 			if (secretsFile.exists()) {
 				// get a file reader
 				BufferedReader br = new BufferedReader(new FileReader(secretsFile));
 				// read the first line
-				String p = br.readLine();
+				String className = br.readLine();
 				// read the next line
 				String s = br.readLine();
 				// close the reader
 				br.close();
-				// set the password
-				password = p.toCharArray();
-				// set the salt
-				salt = Encryption.base64Decode(s);
-			} 
+				
+				try {
+					// get the class 
+					Class classClass = Class.forName(className);
+					// get the interfaces
+					Class[] classInterfaces = classClass.getInterfaces();
+					// assume it doesn't have the interface we want
+					boolean gotInterface = false;
+					// check we got some
+					if (classInterfaces != null) {
+						for (Class classInterface : classInterfaces) {
+							if (com.rapid.utils.Encryption.EncryptionProvider.class.equals(classInterface)) {
+								gotInterface = true;
+								break;
+							}
+						}
+					}
+					// check the class extends com.rapid.Action
+					if (gotInterface) {
+						// get the constructors
+						Constructor[] classConstructors = classClass.getDeclaredConstructors(); 
+						// check we got some
+						if (classConstructors != null) {
+							// assume we don't get the parameterless one we need
+							Constructor constructor = null;
+							// loop them
+							for (Constructor classConstructor : classConstructors) {
+								// check parameters
+								if (classConstructor.getParameterTypes().length == 0) {
+									constructor = classConstructor;
+									break;
+								}
+							}
+							// check we got what we want
+							if (constructor == null) {
+								_logger.error("Encyption not initialised : Class in security.txt class must have a parameterless constructor");								
+							} else {
+								// construct the class
+								EncryptionProvider encryptionProvider = (EncryptionProvider) constructor.newInstance();
+								// get the password
+								password = encryptionProvider.getPassword();
+								// get the salt
+								salt = encryptionProvider.getSalt();
+								// log
+								_logger.info("Encyption initialised");
+							}
+						}
+					} else {
+						_logger.error("Encyption not initialised : Class in security.txt class must extend com.rapid.utils.Encryption.EncryptionProvider");
+					}
+				} catch (Exception ex) {
+					_logger.error("Encyption not initialised : " + ex.getMessage(), ex);
+				}								
+			} else {
+				_logger.info("Encyption not initialised");
+			}
 			
 			// create the encypted xml adapter (if the file above is not found there no encryption will occur)
 			RapidHttpServlet.setEncryptedXmlAdapter(new EncryptedXmlAdapter(password, salt));
@@ -930,30 +983,35 @@ public class RapidServletContextListener implements ServletContextListener {
 			
 		_logger.info("Shutting down...");
 		
-		// interrupt the monitor
+		// interrupt the page monitor
 		_monitor.interrupt();
 		
 		// get all of the applications
-		Map<String, Application> applications = (Map<String, Application>) event.getServletContext().getAttribute("applications");
-		// loop them
-		for (String key : applications.keySet()) {
+		Applications applications = (Applications) event.getServletContext().getAttribute("applications");
+		// loop the application ids
+		for (String id : applications.getIds()) {
 			// get the application
-			Application application = applications.get(key);
-			// check for any connections
-			if (application.getDatabaseConnections() != null) {
-				// loop them
-				for (DatabaseConnection databaseConnection : application.getDatabaseConnections()) {
-					// check adapter
-					try {
-						// get adapter
-						ConnectionAdapter connectionAdapter = databaseConnection.getConnectionAdapter(event.getServletContext());
-						// if we got one try and close it
-						if (connectionAdapter != null) connectionAdapter.close();						
-					} catch (Exception ex) {						
-						_logger.error("Error closing database adapter for " + application.getName(), ex);						
+			Versions versions = applications.getVersions(id);
+			// loop the versions of each app
+			for (String version : versions.keySet()) {
+				// get the application
+				Application application = applications.get(id, version);
+				// check for any connections
+				if (application.getDatabaseConnections() != null) {
+					// loop them
+					for (DatabaseConnection databaseConnection : application.getDatabaseConnections()) {
+						// check adapter
+						try {
+							// get adapter
+							ConnectionAdapter connectionAdapter = databaseConnection.getConnectionAdapter(event.getServletContext());
+							// if we got one try and close it
+							if (connectionAdapter != null) connectionAdapter.close();						
+						} catch (Exception ex) {						
+							_logger.error("Error closing database adapter for " + application.getName(), ex);						
+						}
 					}
-				}
-			}			
+				}	
+			}					
 		}
 		
 		// sleep for 2 seconds to allow any database connection cleanup to complete
