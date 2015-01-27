@@ -55,7 +55,8 @@ public class Rapid extends RapidHttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	// these are held here and referred to globally
-	public static final String VERSION = "2.2.3";
+	public static final String VERSION = "2.2.3"; // the master version of this Rapid server
+	public static final String MOBILE_VERSION = "1"; // the mobile version. update it if you want all mobile devices to updates on their next version check
 	public static final String DESIGN_ROLE = "RapidDesign";
 	public static final String ADMIN_ROLE = "RapidAdmin";
 	public static final String SUPER_ROLE = "RapidSuper";
@@ -399,26 +400,31 @@ public class Rapid extends RapidHttpServlet {
 				// create a json version object
 				JSONObject jsonVersion = new JSONObject();
 				
-				// get the relevant security adapter
-				SecurityAdapter security = app.getSecurity();
-				
-				// fail silently if there was an issue
-				try {
-				
-					// fetch a user object in the name of the current user for the current app
-					User user = security.getUser(rapidRequest);
+				// if an app exists
+				if (app != null) {
+															
+					// get the relevant security adapter
+					SecurityAdapter security = app.getSecurity();
 					
-					// if there was one
-					if (user != null) {
-						// add the version
-						jsonVersion.put("version", app.getVersion());
+					// fail silently if there was an issue
+					try {
+					
+						// fetch a user object in the name of the current user for the current app
+						User user = security.getUser(rapidRequest);
+						
+						// if there was one
+						if (user != null) {
+							// add the mobile version, followed by the app version
+							jsonVersion.put("version", MOBILE_VERSION + " - " + app.getVersion());
+						}
+						
+					} catch (Exception ex) {
+						// only log
+						getLogger().error("Error checking version : ", ex);
 					}
 					
-				} catch (Exception ex) {
-					// only log
-					getLogger().error("Error checking version : ", ex);
 				}
-				
+											
 				// create a writer
 				PrintWriter out = response.getWriter();
 				
