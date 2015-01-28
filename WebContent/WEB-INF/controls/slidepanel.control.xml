@@ -232,15 +232,13 @@ $(document).ready( function() {
 	
 		if (typeof(window.parent._pageIframe) === "undefined") {
 	
-			// get a reference to the document for the full height
 			var doc = $(document);
-			// get a reference to the slidePanelPane if it's there yet
 			var panel = $(".slidePanelPane");
-			// if we got a panel resize it
-			if (panel[0]) panel.css("height",doc.height() - panel.offset().top);
 			
-			// get a reference to the window for the viewport size
-			var win = $(window);			
+			panel.css("height",doc.height() - panel.offset().top);
+			
+			var win = $(window);
+						
 			// resize the page cover
 			$(".slidePanelCover").css({
 	       		width : win.width(),
@@ -409,7 +407,7 @@ return ".slidePanelCover";
 	    
 	   	<initJavaScript>
 	        <![CDATA[
-	        	        
+
 // get a reference to the body
 var body = $("body");
 // get the pageCover
@@ -420,12 +418,12 @@ if (!pageCover[0]) {
 	body.append("<div class='slidePanelCover'></div>");
 	// set the reference
 	pageCover = body.find(".slidePanelCover");
-	// get a reference to the document
-	var doc = $(document);	
+	// get a reference to the window
+	var win = $(window);	
 	// size the cover
 	pageCover.css({
-    	width : doc.width(),
-       	height : doc.height()
+    	width : win.width(),
+       	height : win.height()
     });
 }
 
@@ -491,7 +489,6 @@ pageCover.click({width: slidePanelPane.css("width"),left: slidePanelPane.css("ma
 		pageCover.hide();		
 	});
 });
-
 	        ]]>	        	       	        
 	    </initJavaScript>
 	    	    	    	            	    	    	        	    	    
