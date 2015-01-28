@@ -470,6 +470,8 @@ function getData_dataStore(ev, id, field, details) {
   		}
   	} else if (field && data[field]) {
   		return data[field];
+  	} else {
+  		return null;
   	}
   }	 
   return data;

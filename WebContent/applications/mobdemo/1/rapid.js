@@ -146,7 +146,6 @@ _maps = [];
 
 // adds markers to a map, used by add markers and replace markers
 function addMapMarkers(map, data, details) {
-	map.markerData = data;
 	map.markerSelectedIndex = -1;
 	var latIndex = -1;
 	var lngIndex = -1;
@@ -175,7 +174,8 @@ function addMapMarkers(map, data, details) {
 			if (titleIndex > -1) markerOptions.title = row[titleIndex];
 			if (details.markerImage) markerOptions.icon = "applications/" + _appId + "/" + _appVersion + "/" + details.markerImage;
 			var marker = new google.maps.Marker(markerOptions);	
-			marker.index = i;
+			marker.index = map.markers.length + i*1;
+			marker.data = {fields:data.fields,rows:[data.rows[i]]};
 			map.markers.push(marker);					
 			if (infoIndex > -1) {
 				var markerInfoWindow = new google.maps.InfoWindow({
@@ -271,6 +271,76 @@ function getDatabaseActionMaxSequence(actionId) {
 	}
 	// pass back
 	return sequence;
+}	
+
+// this function creates input data for the database action
+function getDatabaseActionInputData(multiRow, inputs, sourceId, sourceData) {
+	// start data object
+	var data = {};
+	// check multirow
+	if (multiRow) {
+		// check there are sourceData rows
+		if (sourceData && sourceData.fields && sourceData.rows && sourceData.fields.length > 0 && sourceData.rows.length > 0) {
+			// add a fields collection
+			data.fields = [];
+			// loop the inputs
+			for (var i in inputs) {
+				// the field we want to send is the source id plus the field, this matches how we do non multi row queries
+				data.fields.push(sourceId + "." + inputs[i]);
+			}
+			// add a rows collection
+			data.rows = [];
+			// loop the sourceData rows
+			for (var i in sourceData.rows) {
+				// get the source row
+				var sourceRow = sourceData.rows[i];
+				// make a row for our return
+				var row = [];
+				// now loop the inputs
+				for (var j in inputs) {
+					// get the input field
+					var field = inputs[j];
+					// assume we can't find the field we want
+					var fieldIndex = -1;
+					// loop the source fields looking for the position of the field we want
+					for (var k in sourceData.fields) {
+						if (field.toLowerCase() == sourceData.fields[k].toLowerCase()) {
+							// set the fieldIndex
+							fieldIndex = k;
+							// we're done
+							break;
+						}
+					}
+					// if we found the field
+					if (fieldIndex > -1) {
+						row.push(sourceRow[fieldIndex]);
+					} else {
+						row.push(null);
+					}
+				}
+				// add the row
+				data.rows.push(row);
+			}
+		} else {
+			// add a dummy row 
+			data.rows = [];
+			data.rows.push([]);
+		}
+	} else {
+		// not multirow so add fields 
+		data.fields = [];
+		// add a single row for the values
+		data.rows = [];
+		data.rows.push([]);
+		// loop the inputs and add id as field, value as row
+		for (var i in inputs) {
+			var input = inputs[i];
+			data.fields.push(input.id);
+			data.rows[0].push(input.value);
+		}
+	}
+	// return data
+	return data
 }
 
 /* Webservice action resource JavaScript */
@@ -328,7 +398,7 @@ function Init_gallery(id, details) {
 function Init_grid(id, details) {
   if (details && details.dataStorageType) {
   	var data = getGridDataStoreData(id, details);
-  	if (data) setData_grid(id, data, null, details);
+  	if (data) setData_grid($.Event('gridinit'), id, null, details, data);
   	$("#" + id).click(function(ev) {
   		var data = getGridDataStoreData(id, details);
   		data.selectedRowNumber = $(ev.target).closest("tr").index();
@@ -421,14 +491,39 @@ function Init_map(id, details) {
   	// add it to the collections
   	_maps[id] = map;
   	
-  	// if there is a map click event listener
-  	if (window["Event_click_" + id]) {
+  	// turn off the labels for all points of interest
+  	map.setOptions({'styles':[{featureType:"poi",elementType: "labels",stylers:[{visibility:"off"}]}]});
+  	
+  	// get any map click event listener
+  	var f_click = window["Event_mapClick_" + id];
+  	// if there is a map click event listner
+  	if (f_click) {
+  		// attach a listener to the mapClick event
+  		google.maps.event.addListener(map, 'click', function() {
+  			// fire mapClick event
+      		f_click($.Event("mapClick"));
+  		});
+  	}
+  	
+  	// get any map drag start event listener
+  	var f_dragStart = window["Event_dragStart_" + id];
+  	// if there is a map drag event listener
+  	if (f_dragStart) {
   		// attach a listener to the dragstart event
   		google.maps.event.addListener(map, 'dragstart', function() {
-  			// fire click event
-      		window["Event_click_" + id]($.Event("center_changed"));
-      		// stop the original click event from firing too
-      		return false;
+  			// fire touch event
+      		f_dragStart($.Event("drag"));
+  		});
+  	}
+  	
+  	// get any map drag end event listener
+  	var f_dragEnd = window["Event_dragEnd_" + id];
+  	// if there is a map drag event listener
+  	if (f_dragEnd) {
+  		// attach a listener to the dragstart event
+  		google.maps.event.addListener(map, 'dragend', function() {
+  			// fire touch event
+      		f_dragEnd($.Event("drag"));
   		});
   	}
   	
@@ -664,6 +759,8 @@ function getData_dataStore(ev, id, field, details) {
   		}
   	} else if (field && data[field]) {
   		return data[field];
+  	} else {
+  		return null;
   	}
   }	 
   return data;
@@ -1310,19 +1407,19 @@ function setProperty_map_replaceMarkers(ev, id, field, details, data, changeEven
   var map = _maps[id];
   // get the latlng
   var data = makeDataObject(data);
-  // if we got a map and data
-  if (map && data && data.fields && data.rows && data.fields.length > 1 && data.rows.length > 0) {
-  	// if there are any current markers
-  	if (map.markers) {
-  		// loop them
-  		for (var i in map.markers) {
-  			map.markers[i].setMap(null);
-  		}
-  		// empty array
-  		map.markers = [];
-  	} 
+  // if there are any current markers
+  if (map.markers) {
+  	// loop them
+  	for (var i in map.markers) {
+  		map.markers[i].setMap(null);
+  	}
   	// empty array
-  	map.markers = [];	
+  	map.markers = [];
+  } 
+  // empty markers array
+  map.markers = [];
+  // if we got a map and data
+  if (map && data && data.fields && data.rows && data.fields.length > 1 && data.rows.length > 0) {		
   	// add the markers
   	addMapMarkers(map, data, details);
   }
@@ -1334,19 +1431,19 @@ function getProperty_map_selectedMarker(ev, id, field, details) {
   // get the selectedIndex
   var selectedIndex = map.markerSelectedIndex;
   // if we got a map and data
-  if (map && map.markerSelectedIndex > -1 && map.markerData) {
-  	var fields = map.markerData.fields;
-  	var row = map.markerData.rows[map.markerSelectedIndex];
+  if (map && selectedIndex > -1 && map.markers.length > selectedIndex) {
+  	var marker = map.markers[selectedIndex];
+  	var data = marker.data;
   	if (field) {
   		var fieldIndex = -1;
-  		for (var i in fields) {
-  			if (field == fields[i]) {
-  				return row[i];
+  		for (var i in data.fields) {
+  			if (field == data.fields[i]) {
+  				return data.row[0][i];
   			}
   		}	
   		return null;
   	} else {
-  		return {fields:fields,rows:[row]};
+  		return data;
   	}	
   } else {
   	return null;
@@ -1552,7 +1649,7 @@ function Action_navigate(url, dialogue, id) {
 		           			if (!items[i].innerHTML && text.indexOf("href=\"") > 0) {
 		           				var startPos = text.indexOf("href=\"")+6;
 		           				var href = text.substr(startPos,text.indexOf("\"", startPos) - startPos);
-		           				// exclude if we already have an element in the head with with href
+		           				// exclude if we already have an element in the head with this href
 		           				if ($("head").find("link[href='" + href + "']")[0]) include = false;
 		           			}		           			
 		           			// if still safe to include
@@ -1581,12 +1678,12 @@ function Action_navigate(url, dialogue, id) {
 		           	// remove any existing dialogue cover for this action
 		           	$("#" + id + "cover").remove();
 		           	// add the cover and return reference
-		           	dialogueCover = body.append("<div id='" + id + "cover' class='dialogueCover' style='position:absolute;left:0px;top:0px;z-index:100;'></div>").children().last();
+		           	dialogueCover = body.append("<div id='" + id + "cover' class='dialogueCover' style='position:absolute;left:0px;top:0px;z-index:1000;'></div>").children().last();
 		           			      		           			           		            	
 	            	// remove any existing dialogue container for this action
 		           	$("#" + id + "dialogue").remove();
 		           	// add the dialogue container and remove the reference
-		           	dialogue = body.append("<div id='" + id + "dialogue' class='dialogue' style='position:fixed;z-index:101;'></div>").children().last(); 
+		           	dialogue = body.append("<div id='" + id + "dialogue' class='dialogue' style='position:fixed;z-index:1001;'></div>").children().last(); 
 		           	
 		           	// make sure it's hidden
 		           	dialogue.css("visibility","hidden");
