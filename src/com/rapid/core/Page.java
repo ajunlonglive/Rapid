@@ -949,7 +949,7 @@ public class Page {
     	}    	
     }
     
-    // this method produced the start of the head (which is shared by the no permission respone)
+    // this method produces the start of the head (which is shared by the no permission respone)
     private String getHtmlHeadStart() {
     	return 
     	"  <head>\n" +		
@@ -1137,11 +1137,8 @@ public class Page {
 		}
 																	
 		// close the page inline script block
-		stringBuilder.append("</script>\n");
-			
-		// close the head
-		stringBuilder.append("  </head>\n");
-		
+		stringBuilder.append("  </script>\n");
+					
 		// get it into a string and insert any parameters
 		String htmlHead = application.insertParameters(stringBuilder.toString());
 					
@@ -1194,7 +1191,14 @@ public class Page {
 	    		// get the cached head html
 	    		writer.write(getHtmlHeadCached(rapidServlet, application));
 	    	}
-					
+	    	
+	    	// write the username
+	    	writer.write("  <script type='text/javascript'> var _userName = '" + user.getName().replace("'", "\'") + "'; </script>\n");
+	    	
+	    	// close the head
+	    	writer.write("  </head>\n");
+	    	
+			// start the body		
 	    	writer.write("  <body id='" + _id + "' style='visibility:hidden;'>\n");
 			
 			// a reference for the body html
