@@ -564,8 +564,12 @@ function Init_pagePanel(id, details) {
              		case "#text" : case "TITLE" : case "META" : // ignore these types
              		break;
              		case "SCRIPT" :
+             			// ignore links 
              			if (items[i].innerHTML) {
-             				script += items[i].outerHTML; // ignore SCRIPT links
+             				var s = items[i].outerHTML;
+             				// exclude the app id, version, page, mobile resume link
+             				if (s.indexOf("var _appId =") == -1 && s.indexOf("var _appVersion =") == -1 && s.indexOf("var _pageId =") == -1 && s.indexOf("var _mobileResume =") == -1)
+             					script += s;
              			}
              		break;
              		case "LINK" :
@@ -1655,7 +1659,10 @@ function Action_navigate(url, dialogue, id) {
 		           		case "SCRIPT" :
 		           			// exclude any links as we should have them all already
 		           			if (items[i].innerHTML) {
-		           				script += items[i].outerHTML;
+		           				var s = items[i].outerHTML;
+		           				// exclude the app id, version, page, mobile resume link
+		           				if (s.indexOf("var _appId =") == -1 && s.indexOf("var _appVersion =") == -1 && s.indexOf("var _pageId =") == -1 && s.indexOf("var _mobileResume =") == -1)
+		           					script += s;
 		           			}		           			
 		           		break;
 		           		case "LINK" :

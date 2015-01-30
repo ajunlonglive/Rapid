@@ -158,14 +158,14 @@ public class Rapid extends RapidHttpServlet {
 							// create a writer
 							PrintWriter out = response.getWriter();
 							
-							// assume this is not for a dialogue
-							boolean dialogue = false;
+							// assume we do want the designer link
+							boolean showDesignerLink = true;
 							
-							// set to false if action is dialogue
-							if ("dialogue".equals(rapidRequest.getActionName())) dialogue = true;
+							// set designer link to false if action is dialogue
+							if ("dialogue".equals(rapidRequest.getActionName())) showDesignerLink = false;
 							
 							// write the page html excluding the design link
-							page.writeHtml(this, rapidRequest, app, user, out, dialogue);
+							page.writeHtml(this, rapidRequest, app, user, out, showDesignerLink);
 														
 							// output the page
 							out.print(pageHtml);

@@ -234,25 +234,14 @@ public class Page {
 	}
 		
 	// these two methods have different names to avoid being marshelled to the .xml file by JAXB
-	public String getHtmlHeadCached(RapidHttpServlet rapidServlet, Application application, boolean dialogue) throws JSONException {
-		// different if a dialogue
-		if (dialogue) {
-			// check whether the page has been cached yet
-			if (_cachedStartHtmlDialogue == null) {
-				// generate the page start html
-				_cachedStartHtmlDialogue = getHtmlHead(rapidServlet, application, dialogue, null);																		
-			}	
-			// return the dialogue start html
-			return _cachedStartHtmlDialogue;
-		} else {
-			// check whether the page has been cached yet
-			if (_cachedStartHtml == null) {
-				// generate the page start html
-				_cachedStartHtml = getHtmlHead(rapidServlet, application, dialogue, null);																		
-			}	
-			// return the regular
-			return _cachedStartHtml;
-		}					
+	public String getHtmlHeadCached(RapidHttpServlet rapidServlet, Application application) throws JSONException {
+		// check whether the page has been cached yet
+		if (_cachedStartHtml == null) {
+			// generate the page start html if not
+			_cachedStartHtml = getHtmlHead(rapidServlet, application);																		
+		}	
+		// return the regular
+		return _cachedStartHtml;					
 	}
 	
 	public void addControl(Control control) {
@@ -972,27 +961,21 @@ public class Page {
     }
 	
     // this private method produces the head of the page which is often cached, if resourcesOnly is true only page resources are included which is used when sending no permission
-	private String getHtmlHead(RapidHttpServlet rapidServlet, Application application, boolean dialogue, String userName) throws JSONException {
+	private String getHtmlHead(RapidHttpServlet rapidServlet, Application application) throws JSONException {
     	
     	StringBuilder stringBuilder = new StringBuilder(getHtmlHeadStart());
     	    															
 		// if you're looking for where the jquery link is added it's the first resource in the page.control.xml file	
 		stringBuilder.append("    " + getResourcesHtml(application).trim().replace("\n", "\n    ") + "\n");
 												
-		// dialogues do not include this block
-		if (!dialogue) {
-			
-			// add a JavaScript block with important global variables			
-			stringBuilder.append("    <script type='text/javascript'>\n\n");			
-			stringBuilder.append("var _appId = '" + application.getId() + "';\n");			
-			stringBuilder.append("var _appVersion = '" + application.getVersion() + "';\n");			
-			stringBuilder.append("var _pageId = '" + _id + "';\n");			
-			stringBuilder.append("var _userName = '" + userName + "';\n");			
-			stringBuilder.append("var _mobileResume = false;\n\n");
-			stringBuilder.append("    </script>\n");
+		// add a JavaScript block with important global variables - this removed by the pagePanel loader and navigation action when showing dialogues, by matching to the various variables so be careful changing anything below			
+		stringBuilder.append("    <script type='text/javascript'>\n\n");			
+		stringBuilder.append("var _appId = '" + application.getId() + "';\n");			
+		stringBuilder.append("var _appVersion = '" + application.getVersion() + "';\n");			
+		stringBuilder.append("var _pageId = '" + _id + "';\n");						
+		stringBuilder.append("var _mobileResume = false;\n\n");
+		stringBuilder.append("    </script>\n");
 				
-		}
-		
 		// open style blocks			
 		stringBuilder.append("    <style>\n");
 		
@@ -1156,8 +1139,6 @@ public class Page {
 		// close the page inline script block
 		stringBuilder.append("</script>\n");
 			
-
-						
 		// close the head
 		stringBuilder.append("  </head>\n");
 		
@@ -1170,7 +1151,7 @@ public class Page {
     }
 		
 	// this routine produces the entire page
-	public void writeHtml(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, Application application, User user, Writer writer, boolean dialogue) throws JSONException, IOException {
+	public void writeHtml(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, Application application, User user, Writer writer, boolean showDesignerLink) throws JSONException, IOException {
 		
 		// get the security
 		SecurityAdapter security = application.getSecurity();
@@ -1208,10 +1189,10 @@ public class Page {
 	    	// check whether or not we rebuild
 	    	if (rebuildPages) {
 	    		// get fresh head html
-	    		writer.write(getHtmlHead(rapidServlet, application, dialogue, user.getName()));
+	    		writer.write(getHtmlHead(rapidServlet, application));
 	    	} else {
 	    		// get the cached head html
-	    		writer.write(getHtmlHeadCached(rapidServlet, application, dialogue));
+	    		writer.write(getHtmlHeadCached(rapidServlet, application));
 	    	}
 					
 	    	writer.write("  <body id='" + _id + "' style='visibility:hidden;'>\n");
@@ -1310,7 +1291,7 @@ public class Page {
 		try {
 			
 			// dialogues do not have a designer link so no point checking
-			if (!dialogue) {
+			if (showDesignerLink) {
 			
 				// assume not admin link
 				boolean adminLinkPermission = false;
