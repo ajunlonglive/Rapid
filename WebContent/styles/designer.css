@@ -668,7 +668,7 @@ Tip styles
 
 #tipDiv {
 	position:absolute;	
-	z-index:20000;
+	z-index:10012;
 }
 
 #tipDivMain {
