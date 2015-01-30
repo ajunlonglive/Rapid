@@ -50,7 +50,7 @@ public class Device {
 			// create a new list if we haven't got one yet
 			if (devices == null) devices = new Devices();
 					
-			// assume the top device is not a normal monitor (called screen)
+			// assume the top device is not a normal monitor (called desktop)
 			boolean gotScreen = false;
 			// check device count
 			if (devices.size() > 0) {
@@ -65,7 +65,7 @@ public class Device {
 				// add it to the top of the collection
 				devices.add(0, new Device("Desktop", 0, 0, 96, 1d));
 				// save the file
-				save(servletContext, devices);
+				devices.save(servletContext);
 			}
 			
 			// add them to the servlet context
@@ -76,7 +76,8 @@ public class Device {
 			
 		}
 		
-		public static void save(ServletContext servletContext, Devices devices) throws JAXBException, IOException {
+		// instance methods
+		public void save(ServletContext servletContext) throws JAXBException, IOException {
 			
 			// get the file in which the control xml files are stored
 			File file = new File(servletContext.getRealPath("/WEB-INF/devices/devices.xml"));
@@ -86,7 +87,7 @@ public class Device {
 			// get the marshaller from the context
 			Marshaller marshaller = RapidHttpServlet.getMarshaller();
 			// marshall the devices to the file
-			marshaller.marshal(devices, file);
+			marshaller.marshal(this, file);
 					
 		}
 		
