@@ -25,16 +25,19 @@ div.validation{padding:10px;color:red !important;font-weight:bold}
 input.validation{border:2px solid red !important}
 textarea.validation{border:2px solid red !important}
 li.validation{color:red !important}
-body{font-family:'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;font-size:18px}
+body{font-family:'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;font-size:18px;margin:0;background:linear-gradient(#fff, #fff 75%, rgba(170, 204, 238, 0.59)) fixed}
 table{font-family:'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;font-size:18px}
-input{font-size:18px;padding:8px;border:1px solid #888;border-radius:10px;box-shadow:inset -2px 2px 5px 0px #ccc;width:90%}
-input:focus{border:1px solid black;border-radius:10px;box-shadow:inset -2px 2px 5px 0px #aaa;outline:none}
-button{font-size:18px;font-family:'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;box-shadow:inset 2px -2px 10px 0px #888;background:linear-gradient(to bottom, #ededed 5%, #bab1ba 100%);background-color:#ededed;border-radius:10px;border:1px solid #888;display:inline-block;cursor:pointer;color:#000000;padding:7px 25px;text-decoration:none;text-shadow:0px 1px 0px #e1e2ed}
-button:hover{background:linear-gradient(to bottom, #bab1ba 5%, #ededed 100%);background-color:#bab1ba}
+input{font-size:18px;padding:8px;border:1px solid #888;border-radius:10px;box-shadow:inset -2px 2px 5px 0px #bcd;width:90%}
+input:focus{border:2px solid black;border-radius:10px;box-shadow:inset -2px 2px 5px 0px #aaa;outline:none}
+button{font-size:18px;font-family:'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;color:white;box-shadow:inset -2px 2px 10px 0px #ace;background:linear-gradient(to bottom, #1e5799 0%, #2989d8 50%, #207cca 100%);background-color:#2989d8;border-radius:10px;border:1px solid #005;display:inline-block;cursor:pointer;padding:7px 25px;text-decoration:none;text-shadow:0px 1px 0px #000}
+button:hover{background:linear-gradient(to top, #1e5799 0%, #2989d8 50%, #207cca 100%);background-color:#207cca}
 button:active{position:relative;top:1px}
 button:focus{outline:none}
 .cellLabel{font-size:18px;min-width:120px}
-.menuItem{padding:10px;border-bottom:1px solid black;cursor:pointer;background:-moz-linear-gradient(left, rgba(0,0,0,0) 75%, rgba(0,0,0,0.25) 100%);background:-webkit-gradient(linear, left top, right top, color-stop(75%,rgba(0,0,0,0)), color-stop(100%,rgba(0,0,0,0.25)));background:-webkit-linear-gradient(left, rgba(0,0,0,0) 75%,rgba(0,0,0,0.25) 100%);background:-o-linear-gradient(left, rgba(0,0,0,0) 75%,rgba(0,0,0,0.25) 100%);background:-ms-linear-gradient(left, rgba(0,0,0,0) 75%,rgba(0,0,0,0.25) 100%);background:linear-gradient(to right, rgba(0,0,0,0) 75%,rgba(0,0,0,0.25) 100%);filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', endColorstr='#40000000',GradientType=1 )}
+.titleBar{background:rgb(30,87,153); background:-moz-linear-gradient(top, rgba(30,87,153,1) 0%, rgba(41,137,216,1) 50%, rgba(32,124,202,1) 51%, rgba(125,185,232,1) 100%); background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(30,87,153,1)), color-stop(50%,rgba(41,137,216,1)), color-stop(51%,rgba(32,124,202,1)), color-stop(100%,rgba(125,185,232,1))); background:-webkit-linear-gradient(top, rgba(30,87,153,1) 0%,rgba(41,137,216,1) 50%,rgba(32,124,202,1) 51%,rgba(125,185,232,1) 100%); background:-o-linear-gradient(top, rgba(30,87,153,1) 0%,rgba(41,137,216,1) 50%,rgba(32,124,202,1) 51%,rgba(125,185,232,1) 100%); background:-ms-linear-gradient(top, rgba(30,87,153,1) 0%,rgba(41,137,216,1) 50%,rgba(32,124,202,1) 51%,rgba(125,185,232,1) 100%); background:linear-gradient(to bottom, rgba(30,87,153,1) 0%,rgba(41,137,216,1) 50%,rgba(32,124,202,1) 51%,rgba(125,185,232,1) 100%)}
+.titleText{z-index:100;position:absolute;top:0;left:0;padding-top:12px;text-align:center;width:100%;color:white;font-weight:bold;font-size:20;text-shadow:2px 2px 2px #000}
+.menuItem{padding:10px;border-bottom:1px solid black;cursor:pointer;background:-moz-linear-gradient(left, rgba(0,0,0,0) 85%, rgba(108,174,226,0.5) 100%);background:-o-linear-gradient(left, rgba(0,0,0,0) 85%, rgba(108,174,226,0.5) 100%);background:-ms-linear-gradient(left, rgba(0,0,0,0) 85%, rgba(108,174,226,0.5) 100%);background:linear-gradient(to right, rgba(0,0,0,0) 85%, rgba(108,174,226,0.5) 100%)}
+div.dialogue{background-color:rgba(1,1,1,0)}
 .dialogueCover{background-color:#888;opacity:0.7;filter:alpha(opacity=70)}
 div.validation{font-size:12px;margin:10px 10px 10px 0px;padding:6px 10px 5px 25px;background:url(../../images/alert_16x16.png) 5px 5px no-repeat;border:1px solid red;border-radius:5px;max-width:200px}
 input.validation{border:2px solid red;border-radius:5px;box-shadow:1px 1px 2px}
