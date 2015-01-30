@@ -1799,19 +1799,28 @@ public class Rapid extends Action {
 												
 			} else if ("NEWDEVICE".equals(action)) {
 				
+				// get the devices
+				Devices devices = rapidServlet.getDevices();
+				
 				// add a new device to the collection
-				rapidServlet.getDevices().add(new Device("New device", 500, 500, 200, 1d));
+				devices.add(new Device("New device", 500, 500, 200, 1d));
+				
+				// save it
+				devices.save(rapidServlet.getServletContext());
 				
 			} else if ("DELDEVICE".equals(action)) {
 				
 				// get the index
 				int index = jsonAction.getInt("index");
 				
-				// remove the parameter
-				rapidServlet.getDevices().remove(index);
+				// get the devices
+				Devices devices = rapidServlet.getDevices();
+				
+				// remove the device
+				devices.remove(index);
 
-				// save the app
-				app.save(rapidServlet, rapidRequest, true);
+				// save the devices
+				devices.save(rapidServlet.getServletContext());
 								
 				// set the result message
 				result.put("message", "Device deleted");
@@ -1838,7 +1847,7 @@ public class Rapid extends Action {
 				device.setScale(scale);
 				
 				// save the devices
-				Devices.save(rapidServlet.getServletContext(), devices);
+				devices.save(rapidServlet.getServletContext());
 								
 				// set the result message
 				result.put("message", "Device details saved");
