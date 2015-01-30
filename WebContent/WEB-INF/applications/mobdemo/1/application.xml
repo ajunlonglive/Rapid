@@ -1,63 +1,12 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<application>
-    <actionTypes>control</actionTypes>
-    <actionTypes>custom</actionTypes>
-    <actionTypes>dataCopy</actionTypes>
-    <actionTypes>database</actionTypes>
-    <actionTypes>event</actionTypes>
-    <actionTypes>existing</actionTypes>
-    <actionTypes>logic</actionTypes>
-    <actionTypes>mobile</actionTypes>
-    <actionTypes>navigate</actionTypes>
-    <actionTypes>validation</actionTypes>
-    <actionTypes>webservice</actionTypes>
-    <controlTypes>button</controlTypes>
-    <controlTypes>checkbox</controlTypes>
-    <controlTypes>dataStore</controlTypes>
-    <controlTypes>date</controlTypes>
-    <controlTypes>dropdown</controlTypes>
-    <controlTypes>gallery</controlTypes>
-    <controlTypes>grid</controlTypes>
-    <controlTypes>hints</controlTypes>
-    <controlTypes>image</controlTypes>
-    <controlTypes>input</controlTypes>
-    <controlTypes>link</controlTypes>
-    <controlTypes>map</controlTypes>
-    <controlTypes>pagePanel</controlTypes>
-    <controlTypes>panel</controlTypes>
-    <controlTypes>radiobuttons</controlTypes>
-    <controlTypes>slidePanel</controlTypes>
-    <controlTypes>tabGroup</controlTypes>
-    <controlTypes>table</controlTypes>
-    <controlTypes>text</controlTypes>
-    <createdBy>admin</createdBy>
-    <createdDate>2014-08-27T10:45:44.906+01:00</createdDate>
-    <databaseConnections>
-        <connectionAdapterClass>com.rapid.data.SimpleConnectionAdapter</connectionAdapterClass>
-        <connectionString>jdbc:sqlite:WebContent/WEB-INF/database/rapidsample.db</connectionString>
-        <driverClass>org.sqlite.JDBC</driverClass>
-        <name>Demo connection</name>
-        <password>N0Sgi3GcduE=</password>
-        <userName></userName>
-    </databaseConnections>
-    <description>This is a demonstration application provided to showcase many Rapid Mobile features</description>
-    <id>mobdemo</id>
-    <modifiedBy>admin</modifiedBy>
-    <modifiedDate>2014-11-17T07:18:25.402Z</modifiedDate>
-    <name>mobdemo</name>
-    <pageBackupsMaxSize>3</pageBackupsMaxSize>
-    <securityAdapterType>rapid</securityAdapterType>
-    <showActionIds>false</showActionIds>
-    <showControlIds>false</showControlIds>
-    <startPageId>P3</startPageId>
-    <status>0</status>
-    <styles>/*
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?><application><actionTypes>control</actionTypes><actionTypes>custom</actionTypes><actionTypes>dataCopy</actionTypes><actionTypes>database</actionTypes><actionTypes>event</actionTypes><actionTypes>existing</actionTypes><actionTypes>logic</actionTypes><actionTypes>mobile</actionTypes><actionTypes>navigate</actionTypes><actionTypes>validation</actionTypes><actionTypes>webservice</actionTypes><controlTypes>page</controlTypes><controlTypes>button</controlTypes><controlTypes>checkbox</controlTypes><controlTypes>dataStore</controlTypes><controlTypes>date</controlTypes><controlTypes>dropdown</controlTypes><controlTypes>gallery</controlTypes><controlTypes>glyph</controlTypes><controlTypes>grid</controlTypes><controlTypes>hints</controlTypes><controlTypes>image</controlTypes><controlTypes>input</controlTypes><controlTypes>link</controlTypes><controlTypes>map</controlTypes><controlTypes>pagePanel</controlTypes><controlTypes>panel</controlTypes><controlTypes>radiobuttons</controlTypes><controlTypes>slidePanel</controlTypes><controlTypes>tabGroup</controlTypes><controlTypes>table</controlTypes><controlTypes>text</controlTypes><controlTypes>slidePanelPane</controlTypes><controlTypes>tabPanel</controlTypes><controlTypes>tableCell</controlTypes><controlTypes>tableRow</controlTypes><createdBy>admin</createdBy><createdDate>2014-08-27T10:45:44.906+01:00</createdDate><databaseConnections><connectionAdapterClass>com.rapid.data.SimpleConnectionAdapter</connectionAdapterClass><connectionString>jdbc:sqlite:WebContent/WEB-INF/database/rapidsample.db</connectionString><driverClass>org.sqlite.JDBC</driverClass><name>Demo connection</name><password>N0Sgi3GcduE=</password><userName></userName></databaseConnections><description>This is a demonstration application provided to showcase many Rapid Mobile features</description><id>mobdemo</id><modifiedBy>admin</modifiedBy><modifiedDate>2015-01-30T12:56:44.888Z</modifiedDate><name>mobdemo</name><pageBackupsMaxSize>3</pageBackupsMaxSize><securityAdapterType>rapid</securityAdapterType><showActionIds>false</showActionIds><showControlIds>false</showControlIds><startPageId>P3</startPageId><status>0</status><styles>/*
 Styles saved here will be applied to all pages in the application
 */
 
 body {
   font-family : 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;
   font-size : 18px;
+  margin: 0;
+  background: linear-gradient(#fff, #fff 75%, rgba(170, 204, 238, 0.59)) fixed;
 }	
 
 table {
@@ -70,12 +19,12 @@ input {
 	padding: 8px;
 	border: 1px solid #888;
 	border-radius: 10px;
-	box-shadow: inset -2px 2px 5px 0px #ccc; 
+	box-shadow: inset -2px 2px 5px 0px #bcd; 
 	width: 90%;
 }
 
 input:focus {
-	border: 1px solid black;
+	border: 2px solid black;
 	border-radius: 10px;
 	box-shadow: inset -2px 2px 5px 0px #aaa; 
 	outline:none;
@@ -84,23 +33,23 @@ input:focus {
 button {
   font-size: 18px;
   font-family : 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;
-  box-shadow: inset 2px -2px 10px 0px #888;
-  background:linear-gradient(to bottom, #ededed 5%, #bab1ba 100%);	
-  background-color:#ededed;	
-  border-radius:10px;	
-  border:1px solid #888;	
-  display:inline-block;	
-  cursor:pointer;
-  color:#000000;	
-  padding:7px 25px;	
-  text-decoration:none;	
-  text-shadow:0px 1px 0px #e1e2ed;
+  color: white;
+  box-shadow: inset -2px 2px 10px 0px #ace;
+  background: linear-gradient(to bottom, #1e5799 0%, #2989d8 50%, #207cca 100%);	
+  background-color: #2989d8;	
+  border-radius: 10px;	
+  border:1px solid #005;	
+  display: inline-block;	
+  cursor: pointer;
+  padding: 7px 25px;	
+  text-decoration: none;	
+  text-shadow: 0px 1px 0px #000;
 }
 
 
 button:hover {	
-  background:linear-gradient(to bottom, #bab1ba 5%, #ededed 100%);	
-  background-color:#bab1ba;
+  background: linear-gradient(to top, #1e5799 0%, #2989d8 50%, #207cca 100%);	
+  background-color: #207cca;
 }
 
 
@@ -108,6 +57,7 @@ button:active {
   position:relative;	
   top:1px;
 }
+
 button:focus {
 	outline:none;
 }
@@ -117,17 +67,42 @@ button:focus {
 	min-width: 120px;	
 }
 
+.titleBar {
+ background: rgb(30,87,153); /* Old browsers */
+ background: -moz-linear-gradient(top, rgba(30,87,153,1) 0%, rgba(41,137,216,1) 50%, rgba(32,124,202,1) 51%, rgba(125,185,232,1) 100%); /* FF3.6+ */
+ background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(30,87,153,1)), color-stop(50%,rgba(41,137,216,1)), color-stop(51%,rgba(32,124,202,1)), color-stop(100%,rgba(125,185,232,1))); /* Chrome,Safari4+ */
+ background: -webkit-linear-gradient(top, rgba(30,87,153,1) 0%,rgba(41,137,216,1) 50%,rgba(32,124,202,1) 51%,rgba(125,185,232,1) 100%); /* Chrome10+,Safari5.1+ */
+ background: -o-linear-gradient(top, rgba(30,87,153,1) 0%,rgba(41,137,216,1) 50%,rgba(32,124,202,1) 51%,rgba(125,185,232,1) 100%); /* Opera 11.10+ */
+ background: -ms-linear-gradient(top, rgba(30,87,153,1) 0%,rgba(41,137,216,1) 50%,rgba(32,124,202,1) 51%,rgba(125,185,232,1) 100%); /* IE10+ */
+ background: linear-gradient(to bottom, rgba(30,87,153,1) 0%,rgba(41,137,216,1) 50%,rgba(32,124,202,1) 51%,rgba(125,185,232,1) 100%); /* W3C */
+}
+
+.titleText {
+ z-index: 100;
+ position: absolute;
+ top: 0;
+ left: 0;
+ padding-top: 12px;
+ text-align: center;
+ width: 100%;
+ color: white;
+ font-weight: bold;
+ font-size: 20;
+ text-shadow: 2px 2px 2px #000;
+}
+
 .menuItem {
   padding: 10px;
   border-bottom: 1px solid black;
   cursor: pointer;
-  background: -moz-linear-gradient(left,  rgba(0,0,0,0) 75%, rgba(0,0,0,0.25) 100%);
-  background: -webkit-gradient(linear, left top, right top, color-stop(75%,rgba(0,0,0,0)), color-stop(100%,rgba(0,0,0,0.25)));
-  background: -webkit-linear-gradient(left,  rgba(0,0,0,0) 75%,rgba(0,0,0,0.25) 100%);
-  background: -o-linear-gradient(left,  rgba(0,0,0,0) 75%,rgba(0,0,0,0.25) 100%);
-  background: -ms-linear-gradient(left,  rgba(0,0,0,0) 75%,rgba(0,0,0,0.25) 100%);
-  background: linear-gradient(to right,  rgba(0,0,0,0) 75%,rgba(0,0,0,0.25) 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', endColorstr='#40000000',GradientType=1 );
+  background: -moz-linear-gradient(left,  rgba(0,0,0,0) 85%, rgba(108,174,226,0.5) 100%);
+  background: -o-linear-gradient(left,  rgba(0,0,0,0) 85%, rgba(108,174,226,0.5) 100%);
+  background: -ms-linear-gradient(left,  rgba(0,0,0,0) 85%, rgba(108,174,226,0.5) 100%);
+  background: linear-gradient(to right,  rgba(0,0,0,0) 85%, rgba(108,174,226,0.5) 100%);
+}
+
+div.dialogue {
+  background-color: rgba(1,1,1,0);
 }
 
 .dialogueCover {
@@ -151,8 +126,4 @@ input.validation {
   border-radius: 5px;
   box-shadow: 1px 1px 2px;
 }
-</styles>
-    <title>Rapid Mobile demo</title>
-    <version>1</version>
-    <XMLVersion>1</XMLVersion>
-</application>
+</styles><title>Rapid Mobile demo</title><version>1</version><XMLVersion>1</XMLVersion></application>

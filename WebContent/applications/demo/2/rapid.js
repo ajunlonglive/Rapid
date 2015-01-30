@@ -620,6 +620,14 @@ function getData_grid(ev, id, field, details) {
   if (details) {
   	if (details.dataStorageType) {
   		data = getGridDataStoreData(id, details);
+  		if (field && data.fields && data.rows && data.rows.length > 0) {
+  			for (var i in data.fields) {
+  				if (data.fields[i] == field) {
+  					data = data.rows[0][i];
+  					break;
+  				}
+  			}
+  		}
   	} else if (details.columns) {
   		if (field) {		
   			var row = $(ev.target).closest("tr");
@@ -743,6 +751,14 @@ function getProperty_grid_selectedRowData(ev, id, field, details) {
   		for (var i in details.columns) {
   			data.fields.push(details.columns[i].field);
   			data.rows[0].push(row.children(":nth(" + i + ")").html());
+  		}
+  	}
+  }
+  if (field && data.fields && data.rows && data.rows.length > 0) {
+  	for (var i in data.fields) {
+  		if (data.fields[i] == field) {
+  			data = data.rows[0][i];
+  			break;
   		}
   	}
   }

@@ -204,13 +204,15 @@ $(document).ready( function() {
 	
 		if (typeof(window.parent._pageIframe) === "undefined") {
 	
+			// get a reference to the document for the full height
 			var doc = $(document);
+			// get a reference to the slidePanelPane if it's there yet
 			var panel = $(".slidePanelPane");
+			// if we got a panel resize it
+			if (panel[0]) panel.css("height",doc.height() - panel.offset().top);
 			
-			panel.css("height",doc.height() - panel.offset().top);
-			
-			var win = $(window);
-						
+			// get a reference to the window for the viewport size
+			var win = $(window);			
 			// resize the page cover
 			$(".slidePanelCover").css({
 	       		width : win.width(),
@@ -603,12 +605,12 @@ function Init_slidePanel(id, details) {
   	body.append("<div class='slidePanelCover'></div>");
   	// set the reference
   	pageCover = body.find(".slidePanelCover");
-  	// get a reference to the window
-  	var win = $(window);	
+  	// get a reference to the document
+  	var doc = $(document);	
   	// size the cover
   	pageCover.css({
-      	width : win.width(),
-         	height : win.height()
+      	width : doc.width(),
+         	height : doc.height()
       });
   }
   
@@ -975,6 +977,14 @@ function getData_grid(ev, id, field, details) {
   if (details) {
   	if (details.dataStorageType) {
   		data = getGridDataStoreData(id, details);
+  		if (field && data.fields && data.rows && data.rows.length > 0) {
+  			for (var i in data.fields) {
+  				if (data.fields[i] == field) {
+  					data = data.rows[0][i];
+  					break;
+  				}
+  			}
+  		}
   	} else if (details.columns) {
   		if (field) {		
   			var row = $(ev.target).closest("tr");
@@ -1098,6 +1108,14 @@ function getProperty_grid_selectedRowData(ev, id, field, details) {
   		for (var i in details.columns) {
   			data.fields.push(details.columns[i].field);
   			data.rows[0].push(row.children(":nth(" + i + ")").html());
+  		}
+  	}
+  }
+  if (field && data.fields && data.rows && data.rows.length > 0) {
+  	for (var i in data.fields) {
+  		if (data.fields[i] == field) {
+  			data = data.rows[0][i];
+  			break;
   		}
   	}
   }
