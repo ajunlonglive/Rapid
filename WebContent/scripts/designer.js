@@ -1351,7 +1351,7 @@ function loadVersion(forceLoad) {
     			designControls.append("<li class='design-control' data-control='" + c.type + "'>" + (c.image ? "<img src='" + c.image + "'/>" : "<img src='images/tools_24x24.png'/>") + "<span>" + c.name + "</span></li>");
     			
     			// when the mouse moves down on this component
-    			designControls.children().last().mousedown( function(ev) {		
+    			designControls.children().last().on("mousedown touchstart", function(ev) {		
     				
     				// add an undo for the whole page
     				addUndo(true);
@@ -2272,7 +2272,7 @@ $(document).ready( function() {
 	// the div which we place to show where an insert would occur
 	_selectionInsert = $("#selectionInsert");
 	
-	_selectionBorder.mousedown( coverMouseDown );
+	_selectionBorder.on("mousedown touchstart", coverMouseDown );
 	
 	// the div into which all the styles go
 	_stylesPanelDiv = $("#stylesPanelDiv");
@@ -2334,7 +2334,7 @@ $(document).ready( function() {
 	});
 
 	// if we click on the cover (have we hit a control)
-	$("#designCover").mousedown( coverMouseDown ); // cover mouseDown	
+	$("#designCover").on("mousedown touchstart", coverMouseDown ); // cover mouseDown	
 	
 	// administration
 	$("#appAdmin").click( function(ev) {
@@ -2815,7 +2815,7 @@ function isDecendant(control1, control2) {
 }
 
 //if the mouse moves anywhere
-$(document).mousemove( function(ev) {
+$(document).on("mousemove touchmove", function(ev) {
 	
 	// get a reference to the control
 	var c = getMouseControl(ev);
@@ -2935,7 +2935,7 @@ $(document).mousemove( function(ev) {
 }); // mousemove
 
 // if the mouse is upped anywhere
-$(document).mouseup( function(ev) {
+$(document).on("mouseup touchend", function(ev) {
 	
 	_mouseDown = false;
 	_mouseDownXOffset = 0;

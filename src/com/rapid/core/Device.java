@@ -21,9 +21,9 @@ public class Device {
 	@XmlRootElement
 	public static class Devices extends ArrayList<Device> {
 		
-		// properties (for marshelling / unmarshelling)
+		// properties (for marshalling / unmarshalling of this object)
 		public Devices getDevices() { return this; }
-		public void setDevices(Devices devices) { this.addAll(devices); }
+		public void setDevices(Devices devices) { this.clear(); this.addAll(devices); }
 		
 		// static methods
 		public static Devices load(ServletContext servletContext) throws JAXBException, IOException {
