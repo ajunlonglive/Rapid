@@ -127,7 +127,6 @@ public class DataFactory {
 	private String _sql;
 	private boolean _autoCommit, _readOnly;
 	private Connection _connection; 	
-	private Statement _statement;
 	private PreparedStatement _preparedStatement;
 	private ResultSet _resultset;
 		

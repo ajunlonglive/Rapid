@@ -73,6 +73,7 @@ import com.rapid.data.ConnectionAdapter;
 import com.rapid.security.RapidSecurityAdapter;
 import com.rapid.security.SecurityAdapter;
 import com.rapid.security.SecurityAdapter.User;
+import com.rapid.server.Rapid;
 import com.rapid.server.RapidHttpServlet;
 import com.rapid.server.RapidRequest;
 import com.rapid.soa.Webservice;
@@ -1614,7 +1615,7 @@ public class Application {
 				// get a file writer
 				Writer fw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(detailsFile), "UTF-8"));
 				// write the details
-				fw.write(_id + "\r\n" + _version + "\r\n" + _title);
+				fw.write(_id + "\r\n" +  Rapid.MOBILE_VERSION + " - " + _version + "\r\n" + _title);
 				// close the file writer
 				fw.close();
 				// add the file to the zip with a root path
