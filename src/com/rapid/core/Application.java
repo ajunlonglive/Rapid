@@ -29,7 +29,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
@@ -46,7 +45,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.xml.bind.JAXBException;
@@ -77,9 +75,7 @@ import com.rapid.server.Rapid;
 import com.rapid.server.RapidHttpServlet;
 import com.rapid.server.RapidRequest;
 import com.rapid.soa.Webservice;
-import com.rapid.utils.Comparators;
 import com.rapid.utils.Files;
-import com.rapid.utils.JAXB;
 import com.rapid.utils.JAXB.EncryptedXmlAdapter;
 import com.rapid.utils.Minify;
 import com.rapid.utils.Strings;
@@ -296,6 +292,8 @@ public class Application {
 	
 	// some overridden methods for the Resource collection
 	public static class Resources extends ArrayList<Resource> {
+
+		private static final long serialVersionUID = 1025L;
 
 		@Override
 		public boolean contains(Object o) {
@@ -1145,7 +1143,7 @@ public class Application {
 				switch (resource.getType()) {
 					case Resource.JAVASCRIPTFILE :						
 						// get a file for this
-						File jsFile = new File(servletContext.getRealPath(fileName));
+						File jsFile = new File(servletContext.getRealPath("/") + fileName);
 						// if the file exists, and it's in the scripts folder and ends with .js
 						if (jsFile.exists() && fileName.startsWith("scripts/") && fileName.endsWith(".js")) {
 							// derive the min file name by modifying the start and end
@@ -1165,7 +1163,7 @@ public class Application {
 					break;
 					case Resource.CSSFILE :
 						// get a file for this
-						File cssFile = new File(servletContext.getRealPath(fileName));
+						File cssFile = new File(servletContext.getRealPath("/") + fileName);
 						// if the file exists, and it's in the scripts folder and ends with .js
 						if (cssFile.exists() && fileName.startsWith("styles/") && fileName.endsWith(".css")) {
 							// derive the min file name by modifying the start and end
@@ -1532,7 +1530,7 @@ public class Application {
 		
 		// marshal the application object to the temp file
 		FileOutputStream fos = new FileOutputStream(tempFile.getAbsolutePath());		
-	    rapidServlet.getMarshaller().marshal(this, fos);	    
+		RapidHttpServlet.getMarshaller().marshal(this, fos);	    
 	    fos.close();
 	    
 	    // copy / overwrite the app file with the temp file	    	    	    
