@@ -554,22 +554,23 @@ public class Application {
 				try {
 					// get the specified page
 					Page page = _pages.getPage(servletContext, pageId);
-					// if we got a page
-					if (page != null) {
-						// look for the control
+					// check we got a page
+					if (page == null) {
+						// no page matching this control id prefix so just loop all pages
+						for (String loopPageId : _pages.getPageIds()) {
+							// fetch this page
+							page = _pages.getPage(servletContext, loopPageId);
+							// look for the control
+							control = page.getControl(id);
+							// if we found it return it!
+							if (control != null) return control;
+						}
+					} else {
+						// look for the control in the page according to its prefix
 						control = page.getControl(id);
 						// return it if we found it!
 						if (control != null) return control;
 					}
-					// didn't find it in the specified page so loop all pages
-					for (String loopPageId : _pages.getPageIds()) {
-						// fetch this page
-						page = _pages.getPage(servletContext, loopPageId);
-						// look for the control
-						control = page.getControl(id);
-						// if we found it return it!
-						if (control != null) return control;
-					}	
 				} catch (Exception ex) {
 					// get the logger
 					Logger logger = (Logger) servletContext.getAttribute("logger");

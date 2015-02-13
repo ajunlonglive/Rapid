@@ -983,35 +983,38 @@ public class RapidServletContextListener implements ServletContextListener {
 			
 		_logger.info("Shutting down...");
 		
-		// interrupt the page monitor
-		_monitor.interrupt();
+		// interrupt the page monitor if we have one
+		if (_monitor != null) _monitor.interrupt();
 		
 		// get all of the applications
 		Applications applications = (Applications) event.getServletContext().getAttribute("applications");
-		// loop the application ids
-		for (String id : applications.getIds()) {
-			// get the application
-			Versions versions = applications.getVersions(id);
-			// loop the versions of each app
-			for (String version : versions.keySet()) {
+		// if we got some
+		if (applications != null) {
+			// loop the application ids
+			for (String id : applications.getIds()) {
 				// get the application
-				Application application = applications.get(id, version);
-				// check for any connections
-				if (application.getDatabaseConnections() != null) {
-					// loop them
-					for (DatabaseConnection databaseConnection : application.getDatabaseConnections()) {
-						// check adapter
-						try {
-							// get adapter
-							ConnectionAdapter connectionAdapter = databaseConnection.getConnectionAdapter(event.getServletContext());
-							// if we got one try and close it
-							if (connectionAdapter != null) connectionAdapter.close();						
-						} catch (Exception ex) {						
-							_logger.error("Error closing database adapter for " + application.getName(), ex);						
+				Versions versions = applications.getVersions(id);
+				// loop the versions of each app
+				for (String version : versions.keySet()) {
+					// get the application
+					Application application = applications.get(id, version);
+					// check for any connections
+					if (application.getDatabaseConnections() != null) {
+						// loop them
+						for (DatabaseConnection databaseConnection : application.getDatabaseConnections()) {
+							// check adapter
+							try {
+								// get adapter
+								ConnectionAdapter connectionAdapter = databaseConnection.getConnectionAdapter(event.getServletContext());
+								// if we got one try and close it
+								if (connectionAdapter != null) connectionAdapter.close();						
+							} catch (Exception ex) {						
+								_logger.error("Error closing database adapter for " + application.getName(), ex);						
+							}
 						}
-					}
-				}	
-			}					
+					}	
+				}					
+			}
 		}
 		
 		// sleep for 2 seconds to allow any database connection cleanup to complete

@@ -125,6 +125,9 @@ public class Datacopy extends Action {
 		// get any copy type
 		String copyType = getProperty("copyType");
 		
+		// set to replace if null (for backwards compatibility)
+		if (copyType == null) copyType = "replace";
+		
 		// bulk copy is a special animal
 		if ("bulk".equals(copyType)) {
 			

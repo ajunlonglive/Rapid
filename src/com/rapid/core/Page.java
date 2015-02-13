@@ -1174,7 +1174,7 @@ public class Page {
 		
 		
 		// this doctype is necessary (amongst other things) to stop the "user agent stylesheet" overriding styles
-		writer.write("<!DOCTYPE html encoding=\"utf-8\">\n");
+		writer.write("<!DOCTYPE>\n");
 								
 		writer.write("<html>\n");
 		
