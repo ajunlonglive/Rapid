@@ -41,7 +41,12 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <name>Copy type</name>
 	            <setConstructValueFunction>return false;</setConstructValueFunction>
 	            <changeValueJavaScript>select</changeValueJavaScript>	
-	            <getValuesFunction>return [[false,"replace"],["append","append"],["row","row merge"],["child","child merge"],["search","search"],["bulk","bulk"]]</getValuesFunction>
+	            <getValuesFunction>
+// for backwards compatibility	                
+if (!copyType) copyType = "replace";
+// return the values	                
+return [["replace","replace"],["append","append"],["row","row merge"],["child","child merge"],["search","search"],["bulk","bulk"]];
+				</getValuesFunction>
 	            <refreshProperties>true</refreshProperties>	            
 	        </property> 
 	    
