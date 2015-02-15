@@ -622,6 +622,7 @@ function mergeDataObjects(data1, data2, mergeType, field) {
 						}
 					}
 					var value = data1.rows[0][fieldIndex];
+					if (value) value = value.toLowerCase();
 					var data = {fields: data2.fields, rows: []}					
 					for (var i in data2.rows) {
 						var v = data2.rows[i][0];
