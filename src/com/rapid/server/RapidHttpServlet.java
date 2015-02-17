@@ -244,6 +244,8 @@ public class RapidHttpServlet extends HttpServlet {
 		
 		response.setStatus(status);
 		
+		response.setContentType("text/html");
+		
 		PrintWriter out = response.getWriter();		
 		
 		// write a header

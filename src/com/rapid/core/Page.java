@@ -63,6 +63,7 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import com.rapid.core.Application.Resource;
+import com.rapid.core.Application.ResourceDependency;
 import com.rapid.security.SecurityAdapter;
 import com.rapid.security.SecurityAdapter.SecurityAdapaterException;
 import com.rapid.security.SecurityAdapter.User;
@@ -137,13 +138,12 @@ public class Page {
 	// instance variables
 	
 	private int _xmlVersion;
-	private String _id, _name, _title, _description, _createdBy, _modifiedBy, _htmlBody, _cachedStartHtml, _cachedStartHtmlDialogue;
+	private String _id, _name, _title, _description, _createdBy, _modifiedBy, _htmlBody, _cachedStartHtml;
 	private Date _createdDate, _modifiedDate;	
 	private List<Control> _controls;
 	private List<Event> _events;
 	private List<Style> _styles;
-	private List<String> _sessionVariables;
-	private List<String> _roles;
+	private List<String> _controlTypes, _actionTypes, _sessionVariables, _roles;
 	private List<RoleHtml> _rolesHtml;
 	private Lock _lock;
 				
@@ -379,7 +379,7 @@ public class Page {
 	}
 	
 	// get all actions in the page
-	public List<Action> getActions() {
+	public List<Action> getAllActions() {
 		// instantiate the list we're going to return
 		List<Action> actions = new ArrayList<Action>();
 		// check the page events first
@@ -612,7 +612,8 @@ public class Page {
 			} 
 		}
 	}
-				
+	
+	
 	public String getAllCSS(Application application) {
 		// the stringbuilder we're going to use
 		StringBuilder stringBuilder = new StringBuilder();
@@ -627,6 +628,31 @@ public class Page {
 		getChildControlStyles(_controls, stringBuilder);				
 		// return it with inserted parameters
 		return application.insertParameters(stringBuilder.toString());		
+	}
+	
+	public List<String> getAllActionTypes() {
+		List<String> actionTypes = new ArrayList<String>();
+		List<Action> actions = getAllActions();
+		if (actions != null) {
+			for (Action action : actions) {
+				String actionType = action.getType();
+				if (!actionTypes.contains(actionType)) actionTypes.add(actionType);
+			}
+		}
+		return actionTypes;
+	}
+	
+	public List<String> getAllControlTypes() {
+		List<String> controlTypes = new ArrayList<String>();
+		controlTypes.add("page");
+		List<Control> controls = getAllControls();
+		if (controls != null) {
+			for (Control control : controls) {
+				String controlType = control.getType();
+				if (!controlTypes.contains(controlType)) controlTypes.add(controlType);
+			}
+		}
+		return controlTypes;
 	}
 	
 	// removes the page lock if it is more than 1 hour old
@@ -721,6 +747,10 @@ public class Page {
 		
 		// empty the cached page html
 		_cachedStartHtml = null;
+		// empty the cached action types
+		_actionTypes = null;
+		// empty the cached control types
+		_controlTypes = null;
 				
 	}
 	
@@ -795,10 +825,15 @@ public class Page {
     	}    	
     }
     
-    // the resources for the page, and whether we want the css (we might like to override it in the designer or for no permission, etc)
+    // the resources for the page
     public String getResourcesHtml(Application application) {
     	
     	StringBuilder stringBuilder = new StringBuilder();
+    	
+    	// get all action types used in this page
+    	if (_actionTypes == null) _actionTypes = getAllActionTypes();
+    	// get all control types used in this page
+    	if (_controlTypes == null) _controlTypes = getAllControlTypes();
     	
     	// manage the resources links added already so we don't add twice
     	ArrayList<String> addedLinks = new ArrayList<String>(); 
@@ -807,26 +842,33 @@ public class Page {
 		if (application.getResources() != null) {
 			// loop and add the resources required by this application's controls and actions (created when application loads)
 			for (Resource resource : application.getResources()) {
-				// the link we're hoping to get
-				String link = null;
-				// set the link according to the type
-				switch (resource.getType()) {
-					case Resource.JAVASCRIPTFILE : case Resource.JAVASCRIPTLINK :
-						link = "<script type='text/javascript' src='" + resource.getContent() + "'></script>";
-					break;
-					case Resource.CSSFILE : case Resource.CSSLINK :
-						link = "<link rel='stylesheet' type='text/css' href='" + resource.getContent() + "'></link>";
-					break;
-				}				
-				// if we got a link and don't have it already 
-				if (link != null && !addedLinks.contains(link)) {
-					// append it
-					stringBuilder.append(link + "\n");
-					// remember we've added it
-					addedLinks.add(link);
-				}
-			}
-		}
+				// if there is a dependency for this resource
+				if (resource.hasDependency(ResourceDependency.RAPID) || resource.hasDependency(ResourceDependency.ACTION, _actionTypes) || resource.hasDependency(ResourceDependency.CONTROL, _controlTypes)) {
+					
+					// the link we're hoping to get
+					String link = null;
+					// set the link according to the type
+					switch (resource.getType()) {
+						case Resource.JAVASCRIPTFILE : case Resource.JAVASCRIPTLINK :
+							link = "<script type='text/javascript' src='" + resource.getContent() + "'></script>";
+						break;
+						case Resource.CSSFILE : case Resource.CSSLINK :
+							link = "<link rel='stylesheet' type='text/css' href='" + resource.getContent() + "'></link>";
+						break;
+					}				
+					// if we got a link and don't have it already 
+					if (link != null && !addedLinks.contains(link)) {
+						// append it
+						stringBuilder.append(link + "\n");
+						// remember we've added it
+						addedLinks.add(link);
+					}
+					
+				} // dependency check
+				
+			} // resource loop
+			
+		} // has resources
 					
 		return stringBuilder.toString();
     	
@@ -1084,7 +1126,7 @@ public class Page {
 		jsStringBuilder.append("});\n\n");
 						
 		// find any redundant actions anywhere in the page, prior to generating JavaScript
-		List<Action> pageActions = getActions();
+		List<Action> pageActions = getAllActions();
 		
 		// only proceed if there are actions in this page
 		if (pageActions != null) {

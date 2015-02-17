@@ -260,6 +260,34 @@ public class Application {
 		}
 					
 	}
+	
+	// the resource dependency is the control or action dependent on the resource
+	public static class ResourceDependency {
+		
+		// the types that require resources
+		public static final int RAPID = 0;
+		public static final int ACTION = 1;
+		public static final int CONTROL = 2;
+		
+		// private instance variables
+		private int _typeClass;
+		private String _type;
+		
+		// properties
+		public int getTypeClass() { return _typeClass; }
+		public String getType() { return _type; }
+		
+		// constructors
+		public ResourceDependency(int typeClass) {
+			_typeClass = typeClass;
+		}
+		
+		public ResourceDependency(int typeClass, String type) {
+			_typeClass = typeClass;
+			_type = type;
+		}
+				
+	}
 		
 	// the resource is specified in the control or action xml files
 	public static class Resource {
@@ -273,19 +301,71 @@ public class Application {
 		public static final int CSSLINK = 6;
 		public static final int FILE = 7;
 		
+		// source types
+		public static final int ACTION = 101;
+		public static final int CONTROL = 102;
+		
 		// private instance variables
 		private int _type;
 		private String _content;
+		private List<ResourceDependency> _dependancies;
 		
 		// properties
 		public int getType() { return _type; }		
 		public String getContent() { return _content; }
 		public void setContent(String content) { _content = content; }
+		public List<ResourceDependency> getDependencies() { return _dependancies; }
 		
-		// constructor
-		public Resource(int type, String content) {
+		// constructors
+		public Resource(int type, String content, int dependencyTypeClass) {
 			_type = type;
 			_content = content;
+			_dependancies = new ArrayList<ResourceDependency>();
+			_dependancies.add(new ResourceDependency(dependencyTypeClass));
+			
+		}
+		
+		public Resource(int type, String content, int dependencyTypeClass, String dependencyType) {
+			_type = type;
+			_content = content;
+			_dependancies = new ArrayList<ResourceDependency>();
+			_dependancies.add(new ResourceDependency(dependencyTypeClass, dependencyType));
+		}
+		
+		// methods
+		public void addDependency(ResourceDependency dependency) {
+			if (_dependancies == null) _dependancies = new ArrayList<ResourceDependency>();
+			_dependancies.add(dependency);
+		}
+		
+		// check for dependencies on a single type (usally Rapid)
+		public boolean hasDependency(int typeClass) {
+			// assume no dependency
+			boolean hasDependency = false;
+			// if there are some to check
+			if (_dependancies != null) {
+				// loop them
+				for (ResourceDependency dependency : _dependancies) {
+					// check and return immediately
+					if (typeClass == dependency.getTypeClass()) return true;
+				}				
+			}
+			return hasDependency;			
+		}
+		
+		// check for dependencies for a type class and list of types 
+		public boolean hasDependency(int typeClass, List<String> types) {
+			// assume no dependency
+			boolean hasDependency = false;
+			// if there are some to check
+			if (types != null && _dependancies != null) {
+				// loop them
+				for (ResourceDependency dependency : _dependancies) {
+					// check and return immediately
+					if (typeClass == dependency.getTypeClass() && types.contains(dependency.getType())) return true;
+				}				
+			}
+			return hasDependency;			
 		}
 				
 	}
@@ -320,6 +400,32 @@ public class Application {
 			if (!contains(resource)) {
 				super.add(index, resource);
 			}
+		}
+		
+		public void add(int type, String content, int dependencyTypeClass, String dependencyType) {
+			// assume we can't find the resource
+			Resource resource = null;
+			// loop all resources
+			for (Resource r : this) {
+				// if we can match the type and content
+				if (r.getType() == type && r.getContent() == content) {
+					// retain this resource
+					resource = r;
+					// we're done with this loop
+					break;
+				}
+			}
+			// check for an existing resource
+			if (resource == null) {
+				// didn't find one so create
+				resource = new Resource(type, content, dependencyTypeClass, dependencyType);
+				// add to this collection
+				this.add(resource);
+			} else {
+				// add the dependency to the resource
+				resource.addDependency(new ResourceDependency(dependencyTypeClass, dependencyType));
+			}
+			
 		}
 			
 	}
@@ -702,6 +808,15 @@ public class Application {
 			
 			// check we have something
 			if (jsonResources != null) {
+				
+				// assume this is a rapid resource
+				int dependencyTypeClass = ResourceDependency.RAPID;
+				// update if action
+				if ("action".equals(jsonObjectType)) dependencyTypeClass = ResourceDependency.ACTION;
+				if ("control".equals(jsonObjectType)) dependencyTypeClass = ResourceDependency.CONTROL;
+				// get the dependency type
+				String dependencyType = jsonObject.getString("type");
+				
 				// loop them
 				for (int j = 0; j < jsonResources.length(); j++) {
 
@@ -724,15 +839,15 @@ public class Application {
 					} else if ("css".equals(resourceType)) {
 						css.append("\n/* " + name + " resource styles */\n\n" + resourceContents + "\n");
 					} else if ("javascriptFile".equals(resourceType)) {
-						_resources.add(new Resource(Resource.JAVASCRIPTFILE, resourceContents));
+						_resources.add(Resource.JAVASCRIPTFILE, resourceContents, dependencyTypeClass, dependencyType);
 					} else if ("cssFile".equals(resourceType)) {
-						_resources.add(new Resource(Resource.CSSFILE, resourceContents));
+						_resources.add(Resource.CSSFILE, resourceContents, dependencyTypeClass, dependencyType);
 					} else if ("javascriptLink".equals(resourceType)) {
-						_resources.add(new Resource(Resource.JAVASCRIPTLINK, resourceContents));
+						_resources.add(Resource.JAVASCRIPTLINK, resourceContents, dependencyTypeClass, dependencyType);
 					} else if ("cssLink".equals(resourceType)) {
-						_resources.add(new Resource(Resource.CSSLINK, resourceContents));
+						_resources.add(Resource.CSSLINK, resourceContents, dependencyTypeClass, dependencyType);
 					} else if ("file".equals(resourceType)) {
-						_resources.add(new Resource(Resource.FILE, resourceContents));
+						_resources.add(Resource.FILE, resourceContents, dependencyTypeClass, dependencyType);
 					} 
 										
 				} // resource loop
@@ -1126,14 +1241,14 @@ public class Application {
 			// check the status
 	    	if (_status == STATUS_LIVE) {
 	    		// add the application js min file as a resource
-	    		_resources.add(new Resource(Resource.JAVASCRIPTFILE, getWebFolder(this) + "/rapid.min.js"));
+	    		_resources.add(new Resource(Resource.JAVASCRIPTFILE, getWebFolder(this) + "/rapid.min.js", ResourceDependency.RAPID));
 	    		// add the application css min file as a resource	    	
-	    		_resources.add(new Resource(Resource.CSSFILE, getWebFolder(this) + "/rapid.min.css"));
+	    		_resources.add(new Resource(Resource.CSSFILE, getWebFolder(this) + "/rapid.min.css", ResourceDependency.RAPID));
 	    	} else {
 	    		// add the application js file as a resource
-	    		_resources.add(new Resource(Resource.JAVASCRIPTFILE, getWebFolder(this) + "/rapid.js"));
+	    		_resources.add(new Resource(Resource.JAVASCRIPTFILE, getWebFolder(this) + "/rapid.js", ResourceDependency.RAPID));
 	    		// add the application css file as a resource	    	
-	    		_resources.add(new Resource(Resource.CSSFILE, getWebFolder(this) + "/rapid.css"));
+	    		_resources.add(new Resource(Resource.CSSFILE, getWebFolder(this) + "/rapid.css", ResourceDependency.RAPID));
 	    	}
 			
 	    	// loop all resources and minify js and css files
