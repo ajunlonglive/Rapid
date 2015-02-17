@@ -45,7 +45,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.Scanner;
 
 import javax.servlet.ServletContext;
@@ -55,9 +55,6 @@ import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.ValidationEvent;
-import javax.xml.bind.ValidationEventHandler;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
@@ -82,12 +79,11 @@ import com.rapid.core.Applications;
 import com.rapid.core.Applications.Versions;
 import com.rapid.core.Device.Devices;
 import com.rapid.data.ConnectionAdapter;
+import com.rapid.utils.Comparators;
 import com.rapid.utils.Encryption.EncryptionProvider;
 import com.rapid.utils.Files;
 import com.rapid.utils.JAXB.EncryptedXmlAdapter;
-import com.rapid.utils.Encryption;
 import com.rapid.utils.Strings;
-import com.rapid.utils.ZipFile;
 
 public class RapidServletContextListener implements ServletContextListener {
 	
@@ -425,17 +421,18 @@ public class RapidServletContextListener implements ServletContextListener {
 	// loop all of the .action.xml files and check the injectable classes, so we can re-initialise JAXB context to be able to serialise them, and cache their constructors for speedy initialisation
 	public static int loadActions(ServletContext servletContext) throws Exception {
 		
+		// assume no actions
 		int actionCount = 0;
+		
+		// create a list of json actions which we will sort later
+		List<JSONObject> jsonActions = new ArrayList<JSONObject>();
 		
 		// retain our class constructors in a hashtable - this speeds up initialisation
 		HashMap<String,Constructor> actionConstructors = new HashMap<String,Constructor>();
 		
 		// build a collection of classes so we can re-initilise the JAXB context to recognise our injectable classes
 		ArrayList<Action> actions = new ArrayList<Action>(); 
-		
-		// create a JSON Array object which will hold json for all of the available controls
-		JSONArray jsonActions = new JSONArray();
-		
+						
 		// get the directory in which the control xml files are stored
 		File dir = new File(servletContext.getRealPath("/WEB-INF/actions/"));
 		
@@ -483,8 +480,13 @@ public class RapidServletContextListener implements ServletContextListener {
 			
 			do {
 				
+				// check this type does not already exist
+				for (int i = 0; i < jsonActions.size(); i++) {
+					if (jsonAction.getString("type").equals(jsonActions.get(i).getString("type"))) throw new Exception(" action type is loaded already. Type names must be unique");
+				}
+				
 				// add the jsonControl to our array
-				jsonActions.put(jsonAction);
+				jsonActions.add(jsonAction);
 				// get the named type from the json
 				String type = jsonAction.getString("type");
 				// get the class name from the json
@@ -511,8 +513,24 @@ public class RapidServletContextListener implements ServletContextListener {
 			
 		}
 		
+		// sort the list of actions by name
+		Collections.sort(jsonActions, new Comparator<JSONObject>() {
+			@Override
+			public int compare(JSONObject c1, JSONObject c2) {
+				try {
+					return Comparators.AsciiCompare(c1.getString("name"), c2.getString("name"), false);
+				} catch (JSONException e) {
+					return 0;
+				}
+			}
+			
+		});
+		
+		// create a JSON Array object which will hold json for all of the available controls
+		JSONArray jsonArrayActions = new JSONArray(jsonActions);
+		
 		// put the jsonControls in a context attribute (this is available via the getJsonActions method in RapidHttpServlet)
-		servletContext.setAttribute("jsonActions", jsonActions);
+		servletContext.setAttribute("jsonActions", jsonArrayActions);
 		
 		// put the constructors hashmapin a context attribute (this is available via the getContructor method in RapidHttpServlet)
 		servletContext.setAttribute("actionConstructors", actionConstructors);
@@ -526,11 +544,12 @@ public class RapidServletContextListener implements ServletContextListener {
 	// here we loop all of the control.xml files and instantiate the json class object/functions and cache them in the servletContext
 	public static int loadControls(ServletContext servletContext) throws Exception {
 		
+		// assume no controls
 		int controlCount = 0;
-				
-		// create a JSON Array object which will hold json for all of the available controls
-		JSONArray jsonControls = new JSONArray();
 		
+		// create a list for our controls
+		List<JSONObject> jsonControls = new ArrayList<JSONObject>();
+							
 		// get the directory in which the control xml files are stored
 		File dir = new File(servletContext.getRealPath("/WEB-INF/controls/"));
 		
@@ -578,12 +597,12 @@ public class RapidServletContextListener implements ServletContextListener {
 			do {
 				
 				// check this type does not already exist
-				for (int i = 0; i < jsonControls.length(); i++) {
-					if (jsonControl.getString("type").equals(jsonControls.getJSONObject(i).getString("type"))) throw new Exception(" control type is loaded already. Type names must be unique");
+				for (int i = 0; i < jsonControls.size(); i++) {
+					if (jsonControl.getString("type").equals(jsonControls.get(i).getString("type"))) throw new Exception(" control type is loaded already. Type names must be unique");
 				}
 				
 				// add the jsonControl to our array
-				jsonControls.put(jsonControl);
+				jsonControls.add(jsonControl);
 	
 				// inc the control count
 				controlCount ++;
@@ -597,8 +616,24 @@ public class RapidServletContextListener implements ServletContextListener {
 			
 		}
 		
+		// sort the list of controls by name
+		Collections.sort(jsonControls, new Comparator<JSONObject>() {
+			@Override
+			public int compare(JSONObject c1, JSONObject c2) {
+				try {
+					return Comparators.AsciiCompare(c1.getString("name"), c2.getString("name"), false);
+				} catch (JSONException e) {
+					return 0;
+				}
+			}
+			
+		});
+		
+		// create a JSON Array object which will hold json for all of the available controls
+		JSONArray jsonArrayControls = new JSONArray(jsonControls);
+		
 		// put the jsonControls in a context attribute (this is available via the getJsonControls method in RapidHttpServlet)
-		servletContext.setAttribute("jsonControls", jsonControls);
+		servletContext.setAttribute("jsonControls", jsonArrayControls);
 							
 		_logger.info(controlCount + " controls loaded in .control.xml files");
 		

@@ -348,6 +348,8 @@ function Init_pagePanel(id, details) {
          		// empty the body html
          		bodyHtml = "";
          		script = "";
+         		// get the document head
+          	var head = $("head");
          		
              	// loop the items
              	var items = $(page);
@@ -357,19 +359,34 @@ function Init_pagePanel(id, details) {
              		case "#text" : case "TITLE" : case "META" : // ignore these types
              		break;
              		case "SCRIPT" :
-             			// ignore links 
+             			// check whether a script block or link
              			if (items[i].innerHTML) {
              				var s = items[i].outerHTML;
              				// exclude the app id, version, page, mobile resume link
              				if (s.indexOf("var _appId =") == -1 && s.indexOf("var _appVersion =") == -1 && s.indexOf("var _pageId =") == -1 && s.indexOf("var _mobileResume =") == -1)
              					script += s;
-             			}
+             			} else {
+             				// fetch the text
+             				var text = items[i].outerHTML;
+             				// look for a src
+             				if (text.indexOf("src=\"") > 0) {
+             					var startPos = text.indexOf("src=\"")+5;
+             					var src = text.substr(startPos,text.indexOf("\"", startPos) - startPos);
+             					// add if not in the head already
+             					if (!head.find("script[src='" + src + "']")[0]) head.append(text);
+             				}
+             			} 
              		break;
              		case "LINK" :
-             			var href = $(items[i].outerHTML).attr("href");
-             			if (!$("head").children("[href='" + href + "']")[0]) { // ignore if link already present in document head
-             				bodyHtml += items[i].outerHTML;
-             			}           			
+             			// fetch the text
+             			var text = items[i].outerHTML;	           			
+             			// look for an href="
+             			if (!items[i].innerHTML && text.indexOf("href=\"") > 0) {
+             				var startPos = text.indexOf("href=\"")+6;
+             				var href = text.substr(startPos,text.indexOf("\"", startPos) - startPos);
+             				// add this link to the page if not there already
+             				if (!head.find("link[href='" + href + "']")[0]) head.append(text);
+             			}	         			
              		break;
              		default :
              			if (items[i].outerHTML) {
@@ -1154,6 +1171,9 @@ function Action_navigate(url, dialogue, id) {
 		       		script = "";
 		       		links = "";
 		       		
+		       		// get the page document head
+		       		var head = $("head");
+		       		
 		           	// loop the items
 		           	var items = $(page);
 		           	for (var i in items) {
@@ -1162,28 +1182,34 @@ function Action_navigate(url, dialogue, id) {
 		           		case "#text" : case "TITLE" : // ignore these types
 		           		break;
 		           		case "SCRIPT" :
-		           			// exclude any links as we should have them all already
+		           			// check whether a script block or link
 		           			if (items[i].innerHTML) {
 		           				var s = items[i].outerHTML;
 		           				// exclude the app id, version, page, mobile resume link
 		           				if (s.indexOf("var _appId =") == -1 && s.indexOf("var _appVersion =") == -1 && s.indexOf("var _pageId =") == -1 && s.indexOf("var _mobileResume =") == -1)
 		           					script += s;
-		           			}		           			
+		           			} else {
+		           				// fetch the text
+		           				var text = items[i].outerHTML;
+		           				// look for a src
+		           				if (text.indexOf("src=\"") > 0) {
+		           					var startPos = text.indexOf("src=\"")+5;
+		           					var src = text.substr(startPos,text.indexOf("\"", startPos) - startPos);		           					
+		           					// add this to the page if not there already
+		           					if (!head.find("script[src='" + src + "']")[0]) head.append(text);
+		           				}
+		           			}          			
 		           		break;
 		           		case "LINK" :
-		           			// assume we can include this
-		           			var include = true;
 		           			// fetch the text
 		           			var text = items[i].outerHTML;	           			
 		           			// look for an href="
 		           			if (!items[i].innerHTML && text.indexOf("href=\"") > 0) {
 		           				var startPos = text.indexOf("href=\"")+6;
 		           				var href = text.substr(startPos,text.indexOf("\"", startPos) - startPos);
-		           				// exclude if we already have an element in the head with this href
-		           				if ($("head").find("link[href='" + href + "']")[0]) include = false;
-		           			}		           			
-		           			// if still safe to include
-		           			if (include) links += text;		           			
+		           				// add this link to the page if not there already
+		           				if (!head.find("link[href='" + href + "']")[0]) head.append(text);
+		           			}		           				           			
 		           		break;
 		           		case "META" :
 		           			// meta tags can be ignored

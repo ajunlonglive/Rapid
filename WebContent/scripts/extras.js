@@ -98,6 +98,17 @@ $.fn.extend({
   }
 });
 
+// thanks to http://stackoverflow.com/questions/2200494/jquery-trigger-event-when-an-element-is-removed-from-the-dom/10172676#10172676
+(function($){
+  $.event.special.destroyed = {
+    remove: function(o) {
+      if (o.handler) {
+        o.handler()
+      }
+    }
+  }
+})(jQuery)
+
 /*
  
  http://code.accursoft.com/caret
@@ -621,11 +632,11 @@ function mergeDataObjects(data1, data2, mergeType, field) {
 							}
 						}
 					}
-					var value = data1.rows[0][fieldIndex];
+					var value = data1.rows[0][0];
 					if (value) value = value.toLowerCase();
 					var data = {fields: data2.fields, rows: []}					
 					for (var i in data2.rows) {
-						var v = data2.rows[i][0];
+						var v = data2.rows[i][fieldIndex];
 						if (typeof v !== "undefined") {
 							if (v.toLowerCase().indexOf(value) > -1) data.rows.push(data2.rows[i]);
 						}

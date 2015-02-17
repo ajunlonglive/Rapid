@@ -334,9 +334,13 @@ function f_tcalAdd (id) {
 		window.A_TCALTOKENS_IDX = {};
 		for (var n = 0; n < A_TCALTOKENS.length; n++) A_TCALTOKENS_IDX[A_TCALTOKENS[n]['t']] = A_TCALTOKENS[n];
 	}
+	var e = $("#" + id);
 	var e_input = $("#" + id)[0];
 	if (e_input) {
 		e_input.onclick = f_tcalOnClick;
+		e.on("destroyed", function() {
+			if ($(".tcalInput").length <= 1) $("#tcal").remove();
+		});
 		f_tcalAddClass(e_input, A_TCALCONF.cssprefix + 'Input');
 	}
 }
