@@ -111,13 +111,18 @@ public interface SOADataReader {
 			private SOAElement _currentElement;		
 			private String _currentElementId;
 			private int _previousColumn;
+			private String _root;
+			private boolean _rootFound;
 			
 			private List<String> _columnElementIds = new ArrayList<String>();
 			private List<Integer> _columnRows = new ArrayList<Integer>();
 			private List<SOAElement> _columnParents = new ArrayList<SOAElement>();
 						
-			public SOAXMLContentHandler(SOASchema soaSchema) {
+			public SOAXMLContentHandler(SOASchema soaSchema, String root) {
+				// retain the schema
 				_soaSchema = soaSchema;
+				// retain the root, we'll check it on start
+				_root = root;				
 			}
 			
 			public SOAElement getRootElement() {
@@ -150,6 +155,14 @@ public interface SOADataReader {
 				_columnElementIds.clear();
 				_columnRows.clear();
 				_columnParents.clear();	
+				// check whether we got a root for us to start at
+				if (_root == null) {
+					// no explicit root, start at the very beginning
+					_rootFound = true;
+				} else if (_root.length() == 0) {
+					// no explicit root either, start at the very beginning
+					_rootFound = true;
+				}
 			}
 
 			@Override
@@ -169,86 +182,102 @@ public interface SOADataReader {
 			@Override
 			public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
 				
-				// ignore all elements pertaining to the envelope
-				
+				// ignore all elements pertaining to the envelope				
 				if ("http://schemas.xmlsoap.org/soap/envelope/" != uri) {
-				
-					// make a new branch for this element
-					_currentElement = new SOAElement(localName);
 					
-					// check child branches for array for brevity we will only use the name
-					int lastIndexOfArray = _currentElement.getName().lastIndexOf("Array");
-					if (lastIndexOfArray > 0 && lastIndexOfArray == _currentElement.getName().length() - 5) {
-						_currentElement.setIsArray(true);
+					// if we haven't found the root we want yet
+					if (!_rootFound) {
+						// check both local and qualified names for if this is the root we want
+						if (localName.equals(_root) || qName.equals(_root)) _rootFound = true;
 					}
-																	 																								
-					// reset or resume the row counter if the column is different
-					if (_previousColumn == _currentColumn) {
-						_currentRow ++;
-					} else {	
+					
+					// if we've found our root!
+					if (_rootFound) {
 						
-						// add a branch id for this column if required
-						if (_currentColumn > _columnElementIds.size() - 1) {
-							// check root or further down
-							if (_currentColumn == 0) {
-								// root is simple
-								_columnElementIds.add("0");							
-							} else {
-								// other columns are the most recent parent with an extra 0
-								_columnElementIds.add(_columnElementIds.get(_currentColumn - 1) + ".0");
-							}						
-						}
-						
-						// add row counter for this column if required
-						if (_currentColumn > _columnRows.size() - 1) {
-							// add a counter for the number of rows for this column 
-							_columnRows.add(0);	
-							// reset row counter
-							_currentRow = 0;
+						// make a new branch for this element
+						_currentElement = new SOAElement(localName);
+											
+						// if we have a parent for this column already (a proxy for whether it's the second or more peer)
+						if (_columnParents.size() > _currentColumn) {
+							// if the the element at this column has the same name as what we had previously, it's parent must be an array
+							if (localName.equals(_columnParents.get(_currentColumn).getName())) _columnParents.get(_currentColumn - 1).setIsArray(true);
 						} else {
-							// fetch in the current row for this column and inc
-							_currentRow = _columnRows.get(_currentColumn) + 1;
+							// if a root was set
+							if (_root != null) {
+								// the root is always an array too (for now...)
+								if (localName.equals(_root) || qName.equals(_root)) _currentElement.setIsArray(true);
+							}
 						}
+																		 																								
+						// reset or resume the row counter if the column is different
+						if (_previousColumn == _currentColumn) {
+							_currentRow ++;
+						} else {	
+							
+							// add a branch id for this column if required
+							if (_currentColumn > _columnElementIds.size() - 1) {
+								// check root or further down
+								if (_currentColumn == 0) {
+									// root is simple
+									_columnElementIds.add("0");							
+								} else {
+									// other columns are the most recent parent with an extra 0
+									_columnElementIds.add(_columnElementIds.get(_currentColumn - 1) + ".0");
+								}						
+							}
+							
+							// add row counter for this column if required
+							if (_currentColumn > _columnRows.size() - 1) {
+								// add a counter for the number of rows for this column 
+								_columnRows.add(0);	
+								// reset row counter
+								_currentRow = 0;
+							} else {
+								// fetch in the current row for this column and inc
+								_currentRow = _columnRows.get(_currentColumn) + 1;
+							}
+							
+							// add a parent node for this column if required
+							if (_currentColumn > _columnParents.size() - 1) _columnParents.add(_currentElement);	
+							
+							// remember this column
+							_previousColumn = _currentColumn;
+						}
+																								 								 
+						// if not root add this element as a child to the parent is the prior column
+						if (_currentColumn == 0) {
+							
+							_currentElementId = "0";
+							
+						} else {
+							
+							// get the parent of this column
+							SOAElement parentElement = _columnParents.get(_currentColumn - 1);
+							// set parent of this branch
+							_currentElement.setParentElement(parentElement);
+							// add this child node to its parent for cross reference
+							parentElement.addChildElement(_currentElement);
+																																
+							// set the current branch id from the parent
+							_currentElementId = _columnElementIds.get(_currentColumn - 1);
+							// inc the current branch id if not an array
+							if (!parentElement.getIsArray()) _currentElementId += "." + _currentRow;
+							
+							// retain the current branch id
+							_columnElementIds.set(_currentColumn, _currentElementId);					
+							// retain the current row
+							_columnRows.set(_currentColumn, _currentRow);					
+							// retain the parent of this column
+							_columnParents.set(_currentColumn, _currentElement);
+							
+						} 								
 						
-						// add a parent node for this column if required
-						if (_currentColumn > _columnParents.size() - 1) _columnParents.add(_currentElement);	
+						// inc the column
+						_currentColumn ++;	
 						
-						// remember this column
-						_previousColumn = _currentColumn;
-					}
-																							 								 
-					// if not root add this element as a child to the parent is the prior column
-					if (_currentColumn == 0) {
-						
-						_currentElementId = "0";
-						
-					} else {
-						
-						// get the parent of this column
-						SOAElement parentElement = _columnParents.get(_currentColumn - 1);
-						// set parent of this branch
-						_currentElement.setParentElement(parentElement);
-						// add this child node to its parent for cross reference
-						parentElement.addChildElement(_currentElement);
-																															
-						// set the current branch id from the parent
-						_currentElementId = _columnElementIds.get(_currentColumn - 1);
-						// inc the current branch id if not an array
-						if (!parentElement.getIsArray()) _currentElementId += "." + _currentRow;
-						
-						// retain the current branch id
-						_columnElementIds.set(_currentColumn, _currentElementId);					
-						// retain the current row
-						_columnRows.set(_currentColumn, _currentRow);					
-						// retain the parent of this column
-						_columnParents.set(_currentColumn, _currentElement);
-						
-					} 								
-					
-					// inc the column
-					_currentColumn ++;											
-										
-				}
+					} // root found
+																												
+				} // not soap envelope
 								
 			}
 															
@@ -323,8 +352,8 @@ public interface SOADataReader {
 					// go back one column 
 					_currentColumn --;
 					
-					// validate this element
-					if (_soaSchema != null) {
+					// validate this element if this column is the root or above and there is a schema 
+					if (_currentColumn >= 0 && _soaSchema != null) {
 						
 						// retrieve the last branch id for this column
 						String currentElementId = _columnElementIds.get(_currentColumn);
@@ -402,22 +431,34 @@ public interface SOADataReader {
 			
 		}
 
-		private void init(SOASchema soaSchema) throws ParserConfigurationException, SAXException {
+		private void init(SOASchema soaSchema, String root) throws ParserConfigurationException, SAXException {
 			_spf = SAXParserFactory.newInstance();
 			_spf.setNamespaceAware(true);
 			_saxParser = _spf.newSAXParser();
-			_soaXMLContentHandler = new SOAXMLContentHandler(soaSchema);
+			_soaXMLContentHandler = new SOAXMLContentHandler(soaSchema, root);
 			_xmlReader = _saxParser.getXMLReader();		
 			_xmlReader.setContentHandler(_soaXMLContentHandler);
 		}
 		
+		// constructors
+		
 		public SOAXMLReader() throws ParserConfigurationException, SAXException {
-			init(null);
+			init(null, null);
 		}
 		
 		public SOAXMLReader(SOASchema soaSchema) throws ParserConfigurationException, SAXException {
-			init(soaSchema);
+			init(soaSchema, null);
 		}
+		
+		public SOAXMLReader(String root) throws ParserConfigurationException, SAXException {
+			init(null, root);
+		}
+		
+		public SOAXMLReader(SOASchema soaSchema, String root) throws ParserConfigurationException, SAXException {
+			init(soaSchema, root);
+		}
+		
+		// public methods
 								
 		public SOAData read(String xmlString) throws SOAReaderException {
 			

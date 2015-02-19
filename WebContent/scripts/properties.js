@@ -1351,7 +1351,7 @@ function Property_webserviceRequest(cell, propertyObject, property, details) {
 	table.children().remove();
 		
 	// initialise the request object if need be
-	if (!propertyObject.request) propertyObject.request = {inputs:[], type:"SOAP", url: 'soa', action: 'aaa.Samplewebservice', body: '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soa="http://soa.rapid-is.co.uk">\n  <soapenv:Body>\n    <soa:personSearchRequest>\n      <soa:surname>A</soa:surname>\n    </soa:personSearchRequest>\n  </soapenv:Body>\n</soapenv:Envelope>', outputs:[]};
+	if (!propertyObject.request) propertyObject.request = {inputs:[], type:"SOAP", url: 'soa', action: 'demo.Samplewebservice', body: '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soa="http://soa.rapid-is.co.uk">\n  <soapenv:Body>\n    <soa:personSearchRequest>\n      <soa:surname>A</soa:surname>\n    </soa:personSearchRequest>\n  </soapenv:Body>\n</soapenv:Envelope>', outputs:[]};
 	// get the request
 	var request = propertyObject.request;
 	// get the sql into a variable
@@ -1362,7 +1362,7 @@ function Property_webserviceRequest(cell, propertyObject, property, details) {
 	cell.text(text);
 	
 	// add inputs table, body, and outputs table
-	table.append("<tr><td colspan='2' rowspan='3' style='padding:0px;vertical-align: top;'><table style='width:100%' class='propertiesPanelTable'><tr><td><b>Input</b></td><td colspan='2'><b>Field</b></td></tr></table></td><td colspan='2' style='width:500px;padding:0px 6px 0px 0px;'><b>Type</b><br/><input type='radio' name='WSType' value='SOAP'/>SOAP<input type='radio' name='WSType' value='JSON'/>JSON<input type='radio' name='WSType' value='XML'/>XML/Restfull</br><b>URL</b><br/><input class='WSUrl'/></br><b>Action</b><br/><input class='WSAction'/></br><b>Body</b><br/><textarea style='width:100%;min-height:300px;' class='WSBody'></textarea></td><td colspan='2' rowspan='3' style='padding:0px;vertical-align: top;'><table style='width:100%' class='propertiesPanelTable'><tr><td><b>Field</b></td><td colspan='2'><b>Output</b></td></tr></table></td></tr>");
+	table.append("<tr><td colspan='2' rowspan='3' style='padding:0px;vertical-align: top;'><table style='width:100%' class='propertiesPanelTable'><tr><td><b>Input</b></td><td colspan='2'><b>Field</b></td></tr></table></td><td colspan='2' style='width:500px;padding:0px 6px 0px 0px;'><b style='display:block;margin-bottom:-5px;'>Request type</b><br/><input type='radio' name='WSType' value='SOAP'/>SOAP<input type='radio' name='WSType' value='JSON'/>JSON<input type='radio' name='WSType' value='XML'/>XML/Restfull</br><b style='display:block;margin-top:5px;margin-bottom:-5px;'>URL</b><br/><input class='WSUrl' style='max-width:inherit;width:100%' /></br><b style='display:block;margin-top:5px;margin-bottom:-5px;'>Action</b><br/><input class='WSAction' style='max-width:inherit;width:100%' /></br><b style='display:block;margin-top:5px;margin-bottom:-5px;'>Body</b><br/><textarea style='width:100%;min-height:300px;' class='WSBody'></textarea></br><b style='display:block;margin-top:5px;margin-bottom:-5px;'>Response root element</b><br/><input class='WSRoot' style='max-width:inherit;width:100%;margin-bottom:5px;' /></td><td colspan='2' rowspan='3' style='padding:0px;vertical-align: top;'><table style='width:100%' class='propertiesPanelTable'><tr><td><b>Field</b></td><td colspan='2'><b>Output</b></td></tr></table></td></tr>");
 	
 	// find the inputs table
 	var inputsTable = table.children().last().children().first().children().last();
@@ -1426,7 +1426,7 @@ function Property_webserviceRequest(cell, propertyObject, property, details) {
 	typeControls.filter("[value=" + request.type + "]").prop("checked","true");
 	// listener for the action
 	addListener( typeControls.click( {request: request}, function(ev) {
-		request.type = $(ev.target).val();
+		ev.data.request.type = $(ev.target).val();
 	}));
 	
 	// find the url input box
@@ -1434,7 +1434,7 @@ function Property_webserviceRequest(cell, propertyObject, property, details) {
 	actionControl.val(request.url);
 	// listener for the action
 	addListener( actionControl.keyup( {request: request}, function(ev) {
-		request.url = $(ev.target).val();
+		ev.data.request.url = $(ev.target).val();
 	}));
 	
 	// find the action input box
@@ -1442,7 +1442,7 @@ function Property_webserviceRequest(cell, propertyObject, property, details) {
 	actionControl.val(request.action);
 	// listener for the action
 	addListener( actionControl.keyup( {request: request}, function(ev) {
-		request.action = $(ev.target).val();
+		ev.data.request.action = $(ev.target).val();
 	}));
 	
 	// find the request body textarea
@@ -1450,7 +1450,15 @@ function Property_webserviceRequest(cell, propertyObject, property, details) {
 	bodyControl.text(request.body);
 	// listener for the body
 	addListener( bodyControl.keyup( {request: request}, function(ev) {
-		request.body = $(ev.target).val();
+		ev.data.request.body = $(ev.target).val();
+	}));
+	
+	// find the request body textarea
+	var rootControl = table.find("input.WSRoot");
+	rootControl.val(propertyObject.root);
+	// listener for the root
+	addListener( rootControl.keyup( {propertyObject: propertyObject}, function(ev) {
+		ev.data.propertyObject.root = $(ev.target).val();
 	}));
 	
 	// find the outputs table

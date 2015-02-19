@@ -49,9 +49,11 @@ import com.rapid.server.ActionCache;
 import com.rapid.server.RapidHttpServlet;
 import com.rapid.server.RapidRequest;
 import com.rapid.soa.SOAData;
+import com.rapid.soa.SOADataReader.SOAJSONReader;
 import com.rapid.soa.SOADataWriter;
 import com.rapid.soa.SOADataReader.SOAXMLReader;
 import com.rapid.soa.SOADataWriter.SOARapidWriter;
+import com.rapid.utils.Strings;
 
 public class Webservice extends Action {
 	
@@ -97,6 +99,7 @@ public class Webservice extends Action {
 	// instance variables
 	
 	private Request _request;
+	private String _root;
 	private boolean _showLoading;
 	private ArrayList<Action> _successActions, _errorActions, _childActions;
 	
@@ -104,6 +107,9 @@ public class Webservice extends Action {
 	
 	public Request getRequest() { return _request; }
 	public void setRequest(Request request) { _request = request; }
+	
+	public String getRoot() { return _root; }
+	public void setRoot(String root) { _root = root; }
 	
 	public boolean getShowLoading() { return _showLoading; }
 	public void setShowLoading(boolean showLoading) { _showLoading = showLoading; }
@@ -128,7 +134,7 @@ public class Webservice extends Action {
 		// save all key/values from the json into the properties 
 		for (String key : JSONObject.getNames(jsonAction)) {
 			// add all json properties to our properties, except for query
-			if (!"request".equals(key) && !"showLoading".equals(key) && !"successActions".equals(key) && !"errorActions".equals(key)) addProperty(key, jsonAction.get(key).toString());
+			if (!"request".equals(key) && !"root".equals(key) && !"showLoading".equals(key) && !"successActions".equals(key) && !"errorActions".equals(key)) addProperty(key, jsonAction.get(key).toString());
 		} 
 		
 		// try and build the query object
@@ -146,6 +152,9 @@ public class Webservice extends Action {
 			// make the object
 			_request = new Request(inputs, type, url, action, body, outputs);
 		}
+		
+		// look for the response root
+		_root = jsonAction.optString("root");
 		
 		// look for showLoading
 		_showLoading = jsonAction.optBoolean("showLoading");
@@ -190,26 +199,6 @@ public class Webservice extends Action {
 		// return
 		return parameters;
 	}
-		
-	// overrides
-	
-	@Override
-	public List<Action> getChildActions() {			
-		// initialise and populate on first get
-		if (_childActions == null) {
-			// our list of all child actions
-			_childActions = new ArrayList<Action>();
-			// add child success actions
-			if (_successActions != null) {
-				for (Action action : _successActions) _childActions.add(action);			
-			}
-			// add child error actions
-			if (_errorActions != null) {
-				for (Action action : _errorActions) _childActions.add(action);			
-			}
-		}
-		return _childActions;	
-	}
 	
 	public String getLoadingJS(Page page, List<Parameter> parameters, boolean show) {
 		String js = "";
@@ -236,7 +225,27 @@ public class Webservice extends Action {
 		}
 		return js;
 	}
+			
+	// overrides
 	
+	@Override
+	public List<Action> getChildActions() {			
+		// initialise and populate on first get
+		if (_childActions == null) {
+			// our list of all child actions
+			_childActions = new ArrayList<Action>();
+			// add child success actions
+			if (_successActions != null) {
+				for (Action action : _successActions) _childActions.add(action);			
+			}
+			// add child error actions
+			if (_errorActions != null) {
+				for (Action action : _errorActions) _childActions.add(action);			
+			}
+		}
+		return _childActions;	
+	}
+			
 	@Override
 	public String getJavaScript(RapidHttpServlet rapidServlet, Application application, Page page, Control control, JSONObject jsonDetails) throws Exception {
 		
@@ -297,7 +306,7 @@ public class Webservice extends Action {
 			boolean errorActions = false;
 			
 			// prepare a default error hander we'll show if no error actions, or pass to child actions for them to use
-			String defaultErrorHandler = "alert('Error with database action : ' + server.responseText||message);";
+			String defaultErrorHandler = "alert('Error with webservice action : ' + server.responseText||message);";
 			
 			// add any error actions
 			if (_errorActions != null) {
@@ -496,18 +505,27 @@ public class Webservice extends Action {
 				// read input stream if all ok, otherwise something meaningful should be in error stream
 				if (responseCode == 200) {
 					
+					// get the input stream
 					InputStream response = connection.getInputStream();
+					// prepare an soaData object
+					SOAData soaData = null;
 					
-					SOAXMLReader xmlReader = new SOAXMLReader();
-					
-					SOAData soaData = xmlReader.read(response);
+					// read the response accordingly
+					if ("JSON".equals(_request.getType())) {
+						SOAJSONReader jsonReader = new SOAJSONReader();	
+						String jsonResponse = Strings.getString(response);
+						soaData = jsonReader.read(jsonResponse);
+					} else {
+						SOAXMLReader xmlReader = new SOAXMLReader(_root);						
+						soaData = xmlReader.read(response);
+					}
 					
 					SOADataWriter jsonWriter = new SOARapidWriter(soaData);
 					
 					String jsonString = jsonWriter.write();
 					
 					jsonData = new JSONObject(jsonString);
-					
+										
 					if (actionCache != null) actionCache.put(application.getId(), getId(), jsonInputs.toString(), jsonData);
 					
 					response.close();

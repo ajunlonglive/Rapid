@@ -99,7 +99,7 @@ $.fn.extend({
 });
 
 // thanks to http://stackoverflow.com/questions/2200494/jquery-trigger-event-when-an-element-is-removed-from-the-dom/10172676#10172676
-(function($){
+(function($) {
   $.event.special.destroyed = {
     remove: function(o) {
       if (o.handler) {
@@ -107,7 +107,7 @@ $.fn.extend({
       }
     }
   }
-})(jQuery)
+})(jQuery);
 
 /*
  
@@ -214,7 +214,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       target.focus();
     return pos;
   }
-})(jQuery)
+})(jQuery);
 
 // this function can be used on the keydown of textareas to prevent changing to the next control
 function textareaOverride(ev) {
