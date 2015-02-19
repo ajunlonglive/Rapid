@@ -441,7 +441,7 @@ if (details && details.dataStorageType) {
 			        <![CDATA[
 var data = null;
 if (details.dataStorageType) {
-	data = getGridDataStoreData(id, details);
+	data = getGridDataStoreData(id, details);	
 	data.rows = [data.rows[data.selectedRowNumber - 1]];
 } else {
 	var row = $(ev.target).closest("tr");

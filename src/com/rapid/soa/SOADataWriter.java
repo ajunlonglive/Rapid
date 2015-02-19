@@ -43,11 +43,11 @@ public abstract class SOADataWriter {
 		_soaData = soaData;
 	}
 		
-	// abstract method
+	// abstract methods
 	
-	public abstract String write(); 
-		
-		
+	public abstract String write();
+	
+					
 	// implementing classes
 	
 	/*
@@ -257,7 +257,11 @@ public abstract class SOADataWriter {
 		}
 		
 		private String jsonEscape(String value) {
-			return value.replace("'", "\\'").replace("\"", "\\\"");
+			if (value == null) {
+				return value;
+			} else {
+				return value.replace("'", "\\'").replace("\"", "\\\"");
+			}
 		}
 		
 		private void append(SOAElement element) {

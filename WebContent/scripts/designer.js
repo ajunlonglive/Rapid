@@ -2219,7 +2219,7 @@ $(document).ready( function() {
 			        	var lock = _page.lock;
 			        	
 			        	// if there is a lock and the userName is different (see how the userName is set at the top of the design.jsp)
-			        	if (lock && lock.userName != _userName) {
+			        	if (lock && lock.userName && lock.userName.toLowerCase() != _userName.toLowerCase()) {
 			        				        		
 			        		// set that this page is locked
 			        		_locked = true;
@@ -3161,7 +3161,8 @@ function windowResize(ev) {
 			_page.object.css({
 				width: "auto",
 				height: "auto",
-				transform: "none"
+				transform: "none",
+				"transform-origin": "initial"
 			});
 		} else {
 			// the page scale needs ajusting when there is a page margin
@@ -3169,7 +3170,8 @@ function windowResize(ev) {
 			_page.object.css({
 				width: 1 / _scale * 100 + "%",
 				height: 1 / _scale * 100 + "%",
-				transform: "scale(" + _scale + ")"
+				transform: "scale(" + _scale + ")",	
+				"transform-origin": "0 0"
 			});	
 		} // scale check
 	} // page check	
