@@ -130,14 +130,16 @@ public class Applications {
 		put(application.getId(), application.getVersion(), application);
 	}
 	
-	// remove an application by id an version
+	// remove all application versions by id an version
 	public void remove(String id, String version) {
 		// get the versions of this app
 		Versions versions = getVersions(id);
 		// if we have some versions
 		if (versions != null) {
-			// remove if the app is present
+			// remove if the version is present
 			if (versions.containsKey(version)) versions.remove(version);
+			// remove from applications too if all versions are gone
+			if (versions.size() == 0) _applications.remove(id);
 		}
 	}
 	

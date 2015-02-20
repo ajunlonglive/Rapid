@@ -1119,7 +1119,7 @@ function setData_grid(ev, id, field, details, data, changeEvents) {
 function getProperty_grid_selectedRowData(ev, id, field, details) {
   var data = null;
   if (details.dataStorageType) {
-  	data = getGridDataStoreData(id, details);
+  	data = getGridDataStoreData(id, details);	
   	data.rows = [data.rows[data.selectedRowNumber - 1]];
   } else {
   	var row = $(ev.target).closest("tr");
