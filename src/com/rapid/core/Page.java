@@ -1188,6 +1188,26 @@ public class Page {
 		return htmlHead;
     	
     }
+	
+	// this routine will write the no page permission - used by both page permission and if control permission permutations fail to result in any html
+	public void writeNoPermission(Writer writer) throws IOException {
+		
+		// write the head html without the JavaScript and CSS (index.css is substituted for us)
+		writer.write(getHtmlHeadStart());
+		
+		// add the index.css
+		writer.write("    <link rel='stylesheet' type='text/css' href='index.css'></link>\n");
+		
+		// close the head
+		writer.write("</head>\n");
+					
+		// open the body
+		writer.write("  <body>\n");
+		
+		// write no permission (body is closed at the end of this method)
+		writer.write("<div class=\"image\"><img src=\"images/RapidLogo_200x134.png\" /></div><div class=\"title\"><span>Rapid - No permssion</span></div><div class=\"info\"><p>You do not have permssion to view this page</p></div>\n");
+			
+	}
 		
 	// this routine produces the entire page
 	public void writeHtml(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, Application application, User user, Writer writer, boolean showDesignerLink) throws JSONException, IOException {
@@ -1257,15 +1277,18 @@ public class Page {
 												
 					// get the roles from this combination
 					List<String> roles = roleHtml.getRoles();
-												
+					
+					// assume not roles are required (this will be updated if roles are present)
+					int rolesRequired = 0;
+					
 					// keep a running count for the roles we have
 					int gotRoleCount = 0;
-					
+															
 					// if there are roles to check
 					if (roles != null) {
-					
-						// retain how many roles we need our user to have
-						int rolesRequired = roles.size();
+						
+						// update how many roles we need our user to have
+						rolesRequired = roles.size();
 						
 						// check whether we need any roles and that our user has any at all
 						if (rolesRequired > 0) {
@@ -1277,61 +1300,52 @@ public class Page {
 									if (userRoles.contains(role)) {
 										// increment the got role count
 										gotRoleCount ++;
-									}
-								}
-							}									
-						}
-														
-						// if we have all the roles we need
-						if (gotRoleCount == rolesRequired) {
-							// use this html
-							bodyHtml = roleHtml.getHtml();
-							// no need to check any further
-							break;
-						}
-						
-					} 
-					
-				}
+									} // increment the count of required roles
+									
+								} // loop roles
+								
+							} // user has enough roles to bother checking this combination
+							
+						} // if any roles are required
 																										
-			} 
+					} // add roles to check
+					
+					// if we have all the roles we need
+					if (gotRoleCount == rolesRequired) {
+						// use this html
+						bodyHtml = roleHtml.getHtml();
+						// no need to check any further
+						break;
+					}
+					
+				} // html role combo loop
+																										
+			} // if our users have roles and we have different html for roles
 			
-			// if haven't got any body html 
+			// check if we got any body html via the roles
 			if (bodyHtml == null) {
-				// use the full version or empty string
-				if (_htmlBody == null) {
-					bodyHtml = "";
-				} else {					
-					bodyHtml = _htmlBody;
-				}
-			}
-						
-			// check the status of the application
-			if (application.getStatus() == Application.STATUS_DEVELOPMENT) {
-				// pretty print
-				writer.write(Html.getPrettyHtml(bodyHtml.trim()));
+				
+				// didn't get any body html, show no permission
+				writeNoPermission(writer);
+				
 			} else {
-				// no pretty print
-				writer.write(bodyHtml.trim());
-			}
+									
+				// check the status of the application
+				if (application.getStatus() == Application.STATUS_DEVELOPMENT) {
+					// pretty print
+					writer.write(Html.getPrettyHtml(bodyHtml.trim()));
+				} else {
+					// no pretty print
+					writer.write(bodyHtml.trim());
+				}
+				
+			} // got body html check
 									
 		} else {
 			
-			// write the head html without the JavaScript and CSS (index.css is substituted for us)
-			writer.write(getHtmlHeadStart());
-			
-			// add the index.css
-			writer.write("    <link rel='stylesheet' type='text/css' href='index.css'></link>\n");
-			
-			// close the head
-			writer.write("</head>\n");
-						
-			// open the body
-			writer.write("  <body>\n");
-			
-			// write no permission (body is closed at the end of this method)
-			writer.write("<div class=\"image\"><img src=\"images/RapidLogo_200x134.png\" /></div><div class=\"title\"><span>Rapid - No permssion</span></div><div class=\"info\"><p>You do not have permssion to view this page</p></div>\n");
-						
+			// no page permission
+			writeNoPermission(writer);
+					
 		} // page permission check		
 		
 		try {

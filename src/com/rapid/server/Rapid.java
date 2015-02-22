@@ -167,7 +167,7 @@ public class Rapid extends RapidHttpServlet {
 							// set the response type
 							response.setContentType("text/html");
 							
-							// write the page html excluding the design link
+							// write the page html
 							page.writeHtml(this, rapidRequest, app, user, out, showDesignerLink);
 												
 							// output the page
