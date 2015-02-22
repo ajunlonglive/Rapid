@@ -2,11 +2,11 @@
 <security>
     <roles>
         <description>Demonstration role 1</description>
-        <name>Demo 1</name>
+        <name>Demo role 1</name>
     </roles>
     <roles>
         <description>Demonstration role 2</description>
-        <name>Demo 2</name>
+        <name>Demo role 2</name>
     </roles>
     <roles>
         <description>Manage application in Rapid Admin</description>
@@ -20,7 +20,7 @@
         <description>Admin user</description>
         <name>admin</name>
         <password>admin</password>
-        <roles>Demo 1</roles>
+        <roles>Demo role 1</roles>
         <roles>RapidAdmin</roles>
         <roles>RapidDesign</roles>
     </users>

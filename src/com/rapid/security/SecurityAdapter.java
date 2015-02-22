@@ -96,10 +96,18 @@ public abstract class SecurityAdapter {
 		// remove a role by name
 		public boolean remove(String roleName) {
 			boolean removed = false;
-			for (Role role : this) if (role.getName().equals(roleName)) {
+			Role role = null;
+			for (Role r : this) {
+				if (r.getName().equals(roleName)) {
+					role = r;
+					break;
+				}
+				
+			};	
+			if (role != null) {
 				this.remove(role);
 				removed = true;
-			};	
+			}
 			return removed;
 		}
 		

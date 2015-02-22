@@ -60,6 +60,7 @@ import com.rapid.data.ConnectionAdapter;
 import com.rapid.data.DataFactory;
 import com.rapid.security.SecurityAdapter;
 import com.rapid.security.SecurityAdapter.Role;
+import com.rapid.security.SecurityAdapter.Roles;
 import com.rapid.security.SecurityAdapter.SecurityAdapaterException;
 import com.rapid.security.SecurityAdapter.User;
 import com.rapid.security.SecurityAdapter.Users;
@@ -828,9 +829,24 @@ public class Rapid extends Action {
 						// read it back again
 						security = app.getSecurity();
 					}
+					
+					// get the roles
+					Roles roles = security.getRoles(rapidRequest);
 											
-					// add the roles to the response
-					result.put("roles", security.getRoles(rapidRequest));
+					// add the entire roles collection to the response
+					result.put("roles", roles);
+					
+					// if we had some roles
+					if (roles != null) {
+						// prepapre a list of just the role names (not descriptions)
+						List<String> roleNames = new ArrayList<String>();
+						// loop the roles
+						for (Role role : roles) {
+							roleNames.add(role.getName());
+						}
+						// add the rolenames
+						result.put("roleNames", roleNames);
+					}
 					
 					// add the users to the response
 					result.put("users", security.getUsers(rapidRequest));					
