@@ -161,6 +161,13 @@ public class RapidRequest {
 		_request = request;
 		// store the application
 		_application = application;
+		// if we got an application
+		if (application != null) {
+			// store the application id
+			_appId = application.getId();
+			// store the version
+			_version = application.getVersion();
+		}
 	}
 	
 	// can also instantiate a rapid request with just an HttpServletRequest

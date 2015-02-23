@@ -815,7 +815,7 @@ public class Rapid extends Action {
 						}
 					}
 				}	 
-				
+												
 				// get the current app security adapter
 				SecurityAdapter security = app.getSecurity();
 												
@@ -829,6 +829,9 @@ public class Rapid extends Action {
 						// read it back again
 						security = app.getSecurity();
 					}
+					
+					// recreate the rapidRequest with the selected app (so app parameters etc are available from the app in the rapidRequest)
+					rapidRequest = new RapidRequest(rapidServlet, rapidRequest.getRequest(), app);
 					
 					// get the roles
 					Roles roles = security.getRoles(rapidRequest);
@@ -857,6 +860,9 @@ public class Rapid extends Action {
 										
 				// get the userName from the incoming json
 				String userName = jsonAction.getString("userName");
+				
+				// recreate the rapidRequest with the selected app (so app parameters etc are available from the app in the rapidRequest)
+				rapidRequest = new RapidRequest(rapidServlet, rapidRequest.getRequest(), app);
 				
 				// derive whether this is the current user
 				boolean currentUser = userName.toLowerCase().equals(rapidRequest.getUserName().toLowerCase());
@@ -906,6 +912,9 @@ public class Rapid extends Action {
 				
 				// if we got one
 				if (security != null) {
+					
+					// recreate the rapidRequest with the selected app (so app parameters etc are available from the app in the rapidRequest)
+					rapidRequest = new RapidRequest(rapidServlet, rapidRequest.getRequest(), app);
 				
 					// get the users
 					Users users = security.getUsers(rapidRequest);
@@ -1645,6 +1654,9 @@ public class Rapid extends Action {
 				
 				// get the security
 				SecurityAdapter security = app.getSecurity();
+				
+				// recreate the rapidRequest with the selected app (so app parameters etc are available from the app in the rapidRequest)
+				rapidRequest = new RapidRequest(rapidServlet, rapidRequest.getRequest(), app);
 												
 				// add the user
 				security.addUser(rapidRequest, new User(userName, description, password));
@@ -1671,8 +1683,10 @@ public class Rapid extends Action {
 				
 				// get the userName
 				String userName = jsonAction.getString("userName").trim();
+				// recreate the rapidRequest with the selected app (so app parameters etc are available from the app in the rapidRequest)
+				rapidRequest = new RapidRequest(rapidServlet, rapidRequest.getRequest(), app);
 				// override the standard request user
-				rapidRequest.setUserName(userName);
+				rapidRequest.setUserName(userName);				
 				// delete the user
 				app.getSecurity().deleteUser(rapidRequest);
 				// remove any of their page locks
@@ -1686,7 +1700,8 @@ public class Rapid extends Action {
 				String roleName = jsonAction.getString("role").trim();
 				// get the description
 				String roleDescription = jsonAction.getString("description").trim();
-				
+				// recreate the rapidRequest with the selected app (so app parameters etc are available from the app in the rapidRequest)
+				rapidRequest = new RapidRequest(rapidServlet, rapidRequest.getRequest(), app);
 				// update the role
 				app.getSecurity().updateRole(rapidRequest, new Role(roleName, roleDescription));
 				// set the result message
@@ -1695,9 +1710,11 @@ public class Rapid extends Action {
 			} else if ("NEWUSERROLE".equals(action)) {
 				
 				// get the userName
-				String userName = jsonAction.getString("userName").trim();		
+				String userName = jsonAction.getString("userName").trim();
+				// recreate the rapidRequest with the selected app (so app parameters etc are available from the app in the rapidRequest)
+				rapidRequest = new RapidRequest(rapidServlet, rapidRequest.getRequest(), app);
 				// override the standard request user
-				rapidRequest.setUserName(userName);
+				rapidRequest.setUserName(userName);				
 				// get the role
 				String role = jsonAction.getString("role").trim();
 				// add the user role
@@ -1709,6 +1726,8 @@ public class Rapid extends Action {
 				
 				// get the userName
 				String userName = jsonAction.getString("userName").trim();
+				// recreate the rapidRequest with the selected app (so app parameters etc are available from the app in the rapidRequest)
+				rapidRequest = new RapidRequest(rapidServlet, rapidRequest.getRequest(), app);
 				// override the standard request user
 				rapidRequest.setUserName(userName);
 				// get the role
@@ -1722,8 +1741,10 @@ public class Rapid extends Action {
 			
 				// get the userName
 				String userName = jsonAction.getString("userName").trim();
+				// recreate the rapidRequest with the selected app (so app parameters etc are available from the app in the rapidRequest)
+				rapidRequest = new RapidRequest(rapidServlet, rapidRequest.getRequest(), app);
 				// override the standard request user
-				rapidRequest.setUserName(userName);
+				rapidRequest.setUserName(userName);				
 				// get the description
 				String description = jsonAction.getString("description").trim();
 				// get the password

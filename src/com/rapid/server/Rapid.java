@@ -332,9 +332,12 @@ public class Rapid extends RapidHttpServlet {
 						
 						// fail silently if there was an issue
 						try {
+							
+							// make a rapidRequest for this application
+							RapidRequest getAppsRequest = new RapidRequest(this, request, app);
 													
 							// check the user password
-							if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRequest.getUserPassword())) {
+							if (security.checkUserPassword(getAppsRequest, rapidRequest.getUserName(), rapidRequest.getUserPassword())) {
 								
 								// create a json object for the details of this application
 								JSONObject jsonApp = new JSONObject();
