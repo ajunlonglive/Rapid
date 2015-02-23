@@ -1,4 +1,4 @@
-<!DOCTYPE html encoding="utf-8">
+<!DOCTYPE>
 <%@ page language="java" contentType="text/html;charset=utf-8" pageEncoding="utf-8"%>
 <%@ page import="java.util.Map" %>
 <%@ page import="org.apache.log4j.Logger" %>
@@ -93,7 +93,7 @@ if (appId != null && pageId != null) {
 <html>
 <head>	
 	<title>Rapid Desktop - Design Page</title>
-	<meta http-equiv="Content-Type" content="text/html;charset=utf-8">	
+	<meta charset="utf-8">	
 <%
 
 if (appPage != null && designerPermission) {

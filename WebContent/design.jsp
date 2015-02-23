@@ -1,4 +1,4 @@
-<!DOCTYPE html encoding="utf-8">
+<!DOCTYPE>
 <%@ page language="java" contentType="text/html;charset=utf-8" pageEncoding="utf-8"%>
 <%@ page import="java.util.Map" %>
 <%@ page import="org.apache.log4j.Logger" %>
@@ -57,7 +57,7 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 <head>
 	
 	<title>Rapid Design - <%=com.rapid.server.Rapid.VERSION %></title>
-	<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+	<meta charset="utf-8">
 	<link rel="icon" href="favicon.ico"></link>
 <%
 	if (designerPermission) {
