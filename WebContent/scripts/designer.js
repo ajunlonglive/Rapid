@@ -741,7 +741,7 @@ function getRolesOptions(selectRole, ignoreRoles) {
 }
 
 // different system properties for inputs
-var _systemValues = ["true","false","user","field","null","mobile","online"];
+var _systemValues = ["app id","app version","page id","user name","online","mobile","true","false","null","field"];
 
 // this function returns a set of options for a dropdown for inputs or outputs (depending on input true/false), can be controls, control properties (input only), other page controls, page variables (input only), system values (input only)
 function getDataOptions(selectId, ignoreId, input) {
