@@ -2,7 +2,7 @@
 // http://www.softcomplex.com/products/tigra_calendar/
 // License: Public Domain... You're welcome.
 
-// default settins - this structure can be moved in separate file in multilangual applications
+// default settings - this structure can be moved in separate file in multilangual applications
 var A_TCALCONF = {
 	'cssprefix'  : 'tcal',
 	'months'     : ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
@@ -10,10 +10,10 @@ var A_TCALCONF = {
 	'longwdays'  : ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
 	'yearscroll' : true, // show year scroller
 	'weekstart'  : 0, // first day of week: 0-Su or 1-Mo
-	'prevyear'   : 'Previous Year',
-	'nextyear'   : 'Next Year',
-	'prevmonth'  : 'Previous Month',
-	'nextmonth'  : 'Next Month',
+	'prevyear'   : 'Previous year',
+	'nextyear'   : 'Next year',
+	'prevmonth'  : 'Previous month',
+	'nextmonth'  : 'Next month',
 	'format' : 'd/m/Y' // 'm/d/Y', 'd-m-Y', Y-m-d', 'l, F jS Y'
 };
 
