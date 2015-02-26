@@ -75,7 +75,7 @@
 	border-collapse: collapse;
 	border: 1px solid silver;
 	width: 100%;
-	z-order: 1000;
+	z-index: 1000;
 }
 
 #tcalGrid th {

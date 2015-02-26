@@ -176,11 +176,15 @@ function showProperties(control) {
 function updateProperty(cell, propertyObject, property, details, value) {
 	
 	// if the page isn't locked
-	if (!_locked) {		
-		// only if the property is actually different
-		if (propertyObject[property.key] != value) {
-			// add an undo snapshot
-			addUndo();
+	if (!_locked) {
+		// get the value
+		var propertyValue = propertyObject[property.key];
+		// get whether the property is complex like an array or object (in which case it's being passed by ref (not by val) and it won't like it has changed)
+		var propertyComplex = $.isArray(propertyValue) || $.isPlainObject(propertyValue)
+		// only if the property is actually different (or if the value is complext like an array or object, it will have been updated and the reference will not have changed)
+		if (propertyValue != value || propertyComplex) {
+			// add an undo snapshot (complex properties will have to manage this themselves)
+			if (!propertyComplex) addUndo();
 			// update the object property value
 			propertyObject[property.key] = value;
 			// if an html refresh is requested
@@ -613,26 +617,33 @@ function Property_galleryImages(cell, gallery, property, details) {
 	}
 	
 	// append the drop down for existing images
-	table.append("<tr><td  colspan='3' style='text-align:center;'>Url</td></tr>");
+	table.append("<tr><td  colspan='2' style='text-align:center;'>Url</td></tr>");
 	
 	// loop the images
 	for (var i in images) {
 		// get this image
 		var image = images[i];
 		// append
-		table.append("<tr><td><input value='" + image.url + "' /></td><td style='width:32px'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
+		table.append("<tr><td><input value='" + image.url + "' style='max-width:none;width:100%;' /></td><td style='width:32px'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
 	}
 	
 	// add the change listeners
-	addListener( table.find("input").keyup( function (ev) {
+	addListener( table.find("input").keyup( {cell:cell, gallery:gallery, property:property, details:details, images:images}, function (ev) {
 		// get the input
 		var input = $(ev.target);
+		// get the url
+		var url = input.val();
 		// get the image according to the row index, less the header
-		var image = images[input.closest("tr").index() - 1];
-		// update the url
-		image.url = input.val();
+		var image = ev.data.images[input.closest("tr").index() - 1];
+		// if the url is going to change
+		if (url != image.url) {
+			// add an undo
+			addUndo();
+			// update the url
+			image.url = url;
+		}
 		// update the reference and rebuild the html (this adds an undo)
-		updateProperty(cell, gallery, property, details, images); 			
+		updateProperty(ev.data.cell, ev.data.gallery, ev.data.property, ev.data.details, ev.data.images); 			
 	}));
 	
 	// add delete listeners
