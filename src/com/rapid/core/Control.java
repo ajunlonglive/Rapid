@@ -347,27 +347,62 @@ public class Control {
 			// if this is a system value
 			if ("System".equals(idParts[0])) {
 				
-				// the available system values are specified above getDataOptions in designer.js
-				if ("mobile".equals(idParts[1])) {
-					// whether rapid mobile is present
-					return "(typeof _rapidmobile == 'undefined' ? false : true)";
-				} else if ("online".equals(idParts[1])) {
-					// whether we are online (presumed true if no rapid mobile)
-					return "(typeof _rapidmobile == 'undefined' ? true : _rapidmobile.isOnline())";
-				} else if ("user".equals(idParts[1])) {
-					// pass the field as a value
-					return "_userName";
-				} else if ("field".equals(idParts[1])) {
-					// pass the field as a value
-					return "'" + (field == null ? "" : field.replace("'", "\\'")) + "'";
-				} else if (!"".equals(idParts[1])) {
-					// pass through as literal if not blank
-					return idParts[1];
-				} else {
-					// pass blank string
-					return "''";
-				}		
+				// just check that there is a type
+				if (idParts.length > 1) {
 				
+					// get the type from the second part
+					String type = idParts[1];
+					
+					// the available system values are specified above getDataOptions in designer.js
+					if ("app id".equals(type)) {
+						
+						// whether rapid mobile is present
+						return "_appId";
+						
+					} else if ("app version".equals(type)) {
+						
+						// whether rapid mobile is present
+						return "_appVersion";
+						
+					} else if ("page id".equals(type)) {
+						
+						// whether rapid mobile is present
+						return "_pageId";
+						
+					} else if ("mobile".equals(type)) {
+						
+						// whether rapid mobile is present
+						return "(typeof _rapidmobile == 'undefined' ? false : true)";
+						
+					} else if ("online".equals(type)) {
+						
+						// whether we are online (presumed true if no rapid mobile)
+						return "(typeof _rapidmobile == 'undefined' ? true : _rapidmobile.isOnline())";
+						
+					} else if ("user".equals(type) || "user name".equals(idParts[1])) {
+						
+						// pass the field as a value
+						return "_userName";
+						
+					} else if ("field".equals(type)) {
+						
+						// pass the field as a value
+						return "'" + (field == null ? "" : field.replace("'", "\\'")) + "'";
+						
+					} else {
+						
+						// pass through as literal 
+						return idParts[1];
+						
+					}
+					
+				} else {
+					
+					// return error
+					return "null; /* error finding system value, no type */";
+					
+				}
+														
 			} else {
 				
 				// find the control in the page
