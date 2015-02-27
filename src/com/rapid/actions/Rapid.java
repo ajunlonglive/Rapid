@@ -49,6 +49,7 @@ import com.rapid.core.Action;
 import com.rapid.core.Application;
 import com.rapid.core.Application.Parameter;
 import com.rapid.core.Application.RapidLoadingException;
+import com.rapid.core.Applications;
 import com.rapid.core.Control;
 import com.rapid.core.Device;
 import com.rapid.core.Device.Devices;
@@ -1396,8 +1397,10 @@ public class Rapid extends Action {
 						
 				// check we have an app
 				if (app != null)  {						
+					// get the collection of applications and versions
+					Applications applications = rapidServlet.getApplications();
 					// get all versions of this application
-					Versions versions = rapidServlet.getApplications().getVersions(app.getId());
+					Versions versions = applications.getVersions(app.getId());
 					// get the number of version
 					int versionCount = versions.size();
 					// make a list of versions
@@ -1409,7 +1412,7 @@ public class Rapid extends Action {
 					// loop the versionNumbers
 					for (String versionNumber: versionNumbers) {
 						// get this version
-						Application v = rapidServlet.getApplications().get(app.getId(), versionNumber);
+						Application v = applications.get(app.getId(), versionNumber);
 						// delete it
 						v.delete(rapidServlet, rapidActionRequest, true);
 					}
