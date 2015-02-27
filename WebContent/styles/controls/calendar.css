@@ -1,0 +1,39 @@
+div.calendar {
+	display: inline-block;
+}
+
+div.calendarLabel {
+	text-align:center;
+}
+
+.calendarHeader a {
+	text-decoration: none;
+	color: inherit;
+	font-family: FontAwesome;	
+	font-size:1.2em;
+	margin-top: 0.075em;		
+	margin-left: 0.1em;
+	margin-right: 0.1em;
+}
+
+.calendarBack {
+	float:left;	
+}
+
+.calendarForward {
+	float:right;	
+}
+
+.calendar td {
+	text-align:center;
+	padding:2px;
+	width:14%;
+}
+
+.calendar td.calendarToday {
+	background-color:blue;
+}
+
+.calendar td.calendarSelectedDay {
+	background-color:red;
+}
