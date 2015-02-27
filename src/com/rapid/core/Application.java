@@ -1682,10 +1682,11 @@ public class Application {
 			// delete the app folder
 			Files.deleteRecurring(appFolder);
 			// delete the web folder
-			Files.deleteRecurring(webFolder);
-			// remove this application from the collection
-			rapidServlet.getApplications().remove(this);
+			Files.deleteRecurring(webFolder);			
 		}
+		
+		// remove this application from the collection
+		rapidServlet.getApplications().remove(this);
 			    	    		
 	}
 	

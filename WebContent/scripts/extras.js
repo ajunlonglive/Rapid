@@ -63,28 +63,30 @@ $.fn.extend({
     return this;
   },
   showLoading: function() {
-	var loadingCover = $("div[data-id=" + this.attr("id") + "]");
-	if (!loadingCover[0]) {
-		this.after("<div class='loading' data-id='" + this.attr("id") + "'></div><span class='loading' data-id='" + this.attr("id") + "'></span>");
-		loadingCover = $("div[data-id=" + this.attr("id") + "]");
-	}				
-	loadingCover.css({
-		left: this.offset().left,
-		top: this.offset().top,
-		width: this.outerWidth(),
-		height: this.outerHeight()
-	}).show();
-	if (this.outerWidth() > 0) {
-		var image = loadingCover.next();
-		image.css({
-			left: this.offset().left + (this.outerWidth() - image.outerWidth())/2,
-			top: this.offset().top + (this.outerHeight() - image.outerHeight())/2
+	 if (this[0]) {
+		var loadingCover = $("div[data-id=" + this.attr("id") + "]");
+		if (!loadingCover[0]) {
+			this.after("<div class='loading' data-id='" + this.attr("id") + "'></div><span class='loading' data-id='" + this.attr("id") + "'></span>");
+			loadingCover = $("div[data-id=" + this.attr("id") + "]");
+		}				
+		loadingCover.css({
+			left: this.offset().left,
+			top: this.offset().top,
+			width: this.outerWidth(),
+			height: this.outerHeight()
 		}).show();
-	}	
-    return this;
+		if (this.outerWidth() > 0) {
+			var image = loadingCover.next();
+			image.css({
+				left: this.offset().left + (this.outerWidth() - image.outerWidth())/2,
+				top: this.offset().top + (this.outerHeight() - image.outerHeight())/2
+			}).show();
+		}
+	 }
+	 return this;
   },
   hideLoading: function() {
-	$("body").find("div[data-id=" + this.attr("id") + "]").hide().next().hide();	
+	  if (this[0]) $("body").find("div[data-id=" + this.attr("id") + "]").hide().next().hide();	
     return this;
   },
   hideDialogue: function(reload) {	  

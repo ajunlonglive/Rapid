@@ -1735,7 +1735,7 @@ function getSavePageData() {
     		// get the control
     		var control = controls[j];
     		// check for roles
-    		if (control.roles) {
+    		if (control.roles && control.roles.length > 0) {
     			// remember this control has roles
     			roleControls.push(control);
     		}
