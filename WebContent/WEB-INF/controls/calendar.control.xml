@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<controls xmlVersion="1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/control.xsd">
+
+<!-- 
+
+Copyright (C) 2014 - Gareth Edwards / Rapid Information Systems
+
+gareth.edwards@rapid-is.co.uk
+
+
+This file is part of the Rapid Application Platform
+
+RapidSOA is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version. The terms require you to include
+the original copyright, and the license notice in all redistributions.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
+
+ -->
+
+	<control>
+	    
+	    <type>calendar</type>	 
+	    <name>Calendar</name>	   
+	    <image>images/penknife_24x24.png</image>   
+	    
+	    <addToNewApplications>true</addToNewApplications>
+	         
+	    <canUserAdd>true</canUserAdd>
+	    <canUserMove>true</canUserMove>
+	    <canUserAddPeers>true</canUserAddPeers>
+	    
+	    <properties>
+	        
+	        <property>
+	            <key>name</key>
+	            <name>Name</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>	            
+	        </property>	 
+	                   	        	        
+	        <property>
+	            <key>dateFormat</key>
+	            <name>Date format</name>
+	            <setConstructValueFunction>return "d/m/Y";</setConstructValueFunction>
+	            <changeValueJavaScript>select</changeValueJavaScript>	
+	            <getValuesFunction>
+	                <![CDATA[
+return [["d/m/Y","dd/mm/yyyy"],["m/d/Y","mm/dd/yyyy"],["Y-m-d","yyyy-mm-dd"]];
+					]]>
+	            </getValuesFunction>           
+	            <refreshHtml>true</refreshHtml>  
+	        </property>	 
+	        
+			<property>
+	            <key>date</key>
+	            <name>Date</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>	    
+	            <refreshHtml>true</refreshHtml> 	                 
+	        </property>
+	        
+			<property>
+	            <key>selectToday</key>
+	            <name>Select today</name>
+	            <setConstructValueFunction>return true;</setConstructValueFunction>  
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>	     	                 
+	        </property>
+	        
+			<property>
+	            <key>showYearChange</key>
+	            <name>Show year change</name>
+	            <setConstructValueFunction>return true;</setConstructValueFunction>  
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>	     	                 
+	        </property>
+	        
+	    </properties>
+	    
+	    <resources>
+	        <resource>
+	            <type>cssFile</type>
+	            <contents>styles/fonts/fontawesome/css/font-awesome.css</contents>
+	        </resource>
+	        <!-- Some browsers choose the tff instead of the woff so both are included -->
+	        <resource>
+	            <type>file</type>
+	            <contents>styles/fonts/fontawesome/fonts/fontawesome-webfont.woff</contents>
+	        </resource>
+	        <resource>
+	            <type>file</type>
+	            <contents>styles/fonts/fontawesome/fonts/fontawesome-webfont.ttf</contents>
+	        </resource>
+	        <resource>
+	            <type>cssFile</type>
+	            <contents>styles/controls/calendar.css</contents>
+	        </resource>
+	        <resource>
+	            <type>javascriptFile</type>
+	            <contents>scripts/controls/calendar.js</contents>
+	        </resource>
+	    </resources>
+	    	    	    
+	    <getHtmlFunction>
+	        <![CDATA[	  
+var html = '<div id="' + this.id + '" class="calendar"></div>';    
+return html;
+	        ]]>
+	    </getHtmlFunction> 
+	    	    	    
+	    <rebuildJavaScript>
+	        <![CDATA[	           
+	        
+var id = this.id;
+var details = this.details;	        
+var date = null;
+var today = new Date();
+if (details) {
+	if (details.date && details.dateFormat) {
+		try {
+			date = _pageIframeWindow[0].cal_f_tcalParseDate(details.date, details.dateFormat);
+		} catch (ex) {
+			// alert(ex);
+		}
+	}
+	if (details.selectToday) date = today();
+}
+
+var html = '<div class="calendarHeader">';
+html += '<a class="calendarBack calendarMonthChange" href="#" title="Back one month" onclick="calendarMove(this,\'m\',-1);">&#xf104;</a>';
+if (this.showYearChange) html += '<a class="calendarBack calendarYearChange" href="#" title="Back one year" onclick="calendarMove(this,\'y\',-1);">&#xf100;</a>';				
+html += '<a class="calendarForward calendarMonthChange" href="#" title="Forward one month" onclick="calendarMove(this,\'m\',1);">&#xf105;</a>';
+if (this.showYearChange) html += '<a class="calendarForward calendarYearChange" href="#" title="Forward one year" onclick="calendarMove(this,\'y\',1);">&#xf101;</a>';			
+html += '<div class="calendarLabel"></div>';
+html += '</div><table class="calendarTable"><thead><tr>';
+for (var i = 0; i < 7; i++) {
+	html += "<td>" + _pageIframeWindow[0]._calendarWeeks[i] + "</td>";
+}
+html += '</thead><tbody>';
+for (var i = 0; i < 5; i++) {
+	html += "<tr>";
+	for (var j = 0; j < 7; j++) {
+		html += "<td onclick='calendarSelectDay(this);'></td>";				
+	}
+	html += "</tr>";
+}
+html += '</tbody></table>';        
+
+var calendar = $(_pageIframe[0].contentDocument).find("#" + this.id);
+calendar.html(html);	
+
+if (date) {	
+	calendar.attr("data-year", date.getFullYear());
+	calendar.attr("data-month", date.getMonth());	
+} else {
+	calendar.attr("data-year", today.getFullYear());
+	calendar.attr("data-month", today.getMonth());
+}
+
+_pageIframeWindow[0].calendarSetDate(id, date);
+_pageIframeWindow[0].calendarUpdate(id);
+
+	        ]]>
+	    </rebuildJavaScript>
+	    
+	    
+	    <getDetailsFunction>
+	        <![CDATA[
+return {date: this.date, dateFormat: this.dateFormat, selectToday: this.selectToday};	        
+	        ]]>	        
+	    </getDetailsFunction>
+	    
+	    <getDataFunction>
+	        <![CDATA[
+var calendar = $("#" + id);
+var dateString = calendar.attr("data-date");
+if (dateString) {
+	var date = new Date(dateString);
+	return cal_f_tcalGenerateDate(date, details.dateFormat);
+} else {
+	return null;
+}	        
+	        ]]>
+	    </getDataFunction>
+	    
+	    <setDataJavaScript>
+	        <![CDATA[
+var calendar = $("#" + id);
+var dateData = makeDataObject(data,field);
+var dateString = dateData.rows[0][0];
+var date = cal_f_tcalParseDate(dateString, details.dateFormat);
+if (date) {
+	calendar.attr("data-date",date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate());
+} else {
+	calendar.removeAttr("data-date");
+}	
+calendarUpdate(id);        
+	        ]]>
+	    </setDataJavaScript>
+	    	    
+	    <events>
+	        <event>
+	            <type>selectDay</type>
+	            <name>Select day</name>
+	        </event>
+	    </events>
+	    
+	    	    
+	    <styles>
+	        <style>
+	            <name>Calendar</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id;
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	        <style>
+	            <name>Title</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id + " .calendarLabel";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	        <style>
+	            <name>Month change</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id + " .calendarMonthChange";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	        <style>
+	            <name>Year change</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id + " .calendarYearChange";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	        <style>
+	            <name>Cells</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id + " td";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	        <style>
+	            <name>Week days</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id + " thead td";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	        <style>
+	            <name>Month days</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id + " tbody td";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	        <style>
+	            <name>Today</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id + " td.calendarToday";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>	
+	        <style>
+	            <name>Selected day</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id + " td.calendarSelectedDay";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>	       
+	    </styles>
+	    
+	</control>
+</controls>

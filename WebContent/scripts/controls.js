@@ -506,6 +506,8 @@ function rebuildHtml(control) {
 		var controlClass = _controlTypes[control.type];
 		// assume the panelpin offset 
 		panelPinnedOffset = _panelPinnedOffset;
+		// run any getDetailsJavaScript function (if present) - this creates a "details" object which is used in rebuilding the html and the getData and setData calls
+		if (control._getDetails) control.details = control._getDetails();		
 		// run any rebuild JavaScript (if present) - and this is not the page
 		if (control._rebuild) {
 			try {
@@ -539,10 +541,7 @@ function rebuildHtml(control) {
 			// attach the new object
 			control.object = object; 
 		}
-		
-		// run any getDetailsJavaScript function (if present) - this creates a "details" object which is passed to the getData and setData calls
-		if (control._getDetails) control.details = control._getDetails();
-		
+						
 		// if our control looks like a non visible
 		if (control.object.is(".nonVisibleControl")) {
 			// add a selection listener
