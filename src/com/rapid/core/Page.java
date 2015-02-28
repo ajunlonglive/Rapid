@@ -826,7 +826,7 @@ public class Page {
     }
     
     // the resources for the page
-    public String getResourcesHtml(Application application) {
+    public String getResourcesHtml(Application application, boolean allResources) {
     	
     	StringBuilder stringBuilder = new StringBuilder();
     	
@@ -842,8 +842,8 @@ public class Page {
 		if (application.getResources() != null) {
 			// loop and add the resources required by this application's controls and actions (created when application loads)
 			for (Resource resource : application.getResources()) {
-				// if there is a dependency for this resource
-				if (resource.hasDependency(ResourceDependency.RAPID) || resource.hasDependency(ResourceDependency.ACTION, _actionTypes) || resource.hasDependency(ResourceDependency.CONTROL, _controlTypes)) {
+				// if we want all the resources (for the designer) or there is a dependency for this resource
+				if (allResources || resource.hasDependency(ResourceDependency.RAPID) || resource.hasDependency(ResourceDependency.ACTION, _actionTypes) || resource.hasDependency(ResourceDependency.CONTROL, _controlTypes)) {
 					
 					// the link we're hoping to get
 					String link = null;
@@ -1008,7 +1008,7 @@ public class Page {
     	StringBuilder stringBuilder = new StringBuilder(getHtmlHeadStart());
     	    															
 		// if you're looking for where the jquery link is added it's the first resource in the page.control.xml file	
-		stringBuilder.append("    " + getResourcesHtml(application).trim().replace("\n", "\n    ") + "\n");
+		stringBuilder.append("    " + getResourcesHtml(application, false).trim().replace("\n", "\n    ") + "\n");
 												
 		// add a JavaScript block with important global variables - this removed by the pagePanel loader and navigation action when showing dialogues, by matching to the various variables so be careful changing anything below			
 		stringBuilder.append("    <script type='text/javascript'>\n\n");			

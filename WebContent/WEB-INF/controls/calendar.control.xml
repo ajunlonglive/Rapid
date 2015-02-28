@@ -130,42 +130,46 @@ if (details) {
 			// alert(ex);
 		}
 	}
-	if (details.selectToday) date = today();
+	if (details.selectToday) date = today;
 }
 
 var html = '<div class="calendarHeader">';
-html += '<a class="calendarBack calendarMonthChange" href="#" title="Back one month" onclick="calendarMove(this,\'m\',-1);">&#xf104;</a>';
-if (this.showYearChange) html += '<a class="calendarBack calendarYearChange" href="#" title="Back one year" onclick="calendarMove(this,\'y\',-1);">&#xf100;</a>';				
-html += '<a class="calendarForward calendarMonthChange" href="#" title="Forward one month" onclick="calendarMove(this,\'m\',1);">&#xf105;</a>';
-if (this.showYearChange) html += '<a class="calendarForward calendarYearChange" href="#" title="Forward one year" onclick="calendarMove(this,\'y\',1);">&#xf101;</a>';			
+html += '<span class="calendarBack calendarMonthChange" href="#" title="Back one month" onclick="calendarMove(this,\'m\',-1);">&#xf104;</span>';
+if (this.showYearChange) html += '<span class="calendarBack calendarYearChange" href="#" title="Back one year" onclick="calendarMove(this,\'y\',-1);">&#xf100;</span>';				
+html += '<span class="calendarForward calendarMonthChange" href="#" title="Forward one month" onclick="calendarMove(this,\'m\',1);">&#xf105;</span>';
+if (this.showYearChange) html += '<span class="calendarForward calendarYearChange" href="#" title="Forward one year" onclick="calendarMove(this,\'y\',1);">&#xf101;</span>';			
 html += '<div class="calendarLabel"></div>';
 html += '</div><table class="calendarTable"><thead><tr>';
 for (var i = 0; i < 7; i++) {
 	html += "<td>" + _pageIframeWindow[0]._calendarWeeks[i] + "</td>";
 }
 html += '</thead><tbody>';
-for (var i = 0; i < 5; i++) {
+for (var i = 0; i < 6; i++) {
 	html += "<tr>";
 	for (var j = 0; j < 7; j++) {
 		html += "<td onclick='calendarSelectDay(this);'></td>";				
 	}
 	html += "</tr>";
 }
-html += '</tbody></table>';        
+html += '</tbody></table>';       
 
-var calendar = $(_pageIframe[0].contentDocument).find("#" + this.id);
-calendar.html(html);	
+if (_pageIframe && _pageIframe[0]) {
 
-if (date) {	
-	calendar.attr("data-year", date.getFullYear());
-	calendar.attr("data-month", date.getMonth());	
-} else {
-	calendar.attr("data-year", today.getFullYear());
-	calendar.attr("data-month", today.getMonth());
-}
+	var calendar = $(_pageIframe[0].contentDocument).find("#" + this.id);
+	calendar.html(html);	
+	
+	if (date) {	
+		calendar.attr("data-year", date.getFullYear());
+		calendar.attr("data-month", date.getMonth());	
+	} else {
+		calendar.attr("data-year", today.getFullYear());
+		calendar.attr("data-month", today.getMonth());
+	}
+	
+	_pageIframeWindow[0].calendarSetDate(id, date);
+	_pageIframeWindow[0].calendarUpdate(id);
 
-_pageIframeWindow[0].calendarSetDate(id, date);
-_pageIframeWindow[0].calendarUpdate(id);
+} 
 
 	        ]]>
 	    </rebuildJavaScript>

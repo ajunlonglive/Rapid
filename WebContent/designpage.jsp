@@ -99,7 +99,7 @@ if (appId != null && pageId != null) {
 if (appPage != null && designerPermission) {
 
 	// add the required resource links, but not the page.css rapid.css file
-	out.print(appPage.getResourcesHtml(app));	
+	out.print(appPage.getResourcesHtml(app, true));	
 	
 %>
 	<style type="text/css">
