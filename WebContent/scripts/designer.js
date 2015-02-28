@@ -2438,8 +2438,8 @@ $(document).ready( function() {
 	
 	// view page
 	$("#pageView").click( function(ev) {
-		// prompet the user if the page is dirty
-		if (checkDirty()) window.location = "~?a=" + _version.id + "&v=" + _version.version + "&p=" + _page.id;
+		// page unload will prompet the user if the page is dirty
+		window.location = "~?a=" + _version.id + "&v=" + _version.version + "&p=" + _page.id;
 	});
 	
 	// undo

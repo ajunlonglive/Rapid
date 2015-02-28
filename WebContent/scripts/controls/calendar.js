@@ -6,13 +6,13 @@ var cal_A_TCALTOKENS = [
 	 // A full numeric representation of a year, 4 digits
 	{'t': 'Y', 'r': '19\\d{2}|20\\d{2}', 'p': function (d_date, n_value) { d_date.setFullYear(Number(n_value)); return d_date; }, 'g': function (d_date) { var n_year = d_date.getFullYear(); return n_year; }},
 	 // Numeric representation of a month, with leading zeros
-	{'t': 'm', 'r': '0?[1-9]|1[0-2]', 'p': function (d_date, n_value) { d_date.setMonth(Number(n_value) - 1); return d_date; }, 'g': function (d_date) { var n_month = d_date.getMonth() + 1; return (n_month < 10 ? '0' : '') + n_month }},	
+	{'t': 'm', 'r': '0?[1-9]|1[0-2]', 'p': function (d_date, n_value) { d_date.setMonth(Number(n_value) - 1); return d_date; }, 'g': function (d_date) { var n_month = d_date.getMonth() + 1; return (n_month < 10 ? '0' : '') + n_month; }},	
 	 // Day of the month, 2 digits with leading zeros
-	{'t': 'd', 'r': '0?[1-9]|[12][0-9]|3[01]', 'p': function (d_date, n_value) { d_date.setDate(Number(n_value)); if (d_date.getDate() != n_value) d_date.setDate(0); return d_date }, 'g': function (d_date) { var n_date = d_date.getDate(); return (n_date < 10 ? '0' : '') + n_date; }},
+	{'t': 'd', 'r': '0?[1-9]|[12][0-9]|3[01]', 'p': function (d_date, n_value) { d_date.setDate(Number(n_value)); if (d_date.getDate() != n_value) d_date.setDate(0); return d_date; }, 'g': function (d_date) { var n_date = d_date.getDate(); return (n_date < 10 ? '0' : '') + n_date; }},
 	// Day of the month without leading zeros
-	{'t': 'j', 'r': '0?[1-9]|[12][0-9]|3[01]', 'p': function (d_date, n_value) { d_date.setDate(Number(n_value)); if (d_date.getDate() != n_value) d_date.setDate(0); return d_date }, 'g': function (d_date) { var n_date = d_date.getDate(); return n_date; }},	
+	{'t': 'j', 'r': '0?[1-9]|[12][0-9]|3[01]', 'p': function (d_date, n_value) { d_date.setDate(Number(n_value)); if (d_date.getDate() != n_value) d_date.setDate(0); return d_date; }, 'g': function (d_date) { var n_date = d_date.getDate(); return n_date; }},	
 	// English ordinal suffix for the day of the month, 2 characters
-	{'t': 'S', 'r': 'st|nd|rd|th', 'p': function (d_date, s_value) { return d_date }, 'g': function (d_date) { n_date = d_date.getDate(); if (n_date % 10 == 1 && n_date != 11) return 'st'; if (n_date % 10 == 2 && n_date != 12) return 'nd'; if (n_date % 10 == 3 && n_date != 13) return 'rd'; return 'th'; }}	
+	{'t': 'S', 'r': 'st|nd|rd|th', 'p': function (d_date, s_value) { return d_date; }, 'g': function (d_date) { n_date = d_date.getDate(); if (n_date % 10 == 1 && n_date != 11) return 'st'; if (n_date % 10 == 2 && n_date != 12) return 'nd'; if (n_date % 10 == 3 && n_date != 13) return 'rd'; return 'th'; }}	
 ];
 
 function cal_f_tcalResetTime (d_date) {
@@ -102,14 +102,14 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
  */
 
 var _calendarWeeks = ["Su","Mo","Tu","We","Th","Fr","Sa"];
-var _calendarMonths = ["January","February","March","April","May","June","July","August","September","October","November","December"]
+var _calendarMonths = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 var _calendarMonthDays = [31,28,31,30,31,30,31,31,30,31,30,31];
 
 function calendarGetMonthDays(year, month) {
 	var monthDays = _calendarMonthDays[month];
 	// if feb in normal leap year but not divisble by 100 exluding divisible by 400
 	if (month == 1 && year % 4 == 0 && !(year % 100 == 0 && year % 400 != 0)) monthDays++;
-	return monthDays
+	return monthDays;
 }
 
 function calendarSetDate(id, date) {
@@ -156,13 +156,16 @@ function calendarUpdate(id) {
 		day++;
 	});
 	
-	var lastRow = daysBody.find("tr").last();
-	if (lastRow.children().first().html()) {
-		lastRow.show();
-	} else {
-		lastRow.hide();
-	}
-			
+	var rows = daysBody.find("tr").filter( function(idx) { return idx > 0; });
+	rows.each(function() {
+		var row = $(this);
+		if (row.children().first().html()) {
+			row.show();
+		} else {
+			row.hide();
+		}
+	});
+				
 }
 
 function calendarMove(from, type, amount) {
@@ -180,7 +183,7 @@ function calendarMove(from, type, amount) {
 			month = 11;
 			year -= 1;
 		}
-		if (month > 12) {
+		if (month > 11) {
 			month = 0;
 			year += 1;
 		}
@@ -201,7 +204,7 @@ function calendarSelectDay(from) {
 	var date = new Date(year, month, day);
 	calendarSetDate(id, date);		
 	calendarUpdate(id);
-	if (dayCell.hasClass("calendarDay")) window["Event_selectDay_" + id]($.Event('selectDay'));
+	if (dayCell.hasClass("calendarDay") && window["Event_selectDay_" + id]) window["Event_selectDay_" + id]($.Event('selectDay'));
 }
 
 function calendarInit(id, details) {
@@ -218,7 +221,7 @@ function calendarInit(id, details) {
 	var table = calendar.find("table.calendarTable");
 	
 	var weeks = table.find("thead");
-	var weeksHtml = "<tr>"
+	var weeksHtml = "<tr>";
 	for (var i = 0; i < 7; i++) {
 		weeksHtml += "<td>" + _calendarWeeks[i] + "</td>";
 	}
