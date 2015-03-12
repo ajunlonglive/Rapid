@@ -1,4 +1,4 @@
-<!DOCTYPE html encoding="utf-8">
+<!DOCTYPE html>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 

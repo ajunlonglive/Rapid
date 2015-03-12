@@ -1008,14 +1008,24 @@ public class Rapid extends Action {
 				int databaseDrivers = 0;
 				int connectionAdapters = 0;
 				int securityAdapters = 0;
+				int devices = 0;
+				
+				ServletContext servletContext = rapidServlet.getServletContext();
 													
-				databaseDrivers = RapidServletContextListener.loadDatabaseDrivers(rapidServlet.getServletContext());
+				databaseDrivers = RapidServletContextListener.loadDatabaseDrivers(servletContext);
 				
-				connectionAdapters = RapidServletContextListener.loadConnectionAdapters(rapidServlet.getServletContext());
+				connectionAdapters = RapidServletContextListener.loadConnectionAdapters(servletContext);
 				
-				securityAdapters = RapidServletContextListener.loadSecurityAdapters(rapidServlet.getServletContext());
-									
-				result.put("message", databaseDrivers + " database drivers, " + connectionAdapters + " connection adapters, " + securityAdapters + " security adapters");
+				securityAdapters = RapidServletContextListener.loadSecurityAdapters(servletContext);
+				
+				devices = Devices.load(servletContext).size();
+				
+				result.put("message", 
+					databaseDrivers + " database driver" + (databaseDrivers == 1 ? "" : "s") + ", " + 
+					connectionAdapters + " connection adapter" + (connectionAdapters == 1 ? "" : "s") + ", " +
+					securityAdapters + " security adapter" + (securityAdapters == 1 ? "" : "s") + ", " +
+					devices + " device" + (devices == 1 ? "" : "s") + " reloaded"
+				);
 								
 			} else if ("RELOADVERSION".equals(action)) {
 				

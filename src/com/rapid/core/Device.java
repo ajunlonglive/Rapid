@@ -23,7 +23,13 @@ public class Device {
 		
 		// properties (for marshalling / unmarshalling of this object)
 		public Devices getDevices() { return this; }
-		public void setDevices(Devices devices) { this.clear(); this.addAll(devices); }
+		public void setDevices(Devices devices) {
+			// jaxb on some platforms sends the unmarshalled object (itself) into this method
+			if (this != devices) {
+				this.clear();
+				this.addAll(devices);
+			}			 
+		}
 		
 		// static methods
 		public static Devices load(ServletContext servletContext) throws JAXBException, IOException {

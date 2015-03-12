@@ -62,8 +62,7 @@ public class Rapid extends RapidHttpServlet {
 	public static final String ADMIN_ROLE = "RapidAdmin";
 	public static final String SUPER_ROLE = "RapidSuper";
 						
-	// this byte buffer is used for reading the post data - maybe we'll use streams one day...
-	private byte[] _byteBuffer = new byte[1024];
+	
 					                        
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 				
@@ -229,10 +228,13 @@ public class Rapid extends RapidHttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 			
+		// this byte buffer is used for reading the post data 
+		byte[] byteBuffer = new byte[1024];
+		
 		// read bytes from request body into our own byte array (this means we can deal with images) 
 		InputStream input = request.getInputStream();
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();												
-		for (int length = 0; (length = input.read(_byteBuffer)) > -1;) outputStream.write(_byteBuffer, 0, length);			
+		for (int length = 0; (length = input.read(byteBuffer)) > -1;) outputStream.write(byteBuffer, 0, length);			
 		byte[] bodyBytes = outputStream.toByteArray();
 		
 		// log
