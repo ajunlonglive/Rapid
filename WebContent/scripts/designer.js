@@ -1833,7 +1833,7 @@ function cleanControlForPaste(control) {
 	return cleanControl;
 }
 
-function applyStyleForPaste(control, styleSheet) {
+function applyStyleForPaste(control) {
 	// check has style
 	if (control.styles) {
 		// loop them
@@ -1841,7 +1841,7 @@ function applyStyleForPaste(control, styleSheet) {
 			var style = control.styles[i];
 			var appliesTo = style.appliesTo;
 			// create a style sheet rule
-			var styleSheetRule = appliesTo + " {";
+			var styleSheetRule = "";
 			// loop the style rows and add to the style rules
 			for (var j in style.rules) {
 				// get the rule 
@@ -1852,24 +1852,30 @@ function applyStyleForPaste(control, styleSheet) {
 					styleSheetRule += rule;
 				}
 			};
-			// close the styleSheet rule
-			styleSheetRule += "}";
 			// if there are rules
 			if (style.rules.length > 0) {
+				
 				// add the styleSheet rule
-				if (styleSheet) {
-					// check length of parameters
-					if (styleSheet.insertRule.length > 1) {
-						styleSheet.insertRule(styleSheetRule, 0);
+				if (_styleSheet) {
+					// check whether the stylesheet has an insertRule method
+					if (_styleSheet.insertRule) {
+						// ff / chrome - create a single rule inside the applies to
+						styleSheetRule = appliesTo + " {" + styleSheetRule + "}";
+						// insert to send of style sheet
+						_styleSheet.insertRule(styleSheetRule, _styleSheet.cssRules.length);
 					} else {
-						try { styleSheet.insertRule(styleSheetRule); } catch (ex) {}						
-					}					
-				}
-			}
-		}
-	}
+						// ie - use addRule method with seperate applies to and rule 						
+						_styleSheet.addRule(appliesTo, styleSheetRule);
+					}									
+				} // _styleSheet check								
+				
+			} // rules check
+		} // control styles loop
+	} // control styles check
+	// loop child controls
 	for (var i in control.childControls) {
-		applyStyleForPaste(control.childControls[i], styleSheet);
+		// add their styles too
+		applyStyleForPaste(control.childControls[i]);
 	}
 }
 
@@ -1919,7 +1925,7 @@ function doPaste(control, _parent) {
 		newControl = loadControl(mappedControl, _parent, true, true);
 		
 		// apply any styling in the new control
-		applyStyleForPaste(newControl, getStyleSheet());
+		applyStyleForPaste(newControl);
 		
 		// restore the next id
 		_nextId = nextId;
@@ -1977,7 +1983,7 @@ function doPaste(control, _parent) {
 		_page.object = $(_pageIframe[0].contentWindow.document.body);
 		
 		// apply any styling in the new control
-		applyStyleForPaste(_page, getStyleSheet());
+		applyStyleForPaste(_page);
 		
 		// fire window resize in case scroll bars need adjusting, etc.
 		windowResize("paste");
@@ -2195,6 +2201,22 @@ $(document).ready( function() {
 				        		_page.childControls.push(loadControl(childControl, _page, true));
 				        	}
 			        	}
+			        	
+			        	// get all of the stylesheets (we might be using pagepanels where the styling )
+						var styleSheets = _pageIframe[0].contentWindow.document.styleSheets;
+						// check we got some stylesheets
+						if (styleSheets) {
+							// loop them
+							for (var i = 0; i < styleSheets.length; i++) {
+								// get a reference
+								styleSheet = styleSheets[i];
+								// control styles are always in the page and will not have an href
+								if (!styleSheet.href) {
+									// if this style sheets sits in the document head section retain it as the pageStyleSheet
+									if (styleSheet.ownerNode.parentNode.nodeName == "HEAD") _styleSheet = styleSheet;									
+								} // in-page style check
+							} // style sheets loop
+						} // style sheets check
 			        	
 			        	// the page style rules seem to be overridden (especially page backgrounds) for now this is the best way to get them back
 			        	selectControl(_page);

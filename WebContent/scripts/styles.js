@@ -138,6 +138,8 @@ var _styleList;
 var _styleClicked = false;
 // whether the styles have been applied yet (selecting another control can leave them unapplied)
 var _stylesApplied = false;
+// the page style sheet that we'll add all new and updated styling to
+var _styleSheet = null;
 
 function styleRule_mutliCheck(name, value, number) {
 	var f = window["styleRule_" + name]; 
@@ -442,14 +444,11 @@ function rebuildStyles() {
 		var appliesTo = _styleTable.find("td[data-appliesTo]").attr("data-appliesTo");
 		// check we have a style sheet object and an appliesTo
 		if (appliesTo) {
-			
-			// retain a reference for a the page style sheet, we'll add to this one so any rebuilding doesn't remove it (like the pagePanel)
-			var pageStyleSheet = null;
-			
+						
 			// for pointers with ie see:
 			// http://www.javascriptkit.com/domref/stylesheet.shtml
 			
-			// get all of the stylesheets
+			// get all of the stylesheets (we might be using pagepanels where the styling )
 			var styleSheets = _pageIframe[0].contentWindow.document.styleSheets;
 			// check we got some stylesheets
 			if (styleSheets) {
@@ -459,8 +458,6 @@ function rebuildStyles() {
 					styleSheet = styleSheets[i];
 					// control styles are always in the page and will not have an href
 					if (!styleSheet.href) {
-						// if this style sheets sits in the document head section retain it as the pageStyleSheet
-						if (styleSheet.ownerNode.parentNode.nodeName == "HEAD") pageStyleSheet = styleSheet;
 						// get rules
 						var rules = styleSheet.cssRules;					
 						// check rules
@@ -485,8 +482,7 @@ function rebuildStyles() {
 					} // in-page style check
 				} // style sheets loop
 			} // style sheets check
-			
-										
+													
 			// create a single style object which applies to the control element
 			var style = {appliesTo : appliesTo, rules : new Array()};
 			// create a style sheet rule
@@ -508,20 +504,19 @@ function rebuildStyles() {
 				// add the style to the collection
 				styles.push(style);
 				// add the styleSheet rule
-				if (styleSheet) {
+				if (_styleSheet) {
 					// check whether the stylesheet has an insertRule method
-					if (styleSheet.insertRule) {
+					if (_styleSheet.insertRule) {
 						// ff / chrome - create a single rule inside the applies to
 						styleSheetRule = appliesTo + " {" + styleSheetRule + "}";
 						// insert to send of style sheet
-						pageStyleSheet.insertRule(styleSheetRule, pageStyleSheet.cssRules.length);
+						_styleSheet.insertRule(styleSheetRule, _styleSheet.cssRules.length);
 					} else {
 						// ie - use addRule method with seperate applies to and rule 						
-						pageStyleSheet.addRule(appliesTo, styleSheetRule);
-					}
-									
-				}
-			}
+						_styleSheet.addRule(appliesTo, styleSheetRule);
+					}									
+				} // _styleSheet check
+			} // rules check
 		} // check stylesheet
 	});			
 	// asign the collection to the control

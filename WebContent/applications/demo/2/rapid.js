@@ -350,12 +350,13 @@ function Init_pagePanel(id, details) {
          // if the page can't be found a blank response is sent, so only show if we got something
          if (page) {
          	
-         		// empty the body html
-         		bodyHtml = "";
-         		script = "";
          		// get the document head
           	var head = $("head");
-         		
+         		// empty the body html
+         		bodyHtml = "";
+         		// assume the script is empty
+         		script = "";
+         		       		
              	// loop the items
              	var items = $(page);
              	for (var i in items) {
