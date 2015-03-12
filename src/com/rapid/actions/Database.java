@@ -661,7 +661,7 @@ public class Database extends Action {
 									// add the data to the row according to it's type	
 									switch (columnType) {
 									case (Types.NUMERIC) : 
-										jsonRow.put(rs.getFloat(i + 1));
+										jsonRow.put(rs.getDouble(i + 1));
 									break;
 									case (Types.INTEGER) : 
 										jsonRow.put(rs.getInt(i + 1));
