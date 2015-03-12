@@ -430,29 +430,7 @@ function renderHints(val) {
 				
 }
 
-function getStyleSheet() {	
-	// get the document stylehseets
-	var styleSheets = _pageIframe[0].contentWindow.document.styleSheets;
-	var styleSheet = null;
-	// if we got some style sheets
-	if (styleSheets) {
-		// loop them
-		for (var i = 0; i < styleSheets.length; i++) {
-			// get a reference
-			styleSheet = styleSheets[i];
-			// if this is the stylesheet for our page
-			if (styleSheet.href && styleSheet.href.indexOf(_page.name) > 0) {						
-				// this is the one we want
-				break;
-			}
-		}
-	}
-	return styleSheet;
-}
-
 function rebuildStyles() {
-	// get the document stylehseet
-	var styleSheet = getStyleSheet();
 	
 	// create a new array to hold the styles for the selected control 	
 	var styles = new Array();
@@ -463,33 +441,52 @@ function rebuildStyles() {
 		// the applies to is in the first td
 		var appliesTo = _styleTable.find("td[data-appliesTo]").attr("data-appliesTo");
 		// check we have a style sheet object and an appliesTo
-		if (styleSheet && appliesTo) {
-			// get rules
-			var rules = styleSheet.cssRules;
+		if (appliesTo) {
+			
+			// retain a reference for a the page style sheet, we'll add to this one so any rebuilding doesn't remove it (like the pagePanel)
+			var pageStyleSheet = null;
 			
 			// for pointers with ie see:
 			// http://www.javascriptkit.com/domref/stylesheet.shtml
 			
-			// check rules
-			if (rules) {
-				// loop rules
-				for (var j = 0; j < rules.length;) {
-					// get rule
-					var rule = rules[j];
-					// check there is cssText
-					if (rule.cssText) {
-						// get what the rule applies to
-						ruleAppliesTo = rule.cssText.substr(0, rule.cssText.indexOf("{") - 1);
-						// remove if matches our applies to (case insensitive)
-						if (ruleAppliesTo.toLowerCase() == appliesTo.toLowerCase()) {
-							styleSheet.deleteRule(j);
-						} else {
-							j++;
-						}
-					}				
-				}
-			}
-							
+			// get all of the stylesheets
+			var styleSheets = _pageIframe[0].contentWindow.document.styleSheets;
+			// check we got some stylesheets
+			if (styleSheets) {
+				// loop them
+				for (var i = 0; i < styleSheets.length; i++) {
+					// get a reference
+					styleSheet = styleSheets[i];
+					// control styles are always in the page and will not have an href
+					if (!styleSheet.href) {
+						// if this style sheets sits in the document head section retain it as the pageStyleSheet
+						if (styleSheet.ownerNode.parentNode.nodeName == "HEAD") pageStyleSheet = styleSheet;
+						// get rules
+						var rules = styleSheet.cssRules;					
+						// check rules
+						if (rules) {
+							// loop rules
+							for (var j = 0; j < rules.length;) {
+								// get rule
+								var rule = rules[j];
+								// check there is cssText
+								if (rule.cssText) {
+									// get what the rule applies to
+									ruleAppliesTo = rule.cssText.substr(0, rule.cssText.indexOf("{") - 1);
+									// remove if matches our applies to (case insensitive)
+									if (ruleAppliesTo.toLowerCase() == appliesTo.toLowerCase()) {
+										styleSheet.deleteRule(j);
+									} else {
+										j++;
+									}
+								} // cssText check							
+							} // rules loop
+						} // rules check		
+					} // in-page style check
+				} // style sheets loop
+			} // style sheets check
+			
+										
 			// create a single style object which applies to the control element
 			var style = {appliesTo : appliesTo, rules : new Array()};
 			// create a style sheet rule
@@ -512,18 +509,15 @@ function rebuildStyles() {
 				styles.push(style);
 				// add the styleSheet rule
 				if (styleSheet) {
-					// ff / chrome
+					// check whether the stylesheet has an insertRule method
 					if (styleSheet.insertRule) {
+						// ff / chrome - create a single rule inside the applies to
 						styleSheetRule = appliesTo + " {" + styleSheetRule + "}";
-						// check length of parameters
-						if (styleSheet.insertRule.length > 1) {
-							styleSheet.insertRule(styleSheetRule, 0);
-						} else {
-							styleSheet.insertRule(styleSheetRule);
-						}	
+						// insert to send of style sheet
+						pageStyleSheet.insertRule(styleSheetRule, pageStyleSheet.cssRules.length);
 					} else {
-						// ie						
-						styleSheet.addRule(appliesTo, styleSheetRule);
+						// ie - use addRule method with seperate applies to and rule 						
+						pageStyleSheet.addRule(appliesTo, styleSheetRule);
 					}
 									
 				}
@@ -852,7 +846,7 @@ function showStyles(control) {
 				rebuildHtml(ev.data.control);				
 			}));
 			
-			classesTable.append("<tr><td colspan='2'><select class='propertiesPanelTable'></select></td></tr>");
+			classesTable.append("<tr><td colspan='2' style='padding:0;'><select class='propertiesPanelTable'></select></td></tr>");
 			// get a reference to the select
 			var addClass = classesTable.find("select").last();
 			// retain a string for the class options
