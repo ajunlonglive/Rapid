@@ -962,13 +962,13 @@ public class RapidServletContextListener implements ServletContextListener {
 			
 			// store the jaxb context in RapidHttpServlet
 			RapidHttpServlet.setJAXBContext(jaxbContext);
-												
-			// load the applications!
-			loadApplications(servletContext);	
-			
+										
 			// load the devices
 			Devices.load(servletContext);
-			
+						
+			// load the applications!
+			loadApplications(servletContext);	
+									
 			// add some useful global objects 
 			servletContext.setAttribute("xmlDateFormatter", new SimpleDateFormat("yyyy-MM-dd"));
 			servletContext.setAttribute("xmlDateTimeFormatter", new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"));
