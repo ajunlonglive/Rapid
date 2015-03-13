@@ -40,6 +40,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <key>conditions</key>
 	            <name>Conditions</name>
 	            <changeValueJavaScript>logicConditions</changeValueJavaScript>	 
+	            <refreshProperties>true</refreshProperties>
 	        </property>	
 	        
 	        <property>
