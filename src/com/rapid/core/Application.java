@@ -1259,7 +1259,7 @@ public class Application {
 				switch (resource.getType()) {
 					case Resource.JAVASCRIPTFILE :						
 						// get a file for this
-						File jsFile = new File(servletContext.getRealPath("/") + fileName);
+						File jsFile = new File(servletContext.getRealPath("/") + (fileName.startsWith("/") ? "" : "/")  + fileName);
 						// if the file exists, and it's in the scripts folder and ends with .js
 						if (jsFile.exists() && fileName.startsWith("scripts/") && fileName.endsWith(".js")) {
 							// derive the min file name by modifying the start and end
@@ -1279,7 +1279,7 @@ public class Application {
 					break;
 					case Resource.CSSFILE :
 						// get a file for this
-						File cssFile = new File(servletContext.getRealPath("/") + fileName);
+						File cssFile = new File(servletContext.getRealPath("/") + (fileName.startsWith("/") ? "" : "/")  + fileName);
 						// if the file exists, and it's in the scripts folder and ends with .js
 						if (cssFile.exists() && fileName.startsWith("styles/") && fileName.endsWith(".css")) {
 							// derive the min file name by modifying the start and end
