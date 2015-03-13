@@ -48,6 +48,14 @@ function loadControl(jsonControl, parentControl, loadActions, paste, undo) {
 			control.childControls.push(childControl);
 		}
 	}
+	// run any rebuild JavaScript (if present)
+	if (control._rebuild) {
+		try {			
+			control._rebuild();			
+		} catch(ex) {
+			alert("rebuildJavaScript failed for " + control.type + ". " + ex);
+		}
+	}	
 	// return 
 	return control;
 			
