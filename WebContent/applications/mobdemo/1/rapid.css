@@ -199,6 +199,10 @@ li.validation {
 Styles saved here will be applied to all pages in the application
 */
 
+html {
+  height: 100%;
+}
+
 body {
   font-family : 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;
   font-size : 18px;
