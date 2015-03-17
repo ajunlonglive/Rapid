@@ -25,6 +25,7 @@ div.validation{padding:10px;color:red !important;font-weight:bold}
 input.validation{border:2px solid red !important}
 textarea.validation{border:2px solid red !important}
 li.validation{color:red !important}
+html{height:100%}
 body{font-family:'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;font-size:18px;margin:0;background:linear-gradient(#fff, #fff 75%, rgba(170, 204, 238, 0.59)) fixed}
 table{font-family:'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;font-size:18px}
 input{font-size:18px;padding:8px;border:1px solid #888;border-radius:10px;box-shadow:inset -2px 2px 5px 0px #bcd;width:90%}

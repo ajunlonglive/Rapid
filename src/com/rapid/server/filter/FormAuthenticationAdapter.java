@@ -72,6 +72,7 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 			
 			String userName = null;
 			String userPassword = null;
+			String deviceId = null;
 			
 			HttpSession session = request.getSession();
 			
@@ -92,6 +93,8 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 				userName = request.getParameter("userName");
 				// look in the request for the password
 				userPassword = request.getParameter("userPassword");
+				// look in the request for the device id
+				deviceId = request.getParameter("deviceId");
 			
 				if (userName == null) {
 					
@@ -178,6 +181,9 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 							// log the error
 							_logger.error("FormAuthenticationAdapter error storing encrypted password", ex);
 						}
+						
+						// retrain device id in the session
+						session.setAttribute("deviceId", deviceId);
 						
 						// log that authentication was granted
 						_logger.debug("FormAuthenticationAdapter authenticated " + userName);
