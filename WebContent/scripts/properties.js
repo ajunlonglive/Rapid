@@ -1549,15 +1549,8 @@ function Property_navigationPage(cell, navigationAction, property, details) {
 }
 
 // this is a dialogue to specify the session variables of the current page
-function Property_pageSessionVariables(cell, page, property, details) {
-	
-	// retrieve or create the dialogue
-	var dialogue = getDialogue(cell, page, property, details, 200, "Page variables");		
-	// grab a reference to the table
-	var table = dialogue.find("table").first();
-	// make sure table is empty
-	table.children().remove();
-	
+function Property_pageSessionVariables(cell, page, property, details, textOnly) {
+			
 	var variables = [];
 	// set the value if it exists
 	if (page.sessionVariables) variables = page.sessionVariables;
@@ -1572,51 +1565,69 @@ function Property_pageSessionVariables(cell, page, property, details) {
 	// append the adjustable form control
 	cell.text(text);
 	
-	// show variables
-	for (var i in variables) {
-		// add the line
-		table.append("<tr><td style='padding-left:0px'><input class='variable' value='" + variables[i] + "' /></td><td><img src='images/bin_16x16.png' style='float:right;' /></td></tr>");
+	// avoid redoing the whole thing 
+	if (!textOnly) {
+	
+		// retrieve or create the dialogue
+		var dialogue = getDialogue(cell, page, property, details, 200, "Page variables");		
+		// grab a reference to the table
+		var table = dialogue.find("table").first();
+		// make sure table is empty
+		table.children().remove();
 		
-		// find the text
-		var valueEdit = table.find("input.variable").last();
+		// show variables
+		for (var i in variables) {
+			// add the line
+			table.append("<tr><td style='padding-left:0px'><input class='variable' value='" + variables[i] + "' /></td><td><img src='images/bin_16x16.png' style='float:right;' /></td></tr>");
+			
+			// find the text
+			var valueEdit = table.find("input.variable").last();
+			// add a listener
+			addListener( valueEdit.keyup( {cell: cell, page: page, property: property, details: details}, function(ev) {
+				// get the input box
+				var input = $(ev.target)
+				// get the value
+				var value = input.val();
+				// get the index
+				var index = input.closest("tr").index();
+				// update value
+				ev.data.page.sessionVariables[index] = value;
+				// refresh
+				Property_pageSessionVariables(ev.data.cell, ev.data.page, ev.data.property, ev.data.details, true);
+			}));
+					
+			// find the delete
+			var optionDelete = table.find("tr").last().children().last().children().last();
+			// add a listener
+			addListener( optionDelete.click( {variables: variables}, function(ev) {
+				// add an undo snapshot
+				addUndo();
+				// get the input
+				var input = $(ev.target);
+				// remove from parameters
+				ev.data.variables.splice(input.parent().parent().index(),1);
+				// remove row
+				input.parent().parent().remove();
+			}));
+		}
+			
+		// have an add row
+		table.append("<tr><td colspan='2'><a href='#'>add...</a></td></tr>");
+		// get a reference to the add
+		var add = table.find("tr").last().children().last().children().last();
 		// add a listener
-		addListener( valueEdit.keyup( {variables: variables}, function(ev) {
-			// get the value
-			var value = $(ev.target).val();
-			// update value
-			updateProperty(cell, propertyObject, property, details, value);
-		}));
-				
-		// find the delete
-		var optionDelete = table.find("tr").last().children().last().children().last();
-		// add a listener
-		addListener( optionDelete.click( {variables: variables}, function(ev) {
+		addListener( add.click( {cell: cell, page: page, property: property, details: details}, function(ev) {
 			// add an undo snapshot
 			addUndo();
-			// get the input
-			var input = $(ev.target);
-			// remove from parameters
-			ev.data.variables.splice(input.parent().parent().index(),1);
-			// remove row
-			input.parent().parent().remove();
+			// initialise if required
+			if (!ev.data.page.sessionVariables) ev.data.page.sessionVariables = [];
+			// add a blank option
+			ev.data.page.sessionVariables.push("");
+			// refresh
+			Property_pageSessionVariables(ev.data.cell, ev.data.page, ev.data.property, ev.data.details);		
 		}));
-	}
 		
-	// have an add row
-	table.append("<tr><td colspan='2'><a href='#'>add...</a></td></tr>");
-	// get a reference to the add
-	var add = table.find("tr").last().children().last().children().last();
-	// add a listener
-	addListener( add.click( {cell: cell, page: page, property: property, details: details}, function(ev) {
-		// add an undo snapshot
-		addUndo();
-		// initialise if required
-		if (!ev.data.page.sessionVariables) ev.data.page.sessionVariables = [];
-		// add a blank option
-		ev.data.page.sessionVariables.push("");
-		// refresh
-		Property_pageSessionVariables(ev.data.cell, ev.data.page, ev.data.property, ev.data.details);		
-	}));
+	}
 	
 }
 
