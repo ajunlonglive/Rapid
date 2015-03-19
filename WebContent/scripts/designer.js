@@ -367,14 +367,19 @@ function getControlHeight(control) {
 	// get the object
 	var o = control.object;
 	// assume height is straightforwards
-	var height = o.outerHeight();	
-	// if the height is less than or equal to the sum of the padding check further
-	if (height <= toPixels(o.css("padding-top")) + toPixels(o.css("padding-bottom"))) {
+	var height = o.height();	
+	// assume child height = zero
+	var childHeight = 0;
+	// loop all children and sum their height
+	for (var i in control.childControls) childHeight += getControlHeight(control.childControls[i]);
+	// if the height is zero but there are child controls check further
+	if (height < childHeight) {
 		// assume no children are floating
 		var floatLeftHeight = 0;
 		var floatRightHeight = 0;
 		// assume children are 0 left
 		var left = 0;
+		
 		// loop the child controls looking for floating objects
 		for (var i in control.childControls) {
 			// get the child control
@@ -392,13 +397,17 @@ function getControlHeight(control) {
 				floatRightHeight += c.object.outerHeight() + toPixels(c.object.css("margin-top")) + toPixels(c.object.css("margin-bottom"));
 			}
 		}
+		
 		// if all heights are still zero and there are child controls
 		if (height + floatLeftHeight + floatRightHeight == 0 && control.childControls.length > 0) {
 			// set height to the first child control
 			height = getControlHeight(control.childControls[0]);
 		}
 		// take the greatest of these 3 heights
-		height = Math.max(o.outerHeight(), floatLeftHeight, floatRightHeight);
+		height = Math.max(height, o.outerHeight(), floatLeftHeight, floatRightHeight);
+	} else {
+		// no children so go for the outer height
+		height = o.outerHeight();
 	}
 	// return it
 	return height;
