@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?><page><controls><childControls><events><filter></filter><type>mouseover</type></events><events><filter></filter><type>mouseout</type></events><events><filter></filter><type>click</type></events><properties><entry><key>classes</key><value>[]</value></entry><entry><key>id</key><value>P6_C2_</value></entry><entry><key>text</key><value>Thanks for viewing this Rapid Mobile demo. 
+It demonstrates some of the following features:
+&lt;ul&gt;
+&lt;li&gt;Page menus&lt;/li&gt;
+&lt;li&gt;Instant searching&lt;/li&gt;
+&lt;li&gt;Glyphs&lt;/li&gt;
+&lt;li&gt;Images&lt;/li&gt;
+&lt;li&gt;Maps&lt;/li&gt;
+&lt;li&gt;GPS&lt;/li&gt;
+&lt;/ul&gt;
+Try the Rapid Designer live demo and download your own at:</value></entry><entry><key>type</key><value>panel</value></entry></properties><styles><appliesTo>#P6_C2_</appliesTo><rules>font-size:14px;</rules><rules>text-align:left;</rules><rules>padding:10px;</rules></styles><XMLVersion>1</XMLVersion></childControls><childControls><events><filter></filter><type>click</type></events><events><filter></filter><type>mouseover</type></events><events><filter></filter><type>mouseout</type></events><properties><entry><key>classes</key><value>[]</value></entry><entry><key>format</key><value>N</value></entry><entry><key>id</key><value>P6_C3_</value></entry><entry><key>text</key><value>www.rapid-is.co.uk</value></entry><entry><key>type</key><value>text</value></entry></properties><styles><appliesTo>#P6_C3_</appliesTo><rules>display:block;</rules><rules>margin-bottom:15px;</rules></styles><XMLVersion>1</XMLVersion></childControls><childControls><events><actions xsi:type="control" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><properties><entry><key>duration</key><value>1000</value></entry><entry><key>actionType</key><value>custom</value></entry><entry><key>control</key><value>P6_C4_</value></entry><entry><key>id</key><value>P6_A5_</value></entry><entry><key>type</key><value>control</value></entry><entry><key>command</key><value>hideDialogue();</value></entry></properties><XMLVersion>1</XMLVersion></actions><filter></filter><type>click</type></events><properties><entry><key>classes</key><value>[]</value></entry><entry><key>name</key><value>btnClose</value></entry><entry><key>glyphPosition</key><value>left</value></entry><entry><key>glyphBackground</key><value>none</value></entry><entry><key>id</key><value>P6_C4_</value></entry><entry><key>label</key><value>close</value></entry><entry><key>glyphCode</key><value>&amp;#xf112;</value></entry><entry><key>type</key><value>button</value></entry></properties><XMLVersion>1</XMLVersion></childControls><events><filter></filter><type>mouseover</type></events><events><filter></filter><type>mouseout</type></events><events><filter></filter><type>click</type></events><properties><entry><key>classes</key><value>[]</value></entry><entry><key>id</key><value>P6_C1_</value></entry><entry><key>text</key><value>Rapid Mobile demo</value></entry><entry><key>type</key><value>panel</value></entry></properties><styles><appliesTo>#P6_C1_</appliesTo><rules>border:1px solid black;</rules><rules>border-radius:10px;</rules><rules>padding:20px;</rules><rules>text-align:center;</rules><rules>background-color:white;</rules><rules>width:280px;</rules></styles><XMLVersion>1</XMLVersion></controls><description></description><events><filter></filter><type>pageload</type></events><events><filter></filter><type>resume</type></events><events><filter></filter><type>reusable</type></events><htmlBody>&lt;div id="P6_C1_" class="panel"&gt;Rapid Mobile demo&lt;div id="P6_C2_" class="panel"&gt;Thanks for viewing this Rapid Mobile demo. 
+It demonstrates some of the following features:
+&lt;ul&gt;
+&lt;li&gt;Page menus&lt;/li&gt;
+&lt;li&gt;Instant searching&lt;/li&gt;
+&lt;li&gt;Glyphs&lt;/li&gt;
+&lt;li&gt;Images&lt;/li&gt;
+&lt;li&gt;Maps&lt;/li&gt;
+&lt;li&gt;GPS&lt;/li&gt;
+&lt;/ul&gt;
+Try the Rapid Designer live demo and download your own at:&lt;/div&gt;&lt;span id="P6_C3_" class="text"&gt;www.rapid-is.co.uk&lt;/span&gt;&lt;button id="P6_C4_" class="button"&gt;&lt;span class="fa buttonGlyph"&gt;&lt;/span&gt;&amp;nbsp;close&lt;/button&gt;&lt;/div&gt;</htmlBody><id>P6</id><modifiedBy>admin</modifiedBy><modifiedDate>2015-03-17T12:20:33.608Z</modifiedDate><name>About</name><rolesHtml><html>&lt;div id="P6_C1_" class="panel"&gt;Rapid Mobile demo&lt;div id="P6_C2_" class="panel"&gt;Thanks for viewing this Rapid Mobile demo. 
+It demonstrates some of the following features:
+&lt;ul&gt;
+&lt;li&gt;Page menus&lt;/li&gt;
+&lt;li&gt;Instant searching&lt;/li&gt;
+&lt;li&gt;Glyphs&lt;/li&gt;
+&lt;li&gt;Images&lt;/li&gt;
+&lt;li&gt;Maps&lt;/li&gt;
+&lt;li&gt;GPS&lt;/li&gt;
+&lt;/ul&gt;
+Try the Rapid Designer live demo and download your own at:&lt;/div&gt;&lt;span id="P6_C3_" class="text"&gt;www.rapid-is.co.uk&lt;/span&gt;&lt;button id="P6_C4_" class="button"&gt;&lt;span class="fa buttonGlyph"&gt;&lt;/span&gt;&amp;nbsp;close&lt;/button&gt;&lt;/div&gt;</html></rolesHtml><title>About</title><XMLVersion>1</XMLVersion></page>
