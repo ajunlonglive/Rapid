@@ -34,6 +34,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
@@ -92,6 +93,53 @@ public class RapidFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
 
 		_logger.trace("Process filter request...");
+		
+		if (_logger.isTraceEnabled()) {
+						
+			Integer minimumFirefox = 12;
+			Integer minimumChrome = 18;
+			Integer minimumIE = 9;
+			// any version of IE11 is fine
+			
+			HttpServletRequest r = (HttpServletRequest) request;
+
+			String ua = r.getHeader("User-Agent");
+			boolean unsupportedBrowser = true;
+			
+			if (ua != null) {
+								
+				boolean isMSIE = (ua.indexOf("MSIE") != -1);				
+				boolean isChrome = (ua.indexOf("Chrome/") != -1);
+				boolean isFirefox = (ua.indexOf("Firefox/") != -1);
+				boolean isMSIE11 = (ua.indexOf("Windows NT") != -1 && ua.indexOf("rv:1") != -1); // this might be good for IE12 etc. too
+
+				// assume version is 1
+				String version = "1";
+				
+				// look for versions for families tested above
+				if (isFirefox) {
+					// Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7; rv:13.0) Gecko/20100101 Firefox/13.0
+					version = ua.replaceAll("^.*?Firefox/", "").replaceAll("\\.\\d+", "");
+				} else if (isChrome) {
+					// Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.5 (KHTML, like Gecko) Chrome/19.0.1084.52 Safari/536.5
+					version = ua.replaceAll("^.*?Chrome/(\\d+)\\..*$", "$1");
+				} else if (isMSIE) {
+					// Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.1; WOW64; Trident/5.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; .NET4.0C; .NET4.0E)
+					version = ua.replaceAll("^.*?MSIE\\s+(\\d+).*$", "$1");
+				}
+				
+				// check for any browser hits - note any version of IE11 is fine
+				unsupportedBrowser = false
+					|| (isFirefox && Integer.parseInt(version) < minimumFirefox)
+					|| (isChrome && Integer.parseInt(version) < minimumChrome)
+					|| (isMSIE && Integer.parseInt(version) < minimumIE)
+					|| !isMSIE11;
+				
+				_logger.debug("Browser supported = " + !unsupportedBrowser + ", Agent string : " + ua);
+				
+			}
+						
+		}
 		
 		// set all responses as UTF-8
 		response.setCharacterEncoding("utf-8");

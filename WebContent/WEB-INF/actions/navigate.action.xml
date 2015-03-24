@@ -249,7 +249,9 @@ function Action_navigate(url, dialogue, id) {
 	            		// make the dialogue visible
 	            		dialogue.css("visibility","visible");
 	            		// apply the resizing again (for mobile)	
-	            		if (window["_rapidmobile"]) $(window).resize(); 
+	            		if (window["_rapidmobile"]) $(window).resize();
+	            		// set the focus now that we're visible 
+	            		$('[data-focus]').focus();
 	            	}, 200);
 		           	           	        	            	            	            
 		    	}        	       	        	        	        	        		
