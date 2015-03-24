@@ -602,6 +602,14 @@ function setData_dropdown(ev, id, field, details, data, changeEvents) {
   }
 }
 
+function setProperty_dropdown_value(ev, id, field, details, data, changeEvents) {
+  if (data && data.rows) {
+  	$("#" + id).val(data.rows[0][0]);
+  } else {
+  	$("#" + id).val("");
+  }
+}
+
 function getData_grid(ev, id, field, details) {
   var data = null;
   if (details) {
@@ -1281,7 +1289,9 @@ function Action_navigate(url, dialogue, id) {
 	            		// make the dialogue visible
 	            		dialogue.css("visibility","visible");
 	            		// apply the resizing again (for mobile)	
-	            		if (window["_rapidmobile"]) $(window).resize(); 
+	            		if (window["_rapidmobile"]) $(window).resize();
+	            		// set the focus now that we're visible 
+	            		$('[data-focus]').focus();
 	            	}, 200);
 		           	           	        	            	            	            
 		    	}        	       	        	        	        	        		

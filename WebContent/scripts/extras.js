@@ -21,7 +21,12 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
+AFTER MAKING CHANGES TO THIS FILE DELETE /scripts_min/extras.min.js IN ORDER TO REGENERATE IT
+
 */
+
+
+
 
 // extend String to have a trim function for IE8
 if (typeof String.prototype.trim !== 'function') {
@@ -87,7 +92,7 @@ $.fn.extend({
   },
   hideLoading: function() {
 	  if (this[0]) $("body").find("div[data-id=" + this.attr("id") + "]").hide().next().hide();	
-    return this;
+	  return this;
   },
   hideDialogue: function(reload) {	  
 	  var dialogue = $(this).closest("div.dialogue");	  
@@ -97,8 +102,20 @@ $.fn.extend({
 		  var pageId = $("body").attr("id");
 		  if (window["Event_pageload_" + pageId]) window["Event_pageload_" + pageId]();		  
 	  }	  
+	  return this;
+  },
+  focus: function() {		
+	  if ($("body").css("visibility") == "hidden" || this.closest("div.dialogue").css("visibility") == "hidden") {
+		  this.attr("data-focus","true");			  
+	  } else {
+		  if (this[0]) this[0].focus();
+	  }		  		
+	  return this;
   }
 });
+
+
+
 
 // thanks to http://stackoverflow.com/questions/2200494/jquery-trigger-event-when-an-element-is-removed-from-the-dom/10172676#10172676
 (function($) {

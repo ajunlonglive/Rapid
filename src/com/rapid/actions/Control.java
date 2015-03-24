@@ -63,9 +63,9 @@ public class Control extends Action {
 			js = "$(\"#" + getProperty("control") + "\").";
 			// check the type
 			if ("custom".equals(actionType) || actionType == null) {
-				String command = getProperty("command").trim();			
+				String command = getProperty("command").trim();
 				// command can be cleaned up - remove starting dot (we've already got it above)
-				if (command.charAt(0) == '.') command = command.substring(1);
+				if (command.startsWith(".")) command = command.substring(1);
 				// add brackets if there aren't any at the end
 				if (!command.endsWith(")") && !command.endsWith(");")) command += "();";
 				// add a semi colon if there isn't one on the end

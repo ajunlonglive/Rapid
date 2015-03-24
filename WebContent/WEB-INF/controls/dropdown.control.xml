@@ -150,7 +150,7 @@ if (data != null && data !== undefined) {
 	            <name>Change</name>
 	        </event>
 	    </events>
-	    
+	    	    
 	    <styles>
 	        <style>
 	            <name>Drop down</name>  
@@ -161,6 +161,22 @@ return "#" + this.id;
 	            </getAppliesToFunction>
 	        </style>
 	    </styles>
+	    
+	   	<runtimeProperties>
+	        <runtimeProperty>
+	            <type>value</type>
+	            <name>Value</name>
+	            <setPropertyJavaScript>
+	                <![CDATA[
+if (data && data.rows) {
+	$("#" + id).val(data.rows[0][0]);
+} else {
+	$("#" + id).val("");
+}	                
+	                ]]>
+	            </setPropertyJavaScript>
+	        </runtimeProperty>
+	    </runtimeProperties>
 	    
 	</control>
 </controls>

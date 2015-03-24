@@ -30,11 +30,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.PrintStream;
 import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -46,8 +44,6 @@ import java.util.List;
 import javax.servlet.ServletContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.ValidationEvent;
-import javax.xml.bind.ValidationEventHandler;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.parsers.ParserConfigurationException;
@@ -1119,8 +1115,8 @@ public class Page {
 		// close the try
 		jsStringBuilder.append("  } catch(ex) { $('body').html(ex); }\n");
 		
-		// after 200 milliseconds show and trigger a window resize for any controls that might be listening (this also cuts out any flicker)
-		jsStringBuilder.append("  window.setTimeout( function() {\n    $(window).resize();\n    $('body').css('visibility','visible');\n  }, 200);\n");
+		// after 200 milliseconds show and trigger a window resize for any controls that might be listening (this also cuts out any flicker), we also call focus on the elements we marked for focus while invisible (in extras.js)
+		jsStringBuilder.append("  window.setTimeout( function() {\n    $(window).resize();\n    $('body').css('visibility','visible');\n    $('[data-focus]').focus();\n  }, 200);\n");
 								
 		// end of page loaded function
 		jsStringBuilder.append("});\n\n");
