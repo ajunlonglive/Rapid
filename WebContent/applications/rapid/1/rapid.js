@@ -603,6 +603,7 @@ function setData_dropdown(ev, id, field, details, data, changeEvents) {
 }
 
 function setProperty_dropdown_value(ev, id, field, details, data, changeEvents) {
+  var	data = makeDataObject(data, field);             
   if (data && data.rows) {
   	$("#" + id).val(data.rows[0][0]);
   } else {
