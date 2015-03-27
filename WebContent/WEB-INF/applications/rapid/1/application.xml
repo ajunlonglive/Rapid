@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?><application><actionTypes>ajax</actionTypes><actionTypes>control</actionTypes><actionTypes>custom</actionTypes><actionTypes>dataCopy</actionTypes><actionTypes>database</actionTypes><actionTypes>event</actionTypes><actionTypes>existing</actionTypes><actionTypes>logic</actionTypes><actionTypes>navigate</actionTypes><actionTypes>rapid</actionTypes><actionTypes>validation</actionTypes><actionTypes>webservice</actionTypes><controlTypes>button</controlTypes><controlTypes>checkbox</controlTypes><controlTypes>dataStore</controlTypes><controlTypes>dropdown</controlTypes><controlTypes>grid</controlTypes><controlTypes>hints</controlTypes><controlTypes>image</controlTypes><controlTypes>input</controlTypes><controlTypes>link</controlTypes><controlTypes>page</controlTypes><controlTypes>pagePanel</controlTypes><controlTypes>panel</controlTypes><controlTypes>radiobuttons</controlTypes><controlTypes>tabGroup</controlTypes><controlTypes>table</controlTypes><controlTypes>text</controlTypes><controlTypes>tabPanel</controlTypes><controlTypes>tableCell</controlTypes><controlTypes>tableRow</controlTypes><createdDate>2014-10-08T14:53:36.893+01:00</createdDate><description>This is the Rapid application and contains all of the pages which the designer and other screens use as dialogues</description><id>rapid</id><modifiedBy>admin</modifiedBy><modifiedDate>2015-01-30T20:51:07.475Z</modifiedDate><name>Rapid</name><pageBackupsMaxSize>5</pageBackupsMaxSize><securityAdapterType>rapid</securityAdapterType><showActionIds>true</showActionIds><showControlIds>true</showControlIds><startPageId>P0</startPageId><status>0</status><styles>/* sets font in all pages to arial */
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?><application><actionTypes>ajax</actionTypes><actionTypes>control</actionTypes><actionTypes>custom</actionTypes><actionTypes>dataCopy</actionTypes><actionTypes>database</actionTypes><actionTypes>event</actionTypes><actionTypes>existing</actionTypes><actionTypes>logic</actionTypes><actionTypes>navigate</actionTypes><actionTypes>rapid</actionTypes><actionTypes>validation</actionTypes><actionTypes>webservice</actionTypes><controlTypes>button</controlTypes><controlTypes>checkbox</controlTypes><controlTypes>dataStore</controlTypes><controlTypes>dropdown</controlTypes><controlTypes>grid</controlTypes><controlTypes>hints</controlTypes><controlTypes>image</controlTypes><controlTypes>input</controlTypes><controlTypes>link</controlTypes><controlTypes>page</controlTypes><controlTypes>pagePanel</controlTypes><controlTypes>panel</controlTypes><controlTypes>radiobuttons</controlTypes><controlTypes>tabGroup</controlTypes><controlTypes>table</controlTypes><controlTypes>text</controlTypes><controlTypes>tabPanel</controlTypes><controlTypes>tableCell</controlTypes><controlTypes>tableRow</controlTypes><createdDate>2014-10-08T14:53:36.893+01:00</createdDate><description>This is the Rapid application and contains all of the pages which the designer and other screens use as dialogues</description><id>rapid</id><modifiedBy>admin</modifiedBy><modifiedDate>2015-03-27T15:02:34.830Z</modifiedDate><name>Rapid</name><pageBackupsMaxSize>5</pageBackupsMaxSize><securityAdapterType>rapid</securityAdapterType><showActionIds>true</showActionIds><showControlIds>true</showControlIds><startPageId>P0</startPageId><status>0</status><styles>/* sets font in all pages to arial */
 body { font-family: 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif; font-size: 14px; margin:0; }
 table { font-family: 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif; font-size: 14px; margin:0; }
 
@@ -38,10 +38,13 @@ table { font-family: 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif; fon
 }
 
 /* this makes all the dialogues look a litter better */
-tr td { vertical-align: middle; }
+/* tr td { vertical-align: middle; } */
 
 /* these make buttons in grid rows a little smaller */
 .grid tr button { font-size: 11px; }
+
+/* makes all text in the first column of a table align to the top */
+table.table tr td:first-child {	vertical-align: top; }
 
 /* make the dialogue cover white */
 .dialogueCover { background-color: white; }
@@ -58,6 +61,7 @@ input {
   -moz-box-sizing: border-box; 
   box-sizing: order-box;
 }
+
 textarea { 
   border: 1px solid #999; 
   border-radius: 3px; 

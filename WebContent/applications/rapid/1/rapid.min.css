@@ -26,8 +26,8 @@ table{font-family:'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;font-si
 .normalTitle tr:first-child td{font-weight:normal;background-color:transparent;color:initial;padding:0;text-align:center;background:initial;text-shadow:none}
 .niceTablePadding tr:not(:first-child) td:not(:last-child){text-align:left;padding-left:10px;padding-top:5px;padding-bottom:5px}
 .niceTablePadding tr:not(:first-child) td:last-child{text-align:center;padding-left:10px;padding-right:10px;padding-top:5px;padding-bottom:5px}
-tr td{vertical-align:middle}
 .grid tr button{font-size:11px}
+table.table tr td:first-child{vertical-align:top}
 .dialogueCover{background-color:white}
 .dialogue{border:1px solid black;box-shadow:0 0 20px}
 select{border:1px solid #999;border-radius:3px}
