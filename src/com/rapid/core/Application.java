@@ -91,10 +91,10 @@ public class Application {
 	// the version of this class's xml structure when marshalled (if we have any significant changes down the line we can upgrade the xml files before unmarshalling)	
 	public static final int XML_VERSION = 1;
 
-	// application version status in development
+	// application version statuses
 	public static final int STATUS_DEVELOPMENT = 0;
-	// application version status live
 	public static final int STATUS_LIVE = 1;
+	public static final int STATUS_MAINTENANCE = 2;
 	
 	// the name of the folder in which to store backups
 	public static final String BACKUP_FOLDER = "_backups";

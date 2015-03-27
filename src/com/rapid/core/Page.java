@@ -1186,13 +1186,16 @@ public class Page {
     }
 	
 	// this routine will write the no page permission - used by both page permission and if control permission permutations fail to result in any html
-	public void writeNoPermission(Writer writer) throws IOException {
+	public void writeMessage(Writer writer, String title, String message) throws IOException {
 		
 		// write the head html without the JavaScript and CSS (index.css is substituted for us)
 		writer.write(getHtmlHeadStart());
 		
+		// add the jQuery link
+		writer.write("    <script type='text/javascript' src='scripts/jquery-1.10.2.js'></script>\n");
+				
 		// add the index.css
-		writer.write("    <link rel='stylesheet' type='text/css' href='index.css'></link>\n");
+		writer.write("    <link rel='stylesheet' type='text/css' href='styles/index.css'></link>\n");
 		
 		// close the head
 		writer.write("</head>\n");
@@ -1201,185 +1204,193 @@ public class Page {
 		writer.write("  <body>\n");
 		
 		// write no permission (body is closed at the end of this method)
-		writer.write("<div class=\"image\"><img src=\"images/RapidLogo_200x134.png\" /></div><div class=\"title\"><span>Rapid - No permssion</span></div><div class=\"info\"><p>You do not have permssion to view this page</p></div>\n");
+		writer.write("<div class=\"image\"><img src=\"images/RapidLogo_200x134.png\" /></div><div class=\"title\"><span>" + title + "</span></div><div class=\"info\"><p>" + message + "</p></div>\n");
 			
 	}
 		
 	// this routine produces the entire page
 	public void writeHtml(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, Application application, User user, Writer writer, boolean showDesignerLink) throws JSONException, IOException {
-		
-		// get the security
-		SecurityAdapter security = application.getSecurity();
-		
-		// assume the user has permission to access the page
-		boolean gotPagePermission = true;
-		
-		try {
-			
-			// if this page has roles
-			if (_roles != null) {
-				if (_roles.size() > 0) {
-					// check if the user has any of them
-					gotPagePermission = security.checkUserRole(rapidRequest, _roles);
-				}
-			}
-			
-		} catch (SecurityAdapaterException ex) {
-
-			rapidServlet.getLogger().error("Error checking for page roles", ex);
-			
-		}
-		
-		
+				
 		// this doctype is necessary (amongst other things) to stop the "user agent stylesheet" overriding styles
 		writer.write("<!DOCTYPE html>\n");
-								
+										
 		writer.write("<html>\n");
 		
-		if (gotPagePermission) {
-		
-			// whether we're rebulding the page for each request
-	    	boolean rebuildPages = Boolean.parseBoolean(rapidServlet.getServletContext().getInitParameter("rebuildPages"));
+		// check for undermaintenance status
+		if (application.getStatus() == Application.STATUS_MAINTENANCE) {
 			
-	    	// check whether or not we rebuild
-	    	if (rebuildPages) {
-	    		// get fresh head html
-	    		writer.write(getHtmlHead(rapidServlet, application));
-	    	} else {
-	    		// get the cached head html
-	    		writer.write(getHtmlHeadCached(rapidServlet, application));
-	    	}
-	    	
-	    	// write the username
-	    	writer.write("  <script type='text/javascript'> var _userName = '" + user.getName().replace("'", "\'") + "'; </script>\n");
-	    	
-	    	// close the head
-	    	writer.write("  </head>\n");
-	    	
-			// start the body		
-	    	writer.write("  <body id='" + _id + "' style='visibility:hidden;'>\n");
+			writeMessage(writer, "Rapid - Under maintenance", "This application is currently under maintenance. Please try again in a few minutes.");
 			
-			// a reference for the body html
-			String bodyHtml = null;
-			
-			// get the users roles
-			List<String> userRoles = user.getRoles();
-										
-			// check we have userRoles and htmlRoles
-			if (userRoles != null && _rolesHtml != null) {
-																	
-				// loop each roles html entry
-				for (RoleHtml roleHtml : _rolesHtml) {
-												
-					// get the roles from this combination
-					List<String> roles = roleHtml.getRoles();
-					
-					// assume not roles are required (this will be updated if roles are present)
-					int rolesRequired = 0;
-					
-					// keep a running count for the roles we have
-					int gotRoleCount = 0;
-															
-					// if there are roles to check
-					if (roles != null) {
-						
-						// update how many roles we need our user to have
-						rolesRequired = roles.size();
-						
-						// check whether we need any roles and that our user has any at all
-						if (rolesRequired > 0) {
-							// check the user has as many roles as this combination requires
-							if (userRoles.size() >= rolesRequired) {
-								// loop the roles we need for this combination
-								for (String role : roleHtml.getRoles()) {
-									// check this role
-									if (userRoles.contains(role)) {
-										// increment the got role count
-										gotRoleCount ++;
-									} // increment the count of required roles
-									
-								} // loop roles
-								
-							} // user has enough roles to bother checking this combination
-							
-						} // if any roles are required
-																										
-					} // add roles to check
-					
-					// if we have all the roles we need
-					if (gotRoleCount == rolesRequired) {
-						// use this html
-						bodyHtml = roleHtml.getHtml();
-						// no need to check any further
-						break;
-					}
-					
-				} // html role combo loop
-																										
-			} // if our users have roles and we have different html for roles
-			
-			// check if we got any body html via the roles
-			if (bodyHtml == null) {
-				
-				// didn't get any body html, show no permission
-				writeNoPermission(writer);
-				
-			} else {
-									
-				// check the status of the application
-				if (application.getStatus() == Application.STATUS_DEVELOPMENT) {
-					// pretty print
-					writer.write(Html.getPrettyHtml(bodyHtml.trim()));
-				} else {
-					// no pretty print
-					writer.write(bodyHtml.trim());
-				}
-				
-			} // got body html check
-									
 		} else {
+				
+			// get the security
+			SecurityAdapter security = application.getSecurity();
 			
-			// no page permission
-			writeNoPermission(writer);
-					
-		} // page permission check		
-		
-		try {
+			// assume the user has permission to access the page
+			boolean gotPagePermission = true;
 			
-			// dialogues do not have a designer link so no point checking
-			if (showDesignerLink) {
-			
-				// assume not admin link
-				boolean adminLinkPermission = false;
-					
-				// check for the design role, super is required as well if the rapid app
-				if ("rapid".equals(application.getId())) {
-					if (security.checkUserRole(rapidRequest, Rapid.DESIGN_ROLE) && security.checkUserRole(rapidRequest, Rapid.SUPER_ROLE)) adminLinkPermission = true;
-				} else {
-					if (security.checkUserRole(rapidRequest, Rapid.DESIGN_ROLE)) adminLinkPermission = true;
+			try {
+				
+				// if this page has roles
+				if (_roles != null) {
+					if (_roles.size() > 0) {
+						// check if the user has any of them
+						gotPagePermission = security.checkUserRole(rapidRequest, _roles);
+					}
 				}
 				
-				// if we had the admin link
-				if (adminLinkPermission) {
-													
-					// using attr href was the weirdest thing. Some part of jQuery seemed to be setting the url back to v=1&p=P1 when v=2&p=P2 was printed in the html
-					writer.write("<div id='designShow' style='position:fixed;left:0px;bottom:0px;width:30px;height:30px;z-index:10000;'></div>\n"
-			    	+ "<a id='designLink' style='position:fixed;left:6px;bottom:6px;z-index:10001;display:none;' href='#'><img src='images/gear_24x24.png' style='border:0;'/></a>\n"
-			    	+ "<script type='text/javascript'>\n"
-			    	+ "/* designLink */\n"
-			    	+ "$(document).ready( function() {\n"
-			    	+ "  $('#designShow').mouseover ( function(ev) {\n     $('#designLink').attr('href','design.jsp?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + _id + "').show();\n  });\n"
-			    	+ "  $('#designLink').mouseout ( function(ev) {\n     $('#designLink').hide();\n  });\n"
-			    	+ "});\n"
-			    	+ "</script>\n");
-											    			    	
-				}
+			} catch (SecurityAdapaterException ex) {
+	
+				rapidServlet.getLogger().error("Error checking for page roles", ex);
 				
 			}
 			
-		} catch (SecurityAdapaterException ex) {
-
-			rapidServlet.getLogger().error("Error checking for the designer link", ex);
+			if (gotPagePermission) {
+			
+				// whether we're rebulding the page for each request
+		    	boolean rebuildPages = Boolean.parseBoolean(rapidServlet.getServletContext().getInitParameter("rebuildPages"));
+				
+		    	// check whether or not we rebuild
+		    	if (rebuildPages) {
+		    		// get fresh head html
+		    		writer.write(getHtmlHead(rapidServlet, application));
+		    	} else {
+		    		// get the cached head html
+		    		writer.write(getHtmlHeadCached(rapidServlet, application));
+		    	}
+		    	
+		    	// write the username
+		    	writer.write("  <script type='text/javascript'> var _userName = '" + user.getName().replace("'", "\'") + "'; </script>\n");
+		    	
+		    	// close the head
+		    	writer.write("  </head>\n");
+		    	
+				// start the body		
+		    	writer.write("  <body id='" + _id + "' style='visibility:hidden;'>\n");
+				
+				// a reference for the body html
+				String bodyHtml = null;
+				
+				// get the users roles
+				List<String> userRoles = user.getRoles();
+											
+				// check we have userRoles and htmlRoles
+				if (userRoles != null && _rolesHtml != null) {
+																		
+					// loop each roles html entry
+					for (RoleHtml roleHtml : _rolesHtml) {
+													
+						// get the roles from this combination
+						List<String> roles = roleHtml.getRoles();
+						
+						// assume not roles are required (this will be updated if roles are present)
+						int rolesRequired = 0;
+						
+						// keep a running count for the roles we have
+						int gotRoleCount = 0;
+																
+						// if there are roles to check
+						if (roles != null) {
+							
+							// update how many roles we need our user to have
+							rolesRequired = roles.size();
+							
+							// check whether we need any roles and that our user has any at all
+							if (rolesRequired > 0) {
+								// check the user has as many roles as this combination requires
+								if (userRoles.size() >= rolesRequired) {
+									// loop the roles we need for this combination
+									for (String role : roleHtml.getRoles()) {
+										// check this role
+										if (userRoles.contains(role)) {
+											// increment the got role count
+											gotRoleCount ++;
+										} // increment the count of required roles
+										
+									} // loop roles
+									
+								} // user has enough roles to bother checking this combination
+								
+							} // if any roles are required
+																											
+						} // add roles to check
+						
+						// if we have all the roles we need
+						if (gotRoleCount == rolesRequired) {
+							// use this html
+							bodyHtml = roleHtml.getHtml();
+							// no need to check any further
+							break;
+						}
+						
+					} // html role combo loop
+																											
+				} // if our users have roles and we have different html for roles
+				
+				// check if we got any body html via the roles
+				if (bodyHtml == null) {
+					
+					// didn't get any body html, show no permission
+					writeMessage(writer, "Rapid - No permission", "You do not have permssion to view this page");
+					
+				} else {
+										
+					// check the status of the application
+					if (application.getStatus() == Application.STATUS_DEVELOPMENT) {
+						// pretty print
+						writer.write(Html.getPrettyHtml(bodyHtml.trim()));
+					} else {
+						// no pretty print
+						writer.write(bodyHtml.trim());
+					}
+					
+				} // got body html check
+										
+			} else {
+				
+				// no page permission
+				writeMessage(writer, "Rapid - No permission", "You do not have permssion to view this page");
+						
+			} // page permission check		
+			
+			try {
+				
+				// dialogues do not have a designer link so no point checking
+				if (showDesignerLink) {
+				
+					// assume not admin link
+					boolean adminLinkPermission = false;
+						
+					// check for the design role, super is required as well if the rapid app
+					if ("rapid".equals(application.getId())) {
+						if (security.checkUserRole(rapidRequest, Rapid.DESIGN_ROLE) && security.checkUserRole(rapidRequest, Rapid.SUPER_ROLE)) adminLinkPermission = true;
+					} else {
+						if (security.checkUserRole(rapidRequest, Rapid.DESIGN_ROLE)) adminLinkPermission = true;
+					}
+					
+					// if we had the admin link
+					if (adminLinkPermission) {
+														
+						// using attr href was the weirdest thing. Some part of jQuery seemed to be setting the url back to v=1&p=P1 when v=2&p=P2 was printed in the html
+						writer.write("<div id='designShow' style='position:fixed;left:0px;bottom:0px;width:30px;height:30px;z-index:10000;'></div>\n"
+				    	+ "<a id='designLink' style='position:fixed;left:6px;bottom:6px;z-index:10001;display:none;' href='#'><img src='images/gear_24x24.png' style='border:0;'/></a>\n"
+				    	+ "<script type='text/javascript'>\n"
+				    	+ "/* designLink */\n"
+				    	+ "$(document).ready( function() {\n"
+				    	+ "  $('#designShow').mouseover ( function(ev) {\n     $('#designLink').attr('href','design.jsp?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + _id + "').show();\n  });\n"
+				    	+ "  $('#designLink').mouseout ( function(ev) {\n     $('#designLink').hide();\n  });\n"
+				    	+ "});\n"
+				    	+ "</script>\n");
+												    			    	
+					}
+					
+				}
+				
+			} catch (SecurityAdapaterException ex) {
+	
+				rapidServlet.getLogger().error("Error checking for the designer link", ex);
+				
+			}
 			
 		}
 				
