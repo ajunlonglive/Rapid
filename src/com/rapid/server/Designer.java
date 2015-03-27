@@ -1122,12 +1122,11 @@ public class Designer extends RapidHttpServlet {
 												        	
 												        } else {
 												        	
-												        	// replace all properties that appear to have a url, and all created links - note the fix for double encoding which hopefully we can sort out too
+												        	// replace all properties that appear to have a url, and all created links - note the fix for double encoding 
 													        newFileString = fileString
 													        	.replace("applications/" + appOldId + "/" + appOldVersion + "/", "applications/" + appId + "/" + appVersion  + "/")
 													        	.replace("~?a=" + appOldId + "&amp;v=" + appOldVersion + "&amp;", "~?a=" + appId + "&amp;v=" + appVersion + "&amp;")
-														        .replace("~?a=" + appOldId + "&amp;amp;v=" + appOldVersion + "&amp;amp;", "~?a=" + appId + "&amp;v=" + appVersion + "&amp;");
-												        	
+														        .replace("~?a=" + appOldId + "&amp;amp;v=" + appOldVersion + "&amp;amp;", "~?a=" + appId + "&amp;v=" + appVersion + "&amp;");												        	
 												        }
 												        
 												        // get a writer for the new page file

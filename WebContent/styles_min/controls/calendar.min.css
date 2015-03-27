@@ -1,0 +1,10 @@
+div.calendar{display:inline-block}
+div.calendarLabel{text-align:center}
+.calendarHeader span{text-decoration:none;color:inherit;font-family:FontAwesome;font-size:1.2em;margin-top:0.075em;margin-left:0.1em;margin-right:0.1em;cursor:pointer}
+.calendarBack{float:left}
+.calendarForward{float:right}
+.calendar table{width:100%}
+.calendar td{text-align:center;padding:2px;width:14%}
+.calendar td.calendarDay{cursor:pointer}
+.calendar td.calendarToday{border:1px solid black}
+.calendar td.calendarSelectedDay{background-color:blue;color:white}
