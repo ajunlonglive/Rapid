@@ -1436,7 +1436,7 @@ public class Rapid extends Action {
 				String title = jsonAction.optString("title").trim();
 				String description = jsonAction.optString("description").trim();
 				
-				// use the application.copy routine
+				// use the application.copy routine (this updates the status and created time)
 				app.copy(rapidServlet, rapidRequest, app.getId(), version, false, false);
 				
 				// set the new title

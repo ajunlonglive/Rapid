@@ -1191,6 +1191,9 @@ public class Page {
 		// write the head html without the JavaScript and CSS (index.css is substituted for us)
 		writer.write(getHtmlHeadStart());
 		
+		// add the icon
+		writer.write("    <link rel='icon' href='favicon.ico'></link>\n");
+		
 		// add the jQuery link
 		writer.write("    <script type='text/javascript' src='scripts/jquery-1.10.2.js'></script>\n");
 				

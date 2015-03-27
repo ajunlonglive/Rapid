@@ -1078,7 +1078,10 @@ public class Designer extends RapidHttpServlet {
 												appNew.setVersion(appVersion);
 																																		
 												// update the created date
-												appNew.setCreatedDate(new Date());																																								
+												appNew.setCreatedDate(new Date());			
+												
+												// set the status to In development
+												appNew.setStatus(Application.STATUS_DEVELOPMENT);
 																																		
 												// look for page files
 												File pagesFolder = new File(appFolderDest.getAbsolutePath() + "/pages");

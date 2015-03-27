@@ -193,10 +193,13 @@ table { font-family: 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif; fon
 }
 
 /* this makes all the dialogues look a litter better */
-tr td { vertical-align: middle; }
+/* tr td { vertical-align: middle; } */
 
 /* these make buttons in grid rows a little smaller */
 .grid tr button { font-size: 11px; }
+
+/* makes all text in the first column of a table align to the top */
+table.table tr td:first-child {	vertical-align: top; }
 
 /* make the dialogue cover white */
 .dialogueCover { background-color: white; }
@@ -213,6 +216,7 @@ input {
   -moz-box-sizing: border-box; 
   box-sizing: order-box;
 }
+
 textarea { 
   border: 1px solid #999; 
   border-radius: 3px; 
