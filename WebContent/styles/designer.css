@@ -637,8 +637,24 @@ Dialogue styles
 	left:0px;
 	top:0px;
 	z-index:10101;
-	border: 1px solid black; 
-	box-shadow: 0 0 20px;
+	border:1px solid black; 
+	box-shadow:0 0 20px;
+}
+
+.dialogue table {
+	width:100%;
+}
+
+.dialogue span.fa {
+	vertical-align:middle;
+	font-size:20px;
+	min-width:20px;
+	min-height:20px;
+}
+
+.dialogue span.fa_name {
+	vertical-align:middle;
+	margin-left:5px;
 }
 
 /*

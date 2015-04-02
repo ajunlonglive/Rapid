@@ -135,7 +135,7 @@ if (selectedCell[0]) {
 	            <type>css</type>
 	            <contents>
 <![CDATA[
-.flowLayout {
+.flowLayout:after {
 	clear: both;
 }
 .flowLayoutCell {

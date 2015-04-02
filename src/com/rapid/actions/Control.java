@@ -90,8 +90,12 @@ public class Control extends Action {
 				String styleClass = getProperty("styleClass");
 				js += "find('." + styleClass + "').removeClass('" + styleClass + "');";
 			} else {
-				// just call the action type (hide/show/toggle)
+				// just call the action type (hide/show/toggle/hideDialogue)
 				js += actionType + "();";
+			}
+			// if the stopPropagation is checked
+			if (Boolean.parseBoolean(getProperty("stopPropagation"))) {
+				js += "\nev.stopImmediatePropagation();";
 			}
 		}
 		// return the js

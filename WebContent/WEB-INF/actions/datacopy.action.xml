@@ -125,17 +125,12 @@ return "<option value=''>None</option>" + getInputOptions(this.dataSource);
 	    <actionJavaScript>
 	        <![CDATA[ 
 function Action_datacopy(ev, data, outputs, changeEvents, copyType, copyData, field) {
-	if (data != null && data !== undefined && outputs) {
+	if (data !== undefined && outputs) {
 		for (var i in outputs) {
 			var output = outputs[i];	
 			var outputData = null;	
 			switch (copyType) {
-				case "append" :					
-					if (!output.details) output.details = {};						
-					output.details.append = true;
-					outputData = data;					
-				break;
-				case "row" : 
+				case "append" :	case "row" : 
 					var mergeData = window["getData_" + output.type](ev, output.id, null, output.details);
 					data = makeDataObject(data, output.field);
 					outputData = mergeDataObjects(mergeData, data, copyType, field); 

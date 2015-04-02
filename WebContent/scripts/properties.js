@@ -2973,9 +2973,11 @@ function Property_glyphCode(cell, controlAction, property, details) {
 	table = dialogue.find("table").first();
 	// add all of the glyphs, with the current one highlighted
 	for (var i in _fontawesomeGlyphs) {
-		table.append("<tr><td data-code='" + _fontawesomeGlyphs[i][0].replace("&","&amp;") + "' class='hover" + (code == _fontawesomeGlyphs[i][0]? "' selected" : "") + "'><span class='fa'>" + _fontawesomeGlyphs[i][0] + "</span>&nbsp;" + _fontawesomeGlyphs[i][1] + "</td></tr>")
+		table.append("<tr><td data-code='" + _fontawesomeGlyphs[i][0].replace("&","&amp;") + "' class='hover" + (code && code == _fontawesomeGlyphs[i][0] ? " selected" : "") + "'><span class='fa'>" + _fontawesomeGlyphs[i][0] + "</span><span class='fa_name'>&nbsp;" + _fontawesomeGlyphs[i][1] + "</span></td></tr>")
 	}
-	
+	// if a position was set go back to it
+	if (dialogue.attr("data-scroll")) table.parent().scrollTop(dialogue.attr("data-scroll"));
+		
 	addListener( table.find("td").click({cell: cell, controlAction: controlAction, property: property, details: details}, function(ev) {
 		// get the cell
 		var cell = $(ev.target).closest("td");
@@ -2985,6 +2987,10 @@ function Property_glyphCode(cell, controlAction, property, details) {
 		cell.addClass("selected");
 		// get the code
 		var code = cell.attr("data-code");
+		// get the table
+		var table = cell.closest("table");
+		// add the scroll position
+		dialogue.attr("data-scroll",table.parent().scrollTop());
 		// update the property
 		updateProperty(ev.data.cell, ev.data.controlAction, ev.data.property, ev.data.details, code);
 	}));

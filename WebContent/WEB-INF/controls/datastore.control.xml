@@ -142,7 +142,12 @@ if (data) {
 		if (data.rows[0] && field) {
 			for (var i in data.fields) {
 				if (data.fields[i].toLowerCase() == field.toLowerCase()) {
-					return data.rows[0][i];
+					var value = data.rows[0][i];
+					if (value) {
+						return value;
+					} else {
+						break;
+					}					
 				}
 			}
 			return null;
