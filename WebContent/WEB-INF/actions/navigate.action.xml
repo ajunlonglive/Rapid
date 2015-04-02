@@ -219,19 +219,19 @@ function Action_navigate(url, dialogue, id) {
 		           	// append the injected html
 		           	dialogue.append(bodyHtml);
 		           	
-		           	// add custom hide listener to children and event
-		           	dialogue.children().on("hide", function() {
-		           		var dialogue = $(this).closest("div.dialogue");	  
-						dialogue.prev("div.dialogueCover").remove();
-						dialogue.remove(); 
-		           	});
-		           	
-		           	// thanks to http://viralpatel.net/blogs/jquery-trigger-custom-event-show-hide-element/						
-					$.each(['show', 'hide'], function (i, ev) {
-						var el = $.fn[ev];
-						$.fn[ev] = function () {
-							this.trigger(ev);
-							return el.apply(this, arguments);
+					dialogue.children().each( function(i) {
+						// thanks to http://viralpatel.net/blogs/jquery-trigger-custom-event-show-hide-element/	
+						var el = $.fn["hide"];
+						$.fn["hide"] = function () {							
+		           			// if we're hiding an immediate child of the dialogue
+		           			if (this.parent().is(dialogue)) {
+		           				dialogue.prev("div.dialogueCover").remove();
+								dialogue.remove();
+		           				return false;
+		           			} else {
+		           				// trigger the regular hide 								
+								return el.apply(this, arguments);
+							}
 						};
 					});
 							           	

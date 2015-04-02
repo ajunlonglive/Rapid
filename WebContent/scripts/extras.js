@@ -543,7 +543,7 @@ function mergeDataObjects(data1, data2, mergeType, field) {
 		if (data2) {
 			data2 = makeDataObject(data2);
 			switch (mergeType) {
-				case "row" :
+				case "append" : case "row" :
 					var fields = [];
 					for (var i in data1.fields) fields.push(data1.fields[i]);
 					for (var i in data2.fields) {
@@ -558,33 +558,51 @@ function mergeDataObjects(data1, data2, mergeType, field) {
 					}
 					data = {};
 					data.fields = fields;
-					data.rows = [];
-					var totalRows = data2.rows.length;
-					if (data1.rows.length > totalRows) totalRows = data1.rows.length;			
-					for (var i = 0; i < totalRows; i++) {
-						var row = [];
-						for (var j in fields) {
-							var value = null;
-							if (i < data2.rows.length) {
+					if (mergeType == "append") {
+						data.rows = data1.rows;
+						for (var i = 0; i < data2.rows.length; i++) {
+							var row = [];
+							for (var j in fields) {
+								var value = null;
 								for (var k in data2.fields) {
 									if (fields[j] == data2.fields[k]) {
 										value = data2.rows[i][k];
 										break;
 									}
 								}
+								row.push(value);
 							}
-							if (i < data1.rows.length && value == null) {
-								for (var k in data1.fields) {
-									if (fields[j] == data1.fields[k]) {
-										value = data1.rows[i][k];
-										break;
+							data.rows.push(row);
+						}
+					} else {
+						data.rows = [];
+						var totalRows = data2.rows.length;
+						if (data1.rows.length > totalRows) totalRows = data1.rows.length;			
+						for (var i = 0; i < totalRows; i++) {
+							var row = [];
+							for (var j in fields) {
+								var value = null;
+								if (i < data2.rows.length) {
+									for (var k in data2.fields) {
+										if (fields[j] == data2.fields[k]) {
+											value = data2.rows[i][k];
+											break;
+										}
 									}
 								}
+								if (i < data1.rows.length && value == null) {
+									for (var k in data1.fields) {
+										if (fields[j] == data1.fields[k]) {
+											value = data1.rows[i][k];
+											break;
+										}
+									}
+								}
+								row.push(value);
 							}
-							row.push(value);
-						}
-						data.rows.push(row);
-					}			
+							data.rows.push(row);
+						}		
+					}
 				break;
 				case "child" :
 					var fieldMap = {};

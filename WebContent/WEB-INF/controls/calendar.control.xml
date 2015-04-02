@@ -174,7 +174,6 @@ if (_pageIframe && _pageIframe[0]) {
 	        ]]>
 	    </rebuildJavaScript>
 	    
-	    
 	    <getDetailsFunction>
 	        <![CDATA[
 return {date: this.date, dateFormat: this.dateFormat, selectToday: this.selectToday};	        
@@ -197,18 +196,24 @@ if (dateString) {
 	    <setDataJavaScript>
 	        <![CDATA[
 var calendar = $("#" + id);
+var date = null;
 var dateData = makeDataObject(data,field);
-var dateString = dateData.rows[0][0];
-var date = cal_f_tcalParseDate(dateString, details.dateFormat);
+if (dateData) {
+	var dateString = dateData.rows[0][0];
+	date = cal_f_tcalParseDate(dateString, details.dateFormat);
+}
 if (date) {
 	calendar.attr("data-date",date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate());
+	calendar.attr("data-year",date.getFullYear());
+	calendar.attr("data-month",date.getMonth());
 } else {
 	calendar.removeAttr("data-date");
 }	
+
 calendarUpdate(id);        
 	        ]]>
 	    </setDataJavaScript>
-	    	    
+	    	    	    	    
 	    <events>
 	        <event>
 	            <type>selectDay</type>
@@ -291,6 +296,16 @@ return "#" + this.id + " td.calendarSelectedDay";
 	            </getAppliesToFunction>
 	        </style>	       
 	    </styles>
+	    
+	    <initJavaScript>
+	        <![CDATA[
+var calendar = $("#" + id);
+var date = new Date();
+calendar.attr("data-year",date.getFullYear());
+calendar.attr("data-month",date.getMonth());
+calendarUpdate(id);  	        	  
+	        ]]>
+	    </initJavaScript>
 	    
 	</control>
 </controls>

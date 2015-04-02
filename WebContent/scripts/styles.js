@@ -59,6 +59,7 @@ var _styleRules = {
 "border-width" : {"values" : "<border-width>|<border-width-4>"},
 "bottom" : {"values" : "<length>|<percentage>|auto"},
 "box-shadow" : {"values" : "<uri>"},
+"box-sizing" : {"values" : "content-box|border-box|initial|inherit"},
 "clear" : {"values" : "none|left|right|both"},
 "color" : {"values" : "<color>"},
 "cursor" : {"values" : "<uri>,auto|crosshair|default|pointer|move|e-resize|ne-resize|nw-resize|n-resize|se-resize|sw-resize|s-resize|w-resize|text|wait|help|progress"},

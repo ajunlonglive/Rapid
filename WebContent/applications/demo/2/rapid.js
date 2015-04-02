@@ -488,7 +488,12 @@ function getData_dataStore(ev, id, field, details) {
   		if (data.rows[0] && field) {
   			for (var i in data.fields) {
   				if (data.fields[i].toLowerCase() == field.toLowerCase()) {
-  					return data.rows[0][i];
+  					var value = data.rows[0][i];
+  					if (value) {
+  						return value;
+  					} else {
+  						break;
+  					}					
   				}
   			}
   			return null;
@@ -694,9 +699,9 @@ function getData_grid(ev, id, field, details) {
 function setData_grid(ev, id, field, details, data, changeEvents) {
   var control = $("#" + id);
   control.find("tr:not(:first)").remove();	        
-  if (data != null && data !== undefined) {	
+  if (data !== undefined) {	
   	data = makeDataObject(data, field);
-  	if (data.rows) {	        		
+  	if (data && data.rows) {	        		
   		if (details && details.columns && data.fields) {
   			var columnMap = [];
   			for (var i in details.columns) {				
@@ -734,7 +739,9 @@ function setData_grid(ev, id, field, details, data, changeEvents) {
   					// add the cell with the value and return a reference
   					var cellObject = rowObject.append("<td" + style + ">" + value + "</td>").find("td:last");
   					// apply any cell function
-  					if (details.columns[j].f) details.columns[j].f.apply(cellObject,[id, data, field, details]);
+  					if (details.columns[j].f) {
+  						details.columns[j].f.apply(cellObject,[id, data, field, details]);
+  					}
   				}		
   				// if there is a rowValidation collection
   				if (data.rowValidation && i < data.rowValidation.length) {
@@ -753,9 +760,9 @@ function setData_grid(ev, id, field, details, data, changeEvents) {
   				rowHtml += "</tr>";
   				control.append(rowHtml);
   			}
-  		}	
-  		if (details.dataStorageType) saveGridDataStoreData(id, details, data);					
+  		}								
   	} 
+  	if (details && details.dataStorageType) saveGridDataStoreData(id, details, data);
   	
   	control.children().last().children("tr:not(:first)").click( function() { 
   		var row = $(this);
@@ -998,7 +1005,12 @@ function setProperty_grid_selectedRowNumber(ev, id, field, details, data, change
   if (!gridData) gridData = {fields:[],rows:[]};
   data = makeDataObject(data, field);
   var selectedRowNumber = null;
-  if (data) selectedRowNumber = data.rows[0][0];
+  var grid = $("#" + id);
+  if (grid) grid.find("tr.rowSelect").removeClass("rowSelect");
+  if (data) {
+  	selectedRowNumber = data.rows[0][0];
+  	if (grid) grid.find("tr:eq(" + selectedRowNumber + ")").addClass("rowSelect");
+  }
   gridData.selectedRowNumber = selectedRowNumber;	
   saveGridDataStoreData(id, details, gridData);
 }
@@ -1115,17 +1127,12 @@ function Action_control(actions) {
 }
 
 function Action_datacopy(ev, data, outputs, changeEvents, copyType, copyData, field) {
-	if (data != null && data !== undefined && outputs) {
+	if (data !== undefined && outputs) {
 		for (var i in outputs) {
 			var output = outputs[i];	
 			var outputData = null;	
 			switch (copyType) {
-				case "append" :					
-					if (!output.details) output.details = {};						
-					output.details.append = true;
-					outputData = data;					
-				break;
-				case "row" : 
+				case "append" :	case "row" : 
 					var mergeData = window["getData_" + output.type](ev, output.id, null, output.details);
 					data = makeDataObject(data, output.field);
 					outputData = mergeDataObjects(mergeData, data, copyType, field); 
@@ -1295,19 +1302,19 @@ function Action_navigate(url, dialogue, id) {
 		           	// append the injected html
 		           	dialogue.append(bodyHtml);
 		           	
-		           	// add custom hide listener to children and event
-		           	dialogue.children().on("hide", function() {
-		           		var dialogue = $(this).closest("div.dialogue");	  
-						dialogue.prev("div.dialogueCover").remove();
-						dialogue.remove(); 
-		           	});
-		           	
-		           	// thanks to http://viralpatel.net/blogs/jquery-trigger-custom-event-show-hide-element/						
-					$.each(['show', 'hide'], function (i, ev) {
-						var el = $.fn[ev];
-						$.fn[ev] = function () {
-							this.trigger(ev);
-							return el.apply(this, arguments);
+					dialogue.children().each( function(i) {
+						// thanks to http://viralpatel.net/blogs/jquery-trigger-custom-event-show-hide-element/	
+						var el = $.fn["hide"];
+						$.fn["hide"] = function () {							
+		           			// if we're hiding an immediate child of the dialogue
+		           			if (this.parent().is(dialogue)) {
+		           				dialogue.prev("div.dialogueCover").remove();
+								dialogue.remove();
+		           				return false;
+		           			} else {
+		           				// trigger the regular hide 								
+								return el.apply(this, arguments);
+							}
 						};
 					});
 							           	

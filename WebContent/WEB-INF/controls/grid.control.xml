@@ -261,9 +261,9 @@ return data;
 	        <![CDATA[
 var control = $("#" + id);
 control.find("tr:not(:first)").remove();	        
-if (data != null && data !== undefined) {	
+if (data !== undefined) {	
 	data = makeDataObject(data, field);
-	if (data.rows) {	        		
+	if (data && data.rows) {	        		
 		if (details && details.columns && data.fields) {
 			var columnMap = [];
 			for (var i in details.columns) {				
@@ -301,7 +301,9 @@ if (data != null && data !== undefined) {
 					// add the cell with the value and return a reference
 					var cellObject = rowObject.append("<td" + style + ">" + value + "</td>").find("td:last");
 					// apply any cell function
-					if (details.columns[j].f) details.columns[j].f.apply(cellObject,[id, data, field, details]);
+					if (details.columns[j].f) {
+						details.columns[j].f.apply(cellObject,[id, data, field, details]);
+					}
 				}		
 				// if there is a rowValidation collection
 				if (data.rowValidation && i < data.rowValidation.length) {
@@ -320,9 +322,9 @@ if (data != null && data !== undefined) {
 				rowHtml += "</tr>";
 				control.append(rowHtml);
 			}
-		}	
-		if (details.dataStorageType) saveGridDataStoreData(id, details, data);					
+		}								
 	} 
+	if (details && details.dataStorageType) saveGridDataStoreData(id, details, data);
 	
 	control.children().last().children("tr:not(:first)").click( function() { 
 		var row = $(this);
@@ -685,7 +687,12 @@ gridData = getGridDataStoreData(id, details);
 if (!gridData) gridData = {fields:[],rows:[]};
 data = makeDataObject(data, field);
 var selectedRowNumber = null;
-if (data) selectedRowNumber = data.rows[0][0];
+var grid = $("#" + id);
+if (grid) grid.find("tr.rowSelect").removeClass("rowSelect");
+if (data) {
+	selectedRowNumber = data.rows[0][0];
+	if (grid) grid.find("tr:eq(" + selectedRowNumber + ")").addClass("rowSelect");
+}
 gridData.selectedRowNumber = selectedRowNumber;	
 saveGridDataStoreData(id, details, gridData);	            
 	   	            ]]>
