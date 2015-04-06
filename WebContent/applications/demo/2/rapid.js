@@ -666,7 +666,7 @@ function getData_grid(ev, id, field, details) {
   		}
   	} else if (details.columns) {
   		if (field) {		
-  			var row = $(ev.target).closest("tr");
+  			var row = $("#" + id).find("tr.rowSelect");
   			var rowIndex = row.index() - 1;
   			if (rowIndex >= 0) {
   				for (var i in details.columns) {
