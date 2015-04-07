@@ -264,8 +264,8 @@ function validateStyle(name, value) {
 		var rules = option.split(" ");
 		// get the values
 		var values = value.split(" ");
-		// rules must match values
-		if (rules.length == values.length) {
+		// must have same or more values than rules
+		if (rules.length <= values.length) {
 			// loop the rules
 			for (var j in rules) {
 				// get the option we're dealing with

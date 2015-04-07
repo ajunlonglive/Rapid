@@ -182,7 +182,7 @@ return "#" + this.id + " .buttonGlyphBackground";
 	            <name>:hover</name>
 	            <getAppliesToFunction>
 					<![CDATA[	      
-return "#" + this.id + " :hover";
+return "#" + this.id + ":hover";
 	       			 ]]>	                
 	            </getAppliesToFunction>
 	        </style>
