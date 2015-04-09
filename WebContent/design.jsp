@@ -241,6 +241,9 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 	<div id="selectionCover" style="display:none;position:absolute;left:0px;top:0px;z-index:10000;">
 		<div style="background-color:white;width:100%;height:100%;opacity:0.5;" ></div>
 	</div>
+	
+	<div id="selectionInsertCover" style="display:none;position:absolute;left:0px;top:0px;z-index:10000;">
+	</div>
 					
 	<img id="selectionMoveLeft" style="display:none;position:absolute;left:0px;top:0px;z-index:10002;" src="images/moveLeft_32x32.png" />
 	<img id="selectionMoveRight" style="display:none;position:absolute;left:0px;top:0px;z-index:10002;" src="images/moveRight_32x32.png" />

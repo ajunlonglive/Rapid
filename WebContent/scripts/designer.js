@@ -92,6 +92,9 @@ var _selectionMoveLeft;
 var _selectionMoveRight;
 // the div which we place to show where an insert would occur
 var _selectionInsert;
+// a div that we cover the parent object with to show it's full extent
+var _selectionInsertCover;
+
 
 // whether the left control panel is pinned
 var _panelPinned = true;
@@ -2300,8 +2303,10 @@ $(document).ready( function() {
 	_selectionMoveLeft = $("#selectionMoveLeft");
 	// the div which we place to show where an move/insert would occur on the right
 	_selectionMoveRight = $("#selectionMoveRight");
-	// the div which we place to show where an insert would occur
+	// the div with the down arrow which we place to show where an insert would occur
 	_selectionInsert = $("#selectionInsert");
+	// the cover for the control we are inserting into
+	_selectionInsertCover = $("#selectionInsertCover")
 	
 	_selectionBorder.on("mousedown touchstart", coverMouseDown );
 	
@@ -2864,21 +2869,21 @@ $(document).on("mousemove touchmove", function(ev) {
 				// if it is not nonVisible
 				if (controlClass.getHtmlFunction.indexOf("nonVisibleControl") < 0) {
 				
-					// position the cover
+					// position the object cover
 					_selectionCover.css({
 						"width": _selectedControl.object.outerWidth() * _scale, 
 						"height": _selectedControl.object.outerHeight() * _scale, 
 						"left": _selectedControl.object.offset().left + _panelPinnedOffset, 	
 						"top": _selectedControl.object.offset().top
 					});
-				
+														
 				}
 				
 				if (_selectedControl.object.is(":visible")) {
 					// show it if selected object visible
 					_selectionCover.show();				
 					// show the insert
-					_selectionInsert.show();
+					_selectionInsert.show();				
 				}			
 				
 				// hide the properties - this can cause the properties panel to bounce
@@ -2890,16 +2895,24 @@ $(document).on("mousemove touchmove", function(ev) {
 			
 			// position the selection border
 			positionBorder(ev.pageX + _panelPinnedOffset, ev.pageY);
-				
+										
 			// if we got a control and it's allowed to be moved by the user (non-visual controls can be added but not moved so this way they remain with their parent control as the page)
 			if (c && _controlTypes[_selectedControl.type].canUserMove) {
 				// retain a reference to the movedoverObject
-				_movedoverControl = c;	
+				_movedoverControl = c;
+				// position the insert cover
+				_selectionInsertCover.css({
+					"width": _movedoverControl.object.outerWidth() * _scale, 
+					"height": _movedoverControl.object.outerHeight() * _scale, 
+					"left": _movedoverControl.object.offset().left + _panelPinnedOffset, 	
+					"top": _movedoverControl.object.offset().top
+				});
 				// calculate the width
 				var width =  _movedoverControl.object.outerWidth() * _scale;
 				// if over the selected object or a descendant don't show anything
 				if (_movedoverControl === _selectedControl || isDecendant(_selectedControl,_movedoverControl)) {
 					_selectionInsert.hide();
+					_selectionInsertCover.hide();
 					_selectionMoveLeft.hide();
 					_selectionMoveRight.hide();
 				} else {			
@@ -2917,7 +2930,8 @@ $(document).on("mousemove touchmove", function(ev) {
 						});
 						// remember it's on the left
 						_movedoverDirection = "L";
-						// make sure the other selections are hidden					
+						// make sure the other selections are hidden	
+						_selectionInsertCover.hide();
 						_selectionMoveRight.hide();
 						_selectionInsert.hide();
 					} else if (_controlTypes[_movedoverControl.type].canUserMove && ev.pageX - _panelPinnedOffset > _movedoverControl.object.offset().left + width - moveThreshold) {
@@ -2929,7 +2943,8 @@ $(document).on("mousemove touchmove", function(ev) {
 						});
 						// remember it's on the right
 						_movedoverDirection = "R";
-						// make sure the other selections are hidden						
+						// make sure the other selections are hidden		
+						_selectionInsertCover.hide();
 						_selectionMoveLeft.hide();
 						_selectionInsert.hide();
 					} else if (_controlTypes[_movedoverControl.type].canUserInsert) {
@@ -2941,6 +2956,8 @@ $(document).on("mousemove touchmove", function(ev) {
 						});
 						// remember it's in the the centre
 						_movedoverDirection = "C";
+						// show the insert cover
+						_selectionInsertCover.show();
 						// make sure the other selections are hidden					
 						_selectionMoveLeft.hide();
 						_selectionMoveRight.hide();
@@ -3021,6 +3038,8 @@ $(document).on("mouseup touchend", function(ev) {
 		_selectionCover.hide();
 		// hide the insert/moves
 		_selectionInsert.hide();
+		// hide the insert cover
+		_selectionInsertCover.hide();
 		_selectionMoveLeft.hide();
 		_selectionMoveRight.hide();	
 		// size and position the border in case moving it has changed it's geometery
