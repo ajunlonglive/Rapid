@@ -105,10 +105,11 @@ $.fn.extend({
 	  return this;
   },
   focus: function() {		
-	  if ($("body").css("visibility") == "hidden" || this.closest("div.dialogue").css("visibility") == "hidden") {
-		  this.attr("data-focus","true");			  
-	  } else {
-		  if (this[0]) this[0].focus();
+	  if (this[0]) {
+		  this[0].focus();		  
+		  if ($("body").css("visibility") == "hidden" || this.closest("div.dialogue").css("visibility") == "hidden" || this.closest("div.dialogue").css("display") == "none") {
+			  this.attr("data-focus","true");			  
+		  }
 	  }		  		
 	  return this;
   }
