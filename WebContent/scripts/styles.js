@@ -312,6 +312,8 @@ function cursorToEnd(element) {
 function styleEdit() {	
 	// get the value we're working with
 	var value = _styleSpan.text();
+	// if there is a value trim it
+	if (value) value = value.trim();
 	// set the input text from the span we're working with
 	_styleInput.html(value);		
 	// show it
@@ -553,6 +555,8 @@ function applyStyles() {
 			var entry = _styleInput.text();
 			// add a semi-colon to the end if there isn't one
 			if (_styleSpan.is(".styleValue") && entry.lastIndexOf(";") != entry.length - 1) entry += ";";
+			// replace any double semi-colons with a single
+			entry = entry.replace(";;",";");
 			// write the entry to the span
 			_styleSpan.html(entry);
 			// hide the input
@@ -563,6 +567,8 @@ function applyStyles() {
 			var value = _styleCell.children("span").last().text();
 			// remove the semi-colon from the value for validation checking
 			value = value.substr(0, value.length - 1);
+			// trim it
+			if (value) value = value.trim();
 			// check the style for validity
 			if (validateStyle(name, value)) {
 				_styleCell.removeClass("validationFail");
@@ -629,6 +635,11 @@ $(document).ready( function() {
 		_stylesApplied = false;
 		// get the value
 		var val = _styleInput.text();
+		// trim it if need be
+		if (val != val.trim()) {
+			val = val.trim();
+			_styleInput.text(val);
+		}
 		// remove any linebreaks, or tabs, if required
 		if (val != val.replace(/(\r\n|\n|\r|\t)/gm,"")) {
 			val = val.replace(/(\r\n|\n|\r|\t)/gm,"");
