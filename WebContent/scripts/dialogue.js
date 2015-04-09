@@ -28,7 +28,7 @@ function showDialogue(url, onShow) {
 	// hide the control panel
 	if (!_panelPinned) $("#controlPanel").hide();
 	// add the dialogue div
-	$("body").append("<div id='dialogue'></div>");
+	$("body").append("<div id='dialogue' class='dialogue'></div>");
 	// add the dialogueCover div
 	$("body").append("<div id='dialogueCover'></div>");
 	
@@ -114,14 +114,16 @@ function showDialogue(url, onShow) {
 	            	// this seems to be the best way to avoid the resizing/flicker when showing
 	            	window.setTimeout( function() {
 	            		// show the dialogue
-	            		dialogue.show();	            		
+	            		dialogue.show();	        
+	            		// set the focus now that we're visible 
+	            		$('[data-focus]').focus();
 	            	}, 200);
 	            	
 	            	// if any wait half a sec
                 	if (onShow) {
                 		window.setTimeout( function() {
     	            		// run the onshow
-                			onShow();            		
+                			onShow();            	                			
     	            	}, 500);                		
                 	}
             	
