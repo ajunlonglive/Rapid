@@ -601,6 +601,20 @@ Selection Styles
 	margin-left:-5px;
 }
 
+#selectionInsertCover {
+	background:
+		linear-gradient(-45deg, 
+		rgba(106,148,220,0.25) 0px,
+		rgba(106,148,220,0.25) 10px,
+		transparent 0px, 
+		transparent 21px,
+		rgba(106,148,220,0.25) 0px,
+		rgba(106,148,220,0.25) 31.5px,
+		transparent 0px);
+	background-size: 30px 30px;
+	border: 1px solid rgba(106,148,220,0.25);
+}
+
 .nonVisibleControl {
 	position: fixed;
 	bottom: 10px;	
