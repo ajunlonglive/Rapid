@@ -68,7 +68,7 @@ $.fn.extend({
     return this;
   },
   showLoading: function() {
-	 if (this[0]) {
+	 if (this[0] && this.is(":visible")) {
 		var loadingCover = $("div[data-id=" + this.attr("id") + "]");
 		if (!loadingCover[0]) {
 			this.after("<div class='loading' data-id='" + this.attr("id") + "'></div><span class='loading' data-id='" + this.attr("id") + "'></span>");
