@@ -257,17 +257,16 @@ function textareaOverride(ev) {
 	}
 }
 
-
-//this applies and enforces the maxlength attribute on textareas
-jQuery(function($) {
-
-  // ignore these keys
-  var ignore = [8,9,13,33,34,35,36,37,38,39,40,46];
-
-  // handle textareas with maxlength attribute
-  $('textarea[maxlength]')
-
-    // use keypress instead of keydown as that's the only
+// function for applying the maxlength rules to a textarea (reused when dialogue loads)
+function textarea_maxlength() {
+	
+	// ignore these keys
+	var ignore = [8,9,13,33,34,35,36,37,38,39,40,46];
+	
+	// wrap the textarea
+	$(this)
+	
+	// use keypress instead of keydown as that's the only
   	// place keystrokes could be canceled in Opera
     .on('keypress', function(event) {
       var self = $(this),
@@ -289,37 +288,46 @@ jQuery(function($) {
     .on('keydown', function(event) {
       $.data(this, 'keycode', event.keyCode || event.which);
     });
-  
-});
-
-// this applies and enforces the autoheight on textareas
-jQuery(function($) {
-		
-	// handle textareas with autoheight class
-	$('textarea.autoheight')
 	
-	.each( function() {
-		// retain original height
-		$.data(this, 'height', $(this).height());
-	})
-	  	
-    // use keypress instead of keydown as that's the only
+}
+
+// function for apply the autoheight to a textarea  (reused when dialogue loads)
+function textarea_autoheight() {
+	
+	// get a reference to the textarea
+	var textarea = $(this);
+		
+	// retain original height
+	textarea.attr("data-height", textarea.height());
+	
+	// use keypress instead of keydown as that's the only
   	// place keystrokes could be canceled in Opera
-    .on('keypress', function(ev) {
+	textarea.on('keypress', function(ev) {
     	// grow
-    	while($(this).outerHeight() < this.scrollHeight + parseFloat($(this).css("borderTopWidth")) + parseFloat($(this).css("borderBottomWidth"))) {
-            $(this).height($(this).height() + 1);
+    	while(textarea.outerHeight() < this.scrollHeight + parseFloat(textarea.css("borderTopWidth")) + parseFloat(textarea.css("borderBottomWidth"))) {
+    		textarea.height(textarea.height() + 1);
         };
     })
     
     .on('blur', function(ev) {
     	// reset the height
-    	$(this).height($.data(this, 'height'));
+    	textarea.height(textarea.attr("data-height"));
     	// grow again
-    	while($(this).outerHeight() < this.scrollHeight + parseFloat($(this).css("borderTopWidth")) + parseFloat($(this).css("borderBottomWidth"))) {
-            $(this).height($(this).height() + 1);
+    	while(textarea.outerHeight() < this.scrollHeight + parseFloat(textarea.css("borderTopWidth")) + parseFloat(textarea.css("borderBottomWidth"))) {
+    		textarea.height(textarea.height() + 1);
         };
-    })
+    });
+	
+}
+
+// this applies and enforces the maxlength attribute on textareas
+jQuery(function($) {
+  
+	// handle textareas with maxlength attribute
+	$('textarea[maxlength]').each( textarea_maxlength );
+  
+	// handle textareas with autoheight class
+	$('textarea.autoheight').each( textarea_autoheight ); 
   
 });
 
@@ -550,7 +558,7 @@ function mergeDataObjects(data1, data2, mergeType, field) {
 					for (var i in data2.fields) {
 						var gotField = false;
 						for (var j in fields) {
-							if (data2.fields[i] == fields[j]) {
+							if (data2.fields[i].toLowerCase() == fields[j].toLowerCase()) {
 								gotField = true;
 								break;
 							}
@@ -566,7 +574,7 @@ function mergeDataObjects(data1, data2, mergeType, field) {
 							for (var j in fields) {
 								var value = null;
 								for (var k in data2.fields) {
-									if (fields[j] == data2.fields[k]) {
+									if (fields[j].toLowerCase() == data2.fields[k].toLowerCase()) {
 										value = data2.rows[i][k];
 										break;
 									}
@@ -585,7 +593,7 @@ function mergeDataObjects(data1, data2, mergeType, field) {
 								var value = null;
 								if (i < data2.rows.length) {
 									for (var k in data2.fields) {
-										if (fields[j] == data2.fields[k]) {
+										if (fields[j].toLowerCase() == data2.fields[k].toLowerCase()) {
 											value = data2.rows[i][k];
 											break;
 										}
@@ -593,7 +601,7 @@ function mergeDataObjects(data1, data2, mergeType, field) {
 								}
 								if (i < data1.rows.length && value == null) {
 									for (var k in data1.fields) {
-										if (fields[j] == data1.fields[k]) {
+										if (fields[j].toLowerCase() == data1.fields[k].toLowerCase()) {
 											value = data1.rows[i][k];
 											break;
 										}

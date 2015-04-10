@@ -80,7 +80,8 @@ return [["N","Normal"],["L","Large"],["P","Password"],["R","Readonly"]];
 	            <key>autoHeight</key>
 	            <name>Auto height</name>
 	            <setConstructValueFunction>return false;</setConstructValueFunction>
-	            <changeValueJavaScript>inputAutoHeight</changeValueJavaScript>	               
+	            <changeValueJavaScript>inputAutoHeight</changeValueJavaScript>	  
+	            <refreshHtml>true</refreshHtml>             
 	        </property>	 
 	               
 	    </properties>
