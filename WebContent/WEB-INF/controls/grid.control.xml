@@ -213,7 +213,7 @@ return details;
 	        <![CDATA[
 var data = null;
 if (details) {
-	if (details.dataStorageType) {
+	if (details.dataStorageType && !$("#" + id)[0]) {
 		data = getGridDataStoreData(id, details);
 		if (field && data.fields && data.rows && data.rows.length > 0) {
 			for (var i in data.fields) {
@@ -238,14 +238,15 @@ if (details) {
 		} else {
 			var data = {};
 			data.fields = [];		
-			for (var i in details.columns) {	
-				data.fields.push(details.columns[i].field);		
+			for (var i in details.columns) {
+				var field = details.columns[i].field;
+				if (field) data.fields.push(details.columns[i].field);		
 			}
 			data.rows = [];
-			$("#" + id).find("tr:not(:first)").each(function(i) {
+			$("#" + id).find("tr:not(:first):not([data-ignore])").each(function(i) {
 				var row = [];
 				$(this).children().each(function(i) {
-					row.push($(this).html());
+					if (details.columns[i].field) row.push($(this).html());
 				});
 				data.rows.push(row);
 			});

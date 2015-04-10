@@ -1011,7 +1011,7 @@ function getProperty_gallery_urls(ev, id, field, details) {
 function getData_grid(ev, id, field, details) {
   var data = null;
   if (details) {
-  	if (details.dataStorageType) {
+  	if (details.dataStorageType && !$("#" + id)[0]) {
   		data = getGridDataStoreData(id, details);
   		if (field && data.fields && data.rows && data.rows.length > 0) {
   			for (var i in data.fields) {
@@ -1036,14 +1036,15 @@ function getData_grid(ev, id, field, details) {
   		} else {
   			var data = {};
   			data.fields = [];		
-  			for (var i in details.columns) {	
-  				data.fields.push(details.columns[i].field);		
+  			for (var i in details.columns) {
+  				var field = details.columns[i].field;
+  				if (field) data.fields.push(details.columns[i].field);		
   			}
   			data.rows = [];
-  			$("#" + id).find("tr:not(:first)").each(function(i) {
+  			$("#" + id).find("tr:not(:first):not([data-ignore])").each(function(i) {
   				var row = [];
   				$(this).children().each(function(i) {
-  					row.push($(this).html());
+  					if (details.columns[i].field) row.push($(this).html());
   				});
   				data.rows.push(row);
   			});
@@ -1708,7 +1709,10 @@ function Action_navigate(url, dialogue, id) {
 		           					var startPos = text.indexOf("src=\"")+5;
 		           					var src = text.substr(startPos,text.indexOf("\"", startPos) - startPos);		           					
 		           					// add this to the page if not there already
-		           					if (!head.find("script[src='" + src + "']")[0]) head.append(text);
+		           					if (!head.find("script[src='" + src + "']")[0]) {
+		           						// append to the head section of the page and fail silently if any issue - for some reason Rapid Mobile throws a TypeError: undefined is not a function for calendar.js
+		           						try { head.append(text); } catch(ex) {}
+		           					}
 		           				}
 		           			}          			
 		           		break;
@@ -1720,7 +1724,8 @@ function Action_navigate(url, dialogue, id) {
 		           				var startPos = text.indexOf("href=\"")+6;
 		           				var href = text.substr(startPos,text.indexOf("\"", startPos) - startPos);
 		           				// add this link to the page if not there already
-		           				if (!head.find("link[href='" + href + "']")[0]) head.append(text);
+		           				if (!head.find("link[href='" + href + "']")[0]) 
+		           					head.append(text);
 		           			}		           				           			
 		           		break;
 		           		case "META" :
@@ -1780,10 +1785,13 @@ function Action_navigate(url, dialogue, id) {
 							           	
 		           	// add any scripts into the page (if applicable)
 		           	if (script) dialogue.append(script);
-		           			           	
-		           	// get a reference to the window for the visible area
-		           	var win = $(window);
 		           	
+		           	// handle textareas with maxlength attribute
+					dialogue.find('textarea[maxlength]').each( textarea_maxlength );
+  
+					// handle textareas with autoheight class
+					dialogue.find('textarea.autoheight').each( textarea_autoheight ).trigger('keypress'); 
+		           			           	
 		           	// apply the resizing	
 	            	$(window).resize(); 
 	            	
