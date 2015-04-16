@@ -604,15 +604,16 @@ Selection Styles
 #selectionInsertCover {
 	background:
 		linear-gradient(-45deg, 
-		rgba(106,148,220,0.25) 0px,
-		rgba(106,148,220,0.25) 10px,
+		rgba(106,148,220,0.1) 0px,
+		rgba(106,148,220,0.1) 10px,
 		transparent 0px, 
 		transparent 21px,
-		rgba(106,148,220,0.25) 0px,
-		rgba(106,148,220,0.25) 31.5px,
+		rgba(106,148,220,0.1) 0px,
+		rgba(106,148,220,0.1) 31.5px,
 		transparent 0px);
 	background-size: 30px 30px;
-	border: 1px solid rgba(106,148,220,0.25);
+	border: 1px solid rgba(106,148,220,0.1);
+	border-radius: 5px;
 }
 
 .nonVisibleControl {
