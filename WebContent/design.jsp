@@ -120,6 +120,9 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 		<div id="controlPanelShow" style="z-index:10010"></div>
 		
 		<div id="controlPanel" style="z-index:10011">
+		
+			<div id="controlPanelSize" ></div>
+		
 			<div id="controlPanelPin"><img src="images/pinned_14x14.png" title="unpin" /></div>
 			<div class="buttons">
 				<button id="appAdmin" class="buttonLeft buttonRight" title="Load the Rapid Admin screen">Rapid Admin...</button>
@@ -183,7 +186,7 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 			<div class="controlPanelVersion" >
 				<img src="images/RapidLogo_60x40.png" style="margin-left:-16px;"/>
 				<div id="controlPanelVersion">Rapid<br/><%=com.rapid.server.Rapid.VERSION %></div>
-			</div>		
+			</div>								
 													
 		</div>
 		

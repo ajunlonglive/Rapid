@@ -71,7 +71,11 @@ var _mouseDown = false;
 // track mouseDown offsets
 var _mouseDownXOffset = 0;
 var _mouseDownYOffset = 0;
-// track whether we are current moving a control
+// track wether we've moused down on the control panel resize
+var _controlPanelSize = false;
+// track whether we've added a control
+var _addedControl = false;
+// track whether we are currently moving a control
 var _movingControl = false;
 // we need to retain the control we have moved over
 var _movedoverControl = null;
@@ -1367,7 +1371,10 @@ function loadVersion(forceLoad) {
     		if (c.canUserAdd) {
     			
     			// add button (list item + image if exists)
-    			designControls.append("<li class='design-control' data-control='" + c.type + "'>" + (c.image ? "<img src='" + c.image + "'/>" : "<img src='images/tools_24x24.png'/>") + "<span>" + c.name + "</span></li>");
+    			designControls.append("<li id='c_" + c.type + "' class='design-control' data-control='" + c.type + "'>" + (c.image ? "<img src='" + c.image + "'/>" : "<img src='images/tools_24x24.png'/>") + "</li>");
+    			
+    			// add it's name as a help hint
+    			addHelp("c_" + c.type, false, false, c.name);
     			
     			// when the mouse moves down on this component
     			designControls.children().last().on("mousedown touchstart", function(ev) {		
@@ -1385,7 +1392,7 @@ function loadVersion(forceLoad) {
     					"user-select":"none"
     				});	
     							
-    				// hide the panel
+    				// hide the panel if not pinned
     				if (!_panelPinned) $("#controlPanel").hide("slide", {direction: "left"}, 200);
     				
     				// hide the properties
@@ -1433,10 +1440,13 @@ function loadVersion(forceLoad) {
 						alert("The control cannot be created. " + className + "() can't be found.");
 					}    
 					
+					// retain that we've just added a control (we reset in mouse up)
+					_addedControl = true;
+					
 					// we only need the hit on the li
 					ev.stopPropagation();
 											
-    			}); // mouse down
+    			}).find("img").on("dragstart",function() { return false; }); // mouse down, and stop drag for image
     			
     		} // userCanAdd
     		
@@ -2047,6 +2057,9 @@ $(document).ready( function() {
 	// the window we are working in
 	_window = $(window);	
 	
+	// derived the panel pinned offset value (add on the padding and border)
+	_panelPinnedOffset = $("#controlPanel").width() + 21;
+	
 	// check for unsaved page changes if we move away
 	_window.on('beforeunload', function(){
 		if (_dirty) return 'You have unsaved changes.';
@@ -2326,6 +2339,14 @@ $(document).ready( function() {
 	// a list of matching style rules
 	_styleList = $("#styleList");
 	
+	// control panel resize
+	$("#controlPanelSize").on("mousedown", function(ev) {
+		// retain that we are resizing the control panel
+		_controlPanelSize = true;
+		// retain the mouse offset
+		_mouseDownXOffset = ev.offsetX;
+	});
+	
 	// panel pin
 	$("#controlPanelPin").click( function(ev) {
 		// check pinned
@@ -2344,7 +2365,7 @@ $(document).ready( function() {
 			});
 		} else {
 			_panelPinned = true;
-			_panelPinnedOffset = 221;
+			_panelPinnedOffset = $("#controlPanel").width() + 21; // add the padding and border
 			$("#controlPanelPin").html("<img src='images/pinned_14x14.png' title='unpin'>");
 			// resize the window
 			windowResize("unpin");
@@ -2860,128 +2881,137 @@ function isDecendant(control1, control2) {
 //if the mouse moves anywhere
 $(document).on("mousemove touchmove", function(ev) {
 	
-	// get a reference to the control
-	var c = getMouseControl(ev);
-	// if a control is selected and the mouse is down look for the controls new destination
-	if (_selectedControl) {
-		
-		// check the mouse is down (and the selected control has an object)
-		if (_mouseDown && _selectedControl.object[0]) {		
-					
-			// if we have just started moving position the cover
-			if (!_movingControl) {
-				
-				var controlClass = _controlTypes[_selectedControl.type];
-				
-				// if it is not nonVisible
-				if (controlClass.getHtmlFunction.indexOf("nonVisibleControl") < 0) {
-				
-					// position the object cover
-					_selectionCover.css({
-						"width": _selectedControl.object.outerWidth() * _scale, 
-						"height": _selectedControl.object.outerHeight() * _scale, 
-						"left": _selectedControl.object.offset().left + _panelPinnedOffset, 	
-						"top": _selectedControl.object.offset().top - _pageIframeWindow.scrollTop()
-					});
-														
-				}
-				
-				if (_selectedControl.object.is(":visible")) {
-					// show it if selected object visible
-					_selectionCover.show();				
-					// show the insert
-					_selectionInsert.show();				
-				}			
-				
-				// hide the properties - this can cause the properties panel to bounce
-				$("#propertiesPanel").hide("slide", {direction: "right"}, 200);
-				
-				// remember we are now moving an object
-				_movingControl = true;
-			}
-			
-			// position the selection border
-			positionBorder(ev.pageX + _panelPinnedOffset, ev.pageY  - _pageIframeWindow.scrollTop());
-										
-			// if we got a control and it's allowed to be moved by the user (non-visual controls can be added but not moved so this way they remain with their parent control as the page)
-			if (c && _controlTypes[_selectedControl.type].canUserMove) {
-				// retain a reference to the movedoverObject
-				_movedoverControl = c;
-				// position the insert cover
-				_selectionInsertCover.css({
-					"width": _movedoverControl.object.outerWidth() * _scale, 
-					"height": _movedoverControl.object.outerHeight() * _scale, 
-					"left": _movedoverControl.object.offset().left + _panelPinnedOffset, 	
-					"top": _movedoverControl.object.offset().top - _pageIframeWindow.scrollTop()
-				});
-				// calculate the width
-				var width =  _movedoverControl.object.outerWidth() * _scale;
-				// if over the selected object or a descendant don't show anything
-				if (_movedoverControl === _selectedControl || isDecendant(_selectedControl,_movedoverControl)) {
-					_selectionInsert.hide();
-					_selectionInsertCover.hide();
-					_selectionMoveLeft.hide();
-					_selectionMoveRight.hide();
-				} else {			
-					_selectionInsertCover.show();
-					// calculate a move threshold which is the number of pixels to the left or right of the object the users needs to be within
-					var moveThreshold = Math.min(50 * _scale, width/3);
-					// if it's not possible to insert make the move thresholds half the width to cover the full object
-					if (!_controlTypes[_movedoverControl.type].canUserInsert) moveThreshold = width/2;
-					// are we within the move threshold on the left or the right controls that can be moved, or in the middle with an addChildControl method?
-					if (_controlTypes[_movedoverControl.type].canUserMove && ev.pageX - _panelPinnedOffset < _movedoverControl.object.offset().left + moveThreshold) {
-						// position the insert left
-						_selectionMoveLeft.css({
-							"display": "block",
-							"left": _panelPinnedOffset + _movedoverControl.object.offset().left,	
-							"top": ev.pageY - _selectionInsert.outerHeight()/2
-						});
-						// remember it's on the left
-						_movedoverDirection = "L";
-						// make sure the other selections are hidden	
-						_selectionMoveRight.hide();
-						_selectionInsert.hide();
-					} else if (_controlTypes[_movedoverControl.type].canUserMove && ev.pageX - _panelPinnedOffset > _movedoverControl.object.offset().left + width - moveThreshold) {
-						// position the insert right
-						_selectionMoveRight.css({
-							"display": "block",
-							"left": _panelPinnedOffset + _movedoverControl.object.offset().left + width - _selectionMoveRight.outerWidth(),	
-							"top":ev.pageY - _selectionInsert.outerHeight()/2
-						});
-						// remember it's on the right
-						_movedoverDirection = "R";
-						// make sure the other selections are hidden		
-						_selectionMoveLeft.hide();
-						_selectionInsert.hide();
-					} else if (_controlTypes[_movedoverControl.type].canUserInsert) {
-						// position the insert in the middle
-						_selectionInsert.css({
-							"display": "block",
-							"left": _panelPinnedOffset + _movedoverControl.object.offset().left + (width - _selectionInsert.outerWidth())/2,	
-							"top":ev.pageY - _selectionInsert.outerHeight()
-						});
-						// remember it's in the the centre
-						_movedoverDirection = "C";
-						// make sure the other selections are hidden					
-						_selectionMoveLeft.hide();
-						_selectionMoveRight.hide();
-					}									
-				}
-			} // if over object		
-		} // if mouse down
-	}; // if selectedObject
+	if (_controlPanelSize) {
 	
-	// if the current mousedOver object is different from the last one
-	if (c != _mousedOverControl) {
-		// if there actuall is a last one fire it's mouseout event
-		if (_mousedOverControl) _mousedOverControl.object.mouseout();
-	}
-	// fire the mouseover event for any hit control object
-	if (c) {
-		_mousedOverControl = c;
-		c.object.mouseover();
+		// set the new width less offset and padding
+		$("#controlPanel").css("width", ev.pageX - _mouseDownXOffset - 21);
+		
 	} else {
-		_mousedOverControl = null;
+	
+		// get a reference to the control
+		var c = getMouseControl(ev);
+		// if a control is selected and the mouse is down look for the controls new destination
+		if (_selectedControl) {
+			
+			// check the mouse is down (and the selected control has an object)
+			if (_mouseDown && _selectedControl.object[0]) {		
+						
+				// if we have just started moving position the cover
+				if (!_movingControl) {
+					
+					var controlClass = _controlTypes[_selectedControl.type];
+					
+					// if it is not nonVisible
+					if (controlClass.getHtmlFunction.indexOf("nonVisibleControl") < 0) {
+					
+						// position the object cover
+						_selectionCover.css({
+							"width": _selectedControl.object.outerWidth() * _scale, 
+							"height": _selectedControl.object.outerHeight() * _scale, 
+							"left": _selectedControl.object.offset().left + _panelPinnedOffset, 	
+							"top": _selectedControl.object.offset().top - _pageIframeWindow.scrollTop()
+						});
+															
+					}
+					
+					if (_selectedControl.object.is(":visible")) {
+						// show it if selected object visible
+						_selectionCover.show();				
+						// show the insert
+						_selectionInsert.show();				
+					}			
+					
+					// hide the properties - this can cause the properties panel to bounce
+					$("#propertiesPanel").hide("slide", {direction: "right"}, 200);
+					
+					// remember we are now moving an object
+					_movingControl = true;
+				}
+				
+				// position the selection border
+				positionBorder(ev.pageX + _panelPinnedOffset, ev.pageY - (_addedControl ? 0 : _pageIframeWindow.scrollTop()));
+											
+				// if we got a control and it's allowed to be moved by the user (non-visual controls can be added but not moved so this way they remain with their parent control as the page)
+				if (c && _controlTypes[_selectedControl.type].canUserMove) {
+					// retain a reference to the movedoverObject
+					_movedoverControl = c;
+					// position the insert cover
+					_selectionInsertCover.css({
+						"width": _movedoverControl.object.outerWidth() * _scale, 
+						"height": _movedoverControl.object.outerHeight() * _scale, 
+						"left": _movedoverControl.object.offset().left + _panelPinnedOffset, 	
+						"top": _movedoverControl.object.offset().top - _pageIframeWindow.scrollTop()
+					});
+					// calculate the width
+					var width =  _movedoverControl.object.outerWidth() * _scale;
+					// if over the selected object or a descendant don't show anything
+					if (_movedoverControl === _selectedControl || isDecendant(_selectedControl,_movedoverControl)) {
+						_selectionInsert.hide();
+						_selectionInsertCover.hide();
+						_selectionMoveLeft.hide();
+						_selectionMoveRight.hide();
+					} else {			
+						_selectionInsertCover.show();
+						// calculate a move threshold which is the number of pixels to the left or right of the object the users needs to be within
+						var moveThreshold = Math.min(50 * _scale, width/3);
+						// if it's not possible to insert make the move thresholds half the width to cover the full object
+						if (!_controlTypes[_movedoverControl.type].canUserInsert) moveThreshold = width/2;
+						// are we within the move threshold on the left or the right controls that can be moved, or in the middle with an addChildControl method?
+						if (_controlTypes[_movedoverControl.type].canUserMove && ev.pageX - _panelPinnedOffset < _movedoverControl.object.offset().left + moveThreshold) {
+							// position the insert left
+							_selectionMoveLeft.css({
+								"display": "block",
+								"left": _panelPinnedOffset + _movedoverControl.object.offset().left,	
+								"top": ev.pageY - _selectionInsert.outerHeight()/2
+							});
+							// remember it's on the left
+							_movedoverDirection = "L";
+							// make sure the other selections are hidden	
+							_selectionMoveRight.hide();
+							_selectionInsert.hide();
+						} else if (_controlTypes[_movedoverControl.type].canUserMove && ev.pageX - _panelPinnedOffset > _movedoverControl.object.offset().left + width - moveThreshold) {
+							// position the insert right
+							_selectionMoveRight.css({
+								"display": "block",
+								"left": _panelPinnedOffset + _movedoverControl.object.offset().left + width - _selectionMoveRight.outerWidth(),	
+								"top":ev.pageY - _selectionInsert.outerHeight()/2
+							});
+							// remember it's on the right
+							_movedoverDirection = "R";
+							// make sure the other selections are hidden		
+							_selectionMoveLeft.hide();
+							_selectionInsert.hide();
+						} else if (_controlTypes[_movedoverControl.type].canUserInsert) {
+							// position the insert in the middle
+							_selectionInsert.css({
+								"display": "block",
+								"left": _panelPinnedOffset + _movedoverControl.object.offset().left + (width - _selectionInsert.outerWidth())/2,	
+								"top":ev.pageY - _selectionInsert.outerHeight()
+							});
+							// remember it's in the the centre
+							_movedoverDirection = "C";
+							// make sure the other selections are hidden					
+							_selectionMoveLeft.hide();
+							_selectionMoveRight.hide();
+						}									
+					}
+				} // if over object		
+			} // if mouse down
+		}; // if selectedObject
+		
+		// if the current mousedOver object is different from the last one
+		if (c != _mousedOverControl) {
+			// if there actuall is a last one fire it's mouseout event
+			if (_mousedOverControl) _mousedOverControl.object.mouseout();
+		}
+		// fire the mouseover event for any hit control object
+		if (c) {
+			_mousedOverControl = c;
+			c.object.mouseover();
+		} else {
+			_mousedOverControl = null;
+		}
+		
 	}
 	
 }); // mousemove
@@ -2991,10 +3021,22 @@ $(document).on("mouseup touchend", function(ev) {
 	
 	_mouseDown = false;
 	_mouseDownXOffset = 0;
-	_mouseDownYOffset = 0;
+	_mouseDownYOffset = 0;	
+	_addedControl = false;
 	_reorderDetails = null;
+	
+	if (_controlPanelSize) {
+		// only if the panel is pinned
+		if (_panelPinnedOffset > 0) {
+			// set the latest panel pinned offset (plus padding and border)
+			_panelPinnedOffset = $("#controlPanel").width() + 21;
+			// size the window
+			windowResize("controlPanelSize");
+			// set to false
+			_controlPanelSize = false;
+		}
 		
-	if (_selectedControl && _selectedControl.object[0]) {		
+	} else if (_selectedControl && _selectedControl.object[0]) {		
 		// show it in case it was an add
 		if (_controlTypes[_selectedControl.type].canUserAdd) _selectedControl.object.show();
 		// if we were moving a control different from the _selectedControl
@@ -3246,9 +3288,7 @@ function windowResize(ev) {
 		_pageIframe.css({
 			left: _panelPinnedOffset,
 			width: devWidth,
-			height: devHeight,
-			"border-right": "1px solid black",
-			"border-bottom": "1px solid black"
+			height: devHeight
 		});			
 		// adjust the cover
 		_designCover.css({
@@ -3349,10 +3389,8 @@ function windowResize(ev) {
 		// adjust iframe position, width and height
 		_pageIframe.css({
 			left: _panelPinnedOffset,
-			width: width - _panelPinnedOffset,
-			height: height,
-			"border-right": "0px",
-			"border-bottom": "0px"
+			width: width - _panelPinnedOffset - 1,
+			height: height
 		});
 		// adjust the cover to be full-screen
 		_designCover.css({

@@ -36,12 +36,12 @@ _helpText["helpProperties"] = "Edit the properties of the control by clicking on
 _helpText["helpStyles"] = "Specify the CSS rules for this control. Valid css rules will appear as you type.";
 _helpText["helpStyleClasses"] = "Choose a CSS class from your global styling to apply to this control. Classes can be added by editing Application styles in Rapid Admin.";
 
-function addHelp(id, property, right) {
+function addHelp(id, property, right, text) {
 	
 	// check if we have a hint element already, create one if not
 	if (!$("#" + id + "hint")[0]) {
 		// add the hint span
-		$("body").append("<span class='hint' id='" + id + "hint'>" + _helpText[id] + "</span>");
+		$("body").append("<span class='hint' id='" + id + "hint'>" + (_helpText[id]||text) + "</span>");
 		// hide it
 		$("#" + id + "hint").hide();		
 	}
@@ -52,11 +52,14 @@ function addHelp(id, property, right) {
 	});
 	
 	// show the hint on mouseover
-	$("#" + id).mouseover({id: id}, function(ev) { 
-		$("#" + ev.data.id + "hint").css({
-			left: ev.pageX + 5 - (property || right ? $("#" + id + "hint").outerWidth() + 10 : 0),
-			top: ev.pageY + 5
-		}).show();  
+	$("#" + id).mouseover({id: id}, function(ev) {
+		// if not dragging
+		if (!_mouseDown) {
+			$("#" + ev.data.id + "hint").css({
+				left: ev.pageX + 5 - (property || right ? $("#" + id + "hint").outerWidth() + 10 : 0),
+				top: ev.pageY + 5
+			}).show();
+		}
 	});
 	
 }
