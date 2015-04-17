@@ -523,7 +523,7 @@ function rebuildStyles() {
 		} // check stylesheet
 	});			
 	// asign the collection to the control
-	_selectedControl.styles = styles;	
+	if (_selectedControl) _selectedControl.styles = styles;	
 	// resize and reposition the selection as the geometry may have changed
 	positionAndSizeBorder(_selectedControl);	
 	// check the iFrame scroll bars for the same reason

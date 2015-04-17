@@ -1452,6 +1452,9 @@ function loadVersion(forceLoad) {
     		
     	} // app control loop  
     			
+    	
+    	// resize the controls list (for the right height and padding)
+    	sizeControlsList();
 
     	// load the pages with a forced page load
     	loadPages(null, true);
@@ -2056,6 +2059,13 @@ $(document).ready( function() {
 			
 	// the window we are working in
 	_window = $(window);	
+	
+	// check if we have local storage
+	if (typeof(localStorage) !== "undefined") {
+		if (localStorage["_controlPanelWidth"]) {
+			sizeControlsList(localStorage["_controlPanelWidth"]);
+		}
+	}
 	
 	// derived the panel pinned offset value (add on the padding and border)
 	_panelPinnedOffset = $("#controlPanel").width() + 21;
@@ -2878,14 +2888,54 @@ function isDecendant(control1, control2) {
 	return result;
 }
 
+// size the controls list box (used when resizing control panel and starting / loading versions)
+function sizeControlsList(width) {
+	// check if a width was provided
+	if (width) {
+		// set the new width 
+		$("#controlPanel").css("width", width);
+	} else {
+		// read in the current width
+		width = parseInt($("#controlPanel").css("width"));
+	}
+	// get the controls list
+	var controlsList = $("#controlsList");
+	// get the number of children
+	var controls = controlsList.children().size();
+	// get the controls wide
+	var controlsWidth = Math.floor(width / 39);
+	// get the controls high
+	var controlsHigh = Math.ceil(controls / controlsWidth);		
+	// set the fixed height and margin (to allow animation and center controls)
+	controlsList.css({
+		"padding-left" : (width - controlsWidth * 39) / 2,
+		"height" :  controlsHigh * 36
+	});	
+}
+
 //if the mouse moves anywhere
 $(document).on("mousemove touchmove", function(ev) {
 	
 	if (_controlPanelSize) {
 	
-		// set the new width less offset and padding
-		$("#controlPanel").css("width", ev.pageX - _mouseDownXOffset - 21);
-		
+		// get the control panel
+		var controlPanel = $("#controlPanel");
+		// get the min-width
+		var minWidth = parseInt(controlPanel.css("min-width"));
+		// get the max width
+		var maxWidth = parseInt(controlPanel.css("max-width"));
+		// calculate the new width less offset and padding
+		var width = ev.pageX - _mouseDownXOffset - 21
+		// if width is between max and min
+		if (width >= minWidth && width <= maxWidth) {
+			// size the controls list
+			sizeControlsList(width);
+			// save this width
+			if (typeof(localStorage) !== "undefined") {
+				localStorage["_controlPanelWidth"] = width;
+			}
+		}
+				
 	} else {
 	
 		// get a reference to the control
