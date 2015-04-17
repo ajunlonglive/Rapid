@@ -1146,6 +1146,9 @@ function selectControl(control) {
 		body.scrollTop(scollTop);
 		body.scrollLeft(scrolLeft);
 		
+		// resize
+		windowResize("selectControl");
+		
 	} else {
 		
 		_selectedControl = null;
@@ -3085,7 +3088,7 @@ $(document).on("mouseup touchend", function(ev) {
 			// set to false
 			_controlPanelSize = false;
 		}
-		
+		arrangeNonVisibleControls();
 	} else if (_selectedControl && _selectedControl.object[0]) {		
 		// show it in case it was an add
 		if (_controlTypes[_selectedControl.type].canUserAdd) _selectedControl.object.show();

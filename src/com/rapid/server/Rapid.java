@@ -56,14 +56,12 @@ public class Rapid extends RapidHttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	// these are held here and referred to globally
-	public static final String VERSION = "2.2.3"; // the master version of this Rapid server
+	public static final String VERSION = "2.2.4"; // the master version of this Rapid server
 	public static final String MOBILE_VERSION = "1"; // the mobile version. update it if you want all mobile devices to updates on their next version check
 	public static final String DESIGN_ROLE = "RapidDesign";
 	public static final String ADMIN_ROLE = "RapidAdmin";
 	public static final String SUPER_ROLE = "RapidSuper";
-						
-	
-					                        
+												                        
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 				
 		// get a logger
