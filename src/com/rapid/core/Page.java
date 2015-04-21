@@ -922,11 +922,11 @@ public class Page {
 									// add the action function to the action stringbuilder so it's before the event
 									actionStringBuilder.append("function Action_" + action.getId() + "(ev) {\n" 
 									+ "  " + actionJavaScript.trim().replace("\n", "\n  ") + "\n"
-									//+ "  return true;\n"
+									+ "  return true;\n"
 									+ "}\n\n");	
 									// add an action function call to the event string builder
-									//eventStringBuilder.append("    if (!Action_" + action.getId() + "(ev)) return false;\n");																
-									eventStringBuilder.append("    Action_" + action.getId() + "(ev);\n");
+									eventStringBuilder.append("    if (!Action_" + action.getId() + "(ev)) return false;\n");																
+									//eventStringBuilder.append("    Action_" + action.getId() + "(ev);\n");
 								} else {
 									// go straight into the event
 									eventStringBuilder.append("    " + actionJavaScript.trim().replace("\n", "\n    ") + "\n");
@@ -1476,7 +1476,7 @@ public class Page {
 			// unmarshall the page
 			Page page = (Page) unmarshaller.unmarshal(br);
 			
-			// log that the application was loaded
+			// log that the page was loaded
 			logger.debug("Loaded page " + page.getId() + " - " + page.getName() + " from " + file);
 			
 			// close the buffered reader
@@ -1489,6 +1489,9 @@ public class Page {
 			
 			// close the buffered reader
 			br.close();
+			
+			// log that the page had an error
+			logger.error("Error loading page from " + file);
 			
 			// re-throw
 			throw ex;
