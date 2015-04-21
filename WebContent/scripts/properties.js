@@ -3236,3 +3236,108 @@ function Property_mobileActionType(cell, mobileAction, property, details) {
 		updateProperty(ev.data.cell, ev.data.mobileAction, ev.data.property, ev.data.details, value);	
 	}));
 }
+
+// generic inputs to a server-side action
+function Property_inputs(cell, propertyObject, property, details) {
+	
+	// retrieve or create the dialogue
+	var dialogue = getDialogue(cell, propertyObject, property, details, 400, "Inputs");		
+	// grab a reference to the table
+	var table = dialogue.find("table").first();
+	// make sure table is empty
+	table.children().remove();
+	
+	// build what we show in the parent cell
+	var inputs = [];
+	// get the value if it exists
+	if (propertyObject[property.key]) inputs = propertyObject[property.key];	
+	// make some text for our cell (we're going to build in in the loop)
+	var text = "";
+	
+	// add a header
+	table.append("<tr><td><b>Control</b></td><td><b>Field</b></td><td colspan='2'><b>Input field</b></td></tr>");
+		
+	// show current choices (with delete and move)
+	for (var i = 0; i < inputs.length; i++) {
+		// get a single reference
+		var input = inputs[i];	
+		// if we got one
+		if (input) {
+			// get a data item object for this
+			var dataItem = getDataItemDetails(input.itemId);
+			// apend to the text
+			text += dataItem.name + ",";
+			// add a row
+			table.append("<tr><td>" + dataItem.name + "</td><td><input value='" + input.field + "' /></td><td><input value='" + input.inputField + "' /></td><td style='width:32px'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
+			// get the field
+			var editField = table.find("tr").last().children("td:nth(1)").children("input");
+			// add a listener
+			addListener( editField.keyup( {inputs: inputs}, function(ev) {
+				// get the input
+				var input = $(ev.target);
+				// update the field
+				ev.data.inputs[input.parent().parent().index()-1].field = input.val();
+			}));
+			// get the inputfield
+			var editInputField = table.find("tr").last().children("td:nth(2)").children("input");
+			// add a listener
+			addListener( editInputField.keyup( {inputs: inputs}, function(ev) {
+				// get the input
+				var input = $(ev.target);
+				// update the field
+				ev.data.inputs[input.parent().parent().index()-1].inputField = input.val();				
+			}));
+			// get the delete image
+			var imgDelete = table.find("tr").last().children().last().children("img.delete");
+			// add a listener
+			addListener( imgDelete.click( {inputs: inputs}, function(ev) {
+				// get the input
+				var imgDelete = $(ev.target);
+				// remove from parameters
+				ev.data.inputs.splice(imgDelete.parent().parent().index()-1,1);
+				// remove row
+				imgDelete.parent().parent().remove();
+			}));
+		} else {
+			// remove this entry from the collection
+			inputs.splice(i,1);
+			// set i back 1 position
+			i--;
+		}			
+	}
+			
+	// add reorder listeners
+	addReorder(inputs, table.find("img.reorder"), function() { 
+		Property_inputs(cell, propertyObject, property, details); 
+	});
+	
+	// add the add
+	table.append("<tr><td colspan='4' style='padding:0px;'><select style='margin:0px'><option value=''>Add input...</option>" + getInputOptions() + "</select></td></tr>");
+	// find the add
+	var inputAdd = table.find("tr").last().children().last().children().last();
+	// listener to add output
+	addListener( inputAdd.change( {cell: cell, propertyObject: propertyObject, property: property, details: details}, function(ev) {
+		
+		// initialise array if need be
+		if (!ev.data.propertyObject[ev.data.property.key]) ev.data.propertyObject[ev.data.property.key] = [];
+		// get the parameters (inputs or outputs)
+		var inputs = ev.data.propertyObject[ev.data.property.key];
+		// add a new one
+		inputs.push({itemId: $(ev.target).val(), field: "", inputField: ""});
+		// rebuild the dialogue
+		Property_inputs(ev.data.cell, ev.data.propertyObject, ev.data.property, ev.data.details);	
+	}));
+	
+	// if we got text 
+	if (text) {
+		// remove the trailing comma
+		text = text.substring(0,text.length - 1);
+	} else {
+		// add friendly message
+		text = "Click to add...";
+	}
+	// put the text into the cell
+	cell.text(text);
+	
+	
+}
