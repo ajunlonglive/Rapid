@@ -295,7 +295,7 @@ function getDialogue(cell, propertyObject, property, details, width, title) {
 	// if we couldn't retrieve one, make it now
 	if (!dialogue[0]) {		
 		// add the div
-		dialogue = $("#propertiesDialogues").append("<div id='" + dialogueId + "' class='actionsPanelDiv dialogue' style='position:absolute;display:none;width:" + width + "px;z-index:10012;border:1px solid black;background-color:white;font-size:11px;padding:10px;'></div>").children().last();
+		dialogue = $("#propertiesDialogues").append("<div id='" + dialogueId + "' class='propertyDialogue' style='position:absolute;display:none;width:" + width + "px;z-index:10012;border:1px solid black;background-color:white;font-size:11px;padding:10px;'></div>").children().last();
 		// add a close link
 		var close = dialogue.append("<b style='float:left;margin-top:-5px;'>" + title + "</b><a href='#' class='closeDialogue' style='float:right;margin-top:-5px;'>close</a></div>").children().last();
 	

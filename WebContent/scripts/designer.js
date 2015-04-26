@@ -73,6 +73,8 @@ var _mouseDownXOffset = 0;
 var _mouseDownYOffset = 0;
 // track wether we've moused down on the control panel resize
 var _controlPanelSize = false;
+//track wether we've moused down on the properties panel resize
+var _propertiesPanelSize = false;
 // track whether we've added a control
 var _addedControl = false;
 // track whether we are currently moving a control
@@ -2065,8 +2067,15 @@ $(document).ready( function() {
 	
 	// check if we have local storage
 	if (typeof(localStorage) !== "undefined") {
+		// if we have a saved control panel width
 		if (localStorage["_controlPanelWidth"]) {
+			// set it
 			sizeControlsList(localStorage["_controlPanelWidth"]);
+		}
+		// if we have a saved properties panel width
+		if (localStorage["_propertiesPanelWidth"]) {
+			// set
+			$("#propertiesPanel").width(localStorage["_propertiesPanelWidth"]);
 		}
 	}
 	
@@ -2357,9 +2366,17 @@ $(document).ready( function() {
 		// retain that we are resizing the control panel
 		_controlPanelSize = true;
 		// retain the mouse offset
-		_mouseDownXOffset = ev.offsetX;
+		_mouseDownXOffset = ev.pageX - parseInt($("#controlPanel").css("width"));
 	});
 	
+	// property panel resize
+	$("#propertiesPanelSize").on("mousedown", function(ev) {
+		// retain that we are resizing the control panel
+		_propertiesPanelSize = true;
+		// retain the mouse offset
+		_mouseDownXOffset = ev.pageX - $("#propertiesPanel").offset().left;
+	});
+		
 	// panel pin
 	$("#controlPanelPin").click( function(ev) {
 		// check pinned
@@ -2922,13 +2939,13 @@ $(document).on("mousemove touchmove", function(ev) {
 	if (_controlPanelSize) {
 	
 		// get the control panel
-		var controlPanel = $("#controlPanel");
+		var panel = $("#controlPanel");
 		// get the min-width
-		var minWidth = parseInt(controlPanel.css("min-width"));
+		var minWidth = parseInt(panel.css("min-width"));
 		// get the max width
-		var maxWidth = parseInt(controlPanel.css("max-width"));
+		var maxWidth = parseInt(panel.css("max-width"));
 		// calculate the new width less offset and padding
-		var width = ev.pageX - _mouseDownXOffset - 21
+		var width = ev.pageX - _mouseDownXOffset;
 		// if width is between max and min
 		if (width >= minWidth && width <= maxWidth) {
 			// size the controls list
@@ -2936,6 +2953,26 @@ $(document).on("mousemove touchmove", function(ev) {
 			// save this width
 			if (typeof(localStorage) !== "undefined") {
 				localStorage["_controlPanelWidth"] = width;
+			}
+		}
+				
+	} else if (_propertiesPanelSize) {
+	
+		// get the control panel
+		var panel = $("#propertiesPanel");
+		// get the min-width
+		var minWidth = parseInt(panel.css("min-width"));
+		// get the max width
+		var maxWidth = parseInt(panel.css("max-width"));
+		// calculate the new width less offset and padding
+		var width = _window.width() - ev.pageX - 21 + _mouseDownXOffset;
+		// if width is between max and min
+		if (width >= minWidth && width <= maxWidth) {
+			// size the properties panel
+			panel.css("width", width);
+			// save this width
+			if (typeof(localStorage) !== "undefined") {
+				localStorage["_propertiesPanelWidth"] = width;
 			}
 		}
 				
@@ -3079,16 +3116,23 @@ $(document).on("mouseup touchend", function(ev) {
 	_reorderDetails = null;
 	
 	if (_controlPanelSize) {
+		
 		// only if the panel is pinned
 		if (_panelPinnedOffset > 0) {
 			// set the latest panel pinned offset (plus padding and border)
 			_panelPinnedOffset = $("#controlPanel").width() + 21;
 			// size the window
-			windowResize("controlPanelSize");
-			// set to false
-			_controlPanelSize = false;
+			windowResize("controlPanelSize");			
 		}
+		// set to false
+		_controlPanelSize = false;
+		// arrange controls as  the left reference has changed
 		arrangeNonVisibleControls();
+		
+	} else if (_propertiesPanelSize) {
+		
+		_propertiesPanelSize = false;
+		
 	} else if (_selectedControl && _selectedControl.object[0]) {		
 		// show it in case it was an add
 		if (_controlTypes[_selectedControl.type].canUserAdd) _selectedControl.object.show();

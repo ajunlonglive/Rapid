@@ -104,6 +104,21 @@ $.fn.extend({
 	  }	  
 	  return this;
   },
+  hideAllDialogues: function(reload) {	  
+	  $("div.dialogue").remove();
+	  $("div.dialogueCover").remove();
+	  if (reload) {
+		  var pageId = $("body").attr("id");
+		  if (window["Event_pageload_" + pageId]) window["Event_pageload_" + pageId]();		  
+	  }	  
+	  return this;
+  },
+  showError: function() {
+	if (server) {
+		alert(server.responseText||message);
+	}
+    return this;
+  },
   focus: function() {		
 	  if (this[0]) {
 		  this[0].focus();		  

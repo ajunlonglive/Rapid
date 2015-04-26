@@ -20,7 +20,10 @@ table.propertiesPanelTable  {
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	width: 50%;
+}
+
+.propertiesPanelTable td:nth-child(2) {
+	width: 100%;
 	max-width: 50px;
 }
 

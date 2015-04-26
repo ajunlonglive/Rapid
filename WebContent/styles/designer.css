@@ -283,6 +283,8 @@ div#propertiesPanel {
 	right: 0px;
 	top: 0px;
 	width: 200px;	
+	min-width: 200px;
+	max-width: 500px;
 	border-left: 1px solid #191919;
 	background-color: #F5F5F5;
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#E6E6E6', endColorstr='#F5F5F5');
@@ -303,6 +305,19 @@ div#propertiesPanel {
 
 .propertiesPanelDiv {
 	padding-top:0px;
+}
+
+#propertiesPanelSize {
+  	background-color: red;
+  	opacity: 0;
+  	float: left;
+  	position: relative;
+  	top: 0;
+  	left: 0;
+  	width: 4px;
+  	height: 100%;
+  	margin-left: -10px;
+  	cursor: ew-resize;
 }
 
 .untilsPanelDiv .headerHelp {
