@@ -1121,7 +1121,8 @@ public class Designer extends RapidHttpServlet {
 													        newFileString = fileString
 													        	.replace("applications/" + appOldId + "/", "applications/" + appId + "/" + appVersion  + "/")
 													        	.replace("~?a=" + appOldId + "&amp;", "~?a=" + appId + "&amp;v=" + appVersion + "&amp;")
-													        	.replace("~?a=" + appOldId + "&amp;amp;", "~?a=" + appId + "&amp;v=" + appVersion + "&amp;");
+													        	.replace("~?a=" + appOldId + "&amp;amp;", "~?a=" + appId + "&amp;v=" + appVersion + "&amp;")
+													        	.replace("\"" + appOldId + "\"","\"" + appId + "\"");
 												        	
 												        } else {
 												        	
@@ -1129,7 +1130,9 @@ public class Designer extends RapidHttpServlet {
 													        newFileString = fileString
 													        	.replace("applications/" + appOldId + "/" + appOldVersion + "/", "applications/" + appId + "/" + appVersion  + "/")
 													        	.replace("~?a=" + appOldId + "&amp;v=" + appOldVersion + "&amp;", "~?a=" + appId + "&amp;v=" + appVersion + "&amp;")
-														        .replace("~?a=" + appOldId + "&amp;amp;v=" + appOldVersion + "&amp;amp;", "~?a=" + appId + "&amp;v=" + appVersion + "&amp;");												        	
+														        .replace("~?a=" + appOldId + "&amp;amp;v=" + appOldVersion + "&amp;amp;", "~?a=" + appId + "&amp;v=" + appVersion + "&amp;")
+														        .replace("\"" + appOldId + "\"","\"" + appId + "\"")
+														        .replace("\"" + appOldVersion + "\"","\"" + appVersion + "\"");
 												        }
 												        
 												        // get a writer for the new page file

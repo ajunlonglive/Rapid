@@ -192,9 +192,12 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 		
 		<div id="propertiesPanel" style="z-index:10011">
 		
+			<div id="propertiesPanelSize" ></div>
+		
 			<div class="untilsPanelDiv">
-				<div id="propertiesPanelPin"><img src="images/pinned_14x14.png" title="hide" /></div>
-				<img id="helpPropertiesPanel" class="headerHelp" src="images/help_16x16.png" />									
+			
+				<div id="propertiesPanelPin"><img src="images/pinned_14x14.png" title="hide" /></div>		
+				<img id="helpPropertiesPanel" class="headerHelp" src="images/help_16x16.png" />													
 				<div class="buttons">					
 					<button id="selectPeerLeft" class="buttonLeft"><img src="images/moveLeft_16x16.png" title="Select the control before this one"/></button>
 					<button id="selectParent"><img src="images/moveUp_16x16.png" title="Select the parent of this control"/></button>

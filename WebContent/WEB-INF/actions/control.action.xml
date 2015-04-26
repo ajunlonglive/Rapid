@@ -59,7 +59,7 @@ This action runs JQuery functions against specific controls
 	            <key>actionType</key>
 	            <name>Action</name>
 	            <changeValueJavaScript>controlActionType</changeValueJavaScript>	 
-	            <getValuesFunction>return ["hide","show","toggle","slideUp","slideDown","slideToggle","fadeOut","fadeIn","fadeToggle","focus","enable","disable","addClass","removeClass","toggleClass","removeChildClasses","hideDialogue","clearQueue","custom"];</getValuesFunction>
+	            <getValuesFunction>return ["hide","show","toggle","slideUp","slideDown","slideToggle","fadeOut","fadeIn","fadeToggle","focus","enable","disable","addClass","removeClass","toggleClass","removeChildClasses","hideDialogue","hideAllDialogues","showError","clearQueue","custom"];</getValuesFunction>
 	            <refreshProperties>true</refreshProperties>	            
 	        </property>
 	        
