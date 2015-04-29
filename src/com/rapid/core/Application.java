@@ -1265,7 +1265,7 @@ public class Application {
 							// derive the min file name by modifying the start and end
 							String fileNameMin = "scripts_min/" + fileName.substring(8, fileName.length() - 3) + ".min.js";
 							// get a file for minifying 
-							File jsFileMin = new File(servletContext.getRealPath("/") + fileNameMin);
+							File jsFileMin = new File(servletContext.getRealPath("/") + "/" + fileNameMin);
 							// if this file does not exist
 							if (!jsFileMin.exists()) {
 								// make any dirs it may need
@@ -1285,7 +1285,7 @@ public class Application {
 							// derive the min file name by modifying the start and end
 							String fileNameMin = "styles_min/" + fileName.substring(7, fileName.length() - 4) + ".min.css";
 							// get a file for minifying 
-							File cssFileMin = new File(servletContext.getRealPath("/") + fileNameMin);
+							File cssFileMin = new File(servletContext.getRealPath("/") + "/" + fileNameMin);
 							// if this file does not exist
 							if (!cssFileMin.exists()) {
 								// make any dirs it may need

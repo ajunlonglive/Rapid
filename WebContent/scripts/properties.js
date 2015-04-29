@@ -331,7 +331,7 @@ function getDialogue(cell, propertyObject, property, details, width, title) {
 
 		}));			
 		// add an options table
-		dialogue.append("<br/><table style='width:100%' class='propertiesPanelTable dialogueTable'><tbody></tbody></table>");
+		dialogue.append("<br/><table style='width:100%' class='dialogueTable'><tbody></tbody></table>");
 	}	
 	
 	// listener to show the dialogue 
@@ -1160,7 +1160,7 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 	cell.text(text);
 	
 	// add inputs table, sql, and outputs table
-	table.append("<tr><td colspan='2' rowspan='3' style='padding:0px;vertical-align: top;'><table style='width:100%' class='propertiesPanelTable'><tr><td><b>Input</b></td><td colspan='2'><b>Field</b></td></tr></table></td><td colspan='3' style='width:500px;padding:0px 6px 0px 0px;'><b>SQL</b><br/><textarea style='width:100%;min-height:300px;'></textarea></td><td colspan='2' rowspan='3' style='padding:0px;vertical-align: top;'><table style='width:100%' class='propertiesPanelTable'><tr><td><b>Field</b></td><td colspan='2'><b>Output</b></td></tr></table></td></tr>");
+	table.append("<tr><td colspan='2' rowspan='3' style='padding:0px;vertical-align: top;'><table style='width:100%'><tr><td><b>Input</b></td><td colspan='2'><b>Field</b></td></tr></table></td><td colspan='3' style='width:500px;padding:0px 6px 0px 0px;'><b>SQL</b><br/><textarea style='width:100%;min-height:300px;'></textarea></td><td colspan='2' rowspan='3' style='padding:0px;vertical-align: top;'><table style='width:100%'><tr><td><b>Field</b></td><td colspan='2'><b>Output</b></td></tr></table></td></tr>");
 	
 	// find the inputs table
 	var inputsTable = table.children().last().children().first().children("table");
@@ -1373,7 +1373,7 @@ function Property_webserviceRequest(cell, propertyObject, property, details) {
 	cell.text(text);
 	
 	// add inputs table, body, and outputs table
-	table.append("<tr><td colspan='2' rowspan='3' style='padding:0px;vertical-align: top;'><table style='width:100%' class='propertiesPanelTable'><tr><td><b>Input</b></td><td colspan='2'><b>Field</b></td></tr></table></td><td colspan='2' style='width:500px;padding:0px 6px 0px 0px;'><b style='display:block;margin-bottom:-5px;'>Request type</b><br/><input type='radio' name='WSType' value='SOAP'/>SOAP<input type='radio' name='WSType' value='JSON'/>JSON<input type='radio' name='WSType' value='XML'/>XML/Restfull</br><b style='display:block;margin-top:5px;margin-bottom:-5px;'>URL</b><br/><input class='WSUrl' style='max-width:inherit;width:100%' /></br><b style='display:block;margin-top:5px;margin-bottom:-5px;'>Action</b><br/><input class='WSAction' style='max-width:inherit;width:100%' /></br><b style='display:block;margin-top:5px;margin-bottom:-5px;'>Body</b><br/><textarea style='width:100%;min-height:300px;' class='WSBody'></textarea></br><b style='display:block;margin-top:5px;margin-bottom:-5px;'>Response root element</b><br/><input class='WSRoot' style='max-width:inherit;width:100%;margin-bottom:5px;' /></td><td colspan='2' rowspan='3' style='padding:0px;vertical-align: top;'><table style='width:100%' class='propertiesPanelTable'><tr><td><b>Field</b></td><td colspan='2'><b>Output</b></td></tr></table></td></tr>");
+	table.append("<tr><td colspan='2' rowspan='3' style='padding:0px;vertical-align: top;'><table style='width:100%'><tr><td><b>Input</b></td><td colspan='2'><b>Field</b></td></tr></table></td><td colspan='2' style='width:500px;padding:0px 6px 0px 0px;'><b style='display:block;margin-bottom:-5px;'>Request type</b><br/><input type='radio' name='WSType' value='SOAP'/>SOAP<input type='radio' name='WSType' value='JSON'/>JSON<input type='radio' name='WSType' value='XML'/>XML/Restfull</br><b style='display:block;margin-top:5px;margin-bottom:-5px;'>URL</b><br/><input class='WSUrl' style='max-width:inherit;width:100%' /></br><b style='display:block;margin-top:5px;margin-bottom:-5px;'>Action</b><br/><input class='WSAction' style='max-width:inherit;width:100%' /></br><b style='display:block;margin-top:5px;margin-bottom:-5px;'>Body</b><br/><textarea style='width:100%;min-height:300px;' class='WSBody'></textarea></br><b style='display:block;margin-top:5px;margin-bottom:-5px;'>Response root element</b><br/><input class='WSRoot' style='max-width:inherit;width:100%;margin-bottom:5px;' /></td><td colspan='2' rowspan='3' style='padding:0px;vertical-align: top;'><table style='width:100%'><tr><td><b>Field</b></td><td colspan='2'><b>Output</b></td></tr></table></td></tr>");
 	
 	// find the inputs table
 	var inputsTable = table.children().last().children().first().children().last();
@@ -1965,7 +1965,7 @@ function logicConditionValue(cell, action, conditionIndex, valueId) {
 	var value = condition[valueId];
 		
 	// clear and add a table into the cell for this value
-	cell.html("<table class='propertiesPanelTable'></table>")
+	cell.html("<table></table>")
 	// get a reference to it
 	var table = cell.find("table").last();
 	
@@ -2249,6 +2249,8 @@ function Property_gridColumns(cell, grid, property, details) {
 	var table = dialogue.find("table").first();
 	// make sure table is empty
 	table.children().remove();
+	// append inputTableWithTitles class
+	table.addClass("inputTableWithTitles");
 	// get the grid columns
 	var columns = grid.columns;
 	// if they don't exist or an empty array string make them an empty array
@@ -2275,7 +2277,7 @@ function Property_gridColumns(cell, grid, property, details) {
 		if (columns[i].cellFunction) cellFunctionText = columns[i].cellFunction;
 		
 		// add the line
-		table.append("<tr><td style='text-align:center;'><input type='checkbox' " + (columns[i].visible ? "checked='checked'" : "")  + " /></td><td style='padding-left:0px'><input style='max-width:none;' value='" + columns[i].title + "' /></td><td style='padding-left:0px'><input style='max-width:none;' value='" + columns[i].titleStyle + "' /></td><td style='padding-left:0px'><input style='max-width:none;' value='" + columns[i].field + "' /></td><td style='padding-left:0px'><input style='max-width:none;' value='" + columns[i].fieldStyle + "' /></td><td style='width:20px;max-width:100px;padding-left:5px'>" + cellFunctionText.replaceAll("<","&lt;") + "</td><td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
+		table.append("<tr><td><input type='checkbox' " + (columns[i].visible ? "checked='checked'" : "")  + " /></td><td><input value='" + columns[i].title + "' /></td><td><input value='" + columns[i].titleStyle + "' /></td><td><input value='" + columns[i].field + "' /></td><td class='inputBorderRight'><input value='" + columns[i].fieldStyle + "' /></td><td class='paddingLeft5' style='max-width:20px;'>" + cellFunctionText.replaceAll("<","&lt;") + "</td><td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
 		
 		// find the checkbox
 		var visibleEdit = table.find("tr").last().children(":nth(0)").first().children().first();
@@ -2358,7 +2360,7 @@ function Property_gridColumns(cell, grid, property, details) {
 	}
 	
 	// add the cell function text area
-	var cellFunctionTextArea = dialogue.append("<textarea data-index='-1' style='position:absolute;display:none;width:500px;height:300px;top:26px;right:10px;'  wrap='off'></textarea>").find("textarea:first");
+	var cellFunctionTextArea = dialogue.append("<textarea data-index='-1' style='position:absolute;display:none;width:500px;height:300px;top:26px;right:10px;' wrap='off'></textarea>").find("textarea:first");
 	// hide it on unfocus
 	addListener( cellFunctionTextArea.blur( function(ev) {		
 		// get the value
@@ -2576,7 +2578,7 @@ function Property_flowLayoutCellWidth(cell, flowLayout, property, details) {
 	// set the value if it exists
 	if (flowLayout[property.key]) value = flowLayout[property.key];
 	// append the adjustable form control
-	cell.append("<input class='propertiesPanelTable' value='" + value + "' />");
+	cell.append("<input value='" + value + "' />");
 	// get a reference to the form control
 	var input = cell.children().last();
 	// add a listener to update the property
@@ -3025,7 +3027,7 @@ function Property_mapLatLng(cell, propertyObject, property, details) {
 	// set the value if it exists
 	if (propertyObject[property.key] || parseInt(propertyObject[property.key]) == 0) value = propertyObject[property.key];
 	// append the adjustable form control
-	cell.append("<input class='propertiesPanelTable' value='" + value + "' />");
+	cell.append("<input value='" + value + "' />");
 	// get a reference to the form control
 	var input = cell.children().last();
 	// add a listener to return the property value if not a number
@@ -3054,7 +3056,7 @@ function Property_mapZoom(cell, propertyObject, property, details) {
 	// set the value if it exists (or is 0)
 	if (propertyObject[property.key] || parseInt(propertyObject[property.key]) == 0) value = propertyObject[property.key];
 	// append the adjustable form control
-	cell.append("<input class='propertiesPanelTable' value='" + value + "' />");
+	cell.append("<input value='" + value + "' />");
 	// get a reference to the form control
 	var input = cell.children().last();
 	// add a listener to update the property
@@ -3096,7 +3098,7 @@ function Property_device(cell, propertyObject, property, details) {
 	}
 		
 	// add the select object
-	cell.append("<select class='propertiesPanelTable'>" + options + "</select>");
+	cell.append("<select>" + options + "</select>");
 	// get a reference to the object
 	var select = cell.children().last();
 	// add a listener to update the property

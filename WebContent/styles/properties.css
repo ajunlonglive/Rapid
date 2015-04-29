@@ -82,13 +82,22 @@ table.propertiesPanelTable  {
 	padding-left: 5px;
 }
 
+.dialogueTable {
+	border-collapse: collapse;
+}
+
 .dialogueTable td {
-	max-width: none;
-	width: auto;
+	max-width: 50px;
+	padding:0;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .dialogueTable input {
-	max-width: 100px;
+	width: 100%;
+	font-size: 11px;
+	margin-top:-1px;
 }
 
 .dialogueTable input[type=file] {
@@ -102,6 +111,23 @@ table.propertiesPanelTable  {
 	margin-top: 3px;
 	margin-bottom: 3px;
 	margin-left: -1px;
+}
+
+.inputTableWithTitles tr:nth-child(1) td {
+	text-align:center;
+	padding-bottom: 3px;
+}
+
+.inputTableWithTitles tr:nth-child(2) td {
+	padding-top:1px;
+}
+
+td.inputBorderRight {
+	padding-right: 5px;
+}
+
+td.paddingLeft5 {
+	padding-left: 5px;	
 }
 
 .nopadding td {
