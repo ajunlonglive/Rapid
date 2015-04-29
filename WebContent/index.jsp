@@ -131,8 +131,7 @@ $(document).ready( function() {
 	<a href="#" onclick="loadApps();"><img src="images/application_157x135.png" /><span>Applications</span></a>
 </div>
 
-<div class="apps" id="apps">
-</div>
+<div class="apps" id="apps"><b style="padding-left:10px;">loading...</b></div>
 
 <div class="info">
 	<p><a href="logout.jsp">Log out</a></p>	
