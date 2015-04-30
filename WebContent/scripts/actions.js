@@ -395,8 +395,11 @@ function showActions(control, eventType) {
 
 }
 
-//this renders a single action into a table (used by events and childActions)
+// this renders a single action into a table (used by events and childActions)
 function showAction(actionsTable, action, collection, refreshFunction) {
+	
+	// add the action style class
+	actionsTable.parent().addClass("actionsPanelDiv");
 	
 	// get  the action class
 	var actionClass = _actionTypes[action.type];
@@ -407,7 +410,7 @@ function showAction(actionsTable, action, collection, refreshFunction) {
 	// add a small break
 	insertRow.before("<tr><td colspan='2'></td></tr>");
 	// write action name into the table						
-	insertRow.before("<tr><td colspan='2'><h4>" + actionClass.name + " action</h4><img class='delete' src='images/bin_16x16.png' title='Delete this action'/><img class='reorder' src='images/moveUpDown_16x16.png' title='Reorder this action'/><img class='copyAction' src='images/copy_16x16.png' title='Copy this action'/></td></tr>");
+	insertRow.before("<tr><td colspan='2'><h3>" + actionClass.name + " action</h3><img class='delete' src='images/bin_16x16.png' title='Delete this action'/><img class='reorder' src='images/moveUpDown_16x16.png' title='Reorder this action'/><img class='copyAction' src='images/copy_16x16.png' title='Copy this action'/></td></tr>");
 	// get a reference to the delete image
 	var deleteImage = actionsTable.find("img.delete").last(); 
 	// add a click listener to the delete image
