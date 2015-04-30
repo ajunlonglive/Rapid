@@ -41,7 +41,7 @@ Applications applications = (Applications) getServletContext().getAttribute("app
 // retain a ref to rapid app
 Application rapid = applications.get("rapid");
 // get a rapid request
-RapidRequest rapidRequest = new RapidRequest(request); 
+RapidRequest rapidRequest = new RapidRequest(request, rapid); 
 // get the rapid application security
 SecurityAdapter security = rapid.getSecurity();
 // assume no permission

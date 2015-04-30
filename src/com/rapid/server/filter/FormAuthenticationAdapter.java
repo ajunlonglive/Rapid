@@ -156,7 +156,7 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 						for (Application application : applications.get()) {
 							try {
 								// get a Rapid request
-								RapidRequest rapidRequest = new RapidRequest(request);
+								RapidRequest rapidRequest = new RapidRequest(request, application);
 								// see if the user is known to this application
 								authorised = application.getSecurity().checkUserPassword(rapidRequest, userName, userPassword);
 								// we can exit if so as we only need one

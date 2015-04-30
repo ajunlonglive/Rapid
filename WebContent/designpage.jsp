@@ -36,8 +36,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
 // log that this is loading
 Logger.getLogger(this.getClass()).debug("designpage.jsp request : " + request.getQueryString());
-// get a simple rapid request
-RapidRequest rapidRequest = new RapidRequest(request); 
+
 // retain a ref to the app
 Application app = null;
 // retain a ref to the page
@@ -65,6 +64,9 @@ if (appId != null && pageId != null) {
 		
 		// get the security
 		SecurityAdapter security = app.getSecurity();
+		
+		// get a simple rapid request
+		RapidRequest rapidRequest = new RapidRequest(request, app); 
 		
 		// check the user password
 		if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRequest.getUserPassword())) {

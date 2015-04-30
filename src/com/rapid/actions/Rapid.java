@@ -360,17 +360,20 @@ public class Rapid extends Action {
 						// get the security
 						SecurityAdapter security = application.getSecurity();
 						
+						// now emulate the app we are looping
+						RapidRequest appSecurityRequest = new RapidRequest(rapidServlet, rapidRequest.getRequest(), application);
+						
 						// check the user password
-						if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRequest.getUserPassword())) {
+						if (security.checkUserPassword(appSecurityRequest, rapidRequest.getUserName(), rapidRequest.getUserPassword())) {
 							
 							// check the users permission to design this application
-							boolean designPermission = security.checkUserRole(rapidRequest, com.rapid.server.Rapid.DESIGN_ROLE);
+							boolean adminPermission = security.checkUserRole(appSecurityRequest, com.rapid.server.Rapid.DESIGN_ROLE);
 							
 							// if app is rapid do a further check
-							if (designPermission && "rapid".equals(application.getId())) designPermission = application.getSecurity().checkUserRole(rapidRequest, com.rapid.server.Rapid.SUPER_ROLE);
+							if (adminPermission && "rapid".equals(application.getId())) adminPermission = application.getSecurity().checkUserRole(appSecurityRequest, com.rapid.server.Rapid.SUPER_ROLE);
 							
 							// if we got permssion - add this application to the list 
-							if (designPermission) {
+							if (adminPermission) {
 								// create a json object
 								JSONObject jsonApplication = new JSONObject();
 								// add the details we want
@@ -527,17 +530,20 @@ public class Rapid extends Action {
 						// get the security
 						SecurityAdapter security = application.getSecurity();
 						
+						// now emulate the app we are looping
+						RapidRequest appSecurityRequest = new RapidRequest(rapidServlet, rapidRequest.getRequest(), application);
+						
 						// check the user password
-						if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRequest.getUserPassword())) {
+						if (security.checkUserPassword(appSecurityRequest, rapidRequest.getUserName(), rapidRequest.getUserPassword())) {
 							
-							// check the users permission to design this application
-							boolean designPermission = security.checkUserRole(rapidRequest, com.rapid.server.Rapid.DESIGN_ROLE);
+							// check the users permission to administer this application
+							boolean adminPermission = security.checkUserRole(appSecurityRequest, com.rapid.server.Rapid.ADMIN_ROLE);
 							
 							// if app is rapid do a further check
-							if (designPermission && "rapid".equals(application.getId())) designPermission = application.getSecurity().checkUserRole(rapidRequest, com.rapid.server.Rapid.SUPER_ROLE);
+							if (adminPermission && "rapid".equals(application.getId())) adminPermission = application.getSecurity().checkUserRole(appSecurityRequest, com.rapid.server.Rapid.SUPER_ROLE);
 							
 							// check the RapidDesign role is present in the users roles for this application
-							if (designPermission) {												
+							if (adminPermission) {												
 								
 								// make a json object for this version
 								JSONObject jsonVersion = new JSONObject();
@@ -569,15 +575,15 @@ public class Rapid extends Action {
 				SecurityAdapter security = app.getSecurity();
 				
 				// password check
-				if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRequest.getUserPassword())) {
+				if (security.checkUserPassword(rapidActionRequest, rapidRequest.getUserName(), rapidRequest.getUserPassword())) {
 					
 					// check the users permission to design this application
-					boolean designPermission = security.checkUserRole(rapidRequest, com.rapid.server.Rapid.DESIGN_ROLE);
+					boolean adminPermission = security.checkUserRole(rapidActionRequest, com.rapid.server.Rapid.DESIGN_ROLE);
 					
 					// if app is rapid do a further check
-					if (designPermission && "rapid".equals(app.getId())) designPermission = app.getSecurity().checkUserRole(rapidRequest, com.rapid.server.Rapid.SUPER_ROLE);
+					if (adminPermission && "rapid".equals(app.getId())) adminPermission = app.getSecurity().checkUserRole(rapidActionRequest, com.rapid.server.Rapid.SUPER_ROLE);
 					
-					if (designPermission) {
+					if (adminPermission) {
 						
 						// add the name
 						result.put("name", app.getName());
