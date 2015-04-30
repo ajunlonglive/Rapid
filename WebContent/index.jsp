@@ -37,7 +37,7 @@ Applications applications = (Applications) getServletContext().getAttribute("app
 // get the rapid app
 Application rapid = applications.get("rapid");
 //get a rapid request
-RapidRequest rapidRequest = new RapidRequest(request); 
+RapidRequest rapidRequest = new RapidRequest(request, rapid); 
 %>
 <html>
 <head>

@@ -190,14 +190,17 @@ public class Designer extends RapidHttpServlet {
 									// get the security									
 									SecurityAdapter security = application.getSecurity();
 									
+									// recreate the request in the name of this app
+									RapidRequest appRequest = new RapidRequest(this, request, application);
+									
 									// check the users password
-									if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRequest.getUserPassword())) {
+									if (security.checkUserPassword(appRequest, rapidRequest.getUserName(), rapidRequest.getUserPassword())) {
 										
 										// check the users permission to design this application
-										boolean designPermission = security.checkUserRole(rapidRequest, Rapid.DESIGN_ROLE);
+										boolean designPermission = security.checkUserRole(appRequest, Rapid.DESIGN_ROLE);
 										
 										// if app is rapid do a further check
-										if (designPermission && "rapid".equals(application.getId())) designPermission = application.getSecurity().checkUserRole(rapidRequest, Rapid.SUPER_ROLE);
+										if (designPermission && "rapid".equals(application.getId())) designPermission = security.checkUserRole(appRequest, Rapid.SUPER_ROLE);
 										
 										// if we got permssion - add this application to the list 
 										if (designPermission) {
@@ -243,14 +246,17 @@ public class Designer extends RapidHttpServlet {
 									// get the security									
 									SecurityAdapter security = application.getSecurity();
 									
+									// recreate the request in the name of this app
+									RapidRequest appRequest = new RapidRequest(this, request, application);
+									
 									// check the users password
-									if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRequest.getUserPassword())) {
+									if (security.checkUserPassword(appRequest, rapidRequest.getUserName(), rapidRequest.getUserPassword())) {
 										
 										// check the users permission to design this application
-										boolean designPermission = application.getSecurity().checkUserRole(rapidRequest, Rapid.DESIGN_ROLE);
+										boolean designPermission = application.getSecurity().checkUserRole(appRequest, Rapid.DESIGN_ROLE);
 										
 										// if app is rapid do a further check
-										if (designPermission && "rapid".equals(application.getId())) designPermission = application.getSecurity().checkUserRole(rapidRequest, Rapid.SUPER_ROLE);
+										if (designPermission && "rapid".equals(application.getId())) designPermission = security.checkUserRole(appRequest, Rapid.SUPER_ROLE);
 										
 										// check the RapidDesign role is present in the users roles for this application
 										if (designPermission) {												
@@ -1121,8 +1127,7 @@ public class Designer extends RapidHttpServlet {
 													        newFileString = fileString
 													        	.replace("applications/" + appOldId + "/", "applications/" + appId + "/" + appVersion  + "/")
 													        	.replace("~?a=" + appOldId + "&amp;", "~?a=" + appId + "&amp;v=" + appVersion + "&amp;")
-													        	.replace("~?a=" + appOldId + "&amp;amp;", "~?a=" + appId + "&amp;v=" + appVersion + "&amp;")
-													        	.replace("\"" + appOldId + "\"","\"" + appId + "\"");
+													        	.replace("~?a=" + appOldId + "&amp;amp;", "~?a=" + appId + "&amp;v=" + appVersion + "&amp;");
 												        	
 												        } else {
 												        	
@@ -1130,9 +1135,7 @@ public class Designer extends RapidHttpServlet {
 													        newFileString = fileString
 													        	.replace("applications/" + appOldId + "/" + appOldVersion + "/", "applications/" + appId + "/" + appVersion  + "/")
 													        	.replace("~?a=" + appOldId + "&amp;v=" + appOldVersion + "&amp;", "~?a=" + appId + "&amp;v=" + appVersion + "&amp;")
-														        .replace("~?a=" + appOldId + "&amp;amp;v=" + appOldVersion + "&amp;amp;", "~?a=" + appId + "&amp;v=" + appVersion + "&amp;")
-														        .replace("\"" + appOldId + "\"","\"" + appId + "\"")
-														        .replace("\"" + appOldVersion + "\"","\"" + appVersion + "\"");
+														        .replace("~?a=" + appOldId + "&amp;amp;v=" + appOldVersion + "&amp;amp;", "~?a=" + appId + "&amp;v=" + appVersion + "&amp;");												        	
 												        }
 												        
 												        // get a writer for the new page file

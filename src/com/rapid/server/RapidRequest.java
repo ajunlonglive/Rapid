@@ -170,12 +170,21 @@ public class RapidRequest {
 		}
 	}
 	
-	// can also instantiate a rapid request with just an HttpServletRequest
-	public RapidRequest(HttpServletRequest request) {
+	// can also instantiate a rapid request with just an HttpServletRequest and an application
+	public RapidRequest(HttpServletRequest request, Application application) {
 		// store the user name from the session
 		_userName = (String) request.getSession().getAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME);
 		// store the request
 		_request = request;
+		// store the application
+		_application = application;
+		// if we got an application
+		if (application != null) {
+			// store the application id
+			_appId = application.getId();
+			// store the version
+			_version = application.getVersion();
+		}
 	}
 	
 	// good for printing details of the Rapid request into logs and error messages

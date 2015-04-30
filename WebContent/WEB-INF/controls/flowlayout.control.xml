@@ -235,8 +235,9 @@ pageWindow[this.id + "details"] = {};
 // set the cell width
 pageWindow[this.id + "details"].cellWidth = this.cellWidth;
 // resize after half a sec (needs to be after 200 sec delay for visibility
-pageWindow.setTimeout( function() {	
-	_pageIframeWindow[0].sizeFlowLayouts();    		
+pageWindow.setTimeout( function() {
+	// only if the function is present
+	if (_pageIframeWindow[0] && _pageIframeWindow[0].sizeFlowLayouts) _pageIframeWindow[0].sizeFlowLayouts();    		
  }, 500);
 	        ]]>	   	        
 	    </initDesignJavaScript>
