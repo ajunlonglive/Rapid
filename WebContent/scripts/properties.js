@@ -278,7 +278,7 @@ function setPropertyVisibilty(propertyObject, propertyKey, visibile) {
 }
 
 // this is a reusable function for creating dialogue boxes
-function getDialogue(cell, propertyObject, property, details, width, title) {	
+function getDialogue(cell, propertyObject, property, details, width, title, options) {	
 		
 	// derive the id for this dialogue
 	var dialogueId = propertyObject.id + property.key;
@@ -295,7 +295,32 @@ function getDialogue(cell, propertyObject, property, details, width, title) {
 	// if we couldn't retrieve one, make it now
 	if (!dialogue[0]) {		
 		// add the div
-		dialogue = $("#propertiesDialogues").append("<div id='" + dialogueId + "' class='propertyDialogue' style='position:absolute;display:none;width:" + width + "px;z-index:10012;border:1px solid black;background-color:white;font-size:11px;padding:10px;'></div>").children().last();
+		dialogue = $("#propertiesDialogues").append("<div id='" + dialogueId + "' class='propertyDialogue'></div>").children().last();
+		// check the options
+		if (options) {
+			// if resizeX
+			if (options.sizeX) {
+				// add the mouse over div
+				var resizeX = dialogue.append("<div class='resizeX'></div>").find("div.resizeX");
+				// add the listener
+				addListener(resizeX.mousedown( {id: dialogueId}, function(ev) {
+					// retain that we'r resizing a dialogue
+					_dialogueSize = true;
+					// retain it's id
+					_dialogueSizeId = ev.data.id;
+					// retain the type of resize
+					_dialogueSizeType = "X";
+					// calculate the offset
+					_mouseDownXOffset = ev.pageX - $("#" + _dialogueSizeId).offset().left;
+				}));				
+			}
+			// set min-width to explicit or standard width
+			if (options.minWidth) {
+				dialogue.css("min-width", options.minWidth);
+			} else {
+				dialogue.css("min-width", width);
+			}
+		}
 		// add a close link
 		var close = dialogue.append("<b style='float:left;margin-top:-5px;'>" + title + "</b><a href='#' class='closeDialogue' style='float:right;margin-top:-5px;'>close</a></div>").children().last();
 	
@@ -331,7 +356,7 @@ function getDialogue(cell, propertyObject, property, details, width, title) {
 
 		}));			
 		// add an options table
-		dialogue.append("<br/><table style='width:100%' class='dialogueTable'><tbody></tbody></table>");
+		dialogue.append("<br/><table class='dialogueTable'><tbody></tbody></table>");
 	}	
 	
 	// listener to show the dialogue 
@@ -347,7 +372,6 @@ function getDialogue(cell, propertyObject, property, details, width, title) {
 		}		
 		// position the dialogue
 		dialogue.css({
-			"left": cell.offset().left + cell.outerWidth() - dialogue.outerWidth() + 1, 
 			"top": cell.offset().top,
 			"z-index": _dialogueZindex++
 		});
@@ -356,6 +380,13 @@ function getDialogue(cell, propertyObject, property, details, width, title) {
 			windowResize("PropertyDialogue show");
 		});			
 	}));
+	
+	// if there is a saved size of the dialogue, set it, otherwise use the given width
+	if (_sizes[_version.id + _version.version + dialogueId + "width"]) {
+		dialogue.css("width", _sizes[_version.id + _version.version + dialogueId + "width"]);
+	} else {
+		dialogue.css("width", width);
+	}
 	
 	// return
 	return dialogue;	
@@ -473,9 +504,14 @@ function Property_bigtext(cell, propertyObject, property, details) {
 	// add the text
 	textarea.text(value);
 	// add a listener to update the property
-	addListener( cell.click( {textarea: textarea}, function(ev) { 
-		textarea.css({
-			"left": cell.offset().left + cell.outerWidth() - 605, 
+	addListener( cell.click( {textarea: textarea}, function(ev) {
+		// assume right is 10
+		var right = 10;
+		// if we're in a dialogue increase to 20
+		if ($(ev.target).closest(".propertyDialogue")) right = 21;
+		// set the css
+		ev.data.textarea.css({
+			"right": right,
 			"top": cell.offset().top,
 			"z-index" : _dialogueZindex ++
 		});
@@ -679,7 +715,7 @@ function Property_galleryImages(cell, gallery, property, details) {
 function Property_imageFile(cell, propertyObject, property, details) {
 	
 	// retrieve or create the dialogue
-	var dialogue = getDialogue(cell, propertyObject, property, details, 200, "Image file");		
+	var dialogue = getDialogue(cell, propertyObject, property, details, 200, "Image file", {sizeX: true});		
 	// grab a reference to the table
 	var table = dialogue.find("table").first();
 	// make sure table is empty
@@ -755,8 +791,8 @@ function Property_linkPage(cell, propertyObject, property, details) {
 function Property_linkURL(cell, propertyObject, property, details) {
 	// if the type is a url
 	if (propertyObject.linkType == "U")	{
-		// add a big text
-		Property_bigtext(cell, propertyObject, property, details);
+		// add a text
+		Property_text(cell, propertyObject, property, details);
 	} else {
 		// remove the row
 		cell.parent().remove();
@@ -822,9 +858,11 @@ function Property_pageName(cell, page, property, details) {
 function Property_validationControls(cell, propertyObject, property, details) {
 		
 	// retrieve or create the dialogue
-	var dialogue = getDialogue(cell, propertyObject, property, details, 200, "Controls");		
+	var dialogue = getDialogue(cell, propertyObject, property, details, 200, "Controls", {sizeX: true});		
 	// grab a reference to the table
 	var table = dialogue.find("table").first();
+	// add the borders
+	table.addClass("dialogueTableAllBorders");
 	// make sure table is empty
 	table.children().remove();
 	
@@ -899,11 +937,12 @@ function Property_validationControls(cell, propertyObject, property, details) {
 function Property_childActions(cell, propertyObject, property, details) {
 		
 	// retrieve or create the dialogue
-	var dialogue = getDialogue(cell, propertyObject, property, details, 200, property.name);		
+	var dialogue = getDialogue(cell, propertyObject, property, details, 200, property.name, {sizeX: true});		
 	// grab a reference to the table
 	var table = dialogue.children().last().children().last();
 	// remove the dialogue class so it looks like the properties
 	table.parent().removeClass("dialogueTable");
+	table.parent().addClass("propertiesPanelTable");
 	// make sure its empty
 	table.children().remove();
 	
@@ -943,7 +982,7 @@ function Property_childActions(cell, propertyObject, property, details) {
 	if (_copyAction) actionOptions = "<optgroup label='New action'>" + _actionOptions + "</optgroup><optgroup label='Paste action'><option value='pasteActions'>" + getCopyActionName(propertyObject.id) + "</option></optgroup>";
 		
 	// add an add dropdown
-	var addAction = table.append("<tr><td colspan='2'><select><option value=''>Add action...</option>" + actionOptions + "</select></td></tr>").children().last().children().last().children().last();
+	var addAction = table.append("<tr><td colspan='2' style='padding-left:0;'><select style='border:0;'><option value=''>Add action...</option>" + actionOptions + "</select></td></tr>").children().last().children().last().children().last();
 	
 	addListener( addAction.change( { cell: cell, propertyObject: propertyObject, property: property, details: details }, function(ev) {
 		// get a reference to the dropdown
@@ -1026,11 +1065,12 @@ function Property_childActionsForType(cell, propertyObject, property, details) {
 		if (actionClass) {
 			
 			// retrieve or create the dialogue
-			var dialogue = getDialogue(cell, propertyObject, property, details, 200, "Child " + actionClass.name + " actions");		
+			var dialogue = getDialogue(cell, propertyObject, property, details, 200, "Child " + actionClass.name + " actions", {sizeX: true});		
 			// grab a reference to the table
 			var table = dialogue.children().last().children().last();
 			// remove the dialogue class so it looks like the properties
 			table.parent().removeClass("dialogueTable");
+			table.parent().addClass("propertiesPanelTable");
 			// make sure its empty
 			table.children().remove();
 			
@@ -1142,7 +1182,7 @@ function Property_childActionsForType(cell, propertyObject, property, details) {
 function Property_databaseQuery(cell, propertyObject, property, details) {
 	
 	// retrieve or create the dialogue
-	var dialogue = getDialogue(cell, propertyObject, property, details, 1000, "Query");		
+	var dialogue = getDialogue(cell, propertyObject, property, details, 650, "Query", {sizeX: true});		
 	// grab a reference to the table
 	var table = dialogue.children().last().children().last();
 	// make sure its empty
@@ -1160,7 +1200,7 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 	cell.text(text);
 	
 	// add inputs table, sql, and outputs table
-	table.append("<tr><td colspan='2' rowspan='3' style='padding:0px;vertical-align: top;'><table style='width:100%'><tr><td><b>Input</b></td><td colspan='2'><b>Field</b></td></tr></table></td><td colspan='3' style='width:500px;padding:0px 6px 0px 0px;'><b>SQL</b><br/><textarea style='width:100%;min-height:300px;'></textarea></td><td colspan='2' rowspan='3' style='padding:0px;vertical-align: top;'><table style='width:100%'><tr><td><b>Field</b></td><td colspan='2'><b>Output</b></td></tr></table></td></tr>");
+	table.append("<tr><td colspan='2' style='padding:0px;vertical-align: top;'><table class='dialogueTable'><tr><td><b>Input</b></td><td colspan='2'><b>Field</b></td></tr></table></td><td colspan='3' style='width:50%;padding:4px 5px 0 5px;'><b>SQL</b><br/><textarea style='width:100%;min-width:100%;max-width:100%;min-height:200px;box-sizing:border-box;'></textarea></td><td colspan='2' rowspan='3' style='padding:0px;vertical-align: top;'><table  class='dialogueTable'><tr><td><b>Field</b></td><td colspan='2'><b>Output</b></td></tr></table></td></tr>");
 	
 	// find the inputs table
 	var inputsTable = table.children().last().children().first().children("table");
@@ -1177,7 +1217,7 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 		// make it an empty space if null
 		if (!field) field = "";
 		// add the row
-		inputsTable.append("<tr><td style='min-width:100px;'>" + (query.multiRow && i > 0 ? "&nbsp;" : itemName) + "</td><td><input value='" + field + "' /></td><td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
+		inputsTable.append("<tr><td>" + (query.multiRow && i > 0 ? "&nbsp;" : itemName) + "</td><td><input value='" + field + "' /></td><td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
 		// get the field input
 		var fieldInput = inputsTable.find("tr").last().children(":nth(1)").last().children().last();
 		// add a listener
@@ -1236,7 +1276,7 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 			Property_databaseQuery(ev.data.cell, ev.data.propertyObject, ev.data.property, ev.data.details);
 		}));
 	}
-	
+			
 	// find the sql textarea
 	var sqlControl = table.find("textarea").first();
 	sqlControl.text(query.SQL);
@@ -1302,7 +1342,7 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 		Property_databaseQuery(ev.data.cell, ev.data.propertyObject, ev.data.property, ev.data.details);	
 	}));
 	
-	table.append("<tr><td>Multi-row data? <input type='checkbox'" + (query.multiRow ? "checked='checked'" : "" ) + " style='vertical-align: middle;margin-top: -3px;'/></td><td style='text-align: center;'>Database connection <select style='width:auto;'>" + getDatabaseConnectionOptions(query.databaseConnectionIndex) + "</select></td><td style='text-align:right;'><button>Test SQL</button></td></tr>");
+	table.append("<tr><td colspan='2'>Multi-row data? <input type='checkbox'" + (query.multiRow ? "checked='checked'" : "" ) + " style='vertical-align: middle;margin-top: -3px;'/></td><td style='text-align: left;overflow:inherit;' colspan='2'>Database connection <select style='width:auto;'>" + getDatabaseConnectionOptions(query.databaseConnectionIndex) + "</select></td><td style='text-align:right;'><button>Test SQL</button></td></tr>");
 	
 	// get a reference to the multi-data check box
 	var multiRow = table.find("tr").last().find("input");
@@ -1355,7 +1395,7 @@ function Property_databaseChildActions(cell, propertyObject, property, details) 
 function Property_webserviceRequest(cell, propertyObject, property, details) {
 	
 	// retrieve or create the dialogue
-	var dialogue = getDialogue(cell, propertyObject, property, details, 1000, "Webservice request");		
+	var dialogue = getDialogue(cell, propertyObject, property, details, 1000, "Webservice request", {sizeX: true, minWidth: 600});		
 	// grab a reference to the table
 	var table = dialogue.children().last().children().last();
 	// make sure its empty
@@ -1373,7 +1413,7 @@ function Property_webserviceRequest(cell, propertyObject, property, details) {
 	cell.text(text);
 	
 	// add inputs table, body, and outputs table
-	table.append("<tr><td colspan='2' rowspan='3' style='padding:0px;vertical-align: top;'><table style='width:100%'><tr><td><b>Input</b></td><td colspan='2'><b>Field</b></td></tr></table></td><td colspan='2' style='width:500px;padding:0px 6px 0px 0px;'><b style='display:block;margin-bottom:-5px;'>Request type</b><br/><input type='radio' name='WSType' value='SOAP'/>SOAP<input type='radio' name='WSType' value='JSON'/>JSON<input type='radio' name='WSType' value='XML'/>XML/Restfull</br><b style='display:block;margin-top:5px;margin-bottom:-5px;'>URL</b><br/><input class='WSUrl' style='max-width:inherit;width:100%' /></br><b style='display:block;margin-top:5px;margin-bottom:-5px;'>Action</b><br/><input class='WSAction' style='max-width:inherit;width:100%' /></br><b style='display:block;margin-top:5px;margin-bottom:-5px;'>Body</b><br/><textarea style='width:100%;min-height:300px;' class='WSBody'></textarea></br><b style='display:block;margin-top:5px;margin-bottom:-5px;'>Response root element</b><br/><input class='WSRoot' style='max-width:inherit;width:100%;margin-bottom:5px;' /></td><td colspan='2' rowspan='3' style='padding:0px;vertical-align: top;'><table style='width:100%'><tr><td><b>Field</b></td><td colspan='2'><b>Output</b></td></tr></table></td></tr>");
+	table.append("<tr><td colspan='2' rowspan='3' style='padding:0px;vertical-align: top;'><table class='dialogueTable'><tr><td><b>Input</b></td><td colspan='2'><b>Field</b></td></tr></table></td><td class='normalInputs' colspan='2' style='width:500px;padding:0 6px;'><b style='display:block;margin-bottom:-5px;'>Request type</b><br/><input type='radio' name='WSType' value='SOAP'/>SOAP<input type='radio' name='WSType' value='JSON'/>JSON<input type='radio' name='WSType' value='XML'/>XML/Restfull</br><b style='display:block;margin-top:5px;margin-bottom:-5px;'>URL</b><br/><input class='WSUrl' /></br><b style='display:block;margin-top:5px;margin-bottom:-5px;'>Action</b><br/><input class='WSAction' /></br><b style='display:block;margin-top:5px;margin-bottom:-5px;'>Body</b><br/><textarea style='width:100%;min-height:200px;' class='WSBody'></textarea></br><b style='display:block;margin-top:5px;margin-bottom:-5px;'>Response root element</b><br/><input class='WSRoot' style='margin-bottom:5px;' /></td><td colspan='2' rowspan='3' style='padding:0px;vertical-align: top;'><table class='dialogueTable'><tr><td><b>Field</b></td><td colspan='2'><b>Output</b></td></tr></table></td></tr>");
 	
 	// find the inputs table
 	var inputsTable = table.children().last().children().first().children().last();
@@ -1569,16 +1609,18 @@ function Property_pageSessionVariables(cell, page, property, details, textOnly) 
 	if (!textOnly) {
 	
 		// retrieve or create the dialogue
-		var dialogue = getDialogue(cell, page, property, details, 200, "Page variables");		
+		var dialogue = getDialogue(cell, page, property, details, 200, "Page variables", {sizeX: true});		
 		// grab a reference to the table
 		var table = dialogue.find("table").first();
+		// add the all grid
+		table.addClass("dialogueTableAllBorders");
 		// make sure table is empty
 		table.children().remove();
 		
 		// show variables
 		for (var i in variables) {
 			// add the line
-			table.append("<tr><td style='padding-left:0px'><input class='variable' value='" + variables[i] + "' /></td><td><img src='images/bin_16x16.png' style='float:right;' /></td></tr>");
+			table.append("<tr><td><input class='variable' value='" + variables[i] + "' /></td><td style='width:16px;'><img src='images/bin_16x16.png' style='float:right;' /></td></tr>");
 			
 			// find the text
 			var valueEdit = table.find("input.variable").last();
@@ -1635,9 +1677,11 @@ function Property_pageSessionVariables(cell, page, property, details, textOnly) 
 function Property_roles(cell, control, property, details) {
 	
 	// retrieve or create the dialogue
-	var dialogue = getDialogue(cell, control, property, details, 200, "User roles");		
+	var dialogue = getDialogue(cell, control, property, details, 200, "User roles", {sizeX: true});		
 	// grab a reference to the table
 	var table = dialogue.find("table").first();
+	// add the allgrid class
+	table.addClass("dialogueTableAllBorders");
 	// make sure table is empty
 	table.children().remove();
 	
@@ -1658,7 +1702,7 @@ function Property_roles(cell, control, property, details) {
 	// show roles
 	for (var i in roles) {
 		// add the line
-		table.append("<tr><td style='padding-left:0px'>" + roles[i] + "</td><td><img src='images/bin_16x16.png' style='float:right;' /></td></tr>");
+		table.append("<tr><td>" + roles[i] + "</td><td style='width:16px;'><img src='images/bin_16x16.png' style='float:right;' /></td></tr>");
 						
 		// find the delete
 		var optionDelete = table.find("tr").last().children().last().children().last();
@@ -1705,9 +1749,11 @@ function Property_navigationSessionVariables(cell, navigation, property, details
 	}
 	
 	// retrieve or create the dialogue
-	var dialogue = getDialogue(cell, navigation, property, details, 300, "Set page variables");		
+	var dialogue = getDialogue(cell, navigation, property, details, 300, "Set page variables", {sizeX: true});		
 	// grab a reference to the table
 	var table = dialogue.find("table").first();
+	// add dialogueTableBorders
+	table.addClass("dialogueTableBorders");
 	// make sure table is empty
 	table.children().remove();
 	
@@ -1762,7 +1808,7 @@ function Property_navigationSessionVariables(cell, navigation, property, details
 			if (control) name = control.name;
 			
 			// add the line
-			table.append("<tr><td>" + name + "</td><td><select><option value=''>Please select...</option>" + getInputOptions(sessionVariable.itemId) + "</select></td><td style='padding-left:0px'><input value='" + sessionVariable.field + "' /></td></tr>");
+			table.append("<tr><td>" + name + "</td><td><select><option value=''>Please select...</option>" + getInputOptions(sessionVariable.itemId) + "</select></td><td><input value='" + sessionVariable.field + "' /></td></tr>");
 			
 			// find the dropdown
 			var itemEdit = table.find("select").last();
@@ -1797,7 +1843,6 @@ function Property_navigationSessionVariables(cell, navigation, property, details
 					
 }
 
-// this property only appears if the navigation type is dialogue
 function Property_navigationStopActions(cell, navigation, property, details) {
 	
 	if (navigation.dialogue) {
@@ -1818,7 +1863,7 @@ function Property_navigationStopActions(cell, navigation, property, details) {
 function Property_radiobuttons(cell, radiobuttons, property, details) {
 	
 	// retrieve or create the dialogue
-	var dialogue = getDialogue(cell, radiobuttons, property, details, 200, "Radio buttons");		
+	var dialogue = getDialogue(cell, radiobuttons, property, details, 200, "Radio buttons", {sizeX: true});		
 	// grab a reference to the table
 	var table = dialogue.find("table").first();
 	// make sure table is empty
@@ -1840,12 +1885,12 @@ function Property_radiobuttons(cell, radiobuttons, property, details) {
 	cell.text(text);
 	
 	// add a heading
-	table.append("<tr>" + (radiobuttons.codes ? "<td><b>Code</b></td>" : "") + "<td colspan='2'><b>Text</b></td></tr>");
+	table.append("<tr>" + (radiobuttons.codes ? "<td><b>Text</b></td><td colspan='2'><b>Code</b></td>" : "<td colspan='2'><b>Text</b></td>") + "</tr>");
 	
 	// show options
 	for (var i in buttons) {
 		// add the line
-		table.append("<tr>" + (radiobuttons.codes ? "<td style='padding-left:0px'><input class='value' value='" + buttons[i].value + "' /></td>" : "") + "<td style='padding-left:0px'><input class='label' value='" + buttons[i].label + "' /></td><td><img src='images/bin_16x16.png' style='float:right;' /></td></tr>");
+		table.append("<tr><td><input class='label' value='" + buttons[i].label + "' /></td>" + (radiobuttons.codes ? "<td><input class='value' value='" + buttons[i].value + "' /></td>" : "") + "<td style='width:32px;padding:0;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
 		
 		// find the code
 		var valueEdit = table.find("input.value").last();
@@ -1871,22 +1916,7 @@ function Property_radiobuttons(cell, radiobuttons, property, details) {
 			rebuildHtml(ev.data.radiobuttons);
 		}));
 		
-		
-		// find the delete
-		var buttonDelete = table.find("tr").last().children().last().children().last();
-		// add a listener
-		addListener( buttonDelete.click( {cell: cell, radiobuttons: radiobuttons, property: property, details: details}, function(ev) {
-			// get the del image
-			var delImage = $(ev.target);
-			// remove from parameters
-			ev.data.radiobuttons.buttons.splice(delImage.parent().parent().index()-1,1);
-			// remove row
-			delImage.parent().parent().remove();
-			// update html if top row
-			if (delImage.parent().index() == 1) rebuildHtml(ev.data.radiobuttons);
-			// refresh
-			Property_radiobuttons(ev.data.cell, ev.data.radiobuttons, ev.data.property, ev.data.details);
-		}));
+				
 	}
 		
 	// have an add row
@@ -1917,6 +1947,30 @@ function Property_radiobuttons(cell, radiobuttons, property, details) {
 		}));
 		
 	}
+	
+	// find the deletes
+	var buttonDelete = table.find("img.delete");
+	// add a listener
+	addListener( buttonDelete.click( {cell: cell, radiobuttons: radiobuttons, property: property, details: details}, function(ev) {
+		// get the del image
+		var delImage = $(ev.target);
+		// remove from parameters
+		ev.data.radiobuttons.buttons.splice(delImage.parent().parent().index()-1,1);
+		// remove row
+		delImage.parent().parent().remove();
+		// update html if top row
+		if (delImage.parent().index() == 1) rebuildHtml(ev.data.radiobuttons);
+		// refresh
+		Property_radiobuttons(ev.data.cell, ev.data.radiobuttons, ev.data.property, ev.data.details);
+	}));
+	
+	// add reorder listeners
+	addReorder(buttons, table.find("img.reorder"), function() { 
+		// refresh the html and regenerate the mappings
+		rebuildHtml(radiobuttons);
+		// refresh the property
+		Property_radiobuttons(cell, radiobuttons, property, details); 
+	});
 	
 }
 
@@ -1965,7 +2019,7 @@ function logicConditionValue(cell, action, conditionIndex, valueId) {
 	var value = condition[valueId];
 		
 	// clear and add a table into the cell for this value
-	cell.html("<table></table>")
+	cell.html("<table class='propertiesPanelTable'></table>")
 	// get a reference to it
 	var table = cell.find("table").last();
 	
@@ -2026,13 +2080,15 @@ function logicConditionValue(cell, action, conditionIndex, valueId) {
 function Property_logicConditions(cell, action, property, details) {
 	
 	// retrieve or create the dialogue
-	var dialogue = getDialogue(cell, action, property, details, 500, "Conditions");		
+	var dialogue = getDialogue(cell, action, property, details, 500, "Conditions", {sizeX: true});		
 	// grab a reference to the table
 	var table = dialogue.find("table").first();
-	// add the style that removed the restriction on column widths
-	table.addClass("dialogueTable");
 	// make sure table is empty
 	table.children().remove();
+	// remove the dialogueTable class
+	table.removeClass("dialogueTable");
+	// add the dialogueTable class
+	table.addClass("propertiesPanelTable");
 	// get the conditions
 	var conditions = action[property.key];
 	// instantiate if required
@@ -2047,7 +2103,7 @@ function Property_logicConditions(cell, action, property, details) {
 		var condition = conditions[i];
 		
 		// add cells
-		table.append("<tr><td style='vertical-align:top;'></td><td style='vertical-align:top;'></td><td style='vertical-align:top;'></td><td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
+		table.append("<tr><td></td><td style='width:150px;'></td><td></td><td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
 		
 		// get last row
 		var lastrow = table.find("tr").last();
@@ -2126,8 +2182,8 @@ function Property_logicConditions(cell, action, property, details) {
 		action.conditions.push({value1:{type:"CTL"}, operation: "==", value2: {type:"CTL"}});
 		// update this table
 		Property_logicConditions(cell, action, property, details);
-	})
-	
+	});
+		
 }
 
 // this is a dialogue to refine the options available in dropdown and list controls
@@ -2244,7 +2300,7 @@ function Property_options(cell, control, property, details) {
 function Property_gridColumns(cell, grid, property, details) {
 	
 	// retrieve or create the dialogue
-	var dialogue = getDialogue(cell, grid, property, details, 650, "Columns");		
+	var dialogue = getDialogue(cell, grid, property, details, 650, "Columns",{sizeX: true, minWidth: 300});		
 	// grab a reference to the table
 	var table = dialogue.find("table").first();
 	// make sure table is empty
@@ -2277,7 +2333,7 @@ function Property_gridColumns(cell, grid, property, details) {
 		if (columns[i].cellFunction) cellFunctionText = columns[i].cellFunction;
 		
 		// add the line
-		table.append("<tr><td><input type='checkbox' " + (columns[i].visible ? "checked='checked'" : "")  + " /></td><td><input value='" + columns[i].title + "' /></td><td><input value='" + columns[i].titleStyle + "' /></td><td><input value='" + columns[i].field + "' /></td><td class='inputBorderRight'><input value='" + columns[i].fieldStyle + "' /></td><td class='paddingLeft5' style='max-width:20px;'>" + cellFunctionText.replaceAll("<","&lt;") + "</td><td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
+		table.append("<tr><td class='center'><input type='checkbox' " + (columns[i].visible ? "checked='checked'" : "")  + " /></td><td><input value='" + columns[i].title + "' /></td><td><input value='" + columns[i].titleStyle + "' /></td><td><input value='" + columns[i].field + "' /></td><td class='inputBorderRight'><input value='" + columns[i].fieldStyle + "' /></td><td class='paddingLeft5' style='max-width:20px;'>" + cellFunctionText.replaceAll("<","&lt;") + "</td><td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
 		
 		// find the checkbox
 		var visibleEdit = table.find("tr").last().children(":nth(0)").first().children().first();
@@ -2659,7 +2715,7 @@ function Property_datacopyDestinations(cell, propertyObject, property, details) 
 		cell.closest("tr").remove();
 	} else {
 		// retrieve or create the dialogue
-		var dialogue = getDialogue(cell, propertyObject, property, details, 300, "Destinations");		
+		var dialogue = getDialogue(cell, propertyObject, property, details, 300, "Destinations", {sizeX: true});		
 		// grab a reference to the table
 		var table = dialogue.find("table").first();
 		// make sure table is empty
@@ -2790,7 +2846,7 @@ function Property_datacopyCopies(cell, datacopyAction, property, details) {
 			var dataCopy = dataCopies[i];
 						
 			// add a row
-			table.append("<tr class='nopadding'><td><select class='source'><option value=''>Please select...</option>" + getInputOptions(dataCopy.source) + "</select></td><td><input  class='source' value='" + dataCopy.sourceField + "' /></td><td><select class='destination'><option value=''>Please select...</option>" + getOutputOptions(dataCopy.destination) + "</select></td><td><input class='destination' value='" + dataCopy.destinationField + "' /></td><td><select class='type' style='min-width:60px;'>" + getCopyTypeOptions(dataCopy.type) + "</select></td><td style='width:32px'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
+			table.append("<tr><td><select class='source'><option value=''>Please select...</option>" + getInputOptions(dataCopy.source) + "</select></td><td><input  class='source' value='" + dataCopy.sourceField + "' /></td><td><select class='destination'><option value=''>Please select...</option>" + getOutputOptions(dataCopy.destination) + "</select></td><td><input class='destination' value='" + dataCopy.destinationField + "' /></td><td><select class='type' style='min-width:60px;'>" + getCopyTypeOptions(dataCopy.type) + "</select></td><td style='width:32px'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
 			
 			// get the source data item
 			var source = getDataItemDetails(dataCopy.source);

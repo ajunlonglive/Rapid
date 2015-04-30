@@ -84,7 +84,6 @@ hr {
 	top: 0px;
 	width: 195px; 
 	min-width: 195px;
-	max-width: 507px;
 	border-right: 1px solid #191919;
 	background: #dedede;
 	background: -moz-linear-gradient(top,  #dedede 0%, #eeeeee 10%, #dddddd 100%);
@@ -284,7 +283,6 @@ div#propertiesPanel {
 	top: 0px;
 	width: 200px;	
 	min-width: 200px;
-	max-width: 500px;
 	border-left: 1px solid #191919;
 	background-color: #F5F5F5;
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#E6E6E6', endColorstr='#F5F5F5');

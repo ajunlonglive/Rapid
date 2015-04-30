@@ -71,10 +71,18 @@ var _mouseDown = false;
 // track mouseDown offsets
 var _mouseDownXOffset = 0;
 var _mouseDownYOffset = 0;
-// track wether we've moused down on the control panel resize
+//  an object to hold the user-specified sizes of panels and dialogues
+var _sizes = {};
+// track whether we've moused down on the control panel resize
 var _controlPanelSize = false;
-//track wether we've moused down on the properties panel resize
+// track whether we've moused down on the properties panel resize
 var _propertiesPanelSize = false;
+// track whether we've moused down on the dialogue resize
+var _dialogueSize = false;
+// the dialogue's id
+var _dialogueSizeId;
+// the resize type
+var _dialogueSizeType;
 // track whether we've added a control
 var _addedControl = false;
 // track whether we are currently moving a control
@@ -2068,22 +2076,24 @@ $(document).ready( function() {
 	// check if we have local storage
 	if (typeof(localStorage) !== "undefined") {
 		// if we have a saved control panel width
-		if (localStorage["_controlPanelWidth"]) {
-			// set it
-			sizeControlsList(localStorage["_controlPanelWidth"]);
-		}
-		// if we have a saved properties panel width
-		if (localStorage["_propertiesPanelWidth"]) {
-			// set
-			$("#propertiesPanel").width(localStorage["_propertiesPanelWidth"]);
+		if (localStorage["_sizes"]) {
+			// retain it locally
+			_sizes = JSON.parse(localStorage["_sizes"]);
+			// set controlPanelWidth if present
+			if (_sizes["controlPanelWidth"]) sizeControlsList(_sizes["controlPanelWidth"]);
+			// set propertiesPanelWidth if present
+			if (_sizes["propertiesPanelWidth"]) $("#propertiesPanel").width(_sizes["propertiesPanelWidth"]);
 		}
 	}
 	
 	// derived the panel pinned offset value (add on the padding and border)
 	_panelPinnedOffset = $("#controlPanel").width() + 21;
 	
-	// check for unsaved page changes if we move away
+	//  if we move away from this page
 	_window.on('beforeunload', function(){
+		// save the _sizes object if local storage
+		if (typeof(localStorage) !== "undefined") localStorage["_sizes"] = JSON.stringify(_sizes);
+		// check for unsaved page changes
 		if (_dirty) return 'You have unsaved changes.';
 	});
 	// attach a call to the window resize function to the window resize event listener
@@ -2942,18 +2952,14 @@ $(document).on("mousemove touchmove", function(ev) {
 		var panel = $("#controlPanel");
 		// get the min-width
 		var minWidth = parseInt(panel.css("min-width"));
-		// get the max width
-		var maxWidth = parseInt(panel.css("max-width"));
 		// calculate the new width less offset and padding
 		var width = ev.pageX - _mouseDownXOffset;
 		// if width is between max and min
-		if (width >= minWidth && width <= maxWidth) {
+		if (width >= minWidth && width < _window.width() - _scrollBarWidth - 21) {
 			// size the controls list
 			sizeControlsList(width);
-			// save this width
-			if (typeof(localStorage) !== "undefined") {
-				localStorage["_controlPanelWidth"] = width;
-			}
+			// retain this width in the sizes object
+			_sizes["controlPanelWidth"] = width;
 		}
 				
 	} else if (_propertiesPanelSize) {
@@ -2962,20 +2968,32 @@ $(document).on("mousemove touchmove", function(ev) {
 		var panel = $("#propertiesPanel");
 		// get the min-width
 		var minWidth = parseInt(panel.css("min-width"));
-		// get the max width
-		var maxWidth = parseInt(panel.css("max-width"));
 		// calculate the new width less offset and padding
 		var width = _window.width() - ev.pageX - 21 + _mouseDownXOffset;
 		// if width is between max and min
-		if (width >= minWidth && width <= maxWidth) {
+		if (width >= minWidth && width <  _window.width() - _scrollBarWidth - 21) {
 			// size the properties panel
 			panel.css("width", width);
-			// save this width
-			if (typeof(localStorage) !== "undefined") {
-				localStorage["_propertiesPanelWidth"] = width;
-			}
+			// retain this width in the sizes object
+			_sizes["propertiesPanelWidth"] = width;
 		}
 				
+	} else if (_dialogueSize) {
+		
+		// get the dialogue
+		var dialogue = $("#" + _dialogueSizeId);
+		// get the min-width
+		var minWidth = parseInt(dialogue.css("min-width"));
+		// calculate the new width less offset and padding
+		var width = _window.width() - ev.pageX - 32 + _mouseDownXOffset;
+		// if width is greater than min
+		if (width >= minWidth) {
+			// size the properties panel
+			dialogue.css(	"width", width);
+			// retain this width in the sizes object
+			_sizes[_version.id + _version.version + _dialogueSizeId + "width"] = width;
+		}
+		
 	} else {
 	
 		// get a reference to the control
@@ -3114,6 +3132,8 @@ $(document).on("mouseup touchend", function(ev) {
 	_mouseDownYOffset = 0;	
 	_addedControl = false;
 	_reorderDetails = null;
+	_propertiesPanelSize = false;
+	_dialogueSize = false;
 	
 	if (_controlPanelSize) {
 		
@@ -3128,10 +3148,6 @@ $(document).on("mouseup touchend", function(ev) {
 		_controlPanelSize = false;
 		// arrange controls as  the left reference has changed
 		arrangeNonVisibleControls();
-		
-	} else if (_propertiesPanelSize) {
-		
-		_propertiesPanelSize = false;
 		
 	} else if (_selectedControl && _selectedControl.object[0]) {		
 		// show it in case it was an add

@@ -15,6 +15,7 @@ table.propertiesPanelTable  {
 
 .propertiesPanelTable td {
 	text-align: left;
+	vertical-align: top;
 	padding-left: 5px;
 	border-bottom: 1px solid gray;	
 	white-space: nowrap;
@@ -82,35 +83,107 @@ table.propertiesPanelTable  {
 	padding-left: 5px;
 }
 
+div.propertyDialogue {
+	position: absolute;
+	right: 10px;
+	display: none;
+	z-index:10012;
+	border:1px solid black;
+	background-color:white;
+	padding: 10px;
+	-webkit-touch-callout: none;
+  	-webkit-user-select: none;
+  	-khtml-user-select: none;
+  	-moz-user-select: -moz-none;
+  	-ms-user-select: none;
+  	user-select: none;
+}
+
+.propertyDialogue div.resizeX {
+	position:absolute;
+	top:0;
+	left:0;
+	width: 5px;
+	height: 100%;
+	background-color: red;
+	opacity: 0;
+	cursor:ew-resize;
+}
+
 .dialogueTable {
+	width:100%;
 	border-collapse: collapse;
+}
+
+.dialogueTable tr:not(:first-child):not(:last-child) td:not(:last-child) {
+	border: 1px solid silver;
 }
 
 .dialogueTable td {
 	max-width: 50px;
-	padding:0;
+	height:18px;
+	padding:0 0 0 5px;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
 
-.dialogueTable input {
+.dialogueTable input:not([type]) {
 	width: 100%;
 	font-size: 11px;
-	margin-top:-1px;
+	margin-top: -3px;
+	margin-bottom: -4px;
+	border: none;
+	outline: 0;
+}
+
+.dialogueTable input[type=checkbox] {	
+	margin-top: 2px;
+	margin-left: -2px;
 }
 
 .dialogueTable input[type=file] {
-	max-width: none;
-	margin-left: -3px;
-	margin-bottom: -13px;
+	margin-top: 3px;
+	margin-left: -1px;
 }
 
 .dialogueTable input[type=submit] {
-	max-width: none;
 	margin-top: 3px;
-	margin-bottom: 3px;
 	margin-left: -1px;
+}
+
+.dialogueTable select {
+  width: 100%;
+  height: 18px; 
+  font-size: 11px;
+  border-radius: 0;
+  border: 1px solid #888;
+  background-color: white;  
+  outline: 0;
+}
+
+.dialogueTable tr:not(:first-child):not(:last-child) td:not(:last-child) select {
+  border: 0;
+}
+
+.dialogueTable img {
+	margin-top:1px
+}
+
+.dialogueTableBorders tr:not(:first-child) td {
+	border: 1px solid grey;
+}
+
+.dialogueTableBorders select {
+	border: 0;
+}
+
+.dialogueTableAllBorders td {
+	border: 1px solid silver;
+}
+
+.dialogueTableAllBorders select {
+	border: 0;
 }
 
 .inputTableWithTitles tr:nth-child(1) td {
@@ -122,12 +195,27 @@ table.propertiesPanelTable  {
 	padding-top:1px;
 }
 
+td.center {
+	text-align:center;
+}
+
 td.inputBorderRight {
 	padding-right: 5px;
 }
 
 td.paddingLeft5 {
 	padding-left: 5px;	
+}
+
+.normalInputs input {
+	width: auto;	
+}
+
+.normalInputs input:not([type]) {
+	width: 100%;
+	box-sizing: border-box;
+	border: 1px solid silver;
+	padding: 3px;
 }
 
 .nopadding td {
