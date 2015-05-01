@@ -221,43 +221,48 @@ return "<div id='" + this.id + "' style='width:" + this.width + ";height:" + thi
 // get a reference to the iFrame window
 var w = _pageIframe[0].contentWindow;     
 
-// get a reference to the google object loaded in the iFrame
-var google = w.google;
-
 // turn the zoom into a number
 var zoom = parseInt(this.zoom);
 
-// assume we want a roadmap
-var mapTypeId =  google.maps.MapTypeId.ROADMAP;
+// get a reference to the google object loaded in the iFrame
+var google = w.google;
 
-// update if one provided
-switch (this.mapType) {
-	case ("R") :
-		mapTypeId =  google.maps.MapTypeId.ROADMAP;
-	break;
-	case ("S") :
-		mapTypeId =  google.maps.MapTypeId.SATELLITE;
-	break;
-} 
+// check we got google and maps
+if (google && google.maps) {
 
-// create a map in our control object
-var map = new google.maps.Map(this.object[0], {
-   	zoom: zoom,
-	center: new google.maps.LatLng(this.lat, this.lng),
-	mapTypeControlOptions: {mapTypeIds:[google.maps.MapTypeId.ROADMAP, google.maps.MapTypeId.SATELLITE]},
-	mapTypeId: mapTypeId,
-	mapTypeControl: this.showMapType,
-	zoomControl: this.showZoom,	   	
-   	panControl: this.showPan,
-   	streetViewControl: this.showStreetView,
-   	scaleControl: this.showScale
-});
-
-// add it to the collections
-w._maps[this.id] = map;       
-
-// turn off the labels for all points of interest
-map.setOptions({'styles':[{featureType:"poi",elementType: "labels",stylers:[{visibility:"off"}]}]});
+	// assume we want a roadmap
+	var mapTypeId =  google.maps.MapTypeId.ROADMAP;
+	
+	// update if one provided
+	switch (this.mapType) {
+		case ("R") :
+			mapTypeId =  google.maps.MapTypeId.ROADMAP;
+		break;
+		case ("S") :
+			mapTypeId =  google.maps.MapTypeId.SATELLITE;
+		break;
+	} 
+	
+	// create a map in our control object
+	var map = new google.maps.Map(this.object[0], {
+	   	zoom: zoom,
+		center: new google.maps.LatLng(this.lat, this.lng),
+		mapTypeControlOptions: {mapTypeIds:[google.maps.MapTypeId.ROADMAP, google.maps.MapTypeId.SATELLITE]},
+		mapTypeId: mapTypeId,
+		mapTypeControl: this.showMapType,
+		zoomControl: this.showZoom,	   	
+	   	panControl: this.showPan,
+	   	streetViewControl: this.showStreetView,
+	   	scaleControl: this.showScale
+	});
+	
+	// add it to the collections
+	w._maps[this.id] = map;       
+	
+	// turn off the labels for all points of interest
+	map.setOptions({'styles':[{featureType:"poi",elementType: "labels",stylers:[{visibility:"off"}]}]});
+	
+} // got google and google.maps
         
 	        ]]>
 	    </rebuildJavaScript>

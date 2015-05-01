@@ -1200,7 +1200,7 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 	cell.text(text);
 	
 	// add inputs table, sql, and outputs table
-	table.append("<tr><td colspan='2' style='padding:0px;vertical-align: top;'><table class='dialogueTable'><tr><td><b>Input</b></td><td colspan='2'><b>Field</b></td></tr></table></td><td colspan='3' style='width:50%;padding:4px 5px 0 5px;'><b>SQL</b><br/><textarea style='width:100%;min-width:100%;max-width:100%;min-height:200px;box-sizing:border-box;'></textarea></td><td colspan='2' rowspan='3' style='padding:0px;vertical-align: top;'><table  class='dialogueTable'><tr><td><b>Field</b></td><td colspan='2'><b>Output</b></td></tr></table></td></tr>");
+	table.append("<tr><td colspan='2' style='padding:0px;vertical-align: top;'><table class='dialogueTable'><tr><td><b>Input</b></td><td colspan='2'><b>Field</b></td></tr></table></td><td colspan='3' style='width:50%;padding:2px 10px 0 10px;'><b>SQL</b><br/><textarea style='width:100%;min-width:100%;max-width:100%;min-height:200px;box-sizing:border-box;'></textarea></td><td colspan='2' rowspan='3' style='padding:0px;vertical-align: top;'><table  class='dialogueTable'><tr><td><b>Field</b></td><td colspan='2'><b>Output</b></td></tr></table></td></tr>");
 	
 	// find the inputs table
 	var inputsTable = table.children().last().children().first().children("table");
@@ -1327,7 +1327,7 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 		Property_databaseQuery(cell, propertyObject, property); 
 	});
 	// add the add
-	outputsTable.append("<tr><td>&nbsp;</td><td style='padding:0px;'><select style='margin:0px'><option value=''>add output...</option>" + getOutputOptions() + "</select></td><td>&nbsp;</td></tr>");
+	outputsTable.append("<tr><td style='padding:0px;' colspan='2'><select style='margin:0px'><option value=''>add output...</option>" + getOutputOptions() + "</select></td><td>&nbsp;</td></tr>");
 	// find the output add
 	var outputAdd = outputsTable.find("tr").last().children(":nth(1)").last().children().last();
 	// listener to add output
@@ -1342,7 +1342,7 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 		Property_databaseQuery(ev.data.cell, ev.data.propertyObject, ev.data.property, ev.data.details);	
 	}));
 	
-	table.append("<tr><td colspan='2'>Multi-row data? <input type='checkbox'" + (query.multiRow ? "checked='checked'" : "" ) + " style='vertical-align: middle;margin-top: -3px;'/></td><td style='text-align: left;overflow:inherit;' colspan='2'>Database connection <select style='width:auto;'>" + getDatabaseConnectionOptions(query.databaseConnectionIndex) + "</select></td><td style='text-align:right;'><button>Test SQL</button></td></tr>");
+	table.append("<tr><td colspan='2'>Multi-row data?&nbsp;<input type='checkbox'" + (query.multiRow ? "checked='checked'" : "" ) + " style='vertical-align: middle;margin-top: -3px;'/></td><td style='text-align: left;overflow:inherit;' colspan='2'>Database connection <select style='width:auto;'>" + getDatabaseConnectionOptions(query.databaseConnectionIndex) + "</select></td><td style='text-align:right;'><button>Test SQL</button></td></tr>");
 	
 	// get a reference to the multi-data check box
 	var multiRow = table.find("tr").last().find("input");
@@ -1351,7 +1351,7 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 		// set the multiData value
 		ev.data.query.multiRow = $(ev.target).is(":checked");
 		// refresh the dialogue
-		Property_databaseQuery(ev.data.cell, ev.data.propertyObject, ev.data.property, ev.data.details)
+		Property_databaseQuery(ev.data.cell, ev.data.propertyObject, ev.data.property, ev.data.details);
 	}));
 	
 	// get a reference to the db connection
@@ -1627,7 +1627,7 @@ function Property_pageSessionVariables(cell, page, property, details, textOnly) 
 			// add a listener
 			addListener( valueEdit.keyup( {cell: cell, page: page, property: property, details: details}, function(ev) {
 				// get the input box
-				var input = $(ev.target)
+				var input = $(ev.target);
 				// get the value
 				var value = input.val();
 				// get the index
@@ -2190,7 +2190,7 @@ function Property_logicConditions(cell, action, property, details) {
 function Property_options(cell, control, property, details) {
 	
 	// retrieve or create the dialogue
-	var dialogue = getDialogue(cell, control, property, details, 200, "Options");		
+	var dialogue = getDialogue(cell, control, property, details, 200, "Options", {sizeX: true});		
 	// grab a reference to the table
 	var table = dialogue.find("table").first();
 	// make sure table is empty
@@ -2217,7 +2217,7 @@ function Property_options(cell, control, property, details) {
 	// show options
 	for (var i in options) {
 		// add the line
-		table.append("<tr><td style='padding-left:0px'><input class='text' value='" + options[i].text + "' /></td>" + (control.codes ? "<td style='padding-left:0px'><input class='value' value='" + options[i].value + "' /></td>" : "") + "<td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
+		table.append("<tr><td><input class='text' value='" + options[i].text + "' /></td>" + (control.codes ? "<td><input class='value' value='" + options[i].value + "' /></td>" : "") + "<td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
 						
 		// find the text
 		var textEdit = table.find("input.text").last();
@@ -2481,7 +2481,7 @@ function Property_gridColumns(cell, grid, property, details) {
 function Property_controlHints(cell, hints, property, details) {
 	
 	// retrieve or create the dialogue
-	var dialogue = getDialogue(cell, hints, property, details, 500, "Control hints");		
+	var dialogue = getDialogue(cell, hints, property, details, 500, "Control hints", {sizeX: true});		
 	// grab a reference to the table
 	var table = dialogue.find("table").first();
 	// make sure table is empty
@@ -2812,7 +2812,7 @@ var _dataCopyTypes = [[false,"replace"],["append","append"],["row","row merge"]]
 function getCopyTypeOptions(type) {
 	var options = "";
 	for (var i in _dataCopyTypes) {
-		options += "<option value='" + _dataCopyTypes[i][0] + "'" + (type == _dataCopyTypes[i][0] ? " selected='selected'" : "") + ">" + _dataCopyTypes[i][1] + "</option>"
+		options += "<option value='" + _dataCopyTypes[i][0] + "'" + (type == _dataCopyTypes[i][0] ? " selected='selected'" : "") + ">" + _dataCopyTypes[i][1] + "</option>";
 	}
 	return options;
 }
@@ -2823,7 +2823,7 @@ function Property_datacopyCopies(cell, datacopyAction, property, details) {
 	if (datacopyAction.copyType == "bulk") {	
 		
 		// retrieve or create the dialogue
-		var dialogue = getDialogue(cell, datacopyAction, property, details, 700, "Bulk data copies");		
+		var dialogue = getDialogue(cell, datacopyAction, property, details, 700, "Bulk data copies", {sizeX: true});		
 		// grab a reference to the table
 		var table = dialogue.find("table").first();
 		// make sure table is empty
@@ -3026,12 +3026,12 @@ function Property_glyphCode(cell, controlAction, property, details) {
 	// remove the standard table
 	dialogue.find("table").first().remove();
 	// add a scrolling div with the table inside
-	dialogue.append("<div style='overflow-y:scroll;max-height:400px;'><table></table></div>")
+	dialogue.append("<div style='overflow-y:scroll;max-height:400px;'><table></table></div>");
 	// get the new table
 	table = dialogue.find("table").first();
 	// add all of the glyphs, with the current one highlighted
 	for (var i in _fontawesomeGlyphs) {
-		table.append("<tr><td data-code='" + _fontawesomeGlyphs[i][0].replace("&","&amp;") + "' class='hover" + (code && code == _fontawesomeGlyphs[i][0] ? " selected" : "") + "'><span class='fa'>" + _fontawesomeGlyphs[i][0] + "</span><span class='fa_name'>&nbsp;" + _fontawesomeGlyphs[i][1] + "</span></td></tr>")
+		table.append("<tr><td data-code='" + _fontawesomeGlyphs[i][0].replace("&","&amp;") + "' class='hover" + (code && code == _fontawesomeGlyphs[i][0] ? " selected" : "") + "'><span class='fa'>" + _fontawesomeGlyphs[i][0] + "</span><span class='fa_name'>&nbsp;" + _fontawesomeGlyphs[i][1] + "</span></td></tr>");
 	}
 	// if a position was set go back to it
 	if (dialogue.attr("data-scroll")) table.parent().scrollTop(dialogue.attr("data-scroll"));
@@ -3139,7 +3139,7 @@ function Property_mapZoom(cell, propertyObject, property, details) {
 	}));
 }
 
-//this is displayed as a page property but is actually held in local storage
+// this is displayed as a page property but is actually held in local storage
 function Property_device(cell, propertyObject, property, details) {
 	// holds the options html
 	var options = "";
@@ -3299,7 +3299,7 @@ function Property_mobileActionType(cell, mobileAction, property, details) {
 function Property_inputs(cell, propertyObject, property, details) {
 	
 	// retrieve or create the dialogue
-	var dialogue = getDialogue(cell, propertyObject, property, details, 400, "Inputs");		
+	var dialogue = getDialogue(cell, propertyObject, property, details, 400, "Inputs", {sizeX: true});		
 	// grab a reference to the table
 	var table = dialogue.find("table").first();
 	// make sure table is empty
@@ -3396,6 +3396,5 @@ function Property_inputs(cell, propertyObject, property, details) {
 	}
 	// put the text into the cell
 	cell.text(text);
-	
-	
+		
 }

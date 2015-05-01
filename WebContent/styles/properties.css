@@ -110,9 +110,21 @@ div.propertyDialogue {
 	cursor:ew-resize;
 }
 
+.propertyDialogue span {
+	vertical-align:middle;
+	min-height: 20px;
+}
+
+.propertyDialogue span.fa {
+	font-size: 20px;
+	min-width: 25px;
+}
+
 .dialogueTable {
 	width:100%;
 	border-collapse: collapse;
+	margin-left: 1px;
+	font-size: 11px;
 }
 
 .dialogueTable tr:not(:first-child):not(:last-child) td:not(:last-child) {
