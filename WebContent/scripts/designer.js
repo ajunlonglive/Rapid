@@ -2299,7 +2299,7 @@ $(document).ready( function() {
 			        	showDesigner();
 			        	
 			        	// refresh the page map
-			        	showPageMap();
+			        	buildPageMap();
 			        	
 			        	// get the page lock object
 			        	var lock = _page.lock;
@@ -2549,13 +2549,36 @@ $(document).ready( function() {
 	// undo
 	$("#undo").click( function(ev) {
 		doUndo(); 
-		showPageMap();
+		buildPageMap();
 	});
 	
 	// redo
 	$("#redo").click( function(ev) {
 		doRedo();
-		showPageMap();
+		buildPageMap();
+	});
+	
+	// control search
+	$("#pageMapSearch").keyup( function(ev) {
+		// get the current value
+		var val = $(ev.target).val();
+		// lowercase it if we got one
+		if (val) val = val.toLowerCase();
+		// get the flat list of controls
+		var controls = getControls();
+		// loop the controls
+		for (var i in controls) {
+			// get the control
+			var c = controls[i];
+			// check the id or name
+			if (c.id.toLowerCase().indexOf(val) > -1 || (c.name &&  c.name.toLowerCase().indexOf(val) > -1)) {
+				// if control is different from currently selected, select this one
+				if (!_selectedControl || _selectedControl.id != c.id) selectControl(c);
+				// we're done!
+				break;
+			}
+		}
+		
 	});
 	
 	// properties panel pin (for now just hide)
@@ -2646,7 +2669,7 @@ $(document).ready( function() {
 			// re-select the control
 			selectControl(_selectedControl);
 			// rebuild the page map
-			showPageMap();
+			buildPageMap();
 		}
 	});
 	
@@ -2677,7 +2700,7 @@ $(document).ready( function() {
 			// re-select the control
 			selectControl(_selectedControl);
 			// rebuild the page map
-			showPageMap();
+			buildPageMap();
 		}
 	});
 		
@@ -2701,7 +2724,7 @@ $(document).ready( function() {
 			// select the new one
 			selectControl(newControl);
 			// rebuild the page map
-			showPageMap();
+			buildPageMap();
 		}
 		
 	});
@@ -2726,7 +2749,7 @@ $(document).ready( function() {
 			// select the new one
 			 selectControl(newControl);
 			// rebuild the page map
-			showPageMap();
+			 buildPageMap();
 		}
 		
 	});
@@ -2766,7 +2789,7 @@ $(document).ready( function() {
 					// hide the selection and properties panel
 					selectControl(null);
 					// rebuild the page map
-					showPageMap();
+					buildPageMap();
 				}			
 			} else {
 				showDialogue('~?a=rapid&p=P4');
@@ -2855,7 +2878,7 @@ $(document).ready( function() {
 			} // page paste check
 			
 			// rebuild the page map
-			showPageMap();
+			buildPageMap();
 					
 		}		
 	});		
@@ -2999,8 +3022,10 @@ $(document).on("mousemove touchmove", function(ev) {
 		// get the target 
 		var t = $(ev.target);
 		
-		// if in the page map
-		if (t.closest("#pageMap")) {
+		// if in the page map list
+		if (t.closest("#pageMapList")) {
+			
+			/*
 			
 			// get the control
 			var c = getControlById(t.attr("data-id"));
@@ -3076,6 +3101,8 @@ $(document).on("mousemove touchmove", function(ev) {
 				} // if mouse down
 				
 			} // if selected control
+			
+			*/
 			
 		} else {
 	
@@ -3275,7 +3302,7 @@ $(document).on("mouseup touchend", function(ev) {
 				break;
 			}				
 			// rebuild the page map
-			showPageMap();
+			buildPageMap();
 		}
 		
 		// remember we have only selected (no longer moving)
