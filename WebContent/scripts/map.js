@@ -72,7 +72,7 @@ function buildPageMap() {
 			// highlight the selected control
 			if (_selectedControl) {
 				// highlight selected control
-				list.find("span[data-id=" + _selectedControl.id + "]").css("background-color","#ccc");
+				list.find("span[data-id=" + _selectedControl.id + "]").addClass("selected");
 			}
 		}	
 	}
