@@ -229,11 +229,21 @@ li.design-control:hover {
 	text-align: left;	
 	border: 1px solid black;
 	border-radius: 3px;
-	display: none;
-	overflow-x: scroll;
-	overflow-y: scroll;
+	display: none;	
 	background-color: white;
 	max-height: 500px;
+}
+
+#pageMapScroll {
+	overflow-x: scroll;
+	overflow-y: scroll;
+}
+
+#pageMapSearch {
+	width: 100%;
+	box-sizing: border-box;
+	padding: 2px 5px;
+	outline: 0;
 }
 
 .design-map ul {
