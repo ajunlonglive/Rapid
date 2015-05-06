@@ -235,8 +235,8 @@ li.design-control:hover {
 }
 
 #pageMapScroll {
-	overflow-x: scroll;
-	overflow-y: scroll;
+	overflow-x: auto;
+	overflow-y: auto;
 }
 
 #pageMapSearch {
@@ -260,6 +260,11 @@ li.design-control:hover {
 .design-map span {
 	display: block;
 	white-space: nowrap;
+	background-color: none;
+}
+
+.design-map span.selected {
+	background-color: #ccc;
 }
 
 .design-map img {

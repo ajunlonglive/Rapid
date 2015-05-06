@@ -991,10 +991,10 @@ function selectControl(control) {
 		// store the selection globally
 		_selectedControl = control;
 		
-		// set background of all controls in map to white
-		$("#pageMap").find("span").css("background-color","white");
+		// remove any selected class
+		$("#pageMap").find("span.selected").removeClass("selected");
 		// highlight selected control
-		$("#pageMap").find("span[data-id=" + control.id + "]").css("background-color","#ccc");
+		$("#pageMap").find("span[data-id=" + control.id + "]").addClass("selected");
 		
 		// get the body into an object
 		var body = $("body");
@@ -3619,7 +3619,7 @@ function windowResize(ev) {
 		_pageIframe.css({
 			left: _panelPinnedOffset,
 			width: width - _panelPinnedOffset - 1,
-			height: height
+			height: height 
 		});
 		// adjust the cover to be full-screen
 		_designCover.css({
