@@ -23,24 +23,31 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
+// a global for all map listeners so we can de-register
+var _mapListeners = [];
+
+// add a map listener
+function addMapListener(l) {
+	_mapListeners.push(l);
+}
+
+// remove all map listeners
+function removeMapListeners() {
+	// loop all listeners
+	for (var l in _mapListeners) {
+		_mapListeners[l].unbind();
+	}
+	// reset the collection
+	_mapListeners = [];
+}
+
 function createMapEntry(list, c) {
 	// get the control class
 	var controlClass = _controlTypes[c.type];
 	// create the list entry
 	list.append("<li><span data-id='" + c.id + "'>" + ((controlClass.image) ? "<img src='" + controlClass.image + "'/>" : "") + c.type + (c.name ? " - " + c.name: "") + "</span></li>");
 	// get the list entry
-	var li = list.children("li").last();
-	// add an onclick listener if the object is visible
-	li.click( c, function(ev) {
-		// select the control
-		selectControl(ev.data);
-		// get a reference to our body
-		var body = $("body");
-		// scroll to it if it's not on the page
-		// if (ev.data && ev.data.object) body.scrollTop(ev.data.object.offset().top);
-		// stop bubbling
-		return false;
-	});	
+	var li = list.children("li").last();	
 	// check for child controls
 	if (c.childControls && c.childControls.length > 0) {		
 		// add a list for the child controls
@@ -59,6 +66,8 @@ function createMapEntry(list, c) {
 function buildPageMap() {	
 	// get the map div
 	var map = $("#pageMap");
+	// unregister all listener
+	removeMapListeners();
 	// only if visible
 	if (map.is(":visible")) {
 		// get the list
@@ -69,6 +78,23 @@ function buildPageMap() {
 		if (_page) {
 			// build the map
 			createMapEntry(list, _page);
+			// add an onclick listener for all controls
+			addMapListener( list.find("li").click( function(ev) {
+				// get the target
+				var t = $(ev.target);
+				// get the id
+				var id = t.attr("data-id");
+				// get the control
+				var c = getControlById(id);
+				// select the control
+				selectControl(c);
+				// get a reference to our body
+				// var body = $("body");
+				// scroll to it if it's not on the page
+				// if (ev.data && ev.data.object) body.scrollTop(ev.data.object.offset().top);
+				// stop bubbling
+				event.stopPropagation();
+			}));	
 			// highlight the selected control
 			if (_selectedControl) {
 				// highlight selected control
