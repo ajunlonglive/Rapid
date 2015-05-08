@@ -178,9 +178,7 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 				<img id="helpMap" class="headerHelp" src="images/help_16x16.png" />
 			</h2>
 			<div id="pageMap" class="design-map" >
-				<div id="pageMapScroll">
-					<ul id="pageMapList"></ul>
-				</div>				
+				<ul id="pageMapList"></ul>		
 				<input id="pageMapSearch" placeholder="search"></input>
 			</div>	
 			
@@ -251,12 +249,12 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 		<div style="background-color:white;width:100%;height:100%;opacity:0.5;" ></div>
 	</div>
 	
-	<div id="selectionInsertCover" style="display:none;position:absolute;left:0px;top:0px;z-index:10000;">
+	<div id="selectionInsertCover" class="selectionInsertCover" style="display:none;position:absolute;left:0px;top:0px;z-index:10000;">
 	</div>
 					
-	<img id="selectionMoveLeft" style="display:none;position:absolute;left:0px;top:0px;z-index:10002;" src="images/moveLeft_32x32.png" />
-	<img id="selectionMoveRight" style="display:none;position:absolute;left:0px;top:0px;z-index:10002;" src="images/moveRight_32x32.png" />
-	<img id="selectionInsert" style="display:none;position:absolute;left:0px;top:0px;z-index:10002;" src="images/insert_32x32.png" />
+	<img id="selectionMoveLeft" class="selectionCursor" src="images/moveLeft_32x32.png" />
+	<img id="selectionMoveRight" class="selectionCursor" src="images/moveRight_32x32.png" />
+	<img id="selectionInsert" class="selectionCursor" src="images/insert_32x32.png" />
 	
 	<iframe id="uploadIFrame" name="uploadIFrame" width="0" height="0" style="width:0;height:0;border:0px hidden #fff;" onload="fileuploaded(this);"></iframe>
 	
