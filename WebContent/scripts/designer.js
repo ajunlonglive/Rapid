@@ -3068,7 +3068,7 @@ $(document).on("mousemove touchmove", function(ev) {
 				positionBorder(ev.pageX + _panelPinnedOffset, ev.pageY - (_addedControl ? 0 : _pageIframeWindow.scrollTop()));
 											
 				// if we got a control and it's allowed to be moved by the user (non-visual controls can be added but not moved so this way they remain with their parent control as the page)
-				if (c && _controlTypes[_selectedControl.type].canUserMove) {
+				if (c && _controlTypes[_selectedControl.type].canUserMove ) {
 					// retain a reference to the movedoverObject
 					_movedoverControl = c;
 					// position the insert cover
@@ -3127,6 +3127,13 @@ $(document).on("mousemove touchmove", function(ev) {
 							// remember it's in the the centre
 							_movedoverDirection = "C";
 							// make sure the other selections are hidden					
+							_selectionMoveLeft.hide();
+							_selectionMoveRight.hide();
+						} else {
+							// null and hide all selection goodies
+							_selectionInsert.hide();
+							_selectionInsertCover.hide();
+							_movedoverDirection = null;
 							_selectionMoveLeft.hide();
 							_selectionMoveRight.hide();
 						}									

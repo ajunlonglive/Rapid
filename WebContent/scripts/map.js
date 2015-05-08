@@ -78,22 +78,110 @@ function buildPageMap() {
 		if (_page) {
 			// build the map
 			createMapEntry(list, _page);
-			// add an onclick listener for all controls
-			addMapListener( list.find("li").click( function(ev) {
+			// add a mousedown listener for all controls
+			addMapListener( list.find("li").on("mousedown touchstart", function(ev) {
 				// get the target
 				var t = $(ev.target);
 				// get the id
 				var id = t.attr("data-id");
 				// get the control
 				var c = getControlById(id);
-				// select the control
-				selectControl(c);
-				// get a reference to our body
-				// var body = $("body");
-				// scroll to it if it's not on the page
-				// if (ev.data && ev.data.object) body.scrollTop(ev.data.object.offset().top);
+				// if we got one
+				if (c) {
+					// select the control
+					selectControl(c);
+					// set mouse down if this control can be moved
+					if (_controlTypes[_selectedControl.type].canUserMove) _mouseDown = true;
+				}
 				// stop bubbling
 				event.stopPropagation();
+			}));	
+			// add a mouseover listener for all controls
+			addMapListener( list.find("li").on("mousemove touchmove", function(ev) {				
+				// only if mouse is down
+				if (_mouseDown) {
+					// get the target
+					var t = $(ev.target);					
+					// get the id
+					var id = t.attr("data-id");
+					// get the control
+					var c = getControlById(id);
+					// if we got one
+					if (c) {
+						// if different from current movedover control
+						if (c != _movedoverControl || !_movingControl) {
+							// remove all insert covers
+							$("#pageMapList").find("span.selectionInsertCover").removeClass("selectionInsertCover");
+							// add the insert cover if not the selected control too
+							t.addClass("selectionInsertCover");
+							// rememeber we are moving a control
+							_movingControl = true;
+						}
+						// set the movedoverControl
+						_movedoverControl = c;							
+						// check whether a decendent,
+						if (isDecendant(_selectedControl,_movedoverControl) || _movedoverControl == null) {
+							// null the movedoverControl
+							_movedoverControl = null;	
+						} else {
+							
+							// get the span width
+							var width =  t.width();
+							// calculate a move threshold which is the number of pixels to the left or right of the object the users needs to be within
+							var moveThreshold = Math.min(50, width/3);
+							// if it's not possible to insert make the move thresholds half the width to cover the full object
+							if (!_controlTypes[_movedoverControl.type].canUserInsert) moveThreshold = width/2;
+							
+							// are we within the move threshold on the left or the right controls that can be moved, or in the middle with an addChildControl method?
+							if (_controlTypes[_movedoverControl.type].canUserMove && ev.pageX  < t.offset().left + moveThreshold) {
+								// set the cursor
+								t.css("cursor","w-resize");
+								// remember it's on the left
+								_movedoverDirection = "L";
+							} else if (_controlTypes[_movedoverControl.type].canUserMove && ev.pageX > t.offset().left + width - moveThreshold) {
+								// set the cursor
+								t.css("cursor","e-resize");
+								// remember it's on the right
+								_movedoverDirection = "R";
+							} else if (_controlTypes[_movedoverControl.type].canUserInsert) {
+								// set the cursor
+								t.css("cursor","s-resize");
+								// remember it's in the the centre
+								_movedoverDirection = "C";
+							} else {
+								// reset the cursor
+								t.css("cursor","initial");
+								// null the direction
+								_movedoverDirection = null;
+								// remove all insert covers
+								$("#pageMapList").find("span.selectionInsertCover").removeClass("selectionInsertCover");
+							}		
+														
+						} // decendant check 								
+					} // new moved over controls							
+
+				} // mouse down
+				// stop bubbling
+				event.stopPropagation();
+			}));	
+			// add a mouseover listener an up anywhere in the box
+			addMapListener( list.on("mouseup touchend", function(ev) {				
+				// if there is a moved over control
+				if (_movedoverControl) {
+					// fire the main page mouse up
+					
+				}
+			}));	
+			// add a mouseout listener for the box
+			addMapListener( list.on("mouseleave touchcancel", function(ev) {				
+				// reset mousedown
+				_mouseDown = false;
+				// reset moved over control
+				_movedoverControl = null;
+				// remove all insert covers
+				$("#pageMapList").find("span.selectionInsertCover").removeClass("selectionInsertCover");
+				// set all cursors to default
+				$("#pageMapList").find("span").css("cursor","initial");
 			}));	
 			// highlight the selected control
 			if (_selectedControl) {

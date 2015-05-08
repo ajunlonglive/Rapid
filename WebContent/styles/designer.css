@@ -231,12 +231,14 @@ li.design-control:hover {
 	border-radius: 3px;
 	display: none;	
 	background-color: white;
-	max-height: 500px;
 }
 
-#pageMapScroll {
+#pageMapList {
+	margin-top: 2px;
+  	margin-bottom: 0;
 	overflow-x: auto;
 	overflow-y: auto;
+	max-height: 500px;
 }
 
 #pageMapSearch {
@@ -648,7 +650,7 @@ Selection Styles
 	margin-left:-5px;
 }
 
-#selectionInsertCover {
+.selectionInsertCover {
 	background:
 		linear-gradient(-45deg, 
 		rgba(106,148,220,0.1) 0px,
@@ -661,6 +663,20 @@ Selection Styles
 	background-size: 30px 30px;
 	border: 1px solid rgba(106,148,220,0.1);
 	border-radius: 5px;
+}
+
+.selectionCursor {
+	display: none;
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	-webkit-touch-callout: none;
+  	-webkit-user-select: none;
+  	-khtml-user-select: none;
+  	-moz-user-select: -moz-none;
+  	-ms-user-select: none;
+  	user-select: none;
+	z-index: 10002;
 }
 
 .nonVisibleControl {

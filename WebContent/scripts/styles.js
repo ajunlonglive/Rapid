@@ -635,11 +635,6 @@ $(document).ready( function() {
 		_stylesApplied = false;
 		// get the value
 		var val = _styleInput.text();
-		// trim it if need be
-		if (val != val.trim()) {
-			val = val.trim();
-			_styleInput.text(val);
-		}
 		// remove any linebreaks, or tabs, if required
 		if (val != val.replace(/(\r\n|\n|\r|\t)/gm,"")) {
 			val = val.replace(/(\r\n|\n|\r|\t)/gm,"");
