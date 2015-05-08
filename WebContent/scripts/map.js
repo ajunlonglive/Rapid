@@ -125,25 +125,27 @@ function buildPageMap() {
 							_movedoverControl = null;	
 						} else {
 							
+							var movedOverType = _controlTypes[_movedoverControl.type];
+							
 							// get the span width
 							var width =  t.width();
 							// calculate a move threshold which is the number of pixels to the left or right of the object the users needs to be within
 							var moveThreshold = Math.min(50, width/3);
 							// if it's not possible to insert make the move thresholds half the width to cover the full object
-							if (!_controlTypes[_movedoverControl.type].canUserInsert) moveThreshold = width/2;
+							if (!movedOverType.canUserInsert) moveThreshold = width/2;
 							
 							// are we within the move threshold on the left or the right controls that can be moved, or in the middle with an addChildControl method?
-							if (_controlTypes[_movedoverControl.type].canUserMove && ev.pageX  < t.offset().left + moveThreshold) {
+							if (movedOverType.canUserMove && ev.pageX  < t.offset().left + moveThreshold) {
 								// set the cursor
 								t.css("cursor","w-resize");
 								// remember it's on the left
 								_movedoverDirection = "L";
-							} else if (_controlTypes[_movedoverControl.type].canUserMove && ev.pageX > t.offset().left + width - moveThreshold) {
+							} else if (movedOverType.canUserMove && ev.pageX > t.offset().left + width - moveThreshold) {
 								// set the cursor
 								t.css("cursor","e-resize");
 								// remember it's on the right
 								_movedoverDirection = "R";
-							} else if (_controlTypes[_movedoverControl.type].canUserInsert) {
+							} else if (movedOverType.canUserInsert) {
 								// set the cursor
 								t.css("cursor","s-resize");
 								// remember it's in the the centre
