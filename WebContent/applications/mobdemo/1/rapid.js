@@ -775,7 +775,7 @@ function getData_dataStore(ev, id, field, details) {
   			for (var i in data.fields) {
   				if (data.fields[i].toLowerCase() == field.toLowerCase()) {
   					var value = data.rows[0][i];
-  					if (value) {
+  					if (value !== undefined) {
   						return value;
   					} else {
   						break;
