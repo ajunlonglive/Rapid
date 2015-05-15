@@ -2296,7 +2296,24 @@ function Property_options(cell, control, property, details) {
 	
 }
 
-//this is a dialogue to refine the options available in a grid control
+// the different sort options
+var _gridColumnSorts = {
+		"" : { text: "none"},
+		"t" : { text: "text"},
+		"n" : { text: "number"},
+		"d1" : { text: "date (dd/mm/yyyy)"},
+		"d2" : { text: "date (dd-mon-yyyy)"},
+		"d3" : { text: "date (mm/dd/yyyy)"},
+		"d4" : { text: "date (yyyy-mm-dd)"},
+		"c" : { text: "custom"}
+}
+
+// the sort function help text
+var _gridSortFunctionHelpText = "// enter JavaScript here that returns a number to reflect\n// the order by comparing two objects, \"item1\" and \"item2\"\n// each has a \"value\" and \"index\" property";
+// the cell function help text
+var _gridCellFunctionHelpText = "// enter JavaScript here that can alter the contents when this\n// cell is populated. The value is available in the \"value\"\n// variable, and the cell in \"this\"";
+
+// this is a dialogue to refine the options available in a grid control
 function Property_gridColumns(cell, grid, property, details) {
 	
 	// retrieve or create the dialogue
@@ -2322,18 +2339,27 @@ function Property_gridColumns(cell, grid, property, details) {
 	cell.text(text);
 	
 	// add a header
-	table.append("<tr><td style='width:20px;'><b>Visible</b></td><td><b>Title</b></td><td><b>Title style</b></td><td><b>Field</b></td><td><b>Field style</b></td><td colspan='2'><b>Cell function</b></td></tr>");
+	table.append("<tr><td style='width:20px;'><b>Visible</b></td><td><b>Title</b></td><td><b>Title style</b></td><td><b>Field</b></td><td><b>Field style</b></td><td><b>Sort</b></td><td colspan='2'><b>Cell function</b></td></tr>");
 		
 	// show columns
 	for (var i in columns) {
-
+		
+		// set the sort select (show the ellipses if custom)
+		var sortSelect = "<select " + (columns[i].sort == "c" ? "style='width:60px;'" : "" ) + ">";
+		// loop the values and add
+		for (var j in _gridColumnSorts) {
+			sortSelect += "<option value='" + j + "'"+ (columns[i].sort == j ? " selected='selected'" : "") + ">" + _gridColumnSorts[j].text + "</option>";
+		}
+		// close it
+		sortSelect += "</select>";
+			
 		// set the cellFunction text to ellipses
 		var cellFunctionText = "...";
 		// update to function if present
 		if (columns[i].cellFunction) cellFunctionText = columns[i].cellFunction;
 		
 		// add the line
-		table.append("<tr><td class='center'><input type='checkbox' " + (columns[i].visible ? "checked='checked'" : "")  + " /></td><td><input value='" + columns[i].title + "' /></td><td><input value='" + columns[i].titleStyle + "' /></td><td><input value='" + columns[i].field + "' /></td><td class='inputBorderRight'><input value='" + columns[i].fieldStyle + "' /></td><td class='paddingLeft5' style='max-width:20px;'>" + cellFunctionText.replaceAll("<","&lt;") + "</td><td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
+		table.append("<tr><td class='center'><input type='checkbox' " + (columns[i].visible ? "checked='checked'" : "")  + " /></td><td><input value='" + columns[i].title + "' /></td><td><input value='" + columns[i].titleStyle + "' /></td><td><input value='" + columns[i].field + "' /></td><td><input value='" + columns[i].fieldStyle + "' /></td><td style='max-width:20px;'>" + sortSelect + "<span>...</span></td><td class='paddingLeft5' style='max-width:20px;'>" + cellFunctionText.replaceAll("<","&lt;") + "</td><td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
 		
 		// find the checkbox
 		var visibleEdit = table.find("tr").last().children(":nth(0)").first().children().first();
@@ -2392,11 +2418,51 @@ function Property_gridColumns(cell, grid, property, details) {
 			// update value
 			ev.data.grid.columns[input.parent().parent().index()-1].fieldStyle = input.val();
 			// refresh the html and regenerate the mappings
-			rebuildHtml(grid);
+			rebuildHtml(ev.data.grid);
+		}));
+		
+		// find the sort drop down
+		var fieldStyleEdit = table.find("tr").last().children(":nth(5)").first().children().first();
+		// add a listener
+		addListener( fieldStyleEdit.change( {grid: grid, cell: cell, grid: grid, property: property, details: details}, function(ev) {
+			// get the input
+			var input = $(ev.target);
+			// update value
+			ev.data.grid.columns[input.parent().parent().index()-1].sort = input.val();
+			// refresh the grid
+			Property_gridColumns(ev.data.cell, ev.data.grid, ev.data.property, ev.data.details)
+			// refresh the html 
+			rebuildHtml(ev.data.grid);
+		}));
+		
+		// find the sort custom function
+		var fieldStyleEdit = table.find("tr").last().children(":nth(5)").first().children().last();
+		// add a listener
+		addListener( fieldStyleEdit.click( {grid: grid}, function(ev) {
+			// get the span
+			var span = $(ev.target);
+			// get the index
+			var index = span.parent().parent().index()-1;
+			// set the index
+			textArea.attr("data-index",index);
+			// set the type
+			textArea.attr("data-type","s");
+			// get the function text
+			var sortFunctionText = ev.data.grid.columns[index].sortFunction;
+			// check the text
+			if (sortFunctionText) {
+				// show if exists
+				textArea.val(sortFunctionText);
+			} else {
+				// show help if not
+				textArea.val(_gridSortFunctionHelpText);
+			}
+			// show and focus the textarea
+			textArea.show().focus();
 		}));
 		
 		// find the cellFunction
-		var fieldStyleEdit = table.find("tr").last().children(":nth(5)").first();
+		var fieldStyleEdit = table.find("tr").last().children(":nth(6)").first();
 		// add a listener
 		addListener( fieldStyleEdit.click( {grid: grid}, function(ev) {
 			// get the td
@@ -2404,41 +2470,72 @@ function Property_gridColumns(cell, grid, property, details) {
 			// get the index
 			var index = td.parent().index()-1;
 			// set the index
-			cellFunctionTextArea.attr("data-index",index);
+			textArea.attr("data-index",index);
+			// set the type
+			textArea.attr("data-type","f");
 			// get the function text
 			var cellFunctionText = ev.data.grid.columns[index].cellFunction;
-			// set the text
-			if (cellFunctionText) cellFunctionTextArea.val(cellFunctionText);
+			// check the text
+			if (cellFunctionText) {
+				textArea.val(cellFunctionText);
+			} else {
+				textArea.val(_gridCellFunctionHelpText);
+			}
 			// show and focus the textarea
-			cellFunctionTextArea.show().focus();
+			textArea.show().focus();
 		}));
 						
 	}
 	
 	// add the cell function text area
-	var cellFunctionTextArea = dialogue.append("<textarea data-index='-1' style='position:absolute;display:none;width:500px;height:300px;top:26px;right:10px;' wrap='off'></textarea>").find("textarea:first");
+	var textArea = dialogue.append("<textarea data-index='-1' style='position:absolute;display:none;width:500px;height:300px;top:26px;right:10px;' wrap='off'></textarea>").find("textarea:first");
 	// hide it on unfocus
-	addListener( cellFunctionTextArea.blur( function(ev) {		
+	addListener( textArea.blur( function(ev) {		
 		// get the value
-		var value = cellFunctionTextArea.val();
-		// update to elipses if nothing
-		if (!value) value = "...";
+		var value = textArea.val();
+		// update to elipses if nothing or only help text
+		if (!value || value == _gridCellFunctionHelpText) value = "...";
 		// get the index
-		var index = cellFunctionTextArea.attr("data-index")*1;		
-		// update the td text
-		if (index >= 0) table.find("tr:nth(" + (index + 1) + ")").last().children("td:nth(5)").html(value);
+		var index = textArea.attr("data-index")*1;		
+		// get the type
+		var type = textArea.attr("data-type");	
+		// update the td text if known cell function
+		if (index >= 0 && type == "f") table.find("tr:nth(" + (index + 1) + ")").last().children("td:nth(6)").html(value);
 		// empty the value
-		cellFunctionTextArea.val("");
+		textArea.val("");
 		// hide it
-		cellFunctionTextArea.hide();		
+		textArea.hide();		
 	}));
 	
-	// update the applicable cellFunction
-	addListener( cellFunctionTextArea.keyup( {grid: grid}, function(ev) {
+	// update the applicable property on text area key up
+	addListener( textArea.keyup( {grid: grid}, function(ev) {
+		// get the value
+		var value = textArea.val();
 		// get the index
-		var index = cellFunctionTextArea.attr("data-index")*1;
+		var index = textArea.attr("data-index")*1;
+		// get the type
+		var type = textArea.attr("data-type");
 		// update the object value
-		if (index >= 0) ev.data.grid.columns[index].cellFunction = cellFunctionTextArea.val();		
+		if (index >= 0) {			
+			// update the custom sort
+			if (type == "s") {
+				// check the value different from help
+				if (value && value != _gridSortFunctionHelpText) {
+					ev.data.grid.columns[index].sortFunction = textArea.val();
+				} else {
+					ev.data.grid.columns[index].sortFunction = null;
+				}				
+			}
+			// update the cell function
+			if (type == "f") {
+				// check value different from help
+				if (value && value != _gridCellFunctionHelpText) {
+					ev.data.grid.columns[index].cellFunction = value;
+				} else {
+					ev.data.grid.columns[index].cellFunction = null;
+				}
+			}
+		}
 	}));
 	
 	// add delete listeners

@@ -338,7 +338,7 @@ public class Application {
 			_dependancies.add(dependency);
 		}
 		
-		// check for dependencies on a single type (usally Rapid)
+		// check for dependencies on a single type (usually Rapid)
 		public boolean hasDependency(int typeClass) {
 			// assume no dependency
 			boolean hasDependency = false;
