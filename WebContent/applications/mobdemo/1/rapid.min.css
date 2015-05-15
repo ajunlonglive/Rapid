@@ -2,6 +2,7 @@ div.loading{position:absolute;background-color:black;opacity:0.2;filter:alpha(op
 span.loading{position:absolute;background:url("../../../images/wait_120x15.gif");background-repeat:no-repeat;width:120px;height:15px;border:2px solid #777;display:none}
 .buttonGlyphWithBackground{font-size:0.5em}
 table.grid{border-collapse:collapse}
+table.grid span.sort{font-family:FontAwesome;margin-left:5px}
 .hint{position:absolute;z-index:10009}
 .map{width:300px;height:300px;text-align:center}
 .slidePanel{position:absolute;padding:5px;width:20px;height:20px;z-index:101}

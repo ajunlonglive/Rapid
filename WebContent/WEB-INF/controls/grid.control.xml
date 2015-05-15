@@ -77,6 +77,23 @@ return [["","None"],["L","Local storage"],["S","Session storage"]];
 	    </properties>
 	    
 	    <resources>
+	        
+	        <resource>	            
+	            <type>cssFile</type>
+	            <contents>styles/fonts/fontawesome/css/font-awesome.css</contents>
+	        </resource>
+	        
+	        <!-- Some browsers choose the tff instead of the woff so both are included -->
+	        <resource>	            
+	            <type>file</type>
+	            <contents>styles/fonts/fontawesome/fonts/fontawesome-webfont.woff</contents>
+	        </resource>
+	        
+	        <resource>
+	            <type>file</type>
+	            <contents>styles/fonts/fontawesome/fonts/fontawesome-webfont.ttf</contents>
+	        </resource>
+	        
 	        <resource>
 	            <type>css</type>
 	            <contents>
@@ -84,13 +101,20 @@ return [["","None"],["L","Local storage"],["S","Session storage"]];
 table.grid {
 	border-collapse:collapse;
 }           
+
+table.grid span.sort {
+	font-family: FontAwesome;
+	margin-left: 5px;
+}
 	                ]]>
 				</contents>
 	        </resource>
+	        
 	        <resource>
 	            <type>javascript</type>
 	            <contents>
 	                <![CDATA[
+	                
 function getGridDataStoreData(id, details) {
 	data = null;
 	switch (details.dataStorageType) {
@@ -115,7 +139,153 @@ function saveGridDataStoreData(id, details, data) {
 			sessionStorage[_appId + id] = JSON.stringify(data);
 		break;
 	}
-}	                	
+}	
+
+function sortGridByColumn(ev, id, details, column, asc) {
+	// get the grid data
+	var data = getData_grid(ev, id, null, details);
+	// check there is data for the column
+	if (data && data.rows && data.fields[column] && details.columns && details.columns[column]) {
+		
+		// an array for all values in this column
+		var sortedValues = [];
+		// populate the array for each row with an object with the original index and value
+		for (var i in data.rows) sortedValues.push( {index:i, value:data.rows[i][column]} );
+		// determin the sort type
+		switch (details.columns[column].sort) {
+			// for n, turn both values into numbers and use that
+			case "n" : sortedValues.sort( function(i1, i2) {
+				return (i1.value * 1) - (i2.value * 1) ; 
+			});			
+			break;
+			// d1 is uk date format
+			case "d1": sortedValues.sort( function(i1, i2) {
+				// get the parts of the dates
+				var d1Parts = i1.value.split("/");
+				var d2Parts = i2.value.split("/");
+				// easy one's first (null or not enough parts to contruct a date)
+				if (!d1Parts || d1Parts.length < 3) {
+					return 1;
+				} else if (!d2Parts || d2Parts.length < 3) {
+					return -1;
+				} else {
+					var d1 = new Date(d1Parts[2], d1Parts[1]-1, d1Parts[0]);
+					var d2 = new Date(d2Parts[2], d2Parts[1]-1, d2Parts[0]);
+					return d1.getTime() - d2.getTime();
+				}
+			});					
+			break;
+			// d2 is uk month-word date format
+			case "d2": sortedValues.sort( function(i1, i2) {
+				// get the parts of the dates
+				var d1Parts = i1.value.split("-");
+				var d2Parts = i2.value.split("-");
+				// easy one's first (null or not enough parts to contruct a date)
+				if (!d1Parts || d1Parts.length < 3) {
+					return 1;
+				} else if (!d2Parts || d2Parts.length < 3) {
+					return -1;
+				} else {
+					var months = ["jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"];
+					for (m1 in months) if (d1Parts[1].toLowerCase().substr(0,3) == months[m1]) break;
+					for (m2 in months) if (d2Parts[1].toLowerCase().substr(0,3) == months[m2]) break;
+					var d1 = new Date(d1Parts[2], m1, d1Parts[0]);
+					var d2 = new Date(d2Parts[2], m2, d2Parts[0]);
+					return d1.getTime() - d2.getTime();
+				}
+			});					
+			break;
+			// d3 is us date format
+			case "d3": sortedValues.sort( function(i1, i2) {
+				// get the parts of the dates
+				var d1Parts = i1.value.split("/");
+				var d2Parts = i2.value.split("/");
+				// easy one's first (null or not enough parts to contruct a date)
+				if (!d1Parts || d1Parts.length < 3) {
+					return 1;
+				} else if (!d2Parts || d2Parts.length < 3) {
+					return -1;
+				} else {
+					var d1 = new Date(d1Parts[2], d1Parts[0]-1, d1Parts[1]);
+					var d2 = new Date(d2Parts[2], d2Parts[0]-1, d2Parts[1]);
+					return d1.getTime() - d2.getTime();
+				}
+			});					
+			break;
+			// d4 is xml date format
+			case "d1": sortedValues.sort( function(i1, i2) {
+				// get the parts of the dates
+				var d1Parts = i1.value.split("-");
+				var d2Parts = i2.value.split("-");
+				// easy one's first (null or not enough parts to contruct a date)
+				if (!d1Parts || d1Parts.length < 3) {
+					return 1;
+				} else if (!d2Parts || d2Parts.length < 3) {
+					return -1;
+				} else {
+					var d1 = new Date(d1Parts[0], d1Parts[1]-1, d1Parts[1]);
+					var d2 = new Date(d2Parts[0], d2Parts[1]-1, d2Parts[1]);
+					return d1.getTime() - d2.getTime();
+				}
+			});					
+			break;
+			// for c, make a new function from the sortFunction property and use that
+			case "c":
+				var f = new Function("item1","item2",details.columns[column].sortFunction);
+				sortedValues.sort(f);				
+			break;
+			default : sortedValues.sort( function(i1, i2) {				
+				// easy one's first
+				if (i1.value == null) {				
+					return 1;
+				} else if (i2.value == null) {
+					return -1;
+				} else {
+					// assume the values match
+					var s = 0;
+					// get both values in lower case
+					v1 = i1.value.toLowerCase();
+					v2 = i2.value.toLowerCase();
+					// only if the two are different
+					if (v1 != v2) {			
+							// get the shortest length
+							var l = Math.min(v1.length, v2.length);
+							// loop the shortest length
+							for (var i = 0; i < l; i++) {
+								// check the different in ascii values
+								if (v1.charCodeAt(i) > v2.charCodeAt(i)) {
+									s = 1;
+									break;
+								} else if (v1.charCodeAt(i) < v2.charCodeAt(i)) {
+									s = -1;
+									break;
+								}					
+							}
+							// if s is still zero use the length of the strings
+							if (s == 0) s = v1.length - v2.length;			
+					} // same check
+					return s
+				} // null checks					
+			}); 
+		}
+				
+		// create a new rows array
+		var rows = [];
+		// if asc
+		if (asc) {
+			// loop the returned sorted column values and add into the rows array from their original position
+			for (var i in sortedValues)  rows.push(data.rows[sortedValues[i].index]);
+		} else {
+			// loop the returned sorted column values in reverse  and add into the rows array from their original position
+			for (var i in sortedValues)  rows.push(data.rows[sortedValues[sortedValues.length - i - 1].index]);
+		}
+		// replace the data rows with the placed rows
+		data.rows = rows;
+		// set the sorted data
+		setData_grid(ev, id, null, details, data);
+	}
+} 
+           	
 	                ]]>
 	            </contents>
 	        </resource>
@@ -141,7 +311,9 @@ if (this.columns.length > 0) {
 	for (var i in this.columns) {
 		var column = this.columns[i];
 		if (column.visible) {
-			headerHtml += "<td" + (column.titleStyle ? " style='" + column.titleStyle + "'" : "") + ">" + column.title + "</td>";
+			headerHtml += "<td" + (column.titleStyle ? " style='" + column.titleStyle + "'" : "") + ">" + column.title;
+			if (column.sort) headerHtml += "<span class='sort'>&#xf0dc;</span>";
+			headerHtml += "</td>";
 			if (i % 2 == 1) {
 			 	rowHtml += "<td " + (column.fieldStyle ? " style='" + column.fieldStyle + "'" : "") + ">123.00</td>"
 			} else {
@@ -150,6 +322,7 @@ if (this.columns.length > 0) {
 			columnCount ++;
 		} else {
 			headerHtml += "<td style='display:none;'>" + column.title + "</td>";
+			headerHtml += "</td>";
 			rowHtml += "<td style='display:none;'></td>"
 		}
 	}
@@ -186,6 +359,8 @@ if (this.columns && this.columns.length > 0) {
 		if (column.visible) c.visible = column.visible;
 		if (column.field) c.field = column.field;
 		if (column.fieldStyle) c.style = column.fieldStyle;		
+		if (column.sort) c.sort = column.sort;
+		if (column.sortFunction) c.sortFunction = column.sortFunction;
 		if (column.cellFunction) c.cellFunction = column.cellFunction;		
 		details.columns.push(c);
 	}
@@ -260,8 +435,13 @@ return data;
 	    
 	    <setDataJavaScript>
 	        <![CDATA[
+// get the grid control	        
 var control = $("#" + id);
+// remove all columns except for the first one
 control.find("tr:not(:first)").remove();	        
+// reset any sort indicators if not being used for sorting
+control.find("span.sort").html("&#xf0dc");
+// if we have data
 if (data !== undefined) {	
 	data = makeDataObject(data, field);
 	if (data && data.rows) {	        		
@@ -323,16 +503,17 @@ if (data !== undefined) {
 				rowHtml += "</tr>";
 				control.append(rowHtml);
 			}
-		}								
-	} 
+		} // got details and columns and data fields							
+	} // got data
 	if (details && details.dataStorageType) saveGridDataStoreData(id, details, data);
 	
-	control.children().last().children("tr:not(:first)").click( function() { 
+	// if we click on a row that isn't the first one
+	control.children().last().children("tr:not(:first)").click( function() {
+		// get the row 
 		var row = $(this);
-		row.parent().find("tr.rowSelect").each( function() {
-			var row = $(this);
-			row.removeClass("rowSelect");
-		});
+		// remove rowSelect class from all rows in the table
+		row.parent().find("tr.rowSelect").removeClass("rowSelect");
+		// add rowSelect to this row
 		row.addClass("rowSelect"); 
 	});
 	
@@ -423,14 +604,52 @@ return "#" + this.id + " .rowSelect";
 	    
 	    <initJavaScript>
 	        <![CDATA[
-if (details && details.dataStorageType) {
-	var data = getGridDataStoreData(id, details);
-	if (data) setData_grid($.Event('gridinit'), id, null, details, data);
-	$("#" + id).click(function(ev) {
+// get the control
+var control = $("#" + id);	        
+// check there are details	        
+if (details) {
+	// if there are columns
+	if (details.columns) {
+		// get the header cells
+		var headers = control.find("tr:first-child td");
+		// loop the columns
+		for (var i in details.columns) {
+			// if it has a sort
+			if (details.columns[i].sort) {
+				// get the header cell
+				var cell = $(headers.get(i));
+				// change the cursor
+				cell.css("cursor","pointer");
+				// append an indicator
+				cell.append("<span class='sort'>&#xf0dc;</span>");
+				// add a listener
+				cell.click( {index:i},function(ev) {
+					// get the span
+					var span = $(ev.target);
+					// drill down if need be
+					if (!span.is("span")) span = span.find("span");
+					// if ascending or not set (note the unicode escape)
+					if (span.html() == "\uf0de") {
+						sortGridByColumn(ev, id, details, ev.data.index, false);
+						span.html("&#xf0dd;");
+					} else {
+						sortGridByColumn(ev, id, details, ev.data.index, true);
+						span.html("&#xf0de;");
+					}
+				});
+			}
+		}
+	}
+	// if there is a data store
+	if (details.dataStorageType) {
 		var data = getGridDataStoreData(id, details);
-		data.selectedRowNumber = $(ev.target).closest("tr").index();
-		saveGridDataStoreData(id, details, data);
-	});
+		if (data) setData_grid($.Event('gridinit'), id, null, details, data);
+		$("#" + id).click(function(ev) {
+			var data = getGridDataStoreData(id, details);
+			data.selectedRowNumber = $(ev.target).closest("tr").index();
+			saveGridDataStoreData(id, details, data);
+		});
+	} // datastorage type check
 } 
 	        ]]>	        
 	    </initJavaScript>

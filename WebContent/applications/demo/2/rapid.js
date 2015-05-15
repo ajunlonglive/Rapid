@@ -275,14 +275,52 @@ function Init_date(id, details) {
 }
 
 function Init_grid(id, details) {
-  if (details && details.dataStorageType) {
-  	var data = getGridDataStoreData(id, details);
-  	if (data) setData_grid($.Event('gridinit'), id, null, details, data);
-  	$("#" + id).click(function(ev) {
+  // get the control
+  var control = $("#" + id);	        
+  // check there are details	        
+  if (details) {
+  	// if there are columns
+  	if (details.columns) {
+  		// get the header cells
+  		var headers = control.find("tr:first-child td");
+  		// loop the columns
+  		for (var i in details.columns) {
+  			// if it has a sort
+  			if (details.columns[i].sort) {
+  				// get the header cell
+  				var cell = $(headers.get(i));
+  				// change the cursor
+  				cell.css("cursor","pointer");
+  				// append an indicator
+  				cell.append("<span class='sort'>&#xf0dc;</span>");
+  				// add a listener
+  				cell.click( {index:i},function(ev) {
+  					// get the span
+  					var span = $(ev.target);
+  					// drill down if need be
+  					if (!span.is("span")) span = span.find("span");
+  					// if ascending or not set (note the unicode escape)
+  					if (span.html() == "\uf0de") {
+  						sortGridByColumn(ev, id, details, ev.data.index, false);
+  						span.html("&#xf0dd;");
+  					} else {
+  						sortGridByColumn(ev, id, details, ev.data.index, true);
+  						span.html("&#xf0de;");
+  					}
+  				});
+  			}
+  		}
+  	}
+  	// if there is a data store
+  	if (details.dataStorageType) {
   		var data = getGridDataStoreData(id, details);
-  		data.selectedRowNumber = $(ev.target).closest("tr").index();
-  		saveGridDataStoreData(id, details, data);
-  	});
+  		if (data) setData_grid($.Event('gridinit'), id, null, details, data);
+  		$("#" + id).click(function(ev) {
+  			var data = getGridDataStoreData(id, details);
+  			data.selectedRowNumber = $(ev.target).closest("tr").index();
+  			saveGridDataStoreData(id, details, data);
+  		});
+  	} // datastorage type check
   }
 }
 
@@ -533,8 +571,13 @@ function getData_grid(ev, id, field, details) {
 }
 
 function setData_grid(ev, id, field, details, data, changeEvents) {
+  // get the grid control	        
   var control = $("#" + id);
+  // remove all columns except for the first one
   control.find("tr:not(:first)").remove();	        
+  // reset any sort indicators if not being used for sorting
+  control.find("span.sort").html("&#xf0dc");
+  // if we have data
   if (data !== undefined) {	
   	data = makeDataObject(data, field);
   	if (data && data.rows) {	        		
@@ -596,16 +639,17 @@ function setData_grid(ev, id, field, details, data, changeEvents) {
   				rowHtml += "</tr>";
   				control.append(rowHtml);
   			}
-  		}								
-  	} 
+  		} // got details and columns and data fields							
+  	} // got data
   	if (details && details.dataStorageType) saveGridDataStoreData(id, details, data);
   	
-  	control.children().last().children("tr:not(:first)").click( function() { 
+  	// if we click on a row that isn't the first one
+  	control.children().last().children("tr:not(:first)").click( function() {
+  		// get the row 
   		var row = $(this);
-  		row.parent().find("tr.rowSelect").each( function() {
-  			var row = $(this);
-  			row.removeClass("rowSelect");
-  		});
+  		// remove rowSelect class from all rows in the table
+  		row.parent().find("tr.rowSelect").removeClass("rowSelect");
+  		// add rowSelect to this row
   		row.addClass("rowSelect"); 
   	});
   	
