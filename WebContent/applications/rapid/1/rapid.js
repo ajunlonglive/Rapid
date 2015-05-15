@@ -82,6 +82,151 @@ function saveGridDataStoreData(id, details, data) {
 			sessionStorage[_appId + id] = JSON.stringify(data);
 		break;
 	}
+}	
+
+function sortGridByColumn(ev, id, details, column, asc) {
+	// get the grid data
+	var data = getData_grid(ev, id, null, details);
+	// check there is data for the column
+	if (data && data.rows && data.fields[column] && details.columns && details.columns[column]) {
+		
+		// an array for all values in this column
+		var sortedValues = [];
+		// populate the array for each row with an object with the original index and value
+		for (var i in data.rows) sortedValues.push( {index:i, value:data.rows[i][column]} );
+		// determin the sort type
+		switch (details.columns[column].sort) {
+			// for n, turn both values into numbers and use that
+			case "n" : sortedValues.sort( function(i1, i2) {
+				return (i1.value * 1) - (i2.value * 1) ; 
+			});			
+			break;
+			// d1 is uk date format
+			case "d1": sortedValues.sort( function(i1, i2) {
+				// get the parts of the dates
+				var d1Parts = i1.value.split("/");
+				var d2Parts = i2.value.split("/");
+				// easy one's first (null or not enough parts to contruct a date)
+				if (!d1Parts || d1Parts.length < 3) {
+					return 1;
+				} else if (!d2Parts || d2Parts.length < 3) {
+					return -1;
+				} else {
+					var d1 = new Date(d1Parts[2], d1Parts[1]-1, d1Parts[0]);
+					var d2 = new Date(d2Parts[2], d2Parts[1]-1, d2Parts[0]);
+					return d1.getTime() - d2.getTime();
+				}
+			});					
+			break;
+			// d2 is uk month-word date format
+			case "d2": sortedValues.sort( function(i1, i2) {
+				// get the parts of the dates
+				var d1Parts = i1.value.split("-");
+				var d2Parts = i2.value.split("-");
+				// easy one's first (null or not enough parts to contruct a date)
+				if (!d1Parts || d1Parts.length < 3) {
+					return 1;
+				} else if (!d2Parts || d2Parts.length < 3) {
+					return -1;
+				} else {
+					var months = ["jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"];
+					for (m1 in months) if (d1Parts[1].toLowerCase().substr(0,3) == months[m1]) break;
+					for (m2 in months) if (d2Parts[1].toLowerCase().substr(0,3) == months[m2]) break;
+					var d1 = new Date(d1Parts[2], m1, d1Parts[0]);
+					var d2 = new Date(d2Parts[2], m2, d2Parts[0]);
+					return d1.getTime() - d2.getTime();
+				}
+			});					
+			break;
+			// d3 is us date format
+			case "d3": sortedValues.sort( function(i1, i2) {
+				// get the parts of the dates
+				var d1Parts = i1.value.split("/");
+				var d2Parts = i2.value.split("/");
+				// easy one's first (null or not enough parts to contruct a date)
+				if (!d1Parts || d1Parts.length < 3) {
+					return 1;
+				} else if (!d2Parts || d2Parts.length < 3) {
+					return -1;
+				} else {
+					var d1 = new Date(d1Parts[2], d1Parts[0]-1, d1Parts[1]);
+					var d2 = new Date(d2Parts[2], d2Parts[0]-1, d2Parts[1]);
+					return d1.getTime() - d2.getTime();
+				}
+			});					
+			break;
+			// d4 is xml date format
+			case "d1": sortedValues.sort( function(i1, i2) {
+				// get the parts of the dates
+				var d1Parts = i1.value.split("-");
+				var d2Parts = i2.value.split("-");
+				// easy one's first (null or not enough parts to contruct a date)
+				if (!d1Parts || d1Parts.length < 3) {
+					return 1;
+				} else if (!d2Parts || d2Parts.length < 3) {
+					return -1;
+				} else {
+					var d1 = new Date(d1Parts[0], d1Parts[1]-1, d1Parts[1]);
+					var d2 = new Date(d2Parts[0], d2Parts[1]-1, d2Parts[1]);
+					return d1.getTime() - d2.getTime();
+				}
+			});					
+			break;
+			// for c, make a new function from the sortFunction property and use that
+			case "c":
+				var f = new Function("item1","item2",details.columns[column].sortFunction);
+				sortedValues.sort(f);				
+			break;
+			default : sortedValues.sort( function(i1, i2) {				
+				// easy one's first
+				if (i1.value == null) {				
+					return 1;
+				} else if (i2.value == null) {
+					return -1;
+				} else {
+					// assume the values match
+					var s = 0;
+					// get both values in lower case
+					v1 = i1.value.toLowerCase();
+					v2 = i2.value.toLowerCase();
+					// only if the two are different
+					if (v1 != v2) {			
+							// get the shortest length
+							var l = Math.min(v1.length, v2.length);
+							// loop the shortest length
+							for (var i = 0; i < l; i++) {
+								// check the different in ascii values
+								if (v1.charCodeAt(i) > v2.charCodeAt(i)) {
+									s = 1;
+									break;
+								} else if (v1.charCodeAt(i) < v2.charCodeAt(i)) {
+									s = -1;
+									break;
+								}					
+							}
+							// if s is still zero use the length of the strings
+							if (s == 0) s = v1.length - v2.length;			
+					} // same check
+					return s
+				} // null checks					
+			}); 
+		}
+				
+		// create a new rows array
+		var rows = [];
+		// if asc
+		if (asc) {
+			// loop the returned sorted column values and add into the rows array from their original position
+			for (var i in sortedValues)  rows.push(data.rows[sortedValues[i].index]);
+		} else {
+			// loop the returned sorted column values in reverse  and add into the rows array from their original position
+			for (var i in sortedValues)  rows.push(data.rows[sortedValues[sortedValues.length - i - 1].index]);
+		}
+		// replace the data rows with the placed rows
+		data.rows = rows;
+		// set the sorted data
+		setData_grid(ev, id, null, details, data);
+	}
 }
 
 /* Link control resource JavaScript */
@@ -286,8 +431,6 @@ function Init_grid(id, details) {
   				var cell = $(headers.get(i));
   				// change the cursor
   				cell.css("cursor","pointer");
-  				// append an indicator
-  				cell.append("<span class='sort'>&#xf0dc;</span>");
   				// add a listener
   				cell.click( {index:i},function(ev) {
   					// get the span
