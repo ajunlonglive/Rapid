@@ -1200,10 +1200,10 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 	cell.text(text);
 	
 	// add inputs table, sql, and outputs table
-	table.append("<tr><td colspan='2' style='padding:0px;vertical-align: top;'><table class='dialogueTable'><tr><td><b>Input</b></td><td colspan='2'><b>Field</b></td></tr></table></td><td colspan='3' style='width:50%;padding:2px 10px 0 10px;'><b>SQL</b><br/><textarea style='width:100%;min-width:100%;max-width:100%;min-height:200px;box-sizing:border-box;'></textarea></td><td colspan='2' rowspan='3' style='padding:0px;vertical-align: top;'><table  class='dialogueTable'><tr><td><b>Field</b></td><td colspan='2'><b>Output</b></td></tr></table></td></tr>");
+	table.append("<tr><td colspan='2' style='padding:0px;vertical-align: top;'><table class='dialogueTable inputs'><tr><td><b>Input</b></td><td colspan='2'><b>Field</b></td></tr></table></td><td colspan='3' style='width:50%;padding:2px 10px 0 10px;'><b>SQL</b><br/><textarea style='width:100%;min-width:100%;max-width:100%;min-height:200px;box-sizing:border-box;'></textarea></td><td colspan='2' rowspan='3' style='padding:0px;vertical-align: top;'><table  class='dialogueTable outputs'><tr><td><b>Field</b></td><td colspan='2'><b>Output</b></td></tr></table></td></tr>");
 	
 	// find the inputs table
-	var inputsTable = table.children().last().children().first().children("table");
+	var inputsTable = table.find("table.inputs");
 	// loop input parameters
 	for (var i in query.inputs) {		
 		// get the input name
@@ -1286,7 +1286,7 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 	}));
 	
 	// find the outputs table
-	var outputsTable = table.children().last().children().last().children().last();
+	var outputsTable = table.find("table.outputs");
 	// loop output parameters
 	for (var i in query.outputs) {
 		// get the output id
@@ -1327,9 +1327,9 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 		Property_databaseQuery(cell, propertyObject, property); 
 	});
 	// add the add
-	outputsTable.append("<tr><td style='padding:0px;' colspan='2'><select style='margin:0px'><option value=''>add output...</option>" + getOutputOptions() + "</select></td><td>&nbsp;</td></tr>");
+	outputsTable.append("<tr><td style='padding:0px;' colspan='2'><select class='addOutput' style='margin:0px'><option value=''>add output...</option>" + getOutputOptions() + "</select></td><td>&nbsp;</td></tr>");
 	// find the output add
-	var outputAdd = outputsTable.find("tr").last().children(":nth(1)").last().children().last();
+	var outputAdd = outputsTable.find("select.addOutput");
 	// listener to add output
 	addListener( outputAdd.change( {cell: cell, propertyObject: propertyObject, property: property, details: details}, function(ev) {
 		// initialise array if need be
@@ -1342,7 +1342,7 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 		Property_databaseQuery(ev.data.cell, ev.data.propertyObject, ev.data.property, ev.data.details);	
 	}));
 	
-	table.append("<tr><td colspan='2'>Multi-row data?&nbsp;<input type='checkbox'" + (query.multiRow ? "checked='checked'" : "" ) + " style='vertical-align: middle;margin-top: -3px;'/></td><td style='text-align: left;overflow:inherit;' colspan='2'>Database connection <select style='width:auto;'>" + getDatabaseConnectionOptions(query.databaseConnectionIndex) + "</select></td><td style='text-align:right;'><button>Test SQL</button></td></tr>");
+	table.append("<tr><td colspan='2'>Multi-row input data?&nbsp;<input class='multi' type='checkbox'" + (query.multiRow ? "checked='checked'" : "" ) + " style='vertical-align: middle;margin-top: -3px;'/></td><td style='text-align: left;overflow:inherit;' colspan='2'>Database connection <select style='width:auto;'>" + getDatabaseConnectionOptions(query.databaseConnectionIndex) + "</select></td><td style='text-align:right;'><button>Test SQL</button></td></tr>");
 	
 	// get a reference to the multi-data check box
 	var multiRow = table.find("tr").last().find("input");

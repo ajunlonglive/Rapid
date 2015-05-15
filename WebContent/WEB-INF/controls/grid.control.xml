@@ -620,8 +620,6 @@ if (details) {
 				var cell = $(headers.get(i));
 				// change the cursor
 				cell.css("cursor","pointer");
-				// append an indicator
-				cell.append("<span class='sort'>&#xf0dc;</span>");
 				// add a listener
 				cell.click( {index:i},function(ev) {
 					// get the span
