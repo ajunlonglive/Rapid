@@ -467,7 +467,9 @@ function Property_text(cell, propertyObject, property, details) {
 	// get a reference to the form control
 	var input = cell.children().last();
 	// add a listener to update the property
-	addListener( input.keyup( function(ev) { updateProperty(cell, propertyObject, property, details, ev.target.value); }));
+	addListener( input.keyup( function(ev) { 
+		updateProperty(cell, propertyObject, property, details, ev.target.value); 
+	}));
 }
 
 function Property_integer(cell, propertyObject, property, details) {
@@ -2572,6 +2574,42 @@ function Property_gridColumns(cell, grid, property, details) {
 		Property_gridColumns(ev.data.cell, ev.data.grid, ev.data.property, ev.data.details);		
 	}));
 
+}
+
+// the grid scroll width property, only appears if horizontal scrolling is on
+function Property_gridScrollWidth(cell, grid, property, details) {
+	// only if horizontal scrolling
+	if (grid.scrollH) {
+		// add the bigtext
+		Property_text(cell, grid, property, details);
+	} else {
+		// remove this row
+		cell.closest("tr").remove();
+	}
+}
+
+//the grid scroll width property, only appears if horizontal scrolling is on
+function Property_gridScrollHeight(cell, grid, property, details) {
+	// only if vertical scrolling
+	if (grid.scrollV) {
+		// add the bigtext
+		Property_text(cell, grid, property, details);
+	} else {
+		// remove this row
+		cell.closest("tr").remove();
+	}	
+}
+
+//the grid scroll width property, only appears if horizontal scrolling is on
+function Property_gridScrollFixedHeader(cell, grid, property, details) {
+	// only if vertical scrolling
+	if (grid.scrollV) {
+		// add the bigtext
+		Property_checkbox(cell, grid, property, details);
+	} else {
+		// remove this row
+		cell.closest("tr").remove();
+	}	
 }
 
 // this is a dialogue to choose controls and specify their hints

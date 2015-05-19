@@ -73,6 +73,55 @@ return [["","None"],["L","Local storage"],["S","Session storage"]];
 					]]>
 	            </getValuesFunction>               
 	        </property> 
+	        
+	        <property>
+	            <key>scrollH</key>
+	            <name>Scroll horizontal</name>
+	            <setConstructValueFunction>return "";</setConstructValueFunction>
+	            <changeValueJavaScript>select</changeValueJavaScript>	
+	            <getValuesFunction>
+	                <![CDATA[
+return [["","No"],["Y","Yes"],["A","Auto"]];
+					]]>
+	            </getValuesFunction>           
+	            <refreshHtml>true</refreshHtml>
+	            <refreshProperties>true</refreshProperties>    
+	        </property> 
+	        
+	        <property>
+	            <key>scrollWidth</key>
+	            <name>Width</name>
+	            <changeValueJavaScript>gridScrollWidth</changeValueJavaScript>	         
+	             <refreshHtml>true</refreshHtml>   
+	        </property>	
+	        
+	        <property>
+	            <key>scrollV</key>
+	            <name>Scroll vertical</name>
+	            <setConstructValueFunction>return "";</setConstructValueFunction>
+	            <changeValueJavaScript>select</changeValueJavaScript>	
+	            <getValuesFunction>
+	                <![CDATA[
+return [["","No"],["Y","Yes"],["A","Auto"]];
+					]]>
+	            </getValuesFunction>           
+	            <refreshHtml>true</refreshHtml>
+	            <refreshProperties>true</refreshProperties>    
+	        </property> 
+	        
+	        <property>
+	            <key>scrollHeight</key>
+	            <name>Height</name>
+	            <changeValueJavaScript>gridScrollHeight</changeValueJavaScript>	         
+	             <refreshHtml>true</refreshHtml>   
+	        </property>	
+	        
+	        <property>
+	            <key>fixedHeader</key>
+	            <name>Fixed header</name>
+	            <changeValueJavaScript>gridScrollFixedHeader</changeValueJavaScript>	           
+	             <refreshHtml>true</refreshHtml> 
+	        </property>	
 	         
 	    </properties>
 	    
@@ -294,13 +343,36 @@ function sortGridByColumn(ev, id, details, column, asc) {
 	    <getHtmlFunction>
 	        <![CDATA[
 // return an empty table, all the work is done in the rebuild	
-return "<table id='" + this.id + "' class='grid" + getStyleClasses(this) + "'></table>";
+var table = "<table id='" + this.id + "' class='grid" + getStyleClasses(this) + "'></table>";
+// if we have fixed headers or scrolling it needs wrapping
+if (this.scrollV && this.fixedHeader) {
+	table = "<div style='display: inline-block;''><div class='gridFixedHeader'></div><div class='gridFixedHeaderTable'>" + table + "</div></tab>";
+} else if (this.scrollH || this.scrollV) {
+	table = "<div style='display: inline-block;''>" + table + "</tab>";
+}
+// return
+return table;
 	        ]]>
 	    </getHtmlFunction> 	 
 	    
 	    <rebuildJavaScript>
 	        <![CDATA[        
 var table = this.object;
+if (table.is("div")) {
+	if (this.scrollH) {
+		table.css({ "overflow-x":(this.scrollH == "A" ? "auto" : "scroll"), "width": this.scrollWidth });
+	} else {
+		table.css({ "overflow-x":"", 	"width": "" });
+	}
+	if (this.scrollV) {
+		if (this.fixedHeader) table = table.find("div.gridFixedHeaderTable");
+		table.css({ "overflow-y":(this.scrollV == "A" ? "auto" : "scroll"), "height": this.scrollHeight	});
+	} else {
+		table.css({ "overflow-y":"", 	"height": "" });
+	}
+	// now get the proper table
+	table = table.find("table.grid");
+}
 table.removeClass();
 table.addClass("grid" + getStyleClasses(this));
 table.children().remove();
@@ -361,7 +433,7 @@ if (this.columns && this.columns.length > 0) {
 		if (column.fieldStyle) c.style = column.fieldStyle;		
 		if (column.sort) c.sort = column.sort;
 		if (column.sortFunction) c.sortFunction = column.sortFunction;
-		if (column.cellFunction) c.cellFunction = column.cellFunction;		
+		if (column.cellFunction) c.cellFunction = column.cellFunction;			
 		details.columns.push(c);
 	}
 } 	        
@@ -380,6 +452,8 @@ if (this.dataStorageType) {
 } else {
 	this.canBeUsedFromOtherPages = false;
 }
+// only set fixed header if both V scrolling and fixed
+if (this.scrollV && this.fixedHeader) details.fixedHeader = true;
 return details;
 			]]>	        	        
 	    </getDetailsFunction>
@@ -506,6 +580,31 @@ if (data !== undefined) {
 		} // got details and columns and data fields							
 	} // got data
 	if (details && details.dataStorageType) saveGridDataStoreData(id, details, data);
+	
+	// if we have a fixed header row
+	if (details && details.fixedHeader) {		
+		// get the header cells
+		var hcells = control.parent().prev().find("tr:first-child").children();
+		// remove any css for width
+		hcells.css("width","");
+		// get the body cells
+		var bcells = control.find("tr:nth-child(2)").children();
+		// if there are body cells
+		if (bcells.length > 0) {
+			// loop them
+			for (var i = 0; i < bcells.length; i++) {
+				// get the header cell
+				var hcell = $(hcells.get(i));
+				// get the body cell
+				var bcell = $(bcells.get(i));
+				// compare widths
+				if (hcell.width() < bcell.width()) hcell.width(bcell.width());
+				if (hcell.width() > bcell.width()) bcell.width(hcell.width()); 
+			}			
+		}
+		// force the top row to re-render in Chrome
+		control.find("tr:first-child")[0].offsetHeight;
+	}     
 	
 	// if we click on a row that isn't the first one
 	control.children().last().children("tr:not(:first)").click( function() {
@@ -648,6 +747,19 @@ if (details) {
 			saveGridDataStoreData(id, details, data);
 		});
 	} // datastorage type check
+	// if fixed headers
+	if (details.fixedHeader) {
+		// clone control
+		var headerTable = control.clone(true);
+		// hide the top row from the proper table
+		control.find("tr:first-child").hide();
+		// remove id
+		headerTable.removeAttr("id");
+		// remove all rows except the top one
+		headerTable.find("tr:not(:first-child)").remove();
+		// append into div above
+		headerTable.appendTo(control.parent().prev());
+	}
 } 
 	        ]]>	        
 	    </initJavaScript>
