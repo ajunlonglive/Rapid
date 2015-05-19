@@ -459,6 +459,19 @@ function Init_grid(id, details) {
   			saveGridDataStoreData(id, details, data);
   		});
   	} // datastorage type check
+  	// if fixed headers
+  	if (details.fixedHeader) {
+  		// clone control
+  		var headerTable = control.clone(true);
+  		// hide the top row from the proper table
+  		control.find("tr:first-child").hide();
+  		// remove id
+  		headerTable.removeAttr("id");
+  		// remove all rows except the top one
+  		headerTable.find("tr:not(:first-child)").remove();
+  		// append into div above
+  		headerTable.appendTo(control.parent().prev());
+  	}
   }
 }
 
@@ -915,6 +928,31 @@ function setData_grid(ev, id, field, details, data, changeEvents) {
   		} // got details and columns and data fields							
   	} // got data
   	if (details && details.dataStorageType) saveGridDataStoreData(id, details, data);
+  	
+  	// if we have a fixed header row
+  	if (details && details.fixedHeader) {		
+  		// get the header cells
+  		var hcells = control.parent().prev().find("tr:first-child").children();
+  		// remove any css for width
+  		hcells.css("width","");
+  		// get the body cells
+  		var bcells = control.find("tr:nth-child(2)").children();
+  		// if there are body cells
+  		if (bcells.length > 0) {
+  			// loop them
+  			for (var i = 0; i < bcells.length; i++) {
+  				// get the header cell
+  				var hcell = $(hcells.get(i));
+  				// get the body cell
+  				var bcell = $(bcells.get(i));
+  				// compare widths
+  				if (hcell.width() < bcell.width()) hcell.width(bcell.width());
+  				if (hcell.width() > bcell.width()) bcell.width(hcell.width()); 
+  			}			
+  		}
+  		// force the top row to re-render in Chrome
+  		control.find("tr:first-child")[0].offsetHeight;
+  	}     
   	
   	// if we click on a row that isn't the first one
   	control.children().last().children("tr:not(:first)").click( function() {
