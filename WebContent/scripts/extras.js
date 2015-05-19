@@ -714,7 +714,7 @@ function mergeDataObjects(data1, data2, mergeType, field) {
 	return data;
 }
 
-//assume css values are in pixels but if em is recognised convert (other units to follow)
+// assume css values are in pixels but if em is recognised convert (other units to follow)
 function toPixels(size) {
 	if (size) {
 		if (size.indexOf("em") == size.length - 2) {
