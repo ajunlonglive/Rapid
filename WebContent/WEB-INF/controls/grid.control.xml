@@ -422,7 +422,7 @@ table.children().last().children(":not(:first)").remove();
 	    
 	    <getDetailsFunction>	        
 	        <![CDATA[
-var details = {};
+var details = {type: this.type};
 if (this.columns && this.columns.length > 0) {
 	details.columns = [];
 	for (var i in this.columns) {
@@ -1050,6 +1050,23 @@ if (details && details.dataStorageType) {
 	   	    </runtimeProperty>
 	   	    
 	   	</runtimeProperties>
+	   	
+	    <designLinkJQuery>
+	        <![CDATA[
+.filter( function() {
+	var link = $(this);
+	var id = link.attr("data-id");
+	var details = window[id + "details"];
+	if (details && details.dataStorageType) {
+		return true;
+	} else {
+		link.hide();
+	}
+}).click( function(ev) {
+	showDesignData($(this));
+});	        	        
+	        ]]>
+	    </designLinkJQuery>
 	   		    
 	</control>
 </controls>

@@ -130,7 +130,7 @@ return "<img id='" + this.id + "' class='nonVisibleControl' src='images/datastor
 	    	    
 	   	<getDetailsFunction>	        
 	        <![CDATA[
-return {storageType: this.storageType};
+return {type:this.type, storageType: this.storageType};
 			]]>	        	        
 	    </getDetailsFunction>
 	    
@@ -263,6 +263,14 @@ if (dataStoreData) {
 	            </setPropertyJavaScript>
 	        </runtimeProperty>
 	    </runtimeProperties>
+	    
+	    <designLinkJQuery>
+	        <![CDATA[
+.click( function(ev) {
+	showDesignData($(this));
+});	        	        
+	        ]]>
+	    </designLinkJQuery>
 	    
 	</control>
 </controls>

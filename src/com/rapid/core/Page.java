@@ -1373,15 +1373,50 @@ public class Page {
 					
 					// if we had the admin link
 					if (adminLinkPermission) {
+						
+						// create string builder for the links
+						StringBuilder designLinkStringBuilder = new StringBuilder(); 
+						// create a string builder for the jquery
+						StringBuilder designLinkJQueryStringBuilder = new StringBuilder(); 
+						// loop all of the controls
+						for (Control control : getAllControls()) {
+							// get the json control definition
+							JSONObject jsonControl = rapidServlet.getJsonControl(control.getType());
+							// definition check
+							if ( jsonControl != null) {
+								// look for the design link jquery
+								String designLinkJQuery = jsonControl.optString("designLinkJQuery", null);
+								// if we got any design link jquery
+								if (designLinkJQuery != null) {
+									// add the link into the string builder
+									designLinkStringBuilder.append("<a id='designLink_" + control.getId() + "' data-id='" + control.getId() + "' href='#'><img src='" + jsonControl.optString("image","images/penknife_24x24.png") + "' style='border:0;' title='" + control.getName() + "'/></a>\n");
+									// trim the JQuery
+									designLinkJQuery = designLinkJQuery.trim();
+									// start with a . if not
+									if (!designLinkJQuery.startsWith(".")) designLinkJQuery = "." + designLinkJQuery;						
+									// end with ; if not
+									if (!designLinkJQuery.endsWith(";")) designLinkJQuery += ";";
+									// add the jquery after the object reference
+									designLinkJQueryStringBuilder.append("$('#designLink_" + control.getId() + "')" + designLinkJQuery);
+								}
+							}
+						}
 														
 						// using attr href was the weirdest thing. Some part of jQuery seemed to be setting the url back to v=1&p=P1 when v=2&p=P2 was printed in the html
-						writer.write("<div id='designShow' style='position:fixed;left:0px;bottom:0px;width:30px;height:30px;z-index:10000;'></div>\n"
-				    	+ "<a id='designLink' style='position:fixed;left:6px;bottom:6px;z-index:10001;display:none;' href='#'><img src='images/gear_24x24.png' style='border:0;'/></a>\n"
+						writer.write(
+						" <link rel='stylesheet' type='text/css' href='styles/designlinks.css'></link>"
+						+ " <script type='text/javascript' src='scripts/designlinks.js'></script>"
+						+	"<div id='designShow' style='position:fixed;left:0;bottom:0;width:30px;height:30px;z-index:10000;'></div>\n"
+						+ "<div id='designLinks' style='position:fixed;left:0;bottom:0;z-index:10001;padding:5px;display:none;'>"
+				    	+ "<a id='designLink' href='#'><img src='images/gear_24x24.png' style='border:0;' title='Rapid Design'/></a>\n"
+						+ designLinkStringBuilder.toString()
+						+ "</div>"						 
 				    	+ "<script type='text/javascript'>\n"
 				    	+ "/* designLink */\n"
 				    	+ "$(document).ready( function() {\n"
-				    	+ "  $('#designShow').mouseover ( function(ev) {\n     $('#designLink').attr('href','design.jsp?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + _id + "').show();\n  });\n"
-				    	+ "  $('#designLink').mouseout ( function(ev) {\n     $('#designLink').hide();\n  });\n"
+				    	+ "  $('#designShow').mouseover ( function(ev) {\n     $('#designLink').attr('href','design.jsp?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + _id + "'); $('#designLinks').show();\n  });\n"
+				    	+ "  $('#designLinks').mouseleave ( function(ev) {\n     $('#designLinks').hide();\n  });\n"
+				    	+ designLinkJQueryStringBuilder.toString()
 				    	+ "});\n"
 				    	+ "</script>\n");
 												    			    	

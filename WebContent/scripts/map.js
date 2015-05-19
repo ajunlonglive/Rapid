@@ -137,17 +137,17 @@ function buildPageMap() {
 							// are we within the move threshold on the left or the right controls that can be moved, or in the middle with an addChildControl method?
 							if (movedOverType.canUserMove && ev.pageX  < t.offset().left + moveThreshold) {
 								// set the cursor
-								t.css("cursor","w-resize");
+								t.css("cursor","url(images/moveLeft_32x32.png) 16 16,w-resize");
 								// remember it's on the left
 								_movedoverDirection = "L";
 							} else if (movedOverType.canUserMove && ev.pageX > t.offset().left + width - moveThreshold) {
 								// set the cursor
-								t.css("cursor","e-resize");
+								t.css("cursor","url(images/moveRight_32x32.png) 16 16,e-resize");
 								// remember it's on the right
 								_movedoverDirection = "R";
 							} else if (movedOverType.canUserInsert) {
 								// set the cursor
-								t.css("cursor","s-resize");
+								t.css("cursor","url(images/insert_32x32.png) 16 30, s-resize");
 								// remember it's in the the centre
 								_movedoverDirection = "C";
 							} else {
