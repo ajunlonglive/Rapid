@@ -421,11 +421,13 @@ function Init_date(id, details) {
 
 function Init_grid(id, details) {
   // get the control
-  var control = $("#" + id);	        
+  var control = $("#" + id);
+  // make sure it's a table
+  if (!control.is("table")) control = control.find("table").last();	        
   // check there are details	        
   if (details) {
   	// if there are columns
-  	if (details.columns) {
+  	if (details.columns) {				
   		// get the header cells
   		var headers = control.find("tr:first-child td");
   		// loop the columns
@@ -467,15 +469,15 @@ function Init_grid(id, details) {
   	// if fixed headers
   	if (details.fixedHeader) {
   		// clone control
-  		var headerTable = control.clone(true);
-  		// hide the top row from the proper table
-  		control.find("tr:first-child").hide();
-  		// remove id
-  		headerTable.removeAttr("id");
+  		var headerTable = control.clone(true);		
   		// remove all rows except the top one
   		headerTable.find("tr:not(:first-child)").remove();
-  		// append into div above
-  		headerTable.appendTo(control.parent().prev());
+  		// remove the style attribute
+  		headerTable.removeAttr("style");
+  		// hide the top row from the proper table
+  		control.find("tr:first-child").hide();
+  		// append the header table above control
+  		control.before(headerTable);
   	}
   }
 }
@@ -713,7 +715,9 @@ function getData_grid(ev, id, field, details) {
   				if (field) data.fields.push(details.columns[i].field);		
   			}
   			data.rows = [];
-  			$("#" + id).find("tr:not(:first):not([data-ignore])").each(function(i) {
+  			var table = $("#" + id);
+  			if (!table.is("table")) table = table.find("table").last();
+  			table.find("tr:not(:first):not([data-ignore])").each(function(i) {
   				var row = [];
   				$(this).children().each(function(i) {
   					if (details.columns[i].field) row.push($(this).html());
@@ -729,10 +733,12 @@ function getData_grid(ev, id, field, details) {
 function setData_grid(ev, id, field, details, data, changeEvents) {
   // get the grid control	        
   var control = $("#" + id);
-  // remove all columns except for the first one
-  control.find("tr:not(:first)").remove();	        
+  // remove all rows except for the first one
+  control.find("tr:not(:first-child)").remove();	        
   // reset any sort indicators if not being used for sorting
   control.find("span.sort").html("&#xf0dc");
+  // make sure it's a table
+  if (!control.is("table")) control = control.find("table").last();
   // if we have data
   if (data !== undefined) {	
   	data = makeDataObject(data, field);
@@ -801,8 +807,15 @@ function setData_grid(ev, id, field, details, data, changeEvents) {
   	
   	// if we have a fixed header row
   	if (details && details.fixedHeader) {		
+  		// assume it isn't hidden
+  		var hidden = false;	
+  		// check visibilty
+  		if (!control.is(":visible")) { 
+  			hidden = true;
+  			control.parent().show();
+  		}
   		// get the header cells
-  		var hcells = control.parent().prev().find("tr:first-child").children();
+  		var hcells = control.prev().find("tr:first-child").children();
   		// remove any css for width
   		hcells.css("width","");
   		// get the body cells
@@ -820,8 +833,8 @@ function setData_grid(ev, id, field, details, data, changeEvents) {
   				if (hcell.width() > bcell.width()) bcell.width(hcell.width()); 
   			}			
   		}
-  		// force the top row to re-render in Chrome
-  		control.find("tr:first-child")[0].offsetHeight;
+  		// hide again if that was the initial state
+  		if (hidden) control.parent().hide();
   	}     
   	
   	// if we click on a row that isn't the first one

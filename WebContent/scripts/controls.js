@@ -492,9 +492,7 @@ function Control(controlType, parentControl, jsonControl, loadComplexObjects, pa
 		}
 								
 	} else {
-		var parentType = _parent.type;
-		if (!parentType) parentType = "page";
-		alert("ControlClass could not be found when called from " + parentType);
+		alert("Control class could not be found for " + controlType);
 	}
 }
 
