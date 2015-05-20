@@ -1,0 +1,24 @@
+
+
+.designData {
+	position: fixed;
+	bottom: 5px;
+	padding: 5px;
+	border: 1px solid black;
+	background-color: white;
+	font-family: arial;
+	font-size: 12px;
+	max-width: 500px;
+	max-height: 600px;
+	overflow-x: auto;
+	overflow-y: scroll;	
+}
+
+.designData table {
+	font-family: arial;
+	font-size: 12px;
+}
+
+.designData table tr:first-child {
+	font-weight: bold;
+}
