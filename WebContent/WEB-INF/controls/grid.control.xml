@@ -81,7 +81,7 @@ return [["","None"],["L","Local storage"],["S","Session storage"]];
 	            <changeValueJavaScript>select</changeValueJavaScript>	
 	            <getValuesFunction>
 	                <![CDATA[
-return [["","No"],["Y","Yes"],["A","Auto"]];
+return [["","No"],["scroll","Yes"],["auto","Auto"]];
 					]]>
 	            </getValuesFunction>           
 	            <refreshHtml>true</refreshHtml>
@@ -102,7 +102,7 @@ return [["","No"],["Y","Yes"],["A","Auto"]];
 	            <changeValueJavaScript>select</changeValueJavaScript>	
 	            <getValuesFunction>
 	                <![CDATA[
-return [["","No"],["Y","Yes"],["A","Auto"]];
+return [["","No"],["scroll","Yes"],["auto","Auto"]];
 					]]>
 	            </getValuesFunction>           
 	            <refreshHtml>true</refreshHtml>
@@ -342,40 +342,9 @@ function sortGridByColumn(ev, id, details, column, asc) {
 	    
 	    <getHtmlFunction>
 	        <![CDATA[
-// return an empty table, all the work is done in the rebuild	
-var table = "<table id='" + this.id + "' class='grid" + getStyleClasses(this) + "'></table>";
-// if we have fixed headers or scrolling it needs wrapping
-if (this.scrollV && this.fixedHeader) {
-	table = "<div style='display: inline-block;''><div class='gridFixedHeader'></div><div class='gridFixedHeaderTable'>" + table + "</div></tab>";
-} else if (this.scrollH || this.scrollV) {
-	table = "<div style='display: inline-block;''>" + table + "</tab>";
-}
-// return
-return table;
-	        ]]>
-	    </getHtmlFunction> 	 
-	    
-	    <rebuildJavaScript>
-	        <![CDATA[        
-var table = this.object;
-if (table.is("div")) {
-	if (this.scrollH) {
-		table.css({ "overflow-x":(this.scrollH == "A" ? "auto" : "scroll"), "width": this.scrollWidth });
-	} else {
-		table.css({ "overflow-x":"", 	"width": "" });
-	}
-	if (this.scrollV) {
-		if (this.fixedHeader) table = table.find("div.gridFixedHeaderTable");
-		table.css({ "overflow-y":(this.scrollV == "A" ? "auto" : "scroll"), "height": this.scrollHeight	});
-	} else {
-		table.css({ "overflow-y":"", 	"height": "" });
-	}
-	// now get the proper table
-	table = table.find("table.grid");
-}
-table.removeClass();
-table.addClass("grid" + getStyleClasses(this));
-table.children().remove();
+	        
+var headerHtml = "";
+var rowHtml = "<tr><td>No columns</td></tr>";	        
 if (this.columns.length > 0) {
 	var headerHtml = "<tr" + (this.columnHeadings ? "" : " style='display:none;'") + ">";
 	var rowHtml = "<tr>";
@@ -404,18 +373,28 @@ if (this.columns.length > 0) {
 	}
 	headerHtml += "</tr>";
 	rowHtml += "</tr>";
-	table.append(headerHtml);
-	table.append(rowHtml.replace("<tr>","<tr class='rowStyle1'>"));
-	table.append(rowHtml.replace("<tr>","<tr class='rowStyle2'>"));
-} else {
-	table.append("<tr><td>No columns</td></tr>");
-}	        	        
+}        	        	        
+	        
+var style = "";
+if (this.scrollH) style += "display:inline-block;overflow-x:" + this.scrollH + ";max-width:" + this.scrollWidth + ";";
+if (this.scrollV) style += "display:inline-block;overflow-y:" + this.scrollV + ";max-height:" + this.scrollHeight + ";";	        
+	        
+// check for fixed header
+if (this.scrollV && this.fixedHeader) {
+	// return a container div with the table inside
+	return "<div id='" + this.id + "' style='display:inline-block;' class='" + getStyleClasses(this) + "'><table style='" + style + "' class='grid'>" + headerHtml + rowHtml.replace("<tr>","<tr class='rowStyle1'>") + rowHtml.replace("<tr>","<tr class='rowStyle2'>") + "</table></div>";
+} else {	
+	// return a simple table
+	return "<table id='" + this.id + "' style='" + style + "' class='grid" + getStyleClasses(this) + "'>" + headerHtml + rowHtml.replace("<tr>","<tr class='rowStyle1'>") + rowHtml.replace("<tr>","<tr class='rowStyle2'>") + "</table>";
+}
 	        ]]>
-	    </rebuildJavaScript>
-	    
+	    </getHtmlFunction> 	 
+ 	    
 	    <saveJavaScript>
 	        <![CDATA[ 
 var table = this.object;
+if (!table.is("table")) table = table.find("table").last();
+// remove all sample rows, leaving the header row
 table.children().last().children(":not(:first)").remove();	        
 	        ]]>
 	    </saveJavaScript>
@@ -492,7 +471,9 @@ if (details) {
 				if (field) data.fields.push(details.columns[i].field);		
 			}
 			data.rows = [];
-			$("#" + id).find("tr:not(:first):not([data-ignore])").each(function(i) {
+			var table = $("#" + id);
+			if (!table.is("table")) table = table.find("table").last();
+			table.find("tr:not(:first):not([data-ignore])").each(function(i) {
 				var row = [];
 				$(this).children().each(function(i) {
 					if (details.columns[i].field) row.push($(this).html());
@@ -511,10 +492,12 @@ return data;
 	        <![CDATA[
 // get the grid control	        
 var control = $("#" + id);
-// remove all columns except for the first one
-control.find("tr:not(:first)").remove();	        
+// remove all rows except for the first one
+control.find("tr:not(:first-child)").remove();	        
 // reset any sort indicators if not being used for sorting
 control.find("span.sort").html("&#xf0dc");
+// make sure it's a table
+if (!control.is("table")) control = control.find("table").last();
 // if we have data
 if (data !== undefined) {	
 	data = makeDataObject(data, field);
@@ -583,8 +566,15 @@ if (data !== undefined) {
 	
 	// if we have a fixed header row
 	if (details && details.fixedHeader) {		
+		// assume it isn't hidden
+		var hidden = false;	
+		// check visibilty
+		if (!control.is(":visible")) { 
+			hidden = true;
+			control.parent().show();
+		}
 		// get the header cells
-		var hcells = control.parent().prev().find("tr:first-child").children();
+		var hcells = control.prev().find("tr:first-child").children();
 		// remove any css for width
 		hcells.css("width","");
 		// get the body cells
@@ -602,8 +592,8 @@ if (data !== undefined) {
 				if (hcell.width() > bcell.width()) bcell.width(hcell.width()); 
 			}			
 		}
-		// force the top row to re-render in Chrome
-		control.find("tr:first-child")[0].offsetHeight;
+		// hide again if that was the initial state
+		if (hidden) control.parent().hide();
 	}     
 	
 	// if we click on a row that isn't the first one
@@ -704,11 +694,13 @@ return "#" + this.id + " .rowSelect";
 	    <initJavaScript>
 	        <![CDATA[
 // get the control
-var control = $("#" + id);	        
+var control = $("#" + id);
+// make sure it's a table
+if (!control.is("table")) control = control.find("table").last();	        
 // check there are details	        
 if (details) {
 	// if there are columns
-	if (details.columns) {
+	if (details.columns) {				
 		// get the header cells
 		var headers = control.find("tr:first-child td");
 		// loop the columns
@@ -750,15 +742,15 @@ if (details) {
 	// if fixed headers
 	if (details.fixedHeader) {
 		// clone control
-		var headerTable = control.clone(true);
-		// hide the top row from the proper table
-		control.find("tr:first-child").hide();
-		// remove id
-		headerTable.removeAttr("id");
+		var headerTable = control.clone(true);		
 		// remove all rows except the top one
 		headerTable.find("tr:not(:first-child)").remove();
-		// append into div above
-		headerTable.appendTo(control.parent().prev());
+		// remove the style attribute
+		headerTable.removeAttr("style");
+		// hide the top row from the proper table
+		control.find("tr:first-child").hide();
+		// append the header table above control
+		control.before(headerTable);
 	}
 } 
 	        ]]>	        
