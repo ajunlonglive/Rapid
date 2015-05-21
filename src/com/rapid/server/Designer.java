@@ -45,21 +45,36 @@ import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathFactory;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Document;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import com.rapid.security.SecurityAdapter;
 import com.rapid.security.SecurityAdapter.Role;
 import com.rapid.security.SecurityAdapter.User;
 import com.rapid.utils.Bytes;
 import com.rapid.utils.Files;
+import com.rapid.utils.XML;
 import com.rapid.utils.ZipFile;
 import com.rapid.core.Application;
 import com.rapid.core.Application.DatabaseConnection;
@@ -1088,6 +1103,9 @@ public class Designer extends RapidHttpServlet {
 												
 												// set the status to In development
 												appNew.setStatus(Application.STATUS_DEVELOPMENT);
+												
+												// a map of actions that might be removed from any of the pages
+												Map<String,Integer> removedActions = new HashMap<String, Integer>();
 																																		
 												// look for page files
 												File pagesFolder = new File(appFolderDest.getAbsolutePath() + "/pages");
@@ -1137,17 +1155,61 @@ public class Designer extends RapidHttpServlet {
 													        	.replace("~?a=" + appOldId + "&amp;v=" + appOldVersion + "&amp;", "~?a=" + appId + "&amp;v=" + appVersion + "&amp;")
 														        .replace("~?a=" + appOldId + "&amp;amp;v=" + appOldVersion + "&amp;amp;", "~?a=" + appId + "&amp;v=" + appVersion + "&amp;");												        	
 												        }
-												        
-												        // get a writer for the new page file
-												        BufferedWriter writer = new BufferedWriter( new OutputStreamWriter( new FileOutputStream(pageFile), "UTF-8"));
-												        // write the string to the file
-												        writer.write(newFileString);
-												        // close the writer and file
-												        writer.close();
+												        												        												        
+												        // now open the string into a document
+														Document pageDocument = XML.openDocument(newFileString);
+														// get an xpath factory
+														XPathFactory xPathfactory = XPathFactory.newInstance();
+														XPath xpath = xPathfactory.newXPath();
+														// an expression for any attributes with a local name of "type"
+														XPathExpression expr = xpath.compile("//@*[local-name()='type']");
+														// get them
+														NodeList nl = (NodeList) expr.evaluate(pageDocument, XPathConstants.NODESET);
+														// get out system actions
+														JSONArray jsonActions = getJsonActions();
+														// if we found any elements with a type attribute and we have system actions
+														if (nl.getLength() > 0 && jsonActions.length() > 0) {				
+															// a list of action types
+															List<String> types = new ArrayList<String>();															
+															// loop the json actions
+															for (int i = 0; i < jsonActions.length(); i++) types.add(jsonActions.getJSONObject(i).optString("type").toLowerCase());																				
+															// loop the action attributes we found
+															for (int i = 0; i < nl.getLength(); i++) {
+																// get this attribute
+																Attr a = (Attr) nl.item(i);
+																// get the value of the type 
+																String type = a.getTextContent().toLowerCase();
+																// get the element the attribute is in
+																Node n = a.getOwnerElement();
+																// if we don't know about this action type
+																if (!types.contains(type)) {
+																	// get the parent node
+																	Node p = n.getParentNode();
+																	// remove this node
+																	p.removeChild(n);
+																	// if we have removed this type already
+																	if (removedActions.containsKey(type)) {
+																		// increment the entry for this type
+																		removedActions.put(type, removedActions.get(type) + 1);
+																	} else {
+																		// add an entry for this type
+																		removedActions.put(type, 1);
+																	}
+																} // got type check																																															
+															} // attribute loop
+																														
+														} // attribute and system action check
+																										        
+														// use the transformer to write to disk
+														TransformerFactory transformerFactory = TransformerFactory.newInstance();
+														Transformer transformer = transformerFactory.newTransformer();
+														DOMSource source = new DOMSource(pageDocument);
+														StreamResult result = new StreamResult(pageFile);
+														transformer.transform(source, result);
 												        								    	
-												    }
+												    } // page xml file loop
 													
-												}
+												} // pages folder check
 																						
 												// now initialise with the new id but don't make the resource files (this reloads the pages and sets up the security adapter)
 												appNew.initialise(getServletContext(), false);
@@ -1176,6 +1238,27 @@ public class Designer extends RapidHttpServlet {
 													
 													if (!security.checkUserRole(rapidRequest, com.rapid.server.Rapid.DESIGN_ROLE)) 
 														security.addUserRole(rapidRequest, com.rapid.server.Rapid.DESIGN_ROLE);									
+												}
+												
+												// if any items were removed
+												if (removedActions.keySet().size() > 0) {
+													// a description of what was removed
+													String removed = "";
+													// loop the entries
+													for (String type : removedActions.keySet()) {
+														int count = removedActions.get(type);
+														removed += "removed " + count + " " + type + " action" + (count == 1 ? "" : "s") + " on import\n";
+													}
+													// get the current description
+													String description = appNew.getDescription();
+													// if null set to empty string
+													if (description == null) description = "";
+													// add a line break if need be
+													if (description.length() > 0) description += "\n";
+													// add the removed
+													description += removed;
+													// set it back
+													appNew.setDescription(description);
 												}
 												
 												// reload the pages (actually clears down the pages collection and reloads the headers)
