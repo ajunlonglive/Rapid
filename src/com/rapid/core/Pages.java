@@ -25,6 +25,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.log4j.Logger;
+import org.json.JSONException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 

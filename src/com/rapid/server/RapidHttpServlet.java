@@ -46,6 +46,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.ValidationEvent;
 import javax.xml.bind.ValidationEventHandler;
+import javax.xml.bind.Unmarshaller.Listener;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -91,17 +92,19 @@ public class RapidHttpServlet extends HttpServlet {
 		Unmarshaller unmarshaller = _jaxbContext.createUnmarshaller();
 		// add the encrypted xml adapter
 		unmarshaller.setAdapter(_encryptedXmlAdapter);
-		
+				
 		// add a validation listener (this makes for better error messages)
-		unmarshaller.setEventHandler(new ValidationEventHandler() {
+		unmarshaller.setEventHandler( new ValidationEventHandler() {
 			@Override
 			public boolean handleEvent(ValidationEvent event) {
+				
 				// messages with "unrecognized type name" are very useful they're not sever themselves must almost always followed by a severe with a less meaningful message 
 				if (event.getMessage().contains("unrecognized type name") || event.getSeverity() == ValidationEvent.FATAL_ERROR) {
 					return false;
 				} else {						
 					return true;
 				}
+
 			}				
 		});
 		
@@ -208,7 +211,7 @@ public class RapidHttpServlet extends HttpServlet {
 		
 		PrintWriter out = response.getWriter();		
 		
-		out.print("Error : " + ex.getLocalizedMessage());
+		out.print( ex.getLocalizedMessage());
 						
 		boolean showStackTrace = Boolean.parseBoolean(getServletContext().getInitParameter("showStackTrace"));
 				
@@ -220,7 +223,7 @@ public class RapidHttpServlet extends HttpServlet {
 			
 			stackTrace += ex.getClass().getName() + "\n\n";
 			
-			for (StackTraceElement element : ex.getStackTrace()) stackTrace += element + "\n";
+			if (ex.getStackTrace() != null) for (StackTraceElement element : ex.getStackTrace()) stackTrace += element + "\n";
 						
 			out.print(stackTrace);
 		

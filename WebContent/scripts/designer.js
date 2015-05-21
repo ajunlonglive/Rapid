@@ -1516,7 +1516,7 @@ function loadPages(selectedPageId, forceLoad) {
         		location.reload(true);
         	} else {
         		// show an error
-        		alert("Error loading pages : " + error);
+        		alert(server.responseText || "Error loading pages : " + error);
         	}
         },
         success: function(pages) {        	       	

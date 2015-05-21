@@ -128,7 +128,11 @@ public class Application {
 
 		@Override
 		public StackTraceElement[] getStackTrace() {
-			return _exception.getStackTrace();
+			if (_exception == null) {
+				return null;
+			} else {
+				return _exception.getStackTrace();
+			}
 		}
 		
 		@Override
@@ -708,14 +712,22 @@ public class Application {
 	public SecurityAdapter getSecurity() { return _securityAdapter; }
 	// set the security to a given type
 	public void setSecurity(ServletContext servletContext, String securityAdapterType) throws IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException, IOException {
+		// set the security adaper type from the incoming parameter
 		_securityAdapterType = securityAdapterType;
-		if (_securityAdapterType == null) {
-			_securityAdapter = new RapidSecurityAdapter(servletContext, this);
+		// if it was null update to rapid
+		if (_securityAdapterType == null) _securityAdapterType = "rapid";
+		// get a map of the security adapter constructors
+		HashMap<String,Constructor> constructors = (HashMap<String, Constructor>) servletContext.getAttribute("securityConstructors");
+		// get the constructor for our type
+		Constructor<SecurityAdapter> constructor = constructors.get(_securityAdapterType);
+		// if we couldn't find a constructor for the specified type
+		if (constructor == null) {
+			// set the type to rapid
 			_securityAdapterType = "rapid";
-		} else {			
-			HashMap<String,Constructor> constructors = (HashMap<String, Constructor>) servletContext.getAttribute("securityConstructors");
-			Constructor<SecurityAdapter> constructor = constructors.get(_securityAdapterType);
-			if (constructor == null) throw new InstantiationException("Security adapter \"" +  _securityAdapterType + "\" can't be found");
+			// instantiate a rapid security adapter
+			_securityAdapter = new RapidSecurityAdapter(servletContext, this);			
+		} else {
+			// instantiate the specified security adapter
 			_securityAdapter = constructor.newInstance(servletContext, this);
 		}
 	}
