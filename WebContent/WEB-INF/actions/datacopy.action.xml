@@ -137,7 +137,7 @@ function Action_datacopy(ev, data, outputs, changeEvents, copyType, copyData, fi
 				break;
 				case "child" :
 					var mergeData = window["getData_" + output.type](ev, output.id, null, output.details);		
-					if (data && data.rows && data.rows.length > 0) {								
+					if (data && data.rows) {								
 						outputData = mergeDataObjects(mergeData, data, copyType, field);
 					} else {
 						outputData = mergeData;
