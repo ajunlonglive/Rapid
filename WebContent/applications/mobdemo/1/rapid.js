@@ -255,6 +255,39 @@ function sortGridByColumn(ev, id, details, column, asc) {
 		// set the sorted data
 		setData_grid(ev, id, null, details, data);
 	}
+} 
+
+function sizeGridFixedHeaderColumns(control) {
+	// make sure it's a table
+	if (!control.is("table")) control = control.find("table").last();
+	// assume it isn't hidden
+	var hidden = false;	
+	// check visibilty
+	if (!control.css("display") == "none") { 
+		hidden = true;
+		control.parent().show();
+	}
+	// get the header cells
+	var hcells = control.prev().find("tr:first-child").children();
+	// remove any css for width
+	hcells.css("width","");
+	// get the body cells
+	var bcells = control.find("tr:nth-child(2)").children();
+	// if there are body cells
+	if (bcells.length > 0) {
+		// loop them
+		for (var i = 0; i < bcells.length; i++) {
+			// get the header cell
+			var hcell = $(hcells.get(i));
+			// get the body cell
+			var bcell = $(bcells.get(i));
+			// compare widths
+			if (hcell.width() < bcell.width()) hcell.width(bcell.width());
+			if (hcell.width() > bcell.width()) bcell.width(hcell.width()); 
+		}			
+	}
+	// hide again if that was the initial state
+	if (hidden) control.parent().hide();
 }
 
 /* Link control resource JavaScript */
@@ -545,8 +578,15 @@ function Init_gallery(id, details) {
 function Init_grid(id, details) {
   // get the control
   var control = $("#" + id);
+  
+  // resize on show
+  control.on("show", {control: control},  function(ev) {
+  	sizeGridFixedHeaderColumns(ev.data.control);
+  });
+  
   // make sure it's a table
-  if (!control.is("table")) control = control.find("table").last();	        
+  if (!control.is("table")) control = control.find("table").last();
+         
   // check there are details	        
   if (details) {
   	// if there are columns
@@ -1328,37 +1368,8 @@ function setData_grid(ev, id, field, details, data, changeEvents) {
   	if (details && details.dataStorageType) saveGridDataStoreData(id, details, data);
   	
   	// if we have a fixed header row
-  	if (details && details.fixedHeader) {		
-  		// assume it isn't hidden
-  		var hidden = false;	
-  		// check visibilty
-  		if (!control.is(":visible")) { 
-  			hidden = true;
-  			control.parent().show();
-  		}
-  		// get the header cells
-  		var hcells = control.prev().find("tr:first-child").children();
-  		// remove any css for width
-  		hcells.css("width","");
-  		// get the body cells
-  		var bcells = control.find("tr:nth-child(2)").children();
-  		// if there are body cells
-  		if (bcells.length > 0) {
-  			// loop them
-  			for (var i = 0; i < bcells.length; i++) {
-  				// get the header cell
-  				var hcell = $(hcells.get(i));
-  				// get the body cell
-  				var bcell = $(bcells.get(i));
-  				// compare widths
-  				if (hcell.width() < bcell.width()) hcell.width(bcell.width());
-  				if (hcell.width() > bcell.width()) bcell.width(hcell.width()); 
-  			}			
-  		}
-  		// hide again if that was the initial state
-  		if (hidden) control.parent().hide();
-  	}     
-  	
+  	if (details && details.fixedHeader) sizeGridFixedHeaderColumns(control);
+  		
   	// if we click on a row that isn't the first one
   	control.children().last().children("tr:not(:first)").click( function() {
   		// get the row 
@@ -1833,7 +1844,7 @@ function Action_datacopy(ev, data, outputs, changeEvents, copyType, copyData, fi
 				break;
 				case "child" :
 					var mergeData = window["getData_" + output.type](ev, output.id, null, output.details);		
-					if (data && data.rows && data.rows.length > 0) {								
+					if (data && data.rows) {								
 						outputData = mergeDataObjects(mergeData, data, copyType, field);
 					} else {
 						outputData = mergeData;
