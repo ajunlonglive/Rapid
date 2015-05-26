@@ -40,6 +40,19 @@ String.prototype.replaceAll = function( find, replace ) {
     return this.split( find ).join( replace );        
 };
 
+// trigger attached show and hide functions when control is shown or hidden
+// http://stackoverflow.com/questions/15232688/jquery-how-to-call-function-when-element-shows
+(function ($) {
+	  $.each(['show', 'hide'], function (i, ev) {
+	    var el = $.fn[ev];
+	    $.fn[ev] = function () {
+	      this.trigger(ev);
+	      el.apply(this, arguments);
+	      return this;
+	    };
+	  });
+	})(jQuery);
+
 // extend JQuery to have functions for retreiving url parameter values
 $.extend({
   getUrlVars: function(){
@@ -129,9 +142,6 @@ $.fn.extend({
 	  return this;
   }
 });
-
-
-
 
 // thanks to http://stackoverflow.com/questions/2200494/jquery-trigger-event-when-an-element-is-removed-from-the-dom/10172676#10172676
 (function($) {
