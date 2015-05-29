@@ -180,6 +180,7 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 			<div id="pageMap" class="design-map" >
 				<ul id="pageMapList"></ul>		
 				<input id="pageMapSearch" placeholder="search"></input>
+				<button id="pageMapHighlight" class="fa" title="Locate selected control">&#xf140;</button>
 			</div>	
 			
 			<hr/>

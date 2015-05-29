@@ -2581,6 +2581,11 @@ $(document).ready( function() {
 		
 	});
 	
+	// control highlight
+	$("#pageMapHighlight").click( function(ev){
+		scrollMapToSelectedControl();
+	});
+	
 	// properties panel pin (for now just hide)
 	$("#propertiesPanelPin").click( function(ev) {
 		// select a null control (this does a lot of cleanup)

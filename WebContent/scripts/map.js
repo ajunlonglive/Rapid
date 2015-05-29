@@ -62,6 +62,19 @@ function createMapEntry(list, c) {
 	}
 }
 
+// scroll to selectec ontrol
+function scrollMapToSelectedControl() {
+	// get the list
+	var list = $("#pageMapList");
+	// if there is a selected control
+	if (_selectedControl) {
+		// find the selected control map entry
+		var selectedMapEntry = list.find("span[data-id=" + _selectedControl.id + "]");
+		// scroll the list so the selected control is in the middle
+		list.scrollTop(selectedMapEntry.offset().top - list.offset().top - list.height()/2);
+	}
+}
+
 // rebuild the page map
 function buildPageMap() {	
 	// get the map div
@@ -78,6 +91,10 @@ function buildPageMap() {
 		if (_page) {
 			// build the map
 			createMapEntry(list, _page);
+			// prevent dragging on map images
+			list.find("img").on('dragstart', function(ev) { ev.preventDefault(); });
+			// scroll the map to the selected control
+			scrollMapToSelectedControl();
 			// add a mousedown listener for all controls
 			addMapListener( list.find("li").on("mousedown touchstart", function(ev) {
 				// get the target

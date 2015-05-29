@@ -872,6 +872,8 @@ function Property_validationControls(cell, propertyObject, property, details) {
 	var controls = [];
 	// get the value if it exists
 	if (propertyObject[property.key]) controls = propertyObject[property.key];	
+	// if there are no controls and the current one has validation set it
+	if (controls.length == 0 && _selectedControl.validation) { controls.push(_selectedControl.id); propertyObject[property.key] = controls; }
 	// make some text
 	var text = "";
 	for (var i = 0; i < controls.length; i++) {
@@ -2952,6 +2954,141 @@ function getCopyTypeOptions(type) {
 	return options;
 }
 
+// this function returns the position of a key in datacopies
+function getKeyIndexBulkCopies(dataCopies, key, input) {
+	for (var i in dataCopies) {
+		if ((input && dataCopies[i].source == key) || (!input && dataCopies[i].destination == key)) return i*1;
+	}
+	return -1;
+}
+
+// this function returns the position of a key in the page controls 
+function getKeyIndexControls(controls, key) {
+	// get the control id (properties will have some stuff after the .)
+	key = key.split("/.")[0];
+	// loop all the controls
+	for (var i in controls) {
+		// return position on match
+		if (controls[i].id == key) return i*1;
+	}
+	return -1;
+}
+
+// this function ammends the dataCopies collection to have all get or set data controls depending on whether source is true or false
+function getPageControlsBulkCopies(datacopyAction, input) {
+	
+	// create array if need be
+	if (!datacopyAction.dataCopies) datacopyAction.dataCopies = [];
+	// retain a reference to it
+	var dataCopies = datacopyAction.dataCopies;	
+	// get all controls
+	var controls = getControls();
+	// store bulk copy inserts as we discover them
+	var bulkCopyInserts = [];
+	// loop them
+	for (var i in controls) {
+		// get the control
+		var control = controls[i];
+		// we'll set the key if we find the get/set data method we need
+		var key = null;
+		// get the control class
+		var controlClass = _controlTypes[control.type];
+		// if we got one  and the control is named
+		if (controlClass && control.name) {			
+			// if there is a getdata method
+			if ((input && controlClass.getDataFunction) || (!input && controlClass.setDataJavaScript)) {
+				// set the key to the control id
+				key = control.id;
+			} else {
+				// get any run time properties
+				var properties = controlClass.runtimeProperties;
+				// if there are runtimeProperties in the class
+				if (properties) {
+					// promote if array
+					if ($.isArray(properties.runtimeProperty)) properties = properties.runtimeProperty;
+					// loop them
+					for (var i in properties) {
+						// get the property
+						var property = properties[i];
+						// if we want inputs and there's is a get function, or outputs and there's set javascript
+						if ((input && property.getPropertyFunction) || (!input && property.setPropertyJavaScript)) {
+							// use this as the key
+							key = control.id + "." + property.type;
+							// we only want the first one
+							break;
+						} // property check
+						
+					} // properties loop
+					
+				} // properties check
+				
+			} // get / set check
+
+		} // control class check
+		
+		// if there's a key it should be in dataCopies
+		if (key) {
+			// get it's position
+			var index = getKeyIndexBulkCopies(dataCopies, key, input);
+			// if it's not there
+			if (index < 0) {
+				// make a new object for it
+				var dataCopy = {source: null, sourceField: "", destination: null, destinationField: ""};
+				// if for source / destination
+				if (input) {
+					// set the source
+					dataCopy.source = key;
+					// also most likely to be a row merge
+					dataCopy.type = "row";
+				} else {
+					dataCopy.destination = key;
+				}				
+				// rememeber that we don't have this control
+				bulkCopyInserts.push(dataCopy);
+			} // index check
+			
+		} // key check
+		
+	} // controls loop
+	
+	// now loop the inserts finding where they should go
+	for (var i in bulkCopyInserts) {
+		// get the copy to insert
+		var copy = bulkCopyInserts[i];
+		// get the key
+		var key = copy.source || copy.destination;		
+		// get the control postion
+		var controlPos = getKeyIndexControls(controls, key);
+		// assume we haven't inserted it
+		var inserted = false;
+		// now loop the existing bulkCopies
+		for (var j in dataCopies) {
+			// get the existing position 
+			var existingPos = getKeyIndexControls(controls, input ? dataCopies[j].source : dataCopies[j].destination);
+			// if the existing pos is after the insert control position
+			if (existingPos > controlPos) {
+				// check if source / destination
+				if (input) {
+					// if the data copy we've just moved past has a destination field, we can assume this copy will have the same destination
+					if (dataCopies[j].destinationField) copy.destination = dataCopies[j].destination;
+				} else {
+					// if the data copy we've just moved past has a source field, we can assume this copy will have the same source
+					if (dataCopies[j].sourceField) copy.source = dataCopies[j].source;
+				}
+				// insert here
+				dataCopies.splice(j, 0, copy);
+				// retain insert
+				inserted = true;
+				// we're done
+				break;
+			} // found a control after this one so insert before the found one
+		} // loop dataCopies
+		// if we haven't inserted yet do so now
+		if (!inserted) dataCopies.push(copy);
+	} // loop inserts
+	
+}
+
 function Property_datacopyCopies(cell, datacopyAction, property, details) {
 
 	// only if datacopyAction type is bulk
@@ -2972,8 +3109,24 @@ function Property_datacopyCopies(cell, datacopyAction, property, details) {
 		var text = "";
 		
 		// add a header
-		table.append("<tr><td><b>Source</b></td><td><b>Source field</b></td><td><b>Destination</b></td><td><b>Destination field</b></td><td colspan='2'><b>Copy type</b></td></tr>");
+		table.append("<tr><td><b>Source</b><button class='titleButton sources' title='Add all page controls as sources'><span>&#xf021;</span></button></td><td><b>Source field</b></td><td><b>Destination</b><button class='titleButton destinations' title='Add all page controls as destinations'><span>&#xf021;</span></button></td><td><b>Destination field</b></td><td colspan='2'><b>Copy type</b></td></tr>");
 			
+		// add sources listener
+		addListener( table.find("button.sources").click( {cell:cell, datacopyAction:datacopyAction, property:property}, function(ev) {
+			// bring in all source controls
+			getPageControlsBulkCopies(ev.data.datacopyAction, true);
+			// refresh
+			Property_datacopyCopies(ev.data.cell, ev.data.datacopyAction, ev.data.property); 
+		}));	
+		
+		// add destinations listener
+		addListener( table.find("button.destinations").click( {cell:cell, datacopyAction:datacopyAction, property:property}, function(ev) {
+			// bring in all destination controls
+			getPageControlsBulkCopies(ev.data.datacopyAction, false);
+			// refresh
+			Property_datacopyCopies(ev.data.cell, ev.data.datacopyAction, ev.data.property); 
+		}));	
+		
 		// show current choices (with delete and move)
 		for (var i = 0; i < dataCopies.length; i++) {
 			

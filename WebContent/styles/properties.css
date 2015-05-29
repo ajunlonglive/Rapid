@@ -182,6 +182,10 @@ div.propertyDialogue {
 	margin-top:1px
 }
 
+.dialogueTable b {
+	vertical-align: middle;
+}
+
 .dialogueTableBorders tr:not(:first-child) td {
 	border: 1px solid grey;
 }
@@ -232,4 +236,18 @@ td.paddingLeft5 {
 
 .nopadding td {
 	padding: 0;
+}
+
+.titleButton {
+	padding: 0;
+	margin: 0 1px;
+	width: 16px;	
+	border: 1px solid black;
+	border-radius: 5px;
+	float: right;
+}
+
+.titleButton span {
+	font-family: "FontAwesome";
+	font-size: 10px;
 }

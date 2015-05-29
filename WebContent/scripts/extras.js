@@ -677,19 +677,21 @@ function mergeDataObjects(data1, data2, mergeType, field) {
 							if (!match) r1.push(null);
 						}
 					} else {
-						var fieldIndex = -1;
-						for (var i in data1.fields) {
-							if (field.toLowerCase() == data1.fields[i].toLowerCase()) {
-								fieldIndex = i;
-								break;
+						if (data1.rows && data1.rows.length > 0) {
+							var fieldIndex = -1;
+							for (var i in data1.fields) {
+								if (field.toLowerCase() == data1.fields[i].toLowerCase()) {
+									fieldIndex = i;
+									break;
+								}
 							}
+							if (fieldIndex < 0) {
+								data1.fields.push(field);
+								data1.rows[0].push(data2);
+							} else {
+								data1.rows[0][fieldIndex] = data2;
+							}			
 						}
-						if (fieldIndex < 0) {
-							data1.fields.push(field);
-							data1.rows[0].push(data2);
-						} else {
-							data1.rows[0][fieldIndex] = data2;
-						}												
 					}
 					data = data1;					
 				break;
