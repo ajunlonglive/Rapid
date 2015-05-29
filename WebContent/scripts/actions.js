@@ -287,14 +287,16 @@ function showEvents(control) {
 									if (_copyAction.actions) {
 										// loop them
 										for (var j in _copyAction.actions) {
-											// get the action
-											var action = _copyAction.actions[j];
+											// create a new object from the action
+											var action = JSON.parse(JSON.stringify(_copyAction.actions[j]));
 											// add the action using the paste functionality
 											control.events[i].actions.push( new Action(action.type, action, true) );
 										}										
 									} else {
+										// create a new object from the action
+										var action = JSON.parse(JSON.stringify(_copyAction));
 										// add the action using the paste functionality
-										control.events[i].actions.push( new Action(_copyAction.type, _copyAction, true) );
+										control.events[i].actions.push( new Action(action.type, action, true) );
 									}
 								}
 								

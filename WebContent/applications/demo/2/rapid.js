@@ -788,7 +788,7 @@ function setData_grid(ev, id, field, details, data, changeEvents) {
   			for (var i in details.columns) {				
   				for (var j in data.fields) {
   					var found = false;
-  					if (details.columns[i].field) {
+  					if (details.columns[i].field && data.fields[j]) {
   						if (details.columns[i].field.toLowerCase() == data.fields[j].toLowerCase()) found = true;
   					} else {
   						if (!data.fields[j]) found = true;
@@ -1231,7 +1231,7 @@ function Action_datacopy(ev, data, outputs, changeEvents, copyType, copyData, fi
 					}
 				break;
 				case "search" :
-					outputData = mergeDataObjects(copyData, data, copyType, field);
+					if (data) outputData = mergeDataObjects(copyData, data, copyType, field);
 				break;
 				default:
 					outputData = data;
