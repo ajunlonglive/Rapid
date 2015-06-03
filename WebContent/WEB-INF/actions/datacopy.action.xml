@@ -45,7 +45,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 // for backwards compatibility	                
 if (!this.copyType) this.copyType = "replace";
 // return the values	                
-return [["replace","replace"],["append","append"],["row","row merge"],["child","child merge"],["search","search"],["bulk","bulk"]];
+return [["replace","replace"],["append","append"],["row","row merge"],["child","child merge"],["bulk","bulk"],["search","search"],["trans","transpose"]];
 				</getValuesFunction>
 	            <refreshProperties>true</refreshProperties>	            
 	        </property> 
@@ -105,6 +105,22 @@ return "<option value=''>None</option>" + getInputOptions(this.dataSource);
 	            <name>Child field</name>
 	            <changeValueJavaScript>datacopyChildField</changeValueJavaScript>
 	            <getValuesFunction>return "";</getValuesFunction>
+	        </property>
+	        
+	         <property>
+	            <key>keyFields</key>
+	            <name>Key fields</name>
+	            <changeValueJavaScript>datacopyFields</changeValueJavaScript>
+	            <getValuesFunction>return "";</getValuesFunction>
+	            <refreshProperties>true</refreshProperties>
+	        </property>		
+	        
+	         <property>
+	            <key>ignoreFields</key>
+	            <name>Ignore fields</name>
+	            <changeValueJavaScript>datacopyFields</changeValueJavaScript>
+	            <getValuesFunction>return "";</getValuesFunction>
+	            <refreshProperties>true</refreshProperties>
 	        </property>	
 	        
 	        <property>
@@ -124,7 +140,7 @@ return "<option value=''>None</option>" + getInputOptions(this.dataSource);
 	    	    
 	    <actionJavaScript>
 	        <![CDATA[ 
-function Action_datacopy(ev, data, outputs, changeEvents, copyType, copyData, field) {
+function Action_datacopy(ev, data, outputs, changeEvents, copyType, copyData, field, details) {
 	if (data !== undefined && outputs) {
 		for (var i in outputs) {
 			var output = outputs[i];	
@@ -146,6 +162,48 @@ function Action_datacopy(ev, data, outputs, changeEvents, copyType, copyData, fi
 				case "search" :
 					if (data) outputData = mergeDataObjects(copyData, data, copyType, field);
 				break;
+				case "trans" :						
+					if (data && data.fields && data.rows) {						
+						outputData = {fields:["field","value"],rows:[]};						
+						if (details && details.keyFields && details.keyFields.length > 0) {
+							for (var j in details.keyFields) {
+								outputData.fields.push(details.keyFields[j]);
+							}
+						}						
+						for (var i in data.rows) {						
+							var keyFieldValues = [];						
+							// key fields
+							if (details && details.keyFields && details.keyFields.length > 0) {
+								for (var j in details.keyFields) {
+									for (var k in data.fields) {
+										if (data.fields[k] && details.keyFields[j].toLowerCase() == data.fields[k].toLowerCase()) {
+											keyFieldValues.push(data.rows[i][k]);
+											break;
+										}
+									}
+								}								
+							}
+																																	
+							// values
+							for (var j in data.fields) {
+								var ignore = false;
+								if (details && details.ignoreFields && details.ignoreFields.length > 0) {
+									for (var k in details.ignoreFields) {
+										if (!data.fields[j] || data.fields[j].toLowerCase() == details.ignoreFields[k].toLowerCase()) {
+											ignore = true;
+											break;
+										}
+									}
+								}
+								if (!ignore) {
+									var row = [data.fields[j],data.rows[i][j]];
+									for (var k in keyFieldValues) row.push(keyFieldValues[k]);
+									outputData.rows.push(row);
+								}
+							}																											
+						}
+					}
+				break;
 				default:
 					outputData = data;
 			}	
@@ -154,6 +212,6 @@ function Action_datacopy(ev, data, outputs, changeEvents, copyType, copyData, fi
 	}
 }	        ]]>
 	    </actionJavaScript>
-	    
+	    	    	    	    
     </action>     
 </actions>

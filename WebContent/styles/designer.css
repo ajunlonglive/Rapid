@@ -253,8 +253,9 @@ li.design-control:hover {
 	height: 18px;
 	float: right;
 	position: relative;
-	bottom: 20px;
+	top: 22px;
 	right: 2px;
+	margin-top:-20px;
 }
 
 .design-map ul {

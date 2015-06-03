@@ -279,11 +279,21 @@ function sizeGridFixedHeaderColumns(control) {
 		for (var i = 0; i < bcells.length; i++) {
 			// get the header cell
 			var hcell = $(hcells.get(i));
-			// get the body cell
-			var bcell = $(bcells.get(i));
-			// compare widths
-			if (hcell.width() < bcell.width()) hcell.width(bcell.width());
-			if (hcell.width() > bcell.width()) bcell.width(hcell.width()); 
+			// if visible
+			if (hcell.is(":visible")) {
+				// get the header cell width
+				var hwidth = hcell.width();
+				// get the body cell
+				var bcell = $(bcells.get(i));
+				// get the body cell width
+				var bwidth = bcell.width();
+				// compare widths
+				if (hwidth < bwidth) {
+					hcell.css("min-width",bwidth);
+				} else if (hwidth > bwidth) {
+					bcell.css("min-width",hwidth); 
+				}
+			}
 		}			
 	}
 	// hide again if that was the initial state
@@ -1784,7 +1794,7 @@ function setData_radiobuttons(ev, id, field, details, data, changeEvents) {
   		}
   	} 
   	if (value) {
-  		var button = radiobuttons.children("input[type=radio][value=" + value + "]");
+  		var button = radiobuttons.children("input[type=radio][value='" + value + "']");
   		if (button[0]) {
   			button.prop('checked',true);	
   			if (changeEvents) button.trigger("change");		
@@ -1831,7 +1841,7 @@ function Action_control(actions) {
 	}	
 }
 
-function Action_datacopy(ev, data, outputs, changeEvents, copyType, copyData, field) {
+function Action_datacopy(ev, data, outputs, changeEvents, copyType, copyData, field, details) {
 	if (data !== undefined && outputs) {
 		for (var i in outputs) {
 			var output = outputs[i];	
@@ -1852,6 +1862,48 @@ function Action_datacopy(ev, data, outputs, changeEvents, copyType, copyData, fi
 				break;
 				case "search" :
 					if (data) outputData = mergeDataObjects(copyData, data, copyType, field);
+				break;
+				case "trans" :						
+					if (data && data.fields && data.rows) {						
+						outputData = {fields:["field","value"],rows:[]};						
+						if (details && details.keyFields && details.keyFields.length > 0) {
+							for (var j in details.keyFields) {
+								outputData.fields.push(details.keyFields[j]);
+							}
+						}						
+						for (var i in data.rows) {						
+							var keyFieldValues = [];						
+							// key fields
+							if (details && details.keyFields && details.keyFields.length > 0) {
+								for (var j in details.keyFields) {
+									for (var k in data.fields) {
+										if (data.fields[k] && details.keyFields[j].toLowerCase() == data.fields[k].toLowerCase()) {
+											keyFieldValues.push(data.rows[i][k]);
+											break;
+										}
+									}
+								}								
+							}
+																																	
+							// values
+							for (var j in data.fields) {
+								var ignore = false;
+								if (details && details.ignoreFields && details.ignoreFields.length > 0) {
+									for (var k in details.ignoreFields) {
+										if (!data.fields[j] || data.fields[j].toLowerCase() == details.ignoreFields[k].toLowerCase()) {
+											ignore = true;
+											break;
+										}
+									}
+								}
+								if (!ignore) {
+									var row = [data.fields[j],data.rows[i][j]];
+									for (var k in keyFieldValues) row.push(keyFieldValues[k]);
+									outputData.rows.push(row);
+								}
+							}																											
+						}
+					}
 				break;
 				default:
 					outputData = data;

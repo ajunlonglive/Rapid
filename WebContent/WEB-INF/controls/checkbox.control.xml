@@ -65,7 +65,7 @@ return ["false","true"];
 	        <![CDATA[	    
 var checked = "";
 
-if (this.checked == "true") checked=" checked='checked'";
+if (this.checked == "true" || this.checked == true) checked=" checked='checked'";
 	          
 return "<input id='" + this.id + "' type='checkbox' class='checkbox" + getStyleClasses(this) + "'" + checked + "></input>"
 	        ]]>

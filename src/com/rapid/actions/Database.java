@@ -349,10 +349,10 @@ public class Database extends Action {
 		if (_query != null) {
 									
 			// get the sequence for this action requests so long-running early ones don't overwrite fast later ones (defined in databaseaction.xml)
-			js += "  var sequence = getDatabaseActionSequence('" + getId() + "');\n";
+			js += "var sequence = getDatabaseActionSequence('" + getId() + "');\n";
 			
 			// open the js function to get the input data
-			js += "  var data = getDatabaseActionInputData(" + _query.getMultiRow() + ", ";
+			js += "var data = getDatabaseActionInputData(" + _query.getMultiRow() + ", ";
 			
 			// get the inputs
 			js += getInputsJavaScript(rapidServlet.getServletContext(), application, page, _query);
@@ -361,7 +361,7 @@ public class Database extends Action {
 			js += ");\n";
 			
 			// drop in the query variable used to collect the inputs, and hold the sequence
-			js += "  var query = { data: data, sequence: sequence };\n";
+			js += "var query = { data: data, sequence: sequence };\n";
 									
 			// look for any _childDatabaseActions
 			if (_childDatabaseActions != null) {
@@ -374,15 +374,15 @@ public class Database extends Action {
 					// get the childQuery
 					Query childQuery = childDatabaseAction.getQuery();
 					// open function to get input data
-					js += "  var childData" + i + " = getDatabaseActionInputData(" + childQuery.getMultiRow() + ", ";
+					js += "var childData" + i + " = getDatabaseActionInputData(" + childQuery.getMultiRow() + ", ";
 					// add inputs
 					js += getInputsJavaScript(rapidServlet.getServletContext(), application, page, childQuery);
 					// close the function
 					js += ");\n";
 					// create object
-					js += "  var childQuery" + i + " = { data: childData" + i + ", index: " + (i - 1) + " };\n";										
+					js += "var childQuery" + i + " = { data: childData" + i + ", index: " + (i - 1) + " };\n";										
 					// add to query
-					js += "  query.childQueries.push(childQuery" + i + ");\n";			
+					js += "query.childQueries.push(childQuery" + i + ");\n";			
 					// increment the counter
 					i ++;
 				}
@@ -395,33 +395,54 @@ public class Database extends Action {
 			// get the outputs
 			ArrayList<Parameter> outputs = _query.getOutputs();
 			
+			// instantiate the jsonDetails if required
+			if (jsonDetails == null) jsonDetails = new JSONObject();
+			// look for a working page in the jsonDetails
+			String workingPage = jsonDetails.optString("workingPage", null);
+			// look for an offline page in the jsonDetails
+			String offlinePage = jsonDetails.optString("offlinePage", null);
+			
 			// get the js to hide the loading (if applicable)
 			if (_showLoading) js += getLoadingJS(page, outputs, true);
 						
 			// stringify the query
-			js += "  query = JSON.stringify(query);\n";
+			js += "query = JSON.stringify(query);\n";
 			
 			// open the ajax call
-			js += "  $.ajax({ url : '~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + page.getId() + controlParam + "&act=" + getId() + "', type: 'POST', contentType: 'application/json', dataType: 'json',\n";
-			js += "    data: query,\n";
-			js += "    error: function(server, status, message) {\n";
+			js += "$.ajax({ url : '~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + page.getId() + controlParam + "&act=" + getId() + "', type: 'POST', contentType: 'application/json', dataType: 'json',\n";
+			js += "  data: query,\n";
+			js += "  error: function(server, status, message) {\n";
+			
+			// if there is a working page
+			if (workingPage != null) {
+				// remove any working page dialogue 
+				js += "    $('#" + workingPage + "dialogue').remove();\n";
+				// remove any working page dialogue cover
+				js += "    $('#" + workingPage + "cover').remove();\n";
+				// remove the working page so as not to affect actions further down the tree
+			}
 			
 			// hide the loading javascript (if applicable)
 			if (_showLoading) js += "      " + getLoadingJS(page, outputs, false);
 							
 			// this avoids doing the errors if the page is unloading or the back button was pressed
-			js += "      if (server.readyState > 0) {\n";
+			js += "    if (server.readyState > 0) {\n";
 			
 			// retain if error actions
 			boolean errorActions = false;
 			
 			// prepare a default error hander we'll show if no error actions, or pass to child actions for them to use
-			String defaultErrorHandler = "alert('Error with database action : ' + server.responseText||message);";
+			String defaultErrorHandler = "alert('Error with database action : ' + server.responseText||message);";			
+			// if we have an offline page
+			if (offlinePage != null) {
+				// update defaultErrorHandler to navigate to offline page
+				defaultErrorHandler = "if (Action_navigate && _rapidmobile && !_rapidmobile.isOnline()) {\n          Action_navigate('~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + offlinePage + "&action=dialogue',true,'" + getId() + "');\n        } else {\n          " + defaultErrorHandler + "\n        }";
+				// remove the offline page so we don't interfere with actions down the three
+				jsonDetails.remove("offlinePage");
+			}
 			
 			// add any error actions
-			if (_errorActions != null) {
-				// instantiate the jsonDetails if required
-				if (jsonDetails == null) jsonDetails = new JSONObject();
+			if (_errorActions != null) {				
 				// count the actions
 				int i = 0;
 				// loop the actions
@@ -431,7 +452,7 @@ public class Database extends Action {
 					// if this is the last error action add in the default error handler
 					if (i == _errorActions.size() - 1) jsonDetails.put("defaultErrorHandler", defaultErrorHandler);						
 					// add the js
-					js += "         " + action.getJavaScript(rapidServlet, application, page, control, jsonDetails).trim().replace("\n", "\n         ") + "\n";
+					js += "       " + action.getJavaScript(rapidServlet, application, page, control, jsonDetails).trim().replace("\n", "\n       ") + "\n";
 					// if this is the last error action and the default error handler is still present, remove it so it isn't sent down the success path
 					if (i == _errorActions.size() - 1 && jsonDetails.optString("defaultErrorHandler", null) != null) jsonDetails.remove("defaultErrorHandler");	
 					// increase the count
@@ -442,19 +463,19 @@ public class Database extends Action {
 			if (!errorActions) js += "        " + defaultErrorHandler + "\n";
 						
 			// close unloading check
-			js += "      }\n";
+			js += "    }\n";
 			
 			// close error actions
-			js += "    },\n";
+			js += "  },\n";
 			
 			// open success function
-			js += "    success: function(data) {\n";	
-			
+			js += "  success: function(data) {\n";
+									
 			// hide the loading javascript (if applicable)
-			if (_showLoading) js += "    " + getLoadingJS(page, outputs, false);
+			if (_showLoading) js += "  " + getLoadingJS(page, outputs, false);
 			
 			// open if data check
-			js += "      if (data) {\n";
+			js += "    if (data) {\n";
 						
 			// check there are outputs
 			if (outputs != null) {
@@ -484,25 +505,35 @@ public class Database extends Action {
 						if (i < outputs.size() - 1) jsOutputs += ","; 
 					}					
 				}			
-				js += "       var outputs = [" + jsOutputs + "];\n";
+				js += "     var outputs = [" + jsOutputs + "];\n";
 				// send them them and the data to the database action				
-				js += "       Action_database(ev,'" + getId() + "', data, outputs);\n";				
+				js += "     Action_database(ev,'" + getId() + "', data, outputs);\n";				
 			}
 			
 			// add any sucess actions
 			if (_successActions != null) {							
 				for (Action action : _successActions) {
-					js += "       " + action.getJavaScript(rapidServlet, application, page, control, jsonDetails).trim().replace("\n", "\n       ") + "\n";
+					js += "     " + action.getJavaScript(rapidServlet, application, page, control, jsonDetails).trim().replace("\n", "\n       ") + "\n";
 				}
 			}
 			
+			// if there is a working page (from the details)
+			if (workingPage != null) {
+				// remove any working page dialogue 
+				js += "    $('#" + workingPage + "dialogue').remove();\n";
+				// remove any working page dialogue cover
+				js += "    $('#" + workingPage + "cover').remove();\n";
+				// remove the working page so as not to affect actions further down the tree
+				jsonDetails.remove("workingPage");
+			}
+			
 			// close if data check
-			js += "      }\n";						
+			js += "    }\n";						
 			// close success function
-			js += "    }\n";
+			js += "  }\n";
 			
 			// close ajax call
-			js += "  });";
+			js += "});";
 		}
 				
 		// return what we built			

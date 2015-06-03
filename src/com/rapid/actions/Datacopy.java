@@ -417,6 +417,33 @@ public class Datacopy extends Action {
 									js += ", '" + searchField + "'";
 								}
 								
+							} else if ("trans".equals(copyType)) {
+								
+								// assume the key fields are null
+								String keyFields = "null";
+								
+								// try and fetch the key fields
+								try {									
+									JSONArray jsonKeyFields = new JSONArray(getProperty("keyFields"));				
+									keyFields = jsonKeyFields.toString();
+								} catch (JSONException ex) {
+									keyFields = "null /*" + ex.getMessage() + "*/";
+								}
+								
+								// assume the ignore fields are null
+								String ignoreFields = "null";
+								
+								// try and fetch the ignore fields, show message if issue
+								try {									
+									JSONArray jsonIgnoreFields = new JSONArray(getProperty("ignoreFields"));				
+									ignoreFields = jsonIgnoreFields.toString();
+								} catch (JSONException ex) {
+									ignoreFields = "null /*" + ex.getMessage() + "*/";
+								}
+																								
+								// add the details
+								js += ", null, null, {keyFields:" + keyFields + ",ignoreFields:" + ignoreFields + "}";
+								
 							} // copy type
 							
 						} // copy type check
