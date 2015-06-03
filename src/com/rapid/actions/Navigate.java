@@ -122,9 +122,9 @@ public class Navigate extends Action {
 					sessionVariables += "&" + sessionVariable.getName() + "=' + " +  getter + " + '";									
 				}
 			}
-			// build the action string 
+			// build the action string (also used in mobile action for online check type)
 			String action = "Action_navigate('~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + pageId; 
-			// check if this is a dialogue
+			// check if this is a dialogue 
 			if (Boolean.parseBoolean(getProperty("dialogue"))) {
 				action += "&action=dialogue" + sessionVariables + "',true,'" + pageId + "');";				
 				// return false if we're stopping further actions

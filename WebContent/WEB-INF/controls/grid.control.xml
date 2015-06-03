@@ -357,11 +357,21 @@ function sizeGridFixedHeaderColumns(control) {
 		for (var i = 0; i < bcells.length; i++) {
 			// get the header cell
 			var hcell = $(hcells.get(i));
-			// get the body cell
-			var bcell = $(bcells.get(i));
-			// compare widths
-			if (hcell.width() < bcell.width()) hcell.width(bcell.width());
-			if (hcell.width() > bcell.width()) bcell.width(hcell.width()); 
+			// if visible
+			if (hcell.is(":visible")) {
+				// get the header cell width
+				var hwidth = hcell.width();
+				// get the body cell
+				var bcell = $(bcells.get(i));
+				// get the body cell width
+				var bwidth = bcell.width();
+				// compare widths
+				if (hwidth < bwidth) {
+					hcell.css("min-width",bwidth);
+				} else if (hwidth > bwidth) {
+					bcell.css("min-width",hwidth); 
+				}
+			}
 		}			
 	}
 	// hide again if that was the initial state
@@ -409,14 +419,15 @@ if (this.columns.length > 0) {
 }        	        	        
 	        
 var style = "";
-if (this.scrollH) style += "display:inline-block;overflow-x:" + this.scrollH + ";max-width:" + this.scrollWidth + ";";
 if (this.scrollV) style += "display:inline-block;overflow-y:" + this.scrollV + ";max-height:" + this.scrollHeight + ";";	        
 	        
 // check for fixed header
 if (this.scrollV && this.fixedHeader) {
-	// return a container div with the table inside
-	return "<div id='" + this.id + "' style='display:inline-block;' class='" + getStyleClasses(this) + "'><table style='" + style + "' class='grid'>" + headerHtml + rowHtml.replace("<tr>","<tr class='rowStyle1'>") + rowHtml.replace("<tr>","<tr class='rowStyle2'>") + "</table></div>";
-} else {	
+	// return a container div with the table inside (not that scroll h is on the container)
+	return "<div id='" + this.id + "' style='display:inline-block;" + (this.scrollH ? "overflow-x:" + this.scrollH + ";max-width:" + this.scrollWidth + ";" : "") + "' class='" + getStyleClasses(this) + "'><table style='" + style + "' class='grid'>" + headerHtml + rowHtml.replace("<tr>","<tr class='rowStyle1'>") + rowHtml.replace("<tr>","<tr class='rowStyle2'>") + "</table></div>";
+} else {
+	// h styling is on the table if no fixed header row
+	if (this.scrollH) style += "display:inline-block;overflow-x:" + this.scrollH + ";max-width:" + this.scrollWidth + ";";	
 	// return a simple table
 	return "<table id='" + this.id + "' style='" + style + "' class='grid" + getStyleClasses(this) + "'>" + headerHtml + rowHtml.replace("<tr>","<tr class='rowStyle1'>") + rowHtml.replace("<tr>","<tr class='rowStyle2'>") + "</table>";
 }

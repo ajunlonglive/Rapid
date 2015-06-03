@@ -71,7 +71,7 @@ function getDesignDataTable(data) {
 				// get the contents at this position
 				var d = data.rows[j][k];
 				// if it's an object with it's own fields and rows, get it's own table!
-				if (d.fields && d.rows) d = getDesignDataTable(d);
+				if (d && d.fields && d.rows) d = getDesignDataTable(d);
 				// add the cell contents
 				table += "<td>" +  d + "</td>";
 			}

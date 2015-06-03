@@ -119,6 +119,27 @@ return "<option value=''>Please select...</option>" + getControlOptions(this.gal
 	            <changeValueJavaScript>checkbox</changeValueJavaScript>	 
 	        </property>
 	        
+	        <property>
+	            <key>onlineActions</key>
+	            <name>Actions</name>
+	            <visible>false</visible>
+	            <changeValueJavaScript>childActions</changeValueJavaScript>	 
+	        </property>
+	        
+	        <property>
+	            <key>onlineWorking</key>
+	            <name>Working dialogue</name>
+	            <visible>false</visible>
+	            <changeValueJavaScript>navigationPage</changeValueJavaScript>	 
+	        </property>
+	        
+	        <property>
+	            <key>onlineFail</key>
+	            <name>Offline dialogue</name>
+	            <visible>false</visible>
+	            <changeValueJavaScript>navigationPage</changeValueJavaScript>	 
+	        </property>
+	        
 	    </properties>
 	    
 		<actionJavaScript>

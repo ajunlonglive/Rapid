@@ -51,18 +51,29 @@ function getRegEx(type) {
 }
 
 // this function iteratively gets the select options for all controls with validation 
-function getValidationControlOptions(control) {
+function getValidationControlOptions(control, ignoreControls) {
 	var options = "";
 	if (control) {
-		if (control.validation && control.validation.type) options += "<option value='" + control.id + "'>" + control.name + "</option>";
+		if (control.validation && control.validation.type) {
+			var ignore = false;
+			if (ignoreControls) {
+				for (var i in ignoreControls) {
+					if (ignoreControls[i] == control.id) {
+						ignore = true;
+						break;
+					}
+				}
+			}
+			if (!ignore) options += "<option value='" + control.id + "'>" + control.name + "</option>";
+		}
 		if (control.childControls && control.childControls.length > 0) {
 			for (var i in control.childControls) {
-				options += getValidationControlOptions(control.childControls[i]);
+				options += getValidationControlOptions(control.childControls[i], ignoreControls);
 			}
 		}
 	} else {
 		for (var i in _page.childControls) {
-			options += getValidationControlOptions(_page.childControls[i]);
+			options += getValidationControlOptions(_page.childControls[i], ignoreControls);
 		}
 	}
 	return options;

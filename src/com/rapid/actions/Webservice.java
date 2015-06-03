@@ -285,6 +285,13 @@ public class Webservice extends Action {
 			// get the outputs
 			ArrayList<Parameter> outputs = _request.getOutputs();
 			
+			// instantiate the jsonDetails if required
+			if (jsonDetails == null) jsonDetails = new JSONObject();
+			// look for a working page in the jsonDetails
+			String workingPage = jsonDetails.optString("workingPage", null);
+			// look for an offline page in the jsonDetails
+			String offlinePage = jsonDetails.optString("offlinePage", null);
+			
 			// get the js to show the loading (if applicable)
 			if (_showLoading) js += "  " + getLoadingJS(page, outputs, true);
 			
@@ -296,8 +303,17 @@ public class Webservice extends Action {
 			js += "    data: query,\n";
 			js += "    error: function(error, status, message) {\n";
 			
+			// if there is a working page
+			if (workingPage != null) {
+				// remove any working page dialogue 
+				js += "      $('#" + workingPage + "dialogue').remove();\n";
+				// remove any working page dialogue cover
+				js += "      $('#" + workingPage + "cover').remove();\n";
+				// remove the working page so as not to affect actions further down the tree
+			}
+			
 			// hide the loading javascript (if applicable)
-			if (_showLoading) js += "      " + getLoadingJS(page, outputs, false);
+			if (_showLoading) js += "    " + getLoadingJS(page, outputs, false);
 							
 			// this avoids doing the errors if the page is unloading or the back button was pressed
 			js += "      if (server.readyState > 0) {\n";
@@ -306,12 +322,17 @@ public class Webservice extends Action {
 			boolean errorActions = false;
 			
 			// prepare a default error hander we'll show if no error actions, or pass to child actions for them to use
-			String defaultErrorHandler = "alert('Error with webservice action : ' + server.responseText||message);";
+			String defaultErrorHandler = "alert('Error with database action : ' + server.responseText||message);";			
+			// if we have an offline page
+			if (offlinePage != null) {
+				// update defaultErrorHandler to navigate to offline page
+				defaultErrorHandler = "if (Action_navigate && _rapidmobile && !_rapidmobile.isOnline()) {\n          Action_navigate('~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + offlinePage + "&action=dialogue',true,'" + getId() + "');\n        } else {\n          " + defaultErrorHandler + "\n        }";
+				// remove the offline page so we don't interfere with actions down the three
+				jsonDetails.remove("offlinePage");
+			}
 			
 			// add any error actions
 			if (_errorActions != null) {
-				// instantiate the jsonDetails if required
-				if (jsonDetails == null) jsonDetails = new JSONObject();
 				// count the actions
 				int i = 0;
 				// loop the actions
@@ -338,9 +359,11 @@ public class Webservice extends Action {
 			js += "    },\n";
 			
 			// open success function
-			js += "    success: function(data) {\n";	
+			js += "    success: function(data) {\n";
+						
 			// get the js to hide the loading (if applicable)
-			if (_showLoading) js += "      " + getLoadingJS(page, outputs, false);
+			if (_showLoading) js += "    " + getLoadingJS(page, outputs, false);
+			
 			// open if data check
 			js += "      if (data) {\n";
 									
@@ -383,6 +406,16 @@ public class Webservice extends Action {
 						js += "       " + action.getJavaScript(rapidServlet, application, page, control, jsonDetails).trim().replace("\n", "\n       ") + "\n";
 					}
 				}
+			}
+			
+			// if there is a working page (from the details)
+			if (workingPage != null) {
+				// remove any working page dialogue 
+				js += "    $('#" + workingPage + "dialogue').remove();\n";
+				// remove any working page dialogue cover
+				js += "    $('#" + workingPage + "cover').remove();\n";
+				// remove the working page so as not to affect actions further down the tree
+				jsonDetails.remove("workingPage");
 			}
 			
 			// close if data check

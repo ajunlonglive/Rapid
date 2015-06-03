@@ -147,7 +147,7 @@ if (data != null && data !== undefined) {
 		}
 	} 
 	if (value) {
-		var button = radiobuttons.children("input[type=radio][value=" + value + "]");
+		var button = radiobuttons.children("input[type=radio][value='" + value + "']");
 		if (button[0]) {
 			button.prop('checked',true);	
 			if (changeEvents) button.trigger("change");		

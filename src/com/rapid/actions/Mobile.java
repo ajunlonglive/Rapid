@@ -41,7 +41,7 @@ import com.rapid.server.RapidHttpServlet;
 public class Mobile extends Action {
 	
 	// private instance variables
-	private ArrayList<Action> _successActions, _errorActions, _childActions;
+	private ArrayList<Action> _successActions, _errorActions, _onlineActions, _childActions;
 	
 	// properties
 	public ArrayList<Action> getSuccessActions() { return _successActions; }
@@ -49,6 +49,9 @@ public class Mobile extends Action {
 	
 	public ArrayList<Action> getErrorActions() { return _errorActions; }
 	public void setErrorActions(ArrayList<Action> errorActions) { _errorActions = errorActions; }
+	
+	public ArrayList<Action> getOnlineActions() { return _onlineActions; }
+	public void setOnlineActions(ArrayList<Action> onlineActions) { _onlineActions = onlineActions; }
 	
 	// constructors
 	
@@ -62,7 +65,7 @@ public class Mobile extends Action {
 		// save all key/values from the json into the properties 
 		for (String key : JSONObject.getNames(jsonAction)) {
 			// add all json properties to our properties, except for success and error actions
-			if (!"successActions".equals(key) && !"errorActions".equals(key)) addProperty(key, jsonAction.get(key).toString());
+			if (!"successActions".equals(key) && !"errorActions".equals(key) && !"onlineActions".equals(key)) addProperty(key, jsonAction.get(key).toString());
 		} 
 		// grab any successActions
 		JSONArray jsonSuccessActions = jsonAction.optJSONArray("successActions");
@@ -77,6 +80,14 @@ public class Mobile extends Action {
 		if (jsonErrorActions != null) {
 			// instantiate our contols collection
 			_errorActions = Control.getActions(rapidServlet, jsonErrorActions);
+		}
+		
+		// grab any onlineActions
+		JSONArray jsonOnlineActions = jsonAction.optJSONArray("onlineActions");
+		// if we had some
+		if (jsonOnlineActions != null) {
+			// instantiate our contols collection
+			_onlineActions = Control.getActions(rapidServlet, jsonOnlineActions);
 		}
 	}
 		
@@ -96,13 +107,17 @@ public class Mobile extends Action {
 			if (_errorActions != null) {
 				for (Action action : _errorActions) _childActions.add(action);			
 			}
+			// add child online actions
+			if (_onlineActions != null) {
+				for (Action action : _onlineActions) _childActions.add(action);			
+			}
 		}
 		return _childActions;	
 	}
 	
 	@Override
 	public String getPageJavaScript(RapidHttpServlet rapidServlet, Application application, Page page, JSONObject jsonDetails) throws Exception {
-		
+		// refrence to these success and fail actions are sent as callbacks to the on-mobile device file upload function
 		if (_successActions == null && _errorActions == null) {
 			return null;
 		} else {
@@ -131,18 +146,25 @@ public class Mobile extends Action {
 		}
 		
 	}
-			
-	@Override
-	public String getJavaScript(RapidHttpServlet rapidServlet, Application application, Page page, Control control, JSONObject jsonDetails) {
+	
+	// a re-usable function to check whether we are on a mobile device - this is used selectively according to the type and whether the alert should appear or we can silently ignore
+	private String getMobileCheck(boolean alert) {
 		// check that rapidmobile is available
 		String js = "if (typeof _rapidmobile == 'undefined') {\n  ";
 		// check we have errorActions
 		if (_errorActions == null) {
-			js += "  alert('This action is only available in Rapid Mobile');\n";
+			if (alert) js += "  alert('This action is only available in Rapid Mobile');\n";
 		} else {
 			js += "  " + getId() + "error(ev, {}, 1, 'This action is only available in Rapid Mobile');\n";
 		}
 		js += "} else {\n";
+		return js;
+	}
+			
+	@Override
+	public String getJavaScript(RapidHttpServlet rapidServlet, Application application, Page page, Control control, JSONObject jsonDetails) {
+		// start the js
+		String js = "";		
 		// get the type
 		String type = getProperty("actionType");
 		// check we got something
@@ -157,9 +179,13 @@ public class Mobile extends Action {
 				if (galleryControl == null) {
 					js += "  //galleryControl " + galleryControlId + " not found\n";
 				} else {
+					// mobile check with alert
+					js += getMobileCheck(true);
 					int maxSize = Integer.parseInt(getProperty("imageMaxSize"));
-					int quality = Integer.parseInt(getProperty("imageQuality"));
+					int quality = Integer.parseInt(getProperty("imageQuality"));					
 					js += "  _rapidmobile.addImage('" + galleryControlId + "'," + maxSize + "," + quality + ");\n";
+					// close mobile check
+					js += "}\n";
 				}
 			} else if ("uploadImages".equals(type)) {
 				// gett he gallery control Id
@@ -170,6 +196,8 @@ public class Mobile extends Action {
 				if (galleryControl == null) {
 					js += "  // galleryControl " + galleryControlId + " not found\n";
 				} else {
+					// mobile check with alert
+					js += getMobileCheck(true);
 					js += "  var urls = '';\n";
 					js += "  $('#" + galleryControlId + "').find('img').each( function() { urls += $(this).attr('src') + ',' });\n";
 					// assume no success call back
@@ -182,18 +210,31 @@ public class Mobile extends Action {
 					if (_errorActions != null) errorCallback = "'" + getId() + "error'";
 					// call it!
 					js += "  _rapidmobile.uploadImages('" + galleryControlId + "', urls, " + successCallback + ", " + errorCallback + ");\n";
+					// close mobile check
+					js += "}\n";
 				}
 			}  else if ("message".equals(type)) {
 				// retrieve the message
 				String message = getProperty("message");
 				// update to empty string if null
 				if (message == null) message = "";
+				// mobile check with silent fail
+				js += getMobileCheck(false);
 				// add js, replacing any dodgy inverted commas
 				js += "  _rapidmobile.showMessage('" + message.replace("'", "\\'") + "');\n";
+				// close mobile check
+				js += "}\n";
 			} else if ("disableBackButton".equals(type)) {
+				// mobile check with silent fail
+				js += getMobileCheck(false);
 				// add js
-				js += "  _rapidmobile.disableBackButton();\n";
+				js += "    _rapidmobile.disableBackButton();\n";
+				// close mobile check
+				js += "  }\n";
 			} else if ("sendGPS".equals(type)) {
+				
+				// mobile check with alert
+				js += getMobileCheck(true);
 				
 				// get whether to check if gps is enabled
 				boolean checkGPS = Boolean.parseBoolean(getProperty("gpsCheck"));
@@ -302,14 +343,81 @@ public class Mobile extends Action {
 					
 				} // gps destinations check			
 				
+				// close mobile check
+				js += "}\n";
+				
 			} else if ("stopGPS".equals(type)) {
 				
+				// mobile check with silent fail
+				js += getMobileCheck(false);
+				// call stop gps
 				js += "  _rapidmobile.stopGPS();\n";
+				// close mobile check
+				js += "}\n";
+				
+			} else if ("online".equals(type)) {
+				
+				// check we have online actions
+				if (_onlineActions != null) {
+					// check size
+					if (_onlineActions.size() > 0) {
+						
+						try {
+						
+							// ensure we have a details object
+							if (jsonDetails == null) jsonDetails = new JSONObject();
+					
+							// add js online check
+							js += "  if (typeof _rapidmobile == 'undefined' ? true : _rapidmobile.isOnline()) {\n";
+							
+							// get any working / loading page
+							String workingPage = getProperty("onlineWorking");
+							// if there was one 
+							if (workingPage != null) {
+								// show working page as a dialogue
+								js += "  if (Action_navigate) Action_navigate('~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + workingPage + "&action=dialogue',true,'" + getId() + "');\n";
+								// record that we have a working page in the details
+								jsonDetails.put("workingPage", getId());
+							}
+												
+							// get the offline dialogue
+							String offlinePage = getProperty("onlineFail");
+							
+							// loop them (this should clean out the working and offline entries in the details)
+							for (Action action : _onlineActions) {
+								
+								// record that we have an offline page
+								jsonDetails.put("offlinePage", offlinePage);
+								
+								js += "  " + action.getJavaScript(rapidServlet, application, page, control, jsonDetails).trim().replace("\n", "\n  ") + "\n";
+																	
+							}
+							
+							// get the working details page (in case none of the actions have used it
+							workingPage = jsonDetails.optString("workingPage", null);
+																			
+							// js online check fail
+							js += "} else {\n";
+													
+							// if we have an offline page one show it
+							if (offlinePage != null) js += "  if (Action_navigate) Action_navigate('~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + offlinePage + "&action=dialogue',true,'" + getId() + "');\n";
+							
+							// close online check
+							js += "}\n";
+							
+							} catch (Exception ex) {
+								// print an error instead
+								js = "// failed to print action " + getId() + " JavaScript : " + ex.getMessage() + "\n";
+							}
+							
+						} // online actions size check
+						
+					} // online actions check non-null check
 				
 			} // mobile action type check
-		}
-		// close checkRapidMobile
-		js += "}\n";
+			
+		} // mobile action type non-null check
+
 		// return an empty string
 		return js;
 	}

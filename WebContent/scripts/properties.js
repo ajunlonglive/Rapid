@@ -196,13 +196,13 @@ function updateProperty(cell, propertyObject, property, details, value) {
 			if (property.refreshProperties) {
 									
 				// if these are events
-				if (cell.closest("div.actionsPanelDiv")[0]) {
+				if (cell.closest(".actionsPanelDiv")[0]) {
 							
 					// get the event type
 					var eventType = cell.closest("table[data-eventType]").attr("data-eventType");
 					
 					// get the dialogue id
-					var dialogueId = cell.closest("div.dialogue").attr("id");
+					var dialogueId = cell.closest("div.propertyDialogue").attr("id");
 					
 					// if we're in a dialogue
 					if (dialogueId) {
@@ -614,6 +614,79 @@ function Property_checkbox(cell, propertyObject, property, details) {
 	}));
 }
 
+function Property_fields(cell, action, property, details) {
+	
+	// retrieve or create the dialogue
+	var dialogue = getDialogue(cell, action, property, details, 200, property.name);		
+	// grab a reference to the table
+	var table = dialogue.find("table").first();
+	// make sure table is empty
+	table.children().remove();
+	// add the borders style
+	table.addClass("dialogueTableAllBorders");
+	// add the headers
+	table.append("<tr><td colspan='2'>Field</td></tr>");
+	
+	// instantiate if need be
+	if (!action[property.key]) action[property.key] = [];
+	// get our fields
+	var fields = action[property.key];
+	
+	// assume none yet
+	var text = "Click to add...";
+	// if we have some
+	if (fields.length > 0) {
+		// reset the text
+		text = "";
+		// loop them
+		for (var i in fields) {
+			// add it to the text
+			text += fields[i];
+			if (i < fields.length -1) text += ", ";
+			// add it to the table
+			table.append("<tr><td><input value='" + fields[i] + "'/></td><td style='width:32px'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
+		}
+				
+	}
+	// set the cell text
+	cell.text(text);
+	
+	// add change listeners
+	addListener( table.find("input").keyup( function (ev) {
+		// get the input
+		var input = $(ev.target);
+		// update the field field at this location
+		fields[input.parent().parent().index() - 1] = input.val();
+	}));
+		
+	// add delete listeners
+	addListener( table.find("img.delete").click( function (ev) {
+		// add undo
+		addUndo();
+		// get the image
+		var img = $(ev.target);
+		// remove the field at this location
+		fields.splice(img.parent().parent().index() - 1,1);
+		// update the dialogue;
+		Property_fields(cell, action, property, details);
+	}));
+	
+	// add reorder listeners
+	addReorder(fields, table.find("img.reorder"), function() { Property_fields(cell, action, property); });
+		
+	// append add
+	table.append("<tr><td colspan='3'><a href='#'>add...</a></td></tr>");
+	
+	// add listener
+	addListener( table.find("a").click( function (ev) {
+		// add a field
+		fields.push("");
+		// refresh dialogue
+		Property_fields(cell, action, property, details);
+	}));
+	
+}
+
 function Property_inputAutoHeight(cell, input, property, details) {
 	// check if the input control type is large
 	if (input.controlType == "L") {
@@ -860,7 +933,7 @@ function Property_pageName(cell, page, property, details) {
 function Property_validationControls(cell, propertyObject, property, details) {
 		
 	// retrieve or create the dialogue
-	var dialogue = getDialogue(cell, propertyObject, property, details, 200, "Controls", {sizeX: true});		
+	var dialogue = getDialogue(cell, propertyObject, property, details, 200, "Controls<button class='titleButton' title='Add all page controls with validation'><span>&#xf055;</span></button>", {sizeX: true});		
 	// grab a reference to the table
 	var table = dialogue.find("table").first();
 	// add the borders
@@ -917,7 +990,7 @@ function Property_validationControls(cell, propertyObject, property, details) {
 	addReorder(controls, table.find("img.reorder"), function() { Property_validationControls(cell, propertyObject, property); });
 		
 	// add an add dropdown
-	var addControl = table.append("<tr><td colspan='2'><select><option value=''>Add control...</option>" + getValidationControlOptions() + "</select></td></tr>").children().last().children().last().children().last();
+	var addControl = table.append("<tr><td colspan='2'><select><option value=''>Add control...</option>" + getValidationControlOptions(null, controls) + "</select></td></tr>").children().last().children().last().children().last();
 	addListener( addControl.change( {cell: cell, propertyObject: propertyObject, property: property, details: details}, function(ev) {
 		// get a reference to the dropdown
 		var dropdown = $(ev.target);
@@ -934,6 +1007,66 @@ function Property_validationControls(cell, propertyObject, property, details) {
 			// re-render the dialogue
 			Property_validationControls(ev.data.cell, ev.data.propertyObject, ev.data.property, ev.data.details);
 		}
+	}));
+	
+	// add listeners for all controls add
+	addListener( dialogue.find("button").click( {controls:controls,cell: cell, propertyObject: propertyObject, property: property, details: details}, function(ev) {
+		// add an undo snapshot
+		addUndo();
+		// get the list of controls
+		var controls = ev.data.controls;
+		// initialise if need be
+		if (!controls) controls = [];
+		// get all page controls
+		var pageControls = getControls();
+		// prepare a list of controls to insert
+		var insertControls = [];
+		// loop the page controls
+		for (var i in pageControls) {
+			// get the pageControl
+			var pageControl = pageControls[i];
+			// if there is validation
+			if (pageControl.validation && pageControl.validation.type) {
+				// assume we don't have this control already
+				var gotControl = false;
+				// loop our controls
+				for (var i in controls) {
+					if (controls[i] == pageControl.id) {
+						gotControl = true;
+						break;
+					}
+				}
+				// if not add to insert collection
+				if (!gotControl) insertControls.push(pageControl.id);
+			} 
+		}
+		// now loop the insert controls
+		for (var i in insertControls) {
+			// get the insert control
+			var insertControl = insertControls[i];
+			// get the insert control position in the page
+			var insertPos = getKeyIndexControls(pageControls, insertControl);
+			// assume we haven't inserted it
+			var inserted = false;
+			// now loop the existing validation controls
+			for (var j in controls) {
+				// get the existing position 
+				var existingPos = getKeyIndexControls(pageControls, controls[j]);
+				// if the existing pos is after the insert control position
+				if (existingPos > insertPos) {
+					// insert here
+					controls.splice(j, 0, insertControl);
+					// retain insert
+					inserted = true;
+					// we're done
+					break;
+				} // found a control after this one so insert before the found one
+			} // loop dataCopies
+			// if we haven't inserted yet do so now
+			if (!inserted) controls.push(insertControl);
+		} // loop inserts
+		// update dialogue
+		Property_validationControls(ev.data.cell, ev.data.propertyObject, ev.data.property, ev.data.details);
 	}));
 	
 }
@@ -1579,7 +1712,7 @@ function Property_webserviceRequest(cell, propertyObject, property, details) {
 function Property_navigationPage(cell, navigationAction, property, details) {
 	
 	// add the drop down with it's values
-	cell.append("<select><option value=''>Please select...</option>" + getPageOptions(navigationAction.page) + "</select>");
+	cell.append("<select><option value=''>Please select...</option>" + getPageOptions(navigationAction[property.key]) + "</select>");
 	// get a reference to the drop down
 	var pageDropDown = cell.find("select").last();
 	// add a listener
@@ -1588,6 +1721,8 @@ function Property_navigationPage(cell, navigationAction, property, details) {
 		value = $(ev.target).val();
 		// update it
 		updateProperty(ev.data.cell, ev.data.navigationAction, ev.data.property, ev.data.details, value);
+		// refresh this dialogue
+		Property_navigationPage(ev.data.cell, ev.data.navigationAction, ev.data.property, ev.data.details);
 	}));
 	
 }
@@ -2790,7 +2925,7 @@ function Property_flowLayoutCellWidth(cell, flowLayout, property, details) {
 }
 
 function Property_datacopySource(cell, datacopyAction, property, details) {
-	// only if datacopyAction type is child
+	// only if datacopyAction type is not bulk
 	if (datacopyAction.copyType == "bulk") {
 		// remove this row
 		cell.closest("tr").remove();		
@@ -2801,7 +2936,7 @@ function Property_datacopySource(cell, datacopyAction, property, details) {
 }
 
 function Property_datacopySourceField(cell, datacopyAction, property, details) {
-	// only if datacopyAction type is child
+	// only if datacopyAction type is not bulk
 	if (datacopyAction.copyType == "bulk") {
 		// remove this row
 		cell.closest("tr").remove();
@@ -2838,6 +2973,17 @@ function Property_datacopySearchSource(cell, datacopyAction, property, details) 
 	if (datacopyAction.copyType == "search") {
 		// show the duration
 		Property_select(cell, datacopyAction, property, details);
+	} else {
+		// remove this row
+		cell.closest("tr").remove();
+	}
+}
+
+function Property_datacopyFields(cell, datacopyAction, property, details) {
+	// only if datacopyAction is search
+	if (datacopyAction.copyType == "trans") {
+		// show the reusable  fields dialigue
+		Property_fields(cell, datacopyAction, property, details);
 	} else {
 		// remove this row
 		cell.closest("tr").remove();
@@ -3109,10 +3255,12 @@ function Property_datacopyCopies(cell, datacopyAction, property, details) {
 		var text = "";
 		
 		// add a header
-		table.append("<tr><td><b>Source</b><button class='titleButton sources' title='Add all page controls as sources'><span>&#xf021;</span></button></td><td><b>Source field</b></td><td><b>Destination</b><button class='titleButton destinations' title='Add all page controls as destinations'><span>&#xf021;</span></button></td><td><b>Destination field</b></td><td colspan='2'><b>Copy type</b></td></tr>");
+		table.append("<tr><td><b>Source</b><button class='titleButton sources' title='Add all page controls as sources'><span>&#xf055;</span></button></td><td><b>Source field</b></td><td><b>Destination</b><button class='titleButton destinations' title='Add all page controls as destinations'><span>&#xf055;</span></button></td><td><b>Destination field</b></td><td colspan='2'><b>Copy type</b></td></tr>");
 			
 		// add sources listener
 		addListener( table.find("button.sources").click( {cell:cell, datacopyAction:datacopyAction, property:property}, function(ev) {
+			// add an undo snapshot
+			addUndo();
 			// bring in all source controls
 			getPageControlsBulkCopies(ev.data.datacopyAction, true);
 			// refresh
@@ -3121,6 +3269,8 @@ function Property_datacopyCopies(cell, datacopyAction, property, details) {
 		
 		// add destinations listener
 		addListener( table.find("button.destinations").click( {cell:cell, datacopyAction:datacopyAction, property:property}, function(ev) {
+			// add an undo snapshot
+			addUndo();
 			// bring in all destination controls
 			getPageControlsBulkCopies(ev.data.datacopyAction, false);
 			// refresh
@@ -3530,7 +3680,7 @@ function Property_orientation(cell, propertyObject, property, details) {
 }
 
 // possible mobileActionType values used by the mobileActionType property
-var _mobileActionTypes = [["addImage","Add image"],["uploadImages","Upload images"],["sendGPS","Send GPS position"],["stopGPS","Stop GPS updates"],["message","Status bar message"],["disableBackButton","Disable back button"]];
+var _mobileActionTypes = [["addImage","Add image"],["uploadImages","Upload images"],["sendGPS","Send GPS position"],["stopGPS","Stop GPS updates"],["message","Status bar message"],["disableBackButton","Disable back button"],["online","Online actions"]];
 
 // this property changes the visibility of other properties according to the chosen type
 function Property_mobileActionType(cell, mobileAction, property, details) {
@@ -3553,6 +3703,9 @@ function Property_mobileActionType(cell, mobileAction, property, details) {
 	setPropertyVisibilty(mobileAction, "gpsFrequency", false);	
 	setPropertyVisibilty(mobileAction, "gpsCheck", false);
 	setPropertyVisibilty(mobileAction, "message", false);
+	setPropertyVisibilty(mobileAction, "onlineActions", false);
+	setPropertyVisibilty(mobileAction, "onlineWorking", false);
+	setPropertyVisibilty(mobileAction, "onlineFail", false);
 	// adjust required property visibility accordingly
 	switch (mobileAction.actionType) {		
 		case "addImage" :
@@ -3572,6 +3725,11 @@ function Property_mobileActionType(cell, mobileAction, property, details) {
 		break;
 		case "message" :
 			setPropertyVisibilty(mobileAction, "message", true);
+		break;
+		case "online" :
+			setPropertyVisibilty(mobileAction, "onlineActions", true);
+			setPropertyVisibilty(mobileAction, "onlineWorking", true);
+			setPropertyVisibilty(mobileAction, "onlineFail", true);
 		break;
 	}
 	// listener for changing the type

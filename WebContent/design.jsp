@@ -178,9 +178,9 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 				<img id="helpMap" class="headerHelp" src="images/help_16x16.png" />
 			</h2>
 			<div id="pageMap" class="design-map" >
-				<ul id="pageMapList"></ul>		
-				<input id="pageMapSearch" placeholder="search"></input>
-				<button id="pageMapHighlight" class="fa" title="Locate selected control">&#xf140;</button>
+				<ul id="pageMapList"></ul>
+				<button id="pageMapHighlight" class="fa" title="Locate selected control">&#xf140;</button>		
+				<input id="pageMapSearch" placeholder="search"></input>				
 			</div>	
 			
 			<hr/>

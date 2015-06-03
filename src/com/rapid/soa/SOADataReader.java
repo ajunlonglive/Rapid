@@ -199,13 +199,15 @@ public interface SOADataReader {
 											
 						// if we have a parent for this column already (a proxy for whether it's the second or more peer)
 						if (_columnParents.size() > _currentColumn) {
-							// if the the element at this column has the same name as what we had previously, it's parent must be an array
+							// if the element at this column has the same name as what we had previously, it's parent must be an array
 							if (localName.equals(_columnParents.get(_currentColumn).getName())) _columnParents.get(_currentColumn - 1).setIsArray(true);
 						} else {
 							// if a root was set
 							if (_root != null) {
 								// the root is always an array too (for now...)
 								if (localName.equals(_root) || qName.equals(_root)) _currentElement.setIsArray(true);
+								// as is anything that ends in "Array"
+								if (localName.endsWith("Array") || qName.endsWith("Array")) _currentElement.setIsArray(true);
 							}
 						}
 																		 																								
