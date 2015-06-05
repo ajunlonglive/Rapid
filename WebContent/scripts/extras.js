@@ -46,8 +46,8 @@ String.prototype.replaceAll = function( find, replace ) {
 	  $.each(['show', 'hide'], function (i, ev) {
 	    var el = $.fn[ev];
 	    $.fn[ev] = function () {
-	      this.trigger(ev);
-	      el.apply(this, arguments);
+	    	el.apply(this, arguments);
+	    	this.trigger(ev);	      
 	      return this;
 	    };
 	  });
