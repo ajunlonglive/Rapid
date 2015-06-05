@@ -250,32 +250,38 @@ function sizeGridFixedHeaderColumns(control) {
 		control.parent().show();
 	}
 	// get the header cells
-	var hcells = control.prev().find("tr:first-child").children();
+	var hcells = control.prev().find("tr:first-child").children(":visible");
 	// remove any css for width
 	hcells.css("width","");
 	// get the body cells
-	var bcells = control.find("tr:nth-child(2)").children();
+	var bcells = control.find("tr:nth-child(2)").children(":visible");
 	// if there are body cells
 	if (bcells.length > 0) {
+		// remove any previous min-widths
+		hcells.css("min-width","0");
+		bcells.css("min-width","0");
 		// loop them
 		for (var i = 0; i < bcells.length; i++) {
 			// get the header cell
 			var hcell = $(hcells.get(i));
-			// if visible
-			if (hcell.is(":visible")) {
-				// get the header cell width
-				var hwidth = hcell.width();
-				// get the body cell
-				var bcell = $(bcells.get(i));
-				// get the body cell width
-				var bwidth = bcell.width();
-				// compare widths
-				if (hwidth < bwidth) {
-					hcell.css("min-width",bwidth);
-				} else if (hwidth > bwidth) {
-					bcell.css("min-width",hwidth); 
-				}
-			}
+			// get the header cell width
+			var hwidth = hcell.outerWidth();
+			// get the body cell
+			var bcell = $(bcells.get(i));
+			// get the body cell width
+			var bwidth = bcell.outerWidth();
+			// compare widths
+			if (hwidth < bwidth) {
+				// only adjust for padding on the last column - tested in Chrome
+				if (i == bcells.length - 1) bwidth = bwidth - parseInt(hcell.css("padding-left")) - parseInt(hcell.css("padding-right"));
+				// set the min width 
+				hcell.css("min-width",bwidth);
+			} else if (hwidth > bwidth) {
+				// only adjust for padding on the last column - tested in Chrome
+				if (i == bcells.length - 1) hwidth = hwidth - parseInt(bcell.css("padding-left")) - parseInt(bcell.css("padding-right"));
+				// set the min width 
+				bcell.css("min-width",hwidth); 
+			}			
 		}			
 	}
 	// hide again if that was the initial state
@@ -568,7 +574,7 @@ function getData_dataStore(ev, id, field, details) {
   	if (data.rows && data.fields) {
   		if (data.rows[0] && field) {
   			for (var i in data.fields) {
-  				if (data.fields[i].toLowerCase() == field.toLowerCase()) {
+  				if (data.fields[i] && data.fields[i].toLowerCase() == field.toLowerCase()) {
   					var value = data.rows[0][i];
   					if (value !== undefined) {
   						return value;
@@ -875,7 +881,11 @@ function getProperty_grid_selectedRowData(ev, id, field, details) {
   var data = null;
   if (details.dataStorageType) {
   	data = getGridDataStoreData(id, details);	
-  	data.rows = [data.rows[data.selectedRowNumber - 1]];
+  	if (data.selectedRowNumber) {
+  		data.rows = [data.rows[data.selectedRowNumber - 1]];
+  	} else {
+  		data.rows = [];
+  	}
   } else {
   	var row = $(ev.target).closest("tr");
   	var rowNumber = row.index();
@@ -889,7 +899,7 @@ function getProperty_grid_selectedRowData(ev, id, field, details) {
   }
   if (field && data.fields && data.rows && data.rows.length > 0) {
   	for (var i in data.fields) {
-  		if (data.fields[i] == field) {
+  		if (data.fields[i] && data.fields[i].toLowerCase() == field.toLowerCase()) {
   			data = data.rows[0][i];
   			break;
   		}
