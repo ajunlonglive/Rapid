@@ -141,7 +141,7 @@ if (data) {
 	if (data.rows && data.fields) {
 		if (data.rows[0] && field) {
 			for (var i in data.fields) {
-				if (data.fields[i].toLowerCase() == field.toLowerCase()) {
+				if (data.fields[i] && data.fields[i].toLowerCase() == field.toLowerCase()) {
 					var value = data.rows[0][i];
 					if (value !== undefined) {
 						return value;
