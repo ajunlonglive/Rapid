@@ -572,26 +572,14 @@ function getMouseControl(ev, childControls) {
 								// retain the child control
 								c = childControl;
 							}
-						}
-						// if the mousedover control is different from the one before
-						if (!_mousedOverControl || _mousedOverControl.object[0] !== c.object[0]) {
-							// remember this as the mousedover controls
-							_mousedOverControl = c;	
-							// fire the moused over event
-							_mousedOverControl.object.mouseover();		
-						}											
+						}							
 						// return the control!
 						return c;
 					} // mouse within
 				} // mouse below
 			} // visible
 		} // control loop
-		
-		// got to the end without hitting anything fire mouseout on mouseover control
-		if (_mousedOverControl)	_mousedOverControl.object.mouseout();
-		// unset mouseover control
-		_mousedOverControl = null;
-		
+				
 	}
 }
 
@@ -2371,6 +2359,21 @@ $(document).ready( function() {
 	// a list of matching style rules
 	_styleList = $("#styleList");
 	
+	
+	$("#selectionBorder").on("mouseover", function(ev){
+		if (_selectedControl) {
+			if (ev.target != _mousedOverControl) {
+				_selectedControl.object.trigger("mouseover", [ev]);
+				_mousedOverControl = ev.target;
+			}
+		}
+	});
+
+	$("#selectionBorder").on("mouseout", function(ev){
+		if (_selectedControl) _selectedControl.object.trigger("mouseout", [ev]);
+		_mousedOverControl = null;
+	});
+		
 	// control panel resize
 	$("#controlPanelSize").on("mousedown", function(ev) {
 		// retain that we are resizing the control panel
@@ -3145,22 +3148,7 @@ $(document).on("mousemove touchmove", function(ev) {
 					}
 				} // if over object		
 			} // if mouse down
-		}; // if selectedObject
-		
-		// if the current mousedOver object is different from the last one
-		if (c != _mousedOverControl) {
-			// if there actually is a last one fire it's mouseout event
-			if (_mousedOverControl) _mousedOverControl.object.mouseout();
-		}
-		
-		// fire the mouseover event for any hit control object
-		if (c) {
-			_mousedOverControl = c;
-			c.object.mouseover();
-		} else {
-			_mousedOverControl = null;
-		}
-		
+		}; // if selectedObject						
 	}
 	
 }); // mousemove

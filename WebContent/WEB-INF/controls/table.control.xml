@@ -151,13 +151,9 @@ this.object = this._parent.object.children().last().children().last();
 this.childControls = new Array();
 // check if the table object already has rows
 if (this._parent.childControls.length > 0) {
-	// if so make cells in this row for as many cells as there are in the top row
-	var maxCells = 1;
-	// get the widest row
-	for (var i in this._parent.childControls[0].childControls) {
-		if (this._parent.childControls[0].childControls.length > maxCells) maxCells = this._parent.childControls[0].childControls.length;
-	}
-	for (var i = 0; i < maxCells; i++) {
+	// if so make cells in this row for as many cells as there are in the bottom row
+	var cells =  this._parent.childControls[ Math.max(this._parent.childControls.length - 1,0)].childControls.length;
+	for (var i = 0; i < cells; i++) {
 		this.childControls.push(new Control("tableCell", this));
 	}
 } else {	       
@@ -232,40 +228,41 @@ this.childControls.push(new Control("tableRow", this));
 	    <initDesignJavaScript>
 	        <![CDATA[     
 	                   	           
-$("#dialogues").append("<img id='" + this.id + "_addRow' src='images/addDown_16x16.png' style='z-index:10004;position:absolute' />");
+$("#dialogues").append("<img id='" + this.id + "_addRow' class='tableEditImage' src='images/addDown_16x16.png' style='z-index:10004;position:absolute' />");
 var addRow = $("#" + this.id + "_addRow");	        
 addRow.mousedown( this, function(ev) {
+	addUndo();
 	var control = ev.data;
-	control.childControls.push(new Control("tableRow", control));
-	$("#" + control.id + "_addRow").hide();
+	var row = new Control("tableRow", control);
+	control.childControls.push(row);
 });
 addRow.hide();
 
-$("#dialogues").append("<img id='" + this.id + "_addCol' src='images/addRight_16x16.png' style='z-index:10004;position:absolute' />");
+$("#dialogues").append("<img id='" + this.id + "_addCol' class='tableEditImage' src='images/addRight_16x16.png' style='z-index:10004;position:absolute' />");
 var addCol = $("#" + this.id + "_addCol");	        
 addCol.mousedown( this, function(ev) {
+	addUndo();
 	var control = ev.data;
 	for (var i in control.childControls) {
 		var row = control.childControls[i];
 		row.childControls.push(new Control("tableCell", row));
 	}	
-	$("#" + control.id + "_addCol").hide();
 });
 addCol.hide();     
 
 this.object.mouseover( this, function(ev) {
 	if (_selectedControl) { 
 		var control = ev.data;
-		if (_selectedControl.type == "table" && _selectedControl.id == control.id) {			
-			var o = control.object;
-			var os = o.offset();
+		if (_selectedControl.type == "table" && _selectedControl.id == control.id && control.object.is(":visible")) {			
+			var b = $("#selectionBorder");
+			var os = b.offset();
 			$("#" + control.id + "_addRow").css({
-				top : os.top + o.height() - 16,
-				left : _panelPinnedOffset + os.left + o.width()/2 - 8
+				top : os.top + b.height() - 8,
+				left : os.left + b.width()/2
 			}).show();
 			$("#" + control.id + "_addCol").css({
-				top : os.top + o.height()/2 - 8,
-				left : _panelPinnedOffset + os.left + o.width() - 16
+				top : os.top + b.height()/2,
+				left : os.left + b.width() - 8
 			}).show();
 		} else {
 			$("#" + control.id + "_addRow").hide();
@@ -274,10 +271,12 @@ this.object.mouseover( this, function(ev) {
 	}
 });	    
 
-this.object.mouseout( this, function(ev) {
-	var control = ev.data; 
-	$("#" + control.id + "_addRow").hide();
-	$("#" + control.id + "_addCol").hide();
+this.object.mouseout( this, function(ev, evInner) {
+    if (!$(evInner.toElement).is("img.tableEditImage")) {
+		var control = ev.data; 
+		$("#" + control.id + "_addRow").hide();
+		$("#" + control.id + "_addCol").hide();
+	}	
 });	 
 	        ]]>
 	    </initDesignJavaScript>
