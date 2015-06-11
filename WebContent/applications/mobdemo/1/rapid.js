@@ -66,6 +66,64 @@ function saveDataStoreData(id, details, data) {
 	if (f) f($.Event("change"));
 }
 
+/* Flow layout control resource JavaScript */
+
+$(document).ready( function() {
+								
+	$(window).resize(function(ex) {
+
+		sizeFlowLayouts();
+
+    });
+    	    			
+});
+
+function sizeFlowLayouts() {
+	
+	// loop the layouts
+	$(".flowLayout").each(function() {
+		// get the layout
+		var layout = $(this);
+		// size it if visible (it'll have no size if not)
+		if (layout.is(":visible")) sizeFlowLayout(layout);
+	});
+				
+}
+
+function sizeFlowLayout(layout) {
+
+	// find the width (in pixels)
+	var width = layout.width();
+	// get all of the children
+	var cells = layout.children(".flowLayoutCell");
+	// get the details
+	var details = window[layout.attr("id") + "details"];
+	// set their width to the start width (however it was provided)
+	cells.css("width", details.cellWidth);
+	// get the first cell 
+	var cell = layout.children(".flowLayoutCell").first();
+	// get it's width in pixels
+	var cellWidth = cell.width();
+	// get it's width-affecting margin
+	var cellMarginWidth = toPixels(cell.css("margin-left")) + toPixels(cell.css("margin-right"));
+	// get it's with-affecting padding 
+	var cellPaddingWidth = toPixels(cell.css("padding-left")) + toPixels(cell.css("padding-right")); 
+	// get it's width-affecting borders
+	var cellBorderWidth = toPixels(cell.css("border-left-width")) + toPixels(cell.css("border-right-width")); 		 
+	// calculate the max number of whole cells across (can't be more than cells we have)
+	var cellsWide = Math.min(Math.floor(width / cellWidth), cells.length);	
+	// adjust the cell width to include equal amounts of the white space, and adjust for padding and border
+	cellWidth += (width - cellsWide * cellWidth) / cellsWide - cellMarginWidth - cellPaddingWidth - cellBorderWidth;
+	// if there is a transform in place
+	if ($("body").css("transform") && $("body").css("transform") != "auto") {
+		// if the new size exceeds (or equals) the available width reduce by 1 pixel divided by number of cells
+		if (width <= (cellWidth + cellMarginWidth + cellPaddingWidth + cellBorderWidth) * cellsWide) cellWidth -= 1 / cellsWide;
+	}
+	// update the widths
+	layout.children(".flowLayoutCell").css("width", cellWidth);			
+	
+}
+
 /* Gallery control resource JavaScript */
 
 function Gallery_removeImage(ev, id) {
@@ -583,6 +641,19 @@ function getWebserviceActionMaxSequence(actionId) {
 function Init_date(id, details) {
   A_TCALCONF.format = details.dateFormat;	     
   f_tcalAdd (id);
+}
+
+function Init_flowLayout(id, details) {
+  $("#" + id).children("div").click( function(ev) {
+  	// get a reference to the flow layout
+  	var layout = $("#" + id);
+  	// remove selected from all child divs
+  	layout.children("div").removeClass("selected");
+  	// add selected to the div we just clicked on, also get it's index, plus 1, to go from zero to 1 based
+  	var index = $(this).addClass("selected").index() + 1;
+  	// apply selected to the correct body
+  	layout.children("div:nth-child(" + index + ")").addClass("selected");
+  });
 }
 
 function Init_gallery(id, details) {
@@ -1837,6 +1908,15 @@ function setData_text(ev, id, field, details, data, changeEvents) {
   	}
   } else {
   	control.html("");
+  }
+}
+
+function getProperty_flowLayoutCell_cellIndex(ev, id, field, details) {
+  var selectedCell = $("#" + id).children("div.selected");
+  if (selectedCell[0]) {
+  	return selectedCell.index();
+  } else {		        
+  	return -1;
   }
 }
 

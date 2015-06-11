@@ -104,34 +104,8 @@ if (appPage != null && designerPermission) {
 	out.print(appPage.getResourcesHtml(app, true));	
 	
 %>
-	<style type="text/css">
-	
-	html {
-		height: 100%;
-	}
-	
-	body {
-		transform-origin: 0 0;
-	}
-	
-	.pageLoading {
-		text-align: center;	
-		margin: 100px auto;
-		font-size: 20px;		
-		padding: 20px;
-		border: 4px solid black;
-		border-radius: 10px;
-		width: 300px;
-		background: white;
-		box-shadow: 5px 5px 5px #888;
-		font-family: Arial;
-	}
-	
-	.pageLoading p {	
-		margin: 5px;
-	}
-			
-	</style>
+	<link rel="stylesheet" type="text/css" href="styles/designPage.css"></link>
+	<style></style>
 <%
 } else {
 %>

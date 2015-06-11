@@ -31,11 +31,24 @@ span.loading {
 	font-size: 0.5em;
 }
 
+/* Flow layout control resource styles */
+
+div.flowLayout {
+	overflow:auto;
+}
+.flowLayoutCell {
+	float: left;
+}
+
 /* Grid control resource styles */
 
 table.grid {
 	border-collapse:collapse;
-}           
+}          
+
+table.grid td {
+	border: 0;
+}     
 
 table.grid span.sort {
 	font-family: FontAwesome;
