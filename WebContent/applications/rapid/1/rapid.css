@@ -11,7 +11,11 @@
 
 table.grid {
 	border-collapse:collapse;
-}           
+}          
+
+table.grid td {
+	border: 0;
+}     
 
 table.grid span.sort {
 	font-family: FontAwesome;

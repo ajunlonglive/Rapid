@@ -174,7 +174,7 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 			</div>	
 			
 			<h2 id="controlsMap" style="margin-top:5px;">Page controls
-				<img class="headerToggle" src="images/triangleDown_8x8.png" />
+				<img class="headerToggle" src="images/triangleUp_8x8.png" />
 				<img id="helpMap" class="headerHelp" src="images/help_16x16.png" />
 			</h2>
 			<div id="pageMap" class="design-map" >

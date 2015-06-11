@@ -1319,8 +1319,6 @@ function loadVersion(forceLoad) {
 	var designControls = $("ul.design-controls");
 	// hide the controls panel
 	designControls.hide();
-	// hide the map
-	$("#pageMap").hide();
 	// empty the designControls panel
 	designControls.children().remove();	
 	// empty the action options global

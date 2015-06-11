@@ -46,7 +46,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	        <property>
 	            <key>text</key>
 	            <name>Text</name>
-	            <setConstructValueFunction>return "Flow layout cell";</setConstructValueFunction>
+	            <setConstructValueFunction>return "";</setConstructValueFunction>
 	            <changeValueJavaScript>bigtext</changeValueJavaScript>
 	            <refreshHtml>true</refreshHtml>		                       
 	        </property>	
@@ -62,7 +62,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    <getHtmlFunction>
 	        <![CDATA[
 // return our html 
-return "<div id='" + this.id + "' class='flowLayoutCell'>" + this.text + "</div>";
+return "<div id='" + this.id + "' class='flowLayoutCell'" + (this.text ? "" : " style='min-height:20px;'") + ">" + this.text + "</div>";
 	        ]]>
 	    </getHtmlFunction> 
 	    
@@ -135,8 +135,8 @@ if (selectedCell[0]) {
 	            <type>css</type>
 	            <contents>
 <![CDATA[
-.flowLayout:after {
-	clear: both;
+div.flowLayout {
+	overflow:auto;
 }
 .flowLayoutCell {
 	float: left;

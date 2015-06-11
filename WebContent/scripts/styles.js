@@ -435,6 +435,62 @@ function renderHints(val) {
 				
 }
 
+function removeStyle(appliesTo, href) {
+	// for pointers with ie see:
+	// http://www.javascriptkit.com/domref/stylesheet.shtml
+	
+	// get all of the stylesheets (we might be using pagepanels where the styling )
+	var styleSheets = _pageIframe[0].contentWindow.document.styleSheets;
+	// check we got some stylesheets
+	if (styleSheets) {
+		// loop them
+		for (var i = 0; i < styleSheets.length; i++) {
+			// get a reference
+			styleSheet = styleSheets[i];
+			// control styles are always in the page and will not have an href (unless we supply one explcity)
+			if (!styleSheet.href || (href && styleSheet.href && styleSheet.href.indexOf(href) > 0)) {
+				// get rules
+				var rules = styleSheet.cssRules;					
+				// check rules
+				if (rules) {
+					// loop rules
+					for (var j = 0; j < rules.length;) {
+						// get rule
+						var rule = rules[j];
+						// check there is cssText
+						if (rule.cssText) {
+							// get what the rule applies to
+							ruleAppliesTo = rule.cssText.substr(0, rule.cssText.indexOf("{") - 1);
+							// remove if matches our applies to (case insensitive)
+							if (ruleAppliesTo.toLowerCase() == appliesTo.toLowerCase()) {
+								styleSheet.deleteRule(j);
+							} else {
+								j++;
+							}
+						} // cssText check							
+					} // rules loop
+				} // rules check		
+			} // in-page style check
+		} // style sheets loop
+	} // style sheets check
+}
+
+function addStyle(appliesTo, styleSheetRule) {
+	// add the styleSheet rule
+	if (_styleSheet) {
+		// check whether the stylesheet has an insertRule method
+		if (_styleSheet.insertRule) {
+			// ff / chrome - create a single rule inside the applies to
+			styleSheetRule = appliesTo + " {" + styleSheetRule + "}";
+			// insert to send of style sheet
+			_styleSheet.insertRule(styleSheetRule, _styleSheet.cssRules.length);
+		} else {
+			// ie - use addRule method with seperate applies to and rule 						
+			_styleSheet.addRule(appliesTo, styleSheetRule);
+		}									
+	} // _styleSheet check
+}
+
 function rebuildStyles() {
 	
 	// create a new array to hold the styles for the selected control 	
@@ -447,45 +503,8 @@ function rebuildStyles() {
 		var appliesTo = _styleTable.find("td[data-appliesTo]").attr("data-appliesTo");
 		// check we have a style sheet object and an appliesTo
 		if (appliesTo) {
-						
-			// for pointers with ie see:
-			// http://www.javascriptkit.com/domref/stylesheet.shtml
-			
-			// get all of the stylesheets (we might be using pagepanels where the styling )
-			var styleSheets = _pageIframe[0].contentWindow.document.styleSheets;
-			// check we got some stylesheets
-			if (styleSheets) {
-				// loop them
-				for (var i = 0; i < styleSheets.length; i++) {
-					// get a reference
-					styleSheet = styleSheets[i];
-					// control styles are always in the page and will not have an href
-					if (!styleSheet.href) {
-						// get rules
-						var rules = styleSheet.cssRules;					
-						// check rules
-						if (rules) {
-							// loop rules
-							for (var j = 0; j < rules.length;) {
-								// get rule
-								var rule = rules[j];
-								// check there is cssText
-								if (rule.cssText) {
-									// get what the rule applies to
-									ruleAppliesTo = rule.cssText.substr(0, rule.cssText.indexOf("{") - 1);
-									// remove if matches our applies to (case insensitive)
-									if (ruleAppliesTo.toLowerCase() == appliesTo.toLowerCase()) {
-										styleSheet.deleteRule(j);
-									} else {
-										j++;
-									}
-								} // cssText check							
-							} // rules loop
-						} // rules check		
-					} // in-page style check
-				} // style sheets loop
-			} // style sheets check
-													
+			// remove any styling for this 			
+			removeStyle(appliesTo);													
 			// create a single style object which applies to the control element
 			var style = {appliesTo : appliesTo, rules : new Array()};
 			// create a style sheet rule
@@ -507,18 +526,7 @@ function rebuildStyles() {
 				// add the style to the collection
 				styles.push(style);
 				// add the styleSheet rule
-				if (_styleSheet) {
-					// check whether the stylesheet has an insertRule method
-					if (_styleSheet.insertRule) {
-						// ff / chrome - create a single rule inside the applies to
-						styleSheetRule = appliesTo + " {" + styleSheetRule + "}";
-						// insert to send of style sheet
-						_styleSheet.insertRule(styleSheetRule, _styleSheet.cssRules.length);
-					} else {
-						// ie - use addRule method with seperate applies to and rule 						
-						_styleSheet.addRule(appliesTo, styleSheetRule);
-					}									
-				} // _styleSheet check
+				addStyle(appliesTo, styleSheetRule);
 			} // rules check
 		} // check stylesheet
 	});			

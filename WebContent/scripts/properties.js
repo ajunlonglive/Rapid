@@ -3616,6 +3616,34 @@ function Property_device(cell, propertyObject, property, details) {
 	
 }
 
+// this is displayed as a page property but is actually held in local storage
+function Property_orientation(cell, propertyObject, property, details) {
+	// if we're holding a P (this defaulted in designerer.js)
+	if (_orientation == "P") {
+		cell.text("Portrait");
+	} else {
+		cell.text("Landscape");
+	}
+	// add the listener to the cell
+	addListener( cell.click(function(ev) {
+		// toggle the value
+		if (_orientation == "P") {
+			_orientation = "L";
+			$(ev.target).text("Landscape");
+		} else {
+			_orientation = "P";
+			$(ev.target).text("Portrait");
+		}
+		// store it
+		if (typeof(localStorage) !== "undefined") localStorage.setItem("_orientation" ,_orientation);
+		// hide the scroll bars to avoid artifacts during resizing
+		$("#scrollV").hide();
+		$("#scrollH").hide();
+		// windowResize
+		windowResize("_orientation");
+	}));
+}
+
 //this is displayed as a page property but is actually held in local storage
 function Property_zoom(cell, propertyObject, property, details) {
 	// holds the options html
@@ -3651,32 +3679,48 @@ function Property_zoom(cell, propertyObject, property, details) {
 	}));	
 }
 
-// this is displayed as a page property but is actually held in local storage
-function Property_orientation(cell, propertyObject, property, details) {
-	// if we're holding a P (this defaulted in designerer.js)
-	if (_orientation == "P") {
-		cell.text("Portrait");
-	} else {
-		cell.text("Landscape");
+// the guideline styles
+var _guidelineStyles = [
+		".table td",
+		"div.panel",
+		"div.flowLayoutCell"
+];
+
+// this function controls whether guidline table borders are visible
+function Property_guidelines(cell, propertyObject, property, details) {
+	// assume we want them
+	var showGuidelines = true;
+	// if we have local storage
+	if (typeof(localStorage) !== "undefined") {
+		// if we have a local storage item for this
+		if (localStorage.getItem("_guidelines")) {
+			showGuidelines = JSON.parse(localStorage.getItem("_guidelines"));
+		} 
 	}
-	// add the listener to the cell
-	addListener( cell.click(function(ev) {
-		// toggle the value
-		if (_orientation == "P") {
-			_orientation = "L";
-			$(ev.target).text("Landscape");
-		} else {
-			_orientation = "P";
-			$(ev.target).text("Portrait");
+	// add the checkbox
+	cell.html("<input type='checkbox' />");
+	// get the check box
+	var checkbox =  cell.find("input");
+	// set the checked value
+	checkbox.prop("checked",showGuidelines);
+	// add a listener for it to update local storage
+	addListener(checkbox.change( function(ev) {
+		// if we have local storage
+		if (typeof(localStorage) !== "undefined") {
+			// retain the new value
+			localStorage.setItem("_guidelines", JSON.stringify($(ev.target).prop("checked"))); 
+			// update
+			Property_guidelines(cell, propertyObject, property, details);
 		}
-		// store it
-		if (typeof(localStorage) !== "undefined") localStorage.setItem("_orientation" ,_orientation);
-		// hide the scroll bars to avoid artifacts during resizing
-		$("#scrollV").hide();
-		$("#scrollH").hide();
-		// windowResize
-		windowResize("_orientation");
 	}));
+	// loop the guidline styles
+	for (var i in _guidelineStyles) {
+		// remove the style just to be sure
+		removeStyle(_guidelineStyles[i],"designPage.css");
+		// if we want the style add it back in
+		if (showGuidelines) 	addStyle( _guidelineStyles[i],"border: 1px dashed #ccc;");	
+	}
+	
 }
 
 // possible mobileActionType values used by the mobileActionType property

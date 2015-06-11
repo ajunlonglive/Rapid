@@ -46,7 +46,11 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	        <property>
 	            <key>text</key>
 	            <name>Text</name>
-	            <setConstructValueFunction>return "Cell";</setConstructValueFunction>
+	            <setConstructValueFunction>
+	                <![CDATA[
+	                	return "";
+	                ]]>
+	            </setConstructValueFunction>
 	            <changeValueJavaScript>bigtext</changeValueJavaScript>	
 	            <refreshHtml>true</refreshHtml>            
 	        </property>
@@ -91,11 +95,11 @@ return values;
 	        </property>
 	        
 	    </properties>
-	    
+	    	    
 	    <getHtmlFunction>
 	        <![CDATA[
 // return the html for adding to our parent object       
-return "<td id='" + this.id + "' " + ((!isNaN(this.colSpan) && this.colSpan > 1) ? "colspan='" + this.colSpan + "'" : "") + " " + ((!isNaN(this.rowSpan) && this.rowSpan > 1) ? "rowspan='" + this.rowSpan + "'" : "") + " class='tabelCell" + getStyleClasses(this) + "'>" + this.text + "</td>";
+return "<td id='" + this.id + "' " + ((!isNaN(this.colSpan) && this.colSpan > 1) ? "colspan='" + this.colSpan + "'" : "") + " " + ((!isNaN(this.rowSpan) && this.rowSpan > 1) ? "rowspan='" + this.rowSpan + "'" : "") + " class='tabelCell" + getStyleClasses(this) + "'" + (this.text ? "" : " style='min-width:15px;height:15px;'") + ">" + this.text + "</td>";
 	        ]]>
 	    </getHtmlFunction>  	
 	    

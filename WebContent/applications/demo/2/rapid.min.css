@@ -2,6 +2,7 @@ div.loading{position:absolute;background-color:black;opacity:0.2;filter:alpha(op
 span.loading{position:absolute;background:url("../../../images/wait_120x15.gif");background-repeat:no-repeat;width:120px;height:15px;border:2px solid #777;display:none}
 .buttonGlyphWithBackground{font-size:0.5em}
 table.grid{border-collapse:collapse}
+table.grid td{border:0}
 table.grid span.sort{font-family:FontAwesome;margin-left:5px}
 .dialogueCover{background-color:white;opacity:0.8;filter:alpha(opacity=80)}
 .dialogue{background-color:white;padding:0px}

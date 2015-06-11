@@ -213,59 +213,31 @@ function buildPageMap() {
 	}
 }
 
-
-// reusable function
-function toggleMap() {
-	
-	// show the controls if the pageMap is visible
-	var showControls = $("#pageMap").is(":visible");
-	
-	// check show / hide
-	if (showControls) {
-		// hide map instantly
-		$("#pageMap").hide();	
-		// show controls
-		$("#controlsList").show("slide", {direction: "up"}, 500);
-		// after 500 secs
-		window.setTimeout( function() {
-			// invert the up/down images
-			$("#controlsHeader").children("img.headerToggle").attr("src","images/triangleUp_8x8.png");
-			$("#controlsMap").children("img.headerToggle").attr("src","images/triangleDown_8x8.png");					
-    	}, 500);	
-	} else {
-		// hide controls
-		$("#controlsList").hide("slide", {direction: "up"}, 500);
-		// show the map after 500 secs
-		window.setTimeout( function() {
-			// show the map
-			$("#pageMap").show();
-			// rebuild the controls
-			buildPageMap();
-			// invert the up/down images
-			$("#controlsHeader").children("img.headerToggle").attr("src","images/triangleDown_8x8.png");
-			$("#controlsMap").children("img.headerToggle").attr("src","images/triangleUp_8x8.png");
-			// resize the window
-			windowResize("controlsMap hide");
-    	}, 500);						
-	}
-}
-
 //JQuery is ready! 
 $(document).ready( function() {
 	
 	// controls are clicked on
 	$("#controlsHeader").click( function(ev) {
-		toggleMap();		
+		$("#controlsList").slideToggle( 500, function() {
+			if ($(this).is(":visible")) {
+				$("#controlsHeader").children("img.headerToggle").attr("src","images/triangleUp_8x8.png");				
+			} else {
+				$("#controlsHeader").children("img.headerToggle").attr("src","images/triangleDown_8x8.png");
+			}
+		});
 		return false;
 	});
 	
 	// map is clicked on
 	$("#controlsMap").click( function(ev) {		
-		toggleMap();
+		$("#pageMap").slideToggle( 500, function() {
+			if ($(this).is(":visible")) {
+				$("#controlsMap").children("img.headerToggle").attr("src","images/triangleUp_8x8.png");				
+			} else {
+				$("#controlsMap").children("img.headerToggle").attr("src","images/triangleDown_8x8.png");
+			}
+		});
 		return false;
 	});
-	
-	// hide the map
-	$("#pageMap").hide();
 	
 });	
