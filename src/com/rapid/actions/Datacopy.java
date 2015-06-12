@@ -380,74 +380,66 @@ public class Datacopy extends Action {
 						js += "var outputs = [" + jsOutputs + "];\n";
 						// add the start of the call
 						js += "Action_datacopy(ev, data, outputs, " + Boolean.parseBoolean(getProperty("changeEvents"));
-											
-						// check if we got one
-						if (copyType == null) {
+															
+						// add the copy type to the js
+						js += ", '" + copyType + "'";
+						// check the copy type
+						if ("child".equals(copyType)) {
+							// no merge data object
+							js += ", null";						
+							// look for a merge field
+							String childField = getProperty("childField");
+							// check if got we got one
+							if (childField == null) {
+								// call it child if not
+								js += ", 'child'";						 
+							} else {
+								// add it
+								js += ", '" + childField + "'";
+							}
 							
-							// if not update to empty string
-							copyType = "";
+						} else if ("search".equals(copyType)) {
 							
-						} else {
+							// get the search data
+							js += ", " + Control.getDataJavaScript(rapidServlet.getServletContext(), application, page, getProperty("searchSource"), getProperty("searchSourceField"));
+							// look for a search field
+							String searchField = getProperty("searchField");
+							// add it if present
+							if (searchField != null) js += ", '" + searchField + "'";
+							// look for a maxRows field
+							String maxRows = getProperty("maxRows");
+							// add it if present
+							if (maxRows != null) js += "," + maxRows;
 							
-							// add the copy type to the js
-							js += ", '" + copyType + "'";
-							// check the copy type
-							if ("child".equals(copyType)) {
-								// no merge data object
-								js += ", null";						
-								// look for a merge field
-								String childField = getProperty("childField");
-								// check if got we got one
-								if (childField == null) {
-									// call it child if not
-									js += ", 'child'";						 
-								} else {
-									// add it
-									js += ", '" + childField + "'";
-								}
-								
-							} else if ("search".equals(copyType)) {
-								
-								// get the search data
-								js += ", " + Control.getDataJavaScript(rapidServlet.getServletContext(), application, page, getProperty("searchSource"), getProperty("searchSourceField"));
-								// look for a search field
-								String searchField = getProperty("searchField");
-								// add it if present
-								if (searchField != null) {
-									js += ", '" + searchField + "'";
-								}
-								
-							} else if ("trans".equals(copyType)) {
-								
-								// assume the key fields are null
-								String keyFields = "null";
-								
-								// try and fetch the key fields
-								try {									
-									JSONArray jsonKeyFields = new JSONArray(getProperty("keyFields"));				
-									keyFields = jsonKeyFields.toString();
-								} catch (JSONException ex) {
-									keyFields = "null /*" + ex.getMessage() + "*/";
-								}
-								
-								// assume the ignore fields are null
-								String ignoreFields = "null";
-								
-								// try and fetch the ignore fields, show message if issue
-								try {									
-									JSONArray jsonIgnoreFields = new JSONArray(getProperty("ignoreFields"));				
-									ignoreFields = jsonIgnoreFields.toString();
-								} catch (JSONException ex) {
-									ignoreFields = "null /*" + ex.getMessage() + "*/";
-								}
-																								
-								// add the details
-								js += ", null, null, {keyFields:" + keyFields + ",ignoreFields:" + ignoreFields + "}";
-								
-							} // copy type
+						} else if ("trans".equals(copyType)) {
 							
-						} // copy type check
-						
+							// assume the key fields are null
+							String keyFields = "null";
+							
+							// try and fetch the key fields
+							try {									
+								JSONArray jsonKeyFields = new JSONArray(getProperty("keyFields"));				
+								keyFields = jsonKeyFields.toString();
+							} catch (JSONException ex) {
+								keyFields = "null /*" + ex.getMessage() + "*/";
+							}
+							
+							// assume the ignore fields are null
+							String ignoreFields = "null";
+							
+							// try and fetch the ignore fields, show message if issue
+							try {									
+								JSONArray jsonIgnoreFields = new JSONArray(getProperty("ignoreFields"));				
+								ignoreFields = jsonIgnoreFields.toString();
+							} catch (JSONException ex) {
+								ignoreFields = "null /*" + ex.getMessage() + "*/";
+							}
+																							
+							// add the details
+							js += ", null, null, {keyFields:" + keyFields + ",ignoreFields:" + ignoreFields + "}";
+							
+						} // copy type
+							
 						// close the copy data call
 						js += ");\n";
 						

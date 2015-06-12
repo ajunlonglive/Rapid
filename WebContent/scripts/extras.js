@@ -570,7 +570,7 @@ function makeDataObject(data, field) {
 	return data;
 }
 
-function mergeDataObjects(data1, data2, mergeType, field) {
+function mergeDataObjects(data1, data2, mergeType, field, maxRows) {
 	var data = null;
 	if (data1) {
 		data1 = makeDataObject(data1);
@@ -696,24 +696,36 @@ function mergeDataObjects(data1, data2, mergeType, field) {
 					data = data1;					
 				break;
 				case "search" :
-					var fieldIndex = 0;
+					var fieldIndexes = [];
 					if (field) {
-						for (var i in data2.fields) {
-							if (field.toLowerCase() == data2.fields[i].toLowerCase()) {
-								fieldIndex = i;
-								break;
+						for (var f in fields.split(",")) {
+							f = f.trim();
+							if (f) {
+								for (var i in data2.fields) {
+									if (data2.fields[i] && data2.fields[i].toLowerCase() ==  f.toLowerCase()) {
+										fieldIndexes.push(i);
+									}
+								}
 							}
-						}
+						}						
 					}
+					var data = {fields: data2.fields, rows: []};			
 					var value = data1.rows[0][0];
-					if (value) value = value.toLowerCase();
-					var data = {fields: data2.fields, rows: []}					
-					for (var i in data2.rows) {
-						var v = data2.rows[i][fieldIndex];
-						if (typeof v !== "undefined") {
-							if (v.toLowerCase().indexOf(value) > -1) data.rows.push(data2.rows[i]);
+					if (value && fieldIndexes.length > 0) {
+						value = value.toLowerCase();								
+						for (var i in data2.rows) {
+							for (var j in fieldIndexes) {
+								var v = data2.rows[i][fieldIndexes[j]];
+								if (typeof v !== "undefined") {
+									if (v.toLowerCase().indexOf(value) > -1) {
+										data.rows.push(data2.rows[i]);
+										break;
+									}
+								}
+							}	
+							if (data.rows.length >= maxRows) break;
 						}
-					}										
+					}															
 				break;
 			}
 							
