@@ -67,32 +67,39 @@ return "<option value=''>Please select...</option>" + getInputOptions(this.dataS
 	            <changeValueJavaScript>datacopySourceField</changeValueJavaScript>
 	            <getValuesFunction>return "";</getValuesFunction>
 	        </property>	 
-	        	        	        
+	        	        	        	        	        
 	        <property>
 	            <key>searchSource</key>
-	            <name>Search source</name>
+	            <name>Search term</name>
 	            <changeValueJavaScript>datacopySearchSource</changeValueJavaScript>
 	            <getValuesFunction>
 	                <![CDATA[
-return "<option value=''>None</option>" + getInputOptions(this.dataSource);         
+return "<option value=''>Please select...</option>" + getInputOptions(this.dataSource);         
 	                ]]>
 	            </getValuesFunction>	
 	        </property>
 	        
 	        <property>
 	            <key>searchSourceField</key>
-	            <name>Search source field</name>
+	            <name>Search term field</name>
 	            <changeValueJavaScript>datacopySearchField</changeValueJavaScript>
 	            <getValuesFunction>return "";</getValuesFunction>
 	        </property>
 	        
 	        <property>
 	            <key>searchField</key>
-	            <name>Search field</name>
+	            <name>Search fields</name>
 	            <changeValueJavaScript>datacopySearchField</changeValueJavaScript>
 	            <getValuesFunction>return "";</getValuesFunction>
 	        </property>	
 	        
+	        <property>
+	            <key>maxRows</key>
+	            <name>Maximum rows</name>
+	            <changeValueJavaScript>integer</changeValueJavaScript>
+	            <getValuesFunction>return "";</getValuesFunction>
+	        </property>
+	        	        	        
 	        <property>
 	            <key>dataDestinations</key>
 	            <name>Destinations</name>
