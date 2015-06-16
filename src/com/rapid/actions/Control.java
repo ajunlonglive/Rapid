@@ -63,15 +63,33 @@ public class Control extends Action {
 			js = "$(\"#" + getProperty("control") + "\").";
 			// check the type
 			if ("custom".equals(actionType) || actionType == null) {
-				String command = getProperty("command").trim();
-				// command can be cleaned up - remove starting dot (we've already got it above)
-				if (command.startsWith(".")) command = command.substring(1);
-				// add brackets if there aren't any at the end
-				if (!command.endsWith(")") && !command.endsWith(");")) command += "();";
-				// add a semi colon if there isn't one on the end
-				if (!command.endsWith(";")) command += ";";
-				// add the command
-				js += command;		
+				// get the command
+				String command = getProperty("command");
+				// check command
+				if (command != null) {
+					// trim
+					command = command.trim();
+					// check length and whether only comments
+					if (command.length() == 0 || ((command.startsWith("//") || (command.startsWith("/*") && command.endsWith("*/"))) && command.indexOf("\n") == -1)) {
+						// set to null, if empty or only comments
+						command = null;
+					} else {
+						// command can be cleaned up - remove starting dot (we've already got it above)
+						if (command.startsWith(".")) command = command.substring(1);
+						// add brackets if there aren't any at the end
+						if (!command.endsWith(")") && !command.endsWith(");")) command += "();";
+						// add a semi colon if there isn't one on the end
+						if (!command.endsWith(";")) command += ";";
+					}					
+				}
+				// check for null / empty
+				if (command == null) {
+					// show that there's no command
+					js = "/* no command for custom control action " + getId() + " */";
+				} else {
+					// add the command
+					js += command;
+				}				
 			} else if ("slideUp".equals(actionType) || "slideDown".equals(actionType) || "slideToggle".equals(actionType)) {
 				js += actionType + "(" + getProperty("duration") + ");";
 			} else if ("fadeOut".equals(actionType) || "fadeIn".equals(actionType) || "fadeToggle".equals(actionType)) {
@@ -99,6 +117,8 @@ public class Control extends Action {
 			if (Boolean.parseBoolean(getProperty("stopPropagation"))) {
 				js += "\nev.stopImmediatePropagation();";
 			}
+		} else {
+			js = "/* no control specified for control action " + getId() + " */";
 		}
 		// return the js
 		return js;

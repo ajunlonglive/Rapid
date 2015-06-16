@@ -53,7 +53,7 @@ String.prototype.replaceAll = function( find, replace ) {
 	  });
 	})(jQuery);
 
-// extend JQuery to have functions for retreiving url parameter values
+// extend JQuery to have functions for retrieving url parameter values
 $.extend({
   getUrlVars: function(){
     var vars = [], hash;
@@ -583,7 +583,7 @@ function mergeDataObjects(data1, data2, mergeType, field, maxRows) {
 					for (var i in data2.fields) {
 						var gotField = false;
 						for (var j in fields) {
-							if (data2.fields[i].toLowerCase() == fields[j].toLowerCase()) {
+							if (data2.fields[i] && fields[j] && data2.fields[i].toLowerCase() == fields[j].toLowerCase()) {
 								gotField = true;
 								break;
 							}
@@ -599,7 +599,7 @@ function mergeDataObjects(data1, data2, mergeType, field, maxRows) {
 							for (var j in fields) {
 								var value = null;
 								for (var k in data2.fields) {
-									if (fields[j].toLowerCase() == data2.fields[k].toLowerCase()) {
+									if (fields[j] && data2.fields[k] && fields[j].toLowerCase() == data2.fields[k].toLowerCase()) {
 										value = data2.rows[i][k];
 										break;
 									}
@@ -618,7 +618,7 @@ function mergeDataObjects(data1, data2, mergeType, field, maxRows) {
 								var value = null;
 								if (i < data2.rows.length) {
 									for (var k in data2.fields) {
-										if (fields[j].toLowerCase() == data2.fields[k].toLowerCase()) {
+										if (fields[j] && data2.fields[k] && fields[j].toLowerCase() == data2.fields[k].toLowerCase()) {
 											value = data2.rows[i][k];
 											break;
 										}
@@ -626,7 +626,7 @@ function mergeDataObjects(data1, data2, mergeType, field, maxRows) {
 								}
 								if (i < data1.rows.length && value == null) {
 									for (var k in data1.fields) {
-										if (fields[j].toLowerCase() == data1.fields[k].toLowerCase()) {
+										if (fields[j] && data1.fields[k] && fields[j].toLowerCase() == data1.fields[k].toLowerCase()) {
 											value = data1.rows[i][k];
 											break;
 										}
@@ -643,7 +643,7 @@ function mergeDataObjects(data1, data2, mergeType, field, maxRows) {
 					var fieldCount = 0;
 					for (var i in data1.fields) {
 						for (var j in data2.fields) {
-							if (data1.fields[i].toLowerCase() == data2.fields[j].toLowerCase()) {
+							if (data1.fields[i] && data2.fields[j] && data1.fields[i].toLowerCase() == data2.fields[j].toLowerCase()) {
 								fieldMap[i] = j;
 								fieldCount ++;
 							}
@@ -680,7 +680,7 @@ function mergeDataObjects(data1, data2, mergeType, field, maxRows) {
 						if (data1.rows && data1.rows.length > 0) {
 							var fieldIndex = -1;
 							for (var i in data1.fields) {
-								if (field.toLowerCase() == data1.fields[i].toLowerCase()) {
+								if (field && data1.fields[i] && field.toLowerCase() == data1.fields[i].toLowerCase()) {
 									fieldIndex = i;
 									break;
 								}
@@ -698,15 +698,14 @@ function mergeDataObjects(data1, data2, mergeType, field, maxRows) {
 				case "search" :
 					var fieldIndexes = [];
 					if (field) {
-						for (var f in fields.split(",")) {
-							f = f.trim();
-							if (f) {
-								for (var i in data2.fields) {
-									if (data2.fields[i] && data2.fields[i].toLowerCase() ==  f.toLowerCase()) {
-										fieldIndexes.push(i);
-									}
+						var fields = field.split(",");
+						for (var i in fields) {
+							var f = fields[i].trim().toLowerCase();
+							for (var i in data2.fields) {
+								if (data2.fields[i] && data2.fields[i].toLowerCase() ==  f) {
+									fieldIndexes.push(i);
 								}
-							}
+							}							
 						}						
 					}
 					var data = {fields: data2.fields, rows: []};			
