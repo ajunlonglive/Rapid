@@ -1951,7 +1951,7 @@ function Action_datacopy(ev, data, outputs, changeEvents, copyType, copyData, fi
 					}
 				break;
 				case "search" :
-					if (data) outputData = mergeDataObjects(copyData, data, copyType, field);
+					if (data) outputData = mergeDataObjects(copyData, data, copyType, field, details);
 				break;
 				case "trans" :						
 					if (data && data.fields && data.rows) {						
