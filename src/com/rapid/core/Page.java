@@ -821,6 +821,32 @@ public class Page {
     	}    	
     }
     
+    // the html for a specific resource
+    public String getResourceHtml(Resource resource) {
+    	
+    	// assume we couldn't make the resource html
+    	String resourceHtml = null;
+    	
+    	// set the link according to the type
+		switch (resource.getType()) {
+			case Resource.JAVASCRIPT:
+				resourceHtml = "<script type='text/javascript'>" + resource.getContent() + "</script>";
+			break;
+			case Resource.CSS:
+				resourceHtml = "<style>" + resource.getContent() + "<style>";
+			break;
+			case Resource.JAVASCRIPTFILE : case Resource.JAVASCRIPTLINK :
+				resourceHtml = "<script type='text/javascript' src='" + resource.getContent() + "'></script>";
+			break;
+			case Resource.CSSFILE : case Resource.CSSLINK :
+				resourceHtml = "<link rel='stylesheet' type='text/css' href='" + resource.getContent() + "'></link>";
+			break;
+		}	
+    	// return it
+    	return resourceHtml;
+    	
+    }
+    
     // the resources for the page
     public String getResourcesHtml(Application application, boolean allResources) {
     	
@@ -832,32 +858,22 @@ public class Page {
     	if (_controlTypes == null) _controlTypes = getAllControlTypes();
     	
     	// manage the resources links added already so we don't add twice
-    	ArrayList<String> addedLinks = new ArrayList<String>(); 
-				
-		// if this application has resources
+    	ArrayList<String> addedResources = new ArrayList<String>(); 
+				    	
+		// if this application has resources add during initialisation
 		if (application.getResources() != null) {
 			// loop and add the resources required by this application's controls and actions (created when application loads)
 			for (Resource resource : application.getResources()) {
 				// if we want all the resources (for the designer) or there is a dependency for this resource
-				if (allResources || resource.hasDependency(ResourceDependency.RAPID) || resource.hasDependency(ResourceDependency.ACTION, _actionTypes) || resource.hasDependency(ResourceDependency.CONTROL, _controlTypes)) {
-					
-					// the link we're hoping to get
-					String link = null;
-					// set the link according to the type
-					switch (resource.getType()) {
-						case Resource.JAVASCRIPTFILE : case Resource.JAVASCRIPTLINK :
-							link = "<script type='text/javascript' src='" + resource.getContent() + "'></script>";
-						break;
-						case Resource.CSSFILE : case Resource.CSSLINK :
-							link = "<link rel='stylesheet' type='text/css' href='" + resource.getContent() + "'></link>";
-						break;
-					}				
-					// if we got a link and don't have it already 
-					if (link != null && !addedLinks.contains(link)) {
+				if (allResources || resource.hasDependency(ResourceDependency.RAPID) || resource.hasDependency(ResourceDependency.ACTION, _actionTypes) || resource.hasDependency(ResourceDependency.CONTROL, _controlTypes)) {					
+					// the html we're hoping to get
+					String resourceHtml = getResourceHtml(resource);								
+					// if we got some html and don't have it already 
+					if (resourceHtml != null && !addedResources.contains(resourceHtml)) {
 						// append it
-						stringBuilder.append(link + "\n");
+						stringBuilder.append(resourceHtml + "\n");
 						// remember we've added it
-						addedLinks.add(link);
+						addedResources.add(resourceHtml);
 					}
 					
 				} // dependency check
