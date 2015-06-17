@@ -5,6 +5,16 @@
 /* Control and Action resource JavaScript */
 
 
+/* Page control resource JavaScript */
+
+function Event_error(eventName, controlId, ex) {
+	if (controlId) {
+		alert("Error in " + eventName + " event for control " + controlId + "  " + ex);
+	} else {
+		alert("Error in " + eventName + " event for page " + ex);
+	}
+}
+
 /* Data store control resource JavaScript */
 
 function getDataStoreData(id, details, field) {
@@ -303,16 +313,6 @@ function linkClick(url, sessionVariablesString) {
 	
 	window.location = url;
 	
-}
-
-/* Page control resource JavaScript */
-
-function Event_error(eventName, controlId, ex) {
-	if (controlId) {
-		alert("Error in " + eventName + " event for control " + controlId + "  " + ex);
-	} else {
-		alert("Error in " + eventName + " event for page " + ex);
-	}
 }
 
 /* Database action resource JavaScript */

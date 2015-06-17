@@ -2213,6 +2213,14 @@ $(document).ready( function() {
 		        	
 		        	try {
 		        		
+		        		// find the header section
+			    		var head = $(_pageIframe[0].contentWindow.document).find("head");
+		        		
+		        		// remove any current app style sheets
+			    		head.find("link[rel=stylesheet][href$='/rapid.css']").remove();
+			    		// remove any current page style sheets
+			    		head.find("link[rel=stylesheet][href$='/" + _page.id + ".css']").remove();
+			    		
 		        		// retain the childControls
 		        		var childControls = page.controls;
 		        				        		
@@ -2230,12 +2238,7 @@ $(document).ready( function() {
 			    		
 			    		// empty it
 			    		_page.object.children().remove();
-			    		
-			    		// find the header section
-			    		var head = $(_pageIframe[0].contentWindow.document).find("head");
-			    		
-			    		// remove any current app or page style sheets
-			    		head.find("link[rel=stylesheet][href^=applications\\/" + _version.id + "]").remove();			    					    		
+    				    					    		
 			    		// make sure the app styling is correct (this can go wrong if the back button was clicked which loads the current page but the previous styling)
 			    		head.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"" + _version.webFolder + "/rapid.css\">");
 			    		// make sure the page styling is correct (this can go wrong if the back button was clicked which loads the current page but the previous styling)

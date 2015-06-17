@@ -1,6 +1,30 @@
 
 /* This file is auto-generated on application load and save - it is minified when the application status is live */
 
+/* Page control resource styles */
+
+/* Loading */
+
+div.loading {
+	position: absolute;
+	background-color: black;
+	opacity:0.2;
+	filter:alpha(opacity=20); 
+	text-align: center;
+	vertical-align: middle;
+	display: none;
+}
+
+span.loading {
+	position: absolute;
+	background: url("../../../images/wait_120x15.gif");
+	background-repeat : no-repeat;
+	width: 120px;
+	height: 15px;
+	border: 2px solid #777;
+	display: none;
+}
+
 /* Button control resource styles */
 
 .buttonGlyphWithBackground {
@@ -27,30 +51,6 @@ table.grid span.sort {
 .hint {
 	position: absolute;
 	z-index: 10009;
-}
-
-/* Page control resource styles */
-
-/* Loading */
-
-div.loading {
-	position: absolute;
-	background-color: black;
-	opacity:0.2;
-	filter:alpha(opacity=20); 
-	text-align: center;
-	vertical-align: middle;
-	display: none;
-}
-
-span.loading {
-	position: absolute;
-	background: url("../../../images/wait_120x15.gif");
-	background-repeat : no-repeat;
-	width: 120px;
-	height: 15px;
-	border: 2px solid #777;
-	display: none;
 }
 
 /* Tabs control resource styles */

@@ -279,9 +279,14 @@ public class Application {
 		
 		// properties
 		public int getTypeClass() { return _typeClass; }
+		public void setTypeClass(int typeClass) { _typeClass = typeClass; }
+		
 		public String getType() { return _type; }
+		public void setType(String type) { _type = type; }
 		
 		// constructors
+		public ResourceDependency() {};
+		
 		public ResourceDependency(int typeClass) {
 			_typeClass = typeClass;
 		}
@@ -301,8 +306,8 @@ public class Application {
 		public static final int CSS = 2;
 		public static final int JAVASCRIPTFILE = 3;
 		public static final int CSSFILE = 4;				
-		public static final int JAVASCRIPTLINK = 5;
-		public static final int CSSLINK = 6;
+		public static final int JAVASCRIPTLINK = 5;  // links are not minified
+		public static final int CSSLINK = 6; // links are not minified
 		public static final int FILE = 7;
 		
 		// source types
@@ -316,11 +321,17 @@ public class Application {
 		
 		// properties
 		public int getType() { return _type; }		
+		public void setType(int type) { _type = type; }
+		
 		public String getContent() { return _content; }
 		public void setContent(String content) { _content = content; }
+				
 		public List<ResourceDependency> getDependencies() { return _dependancies; }
+		public void setDependencies(List<ResourceDependency> dependancies) {  _dependancies = dependancies; }
 		
 		// constructors
+		public Resource() {};
+		
 		public Resource(int type, String content, int dependencyTypeClass) {
 			_type = type;
 			_content = content;
@@ -444,8 +455,8 @@ public class Application {
 	private List<Webservice> _webservices;
 	private List<Parameter> _parameters;
 	private List<String> _controlTypes, _actionTypes;
-	private Pages _pages;
-	private Resources _resources;
+	private Pages _pages;	
+	private Resources _appResources, _resources;
 	private List<String> _styleClasses;
 	
 	// properties
@@ -545,6 +556,10 @@ public class Application {
 	// number of page backups to keep
 	public int getPageBackupsMaxSize() { return _pageBackupsMaxSize; }
 	public void setPageBackupsMaxSize(int pageBackupsMaxSize) { _pageBackupsMaxSize = pageBackupsMaxSize; }
+	
+	// these are app resources which are marshalled to the application.xml file and add to all pages
+	public Resources getAppResources() { return _appResources; }
+	public void setAppResources(Resources appResources) { _appResources = appResources; }
 		
 	// constructors
 	
@@ -884,13 +899,13 @@ public class Application {
 				
 		// initialise the resource includes collection
 		_resources = new Resources();
-		
+				
 		// if the created date is null set to today
 		if (_createdDate == null) _createdDate = new Date();
 						
 		// when importing an application we need to initialise but don't want the resource folders made in the old applications name
 		if (createResources) {
-			
+									
 			// get the jsonControls
 			JSONArray jsonControls = (JSONArray) servletContext.getAttribute("jsonControls");
 					
@@ -912,8 +927,10 @@ public class Application {
 				// check control types
 				if (_controlTypes != null) {
 					
-					// make sure the page is included as we hide it from the users in the admin
-					if (!_controlTypes.contains("page")) _controlTypes.add(0, "page");
+					// remove the page control (if it's there)
+					_controlTypes.remove("page"); 
+					// add it to the top of the list
+					_controlTypes.add(0, "page");
 					
 					// collection of dependent controls that need adding
 					ArrayList<String> dependentControls = new ArrayList<String>();
@@ -930,7 +947,7 @@ public class Application {
 			    			// check if we're on the type we need
 			    			if (controlType.equals(jsonControl.optString("type"))) {
 			    				
-			    				// look for any dependant control types
+			    				// look for any dependent control types
 			    				JSONObject dependantTypes = jsonControl.optJSONObject("dependentTypes");
 			    				// if we got some
 			    				if (dependantTypes != null) {
@@ -952,11 +969,11 @@ public class Application {
 			    				
 			    				// we're done
 			    				break;
-			    			}
+			    			} // available control type check
 			    						    			
-			    		}
-			    		
-					}
+			    		} // available control types loop
+			    					    					    		
+					} // application control types loop
 					
 					// now add all of the dependent controls
 					_controlTypes.addAll(dependentControls);
@@ -1058,6 +1075,22 @@ public class Application {
 			    			}
 			    					    					    					    					    					    			
 			    		} // jsonControls loop
+			    		
+			    		// if we've just added the page, put the appResources after
+			    		if ("page".equals(controlType) && _appResources != null) {
+			    			for (Resource resource : _appResources) {
+			    				// create new resource based on this one (so that the dependancy doesn't get written back to the application.xml file)
+			    				Resource appResource = new Resource(resource.getType(), resource.getContent(), ResourceDependency.RAPID);
+			    				// if the type is a file or link prefix with the application folder
+			    				switch (resource.getType()) {
+			    					case Resource.JAVASCRIPTFILE : case Resource.JAVASCRIPTLINK: case Resource.CSSFILE : case Resource.CSSLINK:
+			    						appResource.setContent(getWebFolder(this) + (resource.getContent().endsWith("/") ? "" : "/") + resource.getContent());
+			    					break;
+			    				}
+			    				// add new resource based on this one but with Rapid dependency
+			    				_resources.add(appResource);
+			    			}
+			    		}
 						
 					} // control types loop
 					
