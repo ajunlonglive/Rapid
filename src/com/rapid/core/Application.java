@@ -316,10 +316,13 @@ public class Application {
 		
 		// private instance variables
 		private int _type;
-		private String _content;
+		private String _name, _content;
 		private List<ResourceDependency> _dependancies;
 		
 		// properties
+		public String getName() { return _name; }
+		public void setName(String name) { _name = name; }
+		
 		public int getType() { return _type; }		
 		public void setType(int type) { _type = type; }
 		
@@ -336,8 +339,7 @@ public class Application {
 			_type = type;
 			_content = content;
 			_dependancies = new ArrayList<ResourceDependency>();
-			_dependancies.add(new ResourceDependency(dependencyTypeClass));
-			
+			_dependancies.add(new ResourceDependency(dependencyTypeClass));			
 		}
 		
 		public Resource(int type, String content, int dependencyTypeClass, String dependencyType) {
@@ -345,6 +347,12 @@ public class Application {
 			_content = content;
 			_dependancies = new ArrayList<ResourceDependency>();
 			_dependancies.add(new ResourceDependency(dependencyTypeClass, dependencyType));
+		}
+		
+		public Resource(String name, int type, String content) {
+			_name = name;
+			_type = type;
+			_content = content;
 		}
 		
 		// methods
@@ -899,6 +907,16 @@ public class Application {
 				
 		// initialise the resource includes collection
 		_resources = new Resources();
+		
+		// if there is any app JavaScript functions - this is for backwards compatibility as _functions have been moved to JavaScript resources
+		if (_functions != null) {
+			// initialise app resources if need be
+			if (_appResources == null) _appResources = new Resources();
+			// add _functions as JavaScript resource to top of list
+			_appResources.add(0, new Resource("Application functions", 1, _functions));
+			// remove the _functions
+			_functions = null;
+		}
 				
 		// if the created date is null set to today
 		if (_createdDate == null) _createdDate = new Date();

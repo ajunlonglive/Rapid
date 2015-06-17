@@ -96,7 +96,7 @@ return "<option value=''>Please select...</option>" + getInputOptions(this.dataS
 	        <property>
 	            <key>maxRows</key>
 	            <name>Maximum rows</name>
-	            <changeValueJavaScript>integer</changeValueJavaScript>
+	            <changeValueJavaScript>datacopyMaxRows</changeValueJavaScript>
 	            <getValuesFunction>return "";</getValuesFunction>
 	        </property>
 	        	        	        

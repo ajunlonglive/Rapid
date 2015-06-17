@@ -1729,6 +1729,12 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 				setData_dataStore(ev, 'rapid_P0_C1145_', "parameter", {storageType:"S"}, data);
 			};
 		break;
+		case "GETRESOURCE" :	
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), index: $("#rapid_P0_C1344_").find("tr.rowSelect").index()-1 };
+			callback = function(data) {
+				setData_dataStore(ev, 'rapid_P0_C1401_', "resource", {storageType:"S"}, data);
+			};
+		break;
 		case "GETDEVICE" :	
 			data = { actionType: actionType, appId: "rapid", version: _appVersion, index: $("#rapid_P0_C1199_").find("tr.rowSelect").index()-1 };
 			callback = function(data) {
@@ -2037,6 +2043,15 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 		break;
 		case "SAVEPARAM" :
 			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), index: $("#rapid_P0_C1108_").find("tr.rowSelect").index()-1, name: $("#rapid_P0_C1134_").val(), value: $("#rapid_P0_C1123_").val()};
+		break;
+		case "NEWRESOURCE" :
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val() };
+		break;
+		case "DELRESOURCE" :
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), index: $(ev.target).closest("tr").index()-1 };
+		break;
+		case "SAVERESOURCE" :
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), index: $("#rapid_P0_C1344_").find("tr.rowSelect").index()-1, name: $("#rapid_P0_C1362_").val(), type: $("#rapid_P0_C1398_").val(), value: $("#rapid_P0_C1390_").val()};
 		break;
 		case "NEWDEVICE" :
 			data = { actionType: actionType, appId: "rapid", version: _appVersion };

@@ -2979,6 +2979,17 @@ function Property_datacopySearchSource(cell, datacopyAction, property, details) 
 	}
 }
 
+function Property_datacopyMaxRows(cell, datacopyAction, property, details) {
+	// only if datacopyAction is search
+	if (datacopyAction.copyType == "search") {
+		// show the duration
+		Property_integer(cell, datacopyAction, property, details);
+	} else {
+		// remove this row
+		cell.closest("tr").remove();
+	}
+}
+
 function Property_datacopyFields(cell, datacopyAction, property, details) {
 	// only if datacopyAction is search
 	if (datacopyAction.copyType == "trans") {

@@ -51,6 +51,7 @@ return [
  ["GETUSERS","Get users"],
  ["GETUSER","Get user details"],
  ["GETPARAM","Get parameter details"],
+ ["GETRESOURCE","Get resource details"],
  ["GETDEVICE","Get device details"],    
  ["RELOADACTIONS","Reload actions"],
  ["RELOADCONTROLS","Reload controls"],
@@ -88,6 +89,9 @@ return [
  ["NEWPARAM","New parameter"],
  ["DELPARAM","Delete parameter"],
  ["SAVEPARAM","Save parameter"],
+ ["NEWRESOURCE","New resource"],
+ ["DELRESOURCE","Delete resource"],
+ ["SAVERESOURCE","Save resource"],
  ["NEWDEVICE","New device"],
  ["DELDEVICE","Delete device"],
  ["SAVEDEVICE","Save device"],
@@ -239,6 +243,12 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), index: $("#rapid_P0_C1108_").find("tr.rowSelect").index()-1 };
 			callback = function(data) {
 				setData_dataStore(ev, 'rapid_P0_C1145_', "parameter", {storageType:"S"}, data);
+			};
+		break;
+		case "GETRESOURCE" :	
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), index: $("#rapid_P0_C1344_").find("tr.rowSelect").index()-1 };
+			callback = function(data) {
+				setData_dataStore(ev, 'rapid_P0_C1401_', "resource", {storageType:"S"}, data);
 			};
 		break;
 		case "GETDEVICE" :	
@@ -549,6 +559,15 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 		break;
 		case "SAVEPARAM" :
 			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), index: $("#rapid_P0_C1108_").find("tr.rowSelect").index()-1, name: $("#rapid_P0_C1134_").val(), value: $("#rapid_P0_C1123_").val()};
+		break;
+		case "NEWRESOURCE" :
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val() };
+		break;
+		case "DELRESOURCE" :
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), index: $(ev.target).closest("tr").index()-1 };
+		break;
+		case "SAVERESOURCE" :
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), index: $("#rapid_P0_C1344_").find("tr.rowSelect").index()-1, name: $("#rapid_P0_C1362_").val(), type: $("#rapid_P0_C1398_").val(), value: $("#rapid_P0_C1390_").val()};
 		break;
 		case "NEWDEVICE" :
 			data = { actionType: actionType, appId: "rapid", version: _appVersion };
