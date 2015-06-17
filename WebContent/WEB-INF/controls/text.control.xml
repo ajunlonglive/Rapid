@@ -62,10 +62,23 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <changeValueJavaScript>select</changeValueJavaScript>	
 	            <getValuesFunction>
 	                <![CDATA[
-return [{"value":"N","text":"None"},{"value":"P","text":"Paragraph"},{"value":"BF","text":"Line break"}];
+return [{"value":"N","text":"None"},{"value":"P","text":"Paragraph"},{"value":"BF","text":"Line break"},{"value":"H1","text":"Header 1"},{"value":"H2","text":"Header 2"},{"value":"H3","text":"Header 3"},{"value":"H4","text":"Header 4"},{"value":"H5","text":"Header 5"}];
 					]]>
 	            </getValuesFunction>         
 	            <refreshHtml>true</refreshHtml>      
+	        </property>
+	        
+	        <property>
+	            <key>labelFor</key>
+	            <name>Label for</name>
+	             <changeValueJavaScript>select</changeValueJavaScript>	 
+	            <getValuesFunction>
+	                 <![CDATA[
+	                // return the list of all controls on the page with the one for this action selected
+	                return "<option value=''>Please select...</option>" + getControlOptions(this.control);
+	               	]]>
+	            </getValuesFunction>
+	            <refreshHtml>true</refreshHtml>            
 	        </property>
 	        
 	    </properties>
@@ -74,8 +87,29 @@ return [{"value":"N","text":"None"},{"value":"P","text":"Paragraph"},{"value":"B
 	        <![CDATA[
 // return the html for adding to our parent object	 
 var text = this.text;
-if (!text) text = "&nbsp;"       
-return (this.format == "P" ? "<p" : (this.format == "BF" ? "<br/><span" : "<span")) + " id='" + this.id + "' class='text" + getStyleClasses(this) + "'>" + text + "</" + (this.format == "P" ? "p>" : "span>");
+if (!text) text = "&nbsp;"
+var open = "span";
+var close = "span";       
+switch (this.format) {
+	case "BR" :
+		open = "br><span";
+	break;
+	case "P" :  case "H1": case "H2": case "H3": case "H4": case "H5" : 
+		open = close = this.format.toLowerCase();		
+	break; 
+}
+var labelFor = "";
+if (this.labelFor) {
+	labelFor = "for='" + this.labelFor + "' ";
+	if (open == "span") {
+		open = "label";
+		close = "label";
+	} else {
+		open = "label><" + open;
+		close = close + "></label";
+	}
+}
+return "<" + open + " id='" + this.id + "' " + labelFor + " class='text" + getStyleClasses(this) + "'>" + text + "</" + close + ">";
 	        ]]>
 	    </getHtmlFunction>  
 	    

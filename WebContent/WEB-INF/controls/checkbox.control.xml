@@ -58,6 +58,13 @@ return ["false","true"];
 	            </getValuesFunction>   
 	            <refreshHtml>true</refreshHtml>  
 	        </property>	
+	        
+	         <property>
+	            <key>text</key>
+	            <name>Text</name>
+	            <changeValueJavaScript>bigtext</changeValueJavaScript>	          
+	            <refreshHtml>true</refreshHtml>  
+	        </property>	
 	              
 	    </properties>
 	    
@@ -66,8 +73,14 @@ return ["false","true"];
 var checked = "";
 
 if (this.checked == "true" || this.checked == true) checked=" checked='checked'";
-	          
-return "<input id='" + this.id + "' type='checkbox' class='checkbox" + getStyleClasses(this) + "'" + checked + "></input>"
+
+var checkbox = "<input id='" + this.id + "' type='checkbox' class='checkbox" + getStyleClasses(this) + "'" + checked + "></input>";
+
+if (this.text) {
+	return "<label for='" + this.id + "'>" + checkbox + this.text + "</label>";
+} else {
+	return checkbox
+}
 	        ]]>
 	    </getHtmlFunction> 
 	    

@@ -3197,7 +3197,7 @@ $(document).on("mouseup touchend", function(ev) {
 				// move the markup object before the moved over object
 				_selectedControl.object.insertBefore(_movedoverControl.object);
 				// add to childControls at correct position
-				_movedoverControl._parent.childControls.splice(_movedoverControl.object.index(),0,_selectedControl);				
+				_movedoverControl._parent.childControls.splice(_movedoverControl.object.index()-1,0,_selectedControl);				
 				break;		
 			case "R" :				
 				// retain the same parent control as the moved over control
