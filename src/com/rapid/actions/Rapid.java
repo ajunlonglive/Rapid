@@ -49,6 +49,7 @@ import com.rapid.core.Action;
 import com.rapid.core.Application;
 import com.rapid.core.Application.Parameter;
 import com.rapid.core.Application.RapidLoadingException;
+import com.rapid.core.Application.Resource;
 import com.rapid.core.Applications;
 import com.rapid.core.Control;
 import com.rapid.core.Device;
@@ -621,8 +622,6 @@ public class Rapid extends Action {
 						
 						// add the styles
 						result.put("styles", app.getStyles());
-						// add the functions
-						result.put("functions", app.getFunctions());
 						// add the security adapter
 						result.put("securityAdapter", app.getSecurityAdapterType());	
 						// add action types
@@ -682,7 +681,19 @@ public class Rapid extends Action {
 						// add webservices connections
 						result.put("parameters", jsonParameters);
 						
-						
+						// create an array for the appresources
+						JSONArray jsonResources = new JSONArray();
+										
+						// check we have some webservices
+						if (app.getAppResources() != null) {
+							// loop and add to jsonArray
+							for (Resource resource : app.getAppResources()) {
+								jsonResources.put(resource.getName());
+							}					
+						}	
+						// add webservices connections
+						result.put("resources", jsonResources);
+												
 						// create an array for the app backups
 						JSONArray jsonAppBackups = new JSONArray();
 						
@@ -961,6 +972,34 @@ public class Rapid extends Action {
 				// add the parameter to the result
 				result.put("parameter", jsonParameter);
 						
+			} else if ("GETRESOURCE".equals(action)) {
+				
+				// retrieve the index
+				int index = jsonAction.getInt("index");
+				
+				// create the json object
+				JSONObject jsonParameter = new JSONObject();
+				
+				// check the resources
+				if (app.getAppResources() != null) {
+					
+					// check we have the one requested
+					if (index >= 0 && index < app.getAppResources().size()) {
+						
+						// get the parameter
+						Resource resource = app.getAppResources().get(index);
+																		
+						// add the name and value
+						jsonParameter.put("name", resource.getName());
+						jsonParameter.put("type", resource.getType());
+						jsonParameter.put("value", resource.getContent());
+																		
+					}
+				}
+				
+				// add the parameter to the result
+				result.put("resource", jsonParameter);
+						
 			} else if ("GETDEVICE".equals(action)) {
 				
 				// retrieve the index
@@ -1098,17 +1137,6 @@ public class Rapid extends Action {
 				
 				// add the application to the response
 				result.put("message", "Styles saved");
-				
-			} else if ("SAVEFUNCTIONS".equals(action)) {
-				
-				String functions = jsonAction.getString("functions");
-				
-				app.setFunctions(functions);
-				
-				app.save(rapidServlet, rapidRequest, true);
-				
-				// add the application to the response
-				result.put("message", "Functions saved");
 				
 			} else if ("SAVEDBCONN".equals(action)) {
 				
@@ -1852,6 +1880,46 @@ public class Rapid extends Action {
 								
 				// set the result message
 				result.put("message", "Parameter details saved");
+												
+			} else if ("NEWRESOURCE".equals(action)) {
+				
+				// add a new parameter to the collection
+				app.getAppResources().add(new Resource());
+				
+			} else if ("DELRESOURCE".equals(action)) {
+				
+				// get the index
+				int index = jsonAction.getInt("index");
+				
+				// remove the parameter
+				app.getAppResources().remove(index);
+
+				// save the app
+				app.save(rapidServlet, rapidRequest, true);
+								
+				// set the result message
+				result.put("message", "Resource deleted");
+				
+			} else if ("SAVERESOURCE".equals(action)) {	
+				
+				int index = jsonAction.getInt("index");
+				String name = jsonAction.getString("name");
+				int type = jsonAction.getInt("type");
+				String value = jsonAction.getString("value");
+				
+				// fetch the resource
+				Resource resource = app.getAppResources().get(index);
+				
+				// update it
+				resource.setName(name);
+				resource.setType(type);
+				resource.setContent(value);
+				
+				// save the app
+				app.save(rapidServlet, rapidRequest, true);
+								
+				// set the result message
+				result.put("message", "Resource details saved");
 												
 			} else if ("NEWDEVICE".equals(action)) {
 				

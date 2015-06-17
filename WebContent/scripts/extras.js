@@ -492,7 +492,7 @@ function makeDataObject(data, field) {
 	// check we were passed something to work with
 	if (data != null && data !== undefined) {
 		// return immediately if all well (we have rows and fields already and there is nothing to promote)
-		if (data.rows && data.fields && !(field && data[field])) return data;		
+		if (data.rows && data.fields && !(field && (data[field]))) return data;		
 		// initialise fields
 		var fields = [];
 		// initialise rows
@@ -500,7 +500,7 @@ function makeDataObject(data, field) {
 		// initialise a fieldmap (as properties aren't always in the same position each time)
 		var fieldMap = [];
 		// if the field is what we're after move it into the data
-		if (field && data[field] && !$.isFunction(data[field])) data = data[field];
+		if (field && data[field] && !$.isFunction(data[field])) data = data[field];			
 		// if the data is an array
 		if ($.isArray(data)) {
 			// loop the array
