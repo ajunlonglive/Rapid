@@ -87,6 +87,13 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <refreshHtml>true</refreshHtml>
 	        </property>
 	        
+	        <property>
+	            <key>group</key>
+	            <name>Group</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>	            
+	            <refreshHtml>true</refreshHtml>
+	        </property>	
+	        
 	    </properties>
 	    
 	    <getHtmlFunction>
@@ -104,16 +111,16 @@ if (this.buttons) {
 		var button = this.buttons[i];
 		var label = button.label;
 		var value = (this.codes ? button.value : label);
-		if (this.buttonposition == 'R') radiobuttonHtml += "<span>" + label + "</span>";
-		radiobuttonHtml += "<input type='radio' name='" + this.id + "' value='" + value + "' " + (this.value == value ? "checked='checked'" :  "") + "></input>";
-		if (this.buttonposition == 'L') radiobuttonHtml += "<span>" + label + "</span>";
+		if (this.buttonposition == 'R') radiobuttonHtml += label;
+		radiobuttonHtml += "<input type='radio' name='" + (this.group ? this.group : this.id) + "' id='" + this.id + i + "' value='" + value + "' " + (this.value == value ? "checked='checked'" :  "") + "></input>";
+		if (this.buttonposition == 'L') radiobuttonHtml += label;
 		if (this.layout == 'V') radiobuttonHtml += "<br/>";
 	}
 } else {
 	radiobuttonHtml = "No buttons";
 }
 // place into the select
-var html = "<span id='" + this.id + "' class='radiobuttons" + getStyleClasses(this) + "'>" + radiobuttonHtml + "</span>";
+var html = "<label id='" + this.id + "' class='radiobuttons" + getStyleClasses(this) + "'>" + radiobuttonHtml + "</label>";
 // return
 return html;
 	        ]]>
