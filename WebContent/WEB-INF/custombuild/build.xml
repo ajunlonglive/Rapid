@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+
+<!-- 
+
+Copyright (C) 2014 - Gareth Edwards / Rapid Information Systems
+
+gareth.edwards@rapid-is.co.uk
+
+
+This file is part of the Rapid Application Platform
+
+RapidSOA is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as 
+published by the Free Software Foundation, either version 3 of the 
+License, or (at your option) any later version. The terms require you 
+to include the original copyright, and the license notice in all redistributions.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
+
+ -->
+
+<!-- 
+
+How to use this file in Eclipse
+
+Import the Rapid source into Eclipse as a Dynamic Web Project
+
+Create a new, custom, Dynamic Web Project and copy the WebContent/WEB-INF/build folder into your new project
+
+Edit the build.properties file that you just coped over in your new project and set rapid_base to the directory of the imported Rapid sources project above
+
+View the properties of your new Dynamic Web Project, select "Builders", and click "New...". 
+Choose "Ant Builder".
+In the "Main" tab give it a useful name and choose the "Browse Workspace..." button to set the "Buildfile" to this file.
+In the "Targets" tab empty "After a 'Clean'" and "Manual Build". For "Auto Build" click the "Set Targets..." button and choose compile. 
+
+-->
+
+<project name="Custom Rapid instance builder" default="info">
+
+	<property file="build.properties" />
+
+	<target name="info">
+		<echo>Custom Rapid builder v 1.0</echo>
+	</target>
+
+	<target name="clean">
+		<echo>Cleaning custom Rapid instance</echo>
+		<echo>not implemented yet...</echo>
+	</target>
+
+	<target name="rapid_base-check">
+		<available file="${rapid_base}" property="rapid_base.present" />
+	</target>
+
+	<target name="rapid_base-check_fail" unless="rapid_base.present">
+		<echo>rapid_base directory ${rapid)base} does not exist</echo>
+	</target>
+
+	<target name="compile" depends="rapid_base-check,rapid_base-check_fail" if="rapid_base.present">
+		<echo>Compiling custom Rapid instance</echo>
+		<echo>basedir is ${basedir}</echo>
+		<echo>rapid_base is ${rapid_base}</echo>
+		<echo>Copying WebContent</echo>
+		<copy todir="${basedir}/../../../WebContent" includeEmptyDirs="true">
+			<fileset dir="${rapid_base}/WebContent" />
+		</copy>
+		<echo>Copying classes</echo>
+		<copy todir="${basedir}/../../../WebContent/WEB-INF/classes" includeEmptyDirs="true">
+			<fileset dir="${rapid_base}/build/classes" />
+		</copy>
+	</target>
+
+</project>

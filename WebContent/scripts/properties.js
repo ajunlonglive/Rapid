@@ -1065,6 +1065,8 @@ function Property_validationControls(cell, propertyObject, property, details) {
 			// if we haven't inserted yet do so now
 			if (!inserted) controls.push(insertControl);
 		} // loop inserts
+		// add back the changed controls
+		ev.data.propertyObject.controls = controls;
 		// update dialogue
 		Property_validationControls(ev.data.cell, ev.data.propertyObject, ev.data.property, ev.data.details);
 	}));
@@ -2142,6 +2144,8 @@ function logicConditionText(condition) {
 		case "SYS" :
 			// the second part of the id
 			text = condition.id.split(".")[1];
+			// if this is the field use the field property instead
+			if (text == "field") text = condition.field;
 		break;		
 	}
 	// return

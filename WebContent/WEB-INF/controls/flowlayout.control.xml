@@ -66,6 +66,26 @@ return "<div id='" + this.id + "' class='flowLayoutCell'" + (this.text ? "" : " 
 	        ]]>
 	    </getHtmlFunction> 
 	    
+<saveJavaScript>
+	        <![CDATA[
+// get the style attribute 	        
+var style = this.object.attr("style");
+// if the min-height:20 is present but there are children
+if (style && style.indexOf("min-height:20px;") > -1 && this.childControls && this.childControls.length > 0) {
+	// remove the min-height
+	style = style.replace("min-height:20px;","");
+	// if there are other attributes
+	if (style) {
+		// update changed style
+		this.object.attr("style",style );
+	} else {
+		// remove empty style
+		this.object.removeAttr("style");
+	}
+}	        
+	        ]]>
+	    </saveJavaScript>
+	    
 	    <events>
 	        <event>
 	            <type>click</type>

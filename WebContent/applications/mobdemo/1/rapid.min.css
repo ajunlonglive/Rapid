@@ -26,6 +26,7 @@ div.tabsPanel.selected{border:1px solid black;clear:both;padding:0 1em}
 .dialogueCover{background-color:white;opacity:0.8;filter:alpha(opacity=80)}
 .dialogue{background-color:white;padding:0px}
 div.validation{padding:10px;color:red !important;font-weight:bold}
+label.validation{border:2px solid red !important}
 input.validation{border:2px solid red !important}
 textarea.validation{border:2px solid red !important}
 li.validation{color:red !important}

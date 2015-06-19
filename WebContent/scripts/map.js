@@ -115,8 +115,8 @@ function buildPageMap() {
 			}));	
 			// add a mouseover listener for all controls
 			addMapListener( list.find("li").on("mousemove touchmove", function(ev) {				
-				// only if mouse is down
-				if (_mouseDown) {
+				// only if mouse is down and we're not in the process of adding a control
+				if (_mouseDown && !_addedControl) {
 					// get the target
 					var t = $(ev.target);					
 					// get the id
@@ -195,8 +195,6 @@ function buildPageMap() {
 			}));	
 			// add a mouseout listener for the box
 			addMapListener( list.on("mouseleave touchcancel", function(ev) {				
-				// reset mousedown
-				_mouseDown = false;
 				// reset moved over control
 				_movedoverControl = null;
 				// remove all insert covers
