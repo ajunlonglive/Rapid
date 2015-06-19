@@ -822,7 +822,7 @@ public class Page {
     }
     
     // the html for a specific resource
-    public String getResourceHtml(Resource resource) {
+    public String getResourceHtml(Application application, Resource resource) {
     	
     	// assume we couldn't make the resource html
     	String resourceHtml = null;
@@ -830,10 +830,26 @@ public class Page {
     	// set the link according to the type
 		switch (resource.getType()) {
 			case Resource.JAVASCRIPT:
-				resourceHtml = "<script type='text/javascript'>" + resource.getContent() + "</script>";
+				if (application.getStatus() == Application.STATUS_LIVE) {
+					try {
+						resourceHtml = "<script type='text/javascript'>" + Minify.toString(resource.getContent(),Minify.JAVASCRIPT) + "</script>";
+					} catch (IOException ex) {
+						resourceHtml = "<script type='text/javascript'>/* Failed to minify resource " + resource.getName() + " JavaScript : " + ex.getMessage() + "*/</script>";
+					}
+				} else {
+					resourceHtml = "<script type='text/javascript'>" + resource.getContent() + "</script>";
+				}
 			break;
 			case Resource.CSS:
-				resourceHtml = "<style>" + resource.getContent() + "<style>";
+				if (application.getStatus() == Application.STATUS_LIVE) {
+					try {
+						resourceHtml = "<style>" + Minify.toString(resource.getContent(), Minify.CSS) + "<style>";
+					} catch (IOException ex) {
+						resourceHtml = "<style>/* Failed to minify resource " + resource.getName() + " CSS : " + ex.getMessage() + "*/<style>";
+					}
+				} else {
+					resourceHtml = "<style>" + resource.getContent() + "<style>";
+				}
 			break;
 			case Resource.JAVASCRIPTFILE : case Resource.JAVASCRIPTLINK :
 				resourceHtml = "<script type='text/javascript' src='" + resource.getContent() + "'></script>";
@@ -867,7 +883,7 @@ public class Page {
 				// if we want all the resources (for the designer) or there is a dependency for this resource
 				if (allResources || resource.hasDependency(ResourceDependency.RAPID) || resource.hasDependency(ResourceDependency.ACTION, _actionTypes) || resource.hasDependency(ResourceDependency.CONTROL, _controlTypes)) {					
 					// the html we're hoping to get
-					String resourceHtml = getResourceHtml(resource);								
+					String resourceHtml = getResourceHtml(application, resource);								
 					// if we got some html and don't have it already 
 					if (resourceHtml != null && !addedResources.contains(resourceHtml)) {
 						// append it

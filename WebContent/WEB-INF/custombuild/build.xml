@@ -68,11 +68,11 @@ In the "Targets" tab empty "After a 'Clean'" and "Manual Build". For "Auto Build
 		<echo>basedir is ${basedir}</echo>
 		<echo>rapid_base is ${rapid_base}</echo>
 		<echo>Copying WebContent</echo>
-		<copy todir="${basedir}/../../../WebContent" includeEmptyDirs="true">
+		<copy todir="${basedir}/../../../WebContent" includeEmptyDirs="true" verbose="true">
 			<fileset dir="${rapid_base}/WebContent" />
 		</copy>
 		<echo>Copying classes</echo>
-		<copy todir="${basedir}/../../../WebContent/WEB-INF/classes" includeEmptyDirs="true">
+		<copy todir="${basedir}/../../../WebContent/WEB-INF/classes" includeEmptyDirs="true" verbose="true">
 			<fileset dir="${rapid_base}/build/classes" />
 		</copy>
 	</target>
