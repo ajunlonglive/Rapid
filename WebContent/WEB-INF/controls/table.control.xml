@@ -103,6 +103,26 @@ return "<td id='" + this.id + "' " + ((!isNaN(this.colSpan) && this.colSpan > 1)
 	        ]]>
 	    </getHtmlFunction>  	
 	    
+	    <saveJavaScript>
+	        <![CDATA[
+// get the style attribute 	        
+var style = this.object.attr("style");
+// if the min-width:15px;height:15px; is present but there are children
+if (style && style.indexOf("min-width:15px;height:15px;") > -1 && this.childControls && this.childControls.length > 0) {
+	// remove the min-height
+	style = style.replace("min-width:15px;height:15px;","");
+	// if there are other attributes
+	if (style) {
+		// update changed style
+		this.object.attr("style",style );
+	} else {
+		// remove empty style
+		this.object.removeAttr("style");
+	}
+}	        
+	        ]]>
+	    </saveJavaScript>	    
+	    
 	    <styles>
 	        <style>
 	            <name>Table cell</name>  

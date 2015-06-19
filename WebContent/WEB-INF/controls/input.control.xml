@@ -135,22 +135,22 @@ if (changeEvents) control.trigger("change");
 	    </setDataJavaScript>
 	    
 	    <events>
-	        <event>
-	            <type>blur</type>
-	            <name>Blur</name>
-	        </event>
-	        <event>
-	            <type>change</type>
-	            <name>Change</name>
-	        </event>
-	        <event>
+	         <event>
 	            <type>click</type>
 	            <name>Click</name>
 	        </event>
 	        <event>
 	            <type>keyup</type>
 	            <name>Key up</name>
-	        </event>	        	        	        
+	        </event>
+	        <event>
+	            <type>change</type>
+	            <name>Change</name>
+	        </event>	  	
+	        <event>
+	            <type>blur</type>
+	            <name>Blur</name>
+	        </event>	              	        
 	    </events> 
 	    
 	    <styles>

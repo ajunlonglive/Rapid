@@ -75,6 +75,26 @@ return "<div id='" + this.id + "' class='" + classes + "'" + (this.text ? "" : "
 	        ]]>
 	    </getHtmlFunction> 
 	    
+	    <saveJavaScript>
+	        <![CDATA[
+// get the style attribute 	        
+var style = this.object.attr("style");
+// if the min-height:15 is present but there are children
+if (style && style.indexOf("min-height:15px;") > -1 && this.childControls && this.childControls.length > 0) {
+	// remove the min-height
+	style = style.replace("min-height:15px;","");
+	// if there are other attributes
+	if (style) {
+		// update changed style
+		this.object.attr("style",style );
+	} else {
+		// remove empty style
+		this.object.removeAttr("style");
+	}
+}	        
+	        ]]>
+	    </saveJavaScript>
+	    
 	    <events>
 	        <event>
 	            <type>mouseover</type>

@@ -89,6 +89,10 @@ div.validation {
 	font-weight: bold;
 }
 
+label.validation {
+	border: 2px solid red !important;
+}
+
 input.validation {
 	border: 2px solid red !important;
 }

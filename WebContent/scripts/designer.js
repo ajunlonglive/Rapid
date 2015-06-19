@@ -1442,6 +1442,9 @@ function loadVersion(forceLoad) {
 					// retain that we've just added a control (we reset in mouse up)
 					_addedControl = true;
 					
+					// rebuild the page map
+					buildPageMap();
+					
 					// we only need the hit on the li
 					ev.stopPropagation();
 											
@@ -2488,7 +2491,7 @@ $(document).ready( function() {
 	
 	// new page
 	$("#pageNew").click( function(ev) {
-		showDialogue('~?action=page&a=rapid&p=P3'); 
+		if (checkDirty()) showDialogue('~?action=page&a=rapid&p=P3'); 
 	});
 	
 	// edit page
