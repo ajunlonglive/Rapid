@@ -1302,6 +1302,9 @@ public class Page {
 		    	
 				// start the body		
 		    	writer.write("  <body id='" + _id + "' style='visibility:hidden;'>\n");
+		    	
+		    	// start the form		
+		    	writer.write("    <form action='~?a=" + application.getId() + "' method='POST'>\n");
 				
 				// a reference for the body html
 				String bodyHtml = null;
@@ -1465,7 +1468,7 @@ public class Page {
 		}
 				
 		// add the remaining elements
-		writer.write("  </body>\n</html>");
+		writer.write("  </form>\n</body>\n</html>");
 				
 	}
 		
