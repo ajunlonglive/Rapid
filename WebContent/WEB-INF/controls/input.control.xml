@@ -92,11 +92,11 @@ return [["N","Normal"],["L","Large"],["Num","Number"],["P","Password"],["R","Rea
 var value = "";
 if (this.value) value = this.value  
 switch (this.controlType) {
-	case "N" : return "<input id='" + this.id + "' value='" + value + "' type='text'" + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + " class='input" + getStyleClasses(this) + "'></input>";
-	case "L" : return "<textarea id='" + this.id + "' class='input" + getStyleClasses(this) + (this.autoHeight ? " autoheight" : "")  + "' " + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + ">" + value + "</textarea>";
-	case "Num" : return "<input id='" + this.id + "' value='" + value + "' type='number'" + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + " class='input" + getStyleClasses(this) + "'></input>";
-	case "P" : return "<input id='" + this.id + "' value='" + value + "' type='password'" + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + " class='input" + getStyleClasses(this) + "'></input>";
-	case "R" : return "<input id='" + this.id + "' value='" + value + "' type='text'" + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + " class='input" + getStyleClasses(this) + "' readonly='readonly'></input>";
+	case "N" : return "<input id='" + this.id + "' name='" + this.id + "' value='" + value + "' type='text'" + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + " class='input" + getStyleClasses(this) + "'></input>";
+	case "L" : return "<textarea id='" + this.id + "' name='" + this.id + "' class='input" + getStyleClasses(this) + (this.autoHeight ? " autoheight" : "")  + "' " + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + ">" + value + "</textarea>";
+	case "Num" : return "<input id='" + this.id + "' name='" + this.id + "' value='" + value + "' type='number'" + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + " class='input" + getStyleClasses(this) + "'></input>";
+	case "P" : return "<input id='" + this.id + "' name='" + this.id + "' value='" + value + "' type='password'" + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + " class='input" + getStyleClasses(this) + "'></input>";
+	case "R" : return "<input id='" + this.id + "' name='" + this.id + "' value='" + value + "' type='text'" + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + " class='input" + getStyleClasses(this) + "' readonly='readonly'></input>";
 }      
 
 	        ]]>
