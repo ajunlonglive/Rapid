@@ -90,7 +90,7 @@ if (this.options) {
 	}
 }
 // place into the select
-var html = "<select id='" + this.id + "' value='" + value + "' class='dropdown" + getStyleClasses(this) + "'>" + options + "</select>";
+var html = "<select id='" + this.id + "' name='" + this.id + "' value='" + value + "' class='dropdown" + getStyleClasses(this) + "'>" + options + "</select>";
 // return
 return html;
 	        ]]>

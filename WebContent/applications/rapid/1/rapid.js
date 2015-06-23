@@ -1621,13 +1621,16 @@ function Action_navigate(url, dialogue, id) {
 	            		$('[data-focus]').focus();
 	            	}, 200);
 		           	           	        	            	            	            
-		    	}        	       	        	        	        	        		
-		    }       	        	        
+		    	}
+		    	        	       	        	        	        	        		
+		    }       
+		    		    		    	        	        
 		});	      
 	
 	} else {
 		window.location = url;
 	}
+		
 }
 
 // a global for holding the userName which we get when calling GETAPPS	        

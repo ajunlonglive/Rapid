@@ -1304,7 +1304,7 @@ public class Page {
 		    	writer.write("  <body id='" + _id + "' style='visibility:hidden;'>\n");
 		    	
 		    	// start the form		
-		    	writer.write("    <form action='~?a=" + application.getId() + "' method='POST'>\n");
+		    	if (showDesignerLink) writer.write("    <form action='~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + _id + "' method='POST'>\n");
 				
 				// a reference for the body html
 				String bodyHtml = null;
@@ -1466,9 +1466,12 @@ public class Page {
 			}
 			
 		}
-				
+		
+		// add the form
+		if (showDesignerLink) writer.write("  </form>\n");
+		
 		// add the remaining elements
-		writer.write("  </form>\n</body>\n</html>");
+		writer.write("  </body>\n</html>");
 				
 	}
 		

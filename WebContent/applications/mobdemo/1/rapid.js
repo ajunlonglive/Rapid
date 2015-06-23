@@ -2196,13 +2196,16 @@ function Action_navigate(url, dialogue, id) {
 	            		$('[data-focus]').focus();
 	            	}, 200);
 		           	           	        	            	            	            
-		    	}        	       	        	        	        	        		
-		    }       	        	        
+		    	}
+		    	        	       	        	        	        	        		
+		    }       
+		    		    		    	        	        
 		});	      
 	
 	} else {
 		window.location = url;
 	}
+		
 }
 
 function Action_validation(ev, validations, showMessages) {

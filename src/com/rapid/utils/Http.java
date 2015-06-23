@@ -53,16 +53,19 @@ public class Http {
 	
 	// main method
 	
-	public static String post(String url, List<Header> headers, String body) throws IOException {
+	public static String request(boolean post, String url, List<Header> headers, String body) throws IOException {
 		
 		URL obj = new URL(url);
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
  
-		//add request header
-		con.setRequestMethod("POST");
+		// if POST
+		if (post) {
+			//add request header
+			con.setRequestMethod("POST");
  
-		// Set up for post request
-		con.setDoOutput(true);
+			// Set up for post request
+			con.setDoOutput(true);
+		}
 		
 		// look for any headers
 		if (headers != null) {
@@ -72,16 +75,18 @@ public class Http {
 			}
 		}
 		
-		// get the writer
-		DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-		// write the request
-		wr.writeBytes(body);
-		// flush
-		wr.flush();
-		// close
-		wr.close();
- 
-		// get the repsonse code
+		if (post) {
+			// get the writer
+			DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+			// write the request
+			wr.writeBytes(body);
+			// flush
+			wr.flush();
+			// close
+			wr.close();
+		}
+		
+		// get the response code
 		int responseCode = con.getResponseCode();
 		// placeholder for response body
 		String response = null;
@@ -97,24 +102,42 @@ public class Http {
  
 		// return response
 		return response;
+		
 	}
 	
 	// overloads
 	
-	public static String post(String url, String body) throws IOException {
-		
-		return post(url, null, body);
-		
+	public static String post(String url, List<Header> headers, String body) throws IOException {
+		return request(true, url, headers, body);
+	}
+			
+	public static String post(String url, String body) throws IOException {	
+		return request(true, url, null, body);		
+	}
+	
+	public static String get(String url, List<Header> headers) throws IOException {
+		return request(false, url, headers, null);
+	}
+	
+	public static String get(String url) throws IOException {		
+		return request(false, url, null, null);		
 	}
 	
 	public static String postSOAP(String url, String soapAction, String body) throws IOException {
-		
-		List<Header> headers = new ArrayList<Header>();
-		headers.add(new Header("SOAPAction",soapAction));
-		headers.add(new Header("Content-Type","text/xml"));
-		
-		return post(url, headers, body);
-		
+		// create the headers using our speedy helper method
+		List<Header> headers = getHeaders(new Header("SOAPAction",soapAction), new Header("Content-Type","text/xml"));		
+		return request(true, url, headers, body);		
 	}
-
+	
+	// helper method	
+	public static List<Header> getHeaders(Header... headers) {
+		List<Header> headersList = new ArrayList<Header>();
+		if (headers != null) {
+			for (Header header : headers) {
+				headersList.add(header);
+			}
+		}
+		return headersList;
+	}
+	
 }

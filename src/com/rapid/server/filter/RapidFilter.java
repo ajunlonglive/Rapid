@@ -39,6 +39,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
+import com.rapid.utils.Classes;
+
 public class RapidFilter implements Filter {
 
 	// different applications' security adapters will retrieve different user objects
@@ -71,10 +73,8 @@ public class RapidFilter implements Filter {
 				
 				// try and instantiate the authentication adapter
 				Class classClass = Class.forName(authenticationAdapterClass);
-				// check the class extends com.rapid.server.filter.RapidAuthenticationAdapter
-				Class superClass = Class.forName("com.rapid.server.filter.RapidAuthenticationAdapter");
 				// check this class has the right super class
-				if (!classClass.getSuperclass().equals(superClass)) throw new Exception(authenticationAdapterClass + " must extend " + superClass.getCanonicalName()); 
+				if (!Classes.extendsClass(classClass, com.rapid.server.filter.RapidAuthenticationAdapter.class)) throw new Exception(authenticationAdapterClass + " must extend com.rapid.server.filter.RapidAuthenticationAdapter."); 
 				// instantiate an object and retain
 				_authenticationAdapter = (RapidAuthenticationAdapter) classClass.getConstructor(ServletContext.class).newInstance(filterConfig.getServletContext());				
 			

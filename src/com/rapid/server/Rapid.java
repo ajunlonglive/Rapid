@@ -34,6 +34,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.Enumeration;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -301,8 +302,37 @@ public class Rapid extends RapidHttpServlet {
 						
 					}
 					
-				}				
-											
+				}			
+				
+			} else if("application/x-www-form-urlencoded".equals(request.getContentType())) {
+				
+				String formData = new String(bodyBytes, "UTF-8");
+				
+				// log
+				getLogger().debug("Form data : " + formData);
+				
+				/*
+				
+				Enumeration keys = request.getParameterNames();
+				   while (keys.hasMoreElements() )
+				   {
+				      String key = (String)keys.nextElement();
+				      getLogger().debug(key);
+				  
+				      //To retrieve a single value
+				      String value = request.getParameter(key);
+				      getLogger().debug(value);
+				  
+				      // If the same key has multiple values (check boxes)
+				      String[] valueArray = request.getParameterValues(key);
+				       
+				      for(int i = 0; i > valueArray.length; i++){
+				    	  getLogger().debug("VALUE ARRAY" + valueArray[i]);
+				      }
+				   }
+				   
+				   */
+															
 			} else if ("getApps".equals(rapidRequest.getActionName())) {
 				
 				// create an empty array which we will populate

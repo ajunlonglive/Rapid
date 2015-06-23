@@ -42,6 +42,7 @@ import com.rapid.core.Application;
 import com.rapid.core.Applications;
 import com.rapid.server.RapidHttpServlet;
 import com.rapid.server.RapidRequest;
+import com.rapid.utils.Http;
 
 public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 		
@@ -55,7 +56,7 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 		
 	@Override
 	public ServletRequest process(ServletRequest req, ServletResponse res) throws IOException, ServletException {
-			
+		
 		// cast the ServletRequest to a HttpServletRequest
 		HttpServletRequest request = (HttpServletRequest) req;
 		
