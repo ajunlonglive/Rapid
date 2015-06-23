@@ -136,6 +136,8 @@ public class Navigate extends Action {
 			action = action.replace(" + ''", "");
 			// stop event bubbling (both navigation types need this)
 			action += "ev.stopPropagation();\n";
+			// stop the form being submitted
+			action += "ev.preventDefault();\n";
 			// return it into the page!
 			return action;
 		}

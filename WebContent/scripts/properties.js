@@ -3733,7 +3733,7 @@ function Property_guidelines(cell, propertyObject, property, details) {
 		// remove the style just to be sure
 		removeStyle(_guidelineStyles[i],"designPage.css");
 		// if we want the style add it back in
-		if (showGuidelines) 	addStyle( _guidelineStyles[i],"border: 1px dashed #ccc;");	
+		if (showGuidelines) 	addStyle( _guidelineStyles[i],"border: 1px dashed #ccc;margin: -1px;");	
 	}
 	
 }

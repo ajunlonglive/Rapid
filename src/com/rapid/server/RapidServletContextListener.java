@@ -79,6 +79,7 @@ import com.rapid.core.Applications;
 import com.rapid.core.Applications.Versions;
 import com.rapid.core.Device.Devices;
 import com.rapid.data.ConnectionAdapter;
+import com.rapid.utils.Classes;
 import com.rapid.utils.Comparators;
 import com.rapid.utils.Encryption.EncryptionProvider;
 import com.rapid.utils.Files;
@@ -297,7 +298,7 @@ public class RapidServletContextListener implements ServletContextListener {
 			// get the class 
 			Class classClass = Class.forName(className);
 			// check the class extends com.rapid.data.ConnectionAdapter
-			if (!com.rapid.data.ConnectionAdapter.class.equals(classClass.getSuperclass())) throw new Exception(className + " must extend " + classClass.getCanonicalName()); 
+			if (!Classes.extendsClass(classClass, com.rapid.data.ConnectionAdapter.class)) throw new Exception(classClass.getCanonicalName() + " must extend com.rapid.data.ConnectionAdapter");
 			// check this class is unique
 			if (connectionConstructors.get(className) != null) throw new Exception(className + " connection adapter already loaded.");
 			// add to constructors hashmap referenced by type
@@ -392,7 +393,7 @@ public class RapidServletContextListener implements ServletContextListener {
 			// get the class 
 			Class classClass = Class.forName(className);
 			// check the class extends com.rapid.security.SecurityAdapter
-			if (!com.rapid.security.SecurityAdapter.class.equals(classClass.getSuperclass())) throw new Exception(type + " security adapter class must extend com.rapid.security.SecurityAdapter"); 
+			if (!Classes.extendsClass(classClass, com.rapid.security.SecurityAdapter.class)) throw new Exception(type + " security adapter class " + classClass.getCanonicalName() + " must extend com.rapid.security.SecurityAdapter"); 
 			// check this type is unique
 			if (securityConstructors.get(type) != null) throw new Exception(type + " security adapter already loaded. Type names must be unique.");
 			// add to constructors hashmap referenced by type
@@ -494,7 +495,7 @@ public class RapidServletContextListener implements ServletContextListener {
 				// get the class 
 				Class classClass = Class.forName(className);
 				// check the class extends com.rapid.Action
-				if (!com.rapid.core.Action.class.equals(classClass.getSuperclass())) throw new Exception(type + " action class must extend " + classClass.getCanonicalName()); 
+				if (!Classes.extendsClass(classClass, com.rapid.core.Action.class)) throw new Exception(type + " action class " + classClass.getCanonicalName() + " must extend com.rapid.core.Action."); 
 				// check this type is unique
 				if (actionConstructors.get(type) != null) throw new Exception(type + " action already loaded. Type names must be unique.");
 				// add to constructors hashmap referenced by type

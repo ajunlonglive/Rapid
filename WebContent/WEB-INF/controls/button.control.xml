@@ -140,7 +140,7 @@ if (this.glyphCode) {
 	if (this.glyphPosition == "right" || this.glyphPosition == "bottom") html += glyph;
 	html += "</button>";
 } else {
-	html = "<button id='" + this.id + "' class='button" + getStyleClasses(this) + "'>" + this.label + "</button>";
+	html = "<button id='" + this.id + "' type='button' class='button" + getStyleClasses(this) + "'>" + this.label + "</button>";
 }
 return html
 	        ]]>
