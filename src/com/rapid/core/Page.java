@@ -1244,13 +1244,14 @@ public class Page {
 	}
 		
 	// this routine produces the entire page
-	public void writeHtml(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, Application application, User user, Writer writer, boolean showDesignerLink) throws JSONException, IOException {
+	public void writeHtml(RapidHttpServlet rapidServlet, RapidRequest rapidRequest,  Application application, User user, Writer writer, boolean showDesignerLink) throws JSONException, IOException {
 				
 		// this doctype is necessary (amongst other things) to stop the "user agent stylesheet" overriding styles
 		writer.write("<!DOCTYPE html>\n");
 										
+		// open the html
 		writer.write("<html>\n");
-		
+						
 		// check for undermaintenance status
 		if (application.getStatus() == Application.STATUS_MAINTENANCE) {
 			
@@ -1259,7 +1260,7 @@ public class Page {
 		} else {
 				
 			// get the security
-			SecurityAdapter security = application.getSecurity();
+			SecurityAdapter security = application.getSecurityAdapter();
 			
 			// assume the user has permission to access the page
 			boolean gotPagePermission = true;
@@ -1383,6 +1384,9 @@ public class Page {
 					}
 					
 				} // got body html check
+				
+				// close the form
+				if (showDesignerLink) writer.write("    </form>\n");
 										
 			} else {
 				
@@ -1466,10 +1470,7 @@ public class Page {
 			}
 			
 		}
-		
-		// add the form
-		if (showDesignerLink) writer.write("  </form>\n");
-		
+
 		// add the remaining elements
 		writer.write("  </body>\n</html>");
 				

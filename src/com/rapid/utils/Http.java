@@ -27,10 +27,14 @@ package com.rapid.utils;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Http {
 	
@@ -51,6 +55,17 @@ public class Http {
 		
 	}
 	
+	// helper method	
+	public static List<Header> getHeaders(Header... headers) {
+		List<Header> headersList = new ArrayList<Header>();
+		if (headers != null) {
+			for (Header header : headers) {
+				headersList.add(header);
+			}
+		}
+		return headersList;
+	}
+		
 	// main method
 	
 	public static String request(boolean post, String url, List<Header> headers, String body) throws IOException {
@@ -128,16 +143,5 @@ public class Http {
 		List<Header> headers = getHeaders(new Header("SOAPAction",soapAction), new Header("Content-Type","text/xml"));		
 		return request(true, url, headers, body);		
 	}
-	
-	// helper method	
-	public static List<Header> getHeaders(Header... headers) {
-		List<Header> headersList = new ArrayList<Header>();
-		if (headers != null) {
-			for (Header header : headers) {
-				headersList.add(header);
-			}
-		}
-		return headersList;
-	}
-	
+			
 }

@@ -68,6 +68,8 @@ import org.xml.sax.SAXException;
 import com.rapid.core.Page.Lock;
 import com.rapid.core.Pages.PageHeader;
 import com.rapid.data.ConnectionAdapter;
+import com.rapid.forms.FormAdapter;
+import com.rapid.forms.RapidFormAdapter;
 import com.rapid.security.RapidSecurityAdapter;
 import com.rapid.security.SecurityAdapter;
 import com.rapid.security.SecurityAdapter.User;
@@ -455,10 +457,11 @@ public class Application {
 	
 	// instance variables	
 	private int _xmlVersion, _status, _applicationBackupsMaxSize, _pageBackupsMaxSize;
-	private String _id, _version, _name, _title, _description, _startPageId, _styles, _functions, _securityAdapterType, _createdBy, _modifiedBy;
+	private String _id, _version, _name, _title, _description, _startPageId, _styles, _functions, _securityAdapterType, _formAdapterType, _createdBy, _modifiedBy;
 	private boolean _showConrolIds, _showActionIds;
 	private Date _createdDate, _modifiedDate;
-	private SecurityAdapter _securityAdapter;	
+	private SecurityAdapter _securityAdapter;
+	private FormAdapter _formAdapter;	
 	private List<DatabaseConnection> _databaseConnections;	
 	private List<Webservice> _webservices;
 	private List<Parameter> _parameters;
@@ -541,9 +544,13 @@ public class Application {
 	public List<Webservice> getWebservices() { return _webservices; }
 	public void setWebservices(List<Webservice> webservices) { _webservices = webservices; }
 	
-	// the class name of the security adapter this application uses
+	// the type name of the security adapter this application uses
 	public String getSecurityAdapterType() { return _securityAdapterType; }
 	public void setSecurityAdapterType(String securityAdapterType) { _securityAdapterType = securityAdapterType; }
+	
+	// the type name of the form adapter this application uses (if any)
+	public String getFormAdapterType() { return _formAdapterType; }
+	public void setFormAdapterType(String formAdapterType) { _formAdapterType = formAdapterType; }
 	
 	// a collection of parameters for this application
 	public List<Parameter> getParameters() { return _parameters; }
@@ -731,10 +738,10 @@ public class Application {
 		return _styleClasses;		
 	}
 	
-	// an instance of the security adapter used by this class
-	public SecurityAdapter getSecurity() { return _securityAdapter; }
+	// an instance of the security adapter used by this object
+	public SecurityAdapter getSecurityAdapter() { return _securityAdapter; }
 	// set the security to a given type
-	public void setSecurity(ServletContext servletContext, String securityAdapterType) throws IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException, IOException {
+	public void setSecurityAdapter(ServletContext servletContext, String securityAdapterType) throws IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException, IOException {
 		// set the security adaper type from the incoming parameter
 		_securityAdapterType = securityAdapterType;
 		// if it was null update to rapid
@@ -752,6 +759,29 @@ public class Application {
 		} else {
 			// instantiate the specified security adapter
 			_securityAdapter = constructor.newInstance(servletContext, this);
+		}
+	}
+	
+	// an instance of the form adapter used by this object
+	public FormAdapter getFormAdapter() { return _formAdapter; }
+	// set the security to a given type
+	public void setFormAdapter(ServletContext servletContext, String formAdapterType) throws IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException, IOException {
+		// set the security adaper type from the incoming parameter
+		_formAdapterType = formAdapterType;
+		// if it was null
+		if (_formAdapterType == null) {
+			// clear the current one
+			_formAdapter = null;
+		} else {
+			/*
+			// get a map of the form adapter constructors
+			HashMap<String,Constructor> constructors = (HashMap<String, Constructor>) servletContext.getAttribute("formConstructors");
+			// get the constructor for our type
+			Constructor<FormAdapter> constructor = constructors.get(_formAdapterType);
+			// instantiate the specified form adapter
+			_formAdapter = constructor.newInstance(servletContext, this);
+			*/
+			_formAdapter = new RapidFormAdapter(servletContext, this);
 		}
 	}
 	
@@ -903,7 +933,10 @@ public class Application {
 		logger.trace("Initialising application " + _name + "/" + _version);
 		
 		// initialise the security adapter 
-		setSecurity(servletContext, _securityAdapterType);
+		setSecurityAdapter(servletContext, _securityAdapterType);
+		
+		// initialise the form adapter 
+		setFormAdapter(servletContext, _formAdapterType);
 				
 		// initialise the resource includes collection
 		_resources = new Resources();
@@ -1798,7 +1831,7 @@ public class Application {
 				fw.close();
 				// add the file to the zip with a root path
 				zipSources.add(detailsFile, "");
-				
+								
 				// check we have pages
 				if (_pages != null) {					
 					// loop them

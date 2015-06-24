@@ -135,7 +135,7 @@ public class Designer extends RapidHttpServlet {
 			if (rapidApplication != null) {
 				
 				// get rapid security
-				SecurityAdapter rapidSecurity = rapidApplication.getSecurity();
+				SecurityAdapter rapidSecurity = rapidApplication.getSecurityAdapter();
 				
 				// check we got some
 				if (rapidSecurity != null) {
@@ -203,7 +203,7 @@ public class Designer extends RapidHttpServlet {
 									Application application = getApplications().get(id, version);
 									
 									// get the security									
-									SecurityAdapter security = application.getSecurity();
+									SecurityAdapter security = application.getSecurityAdapter();
 									
 									// recreate the request in the name of this app
 									RapidRequest appRequest = new RapidRequest(this, request, application);
@@ -259,7 +259,7 @@ public class Designer extends RapidHttpServlet {
 								for (Application application : versions.sort()) {
 									
 									// get the security									
-									SecurityAdapter security = application.getSecurity();
+									SecurityAdapter security = application.getSecurityAdapter();
 									
 									// recreate the request in the name of this app
 									RapidRequest appRequest = new RapidRequest(this, request, application);
@@ -268,7 +268,7 @@ public class Designer extends RapidHttpServlet {
 									if (security.checkUserPassword(appRequest, rapidRequest.getUserName(), rapidRequest.getUserPassword())) {
 										
 										// check the users permission to design this application
-										boolean designPermission = application.getSecurity().checkUserRole(appRequest, Rapid.DESIGN_ROLE);
+										boolean designPermission = application.getSecurityAdapter().checkUserRole(appRequest, Rapid.DESIGN_ROLE);
 										
 										// if app is rapid do a further check
 										if (designPermission && "rapid".equals(application.getId())) designPermission = security.checkUserRole(appRequest, Rapid.SUPER_ROLE);
@@ -491,7 +491,7 @@ public class Designer extends RapidHttpServlet {
 								// assume we can't find the user
 								String userDescription = "unknown";
 								// get the user 
-								User user = application.getSecurity().getUser(rapidRequest);
+								User user = application.getSecurityAdapter().getUser(rapidRequest);
 								// if we had one and they have a description use it
 								if (user != null) if (user.getDescription() != null) userDescription = user.getDescription();
 																								
@@ -724,7 +724,7 @@ public class Designer extends RapidHttpServlet {
 			if (rapidApplication != null) {
 				
 				// get rapid security
-				SecurityAdapter rapidSecurity = rapidApplication.getSecurity();
+				SecurityAdapter rapidSecurity = rapidApplication.getSecurityAdapter();
 				
 				// check we got some
 				if (rapidSecurity != null) {
@@ -1215,7 +1215,7 @@ public class Designer extends RapidHttpServlet {
 												appNew.initialise(getServletContext(), false);
 												
 												// get the security
-												SecurityAdapter security = appNew.getSecurity();
+												SecurityAdapter security = appNew.getSecurityAdapter();
 												
 												// if we have one
 												if (security != null) {									
@@ -1225,7 +1225,7 @@ public class Designer extends RapidHttpServlet {
 													// check the current user is present in the app's security adapter
 													if (user == null) {
 														// get the Rapid user object
-														User rapidUser = rapidApplication.getSecurity().getUser(rapidRequest);
+														User rapidUser = rapidApplication.getSecurityAdapter().getUser(rapidRequest);
 														// create a new user based on the Rapid user
 														user = new User(userName, rapidUser.getDescription(), rapidUser.getPassword());
 														// add the new user 

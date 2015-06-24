@@ -190,7 +190,7 @@ public class Rapid extends Action {
 		newApp.save(rapidServlet, rapidRequest, false);
 		
 		// get the security 
-		SecurityAdapter security = newApp.getSecurity();
+		SecurityAdapter security = newApp.getSecurityAdapter();
 		
 		// check there is one
 		if (security != null) {
@@ -207,7 +207,7 @@ public class Rapid extends Action {
 			// check the current user is present in the app's security adapter
 			if (user == null) {
 				// get the Rapid user object
-				User rapidUser = rapidApplication.getSecurity().getUser(rapidRequest);
+				User rapidUser = rapidApplication.getSecurityAdapter().getUser(rapidRequest);
 				// create a new user based on the current user
 				user = new User(userName, rapidUser.getDescription(), rapidUser.getPassword());
 				// add the new user 
@@ -359,7 +359,7 @@ public class Rapid extends Action {
 						Application application = rapidServlet.getApplications().get(id, version);
 						
 						// get the security
-						SecurityAdapter security = application.getSecurity();
+						SecurityAdapter security = application.getSecurityAdapter();
 						
 						// now emulate the app we are looping
 						RapidRequest appSecurityRequest = new RapidRequest(rapidServlet, rapidRequest.getRequest(), application);
@@ -371,7 +371,7 @@ public class Rapid extends Action {
 							boolean adminPermission = security.checkUserRole(appSecurityRequest, com.rapid.server.Rapid.DESIGN_ROLE);
 							
 							// if app is rapid do a further check
-							if (adminPermission && "rapid".equals(application.getId())) adminPermission = application.getSecurity().checkUserRole(appSecurityRequest, com.rapid.server.Rapid.SUPER_ROLE);
+							if (adminPermission && "rapid".equals(application.getId())) adminPermission = application.getSecurityAdapter().checkUserRole(appSecurityRequest, com.rapid.server.Rapid.SUPER_ROLE);
 							
 							// if we got permssion - add this application to the list 
 							if (adminPermission) {
@@ -529,7 +529,7 @@ public class Rapid extends Action {
 					for (Application application : versions.sort()) {
 						
 						// get the security
-						SecurityAdapter security = application.getSecurity();
+						SecurityAdapter security = application.getSecurityAdapter();
 						
 						// now emulate the app we are looping
 						RapidRequest appSecurityRequest = new RapidRequest(rapidServlet, rapidRequest.getRequest(), application);
@@ -541,7 +541,7 @@ public class Rapid extends Action {
 							boolean adminPermission = security.checkUserRole(appSecurityRequest, com.rapid.server.Rapid.ADMIN_ROLE);
 							
 							// if app is rapid do a further check
-							if (adminPermission && "rapid".equals(application.getId())) adminPermission = application.getSecurity().checkUserRole(appSecurityRequest, com.rapid.server.Rapid.SUPER_ROLE);
+							if (adminPermission && "rapid".equals(application.getId())) adminPermission = application.getSecurityAdapter().checkUserRole(appSecurityRequest, com.rapid.server.Rapid.SUPER_ROLE);
 							
 							// check the RapidDesign role is present in the users roles for this application
 							if (adminPermission) {												
@@ -573,7 +573,7 @@ public class Rapid extends Action {
 			} else if ("GETVERSION".equals(action)) {
 				
 				// get the security
-				SecurityAdapter security = app.getSecurity();
+				SecurityAdapter security = app.getSecurityAdapter();
 				
 				// password check
 				if (security.checkUserPassword(rapidActionRequest, rapidRequest.getUserName(), rapidRequest.getUserPassword())) {
@@ -582,7 +582,7 @@ public class Rapid extends Action {
 					boolean adminPermission = security.checkUserRole(rapidActionRequest, com.rapid.server.Rapid.DESIGN_ROLE);
 					
 					// if app is rapid do a further check
-					if (adminPermission && "rapid".equals(app.getId())) adminPermission = app.getSecurity().checkUserRole(rapidActionRequest, com.rapid.server.Rapid.SUPER_ROLE);
+					if (adminPermission && "rapid".equals(app.getId())) adminPermission = app.getSecurityAdapter().checkUserRole(rapidActionRequest, com.rapid.server.Rapid.SUPER_ROLE);
 					
 					if (adminPermission) {
 						
@@ -835,7 +835,7 @@ public class Rapid extends Action {
 				}	 
 												
 				// get the current app security adapter
-				SecurityAdapter security = app.getSecurity();
+				SecurityAdapter security = app.getSecurityAdapter();
 												
 				// if we got one
 				if (security != null) {
@@ -843,9 +843,9 @@ public class Rapid extends Action {
 					// if it's different from what came in
 					if (!securityAdapterClass.equals(security.getClass().getCanonicalName())) {						
 						// set the new security adapter
-						app.setSecurity(rapidServlet.getServletContext(), securityAdapterType);
+						app.setSecurityAdapter(rapidServlet.getServletContext(), securityAdapterType);
 						// read it back again
-						security = app.getSecurity();
+						security = app.getSecurityAdapter();
 					}
 					
 					// recreate the rapidRequest with the selected app (so app parameters etc are available from the app in the rapidRequest)
@@ -889,7 +889,7 @@ public class Rapid extends Action {
 				rapidRequest.setUserName(userName);
 				
 				// get the app security
-				SecurityAdapter security = app.getSecurity();
+				SecurityAdapter security = app.getSecurityAdapter();
 				
 				// get the user
 				User user = security.getUser(rapidRequest);
@@ -926,7 +926,7 @@ public class Rapid extends Action {
 			} else if ("GETUSERS".equals(action)) { 
 							
 				// get the app security
-				SecurityAdapter security = app.getSecurity();
+				SecurityAdapter security = app.getSecurityAdapter();
 				
 				// if we got one
 				if (security != null) {
@@ -1677,7 +1677,7 @@ public class Rapid extends Action {
 				String description = jsonAction.getString("description").trim();
 				
 				// add the role
-				app.getSecurity().addRole(rapidRequest, new Role(roleName, description));
+				app.getSecurityAdapter().addRole(rapidRequest, new Role(roleName, description));
 				// set the result message
 				result.put("message", "Role added");
 																	
@@ -1686,7 +1686,7 @@ public class Rapid extends Action {
 				// get the role
 				String role = jsonAction.getString("role").trim();
 				// delete the role
-				app.getSecurity().deleteRole(rapidRequest, role);
+				app.getSecurityAdapter().deleteRole(rapidRequest, role);
 				// set the result message
 				result.put("message", "Role deleted");					
 								
@@ -1700,7 +1700,7 @@ public class Rapid extends Action {
 				String password = jsonAction.getString("password");
 				
 				// get the security
-				SecurityAdapter security = app.getSecurity();
+				SecurityAdapter security = app.getSecurityAdapter();
 				
 				// recreate the rapidRequest with the selected app (so app parameters etc are available from the app in the rapidRequest)
 				rapidRequest = new RapidRequest(rapidServlet, rapidRequest.getRequest(), app);
@@ -1735,7 +1735,7 @@ public class Rapid extends Action {
 				// override the standard request user
 				rapidRequest.setUserName(userName);				
 				// delete the user
-				app.getSecurity().deleteUser(rapidRequest);
+				app.getSecurityAdapter().deleteUser(rapidRequest);
 				// remove any of their page locks
 				app.removeUserPageLocks(rapidServlet.getServletContext(), userName);
 				// set the result message
@@ -1750,7 +1750,7 @@ public class Rapid extends Action {
 				// recreate the rapidRequest with the selected app (so app parameters etc are available from the app in the rapidRequest)
 				rapidRequest = new RapidRequest(rapidServlet, rapidRequest.getRequest(), app);
 				// update the role
-				app.getSecurity().updateRole(rapidRequest, new Role(roleName, roleDescription));
+				app.getSecurityAdapter().updateRole(rapidRequest, new Role(roleName, roleDescription));
 				// set the result message
 				result.put("message", "Role details saved");
 													
@@ -1765,7 +1765,7 @@ public class Rapid extends Action {
 				// get the role
 				String role = jsonAction.getString("role").trim();
 				// add the user role
-				app.getSecurity().addUserRole(rapidRequest, role);
+				app.getSecurityAdapter().addUserRole(rapidRequest, role);
 				// set the result message
 				result.put("message", "User role added");
 									
@@ -1780,7 +1780,7 @@ public class Rapid extends Action {
 				// get the role
 				String role = jsonAction.getString("role").trim();
 				// add the user role
-				app.getSecurity().deleteUserRole(rapidRequest, role);
+				app.getSecurityAdapter().deleteUserRole(rapidRequest, role);
 				// set the result message
 				result.put("message", "User role deleted");
 													
@@ -1798,7 +1798,7 @@ public class Rapid extends Action {
 				String password = jsonAction.getString("password");
 				
 				// get the security
-				SecurityAdapter security = app.getSecurity();
+				SecurityAdapter security = app.getSecurityAdapter();
 				// get the user
 				User user = security.getUser(rapidRequest);
 				// update the description

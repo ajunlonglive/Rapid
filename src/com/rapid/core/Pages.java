@@ -95,6 +95,21 @@ public class Pages {
 						
 	}
 	
+	public static class PageHeaders extends ArrayList<PageHeader> {
+				
+		// a new method used primarily by forms to get the position of a page in the sorted collection
+		public int indexOf(String pageId) {	
+			// loop the page headers in the collection
+			for (int i = 0; i < this.size(); i++) {
+				// if there is a match on an items id return the index
+				if (pageId.equals(this.get(i).getId())) return i;
+			}			
+			// no match
+			return -1;			
+		}
+		
+	}
+	
 	// instance variables
 	
 	private Logger _logger;
@@ -238,9 +253,9 @@ public class Pages {
 	}
 	
 	// we don't want the pages in the application.xml so no setPages to avoid the marshaler
-	public ArrayList<PageHeader> getSortedPages() {
+	public PageHeaders getSortedPages() {
 		// prepare the list we are going to send back
-		ArrayList<PageHeader> pages = new ArrayList<PageHeader>();
+		PageHeaders pages = new PageHeaders();
 		// add each page to the list
 		for (String pageId : _pageHeaders.keySet()) {
 			pages.add(_pageHeaders.get(pageId));

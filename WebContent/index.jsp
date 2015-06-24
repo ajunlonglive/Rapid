@@ -102,13 +102,13 @@ $(document).ready( function() {
 
 <% 
 	// get the rapid application security
-	SecurityAdapter security = rapid.getSecurity();
+	SecurityAdapter securityAdapter = rapid.getSecurityAdapter();
 	
 	// check the user password in the rapid application
-	if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRequest.getUserPassword())) {
+	if (securityAdapter.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRequest.getUserPassword())) {
 
 		// check for the admin role	
-		if (security.checkUserRole(rapidRequest, "RapidAdmin")) {
+		if (securityAdapter.checkUserRole(rapidRequest, "RapidAdmin")) {
 %>
 <div class="body">
 	<a href="~?a=rapid"><img src="images/administration_157x135.png" /><span id="admin">Admin</span></a>
@@ -117,7 +117,7 @@ $(document).ready( function() {
 		}
 		
 		// check for the design role
-		if (security.checkUserRole(rapidRequest, "RapidDesign")) {
+		if (securityAdapter.checkUserRole(rapidRequest, "RapidDesign")) {
 %>
 <div class="body">
 	<a href="design.jsp"><img src="images/designer_157x135.png" /><span id="design">Design</span></a>

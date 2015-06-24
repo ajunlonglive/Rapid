@@ -34,19 +34,24 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.util.Enumeration;
 import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.rapid.core.Application;
 import com.rapid.core.Page;
+import com.rapid.core.Pages.PageHeader;
+import com.rapid.core.Pages.PageHeaders;
+import com.rapid.forms.FormAdapter;
+import com.rapid.forms.FormAdapter.ControlValue;
+import com.rapid.forms.FormAdapter.PageControlValues;
 import com.rapid.security.SecurityAdapter;
 import com.rapid.security.SecurityAdapter.User;
 import com.rapid.utils.Files;
@@ -56,22 +61,22 @@ public class Rapid extends RapidHttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	// these are held here and referred to globally
-	public static final String VERSION = "2.2.5.1"; // the master version of this Rapid server
+	public static final String VERSION = "2.3.0"; // the master version of this Rapid server
 	public static final String MOBILE_VERSION = "1"; // the mobile version. update it if you want all mobile devices to updates on their next version check
 	public static final String DESIGN_ROLE = "RapidDesign";
 	public static final String ADMIN_ROLE = "RapidAdmin";
 	public static final String SUPER_ROLE = "RapidSuper";
-												                        
+	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 				
 		// get a logger
-		getLogger().debug("Rapid GET request : " + request.getQueryString());
-														
-		// get a new rapid request passing in this servelet and the http request
-		RapidRequest rapidRequest = new RapidRequest(this, request);
+		Logger logger = getLogger();
 		
-		// set the page html to an empty string
-		String pageHtml = "";
+		// log!
+		logger.debug("Rapid GET request : " + request.getQueryString());
+														
+		// get a new rapid request passing in this servlet and the http request
+		RapidRequest rapidRequest = new RapidRequest(this, request);		
 					
 		try {
 			
@@ -85,12 +90,12 @@ public class Rapid extends RapidHttpServlet {
 				sendMessage(rapidRequest, response, 404, "Application not found", "The application you requested can't be found");
 								
 				//log
-				getLogger().debug("Rapid GET response (404) : Application not found on this server");
+				logger.debug("Rapid GET response (404) : Application not found on this server");
 				
 			} else {
 				
 				// get the application security
-				SecurityAdapter security = app.getSecurity();
+				SecurityAdapter security = app.getSecurityAdapter();
 																							
 				// check the password
 				if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRequest.getUserPassword())) {
@@ -99,7 +104,12 @@ public class Rapid extends RapidHttpServlet {
 					User user = security.getUser(rapidRequest);
 			
 					// check if there is a Rapid action
-					if ("download".equals(rapidRequest.getActionName())) {
+					if ("summary".equals(rapidRequest.getActionName())) {
+						
+						// write the form summary
+						FormAdapter.writeFormSummary(getServletContext(), rapidRequest, response, app);
+						
+					} else if ("download".equals(rapidRequest.getActionName())) {
 						
 						// set the file name
 						String fileName = app.getId() + "_" + rapidRequest.getUserName() + ".zip";
@@ -148,10 +158,10 @@ public class Rapid extends RapidHttpServlet {
 							sendMessage(rapidRequest, response, 404, "Page not found", "The page you requested can't be found");
 							
 							// log
-							getLogger().debug("Rapid GET response (404) : Page not found");
+							logger.debug("Rapid GET response (404) : Page not found");
 							
 						} else {
-							
+														
 							// create a writer
 							PrintWriter out = response.getWriter();
 							
@@ -165,11 +175,8 @@ public class Rapid extends RapidHttpServlet {
 							response.setContentType("text/html");
 							
 							// write the page html
-							page.writeHtml(this, rapidRequest, app, user, out, showDesignerLink);
-												
-							// output the page
-							out.print(pageHtml);
-																										
+							page.writeHtml(this, rapidRequest,  app, user, out, showDesignerLink);
+																																						
 							// close the writer
 							out.close();
 							
@@ -186,7 +193,7 @@ public class Rapid extends RapidHttpServlet {
 					sendMessage(rapidRequest, response, 403, "No permission", "You do not have permission to use this application");
 					
 					//log
-					getLogger().debug("Rapid GET response (403) : User " + rapidRequest.getUserName() +  " not authorised for application");
+					logger.debug("Rapid GET response (403) : User " + rapidRequest.getUserName() +  " not authorised for application");
 																
 				} // password check
 				
@@ -194,14 +201,12 @@ public class Rapid extends RapidHttpServlet {
 								
 		} catch (Exception ex) {
 		
-			getLogger().error("Rapid GET error : ",ex);
+			logger.error("Rapid GET error : ",ex);
 			
 			sendException(rapidRequest, response, ex);
 		
 		} 
-																			
-		getLogger().trace("Rapid GET response : " + pageHtml);
-					
+																								
 	}
 	
 	private JSONObject getJSONObject(byte[] bodyBytes) throws UnsupportedEncodingException, JSONException {
@@ -214,8 +219,10 @@ public class Rapid extends RapidHttpServlet {
 						
 		// if there is something in the body string it must be json so parse it
 		if (!"".equals(bodyString)) {
+			// get a logger
+			Logger logger = getLogger();
 			// log the body string
-			getLogger().debug(bodyString);
+			logger.debug(bodyString);
 			// get the data
 			jsonData = new JSONObject(bodyString);
 		}
@@ -235,105 +242,19 @@ public class Rapid extends RapidHttpServlet {
 		for (int length = 0; (length = input.read(byteBuffer)) > -1;) outputStream.write(byteBuffer, 0, length);			
 		byte[] bodyBytes = outputStream.toByteArray();
 		
+		// get a logger
+		Logger logger = getLogger();
+				
 		// log
-		getLogger().debug("Rapid POST request : " + request.getQueryString() + " bytes=" + bodyBytes.length);
+		logger.debug("Rapid POST request : " + request.getQueryString() + " bytes=" + bodyBytes.length);
 				
 		// create a Rapid request				
 		RapidRequest rapidRequest = new RapidRequest(this, request);
 				
 		try {
 			
-			// if an application action was found in the request						
-			if (rapidRequest.getAction() != null) {			
-			
-				// get the application
-				Application app = rapidRequest.getApplication();
-				
-				// check we got one
-				if (app == null) {
-					
-					// send forbidden response			
-					sendMessage(rapidRequest, response, 403, "Application not found", "The application you requested can't be found");
-					
-					// log
-					getLogger().debug("Rapid POST response (403) : Application not found");
-					
-				} else {
-					
-					// get the security
-					SecurityAdapter security = app.getSecurity();
-										
-					// check the user password
-					if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRequest.getUserPassword())) {
-						
-						// assume we weren't passed any json				
-						JSONObject jsonData = getJSONObject(bodyBytes);
-																		
-						// if we got some data
-						if (jsonData != null) {
-							
-							// fetch the action result
-							JSONObject jsonResult = rapidRequest.getAction().doAction(rapidRequest, jsonData);
-							
-							// set response to json
-							response.setContentType("application/json");
-							
-							// create a writer
-							PrintWriter out = response.getWriter();
-							
-							// print the results
-							out.print(jsonResult.toString());
-							
-							// close the writer
-							out.close();
-							
-							// log response
-							getLogger().debug("Rapid POST response : " + jsonResult);
-							
-						}
-																																																												
-					} else {
-						
-						// send forbidden response			
-						sendMessage(rapidRequest, response, 403, "No permisssion", "You do not have permssion to use this application");
-						
-						// log
-						getLogger().debug("Rapid POST response (403) : User not authorised for application");
-						
-					}
-					
-				}			
-				
-			} else if("application/x-www-form-urlencoded".equals(request.getContentType())) {
-				
-				String formData = new String(bodyBytes, "UTF-8");
-				
-				// log
-				getLogger().debug("Form data : " + formData);
-				
-				/*
-				
-				Enumeration keys = request.getParameterNames();
-				   while (keys.hasMoreElements() )
-				   {
-				      String key = (String)keys.nextElement();
-				      getLogger().debug(key);
-				  
-				      //To retrieve a single value
-				      String value = request.getParameter(key);
-				      getLogger().debug(value);
-				  
-				      // If the same key has multiple values (check boxes)
-				      String[] valueArray = request.getParameterValues(key);
-				       
-				      for(int i = 0; i > valueArray.length; i++){
-				    	  getLogger().debug("VALUE ARRAY" + valueArray[i]);
-				      }
-				   }
-				   
-				   */
-															
-			} else if ("getApps".equals(rapidRequest.getActionName())) {
+			// this is the only variant where an application isn't specified and secured first
+			if ("getApps".equals(rapidRequest.getActionName())) {
 				
 				// create an empty array which we will populate
 				JSONArray jsonApps = new JSONArray();
@@ -357,7 +278,7 @@ public class Rapid extends RapidHttpServlet {
 					for (Application app : apps) {
 									
 						// get the relevant security adapter
-						SecurityAdapter security = app.getSecurity();
+						SecurityAdapter security = app.getSecurityAdapter();
 						
 						// fail silently if there was an issue
 						try {
@@ -406,7 +327,7 @@ public class Rapid extends RapidHttpServlet {
 							
 						} catch (Exception ex) {
 							// only log
-							getLogger().error("Error geting apps : ", ex);
+							logger.error("Error geting apps : ", ex);
 						}
 																									
 					} // apps loop
@@ -426,55 +347,10 @@ public class Rapid extends RapidHttpServlet {
 				out.close();
 				
 				// log response
-				getLogger().debug("Rapid POST response : " + jsonApps.toString());
+				logger.debug("Rapid POST response : " + jsonApps.toString());
 				
-			} else if ("checkVersion".equals(rapidRequest.getActionName())) {
-				
-				// get the application
-				Application app = rapidRequest.getApplication();
-				
-				// create a json version object
-				JSONObject jsonVersion = new JSONObject();
-				
-				// if an app exists
-				if (app != null) {
-															
-					// get the relevant security adapter
-					SecurityAdapter security = app.getSecurity();
-					
-					// fail silently if there was an issue
-					try {
-					
-						// fetch a user object in the name of the current user for the current app
-						User user = security.getUser(rapidRequest);
-						
-						// if there was one
-						if (user != null) {
-							// add the mobile version, followed by the app version
-							jsonVersion.put("version", MOBILE_VERSION + " - " + app.getVersion());
-						}
-						
-					} catch (Exception ex) {
-						// only log
-						getLogger().error("Error checking version : ", ex);
-					}
-					
-				}
-											
-				// create a writer
-				PrintWriter out = response.getWriter();
-				
-				// print the results
-				out.print(jsonVersion.toString());
-				
-				// close the writer
-				out.close();
-				
-				// log response
-				getLogger().debug("Rapid POST response : " + jsonVersion.toString());
-											
-			} else if ("uploadImage".equals(rapidRequest.getActionName())) {
-				
+			} else {
+			
 				// get the application
 				Application app = rapidRequest.getApplication();
 				
@@ -482,90 +358,192 @@ public class Rapid extends RapidHttpServlet {
 				if (app == null) {
 					
 					// send forbidden response			
-					sendMessage(rapidRequest, response, 403, "Application not found", "Application not found on this server");
+					sendMessage(rapidRequest, response, 403, "Application not found", "The application you requested can't be found");
 					
 					// log
-					getLogger().debug("Rapid POST response (403) : Application not found");
+					logger.debug("Rapid POST response (403) : Application not found");
 					
 				} else {
 					
 					// get the security
-					SecurityAdapter security = app.getSecurity();
-					
+					SecurityAdapter security = app.getSecurityAdapter();
+										
 					// check the user password
 					if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRequest.getUserPassword())) {
-						
-						// get the name
-						String imageName = request.getParameter("name");
-						
-						// if we got one
-						if (imageName == null) {
-							
-							// send forbidden response			
-							sendMessage(rapidRequest, response, 403, "Name required", "Image name must be provided");
-							
-							// log
-							getLogger().debug("Rapid POST response (403) : Name must be provided");
-							
-						} else {
-														
-							// check the jpg file signature (from http://en.wikipedia.org/wiki/List_of_file_signatures)
-							if (bodyBytes[0] == (byte)0xFF && bodyBytes[1] == (byte)0xD8 && bodyBytes[2] == (byte)0xFF) {
+				
+						// if an application action was found in the request						
+						if (rapidRequest.getAction() != null) {			
+				
+							// assume we weren't passed any json				
+							JSONObject jsonData = getJSONObject(bodyBytes);
+																			
+							// if we got some data
+							if (jsonData != null) {
 								
-								// create the paht
-								String imagePath = "uploads/" +  app.getId() + "/" + imageName;
-								// create a file
-								File imageFile = new File(getServletContext().getRealPath(imagePath));
-								// create app folder if need be
-								imageFile.getParentFile().mkdir();
-								// create a file output stream to save the data to
-								FileOutputStream fos = new FileOutputStream(imageFile);
-								// write the body bytes to the stream
-								fos.write(bodyBytes);
-								// close the stream
-								fos.close();
+								// fetch the action result
+								JSONObject jsonResult = rapidRequest.getAction().doAction(rapidRequest, jsonData);
 								
-								// log the file creation
-								getLogger().debug("Saved image file " + imageFile);
+								// set response to json
+								response.setContentType("application/json");
 								
 								// create a writer
 								PrintWriter out = response.getWriter();
 								
 								// print the results
-								out.print(imagePath);
+								out.print(jsonResult.toString());
 								
 								// close the writer
 								out.close();
 								
+								// log response
+								logger.debug("Rapid POST response : " + jsonResult);
+								
+							} // jsonData
+																																																													
+						}  else if("application/x-www-form-urlencoded".equals(request.getContentType())) {
+							
+							//
+							logger.debug("Form data received");
+							
+							// this is a form page's data being submitted
+							String formData = new String(bodyBytes, "UTF-8");
+							
+							// log it!
+							logger.trace("Form data : " + formData);
+							
+							// get the requestPage id
+							String requestPageId = rapidRequest.getPage().getId();
+							
+							// get the page control values
+							PageControlValues pageControlValues = FormAdapter.getPostPageControlValues(requestPageId, formData);
+							
+							// loop and print them if trace on
+							if (logger.isTraceEnabled()) {
+								for (ControlValue controlValue : pageControlValues) {
+									logger.debug(controlValue.getId() + " = " + controlValue.getValue());
+								}
+							}
+							
+							// store the page control values
+							app.getFormAdapter().storePageControlValues(rapidRequest, app, requestPageId, pageControlValues);
+																					
+							// get all of the app pages
+							PageHeaders pageHeaders = app.getPages().getSortedPages();
+							
+							// get it's position
+							int pageIndex = pageHeaders.indexOf(requestPageId);
+							
+							// if there is a next page
+							if (pageIndex < pageHeaders.size() - 1) {
+								
+								// get the next page header
+								PageHeader nextPageHeader = pageHeaders.get(pageIndex + 1);
+								
+								// send a redirect for the page (this avoids ERR_CACH_MISS issues on the back button )
+								response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion() + "&p=" + nextPageHeader.getId());
+								
 							} else {
 								
+								// send a redirect for the summary (this also avoids ERR_CACH_MISS issues on the back button )
+								response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion() + "&action=summary");
+															
+							}
+																							
+						} else if ("checkVersion".equals(rapidRequest.getActionName())) {
+							
+							// create a json version object
+							JSONObject jsonVersion = new JSONObject();
+																
+							// add the mobile version, followed by the app version
+							jsonVersion.put("version", MOBILE_VERSION + " - " + app.getVersion());
+																											
+							// create a writer
+							PrintWriter out = response.getWriter();
+							
+							// print the results
+							out.print(jsonVersion.toString());
+							
+							// close the writer
+							out.close();
+							
+							// log response
+							logger.debug("Rapid POST response : " + jsonVersion.toString());
+														
+						} else if ("uploadImage".equals(rapidRequest.getActionName())) {
+																			
+							// get the name
+							String imageName = request.getParameter("name");
+							
+							// if we got one
+							if (imageName == null) {
+								
 								// send forbidden response			
-								sendMessage(rapidRequest, response, 403, "Unrecognised", "Unrecognised file type");
+								sendMessage(rapidRequest, response, 403, "Name required", "Image name must be provided");
 								
 								// log
-								getLogger().debug("Rapid POST response (403) : Unrecognised file type");
+								logger.debug("Rapid POST response (403) : Name must be provided");
 								
-							} // signature check
+							} else {
+															
+								// check the jpg file signature (from http://en.wikipedia.org/wiki/List_of_file_signatures)
+								if (bodyBytes[0] == (byte)0xFF && bodyBytes[1] == (byte)0xD8 && bodyBytes[2] == (byte)0xFF) {
+									
+									// create the paht
+									String imagePath = "uploads/" +  app.getId() + "/" + imageName;
+									// create a file
+									File imageFile = new File(getServletContext().getRealPath(imagePath));
+									// create app folder if need be
+									imageFile.getParentFile().mkdir();
+									// create a file output stream to save the data to
+									FileOutputStream fos = new FileOutputStream(imageFile);
+									// write the body bytes to the stream
+									fos.write(bodyBytes);
+									// close the stream
+									fos.close();
+									
+									// log the file creation
+									logger.debug("Saved image file " + imageFile);
+									
+									// create a writer
+									PrintWriter out = response.getWriter();
+									
+									// print the results
+									out.print(imagePath);
+									
+									// close the writer
+									out.close();
+									
+								} else {
+									
+									// send forbidden response			
+									sendMessage(rapidRequest, response, 403, "Unrecognised", "Unrecognised file type");
+									
+									// log
+									logger.debug("Rapid POST response (403) : Unrecognised file type");
+									
+								} // signature check
+								
+							} // upload file name check
 							
-						} // name check
-												
+						} // action check
+																																	
 					} else {
 						
 						// send forbidden response			
 						sendMessage(rapidRequest, response, 403, "No permisssion", "You do not have permssion to use this application");
 						
 						// log
-						getLogger().debug("Rapid POST response (403) : User not authorised for application");
-						
-					} // user check
-					
+						logger.debug("Rapid POST response (403) : User not authorised for application");
+											
+					}  // user check
+				
 				} // app check
-																
-			} // action check
-			
+				
+			} // pre app action check
+		
 		} catch (Exception ex) {
 		
-			getLogger().error("Rapid POST error : ", ex);
+			logger.error("Rapid POST error : ", ex);
 			
 			sendException(rapidRequest, response, ex);
 		
