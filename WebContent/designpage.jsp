@@ -63,19 +63,19 @@ if (appId != null && pageId != null) {
 	if (app != null) {
 		
 		// get the security
-		SecurityAdapter security = app.getSecurity();
+		SecurityAdapter securityAdapter = app.getSecurityAdapter();
 		
 		// get a simple rapid request
 		RapidRequest rapidRequest = new RapidRequest(request, app); 
 		
 		// check the user password
-		if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRequest.getUserPassword())) {
+		if (securityAdapter.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRequest.getUserPassword())) {
 			
 			// check we have the RapidDesign permission in the security provider for this app
-			designerPermission = security.checkUserRole(rapidRequest, Rapid.DESIGN_ROLE);
+			designerPermission = securityAdapter.checkUserRole(rapidRequest, Rapid.DESIGN_ROLE);
 			
 			// if this is the rapid app the super permission is required too
-			if ("rapid".equals(app.getId())) designerPermission = designerPermission && app.getSecurity().checkUserRole(rapidRequest, Rapid.SUPER_ROLE);
+			if ("rapid".equals(app.getId())) designerPermission = designerPermission && securityAdapter.checkUserRole(rapidRequest, Rapid.SUPER_ROLE);
 			
 			// check designer permission
 			if (designerPermission) {

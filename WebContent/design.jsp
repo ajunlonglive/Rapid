@@ -43,7 +43,7 @@ Application rapid = applications.get("rapid");
 // get a rapid request
 RapidRequest rapidRequest = new RapidRequest(request, rapid); 
 // get the rapid application security
-SecurityAdapter security = rapid.getSecurity();
+SecurityAdapter security = rapid.getSecurityAdapter();
 // assume no permission
 boolean designerPermission = false;
 // check the user password
