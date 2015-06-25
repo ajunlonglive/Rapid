@@ -60,6 +60,7 @@ import org.xml.sax.SAXException;
 
 import com.rapid.core.Application.Resource;
 import com.rapid.core.Application.ResourceDependency;
+import com.rapid.forms.FormAdapter;
 import com.rapid.security.SecurityAdapter;
 import com.rapid.security.SecurityAdapter.SecurityAdapaterException;
 import com.rapid.security.SecurityAdapter.User;
@@ -1244,7 +1245,7 @@ public class Page {
 	}
 		
 	// this routine produces the entire page
-	public void writeHtml(RapidHttpServlet rapidServlet, RapidRequest rapidRequest,  Application application, User user, Writer writer, boolean showDesignerLink) throws JSONException, IOException {
+	public void writeHtml(RapidHttpServlet rapidServlet, RapidRequest rapidRequest,  Application application, User user, Writer writer, boolean dialogue) throws JSONException, IOException {
 				
 		// this doctype is necessary (amongst other things) to stop the "user agent stylesheet" overriding styles
 		writer.write("<!DOCTYPE html>\n");
@@ -1261,6 +1262,9 @@ public class Page {
 				
 			// get the security
 			SecurityAdapter security = application.getSecurityAdapter();
+			
+			// get any form adapter
+	    	FormAdapter formAdapter = application.getFormAdapter();
 			
 			// assume the user has permission to access the page
 			boolean gotPagePermission = true;
@@ -1297,16 +1301,18 @@ public class Page {
 		    	
 		    	// write the username
 		    	writer.write("  <script type='text/javascript'> var _userName = '" + user.getName().replace("'", "\'") + "'; </script>\n");
-		    	
+		    			    	
 		    	// close the head
 		    	writer.write("  </head>\n");
 		    	
 				// start the body		
 		    	writer.write("  <body id='" + _id + "' style='visibility:hidden;'>\n");
+		    			    			    	
+		    	// start the form if in use		
+		    	if (formAdapter != null) {
+		    		writer.write("    <form action='~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + _id + "' method='POST'>\n");
+		    	}
 		    	
-		    	// start the form		
-		    	if (showDesignerLink) writer.write("    <form action='~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + _id + "' method='POST'>\n");
-				
 				// a reference for the body html
 				String bodyHtml = null;
 				
@@ -1384,9 +1390,17 @@ public class Page {
 					}
 					
 				} // got body html check
-				
-				// close the form
-				if (showDesignerLink) writer.write("    </form>\n");
+								
+				if (formAdapter != null) {
+					// get the form id
+					String formId = formAdapter.getFormId(rapidRequest, application);
+					// write the form id into the page
+		    		writer.write("<script type='text/javascript'> var _formId = '" + formId + "'; </script>\n");
+					// write the form values
+					formAdapter.writeFormPageSetValues(rapidRequest, formId, application, _id, writer);
+					// close the form
+					writer.write("    </form>\n");
+				}
 										
 			} else {
 				
@@ -1398,7 +1412,7 @@ public class Page {
 			try {
 				
 				// dialogues do not have a designer link so no point checking
-				if (showDesignerLink) {
+				if (!dialogue) {
 				
 					// assume not admin link
 					boolean adminLinkPermission = false;

@@ -61,6 +61,9 @@ public class Form extends Action {
 		if ("next".equals(actionType)) {
 			// next submits the form
 			js = "$('form').submit();\n";
+		} else if ("prev".equals(actionType)) {
+			// go back
+			js = "window.history.back();\n";
 		}
 		
 		// return the js

@@ -45,11 +45,52 @@ This action runs form - specifc functions
 	            <key>actionType</key>
 	            <name>Action</name>
 	            <changeValueJavaScript>controlActionType</changeValueJavaScript>	 
-	            <getValuesFunction>return [["next","next page"]];</getValuesFunction>
+	            <getValuesFunction>return [["next","next page"],["prev","previous page"]];</getValuesFunction>
 	            <refreshProperties>true</refreshProperties>	            
 	        </property>
 	        
 		</properties>
+	
+	    <resources>
+	        <resource>
+	            <type>css</type>
+	            <contents>
+	    			<![CDATA[
+	    			
+.formSummaryTitle {
+	margin-left:20px;
+}	    			
+	    			
+.formSummaryPage {
+	margin-left:20px;
+	margin-right:20px;
+	margin-bottom:20px;
+	padding: 10px;
+	border: 3px solid black;
+}
+
+.formSummaryPage h2 {
+	margin-top:0;
+}
+
+.formSummaryPage a {
+	float: right;
+	position:relative;
+	top: -20px
+}
+
+.formSummaryControl {
+	display: block;
+	margin-bottom:5px;
+}
+
+.formSummarySubmit {
+	margin-left:20px;
+}		    			
+	    			]]>        
+	            </contents>
+	        </resource>
+	    </resources>
 	        		    	        
     </action> 
 </actions>

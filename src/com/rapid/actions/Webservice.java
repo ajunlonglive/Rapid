@@ -31,6 +31,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -484,8 +486,10 @@ public class Webservice extends Action {
 					do {
 						// get the input
 						JSONObject input = jsonInputs.getJSONObject(index);
+						// url escape the value
+						String value = URLEncoder.encode(input.optString("value"),"UTF-8");
 						// replace the ? with the input value
-						body = body.substring(0, pos) + input.optString("value") + body.substring(pos + 1);
+						body = body.substring(0, pos) + value + body.substring(pos + 1);
 						// look for the next question mark
 						pos = body.indexOf("?",pos + 1);
 						// inc the index for the next round

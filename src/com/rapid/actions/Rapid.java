@@ -1471,15 +1471,15 @@ public class Rapid extends Action {
 				String description = jsonAction.optString("description").trim();
 				
 				// use the application.copy routine (this updates the status and created time)
-				app.copy(rapidServlet, rapidRequest, app.getId(), version, false, false);
+				Application dupApp = app.copy(rapidServlet, rapidRequest, app.getId(), version, false, false);
 				
-				// set the new title
-				app.setTitle(title);
+				// set the new title into the duplicate
+				dupApp.setTitle(title);
 				// set the new description
-				app.setDescription(description);
+				dupApp.setDescription(description);
 				
-				// save
-				app.save(rapidServlet, rapidRequest, false);
+				// save the duplicate
+				dupApp.save(rapidServlet, rapidRequest, false);
 																		
 				// set the result message
 				result.put("message", "Application " + app.getTitle() + " duplicated");
