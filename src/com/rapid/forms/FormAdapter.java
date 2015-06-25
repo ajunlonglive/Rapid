@@ -28,6 +28,7 @@ package com.rapid.forms;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 
@@ -35,7 +36,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 
 import com.rapid.core.Application;
-import com.rapid.core.Control;
 import com.rapid.core.Page;
 import com.rapid.core.Application.RapidLoadingException;
 import com.rapid.core.Pages.PageHeader;
@@ -45,7 +45,7 @@ import com.rapid.server.RapidRequest;
 public abstract class FormAdapter {
 	
 	// a single controls value
-	public static class ControlValue {
+	public static class FormControlValue {
 		
 		// instance variables
 		private String _id, _value;
@@ -55,7 +55,7 @@ public abstract class FormAdapter {
 		public String getValue() { return _value; }
 		
 		// constructor
-		public ControlValue(String id, String value) {
+		public FormControlValue(String id, String value) {
 			_id = id;
 			_value = value;
 		}
@@ -63,7 +63,7 @@ public abstract class FormAdapter {
 	}
 	
 	// a pages control values
-	public static class PageControlValues extends ArrayList<ControlValue> {
+	public static class FormPageControlValues extends ArrayList<FormControlValue> {
 		
 		// instance variables
 		
@@ -75,10 +75,10 @@ public abstract class FormAdapter {
 		
 		// constructor
 		
-		public PageControlValues(String pageId, ControlValue... controlValues) {
+		public FormPageControlValues(String pageId, FormControlValue... controlValues) {
 			_pageId  = pageId;
 			if (controlValues != null) {
-				for (ControlValue controlValue : controlValues) {
+				for (FormControlValue controlValue : controlValues) {
 					this.add(controlValue);
 				}
 			}
@@ -87,7 +87,7 @@ public abstract class FormAdapter {
 		// methods
 		
 		public void add(String controlId, String controlValue) {
-			this.add(new ControlValue(controlId, controlValue));
+			this.add(new FormControlValue(controlId, controlValue));
 		}
 		
 	}
@@ -111,43 +111,270 @@ public abstract class FormAdapter {
 	
 	// abstract methods
 	
-	public abstract void storePageControlValues(RapidRequest rapidRequest, Application application, String pageId, PageControlValues pageControlValues);
+	public abstract String getFormId(RapidRequest rapidRequest, Application application);
+			
+	public abstract FormPageControlValues getFormPageControlValues(RapidRequest rapidRequest, String formId, Application application, String pageId);
 	
-	public abstract PageControlValues retrievePageControlValues(RapidRequest rapidRequest, Application application, String pageId);
+	public abstract void setFormPageControlValues(RapidRequest rapidRequest, String formId, Application application, String pageId, FormPageControlValues pageControlValues);
+	
+	public abstract void submitForm(RapidRequest rapidRequest, String formId, Application application);
 	
 	// overridable methods
 	
-	public String getSummaryStartHtml(RapidRequest rapidRequest, Application application) {
-		return "<h1>Form summary</h1>\n";
-	}
+	// this html is written after the body tag
+	public abstract String getSummaryStartHtml(RapidRequest rapidRequest, Application application);
 	
-	public String getSummaryEndHtml(RapidRequest rapidRequest, Application application) {
-		return "";
-	}
-	
-	public String getSummaryPageStartHtml(RapidRequest rapidRequest, Application application, Page page) {
-		return "<h2>" + page.getTitle() + "</h2>";
-	}
-	
-	public String getSummaryPageEndHtml(RapidRequest rapidRequest, Application application, Page page) {
-		return "";
-	}
-	
-	public String getSummaryControlValueHtml(RapidRequest rapidRequest, Application application, Page page, ControlValue controlValue) {
-		Control control = page.getControl(controlValue.getId());
-		return "<p>" + control.getName() + " = " + controlValue.getValue() + "</p>";
-	}
+	// this html is written after the submit button, before the body close tag 
+	public abstract String getSummaryEndHtml(RapidRequest rapidRequest, Application application);
 		
+	// this html is written for the start of each page
+	public abstract String getSummaryPageStartHtml(RapidRequest rapidRequest, Application application, Page page);
+	
+	// this html is written for the end of each page
+	public abstract String getSummaryPageEndHtml(RapidRequest rapidRequest, Application application, Page page);
+	
+	// this html contains the control value
+	public abstract String getSummaryControlValueHtml(RapidRequest rapidRequest, Application application, Page page, FormControlValue controlValue);
+	
+	// this html is written after the end of the pages, before the submit button
+	public abstract String getSummaryPagesEndHtml(RapidRequest rapidRequest, Application application);
+				
+
+	// public instance methods
+	
+	// this write the form page set values routine, it is called by Page.getPageHtml just before the form is closed
+	public  void writeFormPageSetValues(RapidRequest rapidRequest, String formId, Application application, String pageId, Writer writer) throws IOException {
+		
+		// get any form page values
+		FormPageControlValues formControlValues = getFormPageControlValues(rapidRequest, formId, application, pageId );
+		
+		// if there are any
+		if (formControlValues != null) {
+			if (formControlValues.size() > 0) {
+				
+				// open the javascript
+				writer.write("<script>\n");
+				
+				// get the form elements
+				writer.write("var el = document.forms[0].elements;\n");
+				
+				// loop the values
+				for (FormControlValue formControlValue : formControlValues) {
+					String value = formControlValue.getValue();
+					if (value != null) writer.write("el['" + formControlValue.getId() + "'].value = '" + value.replace("'", "\'")  + "';\n");
+				}
+				
+				// close the javascript
+				writer.write("</script>\n");
+				
+			}
+		}					
+	}
+	
+	// this writes the form summary page
+	public void writeFormSummary(RapidRequest rapidRequest, HttpServletResponse response) throws IOException, RapidLoadingException {
+		
+		// get the form id
+		String formId = getFormId(rapidRequest, _application);
+		
+		// check for a form id - should be null if form not commence properly
+		if (formId == null) {
+			
+			// send users back to the start
+			response.sendRedirect("~?a=" + _application.getId() + "&v=" + _application.getVersion());
+			
+		} else {
+		
+			// create a writer
+			PrintWriter writer = response.getWriter();
+					
+			// set the response type
+			response.setContentType("text/html");
+			
+			// this doctype is necessary (amongst other things) to stop the "user agent stylesheet" overriding styles
+			writer.write("<!DOCTYPE html>\n");
+																							
+			// open the html
+			writer.write("<html>\n");
+			
+			// open the head
+			writer.write("  <head>\n");
+			
+			// write a title
+			writer.write("    <title>Form summary - by Rapid</title>\n");
+			
+			// get the servletContext
+			ServletContext servletContext = rapidRequest.getRapidServlet().getServletContext();
+			
+			// get app start page
+			Page startPage = _application.getStartPage(servletContext);
+						
+			// write the start page head (and it's resources)
+			writer.write(startPage.getResourcesHtml(_application, true));
+			
+			// close the head
+			writer.write("  </head>\n");
+			
+			// open the body
+			writer.write("  <body>\n");
+			
+			// write the summary start
+			writer.write(getSummaryStartHtml(rapidRequest, _application));
+			
+			// get the sorted pages
+			PageHeaders pageHeaders = _application.getPages().getSortedPages();
+			
+			// loop the page headers
+			for (PageHeader pageHeader : pageHeaders) {
+				
+				// get the page
+				Page page = _application.getPages().getPage(servletContext, pageHeader.getId());
+										
+				// get any page control values
+				FormPageControlValues pageControlValues = _application.getFormAdapter().getFormPageControlValues(rapidRequest, formId, _application, page.getId());
+				
+				// if we got some
+				if (pageControlValues != null) {
+					
+					// write the page start html
+					writer.write(getSummaryPageStartHtml(rapidRequest, _application, page));
+					
+					// loop the control values
+					for (FormControlValue controlValue : pageControlValues) {
+						// write the control value!
+						writer.write(getSummaryControlValueHtml(rapidRequest, _application, page, controlValue));
+					}
+					
+					// write the edit link
+					writer.write("<a href='~?a=" + _application.getId() + "&v=" + _application.getVersion() + "&p=" + page.getId() + "'>edit</a>\n");
+					
+					// write the page end html
+					writer.write(getSummaryPageEndHtml(rapidRequest, _application, page));
+					
+				} // control value check
+				
+			} // page loop
+			
+			// write the pages end
+			writer.write(getSummaryPagesEndHtml(rapidRequest, _application));
+			
+			// write the submit button form and button!
+			writer.write("<form action='~?a=" + _application.getId() + "&v=" + _application.getVersion()  + "&action=submit' method='POST'><button type='submit' class='formSummarySubmit'>Submit</button></form>");
+			
+			// write the summary end
+			writer.write(getSummaryEndHtml(rapidRequest, _application));
+									
+			// close the remaining elements
+			writer.write("  </body>\n</html>");
+																																		
+			// close the writer
+			writer.close();
+			
+			// flush the writer
+			writer.flush();
+			
+		} // form id check
+		
+	}
+	
+	// this write the form submit page if all was ok
+	public  void writeFormSubmitOK(RapidRequest rapidRequest, HttpServletResponse response, String formId) throws IOException, RapidLoadingException {
+					
+			// create a writer
+			PrintWriter writer = response.getWriter();
+					
+			// set the response type
+			response.setContentType("text/html");
+			
+			// this doctype is necessary (amongst other things) to stop the "user agent stylesheet" overriding styles
+			writer.write("<!DOCTYPE html>\n");
+																							
+			// open the html
+			writer.write("<html>\n");
+			
+			// open the head
+			writer.write("  <head>\n");
+			
+			// write a title
+			writer.write("    <title>Form submitted - by Rapid</title>\n");
+			
+			// get the servletContext
+			ServletContext servletContext = rapidRequest.getRapidServlet().getServletContext();
+			
+			// get app start page
+			Page startPage = _application.getStartPage(servletContext);
+						
+			// write the start page head (and it's resources)
+			writer.write(startPage.getResourcesHtml(_application, true));
+			
+			// close the head
+			writer.write("  </head>\n");
+			
+			// open the body
+			writer.write("  <body>Thank you.</body>\n</html>");
+																																		
+			// close the writer
+			writer.close();
+			
+			// flush the writer
+			writer.flush();
+						
+	}
+	
+	// this write the form submit page if all was ok
+	public  void writeFormSubmitError(RapidRequest rapidRequest, HttpServletResponse response, String formId, Exception ex) throws IOException, RapidLoadingException {
+					
+			// create a writer
+			PrintWriter writer = response.getWriter();
+					
+			// set the response type
+			response.setContentType("text/html");
+			
+			// this doctype is necessary (amongst other things) to stop the "user agent stylesheet" overriding styles
+			writer.write("<!DOCTYPE html>\n");
+																							
+			// open the html
+			writer.write("<html>\n");
+			
+			// open the head
+			writer.write("  <head>\n");
+			
+			// write a title
+			writer.write("    <title>Form submit error - by Rapid</title>\n");
+			
+			// get the servletContext
+			ServletContext servletContext = rapidRequest.getRapidServlet().getServletContext();
+			
+			// get app start page
+			Page startPage = _application.getStartPage(servletContext);
+						
+			// write the start page head (and it's resources)
+			writer.write(startPage.getResourcesHtml(_application, true));
+			
+			// close the head
+			writer.write("  </head>\n");
+			
+			// open the body
+			writer.write("  <body>There was a problem submutting your form: " + ex.getMessage() + "</body>\n</html>");
+																																		
+			// close the writer
+			writer.close();
+			
+			// flush the writer
+			writer.flush();
+						
+	}
+	
 	// static methods
 	
-	public static PageControlValues getPostPageControlValues(String pageId, String postBody)  {
+	public static FormPageControlValues getPostPageControlValues(String pageId, String postBody)  {
 		// check for a post body
 		if (postBody == null) {
 			// send null if nothing 
 			return null;
 		} else {
 			// create our pageControlValues
-			PageControlValues pageControlValues = new PageControlValues(pageId);
+			FormPageControlValues pageControlValues = new FormPageControlValues(pageId);
 			// split into name value pairs
 			String[] params = postBody.split("&");
 			// loop the pairs
@@ -176,83 +403,6 @@ public abstract class FormAdapter {
 			} // param loop			
 			return pageControlValues;						
 		} // postBody check				
-	}
-	
-	public static void writeFormSummary(ServletContext servletContext, RapidRequest rapidRequest, HttpServletResponse response, Application application) throws IOException, RapidLoadingException {
-		
-		// get the form adapter
-		FormAdapter formAdapter = application.getFormAdapter();
-		
-		// create a writer
-		PrintWriter writer = response.getWriter();
-				
-		// set the response type
-		response.setContentType("text/html");
-		
-		// this doctype is necessary (amongst other things) to stop the "user agent stylesheet" overriding styles
-		writer.write("<!DOCTYPE html>\n");
-										
-		// open the html
-		writer.write("<html>\n");
-		
-		// open the head
-		writer.write("  <head>\n");
-		
-		// add the Rapid application style sheet
-		writer.write("    <link rel='stylesheet' type='text/css' href='applications/forms/1/rapid.css'></link>\n");
-		
-		// close the head
-		writer.write("  </head>\n");
-		
-		// open the body
-		writer.write("  <body>\n");
-		
-		// write the summary start
-		writer.write(formAdapter.getSummaryStartHtml(rapidRequest, application));
-		
-		// get the sorted pages
-		PageHeaders pageHeaders = application.getPages().getSortedPages();
-		
-		// loop the page headers
-		for (PageHeader pageHeader : pageHeaders) {
-			
-			// get the page
-			Page page = application.getPages().getPage(servletContext, pageHeader.getId());
-									
-			// get any page control values
-			PageControlValues pageControlValues = application.getFormAdapter().retrievePageControlValues(rapidRequest, application, page.getId());
-			
-			// if we got some
-			if (pageControlValues != null) {
-				
-				// write the page start html
-				writer.write(formAdapter.getSummaryPageStartHtml(rapidRequest, application, page));
-				
-				// loop the control values
-				for (ControlValue controlValue : pageControlValues) {
-					// write the control value!
-					writer.write(formAdapter.getSummaryControlValueHtml(rapidRequest, application, page, controlValue));
-				}
-				
-				// write the edit link
-				writer.write("<a href='~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + page.getId() + "'>edit</a>");
-				
-				// write the page end html
-				writer.write(formAdapter.getSummaryPageEndHtml(rapidRequest, application, page));
-				
-			} // control value check
-			
-		} // page loop
-								
-		// close the remaining elements
-		writer.write("  </body>\n</html>");
-																																	
-		// close the writer
-		writer.close();
-		
-		// flush the writer
-		writer.flush();
-		
 	}
 
 }

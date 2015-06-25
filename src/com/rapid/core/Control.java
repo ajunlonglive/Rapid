@@ -163,6 +163,33 @@ public class Control {
 		if (_styles == null) _styles = new ArrayList<Style>();
 		_styles.add(style);
 	}
+	
+	// helper method for looking up code values 
+	// (for now dropdowns and radiobuttons are hardcoded, at some point we can add a lookup interface and lookup class specification in the control.xml, or just properties for the code check, collection, code and label)
+	public String getCodeText(String code) {
+		try {
+			String type = getType();
+			if ("dropdown".equals(type)) {
+				if (Boolean.parseBoolean(getProperty("codes"))) {
+					JSONArray jsonCodes = new JSONArray(getProperty("options"));
+					for (int i = 0; i < jsonCodes.length(); i++) {
+						JSONObject jsonCode = jsonCodes.getJSONObject(i);
+						if (code.equals(jsonCode.optString("value"))) return jsonCode.optString("text");
+					}
+				}
+			} else if ("radiobuttons".equals(type)) {
+				if (Boolean.parseBoolean(getProperty("codes"))) {
+					JSONArray jsonCodes = new JSONArray(getProperty("buttons"));
+					for (int i = 0; i < jsonCodes.length(); i++) {
+						JSONObject jsonCode = jsonCodes.getJSONObject(i);
+						if (code.equals(jsonCode.optString("value"))) return jsonCode.optString("label");
+					}
+				}
+			} 
+		} catch (JSONException ex) {}		
+		return code;
+	}
+	
 				
 	// a parameterless constructor is required so they can go in the JAXB context and be unmarshalled 
 	public Control() {

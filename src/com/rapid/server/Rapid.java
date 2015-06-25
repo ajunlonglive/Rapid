@@ -50,8 +50,8 @@ import com.rapid.core.Page;
 import com.rapid.core.Pages.PageHeader;
 import com.rapid.core.Pages.PageHeaders;
 import com.rapid.forms.FormAdapter;
-import com.rapid.forms.FormAdapter.ControlValue;
-import com.rapid.forms.FormAdapter.PageControlValues;
+import com.rapid.forms.FormAdapter.FormControlValue;
+import com.rapid.forms.FormAdapter.FormPageControlValues;
 import com.rapid.security.SecurityAdapter;
 import com.rapid.security.SecurityAdapter.User;
 import com.rapid.utils.Files;
@@ -106,9 +106,25 @@ public class Rapid extends RapidHttpServlet {
 					// check if there is a Rapid action
 					if ("summary".equals(rapidRequest.getActionName())) {
 						
-						// write the form summary
-						FormAdapter.writeFormSummary(getServletContext(), rapidRequest, response, app);
+						// get the form adapter
+						FormAdapter formAdapter = app.getFormAdapter();
 						
+						// check there is one
+						if (formAdapter == null) {
+							
+							// send message
+							sendMessage(rapidRequest, response, 500, "Not a form", "This Rapid app is not a form");
+							
+							// log
+							logger.debug("Rapid GET response (500) : Page not found");
+							
+						} else {
+															
+							// write the form summary page
+							formAdapter.writeFormSummary(rapidRequest, response);								
+														
+						}
+
 					} else if ("download".equals(rapidRequest.getActionName())) {
 						
 						// set the file name
@@ -147,43 +163,67 @@ public class Rapid extends RapidHttpServlet {
 						zipFile.delete();
 						
 					} else {
+						
+						// assum it's ok to print the page
+						boolean pageCheck = true;
+						
+						// get the form adapter (if there is one)
+						FormAdapter formAdapter = app.getFormAdapter();
+						
+						// if there is a formAdapter, make sure there's a form id
+						if (formAdapter != null) {
+							// get form id
+							String formId = formAdapter.getFormId(rapidRequest, app);
+							// if there isn't one go back to the start
+							if (formId == null) pageCheck = false;							
+						}
+						
+						// if the pageCheck was ok (or not invalidated by lack of a form id)
+						if (pageCheck) {
 																	
-						// get the page object
-						Page page = rapidRequest.getPage();
+							// get the page object
+							Page page = rapidRequest.getPage();
+									
+							// check we got one
+							if (page == null) { 
 								
-						// check we got one
-						if (page == null) { 
-							
-							// send message
-							sendMessage(rapidRequest, response, 404, "Page not found", "The page you requested can't be found");
-							
-							// log
-							logger.debug("Rapid GET response (404) : Page not found");
+								// send message
+								sendMessage(rapidRequest, response, 404, "Page not found", "The page you requested can't be found");
+								
+								// log
+								logger.debug("Rapid GET response (404) : Page not found");
+								
+							} else {
+															
+								// create a writer
+								PrintWriter out = response.getWriter();
+								
+								// assume this is not a dialogue
+								boolean dialogue = false;
+								
+								// set designer link to false if action is dialogue
+								if ("dialogue".equals(rapidRequest.getActionName())) dialogue = true;
+								
+								// set the response type
+								response.setContentType("text/html");
+								
+								// write the page html
+								page.writeHtml(this, rapidRequest,  app, user, out, dialogue);
+																																							
+								// close the writer
+								out.close();
+								
+								// flush the writer
+								out.flush();
+													
+							} // page check
 							
 						} else {
-														
-							// create a writer
-							PrintWriter out = response.getWriter();
 							
-							// assume we do want the designer link
-							boolean showDesignerLink = true;
+							// go to what should be the start page
+							response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion());
 							
-							// set designer link to false if action is dialogue
-							if ("dialogue".equals(rapidRequest.getActionName())) showDesignerLink = false;
-							
-							// set the response type
-							response.setContentType("text/html");
-							
-							// write the page html
-							page.writeHtml(this, rapidRequest,  app, user, out, showDesignerLink);
-																																						
-							// close the writer
-							out.close();
-							
-							// flush the writer
-							out.flush();
-												
-						} // page check
+						} // form id check
 																																					
 					} // action name check
 					
@@ -402,52 +442,96 @@ public class Rapid extends RapidHttpServlet {
 																																																													
 						}  else if("application/x-www-form-urlencoded".equals(request.getContentType())) {
 							
-							//
+							// log
 							logger.debug("Form data received");
 							
-							// this is a form page's data being submitted
-							String formData = new String(bodyBytes, "UTF-8");
+							// get the form adapter
+							FormAdapter formAdapter = app.getFormAdapter();
 							
-							// log it!
-							logger.trace("Form data : " + formData);
-							
-							// get the requestPage id
-							String requestPageId = rapidRequest.getPage().getId();
-							
-							// get the page control values
-							PageControlValues pageControlValues = FormAdapter.getPostPageControlValues(requestPageId, formData);
-							
-							// loop and print them if trace on
-							if (logger.isTraceEnabled()) {
-								for (ControlValue controlValue : pageControlValues) {
-									logger.debug(controlValue.getId() + " = " + controlValue.getValue());
-								}
-							}
-							
-							// store the page control values
-							app.getFormAdapter().storePageControlValues(rapidRequest, app, requestPageId, pageControlValues);
-																					
-							// get all of the app pages
-							PageHeaders pageHeaders = app.getPages().getSortedPages();
-							
-							// get it's position
-							int pageIndex = pageHeaders.indexOf(requestPageId);
-							
-							// if there is a next page
-							if (pageIndex < pageHeaders.size() - 1) {
+							// form adapter check
+							if (formAdapter == null) {
 								
-								// get the next page header
-								PageHeader nextPageHeader = pageHeaders.get(pageIndex + 1);
+								// send message
+								sendMessage(rapidRequest, response, 500, "Not a form", "This Rapid app is not a form");
 								
-								// send a redirect for the page (this avoids ERR_CACH_MISS issues on the back button )
-								response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion() + "&p=" + nextPageHeader.getId());
+								// log
+								logger.debug("Rapid GET response (500) : Page not found");
 								
 							} else {
+							
+								// this is a form page's data being submitted
+								String formData = new String(bodyBytes, "UTF-8");
 								
-								// send a redirect for the summary (this also avoids ERR_CACH_MISS issues on the back button )
-								response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion() + "&action=summary");
-															
-							}
+								// log it!
+								logger.trace("Form data : " + formData);
+								
+								// if there's a submit action
+								if ("submit".equals(request.getParameter("action"))) {
+									
+									// get the form id
+									String formId = formAdapter.getFormId(rapidRequest, app);
+									
+									try {
+										
+										// do the submit
+										formAdapter.submitForm(rapidRequest, formId, app);
+										
+										// write the form submit OK page
+										formAdapter.writeFormSubmitOK(rapidRequest, response, formId);
+										
+									} catch (Exception ex) {
+										
+										// write the form submit Error page
+										formAdapter.writeFormSubmitError(rapidRequest, response, formId, ex);
+										
+									} // submit check
+									
+								} else {
+								
+									// get the requestPage id
+									String requestPageId = rapidRequest.getPage().getId();
+									
+									// get the page control values
+									FormPageControlValues pageControlValues = FormAdapter.getPostPageControlValues(requestPageId, formData);
+									
+									// loop and print them if trace on
+									if (logger.isTraceEnabled()) {
+										for (FormControlValue controlValue : pageControlValues) {
+											logger.debug(controlValue.getId() + " = " + controlValue.getValue());
+										}
+									}
+									
+									// get the form id
+									String formId = formAdapter.getFormId(rapidRequest, app);
+									
+									// store the form page control values
+									formAdapter.setFormPageControlValues(rapidRequest, formId, app, requestPageId, pageControlValues);
+																							
+									// get all of the app pages
+									PageHeaders pageHeaders = app.getPages().getSortedPages();
+									
+									// get it's position
+									int pageIndex = pageHeaders.indexOf(requestPageId);
+									
+									// if there is a next page
+									if (pageIndex < pageHeaders.size() - 1) {
+										
+										// get the next page header
+										PageHeader nextPageHeader = pageHeaders.get(pageIndex + 1);
+										
+										// send a redirect for the page (this avoids ERR_CACH_MISS issues on the back button )
+										response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion() + "&p=" + nextPageHeader.getId());
+										
+									} else {
+										
+										// send a redirect for the summary (this also avoids ERR_CACH_MISS issues on the back button )
+										response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion() + "&action=summary");
+																	
+									} // page size check
+									
+								} // submit action check
+								
+							} // form adapter check
 																							
 						} else if ("checkVersion".equals(rapidRequest.getActionName())) {
 							
