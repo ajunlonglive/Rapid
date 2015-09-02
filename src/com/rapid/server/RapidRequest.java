@@ -50,6 +50,8 @@ import com.rapid.server.filter.RapidFilter;
 //this class provides some utility functions for easily accessing common Rapid objects from a request
 public class RapidRequest {
 	
+	// instance variables
+	
 	private RapidHttpServlet _rapidServlet;
 	private HttpServletRequest _request;
 	private String _actionName, _appId, _version, _userName;
@@ -58,7 +60,7 @@ public class RapidRequest {
 	private Control _control;
 	private Action _action;
 	
-	// useful get methods
+	// properties
 	
 	public RapidHttpServlet getRapidServlet() { return _rapidServlet; }
 	public HttpServletRequest getRequest() { return _request; }	
@@ -69,15 +71,22 @@ public class RapidRequest {
 	public Page getPage() { return _page; }
 	public Control getControl() { return _control; }
 	public Action getAction() { return _action; }
-	public Object getSessionAttribute(String name) { return _request.getSession().getAttribute(name); }
-	
+
 	// allow overriding the user name in the rare event we want to do something in the name of someone else (like modifying another users details in the Security Adapter)
 	public String getUserName() { return _userName; }
 	public void setUserName(String userName) { _userName = userName; }
 	
+	// methods
+	
+	// get a specified session attribute
+	public Object getSessionAttribute(String name) { return _request.getSession().getAttribute(name); }
+	
+	// get the device details
+	public String getDevice() {  return (String) getSessionAttribute(RapidFilter.SESSION_VARIABLE_USER_DEVICE); }
+				
 	// decrypt the password
 	public String getUserPassword() throws GeneralSecurityException, IOException {
-		String raw = (String) _request.getSession().getAttribute(RapidFilter.SESSION_VARIABLE_USER_PASSWORD);
+		String raw = (String) getSessionAttribute(RapidFilter.SESSION_VARIABLE_USER_PASSWORD);
 		String password = RapidHttpServlet.getEncryptedXmlAdapter().unmarshal(raw);
 		if (password == null) {
 			return "";
@@ -93,7 +102,7 @@ public class RapidRequest {
 		// retain the http request
 		_request = request;
 		// store the user name from the session
-		_userName = (String) _request.getSession().getAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME);
+		_userName = (String) getSessionAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME);
 		// look for an action parameter
 		_actionName = request.getParameter("action");			
 		// look for an appId
@@ -152,13 +161,13 @@ public class RapidRequest {
 	}	
 				
 	// can also instantiate a rapid request with just an application object (this is used by the rapid action)
-	public RapidRequest(RapidHttpServlet rapidServlet, HttpServletRequest request, Application application) {
-		// store the user name from the session
-		_userName = (String) request.getSession().getAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME);
+	public RapidRequest(RapidHttpServlet rapidServlet, HttpServletRequest request, Application application) {		
 		// store the servlet
 		_rapidServlet = rapidServlet;
 		// store the request
 		_request = request;
+		// store the user name from the session
+		_userName = (String) getSessionAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME);
 		// store the application
 		_application = application;
 		// if we got an application
@@ -172,10 +181,10 @@ public class RapidRequest {
 	
 	// can also instantiate a rapid request with just an HttpServletRequest and an application
 	public RapidRequest(HttpServletRequest request, Application application) {
-		// store the user name from the session
-		_userName = (String) request.getSession().getAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME);
 		// store the request
 		_request = request;
+		// store the user name from the session
+		_userName = (String) getSessionAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME);
 		// store the application
 		_application = application;
 		// if we got an application
