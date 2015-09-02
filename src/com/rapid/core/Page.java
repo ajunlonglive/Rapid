@@ -188,7 +188,7 @@ public class Page {
 	// the html for this page
 	public String getHtmlBody() { return _htmlBody; }
 	public void setHtmlBody(String htmlBody) { _htmlBody = htmlBody; }
-	
+		
 	// the child controls of the page
 	public List<Control> getControls() { return _controls; }
 	public void setControls(List<Control> controls) { _controls = controls; }
@@ -748,7 +748,7 @@ public class Page {
 		_actionTypes = null;
 		// empty the cached control types
 		_controlTypes = null;
-				
+						
 	}
 	
 	public void delete(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, Application application) throws JAXBException, IOException {

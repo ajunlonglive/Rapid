@@ -3849,6 +3849,56 @@ function Property_mobileActionType(cell, mobileAction, property, details) {
 	}));
 }
 
+// page order
+function Property_pageOrder(cell, propertyObject, property, details) {
+	
+	// retrieve or create the dialogue
+	var dialogue = getDialogue(cell, propertyObject, property, details, 250, "Page order", {sizeX: true});		
+	// grab a reference to the table
+	var table = dialogue.find("table").first();
+	// add the all border class
+	table.addClass("dialogueTableAllBorders");
+	// make sure table is empty
+	table.children().remove();
+		
+	// assume the text of the cell is empty
+	var text = "";
+	
+	for (var i in _pages) {
+		// get the page
+		var page = _pages[i];
+		
+		// append to the text
+		text += page.name
+		// add a comma if need be
+		if (i < _pages.length - 1) text += ", ";
+			
+		// add a page name row
+		table.append("<tr><td>" + page.name + " - " + page.title + "</td><td style='width:16px;padding-left:0;'><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
+		
+	}
+		
+	// add reorder listeners
+	addReorder(_pages, table.find("img.reorder"), function() {
+		// retain that the page order has been changed
+		_pageOrderChanged = true;
+		// get the dropdown
+		var pageSelect = $("#pageSelect");
+		pageSelect.children().remove();
+		// rebuild the dropdown
+		for (var i in _pages) {
+			var page = _pages[i];
+			pageSelect.append("<option value='" + page.id + "'" + (page.id == _page.id ? " selected='true'" : "") + ">" + page.name + " - " + page.title + "</option>");
+		}
+		// rebuild the list
+		Property_pageOrder(cell, propertyObject, property); 
+	});
+	
+	// put the text into the cell
+	cell.text(text);
+	
+}
+
 // generic inputs to a server-side action
 function Property_inputs(cell, propertyObject, property, details) {
 	

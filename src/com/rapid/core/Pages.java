@@ -61,7 +61,7 @@ import com.rapid.utils.Comparators;
 public class Pages {
 	
 	// public static class
-	
+			
 	public static class PageHeader {
 		
 		// instance variables
@@ -95,6 +95,36 @@ public class Pages {
 						
 	}
 	
+	public static class PageSorter implements Comparator<PageHeader> {
+		
+		// private instance variables
+		Application _application;
+		
+		// constructor
+		public PageSorter(Application application) {
+			_application = application;
+		}
+
+		@Override
+		public int compare(PageHeader page1, PageHeader page2) {
+			Map<String,Integer> pageOrders = _application.getPageOrders();
+			int o1 = -1;
+			if (pageOrders.get(page1.getId()) != null) o1 = pageOrders.get(page1.getId());
+			int o2 = -1;
+			if (pageOrders.get(page2.getId()) != null) o2 = pageOrders.get(page2.getId());
+			if (o1 > 0 && o2 > 0) {
+				return o1 - o2;
+			} else if (o1 == -1 && o2 > 0) {
+				return 1;
+			} else if (o2 == -1 && o1 > 0) {
+				return -1;
+			} else {
+				return Comparators.AsciiCompare(page1.getName(), page2.getName(), false);
+			}
+		}
+		
+	}
+	
 	public static class PageHeaders extends ArrayList<PageHeader> {
 				
 		// a new method used primarily by forms to get the position of a page in the sorted collection
@@ -117,6 +147,7 @@ public class Pages {
 	private FilenameFilter _filenameFilter;
 	private HashMap<String,PageHeader> _pageHeaders;
 	private HashMap<String,Page> _pages;
+	private PageSorter _pageSorter;
 			
 	// constructor
 	
@@ -135,6 +166,8 @@ public class Pages {
 	    		return name.toLowerCase().endsWith(".page.xml");
 	    	}
 	    };	   
+	    // make a page sorter
+	    _pageSorter = new PageSorter(application);
 	}
 	
 	// private methods
@@ -260,14 +293,8 @@ public class Pages {
 		for (String pageId : _pageHeaders.keySet()) {
 			pages.add(_pageHeaders.get(pageId));
 		}
-		// sort the list by the page name
-		Collections.sort(pages, new Comparator<PageHeader>() {
-			@Override
-			public int compare(PageHeader page1, PageHeader page2) {
-				return Comparators.AsciiCompare(page1.getName(), page2.getName(), false);
-			}
-			
-		});		
+		// sort the list using our sorter
+		Collections.sort(pages, _pageSorter);		
 		// return the pages
 		return pages; 
 	}	

@@ -863,7 +863,25 @@ public class Designer extends RapidHttpServlet {
 								}
 																
 								// save the new page to file
-								newPage.save(this, rapidRequest, application, true);					
+								newPage.save(this, rapidRequest, application, true);		
+								
+								// get any pages collection (we're only sent it if it's been changed)
+								JSONArray jsonPages = jsonPage.optJSONArray("pages");
+								// if we got some
+								if (jsonPages != null) {
+									// make a new map for the page orders
+									Map<String, Integer> pageOrders = new HashMap<String, Integer>();
+									
+									// loop the page orders
+									for (int i = 0; i < jsonPages.length(); i++) {
+										// add the order to the map
+										pageOrders.put(jsonPages.getJSONObject(i).getString("id"), i);
+									}
+									// replace the application pageOrders map
+									application.setPageOrders(pageOrders);			
+									// save the application and the new orders
+									application.save(this, rapidRequest, true);
+								}
 								
 								// send a positive message
 								output = "{\"message\":\"Saved!\"}";
