@@ -72,6 +72,15 @@ function scrollMapToSelectedControl() {
 		var selectedMapEntry = list.find("span[data-id=" + _selectedControl.id + "]");
 		// scroll the list so the selected control is in the middle
 		list.scrollTop(list.scrollTop() + selectedMapEntry.offset().top - list.offset().top - list.height()/2);
+		// get the verticel scrol bar
+		var vScroll = $("#scrollV");
+		// if it's visible
+		if (vScroll.is(":visible")) {
+			// scroll the scroll bar
+			$("#scrollV").scrollTop(_selectedControl.object.offset().top);
+		} else {
+			$(document).scrollTop(_selectedControl.object.offset().top);
+		}
 	}
 }
 
@@ -204,8 +213,8 @@ function buildPageMap() {
 			}));	
 			// highlight the selected control
 			if (_selectedControl) {
-				// highlight selected control
-				list.find("span[data-id=" + _selectedControl.id + "]").addClass("selected");
+				// highlight selected control span and parent li
+				list.find("span[data-id=" + _selectedControl.id + "]").addClass("selected").parent().addClass("selected");
 			}
 		}	
 	}

@@ -127,7 +127,7 @@ function showSOARestrictions(collection, control) {
 			dialogue.hide();
 		}));	
 		// add table
-		dialogue.append("<table class='propertiesPanelTable'></table>");		
+		dialogue.append("<table class='dialogueTable'></table>");		
 	}
 
 	// remove the add link
@@ -226,7 +226,7 @@ function loadSOA(details) {
 		// look for a table
 		var requestTable = requestCell.children("table");
 		// create one if not there
-		if (!requestTable[0]) requestTable = requestCell.append("<table class='propertiesPanelTable'></table>").children("table");
+		if (!requestTable[0]) requestTable = requestCell.append("<table class='dialogueTable'></table>").children("table");
 		// populate the table header row
 		requestTable.html("<tr><td>Child element name</td><td>Data type</td><td>Restrictions</td><td style='width:32px;min-width:32px;'>&nbsp;</td></tr>");
 		// if there's a request object in the details with a root element
@@ -318,7 +318,7 @@ function loadSOA(details) {
 		// look for a table
 		var responseTable = responseCell.children("table");
 		// create one if not there
-		if (!responseTable[0]) responseTable = responseCell.append("<table class='propertiesPanelTable'></table>").children("table");
+		if (!responseTable[0]) responseTable = responseCell.append("<table class='dialogueTable'></table>").children("table");
 		// populate the table header row
 		responseTable.html("<tr><td>Child element name</td><td>Field</td><td>Data type</td><td>Restrictions</td><td style='width:32px;min-width:32px;'>&nbsp;</td></tr>");
 		// if there's a request object in the details with a root element

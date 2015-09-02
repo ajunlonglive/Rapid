@@ -150,8 +150,8 @@ public class SOA extends RapidHttpServlet {
 					
 				} else {
 					
-					// split the soapAction using forward slashes
-					String[] actionParts = soapAction.trim().split("/");
+					// trim, clean, and split the soapAction using forward slashes
+					String[] actionParts = soapAction.trim().replace("\"", "").replace("'","").split("/");
 					if (actionParts.length == 3) {
 						
 						String appId = actionParts[0];
@@ -234,7 +234,7 @@ public class SOA extends RapidHttpServlet {
 				} else {
 					
 					// split the soapAction using spaces 
-					String[] actionParts = action.replace("\"", "").split(" ");
+					String[] actionParts = action.replace("\"", "").replace("'","").split(" ");
 					if (actionParts.length == 3) {
 						
 						String appId = actionParts[0];

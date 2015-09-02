@@ -50,6 +50,7 @@ import com.rapid.core.Application;
 import com.rapid.core.Application.Parameter;
 import com.rapid.core.Application.RapidLoadingException;
 import com.rapid.core.Application.Resource;
+import com.rapid.core.Application.Resources;
 import com.rapid.core.Applications;
 import com.rapid.core.Control;
 import com.rapid.core.Device;
@@ -1883,8 +1884,18 @@ public class Rapid extends Action {
 												
 			} else if ("NEWRESOURCE".equals(action)) {
 				
+				// get the resources
+				Resources resources = app.getAppResources();
+				// if null (could be from a previous version)
+				if (resources == null) {
+					// instantiate here
+					resources = new Resources();
+					// assign to the application
+					app.setAppResources(resources);
+				}
+				
 				// add a new parameter to the collection
-				app.getAppResources().add(new Resource());
+				resources.add(new Resource());
 				
 			} else if ("DELRESOURCE".equals(action)) {
 				

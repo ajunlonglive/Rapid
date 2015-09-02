@@ -26,6 +26,8 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 package com.rapid.server.filter;
 
 import java.io.IOException;
+import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.security.GeneralSecurityException;
 
 import javax.servlet.ServletContext;
@@ -65,9 +67,17 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 		
 		// now get just the resource path
 		String requestPath = request.getServletPath();
+		
+		// if we can return this resource without authentication
+		if (requestPath.endsWith("favicon.ico") || requestPath.startsWith("/images/") || requestPath.startsWith("/styles/")) {
+			
+			// proceed to the next step
+			return req;
+			
+		} else {
 						
-		// if it's a resource that requires authentication
-		if ("/".equals(requestPath) || requestPath.contains("/~") || requestPath.contains("/rapid") || requestPath.contains("/designer") || requestPath.contains("/applications/") || requestPath.contains("/uploads/") || requestPath.contains("login.jsp") || requestPath.contains("index.jsp") || requestPath.contains("design.jsp") || requestPath.contains("designpage.jsp")) {
+			// if it's a resource that requires authentication
+			//if ("/".equals(requestPath) || requestPath.contains("/~") || requestPath.contains("/rapid") || requestPath.contains("/designer") || requestPath.contains("/applications/") || requestPath.contains("/uploads/") || requestPath.contains("login.jsp") || requestPath.contains("index.jsp") || requestPath.contains("design.jsp") || requestPath.contains("designpage.jsp")) {
 			
 			_logger.trace("FormAuthenticationAdapter checking authorisation");
 			
@@ -183,11 +193,17 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 							_logger.error("FormAuthenticationAdapter error storing encrypted password", ex);
 						}
 						
-						// retrain device id in the session
+						// if the device id is null use the host name
+						if (deviceId == null) {
+							InetAddress inetAddress = InetAddress.getByName(request.getRemoteHost());
+							deviceId = inetAddress.getHostName();
+						}
+						
+						// retain device id in the session
 						session.setAttribute("deviceId", deviceId);
 						
 						// log that authentication was granted
-						_logger.debug("FormAuthenticationAdapter authenticated " + userName);
+						_logger.debug("FormAuthenticationAdapter authenticated " + userName + " from " + deviceId);
 						
 						// make the sessionRequest path the root just in case it was null (or login.jsp itself)
 						if (sessionRequestPath == null || "login.jsp".equals(sessionRequestPath)) sessionRequestPath = ".";
@@ -249,12 +265,7 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 			
 			return filteredReq;
 			
-		} else {
-									
-			// proceed to the next step
-			return req;
-			
-		}
+		} 
 						
 	}
 

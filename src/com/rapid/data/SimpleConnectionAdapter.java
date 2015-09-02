@@ -47,8 +47,7 @@ public class SimpleConnectionAdapter extends ConnectionAdapter {
 	
 	@Override
 	public Connection getConnection(RapidRequest rapidRequest) throws ClassNotFoundException, SQLException {		
-		// ok a small bit of complexity which works out whether a user has been specified as getConnection does not like to be handed one if not
-		Class.forName(getDriverClass());		
+		// ok a small bit of complexity which works out whether a user has been specified as getConnection does not like to be handed one if not			
 		// get username from superclass
 		String userName = getUserName();
 		// convert to empty string if null
@@ -57,11 +56,13 @@ public class SimpleConnectionAdapter extends ConnectionAdapter {
 		String password = getPassword();
 		// convert to empty string if null
 		if (password == null) password = "";		
+		// get the connections string
+		String connectionString = getConnectionString();
 		// if user null or not set don't pass username/password
 		if ("".equals(userName)) {
-			return DriverManager.getConnection(getConnectionString());
+			return DriverManager.getConnection(connectionString);
 		} else {
-			return DriverManager.getConnection(getConnectionString(), userName , password);
+			return DriverManager.getConnection(connectionString, userName , password);
 		}
 	}
 	

@@ -48,9 +48,9 @@ This action runs JQuery functions against specific controls
 	            <getValuesFunction>
 	                 <![CDATA[
 	                // default to the selected control if one hasn't been specified
-	                if (!this.control) this.control = _selectedControl.id;
+	                if (!this.control  && _selectedControl && _selectedControl.name) this.control = _selectedControl.id;
 	                // return the list of all controls on the page with the one for this action selected
-	                return "<option value=''>Please select...</option>" + getControlOptions(this.control);
+	                return "<option value=''>Please select...</option><option value='" + _page.id + "'>page</option>" + getControlOptions(this.control);
 	               	]]>
 	            </getValuesFunction>
 	        </property>

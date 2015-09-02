@@ -36,6 +36,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 
 import com.rapid.core.Application;
+import com.rapid.core.Control;
 import com.rapid.core.Page;
 import com.rapid.core.Application.RapidLoadingException;
 import com.rapid.core.Pages.PageHeader;
@@ -117,7 +118,7 @@ public abstract class FormAdapter {
 	
 	public abstract void setFormPageControlValues(RapidRequest rapidRequest, String formId, Application application, String pageId, FormPageControlValues pageControlValues);
 	
-	public abstract void submitForm(RapidRequest rapidRequest, String formId, Application application);
+	public abstract void submitForm(RapidRequest rapidRequest, String formId, Application application) throws Exception;
 	
 	// overridable methods
 	
@@ -155,14 +156,40 @@ public abstract class FormAdapter {
 				// open the javascript
 				writer.write("<script>\n");
 				
-				// get the form elements
-				writer.write("var el = document.forms[0].elements;\n");
+				// wait until jQuery is ready
+				writer.write("$(document).ready( function() {\n");
 				
-				// loop the values
-				for (FormControlValue formControlValue : formControlValues) {
-					String value = formControlValue.getValue();
-					if (value != null) writer.write("el['" + formControlValue.getId() + "'].value = '" + value.replace("'", "\'")  + "';\n");
+				// create a value set event
+				writer.write("var ev = $.Event('valueset');\n");
+								
+				try {
+									
+					// get the page
+					Page page = application.getPages().getPage(rapidRequest.getRapidServlet().getServletContext(), pageId);
+					
+					// loop the values
+					for (FormControlValue formControlValue : formControlValues) {
+						
+						// get the control
+						Control pageControl = page.getControl(formControlValue.getId());
+
+						// if we got one
+						if (pageControl != null) {
+						
+							// get the value
+							String value = formControlValue.getValue();
+							// if there is a value use the standard setData for it (this might change to something more sophisticated at some point)
+							if (value != null) writer.write("  setData_" + pageControl.getType() + "(ev, '" + pageControl.getId() + "', 'field', null, '" + value + "', true);\n");
+							
+						}
+					}
+					
+				} catch (RapidLoadingException ex) {
+					writer.write("// error getting page : " + ex.getMessage());
 				}
+					
+				// close the jQuery
+				writer.write("});\n");
 				
 				// close the javascript
 				writer.write("</script>\n");

@@ -39,6 +39,12 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    <canUserMove>true</canUserMove>
 	    
 	    <properties> 
+	        
+	        <property>
+	            <key>name</key>
+	            <name>Name</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>	            
+	        </property>	 
 	                  
 	        <property>
 	            <key>pageId</key>
@@ -56,7 +62,7 @@ return "<option value=''>None</option>" + getPageOptions(this.pageId,_page.id);
 	    
 	    <getHtmlFunction>
 	        <![CDATA[
-return "<div id='" + this.id + "' class='pagepanel'><center><h1>Page</h1></center></div>";
+return "<div id='" + this.id + "' class='pagepanel" + getStyleClasses(this) + "'><center><h1>Page</h1></center></div>";
 	        ]]>
 	    </getHtmlFunction> 
 	    

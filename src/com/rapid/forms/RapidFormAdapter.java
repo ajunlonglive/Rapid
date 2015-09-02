@@ -46,7 +46,7 @@ public class RapidFormAdapter extends FormAdapter {
 	
 	// class methods
 	
-	private Map<String,FormPageControlValues> getUserFormPageControlValues(RapidRequest rapidRequest, Application application, String formId) {	
+	protected Map<String,FormPageControlValues> getUserFormPageControlValues(RapidRequest rapidRequest, Application application, String formId) {	
 		// get the user session
 		HttpSession session = rapidRequest.getRequest().getSession();
 		// get all app page control values from session

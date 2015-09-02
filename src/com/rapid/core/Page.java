@@ -1245,7 +1245,7 @@ public class Page {
 	}
 		
 	// this routine produces the entire page
-	public void writeHtml(RapidHttpServlet rapidServlet, RapidRequest rapidRequest,  Application application, User user, Writer writer, boolean dialogue) throws JSONException, IOException {
+	public void writeHtml(RapidHttpServlet rapidServlet, RapidRequest rapidRequest,  Application application, User user, Writer writer, boolean designerLink) throws JSONException, IOException {
 				
 		// this doctype is necessary (amongst other things) to stop the "user agent stylesheet" overriding styles
 		writer.write("<!DOCTYPE html>\n");
@@ -1411,8 +1411,8 @@ public class Page {
 			
 			try {
 				
-				// dialogues do not have a designer link so no point checking
-				if (!dialogue) {
+				// whether to include the designer link - dialogues and files in the .zip do not so no need to even check permission
+				if (designerLink) {
 				
 					// assume not admin link
 					boolean adminLinkPermission = false;

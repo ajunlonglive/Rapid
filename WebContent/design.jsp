@@ -68,6 +68,7 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 	<script type="text/javascript" src="scripts/designer.js"></script>
 	<script type="text/javascript" src="scripts/reorder.js"></script>
 	<script type="text/javascript" src="scripts/properties.js"></script>
+	<script type="text/javascript" src="scripts/propertiescustom.js"></script>	
 	<script type="text/javascript" src="scripts/controls.js"></script>
 	<script type="text/javascript" src="scripts/validation.js"></script>
 	<script type="text/javascript" src="scripts/actions.js"></script>

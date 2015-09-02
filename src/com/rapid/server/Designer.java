@@ -43,7 +43,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -73,6 +75,7 @@ import com.rapid.security.SecurityAdapter;
 import com.rapid.security.SecurityAdapter.Role;
 import com.rapid.security.SecurityAdapter.User;
 import com.rapid.utils.Bytes;
+import com.rapid.utils.Comparators;
 import com.rapid.utils.Files;
 import com.rapid.utils.XML;
 import com.rapid.utils.ZipFile;
@@ -405,11 +408,18 @@ public class Designer extends RapidHttpServlet {
 										    	public boolean accept(File dir, String name) {
 										    		return name.toLowerCase().endsWith(".png") || name.toLowerCase().endsWith(".gif") || name.toLowerCase().endsWith(".jpg") || name.toLowerCase().endsWith(".jpeg");
 										    	}
-										    };								    
+										    };
+										    // a array to hold the images as they come out of the filter
+										    List<String> images = new ArrayList<String>();
 											// loop the image files in the folder
 											for (File imageFile : dir.listFiles(xmlFilenameFilter)) {
-												jsonImages.put(imageFile.getName());
-											}
+												images.add(imageFile.getName());												
+											}											
+											// sort the images
+											Collections.sort(images);
+											// loop the sorted images and add to json
+											for (String image : images) jsonImages.put(image);
+											
 											// put the images collection we've just built into the app
 											jsonVersion.put("images", jsonImages);
 											
@@ -889,14 +899,18 @@ public class Designer extends RapidHttpServlet {
 								int outputs = 0;
 								
 								if (jsonOutputs != null) outputs = jsonOutputs.length();
+								
+								String sql = jsonQuery.getString("SQL");
+								// some jdbc drivers need the line breaks removing before they'll work properly - here's looking at you MS SQL Server!
+								sql = sql.replace("\n", " ");
 																												
 								if (outputs == 0) {
 									
-									df.getPreparedStatement(rapidRequest, jsonQuery.getString("SQL"), parameters);
+									df.getPreparedStatement(rapidRequest,sql , parameters);
 															
 								} else {
 									
-									ResultSet rs = df.getPreparedResultSet(rapidRequest, jsonQuery.getString("SQL"), parameters);
+									ResultSet rs = df.getPreparedResultSet(rapidRequest, sql, parameters);
 									
 									ResultSetMetaData rsmd = rs.getMetaData();
 									

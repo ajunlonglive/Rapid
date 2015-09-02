@@ -27,6 +27,7 @@ package com.rapid.actions;
 
 import com.rapid.core.Action;
 import com.rapid.core.Application;
+import com.rapid.core.Control;
 import com.rapid.core.Page;
 import com.rapid.server.RapidHttpServlet;
 
@@ -64,6 +65,19 @@ public class Form extends Action {
 		} else if ("prev".equals(actionType)) {
 			// go back
 			js = "window.history.back();\n";
+		} else if ("id".equals(actionType)) {
+			// get the dataDestination
+			String destinationId = getProperty("dataDestination");			
+			// first try and look for the control in the page
+			Control destinationControl = page.getControl(destinationId);
+			// check we got a control
+			if (destinationControl == null) {
+				js = "// destination control " +destinationId + " could not be found\n" ;
+			} else {
+				// use the set data
+				js = "setData_" + destinationControl.getType() + "(ev, '" + destinationId + "', null, " + destinationControl.getDetails() + ", _formId);\n";
+			}							
+			
 		}
 		
 		// return the js

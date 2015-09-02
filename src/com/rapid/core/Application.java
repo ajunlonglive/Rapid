@@ -1827,6 +1827,8 @@ public class Application {
 				Writer fw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(detailsFile), "UTF-8"));
 				// write the details
 				fw.write(_id + "\r\n" +  Rapid.MOBILE_VERSION + " - " + _version + "\r\n" + _title);
+				// lines 4 and 5 are the status bar and status bar button colours respecitvely 
+				//fw.write(_id + "\r\n" +  Rapid.MOBILE_VERSION + " - " + _version + "\r\n" + _title + "\r\n0xFFFF0000\r\n0xFF00FF00\r\n");
 				// close the file writer
 				fw.close();
 				// add the file to the zip with a root path

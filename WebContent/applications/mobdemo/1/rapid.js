@@ -140,6 +140,28 @@ function Gallery_removeImage(ev, id) {
 		// fire it if we found it
 		if (imageRemoved) window["Event_imageRemoved_" + id]();
 	}
+}              	
+
+function Gallery_showImage(ev, id) {	
+	// look for the big gallery div
+	var gallery = $("div.bigGallery");
+	// if we couldn't find one add, and 
+	if (!gallery[0]) gallery = $("body").append("<div class='bigGallery'></div>").find("div.bigGallery");
+	// hide the gallery
+	gallery.hide();
+	// get the image
+	var img = $(ev.target);
+	// add the image to the gallery
+	gallery.html("<img src='" + img.attr("src") + "'/>");
+	// get the index
+	var index = img.index();
+	// get the details
+	var details = window[id + "details"];	
+	// if we've got the details
+	if (details) {					
+	// show the caption
+	gallery.append(details.captions[index]);
+	}
 }
 
 /* Grid control resource JavaScript */
@@ -658,7 +680,17 @@ function Init_flowLayout(id, details) {
 
 function Init_gallery(id, details) {
   $("#" + id).children("img").click( function(ev) {
-  	Gallery_removeImage(ev, id);
+  	var details = window[id + "details"];
+  	if (details) {
+  		if (details.onImageClick == "large") {
+  			Gallery_showImage(ev,id);
+  		} else if (details.onImageClick == "caption") {
+  			var index = $(ev.target).index();
+  			if (details.captions && details.captions[index]) alert(details.captions[index]);
+  		} else {
+  			Gallery_removeImage(ev, id);			
+  		}
+  	}		
   });
 }
 
@@ -1334,6 +1366,7 @@ function getProperty_gallery_urls(ev, id, field, details) {
 function getData_grid(ev, id, field, details) {
   var data = null;
   if (details) {
+  	// if there is a datastore and the grid is not present in the page    
   	if (details.dataStorageType && !$("#" + id)[0]) {
   		data = getGridDataStoreData(id, details);
   		if (field && data.fields && data.rows && data.rows.length > 0) {
@@ -1491,12 +1524,15 @@ function getProperty_grid_selectedRowData(ev, id, field, details) {
   	}
   }
   if (field && data.fields && data.rows && data.rows.length > 0) {
+  	var found = false;
   	for (var i in data.fields) {
   		if (data.fields[i] && data.fields[i].toLowerCase() == field.toLowerCase()) {
   			data = data.rows[0][i];
+  			found = true;
   			break;
   		}
   	}
+  	if (!found) data = null;
   }
   return data;
 }
@@ -1563,8 +1599,17 @@ function setProperty_grid_selectedRowData(ev, id, field, details, data, changeEv
   		// remove the selection
   		gridData.selectedRowNumber = null;
   	}
-  	// save the grid
-  	saveGridDataStoreData(id, details, gridData);
+  	// if there is a datastore to save the data to
+  	if (details && details.dataStorageType) {
+  		// if the grid is visible in the page
+  		if ($("#" + id)[0]) {
+  	  		// update the grid with the gridData (which will save as well)
+  	  		setData_grid(ev, id, field, details, gridData, changeEvents);
+  	  	} else {
+  	  		// save the grid
+  	  		saveGridDataStoreData(id, details, gridData);
+  	  	}
+  	}
   } else {
   	// append if no selected row
   	if (data) {
