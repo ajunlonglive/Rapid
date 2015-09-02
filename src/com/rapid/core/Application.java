@@ -460,6 +460,7 @@ public class Application {
 	private String _id, _version, _name, _title, _description, _startPageId, _styles, _functions, _securityAdapterType, _formAdapterType, _createdBy, _modifiedBy;
 	private boolean _showConrolIds, _showActionIds;
 	private Date _createdDate, _modifiedDate;
+	private Map<String,Integer> _pageOrders;
 	private SecurityAdapter _securityAdapter;
 	private FormAdapter _formAdapter;	
 	private List<DatabaseConnection> _databaseConnections;	
@@ -469,6 +470,7 @@ public class Application {
 	private Pages _pages;	
 	private Resources _appResources, _resources;
 	private List<String> _styleClasses;
+	
 	
 	// properties
 				
@@ -515,6 +517,10 @@ public class Application {
 	// the date this application was last saved
 	public Date getModifiedDate() { return _modifiedDate; }
 	public void setModifiedDate(Date modifiedDate) { _modifiedDate = modifiedDate; }
+	
+	// the page orders if they are overridden
+	public Map<String,Integer> getPageOrders() { return _pageOrders; }
+	public void setPageOrders(Map<String,Integer> pageOrders) { _pageOrders = pageOrders; }
 		
 	// whether control ids should be shown when designing this app
 	public boolean getShowControlIds() { return _showConrolIds; }
@@ -584,6 +590,7 @@ public class Application {
 		_databaseConnections = new ArrayList<DatabaseConnection>();
 		_webservices = new ArrayList<Webservice>();
 		_parameters = new ArrayList<Parameter>();
+		_pageOrders = new HashMap<String,Integer>();
 		_applicationBackupsMaxSize = 3;
 		_pageBackupsMaxSize = 3;
 	};

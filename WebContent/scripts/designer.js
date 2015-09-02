@@ -93,6 +93,8 @@ var _movedoverControl = null;
 var _movedoverDirection = "";
 // we need to retain any controls we've moused over so we can fire mouse out
 var _mousedOverControl = null;
+// we need to retain whether the page order has been changed (no need to send and reprocess if not)
+var _pageOrderChanged = false;
 
 // retain the currenty selected object
 var _selectedControl = null;
@@ -1512,6 +1514,8 @@ function loadPages(selectedPageId, forceLoad) {
         	
         	// reset the next page id to 1
         	_nextPageId = 1;
+        	// reset the page order changed to false
+        	_pageOrderChanged = false;
         	// if a page is not selected try the url
         	if (!selectedPageId) selectedPageId = $.getUrlVar("p");
         	// build the select options for each page
@@ -1828,6 +1832,9 @@ function getSavePageData() {
     
     // add the page html this is used by the designer and is always the html for the combination with the most roles
 	pageObject.htmlBody = pageObject.rolesHtml[0].html;
+	
+	// add the pages if their order has been changed
+	if (_pageOrderChanged) pageObject.pages = _pages;
 		
 	// stringify the page control object and add to the page (this creates an array called childControls)
 	var pageData = JSON.stringify(pageObject);
