@@ -813,13 +813,10 @@ function showStyles(control) {
 				
 				// add an empty row for adding a new style
 				stylesTable.append("<tr><td class='styleCell' colspan='2'></td></tr>");
-				// attach a click listener to each row
-				stylesTable.find("td.styleCell").each( function() {
-					addListener( $(this).click( function(ev) {
-						styleClick(ev);					
-					}));
-				});
-															
+				// attach a click listener to each row's cell
+				addListener( stylesTable.find("td.styleCell").click( function(ev) {
+					styleClick(ev);
+				}));								
 			}
 			
 			// add a heading and table

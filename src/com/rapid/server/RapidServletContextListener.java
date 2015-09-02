@@ -221,13 +221,16 @@ public class RapidServletContextListener implements ServletContextListener {
 			jsonDatabaseDriver = jsonDatabaseDriverCollection.getJSONArray("databaseDriver").getJSONObject(index);
 			count = jsonDatabaseDriverCollection.getJSONArray("databaseDriver").length();
 		}
-		
+						
 		do {
 			
 			// check this type does not already exist
 			for (int i = 0; i < jsonDatabaseDrivers.length(); i++) {
 				if (jsonDatabaseDriver.getString("name").equals(jsonDatabaseDrivers.getJSONObject(i).getString("name"))) throw new Exception(" database driver type is loaded already. Type names must be unique");
 			}
+			
+			// register the class so the DriverManager can find it
+			Class.forName(jsonDatabaseDriver.getString("class"));
 			
 			// add the jsonControl to our array
 			jsonDatabaseDrivers.put(jsonDatabaseDriver);

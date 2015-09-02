@@ -590,8 +590,14 @@ div.button {
 	background-color: #ccc;
 }
 
-.selected {
-	background-color: #aaa;
+li.selected {
+	border-top:1px solid #ccc;
+	border-left:1px solid #ccc;
+	border-bottom:1px solid #ccc;
+}
+
+span.selected {
+	background-color: #ccc;
 }
 
 /*

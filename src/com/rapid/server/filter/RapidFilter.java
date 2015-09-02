@@ -46,6 +46,7 @@ public class RapidFilter implements Filter {
 	// different applications' security adapters will retrieve different user objects
 	public static final String SESSION_VARIABLE_USER_NAME = "user";
 	public static final String SESSION_VARIABLE_USER_PASSWORD = "password";
+	public static final String SESSION_VARIABLE_USER_DEVICE = "device";
 	
 	private static Logger _logger = Logger.getLogger(RapidFilter.class);
 		
@@ -94,6 +95,9 @@ public class RapidFilter implements Filter {
 
 		_logger.trace("Process filter request...");
 		
+		// fake slower responses like on mobile
+		//try { Thread.sleep(10000); } catch (InterruptedException e) {}
+				
 		if (_logger.isTraceEnabled()) {
 						
 			Integer minimumFirefox = 12;

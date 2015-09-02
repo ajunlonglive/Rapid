@@ -40,6 +40,12 @@ div.flowLayout {
 	float: left;
 }
 
+/* Gallery control resource styles */
+
+div.gallery img {
+	cursor:pointer;
+}
+
 /* Grid control resource styles */
 
 table.grid {
@@ -244,6 +250,7 @@ input {
 	border-radius: 10px;
 	box-shadow: inset -2px 2px 5px 0px #bcd; 
 	width: 90%;
+	margin: 1px;
 }
 
 input:focus {
@@ -251,6 +258,7 @@ input:focus {
 	border-radius: 10px;
 	box-shadow: inset -2px 2px 5px 0px #aaa; 
 	outline:none;
+	margin: 0;
 }
 
 button {

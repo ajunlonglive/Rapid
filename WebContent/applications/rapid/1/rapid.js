@@ -871,6 +871,7 @@ function setProperty_dropdown_value(ev, id, field, details, data, changeEvents) 
 function getData_grid(ev, id, field, details) {
   var data = null;
   if (details) {
+  	// if there is a datastore and the grid is not present in the page    
   	if (details.dataStorageType && !$("#" + id)[0]) {
   		data = getGridDataStoreData(id, details);
   		if (field && data.fields && data.rows && data.rows.length > 0) {
@@ -1028,12 +1029,15 @@ function getProperty_grid_selectedRowData(ev, id, field, details) {
   	}
   }
   if (field && data.fields && data.rows && data.rows.length > 0) {
+  	var found = false;
   	for (var i in data.fields) {
   		if (data.fields[i] && data.fields[i].toLowerCase() == field.toLowerCase()) {
   			data = data.rows[0][i];
+  			found = true;
   			break;
   		}
   	}
+  	if (!found) data = null;
   }
   return data;
 }
@@ -1100,8 +1104,17 @@ function setProperty_grid_selectedRowData(ev, id, field, details, data, changeEv
   		// remove the selection
   		gridData.selectedRowNumber = null;
   	}
-  	// save the grid
-  	saveGridDataStoreData(id, details, gridData);
+  	// if there is a datastore to save the data to
+  	if (details && details.dataStorageType) {
+  		// if the grid is visible in the page
+  		if ($("#" + id)[0]) {
+  	  		// update the grid with the gridData (which will save as well)
+  	  		setData_grid(ev, id, field, details, gridData, changeEvents);
+  	  	} else {
+  	  		// save the grid
+  	  		saveGridDataStoreData(id, details, gridData);
+  	  	}
+  	}
   } else {
   	// append if no selected row
   	if (data) {

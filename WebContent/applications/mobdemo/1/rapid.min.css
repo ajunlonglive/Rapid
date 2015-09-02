@@ -3,6 +3,7 @@ span.loading{position:absolute;background:url("../../../images/wait_120x15.gif")
 .buttonGlyphWithBackground{font-size:0.5em}
 div.flowLayout{overflow:auto}
 .flowLayoutCell{float:left}
+div.gallery img{cursor:pointer}
 table.grid{border-collapse:collapse}
 table.grid td{border:0}
 table.grid span.sort{font-family:FontAwesome;margin-left:5px}
@@ -33,8 +34,8 @@ li.validation{color:red !important}
 html{height:100%}
 body{font-family:'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;font-size:18px;margin:0;background:linear-gradient(#fff, #fff 75%, rgba(170, 204, 238, 0.59)) fixed}
 table{font-family:'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;font-size:18px}
-input{font-size:18px;padding:8px;border:1px solid #888;border-radius:10px;box-shadow:inset -2px 2px 5px 0px #bcd;width:90%}
-input:focus{border:2px solid black;border-radius:10px;box-shadow:inset -2px 2px 5px 0px #aaa;outline:none}
+input{font-size:18px;padding:8px;border:1px solid #888;border-radius:10px;box-shadow:inset -2px 2px 5px 0px #bcd;width:90%;margin:1px}
+input:focus{border:2px solid black;border-radius:10px;box-shadow:inset -2px 2px 5px 0px #aaa;outline:none;margin:0}
 button{font-size:18px;font-family:'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;color:white;box-shadow:inset -2px 2px 10px 0px #ace;background:linear-gradient(to bottom, #1e5799 0%, #2989d8 50%, #207cca 100%);background-color:#2989d8;border-radius:10px;border:1px solid #005;display:inline-block;cursor:pointer;padding:7px 25px;text-decoration:none;text-shadow:0px 1px 0px #000}
 button:hover{background:linear-gradient(to top, #1e5799 0%, #2989d8 50%, #207cca 100%);background-color:#207cca}
 button:active{position:relative;top:1px}

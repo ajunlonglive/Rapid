@@ -59,6 +59,18 @@ return [["replace","replace"],["append","append"],["row","row merge"],["child","
 return "<option value=''>Please select...</option>" + getInputOptions(this.dataSource);         
 	                ]]>
 	            </getValuesFunction>	
+	            <helpHtml>
+	                <![CDATA[
+<p>This powerful control moves data around your application. The following differnt types of data copy are supported:</p>
+- replace, will empty the destination controls of data beore copying in the source data<br/>
+- append, will add the source data as a new row in the destination data. Any existing fields will be used, new fields will be added<br/>
+- row merge, will keep all destination data and add the source data in the same row. New fields will be added if required<br/>
+- child merge, will uses fields in common between the source and destination to match rows in the source to rows in  the destination where matching rows in the source will be added to child datastores in the destination. Use this for parent/child relationships<br/> 
+- bulk, provides a dialogue where a number of realted datacopies can easily be specified<br/>
+- search, allows a source to be searched against a term and matching rows placed into the destination<br/>
+- transpose, converts a source with lots of columns to one with lots of rows and vice versa. Key fields will appear on every row, igore fields will not be used in the transposition<br/>
+	                ]]>
+	            </helpHtml>
 	        </property>
 	        	        	      
 	        <property>

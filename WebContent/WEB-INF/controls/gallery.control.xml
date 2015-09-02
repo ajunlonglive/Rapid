@@ -60,9 +60,40 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <refreshHtml>true</refreshHtml>	     	                 
 	        </property>
 	        
+	        <property>
+	            <key>onImageClick</key>
+	            <name>On image click</name>
+	            <setConstructValueFunction>return "";</setConstructValueFunction>  
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	            <getValuesFunction>
+	                <![CDATA[
+						return [["nothing","Do nothing"],["","Prompt to remove image"],["caption","Show image caption"]];
+					]]>
+	            </getValuesFunction>       	                 
+	        </property>
+	        
+	         <property>
+	            <key>gotCaptions</key>
+	            <name>Got captions</name>
+	            <visible>false</visible>    	    
+	            <setConstructValueFunction>return false;</setConstructValueFunction>  
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>	                         
+	        </property>
+	        
 	    </properties>
 	    
 	    <resources>
+	        <resource>
+	            <type>css</type>
+	            <contents>
+	                <![CDATA[
+div.gallery img {
+	cursor:pointer;
+}	          
+ 
+	                ]]>
+	            </contents>
+	        </resource>
 	        <resource>
 	            <type>javascript</type>
 	            <contents>
@@ -84,6 +115,28 @@ function Gallery_removeImage(ev, id) {
 	}
 }              	
 
+function Gallery_showImage(ev, id) {	
+	// look for the big gallery div
+	var gallery = $("div.bigGallery");
+	// if we couldn't find one add, and 
+	if (!gallery[0]) gallery = $("body").append("<div class='bigGallery'></div>").find("div.bigGallery");
+	// hide the gallery
+	gallery.hide();
+	// get the image
+	var img = $(ev.target);
+	// add the image to the gallery
+	gallery.html("<img src='" + img.attr("src") + "'/>");
+	// get the index
+	var index = img.index();
+	// get the details
+	var details = window[id + "details"];	
+	// if we've got the details
+	if (details) {					
+	// show the caption
+	gallery.append(details.captions[index]);
+	}
+}      
+
 	                ]]>
 	            </contents>
 	        </resource>
@@ -91,10 +144,12 @@ function Gallery_removeImage(ev, id) {
 	    
 	    <getHtmlFunction>
 	        <![CDATA[	   	        
-var html = "<div id='" + this.id + "'>";
+var html = "<div id='" + this.id + "' class='gallery'>";
 if (this.images && this.images.length > 0) {
   for (var i in this.images) {
-    html += "<img src='" + this.images[i].url + "'/>";    
+  	var url = this.images[i].url;
+  	if (url.indexOf("/") < 0) url = "applications/" + _version.id + "/" + _version.version + "/" + url
+    html += "<img src='" + url + "'/>";    
   }
 } else {
 	html += "<span>" + this.emptyText + "</span>";
@@ -105,6 +160,19 @@ return html;
 	    </getHtmlFunction> 
 	    	    	    
 	    <updateChildObjects>true</updateChildObjects>
+	    
+	    <getDetailsFunction>
+	        <![CDATA[
+var details = {onImageClick: this.onImageClick};
+if (this.images && this.gotCaptions) {
+	details.captions = [];
+	for (var i in this.images) {
+		details.captions.push(this.images[i].caption);
+	}
+} 	        
+return details;	        	   	
+	   	    ]]>
+	   	</getDetailsFunction>
 	    	    	    
 	    <getDataFunction>
 	        <![CDATA[
@@ -192,7 +260,17 @@ return "#" + this.id + " img";
 	   	<initJavaScript>
 	        <![CDATA[
 $("#" + id).children("img").click( function(ev) {
-	Gallery_removeImage(ev, id);
+	var details = window[id + "details"];
+	if (details) {
+		if (details.onImageClick == "large") {
+			Gallery_showImage(ev,id);
+		} else if (details.onImageClick == "caption") {
+			var index = $(ev.target).index();
+			if (details.captions && details.captions[index]) alert(details.captions[index]);
+		} else {
+			Gallery_removeImage(ev, id);			
+		}
+	}		
 });	        
 	        ]]>	        	       	        
 	    </initJavaScript>

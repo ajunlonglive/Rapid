@@ -505,7 +505,7 @@ public class Webservice extends Action {
 					url = new URL(_request.getUrl());
 				} else {
 					HttpServletRequest httpRequest = rapidRequest.getRequest();
-					url = new URL(httpRequest.getScheme(), httpRequest.getServerName(), httpRequest.getServerPort(), httpRequest.getContextPath() + "/" + _request.getUrl());
+					url = new URL(httpRequest.getScheme(), httpRequest.getServerName(), httpRequest.getServerPort(), httpRequest.getContextPath() + "/" + _request.getUrl());					
 				}
 				
 				// retrieve the action
@@ -519,6 +519,14 @@ public class Webservice extends Action {
 				HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 				connection.setDoOutput(true); // Triggers POST.
 				
+				// if we are requesting from ourself
+				if (url.getPath().startsWith(rapidRequest.getRequest().getContextPath())) {
+					// get our session id
+					String sessionId = rapidRequest.getRequest().getSession().getId();
+					// add it to the call for internal authentication
+					connection.setRequestProperty("Cookie", "JSESSIONID=" + sessionId);
+				}
+				
 				// set the content type and action header accordingly
 				if ("SOAP".equals(_request.getType())) {
 					connection.setRequestProperty("Content-Type", "text/xml");
@@ -530,7 +538,7 @@ public class Webservice extends Action {
 					connection.setRequestProperty("Content-Type", "text/xml");
 					connection.setRequestProperty("Action", action);
 				}
-								
+																
 				// get the output stream from the connection into which we write the request
 				OutputStream output = connection.getOutputStream();		
 				

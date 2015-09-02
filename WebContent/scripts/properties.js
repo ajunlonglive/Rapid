@@ -536,7 +536,7 @@ function Property_bigtext(cell, propertyObject, property, details) {
 	
 }
 
-function Property_select(cell, propertyObject, property, details) {
+function Property_select(cell, propertyObject, property, details, changeFunction) {
 	// holds the options html
 	var options = "";
 	var js = property.getValuesFunction;
@@ -584,9 +584,11 @@ function Property_select(cell, propertyObject, property, details) {
 	// get a reference to the object
 	var select = cell.children().last();
 	// add a listener to update the property
-	addListener( select.change({cell: cell, propertyObject: propertyObject, property: property, details: details}, function(ev) {
+	addListener( select.change({cell: cell, propertyObject: propertyObject, property: property, details: details, changeFunction: changeFunction}, function(ev) {
 		// apply the property update
 		updateProperty(ev.data.cell, ev.data.propertyObject, ev.data.property, ev.data.details, ev.target.value);
+		// invoke any supplied change function
+		if (ev.data.changeFunction) ev.data.changeFunction(ev);
 	}));
 	// read the property
 	var val = propertyObject[property.key];
@@ -701,7 +703,7 @@ function Property_inputAutoHeight(cell, input, property, details) {
 function Property_galleryImages(cell, gallery, property, details) {
 	
 	// retrieve or create the dialogue
-	var dialogue = getDialogue(cell, gallery, property, details, 200, "Images");		
+	var dialogue = getDialogue(cell, gallery, property, details, 200, "Images", {sizeX: true});		
 	// grab a reference to the table
 	var table = dialogue.find("table").first();
 	// make sure table is empty
@@ -728,18 +730,20 @@ function Property_galleryImages(cell, gallery, property, details) {
 	}
 	
 	// append the drop down for existing images
-	table.append("<tr><td  colspan='2' style='text-align:center;'>Url</td></tr>");
+	table.append("<tr><td  style='text-align:center;'>Url</td>" + (gallery.gotCaptions ? "<td  style='text-align:center;'>Caption</td>" : "") + "</tr>");
 	
 	// loop the images
 	for (var i in images) {
 		// get this image
 		var image = images[i];
+		// set caption to empty string if not set
+		if (!image.caption) image.caption = "";
 		// append
-		table.append("<tr><td><input value='" + image.url + "' style='max-width:none;width:100%;' /></td><td style='width:32px'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
+		table.append("<tr><td><input class='url' value='" + image.url + "' style='max-width:none;width:100%;' /></td>" + (gallery.gotCaptions ? "<td><input class='caption' value='" + image.caption + "' /></td>" : "") + "<td style='width:32px'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
 	}
 	
-	// add the change listeners
-	addListener( table.find("input").keyup( {cell:cell, gallery:gallery, property:property, details:details, images:images}, function (ev) {
+	// add the url change listeners
+	addListener( table.find("input.url").keyup( {cell:cell, gallery:gallery, property:property, details:details, images:images}, function (ev) {
 		// get the input
 		var input = $(ev.target);
 		// get the url
@@ -755,6 +759,18 @@ function Property_galleryImages(cell, gallery, property, details) {
 		}
 		// update the reference and rebuild the html (this adds an undo)
 		updateProperty(ev.data.cell, ev.data.gallery, ev.data.property, ev.data.details, ev.data.images); 			
+	}));
+	
+	// add the caption change listeners
+	addListener( table.find("input.caption").keyup( {cell:cell, gallery:gallery, property:property, details:details, images:images}, function (ev) {
+		// get the input
+		var input = $(ev.target);
+		// get the caption
+		var caption = input.val();
+		// get the image according to the row index, less the header
+		var image = ev.data.images[input.closest("tr").index() - 1];
+		// set the caption
+		image.caption = caption;
 	}));
 	
 	// add delete listeners
@@ -773,7 +789,7 @@ function Property_galleryImages(cell, gallery, property, details) {
 	
 	// add reorder listeners
 	addReorder(images, table.find("img.reorder"), function() { rebuildHtml(gallery); Property_galleryImages(cell, gallery, property); });
-		
+	
 	// append add
 	table.append("<tr><td colspan='3'><a href='#'>add...</a></td></tr>");
 	
@@ -784,7 +800,25 @@ function Property_galleryImages(cell, gallery, property, details) {
 		// refresh dialogue
 		Property_galleryImages(cell, gallery, property, details);
 	}));
-	
+			
+	// check we don't have a checkbox already
+	if (!dialogue.find("input[type=checkbox]")[0]) {
+		
+		// append caption check box
+		dialogue.append("<tr><td colspan='3'><input type='checkbox' " + (gallery.gotCaptions ? "checked='checked'" : "") + " /> captions</td></tr>");
+		
+		// captions listener
+		addListener( dialogue.find("input[type=checkbox]").click( function (ev) {
+			// get the checkbox
+			var checkbox = $(ev.target);
+			// set gotCaptions
+			gallery.gotCaptions = checkbox.is(":checked");
+			// refresh dialogue
+			Property_galleryImages(cell, gallery, property, details);
+		}));
+		
+	}
+		
 }
 
 function Property_imageFile(cell, propertyObject, property, details) {
@@ -3592,6 +3626,21 @@ function Property_mapZoom(cell, propertyObject, property, details) {
 	}));
 }
 
+// this is for the form action dataDestination
+function Property_formDataDestination(cell, propertyObject, property, details) {
+	// only if the type is id
+	if (propertyObject.actionType == "id") {
+		// add the bigtext
+		Property_select(cell, propertyObject, property, details);
+	} else {
+		// remove this row
+		cell.closest("tr").remove();
+	}
+} 
+
+
+
+
 // this is displayed as a page property but is actually held in local storage
 function Property_device(cell, propertyObject, property, details) {
 	// holds the options html
@@ -3902,4 +3951,23 @@ function Property_inputs(cell, propertyObject, property, details) {
 	// put the text into the cell
 	cell.text(text);
 		
+}
+
+// chart properties
+function Property_chartType(cell, propertyObject, property, details) {
+	Property_select(cell, propertyObject, property, details, function change(ev) {
+		// get the control class
+		var controlClass = _controlTypes[propertyObject.type];		
+		// clean up the JavaScript by triming and removing line breaks and tabs
+		var js = controlClass.initDesignJavaScript.trim();
+		// try and apply it
+		try {				
+			// get the js into a new function variable
+			var f = new Function(js);
+			// run it
+			f.apply(propertyObject, []);
+		} catch (ex) {
+			alert("initDesignJavaScript failed for " + this.type + ". " + ex + "\r\r" + js);
+		}
+	});
 }

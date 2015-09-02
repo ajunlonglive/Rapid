@@ -29,20 +29,35 @@ You should have received a copy of the GNU General Public License
 in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
  -->
-     
+ 
      <databaseDriver>
          <name>MySQL</name>
-         <class>com.mysql.jdbc.Driver</class>
+         <class>com.mysql.jdbc.Driver</class>         
      </databaseDriver>
+     <!--  jdbc:mysql://<hostname>:<port-3306>/<dbname>  -->
      
      <databaseDriver>
          <name>SQLite</name>
-         <class>org.sqlite.JDBC</class>
+         <class>org.sqlite.JDBC</class>         
      </databaseDriver>
+     <!-- jdbc:sqlite:<filepath> -->
      
+      <!-- 
      <databaseDriver>
          <name>Oracle</name>
-         <class>oracle.jdbc.driver.OracleDriver</class>         
+         <class>oracle.jdbc.driver.OracleDriver</class>                 
      </databaseDriver>
-                
+      -->
+      <!--  jdbc:oracle:thin:@<hostname>:<port-1521>:<dbname> -->
+      
+     <!-- 
+     <databaseDriver>
+         <name>MS SQL Server</name>
+         <class>com.microsoft.sqlserver.jdbc.SQLServerDriver</class>                  
+     </databaseDriver>
+	  -->	  
+      <!-- jdbc:sqlserver://<hostname>:<port-1433>;databaseName=<dbname>;[integratedSecurity=true;] 
+      When installing the driver on Windows make sure the sqljdbc_auth.dll is in the class path - Java/bin seems easiest
+      -->
+          
  </databaseDrivers>

@@ -980,9 +980,9 @@ function selectControl(control) {
 		_selectedControl = control;
 		
 		// remove any selected class
-		$("#pageMap").find("span.selected").removeClass("selected");
-		// highlight selected control
-		$("#pageMap").find("span[data-id=" + control.id + "]").addClass("selected");
+		$("#pageMap").find(".selected").removeClass("selected");
+		// highlight selected control span and it's parent li
+		$("#pageMap").find("span[data-id=" + control.id + "]").addClass("selected").parent().addClass("selected");
 		
 		// get the body into an object
 		var body = $("body");

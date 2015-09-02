@@ -157,7 +157,8 @@ public class DataFactory {
 						
 	public PreparedStatement getPreparedStatement(RapidRequest rapidRequest, String SQL, ArrayList<Parameter> parameters) throws SQLException, ClassNotFoundException, ConnectionAdapterException  {
 		
-		_sql = SQL;
+		// some jdbc drivers need the line breaks in the sql replacing - here's looking at you MS SQL!
+		_sql = SQL.replace("\n", " ");
 		
 		if (_connection == null) _connection = getConnection(rapidRequest);
 		

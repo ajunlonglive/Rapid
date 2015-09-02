@@ -45,8 +45,20 @@ This action runs form - specifc functions
 	            <key>actionType</key>
 	            <name>Action</name>
 	            <changeValueJavaScript>controlActionType</changeValueJavaScript>	 
-	            <getValuesFunction>return [["next","next page"],["prev","previous page"]];</getValuesFunction>
+	            <getValuesFunction>return [["","Please select..."],["next","next page"],["prev","previous page"],["id","copy form id"]];</getValuesFunction>
 	            <refreshProperties>true</refreshProperties>	            
+	        </property>
+	        
+	        <property>
+	            <key>dataDestination</key>
+	            <name>Destination</name>
+	            <changeValueJavaScript>formDataDestination</changeValueJavaScript> 
+	            <getValuesFunction>
+	                 <![CDATA[
+	                // return the list of all controls on the page with the one for this action selected
+	                return "<option value=''>Please select...</option>" + getOutputOptions(this.control);
+	               	]]>
+	            </getValuesFunction>
 	        </property>
 	        
 		</properties>

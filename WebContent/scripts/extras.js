@@ -126,15 +126,19 @@ $.fn.extend({
 	  }	  
 	  return this;
   },
-  showError: function() {
+  showError: function(server, status, message) {
 	if (server) {
-		alert(server.responseText||message);
+		var message = server.responseText||message;
+		var b = message.indexOf("\n\n");
+		if (b > 0) message = message.substring(0, b);
+		alert(message);
 	}
     return this;
   },
-  focus: function() {		
-	  if (this[0]) {
-		  this[0].focus();		  
+  focus: function() {
+	  var c = this[0];
+	  if (c) {		  
+		  setTimeout(function() { c.focus() }, 100);		  
 		  if ($("body").css("visibility") == "hidden" || this.closest("div.dialogue").css("visibility") == "hidden" || this.closest("div.dialogue").css("display") == "none") {
 			  this.attr("data-focus","true");			  
 		  }
@@ -383,27 +387,28 @@ if (window["_rapidmobile"]) {
 		// now call into the bridge
 		_rapidmobile.savePageToDevice(html);		
 	}
-	
-	// controls can be restored here, or in the control init function, if present 
-	$(document).ready( function() {
-		
-	});
 			
 	// retain the original JQuery ajax function
 	var ajax = $.ajax;
 	
 	// override it
 	$.ajax = function(settings) {
-		// the shouldInterceptRequest method only works for GET, so if there is data add it to the url
-		if (settings.data) {
-			// add data to the url
-			settings.url += "&data=" + encodeURIComponent(settings.data);
-			// remove it from the body
-			settings.data = null;
+		
+		// only on old (unversioned clients with _rapidMobile), or with multithreaded local requests turned off
+		if (!_rapidmobile.getVersion || !_rapidmobile.isMultiThreaded || !_rapidmobile.isMultiThreaded()) {
+			// the shouldInterceptRequest method only works for GET, so if there is data add it to the url
+			if (settings.data) {
+				// add data to the url
+				settings.url += "&data=" + encodeURIComponent(settings.data);
+				// remove it from the body
+				settings.data = null;
+				// change the action to a GET
+				settings.method = "GET";
+			}
 		}
 		// retain the original success function
 		var success = settings.success;
-		// override it
+		// override it (and pass in the orginal)
 		settings.success = function(data, textStatus, jqXHR) {
 			// if there is a json object in the response
 			if (jqXHR.responseJSON) {
@@ -427,7 +432,7 @@ if (window["_rapidmobile"]) {
 				}
 			}
 			// run the original function if all good
-			success(data, textStatus, jqXHR);
+			if (success) success(data, textStatus, jqXHR);
 		}
 		// now run the original ajax with our modified settings
 		ajax(settings);
@@ -460,7 +465,7 @@ if (window["_rapidmobile"]) {
 				window.location = location;
 			} else {
 				// call the original error
-				error(jqXHR, textStatus, errorThrown);
+				if (error) error(jqXHR, textStatus, errorThrown);
 			}
 		}
 		// call the original
@@ -641,6 +646,8 @@ function mergeDataObjects(data1, data2, mergeType, field, maxRows) {
 				case "child" :
 					var fieldMap = {};
 					var fieldCount = 0;
+					var fieldIndex = -1;
+					// make a map of positions for fields common to parent and child data objects
 					for (var i in data1.fields) {
 						for (var j in data2.fields) {
 							if (data1.fields[i] && data2.fields[j] && data1.fields[i].toLowerCase() == data2.fields[j].toLowerCase()) {
@@ -648,51 +655,53 @@ function mergeDataObjects(data1, data2, mergeType, field, maxRows) {
 								fieldCount ++;
 							}
 						}
+						if (field && field.toLowerCase() == data1.fields[i].toLowerCase()) fieldIndex = i;
 					}
-					var fields = data2.fields;
-					if (fieldCount > 0) {
+					// if the field we want the child in is not present in the parent
+					if (fieldIndex < 0) {
+						// add the field
 						data1.fields.push(field);
-						for (var i in data1.rows) {
-							var match = false;
-							var r1 = data1.rows[i];						
-							for (var j in data2.rows) {
-								var r2 = data2.rows[j];
-								var matches = 0;
-								for (var k in fieldMap) {
-									if (r1[k] == r2[fieldMap[k]]) matches ++; 
-								}
-								if (matches == fieldCount) {
-									match = true;
-									var child;
-									if (data1.rows[i].length < data1.fields.length) {
-										child = {fields:fields,rows:[]};
-									} else {
-										child = data1.rows[i][data1.fields.length - 1];
-									}
-									var row = data2.rows[j];
-									child.rows.push(row);
-									r1.push(child);
-								}
-							}
-							if (!match) r1.push(null);
-						}
-					} else {
-						if (data1.rows && data1.rows.length > 0) {
-							var fieldIndex = -1;
-							for (var i in data1.fields) {
-								if (field && data1.fields[i] && field.toLowerCase() == data1.fields[i].toLowerCase()) {
-									fieldIndex = i;
-									break;
-								}
-							}
-							if (fieldIndex < 0) {
-								data1.fields.push(field);
-								data1.rows[0].push(data2);
-							} else {
-								data1.rows[0][fieldIndex] = data2;
-							}			
-						}
+						// remember the position
+						fieldIndex = data1.fields.length - 1;
 					}
+					// use the fields from the child
+					var fields = data2.fields;											
+					// loop all of the parent (destination) rows
+					for (var i in data1.rows) {
+						// get the parent row
+						var r1 = data1.rows[i];
+						// make sure we have as many cells in our row as there are fields
+						while (r1.length < data1.fields.length)  r1.push(null);							
+						// if there are matching fields between the parent (destination) and child (source)
+						if (fieldCount > 0) {
+							// create a child rows array 
+							var childRows = []; 
+							// loop the child (source) rows
+							for (var j in data2.rows) {
+								// get the row
+								var r2 = data2.rows[j];
+								// assume no matches
+								var matches = 0;
+								// loop the parent/child field map
+								for (var k in fieldMap) {
+									// if there is a match of values between the mapped fields in parent/child, count the match
+									if (r1[k] == r2[fieldMap[k]]) matches ++; 
+								}								
+								// if values in all common fields between parent and child have been matched
+								if (matches == fieldCount) {															
+									// get the matched row from the source
+									var row = data2.rows[j];
+									// add the matched row to the child data object
+									childRows.push(row);									
+								}
+							}
+							// if data was put in the child rows use it to create a child data object in the parent
+							if (childRows.length > 0) r1[fieldIndex] = {fields:fields,rows:childRows};
+						} else {
+							// assign the whole child data object to the parent row
+							 r1[fieldIndex] = data2;
+						} // has fields to match on
+					} // parent row loop
 					data = data1;					
 				break;
 				case "search" :
