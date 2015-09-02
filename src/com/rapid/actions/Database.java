@@ -365,26 +365,29 @@ public class Database extends Action {
 									
 			// look for any _childDatabaseActions
 			if (_childDatabaseActions != null) {
-				// add a collection into the parent
-				js += "  query.childQueries = [];\n";
-				// count them
-				int i = 1;
-				// loop them
-				for (Database childDatabaseAction : _childDatabaseActions) {
-					// get the childQuery
-					Query childQuery = childDatabaseAction.getQuery();
-					// open function to get input data
-					js += "var childData" + i + " = getDatabaseActionInputData(" + childQuery.getMultiRow() + ", ";
-					// add inputs
-					js += getInputsJavaScript(rapidServlet.getServletContext(), application, page, childQuery);
-					// close the function
-					js += ");\n";
-					// create object
-					js += "var childQuery" + i + " = { data: childData" + i + ", index: " + (i - 1) + " };\n";										
-					// add to query
-					js += "query.childQueries.push(childQuery" + i + ");\n";			
-					// increment the counter
-					i ++;
+				// if there are some
+				if (_childDatabaseActions.size() > 0) {
+					// add a collection into the parent
+					js += "  query.childQueries = [];\n";
+					// count them
+					int i = 1;
+					// loop them
+					for (Database childDatabaseAction : _childDatabaseActions) {
+						// get the childQuery
+						Query childQuery = childDatabaseAction.getQuery();
+						// open function to get input data
+						js += "var childData" + i + " = getDatabaseActionInputData(" + childQuery.getMultiRow() + ", ";
+						// add inputs
+						js += getInputsJavaScript(rapidServlet.getServletContext(), application, page, childQuery);
+						// close the function
+						js += ");\n";
+						// create object
+						js += "var childQuery" + i + " = { data: childData" + i + ", index: " + (i - 1) + " };\n";										
+						// add to query
+						js += "query.childQueries.push(childQuery" + i + ");\n";			
+						// increment the counter
+						i ++;
+					}
 				}
 			}
 						
@@ -763,33 +766,34 @@ public class Database extends Action {
 					}
 					
 					// check for any child database actions
-					if (_childDatabaseActions != null) {						
-						// create an array object for all the child data
-						JSONArray jsonChildDataCollection = new JSONArray();
-						// get any child data
-						JSONArray jsonChildQueries = jsonAction.optJSONArray("childQueries");						
-						// if there was some
-						if (jsonChildQueries != null) {
-							// loop
-							for (int i = 0; i < jsonChildQueries.length(); i++) {
-								// fetch the data
-								JSONObject jsonChildAction = jsonChildQueries.getJSONObject(i);
-								// read the index (the position of the child this related to
-								int index = jsonChildAction.getInt("index");
-								// get the relevant child action
-								Database childDatabaseAction = _childDatabaseActions.get(index);
-								// get the resultant child data
-								JSONObject jsonChildData = childDatabaseAction.doQuery(rapidRequest, jsonChildAction, application, df);
-								// add it to the collection
-								jsonChildDataCollection.put(jsonChildData);								
+					if (_childDatabaseActions != null) {
+						// if there really are some
+						if (_childDatabaseActions.size() > 0) {
+							// create an array object for all the child data
+							JSONArray jsonChildDataCollection = new JSONArray();
+							// get any child data
+							JSONArray jsonChildQueries = jsonAction.optJSONArray("childQueries");						
+							// if there was some
+							if (jsonChildQueries != null) {
+								// loop
+								for (int i = 0; i < jsonChildQueries.length(); i++) {
+									// fetch the data
+									JSONObject jsonChildAction = jsonChildQueries.getJSONObject(i);
+									// read the index (the position of the child this related to
+									int index = jsonChildAction.getInt("index");
+									// get the relevant child action
+									Database childDatabaseAction = _childDatabaseActions.get(index);
+									// get the resultant child data
+									JSONObject jsonChildData = childDatabaseAction.doQuery(rapidRequest, jsonChildAction, application, df);
+									// add it to the collection
+									jsonChildDataCollection.put(jsonChildData);								
+								}
 							}
-							
-						}
-						// add a field to the result for the child actions
-						jsonData.getJSONArray("fields").put("childData");
-						// add the collection to the result
-						jsonData.getJSONArray("rows").put(jsonChildDataCollection);
-												
+							// add a field to the result for the child actions
+							jsonData.getJSONArray("fields").put("childData");
+							// add the collection to the result
+							jsonData.getJSONArray("rows").put(jsonChildDataCollection);
+						}																		
 					}
 																		
 				} catch (Exception ex) {
