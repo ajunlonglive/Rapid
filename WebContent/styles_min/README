@@ -7,3 +7,4 @@ There are some rules:
 - their "contents" must start with "scripts/" and end with ".css"
 - they must not exist already (since resources are updated so seldom and shared between applications there is no point constantly rebuilding them)
 
+These files are all ignored by git, except for font-awesome.min.css which has some special changes to use the resources in the unminified location
