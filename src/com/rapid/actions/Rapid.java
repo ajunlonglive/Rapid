@@ -623,6 +623,11 @@ public class Rapid extends Action {
 						
 						// add the styles
 						result.put("styles", app.getStyles());
+						result.put("statusBarColour", app.getStatusBarColour());
+						result.put("statusBarHighlightColour", app.getStatusBarHighlightColour());
+						result.put("statusBarTextColour", app.getStatusBarTextColour());
+						result.put("statusBarIconColour", app.getStatusBarIconColour());
+						
 						// add the security adapter
 						result.put("securityAdapter", app.getSecurityAdapterType());	
 						// add action types
@@ -1131,8 +1136,16 @@ public class Rapid extends Action {
 			} else if ("SAVESTYLES".equals(action)) {
 							
 				String styles = jsonAction.getString("styles");
+				String statusBarColour = jsonAction.optString("statusBarColour");
+				String statusBarHighlightColour = jsonAction.optString("statusBarHighlightColour");
+				String statusBarTextColour = jsonAction.optString("statusBarTextColour");
+				String statusBarIconColour = jsonAction.optString("statusBarIconColour");
 				
 				app.setStyles(styles);
+				app.setStatusBarColour(statusBarColour);
+				app.setStatusBarHighlightColour(statusBarHighlightColour);
+				app.setStatusBarTextColour(statusBarTextColour);
+				app.setStatusBarIconColour(statusBarIconColour);
 				
 				app.save(rapidServlet, rapidRequest, true);
 				

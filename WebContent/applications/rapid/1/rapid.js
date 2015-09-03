@@ -562,18 +562,30 @@ function Init_hints(id, details) {
   	switch (controlHint.type) {		
   		case "click" :
   			$("#" + controlHint.controlId).click({controlId: controlHint.controlId}, function(ev) { 
-  				$("#" + ev.data.controlId + "hint").css({
-  					left: ev.pageX + 5,
-  					top: ev.pageY + 5
-  				}).show(); 
+  				var hint = $("#" + ev.data.controlId + "hint");
+  				hint.show();
+  				var left = ev.pageX + 5;
+  				var top = ev.pageY + 5;
+  				if (ev.pageX + 5 + hint.outerWidth(true) > $(window).width()) left = ev.pageX - hint.outerWidth(true) - 5;
+  				if (ev.pageY + 5 + hint.outerHeight(true) > $(window).height()) top = ev.pageY - hint.outerHeight(true) - 5;
+  				hint.css({
+  					left: left,
+  					top: top
+  				}); 
   			});
   			break;
   		case "hover" :
   			$("#" + controlHint.controlId).mouseover({controlId: controlHint.controlId}, function(ev) { 
-  				$("#" + ev.data.controlId + "hint").css({
-  					left: ev.pageX + 5,
-  					top: ev.pageY + 5
-  				}).show();  
+  				var hint = $("#" + ev.data.controlId + "hint");
+  				hint.show();
+  				var left = ev.pageX + 5;
+  				var top = ev.pageY + 5;
+  				if (ev.pageX + 5 + hint.outerWidth(true) > $(window).width()) left = ev.pageX - hint.outerWidth(true) - 5;
+  				if (ev.pageY + 5 + hint.outerHeight(true) > $(window).height()) top = ev.pageY - hint.outerHeight(true) - 5;
+  				hint.css({
+  					left: left,
+  					top: top
+  				});  
   			});
   		break;
   	}
@@ -1780,7 +1792,16 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 			};	
 		break;
 		case "SAVESTYLES" :		
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), styles: $("#rapid_P0_C116").val() };	
+			data = { 
+				actionType: actionType, 
+				appId: $("#rapid_P0_C43").val(), 
+				version: $("#rapid_P0_C1044_").val(), 
+				styles: $("#rapid_P0_C116").val(),
+				statusBarColour: $("#rapid_P0_C1414_").val(), 
+				statusBarHighlightColour: $("#rapid_P0_C1418_").val(), 
+				statusBarTextColour: $("#rapid_P0_C1415_").val(), 
+				statusBarIconColour: $("#rapid_P0_C1416_").val() 
+			};	
 		break;		
 		case "SAVEFUNCTIONS" :		
 			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), functions: $("#rapid_P0_C1292_").val() };	

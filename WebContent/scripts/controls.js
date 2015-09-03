@@ -541,7 +541,7 @@ function rebuildHtml(control) {
 		}
 						
 		// if our control looks like a non visible
-		if (control.object.is(".nonVisibleControl")) {
+		if (control.object && control.object.is(".nonVisibleControl")) {
 			// add a selection listener
 			control.object.click( function(ev) {
 				selectControl(getControlById($(ev.target).attr("id")));

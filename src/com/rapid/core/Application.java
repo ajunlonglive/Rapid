@@ -457,7 +457,7 @@ public class Application {
 	
 	// instance variables	
 	private int _xmlVersion, _status, _applicationBackupsMaxSize, _pageBackupsMaxSize;
-	private String _id, _version, _name, _title, _description, _startPageId, _styles, _functions, _securityAdapterType, _formAdapterType, _createdBy, _modifiedBy;
+	private String _id, _version, _name, _title, _description, _startPageId, _styles, _statusBarColour, _statusBarHighlightColour, _statusBarTextColour, _statusBarIconColour, _functions, _securityAdapterType, _formAdapterType, _createdBy, _modifiedBy;
 	private boolean _showConrolIds, _showActionIds;
 	private Date _createdDate, _modifiedDate;
 	private Map<String,Integer> _pageOrders;
@@ -538,7 +538,23 @@ public class Application {
 	public String getStyles() { return _styles; }
 	public void setStyles(String styles) { _styles = styles; }
 	
-	// the JavaScript functions added to the generated application rapid.js file
+	// colour of the status bar in Rapid Mobile
+	public String getStatusBarColour() { return _statusBarColour; }
+	public void setStatusBarColour(String statusBarColour) { _statusBarColour =  statusBarColour; }
+	
+	// colour of the status bar highlight in Rapid Mobile
+	public String getStatusBarHighlightColour() { return _statusBarHighlightColour; }
+	public void setStatusBarHighlightColour(String statusBarHighlightColour) { _statusBarHighlightColour =  statusBarHighlightColour; }
+	
+	// colour of the status bar text in Rapid Mobile
+	public String getStatusBarTextColour() { return _statusBarTextColour; }
+	public void setStatusBarTextColour(String statusBarTextColour) { _statusBarTextColour =  statusBarTextColour; }
+	
+	// colour of icons in Rapid Mobile
+	public String getStatusBarIconColour() { return _statusBarIconColour; }
+	public void setStatusBarIconColour(String statusBarIconColour) { _statusBarIconColour =  statusBarIconColour; }
+	
+	// the JavaScript functions added to the generated application rapid.js file (this has been replaced by application resources)
 	public String getFunctions() { return _functions; }
 	public void setFunctions(String functions) { _functions = functions; }
 	
@@ -587,10 +603,14 @@ public class Application {
 	public Application() throws ParserConfigurationException, XPathExpressionException, RapidLoadingException, SAXException, IOException {
 		_xmlVersion = XML_VERSION;
 		_pages = new Pages(this);
+		_pageOrders = new HashMap<String,Integer>();
+		_statusBarColour = "#aaaaaa";
+		_statusBarHighlightColour = "#999999"; 
+		_statusBarTextColour = "#ffffff";
+		_statusBarIconColour = "white";
 		_databaseConnections = new ArrayList<DatabaseConnection>();
 		_webservices = new ArrayList<Webservice>();
-		_parameters = new ArrayList<Parameter>();
-		_pageOrders = new HashMap<String,Integer>();
+		_parameters = new ArrayList<Parameter>();		
 		_applicationBackupsMaxSize = 3;
 		_pageBackupsMaxSize = 3;
 	};
@@ -1833,9 +1853,12 @@ public class Application {
 				// get a file writer
 				Writer fw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(detailsFile), "UTF-8"));
 				// write the details
-				fw.write(_id + "\r\n" +  Rapid.MOBILE_VERSION + " - " + _version + "\r\n" + _title);
-				// lines 4 and 5 are the status bar and status bar button colours respecitvely 
-				//fw.write(_id + "\r\n" +  Rapid.MOBILE_VERSION + " - " + _version + "\r\n" + _title + "\r\n0xFFFF0000\r\n0xFF00FF00\r\n");
+				fw.write(_id + "\r\n" +  Rapid.MOBILE_VERSION + " - " + _version + "\r\n" + _title + "\r\n");				
+				// lines 4 to 7 are for the status bar colours
+				if (_statusBarColour != null) fw.write(_statusBarColour  + "\r\n");
+				if (_statusBarHighlightColour != null) fw.write(_statusBarHighlightColour  + "\r\n");
+				if (_statusBarTextColour != null) fw.write(_statusBarTextColour  + "\r\n");
+				if (_statusBarIconColour != null) fw.write(_statusBarIconColour  + "\r\n");
 				// close the file writer
 				fw.close();
 				// add the file to the zip with a root path
