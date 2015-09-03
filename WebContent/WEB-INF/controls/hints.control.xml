@@ -127,18 +127,30 @@ for (var i in details.controlHints) {
 	switch (controlHint.type) {		
 		case "click" :
 			$("#" + controlHint.controlId).click({controlId: controlHint.controlId}, function(ev) { 
-				$("#" + ev.data.controlId + "hint").css({
-					left: ev.pageX + 5,
-					top: ev.pageY + 5
-				}).show(); 
+				var hint = $("#" + ev.data.controlId + "hint");
+				hint.show();
+				var left = ev.pageX + 5;
+				var top = ev.pageY + 5;
+				if (ev.pageX + 5 + hint.outerWidth(true) > $(window).width()) left = ev.pageX - hint.outerWidth(true) - 5;
+				if (ev.pageY + 5 + hint.outerHeight(true) > $(window).height()) top = ev.pageY - hint.outerHeight(true) - 5;
+				hint.css({
+					left: left,
+					top: top
+				}); 
 			});
 			break;
 		case "hover" :
 			$("#" + controlHint.controlId).mouseover({controlId: controlHint.controlId}, function(ev) { 
-				$("#" + ev.data.controlId + "hint").css({
-					left: ev.pageX + 5,
-					top: ev.pageY + 5
-				}).show();  
+				var hint = $("#" + ev.data.controlId + "hint");
+				hint.show();
+				var left = ev.pageX + 5;
+				var top = ev.pageY + 5;
+				if (ev.pageX + 5 + hint.outerWidth(true) > $(window).width()) left = ev.pageX - hint.outerWidth(true) - 5;
+				if (ev.pageY + 5 + hint.outerHeight(true) > $(window).height()) top = ev.pageY - hint.outerHeight(true) - 5;
+				hint.css({
+					left: left,
+					top: top
+				});  
 			});
 		break;
 	}
