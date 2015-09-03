@@ -107,20 +107,21 @@ public class Pages {
 
 		@Override
 		public int compare(PageHeader page1, PageHeader page2) {
-			Map<String,Integer> pageOrders = _application.getPageOrders();
-			int o1 = -1;
-			if (pageOrders.get(page1.getId()) != null) o1 = pageOrders.get(page1.getId());
-			int o2 = -1;
-			if (pageOrders.get(page2.getId()) != null) o2 = pageOrders.get(page2.getId());
-			if (o1 > 0 && o2 > 0) {
-				return o1 - o2;
-			} else if (o1 == -1 && o2 > 0) {
-				return 1;
-			} else if (o2 == -1 && o1 > 0) {
-				return -1;
-			} else {
-				return Comparators.AsciiCompare(page1.getName(), page2.getName(), false);
-			}
+			Map<String,Integer> pageOrders = _application.getPageOrders();			
+			if (pageOrders != null) {
+				int o1 = -1;			
+				int o2 = -1;
+				if (pageOrders.get(page1.getId()) != null) o1 = pageOrders.get(page1.getId());
+				if (pageOrders.get(page2.getId()) != null) o2 = pageOrders.get(page2.getId());
+				if (o1 > 0 && o2 > 0) {
+					return o1 - o2;
+				} else if (o1 == -1 && o2 > 0) {
+					return 1;
+				} else if (o2 == -1 && o1 > 0) {
+					return -1;
+				} 
+			}			
+			return Comparators.AsciiCompare(page1.getName(), page2.getName(), false);
 		}
 		
 	}

@@ -870,8 +870,7 @@ public class Designer extends RapidHttpServlet {
 								// if we got some
 								if (jsonPages != null) {
 									// make a new map for the page orders
-									Map<String, Integer> pageOrders = new HashMap<String, Integer>();
-									
+									Map<String, Integer> pageOrders = new HashMap<String, Integer>();									
 									// loop the page orders
 									for (int i = 0; i < jsonPages.length(); i++) {
 										// add the order to the map
@@ -881,6 +880,11 @@ public class Designer extends RapidHttpServlet {
 									application.setPageOrders(pageOrders);			
 									// save the application and the new orders
 									application.save(this, rapidRequest, true);
+								}
+								boolean jsonPageOrderReset = jsonPage.optBoolean("pageOrderReset");
+								if (jsonPageOrderReset) {
+									// empty the application pageOrders map so everything goes alphabetical
+									application.setPageOrders(null);
 								}
 								
 								// send a positive message

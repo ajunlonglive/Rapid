@@ -322,7 +322,7 @@ function getDialogue(cell, propertyObject, property, details, width, title, opti
 			}
 		}
 		// add a close link
-		var close = dialogue.append("<b style='float:left;margin-top:-5px;'>" + title + "</b><a href='#' class='closeDialogue' style='float:right;margin-top:-5px;'>close</a></div>").children().last();
+		var close = dialogue.append("<b class='dialogueTitle' style='float:left;margin-top:-5px;'>" + title + "</b><a href='#' class='dialogueClose' style='float:right;margin-top:-5px;'>close</a></div>").children().last();
 	
 		// add the close listener (it's put in the listener collection above)
 		addListener(close.click({dialogueId: dialogueId}, function(ev) {
@@ -341,7 +341,7 @@ function getDialogue(cell, propertyObject, property, details, width, title, opti
 				// if we got one
 				if (childDialogue[0]) {
 					// find the close link
-					var close = childDialogue.find("a.closeDialogue");
+					var close = childDialogue.find("a.dialogueClose");
 					// click it
 					close.click();
 				}
@@ -3849,6 +3849,20 @@ function Property_mobileActionType(cell, mobileAction, property, details) {
 	}));
 }
 
+// helper function for rebuilding the main control panel page select drop down
+function rebuildPageSelect(cell, propertyObject, property) {		
+	// get the dropdown
+	var pageSelect = $("#pageSelect");
+	pageSelect.children().remove();
+	// rebuild the dropdown
+	for (var i in _pages) {
+		var page = _pages[i];
+		pageSelect.append("<option value='" + page.id + "'" + (page.id == _page.id ? " selected='true'" : "") + ">" + page.name + " - " + page.title + "</option>");
+	}
+	// update the dialogue
+	Property_pageOrder(cell, propertyObject, property); 
+}
+
 // page order
 function Property_pageOrder(cell, propertyObject, property, details) {
 	
@@ -3860,6 +3874,27 @@ function Property_pageOrder(cell, propertyObject, property, details) {
 	table.addClass("dialogueTableAllBorders");
 	// make sure table is empty
 	table.children().remove();
+	
+	// get the dialogue title
+	var title = dialogue.find(".dialogueTitle").first();
+	if (!title.next().is("button")) {
+		title.after("<button style='float:left;margin-top:-7px;' class='titleButton sources' title='Reset page order'><span>&#xf0e2;</span></button>");
+		// listener for resetting the page order
+		addListener( dialogue.find("button.titleButton").first().click( function(ev) {
+			// sort the pages
+			_pages.sort( function(p1, p2) {
+				var s1 = p1.name + " - " + p1.title;
+				var s2 = p2.name + " - " + p2.title;
+				return s1.localeCompare(s2);
+			});
+			// retain that the page order has been manually changed
+			_pageOrderChanged = false;
+			// retain that the page order has been reset
+			_pageOrderReset = true;
+			// rebuild the list and dialogue
+			rebuildPageSelect(cell, propertyObject, property);
+		}));
+	}
 		
 	// assume the text of the cell is empty
 	var text = "";
@@ -3879,19 +3914,13 @@ function Property_pageOrder(cell, propertyObject, property, details) {
 	}
 		
 	// add reorder listeners
-	addReorder(_pages, table.find("img.reorder"), function() {
+	addReorder(_pages, table.find("img.reorder"), function() {		
 		// retain that the page order has been changed
 		_pageOrderChanged = true;
-		// get the dropdown
-		var pageSelect = $("#pageSelect");
-		pageSelect.children().remove();
-		// rebuild the dropdown
-		for (var i in _pages) {
-			var page = _pages[i];
-			pageSelect.append("<option value='" + page.id + "'" + (page.id == _page.id ? " selected='true'" : "") + ">" + page.name + " - " + page.title + "</option>");
-		}
-		// rebuild the list
-		Property_pageOrder(cell, propertyObject, property); 
+		// retain that the page order has not been reset
+		_pageOrderReset = false;
+		// rebuild the list and dialogue
+		rebuildPageSelect(cell, propertyObject, property);
 	});
 	
 	// put the text into the cell

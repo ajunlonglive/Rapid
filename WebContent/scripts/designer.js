@@ -95,6 +95,8 @@ var _movedoverDirection = "";
 var _mousedOverControl = null;
 // we need to retain whether the page order has been changed (no need to send and reprocess if not)
 var _pageOrderChanged = false;
+//we need to retain whether the page order has been reset too (this puts it back in alphabetical mode)
+var _pageOrderReset = false;
 
 // retain the currenty selected object
 var _selectedControl = null;
@@ -1516,6 +1518,8 @@ function loadPages(selectedPageId, forceLoad) {
         	_nextPageId = 1;
         	// reset the page order changed to false
         	_pageOrderChanged = false;
+        	// reset the page order reset to false
+        	_pageOrderReset = false;
         	// if a page is not selected try the url
         	if (!selectedPageId) selectedPageId = $.getUrlVar("p");
         	// build the select options for each page
@@ -1835,6 +1839,8 @@ function getSavePageData() {
 	
 	// add the pages if their order has been changed
 	if (_pageOrderChanged) pageObject.pages = _pages;
+	// add whether the page order had been reset
+	pageObject.pageOrderReset = _pageOrderReset;
 		
 	// stringify the page control object and add to the page (this creates an array called childControls)
 	var pageData = JSON.stringify(pageObject);
