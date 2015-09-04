@@ -766,6 +766,17 @@ function getData_grid(ev, id, field, details) {
   					}
   				}
   			}	    
+  			if (data == null && details.dataStorageType) {
+  				var dataStore = getGridDataStoreData(id, details);
+  				if (dataStore.rows > rowIndex) {
+  					for (var i in dataStore.fields) {
+  						if (dataStore.fields[i] && dataStore.fields[i].toLowerCase() == field.toLowerCase()) {
+  							data = dataStore.rows[rowIndex][i];
+  							break;
+  						}
+  					}
+  				}
+  			}
   		} else {
   			var data = {};
   			data.fields = [];		
@@ -786,6 +797,7 @@ function getData_grid(ev, id, field, details) {
   			// if there is a data store
   			if (details.dataStorageType) {
   				var dataStore = getGridDataStoreData(id, details);
+  				// only if there are less fields in the physical grid than in the dataStore
   				if (data.fields.length < dataStore.fields.length) {				
   					var fieldMap = {};
   					for (var i in data.fields) {
@@ -797,7 +809,12 @@ function getData_grid(ev, id, field, details) {
   						}
   					}
   					for (var i in data.rows) {
-  						for (j in fieldMap) {
+  						// add an empty row to the dataStore if there are more in the page
+  						if (dataStore.rows.length < i - 1) {
+  							dataStore.rows.push([]);
+  							for (k in dataStore.fields) dataStore.rows[i].push(null);
+  						}
+  						for (j in fieldMap) {							
   							dataStore.rows[i][fieldMap[j]] = data.rows[i][j];
   						}
   					}
@@ -841,7 +858,7 @@ function setData_grid(ev, id, field, details, data, changeEvents) {
   				// added the column to the map
   				if (columnMap.length == i) columnMap.push("");
   				// if we have cellFunction JavaScript, and it hasn't been turned into a function object yet
-  				if (details.columns[i].cellFunction && !details.columns[i].f) details.columns[i].f = new Function(details.columns[i].cellFunction);
+  				if (details.columns[i].cellFunction && !details.columns[i].f) details.columns[i].f = new Function(["id", "data", "field", "details", "value"],details.columns[i].cellFunction);
   			}
   			for (var i in data.rows) {
   				var row = data.rows[i];
@@ -861,7 +878,7 @@ function setData_grid(ev, id, field, details, data, changeEvents) {
   					var cellObject = rowObject.append("<td" + style + ">" + value + "</td>").find("td:last");
   					// apply any cell function
   					if (details.columns[j].f) {
-  						details.columns[j].f.apply(cellObject,[id, data, field, details]);
+  						details.columns[j].f.apply(cellObject,[id, data, field, details, value]);
   					}
   				}		
   				// if there is a rowValidation collection
