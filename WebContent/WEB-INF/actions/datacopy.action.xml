@@ -221,7 +221,7 @@ function Action_datacopy(ev, data, outputs, changeEvents, copyType, copyData, fi
 							var fieldPos = 0;
 							var valuePos = 1;
 							// check the map for whether the key fields are before or after the field/value pair
-							if (for i in keyFieldsMap) {
+							for (i in keyFieldsMap) {
 								// if any of the key fields are in the first column
 								if (i*1 == 0) {
 									// change field and value columns from 1st and 2nd to those following the keys
