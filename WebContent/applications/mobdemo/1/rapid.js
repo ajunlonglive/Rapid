@@ -2013,44 +2013,126 @@ function Action_datacopy(ev, data, outputs, changeEvents, copyType, copyData, fi
 					if (data) outputData = mergeDataObjects(copyData, data, copyType, field, details);
 				break;
 				case "trans" :						
-					if (data && data.fields && data.rows) {						
-						outputData = {fields:["field","value"],rows:[]};						
-						if (details && details.keyFields && details.keyFields.length > 0) {
-							for (var j in details.keyFields) {
-								outputData.fields.push(details.keyFields[j]);
+					if (data && data.fields && data.rows) {	
+												
+						var downtoside = false;
+						// checking for down to side transpose is quite expensive so get the easy stuff out the way first
+						if (data.rows.length >= details.keyFields.length + 2) {
+							var keyFieldsMap = {};
+							for (var i in data.fields) {
+								for (var j in details.keyFields) {
+									if (data.fields[i] && details.keyFields[j] && data.fields[i].toLowerCase() == details.keyFields[j].toLowerCase()) {
+										keyFieldsMap[i] = j;
+										break;
+									}
+								}
 							}
-						}						
-						for (var i in data.rows) {						
-							var keyFieldValues = [];						
-							// key fields
+							if (Object.keys(keyFieldsMap).length == details.keyFields.length && data.fields.length >= details.keyFields.length + 2) {
+								var keyValueCounts = {};
+								for (var i in data.rows) {
+									var keyValue = "";
+									for (var j in keyFieldsMap) {
+										keyValue += data.rows[i][keyFieldsMap[j]];
+									}
+									if (keyValueCounts[keyValue]) {
+										keyValueCounts[keyValue] ++;
+									} else {
+										keyValueCounts[keyValue] = 1;
+									}
+									if (keyValueCounts[keyValue] > details.keyFields.length) {
+										downtoside = true;
+										break;
+									}
+								}
+							}						
+						}
+												
+						if (downtoside) {
+							// transpose down to side
+							var fieldPos = 0;
+							var valuePos = 1;
+							if (keyFieldsMap[0] == 0) {
+								fieldPos = details.keyFields.length - 1;
+								valuePos = details.keyFields.length;
+							}
+							var outputFields = [];
+							for (var i in details.keyFields) outputFields.push(details.keyFields);
+							var keyValueRows = {};
+							for (var i in data.rows) {
+								var row = data.rows[i];
+								var field = row[fieldPos];
+								var value = row[valuePos];
+								// determin the key value for this row
+								var keyValue = "";
+								for (var j in keyFieldsMap) {
+									keyValue += row[j];
+								}
+								// fetch the row we are creating for this key
+								var keyRow = keyValueRows[keyValue];
+								if (!keyRow) {
+									keyRow = [];
+									keyValueRows[keyValue] = keyRow;
+								}
+								// find the position of this field in the output fields
+								var outputFieldPos = -1;
+								for (var j in outputFields) {
+									if (outputFields[j] == field) {
+										outputFieldPos = j;
+										break;
+									}
+								}
+								if (outputFieldPos < 0) {
+									outputFields.push(field);
+									outputFieldPos = outputFields.length - 1;
+								}
+								// ensure the row is the right length as we discover more fields								
+								while (keyRow.length < outputFields.length) keyRow.push(null);
+								// set the value in the correct position
+								keyRow[outputFieldPos] = value;
+																													 
+							}
+							outputData = {fields:outputFields,rows:[]};		
+							for (var i in keyValueRows) outputData.rows.push(keyValueRows[i]);
+						} else {
+							// transpose side to down				
+							outputData = {fields:["field","value"],rows:[]};						
 							if (details && details.keyFields && details.keyFields.length > 0) {
 								for (var j in details.keyFields) {
-									for (var k in data.fields) {
-										if (data.fields[k] && details.keyFields[j].toLowerCase() == data.fields[k].toLowerCase()) {
-											keyFieldValues.push(data.rows[i][k]);
-											break;
+									outputData.fields.push(details.keyFields[j]);
+								}
+							}						
+							for (var i in data.rows) {						
+								var keyFieldValues = [];						
+								// key fields
+								if (details && details.keyFields && details.keyFields.length > 0) {
+									for (var j in details.keyFields) {
+										for (var k in data.fields) {
+											if (data.fields[k] && details.keyFields[j].toLowerCase() == data.fields[k].toLowerCase()) {
+												keyFieldValues.push(data.rows[i][k]);
+												break;
+											}
+										}
+									}								
+								}
+																																		
+								// values
+								for (var j in data.fields) {
+									var ignore = false;
+									if (details && details.ignoreFields && details.ignoreFields.length > 0) {
+										for (var k in details.ignoreFields) {
+											if (!data.fields[j] || data.fields[j].toLowerCase() == details.ignoreFields[k].toLowerCase()) {
+												ignore = true;
+												break;
+											}
 										}
 									}
-								}								
+									if (!ignore) {
+										var row = [data.fields[j],data.rows[i][j]];
+										for (var k in keyFieldValues) row.push(keyFieldValues[k]);
+										outputData.rows.push(row);
+									}
+								}																											
 							}
-																																	
-							// values
-							for (var j in data.fields) {
-								var ignore = false;
-								if (details && details.ignoreFields && details.ignoreFields.length > 0) {
-									for (var k in details.ignoreFields) {
-										if (!data.fields[j] || data.fields[j].toLowerCase() == details.ignoreFields[k].toLowerCase()) {
-											ignore = true;
-											break;
-										}
-									}
-								}
-								if (!ignore) {
-									var row = [data.fields[j],data.rows[i][j]];
-									for (var k in keyFieldValues) row.push(keyFieldValues[k]);
-									outputData.rows.push(row);
-								}
-							}																											
 						}
 					}
 				break;
