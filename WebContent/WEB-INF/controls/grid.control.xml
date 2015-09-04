@@ -612,7 +612,7 @@ if (data !== undefined) {
 				// added the column to the map
 				if (columnMap.length == i) columnMap.push("");
 				// if we have cellFunction JavaScript, and it hasn't been turned into a function object yet
-				if (details.columns[i].cellFunction && !details.columns[i].f) details.columns[i].f = new Function(details.columns[i].cellFunction);
+				if (details.columns[i].cellFunction && !details.columns[i].f) details.columns[i].f = new Function(["id", "data", "field", "details", "value"],details.columns[i].cellFunction);
 			}
 			for (var i in data.rows) {
 				var row = data.rows[i];
@@ -632,7 +632,7 @@ if (data !== undefined) {
 					var cellObject = rowObject.append("<td" + style + ">" + value + "</td>").find("td:last");
 					// apply any cell function
 					if (details.columns[j].f) {
-						details.columns[j].f.apply(cellObject,[id, data, field, details]);
+						details.columns[j].f.apply(cellObject,[id, data, field, details, value]);
 					}
 				}		
 				// if there is a rowValidation collection
