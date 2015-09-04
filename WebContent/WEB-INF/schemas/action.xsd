@@ -71,7 +71,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 							<xs:element name="class">
 								<xs:annotation>
 									<xs:documentation>Each action must have a Java class, in the
-										classpath, that extends com.rapid.desktop.Action
+										classpath, that extends com.rapid.core.Action
 									</xs:documentation>
 								</xs:annotation>
 								<xs:simpleType>

@@ -405,22 +405,22 @@ public class Rapid extends Action {
 					// check we have some database drivers
 					if (jsonDatabaseDrivers != null) {
 						// prepare the database driver collection we'll send
-						JSONArray jsonSendDatabaseDrivers = new JSONArray();
+						JSONArray jsonDrivers = new JSONArray();
 						// loop what we have
 						for (int i = 0; i < jsonDatabaseDrivers.length(); i++) {
 							// get the item
 							JSONObject jsonDatabaseDriver = jsonDatabaseDrivers.getJSONObject(i);
 							// make a simpler send item
-							JSONObject jsonSendDatabaseDriver = new JSONObject();
+							JSONObject jsonDriver = new JSONObject();
 							// add type
-							jsonSendDatabaseDriver.put("value", jsonDatabaseDriver.get("class"));
+							jsonDriver.put("value", jsonDatabaseDriver.get("class"));
 							// add name
-							jsonSendDatabaseDriver.put("text", jsonDatabaseDriver.get("name"));
+							jsonDriver.put("text", jsonDatabaseDriver.get("name"));
 							// add to collection
-							jsonSendDatabaseDrivers.put(jsonSendDatabaseDriver);
+							jsonDrivers.put(jsonDriver);
 						}
 						// add the database drivers to the result
-						result.put("databaseDrivers", jsonSendDatabaseDrivers);
+						result.put("databaseDrivers", jsonDrivers);
 					}
 					
 					// fetch the connection adapters
@@ -428,22 +428,22 @@ public class Rapid extends Action {
 					// check we have some database drivers
 					if (jsonConnectionAdapters != null) {
 						// prepare the database driver collection we'll send
-						JSONArray jsonSendConnectionAdapters = new JSONArray();
+						JSONArray jsonAdapters = new JSONArray();
 						// loop what we have
 						for (int i = 0; i < jsonConnectionAdapters.length(); i++) {
 							// get the item
 							JSONObject jsonConnectionAdapter = jsonConnectionAdapters.getJSONObject(i);
 							// make a simpler send item
-							JSONObject jsonSendConnectionAdapter = new JSONObject();
+							JSONObject jsonSendAdapter = new JSONObject();
 							// add type
-							jsonSendConnectionAdapter.put("value", jsonConnectionAdapter.get("class"));
+							jsonSendAdapter.put("value", jsonConnectionAdapter.get("class"));
 							// add name
-							jsonSendConnectionAdapter.put("text", jsonConnectionAdapter.get("name"));
+							jsonSendAdapter.put("text", jsonConnectionAdapter.get("name"));
 							// add to collection
-							jsonSendConnectionAdapters.put(jsonSendConnectionAdapter);
+							jsonAdapters.put(jsonSendAdapter);
 						}
 						// add the database drivers to the result
-						result.put("connectionAdapters", jsonSendConnectionAdapters);
+						result.put("connectionAdapters", jsonAdapters);
 					}	
 					
 					// fetch the security adapters
@@ -451,29 +451,60 @@ public class Rapid extends Action {
 					// check we have some security adapters
 					if (jsonSecurityAdapters != null) {
 						// prepare the security adapter collection we'll send
-						JSONArray jsonSendSecurityAdapters = new JSONArray();
+						JSONArray jsonAdapters = new JSONArray();
 						// loop what we have
 						for (int i = 0; i < jsonSecurityAdapters.length(); i++) {
 							// get the item
 							JSONObject jsonSecurityAdapter = jsonSecurityAdapters.getJSONObject(i);
 							// make a simpler send item
-							JSONObject jsonSendSecurityAdapter = new JSONObject();
+							JSONObject jsonSendAdapter = new JSONObject();
 							// add type
-							jsonSendSecurityAdapter.put("value", jsonSecurityAdapter.get("type"));
+							jsonSendAdapter.put("value", jsonSecurityAdapter.get("type"));
 							// add name
-							jsonSendSecurityAdapter.put("text", jsonSecurityAdapter.get("name"));
+							jsonSendAdapter.put("text", jsonSecurityAdapter.get("name"));
 							// add canManageRoles
-							jsonSendSecurityAdapter.put("canManageRoles", jsonSecurityAdapter.get("canManageRoles"));
+							jsonSendAdapter.put("canManageRoles", jsonSecurityAdapter.get("canManageRoles"));
 							// add canManageUsers
-							jsonSendSecurityAdapter.put("canManageUsers", jsonSecurityAdapter.get("canManageUsers"));
+							jsonSendAdapter.put("canManageUsers", jsonSecurityAdapter.get("canManageUsers"));
 							// add canManageUserRoles
-							jsonSendSecurityAdapter.put("canManageUserRoles", jsonSecurityAdapter.get("canManageUserRoles"));
+							jsonSendAdapter.put("canManageUserRoles", jsonSecurityAdapter.get("canManageUserRoles"));
 							// add to collection
-							jsonSendSecurityAdapters.put(jsonSendSecurityAdapter);
+							jsonAdapters.put(jsonSendAdapter);
 						}
 						// add the security adapters to the result
-						result.put("securityAdapters", jsonSendSecurityAdapters);
-					}									
+						result.put("securityAdapters", jsonAdapters);
+					}						
+					
+					// fetch the form adapters
+					JSONArray jsonFormAdapters = rapidServlet.getJsonFormAdapters();
+					// prepare the collection we'll send
+					JSONArray jsonAdapters = new JSONArray();
+					// create an entry for no form adapter
+					JSONObject jsonSendAdapter = new JSONObject();
+					// no value
+					jsonSendAdapter.put("value", "");
+					// None as text
+					jsonSendAdapter.put("text", "None");					
+					// add the None member first
+					jsonAdapters.put(jsonSendAdapter);
+					// check we have some database drivers
+					if (jsonConnectionAdapters != null) {						
+						// loop what we have
+						for (int i = 0; i < jsonFormAdapters.length(); i++) {
+							// get the item
+							JSONObject jsonAdapter = jsonFormAdapters.getJSONObject(i);
+							// make a simpler send item
+							 jsonSendAdapter = new JSONObject();
+							// add type
+							jsonSendAdapter.put("value", jsonAdapter.get("type"));
+							// add name
+							jsonSendAdapter.put("text", jsonAdapter.get("name"));
+							// add to collection
+							jsonAdapters.put(jsonSendAdapter);
+						}
+						// add the database drivers to the result
+						result.put("formAdapters", jsonAdapters);
+					}	
 					
 					// process the actions and only send the name and type
 					JSONArray jsonSendActions = new JSONArray();
@@ -597,6 +628,8 @@ public class Rapid extends Action {
 						result.put("title", app.getTitle());
 						// add the description
 						result.put("description", app.getDescription());
+						// add the form adapter
+						result.put("formAdapterType", app.getFormAdapterType());
 						// add whether to show control ids
 						result.put("showControlIds", app.getShowControlIds());
 						// add whether to show action ids

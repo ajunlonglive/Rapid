@@ -133,8 +133,8 @@ if (data != null && data !== undefined) {
 					}
 				}
 				if (!text) text = row[0];
-				if (!value && row[1]) value = row[1];
-				if (value || value == "0") value = 	" value='" + value + "'";
+				if (value == undefined && row[1]) value = row[1];
+				if (value != undefined) value = 	" value='" + value + "'";
 				control.append("<option " + value + ">" + text + "</option>");
 			}	
 		}
@@ -168,12 +168,14 @@ return "#" + this.id;
 	            <name>Value</name>
 	            <setPropertyJavaScript>
 	                <![CDATA[
-var	data = makeDataObject(data, field);             
+var	data = makeDataObject(data, field);        
+var control = $("#" + id);
 if (data && data.rows) {
-	$("#" + id).val(data.rows[0][0]);
+	control.val(data.rows[0][0]);
 } else {
-	$("#" + id).val("");
+	control.val("");
 }	                
+if (changeEvents) control.trigger("change");
 	                ]]>
 	            </setPropertyJavaScript>
 	        </runtimeProperty>
