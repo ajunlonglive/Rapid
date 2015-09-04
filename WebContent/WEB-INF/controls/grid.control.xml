@@ -490,7 +490,7 @@ if (this.scrollV && this.fixedHeader) details.fixedHeader = true;
 return details;
 			]]>	        	        
 	    </getDetailsFunction>
-	    	    
+	    
 	    <getDataFunction>
 	        <![CDATA[
 var data = null;
@@ -518,6 +518,17 @@ if (details) {
 					}
 				}
 			}	    
+			if (data == null && details.dataStorageType) {
+				var dataStore = getGridDataStoreData(id, details);
+				if (dataStore.rows > rowIndex) {
+					for (var i in dataStore.fields) {
+						if (dataStore.fields[i] && dataStore.fields[i].toLowerCase() == field.toLowerCase()) {
+							data = dataStore.rows[rowIndex][i];
+							break;
+						}
+					}
+				}
+			}
 		} else {
 			var data = {};
 			data.fields = [];		
@@ -535,14 +546,40 @@ if (details) {
 				});
 				data.rows.push(row);
 			});
+			// if there is a data store
+			if (details.dataStorageType) {
+				var dataStore = getGridDataStoreData(id, details);
+				// only if there are less fields in the physical grid than in the dataStore
+				if (data.fields.length < dataStore.fields.length) {				
+					var fieldMap = {};
+					for (var i in data.fields) {
+						for (var j in dataStore.fields) {
+							if (data.fields[i] && dataStore.fields[j] && data.fields[i].toLowerCase() == dataStore.fields[j].toLowerCase()) {
+								fieldMap[i] = j;
+								break;
+							}
+						}
+					}
+					for (var i in data.rows) {
+						// add an empty row to the dataStore if there are more in the page
+						if (dataStore.rows.length < i - 1) {
+							dataStore.rows.push([]);
+							for (k in dataStore.fields) dataStore.rows[i].push(null);
+						}
+						for (j in fieldMap) {							
+							dataStore.rows[i][fieldMap[j]] = data.rows[i][j];
+						}
+					}
+				}
+				data = dataStore;
+			}						
 		}	
 	}
 }
 return data;
-
 			]]>
-	    </getDataFunction>	    		
-	    
+	    </getDataFunction>	   
+	    	    	   
 	    <setDataJavaScript>
 	        <![CDATA[
 // get the grid control	        

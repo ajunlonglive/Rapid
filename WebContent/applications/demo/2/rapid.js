@@ -783,6 +783,27 @@ function getData_grid(ev, id, field, details) {
   				});
   				data.rows.push(row);
   			});
+  			// if there is a data store
+  			if (details.dataStorageType) {
+  				var dataStore = getGridDataStoreData(id, details);
+  				if (data.fields.length < dataStore.fields.length) {				
+  					var fieldMap = {};
+  					for (var i in data.fields) {
+  						for (var j in dataStore.fields) {
+  							if (data.fields[i] && dataStore.fields[j] && data.fields[i].toLowerCase() == dataStore.fields[j].toLowerCase()) {
+  								fieldMap[i] = j;
+  								break;
+  							}
+  						}
+  					}
+  					for (var i in data.rows) {
+  						for (j in fieldMap) {
+  							dataStore.rows[i][fieldMap[j]] = data.rows[i][j];
+  						}
+  					}
+  				}
+  				data = dataStore;
+  			}						
   		}	
   	}
   }
@@ -1307,9 +1328,14 @@ function Action_datacopy(ev, data, outputs, changeEvents, copyType, copyData, fi
 							// transpose down to side
 							var fieldPos = 0;
 							var valuePos = 1;
-							if (keyFieldsMap[0] == 0) {
-								fieldPos = details.keyFields.length - 1;
-								valuePos = details.keyFields.length;
+							// check the map for whether the key fields are before or after the field/value pair
+							for (i in keyFieldsMap) {
+								// if any of the key fields are in the first column
+								if (i*1 == 0) {
+									// change field and value columns from 1st and 2nd to those following the keys
+									fieldPos = details.keyFields.length - 1;
+									valuePos = details.keyFields.length;									
+								}
 							}
 							var outputFields = [];
 							for (var i in details.keyFields) outputFields.push(details.keyFields);
@@ -1337,6 +1363,7 @@ function Action_datacopy(ev, data, outputs, changeEvents, copyType, copyData, fi
 										break;
 									}
 								}
+								// if the field couldn't be found
 								if (outputFieldPos < 0) {
 									outputFields.push(field);
 									outputFieldPos = outputFields.length - 1;
