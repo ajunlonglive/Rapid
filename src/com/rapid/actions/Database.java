@@ -29,7 +29,9 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.xml.bind.JAXBException;
@@ -653,7 +655,11 @@ public class Database extends Action {
 					
 					// instantiate jsonData
 					jsonData = new JSONObject();
-																		
+					// fields collection
+					JSONArray jsonFields = new JSONArray();						
+					// rows collection can start initialised
+					JSONArray jsonRows = new JSONArray();
+																							
 					// trim the sql
 					sql = sql.trim();
 					
@@ -662,12 +668,7 @@ public class Database extends Action {
 						
 						// set readonly to true (makes for faster querying)
 						df.setReadOnly(true);
-						
-						// fields collection
-						JSONArray jsonFields = new JSONArray();						
-						// rows collection can start initialised
-						JSONArray jsonRows = new JSONArray();
-																		
+														
 						// loop the parameterList getting a result set for each parameters (input row)
 						for (Parameters parameters : parametersList) {
 							
@@ -724,15 +725,7 @@ public class Database extends Action {
 							rs.close();
 							
 						}
-						
-						// add the fields to the data object
-						jsonData.put("fields", jsonFields);
-						// add the rows to the data object
-						jsonData.put("rows", jsonRows);
-						
-						// cache if in use
-						if (actionCache != null) actionCache.put(application.getId(), getId(), parametersList.toString(), jsonData);
-						
+																		
 					} else {
 						
 						// assume rows affected is 0
@@ -743,8 +736,6 @@ public class Database extends Action {
 							rows += df.getPreparedUpdate(rapidRequest, sql, parameters);
 						}
 						
-						// create a fields array
-						JSONArray jsonFields = new JSONArray();
 						// add a psuedo field 
 						jsonFields.put("rows");
 						
@@ -752,25 +743,20 @@ public class Database extends Action {
 						JSONArray jsonRow = new JSONArray();
 						// add the rows updated
 						jsonRow.put(rows);
-						
-						// create a rows array
-						JSONArray jsonRows = new JSONArray();
 						// add the row we just made
 						jsonRows.put(jsonRow);
-						
-						// add the fields to the data object
-						jsonData.put("fields", jsonFields);
-						// add the rows to the data object
-						jsonData.put("rows", jsonRows);
-											
+																	
 					}
 					
+					// add the fields to the data object
+					jsonData.put("fields", jsonFields);
+					// add the rows to the data object
+					jsonData.put("rows", jsonRows);
+															
 					// check for any child database actions
 					if (_childDatabaseActions != null) {
 						// if there really are some
 						if (_childDatabaseActions.size() > 0) {
-							// create an array object for all the child data
-							JSONArray jsonChildDataCollection = new JSONArray();
 							// get any child data
 							JSONArray jsonChildQueries = jsonAction.optJSONArray("childQueries");						
 							// if there was some
@@ -785,16 +771,122 @@ public class Database extends Action {
 									Database childDatabaseAction = _childDatabaseActions.get(index);
 									// get the resultant child data
 									JSONObject jsonChildData = childDatabaseAction.doQuery(rapidRequest, jsonChildAction, application, df);
-									// add it to the collection
-									jsonChildDataCollection.put(jsonChildData);								
-								}
-							}
-							// add a field to the result for the child actions
-							jsonData.getJSONArray("fields").put("childData");
-							// add the collection to the result
-							jsonData.getJSONArray("rows").put(jsonChildDataCollection);
-						}																		
-					}
+																											
+									// a map for indexes of matching fields between our parent and child
+									Map<Integer,Integer> fieldsMap = new HashMap<Integer,Integer>();
+									// the child fields
+									JSONArray jsonChildFields = jsonChildData.getJSONArray("fields");
+									if (jsonChildFields != null) {
+										// loop the parent fields
+										for (int j = 0; j < jsonFields.length(); j++) {
+											// loop the child fields
+											for (int k = 0; k < jsonChildFields.length(); k++) {
+												// get parent field
+												String field = jsonFields.getString(j);
+												// get child field
+												String childField = jsonChildFields.getString(k);
+												// if both not null
+												if (field != null && childField != null) {
+													// check for match
+													if (field.toLowerCase().equals(childField.toLowerCase())) fieldsMap.put(j, k);
+												}											
+											}										
+										}
+									}
+									
+									// add a field for the results of this child action
+									jsonFields.put("childAction" + (i + 1));
+									
+									// if matching fields
+									if (fieldsMap.size() > 0) {
+										// an object with a null value for when there is no match
+										Object nullObject = null;
+										// get the child rows
+										JSONArray jsonChildRows = jsonChildData.getJSONArray("rows");
+										// if we had some
+										if (jsonChildRows != null) {
+											// loop the parent rows
+											for (int j = 0; j < jsonRows.length(); j++) {
+												// get the parent row
+												JSONArray jsonRow = jsonRows.getJSONArray(j);
+												// make a new rows collection for the child subset
+												JSONArray jsonChildRowsSubset = new JSONArray();
+												// loop the child rows
+												for (int k =0; k < jsonChildRows.length(); k++) {
+													// get the child row
+													JSONArray jsonChildRow = jsonChildRows.getJSONArray(k);
+													// assume no matches
+													int matches = 0;
+													// loop the fields map
+													for (Integer l: fieldsMap.keySet()) {
+														// parent value
+														Object parentValue = null;
+														// get the value if there are enough
+														if (jsonRow.length() > l) parentValue = jsonRow.get(l);
+														// child value
+														Object childValue = null;
+														if (jsonChildRow.length() > l) childValue= jsonChildRow.get(fieldsMap.get(l));	
+														// non null check
+														if (parentValue != null && childValue != null) {
+															// a string we will concert the child value to
+															String parentString = null;
+															// check the parent value type
+															if (parentValue.getClass() == String.class) {
+																parentString = (String) parentValue;
+															} else if (parentValue.getClass() == Integer.class) {
+																parentString = Integer.toString((Integer) parentValue);
+															}
+															// a string we will convert the child value to
+															String childString = null;
+															// check the parent value type
+															if (childValue.getClass() == String.class) {
+																childString = (String) childValue;
+															} else if (childValue.getClass() == Integer.class) {
+																childString = Integer.toString((Integer) childValue);
+															}
+															// non null check
+															if (parentString != null && childString != null) {
+																// do the match!
+																if (parentString.equals(childString)) matches++;
+															}
+														} // values non null														
+													} // field map loop
+													// if we got some matches for all the fields add this row to the subset
+													if (matches == fieldsMap.size()) jsonChildRowsSubset.put(jsonChildRow);													
+												} // child row loop
+												// if our child subset has rows in it
+												if (jsonChildRowsSubset.length() > 0) {
+													// create a new childSubset object
+													JSONObject jsonChildDataSubset = new JSONObject();
+													// add the fields
+													jsonChildDataSubset.put("fields", jsonChildFields);
+													// add the subset of rows
+													jsonChildDataSubset.put("rows", jsonChildRowsSubset);
+													// add the child database action data subset
+													jsonRow.put(jsonChildDataSubset);
+												} else {
+													// add an empty cell
+													jsonRow.put(nullObject);
+												}
+											} // parent row loop											
+										} // jsonChildRows null check
+									} else {																			
+										// loop the parent rows
+										for (int j = 0; j < jsonRows.length(); j++) {
+											// get the row
+											JSONArray jsonRow = jsonRows.getJSONArray(j);
+											// add the child database action data
+											jsonRow.put(jsonChildData);
+										}
+									} // matching fields check
+									
+								} // jsonChildQueries loop
+							} // jsonChildQueries null check		 					
+						} // _childDatabaseActions size > 0																		
+					} // _childDatabaseActions not null
+					
+					// cache if in use
+					if (actionCache != null) actionCache.put(application.getId(), getId(), parametersList.toString(), jsonData);
 																		
 				} catch (Exception ex) {
 					
@@ -808,7 +900,7 @@ public class Database extends Action {
 						_logger.debug("Error not shown to user due to cache : " + ex.getMessage());
 					}
 					
-				}
+				} // jsonData not null
 														
 			} // jsonData == null
 			
