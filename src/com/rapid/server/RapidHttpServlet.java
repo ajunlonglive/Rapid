@@ -136,6 +136,10 @@ public class RapidHttpServlet extends HttpServlet {
 		return (JSONArray) getServletContext().getAttribute("jsonSecurityAdapters");
 	}
 	
+	public JSONArray getJsonFormAdapters() {
+		return (JSONArray) getServletContext().getAttribute("jsonFormAdapters");
+	}
+	
 	public JSONArray getJsonControls() {
 		return (JSONArray) getServletContext().getAttribute("jsonControls");
 	}

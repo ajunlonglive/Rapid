@@ -193,15 +193,9 @@ public class RapidServletContextListener implements ServletContextListener {
 	    // create a validator
 	    Validator validator = schema.newValidator();
 	    
-	    // get a scanner to read the file
-		Scanner fileScanner = new Scanner(new File(servletContext.getRealPath("/WEB-INF/database/") + "/databaseDrivers.xml")).useDelimiter("\\A");
-		
 		// read the xml into a string
-		String xml = fileScanner.next();
-		
-		// close the scanner (and file)
-		fileScanner.close();
-		
+		String xml = Strings.getString(new File(servletContext.getRealPath("/WEB-INF/database/") + "/databaseDrivers.xml"));
+				
 		// validate the control xml file against the schema
 		validator.validate(new StreamSource(new ByteArrayInputStream(xml.getBytes("UTF-8"))));
 		
@@ -280,15 +274,9 @@ public class RapidServletContextListener implements ServletContextListener {
 	    	
 		// loop the xml files in the folder
 		for (File xmlFile : dir.listFiles(xmlFilenameFilter)) { 
-			
-			// get a scanner to read the file
-			Scanner fileScanner = new Scanner(xmlFile).useDelimiter("\\A");
-			
+
 			// read the xml into a string
-			String xml = fileScanner.next();
-			
-			// close the scanner (and file)
-			fileScanner.close();
+			String xml = Strings.getString(xmlFile);
 			
 			// validate the control xml file against the schema
 			validator.validate(new StreamSource(new ByteArrayInputStream(xml.getBytes("UTF-8"))));
@@ -359,7 +347,7 @@ public class RapidServletContextListener implements ServletContextListener {
 		// get the directory in which the control xml files are stored
 		File dir = new File(servletContext.getRealPath("/WEB-INF/security/"));
 		
-		// create a filter for finding .control.xml files
+		// create a filter for finding .securityadapter.xml files
 		FilenameFilter xmlFilenameFilter = new FilenameFilter() {
 	    	public boolean accept(File dir, String name) {
 	    		return name.toLowerCase().endsWith(".securityadapter.xml");
@@ -374,14 +362,8 @@ public class RapidServletContextListener implements ServletContextListener {
 		// loop the xml files in the folder
 		for (File xmlFile : dir.listFiles(xmlFilenameFilter)) { 
 			
-			// get a scanner to read the file
-			Scanner fileScanner = new Scanner(xmlFile).useDelimiter("\\A");
-			
 			// read the xml into a string
-			String xml = fileScanner.next();
-			
-			// close the scanner (and file)
-			fileScanner.close();
+			String xml = Strings.getString(xmlFile);
 			
 			// validate the control xml file against the schema
 			validator.validate(new StreamSource(new ByteArrayInputStream(xml.getBytes("UTF-8"))));
@@ -421,7 +403,79 @@ public class RapidServletContextListener implements ServletContextListener {
 		return adapterCount;
 		
 	}
+	
+	// loop all of the .securityAdapter.xml files and check the injectable classes, so we can re-initialise JAXB context to be able to serialise them, and cache their constructors for speedy initialisation
+	public static int loadFormAdapters(ServletContext servletContext) throws Exception {
 		
+		int adapterCount = 0;
+		
+		// retain our class constructors in a hashtable - this speeds up initialisation
+		HashMap<String,Constructor> formConstructors = new HashMap<String,Constructor>();
+		
+		// create a JSON Array object which will hold json for all of the available security adapters
+		JSONArray jsonAdapters = new JSONArray();
+		
+		// get the directory in which the control xml files are stored
+		File dir = new File(servletContext.getRealPath("/WEB-INF/forms/"));
+		
+		// create a filter for finding .formadapter.xml files
+		FilenameFilter xmlFilenameFilter = new FilenameFilter() {
+	    	public boolean accept(File dir, String name) {
+	    		return name.toLowerCase().endsWith(".formadapter.xml");
+	    	}
+	    };
+	    
+	    // create a schema object for the xsd
+	    Schema schema = _schemaFactory.newSchema(new File(servletContext.getRealPath("/WEB-INF/schemas/") + "/formAdapter.xsd"));
+	    // create a validator
+	    Validator validator = schema.newValidator();
+	    	
+		// loop the xml files in the folder
+		for (File xmlFile : dir.listFiles(xmlFilenameFilter)) { 
+			
+			// read the xml into a string
+			String xml = Strings.getString(xmlFile);
+						
+			// validate the control xml file against the schema
+			validator.validate(new StreamSource(new ByteArrayInputStream(xml.getBytes("UTF-8"))));
+			
+			// convert the string into JSON
+			JSONObject jsonFormAdapter = org.json.XML.toJSONObject(xml).getJSONObject("formAdapter");
+			
+			// get the type from the json
+			String type = jsonFormAdapter.getString("type");
+			// get the class name from the json
+			String className = jsonFormAdapter.getString("class");
+			// get the class 
+			Class classClass = Class.forName(className);
+			// check the class extends com.rapid.security.SecurityAdapter
+			if (!Classes.extendsClass(classClass, com.rapid.forms.FormAdapter.class)) throw new Exception(type + " form adapter class " + classClass.getCanonicalName() + " must extend com.rapid.forms.FormsAdapter"); 
+			// check this type is unique
+			if (formConstructors.get(type) != null) throw new Exception(type + " form adapter already loaded. Type names must be unique.");
+			// add to constructors hashmap referenced by type
+			formConstructors.put(type, classClass.getConstructor(ServletContext.class, Application.class));
+			
+			// add to our collection
+			jsonAdapters.put(jsonFormAdapter);
+									
+			// increment the count
+			adapterCount++;
+			
+		}
+		
+		// put the jsonControls in a context attribute (this is available via the getJsonActions method in RapidHttpServlet)
+		servletContext.setAttribute("jsonFormAdapters", jsonAdapters);
+		
+		// put the constructors hashmapin a context attribute (this is available via the getContructor method in RapidHttpServlet)
+		servletContext.setAttribute("formConstructors", formConstructors);
+															
+		_logger.info(adapterCount + " form adapters loaded in .formAdapter.xml files");
+		
+		return adapterCount;
+		
+	}
+		
+	
 	// loop all of the .action.xml files and check the injectable classes, so we can re-initialise JAXB context to be able to serialise them, and cache their constructors for speedy initialisation
 	public static int loadActions(ServletContext servletContext) throws Exception {
 		
@@ -931,6 +985,9 @@ public class RapidServletContextListener implements ServletContextListener {
 			
 			// load the security adapters 
 			loadSecurityAdapters(servletContext);
+			
+			// load the form adapters
+			loadFormAdapters(servletContext);
 			
 			// load the actions 
 			loadActions(servletContext);

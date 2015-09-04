@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<controls xmlVersion="1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/control.xsd">
+
+<!-- 
+
+Copyright (C) 2014 - Gareth Edwards / Rapid Information Systems
+
+gareth.edwards@rapid-is.co.uk
+
+
+This file is part of the Rapid Application Platform
+
+RapidSOA is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version. The terms require you to include
+the original copyright, and the license notice in all redistributions.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
+
+ -->
+
+	<control>
+	    
+	    <type>chart</type>	 
+	    <name>Chart</name>	   
+	    <image>images/chart_24x24.png</image>   
+	    
+	    <addToNewApplications>false</addToNewApplications>
+	         
+	    <canUserAdd>true</canUserAdd>
+	    <canUserMove>true</canUserMove>
+	    <canUserAddPeers>true</canUserAddPeers>
+	    
+	    <properties>
+	        
+	        <property>
+	            <key>name</key>
+	            <name>Name</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>	            
+	        </property>	 
+	        
+	        <property>
+	            <key>chartType</key>
+	            <name>Type</name>
+	            <setConstructValueFunction>return "Line";</setConstructValueFunction>
+	            <changeValueJavaScript>chartType</changeValueJavaScript>	
+	            <getValuesFunction>
+	                <![CDATA[
+return [["Line","Line"],["Bar","Bar"],["Pie","Pie"]];
+					]]>
+	            </getValuesFunction>           
+	            <refreshHtml>true</refreshHtml>
+	            <refreshProperties>true</refreshProperties>    
+	        </property>
+	                   	       	        
+	    </properties>
+	    
+	    <resources>
+	        <resource>
+	            <type>javascriptFile</type>
+	            <contents>scripts/controls/charts.js</contents>
+	        </resource>	    
+	        <resource>
+	            <type>javascript</type>
+	            <contents>
+					<![CDATA[
+// global for all charts in the page
+_charts = {};					
+					]]>	                
+	            </contents>
+	        </resource>		        
+	        <resource>
+	            <type>css</type>
+	            <contents>
+.chart {
+	width: 300px;
+	height: 200px;
+}	                
+	            </contents>
+	        </resource>  
+	    </resources>
+	    	    	    
+	    <getHtmlFunction>
+	        <![CDATA[	  
+return "<canvas id='" + this.id + "' class='chart" + getStyleClasses(this) + "'></canvas>";
+	        ]]>
+	    </getHtmlFunction> 
+	    	    
+	    <initDesignJavaScript>
+	        <![CDATA[
+// get the iFrame window
+var w = _pageIframe[0].contentWindow;
+// get the object	        
+var o = this.object;
+// get the current width
+var width = o.width();
+// get the current height
+var height = o.height();
+// remove any explicit style
+o.removeAttr("style");
+// add the width and height (this is neccessary for charts to be regenerated in the designert)
+o.attr("style","width:" + Math.max(width,o.width()) + "px;height:" + Math.max(height,o.height()) + "px;");
+// Get context with jQuery - using jQuery's .get() method.
+var ctx = o.get(0).getContext("2d");
+// the chart data object
+var data = {};
+// options object
+var options = {};
+// check type
+if (this.chartType == "Pie") {
+	data = [
+	    {
+	        value: 300,
+	        color:"#F7464A",
+	        highlight: "#FF5A5E",
+	        label: "Red"
+	    },
+	    {
+	        value: 50,
+	        color: "#46BFBD",
+	        highlight: "#5AD3D1",
+	        label: "Green"
+	    },
+	    {
+	        value: 100,
+	        color: "#FDB45C",
+	        highlight: "#FFC870",
+	        label: "Yellow"
+	    }
+	];
+} else {
+	data = {
+	    labels: ["January", "February", "March", "April", "May", "June", "July"],
+	    datasets: [
+	        {
+	            label: "Dataset 1",
+	            fillColor: "rgba(220,220,220,0.2)",
+	            strokeColor: "rgba(220,220,220,1)",
+	            pointColor: "rgba(220,220,220,1)",
+	            pointStrokeColor: "#fff",
+	            pointHighlightFill: "#fff",
+	            pointHighlightStroke: "rgba(220,220,220,1)",
+	            data: [65, 59, 80, 81, 56, 55, 40]
+	        },
+	        {
+	            label: "Dataset 2",
+	            fillColor: "rgba(151,187,205,0.2)",
+	            strokeColor: "rgba(151,187,205,1)",
+	            pointColor: "rgba(151,187,205,1)",
+	            pointStrokeColor: "#fff",
+	            pointHighlightFill: "#fff",
+	            pointHighlightStroke: "rgba(151,187,205,1)",
+	            data: [28, 48, 40, 19, 86, 27, 90]
+	        }
+	    ]
+	}
+}
+
+// make us a chart of the right type
+var chart = new w.Chart(ctx)[this.chartType](data, options);
+// store it
+w._charts[this.id] = chart;
+	        ]]>	        
+	    </initDesignJavaScript>
+	    
+	     <saveJavaScript>
+	        <![CDATA[ 
+this.object.html("").removeAttr("style");      
+	        ]]>
+	    </saveJavaScript>	    
+	    
+	     <getDetailsFunction>
+	        <![CDATA[
+return { name: this.name, chartType: this.chartType };      
+	        ]]>
+	    </getDetailsFunction>
+	    
+	     <setDataJavaScript>
+	        <![CDATA[
+var control = $("#" + id);
+var canvas = control.get(0);
+var ctx = canvas.getContext("2d");
+// the chart data object
+var data = {};
+if (details.chartType == "Pie") {
+	data = [
+	    {
+	        value: 300,
+	        color:"#F7464A",
+	        highlight: "#FF5A5E",
+	        label: "Red"
+	    },
+	    {
+	        value: 50,
+	        color: "#46BFBD",
+	        highlight: "#5AD3D1",
+	        label: "Green"
+	    },
+	    {
+	        value: 100,
+	        color: "#FDB45C",
+	        highlight: "#FFC870",
+	        label: "Yellow"
+	    }
+	]
+} else {
+	data = {
+	    labels: ["January", "February", "March", "April", "May", "June", "July"],
+	    datasets: [
+	        {
+	            label: "Dataset 1",
+	            fillColor: "rgba(220,220,220,0.2)",
+	            strokeColor: "rgba(220,220,220,1)",
+	            pointColor: "rgba(220,220,220,1)",
+	            pointStrokeColor: "#fff",
+	            pointHighlightFill: "#fff",
+	            pointHighlightStroke: "rgba(220,220,220,1)",
+	            data: [65, 59, 80, 81, 56, 55, 40]
+	        },
+	        {
+	            label: "Dataset 2",
+	            fillColor: "rgba(151,187,205,0.2)",
+	            strokeColor: "rgba(151,187,205,1)",
+	            pointColor: "rgba(151,187,205,1)",
+	            pointStrokeColor: "#fff",
+	            pointHighlightFill: "#fff",
+	            pointHighlightStroke: "rgba(151,187,205,1)",
+	            data: [28, 48, 40, 19, 86, 27, 90]
+	        }
+	    ]
+	}
+}
+// make us a chart of the right type
+_charts[this.id] = new Chart(ctx)[details.chartType](data, {});
+			]]>
+	    </setDataJavaScript>
+	    
+	    <events>
+	        <event>
+	            <type>click</type>
+	            <name>Click</name>
+	        </event>
+	    </events>
+
+	    <styles>
+	        <style>
+	            <name>Chart</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id;
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	    </styles>
+	    
+	    <initJavaScript>
+	        <![CDATA[      
+// Get context with jQuery - using jQuery's .get() method.
+var canvas = $("#" + id).get(0); 
+var ctx = canvas.getContext("2d");
+// get the width
+var w = canvas.width;
+// get the height
+var h = canvas.height;
+// chart border
+ctx.beginPath();
+ctx.moveTo(0, 0);
+ctx.lineTo(w, 0);
+ctx.lineTo(w, h);
+ctx.lineTo(0, h);
+ctx.lineTo(0, 0);
+ctx.stroke();
+// write the chart name
+ctx.font = "bold 30px Arial";
+ctx.fillStyle = "#ccc";
+ctx.textAlign = "center";
+ctx.fillText(details.name,w / 2, h / 2);
+	        ]]>
+	    </initJavaScript>
+	    
+	    
+	    	    	    
+	</control>
+</controls>

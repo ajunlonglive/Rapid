@@ -862,8 +862,8 @@ function setData_dropdown(ev, id, field, details, data, changeEvents) {
   					}
   				}
   				if (!text) text = row[0];
-  				if (!value && row[1]) value = row[1];
-  				if (value || value == "0") value = 	" value='" + value + "'";
+  				if (value == undefined && row[1]) value = row[1];
+  				if (value != undefined) value = 	" value='" + value + "'";
   				control.append("<option " + value + ">" + text + "</option>");
   			}	
   		}
@@ -872,12 +872,14 @@ function setData_dropdown(ev, id, field, details, data, changeEvents) {
 }
 
 function setProperty_dropdown_value(ev, id, field, details, data, changeEvents) {
-  var	data = makeDataObject(data, field);             
+  var	data = makeDataObject(data, field);        
+  var control = $("#" + id);
   if (data && data.rows) {
-  	$("#" + id).val(data.rows[0][0]);
+  	control.val(data.rows[0][0]);
   } else {
-  	$("#" + id).val("");
-  }
+  	control.val("");
+  }	                
+  if (changeEvents) control.trigger("change");
 }
 
 function getData_grid(ev, id, field, details) {

@@ -1021,20 +1021,21 @@ public class Page {
     }
     
     // this method produces the start of the head (which is shared by the no permission respone)
-    private String getHtmlHeadStart() {
+    private String getHtmlHeadStart(Application application) {
     	return 
     	"  <head>\n" +		
 		"    <title>" + _title + " - by Rapid</title>\n" +		
 		"    <meta description=\"Created using Rapid - www.rapid-is.co.uk\"/>\n" +		
 		"    <meta charset=\"utf-8\"/>\n" +		
-		"    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no\" />\n" +						
+		"    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no\" />\n" +				
+		(application != null ? "    <meta name=\"theme-color\" content=\"" + application.getStatusBarColour() + "\" />\n" : "" )+		
 		"    <link rel=\"icon\" href=\"favicon.ico\"></link>\n";    			
     }
 	
     // this private method produces the head of the page which is often cached, if resourcesOnly is true only page resources are included which is used when sending no permission
 	private String getHtmlHead(RapidHttpServlet rapidServlet, Application application) throws JSONException {
     	
-    	StringBuilder stringBuilder = new StringBuilder(getHtmlHeadStart());
+    	StringBuilder stringBuilder = new StringBuilder(getHtmlHeadStart(application));
     	    															
 		// if you're looking for where the jquery link is added it's the first resource in the page.control.xml file	
 		stringBuilder.append("    " + getResourcesHtml(application, false).trim().replace("\n", "\n    ") + "\n");
@@ -1222,7 +1223,7 @@ public class Page {
 	public void writeMessage(Writer writer, String title, String message) throws IOException {
 		
 		// write the head html without the JavaScript and CSS (index.css is substituted for us)
-		writer.write(getHtmlHeadStart());
+		writer.write(getHtmlHeadStart(null));
 		
 		// add the icon
 		writer.write("    <link rel='icon' href='favicon.ico'></link>\n");

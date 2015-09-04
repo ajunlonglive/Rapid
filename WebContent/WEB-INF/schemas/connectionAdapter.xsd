@@ -48,7 +48,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 				<xs:element name="class">
 					<xs:annotation>
 						<xs:documentation>Each connection adapter must have a Java class, in the
-							classpath, that extends com.rapid.desktop.data.ConnectionAdapter
+							classpath, that extends com.rapid.data.ConnectionAdapter
 						</xs:documentation>
 					</xs:annotation>
 					<xs:simpleType>

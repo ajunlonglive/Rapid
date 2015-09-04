@@ -204,7 +204,7 @@ public class Datacopy extends Action {
 							// get the property from the second id part
 							String property = idParts[1];
 							// append the set property call
-							js += "setProperty_" + destinationControl.getType() +  "_" + property + "(ev, '" + destinationControl.getId() + "', '" + destinationField + "', " + details + ", data, " + Boolean.parseBoolean("changeEvents") + ");\n";
+							js += "setProperty_" + destinationControl.getType() +  "_" + property + "(ev, '" + destinationControl.getId() + "', '" + destinationField + "', " + details + ", data, " + Boolean.parseBoolean(getProperty("changeEvents")) + ");\n";
 						
 						} else {
 							
