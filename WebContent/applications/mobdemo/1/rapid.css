@@ -248,8 +248,9 @@ input {
 	padding: 8px;
 	border: 1px solid #888;
 	border-radius: 10px;
-	box-shadow: inset -2px 2px 5px 0px #bcd; 
-	width: 90%;
+	box-shadow: inset -2px 2px 5px 0px #bcd;
+	box-sizing: border-box;																				 
+	width: 100%;
 	margin: 1px;
 }
 

@@ -43,9 +43,47 @@ This action runs actions that already exist on other controls
 	        <property>
 	            <key>actionType</key>
 	            <name>Type</name>
-	            <setConstructValueFunction>return "addImage";</setConstructValueFunction>
+	            <setConstructValueFunction>return "dial";</setConstructValueFunction>
 	            <changeValueJavaScript>mobileActionType</changeValueJavaScript>	 
 	            <refreshProperties>true</refreshProperties>
+	        </property>
+	        
+	        <property>
+	            <key>numberControlId</key>
+	            <name>Phone number source</name>
+	             <visible>false</visible>
+	            <changeValueJavaScript>select</changeValueJavaScript>	 
+	             <getValuesFunction>
+	                <![CDATA[
+return "<option value=''>Please select...</option>" + getInputOptions(this.numberControlId);	                
+	                ]]>
+	            </getValuesFunction>
+	        </property>
+	        
+	        <property>
+	            <key>numberField</key>
+	            <name>Phone number source field</name>
+	             <visible>false</visible>
+	            <changeValueJavaScript>text</changeValueJavaScript>	 
+	        </property>
+	        
+	        <property>
+	            <key>messageControlId</key>
+	            <name>Message source</name>
+	             <visible>false</visible>
+	            <changeValueJavaScript>select</changeValueJavaScript>	
+	             <getValuesFunction>
+	                <![CDATA[
+return "<option value=''>Please select...</option>" + getInputOptions(this.messageControlId);	                
+	                ]]>
+	            </getValuesFunction> 	           
+	        </property>
+	        
+	        <property>
+	            <key>messageField</key>
+	            <name>Message source field</name>
+	             <visible>false</visible>
+	            <changeValueJavaScript>text</changeValueJavaScript>	 	            
 	        </property>
 	        
 	        <property>

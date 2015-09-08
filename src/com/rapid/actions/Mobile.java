@@ -150,7 +150,7 @@ public class Mobile extends Action {
 	// a re-usable function to check whether we are on a mobile device - this is used selectively according to the type and whether the alert should appear or we can silently ignore
 	private String getMobileCheck(boolean alert) {
 		// check that rapidmobile is available
-		String js = "if (typeof _rapidmobile == 'undefined') {\n  ";
+		String js = "if (typeof _rapidmobile == 'undefined') {\n";
 		// check we have errorActions
 		if (_errorActions == null) {
 			if (alert) js += "  alert('This action is only available in Rapid Mobile');\n";
@@ -170,14 +170,54 @@ public class Mobile extends Action {
 		// check we got something
 		if (type != null) {
 			// check the type
-			if ("addImage".equals(type)) {
-				// get he gallery control Id
+			if ("dial".equals(type) || "sms".equals(type)) {
+				// get the number control
+				String numberControlId = getProperty("numberControlId");
+				// get the control
+				Control numberControl = page.getControl(numberControlId);				
+				// check we got one
+				if (numberControl == null) {
+					js += "// phone number control " + numberControlId + " not found\n";
+				} else {
+					// get the number field
+					String numberField = getProperty("numberField");
+					// escape it if present
+					if (numberField != null) numberField = "'" + numberField + "'";
+					// mobile check with alert
+					js += getMobileCheck(true);															
+					// get number
+					js += "  var number = " + Control.getDataJavaScript(rapidServlet.getServletContext(), application, page, numberControlId, numberField) + ";\n";
+					// sms has a message too
+					if ("sms".equals(type)) {
+						// get the message control
+						String messageControlId = getProperty("messageControlId");
+						// check we got one
+						if (messageControlId == null) {
+							js += "// message control " + numberControlId + " not found\n";
+						} else {
+							// get the field
+							String messageField = getProperty("messageField");
+							// get the message
+							js += "  var message = " + Control.getDataJavaScript(rapidServlet.getServletContext(), application, page, messageControlId, messageField) + ";\n";
+							// send the message
+							js += "  _rapidmobile.openSMS(number, message);\n";
+						}
+					} else {
+						// dial number
+						js += "  _rapidmobile.openPhone(number);\n";
+					}					
+					// close mobile check
+					js += "}";
+				}
+								
+			} else if ("addImage".equals(type)) {
+				// get the gallery control Id
 				String galleryControlId = getProperty("galleryControlId");
 				// get the gallery control
 				Control galleryControl = page.getControl(galleryControlId);
 				// check if we got one
 				if (galleryControl == null) {
-					js += "  //galleryControl " + galleryControlId + " not found\n";
+					js += "  //gallery control " + galleryControlId + " not found\n";
 				} else {
 					// mobile check with alert
 					js += getMobileCheck(true);
@@ -195,11 +235,12 @@ public class Mobile extends Action {
 				// check if we got one
 				if (galleryControl == null) {
 					js += "  // galleryControl " + galleryControlId + " not found\n";
-				} else {
+				} else {					
+					js += "var urls = '';\n";
+					js += "$('#" + galleryControlId + "').find('img').each( function() { urls += $(this).attr('src') + ',' });\n";
+					js += "if (urls) { \n";
 					// mobile check with alert
-					js += getMobileCheck(true);
-					js += "  var urls = '';\n";
-					js += "  $('#" + galleryControlId + "').find('img').each( function() { urls += $(this).attr('src') + ',' });\n";
+					js += "  " + getMobileCheck(true);
 					// assume no success call back
 					String successCallback = "null";
 					// update to name of callback if we have any success actions
@@ -209,8 +250,10 @@ public class Mobile extends Action {
 					// update to name of callback  if we have any error actions
 					if (_errorActions != null) errorCallback = "'" + getId() + "error'";
 					// call it!
-					js += "  _rapidmobile.uploadImages('" + galleryControlId + "', urls, " + successCallback + ", " + errorCallback + ");\n";
-					// close mobile check
+					js += "    _rapidmobile.uploadImages('" + galleryControlId + "', urls, " + successCallback + ", " + errorCallback + ");\n";
+					// close rapid mobile check
+					js += "  }\n";
+					// close urls check
 					js += "}\n";
 				}
 			}  else if ("message".equals(type)) {

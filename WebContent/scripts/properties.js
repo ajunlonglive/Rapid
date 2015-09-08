@@ -3788,7 +3788,7 @@ function Property_guidelines(cell, propertyObject, property, details) {
 }
 
 // possible mobileActionType values used by the mobileActionType property
-var _mobileActionTypes = [["addImage","Add image"],["uploadImages","Upload images"],["sendGPS","Send GPS position"],["stopGPS","Stop GPS updates"],["message","Status bar message"],["disableBackButton","Disable back button"],["online","Online actions"]];
+var _mobileActionTypes = [["dial","Dial number"],["sms","Send text/sms message"],["addImage","Aquire image"],["uploadImages","Upload images"],["sendGPS","Send GPS position"],["stopGPS","Stop GPS updates"],["message","Status bar message"],["disableBackButton","Disable back button"],["online","Online actions"]];
 
 // this property changes the visibility of other properties according to the chosen type
 function Property_mobileActionType(cell, mobileAction, property, details) {
@@ -3801,7 +3801,11 @@ function Property_mobileActionType(cell, mobileAction, property, details) {
 	selectHtml += "</select>";
 	// add the available types and retrieve dropdown
 	var actionTypeSelect = cell.append(selectHtml).find("select");	
-	// assume all other properties invisible		
+	// assume all other properties invisible
+	setPropertyVisibilty(mobileAction, "numberControlId", false);
+	setPropertyVisibilty(mobileAction, "numberField", false);
+	setPropertyVisibilty(mobileAction, "messageControlId", false);
+	setPropertyVisibilty(mobileAction, "messageField", false);
 	setPropertyVisibilty(mobileAction, "galleryControlId", false);
 	setPropertyVisibilty(mobileAction, "imageMaxSize", false);
 	setPropertyVisibilty(mobileAction, "imageQuality", false);
@@ -3815,7 +3819,17 @@ function Property_mobileActionType(cell, mobileAction, property, details) {
 	setPropertyVisibilty(mobileAction, "onlineWorking", false);
 	setPropertyVisibilty(mobileAction, "onlineFail", false);
 	// adjust required property visibility accordingly
-	switch (mobileAction.actionType) {		
+	switch (mobileAction.actionType) {
+		case "dial" :
+			setPropertyVisibilty(mobileAction, "numberControlId", true);
+			setPropertyVisibilty(mobileAction, "numberField", true);
+		break;
+		case "sms" :
+			setPropertyVisibilty(mobileAction, "numberControlId", true);
+			setPropertyVisibilty(mobileAction, "numberField", true);
+			setPropertyVisibilty(mobileAction, "messageControlId", true);
+			setPropertyVisibilty(mobileAction, "messageField", true);
+		break;
 		case "addImage" :
 			setPropertyVisibilty(mobileAction, "galleryControlId", true);
 			setPropertyVisibilty(mobileAction, "imageMaxSize", true);
