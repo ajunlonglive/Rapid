@@ -660,9 +660,12 @@ function getWebserviceActionMaxSequence(actionId) {
 /* Control initialisation methods */
 
 
-function Init_date(id, details) {
-  A_TCALCONF.format = details.dateFormat;	     
-  f_tcalAdd (id);
+function Init_calendar(id, details) {
+  var calendar = $("#" + id);
+  var date = new Date();
+  calendar.attr("data-year",date.getFullYear());
+  calendar.attr("data-month",date.getMonth());
+  calendarUpdate(id);
 }
 
 function Init_flowLayout(id, details) {
@@ -1108,6 +1111,47 @@ function Init_tabGroup(id, details) {
 /* Control getData and setData methods */
 
 
+function getData_calendar(ev, id, field, details) {
+  var calendar = $("#" + id);
+  var dateString = calendar.attr("data-date");
+  if (dateString) {
+  	var date = new Date(dateString);
+  	return cal_f_tcalGenerateDate(date, details.dateFormat);
+  } else {
+  	return null;
+  }
+}
+
+function setData_calendar(ev, id, field, details, data, changeEvents) {
+  var calendar = $("#" + id);
+  var date = null;
+  var dateData = makeDataObject(data,field);
+  if (dateData) {
+  	if (dateData.rows && dateData.rows.length > 0) {
+  		var dateString = dateData.rows[0][0];
+  		if (dateData.fields && dateData.fields.length >0 && field) {
+  			for (var i in date = dateData.fields) {
+  				var dataField = dateData.fields[i];
+  				if (dataField && dataField.toLowerCase() == field.toLowerCase()) {
+  					dateString = dateData.rows[0][i];
+  					break;
+  				}
+  			}
+  		}		
+  		date = cal_f_tcalParseDate(dateString, details.dateFormat);
+  	}
+  }
+  if (date) {
+  	calendar.attr("data-date",date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate());
+  	calendar.attr("data-year",date.getFullYear());
+  	calendar.attr("data-month",date.getMonth());
+  } else {
+  	calendar.removeAttr("data-date");
+  }	
+  
+  calendarUpdate(id);
+}
+
 function getData_checkbox(ev, id, field, details) {
   return $("#" + id).prop("checked") ? "true" : "false";
 }
@@ -1222,36 +1266,6 @@ function setProperty_dataStore_append(ev, id, field, details, data, changeEvents
   		saveDataStoreData(id, details, dataStoreData);
   	}	
   }
-}
-
-function getData_date(ev, id, field, details) {
-  return $("#" + id).val();
-}
-
-function setData_date(ev, id, field, details, data, changeEvents) {
-  var control = $("#" + id);
-  var value = "";
-  if (data != null && data !== undefined) {	
-  	data = makeDataObject(data, field);
-  	if (data.rows && data.rows[0]) {	        		
-  		if (field && data.fields) {
-  			for (var i in data.fields) {
-  				if (data.fields[i].toLowerCase() == field.toLowerCase()) {
-  					value = data.rows[0][i];
-  					break;
-  				}
-  			}
-  		} else {
-  			value = data.rows[0][0];
-  		}
-  	} 
-  }      
-  if (value) {
-  	var date = f_tcalParseDate(value,'Y-m-d');
-  	if (date) value = f_tcalGenerateDate(date, details.dateFormat);
-  }
-  control.val(value);
-  if (changeEvents) control.trigger("change");
 }
 
 function getData_dropdown(ev, id, field, details) {

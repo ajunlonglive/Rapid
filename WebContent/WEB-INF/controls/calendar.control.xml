@@ -199,8 +199,19 @@ var calendar = $("#" + id);
 var date = null;
 var dateData = makeDataObject(data,field);
 if (dateData) {
-	var dateString = dateData.rows[0][0];
-	date = cal_f_tcalParseDate(dateString, details.dateFormat);
+	if (dateData.rows && dateData.rows.length > 0) {
+		var dateString = dateData.rows[0][0];
+		if (dateData.fields && dateData.fields.length >0 && field) {
+			for (var i in date = dateData.fields) {
+				var dataField = dateData.fields[i];
+				if (dataField && dataField.toLowerCase() == field.toLowerCase()) {
+					dateString = dateData.rows[0][i];
+					break;
+				}
+			}
+		}		
+		date = cal_f_tcalParseDate(dateString, details.dateFormat);
+	}
 }
 if (date) {
 	calendar.attr("data-date",date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate());
