@@ -2292,13 +2292,8 @@ $(document).ready( function() {
 			        	rebuildStyles();
 			        	selectControl(null);
 			        	
-			        	// show it after a pause to allow the new style sheets to apply
-			        	window.setTimeout( function() {			        		
-			        		// show the page object
-			        		_page.object.show();	
-			        		// resize
-			        		windowResize("pageLoad");
-		            	}, 200);
+			        	// show the page object
+			        	_page.object.show();	
 			        	
 			        	// make everything visible
 			        	showDesigner();
