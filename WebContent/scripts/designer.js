@@ -2603,7 +2603,7 @@ $(document).ready( function() {
 	
 	// control highlight
 	$("#pageMapHighlight").click( function(ev){
-		scrollMapToSelectedControl();
+		scrollMapToSelectedControl(true);
 	});
 	
 	// properties panel pin (for now just hide)
