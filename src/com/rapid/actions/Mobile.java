@@ -235,12 +235,7 @@ public class Mobile extends Action {
 				// check if we got one
 				if (galleryControl == null) {
 					js += "  // galleryControl " + galleryControlId + " not found\n";
-				} else {					
-					js += "var urls = '';\n";
-					js += "$('#" + galleryControlId + "').find('img').each( function() { urls += $(this).attr('src') + ',' });\n";
-					js += "if (urls) { \n";
-					// mobile check with alert
-					js += "  " + getMobileCheck(true);
+				} else {
 					// assume no success call back
 					String successCallback = "null";
 					// update to name of callback if we have any success actions
@@ -249,12 +244,20 @@ public class Mobile extends Action {
 					String errorCallback = "null";
 					// update to name of callback  if we have any error actions
 					if (_errorActions != null) errorCallback = "'" + getId() + "error'";
-					// call it!
-					js += "    _rapidmobile.uploadImages('" + galleryControlId + "', urls, " + successCallback + ", " + errorCallback + ");\n";
-					// close rapid mobile check
+					// start building the js
+					js += "var urls = '';\n";
+					// get any urls from the gallery
+					js += "$('#" + galleryControlId + "').find('img').each( function() { urls += $(this).attr('src') + ',' });\n";
+					// if we got any urls
+					js += "if (urls) { \n";															
+					// mobile check with alert
+					js += "  " + getMobileCheck(true).replace("\n", "\n  ");
+					// upload the images
+					js += "  _rapidmobile.uploadImages('" + galleryControlId + "', urls, " + successCallback + ", " + errorCallback + ");\n";
+					// close rapid mobile check 
 					js += "  }\n";
-					// close urls check
-					js += "}\n";
+					// close urls check and proceed straight to success call back if none
+					js += "} else {\n  " + successCallback.replace("'", "") + "(ev);\n}\n";
 				}
 			}  else if ("message".equals(type)) {
 				// retrieve the message

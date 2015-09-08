@@ -720,134 +720,153 @@ public class RapidServletContextListener implements ServletContextListener {
 				// if we got some
 				if (applicationFolders != null) {
 					
-					// look for an application file in the root of the application folder
-					File applicationFile = new File(applicationFolder.getAbsoluteFile() + "/application.xml");
-					
-					// set a version for this app (just in case it doesn't have one)
-					String version = "1";
-					
-					// if it exists here, it's in the wrong (non-versioned) place!
-					if (applicationFile.exists()) {
-																				
-						// create a file for the new version folder
-						File versionFolder = new File(applicationFolder + "/" + version);
-						// keep appending the version if the folder already exists
-						while (versionFolder.exists()) {
-							// append .1 to the version 1, 1.1, 1.1.1, etc
-							version += ".1";
-							versionFolder = new File(applicationFolder + "/" + version);
-						}
+					try {
 						
-						// make the dir
-						versionFolder.mkdir();
-						_logger.info(versionFolder + " created");
-						// copy in all files and pages folder
-						for (File file : applicationFolders) {
-							// copy all files and the pages folder
-							if (!file.isDirectory() || (file.isDirectory() && "pages".equals(file.getName()))) {
-								// make a desintation file
-								File destFile = new File(versionFolder + "/" + file.getName());
-								// this is not a version folder itself, copy it to the new version folder
-								Files.copyFolder(file, destFile);
-								// delete the file or folder
-								Files.deleteRecurring(file);
-								// log
-								_logger.info(file + " moved to " + destFile);
-							}							
-							
-						}
-						// record that we created a version
-						versionCreated = true;
+						// look for an application file in the root of the application folder
+						File applicationFile = new File(applicationFolder.getAbsoluteFile() + "/application.xml");
 						
-					}	// application.xml non-versioned check
-					
-					// get the version folders
-					File[] versionFolders = applicationFolder.listFiles();
-					// get a marsheller
-					Marshaller marsheller = RapidHttpServlet.getMarshaller();
-					// loop them
-					for (File versionFolder : versionFolders) {
-						// check is folder
-						if (versionFolder.isDirectory()) {
-							// look for an application file in the version folder
-							applicationFile = new File(versionFolder + "/application.xml");
-							// if it exists
-							if (applicationFile.exists()) {								
-								
-								// placeholder for the application we're going to version up or just load
-								Application application = null;								
-								
-								// if we had to create a version for it
-								if (versionCreated) {
-									
-									// load without resources
-									application = Application.load(servletContext, applicationFile, false);
-									
-									// set the new version
-									application.setVersion(version);
-									
-									// re-initialise it without resources (for the security adapter)
-									application.initialise(servletContext, false);
-									
-									// marshal the updated application object to it's file
-									FileOutputStream fos = new FileOutputStream(applicationFile);		
-									marsheller.marshal(application, fos);	    
-								    fos.close();
-								    
-									// get a dir for the pages
-									File pageDir = new File(versionFolder + "/pages");
-									// check it exists
-									if (pageDir.exists()) {
-										// loop the pages files
-										for (File pageFile : pageDir.listFiles()) {
-											// read the contents of the file
-											String pageContent = Strings.getString(pageFile);
-											// replace all old file references
-											pageContent = pageContent
-												.replace("/" + application.getId() + "/", "/" + application.getId() + "/" + application.getVersion() + "/")
-												.replace("~?a=" + application.getId() + "&amp;", "~?a=" + application.getId() + "&amp;" + application.getVersion() + "&amp;");
-											// create a file writer
-											FileWriter fs = new FileWriter(pageFile);
-											// save the changes
-											fs.write(pageContent);
-											// close the writer
-											fs.close();
-											_logger.info(pageFile + " updated with new references");
-										}
-									}																		
-									// make a dir for it's web resources
-									File webDir = new File(application.getWebFolder(servletContext));
-									webDir.mkdir();
-									_logger.info(webDir + " created");
-									// loop all the files in the parent
-									for (File file : webDir.getParentFile().listFiles()) {
-										// check not dir
-										if (!file.isDirectory()) {
-											// create a destination file for the new location
-											File destFile = new File(webDir + "/" + file.getName());
-											// copy it to the new destination
-											Files.copyFile(file, destFile);
-											// delete the file or folder
-											file.delete();
-											_logger.info(file + " moved to " + destFile);
-										}
-										
-									}
-																		
-								} 
-									
-								// (re)load the application
-								application = Application.load(servletContext, applicationFile);
-
-								// put it in our collection
-								applications.put(application);
-								
+						// set a version for this app (just in case it doesn't have one)
+						String version = "1";
+						
+						// if it exists here, it's in the wrong (non-versioned) place!
+						if (applicationFile.exists()) {
+																					
+							// create a file for the new version folder
+							File versionFolder = new File(applicationFolder + "/" + version);
+							// keep appending the version if the folder already exists
+							while (versionFolder.exists()) {
+								// append .1 to the version 1, 1.1, 1.1.1, etc
+								version += ".1";
+								versionFolder = new File(applicationFolder + "/" + version);
 							}
 							
-						} // folder check
-																		
-					} // version folder loop		
-					
+							// make the dir
+							versionFolder.mkdir();
+							_logger.info(versionFolder + " created");
+							// copy in all files and pages folder
+							for (File file : applicationFolders) {
+								// copy all files and the pages folder
+								if (!file.isDirectory() || (file.isDirectory() && "pages".equals(file.getName()))) {
+									// make a desintation file
+									File destFile = new File(versionFolder + "/" + file.getName());
+									// this is not a version folder itself, copy it to the new version folder
+									Files.copyFolder(file, destFile);
+									// delete the file or folder
+									Files.deleteRecurring(file);
+									// log
+									_logger.info(file + " moved to " + destFile);
+								}							
+								
+							}
+							// record that we created a version
+							versionCreated = true;
+							
+						}	// application.xml non-versioned check
+						
+						try {
+							
+							// get the version folders
+							File[] versionFolders = applicationFolder.listFiles();
+							// get a marshaller
+							Marshaller marshaller = RapidHttpServlet.getMarshaller();
+							
+							// loop them
+							for (File versionFolder : versionFolders) {
+								// check is folder
+								if (versionFolder.isDirectory()) {
+									// look for an application file in the version folder
+									applicationFile = new File(versionFolder + "/application.xml");
+									// if it exists
+									if (applicationFile.exists()) {								
+										
+										// placeholder for the application we're going to version up or just load
+										Application application = null;								
+										
+										// if we had to create a version for it
+										if (versionCreated) {
+											
+											// load without resources
+											application = Application.load(servletContext, applicationFile, false);
+											
+											// set the new version
+											application.setVersion(version);
+											
+											// re-initialise it without resources (for the security adapter)
+											application.initialise(servletContext, false);
+											
+											// marshal the updated application object to it's file
+											FileOutputStream fos = new FileOutputStream(applicationFile);		
+											marshaller.marshal(application, fos);	    
+										    fos.close();
+										    
+											// get a dir for the pages
+											File pageDir = new File(versionFolder + "/pages");
+											// check it exists
+											if (pageDir.exists()) {
+												// loop the pages files
+												for (File pageFile : pageDir.listFiles()) {
+													// read the contents of the file
+													String pageContent = Strings.getString(pageFile);
+													// replace all old file references
+													pageContent = pageContent
+														.replace("/" + application.getId() + "/", "/" + application.getId() + "/" + application.getVersion() + "/")
+														.replace("~?a=" + application.getId() + "&amp;", "~?a=" + application.getId() + "&amp;" + application.getVersion() + "&amp;");
+													// create a file writer
+													FileWriter fs = new FileWriter(pageFile);
+													// save the changes
+													fs.write(pageContent);
+													// close the writer
+													fs.close();
+													_logger.info(pageFile + " updated with new references");
+												}
+											}																		
+											// make a dir for it's web resources
+											File webDir = new File(application.getWebFolder(servletContext));
+											webDir.mkdir();
+											_logger.info(webDir + " created");
+											// loop all the files in the parent
+											for (File file : webDir.getParentFile().listFiles()) {
+												// check not dir
+												if (!file.isDirectory()) {
+													// create a destination file for the new location
+													File destFile = new File(webDir + "/" + file.getName());
+													// copy it to the new destination
+													Files.copyFile(file, destFile);
+													// delete the file or folder
+													file.delete();
+													_logger.info(file + " moved to " + destFile);
+												}
+												
+											}
+																				
+										} 
+											
+										// (re)load the application
+										application = Application.load(servletContext, applicationFile);
+
+										// put it in our collection
+										applications.put(application);
+										
+									}
+									
+								} // folder check
+																				
+							} // version folder loop		
+							
+						} catch (Exception ex) {
+							
+							// log the exception
+							_logger.error(ex);
+							
+						} // version load catch
+						
+					} catch (Exception ex) {
+						
+						// log it
+						_logger.error("Error creating version folder for app " + applicationFolder, ex);
+						
+					} // version folder creation catch					
+															
 				} // application folders check
 				
 			} // application folder check
