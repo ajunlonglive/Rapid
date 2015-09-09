@@ -383,14 +383,14 @@ function checkDirty() {
 	}
 }
 
-// this function returns a controls height after taking into account floating children
+// this function returns a control's height after taking into account floating children
 function getControlHeight(control, childLevel) {
 	// if there is no childLevel set it to 0
 	if (!childLevel) childLevel = 0;
 	// get the object
 	var o = control.object;
-	// assume height is straightforwards
-	var height = o.height();	
+	// assume height is straightforwards (includes border but not margin)
+	var height = o.outerHeight();	
 	// assume child height = zero
 	var childHeight = 0;
 	// if we are below the max child levels (the recursion can get quite fierce)
@@ -432,16 +432,40 @@ function getControlHeight(control, childLevel) {
 			}
 			// take the greatest of these 3 heights
 			height = Math.max(height, o.outerHeight(), floatLeftHeight, floatRightHeight);
-		} else {
-			// no children so go for the outer height
-			height = o.outerHeight();
-		}
+		} 
 	}	
+	height += getFloatHeight(control);
 	// return it
 	return height;
 
 }
-
+  
+// controls that are preceeded by floating ones are actually lower then offset().top reports we want to add the heights  
+function getFloatHeight(control, parentLevel) {
+	var height = 0;
+	if (!parentLevel) parentLevel = 0;
+	var index = control.object.index();
+	if (control._parent && parentLevel < 2) {
+		parentLevel ++;
+		if (index == 0) height += getFloatHeight(control._parent,parentLevel);
+		var floatLeftHeight = 0;
+		var floatRightHeight = 0;
+		if (index > 0) {						
+			var o = control._parent.childControls[index-1].object;
+			// check for a left float the same amount left as the parent
+			if (o.css("float") == "left") {
+				floatLeftHeight += o.height() + toPixels(o.css("margin-top")) + toPixels(o.css("margin-bottom"));
+			}
+			// check for a right float the same amount right as the parent
+			if (o.css("float") == "right") {
+				floatRightHeight += o.height() + toPixels(o.css("margin-top")) + toPixels(o.css("margin-bottom"));
+			}			
+		}
+		height = Math.max(height,floatLeftHeight, floatRightHeight);
+	}
+	return height;
+}
+ 
 // this function is useful for calling from the JavaScript terminal to find out why certain objects have not been found
 function debuggMouseControl(ev, childControls) {	
 	
@@ -468,7 +492,7 @@ function getMouseControl(ev, childControls) {
 		// get the mouse X and Y, relative to what's visible in the iframe
 		var mouseX = ev.pageX + _pageIframeWindow.scrollLeft() - _panelPinnedOffset;
 		var mouseY = ev.pageY + _pageIframeWindow.scrollTop();
-		
+				
 		//console.log("X: " + mouseX + ", Y: " + mouseY);
 												
 		// check if we hit the border first		
@@ -525,14 +549,16 @@ function getMouseControl(ev, childControls) {
 			var o = c.object;
 			// only if this object is visible
 			if (o.is(":visible")) {
+				// get the top
+				var top = o.offset().top;
 				// is the mouse below this object
-				if (mouseX >= o.offset().left && mouseY >= o.offset().top) {
+				if (mouseX >= o.offset().left && mouseY >= top) {
 					// get the height of the object
 					var height = getControlHeight(c) * _scale;				
 					// get the width
 					var width = o.outerWidth() * _scale;
 					// does the width and height of this object mean we are inside it
-					if  (mouseX <= o.offset().left + width && mouseY <= o.offset().top + height) {
+					if  (mouseX <= o.offset().left + width && mouseY <= top + height) {
 						// if there are childObjects check for a hit on one of them
 						if (c.childControls) {
 							// use this function recursively
@@ -672,16 +698,18 @@ function positionBorder(x, y) {
 	if (x != null) {
 		// if x is actually a control
 		if (typeof x === "object" && x.object) {
+			// get the top
+			var top = x.object.offset().top;
 			// check if nonVisualControl
 			if (x.object.is(".nonVisibleControl")) {
 				positionBorder(
 					x.object.offset().left - _window.scrollLeft(), 
-					x.object.offset().top - _window.scrollTop()
+					top - _window.scrollTop()
 				);
 			} else {
 				positionBorder(
 					x.object.offset().left - _pageIframeWindow.scrollLeft() + _panelPinnedOffset, 
-					x.object.offset().top - _pageIframeWindow.scrollTop()
+					top - _pageIframeWindow.scrollTop()
 				);
 			}	
 		} else {			
