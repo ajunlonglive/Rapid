@@ -171,28 +171,28 @@ public class Mobile extends Action {
 		if (type != null) {
 			// check the type
 			if ("dial".equals(type) || "sms".equals(type)) {
-				// get the number control
+				// get the number control id
 				String numberControlId = getProperty("numberControlId");
 				// get the control
-				Control numberControl = page.getControl(numberControlId);				
+				Control numberControl = Control.getControl(rapidServlet.getServletContext(), application, page, numberControlId);				
 				// check we got one
 				if (numberControl == null) {
 					js += "// phone number control " + numberControlId + " not found\n";
 				} else {
 					// get the number field
 					String numberField = getProperty("numberField");
-					// escape it if present
-					if (numberField != null) numberField = "'" + numberField + "'";
 					// mobile check with alert
 					js += getMobileCheck(true);															
 					// get number
 					js += "  var number = " + Control.getDataJavaScript(rapidServlet.getServletContext(), application, page, numberControlId, numberField) + ";\n";
 					// sms has a message too
 					if ("sms".equals(type)) {
-						// get the message control
+						// get the message control id
 						String messageControlId = getProperty("messageControlId");
+						// get the messagecontrol
+						Control messageControl = Control.getControl(rapidServlet.getServletContext(), application, page, messageControlId);
 						// check we got one
-						if (messageControlId == null) {
+						if (messageControl == null) {
 							js += "// message control " + numberControlId + " not found\n";
 						} else {
 							// get the field

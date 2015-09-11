@@ -26,26 +26,21 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 package com.rapid.server;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -75,13 +70,12 @@ import com.rapid.security.SecurityAdapter;
 import com.rapid.security.SecurityAdapter.Role;
 import com.rapid.security.SecurityAdapter.User;
 import com.rapid.utils.Bytes;
-import com.rapid.utils.Comparators;
 import com.rapid.utils.Files;
 import com.rapid.utils.XML;
 import com.rapid.utils.ZipFile;
+import com.rapid.actions.Logic.Condition;
 import com.rapid.core.Application;
 import com.rapid.core.Application.DatabaseConnection;
-import com.rapid.core.Application.RapidLoadingException;
 import com.rapid.core.Applications.Versions;
 import com.rapid.core.Page;
 import com.rapid.core.Page.Lock;
@@ -227,7 +221,7 @@ public class Designer extends RapidHttpServlet {
 											// add the details we want
 											jsonApplication.put("id", application.getId());
 											jsonApplication.put("name", application.getName());
-											jsonApplication.put("title", application.getTitle());
+											jsonApplication.put("title", application.getTitle());											
 											// add the object to the collection
 											jsonApps.put(jsonApplication);
 											// no need to check any further versions
@@ -289,6 +283,8 @@ public class Designer extends RapidHttpServlet {
 											jsonVersion.put("status", application.getStatus());
 											// add the title
 											jsonVersion.put("title", application.getTitle());
+											// add a formAdapter if present
+											if (application.getFormAdapter() != null) jsonVersion.put("formAdapter", true);
 											// add whether to show control Ids
 											jsonVersion.put("showControlIds", application.getShowControlIds());
 											// add whether to show action Ids
@@ -471,10 +467,24 @@ public class Designer extends RapidHttpServlet {
 									// add simple properties
 									jsonPage.put("id", page.getId());
 									jsonPage.put("name", page.getName());
-									jsonPage.put("title", page.getTitle());									
-									jsonPage.put("sessionVariables", page.getSessionVariables());
+									jsonPage.put("title", page.getTitle());		
+									// get a list of page session variables
+									List<String> pageSessionVariables = page.getSessionVariables();
+									// add them if there are some
+									if (pageSessionVariables != null) if (pageSessionVariables.size() > 0) 	jsonPage.put("sessionVariables", pageSessionVariables);
+									// assume we don't need to know page visibilty
+									boolean includePageVisibiltyControls = false;
+									// if there is a form adapter
+									if (application.getFormAdapter() != null) {
+										// set to true
+										includePageVisibiltyControls = true;
+										// add visibility conditions
+										List<Condition> pageVisibilityConditions = page.getVisibilityConditions();
+										// add them if there are some
+										if (pageVisibilityConditions != null) if (pageVisibilityConditions.size() > 0) jsonPage.put("visibilityConditions", pageVisibilityConditions); 
+									}
 									// get a collection of other page controls in this page
-									JSONArray jsonOtherPageControls = page.getOtherPageControls(this);
+									JSONArray jsonOtherPageControls = page.getOtherPageControls(this, includePageVisibiltyControls);
 									// only add the property if there are some
 									if (jsonOtherPageControls.length() > 0) jsonPage.put("controls", jsonOtherPageControls);
 									// check if the start page and add property if so
@@ -791,7 +801,7 @@ public class Designer extends RapidHttpServlet {
 								// if there are roles specified for this page
 								JSONArray jsonUserRoles = jsonPage.optJSONArray("roles");
 								if (jsonUserRoles != null) {
-									ArrayList<String> userRoles = new ArrayList<String>(); 
+									List<String> userRoles = new ArrayList<String>(); 
 									for (int i = 0; i < jsonUserRoles.length(); i++) {
 										// get the JSON role
 										String jsonUserRole = jsonUserRoles.getString(i);
@@ -806,13 +816,24 @@ public class Designer extends RapidHttpServlet {
 								JSONArray jsonSessionVariables = jsonPage.optJSONArray("sessionVariables");
 								// if we found one
 								if (jsonSessionVariables != null) {
-									ArrayList<String> sessionVariables = new ArrayList<String>();
+									List<String> sessionVariables = new ArrayList<String>();
 									for (int i = 0; i < jsonSessionVariables.length(); i++) {
 										sessionVariables.add(jsonSessionVariables.getString(i));
 									}
 									newPage.setSessionVariables(sessionVariables);
 								}
 								
+								// look in the JSON for a pageVisibilityRules array
+								JSONArray jsonVisibilityConditions = jsonPage.optJSONArray("visibilityConditions");
+								// if we found one
+								if (jsonVisibilityConditions != null) {
+									List<Condition> visibilityConditions = new ArrayList<Condition>();
+									for (int i = 0; i < jsonVisibilityConditions.length(); i++) {										
+										visibilityConditions.add(new Condition(jsonVisibilityConditions.getJSONObject(i)));										
+									}
+									newPage.setVisibilityConditions(visibilityConditions);
+								}
+	
 								// retrieve the html body
 								String htmlBody = jsonPage.optString("htmlBody");
 								// if we got one trim it and retain in page

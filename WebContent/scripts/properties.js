@@ -2175,7 +2175,7 @@ function logicConditionText(condition) {
 			// add the field if present
 			if (condition.field) text += "." + condition.field;
 		break;
-		case "SYS" :
+		case "SYS" : case "SES" :
 			// the second part of the id
 			text = condition.id.split(".")[1];
 			// if this is the field use the field property instead
@@ -2186,10 +2186,10 @@ function logicConditionText(condition) {
 	return text;
 }
 
-function logicConditionValue(cell, action, conditionIndex, valueId) {
+function logicConditionValue(cell, action, key, conditionIndex, valueId) {
 	
 	// get a reference to the condition
-	var condition = action.conditions[conditionIndex];
+	var condition = action[key][conditionIndex];
 	// instantiate the value if need be
 	if (!condition[valueId]) condition[valueId] = {type:"CTL"};
 	// get a reference for the value
@@ -2200,7 +2200,14 @@ function logicConditionValue(cell, action, conditionIndex, valueId) {
 	// get a reference to it
 	var table = cell.find("table").last();
 	
-	table.append("<tr><td>" + (valueId == "value1" ? "Item 1" : "Item 2") + "</td><td><select>" + getInputOptions(value.id) + "</select></td></tr>");
+	var options = "";
+	if (key == "visibilityConditions") {
+		options = getPageVisibilityOptions(value.id);
+	} else {
+		options = getInputOptions(value.id);
+	}
+	
+	table.append("<tr><td>" + (valueId == "value1" ? "Item 1" : "Item 2") + "</td><td><select>" + options + "</select></td></tr>");
 	// get a reference to the select
 	var select = table.find("select");
 	// retain the value if we don't have one yet
@@ -2213,12 +2220,14 @@ function logicConditionValue(cell, action, conditionIndex, valueId) {
 		var type = "CTL";				
 		// check for system value
 		if (id.substr(0,7) == "System.") type = "SYS";
+		// check for session value
+		if (id.substr(0,8) == "Session.") type = "SES";
 		// set the new type 
 		value.type = type;
 		// set the id
 		value.id = id;
 		// refresh the property
-		logicConditionValue(cell, action, conditionIndex, valueId); 
+		logicConditionValue(cell, action, key, conditionIndex, valueId); 
 	}));
 		
 	switch (value.type) {
@@ -2291,8 +2300,8 @@ function Property_logicConditions(cell, action, property, details) {
 		var operationCell = lastrow.children("td:nth(1)");
 		
 		// add (sub)properties
-		logicConditionValue(value1Cell, action, i, "value1");
-		logicConditionValue(value2Cell, action, i, "value2");
+		logicConditionValue(value1Cell, action, property.key, i, "value1");
+		logicConditionValue(value2Cell, action, property.key, i, "value2");
 		
 		var operationHtml = "<select style='margin-top:1px;'>"
 		for (var j in _logicOperations) {
@@ -2354,13 +2363,23 @@ function Property_logicConditions(cell, action, property, details) {
 	// add listener
 	table.find("a").last().click( function(ev) {
 		// instatiate if need be
-		if (!action.conditions) action.conditions = [];
+		if (!action[property.key]) action[property.key] = [];
 		// add new condition
-		action.conditions.push({value1:{type:"CTL"}, operation: "==", value2: {type:"CTL"}});
+		action[property.key].push({value1:{type:"CTL"}, operation: "==", value2: {type:"CTL"}});
 		// update this table
 		Property_logicConditions(cell, action, property, details);
 	});
 		
+}
+
+// this very similar to the above but hidden if no form adapter
+function Property_visibilityConditions(cell, control, property, details) {
+	if (_version.formAdapter) {
+		Property_logicConditions(cell, control, property, details)
+	} else {
+		// remove this row
+		cell.closest("tr").remove();
+	}
 }
 
 // this is a dialogue to refine the options available in dropdown and list controls

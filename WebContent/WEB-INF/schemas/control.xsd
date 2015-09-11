@@ -127,18 +127,21 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 									</xs:documentation>
 								</xs:annotation>
 							</xs:element>
-							<xs:element name="canUserMove" type="xs:boolean"
-								minOccurs="0" />
-							<xs:element name="canUserInsert" type="xs:boolean"
-								minOccurs="0" />
-							<xs:element name="canUserAddPeers" type="xs:boolean"
-								minOccurs="0" />
-							<xs:element name="canBeUsedFromOtherPages" type="xs:boolean"
-								minOccurs="0">
+							<xs:element name="canUserMove" type="xs:boolean"  minOccurs="0" />
+							<xs:element name="canUserInsert" type="xs:boolean"  minOccurs="0" />
+							<xs:element name="canUserAddPeers" type="xs:boolean"  minOccurs="0" />
+							<xs:element name="canBeUsedFromOtherPages" type="xs:boolean" minOccurs="0">
 								<xs:annotation>
 									<xs:documentation>Controls like the Data store have getData and
-										setData methods whihc use global objects so they can be used
+										setData methods which use global objects so they can be used
 										in all pages
+									</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="canBeUsedForFormPageVisibilty" type="xs:boolean" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Simple controls where the value is saved on the server side by 
+									a form adapter can be used in page visibility rules of subsequent pages
 									</xs:documentation>
 								</xs:annotation>
 							</xs:element>
