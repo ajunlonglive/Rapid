@@ -483,6 +483,9 @@ function Control(controlType, parentControl, jsonControl, loadComplexObjects, pa
 		// retain that this control can be used from other pages, if applicable
 		if (controlClass.canBeUsedFromOtherPages) this.canBeUsedFromOtherPages = true; 
 		
+		// retain that this control can be used from other pages, if applicable
+		if (controlClass.canBeUsedForFormPageVisibilty) this.canBeUsedForFormPageVisibilty = true; 
+		
 		// if our control looks like a non visible
 		if (this.object && this.object.is(".nonVisibleControl")) {
 			// add a selection listener

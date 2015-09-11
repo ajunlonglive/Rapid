@@ -112,6 +112,8 @@ public class Control {
 	public String getDetails() { return getProperty("details"); }
 	// whether this control can be used from other pages
 	public boolean getCanBeUsedFromOtherPages() { return Boolean.parseBoolean(getProperty("canBeUsedFromOtherPages")); }
+	// whether this control can be used for page visibilty rules
+		public boolean getCanBeUsedForFormPageVisibilty() { return Boolean.parseBoolean(getProperty("canBeUsedForFormPageVisibilty")); }
 	// whether there is javascript that must be run to initialise the control when the page loads
 	public boolean hasInitJavaScript() { return Boolean.parseBoolean(getProperty("initJavaScript")); }
 			
@@ -209,6 +211,21 @@ public class Control {
 	}
 	
 	// static methods
+	
+	public static Control getControl(ServletContext servletContext, Application application, Page page, String id) {		
+		Control control = null;		
+		// split by escaped .
+		String idParts[] = id.split("\\.");
+		// if there is more than 1 part we are dealing with set properties, for now just update the id
+		if (idParts.length > 1) id = idParts[0];
+		
+		// first try and look for the control in the page
+		control = page.getControl(id);
+		// if still no control look for the control in the application
+		if (control == null) control = application.getControl(servletContext, id);
+		// return
+		return control;		
+	}
 	
 	public static Control searchChildControl(ArrayList<Control> controls, String controlId) {
 		Control returnControl = null;
@@ -359,6 +376,11 @@ public class Control {
 			}			
 		}
 		return js;
+	}
+	
+	@Override
+	public String toString() {
+		return getType() + " - " + getId();		
 	}
 	
 	// this method returns JavaScript for retrieving a control's data, or runtime property value

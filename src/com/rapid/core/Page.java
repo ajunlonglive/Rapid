@@ -58,6 +58,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
+import com.rapid.actions.Logic.Condition;
 import com.rapid.core.Application.Resource;
 import com.rapid.core.Application.ResourceDependency;
 import com.rapid.forms.FormAdapter;
@@ -142,6 +143,7 @@ public class Page {
 	private List<Style> _styles;
 	private List<String> _controlTypes, _actionTypes, _sessionVariables, _roles;
 	private List<RoleHtml> _rolesHtml;
+	private List<Condition> _visibilityConditions;
 	private Lock _lock;
 				
 	// this array is used to collect all of the lines needed in the pageload before sorting them
@@ -216,6 +218,10 @@ public class Page {
 	// any lock that might be on this page
 	public Lock getLock() { return _lock; }
 	public void setLock(Lock lock) { _lock = lock; }
+	
+	// the page visibility rule conditions
+	public List<Condition> getVisibilityConditions() { return _visibilityConditions; }
+	public void setVisibilityConditions(List<Condition> visibilityConditions) { _visibilityConditions = visibilityConditions; }
 		
 	// constructor
 	
@@ -482,88 +488,104 @@ public class Page {
 	}
 			
 	// iterative function for building a flat JSONArray of controls that can be used on other pages
-	private void getOtherPageChildControls(RapidHttpServlet rapidServlet, JSONArray jsonControls, List<Control> controls) throws JSONException {
+	private void getOtherPageChildControls(RapidHttpServlet rapidServlet, JSONArray jsonControls, List<Control> controls, boolean includePageVisibiltyControls) throws JSONException {
 		// check we were given some controls
 		if (controls != null) {
 			// loop the controls
 			for (Control control : controls) {
+				// get if this control can be used from other pages
+				boolean canBeUsedFromOtherPages = control.getCanBeUsedFromOtherPages();
+				boolean canBeUsedForFormPageVisibilty = control.getCanBeUsedForFormPageVisibilty() && includePageVisibiltyControls;
 				// if this control can be used from other pages
-				if (control.getCanBeUsedFromOtherPages()) {
+				if (canBeUsedFromOtherPages || canBeUsedForFormPageVisibilty) {
 					
 					// get the control details
 					JSONObject jsonControlClass = rapidServlet.getJsonControl(control.getType());
 					
 					// check we got one
 					if (jsonControlClass != null) {
-					
-						// make a JSON object with what we need about this control
-						JSONObject jsonControl = new JSONObject();
-						jsonControl.put("id", control.getId());
-						jsonControl.put("type", control.getType());
-						jsonControl.put("name", control.getName());
-						if (jsonControlClass.optString("getDataFunction", null) != null) jsonControl.put("input", true);
-						if (jsonControlClass.optString("setDataJavaScript", null) != null) jsonControl.put("output", true);
 						
-						// look for any runtimeProperties
-						JSONObject jsonProperty = jsonControlClass.optJSONObject("runtimeProperties");
-						// if we got some
-						if (jsonProperty != null) {
-							// create an array to hold the properties
-							JSONArray jsonRunTimeProperties = new JSONArray();
-							// look for an array too
-							JSONArray jsonProperties = jsonProperty.optJSONArray("runtimeProperty");
-							// assume
-							int index = 0;
-							int count = 0;
-							// if an array 
-							if (jsonProperties != null) {
-								// get the first item
-								jsonProperty = jsonProperties.getJSONObject(index);
-								// set the count
-								count = jsonProperties.length();
+						// get the name - no need to include if we don't have one
+						String controlName = control.getName();
+						
+						if (controlName != null) {
+							
+							// make a JSON object with what we need about this control
+							JSONObject jsonControl = new JSONObject();
+							jsonControl.put("id", control.getId());
+							jsonControl.put("type", control.getType());
+							jsonControl.put("name", controlName);
+							if (jsonControlClass.optString("getDataFunction", null) != null) jsonControl.put("input", true);
+							if (jsonControlClass.optString("setDataJavaScript", null) != null) jsonControl.put("output", true);
+							if (canBeUsedFromOtherPages) jsonControl.put("otherPages", true);
+							if (canBeUsedForFormPageVisibilty) jsonControl.put("pageVisibility", true);
+							
+							// look for any runtimeProperties
+							JSONObject jsonProperty = jsonControlClass.optJSONObject("runtimeProperties");
+							// if we got some
+							if (jsonProperty != null) {							
+								// create an array to hold the properties
+								JSONArray jsonRunTimeProperties = new JSONArray();
+								// look for an array too
+								JSONArray jsonProperties = jsonProperty.optJSONArray("runtimeProperty");
+								// assume
+								int index = 0;
+								int count = 0;
+								// if an array 
+								if (jsonProperties != null) {
+									// get the first item
+									jsonProperty = jsonProperties.getJSONObject(index);
+									// set the count
+									count = jsonProperties.length();
+								}
+								// look for a single object
+								JSONObject jsonPropertySingle = jsonProperty.optJSONObject("runtimeProperty");
+								// assume this one if not null
+								if (jsonPropertySingle != null) jsonProperty = jsonPropertySingle;
+								
+								// do once and loop until no more left 
+								do {
+									
+									// create a json object for this runtime property
+									JSONObject jsonRuntimeProperty = new JSONObject();
+									jsonRuntimeProperty.put("type", jsonProperty.get("type"));
+									jsonRuntimeProperty.put("name", jsonProperty.get("name"));
+									if (jsonProperty.optString("getPropertyFunction", null) != null) jsonRuntimeProperty.put("input", true);
+									if (jsonProperty.optString("setPropertyJavaScript", null) != null) jsonRuntimeProperty.put("output", true);
+									if (jsonProperty.optBoolean("canBeUsedForFormPageVisibilty")) jsonRuntimeProperty.put("visibility", true);
+									
+									// add to the collection
+									jsonRunTimeProperties.put(jsonRuntimeProperty);
+									
+									// increment the index
+									index ++;
+									
+									// get the next item if there's one there
+									if (index < count) jsonProperty = jsonProperties.getJSONObject(index);
+									
+								} while (index < count);
+								// add the properties to what we're returning
+								jsonControl.put("runtimeProperties", jsonRunTimeProperties);
 							}
 							
-							// do once and loop until no more left 
-							do {
-								
-								// create a json object for this runtime property
-								JSONObject jsonRuntimeProperty = new JSONObject();
-								jsonRuntimeProperty.put("type", jsonProperty.get("type"));
-								jsonRuntimeProperty.put("name", jsonProperty.get("name"));
-								if (jsonProperty.optString("getPropertyFunction", null) != null) jsonRuntimeProperty.put("input", true);
-								if (jsonProperty.optString("setPropertyJavaScript", null) != null) jsonRuntimeProperty.put("output", true);
-								
-								// add to the collection
-								jsonRunTimeProperties.put(jsonRuntimeProperty);
-								
-								// increment the index
-								index ++;
-								
-								// get the next item if there's one there
-								if (index < count) jsonProperty = jsonProperties.getJSONObject(index);
-								
-							} while (index < count);
-							// add the properties to what we're returning
-							jsonControl.put("runtimeProperties", jsonRunTimeProperties);
-						}
-						
-						// add it to the collection we are returning
-						jsonControls.put(jsonControl);
-						
-					}
-				}
+							// add it to the collection we are returning
+							jsonControls.put(jsonControl);
+							
+						} // name check																	
+					} // control class check
+				} // other page or visibility check
 				// run for any child controls
-				getOtherPageChildControls(rapidServlet, jsonControls, control.getChildControls());				
+				getOtherPageChildControls(rapidServlet, jsonControls, control.getChildControls(), includePageVisibiltyControls);				
 			}			
 		}
 	}
 		
 	// uses the above iterative method to return a flat array of controls in this page that can be used from other pages, for use in the designer
-	public JSONArray getOtherPageControls(RapidHttpServlet rapidServlet) throws JSONException {
+	public JSONArray getOtherPageControls(RapidHttpServlet rapidServlet, boolean includePageVisibiltyControls) throws JSONException {
 		// the array we're about to return
 		JSONArray jsonControls = new JSONArray();
 		// start building the array using the page controls
-		getOtherPageChildControls(rapidServlet, jsonControls, _controls);
+		getOtherPageChildControls(rapidServlet, jsonControls, _controls, includePageVisibiltyControls);
 		// return the controls
 		return jsonControls;		
 	}
