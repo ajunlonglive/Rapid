@@ -92,6 +92,11 @@ public class Pages {
 			_title = page.getTitle();
 			_file = pageFile;
 		}
+		
+		@Override
+		public String toString() {
+			return "Page " + _id + " " + _name + " - " + _title;
+		}
 						
 	}
 	
@@ -149,6 +154,7 @@ public class Pages {
 	private HashMap<String,PageHeader> _pageHeaders;
 	private HashMap<String,Page> _pages;
 	private PageSorter _pageSorter;
+	private PageHeaders _sortedPageHeaders;
 			
 	// constructor
 	
@@ -207,6 +213,8 @@ public class Pages {
 		_pageHeaders.put(page.getId(), new PageHeader(page, pageFile));
 		// add to pages collection
 		_pages.put(page.getId(), page); 
+		// force the pages list to be resorted on next fetch
+		_sortedPageHeaders = null;
 	}
 	
 	// remove them one by one too
@@ -215,6 +223,8 @@ public class Pages {
 		_pageHeaders.remove(id);
 		// remove from page headers
 		_pages.remove(id); 
+		// force the pages list to be resorted on next fetch
+		_sortedPageHeaders = null;
 	}
 	
 	// the number of pages
@@ -288,16 +298,26 @@ public class Pages {
 	
 	// we don't want the pages in the application.xml so no setPages to avoid the marshaler
 	public PageHeaders getSortedPages() {
-		// prepare the list we are going to send back
-		PageHeaders pages = new PageHeaders();
-		// add each page to the list
-		for (String pageId : _pageHeaders.keySet()) {
-			pages.add(_pageHeaders.get(pageId));
+		// the pages we are going to return
+		PageHeaders sortedPageHeaders = null;
+		// if we want a resort or sorted pages is null
+		if (_sortedPageHeaders == null) {
+			// prepare the list we are going to send back
+			sortedPageHeaders = new PageHeaders();
+			// add each page to the list
+			for (String pageId : _pageHeaders.keySet()) {
+				sortedPageHeaders.add(_pageHeaders.get(pageId));
+			}
+			// sort the list using our sorter
+			Collections.sort(sortedPageHeaders, _pageSorter);			
+			// cache the sorted list
+			_sortedPageHeaders = sortedPageHeaders;
+		} else {
+			// use the cached sorted list
+			sortedPageHeaders = _sortedPageHeaders;
 		}
-		// sort the list using our sorter
-		Collections.sort(pages, _pageSorter);		
 		// return the pages
-		return pages; 
+		return sortedPageHeaders; 
 	}	
 
 	// clears the pages and reloads the page headers
@@ -305,6 +325,9 @@ public class Pages {
 		
 		// clear the pages
 		_pages.clear();
+		
+		// force the pages to be resorted
+		_sortedPageHeaders = null;
 		
 		// create a new map for caching page files by id's
 	    _pageHeaders = new HashMap<String,PageHeader>();		   

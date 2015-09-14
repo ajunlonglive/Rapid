@@ -113,14 +113,32 @@ public class RapidFormAdapter extends FormAdapter {
 	}
 
 	@Override
-	public void setFormPageControlValues(RapidRequest rapidRequest, String formId, Application application, String pageId, FormPageControlValues pageControlValues) {
-		
+	public void setFormPageControlValues(RapidRequest rapidRequest, String formId, Application application, String pageId, FormPageControlValues pageControlValues) {		
 		// if there are controls to store
 		if (pageControlValues.size() > 0) {
 			// store them
 			getUserFormPageControlValues(rapidRequest, application, formId).put(pageId, pageControlValues);
+		}		
+	}
+	
+	@Override
+	public String getFormPageControlValue(RapidRequest rapidRequest, String formId, Application application, String pageId, String controlId) {
+		// get all user form page values
+		Map<String,FormPageControlValues> userFormPageControlValues = getUserFormPageControlValues(rapidRequest, application, formId);
+		// if there are control values stored
+		if (userFormPageControlValues.size() > 0) {
+			// look for values from our page
+			FormPageControlValues pageControlValues = userFormPageControlValues.get(pageId);
+			// if we have some
+			if (pageControlValues != null) {
+				// loop them
+				for (FormControlValue controlValue : pageControlValues) {
+					// look for an id match
+					if (controlValue.equals(controlValue)) return controlValue.getValue();
+				}
+			}
 		}
-		
+		return null;
 	}
 	
 	@Override
@@ -169,5 +187,5 @@ public class RapidFormAdapter extends FormAdapter {
 		}
 		// for a "real" form you would either write to your database form header record that it has been submitted		
 	}
-	
+		
 }
