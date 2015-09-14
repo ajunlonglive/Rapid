@@ -1512,6 +1512,11 @@ public class Page {
 		writer.write("  </body>\n</html>");
 				
 	}
+	
+	@Override
+	public String toString() {
+		return "Page " + _id + " " + _name + " - " + _title;
+	}
 		
 	// static function to load a new page
 	public static Page load(ServletContext servletContext, File file) throws JAXBException, ParserConfigurationException, SAXException, IOException, TransformerFactoryConfigurationError, TransformerException {

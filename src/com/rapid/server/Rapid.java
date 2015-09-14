@@ -45,6 +45,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.rapid.actions.Logic.Condition;
 import com.rapid.core.Application;
 import com.rapid.core.Page;
 import com.rapid.core.Pages.PageHeader;
@@ -512,22 +513,57 @@ public class Rapid extends RapidHttpServlet {
 									
 									// get it's position
 									int pageIndex = pageHeaders.indexOf(requestPageId);
+									// assume no page sent
+									boolean pageSent = false;
 									
-									// if there is a next page
-									if (pageIndex < pageHeaders.size() - 1) {
+									// start a loop for all remaining pages
+									while (pageIndex < pageHeaders.size() - 1) {
+										
+										// increment the page index
+										pageIndex++;
 										
 										// get the next page header
-										PageHeader nextPageHeader = pageHeaders.get(pageIndex + 1);
+										PageHeader nextPageHeader = pageHeaders.get(pageIndex);
 										
-										// send a redirect for the page (this avoids ERR_CACH_MISS issues on the back button )
-										response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion() + "&p=" + nextPageHeader.getId());
+										//////////////////////////////////////////// This should really set the nextPageId in the session and redirect, then do visibility and update page session in the GET
 										
-									} else {
+										// get the page
+										Page page = app.getPages().getPage(getServletContext(), nextPageHeader.getId());
 										
-										// send a redirect for the summary (this also avoids ERR_CACH_MISS issues on the back button )
-										response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion() + "&action=summary");
-																	
-									} // page size check
+										// assume it's visible
+										boolean pageVisible = true;
+										
+										// get any visibility conditions
+										List<Condition> visibilityConditions = page.getVisibilityConditions();
+										// if there are some
+										if (visibilityConditions != null) if (visibilityConditions.size() > 0) {
+											// loop them
+											for (Condition condition : visibilityConditions) {
+												
+												logger.debug("Page condition " + page.getId() + " : " + condition);
+												
+												String value1 = formAdapter.getFormPageControlValue(rapidRequest, formId, app, "P2", "P2_C40_");
+												
+												logger.debug("Value 1 = " + value1);
+												
+											}
+											
+										}
+										
+										// if this page is visible
+										if (pageVisible) {
+											// send a redirect for the page (this avoids ERR_CACH_MISS issues on the back button )
+											response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion() + "&p=" + nextPageHeader.getId());
+											// record that a page was sent
+											pageSent = true;
+											// we're done!
+											break;
+										}
+										
+									}																											
+									
+									// send a redirect for the summary (this also avoids ERR_CACH_MISS issues on the back button )
+									if (!pageSent) response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion() + "&action=summary");
 									
 								} // submit action check
 								

@@ -118,6 +118,8 @@ public abstract class FormAdapter {
 	
 	public abstract void setFormPageControlValues(RapidRequest rapidRequest, String formId, Application application, String pageId, FormPageControlValues pageControlValues);
 	
+	public abstract String getFormPageControlValue(RapidRequest rapidRequest, String formId, Application application, String pageId, String controlId);
+	
 	public abstract void submitForm(RapidRequest rapidRequest, String formId, Application application) throws Exception;
 	
 	// overridable methods

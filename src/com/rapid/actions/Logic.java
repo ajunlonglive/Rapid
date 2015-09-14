@@ -79,6 +79,11 @@ public class Logic extends Action {
 			
 		}
 		
+		@Override
+		public String toString() {
+			return _id + (_field == null ? "" : (_field.length() == 0 ? "" : "/" + _field));
+		}
+		
 	}
 	
 	public static class Condition {
@@ -118,6 +123,11 @@ public class Logic extends Action {
 				js = _value1.getArgument(servletContext, application, page) + " " + _operation + " " + _value2.getArgument(servletContext, application, page);
 			}
 			return js;
+		}
+		
+		@Override
+		public String toString() {
+			return _value1 + " " + _operation + " " + _value2;
 		}
 		
 	}
