@@ -61,6 +61,13 @@ public abstract class FormAdapter {
 			_value = value;
 		}
 		
+		// override
+		
+		@Override
+		public String toString() {
+			return _id + "  = " + _value;
+		}
+		
 	}
 	
 	// a pages control values
@@ -90,7 +97,7 @@ public abstract class FormAdapter {
 		public void add(String controlId, String controlValue) {
 			this.add(new FormControlValue(controlId, controlValue));
 		}
-		
+						
 	}
 	
 	// instance variables

@@ -690,7 +690,7 @@ public class Database extends Action {
 								// loop the columns
 								for (int i = 0; i < rsmd.getColumnCount(); i++) {
 									// add the field name to the fields collection if not done yet
-									if (!gotFields) jsonFields.put(rsmd.getColumnName(i + 1));
+									if (!gotFields) jsonFields.put(rsmd.getColumnLabel(i + 1));
 									// get the column type
 									int columnType = rsmd.getColumnType(i + 1);
 									// add the data to the row according to it's type	
@@ -756,11 +756,11 @@ public class Database extends Action {
 					// check for any child database actions
 					if (_childDatabaseActions != null) {
 						// if there really are some
-						if (_childDatabaseActions.size() > 0) {
+						if (_childDatabaseActions.size() > 0) {																					
 							// get any child data
 							JSONArray jsonChildQueries = jsonAction.optJSONArray("childQueries");						
 							// if there was some
-							if (jsonChildQueries != null) {
+							if (jsonChildQueries != null) {							
 								// loop
 								for (int i = 0; i < jsonChildQueries.length(); i++) {
 									// fetch the data
@@ -835,6 +835,12 @@ public class Database extends Action {
 																parentString = (String) parentValue;
 															} else if (parentValue.getClass() == Integer.class) {
 																parentString = Integer.toString((Integer) parentValue);
+															} else if (parentValue.getClass() == Long.class) {
+																parentString = Long.toString((Long) parentValue);
+															} else if (parentValue.getClass() == Double.class) {
+																parentString = Double.toString((Double) parentValue);
+															} else if (parentValue.getClass() == Boolean.class) {
+																parentString = Boolean.toString((Boolean) parentValue);
 															}
 															// a string we will convert the child value to
 															String childString = null;
@@ -843,12 +849,18 @@ public class Database extends Action {
 																childString = (String) childValue;
 															} else if (childValue.getClass() == Integer.class) {
 																childString = Integer.toString((Integer) childValue);
+															} else if (childValue.getClass() == Long.class) {
+																childString = Long.toString((Long) childValue);
+															} else if (childValue.getClass() == Double.class) {
+																childString = Double.toString((Double) childValue);
+															} else if (childValue.getClass() == Boolean.class) {
+																childString = Boolean.toString((Boolean) childValue);
 															}
 															// non null check
-															if (parentString != null && childString != null) {
+															if (parentString != null && childString != null) {																
 																// do the match!
 																if (parentString.equals(childString)) matches++;
-															}
+															}															
 														} // values non null														
 													} // field map loop
 													// if we got some matches for all the fields add this row to the subset

@@ -1292,7 +1292,7 @@ function setData_dropdown(ev, id, field, details, data, changeEvents) {
   			for (var i in data.rows) {
   				var row = data.rows[i];		
   				var text = "";
-  				var value = "";
+  				var value = null;
   				if (data.fields) {
   					for (var j in data.fields) {
   						if (data.fields[j].toLowerCase() == "text") text = data.rows[i][j];
@@ -1300,8 +1300,8 @@ function setData_dropdown(ev, id, field, details, data, changeEvents) {
   					}
   				}
   				if (!text) text = row[0];
-  				if (value == undefined && row[1]) value = row[1];
-  				if (value != undefined) value = 	" value='" + value + "'";
+  				if (value == null && row[1]) value = row[1];
+  				if (value != null) value = "value='" + value + "'";
   				control.append("<option " + value + ">" + text + "</option>");
   			}	
   		}

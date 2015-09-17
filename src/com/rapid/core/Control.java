@@ -385,8 +385,10 @@ public class Control {
 	
 	// this method returns JavaScript for retrieving a control's data, or runtime property value
 	public static String getDataJavaScript(ServletContext servletContext, Application application, Page page, String id, String field) {
+		
 		// assume an empty string
 		String js = "";
+		
 		// if id is not null
 		if (id != null) {
 			
@@ -445,7 +447,7 @@ public class Control {
 						
 					}
 					
-				} else {
+				}  else {
 					
 					// return error
 					return "null; /* error finding system value, no type */";

@@ -134,7 +134,7 @@ public class RapidFormAdapter extends FormAdapter {
 				// loop them
 				for (FormControlValue controlValue : pageControlValues) {
 					// look for an id match
-					if (controlValue.equals(controlValue)) return controlValue.getValue();
+					if (controlValue.getId().equals(controlId)) return controlValue.getValue();
 				}
 			}
 		}

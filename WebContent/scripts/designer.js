@@ -938,11 +938,12 @@ function getPageVisibilityOptions(selectId) {
 	if (_page && _page.sessionVariables) {
 		options += "<optgroup label='Page variables'>";
 		for (var i in _page.sessionVariables) {
-			if (selectId == _page.sessionVariables[i] && !gotSelected) {
-				options += "<option value='" + _page.sessionVariables[i] + "' selected='selected' >" + _page.sessionVariables[i] + "</option>";
+			var val = "Session." + _page.sessionVariables[i];
+			if (selectId == val && !gotSelected) {
+				options += "<option value='" + val + "' selected='selected' >" + _page.sessionVariables[i] + "</option>";
 				gotSelected = true;
 			} else {
-				options += "<option value='" + _page.sessionVariables[i] + "' >" + _page.sessionVariables[i] + "</option>";
+				options += "<option value='" + val + "' >" + _page.sessionVariables[i] + "</option>";
 			}			
 		}
 		options += "</optgroup>";
