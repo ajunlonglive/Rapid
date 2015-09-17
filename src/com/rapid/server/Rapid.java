@@ -165,8 +165,13 @@ public class Rapid extends RapidHttpServlet {
 						
 					} else {
 						
-						// assum it's ok to print the page
+						// assume it's ok to print the page
 						boolean pageCheck = true;
+						// assume we won't be showing the summary
+						boolean showSummary = false;
+						
+						// get the page object
+						Page page = rapidRequest.getPage();
 						
 						// get the form adapter (if there is one)
 						FormAdapter formAdapter = app.getFormAdapter();
@@ -176,15 +181,33 @@ public class Rapid extends RapidHttpServlet {
 							// get form id
 							String formId = formAdapter.getFormId(rapidRequest, app);
 							// if there isn't one go back to the start
-							if (formId == null) pageCheck = false;							
+							if (formId == null) {
+								pageCheck = false;							
+							} else {
+								// get all of the pages
+								PageHeaders pageHeaders = app.getPages().getSortedPages();
+								// get this page position
+								int pageIndex = pageHeaders.indexOf(page.getId());
+								// check the page visibility
+								while (!page.getPageVisible(rapidRequest, formId, app)) {
+									// if we're here the visibility check on the current page failed so increment the index
+									pageIndex ++;
+									// if there are no more pages go to the summary
+									if (pageIndex > pageHeaders.size() - 1) {
+										pageCheck = false;
+										showSummary = true;
+										break;
+									} else {
+										// select the next page to check the visibility of
+										page = app.getPages().getPage(getServletContext(), pageHeaders.get(pageIndex).getId());
+									}									
+								}
+							}
 						}
 						
-						// if the pageCheck was ok (or not invalidated by lack of a form id)
+						// if the pageCheck was ok (or not invalidated by lack of a form id or summary page)
 						if (pageCheck) {
-																	
-							// get the page object
-							Page page = rapidRequest.getPage();
-									
+																																	
 							// check we got one
 							if (page == null) { 
 								
@@ -221,8 +244,17 @@ public class Rapid extends RapidHttpServlet {
 							
 						} else {
 							
-							// go to what should be the start page
-							response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion());
+							if (showSummary) {
+								
+								// go to the summary
+								response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion() + "&action=summary");
+								
+							} else {
+							
+								// go to what should be the start page
+								response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion());
+								
+							}
 							
 						} // form id check
 																																					
@@ -271,7 +303,7 @@ public class Rapid extends RapidHttpServlet {
 		return jsonData;
 		
 	}
-
+	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 			
 		// this byte buffer is used for reading the post data 
@@ -513,58 +545,23 @@ public class Rapid extends RapidHttpServlet {
 									
 									// get it's position
 									int pageIndex = pageHeaders.indexOf(requestPageId);
-									// assume no page sent
-									boolean pageSent = false;
 									
-									// start a loop for all remaining pages
-									while (pageIndex < pageHeaders.size() - 1) {
+									// if this is the last page
+									if (pageIndex >= pageHeaders.size() - 1) {
 										
+										// send a redirect for the summary (this also avoids ERR_CACH_MISS issues on the back button )
+										response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion() + "&action=summary");
+										
+									} else {
+																				
 										// increment the page index
 										pageIndex++;
 										
-										// get the next page header
-										PageHeader nextPageHeader = pageHeaders.get(pageIndex);
-										
-										//////////////////////////////////////////// This should really set the nextPageId in the session and redirect, then do visibility and update page session in the GET
-										
-										// get the page
-										Page page = app.getPages().getPage(getServletContext(), nextPageHeader.getId());
-										
-										// assume it's visible
-										boolean pageVisible = true;
-										
-										// get any visibility conditions
-										List<Condition> visibilityConditions = page.getVisibilityConditions();
-										// if there are some
-										if (visibilityConditions != null) if (visibilityConditions.size() > 0) {
-											// loop them
-											for (Condition condition : visibilityConditions) {
-												
-												logger.debug("Page condition " + page.getId() + " : " + condition);
-												
-												String value1 = formAdapter.getFormPageControlValue(rapidRequest, formId, app, "P2", "P2_C40_");
-												
-												logger.debug("Value 1 = " + value1);
-												
-											}
-											
-										}
-										
-										// if this page is visible
-										if (pageVisible) {
-											// send a redirect for the page (this avoids ERR_CACH_MISS issues on the back button )
-											response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion() + "&p=" + nextPageHeader.getId());
-											// record that a page was sent
-											pageSent = true;
-											// we're done!
-											break;
-										}
+										// send a redirect for the page (this avoids ERR_CACH_MISS issues on the back button )
+										response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion() + "&p=" + pageHeaders.get(pageIndex).getId());
 										
 									}																											
-									
-									// send a redirect for the summary (this also avoids ERR_CACH_MISS issues on the back button )
-									if (!pageSent) response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion() + "&action=summary");
-									
+
 								} // submit action check
 								
 							} // form adapter check

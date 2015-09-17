@@ -44,8 +44,9 @@ This action runs form - specifc functions
 	        <property>
 	            <key>actionType</key>
 	            <name>Action</name>
-	            <changeValueJavaScript>controlActionType</changeValueJavaScript>	 
-	            <getValuesFunction>return [["","Please select..."],["next","next page"],["prev","previous page"],["id","copy form id"]];</getValuesFunction>
+	            <setConstructValueFunction>return ""</setConstructValueFunction>
+	            <changeValueJavaScript>select</changeValueJavaScript>	 	            
+	            <getValuesFunction>return [["","Please select..."],["next","next page"],["prev","previous page"],["id","copy form id"]];</getValuesFunction>	            
 	            <refreshProperties>true</refreshProperties>	            
 	        </property>
 	        

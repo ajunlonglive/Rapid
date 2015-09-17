@@ -59,6 +59,7 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import com.rapid.actions.Logic.Condition;
+import com.rapid.actions.Logic.Value;
 import com.rapid.core.Application.Resource;
 import com.rapid.core.Application.ResourceDependency;
 import com.rapid.forms.FormAdapter;
@@ -1513,10 +1514,129 @@ public class Page {
 				
 	}
 	
+	private String getConditionValue(RapidRequest rapidRequest, String formId, FormAdapter formAdapter, Application application, Value value) {
+		String[] idParts = value.getId().split("\\.");
+		if (idParts[0].equals("System")) {			
+			// just check that there is a type
+			if (idParts.length > 1) {			
+				// get the type from the second part
+				String type = idParts[1];				
+				// the available system values are specified above getDataOptions in designer.js
+				if ("app id".equals(type)) {					
+					// whether rapid mobile is present
+					return application.getId();					
+				} else if ("app version".equals(type)) {					
+					// whether rapid mobile is present
+					return application.getVersion();					
+				} else if ("page id".equals(type)) {					
+					// the page
+					return _id;					
+				} else if ("mobile".equals(type)) {					
+					// whether rapid mobile is present
+					return "false";					
+				} else if ("online".equals(type)) {					
+					// whether we are online (presumed true if no rapid mobile)
+					return "true";					
+				} else if ("user".equals(type) || "user name".equals(idParts[1])) {					
+					// pass the field as a value
+					return rapidRequest.getUserName();					
+				} else if ("field".equals(type)) {					
+					// pass the field as a value
+					return value.getField();					
+				} else {					
+					// pass through as literal 
+					return idParts[1];					
+				}				
+			}  else {				
+				// return null
+				return null;				
+			}			
+		} else if (idParts[0].equals("Session")) {
+			// if there are enough if parts
+			if (idParts.length > 1) {
+				return (String) rapidRequest.getSessionAttribute(idParts[1]);
+			} else {
+				return null;
+			}
+		} else {
+			String valueId = value.getId();
+			String[] valueIdParts = valueId.split("_");
+			String pageId = valueIdParts[0];
+			return formAdapter.getFormPageControlValue(rapidRequest, formId, application, pageId, valueId);
+		}
+	}
+	
+	// return a boolean for page visibility
+	public boolean getPageVisible(RapidRequest rapidRequest, String formId, Application application) {
+		
+		// get the form adapter
+		FormAdapter formAdapter = application.getFormAdapter();
+						
+		// if we have a form adapter and visibility conditions
+		if (formAdapter != null && _visibilityConditions != null) {
+		
+			// get a logger
+			Logger logger = rapidRequest.getRapidServlet().getLogger();
+			
+			// if there are some visibility conditions
+			if (_visibilityConditions.size() > 0) {
+				// loop them
+				for (Condition condition : _visibilityConditions) {
+					
+					logger.debug("Page " + _id + " visibility condition " + " : " + condition);
+					
+					String value1 = getConditionValue(rapidRequest, formId, formAdapter, application, condition.getValue1());
+					
+					logger.debug("Value 1 = " + value1);
+					
+					String value2 = getConditionValue(rapidRequest, formId, formAdapter, application, condition.getValue2());
+					
+					logger.debug("Value 2 = " + value2);
+					
+					String operation = condition.getOperation();
+					
+					if (value1 == null || value2 == null) return false;
+					
+					if ("==".equals(operation)) {
+						if (!value1.equals(value2)) return false;						
+					} else if ("!=".equals(operation)) {
+						if (value1.equals(value2)) return false;
+					} else {						
+						try {
+							// the remaining conditions all work with numbers so covert
+							float num1 = Float.parseFloat(value1);
+							float num2 = Float.parseFloat(value2);
+							// check the conditions
+							if (">".equals(operation)) {
+								if (!(num1 > num2)) return false;														
+							} else if (">=".equals(operation)) {
+								if (!(num1 >= num2)) return false;
+							} else if ("<".equals(operation)) {
+								if (!(num1 < num2)) return false;
+							} else if ("<=".equals(operation)) {
+								if (!(num1 <= num2)) return false;
+							}		
+						} catch (Exception ex) {
+							// something went wrong - generally in the conversion - return false
+							return false;
+						}										
+					}						
+				}				
+			} else {				
+				logger.debug("Page " + _id + " is visible");				
+			}			
+		}		
+		return true;
+	}
+	
+	// overrides
+	
 	@Override
 	public String toString() {
 		return "Page " + _id + " " + _name + " - " + _title;
 	}
+	
+	// static methods
 		
 	// static function to load a new page
 	public static Page load(ServletContext servletContext, File file) throws JAXBException, ParserConfigurationException, SAXException, IOException, TransformerFactoryConfigurationError, TransformerException {
@@ -1615,5 +1735,5 @@ public class Page {
 		}
 				
 	}
-		
+	
 }
