@@ -137,7 +137,7 @@ public class Page {
 	// instance variables
 	
 	private int _xmlVersion;
-	private String _id, _name, _title, _description, _createdBy, _modifiedBy, _htmlBody, _cachedStartHtml;
+	private String _id, _name, _title, _label, _description, _createdBy, _modifiedBy, _htmlBody, _cachedStartHtml;
 	private Date _createdDate, _modifiedDate;	
 	private List<Control> _controls;
 	private List<Event> _events;
@@ -167,6 +167,10 @@ public class Page {
 	// this is a user-friendly, long title
 	public String getTitle() { return _title; }
 	public void setTitle(String title) { _title = title; }
+	
+	// this is a the label to use in the form summary
+	public String getLabel() { return _label; }
+	public void setLabel(String label) { _label = label; }
 	
 	// an even longer description of what this page does
 	public String getDescription() { return _description; }

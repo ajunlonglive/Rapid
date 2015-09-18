@@ -166,16 +166,46 @@ public class RapidFilter implements Filter {
 			httpResponse.setHeader("Pragma", "no-cache");
 			
 		}
-									
-		ServletRequest filteredRequest = _authenticationAdapter.process(request, response);
-			
-		if (filteredRequest == null) {
-			// send response back to client immediately 
-			return;
-		} else {
-			// continue the rest of the chain
-			filterChain.doFilter(filteredRequest, response);
+		
+		// cast the ServletRequest to a HttpServletRequest
+		HttpServletRequest req = (HttpServletRequest) request;
+		
+		// assume this is not an soa request
+		boolean isSoaRequest = false;
+		
+		// all webservice related requests got to the soa servelet
+		if ("/soa".equals(req.getServletPath())) {			
+			// if this is a get request
+			if ("GET".equals(req.getMethod())) {
+				// remember this is a webservice
+				isSoaRequest = true;
+				// continue the rest of the chain
+				filterChain.doFilter(request, response);				
+			} else {
+				// get the content type (only present for POST)
+				String contentType = request.getContentType();
+				// if we got one
+				if (contentType != null) {
+					// put into lower case
+					contentType = contentType.toLowerCase();			
+					// check this is known type of soa request xml
+					if (((req.getHeader("Action") != null || req.getHeader("SoapAction") != null) && contentType.contains("xml")) || (req.getHeader("Action") != null && contentType.contains("json"))) {
+						// remember this is a webservice
+						isSoaRequest = true;
+						// continue the rest of the chain
+						filterChain.doFilter(request, response);
+					}
+				}
+			}
 		}
+											
+		// if we have not handled the request via the soa checks
+		if (!isSoaRequest) {			
+			// get a filtered request
+			ServletRequest filteredRequest = _authenticationAdapter.process(request, response);			
+			// continue the rest of the chain with it if we got one
+			if (filteredRequest != null) 	filterChain.doFilter(filteredRequest, response);			
+		}				
 	}
 
 	@Override

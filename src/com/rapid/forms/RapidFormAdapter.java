@@ -153,7 +153,9 @@ public class RapidFormAdapter extends FormAdapter {
 		
 	@Override
 	public String getSummaryPageStartHtml(RapidRequest rapidRequest, Application application, Page page) {
-		return "<div class='formSummaryPage'><h2>" + page.getTitle() + "</h2>\n";
+		String label = page.getLabel();
+		if (label == null) label = page.getTitle();
+		return "<div class='formSummaryPage'><h2>" + label + "</h2>\n";
 	}
 	
 	@Override
@@ -164,9 +166,14 @@ public class RapidFormAdapter extends FormAdapter {
 	@Override
 	public String getSummaryControlValueHtml(RapidRequest rapidRequest, Application application, Page page, FormControlValue controlValue) {
 		Control control = page.getControl(controlValue.getId());
-		String value = controlValue.getValue();
-		if (value == null) value = "(no value)";
-		return "<span class='formSummaryControl'>" + control.getName() + " : " + control.getCodeText(value) + "</span>\n";
+		String label = control.getLabel();
+		if (label == null) {
+			return "";
+		} else {
+			String value = controlValue.getValue();
+			if (value == null) value = "(no value)";
+			return "<span class='formSummaryControl'>" + label + " : " + control.getCodeText(value) + "</span>\n";
+		}		
 	}
 	
 	@Override

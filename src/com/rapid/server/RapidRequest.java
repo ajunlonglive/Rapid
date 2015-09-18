@@ -37,6 +37,7 @@ import java.util.Enumeration;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
@@ -54,6 +55,7 @@ public class RapidRequest {
 	
 	private RapidHttpServlet _rapidServlet;
 	private HttpServletRequest _request;
+	private HttpSession _session;
 	private String _actionName, _appId, _version, _userName;
 	private Application _application;		
 	private Page _page;
@@ -79,7 +81,13 @@ public class RapidRequest {
 	// methods
 	
 	// get a specified session attribute
-	public Object getSessionAttribute(String name) { return _request.getSession().getAttribute(name); }
+	public Object getSessionAttribute(String name) {
+		if (_session == null) {
+			return null;
+		} else { 
+			return _session.getAttribute(name);
+		}
+	}
 	
 	// get the device details
 	public String getDevice() {  return (String) getSessionAttribute(RapidFilter.SESSION_VARIABLE_USER_DEVICE); }
@@ -101,6 +109,8 @@ public class RapidRequest {
 		_rapidServlet = rapidServlet;
 		// retain the http request
 		_request = request;
+		// retain the session
+		_session = request.getSession(false);
 		// store the user name from the session
 		_userName = (String) getSessionAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME);
 		// look for an action parameter
@@ -166,6 +176,8 @@ public class RapidRequest {
 		_rapidServlet = rapidServlet;
 		// store the request
 		_request = request;
+		// retain the session
+		_session = request.getSession(false);
 		// store the user name from the session
 		_userName = (String) getSessionAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME);
 		// store the application
@@ -183,6 +195,29 @@ public class RapidRequest {
 	public RapidRequest(HttpServletRequest request, Application application) {
 		// store the request
 		_request = request;
+		// retain the session
+		_session = request.getSession(false);
+		// store the user name from the session
+		_userName = (String) getSessionAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME);
+		// store the application
+		_application = application;
+		// if we got an application
+		if (application != null) {
+			// store the application id
+			_appId = application.getId();
+			// store the version
+			_version = application.getVersion();
+		}
+	}
+	
+	// can also instantiate a rapid request with just an HttpServletRequest a session
+	public RapidRequest(RapidHttpServlet rapidServlet, HttpServletRequest request, HttpSession session, Application application) {
+		// store the servlet
+		_rapidServlet = rapidServlet;
+		// store the request
+		_request = request;
+		// retain the session
+		_session = session;
 		// store the user name from the session
 		_userName = (String) getSessionAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME);
 		// store the application

@@ -39,6 +39,7 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 
 import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -247,7 +248,7 @@ public class RapidHttpServlet extends HttpServlet {
 				
 	}
 	
-	public void sendMessage(RapidRequest rapidRequest, HttpServletResponse response, int status, String title, String message ) throws IOException {
+	public void sendMessage(HttpServletResponse response, int status, String title, String message ) throws IOException {
 		
 		response.setStatus(status);
 		
@@ -256,15 +257,16 @@ public class RapidHttpServlet extends HttpServlet {
 		PrintWriter out = response.getWriter();		
 		
 		// write a header
-		out.write("<html><head><title>Rapid - " + title + "</title><meta charset=\"utf-8\"/><link rel='stylesheet' type='text/css' href='styles/index.css'></link>");
+		out.write("<html>\n  <head>\n    <title>Rapid - " + title + "</title>\n    <meta charset=\"utf-8\"/>\n    <link rel='stylesheet' type='text/css' href='styles/index.css'></link>\n  </head>\n");
 					
 		// write no permission
-		out.write("<body><div class=\"image\"><img src=\"images/RapidLogo_200x134.png\" /></div><div class=\"title\"><span>Rapid - " + title + "</span></div><div class=\"info\"><p>" + message + "</p></div></body>");
+		out.write("  <body>\n    <div class=\"image\"><img src=\"images/RapidLogo_200x134.png\" /></div>\n    <div class=\"title\"><span>Rapid - " + title + "</span></div>\n    <div class=\"info\"><p>" + message + "</p></div>\n  </body>\n</html>");
 		
 		out.println();
 										
 		out.close();
 		
 	}
+
 	
 }

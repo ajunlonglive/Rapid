@@ -108,6 +108,17 @@ public class Control {
 	public String getId() { return getProperty("id"); }
 	// the name of this object
 	public String getName() { return getProperty("name"); }
+	// the form summary label of this object
+	public String getLabel() { 
+		String label = getProperty("label");
+		if (label == null) {
+			return null;
+		} else if (label.trim().length() == 0) {
+			return null;
+		} else {
+			return label;
+		}
+	}
 	// the details used by the getData and setData method to map the data to the control
 	public String getDetails() { return getProperty("details"); }
 	// whether this control can be used from other pages
