@@ -26,18 +26,37 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 package com.rapid.soa;
 
 import java.sql.Date;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 
+import com.rapid.core.Application;
+import com.rapid.core.Application.DatabaseConnection;
+import com.rapid.data.ConnectionAdapter;
+import com.rapid.data.DataFactory;
+import com.rapid.data.DataFactory.Parameters;
+import com.rapid.server.RapidRequest;
+import com.rapid.soa.JavaWebservice.*;
+import com.rapid.soa.Webservice.WebserviceException;
+
 // this class performs the same task as the sql webservice in the demo application
-public class PersonSearch implements JavaWebservice.Response {
+public class PersonSearch implements Response {
 	
 	// private instance variables
 	private String _forename, _surname;
 	
 	// properties
+	@XSDorder(1)
+	@XSDnillable(false)
+	@XSDminOccurs(0)
+	@XSDminLength(1)
+	@XSDmaxLength(30)
 	public String getForename() { return _forename; }
 	public void setForename(String forename) { _forename = forename; }
 	
+	@XSDorder(2)
+	@XSDnillable(false)
+	@XSDminLength(1)
+	@XSDmaxLength(30)
 	public String getSurname() { return _surname; }
 	public void setSurname(String surname) { _surname = surname; }
 	
@@ -45,9 +64,26 @@ public class PersonSearch implements JavaWebservice.Response {
 	public class Person {
 		
 		// public instance variables
+		
+		@XSDorder(1)
+		public int id;
+		
+		@XSDorder(2)
+		@XSDminOccurs(0)
+		@XSDminLength(1)
+		@XSDmaxLength(30)
 		public String forename;
+		
+		@XSDorder(3)
+		@XSDminLength(1)
+		@XSDmaxLength(30)
 		public String surname;
+		
+		@XSDorder(4)
 		public Date birthday;
+		
+		@XSDorder(5)
+		@XSDenumeration("M,F,U")
 		public String gender;
 		
 	}
@@ -56,26 +92,52 @@ public class PersonSearch implements JavaWebservice.Response {
 	public class PersonSearchResponse extends ArrayList<Person> {}
 
 	@Override
-	public PersonSearchResponse getResponse() {
+	public PersonSearchResponse getResponse(RapidRequest rapidRequest) throws WebserviceException {
 		
-		PersonSearchResponse response = new PersonSearchResponse();
+		// this will be done by the inflator before the response is called
+		_surname = "E";
 		
-		Person person1 = new Person();
-		person1.forename = "Gareth";
-		person1.surname = "Edwards";
-		person1.birthday = new Date(1);
-		person1.gender = "M";
-		response.add(person1);
-		
-		Person person2 = new Person();
-		person2.forename = "Alex";
-		person2.surname = "Edwards";
-		person2.birthday = new Date(2);
-		person2.gender = "F";
-		
-		response.add(person2);
-		
-		return response;
+		try {
+			
+			PersonSearchResponse response = new PersonSearchResponse();
+			
+			Application application = rapidRequest.getApplication();
+			
+			DatabaseConnection databaseConnection = application.getDatabaseConnections().get(0);
+			
+			ConnectionAdapter ca = databaseConnection.getConnectionAdapter(rapidRequest.getRapidServlet().getServletContext());			
+			
+			DataFactory df = new DataFactory(ca);
+			
+			Parameters parameters = new Parameters();
+			parameters.add(_forename);
+			parameters.add(_surname);
+			
+			String sql = "select id, forename, surname, strftime('%s', birthday)*1000 birthday, gender from people where lower(forename) like ifnull(lower(?),'%')||'%' and lower(surname) like lower(?)||'%' order by surname, birthday limit 10";
+			
+			ResultSet rs = df.getPreparedResultSet(rapidRequest, sql, parameters);
+			
+			while (rs.next()) {
+				
+				Person person = new Person();
+				person.id = rs.getInt("id");
+				person.forename = rs.getString("forename");
+				person.surname =  rs.getString("surname");
+				person.birthday =  rs.getDate("birthday");
+				person.gender =  rs.getString("gender");
+				response.add(person);
+				
+			}
+			
+			df.close();
+						
+			return response;
+						
+		} catch (Exception ex) {
+			
+			throw new WebserviceException(ex);
+			
+		}			
 		
 	}
 

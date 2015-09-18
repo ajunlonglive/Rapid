@@ -269,16 +269,20 @@ public abstract class Webservice {
 			_wsdl.append("<xs:element name=\"authentication\" type=\"xs:string\"/>");
 		}
 		
-		// request
+		// request element
 		SOASchemaElement requestRootElement = null;
-		if (_requestSchema != null) {
-			requestRootElement = _requestSchema.getRootElement(); 
+		// request schema - use the method to allow overrides to populate it
+		SOASchema requestSchema = getRequestSchema();
+		if (requestSchema != null) {
+			requestRootElement = requestSchema.getRootElement(); 
 			if (requestRootElement != null) appendRootElement(requestRootElement);
 		}
 		// response
 		SOASchemaElement responseRootElement = null;
-		if (_responseSchema != null) {
-			responseRootElement = _responseSchema.getRootElement(); 
+		// response schema - use the method to allow overrides to populate it
+		SOASchema responseSchema = getResponseSchema();
+		if (responseSchema != null) {
+			responseRootElement = responseSchema.getRootElement(); 
 			if (responseRootElement != null) appendRootElement(responseRootElement);
 		}
 
@@ -347,6 +351,6 @@ public abstract class Webservice {
 		
 	// every child class is expected to return a response of SOAData
 	
-	public abstract SOAData getResponseData(RapidRequest rapidRequest, Application application, SOAData requestData) throws WebserviceException;
+	public abstract SOAData getResponseData(RapidRequest rapidRequest, SOAData requestData) throws WebserviceException;
 	
 }

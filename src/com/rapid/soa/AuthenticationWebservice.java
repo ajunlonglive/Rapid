@@ -34,7 +34,7 @@ public class AuthenticationWebservice extends Webservice {
 	}
 
 	@Override
-	public SOAData getResponseData(RapidRequest rapidRequest,	Application application, SOAData requestData)	throws WebserviceException {
+	public SOAData getResponseData(RapidRequest rapidRequest,	SOAData requestData)	throws WebserviceException {
 		
 		List<SOAElement> requestElements = requestData.getRootElement().getChildElements();
 		String username = null;

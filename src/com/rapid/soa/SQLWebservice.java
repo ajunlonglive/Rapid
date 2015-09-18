@@ -64,13 +64,15 @@ public class SQLWebservice extends Webservice {
 	// overrides
 	
 	@Override
-	public SOAData getResponseData(RapidRequest rapidRequest, Application application, SOAData requestData) throws WebserviceException {
+	public SOAData getResponseData(RapidRequest rapidRequest, SOAData requestData) throws WebserviceException {
 		
 		try {
 			
 			SimpleDateFormat dateFormatter = null;
 			
 			Date date = null;
+			
+			Application application = rapidRequest.getApplication();
 												
 			DatabaseConnection databaseConnection = application.getDatabaseConnections().get(_databaseConnectionIndex);
 			

@@ -25,6 +25,10 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
 package com.rapid.soa;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
@@ -33,6 +37,7 @@ import org.json.JSONObject;
 import com.rapid.core.Application;
 import com.rapid.server.RapidHttpServlet;
 import com.rapid.server.RapidRequest;
+import com.rapid.soa.Webservice.WebserviceException;
 import com.rapid.utils.Classes;
 
 public class JavaWebservice extends Webservice {
@@ -40,9 +45,69 @@ public class JavaWebservice extends Webservice {
 	// all classes used by JavaWebservices are expected to implement this interface 
 	public interface Response {
 		
-		public Object getResponse();
+		public Object getResponse(RapidRequest rapidRequest) throws WebserviceException;
 
 	}
+	
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target({ElementType.METHOD, ElementType.FIELD, ElementType.TYPE})
+	public @interface XSDchoice {}
+			
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target({ElementType.METHOD, ElementType.FIELD})
+	public @interface XSDname { public String name(); }
+	
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target({ElementType.METHOD, ElementType.FIELD})
+	public @interface XSDtype { public String name(); }
+	
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target({ElementType.METHOD, ElementType.FIELD})
+	public @interface XSDorder { public int value(); }
+	
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target({ElementType.METHOD, ElementType.FIELD})
+	public @interface XSDminOccurs { public int value(); }
+	
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target({ElementType.METHOD, ElementType.FIELD})
+	public @interface XSDmaxOccurs { public int value(); }	
+	
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target({ElementType.METHOD, ElementType.FIELD})
+	public @interface XSDnillable { public boolean value(); }	
+		
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target({ElementType.METHOD, ElementType.FIELD})
+	public @interface XSDminLength { public int value(); }	
+	
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target({ElementType.METHOD, ElementType.FIELD})
+	public @interface XSDmaxLength { public int value(); }	
+	
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target({ElementType.METHOD, ElementType.FIELD})
+	public @interface XSDpattern { public String value(); }
+	
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target({ElementType.METHOD, ElementType.FIELD})
+	public @interface XSDenumeration { public String value(); }
+	
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target({ElementType.METHOD, ElementType.FIELD})
+	public @interface XSDminInclusive{ public String value(); }	
+	
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target({ElementType.METHOD, ElementType.FIELD})
+	public @interface XSDmaxInclusive { public String value(); }
+	
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target({ElementType.METHOD, ElementType.FIELD})
+	public @interface XSDminExclusive{ public String value(); }	
+	
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target({ElementType.METHOD, ElementType.FIELD})
+	public @interface XSDmaxExclusive { public String value(); }
 		
 	// private variables
 	private String _className;
@@ -61,9 +126,58 @@ public class JavaWebservice extends Webservice {
 	public JavaWebservice(String name) {
 		setName(name);
 	}
+	
+	// private methods
+	private Class getNamedClass() throws Exception {		
+		// get the class
+		Class c = Class.forName(_className);		
+		// make sure it implements JavaWebservice.Response
+		if (!Classes.implementsClass(c, com.rapid.soa.JavaWebservice.Response.class)) throw new WebserviceException("Webservice action class " + c.getCanonicalName() + " must implement com.rapid.soa.JavaWebservice.Response.");						
+		return c;		
+	}
+	
+	private SOASchema getClassSchema(Class schemaClass) {
+		SOASchema classSchema = new SOASchema(schemaClass.getSimpleName());
+		///////////////////////////////////////////////////////////////////////////////// here we build a schema from a class ////////////////////////////////////////////////////////////////////////////////////////
+		return classSchema;
+	}
+	
+	@Override
+	public SOASchema getRequestSchema() {
+		if (_requestSchema == null) {
+			try {
+				// get the request class
+				Class requestClass = getNamedClass();
+				// now make a schema from it
+				_requestSchema = getClassSchema(requestClass);
+			} catch (Exception ex) {
+				
+			}
+		}
+		return _requestSchema; 
+	}
+	
+	@Override
+	public SOASchema getResponseSchema() {
+		if (_responseSchema == null) {
+			try {
+				// get the request class
+				Class requestClass = getNamedClass();
+				// get the response method
+				Method responseMethod = requestClass.getMethod("getResponse", RapidRequest.class);
+				// get the response class
+				Class responseClass = responseMethod.getReturnType();
+				// now make a schema from it
+				_responseSchema = getClassSchema(responseClass);
+			} catch (Exception ex) {
+				
+			}
+		}
+		return _responseSchema;
+	}
 
 	@Override
-	public SOAData getResponseData(RapidRequest rapidRequest, Application application, SOAData requestData)	throws WebserviceException {
+	public SOAData getResponseData(RapidRequest rapidRequest, SOAData requestData)	throws WebserviceException {
 		
 		// instantiate an instance of _className
 		// use requestData to inflate it's properties (or public instance variables)
@@ -73,14 +187,11 @@ public class JavaWebservice extends Webservice {
 		
 		try {
 			
-			// get the class
-			Class c = Class.forName(_className);
-			
-			// make sure it implements JavaWebservice.Response
-			if (!Classes.implementsClass(c, com.rapid.soa.JavaWebservice.Response.class)) throw new WebserviceException("Webservice action class " + c.getCanonicalName() + " must implement com.rapid.soa.JavaWebservice.Response.");
+			// get the request class
+			Class requestClass = getNamedClass();
 			
 			// get the parameterless constructor
-			Constructor constructor = c.getConstructor();
+			Constructor constructor = requestClass.getConstructor();
 			
 			// get an instance of the object
 			JavaWebservice.Response requestObject = (JavaWebservice.Response) constructor.newInstance();
@@ -88,12 +199,12 @@ public class JavaWebservice extends Webservice {
 			/////////////////////////////////////////////////////////////////////////////////////// here we use requestData to populate the requestObject //////////////////////////////////////////////////////////////////////////////////////////////
 			
 			// get the response method
-			Method method = c.getMethod("getResponse");
+			Method responseMethod = requestClass.getMethod("getResponse", RapidRequest.class);
 			
 			// invoke the response method
-			Object responseObject = method.invoke(requestObject);
+			Object responseObject = responseMethod.invoke(requestObject, rapidRequest);
 						
-			SOAData responseData = new SOAData(new SOAElement(c.getSimpleName(),"values coming soon"));
+			SOAData responseData = new SOAData(new SOAElement(requestClass.getSimpleName(),"values coming soon"));
 			
 			/////////////////////////////////////////////////////////////////////////////////////// here we use responseObject to populate the responseData object //////////////////////////////////////////////////////////////////////////////////////////////
 			
