@@ -25,38 +25,52 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
 package com.rapid.server;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
+import org.apache.log4j.Logger;
+
 public class RapidSessionListener implements HttpSessionListener {
 	
-    final private List<HttpSession> _sessions;
+    private static Map<String, HttpSession> _sessions;
+    private Logger _logger;
     
     public RapidSessionListener() {
-    	_sessions = new ArrayList<HttpSession>() ; 
+    	// instantiate the concurrent hash map which should make it thread safe, alternatively there is the Collections.synchronizedMap
+    	_sessions = new ConcurrentHashMap<String,HttpSession>() ;    	
     }
 
     @Override
     public void sessionCreated(HttpSessionEvent event) {   	
-    	List<HttpSession> sessions = Collections.synchronizedList(_sessions);
     	HttpSession session = event.getSession();
-    	sessions.add(session);
+    	String sessionId = session.getId(); 
+    	_sessions.put(sessionId, session);
+    	if (_logger == null) _logger = Logger.getLogger(this.getClass());
+    	_logger.debug("Session created " + sessionId);
     }
 
     @Override
     public void sessionDestroyed(HttpSessionEvent event) {
-    	List<HttpSession> sessions = Collections.synchronizedList(_sessions);
     	HttpSession session = event.getSession();
-    	sessions.remove(session);
+    	if (_logger == null) _logger = Logger.getLogger(this.getClass());
+    	_logger.debug("Session destroyed " + session.getId());
     }
-
-    public int getTotalSessionCount() {
-    	List<HttpSession> sessions = Collections.synchronizedList(_sessions);
+    
+    public static HttpSession  getSession(String sessionId) {
+    	return _sessions.get(sessionId);
+    }
+    
+    public static Map<String,HttpSession>  getSessions() {
+    	return _sessions;
+    }
+    
+    public static int getTotalSessionCount() {
+    	Map<String,HttpSession> sessions = Collections.synchronizedMap(_sessions);
     	return sessions.size();
     }
     

@@ -63,7 +63,7 @@ public class Webservice extends Action {
 	// details of the request (inputs, sql, outputs)
 	public static class Request {
 		
-		private String _type, _url, _action, _body;
+		private String _type, _url, _action, _body, _transform, _root;
 		private ArrayList<Parameter> _inputs, _outputs;				
 				
 		public ArrayList<Parameter> getInputs() { return _inputs; }
@@ -81,16 +81,24 @@ public class Webservice extends Action {
 		public String getBody() { return _body; }
 		public void setBody(String body) { _body = body; }
 		
+		public String getTransform() { return _transform; }
+		public void setTransform(String transform) { _transform = transform; }
+		
+		public String getRoot() { return _root; }
+		public void setRoot(String root) { _root = root; }
+		
 		public ArrayList<Parameter> getOutputs() { return _outputs; }
 		public void setOutputs(ArrayList<Parameter> outputs) { _outputs = outputs; }
 		
 		public Request() {};
-		public Request(ArrayList<Parameter> inputs, String type, String url, String action, String body, ArrayList<Parameter> outputs) {
+		public Request(ArrayList<Parameter> inputs, String type, String url, String action, String body, String transform, String root, ArrayList<Parameter> outputs) {
 			_inputs = inputs;
 			_type = type;
 			_url = url;
 			_action = action;
 			_body = body;
+			_transform = transform;
+			_root = root;
 			_outputs = outputs;
 		}
 				
@@ -102,7 +110,6 @@ public class Webservice extends Action {
 	// instance variables
 	
 	private Request _request;
-	private String _root;
 	private boolean _showLoading;
 	private ArrayList<Action> _successActions, _errorActions, _childActions;
 	
@@ -110,10 +117,7 @@ public class Webservice extends Action {
 	
 	public Request getRequest() { return _request; }
 	public void setRequest(Request request) { _request = request; }
-	
-	public String getRoot() { return _root; }
-	public void setRoot(String root) { _root = root; }
-	
+		
 	public boolean getShowLoading() { return _showLoading; }
 	public void setShowLoading(boolean showLoading) { _showLoading = showLoading; }
 	
@@ -151,14 +155,13 @@ public class Webservice extends Action {
 			String url = jsonQuery.optString("url");
 			String action = jsonQuery.optString("action");
 			String body = jsonQuery.optString("body");
+			String transform = jsonQuery.optString("transform");
+			String root = jsonQuery.optString("root");
 			ArrayList<Parameter> outputs = getParameters(jsonQuery.optJSONArray("outputs"));
 			// make the object
-			_request = new Request(inputs, type, url, action, body, outputs);
+			_request = new Request(inputs, type, url, action, body, transform, root, outputs);
 		}
-		
-		// look for the response root
-		_root = jsonAction.optString("root");
-		
+				
 		// look for showLoading
 		_showLoading = jsonAction.optBoolean("showLoading");
 		
@@ -562,7 +565,7 @@ public class Webservice extends Action {
 						String jsonResponse = Strings.getString(response);
 						soaData = jsonReader.read(jsonResponse);
 					} else {
-						SOAXMLReader xmlReader = new SOAXMLReader(_root);						
+						SOAXMLReader xmlReader = new SOAXMLReader(_request.getRoot());						
 						soaData = xmlReader.read(response);
 					}
 					

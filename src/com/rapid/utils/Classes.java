@@ -52,5 +52,29 @@ public class Classes {
 		return extendsClass;
 		
 	}
+	
+
+	public static boolean implementsClass(Class classClass, Class interfaceClass) {
+		
+		// assume not
+		boolean implementsClass = false;
+		
+		// get the class super class
+		Class[] classInterfaceClasses = classClass.getInterfaces();
+		
+		// if we got some
+		if (classInterfaceClasses != null) {
+		
+			// loop them
+			for (Class classInterfaceClasse : classInterfaceClasses) {
+				// if we have this one
+				if (interfaceClass.equals(classInterfaceClasse)) return true;
+			}
+		}
+				
+		// return whatever came back!
+		return implementsClass;
+		
+	}
 
 }

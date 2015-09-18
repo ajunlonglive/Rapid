@@ -1380,7 +1380,7 @@ function getProperty_gallery_urls(ev, id, field, details) {
   images.each( function(i) {
   	var url = $(this).attr("src");
   	if (url) {
-  		urls += url.replace("http://cache/","");
+  		urls += url.replace("http://cache/","").replace("http://images/","");
   		if (i < images.length - 1) urls += ",";
   	}
   });

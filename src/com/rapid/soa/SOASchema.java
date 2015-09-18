@@ -123,6 +123,12 @@ public class SOASchema {
 			_name = name;
 		}
 		
+		public SOASchemaElement(String id, String name, int dataType) {
+			_id = id;
+			_name = name;
+			_dataType = dataType;
+		}
+		
 		public SOASchemaElement(String id, String name, boolean isArray) {
 			_id = id;
 			_name = name;
@@ -144,6 +150,13 @@ public class SOASchema {
 		public SOASchemaElement addChildElement(String ElementName) {
 			if (_childSchemaElements == null) _childSchemaElements = new ArrayList<SOASchemaElement>();
 			SOASchemaElement childSchemaElement = new SOASchemaElement(_id + "." + _childSchemaElements.size(), ElementName);
+			_childSchemaElements.add(childSchemaElement);
+			return childSchemaElement;
+		}
+		
+		public SOASchemaElement addChildElement(String ElementName, int dataType) {
+			if (_childSchemaElements == null) _childSchemaElements = new ArrayList<SOASchemaElement>();
+			SOASchemaElement childSchemaElement = new SOASchemaElement(_id + "." + _childSchemaElements.size(), ElementName, dataType);
 			_childSchemaElements.add(childSchemaElement);
 			return childSchemaElement;
 		}
@@ -305,14 +318,19 @@ public class SOASchema {
 		return _elements.get(currentElementId); 
 	}
 	
-	public SOASchemaElement addChildElement(String ElementName) {
+	public SOASchemaElement addChildElement(String elementName) {
 		_elements = null;
-		return _rootSchemaElement.addChildElement(ElementName);
+		return _rootSchemaElement.addChildElement(elementName);
 	}
 	
-	public SOASchemaElement addChildElement(String ElementName, boolean isArray) {
+	public SOASchemaElement addChildElement(String elementName, int dataType) {
 		_elements = null;
-		return _rootSchemaElement.addChildElement(ElementName, isArray);
+		return _rootSchemaElement.addChildElement(elementName, dataType);
+	}
+	
+	public SOASchemaElement addChildElement(String elementName, boolean isArray) {
+		_elements = null;
+		return _rootSchemaElement.addChildElement(elementName, isArray);
 	}
 	
 	// static methods

@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.security.GeneralSecurityException;
+import java.util.Enumeration;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -63,7 +64,16 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 		HttpServletRequest request = (HttpServletRequest) req;
 		
 		// log the full request
-		_logger.trace("FormAuthenticationAdapter request : " + request.getRequestURL() + (request.getQueryString() == null ? "" : "?" + request.getQueryString()));
+		if (_logger.isTraceEnabled()) {
+			_logger.debug("FormAuthenticationAdapter request : " + request.getMethod() + " " + request.getRequestURL() + (request.getQueryString() == null ? "" : "?" + request.getQueryString()));
+			Enumeration<String> headerNames = request.getHeaderNames();
+			String headers = "";
+			while (headerNames.hasMoreElements()) {
+				String headerName = headerNames.nextElement();
+				headers += headerName + " = " + request.getHeader(headerName) + "; ";
+			}
+			_logger.debug("Headers : " + headers);
+		}
 		
 		// now get just the resource path
 		String requestPath = request.getServletPath();
@@ -77,8 +87,6 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 		} else {
 						
 			// if it's a resource that requires authentication
-			//if ("/".equals(requestPath) || requestPath.contains("/~") || requestPath.contains("/rapid") || requestPath.contains("/designer") || requestPath.contains("/applications/") || requestPath.contains("/uploads/") || requestPath.contains("login.jsp") || requestPath.contains("index.jsp") || requestPath.contains("design.jsp") || requestPath.contains("designpage.jsp")) {
-			
 			_logger.trace("FormAuthenticationAdapter checking authorisation");
 			
 			String userName = null;

@@ -53,7 +53,11 @@ public interface SOADataReader {
 		
 	// interface methods
 	
-	public SOAData read(String string) throws SOAReaderException; 
+	public SOAData read(String string) throws SOAReaderException;
+	
+	public SOAData read(InputStream stream) throws SOAReaderException; 
+	
+	public String getAuthentication();
 		
 		
 	// exception class
@@ -102,17 +106,15 @@ public interface SOADataReader {
 		private SAXParser _saxParser;
 		private XMLReader _xmlReader;
 		private SOAXMLContentHandler _soaXMLContentHandler;
+		private static String _authentication;
 							
 		private static class SOAXMLContentHandler implements ContentHandler {
 		
 			private SOASchema _soaSchema;
-			private int _currentColumn;
-			private int _currentRow;
+			private int _currentColumn,  _currentRow, _previousColumn;
 			private SOAElement _currentElement;		
-			private String _currentElementId;
-			private int _previousColumn;
-			private String _root;
-			private boolean _rootFound;
+			private String _root, _currentElementId;
+			private boolean _rootFound, _ignoreHeader;
 			
 			private List<String> _columnElementIds = new ArrayList<String>();
 			private List<Integer> _columnRows = new ArrayList<Integer>();
@@ -136,7 +138,11 @@ public interface SOADataReader {
 			@Override
 			public void characters(char[] chars, int start, int length) throws SAXException {
 				// only if we have a current element
-				if (_currentElement != null) {
+				if (_ignoreHeader) {
+					// instantiate a string using the char array we've been given
+					String value = new String(chars, start, length).trim();
+					if (value.length() > 0) _authentication = value;
+				} else if (_currentElement != null) {				
 					// instantiate a string using the char array we've been given
 					String value = new String(chars, start, length);
 					// set the value if we don't have one already (note the trim)
@@ -155,6 +161,8 @@ public interface SOADataReader {
 				_columnElementIds.clear();
 				_columnRows.clear();
 				_columnParents.clear();	
+				_ignoreHeader = false;
+				_authentication = null;
 				// check whether we got a root for us to start at
 				if (_root == null) {
 					// no explicit root, start at the very beginning
@@ -183,8 +191,13 @@ public interface SOADataReader {
 			public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
 				
 				// ignore all elements pertaining to the envelope				
-				if ("http://schemas.xmlsoap.org/soap/envelope/" != uri) {
+				if ("http://schemas.xmlsoap.org/soap/envelope/".equals(uri)) {
 					
+					// if this is the header element start the header ignore
+					if ("Header".equals(localName)) _ignoreHeader = true;
+					
+				} else if (!_ignoreHeader) {
+										
 					// if we haven't found the root we want yet
 					if (!_rootFound) {
 						// check both local and qualified names for if this is the root we want
@@ -349,7 +362,12 @@ public interface SOADataReader {
 						
 				// ignore all elements pertaining to the envelope
 				
-				if ("http://schemas.xmlsoap.org/soap/envelope/" != uri) {
+				if ("http://schemas.xmlsoap.org/soap/envelope/".equals(uri)) {
+					
+					// if this is the end of the header element we can now stop ignoring it
+					if ("Header".equals(localName)) _ignoreHeader = false;
+					
+				} else if (!_ignoreHeader) {
 				
 					// go back one column 
 					_currentColumn --;
@@ -496,6 +514,11 @@ public interface SOADataReader {
 			// return a datatree based on the current branch which will now be the root
 			return new SOAData(_soaXMLContentHandler.getRootElement(), _soaXMLContentHandler.getSOASchema());
 			
+		}
+
+		@Override
+		public String getAuthentication() {
+			return _authentication;
 		}
 		
 	}
@@ -753,6 +776,10 @@ public interface SOADataReader {
 				super(string);
 			}
 			
+			public SOAJSONTokener(InputStream stream) throws JSONException {
+				super(stream);
+			}
+			
 		}
 				
 		public class SOAJSONObject extends JSONObject {
@@ -917,8 +944,8 @@ public interface SOADataReader {
 			_soaSchema = dataTreeSchema;
 		}
 				
-		@Override
-		public SOAData read(String string) throws SOAReaderException {
+		
+		private void reset() {
 			
 			// reset all our counters when we first start the read
 			_currentColumn = 0;
@@ -929,6 +956,13 @@ public interface SOADataReader {
 			_columnElementIds.clear();
 			_columnRows.clear();
 			_columnParents.clear();	
+			
+		}
+		
+		@Override
+		public SOAData read(String string) throws SOAReaderException {
+			
+			reset();
 						
 			SOAElement rootElement;
 			
@@ -947,6 +981,36 @@ public interface SOADataReader {
 			return new SOAData(rootElement, _soaSchema);
 			
 		}
+		
+		@Override
+		public SOAData read(InputStream stream) throws SOAReaderException {
+			
+			reset();
+			
+			SOAElement rootElement;
+			
+			try {
+				
+				SOAJSONObject dataTreeJSONObject = new SOAJSONObject(new SOAJSONTokener(stream));	
+				
+				rootElement = dataTreeJSONObject.getRootElement();
+				
+			} catch (Exception e) {
+				
+				throw new SOAReaderException(e);
+				
+			}
+			
+			return new SOAData(rootElement, _soaSchema);
+			
+		}
+
+		@Override
+		public String getAuthentication() {
+			return null;
+		}
+
+		
 		
 	}
 	

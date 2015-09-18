@@ -458,6 +458,7 @@ function getDataItemDetails(id) {
 	}
 }
 
+// a standard handler for text properties
 function Property_text(cell, propertyObject, property, details) {
 	var value = "";
 	// set the value if it exists
@@ -471,6 +472,19 @@ function Property_text(cell, propertyObject, property, details) {
 		updateProperty(cell, propertyObject, property, details, ev.target.value); 
 	}));
 }
+
+// a handler for text properties where there is a form adapter
+function Property_formText(cell, propertyObject, property, details) {
+	// only if there is a form adapter
+	if (_version.formAdapter) {
+		// add the text handler for this property
+		Property_text(cell, propertyObject, property, details);
+	} else {
+		// remove this row
+		cell.closest("tr").remove();
+	}
+}
+
 
 function Property_integer(cell, propertyObject, property, details) {
 	var value = "";
@@ -1586,7 +1600,7 @@ function Property_webserviceRequest(cell, propertyObject, property, details) {
 	cell.text(text);
 	
 	// add inputs table, body, and outputs table
-	table.append("<tr><td colspan='2' rowspan='3' style='padding:0px;vertical-align: top;'><table class='dialogueTable'><tr><td><b>Input</b></td><td colspan='2'><b>Field</b></td></tr></table></td><td class='normalInputs' colspan='2' style='width:500px;padding:0 6px;'><b style='display:block;margin-bottom:-5px;'>Request type</b><br/><input type='radio' name='WSType' value='SOAP'/>SOAP<input type='radio' name='WSType' value='JSON'/>JSON<input type='radio' name='WSType' value='XML'/>XML/Restfull</br><b style='display:block;margin-top:5px;margin-bottom:-5px;'>URL</b><br/><input class='WSUrl' /></br><b style='display:block;margin-top:5px;margin-bottom:-5px;'>Action</b><br/><input class='WSAction' /></br><b style='display:block;margin-top:5px;margin-bottom:-5px;'>Body</b><br/><textarea style='width:100%;min-height:200px;' class='WSBody'></textarea></br><b style='display:block;margin-top:5px;margin-bottom:-5px;'>Response root element</b><br/><input class='WSRoot' style='margin-bottom:5px;' /></td><td colspan='2' rowspan='3' style='padding:0px;vertical-align: top;'><table class='dialogueTable'><tr><td><b>Field</b></td><td colspan='2'><b>Output</b></td></tr></table></td></tr>");
+	table.append("<tr><td colspan='2' rowspan='3' style='padding:0px;vertical-align: top;'><table class='dialogueTable'><tr><td><b>Input</b></td><td colspan='2'><b>Field</b></td></tr></table></td><td class='normalInputs' colspan='2' style='width:500px;padding:0 6px;'><b style='display:block;'>Request type</b><input type='radio' name='WSType' value='SOAP'/>SOAP<input type='radio' name='WSType' value='JSON'/>JSON<input type='radio' name='WSType' value='XML'/>XML/Restfull<b style='display:block;margin-top:5px;margin-bottom:5px;'>URL</b><input class='WSUrl' /></br><b style='display:block;margin-top:5px;margin-bottom:5px;'>Action</b><input class='WSAction' /><b style='display:block;margin-top:5px;margin-bottom:2px;'>Body</b><textarea style='width:100%;min-height:200px;' class='WSBody'></textarea><b style='display:block;'>Response transform</b><textarea style='width:100%;' class='WSTransform'></textarea><b style='display:block;;margin-bottom:5px;'>Response root element</b><input class='WSRoot' style='margin-bottom:5px;' /></td><td colspan='2' rowspan='3' style='padding:0px;vertical-align: top;'><table class='dialogueTable'><tr><td><b>Field</b></td><td colspan='2'><b>Output</b></td></tr></table></td></tr>");
 	
 	// find the inputs table
 	var inputsTable = table.children().last().children().first().children().last();
@@ -1670,19 +1684,27 @@ function Property_webserviceRequest(cell, propertyObject, property, details) {
 	}));
 	
 	// find the request body textarea
-	var bodyControl = table.find("textarea");
+	var bodyControl = table.find("textarea.WSBody");
 	bodyControl.text(request.body);
 	// listener for the body
 	addListener( bodyControl.keyup( {request: request}, function(ev) {
 		ev.data.request.body = $(ev.target).val();
 	}));
 	
-	// find the request body textarea
+	// find the transform textarea
+	var transformControl = table.find("textarea.WSTransform");
+	transformControl.text(request.transform);
+	// listener for the body
+	addListener( transformControl.keyup( {request: request}, function(ev) {
+		ev.data.request.transform = $(ev.target).val();
+	}));
+	
+	// find the response root element
 	var rootControl = table.find("input.WSRoot");
-	rootControl.val(propertyObject.root);
+	rootControl.val(request.root);
 	// listener for the root
-	addListener( rootControl.keyup( {propertyObject: propertyObject}, function(ev) {
-		ev.data.propertyObject.root = $(ev.target).val();
+	addListener( rootControl.keyup( {request: request}, function(ev) {
+		ev.data.request.root = $(ev.target).val();
 	}));
 	
 	// find the outputs table
@@ -3656,9 +3678,6 @@ function Property_formDataDestination(cell, propertyObject, property, details) {
 		cell.closest("tr").remove();
 	}
 } 
-
-
-
 
 // this is displayed as a page property but is actually held in local storage
 function Property_device(cell, propertyObject, property, details) {

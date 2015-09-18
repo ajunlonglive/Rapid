@@ -54,7 +54,9 @@ public class SQLWebservice extends Webservice {
 	
 	// constructors
 		
+	// used by Jaxb
 	public SQLWebservice() {}
+	// used by Designer
 	public SQLWebservice(String name) {
 		setName(name);
 	}

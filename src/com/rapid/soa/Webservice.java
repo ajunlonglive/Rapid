@@ -91,6 +91,7 @@ public abstract class Webservice {
 	// instance variables
 	
 	protected String _id, _name;
+	protected boolean _isAuthenticate;
 	protected SOASchema _requestSchema, _responseSchema;
 	private StringBuilder _wsdl;
 	
@@ -104,7 +105,7 @@ public abstract class Webservice {
 		_name = name;
 		_id = Files.safeName(_name);
 	}
-	
+		
 	public SOASchema getRequestSchema() { return _requestSchema; }
 	public void setRequestSchema(SOASchema requestSchema) { _requestSchema = requestSchema; }
 	
@@ -258,45 +259,82 @@ public abstract class Webservice {
 		_wsdl.append("<wsdl:types>");
 		_wsdl.append("<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" elementFormDefault=\"qualified\" targetNamespace=\"" + wsdlNameSpace + "\">");
 		
-		if (_requestSchema != null) appendRootElement(_requestSchema.getRootElement());
-		if (_responseSchema != null) appendRootElement(_responseSchema.getRootElement());
+		// get the id just once as authenticate will override it
+		String id = getId();
+		
+		// header - not required to establish authentication, but is used thereafter  
+		if (_isAuthenticate) {
+			id = "authenticate";
+		} else {
+			_wsdl.append("<xs:element name=\"authentication\" type=\"xs:string\"/>");
+		}
+		
+		// request
+		SOASchemaElement requestRootElement = null;
+		if (_requestSchema != null) {
+			requestRootElement = _requestSchema.getRootElement(); 
+			if (requestRootElement != null) appendRootElement(requestRootElement);
+		}
+		// response
+		SOASchemaElement responseRootElement = null;
+		if (_responseSchema != null) {
+			responseRootElement = _responseSchema.getRootElement(); 
+			if (responseRootElement != null) appendRootElement(responseRootElement);
+		}
 
 		_wsdl.append("</xs:schema>");
 		_wsdl.append("</wsdl:types>");
 		
-		// this is the request - note the use of getNameArrayCheck which adds the "Array" prefix to the name should it be required
-		_wsdl.append("<wsdl:message name=\"Input\">");
-		if (_requestSchema != null) _wsdl.append("<wsdl:part element=\"xsd:" + _requestSchema.getRootElement().getNameArrayCheck() + "\" name=\"body\"/>");
-		_wsdl.append("</wsdl:message>");
+		// this is the request header - a property of SOAP is that it is optional
+		if (!_isAuthenticate) {		 
+			_wsdl.append("<wsdl:message name=\"Header\">");
+		 	_wsdl.append("<wsdl:part element=\"xsd:authentication\" name=\"header\" />");
+		 	_wsdl.append("</wsdl:message>");
+		}
 		
-		_wsdl.append("<wsdl:message name=\"Output\">");
-		if (_responseSchema != null) _wsdl.append("<wsdl:part element=\"xsd:" + _responseSchema.getRootElement().getNameArrayCheck() + "\" name=\"body\"/>");
+		// this is the request body - note the use of getNameArrayCheck which adds the "Array" prefix to the name should it be required
+		_wsdl.append("<wsdl:message name=\"Input\">");
+		if (_requestSchema != null && requestRootElement != null) _wsdl.append("<wsdl:part element=\"xsd:" + requestRootElement.getNameArrayCheck() + "\" name=\"body\"/>");
 		_wsdl.append("</wsdl:message>");
+								
+		// this is the response body
+		_wsdl.append("<wsdl:message name=\"Output\">");
+		if (_responseSchema != null && responseRootElement != null) _wsdl.append("<wsdl:part element=\"xsd:" + responseRootElement.getNameArrayCheck() + "\" name=\"body\"/>");
+		_wsdl.append("</wsdl:message>");
+	
 		
 		_wsdl.append("<wsdl:portType name=\"PortType\">");
-		_wsdl.append("<wsdl:operation name=\"" + getId() + "\">");
+		_wsdl.append("<wsdl:operation name=\"" + id + "\">");
 		_wsdl.append("<wsdl:input message=\"tns:Input\"/>");
 		_wsdl.append("<wsdl:output message=\"tns:Output\"/>");
 		_wsdl.append("</wsdl:operation>");
 		_wsdl.append("</wsdl:portType>");
 		
 		// this specifies the binding, including the soapAction which is the appId . webserviceId
-		_wsdl.append("<wsdl:binding name=\"" + getId() + "Binding\" type=\"tns:PortType\">");
+		_wsdl.append("<wsdl:binding name=\"" + id + "Binding\" type=\"tns:PortType\">");
 		_wsdl.append("<soap:binding style=\"document\" transport=\"http://schemas.xmlsoap.org/soap/http\"/>");
-		_wsdl.append("<wsdl:operation name=\"" + getId() + "\">");
-		_wsdl.append("<soap:operation soapAction=\"" + appId + "/" + appVersion + "/" + getId() + "\"/>");
+		_wsdl.append("<wsdl:operation name=\"" + id + "\">");
+		if (_isAuthenticate) {
+			_wsdl.append("<soap:operation soapAction=\"authenticate\"/>");
+		} else {
+			_wsdl.append("<soap:operation soapAction=\"" + appId + "/" + appVersion + "/" + id + "\"/>");
+		}
+		
 		_wsdl.append("<wsdl:input>");
 		_wsdl.append("<soap:body use=\"literal\"/>");
+		if (!_isAuthenticate) _wsdl.append("<soap:header message=\"tns:Header\" part=\"header\"/>");
 		_wsdl.append("</wsdl:input>");
+		
 		_wsdl.append("<wsdl:output>");
 		_wsdl.append("<soap:body use=\"literal\"/>");
 		_wsdl.append("</wsdl:output>");
+		
 		_wsdl.append("</wsdl:operation>");
 		_wsdl.append("</wsdl:binding>");
 		
 		// this specifies the end point which we get from the servelet
 		_wsdl.append("<wsdl:service name=\"Service\">");
-		_wsdl.append("<wsdl:port binding=\"tns:" + getId() + "Binding\" name=\"Port\">");
+		_wsdl.append("<wsdl:port binding=\"tns:" + id + "Binding\" name=\"Port\">");
 		_wsdl.append("<soap:address location=\"" + endPoint + "\"/>");
 		_wsdl.append("</wsdl:port>");		
 		_wsdl.append("</wsdl:service>");

@@ -882,6 +882,10 @@ public class RapidServletContextListener implements ServletContextListener {
 		
 	}
 					
+	public RapidServletContextListener() {
+		
+	}
+	
 	@Override
 	public void contextInitialized(ServletContextEvent event) {   
 		

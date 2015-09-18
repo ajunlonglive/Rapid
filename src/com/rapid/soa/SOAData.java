@@ -45,7 +45,7 @@ public class SOAData {
 	}
 	
 	public SOAElement getRootElement() { return _rootElement; }
-	public void setRootNode(SOAElement rootElement) { _rootElement = rootElement; }
+	public void setRootElement(SOAElement rootElement) { _rootElement = rootElement; }
 					
 	@Override
 	public String toString() {
