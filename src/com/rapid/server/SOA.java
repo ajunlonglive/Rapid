@@ -301,7 +301,7 @@ public class SOA extends RapidHttpServlet {
 						RapidRequest rapidRequest = new RapidRequest(this, request);
 												
 						// call the webservice
-						SOAData responseData = _authenticationWebservice.getResponseData(rapidRequest, null, requestData);
+						SOAData responseData = _authenticationWebservice.getResponseData(rapidRequest, requestData);
 						
 						// write the response (shared by authenticate)
 						writeResponseData(contentType, response, out, responseData, soapAction);
@@ -365,7 +365,7 @@ public class SOA extends RapidHttpServlet {
 										if (validUser) {
 											
 											// process the webservice and get its data
-											SOAData soaResponseData = webservice.getResponseData(rapidRequest, application, requestData);
+											SOAData soaResponseData = webservice.getResponseData(rapidRequest, requestData);
 											
 											// write the response (shared by authenticate)
 											writeResponseData(contentType, response, out, soaResponseData, soapAction);
