@@ -28,13 +28,13 @@ package com.rapid.utils;
 public class Classes {
 	
 	// whether a given class extends another (super) class
-	public static boolean extendsClass(Class classClass, Class superClass) {
+	public static boolean extendsClass(Class c, Class superClass) {
 		
 		// assume not
 		boolean extendsClass = false;
 		
 		// get the class super class
-		Class classSuperClass = classClass.getSuperclass();
+		Class classSuperClass = c.getSuperclass();
 		
 		// if the given super class is the same as the classes super class we're good
 		if (superClass.equals(classSuperClass)) {
@@ -54,23 +54,26 @@ public class Classes {
 	}
 	
 
-	public static boolean implementsClass(Class classClass, Class interfaceClass) {
+	public static boolean implementsClass(Class c, Class interfaceClass) {
 		
 		// assume not
 		boolean implementsClass = false;
 		
-		// get the class super class
-		Class[] classInterfaceClasses = classClass.getInterfaces();
+		// get the class interfaces
+		Class[] classInterfaceClasses = c.getInterfaces();
 		
 		// if we got some
-		if (classInterfaceClasses != null) {
-		
+		if (classInterfaceClasses != null) {		
 			// loop them
 			for (Class classInterfaceClasse : classInterfaceClasses) {
 				// if we have this one
 				if (interfaceClass.equals(classInterfaceClasse)) return true;
 			}
 		}
+		// get the super class
+		Class classSuperClass = c.getSuperclass();
+		// if there are super classes to check go interative!
+		if (classSuperClass != null) implementsClass = implementsClass(classSuperClass, interfaceClass);
 				
 		// return whatever came back!
 		return implementsClass;

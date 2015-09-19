@@ -25,25 +25,35 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
 package com.rapid.soa;
 
+import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 import com.rapid.core.Application;
 import com.rapid.server.RapidHttpServlet;
 import com.rapid.server.RapidRequest;
+import com.rapid.soa.SOASchema.SOASchemaElement;
 import com.rapid.soa.Webservice.WebserviceException;
 import com.rapid.utils.Classes;
 
 public class JavaWebservice extends Webservice {
 	
 	// all classes used by JavaWebservices are expected to implement this interface 
-	public interface Response {
+	public interface Request {
 		
 		public Object getResponse(RapidRequest rapidRequest) throws WebserviceException;
 
@@ -108,9 +118,41 @@ public class JavaWebservice extends Webservice {
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target({ElementType.METHOD, ElementType.FIELD})
 	public @interface XSDmaxExclusive { public String value(); }
+	
+	// schema element properties can come from fields or methods so we collect them before sorting
+	public static class ElementProperty {
 		
+		// private instance variables
+		private String _name;
+		private Class _class; 
+		
+		// properties
+		public String getName() { return _name; }
+		public Class getPropertyClass() { return _class; }
+		public int getOrder() {
+			Annotation[] annotations = _class.getAnnotations();
+			if (annotations != null) {
+				for (Annotation a : annotations) {
+					if (a instanceof XSDorder) {
+						XSDorder o = (XSDorder) a;
+						return o.value();
+					}
+				}
+			}
+			return -1;
+		}
+		
+		// constructor
+		public ElementProperty(String name, Class propertyClass) {
+			_name = name;
+			_class = propertyClass;
+		}
+		
+	}
+			
 	// private variables
 	private String _className;
+	private Logger _logger;
 	
 	// properties
 	
@@ -121,48 +163,226 @@ public class JavaWebservice extends Webservice {
 	// constructors
 	
 	// used by Jaxb
-	public JavaWebservice() {}
+	public JavaWebservice() {
+		_logger = Logger.getLogger(this.getClass());
+	}
 	// used by Designer
 	public JavaWebservice(String name) {
+		this();
 		setName(name);
 	}
 	
 	// private methods
-	private Class getNamedClass() throws Exception {		
+	
+	// is this an arry type
+	private static boolean isArray(Class c) {				
+		return c.isArray() || 
+				Classes.implementsClass(c, java.util.List.class)  
+				? true : false;		
+	}
+			
+	// is this a java class or any of the primitives
+	private static boolean isSimpleType(Class c) {				
+		return c.getName().indexOf("java") == 0 || 
+				c.getName().equals("int") || 
+				c.getName().equals("boolean") || 
+				c.getName().equals("float") 
+				? true : false;		
+	}
+	
+	// what is the simple type
+	private static int getSimpleType(Class c) {		
+		int type = SOASchema.STRING;
+		if (c.getSimpleName().equals("boolean")) { type = SOASchema.BOOLEAN; }
+		else if (c.getSimpleName().equals("Date")) { type = SOASchema.DATE; }
+		else if (c.getSimpleName().equals("Timestamp")) { type = SOASchema.DATETIME; }
+		else if (c.getSimpleName().equals("float") || c.getSimpleName().equals("Float")) { type = SOASchema.DECIMAL; }
+		else if (c.getSimpleName().equals("int") || c.getSimpleName().equals("Integer")) { type = SOASchema.INTEGER; }		 						
+		return type;		
+	}
+	
+	private boolean isXSDAnnotation(Annotation a) {		
+		if (a instanceof XSDchoice || 
+				a instanceof XSDname || 
+				a instanceof XSDtype || 
+				a instanceof XSDorder || 
+				a instanceof XSDminOccurs || 
+				a instanceof XSDmaxOccurs || 
+				a instanceof XSDnillable || 
+				a instanceof XSDminLength || 
+				a instanceof XSDmaxLength|| 
+				a instanceof XSDpattern || 
+				a instanceof XSDenumeration || 
+				a instanceof XSDminInclusive || 
+				a instanceof XSDmaxInclusive || 
+				a instanceof XSDminExclusive || 
+				a instanceof XSDmaxExclusive ) {			
+			return true;			
+		} else {			
+			return false;			
+		}				
+	}
+	
+	// whether there is a set method for a corresponding get
+	private boolean containsSetMethod(Method[] methods, Method method) {
+		for (Method m : methods) {
+			if (m.getName().equals("set" + method.getName().substring(3))) return true;
+		}
+		return false;
+	}
+	
+	private List<SOASchemaElement> getChildClassSchemaElements(Class c, String parentId) {
+		
+		// a list of properties in the class		
+		List<ElementProperty> elementProperties = new ArrayList<ElementProperty>();
+		
+		// get all class methods
+		Method[] methods = c.getMethods();	
+		// if we got some
+		if (methods != null) {
+			// loop all retained method names looking for get/set pairs
+			for (Method m : methods) {
+				// work with the get methods as we need the return type for our class
+				if (m.getName().startsWith("get")) {
+					// if we have a corresponding set method in the list
+					if (containsSetMethod(methods, m)) {
+						// get the return class
+						Class rc = m.getReturnType();
+						// check if array
+						elementProperties.add(new ElementProperty(m.getName().substring(3), rc));
+					}
+				}						
+			}
+		}
+		
+		// get all fields
+		Field[] fields = c.getFields();
+		// if we got some
+		if (fields != null) {
+			// loop them
+			for (Field f : fields) {
+				// get the annotations
+				Annotation[] annotations = f.getAnnotations();
+				// if we got some
+				if (annotations != null) {
+					// loop the annotations
+					for (Annotation a : annotations) {
+						// if this is an XSD annotation
+						if (isXSDAnnotation(a)) {
+							// put our property collection
+							elementProperties.add(new ElementProperty(f.getName(), f.getClass()));
+							// we're done with the annotations
+							break;
+						}						
+					}														
+				}								
+			}									
+		}
+		
+		// sort the properties
+		Collections.sort(elementProperties, new Comparator<ElementProperty>() {
+			@Override
+			public int compare(ElementProperty p1, ElementProperty p2) {
+				return p1.getOrder() - p2.getOrder();
+			}			
+		});
+		
+		// the list we're making
+		List<SOASchemaElement> elements = new ArrayList<SOASchemaElement>();
+		// first id
+		int id = 0;
+		// loop the properties
+		for (ElementProperty p : elementProperties) {
+			// add a schema element for the property class
+			elements.add(getClassSchemaElement(p.getName(), p.getPropertyClass(), parentId + "." + id));
+			// increment the id
+			id++;
+		}		
+		// return 
+		return elements;
+	}
+	
+	private SOASchemaElement getClassSchemaElement(String name, Class c, String id) {
+		// the schema element we're making
+		SOASchemaElement e = new SOASchemaElement();
+		// set it's name
+		e.setName(name.substring(0,1).toLowerCase() + name.substring(1));
+		// set it's id
+		e.setId(id);
+		// simple type check
+		if (isSimpleType(c)) {
+			// set it's type
+			e.setDataType(getSimpleType(c));			
+		} else {
+			// if it's an array type
+			if (isArray(c)) {
+				// set flag
+				e.setIsArray(true);
+				// if list
+				if (Classes.implementsClass(c, java.util.List.class)) {
+					// get the generic super class type
+					ParameterizedType t = (ParameterizedType) c.getGenericSuperclass();
+					// get it's class name
+					String n = t.getActualTypeArguments()[0].getTypeName();
+					// get the class
+					try {
+						c = Class.forName(n);
+					} catch (ClassNotFoundException ex) {
+						_logger.error("Error creating schema element for class " + n, ex);
+					}
+				} else {
+					// get the array type
+					c = c.getComponentType();
+				}
+			}			
+			// add child elements
+			e.setChildElements(getChildClassSchemaElements(c, id));
+		}
+		// return it
+		return e;
+	}
+			
+	private SOASchema getClassSchema(Class c) {
+		// the schema we're making
+		SOASchema classSchema = new SOASchema();
+		// get the element for the root class
+		SOASchemaElement rootSchemaElement = getClassSchemaElement(c.getSimpleName(), c,"0");
+		// add it to the schema
+		classSchema.setRootElement(rootSchemaElement);
+		// return it
+		return classSchema;
+	}
+	
+	// get the class of our named request object
+	private Class getRequestClass() throws Exception {		
 		// get the class
 		Class c = Class.forName(_className);		
 		// make sure it implements JavaWebservice.Response
-		if (!Classes.implementsClass(c, com.rapid.soa.JavaWebservice.Response.class)) throw new WebserviceException("Webservice action class " + c.getCanonicalName() + " must implement com.rapid.soa.JavaWebservice.Response.");						
+		if (!Classes.implementsClass(c, com.rapid.soa.JavaWebservice.Request.class)) throw new WebserviceException("Webservice action class " + c.getCanonicalName() + " must implement com.rapid.soa.JavaWebservice.Response.");						
 		return c;		
-	}
-	
-	private SOASchema getClassSchema(Class schemaClass) {
-		SOASchema classSchema = new SOASchema(schemaClass.getSimpleName());
-		///////////////////////////////////////////////////////////////////////////////// here we build a schema from a class ////////////////////////////////////////////////////////////////////////////////////////
-		return classSchema;
 	}
 	
 	@Override
 	public SOASchema getRequestSchema() {
-		if (_requestSchema == null) {
+		//if (_requestSchema == null) {
 			try {
 				// get the request class
-				Class requestClass = getNamedClass();
+				Class requestClass = getRequestClass();
 				// now make a schema from it
 				_requestSchema = getClassSchema(requestClass);
 			} catch (Exception ex) {
-				
+				_logger.error("Error creating request schema for Java webservice", ex);
 			}
-		}
+		//}
 		return _requestSchema; 
 	}
 	
 	@Override
 	public SOASchema getResponseSchema() {
-		if (_responseSchema == null) {
+		//if (_responseSchema == null) {
 			try {
 				// get the request class
-				Class requestClass = getNamedClass();
+				Class requestClass = getRequestClass();
 				// get the response method
 				Method responseMethod = requestClass.getMethod("getResponse", RapidRequest.class);
 				// get the response class
@@ -170,9 +390,9 @@ public class JavaWebservice extends Webservice {
 				// now make a schema from it
 				_responseSchema = getClassSchema(responseClass);
 			} catch (Exception ex) {
-				
+				_logger.error("Error creating response schema for Java webservice", ex);
 			}
-		}
+		//}
 		return _responseSchema;
 	}
 
@@ -188,13 +408,13 @@ public class JavaWebservice extends Webservice {
 		try {
 			
 			// get the request class
-			Class requestClass = getNamedClass();
+			Class requestClass = getRequestClass();
 			
 			// get the parameterless constructor
 			Constructor constructor = requestClass.getConstructor();
 			
-			// get an instance of the object
-			JavaWebservice.Response requestObject = (JavaWebservice.Response) constructor.newInstance();
+			// get an instance of the request object
+			JavaWebservice.Request requestObject = (JavaWebservice.Request) constructor.newInstance();
 			
 			/////////////////////////////////////////////////////////////////////////////////////// here we use requestData to populate the requestObject //////////////////////////////////////////////////////////////////////////////////////////////
 			

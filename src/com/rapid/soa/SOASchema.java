@@ -41,6 +41,7 @@ public class SOASchema {
 	public static final int DECIMAL = 3;
 	public static final int DATE = 4;
 	public static final int DATETIME = 5;
+	public static final int BOOLEAN = 6;
 	
 	// exception class
 	
