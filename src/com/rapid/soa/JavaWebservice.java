@@ -34,6 +34,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -47,6 +48,7 @@ import com.rapid.core.Application;
 import com.rapid.server.RapidHttpServlet;
 import com.rapid.server.RapidRequest;
 import com.rapid.soa.SOASchema.SOASchemaElement;
+import com.rapid.soa.SOAElementRestriction.*;
 import com.rapid.soa.Webservice.WebserviceException;
 import com.rapid.utils.Classes;
 
@@ -125,14 +127,24 @@ public class JavaWebservice extends Webservice {
 		// private instance variables
 		private String _name;
 		private Class _class; 
+		private Annotation[] _annotations;
 		
 		// properties
 		public String getName() { return _name; }
 		public Class getPropertyClass() { return _class; }
+		public Annotation[] getAnnotations() { return _annotations; }
+						
+		// constructor
+		public ElementProperty(String name, Class propertyClass, Annotation[] annotations) {
+			_name = name;
+			_class = propertyClass;
+			_annotations = annotations;
+		}
+		
+		// methods
 		public int getOrder() {
-			Annotation[] annotations = _class.getAnnotations();
-			if (annotations != null) {
-				for (Annotation a : annotations) {
+			if (_annotations != null) {
+				for (Annotation a : _annotations) {
 					if (a instanceof XSDorder) {
 						XSDorder o = (XSDorder) a;
 						return o.value();
@@ -140,12 +152,6 @@ public class JavaWebservice extends Webservice {
 				}
 			}
 			return -1;
-		}
-		
-		// constructor
-		public ElementProperty(String name, Class propertyClass) {
-			_name = name;
-			_class = propertyClass;
 		}
 		
 	}
@@ -249,7 +255,7 @@ public class JavaWebservice extends Webservice {
 						// get the return class
 						Class rc = m.getReturnType();
 						// check if array
-						elementProperties.add(new ElementProperty(m.getName().substring(3), rc));
+						elementProperties.add(new ElementProperty(m.getName().substring(3), rc, m.getAnnotations()));
 					}
 				}						
 			}
@@ -270,7 +276,7 @@ public class JavaWebservice extends Webservice {
 						// if this is an XSD annotation
 						if (isXSDAnnotation(a)) {
 							// put our property collection
-							elementProperties.add(new ElementProperty(f.getName(), f.getClass()));
+							elementProperties.add(new ElementProperty(f.getName(), f.getType(), f.getAnnotations()));
 							// we're done with the annotations
 							break;
 						}						
@@ -286,7 +292,7 @@ public class JavaWebservice extends Webservice {
 				return p1.getOrder() - p2.getOrder();
 			}			
 		});
-		
+						
 		// the list we're making
 		List<SOASchemaElement> elements = new ArrayList<SOASchemaElement>();
 		// first id
@@ -294,7 +300,7 @@ public class JavaWebservice extends Webservice {
 		// loop the properties
 		for (ElementProperty p : elementProperties) {
 			// add a schema element for the property class
-			elements.add(getClassSchemaElement(p.getName(), p.getPropertyClass(), parentId + "." + id));
+			elements.add(getClassSchemaElement(p.getName(), p.getPropertyClass(), p.getAnnotations(), parentId + "." + id));
 			// increment the id
 			id++;
 		}		
@@ -302,7 +308,7 @@ public class JavaWebservice extends Webservice {
 		return elements;
 	}
 	
-	private SOASchemaElement getClassSchemaElement(String name, Class c, String id) {
+	private SOASchemaElement getClassSchemaElement(String name, Class c, Annotation[] annotations, String id) {
 		// the schema element we're making
 		SOASchemaElement e = new SOASchemaElement();
 		// set it's name
@@ -321,9 +327,11 @@ public class JavaWebservice extends Webservice {
 				// if list
 				if (Classes.implementsClass(c, java.util.List.class)) {
 					// get the generic super class type
-					ParameterizedType t = (ParameterizedType) c.getGenericSuperclass();
-					// get it's class name
-					String n = t.getActualTypeArguments()[0].getTypeName();
+					ParameterizedType pt = (ParameterizedType) c.getGenericSuperclass();
+					// get it's name
+					Type t = pt.getActualTypeArguments()[0];
+					// get the name, trimming out the prefix
+					String n = t.toString().replace("class ", "");
 					// get the class
 					try {
 						c = Class.forName(n);
@@ -337,6 +345,53 @@ public class JavaWebservice extends Webservice {
 			}			
 			// add child elements
 			e.setChildElements(getChildClassSchemaElements(c, id));
+		}						
+		
+		// if there are some annotations
+		if (annotations != null) {
+			// loop them
+			for (Annotation a : annotations) {
+				// if this is an xsd annotation
+				if (isXSDAnnotation(a)) {
+					// add appropriate restriction
+					if (a instanceof XSDchoice) {
+						XSDchoice x = (XSDchoice) a;
+
+					} else if (a instanceof XSDminOccurs) {
+						XSDminOccurs x = (XSDminOccurs) a;
+						e.addRestriction(new MinOccursRestriction(x.value()));
+					} else if (a instanceof XSDmaxOccurs) {
+						XSDmaxOccurs x = (XSDmaxOccurs) a;
+						e.addRestriction(new MaxOccursRestriction(x.value()));
+					} else if (a instanceof XSDnillable) {
+						XSDnillable x = (XSDnillable) a;
+						
+					} else if (a instanceof XSDminLength) {
+						XSDminLength x = (XSDminLength) a;
+						
+					} else if (a instanceof XSDmaxLength) {
+						XSDmaxLength x = (XSDmaxLength) a;
+						
+					} else if (a instanceof XSDpattern) {
+						XSDpattern x = (XSDpattern) a;
+						
+					} else if (a instanceof XSDenumeration) {
+						XSDenumeration x = (XSDenumeration) a;
+						e.addRestriction(new EnumerationRestriction(x.value()));
+					} else if (a instanceof XSDminInclusive) {
+						XSDminInclusive x = (XSDminInclusive) a;
+						
+					} else if (a instanceof XSDmaxInclusive) {
+						XSDmaxInclusive x = (XSDmaxInclusive) a;
+						
+					} else if (a instanceof XSDminExclusive) {
+						XSDminExclusive x = (XSDminExclusive) a;
+						
+					} else if (a instanceof XSDmaxExclusive ) {
+						XSDmaxExclusive x = (XSDmaxExclusive) a;
+					} 					
+				}
+			}
 		}
 		// return it
 		return e;
@@ -346,7 +401,7 @@ public class JavaWebservice extends Webservice {
 		// the schema we're making
 		SOASchema classSchema = new SOASchema();
 		// get the element for the root class
-		SOASchemaElement rootSchemaElement = getClassSchemaElement(c.getSimpleName(), c,"0");
+		SOASchemaElement rootSchemaElement = getClassSchemaElement(c.getSimpleName(), c, c.getAnnotations(),"0");
 		// add it to the schema
 		classSchema.setRootElement(rootSchemaElement);
 		// return it
