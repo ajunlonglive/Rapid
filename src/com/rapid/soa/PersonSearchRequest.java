@@ -80,9 +80,11 @@ public class PersonSearchRequest implements Request {
 		public String surname;
 		
 		@XSDorder(4)
+		@XSDminOccurs(0)
 		public Date birthday;
 		
 		@XSDorder(5)
+		@XSDminOccurs(0)
 		@XSDenumeration("M,F,U")
 		public String gender;
 		

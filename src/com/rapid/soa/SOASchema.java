@@ -144,6 +144,7 @@ public class SOASchema {
 		}
 		
 		public SOASchemaElement addRestriction(SOAElementRestriction restriction) {
+			if (_restrictions == null) _restrictions = new ArrayList<SOAElementRestriction>();
 			_restrictions.add(restriction);
 			return this;
 		}		
