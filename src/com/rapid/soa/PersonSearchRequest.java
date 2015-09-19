@@ -39,7 +39,7 @@ import com.rapid.soa.JavaWebservice.*;
 import com.rapid.soa.Webservice.WebserviceException;
 
 // this class performs the same task as the sql webservice in the demo application
-public class PersonSearch implements Response {
+public class PersonSearchRequest implements Request {
 	
 	// private instance variables
 	private String _forename, _surname;
