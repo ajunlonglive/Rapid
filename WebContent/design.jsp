@@ -123,108 +123,118 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 		<div id="controlPanel" style="z-index:10011">
 		
 			<div id="controlPanelSize" ></div>
-		
-			<div id="controlPanelPin"><img src="images/pinned_14x14.png" title="unpin" /></div>
-			<div class="buttons">
-				<button id="appAdmin" class="buttonLeft buttonRight" title="Load the Rapid Admin screen">Rapid Admin...</button>
-			</div>
 			
-			<h2>Application<img id="helpApplication" class="headerHelp" src="images/help_16x16.png" /></h2>
-			<select id="appSelect">
-				<!-- Applications are added here as options the designer loads -->
-			</select>
+			<div id="controlPanelInner">
 			
-			<h2>Version<img id="helpVersion" class="headerHelp" src="images/help_16x16.png" /></h2>
-			<select id="versionSelect">
-				<!-- Application versions are added here as options the designer loads -->
-			</select>					
-			
-			<h2>Page<img id="helpPage" class="headerHelp" src="images/help_16x16.png" /></h2>
-			<select id="pageSelect">
-				<!-- Pages are added here as options the designer loads -->
-			</select>
-			
-			<div id="pageLock">
-				<h3>This page is locked for editing</h3>
-			</div>
-			
-			<div class="buttons">				
-				<button id="pageEdit" class="buttonLeft buttonRight" title="View and edit the page properties">properties</button>
-			</div>		
-							
-			<div class="buttons">
-				<button id="pageNew" class="buttonLeft" title="Create a new page for this application">new</button>
-				<button id="pageSave" class="" title="Save this page">save</button>
-				<button id="pageView" class="buttonRight" title="View this page in the application">view</button>
-			</div>	
+				<div id="controlPanelPin"><img src="images/pinned_14x14.png" title="unpin" /></div>
+				
+				<div class="buttons">
+					<button id="appAdmin" class="buttonLeft buttonRight" title="Load the Rapid Admin screen">Rapid Admin...</button>
+				</div>
+				
+				<h2>Application<img id="helpApplication" class="headerHelp" src="images/help_16x16.png" /></h2>
+				<select id="appSelect">
+					<!-- Applications are added here as options the designer loads -->
+				</select>
+				
+				<h2>Version<img id="helpVersion" class="headerHelp" src="images/help_16x16.png" /></h2>
+				<select id="versionSelect">
+					<!-- Application versions are added here as options the designer loads -->
+				</select>					
+				
+				<h2>Page<img id="helpPage" class="headerHelp" src="images/help_16x16.png" /></h2>
+				<select id="pageSelect">
+					<!-- Pages are added here as options the designer loads -->
+				</select>
+				
+				<div id="pageLock">
+					<h3>This page is locked for editing</h3>
+				</div>
+				
+				<div class="buttons">				
+					<button id="pageEdit" class="buttonLeft buttonRight" title="View and edit the page properties">properties</button>
+				</div>		
+								
+				<div class="buttons">
+					<button id="pageNew" class="buttonLeft" title="Create a new page for this application">new</button>
+					<button id="pageSave" class="" title="Save this page">save</button>
+					<button id="pageView" class="buttonRight" title="View this page in the application">view</button>
+				</div>	
+						
+				<div class="buttons">
+					<button id="undo" class="buttonLeft" disabled="disabled" title="Undo changes">undo</button>
+					<button id="redo" class="buttonRight" disabled="disabled" title="Redo changes">redo</button>
+				</div>	
+								
+				<div id="controlControls" style="margin-top:5px;">
+					<h2 id="controlsHeader">Controls
+						<img class="headerToggle" src="images/triangleUp_8x8.png" />
+						<img id="helpControls" class="headerHelp" src="images/help_16x16.png" />
+					</h2>
 					
-			<div class="buttons">
-				<button id="undo" class="buttonLeft" disabled="disabled" title="Undo changes">undo</button>
-				<button id="redo" class="buttonRight" disabled="disabled" title="Redo changes">redo</button>
-			</div>	
-							
-			<div id="controlControls" style="margin-top:5px;">
-				<h2 id="controlsHeader">Controls
+					<ul id="controlsList" class="design-controls" >
+						<!-- Controls are added here as list items when the designer loads -->
+					</ul>					
+				</div>	
+				
+				<h2 id="controlsMap" style="margin-top:5px;">Page controls
 					<img class="headerToggle" src="images/triangleUp_8x8.png" />
-					<img id="helpControls" class="headerHelp" src="images/help_16x16.png" />
+					<img id="helpMap" class="headerHelp" src="images/help_16x16.png" />
 				</h2>
 				
-				<ul id="controlsList" class="design-controls" >
-					<!-- Controls are added here as list items when the designer loads -->
-				</ul>					
-			</div>	
+				<div id="pageMap" class="design-map" >
+					<ul id="pageMapList"></ul>
+					<button id="pageMapHighlight" class="fa" title="Locate selected control">&#xf140;</button>		
+					<input id="pageMapSearch" placeholder="search"></input>				
+				</div>	
+				
+				<hr/>
+				
+				<div class="controlPanelVersion" >
+					<img src="images/RapidLogo_60x40.png" style="margin-left:-16px;"/>
+					<div id="controlPanelVersion">Rapid<br/><%=com.rapid.server.Rapid.VERSION %></div>
+				</div>					
 			
-			<h2 id="controlsMap" style="margin-top:5px;">Page controls
-				<img class="headerToggle" src="images/triangleUp_8x8.png" />
-				<img id="helpMap" class="headerHelp" src="images/help_16x16.png" />
-			</h2>
-			<div id="pageMap" class="design-map" >
-				<ul id="pageMapList"></ul>
-				<button id="pageMapHighlight" class="fa" title="Locate selected control">&#xf140;</button>		
-				<input id="pageMapSearch" placeholder="search"></input>				
-			</div>	
-			
-			<hr/>
-			
-			<div class="controlPanelVersion" >
-				<img src="images/RapidLogo_60x40.png" style="margin-left:-16px;"/>
-				<div id="controlPanelVersion">Rapid<br/><%=com.rapid.server.Rapid.VERSION %></div>
-			</div>								
-													
+			</div>
+																					
 		</div>
 		
 		<div id="propertiesPanel" style="z-index:10011">
 		
 			<div id="propertiesPanelSize" ></div>
-		
-			<div class="untilsPanelDiv">
 			
-				<div id="propertiesPanelPin"><img src="images/pinned_14x14.png" title="hide" /></div>		
-				<img id="helpPropertiesPanel" class="headerHelp" src="images/help_16x16.png" />													
-				<div class="buttons">					
-					<button id="selectPeerLeft" class="buttonLeft"><img src="images/moveLeft_16x16.png" title="Select the control before this one"/></button>
-					<button id="selectParent"><img src="images/moveUp_16x16.png" title="Select the parent of this control"/></button>
-					<button id="selectChild"><img src="images/moveDown_16x16.png" title="Select the first child of this control"/></button>
-					<button id="selectPeerRight" class="buttonRight"><img src="images/moveRight_16x16.png" title="Select the control after this one"/></button>
-				</div>													
-				<div class="buttons">
-					<button id="swapPeerLeft" class="buttonLeft"><img src="images/swapLeft_16x16.png" title="Swap position with control before this one"/></button>
-					<button id="addPeerLeft"><img src="images/addLeft_16x16.png" title="Add a new control before this one"/></button>
-					<button id="deleteControl">&nbsp;<img src="images/bin_16x16.png" title="Delete this control"/>&nbsp;</button>
-					<button id="addPeerRight"><img src="images/addRight_16x16.png" title="Add a new control after this one"/></button>
-					<button id="swapPeerRight" class="buttonRight"><img src="images/swapRight_16x16.png" title="Swap position with control after this one"/></button>
-				</div>						
-				<div class="buttons">
-					<button id="copy" class="buttonLeft" title="copy this control">&nbsp;copy</button>
-					<button id="paste" class="buttonRight" title="paste this control">paste</button>
-				</div>								
-			</div>		
-							
-			<div class="propertiesPanelDiv" data-dialogueId="propertiesPanel"></div>			
-			<div class="validationPanelDiv" data-dialogueId="validationPanel"></div>
-			<div id="actionsPanelDiv" class="actionsPanelDiv" data-dialogueId="actionsPanel"></div>
-			<div id="stylesPanelDiv" data-dialogueId="stylesPanel"></div>		
-														
+			<div id="propertiesPanelInner">
+			
+				<div class="untilsPanelDiv">
+			
+					<div id="propertiesPanelPin"><img src="images/pinned_14x14.png" title="hide" /></div>		
+					<img id="helpPropertiesPanel" class="headerHelp" src="images/help_16x16.png" />													
+					<div class="buttons">					
+						<button id="selectPeerLeft" class="buttonLeft"><img src="images/moveLeft_16x16.png" title="Select the control before this one"/></button>
+						<button id="selectParent"><img src="images/moveUp_16x16.png" title="Select the parent of this control"/></button>
+						<button id="selectChild"><img src="images/moveDown_16x16.png" title="Select the first child of this control"/></button>
+						<button id="selectPeerRight" class="buttonRight"><img src="images/moveRight_16x16.png" title="Select the control after this one"/></button>
+					</div>													
+					<div class="buttons">
+						<button id="swapPeerLeft" class="buttonLeft"><img src="images/swapLeft_16x16.png" title="Swap position with control before this one"/></button>
+						<button id="addPeerLeft"><img src="images/addLeft_16x16.png" title="Add a new control before this one"/></button>
+						<button id="deleteControl">&nbsp;<img src="images/bin_16x16.png" title="Delete this control"/>&nbsp;</button>
+						<button id="addPeerRight"><img src="images/addRight_16x16.png" title="Add a new control after this one"/></button>
+						<button id="swapPeerRight" class="buttonRight"><img src="images/swapRight_16x16.png" title="Swap position with control after this one"/></button>
+					</div>						
+					<div class="buttons">
+						<button id="copy" class="buttonLeft" title="copy this control">&nbsp;copy</button>
+						<button id="paste" class="buttonRight" title="paste this control">paste</button>
+					</div>								
+				</div>		
+								
+				<div class="propertiesPanelDiv" data-dialogueId="propertiesPanel"></div>			
+				<div class="validationPanelDiv" data-dialogueId="validationPanel"></div>
+				<div id="actionsPanelDiv" class="actionsPanelDiv" data-dialogueId="actionsPanel"></div>
+				<div id="stylesPanelDiv" data-dialogueId="stylesPanel"></div>		
+			
+			</div>
+																			
 		</div>
 		
 		<div id="propertiesDialogues" data-dialogueId="propertiesDialogues"></div>

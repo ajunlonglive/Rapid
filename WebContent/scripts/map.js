@@ -222,32 +222,3 @@ function buildPageMap() {
 		}	
 	}
 }
-
-//JQuery is ready! 
-$(document).ready( function() {
-	
-	// controls are clicked on
-	$("#controlsHeader").click( function(ev) {
-		$("#controlsList").slideToggle( 500, function() {
-			if ($(this).is(":visible")) {
-				$("#controlsHeader").children("img.headerToggle").attr("src","images/triangleUp_8x8.png");				
-			} else {
-				$("#controlsHeader").children("img.headerToggle").attr("src","images/triangleDown_8x8.png");
-			}
-		});
-		return false;
-	});
-	
-	// map is clicked on
-	$("#controlsMap").click( function(ev) {		
-		$("#pageMap").slideToggle( 500, function() {
-			if ($(this).is(":visible")) {
-				$("#controlsMap").children("img.headerToggle").attr("src","images/triangleUp_8x8.png");				
-			} else {
-				$("#controlsMap").children("img.headerToggle").attr("src","images/triangleDown_8x8.png");
-			}
-		});
-		return false;
-	});
-	
-});	
