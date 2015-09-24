@@ -124,10 +124,10 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 		
 			<div id="controlPanelSize" ></div>
 			
-			<div id="controlPanelInner">
+			<div id="controlPanelPin"><img src="images/pinned_14x14.png" title="unpin" /></div>
 			
-				<div id="controlPanelPin"><img src="images/pinned_14x14.png" title="unpin" /></div>
-				
+			<div id="controlPanelInner">
+										
 				<div class="buttons">
 					<button id="appAdmin" class="buttonLeft buttonRight" title="Load the Rapid Admin screen">Rapid Admin...</button>
 				</div>
@@ -166,7 +166,7 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 					<button id="redo" class="buttonRight" disabled="disabled" title="Redo changes">redo</button>
 				</div>	
 								
-				<div id="controlControls" style="margin-top:5px;">
+				<div id="controlControls" style="margin-top:0;margin-bottom:-3px;">
 					<h2 id="controlsHeader">Controls
 						<img class="headerToggle" src="images/triangleUp_8x8.png" />
 						<img id="helpControls" class="headerHelp" src="images/help_16x16.png" />
@@ -201,13 +201,12 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 		
 			<div id="propertiesPanelSize" ></div>
 			
+			<div id="propertiesPanelPin"><img src="images/pinned_14x14.png" title="hide" /></div>										
 			<div id="propertiesPanelInner">
 			
 				<div class="untilsPanelDiv">
-			
-					<div id="propertiesPanelPin"><img src="images/pinned_14x14.png" title="hide" /></div>		
-					<img id="helpPropertiesPanel" class="headerHelp" src="images/help_16x16.png" />			
-															
+											
+					<img id="helpPropertiesPanel" class="headerHelp" src="images/help_16x16.png" />
 					<div class="buttons">					
 						<button id="selectPeerLeft" class="buttonLeft"><img src="images/moveLeft_16x16.png" title="Select the control before this one"/></button>
 						<button id="selectParent"><img src="images/moveUp_16x16.png" title="Select the parent of this control"/></button>
