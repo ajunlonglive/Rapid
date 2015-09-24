@@ -1966,7 +1966,7 @@ function Property_navigationSessionVariables(cell, navigation, property, details
 		// initialise the collection if need be
 		if (!navigation.sessionVariables || navigation.sessionVariables == "[]") navigation.sessionVariables = [];
 		// reset if there are no page session variables
-		if (page.sessionVariables.length == 0) navigation.sessionVariables = [];
+		if (!page.sessionVariables || page.sessionVariables.length == 0) navigation.sessionVariables = [];
 		// retrieve the collection
 		var sessionVariables = navigation.sessionVariables;
 		

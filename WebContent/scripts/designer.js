@@ -1253,7 +1253,7 @@ function selectControl(control) {
 		_selectionBorder.hide();
 						
 		// hide the properties panel
-		$("#propertiesPanel").hide("slide", {direction: "right"}, 200);
+		hidePropertiesPanel();
 		
 		// show null properties
 		showProperties(null);
@@ -1494,7 +1494,7 @@ function loadVersion(forceLoad) {
     				if (!_panelPinned) $("#controlPanel").hide("slide", {direction: "left"}, 200);
     				
     				// hide the properties
-    				$("#propertiesPanel").hide("slide", {direction: "right"}, 200);
+    				hidePropertiesPanel();
     				
     				// get the control constructor name (way easier to use an attribute than closures)
     				var className = $(ev.target).attr("data-control");
@@ -2422,6 +2422,9 @@ $(document).ready( function() {
 			        		$("#pageSave").removeAttr("disabled");
 			        		$("#controlControls").show();
 			        	}
+			        	
+			        	// fire the page resize code
+			        	windowResize("pageLoaded");
 			        				        	
 		        	} catch (ex) {
 		        		
@@ -2666,6 +2669,32 @@ $(document).ready( function() {
 	$("#redo").click( function(ev) {
 		doRedo();
 		buildPageMap();
+	});
+	
+	// controls are clicked on
+	$("#controlsHeader").click( function(ev) {
+		$("#controlsList").slideToggle( 500, function() {
+			if ($(this).is(":visible")) {
+				$("#controlsHeader").children("img.headerToggle").attr("src","images/triangleUp_8x8.png");				
+			} else {
+				$("#controlsHeader").children("img.headerToggle").attr("src","images/triangleDown_8x8.png");
+			}
+			windowResize("controlsHeader");
+		});		
+		return false;
+	});
+	
+	// map is clicked on
+	$("#controlsMap").click( function(ev) {		
+		$("#pageMap").slideToggle( 500, function() {
+			if ($(this).is(":visible")) {
+				$("#controlsMap").children("img.headerToggle").attr("src","images/triangleUp_8x8.png");				
+			} else {
+				$("#controlsMap").children("img.headerToggle").attr("src","images/triangleDown_8x8.png");
+			}
+			windowResize("controlsMap");
+		});		
+		return false;
 	});
 	
 	// control search
@@ -3066,6 +3095,8 @@ function sizeControlsList(width) {
 		// read in the current width
 		width = parseInt($("#controlPanel").css("width"));
 	}
+	// size the inner
+	$("#controlPanelInner").css("width",width);
 	// get the controls list
 	var controlsList = $("#controlsList");
 	// get the number of children
@@ -3112,6 +3143,8 @@ $(document).on("mousemove touchmove", function(ev) {
 		if (width >= minWidth && width <  _window.width() - _scrollBarWidth - 21) {
 			// size the properties panel
 			panel.css("width", width);
+			// size the inner panel
+			$("#propertiesPanelInner").width(width);
 			// retain this width in the sizes object
 			_sizes["propertiesPanelWidth"] = width;
 		}
@@ -3172,7 +3205,7 @@ $(document).on("mousemove touchmove", function(ev) {
 					}			
 					
 					// hide the properties - this can cause the properties panel to bounce
-					$("#propertiesPanel").hide("slide", {direction: "right"}, 200);
+					hidePropertiesPanel();
 					
 					// remember we are now moving an object
 					_movingControl = true;
@@ -3460,10 +3493,21 @@ function showPropertiesPanel() {
 		propertiesPanel.find("img").off("mousedown");
 		propertiesDialogues.find("img").off("mousedown");
 	}
+		
+	// size the panel (less padding) and show - note the .stop(true, true) which clears any current animation queue and sets the final settings immediately 
+	$("#propertiesPanel").css("height",getHeight() - 20).stop(true, true).show("slide", {direction: "right"}, 200, function(){
+		// show the inner 
+		$("#propertiesPanelInner").show()
+	});
+					
+}
+
+function hidePropertiesPanel() {
 	
-	// size the panel (less padding) and show
-	$("#propertiesPanel").css("height",getHeight() - 20).show("slide", {direction: "right"}, 200);
-				
+	// hide the inner
+	$("#propertiesPanelInner").hide();
+	// slide in the panel - note the .stop(true, true) which clears any current animation queue and sets the final settings immediately 
+	$("#propertiesPanel").stop(true, true).hide("slide", {direction: "right"}, 200);
 }
 
 // called whenever the page is resized
@@ -3632,7 +3676,7 @@ function windowResize(ev) {
     		} else {
     			$("#propertiesPanel").css("right", 0);
     		}
-
+    		
     	}, 500);
 		
 	} else {
@@ -3659,6 +3703,34 @@ function windowResize(ev) {
 		$(".desktopCover").hide();				
 	}
 					
+	// get the control inner
+	var cinner = $("#controlPanelInner");
+	// if height is less than window
+	if (cinner.height() < _window.height()) {
+		// fix the position and set the width
+		cinner.css({
+			"position":"fixed",
+			"width": $("#controlPanel").width()
+			});
+	} else {
+		// set it to the default, static, so it scrolls
+		cinner.css("position","static");
+	}
+	
+	// get the properties inner
+	var pinner = $("#propertiesPanelInner");
+	// if height is less than window
+	if (pinner.height() < _window.height()) {
+		// fix the position and set the width
+		pinner.css({
+			"position":"fixed",
+			"width": $("#propertiesPanel").width()
+			});
+	} else {
+		// set it to the default, static, so it scrolls
+		pinner.css("position","static");
+	}
+	
 	// resize / reposition the selection
 	positionAndSizeBorder(_selectedControl);
 	
