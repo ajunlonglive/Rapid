@@ -187,9 +187,7 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 					<button id="pageMapHighlight" class="fa" title="Locate selected control">&#xf140;</button>		
 					<input id="pageMapSearch" placeholder="search"></input>				
 				</div>	
-				
-				<hr/>
-				
+
 				<div class="controlPanelVersion" >
 					<img src="images/RapidLogo_60x40.png" style="margin-left:-16px;"/>
 					<div id="controlPanelVersion">Rapid<br/><%=com.rapid.server.Rapid.VERSION %></div>
@@ -208,13 +206,15 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 				<div class="untilsPanelDiv">
 			
 					<div id="propertiesPanelPin"><img src="images/pinned_14x14.png" title="hide" /></div>		
-					<img id="helpPropertiesPanel" class="headerHelp" src="images/help_16x16.png" />													
+					<img id="helpPropertiesPanel" class="headerHelp" src="images/help_16x16.png" />			
+															
 					<div class="buttons">					
 						<button id="selectPeerLeft" class="buttonLeft"><img src="images/moveLeft_16x16.png" title="Select the control before this one"/></button>
 						<button id="selectParent"><img src="images/moveUp_16x16.png" title="Select the parent of this control"/></button>
 						<button id="selectChild"><img src="images/moveDown_16x16.png" title="Select the first child of this control"/></button>
 						<button id="selectPeerRight" class="buttonRight"><img src="images/moveRight_16x16.png" title="Select the control after this one"/></button>
-					</div>													
+					</div>							
+											
 					<div class="buttons">
 						<button id="swapPeerLeft" class="buttonLeft"><img src="images/swapLeft_16x16.png" title="Swap position with control before this one"/></button>
 						<button id="addPeerLeft"><img src="images/addLeft_16x16.png" title="Add a new control before this one"/></button>
@@ -222,15 +222,19 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 						<button id="addPeerRight"><img src="images/addRight_16x16.png" title="Add a new control after this one"/></button>
 						<button id="swapPeerRight" class="buttonRight"><img src="images/swapRight_16x16.png" title="Swap position with control after this one"/></button>
 					</div>						
+					
 					<div class="buttons">
 						<button id="copy" class="buttonLeft" title="copy this control">&nbsp;copy</button>
 						<button id="paste" class="buttonRight" title="paste this control">paste</button>
 					</div>								
 				</div>		
 								
-				<div class="propertiesPanelDiv" data-dialogueId="propertiesPanel"></div>			
-				<div class="validationPanelDiv" data-dialogueId="validationPanel"></div>
-				<div id="actionsPanelDiv" class="actionsPanelDiv" data-dialogueId="actionsPanel"></div>
+				<h2 id="propertiesHeader">Properties  <img id='helpProperties' class='headerHelp' src='images/help_16x16.png' /><img class='headerToggle' src='images/triangleUp_8x8.png' /></h2>
+				<div>
+					<div class="propertiesPanelDiv" data-dialogueId="propertiesPanel"></div>			
+					<div class="validationPanelDiv" data-dialogueId="validationPanel"></div>
+					<div id="actionsPanelDiv" class="actionsPanelDiv" data-dialogueId="actionsPanel"></div>
+				</div>				
 				<div id="stylesPanelDiv" data-dialogueId="stylesPanel"></div>		
 			
 			</div>

@@ -2137,6 +2137,21 @@ function doPaste(control, _parent) {
 			
 }
 
+// a function for animating the hide/show headers
+function toggleHeader(ev) {
+	var header = $(this);
+	var contents = header.next();
+	contents.slideToggle( 500, function() {
+		if (contents.is(":visible")) {
+			header.children("img.headerToggle").attr("src","images/triangleUp_8x8.png");				
+		} else {
+			header.children("img.headerToggle").attr("src","images/triangleDown_8x8.png");
+		}
+		windowResize("toggleHeader");
+	});		
+	return false;	
+}
+
 // JQuery is ready! 
 $(document).ready( function() {
 	
@@ -2672,31 +2687,11 @@ $(document).ready( function() {
 	});
 	
 	// controls are clicked on
-	$("#controlsHeader").click( function(ev) {
-		$("#controlsList").slideToggle( 500, function() {
-			if ($(this).is(":visible")) {
-				$("#controlsHeader").children("img.headerToggle").attr("src","images/triangleUp_8x8.png");				
-			} else {
-				$("#controlsHeader").children("img.headerToggle").attr("src","images/triangleDown_8x8.png");
-			}
-			windowResize("controlsHeader");
-		});		
-		return false;
-	});
-	
-	// map is clicked on
-	$("#controlsMap").click( function(ev) {		
-		$("#pageMap").slideToggle( 500, function() {
-			if ($(this).is(":visible")) {
-				$("#controlsMap").children("img.headerToggle").attr("src","images/triangleUp_8x8.png");				
-			} else {
-				$("#controlsMap").children("img.headerToggle").attr("src","images/triangleDown_8x8.png");
-			}
-			windowResize("controlsMap");
-		});		
-		return false;
-	});
-	
+	$("#controlsHeader").click( toggleHeader );
+			
+	// page controls are clicked on
+	$("#controlsMap").click( toggleHeader );
+			
 	// control search
 	$("#pageMapSearch").keyup( function(ev) {
 		// get the current value
@@ -3026,6 +3021,9 @@ $(document).ready( function() {
 					
 		}		
 	});		
+	
+	// properties header toggle
+	$("#propertiesHeader").click( toggleHeader );
 							
 });
 
