@@ -753,9 +753,13 @@ function showStyles(control) {
 		// check there are styles
 		if (controlClass.styles && controlClass.styles.style) {				
 			// add a heading and table
-			_stylesPanelDiv.append("<h2>Styles<img id='helpStyles' class='headerHelp' src='images/help_16x16.png' /></h2>");
+			_stylesPanelDiv.append("<h2 style='margin-top:5px'>Styles  <img id='helpStyles' class='headerHelp' src='images/help_16x16.png' /><img class='headerToggle' src='images/triangleUp_8x8.png' /></h2><div></div>");
 			// add the help hint
 			addHelp("helpStyles",true);
+			// add the header toggle hint
+			_stylesPanelDiv.find("h2").click( toggleHeader );
+			// get the panel
+			var stylesTablesPanel = _stylesPanelDiv.find("div");
 			// get the array of styles classes
 			var styles = controlClass.styles.style;
 			// make it an array if the xml to json didn't
@@ -770,7 +774,7 @@ function showStyles(control) {
 				// invoke and return applies to with the control as the context
 				var appliesTo = f.apply(control);
 				// add a table for this rule
-				_stylesPanelDiv.append("<table class='stylesPanelTable'><tbody></tbody></table>");
+				stylesTablesPanel.append("<table class='stylesPanelTable'><tbody></tbody></table>");
 				// grab a refrence to the table
 				var stylesTable = _stylesPanelDiv.find("tbody").last();			
 				// write it to the table;
@@ -820,12 +824,14 @@ function showStyles(control) {
 			}
 			
 			// add a heading and table
-			_stylesPanelDiv.append("<h2>Style classes<img id='helpStyleClasses' class='headerHelp' src='images/help_16x16.png' /></h2>");
+			_stylesPanelDiv.append("<h2 style='margin-top:5px'>Style classes  <img id='helpStyleClasses' class='headerHelp' src='images/help_16x16.png' /><img class='headerToggle' src='images/triangleUp_8x8.png' /></h2><div></div>");
 			// add the help hint
 			addHelp("helpStyleClasses",true);
+			// add the header toggle
+			_stylesPanelDiv.find("h2").last().click( toggleHeader );
 			
 			// add a table for this rule
-			_stylesPanelDiv.append("<table class='stylesPanelTable'><tbody></tbody></table>");
+			_stylesPanelDiv.find("div").last().append("<table class='stylesPanelTable'><tbody></tbody></table>");
 			// grab a refrence to the table
 			var classesTable = _stylesPanelDiv.find("tbody").last();	
 			

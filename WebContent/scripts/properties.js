@@ -113,10 +113,13 @@ function showProperties(control) {
 		// get the contro class
 		var controlClass = _controlTypes[control.type];
 	
-		// write the properties heading
-		propertiesPanel.html("<h2>Properties<img id='helpProperties' class='headerHelp' src='images/help_16x16.png' /></h2>");
+		// empty the properties
+		propertiesPanel.html("");
 		// add the help hint
 		addHelp("helpProperties",true);
+		// add a header toggle
+		propertiesPanel.find("h2").click( toggleHeader );
+
 		// append a table
 		propertiesPanel.append("<table class='propertiesPanelTable'><tbody></tbody></table>");		
 		// get a reference to the table
