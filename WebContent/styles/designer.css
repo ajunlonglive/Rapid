@@ -293,6 +293,7 @@ li.design-control:hover {
 	font-family: Arial;
 	font-size: 12px;
 	font-weight: bold;	
+	border-top: 1px solid #777;
 }
 
 #controlPanelVersion {
@@ -355,6 +356,7 @@ div#propertiesPanel {
 	cursor: pointer;
 	width: 14px;
 	height: 14px;
+	z-index:101;
 }
 
 div#propertiesPanel h2 {
