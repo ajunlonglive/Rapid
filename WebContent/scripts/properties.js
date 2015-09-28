@@ -3829,7 +3829,7 @@ function Property_guidelines(cell, propertyObject, property, details) {
 }
 
 // possible mobileActionType values used by the mobileActionType property
-var _mobileActionTypes = [["dial","Dial number"],["sms","Send text/sms message"],["addImage","Aquire image"],["uploadImages","Upload images"],["sendGPS","Send GPS position"],["stopGPS","Stop GPS updates"],["message","Status bar message"],["disableBackButton","Disable back button"],["online","Online actions"]];
+var _mobileActionTypes = [["dial","Dial number"],["sms","Send text/sms message"],["addImage","Aquire image"],["uploadImages","Upload images"],["navigate","Navigate to"],["sendGPS","Send GPS position"],["stopGPS","Stop GPS updates"],["message","Status bar message"],["disableBackButton","Disable back button"],["online","Online actions"]];
 
 // this property changes the visibility of other properties according to the chosen type
 function Property_mobileActionType(cell, mobileAction, property, details) {
@@ -3852,6 +3852,9 @@ function Property_mobileActionType(cell, mobileAction, property, details) {
 	setPropertyVisibilty(mobileAction, "imageQuality", false);
 	setPropertyVisibilty(mobileAction, "successActions", false);
 	setPropertyVisibilty(mobileAction, "errorActions", false);
+	setPropertyVisibilty(mobileAction, "navigateControlId", false);
+	setPropertyVisibilty(mobileAction, "navigateField", false);
+	setPropertyVisibilty(mobileAction, "navigateMode", false);
 	setPropertyVisibilty(mobileAction, "gpsDestinations", false);
 	setPropertyVisibilty(mobileAction, "gpsFrequency", false);	
 	setPropertyVisibilty(mobileAction, "gpsCheck", false);
@@ -3880,6 +3883,11 @@ function Property_mobileActionType(cell, mobileAction, property, details) {
 			setPropertyVisibilty(mobileAction, "galleryControlId", true);
 			setPropertyVisibilty(mobileAction, "successActions", true);
 			setPropertyVisibilty(mobileAction, "errorActions", true);
+		break;
+		case "navigate" :
+			setPropertyVisibilty(mobileAction, "navigateMode", true);
+			setPropertyVisibilty(mobileAction, "navigateControlId", true);
+			setPropertyVisibilty(mobileAction, "navigateField", true);			
 		break;
 		case "sendGPS" :						
 			setPropertyVisibilty(mobileAction, "gpsDestinations", true);

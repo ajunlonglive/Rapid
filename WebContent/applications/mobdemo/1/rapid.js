@@ -413,62 +413,6 @@ function linkClick(url, sessionVariablesString) {
 	
 }
 
-/* Map control resource JavaScript */
-
-// an array to manage the in-page maps	                
-_maps = [];	    
-
-// adds markers to a map, used by add markers and replace markers
-function addMapMarkers(map, data, details) {
-	map.markerSelectedIndex = -1;
-	var latIndex = -1;
-	var lngIndex = -1;
-	var titleIndex = -1;
-	var infoIndex = -1;
-	for (var i in data.fields) {
-		if (data.fields[i].toLowerCase().indexOf("lat") == 0) {
-			latIndex = i; 
-		} else if (data.fields[i].toLowerCase().indexOf("lng") == 0 || data.fields[i].toLowerCase().indexOf("lon") == 0 ) {
-			 lngIndex = i;
-		} else if (data.fields[i].toLowerCase().indexOf("title") == 0) {
-			 titleIndex = i;
-		} else if (data.fields[i].toLowerCase().indexOf("info") == 0) {
-			 infoIndex = i;
-		}
-	}
-	if (latIndex > -1 && lngIndex > -1) {
-		for (var i in data.rows) {
-			var row = data.rows[i];
-			var lat = row[latIndex];
-			var lng = row[lngIndex];
-			var markerOptions = {
-				map: map,
-				position: new google.maps.LatLng(lat, lng)				
-			};
-			if (titleIndex > -1) markerOptions.title = row[titleIndex];
-			if (details.markerImage) markerOptions.icon = "applications/" + _appId + "/" + _appVersion + "/" + details.markerImage;
-			var marker = new google.maps.Marker(markerOptions);	
-			marker.index = map.markers.length + i*1;
-			marker.data = {fields:data.fields,rows:[data.rows[i]]};
-			map.markers.push(marker);					
-			if (infoIndex > -1) {
-				var markerInfoWindow = new google.maps.InfoWindow({
-					content: row[infoIndex]
-				});
-				google.maps.event.addListener(marker, 'click', function() {
-				    markerInfoWindow.open(map,marker);
-				});
-			}
-			if (details.markerClickFunction) {
-				google.maps.event.addListener(marker, 'click', function() {
-					map.markerSelectedIndex = marker.index;
-				    window[details.markerClickFunction]($.Event('markerclick'));
-				});
-			}
-		}
-	}
-}
-
 /* Slide panel control resource JavaScript */
 
 //JQuery is ready! 
@@ -1886,28 +1830,23 @@ function getProperty_map_mapCentre(ev, id, field, details) {
 function setProperty_map_mapCentre(ev, id, field, details, data, changeEvents) {
   // get the map
   var map = _maps[id];
-  // get the latlng
-  var data = makeDataObject(data);
+  // get the data object
+  var data = makeDataObject(data, field);
+  // get the position for the first row
+  var pos = getMapPosition(data, 0, setMapCentre, map);
   // if we got a map and data
-  if (map && data && data.fields && data.rows && data.fields.length > 1 && data.rows.length > 0) {
-  	var lat = 0;
-  	var lng = 0;
-  	for (var i in data.fields) {
-  		if (data.fields[i].toLowerCase().indexOf("lat") == 0) lat = data.rows[0][i];
-  		if (data.fields[i].toLowerCase().indexOf("lng") == 0 || data.fields[i].toLowerCase().indexOf("lon") == 0) lng = data.rows[0][i];
-  	}
-  	var latlng = new google.maps.LatLng(lat, lng);
-  	map.panTo( latlng );
+  if (map && pos && pos.lat && pos.lng) {
+  	setMapCentre(map, pos);
   }
 }
 
 function setProperty_map_addMarkers(ev, id, field, details, data, changeEvents) {
   // get the map
   var map = _maps[id];
-  // get the latlng
-  var data = makeDataObject(data);
+  // get the data object
+  var data = makeDataObject(data, field);
   // if we got a map and data
-  if (map && data && data.fields && data.rows && data.fields.length > 1 && data.rows.length > 0) {
+  if (map && data && data.rows && data.rows.length > 0) {
   	// create a markers array if there isn't one
   	if (!map.markers) map.markers = [];
   	// add the markers
@@ -1918,8 +1857,8 @@ function setProperty_map_addMarkers(ev, id, field, details, data, changeEvents) 
 function setProperty_map_replaceMarkers(ev, id, field, details, data, changeEvents) {
   // get the map
   var map = _maps[id];
-  // get the latlng
-  var data = makeDataObject(data);
+  // get the data object
+  var data = makeDataObject(data, field);
   // if there are any current markers
   if (map.markers) {
   	// loop them
@@ -1932,7 +1871,7 @@ function setProperty_map_replaceMarkers(ev, id, field, details, data, changeEven
   // empty markers array
   map.markers = [];
   // if we got a map and data
-  if (map && data && data.fields && data.rows && data.fields.length > 1 && data.rows.length > 0) {		
+  if (map && data && data.rows && data.rows.length > 0) {		
   	// add the markers
   	addMapMarkers(map, data, details);
   }
@@ -1951,7 +1890,7 @@ function getProperty_map_selectedMarker(ev, id, field, details) {
   		var fieldIndex = -1;
   		for (var i in data.fields) {
   			if (field == data.fields[i]) {
-  				return data.row[0][i];
+  				return data.rows[0][i];
   			}
   		}	
   		return null;

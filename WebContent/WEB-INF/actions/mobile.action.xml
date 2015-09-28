@@ -127,6 +127,42 @@ return "<option value=''>Please select...</option>" + getControlOptions(this.gal
 	            <visible>false</visible>
 	            <changeValueJavaScript>childActions</changeValueJavaScript>	 
 	        </property> 
+	        	        
+	        <property>
+	            <key>navigateControlId</key>
+	            <name>Navigate to source</name>
+	             <visible>false</visible>
+	            <changeValueJavaScript>select</changeValueJavaScript>	 
+	             <getValuesFunction>
+	                <![CDATA[
+return "<option value=''>Please select...</option>" + getInputOptions(this.navigateControlId);	                
+	                ]]>
+	            </getValuesFunction>
+	        </property>
+	        
+	        <property>
+	            <key>navigateField</key>
+	            <name>Navigate to source field</name>
+	             <visible>false</visible>
+	            <changeValueJavaScript>text</changeValueJavaScript>	 
+	        </property>
+	        
+	         <property>
+	            <key>navigateMode</key>
+	            <name>Navigation mode</name>
+	            <visible>false</visible>	            
+	            <setConstructValueFunction>
+	                <![CDATA[
+return "d";	                
+	                ]]>
+	            </setConstructValueFunction>
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	            <getValuesFunction>
+	                <![CDATA[
+return [["d","driving"],["w","walking"],["b","cycling"],["transit","public transport"]];	                
+	                ]]>
+	            </getValuesFunction>	 	            
+	        </property>
 	        
 	        <property>
 	            <key>message</key>
@@ -179,6 +215,17 @@ return "<option value=''>Please select...</option>" + getControlOptions(this.gal
 	        </property>
 	        
 	    </properties>
+	    
+		<resources>
+		    
+	        <resource>
+	            <type>javascriptFile</type>
+	            <contents>
+	               scripts/controls/map.js
+	            </contents>
+            </resource>
+            
+		</resources>
 	    
 		<actionJavaScript>
 	        <![CDATA[ 

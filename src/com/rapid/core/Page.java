@@ -1571,7 +1571,7 @@ public class Page {
 	}
 	
 	// return a boolean for page visibility
-	public boolean getPageVisible(RapidRequest rapidRequest, String formId, Application application) {
+	public boolean isVisible(RapidRequest rapidRequest, String formId, Application application) {
 		
 		// get the form adapter
 		FormAdapter formAdapter = application.getFormAdapter();
