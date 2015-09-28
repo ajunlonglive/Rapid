@@ -259,6 +259,32 @@ public class Mobile extends Action {
 					// close urls check and proceed straight to success call back if none
 					js += "} else {\n  " + successCallback.replace("'", "") + "(ev);\n}\n";
 				}
+			} else if ("navigate".equals(type)) {
+				// get the naviagte source control id
+				String navigateControlId = getProperty("navigateControlId");
+				// get the control
+				Control navigateControl = Control.getControl(rapidServlet.getServletContext(), application, page, navigateControlId);				
+				// check we got one
+				if (navigateControl == null) {
+					js += "// navigate to control " + navigateControlId + " not found\n";
+				} else {
+					// get the navigate to field
+					String navigateField = getProperty("navigateField");
+					// get the mode
+					String navigateMode = getProperty("navigateMode");
+					// enclose if we got one
+					if (navigateMode != null) navigateMode = "'" + navigateMode + "'";
+					// mobile check 
+					js += getMobileCheck(true);
+					// get the data
+					js += "var data = " + Control.getDataJavaScript(rapidServlet.getServletContext(), application, page, navigateControlId, navigateField) + ";\n";
+					// get a position object
+					js += "var pos = getMapPosition(data, 0)\n";
+					// add js, replacing any dodgy inverted commas
+					js += "  _rapidmobile.navigateTo(pos.lat, pos.lng, pos.s, " + navigateMode + ");\n";
+					// close mobile check
+					js += "}\n";
+				}
 			}  else if ("message".equals(type)) {
 				// retrieve the message
 				String message = getProperty("message");

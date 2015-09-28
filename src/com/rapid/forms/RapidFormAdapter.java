@@ -101,13 +101,26 @@ public class RapidFormAdapter extends FormAdapter {
 				formIds.put(application.getId() + "-" + application.getVersion(), formId);
 				// retain for user
 				session.setAttribute("userFormIds",formIds);
+				
+				
+				// testing pre-population
+				
+				FormControlValue controlValue = new FormControlValue("P4_C55_","Hello!");
+				
+				FormPageControlValues pageControlValue = new FormPageControlValues(controlValue);
+				
+				setFormPageControlValues(rapidRequest, formId, application, "P4", pageControlValue);
+				
+				// it works!
+								
 			}
-		}
+			
+		}					
 		return formId;
 	}
 	
 	@Override
-	public FormPageControlValues getFormPageControlValues(RapidRequest rapidRequest, String formId, Application application, String pageId) {
+	public FormPageControlValues getFormPageControlValues(RapidRequest rapidRequest, String formId, Application application, String pageId)	{
 		// retrieve
 		return getUserFormPageControlValues(rapidRequest, application, formId).get(pageId);
 	}
@@ -154,7 +167,11 @@ public class RapidFormAdapter extends FormAdapter {
 	@Override
 	public String getSummaryPageStartHtml(RapidRequest rapidRequest, Application application, Page page) {
 		String label = page.getLabel();
-		if (label == null) label = page.getTitle();
+		if (label == null) {
+			label = page.getTitle();
+		} else {
+			if (label.trim().length() == 0) label = page.getTitle();
+		}
 		return "<div class='formSummaryPage'><h2>" + label + "</h2>\n";
 	}
 	

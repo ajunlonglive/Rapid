@@ -72,19 +72,10 @@ public abstract class FormAdapter {
 	
 	// a pages control values
 	public static class FormPageControlValues extends ArrayList<FormControlValue> {
-		
-		// instance variables
-		
-		private String _pageId;
-		
-		// properties
-		
-		public String getPageId() { return _pageId; }
-		
+				
 		// constructor
 		
-		public FormPageControlValues(String pageId, FormControlValue... controlValues) {
-			_pageId  = pageId;
+		public FormPageControlValues(FormControlValue... controlValues) {
 			if (controlValues != null) {
 				for (FormControlValue controlValue : controlValues) {
 					this.add(controlValue);
@@ -265,30 +256,46 @@ public abstract class FormAdapter {
 				
 				// get the page
 				Page page = _application.getPages().getPage(servletContext, pageHeader.getId());
+				
+				// if this page was visible
+				if (page.isVisible(rapidRequest, formId, _application)) {
 										
-				// get any page control values
-				FormPageControlValues pageControlValues = _application.getFormAdapter().getFormPageControlValues(rapidRequest, formId, _application, page.getId());
-				
-				// if we got some
-				if (pageControlValues != null) {
+					// a string builder for the page values
+					StringBuilder valuesStringBuilder = new StringBuilder();
 					
-					// write the page start html
-					writer.write(getSummaryPageStartHtml(rapidRequest, _application, page));
+					// get any page control values
+					FormPageControlValues pageControlValues = _application.getFormAdapter().getFormPageControlValues(rapidRequest, formId, _application, page.getId());
 					
-					// loop the control values
-					for (FormControlValue controlValue : pageControlValues) {
-						// write the control value!
-						writer.write(getSummaryControlValueHtml(rapidRequest, _application, page, controlValue));
-					}
+					// if we got some
+					if (pageControlValues != null) {
+						
+						// loop the control values
+						for (FormControlValue controlValue : pageControlValues) {
+							// write the control value!
+							valuesStringBuilder.append(getSummaryControlValueHtml(rapidRequest, _application, page, controlValue));
+						}
+						
+					} // control value check
 					
-					// write the edit link
-					writer.write("<a href='~?a=" + _application.getId() + "&v=" + _application.getVersion() + "&p=" + page.getId() + "'>edit</a>\n");
+					// if there are some values in thre string builder
+					if (valuesStringBuilder.length() > 0) {
+						
+						// write the page start html
+						writer.write(getSummaryPageStartHtml(rapidRequest, _application, page));
+						
+						// write the values
+						writer.write(valuesStringBuilder.toString());
+						
+						// write the edit link
+						writer.write("<a href='~?a=" + _application.getId() + "&v=" + _application.getVersion() + "&p=" + page.getId() + "'>edit</a>\n");
+						
+						// write the page end html
+						writer.write(getSummaryPageEndHtml(rapidRequest, _application, page));
+						
+					} // values written check
 					
-					// write the page end html
-					writer.write(getSummaryPageEndHtml(rapidRequest, _application, page));
-					
-				} // control value check
-				
+				} // page visibility check
+																		
 			} // page loop
 			
 			// write the pages end
@@ -410,7 +417,7 @@ public abstract class FormAdapter {
 			return null;
 		} else {
 			// create our pageControlValues
-			FormPageControlValues pageControlValues = new FormPageControlValues(pageId);
+			FormPageControlValues pageControlValues = new FormPageControlValues();
 			// split into name value pairs
 			String[] params = postBody.split("&");
 			// loop the pairs

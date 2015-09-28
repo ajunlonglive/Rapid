@@ -115,8 +115,10 @@ public class DataFactory {
 		@Override
 		public String toString() {
 			String parametersString = "";
-			for (Parameter parameter : this) {
-				parametersString += parameter.toString();
+			for (int i = 0; i < this.size(); i++) {
+				Parameter parameter = this.get(i);
+				parametersString += "'" + parameter.toString() + "'";
+				if (i < this.size() - 1) parametersString += ", ";
 			}
 			return parametersString;
 		}
