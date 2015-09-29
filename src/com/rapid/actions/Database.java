@@ -947,7 +947,7 @@ public class Database extends Action {
 			DatabaseConnection databaseConnection = application.getDatabaseConnections().get(_query.getDatabaseConnectionIndex());
 			
 			// get the connection adapter
-			ConnectionAdapter ca = databaseConnection.getConnectionAdapter(rapidRequest.getRapidServlet().getServletContext());			
+			ConnectionAdapter ca = databaseConnection.getConnectionAdapter(rapidRequest.getRapidServlet().getServletContext(), application);			
 							
 			// instantiate a data factory with autocommit = false;
 			DataFactory df = new DataFactory(ca, false);

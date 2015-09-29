@@ -1124,7 +1124,7 @@ public class RapidServletContextListener implements ServletContextListener {
 							// check adapter
 							try {
 								// get adapter
-								ConnectionAdapter connectionAdapter = databaseConnection.getConnectionAdapter(event.getServletContext());
+								ConnectionAdapter connectionAdapter = databaseConnection.getConnectionAdapter(event.getServletContext(), application);
 								// if we got one try and close it
 								if (connectionAdapter != null) connectionAdapter.close();						
 							} catch (Exception ex) {						

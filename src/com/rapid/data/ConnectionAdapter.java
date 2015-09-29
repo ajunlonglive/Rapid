@@ -100,7 +100,7 @@ public abstract class ConnectionAdapter {
 	public ConnectionAdapter(ServletContext servletContext, String driverClassName, String connectionString, String userName, String password) {
 		_servletContext = servletContext;
 		_driverClassName = driverClassName;
-		_connectionString = connectionString;
+		_connectionString = connectionString; 
 		_userName = userName;
 		_password = password;
 	}

@@ -2058,14 +2058,11 @@ public class Rapid extends Action {
 						
 						// if the password wasn't set retrieve it via the connection index
 						if ("********".equals(password)) password = dbConns.get(index).getPassword();
-						
-						// get our class
-						Class classClass = Class.forName(connectionAdapterClass);
-						// initialise a constructor
-						Constructor constructor = classClass.getConstructor(ServletContext.class, String.class, String.class, String.class, String.class);
-						// initialise the class
-						ConnectionAdapter connectionAdapter = (ConnectionAdapter) constructor.newInstance(rapidServlet.getServletContext(), driverClass, connectionString, userName, password) ;
-						
+					
+						// instatntiate a DatabaseConnection object for this test
+						DatabaseConnection dbconnection = new DatabaseConnection("test", driverClass, connectionString, connectionAdapterClass, userName, password);
+						// get the adapter
+						ConnectionAdapter connectionAdapter = dbconnection.getConnectionAdapter(rapidServlet.getServletContext(), app);						
 						// get a data factory
 						DataFactory dataFactory = new DataFactory(connectionAdapter);
 						// get a connection

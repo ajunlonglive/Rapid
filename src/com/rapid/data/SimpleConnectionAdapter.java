@@ -77,6 +77,4 @@ public class SimpleConnectionAdapter extends ConnectionAdapter {
 		// nothing to clean up
 	}
 
-	
-
 }

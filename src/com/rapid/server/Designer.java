@@ -546,7 +546,7 @@ public class Designer extends RapidHttpServlet {
 								}
 								
 								// add the css
-								jsonPage.put("css", page.getAllCSS(application));
+								jsonPage.put("css", page.getAllCSS(getServletContext(), application));
 								
 								// add the device as page properties (even though we store this in the app)
 								jsonPage.put("device", 1);
@@ -937,7 +937,7 @@ public class Designer extends RapidHttpServlet {
 								
 								DatabaseConnection databaseConnection = application.getDatabaseConnections().get(jsonQuery.optInt("databaseConnectionIndex",0));
 								
-								ConnectionAdapter ca = databaseConnection.getConnectionAdapter(getServletContext());			
+								ConnectionAdapter ca = databaseConnection.getConnectionAdapter(getServletContext(), application);			
 								
 								DataFactory df = new DataFactory(ca);
 								

@@ -76,7 +76,7 @@ public class SQLWebservice extends Webservice {
 												
 			DatabaseConnection databaseConnection = application.getDatabaseConnections().get(_databaseConnectionIndex);
 			
-			ConnectionAdapter ca = databaseConnection.getConnectionAdapter(rapidRequest.getRapidServlet().getServletContext());			
+			ConnectionAdapter ca = databaseConnection.getConnectionAdapter(rapidRequest.getRapidServlet().getServletContext(), application);			
 			
 			DataFactory df = new DataFactory(ca);
 			

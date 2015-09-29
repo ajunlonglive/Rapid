@@ -638,7 +638,7 @@ public class Page {
 	}
 	
 	
-	public String getAllCSS(Application application) {
+	public String getAllCSS(ServletContext servletContext,  Application application) {
 		// the stringbuilder we're going to use
 		StringBuilder stringBuilder = new StringBuilder();
 		// check if the page has styles
@@ -651,7 +651,7 @@ public class Page {
 		// use the iterative tree-walking function to add all of the control styles
 		getChildControlStyles(_controls, stringBuilder);				
 		// return it with inserted parameters
-		return application.insertParameters(stringBuilder.toString());		
+		return application.insertParameters(servletContext, stringBuilder.toString());		
 	}
 	
 	public List<String> getAllActionTypes() {
@@ -1079,7 +1079,7 @@ public class Page {
 		stringBuilder.append("    <style>\n");
 		
 		// fetch all page control styles
-		String pageCss = getAllCSS(application);
+		String pageCss = getAllCSS(rapidServlet.getServletContext(), application);
 		
 		// if live we're going to try and minify
 		if (application.getStatus() == Application.STATUS_LIVE) {				
@@ -1239,7 +1239,7 @@ public class Page {
 		stringBuilder.append("  </script>\n");
 					
 		// get it into a string and insert any parameters
-		String htmlHead = application.insertParameters(stringBuilder.toString());
+		String htmlHead = application.insertParameters(rapidServlet.getServletContext(), stringBuilder.toString());
 					
 		// return it
 		return htmlHead;
