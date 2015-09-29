@@ -187,7 +187,7 @@ public class Application {
 		// instance methods
 		
 		// get the connection adapter, instantiating if null as this is quite expensive
-		public synchronized ConnectionAdapter getConnectionAdapter(ServletContext servletContext) throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
+		public synchronized ConnectionAdapter getConnectionAdapter(ServletContext servletContext, Application application) throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
 			
 			// only if the connection adapter has not already been initialised
 			if (_connectionAdapter == null) {
@@ -196,7 +196,7 @@ public class Application {
 				// initialise a constructor
 				Constructor constructor = classClass.getConstructor(ServletContext.class, String.class, String.class, String.class, String.class);
 				// initialise the class
-				_connectionAdapter = (ConnectionAdapter) constructor.newInstance(servletContext, _driverClass, _connectionString, _userName, _password) ;
+				_connectionAdapter = (ConnectionAdapter) constructor.newInstance(servletContext, _driverClass, application.insertParameters(servletContext, _connectionString), _userName, _password) ;
 			}
 			
 			return _connectionAdapter;
@@ -633,22 +633,30 @@ public class Application {
 	}
 	
 	// this replaces [[xxx]] in a string where xxx is a known system or application parameter
-	public String insertParameters(String string) {
+	public String insertParameters(ServletContext servletContext, String string) {
 		// check for non-null
 		if (string != null) {
-			// update commmon known system parameters
-			string = string
-				.replace("[[webfolder]]", getWebFolder(this));
-			// if we have parameters
-			if (_parameters != null) {
-				// loop them
-				for (Parameter parameter : _parameters) {
-					// define the match string
-					String matchString = "[[" + parameter.getName() + "]]";
-					// if the match string is present replace it with the value
-					if (string.contains(matchString)) string = string.replace(matchString, parameter.getValue());
-				}
-			}
+			// check string contains [[ 
+			if (string.contains("[[")) {
+				// if it has ]] thereafter
+				if (string.indexOf("]]") > string.indexOf("[[")) {
+					// webfolder is the client web facing resources
+					string = string.replace("[[webfolder]]", getWebFolder(this));
+					// appfolder and configfolder are the hidden server app resources
+					string = string.replace("[[appfolder]]", getConfigFolder(servletContext, _id, _version));
+					string = string.replace("[[configfolder]]", getConfigFolder(servletContext, _id, _version));
+					// if we have parameters
+					if (_parameters != null) {
+						// loop them
+						for (Parameter parameter : _parameters) {
+							// define the match string
+							String matchString = "[[" + parameter.getName() + "]]";
+							// if the match string is present replace it with the value
+							if (string.contains(matchString)) string = string.replace(matchString, parameter.getValue());
+						}
+					}
+				}				
+			}			
 		}
 		// return it
 		return string;
@@ -1285,7 +1293,7 @@ public class Application {
 					// header (this is removed by minify)
 					ps.print("\n\n/* Application functions JavaScript */\n\n");
 					// insert params
-					String functionsParamsInserted = insertParameters(_functions);				
+					String functionsParamsInserted = insertParameters(servletContext, _functions);				
 					// print
 					ps.print(functionsParamsInserted);
 					// print minify 
@@ -1297,7 +1305,7 @@ public class Application {
 				// header
 				ps.print("\n\n/* Control and Action resource JavaScript */\n\n");
 				// insert params
-				String resourceJSParamsInserted = insertParameters(resourceJS.toString());
+				String resourceJSParamsInserted = insertParameters(servletContext, resourceJS.toString());
 				// print
 				ps.print(resourceJS.toString());
 				// print minify 
@@ -1308,7 +1316,7 @@ public class Application {
 				// header
 				ps.print("\n\n/* Control initialisation methods */\n\n");
 				// insert params
-				String initJSParamsInserted = insertParameters(initJS.toString());
+				String initJSParamsInserted = insertParameters(servletContext, initJS.toString());
 				// print
 				ps.print(initJS.toString());
 				// print minify 
@@ -1319,7 +1327,7 @@ public class Application {
 				// header
 				ps.print("\n\n/* Control getData and setData methods */\n\n");
 				// insert params
-				String dataJSParamsInserted = insertParameters(dataJS.toString());
+				String dataJSParamsInserted = insertParameters(servletContext, dataJS.toString());
 				// print
 				ps.print(dataJS.toString());
 				// print minify 
@@ -1330,7 +1338,7 @@ public class Application {
 				// header
 				ps.print("\n\n/* Action methods */\n\n");
 				// insert params
-				String actionParamsInserted = insertParameters(actionJS.toString());
+				String actionParamsInserted = insertParameters(servletContext, actionJS.toString());
 				// print
 				ps.print(actionJS.toString());
 				// print minify 
@@ -1345,8 +1353,8 @@ public class Application {
 			fosMin.close();
 								
 			// get the rapid CSS into a string and insert parameters
-			String resourceCSSWithParams = insertParameters(resourceCSS.toString());
-			String appCSSWithParams = insertParameters(_styles);
+			String resourceCSSWithParams = insertParameters(servletContext, resourceCSS.toString());
+			String appCSSWithParams = insertParameters(servletContext, _styles);
 			
 			// write the rapid.css file
 			fos = new FileOutputStream (applicationPath + "/rapid.css");

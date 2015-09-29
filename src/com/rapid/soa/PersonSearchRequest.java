@@ -107,7 +107,7 @@ public class PersonSearchRequest implements Request {
 			
 			DatabaseConnection databaseConnection = application.getDatabaseConnections().get(0);
 			
-			ConnectionAdapter ca = databaseConnection.getConnectionAdapter(rapidRequest.getRapidServlet().getServletContext());			
+			ConnectionAdapter ca = databaseConnection.getConnectionAdapter(rapidRequest.getRapidServlet().getServletContext(), application);			
 			
 			DataFactory df = new DataFactory(ca);
 			
