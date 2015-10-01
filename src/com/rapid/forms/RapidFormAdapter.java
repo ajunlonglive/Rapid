@@ -199,7 +199,7 @@ public class RapidFormAdapter extends FormAdapter {
 	}
 
 	@Override
-	public void submitForm(RapidRequest rapidRequest, String formId, Application application) {
+	public void submitForm(RapidRequest rapidRequest, String formId, Application application) throws Exception {
 		// get the user session
 		HttpSession session = rapidRequest.getRequest().getSession();
 		// retrieve the form ids from the session

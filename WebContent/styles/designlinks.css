@@ -11,6 +11,7 @@
 	overflow-x: auto;
 	overflow-y: scroll;	
 	color: black;
+	z-index:10000;
 }
 
 .designData table {

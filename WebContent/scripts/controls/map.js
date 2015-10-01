@@ -114,6 +114,8 @@ function getMapPosition(data, rowIndex, callBack, map, details) {
 			var f = data.fields[i];
 			// if there is a field
 			if (f) {
+				// make it lower case
+				f = f.toLowerCase();
 				// check for latitude
 				if (f == "lat" || f == "latitude") pos.lat = data.rows[rowIndex][i];
 				// check for longditude
