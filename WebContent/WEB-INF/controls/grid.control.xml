@@ -873,7 +873,7 @@ if (!gridData) gridData = {};
 data = makeDataObject(data, field);
 if (gridData.selectedRowNumber) {
 	// replace or remove selected row	
-	if (data) {
+	if (data && data.fields && data.rows && data.rows.length > 0) {
 		// get the gridData fields
 		var gridDataFields = gridData.fields;
 		// check there are some

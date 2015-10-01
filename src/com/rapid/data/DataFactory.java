@@ -163,12 +163,8 @@ public class DataFactory {
 		_sql = SQL.replace("\n", " ");
 		
 		if (_connection == null) _connection = getConnection(rapidRequest);
-		
-		//if (_connection.isClosed()) _connection = getConnection(rapidRequest);
-		
-		//if (_resultset != null) _resultset.close();
-		
-		//if (_preparedStatement != null) _preparedStatement.close();	
+				
+		if (_preparedStatement != null) _preparedStatement.close();	
 		
 		_preparedStatement = _connection.prepareStatement(_sql);
 		
@@ -250,13 +246,9 @@ public class DataFactory {
 	}
 	
 	public void close() throws SQLException {
-		
-		//if (_statement != null) _statement.close();
-		
-		//if (_preparedStatement != null) _preparedStatement.close();
-						
-		//if (_resultset != null) _resultset.close();				
-		
+				
+		if (_preparedStatement != null) _preparedStatement.close();
+
 		if (_connection != null) _connectionAdapter.closeConnection(_connection);
 		
 	}

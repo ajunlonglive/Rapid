@@ -958,7 +958,7 @@ function setProperty_grid_selectedRowData(ev, id, field, details, data, changeEv
   data = makeDataObject(data, field);
   if (gridData.selectedRowNumber) {
   	// replace or remove selected row	
-  	if (data) {
+  	if (data && data.fields && data.rows && data.rows.length > 0) {
   		// get the gridData fields
   		var gridDataFields = gridData.fields;
   		// check there are some
@@ -1333,7 +1333,7 @@ function Action_datacopy(ev, data, outputs, changeEvents, copyType, copyData, fi
 									} else {
 										keyValueCounts[keyValue] = 1;
 									}
-									if (keyValueCounts[keyValue] > details.keyFields.length) {
+									if (keyValueCounts[keyValue] > 1) {
 										downtoside = true;
 										break;
 									}
@@ -1350,12 +1350,12 @@ function Action_datacopy(ev, data, outputs, changeEvents, copyType, copyData, fi
 								// if any of the key fields are in the first column
 								if (i*1 == 0) {
 									// change field and value columns from 1st and 2nd to those following the keys
-									fieldPos = details.keyFields.length - 1;
-									valuePos = details.keyFields.length;									
+									fieldPos = details.keyFields.length;
+									valuePos = details.keyFields.length + 1;									
 								}
 							}
 							var outputFields = [];
-							for (var i in details.keyFields) outputFields.push(details.keyFields);
+							for (var i in details.keyFields) outputFields.push(details.keyFields[i]);
 							var keyValueRows = {};
 							for (var i in data.rows) {
 								var row = data.rows[i];
@@ -1370,29 +1370,41 @@ function Action_datacopy(ev, data, outputs, changeEvents, copyType, copyData, fi
 								var keyRow = keyValueRows[keyValue];
 								if (!keyRow) {
 									keyRow = [];
+									for (var j in keyFieldsMap) keyRow.push(row[j]);
 									keyValueRows[keyValue] = keyRow;
 								}
-								// find the position of this field in the output fields
-								var outputFieldPos = -1;
-								for (var j in outputFields) {
-									if (outputFields[j] == field) {
-										outputFieldPos = j;
-										break;
+								// if there is a field (can be null on an outer join)
+								if (field) {
+									// find the position of this field in the output fields
+									var outputFieldPos = -1;
+									for (var j in outputFields) {
+										if (outputFields[j] == field) {
+											outputFieldPos = j;
+											break;
+										}
 									}
-								}
-								// if the field couldn't be found
-								if (outputFieldPos < 0) {
-									outputFields.push(field);
-									outputFieldPos = outputFields.length - 1;
+									// if the field couldn't be found
+									if (outputFieldPos < 0) {
+										outputFields.push(field);
+										outputFieldPos = outputFields.length - 1;
+									}
 								}
 								// ensure the row is the right length as we discover more fields								
 								while (keyRow.length < outputFields.length) keyRow.push(null);
 								// set the value in the correct position
-								keyRow[outputFieldPos] = value;
-																													 
+								keyRow[outputFieldPos] = value;								
 							}
-							outputData = {fields:outputFields,rows:[]};		
-							for (var i in keyValueRows) outputData.rows.push(keyValueRows[i]);
+							// create the output data object
+							outputData = {fields:outputFields,rows:[]};
+							// loop the unique rows		
+							for (var i in keyValueRows) {
+								// get the row
+								var row = keyValueRows[i];
+								// ensure the row is the right length
+								while (row.length < outputFields.length) row.push(null);
+								// add the row
+								outputData.rows.push(row);
+							}
 						} else {
 							// transpose side to down				
 							outputData = {fields:["field","value"],rows:[]};						

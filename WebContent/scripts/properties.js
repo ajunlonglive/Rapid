@@ -3213,7 +3213,7 @@ function getKeyIndexControls(controls, key) {
 	return -1;
 }
 
-// this function ammends the dataCopies collection to have all get or set data controls depending on whether source is true or false
+// this function ammends the dataCopies collection to have all get or set data controls depending on whether input is true or false
 function getPageControlsBulkCopies(datacopyAction, input) {
 	
 	// create array if need be
@@ -3276,10 +3276,11 @@ function getPageControlsBulkCopies(datacopyAction, input) {
 				// if for source / destination
 				if (input) {
 					// set the source
-					dataCopy.source = key;
+					dataCopy.source = key;					
 					// also most likely to be a row merge
 					dataCopy.type = "row";
 				} else {
+					// set the destination
 					dataCopy.destination = key;
 				}				
 				// rememeber that we don't have this control
@@ -3294,6 +3295,10 @@ function getPageControlsBulkCopies(datacopyAction, input) {
 	for (var i in bulkCopyInserts) {
 		// get the copy to insert
 		var copy = bulkCopyInserts[i];
+		// set an added property
+		copy.added = true;
+		// assume no copy above
+		var copyAbove = null;
 		// get the key
 		var key = copy.source || copy.destination;		
 		// get the control postion
@@ -3306,14 +3311,8 @@ function getPageControlsBulkCopies(datacopyAction, input) {
 			var existingPos = getKeyIndexControls(controls, input ? dataCopies[j].source : dataCopies[j].destination);
 			// if the existing pos is after the insert control position
 			if (existingPos > controlPos) {
-				// check if source / destination
-				if (input) {
-					// if the data copy we've just moved past has a destination field, we can assume this copy will have the same destination
-					if (dataCopies[j].destinationField) copy.destination = dataCopies[j].destination;
-				} else {
-					// if the data copy we've just moved past has a source field, we can assume this copy will have the same source
-					if (dataCopies[j].sourceField) copy.source = dataCopies[j].source;
-				}
+				// set the copyAbove
+				copyAbove = dataCopies[j];				
 				// insert here
 				dataCopies.splice(j, 0, copy);
 				// retain insert
@@ -3323,7 +3322,23 @@ function getPageControlsBulkCopies(datacopyAction, input) {
 			} // found a control after this one so insert before the found one
 		} // loop dataCopies
 		// if we haven't inserted yet do so now
-		if (!inserted) dataCopies.push(copy);
+		if (!inserted) {
+			// check there is an existing data copy above and set if so
+			if (dataCopies.length > 0) copyAbove = dataCopies[dataCopies.length - 1];							
+			// insert it now
+			dataCopies.push(copy);
+		}
+		// if there was a copy above
+		if (copyAbove) {
+			// check if source / destination
+			if (input) {
+				// if the data copy we've just moved past has a destination field, we can assume this copy will have the same destination
+				if (copyAbove.destinationField || (copyAbove.destination && copyAbove.added)) copy.destination = copyAbove.destination;
+			} else {
+				// if the data copy we've just moved past has a source field, we can assume this copy will have the same source
+				if (copyAbove.sourceField || (copyAbove.source && copyAbove.added)) copy.source = copyAbove.source;
+			}
+		}		
 	} // loop inserts
 	
 }
