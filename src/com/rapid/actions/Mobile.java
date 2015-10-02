@@ -277,9 +277,9 @@ public class Mobile extends Action {
 					// mobile check 
 					js += getMobileCheck(true);
 					// get the data
-					js += "var data = " + Control.getDataJavaScript(rapidServlet.getServletContext(), application, page, navigateControlId, navigateField) + ";\n";
+					js += "  var data = " + Control.getDataJavaScript(rapidServlet.getServletContext(), application, page, navigateControlId, navigateField) + ";\n";
 					// get a position object
-					js += "var pos = getMapPosition(data, 0)\n";
+					js += "  var pos = getMapPosition(data, 0);\n";
 					// add js, replacing any dodgy inverted commas
 					js += "  _rapidmobile.navigateTo(pos.lat, pos.lng, pos.s, " + navigateMode + ");\n";
 					// close mobile check

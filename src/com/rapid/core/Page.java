@@ -961,7 +961,7 @@ public class Page {
 				if (filter != null) {
 					// only bother if not an empty string
 					if (!"".equals(filter)) {
-						eventStringBuilder.append("    " + filter.trim().replace("\n", "    \n") + "\n");
+						eventStringBuilder.append("    " + filter.trim().replace("\n", "\n    ") + "\n");
 					}
 				}
 				
