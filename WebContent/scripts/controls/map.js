@@ -103,7 +103,7 @@ var _maps = [];
 var _geocoder = null;
 
 // get the standard map position object a data object a varierty of ways, including the async geocoder
-function getMapPosition(data, rowIndex, callBack, map, details) {
+function getMapPosition(data, rowIndex, callBack, map, details, zoomMarkers) {
 	// create a basic position object
 	var pos ={s:null};
 	// check the data object
@@ -140,13 +140,13 @@ function getMapPosition(data, rowIndex, callBack, map, details) {
 				var latlng = OSGridToLatLong(pos.e, pos.n);
 				pos.lat = latlng.lat;
 				pos.lng = latlng.lng;
-			} else {
-				// create the geocoder if we don't have one already
-				if (!_geocoder) _geocoder = new google.maps.Geocoder();
+			} else {				
 				// if there is not currently a search term make it the first cell
 				if (!pos.s) pos.s = data.rows[rowIndex][0];
-				// if there is a callback
+				// if there is a callback (getting positions for navigate to won't have one so will avoid the geo-coder)
 				if (callBack) {
+					// create the geocoder if we don't have one already
+					if (!_geocoder) _geocoder = new google.maps.Geocoder();
 					// geocode the search term
 					_geocoder.geocode( {address: pos.s}, function(results, status) {
 					    if (status == google.maps.GeocoderStatus.OK) {							
@@ -156,7 +156,7 @@ function getMapPosition(data, rowIndex, callBack, map, details) {
 									var l = result.geometry.location;
 									pos.lat = l.lat();
 									pos.lng = l.lng();								
-									callBack(map, pos, details, data, rowIndex);								
+									callBack(map, pos, details, data, rowIndex, zoomMarkers);								
 								}
 							}      	
 						} 
@@ -177,7 +177,7 @@ function setMapCentre(map, pos) {
 }
 
 // add a map marker, used by both the addMapMarkers function (from the properties), and the getPosition callback
-function addMapMarker(map, pos, details, data, rowIndex) {
+function addMapMarker(map, pos, details, data, rowIndex, zoomMarkers) {
 	if (map && pos && pos.lat && pos.lng) {		
 		var markerOptions = {
 			map: map,
@@ -203,15 +203,23 @@ function addMapMarker(map, pos, details, data, rowIndex) {
 			    window[details.markerClickFunction]($.Event('markerclick'));
 			});
 		}
+		// if we have all the markers now, zoom and centre them
+		if (zoomMarkers == rowIndex*1) {
+			var bounds = new google.maps.LatLngBounds();
+			for (var i in map.markers) {
+				bounds.extend(map.markers[i].getPosition());
+			}
+			map.fitBounds(bounds);
+		}
 	}	
 }
 
 // adds markers to a map, used by add markers and replace markers
-function addMapMarkers(map, data, details) {
+function addMapMarkers(map, data, details, zoomMarkers) {
 	if (data && data.rows) {
 		for (var i in data.rows) {
-			var pos = getMapPosition(data, i, addMapMarker, map, details);
-			addMapMarker(map, pos, details, data, i);
+			var pos = getMapPosition(data, i, addMapMarker, map, details, zoomMarkers);
+			addMapMarker(map, pos, details, data, i, zoomMarkers);
 		}
 	}
 }            
