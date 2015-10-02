@@ -61,12 +61,28 @@ public class Mobile extends Action {
 	}
 	// used by designer
 	public Mobile(RapidHttpServlet rapidServlet, JSONObject jsonAction) throws Exception { 
-		super();
+		this();
 		// save all key/values from the json into the properties 
 		for (String key : JSONObject.getNames(jsonAction)) {
 			// add all json properties to our properties, except for success and error actions
 			if (!"successActions".equals(key) && !"errorActions".equals(key) && !"onlineActions".equals(key)) addProperty(key, jsonAction.get(key).toString());
 		} 
+		
+		// upload images was modified to have a number of gallery ids (rather than 1) migrate for old versions
+		String type = getProperty("actionType");
+		// if this is upload images
+		if ("uploadImages".equals(type)) {
+			// get any single gallery controlId
+			String galleryControlId = getProperty("galleryControlId");
+			// if not null
+			if (galleryControlId != null) {
+				// empty the property
+				_properties.remove("galleryControlId");
+				// move it into the galleryControlIds
+				_properties.put("galleryControlIds", "[\"" + galleryControlId + "\"]");
+			}			
+		}
+		
 		// grab any successActions
 		JSONArray jsonSuccessActions = jsonAction.optJSONArray("successActions");
 		// if we had some
@@ -228,13 +244,37 @@ public class Mobile extends Action {
 					js += "}\n";
 				}
 			} else if ("uploadImages".equals(type)) {
-				// gett he gallery control Id
-				String galleryControlId = getProperty("galleryControlId");
-				// get the gallery control
-				Control galleryControl = page.getControl(galleryControlId);
+												
+				// make a list of control ids
+				List<String> galleryControlIds = new ArrayList<String>(); 
+				
+				// get the old style gallery id
+				String galleryControlIdProperty = getProperty("galleryControlId");
+				// if we got one
+				if (galleryControlIdProperty != null) {
+					//  add to list if it contains something
+					if (galleryControlIdProperty.trim().length() > 0) galleryControlIds.add(galleryControlIdProperty);
+				}
+				
+				// get the new style gallery ids
+				String galleryControlIdsProperty = getProperty("galleryControlIds");
+				// if we got one
+				if (galleryControlIdsProperty != null) {
+					// clean it up
+					galleryControlIdsProperty = galleryControlIdsProperty.replace("\"","").replace("[", "").replace("]", "");
+					// if anything is left
+					if (galleryControlIdsProperty.length() > 0) {
+						// split and loop
+						for (String id : galleryControlIdsProperty.split(",")) {
+							// add to collection
+							galleryControlIds.add(id);
+						}
+					}
+				}
+				
 				// check if we got one
-				if (galleryControl == null) {
-					js += "  // galleryControl " + galleryControlId + " not found\n";
+				if (galleryControlIds.size() == 0) {
+					js += "  // no galleryControls specified\n";
 				} else {
 					// assume no success call back
 					String successCallback = "null";
@@ -246,19 +286,24 @@ public class Mobile extends Action {
 					if (_errorActions != null) errorCallback = "'" + getId() + "error'";
 					// start building the js
 					js += "var urls = '';\n";
-					// get any urls from the gallery
-					js += "$('#" + galleryControlId + "').find('img').each( function() { urls += $(this).attr('src') + ',' });\n";
+					// get any urls from the gallery controls
+					for (String id : galleryControlIds) {
+						js += "$('#" + id + "').find('img').each( function() { urls += $(this).attr('src') + ',' });\n";
+					}
 					// if we got any urls
 					js += "if (urls) { \n";															
 					// mobile check with alert
 					js += "  " + getMobileCheck(true).replace("\n", "\n  ");
 					// upload the images
-					js += "  _rapidmobile.uploadImages('" + galleryControlId + "', urls, " + successCallback + ", " + errorCallback + ");\n";
+					js += "  _rapidmobile.uploadImages('" + getId() + "', urls, " + successCallback + ", " + errorCallback + ");\n";
 					// close rapid mobile check 
 					js += "  }\n";
 					// close urls check and proceed straight to success call back if none
-					js += "} else {\n  " + successCallback.replace("'", "") + "(ev);\n}\n";
+					js += "}";
+					// if there is a successCallback call it now
+					if (!"null".equals(successCallback) && successCallback.length() > 0) js += " else {\n  " + successCallback.replace("'", "") + "(ev);\n}\n";
 				}
+				
 			} else if ("navigate".equals(type)) {
 				// get the naviagte source control id
 				String navigateControlId = getProperty("navigateControlId");
