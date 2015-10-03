@@ -114,6 +114,14 @@ return "<option value=''>Please select...</option>" + getControlOptions(this.gal
 	            <changeValueJavaScript>integer</changeValueJavaScript>	 
 	        </property>
 	        
+	         <property>
+	            <key>galleryControlIds</key>
+	            <name>Gallery controls</name>
+	            <visible>false</visible>
+	            <changeValueJavaScript>galleryControls</changeValueJavaScript>	            
+	            <refreshProperties>true</refreshProperties>
+	        </property>
+	        
 	        <property>
 	            <key>successActions</key>
 	            <name>Success actions</name>

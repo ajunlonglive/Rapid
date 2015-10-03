@@ -2440,6 +2440,9 @@ $(document).ready( function() {
 			        	
 			        	// fire the page resize code
 			        	windowResize("pageLoaded");
+			        	
+			        	// update the url
+			        	if (window.history) window.history.replaceState("page", _page.title, "design.jsp?a=" + _version.id + "&v=" + _version.version + "&p=" + _page.id );
 			        				        	
 		        	} catch (ex) {
 		        		

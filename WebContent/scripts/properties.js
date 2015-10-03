@@ -1243,6 +1243,106 @@ function Property_childActions(cell, propertyObject, property, details) {
 					
 }
 
+function Property_controlsForType(cell, propertyObject, property, details) {
+	
+	// check we have what we need
+	if (details && details.type) {
+		
+		// find the control class
+		var controlClass = _controlTypes[details.type];
+		
+		// check we have one
+		if (controlClass) {
+			
+			// retrieve or create the dialogue
+			var dialogue = getDialogue(cell, propertyObject, property, details, 200, controlClass.name + " controls", {sizeX: true});		
+			// grab a reference to the table
+			var table = dialogue.children().last().children().last();
+			// remove the dialogue class so it looks like the properties
+			table.parent().removeClass("dialogueTable");
+			table.parent().addClass("propertiesPanelTable");
+			// make sure its empty
+			table.children().remove();			
+			
+			// build what we show in the parent cell
+			var controls = [];
+			// get the value if it exists
+			if (propertyObject[property.key]) controls = propertyObject[property.key];	
+			// make some text
+			var text = "";
+			// loop the controls
+			for (var i = 0; i < controls.length; i++) {
+				// get the control
+				var control = getControlById(controls[i]);
+				// add the name to the cell text
+				text += control.name;
+				// add a comma if not the last one
+				if (i < controls.length - 1) text += ",";
+				
+				// add a row with the control name
+				table.append("<tr><td>" + control.name + "</td><td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td><tr>");
+				
+				
+			}
+			
+			// add listeners to the delete image
+			addListener( table.find("img.delete").click( function(ev) {
+				// get the row
+				var row = $(this).parent().parent();
+				// remove the control
+				propertyObject[property.key].splice(row.index() - 1,1);
+				// remove the row
+				row.remove();
+			}));
+			
+			// add reorder listeners
+			addReorder(controls, table.find("img.reorder"), function() { Property_controlsForType(cell, propertyObject, property, details); });
+			
+			// have an add row
+			table.append("<tr><td colspan='2'><select><option>add..</option>" + getControlOptions(null, null, details.type) + "</select></td></tr>");
+			// get a reference to the add
+			var add = table.find("select").last();
+			// add a listener
+			addListener( add.change( {cell: cell, propertyObject: propertyObject, property: property, details: details}, function(ev) {
+				// get the value
+				var value = $(ev.target).val();
+				// if there was one
+				if (value) {
+					// get the array
+					var controls = ev.data.propertyObject[ev.data.property.key];
+					// instatiate if we need to
+					if (!controls) {
+						controls = [];
+						ev.data.propertyObject[ev.data.property.key] = controls;
+					}
+					// add a blank option
+					controls.push(value);
+					// refresh
+					Property_controlsForType(ev.data.cell, ev.data.propertyObject, ev.data.property, ev.data.details);		
+				}
+			}));
+			
+			// if no text add friendly message
+			if (!text) text = "Click to add...";
+			// put the text into the cell
+			cell.text(text);
+								
+		} else {
+			
+			// put a message into the cell
+			cell.text("Control type " + details.type  + " not found");
+			
+		}
+		
+	} else {
+		
+		// put a message into the cell
+		cell.text("Control type not provided");
+		
+	}
+	
+}
+
 function Property_childActionsForType(cell, propertyObject, property, details) {
 	
 	// check we have what we need
@@ -3865,6 +3965,7 @@ function Property_mobileActionType(cell, mobileAction, property, details) {
 	setPropertyVisibilty(mobileAction, "galleryControlId", false);
 	setPropertyVisibilty(mobileAction, "imageMaxSize", false);
 	setPropertyVisibilty(mobileAction, "imageQuality", false);
+	setPropertyVisibilty(mobileAction, "galleryControlIds", false);
 	setPropertyVisibilty(mobileAction, "successActions", false);
 	setPropertyVisibilty(mobileAction, "errorActions", false);
 	setPropertyVisibilty(mobileAction, "navigateControlId", false);
@@ -3895,7 +3996,7 @@ function Property_mobileActionType(cell, mobileAction, property, details) {
 			setPropertyVisibilty(mobileAction, "imageQuality", true);
 		break;
 		case "uploadImages" :
-			setPropertyVisibilty(mobileAction, "galleryControlId", true);
+			setPropertyVisibilty(mobileAction, "galleryControlIds", true);
 			setPropertyVisibilty(mobileAction, "successActions", true);
 			setPropertyVisibilty(mobileAction, "errorActions", true);
 		break;
@@ -3925,6 +4026,30 @@ function Property_mobileActionType(cell, mobileAction, property, details) {
 		// update the property (which will update the required visibilities)
 		updateProperty(ev.data.cell, ev.data.mobileAction, ev.data.property, ev.data.details, value);	
 	}));
+}
+
+//reuse the generic childActionsForType but set the details with type = database
+function Property_galleryControls(cell, propertyObject, property, details) {
+	// get any old school single property value
+	var galleryControlId = propertyObject.galleryControlId;
+	// if there was one
+	if (galleryControlId) {
+		// get the new array kind
+		var galleryControlIds = propertyObject.galleryControlIds;
+		// if null
+		if (!galleryControlIds) {
+			// instantiate
+			galleryControlIds = [];
+			// assign
+			propertyObject.galleryControlIds = galleryControlIds;
+		}
+		// splice the old value to the top of the new property array
+		galleryControlIds.splice(0,0,galleryControlId);
+		// remove the old property
+		propertyObject.galleryControlId = null;		
+	}
+	// run the controls for type
+	Property_controlsForType(cell, propertyObject, property, {type:"gallery"});
 }
 
 // helper function for rebuilding the main control panel page select drop down
