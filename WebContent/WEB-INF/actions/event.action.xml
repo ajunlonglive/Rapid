@@ -32,7 +32,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
         <name>Event</name>	        
 	    <class>com.rapid.actions.Event</class>	
 	    
-	    <addToNewApplications>true</addToNewApplications> 
+	    <addToNewApplications>false</addToNewApplications> 
 	    	    	    	    
 	    <properties>
 	        

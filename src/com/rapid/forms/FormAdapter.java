@@ -145,7 +145,7 @@ public abstract class FormAdapter {
 	
 	// this write the form page set values routine, it is called by Page.getPageHtml just before the form is closed
 	public  void writeFormPageSetValues(RapidRequest rapidRequest, String formId, Application application, String pageId, Writer writer) throws IOException {
-		
+				
 		// get any form page values
 		FormPageControlValues formControlValues = getFormPageControlValues(rapidRequest, formId, application, pageId );
 		

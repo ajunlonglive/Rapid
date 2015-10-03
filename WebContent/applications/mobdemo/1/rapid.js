@@ -1860,6 +1860,8 @@ function setProperty_map_addMarkers(ev, id, field, details, data, changeEvents) 
 function setProperty_map_replaceMarkers(ev, id, field, details, data, changeEvents) {
   // get the map
   var map = _maps[id];
+  // redraw the map in case it was hidden (this will mean the centre hasn't been set correctly but the zoomExtents for the markers will fix this)
+  google.maps.event.trigger(map, "resize");
   // get the data object
   var data = makeDataObject(data, field);
   // if there are any current markers
@@ -1868,15 +1870,13 @@ function setProperty_map_replaceMarkers(ev, id, field, details, data, changeEven
   	for (var i in map.markers) {
   		map.markers[i].setMap(null);
   	}
-  	// empty array
-  	map.markers = [];
   } 
   // empty markers array
   map.markers = [];
   // if we got a map and data
   if (map && data && data.rows && data.rows.length > 0) {		
-  	// add the markers
-  	addMapMarkers(map, data, details);
+  	// add the markers, and zoom their extents and centre the map once all markers are resolved
+  	addMapMarkers(map, data, details, data.rows.length - 1);
   }
 }
 
