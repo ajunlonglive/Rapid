@@ -3075,7 +3075,7 @@ function isDecendant(control1, control2) {
 	if (control1 === control2) {
 		result = true;
 	} else {
-		if (control && control1.childControls) {
+		if (control1 && control2 && control1.childControls) {
 			for (var i in control1.childControls) {
 				var c = control1.childControls[i];
 				result = isDecendant(c, control2);
