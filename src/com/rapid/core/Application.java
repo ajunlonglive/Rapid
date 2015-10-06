@@ -661,6 +661,18 @@ public class Application {
 		// return it
 		return string;
 	}
+	
+	// used by the function below if no specified start page or if the specified one can't be found
+	private Page getStartPageUsingOrder(ServletContext servletContext) throws RapidLoadingException {
+		if (_pages.size() > 0) {
+			// get the id of the first page alphabetically
+			String firstPageId = _pages.getSortedPages().get(0).getId();
+			// get this page
+			return _pages.getPage(servletContext, firstPageId);
+		} else {
+			return null;
+		}
+	}
 		
 	// get the first page the users want to see (set in Rapid Admin on first save)
 	public Page getStartPage(ServletContext servletContext) throws RapidLoadingException {		
@@ -668,16 +680,13 @@ public class Application {
 		Page startPage = null;
 		// check whether we have a _startPageId set 
 		if (_startPageId == null) {
-			// check for any pages
-			if (_pages.size() > 0) {
-				// get the id of the first page alphabetically
-				String firstPageId = _pages.getSortedPages().get(0).getId();
-				// get this page
-				startPage = _pages.getPage(servletContext, firstPageId);
-			}
+			// get the first page by order
+			startPage = getStartPageUsingOrder(servletContext);
 		} else {
 			// get the start page from the id
 			startPage = _pages.getPage(servletContext, _startPageId);
+			// if it's null the start page has probably been deleted without updating the application object
+			if (startPage == null) startPage = getStartPageUsingOrder(servletContext);
 		}
 		// return
 		return startPage;

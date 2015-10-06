@@ -1336,8 +1336,8 @@ public class Page {
 				// start the body		
 		    	writer.write("  <body id='" + _id + "' style='visibility:hidden;'>\n");
 		    			    			    	
-		    	// start the form if in use		
-		    	if (formAdapter != null) {
+		    	// start the form if in use (but not for dialogues and other cases where the)		
+		    	if (formAdapter != null && !designerLink) {
 		    		writer.write("    <form action='~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + _id + "' method='POST'>\n");
 		    	}
 		    	
