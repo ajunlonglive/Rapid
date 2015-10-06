@@ -450,7 +450,7 @@ function getFloatHeight(control, parentLevel) {
 		if (index == 0) height += getFloatHeight(control._parent,parentLevel);
 		var floatLeftHeight = 0;
 		var floatRightHeight = 0;
-		if (index > 0) {						
+		if (index > 0 && control._parent.childControls && index <  control._parent.childControls.length) {						
 			var o = control._parent.childControls[index-1].object;
 			// check for a left float the same amount left as the parent
 			if (o.css("float") == "left") {
