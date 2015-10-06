@@ -85,8 +85,12 @@ public class RapidFormAdapter extends FormAdapter {
 		String formId = formIds.get(application.getId() + "-" + application.getVersion());
 		// if it's null
 		if (formId == null) {
+			// get the start page id
+			String startPageId = application.getStartPageId();
+			// get the request page id
+			String requestPageId = rapidRequest.getPage().getId();
 			// there are some rules for creating new form ids - there must be no action and the page must be the start page
-			if (rapidRequest.getRequest().getParameter("action") == null && application.getStartPageId().equals(rapidRequest.getPage().getId())) {
+			if (rapidRequest.getRequest().getParameter("action") == null && (startPageId.equals(requestPageId) || !application.getPages().getPageIds().contains(startPageId))) {
 				// get the servlet context
 				ServletContext servletContext = rapidRequest.getRapidServlet().getServletContext();
 				// the maste form id as a string

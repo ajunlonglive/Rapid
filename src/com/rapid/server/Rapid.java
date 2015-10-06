@@ -176,7 +176,7 @@ public class Rapid extends RapidHttpServlet {
 						// get the form adapter (if there is one)
 						FormAdapter formAdapter = app.getFormAdapter();
 						
-						// if there is a formAdapter, make sure there's a form id
+						// if there is a formAdapter, make sure there's a form id, unless it's for a dialogue
 						if (formAdapter != null) {
 							// get form id
 							String formId = formAdapter.getFormId(rapidRequest, app);
@@ -184,23 +184,26 @@ public class Rapid extends RapidHttpServlet {
 							if (formId == null) {
 								pageCheck = false;							
 							} else {
-								// get all of the pages
-								PageHeaders pageHeaders = app.getPages().getSortedPages();
-								// get this page position
-								int pageIndex = pageHeaders.indexOf(page.getId());
-								// check the page visibility
-								while (!page.isVisible(rapidRequest, formId, app)) {
-									// if we're here the visibility check on the current page failed so increment the index
-									pageIndex ++;
-									// if there are no more pages go to the summary
-									if (pageIndex > pageHeaders.size() - 1) {
-										pageCheck = false;
-										showSummary = true;
-										break;
-									} else {
-										// select the next page to check the visibility of
-										page = app.getPages().getPage(getServletContext(), pageHeaders.get(pageIndex).getId());
-									}									
+								// only if this is not a dialogue
+								if (!"dialogue".equals(rapidRequest.getActionName())) {
+									// get all of the pages
+									PageHeaders pageHeaders = app.getPages().getSortedPages();
+									// get this page position
+									int pageIndex = pageHeaders.indexOf(page.getId());
+									// check the page visibility
+									while (!page.isVisible(rapidRequest, formId, app)) {
+										// if we're here the visibility check on the current page failed so increment the index
+										pageIndex ++;
+										// if there are no more pages go to the summary
+										if (pageIndex > pageHeaders.size() - 1) {
+											pageCheck = false;
+											showSummary = true;
+											break;
+										} else {
+											// select the next page to check the visibility of
+											page = app.getPages().getPage(getServletContext(), pageHeaders.get(pageIndex).getId());
+										}									
+									}
 								}
 							}
 						}
