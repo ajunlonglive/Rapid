@@ -753,7 +753,7 @@ function showStyles(control) {
 		// check there are styles
 		if (controlClass.styles && controlClass.styles.style) {				
 			// add a heading and table
-			_stylesPanelDiv.append("<h2 style='margin-top:5px'>Styles  <img id='helpStyles' class='headerHelp' src='images/help_16x16.png' /><img class='headerToggle' src='images/triangleUp_8x8.png' /></h2><div></div>");
+			_stylesPanelDiv.append("<h2 id='stylesHeader' style='margin-top:5px;'>Styles  <img id='helpStyles' class='headerHelp' src='images/help_16x16.png' /><img class='headerToggle' src='images/triangle" + (_stylesHidden ? "Down" : "Up") + "_8x8.png' /></h2><div" + (_stylesHidden ? " style='display:none;'" : "") + "></div>");
 			// add the help hint
 			addHelp("helpStyles",true);
 			// add the header toggle hint
@@ -824,7 +824,7 @@ function showStyles(control) {
 			}
 			
 			// add a heading and table
-			_stylesPanelDiv.append("<h2 style='margin-top:5px'>Style classes  <img id='helpStyleClasses' class='headerHelp' src='images/help_16x16.png' /><img class='headerToggle' src='images/triangleUp_8x8.png' /></h2><div></div>");
+			_stylesPanelDiv.append("<h2  id='styleClasssesHeader' style='margin-top:5px;'>Style classes  <img id='helpStyleClasses' class='headerHelp' src='images/help_16x16.png' /><img class='headerToggle' src='images/triangle" + (_stylesHidden ? "Down" : "Up") + "_8x8.png' /></h2><div" + (_styleClassesHidden ? " style='display:none;'" : "") + "></div>");
 			// add the help hint
 			addHelp("helpStyleClasses",true);
 			// add the header toggle
