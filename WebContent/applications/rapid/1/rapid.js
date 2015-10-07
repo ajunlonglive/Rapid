@@ -1926,9 +1926,10 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 				saveVersion: $("#rapid_P0_C1077_").val(),
 				title: $("#rapid_P0_C394_").val(),
 				description: $("#rapid_P0_C393_").val(),
+				formAdapter: $("#rapid_P0_C1406_").val(),
+				startPageId: $("#rapid_P0_C644_").val(),
 				showControlIds: $("#rapid_P0_C381_").prop("checked"),
-				showActionIds: $("#rapid_P0_C382_").prop("checked"),
-				startPageId: $("#rapid_P0_C644_").val()
+				showActionIds: $("#rapid_P0_C382_").prop("checked")				
 			};	
 		break;
 		case "SAVESTYLES" :		

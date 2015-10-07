@@ -1134,10 +1134,11 @@ public class Rapid extends Action {
 				String name = jsonAction.getString("name");
 				String title = jsonAction.getString("title");
 				String description = jsonAction.getString("description");
+				String formAdapter = jsonAction.optString("formAdapter");
+				String startPageId = jsonAction.optString("startPageId","");				
 				boolean showControlIds = jsonAction.optBoolean("showControlIds");
 				boolean showActionIds = jsonAction.optBoolean("showActionIds");
-				String startPageId = jsonAction.optString("startPageId","");
-				
+								
 				// assume we do not need to update the applications drop down
 				boolean appUpdated = false;				
 				
@@ -1154,10 +1155,11 @@ public class Rapid extends Action {
 				app.setStatus(status);
 				app.setTitle(title);
 				app.setDescription(description);
+				app.setFormAdapterType(formAdapter);
+				app.setStartPageId(startPageId);
 				app.setShowControlIds(showControlIds);
 				app.setShowActionIds(showActionIds);
-				app.setStartPageId(startPageId);
-				
+								
 				// save
 				app.save(rapidServlet, rapidRequest, true); 
 											

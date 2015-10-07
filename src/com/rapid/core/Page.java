@@ -242,11 +242,11 @@ public class Page {
 	}
 		
 	// these two methods have different names to avoid being marshelled to the .xml file by JAXB
-	public String getHtmlHeadCached(RapidHttpServlet rapidServlet, Application application) throws JSONException {
+	public String getHtmlHeadCached(RapidHttpServlet rapidServlet, Application application, boolean isDialogue) throws JSONException {
 		// check whether the page has been cached yet
 		if (_cachedStartHtml == null) {
 			// generate the page start html if not
-			_cachedStartHtml = getHtmlHead(rapidServlet, application);																		
+			_cachedStartHtml = getHtmlHead(rapidServlet, application, isDialogue);																		
 		}	
 		// return the regular
 		return _cachedStartHtml;					
@@ -1060,7 +1060,7 @@ public class Page {
     }
 	
     // this private method produces the head of the page which is often cached, if resourcesOnly is true only page resources are included which is used when sending no permission
-	private String getHtmlHead(RapidHttpServlet rapidServlet, Application application) throws JSONException {
+	private String getHtmlHead(RapidHttpServlet rapidServlet, Application application, boolean isDialogue) throws JSONException {
     	
     	StringBuilder stringBuilder = new StringBuilder(getHtmlHeadStart(application));
     	    															
@@ -1074,37 +1074,39 @@ public class Page {
 		stringBuilder.append("var _pageId = '" + _id + "';\n");						
 		stringBuilder.append("var _mobileResume = false;\n\n");
 		stringBuilder.append("    </script>\n");
-				
-		// open style blocks			
-		stringBuilder.append("    <style>\n");
-		
+								
 		// fetch all page control styles
 		String pageCss = getAllCSS(rapidServlet.getServletContext(), application);
 		
-		// if live we're going to try and minify
-		if (application.getStatus() == Application.STATUS_LIVE) {				
-			try {
-				// get string to itself minified
-				pageCss = Minify.toString(pageCss, Minify.CSS); 
-			} catch (IOException ex) {			
-				// add error and resort to unminified
-				pageCss = "\n/*\n\n Failed to minify the css : " + ex.getMessage() + "\n\n*/\n\n" + pageCss;
-			}				
-		} else {
-			// prefix with minify message
-			pageCss = "\n/* The code below is minified for live applications */\n\n" + pageCss;
+		// only if there is some
+		if (pageCss.length() > 0) {
+			
+			// open style blocks			
+			stringBuilder.append("    <style>\n");
+			
+			// if live we're going to try and minify
+			if (application.getStatus() == Application.STATUS_LIVE) {				
+				try {
+					// get string to itself minified
+					pageCss = Minify.toString(pageCss, Minify.CSS); 
+				} catch (IOException ex) {			
+					// add error and resort to unminified
+					pageCss = "\n/*\n\n Failed to minify the css : " + ex.getMessage() + "\n\n*/\n\n" + pageCss;
+				}				
+			} else {
+				// prefix with minify message
+				pageCss = "\n/* The code below is minified for live applications */\n\n" + pageCss;
+				
+			}
+			// add it to the page
+			stringBuilder.append(pageCss);
+			// close the style block
+			stringBuilder.append("    </style>\n");
 			
 		}
-		// add it to the page
-		stringBuilder.append(pageCss);
-		// close the style block
-		stringBuilder.append("    </style>\n");
-											
-		// if we have requested more than just the resources so start building the inline js for the page				
-		stringBuilder.append("    <script type='text/javascript'>\n");
-								
+																						
 		// make a new string builder just for the js (so we can minify it independently)
-		StringBuilder jsStringBuilder = new StringBuilder("/* The code below is minified for live applications */\n\n"); 
+		StringBuilder jsStringBuilder = new StringBuilder(); 
 		
 		// get all controls
 		List<Control> pageControls = getAllControls();
@@ -1121,7 +1123,8 @@ public class Page {
 					jsStringBuilder.append("var " + control.getId() + "details = " + details + ";\n");
 				}
 			}
-			jsStringBuilder.append("\n");
+			// add a line break again if we printed anything
+			if (jsStringBuilder.length() > 0) jsStringBuilder.append("\n");
 		}
 				
 		// initialise our pageload lines collections
@@ -1164,24 +1167,29 @@ public class Page {
 			}
 		}  
 		
-		// open the page loaded function
-		jsStringBuilder.append("$(document).ready( function() {\n");
-		
-		// add a try
-		jsStringBuilder.append("  try {\n");
-		
-		// print any page load lines such as initialising controls
-		for (String line : _pageloadLines) jsStringBuilder.append("    " + line);
-														
-		// close the try
-		jsStringBuilder.append("  } catch(ex) { $('body').html(ex); }\n");
-		
-		// after 200 milliseconds show and trigger a window resize for any controls that might be listening (this also cuts out any flicker), we also call focus on the elements we marked for focus while invisible (in extras.js)
-		jsStringBuilder.append("  window.setTimeout( function() {\n    $(window).resize();\n    $('body').css('visibility','visible');\n    $('[data-focus]').focus();\n  }, 200);\n");
-								
-		// end of page loaded function
-		jsStringBuilder.append("});\n\n");
-						
+		// if this is not a dialogue or there are any load lines
+		if (!isDialogue || _pageloadLines.size() > 0) {
+			
+			// open the page loaded function
+			jsStringBuilder.append("$(document).ready( function() {\n");
+			
+			// add a try
+			jsStringBuilder.append("  try {\n");
+			
+			// print any page load lines such as initialising controls
+			for (String line : _pageloadLines) jsStringBuilder.append("    " + line);
+															
+			// close the try
+			jsStringBuilder.append("  } catch(ex) { $('body').html(ex); }\n");
+			
+			// after 200 milliseconds show and trigger a window resize for any controls that might be listening (this also cuts out any flicker), we also call focus on the elements we marked for focus while invisible (in extras.js)
+			jsStringBuilder.append("  window.setTimeout( function() {\n    $(window).resize();\n    $('body').css('visibility','visible');\n    $('[data-focus]').focus();\n  }, 200);\n");
+									
+			// end of page loaded function
+			jsStringBuilder.append("});\n\n");
+			
+		}
+										
 		// find any redundant actions anywhere in the page, prior to generating JavaScript
 		List<Action> pageActions = getAllActions();
 		
@@ -1219,25 +1227,32 @@ public class Page {
 			getEventHandlersJavaScript(rapidServlet, jsStringBuilder, application, _controls);
 		}
 		
-		// check the application status
-		if (application.getStatus() == Application.STATUS_LIVE) {			
-			try {
-				// minify the js before adding
-				stringBuilder.append(Minify.toString(jsStringBuilder.toString(),Minify.JAVASCRIPT));
-			} catch (IOException ex) {
-				// add the error
-				stringBuilder.append("\n\n/* Failed to minify JavaScript : " + ex.getMessage() + " */\n\n");
+		// if there was any js
+		if (jsStringBuilder.length() > 0) {
+			
+			// if we have requested more than just the resources so start building the inline js for the page				
+			stringBuilder.append("    <script type='text/javascript'>\n");
+			
+			// check the application status
+			if (application.getStatus() == Application.STATUS_LIVE) {			
+				try {
+					// minify the js before adding
+					stringBuilder.append(Minify.toString(jsStringBuilder.toString(),Minify.JAVASCRIPT));
+				} catch (IOException ex) {
+					// add the error
+					stringBuilder.append("\n\n/* Failed to minify JavaScript : " + ex.getMessage() + " */\n\n");
+					// add the js as is
+					stringBuilder.append(jsStringBuilder);
+				}
+			} else {
 				// add the js as is
-				stringBuilder.append(jsStringBuilder);
+				stringBuilder.append("/* The code below is minified for live applications */\n\n\n" + jsStringBuilder.toString().trim() + "\n\n");
 			}
-		} else {
-			// add the js as is
-			stringBuilder.append("\n" + jsStringBuilder.toString().trim() + "\n\n");
+																		
+			// close the page inline script block
+			stringBuilder.append("  </script>\n");
 		}
-																	
-		// close the page inline script block
-		stringBuilder.append("  </script>\n");
-					
+							
 		// get it into a string and insert any parameters
 		String htmlHead = application.insertParameters(rapidServlet.getServletContext(), stringBuilder.toString());
 					
@@ -1321,14 +1336,14 @@ public class Page {
 		    	// check whether or not we rebuild
 		    	if (rebuildPages) {
 		    		// get fresh head html
-		    		writer.write(getHtmlHead(rapidServlet, application));
+		    		writer.write(getHtmlHead(rapidServlet, application, !designerLink));
 		    	} else {
 		    		// get the cached head html
-		    		writer.write(getHtmlHeadCached(rapidServlet, application));
+		    		writer.write(getHtmlHeadCached(rapidServlet, application, !designerLink));
 		    	}
 		    	
-		    	// write the username
-		    	writer.write("  <script type='text/javascript'> var _userName = '" + user.getName().replace("'", "\'") + "'; </script>\n");
+		    	// write the username if not dialogue
+		    	if (designerLink) writer.write("  <script type='text/javascript'> var _userName = '" + user.getName().replace("'", "\'") + "'; </script>\n");
 		    			    	
 		    	// close the head
 		    	writer.write("  </head>\n");
@@ -1337,7 +1352,7 @@ public class Page {
 		    	writer.write("  <body id='" + _id + "' style='visibility:hidden;'>\n");
 		    			    			    	
 		    	// start the form if in use (but not for dialogues and other cases where the)		
-		    	if (formAdapter != null && !designerLink) {
+		    	if (formAdapter != null && designerLink) {
 		    		writer.write("    <form action='~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + _id + "' method='POST'>\n");
 		    	}
 		    	
@@ -1419,7 +1434,8 @@ public class Page {
 					
 				} // got body html check
 								
-				if (formAdapter != null) {
+				// close the form
+				if (formAdapter != null && designerLink) {
 					// get the form id
 					String formId = formAdapter.getFormId(rapidRequest, application);
 					// write the form id into the page
