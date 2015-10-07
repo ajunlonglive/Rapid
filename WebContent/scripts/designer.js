@@ -2408,12 +2408,7 @@ $(document).ready( function() {
 								} // in-page style check
 							} // style sheets loop
 						} // style sheets check
-			        	
-			        	// the page style rules seem to be overridden (especially page backgrounds) for now this is the best way to get them back
-			        	selectControl(_page);
-			        	rebuildStyles();
-			        	selectControl(null);
-			        	
+			        				        	
 			        	// show the page object
 			        	_page.object.show();	
 			        	
@@ -2454,7 +2449,7 @@ $(document).ready( function() {
 			        	windowResize("pageLoaded");
 			        	
 			        	// update the url
-			        	if (window.history) window.history.replaceState("page", _page.title, "design.jsp?a=" + _version.id + "&v=" + _version.version + "&p=" + _page.id );
+			        	if (window.history && window.history.replaceState) window.history.replaceState("page", _page.title, "design.jsp?a=" + _version.id + "&v=" + _version.version + "&p=" + _page.id );
 			        				        	
 		        	} catch (ex) {
 		        		

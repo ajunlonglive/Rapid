@@ -1532,6 +1532,8 @@ public class Rapid extends Action {
 																		
 				// set the result message
 				result.put("message", "Application " + app.getTitle() + " duplicated");
+				result.put("id", dupApp.getId());
+				result.put("version", dupApp.getVersion());
 				
 			} else if ("NEWVERSION".equals(action)) {
 				
@@ -1551,6 +1553,11 @@ public class Rapid extends Action {
 				result.put("appId", newApp.getId());
 				
 				// set the result version
+				result.put("version", newApp.getVersion());
+				
+				// set the result message
+				result.put("message", "Application " + app.getTitle() + " duplicated");
+				result.put("id", newApp.getId());
 				result.put("version", newApp.getVersion());
 				
 			} else if ("DELVERSION".equals(action)) {
