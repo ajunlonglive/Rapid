@@ -520,7 +520,7 @@ public class Application {
 	
 	// the page orders if they are overridden
 	public Map<String,Integer> getPageOrders() { return _pageOrders; }
-	public void setPageOrders(Map<String,Integer> pageOrders) { _pageOrders = pageOrders; }
+	public void setPageOrders(Map<String,Integer> pageOrders) { _pageOrders = pageOrders; _pages.clearCachedOrder(); }
 		
 	// whether control ids should be shown when designing this app
 	public boolean getShowControlIds() { return _showConrolIds; }
