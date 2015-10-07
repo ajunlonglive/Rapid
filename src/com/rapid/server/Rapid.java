@@ -347,65 +347,70 @@ public class Rapid extends RapidHttpServlet {
 					// assume we weren't passed any json				
 					JSONObject jsonData = getJSONObject(bodyBytes);
 																	
-					// if we got some data, look for a test = true entry
+					// if we got some data, look for a test = true entry - this is sent from Rapid Mobile
 					if (jsonData != null) forTesting = jsonData.optBoolean("test");
 											
 					// loop the apps
 					for (Application app : apps) {
-									
-						// get the relevant security adapter
-						SecurityAdapter security = app.getSecurityAdapter();
 						
-						// fail silently if there was an issue
-						try {
+						// if Rapid app must not be for testing / from Rapid Mobile
+						if (!"rapid".equals(app.getId()) || !forTesting) {
 							
-							// make a rapidRequest for this application
-							RapidRequest getAppsRequest = new RapidRequest(this, request, app);
-													
-							// check the user password
-							if (security.checkUserPassword(getAppsRequest, rapidRequest.getUserName(), rapidRequest.getUserPassword())) {
+							// get the relevant security adapter
+							SecurityAdapter security = app.getSecurityAdapter();
+							
+							// fail silently if there was an issue
+							try {
 								
-								// create a json object for the details of this application
-								JSONObject jsonApp = new JSONObject();
-								// add details
-								jsonApp.put("id", app.getId());
-								jsonApp.put("version", app.getVersion());
-								jsonApp.put("title", app.getTitle());								
-								// add app to our main array
-								jsonApps.put(jsonApp);
-								
-								// check if we are testing
-								if (forTesting) {
+								// make a rapidRequest for this application
+								RapidRequest getAppsRequest = new RapidRequest(this, request, app);
+														
+								// check the user password
+								if (security.checkUserPassword(getAppsRequest, rapidRequest.getUserName(), rapidRequest.getUserPassword())) {
 									
-									// if the user has Rapid Design for this application, (or Rpaid Super if this is the rapid app)
-									if (security.checkUserRole(rapidRequest, Rapid.DESIGN_ROLE) && (!app.getId().equals("rapid") || security.checkUserRole(rapidRequest, Rapid.SUPER_ROLE))) {
+									// create a json object for the details of this application
+									JSONObject jsonApp = new JSONObject();
+									// add details
+									jsonApp.put("id", app.getId());
+									jsonApp.put("version", app.getVersion());
+									jsonApp.put("title", app.getTitle());								
+									// add app to our main array
+									jsonApps.put(jsonApp);
+									
+									// check if we are testing
+									if (forTesting) {
 										
-										// loop the versions
-										for (Application version :	getApplications().getVersions(app.getId()).sort()) {
+										// if the user has Rapid Design for this application, (or Rpaid Super if this is the rapid app)
+										if (security.checkUserRole(rapidRequest, Rapid.DESIGN_ROLE) && (!app.getId().equals("rapid") || security.checkUserRole(rapidRequest, Rapid.SUPER_ROLE))) {
 											
-											// create a json object for the details of this version
-											jsonApp = new JSONObject();
-											// add details
-											jsonApp.put("id", version.getId());
-											jsonApp.put("version", version.getVersion());
-											jsonApp.put("status", version.getStatus());										
-											jsonApp.put("title", version.getTitle());
-											jsonApp.put("test", true);
-											// add app to our main array
-											jsonApps.put(jsonApp);
-										}
-										
-									} // got design role
-																		
-								} // forTesting check
+											// loop the versions
+											for (Application version :	getApplications().getVersions(app.getId()).sort()) {
+												
+												// create a json object for the details of this version
+												jsonApp = new JSONObject();
+												// add details
+												jsonApp.put("id", version.getId());
+												jsonApp.put("version", version.getVersion());
+												jsonApp.put("status", version.getStatus());										
+												jsonApp.put("title", version.getTitle());
+												jsonApp.put("test", true);
+												// add app to our main array
+												jsonApps.put(jsonApp);
+											}
+											
+										} // got design role
+																			
+									} // forTesting check
+									
+								} // user check
 								
-							} // user check
+							} catch (Exception ex) {
+								// only log
+								logger.error("Error geting apps : ", ex);
+							}
 							
-						} catch (Exception ex) {
-							// only log
-							logger.error("Error geting apps : ", ex);
-						}
-																									
+						} // rapid app and not for testing check
+																																								
 					} // apps loop
 					
 				} // apps check

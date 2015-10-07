@@ -2654,13 +2654,13 @@ $(document).ready( function() {
 		        	// show error
 		        	$("#rapid_P11_C7_").html(error);
 		        	// enable close button
-		        	$("#rapid_P11_C10_").enable();
+		        	$("#rapid_P11_C10_").enable().focus();
 		        },
 		        success: function(controls) {
 		        	// show message
 		        	$("#rapid_P11_C7_").html("Page saved!");
 		        	// enable close button
-		        	$("#rapid_P11_C10_").enable();
+		        	$("#rapid_P11_C10_").enable().focus();
 		        	// set dirty to false
 		        	_dirty = false;
 		        	// reload the pages as the order may have changed, but keep the current one selected
@@ -3032,6 +3032,26 @@ $(document).ready( function() {
 	
 	// properties header toggle
 	$("#propertiesHeader").click( toggleHeader );
+	
+	// keyboard short-cuts
+	$(window).on('keydown', function(ev) {
+	    if (event.ctrlKey || event.metaKey) {
+	        switch (String.fromCharCode(ev.which).toLowerCase()) {
+	        case 's':
+	            ev.preventDefault();
+	            $("#pageSave").click();
+	            break;
+	        case 'c':
+	            ev.preventDefault();
+	            if (_selectedControl) $("#copy").click();
+	            break;
+	        case 'v':
+	            ev.preventDefault();
+	            if (_copyControl) $("#paste").click();
+	            break;
+	        }
+	    }
+	});
 							
 });
 
