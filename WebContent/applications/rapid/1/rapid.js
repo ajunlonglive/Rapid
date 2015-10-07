@@ -2044,7 +2044,10 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 				description: $("#rapid_P8_C17_").val()
 			}
 			callback = function(response) {
-				location.reload();
+				var url = "~?a=rapid&p=P0";
+				if (response.id) url += "&appId=" + response.id;
+				if (response.version) url += "&version=" + response.version;
+				window.location = url;
 			}; 			
 		break;				
 		case "NEWVERSION" :		
