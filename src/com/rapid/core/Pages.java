@@ -114,15 +114,17 @@ public class Pages {
 		public int compare(PageHeader page1, PageHeader page2) {
 			Map<String,Integer> pageOrders = _application.getPageOrders();			
 			if (pageOrders != null) {
+				String id1 = page1.getId();
+				String id2 = page2.getId();
 				int o1 = -1;			
 				int o2 = -1;
-				if (pageOrders.get(page1.getId()) != null) o1 = pageOrders.get(page1.getId());
-				if (pageOrders.get(page2.getId()) != null) o2 = pageOrders.get(page2.getId());
-				if (o1 > 0 && o2 > 0) {
+				if (pageOrders.get(id1) != null) o1 = pageOrders.get(id1);
+				if (pageOrders.get(id2) != null) o2 = pageOrders.get(id2);
+				if (o1 >= 0 && o2 >= 0) {
 					return o1 - o2;
-				} else if (o1 == -1 && o2 > 0) {
+				} else if (o1 == -1 && o2 >= 0) {
 					return 1;
-				} else if (o2 == -1 && o1 > 0) {
+				} else if (o2 == -1 && o1 >= 0) {
 					return -1;
 				} 
 			}			
@@ -319,6 +321,11 @@ public class Pages {
 		// return the pages
 		return sortedPageHeaders; 
 	}	
+	
+	// clear the cached page order (used when updating the page orders saved in the application.xml file )
+	public void clearCachedOrder() {
+		_sortedPageHeaders = null;
+	}
 
 	// clears the pages and reloads the page headers
 	public void loadpages(ServletContext servletContext) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {
@@ -371,7 +378,7 @@ public class Pages {
 		}
 		
 	}
-	
+			
 	// removes old pages from the collection
 	public void clearOldPages(Date now, int maxPageAge) {
 		// list of pages to clear
