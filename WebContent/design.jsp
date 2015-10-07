@@ -123,12 +123,12 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 		<div id="controlPanel" style="z-index:10011">
 		
 			<div id="controlPanelSize" ></div>
-			
-			<div id="controlPanelPin"><img src="images/pinned_14x14.png" title="unpin" /></div>
-			
+															
 			<div id="controlPanelInner">
-										
-				<div class="buttons">
+			
+				<div id="controlPanelPin"><img src="images/pinned_14x14.png" title="unpin" /></div>
+																
+				<div class="buttons">					
 					<button id="appAdmin" class="buttonLeft buttonRight" title="Load the Rapid Admin screen">Rapid Admin...</button>
 				</div>
 				
@@ -200,12 +200,13 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 		<div id="propertiesPanel" style="z-index:10011">
 		
 			<div id="propertiesPanelSize" ></div>
-			
-			<div id="propertiesPanelPin"><img src="images/pinned_14x14.png" title="hide" /></div>										
+																					
 			<div id="propertiesPanelInner">
 			
+				<div id="propertiesPanelPin"><img src="images/pinned_14x14.png" title="hide" /></div>
+										
 				<div class="untilsPanelDiv">
-											
+							
 					<img id="helpPropertiesPanel" class="headerHelp" src="images/help_16x16.png" />
 					<div class="buttons">					
 						<button id="selectPeerLeft" class="buttonLeft"><img src="images/moveLeft_16x16.png" title="Select the control before this one"/></button>

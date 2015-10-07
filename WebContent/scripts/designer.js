@@ -118,6 +118,10 @@ var _selectionInsertCover;
 var _panelPinned = true;
 // panel offset if pinned (includes padding and border)
 var _panelPinnedOffset = 221;
+// whether styles are hidden
+var _stylesHidden = false;
+// whether style classes are hidden
+var _styleClassesHidden = false;
 
 // scroll bar width
 var _scrollBarWidth = 0;
@@ -1491,7 +1495,7 @@ function loadVersion(forceLoad) {
     				});	
     							
     				// hide the panel if not pinned
-    				if (!_panelPinned) $("#controlPanel").hide("slide", {direction: "left"}, 200);
+    				if (!_panelPinned) hideControlPanel();
     				
     				// hide the properties
     				hidePropertiesPanel();
@@ -2143,9 +2147,17 @@ function toggleHeader(ev) {
 	var contents = header.next();
 	contents.slideToggle( 500, function() {
 		if (contents.is(":visible")) {
-			header.children("img.headerToggle").attr("src","images/triangleUp_8x8.png");				
+			header.children("img.headerToggle").attr("src","images/triangleUp_8x8.png");						
 		} else {
 			header.children("img.headerToggle").attr("src","images/triangleDown_8x8.png");
+		}
+		switch (header.attr("id")) {
+		case "stylesHeader" :
+			_stylesHidden = !contents.is(":visible");
+			break;
+		case "styleClasssesHeader":
+			_styleClassesHidden = !contents.is(":visible");
+			break;
 		}
 		windowResize("toggleHeader");
 	});		
@@ -2530,10 +2542,8 @@ $(document).ready( function() {
 			arrangeNonVisibleControls();	
 			// reselect control
 			selectControl(_selectedControl);
-			$("#controlPanel").hide("slide", {direction: "left"}, 200, function() {
-				// resize the window
-				windowResize("pin");		
-			});
+			// hide control panel
+			hideControlPanel();
 		} else {
 			_panelPinned = true;
 			_panelPinnedOffset = $("#controlPanel").width() + 21; // add the padding and border
@@ -2552,7 +2562,10 @@ $(document).ready( function() {
 		// show the panel if we're not moving a control
 		if (!_movingControl) {
 			// show the panel
-			$("#controlPanel").show("slide", {direction: "left"}, 200);			
+			$("#controlPanel").stop(true, true).show("slide", {direction: "left"}, 200, function() {
+				// show the inner when the animation has finished
+				$("#controlPanelInner").show();
+			});			
 		}
 	});
 	
@@ -2561,10 +2574,7 @@ $(document).ready( function() {
 		// if the panel isn't pinned and this not the selected control
 		if (!_panelPinned && !$(ev.target).is("select")) {
 			// slide the control panel back in
-			$("#controlPanel").hide("slide", {direction: "left"}, 200, function() {
-				// set the panel pin offset
-				_panelPinnedOffset = 0;
-			});			
+			hideControlPanel(true);	
 		}
 	});
 
@@ -3036,7 +3046,7 @@ function coverMouseDown(ev) {
 	// remember that the mouse is down
 	_mouseDown = true;
 	// hide the control panel (sometimes it's mouseout isn't hit)
-	if (!_panelPinned) $("#controlPanel").hide("slide", {direction: "left"}, 200);
+	if (!_panelPinned) hideControlPanel();
 	// if there is a selected control with unapplied styles, apply now before wiping everything out
 	if (_selectedControl && !_stylesApplied) applyStyles();
 	// get the control under the mouse X/Y
@@ -3503,6 +3513,20 @@ function showPropertiesPanel() {
 					
 }
 
+function hideControlPanel(resetOffset) {
+	// slide the control panel
+	$("#controlPanel").stop(true, true).hide("slide", {direction: "left"}, 200, function() {
+		// hide the inner
+		$("#controlPanelInner").hide();
+		// set the panel pin offset
+		if (resetOffset) _panelPinnedOffset = 0;
+		// resize the window
+		windowResize("pin");		
+	});
+	// hide the inner
+	$("#controlPanelInner").hide();
+}
+
 function hidePropertiesPanel() {
 	
 	// hide the inner
@@ -3713,9 +3737,13 @@ function windowResize(ev) {
 			"position":"fixed",
 			"width": $("#controlPanel").width()
 			});
+		// reset pin
+		$("#controlPanelPin").css({"top":"0", "right":"0"});
 	} else {
 		// set it to the default, static, so it scrolls
 		cinner.css("position","static");
+		// adjust pin
+		$("#controlPanelPin").css({"top":controlPanel.css("padding-top"), "right":controlPanel.css("padding-right")});
 	}
 	
 	// get the properties inner
@@ -3727,9 +3755,13 @@ function windowResize(ev) {
 			"position":"fixed",
 			"width": $("#propertiesPanel").width()
 			});
+		// reset pin
+		$("#propertiesPanelPin").css({"top":controlPanel.css("padding-top"), "left":"0"});
 	} else {
 		// set it to the default, static, so it scrolls
 		pinner.css("position","static");
+		// adjust pin - note that the height is matched to the padding on the control panel as properties has no padding top and we want pins on the same level
+		$("#propertiesPanelPin").css({"top":controlPanel.css("padding-top"), "left":propertiesPanel.css("padding-left")});
 	}
 	
 	// resize / reposition the selection

@@ -229,6 +229,11 @@ public class Pages {
 		_sortedPageHeaders = null;
 	}
 	
+	// clear the cached page order (used when updating the page orders saved in the application.xml file )
+	public void clearCachedOrder() {
+		_sortedPageHeaders = null;
+	}
+	
 	// the number of pages
 	public int size() {
 		return _pageHeaders.size();
@@ -321,12 +326,7 @@ public class Pages {
 		// return the pages
 		return sortedPageHeaders; 
 	}	
-	
-	// clear the cached page order (used when updating the page orders saved in the application.xml file )
-	public void clearCachedOrder() {
-		_sortedPageHeaders = null;
-	}
-
+		
 	// clears the pages and reloads the page headers
 	public void loadpages(ServletContext servletContext) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {
 		

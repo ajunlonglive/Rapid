@@ -4,6 +4,11 @@ body {
 	padding: 0px;
 	margin: 0px;	
 	background-color: #ccc;
+	-webkit-user-drag: none;
+	-khtml-user-drag: none;
+	-moz-user-drag: -moz-none;
+	-ms-user-drag: none;
+	user-drag: none;
 }
 
 optgroup {
@@ -71,11 +76,12 @@ hr {
 
 #controlPanelPin {
 	position: absolute;
-	right: 7px;
-	top: 7px;
+	right: 0;
+	top: 0;
 	cursor: pointer;
 	width: 14px;
 	height: 14px;
+	z-index: 1;
 }
 
 #controlPanel {
@@ -351,12 +357,12 @@ div#propertiesPanel {
 
 #propertiesPanelPin {
 	position: absolute;
-	left: 7px;
-	top: 7px;
+	left: 0;
+	top: 0;
 	cursor: pointer;
 	width: 14px;
 	height: 14px;
-	z-index:101;
+	z-index: 1;
 }
 
 div#propertiesPanel h2 {
