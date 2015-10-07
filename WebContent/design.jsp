@@ -126,7 +126,7 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 															
 			<div id="controlPanelInner">
 			
-				<div id="controlPanelPin"><img src="images/pinned_14x14.png" title="unpin" /></div>
+				<div id="controlPanelPin"><img src="images/triangleLeft_8x8.png" title="unpin panel" /></div>
 																
 				<div class="buttons">					
 					<button id="appAdmin" class="buttonLeft buttonRight" title="Load the Rapid Admin screen">Rapid Admin...</button>
@@ -203,7 +203,7 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 																					
 			<div id="propertiesPanelInner">
 			
-				<div id="propertiesPanelPin"><img src="images/pinned_14x14.png" title="hide" /></div>
+				<div id="propertiesPanelPin"><img src="images/triangleRight_8x8.png" title="hide panel" /></div>
 										
 				<div class="untilsPanelDiv">
 							

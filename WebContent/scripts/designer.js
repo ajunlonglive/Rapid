@@ -2530,7 +2530,7 @@ $(document).ready( function() {
 		// check pinned
 		if (_panelPinned) {
 			_panelPinned = false;			
-			$("#controlPanelPin").html("<img src='images/unpinned_14x14.png' title='pin'>");
+			$("#controlPanelPin").html("<img src='images/triangleDown_8x8.png' title='pin panel'>");
 			// set the panel pin offset
 			_panelPinnedOffset = 0;			
 			// arrange the non visible controls due to the shift in the panel
@@ -2542,7 +2542,7 @@ $(document).ready( function() {
 		} else {
 			_panelPinned = true;
 			_panelPinnedOffset = $("#controlPanel").width() + 21; // add the padding and border
-			$("#controlPanelPin").html("<img src='images/pinned_14x14.png' title='unpin'>");
+			$("#controlPanelPin").html("<img src='images/triangleLeft_8x8.png' title='unpin panel'>");
 			// resize the window
 			windowResize("unpin");
 			// arrange the non visible controls due to the shift in the panel
@@ -3035,19 +3035,32 @@ $(document).ready( function() {
 	
 	// keyboard short-cuts
 	$(window).on('keydown', function(ev) {
-	    if (event.ctrlKey || event.metaKey) {
+		var t = $(ev.target);
+		if (event.ctrlKey || event.metaKey) {
 	        switch (String.fromCharCode(ev.which).toLowerCase()) {
 	        case 's':
 	            ev.preventDefault();
 	            $("#pageSave").click();
 	            break;
-	        case 'c':
+	        case 'z':
 	            ev.preventDefault();
-	            if (_selectedControl) $("#copy").click();
+	            if (ev.shiftKey) {
+	            	$("#redo").click();
+	            } else {
+	            	$("#undo").click();
+	            }
+	            break;
+	        case 'c':
+	        	if (!t.is("input") && !t.is("textarea")) {
+		            ev.preventDefault();
+		            if (_selectedControl) $("#copy").click();
+	        	}
 	            break;
 	        case 'v':
-	            ev.preventDefault();
-	            if (_copyControl) $("#paste").click();
+	        	if (!t.is("input") && !t.is("textarea")) {
+		            ev.preventDefault();
+		            if (_copyControl) $("#paste").click();
+	        	}
 	            break;
 	        }
 	    }
