@@ -1333,7 +1333,7 @@ public class Designer extends RapidHttpServlet {
 												Files.deleteRecurring(unZipFolder);
 																								
 												// send a positive message
-												output = "Import successful";
+												output = "{\"id\":\"" + appNew.getId() + "\",\"version\":\"" + appNew.getVersion() + "\"}";
 												
 											} catch (Exception ex) {
 												
