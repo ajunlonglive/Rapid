@@ -436,6 +436,11 @@ public class Control {
 						// whether rapid mobile is present
 						return "(typeof _rapidmobile == 'undefined' ? false : true)";
 						
+					} else if ("mobile version".equals(type)) {
+						
+						// if rapid mobile and the client version method are present call it, otherwise unknown
+						return "(typeof _rapidmobile == 'undefined' ? 'unknown' : (_rapidmobile.getClientVersion ? _rapidmobile.getClientVersion() : 'unknown'))";
+						
 					} else if ("online".equals(type)) {
 						
 						// whether we are online (presumed true if no rapid mobile)

@@ -85,6 +85,7 @@ hr {
 }
 
 #controlPanel {
+	font-family: arial;
 	position: absolute;
 	left: 0px;
 	top: 0px;
@@ -239,6 +240,7 @@ li.design-control:hover {
 }
 
 #pageMapList {
+	font-size: 12px;
 	margin-top: 2px;
   	margin-bottom: 0;
 	overflow-x: auto;
@@ -311,6 +313,7 @@ li.design-control:hover {
 }
 
 div#propertiesPanel {
+	font-family: arial;
 	position: absolute;
 	right: 0px;
 	top: 0px;
@@ -381,6 +384,10 @@ div#propertiesPanel h2 {
 	font-size: 11px;
 }
 
+table.propertiesPanelTable {
+	font-family: arial;
+}
+
 .canSelect {
 	-webkit-user-select: text;
 	-khtml-user-select: text;
@@ -417,6 +424,7 @@ div#propertiesPanel h2 {
 /* properties styles are in their own properties.css file for reuse with Rapid Admin */
 
 table.stylesPanelTable  {
+	font-family: arial;
 	width: 100%;
 	background-color: white;
 	border-left: 1px solid gray;

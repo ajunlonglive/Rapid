@@ -798,7 +798,7 @@ function getRolesOptions(selectRole, ignoreRoles) {
 }
 
 // different system properties for inputs
-var _systemValues = ["app id","app version","page id","user name","online","mobile","true","false","null","field"];
+var _systemValues = ["app id","app version","page id","user name","online","mobile","mobile version","true","false","null","field"];
 
 // this function returns a set of options for a dropdown for inputs or outputs (depending on input true/false), can be controls, control properties (input only), other page controls, page variables (input only), system values (input only)
 function getDataOptions(selectId, ignoreId, input) {
@@ -1378,39 +1378,51 @@ function loadVersions(selectedVersion, forceLoad) {
         		alert("Error loading versions : " + error);
         	}
         },
-        success: function(versions) {        	
-        	// if an app is not selected try the url
-        	if (!selectedVersion) var urlVersion = $.getUrlVar("v");
-        	// build the select options for each app
-        	var options = "";
-        	// loop the apps we received
-        	for (var i in versions) {        		
-        		// get a reference to the app
-        		var version = versions[i];
-        		// derived the status text (these must match final ints at the top of Application.java)
-        		var status = "";
-        		// live = 1
-        		if (version.status == 1) status = " - (Live)";
-        		// add an option for this page (if not the rapid app itself)
-        		options += "<option value='" + version.version + "' " + (selectedVersion || urlVersion == version.version ? "selected='true'" : "") + ">" + version.version + status + "</option>";        	
-        	}
+        success: function(versions) {        
         	// get a reference to apps dropdown
         	var versionsDropDown = $("#versionSelect");
-        	// put the options into the dropdown
-        	versionsDropDown.html(options);
-        	// retain all the versions data
-        	_versions = versions;        	
-        	// set the selected _version
-        	_version = _versions[versionsDropDown[0].selectedIndex];
-        	// set the s
-        	// load the app and its pages in the drop down if we weren't handed one
-        	if (!selectedVersion || forceLoad) {
-        		loadVersion();
+        	// check there are some versions
+        	if (versions && versions.length > 0) {        		
+        		// if an app is not selected try the url
+            	if (!selectedVersion) var urlVersion = $.getUrlVar("v");
+            	// build the select options for each app
+            	var options = "";
+            	// loop the apps we received
+            	for (var i in versions) {        		
+            		// get a reference to the app
+            		var version = versions[i];
+            		// derived the status text (these must match final ints at the top of Application.java)
+            		var status = "";
+            		// live = 1
+            		if (version.status == 1) status = " - (Live)";
+            		// add an option for this page (if not the rapid app itself)
+            		options += "<option value='" + version.version + "' " + (selectedVersion || urlVersion == version.version ? "selected='true'" : "") + ">" + version.version + status + "</option>";        	
+            	}            	
+            	// put the options into the dropdown
+            	versionsDropDown.html(options);
+            	// retain all the versions data
+            	_versions = versions;        	
+            	// set the selected _version
+            	_version = _versions[versionsDropDown[0].selectedIndex];
+            	// set the s
+            	// load the app and its pages in the drop down if we weren't handed one
+            	if (!selectedVersion || forceLoad) {
+            		loadVersion();
+            	} else {
+            		// show the designer
+            		showDesigner();
+            	}
+        		
         	} else {
-        		// show the designer
-        		showDesigner();
-        	}
-        	
+        		// remove all versions
+        		versionsDropDown.children().remove();
+        		// remove all pages
+        		$("#pageSelect").children().remove();
+        		// remove all controls
+        		$("#controlsList").children().remove().css("height",0);	
+        		// empty page controls
+        		$("#pageMapList").children().remove();
+        	} // versions check	
         }
 	});
 }
@@ -1419,11 +1431,11 @@ function loadVersions(selectedVersion, forceLoad) {
 function loadVersion(forceLoad) {
 	
 	// grab a reference to the ul where the canUserAdd controls will be added
-	var designControls = $("ul.design-controls");
+	var designControls = $("#controlsList");
 	// hide the controls panel
 	designControls.hide();
 	// empty the designControls panel
-	designControls.children().remove();	
+	designControls.children().remove().css("height",0);	
 	// empty the action options global
 	_actionOptions = "";
 	// empty the style classes array
@@ -1592,7 +1604,7 @@ function loadVersion(forceLoad) {
 
 // this function loads the selected apps pages into the drop down, in case the order has changed
 function loadPages(selectedPageId, forceLoad) {
-	
+			
 	$.ajax({
     	url: "designer?action=getPages&a=" + _version.id + "&v=" + _version.version,
     	type: "GET",
@@ -1642,7 +1654,10 @@ function loadPages(selectedPageId, forceLoad) {
         	
         	// put the options into the dropdown
         	$("#pageSelect").html(options);
-        	
+        	// empty the page map
+        	$("#pageMapList").children().remove();
+        	// enable the new page button
+        	$("#pageNew").removeAttr("disabled");
         	// check we got some pages
         	if (options) {
         		// unlock controls and page edit
@@ -1662,8 +1677,16 @@ function loadPages(selectedPageId, forceLoad) {
         		$("#pageView").attr("disabled","disabled");
         		// show the designer
         		showDesigner();
-        		// show the new page dialogue
-        		showDialogue('~?action=page&a=rapid&p=P3'); 
+        		// show the new page dialogue if it was an empty array
+        		if ($.isArray(pages)) {
+        			// hide the property panel just in case
+        			hidePropertiesPanel();
+        			// show the new page dialogue
+        			showDialogue('~?action=page&a=rapid&p=P3'); 
+        		} else {
+        			// disable the new page button
+        			$("#pageNew").attr("disabled","disabled");
+        		}
         	}
         	
         } // success
@@ -2961,46 +2984,50 @@ $(document).ready( function() {
 	// paste
 	$("#paste").click( function(ev) {
 		// see the enable/disable rules for the past button to see all the rules but basically we're working out whether we can insert into the selected control, into the parent, or not at all
-		if (_selectedControl && _copyControl) {
+		if (_copyControl) {
+			// assume we're pasting into the selected control
+			var pasteControl = _selectedControl;
+			// if no selected control use the page
+			if (!pasteControl) pasteControl = _page;
 			// add an undo snapshot for the whole page
 			addUndo(true);
 			// if no parent it's the page
-			if (_selectedControl._parent) {
+			if (pasteControl._parent) {
 				// find out if there are childControls with the same type with canUserAddPeers
 				var childCanAddPeers = false;
-				for (i in _selectedControl.childControls) {
-					if (_copyControl.type == _selectedControl.childControls[i].type && _controlTypes[_selectedControl.childControls[i].type].canUserAddPeers) {
+				for (i in pasteControl.childControls) {
+					if (_copyControl.type == pasteControl.childControls[i].type && _controlTypes[pasteControl.childControls[i].type].canUserAddPeers) {
 						childCanAddPeers = true;
 						break;
 					}
 				}
 				// find out if there are peers with the same type with canUserAddPeers
 				var peerCanAddPeers = false;
-				for (i in _selectedControl._parent.childControls) {
-					if (_copyControl.type == _selectedControl._parent.childControls[i].type && _controlTypes[_selectedControl._parent.childControls[i].type].canUserAddPeers) {
+				for (i in pasteControl._parent.childControls) {
+					if (_copyControl.type == pasteControl._parent.childControls[i].type && _controlTypes[pasteControl._parent.childControls[i].type].canUserAddPeers) {
 						peerCanAddPeers = true;
 						break;
 					}
 				}
 				// can we do an insert, or add as a peer
-				if (_controlTypes[_selectedControl.type].canUserInsert && (_controlTypes[_copyControl.type].canUserAdd || childCanAddPeers)) {
+				if (_controlTypes[pasteControl.type].canUserInsert && (_controlTypes[_copyControl.type].canUserAdd || childCanAddPeers)) {
 					// create the new control and place in child collection of current parent
-					var newControl = doPaste(_copyControl, _selectedControl);
+					var newControl = doPaste(_copyControl, pasteControl);
 					// add to childControl collection of current parent
-					_selectedControl.childControls.push(newControl);
+					pasteControl.childControls.push(newControl);
 					// move the html to the right place
-					_selectedControl.object.append(newControl.object);
+					pasteControl.object.append(newControl.object);
 				} else if (_controlTypes[_copyControl.type].canUserAdd || peerCanAddPeers) {
 					// create the new control as peer of current selection
-					var newControl = doPaste(_copyControl, _selectedControl._parent);
+					var newControl = doPaste(_copyControl, pasteControl._parent);
 					// use the insert right routine if we've got one
 					if (newControl._insertRight) {
 						newControl._insertRight();
 					} else {						
 						// move the object (if the parent isn't the page)
-						if (_selectedControl._parent._parent) newControl.object.insertAfter(_selectedControl.object);
+						if (pasteControl._parent._parent) newControl.object.insertAfter(pasteControl.object);
 						// add it to the parent at the correct position
-						 _selectedControl._parent.childControls.splice(_selectedControl.object.index()+1,0,newControl);
+						pasteControl._parent.childControls.splice(pasteControl.object.index()+1,0,newControl);
 					}
 					// select the new one
 					selectControl(newControl);				
@@ -3010,9 +3037,9 @@ $(document).ready( function() {
 								
 				if (_copyControl._parent && _controlTypes[_copyControl.type].canUserAdd) {
 					// create the new control and place in child collection of current parent
-					var newControl = doPaste(_copyControl, _selectedControl);
+					var newControl = doPaste(_copyControl, pasteControl);
 					// add to childControl collection of current parent (which is the page)
-					_selectedControl.childControls.push(newControl);
+					pasteControl.childControls.push(newControl);
 					// select the new control
 					selectControl(newControl);
 				} else {
@@ -3051,13 +3078,13 @@ $(document).ready( function() {
 	            }
 	            break;
 	        case 'c':
-	        	if (!t.is("input") && !t.is("textarea")) {
+	        	if (t.is("body")) {
 		            ev.preventDefault();
 		            if (_selectedControl) $("#copy").click();
 	        	}
 	            break;
 	        case 'v':
-	        	if (!t.is("input") && !t.is("textarea")) {
+	        	if (t.is("body")) {
 		            ev.preventDefault();
 		            if (_copyControl) $("#paste").click();
 	        	}
