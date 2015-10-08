@@ -1145,8 +1145,8 @@ public class Page {
 			}}
 		);
 		
-		// check for page events (this is here so all listeners are registered by now)
-		if (_events != null) {
+		// check for page events (this is here so all listeners are registered by now) and controls (there should not be none but nothing happens without them)
+		if (_events != null && _controls != null) {
 			// loop page events
 			for (Event event : _events) {        				
 				// only if there are actually some actions to invoke

@@ -449,8 +449,13 @@ public class Designer extends RapidHttpServlet {
 						} else if ("getPages".equals(actionName)) {
 							
 							Application application = rapidRequest.getApplication();
-							
-							if (application != null) {
+																					
+							if (application == null) {
+								
+								// send an empty object
+								output = "{}";
+								
+							} else {
 								
 								JSONArray jsonPages = new JSONArray();
 								
@@ -496,10 +501,10 @@ public class Designer extends RapidHttpServlet {
 								
 								// set the output to the collection turned into a string			
 								output = jsonPages.toString();
-								
-								sendJsonOutput(response, output);
-								
-							}
+																								
+							} // application check
+							
+							sendJsonOutput(response, output);
 							
 						} else if ("getPage".equals(actionName)) {
 							

@@ -30,17 +30,21 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.TreeMap;
 
 import com.rapid.utils.Comparators;
 
 public class Applications {
 	
-	public static class Versions extends HashMap<String, Application> {
+	public static class Versions extends TreeMap<String, Application> {
 
 		private static final long serialVersionUID = 5010L;
+		
+		public Versions() {
+			// note the use of the tree map with case insensitive order - this means that keys are all case insensitive, including checking them
+			super(String.CASE_INSENSITIVE_ORDER);
+		}
 		
 		public List<Application> sort() {
 			// create the list we're going to return
@@ -70,11 +74,12 @@ public class Applications {
 	}
 
 	// private instance variables
-	private HashMap<String, Versions> _applications;
+	private TreeMap<String, Versions> _applications;
 	
 	// constructor
 	public Applications() {
-		_applications = new HashMap<String, Versions>();
+		// note the use of the tree map with case insensitive order - this means that keys are all case insensitive, including checking them
+		_applications = new TreeMap<String, Versions>(String.CASE_INSENSITIVE_ORDER);
 	}
 	
 	// methods
