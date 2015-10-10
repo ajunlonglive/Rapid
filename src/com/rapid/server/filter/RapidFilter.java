@@ -46,7 +46,7 @@ public class RapidFilter implements Filter {
 	// different applications' security adapters will retrieve different user objects
 	public static final String SESSION_VARIABLE_USER_NAME = "user";
 	public static final String SESSION_VARIABLE_USER_PASSWORD = "password";
-	public static final String SESSION_VARIABLE_USER_DEVICE = "device";
+	public static final String SESSION_VARIABLE_USER_DEVICE = "device";	
 	
 	private static Logger _logger = Logger.getLogger(RapidFilter.class);
 		
@@ -56,19 +56,19 @@ public class RapidFilter implements Filter {
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 		
-		try {
+		try {						
 			
 			// set the value from stopCaching from the init parameter in web.xml
 			_noCaching = Boolean.parseBoolean(filterConfig.getServletContext().getInitParameter("noCaching"));
 			
 			// look for a specified authentication adapter
 			String authenticationAdapterClass = filterConfig.getInitParameter("authenticationAdapterClass");
-			
+									
 			// if we didn't find one
 			if (authenticationAdapterClass == null) {
 				
-				// fall back to the formauthenticationadapter
-				_authenticationAdapter = new FormAuthenticationAdapter(filterConfig.getServletContext());	
+				// fall back to the FormAuthenticationAdapter
+				_authenticationAdapter = new FormAuthenticationAdapter(filterConfig);	
 				
 			} else {
 				
