@@ -446,7 +446,7 @@ public class Control {
 						// whether we are online (presumed true if no rapid mobile)
 						return "(typeof _rapidmobile == 'undefined' ? true : _rapidmobile.isOnline())";
 						
-					} else if ("user".equals(type) || "user name".equals(idParts[1])) {
+					} else if ("user".equals(type) || "user name".equals(type)) {
 						
 						// pass the field as a value
 						return "_userName";

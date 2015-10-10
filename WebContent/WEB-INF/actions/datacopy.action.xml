@@ -43,7 +43,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <changeValueJavaScript>select</changeValueJavaScript>	
 	            <getValuesFunction>
 // for backwards compatibility	                
-if (!this.copyType) this.copyType = "replace";
+if (!this.copyType || this.copyType == "false") this.copyType = "replace";
 // return the values	                
 return [["replace","replace"],["append","append"],["row","row merge"],["child","child merge"],["bulk","bulk"],["search","search"],["trans","transpose"]];
 				</getValuesFunction>
@@ -56,6 +56,8 @@ return [["replace","replace"],["append","append"],["row","row merge"],["child","
 	            <changeValueJavaScript>datacopySource</changeValueJavaScript>
 	            <getValuesFunction>
 	                <![CDATA[
+// for backwards compatibility	                
+if (this.dataSource == "System.user") this.dataSource = "System.user name";
 return "<option value=''>Please select...</option>" + getInputOptions(this.dataSource);         
 	                ]]>
 	            </getValuesFunction>	

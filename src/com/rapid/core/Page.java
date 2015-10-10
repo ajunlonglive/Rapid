@@ -242,11 +242,11 @@ public class Page {
 	}
 		
 	// these two methods have different names to avoid being marshelled to the .xml file by JAXB
-	public String getHtmlHeadCached(RapidHttpServlet rapidServlet, Application application, boolean isDialogue) throws JSONException {
+	public String getHtmlHeadCached(RapidHttpServlet rapidServlet, Application application, User user, boolean isDialogue) throws JSONException {
 		// check whether the page has been cached yet
 		if (_cachedStartHtml == null) {
 			// generate the page start html if not
-			_cachedStartHtml = getHtmlHead(rapidServlet, application, isDialogue);																		
+			_cachedStartHtml = getHtmlHead(rapidServlet, application, user, isDialogue);																		
 		}	
 		// return the regular
 		return _cachedStartHtml;					
@@ -1060,7 +1060,7 @@ public class Page {
     }
 	
     // this private method produces the head of the page which is often cached, if resourcesOnly is true only page resources are included which is used when sending no permission
-	private String getHtmlHead(RapidHttpServlet rapidServlet, Application application, boolean isDialogue) throws JSONException {
+	private String getHtmlHead(RapidHttpServlet rapidServlet, Application application, User user, boolean isDialogue) throws JSONException {
     	
     	StringBuilder stringBuilder = new StringBuilder(getHtmlHeadStart(application));
     	    															
@@ -1068,10 +1068,13 @@ public class Page {
 		stringBuilder.append("    " + getResourcesHtml(application, false).trim().replace("\n", "\n    ") + "\n");
 												
 		// add a JavaScript block with important global variables - this removed by the pagePanel loader and navigation action when showing dialogues, by matching to the various variables so be careful changing anything below			
-		stringBuilder.append("    <script type='text/javascript'>\n\n");			
-		stringBuilder.append("var _appId = '" + application.getId() + "';\n");			
-		stringBuilder.append("var _appVersion = '" + application.getVersion() + "';\n");			
-		stringBuilder.append("var _pageId = '" + _id + "';\n");						
+		stringBuilder.append("    <script type='text/javascript'>\n\n");
+		if (application != null) {
+			stringBuilder.append("var _appId = '" + application.getId() + "';\n");			
+			stringBuilder.append("var _appVersion = '" + application.getVersion() + "';\n");
+		}
+		stringBuilder.append("var _pageId = '" + _id + "';\n");			
+		if (user != null) stringBuilder.append("var _userName = '" +user.getName().replace("'", "\'") + "';\n");
 		stringBuilder.append("var _mobileResume = false;\n\n");
 		stringBuilder.append("    </script>\n");
 								
@@ -1332,19 +1335,16 @@ public class Page {
 			
 				// whether we're rebulding the page for each request
 		    	boolean rebuildPages = Boolean.parseBoolean(rapidServlet.getServletContext().getInitParameter("rebuildPages"));
-				
+						    	
 		    	// check whether or not we rebuild
 		    	if (rebuildPages) {
 		    		// get fresh head html
-		    		writer.write(getHtmlHead(rapidServlet, application, !designerLink));
+		    		writer.write(getHtmlHead(rapidServlet, application, user, !designerLink));
 		    	} else {
 		    		// get the cached head html
-		    		writer.write(getHtmlHeadCached(rapidServlet, application, !designerLink));
+		    		writer.write(getHtmlHeadCached(rapidServlet, application, user, !designerLink));
 		    	}
-		    	
-		    	// write the username if not dialogue
-		    	if (designerLink) writer.write("  <script type='text/javascript'> var _userName = '" + user.getName().replace("'", "\'") + "'; </script>\n");
-		    			    	
+		    			    			    			    	
 		    	// close the head
 		    	writer.write("  </head>\n");
 		    	
