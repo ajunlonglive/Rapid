@@ -27,6 +27,7 @@ package com.rapid.server.filter;
 
 import java.io.IOException;
 
+import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -38,8 +39,8 @@ public abstract class RapidAuthenticationAdapter {
 	
 	public ServletContext getServletContext() { return _servletContext; }
 	
-	public RapidAuthenticationAdapter(ServletContext servletContext) {
-		_servletContext = servletContext;
+	public RapidAuthenticationAdapter(FilterConfig filterConfig) {
+		_servletContext = filterConfig.getServletContext();
 	}
 	
 	public abstract ServletRequest process(ServletRequest request, ServletResponse response) throws IOException, ServletException;
