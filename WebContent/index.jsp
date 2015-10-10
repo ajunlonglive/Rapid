@@ -98,6 +98,7 @@ $(document).ready( function() {
 
 <div class="title">
 	<span>Rapid - version <%=com.rapid.server.Rapid.VERSION %></span>
+	<span class="link"><a href="logout.jsp">log out</a></span>
 </div>
 
 <% 
@@ -132,10 +133,6 @@ $(document).ready( function() {
 </div>
 
 <div class="apps" id="apps"><b style="padding-left:10px;">loading...</b></div>
-
-<div class="info">
-	<p><a href="logout.jsp">Log out</a></p>	
-</div>
 
 </body>
 </html>

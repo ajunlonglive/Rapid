@@ -925,17 +925,6 @@ function Property_linkURL(cell, propertyObject, property, details) {
 	}
 }
 
-function Property_linkPopup(cell, propertyObject, property, details) {
-	// if the type is a url
-	if (propertyObject.linkType == "U")	{
-		// add a big text
-		Property_checkbox(cell, propertyObject, property, details);
-	} else {
-		// remove the row
-		cell.parent().remove();
-	}
-}
-
 function Property_pageName(cell, page, property, details) {
 	// get the value from the page name
 	var value = page.name;
