@@ -2431,6 +2431,25 @@ $(document).ready( function() {
 								} // in-page style check
 							} // style sheets loop
 						} // style sheets check
+						
+						// if we have local storage
+						if (typeof(localStorage) !== "undefined") {
+							// if we have a local storage for the guidelines
+							if (localStorage.getItem("_guidelines")) {
+								// read the value of whether to show guidelines
+								var showGuidelines = JSON.parse(localStorage.getItem("_guidelines"));
+								// show if so (details in properties.js, functions in styles.js)
+								if (showGuidelines) {
+									// loop the guidline styles
+									for (var i in _guidelineStyles) {
+										// remove the style just to be sure
+										removeStyle(_guidelineStyles[i],"designPage.css");
+										// if we want the style add it back in
+										if (showGuidelines) 	addStyle( _guidelineStyles[i],"border: 1px dashed #ccc;margin: -1px;");	
+									}
+								}
+							} 
+						}
 			        				        	
 			        	// show the page object
 			        	_page.object.show();	
