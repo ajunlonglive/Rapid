@@ -813,19 +813,22 @@ public class Application {
 		// set the security adaper type from the incoming parameter
 		_formAdapterType = formAdapterType;
 		// if it was null
-		if (_formAdapterType == null) {
+		if (_formAdapterType == null || "".equals(_formAdapterType)) {
 			// clear the current one
 			_formAdapter = null;
-		} else {
-			/*
+		} else {			
 			// get a map of the form adapter constructors
 			HashMap<String,Constructor> constructors = (HashMap<String, Constructor>) servletContext.getAttribute("formConstructors");
 			// get the constructor for our type
 			Constructor<FormAdapter> constructor = constructors.get(_formAdapterType);
-			// instantiate the specified form adapter
-			_formAdapter = constructor.newInstance(servletContext, this);
-			*/
-			_formAdapter = new RapidFormAdapter(servletContext, this);
+			// if we got this constructor
+			if (constructor != null) {
+				// instantiate the specified form adapter
+				_formAdapter = constructor.newInstance(servletContext, this);
+			} else {
+				// revert to rapid form adapter
+				_formAdapter = new RapidFormAdapter(servletContext, this);
+			}
 		}
 	}
 	
