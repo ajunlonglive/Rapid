@@ -341,7 +341,7 @@ public class Rapid extends RapidHttpServlet {
 				// if there were some
 				if (apps != null) {
 					
-					// assume the request wasn't for testing
+					// assume the request wasn't for testing on Rapid Mobile
 					boolean forTesting = false;
 					
 					// assume we weren't passed any json				
