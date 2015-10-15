@@ -1395,8 +1395,8 @@ function loadVersions(selectedVersion, forceLoad) {
             		var status = "";
             		// live = 1
             		if (version.status == 1) status = " - (Live)";
-            		// add an option for this page (if not the rapid app itself)
-            		options += "<option value='" + version.version + "' " + (selectedVersion || urlVersion == version.version ? "selected='true'" : "") + ">" + version.version + status + "</option>";        	
+            		// add an option for this page, setting selected, in order of precidence
+            		options += "<option value='" + version.version + "' " + (selectedVersion || urlVersion || versions[versions.length-1].version == version.version ? "selected='true'" : "") + ">" + version.version + status + "</option>";        	
             	}            	
             	// put the options into the dropdown
             	versionsDropDown.html(options);
