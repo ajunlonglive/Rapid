@@ -200,24 +200,24 @@ div.tabsPanel.selected {
 
 div.validation {
 	padding: 10px;
-	color: red !important;
+	color: red;
 	font-weight: bold;
 }
 
 label.validation {
-	border: 2px solid red !important;
+	border: 2px solid red;
 }
 
 input.validation {
-	border: 2px solid red !important;
+	border: 2px solid red;
 }
 
 textarea.validation {
-	border: 2px solid red !important;
+	border: 2px solid red;
 }  
 
 li.validation {
-  color:red !important;
+  color:red;
 }
 
 

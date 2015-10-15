@@ -145,6 +145,7 @@ public class Page {
 	private List<String> _controlTypes, _actionTypes, _sessionVariables, _roles;
 	private List<RoleHtml> _rolesHtml;
 	private List<Condition> _visibilityConditions;
+	private boolean _visibilityConditionsOr;
 	private Lock _lock;
 				
 	// this array is used to collect all of the lines needed in the pageload before sorting them
@@ -227,7 +228,11 @@ public class Page {
 	// the page visibility rule conditions
 	public List<Condition> getVisibilityConditions() { return _visibilityConditions; }
 	public void setVisibilityConditions(List<Condition> visibilityConditions) { _visibilityConditions = visibilityConditions; }
-		
+	
+	// whether the visibility conditions are an And (the default) or an Or
+	public boolean getVisibilityConditionsOr() { return _visibilityConditionsOr; }
+	public void setVisibilityConditionsOr(boolean visibilityConditionsOr) { _visibilityConditionsOr = visibilityConditionsOr; }
+	
 	// constructor
 	
 	public Page() {
@@ -1599,7 +1604,13 @@ public class Page {
 			Logger logger = rapidRequest.getRapidServlet().getLogger();
 			
 			// if there are some visibility conditions
-			if (_visibilityConditions.size() > 0) {
+			if (_visibilityConditions.size() > 0) {				
+				
+				logger.debug("Page " + _id + " " + _visibilityConditions.size() + " visibility condition(s) " + " : " + (_visibilityConditionsOr ? "OR" : "AND"));
+				
+				// assume we have failed
+				boolean pass = false;
+				
 				// loop them
 				for (Condition condition : _visibilityConditions) {
 					
@@ -1615,12 +1626,13 @@ public class Page {
 					
 					String operation = condition.getOperation();
 					
-					if (value1 == null || value2 == null) return false;
+					if (value1 == null) value1 = "";
+					if (value2 == null) value2 = "";
 					
 					if ("==".equals(operation)) {
-						if (!value1.equals(value2)) return false;						
+						if (value1.equals(value2)) pass = true;						
 					} else if ("!=".equals(operation)) {
-						if (value1.equals(value2)) return false;
+						if (!value1.equals(value2)) pass = true;
 					} else {						
 						try {
 							// the remaining conditions all work with numbers so covert
@@ -1628,24 +1640,36 @@ public class Page {
 							float num2 = Float.parseFloat(value2);
 							// check the conditions
 							if (">".equals(operation)) {
-								if (!(num1 > num2)) return false;														
+								if ((num1 > num2)) pass = true;														
 							} else if (">=".equals(operation)) {
-								if (!(num1 >= num2)) return false;
+								if ((num1 >= num2)) pass = true;
 							} else if ("<".equals(operation)) {
-								if (!(num1 < num2)) return false;
+								if ((num1 < num2)) pass = true;
 							} else if ("<=".equals(operation)) {
-								if (!(num1 <= num2)) return false;
+								if ((num1 <= num2)) pass = true;
 							}		
 						} catch (Exception ex) {
 							// something went wrong - generally in the conversion - return false
-							return false;
-						}										
+							logger.error("Error assessing page visibility page " + _id + " " + condition);		
+						}	
+						
+						// for the fast fail check whether we have an or
+						if (_visibilityConditionsOr) {
+							// if the conditions are or and we've just passed, we can stop checking further as we've passed in total
+							if (pass) break;
+						} else {
+							// if the conditions are and and we've just failed, we can stop checking further as we've failed in total
+							if (!pass) break;
+						}
 					}						
-				}				
+				}
+				// return the pass
+				return pass;
 			} else {				
-				logger.debug("Page " + _id + " is visible");				
-			}			
+				logger.debug("Page " + _id + " has not visibility conditions");				
+			}						
 		}		
+		// no conditions or adapter we're ok to view
 		return true;
 	}
 	

@@ -109,14 +109,14 @@ public class RapidFormAdapter extends FormAdapter {
 				
 				// testing pre-population
 				
+				/*
 				FormControlValue controlValue = new FormControlValue("P4_C55_","Hello!");
 				
 				FormPageControlValues pageControlValue = new FormPageControlValues(controlValue);
 				
 				setFormPageControlValues(rapidRequest, formId, application, "P4", pageControlValue);
-				
-				// it works!
-								
+				*/
+												
 			}
 			
 		}					

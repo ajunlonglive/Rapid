@@ -6,11 +6,11 @@ table.grid td{border:0}
 table.grid span.sort{font-family:FontAwesome;margin-left:5px}
 .dialogueCover{background-color:white;opacity:0.8;filter:alpha(opacity=80)}
 .dialogue{background-color:white;padding:0px}
-div.validation{padding:10px;color:red !important;font-weight:bold}
-label.validation{border:2px solid red !important}
-input.validation{border:2px solid red !important}
-textarea.validation{border:2px solid red !important}
-li.validation{color:red !important}
+div.validation{padding:10px;color:red;font-weight:bold}
+label.validation{border:2px solid red}
+input.validation{border:2px solid red}
+textarea.validation{border:2px solid red}
+li.validation{color:red}
 body{padding:10px;font-family:'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;font-size:13px}
 table{font-family:'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;font-size:13px}
 .dialogueCover{background-color:white;opacity:0.7;filter:alpha(opacity=70)}

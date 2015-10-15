@@ -1653,9 +1653,7 @@ function loadPages(selectedPageId, forceLoad) {
         	}
         	
         	// put the options into the dropdown
-        	$("#pageSelect").html(options);
-        	// empty the page map
-        	$("#pageMapList").children().remove();
+        	$("#pageSelect").html(options);        	
         	// enable the new page button
         	$("#pageNew").removeAttr("disabled");
         	// check we got some pages
@@ -1675,6 +1673,8 @@ function loadPages(selectedPageId, forceLoad) {
         		$("#pageEdit").attr("disabled","disabled");
         		$("#pageSave").attr("disabled","disabled");
         		$("#pageView").attr("disabled","disabled");
+        		// empty the page map
+            	$("#pageMapList").children().remove();
         		// show the designer
         		showDesigner();
         		// show the new page dialogue if it was an empty array
@@ -2706,7 +2706,7 @@ $(document).ready( function() {
 		        	// set dirty to false
 		        	_dirty = false;
 		        	// reload the pages as the order may have changed, but keep the current one selected
-		        	loadPages(_page.id);
+		        	loadPages(_page.id);		        	
 		        	// arrange any non-visible controls
 		        	arrangeNonVisibleControls();	   
 		        	// iframe resize
