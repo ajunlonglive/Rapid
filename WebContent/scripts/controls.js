@@ -220,8 +220,10 @@ function Control(controlType, parentControl, jsonControl, loadComplexObjects, pa
 								for (var k in jsonControl.events[i].actions) {
 									// get our jsonAction
 									var jsonAction = jsonControl.events[i].actions[k];
-									// add new action object into event
-									event.actions.push(new Action(jsonAction.type, jsonAction, paste, undo));
+									// make an action from it
+									var action = new Action(jsonAction.type, jsonAction, paste, undo)
+									// if that came back with a type add new action object into event
+									if (action.type) event.actions.push(action);
 								}
 								// we're finished with this event
 								break;

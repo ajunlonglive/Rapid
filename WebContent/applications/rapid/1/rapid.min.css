@@ -18,11 +18,11 @@ div.tabsPanel{display:none;min-height:2em;vertical-align:top}
 div.tabsPanel.selected{border:1px solid black;clear:both;padding:0 1em}
 .dialogueCover{background-color:white;opacity:0.8;filter:alpha(opacity=80)}
 .dialogue{background-color:white;padding:0px}
-div.validation{padding:10px;color:red !important;font-weight:bold}
-label.validation{border:2px solid red !important}
-input.validation{border:2px solid red !important}
-textarea.validation{border:2px solid red !important}
-li.validation{color:red !important}
+div.validation{padding:10px;color:red;font-weight:bold}
+label.validation{border:2px solid red}
+input.validation{border:2px solid red}
+textarea.validation{border:2px solid red}
+li.validation{color:red}
 body{font-family:'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;font-size:14px;margin:0}
 table{font-family:'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;font-size:14px;margin:0}
 .glossyTitle tr:first-child td{font-weight:bold;background-color:red;color:white;padding:10px;text-align:center;background:red url(highlight_red_1x44.png) 50% 50% repeat-x;text-shadow:-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black}
