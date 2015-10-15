@@ -1651,18 +1651,23 @@ public class Page {
 						} catch (Exception ex) {
 							// something went wrong - generally in the conversion - return false
 							logger.error("Error assessing page visibility page " + _id + " " + condition);		
-						}	
-						
-						// for the fast fail check whether we have an or
-						if (_visibilityConditionsOr) {
-							// if the conditions are or and we've just passed, we can stop checking further as we've passed in total
-							if (pass) break;
-						} else {
-							// if the conditions are and and we've just failed, we can stop checking further as we've failed in total
-							if (!pass) break;
-						}
-					}						
-				}
+						} 													
+					} // operation check						
+					
+					// log result
+					logger.debug("pass = " + pass);
+					
+					// for the fast fail check whether we have an or
+					if (_visibilityConditionsOr) {
+						// if the conditions are or and we've just passed, we can stop checking further as we've passed in total
+						if (pass) break;
+					} else {
+						// if the conditions are and and we've just failed, we can stop checking further as we've failed in total
+						if (!pass) break;
+					}
+					
+				} // condition loop
+				
 				// return the pass
 				return pass;
 			} else {				
