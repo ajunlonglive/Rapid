@@ -1379,12 +1379,26 @@ function loadVersions(selectedVersion, forceLoad) {
         	}
         },
         success: function(versions) {        
+        	
         	// get a reference to apps dropdown
         	var versionsDropDown = $("#versionSelect");
         	// check there are some versions
         	if (versions && versions.length > 0) {        		
-        		// if an app is not selected try the url
-            	if (!selectedVersion) var urlVersion = $.getUrlVar("v");
+        		// if a version is not specified for selection
+            	if (!selectedVersion) {
+            		// try the url
+            		var urlVersion = $.getUrlVar("v");
+            		// if we got something
+            		if (urlVersion) {
+            			// retain url version as selected
+            			selectedVersion = urlVersion;
+            		} else {
+            			// set selected to last version in collection
+            			selectedVersion = versions[versions.length - 1].version;
+            		}
+            		// force a reload
+            		forceLoad = true;
+            	}
             	// build the select options for each app
             	var options = "";
             	// loop the apps we received
@@ -1395,8 +1409,8 @@ function loadVersions(selectedVersion, forceLoad) {
             		var status = "";
             		// live = 1
             		if (version.status == 1) status = " - (Live)";
-            		// add an option for this page, setting selected, in order of precidence
-            		options += "<option value='" + version.version + "' " + (selectedVersion || urlVersion || versions[versions.length-1].version == version.version ? "selected='true'" : "") + ">" + version.version + status + "</option>";        	
+            		// add an option for this page, setting selected
+            		options += "<option value='" + version.version + "' " + (selectedVersion == version.version ? "selected='true'" : "") + ">" + version.version + status + "</option>";        	
             	}            	
             	// put the options into the dropdown
             	versionsDropDown.html(options);
@@ -1404,7 +1418,6 @@ function loadVersions(selectedVersion, forceLoad) {
             	_versions = versions;        	
             	// set the selected _version
             	_version = _versions[versionsDropDown[0].selectedIndex];
-            	// set the s
             	// load the app and its pages in the drop down if we weren't handed one
             	if (!selectedVersion || forceLoad) {
             		loadVersion();
@@ -2631,6 +2644,9 @@ $(document).ready( function() {
 	$("#appSelect").change( function() {
     	// load the selected app and its pages in the drop down 
     	if (checkDirty()) {
+    		// update the url, removing the version so the last one will be loaded for us
+        	if (window.history && window.history.replaceState) window.history.replaceState("page", _page.title, "design.jsp?a=" + _version.id);   
+        	// load the versions
     		loadVersions();
     	} else {
     		// revert the drop down on cancel
@@ -2642,6 +2658,9 @@ $(document).ready( function() {
 	$("#versionSelect").change( function() {
     	// load the selected app and its pages in the drop down 
     	if (checkDirty()) {
+    		// update the url, removing the version so the right one is loaded to it's own start page
+        	if (window.history && window.history.replaceState) window.history.replaceState("page", _page.title, "design.jsp?a=" + _version.id);   
+        	// load the version
     		loadVersion();
     	} else {
     		// revert the drop down on cancel
