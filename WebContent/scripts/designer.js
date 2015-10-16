@@ -3116,7 +3116,7 @@ $(document).ready( function() {
 	            }
 	            break;
 	        case 'c':
-	        	if (t.is("body")) {
+	        	if (t.is("body") && (!window.getSelection || !window.getSelection().toString())) {
 		            ev.preventDefault();
 		            if (_selectedControl) $("#copy").click();
 	        	}
