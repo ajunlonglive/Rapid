@@ -382,6 +382,7 @@ public class Designer extends RapidHttpServlet {
 															jsonAppControl.put("type", jsonControl.getString("type"));
 															jsonAppControl.put("name", jsonControl.getString("name"));
 															jsonAppControl.put("image", jsonControl.optString("image"));
+															jsonAppControl.put("category", jsonControl.optString("category"));
 															jsonAppControl.put("canUserAdd", jsonControl.optString("canUserAdd"));
 															// add it to the app controls collection
 															jsonAppControls.put(jsonAppControl);

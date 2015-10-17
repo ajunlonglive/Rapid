@@ -45,10 +45,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.rapid.actions.Logic.Condition;
 import com.rapid.core.Application;
 import com.rapid.core.Page;
-import com.rapid.core.Pages.PageHeader;
 import com.rapid.core.Pages.PageHeaders;
 import com.rapid.forms.FormAdapter;
 import com.rapid.forms.FormAdapter.FormControlValue;
@@ -62,7 +60,7 @@ public class Rapid extends RapidHttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	// these are held here and referred to globally
-	public static final String VERSION = "2.3.0"; // the master version of this Rapid server
+	public static final String VERSION = "2.3.1"; // the master version of this Rapid server
 	public static final String MOBILE_VERSION = "1"; // the mobile version. update it if you want all mobile devices to updates on their next version check
 	public static final String DESIGN_ROLE = "RapidDesign";
 	public static final String ADMIN_ROLE = "RapidAdmin";
