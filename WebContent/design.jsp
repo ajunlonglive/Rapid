@@ -172,9 +172,9 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 						<img id="helpControls" class="headerHelp" src="images/help_16x16.png" />
 					</h2>
 					
-					<ul id="controlsList" class="design-controls" >
+					<div id="controlsList">
 						<!-- Controls are added here as list items when the designer loads -->
-					</ul>					
+					</div>					
 				</div>	
 				
 				<h2 id="controlsMap" style="margin-top:5px;">Page controls

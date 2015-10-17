@@ -69,11 +69,22 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 										<xs:minLength value="1" />
 									</xs:restriction>
 								</xs:simpleType>
-							</xs:element>
+							</xs:element>							
 							<xs:element name="image" minOccurs="0">
 								<xs:annotation>
 									<xs:documentation>A url for the control image relative to the
 										designer.jsp document
+									</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="1" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="category" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>The category the control will be placed in, in the control panel
 									</xs:documentation>
 								</xs:annotation>
 								<xs:simpleType>

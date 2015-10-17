@@ -151,6 +151,14 @@ hr {
 	cursor: pointer;
 }
 
+#controlsList h3 {
+	clear: left;
+	text-transform: uppercase;
+    font-size: 12px;
+	margin-top: 5px;
+	margin-bottom: 3px;
+}
+
 .headerToggle {
 	padding-left: 2px;
 	vertical-align: middle;

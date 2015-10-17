@@ -1448,7 +1448,7 @@ function loadVersion(forceLoad) {
 	// hide the controls panel
 	designControls.hide();
 	// empty the designControls panel
-	designControls.children().remove().css("height",0);	
+	designControls.html("<ul class='design-controls'></ul>").css("height",0);	
 	// empty the action options global
 	_actionOptions = "";
 	// empty the style classes array
@@ -1497,8 +1497,25 @@ function loadVersion(forceLoad) {
     		// if the control can be added by the user
     		if (c.canUserAdd) {
     			
-    			// add button (list item + image if exists)
-    			designControls.append("<li id='c_" + c.type + "' class='design-control' data-control='" + c.type + "'>" + (c.image ? "<img src='" + c.image + "'/>" : "<img src='images/tools_24x24.png'/>") + "</li>");
+    			// make the list entry
+    			var li = "<li id='c_" + c.type + "' class='design-control' data-control='" + c.type + "'>" + (c.image ? "<img src='" + c.image + "'/>" : "<img src='images/tools_24x24.png'/>") + "</li>";
+    			
+    			// check for a category
+    			if (c.category) {
+    				// check for a sub list
+    				var ul = designControls.parent().find("ul[data-for='" + c.category + "']");
+    				// if we got one
+    				if (ul[0]) {
+    					// add entry to list
+    					ul.append(li);
+    				} else {
+    					// add list and entry
+    					designControls.append("<h3>" + c.category + "</h3><ul class='design-controls' data-for='" + c.category + "'>" + li + "</ul>");
+    				}
+    			} else {
+	    			// add button to first ul
+	    			designControls.find("ul").first().append(li);
+    			}
     			
     			// add it's name as a help hint
     			addHelp("c_" + c.type, false, false, c.name);
