@@ -48,7 +48,7 @@ import com.rapid.core.Control;
 import com.rapid.core.Page;
 import com.rapid.server.filter.RapidFilter;
 
-//this class provides some utility functions for easily accessing common Rapid objects from a request
+// this class provides some utility functions for easily accessing common Rapid objects from a request
 public class RapidRequest {
 	
 	// instance variables

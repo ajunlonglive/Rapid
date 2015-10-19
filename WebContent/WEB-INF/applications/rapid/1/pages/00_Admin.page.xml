@@ -9,7 +9,7 @@ var version = $.getUrlVar("version");
 // if we got one
 if (version) {  
   // if there is an entry in the drop down that matches the version in the url
-  if (versions.find("option[value="+ version +"]")[0]) {
+  if (versions.find("option[value='"+ version +"']")[0]) {
     // change the dropdown value
     versions.val(version);
     // fire the change event

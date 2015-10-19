@@ -46,8 +46,20 @@ This action runs form - specifc functions
 	            <name>Action</name>
 	            <setConstructValueFunction>return ""</setConstructValueFunction>
 	            <changeValueJavaScript>select</changeValueJavaScript>	 	            
-	            <getValuesFunction>return [["","Please select..."],["next","next page"],["prev","previous page"],["id","copy form id"]];</getValuesFunction>	            
+	            <getValuesFunction>return [["","Please select..."],["next","next page"],["prev","previous page"],["id","copy form id"],["val","copy form value"]];</getValuesFunction>	            
 	            <refreshProperties>true</refreshProperties>	            
+	        </property>
+	        
+	        <property>
+	            <key>dataSource</key>
+	            <name>Source</name>
+	            <changeValueJavaScript>formDataSource</changeValueJavaScript> 
+	            <getValuesFunction>
+	                 <![CDATA[
+	                // return the list of all controls on the page with the one for this action selected
+	                return "<option value=''>Please select...</option>" + getFormValueOptions(this.dataSource);
+	               	]]>
+	            </getValuesFunction>
 	        </property>
 	        
 	        <property>
@@ -57,7 +69,7 @@ This action runs form - specifc functions
 	            <getValuesFunction>
 	                 <![CDATA[
 	                // return the list of all controls on the page with the one for this action selected
-	                return "<option value=''>Please select...</option>" + getOutputOptions(this.control);
+	                return "<option value=''>Please select...</option>" + getOutputOptions(this.dataDestination);
 	               	]]>
 	            </getValuesFunction>
 	        </property>
