@@ -1501,7 +1501,7 @@ function loadVersion(forceLoad) {
     			var li = "<li id='c_" + c.type + "' class='design-control' data-control='" + c.type + "'>" + (c.image ? "<img src='" + c.image + "'/>" : "<img src='images/tools_24x24.png'/>") + "</li>";
     			
     			// check for a category
-    			if (c.category) {
+    			if (c.category) {    				
     				// check for a sub list
     				var ul = designControls.parent().find("ul[data-for='" + c.category + "']");
     				// if we got one
@@ -1511,17 +1511,23 @@ function loadVersion(forceLoad) {
     				} else {
     					// add list and entry
     					designControls.append("<h3>" + c.category + "</h3><ul class='design-controls' data-for='" + c.category + "'>" + li + "</ul>");
+    					// find the list
+    					ul = designControls.parent().find("ul[data-for='" + c.category + "']");
     				}
+    				// find the list entry
+    				li = ul.children().last();
     			} else {
 	    			// add button to first ul
 	    			designControls.find("ul").first().append(li);
+	    			// now fetch it into the li variable
+	    			li = designControls.children().last();
     			}
     			
     			// add it's name as a help hint
     			addHelp("c_" + c.type, false, false, c.name);
     			
     			// when the mouse moves down on this component
-    			designControls.children().last().on("mousedown touchstart", function(ev) {		
+    			li.on("mousedown touchstart", function(ev) {		
     				
     				// add an undo for the whole page
     				addUndo(true);
