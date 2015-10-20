@@ -32,6 +32,7 @@ import com.rapid.core.Application;
 import com.rapid.core.Control;
 import com.rapid.core.Page;
 import com.rapid.server.RapidHttpServlet;
+import com.rapid.server.RapidRequest;
 
 public class Custom extends Action {
 	
@@ -45,7 +46,7 @@ public class Custom extends Action {
 	// methods
 	
 	@Override
-	public String getJavaScript(RapidHttpServlet rapidServlet, Application application, Page page, Control control, JSONObject jsonDetails) {
+	public String getJavaScript(RapidRequest rapidRequest, Application application, Page page, Control control, JSONObject jsonDetails) {
 		// get the JavaScript
 		String javaScript = getProperty("javascript");
 		// if we have some javascript		

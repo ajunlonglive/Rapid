@@ -36,6 +36,7 @@ import com.rapid.core.Application;
 import com.rapid.core.Control;
 import com.rapid.core.Page;
 import com.rapid.server.RapidHttpServlet;
+import com.rapid.server.RapidRequest;
 
 public class Validation extends Action {
 	
@@ -100,7 +101,7 @@ public class Validation extends Action {
 	// methods
 	
 	@Override
-	public String getJavaScript(RapidHttpServlet rapidServlet, Application application, Page page, Control control, JSONObject jsonDetails) throws Exception {
+	public String getJavaScript(RapidRequest rapidRequest, Application application, Page page, Control control, JSONObject jsonDetails) throws Exception {
 		
 		String js = "";
 						
@@ -120,7 +121,7 @@ public class Validation extends Action {
 					if (controlValidation != null) {
 						
 						// find the control class
-						JSONObject jsonControl = rapidServlet.getJsonControl(validateControl.getType());
+						JSONObject jsonControl = rapidRequest.getRapidServlet().getJsonControl(validateControl.getType());
 						
 						// check a type has been specified and we could find it
 						if (jsonControl != null && !"".equals(controlValidation.getType())) {
@@ -156,14 +157,14 @@ public class Validation extends Action {
 			
 			// insert pass actions
 			if (_passActions != null) {
-				for (Action action : _passActions) js += "    " + action.getJavaScript(rapidServlet, application, page, control, jsonDetails) + "\n";
+				for (Action action : _passActions) js += "    " + action.getJavaScript(rapidRequest, application, page, control, jsonDetails) + "\n";
 			}
 			
 			js += "  } else {\n";
 			
 			// insert fail actions
 			if (_failActions != null) {
-				for (Action action : _failActions) js += "    " + action.getJavaScript(rapidServlet, application, page, control, jsonDetails) + "\n";
+				for (Action action : _failActions) js += "    " + action.getJavaScript(rapidRequest, application, page, control, jsonDetails) + "\n";
 			}
 			
 			// check whether to stop further actions

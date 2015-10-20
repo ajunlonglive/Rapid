@@ -37,6 +37,7 @@ import com.rapid.core.Application;
 import com.rapid.core.Control;
 import com.rapid.core.Page;
 import com.rapid.server.RapidHttpServlet;
+import com.rapid.server.RapidRequest;
 
 public class Datacopy extends Action {
 	
@@ -117,10 +118,13 @@ public class Datacopy extends Action {
 	// overrides
 	
 	@Override
-	public String getJavaScript(RapidHttpServlet rapidServlet, Application application, Page page, Control control, JSONObject jsonDetails) {
+	public String getJavaScript(RapidRequest rapidRequest, Application application, Page page, Control control, JSONObject jsonDetails) {
 		
 		// the javascript we're making
 		String js = "";
+		
+		// get the Rapid servlet
+		RapidHttpServlet rapidServlet = rapidRequest.getRapidServlet();
 		
 		// get any copy type
 		String copyType = getProperty("copyType");

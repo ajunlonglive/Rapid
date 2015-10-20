@@ -36,6 +36,7 @@ import com.rapid.core.Control;
 import com.rapid.core.Event;
 import com.rapid.core.Page;
 import com.rapid.server.RapidHttpServlet;
+import com.rapid.server.RapidRequest;
 
 public class Existing extends Action {
 		
@@ -74,7 +75,7 @@ public class Existing extends Action {
 	}
 	
 	@Override
-	public String getJavaScript(RapidHttpServlet rapidServlet, Application application, Page page, Control control, JSONObject jsonDetails) throws Exception {
+	public String getJavaScript(RapidRequest rapidRequest, Application application, Page page, Control control, JSONObject jsonDetails) throws Exception {
 		// get the action id
 		String actionId = getProperty("action");
 		// check we got something
@@ -86,7 +87,7 @@ public class Existing extends Action {
 			// check we got something
 			if (existingAction != null) {
 				// get its JavaScript
-				String existingJavaScript = existingAction.getJavaScript(rapidServlet, application, page, actionControl, jsonDetails);
+				String existingJavaScript = existingAction.getJavaScript(rapidRequest, application, page, actionControl, jsonDetails);
 				// check we got some
 				if (existingJavaScript != null) {
 					// trim it

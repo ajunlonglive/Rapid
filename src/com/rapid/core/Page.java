@@ -925,7 +925,7 @@ public class Page {
     	
     }
           
-    private void getEventJavaScriptFunction(RapidHttpServlet rapidServlet, StringBuilder stringBuilder, Application application, Control control, Event event) {
+    private void getEventJavaScriptFunction(RapidRequest rapidRequest, StringBuilder stringBuilder, Application application, Control control, Event event) {
     	// check actions are initialised
 		if (event.getActions() != null) {
 			// check there are some to loop
@@ -965,7 +965,7 @@ public class Page {
 					
 					try {						
 						// get the action client-side java script from the action object (it's generated there as it can contain values stored in the object on the server side)
-						String actionJavaScript = action.getJavaScript(rapidServlet, application, this, control, null);
+						String actionJavaScript = action.getJavaScript(rapidRequest, application, this, control, null);
 						// if non null
 						if (actionJavaScript != null) {
 							// trim it to avoid tabs and line breaks that might sneak in
@@ -1019,7 +1019,7 @@ public class Page {
     }
             
     // build the event handling page JavaScript iteratively
-    private void getEventHandlersJavaScript(RapidHttpServlet rapidServlet, StringBuilder stringBuilder, Application application, List<Control> controls) throws JSONException {
+    private void getEventHandlersJavaScript(RapidRequest rapidRequest, StringBuilder stringBuilder, Application application, List<Control> controls) throws JSONException {
     	// check there are some controls    			
     	if (controls != null) {    		
 			// if we're at the root of the page
@@ -1027,17 +1027,17 @@ public class Page {
     			// check for page events
     			if (_events != null) {
     				// loop page events and get js functions
-        			for (Event event : _events) getEventJavaScriptFunction(rapidServlet, stringBuilder, application, null, event);        			
+        			for (Event event : _events) getEventJavaScriptFunction(rapidRequest, stringBuilder, application, null, event);        			
     			}    			
     		}
     		for (Control control : controls) {
     			// check event actions
     			if (control.getEvents() != null) {
     				// loop page events and get js functions
-    				for (Event event : control.getEvents()) getEventJavaScriptFunction(rapidServlet, stringBuilder, application, control, event);    					    				
+    				for (Event event : control.getEvents()) getEventJavaScriptFunction(rapidRequest, stringBuilder, application, control, event);    					    				
     			}
     			// now call iteratively for child controls (of this [child] control, etc.)
-    			if (control.getChildControls() != null) getEventHandlersJavaScript(rapidServlet, stringBuilder, application, control.getChildControls());     				
+    			if (control.getChildControls() != null) getEventHandlersJavaScript(rapidRequest, stringBuilder, application, control.getChildControls());     				
     		}    		 		
     	}    	
     }
@@ -1078,13 +1078,13 @@ public class Page {
     }
 	
 	// this private method produces the head of the page which is often cached, if resourcesOnly is true only page resources are included which is used when sending no permission
-	private String getHeadJSCSS(RapidHttpServlet rapidServlet, Application application, boolean isDialogue) throws JSONException {
+	private String getHeadJSCSS(RapidRequest rapidRequest, Application application, boolean isDialogue) throws JSONException {
     	
 		// create an empty string builder
     	StringBuilder stringBuilder = new StringBuilder();
    							
 		// fetch all page control styles
-		String pageCss = getAllCSS(rapidServlet.getServletContext(), application);
+		String pageCss = getAllCSS(rapidRequest.getRapidServlet().getServletContext(), application);
 		
 		// only if there is some
 		if (pageCss.length() > 0) {
@@ -1208,7 +1208,7 @@ public class Page {
 			for (Action action : pageActions) {
 				try {
 					// look for any page javascript that this action may have
-					String actionPageJavaScript = action.getPageJavaScript(rapidServlet, application, this, null);
+					String actionPageJavaScript = action.getPageJavaScript(rapidRequest, application, this, null);
 					// print it here if so
 					if (actionPageJavaScript != null) jsStringBuilder.append(actionPageJavaScript.trim() + "\n\n");
 					// if this action adds redundancy to any others 
@@ -1232,7 +1232,7 @@ public class Page {
 			} // action loop		
 			
 			// add event handlers, staring at the root controls
-			getEventHandlersJavaScript(rapidServlet, jsStringBuilder, application, _controls);
+			getEventHandlersJavaScript(rapidRequest, jsStringBuilder, application, _controls);
 		}
 		
 		// if there was any js
@@ -1262,7 +1262,7 @@ public class Page {
 		}
 							
 		// get it into a string and insert any parameters
-		String htmlHead = application.insertParameters(rapidServlet.getServletContext(), stringBuilder.toString());
+		String htmlHead = application.insertParameters(rapidRequest.getRapidServlet().getServletContext(), stringBuilder.toString());
 					
 		// return it
 		return htmlHead;
@@ -1281,11 +1281,11 @@ public class Page {
 	}
 	
 	// this gets the cached CSS and JS  for the head html
-	public String getCachedHeadJSCSS(RapidHttpServlet rapidServlet, Application application, boolean isDialogue) throws JSONException {
+	public String getCachedHeadJSCSS(RapidRequest rapidRequest, Application application, boolean isDialogue) throws JSONException {
 		// check whether the page has been cached yet
 		if (_cachedHeadJSCSS == null) {
 			// generate the page start html if not
-			_cachedHeadJSCSS = getHeadJSCSS(rapidServlet, application, isDialogue);																		
+			_cachedHeadJSCSS = getHeadJSCSS(rapidRequest, application, isDialogue);																		
 		}	
 		// return the regular
 		return _cachedHeadJSCSS;					
@@ -1379,14 +1379,14 @@ public class Page {
 		    		// write the user
 		    		writer.write(getUserJS(user));
 		    		// get fresh js and css
-		    		writer.write(getHeadJSCSS(rapidServlet, application, !designerLink));
+		    		writer.write(getHeadJSCSS(rapidRequest, application, !designerLink));
 		    	} else {
 		    		// get the cached head links
 		    		writer.write(getCachedHeadLinks(rapidServlet, application, !designerLink));
 		    		// write the user
 		    		writer.write(getUserJS(user));
 		    		// get the cached head js and css
-		    		writer.write(getCachedHeadJSCSS(rapidServlet, application, !designerLink));
+		    		writer.write(getCachedHeadJSCSS(rapidRequest, application, !designerLink));
 		    	}
 		    			    			    			    	
 		    	// close the head
@@ -1481,7 +1481,7 @@ public class Page {
 				// close the form
 				if (formAdapter != null && designerLink) {
 					// get the form id
-					String formId = formAdapter.getFormId(rapidRequest, application);
+					String formId = formAdapter.getFormId(rapidRequest);
 					// write the form id into the page
 		    		writer.write("<script type='text/javascript'> var _formId = '" + formId + "'; </script>\n");
 					// write the form values
@@ -1626,7 +1626,7 @@ public class Page {
 			String valueId = value.getId();
 			String[] valueIdParts = valueId.split("_");
 			String pageId = valueIdParts[0];
-			return formAdapter.getFormPageControlValue(rapidRequest, formId, application, pageId, valueId);
+			return formAdapter.getFormPageControlValue(rapidRequest, pageId, valueId);
 		}
 	}
 	

@@ -45,8 +45,8 @@ public class RapidFormAdapter extends FormAdapter {
 	}
 	
 	// class methods
-	
-	protected Map<String,FormPageControlValues> getUserFormPageControlValues(RapidRequest rapidRequest, Application application, String formId) {	
+		
+	protected Map<String,FormPageControlValues> getUserFormPageControlValues(RapidRequest rapidRequest) {	
 		// get the user session
 		HttpSession session = rapidRequest.getRequest().getSession();
 		// get all app page control values from session
@@ -58,6 +58,8 @@ public class RapidFormAdapter extends FormAdapter {
 			// add to session
 			session.setAttribute("userFormPageControlValues", userAppPageControlValues);
 		}
+		// get the form id
+		String formId = getFormId(rapidRequest);
 		// the page controls for specified app
 		Map<String,FormPageControlValues> userPageControlValues = userAppPageControlValues.get(formId);
 		// if null, instantiate
@@ -74,13 +76,15 @@ public class RapidFormAdapter extends FormAdapter {
 	// overridden methods
 	
 	@Override
-	public String getFormId(RapidRequest rapidRequest, Application application) {
-		// get the user session
+	public String getFormId(RapidRequest rapidRequest) {
+		// get the user session (making a new one if need be)
 		HttpSession session = rapidRequest.getRequest().getSession();
 		// retrieve the form ids from the session
 		Map<String,String> formIds = (Map<String, String>) session.getAttribute("userFormIds");
 		// instantiate if null
 		if (formIds == null) formIds = new HashMap<String, String>();
+		// get the application
+		Application application = rapidRequest.getApplication();
 		// get the form id based on the app id and version
 		String formId = formIds.get(application.getId() + "-" + application.getVersion());
 		// if it's null
@@ -104,44 +108,31 @@ public class RapidFormAdapter extends FormAdapter {
 				// put into form ids
 				formIds.put(application.getId() + "-" + application.getVersion(), formId);
 				// retain for user
-				session.setAttribute("userFormIds",formIds);
-				
-				
-				// testing pre-population
-				
-				/*
-				FormControlValue controlValue = new FormControlValue("P4_C55_","Hello!");
-				
-				FormPageControlValues pageControlValue = new FormPageControlValues(controlValue);
-				
-				setFormPageControlValues(rapidRequest, formId, application, "P4", pageControlValue);
-				*/
-												
-			}
-			
+				session.setAttribute("userFormIds",formIds);									
+			}			
 		}					
 		return formId;
 	}
 	
 	@Override
-	public FormPageControlValues getFormPageControlValues(RapidRequest rapidRequest, String formId, Application application, String pageId)	{
+	public FormPageControlValues getFormPageControlValues(RapidRequest rapidRequest, String pageId)	{
 		// retrieve
-		return getUserFormPageControlValues(rapidRequest, application, formId).get(pageId);
+		return getUserFormPageControlValues(rapidRequest).get(pageId);
 	}
 
 	@Override
-	public void setFormPageControlValues(RapidRequest rapidRequest, String formId, Application application, String pageId, FormPageControlValues pageControlValues) {		
+	public void setFormPageControlValues(RapidRequest rapidRequest, String pageId, FormPageControlValues pageControlValues) {		
 		// if there are controls to store
-		if (pageControlValues.size() > 0) {
+		if (pageControlValues.size() > 0) {;
 			// store them
-			getUserFormPageControlValues(rapidRequest, application, formId).put(pageId, pageControlValues);
+			getUserFormPageControlValues(rapidRequest).put(pageId, pageControlValues);
 		}		
 	}
 	
 	@Override
-	public String getFormPageControlValue(RapidRequest rapidRequest, String formId, Application application, String pageId, String controlId) {
+	public String getFormPageControlValue(RapidRequest rapidRequest, String pageId, String controlId) {
 		// get all user form page values
-		Map<String,FormPageControlValues> userFormPageControlValues = getUserFormPageControlValues(rapidRequest, application, formId);
+		Map<String,FormPageControlValues> userFormPageControlValues = getUserFormPageControlValues(rapidRequest);
 		// if there are control values stored
 		if (userFormPageControlValues.size() > 0) {
 			// look for values from our page
@@ -156,6 +147,14 @@ public class RapidFormAdapter extends FormAdapter {
 			}
 		}
 		return null;
+	}
+	
+	@Override
+	public String getFormControlValue(RapidRequest rapidRequest, String controlId) {
+		// split the controlid
+		String[] controlIdParts = controlId.split("_");
+		// use the parts to access the page and control id
+		return getFormPageControlValue(rapidRequest, controlIdParts[0], controlId);
 	}
 	
 	@Override
@@ -187,14 +186,18 @@ public class RapidFormAdapter extends FormAdapter {
 	@Override
 	public String getSummaryControlValueHtml(RapidRequest rapidRequest, Application application, Page page, FormControlValue controlValue) {
 		Control control = page.getControl(controlValue.getId());
-		String label = control.getLabel();
-		if (label == null) {
-			return "";
+		if (control == null) {
+			return "control " + controlValue.getId() + " cannot be found";
 		} else {
-			String value = controlValue.getValue();
-			if (value == null) value = "(no value)";
-			return "<span class='formSummaryControl'>" + label + " : " + control.getCodeText(value) + "</span>\n";
-		}		
+			String label = control.getLabel();
+			if (label == null) {
+				return "";
+			} else {
+				String value = controlValue.getValue();
+				if (value == null) value = "(no value)";
+				return "<span class='formSummaryControl'>" + label + " : " + control.getCodeText(value) + "</span>\n";
+			}		
+		}
 	}
 	
 	@Override
@@ -203,11 +206,13 @@ public class RapidFormAdapter extends FormAdapter {
 	}
 
 	@Override
-	public void submitForm(RapidRequest rapidRequest, String formId, Application application) throws Exception {
+	public void submitForm(RapidRequest rapidRequest) throws Exception {
 		// get the user session
 		HttpSession session = rapidRequest.getRequest().getSession();
 		// retrieve the form ids from the session
 		Map<String,String> formIds = (Map<String, String>) session.getAttribute("userFormIds");
+		// get the application
+		Application application = rapidRequest.getApplication();
 		// null check
 		if (formIds != null) {
 			// empty the form id - invalidating the form

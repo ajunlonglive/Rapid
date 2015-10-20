@@ -177,7 +177,7 @@ public class Rapid extends RapidHttpServlet {
 						// if there is a formAdapter, make sure there's a form id, unless it's for a dialogue
 						if (formAdapter != null) {
 							// get form id
-							String formId = formAdapter.getFormId(rapidRequest, app);
+							String formId = formAdapter.getFormId(rapidRequest);
 							// if there isn't one go back to the start
 							if (formId == null) {
 								pageCheck = false;							
@@ -508,12 +508,12 @@ public class Rapid extends RapidHttpServlet {
 								if ("submit".equals(request.getParameter("action"))) {
 									
 									// get the form id
-									String formId = formAdapter.getFormId(rapidRequest, app);
+									String formId = formAdapter.getFormId(rapidRequest);
 									
 									try {
 										
 										// do the submit
-										formAdapter.submitForm(rapidRequest, formId, app);
+										formAdapter.submitForm(rapidRequest);
 										
 										// write the form submit OK page
 										formAdapter.writeFormSubmitOK(rapidRequest, response, formId);
@@ -538,13 +538,10 @@ public class Rapid extends RapidHttpServlet {
 										for (FormControlValue controlValue : pageControlValues) {
 											logger.debug(controlValue.getId() + " = " + controlValue.getValue());
 										}
-									}
-									
-									// get the form id
-									String formId = formAdapter.getFormId(rapidRequest, app);
+									}									
 									
 									// store the form page control values
-									formAdapter.setFormPageControlValues(rapidRequest, formId, app, requestPageId, pageControlValues);
+									formAdapter.setFormPageControlValues(rapidRequest, requestPageId, pageControlValues);
 																							
 									// get all of the app pages
 									PageHeaders pageHeaders = app.getPages().getSortedPages();

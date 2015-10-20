@@ -32,6 +32,7 @@ import com.rapid.core.Application;
 import com.rapid.core.Control;
 import com.rapid.core.Page;
 import com.rapid.server.RapidHttpServlet;
+import com.rapid.server.RapidRequest;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -105,7 +106,7 @@ public class Navigate extends Action {
 	}
 	
 	@Override
-	public String getJavaScript(RapidHttpServlet rapidServlet, Application application, Page page, Control control, JSONObject jsonDetails) {
+	public String getJavaScript(RapidRequest rapidRequest, Application application, Page page, Control control, JSONObject jsonDetails) {
 		String pageId = getProperty("page");
 		if (pageId == null) {
 			return "";
@@ -117,7 +118,7 @@ public class Navigate extends Action {
 				// loop
 				for (SessionVariable sessionVariable : _sessionVariables) {					
 					// get the data getter command
-					String getter = Control.getDataJavaScript(rapidServlet.getServletContext(), application, page, sessionVariable.getItemId(), sessionVariable.getField());
+					String getter = Control.getDataJavaScript(rapidRequest.getRapidServlet().getServletContext(), application, page, sessionVariable.getItemId(), sessionVariable.getField());
 					// build the concatinating string
 					sessionVariables += "&" + sessionVariable.getName() + "=' + " +  getter + " + '";									
 				}

@@ -37,6 +37,7 @@ import com.rapid.core.Application;
 import com.rapid.core.Control;
 import com.rapid.core.Page;
 import com.rapid.server.RapidHttpServlet;
+import com.rapid.server.RapidRequest;
 
 public class Mobile extends Action {
 	
@@ -132,7 +133,7 @@ public class Mobile extends Action {
 	}
 	
 	@Override
-	public String getPageJavaScript(RapidHttpServlet rapidServlet, Application application, Page page, JSONObject jsonDetails) throws Exception {
+	public String getPageJavaScript(RapidRequest rapidRequest, Application application, Page page, JSONObject jsonDetails) throws Exception {
 		// refrence to these success and fail actions are sent as callbacks to the on-mobile device file upload function
 		if (_successActions == null && _errorActions == null) {
 			return null;
@@ -146,7 +147,7 @@ public class Mobile extends Action {
 			if (_successActions != null) {
 				js += "function " + id + "success(ev) {\n";
 				for (Action action : _successActions) {
-					js += "  " + action.getJavaScript(rapidServlet, application, page, control, jsonDetails).trim().replace("\n", "\n  ") + "\n";
+					js += "  " + action.getJavaScript(rapidRequest, application, page, control, jsonDetails).trim().replace("\n", "\n  ") + "\n";
 				}
 				js += "}\n";
 			}
@@ -154,7 +155,7 @@ public class Mobile extends Action {
 			if (_errorActions != null) {
 				js += "function " + id + "error(ev, server, status, message) {\n";
 				for (Action action : _errorActions) {
-					js += "  " + action.getJavaScript(rapidServlet, application, page, control, jsonDetails).trim().replace("\n", "\n  ") + "\n";
+					js += "  " + action.getJavaScript(rapidRequest, application, page, control, jsonDetails).trim().replace("\n", "\n  ") + "\n";
 				}
 				js += "}\n";
 			}
@@ -178,9 +179,11 @@ public class Mobile extends Action {
 	}
 			
 	@Override
-	public String getJavaScript(RapidHttpServlet rapidServlet, Application application, Page page, Control control, JSONObject jsonDetails) {
+	public String getJavaScript(RapidRequest rapidRequest, Application application, Page page, Control control, JSONObject jsonDetails) {
 		// start the js
 		String js = "";		
+		// get the servlet
+		RapidHttpServlet rapidServlet = rapidRequest.getRapidServlet();
 		// get the type
 		String type = getProperty("actionType");
 		// check we got something
@@ -506,7 +509,7 @@ public class Mobile extends Action {
 								// record that we have an offline page
 								jsonDetails.put("offlinePage", offlinePage);
 								
-								js += "  " + action.getJavaScript(rapidServlet, application, page, control, jsonDetails).trim().replace("\n", "\n  ") + "\n";
+								js += "  " + action.getJavaScript(rapidRequest, application, page, control, jsonDetails).trim().replace("\n", "\n  ") + "\n";
 																	
 							}
 							
