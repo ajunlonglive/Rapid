@@ -137,7 +137,7 @@ public class Page {
 	// instance variables
 	
 	private int _xmlVersion;
-	private String _id, _name, _title, _label, _description, _createdBy, _modifiedBy, _htmlBody, _cachedStartHtml;
+	private String _id, _name, _title, _label, _description, _createdBy, _modifiedBy, _htmlBody, _cachedHeadLinks, _cachedHeadJSCSS;
 	private Date _createdDate, _modifiedDate;	
 	private List<Control> _controls;
 	private List<Event> _events;
@@ -245,18 +245,7 @@ public class Page {
 	public String getFile(ServletContext servletContext, Application application) {
 		return application.getConfigFolder(servletContext) + "/" + "/pages/" + Files.safeName(_name) + ".page.xml";
 	}
-		
-	// these two methods have different names to avoid being marshelled to the .xml file by JAXB
-	public String getHtmlHeadCached(RapidHttpServlet rapidServlet, Application application, User user, boolean isDialogue) throws JSONException {
-		// check whether the page has been cached yet
-		if (_cachedStartHtml == null) {
-			// generate the page start html if not
-			_cachedStartHtml = getHtmlHead(rapidServlet, application, user, isDialogue);																		
-		}	
-		// return the regular
-		return _cachedStartHtml;					
-	}
-	
+				
 	public void addControl(Control control) {
 		if (_controls == null) _controls = new ArrayList<Control>();
 		_controls.add(control);
@@ -775,7 +764,8 @@ public class Page {
 		application.getPages().addPage(this, newFile);
 		
 		// empty the cached page html
-		_cachedStartHtml = null;
+		_cachedHeadLinks = null;
+		_cachedHeadJSCSS = null;
 		// empty the cached action types
 		_actionTypes = null;
 		// empty the cached control types
@@ -1053,7 +1043,7 @@ public class Page {
     }
     
     // this method produces the start of the head (which is shared by the no permission respone)
-    private String getHtmlHeadStart(Application application) {
+    private String getHeadStart(Application application) {
     	return 
     	"  <head>\n" +		
 		"    <title>" + _title + " - by Rapid</title>\n" +		
@@ -1065,9 +1055,10 @@ public class Page {
     }
 	
     // this private method produces the head of the page which is often cached, if resourcesOnly is true only page resources are included which is used when sending no permission
-	private String getHtmlHead(RapidHttpServlet rapidServlet, Application application, User user, boolean isDialogue) throws JSONException {
+	private String getHeadLinks(RapidHttpServlet rapidServlet, Application application, boolean isDialogue) throws JSONException {
     	
-    	StringBuilder stringBuilder = new StringBuilder(getHtmlHeadStart(application));
+		// create a string builder containing the head links
+    	StringBuilder stringBuilder = new StringBuilder(getHeadStart(application));
     	    															
 		// if you're looking for where the jquery link is added it's the first resource in the page.control.xml file	
 		stringBuilder.append("    " + getResourcesHtml(application, false).trim().replace("\n", "\n    ") + "\n");
@@ -1079,10 +1070,19 @@ public class Page {
 			stringBuilder.append("var _appVersion = '" + application.getVersion() + "';\n");
 		}
 		stringBuilder.append("var _pageId = '" + _id + "';\n");			
-		if (user != null) stringBuilder.append("var _userName = '" +user.getName().replace("'", "\'") + "';\n");
 		stringBuilder.append("var _mobileResume = false;\n\n");
 		stringBuilder.append("    </script>\n");
 								
+		return stringBuilder.toString();
+    	
+    }
+	
+	// this private method produces the head of the page which is often cached, if resourcesOnly is true only page resources are included which is used when sending no permission
+	private String getHeadJSCSS(RapidHttpServlet rapidServlet, Application application, boolean isDialogue) throws JSONException {
+    	
+		// create an empty string builder
+    	StringBuilder stringBuilder = new StringBuilder();
+   							
 		// fetch all page control styles
 		String pageCss = getAllCSS(rapidServlet.getServletContext(), application);
 		
@@ -1269,11 +1269,42 @@ public class Page {
     	
     }
 	
+	// this gets the cached links for the head html
+	public String getCachedHeadLinks(RapidHttpServlet rapidServlet, Application application, boolean isDialogue) throws JSONException {
+		// check whether the page has been cached yet
+		if (_cachedHeadLinks == null) {
+			// generate the page start html if not
+			_cachedHeadLinks = getHeadLinks(rapidServlet, application, isDialogue);																		
+		}	
+		// return the regular
+		return _cachedHeadLinks;					
+	}
+	
+	// this gets the cached CSS and JS  for the head html
+	public String getCachedHeadJSCSS(RapidHttpServlet rapidServlet, Application application, boolean isDialogue) throws JSONException {
+		// check whether the page has been cached yet
+		if (_cachedHeadJSCSS == null) {
+			// generate the page start html if not
+			_cachedHeadJSCSS = getHeadJSCSS(rapidServlet, application, isDialogue);																		
+		}	
+		// return the regular
+		return _cachedHeadJSCSS;					
+	}
+	
+	// writer the user js
+	public String getUserJS(User user) {
+		if (user == null) {
+			return null;
+		} else {
+			return "    <script type='text/javascript'>\nvar _userName = '" + user.getName() + "';\n    </script>\n";
+		}
+	}
+	
 	// this routine will write the no page permission - used by both page permission and if control permission permutations fail to result in any html
 	public void writeMessage(Writer writer, String title, String message) throws IOException {
 		
 		// write the head html without the JavaScript and CSS (index.css is substituted for us)
-		writer.write(getHtmlHeadStart(null));
+		writer.write(getHeadStart(null));
 		
 		// add the icon
 		writer.write("    <link rel='icon' href='favicon.ico'></link>\n");
@@ -1343,11 +1374,19 @@ public class Page {
 						    	
 		    	// check whether or not we rebuild
 		    	if (rebuildPages) {
-		    		// get fresh head html
-		    		writer.write(getHtmlHead(rapidServlet, application, user, !designerLink));
+		    		// get fresh head links
+		    		writer.write(getHeadLinks(rapidServlet, application, !designerLink));
+		    		// write the user
+		    		writer.write(getUserJS(user));
+		    		// get fresh js and css
+		    		writer.write(getHeadJSCSS(rapidServlet, application, !designerLink));
 		    	} else {
-		    		// get the cached head html
-		    		writer.write(getHtmlHeadCached(rapidServlet, application, user, !designerLink));
+		    		// get the cached head links
+		    		writer.write(getCachedHeadLinks(rapidServlet, application, !designerLink));
+		    		// write the user
+		    		writer.write(getUserJS(user));
+		    		// get the cached head js and css
+		    		writer.write(getCachedHeadJSCSS(rapidServlet, application, !designerLink));
 		    	}
 		    			    			    			    	
 		    	// close the head
