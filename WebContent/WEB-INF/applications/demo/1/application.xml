@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?><application><actionTypes>control</actionTypes><actionTypes>custom</actionTypes><actionTypes>dataCopy</actionTypes><actionTypes>database</actionTypes><actionTypes>existing</actionTypes><actionTypes>logic</actionTypes><actionTypes>navigate</actionTypes><actionTypes>validation</actionTypes><actionTypes>webservice</actionTypes><controlTypes>page</controlTypes><controlTypes>button</controlTypes><controlTypes>chart</controlTypes><controlTypes>checkbox</controlTypes><controlTypes>dataStore</controlTypes><controlTypes>date</controlTypes><controlTypes>dropdown</controlTypes><controlTypes>grid</controlTypes><controlTypes>image</controlTypes><controlTypes>input</controlTypes><controlTypes>link</controlTypes><controlTypes>panel</controlTypes><controlTypes>radiobuttons</controlTypes><controlTypes>table</controlTypes><controlTypes>text</controlTypes><controlTypes>tableCell</controlTypes><controlTypes>tableRow</controlTypes><createdDate>2013-12-31T23:00:00Z</createdDate><databaseConnections><connectionAdapterClass>com.rapid.data.SimpleConnectionAdapter</connectionAdapterClass><connectionString>jdbc:sqlite:WebContent/WEB-INF/database/rapidsample.db</connectionString><driverClass>org.sqlite.JDBC</driverClass><name>Demo connection</name><password></password><userName></userName></databaseConnections><description>This is a demonstration Rapid application provided to showcase many common Rapid features</description><formAdapterType></formAdapterType><id>demo</id><modifiedBy>admin</modifiedBy><modifiedDate>2015-10-19T20:14:12.528+01:00</modifiedDate><name>demo</name><pageBackupsMaxSize>3</pageBackupsMaxSize><pageOrders/><securityAdapterType>rapid</securityAdapterType><showActionIds>false</showActionIds><showControlIds>false</showControlIds><startPageId>P1</startPageId><status>1</status><statusBarColour>#aaaaaa</statusBarColour><statusBarHighlightColour>#999999</statusBarHighlightColour><statusBarIconColour>white</statusBarIconColour><statusBarTextColour>#ffffff</statusBarTextColour><styles>/*
+Styles saved here will be applied to all pages in the application
+*/
+
+body {
+  padding : 10px;
+  font-family : 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;
+  font-size : 13px;
+}
+
+table {
+  font-family : 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;
+  font-size : 13px;
+}
+
+.dialogueCover {
+  background-color : white;
+  opacity:0.7;
+  filter:alpha(opacity=70);
+}
+
+div.validation {
+ font-size: 12px;
+ margin: 10px 10px 10px 0px;
+ padding: 6px 10px 5px 25px;	
+ background: url(../../../images/alert_16x16.png) 5px 5px no-repeat;
+ border: 1px solid red;
+ border-radius: 5px;
+ max-width: 200px;
+}
+
+input.validation {
+  border: 2px solid red;
+  border-radius: 5px;
+  box-shadow: 1px 1px 2px;
+}
+
+</styles><title>Rapid demo</title><version>1</version><webservices xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="sqlWebservice"><id>SampleSQLwebservice</id><name>Sample SQL webservice</name><requestSchema><rootElement><childElements><dataType>1</dataType><id>0.0</id><isArray>false</isArray><name>forename</name><restrictions xsi:type="minOccursRestriction"><value>0</value></restrictions></childElements><childElements><dataType>1</dataType><id>0.1</id><isArray>false</isArray><name>surname</name></childElements><dataType>0</dataType><id>0</id><isArray>false</isArray><name>personSearchRequest</name></rootElement></requestSchema><responseSchema><rootElement><childElements><dataType>2</dataType><field>id</field><id>0.0</id><isArray>false</isArray><name>id</name></childElements><childElements><dataType>1</dataType><field>forename</field><id>0.1</id><isArray>false</isArray><name>forename</name><restrictions xsi:type="minOccursRestriction"><value>0</value></restrictions></childElements><childElements><dataType>1</dataType><field>surname</field><id>0.2</id><isArray>false</isArray><name>surname</name></childElements><childElements><dataType>4</dataType><field>birthday</field><id>0.3</id><isArray>false</isArray><name>birthday</name><restrictions xsi:type="minOccursRestriction"><value>0</value></restrictions></childElements><childElements><dataType>1</dataType><field>gender</field><id>0.4</id><isArray>false</isArray><name>gender</name><restrictions xsi:type="enumerationRestriction"><value>M,F,U</value></restrictions><restrictions xsi:type="minOccursRestriction"><value>0</value></restrictions></childElements><dataType>0</dataType><id>0</id><isArray>true</isArray><name>personSearchResponse</name></rootElement></responseSchema><databaseConnectionIndex>0</databaseConnectionIndex><SQL>select id, forename,
+surname,
+/* The function below converts an SQLite date into the number of milliseconds since 1 Jan 1970 so the jdbc driver can retrieve it as a proper date object */
+strftime('%s', birthday)*1000 birthday,
+gender
+from people
+/* The ifnull function substitutes the wildcard character if forename is not provided, which may happen has minOccurs=0 */
+where lower(forename) like ifnull(lower(?),'%')||'%'
+and lower(surname) like lower(?)||'%'
+order by surname, birthday
+/* Return at most 10 rows */
+limit 10</SQL></webservices><webservices xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="javaWebservice"><id>SampleJavawebservice</id><name>Sample Java webservice</name><requestSchema><rootElement><childElements><dataType>1</dataType><id>0.0</id><isArray>false</isArray><name>forename</name><restrictions xsi:type="minOccursRestriction"><value>0</value></restrictions></childElements><childElements><dataType>1</dataType><id>0.1</id><isArray>false</isArray><name>surname</name></childElements><dataType>0</dataType><id>0</id><isArray>false</isArray><name>personSearchRequest</name></rootElement></requestSchema><responseSchema><rootElement><childElements><dataType>2</dataType><id>0.0</id><isArray>false</isArray><name>id</name></childElements><childElements><dataType>1</dataType><id>0.1</id><isArray>false</isArray><name>forename</name><restrictions xsi:type="minOccursRestriction"><value>0</value></restrictions></childElements><childElements><dataType>1</dataType><id>0.2</id><isArray>false</isArray><name>surname</name></childElements><childElements><dataType>4</dataType><id>0.3</id><isArray>false</isArray><name>birthday</name><restrictions xsi:type="minOccursRestriction"><value>0</value></restrictions></childElements><childElements><dataType>1</dataType><id>0.4</id><isArray>false</isArray><name>gender</name><restrictions xsi:type="minOccursRestriction"><value>0</value></restrictions><restrictions xsi:type="enumerationRestriction"><value>M,F,U</value></restrictions></childElements><dataType>0</dataType><id>0</id><isArray>true</isArray><name>personSearchResponse</name></rootElement></responseSchema><className>com.rapid.soa.PersonSearchRequest</className></webservices><XMLVersion>1</XMLVersion></application>
