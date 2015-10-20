@@ -29,6 +29,7 @@ import com.rapid.core.Action;
 import com.rapid.core.Application;
 import com.rapid.core.Control;
 import com.rapid.core.Page;
+import com.rapid.forms.FormAdapter;
 import com.rapid.server.RapidHttpServlet;
 
 import org.json.JSONObject;
@@ -65,17 +66,27 @@ public class Form extends Action {
 		} else if ("prev".equals(actionType)) {
 			// go back
 			js = "window.history.back();\n";
-		} else if ("id".equals(actionType)) {
+		} else if ("id".equals(actionType) || "val".equals(actionType)) {
 			// get the dataDestination
 			String destinationId = getProperty("dataDestination");			
 			// first try and look for the control in the page
 			Control destinationControl = page.getControl(destinationId);
 			// check we got a control
 			if (destinationControl == null) {
-				js = "// destination control " +destinationId + " could not be found\n" ;
+				js = "// destination control " + destinationId + " could not be found\n" ;
 			} else {
+				// assume the value is the form id
+				String value = "_formId";
+				// if this is for a form value
+				if ("val".equals(actionType)) {
+					// get the form adpater
+					FormAdapter formAdapter = application.getFormAdapter();
+					// get the value
+					// value = formAdapter.getFormPageControlValue(rapidServlet.getR, formId, application, pageId, getProperty("dataSource"));
+					value = "'Refactor Action.getJavaScript to have RapidRequest'".replace("'", "\'");
+				}
 				// use the set data
-				js = "setData_" + destinationControl.getType() + "(ev, '" + destinationId + "', null, " + destinationControl.getDetails() + ", _formId);\n";
+				js = "setData_" + destinationControl.getType() + "(ev, '" + destinationId + "', null, " + destinationControl.getDetails() + ", " + value + ");\n";
 			}							
 			
 		}

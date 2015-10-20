@@ -800,6 +800,21 @@ function getRolesOptions(selectRole, ignoreRoles) {
 // different system properties for inputs
 var _systemValues = ["app id","app version","page id","user name","online","mobile","mobile version","true","false","null","field"];
 
+//this function returns system values
+function getSystemValueOptions(selectId) {
+	var options = "";
+	// system values
+	if (_systemValues) {
+		options += "<optgroup label='System values'>";
+		for (var i in _systemValues) {
+			var val = "System." + _systemValues[i];
+			options += "<option value='" + val + "'" + (val == selectId ? " selected='selected'" : "") + ">" + _systemValues[i] + "</option>";
+		}
+		options += "</optgroup>";
+	}
+	return options;
+}
+
 // this function returns a set of options for a dropdown for inputs or outputs (depending on input true/false), can be controls, control properties (input only), other page controls, page variables (input only), system values (input only)
 function getDataOptions(selectId, ignoreId, input) {
 	var options = "";	
@@ -909,32 +924,17 @@ function getDataOptions(selectId, ignoreId, input) {
 			
 			}			
 		}
-	}
-	
+	}	
 	// system values, only for inputs - these are defined in an array above this function
 	if (input && _systemValues) {
-		options += "<optgroup label='System values'>";
-		for (var i in _systemValues) {
-			var val = "System." + _systemValues[i];
-			options += "<option value='" + val + "'" + (val == selectId ? " selected='selected'" : "") + ">" + _systemValues[i] + "</option>";
-		}
-		options += "</optgroup>";
+		options += getSystemValueOptions(selectId);		
 	}
+	// return
 	return options;
 }
 
-// this function returns a set of options for a dropdown of sessionVariables and controls with a getData method
-function getInputOptions(selectId, ignoreId) {
-	return getDataOptions(selectId, ignoreId, true);
-}
-
-// this function returns a set of options for a dropdown of sessionVariables and controls with a setData method
-function getOutputOptions(selectId, ignoreId) {
-	return getDataOptions(selectId, ignoreId, false);
-}
-
-// this function returns a set of options for use in page visibility logic
-function getPageVisibilityOptions(selectId) {
+// this function returns a set of options for form values from previous pages
+function getFormValueOptions(selectId) {
 	// we want this pages session variables and all prior pages session variables and controls with canBeUsedForFormPageVisibilty
 	var options = "";
 	var gotSelected = false;
@@ -986,16 +986,24 @@ function getPageVisibilityOptions(selectId) {
 			}			
 		}
 	}
-	// system values
-	if (_systemValues) {
-		options += "<optgroup label='System values'>";
-		for (var i in _systemValues) {
-			var val = "System." + _systemValues[i];
-			options += "<option value='" + val + "'" + (val == selectId ? " selected='selected'" : "") + ">" + _systemValues[i] + "</option>";
-		}
-		options += "</optgroup>";
-	}
 	return options;
+}
+
+
+
+// this function returns a set of options for a dropdown of sessionVariables and controls with a getData method
+function getInputOptions(selectId, ignoreId) {
+	return getDataOptions(selectId, ignoreId, true);
+}
+
+// this function returns a set of options for a dropdown of sessionVariables and controls with a setData method
+function getOutputOptions(selectId, ignoreId) {
+	return getDataOptions(selectId, ignoreId, false);
+}
+
+// this function returns a set of options for use in page visibility logic
+function getPageVisibilityOptions(selectId) {
+	return getFormValueOptions(selectId) + getSystemValueOptions(selectId);
 }
 
 // this function returns a set of options for a dropdown of existing events from current controls 
@@ -1501,7 +1509,7 @@ function loadVersion(forceLoad) {
     			var li = "<li id='c_" + c.type + "' class='design-control' data-control='" + c.type + "'>" + (c.image ? "<img src='" + c.image + "'/>" : "<img src='images/tools_24x24.png'/>") + "</li>";
     			
     			// check for a category
-    			if (c.category) {
+    			if (c.category) {    				
     				// check for a sub list
     				var ul = designControls.parent().find("ul[data-for='" + c.category + "']");
     				// if we got one
@@ -1511,17 +1519,23 @@ function loadVersion(forceLoad) {
     				} else {
     					// add list and entry
     					designControls.append("<h3>" + c.category + "</h3><ul class='design-controls' data-for='" + c.category + "'>" + li + "</ul>");
+    					// find the list
+    					ul = designControls.parent().find("ul[data-for='" + c.category + "']");
     				}
+    				// find the list entry
+    				li = ul.children().last();
     			} else {
 	    			// add button to first ul
 	    			designControls.find("ul").first().append(li);
+	    			// now fetch it into the li variable
+	    			li = designControls.children().last();
     			}
     			
     			// add it's name as a help hint
     			addHelp("c_" + c.type, false, false, c.name);
     			
     			// when the mouse moves down on this component
-    			designControls.children().last().on("mousedown touchstart", function(ev) {		
+    			li.on("mousedown touchstart", function(ev) {		
     				
     				// add an undo for the whole page
     				addUndo(true);
