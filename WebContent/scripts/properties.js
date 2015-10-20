@@ -3785,10 +3785,22 @@ function Property_mapZoom(cell, propertyObject, property, details) {
 	}));
 }
 
+//this is for the form action dataDestination
+function Property_formDataSource(cell, propertyObject, property, details) {
+	// only if the type is id
+	if (propertyObject.actionType == "val") {
+		// add the bigtext
+		Property_select(cell, propertyObject, property, details);
+	} else {
+		// remove this row
+		cell.closest("tr").remove();
+	}
+} 
+
 // this is for the form action dataDestination
 function Property_formDataDestination(cell, propertyObject, property, details) {
 	// only if the type is id
-	if (propertyObject.actionType == "id") {
+	if (propertyObject.actionType == "id" || propertyObject.actionType == "val") {
 		// add the bigtext
 		Property_select(cell, propertyObject, property, details);
 	} else {
