@@ -31,6 +31,7 @@ import com.rapid.core.Control;
 import com.rapid.core.Page;
 import com.rapid.forms.FormAdapter;
 import com.rapid.server.RapidHttpServlet;
+import com.rapid.server.RapidRequest;
 
 import org.json.JSONObject;
 
@@ -52,7 +53,7 @@ public class Form extends Action {
 	// methods
 		
 	@Override
-	public String getJavaScript(RapidHttpServlet rapidServlet, Application application, Page page, com.rapid.core.Control control, JSONObject jsonDetails) {
+	public String getJavaScript(RapidRequest rapidRequest, Application application, Page page, com.rapid.core.Control control, JSONObject jsonDetails) {
 
 		// get the action type
 		String actionType = getProperty("actionType");
@@ -82,8 +83,7 @@ public class Form extends Action {
 					// get the form adpater
 					FormAdapter formAdapter = application.getFormAdapter();
 					// get the value
-					// value = formAdapter.getFormPageControlValue(rapidServlet.getR, formId, application, pageId, getProperty("dataSource"));
-					value = "'Refactor Action.getJavaScript to have RapidRequest'".replace("'", "\'");
+					value = formAdapter.getFormControlValue(rapidRequest, getProperty("dataSource"));					
 				}
 				// use the set data
 				js = "setData_" + destinationControl.getType() + "(ev, '" + destinationId + "', null, " + destinationControl.getDetails() + ", " + value + ");\n";

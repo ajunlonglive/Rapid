@@ -110,15 +110,17 @@ public abstract class FormAdapter {
 	
 	// abstract methods
 	
-	public abstract String getFormId(RapidRequest rapidRequest, Application application);
+	public abstract String getFormId(RapidRequest rapidRequest);
 			
-	public abstract FormPageControlValues getFormPageControlValues(RapidRequest rapidRequest, String formId, Application application, String pageId);
+	public abstract FormPageControlValues getFormPageControlValues(RapidRequest rapidRequest, String pageId);
 	
-	public abstract void setFormPageControlValues(RapidRequest rapidRequest, String formId, Application application, String pageId, FormPageControlValues pageControlValues);
+	public abstract void setFormPageControlValues(RapidRequest rapidRequest, String pageId, FormPageControlValues pageControlValues);
 	
-	public abstract String getFormPageControlValue(RapidRequest rapidRequest, String formId, Application application, String pageId, String controlId);
+	public abstract String getFormPageControlValue(RapidRequest rapidRequest, String pageId, String controlId);
 	
-	public abstract void submitForm(RapidRequest rapidRequest, String formId, Application application) throws Exception;
+	public abstract String getFormControlValue(RapidRequest rapidRequest, String controlId);
+	
+	public abstract void submitForm(RapidRequest rapidRequest) throws Exception;
 	
 	// overridable methods
 	
@@ -147,7 +149,7 @@ public abstract class FormAdapter {
 	public  void writeFormPageSetValues(RapidRequest rapidRequest, String formId, Application application, String pageId, Writer writer) throws IOException {
 				
 		// get any form page values
-		FormPageControlValues formControlValues = getFormPageControlValues(rapidRequest, formId, application, pageId );
+		FormPageControlValues formControlValues = getFormPageControlValues(rapidRequest, pageId);
 		
 		// if there are any
 		if (formControlValues != null) {
@@ -202,7 +204,7 @@ public abstract class FormAdapter {
 	public void writeFormSummary(RapidRequest rapidRequest, HttpServletResponse response) throws IOException, RapidLoadingException {
 		
 		// get the form id
-		String formId = getFormId(rapidRequest, _application);
+		String formId = getFormId(rapidRequest);
 		
 		// check for a form id - should be null if form not commence properly
 		if (formId == null) {
@@ -264,7 +266,7 @@ public abstract class FormAdapter {
 					StringBuilder valuesStringBuilder = new StringBuilder();
 					
 					// get any page control values
-					FormPageControlValues pageControlValues = _application.getFormAdapter().getFormPageControlValues(rapidRequest, formId, _application, page.getId());
+					FormPageControlValues pageControlValues = _application.getFormAdapter().getFormPageControlValues(rapidRequest, page.getId());
 					
 					// if we got some
 					if (pageControlValues != null) {

@@ -344,11 +344,14 @@ public class Database extends Action {
 	}
 	
 	@Override
-	public String getJavaScript(RapidHttpServlet rapidServlet, Application application, Page page, Control control, JSONObject jsonDetails) throws Exception {
+	public String getJavaScript(RapidRequest rapidRequest, Application application, Page page, Control control, JSONObject jsonDetails) throws Exception {
 		
 		String js = "";
 		
 		if (_query != null) {
+			
+			// get the rapid servlet
+			RapidHttpServlet rapidServlet = rapidRequest.getRapidServlet();
 									
 			// get the sequence for this action requests so long-running early ones don't overwrite fast later ones (defined in databaseaction.xml)
 			js += "var sequence = getDatabaseActionSequence('" + getId() + "');\n";
@@ -457,7 +460,7 @@ public class Database extends Action {
 					// if this is the last error action add in the default error handler
 					if (i == _errorActions.size() - 1) jsonDetails.put("defaultErrorHandler", defaultErrorHandler);						
 					// add the js
-					js += "       " + action.getJavaScript(rapidServlet, application, page, control, jsonDetails).trim().replace("\n", "\n       ") + "\n";
+					js += "       " + action.getJavaScript(rapidRequest, application, page, control, jsonDetails).trim().replace("\n", "\n       ") + "\n";
 					// if this is the last error action and the default error handler is still present, remove it so it isn't sent down the success path
 					if (i == _errorActions.size() - 1 && jsonDetails.optString("defaultErrorHandler", null) != null) jsonDetails.remove("defaultErrorHandler");	
 					// increase the count
@@ -518,7 +521,7 @@ public class Database extends Action {
 			// add any sucess actions
 			if (_successActions != null) {							
 				for (Action action : _successActions) {
-					js += "     " + action.getJavaScript(rapidServlet, application, page, control, jsonDetails).trim().replace("\n", "\n       ") + "\n";
+					js += "     " + action.getJavaScript(rapidRequest, application, page, control, jsonDetails).trim().replace("\n", "\n       ") + "\n";
 				}
 			}
 			

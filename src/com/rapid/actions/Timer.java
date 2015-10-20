@@ -32,6 +32,7 @@ import com.rapid.core.Application;
 import com.rapid.core.Control;
 import com.rapid.core.Page;
 import com.rapid.server.RapidHttpServlet;
+import com.rapid.server.RapidRequest;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -66,7 +67,7 @@ public class Timer extends Action {
 	}
 	
 	@Override
-	public String getJavaScript(RapidHttpServlet rapidServlet, Application application, Page page, Control control, JSONObject jsonDetails) throws Exception {
+	public String getJavaScript(RapidRequest rapidRequest, Application application, Page page, Control control, JSONObject jsonDetails) throws Exception {
 		String js = "";
 		if (_actions != null) {
 			if (_actions.size() > 0) {
@@ -82,7 +83,7 @@ public class Timer extends Action {
 				js += " function() {\n";
 				// loop the actions
 				for (Action action : _actions) {
-					js += "  " + action.getJavaScript(rapidServlet, application, page, control, jsonDetails).trim().replace("\n", "\n  ") + "\n";
+					js += "  " + action.getJavaScript(rapidRequest, application, page, control, jsonDetails).trim().replace("\n", "\n  ") + "\n";
 				}
 				// close the function and add the duration
 				js += "}," + getProperty("duration") + ");\n";

@@ -29,6 +29,7 @@ import com.rapid.core.Action;
 import com.rapid.core.Application;
 import com.rapid.core.Page;
 import com.rapid.server.RapidHttpServlet;
+import com.rapid.server.RapidRequest;
 
 import org.json.JSONObject;
 
@@ -50,7 +51,7 @@ public class Control extends Action {
 	// methods
 		
 	@Override
-	public String getJavaScript(RapidHttpServlet rapidServlet, Application application, Page page, com.rapid.core.Control control, JSONObject jsonDetails) {
+	public String getJavaScript(RapidRequest rapidRequest, Application application, Page page, com.rapid.core.Control control, JSONObject jsonDetails) {
 		// get the control Id and command
 		String controlId = getProperty("control");
 		// get the action type

@@ -84,10 +84,10 @@ public abstract class Action {
 	public List<String> getRedundantActions() { return null; }	
 	
 	// this generates the clientside javascript at the top of the page for any reusable functions or global callbacks
-	public String getPageJavaScript(RapidHttpServlet rapidServlet, Application application, Page page, JSONObject jsonDetails) throws Exception { return null; }
+	public String getPageJavaScript(RapidRequest rapidRequest, Application application, Page page, JSONObject jsonDetails) throws Exception { return null; }
 			
 	// this generates the clientside javascript inside the events for the action to happen (must be implemented as every action is kicked off from the client side [for now anyway])
-	public abstract String getJavaScript(RapidHttpServlet rapidServlet, Application application, Page page, Control control, JSONObject jsonDetails) throws Exception;
+	public abstract String getJavaScript(RapidRequest rapidRequest, Application application, Page page, Control control, JSONObject jsonDetails) throws Exception;
 
 	// this is where any serverside action happens! (some actions are client side only)
 	public JSONObject doAction(RapidRequest rapidRequest, JSONObject jsonData) throws Exception { return null; };
