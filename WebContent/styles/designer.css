@@ -223,6 +223,13 @@ li.design-control:hover {
 	margin: auto;
 	max-width: 24px;
 	max-height: 24px;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: -moz-none;
+	-ms-user-select: none;
+	user-select: none;
+	pointer-events: none;
 }
 
 .design-control span {
