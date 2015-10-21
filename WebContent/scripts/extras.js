@@ -137,24 +137,27 @@ $.fn.extend({
   }
 });
 
-// this overrides the focus so that if focus is fired when the page is invisible, focus can be set once the page is visible
+// this overrides the focus so that if focus is fired when the page is invisible, focus can be set once the page is made visible by Rapid
 (function($) {
 	// a reference to the original focus method
     var focus_orignal = $.fn.focus; // maintain a to the existing function
     // override the focus method
-    $.fn.focus = function() {
-    	// get a reference to the control
-		var c = this[0];
-		// if there is one
-		if (c) {		  
-			// refire the original focus after 100 milliseconds
-			setTimeout(function() { c.focus() }, 100);		  
-			// if the page or dialogue are hidden
-			if ($("body").css("visibility") == "hidden" || this.closest("div.dialogue").css("visibility") == "hidden" || this.closest("div.dialogue").css("display") == "none") {
-				// mark the element with data-focus=true (the page display will then set the focus on this)
-				this.attr("data-focus","true");			  
-			}
-		}		  		
+    $.fn.focus = function(type) {
+    	// if there was an event of type DOMContentLoaded
+    	if (type == "rapid") {
+	    	// get a reference to the control
+			var c = this[0];
+			// if there is one
+			if (c) {		  
+				// if the page or dialogue are hidden
+				if ($("body").css("visibility") == "hidden" || this.closest("div.dialogue").css("visibility") == "hidden" || this.closest("div.dialogue").css("display") == "none") {
+					// mark the element with data-focus=true (the page display will then set the focus on this)
+					this.attr("data-focus","true");			  
+				}
+			}		 
+			// reset the arguments
+			arguments = [];
+    	}
 		// apply and return the original method
         return focus_orignal.apply(this, arguments);
     };

@@ -91,7 +91,9 @@ public class Control extends Action {
 					// add the command
 					js += command;
 				}				
-			} else if ("slideUp".equals(actionType) || "slideDown".equals(actionType) || "slideToggle".equals(actionType)) {
+			} else if ("focus".equals(actionType)) {
+				js += actionType + "('rapid');";
+			} else if ("slideUp".equals(actionType) || "slideDown".equals(actionType) || "slideToggle".equals(actionType)) {			
 				js += actionType + "(" + getProperty("duration") + ");";
 			} else if ("fadeOut".equals(actionType) || "fadeIn".equals(actionType) || "fadeToggle".equals(actionType)) {
 				js += actionType + "(" + getProperty("duration") + ");";

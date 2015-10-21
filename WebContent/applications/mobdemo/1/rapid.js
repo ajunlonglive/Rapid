@@ -1394,34 +1394,33 @@ function getData_grid(ev, id, field, details) {
   			});
   			// if there is a data store
   			if (details.dataStorageType) {
-  			    // get any grid dataStore
+  			    // get the data from the data store
   				var dataStore = getGridDataStoreData(id, details);
   				// if we got one
   				if (dataStore) {
-  					// only if there are less fields in the physical grid than in the dataStore
-  					if (data.fields.length < dataStore.fields.length) {				
-  						var fieldMap = {};
-  						for (var i in data.fields) {
-  							for (var j in dataStore.fields) {
-  								if (data.fields[i] && dataStore.fields[j] && data.fields[i].toLowerCase() == dataStore.fields[j].toLowerCase()) {
-  									fieldMap[i] = j;
-  									break;
-  								}
-  							}
-  						}
-  						for (var i in data.rows) {
-  							// add an empty row to the dataStore if there are more in the page
-  							if (dataStore.rows.length < i - 1) {
-  								dataStore.rows.push([]);
-  								for (k in dataStore.fields) dataStore.rows[i].push(null);
-  							}
-  							for (j in fieldMap) {							
-  								dataStore.rows[i][fieldMap[j]] = data.rows[i][j];
+  					// make a field map of data from the grid to data from the dataStore
+  					var fieldMap = {};
+  					for (var i in data.fields) {
+  						for (var j in dataStore.fields) {
+  							if (data.fields[i] && dataStore.fields[j] && data.fields[i].toLowerCase() == dataStore.fields[j].toLowerCase()) {
+  								fieldMap[i] = j;
+  								break;
   							}
   						}
   					}
-  					data = dataStore;
-  				}
+  					// loop the rows in the data from the grid
+  					for (var i in data.rows) {
+  						// add an empty row to the dataStore if there are more in the page
+  						if (dataStore.rows.length < i - 1) {
+  							dataStore.rows.push([]);
+  							for (k in dataStore.fields) dataStore.rows[i].push(null);
+  						}
+  						for (j in fieldMap) {							
+  							dataStore.rows[i][fieldMap[j]] = data.rows[i][j];
+  						}
+  					}
+  					data = dataStore;	
+  				}							
   			}						
   		}	
   	}

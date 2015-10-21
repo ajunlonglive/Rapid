@@ -1506,7 +1506,7 @@ function loadVersion(forceLoad) {
     		if (c.canUserAdd) {
     			
     			// make the list entry
-    			var li = "<li id='c_" + c.type + "' class='design-control' data-control='" + c.type + "'>" + (c.image ? "<img src='" + c.image + "'/>" : "<img src='images/tools_24x24.png'/>") + "</li>";
+    			var li = "<li id='c_" + c.type + "' class='design-control' data-control='" + c.type + "'>" + (c.image ? "<img src='" + c.image + "' draggable='false' />" : "<img src='images/tools_24x24.png'/>") + "</li>";
     			
     			// check for a category
     			if (c.category) {    				
@@ -1533,6 +1533,9 @@ function loadVersion(forceLoad) {
     			
     			// add it's name as a help hint
     			addHelp("c_" + c.type, false, false, c.name);
+    			
+    			// prevent dragging the ghost image
+    			li.on("dragstart", function(ev) { return false; });
     			
     			// when the mouse moves down on this component
     			li.on("mousedown touchstart", function(ev) {		
