@@ -480,13 +480,13 @@ function Control(controlType, parentControl, jsonControl, loadComplexObjects, pa
 		}
 		
 		// retain that there is initJavaScript (if applicable - this is placed into the page later)
-		if (controlClass.initJavaScript) this.initJavaScript = true; 
+		this.initJavaScript = (controlClass.initJavaScript ? true : false); 
 		
 		// retain that this control can be used from other pages, if applicable
-		if (controlClass.canBeUsedFromOtherPages) this.canBeUsedFromOtherPages = true; 
+		this.canBeUsedFromOtherPages = (controlClass.canBeUsedFromOtherPages ? true : false); 
 		
 		// retain that this control can be used from other pages, if applicable
-		if (controlClass.canBeUsedForFormPageVisibilty) this.canBeUsedForFormPageVisibilty = true; 
+		this.canBeUsedForFormPageVisibilty = (controlClass.canBeUsedForFormPageVisibilty ? true : false); 
 		
 		// if our control looks like a non visible
 		if (this.object && this.object.is(".nonVisibleControl")) {

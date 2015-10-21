@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<controls xmlVersion="1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/control.xsd">
+
+<!-- 
+
+Copyright (C) 2014 - Gareth Edwards / Rapid Information Systems
+
+gareth.edwards@rapid-is.co.uk
+
+
+This file is part of the Rapid Application Platform
+
+RapidSOA is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version. The terms require you to include
+the original copyright, and the license notice in all redistributions.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
+
+ -->
+
+	<control>
+	    
+	    <type>hiddenvalue</type>	 
+	    <name>Hidden value</name>	   
+	    <image>images/penknife_24x24.png</image>    
+	      
+	    <canUserAdd>true</canUserAdd>
+	    <canUserAddPeers>true</canUserAddPeers>
+	    
+	    <properties>
+	        
+	        <property>
+	            <key>name</key>
+	            <name>Name</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>	            
+	        </property>	
+	        
+	        <property>
+	            <key>label</key>
+	            <name>Form summary label</name>
+	            <setConstructValueFunction>return "";</setConstructValueFunction>
+	            <changeValueJavaScript>formText</changeValueJavaScript>	        
+	        </property>
+	               
+	        <property>
+	            <key>value</key>
+	            <name>Value</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>	             
+	        </property> 
+	            
+	    </properties>
+	    
+	    <resources>
+	        <resource>
+	            <type>css</type>
+	            <contents>
+	                <![CDATA[	                
+.hiddenValue {
+	position: absolute;
+	z-index: 10009;
+}                
+	                ]]>
+				</contents>
+	        </resource>
+	    </resources>
+	    
+	    <getHtmlFunction>
+	        <![CDATA[	     	        
+// return our html 
+return "<img id='" + this.id + "' class='nonVisibleControl' src='images/penknife_24x24.png'></img>"
+	        ]]>
+	    </getHtmlFunction>
+	    
+	     <removeJavaScript>
+	        <![CDATA[        
+// remove any inputs that might be hanging around
+_page.object.find("#" + this.id).remove();
+// remove the image
+this.object.remove();     	    
+	        ]]>
+	    </removeJavaScript> 
+	    
+	    <saveJavaScript>
+	        <![CDATA[
+// remove our image
+this.object.remove();
+// add our input box     	   	        
+_page.object.append("<input id='" + this.id + "' name='" + this.id + "' type='hidden' " + (this.value ? "value='" + this.value + "'": "") + "/>");	  
+	        ]]>	        	        
+	    </saveJavaScript>	    
+	    
+	    <getDataFunction>
+	        <![CDATA[
+return $("#" + id).val();
+			]]>
+	    </getDataFunction>
+	    
+	    <setDataJavaScript>
+	        <![CDATA[
+var control = $("#" + id);
+var value = "";
+if (data != null && data !== undefined) {	
+	data = makeDataObject(data, field);
+	if (data.rows && data.rows[0]) {	        		
+		if (field && data.fields && data.fields.length > 0) {
+			for (var i in data.fields) {
+				if (data.fields[i] && data.fields[i].toLowerCase() == field.toLowerCase()) {
+					value = data.rows[0][i];
+					break;
+				}
+			}
+		} else {
+			if (data.rows[0][0] != null && data.rows[0][0] !== undefined) {
+				value = data.rows[0][0];
+			} 			
+		}
+	} 
+} 
+control.val(value);
+if (changeEvents) control.trigger("change");    
+			]]>
+	    </setDataJavaScript>	    	    
+	     
+	</control>
+</controls>
