@@ -1533,10 +1533,7 @@ function loadVersion(forceLoad) {
     			
     			// add it's name as a help hint
     			addHelp("c_" + c.type, false, false, c.name);
-    			
-    			// prevent dragging the ghost image
-    			li.on("dragstart", function(ev) { return false; });
-    			
+    			    			    			
     			// when the mouse moves down on this component
     			li.on("mousedown touchstart", function(ev) {		
     				
@@ -2267,6 +2264,9 @@ $(document).ready( function() {
 	// the window we are working in
 	_window = $(window);	
 	
+	// prevent any dragging and ghost images 
+	_window.on("dragstart", function(ev) { ev.preventDefault(); });
+	
 	// check if we have local storage
 	if (typeof(localStorage) !== "undefined") {
 		// if we have a saved control panel width
@@ -2315,7 +2315,7 @@ $(document).ready( function() {
 			
 	// the div that covers all of the components in design mode so they don't react to clicks
 	_designCover = $("#designCover");
-			
+		
 	// load the action classes
 	$.ajax({
     	url: "designer?action=getSystemData",

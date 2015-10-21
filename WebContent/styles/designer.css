@@ -109,7 +109,10 @@ hr {
 	-khtml-user-select: none;
 	-moz-user-select: -moz-none;
 	-ms-user-select: none;
-	user-select: none;
+	-webkit-user-drag: none;
+	-khtml-user-drag: none;
+	-moz-user-drag: -moz-none;
+	-ms-user-drag: none;	
 }
 
 #controlPanelSize {
@@ -317,6 +320,7 @@ li.design-control:hover {
 	font-size: 12px;
 	font-weight: bold;	
 	border-top: 1px solid #777;
+	pointer-events: none;
 }
 
 #controlPanelVersion {
