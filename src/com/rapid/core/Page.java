@@ -855,30 +855,30 @@ public class Page {
 			case Resource.JAVASCRIPT:
 				if (application.getStatus() == Application.STATUS_LIVE) {
 					try {
-						resourceHtml = "<script type='text/javascript'>" + Minify.toString(resource.getContent(),Minify.JAVASCRIPT) + "</script>";
+						resourceHtml = "    <script type='text/javascript'>" + Minify.toString(resource.getContent(),Minify.JAVASCRIPT) + "</script>";
 					} catch (IOException ex) {
-						resourceHtml = "<script type='text/javascript'>/* Failed to minify resource " + resource.getName() + " JavaScript : " + ex.getMessage() + "*/</script>";
+						resourceHtml = "    <script type='text/javascript'>/* Failed to minify resource " + resource.getName() + " JavaScript : " + ex.getMessage() + "*/</script>";
 					}
 				} else {
-					resourceHtml = "<script type='text/javascript'>" + resource.getContent() + "</script>";
+					resourceHtml = "    <script type='text/javascript'>\n" + resource.getContent() + "\n    </script>";
 				}
 			break;
 			case Resource.CSS:
 				if (application.getStatus() == Application.STATUS_LIVE) {
 					try {
-						resourceHtml = "<style>" + Minify.toString(resource.getContent(), Minify.CSS) + "<style>";
+						resourceHtml = "    <style>" + Minify.toString(resource.getContent(), Minify.CSS) + "<style>";
 					} catch (IOException ex) {
-						resourceHtml = "<style>/* Failed to minify resource " + resource.getName() + " CSS : " + ex.getMessage() + "*/<style>";
+						resourceHtml = "    <style>/* Failed to minify resource " + resource.getName() + " CSS : " + ex.getMessage() + "*/<style>";
 					}
 				} else {
-					resourceHtml = "<style>" + resource.getContent() + "<style>";
+					resourceHtml = "    <style>" + resource.getContent() + "<style>";
 				}
 			break;
 			case Resource.JAVASCRIPTFILE : case Resource.JAVASCRIPTLINK :
-				resourceHtml = "<script type='text/javascript' src='" + resource.getContent() + "'></script>";
+				resourceHtml = "    <script type='text/javascript' src='" + resource.getContent() + "'></script>";
 			break;
 			case Resource.CSSFILE : case Resource.CSSLINK :
-				resourceHtml = "<link rel='stylesheet' type='text/css' href='" + resource.getContent() + "'></link>";
+				resourceHtml = "    <link rel='stylesheet' type='text/css' href='" + resource.getContent() + "'></link>";
 			break;
 		}	
     	// return it
@@ -1061,16 +1061,16 @@ public class Page {
     	StringBuilder stringBuilder = new StringBuilder(getHeadStart(application));
     	    															
 		// if you're looking for where the jquery link is added it's the first resource in the page.control.xml file	
-		stringBuilder.append("    " + getResourcesHtml(application, false).trim().replace("\n", "\n    ") + "\n");
+		stringBuilder.append("    " + getResourcesHtml(application, false).trim() + "\n");
 												
 		// add a JavaScript block with important global variables - this removed by the pagePanel loader and navigation action when showing dialogues, by matching to the various variables so be careful changing anything below			
-		stringBuilder.append("    <script type='text/javascript'>\n\n");
+		stringBuilder.append("    <script type='text/javascript'>\n");
 		if (application != null) {
 			stringBuilder.append("var _appId = '" + application.getId() + "';\n");			
 			stringBuilder.append("var _appVersion = '" + application.getVersion() + "';\n");
 		}
 		stringBuilder.append("var _pageId = '" + _id + "';\n");			
-		stringBuilder.append("var _mobileResume = false;\n\n");
+		stringBuilder.append("var _mobileResume = false;\n");
 		stringBuilder.append("    </script>\n");
 								
 		return stringBuilder.toString();
@@ -1538,7 +1538,7 @@ public class Page {
 									// end with ; if not
 									if (!designLinkJQuery.endsWith(";")) designLinkJQuery += ";";
 									// add the jquery after the object reference
-									designLinkJQueryStringBuilder.append("$('#designLink_" + control.getId() + "')" + designLinkJQuery);
+									designLinkJQueryStringBuilder.append("  $('#designLink_" + control.getId() + "')" + designLinkJQuery.replace("\n", "\n  ") + "\n");
 								}
 							}
 						}

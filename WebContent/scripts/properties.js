@@ -2285,7 +2285,7 @@ function logicConditionText(condition) {
 			// if we don't find one just show id (could be page variable)
 			text = (control ? control.name : condition.id);
 			// add the property if present
-			if (idParts.length > 1) text += "." + idParts[1];
+			if (idParts.length > 1 && text != condition.id) text += "." + idParts[1];
 			// add the field if present
 			if (condition.field) text += "." + condition.field;
 		break;
@@ -2297,7 +2297,7 @@ function logicConditionText(condition) {
 		break;		
 	}
 	// return
-	return text;
+	return text.replace("Session.","Variable.");
 }
 
 function logicConditionValue(cell, action, key, conditionIndex, valueId) {

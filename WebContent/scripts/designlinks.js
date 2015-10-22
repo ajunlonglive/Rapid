@@ -27,17 +27,17 @@ function showDesignData(link) {
 	var id = link.attr("data-id");
 	var name = link.find("img").attr("title");
 	var details = window[id + "details"];
-	if (details) {
-		var div = $("#" + id + "designData");
-		if (!div[0]) {
-			div = $("body").append("<div id='" + id + "designData' style='display:none;' class='designData'></div>").find("#" + id + "designData");
-			div.css({
-				"left": link.offset().left
-			});
-			div.mouseleave( function(ev) {  
-				div.hide();
-			});
-		}
+	var div = $("#" + id + "designData");
+	if (!div[0]) {
+		div = $("body").append("<div id='" + id + "designData' style='display:none;' class='designData'></div>").find("#" + id + "designData");
+		div.css({
+			"left": link.offset().left
+		});
+		div.mouseleave( function(ev) {  
+			div.hide();
+		});
+	}
+	if (details) {		
 		var data = null;
 		switch (details.type) {
 			case "grid" :
@@ -46,10 +46,12 @@ function showDesignData(link) {
 			case "dataStore" :
 				data = getDataStoreData(id, details);
 			break;
+			default :
+				data = $("#" + id).val();
 		}
 		renderDesignData(name, data, div);
 	} else {
-		alert("Details not found");
+		renderDesignData(name, $("#" + id).val(), div);
 	}
 }
 
@@ -78,7 +80,9 @@ function getDesignDataTable(data) {
 			// close the table			
 			table += "</tr>";
 		}		
-	}	
+	} else {
+		table += "<tr><td>" + data + "</td></tr>";
+	}
 	table += "</table>";
 	// return it
 	return table;

@@ -75,22 +75,20 @@ public class Form extends Action {
 			// check we got a control
 			if (destinationControl == null) {
 				js = "// destination control " + destinationId + " could not be found\n" ;
-			} else {
-				// assume the value is the form id
-				String value = "_formId";
-				// if this is for a form value
-				if ("val".equals(actionType)) {
-					// get the form adpater
-					FormAdapter formAdapter = application.getFormAdapter();
-					// get the value
-					value = formAdapter.getFormControlValue(rapidRequest, getProperty("dataSource"));					
-				}
-				// use the set data
+			} else if ("id".equals(actionType)) {
+				// use the set data to copy in the form id
+				js = "setData_" + destinationControl.getType() + "(ev, '" + destinationId + "', null, " + destinationControl.getDetails() + ", _formId);\n";
+			} else if ("val".equals(actionType)) {
+				// get the form adpater
+				FormAdapter formAdapter = application.getFormAdapter();
+				// get the value
+				String value = formAdapter.getFormControlValue(rapidRequest, getProperty("dataSource"));					
+				// enclose it if we got something
+				if (value != null) value = "'" + value +"'";				
+				// use the set data if we got something
 				js = "setData_" + destinationControl.getType() + "(ev, '" + destinationId + "', null, " + destinationControl.getDetails() + ", " + value + ");\n";
-			}							
-			
-		}
-		
+			}										
+		}		
 		// return the js
 		return js;
 	}
