@@ -42,7 +42,7 @@ This action runs JQuery against a specified control. Can be entered with or with
 public class Control extends Action {
 
 	// parameterless constructor (required for jaxb)
-	Control() { super(); }
+	public Control() { super(); }
 	// designer constructor
 	public Control(RapidHttpServlet rapidServlet, JSONObject jsonAction) throws Exception { 
 		super(rapidServlet, jsonAction);				
