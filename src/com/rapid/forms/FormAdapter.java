@@ -146,24 +146,18 @@ public abstract class FormAdapter {
 	// public instance methods
 	
 	// this write the form page set values routine, it is called by Page.getPageHtml just before the form is closed
-	public  void writeFormPageSetValues(RapidRequest rapidRequest, String formId, Application application, String pageId, Writer writer) throws IOException {
+	public  void writePageSetFormValues(RapidRequest rapidRequest, String formId, Application application, String pageId, Writer writer) throws IOException {
 				
+		// start the function
+		writer.write("function Event_setFormValues(ev) {\n");
+		
 		// get any form page values
 		FormPageControlValues formControlValues = getFormPageControlValues(rapidRequest, pageId);
 		
 		// if there are any
 		if (formControlValues != null) {
 			if (formControlValues.size() > 0) {
-				
-				// open the javascript
-				writer.write("<script>\n");
-				
-				// wait until jQuery is ready
-				writer.write("$(document).ready( function() {\n");
-				
-				// create a value set event
-				writer.write("var ev = $.Event('valueset');\n");
-								
+											
 				try {
 									
 					// get the page
@@ -189,15 +183,12 @@ public abstract class FormAdapter {
 				} catch (RapidLoadingException ex) {
 					writer.write("// error getting page : " + ex.getMessage());
 				}
-					
-				// close the jQuery
-				writer.write("});\n");
-				
-				// close the javascript
-				writer.write("</script>\n");
-				
 			}
-		}					
+		}			
+		
+		// close the function
+		writer.write("};\n\n");
+		
 	}
 	
 	// this writes the form summary page
