@@ -2296,8 +2296,10 @@ function logicConditionText(condition) {
 			if (text == "field") text = condition.field;
 		break;		
 	}
+	// clean up any old style refences from session to page variables
+	if (text) text = text.replace("Session.","Variable.");
 	// return
-	return text.replace("Session.","Variable.");
+	return text;
 }
 
 function logicConditionValue(cell, action, key, conditionIndex, valueId) {
