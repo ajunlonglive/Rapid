@@ -297,9 +297,11 @@ public class Page {
 		Action foundAction = null;
 		if (actions != null) {
 			for (Action action : actions) {
-				if (actionId.equals(action.getId())) return action;
-				foundAction = getChildAction(action.getChildActions(), actionId);
-				if (foundAction != null) return foundAction;
+				if (action != null) {
+					if (actionId.equals(action.getId())) return action;
+					foundAction = getChildAction(action.getChildActions(), actionId);
+					if (foundAction != null) return foundAction;
+				}
 			}
 		}
 		return foundAction;

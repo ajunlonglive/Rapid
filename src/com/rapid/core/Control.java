@@ -124,7 +124,7 @@ public class Control {
 	// whether this control can be used from other pages
 	public boolean getCanBeUsedFromOtherPages() { return Boolean.parseBoolean(getProperty("canBeUsedFromOtherPages")); }
 	// whether this control can be used for page visibilty rules
-		public boolean getCanBeUsedForFormPageVisibilty() { return Boolean.parseBoolean(getProperty("canBeUsedForFormPageVisibilty")); }
+	public boolean getCanBeUsedForFormPageVisibilty() { return Boolean.parseBoolean(getProperty("canBeUsedForFormPageVisibilty")); }
 	// whether there is javascript that must be run to initialise the control when the page loads
 	public boolean hasInitJavaScript() { return Boolean.parseBoolean(getProperty("initJavaScript")); }
 			
@@ -143,6 +143,7 @@ public class Control {
 		}
 		return null;
 	}
+	
 	private Action getActionRecursive(String actionId, List<Action> actions) {
 		Action returnAction = null;
 		for (Action action : actions) {
@@ -158,6 +159,7 @@ public class Control {
 		}
 		return returnAction;
 	}
+	
 	public Action getAction(String actionId) {
 		Action action = null;
 		if (_events != null) {

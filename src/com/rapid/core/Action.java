@@ -105,10 +105,8 @@ public abstract class Action {
 	
 	// json constructor allowing properties to be sent in from the designer
 	public Action(RapidHttpServlet rapidServlet, JSONObject jsonAction) throws Exception {
-		// set the xml version
-		_xmlVersion = XML_VERSION;
-		// initialise properties
-		_properties = new HashMap<String,String>();
+		// run the parameterless constructor
+		this();
 		// save all key/values from the json into the properties 
 		for (String key : JSONObject.getNames(jsonAction)) {
 			// add all json properties to our properties

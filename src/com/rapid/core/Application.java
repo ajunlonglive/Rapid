@@ -1095,12 +1095,9 @@ public class Application {
 				    			String js = jsonControl.optString("initJavaScript");
 				    			// check
 				    			if (js != null) {
-				    				// only if something there
-				    				if (!"".equals(js.trim())) {
-				    					initJS.append("\nfunction Init_" + jsonControl.getString("type") + "(id, details) {\n");
-				    					initJS.append("  " + js.trim().replace("\n", "\n  "));
-				    					initJS.append("\n}\n");
-				    				}    				
+			    					initJS.append("\nfunction Init_" + jsonControl.getString("type") + "(id, details) {\n");
+			    					initJS.append("  " + js.trim().replace("\n", "\n  "));
+			    					initJS.append("\n}\n");				    						
 				    			}
 				    			
 				    			// check for a getData method
