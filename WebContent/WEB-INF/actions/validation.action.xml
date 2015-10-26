@@ -113,7 +113,7 @@ li.validation {
 	    <actionJavaScript>
 	        <![CDATA[   
 function Action_validation(ev, validations, showMessages) {
-	var valid = true;
+	var valid = true;		
 	for (var i in validations) {
 		var validation = validations[i];
 		var validationControl = $("#" + validation.controlId);
@@ -141,8 +141,8 @@ function Action_validation(ev, validations, showMessages) {
 							// passed
 							if (showMessages) hideControlValidation(validation.controlId);				
 						} else {
-							// failed, and there is a message to show
-							if (showMessages) showControlValidation(validation.controlId, validation.message);
+							// failed, and there is a message to show, but not on tab keyup
+							if (showMessages && !(ev.type == "keyup" && ev.keyCode != 9)) showControlValidation(validation.controlId, validation.message);
 							valid = false;					
 						}	
 					}	
