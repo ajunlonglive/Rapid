@@ -31,6 +31,8 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
+import org.json.JSONObject;
+
 import com.rapid.core.Application;
 import com.rapid.core.Control;
 import com.rapid.core.Page;
@@ -194,7 +196,15 @@ public class RapidFormAdapter extends FormAdapter {
 				return "";
 			} else {
 				String value = controlValue.getValue();
+				// check for nulls
 				if (value == null) value = "(no value)";
+				// check for json
+				if (value.startsWith("{") && value.endsWith("}")) {
+					try {
+						JSONObject jsonValue = new JSONObject(value);
+						value = jsonValue.optString("text");
+					} catch (Exception ex) {}
+				}
 				return "<span class='formSummaryControl'>" + label + " : " + control.getCodeText(value) + "</span>\n";
 			}		
 		}
