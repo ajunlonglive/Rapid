@@ -1490,7 +1490,7 @@ function loadVersion(forceLoad) {
 			// get a reference to the action
 			var action = _version.actions[j];
 			// add to our _actionOptions excluding the rapid action unless this is the rapid app
-			if (action.type != "rapid" || _version.id == "rapid") _actionOptions += "<option value='" + action.type + "'>" + action.name + "</option>";
+			if ((action.visible === undefined || !action.visible === false) && (action.type != "rapid" || _version.id == "rapid")) _actionOptions += "<option value='" + action.type + "'>" + action.name + "</option>";
 		}
 		
 		// retain the app styleclasses

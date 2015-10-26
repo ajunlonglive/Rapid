@@ -349,6 +349,7 @@ public class Designer extends RapidHttpServlet {
 															// add just what we need
 															jsonAppAction.put("type", jsonAction.getString("type"));
 															jsonAppAction.put("name", jsonAction.getString("name"));
+															jsonAppAction.put("visible", jsonAction.optBoolean("visible", true));
 															// add it to the app actions collection
 															jsonAppActions.put(jsonAppAction);
 															// start on the next app action
