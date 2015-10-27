@@ -488,7 +488,7 @@ public class Control {
 				// check control
 				if (control == null) {
 					// if still null look for it in page variables
-					return "$.getUrlVar('" + id + "')";				
+					return "getPageVariableValue('" + id + "')";				
 				} else {
 					// assume no field
 					String fieldJS = "null";

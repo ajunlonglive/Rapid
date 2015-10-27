@@ -467,10 +467,10 @@ public class Application {
 	private List<Webservice> _webservices;
 	private List<Parameter> _parameters;
 	private List<String> _controlTypes, _actionTypes;
-	private Pages _pages;	
+	private Pages _pages;
 	private Resources _appResources, _resources;
 	private List<String> _styleClasses;
-	
+	private List<String> _pageVariables;
 	
 	// properties
 				
@@ -780,6 +780,35 @@ public class Application {
 	// return the list of style classes
 	public List<String> getStyleClasses() {
 		return _styleClasses;		
+	}
+	
+	// return the list of page variables used in the application
+	public List<String> getPageVariables(ServletContext servletContext) throws RapidLoadingException {
+		// if not set yet
+		if (_pageVariables == null) {
+			// make the collection of pages
+			_pageVariables = new ArrayList<String>();
+			// loop the pages
+			for (String pageId : _pages.getPageIds()) {
+				// get the page
+				Page page = _pages.getPage(servletContext, pageId);
+				// get any variables
+				List<String> pageVariables = page.getSessionVariables();
+				// if we got some
+				if (pageVariables != null) {
+					// loop them
+					for (String pageVariable : pageVariables) {
+						// add if we don't have already
+						if (!_pageVariables.contains(pageVariable)) _pageVariables.add(pageVariable);
+					}
+				}
+			}
+		}
+		return _pageVariables;
+	}
+	// different name from above to stop jaxb writing it to xml
+	public void emptyPageVariables() {
+		_pageVariables = null;
 	}
 	
 	// an instance of the security adapter used by this object
@@ -1445,6 +1474,9 @@ public class Application {
 														
 		// populate the list of style classes by scanning the rapid.css
 		_styleClasses = scanStyleClasses(_styles);
+		
+		// empty the list of page variables so it's regenerated
+		_pageVariables = null;
 		
 		// debug log that we initialised
 		logger.debug("Initialised application " + _name + "/" + _version + (createResources ? "" : " (no resources)"));
