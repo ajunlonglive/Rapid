@@ -60,6 +60,7 @@ import org.xml.sax.SAXException;
 
 import com.rapid.actions.Logic.Condition;
 import com.rapid.actions.Logic.Value;
+import com.rapid.core.Application.RapidLoadingException;
 import com.rapid.core.Application.Resource;
 import com.rapid.core.Application.ResourceDependency;
 import com.rapid.forms.FormAdapter;
@@ -774,6 +775,9 @@ public class Page {
 		_actionTypes = null;
 		// empty the cached control types
 		_controlTypes = null;
+		
+		// empty the page variables so they are rebuilt the next time
+		application.emptyPageVariables();
 						
 	}
 	
@@ -1081,6 +1085,29 @@ public class Page {
     	
     }
 	
+	// this private method writes JS specific to the user
+	private void writeUserJS(Writer writer, RapidRequest rapidRequest, Application application, User user) throws RapidLoadingException, IOException {
+		
+		// open js
+		writer.write("    <script type='text/javascript'>\n");
+		// print user
+		if (user != null) writer.write("var _userName = '" + user.getName() + "';\n");
+		// get app page variables
+		List<String> pageVariables = application.getPageVariables(rapidRequest.getRapidServlet().getServletContext());
+		// if we got some
+		if (pageVariables != null) {
+			// loop them
+			for (String pageVariable : pageVariables) {
+				// look for a value in the session
+				String value = (String) rapidRequest.getSessionAttribute(pageVariable);
+				// if we got one
+				if (value != null) writer.write("var _pageVariable_" + pageVariable + " = '" + value.replace("'", "''") + "';\n");
+			}
+		}
+		// close js
+		writer.write("    </script>\n");
+	}
+	
 	// this private method produces the head of the page which is often cached, if resourcesOnly is true only page resources are included which is used when sending no permission
 	private String getHeadCSS(RapidRequest rapidRequest, Application application, boolean isDialogue) throws JSONException {
     	
@@ -1323,7 +1350,7 @@ public class Page {
 	}
 		
 	// this routine produces the entire page
-	public void writeHtml(RapidHttpServlet rapidServlet, RapidRequest rapidRequest,  Application application, User user, Writer writer, boolean designerLink) throws JSONException, IOException {
+	public void writeHtml(RapidHttpServlet rapidServlet, RapidRequest rapidRequest,  Application application, User user, Writer writer, boolean designerLink) throws JSONException, IOException, RapidLoadingException {
 				
 		// this doctype is necessary (amongst other things) to stop the "user agent stylesheet" overriding styles
 		writer.write("<!DOCTYPE html>\n");
@@ -1372,8 +1399,8 @@ public class Page {
 		    	if (rebuildPages) {
 		    		// get fresh head links
 		    		writer.write(getHeadLinks(rapidServlet, application, !designerLink));
-		    		// write the user
-		    		if (user != null) writer.write("    <script type='text/javascript'>\nvar _userName = '" + user.getName() + "';\n    </script>\n");
+		    		// write the user-specific JS
+		    		writeUserJS(writer, rapidRequest, application, user);		    		
 		    		// get fresh js and css
 		    		writer.write(getHeadCSS(rapidRequest, application, !designerLink));
 		    		// open the script
@@ -1387,8 +1414,8 @@ public class Page {
 		    		if (_cachedHeadReadyJS == null) _cachedHeadReadyJS = getHeadReadyJS(rapidRequest, application, !designerLink, formAdapter);		    		
 		    		// get the cached head links
 		    		writer.write(_cachedHeadLinks);
-		    		// write the user
-		    		if (user != null) writer.write("    <script type='text/javascript'>\nvar _userName = '" + user.getName() + "';\n    </script>\n");
+		    		// write the user-specific JS
+		    		writeUserJS(writer, rapidRequest, application, user);		
 		    		// get the cached head js and css
 		    		writer.write(_cachedHeadCSS);
 		    		// open the script

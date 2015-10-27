@@ -775,3 +775,14 @@ function toPixels(size) {
 		return 0;
 	}
 }
+
+function getPageVariableValue(name) {
+	var value = $.getUrlVar(name);
+	if (value) {
+		return value;
+	} else if (window["_pageVariable_" + name]) {
+		return window["_pageVariable_" + name]; 
+	} else {
+		return null;
+	}
+}
