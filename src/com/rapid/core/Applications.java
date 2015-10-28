@@ -183,39 +183,13 @@ public class Applications {
 	public Application getLatestVersion(String id) {
 		return getLatestVersion(id, -1);
 	}
-	
-	// fetch the highest version for an id
-	public Application getEarliestVersion(String id) {
-		// assume there are no applications
-		Application application = null;
-		// start with a very recent date!
-		Date earliestDate = new GregorianCalendar(3000, 1, 1, 0, 0).getTime();
-		// get the versions of this app
-		Versions versions = getVersions(id);
-		// if we got some
-		if (versions != null) {
-			// loop them and retain highest version
-			for (String appId : versions.keySet()) {
-				// get the application
-				Application applicationVersion = versions.get(appId);
-				// if this application created date is later
-				if (applicationVersion.getCreatedDate().before(earliestDate)) {
-					// update oldest date
-					earliestDate = applicationVersion.getCreatedDate();
-					// retain version
-					application = applicationVersion;
-				}
-			}
-		}
-		return application;
-	}
-	
-	// fetch the most recent live version, or first
+		
+	// fetch the most recent live version, then most recent dev
 	public Application get(String id) {
 		// get the latest live application
 		Application application = getLatestVersion(id, Application.STATUS_LIVE);
-		// set to earliest if no versions are live
-		if (application == null) application = getEarliestVersion(id);
+		// get the very latest if no versions are live
+		if (application == null) application = getLatestVersion(id);
 		// return our highest application
 		return application;
 	}
