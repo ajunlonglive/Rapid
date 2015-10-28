@@ -2395,17 +2395,8 @@ function Property_logicConditions(cell, action, property, details) {
 	var conditions = action[property.key];
 	// instantiate if required
 	if (!conditions) conditions = [];
-	// if the type is not specified
-	if (!action.conditionsType) {
-		// look for a visibilityConditionsOr (the page sends this)
-		if (action.visibilityConditionsOr) {
-			// set if so
-			action.conditionsType = "or";
-		} else {
-			// otherwise an and
-			action.conditionsType = "and";
-		}
-	}
+	// if the type is not specified make it an and
+	if (!action.conditionsType) action.conditionsType = "and";
 	// assume there is no text
 	var text = "";
 		
