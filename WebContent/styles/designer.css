@@ -266,6 +266,12 @@ li.design-control:hover {
 	max-height: 500px;
 }
 
+img.conflictimgage {
+	float:right;
+	margin-top: 0;
+	margin-right: 2px;
+}
+
 #pageMapSearch {
 	width: 100%;
 	height: 22px;
@@ -405,6 +411,14 @@ div#propertiesPanel h2 {
 
 table.propertiesPanelTable {
 	font-family: arial;
+}
+
+table.propertiesPanelTable td.conflict {
+	max-width:50px;
+	width:100%;	
+	font-weight: bold;
+	background-color: red;
+	color: white;
 }
 
 .canSelect {

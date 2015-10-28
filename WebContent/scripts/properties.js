@@ -128,6 +128,8 @@ function showProperties(control) {
 		propertiesTable.append("<tr><td colspan='2'><h3>" + controlClass.name + "</h3></td></tr>");
 		// add a small break
 		propertiesTable.append("<tr><td colspan='2'></td></tr>");
+		// show any conflict message
+		if (control._conflict) propertiesTable.append("<tr><td colspan='2' class='conflict'>Page \"" + control._conflict + "\" has a control with the same name</td></tr>");
 		// show the control id if requested
 		if (_version.showControlIds) propertiesTable.append("<tr><td>ID</td><td class='canSelect'>" + control.id + "</td></tr>");
 		// check there are class properties
