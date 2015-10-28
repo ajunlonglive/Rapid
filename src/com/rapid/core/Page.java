@@ -146,7 +146,7 @@ public class Page {
 	private List<String> _controlTypes, _actionTypes, _sessionVariables, _roles;
 	private List<RoleHtml> _rolesHtml;
 	private List<Condition> _visibilityConditions;
-	private boolean _visibilityConditionsOr;
+	private String _conditionsType;
 	private Lock _lock;
 				
 	// this array is used to collect all of the lines needed in the pageload before sorting them
@@ -230,9 +230,9 @@ public class Page {
 	public List<Condition> getVisibilityConditions() { return _visibilityConditions; }
 	public void setVisibilityConditions(List<Condition> visibilityConditions) { _visibilityConditions = visibilityConditions; }
 	
-	// whether the visibility conditions are an And (the default) or an Or
-	public boolean getVisibilityConditionsOr() { return _visibilityConditionsOr; }
-	public void setVisibilityConditionsOr(boolean visibilityConditionsOr) { _visibilityConditionsOr = visibilityConditionsOr; }
+	// the type (and/or) of the page visibility conditions - named so can be shared with logic action 
+	public String getConditionsType() { return _conditionsType; }
+	public void setConditionsType(String conditionsType) { _conditionsType = conditionsType; }
 	
 	// constructor
 	
@@ -1694,16 +1694,19 @@ public class Page {
 			// if there are some visibility conditions
 			if (_visibilityConditions.size() > 0) {				
 				
-				logger.debug("Page " + _id + " " + _visibilityConditions.size() + " visibility condition(s) " + " : " + (_visibilityConditionsOr ? "OR" : "AND"));
+				logger.debug("Page " + _id + " " + _visibilityConditions.size() + " visibility condition(s) " + " : " + _conditionsType);
 				
-				// assume we have failed
+				// assume we have failed all conditions
 				boolean pass = false;
 				
 				// loop them
 				for (Condition condition : _visibilityConditions) {
 					
-					logger.debug("Page " + _id + " visibility condition " + " : " + condition);
+					// assume we have failed this condition
+					pass = false;
 					
+					logger.debug("Page " + _id + " visibility condition " + " : " + condition);
+										
 					String value1 = getConditionValue(rapidRequest, formId, formAdapter, application, condition.getValue1());
 					
 					logger.debug("Value 1 = " + value1);
@@ -1717,13 +1720,14 @@ public class Page {
 					if (value1 == null) value1 = "";
 					if (value2 == null) value2 = "";
 					
+					// pass is updated from false to true if conditions match
 					if ("==".equals(operation)) {
 						if (value1.equals(value2)) pass = true;						
 					} else if ("!=".equals(operation)) {
 						if (!value1.equals(value2)) pass = true;
 					} else {						
 						try {
-							// the remaining conditions all work with numbers so covert
+							// the remaining conditions all work with numbers so convert
 							float num1 = Float.parseFloat(value1);
 							float num2 = Float.parseFloat(value2);
 							// check the conditions
@@ -1746,7 +1750,7 @@ public class Page {
 					logger.debug("pass = " + pass);
 					
 					// for the fast fail check whether we have an or
-					if (_visibilityConditionsOr) {
+					if ("or".equals(_conditionsType)) {
 						// if the conditions are or and we've just passed, we can stop checking further as we've passed in total
 						if (pass) break;
 					} else {

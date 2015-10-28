@@ -843,14 +843,10 @@ public class Designer extends RapidHttpServlet {
 									newPage.setVisibilityConditions(visibilityConditions);
 								}
 								
-								// look in the JSON for a pageVisibilityRules array is an Or
-								String jsonConditionsType = jsonPage.optString("conditionsType");
-								// check for or
-								if ("or".equals(jsonConditionsType)) {
-									newPage.setVisibilityConditionsOr(true);
-								} else {
-									newPage.setVisibilityConditionsOr(false);
-								}
+								// look in the JSON for a pageVisibilityRules array is an and or or (default to and)
+								String jsonConditionsType = jsonPage.optString("conditionsType","and");
+								// set what we got
+								newPage.setConditionsType(jsonConditionsType);
 									
 								// retrieve the html body
 								String htmlBody = jsonPage.optString("htmlBody");
