@@ -132,6 +132,14 @@ function Control(controlType, parentControl, jsonControl, loadComplexObjects, pa
 				for (var i in jsonControl) {
 					if (i != "_parent" && i != "validation" && i != "events" && i != "styles" && (i != "childControls" || !controlClass)) this[i] = jsonControl[i];								
 				}
+				// if paste, check name for conflict
+				if (paste && this.name) {
+					var num = this.name.replace(/\D/g,'')*1;
+					if (num > 0 && getControlConflict(this)) {
+						var newNum = num + 1;
+						this.name = this.name.replace(num, newNum);
+					}
+				}
 				// only if not the page
 				if (this._parent) {
 					// give this control a new, unique id when pasting
@@ -603,3 +611,28 @@ function getControlById(id, control) {
 	return foundControl;
 }
 
+// returns the page with a control of the same name
+function getControlConflict(c) {
+	// assume no conflict
+	var conflict = "";
+	
+	/////////////////////////////////////////////////////////////
+	
+	// Get all page conrols and check those first, then ignore this page ? - maybe
+	
+	////////////////////////////////////////////////////////////
+	
+	// loop all pages looking for controls with the same name
+	for (var i in _pages) {
+		var page = _pages[i];
+		for (var j in page.controls) {
+			var pc = page.controls[j];
+			if (c.name && c.id != pc.id && c.name == pc.name) {
+				conflict = page.name + " - " + page.title;
+				break;
+			}						
+		}
+		if (conflict) break;
+	}
+	return conflict;
+}
