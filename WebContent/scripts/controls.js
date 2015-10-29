@@ -33,9 +33,9 @@ Functions used to create an modify controls are here so they can be loaded by th
 var _controlNumbers = {};
 
 // this function is called iteratively when loading in the controls (used by both designer and script engine)
-function loadControl(jsonControl, parentControl, loadActions, paste, undo) {	
+function loadControl(jsonControl, parentControl, loadActions, paste, undo, checkNameConflicts) {	
 	// we need to init the control
-	var control = new Control(jsonControl.type, parentControl, jsonControl, loadActions, paste, undo);
+	var control = new Control(jsonControl.type, parentControl, jsonControl, loadActions, paste, undo, checkNameConflicts);
 	// if we have child controls
 	if (jsonControl.childControls) {
 		// loop and add
@@ -43,7 +43,7 @@ function loadControl(jsonControl, parentControl, loadActions, paste, undo) {
 			// get the child control json
 			var jsonChildControl = jsonControl.childControls[i];
 			// load us up the child control (using this function called iteratively)
-			var childControl = loadControl(jsonChildControl, control, loadActions, paste, undo);
+			var childControl = loadControl(jsonChildControl, control, loadActions, paste, undo, checkNameConflicts);
 			// add it to our childControls
 			control.childControls.push(childControl);
 		}
@@ -68,7 +68,7 @@ function ControlClass(controlClass) {
 }
 
 // this object function will create the control as specified in the controlClass, jsonControl is from a previously saved control, or paste, loadActions can avoid loading the action objects into the control (the page renderer doesn't need them), and paste can generate new id's
-function Control(controlType, parentControl, jsonControl, loadComplexObjects, paste, undo) {
+function Control(controlType, parentControl, jsonControl, loadComplexObjects, paste, undo, checkNameConflicts) {
 			
 	// get the type into the "class"
 	var controlClass = _controlTypes[controlType];
@@ -131,15 +131,7 @@ function Control(controlType, parentControl, jsonControl, loadComplexObjects, pa
 				// copy all properties into this control (expect for complex objects: _parent, roles, validation, childControls, events, and styles - [we've set them already and don't want them overwritten, unless it's the page child controls])
 				for (var i in jsonControl) {
 					if (i != "_parent" && i != "validation" && i != "events" && i != "styles" && (i != "childControls" || !controlClass)) this[i] = jsonControl[i];								
-				}
-				// if paste, check name for conflict
-				if (paste && this.name) {
-					var num = this.name.replace(/\D/g,'')*1;
-					if (num > 0 && getControlConflict(this)) {
-						var newNum = num + 1;
-						this.name = this.name.replace(num, newNum);
-					}
-				}
+				}				
 				// only if not the page
 				if (this._parent) {
 					// give this control a new, unique id when pasting
@@ -208,7 +200,33 @@ function Control(controlType, parentControl, jsonControl, loadComplexObjects, pa
 						}
 					}
 				}								
-			} // if paste
+			} // if paste / undo
+			
+			// if checkNameConflicts, re-number until no conflict
+			if (checkNameConflicts && this.name) {
+				// get any numbers in the name
+				var num = this.name.replace(/\D/g,'')*1;
+				// if they're greater than 0 (should cover no numbers and NaN)
+				if (num > 0) {
+					// get the current name
+					var name = this.name;
+					// start with the old num
+					var newNum = num ;
+					// keep looping until the conflict is resolved
+					while (getControlConflict(this)) {
+						// increment the new num
+						newNum ++;
+						// make a new name replacing the old num with new
+						var newName = name.replace(num, newNum); 
+						// if the replace made no difference bail as there's nothing we can do, and only try 100 times in case we get stuck in a loop
+						if (name == newName || newNum - num > 100) break;
+						// set the new name
+						this.name = newName;
+					}
+				}
+				// add to paste controls
+				_pasteControls.push(this);
+			}
 											
 			// page renderer does not use validation, actions, or styles
 			if (loadComplexObjects) {
@@ -615,24 +633,50 @@ function getControlById(id, control) {
 function getControlConflict(c) {
 	// assume no conflict
 	var conflict = "";
-	
-	/////////////////////////////////////////////////////////////
-	
-	// Get all page conrols and check those first, then ignore this page ? - maybe
-	
-	////////////////////////////////////////////////////////////
-	
-	// loop all pages looking for controls with the same name
-	for (var i in _pages) {
-		var page = _pages[i];
-		for (var j in page.controls) {
-			var pc = page.controls[j];
-			if (c.name && c.id != pc.id && c.name == pc.name) {
-				conflict = page.name + " - " + page.title;
+	// only if c has a name
+	if (c.name) {
+		// get all controls on this page
+		var controls = getControls();
+		// loop them
+		for (var i in controls) {
+			var control = controls[i];
+			// if it has a name and is for a form
+			if (control.name && c.id != control.id && c.name == control.name) {
+				conflict = _page.name + " - " + _page.title;
 				break;
-			}						
+			} 
+		}	
+		// get any controls we are current making in a paste
+		if (_pasteControls) {
+			// loop them
+			for (var i in _pasteControls) {
+				var control = _pasteControls[i];
+				// if it has a name and is for a form
+				if (control.name && c.id != control.id && c.name == control.name) {
+					conflict = _page.name + " - " + _page.title;
+					break;
+				} 
+			}	
 		}
-		if (conflict) break;
+		
+		// if not found in this page
+		if (!conflict) {
+			// loop all pages looking for controls with the same name
+			for (var i in _pages) {
+				var page = _pages[i];
+				if (page.id != _page.id) {
+					for (var j in page.controls) {
+						var pc = page.controls[j];
+						if (pc.name && c.id != pc.id && c.name == pc.name) {
+							conflict = page.name + " - " + page.title;
+							break;
+						}						
+					}
+				}			
+				if (conflict) break;
+			}
+		}
 	}
+	// return
 	return conflict;
 }

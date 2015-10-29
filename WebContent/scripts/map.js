@@ -48,15 +48,7 @@ function createMapEntry(list, c) {
 	// get any conflict
 	var conflict = getControlConflict(c);
 	// if we got one 
-	if (conflict) {
-		// retain it in  the control
-		c._conflict = conflict;
-		// wrap it in an image
-		conflict = "<img src='images/conflict_16x16.png' title='Page \"" + conflict + "\" has a control with the same name' class='conflictimgage'/>"
-	} else {
-		// remove the conflict
-		c._conflict = null;
-	}
+	if (conflict) conflict = "<img src='images/conflict_16x16.png' title='Page \"" + conflict + "\" has a control with the same name' class='conflictimgage'/>"
 
 	// create the list entry
 	list.append("<li><span data-id='" + c.id + "' " + (conflict ? " class='conflict'": "") + ">" + ((controlClass.image) ? "<img src='" + controlClass.image + "'/>" : "") + c.type + (c.name ? " - " + c.name: "") + conflict + "</span></li>");

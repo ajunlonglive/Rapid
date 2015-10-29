@@ -270,6 +270,7 @@ img.conflictimgage {
 	float:right;
 	margin-top: 0;
 	margin-right: 2px;
+	margin-left: -2000px;
 }
 
 #pageMapSearch {
