@@ -203,7 +203,7 @@ function Control(controlType, parentControl, jsonControl, loadComplexObjects, pa
 			} // if paste / undo
 			
 			// if checkNameConflicts, re-number until no conflict
-			if (checkNameConflicts && this.name) {
+			if (checkNameConflicts && this.name && controlClass.canBeUsedForFormPageVisibilty) {
 				// get any numbers in the name
 				var num = this.name.replace(/\D/g,'')*1;
 				// if they're greater than 0 (should cover no numbers and NaN)
@@ -642,19 +642,29 @@ function getControlConflict(c) {
 			var control = controls[i];
 			// if it has a name and is for a form
 			if (control.name && c.id != control.id && c.name == control.name) {
-				conflict = _page.name + " - " + _page.title;
-				break;
+				// get the control class
+				var controlClass = _controlTypes[control.type];
+				// only if it can be used for form page visibility (form control)
+				if (controlClass.canBeUsedForFormPageVisibilty) {	
+					conflict = _page.name + " - " + _page.title;
+					break;
+				}				
 			} 
 		}	
 		// get any controls we are current making in a paste
-		if (_pasteControls) {
+		if (!conflict && _pasteControls) {
 			// loop them
 			for (var i in _pasteControls) {
 				var control = _pasteControls[i];
 				// if it has a name and is for a form
 				if (control.name && c.id != control.id && c.name == control.name) {
-					conflict = _page.name + " - " + _page.title;
-					break;
+					// get the control class
+					var controlClass = _controlTypes[control.type];
+					// only if it can be used for form page visibility (form control)
+					if (controlClass.canBeUsedForFormPageVisibilty) {	
+						conflict = _page.name + " - " + _page.title;
+						break;
+					}					
 				} 
 			}	
 		}
@@ -668,14 +678,24 @@ function getControlConflict(c) {
 					for (var j in page.controls) {
 						var pc = page.controls[j];
 						if (pc.name && c.id != pc.id && c.name == pc.name) {
-							conflict = page.name + " - " + page.title;
-							break;
+							// get the control class
+							var controlClass = _controlTypes[control.type];
+							// only if it can be used for form page visibility (form control)
+							if (controlClass.canBeUsedForFormPageVisibilty) {	
+								conflict = page.name + " - " + page.title;
+								break;
+							}							
 						}						
 					}
 				}			
 				if (conflict) break;
 			}
 		}
+	}
+	if (conflict) {
+		c._conflict = conflict;
+	} else {
+		c._conflict = null;
 	}
 	// return
 	return conflict;
