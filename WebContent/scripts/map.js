@@ -45,10 +45,15 @@ function createMapEntry(list, c) {
 	// get the control class
 	var controlClass = _controlTypes[c.type];
 	
-	// get any conflict
-	var conflict = getControlConflict(c);
-	// if we got one 
-	if (conflict) conflict = "<img src='images/conflict_16x16.png' title='Page \"" + conflict + "\" has a control with the same name' class='conflictimgage'/>"
+	// assume no conflict
+	var conflict = "";
+	// if this can be used in page visibility (it's a form control)
+	if (controlClass.canBeUsedForFormPageVisibilty) {	
+		// look for any conflict
+		conflict = getControlConflict(c);
+		// if we got one 
+		if (conflict) conflict = "<img src='images/conflict_16x16.png' title='Page \"" + conflict + "\" has a control with the same name' class='conflictimgage'/>";
+	}
 
 	// create the list entry
 	list.append("<li><span data-id='" + c.id + "' " + (conflict ? " class='conflict'": "") + ">" + ((controlClass.image) ? "<img src='" + controlClass.image + "'/>" : "") + c.type + (c.name ? " - " + c.name: "") + conflict + "</span></li>");
@@ -104,7 +109,7 @@ function buildPageMap() {
 		// get the list
 		var list = $("#pageMapList");
 		// empty the current list
-		list.html("");		
+		list.children().remove();
 		// check we have a page and childControls
 		if (_page) {
 			// build the map

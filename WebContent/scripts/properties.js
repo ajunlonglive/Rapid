@@ -476,6 +476,12 @@ function Property_text(cell, propertyObject, property, details) {
 	addListener( input.keyup( function(ev) { 
 		updateProperty(cell, propertyObject, property, details, ev.target.value); 
 	}));
+	// if this is the name also add an onchange to rebuild the map
+	if (property.key == "name") {
+		addListener( input.change( function(ev) { 
+			buildPageMap();
+		}));
+	}
 }
 
 // a handler for text properties where there is a form adapter
