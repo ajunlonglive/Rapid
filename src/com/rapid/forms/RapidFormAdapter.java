@@ -36,6 +36,9 @@ import org.json.JSONObject;
 import com.rapid.core.Application;
 import com.rapid.core.Control;
 import com.rapid.core.Page;
+import com.rapid.security.SecurityAdapter;
+import com.rapid.security.SecurityAdapter.SecurityAdapaterException;
+import com.rapid.server.Rapid;
 import com.rapid.server.RapidRequest;
 
 public class RapidFormAdapter extends FormAdapter {
@@ -90,13 +93,27 @@ public class RapidFormAdapter extends FormAdapter {
 		// get the form id based on the app id and version
 		String formId = formIds.get(application.getId() + "-" + application.getVersion());
 		// if it's null
-		if (formId == null) {
-			// get the start page id
-			String startPageId = application.getStartPageId();
+		if (formId == null) {			
+			// get the start page header
+			String startPageId = application.getPages().getSortedPages().get(0).getId();
 			// get the request page id
 			String requestPageId = rapidRequest.getPage().getId();
+			// assume no new id
+			boolean newId = false;
+			// if this is the start page
+			if  (startPageId.equals(requestPageId)) {
+				// we're ok to hand out a new id
+				newId = true;
+			} else {
+				// get the security adapter
+				SecurityAdapter security = application.getSecurityAdapter();
+				// if the user has design 
+				try {
+					if (security.checkUserRole(rapidRequest, Rapid.DESIGN_ROLE)) newId = true;
+				} catch (SecurityAdapaterException e) {}
+			}
 			// there are some rules for creating new form ids - there must be no action and the page must be the start page
-			if (rapidRequest.getRequest().getParameter("action") == null && (startPageId.equals(requestPageId) || !application.getPages().getPageIds().contains(startPageId))) {
+			if (rapidRequest.getRequest().getParameter("action") == null && newId) {
 				// get the servlet context
 				ServletContext servletContext = rapidRequest.getRapidServlet().getServletContext();
 				// the maste form id as a string
