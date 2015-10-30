@@ -633,6 +633,40 @@ div.button {
 	border-top-right-radius: 1000px;		
 }
 
+.buttons .buttonImage {
+    padding-left: 5px;
+    margin-left: 2px;
+    border-left:none;
+}
+
+#appAdmin {
+	padding-left:20px;
+	padding-right:5px;
+}
+
+#appAdminNewTab {
+	margin-top: 0;
+}
+
+#pageNew {
+	width: 58px;	
+}
+
+#pageSave {
+	width: 58px;	
+}
+
+#pageView {
+	padding-left: 8px;
+    padding-right: 5px;
+    width: 38px;	
+}
+
+#pageViewNewTab {
+	width:20px;
+}
+
+
 .hover {
 	cursor: pointer;
 }

@@ -679,7 +679,7 @@ function getControlConflict(c) {
 						var pc = page.controls[j];
 						if (pc.name && c.id != pc.id && c.name == pc.name) {
 							// get the control class
-							var controlClass = _controlTypes[control.type];
+							var controlClass = _controlTypes[pc.type];
 							// only if it can be used for form page visibility (form control)
 							if (controlClass.canBeUsedForFormPageVisibilty) {	
 								conflict = page.name + " - " + page.title;

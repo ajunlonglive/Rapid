@@ -129,7 +129,7 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 				<div id="controlPanelPin"><img src="images/triangleLeft_8x8.png" title="unpin panel" /></div>
 																
 				<div class="buttons">					
-					<button id="appAdmin" class="buttonLeft buttonRight" title="Load the Rapid Admin screen">Rapid Admin...</button>
+					<button id="appAdmin" class="buttonLeft" title="Open the Rapid Admin screen">Rapid Admin</button><button id="appAdminNewTab" class="buttonRight buttonImage" title="Open the Rapid Admin screen in a new tab"><img src="images/triangleRight_8x8.png" /></button>
 				</div>
 				
 				<h2>Application<img id="helpApplication" class="headerHelp" src="images/help_16x16.png" /></h2>
@@ -158,7 +158,7 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 				<div class="buttons">
 					<button id="pageNew" class="buttonLeft" title="Create a new page for this application">new</button>
 					<button id="pageSave" class="" title="Save this page">save</button>
-					<button id="pageView" class="buttonRight" title="View this page in the application">view</button>
+					<button id="pageView" class="" title="View this page in the application">view</button><button id="pageViewNewTab" class="buttonRight buttonImage"  title="View this page in a new tab"><img src="images/triangleRight_8x8.png" /></button>
 				</div>	
 						
 				<div class="buttons">

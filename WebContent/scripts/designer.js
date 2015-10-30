@@ -2684,6 +2684,15 @@ $(document).ready( function() {
 		}		 
 	});
 	
+	// administration, new tab
+	$("#appAdminNewTab").click( function(ev) {
+		if (_version && _version.id) {
+			window.open("~?a=rapid&appId=" + _version.id + "&version=" + _version.version,"blank");
+		} else {
+			window.open("~?a=rapid","blank");
+		}		 
+	});
+	
 	// load app
 	$("#appSelect").change( function() {
     	// load the selected app and its pages in the drop down 
@@ -2723,11 +2732,6 @@ $(document).ready( function() {
 		}
 	});
 	
-	// new page
-	$("#pageNew").click( function(ev) {
-		if (checkDirty()) showDialogue('~?action=page&a=rapid&p=P3'); 
-	});
-	
 	// edit page
 	$("#pageEdit").click( function(ev) {
 		// hide any selection border
@@ -2735,7 +2739,12 @@ $(document).ready( function() {
 		// set the selected control to the page
 		selectControl(_page);		
 	});
-			
+	
+	// new page
+	$("#pageNew").click( function(ev) {
+		if (checkDirty()) showDialogue('~?action=page&a=rapid&p=P3'); 
+	});
+	
 	// save page
 	$("#pageSave").click( function() {
 		
@@ -2785,6 +2794,12 @@ $(document).ready( function() {
 	$("#pageView").click( function(ev) {
 		// page unload will prompet the user if the page is dirty
 		window.location = "~?a=" + _version.id + "&v=" + _version.version + "&p=" + _page.id;
+	});
+	
+	// view page, new tab
+	$("#pageViewNewTab").click( function(ev) {
+		// page unload will prompet the user if the page is dirty
+		window.open("~?a=" + _version.id + "&v=" + _version.version + "&p=" + _page.id);
 	});
 	
 	// undo
