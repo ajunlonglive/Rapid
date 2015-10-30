@@ -27,7 +27,6 @@ package com.rapid.actions;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -51,6 +50,8 @@ import com.rapid.core.Application.Parameter;
 import com.rapid.core.Application.RapidLoadingException;
 import com.rapid.core.Application.Resource;
 import com.rapid.core.Application.Resources;
+import com.rapid.core.Application.Value;
+import com.rapid.core.Application.ValueList;
 import com.rapid.core.Applications;
 import com.rapid.core.Control;
 import com.rapid.core.Device;
@@ -1138,7 +1139,7 @@ public class Rapid extends Action {
 				String startPageId = jsonAction.optString("startPageId","");				
 				boolean showControlIds = jsonAction.optBoolean("showControlIds");
 				boolean showActionIds = jsonAction.optBoolean("showActionIds");
-								
+						
 				// assume we do not need to update the applications drop down
 				boolean appUpdated = false;				
 				
@@ -1159,6 +1160,33 @@ public class Rapid extends Action {
 				app.setStartPageId(startPageId);
 				app.setShowControlIds(showControlIds);
 				app.setShowActionIds(showActionIds);
+				
+				///////////////////////////////////////////////////////////////////////////////////////////////////
+				
+				/*
+								
+				List<Value> v1 = new ArrayList<Value>();				
+				v1.add(new Value("Male"));
+				v1.add(new Value("Female"));
+				ValueList vl1 = new ValueList("1","List 1", false);
+				vl1.setValues(v1);
+				
+				List<Value> v2 = new ArrayList<Value>();				
+				v2.add(new Value("Male","M"));
+				v2.add(new Value("Female","F"));
+				v2.add(new Value("Unborn","U"));
+				ValueList vl2 = new ValueList("2","List 2", true);
+				vl2.setValues(v2);
+				
+				ArrayList<ValueList> vs = new ArrayList<ValueList>();
+				vs.add(vl1);
+				vs.add(vl2);
+				
+				app.setValueLists(vs);
+				
+				*/
+											
+				/////////////////////////////////////////////////////////////////////////////////////////////////
 								
 				// save
 				app.save(rapidServlet, rapidRequest, true); 

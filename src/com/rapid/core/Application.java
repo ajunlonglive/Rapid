@@ -212,6 +212,91 @@ public class Application {
 	
 	// application parameters which will can access in some of our actions
 	@XmlType(namespace="http://rapid-is.co.uk/core")
+	public static class Value {
+		
+		// private instance variables		
+		
+		private String _text, _code;
+		
+		// properties		
+		
+		public String getText() { return _text; }
+		public void setText(String text) { _text = text; }
+		
+		public String getCode() { return _code; }
+		public void setCode(String code) { _code = code; }
+		
+		// constructors
+		
+		public Value() {}
+		public Value(String text) { _text = text;}
+		public Value(String text, String code) { 
+			_text = text; 
+			_code = code;
+		}
+		
+		// overrides
+		
+		@Override
+		public String toString() {
+			if (_code == null) {
+				return _text;
+			} else {
+				return _text + " (" + _code + ")";
+			}
+		}
+		
+	}
+	
+	// a value list of which there will be many - we can't extend list as jaxb does not handle list of list
+	public static class ValueList  {
+		
+		// private instance variables
+		
+		private String _id, _name;
+		private boolean _usesCodes;
+		private List<Value> _values;
+		
+		// properties		
+		
+		public String getId() { return _id; }
+		public void setId(String id) { _id = id; }
+		
+		public String getName() { return _name; }
+		public void setName(String name) { _name = name; }
+		
+		public boolean getUsesCodes() { return _usesCodes; }
+		public void setUsesCodes(boolean usesCodes) { _usesCodes = usesCodes; }
+		
+		public List<Value> getValues() { return _values; }
+		public void setValues(List<Value> values) { _values = values; }		
+		
+		// constructors
+		
+		public ValueList() {}
+		public ValueList(String id, String name, boolean usesCodes) { 
+			_id = id; 
+			_name = name;
+			_usesCodes = usesCodes;
+		}
+		
+		// overrides
+		
+		@Override
+		public String toString() {
+			String s = _id + "/" + _name;
+			if (_values == null) {
+				s += "  values is null";
+			} else {
+				s += "  " + _values.size() + " values";
+			}
+			return s  + " " + (_usesCodes ? "uses codes" : "no codes");
+		}
+								
+	}
+	
+	// application parameters which will can access in some of our actions
+	@XmlType(namespace="http://rapid-is.co.uk/core")
 	public static class Parameter {
 		
 		// private instance variables
@@ -465,11 +550,12 @@ public class Application {
 	private FormAdapter _formAdapter;	
 	private List<DatabaseConnection> _databaseConnections;	
 	private List<Webservice> _webservices;
+	private List<ValueList> _valueLists;
 	private List<Parameter> _parameters;
 	private List<String> _controlTypes, _actionTypes;
 	private Pages _pages;
 	private Resources _appResources, _resources;
-	private List<String> _styleClasses;
+	private List<String> _styleClasses;	
 	private List<String> _pageVariables;
 	
 	// properties
@@ -575,6 +661,10 @@ public class Application {
 	public void setFormAdapterType(String formAdapterType) { _formAdapterType = formAdapterType; }
 	
 	// a collection of parameters for this application
+	public List<ValueList> getValueLists() { return _valueLists; }
+	public void setValueLists(List<ValueList> valueLists) { _valueLists = valueLists; }
+		
+	// a collection of parameters for this application
 	public List<Parameter> getParameters() { return _parameters; }
 	public void setParameters(List<Parameter> parameters) { _parameters = parameters; }
 	
@@ -597,7 +687,7 @@ public class Application {
 	// these are app resources which are marshalled to the application.xml file and add to all pages
 	public Resources getAppResources() { return _appResources; }
 	public void setAppResources(Resources appResources) { _appResources = appResources; }
-		
+			
 	// constructors
 	
 	public Application() throws ParserConfigurationException, XPathExpressionException, RapidLoadingException, SAXException, IOException {
@@ -2107,7 +2197,7 @@ public class Application {
 		
 		// get the unmarshaller 
 		Unmarshaller unmarshaller = RapidHttpServlet.getUnmarshaller();
-										
+
 		try {
 		
 			// unmarshall the application

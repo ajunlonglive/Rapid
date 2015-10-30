@@ -975,7 +975,7 @@ function getFormValueOptions(selectId) {
 				// page controls
 				for (var j in _pages[i].controls) {					
 					var control = _pages[i].controls[j];					
-					if (control.pageVisibility) {																	
+					if (control.pageVisibility && control.name) {																	
 						if (selectId == control.id && !gotSelected) {
 							pageControlOptions += "<option value='" + control.id + "' selected='selected' >" +  control.name + "</option>";
 							gotSelected = true;
@@ -1780,6 +1780,8 @@ function loadPage() {
     	_pageIframe[0].contentDocument.location.href = "designpage.jsp?a=" + _version.id + "&v=" + _version.version + "&p=" + _page.id;    	
     	// set dirty to false
     	_dirty = false;    	
+    	// disable all page buttons
+    	$("button").disable();
 	} // drop down val check
 	
 }
@@ -2508,9 +2510,12 @@ $(document).ready( function() {
 							} 
 						}
 			        				        	
+						// enable all buttons except for undo and redo 
+		        		$("button:not(#undo):not(#redo)").enable();
+		        		
 			        	// show the page object
 			        	_page.object.show();	
-			        	
+			        				        				        	
 			        	// make everything visible
 			        	showDesigner();
 			        	
