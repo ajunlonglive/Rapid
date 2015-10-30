@@ -96,8 +96,12 @@ public class RapidFormAdapter extends FormAdapter {
 		if (formId == null) {			
 			// get the start page header
 			String startPageId = application.getPages().getSortedPages().get(0).getId();
+			// get the requested Page
+			Page requestPage = rapidRequest.getPage();
 			// get the request page id
-			String requestPageId = rapidRequest.getPage().getId();
+			String requestPageId = null;
+			// if there was a page get the id
+			if (requestPage  != null) requestPageId = requestPage.getId();
 			// assume no new id
 			boolean newId = false;
 			// if this is the start page
