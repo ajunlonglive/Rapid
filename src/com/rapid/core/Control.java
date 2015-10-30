@@ -453,6 +453,11 @@ public class Control {
 						// pass the field as a value
 						return "_userName";
 						
+					} else if ("true".equals(type) || "false".equals(type)) {
+						
+						// wrap true and false in quotes to make it a string value, rather than a literal boolean
+						return "'" + type + "'";
+						
 					} else if ("field".equals(type)) {
 						
 						// pass the field as a value

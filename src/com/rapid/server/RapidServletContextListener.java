@@ -475,7 +475,6 @@ public class RapidServletContextListener implements ServletContextListener {
 		
 	}
 		
-	
 	// loop all of the .action.xml files and check the injectable classes, so we can re-initialise JAXB context to be able to serialise them, and cache their constructors for speedy initialisation
 	public static int loadActions(ServletContext servletContext) throws Exception {
 		
@@ -882,9 +881,7 @@ public class RapidServletContextListener implements ServletContextListener {
 		
 	}
 					
-	public RapidServletContextListener() {
-		
-	}
+	public RapidServletContextListener() {	}
 	
 	@Override
 	public void contextInitialized(ServletContextEvent event) {   
@@ -1043,6 +1040,9 @@ public class RapidServletContextListener implements ServletContextListener {
 			Class[] classes = _jaxbClasses.toArray(new Class[_jaxbClasses.size()]);			
 			// re-init the JAXB context to include our injectable classes					
 			JAXBContext jaxbContext = JAXBContext.newInstance(classes);
+			
+			// this logs the JAXB classes
+			_logger.trace("JAXB  content : " + jaxbContext.toString());
 			
 			// store the jaxb context in RapidHttpServlet
 			RapidHttpServlet.setJAXBContext(jaxbContext);

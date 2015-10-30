@@ -76,6 +76,7 @@ import com.rapid.utils.ZipFile;
 import com.rapid.actions.Logic.Condition;
 import com.rapid.core.Application;
 import com.rapid.core.Application.DatabaseConnection;
+import com.rapid.core.Application.ValueList;
 import com.rapid.core.Applications.Versions;
 import com.rapid.core.Page;
 import com.rapid.core.Page.Lock;
@@ -327,7 +328,13 @@ public class Designer extends RapidHttpServlet {
 											}							
 											// add the security roles to the app 
 											jsonVersion.put("roles", jsonRoles);
-																												
+											
+											// get any value lists
+											List<ValueList> valueLists = application.getValueLists();
+											
+											// add all of the value lists
+											jsonVersion.put("valueLists", valueLists);
+																																							
 											// get all the possible json actions
 											JSONArray jsonActions = getJsonActions();
 											// make an array for the actions in this app
