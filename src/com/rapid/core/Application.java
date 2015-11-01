@@ -216,33 +216,33 @@ public class Application {
 		
 		// private instance variables		
 		
-		private String _text, _code;
+		private String _text, _value;
 		
 		// properties		
 		
 		public String getText() { return _text; }
 		public void setText(String text) { _text = text; }
 		
-		public String getCode() { return _code; }
-		public void setCode(String code) { _code = code; }
+		public String getValue() { return _value; }
+		public void setValue(String value) { _value = value; }
 		
 		// constructors
 		
 		public Value() {}
 		public Value(String text) { _text = text;}
-		public Value(String text, String code) { 
+		public Value(String text, String value) { 
 			_text = text; 
-			_code = code;
+			_value = value;
 		}
 		
 		// overrides
 		
 		@Override
 		public String toString() {
-			if (_code == null) {
+			if (_value == null) {
 				return _text;
 			} else {
-				return _text + " (" + _code + ")";
+				return _text + " (" + _value + ")";
 			}
 		}
 		
@@ -253,15 +253,12 @@ public class Application {
 		
 		// private instance variables
 		
-		private String _id, _name;
+		private String _name;
 		private boolean _usesCodes;
 		private List<Value> _values;
 		
 		// properties		
-		
-		public String getId() { return _id; }
-		public void setId(String id) { _id = id; }
-		
+				
 		public String getName() { return _name; }
 		public void setName(String name) { _name = name; }
 		
@@ -274,8 +271,7 @@ public class Application {
 		// constructors
 		
 		public ValueList() {}
-		public ValueList(String id, String name, boolean usesCodes) { 
-			_id = id; 
+		public ValueList(String name, boolean usesCodes) { 
 			_name = name;
 			_usesCodes = usesCodes;
 		}
@@ -284,7 +280,7 @@ public class Application {
 		
 		@Override
 		public String toString() {
-			String s = _id + "/" + _name;
+			String s = _name;
 			if (_values == null) {
 				s += "  values is null";
 			} else {

@@ -1072,12 +1072,22 @@ function getDatabaseConnectionOptions(selectIndex) {
 
 function getStyleClassesOptions(selected) {
 	var classOptions = "";
-	// loop any stye classes
+	// loop any style classes
 	for (var i in _styleClasses) {
 		classOptions += "<option" + (_styleClasses[i] == selected ? " selected='selected'" : "") + ">" + _styleClasses[i] + "</option>";
 	}
 	// return
 	return classOptions;
+}
+
+function getValueListsOptions(selected) {
+	var valueLists = "";
+	if (_version.valueLists) {
+		for (var i in _version.valueLists) {
+			valueLists += "<option" + (_version.valueLists[i].name == selected ? " selected='selected'" : "") + ">" + _version.valueLists[i].name + "</option>";
+		}
+	}
+	return valueLists;
 }
 
 // move the border and show properties and actions
