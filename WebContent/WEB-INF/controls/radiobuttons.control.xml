@@ -110,16 +110,34 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 // return our html for adding to our parent object	
 var radiobuttonHtml = "";
 // check we have buttons
-if (this.buttons) {
+if (this.buttons || this.valueList) {
 	// if the options are a string turn them in an array
 	if ($.type(this.buttons) == "string") this.buttons = JSON.parse(this.buttons);
 	// if codes is a false string make it a boolean
 	if (this.codes == "false") this.codes = false;
-	// loop the options
-	for (var i in this.buttons) {
-		var button = this.buttons[i];
-		var label = button.label;
-		var value = (this.codes ? button.value : label);
+	// get the buttons
+	var buttons = this.buttons;
+	// get if we have codes
+	var codes = this.codes;
+	// if it's a value list use that instead
+	if (this.valueList) {
+		for (var i in _version.valueLists) {
+			if (this.valueList == _version.valueLists[i].name) {
+		  		buttons = _version.valueLists[i].values;
+		  		codes = _version.valueLists[i].usesCodes;
+		  		break;
+			}
+		}
+	}
+	// loop the buttons
+	for (var i in buttons) {
+		// get the button
+		var button = buttons[i];
+		// get the label
+		var label = button.label;				
+		// if valueList
+		if (this.valueList) label = button.text;		
+		var value = (codes ? button.value : label);
 		if (this.buttonposition == 'R') radiobuttonHtml += label;
 		radiobuttonHtml += "<input type='radio' name='" + (this.group ? this.group : this.id) + "' id='" + this.id + i + "' value='" + value + "' " + (this.value == value ? "checked='checked'" :  "") + "></input>";
 		if (this.buttonposition == 'L') radiobuttonHtml += label;

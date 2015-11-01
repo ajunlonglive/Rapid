@@ -2157,117 +2157,151 @@ function Property_navigationStopActions(cell, navigation, property, details) {
 }
 
 //this is a dialogue to define radio buttons for the radio buttons control
-function Property_radiobuttons(cell, radiobuttons, property, details) {
+function Property_radiobuttons(cell, control, property, details) {
 	
 	// retrieve or create the dialogue
-	var dialogue = getDialogue(cell, radiobuttons, property, details, 200, "Radio buttons", {sizeX: true});		
+	var dialogue = getDialogue(cell, control, property, details, 200, "Radio buttons", {sizeX: true});		
 	// grab a reference to the table
 	var table = dialogue.find("table").first();
 	// make sure table is empty
 	table.children().remove();
 	
-	var buttons = [];
-	// set the value if it exists
-	if (radiobuttons.buttons) buttons = radiobuttons.buttons;
-	// make some text
-	var text = "";
-	for (var i = 0; i < buttons.length; i++) {
-		text += buttons[i].label;
-		if (radiobuttons.codes) text += " (" + buttons[i].value + ")";	
-		if (i < buttons.length - 1) text += ",";
-	}
-	// add a descrption if nothing yet
-	if (!text) text = "Click to add...";
-	// append the adjustable form control
-	cell.text(text);
+	// if we're using a value list and this version still has them
+	if (control.valueList && _version.valueLists && _version.valueLists.length > 0) {
+		
+		// set the text to the value list
+		cell.text(control.valueList);
+		
+		// remove any current useCodes
+		dialogue.find("div.useCodes").remove();
+		
+	} else {
 	
-	// add a heading
-	table.append("<tr>" + (radiobuttons.codes ? "<td><b>Text</b></td><td colspan='2'><b>Code</b></td>" : "<td colspan='2'><b>Text</b></td>") + "</tr>");
-	
-	// show options
-	for (var i in buttons) {
-		// add the line
-		table.append("<tr><td><input class='label' value='" + buttons[i].label + "' /></td>" + (radiobuttons.codes ? "<td><input class='value' value='" + buttons[i].value + "' /></td>" : "") + "<td style='width:32px;padding:0;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
+		var buttons = [];
+		// set the value if it exists
+		if (control.buttons) buttons = control.buttons;
+		// make some text
+		var text = "";
+		for (var i = 0; i < buttons.length; i++) {
+			text += buttons[i].label;
+			if (control.codes) text += " (" + buttons[i].value + ")";	
+			if (i < buttons.length - 1) text += ",";
+		}
+		// add a descrption if nothing yet
+		if (!text) text = "Click to add...";
+		// append the adjustable form control
+		cell.text(text);
 		
-		// find the code
-		var valueEdit = table.find("input.value").last();
+		// add a heading
+		table.append("<tr>" + (control.codes ? "<td><b>Text</b></td><td colspan='2'><b>Code</b></td>" : "<td colspan='2'><b>Text</b></td>") + "</tr>");
+		
+		// show options
+		for (var i in buttons) {
+			// add the line
+			table.append("<tr><td><input class='label' value='" + buttons[i].label + "' /></td>" + (control.codes ? "<td><input class='value' value='" + buttons[i].value + "' /></td>" : "") + "<td style='width:32px;padding:0;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
+			
+			// find the code
+			var valueEdit = table.find("input.value").last();
+			// add a listener
+			addListener( valueEdit.keyup( {control : control, buttons: buttons}, function(ev) {
+				// get the input
+				var input = $(ev.target);
+				// update value
+				ev.data.buttons[input.parent().parent().index()-1].value = input.val();
+				// update html 
+				rebuildHtml(ev.data.control);
+			}));
+			
+			// find the label
+			var textEdit = table.find("input.label").last();
+			// add a listener
+			addListener( textEdit.keyup( {control : control, buttons: buttons}, function(ev) {
+				// get the input
+				var input = $(ev.target);
+				// update text
+				ev.data.buttons[input.parent().parent().index()-1].label = input.val();
+				// update html 
+				rebuildHtml(ev.data.control);
+			}));
+			
+		}
+			
+		// have an add row
+		table.append("<tr><td colspan='" + (control.codes ? "3" : "2") + "'><a href='#'>add...</a></td></tr>");
+		// get a reference to the add
+		var add = table.find("tr").last().children().last().children().last();
 		// add a listener
-		addListener( valueEdit.keyup( {radiobuttons : radiobuttons, buttons: buttons}, function(ev) {
-			// get the input
-			var input = $(ev.target);
-			// update value
-			ev.data.buttons[input.parent().parent().index()-1].value = input.val();
-			// update html 
-			rebuildHtml(ev.data.radiobuttons);
-		}));
-		
-		// find the label
-		var textEdit = table.find("input.label").last();
-		// add a listener
-		addListener( textEdit.keyup( {radiobuttons : radiobuttons, buttons: buttons}, function(ev) {
-			// get the input
-			var input = $(ev.target);
-			// update text
-			ev.data.buttons[input.parent().parent().index()-1].label = input.val();
-			// update html 
-			rebuildHtml(ev.data.radiobuttons);
-		}));
-		
-				
-	}
-		
-	// have an add row
-	table.append("<tr><td colspan='" + (radiobuttons.codes ? "3" : "2") + "'><a href='#'>add...</a></td></tr>");
-	// get a reference to the add
-	var add = table.find("tr").last().children().last().children().last();
-	// add a listener
-	addListener( add.click( {cell: cell, radiobuttons: radiobuttons, property: property, details: details}, function(ev) {
-		// add a blank option
-		ev.data.radiobuttons.buttons.push({value: "", label: ""});
-		// refresh
-		Property_radiobuttons(ev.data.cell, ev.data.radiobuttons, ev.data.property, ev.data.details);		
-	}));
-	
-	// check we don't have a checkbox already
-	if (!dialogue.find("input[type=checkbox]")[0]) {
-		// add checkbox
-		dialogue.append("Use codes <input type='checkbox' " + (radiobuttons.codes ? "checked='checked'" : "") + " />");
-		// get a reference
-		var optionsCodes = dialogue.children().last();
-		// add a listener
-		addListener( optionsCodes.change( {cell: cell, radiobuttons: radiobuttons, buttons: buttons, property: property, details: details}, function(ev) {
-			// get the value
-			ev.data.radiobuttons.codes = ev.target.checked;
+		addListener( add.click( {cell: cell, control: control, property: property, details: details}, function(ev) {
+			// add a blank option
+			ev.data.control.buttons.push({value: "", label: ""});
 			// refresh
-			Property_radiobuttons(ev.data.cell, ev.data.radiobuttons, ev.data.property, ev.data.details);
-		
+			Property_radiobuttons(ev.data.cell, ev.data.control, ev.data.property, ev.data.details);		
 		}));
+				
+		// find the deletes
+		var buttonDelete = table.find("img.delete");
+		// add a listener
+		addListener( buttonDelete.click( {cell: cell, control: control, property: property, details: details}, function(ev) {
+			// get the del image
+			var delImage = $(ev.target);
+			// remove from parameters
+			ev.data.control.buttons.splice(delImage.parent().parent().index()-1,1);
+			// remove row
+			delImage.parent().parent().remove();
+			// update html if top row
+			if (delImage.parent().index() == 1) rebuildHtml(ev.data.control);
+			// refresh
+			Property_radiobuttons(ev.data.cell, ev.data.control, ev.data.property, ev.data.details);
+		}));
+		
+		// add reorder listeners
+		addReorder(buttons, table.find("img.reorder"), function() { 
+			// refresh the html and regenerate the mappings
+			rebuildHtml(control);
+			// refresh the property
+			Property_radiobuttons(cell, control, property, details); 
+		});
+		
+		// check we don't have a checkbox already
+		if (!dialogue.find("div.useCodes")[0]) {
+			// add checkbox
+			table.after("<div class='useCodes'>Use codes <input type='checkbox' " + (control.codes ? "checked='checked'" : "") + " /></span>");
+			// get a reference
+			var optionsCodes = dialogue.children().last();
+			// add a listener
+			addListener( optionsCodes.change( {cell: cell, control: control, buttons: buttons, property: property, details: details}, function(ev) {
+				// get the value
+				ev.data.control.codes = ev.target.checked;
+				// refresh
+				Property_radiobuttons(ev.data.cell, ev.data.control, ev.data.property, ev.data.details);
+			
+			}));
+			
+		}
 		
 	}
 	
-	// find the deletes
-	var buttonDelete = table.find("img.delete");
-	// add a listener
-	addListener( buttonDelete.click( {cell: cell, radiobuttons: radiobuttons, property: property, details: details}, function(ev) {
-		// get the del image
-		var delImage = $(ev.target);
-		// remove from parameters
-		ev.data.radiobuttons.buttons.splice(delImage.parent().parent().index()-1,1);
-		// remove row
-		delImage.parent().parent().remove();
-		// update html if top row
-		if (delImage.parent().index() == 1) rebuildHtml(ev.data.radiobuttons);
-		// refresh
-		Property_radiobuttons(ev.data.cell, ev.data.radiobuttons, ev.data.property, ev.data.details);
-	}));
-	
-	// add reorder listeners
-	addReorder(buttons, table.find("img.reorder"), function() { 
-		// refresh the html and regenerate the mappings
-		rebuildHtml(radiobuttons);
-		// refresh the property
-		Property_radiobuttons(cell, radiobuttons, property, details); 
-	});
+	// only if this version has value lists
+	if (_version.valueLists && _version.valueLists.length > 0) {
+		// check we don't have a value list select already
+		if (!dialogue.find("select")[0]) {
+			// add the select
+			dialogue.append("Value list <select><option value=''>None</option>" + getValueListsOptions(control.valueList) + "</select>");
+			// get a reference
+			var valueListSelect = dialogue.find("select");
+			// add a listener
+			addListener( valueListSelect.change( {cell: cell, control: control, property: property, details: details}, function(ev) {
+				// get the value
+				ev.data.control.valueList = $(ev.target).val();
+				// refresh
+				Property_radiobuttons(ev.data.cell, ev.data.control, ev.data.property, ev.data.details);
+				// rebuild
+				rebuildHtml(ev.data.control);
+			}));				
+		}
+		// add margin to checkbox if present
+		$("div.useCodes").css("margin-bottom","10px");
+	}
 	
 }
 
@@ -2518,102 +2552,134 @@ function Property_options(cell, control, property, details) {
 	// make sure table is empty
 	table.children().remove();
 	
-	var options = [];
-	// set the value if it exists
-	if (control.options) options = control.options;
-	// make some text
-	var text = "";
-	for (var i = 0; i < options.length; i++) {
-		text += options[i].text;
-		if (control.codes) text += " (" + options[i].value + ")";	
-		if (i < options.length - 1) text += ",";
-	}
-	// add a descrption if nothing yet
-	if (!text) text = "Click to add...";
-	// append the adjustable form control
-	cell.text(text);
-	
-	// add a heading
-	table.append("<tr><td><b>Text</b></td>" + (control.codes ? "<td colspan='2'><b>Code</b></td>" : "") + "</tr>");
-	
-	// show options
-	for (var i in options) {
-		// add the line
-		table.append("<tr><td><input class='text' value='" + options[i].text + "' /></td>" + (control.codes ? "<td><input class='value' value='" + options[i].value + "' /></td>" : "") + "<td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
-						
-		// find the text
-		var textEdit = table.find("input.text").last();
+	// check for a value list and that this version has some
+	if (control.valueList && _version.valueLists && _version.valueLists.length > 0) {
+		
+		// set the text to the value list
+		cell.text(control.valueList);
+		
+		// remove any prior use codes 
+		dialogue.find("div.useCodes").remove();
+		
+	} else {
+		
+		var options = [];
+		// set the value if it exists
+		if (control.options) options = control.options;
+		// make some text
+		var text = "";
+		for (var i = 0; i < options.length; i++) {
+			text += options[i].text;
+			if (control.codes) text += " (" + options[i].value + ")";	
+			if (i < options.length - 1) text += ",";
+		}
+		// add a descrption if nothing yet
+		if (!text) text = "Click to add...";
+		// append the adjustable form control
+		cell.text(text);
+					
+		// add a heading
+		table.append("<tr><td><b>Text</b></td>" + (control.codes ? "<td colspan='2'><b>Code</b></td>" : "") + "</tr>");
+		
+		// show options
+		for (var i in options) {
+			// add the line
+			table.append("<tr><td><input class='text' value='" + options[i].text + "' /></td>" + (control.codes ? "<td><input class='value' value='" + options[i].value + "' /></td>" : "") + "<td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
+							
+			// find the text
+			var textEdit = table.find("input.text").last();
+			// add a listener
+			addListener( textEdit.keyup( {control : control, options: options}, function(ev) {
+				// get the input
+				var input = $(ev.target);
+				// update text
+				ev.data.options[input.parent().parent().index()-1].text = input.val();
+				// update html if top row
+				if (input.parent().parent().index() == 1 || control.type != "dropdown") rebuildHtml(control);
+			}));
+			
+			// find the code
+			var valueEdit = table.find("input.value").last();
+			// add a listener
+			addListener( valueEdit.keyup( {options: options}, function(ev) {
+				// get the input
+				var input = $(ev.target);
+				// update value
+				ev.data.options[input.parent().parent().index()-1].value = input.val();
+			}));
+					
+		}
+		
+		// find the deletes
+		var deleteImages = table.find("img.delete");
 		// add a listener
-		addListener( textEdit.keyup( {control : control, options: options}, function(ev) {
-			// get the input
-			var input = $(ev.target);
-			// update text
-			ev.data.options[input.parent().parent().index()-1].text = input.val();
+		addListener( deleteImages.click( {options: options}, function(ev) {
+			// get the del image
+			var delImage = $(ev.target);
+			// remove from parameters
+			ev.data.options.splice(delImage.parent().parent().index()-1,1);
+			// remove row
+			delImage.parent().parent().remove();
 			// update html if top row
-			if (input.parent().parent().index() == 1 || control.type != "dropdown") rebuildHtml(control);
+			if (delImage.parent().index() == 1) rebuildHtml(control);
 		}));
-		
-		// find the code
-		var valueEdit = table.find("input.value").last();
+			
+		// add reorder listeners
+		addReorder(options, table.find("img.reorder"), function() { 
+			// refresh the html and regenerate the mappings
+			rebuildHtml(control);
+			// refresh the property
+			Property_options(cell, control, property, details); 
+		});
+			
+		// have an add row
+		table.append("<tr><td colspan='" + (control.codes ? "3" : "2") + "'><a href='#'>add...</a></td></tr>");
+		// get a reference to the add
+		var add = table.find("tr").last().children().last().children().last();
 		// add a listener
-		addListener( valueEdit.keyup( {options: options}, function(ev) {
-			// get the input
-			var input = $(ev.target);
-			// update value
-			ev.data.options[input.parent().parent().index()-1].value = input.val();
-		}));
-				
-	}
-	
-	// find the deletes
-	var deleteImages = table.find("img.delete");
-	// add a listener
-	addListener( deleteImages.click( {options: options}, function(ev) {
-		// get the del image
-		var delImage = $(ev.target);
-		// remove from parameters
-		ev.data.options.splice(delImage.parent().parent().index()-1,1);
-		// remove row
-		delImage.parent().parent().remove();
-		// update html if top row
-		if (delImage.parent().index() == 1) rebuildHtml(control);
-	}));
-		
-	// add reorder listeners
-	addReorder(options, table.find("img.reorder"), function() { 
-		// refresh the html and regenerate the mappings
-		rebuildHtml(control);
-		// refresh the property
-		Property_options(cell, control, property, details); 
-	});
-		
-	// have an add row
-	table.append("<tr><td colspan='" + (control.codes ? "3" : "2") + "'><a href='#'>add...</a></td></tr>");
-	// get a reference to the add
-	var add = table.find("tr").last().children().last().children().last();
-	// add a listener
-	addListener( add.click( {cell: cell, control: control, property: property, details: details}, function(ev) {
-		// add a blank option
-		ev.data.control.options.push({value: "", text: ""});
-		// refresh
-		Property_options(ev.data.cell, ev.data.control, ev.data.property, ev.data.details);		
-	}));
-	
-	// check we don't have a checkbox already
-	if (!dialogue.find("input[type=checkbox]")[0]) {
-		// add checkbox
-		dialogue.append("Use codes <input type='checkbox' " + (control.codes ? "checked='checked'" : "") + " />");
-		// get a reference
-		var optionsCodes = dialogue.children().last();
-		// add a listener
-		addListener( optionsCodes.change( {cell: cell, control: control, options: options, property: property, details: details}, function(ev) {
-			// get the value
-			control.codes = ev.target.checked;
+		addListener( add.click( {cell: cell, control: control, property: property, details: details}, function(ev) {
+			// add a blank option
+			ev.data.control.options.push({value: "", text: ""});
 			// refresh
-			Property_options(ev.data.cell, ev.data.control, ev.data.property, ev.data.details);
-		
+			Property_options(ev.data.cell, ev.data.control, ev.data.property, ev.data.details);		
 		}));
 		
+		// check we don't have a checkbox already
+		if (!dialogue.find("div.useCodes")[0]) {
+			// add checkbox
+			table.after("<div class='useCodes'>Use codes <input type='checkbox' " + (control.codes ? "checked='checked'" : "") + " /></div>");
+			// get a reference
+			var optionsCodes = dialogue.find("input[type=checkbox]");
+			// add a listener
+			addListener( optionsCodes.change( {cell: cell, control: control, options: options, property: property, details: details}, function(ev) {
+				// get the value
+				control.codes = ev.target.checked;
+				// refresh
+				Property_options(ev.data.cell, ev.data.control, ev.data.property, ev.data.details);		
+			}));		
+		}
+		
+	} 
+	
+	// if this version has value lists
+	if (_version.valueLists && _version.valueLists.length > 0) {
+		// check we don't have a value list select already
+		if (!dialogue.find("select")[0]) {
+			// add the select
+			dialogue.append("Value list <select><option value=''>None</option>" + getValueListsOptions(control.valueList) + "</select>");
+			// get a reference
+			var valueListSelect = dialogue.find("select");
+			// add a listener
+			addListener( valueListSelect.change( {cell: cell, control: control, property: property, details: details}, function(ev) {
+				// get the value
+				ev.data.control.valueList = $(ev.target).val();
+				// refresh
+				Property_options(ev.data.cell, ev.data.control, ev.data.property, ev.data.details);
+				// rebuild
+				rebuildHtml(ev.data.control);
+			}));				
+		}
+		dialogue.find("div.useCodes").css("margin-bottom","10px");
 	}
 	
 }

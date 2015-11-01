@@ -84,22 +84,36 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 // return our html for adding to our parent object	
 var value = "";
 if (this.value) value = this.value;
-var options = "";
-// check we have options
-if (this.options) {
+var html = "";
+// check we have options or a value list
+if (this.options || this.valueList) {
 	// if the options are a string turn them in an array
 	if ($.type(this.options) == "string") this.options = JSON.parse(this.options);
+	// assume we are using the options
+	var options = this.options;
+	// assume we are using this.codes
+	var codes = this.codes;
+	// if it's a value list use that instead
+	if (this.valueList) {
+		for (var i in _version.valueLists) {
+			if (this.valueList == _version.valueLists[i].name) {
+		  		options = _version.valueLists[i].values;
+		  		codes = _version.valueLists[i].usesCodes;
+		  		break;
+			}
+		}
+	}
 	// loop the options
-	for (var i in this.options) {		
-		if (this.codes) {
-			options += "<option value='" + this.options[i].value + "'" + (this.value == this.options[i].value ? " selected='selected'" : "") + ">" + this.options[i].text + "</option>";
+	for (var i in options) {		
+		if (codes) {
+			html += "<option value='" + options[i].value + "'" + (this.value == options[i].value ? " selected='selected'" : "") + ">" + options[i].text + "</option>";
 		} else {
-			options += "<option" + (this.value == this.options[i].text ? " selected='selected'" : "") + ">" + this.options[i].text + "</option>";
+			html += "<option" + (this.value == options[i].text ? " selected='selected'" : "") + ">" + options[i].text + "</option>";
 		}
 	}
 }
 // place into the select
-var html = "<select id='" + this.id + "' name='" + this.id + "' value='" + value + "' class='dropdown" + getStyleClasses(this) + "'>" + options + "</select>";
+var html = "<select id='" + this.id + "' name='" + this.id + "' value='" + value + "' class='dropdown" + getStyleClasses(this) + "'>" + html + "</select>";
 // return
 return html;
 	        ]]>
