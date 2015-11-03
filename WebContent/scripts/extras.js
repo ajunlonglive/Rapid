@@ -512,6 +512,8 @@ function hideControlValidation(controlId) {
 function makeDataObject(data, field) {
 	// check we were passed something to work with
 	if (data != null && data !== undefined) {
+		// convert any json strings to json
+		if ($.type(data) == "string" && data.indexOf("{") == 0 && data.indexOf("}") == data.length - 1) data = JSON.parse(data);
 		// return immediately if all well (we have rows and fields already and there is nothing to promote)
 		if (data.rows && data.fields && !(field && (data[field]))) return data;		
 		// initialise fields

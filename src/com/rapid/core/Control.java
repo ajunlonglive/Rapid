@@ -126,7 +126,12 @@ public class Control {
 	// whether this control can be used for page visibilty rules
 	public boolean getCanBeUsedForFormPageVisibilty() { return Boolean.parseBoolean(getProperty("canBeUsedForFormPageVisibilty")); }
 	// whether there is javascript that must be run to initialise the control when the page loads
-	public boolean hasInitJavaScript() { return Boolean.parseBoolean(getProperty("initJavaScript")); }
+	public boolean hasInitJavaScript() { 
+		String js = getProperty("initJavaScript");
+		if (js == null) return false;
+		if (js.trim().length() == 0) return false;
+		return true;
+	}
 			
 	// helper method for child components
 	public void addChildControl(Control childControl) {

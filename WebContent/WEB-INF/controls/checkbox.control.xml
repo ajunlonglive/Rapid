@@ -76,7 +76,7 @@ var checked = "";
 
 if (this.checked == "true" || this.checked == true) checked=" checked='checked'";
 
-var checkbox = "<input id='" + this.id + "'  name='" + this.id + "' type='checkbox' class='checkbox" + getStyleClasses(this) + "'" + checked + "></input>";
+var checkbox = "<input id='" + this.id + "'  name='" + this.id + "' type='checkbox' class='checkbox" + getStyleClasses(this) + "'" + checked + " value='true'></input>";
 
 if (this.text) {
 	return "<label for='" + this.id + "'>" + checkbox + this.text + "</label>";

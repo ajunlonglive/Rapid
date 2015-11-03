@@ -175,7 +175,7 @@ public abstract class FormAdapter {
 							// get the value
 							String value = formControlValue.getValue();
 							// if there is a value use the standard setData for it (this might change to something more sophisticated at some point)
-							if (value != null) writer.write("  setData_" + pageControl.getType() + "(ev, '" + pageControl.getId() + "', 'field', null, '" + value + "', true);\n");
+							if (value != null) writer.write("  setData_" + pageControl.getType() + "(ev, '" + pageControl.getId() + "', 'field', null, '" + value.replace("'", "\'").replace("\n", "\\n") + "', true);\n");
 							
 						}
 					}
