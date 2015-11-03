@@ -129,7 +129,7 @@ public class Control {
 	public boolean hasInitJavaScript() { 
 		String js = getProperty("initJavaScript");
 		if (js == null) return false;
-		if (js.trim().length() == 0) return false;
+		if (js.trim().replace("false", "").length() == 0) return false;
 		return true;
 	}
 			

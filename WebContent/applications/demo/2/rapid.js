@@ -463,29 +463,9 @@ function getWebserviceActionMaxSequence(actionId) {
 /* Control initialisation methods */
 
 
-function Init_page(id, details) {
-  
-}
-
-function Init_button(id, details) {
-  
-}
-
-function Init_checkbox(id, details) {
-  
-}
-
-function Init_dataStore(id, details) {
-  
-}
-
 function Init_date(id, details) {
   A_TCALCONF.format = details.dateFormat;	     
   f_tcalAdd (id);
-}
-
-function Init_dropdown(id, details) {
-  
 }
 
 function Init_grid(id, details) {
@@ -556,42 +536,6 @@ function Init_grid(id, details) {
   		control.before(headerTable);
   	}
   }
-}
-
-function Init_image(id, details) {
-  
-}
-
-function Init_input(id, details) {
-  
-}
-
-function Init_link(id, details) {
-  
-}
-
-function Init_panel(id, details) {
-  
-}
-
-function Init_radiobuttons(id, details) {
-  
-}
-
-function Init_table(id, details) {
-  
-}
-
-function Init_text(id, details) {
-  
-}
-
-function Init_tableCell(id, details) {
-  
-}
-
-function Init_tableRow(id, details) {
-  
 }
 
 
@@ -1720,41 +1664,69 @@ function Action_validation(ev, validations, showMessages) {
 	for (var i in validations) {
 		var validation = validations[i];
 		var validationControl = $("#" + validation.controlId);
-		if (validationControl[0]) {
-			if (!validationControl.is(":hidden") || !validation.passHidden) {
-				var getValueFunction = null;
-				if (validation.validationProperty) {
-					getValueFunction = window["getProperty_" + validation.controlType + "_" + validation.validationProperty];
-				} else {
-					getValueFunction = window["getData_" + validation.controlType];
-				}
-				if (getValueFunction) {
-					var value = getValueFunction(ev, validation.controlId, validation.field, validation.details);
-					if (validation.validationType == "javascript") {						
-						var validationFunction = new Function(["ev","id","value"], validation.javaScript);
-						var failMessage = validationFunction.apply(this, [ev,validation.controlId,value]);
-						if (failMessage != null && failMessage !== false && failMessage !== undefined) {
-							if (showMessages) showControlValidation(validation.controlId, failMessage);
-							valid = false;
-						} else {
-							if (showMessages) hideControlValidation(validation.controlId);
-						}
-					} else {
-						if ((value && value.match(new RegExp(validation.regEx)))||(!value && validation.allowNulls)) {
-							// passed
-							if (showMessages) hideControlValidation(validation.controlId);				
-						} else {
-							// failed, and there is a message to show, but not on tab keyup
-							if (showMessages && !(ev.type == "keyup" && ev.keyCode != 9)) showControlValidation(validation.controlId, validation.message);
-							valid = false;					
-						}	
-					}	
-				} else {
-					if (showMessages) showControlValidation(validation.controlId, validation.message);
-					valid = false;
-				}
+		if (validationControl[0]) {		
+			var getValueFunction = null;
+			if (validation.validationProperty) {
+				getValueFunction = window["getProperty_" + validation.controlType + "_" + validation.validationProperty];
+			} else {
+				getValueFunction = window["getData_" + validation.controlType];
 			}
-		}
+			if (getValueFunction) {
+				var value = getValueFunction(ev, validation.controlId, validation.field, validation.details);
+				if (validation.validationType == "javascript") {						
+					var validationFunction = new Function(["ev","id","value"], validation.javaScript);
+					var failMessage = validationFunction.apply(this, [ev,validation.controlId,value]);
+					if (failMessage != null && failMessage !== false && failMessage !== undefined) {
+						if (showMessages) showControlValidation(validation.controlId, failMessage);
+						valid = false;
+					} else {
+						if (showMessages) hideControlValidation(validation.controlId);
+					}
+				} else {
+					// assume no pass
+					var pass = false;
+					// start with some basic checks
+					if (value) {
+						// make a regex
+						var regex = new RegExp(validation.regEx);
+						// get the matches from the reg ex
+						var matches = value.match(regex);
+						// ensure the first match is for the whole value
+						if (matches) {
+							// got some matches now groups must match too
+							if (matches.length == 1) {
+								// these are the easy ones
+								pass = true;
+							} else {
+								// we now need to loop all of the groups
+								for (var i in matches) {
+									if (i != "index" && i != "input" && matches[i] == value) {
+										// we're good
+										pass = true;
+										break;
+									}
+								}
+							}
+						} 
+					} else if (validation.allowNulls) {
+						// no value but this is allowed
+						pass = true;
+					}
+					// pass, or hidden and allowed this way
+					if (pass || (validationControl.is(":hidden") && validation.passHidden)) {
+						// passed
+						if (showMessages) hideControlValidation(validation.controlId);				
+					} else {
+						// failed, and there is a message to show, but not on tab keyup
+						if (showMessages && !(ev.type == "keyup" && ev.keyCode == 9)) showControlValidation(validation.controlId, validation.message);
+						valid = false;					
+					}	
+				}	
+			} else {
+				if (showMessages) showControlValidation(validation.controlId, validation.message);
+				valid = false;
+			}
+		}		
 	}	
 	return valid;
 }
