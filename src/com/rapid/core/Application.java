@@ -1207,9 +1207,9 @@ public class Application {
 			    				addResources(jsonControl, "control", resourceJS, resourceCSS);
 			    				
 			    				// get any initJavaScript
-				    			String js = jsonControl.optString("initJavaScript");
-				    			// check
-				    			if (js != null) {
+				    			String js = jsonControl.optString("initJavaScript", "");
+				    			// check we got some
+				    			if (js.length() > 0) {
 			    					initJS.append("\nfunction Init_" + jsonControl.getString("type") + "(id, details) {\n");
 			    					initJS.append("  " + js.trim().replace("\n", "\n  "));
 			    					initJS.append("\n}\n");				    						

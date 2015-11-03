@@ -142,7 +142,7 @@ function Action_validation(ev, validations, showMessages) {
 							if (showMessages) hideControlValidation(validation.controlId);				
 						} else {
 							// failed, and there is a message to show, but not on tab keyup
-							if (showMessages && !(ev.type == "keyup" && ev.keyCode != 9)) showControlValidation(validation.controlId, validation.message);
+							if (showMessages && !(ev.type == "keyup" && ev.keyCode == 9)) showControlValidation(validation.controlId, validation.message);
 							valid = false;					
 						}	
 					}	
