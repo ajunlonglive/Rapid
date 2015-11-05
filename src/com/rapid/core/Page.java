@@ -1598,13 +1598,14 @@ public class Page {
 						+ " <script type='text/javascript' src='scripts/designlinks.js'></script>"
 						+	"<div id='designShow' style='position:fixed;left:0;bottom:0;width:30px;height:30px;z-index:10000;'></div>\n"
 						+ "<div id='designLinks' style='position:fixed;left:0;bottom:0;z-index:10001;padding:5px;display:none;'>"
-				    	+ "<a id='designLink' href='#'><img src='images/gear_24x24.png' style='border:0;' title='Rapid Design'/></a>\n"
+				    	+ "<a id='designLink' href='#'><img src='images/gear_24x24.png' style='border:0;' title='Open Rapid Design'/></a>\n"
+				    	+ "<a id='designLinkNewTab' href='#''><img src='images/triangleRight_8x8.png' style='border:0;margin-bottom:8px;' title='Open Rapid Design in a new tab'/></a>\n"
 						+ designLinkStringBuilder.toString()
 						+ "</div>"						 
 				    	+ "<script type='text/javascript'>\n"
 				    	+ "/* designLink */\n"
 				    	+ "$(document).ready( function() {\n"
-				    	+ "  $('#designShow').mouseover ( function(ev) {\n     $('#designLink').attr('href','design.jsp?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + _id + "'); $('#designLinks').show();\n  });\n"
+				    	+ "  $('#designShow').mouseover ( function(ev) {\n     $('#designLink').attr('href','design.jsp?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + _id + "'); $('#designLinkNewTab').attr('target','_blank').attr('href','design.jsp?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + _id + "'); $('#designLinks').show();\n  });\n"
 				    	+ "  $('#designLinks').mouseleave ( function(ev) {\n     $('#designLinks').hide();\n  });\n"
 				    	+ designLinkJQueryStringBuilder.toString()
 				    	+ "});\n"

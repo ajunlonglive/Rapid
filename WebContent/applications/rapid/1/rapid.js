@@ -2366,8 +2366,17 @@ function Action_validation(ev, validations, showMessages) {
 					var pass = false;
 					// start with some basic checks
 					if (value) {
+						// get the regex expression
+						var exp = validation.regEx.trim();
 						// make a regex
-						var regex = new RegExp(validation.regEx);
+						var regex = new RegExp(exp);
+						// if the expression ends with /i
+						if (exp.indexOf("/i") == exp.length - 2) {
+							// update the exp removing the /i
+							exp = exp.substr(0, exp.length - 2);
+							// remake the regex with the case insensitivity
+							regex = new RegExp(exp, "i")
+						} 					
 						// get the matches from the reg ex
 						var matches = value.match(regex);
 						// ensure the first match is for the whole value
