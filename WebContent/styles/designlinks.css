@@ -1,3 +1,8 @@
+#designLinks img {
+	vertical-align: middle;
+	border: 0;
+}
+
 .designData {
 	position: fixed;
 	bottom: 5px;
