@@ -174,8 +174,16 @@ public abstract class FormAdapter {
 						
 							// get the value
 							String value = formControlValue.getValue();
+							// assume no field
+							String field = "null";
+							// the dropdown control needs a little help
+							if ("dropdown".equals(pageControl.getType())) field = "'x'";
+							// get any control details
+							String details = pageControl.getDetailsJavaScript(application, page);
+							// if null update to string
+							if (details == null) details = null;
 							// if there is a value use the standard setData for it (this might change to something more sophisticated at some point)
-							if (value != null) writer.write("  setData_" + pageControl.getType() + "(ev, '" + pageControl.getId() + "', null, null, '" + value.replace("'", "\'").replace("\r\n", "\\n").replace("\n", "\\n").replace("\r", "") + "', true);\n");
+							if (value != null) writer.write("  setData_" + pageControl.getType() + "(ev, '" + pageControl.getId() + "', " + field + ", " + details + ", '" + value.replace("'", "\'").replace("\r\n", "\\n").replace("\n", "\\n").replace("\r", "") + "', true);\n");
 							
 						}
 					}

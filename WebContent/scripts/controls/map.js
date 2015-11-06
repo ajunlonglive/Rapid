@@ -294,12 +294,19 @@ function addMapMarker(map, pos, details, data, rowIndex, zoomMarkers) {
 			});
 		}
 		// if we have all the markers now, zoom and centre them
-		if (zoomMarkers == rowIndex*1) {
-			var bounds = new google.maps.LatLngBounds();
-			for (var i in map.markers) {
-				bounds.extend(map.markers[i].getPosition());
+		if (map.markers.length > 0 && zoomMarkers == rowIndex*1) {
+			if (zoomMarkers == 0) {
+				// single marker, just move centre
+				var latlng = new google.maps.LatLng(map.markers[0].getPosition());
+				map.panTo( latlng );
+			} else {
+				// multiple markers set bounds
+				var bounds = new google.maps.LatLngBounds();
+				for (var i in map.markers) {
+					bounds.extend(map.markers[i].getPosition());
+				}
+				map.fitBounds(bounds);
 			}
-			map.fitBounds(bounds);
 		}
 	}	
 }
