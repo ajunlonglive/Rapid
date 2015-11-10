@@ -204,8 +204,14 @@ function Control(controlType, parentControl, jsonControl, loadComplexObjects, pa
 			
 			// if checkNameConflicts, re-number until no conflict
 			if (checkNameConflicts && this.name && controlClass.canBeUsedForFormPageVisibilty) {
-				// get any numbers in the name
-				var num = this.name.replace(/\D/g,'')*1;
+				// look for any underscores
+				var numParts = this.name.split("_");
+				// work with the last item and remove all non-numbers
+				var oldNum = numParts[numParts.length - 1].replace(/\D/g,'')*1;
+				// start with the old number
+				var num = oldNum;
+				// if more than one part add back _
+				if (numParts.length > 1) oldNum = "_" + oldNum;
 				// if they're greater than 0 (should cover no numbers and NaN)
 				if (num > 0) {
 					// get the current name
@@ -217,7 +223,7 @@ function Control(controlType, parentControl, jsonControl, loadComplexObjects, pa
 						// increment the new num
 						newNum ++;
 						// make a new name replacing the old num with new
-						var newName = name.replace(num, newNum); 
+						var newName = name.replace(oldNum, (numParts.length > 1 ? "_" : "") + newNum); 
 						// if the replace made no difference bail as there's nothing we can do, and only try 100 times in case we get stuck in a loop
 						if (name == newName || newNum - num > 100) break;
 						// set the new name
