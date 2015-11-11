@@ -73,6 +73,7 @@ In the "Targets" tab empty "After a 'Clean'" and "Manual Build". For "Auto Build
 				<exclude name="**/custombuild/build.properties" />  <!-- don't overwrite our own properties -->
 				<exclude name="**/rapid/*/security.xml" />  <!-- don't overwrite user security.xml for Rapid Admin and Rapid Design -->
 				<exclude name="**/scripts/propertiescustom.js" /> <!-- don't overwrite the custom properties file -->
+				<exclude name="**/database/databaseDrivers.xml" /> <!-- don't overwrite the database drivers.xml file -->
 				<exclude name="**/web.xml" /> <!-- don't overwrite user web.xml -->
 				<exclude name="**/applications/demo/**" /> <!-- exclude demo project-->
 				<exclude name="**/applications/mobdemo/**" /> <!-- exclude mobdemo project-->
