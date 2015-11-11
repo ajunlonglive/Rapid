@@ -31,9 +31,12 @@ import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import com.rapid.core.Application;
 import com.rapid.core.Control;
@@ -41,6 +44,9 @@ import com.rapid.core.Page;
 import com.rapid.core.Application.RapidLoadingException;
 import com.rapid.core.Pages.PageHeader;
 import com.rapid.core.Pages.PageHeaders;
+import com.rapid.security.SecurityAdapter;
+import com.rapid.security.SecurityAdapter.SecurityAdapaterException;
+import com.rapid.server.Rapid;
 import com.rapid.server.RapidRequest;
 
 public abstract class FormAdapter {
@@ -50,12 +56,20 @@ public abstract class FormAdapter {
 		
 		// instance variables
 		private String _id, _value;
+		private boolean _hidden;
 		
 		// properties
 		public String getId() { return _id; }
 		public String getValue() { return _value; }
+		public Boolean getHidden() { return _hidden; }
 		
-		// constructor
+		// constructors
+		public FormControlValue(String id, String value, boolean hidden) {
+			_id = id;
+			_value = value;
+			_hidden = hidden;
+		}
+		
 		public FormControlValue(String id, String value) {
 			_id = id;
 			_value = value;
@@ -65,7 +79,7 @@ public abstract class FormAdapter {
 		
 		@Override
 		public String toString() {
-			return _id + "  = " + _value;
+			return _id + "  = " + _value + (_hidden ? " (hidden)"  : "");
 		}
 		
 	}
@@ -85,11 +99,18 @@ public abstract class FormAdapter {
 		
 		// methods
 		
+		public void add(String controlId, String controlValue, boolean hidden) {
+			this.add(new FormControlValue(controlId, controlValue, hidden));
+		}
+		
 		public void add(String controlId, String controlValue) {
 			this.add(new FormControlValue(controlId, controlValue));
 		}
 						
 	}
+	
+	//  static finals
+	private static final String USERFORMIDS = "userFormIds";
 	
 	// instance variables
 	
@@ -109,20 +130,20 @@ public abstract class FormAdapter {
 	}
 	
 	// abstract methods
+					
+	// this method returns a new form id, when allowed, by a given adapter, could be in memory, or database, etc
+	public abstract String getNewFormId(RapidRequest rapidRequest);
 	
-	public abstract String getFormId(RapidRequest rapidRequest);
-			
+	
+	// returns all the form control values for a given page
 	public abstract FormPageControlValues getFormPageControlValues(RapidRequest rapidRequest, String pageId);
 	
+	// sets all the form control values for a given page
 	public abstract void setFormPageControlValues(RapidRequest rapidRequest, String pageId, FormPageControlValues pageControlValues);
 	
-	public abstract String getFormPageControlValue(RapidRequest rapidRequest, String pageId, String controlId);
-	
+	// gets the value of a form control value	
 	public abstract String getFormControlValue(RapidRequest rapidRequest, String controlId);
-	
-	public abstract void submitForm(RapidRequest rapidRequest) throws Exception;
-	
-	// overridable methods
+			
 	
 	// this html is written after the body tag
 	public abstract String getSummaryStartHtml(RapidRequest rapidRequest, Application application);
@@ -141,9 +162,84 @@ public abstract class FormAdapter {
 	
 	// this html is written after the end of the pages, before the submit button
 	public abstract String getSummaryPagesEndHtml(RapidRequest rapidRequest, Application application);
+	
+	
+	// submits the form
+	public abstract void submitForm(RapidRequest rapidRequest) throws Exception;
 				
+	// this html is written for successfully submitted forms
+	public abstract String getSubmittedHtml(RapidRequest rapidRequest);
+	
+	// this html is written for any forms where there was an error on submission
+	public abstract String getSubmittedExceptionHtml(RapidRequest rapidRequest, Exception ex);
 
 	// public instance methods
+	
+	// this looks for a form id in the user session and uses the adapter specific getNewId routine if one is allowed. Returning null sends the user to the start page
+	public String getFormId(RapidRequest rapidRequest) {
+		// get the user session (making a new one if need be)
+		HttpSession session = rapidRequest.getRequest().getSession();
+		// retrieve the form ids from the session
+		Map<String,String> formIds = (Map<String, String>) session.getAttribute(USERFORMIDS);
+		// instantiate if null
+		if (formIds == null) formIds = new HashMap<String, String>();
+		// get the application
+		Application application = rapidRequest.getApplication();
+		// get the form id based on the app id and version
+		String formId = formIds.get(application.getId() + "-" + application.getVersion());
+		// if it's null
+		if (formId == null) {			
+			// get the start page header
+			String startPageId = application.getPages().getSortedPages().get(0).getId();
+			// get the requested Page
+			Page requestPage = rapidRequest.getPage();
+			// get the request page id
+			String requestPageId = null;
+			// if there was a page get the id
+			if (requestPage  != null) requestPageId = requestPage.getId();
+			// assume no new id allowed
+			boolean newIdAllowed = false;
+			// if this is the start page
+			if  (startPageId.equals(requestPageId)) {
+				// we're ok to hand out a new id
+				newIdAllowed = true;
+			} else {
+				// get the security adapter
+				SecurityAdapter security = application.getSecurityAdapter();
+				// if the user has design 
+				try {
+					if (security.checkUserRole(rapidRequest, Rapid.DESIGN_ROLE)) newIdAllowed = true;
+				} catch (SecurityAdapaterException e) {}
+			}
+			// there are some rules for creating new form ids - there must be no action and the page must be the start page
+			if (rapidRequest.getRequest().getParameter("action") == null && newIdAllowed) {				
+				// get a new form id from the adapter
+				formId = getNewFormId(rapidRequest);
+				// put into form ids
+				formIds.put(application.getId() + "-" + application.getVersion(), formId);
+				// retain user form ids
+				session.setAttribute(USERFORMIDS,formIds);									
+			}			
+		}					
+		return formId;
+	}
+	
+	// this is called from the Rapid servelet and is the form submission and management of the form state in the user session 
+	public void doFormSubmit(RapidRequest rapidRequest) throws Exception {
+		// first run the subitForm in the non-abstract class
+		submitForm(rapidRequest);
+		// get the user session
+		HttpSession session = rapidRequest.getRequest().getSession();
+		// retrieve the form ids from the session
+		Map<String,String> formIds = (Map<String, String>) session.getAttribute(USERFORMIDS);
+		// get the application
+		Application application = rapidRequest.getApplication();
+		// null check
+		if (formIds != null) {
+			// empty the form id - invalidating the form
+			formIds.put(application.getId() + "-" + application.getVersion(), null);
+		}		
+	}
 	
 	// this write the form page set values routine, it is called by Page.getPageHtml just before the form is closed
 	public  void writePageSetFormValues(RapidRequest rapidRequest, String formId, Application application, String pageId, Writer writer) throws IOException {
@@ -355,7 +451,13 @@ public abstract class FormAdapter {
 			writer.write("  </head>\n");
 			
 			// open the body
-			writer.write("  <body>Thank you.</body>\n</html>");
+			writer.write("  <body>\n");
+			
+			// writer the adapter specific submission message
+			writer.write(getSubmittedHtml(rapidRequest));
+			
+			// close the body and html
+			writer.write("  </body>\n</html>");
 																																		
 			// close the writer
 			writer.close();
@@ -399,7 +501,13 @@ public abstract class FormAdapter {
 			writer.write("  </head>\n");
 			
 			// open the body
-			writer.write("  <body>There was a problem submutting your form: " + ex.getMessage() + "</body>\n</html>");
+			writer.write("  <body>\n");
+			
+			// write the adapter specific error html
+			writer.write(getSubmittedExceptionHtml(rapidRequest, ex));
+			
+			// close the body and html
+			writer.write("  </body>\n</html>");
 																																		
 			// close the writer
 			writer.close();
@@ -421,29 +529,55 @@ public abstract class FormAdapter {
 			FormPageControlValues pageControlValues = new FormPageControlValues();
 			// split into name value pairs
 			String[] params = postBody.split("&");
+			// hidden control values
+			String[] hiddenControls =null;
 			// loop the pairs
 			for (String param : params) {
 				// split on =
 				String[] parts = param.split("=");						
-				// get the name
-				String name = null;
-				// try and decode the name with a silent fail
-				try { 
-					// get the name
-					name = URLDecoder.decode(parts[0],"UTF-8");
-					// if there was a name
-					if (name.length() > 0) {
+				// the key/name is the control id
+				String id = null;
+				// assume it's not hidden
+				boolean hidden = false;
+				// try and decode the if with a silent fail
+				try { id = URLDecoder.decode(parts[0],"UTF-8");	} catch (UnsupportedEncodingException e) {}		
+				// check we got something
+				if (id != null) {
+					// if there was a name but not the _hiddenControls
+					if (id.length() > 0) {
 						// assume no value
 						String value = null;					
 						// if more than 1 part
 						if (parts.length > 1) {
-							// url decode value with a silent fail
-							try { value = URLDecoder.decode(parts[1],"UTF-8"); } catch (UnsupportedEncodingException e) {}				
-						}	
-						// add name value pair
-						pageControlValues.add(name, value);
-					}
-				} catch (UnsupportedEncodingException e) {}												
+							// url decode value 
+							try {
+								// url decode the value
+								value = URLDecoder.decode(parts[1],"UTF-8");
+								// if this is the hidden values
+								if (id.endsWith("_hiddenControls")) {
+									// retain the hidden values
+									hiddenControls = value.split(",");
+								} else	{
+									// if we have hidden controls to check
+									if (hiddenControls != null) {								
+										// loop the hidden controls
+										for (String hiddenControl : hiddenControls) {
+											// if there's a match
+											if (id.equals(hiddenControl)) {
+												// retain as hidden
+												hidden = true;
+												// we're done
+												break;
+											}
+										}
+									}
+									// add name value pair
+									pageControlValues.add(id, value, hidden);
+								}
+							} catch (UnsupportedEncodingException ex) {}				
+						} // parts > 0													
+					}	// id .length > 0
+				} // id != null																
 			} // param loop			
 			return pageControlValues;						
 		} // postBody check				

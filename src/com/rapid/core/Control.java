@@ -186,27 +186,35 @@ public class Control {
 	
 	// helper method for looking up code values 
 	// (for now dropdowns and radiobuttons are hardcoded, at some point we can add a lookup interface and lookup class specification in the control.xml, or just properties for the code check, collection, code and label)
-	public String getCodeText(String code) {
-		try {
-			String type = getType();
-			if ("dropdown".equals(type)) {
-				if (Boolean.parseBoolean(getProperty("codes"))) {
-					JSONArray jsonCodes = new JSONArray(getProperty("options"));
-					for (int i = 0; i < jsonCodes.length(); i++) {
-						JSONObject jsonCode = jsonCodes.getJSONObject(i);
-						if (code.equals(jsonCode.optString("value"))) return jsonCode.optString("text");
+	public String getCodeText(String code) {		
+		// get control type
+		String type = getType();
+		// if we got one
+		if (type != null) {
+			// change type to all lower case
+			type = type.toLowerCase();
+			// try to look up the user-friendly value and silently fail if any problems
+			try {
+				// if this is a drop down, or derived from one
+				if (type.contains("dropdown")) {
+					if (Boolean.parseBoolean(getProperty("codes"))) {
+						JSONArray jsonCodes = new JSONArray(getProperty("options"));
+						for (int i = 0; i < jsonCodes.length(); i++) {
+							JSONObject jsonCode = jsonCodes.getJSONObject(i);
+							if (code.equals(jsonCode.optString("value"))) return jsonCode.optString("text");
+						}
+					}					
+				} else if (type.contains("radiobuttons")) {
+					if (Boolean.parseBoolean(getProperty("codes"))) {
+						JSONArray jsonCodes = new JSONArray(getProperty("buttons"));
+						for (int i = 0; i < jsonCodes.length(); i++) {
+							JSONObject jsonCode = jsonCodes.getJSONObject(i);
+							if (code.equals(jsonCode.optString("value"))) return jsonCode.optString("label");
+						}
 					}
 				}
-			} else if ("radiobuttons".equals(type)) {
-				if (Boolean.parseBoolean(getProperty("codes"))) {
-					JSONArray jsonCodes = new JSONArray(getProperty("buttons"));
-					for (int i = 0; i < jsonCodes.length(); i++) {
-						JSONObject jsonCode = jsonCodes.getJSONObject(i);
-						if (code.equals(jsonCode.optString("value"))) return jsonCode.optString("label");
-					}
-				}
-			} 
-		} catch (JSONException ex) {}		
+			} catch (JSONException ex) {}		
+		}					
 		return code;
 	}
 	

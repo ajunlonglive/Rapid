@@ -1195,8 +1195,13 @@ public class Page {
 				}}
 			);
 			
-			// add a line to set any form values before the load event is run
-			if (formAdapter != null) _pageloadLines.add("Event_setFormValues($.Event('setValues'));\n");
+			// if there is a form adapter in place
+			if (formAdapter != null) {
+				// add a line to set any form values before the load event is run
+				_pageloadLines.add("Event_setFormValues($.Event('setValues'));\n");
+				// add an init form function - in extras.js
+				_pageloadLines.add("Event_initForm('" + _id + "');\n");
+			}
 			
 			// check for page events (this is here so all listeners are registered by now) and controls (there should not be none but nothing happens without them)
 			if (_events != null && _controls != null) {
@@ -1428,10 +1433,10 @@ public class Page {
 				if (formAdapter != null) {
 					// get the form id
 					String formId = formAdapter.getFormId(rapidRequest);
-					// write the form id into the page
+					// write the form id into the page - not necessary for dialogues
 		    		if (designerLink) writer.write("var _formId = '" + formId + "';\n\n");
 					// write the form values
-					formAdapter.writePageSetFormValues(rapidRequest, formId, application, _id, writer);
+					formAdapter.writePageSetFormValues(rapidRequest, formId, application, _id, writer);									
 				}
 				
 				if (rebuildPages) {
@@ -1453,9 +1458,10 @@ public class Page {
 				// start the body		
 		    	writer.write("  <body id='" + _id + "' style='visibility:hidden;'>\n");
 		    			    			    	
-		    	// start the form if in use (but not for dialogues and other cases where the)		
+		    	// start the form if in use (but not for dialogues and other cases where the page is partial)		
 		    	if (formAdapter != null && designerLink) {
-		    		writer.write("    <form action='~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + _id + "' method='POST'>\n");
+		    		writer.write("    <form id='" + _id + "_form' action='~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + _id + "' method='POST'>\n");
+		    		writer.write("      <input type='hidden' id='" + _id +  "_hiddenControls' name='" + _id +  "_hiddenControls' />\n");
 		    	}
 		    	
 				// a reference for the body html
@@ -1533,9 +1539,9 @@ public class Page {
 						// no pretty print
 						writer.write(bodyHtml.trim());
 					}
-					
+										
 					// close the form
-					if (formAdapter != null) writer.write("\n    </form>\n");
+					if (formAdapter != null && designerLink) writer.write("    </form>\n");
 
 				} // got body html check
 																						
@@ -1628,6 +1634,7 @@ public class Page {
 				
 	}
 	
+	// gets the value of a condition used in the page visibility rules
 	private String getConditionValue(RapidRequest rapidRequest, String formId, FormAdapter formAdapter, Application application, Value value) {
 		String[] idParts = value.getId().split("\\.");
 		if (idParts[0].equals("System")) {			
@@ -1673,10 +1680,10 @@ public class Page {
 				return null;
 			}
 		} else {
+			// get the id of the value object (should be a control Id)
 			String valueId = value.getId();
-			String[] valueIdParts = valueId.split("_");
-			String pageId = valueIdParts[0];
-			return formAdapter.getFormPageControlValue(rapidRequest, pageId, valueId);
+			// retrieve and return it from the form adapater
+			return formAdapter.getFormControlValue(rapidRequest, valueId);
 		}
 	}
 	
