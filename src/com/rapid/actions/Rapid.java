@@ -1093,7 +1093,9 @@ public class Rapid extends Action {
 				int databaseDrivers = 0;
 				int connectionAdapters = 0;
 				int securityAdapters = 0;
+				int forms = 0;
 				int devices = 0;
+				
 				
 				ServletContext servletContext = rapidServlet.getServletContext();
 													
@@ -1103,12 +1105,15 @@ public class Rapid extends Action {
 				
 				securityAdapters = RapidServletContextListener.loadSecurityAdapters(servletContext);
 				
-				devices = Devices.load(servletContext).size();
+				forms =  RapidServletContextListener.loadFormAdapters(servletContext);
 				
+				devices = Devices.load(servletContext).size();
+												
 				result.put("message", 
 					databaseDrivers + " database driver" + (databaseDrivers == 1 ? "" : "s") + ", " + 
 					connectionAdapters + " connection adapter" + (connectionAdapters == 1 ? "" : "s") + ", " +
 					securityAdapters + " security adapter" + (securityAdapters == 1 ? "" : "s") + ", " +
+					forms + " form adapter" + (forms == 1 ? "" : "s") + ", " +
 					devices + " device" + (devices == 1 ? "" : "s") + " reloaded"
 				);
 								
