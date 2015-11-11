@@ -788,3 +788,15 @@ function getPageVariableValue(name) {
 		return null;
 	}
 }
+
+function Event_initForm(id) {
+	$("#" + id + "_form").submit(function() {
+		var hiddenControls = "";
+		$("input:hidden[name],select:hidden[name],textarea:hidden[name]").each(function(i) {
+			var id = $(this).attr("id");
+			if (i > 1) hiddenControls += ",";
+			if (i > 0)	hiddenControls += id;			
+		});
+		$("#" + id + "_hiddenControls").val(hiddenControls);
+	});
+}
