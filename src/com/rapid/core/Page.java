@@ -1202,7 +1202,7 @@ public class Page {
 				// add an init form function - in extras.js
 				_pageloadLines.add("Event_initForm('" + _id + "');\n");
 			}
-			
+															
 			// check for page events (this is here so all listeners are registered by now) and controls (there should not be none but nothing happens without them)
 			if (_events != null && _controls != null) {
 				// loop page events
@@ -1223,8 +1223,8 @@ public class Page {
 						}
 					}         				
 				}
-			}  
-			
+			}
+															
 			// if this is not a dialogue or there are any load lines
 			if (!isDialogue || _pageloadLines.size() > 0) {
 				

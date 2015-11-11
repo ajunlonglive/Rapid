@@ -543,15 +543,20 @@ public class Rapid extends RapidHttpServlet {
 									// get the page control values
 									FormPageControlValues pageControlValues = FormAdapter.getPostPageControlValues(requestPageId, formData);
 									
-									// loop and print them if trace on
-									if (logger.isTraceEnabled()) {
-										for (FormControlValue controlValue : pageControlValues) {
-											logger.debug(controlValue.getId() + " = " + controlValue.getValue());
-										}
-									}									
+									// check we got some
+									if (pageControlValues != null) {
 									
-									// store the form page control values
-									formAdapter.setFormPageControlValues(rapidRequest, requestPageId, pageControlValues);
+										// loop and print them if trace on
+										if (logger.isTraceEnabled()) {
+											for (FormControlValue controlValue : pageControlValues) {
+												logger.debug(controlValue.getId() + " = " + controlValue.getValue());
+											}
+										}									
+																			
+										// store the form page control values
+										formAdapter.setFormPageControlValues(rapidRequest, requestPageId, pageControlValues);
+										
+									}
 																							
 									// get all of the app pages
 									PageHeaders pageHeaders = app.getPages().getSortedPages();
