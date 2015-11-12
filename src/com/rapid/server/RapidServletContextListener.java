@@ -218,17 +218,37 @@ public class RapidServletContextListener implements ServletContextListener {
 						
 		do {
 			
-			// check this type does not already exist
-			for (int i = 0; i < jsonDatabaseDrivers.length(); i++) {
-				if (jsonDatabaseDriver.getString("name").equals(jsonDatabaseDrivers.getJSONObject(i).getString("name"))) throw new Exception(" database driver type is loaded already. Type names must be unique");
+			_logger.info("Registering database driver " + jsonDatabaseDriver.getString("name")  + " using " + jsonDatabaseDriver.getString("class"));
+			
+			try {
+				
+				// check this type does not already exist
+				for (int i = 0; i < jsonDatabaseDrivers.length(); i++) {
+					if (jsonDatabaseDriver.getString("name").equals(jsonDatabaseDrivers.getJSONObject(i).getString("name"))) throw new Exception(" database driver type is loaded already. Type names must be unique");
+				}
+									
+				// get  the class name
+				String className = jsonDatabaseDriver.getString("class");
+				// get the current thread class loader (this should log better if there are any issues)
+				ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+				// check we got a class loader
+				if (classLoader == null) {
+					// register the class the old fashioned way so the DriverManager can find it
+					Class.forName(className);
+				} else {
+					// register the class on this thread so we can catch any errors
+					Class.forName(className, true, classLoader);
+				}
+				
+				// add the jsonControl to our array
+				jsonDatabaseDrivers.put(jsonDatabaseDriver);
+								
+			} catch (Exception ex) {
+				
+				_logger.error("Error registering database driver : " + ex.getMessage(), ex);
+				
 			}
 			
-			// register the class so the DriverManager can find it
-			Class.forName(jsonDatabaseDriver.getString("class"));
-			
-			// add the jsonControl to our array
-			jsonDatabaseDrivers.put(jsonDatabaseDriver);
-
 			// inc the count of controls in this file
 			index++;
 			
@@ -997,24 +1017,36 @@ public class RapidServletContextListener implements ServletContextListener {
 			// initialise the list of classes we're going to want in the JAXB context (the loaders will start adding to it)
 			_jaxbClasses = new ArrayList<Class>();	
 			
+			_logger.info("Loading database drivers");
+			
 			// load the database drivers first
 			loadDatabaseDrivers(servletContext);
+			
+			_logger.info("Loading connection adapters");
 			
 			// load the connection adapters 
 			loadConnectionAdapters(servletContext);
 			
+			_logger.info("Loading security adapters");
+			
 			// load the security adapters 
 			loadSecurityAdapters(servletContext);
+			
+			_logger.info("Loading form adapters");
 			
 			// load the form adapters
 			loadFormAdapters(servletContext);
 			
+			_logger.info("Loading actions");
+			
 			// load the actions 
 			loadActions(servletContext);
+			
+			_logger.info("Loading controls");
 						
 			// load the controls 
 			loadControls(servletContext);	
-									
+												
 			// add some classes manually
 			_jaxbClasses.add(com.rapid.soa.SOAElementRestriction.class);
 			_jaxbClasses.add(com.rapid.soa.SOAElementRestriction.NameRestriction.class);
