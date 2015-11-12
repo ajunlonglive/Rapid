@@ -279,7 +279,7 @@ public abstract class FormAdapter {
 							// if null update to string
 							if (details == null) details = null;
 							// if there is a value use the standard setData for it (this might change to something more sophisticated at some point)
-							if (value != null) writer.write("  setData_" + pageControl.getType() + "(ev, '" + pageControl.getId() + "', " + field + ", " + details + ", '" + value.replace("'", "\'").replace("\r\n", "\\n").replace("\n", "\\n").replace("\r", "") + "', true);\n");
+							if (value != null) writer.write("  setData_" + pageControl.getType() + "(ev, '" + pageControl.getId() + "', " + field + ", " + details + ", '" + value.replace("'", "\'").replace("\r\n", "\\n").replace("\n", "\\n").replace("\r", "") + "');\n");
 							
 						}
 					}
