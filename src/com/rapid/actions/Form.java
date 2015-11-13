@@ -53,7 +53,7 @@ public class Form extends Action {
 	// methods
 		
 	@Override
-	public String getJavaScript(RapidRequest rapidRequest, Application application, Page page, com.rapid.core.Control control, JSONObject jsonDetails) {
+	public String getJavaScript(RapidRequest rapidRequest, Application application, Page page, com.rapid.core.Control control, JSONObject jsonDetails) throws Exception {
 
 		// get the action type
 		String actionType = getProperty("actionType");

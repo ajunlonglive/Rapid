@@ -79,6 +79,20 @@ public class XML {
 		
 	}
 	
+	public static Node getChildElement(Node node) {
+		
+		NodeList nodeList = node.getChildNodes();
+		
+		if (nodeList.getLength() > 0) {
+
+			return nodeList.item(0);
+			
+		}
+		
+		return null;
+		
+	}
+	
 	public static Node getChildElement(Node node, String elementName) {
 		
 		NodeList nodeList = node.getChildNodes();

@@ -82,8 +82,6 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    <getHtmlFunction>
 	        <![CDATA[
 // return our html for adding to our parent object	
-var value = "";
-if (this.value) value = this.value;
 var html = "";
 // check we have options or a value list
 if (this.options || this.valueList) {
@@ -113,7 +111,7 @@ if (this.options || this.valueList) {
 	}
 }
 // place into the select
-var html = "<select id='" + this.id + "' name='" + this.id + "' value='" + value + "' class='dropdown" + getStyleClasses(this) + "'>" + html + "</select>";
+var html = "<select id='" + this.id + "' name='" + this.id + "' class='dropdown" + getStyleClasses(this) + "'>" + html + "</select>";
 // return
 return html;
 	        ]]>

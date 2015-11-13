@@ -53,7 +53,7 @@ public class RapidFormAdapter extends FormAdapter {
 	// class methods
 		
 	// the RapidFormAdapter holds all values in the user session so this method just gets them from there
-	protected Map<String,FormPageControlValues> getUserFormPageControlValues(RapidRequest rapidRequest) {	
+	protected Map<String,FormPageControlValues> getUserFormPageControlValues(RapidRequest rapidRequest) throws Exception {	
 		// get the user session
 		HttpSession session = rapidRequest.getRequest().getSession();
 		// get all app page control values from session
@@ -106,14 +106,14 @@ public class RapidFormAdapter extends FormAdapter {
 	
 	// uses our user session method to get the form page control values
 	@Override
-	public FormPageControlValues getFormPageControlValues(RapidRequest rapidRequest, String pageId)	{
+	public FormPageControlValues getFormPageControlValues(RapidRequest rapidRequest, String pageId) throws Exception	{
 		// retrieve
 		return getUserFormPageControlValues(rapidRequest).get(pageId);
 	}
 
 	// uses our user session method to set the form page control values
 	@Override
-	public void setFormPageControlValues(RapidRequest rapidRequest, String pageId, FormPageControlValues pageControlValues) {		
+	public void setFormPageControlValues(RapidRequest rapidRequest, String pageId, FormPageControlValues pageControlValues) throws Exception {		
 		// if there are controls to store
 		if (pageControlValues.size() > 0) {;
 			// store them
@@ -123,7 +123,7 @@ public class RapidFormAdapter extends FormAdapter {
 	
 	// uses our user session method to get a control value
 	@Override
-	public String getFormControlValue(RapidRequest rapidRequest, String controlId) {
+	public String getFormControlValue(RapidRequest rapidRequest, String controlId) throws Exception {
 		// split the controlid
 		String[] controlIdParts = controlId.split("_");
 		// check we have enough to include the page

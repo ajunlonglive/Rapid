@@ -64,6 +64,8 @@ import com.rapid.core.Application.RapidLoadingException;
 import com.rapid.core.Application.Resource;
 import com.rapid.core.Application.ResourceDependency;
 import com.rapid.forms.FormAdapter;
+import com.rapid.forms.FormAdapter.FormControlValue;
+import com.rapid.forms.FormAdapter.FormPageControlValues;
 import com.rapid.security.SecurityAdapter;
 import com.rapid.security.SecurityAdapter.SecurityAdapaterException;
 import com.rapid.security.SecurityAdapter.User;
@@ -1396,155 +1398,228 @@ public class Page {
 			}
 			
 			if (gotPagePermission) {
-			
-				// whether we're rebulding the page for each request
-		    	boolean rebuildPages = Boolean.parseBoolean(rapidServlet.getServletContext().getInitParameter("rebuildPages"));
-						    	
-		    	// check whether or not we rebuild
-		    	if (rebuildPages) {
-		    		// get fresh head links
-		    		writer.write(getHeadLinks(rapidServlet, application, !designerLink));
-		    		// write the user-specific JS
-		    		writeUserJS(writer, rapidRequest, application, user);		    		
-		    		// get fresh js and css
-		    		writer.write(getHeadCSS(rapidRequest, application, !designerLink));
-		    		// open the script
-					writer.write("    <script  type='text/javascript'>\n");
-		    		// write the ready JS
-		    		writer.write(getHeadReadyJS(rapidRequest, application, !designerLink, formAdapter));
-		    	} else {
-		    		// rebuild any uncached 
-		    		if (_cachedHeadLinks == null) _cachedHeadLinks = getHeadLinks(rapidServlet, application, !designerLink);
-		    		if (_cachedHeadCSS == null) _cachedHeadCSS = getHeadCSS(rapidRequest, application, !designerLink);
-		    		if (_cachedHeadReadyJS == null) _cachedHeadReadyJS = getHeadReadyJS(rapidRequest, application, !designerLink, formAdapter);		    		
-		    		// get the cached head links
-		    		writer.write(_cachedHeadLinks);
-		    		// write the user-specific JS
-		    		writeUserJS(writer, rapidRequest, application, user);		
-		    		// get the cached head js and css
-		    		writer.write(_cachedHeadCSS);
-		    		// open the script
-					writer.write("    <script  type='text/javascript'>\n\n");
-					// write the ready JS
-					writer.write(_cachedHeadReadyJS);
-		    	}
-		    	
-		    	// if there is a form
-				if (formAdapter != null) {
-					// get the form id
-					String formId = formAdapter.getFormId(rapidRequest);
-					// write the form id into the page - not necessary for dialogues
-		    		if (designerLink) writer.write("var _formId = '" + formId + "';\n\n");
-					// write the form values
-					formAdapter.writePageSetFormValues(rapidRequest, formId, application, _id, writer);									
-				}
 				
-				if (rebuildPages) {
-					// write the ready JS
-		    		writer.write(getHeadJS(rapidRequest, application, !designerLink));
+				// assume we couldn't build the page
+				boolean pass = false;
+				
+				// a placeholder for any form id
+				String formId = null;
+				// a placeholder for any form values
+				StringBuilder formValues = null;
+				
+				// check for a form adapter
+				if (formAdapter == null) {
+					// we're good!
+					pass = true;
 				} else {
-					// get the rest of the cached JS
-					if (_cachedHeadJS == null) _cachedHeadJS = getHeadJS(rapidRequest, application, !designerLink);
-					// write the ready JS
-		    		writer.write(_cachedHeadJS);					
-				}
-				
-				// close the script
-				writer.write("\n    </script>\n");
-		    			    			    			    	
-		    	// close the head
-		    	writer.write("  </head>\n");
-		    	
-				// start the body		
-		    	writer.write("  <body id='" + _id + "' style='visibility:hidden;'>\n");
-		    			    			    	
-		    	// start the form if in use (but not for dialogues and other cases where the page is partial)		
-		    	if (formAdapter != null && designerLink) {
-		    		writer.write("    <form id='" + _id + "_form' action='~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + _id + "' method='POST'>\n");
-		    		writer.write("      <input type='hidden' id='" + _id +  "_hiddenControls' name='" + _id +  "_hiddenControls' />\n");
-		    	}
-		    	
-				// a reference for the body html
-				String bodyHtml = null;
-				
-				// get the users roles
-				List<String> userRoles = user.getRoles();
-											
-				// check we have userRoles and htmlRoles
-				if (userRoles != null && _rolesHtml != null) {
+					// first do the actions that could result in an exception
+					try {
+						// get the form id
+						formId =  formAdapter.getFormId(rapidRequest);
+						// create the values string builder
+						formValues = new StringBuilder();
+						// start the set form values function
+						formValues.append("function Event_setFormValues(ev) {\n");
+						
+						// get any form page values
+						FormPageControlValues formControlValues = formAdapter.getFormPageControlValues(rapidRequest, _id);
+						
+						// if there are any
+						if (formControlValues != null) {
+							if (formControlValues.size() > 0) {
 																		
-					// loop each roles html entry
-					for (RoleHtml roleHtml : _rolesHtml) {
-													
-						// get the roles from this combination
-						List<String> roles = roleHtml.getRoles();
-						
-						// assume not roles are required (this will be updated if roles are present)
-						int rolesRequired = 0;
-						
-						// keep a running count for the roles we have
-						int gotRoleCount = 0;
-																
-						// if there are roles to check
-						if (roles != null) {
-							
-							// update how many roles we need our user to have
-							rolesRequired = roles.size();
-							
-							// check whether we need any roles and that our user has any at all
-							if (rolesRequired > 0) {
-								// check the user has as many roles as this combination requires
-								if (userRoles.size() >= rolesRequired) {
-									// loop the roles we need for this combination
-									for (String role : roleHtml.getRoles()) {
-										// check this role
-										if (userRoles.contains(role)) {
-											// increment the got role count
-											gotRoleCount ++;
-										} // increment the count of required roles
-										
-									} // loop roles
+								// loop the values
+								for (FormControlValue formControlValue : formControlValues) {
 									
-								} // user has enough roles to bother checking this combination
-								
-							} // if any roles are required
-																											
-						} // add roles to check
-						
-						// if we have all the roles we need
-						if (gotRoleCount == rolesRequired) {
-							// use this html
-							bodyHtml = roleHtml.getHtml();
-							// no need to check any further
-							break;
-						}
-						
-					} // html role combo loop
-																											
-				} // if our users have roles and we have different html for roles
+									// get the control
+									Control pageControl = getControl(formControlValue.getId());
+	
+									// if we got one
+									if (pageControl != null) {		
+										
+										// get the value
+										String value = formControlValue.getValue();
+										// assume no field
+										String field = "null";
+										// the dropdown control needs a little help
+										if ("dropdown".equals(pageControl.getType())) field = "'x'";
+										// get any control details
+										String details = pageControl.getDetailsJavaScript(application, this);
+										// if null update to string
+										if (details == null) details = null;
+										// if there is a value use the standard setData for it (this might change to something more sophisticated at some point)
+										if (value != null) formValues.append("  setData_" + pageControl.getType() + "(ev, '" + pageControl.getId() + "', " + field + ", " + details + ", '" + value.replace("'", "\'").replace("\r\n", "\\n").replace("\n", "\\n").replace("\r", "") + "');\n");
+										
+									}
+								}								
+							}
+						}									
+						// close the function
+						formValues.append("};\n\n");						
+					} catch (Exception ex) {						
+						// log the error
+						rapidServlet.getLogger().error("Error create page form values", ex);																		
+					}					
+					// we're good!
+					pass = true;					
+				}
 				
-				// check if we got any body html via the roles
-				if (bodyHtml == null) {
+				// if we passed
+				if (pass) {
 					
-					// didn't get any body html, show no permission
-					writeMessage(writer, "Rapid - No permission", "You do not have permssion to view this page");
+					// whether we're rebulding the page for each request
+			    	boolean rebuildPages = Boolean.parseBoolean(rapidServlet.getServletContext().getInitParameter("rebuildPages"));
+							    	
+			    	// check whether or not we rebuild
+			    	if (rebuildPages) {
+			    		// get fresh head links
+			    		writer.write(getHeadLinks(rapidServlet, application, !designerLink));
+			    		// write the user-specific JS
+			    		writeUserJS(writer, rapidRequest, application, user);		    		
+			    		// get fresh js and css
+			    		writer.write(getHeadCSS(rapidRequest, application, !designerLink));
+			    		// open the script
+						writer.write("    <script  type='text/javascript'>\n");
+			    		// write the ready JS
+			    		writer.write(getHeadReadyJS(rapidRequest, application, !designerLink, formAdapter));
+			    	} else {
+			    		// rebuild any uncached 
+			    		if (_cachedHeadLinks == null) _cachedHeadLinks = getHeadLinks(rapidServlet, application, !designerLink);
+			    		if (_cachedHeadCSS == null) _cachedHeadCSS = getHeadCSS(rapidRequest, application, !designerLink);
+			    		if (_cachedHeadReadyJS == null) _cachedHeadReadyJS = getHeadReadyJS(rapidRequest, application, !designerLink, formAdapter);		    		
+			    		// get the cached head links
+			    		writer.write(_cachedHeadLinks);
+			    		// write the user-specific JS
+			    		writeUserJS(writer, rapidRequest, application, user);		
+			    		// get the cached head js and css
+			    		writer.write(_cachedHeadCSS);
+			    		// open the script
+						writer.write("    <script  type='text/javascript'>\n\n");
+						// write the ready JS
+						writer.write(_cachedHeadReadyJS);
+			    	}
+			    	
+			    	// if there is a form
+					if (formAdapter != null) {
+						// write the form id into the page - not necessary for dialogues
+			    		if (designerLink) writer.write("var _formId = '" + formId + "';\n\n");
+						// write the form values
+						writer.write(formValues.toString());							
+					}
+					
+					if (rebuildPages) {
+						// write the ready JS
+			    		writer.write(getHeadJS(rapidRequest, application, !designerLink));
+					} else {
+						// get the rest of the cached JS
+						if (_cachedHeadJS == null) _cachedHeadJS = getHeadJS(rapidRequest, application, !designerLink);
+						// write the ready JS
+			    		writer.write(_cachedHeadJS);					
+					}
+					
+					// close the script
+					writer.write("\n    </script>\n");
+			    			    			    			    	
+			    	// close the head
+			    	writer.write("  </head>\n");
+			    	
+					// start the body		
+			    	writer.write("  <body id='" + _id + "' style='visibility:hidden;'>\n");
+			    			    			    	
+			    	// start the form if in use (but not for dialogues and other cases where the page is partial)		
+			    	if (formAdapter != null && designerLink) {
+			    		writer.write("    <form id='" + _id + "_form' action='~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + _id + "' method='POST'>\n");
+			    		writer.write("      <input type='hidden' id='" + _id +  "_hiddenControls' name='" + _id +  "_hiddenControls' />\n");
+			    	}
+			    	
+					// a reference for the body html
+					String bodyHtml = null;
+					
+					// get the users roles
+					List<String> userRoles = user.getRoles();
+												
+					// check we have userRoles and htmlRoles
+					if (userRoles != null && _rolesHtml != null) {
+																			
+						// loop each roles html entry
+						for (RoleHtml roleHtml : _rolesHtml) {
+														
+							// get the roles from this combination
+							List<String> roles = roleHtml.getRoles();
+							
+							// assume not roles are required (this will be updated if roles are present)
+							int rolesRequired = 0;
+							
+							// keep a running count for the roles we have
+							int gotRoleCount = 0;
+																	
+							// if there are roles to check
+							if (roles != null) {
+								
+								// update how many roles we need our user to have
+								rolesRequired = roles.size();
+								
+								// check whether we need any roles and that our user has any at all
+								if (rolesRequired > 0) {
+									// check the user has as many roles as this combination requires
+									if (userRoles.size() >= rolesRequired) {
+										// loop the roles we need for this combination
+										for (String role : roleHtml.getRoles()) {
+											// check this role
+											if (userRoles.contains(role)) {
+												// increment the got role count
+												gotRoleCount ++;
+											} // increment the count of required roles
+											
+										} // loop roles
+										
+									} // user has enough roles to bother checking this combination
+									
+								} // if any roles are required
+																												
+							} // add roles to check
+							
+							// if we have all the roles we need
+							if (gotRoleCount == rolesRequired) {
+								// use this html
+								bodyHtml = roleHtml.getHtml();
+								// no need to check any further
+								break;
+							}
+							
+						} // html role combo loop
+																												
+					} // if our users have roles and we have different html for roles
+					
+					// check if we got any body html via the roles
+					if (bodyHtml == null) {
+						
+						// didn't get any body html, show no permission
+						writeMessage(writer, "Rapid - No permission", "You do not have permssion to view this page");
+						
+					} else {
+											
+						// check the status of the application
+						if (application.getStatus() == Application.STATUS_DEVELOPMENT) {
+							// pretty print
+							writer.write(Html.getPrettyHtml(bodyHtml.trim()));
+						} else {
+							// no pretty print
+							writer.write(bodyHtml.trim());
+						}
+											
+						// close the form
+						if (formAdapter != null && designerLink) writer.write("    </form>\n");
+
+					} // got body html check
 					
 				} else {
-										
-					// check the status of the application
-					if (application.getStatus() == Application.STATUS_DEVELOPMENT) {
-						// pretty print
-						writer.write(Html.getPrettyHtml(bodyHtml.trim()));
-					} else {
-						// no pretty print
-						writer.write(bodyHtml.trim());
-					}
-										
-					// close the form
-					if (formAdapter != null && designerLink) writer.write("    </form>\n");
-
-				} // got body html check
-																						
+					
+					// send an error message to the screen
+					writeMessage(writer, "Rapid - Error", "An error has occurred. Please try again in a few minutes.");
+					
+				}
+																													
 			} else {
 				
 				// no page permission
@@ -1635,7 +1710,7 @@ public class Page {
 	}
 	
 	// gets the value of a condition used in the page visibility rules
-	private String getConditionValue(RapidRequest rapidRequest, String formId, FormAdapter formAdapter, Application application, Value value) {
+	private String getConditionValue(RapidRequest rapidRequest, String formId, FormAdapter formAdapter, Application application, Value value) throws Exception {
 		String[] idParts = value.getId().split("\\.");
 		if (idParts[0].equals("System")) {			
 			// just check that there is a type
@@ -1688,7 +1763,7 @@ public class Page {
 	}
 	
 	// return a boolean for page visibility
-	public boolean isVisible(RapidRequest rapidRequest, String formId, Application application) {
+	public boolean isVisible(RapidRequest rapidRequest, String formId, Application application) throws Exception {
 		
 		// get the form adapter
 		FormAdapter formAdapter = application.getFormAdapter();

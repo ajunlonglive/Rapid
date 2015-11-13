@@ -399,6 +399,8 @@ function getDialogue(cell, propertyObject, property, details, width, title, opti
 
 // this function clears down all of the property dialogues
 function hideDialogues() {		
+	// execute the click on all visible dialogue close links to update the property and even the html
+	$("a.dialogueClose:visible").click();
 	// remove all listeners
 	removeListeners();	
 	// grab a reference to any dialogues

@@ -132,17 +132,17 @@ public abstract class FormAdapter {
 	// abstract methods
 					
 	// this method returns a new form id, when allowed, by a given adapter, could be in memory, or database, etc
-	public abstract String getNewFormId(RapidRequest rapidRequest);
+	public abstract String getNewFormId(RapidRequest rapidRequest) throws Exception;
 	
 	
 	// returns all the form control values for a given page
-	public abstract FormPageControlValues getFormPageControlValues(RapidRequest rapidRequest, String pageId);
+	public abstract FormPageControlValues getFormPageControlValues(RapidRequest rapidRequest, String pageId) throws Exception;
 	
 	// sets all the form control values for a given page
-	public abstract void setFormPageControlValues(RapidRequest rapidRequest, String pageId, FormPageControlValues pageControlValues);
+	public abstract void setFormPageControlValues(RapidRequest rapidRequest, String pageId, FormPageControlValues pageControlValues) throws Exception;
 	
 	// gets the value of a form control value	
-	public abstract String getFormControlValue(RapidRequest rapidRequest, String controlId);
+	public abstract String getFormControlValue(RapidRequest rapidRequest, String controlId) throws Exception;
 			
 	
 	// this html is written after the body tag
@@ -176,7 +176,7 @@ public abstract class FormAdapter {
 	// public instance methods
 	
 	// this looks for a form id in the user session and uses the adapter specific getNewId routine if one is allowed. Returning null sends the user to the start page
-	public String getFormId(RapidRequest rapidRequest) {
+	public String getFormId(RapidRequest rapidRequest) throws Exception {
 		// get the user session (making a new one if need be)
 		HttpSession session = rapidRequest.getRequest().getSession();
 		// retrieve the form ids from the session
@@ -241,62 +241,8 @@ public abstract class FormAdapter {
 		}		
 	}
 	
-	// this write the form page set values routine, it is called by Page.getPageHtml just before the form is closed
-	public  void writePageSetFormValues(RapidRequest rapidRequest, String formId, Application application, String pageId, Writer writer) throws IOException {
-				
-		// start the function
-		writer.write("function Event_setFormValues(ev) {\n");
-		
-		// get any form page values
-		FormPageControlValues formControlValues = getFormPageControlValues(rapidRequest, pageId);
-		
-		// if there are any
-		if (formControlValues != null) {
-			if (formControlValues.size() > 0) {
-											
-				try {
-									
-					// get the page
-					Page page = application.getPages().getPage(rapidRequest.getRapidServlet().getServletContext(), pageId);
-					
-					// loop the values
-					for (FormControlValue formControlValue : formControlValues) {
-						
-						// get the control
-						Control pageControl = page.getControl(formControlValue.getId());
-
-						// if we got one
-						if (pageControl != null) {
-						
-							// get the value
-							String value = formControlValue.getValue();
-							// assume no field
-							String field = "null";
-							// the dropdown control needs a little help
-							if ("dropdown".equals(pageControl.getType())) field = "'x'";
-							// get any control details
-							String details = pageControl.getDetailsJavaScript(application, page);
-							// if null update to string
-							if (details == null) details = null;
-							// if there is a value use the standard setData for it (this might change to something more sophisticated at some point)
-							if (value != null) writer.write("  setData_" + pageControl.getType() + "(ev, '" + pageControl.getId() + "', " + field + ", " + details + ", '" + value.replace("'", "\'").replace("\r\n", "\\n").replace("\n", "\\n").replace("\r", "") + "');\n");
-							
-						}
-					}
-					
-				} catch (RapidLoadingException ex) {
-					writer.write("// error getting page : " + ex.getMessage());
-				}
-			}
-		}			
-		
-		// close the function
-		writer.write("};\n\n");
-		
-	}
-	
 	// this writes the form summary page
-	public void writeFormSummary(RapidRequest rapidRequest, HttpServletResponse response) throws IOException, RapidLoadingException {
+	public void writeFormSummary(RapidRequest rapidRequest, HttpServletResponse response) throws Exception {
 		
 		// get the form id
 		String formId = getFormId(rapidRequest);

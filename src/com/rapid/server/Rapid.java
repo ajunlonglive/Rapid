@@ -174,38 +174,50 @@ public class Rapid extends RapidHttpServlet {
 						// get the form adapter (if there is one)
 						FormAdapter formAdapter = app.getFormAdapter();
 						
-						// if there is a formAdapter, make sure there's a form id, unless it's for a dialogue
-						if (formAdapter != null) {
-							// get form id
-							String formId = formAdapter.getFormId(rapidRequest);
-							// if there isn't one go back to the start
-							if (formId == null) {
-								pageCheck = false;							
-							} else {
-								// only if this is not a dialogue
-								if (!"dialogue".equals(rapidRequest.getActionName())) {
-									// get all of the pages
-									PageHeaders pageHeaders = app.getPages().getSortedPages();
-									// get this page position
-									int pageIndex = pageHeaders.indexOf(page.getId());
-									// check the page visibility
-									while (!page.isVisible(rapidRequest, formId, app)) {
-										// if we're here the visibility check on the current page failed so increment the index
-										pageIndex ++;
-										// if there are no more pages go to the summary
-										if (pageIndex > pageHeaders.size() - 1) {
-											pageCheck = false;
-											showSummary = true;
-											break;
-										} else {
-											// select the next page to check the visibility of
-											page = app.getPages().getPage(getServletContext(), pageHeaders.get(pageIndex).getId());
-										}									
+						try {																											
+							
+							// if there is a formAdapter, make sure there's a form id, unless it's for a dialogue
+							if (formAdapter != null) {
+								// get form id
+								String formId = formAdapter.getFormId(rapidRequest);
+								// if there isn't one go back to the start
+								if (formId == null) {
+									pageCheck = false;							
+								} else {
+									// only if this is not a dialogue
+									if (!"dialogue".equals(rapidRequest.getActionName())) {
+										// get all of the pages
+										PageHeaders pageHeaders = app.getPages().getSortedPages();
+										// get this page position
+										int pageIndex = pageHeaders.indexOf(page.getId());
+										// check the page visibility
+										while (!page.isVisible(rapidRequest, formId, app)) {
+											// if we're here the visibility check on the current page failed so increment the index
+											pageIndex ++;
+											// if there are no more pages go to the summary
+											if (pageIndex > pageHeaders.size() - 1) {
+												pageCheck = false;
+												showSummary = true;
+												break;
+											} else {
+												// select the next page to check the visibility of
+												page = app.getPages().getPage(getServletContext(), pageHeaders.get(pageIndex).getId());
+											}									
+										}
 									}
 								}
 							}
+							
+						} catch (Exception ex) {
+							
+							// set the page to null so we show the user a not found
+							page = null;
+							
+							// log
+							logger.debug("Error with page visibility rules : " + ex.getMessage(), ex);
+							
 						}
-						
+																		
 						// if the pageCheck was ok (or not invalidated by lack of a form id or summary page)
 						if (pageCheck) {
 																																	
