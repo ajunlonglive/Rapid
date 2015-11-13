@@ -130,6 +130,12 @@ return "<img id='" + this.id + "' class='nonVisibleControl' src='images/datastor
 	    	    
 	   	<getDetailsFunction>	        
 	        <![CDATA[
+// turn off canBeUsedFromOtherPages if page storage 	        
+if (this.storageType == "P") {
+	this.canBeUsedFromOtherPages = false;
+} else {
+	this.canBeUsedFromOtherPages = true;
+}
 return {type:this.type, storageType: this.storageType};
 			]]>	        	        
 	    </getDetailsFunction>
