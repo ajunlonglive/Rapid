@@ -28,7 +28,6 @@ package com.rapid.forms;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.io.Writer;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,7 +38,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.rapid.core.Application;
-import com.rapid.core.Control;
 import com.rapid.core.Page;
 import com.rapid.core.Application.RapidLoadingException;
 import com.rapid.core.Pages.PageHeader;
@@ -138,7 +136,7 @@ public abstract class FormAdapter {
 	// returns all the form control values for a given page
 	public abstract FormPageControlValues getFormPageControlValues(RapidRequest rapidRequest, String pageId) throws Exception;
 	
-	// sets all the form control values for a given page
+	// sets all the form control values for a given page - pages that fail the isVisible method will be sent  a null pageControlValues
 	public abstract void setFormPageControlValues(RapidRequest rapidRequest, String pageId, FormPageControlValues pageControlValues) throws Exception;
 	
 	// gets the value of a form control value	
@@ -299,46 +297,46 @@ public abstract class FormAdapter {
 				
 				// get the page
 				Page page = _application.getPages().getPage(servletContext, pageHeader.getId());
+														
+				// a string builder for the page values
+				StringBuilder valuesStringBuilder = new StringBuilder();
 				
-				// if this page was visible
-				if (page.isVisible(rapidRequest, formId, _application)) {
-										
-					// a string builder for the page values
-					StringBuilder valuesStringBuilder = new StringBuilder();
-					
-					// get any page control values
-					FormPageControlValues pageControlValues = _application.getFormAdapter().getFormPageControlValues(rapidRequest, page.getId());
+				// get any page control values
+				FormPageControlValues pageControlValues = _application.getFormAdapter().getFormPageControlValues(rapidRequest, page.getId());
+				
+				// if non null
+				if (pageControlValues != null) {
 					
 					// if we got some
-					if (pageControlValues != null) {
-						
-						// loop the control values
+					if (pageControlValues.size() > 0) {
+					
+						// loop the page control values
 						for (FormControlValue controlValue : pageControlValues) {
 							// write the control value!
 							valuesStringBuilder.append(getSummaryControlValueHtml(rapidRequest, _application, page, controlValue));
 						}
 						
-					} // control value check
+					} // control values length > 0
 					
-					// if there are some values in thre string builder
-					if (valuesStringBuilder.length() > 0) {
-						
-						// write the page start html
-						writer.write(getSummaryPageStartHtml(rapidRequest, _application, page));
-						
-						// write the values
-						writer.write(valuesStringBuilder.toString());
-						
-						// write the edit link
-						writer.write("<a href='~?a=" + _application.getId() + "&v=" + _application.getVersion() + "&p=" + page.getId() + "'>edit</a>\n");
-						
-						// write the page end html
-						writer.write(getSummaryPageEndHtml(rapidRequest, _application, page));
-						
-					} // values written check
+				} // control values non null
+				
+				// if there are some values in thre string builder
+				if (valuesStringBuilder.length() > 0) {
 					
-				} // page visibility check
-																		
+					// write the page start html
+					writer.write(getSummaryPageStartHtml(rapidRequest, _application, page));
+					
+					// write the values
+					writer.write(valuesStringBuilder.toString());
+					
+					// write the edit link
+					writer.write("<a href='~?a=" + _application.getId() + "&v=" + _application.getVersion() + "&p=" + page.getId() + "'>edit</a>\n");
+					
+					// write the page end html
+					writer.write(getSummaryPageEndHtml(rapidRequest, _application, page));
+					
+				} // values written check
+																							
 			} // page loop
 			
 			// write the pages end

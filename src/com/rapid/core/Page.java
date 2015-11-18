@@ -1777,7 +1777,8 @@ public class Page {
 			// if there are some visibility conditions
 			if (_visibilityConditions.size() > 0) {				
 				
-				logger.debug("Page " + _id + " " + _visibilityConditions.size() + " visibility condition(s) " + " : " + _conditionsType);
+				// log
+				logger.trace("Page " + _id + " " + _visibilityConditions.size() + " visibility condition(s) " + " : " + _conditionsType);
 				
 				// assume we have failed all conditions
 				boolean pass = false;
@@ -1788,15 +1789,15 @@ public class Page {
 					// assume we have failed this condition
 					pass = false;
 					
-					logger.debug("Page " + _id + " visibility condition " + " : " + condition);
+					logger.trace("Page " + _id + " visibility condition " + " : " + condition);
 										
 					String value1 = getConditionValue(rapidRequest, formId, formAdapter, application, condition.getValue1());
 					
-					logger.debug("Value 1 = " + value1);
+					logger.trace("Value 1 = " + value1);
 					
 					String value2 = getConditionValue(rapidRequest, formId, formAdapter, application, condition.getValue2());
 					
-					logger.debug("Value 2 = " + value2);
+					logger.trace("Value 2 = " + value2);
 					
 					String operation = condition.getOperation();
 					
@@ -1809,28 +1810,31 @@ public class Page {
 					} else if ("!=".equals(operation)) {
 						if (!value1.equals(value2)) pass = true;
 					} else {						
-						try {
-							// the remaining conditions all work with numbers so convert
-							float num1 = Float.parseFloat(value1);
-							float num2 = Float.parseFloat(value2);
-							// check the conditions
-							if (">".equals(operation)) {
-								if ((num1 > num2)) pass = true;														
-							} else if (">=".equals(operation)) {
-								if ((num1 >= num2)) pass = true;
-							} else if ("<".equals(operation)) {
-								if ((num1 < num2)) pass = true;
-							} else if ("<=".equals(operation)) {
-								if ((num1 <= num2)) pass = true;
-							}		
-						} catch (Exception ex) {
-							// something went wrong - generally in the conversion - return false
-							logger.error("Error assessing page visibility page " + _id + " " + condition);		
-						} 													
+						// the remaining conditions all work with numbers and must not be empty strings
+						if (value1.length() > 0 && value2.length() > 0) {
+							try {
+								// convert to floats
+								float num1 = Float.parseFloat(value1);
+								float num2 = Float.parseFloat(value2);
+								// check the conditions
+								if (">".equals(operation)) {
+									if ((num1 > num2)) pass = true;														
+								} else if (">=".equals(operation)) {
+									if ((num1 >= num2)) pass = true;
+								} else if ("<".equals(operation)) {
+									if ((num1 < num2)) pass = true;
+								} else if ("<=".equals(operation)) {
+									if ((num1 <= num2)) pass = true;
+								}		
+							} catch (Exception ex) {
+								// something went wrong - generally in the conversion - return false
+								logger.error("Error assessing page visibility page " + _id + " " + condition);		
+							} // try 						
+						} // empty string check													
 					} // operation check						
 					
 					// log result
-					logger.debug("pass = " + pass);
+					logger.trace("pass = " + pass);
 					
 					// for the fast fail check whether we have an or
 					if ("or".equals(_conditionsType)) {
@@ -1843,8 +1847,12 @@ public class Page {
 					
 				} // condition loop
 				
+				// if we failed set the page values to null
+				if (!pass) formAdapter.setFormPageControlValues(rapidRequest, _id, null);
+				
 				// return the pass
 				return pass;
+				
 			} else {				
 				logger.debug("Page " + _id + " has not visibility conditions");				
 			}						

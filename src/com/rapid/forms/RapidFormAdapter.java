@@ -111,14 +111,11 @@ public class RapidFormAdapter extends FormAdapter {
 		return getUserFormPageControlValues(rapidRequest).get(pageId);
 	}
 
-	// uses our user session method to set the form page control values
+	// uses our user session method to set the form page control values (for hidden pages pageControlValues will be null)
 	@Override
 	public void setFormPageControlValues(RapidRequest rapidRequest, String pageId, FormPageControlValues pageControlValues) throws Exception {		
-		// if there are controls to store
-		if (pageControlValues.size() > 0) {;
-			// store them
-			getUserFormPageControlValues(rapidRequest).put(pageId, pageControlValues);
-		}		
+		// store them
+		getUserFormPageControlValues(rapidRequest).put(pageId, pageControlValues);	
 	}
 	
 	// uses our user session method to get a control value

@@ -504,27 +504,28 @@ public class Webservice extends Action {
 					} while (pos > 0);
 				}
 				
+				// retrieve the action
+				String action = _request.getAction();				
 				// create a placeholder for the request url
 				URL url = null;				
 				// if the given request url starts with http use it as is, otherwise use the soa servlet
 				if (_request.getUrl().startsWith("http")) {
+					// use the url as is
 					url = new URL(_request.getUrl());
 				} else {
+					// get our request
 					HttpServletRequest httpRequest = rapidRequest.getRequest();
-					url = new URL(httpRequest.getScheme(), httpRequest.getServerName(), httpRequest.getServerPort(), httpRequest.getContextPath() + "/" + _request.getUrl());					
+					// make a url using our own request and add the action
+					url = new URL(httpRequest.getScheme(), httpRequest.getServerName(), httpRequest.getServerPort(), httpRequest.getContextPath() + "/" + _request.getUrl());
+					// check whether we have any id / version seperators
+					String[] actionParts = action.split("/");
+					// add them if none
+					if (actionParts.length < 2) action = application.getId() + "/" + application.getVersion() +  "/" + action;
 				}
-				
-				// retrieve the action
-				String action = _request.getAction();
-				// check whether we have any id / version seperators
-				String[] actionParts = action.split("/");
-				// add them if none
-				if (actionParts.length < 2) action = application.getId() + "/" + application.getVersion() +  "/" + action;
-				
+																
 				// establish the connection
 				HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-				connection.setDoOutput(true); // Triggers POST.
-				
+												
 				// if we are requesting from ourself
 				if (url.getPath().startsWith(rapidRequest.getRequest().getContextPath())) {
 					// get our session id
@@ -539,18 +540,25 @@ public class Webservice extends Action {
 					connection.setRequestProperty("SOAPAction", action);
 				} else if ("JSON".equals(_request.getType())) {
 					connection.setRequestProperty("Content-Type", "application/json");
-					connection.setRequestProperty("Action", action);
+					if (action.length() > 0) connection.setRequestProperty("Action", action);
 				} else if ("XML".equals(_request.getType())) {
 					connection.setRequestProperty("Content-Type", "text/xml");
-					connection.setRequestProperty("Action", action);
+					if (action.length() > 0) connection.setRequestProperty("Action", action);
 				}
-																
-				// get the output stream from the connection into which we write the request
-				OutputStream output = connection.getOutputStream();		
 				
-				// write the processed body string into the request output stream
-				output.write(body.getBytes("UTF8"));
-				
+				// if a body has been specified
+				if (body.length() > 0) {
+										
+					// Triggers POST.
+					connection.setDoOutput(true); 
+					
+					// get the output stream from the connection into which we write the request
+					OutputStream output = connection.getOutputStream();		
+					
+					// write the processed body string into the request output stream
+					output.write(body.getBytes("UTF8"));
+				}
+								
 				// check the response code
 				int responseCode = connection.getResponseCode();
 				
