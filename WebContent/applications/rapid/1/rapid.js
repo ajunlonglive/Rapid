@@ -1381,12 +1381,14 @@ function setData_radiobuttons(ev, id, field, details, data, changeEvents) {
   			value = data.rows[0][0];
   		}
   	} 
-  	if (value) {
+  	if (value !== undefined) {
   		var button = radiobuttons.children("input[type=radio][value='" + value + "']");
   		if (button[0]) {
-  			button.prop('checked',true);	
-  			if (changeEvents) button.trigger("change");		
-  		}		
+  			button.prop('checked',true);				
+  		} else {
+  			radiobuttons.children("input[type=radio]").prop('checked',false);	
+  		}
+  		if (changeEvents) button.trigger("change");				
   	}
   }
 }
