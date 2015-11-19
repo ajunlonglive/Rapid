@@ -206,7 +206,11 @@ function sortGridByColumn(ev, id, details, column, asc) {
 		switch (details.columns[column].sort) {
 			// for n, turn both values into numbers and use that
 			case "n" : sortedValues.sort( function(i1, i2) {
-				return (i1.value * 1) - (i2.value * 1) ; 
+				var v1 = i1.value;
+				if (v1) v1 = parseFloat(v1.replace(",",""));
+				var v2 = i2.value;
+				if (v2) v2 = parseFloat(v2.replace(",",""));
+				return v1 - v2; 
 			});			
 			break;
 			// d1 is uk date format
@@ -851,83 +855,87 @@ function Init_map(id, details) {
 }
 
 function Init_pagePanel(id, details) {
-  var bodyHtml = "<center><h1>Page</h1></center>";
-  
-  // request the page		
-  $.ajax({
-     	url: "~?a=" + _appId + "&v=" + _appVersion + "&p=" + details.pageId + "&action=dialogue",  // reuse the design link hiding from dialogues
-     	type: "GET",          
-         data: null,        
-         error: function(server, status, error) { 
-         	var bodyHtml = "Error loading page : " + error; 
-         },
-         success: function(page) {
-         	
-         // if the page can't be found a blank response is sent, so only show if we got something
-         if (page) {
-         	
-         		// get the document head
-          	var head = $("head");
-         		// empty the body html
-         		bodyHtml = "";
-         		// assume the script is empty
-         		script = "";
-         		       		
-             	// loop the items
-             	var items = $(page);
-             	for (var i in items) {
-             		// check for a script node
-             		switch (items[i].nodeName) {
-             		case "#text" : case "TITLE" : case "META" : // ignore these types
-             		break;
-             		case "SCRIPT" :
-             			// check whether a script block or link
-             			if (items[i].innerHTML) {
-             				var s = items[i].outerHTML;
-             				// exclude the app id, version, page, mobile resume link
-             				if (s.indexOf("var _appId =") == -1 && s.indexOf("var _appVersion =") == -1 && s.indexOf("var _pageId =") == -1 && s.indexOf("var _mobileResume =") == -1)
-             					script += s;
-             			} else {
-             				// fetch the text
-             				var text = items[i].outerHTML;
-             				// look for a src
-             				if (text.indexOf("src=\"") > 0) {
-             					var startPos = text.indexOf("src=\"")+5;
-             					var src = text.substr(startPos,text.indexOf("\"", startPos) - startPos);
-             					// add if not in the head already
-             					if (!head.find("script[src='" + src + "']")[0]) head.append(text);
-             				}
-             			} 
-             		break;
-             		case "LINK" :
-             			// fetch the text
-             			var text = items[i].outerHTML;	           			
-             			// look for an href="
-             			if (!items[i].innerHTML && text.indexOf("href=\"") > 0) {
-             				var startPos = text.indexOf("href=\"")+6;
-             				var href = text.substr(startPos,text.indexOf("\"", startPos) - startPos);
-             				// add this link to the page if not there already
-             				if (!head.find("link[href='" + href + "']")[0]) head.append(text);
-             			}	         			
-             		break;
-             		default :
-             			if (items[i].outerHTML) {
-             				// retain the script in our body html
-             				bodyHtml += items[i].outerHTML;        				
-             			}
-             		break;
-             		}
-             	}   
-             	// apply the injected html
-             	$("#" + id).html(bodyHtml);
-             	// add script into the page (if applicable)
-             	if (script) $("#" + id).append(script);
-             	// fire the window resize event
-             	$(window).resize();
-             	           	        	            	            	            
-      	}        	       	        	        	        	        		
-      }       	        	        
-  });
+  // if this page is not static reload it	        
+  if (details.simple === undefined || !details.simple) {
+  	        
+  	var bodyHtml = "<center><h1>Page</h1></center>";
+  	
+  	// request the page		
+  	$.ajax({
+  	   	url: "~?a=" + _appId + "&v=" + _appVersion + "&p=" + details.pageId + "&action=dialogue",  // reuse the design link hiding from dialogues
+  	   	type: "GET",          
+  	       data: null,        
+  	       error: function(server, status, error) { 
+  	       	var bodyHtml = "Error loading page : " + error; 
+  	       },
+  	       success: function(page) {
+  	       	
+  	       // if the page can't be found a blank response is sent, so only show if we got something
+  	       if (page) {
+  	       	
+  	       		// get the document head
+  	        	var head = $("head");
+  	       		// empty the body html
+  	       		bodyHtml = "";
+  	       		// assume the script is empty
+  	       		script = "";
+  	       		       		
+  	           	// loop the items
+  	           	var items = $(page);
+  	           	for (var i in items) {
+  	           		// check for a script node
+  	           		switch (items[i].nodeName) {
+  	           		case "#text" : case "TITLE" : case "META" : // ignore these types
+  	           		break;
+  	           		case "SCRIPT" :
+  	           			// check whether a script block or link
+  	           			if (items[i].innerHTML) {
+  	           				var s = items[i].outerHTML;
+  	           				// exclude the app id, version, page, mobile resume link
+  	           				if (s.indexOf("var _appId =") == -1 && s.indexOf("var _appVersion =") == -1 && s.indexOf("var _pageId =") == -1 && s.indexOf("var _mobileResume =") == -1)
+  	           					script += s;
+  	           			} else {
+  	           				// fetch the text
+  	           				var text = items[i].outerHTML;
+  	           				// look for a src
+  	           				if (text.indexOf("src=\"") > 0) {
+  	           					var startPos = text.indexOf("src=\"")+5;
+  	           					var src = text.substr(startPos,text.indexOf("\"", startPos) - startPos);
+  	           					// add if not in the head already
+  	           					if (!head.find("script[src='" + src + "']")[0]) head.append(text);
+  	           				}
+  	           			} 
+  	           		break;
+  	           		case "LINK" :
+  	           			// fetch the text
+  	           			var text = items[i].outerHTML;	           			
+  	           			// look for an href="
+  	           			if (!items[i].innerHTML && text.indexOf("href=\"") > 0) {
+  	           				var startPos = text.indexOf("href=\"")+6;
+  	           				var href = text.substr(startPos,text.indexOf("\"", startPos) - startPos);
+  	           				// add this link to the page if not there already
+  	           				if (!head.find("link[href='" + href + "']")[0]) head.append(text);
+  	           			}	         			
+  	           		break;
+  	           		default :
+  	           			if (items[i].outerHTML) {
+  	           				// retain the script in our body html
+  	           				bodyHtml += items[i].outerHTML;        				
+  	           			}
+  	           		break;
+  	           		}
+  	           	}   
+  	           	// apply the injected html
+  	           	$("#" + id).html(bodyHtml);
+  	           	// add script into the page (if applicable)
+  	           	if (script) $("#" + id).append(script);
+  	           	// fire the window resize event
+  	           	$(window).resize();
+  	           	           	        	            	            	            
+  	    	}        	       	        	        	        	        		
+  	    }       	        	        
+  	});	        
+  }
 }
 
 function Init_slidePanel(id, details) {
@@ -1358,7 +1366,7 @@ function getData_grid(ev, id, field, details) {
   			var rowIndex = row.index() - 1;
   			if (rowIndex >= 0) {
   				for (var i in details.columns) {
-  					if (details.columns[i].field.toLowerCase() == field.toLowerCase()) {
+  					if (details.columns[i].field && details.columns[i].field.toLowerCase() == field.toLowerCase()) {
   						data = row.children(":nth(" + i + ")").html();
   						break;
   					}

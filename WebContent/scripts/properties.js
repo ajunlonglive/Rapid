@@ -643,6 +643,11 @@ function Property_checkbox(cell, propertyObject, property, details) {
 	}));
 }
 
+// adds a gap in the properties
+function Property_gap(cell, propertyObject, property, details) {
+	cell.prev().html("");
+}
+
 function Property_fields(cell, action, property, details) {
 	
 	// retrieve or create the dialogue
@@ -1889,84 +1894,94 @@ function Property_navigationPage(cell, navigationAction, property, details) {
 
 // this is a dialogue to specify the session variables of the current page
 function Property_pageSessionVariables(cell, page, property, details, textOnly) {
-			
-	var variables = [];
-	// set the value if it exists
-	if (page.sessionVariables) variables = page.sessionVariables;
-	// make some text
-	var text = "";
-	for (var i = 0; i < variables.length; i++) {
-		text += variables[i];
-		if (i < variables.length - 1) text += ",";
-	}
-	// add a descrption if nothing yet
-	if (!text) text = "Click to add...";
-	// append the adjustable form control
-	cell.text(text);
 	
-	// avoid redoing the whole thing 
-	if (!textOnly) {
-	
-		// retrieve or create the dialogue
-		var dialogue = getDialogue(cell, page, property, details, 200, "Page variables", {sizeX: true});		
-		// grab a reference to the table
-		var table = dialogue.find("table").first();
-		// add the all grid
-		table.addClass("dialogueTableAllBorders");
-		// make sure table is empty
-		table.children().remove();
+	// check for simple
+	if (_page.simple) {
 		
-		// show variables
-		for (var i in variables) {
-			// add the line
-			table.append("<tr><td><input class='variable' value='" + variables[i] + "' /></td><td style='width:16px;'><img src='images/bin_16x16.png' style='float:right;' /></td></tr>");
+		// remove the row
+		cell.parent().remove();
+		
+	} else {
 			
-			// find the text
-			var valueEdit = table.find("input.variable").last();
+		var variables = [];
+		// set the value if it exists
+		if (page.sessionVariables) variables = page.sessionVariables;
+		// make some text
+		var text = "";
+		for (var i = 0; i < variables.length; i++) {
+			text += variables[i];
+			if (i < variables.length - 1) text += ",";
+		}
+		// add a descrption if nothing yet
+		if (!text) text = "Click to add...";
+		// append the adjustable form control
+		cell.text(text);
+		
+		// avoid redoing the whole thing 
+		if (!textOnly) {
+		
+			// retrieve or create the dialogue
+			var dialogue = getDialogue(cell, page, property, details, 200, "Page variables", {sizeX: true});		
+			// grab a reference to the table
+			var table = dialogue.find("table").first();
+			// add the all grid
+			table.addClass("dialogueTableAllBorders");
+			// make sure table is empty
+			table.children().remove();
+			
+			// show variables
+			for (var i in variables) {
+				// add the line
+				table.append("<tr><td><input class='variable' value='" + variables[i] + "' /></td><td style='width:16px;'><img src='images/bin_16x16.png' style='float:right;' /></td></tr>");
+				
+				// find the text
+				var valueEdit = table.find("input.variable").last();
+				// add a listener
+				addListener( valueEdit.keyup( {cell: cell, page: page, property: property, details: details}, function(ev) {
+					// get the input box
+					var input = $(ev.target);
+					// get the value
+					var value = input.val();
+					// get the index
+					var index = input.closest("tr").index();
+					// update value
+					ev.data.page.sessionVariables[index] = value;
+					// refresh
+					Property_pageSessionVariables(ev.data.cell, ev.data.page, ev.data.property, ev.data.details, true);
+				}));
+						
+				// find the delete
+				var optionDelete = table.find("tr").last().children().last().children().last();
+				// add a listener
+				addListener( optionDelete.click( {variables: variables}, function(ev) {
+					// add an undo snapshot
+					addUndo();
+					// get the input
+					var input = $(ev.target);
+					// remove from parameters
+					ev.data.variables.splice(input.parent().parent().index(),1);
+					// remove row
+					input.parent().parent().remove();
+				}));
+			}
+				
+			// have an add row
+			table.append("<tr><td colspan='2'><a href='#'>add...</a></td></tr>");
+			// get a reference to the add
+			var add = table.find("tr").last().children().last().children().last();
 			// add a listener
-			addListener( valueEdit.keyup( {cell: cell, page: page, property: property, details: details}, function(ev) {
-				// get the input box
-				var input = $(ev.target);
-				// get the value
-				var value = input.val();
-				// get the index
-				var index = input.closest("tr").index();
-				// update value
-				ev.data.page.sessionVariables[index] = value;
-				// refresh
-				Property_pageSessionVariables(ev.data.cell, ev.data.page, ev.data.property, ev.data.details, true);
-			}));
-					
-			// find the delete
-			var optionDelete = table.find("tr").last().children().last().children().last();
-			// add a listener
-			addListener( optionDelete.click( {variables: variables}, function(ev) {
+			addListener( add.click( {cell: cell, page: page, property: property, details: details}, function(ev) {
 				// add an undo snapshot
 				addUndo();
-				// get the input
-				var input = $(ev.target);
-				// remove from parameters
-				ev.data.variables.splice(input.parent().parent().index(),1);
-				// remove row
-				input.parent().parent().remove();
+				// initialise if required
+				if (!ev.data.page.sessionVariables) ev.data.page.sessionVariables = [];
+				// add a blank option
+				ev.data.page.sessionVariables.push("");
+				// refresh
+				Property_pageSessionVariables(ev.data.cell, ev.data.page, ev.data.property, ev.data.details);		
 			}));
-		}
 			
-		// have an add row
-		table.append("<tr><td colspan='2'><a href='#'>add...</a></td></tr>");
-		// get a reference to the add
-		var add = table.find("tr").last().children().last().children().last();
-		// add a listener
-		addListener( add.click( {cell: cell, page: page, property: property, details: details}, function(ev) {
-			// add an undo snapshot
-			addUndo();
-			// initialise if required
-			if (!ev.data.page.sessionVariables) ev.data.page.sessionVariables = [];
-			// add a blank option
-			ev.data.page.sessionVariables.push("");
-			// refresh
-			Property_pageSessionVariables(ev.data.cell, ev.data.page, ev.data.property, ev.data.details);		
-		}));
+		}
 		
 	}
 	
@@ -2140,6 +2155,19 @@ function Property_navigationSessionVariables(cell, navigation, property, details
 		
 	}
 					
+}
+
+//whether this page is simple, and no events
+function Property_simple(cell, control, property, details) {
+	// start with a default check box
+	Property_checkbox(cell, control, property, details);
+	// get a reference to the checkboxl
+	var input = cell.find("input");
+	// add a listener to show ot hide the events
+	addListener( input.change( function(ev) {
+		// rebuild them accordingly
+		showEvents(_page);
+	}));
 }
 
 function Property_navigationStopActions(cell, navigation, property, details) {
@@ -2536,7 +2564,8 @@ function Property_logicConditions(cell, action, property, details) {
 
 // this very similar to the above but hidden if no form adapter
 function Property_visibilityConditions(cell, control, property, details) {
-	if (_version.formAdapter) {
+	// if this is not a simple page
+	if (_version.formAdapter && !_page.simple) {
 		Property_logicConditions(cell, control, property, details)
 	} else {
 		// remove this row

@@ -108,7 +108,11 @@ function sortGridByColumn(ev, id, details, column, asc) {
 		switch (details.columns[column].sort) {
 			// for n, turn both values into numbers and use that
 			case "n" : sortedValues.sort( function(i1, i2) {
-				return (i1.value * 1) - (i2.value * 1) ; 
+				var v1 = i1.value;
+				if (v1) v1 = parseFloat(v1.replace(",",""));
+				var v2 = i2.value;
+				if (v2) v2 = parseFloat(v2.replace(",",""));
+				return v1 - v2; 
 			});			
 			break;
 			// d1 is uk date format
@@ -760,7 +764,7 @@ function getData_grid(ev, id, field, details) {
   			var rowIndex = row.index() - 1;
   			if (rowIndex >= 0) {
   				for (var i in details.columns) {
-  					if (details.columns[i].field.toLowerCase() == field.toLowerCase()) {
+  					if (details.columns[i].field && details.columns[i].field.toLowerCase() == field.toLowerCase()) {
   						data = row.children(":nth(" + i + ")").html();
   						break;
   					}

@@ -468,8 +468,8 @@ public class Control {
 						
 					} else if ("true".equals(type) || "false".equals(type)) {
 						
-						// wrap true and false in quotes to make it a string value, rather than a literal boolean
-						return "'" + type + "'";
+						// return boolean and string values
+						return "(" + type + "||'" + type + "')";
 						
 					} else if ("field".equals(type)) {
 						

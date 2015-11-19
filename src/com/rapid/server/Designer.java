@@ -482,7 +482,8 @@ public class Designer extends RapidHttpServlet {
 									jsonPage.put("id", page.getId());
 									jsonPage.put("name", page.getName());
 									jsonPage.put("title", page.getTitle());
-									jsonPage.put("label", page.getLabel());		
+									jsonPage.put("label", page.getLabel());
+									jsonPage.put("simple", page.getSimple());		
 									// get a list of page session variables
 									List<String> pageSessionVariables = page.getSessionVariables();
 									// add them if there are some
@@ -792,6 +793,7 @@ public class Designer extends RapidHttpServlet {
 								newPage.setTitle(jsonPage.optString("title"));
 								newPage.setLabel(jsonPage.optString("label"));
 								newPage.setDescription(jsonPage.optString("description"));
+								newPage.setSimple(jsonPage.optBoolean("simple"));
 																
 								// look in the JSON for an event array
 								JSONArray jsonEvents = jsonPage.optJSONArray("events");

@@ -176,7 +176,7 @@ public class Rapid extends RapidHttpServlet {
 						
 						try {																											
 							
-							// if there is a formAdapter, make sure there's a form id, unless it's for a dialogue
+							// if there is a formAdapter, make sure there's a form id, unless it's for a simple page
 							if (formAdapter != null) {
 								// get form id
 								String formId = formAdapter.getFormId(rapidRequest);
