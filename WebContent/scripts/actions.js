@@ -229,103 +229,116 @@ function showEvents(control) {
 	// remove any listeners
 	removeListeners("actionsPanel");
 	// empty the panel
-	actionsPanel.html("");	
+	actionsPanel.html("");
 	
-	// only if there is a control and there are events in the control class
-	if (control) {
-		// get a reference to the control class
-		var controlClass = _controlTypes[control.type];
-		// get a reference to the events
-		var events = controlClass.events;
-		// check we have some
-		if (events) {
-			// JSON library single member check
-			if ($.isArray(controlClass.events.event)) events = controlClass.events.event;		
-			// loop them
-			for (var i in events) {
-				// get a reference
-				var event = events[i];
-				// if the event visibilty has not been set or is not false
-				if (event.visible === undefined || !event.visible === false) {
-					
-					// append a table
-					actionsPanel.append("<table class='propertiesPanelTable' data-eventType='" + event.type + "'><tbody></tbody></table>");	
-					// get a reference to the table
-					var actionsTable = actionsPanel.children().last().children().last();
-					// add a heading for the event
-					actionsTable.append("<tr><td colspan='2'><h3>" + event.name + " event</h3><img class='copyEvent' src='images/copy_16x16.png' title='Copy all event actions'/></td></tr>");																	
-					// add a small break
-					actionsTable.append("<tr><td colspan='2'></td></tr>");
-					// check if copyAction
-					if (_copyAction) {
-						// start the action name
-						var actionName = getCopyActionName();									 
-						// add an add facility
-						actionsTable.append("<tr><td>Add action : </td><td><select data-event='" + event.type + "'><option value='_'>Please select...</option><optgroup label='New action'>" + _actionOptions + "</optgroup><optgroup label='Paste action'><option value='pasteActions'>" + actionName + "</option></optgroup></select></td></tr>");
-					} else {
-						// add an add facility
-						actionsTable.append("<tr><td>Add action : </td><td><select data-event='" + event.type + "'><option value='_'>Please select...</option>" + _actionOptions + "</select></td></tr>");
-					}				
-					// get a reference to the select
-					var addAction = actionsTable.children().last().children().last().children().last();
-					// add a change listener
-					addListener( addAction.change( { control: control, event: event }, function(ev) {
-						// get a reference to the control
-						var control = ev.data.control;
-						// get a reference to the eventType
-						var eventType = ev.data.event.type;
-						// look for the events collection in the control
-						for (var i in control.events) {
-							// check whether this is the event we want
-							if (control.events[i].type == eventType) {
-								// get the type of action we selected
-								var actionType = $(ev.target).val();
-								// check if pasteActions
-								if (actionType == "pasteActions") {
-									// if _copyAction
-									if (_copyAction) {
-										// reset the paste map
-										_pasteMap = {};
-										// check for actions collection
-										if (_copyAction.actions) {
-											// loop them
-											for (var j in _copyAction.actions) {
+	// only if the page is not simple
+	if (_page.simple === undefined || _page.simple != true) {
+								
+		// only if there is a control and there are events in the control class
+		if (control) {
+			// get a reference to the control class
+			var controlClass = _controlTypes[control.type];
+			// get a reference to the events
+			var events = controlClass.events;
+			// check we have some
+			if (events) {
+				// JSON library single member check
+				if ($.isArray(controlClass.events.event)) events = controlClass.events.event;		
+				// loop them
+				for (var i in events) {
+					// get a reference
+					var event = events[i];
+					// if the event visibilty has not been set or is not false
+					if (event.visible === undefined || !event.visible === false) {
+						
+						// append a table
+						actionsPanel.append("<table class='propertiesPanelTable' data-eventType='" + event.type + "'><tbody></tbody></table>");	
+						// get a reference to the table
+						var actionsTable = actionsPanel.children().last().children().last();
+						// add a heading for the event
+						actionsTable.append("<tr><td colspan='2'><h3>" + event.name + " event</h3><img class='copyEvent' src='images/copy_16x16.png' title='Copy all event actions'/></td></tr>");																	
+						// add a small break
+						actionsTable.append("<tr><td colspan='2'></td></tr>");
+						// check if copyAction
+						if (_copyAction) {
+							// start the action name
+							var actionName = getCopyActionName();									 
+							// add an add facility
+							actionsTable.append("<tr><td>Add action : </td><td><select data-event='" + event.type + "'><option value='_'>Please select...</option><optgroup label='New action'>" + _actionOptions + "</optgroup><optgroup label='Paste action'><option value='pasteActions'>" + actionName + "</option></optgroup></select></td></tr>");
+						} else {
+							// add an add facility
+							actionsTable.append("<tr><td>Add action : </td><td><select data-event='" + event.type + "'><option value='_'>Please select...</option>" + _actionOptions + "</select></td></tr>");
+						}				
+						// get a reference to the select
+						var addAction = actionsTable.children().last().children().last().children().last();
+						// add a change listener
+						addListener( addAction.change( { control: control, event: event }, function(ev) {
+							// get a reference to the control
+							var control = ev.data.control;
+							// get a reference to the eventType
+							var eventType = ev.data.event.type;
+							// look for the events collection in the control
+							for (var i in control.events) {
+								// check whether this is the event we want
+								if (control.events[i].type == eventType) {
+									// get the type of action we selected
+									var actionType = $(ev.target).val();
+									// check if pasteActions
+									if (actionType == "pasteActions") {
+										// if _copyAction
+										if (_copyAction) {
+											// reset the paste map
+											_pasteMap = {};
+											// check for actions collection
+											if (_copyAction.actions) {
+												// loop them
+												for (var j in _copyAction.actions) {
+													// create a new object from the action
+													var action = JSON.parse(JSON.stringify(_copyAction.actions[j]));
+													// add the action using the paste functionality
+													control.events[i].actions.push( new Action(action.type, action, true) );
+												}										
+											} else {
 												// create a new object from the action
-												var action = JSON.parse(JSON.stringify(_copyAction.actions[j]));
+												var action = JSON.parse(JSON.stringify(_copyAction));
 												// add the action using the paste functionality
 												control.events[i].actions.push( new Action(action.type, action, true) );
-											}										
-										} else {
-											// create a new object from the action
-											var action = JSON.parse(JSON.stringify(_copyAction));
-											// add the action using the paste functionality
-											control.events[i].actions.push( new Action(action.type, action, true) );
+											}
 										}
-									}
-									
-								} else {
-									// add a new action of this type to the event
-									control.events[i].actions.push( new Action(actionType) );
-								}							
-								// rebuild actions
-								showEvents(_selectedControl);
-								// we're done
-								break;
+										
+									} else {
+										// add a new action of this type to the event
+										control.events[i].actions.push( new Action(actionType) );
+									}							
+									// rebuild actions
+									showEvents(_selectedControl);
+									// we're done
+									break;
+								}
 							}
-						}
+							
+						}));
 						
-					}));
+						// show any actions
+						showActions(control, event.type);
+						
+					} // visibility not set or not false
 					
-					// show any actions
-					showActions(control, event.type);
-					
-				} // visibility not set or not false
-				
-			} // event loop	
-												
-		} // event check
+				} // event loop	
+													
+			} // event check
+			
+		} // control check
 		
-	} // control check
+		// show in case a previous simple property has hidden them
+		actionsPanel.show();
+		
+	} else {
+		
+		// hide them
+		actionsPanel.hide();
+		
+	} // page simple check
 	
 }
 
