@@ -104,6 +104,26 @@ public class RapidFormAdapter extends FormAdapter {
 		return formId;
 	}
 	
+	@Override
+	public boolean checkFormResume(RapidRequest rapidRequest, String formId, String password) throws Exception {
+		// get the user session
+		HttpSession session = rapidRequest.getRequest().getSession();
+		// get all app page control values from session
+		Map<String,Map<String,FormPageControlValues>> userAppPageControlValues = (Map<String, Map<String, FormPageControlValues>>) session.getAttribute(USERFORMPAGECONTROLVALUES);
+		// if null no forms in session so fail
+		if (userAppPageControlValues == null) return false;
+		// the page controls for specified app
+		Map<String,FormPageControlValues> userPageControlValues = userAppPageControlValues.get(formId);
+		// null check
+		if (userPageControlValues == null) {
+			// form not found so fail
+			return false;
+		} else {
+			// form found we're good
+			return true;
+		}
+	}
+	
 	// uses our user session method to get the form page control values
 	@Override
 	public FormPageControlValues getFormPageControlValues(RapidRequest rapidRequest, String pageId) throws Exception	{
@@ -226,5 +246,5 @@ public class RapidFormAdapter extends FormAdapter {
 	public String getSubmittedExceptionHtml(RapidRequest rapidRequest, Exception ex) {
 		return "The following error occured : " + ex.getMessage();
 	}
-		
+	
 }

@@ -101,11 +101,14 @@ public class Rapid extends RapidHttpServlet {
 																			
 					// get the user
 					User user = security.getUser(rapidRequest);
+					
+					// get the action
+					String action = rapidRequest.getActionName();
 			
 					// check if there is a Rapid action
-					if ("summary".equals(rapidRequest.getActionName())) {
+					if ("summary".equals(action)) {
 						
-						// get the form adapter
+						// get the form adapter for both of the above
 						FormAdapter formAdapter = app.getFormAdapter();
 						
 						// check there is one
@@ -115,16 +118,16 @@ public class Rapid extends RapidHttpServlet {
 							sendMessage(response, 500, "Not a form", "This Rapid app is not a form");
 							
 							// log
-							logger.debug("Rapid GET response (500) : Page not found");
+							logger.error("Rapid GET response (500) : Summary requested for " + app.getId() + "/" + app.getDescription() + " but it does not have a form adapter");
 							
 						} else {
-															
+							
 							// write the form summary page
-							formAdapter.writeFormSummary(rapidRequest, response);								
-														
+							formAdapter.writeFormSummary(rapidRequest, response);		
+																																																	
 						}
 
-					} else if ("download".equals(rapidRequest.getActionName())) {
+					} else if ("download".equals(action)) {
 						
 						// set the file name
 						String fileName = app.getId() + "_" + rapidRequest.getUserName() + ".zip";
@@ -178,14 +181,25 @@ public class Rapid extends RapidHttpServlet {
 							
 							// if there is a formAdapter, make sure there's a form id, unless it's for a simple page
 							if (formAdapter != null) {
-								// get form id
-								String formId = formAdapter.getFormId(rapidRequest);
-								// if there isn't one go back to the start
+								// assume the form id is null
+								String formId = null;
+								// if this is a form resume
+								if ("resume".equals(action)) {
+									// get the form id and password from the url
+									String resumeFormId = request.getParameter("f");
+									String resumePassword = request.getParameter("pwd");
+									// check whether we can resume this form
+									if (formAdapter.doResumeForm(rapidRequest, resumeFormId, resumePassword))  formId = resumeFormId;
+								} else {								
+									// get form id from the adapter
+									formId = formAdapter.getFormId(rapidRequest);									
+								}								
+								// if there isn't a form id go back to the start
 								if (formId == null) {
 									pageCheck = false;							
 								} else {
 									// only if this is not a dialogue
-									if (!"dialogue".equals(rapidRequest.getActionName())) {
+									if (!"dialogue".equals(action)) {
 										// get all of the pages
 										PageHeaders pageHeaders = app.getPages().getSortedPages();
 										// get this page position
