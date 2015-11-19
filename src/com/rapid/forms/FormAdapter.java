@@ -132,6 +132,8 @@ public abstract class FormAdapter {
 	// this method returns a new form id, when allowed, by a given adapter, could be in memory, or database, etc
 	public abstract String getNewFormId(RapidRequest rapidRequest) throws Exception;
 	
+	// this method checks a form id against a password for resuming 
+	public abstract boolean checkFormResume(RapidRequest rapidRequest, String formId, String password) throws Exception;
 	
 	// returns all the form control values for a given page
 	public abstract FormPageControlValues getFormPageControlValues(RapidRequest rapidRequest, String pageId) throws Exception;
@@ -171,6 +173,13 @@ public abstract class FormAdapter {
 	// this html is written for any forms where there was an error on submission
 	public abstract String getSubmittedExceptionHtml(RapidRequest rapidRequest, Exception ex);
 
+	// protected instance methods
+	
+	protected void setUserFormId(Map<String,String> formIds, Application application, String formId) {
+		// put into form ids
+		formIds.put(application.getId() + "-" + application.getVersion(), formId);
+	}
+	
 	// public instance methods
 	
 	// this looks for a form id in the user session and uses the adapter specific getNewId routine if one is allowed. Returning null sends the user to the start page
@@ -214,12 +223,36 @@ public abstract class FormAdapter {
 				// get a new form id from the adapter
 				formId = getNewFormId(rapidRequest);
 				// put into form ids
-				formIds.put(application.getId() + "-" + application.getVersion(), formId);
+				setUserFormId(formIds, application, formId);
 				// retain user form ids
 				session.setAttribute(USERFORMIDS,formIds);									
 			}			
 		}					
 		return formId;
+	}
+	
+	// used when resuming forms
+	public boolean doResumeForm(RapidRequest rapidRequest, String formId, String password) throws Exception {
+		// first check the password against the formId using the user-implemented method
+		boolean canResume = checkFormResume(rapidRequest, formId, password);
+		// get the user session (making a new one if need be)
+		HttpSession session = rapidRequest.getRequest().getSession();
+		// retrieve the form ids from the session
+		Map<String,String> formIds = (Map<String, String>) session.getAttribute(USERFORMIDS);
+		// instantiate if null
+		if (formIds == null) formIds = new HashMap<String, String>();
+		// get the application
+		Application application = rapidRequest.getApplication();
+		// check success
+		if (canResume) {			
+			// set the form id based on the app id and version
+			setUserFormId(formIds, application, formId);
+		} else {
+			// invalidate any current form
+			setUserFormId(formIds, application, null);
+		}
+		// return the result
+		return canResume;
 	}
 	
 	// this is called from the Rapid servelet and is the form submission and management of the form state in the user session 
@@ -235,7 +268,7 @@ public abstract class FormAdapter {
 		// null check
 		if (formIds != null) {
 			// empty the form id - invalidating the form
-			formIds.put(application.getId() + "-" + application.getVersion(), null);
+			setUserFormId(formIds, application, null);
 		}		
 	}
 	
