@@ -1762,8 +1762,8 @@ public class Page {
 		} else {
 			// get the id of the value object (should be a control Id)
 			String valueId = value.getId();
-			// retrieve and return it from the form adapater
-			return formAdapter.getFormControlValue(rapidRequest, valueId);
+			// retrieve and return it from the form adapater, but not if it's hidden
+			return formAdapter.getFormControlValue(rapidRequest, valueId, true);
 		}
 	}
 	
@@ -1859,10 +1859,7 @@ public class Page {
 						} // try 						
 					} // empty string check													
 				} // operation check						
-				
-				// log result
-				logger.debug("Page " + _id + " visibility check, " + _visibilityConditions.size() + " conditions, pass = " + pass);
-				
+												
 				// for the fast fail check whether we have an or
 				if ("or".equals(_conditionsType)) {
 					// if the conditions are or and we've just passed, we can stop checking further as we've passed in total
@@ -1873,6 +1870,9 @@ public class Page {
 				}
 				
 			} // condition loop
+			
+			// log result
+			logger.debug("Page " + _id + " visibility check, " + _visibilityConditions.size() + " conditions, pass = " + pass);
 			
 			// if we failed set the page values to null
 			if (!pass) formAdapter.setFormPageControlValues(rapidRequest, _id, null);

@@ -142,7 +142,7 @@ public abstract class FormAdapter {
 	public abstract void setFormPageControlValues(RapidRequest rapidRequest, String pageId, FormPageControlValues pageControlValues) throws Exception;
 	
 	// gets the value of a form control value	
-	public abstract String getFormControlValue(RapidRequest rapidRequest, String controlId) throws Exception;
+	public abstract String getFormControlValue(RapidRequest rapidRequest, String controlId, boolean notHidden) throws Exception;
 			
 	
 	// this html is written after the body tag

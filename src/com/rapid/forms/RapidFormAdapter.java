@@ -140,7 +140,7 @@ public class RapidFormAdapter extends FormAdapter {
 	
 	// uses our user session method to get a control value
 	@Override
-	public String getFormControlValue(RapidRequest rapidRequest, String controlId) throws Exception {
+	public String getFormControlValue(RapidRequest rapidRequest, String controlId, boolean notHidden) throws Exception {
 		// split the controlid
 		String[] controlIdParts = controlId.split("_");
 		// check we have enough to include the page
@@ -157,8 +157,8 @@ public class RapidFormAdapter extends FormAdapter {
 				if (pageControlValues != null) {
 					// loop them
 					for (FormControlValue controlValue : pageControlValues) {
-						// look for an id match
-						if (controlValue.getId().equals(controlId)) return controlValue.getValue();
+						// look for an id match, but not if hidden and not hidden is true
+						if (controlValue.getId().equals(controlId) && !(controlValue.getHidden() && notHidden)) return controlValue.getValue();						
 					}
 				} 
 			} // page has values

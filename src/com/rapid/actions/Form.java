@@ -82,7 +82,7 @@ public class Form extends Action {
 				// get the form adpater
 				FormAdapter formAdapter = application.getFormAdapter();
 				// get the value
-				String value = formAdapter.getFormControlValue(rapidRequest, getProperty("dataSource"));					
+				String value = formAdapter.getFormControlValue(rapidRequest, getProperty("dataSource"), false);					
 				// enclose it if we got something
 				if (value != null) value = "'" + value +"'";				
 				// use the set data if we got something
