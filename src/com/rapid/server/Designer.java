@@ -82,6 +82,7 @@ import com.rapid.core.Page;
 import com.rapid.core.Page.Lock;
 import com.rapid.core.Control;
 import com.rapid.core.Pages.PageHeader;
+import com.rapid.core.Pages.PageHeaders;
 import com.rapid.data.ConnectionAdapter;
 import com.rapid.data.DataFactory;
 import com.rapid.data.DataFactory.Parameters;
@@ -642,6 +643,58 @@ public class Designer extends RapidHttpServlet {
 								
 							}
 															
+						} else if ("getSummary".equals(actionName)) {
+							
+							// a string builder for the response
+							StringBuilder sb = new StringBuilder(); 
+							
+							// get the application
+							Application application = rapidRequest.getApplication();
+							
+							// get the page headers
+							PageHeaders pageHeaders = application.getPages().getSortedPages();
+							
+							// loop the page headers
+							for (PageHeader pageHeader : pageHeaders) {
+								// get the page
+								Page page = application.getPages().getPage(getServletContext(), pageHeader.getId());
+								// print the page name
+								sb.append(page.getName() + "<p/>\n");
+								// get the controls
+								List<Control> controls = page.getAllControls();
+								// loop them
+								for (Control control : controls) {
+									// get the name 
+									String name = control.getName();
+									// null check
+									if (name != null) {
+										if (name.trim().length() > 0) {											
+											// get the label
+											String label = control.getLabel();
+											// get the type
+											String type = control.getType();
+											// print the control name
+											sb.append(control.getId() + " (" + type + ")" + " - " + name + " : " + label + "<p/>");											
+										}
+									}
+								}
+							}
+													
+							// set response as json
+							response.setContentType("text/html");
+														
+							// get a writer from the response
+							PrintWriter out = response.getWriter();
+							
+							// write the output into the response
+							out.print("<html>\n  <head></head>\n  <body>\n" + sb.toString() + "  </body>\n</html>");
+							
+							// close the writer
+							out.close();
+							
+							// send it immediately
+							out.flush();
+							
 						} else if ("export".equals(actionName)) {
 							
 							// get the application
