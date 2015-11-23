@@ -2496,7 +2496,7 @@ $(document).ready( function() {
 								// control styles are always in the page and will not have an href
 								if (!styleSheet.href) {
 									// if this style sheets sits in the document head section retain it as the pageStyleSheet
-									if (styleSheet.ownerNode.parentNode.nodeName == "HEAD") _styleSheet = styleSheet;									
+									if (styleSheet.ownerNode && styleSheet.ownerNode.parentNode.nodeName == "HEAD") _styleSheet = styleSheet;									
 								} // in-page style check
 							} // style sheets loop
 						} // style sheets check
