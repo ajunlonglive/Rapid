@@ -141,7 +141,7 @@ public class Logic extends Action {
 				// if right side is System.true or System.false
 				if ("System.true".equals(rightId) || "System.false".equals(rightId)) {
 					// add an or clause with the literal
-					js += " || " + rightSide + " " + _operation + " '" + rightId.replace("System.", "") + "'";
+					js += " || " + leftSide + " " + _operation + " '" + rightId.replace("System.", "") + "'";
 					// going to need exrea brackets
 					brackets = true;
 				} 

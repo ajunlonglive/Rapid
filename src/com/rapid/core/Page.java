@@ -1803,7 +1803,6 @@ public class Page {
 			
 		} else {
 		
-
 			// log
 			logger.trace("Page " + _id + " " + _visibilityConditions.size() + " visibility condition(s) " + " : " + _conditionsType);
 			
@@ -1858,7 +1857,10 @@ public class Page {
 							logger.error("Error assessing page visibility page " + _id + " " + condition);		
 						} // try 						
 					} // empty string check													
-				} // operation check						
+				} // operation check					
+				
+				// log
+				logger.debug("Visibility condition for page " + _id + " : " + value1 + " " + condition.getOperation()+ " " + value2 + " , (" + condition + ") result is " + pass);
 												
 				// for the fast fail check whether we have an or
 				if ("or".equals(_conditionsType)) {
