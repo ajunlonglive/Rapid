@@ -234,12 +234,13 @@ public class RapidFormAdapter extends FormAdapter {
 
 	// submit the form - for the RapidFormAdapter it doesn't go anywhere but the user session state tracking is invalidated afterwards
 	@Override
-	public void submitForm(RapidRequest rapidRequest) throws Exception {
+	public String submitForm(RapidRequest rapidRequest) throws Exception {
+		return "your form has been submitted";
 	}
 	 	
 	@Override
-	public String getSubmittedHtml(RapidRequest rapidRequest) {
-		return "Thank you";
+	public String getSubmittedHtml(RapidRequest rapidRequest, String message) {
+		return "Thank you, " + message;
 	}
 
 	@Override

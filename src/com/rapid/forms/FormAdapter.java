@@ -164,11 +164,11 @@ public abstract class FormAdapter {
 	public abstract String getSummaryPagesEndHtml(RapidRequest rapidRequest, Application application);
 	
 	
-	// submits the form
-	public abstract void submitForm(RapidRequest rapidRequest) throws Exception;
+	// submits the form and receives a message for the submitted page
+	public abstract String submitForm(RapidRequest rapidRequest) throws Exception;
 				
 	// this html is written for successfully submitted forms
-	public abstract String getSubmittedHtml(RapidRequest rapidRequest);
+	public abstract String getSubmittedHtml(RapidRequest rapidRequest, String message);
 	
 	// this html is written for any forms where there was an error on submission
 	public abstract String getSubmittedExceptionHtml(RapidRequest rapidRequest, Exception ex);
@@ -256,9 +256,9 @@ public abstract class FormAdapter {
 	}
 	
 	// this is called from the Rapid servelet and is the form submission and management of the form state in the user session 
-	public void doFormSubmit(RapidRequest rapidRequest) throws Exception {
+	public String doFormSubmit(RapidRequest rapidRequest) throws Exception {
 		// first run the subitForm in the non-abstract class
-		submitForm(rapidRequest);
+		String message = submitForm(rapidRequest);
 		// get the user session
 		HttpSession session = rapidRequest.getRequest().getSession();
 		// retrieve the form ids from the session
@@ -270,6 +270,8 @@ public abstract class FormAdapter {
 			// empty the form id - invalidating the form
 			setUserFormId(formIds, application, null);
 		}		
+		// return the message
+		return message;
 	}
 	
 	// this writes the form summary page
@@ -395,7 +397,7 @@ public abstract class FormAdapter {
 	}
 	
 	// this write the form submit page if all was ok
-	public  void writeFormSubmitOK(RapidRequest rapidRequest, HttpServletResponse response, String formId) throws IOException, RapidLoadingException {
+	public  void writeFormSubmitOK(RapidRequest rapidRequest, HttpServletResponse response, String formId, String message) throws IOException, RapidLoadingException {
 					
 			// create a writer
 			PrintWriter writer = response.getWriter();
@@ -431,7 +433,7 @@ public abstract class FormAdapter {
 			writer.write("  <body>\n");
 			
 			// writer the adapter specific submission message
-			writer.write(getSubmittedHtml(rapidRequest));
+			writer.write(getSubmittedHtml(rapidRequest, message));
 			
 			// close the body and html
 			writer.write("  </body>\n</html>");
