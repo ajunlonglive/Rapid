@@ -14,6 +14,11 @@
         <password>admin</password>
         <roles>RapidAdmin</roles>
         <roles>RapidDesign</roles>
-        <!-- <roles>RapidSuper</roles> -->    
+    </users>
+    <users>
+        <description>Design user</description>
+        <name>design</name>
+        <password>design</password>
+        <roles>RapidDesign</roles>
     </users>
 </security>

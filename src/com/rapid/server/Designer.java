@@ -674,13 +674,10 @@ public class Designer extends RapidHttpServlet {
 											String label = control.getLabel();
 											// get the type
 											String type = control.getType();
+											// exclude panels, hidden values, and datastores
 											if (!"panel".equals(type) && !("hiddenvalue").equals(type) && !("dataStore").equals(type)) {
-												// Non-reusable code (Camden only for hiding next/back buttons but not apply button
-												if (!"Next".equals(label) && !"Back".equals(label)) {
-													// print the control name
-													sb.append("<tr><td>" + control.getId() +"</td><td>" + type + "</td><td>" + name + "</td><td>" + label + "</td></tr>");
-													//sb.append("<div>" + control.getId() + " (" + type + ")" + " - " + name + " : " + label + "</div><p/>\n");
-												}
+												// print the control name
+												sb.append("<tr><td>" + control.getId() +"</td><td>" + type + "</td><td>" + name + "</td><td>" + label + "</td></tr>");												
 											}
 										}
 									}
