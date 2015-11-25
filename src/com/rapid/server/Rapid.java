@@ -548,11 +548,11 @@ public class Rapid extends RapidHttpServlet {
 									
 									try {
 										
-										// do the submit (this will call the non-abstract submit and manage the form state)
-										formAdapter.doFormSubmit(rapidRequest);
+										// do the submit (this will call the non-abstract submit, manage the form state, and return with an applicable message)
+										String message = formAdapter.doFormSubmit(rapidRequest);
 										
 										// write the form submit OK page
-										formAdapter.writeFormSubmitOK(rapidRequest, response, formId);
+										formAdapter.writeFormSubmitOK(rapidRequest, response, formId, message);
 										
 									} catch (Exception ex) {
 										

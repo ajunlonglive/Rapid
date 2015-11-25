@@ -157,10 +157,10 @@ public class DataFactory {
 	public boolean getReadOnly(boolean readOnly) { return _readOnly; }	
 	public void setReadOnly(boolean readOnly) {	_readOnly = readOnly; }
 						
-	public PreparedStatement getPreparedStatement(RapidRequest rapidRequest, String SQL, ArrayList<Parameter> parameters) throws SQLException, ClassNotFoundException, ConnectionAdapterException  {
+	public PreparedStatement getPreparedStatement(RapidRequest rapidRequest, String sql, ArrayList<Parameter> parameters) throws SQLException, ClassNotFoundException, ConnectionAdapterException  {
 		
 		// some jdbc drivers need the line breaks in the sql replacing - here's looking at you MS SQL!
-		_sql = SQL.replace("\n", " ");
+		_sql = sql.replace("\n", " ");
 		
 		if (_connection == null) _connection = getConnection(rapidRequest);
 				
@@ -211,27 +211,39 @@ public class DataFactory {
 		
 	}
 	
-	public ResultSet getPreparedResultSet(RapidRequest rapidRequest, String SQL, ArrayList<Parameter> parameters) throws SQLException, ClassNotFoundException, ConnectionAdapterException {
+	public ResultSet getPreparedResultSet(RapidRequest rapidRequest, String sql, ArrayList<Parameter> parameters) throws SQLException, ClassNotFoundException, ConnectionAdapterException {
 				
-		_resultset = getPreparedStatement(rapidRequest, SQL, parameters).executeQuery();
+		_resultset = getPreparedStatement(rapidRequest, sql, parameters).executeQuery();
 		
 		return _resultset;
 				
 	}
 	
-	public ResultSet getPreparedResultSet(RapidRequest rapidRequest, String SQL) throws SQLException, ClassNotFoundException, ConnectionAdapterException {
+	public ResultSet getPreparedResultSet(RapidRequest rapidRequest, String sql) throws SQLException, ClassNotFoundException, ConnectionAdapterException {
 		
-		_resultset = getPreparedStatement(rapidRequest, SQL, null).executeQuery();
+		_resultset = getPreparedStatement(rapidRequest, sql, null).executeQuery();
 		
 		return _resultset;
 				
 	}
 	
-	public int getPreparedUpdate(RapidRequest rapidRequest,String SQL, ArrayList<Parameter> parameters) throws SQLException, ClassNotFoundException, ConnectionAdapterException {
+	public int getPreparedUpdate(RapidRequest rapidRequest, String sql, ArrayList<Parameter> parameters) throws SQLException, ClassNotFoundException, ConnectionAdapterException {
 		
-		return getPreparedStatement(rapidRequest, SQL, parameters).executeUpdate();
+		return getPreparedStatement(rapidRequest, sql, parameters).executeUpdate();
 		
-	}	
+	}
+	
+	public String getPreparedScalar(RapidRequest rapidRequest, String sql, ArrayList<Parameter> parameters) throws SQLException, ClassNotFoundException, ConnectionAdapterException {
+		
+		_resultset = getPreparedStatement(rapidRequest, sql, parameters).executeQuery();
+		
+		if (_resultset.next()) {
+			return _resultset.getString(1);
+		} else {
+			return null;
+		}
+		
+	}
 	
 	public void commit() throws SQLException {
 		
