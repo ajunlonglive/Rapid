@@ -659,10 +659,11 @@ public class Designer extends RapidHttpServlet {
 								// get the page
 								Page page = application.getPages().getPage(getServletContext(), pageHeader.getId());
 								// print the page name
-								sb.append(page.getName() + "<p/>\n");
+								sb.append(page.getName() + " - number of controls: " + page.getAllControls().size() + "<p/>\n");
 								// get the controls
 								List<Control> controls = page.getAllControls();
 								// loop them
+								sb.append("<table>");
 								for (Control control : controls) {
 									// get the name 
 									String name = control.getName();
@@ -673,11 +674,19 @@ public class Designer extends RapidHttpServlet {
 											String label = control.getLabel();
 											// get the type
 											String type = control.getType();
-											// print the control name
-											sb.append(control.getId() + " (" + type + ")" + " - " + name + " : " + label + "<p/>");											
+											if (!"panel".equals(type) && !("hiddenvalue").equals(type) && !("dataStore").equals(type)) {
+												// Non-reusable code (Camden only for hiding next/back buttons but not apply button
+												if (!"Next".equals(label) && !"Back".equals(label)) {
+													// print the control name
+													sb.append("<tr><td>" + control.getId() +"</td><td>" + type + "</td><td>" + name + "</td><td>" + label + "</td></tr>");
+													//sb.append("<div>" + control.getId() + " (" + type + ")" + " - " + name + " : " + label + "</div><p/>\n");
+												}
+											}
 										}
 									}
 								}
+								sb.append("</table>");
+								sb.append("<p/>\n");
 							}
 													
 							// set response as json
@@ -687,7 +696,7 @@ public class Designer extends RapidHttpServlet {
 							PrintWriter out = response.getWriter();
 							
 							// write the output into the response
-							out.print("<html>\n  <head></head>\n  <body>\n" + sb.toString() + "  </body>\n</html>");
+							out.print("<html>\n  <head>\n  <link rel='stylesheet' type='text/css' href='styles/summary.css'></link>\n  </head>\n  <body>\n" + sb.toString() + "  </body>\n</html>");
 							
 							// close the writer
 							out.close();
