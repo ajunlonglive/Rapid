@@ -119,8 +119,34 @@ public class Logic extends Action {
 			String js = "false";
 			// check we have everything we need to make a condition
 			if (_value1 != null && _operation != null && _value2 != null) {				
-				// construct the condition
-				js = _value1.getArgument(servletContext, application, page) + " " + _operation + " " + _value2.getArgument(servletContext, application, page);
+				// get the left side
+				String leftSide = _value1.getArgument(servletContext, application, page);
+				// get the right side
+				String rightSide = _value2.getArgument(servletContext, application, page);
+				// construct the condition simply
+				js = leftSide + " " + _operation + " " + rightSide;
+				// assume no brackets required
+				boolean brackets = false;
+				// get the leftId
+				String leftId = _value1.getId();
+				// if left side is System.true or System.false
+				if ("System.true".equals(leftId) || "System.false".equals(leftId)) {
+					// add an or clause with the literal
+					js += " || " + "'" + leftId.replace("System.", "") + "' "  + _operation + " " + rightSide;
+					// going to need exrea brackets
+					brackets = true;
+				} 
+				// get the rightId
+				String rightId = _value2.getId();
+				// if right side is System.true or System.false
+				if ("System.true".equals(rightId) || "System.false".equals(rightId)) {
+					// add an or clause with the literal
+					js += " || " + rightSide + " " + _operation + " '" + rightId.replace("System.", "") + "'";
+					// going to need exrea brackets
+					brackets = true;
+				} 
+				// if we needed brackets
+				if (brackets) js = "(" + js + ")";
 			}
 			return js;
 		}

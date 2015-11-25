@@ -1358,14 +1358,28 @@ function loadApps(selectedAppId, forceLoad) {
         	appsDropDown.html(options);
         	// retain all the apps data
         	_apps = apps;        	       	
-        	// load the app and its pages in the drop down if we weren't handed one
-        	if (!selectedAppId || forceLoad) {
-        		loadVersions();
+        	// if we got some apps
+        	if (apps.length > 0) {
+	        	// load the app and its pages in the drop down if we weren't handed one
+	        	if (!selectedAppId || forceLoad) {
+	        		// load the versions for the app, or top app
+	        		loadVersions();
+	        	} else {
+	        		// show the designer
+	        		showDesigner();
+	        	}
         	} else {
+        		// disable a bunch of stuff as there there are no apps
+        		$("#appDelete").attr("disabled","disabled");
+        		$("#appEdit").attr("disabled","disabled");
+        		$("#pageNew").attr("disabled","disabled");
+        		$("#pageEdit").attr("disabled","disabled");
+        		$("#pageSave").attr("disabled","disabled");
+        		$("#pageView").attr("disabled","disabled");        		
+        		$("#pageViewNewTab").attr("disabled","disabled");        		
         		// show the designer
         		showDesigner();
-        	}
-        	
+        	}        	
         }
 	});
 }
@@ -1649,6 +1663,7 @@ function loadVersion(forceLoad) {
 		$("#pageEdit").attr("disabled","disabled");
 		$("#pageSave").attr("disabled","disabled");
 		$("#pageView").attr("disabled","disabled");
+		$("#pageViewNewTab").attr("disabled","disabled");
 		// show the designer
 		showDesigner();
 	} // no app id
@@ -1719,6 +1734,7 @@ function loadPages(selectedPageId, forceLoad) {
         		$("#pageEdit").removeAttr("disabled");
         		$("#pageSave").removeAttr("disabled");
         		$("#pageView").removeAttr("disabled");
+        		$("#pageViewNewTab").removeAttr("disabled");
         		// only if we have to do we load the selected page
         		if (forceLoad) loadPage();
         	} else {
@@ -1729,6 +1745,7 @@ function loadPages(selectedPageId, forceLoad) {
         		$("#pageEdit").attr("disabled","disabled");
         		$("#pageSave").attr("disabled","disabled");
         		$("#pageView").attr("disabled","disabled");
+        		$("#pageViewNewTab").attr("disabled","disabled");
         		// empty the page map
             	$("#pageMapList").children().remove();
         		// show the designer

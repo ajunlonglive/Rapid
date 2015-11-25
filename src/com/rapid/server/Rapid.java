@@ -402,39 +402,51 @@ public class Rapid extends RapidHttpServlet {
 								// check the user password
 								if (security.checkUserPassword(getAppsRequest, rapidRequest.getUserName(), rapidRequest.getUserPassword())) {
 									
-									// create a json object for the details of this application
-									JSONObject jsonApp = new JSONObject();
-									// add details
-									jsonApp.put("id", app.getId());
-									jsonApp.put("version", app.getVersion());
-									jsonApp.put("title", app.getTitle());								
-									// add app to our main array
-									jsonApps.put(jsonApp);
+									// assume can add
+									boolean canAdd = true;
+																											
+									if ("rapid".equals(app.getId())) {
+										// must have RapidAdmin or RapidSuper to see Rapid app
+										canAdd = security.checkUserRole(rapidRequest, Rapid.ADMIN_ROLE) || security.checkUserRole(rapidRequest, Rapid.SUPER_ROLE);
+									}
 									
-									// check if we are testing
-									if (forTesting) {
-										
-										// if the user has Rapid Design for this application, (or Rpaid Super if this is the rapid app)
-										if (security.checkUserRole(rapidRequest, Rapid.DESIGN_ROLE) && (!app.getId().equals("rapid") || security.checkUserRole(rapidRequest, Rapid.SUPER_ROLE))) {
+									if (canAdd) {
+										// create a json object for the details of this application
+										JSONObject jsonApp = new JSONObject();
+										// add details
+										jsonApp.put("id", app.getId());
+										jsonApp.put("version", app.getVersion());
+										jsonApp.put("title", app.getTitle());								
+										// add app to our main array
+										jsonApps.put(jsonApp);
+									
+									
+										// check if we are testing
+										if (forTesting) {
 											
-											// loop the versions
-											for (Application version :	getApplications().getVersions(app.getId()).sort()) {
+											// if the user has Rapid Design for this application, (or Rpaid Super if this is the rapid app)
+											if (security.checkUserRole(rapidRequest, Rapid.DESIGN_ROLE) && (!app.getId().equals("rapid") || security.checkUserRole(rapidRequest, Rapid.SUPER_ROLE))) {
 												
-												// create a json object for the details of this version
-												jsonApp = new JSONObject();
-												// add details
-												jsonApp.put("id", version.getId());
-												jsonApp.put("version", version.getVersion());
-												jsonApp.put("status", version.getStatus());										
-												jsonApp.put("title", version.getTitle());
-												jsonApp.put("test", true);
-												// add app to our main array
-												jsonApps.put(jsonApp);
-											}
-											
-										} // got design role
-																			
-									} // forTesting check
+												// loop the versions
+												for (Application version :	getApplications().getVersions(app.getId()).sort()) {
+													
+													// create a json object for the details of this version
+													jsonApp = new JSONObject();
+													// add details
+													jsonApp.put("id", version.getId());
+													jsonApp.put("version", version.getVersion());
+													jsonApp.put("status", version.getStatus());										
+													jsonApp.put("title", version.getTitle());
+													jsonApp.put("test", true);
+													// add app to our main array
+													jsonApps.put(jsonApp);
+												}
+												
+											} // got design role
+																				
+										} // forTesting check
+										
+									} // rapid app extra check
 									
 								} // user check
 								
