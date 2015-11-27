@@ -31,6 +31,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -38,6 +39,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.rapid.core.Application;
+import com.rapid.core.Control;
 import com.rapid.core.Page;
 import com.rapid.core.Application.RapidLoadingException;
 import com.rapid.core.Pages.PageHeader;
@@ -345,10 +347,32 @@ public abstract class FormAdapter {
 					// if we got some
 					if (pageControlValues.size() > 0) {
 					
-						// loop the page control values
-						for (FormControlValue controlValue : pageControlValues) {
-							// write the control value!
-							valuesStringBuilder.append(getSummaryControlValueHtml(rapidRequest, _application, page, controlValue));
+						// get all page controls (in display order)
+						List<Control> pageControls = page.getAllControls();
+					
+						// loop the page controls
+						for (Control control : pageControls) {
+							
+							// loop the page control values
+							for (FormControlValue controlValue : pageControlValues) {
+																						
+								// look for an id match
+								if (control.getId().equals(controlValue.getId())) {
+							
+									// write the control value!
+									valuesStringBuilder.append(getSummaryControlValueHtml(rapidRequest, _application, page, controlValue));
+									// we've found a match so are done with this controlValue
+									pageControlValues.remove(controlValue);
+									// exit this loop
+									break;
+																		
+								}
+								
+							}
+							
+							// if there are no controlValues left we can stop entirely
+							if (pageControlValues.size() == 0) break;
+							
 						}
 						
 					} // control values length > 0
@@ -399,100 +423,100 @@ public abstract class FormAdapter {
 	// this write the form submit page if all was ok
 	public  void writeFormSubmitOK(RapidRequest rapidRequest, HttpServletResponse response, String formId, String message) throws IOException, RapidLoadingException {
 					
-			// create a writer
-			PrintWriter writer = response.getWriter();
+		// create a writer
+		PrintWriter writer = response.getWriter();
+				
+		// set the response type
+		response.setContentType("text/html");
+		
+		// this doctype is necessary (amongst other things) to stop the "user agent stylesheet" overriding styles
+		writer.write("<!DOCTYPE html>\n");
+																						
+		// open the html
+		writer.write("<html>\n");
+		
+		// open the head
+		writer.write("  <head>\n");
+		
+		// write a title
+		writer.write("    <title>Form submitted - by Rapid</title>\n");
+		
+		// get the servletContext
+		ServletContext servletContext = rapidRequest.getRapidServlet().getServletContext();
+		
+		// get app start page
+		Page startPage = _application.getStartPage(servletContext);
 					
-			// set the response type
-			response.setContentType("text/html");
-			
-			// this doctype is necessary (amongst other things) to stop the "user agent stylesheet" overriding styles
-			writer.write("<!DOCTYPE html>\n");
-																							
-			// open the html
-			writer.write("<html>\n");
-			
-			// open the head
-			writer.write("  <head>\n");
-			
-			// write a title
-			writer.write("    <title>Form submitted - by Rapid</title>\n");
-			
-			// get the servletContext
-			ServletContext servletContext = rapidRequest.getRapidServlet().getServletContext();
-			
-			// get app start page
-			Page startPage = _application.getStartPage(servletContext);
-						
-			// write the start page head (and it's resources)
-			writer.write(startPage.getResourcesHtml(_application, true));
-			
-			// close the head
-			writer.write("  </head>\n");
-			
-			// open the body
-			writer.write("  <body>\n");
-			
-			// writer the adapter specific submission message
-			writer.write(getSubmittedHtml(rapidRequest, message));
-			
-			// close the body and html
-			writer.write("  </body>\n</html>");
-																																		
-			// close the writer
-			writer.close();
-			
-			// flush the writer
-			writer.flush();
+		// write the start page head (and it's resources)
+		writer.write(startPage.getResourcesHtml(_application, true));
+		
+		// close the head
+		writer.write("  </head>\n");
+		
+		// open the body
+		writer.write("  <body>\n");
+		
+		// writer the adapter specific submission message
+		writer.write(getSubmittedHtml(rapidRequest, message));
+		
+		// close the body and html
+		writer.write("  </body>\n</html>");
+																																	
+		// close the writer
+		writer.close();
+		
+		// flush the writer
+		writer.flush();
 						
 	}
 	
 	// this write the form submit page if all was ok
 	public  void writeFormSubmitError(RapidRequest rapidRequest, HttpServletResponse response, String formId, Exception ex) throws IOException, RapidLoadingException {
 					
-			// create a writer
-			PrintWriter writer = response.getWriter();
+		// create a writer
+		PrintWriter writer = response.getWriter();
+				
+		// set the response type
+		response.setContentType("text/html");
+		
+		// this doctype is necessary (amongst other things) to stop the "user agent stylesheet" overriding styles
+		writer.write("<!DOCTYPE html>\n");
+																						
+		// open the html
+		writer.write("<html>\n");
+		
+		// open the head
+		writer.write("  <head>\n");
+		
+		// write a title
+		writer.write("    <title>Form submit error - by Rapid</title>\n");
+		
+		// get the servletContext
+		ServletContext servletContext = rapidRequest.getRapidServlet().getServletContext();
+		
+		// get app start page
+		Page startPage = _application.getStartPage(servletContext);
 					
-			// set the response type
-			response.setContentType("text/html");
-			
-			// this doctype is necessary (amongst other things) to stop the "user agent stylesheet" overriding styles
-			writer.write("<!DOCTYPE html>\n");
-																							
-			// open the html
-			writer.write("<html>\n");
-			
-			// open the head
-			writer.write("  <head>\n");
-			
-			// write a title
-			writer.write("    <title>Form submit error - by Rapid</title>\n");
-			
-			// get the servletContext
-			ServletContext servletContext = rapidRequest.getRapidServlet().getServletContext();
-			
-			// get app start page
-			Page startPage = _application.getStartPage(servletContext);
-						
-			// write the start page head (and it's resources)
-			writer.write(startPage.getResourcesHtml(_application, true));
-			
-			// close the head
-			writer.write("  </head>\n");
-			
-			// open the body
-			writer.write("  <body>\n");
-			
-			// write the adapter specific error html
-			writer.write(getSubmittedExceptionHtml(rapidRequest, ex));
-			
-			// close the body and html
-			writer.write("  </body>\n</html>");
-																																		
-			// close the writer
-			writer.close();
-			
-			// flush the writer
-			writer.flush();
+		// write the start page head (and it's resources)
+		writer.write(startPage.getResourcesHtml(_application, true));
+		
+		// close the head
+		writer.write("  </head>\n");
+		
+		// open the body
+		writer.write("  <body>\n");
+		
+		// write the adapter specific error html
+		writer.write(getSubmittedExceptionHtml(rapidRequest, ex));
+		
+		// close the body and html
+		writer.write("  </body>\n</html>");
+																																	
+		// close the writer
+		writer.close();
+		
+		// flush the writer
+		writer.flush();
 						
 	}
 	
@@ -529,32 +553,29 @@ public abstract class FormAdapter {
 						// if more than 1 part
 						if (parts.length > 1) {
 							// url decode value 
-							try {
-								// url decode the value
-								value = URLDecoder.decode(parts[1],"UTF-8");
-								// if this is the hidden values
-								if (id.endsWith("_hiddenControls")) {
-									// retain the hidden values
-									hiddenControls = value.split(",");
-								} else	{
-									// if we have hidden controls to check
-									if (hiddenControls != null) {								
-										// loop the hidden controls
-										for (String hiddenControl : hiddenControls) {
-											// if there's a match
-											if (id.equals(hiddenControl)) {
-												// retain as hidden
-												hidden = true;
-												// we're done
-												break;
-											}
-										}
-									}
-									// add name value pair
-									pageControlValues.add(id, value, hidden);
-								}
-							} catch (UnsupportedEncodingException ex) {}				
+							try {  value = URLDecoder.decode(parts[1],"UTF-8"); } catch (UnsupportedEncodingException ex) {}				
 						} // parts > 0													
+						// if this is the hidden values
+						if (id.endsWith("_hiddenControls")) {
+							// retain the hidden values
+							hiddenControls = value.split(",");
+						} else	{
+							// if we have hidden controls to check
+							if (hiddenControls != null) {								
+								// loop the hidden controls
+								for (String hiddenControl : hiddenControls) {
+									// if there's a match
+									if (id.equals(hiddenControl)) {
+										// retain as hidden
+										hidden = true;
+										// we're done
+										break;
+									} // this is a hidden control
+								} // loop the hidden controls
+							} // got hidden controls to check
+							// add name value pair
+							pageControlValues.add(id, value, hidden);
+						} // ends with hidden controls						
 					}	// id .length > 0
 				} // id != null																
 			} // param loop			

@@ -10,7 +10,7 @@ gareth.edwards@rapid-is.co.uk
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version. The terms require you to include
@@ -69,6 +69,14 @@ return ["false","true"];
 	            <refreshHtml>true</refreshHtml>  
 	        </property>	
 	        
+	        <property>
+	            <key>value</key>
+	            <name>Value</name>
+	            <setConstructValueFunction>return "true";</setConstructValueFunction>
+	            <changeValueJavaScript>text</changeValueJavaScript>	   
+	            <refreshHtml>true</refreshHtml>           
+	        </property>	
+	        
 	         <property>
 	            <key>text</key>
 	            <name>Text</name>
@@ -84,12 +92,18 @@ var checked = "";
 
 if (this.checked == "true" || this.checked == true) checked=" checked='checked'";
 
-var checkbox = "<input id='" + this.id + "'  name='" + this.id + "' type='checkbox' class='checkbox" + getStyleClasses(this) + "'" + checked + " value='true'></input>";
+var value = "true";
+if (this.value) value = this.value;
+
+// this is the hidden input with no value to stand in for the checkbox on a form post when the checkbox is null
+var html = "<input type='hidden' name='" +  this.id + "' value=''></input>"; 
+// the checkbox proper
+html += "<input id='" + this.id + "'  name='" + this.id + "' type='checkbox' class='checkbox" + getStyleClasses(this) + "'" + checked + " value='" + value + "'></input>";
 
 if (this.text) {
-	return "<label for='" + this.id + "'>" + checkbox + this.text + "</label>";
+	return "<label for='" + this.id + "'>" + html + this.text + "</label>";
 } else {
-	return checkbox
+	return html
 }
 	        ]]>
 	    </getHtmlFunction> 
