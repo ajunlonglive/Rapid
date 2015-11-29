@@ -176,28 +176,48 @@ public abstract class FormAdapter {
 	public abstract String getSubmittedExceptionHtml(RapidRequest rapidRequest, Exception ex);
 
 	// protected instance methods
+		
+	protected String getUserFormId(RapidRequest rapidRequest) {
+		// get the user session (without making a new one)
+		HttpSession session = rapidRequest.getRequest().getSession(false);
+		// get the form ids map from the session
+		Map<String,String> formIds = (Map<String, String>) session.getAttribute(USERFORMIDS);
+		// check we got some
+		if (formIds == null) {
+			return null;
+		} else {
+			// get the application
+			Application application = rapidRequest.getApplication();
+			// return the user form id for a given app id / version
+			return formIds.get(application.getId() + "-" + application.getVersion());
+		}
+	}
 	
-	protected void setUserFormId(Map<String,String> formIds, Application application, String formId) {
-		// put into form ids
-		formIds.put(application.getId() + "-" + application.getVersion(), formId);
+	protected void setUserFormId(RapidRequest rapidRequest, String formId) {
+		// get the user session (making a new one if need be)
+		HttpSession session = rapidRequest.getRequest().getSession();
+		// get the form ids
+		Map<String,String> formIds = (Map<String, String>) session.getAttribute(USERFORMIDS);
+		// make some if we didn't get
+		if (formIds == null)  formIds = new HashMap<String, String>(); 					
+		// get the application
+		Application application = rapidRequest.getApplication();
+		// store the form if for a given app id / version
+		formIds.put(application.getId() + "-" + application.getVersion(), formId);		
+		// update the session with the new form ids
+		session.setAttribute(USERFORMIDS, formIds);		
 	}
 	
 	// public instance methods
 	
 	// this looks for a form id in the user session and uses the adapter specific getNewId routine if one is allowed. Returning null sends the user to the start page
-	public String getFormId(RapidRequest rapidRequest) throws Exception {
-		// get the user session (making a new one if need be)
-		HttpSession session = rapidRequest.getRequest().getSession();
-		// retrieve the form ids from the session
-		Map<String,String> formIds = (Map<String, String>) session.getAttribute(USERFORMIDS);
-		// instantiate if null
-		if (formIds == null) formIds = new HashMap<String, String>();
-		// get the application
-		Application application = rapidRequest.getApplication();
-		// get the form id based on the app id and version
-		String formId = formIds.get(application.getId() + "-" + application.getVersion());
+	public String getFormId(RapidRequest rapidRequest) throws Exception {		
+		// get the form id using what's in the request
+		String formId = getUserFormId(rapidRequest);
 		// if it's null
 		if (formId == null) {			
+			// get the application
+			Application application = rapidRequest.getApplication();
 			// get the start page header
 			String startPageId = application.getPages().getSortedPages().get(0).getId();
 			// get the requested Page
@@ -225,9 +245,7 @@ public abstract class FormAdapter {
 				// get a new form id from the adapter
 				formId = getNewFormId(rapidRequest);
 				// put into form ids
-				setUserFormId(formIds, application, formId);
-				// retain user form ids
-				session.setAttribute(USERFORMIDS,formIds);									
+				setUserFormId(rapidRequest, formId);						
 			}			
 		}					
 		return formId;
@@ -237,22 +255,14 @@ public abstract class FormAdapter {
 	public boolean doResumeForm(RapidRequest rapidRequest, String formId, String password) throws Exception {
 		// first check the password against the formId using the user-implemented method
 		boolean canResume = checkFormResume(rapidRequest, formId, password);
-		// get the user session (making a new one if need be)
-		HttpSession session = rapidRequest.getRequest().getSession();
-		// retrieve the form ids from the session
-		Map<String,String> formIds = (Map<String, String>) session.getAttribute(USERFORMIDS);
-		// instantiate if null
-		if (formIds == null) formIds = new HashMap<String, String>();
-		// get the application
-		Application application = rapidRequest.getApplication();
 		// check success
 		if (canResume) {			
 			// set the form id based on the app id and version
-			setUserFormId(formIds, application, formId);
+			setUserFormId(rapidRequest, formId);
 		} else {
 			// invalidate any current form
-			setUserFormId(formIds, application, null);
-		}
+			setUserFormId(rapidRequest, null);
+		}		
 		// return the result
 		return canResume;
 	}
@@ -261,17 +271,8 @@ public abstract class FormAdapter {
 	public String doFormSubmit(RapidRequest rapidRequest) throws Exception {
 		// first run the subitForm in the non-abstract class
 		String message = submitForm(rapidRequest);
-		// get the user session
-		HttpSession session = rapidRequest.getRequest().getSession();
-		// retrieve the form ids from the session
-		Map<String,String> formIds = (Map<String, String>) session.getAttribute(USERFORMIDS);
-		// get the application
-		Application application = rapidRequest.getApplication();
-		// null check
-		if (formIds != null) {
-			// empty the form id - invalidating the form
-			setUserFormId(formIds, application, null);
-		}		
+		// empty the form id - invalidating the form
+		setUserFormId(rapidRequest, null);
 		// return the message
 		return message;
 	}
@@ -556,7 +557,7 @@ public abstract class FormAdapter {
 							try {  value = URLDecoder.decode(parts[1],"UTF-8"); } catch (UnsupportedEncodingException ex) {}				
 						} // parts > 0													
 						// if this is the hidden values
-						if (id.endsWith("_hiddenControls")) {
+						if (id.endsWith("_hiddenControls") && value != null) {
 							// retain the hidden values
 							hiddenControls = value.split(",");
 						} else	{
