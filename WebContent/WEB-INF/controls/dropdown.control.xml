@@ -104,9 +104,9 @@ if (this.options || this.valueList) {
 	// loop the options
 	for (var i in options) {		
 		if (codes) {
-			html += "<option value='" + options[i].value + "'" + (this.value == options[i].value ? " selected='selected'" : "") + ">" + options[i].text + "</option>";
+			html += "<option value='" + escapeApos(options[i].value) + "'" + (escapeApos(this.value) == escapeApos(options[i].value) ? " selected='selected'" : "") + ">" + options[i].text + "</option>";
 		} else {
-			html += "<option" + (this.value == options[i].text ? " selected='selected'" : "") + ">" + options[i].text + "</option>";
+			html += "<option" + (escapeApos(this.value) == options[i].text ? " selected='selected'" : "") + ">" + options[i].text + "</option>";
 		}
 	}
 }
