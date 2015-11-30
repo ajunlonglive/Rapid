@@ -465,13 +465,22 @@ function getDataItemDetails(id) {
 	}
 }
 
+// escape single apostophe's in values
+function escapeApos(value) {
+	if (value) {
+		return value.replace("'","&apos;");
+	} else {
+		return value;
+	}
+}
+
 // a standard handler for text properties
 function Property_text(cell, propertyObject, property, details) {
 	var value = "";
 	// set the value if it exists
 	if (propertyObject[property.key]) value = propertyObject[property.key];
 	// append the adjustable form control
-	cell.append("<input class='propertiesPanelTable' value='" + value + "' />");
+	cell.append("<input class='propertiesPanelTable' value='" + escapeApos(value) + "' />");
 	// get a reference to the form control
 	var input = cell.children().last();
 	// add a listener to update the property
@@ -504,7 +513,7 @@ function Property_integer(cell, propertyObject, property, details) {
 	// set the value if it exists (or is 0)
 	if (propertyObject[property.key] || parseInt(propertyObject[property.key]) == 0) value = propertyObject[property.key];
 	// append the adjustable form control
-	cell.append("<input class='propertiesPanelTable' value='" + value + "' />");
+	cell.append("<input class='propertiesPanelTable' value='" + escapeApos(value) + "' />");
 	// get a reference to the form control
 	var input = cell.children().last();
 	// add a listener to set the property back if not an integer
@@ -593,9 +602,9 @@ function Property_select(cell, propertyObject, property, details, changeFunction
 					if (!text) text = value;
 					// if the value is matched add selected
 					if (propertyObject[property.key] == value) {
-						options += "<option value='" + value + "' selected='selected'>" + text + "</option>";
+						options += "<option value='" + escapeApos(value) + "' selected='selected'>" + text + "</option>";
 					} else {
-						options += "<option value='" + value + "'>" + text + "</option>";
+						options += "<option value='" + escapeApos(value) + "'>" + text + "</option>";
 					}
 				}
 			}
@@ -678,7 +687,7 @@ function Property_fields(cell, action, property, details) {
 			text += fields[i];
 			if (i < fields.length -1) text += ", ";
 			// add it to the table
-			table.append("<tr><td><input value='" + fields[i] + "'/></td><td style='width:32px'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
+			table.append("<tr><td><input value='" + escapeApos(fields[i]) + "'/></td><td style='width:32px'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
 		}
 				
 	}
@@ -771,7 +780,7 @@ function Property_galleryImages(cell, gallery, property, details) {
 		// set caption to empty string if not set
 		if (!image.caption) image.caption = "";
 		// append
-		table.append("<tr><td><input class='url' value='" + image.url + "' style='max-width:none;width:100%;' /></td>" + (gallery.gotCaptions ? "<td><input class='caption' value='" + image.caption + "' /></td>" : "") + "<td style='width:32px'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
+		table.append("<tr><td><input class='url' value='" + escapeApos(image.url) + "' style='max-width:none;width:100%;' /></td>" + (gallery.gotCaptions ? "<td><input class='caption' value='" + escapeApos(image.caption) + "' /></td>" : "") + "<td style='width:32px'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
 	}
 	
 	// add the url change listeners
@@ -944,7 +953,7 @@ function Property_pageName(cell, page, property, details) {
 	// get the value from the page name
 	var value = page.name;
 	// append the adjustable form control
-	cell.append("<input class='propertiesPanelTable' value='" + value + "' />");
+	cell.append("<input class='propertiesPanelTable' value='" + escapeApos(value) + "' />");
 	// get a reference to the form control
 	var input = cell.children().last();
 	// add a listener to update the property
@@ -3186,7 +3195,7 @@ function Property_flowLayoutCellWidth(cell, flowLayout, property, details) {
 	// set the value if it exists
 	if (flowLayout[property.key]) value = flowLayout[property.key];
 	// append the adjustable form control
-	cell.append("<input value='" + value + "' />");
+	cell.append("<input value='" + escapeApos(value) + "' />");
 	// get a reference to the form control
 	var input = cell.children().last();
 	// add a listener to update the property
@@ -3827,7 +3836,7 @@ function Property_mapLatLng(cell, propertyObject, property, details) {
 	// set the value if it exists
 	if (propertyObject[property.key] || parseInt(propertyObject[property.key]) == 0) value = propertyObject[property.key];
 	// append the adjustable form control
-	cell.append("<input value='" + value + "' />");
+	cell.append("<input value='" + escapeApos(value) + "' />");
 	// get a reference to the form control
 	var input = cell.children().last();
 	// add a listener to return the property value if not a number
@@ -3856,7 +3865,7 @@ function Property_mapZoom(cell, propertyObject, property, details) {
 	// set the value if it exists (or is 0)
 	if (propertyObject[property.key] || parseInt(propertyObject[property.key]) == 0) value = propertyObject[property.key];
 	// append the adjustable form control
-	cell.append("<input value='" + value + "' />");
+	cell.append("<input value='" + escapeApos(value) + "' />");
 	// get a reference to the form control
 	var input = cell.children().last();
 	// add a listener to update the property
