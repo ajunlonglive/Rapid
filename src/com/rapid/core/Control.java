@@ -53,6 +53,7 @@ import org.w3c.dom.Node;
 import com.rapid.core.Action;
 import com.rapid.server.RapidHttpServlet;
 import com.rapid.server.RapidRequest;
+import com.rapid.utils.Numbers;
 
 @XmlRootElement
 @XmlType(namespace="http://rapid-is.co.uk/core")
@@ -468,8 +469,18 @@ public class Control {
 						
 					} else if ("field".equals(type)) {
 						
-						// pass the field as a value
-						return "'" + (field == null ? "" : field.replace("'", "\\'")) + "'";
+						// work out if field is numeric
+						if (Numbers.isNumber(field)) {
+							
+							// pass the field as a numeric value
+							return field;
+							
+						} else {
+						
+							// pass the field as a string value
+							return "'" + (field == null ? "" : field.replace("'", "\\'")) + "'";
+							
+						}
 						
 					} else {
 						

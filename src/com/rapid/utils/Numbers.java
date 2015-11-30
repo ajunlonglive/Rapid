@@ -25,7 +25,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
 package com.rapid.utils;
 
-public class Integers {
+public class Numbers {
 	
 	public static boolean isInteger(String str) {
 		if (str == null) {
@@ -49,6 +49,30 @@ public class Integers {
 			}
 		}
 		return true;
+	}
+	
+	public static boolean isNumber(String string) {
+	    if (string == null || string.isEmpty()) {
+	        return false;
+	    }
+	    int i = 0;
+	    if (string.charAt(0) == '-') {
+	        if (string.length() > 1) {
+	            i++;
+	        } else {
+	            return false;
+	        }
+	    }
+	    int d = 0;
+	    for (; i < string.length(); i++) {
+	    	if (string.charAt(i) == '.') {	    		
+	    		if (d > 0) return false;
+	    		d++;
+	    	} else if (!Character.isDigit(string.charAt(i))) {
+	            return false;
+	        }
+	    }
+	    return true;
 	}
 
 }
