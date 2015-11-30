@@ -34,9 +34,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
-
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
+import javax.xml.bind.DatatypeConverter;
 
 public class Encryption {
 	
@@ -48,11 +46,11 @@ public class Encryption {
 	}
         
     public static String base64Encode(byte[] bytes) {
-        return new BASE64Encoder().encode(bytes);
+        return DatatypeConverter.printBase64Binary(bytes);
     }
     
     public static byte[] base64Decode(String value) throws IOException {
-        return new BASE64Decoder().decodeBuffer(value);
+        return DatatypeConverter.parseBase64Binary(value);
     }
 
     public static String encrypt(String value, char[] password, byte[] salt) throws GeneralSecurityException, UnsupportedEncodingException {
