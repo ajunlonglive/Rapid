@@ -139,7 +139,7 @@ if (this.buttons || this.valueList) {
 		if (this.valueList) label = button.text;		
 		var value = (codes ? button.value : label);
 		if (this.buttonposition == 'R') radiobuttonHtml += label;
-		radiobuttonHtml += "<input type='radio' name='" + (this.group ? this.group : this.id) + "' id='" + this.id + i + "' value='" + value + "' " + (this.value == value ? "checked='checked'" :  "") + "></input>";
+		radiobuttonHtml += "<input type='radio' name='" + (this.group ? escapeApos(this.group) : this.id) + "' id='" + this.id + i + "' value='" + escapeApos(value) + "' " + (this.value == value ? "checked='checked'" :  "") + "></input>";
 		if (this.buttonposition == 'L') radiobuttonHtml += label;
 		if (this.layout == 'V') radiobuttonHtml += "<br/>";
 	}

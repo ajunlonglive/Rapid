@@ -568,6 +568,7 @@ function setData_checkbox(ev, id, field, details, data, changeEvents) {
   		}
   	} 
   }
+  if (value == "false") value = false;
   control.prop('checked', value);
   if (changeEvents) control.trigger("change");
 }

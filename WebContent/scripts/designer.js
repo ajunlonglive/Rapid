@@ -7,7 +7,7 @@ gareth.edwards@rapid-is.co.uk
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version. The terms require you to include
@@ -1560,84 +1560,87 @@ function loadVersion(forceLoad) {
     			// add it's name as a help hint
     			addHelp("c_" + c.type, false, false, c.name);
     			    			    			
-    			// when the mouse moves down on this component
-    			li.on("mousedown touchstart", function(ev) {		
-    				
-    				// add an undo for the whole page
-    				addUndo(true);
-    				
-    				// stop text selection as we are moving the new object
-    				$("body").css({
-    					"-webkit-touch-callout":"none",
-    					"-webkit-user-select":"none",
-    					"-khtml-user-select":"none",
-    					"-moz-user-select":"-moz-none",
-    					"-ms-user-select":"none",
-    					"user-select":"none"
-    				});	
-    							
-    				// hide the panel if not pinned
-    				if (!_panelPinned) hideControlPanel();
-    				
-    				// hide the properties
-    				hidePropertiesPanel();
-    				
-    				// get the control constructor name (way easier to use an attribute than closures)
-    				var className = $(ev.target).attr("data-control");
-    				if (!className) className = $(ev.target).parent().attr("data-control");
-    				
-					// get the control constructor
-					var controlClass = _controlTypes[className];
-					
-					// there is a function to create this control
-					if (controlClass) {    						
-						// instantiate the control with the _page as the parent
-						var control = new Control(className, _page, null, true);										
-						// size the border for the control while it is still visible		
-						sizeBorder(control);
-						// set the mouseDown offsets so when we drag the mouse is in the center
-						_mouseDownXOffset = -control.object.outerWidth()/2 - _panelPinnedOffset;
-						_mouseDownYOffset = -control.object.outerHeight()/2;				
-						// hide the control's object as we have the geometery we need
-						control.object.hide();
-						// show the selection border
-						_selectionBorder.show();	
-						// set its parent to the _page
-						control._parent = _page;
-						// add it to the _page childControls collection
-						_page.childControls.push(control);					
-						// retain a reference to the selected control					
-						_selectedControl = control;	
-						// show the properties
-						showProperties(_selectedControl);
-						// show the validation
-						showValidation(_selectedControl);
-						// show the events (and any actions)
-						showEvents(_selectedControl);
-						// show the styles
-						showStyles(_selectedControl);
-						// arrange the non-visible controls if our control looks like one
-						if (!controlClass.canUserMove) arrangeNonVisibleControls();
-						// set the _mouseDown so the moving kicks in
-						_mouseDown = true;    						
-					} else {
-						alert("The control cannot be created. " + className + "() can't be found.");
-					}    
-					
-					// retain that we've just added a control (we reset in mouse up)
-					_addedControl = true;
-					
-					// rebuild the page map
-					buildPageMap();
-					
-					// we only need the hit on the li
-					ev.stopPropagation();
-											
-    			}).find("img").on("dragstart",function() { return false; }); // mouse down, and stop drag for image
-    			
     		} // userCanAdd
     		
     	} // app control loop  
+    	
+    	// when the mouse moves down on any control button
+    	designControls.find("li").on("mousedown touchstart", function(ev) {		
+			
+			// clear down property dialogues for good measure
+			hideDialogues();
+			
+			// add an undo for the whole page
+			addUndo(true);
+			
+			// stop text selection as we are moving the new object
+			$("body").css({
+				"-webkit-touch-callout":"none",
+				"-webkit-user-select":"none",
+				"-khtml-user-select":"none",
+				"-moz-user-select":"-moz-none",
+				"-ms-user-select":"none",
+				"user-select":"none"
+			});	
+						
+			// hide the panel if not pinned
+			if (!_panelPinned) hideControlPanel();
+			
+			// hide the properties
+			hidePropertiesPanel();
+			
+			// get the control constructor name (way easier to use an attribute than closures)
+			var className = $(ev.target).attr("data-control");
+			if (!className) className = $(ev.target).parent().attr("data-control");
+			
+			// get the control constructor
+			var controlClass = _controlTypes[className];
+			
+			// there is a function to create this control
+			if (controlClass) {    						
+				// instantiate the control with the _page as the parent
+				var control = new Control(className, _page, null, true);										
+				// size the border for the control while it is still visible		
+				sizeBorder(control);
+				// set the mouseDown offsets so when we drag the mouse is in the center
+				_mouseDownXOffset = -control.object.outerWidth()/2 - _panelPinnedOffset;
+				_mouseDownYOffset = -control.object.outerHeight()/2;				
+				// hide the control's object as we have the geometery we need
+				control.object.hide();
+				// show the selection border
+				_selectionBorder.show();	
+				// set its parent to the _page
+				control._parent = _page;
+				// add it to the _page childControls collection
+				_page.childControls.push(control);					
+				// retain a reference to the selected control					
+				_selectedControl = control;	
+				// show the properties
+				showProperties(_selectedControl);
+				// show the validation
+				showValidation(_selectedControl);
+				// show the events (and any actions)
+				showEvents(_selectedControl);
+				// show the styles
+				showStyles(_selectedControl);
+				// arrange the non-visible controls if our control looks like one
+				if (!controlClass.canUserMove) arrangeNonVisibleControls();
+				// set the _mouseDown so the moving kicks in
+				_mouseDown = true;    						
+			} else {
+				alert("The control cannot be created. " + className + "() can't be found.");
+			}    
+			
+			// retain that we've just added a control (we reset in mouse up)
+			_addedControl = true;
+			
+			// rebuild the page map
+			buildPageMap();
+			
+			// we only need the hit on the li
+			ev.stopPropagation();
+									
+		}).find("img").on("dragstart",function() { return false; }); // mouse down, and stop drag for image
     			
     	
     	// resize the controls list (for the right height and padding)
@@ -2780,45 +2783,56 @@ $(document).ready( function() {
 	// save page
 	$("#pageSave").click( function() {
 		
-		// hide all dialogues
-		hideDialogues();
+		// get a reference to the button
+		var button = $(this);
 		
-		// show the saving page dialogue with 
-		showDialogue('~?action=page&a=rapid&p=P11', function() {
+		// only if not disabled
+		if (!button.attr("disabled")) {
 			
-			// show message
-			$("#rapid_P11_C7_").html("Saving page...");
+			// disable the button
+			button.disable();
 			
-			// send the data to the backend
-			$.ajax({
-		    	url: "designer?action=savePage&a=" + _version.id + "&v=" + _version.version,
-		    	type: "POST",
-		    	contentType: "application/json",
-		        dataType: "json",            
-		        data: getSavePageData(),            
-		        error: function(server, status, error) { 
-		        	// show error
-		        	$("#rapid_P11_C7_").html(error);
-		        	// enable close button
-		        	$("#rapid_P11_C10_").enable().focus();
-		        },
-		        success: function(controls) {
-		        	// show message
-		        	$("#rapid_P11_C7_").html("Page saved!");
-		        	// enable close button
-		        	$("#rapid_P11_C10_").enable().focus();
-		        	// set dirty to false
-		        	_dirty = false;
-		        	// reload the pages as the order may have changed, but keep the current one selected
-		        	loadPages(_page.id);		        	
-		        	// arrange any non-visible controls
-		        	arrangeNonVisibleControls();	   
-		        	// iframe resize
-		    		_pageIframe.resize();
-		        }
+			// hide all property dialogues
+			hideDialogues();
+			
+			// show the saving page dialogue with 
+			showDialogue('~?action=page&a=rapid&p=P11', function() {
+				
+				// show message
+				$("#rapid_P11_C7_").html("Saving page...");
+				
+				// send the data to the backend
+				$.ajax({
+			    	url: "designer?action=savePage&a=" + _version.id + "&v=" + _version.version,
+			    	type: "POST",
+			    	contentType: "application/json",
+			        dataType: "json",            
+			        data: getSavePageData(),            
+			        error: function(server, status, error) { 
+			        	// show error
+			        	$("#rapid_P11_C7_").html(error);
+			        	// enable close button
+			        	$("#rapid_P11_C10_").enable().focus();
+			        },
+			        success: function(controls) {
+			        	// show message
+			        	$("#rapid_P11_C7_").html("Page saved!");
+			        	// enable close button
+			        	$("#rapid_P11_C10_").enable().focus();
+			        	// set dirty to false
+			        	_dirty = false;
+			        	// reload the pages as the order may have changed, but keep the current one selected
+			        	loadPages(_page.id);		        	
+			        	// arrange any non-visible controls
+			        	arrangeNonVisibleControls();	   
+			        	// iframe resize
+			    		_pageIframe.resize();
+			        }
+				});
+				
 			});
 			
-		});
+		}
 		
 	});
 	

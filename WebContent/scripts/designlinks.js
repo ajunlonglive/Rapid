@@ -80,6 +80,8 @@ function getDesignDataTable(data) {
 			// close the table			
 			table += "</tr>";
 		}		
+	} else if ($.isEmptyObject(data)) {
+			table += "<tr><td>(empty)</td></tr>";
 	} else {
 		table += "<tr><td>" + data + "</td></tr>";
 	}
