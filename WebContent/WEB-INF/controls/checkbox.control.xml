@@ -98,7 +98,7 @@ if (this.value) value = this.value;
 // this is the hidden input with no value to stand in for the checkbox on a form post when the checkbox is null
 var html = "<input type='hidden' name='" +  this.id + "' value=''></input>"; 
 // the checkbox proper
-html += "<input id='" + this.id + "'  name='" + this.id + "' type='checkbox' class='checkbox" + getStyleClasses(this) + "'" + checked + " value='" + value + "'></input>";
+html += "<input id='" + this.id + "'  name='" + this.id + "' type='checkbox' class='checkbox" + getStyleClasses(this) + "'" + checked + " value='" + escapeApos(value) + "'></input>";
 
 if (this.text) {
 	return "<label for='" + this.id + "'>" + html + this.text + "</label>";
@@ -133,6 +133,7 @@ if (data != null && data !== undefined) {
 		}
 	} 
 }
+if (value == "false") value = false;
 control.prop('checked', value);
 if (changeEvents) control.trigger("change");    
 			]]>

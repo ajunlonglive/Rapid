@@ -170,7 +170,7 @@ if (this.options) {
 			}
 		}
 		// append the options
-		options += "<li class='listOption" + (selected ? " listSelected" : "") + "'" + (this.slide ? " style='display:none'" : "") + " data-value='" + value + "'>" + this.options[i].text + "</li>";
+		options += "<li class='listOption" + (selected ? " listSelected" : "") + "'" + (this.slide ? " style='display:none'" : "") + " data-value='" + escapeApos(value) + "'>" + this.options[i].text + "</li>";
 	}
 }
 // check we have a header or can slide
