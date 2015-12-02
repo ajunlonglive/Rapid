@@ -119,7 +119,7 @@ return [["d/m/Y","dd/mm/yyyy"],["m/d/Y","mm/dd/yyyy"],["Y-m-d","yyyy-mm-dd"]];
 // return our html for adding to our parent object	
 var value = this.value;
 if (!value) value = "";
-return "<input id='" + this.id + "' name='" + this.id + "' value='" + value + "' readonly='readonly' class='date tcal tcalInput" + getStyleClasses(this) + "'></input>";  
+return "<input id='" + this.id + "' name='" + this.id + "' value='" + escapeApos(value) + "' readonly='readonly' class='date tcal tcalInput" + getStyleClasses(this) + "'></input>";  
 
 	        ]]>
 	    </getHtmlFunction> 

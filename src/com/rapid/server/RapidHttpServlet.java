@@ -47,6 +47,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.ValidationEvent;
 import javax.xml.bind.ValidationEventHandler;
+import javax.xml.bind.ValidationEventLocator;
 import javax.xml.bind.Unmarshaller.Listener;
 
 import org.apache.log4j.Logger;
@@ -98,6 +99,12 @@ public class RapidHttpServlet extends HttpServlet {
 		unmarshaller.setEventHandler( new ValidationEventHandler() {
 			@Override
 			public boolean handleEvent(ValidationEvent event) {
+				
+				// get the location
+				ValidationEventLocator location = event.getLocator();
+				
+				// log
+				_logger.debug("JAXB validation event - " + event.getMessage() + (location == null ? "" : " at line " + location.getLineNumber() + ", column " + location.getColumnNumber() + ", node " + location.getNode()));
 				
 				// messages with "unrecognized type name" are very useful they're not sever themselves must almost always followed by a severe with a less meaningful message 
 				if (event.getMessage().contains("unrecognized type name") || event.getSeverity() == ValidationEvent.FATAL_ERROR) {

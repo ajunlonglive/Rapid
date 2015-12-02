@@ -94,7 +94,7 @@ this.object.remove();
 // remove our image
 this.object.remove();
 // add our input box     	   	        
-_page.object.append("<input id='" + this.id + "' name='" + this.id + "' type='hidden' " + (this.value ? "value='" + this.value + "'": "") + "/>");	  
+_page.object.append("<input id='" + this.id + "' name='" + this.id + "' type='hidden' " + (this.value ? "value='" + escapeApos(this.value) + "'": "") + "/>");	  
 	        ]]>	        	        
 	    </saveJavaScript>	    
 	    

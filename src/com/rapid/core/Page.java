@@ -1664,8 +1664,12 @@ public class Page {
 								String designLinkJQuery = jsonControl.optString("designLinkJQuery", null);
 								// if we got any design link jquery
 								if (designLinkJQuery != null) {
+									// get the image title from the control name
+									String title = control.getName();
+									// escape any apostrophes
+									if (title != null) title = title.replace("'", "&apos;");
 									// add the link into the string builder
-									designLinkStringBuilder.append("<a id='designLink_" + control.getId() + "' data-id='" + control.getId() + "' href='#'><img src='" + jsonControl.optString("image","images/penknife_24x24.png") + "' title='" + control.getName() + "'/></a>\n");
+									designLinkStringBuilder.append("<a id='designLink_" + control.getId() + "' data-id='" + control.getId() + "' href='#'><img src='" + jsonControl.optString("image","images/penknife_24x24.png") + "' title='" + title +  "'/></a>\n");
 									// trim the JQuery
 									designLinkJQuery = designLinkJQuery.trim();
 									// start with a . if not
@@ -1685,7 +1689,7 @@ public class Page {
 						+	"<div id='designShow' style='position:fixed;left:0;bottom:0;width:30px;height:30px;z-index:10000;'></div>\n"
 						+ "<div id='designLinks' style='position:fixed;left:0;bottom:0;z-index:10001;padding:5px;display:none;'>"
 				    	+ "<a id='designLink' href='#'><img src='images/gear_24x24.png' title='Open Rapid Design'/></a>\n"
-				    	+ "<a id='designLinkNewTab' style='margin-left:-3px;' href='#''><img src='images/triangleRight_8x8.png' title='Open Rapid Design in a new tab'/></a>\n"
+				    	+ "<a id='designLinkNewTab' style='margin-left:-3px;' href='#'><img src='images/triangleRight_8x8.png' title='Open Rapid Design in a new tab'/></a>\n"
 						+ designLinkStringBuilder.toString()
 						+ "</div>"						 
 				    	+ "<script type='text/javascript'>\n"

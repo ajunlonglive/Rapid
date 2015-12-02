@@ -409,13 +409,13 @@ if (this.columns.length > 0) {
 	for (var i in this.columns) {
 		var column = this.columns[i];
 		if (column.visible) {
-			headerHtml += "<td" + (column.titleStyle ? " style='" + column.titleStyle + "'" : "") + ">" + column.title;
+			headerHtml += "<td" + (column.titleStyle ? " style='" + escapeApos(column.titleStyle) + "'" : "") + ">" + column.title;
 			if (column.sort) headerHtml += "<span class='sort'>&#xf0dc;</span>";
 			headerHtml += "</td>";
 			if (i % 2 == 1) {
-			 	rowHtml += "<td " + (column.fieldStyle ? " style='" + column.fieldStyle + "'" : "") + ">123.00</td>"
+			 	rowHtml += "<td " + (column.fieldStyle ? " style='" + escapeApos(column.fieldStyle) + "'" : "") + ">123.00</td>"
 			} else {
-				rowHtml += "<td" + (column.fieldStyle ? " style='" + column.fieldStyle + "'" : "") + ">Data</td>"
+				rowHtml += "<td" + (column.fieldStyle ? " style='" + escapeApos(column.fieldStyle) + "'" : "") + ">Data</td>"
 			}
 			columnCount ++;
 		} else {
