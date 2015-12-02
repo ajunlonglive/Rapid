@@ -391,6 +391,14 @@ function sizeGridFixedHeaderColumns(control) {
 	// hide again if that was the initial state
 	if (hidden) control.parent().hide();
 }
+
+// get the index of the selected row, ignoring rows without rowStyle1 and rowStyle2 which can be introduced by custom code
+function getGridSelecteRowNumber(ev) {
+	var index = -1;
+	index = $(ev.target).closest("table").find("tr.rowStyle1,tr.rowStyle2").index($(ev.target).closest("tr"));
+	if (index > -1) index ++;
+	return index;
+}
            	
 	                ]]>
 	            </contents>
@@ -409,13 +417,13 @@ if (this.columns.length > 0) {
 	for (var i in this.columns) {
 		var column = this.columns[i];
 		if (column.visible) {
-			headerHtml += "<td" + (column.titleStyle ? " style='" + column.titleStyle + "'" : "") + ">" + column.title;
+			headerHtml += "<td" + (column.titleStyle ? " style='" + escapeApos(column.titleStyle) + "'" : "") + ">" + column.title;
 			if (column.sort) headerHtml += "<span class='sort'>&#xf0dc;</span>";
 			headerHtml += "</td>";
 			if (i % 2 == 1) {
-			 	rowHtml += "<td " + (column.fieldStyle ? " style='" + column.fieldStyle + "'" : "") + ">123.00</td>"
+			 	rowHtml += "<td " + (column.fieldStyle ? " style='" + escapeApos(column.fieldStyle) + "'" : "") + ">123.00</td>"
 			} else {
-				rowHtml += "<td" + (column.fieldStyle ? " style='" + column.fieldStyle + "'" : "") + ">Data</td>"
+				rowHtml += "<td" + (column.fieldStyle ? " style='" + escapeApos(column.fieldStyle) + "'" : "") + ">Data</td>"
 			}
 			columnCount ++;
 		} else {
@@ -513,8 +521,8 @@ if (details) {
 	} else if (details.columns) {
 		if (field) {		
 			var row = $("#" + id).find("tr.rowSelect");
-			var rowIndex = row.index() - 1;
-			if (rowIndex >= 0) {
+			var rowIndex = getGridSelecteRowNumber(ev);
+			if (rowIndex > 0) {
 				for (var i in details.columns) {
 					if (details.columns[i].field && details.columns[i].field.toLowerCase() == field.toLowerCase()) {
 						data = row.children(":nth(" + i + ")").html();
@@ -810,9 +818,9 @@ if (details) {
 	if (details.dataStorageType) {
 		var data = getGridDataStoreData(id, details);
 		if (data) setData_grid($.Event('gridinit'), id, null, details, data);
-		$("#" + id).click(function(ev) {
+		$("#" + id).click( function(ev) {
 			var data = getGridDataStoreData(id, details);
-			data.selectedRowNumber = $(ev.target).closest("tr").index();
+			data.selectedRowNumber = getGridSelecteRowNumber(ev);
 			saveGridDataStoreData(id, details, data);
 		});
 	} // datastorage type check
@@ -850,7 +858,7 @@ if (details.dataStorageType) {
 	}
 } else {
 	var row = $(ev.target).closest("tr");
-	var rowNumber = row.index();
+	var rowNumber = getGridSelecteRowNumber(ev);
 	if (rowNumber > 0) {
 		data = {fields:[],rows:[[]]};
 		for (var i in details.columns) {
@@ -1000,7 +1008,7 @@ if (gridData.selectedRowNumber) {
 		
 		} else {
 			
-			// assume the incomming fields		
+			// assume the incoming fields		
 			gridData.fields = data.fields;
 			// add the top row of what we were given
 			gridData.rows.push(data.rows[0]);
@@ -1028,7 +1036,7 @@ if (details && details.dataStorageType) {
 		return gridData.rowValidation[gridData.selectedRowNumber - 1];
 	} 
 } else {
-	return $(ev.target).closest("tr").index();
+	return getGridSelecteRowNumber(ev);
 }
 			        ]]>	  	   	            
 	   	        </getPropertyFunction>	   	
@@ -1043,7 +1051,7 @@ var grid = $("#" + id);
 // if it's present
 if (grid[0]) {
 	// get the selected row number
-	selectedRowNumber = grid.find("tr.rowSelect").index();
+	selectedRowNumber = getGridSelecteRowNumber(ev);
 	// check the incoming data for a positive
 	if (data[0][0]) {
 		// remove validation class from row if true
@@ -1092,7 +1100,7 @@ if (details && details.dataStorageType) {
 		return null;
 	}
 } else {
-	return $(ev.target).closest("tr").index();
+	return getGridSelecteRowNumber(ev);
 }
 			        ]]>	  	   	            
 	   	        </getPropertyFunction>	   	
