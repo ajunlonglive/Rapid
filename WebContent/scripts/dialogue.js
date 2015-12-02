@@ -27,6 +27,10 @@ function showDialogue(url, onShow) {
 
 	// hide the control panel
 	if (!_panelPinned) $("#controlPanel").hide();
+	// remove any existing dialogues
+	$("#dialogue").remove();
+	// remove any existing dialogue covers
+	$("#dialogueCover").remove();
 	// add the dialogue div
 	$("body").append("<div id='dialogue' class='dialogue'></div>");
 	// add the dialogueCover div
@@ -42,7 +46,7 @@ function showDialogue(url, onShow) {
 	var dialogueCover = $("#dialogueCover");
 	// hide it (but it must retain its geometry)
 	dialogue.hide();
-		
+
 	// request the dialogue		
 	$.ajax({
     	url: url,

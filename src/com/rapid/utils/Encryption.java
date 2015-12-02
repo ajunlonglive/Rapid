@@ -7,7 +7,7 @@ gareth.edwards@rapid-is.co.uk
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as 
 published by the Free Software Foundation, either version 3 of the 
 License, or (at your option) any later version. The terms require you 
@@ -34,9 +34,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
-
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
+import javax.xml.bind.DatatypeConverter;
 
 public class Encryption {
 	
@@ -48,11 +46,11 @@ public class Encryption {
 	}
         
     public static String base64Encode(byte[] bytes) {
-        return new BASE64Encoder().encode(bytes);
+        return DatatypeConverter.printBase64Binary(bytes);
     }
     
     public static byte[] base64Decode(String value) throws IOException {
-        return new BASE64Decoder().decodeBuffer(value);
+        return DatatypeConverter.parseBase64Binary(value);
     }
 
     public static String encrypt(String value, char[] password, byte[] salt) throws GeneralSecurityException, UnsupportedEncodingException {

@@ -467,7 +467,7 @@ function getDataItemDetails(id) {
 
 // escape single apostophe's in values
 function escapeApos(value) {
-	if (value) {
+	if (value && value.replace) {
 		return value.replace("'","&apos;");
 	} else {
 		return value;
@@ -513,7 +513,7 @@ function Property_integer(cell, propertyObject, property, details) {
 	// set the value if it exists (or is 0)
 	if (propertyObject[property.key] || parseInt(propertyObject[property.key]) == 0) value = propertyObject[property.key];
 	// append the adjustable form control
-	cell.append("<input class='propertiesPanelTable' value='" + escapeApos(value) + "' />");
+	cell.append("<input class='propertiesPanelTable' value='" + value + "' />");
 	// get a reference to the form control
 	var input = cell.children().last();
 	// add a listener to set the property back if not an integer
@@ -1520,7 +1520,7 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 		// make it an empty space if null
 		if (!field) field = "";
 		// add the row
-		inputsTable.append("<tr><td>" + (query.multiRow && i > 0 ? "&nbsp;" : itemName) + "</td><td><input value='" + field + "' /></td><td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
+		inputsTable.append("<tr><td>" + (query.multiRow && i > 0 ? "&nbsp;" : itemName) + "</td><td><input value='" + escapeApos(field) + "' /></td><td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
 		// get the field input
 		var fieldInput = inputsTable.find("tr").last().children(":nth(1)").last().children().last();
 		// add a listener
@@ -1603,7 +1603,7 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 		// make it an empty space if null
 		if (!field) field = "";
 		// add the row
-		outputsTable.append("<tr><td><input value='" + field + "' /></td><td>" + itemName + "</td><td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
+		outputsTable.append("<tr><td><input value='" + escapeApos(field) + "' /></td><td>" + itemName + "</td><td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
 		// get the field input
 		var fieldOutput = outputsTable.find("tr").last().children().first().children().last();
 		// add a listener
@@ -1733,7 +1733,7 @@ function Property_webserviceRequest(cell, propertyObject, property, details) {
 		// make it an empty space if null
 		if (!field) field = "";
 		// add the row
-		inputsTable.append("<tr><td>" + itemName + "</td><td><input value='" + field + "' /></td><td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
+		inputsTable.append("<tr><td>" + itemName + "</td><td><input value='" + escapeApos(field) + "' /></td><td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
 		// get the field input
 		var fieldInput = inputsTable.find("tr").last().children(":nth(1)").last().children().last();
 		// add a listener
@@ -1838,7 +1838,7 @@ function Property_webserviceRequest(cell, propertyObject, property, details) {
 		// make it an empty space if null
 		if (!field) field = "";
 		// add the row
-		outputsTable.append("<tr><td><input value='" + field + "' /></td><td>" + itemName + "</td><td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
+		outputsTable.append("<tr><td><input value='" + escapeApos(field) + "' /></td><td>" + itemName + "</td><td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
 		// get the field input
 		var fieldOutput = outputsTable.find("tr").last().children().first().children().last();
 		// add a listener
@@ -1941,7 +1941,7 @@ function Property_pageSessionVariables(cell, page, property, details, textOnly) 
 			// show variables
 			for (var i in variables) {
 				// add the line
-				table.append("<tr><td><input class='variable' value='" + variables[i] + "' /></td><td style='width:16px;'><img src='images/bin_16x16.png' style='float:right;' /></td></tr>");
+				table.append("<tr><td><input class='variable' value='" + escapeApos(variables[i]) + "' /></td><td style='width:16px;'><img src='images/bin_16x16.png' style='float:right;' /></td></tr>");
 				
 				// find the text
 				var valueEdit = table.find("input.variable").last();
@@ -1996,7 +1996,7 @@ function Property_pageSessionVariables(cell, page, property, details, textOnly) 
 	
 }
 
-// this is a dalogue which allows for the adding of user roles
+// this is a dialogue which allows for the adding of user roles
 function Property_roles(cell, control, property, details) {
 	
 	// retrieve or create the dialogue
@@ -2131,7 +2131,7 @@ function Property_navigationSessionVariables(cell, navigation, property, details
 			if (control) name = control.name;
 			
 			// add the line
-			table.append("<tr><td>" + name + "</td><td><select><option value=''>Please select...</option>" + getInputOptions(sessionVariable.itemId) + "</select></td><td><input value='" + sessionVariable.field + "' /></td></tr>");
+			table.append("<tr><td>" + name + "</td><td><select><option value=''>Please select...</option>" + getInputOptions(sessionVariable.itemId) + "</select></td><td><input value='" + escapeApos(sessionVariable.field) + "' /></td></tr>");
 			
 			// find the dropdown
 			var itemEdit = table.find("select").last();
@@ -2223,7 +2223,7 @@ function Property_radiobuttons(cell, control, property, details) {
 		var text = "";
 		for (var i = 0; i < buttons.length; i++) {
 			text += buttons[i].label;
-			if (control.codes) text += " (" + buttons[i].value + ")";	
+			if (control.codes) text += " (" + buttons[i].value + ")";
 			if (i < buttons.length - 1) text += ",";
 		}
 		// add a descrption if nothing yet
@@ -2237,7 +2237,7 @@ function Property_radiobuttons(cell, control, property, details) {
 		// show options
 		for (var i in buttons) {
 			// add the line
-			table.append("<tr><td><input class='label' value='" + buttons[i].label + "' /></td>" + (control.codes ? "<td><input class='value' value='" + buttons[i].value + "' /></td>" : "") + "<td style='width:32px;padding:0;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
+			table.append("<tr><td><input class='label' value='" + escapeApos(buttons[i].label) + "' /></td>" + (control.codes ? "<td><input class='value' value='" + escapeApos(buttons[i].value) + "' /></td>" : "") + "<td style='width:32px;padding:0;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
 			
 			// find the code
 			var valueEdit = table.find("input.value").last();
@@ -2624,7 +2624,7 @@ function Property_options(cell, control, property, details) {
 		// show options
 		for (var i in options) {
 			// add the line
-			table.append("<tr><td><input class='text' value='" + options[i].text + "' /></td>" + (control.codes ? "<td><input class='value' value='" + options[i].value + "' /></td>" : "") + "<td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
+			table.append("<tr><td><input class='text' value='" + escapeApos(options[i].text) + "' /></td>" + (control.codes ? "<td><input class='value' value='" + escapeApos(options[i].value) + "' /></td>" : "") + "<td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
 							
 			// find the text
 			var textEdit = table.find("input.text").last();
@@ -2787,7 +2787,7 @@ function Property_gridColumns(cell, grid, property, details) {
 		if (columns[i].cellFunction) cellFunctionText = columns[i].cellFunction;
 		
 		// add the line
-		table.append("<tr><td class='center'><input type='checkbox' " + (columns[i].visible ? "checked='checked'" : "")  + " /></td><td><input value='" + columns[i].title + "' /></td><td><input value='" + columns[i].titleStyle + "' /></td><td><input value='" + columns[i].field + "' /></td><td><input value='" + columns[i].fieldStyle + "' /></td><td style='max-width:20px;'>" + sortSelect + "<span>...</span></td><td class='paddingLeft5' style='max-width:20px;'>" + cellFunctionText.replaceAll("<","&lt;") + "</td><td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
+		table.append("<tr><td class='center'><input type='checkbox' " + (columns[i].visible ? "checked='checked'" : "")  + " /></td><td><input value='" + escapeApos(columns[i].title) + "' /></td><td><input value='" + escapeApos(columns[i].titleStyle) + "' /></td><td><input value='" + escapeApos(columns[i].field) + "' /></td><td><input value='" + escapeApos(columns[i].fieldStyle) + "' /></td><td style='max-width:20px;'>" + sortSelect + "<span>...</span></td><td class='paddingLeft5' style='max-width:20px;'>" + cellFunctionText.replaceAll("<","&lt;") + "</td><td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
 		
 		// find the checkbox
 		var visibleEdit = table.find("tr").last().children(":nth(0)").first().children().first();
@@ -3073,7 +3073,7 @@ function Property_controlHints(cell, hints, property, details) {
 		var typeOptions = "<option value='hover'" + ((controlHint.type == 'hover') ? " selected": "") + ">hover</option><option value='click'" + ((controlHint.type == 'click') ? " selected": "") + ">click</option>";
 		
 		// add the row
-		table.append("<tr class='nopadding'><td><select class='control'><option value=''>Please select...</option>" + getControlOptions(controlHint.controlId) + "</select></td><td><select class='type'>" + typeOptions + "</select></td><td style='max-width:150px;'><span>" + controlHint.text + "</span></td><td><input value='" + controlHint.style + "'/></td><td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
+		table.append("<tr class='nopadding'><td><select class='control'><option value=''>Please select...</option>" + getControlOptions(controlHint.controlId) + "</select></td><td><select class='type'>" + typeOptions + "</select></td><td style='max-width:150px;'><span>" + controlHint.text + "</span></td><td><input value='" + escapeApos(controlHint.style) + "'/></td><td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
 	
 		// add a seperating comma to the text if not the last hint
 		if (i < controlHints.length - 1) text += ",";
@@ -3599,7 +3599,7 @@ function Property_datacopyCopies(cell, datacopyAction, property, details) {
 			var dataCopy = dataCopies[i];
 						
 			// add a row
-			table.append("<tr><td><select class='source'><option value=''>Please select...</option>" + getInputOptions(dataCopy.source) + "</select></td><td><input  class='source' value='" + dataCopy.sourceField + "' /></td><td><select class='destination'><option value=''>Please select...</option>" + getOutputOptions(dataCopy.destination) + "</select></td><td><input class='destination' value='" + dataCopy.destinationField + "' /></td><td><select class='type' style='min-width:60px;'>" + getCopyTypeOptions(dataCopy.type) + "</select></td><td style='width:32px'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
+			table.append("<tr><td><select class='source'><option value=''>Please select...</option>" + getInputOptions(dataCopy.source) + "</select></td><td><input  class='source' value='" + escapeApos(dataCopy.sourceField) + "' /></td><td><select class='destination'><option value=''>Please select...</option>" + getOutputOptions(dataCopy.destination) + "</select></td><td><input class='destination' value='" + escapeApos(dataCopy.destinationField) + "' /></td><td><select class='type' style='min-width:60px;'>" + getCopyTypeOptions(dataCopy.type) + "</select></td><td style='width:32px'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
 			
 			// get the source data item
 			var source = getDataItemDetails(dataCopy.source);
