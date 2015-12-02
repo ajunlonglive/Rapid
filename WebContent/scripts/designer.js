@@ -2273,6 +2273,29 @@ function toggleHeader(ev) {
 	return false;	
 }
 
+// a function for updating whether guidlines are visible
+function updateGuidelines() {	
+	// assume we want guidelines
+	var showGuidelines = true;
+	// if we have local storage
+	if (typeof(localStorage) !== "undefined") {
+		// if we have a local storage item for this
+		if (localStorage.getItem("_guidelines")) {
+			// parse it to a boolean
+			showGuidelines = JSON.parse(localStorage.getItem("_guidelines"));
+		} 
+	}
+	// define the guideline style selectors to apply to
+	guidelineStyles = [ ".table td", 	"div.panel", "div.flowLayoutCell" ];
+	// loop the guidline styles
+	for (var i in guidelineStyles) {
+		// remove the style just to be sure
+		removeStyle(guidelineStyles[i],"designPage.css");
+		// if we want the style add it back in
+		if (showGuidelines) addStyle( guidelineStyles[i],"border: 1px dashed #ccc;margin: -1px;");	
+	}
+}
+
 // JQuery is ready! 
 $(document).ready( function() {
 	
@@ -2309,6 +2332,15 @@ $(document).ready( function() {
 	// prevent any dragging and ghost images 
 	_window.on("dragstart", function(ev) { ev.preventDefault(); });
 	
+	// the iframe in which we load the page
+	_pageIframe = $("#page");		
+	
+	// the iframe window that tells us about it's scroll positions
+	_pageIframeWindow = $(_pageIframe[0].contentWindow);
+			
+	// the div that covers all of the components in design mode so they don't react to clicks
+	_designCover = $("#designCover");
+			
 	// check if we have local storage
 	if (typeof(localStorage) !== "undefined") {
 		// if we have a saved control panel width
@@ -2319,9 +2351,11 @@ $(document).ready( function() {
 			if (_sizes["controlPanelWidth"]) sizeControlsList(_sizes["controlPanelWidth"]);
 			// set propertiesPanelWidth if present
 			if (_sizes["propertiesPanelWidth"]) $("#propertiesPanel").width(_sizes["propertiesPanelWidth"]);
+			// if we have a local storage item for the guidlines
+			if (localStorage.getItem("_guidelines")) showGuidelines = JSON.parse(localStorage.getItem("_guidelines"));			
 		}
 	}
-	
+		
 	// derived the panel pinned offset value (add on the padding and border)
 	_panelPinnedOffset = $("#controlPanel").width() + 21;
 	
@@ -2349,15 +2383,7 @@ $(document).ready( function() {
 		_pageIframeWindow.scrollLeft($(ev.target).scrollLeft());
 		positionBorder(_selectedControl);
 	});
-	
-	// the iframe in which we load the page
-	_pageIframe = $("#page");		
-	// the iframe window that tells us about it's scroll positions
-	_pageIframeWindow = $(_pageIframe[0].contentWindow);
-			
-	// the div that covers all of the components in design mode so they don't react to clicks
-	_designCover = $("#designCover");
-		
+				
 	// load the action classes
 	$.ajax({
     	url: "designer?action=getSystemData",
@@ -2520,28 +2546,12 @@ $(document).ready( function() {
 								} // in-page style check
 							} // style sheets loop
 						} // style sheets check
-						
-						// if we have local storage
-						if (typeof(localStorage) !== "undefined") {
-							// if we have a local storage for the guidelines
-							if (localStorage.getItem("_guidelines")) {
-								// read the value of whether to show guidelines
-								var showGuidelines = JSON.parse(localStorage.getItem("_guidelines"));
-								// show if so (details in properties.js, functions in styles.js)
-								if (showGuidelines) {
-									// loop the guidline styles
-									for (var i in _guidelineStyles) {
-										// remove the style just to be sure
-										removeStyle(_guidelineStyles[i],"designPage.css");
-										// if we want the style add it back in
-										if (showGuidelines) 	addStyle( _guidelineStyles[i],"border: 1px dashed #ccc;margin: -1px;");	
-									}
-								}
-							} 
-						}
-			        				        	
+									        				        	
 						// enable all buttons except for undo and redo 
 		        		$("button:not(#undo):not(#redo)").enable();
+		        		
+		        		// update the guidlines (this function is in desginer.js)
+		        		updateGuidelines();	
 		        		
 			        	// show the page object
 			        	_page.object.show();	

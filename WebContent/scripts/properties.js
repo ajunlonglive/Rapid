@@ -4018,13 +4018,6 @@ function Property_zoom(cell, propertyObject, property, details) {
 	}));	
 }
 
-// the guideline styles
-var _guidelineStyles = [
-		".table td",
-		"div.panel",
-		"div.flowLayoutCell"
-];
-
 // this function controls whether guidline table borders are visible
 function Property_guidelines(cell, propertyObject, property, details) {
 	// assume we want them
@@ -4033,6 +4026,7 @@ function Property_guidelines(cell, propertyObject, property, details) {
 	if (typeof(localStorage) !== "undefined") {
 		// if we have a local storage item for this
 		if (localStorage.getItem("_guidelines")) {
+			// parse it to a boolean
 			showGuidelines = JSON.parse(localStorage.getItem("_guidelines"));
 		} 
 	}
@@ -4052,14 +4046,8 @@ function Property_guidelines(cell, propertyObject, property, details) {
 			Property_guidelines(cell, propertyObject, property, details);
 		}
 	}));
-	// loop the guidline styles
-	for (var i in _guidelineStyles) {
-		// remove the style just to be sure
-		removeStyle(_guidelineStyles[i],"designPage.css");
-		// if we want the style add it back in
-		if (showGuidelines) 	addStyle( _guidelineStyles[i],"border: 1px dashed #ccc;margin: -1px;");	
-	}
-	
+	// update the guidlines (this function is in desginer.js)
+	updateGuidelines();	
 }
 
 // possible mobileActionType values used by the mobileActionType property
