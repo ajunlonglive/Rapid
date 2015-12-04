@@ -61,7 +61,9 @@ public abstract class FormAdapter {
 		// properties
 		public String getId() { return _id; }
 		public String getValue() { return _value; }
+		public void setValue(String value) { _value = value;	}
 		public Boolean getHidden() { return _hidden; }
+		public void setHidden( boolean hidden) { _hidden = hidden; 	}
 		
 		// constructors
 		public FormControlValue(String id, String value, boolean hidden) {
