@@ -281,6 +281,9 @@ public class Rapid extends Action {
 		// the javascript we're about to build
 		String js = "";
 		
+		// if we are getting the versions for an application remove the appId and version parameters from the url so we don't end up with a version from an app we were previously looking at
+		if ("GETVERSIONS".equals(getProperty("actionType"))) js += "if (window.history && window.history.replaceState) window.history.replaceState(\"rapid\", \"\", \"~?a=rapid\");\n";
+		
 		// write success actions variable
 		js += "  var successCallback = function(data) {\n";
 		// check success actions
@@ -1503,7 +1506,7 @@ public class Rapid extends Action {
 				
 				// retrieve the inputs from the json
 				String name = jsonAction.getString("name").trim();
-				String version = jsonAction.getString("version").trim();
+				String version = jsonAction.getString("newVersion").trim();
 				String title = jsonAction.optString("title").trim();
 				String description = jsonAction.optString("description").trim();
 				
