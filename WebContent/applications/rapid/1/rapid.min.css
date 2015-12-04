@@ -23,8 +23,8 @@ label.validation{border:2px solid red}
 input.validation{border:2px solid red}
 textarea.validation{border:2px solid red}
 li.validation{color:red}
-body{font-family:'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;font-size:14px;margin:0}
-table{font-family:'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;font-size:14px;margin:0}
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,600,700);body{font-family:'Open Sans', Arial, Helvetica, sans-serif;font-size:14px;margin:0}
+table{font-family:'Open Sans', Arial, Helvetica, sans-serif;font-size:14px;margin:0}
 .glossyTitle tr:first-child td{font-weight:bold;background-color:red;color:white;padding:10px;text-align:center;background:red url(highlight_red_1x44.png) 50% 50% repeat-x;text-shadow:-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black}
 .normalTitle tr:first-child td{font-weight:normal;background-color:transparent;color:initial;padding:0;text-align:center;background:initial;text-shadow:none}
 .niceTablePadding tr:not(:first-child) td:not(:last-child){text-align:left;padding-left:10px;padding-top:5px;padding-bottom:5px}
@@ -36,3 +36,7 @@ table.table tr td:first-child{vertical-align:top}
 select{border:1px solid #999;border-radius:3px}
 input{border:1px solid #999;border-radius:3px; padding-left:5px; -webkit-box-sizing:border-box; -moz-box-sizing:border-box; box-sizing:order-box}
 textarea{border:1px solid #999; border-radius:3px; -webkit-box-sizing:border-box; -moz-box-sizing:border-box; box-sizing:order-box}
+button{padding:3px}
+.tabsHeader li{color:black}
+ul.tabsHeaderH li{background:rgb(214,214,214); background:-moz-linear-gradient(top, rgba(214,214,214,1) 0%, rgba(192,192,192,1) 100%);background:-webkit-linear-gradient(top, rgba(214,214,214,1) 0%,rgba(192,192,192,1) 100%);background:linear-gradient(to bottom, rgba(214,214,214,1) 0%,rgba(192,192,192,1) 100%); border-color:#777}
+ul.tabsHeaderH li.selected{background:rgb(229,229,229); background:-moz-linear-gradient(top, rgba(229,229,229,1) 0%, rgba(255,255,255,1) 100%); background:-webkit-linear-gradient(top, rgba(229,229,229,1) 0%,rgba(255,255,255,1) 100%);background:linear-gradient(to bottom, rgba(229,229,229,1) 0%,rgba(255,255,255,1) 100%)}
