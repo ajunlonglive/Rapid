@@ -292,6 +292,14 @@ function sizeGridFixedHeaderColumns(control) {
 	if (hidden) control.parent().hide();
 }
 
+// get the index of the selected row, ignoring rows without rowStyle1 and rowStyle2 which can be introduced by custom code
+function getGridSelecteRowNumber(ev) {
+	var index = -1;
+	index = $(ev.target).closest("table").find("tr.rowStyle1,tr.rowStyle2").index($(ev.target).closest("tr"));
+	if (index > -1) index ++;
+	return index;
+}
+
 /* Link control resource JavaScript */
 
 function linkClick(url, sessionVariablesString) {
@@ -520,9 +528,9 @@ function Init_grid(id, details) {
   	if (details.dataStorageType) {
   		var data = getGridDataStoreData(id, details);
   		if (data) setData_grid($.Event('gridinit'), id, null, details, data);
-  		$("#" + id).click(function(ev) {
+  		$("#" + id).click( function(ev) {
   			var data = getGridDataStoreData(id, details);
-  			data.selectedRowNumber = $(ev.target).closest("tr").index();
+  			data.selectedRowNumber = getGridSelecteRowNumber(ev);
   			saveGridDataStoreData(id, details, data);
   		});
   	} // datastorage type check
@@ -762,8 +770,8 @@ function getData_grid(ev, id, field, details) {
   	} else if (details.columns) {
   		if (field) {		
   			var row = $("#" + id).find("tr.rowSelect");
-  			var rowIndex = row.index() - 1;
-  			if (rowIndex >= 0) {
+  			var rowIndex = getGridSelecteRowNumber(ev);
+  			if (rowIndex > 0) {
   				for (var i in details.columns) {
   					if (details.columns[i].field && details.columns[i].field.toLowerCase() == field.toLowerCase()) {
   						data = row.children(":nth(" + i + ")").html();
@@ -937,7 +945,7 @@ function getProperty_grid_selectedRowData(ev, id, field, details) {
   	}
   } else {
   	var row = $(ev.target).closest("tr");
-  	var rowNumber = row.index();
+  	var rowNumber = getGridSelecteRowNumber(ev);
   	if (rowNumber > 0) {
   		data = {fields:[],rows:[[]]};
   		for (var i in details.columns) {
@@ -1086,7 +1094,7 @@ function setProperty_grid_selectedRowData(ev, id, field, details, data, changeEv
   		
   		} else {
   			
-  			// assume the incomming fields		
+  			// assume the incoming fields		
   			gridData.fields = data.fields;
   			// add the top row of what we were given
   			gridData.rows.push(data.rows[0]);
@@ -1108,7 +1116,7 @@ function getProperty_grid_selectedRowValidation(ev, id, field, details) {
   		return gridData.rowValidation[gridData.selectedRowNumber - 1];
   	} 
   } else {
-  	return $(ev.target).closest("tr").index();
+  	return getGridSelecteRowNumber(ev);
   }
 }
 
@@ -1121,7 +1129,7 @@ function setProperty_grid_selectedRowValidation(ev, id, field, details, data, ch
   // if it's present
   if (grid[0]) {
   	// get the selected row number
-  	selectedRowNumber = grid.find("tr.rowSelect").index();
+  	selectedRowNumber = getGridSelecteRowNumber(ev);
   	// check the incoming data for a positive
   	if (data[0][0]) {
   		// remove validation class from row if true
@@ -1162,7 +1170,7 @@ function getProperty_grid_selectedRowNumber(ev, id, field, details) {
   		return null;
   	}
   } else {
-  	return $(ev.target).closest("tr").index();
+  	return getGridSelecteRowNumber(ev);
   }
 }
 
