@@ -166,9 +166,10 @@ li.validation {
 
 /* Application styles */
 
-/* sets font in all pages to arial */
-body { font-family: 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif; font-size: 14px; margin:0; }
-table { font-family: 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif; font-size: 14px; margin:0; }
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,600,700);
+
+body { font-family: 'Open Sans', Arial, Helvetica, sans-serif; font-size: 14px; margin:0; }
+table { font-family: 'Open Sans', Arial, Helvetica, sans-serif; font-size: 14px; margin:0; }
 
 .glossyTitle tr:first-child td {
   font-weight: bold;
@@ -237,3 +238,26 @@ textarea {
   -moz-box-sizing: border-box; 
   box-sizing: order-box;
 } 
+
+button {
+  padding: 3px;
+}
+
+.tabsHeader li {
+  color: black;
+}
+
+ul.tabsHeaderH li {
+  background: rgb(214,214,214); /* Old browsers */
+  background: -moz-linear-gradient(top, rgba(214,214,214,1) 0%, rgba(192,192,192,1) 100%);
+  background: -webkit-linear-gradient(top, rgba(214,214,214,1) 0%,rgba(192,192,192,1) 100%);
+  background: linear-gradient(to bottom, rgba(214,214,214,1) 0%,rgba(192,192,192,1) 100%); 
+  border-color: #777;
+}
+
+ul.tabsHeaderH li.selected{
+  background: rgb(229,229,229); /* Old browsers */
+  background: -moz-linear-gradient(top, rgba(229,229,229,1) 0%, rgba(255,255,255,1) 100%); 
+  background: -webkit-linear-gradient(top, rgba(229,229,229,1) 0%,rgba(255,255,255,1) 100%);
+  background: linear-gradient(to bottom, rgba(229,229,229,1) 0%,rgba(255,255,255,1) 100%); 
+}
