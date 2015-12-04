@@ -4203,6 +4203,8 @@ function Property_pageOrder(cell, propertyObject, property, details) {
 			_pageOrderReset = true;
 			// rebuild the list and dialogue
 			rebuildPageSelect(cell, propertyObject, property);
+			// add an undo snapshot
+			addUndo();
 		}));
 	}
 		
@@ -4231,6 +4233,8 @@ function Property_pageOrder(cell, propertyObject, property, details) {
 		_pageOrderReset = false;
 		// rebuild the list and dialogue
 		rebuildPageSelect(cell, propertyObject, property);
+		// add an undo snapshot (this will also prompt users to save the page)
+		addUndo();
 	});
 	
 	// put the text into the cell

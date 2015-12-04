@@ -364,8 +364,9 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 			data = {
 				actionType: actionType,
 				appId: "rapid",
+				version: "1",
 				name: $("#rapid_P1_C7").val(),
-				version: $("#rapid_P1_C48_").val(),
+				newVersion: $("#rapid_P1_C48_").val(),
 				title: $("#rapid_P1_C11").val(),
 				description: $("#rapid_P1_C15").val()
 			}
