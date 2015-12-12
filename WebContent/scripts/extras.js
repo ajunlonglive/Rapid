@@ -790,11 +790,11 @@ function getPageVariableValue(name) {
 }
 
 function Event_initForm(id) {
-	$("#" + id + "_form").submit(function() {
+	$("#" + id + "_form").submit( function() {
 		var hiddenControls = "";
-		$("input:hidden[name]:not([type=hidden]),select:hidden[name],textarea:hidden[name]").each(function(i) {
+		$(":hidden[id]:not([type=hidden])").each( function(i) {
 			var id = $(this).attr("id");
-			if (id) {
+			if (id.indexOf(_pageId) == 0) {
 				if (hiddenControls) hiddenControls += ",";
 				hiddenControls += id;
 			}

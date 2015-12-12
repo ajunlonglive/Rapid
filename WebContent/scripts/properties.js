@@ -1010,7 +1010,7 @@ function Property_validationControls(cell, propertyObject, property, details) {
 	// get the value if it exists
 	if (propertyObject[property.key]) controls = propertyObject[property.key];	
 	// if there are no controls and the current one has validation set it
-	if (controls.length == 0 && _selectedControl.validation) { controls.push(_selectedControl.id); propertyObject[property.key] = controls; }
+	if (controls.length == 0 && _selectedControl.validation && _selectedControl.validation.type) { controls.push(_selectedControl.id); propertyObject[property.key] = controls; }
 	// make some text
 	var text = "";
 	for (var i = 0; i < controls.length; i++) {
