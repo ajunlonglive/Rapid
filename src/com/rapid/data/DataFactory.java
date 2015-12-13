@@ -112,6 +112,29 @@ public class DataFactory {
 		public void add(Date value) { this.add(new Parameter(value)); }
 		public void add(float value) { this.add(new Parameter(value)); }
 		
+		public Parameters() {}
+		public Parameters(Object...parameters) {
+			if (parameters != null) {
+				for (Object object : parameters) {
+					if (object== null) {
+						this.add(new Parameter());
+					} else if (object instanceof String) {
+						String v = (String) object;
+						this.add(new Parameter(v));
+					} else if (object instanceof Integer) {
+						Integer v = (Integer) object;
+						this.add(new Parameter(v));
+					} else if (object instanceof Float) {
+						Float v = (Float) object;
+						this.add(new Parameter(v));
+					} else if (object instanceof Date) {
+						Date v = (Date) object;
+						this.add(new Parameter(v));
+					}  					
+				}
+			}
+		}
+		
 		@Override
 		public String toString() {
 			String parametersString = "";
@@ -219,6 +242,16 @@ public class DataFactory {
 				
 	}
 	
+	public ResultSet getPreparedResultSet(RapidRequest rapidRequest, String sql, Object... parameters) throws SQLException, ClassNotFoundException, ConnectionAdapterException {
+		
+		Parameters params = new Parameters(parameters);
+		
+		_resultset = getPreparedStatement(rapidRequest, sql, params).executeQuery();
+		
+		return _resultset;
+				
+	}
+	
 	public ResultSet getPreparedResultSet(RapidRequest rapidRequest, String sql) throws SQLException, ClassNotFoundException, ConnectionAdapterException {
 		
 		_resultset = getPreparedStatement(rapidRequest, sql, null).executeQuery();
@@ -233,6 +266,14 @@ public class DataFactory {
 		
 	}
 	
+	public int getPreparedUpdate(RapidRequest rapidRequest, String SQL, Object... parameters) throws SQLException, ClassNotFoundException, ConnectionAdapterException {
+		
+		Parameters params = new Parameters(parameters);
+		
+		return getPreparedStatement(rapidRequest, SQL, params).executeUpdate();
+		
+	}
+	
 	public String getPreparedScalar(RapidRequest rapidRequest, String sql, ArrayList<Parameter> parameters) throws SQLException, ClassNotFoundException, ConnectionAdapterException {
 		
 		_resultset = getPreparedStatement(rapidRequest, sql, parameters).executeQuery();
@@ -242,6 +283,14 @@ public class DataFactory {
 		} else {
 			return null;
 		}
+		
+	}
+	
+	public String getPreparedScalar(RapidRequest rapidRequest, String SQL, Object... parameters) throws SQLException, ClassNotFoundException, ConnectionAdapterException {
+		
+		Parameters params = new Parameters(parameters);
+		
+		return getPreparedScalar(rapidRequest, SQL, params);
 		
 	}
 	
