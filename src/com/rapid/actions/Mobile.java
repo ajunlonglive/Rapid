@@ -177,6 +177,85 @@ public class Mobile extends Action {
 		js += "} else {\n";
 		return js;
 	}
+	
+	// a re-usable function for printing the details of the outputs
+	private String getOutputs(RapidHttpServlet rapidServlet, Application application, Page page, String outputsJSON) throws JSONException {
+		
+		// start the outputs string
+		String outputsString = "";
+					
+		// read into json Array
+		JSONArray jsonOutputs = new JSONArray(outputsJSON);
+		
+		// loop
+		for (int i = 0; i < jsonOutputs.length(); i++) {
+									
+			// get the gps desintation
+			JSONObject jsonGpsDestination = jsonOutputs.getJSONObject(i);
+			
+			// get the itemId
+			String itemId = jsonGpsDestination.getString("itemId");
+			// split by escaped .
+			String idParts[] = itemId.split("\\.");
+			// if there is more than 1 part we are dealing with set properties, for now just update the destintation id
+			if (idParts.length > 1) itemId = idParts[0];
+			
+			// get the field
+			String field = jsonGpsDestination.optString("field","");
+			
+			// first try and look for the control in the page
+			Control destinationControl = page.getControl(itemId);
+			// assume we found it
+			boolean pageControl = true;
+			// check we got a control
+			if (destinationControl == null) {
+				// now look for the control in the application
+				destinationControl = application.getControl(rapidServlet.getServletContext(), itemId);
+				// set page control to false
+				pageControl = false;
+			} 
+			
+			// check we got one from either location
+			if (destinationControl != null) {				
+												
+				// get any details we may have
+				String details = destinationControl.getDetailsJavaScript(application, page);
+					
+				// if we have some details
+				if (details != null) {
+					// if this is a page control
+					if (pageControl) {
+						// the details will already be in the page so we can use the short form
+						details = destinationControl.getId() + "details";
+					} 
+				}
+				
+				// if the idParts is greater then 1 this is a set property
+				if (idParts.length > 1) {
+					
+					// get the property from the second id part
+					String property = idParts[1];
+
+					// make the getGps call to the bridge
+					outputsString += "{f:'setProperty_" + destinationControl.getType() +  "_" + property + "',id:'" + itemId + "',field:'" + field + "',details:'" + details + "'}";
+				
+				} else {
+					
+					outputsString += "{f:'setData_" + destinationControl.getType() + "',id:'" + itemId + "',field:'" + field + "',details:'" + details + "'}";
+					
+				} // copy / set property check
+				
+				// add a comma if more are to come
+				if (i < jsonOutputs.length() - 1) outputsString += ", ";
+				
+			} // destination control check	
+																															
+		} // destination loop
+		
+		// return
+		return outputsString;
+		
+	}
 			
 	@Override
 	public String getJavaScript(RapidRequest rapidRequest, Application application, Page page, Control control, JSONObject jsonDetails) {
@@ -230,6 +309,7 @@ public class Mobile extends Action {
 				}
 								
 			} else if ("addImage".equals(type)) {
+				
 				// get the gallery control Id
 				String galleryControlId = getProperty("galleryControlId");
 				// get the gallery control
@@ -246,6 +326,7 @@ public class Mobile extends Action {
 					// close mobile check
 					js += "}\n";
 				}
+				
 			} else if ("uploadImages".equals(type)) {
 												
 				// make a list of control ids
@@ -308,6 +389,7 @@ public class Mobile extends Action {
 				}
 				
 			} else if ("navigate".equals(type)) {
+				
 				// get the naviagte source control id
 				String navigateControlId = getProperty("navigateControlId");
 				// get the control
@@ -315,7 +397,7 @@ public class Mobile extends Action {
 				// check we got one
 				if (navigateControl == null) {
 					js += "// navigate to control " + navigateControlId + " not found\n";
-				} else {
+				} else {				
 					// get the navigate to field
 					String navigateField = getProperty("navigateField");
 					// get the mode
@@ -333,7 +415,9 @@ public class Mobile extends Action {
 					// close mobile check
 					js += "}\n";
 				}
+				
 			}  else if ("message".equals(type)) {
+				
 				// retrieve the message
 				String message = getProperty("message");
 				// update to empty string if null
@@ -344,13 +428,16 @@ public class Mobile extends Action {
 				js += "  _rapidmobile.showMessage('" + message.replace("'", "\\'") + "');\n";
 				// close mobile check
 				js += "}\n";
+				
 			} else if ("disableBackButton".equals(type)) {
+				
 				// mobile check with silent fail
 				js += getMobileCheck(false);
 				// add js
 				js += "    _rapidmobile.disableBackButton();\n";
 				// close mobile check
 				js += "  }\n";
+				
 			} else if ("sendGPS".equals(type)) {
 				
 				// mobile check with alert
@@ -365,89 +452,19 @@ public class Mobile extends Action {
 				int gpsFrequency = Integer.parseInt(getProperty("gpsFrequency"));
 				
 				// get the gps destinations
-				String gpsDestionationsString = getProperty("gpsDestinations");
+				String gpsDestinationsString = getProperty("gpsDestinations");
 				
 				// if we had some
-				if (gpsDestionationsString != null) {					
+				if (gpsDestinationsString != null) {					
 															
 					try {
 						
 						// start the getGPS string
 						String getGPSjs = "  _rapidmobile.getGPS(" + gpsFrequency + ",\"[";
-						
-						// read into json Array
-						JSONArray jsonGpsDestinations = new JSONArray(gpsDestionationsString);
-						
-						// loop
-						for (int i = 0; i < jsonGpsDestinations.length(); i++) {
-							
-							// get the gps desintation
-							JSONObject jsonGpsDestination = jsonGpsDestinations.getJSONObject(i);
-							
-							// get the itemId
-							String itemId = jsonGpsDestination.getString("itemId");
-							// split by escaped .
-							String idParts[] = itemId.split("\\.");
-							// if there is more than 1 part we are dealing with set properties, for now just update the destintation id
-							if (idParts.length > 1) itemId = idParts[0];
-							
-							// get the field
-							String field = jsonGpsDestination.optString("field","");
-							
-							// first try and look for the control in the page
-							Control destinationControl = page.getControl(itemId);
-							// assume we found it
-							boolean pageControl = true;
-							// check we got a control
-							if (destinationControl == null) {
-								// now look for the control in the application
-								destinationControl = application.getControl(rapidServlet.getServletContext(), itemId);
-								// set page control to false
-								pageControl = false;
-							} 
-							
-							// check we got one from either location
-							if (destinationControl == null) {
-								
-								// data copies not found return a comment
-								js = "// data destination not found for " + itemId;
-								
-							} else {
-																
-								// get any details we may have
-								String details = destinationControl.getDetailsJavaScript(application, page);
-									
-								// if we have some details
-								if (details != null) {
-									// if this is a page control
-									if (pageControl) {
-										// the details will already be in the page so we can use the short form
-										details = destinationControl.getId() + "details";
-									} 
-								}
-								
-								// if the idParts is greater then 1 this is a set property
-								if (idParts.length > 1) {
-									
-									// get the property from the second id part
-									String property = idParts[1];
 
-									// make the getGps call to the bridge
-									getGPSjs += "{f:'setProperty_" + destinationControl.getType() +  "_" + property + "',id:'" + itemId + "',field:'" + field + "',details:'" + details + "'}";
-								
-								} else {
-									
-									getGPSjs += "{f:'setData_" + destinationControl.getType() + "',id:'" + itemId + "',field:'" + field + "',details:'" + details + "'}";
-									
-								} // copy / set property check
-								
-								// add a comma if more are to come
-								if (i < jsonGpsDestinations.length() - 1) getGPSjs += ", ";
-								
-							} // destination control check	
-																																			
-						} // destination loop
-						
+						// add the gpsDestinationsString
+						getGPSjs += getOutputs(rapidServlet, application, page, gpsDestinationsString);
+
 						// close the get gps string
 						getGPSjs += "]\");\n";
 						
@@ -534,6 +551,37 @@ public class Mobile extends Action {
 						
 					} // online actions check non-null check
 				
+			} else if ("addBarcode".equals(type)) {
+				
+				try {
+					
+					// mobile check with fail
+					String jsBarcode = getMobileCheck(true);
+					
+					// get the barcodeDestinations
+					String barcodeDestinations = getProperty("barcodeDestinations");
+					
+					// start the add barcode call
+					jsBarcode += "  _rapidmobile.addBarcode(\"[";
+					
+					jsBarcode += getOutputs(rapidServlet, application, page, barcodeDestinations);
+					
+					// call get barcode
+					jsBarcode +=  "]\");\n";
+					
+					// close mobile check
+					jsBarcode += "}\n";
+					
+					// now safe to add back into main js
+					js += jsBarcode;
+					
+				} catch (JSONException ex) {
+					
+					// print an error into the js instead
+					js += "  // error reading gpsDestinations : " + ex.getMessage();
+					
+				}
+												
 			} // mobile action type check
 			
 		} // mobile action type non-null check
