@@ -2325,12 +2325,24 @@ $(document).ready( function() {
 	document.body.removeChild(outer);
 
 	_scrollBarWidth = (w1 - w2);
-			
+	
+	// the control panel on the left
+	var controlPanelInner = $("#controlPanelInner");
+	// the properties panel on the right
+	var propertiesPanel = $("#propertiesPanel");
+	
 	// the window we are working in
 	_window = $(window);	
 	
 	// prevent any dragging and ghost images 
 	_window.on("dragstart", function(ev) { ev.preventDefault(); });
+	
+	_window.scroll( function() {
+		// adjust the control panel left / right
+		controlPanelInner.css("left",-$(this).scrollLeft() + 10);
+		// adjust the properties panel left/right
+		propertiesPanel.css("right",-$(this).scrollLeft());
+	});
 	
 	// the iframe in which we load the page
 	_pageIframe = $("#page");		
@@ -3917,7 +3929,7 @@ function windowResize(ev) {
 		_pageIframe.css({
 			left: _panelPinnedOffset,
 			width: width - _panelPinnedOffset - 1,
-			height: height 
+			height: height
 		});
 		// adjust the cover to be full-screen
 		_designCover.css({

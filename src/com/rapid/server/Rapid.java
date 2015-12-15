@@ -545,78 +545,88 @@ public class Rapid extends RapidHttpServlet {
 								logger.debug("Rapid GET response (500) : Not a form");
 								
 							} else {
-							
-								// this is a form page's data being submitted
-								String formData = new String(bodyBytes, "UTF-8");
 								
-								// log it!
-								logger.trace("Form data : " + formData);
+								// get the formId to test all is ok
+								String formId = formAdapter.getFormId(rapidRequest);
 								
-								// if there's a submit action
-								if ("submit".equals(request.getParameter("action"))) {
+								// check we got one
+								if (formId == null) {
 									
-									// get the form id
-									String formId = formAdapter.getFormId(rapidRequest);
-									
-									try {
-										
-										// do the submit (this will call the non-abstract submit, manage the form state, and return with an applicable message)
-										String message = formAdapter.doFormSubmit(rapidRequest);
-										
-										// write the form submit OK page
-										formAdapter.writeFormSubmitOK(rapidRequest, response, formId, message);
-										
-									} catch (Exception ex) {
-										
-										// write the form submit Error page
-										formAdapter.writeFormSubmitError(rapidRequest, response, formId, ex);
-										
-									} // submit check
+									// we've lost the form id so start the form again
+									response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion());
 									
 								} else {
-								
-									// get the requestPage id
-									String requestPageId = rapidRequest.getPage().getId();
+							
+									// this is a form page's data being submitted
+									String formData = new String(bodyBytes, "UTF-8");
 									
-									// get the page control values
-									FormPageControlValues pageControlValues = FormAdapter.getPostPageControlValues(requestPageId, formData);
+									// log it!
+									logger.trace("Form data : " + formData);
 									
-									// check we got some
-									if (pageControlValues != null) {
-									
-										// loop and print them if trace on
-										if (logger.isTraceEnabled()) {
-											for (FormControlValue controlValue : pageControlValues) {
-												logger.debug(controlValue.getId() + " = " + controlValue.getValue());
-											}
-										}									
-																			
-										// store the form page control values
-										formAdapter.setFormPageControlValues(rapidRequest, requestPageId, pageControlValues);
+									// if there's a submit action
+									if ("submit".equals(request.getParameter("action"))) {
 										
-									}
-																							
-									// get all of the app pages
-									PageHeaders pageHeaders = app.getPages().getSortedPages();
-									
-									// get it's position
-									int pageIndex = pageHeaders.indexOf(requestPageId);
-									
-									// if this is the last page
-									if (pageIndex >= pageHeaders.size() - 1) {
-										
-										// send a redirect for the summary (this also avoids ERR_CACH_MISS issues on the back button )
-										response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion() + "&action=summary");
+										try {
+											
+											// do the submit (this will call the non-abstract submit, manage the form state, and return with an applicable message)
+											String message = formAdapter.doFormSubmit(rapidRequest);
+											
+											// write the form submit OK page
+											formAdapter.writeFormSubmitOK(rapidRequest, response, formId, message);
+											
+										} catch (Exception ex) {
+											
+											// write the form submit Error page
+											formAdapter.writeFormSubmitError(rapidRequest, response, formId, ex);
+											
+										} // submit check
 										
 									} else {
+									
+										// get the requestPage id
+										String requestPageId = rapidRequest.getPage().getId();
+										
+										// get the page control values
+										FormPageControlValues pageControlValues = FormAdapter.getPostPageControlValues(requestPageId, formData);
+										
+										// check we got some
+										if (pageControlValues != null) {
+										
+											// loop and print them if trace on
+											if (logger.isTraceEnabled()) {
+												for (FormControlValue controlValue : pageControlValues) {
+													logger.debug(controlValue.getId() + " = " + controlValue.getValue());
+												}
+											}									
 																				
-										// increment the page index
-										pageIndex++;
+											// store the form page control values
+											formAdapter.setFormPageControlValues(rapidRequest, requestPageId, pageControlValues);
+											
+										}
+																								
+										// get all of the app pages
+										PageHeaders pageHeaders = app.getPages().getSortedPages();
 										
-										// send a redirect for the page (this avoids ERR_CACH_MISS issues on the back button )
-										response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion() + "&p=" + pageHeaders.get(pageIndex).getId());
+										// get it's position
+										int pageIndex = pageHeaders.indexOf(requestPageId);
 										
-									}																											
+										// if this is the last page
+										if (pageIndex >= pageHeaders.size() - 1) {
+											
+											// send a redirect for the summary (this also avoids ERR_CACH_MISS issues on the back button )
+											response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion() + "&action=summary");
+											
+										} else {
+																					
+											// increment the page index
+											pageIndex++;
+											
+											// send a redirect for the page (this avoids ERR_CACH_MISS issues on the back button )
+											response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion() + "&p=" + pageHeaders.get(pageIndex).getId());
+											
+										} // last page check					
+										
+									} // form id check
 
 								} // submit action check
 								

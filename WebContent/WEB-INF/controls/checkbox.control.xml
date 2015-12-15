@@ -108,6 +108,15 @@ if (this.text) {
 	        ]]>
 	    </getHtmlFunction> 
 	    
+	    <removeJavaScript>
+	        <![CDATA[        
+// remove the hidden input
+this.object.closest("body").find("input[type=hidden][name='" + this.id + "']").remove();
+// remove the control
+this.object.remove();
+	        ]]>
+	    </removeJavaScript> 
+	    
 	    <getDataFunction>
 	        <![CDATA[
 return $("#" + id).prop("checked") ? "true" : "false";
@@ -138,7 +147,7 @@ control.prop('checked', value);
 if (changeEvents) control.trigger("change");    
 			]]>
 	    </setDataJavaScript>
-	    
+	    	    
 	    <events>
 	        <event>
 	            <type>click</type>

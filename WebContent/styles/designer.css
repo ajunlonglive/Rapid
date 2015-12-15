@@ -364,6 +364,10 @@ div#propertiesPanel {
 	display: none;
 }
 
+div#propertiesPanelInner {
+	right: 10px;
+}
+
 .propertiesPanelDiv {
 	padding-top:0px;
 }
