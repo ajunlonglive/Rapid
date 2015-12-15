@@ -122,6 +122,13 @@ return "<option value=''>Please select...</option>" + getControlOptions(this.gal
 	            <refreshProperties>true</refreshProperties>
 	        </property>
 	        
+	         <property>
+	            <key>barcodeDestinations</key>
+	            <name>Destinations</name>
+	            <visible>false</visible>
+	            <changeValueJavaScript>datacopyDestinations</changeValueJavaScript>	 
+	        </property> 
+	        
 	        <property>
 	            <key>successActions</key>
 	            <name>Success actions</name>
