@@ -4051,7 +4051,7 @@ function Property_guidelines(cell, propertyObject, property, details) {
 }
 
 // possible mobileActionType values used by the mobileActionType property
-var _mobileActionTypes = [["dial","Dial number"],["sms","Send text/sms message"],["addImage","Aquire image"],["uploadImages","Upload images"],["navigate","Navigate to"],["sendGPS","Send GPS position"],["stopGPS","Stop GPS updates"],["message","Status bar message"],["disableBackButton","Disable back button"],["online","Online actions"]];
+var _mobileActionTypes = [["dial","Dial number"],["sms","Send text/sms message"],["addImage","Get image"],["uploadImages","Upload images"],["addBarcode","Scan barcode"],["navigate","Navigate to"],["sendGPS","Send GPS position"],["stopGPS","Stop GPS updates"],["message","Status bar message"],["disableBackButton","Disable back button"],["online","Online actions"]];
 
 // this property changes the visibility of other properties according to the chosen type
 function Property_mobileActionType(cell, mobileAction, property, details) {
@@ -4073,6 +4073,7 @@ function Property_mobileActionType(cell, mobileAction, property, details) {
 	setPropertyVisibilty(mobileAction, "imageMaxSize", false);
 	setPropertyVisibilty(mobileAction, "imageQuality", false);
 	setPropertyVisibilty(mobileAction, "galleryControlIds", false);
+	setPropertyVisibilty(mobileAction, "barcodeDestinations", false);
 	setPropertyVisibilty(mobileAction, "successActions", false);
 	setPropertyVisibilty(mobileAction, "errorActions", false);
 	setPropertyVisibilty(mobileAction, "navigateControlId", false);
@@ -4106,6 +4107,9 @@ function Property_mobileActionType(cell, mobileAction, property, details) {
 			setPropertyVisibilty(mobileAction, "galleryControlIds", true);
 			setPropertyVisibilty(mobileAction, "successActions", true);
 			setPropertyVisibilty(mobileAction, "errorActions", true);
+		break;
+		case "addBarcode" :
+			setPropertyVisibilty(mobileAction, "barcodeDestinations", true);
 		break;
 		case "navigate" :
 			setPropertyVisibilty(mobileAction, "navigateMode", true);
