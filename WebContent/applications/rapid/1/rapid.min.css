@@ -4,7 +4,7 @@ span.loading{position:absolute;background:url("../../../images/wait_120x15.gif")
 table.grid{border-collapse:collapse}
 table.grid td{border:0}
 table.grid span.sort{font-family:FontAwesome;margin-left:5px}
-.hint{position:absolute;z-index:10009}
+.hint{position:absolute;z-index:10101}
 ul.tabsHeader{list-style:none;padding:0;margin:0;vertical-align:top}
 .tabsHeader li{border:1px solid #bbb;border-top-left-radius:5px;border-top-right-radius:5px;margin:0;text-decoration:none;display:block;background:#eee;color:#00c;width:8em;text-align:center;cursor:pointer}
 .tabsHeader li:hover{background:#ddf}
