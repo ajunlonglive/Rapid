@@ -149,7 +149,7 @@ public abstract class SecurityAdapter {
 	public static class User {
 		
 		// private class variables
-		protected String _name, _description, _password;
+		protected String _name, _description, _password, _deviceDetails;
 		protected UserRoles _userRoles;
 		
 		// properties
@@ -163,6 +163,9 @@ public abstract class SecurityAdapter {
 		public String getPassword() { return _password; }
 		public void setPassword(String password) { _password = password; }
 		
+		public String getDeviceDetails() { return _deviceDetails; }
+		public void setDeviceDetails(String deviceDetails) { _deviceDetails = deviceDetails; }
+		
 		public UserRoles getRoles() { return _userRoles; }
 		public void setRoles(UserRoles roles) { _userRoles = roles; }
 		
@@ -170,21 +173,27 @@ public abstract class SecurityAdapter {
 		public User() {
 			_userRoles = new UserRoles();
 		}
-		
-		public User(String name, String description, String password) {
+				
+		public User(String name, String description, String password, String deviceDetails, UserRoles roles) {
 			_name = name;
 			_description = description;
 			_password = password;
-			_userRoles = new UserRoles();
+			_deviceDetails = deviceDetails;
+			_userRoles = roles;
 		}
 		
 		public User(String name, String description, String password, UserRoles roles) {
-			_name = name;
-			_description = description;
-			_password = password;
-			_userRoles = roles;
+			this(name, description, password, null, roles);
 		}
-						
+		
+		public User(String name, String description, String password, String deviceDetails) {
+			this(name, description, password, deviceDetails, new UserRoles());
+		}
+		
+		public User(String name, String description, String password) { 
+			this(name, description, password, null, new UserRoles());
+		}
+								
 	}
 	
 		

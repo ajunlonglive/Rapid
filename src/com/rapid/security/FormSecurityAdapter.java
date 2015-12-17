@@ -33,11 +33,17 @@ import com.rapid.core.Application;
 import com.rapid.server.RapidRequest;
 
 public class FormSecurityAdapter extends RapidSecurityAdapter {
+	
+	// private instance methods
+	protected User _formUser;
 
 	// constructor
 	
 	public FormSecurityAdapter(ServletContext servletContext, Application application) throws SecurityException,IllegalArgumentException, ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
+		// call the super constructor
 		super(servletContext, application);
+		// make the form user which all anonymous users will use
+		_formUser = new User("public","Public form user","");
 	}
 	
 	// overrides
@@ -46,8 +52,8 @@ public class FormSecurityAdapter extends RapidSecurityAdapter {
 	public User getUser(RapidRequest rapidRequest) throws SecurityAdapaterException {
 		// first try and get the user with the super method
 		User user = super.getUser(rapidRequest);
-		// if that failed set to an anonymous user
-		if (user == null) user = new User(rapidRequest.getUserName(),"Form user","");
+		// if that didn'y find anyone set to an anonymous user
+		if (user == null) user = _formUser;
 		// return
 		return user;
 	}

@@ -1366,7 +1366,7 @@ public class Designer extends RapidHttpServlet {
 														// get the Rapid user object
 														User rapidUser = rapidApplication.getSecurityAdapter().getUser(rapidRequest);
 														// create a new user based on the Rapid user
-														user = new User(userName, rapidUser.getDescription(), rapidUser.getPassword());
+														user = new User(userName, rapidUser.getDescription(), rapidUser.getPassword(), rapidUser.getDeviceDetails());
 														// add the new user 
 														security.addUser(rapidRequest, user);
 													}

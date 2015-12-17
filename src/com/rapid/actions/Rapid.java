@@ -211,7 +211,7 @@ public class Rapid extends Action {
 				// get the Rapid user object
 				User rapidUser = rapidApplication.getSecurityAdapter().getUser(rapidRequest);
 				// create a new user based on the current user
-				user = new User(userName, rapidUser.getDescription(), rapidUser.getPassword());
+				user = new User(userName, rapidUser.getDescription(), rapidUser.getPassword(), rapidUser.getDeviceDetails());
 				// add the new user 
 				security.addUser(rapidRequest, user);
 			}
@@ -1790,6 +1790,8 @@ public class Rapid extends Action {
 				String description = jsonAction.optString("description","").trim();
 				// get the password
 				String password = jsonAction.getString("password");
+				// get the device details
+				String deviceDetails = jsonAction.getString("deviceDetails");
 				
 				// get the security
 				SecurityAdapter security = app.getSecurityAdapter();
@@ -1798,7 +1800,7 @@ public class Rapid extends Action {
 				rapidRequest = new RapidRequest(rapidServlet, rapidRequest.getRequest(), app);
 												
 				// add the user
-				security.addUser(rapidRequest, new User(userName, description, password));
+				security.addUser(rapidRequest, new User(userName, description, password, deviceDetails));
 				
 				// update the Rapid Request to have the new user name
 				rapidRequest.setUserName(userName);
