@@ -37,6 +37,7 @@ import com.rapid.core.Application;
 import com.rapid.core.Control;
 import com.rapid.core.Page;
 import com.rapid.server.RapidRequest;
+import com.rapid.utils.Html;
 
 public class RapidFormAdapter extends FormAdapter {
 	
@@ -220,7 +221,7 @@ public class RapidFormAdapter extends FormAdapter {
 							value = jsonValue.optString("text");
 						} catch (Exception ex) {}
 					}
-					return "<span class='formSummaryControl'>" + label + " : " + control.getCodeText(value) + "</span>\n";
+					return "<span class='formSummaryControl'>" + label + " : " + Html.escape(control.getCodeText(value)) + "</span>\n";
 				}		
 			}
 		}
