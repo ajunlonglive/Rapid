@@ -28,13 +28,16 @@ package com.rapid.security;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import com.rapid.core.Application;
 import com.rapid.server.RapidRequest;
+import com.rapid.server.filter.RapidFilter;
 import com.rapid.utils.Comparators;
 import com.rapid.utils.JAXB.EncryptedXmlAdapter;
 
@@ -193,6 +196,86 @@ public abstract class SecurityAdapter {
 		public User(String name, String description, String password) { 
 			this(name, description, password, null, new UserRoles());
 		}
+		
+		// public methods
+		
+		public boolean checkDevice(RapidRequest rapidRequest) {
+			
+			// if there are no device details for this user we're good
+			if (_deviceDetails == null) return true;
+			if (_deviceDetails.trim().length() == 0) return true;
+
+			// get the user device details from the user session
+			String deviceDetails = (String) rapidRequest.getRequest().getSession().getAttribute(RapidFilter.SESSION_VARIABLE_USER_DEVICE);
+			
+			// if we got some
+			if (deviceDetails != null) {
+								
+				// a map to hold of all values found
+				Map<String,String> deviceValues = new HashMap<String,String>();
+				// split the various device attributes by a comma (IMEI, MAC, etc)
+				String[] deviceAttributes = deviceDetails.split(",");
+				// loop the attributes			
+				for (String deviceAttribute : deviceAttributes) {
+					// split into key value parts by =
+					String[] attributeParts = deviceAttribute.split("=");
+					// if we got two parts
+					if (attributeParts.length == 2) {
+						// add key in upper case and value to our device map
+						deviceValues.put(attributeParts[0].toUpperCase(),attributeParts[1]);
+					}				
+				}
+
+				// now split the incoming rules by ; - we only need to match one
+				String[] rules = _deviceDetails.split(";");
+				// loop the rules
+				for (String rule : rules) {
+					// split the rule conditions - all conditions in a rule must be met
+					String[] conditions = rule.split(",");
+					// number of parts matched
+					int conditionsMatched = 0;
+					// loop the conditions
+					for (String condition : conditions) {
+						// split the parts of the condition by =
+						String[] conditionParts = condition.split("=");
+						// if we had a key and a value
+						if (conditionParts.length == 2) {
+							// get the key in upper case
+							String key = conditionParts[0].toUpperCase();
+							// get the value
+							String value = conditionParts[1];
+							// find a device value for the key
+							String deviceValue = deviceValues.get(key);
+							// if we don't have this a device value for this key
+							if (deviceValue == null) {
+								// stop checking this condition any further
+								break;
+							} else {						
+								// if there is a direct match or wildcard match
+								if (value.equals(deviceValue) // full match
+										|| ("*".equals(value)) // value can be anything
+										|| (value.startsWith("*") && deviceValue.endsWith(value.substring(1))) // wildcard at start
+										|| (value.endsWith("*") && deviceValue.startsWith(value.substring(0,value.length()-2))) // wildcard at end									
+										|| (value.startsWith("*") && value.endsWith("*") && deviceValue.contains(value.substring(1,value.length()-2))) // wildcard start and end
+								) {
+									// record this condition was matched
+									conditionsMatched ++;
+								}							
+							}
+							
+						} 
+									
+					}
+					// if we matched all the conditions in the rule we're good!
+					if (conditionsMatched > 0 && conditionsMatched == conditions.length) return true;
+								
+				}
+				
+			}
+				
+			return false;
+							
+		}
 								
 	}
 	
@@ -332,5 +415,5 @@ public abstract class SecurityAdapter {
 	
 	// check a named userName/password combination
 	public abstract boolean checkUserPassword(RapidRequest rapidRequest, String userName, String password) throws SecurityAdapaterException;
-		
+				
 }

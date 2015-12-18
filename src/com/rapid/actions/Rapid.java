@@ -951,6 +951,9 @@ public class Rapid extends Action {
 				
 				// add a masked password
 				result.put("password", password);
+				
+				// add the device details
+				result.put("deviceDetails", user.getDeviceDetails());
 			
 				// if we got one
 				if (security != null) {
@@ -1890,6 +1893,8 @@ public class Rapid extends Action {
 				String description = jsonAction.getString("description").trim();
 				// get the password
 				String password = jsonAction.getString("password");
+				// get the device details
+				String deviceDetails = jsonAction.getString("deviceDetails");
 				
 				// get the security
 				SecurityAdapter security = app.getSecurityAdapter();
@@ -1899,6 +1904,8 @@ public class Rapid extends Action {
 				user.setDescription(description);
 				// update the password if different from the mask
 				if (!"********".equals(password)) user.setPassword(password);
+				// update the device details
+				user.setDeviceDetails(deviceDetails);
 				// update the user
 				security.updateUser(rapidRequest, user);
 				

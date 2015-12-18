@@ -55,6 +55,12 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	        </property>
 	        
 	        <property>
+	            <key>title</key>
+	            <name>Title</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>	            
+	        </property>	 
+	        
+	        <property>
 	            <key>glyphCode</key>
 	            <name>Glyph</name>
 	            <setConstructValueFunction>
@@ -130,7 +136,7 @@ if (this.glyphCode) {
 		glyph = "<span class='fa-stack fa-lg buttonGlyphWithBackground buttonGlyph'><i class='fa fa-" + this.glyphBackground + " fa-stack-2x buttonGlyphBackground'></i><i class='fa fa-stack-1x'>" + this.glyphCode + "</i></span>";
 	}
 		       
-	var html = "<button id='" + this.id + "' class='button" + getStyleClasses(this) + "'>";
+	var html = "<button id='" + this.id + "' class='button" + getStyleClasses(this) + "' " + (this.title ? "title='" + escapeApos(this.title) + "'" : "") + ">";
 	if (this.glyphPosition == "left" || this.glyphPosition == "top") html += glyph;
 	if (this.glyphPosition == "left") html += "&nbsp;";
 	if (this.glyphPosition == "top") html += "<br/>";
@@ -140,7 +146,7 @@ if (this.glyphCode) {
 	if (this.glyphPosition == "right" || this.glyphPosition == "bottom") html += glyph;
 	html += "</button>";
 } else {
-	html = "<button id='" + this.id + "' type='button' class='button" + getStyleClasses(this) + "'>" + this.label + "</button>";
+	html = "<button id='" + this.id + "' " + (this.title ? "title='" + escapeApos(this.title) + "' " : "") + "class='button" + getStyleClasses(this) + "'>" + this.label + "</button>";
 }
 return html
 	        ]]>

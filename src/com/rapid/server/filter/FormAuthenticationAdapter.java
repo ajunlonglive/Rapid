@@ -193,9 +193,7 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 					
 					// look in the request for the password
 					String userPassword = request.getParameter("userPassword");
-					// look in the request for the device id
-					String deviceId = request.getParameter("deviceId");
-					
+										
 					// remember whether we are authorised for at least one application
 					boolean authorised = false;
 					
@@ -233,15 +231,21 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 							// log the error
 							_logger.error("FormAuthenticationAdapter error storing encrypted password", ex);
 						}
+
+						// get the address from the request host
+						InetAddress inetAddress = InetAddress.getByName(request.getRemoteHost());
 						
-						// if the device id is null use the host name
-						if (deviceId == null) {
-							InetAddress inetAddress = InetAddress.getByName(request.getRemoteHost());
-							deviceId = inetAddress.getHostName();
-						}
+						// start the device details
+						String deviceDetails = "ip=" + inetAddress.getHostAddress() + ",name=" + inetAddress.getHostName() + ",agent=" + request.getHeader("User-Agent");
+						
+						// look in the request for the device id parameter
+						String deviceId = request.getParameter("deviceId");
+						
+						// if we were sent one add it to the device details
+						if (deviceId == null)  deviceDetails += "," + deviceId;
 						
 						// retain device id in the session
-						session.setAttribute("deviceId", deviceId);
+						session.setAttribute(RapidFilter.SESSION_VARIABLE_USER_DEVICE, deviceDetails);
 						
 						// log that authentication was granted
 						_logger.debug("FormAuthenticationAdapter authenticated " + userName + " from " + deviceId);
