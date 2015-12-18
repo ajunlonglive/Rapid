@@ -242,13 +242,13 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 						String deviceId = request.getParameter("deviceId");
 						
 						// if we were sent one add it to the device details
-						if (deviceId == null)  deviceDetails += "," + deviceId;
+						if (deviceId != null)  deviceDetails += "," + deviceId;
 						
 						// retain device id in the session
 						session.setAttribute(RapidFilter.SESSION_VARIABLE_USER_DEVICE, deviceDetails);
 						
 						// log that authentication was granted
-						_logger.debug("FormAuthenticationAdapter authenticated " + userName + " from " + deviceId);
+						_logger.debug("FormAuthenticationAdapter authenticated " + userName + " from " + deviceDetails);
 						
 						// make the sessionRequest path the root just in case it was null (or login.jsp itself)
 						if (sessionRequestPath == null || "login.jsp".equals(sessionRequestPath)) sessionRequestPath = ".";

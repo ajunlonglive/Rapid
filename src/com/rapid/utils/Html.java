@@ -130,5 +130,14 @@ public class Html {
     	return prettyHtml.toString();    	
     	
     }
+	
+	// escape common characters to avoid cross-site-scripting
+	public static String escape(String string) {
+		if (string == null) {
+			return "";
+		} else {
+			return string.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot").replace("'", "&apos;").replace("/", "&#x2F;");
+		}		
+	}
 
 }
