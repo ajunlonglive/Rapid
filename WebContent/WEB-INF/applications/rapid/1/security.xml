@@ -10,11 +10,12 @@
     </roles>
     <users>
         <description>Admin user</description>
+        <deviceDetails></deviceDetails>
         <name>admin</name>
         <password>admin</password>
         <roles>RapidAdmin</roles>
         <roles>RapidDesign</roles>
-        <roles>RapidSuper</roles>  
+<!--    <roles>RapidSuper</roles>  -->
     </users>
     <users>
         <description>Design user</description>

@@ -18,6 +18,7 @@
     </roles>
     <users>
         <description>Admin user</description>
+        <deviceDetails></deviceDetails>
         <name>admin</name>
         <password>admin</password>
         <roles>Demo 1</roles>
@@ -32,6 +33,7 @@
     </users>
     <users>
         <description>Unprivileged user</description>
+        <deviceDetails></deviceDetails>
         <name>user</name>
         <password>user</password>
     </users>
