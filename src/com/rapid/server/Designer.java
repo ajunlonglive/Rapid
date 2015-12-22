@@ -1353,18 +1353,32 @@ public class Designer extends RapidHttpServlet {
 												// now initialise with the new id but don't make the resource files (this reloads the pages and sets up the security adapter)
 												appNew.initialise(getServletContext(), false);
 												
-												// get the security
+												// get the security for this application
 												SecurityAdapter security = appNew.getSecurityAdapter();
 												
 												// if we have one
-												if (security != null) {									
-													
+												if (security != null) {			
+																										
+													// assume we don't have the user
+													boolean gotUser = false;
 													// get the current users record from the adapter
 													User user = security.getUser(rapidRequest);
 													// check the current user is present in the app's security adapter
-													if (user == null) {
-														// get the Rapid user object
-														User rapidUser = rapidApplication.getSecurityAdapter().getUser(rapidRequest);
+													if (user != null) {
+														// now check the current user password is correct too
+														if (security.checkUserPassword(rapidRequest, userName, rapidRequest.getUserPassword())) {
+															// we have the right user with the right password
+															gotUser = true;
+														} else {
+															// remove this user as the password does not match
+															security.deleteUser(rapidRequest);
+														}
+													}
+													
+													// if we don't have the user
+													if (!gotUser) {
+														// get the current user from the Rapid application
+														User rapidUser = rapidSecurity.getUser(rapidRequest);
 														// create a new user based on the Rapid user
 														user = new User(userName, rapidUser.getDescription(), rapidUser.getPassword(), rapidUser.getDeviceDetails());
 														// add the new user 

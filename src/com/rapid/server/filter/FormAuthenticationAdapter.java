@@ -81,6 +81,9 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 		
 		// now get just the resource path
 		String requestPath = request.getServletPath();
+		// if null set to root
+		if (requestPath == null) requestPath = "/";
+		if (requestPath.length() == 0) requestPath = "/"; 
 		
 		/*
 		
