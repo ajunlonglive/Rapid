@@ -1794,7 +1794,7 @@ public class Rapid extends Action {
 				// get the password
 				String password = jsonAction.getString("password");
 				// get the device details
-				String deviceDetails = jsonAction.getString("deviceDetails");
+				String deviceDetails = jsonAction.optString("deviceDetails");
 				
 				// get the security
 				SecurityAdapter security = app.getSecurityAdapter();

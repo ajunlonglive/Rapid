@@ -394,7 +394,7 @@ public class Control {
 			// get the id
 			String id = getId();
 			// if the control is from this page
-			if (id.startsWith(page.getId())) {
+			if (id.startsWith(page.getId() + "_")) {
 				// we can safely use the global variable
 				js = id + "details";
 			} else {

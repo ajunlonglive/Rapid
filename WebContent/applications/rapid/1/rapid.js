@@ -2231,7 +2231,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 		break;
 		case "SAVEUSER" :	
 			if (rapidApp) {
-				data = { actionType: actionType, appId: "rapid", version: _appVersion, userName: $("#rapid_P0_C823_").find("tr.rowSelect").children().first().html(), description: $("#rapid_P0_C838_").val(), password: $("#rapid_P0_C843_").val(), deviceDetails: $("#rapid_P0_C1453_").val(), useAdmin: $("#rapid_P0_C879_").prop('checked'), useDesign: $("#rapid_P0_C880_").prop('checked') }; 
+				data = { actionType: actionType, appId: "rapid", version: _appVersion, userName: $("#rapid_P0_C834_").text(), description: $("#rapid_P0_C838_").val(), password: $("#rapid_P0_C843_").val(), deviceDetails: $("#rapid_P0_C1453_").val(), useAdmin: $("#rapid_P0_C879_").prop('checked'), useDesign: $("#rapid_P0_C880_").prop('checked') }; 
 			} else {
 				data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), userName: $("#rapid_P0_C216").find("tr.rowSelect").children().first().html(), description: $("#rapid_P0_C717_").val(), password: $("#rapid_P0_C231").val(), deviceDetails: $("#rapid_P0_C1444_").val() };
 				callback = function() {
@@ -2343,7 +2343,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
     	dataType: "json",
         data: data,            
         error: function(server, status, error) { 
-        	if (server && server.status && server.status == 401) {
+        	if (server && server.status && (server.status == 401 || server.status == 403)) {
         		window.location = "login.jsp";
         	} else if (errorCallback) {
         		errorCallback(server, status, error);
