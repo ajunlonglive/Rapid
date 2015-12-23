@@ -792,6 +792,9 @@ function getPageVariableValue(name) {
 function Event_initForm(id) {
 	$("#" + id + "_form").submit( function() {
 		var hiddenControls = "";
+		$("[id][disabled]").each( function () {
+			$(this).removeAttr("disabled");
+		});
 		$(":hidden[id]:not([type=hidden])").each( function(i) {
 			var id = $(this).attr("id");
 			if (id.indexOf(_pageId) == 0) {
