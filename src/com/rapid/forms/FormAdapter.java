@@ -7,7 +7,7 @@ gareth.edwards@rapid-is.co.uk
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as 
 published by the Free Software Foundation, either version 3 of the 
 License, or (at your option) any later version. The terms require you 
@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
@@ -44,6 +45,7 @@ import com.rapid.core.Page;
 import com.rapid.core.Application.RapidLoadingException;
 import com.rapid.core.Pages.PageHeader;
 import com.rapid.core.Pages.PageHeaders;
+import com.rapid.core.Validation;
 import com.rapid.security.SecurityAdapter;
 import com.rapid.security.SecurityAdapter.SecurityAdapaterException;
 import com.rapid.server.Rapid;
@@ -109,6 +111,40 @@ public abstract class FormAdapter {
 			this.add(new FormControlValue(controlId, controlValue));
 		}
 						
+	}
+	
+	// this exception class can be extended for more meaningful exceptions that may occur within the adapters
+	public static class ServerSideValidationException extends Exception {
+		
+		private String _message;
+		private Throwable _cause;
+		
+		public ServerSideValidationException(String message) {
+			_message = message;
+		}
+		
+		public ServerSideValidationException(String message, Throwable cause) {
+			_message = message;
+			_cause = cause;
+		}
+
+		@Override
+		public String getMessage() {
+			return _message;
+		}
+		
+		@Override
+		public Throwable getCause() {
+			if (_cause == null) return super.getCause();
+			return _cause;			
+		}
+		
+		@Override
+		public StackTraceElement[] getStackTrace() {
+			if (_cause == null) return super.getStackTrace();
+			return _cause.getStackTrace();			
+		}
+		
 	}
 	
 	//  static finals
@@ -525,7 +561,7 @@ public abstract class FormAdapter {
 	
 	// static methods
 	
-	public static FormPageControlValues getPostPageControlValues(String pageId, String postBody)  {
+	public static FormPageControlValues getPostPageControlValues(RapidRequest rapidRequest, String postBody, String formId) throws ServerSideValidationException  {
 		// check for a post body
 		if (postBody == null) {
 			// send null if nothing 
@@ -548,37 +584,58 @@ public abstract class FormAdapter {
 				// try and decode the if with a silent fail
 				try { id = URLDecoder.decode(parts[0],"UTF-8");	} catch (UnsupportedEncodingException e) {}		
 				// check we got something
-				if (id != null) {
+				if (id != null) {					
 					// if there was a name but not the _hiddenControls
 					if (id.length() > 0) {
-						// assume no value
-						String value = null;					
-						// if more than 1 part
-						if (parts.length > 1) {
-							// url decode value 
-							try {  value = URLDecoder.decode(parts[1],"UTF-8"); } catch (UnsupportedEncodingException ex) {}				
-						} // parts > 0													
-						// if this is the hidden values
-						if (id.endsWith("_hiddenControls") && value != null) {
-							// retain the hidden values
-							hiddenControls = value.split(",");
-						} else	{
-							// if we have hidden controls to check
-							if (hiddenControls != null) {								
-								// loop the hidden controls
-								for (String hiddenControl : hiddenControls) {
-									// if there's a match
-									if (id.equals(hiddenControl)) {
-										// retain as hidden
-										hidden = true;
-										// we're done
-										break;
-									} // this is a hidden control
-								} // loop the hidden controls
-							} // got hidden controls to check
-							// add name value pair
-							pageControlValues.add(id, value, hidden);
-						} // ends with hidden controls						
+						// find the control in the page
+						Control control = rapidRequest.getPage().getControl(id);
+						// only if we found it
+						if (control != null) {
+							// assume no value
+							String value = null;					
+							// if more than 1 part
+							if (parts.length > 1) {
+								// url decode value 
+								try {  value = URLDecoder.decode(parts[1],"UTF-8"); } catch (UnsupportedEncodingException ex) {}				
+							} // parts > 0								
+							// get any control validation
+							Validation validation = control.getValidation();
+							// if we had some
+							if (validation != null) {
+								// get the RegEx
+								String regEx = validation.getRegEx();
+								// set to empty string if null (most seem to be empty)
+								if (regEx == null) regEx = "";
+								// but not JavaScript, and no regex
+								if (!"javascript".equals(validation.getType()) && regEx.length() > 0) {
+									// throw error if non-null
+									if (value == null && !validation.getAllowNulls()) throw new ServerSideValidationException("Server side validation error - value " + id + " for  form " + formId+ " can't be null");								
+									// compile and check it
+									if (!Pattern.compile(regEx).matcher(value).find()) throw new ServerSideValidationException("Server side validation error - value " + id + " for  form " + formId+ " failed regex");
+								}
+							}
+							// if this is the hidden values
+							if (id.endsWith("_hiddenControls") && value != null) {
+								// retain the hidden values
+								hiddenControls = value.split(",");
+							} else	{
+								// if we have hidden controls to check
+								if (hiddenControls != null) {								
+									// loop the hidden controls
+									for (String hiddenControl : hiddenControls) {
+										// if there's a match
+										if (id.equals(hiddenControl)) {
+											// retain as hidden
+											hidden = true;
+											// we're done
+											break;
+										} // this is a hidden control
+									} // loop the hidden controls
+								} // got hidden controls to check
+								// add name value pair
+								pageControlValues.add(id, value, hidden);
+							} // ends with hidden controls			
+						} // found control in page								
 					}	// id .length > 0
 				} // id != null																
 			} // param loop			
