@@ -51,6 +51,7 @@ import com.rapid.core.Pages.PageHeaders;
 import com.rapid.forms.FormAdapter;
 import com.rapid.forms.FormAdapter.FormControlValue;
 import com.rapid.forms.FormAdapter.FormPageControlValues;
+import com.rapid.forms.FormAdapter.ServerSideValidationException;
 import com.rapid.security.SecurityAdapter;
 import com.rapid.security.SecurityAdapter.User;
 import com.rapid.utils.Files;
@@ -582,50 +583,63 @@ public class Rapid extends RapidHttpServlet {
 										} // submit check
 										
 									} else {
-									
-										// get the requestPage id
-										String requestPageId = rapidRequest.getPage().getId();
 										
-										// get the page control values
-										FormPageControlValues pageControlValues = FormAdapter.getPostPageControlValues(requestPageId, formData);
-										
-										// check we got some
-										if (pageControlValues != null) {
-										
-											// loop and print them if trace on
-											if (logger.isTraceEnabled()) {
-												for (FormControlValue controlValue : pageControlValues) {
-													logger.debug(controlValue.getId() + " = " + controlValue.getValue());
-												}
-											}									
-																				
-											// store the form page control values
-											formAdapter.setFormPageControlValues(rapidRequest, requestPageId, pageControlValues);
+										// try
+										try {
+											
+											// get the page control values
+											FormPageControlValues pageControlValues = FormAdapter.getPostPageControlValues(rapidRequest, formData, formId);
+											
+											// get the page id
+											String requestPageId = rapidRequest.getPage().getId();
+											
+											// check we got some
+											if (pageControlValues != null) {
+											
+												// loop and print them if trace on
+												if (logger.isTraceEnabled()) {
+													for (FormControlValue controlValue : pageControlValues) {
+														logger.debug(controlValue.getId() + " = " + controlValue.getValue());
+													}
+												}									
+																					
+												// store the form page control values
+												formAdapter.setFormPageControlValues(rapidRequest, requestPageId, pageControlValues);
+												
+											}
+																									
+											// get all of the app pages
+											PageHeaders pageHeaders = app.getPages().getSortedPages();
+											
+											// get it's position
+											int pageIndex = pageHeaders.indexOf(requestPageId);
+											
+											// if this is the last page
+											if (pageIndex >= pageHeaders.size() - 1) {
+												
+												// send a redirect for the summary (this also avoids ERR_CACH_MISS issues on the back button )
+												response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion() + "&action=summary");
+												
+											} else {
+																						
+												// increment the page index
+												pageIndex++;
+												
+												// send a redirect for the page (this avoids ERR_CACH_MISS issues on the back button )
+												response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion() + "&p=" + pageHeaders.get(pageIndex).getId());
+												
+											} // last page check		
+											
+										} catch (ServerSideValidationException ex) {
+											
+											// log it!
+											logger.error("Form data failed server side validation : " + ex.getMessage(), ex);
+											
+											// send a redirect back to the beginning - there's no reason except for tampering  that this would happen
+											response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion());
 											
 										}
-																								
-										// get all of the app pages
-										PageHeaders pageHeaders = app.getPages().getSortedPages();
-										
-										// get it's position
-										int pageIndex = pageHeaders.indexOf(requestPageId);
-										
-										// if this is the last page
-										if (pageIndex >= pageHeaders.size() - 1) {
-											
-											// send a redirect for the summary (this also avoids ERR_CACH_MISS issues on the back button )
-											response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion() + "&action=summary");
-											
-										} else {
-																					
-											// increment the page index
-											pageIndex++;
-											
-											// send a redirect for the page (this avoids ERR_CACH_MISS issues on the back button )
-											response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion() + "&p=" + pageHeaders.get(pageIndex).getId());
-											
-										} // last page check					
-										
+									
 									} // form id check
 
 								} // submit action check

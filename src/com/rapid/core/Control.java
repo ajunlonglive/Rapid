@@ -79,12 +79,12 @@ public class Control {
 	// all properties are stored here (allowing us to define them just in the .control.xml files)
 	public HashMap<String,String> getProperties() { return _properties; }
 	public void setProperties(HashMap<String,String> properties) { _properties = properties; }
-	
-	// every control can have validation (not all do)
+		
+	// every control can have events (and actions)
 	public ArrayList<Event> getEvents() { return _events; }	
 	public void setEvents(ArrayList<Event> events) { _events = events; }
 		
-	// every control can have events (and actions)
+	// every control can have validation (not all do)
 	public Validation getValidation() { return _validation; }	
 	public void setValidation(Validation validation) { _validation = validation; }
 	
