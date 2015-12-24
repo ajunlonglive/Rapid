@@ -450,8 +450,7 @@ public abstract class FormAdapter {
 							
 									// write the control value!
 									valuesStringBuilder.append(getSummaryControlValueHtml(rapidRequest, _application, page, controlValue));
-									// we've found a match so are done with this controlValue
-									pageControlValues.remove(controlValue);
+
 									// exit this loop
 									break;
 																		
