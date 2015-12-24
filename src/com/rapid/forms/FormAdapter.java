@@ -608,10 +608,14 @@ public abstract class FormAdapter {
 								if (regEx == null) regEx = "";
 								// but not JavaScript, and no regex
 								if (!"javascript".equals(validation.getType()) && regEx.length() > 0) {
-									// throw error if non-null
-									if (value == null && !validation.getAllowNulls()) throw new ServerSideValidationException("Server side validation error - value " + id + " for  form " + formId+ " can't be null");								
-									// compile and check it
-									if (!Pattern.compile(regEx).matcher(value).find()) throw new ServerSideValidationException("Server side validation error - value " + id + " for  form " + formId+ " failed regex");
+									// check for null
+									if (value == null) {
+										// throw error if nulls not allowed and not pass if hidden
+										if (!validation.getAllowNulls() && !validation.getPassHidden()) throw new ServerSideValidationException("Server side validation error - value " + id + " for  form " + formId+ " can't be null");								
+									} else {
+										// compile and check it
+										if (!Pattern.compile(regEx).matcher(value).find()) throw new ServerSideValidationException("Server side validation error - value " + id + " for  form " + formId+ " failed regex");
+									}
 								}
 							}
 							// if this is the hidden values
