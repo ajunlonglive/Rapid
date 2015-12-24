@@ -42,8 +42,8 @@ import com.rapid.utils.Html;
 public class RapidFormAdapter extends FormAdapter {
 	
 	//  static finals
-	private static final String USERFORMPAGECONTROLVALUES = "userFormPageControlValues";
-	private static final String NEXTFORMID = "nextFormId";
+	private static final String USER_FORM_PAGE_CONTROL_VALUES = "userFormPageControlValues";
+	private static final String NEXT_FORM_ID = "nextFormId";
 	
 	// constructor
 
@@ -55,16 +55,16 @@ public class RapidFormAdapter extends FormAdapter {
 		
 	// the RapidFormAdapter holds all values in the user session so this method just gets them from there
 	protected Map<String,FormPageControlValues> getUserFormPageControlValues(RapidRequest rapidRequest) throws Exception {	
-		// get the user session
-		HttpSession session = rapidRequest.getRequest().getSession();
+		// get the servlet context
+		ServletContext servletContext = rapidRequest.getRapidServlet().getServletContext();
 		// get all app page control values from session
-		Map<String,Map<String,FormPageControlValues>> userAppPageControlValues = (Map<String, Map<String, FormPageControlValues>>) session.getAttribute(USERFORMPAGECONTROLVALUES);
+		Map<String,Map<String,FormPageControlValues>> userAppPageControlValues = (Map<String, Map<String, FormPageControlValues>>) servletContext.getAttribute(USER_FORM_PAGE_CONTROL_VALUES);
 		// if null
 		if (userAppPageControlValues == null) {
 			// instantiate
 			userAppPageControlValues = new HashMap<String, Map<String, FormPageControlValues>>();
 			// add to session
-			session.setAttribute(USERFORMPAGECONTROLVALUES, userAppPageControlValues);
+			servletContext.setAttribute(USER_FORM_PAGE_CONTROL_VALUES, userAppPageControlValues);
 		}		
 		// get the form id
 		String formId = getFormId(rapidRequest);
@@ -82,7 +82,7 @@ public class RapidFormAdapter extends FormAdapter {
 		// userPageControlValues.put("P2", new FormPageControlValues(new FormControlValue("P2_C1_", "Hello world !!!")));
 		
 		// return!
-		return userPageControlValues;		
+		return userPageControlValues;
 	}
 	
 	
@@ -94,23 +94,23 @@ public class RapidFormAdapter extends FormAdapter {
 		// get the servlet context
 		ServletContext servletContext = rapidRequest.getRapidServlet().getServletContext();
 		// the master form id as a string
-		String nextFormIdString = (String) servletContext.getAttribute(NEXTFORMID);
+		String nextFormIdString = (String) servletContext.getAttribute(NEXT_FORM_ID);
 		// if null set to "0"
 		if (nextFormIdString == null) nextFormIdString = "0";
 		// add 1 to the master form id
 		String formId = Integer.toString(Integer.parseInt( nextFormIdString ) + 1);
 		// retain it in the context
-		servletContext.setAttribute(NEXTFORMID, formId);
+		servletContext.setAttribute(NEXT_FORM_ID, formId);
 		// return it
 		return formId;
 	}
 	
 	@Override
 	public boolean checkFormResume(RapidRequest rapidRequest, String formId, String password) throws Exception {
-		// get the user session
-		HttpSession session = rapidRequest.getRequest().getSession();
+		// get the servlet context
+		ServletContext servletContext = rapidRequest.getRapidServlet().getServletContext();
 		// get all app page control values from session
-		Map<String,Map<String,FormPageControlValues>> userAppPageControlValues = (Map<String, Map<String, FormPageControlValues>>) session.getAttribute(USERFORMPAGECONTROLVALUES);
+		Map<String,Map<String,FormPageControlValues>> userAppPageControlValues = (Map<String, Map<String, FormPageControlValues>>) servletContext.getAttribute(USER_FORM_PAGE_CONTROL_VALUES);
 		// if null no forms in session so fail
 		if (userAppPageControlValues == null) return false;
 		// the page controls for specified app

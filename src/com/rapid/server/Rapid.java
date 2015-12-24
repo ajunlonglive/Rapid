@@ -210,7 +210,11 @@ public class Rapid extends RapidHttpServlet {
 									String resumeFormId = request.getParameter("f");
 									String resumePassword = request.getParameter("pwd");
 									// check whether we can resume this form
-									if (formAdapter.doResumeForm(rapidRequest, resumeFormId, resumePassword))  formId = resumeFormId;
+									if (formAdapter.doResumeForm(rapidRequest, resumeFormId, resumePassword))  {
+										// use the resume form id
+										formId = resumeFormId;
+										// Get the max page this form got to and set as max page!!!!!
+									}
 								} else {								
 									// get form id from the adapter
 									formId = formAdapter.getFormId(rapidRequest);									
