@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
@@ -148,7 +149,8 @@ public abstract class FormAdapter {
 	}
 	
 	//  static finals
-	private static final String USERFORMIDS = "userFormIds";
+	private static final String USER_FORM_IDS = "userFormIds";
+	private static final String USER_FORM_MAX_PAGES = "userFormMaxPages";
 	
 	// instance variables
 	
@@ -219,7 +221,7 @@ public abstract class FormAdapter {
 		// get the user session (without making a new one)
 		HttpSession session = rapidRequest.getRequest().getSession(false);
 		// get the form ids map from the session
-		Map<String,String> formIds = (Map<String, String>) session.getAttribute(USERFORMIDS);
+		Map<String,String> formIds = (Map<String, String>) session.getAttribute(USER_FORM_IDS);
 		// check we got some
 		if (formIds == null) {
 			return null;
@@ -235,7 +237,7 @@ public abstract class FormAdapter {
 		// get the user session (making a new one if need be)
 		HttpSession session = rapidRequest.getRequest().getSession();
 		// get the form ids
-		Map<String,String> formIds = (Map<String, String>) session.getAttribute(USERFORMIDS);
+		Map<String,String> formIds = (Map<String, String>) session.getAttribute(USER_FORM_IDS);
 		// make some if we didn't get
 		if (formIds == null)  formIds = new HashMap<String, String>(); 					
 		// get the application
@@ -243,7 +245,52 @@ public abstract class FormAdapter {
 		// store the form if for a given app id / version
 		formIds.put(application.getId() + "-" + application.getVersion(), formId);		
 		// update the session with the new form ids
-		session.setAttribute(USERFORMIDS, formIds);		
+		session.setAttribute(USER_FORM_IDS, formIds);		
+	}
+	
+	public boolean checkUserMaxPage(RapidRequest rapidRequest, String pageId) throws RapidLoadingException {
+		// get the user session (without making a new one)
+		HttpSession session = rapidRequest.getRequest().getSession(false);
+		// get the form ids map from the session
+		Map<String,String> pageIds = (Map<String, String>) session.getAttribute(USER_FORM_MAX_PAGES);
+		// get the application
+		Application application = rapidRequest.getApplication();
+		// check we have pageIds and an application
+		if (application != null) {
+			// get the sorted pages
+			PageHeaders pages = application.getPages().getSortedPages();
+			// check we got some pages
+			if (pages != null) {
+				if (pages.size() > 0) {
+					// start with the top page
+					String maxPageId =  pages.get(0).getId();
+					// use the page ids if we have some
+					if (pageIds != null) maxPageId = pageIds.get(application.getId() + "-" + application.getVersion());				
+					// get the position of the maxPage
+					int maxPageIndex = pages.indexOf(maxPageId);
+					// get the position of this page
+					int pageIndex = pages.indexOf(pageId);
+					// if we're allowed at this point
+					if (pageIndex <= maxPageIndex) return true;
+				}				
+			}			
+		}
+		return false;
+	}
+			
+	public void setUserMaxPageId(RapidRequest rapidRequest, String pageId) {
+		// get the user session (making a new one if need be)
+		HttpSession session = rapidRequest.getRequest().getSession();
+		// get the form ids
+		Map<String,String> maxPages = (Map<String, String>) session.getAttribute(USER_FORM_MAX_PAGES);
+		// make some if we didn't get
+		if (maxPages == null)  maxPages = new HashMap<String, String>(); 					
+		// get the application
+		Application application = rapidRequest.getApplication();
+		// store the form if for a given app id / version
+		maxPages.put(application.getId() + "-" + application.getVersion(), pageId);		
+		// update the session with the new form ids
+		session.setAttribute(USER_FORM_MAX_PAGES, maxPages);		
 	}
 	
 	// public instance methods
@@ -368,11 +415,14 @@ public abstract class FormAdapter {
 			// get the sorted pages
 			PageHeaders pageHeaders = _application.getPages().getSortedPages();
 			
+			// placeholder for the page - we will retain the last one as the max allowed so if we saw the summary first we are allowed to all of it's pages
+			Page page = null;
+			
 			// loop the page headers
 			for (PageHeader pageHeader : pageHeaders) {
 				
-				// get the page
-				Page page = _application.getPages().getPage(servletContext, pageHeader.getId());
+				// get the page with this id
+				page = _application.getPages().getPage(servletContext, pageHeader.getId());
 														
 				// a string builder for the page values
 				StringBuilder valuesStringBuilder = new StringBuilder();
@@ -436,6 +486,9 @@ public abstract class FormAdapter {
 				} // values written check
 																							
 			} // page loop
+			
+			// retain the greatest page we showed as the max
+			setUserMaxPageId(rapidRequest, page.getId());
 			
 			// write the pages end
 			writer.write(getSummaryPagesEndHtml(rapidRequest, _application));
@@ -570,11 +623,13 @@ public abstract class FormAdapter {
 			// create our pageControlValues
 			FormPageControlValues pageControlValues = new FormPageControlValues();
 			// split into name value pairs
-			String[] params = postBody.split("&");
+			String[] params = postBody.split("&");			
 			// hidden control values
-			String[] hiddenControls =null;
+			String[] hiddenControls = null;
 			// loop the pairs
-			for (String param : params) {
+			for (int i = 0; i < params.length; i++) {
+				// get the param
+				String param = params[i];
 				// split on =
 				String[] parts = param.split("=");						
 				// the key/name is the control id
@@ -584,62 +639,100 @@ public abstract class FormAdapter {
 				// try and decode the if with a silent fail
 				try { id = URLDecoder.decode(parts[0],"UTF-8");	} catch (UnsupportedEncodingException e) {}		
 				// check we got something
-				if (id != null) {					
+				if (id != null) {
 					// if there was a name but not the _hiddenControls
 					if (id.length() > 0) {
-						// find the control in the page
-						Control control = rapidRequest.getPage().getControl(id);
-						// only if we found it
-						if (control != null) {
-							// assume no value
-							String value = null;					
-							// if more than 1 part
-							if (parts.length > 1) {
-								// url decode value 
-								try {  value = URLDecoder.decode(parts[1],"UTF-8"); } catch (UnsupportedEncodingException ex) {}				
-							} // parts > 0								
-							// get any control validation
-							Validation validation = control.getValidation();
-							// if we had some
-							if (validation != null) {
-								// get the RegEx
-								String regEx = validation.getRegEx();
-								// set to empty string if null (most seem to be empty)
-								if (regEx == null) regEx = "";
-								// but not JavaScript, and no regex
-								if (!"javascript".equals(validation.getType()) && regEx.length() > 0) {
-									// check for null
-									if (value == null) {
-										// throw error if nulls not allowed and not pass if hidden
-										if (!validation.getAllowNulls() && !validation.getPassHidden()) throw new ServerSideValidationException("Server side validation error - value " + id + " for  form " + formId+ " can't be null");								
-									} else {
-										// compile and check it
-										if (!Pattern.compile(regEx).matcher(value).find()) throw new ServerSideValidationException("Server side validation error - value " + id + " for  form " + formId+ " failed regex");
+						// assume there are no more of this parameter
+						boolean lastValue = true;
+						// now check there are no more (check boxes get sent with a null in front, in case they are not ticked so we know it update their value)
+						for (int j = i + 1; j < params.length; j++) {
+							// get the check param
+							String checkParam = params[j];
+							// if this starts with the id
+							if (checkParam.startsWith(id)) {
+								// update last value
+								lastValue = false;
+								// we're done
+								break;
+							}
+						}
+						// if this was the last value for the control
+						if (lastValue) {
+							// find the control in the page
+							Control control = rapidRequest.getPage().getControl(id);
+							// only if we found it
+							if (control != null) {
+								// assume no value
+								String value = null;					
+								// if more than 1 part
+								if (parts.length > 1) {
+									// url decode value 
+									try {  value = URLDecoder.decode(parts[1],"UTF-8"); } catch (UnsupportedEncodingException ex) {}				
+								} // parts > 0								
+								// get any control validation
+								Validation validation = control.getValidation();
+								// if we had some
+								if (validation != null) {
+									// get the RegEx
+									String regEx = validation.getRegEx();
+									// set to empty string if null (most seem to be empty)
+									if (regEx == null) regEx = "";
+									// but not JavaScript, and no regex
+									if (!"javascript".equals(validation.getType()) && regEx.length() > 0) {										
+										// check for null
+										if (value == null) {
+											// throw error if nulls not allowed and not pass if hidden
+											if (!validation.getAllowNulls() && !validation.getPassHidden()) throw new ServerSideValidationException("Server side validation error - value " + id + " for  form " + formId+ " can't be null");								
+										} else {
+											// place holder for the patter
+											Pattern pattern = null;
+											// this exception is uncaught but we want to know about it
+											try {
+												// we recognise a small subset of switches
+												if (regEx.endsWith("/i")) {
+													// trim out the switch
+													regEx = regEx.substring(0, regEx.length() - 2);
+													// build the pattern with case insensitivity
+													pattern = Pattern.compile(regEx, Pattern.CASE_INSENSITIVE);		
+												} else {
+													// build the patter as-is
+													pattern = Pattern.compile(regEx);
+												}
+											} catch (PatternSyntaxException ex) {
+												// rethrow
+												throw new ServerSideValidationException("Server side validation error - value " + id + " for  form " + formId+ " regex PatternSyntaxException", ex);
+											} catch (IllegalArgumentException  ex) {
+												// rethrow
+												throw new ServerSideValidationException("Server side validation error - value " + id + " for  form " + formId+ " regex ServerSideValidationException", ex);
+											}											
+											// compile and check it
+											if (!pattern.matcher(value).find()) throw new ServerSideValidationException("Server side validation error - value " + id + " for  form " + formId+ " failed regex");
+										}
 									}
 								}
-							}
-							// if this is the hidden values
-							if (id.endsWith("_hiddenControls") && value != null) {
-								// retain the hidden values
-								hiddenControls = value.split(",");
-							} else	{
-								// if we have hidden controls to check
-								if (hiddenControls != null) {								
-									// loop the hidden controls
-									for (String hiddenControl : hiddenControls) {
-										// if there's a match
-										if (id.equals(hiddenControl)) {
-											// retain as hidden
-											hidden = true;
-											// we're done
-											break;
-										} // this is a hidden control
-									} // loop the hidden controls
-								} // got hidden controls to check
-								// add name value pair
-								pageControlValues.add(id, value, hidden);
-							} // ends with hidden controls			
-						} // found control in page								
+								// if this is the hidden values
+								if (id.endsWith("_hiddenControls") && value != null) {
+									// retain the hidden values
+									hiddenControls = value.split(",");
+								} else	{
+									// if we have hidden controls to check
+									if (hiddenControls != null) {								
+										// loop the hidden controls
+										for (String hiddenControl : hiddenControls) {
+											// if there's a match
+											if (id.equals(hiddenControl)) {
+												// retain as hidden
+												hidden = true;
+												// we're done
+												break;
+											} // this is a hidden control
+										} // loop the hidden controls
+									} // got hidden controls to check
+									// add name value pair
+									pageControlValues.add(id, value, hidden);
+								} // ends with hidden controls			
+							} // found control in page	
+						} // last value													
 					}	// id .length > 0
 				} // id != null																
 			} // param loop			
