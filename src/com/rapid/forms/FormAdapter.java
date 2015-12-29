@@ -44,6 +44,7 @@ import com.rapid.core.Application;
 import com.rapid.core.Control;
 import com.rapid.core.Page;
 import com.rapid.core.Application.RapidLoadingException;
+import com.rapid.core.Pages;
 import com.rapid.core.Pages.PageHeader;
 import com.rapid.core.Pages.PageHeaders;
 import com.rapid.core.Validation;
@@ -150,8 +151,7 @@ public abstract class FormAdapter {
 	
 	//  static finals
 	private static final String USER_FORM_IDS = "userFormIds";
-	private static final String USER_FORM_MAX_PAGES = "userFormMaxPages";
-	
+		
 	// instance variables
 	
 	protected ServletContext _servletContext;
@@ -174,9 +174,27 @@ public abstract class FormAdapter {
 	// this method returns a new form id, when allowed, by a given adapter, could be in memory, or database, etc
 	public abstract String getNewFormId(RapidRequest rapidRequest) throws Exception;
 	
+	// checks a given page id against the maximum
+	public abstract boolean checkMaxPage(RapidRequest rapidRequest, String formId, String pageId) throws Exception;
+	
+	// sets the maximum page id the user is allowed to see
+	public abstract void setMaxPage(RapidRequest rapidRequest, String formId, String pageId) throws Exception;
+	
+	// gets whether a form has been completed (and we can show the submit button on the summary)
+	public abstract boolean getFormComplete(RapidRequest rapidRequest, String formId) throws Exception;
+		
+	// sets whether a form has been completed (and we can show the submit button on the summary)
+	public abstract void setFormComplete(RapidRequest rapidRequest, String formId, boolean completed) throws Exception;
+	
+	// gets any page/session variables for this form
+	public abstract Map<String,String> getFormPageVariableValues(RapidRequest rapidRequest, String formId) throws Exception;
+	
+	// sets any page/session variables for this form
+	public abstract void setFormPageVariableValue(RapidRequest rapidRequest, String formId, String name, String value) throws Exception;
+	
 	// this method checks a form id against a password for resuming 
 	public abstract boolean checkFormResume(RapidRequest rapidRequest, String formId, String password) throws Exception;
-	
+			
 	// returns all the form control values for a given page
 	public abstract FormPageControlValues getFormPageControlValues(RapidRequest rapidRequest, String pageId) throws Exception;
 	
@@ -185,8 +203,7 @@ public abstract class FormAdapter {
 	
 	// gets the value of a form control value	
 	public abstract String getFormControlValue(RapidRequest rapidRequest, String controlId, boolean notHidden) throws Exception;
-			
-	
+						
 	// this html is written after the body tag
 	public abstract String getSummaryStartHtml(RapidRequest rapidRequest, Application application);
 	
@@ -204,8 +221,7 @@ public abstract class FormAdapter {
 	
 	// this html is written after the end of the pages, before the submit button
 	public abstract String getSummaryPagesEndHtml(RapidRequest rapidRequest, Application application);
-	
-	
+		
 	// submits the form and receives a message for the submitted page
 	public abstract String submitForm(RapidRequest rapidRequest) throws Exception;
 				
@@ -247,52 +263,7 @@ public abstract class FormAdapter {
 		// update the session with the new form ids
 		session.setAttribute(USER_FORM_IDS, formIds);		
 	}
-	
-	public boolean checkUserMaxPage(RapidRequest rapidRequest, String pageId) throws RapidLoadingException {
-		// get the user session (without making a new one)
-		HttpSession session = rapidRequest.getRequest().getSession(false);
-		// get the form ids map from the session
-		Map<String,String> pageIds = (Map<String, String>) session.getAttribute(USER_FORM_MAX_PAGES);
-		// get the application
-		Application application = rapidRequest.getApplication();
-		// check we have pageIds and an application
-		if (application != null) {
-			// get the sorted pages
-			PageHeaders pages = application.getPages().getSortedPages();
-			// check we got some pages
-			if (pages != null) {
-				if (pages.size() > 0) {
-					// start with the top page
-					String maxPageId =  pages.get(0).getId();
-					// use the page ids if we have some
-					if (pageIds != null) maxPageId = pageIds.get(application.getId() + "-" + application.getVersion());				
-					// get the position of the maxPage
-					int maxPageIndex = pages.indexOf(maxPageId);
-					// get the position of this page
-					int pageIndex = pages.indexOf(pageId);
-					// if we're allowed at this point
-					if (pageIndex <= maxPageIndex) return true;
-				}				
-			}			
-		}
-		return false;
-	}
 			
-	public void setUserMaxPageId(RapidRequest rapidRequest, String pageId) {
-		// get the user session (making a new one if need be)
-		HttpSession session = rapidRequest.getRequest().getSession();
-		// get the form ids
-		Map<String,String> maxPages = (Map<String, String>) session.getAttribute(USER_FORM_MAX_PAGES);
-		// make some if we didn't get
-		if (maxPages == null)  maxPages = new HashMap<String, String>(); 					
-		// get the application
-		Application application = rapidRequest.getApplication();
-		// store the form if for a given app id / version
-		maxPages.put(application.getId() + "-" + application.getVersion(), pageId);		
-		// update the session with the new form ids
-		session.setAttribute(USER_FORM_MAX_PAGES, maxPages);		
-	}
-	
 	// public instance methods
 	
 	// this looks for a form id in the user session and uses the adapter specific getNewId routine if one is allowed. Returning null sends the user to the start page
@@ -338,12 +309,51 @@ public abstract class FormAdapter {
 	
 	// used when resuming forms
 	public boolean doResumeForm(RapidRequest rapidRequest, String formId, String password) throws Exception {
-		// first check the password against the formId using the user-implemented method
-		boolean canResume = checkFormResume(rapidRequest, formId, password);
+		// assume we are not allowed to resume
+		boolean canResume = false;
+		// get the application
+		Application application = rapidRequest.getApplication();
+		// if there was one
+		if (application != null) {
+			// get the pages
+			Pages pages = application.getPages();
+			// if we got some
+			if (pages != null) {
+				// loop them
+				for (String pageId : pages.getPageIds()) {
+					// get the page
+					Page page = pages.getPage(rapidRequest.getRapidServlet().getServletContext(), pageId);
+					// if it has variables
+					List<String> variables = page.getSessionVariables();
+					// if it has some
+					if (variables != null) {
+						// loop them
+						for (String variable : variables) {
+							// set them to null
+							rapidRequest.getRequest().getSession().setAttribute(variable, null);
+						}
+					}
+				}
+			}
+		}
+		// check the password against the formId using the user-implemented method
+		canResume = checkFormResume(rapidRequest, formId, password);
 		// check success
 		if (canResume) {			
 			// set the form id based on the app id and version
 			setUserFormId(rapidRequest, formId);
+			// get the user page variable values
+			Map<String, String> pageVariableValues = getFormPageVariableValues(rapidRequest, formId);
+			// if we got some
+			if (pageVariableValues != null) {
+				// loop them
+				for (String variable  : pageVariableValues.keySet()) {
+					// get the value
+					String value = pageVariableValues.get(variable);
+					// set the value
+					rapidRequest.getRequest().getSession().setAttribute(variable, value);
+				}
+			}
 		} else {
 			// invalidate any current form
 			setUserFormId(rapidRequest, null);
@@ -414,27 +424,24 @@ public abstract class FormAdapter {
 			
 			// get the sorted pages
 			PageHeaders pageHeaders = _application.getPages().getSortedPages();
-			
-			// placeholder for the page - we will retain the last one as the max allowed so if we saw the summary first we are allowed to all of it's pages
-			Page page = null;
-			
+						
 			// loop the page headers
 			for (PageHeader pageHeader : pageHeaders) {
-				
-				// get the page with this id
-				page = _application.getPages().getPage(servletContext, pageHeader.getId());
-														
+																						
 				// a string builder for the page values
 				StringBuilder valuesStringBuilder = new StringBuilder();
 				
 				// get any page control values
-				FormPageControlValues pageControlValues = _application.getFormAdapter().getFormPageControlValues(rapidRequest, page.getId());
+				FormPageControlValues pageControlValues = _application.getFormAdapter().getFormPageControlValues(rapidRequest, pageHeader.getId());
 				
 				// if non null
 				if (pageControlValues != null) {
 					
 					// if we got some
 					if (pageControlValues.size() > 0) {
+						
+						// get the page with this id
+						Page page = _application.getPages().getPage(servletContext, pageHeader.getId());
 					
 						// get all page controls (in display order)
 						List<Control> pageControls = page.getAllControls();
@@ -461,41 +468,49 @@ public abstract class FormAdapter {
 							// if there are no controlValues left we can stop entirely
 							if (pageControlValues.size() == 0) break;
 							
-						}
+						} // page control loop
+						
+						// if there are some values in thre string builder
+						if (valuesStringBuilder.length() > 0) {
+							
+							// write the page start html
+							writer.write(getSummaryPageStartHtml(rapidRequest, _application, page));
+							
+							// write the values
+							writer.write(valuesStringBuilder.toString());
+							
+							// write the edit link
+							writer.write("<a href='~?a=" + _application.getId() + "&v=" + _application.getVersion() + "&p=" + page.getId() + "'>edit</a>\n");
+							
+							// write the page end html
+							writer.write(getSummaryPageEndHtml(rapidRequest, _application, page));
+							
+						} // values written check
 						
 					} // control values length > 0
 					
 				} // control values non null
-				
-				// if there are some values in thre string builder
-				if (valuesStringBuilder.length() > 0) {
-					
-					// write the page start html
-					writer.write(getSummaryPageStartHtml(rapidRequest, _application, page));
-					
-					// write the values
-					writer.write(valuesStringBuilder.toString());
-					
-					// write the edit link
-					writer.write("<a href='~?a=" + _application.getId() + "&v=" + _application.getVersion() + "&p=" + page.getId() + "'>edit</a>\n");
-					
-					// write the page end html
-					writer.write(getSummaryPageEndHtml(rapidRequest, _application, page));
-					
-				} // values written check
-																							
+																				
 			} // page loop
-			
-			// retain the greatest page we showed as the max
-			setUserMaxPageId(rapidRequest, page.getId());
-			
+						
 			// write the pages end
 			writer.write(getSummaryPagesEndHtml(rapidRequest, _application));
 			
-			// write the submit button form and button!
-			writer.write("<form action='~?a=" + _application.getId() + "&v=" + _application.getVersion()  + "&action=submit' method='POST'><button type='submit' class='formSummarySubmit'>Submit</button></form>");
+			// assume the form was not completed
+			boolean formComplete = false;
 			
-			// write the summary end
+			try {
+				// try and get whether the form is complete
+				formComplete = getFormComplete(rapidRequest, formId);
+			} catch(Exception ex) {
+				// log it
+				rapidRequest.getRapidServlet().getLogger().error("Error getting form complete for form " + formId, ex);
+			}
+			
+			// write the submit button form and button if the form has been completed!
+			if (formComplete)  writer.write("<form action='~?a=" + _application.getId() + "&v=" + _application.getVersion()  + "&action=submit' method='POST'><button type='submit' class='formSummarySubmit'>Submit</button></form>");
+			
+			// write the summary end 
 			writer.write(getSummaryEndHtml(rapidRequest, _application));
 									
 			// close the remaining elements
@@ -657,17 +672,17 @@ public abstract class FormAdapter {
 						}
 						// if this was the last value for the control
 						if (lastValue) {
+							// assume no value
+							String value = null;	
+							// if more than 1 part
+							if (parts.length > 1) {
+								// url decode value 
+								try { value = URLDecoder.decode(parts[1],"UTF-8"); } catch (UnsupportedEncodingException ex) {}				
+							} // parts > 0	
 							// find the control in the page
 							Control control = rapidRequest.getPage().getControl(id);
 							// only if we found it
-							if (control != null) {
-								// assume no value
-								String value = null;					
-								// if more than 1 part
-								if (parts.length > 1) {
-									// url decode value 
-									try {  value = URLDecoder.decode(parts[1],"UTF-8"); } catch (UnsupportedEncodingException ex) {}				
-								} // parts > 0								
+							if (control != null) {																										
 								// get any control validation
 								Validation validation = control.getValidation();
 								// if we had some
@@ -699,44 +714,56 @@ public abstract class FormAdapter {
 												}
 											} catch (PatternSyntaxException ex) {
 												// rethrow
-												throw new ServerSideValidationException("Server side validation error - value " + id + " for  form " + formId+ " regex PatternSyntaxException", ex);
+												throw new ServerSideValidationException("Server side validation error - value " + id + " for  form " + formId+ " regex syntax failed for " + regEx + " regex PatternSyntaxException", ex);
 											} catch (IllegalArgumentException  ex) {
 												// rethrow
-												throw new ServerSideValidationException("Server side validation error - value " + id + " for  form " + formId+ " regex ServerSideValidationException", ex);
+												throw new ServerSideValidationException("Server side validation error - value " + value + " for control " + id + " in  form " + formId+ " failed regex " + regEx + " regex ServerSideValidationException", ex);
 											}											
 											// compile and check it
 											if (!pattern.matcher(value).find()) throw new ServerSideValidationException("Server side validation error - value " + id + " for  form " + formId+ " failed regex");
-										}
+										} // value check
+									} // javascript type check		
+								} // validation check
+								// check value again
+								if (value != null) {
+									// look for a maxLength property
+									String maxLength = control.getProperty("maxLength");
+									// if we got one
+									if (maxLength != null) {
+										// convert to int
+										int max = Integer.parseInt(maxLength);
+										// check length
+										if (value.length() >  max) throw new ServerSideValidationException("Server side validation error - value " + id + " for  form " + formId+ " failed regex");
 									}
 								}
-								// if this is the hidden values
-								if (id.endsWith("_hiddenControls") && value != null) {
-									// retain the hidden values
-									hiddenControls = value.split(",");
-								} else	{
-									// if we have hidden controls to check
-									if (hiddenControls != null) {								
-										// loop the hidden controls
-										for (String hiddenControl : hiddenControls) {
-											// if there's a match
-											if (id.equals(hiddenControl)) {
-												// retain as hidden
-												hidden = true;
-												// we're done
-												break;
-											} // this is a hidden control
-										} // loop the hidden controls
-									} // got hidden controls to check
-									// add name value pair
-									pageControlValues.add(id, value, hidden);
-								} // ends with hidden controls			
-							} // found control in page	
-						} // last value													
+							} // found control in page
+							// if this is the hidden values
+							if (id.endsWith("_hiddenControls") && value != null) {
+								// retain the hidden values
+								hiddenControls = value.split(",");
+							} else	{
+								// if we have hidden controls to check
+								if (hiddenControls != null) {								
+									// loop the hidden controls
+									for (String hiddenControl : hiddenControls) {
+										// if there's a match
+										if (id.equals(hiddenControl)) {
+											// retain as hidden
+											hidden = true;
+											// we're done
+											break;
+										} // this is a hidden control
+									} // loop the hidden controls
+								} // got hidden controls to check
+								// add name value pair
+								pageControlValues.add(id, value, hidden);
+							} // ends with hidden controls	
+						} // last value						
 					}	// id .length > 0
 				} // id != null																
 			} // param loop			
 			return pageControlValues;						
 		} // postBody check				
 	}
-
+	
 }

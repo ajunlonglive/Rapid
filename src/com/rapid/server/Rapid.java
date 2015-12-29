@@ -123,27 +123,8 @@ public class Rapid extends RapidHttpServlet {
 							
 						} else {
 							
-							// get the application
-							Application application = rapidRequest.getApplication();
-							
-							// get the sorted pages
-							PageHeaders pages = application.getPages().getSortedPages();
-							
-							// get the last page id
-							String lastPageId = pages.get(pages.size() - 1).getId();
-							
-							// check we are allowed to view the last page
-							if (formAdapter.checkUserMaxPage(rapidRequest, lastPageId)) {
-								
-								// write the form summary page
-								formAdapter.writeFormSummary(rapidRequest, response);
-								
-							} else {
-								
-								// go to what should be the start page
-								response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion());
-								
-							}
+							// write the form summary page
+							formAdapter.writeFormSummary(rapidRequest, response);
 																																																								
 						}
 
@@ -197,13 +178,14 @@ public class Rapid extends RapidHttpServlet {
 						// get the form adapter (if there is one)
 						FormAdapter formAdapter = app.getFormAdapter();
 						
+						// assume the form id is null
+						String formId = null;
+						
 						try {																											
 							
 							// if there is a formAdapter, make sure there's a form id, unless it's for a simple page
 							if (formAdapter != null) {
-								
-								// assume the form id is null
-								String formId = null;
+																																
 								// if this is a form resume
 								if ("resume".equals(action)) {
 									// get the form id and password from the url
@@ -213,19 +195,21 @@ public class Rapid extends RapidHttpServlet {
 									if (formAdapter.doResumeForm(rapidRequest, resumeFormId, resumePassword))  {
 										// use the resume form id
 										formId = resumeFormId;
-										// Get the max page this form got to and set as max page!!!!!
+										// go for the summary if no page specified
+										if (request.getParameter("p") == null) showSummary  = true;										
 									}
 								} else {								
 									// get form id from the adapter
 									formId = formAdapter.getFormId(rapidRequest);									
 								}								
-								// if there isn't a form id go back to the start
-								if (formId == null) {
+								// if there isn't a form id, or we want to show the summary don't check the pages
+								if (formId == null || showSummary) {
+									// set the page check to false
 									pageCheck = false;							
 								} else {
 									
 									// check that we have progressed far enough in the form to view this page
-									if (formAdapter.checkUserMaxPage(rapidRequest, page.getId())) {
+									if (formAdapter.checkMaxPage(rapidRequest, formId, page.getId())) {
 										
 										// only if this is not a dialogue
 										if (!"dialogue".equals(action)) {
@@ -246,7 +230,18 @@ public class Rapid extends RapidHttpServlet {
 													// select the next page to check the visibility of
 													page = app.getPages().getPage(getServletContext(), pageHeaders.get(pageIndex).getId());		
 													// set that we're allowed to this page
-													formAdapter.setUserMaxPageId(rapidRequest, page.getId());
+													formAdapter.setMaxPage(rapidRequest, formId, page.getId());
+													// if this page has session values
+													if (page.getSessionVariables() != null) {
+														// loop them
+														for (String variable : page.getSessionVariables()) {
+															// look for values
+															String value = (String) rapidRequest.getSessionAttribute(variable);
+															// if we got one update it's value
+															if (value != null) formAdapter.setFormPageVariableValue(rapidRequest, formId, variable, value);
+															
+														}
+													}
 												} // pages remaining check									
 											} // page vis loop
 										} // dialogue check
@@ -324,6 +319,9 @@ public class Rapid extends RapidHttpServlet {
 						} else {
 							
 							if (showSummary) {
+								
+								// mark that this form is now complete
+								formAdapter.setFormComplete(rapidRequest, formId, true);
 								
 								// go to the summary
 								response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion() + "&action=summary");
@@ -658,6 +656,9 @@ public class Rapid extends RapidHttpServlet {
 											// if this is the last page
 											if (pageIndex >= pages.size() - 1) {
 												
+												// mark that this form is complete
+												formAdapter.setFormComplete(rapidRequest, formId, true);
+												
 												// send a redirect for the summary (this also avoids ERR_CACH_MISS issues on the back button )
 												response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion() + "&action=summary");
 												
@@ -670,7 +671,7 @@ public class Rapid extends RapidHttpServlet {
 												String nextPageId =  pages.get(pageIndex).getId();
 														
 												// set that we're allowed to this page
-												formAdapter.setUserMaxPageId(rapidRequest, nextPageId);
+												formAdapter.setMaxPage(rapidRequest, formId, nextPageId);
 												
 												// send a redirect for the page (this avoids ERR_CACH_MISS issues on the back button )
 												response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion() + "&p=" + nextPageId);

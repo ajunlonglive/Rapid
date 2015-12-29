@@ -7,7 +7,7 @@ gareth.edwards@rapid-is.co.uk
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as 
 published by the Free Software Foundation, either version 3 of the 
 License, or (at your option) any later version. The terms require you 
@@ -36,15 +36,19 @@ import org.json.JSONObject;
 import com.rapid.core.Application;
 import com.rapid.core.Control;
 import com.rapid.core.Page;
+import com.rapid.core.Pages.PageHeaders;
 import com.rapid.server.RapidRequest;
 import com.rapid.utils.Html;
 
 public class RapidFormAdapter extends FormAdapter {
 	
 	//  static finals
-	private static final String USER_FORM_PAGE_CONTROL_VALUES = "userFormPageControlValues";
 	private static final String NEXT_FORM_ID = "nextFormId";
-	
+	private static final String USER_FORM_PAGE_VARIABLE_VALUES = "userFormPageVariableValues";
+	private static final String USER_FORM_PAGE_CONTROL_VALUES = "userFormPageControlValues";
+	private static final String USER_FORM_MAX_PAGES = "userFormMaxPages";
+	private static final String USER_FORM_COMPLETE_VALUES = "userFormCompleteValues";	
+		
 	// constructor
 
 	public RapidFormAdapter(ServletContext servletContext, Application application) {
@@ -57,7 +61,7 @@ public class RapidFormAdapter extends FormAdapter {
 	protected Map<String,FormPageControlValues> getUserFormPageControlValues(RapidRequest rapidRequest) throws Exception {	
 		// get the servlet context
 		ServletContext servletContext = rapidRequest.getRapidServlet().getServletContext();
-		// get all app page control values from session
+		// get all app page control values from the context
 		Map<String,Map<String,FormPageControlValues>> userAppPageControlValues = (Map<String, Map<String, FormPageControlValues>>) servletContext.getAttribute(USER_FORM_PAGE_CONTROL_VALUES);
 		// if null
 		if (userAppPageControlValues == null) {
@@ -85,6 +89,47 @@ public class RapidFormAdapter extends FormAdapter {
 		return userPageControlValues;
 	}
 	
+	// this uses a similar technique to record whether the form is complete or not
+	protected Map<String,Boolean> getUserFormCompleteValues(RapidRequest rapidRequest) {
+		// get the servlet context
+		ServletContext servletContext = rapidRequest.getRapidServlet().getServletContext();
+		// get the map of completed values
+		Map<String,Boolean> userFormCompleteValues = (Map<String, Boolean>) servletContext.getAttribute(USER_FORM_COMPLETE_VALUES);
+		// if there aren't any yet
+		if  (userFormCompleteValues == null) {
+			// make some
+			userFormCompleteValues = new HashMap<String,Boolean>();
+			// store them
+			servletContext.setAttribute(USER_FORM_COMPLETE_VALUES, userFormCompleteValues);
+		}
+		// return
+		return userFormCompleteValues;
+	}
+		
+	protected Map<String,String> getUserFormPageVariableValues(RapidRequest rapidRequest, String formId) {
+		// get the servlet context
+		ServletContext servletContext = rapidRequest.getRapidServlet().getServletContext();
+		// get the map of form values
+		Map<String, HashMap<String, String>> userFormPageVariableValues = (Map<String, HashMap<String, String>>) servletContext.getAttribute(USER_FORM_PAGE_VARIABLE_VALUES);
+		// if there aren't any yet
+		if  (userFormPageVariableValues == null) {
+			// make some
+			userFormPageVariableValues = new HashMap<String,HashMap<String,String>>();
+			// store them
+			servletContext.setAttribute(USER_FORM_PAGE_VARIABLE_VALUES, userFormPageVariableValues);
+		}
+		// get the map of values
+		HashMap<String, String> formPageVariableValues = userFormPageVariableValues.get(formId);
+		// if it's null
+		if (formPageVariableValues == null) {
+			// make some
+			formPageVariableValues = new HashMap<String,String>();
+			// store them
+			userFormPageVariableValues.put(formId, formPageVariableValues);
+		}		
+		// return
+		return formPageVariableValues;
+	}
 	
 	// overridden methods
 	
@@ -106,6 +151,53 @@ public class RapidFormAdapter extends FormAdapter {
 	}
 	
 	@Override
+	public boolean checkMaxPage(RapidRequest rapidRequest, String formId, String pageId) throws Exception {
+		// get the user session (without making a new one)
+		HttpSession session = rapidRequest.getRequest().getSession(false);
+		// get the form ids map from the session
+		Map<String,String> pageIds = (Map<String, String>) session.getAttribute(USER_FORM_MAX_PAGES);
+		// get the application
+		Application application = rapidRequest.getApplication();
+		// check we have pageIds and an application
+		if (application != null) {
+			// get the sorted pages
+			PageHeaders pages = application.getPages().getSortedPages();
+			// check we got some pages
+			if (pages != null) {
+				if (pages.size() > 0) {
+					// start with the top page
+					String maxPageId =  pages.get(0).getId();
+					// use the page ids if we have some
+					if (pageIds != null) maxPageId = pageIds.get(application.getId() + "-" + application.getVersion());				
+					// get the position of the maxPage
+					int maxPageIndex = pages.indexOf(maxPageId);
+					// get the position of this page
+					int pageIndex = pages.indexOf(pageId);
+					// if we're allowed at this point
+					if (pageIndex <= maxPageIndex) return true;
+				}				
+			}			
+		}
+		return false;
+	}
+			
+	@Override
+	public void setMaxPage(RapidRequest rapidRequest, String formId, String pageId) {
+		// get the user session (making a new one if need be)
+		HttpSession session = rapidRequest.getRequest().getSession();
+		// get the form ids
+		Map<String,String> maxPages = (Map<String, String>) session.getAttribute(USER_FORM_MAX_PAGES);
+		// make some if we didn't get
+		if (maxPages == null)  maxPages = new HashMap<String, String>(); 					
+		// get the application
+		Application application = rapidRequest.getApplication();
+		// store the form if for a given app id / version
+		maxPages.put(application.getId() + "-" + application.getVersion(), pageId);		
+		// update the session with the new form ids
+		session.setAttribute(USER_FORM_MAX_PAGES, maxPages);		
+	}
+	
+	@Override
 	public boolean checkFormResume(RapidRequest rapidRequest, String formId, String password) throws Exception {
 		// get the servlet context
 		ServletContext servletContext = rapidRequest.getRapidServlet().getServletContext();
@@ -123,6 +215,49 @@ public class RapidFormAdapter extends FormAdapter {
 			// form found we're good
 			return true;
 		}
+	}
+	
+	@Override
+	public boolean getFormComplete(RapidRequest rapidRequest, String formId) throws Exception {
+		// get the userPageComplete values
+		Map<String, Boolean>  userFormCompleteValues = getUserFormCompleteValues(rapidRequest);
+		// get the value
+		Boolean formComplete = userFormCompleteValues.get(formId);
+		// check for nulls
+		if (formComplete == null) {
+			return false;
+		} else {
+			// return
+			return formComplete.booleanValue();
+		}
+	}
+
+	@Override
+	public void setFormComplete(RapidRequest rapidRequest, String formId, boolean completed) throws Exception {
+		// get the userPageComplete values
+		Map<String, Boolean>  userFormCompleteValues = getUserFormCompleteValues(rapidRequest);
+		// set it
+		userFormCompleteValues.put(formId, completed);
+		// store it
+		rapidRequest.getRapidServlet().getServletContext().setAttribute(USER_FORM_COMPLETE_VALUES, userFormCompleteValues);
+	}
+	
+	// set a form page variable
+	@Override
+	public void setFormPageVariableValue(RapidRequest rapidRequest, String formId, 	String name, String value) throws Exception {
+		// get the userPageComplete values
+		Map<String, String>  userFormPageVariableValues = getUserFormPageVariableValues(rapidRequest, formId);
+		// set it
+		userFormPageVariableValues.put(name, value);
+		// store it
+		rapidRequest.getRapidServlet().getServletContext().setAttribute(USER_FORM_PAGE_VARIABLE_VALUES, userFormPageVariableValues);
+	}
+	
+	// return form page variables
+	@Override
+	public Map<String, String> getFormPageVariableValues( 	RapidRequest rapidRequest, String formId) throws Exception {
+		// use our reusable function
+		return getUserFormPageVariableValues(rapidRequest, formId);
 	}
 	
 	// uses our user session method to get the form page control values
