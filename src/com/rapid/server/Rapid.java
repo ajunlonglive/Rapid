@@ -207,9 +207,9 @@ public class Rapid extends RapidHttpServlet {
 									// set the page check to false
 									pageCheck = false;							
 								} else {
-									
-									// check that we have progressed far enough in the form to view this page
-									if (formAdapter.checkMaxPage(rapidRequest, formId, page.getId())) {
+																											
+									// check that we have progressed far enough in the form to view this page, or we are a designer
+									if (formAdapter.checkMaxPage(rapidRequest, formId, page.getId()) || security.checkUserRole(rapidRequest, DESIGN_ROLE)) {
 										
 										// only if this is not a dialogue
 										if (!"dialogue".equals(action)) {
