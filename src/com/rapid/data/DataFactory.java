@@ -7,7 +7,7 @@ gareth.edwards@rapid-is.co.uk
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as 
 published by the Free Software Foundation, either version 3 of the 
 License, or (at your option) any later version. The terms require you 
@@ -25,14 +25,15 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
 package com.rapid.data;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ParameterMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.ArrayList;
 
 import com.rapid.data.ConnectionAdapter.ConnectionAdapterException;
@@ -179,6 +180,57 @@ public class DataFactory {
 	
 	public boolean getReadOnly(boolean readOnly) { return _readOnly; }	
 	public void setReadOnly(boolean readOnly) {	_readOnly = readOnly; }
+	
+	private void populateStatement(PreparedStatement statement, ArrayList<Parameter> parameters, int startColumn) throws SQLException {
+		
+		ParameterMetaData parameterMetaData = statement.getParameterMetaData();
+		
+		int parameterCount = parameterMetaData.getParameterCount() - startColumn;
+		
+		if (parameters == null) {
+			
+			if (parameterCount > 0) throw new SQLException("SQL has " + parameterMetaData.getParameterCount() + " parameters, none provided");
+			
+		} else {
+			
+			if (parameterCount != parameters.size()) throw new SQLException("SQL has " + parameterMetaData.getParameterCount() + " parameters, " + parameters.size() + " provided");
+		
+			int i = startColumn;
+			
+			for (Parameter parameter : parameters) {
+			
+				i++;
+				
+				switch (parameter.getType()) {
+				case Parameter.NULL : 
+					statement.setNull(i, Types.NULL); 
+					break;
+				case Parameter.STRING : 											
+					if (parameter.getString() == null) {
+						statement.setNull(i, Types.NULL);
+					} else {
+						statement.setString(i, parameter.getString());
+					}
+					break;
+				case Parameter.DATE : 				
+					if (parameter.getDate() == null) {
+						statement.setNull(i, Types.NULL);
+					} else {
+						statement.setTimestamp(i, new Timestamp(parameter.getDate().getTime()));
+					}
+					break;
+				case Parameter.INTEGER : 
+					statement.setInt(i, parameter.getInteger()); 
+					break;
+				case Parameter.FLOAT : 
+					statement.setFloat(i, parameter.getFloat()); 
+					break;
+				}						
+			}
+		
+		}
+		
+	}
 						
 	public PreparedStatement getPreparedStatement(RapidRequest rapidRequest, String sql, ArrayList<Parameter> parameters) throws SQLException, ClassNotFoundException, ConnectionAdapterException  {
 		
@@ -191,44 +243,7 @@ public class DataFactory {
 		
 		_preparedStatement = _connection.prepareStatement(_sql);
 		
-		ParameterMetaData parameterMetaData = _preparedStatement.getParameterMetaData();
-										
-		if (parameters == null) {
-			
-			if (parameterMetaData.getParameterCount() > 0) throw new SQLException("SQL has " + parameterMetaData.getParameterCount() + " parameters, none provided");
-			
-		} else {
-			
-			if (parameterMetaData.getParameterCount() != parameters.size()) throw new SQLException("SQL has " + parameterMetaData.getParameterCount() + " parameters, " + parameters.size() + " provided");
-		
-			int i = 0;
-			
-			for (Parameter parameter : parameters) {
-			
-				i++;
-				
-				switch (parameter.getType()) {
-				case Parameter.NULL : _preparedStatement.setNull(i, java.sql.Types.NULL); break;
-				case Parameter.STRING : 											
-					if (parameter.getString() == null) {
-						_preparedStatement.setNull(i, java.sql.Types.NULL);
-					} else {
-						_preparedStatement.setString(i, parameter.getString());
-					}
-					break;
-				case Parameter.DATE : 				
-					if (parameter.getDate() == null) {
-						_preparedStatement.setNull(i, java.sql.Types.NULL);
-					} else {
-						_preparedStatement.setTimestamp(i, new Timestamp(parameter.getDate().getTime()));
-					}
-					break;
-				case Parameter.INTEGER : _preparedStatement.setInt(i, parameter.getInteger()); break;
-				case Parameter.FLOAT : _preparedStatement.setFloat(i, parameter.getFloat()); break;
-				}						
-			}
-		
-		}
+		populateStatement(_preparedStatement, parameters, 0);
 		
 		return _preparedStatement;
 		
@@ -274,15 +289,45 @@ public class DataFactory {
 		
 	}
 	
-	public String getPreparedScalar(RapidRequest rapidRequest, String sql, ArrayList<Parameter> parameters) throws SQLException, ClassNotFoundException, ConnectionAdapterException {
+	public String getPreparedScalar(RapidRequest rapidRequest, String SQL, ArrayList<Parameter> parameters) throws SQLException, ClassNotFoundException, ConnectionAdapterException {
 		
-		_resultset = getPreparedStatement(rapidRequest, sql, parameters).executeQuery();
+		String result = null;
 		
-		if (_resultset.next()) {
-			return _resultset.getString(1);
-		} else {
-			return null;
+		if (SQL != null) {
+			
+			String sql = SQL.trim().toLowerCase();
+			
+			if (sql.startsWith("select")) {
+				
+				_resultset = getPreparedStatement(rapidRequest, SQL, parameters).executeQuery();
+				
+				if (_resultset.next()) result = _resultset.getString(1);
+				
+			} else if (sql.startsWith("insert") || sql.startsWith("update"))  {
+				
+				result = Integer.toString(getPreparedUpdate(rapidRequest, SQL, parameters));
+		
+			} else {
+				
+				if (_connection == null) _connection = getConnection(rapidRequest);
+				
+				CallableStatement st = _connection.prepareCall("{? = call " + sql + "}");
+				
+				_preparedStatement = st;
+				
+				populateStatement(st, parameters, 1);
+				
+				st.registerOutParameter(1, Types.NVARCHAR);
+								
+				st.execute();
+								
+				result = st.getString(1);
+									
+			}
+		
 		}
+		
+		return result;
 		
 	}
 	
