@@ -295,15 +295,15 @@ public class DataFactory {
 		
 		if (SQL != null) {
 			
-			String sql = SQL.trim().toLowerCase();
+			String sqlCheck = SQL.trim().toLowerCase();
 			
-			if (sql.startsWith("select")) {
+			if (sqlCheck.startsWith("select")) {
 				
 				_resultset = getPreparedStatement(rapidRequest, SQL, parameters).executeQuery();
 				
 				if (_resultset.next()) result = _resultset.getString(1);
 				
-			} else if (sql.startsWith("insert") || sql.startsWith("update"))  {
+			} else if (sqlCheck.startsWith("insert") || sqlCheck.startsWith("update") || sqlCheck.startsWith("delete"))  {
 				
 				result = Integer.toString(getPreparedUpdate(rapidRequest, SQL, parameters));
 		
@@ -311,7 +311,7 @@ public class DataFactory {
 				
 				if (_connection == null) _connection = getConnection(rapidRequest);
 				
-				CallableStatement st = _connection.prepareCall("{? = call " + sql + "}");
+				CallableStatement st = _connection.prepareCall("{? = call " + SQL + "}");
 				
 				_preparedStatement = st;
 				
