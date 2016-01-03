@@ -223,8 +223,13 @@ public class Rapid extends RapidHttpServlet {
 												pageIndex ++;
 												// if there are no more pages go to the summary
 												if (pageIndex > pageHeaders.size() - 1) {
+													// fail the check to print a page
 													pageCheck = false;
+													// but set the the show summary to true
 													showSummary = true;
+													// and set the completed flag so the submit button shows
+													formAdapter.setFormComplete(rapidRequest, formId, true);
+													// we're done
 													break;
 												} else {
 													// select the next page to check the visibility of
