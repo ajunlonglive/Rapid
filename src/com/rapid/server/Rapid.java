@@ -319,10 +319,7 @@ public class Rapid extends RapidHttpServlet {
 						} else {
 							
 							if (showSummary) {
-								
-								// mark that this form is now complete
-								formAdapter.setFormComplete(rapidRequest, formId, true);
-								
+																
 								// go to the summary
 								response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion() + "&action=summary");
 								
