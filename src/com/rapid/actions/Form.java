@@ -25,11 +25,14 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
 package com.rapid.actions;
 
+import java.net.URLEncoder;
+
 import com.rapid.core.Action;
 import com.rapid.core.Application;
 import com.rapid.core.Control;
 import com.rapid.core.Page;
 import com.rapid.forms.FormAdapter;
+import com.rapid.forms.FormAdapter.UserFormDetails;
 import com.rapid.server.RapidHttpServlet;
 import com.rapid.server.RapidRequest;
 
@@ -59,36 +62,70 @@ public class Form extends Action {
 		String actionType = getProperty("actionType");
 		// prepare the js
 		String js = "";
-		
-		// check the action type
-		if ("next".equals(actionType)) {
-			// next submits the form
-			js = "$('form').submit();\n";
-		} else if ("prev".equals(actionType)) {
-			// go back
-			js = "window.history.back();\n";
-		} else if ("id".equals(actionType) || "val".equals(actionType)) {
-			// get the dataDestination
-			String destinationId = getProperty("dataDestination");			
-			// first try and look for the control in the page
-			Control destinationControl = page.getControl(destinationId);
-			// check we got a control
-			if (destinationControl == null) {
-				js = "// destination control " + destinationId + " could not be found\n" ;
-			} else if ("id".equals(actionType)) {
-				// use the set data to copy in the form id
-				js = "setData_" + destinationControl.getType() + "(ev, '" + destinationId + "', null, " + destinationControl.getDetails() + ", _formId);\n";
-			} else if ("val".equals(actionType)) {
-				// get the form adpater
-				FormAdapter formAdapter = application.getFormAdapter();
-				// get the value
-				String value = formAdapter.getFormControlValue(rapidRequest, getProperty("dataSource"), false);					
-				// enclose it if we got something
-				if (value != null) value = "'" + value +"'";				
-				// use the set data if we got something
-				js = "setData_" + destinationControl.getType() + "(ev, '" + destinationId + "', null, " + destinationControl.getDetails() + ", " + value + ");\n";
-			}										
-		}		
+		// get the form adpater
+		FormAdapter formAdapter = application.getFormAdapter();
+		// check we got one
+		if (formAdapter == null) {
+			js = "// no form adapter\n";
+		} else {
+			// check the action type
+			if ("next".equals(actionType)) {
+				// next submits the form
+				js = "$('form').submit();\n";
+			} else if ("prev".equals(actionType)) {
+				// go back
+				js = "window.history.back();\n";
+			} else {
+				// get the dataDestination
+				String destinationId = getProperty("dataDestination");			
+				// first try and look for the control in the page
+				Control destinationControl = page.getControl(destinationId);
+				// check we got a control
+				if (destinationControl == null) {
+					js = "// destination control " + destinationId + " could not be found\n" ;
+				} else  {				
+					// the value we will get
+					String value = null;
+					if ("id".equals(actionType)) {
+						value = "_formId";
+					} else if ("val".equals(actionType)) {
+						// get the control value
+						value = formAdapter.getFormControlValue(rapidRequest, getProperty("dataSource"), false);					
+						// enclose it in quotes (and escape it) if we got something
+						if (value != null) value = "'" + value.replace("'", "\\'") +"'";				
+					} else {
+						// get the user form details
+						UserFormDetails details = formAdapter.getUserFormDetails(rapidRequest);
+						// check we got the details then what to do with them
+						if (details == null) {
+							js = "// user form details could not be found";
+						} else if ("err".equals(actionType)) {					
+							// get the form details value
+							value = details.getErrorMessage();								
+						} else if ("res".equals(actionType)) {
+							// create the resume url
+							value = "~?a=" + application.getId() + "&v=" + application.getVersion() + "&action=resume&f=" + details.getId();
+							// get the password
+							String password = details.getPassword();
+							// if we got one
+							if (password != null) {
+								// url encode it
+								password = URLEncoder.encode(password,"UTF8");
+								// ammend to url
+								value += "&pwd=" + password;
+							}
+						} else if ("pdf".equals(actionType)) {
+							// create the pdf url
+							value = "~?a=" + application.getId() + "&v=" + application.getVersion() + "&action=pdf&f=" + details.getId();
+						} // details and what to do check
+						// enclose it if we got something
+						if (value != null) value = "'" + value.replace("'", "\\'") +"'";	
+					}
+					// use the set data if we got something
+					if (value != null) js = "setData_" + destinationControl.getType() + "(ev, '" + destinationId + "', null, " + destinationControl.getDetails() + ", " + value + ");\n";
+				} // destination check										
+			} // action type
+		} // form adapter type
 		// return the js
 		return js;
 	}

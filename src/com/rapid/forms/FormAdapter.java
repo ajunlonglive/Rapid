@@ -25,7 +25,6 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
 package com.rapid.forms;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -43,7 +42,6 @@ import javax.servlet.http.HttpSession;
 import com.rapid.core.Application;
 import com.rapid.core.Control;
 import com.rapid.core.Page;
-import com.rapid.core.Application.RapidLoadingException;
 import com.rapid.core.Pages;
 import com.rapid.core.Pages.PageHeader;
 import com.rapid.core.Pages.PageHeaders;
@@ -54,6 +52,33 @@ import com.rapid.server.Rapid;
 import com.rapid.server.RapidRequest;
 
 public abstract class FormAdapter {
+	
+	// details about a user form
+	public static class UserFormDetails {
+		
+		// instance variables
+		private String _id, _password, _errorMessage;
+		boolean _submitted, _error, _saved;
+		
+		// properties
+		public String getId() { return _id; }
+		public String getPassword() { return _password; }
+		public boolean getSubmitted() { return _submitted; }
+		public void setSubmitted(boolean submitted) { _submitted = submitted; }
+		public boolean getError() { return _error; }
+		public void setError(boolean error) { _error = error; }
+		public boolean getSaved() { return _saved; }
+		public void setSaved(boolean saved) { _saved = saved; }
+		public String getErrorMessage() { return _errorMessage; }
+		public void setErrorMessage(String errorMessage) { _errorMessage = errorMessage; }
+		
+		// constructor
+		public UserFormDetails(String id, String password) {
+			_id = id;
+			_password = password;
+		}
+		
+	}
 	
 	// a single controls value
 	public static class FormControlValue {
@@ -150,7 +175,7 @@ public abstract class FormAdapter {
 	}
 	
 	//  static finals
-	private static final String USER_FORM_IDS = "userFormIds";
+	private static final String USER_FORM_DETAILS = "userFormDetails";
 		
 	// instance variables
 	
@@ -172,7 +197,10 @@ public abstract class FormAdapter {
 	// abstract methods
 					
 	// this method returns a new form id, when allowed, by a given adapter, could be in memory, or database, etc
-	public abstract String getNewFormId(RapidRequest rapidRequest) throws Exception;
+	public abstract UserFormDetails getNewFormDetails(RapidRequest rapidRequest) throws Exception;
+	
+	// this method checks a form id against a password for resuming 
+	public abstract UserFormDetails getResumeFormDetails(RapidRequest rapidRequest, String formId, String password) throws Exception;
 	
 	// checks a given page id against the maximum
 	public abstract boolean checkMaxPage(RapidRequest rapidRequest, String formId, String pageId) throws Exception;
@@ -191,10 +219,7 @@ public abstract class FormAdapter {
 	
 	// sets any page/session variables for this form
 	public abstract void setFormPageVariableValue(RapidRequest rapidRequest, String formId, String name, String value) throws Exception;
-	
-	// this method checks a form id against a password for resuming 
-	public abstract boolean checkFormResume(RapidRequest rapidRequest, String formId, String password) throws Exception;
-			
+					
 	// returns all the form control values for a given page
 	public abstract FormPageControlValues getFormPageControlValues(RapidRequest rapidRequest, String pageId) throws Exception;
 	
@@ -223,55 +248,74 @@ public abstract class FormAdapter {
 	public abstract String getSummaryPagesEndHtml(RapidRequest rapidRequest, Application application);
 		
 	// submits the form and receives a message for the submitted page
-	public abstract String submitForm(RapidRequest rapidRequest) throws Exception;
-				
-	// this html is written for successfully submitted forms
-	public abstract String getSubmittedHtml(RapidRequest rapidRequest, String message);
+	public abstract void submitForm(RapidRequest rapidRequest) throws Exception;
 	
-	// this html is written for any forms where there was an error on submission
-	public abstract String getSubmittedExceptionHtml(RapidRequest rapidRequest, Exception ex);
-
+	// closes any resources used by the form adapter when the server shuts down
+	public abstract void close();
+				
 	// protected instance methods
 		
-	protected String getUserFormId(RapidRequest rapidRequest) {
-		// get the user session (without making a new one)
-		HttpSession session = rapidRequest.getRequest().getSession(false);
-		// get the form ids map from the session
-		Map<String,String> formIds = (Map<String, String>) session.getAttribute(USER_FORM_IDS);
-		// check we got some
-		if (formIds == null) {
-			return null;
-		} else {
-			// get the application
-			Application application = rapidRequest.getApplication();
-			// return the user form id for a given app id / version
-			return formIds.get(application.getId() + "-" + application.getVersion());
+	protected String getFormMapKey(RapidRequest rapidRequest) {
+		// get the application
+		Application application = rapidRequest.getApplication();
+		// return the key
+		return application.getId() + "-" + application.getVersion();
+	}
+							
+	// public instance methods
+	
+	// sets whether the form has been submitted
+	public void setUserFormSubmitted(RapidRequest rapidRequest, boolean submitted) {
+		// get the details
+		UserFormDetails details = getUserFormDetails(rapidRequest);
+		// update if we got some
+		if (details != null) details.setSubmitted(submitted);
+	}
+	
+	// sets whether the form has has an error
+	public void setUserFormError(RapidRequest rapidRequest, boolean error, String errorMessage) {
+		// get the details
+		UserFormDetails details = getUserFormDetails(rapidRequest);
+		// if we got some
+		if (details != null) {
+			// update error
+			details.setError(error);
+			// update error message
+			details.setErrorMessage(errorMessage);
 		}
 	}
 	
-	protected void setUserFormId(RapidRequest rapidRequest, String formId) {
-		// get the user session (making a new one if need be)
-		HttpSession session = rapidRequest.getRequest().getSession();
-		// get the form ids
-		Map<String,String> formIds = (Map<String, String>) session.getAttribute(USER_FORM_IDS);
-		// make some if we didn't get
-		if (formIds == null)  formIds = new HashMap<String, String>(); 					
-		// get the application
-		Application application = rapidRequest.getApplication();
-		// store the form if for a given app id / version
-		formIds.put(application.getId() + "-" + application.getVersion(), formId);		
-		// update the session with the new form ids
-		session.setAttribute(USER_FORM_IDS, formIds);		
+	// sets whether the form has been saved
+	public void setUserFormSaved(RapidRequest rapidRequest, boolean saved) {
+		// get the details
+		UserFormDetails details = getUserFormDetails(rapidRequest);
+		// update if we got some
+		if (details != null) details.setSaved(saved);
 	}
-			
-	// public instance methods
 	
+	// returns the form id in the user session for a given application id and version
+	public UserFormDetails getUserFormDetails(RapidRequest rapidRequest) {
+		// get the user session (without making a new one)
+		HttpSession session = rapidRequest.getRequest().getSession(false);
+		// get the form ids map from the session
+		Map<String,UserFormDetails> details = (Map<String, UserFormDetails>) session.getAttribute(USER_FORM_DETAILS);
+		// check we got some
+		if (details == null) {
+			return null;
+		} else {			
+			// return the user form id for a given app id / version
+			return details.get(getFormMapKey(rapidRequest));
+		}
+	}
+						
 	// this looks for a form id in the user session and uses the adapter specific getNewId routine if one is allowed. Returning null sends the user to the start page
 	public String getFormId(RapidRequest rapidRequest) throws Exception {		
+		// assume no form id
+		String formId = null;
 		// get the form id using what's in the request
-		String formId = getUserFormId(rapidRequest);
+		UserFormDetails details = getUserFormDetails(rapidRequest);
 		// if it's null
-		if (formId == null) {			
+		if (details == null) {			
 			// get the application
 			Application application = rapidRequest.getApplication();
 			// get the start page header
@@ -298,13 +342,29 @@ public abstract class FormAdapter {
 			}
 			// there are some rules for creating new form ids - there must be no action and the page must be the start page
 			if (rapidRequest.getRequest().getParameter("action") == null && newIdAllowed) {				
-				// get a new form id from the adapter
-				formId = getNewFormId(rapidRequest);
-				// put into form ids
-				setUserFormId(rapidRequest, formId);						
+				// get a new form details from the adapter
+				details = getNewFormDetails(rapidRequest);
+				// set the new user form details
+				setUserFormDetails(rapidRequest, details);				
 			}			
-		}					
+		} else {
+			formId = details.getId();
+		}
 		return formId;
+	}
+	
+	// sets the form details in the user session for a given application id and version
+	public void setUserFormDetails(RapidRequest rapidRequest, UserFormDetails details) {
+		// get the user session (making a new one if need be)
+		HttpSession session = rapidRequest.getRequest().getSession();
+		// get all user form details
+		Map<String,UserFormDetails> allDetails = (Map<String, UserFormDetails>) session.getAttribute(USER_FORM_DETAILS);
+		// make some if we didn't get
+		if (allDetails == null)  allDetails = new HashMap<String, UserFormDetails>(); 	
+		// store the form if for a given app id / version
+		allDetails.put(getFormMapKey(rapidRequest), details);	
+		// update the session with the new form ids
+		session.setAttribute(USER_FORM_DETAILS, allDetails);
 	}
 	
 	// used when resuming forms
@@ -337,11 +397,11 @@ public abstract class FormAdapter {
 			}
 		}
 		// check the password against the formId using the user-implemented method
-		canResume = checkFormResume(rapidRequest, formId, password);
+		UserFormDetails details = getResumeFormDetails(rapidRequest, formId, password);
 		// check success
-		if (canResume) {			
+		if (details != null) {			
 			// set the form id based on the app id and version
-			setUserFormId(rapidRequest, formId);
+			setUserFormDetails(rapidRequest, details);
 			// get the user page variable values
 			Map<String, String> pageVariableValues = getFormPageVariableValues(rapidRequest, formId);
 			// if we got some
@@ -356,22 +416,12 @@ public abstract class FormAdapter {
 			}
 		} else {
 			// invalidate any current form
-			setUserFormId(rapidRequest, null);
+			setUserFormDetails(rapidRequest, null);
 		}		
 		// return the result
 		return canResume;
 	}
-	
-	// this is called from the Rapid servelet and is the form submission and management of the form state in the user session 
-	public String doFormSubmit(RapidRequest rapidRequest) throws Exception {
-		// first run the subitForm in the non-abstract class
-		String message = submitForm(rapidRequest);
-		// empty the form id - invalidating the form
-		setUserFormId(rapidRequest, null);
-		// return the message
-		return message;
-	}
-	
+		
 	// this writes the form summary page
 	public void writeFormSummary(RapidRequest rapidRequest, HttpServletResponse response) throws Exception {
 		
@@ -525,107 +575,7 @@ public abstract class FormAdapter {
 		} // form id check
 		
 	}
-	
-	// this write the form submit page if all was ok
-	public  void writeFormSubmitOK(RapidRequest rapidRequest, HttpServletResponse response, String formId, String message) throws IOException, RapidLoadingException {
-					
-		// create a writer
-		PrintWriter writer = response.getWriter();
-				
-		// set the response type
-		response.setContentType("text/html");
 		
-		// this doctype is necessary (amongst other things) to stop the "user agent stylesheet" overriding styles
-		writer.write("<!DOCTYPE html>\n");
-																						
-		// open the html
-		writer.write("<html>\n");
-		
-		// open the head
-		writer.write("  <head>\n");
-		
-		// write a title
-		writer.write("    <title>Form submitted - by Rapid</title>\n");
-		
-		// get the servletContext
-		ServletContext servletContext = rapidRequest.getRapidServlet().getServletContext();
-		
-		// get app start page
-		Page startPage = _application.getStartPage(servletContext);
-					
-		// write the start page head (and it's resources)
-		writer.write(startPage.getResourcesHtml(_application, true));
-		
-		// close the head
-		writer.write("  </head>\n");
-		
-		// open the body
-		writer.write("  <body>\n");
-		
-		// writer the adapter specific submission message
-		writer.write(getSubmittedHtml(rapidRequest, message));
-		
-		// close the body and html
-		writer.write("  </body>\n</html>");
-																																	
-		// close the writer
-		writer.close();
-		
-		// flush the writer
-		writer.flush();
-						
-	}
-	
-	// this write the form submit page if all was ok
-	public  void writeFormSubmitError(RapidRequest rapidRequest, HttpServletResponse response, String formId, Exception ex) throws IOException, RapidLoadingException {
-					
-		// create a writer
-		PrintWriter writer = response.getWriter();
-				
-		// set the response type
-		response.setContentType("text/html");
-		
-		// this doctype is necessary (amongst other things) to stop the "user agent stylesheet" overriding styles
-		writer.write("<!DOCTYPE html>\n");
-																						
-		// open the html
-		writer.write("<html>\n");
-		
-		// open the head
-		writer.write("  <head>\n");
-		
-		// write a title
-		writer.write("    <title>Form submit error - by Rapid</title>\n");
-		
-		// get the servletContext
-		ServletContext servletContext = rapidRequest.getRapidServlet().getServletContext();
-		
-		// get app start page
-		Page startPage = _application.getStartPage(servletContext);
-					
-		// write the start page head (and it's resources)
-		writer.write(startPage.getResourcesHtml(_application, true));
-		
-		// close the head
-		writer.write("  </head>\n");
-		
-		// open the body
-		writer.write("  <body>\n");
-		
-		// write the adapter specific error html
-		writer.write(getSubmittedExceptionHtml(rapidRequest, ex));
-		
-		// close the body and html
-		writer.write("  </body>\n</html>");
-																																	
-		// close the writer
-		writer.close();
-		
-		// flush the writer
-		writer.flush();
-						
-	}
-	
 	// static methods
 	
 	public static FormPageControlValues getPostPageControlValues(RapidRequest rapidRequest, String postBody, String formId) throws ServerSideValidationException  {

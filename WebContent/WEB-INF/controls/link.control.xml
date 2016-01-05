@@ -41,6 +41,12 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    <properties>
 	        
 	        <property>
+	            <key>name</key>
+	            <name>Name</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>	            
+	        </property>	 
+	        
+	        <property>
 	            <key>text</key>
 	            <name>Text</name>
 	            <setConstructValueFunction>return this.name;</setConstructValueFunction>  
@@ -54,7 +60,8 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <setConstructValueFunction>return "P";</setConstructValueFunction>
 	            <changeValueJavaScript>select</changeValueJavaScript>
 	            <getValuesFunction>return [["P","Page"],["U","URL"]];</getValuesFunction>
-	            <refreshProperties>true</refreshProperties>	              
+	            <refreshHtml>true</refreshHtml>         
+	            <refreshProperties>true</refreshProperties>	  
 	        </property>  
 	        	                
 	        <property>
@@ -72,6 +79,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <key>url</key>
 	            <name>URL</name>  
 	            <changeValueJavaScript>linkURL</changeValueJavaScript>	            
+	            <refreshHtml>true</refreshHtml>  
 	        </property>
 	        
 	        <property>
@@ -208,6 +216,31 @@ rebuildHtml(this);
 return { dialogue: this.dialogue };	        
 	        ]]>	        
 	    </getDetailsFunction>
+	    
+	    <setDataJavaScript>
+	        <![CDATA[
+var control = $("#" + id);
+var value = "";
+if (data != null && data !== undefined) {	
+	data = makeDataObject(data, field);
+	if (data.rows && data.rows[0]) {	        		
+		if (field && data.fields && data.fields.length > 0) {
+			for (var i in data.fields) {
+				if (data.fields[i] && data.fields[i].toLowerCase() == field.toLowerCase()) {
+					value = data.rows[0][i];
+					break;
+				}
+			}
+		} else {
+			if (data.rows[0][0] != null && data.rows[0][0] !== undefined) {
+				value = data.rows[0][0];
+			} 			
+		}
+	} 
+} 
+control.attr("href",value);
+			]]>
+	    </setDataJavaScript>
 	    
 	    <styles>
 	        <style>

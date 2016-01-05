@@ -66,6 +66,7 @@ import com.rapid.core.Application.ResourceDependency;
 import com.rapid.forms.FormAdapter;
 import com.rapid.forms.FormAdapter.FormControlValue;
 import com.rapid.forms.FormAdapter.FormPageControlValues;
+import com.rapid.forms.FormAdapter.UserFormDetails;
 import com.rapid.security.SecurityAdapter;
 import com.rapid.security.SecurityAdapter.SecurityAdapaterException;
 import com.rapid.security.SecurityAdapter.User;
@@ -83,6 +84,12 @@ public class Page {
 	
 	// the version of this class's xml structure when marshelled (if we have any significant changes down the line we can upgrade the xml files before unmarshalling)	
 	public static final int XML_VERSION = 1;
+	
+	// form page types
+	public static final int FORM_PAGE_TYPE_NORMAL = 0;
+	public static final int FORM_PAGE_TYPE_SUBMITTED = 1;
+	public static final int FORM_PAGE_TYPE_ERROR = 2;
+	public static final int FORM_PAGE_TYPE_SAVED = 3;
 			
 	// a class for retaining page html for a set of user roles	
 	public static class RoleHtml {
@@ -139,7 +146,7 @@ public class Page {
 	
 	// instance variables
 	
-	private int _xmlVersion;
+	private int _xmlVersion, _formPageType;
 	private String _id, _name, _title, _label, _description, _createdBy, _modifiedBy, _htmlBody, _cachedHeadLinks, _cachedHeadCSS, _cachedHeadReadyJS, _cachedHeadJS;
 	private boolean _simple;
 	private Date _createdDate, _modifiedDate;		
@@ -164,7 +171,7 @@ public class Page {
 	// the id uniquely identifies the page (it is quiet short and is concatinated to control id's so more than one page's control's can be working in a document at one time)
 	public String getId() { return _id; }
 	public void setId(String id) { _id = id; }
-	
+			
 	// this is expected to be short name, probably even a code that is used by users to simply identify pages (also becomes the file name)
 	public String getName() { return _name; }
 	public void setName(String name) { _name = name; }
@@ -172,6 +179,10 @@ public class Page {
 	// this is a user-friendly, long title
 	public String getTitle() { return _title; }
 	public void setTitle(String title) { _title = title; }
+	
+	// the form page type, most will be normal but we show special pages for after submission, error, and saved
+	public int getFormPageType() { return _formPageType; }
+	public void setFormPageType(int formPageType) { _formPageType = formPageType; }
 	
 	// this is a the label to use in the form summary
 	public String getLabel() { return _label; }
@@ -1784,108 +1795,153 @@ public class Page {
 			
 			// no form adapter always visible
 			logger.debug("Page " + _id + " no form adapter, always visibe ");
+			
 			return true;
 			
-		} else if (_simple) { 
+		}  else {
 			
-			// simple page always invisble on forms
-			logger.debug("Page " + _id + " is a simple page, always hidden on forms");
-			return false;
+			// get the user form details
+			UserFormDetails userFormDetails = formAdapter.getUserFormDetails(rapidRequest);
 			
-		} else if (_visibilityConditions == null) {
-			
-			// no _visibilityConditions always visible
-			logger.debug("Page " + _id + " _visibilityConditions is null, always visible on forms");
-			return true;
-		
-		} else if (_visibilityConditions.size() == 0) { 
-			
-			// no _visibilityConditions always visible
-			logger.debug("Page " + _id + " _visibilityConditions size is zero, always visible on forms");
-			return true;
-			
-		} else {
-		
-			// log
-			logger.trace("Page " + _id + " " + _visibilityConditions.size() + " visibility condition(s) " + " : " + _conditionsType);
-			
-			// assume we have failed all conditions
-			boolean pass = false;
-			
-			// loop them
-			for (Condition condition : _visibilityConditions) {
+			 if (userFormDetails == null) {
 				
-				// assume we have failed this condition
-				pass = false;
-				
-				logger.trace("Page " + _id + " visibility condition " + " : " + condition);
-									
-				String value1 = getConditionValue(rapidRequest, formId, formAdapter, application, condition.getValue1());
-				
-				logger.trace("Value 1 = " + value1);
-				
-				String value2 = getConditionValue(rapidRequest, formId, formAdapter, application, condition.getValue2());
-				
-				logger.trace("Value 2 = " + value2);
-				
-				String operation = condition.getOperation();
-				
-				if (value1 == null) value1 = "";
-				if (value2 == null) value2 = "";
-				
-				// pass is updated from false to true if conditions match
-				if ("==".equals(operation)) {
-					if (value1.equals(value2)) pass = true;						
-				} else if ("!=".equals(operation)) {
-					if (!value1.equals(value2)) pass = true;
-				} else {						
-					// the remaining conditions all work with numbers and must not be empty strings
-					if (value1.length() > 0 && value2.length() > 0) {
-						try {
-							// convert to floats
-							float num1 = Float.parseFloat(value1);
-							float num2 = Float.parseFloat(value2);
-							// check the conditions
-							if (">".equals(operation)) {
-								if ((num1 > num2)) pass = true;														
-							} else if (">=".equals(operation)) {
-								if ((num1 >= num2)) pass = true;
-							} else if ("<".equals(operation)) {
-								if ((num1 < num2)) pass = true;
-							} else if ("<=".equals(operation)) {
-								if ((num1 <= num2)) pass = true;
-							}		
-						} catch (Exception ex) {
-							// something went wrong - generally in the conversion - return false
-							logger.error("Error assessing page visibility page " + _id + " " + condition);		
-						} // try 						
-					} // empty string check													
-				} // operation check					
-				
-				// log
-				logger.debug("Visibility condition for page " + _id + " : " + value1 + " " + condition.getOperation()+ " " + value2 + " , (" + condition + ") result is " + pass);
-												
-				// for the fast fail check whether we have an or
-				if ("or".equals(_conditionsType)) {
-					// if the conditions are or and we've just passed, we can stop checking further as we've passed in total
-					if (pass) break;
-				} else {
-					// if the conditions are and and we've just failed, we can stop checking further as we've failed in total
-					if (!pass) break;
-				}
-				
-			} // condition loop
-			
-			// log result
-			logger.debug("Page " + _id + " visibility check, " + _visibilityConditions.size() + " conditions, pass = " + pass);
-			
-			// if we failed set the page values to null
-			if (!pass) formAdapter.setFormPageControlValues(rapidRequest, _id, null);
-			
-			// return the pass
-			return pass;
+				// no user form details
+				logger.debug("No user form details");
 					
-		}
+				return false;
+				 
+			 } else if  (_simple) { 
+				
+				// simple page always invisble on forms
+				logger.debug("Page " + _id + " is a simple page, always hidden on forms");
+				
+				return false;
+				
+			} else if (_formPageType == FORM_PAGE_TYPE_SUBMITTED && !userFormDetails.getSubmitted()) {
+				
+				// requests for sumbiited page are denied if not submitted
+				logger.debug("Page " + _id + " is a submitted page but the form has not been submitted yet");
+				
+				return false;
+				
+			} else if (_formPageType != FORM_PAGE_TYPE_SUBMITTED && userFormDetails.getSubmitted()) {
+				
+				// requests for normal pages are denied if the form has been submitted
+				logger.debug("Page " + _id + " is a non-submitted page but the form has been submitted");
+				
+				return false;
+				
+			} else if (_formPageType == FORM_PAGE_TYPE_ERROR && !userFormDetails.getError()) {
+				
+				// requests for sumbiited page are denied if not submitted
+				logger.debug("Page " + _id + " is an error page but the form has not had an error yet");
+				
+				return false;
+				
+			} else if (_formPageType == FORM_PAGE_TYPE_SAVED && !userFormDetails.getSaved()) {
+				
+				// requests for submitted page are denied if not submitted
+				logger.debug("Page " + _id + " is a saved page but the form has not been saved yet");
+				
+				return false;
+				
+			} else if (_visibilityConditions == null) {
+				
+				// no _visibilityConditions always visible
+				logger.debug("Page " + _id + " _visibilityConditions is null, always visible on forms");
+				
+				return true;
+			
+			} else if (_visibilityConditions.size() == 0) { 
+				
+				// no _visibilityConditions always visible
+				logger.debug("Page " + _id + " _visibilityConditions size is zero, always visible on forms");
+				return true;
+				
+			} else {
+			
+				// log
+				logger.trace("Page " + _id + " " + _visibilityConditions.size() + " visibility condition(s) " + " : " + _conditionsType);
+				
+				// assume we have failed all conditions
+				boolean pass = false;
+				
+				// loop them
+				for (Condition condition : _visibilityConditions) {
+					
+					// assume we have failed this condition
+					pass = false;
+					
+					logger.trace("Page " + _id + " visibility condition " + " : " + condition);
+										
+					String value1 = getConditionValue(rapidRequest, formId, formAdapter, application, condition.getValue1());
+					
+					logger.trace("Value 1 = " + value1);
+					
+					String value2 = getConditionValue(rapidRequest, formId, formAdapter, application, condition.getValue2());
+					
+					logger.trace("Value 2 = " + value2);
+					
+					String operation = condition.getOperation();
+					
+					if (value1 == null) value1 = "";
+					if (value2 == null) value2 = "";
+					
+					// pass is updated from false to true if conditions match
+					if ("==".equals(operation)) {
+						if (value1.equals(value2)) pass = true;						
+					} else if ("!=".equals(operation)) {
+						if (!value1.equals(value2)) pass = true;
+					} else {						
+						// the remaining conditions all work with numbers and must not be empty strings
+						if (value1.length() > 0 && value2.length() > 0) {
+							try {
+								// convert to floats
+								float num1 = Float.parseFloat(value1);
+								float num2 = Float.parseFloat(value2);
+								// check the conditions
+								if (">".equals(operation)) {
+									if ((num1 > num2)) pass = true;														
+								} else if (">=".equals(operation)) {
+									if ((num1 >= num2)) pass = true;
+								} else if ("<".equals(operation)) {
+									if ((num1 < num2)) pass = true;
+								} else if ("<=".equals(operation)) {
+									if ((num1 <= num2)) pass = true;
+								}		
+							} catch (Exception ex) {
+								// something went wrong - generally in the conversion - return false
+								logger.error("Error assessing page visibility page " + _id + " " + condition);		
+							} // try 						
+						} // empty string check													
+					} // operation check					
+					
+					// log
+					logger.debug("Visibility condition for page " + _id + " : " + value1 + " " + condition.getOperation()+ " " + value2 + " , (" + condition + ") result is " + pass);
+													
+					// for the fast fail check whether we have an or
+					if ("or".equals(_conditionsType)) {
+						// if the conditions are or and we've just passed, we can stop checking further as we've passed in total
+						if (pass) break;
+					} else {
+						// if the conditions are and and we've just failed, we can stop checking further as we've failed in total
+						if (!pass) break;
+					}
+					
+				} // condition loop
+				
+				// log result
+				logger.debug("Page " + _id + " visibility check, " + _visibilityConditions.size() + " conditions, pass = " + pass);
+				
+				// if we failed set the page values to null
+				if (!pass) formAdapter.setFormPageControlValues(rapidRequest, _id, null);
+				
+				// return the pass
+				return pass;
+						
+			} // simple, conditions, condition checks
+			
+		} // form adapter check
 		
 	}
 	

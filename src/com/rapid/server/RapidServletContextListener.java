@@ -79,6 +79,7 @@ import com.rapid.core.Applications;
 import com.rapid.core.Applications.Versions;
 import com.rapid.core.Device.Devices;
 import com.rapid.data.ConnectionAdapter;
+import com.rapid.forms.FormAdapter;
 import com.rapid.utils.Classes;
 import com.rapid.utils.Comparators;
 import com.rapid.utils.Encryption.EncryptionProvider;
@@ -1149,6 +1150,10 @@ public class RapidServletContextListener implements ServletContextListener {
 				for (String version : versions.keySet()) {
 					// get the application
 					Application application = applications.get(id, version);
+					// check for a form adapter
+					FormAdapter formAdapter = application.getFormAdapter();
+					// close it if there was one
+					if (formAdapter != null) formAdapter.close();
 					// check for any connections
 					if (application.getDatabaseConnections() != null) {
 						// loop them

@@ -847,9 +847,10 @@ public class Designer extends RapidHttpServlet {
 								Page newPage = new Page();
 								
 								// set page properties
-								newPage.setId(jsonPage.optString("id"));
+								newPage.setId(jsonPage.optString("id"));								
 								newPage.setName(jsonPage.optString("name"));
 								newPage.setTitle(jsonPage.optString("title"));
+								newPage.setFormPageType(jsonPage.optInt("formPageType"));
 								newPage.setLabel(jsonPage.optString("label"));
 								newPage.setDescription(jsonPage.optString("description"));
 								newPage.setSimple(jsonPage.optBoolean("simple"));
