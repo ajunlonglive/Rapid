@@ -374,8 +374,9 @@ public class RapidFormAdapter extends FormAdapter {
 
 	// submit the form - for the RapidFormAdapter nothing special happens, more sophisticated ones will write to databases, webservices, etc
 	@Override
-	public void submitForm(RapidRequest rapidRequest) throws Exception {	
+	public String submitForm(RapidRequest rapidRequest) throws Exception {	
 		// throw new Exception("An error has occurred");
+		return "Form submitted";
 	}
 
 	// nothing to do here

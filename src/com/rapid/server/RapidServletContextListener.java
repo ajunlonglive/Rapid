@@ -1153,7 +1153,13 @@ public class RapidServletContextListener implements ServletContextListener {
 					// check for a form adapter
 					FormAdapter formAdapter = application.getFormAdapter();
 					// close it if there was one
-					if (formAdapter != null) formAdapter.close();
+					if (formAdapter != null) {
+						try {
+							formAdapter.close();
+						} catch (Exception ex) {
+							_logger.error("Error closing form adapter for " + application.getName(), ex);					
+						}						
+					}
 					// check for any connections
 					if (application.getDatabaseConnections() != null) {
 						// loop them
