@@ -46,7 +46,7 @@ This action runs form - specifc functions
 	            <name>Action</name>
 	            <setConstructValueFunction>return ""</setConstructValueFunction>
 	            <changeValueJavaScript>select</changeValueJavaScript>	 	            
-	            <getValuesFunction>return [["","Please select..."],["next","next page"],["prev","previous page"],["id","copy form id"],["val","copy form value"]];</getValuesFunction>	            
+	            <getValuesFunction>return [["","Please select..."],["next","next page"],["prev","previous page"],["id","copy form id"],["val","copy form value"],["err","copy form error message"],["res","copy form resume url"],["pdf","copy form pdf url"]];</getValuesFunction>	            
 	            <refreshProperties>true</refreshProperties>	            
 	        </property>
 	        

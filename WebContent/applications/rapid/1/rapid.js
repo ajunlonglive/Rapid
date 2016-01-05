@@ -1376,6 +1376,29 @@ function setData_input(ev, id, field, details, data, changeEvents) {
   if (changeEvents) control.trigger("change");
 }
 
+function setData_link(ev, id, field, details, data, changeEvents) {
+  var control = $("#" + id);
+  var value = "";
+  if (data != null && data !== undefined) {	
+  	data = makeDataObject(data, field);
+  	if (data.rows && data.rows[0]) {	        		
+  		if (field && data.fields && data.fields.length > 0) {
+  			for (var i in data.fields) {
+  				if (data.fields[i] && data.fields[i].toLowerCase() == field.toLowerCase()) {
+  					value = data.rows[0][i];
+  					break;
+  				}
+  			}
+  		} else {
+  			if (data.rows[0][0] != null && data.rows[0][0] !== undefined) {
+  				value = data.rows[0][0];
+  			} 			
+  		}
+  	} 
+  } 
+  control.attr("href",value);
+}
+
 function getData_radiobuttons(ev, id, field, details) {
   return $("#" + id).children("input[type=radio]:checked").val();
 }

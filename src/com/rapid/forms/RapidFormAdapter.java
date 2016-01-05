@@ -135,7 +135,7 @@ public class RapidFormAdapter extends FormAdapter {
 	
 	// this gets a new form id, when required, from an attribute in the servletContext
 	@Override
-	public String getNewFormId(RapidRequest rapidRequest) {
+	public UserFormDetails getNewFormDetails(RapidRequest rapidRequest) {
 		// get the servlet context
 		ServletContext servletContext = rapidRequest.getRapidServlet().getServletContext();
 		// the master form id as a string
@@ -147,7 +147,31 @@ public class RapidFormAdapter extends FormAdapter {
 		// retain it in the context
 		servletContext.setAttribute(NEXT_FORM_ID, formId);
 		// return it
-		return formId;
+		return new UserFormDetails(formId, null);
+	}
+	
+	@Override
+	public UserFormDetails getResumeFormDetails(RapidRequest rapidRequest, String formId, String password) throws Exception {
+		// get the servlet context
+		ServletContext servletContext = rapidRequest.getRapidServlet().getServletContext();
+		// get all app page control values from session
+		Map<String,Map<String,FormPageControlValues>> userAppPageControlValues = (Map<String, Map<String, FormPageControlValues>>) servletContext.getAttribute(USER_FORM_PAGE_CONTROL_VALUES);
+		// check we got something
+		if (userAppPageControlValues == null) {
+			// nothing so return null
+			return null;
+		} else {
+			// the page controls for specified app
+			Map<String,FormPageControlValues> userPageControlValues = userAppPageControlValues.get(formId);
+			// null check
+			if (userPageControlValues == null) {
+				// form not found so fail
+				return null;
+			} else {
+				// form found we're good
+				return new UserFormDetails(formId, null);
+			}
+		}
 	}
 	
 	@Override
@@ -196,27 +220,7 @@ public class RapidFormAdapter extends FormAdapter {
 		// update the session with the new form ids
 		session.setAttribute(USER_FORM_MAX_PAGES, maxPages);		
 	}
-	
-	@Override
-	public boolean checkFormResume(RapidRequest rapidRequest, String formId, String password) throws Exception {
-		// get the servlet context
-		ServletContext servletContext = rapidRequest.getRapidServlet().getServletContext();
-		// get all app page control values from session
-		Map<String,Map<String,FormPageControlValues>> userAppPageControlValues = (Map<String, Map<String, FormPageControlValues>>) servletContext.getAttribute(USER_FORM_PAGE_CONTROL_VALUES);
-		// if null no forms in session so fail
-		if (userAppPageControlValues == null) return false;
-		// the page controls for specified app
-		Map<String,FormPageControlValues> userPageControlValues = userAppPageControlValues.get(formId);
-		// null check
-		if (userPageControlValues == null) {
-			// form not found so fail
-			return false;
-		} else {
-			// form found we're good
-			return true;
-		}
-	}
-	
+			
 	@Override
 	public boolean getFormComplete(RapidRequest rapidRequest, String formId) throws Exception {
 		// get the userPageComplete values
@@ -368,20 +372,14 @@ public class RapidFormAdapter extends FormAdapter {
 		return "";
 	}
 
-	// submit the form - for the RapidFormAdapter it doesn't go anywhere but the user session state tracking is invalidated afterwards
+	// submit the form - for the RapidFormAdapter nothing special happens, more sophisticated ones will write to databases, webservices, etc
 	@Override
-	public String submitForm(RapidRequest rapidRequest) throws Exception {
-		return "your form has been submitted";
-	}
-	 	
-	@Override
-	public String getSubmittedHtml(RapidRequest rapidRequest, String message) {
-		return "Thank you, " + message;
+	public void submitForm(RapidRequest rapidRequest) throws Exception {	
+		// throw new Exception("An error has occurred");
 	}
 
+	// nothing to do here
 	@Override
-	public String getSubmittedExceptionHtml(RapidRequest rapidRequest, Exception ex) {
-		return "The following error occured : " + ex.getMessage();
-	}
-	
+	public void close() {}
+	 		
 }

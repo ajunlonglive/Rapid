@@ -46,7 +46,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.rapid.core.Application;
+import com.rapid.core.Application.RapidLoadingException;
 import com.rapid.core.Page;
+import com.rapid.core.Pages.PageHeader;
 import com.rapid.core.Pages.PageHeaders;
 import com.rapid.forms.FormAdapter;
 import com.rapid.forms.FormAdapter.FormControlValue;
@@ -66,6 +68,25 @@ public class Rapid extends RapidHttpServlet {
 	public static final String DESIGN_ROLE = "RapidDesign";
 	public static final String ADMIN_ROLE = "RapidAdmin";
 	public static final String SUPER_ROLE = "RapidSuper";
+	
+	//  helper methods for forms
+	private String getFirstPageForFormType(Application app, int formPageType) throws RapidLoadingException {
+		// loop  the sorted page headers
+		for (PageHeader pageHeader : app.getPages().getSortedPages()) {
+			// get the page
+			Page page = app.getPages().getPage(getServletContext(), pageHeader.getId());
+			// if this is s submitted page
+			if (page.getFormPageType() == formPageType) {
+				// return the page id
+				return page.getId();				
+			}
+		}
+		return null;
+	}
+	
+	public static void gotoStartPage(HttpServletResponse response, Application app) throws IOException {
+		response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion());
+	}
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 				
@@ -204,9 +225,11 @@ public class Rapid extends RapidHttpServlet {
 								}								
 								// if there isn't a form id, or we want to show the summary don't check the pages
 								if (formId == null || showSummary) {
+									
 									// set the page check to false
-									pageCheck = false;							
-								} else {
+									pageCheck = false;			
+									
+								} else if (page != null) {
 																											
 									// check that we have progressed far enough in the form to view this page, or we are a designer
 									if (formAdapter.checkMaxPage(rapidRequest, formId, page.getId()) || security.checkUserRole(rapidRequest, DESIGN_ROLE)) {
@@ -252,13 +275,16 @@ public class Rapid extends RapidHttpServlet {
 										} // dialogue check
 										
 									} else {
+										
 										// go back to the start
 										pageCheck = false;		
 										//log
 										logger.debug("Not allowed on page " + page.getId() + " yet!");
+										
 									} // page max check
 																		
 								} // form id check
+								
 							} // form adapter check
 							
 						} catch (Exception ex) {
@@ -312,6 +338,12 @@ public class Rapid extends RapidHttpServlet {
 									// flush the writer
 									out.flush();
 									
+									// if there was a form adapter
+									if (formAdapter != null) {
+										// invalidate the form if this was a submission or save page
+										if (page.getFormPageType() == Page.FORM_PAGE_TYPE_SUBMITTED || page.getFormPageType() == Page.FORM_PAGE_TYPE_SAVED) formAdapter.setUserFormDetails(rapidRequest, null);
+									}
+									
 								} else {
 									
 									// redirect user to correct page
@@ -330,8 +362,8 @@ public class Rapid extends RapidHttpServlet {
 								
 							} else {
 							
-								// go to what should be the start page
-								response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion());
+								// go to the start page
+								gotoStartPage(response, app);
 								
 							}
 							
@@ -382,7 +414,7 @@ public class Rapid extends RapidHttpServlet {
 		return jsonData;
 		
 	}
-	
+			
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 			
 		// this byte buffer is used for reading the post data 
@@ -595,7 +627,7 @@ public class Rapid extends RapidHttpServlet {
 								if (formId == null) {
 									
 									// we've lost the form id so start the form again
-									response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion());
+									gotoStartPage(response, app);
 									
 								} else {
 							
@@ -611,15 +643,50 @@ public class Rapid extends RapidHttpServlet {
 										try {
 											
 											// do the submit (this will call the non-abstract submit, manage the form state, and return with an applicable message)
-											String message = formAdapter.doFormSubmit(rapidRequest);
+											formAdapter.submitForm(rapidRequest);
 											
-											// write the form submit OK page
-											formAdapter.writeFormSubmitOK(rapidRequest, response, formId, message);
+											// mark user form as submitted
+											formAdapter.setUserFormSubmitted(rapidRequest, true);
+											
+											// place holder for first submitted page
+											String submittedPageId = getFirstPageForFormType( app, Page.FORM_PAGE_TYPE_SUBMITTED);
+											
+											// check we got a submitted page
+											if (submittedPageId == null) {
+												
+												// invalidate the form 
+												formAdapter.setUserFormDetails(rapidRequest, null);
+												
+												// go to the start page
+												gotoStartPage(response, app);
+												
+											} else {
+											
+												// request the first submitted page
+												response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion() + "&p=" + submittedPageId);
+												
+											}
 											
 										} catch (Exception ex) {
 											
-											// write the form submit Error page
-											formAdapter.writeFormSubmitError(rapidRequest, response, formId, ex);
+											// mark user form as error
+											formAdapter.setUserFormError(rapidRequest, true, ex.getMessage());
+											
+											// place holder for first submitted page
+											String errrorPageId = getFirstPageForFormType( app, Page.FORM_PAGE_TYPE_ERROR);
+											
+											// check we got one
+											if (errrorPageId == null) {
+												
+												// just re throw the error
+												throw ex;
+												
+											} else {
+											
+												// request the first error page
+												response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion() + "&p=" + errrorPageId);
+												
+											}
 											
 										} // submit check
 										
@@ -686,7 +753,7 @@ public class Rapid extends RapidHttpServlet {
 											logger.error("Form data failed server side validation : " + ex.getMessage(), ex);
 											
 											// send a redirect back to the beginning - there's no reason except for tampering  that this would happen
-											response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion());
+											gotoStartPage(response, app);
 											
 										}
 									
