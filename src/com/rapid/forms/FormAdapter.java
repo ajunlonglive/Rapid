@@ -57,7 +57,7 @@ public abstract class FormAdapter {
 	public static class UserFormDetails {
 		
 		// instance variables
-		private String _id, _password, _errorMessage;
+		private String _id, _password, _submitMessage, _errorMessage;
 		boolean _submitted, _error, _saved;
 		
 		// properties
@@ -69,6 +69,8 @@ public abstract class FormAdapter {
 		public void setError(boolean error) { _error = error; }
 		public boolean getSaved() { return _saved; }
 		public void setSaved(boolean saved) { _saved = saved; }
+		public String getSubmitMessage() { return _submitMessage; }
+		public void setSubmitMessage(String submitMessage) { _submitMessage = submitMessage; }
 		public String getErrorMessage() { return _errorMessage; }
 		public void setErrorMessage(String errorMessage) { _errorMessage = errorMessage; }
 		
@@ -248,10 +250,10 @@ public abstract class FormAdapter {
 	public abstract String getSummaryPagesEndHtml(RapidRequest rapidRequest, Application application);
 		
 	// submits the form and receives a message for the submitted page
-	public abstract void submitForm(RapidRequest rapidRequest) throws Exception;
+	public abstract String submitForm(RapidRequest rapidRequest) throws Exception;
 	
 	// closes any resources used by the form adapter when the server shuts down
-	public abstract void close();
+	public abstract void close() throws Exception;
 				
 	// protected instance methods
 		
@@ -261,30 +263,9 @@ public abstract class FormAdapter {
 		// return the key
 		return application.getId() + "-" + application.getVersion();
 	}
-							
+								
 	// public instance methods
-	
-	// sets whether the form has been submitted
-	public void setUserFormSubmitted(RapidRequest rapidRequest, boolean submitted) {
-		// get the details
-		UserFormDetails details = getUserFormDetails(rapidRequest);
-		// update if we got some
-		if (details != null) details.setSubmitted(submitted);
-	}
-	
-	// sets whether the form has has an error
-	public void setUserFormError(RapidRequest rapidRequest, boolean error, String errorMessage) {
-		// get the details
-		UserFormDetails details = getUserFormDetails(rapidRequest);
-		// if we got some
-		if (details != null) {
-			// update error
-			details.setError(error);
-			// update error message
-			details.setErrorMessage(errorMessage);
-		}
-	}
-	
+			
 	// sets whether the form has been saved
 	public void setUserFormSaved(RapidRequest rapidRequest, boolean saved) {
 		// get the details
@@ -367,6 +348,25 @@ public abstract class FormAdapter {
 		session.setAttribute(USER_FORM_DETAILS, allDetails);
 	}
 	
+	public void doSubmitForm(RapidRequest rapidRequest) throws Exception {
+		// get the details
+		UserFormDetails details = getUserFormDetails(rapidRequest);
+		try {
+			// get the submit message
+			String message = submitForm(rapidRequest);				
+			// mark user form as submitted
+			details.setSubmitted(true);
+			// retain the submit message in the details
+			details.setSubmitMessage(message);			
+		} catch (Exception ex) {
+			// mark user form as error
+			details.setError(true);
+			// retain the error message in the details
+			details.setErrorMessage(ex.getMessage());			
+			throw ex;
+		}		
+	}
+		
 	// used when resuming forms
 	public boolean doResumeForm(RapidRequest rapidRequest, String formId, String password) throws Exception {
 		// assume we are not allowed to resume

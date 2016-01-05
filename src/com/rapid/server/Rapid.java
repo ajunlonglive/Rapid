@@ -642,12 +642,9 @@ public class Rapid extends RapidHttpServlet {
 										
 										try {
 											
-											// do the submit (this will call the non-abstract submit, manage the form state, and return with an applicable message)
-											formAdapter.submitForm(rapidRequest);
-											
-											// mark user form as submitted
-											formAdapter.setUserFormSubmitted(rapidRequest, true);
-											
+											// do the submit (this will call the non-abstract submit, manage the form state, and retain the submit message)
+											formAdapter.doSubmitForm(rapidRequest);
+																																	
 											// place holder for first submitted page
 											String submittedPageId = getFirstPageForFormType( app, Page.FORM_PAGE_TYPE_SUBMITTED);
 											
@@ -668,10 +665,7 @@ public class Rapid extends RapidHttpServlet {
 											}
 											
 										} catch (Exception ex) {
-											
-											// mark user form as error
-											formAdapter.setUserFormError(rapidRequest, true, ex.getMessage());
-											
+																																	
 											// place holder for first submitted page
 											String errrorPageId = getFirstPageForFormType( app, Page.FORM_PAGE_TYPE_ERROR);
 											

@@ -3999,7 +3999,7 @@ function Property_formDataSource(cell, propertyObject, property, details) {
 // this is for the form action dataDestination
 function Property_formDataDestination(cell, propertyObject, property, details) {
 	// only if the type is id
-	if (propertyObject.actionType == "id" || propertyObject.actionType == "val" || propertyObject.actionType == "err" || propertyObject.actionType == "res" || propertyObject.actionType == "pdf" ) {
+	if (propertyObject.actionType == "id" || propertyObject.actionType == "val" || propertyObject.actionType == "sub" || propertyObject.actionType == "err" || propertyObject.actionType == "res" || propertyObject.actionType == "pdf" ) {
 		// add the select
 		Property_select(cell, propertyObject, property, details);
 	} else {

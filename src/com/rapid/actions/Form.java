@@ -99,8 +99,11 @@ public class Form extends Action {
 						// check we got the details then what to do with them
 						if (details == null) {
 							js = "// user form details could not be found";
+						} else if ("sub".equals(actionType)) {					
+							// get the form submit message
+							value = details.getSubmitMessage();		
 						} else if ("err".equals(actionType)) {					
-							// get the form details value
+							// get the form error message
 							value = details.getErrorMessage();								
 						} else if ("res".equals(actionType)) {
 							// create the resume url
