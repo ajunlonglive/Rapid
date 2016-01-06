@@ -7,7 +7,7 @@ gareth.edwards@rapid-is.co.uk
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as 
 published by the Free Software Foundation, either version 3 of the 
 License, or (at your option) any later version. The terms require you 
@@ -32,24 +32,24 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.json.JSONObject;
 
-import com.rapid.core.Application;
-import com.rapid.server.RapidHttpServlet;
 import com.rapid.server.RapidRequest;
 import com.rapid.soa.SOASchema.SOASchemaElement;
 import com.rapid.soa.SOAElementRestriction.*;
-import com.rapid.soa.Webservice.WebserviceException;
 import com.rapid.utils.Classes;
 
 public class JavaWebservice extends Webservice {
@@ -124,21 +124,31 @@ public class JavaWebservice extends Webservice {
 	// schema element properties can come from fields or methods so we collect them before sorting
 	public static class ElementProperty {
 		
+		// private final statics
+		private static final int TYPE_SIMPLE = 0;
+		private static final int TYPE_ARRAY = 1;
+		private static final int TYPE_COMPLEX = 2;
+		private static final int TYPE_METHOD = 3;
+		private static final int TYPE_FIELD = 4;
+		
 		// private instance variables
 		private String _name;
 		private Class _class; 
 		private Annotation[] _annotations;
+		private int _type;
 		
 		// properties
 		public String getName() { return _name; }
-		public Class getPropertyClass() { return _class; }
+		public Class getElementClass() { return _class; }
 		public Annotation[] getAnnotations() { return _annotations; }
+		public int getType() { return _type; }
 						
 		// constructor
-		public ElementProperty(String name, Class propertyClass, Annotation[] annotations) {
+		public ElementProperty(String name, Class propertyClass, Annotation[] annotations, int type) {
 			_name = name;
 			_class = propertyClass;
 			_annotations = annotations;
+			_type = type;
 		}
 		
 		// methods
@@ -159,6 +169,9 @@ public class JavaWebservice extends Webservice {
 	// private variables
 	private String _className;
 	private Logger _logger;
+	private Map<String, ElementProperty> _elementProperties;
+	private Map<String,List<ElementProperty>> _childElementProperties;
+	private SimpleDateFormat _dateFormat, _dateTimeFormat;
 	
 	// properties
 	
@@ -171,7 +184,12 @@ public class JavaWebservice extends Webservice {
 	// used by Jaxb
 	public JavaWebservice() {
 		_logger = Logger.getLogger(this.getClass());
+		_elementProperties = new HashMap<String,ElementProperty>();
+		_childElementProperties = new HashMap<String,List<ElementProperty>>();
+		_dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		_dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	}
+	
 	// used by Designer
 	public JavaWebservice(String name) {
 		this();
@@ -237,6 +255,19 @@ public class JavaWebservice extends Webservice {
 		return false;
 	}
 	
+	// get a list of element properties for a class
+	private List<ElementProperty> getChildElements(Class c) {
+		
+		// a list of properties in the class		
+		List<ElementProperty> elementProperties = new ArrayList<ElementProperty>();
+		
+		// return them
+		return elementProperties;
+		
+	}
+	
+	
+	// get the child schema elements
 	private List<SOASchemaElement> getChildClassSchemaElements(Class c, String parentId) {
 		
 		// a list of properties in the class		
@@ -255,7 +286,7 @@ public class JavaWebservice extends Webservice {
 						// get the return class
 						Class rc = m.getReturnType();
 						// check if array
-						elementProperties.add(new ElementProperty(m.getName().substring(3), rc, m.getAnnotations()));
+						elementProperties.add(new ElementProperty(m.getName().substring(3), rc, m.getAnnotations(), ElementProperty.TYPE_METHOD));
 					}
 				}						
 			}
@@ -276,7 +307,7 @@ public class JavaWebservice extends Webservice {
 						// if this is an XSD annotation
 						if (isXSDAnnotation(a)) {
 							// put our property collection
-							elementProperties.add(new ElementProperty(f.getName(), f.getType(), f.getAnnotations()));
+							elementProperties.add(new ElementProperty(f.getName(), f.getType(), f.getAnnotations(), ElementProperty.TYPE_FIELD));
 							// we're done with the annotations
 							break;
 						}						
@@ -292,6 +323,9 @@ public class JavaWebservice extends Webservice {
 				return p1.getOrder() - p2.getOrder();
 			}			
 		});
+		
+		// cache element properties them for when we produce the output
+		_childElementProperties.put(c.getCanonicalName(), elementProperties);
 						
 		// the list we're making
 		List<SOASchemaElement> elements = new ArrayList<SOASchemaElement>();
@@ -300,7 +334,7 @@ public class JavaWebservice extends Webservice {
 		// loop the properties
 		for (ElementProperty p : elementProperties) {
 			// add a schema element for the property class
-			elements.add(getClassSchemaElement(p.getName(), p.getPropertyClass(), p.getAnnotations(), parentId + "." + id));
+			elements.add(getClassSchemaElement(p.getName(), p.getElementClass(), p.getAnnotations(), parentId + "." + id));
 			// increment the id
 			id++;
 		}		
@@ -308,7 +342,7 @@ public class JavaWebservice extends Webservice {
 		return elements;
 	}
 	
-	private SOASchemaElement getClassSchemaElement(String name, Class c, Annotation[] annotations, String id) {
+	private SOASchemaElement getClassSchemaElement(String name, Class c, Annotation[] annotations, String id) {			
 		// the schema element we're making
 		SOASchemaElement e = new SOASchemaElement();
 		// set it's name
@@ -319,9 +353,13 @@ public class JavaWebservice extends Webservice {
 		if (isSimpleType(c)) {
 			// set it's type
 			e.setDataType(getSimpleType(c));			
+			// cache element properties them for when we produce the output
+			_elementProperties.put(c.getCanonicalName(), new ElementProperty(c.getName(), c, c.getAnnotations(), ElementProperty.TYPE_SIMPLE));
 		} else {
 			// if it's an array type
 			if (isArray(c)) {
+				// cache element properties them for when we produce the output
+				_elementProperties.put(c.getCanonicalName(), new ElementProperty(c.getName(), c, c.getAnnotations(), ElementProperty.TYPE_ARRAY));
 				// set flag
 				e.setIsArray(true);
 				// if list
@@ -343,6 +381,8 @@ public class JavaWebservice extends Webservice {
 					c = c.getComponentType();
 				}
 			}			
+			// cache element properties them for when we produce the output
+			_elementProperties.put(c.getCanonicalName(), new ElementProperty(c.getName(), c, c.getAnnotations(), ElementProperty.TYPE_COMPLEX));
 			// add child elements
 			e.setChildElements(getChildClassSchemaElements(c, id));
 		}						
@@ -414,9 +454,268 @@ public class JavaWebservice extends Webservice {
 		Class c = Class.forName(_className);		
 		// make sure it implements JavaWebservice.Response
 		if (!Classes.implementsClass(c, com.rapid.soa.JavaWebservice.Request.class)) throw new WebserviceException("Webservice action class " + c.getCanonicalName() + " must implement com.rapid.soa.JavaWebservice.Response.");						
+		// return
 		return c;		
 	}
 	
+	private Request getRequestObject(SOAData soaData, Class c) throws NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchFieldException, ParseException {
+		
+		// make sure the request schema and all element properties have been cached
+		getRequestSchema();
+		
+		// placeholder for the object we are making
+		Request o = null;
+						
+		// get the root element
+		SOAElement root = soaData.getRootElement();
+		
+		// if we got one
+		if (root != null) {
+			
+			// get the child nodes
+			List<SOAElement> childElements =  root.getChildElements();
+			
+			// if we got some
+			if (childElements != null) {
+				if (childElements.size() > 0) {
+					
+					// get the parameterless constructor
+					Constructor constructor = c.getConstructor();
+					
+					// create an object
+					o = (Request) c.newInstance();
+					
+					// get the element properties
+					List<ElementProperty> properties =  _childElementProperties.get(c.getCanonicalName());
+					
+					// check we got some
+					if (properties != null) {
+												
+						// loop them
+						for (ElementProperty childElementProperty : properties) {
+							
+							// lower case the name
+							String childElementName = childElementProperty.getName().toLowerCase();
+							
+							// loop the childElements
+							for (SOAElement childElement : childElements) {
+								
+								// match?
+								if (childElementName.equals(childElement.getName())) {
+									
+									// get the string value
+									String stringValue =  childElement.getValue();
+									
+									// place holder for the final value
+									Object value = null;
+									
+									// get the child object object type
+									int simpleType = getSimpleType(o.getClass());
+									
+									// get the string value based on type
+									switch (simpleType) {
+									case SOASchema.STRING :
+										value = stringValue;
+										break;
+									case SOASchema.BOOLEAN :					
+										value = Boolean.parseBoolean(stringValue);
+										break;
+									case SOASchema.DATE :
+										java.util.Date d = _dateFormat.parse(stringValue);
+										value = new java.sql.Date(d.getTime());
+										break;
+									case SOASchema.DATETIME :
+										java.util.Date dt = _dateTimeFormat.parse(stringValue);
+										value = new java.sql.Date(dt.getTime());
+										break;
+									case SOASchema.DECIMAL :
+										value = Float.parseFloat(stringValue);
+										break;
+									case SOASchema.INTEGER :
+										value = Integer.parseInt(stringValue);
+										break;
+									}
+									
+									if (childElementProperty.getType() == ElementProperty.TYPE_METHOD) {
+										
+										// get the method value
+										Method method = c.getDeclaredMethod("set" + childElementProperty.getName(), childElementProperty.getElementClass());
+										
+										// set the object in the method
+										method.invoke(o, value);
+										
+									} else if (childElementProperty.getType() == ElementProperty.TYPE_FIELD) {
+										
+										// get the field 
+										Field field = c.getDeclaredField(childElement.getName());
+										
+										// get the object in the field
+										field.set(o, value);
+																				
+									} 
+									
+									// we're done with the childElement
+									break;
+									
+								} // name match
+								
+							} // childElements loop
+							
+						} // ElementProperty loop
+						
+					} // properties check
+					
+				} // childElements size check
+				
+			} // childElements check
+			
+		} // root check
+		
+		// return
+		return o;
+		
+	}
+	
+	// get an SOA element from an object (used to generate the response)
+	private SOAElement getResponseSOAElement(Object object) throws NoSuchMethodException, SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+		
+		// make sure the schema and all element properties has been cached
+		getResponseSchema();
+		
+		// get the class
+		Class c = object.getClass();
+		// get the class SOA properties if not provided
+		ElementProperty properties  = _elementProperties.get(c.getCanonicalName());
+		// place holder for the element
+		SOAElement element = null;
+				
+		if (properties == null) {
+			
+			element = new SOAElement(c.getSimpleName(),"Properties for " + c.getCanonicalName() + " not found!");
+			
+		} else {
+			
+			if (properties.getType() == ElementProperty.TYPE_ARRAY) {
+				
+				// create the array SOA element
+				element = new SOAElement(c.getSimpleName(),true);
+				
+				// get the children
+				List<Object> childObjects = (List<Object>) object;
+				
+				// loop them
+				for (Object childObject  : childObjects) {
+					
+					// get a child element from it
+					SOAElement childElement = getResponseSOAElement(childObject);
+					
+					// add if we got one
+					if (childElement != null) element.addChildElement(childElement);
+					
+				}
+													
+			} else { 
+				
+				// create the array SOA element
+				element = new SOAElement(c.getSimpleName());
+				
+				// get the child element properties
+				List<ElementProperty> childElementProperties = _childElementProperties.get(c.getCanonicalName());
+				
+				// if we got some
+				if (childElementProperties != null) {
+					
+					// loop them
+					for (ElementProperty childElementProperty : childElementProperties) {
+						
+						// place holder for the child object we're about to retrieve
+						Object childObject = null;
+												
+						// check the type
+						if (childElementProperty.getType() == ElementProperty.TYPE_METHOD) {
+							
+							// get the method value
+							Method method = c.getDeclaredMethod("get" + childElementProperty.getName());
+							
+							// get the object in the method
+							childObject = method.invoke(object);
+							
+						} else if (childElementProperty.getType() == ElementProperty.TYPE_FIELD) {
+							
+							// get the field 
+							Field field = c.getDeclaredField(childElementProperty.getName());
+							
+							// get the object in the field
+							childObject = field.get(object);
+							
+						} else {
+							
+							childObject = "Unknown type";
+							
+						}
+						
+						// if we got a child object
+						if (childObject != null) {
+							
+							// check it's type
+							if (isSimpleType(childObject.getClass())) {
+								
+								// placeholder for the value
+								String value = null;
+								
+								// get the child object object type
+								int simpleType = getSimpleType(childObject.getClass());
+								
+								// get the string value based on type
+								switch (simpleType) {
+								case SOASchema.STRING :
+									value = (String) childObject;
+									break;
+								case SOASchema.BOOLEAN :					
+									if ((Boolean) childObject) {
+										value  = "true";
+									} else {
+										value  = "false";
+									}
+									break;
+								case SOASchema.DATE :
+									value = _dateFormat.format(childObject);
+									break;
+								case SOASchema.DATETIME :
+									value = _dateTimeFormat.format(childObject);
+									break;
+								case SOASchema.DECIMAL :
+									value = Float.toString((Float) childObject);
+									break;
+								case SOASchema.INTEGER :
+									value = Integer.toString((Integer) childObject);
+									break;
+								}
+												
+								// add the child with its value
+								element.addChildElement(new SOAElement(childElementProperty.getName(), value));
+								
+							} else {
+								
+								// add the child the more complex way
+								element.addChildElement(getResponseSOAElement(childObject));
+								
+							} // simple type check
+							
+						} // childObject check
+																				
+					} // child element loop
+					
+				} // child element check
+				
+			} // property type check
+			
+		} // got properties check
+		
+		// return it
+		return element ;
+	}
+		
 	@Override
 	public SOASchema getRequestSchema() {
 		//if (_requestSchema == null) {
@@ -464,14 +763,9 @@ public class JavaWebservice extends Webservice {
 			
 			// get the request class
 			Class requestClass = getRequestClass();
-			
-			// get the parameterless constructor
-			Constructor constructor = requestClass.getConstructor();
-			
+									
 			// get an instance of the request object
-			JavaWebservice.Request requestObject = (JavaWebservice.Request) constructor.newInstance();
-			
-			/////////////////////////////////////////////////////////////////////////////////////// here we use requestData to populate the requestObject //////////////////////////////////////////////////////////////////////////////////////////////
+			JavaWebservice.Request requestObject =  getRequestObject(requestData, requestClass);
 			
 			// get the response method
 			Method responseMethod = requestClass.getMethod("getResponse", RapidRequest.class);
@@ -479,9 +773,8 @@ public class JavaWebservice extends Webservice {
 			// invoke the response method
 			Object responseObject = responseMethod.invoke(requestObject, rapidRequest);
 						
-			SOAData responseData = new SOAData(new SOAElement(requestClass.getSimpleName(),"values coming soon"));
-			
-			/////////////////////////////////////////////////////////////////////////////////////// here we use responseObject to populate the responseData object //////////////////////////////////////////////////////////////////////////////////////////////
+			// get the response data
+			SOAData responseData = new SOAData(getResponseSOAElement(responseObject));
 			
 			// return the response data
 			return responseData;

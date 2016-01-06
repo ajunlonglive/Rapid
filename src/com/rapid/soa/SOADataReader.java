@@ -185,6 +185,17 @@ public interface SOADataReader {
 				_columnElementIds.clear();
 				_columnRows.clear();
 				_columnParents.clear();
+				
+				// if we have a schema
+				if (_soaSchema != null) {
+					// try and validate it
+					try {
+						_soaSchema.getRootElement().validate(_currentElement);
+					} catch (SOASchemaException ex) {
+						throw new SAXException(ex);
+					}
+				}
+								
 			}
 			
 			@Override
@@ -1013,5 +1024,7 @@ public interface SOADataReader {
 		
 		
 	}
+	
+	
 	
 }

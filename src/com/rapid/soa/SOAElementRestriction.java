@@ -44,6 +44,44 @@ public abstract class SOAElementRestriction {
 		
 	// implementation classes (note: these all need manually adding to JAXB in the RapidServletContextListener)
 	
+	public static class ExistsRestriction extends SOAElementRestriction {
+		
+		// constructors
+		
+		public ExistsRestriction() {}		
+		
+		// instance methods
+		
+		public void fail(SOASchemaElement schemaElement) throws SOASchemaException {			
+			throw new SOASchemaException(schemaElement.getName() + " is expected");			
+		}
+		
+		// overrides
+
+		@Override
+		public boolean checkAtParent() {
+			return false;
+		}
+		
+		@Override
+		public String getSchemaRule() {
+			return "";
+		}
+		
+		@Override
+		public void validate(SOASchemaElement schemaElement, SOAElement element) throws SOASchemaException  {
+			if (element == null) {
+				 fail(schemaElement);
+			} 
+		}
+		
+		@Override
+		public String toString() {
+			return "ExistsRestriction - must be provided";
+		}		
+		
+	}
+	
 	public static class NameRestriction extends SOAElementRestriction {
 		
 		// constructors
@@ -70,7 +108,9 @@ public abstract class SOAElementRestriction {
 		
 		@Override
 		public void validate(SOASchemaElement schemaElement, SOAElement element) throws SOASchemaException  {
-			if (element.getIsArray()) {
+			if (element == null) {
+				 fail(schemaElement, schemaElement.getName() + " is expected");
+			} else if (element.getIsArray()) {
 				if (!schemaElement.getName().equals(element.getName().substring(0, element.getName().length() - 5))) fail(schemaElement, element.getName());
 			} else if (!schemaElement.getName().equals(element.getName())) fail(schemaElement, element.getName());
 		}

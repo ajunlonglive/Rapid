@@ -171,6 +171,9 @@ public class SOASchema {
 		}
 				
 		public void validate(SOAElement element) throws SOASchemaException {
+			
+			// validate that the element is not null (this should never be provided explicitly)
+			_existsRestriction.validate(this, element);
 
 			// validate the name first (this should never be provided explicitly)
 			_defaultNameRestriction.validate(this, element);
@@ -247,7 +250,8 @@ public class SOASchema {
 		}
 		
 	}
-		
+	
+	private static SOAElementRestriction _existsRestriction;
 	private static SOAElementRestriction _defaultNameRestriction;
 	private static SOAElementRestriction _defaultTypeRestriction;
 	private static SOAElementRestriction _defaultMinOccursRestriction;
@@ -258,6 +262,7 @@ public class SOASchema {
 	
 	public SOASchema() {
 		// instantiate reusable default restrictions
+		_existsRestriction = new ExistsRestriction();
 		_defaultNameRestriction = new NameRestriction();
 		_defaultTypeRestriction = new TypeRestriction();
 		_defaultMinOccursRestriction = new MinOccursRestriction(1);
