@@ -238,7 +238,7 @@ public class RapidHttpServlet extends HttpServlet {
 			if (ex.getStackTrace() != null) for (StackTraceElement element : ex.getStackTrace()) stackTrace += element + "\n";
 						
 			out.print(stackTrace);
-		
+					
 		}
 		
 		if (rapidRequest == null) {

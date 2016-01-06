@@ -96,9 +96,6 @@ public class PersonSearchRequest implements Request {
 	@Override
 	public PersonSearchResponse getResponse(RapidRequest rapidRequest) throws WebserviceException {
 		
-		// this will be done by the inflator before the response is called
-		_surname = "E";
-		
 		try {
 			
 			PersonSearchResponse response = new PersonSearchResponse();
