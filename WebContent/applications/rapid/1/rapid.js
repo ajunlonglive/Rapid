@@ -1852,6 +1852,11 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 	
 	var data = null;
 	var callback = null;
+	
+	// get a ref to the control that iniated this action	
+	var target = $(ev.target);
+	// disable it if a button
+	if (target.is("button")) target.disable();
 
 	// some special types require data and callbacks	
 	switch (actionType) {
@@ -2366,6 +2371,9 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
     	dataType: "json",
         data: data,            
         error: function(server, status, error) { 
+        	// re-enable target if a button
+			if (target.is("button")) target.enable();
+			// check security statuses
         	if (server && server.status && (server.status == 401 || server.status == 403)) {
         		window.location = "login.jsp";
         	} else if (errorCallback) {
@@ -2375,6 +2383,8 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
         	}
         },
         success: function(data) {
+        	// re-enable target if a button
+			if (target.is("button")) target.enable();
        		if (callback) callback(data);
        		if (successCallback) successCallback(data);        	
         }

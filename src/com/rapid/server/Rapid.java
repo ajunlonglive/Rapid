@@ -89,6 +89,9 @@ public class Rapid extends RapidHttpServlet {
 	}
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		// fake a delay for testing slow servers
+		//try { Thread.sleep(3000); } catch (InterruptedException e) {}
 				
 		// get a logger
 		Logger logger = getLogger();
@@ -417,6 +420,9 @@ public class Rapid extends RapidHttpServlet {
 			
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 			
+		// fake a delay for testing slow servers
+		//try { Thread.sleep(3000); } catch (InterruptedException e) {}
+		
 		// this byte buffer is used for reading the post data 
 		byte[] byteBuffer = new byte[1024];
 		
