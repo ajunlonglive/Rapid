@@ -414,6 +414,8 @@ public abstract class FormAdapter {
 					rapidRequest.getRequest().getSession().setAttribute(variable, value);
 				}
 			}
+			// remember we can resume
+			canResume = true;
 		} else {
 			// invalidate any current form
 			setUserFormDetails(rapidRequest, null);

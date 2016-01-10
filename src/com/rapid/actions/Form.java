@@ -92,7 +92,7 @@ public class Form extends Action {
 						// get the control value
 						value = formAdapter.getFormControlValue(rapidRequest, getProperty("dataSource"), false);					
 						// enclose it in quotes (and escape it) if we got something
-						if (value != null) value = "'" + value.replace("'", "\\'") +"'";				
+						if (value != null) value = "'" + value.replace("\\", "\\\\").replace("'", "\\'").replace("\r\n", "\\n").replace("\n", "\\n").replace("\r", "") + "'";			
 					} else {
 						// get the user form details
 						UserFormDetails details = formAdapter.getUserFormDetails(rapidRequest);
@@ -122,7 +122,7 @@ public class Form extends Action {
 							value = "~?a=" + application.getId() + "&v=" + application.getVersion() + "&action=pdf&f=" + details.getId();
 						} // details and what to do check
 						// enclose it if we got something
-						if (value != null) value = "'" + value.replace("'", "\\'") +"'";	
+						if (value != null) value = "'" + value.replace("\\", "\\\\").replace("'", "\\'").replace("\r\n", "\\n").replace("\n", "\\n").replace("\r", "") + "'";
 					}
 					// use the set data if we got something
 					if (value != null) js = "setData_" + destinationControl.getType() + "(ev, '" + destinationId + "', null, " + destinationControl.getDetails() + ", " + value + ");\n";
