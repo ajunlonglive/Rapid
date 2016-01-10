@@ -1832,7 +1832,7 @@ function getDataObject(object) {
 				if (p.type && (_actionTypes[p.type] || _controlTypes[p.type])) {
 					// get an object
 					o[i] = getDataObject(p);
-				} else if ($.isArray(p) && p.length > 0 && p[0].type && (_actionTypes[p[0].type] || _controlTypes[p[0].type] || i == "events" )) {
+				} else if ($.isArray(p) && p.length > 0 && p[0] && p[0].type && (_actionTypes[p[0].type] || _controlTypes[p[0].type] || i == "events" )) {
 					// make an array
 					o[i] = [];
 					// loop to clean up childControls

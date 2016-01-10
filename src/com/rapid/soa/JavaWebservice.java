@@ -472,18 +472,18 @@ public class JavaWebservice extends Webservice {
 		// if we got one
 		if (root != null) {
 			
+			// get the parameterless constructor
+			Constructor constructor = c.getConstructor();
+			
+			// create an object
+			o = (Request) c.newInstance();
+			
 			// get the child nodes
 			List<SOAElement> childElements =  root.getChildElements();
 			
 			// if we got some
 			if (childElements != null) {
 				if (childElements.size() > 0) {
-					
-					// get the parameterless constructor
-					Constructor constructor = c.getConstructor();
-					
-					// create an object
-					o = (Request) c.newInstance();
 					
 					// get the element properties
 					List<ElementProperty> properties =  _childElementProperties.get(c.getCanonicalName());
@@ -765,7 +765,7 @@ public class JavaWebservice extends Webservice {
 			Class requestClass = getRequestClass();
 									
 			// get an instance of the request object
-			JavaWebservice.Request requestObject =  getRequestObject(requestData, requestClass);
+			JavaWebservice.Request requestObject = getRequestObject(requestData, requestClass);
 			
 			// get the response method
 			Method responseMethod = requestClass.getMethod("getResponse", RapidRequest.class);
