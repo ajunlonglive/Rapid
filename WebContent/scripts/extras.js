@@ -348,18 +348,24 @@ function textarea_autoheight() {
 	// use keypress instead of keydown as that's the only
   	// place keystrokes could be canceled in Opera
 	textarea.on('keypress', function(ev) {
+		// max times
+		var i = 0;
     	// grow
-    	while(textarea.outerHeight() < this.scrollHeight + parseFloat(textarea.css("borderTopWidth")) + parseFloat(textarea.css("borderBottomWidth"))) {
+    	while(i < 1000 && textarea.outerHeight() < this.scrollHeight + parseFloat(textarea.css("borderTopWidth")) + parseFloat(textarea.css("borderBottomWidth"))) {
     		textarea.height(textarea.height() + 1);
+    		i ++;
         };
     })
     
     .on('blur', function(ev) {
     	// reset the height
     	textarea.height(textarea.attr("data-height"));
+    	// max times
+		var i = 0;
     	// grow again
-    	while(textarea.outerHeight() < this.scrollHeight + parseFloat(textarea.css("borderTopWidth")) + parseFloat(textarea.css("borderBottomWidth"))) {
+    	while(i < 1000 && textarea.outerHeight() < this.scrollHeight + parseFloat(textarea.css("borderTopWidth")) + parseFloat(textarea.css("borderBottomWidth"))) {
     		textarea.height(textarea.height() + 1);
+    		i ++;
         };
     });
 	
