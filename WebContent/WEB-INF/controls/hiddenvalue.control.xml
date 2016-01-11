@@ -100,7 +100,10 @@ _page.object.append("<input id='" + this.id + "' name='" + this.id + "' type='hi
 	    
 	    <getDataFunction>
 	        <![CDATA[
-return $("#" + id).val();
+var value = $("#" + id).val();
+var match = value.match(/^\-?\d*\.?\d*$/);
+if (match) value = value * 1;
+return value;
 			]]>
 	    </getDataFunction>
 	    
