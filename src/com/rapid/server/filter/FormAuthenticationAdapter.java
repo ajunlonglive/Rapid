@@ -47,17 +47,34 @@ import com.rapid.server.RapidRequest;
 
 public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 	
-	public static final String PUBLIC_ACCESS_PARAM = "public";
+	public static final String INIT_PARAM_IP_CHECK = "ipcheck";
+	public static final String INIT_PARAM_PUBLIC_ACCESS = "public";
 	public static final String PUBLIC_ACCESS_USER = "public";
 		
 	private static Logger _logger = Logger.getLogger(RapidAuthenticationAdapter.class);
 	
 	private boolean _publicAccess = false;
+	private String[] _ipChecks = null;
 	
 	public FormAuthenticationAdapter(FilterConfig filterConfig) {
 		 super(filterConfig);
-		// look for whether public access is allowed
-		 _publicAccess  = Boolean.parseBoolean(filterConfig.getInitParameter(PUBLIC_ACCESS_PARAM));
+		// look for ip check for sensitive pages
+		 String ipCheck = filterConfig.getInitParameter(INIT_PARAM_IP_CHECK);
+		 // if we got some, build the array now
+		 if (ipCheck != null) {
+			 // split them
+			 _ipChecks = ipCheck.split(",");
+			 // loop them
+			 for (int i = 0; i < _ipChecks.length; i++) {
+				 // trim them for good measure, and replace *
+				 _ipChecks[i] = _ipChecks[i].trim().replace("*","");
+			 }
+			 // log
+			 _logger.info("IP addresses will be checked against " + ipCheck + " for access to sensitive resources.");	
+		 }
+		 // look for whether public access is allowed
+		 _publicAccess  = Boolean.parseBoolean(filterConfig.getInitParameter(INIT_PARAM_PUBLIC_ACCESS));
+		 // log
 		 _logger.info("Form authentication filter initialised.");		
 	}
 		
@@ -84,23 +101,55 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 		// if null set to root
 		if (requestPath == null) requestPath = "/";
 		if (requestPath.length() == 0) requestPath = "/"; 
+		// make lower case - just to be sure
+		requestPath = requestPath.toLowerCase();
 		
-		/*
-		
-		At some stage we will provide a parameter to allow ip pattern checking for the following files		
-		 
-		if (requestPath.endsWith("login.jsp") || requestPath.endsWith("logout.jsp") || requestPath.endsWith("design.jsp") || requestPath.endsWith("designpage.jsp") || (requestPath.endsWith("~") && "rapid".equals(req.getParameter("a")))) {
-			// cast the ServletRequest to a HttpServletRequest
-			HttpServletResponse response = (HttpServletResponse) res;
-			// send a not found
-			response.sendError(404);
-			// no further processing
-			return null;
+		// if ip checking is in place
+		if (_ipChecks != null) {
+			// get the query string			
+			String queryString = request.getQueryString();
+			// check we got one
+			if (queryString == null) {
+				// set to empty string
+				queryString = "";
+			} else {
+				// set to lower case
+				queryString = queryString.toLowerCase();
+			}
+			// if this is a sensitive resource
+			if (requestPath.startsWith("/login.jsp") || requestPath.startsWith("/logout.jsp") || requestPath.startsWith("/design.jsp") || requestPath.startsWith("/designpage.jsp") || requestPath.startsWith("/designer") || (requestPath.startsWith("/~") && queryString.contains("a=rapid"))) {
+				// get the client IP
+				String ip = request.getRemoteAddr();
+				// assume no pass
+				boolean pass = false;
+				// log
+				_logger.debug("Checking IP " + ip + " for " + requestPath);				
+				// loop the ip checks
+				for (String ipCheck : _ipChecks) {
+					// check the ip starts with the filter, this allows full, or partial IPs (we remove the * for good measure)
+					if (ip.startsWith(ipCheck)) {
+						// we passed
+						pass = true;
+						// we're done
+						break;
+					}
+				}
+				// if we failed
+				if (!pass) {
+					// log
+					_logger.info("Access from " + ip + " for " + requestPath + " failed IP check");
+					// cast the ServletRequest to a HttpServletRequest
+					HttpServletResponse response = (HttpServletResponse) res;
+					// send a not found
+					response.sendError(404);
+					// no further processing
+					return null;
+				}			
+			}
 		}
-		*/
-		
+				
 		// if we can return this resource without authentication
-		if (requestPath.endsWith("favicon.ico") || requestPath.startsWith("/images/") || requestPath.startsWith("/scripts/") || requestPath.startsWith("/styles/")) {
+		if (requestPath.endsWith("favicon.ico") || requestPath.startsWith("/images/") || requestPath.startsWith("/scripts") || requestPath.startsWith("/styles")) {
 			
 			// proceed to the next step
 			return req;			
