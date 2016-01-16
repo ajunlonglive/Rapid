@@ -7,7 +7,7 @@ gareth.edwards@rapid-is.co.uk
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version. The terms require you to include
@@ -351,8 +351,8 @@ function textarea_autoheight() {
 		// max times
 		var i = 0;
     	// grow
-    	while(i < 1000 && textarea.outerHeight() < this.scrollHeight + parseFloat(textarea.css("borderTopWidth")) + parseFloat(textarea.css("borderBottomWidth"))) {
-    		textarea.height(textarea.height() + 1);
+    	while(i < 100 && textarea.outerHeight() < this.scrollHeight + parseFloat(textarea.css("borderTopWidth")) + parseFloat(textarea.css("borderBottomWidth"))) {
+    		textarea.height(textarea.height() + 5);
     		i ++;
         };
     })

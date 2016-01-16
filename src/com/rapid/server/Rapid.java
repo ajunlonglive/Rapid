@@ -131,7 +131,7 @@ public class Rapid extends RapidHttpServlet {
 					String action = rapidRequest.getActionName();
 			
 					// check if there is a Rapid action
-					if ("summary".equals(action)) {
+					if ("summary".equals(action) || "pdf".equals(action)) {
 						
 						// get the form adapter for both of the above
 						FormAdapter formAdapter = app.getFormAdapter();
@@ -143,12 +143,17 @@ public class Rapid extends RapidHttpServlet {
 							sendMessage(response, 500, "Not a form", "This Rapid app is not a form");
 							
 							// log
-							logger.error("Rapid GET response (500) : Summary requested for " + app.getId() + "/" + app.getDescription() + " but it does not have a form adapter");
+							logger.error("Rapid GET response (500) : Summary requested for " + app.getId() + "/" + app.getDescription() + " " + action +" but it does not have a form adapter");
 							
 						} else {
 							
-							// write the form summary page
-							formAdapter.writeFormSummary(rapidRequest, response);
+							if ("pdf".equals(action)) {
+								// write the form pdf
+								formAdapter.doWriteFormPDF(rapidRequest, response, request.getParameter("f"));
+							} else {								
+								// write the form summary page
+								formAdapter.writeFormSummary(rapidRequest, response);							
+							}
 																																																								
 						}
 
@@ -712,7 +717,7 @@ public class Rapid extends RapidHttpServlet {
 												}									
 																					
 												// store the form page control values
-												formAdapter.setFormPageControlValues(rapidRequest, requestPageId, pageControlValues);
+												formAdapter.setFormPageControlValues(rapidRequest, formId, requestPageId, pageControlValues);
 												
 											}
 																									

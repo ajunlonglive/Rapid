@@ -7,7 +7,7 @@ gareth.edwards@rapid-is.co.uk
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as 
 published by the Free Software Foundation, either version 3 of the 
 License, or (at your option) any later version. The terms require you 
@@ -722,8 +722,25 @@ public class RapidServletContextListener implements ServletContextListener {
 	// Here we loop all of the folders under "applications" looking for a application.xml file, copying to the latest version if found before loading the versions
 	public static int loadApplications(ServletContext servletContext) throws JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException, IOException, ParserConfigurationException, SAXException, TransformerFactoryConfigurationError, TransformerException, RapidLoadingException, XPathExpressionException {
 		
-		// instatiate a new applications collection which allows us to retrieve by id and version
-		Applications applications = new Applications();
+		// get any existing applications
+		Applications applications = (Applications) servletContext.getAttribute("applications");
+		
+		// check we got some
+		if (applications != null) {
+			// loop the application ids
+			for (String appId : applications.getIds()) {
+				// loop the versions
+				for (String version : applications.getVersions(appId).keySet()) {
+					// get the version
+					Application application = applications.get(appId, version);
+					// close it
+					application.close(servletContext);
+				}				
+			}			
+		}
+		
+		// make a new set of applications
+		applications = new Applications();
 		
 		File applicationFolderRoot = new File(servletContext.getRealPath("/WEB-INF/applications/"));
 		
@@ -1138,8 +1155,11 @@ public class RapidServletContextListener implements ServletContextListener {
 		// interrupt the page monitor if we have one
 		if (_monitor != null) _monitor.interrupt();
 		
+		// get the servletContext
+		ServletContext servletContext = event.getServletContext();
+		
 		// get all of the applications
-		Applications applications = (Applications) event.getServletContext().getAttribute("applications");
+		Applications applications = (Applications) servletContext.getAttribute("applications");
 		// if we got some
 		if (applications != null) {
 			// loop the application ids
@@ -1150,31 +1170,8 @@ public class RapidServletContextListener implements ServletContextListener {
 				for (String version : versions.keySet()) {
 					// get the application
 					Application application = applications.get(id, version);
-					// check for a form adapter
-					FormAdapter formAdapter = application.getFormAdapter();
-					// close it if there was one
-					if (formAdapter != null) {
-						try {
-							formAdapter.close();
-						} catch (Exception ex) {
-							_logger.error("Error closing form adapter for " + application.getName(), ex);					
-						}						
-					}
-					// check for any connections
-					if (application.getDatabaseConnections() != null) {
-						// loop them
-						for (DatabaseConnection databaseConnection : application.getDatabaseConnections()) {
-							// check adapter
-							try {
-								// get adapter
-								ConnectionAdapter connectionAdapter = databaseConnection.getConnectionAdapter(event.getServletContext(), application);
-								// if we got one try and close it
-								if (connectionAdapter != null) connectionAdapter.close();						
-							} catch (Exception ex) {						
-								_logger.error("Error closing database adapter for " + application.getName(), ex);						
-							}
-						}
-					}	
+					// have it close any sensitive resources 
+					application.close(servletContext);					
 				}					
 			}
 		}

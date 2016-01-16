@@ -7,7 +7,7 @@ gareth.edwards@rapid-is.co.uk
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as 
 published by the Free Software Foundation, either version 3 of the 
 License, or (at your option) any later version. The terms require you 
@@ -36,6 +36,7 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -206,6 +207,11 @@ public class Application {
 		// set the connection adapter to null to for it to be re-initialised
 		public synchronized void reset() {
 			_connectionAdapter = null;
+		}
+		
+		// set the connection adapter to null to for it to be re-initialised
+		public synchronized void close() throws SQLException  {
+			if (_connectionAdapter != null) _connectionAdapter.close();
 		}
 		
 	}
@@ -1923,13 +1929,16 @@ public class Application {
 	
 	public void delete(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, boolean allVersions) throws JAXBException, IOException {
 		
+		// get the servlet context
+		ServletContext servletContext = rapidServlet.getServletContext();
+		
 		// create a file object for the config folder
-		File appFolder = new File(getConfigFolder(rapidServlet.getServletContext()));
+		File appFolder = new File(getConfigFolder(servletContext));
 		// if this is all versions promote from version to app
 		if (allVersions) appFolder = appFolder.getParentFile();
 		
 		// create a file object for the webcontent folder
-		File webFolder = new File (getWebFolder(rapidServlet.getServletContext()));
+		File webFolder = new File (getWebFolder(servletContext));
 		// if this is all versions promote from version to app
 		if (allVersions) webFolder = webFolder.getParentFile();
 				
@@ -1942,6 +1951,9 @@ public class Application {
 			// delete the web folder
 			Files.deleteRecurring(webFolder);			
 		}
+		
+		// close the application
+		close(servletContext);
 		
 		// remove this application from the collection
 		rapidServlet.getApplications().remove(this);
@@ -2108,6 +2120,40 @@ public class Application {
 		zip(rapidServlet, rapidRequest, user, fileName, false);
 	}
 		
+	// close the database connections and form adapters before reload
+	public void close(ServletContext servletContext) {
+		// get the logger
+		Logger logger = (Logger) servletContext.getAttribute("logger");
+		// closing 
+		logger.debug("Closing " + _id + "/" + _version + "...");		
+		// if we got some
+		if (_databaseConnections != null) {
+			// loop them
+			for (DatabaseConnection databaseConnection : _databaseConnections) {
+				// close database connection
+				try {
+					// call the close method
+					databaseConnection.close();
+					// log
+					logger.debug("Closed " + databaseConnection.getName());
+				} catch (SQLException ex) {
+					logger.error("Error closing database connection " + databaseConnection.getName() + " for " + _id + "/" + _version, ex);
+				}
+			}
+		}
+		// close form adapter
+		if (_formAdapter != null) {
+			try {
+				// call the close method
+				_formAdapter.close();
+				// log
+				logger.debug("Closed form adapter");
+			} catch (Exception ex) {
+				logger.error("Error closing form adapter for " + _id + "/" + _version, ex);
+			}					
+		}
+	}
+	
 	// static methods
 	
 	// this is where the application configuration will be stored

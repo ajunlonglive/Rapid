@@ -7,7 +7,7 @@ gareth.edwards@rapid-is.co.uk
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as 
 published by the Free Software Foundation, either version 3 of the 
 License, or (at your option) any later version. The terms require you 
@@ -158,6 +158,7 @@ public class Page {
 	private List<Condition> _visibilityConditions;
 	private String _conditionsType;
 	private Lock _lock;
+	private List<String> _formControlValues;
 				
 	// this array is used to collect all of the lines needed in the pageload before sorting them
 	private List<String> _pageloadLines;
@@ -257,7 +258,7 @@ public class Page {
 	public Page() {
 		// set the xml version
 		_xmlVersion = XML_VERSION;				
-	};
+	}
 		
 	// instance methods
 	
@@ -836,7 +837,8 @@ public class Page {
 	
 	// this includes functions to iteratively call any control initJavaScript and set up any event listeners
     private void getPageLoadLines(List<String> pageloadLines, List<Control> controls) throws JSONException {
-    	if (controls != null) {    		
+    	// if we have controls
+    	if (controls != null) {    		    		
     		// loop controls
     		for (Control control : controls) {
     			// check for any initJavaScript to call
@@ -856,9 +858,10 @@ public class Page {
     			if (control.getEvents() != null) {
     				// loop events
     				for (Event event : control.getEvents()) {
-    					// only if event is non-custome and there are actually some actions to invoke
+    					// only if event is non-custom and there are actually some actions to invoke
     					if (!event.isCustomType() && event.getActions() != null) {
     						if (event.getActions().size() > 0) {
+    							// add any page load lines from this 
     							pageloadLines.add(event.getPageLoadJavaScript(control));
     						}
     					}    					
@@ -956,6 +959,7 @@ public class Page {
 		if (event.getActions() != null) {
 			// check there are some to loop
 			if (event.getActions().size() > 0) {				
+				
 				// create actions separately to avoid redundancy
 				StringBuilder actionStringBuilder = new StringBuilder();
 				StringBuilder eventStringBuilder = new StringBuilder();
@@ -1168,183 +1172,203 @@ public class Page {
     }
 	
 	// this private method produces the head of the page which is often cached, if resourcesOnly is true only page resources are included which is used when sending no permission
-		private String getHeadReadyJS(RapidRequest rapidRequest, Application application, boolean isDialogue, FormAdapter formAdapter) throws JSONException {
-	    																											
-			// make a new string builder just for the js (so we can minify it independently)
-			StringBuilder jsStringBuilder = new StringBuilder(); 
-			
-			// add an extra line break for non-live applications
-			if (application.getStatus() != Application.STATUS_LIVE) jsStringBuilder.append("\n");
-			
-			// get all controls
-			List<Control> pageControls = getAllControls();
-			
-			// if we got some
-			if (pageControls != null) {
-				// loop them
-				for (Control control : pageControls) {
-					// get the details
-					String details = control.getDetails();
-					// check if null
-					if (details != null) {
-						// create a gloabl variable for it's details
-						jsStringBuilder.append("var " + control.getId() + "details = " + details + ";\n");
-					}
-				}
-				// add a line break again if we printed anything
-				if (jsStringBuilder.length() > 0) jsStringBuilder.append("\n");
-			}
-					
-			// initialise our pageload lines collections
-			_pageloadLines = new ArrayList<String>();
-			
-			// get any control initJavaScript event listeners into he pageloadLine (goes into $(document).ready function)
-			getPageLoadLines(_pageloadLines, _controls);
-									      					
-			// sort the page load lines
-			Collections.sort(_pageloadLines, new Comparator<String>() {
-				@Override
-				public int compare(String l1, String l2) {				
-					if (l1.isEmpty()) return -1;
-					if (l2.isEmpty()) return 1;
-					char i1 = l1.charAt(0);
-					char i2 = l2.charAt(0);
-					return i2 - i1;						
-				}}
-			);
-			
-			// if there is a form adapter in place
-			if (formAdapter != null) {
-				// add a line to set any form values before the load event is run
-				_pageloadLines.add("Event_setFormValues($.Event('setValues'));\n");
-				// add an init form function - in extras.js
-				_pageloadLines.add("Event_initForm('" + _id + "');\n");
-			}
-															
-			// check for page events (this is here so all listeners are registered by now) and controls (there should not be none but nothing happens without them)
-			if (_events != null && _controls != null) {
-				// loop page events
-				for (Event event : _events) {        				
-					// only if there are actually some actions to invoke
-					if (event.getActions() != null) {
-						if (event.getActions().size() > 0) {
-							// page is a special animal so we need to do each of it's event types differently
-							if ("pageload".equals(event.getType())) {
-								_pageloadLines.add("if (!_mobileResume) Event_pageload_" + _id + "($.Event('pageload'));\n");
-	        				}    			
-							// resume is also a special animal
-							if ("resume".equals(event.getType())) {
-								// fire the resume event immediately if there is no rapidMobile (it will be done by the Rapid Mobile app if present)
-								_pageloadLines.add("if (!window['_rapidmobile']) Event_resume_" + _id + "($.Event('resume'));\n");
-							}
-							// reusable action is only invoked via reusable actions on other events - there is no listener
-						}
-					}         				
-				}
-			}
-															
-			// if this is not a dialogue or there are any load lines
-			if (!isDialogue || _pageloadLines.size() > 0) {
-				
-				// open the page loaded function
-				jsStringBuilder.append("$(document).ready( function() {\n");
-				
-				// add a try
-				jsStringBuilder.append("  try {\n");
-				
-				// print any page load lines such as initialising controls
-				for (String line : _pageloadLines) jsStringBuilder.append("    " + line);
-																
-				// close the try
-				jsStringBuilder.append("  } catch(ex) { $('body').html(ex); }\n");
-				
-				// after 200 milliseconds show and trigger a window resize for any controls that might be listening (this also cuts out any flicker), we also call focus on the elements we marked for focus while invisible (in extras.js)
-				jsStringBuilder.append("  window.setTimeout( function() {\n    $(window).resize();\n    $('body').css('visibility','visible');\n    $('[data-focus]').focus();\n  }, 200);\n");
-										
-				// end of page loaded function
-				jsStringBuilder.append("});\n\n");
-				
-			}
-																				
-			// return it
-			return jsStringBuilder.toString();
-	    	
-	    }
+	private String getHeadReadyJS(RapidRequest rapidRequest, Application application, boolean isDialogue, FormAdapter formAdapter) throws JSONException {
+    																											
+		// make a new string builder just for the js (so we can minify it independently)
+		StringBuilder jsStringBuilder = new StringBuilder(); 
 		
-		// this private method produces the head of the page which is often cached, if resourcesOnly is true only page resources are included which is used when sending no permission
-		private String getHeadJS(RapidRequest rapidRequest, Application application, boolean isDialogue) throws JSONException {
-	    	
-			// a string builder
-			StringBuilder stringBuilder = new StringBuilder(); 
-			
-			// make a new string builder just for the js (so we can minify it independently)
-			StringBuilder jsStringBuilder = new StringBuilder(); 
-												
-			// find any redundant actions anywhere in the page, prior to generating JavaScript
-			List<Action> pageActions = getAllActions();
-			
-			// only proceed if there are actions in this page
-			if (pageActions != null) {
-				
-				// loop the list of actions to indentify potential redundancies before we create all the event handling JavaScript
-				for (Action action : pageActions) {
-					try {
-						// look for any page javascript that this action may have
-						String actionPageJavaScript = action.getPageJavaScript(rapidRequest, application, this, null);
-						// print it here if so
-						if (actionPageJavaScript != null) jsStringBuilder.append(actionPageJavaScript.trim() + "\n\n");
-						// if this action adds redundancy to any others 
-						if (action.getRedundantActions() != null) {
-							// loop them
-							for (String actionId : action.getRedundantActions()) {
-								// try and find the action
-								Action redundantAction = getAction(actionId);
-								// if we got one
-								if (redundantAction != null) {
-									// update the redundancy avoidance flag
-									redundantAction.avoidRedundancy(true);
-								} 
-							}										
-						} // redundantActions != null
-					} catch (Exception ex) {
-						// print the exception as a comment
-						jsStringBuilder.append("// Error producing page JavaScript : " + ex.getMessage() + "\n\n");
-					}					
-					
-				} // action loop		
-				
-				// add event handlers, staring at the root controls
-				getEventHandlersJavaScript(rapidRequest, jsStringBuilder, application, _controls);
-			}
-			
-			// if there was any js
-			if (jsStringBuilder.length() > 0) {
-								
-				// check the application status
-				if (application.getStatus() == Application.STATUS_LIVE) {			
-					try {
-						// minify the js before adding
-						stringBuilder.append(Minify.toString(jsStringBuilder.toString(),Minify.JAVASCRIPT));
-					} catch (IOException ex) {
-						// add the error
-						stringBuilder.append("\n\n/* Failed to minify JavaScript : " + ex.getMessage() + " */\n\n");
-						// add the js as is
-						stringBuilder.append(jsStringBuilder);
-					}
-				} else {
-					// add the js as is
-					stringBuilder.append("/* The code below is minified for live applications */\n\n" + jsStringBuilder.toString().trim() + "\n");
+		// add an extra line break for non-live applications
+		if (application.getStatus() != Application.STATUS_LIVE) jsStringBuilder.append("\n");
+		
+		// get all controls
+		List<Control> pageControls = getAllControls();
+		
+		// if we got some
+		if (pageControls != null) {
+			// loop them
+			for (Control control : pageControls) {
+				// get the details
+				String details = control.getDetails();
+				// check if null
+				if (details != null) {
+					// create a gloabl variable for it's details
+					jsStringBuilder.append("var " + control.getId() + "details = " + details + ";\n");
 				}
-																			
 			}
-								
-			// get it into a string and insert any parameters
-			String headJS = application.insertParameters(rapidRequest.getRapidServlet().getServletContext(), stringBuilder.toString());
-						
-			// return it
-			return headJS;
-	    	
-	    }
+			// add a line break again if we printed anything
+			if (jsStringBuilder.length() > 0) jsStringBuilder.append("\n");
+		}
+		
+		// initialise the form controls that need their values added in the dynamic part of the page script
+		_formControlValues = new ArrayList<String>();
+		// get all actions
+		List<Action> actions = getAllActions();
+		// loop them
+		for (Action action : actions) {
+			// if form type
+			if ("form".equals(action.getType())) {
+				// if value copy
+				if ("val".equals(action.getProperty("actionType"))) {
+					// get control id
+					String controlId = action.getProperty("dataSource");
+					// add to collection if all in order
+					if (controlId != null) _formControlValues.add(controlId);
+				}
+			}
+		}
+				
+		// initialise our pageload lines collections
+		_pageloadLines = new ArrayList<String>();
+				
+		// get any control initJavaScript event listeners into he pageloadLine (goes into $(document).ready function)
+		getPageLoadLines(_pageloadLines, _controls);
+								      					
+		// sort the page load lines
+		Collections.sort(_pageloadLines, new Comparator<String>() {
+			@Override
+			public int compare(String l1, String l2) {				
+				if (l1.isEmpty()) return -1;
+				if (l2.isEmpty()) return 1;
+				char i1 = l1.charAt(0);
+				char i2 = l2.charAt(0);
+				return i2 - i1;						
+			}}
+		);
+		
+		// if there is a form adapter in place
+		if (formAdapter != null) {
+			// add a line to set any form values before the load event is run
+			_pageloadLines.add("Event_setFormValues($.Event('setValues'));\n");
+			// add an init form function - in extras.js
+			_pageloadLines.add("Event_initForm('" + _id + "');\n");
+		}
+														
+		// check for page events (this is here so all listeners are registered by now) and controls (there should not be none but nothing happens without them)
+		if (_events != null && _controls != null) {
+			// loop page events
+			for (Event event : _events) {        				
+				// only if there are actually some actions to invoke
+				if (event.getActions() != null) {
+					if (event.getActions().size() > 0) {
+						// page is a special animal so we need to do each of it's event types differently
+						if ("pageload".equals(event.getType())) {
+							_pageloadLines.add("if (!_mobileResume) Event_pageload_" + _id + "($.Event('pageload'));\n");
+        				}    			
+						// resume is also a special animal
+						if ("resume".equals(event.getType())) {
+							// fire the resume event immediately if there is no rapidMobile (it will be done by the Rapid Mobile app if present)
+							_pageloadLines.add("if (!window['_rapidmobile']) Event_resume_" + _id + "($.Event('resume'));\n");
+						}
+						// reusable action is only invoked via reusable actions on other events - there is no listener
+					}
+				}         				
+			}
+		}
+														
+		// if this is not a dialogue or there are any load lines
+		if (!isDialogue || _pageloadLines.size() > 0) {
+			
+			// open the page loaded function
+			jsStringBuilder.append("$(document).ready( function() {\n");
+			
+			// add a try
+			jsStringBuilder.append("  try {\n");
+			
+			// print any page load lines such as initialising controls
+			for (String line : _pageloadLines) jsStringBuilder.append("    " + line);
+															
+			// close the try
+			jsStringBuilder.append("  } catch(ex) { $('body').html(ex); }\n");
+			
+			// after 200 milliseconds show and trigger a window resize for any controls that might be listening (this also cuts out any flicker), we also call focus on the elements we marked for focus while invisible (in extras.js)
+			jsStringBuilder.append("  window.setTimeout( function() {\n    $(window).resize();\n    $('body').css('visibility','visible');\n    $('[data-focus]').focus();\n  }, 200);\n");
+									
+			// end of page loaded function
+			jsStringBuilder.append("});\n\n");
+			
+		}
+																			
+		// return it
+		return jsStringBuilder.toString();
+    	
+    }
+	
+	// this private method produces the head of the page which is often cached, if resourcesOnly is true only page resources are included which is used when sending no permission
+	private String getHeadJS(RapidRequest rapidRequest, Application application, boolean isDialogue) throws JSONException {
+    	
+		// a string builder
+		StringBuilder stringBuilder = new StringBuilder(); 
+		
+		// make a new string builder just for the js (so we can minify it independently)
+		StringBuilder jsStringBuilder = new StringBuilder(); 
+											
+		// get all actions in the page
+		List<Action> pageActions = getAllActions();
+		
+		// only proceed if there are actions in this page
+		if (pageActions != null) {
+			
+			// loop the list of actions 
+			for (Action action : pageActions) {
+				// if this is a form action
+				// indentify potential redundancies before we create all the event handling JavaScript
+				try {
+					// look for any page javascript that this action may have
+					String actionPageJavaScript = action.getPageJavaScript(rapidRequest, application, this, null);
+					// print it here if so
+					if (actionPageJavaScript != null) jsStringBuilder.append(actionPageJavaScript.trim() + "\n\n");
+					// if this action adds redundancy to any others 
+					if (action.getRedundantActions() != null) {
+						// loop them
+						for (String actionId : action.getRedundantActions()) {
+							// try and find the action
+							Action redundantAction = getAction(actionId);
+							// if we got one
+							if (redundantAction != null) {
+								// update the redundancy avoidance flag
+								redundantAction.avoidRedundancy(true);
+							} 
+						}										
+					} // redundantActions != null
+				} catch (Exception ex) {
+					// print the exception as a comment
+					jsStringBuilder.append("// Error producing page JavaScript : " + ex.getMessage() + "\n\n");
+				}					
+				
+			} // action loop		
+			
+			// add event handlers, staring at the root controls
+			getEventHandlersJavaScript(rapidRequest, jsStringBuilder, application, _controls);
+		}
+		
+		// if there was any js
+		if (jsStringBuilder.length() > 0) {
+							
+			// check the application status
+			if (application.getStatus() == Application.STATUS_LIVE) {			
+				try {
+					// minify the js before adding
+					stringBuilder.append(Minify.toString(jsStringBuilder.toString(),Minify.JAVASCRIPT));
+				} catch (IOException ex) {
+					// add the error
+					stringBuilder.append("\n\n/* Failed to minify JavaScript : " + ex.getMessage() + " */\n\n");
+					// add the js as is
+					stringBuilder.append(jsStringBuilder);
+				}
+			} else {
+				// add the js as is
+				stringBuilder.append("/* The code below is minified for live applications */\n\n" + jsStringBuilder.toString().trim() + "\n");
+			}
+																		
+		}
+							
+		// get it into a string and insert any parameters
+		String headJS = application.insertParameters(rapidRequest.getRapidServlet().getServletContext(), stringBuilder.toString());
+					
+		// return it
+		return headJS;
+    	
+    }
 			
 	// this routine will write the no page permission - used by both page permission and if control permission permutations fail to result in any html
 	public void writeMessage(Writer writer, String title, String message) throws IOException {
@@ -1413,36 +1437,100 @@ public class Page {
 				
 			}
 			
+			// check that there's permission
 			if (gotPagePermission) {
-				
-				// assume we couldn't build the page
-				boolean pass = false;
-				
-				// a placeholder for any form id
-				String formId = null;
-				// a placeholder for any form values
-				StringBuilder formValues = null;
-				
-				// check for a form adapter
-				if (formAdapter == null) {
-					// we're good!
-					pass = true;
-				} else {
-					// first do the actions that could result in an exception
+									
+				// whether we're rebulding the page for each request
+		    	boolean rebuildPages = Boolean.parseBoolean(rapidServlet.getServletContext().getInitParameter("rebuildPages"));
+						    	
+		    	// check whether or not we rebuild
+		    	if (rebuildPages) {
+		    		// get fresh head links
+		    		writer.write(getHeadLinks(rapidServlet, application, !designerLink));
+		    		// write the user-specific JS
+		    		writeUserJS(writer, rapidRequest, application, user);		    		
+		    		// get fresh js and css
+		    		writer.write(getHeadCSS(rapidRequest, application, !designerLink));
+		    		// open the script
+					writer.write("    <script  type='text/javascript'>\n");
+		    		// write the ready JS
+		    		writer.write(getHeadReadyJS(rapidRequest, application, !designerLink, formAdapter));
+		    	} else {
+		    		// rebuild any uncached 
+		    		if (_cachedHeadLinks == null) _cachedHeadLinks = getHeadLinks(rapidServlet, application, !designerLink);
+		    		if (_cachedHeadCSS == null) _cachedHeadCSS = getHeadCSS(rapidRequest, application, !designerLink);
+		    		if (_cachedHeadReadyJS == null) _cachedHeadReadyJS = getHeadReadyJS(rapidRequest, application, !designerLink, formAdapter);		    		
+		    		// get the cached head links
+		    		writer.write(_cachedHeadLinks);
+		    		// write the user-specific JS
+		    		writeUserJS(writer, rapidRequest, application, user);		
+		    		// get the cached head js and css
+		    		writer.write(_cachedHeadCSS);
+		    		// open the script
+					writer.write("    <script  type='text/javascript'>\n\n");
+					// write the ready JS
+					writer.write(_cachedHeadReadyJS);
+		    	}
+		    	
+		    	// if there is a form
+				if (formAdapter != null) {
+											
+					// a placeholder for any form id
+					String formId = null;
+					// a placeholder for any form values
+					StringBuilder formValues = null;
+					
+		    		// first do the actions that could result in an exception
 					try {
+						
 						// get the form id
 						formId =  formAdapter.getFormId(rapidRequest);
+						
 						// create the values string builder
 						formValues = new StringBuilder();
+						
+						// start the form values object (to supply previous form values)
+						formValues.append("var _formValues = {");
+						
+						// if form control values to set
+						if (_formControlValues != null) {
+							
+							// loop then
+							for (int i = 0; i < _formControlValues.size(); i++) {
+							
+								// get the control id
+								String controlId = _formControlValues.get(i);
+								
+								// get the value
+								String value = formAdapter.getFormControlValue(rapidRequest, formId, controlId, false);
+								
+								// if we got one
+								if (value != null) {
+									// escape it and enclose it
+									value = value.replace("\\", "\\\\").replace("'", "\\'").replace("\r\n", "\\n").replace("\n", "\\n").replace("\r", "");
+									// add to object
+									formValues.append("'" + controlId + "':'" + value + "'");
+									// add comma if need be
+									if (i < _formControlValues.size() - 1) formValues.append(",");
+								}								
+							}														
+						}
+						
+						// close it
+						formValues.append("};\n\n");
+						
 						// start the set form values function
-						formValues.append("function Event_setFormValues(ev) {\n");
+						formValues.append("function Event_setFormValues(ev) {");
 						
 						// get any form page values
-						FormPageControlValues formControlValues = formAdapter.getFormPageControlValues(rapidRequest, _id);
+						FormPageControlValues formControlValues = formAdapter.getFormPageControlValues(rapidRequest, formId, _id);
 						
 						// if there are any
 						if (formControlValues != null) {
 							if (formControlValues.size() > 0) {
+								
+								// add a line break
+								formValues.append("\n");
 																		
 								// loop the values
 								for (FormControlValue formControlValue : formControlValues) {
@@ -1464,176 +1552,134 @@ public class Page {
 										// if null update to string
 										if (details == null) details = null;
 										// if there is a value use the standard setData for it (this might change to something more sophisticated at some point)
-										if (value != null) formValues.append("  setData_" + pageControl.getType() + "(ev, '" + pageControl.getId() + "', " + field + ", " + details + ", '" + value.replace("\\", "\\\\").replace("'", "\\'").replace("\r\n", "\\n").replace("\n", "\\n").replace("\r", "") + "');\n");										
+										if (value != null) formValues.append("  if (window[\"setData_" + pageControl.getType() + "\"]) setData_" + pageControl.getType() + "(ev, '" + pageControl.getId() + "', " + field + ", " + details + ", '" + value.replace("\\", "\\\\").replace("'", "\\'").replace("\r\n", "\\n").replace("\n", "\\n").replace("\r", "") + "');\n");										
 									}
 								}								
 							}
 						}									
 						// close the function
-						formValues.append("};\n\n");						
+						formValues.append("};\n\n");		
+						
+						// write the form id into the page - not necessary for dialogues
+			    		if (designerLink) writer.write("var _formId = '" + formId + "';\n\n");
+			    		
+			    		// write the form values
+			    		writer.write(formValues.toString());
+						
 					} catch (Exception ex) {						
 						// log the error
 						rapidServlet.getLogger().error("Error create page form values", ex);																		
-					}					
-					// we're good!
-					pass = true;					
+					}	
+		    														
 				}
 				
-				// if we passed
-				if (pass) {
-					
-					// whether we're rebulding the page for each request
-			    	boolean rebuildPages = Boolean.parseBoolean(rapidServlet.getServletContext().getInitParameter("rebuildPages"));
-							    	
-			    	// check whether or not we rebuild
-			    	if (rebuildPages) {
-			    		// get fresh head links
-			    		writer.write(getHeadLinks(rapidServlet, application, !designerLink));
-			    		// write the user-specific JS
-			    		writeUserJS(writer, rapidRequest, application, user);		    		
-			    		// get fresh js and css
-			    		writer.write(getHeadCSS(rapidRequest, application, !designerLink));
-			    		// open the script
-						writer.write("    <script  type='text/javascript'>\n");
-			    		// write the ready JS
-			    		writer.write(getHeadReadyJS(rapidRequest, application, !designerLink, formAdapter));
-			    	} else {
-			    		// rebuild any uncached 
-			    		if (_cachedHeadLinks == null) _cachedHeadLinks = getHeadLinks(rapidServlet, application, !designerLink);
-			    		if (_cachedHeadCSS == null) _cachedHeadCSS = getHeadCSS(rapidRequest, application, !designerLink);
-			    		if (_cachedHeadReadyJS == null) _cachedHeadReadyJS = getHeadReadyJS(rapidRequest, application, !designerLink, formAdapter);		    		
-			    		// get the cached head links
-			    		writer.write(_cachedHeadLinks);
-			    		// write the user-specific JS
-			    		writeUserJS(writer, rapidRequest, application, user);		
-			    		// get the cached head js and css
-			    		writer.write(_cachedHeadCSS);
-			    		// open the script
-						writer.write("    <script  type='text/javascript'>\n\n");
-						// write the ready JS
-						writer.write(_cachedHeadReadyJS);
-			    	}
-			    	
-			    	// if there is a form
-					if (formAdapter != null) {
-						// write the form id into the page - not necessary for dialogues
-			    		if (designerLink) writer.write("var _formId = '" + formId + "';\n\n");
-						// write the form values
-						writer.write(formValues.toString());							
-					}
-					
-					if (rebuildPages) {
-						// write the ready JS
-			    		writer.write(getHeadJS(rapidRequest, application, !designerLink));
-					} else {
-						// get the rest of the cached JS
-						if (_cachedHeadJS == null) _cachedHeadJS = getHeadJS(rapidRequest, application, !designerLink);
-						// write the ready JS
-			    		writer.write(_cachedHeadJS);					
-					}
-					
-					// close the script
-					writer.write("\n    </script>\n");
-			    			    			    			    	
-			    	// close the head
-			    	writer.write("  </head>\n");
-			    	
-					// start the body		
-			    	writer.write("  <body id='" + _id + "' style='visibility:hidden;'>\n");
-			    			    			    	
-			    	// start the form if in use (but not for dialogues and other cases where the page is partial)		
-			    	if (formAdapter != null && designerLink) {
-			    		writer.write("    <form id='" + _id + "_form' action='~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + _id + "' method='POST'>\n");
-			    		writer.write("      <input type='hidden' id='" + _id +  "_hiddenControls' name='" + _id +  "_hiddenControls' />\n");
-			    	}
-			    	
-					// a reference for the body html
-					String bodyHtml = null;
-					
-					// get the users roles
-					List<String> userRoles = user.getRoles();
-												
-					// check we have userRoles and htmlRoles
-					if (userRoles != null && _rolesHtml != null) {
-																			
-						// loop each roles html entry
-						for (RoleHtml roleHtml : _rolesHtml) {
-														
-							// get the roles from this combination
-							List<String> roles = roleHtml.getRoles();
-							
-							// assume not roles are required (this will be updated if roles are present)
-							int rolesRequired = 0;
-							
-							// keep a running count for the roles we have
-							int gotRoleCount = 0;
-																	
-							// if there are roles to check
-							if (roles != null) {
-								
-								// update how many roles we need our user to have
-								rolesRequired = roles.size();
-								
-								// check whether we need any roles and that our user has any at all
-								if (rolesRequired > 0) {
-									// check the user has as many roles as this combination requires
-									if (userRoles.size() >= rolesRequired) {
-										// loop the roles we need for this combination
-										for (String role : roleHtml.getRoles()) {
-											// check this role
-											if (userRoles.contains(role)) {
-												// increment the got role count
-												gotRoleCount ++;
-											} // increment the count of required roles
+				if (rebuildPages) {
+					// write the ready JS
+		    		writer.write(getHeadJS(rapidRequest, application, !designerLink));
+				} else {
+					// get the rest of the cached JS
+					if (_cachedHeadJS == null) _cachedHeadJS = getHeadJS(rapidRequest, application, !designerLink);
+					// write the ready JS
+		    		writer.write(_cachedHeadJS);					
+				}
+				
+				// close the script
+				writer.write("\n    </script>\n");
+		    			    			    			    	
+		    	// close the head
+		    	writer.write("  </head>\n");
+		    	
+				// start the body		
+		    	writer.write("  <body id='" + _id + "' style='visibility:hidden;'>\n");
+		    			    			    	
+		    	// start the form if in use (but not for dialogues and other cases where the page is partial)		
+		    	if (formAdapter != null && designerLink) {
+		    		writer.write("    <form id='" + _id + "_form' action='~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + _id + "' method='POST'>\n");
+		    		writer.write("      <input type='hidden' id='" + _id +  "_hiddenControls' name='" + _id +  "_hiddenControls' />\n");
+		    	}
+		    	
+				// a reference for the body html
+				String bodyHtml = null;
+				
+				// get the users roles
+				List<String> userRoles = user.getRoles();
 											
-										} // loop roles
+				// check we have userRoles and htmlRoles
+				if (userRoles != null && _rolesHtml != null) {
+																		
+					// loop each roles html entry
+					for (RoleHtml roleHtml : _rolesHtml) {
+													
+						// get the roles from this combination
+						List<String> roles = roleHtml.getRoles();
+						
+						// assume not roles are required (this will be updated if roles are present)
+						int rolesRequired = 0;
+						
+						// keep a running count for the roles we have
+						int gotRoleCount = 0;
+																
+						// if there are roles to check
+						if (roles != null) {
+							
+							// update how many roles we need our user to have
+							rolesRequired = roles.size();
+							
+							// check whether we need any roles and that our user has any at all
+							if (rolesRequired > 0) {
+								// check the user has as many roles as this combination requires
+								if (userRoles.size() >= rolesRequired) {
+									// loop the roles we need for this combination
+									for (String role : roleHtml.getRoles()) {
+										// check this role
+										if (userRoles.contains(role)) {
+											// increment the got role count
+											gotRoleCount ++;
+										} // increment the count of required roles
 										
-									} // user has enough roles to bother checking this combination
+									} // loop roles
 									
-								} // if any roles are required
-																												
-							} // add roles to check
-							
-							// if we have all the roles we need
-							if (gotRoleCount == rolesRequired) {
-								// use this html
-								bodyHtml = roleHtml.getHtml();
-								// no need to check any further
-								break;
-							}
-							
-						} // html role combo loop
-																												
-					} // if our users have roles and we have different html for roles
-					
-					// check if we got any body html via the roles
-					if (bodyHtml == null) {
+								} // user has enough roles to bother checking this combination
+								
+							} // if any roles are required
+																											
+						} // add roles to check
 						
-						// didn't get any body html, show no permission
-						writeMessage(writer, "Rapid - No permission", "You do not have permssion to view this page");
-						
-					} else {
-											
-						// check the status of the application
-						if (application.getStatus() == Application.STATUS_DEVELOPMENT) {
-							// pretty print
-							writer.write(Html.getPrettyHtml(bodyHtml.trim()));
-						} else {
-							// no pretty print
-							writer.write(bodyHtml.trim());
+						// if we have all the roles we need
+						if (gotRoleCount == rolesRequired) {
+							// use this html
+							bodyHtml = roleHtml.getHtml();
+							// no need to check any further
+							break;
 						}
-											
-						// close the form
-						if (formAdapter != null && designerLink) writer.write("    </form>\n");
-
-					} // got body html check
+						
+					} // html role combo loop
+																											
+				} // if our users have roles and we have different html for roles
+				
+				// check if we got any body html via the roles
+				if (bodyHtml == null) {
+					
+					// didn't get any body html, show no permission
+					writeMessage(writer, "Rapid - No permission", "You do not have permssion to view this page");
 					
 				} else {
-					
-					// send an error message to the screen
-					writeMessage(writer, "Rapid - Error", "An error has occurred. Please try again in a few minutes.");
-					
-				}
+										
+					// check the status of the application
+					if (application.getStatus() == Application.STATUS_DEVELOPMENT) {
+						// pretty print
+						writer.write(Html.getPrettyHtml(bodyHtml.trim()));
+					} else {
+						// no pretty print
+						writer.write(bodyHtml.trim());
+					}
+										
+					// close the form
+					if (formAdapter != null && designerLink) writer.write("    </form>\n");
+
+				} // got body html check
+				
+
 																													
 			} else {
 				
@@ -1777,7 +1823,7 @@ public class Page {
 			// get the id of the value object (should be a control Id)
 			String valueId = value.getId();
 			// retrieve and return it from the form adapater, but not if it's hidden
-			return formAdapter.getFormControlValue(rapidRequest, valueId, true);
+			return formAdapter.getFormControlValue(rapidRequest, formId, valueId, true);
 		}
 	}
 	
@@ -1934,7 +1980,7 @@ public class Page {
 				logger.debug("Page " + _id + " visibility check, " + _visibilityConditions.size() + " conditions, pass = " + pass);
 				
 				// if we failed set the page values to null
-				if (!pass) formAdapter.setFormPageControlValues(rapidRequest, _id, null);
+				if (!pass) formAdapter.setFormPageControlValues(rapidRequest, formId, _id, null);
 				
 				// return the pass
 				return pass;

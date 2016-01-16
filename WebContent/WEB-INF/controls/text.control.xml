@@ -113,6 +113,13 @@ return "<" + open + " id='" + this.id + "' " + labelFor + " class='text" + getSt
 	        ]]>
 	    </getHtmlFunction>  
 	    
+	    <saveJavaScript>
+	        <![CDATA[
+var v = this.object.html();
+if (v == "&nbsp;") this.object.html("");	        
+	        ]]>	        
+	    </saveJavaScript>
+	    
 	    <getDataFunction>
 	        <![CDATA[
 return $("#" + id).html();
