@@ -7,7 +7,7 @@ gareth.edwards@rapid-is.co.uk
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as 
 published by the Free Software Foundation, either version 3 of the 
 License, or (at your option) any later version. The terms require you 
@@ -89,10 +89,8 @@ public class Form extends Action {
 					if ("id".equals(actionType)) {
 						value = "_formId";
 					} else if ("val".equals(actionType)) {
-						// get the control value
-						value = formAdapter.getFormControlValue(rapidRequest, getProperty("dataSource"), false);					
-						// enclose it in quotes (and escape it) if we got something
-						if (value != null) value = "'" + value.replace("\\", "\\\\").replace("'", "\\'").replace("\r\n", "\\n").replace("\n", "\\n").replace("\r", "") + "'";			
+						// get the control value from the _formValues object which we add in the dynamic section of the page
+						value = "_formValues['" + getProperty("dataSource") + "']"; 															
 					} else {
 						// get the user form details
 						UserFormDetails details = formAdapter.getUserFormDetails(rapidRequest);
@@ -101,7 +99,7 @@ public class Form extends Action {
 							js = "// user form details could not be found";
 						} else if ("sub".equals(actionType)) {					
 							// get the form submit message
-							value = details.getSubmitMessage();		
+							value = details.getSubmitMessage();								
 						} else if ("err".equals(actionType)) {					
 							// get the form error message
 							value = details.getErrorMessage();								
@@ -122,7 +120,7 @@ public class Form extends Action {
 							value = "~?a=" + application.getId() + "&v=" + application.getVersion() + "&action=pdf&f=" + details.getId();
 						} // details and what to do check
 						// enclose it if we got something
-						if (value != null) value = "'" + value.replace("\\", "\\\\").replace("'", "\\'").replace("\r\n", "\\n").replace("\n", "\\n").replace("\r", "") + "'";
+						if (value != null) value = "'" + value.replace("\\", "\\\\").replace("'", "\\'").replace("\r\n", "\\n").replace("\n", "\\n").replace("\r", "") + "'";	
 					}
 					// use the set data if we got something
 					if (value != null) js = "setData_" + destinationControl.getType() + "(ev, '" + destinationId + "', null, " + destinationControl.getDetails() + ", " + value + ");\n";

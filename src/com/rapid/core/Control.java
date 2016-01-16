@@ -51,6 +51,8 @@ import org.json.JSONObject;
 import org.w3c.dom.Node;
 
 import com.rapid.core.Action;
+import com.rapid.core.Application.Value;
+import com.rapid.core.Application.ValueList;
 import com.rapid.server.RapidHttpServlet;
 import com.rapid.server.RapidRequest;
 import com.rapid.utils.Numbers;
@@ -187,11 +189,11 @@ public class Control {
 	
 	// helper method for looking up code values 
 	// (for now dropdowns and radiobuttons are hardcoded, at some point we can add a lookup interface and lookup class specification in the control.xml, or just properties for the code check, collection, code and label)
-	public String getCodeText(String code) {		
+	public String getCodeText(Application application, String code) {		
 		// get control type
 		String type = getType();
 		// if we got one
-		if (type != null) {
+		if (code != null && type != null) {
 			// change type to all lower case
 			type = type.toLowerCase();
 			// try to look up the user-friendly value and silently fail if any problems
@@ -199,11 +201,31 @@ public class Control {
 				// if this is a drop down, or derived from one
 				if (type.contains("dropdown")) {
 					if (Boolean.parseBoolean(getProperty("codes"))) {
-						JSONArray jsonCodes = new JSONArray(getProperty("options"));
-						for (int i = 0; i < jsonCodes.length(); i++) {
-							JSONObject jsonCode = jsonCodes.getJSONObject(i);
-							if (code.equals(jsonCode.optString("value"))) return jsonCode.optString("text");
-						}
+						// look for a value list
+						String valueListName = getProperty("valueList");
+						// check we got one
+						if (valueListName == null) {
+							JSONArray jsonCodes = new JSONArray(getProperty("options"));
+							for (int i = 0; i < jsonCodes.length(); i++) {
+								JSONObject jsonCode = jsonCodes.getJSONObject(i);
+								if (code.equals(jsonCode.optString("value"))) return jsonCode.optString("text");
+							}
+						} else {
+							List<ValueList> valueLists = application.getValueLists();
+							if (valueLists != null) {
+								for (ValueList valueList : valueLists) {
+									if (valueListName.equals(valueList.getName())) {
+										if (valueList.getUsesCodes()) {
+											for (Value value : valueList.getValues()) {
+												if (code.equals(value.getValue())) {
+													return value.getText();
+												}
+											}
+										}
+									}
+								}
+							}
+						}						
 					}					
 				} else if (type.contains("radiobuttons")) {
 					if (Boolean.parseBoolean(getProperty("codes"))) {
@@ -218,8 +240,7 @@ public class Control {
 		}					
 		return code;
 	}
-	
-				
+		
 	// a parameterless constructor is required so they can go in the JAXB context and be unmarshalled 
 	public Control() {
 		// set the xml version

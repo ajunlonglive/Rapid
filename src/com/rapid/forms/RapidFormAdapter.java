@@ -266,21 +266,21 @@ public class RapidFormAdapter extends FormAdapter {
 	
 	// uses our user session method to get the form page control values
 	@Override
-	public FormPageControlValues getFormPageControlValues(RapidRequest rapidRequest, String pageId) throws Exception	{
+	public FormPageControlValues getFormPageControlValues(RapidRequest rapidRequest, String formId, String pageId) throws Exception	{
 		// retrieve
 		return getUserFormPageControlValues(rapidRequest).get(pageId);
 	}
 
 	// uses our user session method to set the form page control values (for hidden pages pageControlValues will be null)
 	@Override
-	public void setFormPageControlValues(RapidRequest rapidRequest, String pageId, FormPageControlValues pageControlValues) throws Exception {		
+	public void setFormPageControlValues(RapidRequest rapidRequest, String formId, String pageId, FormPageControlValues pageControlValues) throws Exception {		
 		// store them
 		getUserFormPageControlValues(rapidRequest).put(pageId, pageControlValues);	
 	}
 	
 	// uses our user session method to get a control value
 	@Override
-	public String getFormControlValue(RapidRequest rapidRequest, String controlId, boolean notHidden) throws Exception {
+	public String getFormControlValue(RapidRequest rapidRequest, String formId, String controlId, boolean notHidden) throws Exception {
 		// split the controlid
 		String[] controlIdParts = controlId.split("_");
 		// check we have enough to include the page
@@ -360,7 +360,7 @@ public class RapidFormAdapter extends FormAdapter {
 							value = jsonValue.optString("text");
 						} catch (Exception ex) {}
 					}
-					return "<span class='formSummaryControl'>" + label + " : " + Html.escape(control.getCodeText(value)) + "</span>\n";
+					return "<span class='formSummaryControl'>" + label + " : " + Html.escape(control.getCodeText(application, value)) + "</span>\n";
 				}		
 			}
 		}

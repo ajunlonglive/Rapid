@@ -141,7 +141,11 @@ public class DataFactory {
 			String parametersString = "";
 			for (int i = 0; i < this.size(); i++) {
 				Parameter parameter = this.get(i);
-				parametersString += "'" + parameter.toString() + "'";
+				if (parameter.getString() == null) {
+					parametersString += parameter.toString();
+				} else {
+					parametersString += "'" + parameter.toString() + "'";
+				}
 				if (i < this.size() - 1) parametersString += ", ";
 			}
 			return parametersString;

@@ -7,7 +7,7 @@ gareth.edwards@rapid-is.co.uk
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as 
 published by the Free Software Foundation, either version 3 of the 
 License, or (at your option) any later version. The terms require you 
@@ -332,6 +332,8 @@ public class Rapid extends Action {
 		String action = jsonAction.getString("actionType");
 		
 		RapidHttpServlet rapidServlet = rapidRequest.getRapidServlet();
+		
+		ServletContext servletContext = rapidServlet.getServletContext();
 		
 		String newAppId = null;
 		
@@ -886,7 +888,7 @@ public class Rapid extends Action {
 					// if it's different from what came in
 					if (!securityAdapterClass.equals(security.getClass().getCanonicalName())) {						
 						// set the new security adapter
-						app.setSecurityAdapter(rapidServlet.getServletContext(), securityAdapterType);
+						app.setSecurityAdapter(servletContext, securityAdapterType);
 						// read it back again
 						security = app.getSecurityAdapter();
 					}
@@ -1081,17 +1083,17 @@ public class Rapid extends Action {
 			} else if ("RELOADACTIONS".equals(action)) {
 							
 				// load actions and set the result message
-				result.put("message", RapidServletContextListener.loadActions(rapidServlet.getServletContext()) + " actions reloaded");  
+				result.put("message", RapidServletContextListener.loadActions(servletContext) + " actions reloaded");  
 								
 			} else if ("RELOADCONTROLS".equals(action)) {
 				
 				// load controls and set the result message
-				result.put("message", RapidServletContextListener.loadControls(rapidServlet.getServletContext()) + " controls reloaded");  				
+				result.put("message", RapidServletContextListener.loadControls(servletContext) + " controls reloaded");  				
 				
 			} else if ("RELOADAPPLICATIONS".equals(action)) {
 				
 				// load applications and set the result message
-				result.put("message", RapidServletContextListener.loadApplications(rapidServlet.getServletContext()) + " applications reloaded");  
+				result.put("message", RapidServletContextListener.loadApplications(servletContext) + " applications reloaded");  
 								
 			} else if ("RELOADADAPTERS".equals(action)) {
 								
@@ -1101,10 +1103,7 @@ public class Rapid extends Action {
 				int securityAdapters = 0;
 				int forms = 0;
 				int devices = 0;
-				
-				
-				ServletContext servletContext = rapidServlet.getServletContext();
-													
+											
 				databaseDrivers = RapidServletContextListener.loadDatabaseDrivers(servletContext);
 				
 				connectionAdapters = RapidServletContextListener.loadConnectionAdapters(servletContext);
@@ -1126,10 +1125,13 @@ public class Rapid extends Action {
 			} else if ("RELOADVERSION".equals(action)) {
 				
 				// look for an application file in the application folder
-				File applicationFile = new File(app.getConfigFolder(rapidServlet.getServletContext()) + "/application.xml");
+				File applicationFile = new File(app.getConfigFolder(servletContext) + "/application.xml");
+				
+				// close the existing app
+				app.close(servletContext);
 				
 				// reload the application from file
-				Application reloadedApplication = Application.load(rapidServlet.getServletContext(), applicationFile);
+				Application reloadedApplication = Application.load(servletContext, applicationFile);
 				
 				// replace it into the applications collection
 				rapidServlet.getApplications().put(reloadedApplication);
@@ -1834,7 +1836,7 @@ public class Rapid extends Action {
 				// delete the user
 				app.getSecurityAdapter().deleteUser(rapidRequest);
 				// remove any of their page locks
-				app.removeUserPageLocks(rapidServlet.getServletContext(), userName);
+				app.removeUserPageLocks(servletContext, userName);
 				// set the result message
 				result.put("message", "User deleted");
 													
@@ -2041,7 +2043,7 @@ public class Rapid extends Action {
 				devices.add(new Device("New device", 500, 500, 200, 1d));
 				
 				// save it
-				devices.save(rapidServlet.getServletContext());
+				devices.save(servletContext);
 				
 			} else if ("DELDEVICE".equals(action)) {
 				
@@ -2055,7 +2057,7 @@ public class Rapid extends Action {
 				devices.remove(index);
 
 				// save the devices
-				devices.save(rapidServlet.getServletContext());
+				devices.save(servletContext);
 								
 				// set the result message
 				result.put("message", "Device deleted");
@@ -2082,7 +2084,7 @@ public class Rapid extends Action {
 				device.setScale(scale);
 				
 				// save the devices
-				devices.save(rapidServlet.getServletContext());
+				devices.save(servletContext);
 								
 				// set the result message
 				result.put("message", "Device details saved");
@@ -2116,7 +2118,7 @@ public class Rapid extends Action {
 						// instatntiate a DatabaseConnection object for this test
 						DatabaseConnection dbconnection = new DatabaseConnection("test", driverClass, connectionString, connectionAdapterClass, userName, password);
 						// get the adapter
-						ConnectionAdapter connectionAdapter = dbconnection.getConnectionAdapter(rapidServlet.getServletContext(), app);						
+						ConnectionAdapter connectionAdapter = dbconnection.getConnectionAdapter(servletContext, app);						
 						// get a data factory
 						DataFactory dataFactory = new DataFactory(connectionAdapter);
 						// get a connection
@@ -2141,7 +2143,7 @@ public class Rapid extends Action {
 				String backupId = jsonAction.getString("backupId");
 				
 				// get the folder into a file object
-				File backup = new File (app.getBackupFolder(rapidServlet.getServletContext(), false) + "/" + backupId);
+				File backup = new File (app.getBackupFolder(servletContext, false) + "/" + backupId);
 				// delete it
 				Files.deleteRecurring(backup);
 				
@@ -2156,7 +2158,7 @@ public class Rapid extends Action {
 				String backupId = jsonAction.getString("backupId");
 				
 				// get the folder into a file object
-				File backup = new File (app.getBackupFolder(rapidServlet.getServletContext(), false) + "/" + backupId);
+				File backup = new File (app.getBackupFolder(servletContext, false) + "/" + backupId);
 				// delete it
 				Files.deleteRecurring(backup);
 				
@@ -2171,7 +2173,7 @@ public class Rapid extends Action {
 				String backupId = jsonAction.getString("backupId");
 				
 				// get this backup folder
-				File backupFolder = new File(app.getBackupFolder(rapidServlet.getServletContext(), false) + "/" + backupId);
+				File backupFolder = new File(app.getBackupFolder(servletContext, false) + "/" + backupId);
 				
 				// check it exists
 				if (backupFolder.exists()) {
@@ -2181,18 +2183,18 @@ public class Rapid extends Action {
 					
 					
 					// get the config folder
-					File configFolder = new File(app.getConfigFolder(rapidServlet.getServletContext()));
+					File configFolder = new File(app.getConfigFolder(servletContext));
 					
 					// get the web folder
-					File webFolder = new File(app.getWebFolder(rapidServlet.getServletContext()));
+					File webFolder = new File(app.getWebFolder(servletContext));
 					
 					// get the backups folder
-					File backupsFolder = new File(app.getBackupFolder(rapidServlet.getServletContext(), false));
+					File backupsFolder = new File(app.getBackupFolder(servletContext, false));
 					
 															
 					
 					// create a file object for restoring the config folder
-				 	File configRestoreFolder = new File(Application.getConfigFolder(rapidServlet.getServletContext(), app.getId(), "_restore"));
+				 	File configRestoreFolder = new File(Application.getConfigFolder(servletContext, app.getId(), "_restore"));
 				 	
 				 	List<String> ignoreList = new ArrayList<String>();
 				 	ignoreList.add("WebContent");
@@ -2206,7 +2208,7 @@ public class Rapid extends Action {
 					File webBackupFolder = new File(backupFolder + "/WebContent");
 					
 					// create a file object for the web content restore folder
-					File webRestoreFolder = new File(Application.getWebFolder(rapidServlet.getServletContext(), app.getId(), "_restore"));
+					File webRestoreFolder = new File(Application.getWebFolder(servletContext, app.getId(), "_restore"));
 					
 					// copy the web contents backup folder to the webcontent restore folder
 					Files.copyFolder(webBackupFolder, webRestoreFolder);
@@ -2214,7 +2216,7 @@ public class Rapid extends Action {
 									
 					
 					// get the backups destination folder
-					File backupsRestoreFolder = new File(Application.getBackupFolder(rapidServlet.getServletContext(), app.getId(), "_restore", false));
+					File backupsRestoreFolder = new File(Application.getBackupFolder(servletContext, app.getId(), "_restore", false));
 					
 					// copy in the backups
 					Files.copyFolder(backupsFolder, backupsRestoreFolder);
@@ -2240,7 +2242,7 @@ public class Rapid extends Action {
 					File applicationFile = new File(configFolder + "/application.xml");
 					
 					// reload the application
-					app = Application.load(rapidServlet.getServletContext(), applicationFile);
+					app = Application.load(servletContext, applicationFile);
 					
 					// add it back to the collection
 					rapidServlet.getApplications().put(app);
@@ -2276,22 +2278,22 @@ public class Rapid extends Action {
 				}
 				
 				// get the page
-				Page page = app.getPages().getPageByName(rapidServlet.getServletContext(), pageName);
+				Page page = app.getPages().getPageByName(servletContext, pageName);
 				
 				// create a file object for the page
-			 	File pageFile = new File(page.getFile(rapidServlet.getServletContext(), app));
+			 	File pageFile = new File(page.getFile(servletContext, app));
 				
 			 	// create a backup for the current state
 				page.backup(rapidServlet, rapidRequest, app, pageFile, false);
 				
 				// get this backup file
-				File backupFile = new File(app.getBackupFolder(rapidServlet.getServletContext(), false) + "/" + backupId);
+				File backupFile = new File(app.getBackupFolder(servletContext, false) + "/" + backupId);
 				
 				// copy it over the current page file
 				Files.copyFile(backupFile, pageFile);
 				
 				// load the page from the backup 
-				page = Page.load(rapidServlet.getServletContext(), backupFile);
+				page = Page.load(servletContext, backupFile);
 				
 				// replace the current entry
 				app.getPages().addPage(page, pageFile);

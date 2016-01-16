@@ -1379,15 +1379,16 @@ function Property_controlsForType(cell, propertyObject, property, details) {
 			for (var i = 0; i < controls.length; i++) {
 				// get the control
 				var control = getControlById(controls[i]);
-				// add the name to the cell text
-				text += control.name;
-				// add a comma if not the last one
-				if (i < controls.length - 1) text += ",";
-				
-				// add a row with the control name
-				table.append("<tr><td>" + control.name + "</td><td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td><tr>");
-				
-				
+				// if we got one
+				if (control) {
+					// add the name to the cell text
+					text += control.name;
+					// add a comma if not the last one
+					if (i < controls.length - 1) text += ",";
+					
+					// add a row with the control name
+					table.append("<tr><td>" + control.name + "</td><td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td><tr>");
+				}				
 			}
 			
 			// add listeners to the delete image

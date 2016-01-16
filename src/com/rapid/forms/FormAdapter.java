@@ -50,6 +50,7 @@ import com.rapid.security.SecurityAdapter;
 import com.rapid.security.SecurityAdapter.SecurityAdapaterException;
 import com.rapid.server.Rapid;
 import com.rapid.server.RapidRequest;
+import com.rapid.utils.Numbers;
 
 public abstract class FormAdapter {
 	
@@ -139,6 +140,20 @@ public abstract class FormAdapter {
 		public void add(String controlId, String controlValue) {
 			this.add(new FormControlValue(controlId, controlValue));
 		}
+		
+		public FormControlValue get(String controlId) {
+			for (FormControlValue controlValue : this) {
+				if (controlId.equals(controlValue.getId())) return controlValue;
+			}
+			return null;
+		}
+		
+		public String getValue(String controlId) {
+			for (FormControlValue controlValue : this) {
+				if (controlId.equals(controlValue.getId())) return controlValue.getValue();
+			}
+			return null;
+		}
 						
 	}
 	
@@ -178,6 +193,7 @@ public abstract class FormAdapter {
 	
 	//  static finals
 	private static final String USER_FORM_DETAILS = "userFormDetails";
+	private static final String USER_FORMS_SUBMITTED = "userFormsSubmitted";
 		
 	// instance variables
 	
@@ -194,6 +210,15 @@ public abstract class FormAdapter {
 	public FormAdapter(ServletContext servletContext, Application application) {
 		_servletContext = servletContext;
 		_application = application;
+	}
+	
+	// private instance methods
+	
+	private String getFormMapKey(RapidRequest rapidRequest) {
+		// get the application
+		Application application = rapidRequest.getApplication();
+		// return the key
+		return application.getId() + "-" + application.getVersion();
 	}
 	
 	// abstract methods
@@ -223,13 +248,13 @@ public abstract class FormAdapter {
 	public abstract void setFormPageVariableValue(RapidRequest rapidRequest, String formId, String name, String value) throws Exception;
 					
 	// returns all the form control values for a given page
-	public abstract FormPageControlValues getFormPageControlValues(RapidRequest rapidRequest, String pageId) throws Exception;
+	public abstract FormPageControlValues getFormPageControlValues(RapidRequest rapidRequest, String formId, String pageId) throws Exception;
 	
 	// sets all the form control values for a given page - pages that fail the isVisible method will be sent  a null pageControlValues
-	public abstract void setFormPageControlValues(RapidRequest rapidRequest, String pageId, FormPageControlValues pageControlValues) throws Exception;
+	public abstract void setFormPageControlValues(RapidRequest rapidRequest, String formId, String pageId, FormPageControlValues pageControlValues) throws Exception;
 	
 	// gets the value of a form control value	
-	public abstract String getFormControlValue(RapidRequest rapidRequest, String controlId, boolean notHidden) throws Exception;
+	public abstract String getFormControlValue(RapidRequest rapidRequest, String formId, String controlId, boolean notHidden) throws Exception;
 						
 	// this html is written after the body tag
 	public abstract String getSummaryStartHtml(RapidRequest rapidRequest, Application application);
@@ -256,14 +281,39 @@ public abstract class FormAdapter {
 	public abstract void close() throws Exception;
 				
 	// protected instance methods
+	
+	// this writes the form pdf
+	protected void writeFormPDF(RapidRequest rapidRequest, HttpServletResponse response, String formId) throws Exception {}
 		
-	protected String getFormMapKey(RapidRequest rapidRequest) {
-		// get the application
-		Application application = rapidRequest.getApplication();
-		// return the key
-		return application.getId() + "-" + application.getVersion();
+	// this gets the list of submitted forms from the users session
+	protected List<String> getSubmittedForms(RapidRequest rapidRequest) {
+		// first try and get from the session
+		List<String> submittedForms = (List<String>) rapidRequest.getSessionAttribute(USER_FORMS_SUBMITTED);
+		// if this is null
+		if (submittedForms == null) {
+			// make a new one
+			submittedForms = new ArrayList<String>();
+			// store it
+			rapidRequest.getRequest().getSession().setAttribute(USER_FORMS_SUBMITTED, submittedForms);
+		}
+		// return 
+		return submittedForms;
 	}
-								
+	
+	// this adds a form id to the submitted list
+	protected void addSubmittedForm(RapidRequest rapidRequest, String formId) {
+		// get  the list
+		List<String> submittedForms = getSubmittedForms(rapidRequest);
+		// if not there already
+		if (!submittedForms.contains(formId)) {
+			// add it
+			submittedForms.add(formId);
+			// store it
+			rapidRequest.getRequest().getSession().setAttribute(USER_FORMS_SUBMITTED, submittedForms);
+		}
+		
+	}
+	
 	// public instance methods
 			
 	// sets whether the form has been saved
@@ -357,12 +407,15 @@ public abstract class FormAdapter {
 			// mark user form as submitted
 			details.setSubmitted(true);
 			// retain the submit message in the details
-			details.setSubmitMessage(message);			
+			details.setSubmitMessage(message);
+			// retain that this form was submitted
+			addSubmittedForm(rapidRequest, details.getId());
 		} catch (Exception ex) {
 			// mark user form as error
 			details.setError(true);
 			// retain the error message in the details
-			details.setErrorMessage(ex.getMessage());			
+			details.setErrorMessage(ex.getMessage());
+			// rethrow
 			throw ex;
 		}		
 	}
@@ -422,6 +475,33 @@ public abstract class FormAdapter {
 		}		
 		// return the result
 		return canResume;
+	}
+	
+	// used when resuming forms
+	public void doWriteFormPDF(RapidRequest rapidRequest, HttpServletResponse response, String formId) throws Exception {
+		
+		// assume not passed
+		boolean passed = false;
+		
+		// check we got a form id
+		if (formId != null) {
+			// check this has been submitted
+			if (getSubmittedForms(rapidRequest).contains(formId)) passed = true;
+		}
+		
+		// check for a form id - should be null if form not commence properly
+		if (passed) {
+			
+			// write the pdf
+			writeFormPDF(rapidRequest, response, formId);
+			
+		} else {
+			
+			// send users back to the start
+			response.sendRedirect("~?a=" + _application.getId() + "&v=" + _application.getVersion());
+															
+		}
+		
 	}
 		
 	// this writes the form summary page
@@ -484,7 +564,7 @@ public abstract class FormAdapter {
 				StringBuilder valuesStringBuilder = new StringBuilder();
 				
 				// get any page control values
-				FormPageControlValues pageControlValues = _application.getFormAdapter().getFormPageControlValues(rapidRequest, pageHeader.getId());
+				FormPageControlValues pageControlValues = _application.getFormAdapter().getFormPageControlValues(rapidRequest, formId, pageHeader.getId());
 				
 				// if non null
 				if (pageControlValues != null) {
@@ -682,10 +762,12 @@ public abstract class FormAdapter {
 									String maxLength = control.getProperty("maxLength");
 									// if we got one
 									if (maxLength != null) {
-										// convert to int
-										int max = Integer.parseInt(maxLength);
-										// check length
-										if (value.length() >  max) throw new ServerSideValidationException("Server side validation error - value " + id + " for  form " + formId+ " failed regex");
+										if (Numbers.isInteger(maxLength)) {
+											// convert to int
+											int max = Integer.parseInt(maxLength);
+											// check length
+											if (value.length() >  max) throw new ServerSideValidationException("Server side validation error - value " + id + " for  form " + formId+ " failed regex");
+										}
 									}
 								}
 							} // found control in page
