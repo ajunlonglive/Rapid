@@ -169,81 +169,27 @@ public class RapidFormAdapter extends FormAdapter {
 				return null;
 			} else {
 				// form found we're good
-				return new UserFormDetails(formId, null);
+				return new UserFormDetails(formId, null, null, false, null);
 			}
 		}
 	}
-	
+			
 	@Override
-	public boolean checkMaxPage(RapidRequest rapidRequest, String formId, String pageId) throws Exception {
-		// get the user session (without making a new one)
-		HttpSession session = rapidRequest.getRequest().getSession(false);
-		// get the form ids map from the session
-		Map<String,String> pageIds = (Map<String, String>) session.getAttribute(USER_FORM_MAX_PAGES);
-		// get the application
-		Application application = rapidRequest.getApplication();
-		// check we have pageIds and an application
-		if (application != null) {
-			// get the sorted pages
-			PageHeaders pages = application.getPages().getSortedPages();
-			// check we got some pages
-			if (pages != null) {
-				if (pages.size() > 0) {
-					// start with the top page
-					String maxPageId =  pages.get(0).getId();
-					// use the page ids if we have some
-					if (pageIds != null) maxPageId = pageIds.get(application.getId() + "-" + application.getVersion());				
-					// get the position of the maxPage
-					int maxPageIndex = pages.indexOf(maxPageId);
-					// get the position of this page
-					int pageIndex = pages.indexOf(pageId);
-					// if we're allowed at this point
-					if (pageIndex <= maxPageIndex) return true;
-				}				
-			}			
-		}
-		return false;
+	public void setMaxPage(RapidRequest rapidRequest, UserFormDetails formDetails, String pageId) {
+		// if we got the details
+		if (formDetails != null) formDetails.setMaxPageId(pageId);
 	}
 			
 	@Override
-	public void setMaxPage(RapidRequest rapidRequest, String formId, String pageId) {
-		// get the user session (making a new one if need be)
-		HttpSession session = rapidRequest.getRequest().getSession();
-		// get the form ids
-		Map<String,String> maxPages = (Map<String, String>) session.getAttribute(USER_FORM_MAX_PAGES);
-		// make some if we didn't get
-		if (maxPages == null)  maxPages = new HashMap<String, String>(); 					
-		// get the application
-		Application application = rapidRequest.getApplication();
-		// store the form if for a given app id / version
-		maxPages.put(application.getId() + "-" + application.getVersion(), pageId);		
-		// update the session with the new form ids
-		session.setAttribute(USER_FORM_MAX_PAGES, maxPages);		
-	}
-			
-	@Override
-	public boolean getFormComplete(RapidRequest rapidRequest, String formId) throws Exception {
-		// get the userPageComplete values
-		Map<String, Boolean>  userFormCompleteValues = getUserFormCompleteValues(rapidRequest);
-		// get the value
-		Boolean formComplete = userFormCompleteValues.get(formId);
-		// check for nulls
-		if (formComplete == null) {
-			return false;
-		} else {
-			// return
-			return formComplete.booleanValue();
-		}
-	}
-
-	@Override
-	public void setFormComplete(RapidRequest rapidRequest, String formId, boolean completed) throws Exception {
+	public void setFormComplete(RapidRequest rapidRequest, UserFormDetails formDetails) throws Exception {
 		// get the userPageComplete values
 		Map<String, Boolean>  userFormCompleteValues = getUserFormCompleteValues(rapidRequest);
 		// set it
-		userFormCompleteValues.put(formId, completed);
+		userFormCompleteValues.put(formDetails.getId(), true);
 		// store it
 		rapidRequest.getRapidServlet().getServletContext().setAttribute(USER_FORM_COMPLETE_VALUES, userFormCompleteValues);
+		// update details
+		formDetails.setComplete(true);
 	}
 	
 	// set a form page variable
@@ -374,9 +320,9 @@ public class RapidFormAdapter extends FormAdapter {
 
 	// submit the form - for the RapidFormAdapter nothing special happens, more sophisticated ones will write to databases, webservices, etc
 	@Override
-	public String submitForm(RapidRequest rapidRequest) throws Exception {	
-		// throw new Exception("An error has occurred");
-		return "Form submitted";
+	public SubmissionDetails submitForm(RapidRequest rapidRequest) throws Exception {	
+		// simple submission details
+		return new SubmissionDetails("Form submitted", null);
 	}
 
 	// nothing to do here

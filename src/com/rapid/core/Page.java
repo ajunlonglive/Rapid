@@ -1207,12 +1207,23 @@ public class Page {
 		for (Action action : actions) {
 			// if form type
 			if ("form".equals(action.getType())) {
+				// get the action type
+				String type = action.getProperty("actionType");
 				// if value copy
-				if ("val".equals(action.getProperty("actionType"))) {
+				if ("val".equals(type)) {
 					// get control id
 					String controlId = action.getProperty("dataSource");
 					// add to collection if all in order
 					if (controlId != null) _formControlValues.add(controlId);
+				} else if ("sub".equals(type)) {
+					// add sub as id
+					_formControlValues.add("sub");
+				} else if ("err".equals(type)) {
+					// add err as id
+					_formControlValues.add("err");
+				} else if ("res".equals(type)) {
+					// add res as id
+					_formControlValues.add("res");
 				}
 			}
 		}
@@ -1483,82 +1494,108 @@ public class Page {
 		    		// first do the actions that could result in an exception
 					try {
 						
-						// get the form id
-						formId =  formAdapter.getFormId(rapidRequest);
+						// get the form details
+						UserFormDetails formDetails =  formAdapter.getUserFormDetails(rapidRequest);
 						
-						// create the values string builder
-						formValues = new StringBuilder();
-						
-						// start the form values object (to supply previous form values)
-						formValues.append("var _formValues = {");
-						
-						// if form control values to set
-						if (_formControlValues != null) {
+						// if we got some
+						if (formDetails != null) {
 							
-							// loop then
-							for (int i = 0; i < _formControlValues.size(); i++) {
+							// set the form id
+							formId = formDetails.getId();
 							
-								// get the control id
-								String controlId = _formControlValues.get(i);
+							// create the values string builder
+							formValues = new StringBuilder();
+							
+							// start the form values object (to supply previous form values)
+							formValues.append("var _formValues = {");
+							
+							// if form control values to set
+							if (_formControlValues != null) {
 								
-								// get the value
-								String value = formAdapter.getFormControlValue(rapidRequest, formId, controlId, false);
+								// loop then
+								for (int i = 0; i < _formControlValues.size(); i++) {
 								
-								// if we got one
-								if (value != null) {
-									// escape it and enclose it
-									value = value.replace("\\", "\\\\").replace("'", "\\'").replace("\r\n", "\\n").replace("\n", "\\n").replace("\r", "");
-									// add to object
-									formValues.append("'" + controlId + "':'" + value + "'");
-									// add comma if need be
-									if (i < _formControlValues.size() - 1) formValues.append(",");
-								}								
-							}														
-						}
-						
-						// close it
-						formValues.append("};\n\n");
-						
-						// start the set form values function
-						formValues.append("function Event_setFormValues(ev) {");
-						
-						// get any form page values
-						FormPageControlValues formControlValues = formAdapter.getFormPageControlValues(rapidRequest, formId, _id);
-						
-						// if there are any
-						if (formControlValues != null) {
-							if (formControlValues.size() > 0) {
-								
-								// add a line break
-								formValues.append("\n");
-																		
-								// loop the values
-								for (FormControlValue formControlValue : formControlValues) {
+									// get the control id
+									String id = _formControlValues.get(i);
 									
-									// get the control
-									Control pageControl = getControl(formControlValue.getId());
-	
-									// if we got one
-									if (pageControl != null) {		
-										
-										// get the value
-										String value = formControlValue.getValue();
-										// assume no field
-										String field = "null";
-										// the dropdown control needs a little help
-										if ("dropdown".equals(pageControl.getType())) field = "'x'";
-										// get any control details
-										String details = pageControl.getDetailsJavaScript(application, this);
-										// if null update to string
-										if (details == null) details = null;
-										// if there is a value use the standard setData for it (this might change to something more sophisticated at some point)
-										if (value != null) formValues.append("  if (window[\"setData_" + pageControl.getType() + "\"]) setData_" + pageControl.getType() + "(ev, '" + pageControl.getId() + "', " + field + ", " + details + ", '" + value.replace("\\", "\\\\").replace("'", "\\'").replace("\r\n", "\\n").replace("\n", "\\n").replace("\r", "") + "');\n");										
+									// place holder for the value
+									String value = null; 
+									
+									// some id's are special
+									if ("id".equals(id)) {
+										// the submission message
+										value = formDetails.getId();									
+									} else if ("sub".equals(id)) {
+										// the submission message
+										value = formDetails.getSubmitMessage();										
+									} else if ("err".equals(id)) {
+										// the submission message
+										value = formDetails.getErrorMessage();										
+									} else if ("res".equals(id)) {
+										// the submission message
+										value = formDetails.getPassword();									
+									} else {
+										// lookup the value
+										value = formAdapter.getFormControlValue(rapidRequest, formId, id, false);
 									}
-								}								
+									
+									// if we got one
+									if (value != null) {
+										// escape it and enclose it
+										value = value.replace("\\", "\\\\").replace("'", "\\'").replace("\r\n", "\\n").replace("\n", "\\n").replace("\r", "");
+										// add to object
+										formValues.append("'" + id + "':'" + value + "'");
+										// add comma if need be
+										if (i < _formControlValues.size() - 1) formValues.append(",");
+									}								
+								}														
 							}
-						}									
-						// close the function
-						formValues.append("};\n\n");		
+							
+							// close it
+							formValues.append("};\n\n");
+							
+							// start the set form values function
+							formValues.append("function Event_setFormValues(ev) {");
+							
+							// get any form page values
+							FormPageControlValues formControlValues = formAdapter.getFormPageControlValues(rapidRequest, formId, _id);
+							
+							// if there are any
+							if (formControlValues != null) {
+								if (formControlValues.size() > 0) {
+									
+									// add a line break
+									formValues.append("\n");
+																			
+									// loop the values
+									for (FormControlValue formControlValue : formControlValues) {
+										
+										// get the control
+										Control pageControl = getControl(formControlValue.getId());
+		
+										// if we got one
+										if (pageControl != null) {		
+											
+											// get the value
+											String value = formControlValue.getValue();
+											// assume no field
+											String field = "null";
+											// the dropdown control needs a little help
+											if ("dropdown".equals(pageControl.getType())) field = "'x'";
+											// get any control details
+											String details = pageControl.getDetailsJavaScript(application, this);
+											// if null update to string
+											if (details == null) details = null;
+											// if there is a value use the standard setData for it (this might change to something more sophisticated at some point)
+											if (value != null) formValues.append("  if (window[\"setData_" + pageControl.getType() + "\"]) setData_" + pageControl.getType() + "(ev, '" + pageControl.getId() + "', " + field + ", " + details + ", '" + value.replace("\\", "\\\\").replace("'", "\\'").replace("\r\n", "\\n").replace("\n", "\\n").replace("\r", "") + "');\n");										
+										}
+									}								
+								}
+							}									
+							// close the function
+							formValues.append("};\n\n");	
+														
+						}
 						
 						// write the form id into the page - not necessary for dialogues
 			    		if (designerLink) writer.write("var _formId = '" + formId + "';\n\n");
@@ -1863,17 +1900,10 @@ public class Page {
 				
 				return false;
 				
-			} else if (_formPageType == FORM_PAGE_TYPE_SUBMITTED && !userFormDetails.getSubmitted()) {
+			} else if (_formPageType == FORM_PAGE_TYPE_SUBMITTED && !userFormDetails.getShowSubmitPage()) {
 				
-				// requests for sumbiited page are denied if not submitted
+				// requests for sumbitted page are denied if show submission is not true
 				logger.debug("Page " + _id + " is a submitted page but the form has not been submitted yet");
-				
-				return false;
-				
-			} else if (_formPageType != FORM_PAGE_TYPE_SUBMITTED && userFormDetails.getSubmitted()) {
-				
-				// requests for normal pages are denied if the form has been submitted
-				logger.debug("Page " + _id + " is a non-submitted page but the form has been submitted");
 				
 				return false;
 				

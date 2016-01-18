@@ -58,27 +58,82 @@ public abstract class FormAdapter {
 	public static class UserFormDetails {
 		
 		// instance variables
-		private String _id, _password, _submitMessage, _errorMessage;
-		boolean _submitted, _error, _saved;
+		private String _id, _password, _maxPageId, _submittedDateTime, _submitMessage, _errorMessage;
+		boolean _saved, _complete, _error, _showSubmitPage;
 		
 		// properties
+		
+		// id
 		public String getId() { return _id; }
+		// password
 		public String getPassword() { return _password; }
-		public boolean getSubmitted() { return _submitted; }
-		public void setSubmitted(boolean submitted) { _submitted = submitted; }
-		public boolean getError() { return _error; }
-		public void setError(boolean error) { _error = error; }
+		
+		// whether this form has been saved
 		public boolean getSaved() { return _saved; }
 		public void setSaved(boolean saved) { _saved = saved; }
+		
+		// max page to which users have already been / are allowed
+		public String getMaxPageId() { return _maxPageId; }
+		public void setMaxPageId(String maxPageId) {_maxPageId = maxPageId; }
+		
+		// whether this form has been completed 
+		public boolean getComplete() { return _complete; }
+		public void setComplete(boolean complete) { _complete = complete; }
+				
+		// the date/time the form was submitted to show on the summary screen
+		public String getSubmittedDateTime() { return _submittedDateTime; }
+		public void setSubmittedDateTime(String submittedDateTime) { _submittedDateTime = submittedDateTime; }
+		// a helper method for the above
+		public boolean getSubmitted() { return _submittedDateTime == null ? false : true; }
+		
+		// the recently submitted message
 		public String getSubmitMessage() { return _submitMessage; }
 		public void setSubmitMessage(String submitMessage) { _submitMessage = submitMessage; }
+		
+		// whether to show the submission page (not allowed for resuming submitted forms)
+		public boolean getShowSubmitPage() { return _showSubmitPage; }
+		public void setShowSubmitPage(boolean showSubmitPage) { _showSubmitPage = showSubmitPage; } 
+		
+		// whether there was an error on recent submission
+		public boolean getError() { return _error; }
+		public void setError(boolean error) { _error = error; }
+		// the recent submission error
 		public String getErrorMessage() { return _errorMessage; }
 		public void setErrorMessage(String errorMessage) { _errorMessage = errorMessage; }
+						
+		// constructors		
 		
-		// constructor
+		// brand new forms
 		public UserFormDetails(String id, String password) {
 			_id = id;
 			_password = password;
+		}
+		
+		// resumed forms
+		public UserFormDetails(String id, String password, String maxPageId, boolean complete, String submittedDateTime) {
+			_id = id;
+			_password = password;
+			_maxPageId = maxPageId;
+			_complete = complete;
+			_submittedDateTime = submittedDateTime;
+		}
+		
+	}
+	
+	// details about a submitted form
+	public static class SubmissionDetails {
+		
+		// instance variables
+		String _message, _dateTime;
+		
+		// properties
+		public String getMessage() { return _message; }
+		public String getDateTime() { return _dateTime; }
+		
+		// constructor
+		public SubmissionDetails(String message, String dateTime) {
+			_message = message;
+			_dateTime = dateTime;
 		}
 		
 	}
@@ -228,18 +283,12 @@ public abstract class FormAdapter {
 	
 	// this method checks a form id against a password for resuming 
 	public abstract UserFormDetails getResumeFormDetails(RapidRequest rapidRequest, String formId, String password) throws Exception;
-	
-	// checks a given page id against the maximum
-	public abstract boolean checkMaxPage(RapidRequest rapidRequest, String formId, String pageId) throws Exception;
-	
+				
 	// sets the maximum page id the user is allowed to see
-	public abstract void setMaxPage(RapidRequest rapidRequest, String formId, String pageId) throws Exception;
+	public abstract void setMaxPage(RapidRequest rapidRequest, UserFormDetails formDetails, String pageId) throws Exception;
 	
-	// gets whether a form has been completed (and we can show the submit button on the summary)
-	public abstract boolean getFormComplete(RapidRequest rapidRequest, String formId) throws Exception;
-		
-	// sets whether a form has been completed (and we can show the submit button on the summary)
-	public abstract void setFormComplete(RapidRequest rapidRequest, String formId, boolean completed) throws Exception;
+	// sets that a form has been completed (and we can show the submit button on the summary)
+	public abstract void setFormComplete(RapidRequest rapidRequest, UserFormDetails formDetails) throws Exception;
 	
 	// gets any page/session variables for this form
 	public abstract Map<String,String> getFormPageVariableValues(RapidRequest rapidRequest, String formId) throws Exception;
@@ -275,7 +324,7 @@ public abstract class FormAdapter {
 	public abstract String getSummaryPagesEndHtml(RapidRequest rapidRequest, Application application);
 		
 	// submits the form and receives a message for the submitted page
-	public abstract String submitForm(RapidRequest rapidRequest) throws Exception;
+	public abstract SubmissionDetails submitForm(RapidRequest rapidRequest) throws Exception;
 	
 	// closes any resources used by the form adapter when the server shuts down
 	public abstract void close() throws Exception;
@@ -317,7 +366,7 @@ public abstract class FormAdapter {
 	// public instance methods
 			
 	// sets whether the form has been saved
-	public void setUserFormSaved(RapidRequest rapidRequest, boolean saved) {
+	public void setUserFormSaved(RapidRequest rapidRequest, boolean saved) throws Exception {
 		// get the details
 		UserFormDetails details = getUserFormDetails(rapidRequest);
 		// update if we got some
@@ -325,28 +374,22 @@ public abstract class FormAdapter {
 	}
 	
 	// returns the form id in the user session for a given application id and version
-	public UserFormDetails getUserFormDetails(RapidRequest rapidRequest) {
+	public UserFormDetails getUserFormDetails(RapidRequest rapidRequest) throws Exception {
 		// get the user session (without making a new one)
 		HttpSession session = rapidRequest.getRequest().getSession(false);
 		// get the form ids map from the session
-		Map<String,UserFormDetails> details = (Map<String, UserFormDetails>) session.getAttribute(USER_FORM_DETAILS);
-		// check we got some
-		if (details == null) {
-			return null;
-		} else {			
-			// return the user form id for a given app id / version
-			return details.get(getFormMapKey(rapidRequest));
+		Map<String,UserFormDetails> allFormDetails = (Map<String, UserFormDetails>) session.getAttribute(USER_FORM_DETAILS);
+		// if null
+		if (allFormDetails == null) {
+			// make some
+			allFormDetails = new HashMap<String, UserFormDetails>();
+			// add to session
+			session.setAttribute(USER_FORM_DETAILS, allFormDetails);
 		}
-	}
-						
-	// this looks for a form id in the user session and uses the adapter specific getNewId routine if one is allowed. Returning null sends the user to the start page
-	public String getFormId(RapidRequest rapidRequest) throws Exception {		
-		// assume no form id
-		String formId = null;
-		// get the form id using what's in the request
-		UserFormDetails details = getUserFormDetails(rapidRequest);
-		// if it's null
-		if (details == null) {			
+		// get the details for this form
+		UserFormDetails formDetails = allFormDetails.get(getFormMapKey(rapidRequest));
+		// check we got some
+		if (formDetails == null) {
 			// get the application
 			Application application = rapidRequest.getApplication();
 			// get the start page header
@@ -374,16 +417,15 @@ public abstract class FormAdapter {
 			// there are some rules for creating new form ids - there must be no action and the page must be the start page
 			if (rapidRequest.getRequest().getParameter("action") == null && newIdAllowed) {				
 				// get a new form details from the adapter
-				details = getNewFormDetails(rapidRequest);
+				formDetails = getNewFormDetails(rapidRequest);
 				// set the new user form details
-				setUserFormDetails(rapidRequest, details);				
-			}			
-		} else {
-			formId = details.getId();
-		}
-		return formId;
+				setUserFormDetails(rapidRequest, formDetails);				
+			}
+		} 
+		// return the user form details
+		return formDetails;
 	}
-	
+						
 	// sets the form details in the user session for a given application id and version
 	public void setUserFormDetails(RapidRequest rapidRequest, UserFormDetails details) {
 		// get the user session (making a new one if need be)
@@ -398,32 +440,80 @@ public abstract class FormAdapter {
 		session.setAttribute(USER_FORM_DETAILS, allDetails);
 	}
 	
+	// a helper method to get the form id via the details
+	public String getFormId(RapidRequest rapidRequest) throws Exception {
+		// get the user form details
+		UserFormDetails formDetails = getUserFormDetails(rapidRequest);
+		// check we got some
+		if (formDetails == null) {
+			return null;
+		} else {
+			return formDetails.getId();
+		}		
+	}
+	
+	// checks a given page id against the maximum
+	public boolean checkMaxPage(RapidRequest rapidRequest, UserFormDetails formDetails, String pageId) throws Exception {
+		// assume not completed
+		boolean check = false;
+		// get the application
+		Application application = rapidRequest.getApplication();
+		// check we got one
+		if (formDetails != null && application != null) {
+			// get the sorted pages
+			PageHeaders pages = application.getPages().getSortedPages();			
+			// get a scaler
+			String maxPageId = formDetails.getMaxPageId();			
+			// check we got something
+			if (maxPageId == null) {
+				// fine if the first page
+				if (pageId.equals(pages.get(0).getId())) check = true;
+			} else {
+				// check we got some pages
+				if (pages != null) {
+					if (pages.size() > 0) {										
+						// get the position of the maxPage
+						int maxPageIndex = pages.indexOf(maxPageId);
+						// get the position of this page
+						int pageIndex = pages.indexOf(pageId);
+						// if we're allowed at this point
+						if (pageIndex <= maxPageIndex) check = true;
+					}
+				}				
+			}
+		}		
+		// return
+		return check;
+	}
+
 	public void doSubmitForm(RapidRequest rapidRequest) throws Exception {
-		// get the details
-		UserFormDetails details = getUserFormDetails(rapidRequest);
+		// get the form details
+		UserFormDetails formDetails = getUserFormDetails(rapidRequest);
 		try {
-			// get the submit message
-			String message = submitForm(rapidRequest);				
-			// mark user form as submitted
-			details.setSubmitted(true);
+			// if submitted already throw exception
+			if (formDetails.getSubmitted()) throw new Exception("This form has already been submitted");
+			// get the submission details
+			SubmissionDetails submissionDetails = submitForm(rapidRequest);						
+			// retain the submitted date/time in the details
+			formDetails.setSubmittedDateTime(submissionDetails.getDateTime());
 			// retain the submit message in the details
-			details.setSubmitMessage(message);
+			formDetails.setSubmitMessage(submissionDetails.getMessage());
+			// allow the submission page to be seen
+			formDetails.setShowSubmitPage(true);
 			// retain that this form was submitted
-			addSubmittedForm(rapidRequest, details.getId());
+			addSubmittedForm(rapidRequest, formDetails.getId());
 		} catch (Exception ex) {
 			// mark user form as error
-			details.setError(true);
+			formDetails.setError(true);
 			// retain the error message in the details
-			details.setErrorMessage(ex.getMessage());
+			formDetails.setErrorMessage(ex.getMessage());
 			// rethrow
 			throw ex;
 		}		
 	}
 		
 	// used when resuming forms
-	public boolean doResumeForm(RapidRequest rapidRequest, String formId, String password) throws Exception {
-		// assume we are not allowed to resume
-		boolean canResume = false;
+	public UserFormDetails doResumeForm(RapidRequest rapidRequest, String formId, String password) throws Exception {
 		// get the application
 		Application application = rapidRequest.getApplication();
 		// if there was one
@@ -452,8 +542,11 @@ public abstract class FormAdapter {
 		// check the password against the formId using the user-implemented method
 		UserFormDetails details = getResumeFormDetails(rapidRequest, formId, password);
 		// check success
-		if (details != null) {			
-			// set the form id based on the app id and version
+		if (details == null) {
+			// invalidate any current form
+			setUserFormDetails(rapidRequest, null);
+		} else {
+			// set the form details
 			setUserFormDetails(rapidRequest, details);
 			// get the user page variable values
 			Map<String, String> pageVariableValues = getFormPageVariableValues(rapidRequest, formId);
@@ -467,14 +560,9 @@ public abstract class FormAdapter {
 					rapidRequest.getRequest().getSession().setAttribute(variable, value);
 				}
 			}
-			// remember we can resume
-			canResume = true;
-		} else {
-			// invalidate any current form
-			setUserFormDetails(rapidRequest, null);
-		}		
+		} 	
 		// return the result
-		return canResume;
+		return details;
 	}
 	
 	// used when resuming forms
@@ -507,11 +595,11 @@ public abstract class FormAdapter {
 	// this writes the form summary page
 	public void writeFormSummary(RapidRequest rapidRequest, HttpServletResponse response) throws Exception {
 		
-		// get the form id
-		String formId = getFormId(rapidRequest);
+		// get the user form details
+		UserFormDetails formDetails = getUserFormDetails(rapidRequest);
 		
 		// check for a form id - should be null if form not commence properly
-		if (formId == null) {
+		if (formDetails == null) {
 			
 			// send users back to the start
 			response.sendRedirect("~?a=" + _application.getId() + "&v=" + _application.getVersion());
@@ -556,6 +644,11 @@ public abstract class FormAdapter {
 			
 			// get the sorted pages
 			PageHeaders pageHeaders = _application.getPages().getSortedPages();
+			
+			// assume the page return link is edit
+			String pageReturn = "edit";
+			// update to view if submitted
+			if (formDetails.getSubmitted()) pageReturn = "view";
 						
 			// loop the page headers
 			for (PageHeader pageHeader : pageHeaders) {
@@ -564,7 +657,7 @@ public abstract class FormAdapter {
 				StringBuilder valuesStringBuilder = new StringBuilder();
 				
 				// get any page control values
-				FormPageControlValues pageControlValues = _application.getFormAdapter().getFormPageControlValues(rapidRequest, formId, pageHeader.getId());
+				FormPageControlValues pageControlValues = _application.getFormAdapter().getFormPageControlValues(rapidRequest, formDetails.getId(), pageHeader.getId());
 				
 				// if non null
 				if (pageControlValues != null) {
@@ -610,9 +703,9 @@ public abstract class FormAdapter {
 							
 							// write the values
 							writer.write(valuesStringBuilder.toString());
-							
+														
 							// write the edit link
-							writer.write("<a href='~?a=" + _application.getId() + "&v=" + _application.getVersion() + "&p=" + page.getId() + "'>edit</a>\n");
+							writer.write("<a href='~?a=" + _application.getId() + "&v=" + _application.getVersion() + "&p=" + page.getId() + "'>" + pageReturn + "</a>\n");
 							
 							// write the page end html
 							writer.write(getSummaryPageEndHtml(rapidRequest, _application, page));
@@ -627,20 +720,20 @@ public abstract class FormAdapter {
 						
 			// write the pages end
 			writer.write(getSummaryPagesEndHtml(rapidRequest, _application));
-			
-			// assume the form was not completed
-			boolean formComplete = false;
-			
-			try {
-				// try and get whether the form is complete
-				formComplete = getFormComplete(rapidRequest, formId);
-			} catch(Exception ex) {
-				// log it
-				rapidRequest.getRapidServlet().getLogger().error("Error getting form complete for form " + formId, ex);
+						
+			// if the form has been completed
+			if (formDetails.getComplete()) {
+				// if it has been submitted
+				if (formDetails.getSubmitted()) {
+					// look for a submitted date/time
+					String submittedDateTime = formDetails.getSubmittedDateTime();
+					// add if we got one
+					if (submittedDateTime != null) writer.write("<span class='formSubmittedDateTime'>" + submittedDateTime + "</span>");					
+				} else {
+					// add the submit button
+					writer.write("<form action='~?a=" + _application.getId() + "&v=" + _application.getVersion()  + "&action=submit' method='POST'><button type='submit' class='formSummarySubmit'>Submit</button></form>");
+				}
 			}
-			
-			// write the submit button form and button if the form has been completed!
-			if (formComplete)  writer.write("<form action='~?a=" + _application.getId() + "&v=" + _application.getVersion()  + "&action=submit' method='POST'><button type='submit' class='formSummarySubmit'>Submit</button></form>");
 			
 			// write the summary end 
 			writer.write(getSummaryEndHtml(rapidRequest, _application));
