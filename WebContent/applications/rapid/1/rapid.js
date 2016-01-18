@@ -1959,6 +1959,12 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 				setData_dataStore(ev, 'rapid_P0_C1269_', "device", {storageType:"S"}, data);
 			};
 		break;
+		case "GETSESSIONS" :	
+			data = { actionType: actionType, appId: "rapid", version: _appVersion };
+			callback = function(data) {
+				setData_grid(ev, 'rapid_P0_C1485_', "sessions", rapid_P0_C1485_details, data);
+			};
+		break;
 		case "RELOADVERSION" :		
 			data = { 
 				actionType: actionType, 
