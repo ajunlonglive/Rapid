@@ -86,42 +86,25 @@ public class Form extends Action {
 				} else  {				
 					// the value we will get
 					String value = null;
+					// check the action type
 					if ("id".equals(actionType)) {
 						value = "_formId";
 					} else if ("val".equals(actionType)) {
-						// get the control value from the _formValues object which we add in the dynamic section of the page
-						value = "_formValues['" + getProperty("dataSource") + "']"; 															
-					} else {
-						// get the user form details
-						UserFormDetails details = formAdapter.getUserFormDetails(rapidRequest);
-						// check we got the details then what to do with them
-						if (details == null) {
-							js = "// user form details could not be found";
-						} else if ("sub".equals(actionType)) {					
-							// get the form submit message
-							value = details.getSubmitMessage();								
-						} else if ("err".equals(actionType)) {					
-							// get the form error message
-							value = details.getErrorMessage();								
-						} else if ("res".equals(actionType)) {
-							// create the resume url
-							value = "~?a=" + application.getId() + "&v=" + application.getVersion() + "&action=resume&f=" + details.getId();
-							// get the password
-							String password = details.getPassword();
-							// if we got one
-							if (password != null) {
-								// url encode it
-								password = URLEncoder.encode(password,"UTF8");
-								// ammend to url
-								value += "&pwd=" + password;
-							}
-						} else if ("pdf".equals(actionType)) {
-							// create the pdf url
-							value = "~?a=" + application.getId() + "&v=" + application.getVersion() + "&action=pdf&f=" + details.getId();
-						} // details and what to do check
-						// enclose it if we got something
-						if (value != null) value = "'" + value.replace("\\", "\\\\").replace("'", "\\'").replace("\r\n", "\\n").replace("\n", "\\n").replace("\r", "") + "'";	
-					}
+						// get the control value from the _formValues object which we add in the dynamic section
+						value = "_formValues['" + getProperty("dataSource") + "']"; 																		
+					} else if ("sub".equals(actionType)) {					
+						// get the form submit message
+						value = "_formValues['sub']";								
+					} else if ("err".equals(actionType)) {					
+						// get the form error message
+						value = "_formValues['err']";						
+					} else if ("res".equals(actionType)) {
+						// create the resume url
+						value = "'~?a=" + application.getId() + "&v=" + application.getVersion() + "&action=resume&f=' + _formId + '&pwd=' + _formValues['res'] + '";
+					} else if ("pdf".equals(actionType)) {
+						// create the pdf url
+						value = "~?a=" + application.getId() + "&v=" + application.getVersion() + "&action=pdf&f='+ _formId + '";
+					}						
 					// use the set data if we got something
 					if (value != null) js = "setData_" + destinationControl.getType() + "(ev, '" + destinationId + "', null, " + destinationControl.getDetails() + ", " + value + ");\n";
 				} // destination check										

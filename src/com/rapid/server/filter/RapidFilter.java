@@ -7,7 +7,7 @@ gareth.edwards@rapid-is.co.uk
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as 
 published by the Free Software Foundation, either version 3 of the 
 License, or (at your option) any later version. The terms require you 
@@ -51,7 +51,9 @@ public class RapidFilter implements Filter {
 		
 	private RapidAuthenticationAdapter _authenticationAdapter;
 	private boolean _noCaching;
-
+	
+	// overrides
+		
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 		
@@ -97,38 +99,24 @@ public class RapidFilter implements Filter {
 		// fake slower responses like on mobile
 		//try { Thread.sleep(10000); } catch (InterruptedException e) {}
 		
-		// cast the request to http
-		HttpServletResponse res = (HttpServletResponse) response;
-		// cast the request to http
+		// cast the request to http servlet
 		HttpServletRequest req = (HttpServletRequest) request;
+
+		// cast the response to http servlet
+		HttpServletResponse res = (HttpServletResponse) response;
 		
 		// get the user agent
 		String ua = req.getHeader("User-Agent");
-		//if IE send header to stop compatibility mode on LANs
-		//if (ua.indexOf("MSIE") != -1)  res.setHeader("X-UA-Compatible", "IE=EDGE");
+		
+		// if IE send X-UA-Compatible to prevent compatibility view		
+		if (ua.indexOf("MSIE") != -1) res.addHeader("X-UA-Compatible", "IE=edge,chrome=1");
 							
 		// set all responses as UTF-8
 		response.setCharacterEncoding("utf-8");
 				
-		if (_noCaching) {
-			
-			// cast response to http
-			HttpServletResponse httpResponse = (HttpServletResponse) response;
-		
-			// try and avoid caching
-			httpResponse.setHeader("Expires", "Sat, 15 March 1980 12:00:00 GMT");
-
-			// Set standard HTTP/1.1 no-cache headers.
-			httpResponse.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
-
-			// Set IE extended HTTP/1.1 no-cache headers (use addHeader).
-			httpResponse.addHeader("Cache-Control", "post-check=0, pre-check=0");
-
-			// Set standard HTTP/1.0 no-cache header.
-			httpResponse.setHeader("Pragma", "no-cache");
-			
-		}
-		
+		// if no caching is on, try and prevent cache
+		if (_noCaching) noCache(res);
+				
 		// assume this is not an soa request
 		boolean isSoaRequest = false;
 		
@@ -148,7 +136,7 @@ public class RapidFilter implements Filter {
 					// put into lower case
 					contentType = contentType.toLowerCase();			
 					// check this is known type of soa request xml
-					if ((req.getHeader("Action") != null && (contentType.contains("xml") || contentType.contains("json")) || (req.getHeader("SoapAction") != null && contentType.contains("xml")))) {
+					if (((req.getHeader("Action") != null || req.getHeader("SoapAction") != null) && contentType.contains("xml")) || (req.getHeader("Action") != null && contentType.contains("json"))) {
 						// remember this is a webservice
 						isSoaRequest = true;
 						// continue the rest of the chain
@@ -156,8 +144,6 @@ public class RapidFilter implements Filter {
 					}
 				}
 			}
-			
-			
 		}
 											
 		// if we have not handled the request via the soa checks
@@ -172,4 +158,22 @@ public class RapidFilter implements Filter {
 	@Override
 	public void destroy() {}
 
+	// public static method
+	
+	public static void noCache(HttpServletResponse res) {
+		
+		// try and avoid caching
+		res.setHeader("Expires", "Sat, 15 March 1980 12:00:00 GMT");
+
+		// Set standard HTTP/1.1 no-cache headers.
+		res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+
+		// Set IE extended HTTP/1.1 no-cache headers (use addHeader).
+		res.addHeader("Cache-Control", "post-check=0, pre-check=0");
+
+		// Set standard HTTP/1.0 no-cache header.
+		res.setHeader("Pragma", "no-cache");
+		
+	}
+	
 }
