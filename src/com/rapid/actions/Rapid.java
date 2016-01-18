@@ -29,12 +29,15 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
@@ -71,6 +74,8 @@ import com.rapid.security.SecurityAdapter.Users;
 import com.rapid.server.RapidHttpServlet;
 import com.rapid.server.RapidRequest;
 import com.rapid.server.RapidServletContextListener;
+import com.rapid.server.RapidSessionListener;
+import com.rapid.server.filter.RapidFilter;
 import com.rapid.soa.JavaWebservice;
 import com.rapid.soa.SOAElementRestriction;
 import com.rapid.soa.SOASchema;
@@ -1079,6 +1084,41 @@ public class Rapid extends Action {
 				
 				// add the parameter to the result
 				result.put("device", jsonDevice);
+				
+			} else if ("GETSESSIONS".equals(action)) {
+				
+				// create the json object
+				JSONObject jsonDetails= new JSONObject();
+				
+				// create a json array
+				JSONArray jsonSessions = new JSONArray();
+				
+				// get the sessions
+				Map<String, HttpSession> sessions = RapidSessionListener.getSessions();
+				
+				// get a date formatter
+				SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+				
+				// loop them
+				for (String key : sessions.keySet()) {
+					// get the session
+					HttpSession httpSession = sessions.get(key);
+					// create object
+					JSONObject jsonSession = new JSONObject();
+					// add name
+					jsonSession.put("name", (String) httpSession.getAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME));
+					// get a new date from the time
+					Date accessTime = new Date(httpSession.getLastAccessedTime());
+					// add last access
+					jsonSession.put("access", df.format(accessTime));
+					// add to collections
+					jsonSessions.put(jsonSession);
+				}
+				
+				// add sessions
+				jsonDetails.put("sessions", jsonSessions);
+				
+				return jsonDetails;
 						
 			} else if ("RELOADACTIONS".equals(action)) {
 							

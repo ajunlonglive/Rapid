@@ -50,6 +50,7 @@ return [
  ["GETSEC","Get security details"],  
  ["GETUSERS","Get users"],
  ["GETUSER","Get user details"],
+ ["GETSESSIONS","Get session details"],
  ["GETPARAM","Get parameter details"],
  ["GETRESOURCE","Get resource details"],
  ["GETDEVICE","Get device details"],    
@@ -260,6 +261,12 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 			data = { actionType: actionType, appId: "rapid", version: _appVersion, index: $("#rapid_P0_C1199_").find("tr.rowSelect").index()-1 };
 			callback = function(data) {
 				setData_dataStore(ev, 'rapid_P0_C1269_', "device", {storageType:"S"}, data);
+			};
+		break;
+		case "GETSESSIONS" :	
+			data = { actionType: actionType, appId: "rapid", version: _appVersion };
+			callback = function(data) {
+				setData_grid(ev, 'rapid_P0_C1485_', "sessions", rapid_P0_C1485_details, data);
 			};
 		break;
 		case "RELOADVERSION" :		
