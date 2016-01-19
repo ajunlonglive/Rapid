@@ -142,7 +142,7 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 					<!-- Application versions are added here as options the designer loads -->
 				</select>					
 				
-				<h2>Page<img id="helpPage" class="headerHelp" src="images/help_16x16.png" /></h2>
+				<h2><img id="pagePrev" class="pageNav" src="images/triangleLeft_8x8.png" title="previous page" />Page<img id="pageNext" class="pageNav" src="images/triangleRight_8x8.png" title="next page" /><img id="helpPage" class="headerHelp" src="images/help_16x16.png" /></h2>
 				<select id="pageSelect">
 					<!-- Pages are added here as options the designer loads -->
 				</select>

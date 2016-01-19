@@ -1641,8 +1641,7 @@ function loadVersion(forceLoad) {
 			ev.stopPropagation();
 									
 		}).find("img").on("dragstart",function() { return false; }); // mouse down, and stop drag for image
-    			
-    	
+    			    	
     	// resize the controls list (for the right height and padding)
     	sizeControlsList();
 
@@ -2378,6 +2377,7 @@ $(document).ready( function() {
 		// check for unsaved page changes
 		if (_dirty) return 'You have unsaved changes.';
 	});
+	
 	// attach a call to the window resize function to the window resize event listener
 	_window.resize("windowResize", windowResize);		
 	// reposition the selection if there's a scroll
@@ -2390,6 +2390,7 @@ $(document).ready( function() {
 		_pageIframeWindow.scrollTop($(ev.target).scrollTop());
 		positionBorder(_selectedControl);		
 	});
+	
 	// scroll the iFrame left if it's outer scroll bar is used
 	$("#scrollH").scroll( function(ev) {
 		_pageIframeWindow.scrollLeft($(ev.target).scrollLeft());
@@ -2789,6 +2790,17 @@ $(document).ready( function() {
 		}
 	});
 	
+	// previous page
+	$("#pagePrev").click( function(ev) {
+		$("#pageSelect").find("[selected]").prev().attr("selected","selected");
+		$("#pageSelect").change();
+	});
+	
+	// next page
+	$("#pageNext").click( function(ev) {
+		$("#pageSelect").find("[selected]").next().attr("selected","selected");
+		$("#pageSelect").change();
+	});
 	// edit page
 	$("#pageEdit").click( function(ev) {
 		// hide any selection border
