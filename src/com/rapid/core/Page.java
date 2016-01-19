@@ -1263,7 +1263,7 @@ public class Page {
 					if (event.getActions().size() > 0) {
 						// page is a special animal so we need to do each of it's event types differently
 						if ("pageload".equals(event.getType())) {
-							_pageloadLines.add("if (!_mobileResume) Event_pageload_" + _id + "($.Event('pageload'));\n");
+							_pageloadLines.add("if (!_mobileResume) Event_pageload_" + _id + "($.Event('pageload'));\n");							
         				}    			
 						// resume is also a special animal
 						if ("resume".equals(event.getType())) {
@@ -1274,6 +1274,12 @@ public class Page {
 					}
 				}         				
 			}
+		}
+		
+		// if there is a form adapter in place
+		if (formAdapter != null) {
+			// add a line to check the form now all load events have been run
+			_pageloadLines.add("Event_checkForm();\n");
 		}
 														
 		// if this is not a dialogue or there are any load lines
@@ -1506,6 +1512,9 @@ public class Page {
 							// create the values string builder
 							formValues = new StringBuilder();
 							
+							// set whether submitted
+							formValues.append("var _formSubmitted = " + formDetails.getSubmitted() + ";\n\n");
+							
 							// start the form values object (to supply previous form values)
 							formValues.append("var _formValues = {");
 							
@@ -1545,14 +1554,14 @@ public class Page {
 										value = value.replace("\\", "\\\\").replace("'", "\\'").replace("\r\n", "\\n").replace("\n", "\\n").replace("\r", "");
 										// add to object
 										formValues.append("'" + id + "':'" + value + "'");
-										// add comma if need be
-										if (i < _formControlValues.size() - 1) formValues.append(",");
+										// add comma 
+										formValues.append(",");
 									}								
 								}														
 							}
 							
 							// close it
-							formValues.append("};\n\n");
+							formValues.append("'id':_formId};\n\n");
 							
 							// start the set form values function
 							formValues.append("function Event_setFormValues(ev) {");
@@ -1619,7 +1628,7 @@ public class Page {
 					// write the ready JS
 		    		writer.write(_cachedHeadJS);					
 				}
-				
+								
 				// close the script
 				writer.write("\n    </script>\n");
 		    			    			    			    	
@@ -1715,9 +1724,7 @@ public class Page {
 					if (formAdapter != null && designerLink) writer.write("    </form>\n");
 
 				} // got body html check
-				
-
-																													
+																																	
 			} else {
 				
 				// no page permission

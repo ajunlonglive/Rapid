@@ -25,9 +25,6 @@ AFTER MAKING CHANGES TO THIS FILE DELETE /scripts_min/extras.min.js IN ORDER TO 
 
 */
 
-
-
-
 // extend String to have a trim function for IE8
 if (typeof String.prototype.trim !== 'function') {
 	String.prototype.trim = function() {
@@ -810,4 +807,12 @@ function Event_initForm(id) {
 		});
 		$("#" + id + "_hiddenControls").val(hiddenControls);
 	});
+}
+
+function Event_checkForm() {
+	if (_formSubmitted) {
+		$("input").disable();
+		$("select").disable();
+		$("textarea").disable();
+	}
 }
