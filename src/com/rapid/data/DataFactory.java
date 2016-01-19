@@ -189,20 +189,18 @@ public class DataFactory {
 		
 		ParameterMetaData parameterMetaData = statement.getParameterMetaData();
 		
-		int parameterCount = parameterMetaData.getParameterCount() - startColumn;
-		
 		if (parameters == null) {
 			
-			if (parameterCount > 0) throw new SQLException("SQL has " + parameterMetaData.getParameterCount() + " parameters, none provided");
+			if (parameterMetaData.getParameterCount() > 0) throw new SQLException("SQL has " + parameterMetaData.getParameterCount() + " parameters, none provided");
 			
 		} else {
 			
-			if (parameterCount != parameters.size()) throw new SQLException("SQL has " + parameterMetaData.getParameterCount() + " parameters, " + parameters.size() + " provided");
+			if (parameterMetaData.getParameterCount() - startColumn != parameters.size()) throw new SQLException("SQL has " + parameterMetaData.getParameterCount() + " parameters, " + (parameters.size() - startColumn) + " provided");
 		
 			int i = startColumn;
 			
 			for (Parameter parameter : parameters) {
-			
+							
 				i++;
 				
 				switch (parameter.getType()) {

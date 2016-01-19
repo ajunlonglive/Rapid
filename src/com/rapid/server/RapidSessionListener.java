@@ -7,7 +7,7 @@ gareth.edwards@rapid-is.co.uk
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as 
 published by the Free Software Foundation, either version 3 of the 
 License, or (at your option) any later version. The terms require you 
@@ -57,19 +57,20 @@ public class RapidSessionListener implements HttpSessionListener {
     @Override
     public void sessionDestroyed(HttpSessionEvent event) {
     	HttpSession session = event.getSession();
+    	_sessions.remove(session.getId());
     	if (_logger == null) _logger = Logger.getLogger(this.getClass());
     	_logger.debug("Session destroyed " + session.getId());
     }
     
-    public static HttpSession  getSession(String sessionId) {
+    public synchronized static HttpSession  getSession(String sessionId) {
     	return _sessions.get(sessionId);
     }
     
-    public static Map<String,HttpSession>  getSessions() {
+    public synchronized static Map<String,HttpSession>  getSessions() {
     	return _sessions;
     }
     
-    public static int getTotalSessionCount() {
+    public synchronized static int getTotalSessionCount() {
     	Map<String,HttpSession> sessions = Collections.synchronizedMap(_sessions);
     	return sessions.size();
     }
