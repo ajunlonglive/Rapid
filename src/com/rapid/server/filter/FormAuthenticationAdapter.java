@@ -330,6 +330,9 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 						// retain the authorisation attempt in the session
 						session.setAttribute("message", "Your user name / password has not been recognised");
 						
+						// delay by 1sec to make brute force attacks a little harder
+						try { Thread.sleep(1000); } catch (InterruptedException e) {}
+						
 						// send a redirect to load the login page
 						response.sendRedirect("login.jsp");
 											
