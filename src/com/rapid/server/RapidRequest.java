@@ -7,7 +7,7 @@ gareth.edwards@rapid-is.co.uk
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as 
 published by the Free Software Foundation, either version 3 of the 
 License, or (at your option) any later version. The terms require you 
@@ -145,7 +145,7 @@ public class RapidRequest {
 					_control = _page.getControl(request.getParameter("c"));
 					// if we've found the control and have an action parameter
 					if (_control != null && request.getParameter("act") != null) {
-						// get action from the page
+						// get action from the control
 						_action = _control.getAction(request.getParameter("act"));						
 					}	
 				}

@@ -27,7 +27,6 @@ package com.rapid.server;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Writer;
 import java.net.URL;
 import java.util.List;
 

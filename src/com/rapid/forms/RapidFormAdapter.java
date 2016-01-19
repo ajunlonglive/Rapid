@@ -29,14 +29,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
 
 import org.json.JSONObject;
 
 import com.rapid.core.Application;
 import com.rapid.core.Control;
 import com.rapid.core.Page;
-import com.rapid.core.Pages.PageHeaders;
 import com.rapid.server.RapidRequest;
 import com.rapid.utils.Html;
 
@@ -46,7 +44,6 @@ public class RapidFormAdapter extends FormAdapter {
 	private static final String NEXT_FORM_ID = "nextFormId";
 	private static final String USER_FORM_PAGE_VARIABLE_VALUES = "userFormPageVariableValues";
 	private static final String USER_FORM_PAGE_CONTROL_VALUES = "userFormPageControlValues";
-	private static final String USER_FORM_MAX_PAGES = "userFormMaxPages";
 	private static final String USER_FORM_COMPLETE_VALUES = "userFormCompleteValues";	
 		
 	// constructor
