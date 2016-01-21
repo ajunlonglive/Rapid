@@ -86,9 +86,9 @@ public class Rapid extends RapidHttpServlet {
 		return null;
 	}
 	
-	public static void gotoStartPage(HttpServletRequest request, HttpServletResponse response, Application app) throws IOException {
-		// clear the session
-		request.getSession().invalidate();
+	public static void gotoStartPage(HttpServletRequest request, HttpServletResponse response, Application app, boolean invalidate) throws IOException {
+		// clear the session if requested to
+		if (invalidate) request.getSession().invalidate();
 		// go to the start page
 		response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion());
 	}
@@ -384,8 +384,8 @@ public class Rapid extends RapidHttpServlet {
 								
 								logger.debug("Returning to start - failed page check and no showSummary");
 							
-								// go to the start page
-								gotoStartPage(request, response, app);
+								// go to the start page (invalidate unless user has design role)
+								gotoStartPage(request, response, app, !security.checkUserRole(rapidRequest, DESIGN_ROLE));
 								
 							}
 							
@@ -655,7 +655,7 @@ public class Rapid extends RapidHttpServlet {
 									logger.debug("Returning to start - could not retrieve form details");
 									
 									// we've lost the form id so start the form again
-									gotoStartPage(request, response, app);
+									gotoStartPage(request, response, app, true);
 									
 								} else {
 							
@@ -674,7 +674,7 @@ public class Rapid extends RapidHttpServlet {
 											logger.debug("Returning to start - submit action but form not submitted");
 											
 											// go to the start page
-											gotoStartPage(request, response, app);
+											gotoStartPage(request, response, app, true);
 											
 										} else {
 																															
@@ -695,7 +695,7 @@ public class Rapid extends RapidHttpServlet {
 													logger.debug("Returning to start - form has been submitted, no submission page");
 													
 													// go to the start page
-													gotoStartPage(request, response, app);
+													gotoStartPage(request, response, app, true);
 													
 												} else {
 													
@@ -794,7 +794,7 @@ public class Rapid extends RapidHttpServlet {
 											logger.error("Form data failed server side validation : " + ex.getMessage(), ex);
 											
 											// send a redirect back to the beginning - there's no reason except for tampering  that this would happen
-											gotoStartPage(request, response, app);
+											gotoStartPage(request, response, app, true);
 											
 										}
 									
