@@ -37,6 +37,7 @@ import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletResponse;
@@ -55,6 +56,7 @@ import org.json.JSONObject;
 
 import com.rapid.core.Applications;
 import com.rapid.core.Device.Devices;
+import com.rapid.core.Template;
 import com.rapid.utils.JAXB.EncryptedXmlAdapter;
 
 @SuppressWarnings({"serial", "unchecked", "rawtypes"})
@@ -179,6 +181,10 @@ public class RapidHttpServlet extends HttpServlet {
 			
 	public Devices getDevices() {
 		return (Devices) getServletContext().getAttribute("devices");
+	}
+	
+	public List<Template> getTemplates() {
+		return (List<Template>) getServletContext().getAttribute("templates");
 	}
 	
 	public String getSecureInitParameter(String name) {

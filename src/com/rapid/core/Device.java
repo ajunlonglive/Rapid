@@ -7,7 +7,7 @@ gareth.edwards@rapid-is.co.uk
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as 
 published by the Free Software Foundation, either version 3 of the 
 License, or (at your option) any later version. The terms require you 
@@ -26,8 +26,6 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 package com.rapid.core;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -62,7 +60,7 @@ public class Device {
 			// create the list
 			Devices devices = null;
 			
-			// get the file in which the control xml files are stored
+			// get the file in which the device xml file is stored
 			File file = new File(servletContext.getRealPath("/WEB-INF/devices/devices.xml"));
 			
 			// if it exists

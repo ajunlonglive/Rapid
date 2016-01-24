@@ -183,7 +183,7 @@ public class Designer extends RapidHttpServlet {
 							
 							// add the devices
 							jsonSystemData.put("devices", getDevices());
-							
+																					
 							// put into output string
 							output = jsonSystemData.toString();
 							

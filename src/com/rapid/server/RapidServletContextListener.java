@@ -78,6 +78,7 @@ import com.rapid.core.Application.RapidLoadingException;
 import com.rapid.core.Applications;
 import com.rapid.core.Applications.Versions;
 import com.rapid.core.Device.Devices;
+import com.rapid.core.Template;
 import com.rapid.data.ConnectionAdapter;
 import com.rapid.forms.FormAdapter;
 import com.rapid.utils.Classes;
@@ -719,6 +720,74 @@ public class RapidServletContextListener implements ServletContextListener {
 		
 	}
 	
+	// here we loop all of the template.xml files and instantiate the json class object/functions and cache them in the servletContext
+	public static int loadTemplates(ServletContext servletContext) throws Exception {
+		
+		// assume no templates
+		int templateCount = 0;
+		
+		// create a list for our templates
+		List<Template> templates = new ArrayList<Template>();
+							
+		// get the directory in which the control xml files are stored
+		File dir = new File(servletContext.getRealPath("/WEB-INF/templates/"));
+		
+		// create a filter for finding .control.xml files
+		FilenameFilter xmlFilenameFilter = new FilenameFilter() {
+	    	public boolean accept(File dir, String name) {
+	    		return name.toLowerCase().endsWith(".template.xml");
+	    	}
+	    };
+	    
+	    // create a schema object for the xsd
+	    Schema schema = _schemaFactory.newSchema(new File(servletContext.getRealPath("/WEB-INF/schemas/") + "/template.xsd"));
+	    // create a validator
+	    Validator validator = schema.newValidator();
+	    	
+		// loop the xml files in the folder
+		for (File xmlFile : dir.listFiles(xmlFilenameFilter)) { 
+			
+			// get a scanner to read the file
+			Scanner fileScanner = new Scanner(xmlFile).useDelimiter("\\A");
+			
+			// read the xml into a string
+			String xml = fileScanner.next();
+			
+			// close the scanner (and file)
+			fileScanner.close();
+			
+			// validate the control xml file against the schema
+			validator.validate(new StreamSource(new ByteArrayInputStream(xml.getBytes("UTF-8"))));
+			
+			// create a template object from the xml
+			Template template = new Template(xml);
+			
+			// add it to our collection
+			templates.add(template);
+			
+			// inc the template count
+			templateCount ++;
+							
+		}
+		
+		// sort the list of templates by name
+		Collections.sort(templates, new Comparator<Template>() {
+			@Override
+			public int compare(Template t1, Template t2) {
+				return Comparators.AsciiCompare(t1.getName(), t2.getName(), false);
+			}
+			
+		});
+					
+		// put the jsonControls in a context attribute (this is available via the getJsonControls method in RapidHttpServlet)
+		servletContext.setAttribute("templates", templates);
+							
+		_logger.info(templateCount + " templates loaded in .template.xml files");
+		
+		return templateCount;
+		
+	}
+	
 	// Here we loop all of the folders under "applications" looking for a application.xml file, copying to the latest version if found before loading the versions
 	public static int loadApplications(ServletContext servletContext) throws JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException, IOException, ParserConfigurationException, SAXException, TransformerFactoryConfigurationError, TransformerException, RapidLoadingException, XPathExpressionException {
 		
@@ -1060,7 +1129,12 @@ public class RapidServletContextListener implements ServletContextListener {
 			// load the actions 
 			loadActions(servletContext);
 			
-			_logger.info("Loading controls");
+			_logger.info("Loading templates");
+			
+			// load templates
+			loadTemplates(servletContext);
+			
+			_logger.info("Loading templates");
 						
 			// load the controls 
 			loadControls(servletContext);	
