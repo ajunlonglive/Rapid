@@ -63,6 +63,7 @@ import com.rapid.core.Page;
 import com.rapid.core.Application.DatabaseConnection;
 import com.rapid.core.Applications.Versions;
 import com.rapid.core.Pages.PageHeader;
+import com.rapid.core.Template;
 import com.rapid.data.ConnectionAdapter;
 import com.rapid.data.DataFactory;
 import com.rapid.security.SecurityAdapter;
@@ -517,6 +518,35 @@ public class Rapid extends Action {
 						result.put("formAdapters", jsonAdapters);
 					}	
 					
+					// prepare the collection we'll send
+					JSONArray jsonTemplates = new JSONArray();
+					// create an entry for no form adapter
+					JSONObject jsonTemplate = new JSONObject();
+					// no value
+					jsonSendAdapter.put("value", "");
+					// None as text
+					jsonSendAdapter.put("text", "None");					
+					// add the None member first
+					jsonAdapters.put(jsonSendAdapter);
+					// get the templates
+					List<Template> templates = rapidServlet.getTemplates();
+					// check we have some 
+					if (templates != null) {						
+						// loop what we have
+						for (Template template : templates) {
+							// make a simpler send item
+							jsonTemplate = new JSONObject();
+							// add type
+							jsonTemplate.put("value", template.getType());
+							// add name
+							jsonTemplate.put("text", template.getName());
+							// add to collection
+							jsonTemplates.put(jsonTemplate);
+						}
+						// add the database drivers to the result
+						result.put("templates", jsonTemplates);
+					}	
+										
 					// process the actions and only send the name and type
 					JSONArray jsonSendActions = new JSONArray();
 					JSONArray jsonActions = rapidServlet.getJsonActions();
@@ -666,6 +696,7 @@ public class Rapid extends Action {
 						result.put("startPageId", app.getStartPageId());
 						
 						// add the styles
+						result.put("templateType", app.getTemplateType());
 						result.put("styles", app.getStyles());
 						result.put("statusBarColour", app.getStatusBarColour());
 						result.put("statusBarHighlightColour", app.getStatusBarHighlightColour());
@@ -1142,8 +1173,9 @@ public class Rapid extends Action {
 				int connectionAdapters = 0;
 				int securityAdapters = 0;
 				int forms = 0;
+				int templates = 0;
 				int devices = 0;
-											
+															
 				databaseDrivers = RapidServletContextListener.loadDatabaseDrivers(servletContext);
 				
 				connectionAdapters = RapidServletContextListener.loadConnectionAdapters(servletContext);
@@ -1152,13 +1184,16 @@ public class Rapid extends Action {
 				
 				forms =  RapidServletContextListener.loadFormAdapters(servletContext);
 				
+				templates = RapidServletContextListener.loadTemplates(servletContext);
+				
 				devices = Devices.load(servletContext).size();
-												
+																				
 				result.put("message", 
 					databaseDrivers + " database driver" + (databaseDrivers == 1 ? "" : "s") + ", " + 
 					connectionAdapters + " connection adapter" + (connectionAdapters == 1 ? "" : "s") + ", " +
 					securityAdapters + " security adapter" + (securityAdapters == 1 ? "" : "s") + ", " +
 					forms + " form adapter" + (forms == 1 ? "" : "s") + ", " +
+					templates + " template" + (templates == 1 ? "" : "s") + ", " +
 					devices + " device" + (devices == 1 ? "" : "s") + " reloaded"
 				);
 								
@@ -1250,13 +1285,15 @@ public class Rapid extends Action {
 
 				
 			} else if ("SAVESTYLES".equals(action)) {
-							
+				
+				String templateType = jsonAction.getString("templateType");
 				String styles = jsonAction.getString("styles");
 				String statusBarColour = jsonAction.optString("statusBarColour");
 				String statusBarHighlightColour = jsonAction.optString("statusBarHighlightColour");
 				String statusBarTextColour = jsonAction.optString("statusBarTextColour");
 				String statusBarIconColour = jsonAction.optString("statusBarIconColour");
 				
+				app.setTemplateType(templateType);
 				app.setStyles(styles);
 				app.setStatusBarColour(statusBarColour);
 				app.setStatusBarHighlightColour(statusBarHighlightColour);

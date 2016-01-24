@@ -1992,7 +1992,8 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 			data = { 
 				actionType: actionType, 
 				appId: $("#rapid_P0_C43").val(), 
-				version: $("#rapid_P0_C1044_").val(), 
+				version: $("#rapid_P0_C1044_").val(),
+				templateType: $("#rapid_P0_C1570_").val(), 
 				styles: $("#rapid_P0_C116").val(),
 				statusBarColour: $("#rapid_P0_C1414_").val(), 
 				statusBarHighlightColour: $("#rapid_P0_C1418_").val(), 

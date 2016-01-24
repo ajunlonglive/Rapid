@@ -544,7 +544,7 @@ public class Application {
 	
 	// instance variables	
 	private int _xmlVersion, _status, _applicationBackupsMaxSize, _pageBackupsMaxSize;
-	private String _id, _version, _name, _title, _description, _startPageId, _styles, _statusBarColour, _statusBarHighlightColour, _statusBarTextColour, _statusBarIconColour, _functions, _securityAdapterType, _formAdapterType, _createdBy, _modifiedBy;
+	private String _id, _version, _name, _title, _description, _startPageId, _templateType, _styles, _statusBarColour, _statusBarHighlightColour, _statusBarTextColour, _statusBarIconColour, _functions, _securityAdapterType, _formAdapterType, _createdBy, _modifiedBy;
 	private boolean _showConrolIds, _showActionIds;
 	private Date _createdDate, _modifiedDate;
 	private Map<String,Integer> _pageOrders;
@@ -621,7 +621,11 @@ public class Application {
 	// the application start page which will be supplied if no page is explicitly provided
 	public String getStartPageId() { return _startPageId; }
 	public void setStartPageId(String startPageId) { _startPageId = startPageId; }
-			
+	
+	// the CSS template type which we'll look up and add to the rapid.css file
+	public String getTemplateType() { return _templateType; }
+	public void setTemplateType(String templateType) { _templateType = templateType; }
+	
 	// the CSS styles added to the generated application rapid.css file
 	public String getStyles() { return _styles; }
 	public void setStyles(String styles) { _styles = styles; }
@@ -1481,9 +1485,30 @@ public class Application {
 			// close min writer and stream
 			pw.close();
 			fosMin.close();
+			
+			// assume no template css
+			String appTemplateCSS = "";
+			// if we have a template
+			if (_templateType != null) {
+				// get the templates
+				List<Template> templates = (List<Template>) servletContext.getAttribute("templates");
+				// if we got some
+				if (templates != null) {
+					// loop them
+					for (Template template : templates) {
+						// if this is the one we want
+						if (_templateType.equals(template.getType())) {
+							// add the css
+							appTemplateCSS = template.getCSS();
+							// we're done
+							break;
+						}
+					}
+				}
+			}
 								
 			// get the rapid CSS into a string and insert parameters
-			String resourceCSSWithParams = insertParameters(servletContext, resourceCSS.toString());
+			String resourceCSSWithParams = insertParameters(servletContext, resourceCSS.toString());			
 			String appCSSWithParams = insertParameters(servletContext, _styles);
 			
 			// write the rapid.css file
@@ -1491,6 +1516,8 @@ public class Application {
 			ps = new PrintStream(fos);
 			ps.print("\n/* This file is auto-generated on application load and save - it is minified when the application status is live */\n");		
 			ps.print(resourceCSSWithParams);
+			ps.print("\n\n/* Application template */\n\n");
+			ps.print(appTemplateCSS);
 			ps.print("\n\n/* Application styles */\n\n");
 			ps.print(appCSSWithParams);
 			ps.close();

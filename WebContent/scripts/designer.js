@@ -1398,11 +1398,7 @@ function loadLock(level) {
 	
 	// disable page back/forwards
 	$("img.pageNav").addClass("pageNavDisabled");
-			
-	// remove all page map entries		
-	$("#pageMapList").children().remove();
-	
-	
+					
 	// loading versions - loadVersions (changed app)
 	if (level <= 1) {
 		
@@ -1415,10 +1411,12 @@ function loadLock(level) {
 	if (level != 3) {
 		// show loading in iFrame if not pages reloading for updated order
 		$(_pageIframe[0].contentWindow.document).find("body").html("<div><div class='pageLoading'><p><img src='images/wait_220x19.gif' /></p><p style='margin-left:20px;'>loading...</p></div></div>");
+		// hide any selection border
+		if (_selectionBorder) _selectionBorder.hide();
 		// remove any nonVisibleControls
 		$(".nonVisibleControl").remove();	
-		// hide any selection border
-		if (_selectionBorder) _selectionBorder.hide();		
+		// remove all page map entries		
+		$("#pageMapList").children().remove();				
 		// set the next id back
 		_nextId = 1;
 		// reset the control numbering
