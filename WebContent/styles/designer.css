@@ -181,6 +181,11 @@ hr {
 	cursor: pointer;
 }
 
+.pageNavDisabled {
+	opacity: 0.25;
+	cursor: auto;
+}
+
 ul.design-controls {
 	margin-top: 0px;
 	margin-bottom: 0px;

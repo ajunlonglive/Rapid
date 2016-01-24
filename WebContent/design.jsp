@@ -18,7 +18,7 @@ gareth.edwards@rapid-is.co.uk
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version. The terms require you to include
@@ -142,7 +142,7 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 					<!-- Application versions are added here as options the designer loads -->
 				</select>					
 				
-				<h2><img id="pagePrev" class="pageNav" src="images/triangleLeft_8x8.png" title="previous page" />Page<img id="pageNext" class="pageNav" src="images/triangleRight_8x8.png" title="next page" /><img id="helpPage" class="headerHelp" src="images/help_16x16.png" /></h2>
+				<h2><img id="pagePrev" class="pageNav pageNavDisabled" src="images/triangleLeft_8x8.png" title="previous page" />Page<img id="pageNext" class="pageNav pageNavDisabled" src="images/triangleRight_8x8.png" title="next page" /><img id="helpPage" class="headerHelp" src="images/help_16x16.png" /></h2>
 				<select id="pageSelect">
 					<!-- Pages are added here as options the designer loads -->
 				</select>

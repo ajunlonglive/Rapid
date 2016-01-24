@@ -117,6 +117,9 @@ public class Designer extends RapidHttpServlet {
     
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 							
+		// fake a slow server
+		// try { Thread.sleep(3000); } catch (InterruptedException e) { }
+		
 		RapidRequest rapidRequest = new RapidRequest(this, request);
 		
 		try {
@@ -799,6 +802,9 @@ public class Designer extends RapidHttpServlet {
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		// fake a slow server
+		//try { Thread.sleep(3000); } catch (InterruptedException e) { }
 
 		RapidRequest rapidRequest = new RapidRequest(this, request);
 		

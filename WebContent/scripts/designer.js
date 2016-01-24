@@ -1354,8 +1354,8 @@ function loadApps(selectedAppId, forceLoad) {
         	}
         	// get a reference to apps dropdown
         	var appsDropDown = $("#appSelect");
-        	// put the options into the dropdown
-        	appsDropDown.html(options);
+        	// put the options into the dropdown and enable
+        	appsDropDown.html(options).enable();
         	// retain all the apps data
         	_apps = apps;        	       	
         	// if we got some apps
@@ -1384,16 +1384,83 @@ function loadApps(selectedAppId, forceLoad) {
 	});
 }
 
-//this function loads the versions into versionSelect
+// this function locks the ui whilst either versions, pages, or a page are loading
+function loadLock(level) {
+	
+	// clear down property dialogues for good measure
+	hideDialogues();
+	
+	// disable all page buttons
+	$("button").disable();
+	
+	// disable all page drop downs
+	$("select").disable();
+	
+	// disable page back/forwards
+	$("img.pageNav").addClass("pageNavDisabled");
+			
+	// remove all page map entries		
+	$("#pageMapList").children().remove();
+	
+	
+	// loading versions - loadVersions (changed app)
+	if (level <= 1) {
+		
+		// remove any current versions
+		$("#versionSelect").children().remove();
+									
+	}
+	
+	// reloading the pages is used to get their new order so is a little different as the page itself is not reloaded
+	if (level != 3) {
+		// show loading in iFrame if not pages reloading for updated order
+		$(_pageIframe[0].contentWindow.document).find("body").html("<div><div class='pageLoading'><p><img src='images/wait_220x19.gif' /></p><p style='margin-left:20px;'>loading...</p></div></div>");
+		// remove any nonVisibleControls
+		$(".nonVisibleControl").remove();	
+		// hide any selection border
+		if (_selectionBorder) _selectionBorder.hide();		
+		// set the next id back
+		_nextId = 1;
+		// reset the control numbering
+		_controlNumbers = {};
+		// empty undo stack
+		_undo = [];	
+		// empty redo stack
+		_redo = [];
+		// lose the selected control
+		_selectedControl = null;	
+		// lose the property control
+		_propertiesControl = null;	
+	}
+	
+	// loading version - loadVersion (changed version)
+	if (level <= 2) {
+		
+		// remove any current pages
+		$("#pageSelect").children().remove();
+		
+		// grab a reference to the ul where the canUserAdd controls will be added
+		var designControls = $("#controlsList");
+		// hide the controls panel
+		designControls.hide();
+		// empty the designControls panel
+		designControls.html("<ul class='design-controls'></ul>").css("height",0);	
+		// empty the action options global
+		_actionOptions = "";
+		// empty the style classes array
+		_styleClasses = [];
+		// empty the pages list
+		_pages = [];
+		
+	}
+		
+}
+
+// this function loads the versions into versionSelect
 function loadVersions(selectedVersion, forceLoad) {
-	// hide the properties panel
-	$("#propertiesPanel").hide();
-	// remove all current page html
-	$("#page").children().remove();
-	// remove any dialogues or components
-	$("#dialogues").children().remove();
-	// remove any current versions
-	$("#versionSelect").children().remove();
+		
+	// lock the ui
+	loadLock(1);
 	
 	// do the ajax
 	$.ajax({
@@ -1446,8 +1513,8 @@ function loadVersions(selectedVersion, forceLoad) {
             		// add an option for this page, setting selected
             		options += "<option value='" + version.version + "' " + (selectedVersion == version.version ? "selected='true'" : "") + ">" + version.version + status + "</option>";        	
             	}            	
-            	// put the options into the dropdown
-            	versionsDropDown.html(options);
+            	// put the options into the dropdown and enable
+            	versionsDropDown.html(options).enable();            	
             	// retain all the versions data
             	_versions = versions;        	
             	// set the selected _version
@@ -1460,15 +1527,6 @@ function loadVersions(selectedVersion, forceLoad) {
             		showDesigner();
             	}
         		
-        	} else {
-        		// remove all versions
-        		versionsDropDown.children().remove();
-        		// remove all pages
-        		$("#pageSelect").children().remove();
-        		// remove all controls
-        		$("#controlsList").children().remove().css("height",0);	
-        		// empty page controls
-        		$("#pageMapList").children().remove();
         	} // versions check	
         }
 	});
@@ -1477,21 +1535,9 @@ function loadVersions(selectedVersion, forceLoad) {
 // this function loads the version pages into pagesSelect
 function loadVersion(forceLoad) {
 	
-	// grab a reference to the ul where the canUserAdd controls will be added
-	var designControls = $("#controlsList");
-	// hide the controls panel
-	designControls.hide();
-	// empty the designControls panel
-	designControls.html("<ul class='design-controls'></ul>").css("height",0);	
-	// empty the action options global
-	_actionOptions = "";
-	// empty the style classes array
-	_styleClasses = [];
-	// remove any dialogues or components
-	$("#dialogues").children().remove();
-	// empty the pages list
-	_pages = [];
-	
+	// lock the ui
+	loadLock(2);
+			
 	// check we have some versions
 	if (_versions) {
 		// get the selected version Id
@@ -1521,6 +1567,9 @@ function loadVersion(forceLoad) {
 		
 		// retain the app styleclasses
 		_styleClasses = _version.styleClasses;
+		
+		// grab a reference to the ul where the canUserAdd controls will be added
+		var designControls = $("#controlsList");
 		
 		// loop the controls
     	for (var j in _version.controls) {	    	    		
@@ -1658,16 +1707,10 @@ function loadVersion(forceLoad) {
 		$("#appEdit").removeAttr("appEdit");
 		
 	} else {
-		// disable a bunch of stuff as there there are no pages and no apps
-		$("#appDelete").attr("disabled","disabled");
-		$("#appEdit").attr("disabled","disabled");
-		$("#pageNew").attr("disabled","disabled");
-		$("#pageEdit").attr("disabled","disabled");
-		$("#pageSave").attr("disabled","disabled");
-		$("#pageView").attr("disabled","disabled");
-		$("#pageViewNewTab").attr("disabled","disabled");
+				
 		// show the designer
 		showDesigner();
+		
 	} // no app id
 	
 	// show the controls panel
@@ -1677,7 +1720,10 @@ function loadVersion(forceLoad) {
 
 // this function loads the selected apps pages into the drop down, in case the order has changed
 function loadPages(selectedPageId, forceLoad) {
-			
+	
+	// lock the ui
+	loadLock(3);
+				
 	$.ajax({
     	url: "designer?action=getPages&a=" + _version.id + "&v=" + _version.version,
     	type: "GET",
@@ -1723,47 +1769,38 @@ function loadPages(selectedPageId, forceLoad) {
         		options += "<option value='" + page.id + "' " + selected + ">" + page.name + " - " + page.title + "</option>";
         		// check the next pageId
         		if (parseInt(page.id.substring(1)) >= _nextPageId) _nextPageId = parseInt(page.id.substring(1)) + 1; 
-        	}
-        	
-        	// put the options into the dropdown
-        	$("#pageSelect").html(options);        	
-        	// enable the new page button
-        	$("#pageNew").removeAttr("disabled");
+        	}        	
+        	// put the options into the dropdown and ebable
+        	$("#pageSelect").html(options);
+        	// enabled all dropdowns
+			$("select").enable();
         	// check we got some pages
         	if (options) {
-        		// unlock controls and page edit
-        		$("#controlControls").show();
-        		$("#pageEdit").removeAttr("disabled");
-        		$("#pageSave").removeAttr("disabled");
-        		$("#pageView").removeAttr("disabled");
-        		$("#pageViewNewTab").removeAttr("disabled");
         		// only if we have to do we load the selected page
-        		if (forceLoad) loadPage();
-        	} else {
-        		// remove any current html
-        		if (_page.object) _page.object.children().remove();
-        		// lock controls and page edit
-        		$("#controlControls").hide();
-        		$("#pageEdit").attr("disabled","disabled");
-        		$("#pageSave").attr("disabled","disabled");
-        		$("#pageView").attr("disabled","disabled");
-        		$("#pageViewNewTab").attr("disabled","disabled");
-        		// empty the page map
-            	$("#pageMapList").children().remove();
+        		if (forceLoad) {
+        			loadPage();
+        		} else {        			
+        			// unlock buttons (except for undo/ redo)
+        			$("button:not(#undo):not(#redo)").enable();
+        			// enable undo if undo stack
+        			if (_undo.length > 0) $("#undo").enable();
+        			// enable redo if redo stack
+        			if (_redo.length > 0) $("#redo").enable();
+        			// update which of prev/next are visible
+            		updatePrevNext();
+        		}        		
+        	} else {        		
         		// show the designer
         		showDesigner();
-        		// show the new page dialogue if it was an empty array
-        		if ($.isArray(pages)) {
-        			// hide the property panel just in case
-        			hidePropertiesPanel();
-        			// show the new page dialogue
-        			showDialogue('~?action=page&a=rapid&p=P3'); 
-        		} else {
-        			// disable the new page button
-        			$("#pageNew").attr("disabled","disabled");
-        		}
-        	}
-        	
+    			// hide the property panel just in case
+    			hidePropertiesPanel();
+    			// empty the iframe
+    			$(_pageIframe[0].contentWindow.document).find("body").html("");
+    			// show the new page dialogue
+    			showDialogue('~?action=page&a=rapid&p=P3'); 
+        		// enabled the new button in case the dialogue is cancelled
+    			$("#pageNew").removeAttr("disabled");
+        	} // pages check        	
         } // success
 	}); // ajax
 	
@@ -1772,50 +1809,22 @@ function loadPages(selectedPageId, forceLoad) {
 // this function loads the controls into the page
 function loadPage() {
 	
-	// hide the properties panel
-	$("#propertiesPanel").hide();	
-	// remove any dialogues or components
-	$("#dialogues").children().remove();	
-	// clear down property dialogues for good measure
-	hideDialogues();
-	// hide any selection border
-	if (_selectionBorder) _selectionBorder.hide();	
-	// remove any nonVisibleControls
-	$(".nonVisibleControl").remove();
-	// lose the selected control
-	_selectedControl = null;	
-	// lose the property control
-	_propertiesControl = null;	
-	// set the next id back
-	_nextId = 1;
-	// reset the control numbering
-	_controlNumbers = {};
-	// empty undo stack
-	_undo = [];	
-	// disable undo
-	$("#undo").disable();
-	// empty redo stack
-	_redo = [];
-	// disble redo
-	$("#redo").disable();
+	// lock the ui for loadin
+	loadLock(4);
 	
 	// get the id of the selected page
 	var pageId = $("#pageSelect").val();	
 	// check there is a page selected in the dropdown
-	if (pageId) {										
+	if (_version && pageId) {										
 		// set the page id
 		_page.id = pageId;		
 		// reload the page iFrame with resources for the app and this page
-    	_pageIframe[0].contentDocument.location.href = "designpage.jsp?a=" + _version.id + "&v=" + _version.version + "&p=" + _page.id;    	
-    	// set dirty to false
-    	_dirty = false;    	
-    	// disable all page buttons
-    	$("button").disable();
+    	_pageIframe[0].contentDocument.location.href = "designpage.jsp?a=" + _version.id + "&v=" + _version.version + "&p=" + pageId;    	
 	} // drop down val check
 	
 }
 
-//this function removes properties that create circular references from the control tree when saving
+// this function removes properties that create circular references from the control tree when saving
 function getDataObject(object) {
 	// make a new empty object
 	var o = {};
@@ -2295,6 +2304,20 @@ function updateGuidelines() {
 	}
 }
 
+// a function for which of page prev / next are usable
+function updatePrevNext() {
+	// get the pages drop down
+	var pages = $("#pageSelect");
+	// get the page id
+	var pageId = pages.val();
+	// get the index of the selected it
+	var i = pages.find("[value=" + pageId + "]").index();
+	// if more than 0 can prev
+	if (i > 0) 	$("#pagePrev").removeClass("pageNavDisabled");
+	// if less than end can no next
+	if (i < pages.children().length - 1) $("#pageNext").removeClass("pageNavDisabled"); 
+}
+
 // JQuery is ready! 
 $(document).ready( function() {
 	
@@ -2562,9 +2585,14 @@ $(document).ready( function() {
 									        				        	
 						// enable all buttons except for undo and redo 
 		        		$("button:not(#undo):not(#redo)").enable();
+		        		// enable all drop downs
+		        		$("select").enable();
 		        		
-		        		// update the guidlines (this function is in desginer.js)
+		        		// update whether guidlines are visible
 		        		updateGuidelines();	
+		        		
+		        		// update which of page prev/next are usable
+		        		updatePrevNext();
 		        		
 			        	// show the page object
 			        	_page.object.show();	
@@ -2792,15 +2820,34 @@ $(document).ready( function() {
 	
 	// previous page
 	$("#pagePrev").click( function(ev) {
-		$("#pageSelect").find("[selected]").prev().attr("selected","selected");
-		$("#pageSelect").change();
+		// if not disabled
+		if (!$(this).is(".pageNavDisabled")) {
+			// get the page select
+			var page = $("#pageSelect");
+			// get the current page id
+			var pageId = page.val();
+			// get the previous page id
+			pageId = $("#pageSelect").find("[value=" + pageId + "]").prev().val();
+			// set it if there is one
+			if (pageId) $("#pageSelect").val(pageId).change();
+		}
 	});
 	
 	// next page
 	$("#pageNext").click( function(ev) {
-		$("#pageSelect").find("[selected]").next().attr("selected","selected");
-		$("#pageSelect").change();
+		// if not disabled
+		if (!$(this).is(".pageNavDisabled")) {
+			// get the page select
+			var page = $("#pageSelect");
+			// get the current page id
+			var pageId = page.val();
+			// get the previous one
+			pageId = page.find("[value=" + pageId + "]").next().val();
+			// set it if there was one
+			if (pageId) $("#pageSelect").val(pageId).change();
+		}
 	});
+	
 	// edit page
 	$("#pageEdit").click( function(ev) {
 		// hide any selection border
@@ -2850,17 +2897,13 @@ $(document).ready( function() {
 			        },
 			        success: function(controls) {
 			        	// show message
-			        	$("#rapid_P11_C7_").html("Page saved!");
-			        	// enable close button
-			        	$("#rapid_P11_C10_").enable().focus();
+			        	$("#rapid_P11_C7_").html("Page saved!");			        	
 			        	// set dirty to false
 			        	_dirty = false;
 			        	// reload the pages as the order may have changed, but keep the current one selected
-			        	loadPages(_page.id);		        	
-			        	// arrange any non-visible controls
-			        	arrangeNonVisibleControls();	   
-			        	// iframe resize
-			    		_pageIframe.resize();
+			        	loadPages(_page.id, false);		        	
+			        	// enable close button
+			        	$("#rapid_P11_C10_").enable().focus();			        	
 			        }
 				});
 				
