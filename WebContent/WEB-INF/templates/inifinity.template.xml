@@ -1,0 +1,438 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<template xmlVersion="1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/template.xsd">
+
+<!-- 
+
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
+
+gareth.edwards@rapid-is.co.uk
+
+
+This file is part of the Rapid Application Platform
+
+Rapid is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version. The terms require you to include
+the original copyright, and the license notice in all redistributions.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
+
+ -->
+
+	    <type>infinity</type>	 
+	    <name>Infinity</name>	   
+	    <css>
+	    <![CDATA[
+
+@font-face {
+  font-family: 'Didact Gothic';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Didact Gothic'), local('DidactGothic'), url(https://fonts.gstatic.com/s/didactgothic/v7/v8_72sD3DYMKyM0dn3LtWmYKogTrBb-Yb2DFwx30qLM.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+
+body {
+  background: #f3f4f5
+}
+
+body, input, textarea, button, legend {
+  font-family: 'Lucida Grande', 'Didact Gothic', Helvetica, Arial, Verdana, sans-serif;
+  line-height: 1.5;
+}
+
+.spacer {
+  margin-bottom: 20px;
+}
+
+.buttonAction {
+  background-image: linear-gradient(#37AAEA, #117ED2);
+  border-radius: 4px;
+  border: 1px solid #1992D9;
+  box-shadow: rgba(255, 255, 255, 0.2) 0px 1px 0px 0px inset;
+  color: #FFF;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 13px;
+}
+
+.buttonAction:hover {
+  background: transparent linear-gradient(#2F90D5, #0351B7);
+}
+
+.buttonCheck {
+  color: #FFF;
+  background: transparent linear-gradient(#00C307, #039103);
+  border: 0.1rem solid #20A623;
+  box-shadow: 0px 0.1rem 0px rgba(255, 255, 255, 0.2) inset;
+}
+
+.buttonCheck:hover {
+  background: transparent linear-gradient(#00B300, #006C00);
+}
+
+.buttonGolden {
+  border: 1px solid #D17D33;
+  background: #F4B442;
+  color: #FFF;
+  font-weight: bold;
+}
+
+.buttonGolden:hover {
+  background: #F4B442;
+}
+
+.buttonGolden:active {
+  box-shadow: none;
+}
+
+.inputBig {
+  border-radius: 5px;
+  border: 1px solid #D6D6D6;
+  box-shadow: #AAA 0px 1px 4px 0px inset;
+  color: #333;
+  font-size: 16px;
+  height: 21px;
+  padding: 7px 2px 7px 7px;
+}
+
+.inputThick {
+  height: 24px;
+  background: #FAFAFA;
+  border: 5px solid #E8E8E8;
+  border-radius: 5px;
+  font-size: 16px;
+  padding: 7px 13px 3px;
+}
+
+button {
+  background: linear-gradient(#FFF, #EBEBEB);
+  border-radius: 4px;
+  border: 1px solid #B5B5B5;
+  color: #0085CF;
+  cursor: pointer;
+  line-height: 15px;
+  padding: 9px 15px 9px 15px;
+}
+
+button:hover {
+  background: transparent linear-gradient(#FFF, #D7D7D7);
+}
+
+button:active {
+  box-shadow:0 1px 0 #fff,inset 0 0 9px rgba(0,0,0,0.5)
+}
+
+h1 {
+  color: #333;
+  font-size: 24px;
+  font-weight: 400;
+}
+
+input:not(.inputThick):not(.selectWhite):not([type=radio]):not([type=checkbox]),[type=input], select {
+  font-size: 15px;
+  padding: 6px;
+  line-height: 1;
+  color: #555;
+  border: 1px solid #CCC;
+  border-radius: 4px;
+  font-family: 'Lucida Grande', 'Didact Gothic', Helvetica, Arial, Verdana, sans-serif;
+}
+
+a {
+  color: #0085CF;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+:focus {
+  outline:none;
+}
+
+.paddingSmall {
+  padding: 6px;
+}
+
+.paddingMedium {
+  padding: 15px;
+}
+
+.paddingLarge {
+  padding: 24px;
+}
+
+div.panel:not(.panelInnerWhite):not(.panelInnerGrey) {
+  box-shadow: 1px 0px 0px 0px #D2D2D2, -1px 0px 0px 0px #D2D2D2, 0px 1px 0px 0px #B6B6B6, 0px 2px 0px 0px #D2D2D2, 2px 0px 0px 0px #E6E6E6, -2px 0px 0px 0px #E6E6E6, 0px 3px 0px 0px #E6E6E6, 0px -1px 0px 0px #E6E6E6;
+  background: #FFF;
+  border-radius: 4px;
+}
+
+.panelGold {
+  margin: 10px auto 20px;
+  border: 1px solid #CCC;
+  color: #333;
+  background: transparent linear-gradient(#FDEFCA 0%, #EFCA6C 90%) !important;
+}
+
+.panelInnerWhite {
+  border-radius: 6px;
+  background-color: #FCFCFC;
+  border: 1px solid #E8E8E8;
+}
+
+.panelInnerGrey {
+  border: 1px solid #DDD;
+  border-radius: 4px;
+}
+
+.selectWhite {
+  background-color: #FFF;
+  cursor: pointer;
+  padding: 6px;
+  color: #333;
+  font-size: 15px;
+  border: 1px solid #D6D6D6;
+  border-radius: 4px;
+}
+
+.selectWhite:focus {
+  border: 1px solid #66afe9;
+  box-shadow:inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 0 2pt rgba(102, 175, 233, 0.6);
+}
+
+input[type=checkbox] {
+  width: 20px;
+  height: 20px;
+  position: relative;
+  top: 2px;
+  vertical-align: middle;
+  margin-top: -4px;
+  margin-right: 10px;
+  margin-left: 8px;
+}
+
+input[type=checkbox]:before {
+  width: 20px;
+  height: 20px;
+  display: block;
+  content: '';
+  background: #FFF;
+  border-radius: 4px;
+  border: 1px solid #c9c9c9;
+  margin: -1px;
+}
+
+input[type=checkbox]:checked:before {
+  width: 20px;
+  height: 20px;
+  display: block;
+  content: '';
+  background: #007bbe;
+  border: 1px solid #007bbe;
+  margin: -1px;
+}
+
+input[type=checkbox]:checked:after {
+  content: '';
+  position: absolute;
+  margin-top: -19px;
+  margin-left: 7px;
+  border-right: 2px solid white;
+  border-bottom: 2px solid white;
+  width: 5px;
+  height: 12px;
+  transform: rotate(45deg);
+}
+
+input[type=checkbox]:hover:before {
+  box-shadow: 0 0 0 2px #87c4e7;
+}
+
+input[type=checkbox]:focus:before {
+  box-shadow: 0 0 0 5px #87c4e7;
+}
+
+input[type=radio] {
+  width: 20px;
+  height: 20px;
+  position: relative;
+  top: -1px;
+  vertical-align: middle;
+  margin-top: -4px;
+  margin-right: 12px;
+}
+
+input[type=radio]:before {
+  width: 20px;
+  height: 20px;
+  display: block;
+  content: '';
+  background: #FFF;
+  border-radius: 100%;
+  border: 1px solid #c9c9c9;
+  margin: -1px;
+}
+
+input[type=radio]:checked {
+  transform: rotate(45deg)
+}
+
+input[type=radio]:checked:before {
+  width: 20px;
+  height: 20px;
+  display: block;
+  content: '';
+  background: #007bbe;
+  border: 1px solid #007bbe;
+  margin: -1px;
+}
+
+input[type=radio]:checked:after {
+  content: '';
+  position: absolute;
+  margin-top: -17px;
+  margin-left: 6px;
+  border-right: 2px solid white;
+  border-bottom: 2px solid white;
+  width: 4px;
+  height: 10px
+}
+
+input[type=radio]:hover:before {
+  box-shadow: 0 0 0 2px #87c4e7
+}
+
+input[type=radio]:focus:before {
+  box-shadow: 0 0 0 5px #87c4e7
+}
+
+.hint {
+  background: #FFF;
+  border: 1px solid #CCC;
+  border-radius: 5px;
+  box-shadow: 3px 3px 10px #999;
+  display: none;
+  padding: 10px 15px;
+  font-weight: normal;
+}
+
+table.grid {
+  margin-bottom: 4px;
+  color: #333;
+  border-style: hidden;
+  box-shadow: 0 0 0 1px #E5E5E5;
+  border-radius: 4px;
+}
+
+table.grid tr:first-child td {
+  border-bottom: 1px solid #E5E5E5;
+  cursor: pointer;
+  padding: 10px;
+  background: linear-gradient(#EEE 0px, #EAEAEA 6%, #FAFAFA 100%);
+  text-align: center;
+}
+
+table.grid tr:first-child td:first-child {
+  border-top-left-radius: 4px;
+}
+
+table.grid tr:first-child td:last-child {
+  border-top-right-radius: 4px;
+}
+
+table.grid tr:not(:first-child) {
+  border: 1px solid #e5e5e5;
+  background: #fff;
+}
+
+table.grid tr:last-child td:first-child {
+  border-bottom-left-radius: 4px;
+}
+
+table.grid tr:last-child td:last-child {
+  border-bottom-right-radius: 4px;
+}
+
+table.grid td {
+  cursor: pointer;
+}
+
+table.grid tr:hover {
+  background: #d9eff9;
+  /*background: linear-gradient(#f4fafd 0,#d9eff9 30%,#87c4e7 100%);
+  
+  #007bbe
+  #87c4e7
+  #d9eff9
+  #e5f4fc
+  #f4fafd
+  */
+}
+
+table.grid tr:nth-child(3) {
+  background: #d9eff9;
+}
+
+.ui-widget {
+  font-family: 'Lucida Grande', 'Didact Gothic', Helvetica, Arial, Verdana, sans-serif;
+}
+
+.ui-datepicker select.ui-datepicker-month {
+  font-family: 'Lucida Grande', 'Didact Gothic', Helvetica, Arial, Verdana, sans-serif;
+}
+
+.ui-datepicker select.ui-datepicker-year {
+  font-family: 'Lucida Grande', 'Didact Gothic', Helvetica, Arial, Verdana, sans-serif;
+}
+
+.ui-datepicker th {
+  background: linear-gradient(#EEE 0px, #EAEAEA 6%, #FAFAFA 100%);
+  color: #333 !important;
+  text-shadow: none;
+}
+
+.ui-datepicker tr:first-child {
+  border: 1px solid #CDCDCD !important;
+}
+
+.ui-datepicker .ui-datepicker-header {
+  border: 1px solid #CCC;
+  border-top-right-radius: 4px;
+  border-top-left-radius: 4px;
+  background: linear-gradient(#7D7D7D, #A5A5A5);
+}
+
+.ui-datepicker td a {
+  background: transparent linear-gradient(#EEE 0px, #EAEAEA 6%, #FAFAFA 100%) !important;
+}
+
+.ui-datepicker td a:hover {
+  background: transparent linear-gradient(#FDEFCA 0%, #EFCA6C 90%) !important;
+}
+
+.ui-widget-content .ui-state-active {
+  background: transparent linear-gradient(#FDEEC9 0%, #EFCA6C 90%) !important;
+  box-shadow: 0 0 7px #DB9D00 inset!important;
+  color: #000 !important;
+}
+
+.ui-datepicker-unselectable .ui-state-default {
+  background: #F1F1F1 !important;
+}
+	    	        
+	    ]]>    
+	    </css>
+	   
+</template>
+
