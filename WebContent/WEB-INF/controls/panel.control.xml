@@ -71,7 +71,7 @@ classes = getStyleClasses(this);
 // if they start with "alert" do not include "panel" as this messes up bootstrap
 if (!classes && classes.indexOf("alert") != 1) classes = "panel" + classes;  
 // return our html for adding to our parent object	        
-return "<div id='" + this.id + "' class='" + classes + "'" + (this.text ? "" : " style='min-height:15px;'") + ">" + this.text + "</div>";
+return "<div id='" + this.id + "' class='panel" + classes + "'" + (this.text ? "" : " style='min-height:15px;'") + ">" + this.text + "</div>";
 	        ]]>
 	    </getHtmlFunction> 
 	    
