@@ -361,6 +361,7 @@ public class Application {
 		public static final int RAPID = 0;
 		public static final int ACTION = 1;
 		public static final int CONTROL = 2;
+		public static final int TEMPLATE = 3;
 		
 		// private instance variables
 		private int _typeClass;
@@ -387,7 +388,7 @@ public class Application {
 				
 	}
 		
-	// the resource is specified in the control or action xml files
+	// the resource is specified in the action, control, or template xml files
 	public static class Resource {
 		
 		// these are the types defined in the control and action .xsd files
@@ -1020,9 +1021,28 @@ public class Application {
 	
 	// this adds resources from either a control or action, they are added to the resources collection for printing in the top of each page if they are files, or amended to the application .js or .css files
 	private void addResources(JSONObject jsonObject, String jsonObjectType, StringBuilder js, StringBuilder css) throws JSONException {
-		
+			
 		// look for a resources object
 		JSONObject jsonResourcesObject = jsonObject.optJSONObject("resources");
+						
+		// if we got one
+		if (jsonResourcesObject != null) {
+			
+			// get a name for the jsonObject
+			String name = jsonObject.optString("name");
+			
+			// get the dependency type
+			String dependencyType = jsonObject.getString("type");
+			
+			// use the override below
+			addResources(jsonResourcesObject, jsonObjectType, name, dependencyType, js, css);
+			
+		}
+		
+	}
+	
+	// this adds resources from either a control or action, they are added to the resources collection for printing in the top of each page if they are files, or amended to the application .js or .css files
+	private void addResources(JSONObject jsonResourcesObject, String jsonObjectType, String name, String dependencyType, StringBuilder js, StringBuilder css) throws JSONException {
 		
 		// if we got one
 		if (jsonResourcesObject != null) {
@@ -1050,9 +1070,10 @@ public class Application {
 				int dependencyTypeClass = ResourceDependency.RAPID;
 				// update if action
 				if ("action".equals(jsonObjectType)) dependencyTypeClass = ResourceDependency.ACTION;
+				// update if control
 				if ("control".equals(jsonObjectType)) dependencyTypeClass = ResourceDependency.CONTROL;
-				// get the dependency type
-				String dependencyType = jsonObject.getString("type");
+				// update if template
+				if ("template".equals(jsonObjectType)) dependencyTypeClass = ResourceDependency.TEMPLATE;
 				
 				// loop them
 				for (int j = 0; j < jsonResources.length(); j++) {
@@ -1062,9 +1083,7 @@ public class Application {
 					// get the type
 					String resourceType = jsonResource.getString("type");
 					// get the contens which is either a path, or the real stuff
-					String resourceContents = jsonResource.getString("contents").trim();
-					// get a name for the jsonObject
-					String name = jsonObject.optString("name");
+					String resourceContents = jsonResource.getString("contents").trim();					
 					// safety check
 					if (name == null) name = resourceType;
 					// add json object type
@@ -1390,8 +1409,7 @@ public class Application {
 				    			// only produce rapid action is this is rapid app
 				    			if (js != null && ("rapid".equals(_id) || !"rapid".equals(actionType))) {    				
 				        			// clean and print! (if not an empty string)
-				        			if (js.trim().length() > 0) actionJS.append("\n" + js.trim() + "\n");
-				        			
+				        			if (js.trim().length() > 0) actionJS.append("\n" + js.trim() + "\n");				        			
 				    			}
 			    				
 			    				// move onto the next action type
@@ -1405,7 +1423,26 @@ public class Application {
 	    		} // action types check
 	    		
 	    	} // jsonAction check
-	    		    					    	
+	    	
+	    	// check the template type
+	    	if (_templateType != null) {
+	    		// get the templates
+	    		List<Template> templates =  (List<Template>) servletContext.getAttribute("templates");
+	    		// check we got some
+	    		if (templates != null) {
+	    			// loop them
+	    			for (Template template : templates) {
+	    				// check type
+	    				if (_templateType.equals(template.getType())) {
+	    					// get any resources
+	    					addResources(template.getResources(), "Template", "", null, resourceJS, resourceCSS);
+	    					// we're done
+	    					break;
+	    				}
+	    			}
+	    		}
+	    	}
+	    		    		    					    
 	    	// create folders to write the rapid.js file
 			String applicationPath = getWebFolder(servletContext);		
 			File applicationFolder = new File(applicationPath);		

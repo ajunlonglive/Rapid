@@ -500,7 +500,7 @@ public class Rapid extends Action {
 					// add the None member first
 					jsonAdapters.put(jsonSendAdapter);
 					// check we have some database drivers
-					if (jsonConnectionAdapters != null) {						
+					if (jsonFormAdapters != null) {						
 						// loop what we have
 						for (int i = 0; i < jsonFormAdapters.length(); i++) {
 							// get the item
@@ -520,14 +520,14 @@ public class Rapid extends Action {
 					
 					// prepare the collection we'll send
 					JSONArray jsonTemplates = new JSONArray();
-					// create an entry for no form adapter
+					// create an entry for no template
 					JSONObject jsonTemplate = new JSONObject();
 					// no value
-					jsonSendAdapter.put("value", "");
+					jsonTemplate.put("value", "");
 					// None as text
-					jsonSendAdapter.put("text", "None");					
+					jsonTemplate.put("text", "None");					
 					// add the None member first
-					jsonAdapters.put(jsonSendAdapter);
+					jsonTemplates.put(jsonTemplate);
 					// get the templates
 					List<Template> templates = rapidServlet.getTemplates();
 					// check we have some 
