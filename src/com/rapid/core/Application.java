@@ -545,7 +545,7 @@ public class Application {
 	
 	// instance variables	
 	private int _xmlVersion, _status, _applicationBackupsMaxSize, _pageBackupsMaxSize;
-	private String _id, _version, _name, _title, _description, _startPageId, _templateType, _styles, _statusBarColour, _statusBarHighlightColour, _statusBarTextColour, _statusBarIconColour, _functions, _securityAdapterType, _formAdapterType, _createdBy, _modifiedBy;
+	private String _id, _version, _name, _title, _description, _startPageId, _themeType, _styles, _statusBarColour, _statusBarHighlightColour, _statusBarTextColour, _statusBarIconColour, _functions, _securityAdapterType, _formAdapterType, _createdBy, _modifiedBy;
 	private boolean _showConrolIds, _showActionIds;
 	private Date _createdDate, _modifiedDate;
 	private Map<String,Integer> _pageOrders;
@@ -623,9 +623,9 @@ public class Application {
 	public String getStartPageId() { return _startPageId; }
 	public void setStartPageId(String startPageId) { _startPageId = startPageId; }
 	
-	// the CSS template type which we'll look up and add to the rapid.css file
-	public String getTemplateType() { return _templateType; }
-	public void setTemplateType(String templateType) { _templateType = templateType; }
+	// the CSS theme type which we'll look up and add to the rapid.css file
+	public String getThemeType() { return _themeType; }
+	public void setThemeType(String templateType) { _themeType = templateType; }
 	
 	// the CSS styles added to the generated application rapid.css file
 	public String getStyles() { return _styles; }
@@ -962,9 +962,7 @@ public class Application {
 	public List<Resource> getResources() { return _resources; }
 			
 	// scan the css for classes
-	private List<String> scanStyleClasses(String css) {
-		
-		ArrayList<String> classes = new ArrayList<String>();
+	private List<String> scanStyleClasses(String css, List<String> classes) {
 		
 		// only if we got something we can use
 		if (css != null) {
@@ -1424,18 +1422,23 @@ public class Application {
 	    		
 	    	} // jsonAction check
 	    	
-	    	// check the template type
-	    	if (_templateType != null) {
+	    	// assume no theme css
+	    	String themeCSS = null;
+	    	
+	    	// check the theme type
+	    	if (_themeType != null) {
 	    		// get the templates
-	    		List<Template> templates =  (List<Template>) servletContext.getAttribute("templates");
+	    		List<Theme> themes =  (List<Theme>) servletContext.getAttribute("themes");
 	    		// check we got some
-	    		if (templates != null) {
+	    		if (themes != null) {
 	    			// loop them
-	    			for (Template template : templates) {
+	    			for (Theme theme : themes) {
 	    				// check type
-	    				if (_templateType.equals(template.getType())) {
+	    				if (_themeType.equals(theme.getType())) {
+	    					// retain the theme CSS
+	    					themeCSS = theme.getCSS();
 	    					// get any resources
-	    					addResources(template.getResources(), "Template", "", null, resourceJS, resourceCSS);
+	    					addResources(theme.getResources(), "Theme", "", null, resourceJS, resourceCSS);
 	    					// we're done
 	    					break;
 	    				}
@@ -1523,40 +1526,26 @@ public class Application {
 			pw.close();
 			fosMin.close();
 			
-			// assume no template css
-			String appTemplateCSS = "";
-			// if we have a template
-			if (_templateType != null) {
-				// get the templates
-				List<Template> templates = (List<Template>) servletContext.getAttribute("templates");
-				// if we got some
-				if (templates != null) {
-					// loop them
-					for (Template template : templates) {
-						// if this is the one we want
-						if (_templateType.equals(template.getType())) {
-							// add the css
-							appTemplateCSS = template.getCSS();
-							// we're done
-							break;
-						}
-					}
-				}
-			}
-								
 			// get the rapid CSS into a string and insert parameters
 			String resourceCSSWithParams = insertParameters(servletContext, resourceCSS.toString());			
 			String appCSSWithParams = insertParameters(servletContext, _styles);
+			String appThemeCSSWithParams = insertParameters(servletContext, themeCSS);
 			
 			// write the rapid.css file
 			fos = new FileOutputStream (applicationPath + "/rapid.css");
 			ps = new PrintStream(fos);
 			ps.print("\n/* This file is auto-generated on application load and save - it is minified when the application status is live */\n");		
-			ps.print(resourceCSSWithParams);
-			ps.print("\n\n/* Application template */\n\n");
-			ps.print(appTemplateCSS);
-			ps.print("\n\n/* Application styles */\n\n");
-			ps.print(appCSSWithParams);
+			if (resourceCSSWithParams != null) {
+				ps.print(resourceCSSWithParams);
+			}
+			if (appThemeCSSWithParams != null) {
+				ps.print("\n\n/* Application theme */\n\n");
+				ps.print(appThemeCSSWithParams);
+			}
+			if (appCSSWithParams != null) {
+				ps.print("\n\n/* Application styles */\n\n");
+				ps.print(appCSSWithParams);
+			}
 			ps.close();
 			fos.close();
 			
@@ -1625,11 +1614,15 @@ public class Application {
 				}
 				
 	    	} // loop resources
+			
+			// a list for all of the style classes we're going to send up with
+			_styleClasses = new ArrayList<String>();			
+			// populate the list of style classes by scanning the global styles
+			scanStyleClasses(_styles, _styleClasses);
+			// and any theme
+			scanStyleClasses(appThemeCSSWithParams, _styleClasses);
 								
 		} // create resources
-														
-		// populate the list of style classes by scanning the rapid.css
-		_styleClasses = scanStyleClasses(_styles);
 		
 		// empty the list of page variables so it's regenerated
 		_pageVariables = null;

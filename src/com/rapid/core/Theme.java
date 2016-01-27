@@ -3,7 +3,7 @@ package com.rapid.core;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Template {
+public class Theme  {
 	
 	// private instance variables
 	private String _type, _name, _css;
@@ -16,7 +16,7 @@ public class Template {
 	public JSONObject getResources()  { return _resources; }
 
 	// constructor
-	public Template(String xml) throws JSONException {		
+	public Theme(String xml) throws JSONException {		
 		// convert the xml string into JSON
 		JSONObject jsonTemplate = org.json.XML.toJSONObject(xml).getJSONObject("template");
 		// retain properties

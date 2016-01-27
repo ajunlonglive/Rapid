@@ -54,4 +54,17 @@ public class Strings {
         return response;
 	}
 	
+	
+	public static int occurrences(String string, String pattern) {
+		// assume no occurences
+		int count = 0;
+		// if both the string and pattern are non null
+		if (string != null && pattern != null) {
+			// replace pattern with nothing and calc difference in length
+			count = string.length() - string.replace(pattern, "").length() / pattern.length();
+		}
+		// return
+		return count;		
+	}
+	
 }
