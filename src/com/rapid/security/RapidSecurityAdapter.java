@@ -7,7 +7,7 @@ gareth.edwards@rapid-is.co.uk
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as 
 published by the Free Software Foundation, either version 3 of the 
 License, or (at your option) any later version. The terms require you 
@@ -27,9 +27,7 @@ package com.rapid.security;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.xml.bind.JAXBContext;
@@ -44,7 +42,6 @@ import com.rapid.core.Application;
 import com.rapid.server.Rapid;
 import com.rapid.server.RapidHttpServlet;
 import com.rapid.server.RapidRequest;
-import com.rapid.server.filter.RapidFilter;
 import com.rapid.utils.Files;
 
 public class RapidSecurityAdapter extends SecurityAdapter {
@@ -273,7 +270,7 @@ public class RapidSecurityAdapter extends SecurityAdapter {
 	@Override
 	public User getUser(RapidRequest rapidRequest) throws SecurityAdapaterException {
 		for (User user : _security.getUsers()) {
-			if (user.getName() != null) {
+			if (user.getName() != null && rapidRequest.getUserName() != null) {
 				if (user.getName().toLowerCase().equals(rapidRequest.getUserName().toLowerCase())) return user;
 			}
 		}

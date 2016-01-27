@@ -5,7 +5,7 @@
 /* Control and Action resource JavaScript */
 
 
-/* Page control resource JavaScript */
+/* Page control control control control resource JavaScript */
 
 function Event_error(eventName, controlId, ex) {
 	if (controlId) {
@@ -66,7 +66,7 @@ function saveDataStoreData(id, details, data) {
 	if (f) f($.Event("change"));
 }
 
-/* Grid control resource JavaScript */
+/* Grid control control control control control resource JavaScript */
 
 function getGridDataStoreData(id, details) {
 	data = null;
@@ -327,7 +327,7 @@ function linkClick(url, sessionVariablesString) {
 	
 }
 
-/* Database action resource JavaScript */
+/* Database action action resource JavaScript */
 
 // this global associative array tracks the databaseAction call sequences for each action	    			
 var _databaseActionSequence = [];	    
@@ -434,7 +434,7 @@ function getDatabaseActionInputData(multiRow, inputs, sourceId, sourceData) {
 	return data
 }
 
-/* Webservice action resource JavaScript */
+/* Webservice action action resource JavaScript */
 
 // this global associative array tracks the webserviceAction call sequences for each action	    			
 var _webserviceActionSequence = [];	    

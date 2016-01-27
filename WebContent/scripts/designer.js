@@ -3725,16 +3725,16 @@ function getHeight() {
 	var height = _window.height();
 				
 	// get the control panel
-	var controlPanel = $("#controlPanel");
+	var controlPanel = $("#controlPanelInner");
 		
 	// get the properties panel
-	var propertiesPanel = $("#propertiesPanel");
+	var propertiesPanel = $("#propertiesPanelInner");
 			
-	// get its current height (less the combined top and bottom padding)
-	var controlPanelHeight = controlPanel.outerHeight(true);
+	// get its current height
+	var controlPanelHeight = controlPanel.outerHeight(true) + 10;
 		
 	// get its current height
-	var propertiesPanelHeight = propertiesPanel.outerHeight(true);
+	var propertiesPanelHeight = propertiesPanel.outerHeight(true) + 10;
 	
 	// get the iFrame height by it's contents
 	var iframeHeight = $(_pageIframe[0].contentDocument).height();
@@ -3967,7 +3967,7 @@ function windowResize(ev) {
     			// if just H cover V with right
     			if (scrollH) $("#desktopCoverRight").css("z-index",10006);
     		}
-    		
+
     		// check properties panel position, the iframe may be jutting out of the body
     		if (_panelPinnedOffset + devWidth + 1 > width) {
     			$("#propertiesPanel").css("right", -$("body")[0].scrollWidth + width - _scrollBarWidth);
