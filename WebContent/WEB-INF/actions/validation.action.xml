@@ -3,14 +3,14 @@
 
 <!-- 
 
-Copyright (C) 2014 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version. The terms require you to include
@@ -125,7 +125,15 @@ function Action_validation(ev, validations, showMessages) {
 				getValueFunction = window["getData_" + validation.controlType];
 			}
 			if (getValueFunction) {
-				var value = getValueFunction(ev, validation.controlId, validation.field, validation.details);
+				var details = null;
+				if (validation.details) {
+					if (validation.details.indexOf("{") == 0) {
+						details = JSON.parse(details);
+					} else {
+						details = window[validation.details];
+					}
+				}
+				var value = getValueFunction(ev, validation.controlId, validation.field, details);
 				if (validation.validationType == "javascript") {						
 					var validationFunction = new Function(["ev","id","value"], validation.javaScript);
 					var failMessage = validationFunction.apply(this, [ev,validation.controlId,value]);
