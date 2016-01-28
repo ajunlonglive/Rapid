@@ -361,7 +361,7 @@ public class Application {
 		public static final int RAPID = 0;
 		public static final int ACTION = 1;
 		public static final int CONTROL = 2;
-		public static final int TEMPLATE = 3;
+		public static final int THEME = 3;
 		
 		// private instance variables
 		private int _typeClass;
@@ -1071,7 +1071,7 @@ public class Application {
 				// update if control
 				if ("control".equals(jsonObjectType)) dependencyTypeClass = ResourceDependency.CONTROL;
 				// update if template
-				if ("template".equals(jsonObjectType)) dependencyTypeClass = ResourceDependency.TEMPLATE;
+				if ("theme".equals(jsonObjectType)) dependencyTypeClass = ResourceDependency.THEME;
 				
 				// loop them
 				for (int j = 0; j < jsonResources.length(); j++) {
@@ -1082,16 +1082,18 @@ public class Application {
 					String resourceType = jsonResource.getString("type");
 					// get the contens which is either a path, or the real stuff
 					String resourceContents = jsonResource.getString("contents").trim();					
+					// define the comments name as the name 
+					String commentsName = name;
 					// safety check
-					if (name == null) name = resourceType;
-					// add json object type
-					name += " " + jsonObjectType;
-					
+					if (commentsName == null) commentsName = "";
+					// add the json object type and resource type
+					commentsName += " " + jsonObjectType + " " + resourceType;
+										
 					// add as resources if they're files, or append the string builders (the app .js and .css are added as resources at the end)
 					if ("javascript".equals(resourceType)) {
-						js.append("\n/* " + name + " resource JavaScript */\n\n" + resourceContents + "\n");
+						js.append("\n/* " + commentsName + " resource JavaScript */\n\n" + resourceContents + "\n");
 					} else if ("css".equals(resourceType)) {
-						css.append("\n/* " + name + " resource styles */\n\n" + resourceContents + "\n");
+						css.append("\n/* " + commentsName + " resource styles */\n\n" + resourceContents + "\n");
 					} else if ("javascriptFile".equals(resourceType)) {
 						_resources.add(Resource.JAVASCRIPTFILE, resourceContents, dependencyTypeClass, dependencyType);
 					} else if ("cssFile".equals(resourceType)) {
@@ -1256,8 +1258,7 @@ public class Application {
 				    			// if there was something
 				    			if (setDataFunction != null) {
 				        			// clean and print! (if not an empty string)
-				        			if (setDataFunction.trim().length() > 0) dataJS.append("\nfunction setData_" + controlType + "(ev, id, field, details, data, changeEvents) {\n  " + setDataFunction.trim().replace("\n", "\n  ") + "\n}\n");
-				        			
+				        			if (setDataFunction.trim().length() > 0) dataJS.append("\nfunction setData_" + controlType + "(ev, id, field, details, data, changeEvents) {\n  " + setDataFunction.trim().replace("\n", "\n  ") + "\n}\n");				        			
 				    			}	
 				    			
 				    			// retrieve any runtimeProperties
@@ -1424,6 +1425,8 @@ public class Application {
 	    	
 	    	// assume no theme css
 	    	String themeCSS = null;
+	    	// assume no theme name
+	    	String themeName = null;
 	    	
 	    	// check the theme type
 	    	if (_themeType != null) {
@@ -1437,8 +1440,10 @@ public class Application {
 	    				if (_themeType.equals(theme.getType())) {
 	    					// retain the theme CSS
 	    					themeCSS = theme.getCSS();
+	    					// retain the name
+	    					themeName = theme.getName();
 	    					// get any resources
-	    					addResources(theme.getResources(), "Theme", "", null, resourceJS, resourceCSS);
+	    					addResources(theme.getResources(), "theme", themeName, null, resourceJS, resourceCSS);
 	    					// we're done
 	    					break;
 	    				}
@@ -1527,24 +1532,24 @@ public class Application {
 			fosMin.close();
 			
 			// get the rapid CSS into a string and insert parameters
-			String resourceCSSWithParams = insertParameters(servletContext, resourceCSS.toString());			
-			String appCSSWithParams = insertParameters(servletContext, _styles);
+			String resourceCSSWithParams = insertParameters(servletContext, resourceCSS.toString());						
 			String appThemeCSSWithParams = insertParameters(servletContext, themeCSS);
+			String appCSSWithParams = insertParameters(servletContext, _styles);
 			
 			// write the rapid.css file
 			fos = new FileOutputStream (applicationPath + "/rapid.css");
 			ps = new PrintStream(fos);
-			ps.print("\n/* This file is auto-generated on application load and save - it is minified when the application status is live */\n");		
+			ps.print("\n/* This file is auto-generated on application load and save - it is minified when the application status is live */\n\n");		
 			if (resourceCSSWithParams != null) {
-				ps.print(resourceCSSWithParams);
+				ps.print(resourceCSSWithParams.trim());
 			}
 			if (appThemeCSSWithParams != null) {
-				ps.print("\n\n/* Application theme */\n\n");
-				ps.print(appThemeCSSWithParams);
+				ps.print("\n\n/* " + themeName + " theme styles */\n\n");
+				ps.print(appThemeCSSWithParams.trim());
 			}
 			if (appCSSWithParams != null) {
 				ps.print("\n\n/* Application styles */\n\n");
-				ps.print(appCSSWithParams);
+				ps.print(appCSSWithParams.trim());
 			}
 			ps.close();
 			fos.close();

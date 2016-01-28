@@ -44,6 +44,63 @@ $(document).ready( function() {
 	                ]]>	                
 	            </contents>
 	        </resource>
+	        <resource>
+	            <type>css</type>
+	            <contents>
+	                <![CDATA[
+.ui-widget {
+  font-family: 'PT Sans Caption', 'Lato', Arial , sans-serif;
+}
+
+.ui-datepicker select.ui-datepicker-month {
+  padding: 6px 0px 6px 8px;
+  font-family: 'PT Sans Caption', 'Lato', Arial , sans-serif;
+}
+
+.ui-datepicker select.ui-datepicker-year {
+  padding: 6px 0px 6px 8px;
+  font-family: 'PT Sans Caption', 'Lato', Arial , sans-serif;
+}
+
+.ui-datepicker .ui-datepicker-header {
+  border: 1px solid #6C82B4;
+  background: #315A9A !important;
+}
+
+.ui-datepicker tr:first-child {
+  border: 1px solid #6C82B4 !important;
+}
+
+.ui-datepicker th {
+  background: linear-gradient(#1E488C, #2B579C);
+}
+
+.ui-datepicker-unselectable {
+  background: #6785B5 !important;
+}
+
+.ui-datepicker-unselectable .ui-state-default {
+  background: #436499 !important;
+  color: #E8E9EA;
+}
+
+.ui-datepicker td a {
+  background: #4D74B2 !important;
+  color: #E8E9EA !important;
+  text-shadow: none !important;
+}
+
+.ui-datepicker td a:hover {
+  background: #2A60B6 !important;
+  color: #FFF;
+}
+
+.ui-widget-content .ui-state-active {
+  background: #315A9A radial-gradient(at 30% 0px , #4E79E8, #315A9A 25%) !important;
+}	                
+	                ]]>
+	            </contents>
+	        </resource>
 	    </resources>
 	    
 	    <css>
@@ -485,57 +542,6 @@ div.tabsPanel.selected {
   box-shadow: 0px 1px 3px #071028;
   font-size: 0.8rem;
   color: #A8B9D0;
-}
-
-.ui-widget {
-  font-family: 'PT Sans Caption', 'Lato', Arial , sans-serif;
-}
-
-.ui-datepicker select.ui-datepicker-month {
-  padding: 6px 0px 6px 8px;
-  font-family: 'PT Sans Caption', 'Lato', Arial , sans-serif;
-}
-
-.ui-datepicker select.ui-datepicker-year {
-  padding: 6px 0px 6px 8px;
-  font-family: 'PT Sans Caption', 'Lato', Arial , sans-serif;
-}
-
-.ui-datepicker .ui-datepicker-header {
-  border: 1px solid #6C82B4;
-  background: #315A9A !important;
-}
-
-.ui-datepicker tr:first-child {
-  border: 1px solid #6C82B4 !important;
-}
-
-.ui-datepicker th {
-  background: linear-gradient(#1E488C, #2B579C);
-}
-
-.ui-datepicker-unselectable {
-  background: #6785B5 !important;
-}
-
-.ui-datepicker-unselectable .ui-state-default {
-  background: #436499 !important;
-  color: #E8E9EA;
-}
-
-.ui-datepicker td a {
-  background: #4D74B2 !important;
-  color: #E8E9EA !important;
-  text-shadow: none !important;
-}
-
-.ui-datepicker td a:hover {
-  background: #2A60B6 !important;
-  color: #FFF;
-}
-
-.ui-widget-content .ui-state-active {
-  background: #315A9A radial-gradient(at 30% 0px , #4E79E8, #315A9A 25%) !important;
 }
 	    	        
 	    ]]>    
