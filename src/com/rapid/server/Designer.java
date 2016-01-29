@@ -96,6 +96,7 @@ public class Designer extends RapidHttpServlet {
        
     public Designer() { super(); }
     
+    // helper method to set the content type, write, and close the stream for common JSON output
     private void sendJsonOutput(HttpServletResponse response, String output) throws IOException {
     	
     	// set response as json
@@ -114,12 +115,9 @@ public class Designer extends RapidHttpServlet {
 		out.flush();
     	
     }
-    
+        
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 							
-		// fake a slow server
-		// try { Thread.sleep(3000); } catch (InterruptedException e) { }
-		
 		RapidRequest rapidRequest = new RapidRequest(this, request);
 		
 		try {
@@ -183,7 +181,7 @@ public class Designer extends RapidHttpServlet {
 							
 							// add the devices
 							jsonSystemData.put("devices", getDevices());
-																					
+							
 							// put into output string
 							output = jsonSystemData.toString();
 							
@@ -646,7 +644,7 @@ public class Designer extends RapidHttpServlet {
 								
 							}
 															
-						} else if ("getSummary".equals(actionName)) {
+						} else if ("pages".equals(actionName) || "summary".equals(actionName) || "detail".equals(actionName)) {
 							
 							// a string builder for the response
 							StringBuilder sb = new StringBuilder(); 
@@ -659,33 +657,74 @@ public class Designer extends RapidHttpServlet {
 							
 							// loop the page headers
 							for (PageHeader pageHeader : pageHeaders) {
+								
 								// get the page
 								Page page = application.getPages().getPage(getServletContext(), pageHeader.getId());
+								
+								// get the label
+								String label = page.getLabel();
+								// if we got one
+								if (label == null) {
+									label = "";									
+								} else {
+									if (label.length() > 0) label = " - " + label;									
+								}
+								
 								// print the page name
-								sb.append(page.getName() + " - number of controls: " + page.getAllControls().size() + "<p/>\n");
-								// get the controls
-								List<Control> controls = page.getAllControls();
-								// loop them
-								sb.append("<table>");
-								for (Control control : controls) {
-									// get the name 
-									String name = control.getName();
-									// null check
-									if (name != null) {
-										if (name.trim().length() > 0) {											
-											// get the label
-											String label = control.getLabel();
-											// get the type
-											String type = control.getType();
-											// exclude panels, hidden values, and datastores
-											if (!"panel".equals(type) && !("hiddenvalue").equals(type) && !("dataStore").equals(type)) {
-												// print the control name
-												sb.append("<tr><td>" + control.getId() +"</td><td>" + type + "</td><td>" + name + "</td><td>" + label + "</td></tr>");												
+								sb.append(page.getId() + " " + page.getName() + label);
+								
+								// check summary
+								if ("summary".equals(actionName) || "detail".equals(actionName)) {
+									
+									// print the number of controls
+									sb.append(" - number of controls: " + page.getAllControls().size() + "<p/>\n");
+									// if detail
+									if ("detail".equals(actionName)) {
+										// print the page properties										
+									}
+								
+									// get the controls
+									List<Control> controls = page.getAllControls();
+									// open a table
+									sb.append("<table>\n");
+									// loop them
+									for (Control control : controls) {
+										// get the name 
+										String name = control.getName();
+										// null check
+										if (name != null) {
+											if (name.trim().length() > 0) {											
+												// get the label
+												label = control.getLabel();
+												// get the type
+												String type = control.getType();												
+												// exclude panels, hidden values, and datastores for summary
+												if ("detail".equals(actionName) || (!"panel".equals(type) && !("hiddenvalue").equals(type) && !("dataStore").equals(type))) {
+													// print the control name
+													sb.append("<tr><td>" + control.getId() +"</td><td>" + type + "</td><td>" + name + "</td><td>" + label + "</td></tr>\n");
+													// if details
+													if ("detail".equals(actionName)) {
+														// get the properties
+														Map<String, String> properties = control.getProperties();
+														// loop them
+														for (String key : properties.keySet()) {																																												
+															// print the properties															
+															sb.append("<tr><td>&nbsp;</td><td>" + key + "</td><td>" + properties.get(key) + "</td></tr>\n");														
+															/*
+															// get the this control definition
+															JSONObject jsonControl = this.getJsonControl(type);
+															// get the events for this control
+															JSONObject jsonEvents = jsonControl.optJSONObject("events");
+															// print them
+															*/
+														}					
+													}
+												}													
 											}
 										}
 									}
-								}
-								sb.append("</table>");
+									sb.append("</table>\n");																	
+								}																								
 								sb.append("<p/>\n");
 							}
 													
@@ -802,9 +841,6 @@ public class Designer extends RapidHttpServlet {
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
-		// fake a slow server
-		//try { Thread.sleep(3000); } catch (InterruptedException e) { }
 
 		RapidRequest rapidRequest = new RapidRequest(this, request);
 		
@@ -1387,7 +1423,7 @@ public class Designer extends RapidHttpServlet {
 														// get the current user from the Rapid application
 														User rapidUser = rapidSecurity.getUser(rapidRequest);
 														// create a new user based on the Rapid user
-														user = new User(userName, rapidUser.getDescription(), rapidUser.getPassword(), rapidUser.getDeviceDetails());
+														user = new User(userName, rapidUser.getDescription(), rapidUser.getPassword());
 														// add the new user 
 														security.addUser(rapidRequest, user);
 													}

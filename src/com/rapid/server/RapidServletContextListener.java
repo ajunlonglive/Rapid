@@ -78,7 +78,7 @@ import com.rapid.core.Application.RapidLoadingException;
 import com.rapid.core.Applications;
 import com.rapid.core.Applications.Versions;
 import com.rapid.core.Device.Devices;
-import com.rapid.core.Template;
+import com.rapid.core.Theme;
 import com.rapid.data.ConnectionAdapter;
 import com.rapid.forms.FormAdapter;
 import com.rapid.utils.Classes;
@@ -720,27 +720,27 @@ public class RapidServletContextListener implements ServletContextListener {
 		
 	}
 	
-	// here we loop all of the template.xml files and instantiate the json class object/functions and cache them in the servletContext
-	public static int loadTemplates(ServletContext servletContext) throws Exception {
+	// here we loop all of the theme.xml files and instantiate the json class object/functions and cache them in the servletContext
+	public static int loadThemes(ServletContext servletContext) throws Exception {
 		
-		// assume no templates
-		int templateCount = 0;
+		// assume no themes
+		int themeCount = 0;
 		
-		// create a list for our templates
-		List<Template> templates = new ArrayList<Template>();
+		// create a list for our themes
+		List<Theme> themes = new ArrayList<Theme>();
 							
 		// get the directory in which the control xml files are stored
-		File dir = new File(servletContext.getRealPath("/WEB-INF/templates/"));
+		File dir = new File(servletContext.getRealPath("/WEB-INF/themes/"));
 		
 		// create a filter for finding .control.xml files
 		FilenameFilter xmlFilenameFilter = new FilenameFilter() {
 	    	public boolean accept(File dir, String name) {
-	    		return name.toLowerCase().endsWith(".template.xml");
+	    		return name.toLowerCase().endsWith(".theme.xml");
 	    	}
 	    };
 	    
 	    // create a schema object for the xsd
-	    Schema schema = _schemaFactory.newSchema(new File(servletContext.getRealPath("/WEB-INF/schemas/") + "/template.xsd"));
+	    Schema schema = _schemaFactory.newSchema(new File(servletContext.getRealPath("/WEB-INF/schemas/") + "/theme.xsd"));
 	    // create a validator
 	    Validator validator = schema.newValidator();
 	    	
@@ -759,32 +759,32 @@ public class RapidServletContextListener implements ServletContextListener {
 			// validate the control xml file against the schema
 			validator.validate(new StreamSource(new ByteArrayInputStream(xml.getBytes("UTF-8"))));
 			
-			// create a template object from the xml
-			Template template = new Template(xml);
+			// create a theme object from the xml
+			Theme theme = new Theme(xml);
 			
 			// add it to our collection
-			templates.add(template);
+			themes.add(theme);
 			
 			// inc the template count
-			templateCount ++;
+			themeCount ++;
 							
 		}
 		
 		// sort the list of templates by name
-		Collections.sort(templates, new Comparator<Template>() {
+		Collections.sort(themes, new Comparator<Theme>() {
 			@Override
-			public int compare(Template t1, Template t2) {
+			public int compare(Theme t1, Theme t2) {
 				return Comparators.AsciiCompare(t1.getName(), t2.getName(), false);
 			}
 			
 		});
 					
 		// put the jsonControls in a context attribute (this is available via the getJsonControls method in RapidHttpServlet)
-		servletContext.setAttribute("templates", templates);
+		servletContext.setAttribute("themes", themes);
 							
-		_logger.info(templateCount + " templates loaded in .template.xml files");
+		_logger.info(themeCount + " templates loaded in .template.xml files");
 		
-		return templateCount;
+		return themeCount;
 		
 	}
 	
@@ -1132,9 +1132,9 @@ public class RapidServletContextListener implements ServletContextListener {
 			_logger.info("Loading templates");
 			
 			// load templates
-			loadTemplates(servletContext);
+			loadThemes(servletContext);
 			
-			_logger.info("Loading templates");
+			_logger.info("Loading themes");
 						
 			// load the controls 
 			loadControls(servletContext);	

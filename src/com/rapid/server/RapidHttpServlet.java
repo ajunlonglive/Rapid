@@ -56,7 +56,7 @@ import org.json.JSONObject;
 
 import com.rapid.core.Applications;
 import com.rapid.core.Device.Devices;
-import com.rapid.core.Template;
+import com.rapid.core.Theme;
 import com.rapid.utils.JAXB.EncryptedXmlAdapter;
 
 @SuppressWarnings({"serial", "unchecked", "rawtypes"})
@@ -183,8 +183,8 @@ public class RapidHttpServlet extends HttpServlet {
 		return (Devices) getServletContext().getAttribute("devices");
 	}
 	
-	public List<Template> getTemplates() {
-		return (List<Template>) getServletContext().getAttribute("templates");
+	public List<Theme> getThemes() {
+		return (List<Theme>) getServletContext().getAttribute("themes");
 	}
 	
 	public String getSecureInitParameter(String name) {

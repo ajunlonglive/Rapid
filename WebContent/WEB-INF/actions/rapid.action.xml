@@ -297,7 +297,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 				actionType: actionType, 
 				appId: $("#rapid_P0_C43").val(), 
 				version: $("#rapid_P0_C1044_").val(),
-				templateType: $("#rapid_P0_C1570_").val(), 
+				themeType: $("#rapid_P0_C1570_").val(), 
 				styles: $("#rapid_P0_C116").val(),
 				statusBarColour: $("#rapid_P0_C1414_").val(), 
 				statusBarHighlightColour: $("#rapid_P0_C1418_").val(), 
@@ -381,6 +381,8 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 				name: $("#rapid_P1_C7").val(),
 				newVersion: $("#rapid_P1_C48_").val(),
 				title: $("#rapid_P1_C11").val(),
+				type: $("#rapid_P1_C57_").children("input[type=radio]:checked").val(),
+				themeType: $("#rapid_P1_C63_").val(),
 				description: $("#rapid_P1_C15").val()
 			}
 			callback = function(response) {

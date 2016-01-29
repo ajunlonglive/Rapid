@@ -7,7 +7,7 @@ gareth.edwards@rapid-is.co.uk
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as 
 published by the Free Software Foundation, either version 3 of the 
 License, or (at your option) any later version. The terms require you 
@@ -84,7 +84,7 @@ public class XML {
 		NodeList nodeList = node.getChildNodes();
 		
 		if (nodeList.getLength() > 0) {
-
+			
 			return nodeList.item(0);
 			
 		}
@@ -92,7 +92,7 @@ public class XML {
 		return null;
 		
 	}
-	
+
 	public static Node getChildElement(Node node, String elementName) {
 		
 		NodeList nodeList = node.getChildNodes();
@@ -137,7 +137,7 @@ public class XML {
 		
 	}
 	
-public static String getElementAttributeValue(String xml, String elementName, String attributeName) {
+	public static String getElementAttributeValue(String xml, String elementName, String attributeName) {
 		
 		String value = null;
 		
@@ -181,13 +181,29 @@ public static String getElementAttributeValue(String xml, String elementName, St
 	
 	public static String escape(String value) {
 		
-		return value.replace("<", "&lt;").replace(">", "&gt;").replace("&", "&amp;").replace("'", "&apos;");
+		if (value == null) {
+			
+			return null;
+		
+		} else {
+		
+			return value.replace("<", "&lt;").replace(">", "&gt;").replace("&", "&amp;").replace("'", "&apos;");
+			
+		}
 		
 	}
 	
 	public static String unescape(String value) {
 		
-		return value.replace("&lt;","<").replace("&gt;",">").replace("&amp;","&").replace("&apos;","'");
+		if (value == null) {
+		
+			return null;
+			
+		} else {
+					
+			return value.replace("&lt;","<").replace("&gt;",">").replace("&amp;","&").replace("&apos;","'");
+		
+		}
 		
 	}
 

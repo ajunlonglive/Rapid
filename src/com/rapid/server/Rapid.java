@@ -221,7 +221,17 @@ public class Rapid extends RapidHttpServlet {
 							
 							// if there is a formAdapter, make sure there's a form id, unless it's for a simple page
 							if (formAdapter != null) {
-																																
+								
+								// if there is a start parameter
+								if (request.getParameter("start") != null) {
+									// invalidate the session
+									request.getSession().invalidate();
+									// create a new session
+									request.getSession();
+									// recreate the rapidRequest
+									rapidRequest = new RapidRequest(this, request);
+								}
+																														
 								// if this is a form resume
 								if ("resume".equals(action)) {
 									// get the form id and password from the url
@@ -238,6 +248,7 @@ public class Rapid extends RapidHttpServlet {
 									// get form id from the adapter
 									formDetails = formAdapter.getUserFormDetails(rapidRequest);									
 								}								
+								
 								// if there isn't a form id, or we want to show the summary don't check the pages
 								if (formDetails == null || showSummary) {
 									

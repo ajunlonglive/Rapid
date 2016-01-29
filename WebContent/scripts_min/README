@@ -7,5 +7,5 @@ There are some rules:
 - their "contents" must start with "scripts/" and end with ".js"
 - they must not exist already (since resources are updated so seldom and shared between applications there is no point constantly rebuilding them)
 
-With the exception of jquery*.js they are all exlcuded from source control
+With the exception of jquery*.js they are all excluded from source control
 
