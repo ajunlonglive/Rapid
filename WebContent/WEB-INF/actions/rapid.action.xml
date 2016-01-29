@@ -381,6 +381,8 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 				name: $("#rapid_P1_C7").val(),
 				newVersion: $("#rapid_P1_C48_").val(),
 				title: $("#rapid_P1_C11").val(),
+				type: $("#rapid_P1_C57_").children("input[type=radio]:checked").val(),
+				themeType: $("#rapid_P1_C63_").val(),
 				description: $("#rapid_P1_C15").val()
 			}
 			callback = function(response) {

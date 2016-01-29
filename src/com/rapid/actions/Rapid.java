@@ -134,7 +134,7 @@ public class Rapid extends Action {
 	
 	// internal methods
 	
-	private Application createApplication(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, String name, String version, String title, String description) throws IllegalArgumentException, SecurityException, JAXBException, IOException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, SecurityAdapaterException, ParserConfigurationException, XPathExpressionException, RapidLoadingException, SAXException {
+	private Application createApplication(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, String name, String version, String title, String type, String themeType, String description) throws IllegalArgumentException, SecurityException, JAXBException, IOException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, SecurityAdapaterException, ParserConfigurationException, XPathExpressionException, RapidLoadingException, SAXException {
 		
 		String newAppId = Files.safeName(name).toLowerCase();
 		String newAppVersion = Files.safeName(version);
@@ -146,18 +146,25 @@ public class Rapid extends Action {
 		newApp.setVersion(newAppVersion);
 		newApp.setName(name);
 		newApp.setTitle(title);
+		newApp.setThemeType(themeType);
 		newApp.setDescription(description);
 		newApp.setCreatedBy(rapidRequest.getUserName());
 		newApp.setCreatedDate(new Date());
 		newApp.setSecurityAdapterType("rapid");
-						 								
+		
+		// if this is a form
+		if ("F".equals(type)) {
+			// add standard form adapter too
+			newApp.setFormAdapterType("rapid");
+		}
+										 								
 		// initialise the application
 		newApp.initialise(rapidServlet.getServletContext(), true);
-		
-		// initialise the list of action
+				
+		// initialise the list of actions
 		List<String> actionTypes = new ArrayList<String>();
-		
-		// get the JSONArray of controls
+										
+		// get the JSONArray of actions
 		JSONArray jsonActionTypes = rapidServlet.getJsonActions();
 		
 		// if there were some
@@ -170,9 +177,22 @@ public class Rapid extends Action {
 				if (jsonActionType.optBoolean("addToNewApplications")) actionTypes.add(jsonActionType.getString("type"));
 			}
 		}
+		
+		// check the new app type
+		if ("M".equals(type)) {
+			// if mobile, add mobile action
+			actionTypes.add("mobile");
+		} else if ("F".equals(type)) {
+			// add form control if form
+			actionTypes.add("form");
+		}
+		
+		// sort them again, just to be sure
+		Collections.sort(actionTypes);
 							
 		// assign the list to the application
 		newApp.setActionTypes(actionTypes);
+		
 		
 		// initialise the list of controls
 		List<String> controlTypes = new ArrayList<String>();
@@ -190,6 +210,20 @@ public class Rapid extends Action {
 				if (jsonControlType.optBoolean("addToNewApplications")) controlTypes.add(jsonControlType.getString("type"));
 			}
 		}
+		
+		// check the new app type
+		if ("M".equals(type)) {
+			// add flow layout control
+			controlTypes.add("flowLayout");
+			// remove tabs 
+			controlTypes.remove("tabGroup");			
+		} else if ("F".equals(type)) {
+			// remove tabs 
+			controlTypes.remove("tabGroup");		
+		}
+		
+		// sort them again, just to be sure
+		Collections.sort(controlTypes);
 							
 		// assign the list to the application
 		newApp.setControlTypes(controlTypes);
@@ -1590,11 +1624,13 @@ public class Rapid extends Action {
 				String name = jsonAction.getString("name").trim();
 				String version = jsonAction.getString("newVersion").trim();
 				String title = jsonAction.optString("title").trim();
+				String type = jsonAction.optString("type");
+				String themeType = jsonAction.optString("themeType");
 				String description = jsonAction.optString("description").trim();
 				
 				// create a new application with our reusable, private method
-				Application newApp = createApplication(rapidServlet, rapidRequest, name, version, title, description);
-											
+				Application newApp = createApplication(rapidServlet, rapidRequest, name, version, title, type, themeType, description);
+										
 				// set the result message
 				result.put("message", "Application " + app.getTitle() + " created");
 				
@@ -1662,7 +1698,7 @@ public class Rapid extends Action {
 				String description = jsonAction.optString("description").trim();
 				
 				// create a new application with our reusable, private method
-				Application newApp = createApplication(rapidServlet, rapidRequest, id, version, title, description);
+				Application newApp = createApplication(rapidServlet, rapidRequest, id, version, title, "", "", description);
 											
 				// set the result message
 				result.put("message", "Version " + newApp.getVersion() + " created for " + newApp.getTitle());

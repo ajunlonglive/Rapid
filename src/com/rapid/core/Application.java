@@ -625,7 +625,7 @@ public class Application {
 	
 	// the CSS theme type which we'll look up and add to the rapid.css file
 	public String getThemeType() { return _themeType; }
-	public void setThemeType(String templateType) { _themeType = templateType; }
+	public void setThemeType(String themeType) { _themeType = themeType; }
 	
 	// the CSS styles added to the generated application rapid.css file
 	public String getStyles() { return _styles; }
