@@ -54,6 +54,13 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <changeValueJavaScript>text</changeValueJavaScript>	     	                 
 	        </property>
 	        
+	         <property>
+	            <key>alt</key>
+	            <name>Alt text</name>
+	            <setConstructValueFunction>return this.name;</setConstructValueFunction>  
+	            <changeValueJavaScript>text</changeValueJavaScript>	     	                 
+	        </property>
+	        
 	        <property>
 	            <key>file</key>
 	            <name>File</name>
@@ -73,8 +80,9 @@ if (this.file && this.file.indexOf("RapidLogo_60x40.png") < 0) {
 } else {
 	this.file = "../../../images/RapidLogo_60x40.png";
 }	 
-var title = (this.title) ? " title='" + this.title + "'": "";         
-return "<img id='" + this.id + "' src='applications/" + _version.id + "/" + _version.version + "/" + this.file + "'" + title + " class='image" + getStyleClasses(this) + "'></img>"
+var title = (this.title) ? " title='" + this.title + "'" : "";
+var alt = (this.alt) ? " alt='" + this.alt + "'" : "";
+return "<img id='" + this.id + "' src='applications/" + _version.id + "/" + _version.version + "/" + this.file + "'" + title + alt + " class='image" + getStyleClasses(this) + "' ></img>"
 	        ]]>
 	    </getHtmlFunction> 
 	    
