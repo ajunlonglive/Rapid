@@ -1,7 +1,7 @@
 
 /* This file is auto-generated on application load and save - it is minified when the application status is live */
 
-/* Page control control control control control resource styles */
+/* Page control css resource styles */
 
 /* Loading */
 
@@ -25,13 +25,13 @@ span.loading {
 	display: none;
 }
 
-/* Button control control control control resource styles */
+/* Button control css resource styles */
 
 .buttonGlyphWithBackground {
 	font-size: 0.5em;
 }
 
-/* Grid control control control control resource styles */
+/* Grid control css resource styles */
 
 table.grid {
 	border-collapse:collapse;
@@ -46,7 +46,7 @@ table.grid span.sort {
 	margin-left: 5px;
 }
 
-/* Navigate action resource styles */
+/* Navigate action css resource styles */
 
 .dialogueCover {
 	background-color: white;
@@ -59,7 +59,7 @@ table.grid span.sort {
 	padding: 0px;
 }
 
-/* Validation action action resource styles */
+/* Validation action css resource styles */
 
 div.validation {
 	padding: 10px;
@@ -82,7 +82,6 @@ textarea.validation {
 li.validation {
   color:red;
 }
-
 
 /* Application styles */
 
