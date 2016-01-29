@@ -1,0 +1,494 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<template xmlVersion="1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/theme.xsd">
+
+<!-- 
+
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
+
+gareth.edwards@rapid-is.co.uk
+
+
+This file is part of the Rapid Application Platform
+
+Rapid is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version. The terms require you to include
+the original copyright, and the license notice in all redistributions.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
+
+ -->
+
+	    <type>rapid</type>	 
+	    <name>Rapid</name>	   
+	    <css>
+	    <![CDATA[
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Open Sans'), local('OpenSans'), url(https://fonts.gstatic.com/s/opensans/v13/cJZKeOuBrn4kERxqtaUH3VtXRa8TVwTICgirnJhmVJw.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+
+@font-face {
+  font-family: 'Oxygen';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Oxygen'), local('Oxygen-Regular'), url(https://fonts.gstatic.com/s/oxygen/v5/78wGxsHfFBzG7bRkpfRnCQ.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+
+@font-face {
+  font-family: 'PT Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local('PT Sans'), local('PTSans-Regular'), url(https://fonts.gstatic.com/s/ptsans/v8/ATKpv8nLYAKUYexo8iqqrg.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+
+html { height: 100%; }
+
+body {
+  font-family: 'Open Sans', 'Oxygen', 'PT Sans', Arial,sans-serif;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: normal;
+  background: transparent linear-gradient(#FFF, #E8E8E8) fixed;
+}
+
+.spacer {
+  margin-bottom: 20px;
+}
+
+.paddingSmall {
+  padding: 6px;
+}
+
+.paddingMedium {
+  padding: 15px;
+}
+
+.paddingLarge {
+  padding: 24px;
+}
+
+h2 {
+  font: 400 160%;
+  color: #343434;
+}
+
+button {
+  color: #000;
+  border: 2px solid #999;
+  background: transparent linear-gradient(#FFF, #E0E0E0);
+  box-shadow: 0px 1px 3px 1px #D0D0D0;
+  cursor: pointer;
+  padding: 5px 18px 6px;
+  border-radius: 34px;
+}
+
+button:hover {
+  background: transparent linear-gradient(#EBEBEB, #BABABA);
+}
+
+button:active, button:focus {
+  outline: none;
+}
+
+button:active {
+  background: transparent linear-gradient(#D4D4D4, #AAAAAA);
+}
+
+.buttonAction {
+  border: 2px solid #333;
+  color: #FFF;
+  background: transparent linear-gradient(#666, #494949);
+}
+
+.buttonAction:hover {
+  border: 2px solid #000;
+  background: transparent linear-gradient(#B80101, #500000);
+}
+
+.buttonAction:active {
+  background: transparent linear-gradient(#292929, #121212);
+}
+
+.buttonCheck {
+  box-shadow: 0px 1px 3px 1px #D0D0D0;
+  border: 2px solid #600;
+  color: #FFF;
+  background: transparent linear-gradient(#F00, #C10202);
+}
+
+.buttonCheck:hover {
+  background: transparent linear-gradient(#C00, #980202);
+}
+
+.buttonCheck:active {
+  background: transparent linear-gradient(#292929, #121212);
+  border: 2px solid #333;
+}
+
+.buttonSubmit {
+  box-shadow: 0px 1px 3px 1px #606060;
+}
+
+a {
+  color: #C00;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+a:active {
+  outline: 1px dotted black;
+}
+
+input:not([type=radio]):not([type=checkbox]):not(.inputFormValidation):not(.inputSignUpValidation) {
+  box-shadow: 0px 1px 3px 1px #D0D0D0;
+  border: 1px solid #999;
+  padding: 6px 5px;
+  border-radius: 5px;
+  outline: none;
+}
+
+input:not([type=radio]):not([type=checkbox]):not(.inputFormValidation):not(.inputSignUpValidation):hover {
+  border-color: #6F6F6F !important;
+}
+
+input:not([type=radio]):not([type=checkbox]):not(.inputFormValidation):not(.inputSignUpValidation):focus {
+  border-color: #660000 !important;
+}
+
+input[type=radio] {
+  width: 17px;
+  height: 17px;
+  vertical-align: middle;
+  margin-top: -9px;
+  margin-right: 13px;
+  margin-left: 8px;
+  outline: none;
+  cursor: pointer;
+}
+
+input[type=radio]:before {
+  width: 20px;
+  height: 20px;
+  display: block;
+  content: '';
+  background: #FFF;
+  border-radius: 100px;
+  margin: -1px;
+  cursor: pointer;
+  border: 2px solid #999;
+  background: transparent linear-gradient(#FFF, #E0E0E0);
+}
+
+input:hover[type=radio]:before {
+  border: 2px solid #6F6F6F;
+  background: transparent linear-gradient(#EBEBEB, #999);
+}
+
+input:active[type=radio]:before {
+  border-color: #999;
+}
+
+input[type=radio]:checked:before {
+  width: 20px;
+  height: 20px;
+  display: block;
+  content: '';
+  margin: -1px;
+  background-color: #FFF;
+  border: 2px solid #600;
+  background: transparent linear-gradient(#EBEBEB, #BABABA);
+}
+
+input:hover[type=radio]:checked:before {
+  background: transparent linear-gradient(#EBEBEB, #999);
+}
+
+input[type=radio]:checked:after {
+  content: '';
+  position: absolute;
+  margin-top: -16px;
+  margin-left: 6px;
+  border-radius: 500px;
+  background-color: #4D0000;
+  width: 10px;
+  height: 10px;
+}
+
+input[type=checkbox] {
+  width: 17px;
+  height: 17px;
+  vertical-align: middle;
+  margin-top: -9px;
+  margin-right: 13px;
+  margin-left: 8px;
+  outline: none;
+  cursor: pointer;
+}
+
+input[type=checkbox]:before {
+  width: 20px;
+  height: 20px;
+  display: block;
+  content: '';
+  background: #FFF;
+  border-radius: 4px;
+  margin: -1px;
+  cursor: pointer;
+  border: 2px solid #999;
+  background: transparent linear-gradient(#FFF, #E0E0E0);
+}
+
+input:hover[type=checkbox]:before {
+  border: 2px solid #6F6F6F;
+  background: transparent linear-gradient(#EBEBEB, #999);
+}
+
+input:active[type=checkbox]:before {
+  border-color: #999;
+}
+
+input[type=checkbox]:checked:before {
+  width: 20px;
+  height: 20px;
+  display: block;
+  content: '';
+  margin: -1px;
+  background-color: #FFF;
+  border: 2px solid #600;
+  background: transparent linear-gradient(#EBEBEB, #BABABA);
+}
+
+input:hover[type=checkbox]:checked:before {
+  background: transparent linear-gradient(#EBEBEB, #999);
+}
+
+input[type=checkbox]:checked:after {
+  content: '';
+  position: absolute;
+  margin-top: -19.5px;
+  margin-left: 7px;
+  border-radius: 2px;
+  border-right: 3px solid #4D0000;
+  border-bottom: 3px solid #4D0000;
+  width: 5px;
+  height: 12px;
+  transform: rotate(45deg);
+}
+
+.inputFormValidation {
+  outline: none;
+  padding: 6px 5px;
+  border-radius: 4px;
+  border: 2px solid #600;
+  box-shadow: 0px 1px 3px 1px #A60000;
+}
+
+.inputFormValidation:focus {
+  border-color: #AA0F0F;
+}
+
+.inputSignUpValidation {
+  border: 1px solid #600;
+  box-shadow: 0px -2px 0px 0px #C6CACC inset;
+  background: #F7F7F7;
+  padding: 6px 5px;
+  border-radius: 4px;
+  outline: none;
+}
+
+.inputSignUpValidation:focus {
+  border-color: #AA0F0F;
+  box-shadow: 0px 0px 1px 1px #A60000;
+}
+
+select {
+  padding: 5px 10px 5px 5px;
+  border-radius: 4px;
+  border: 2px solid #333;
+  background: transparent linear-gradient(#666, #494949);
+  display: inline-block;
+  cursor: pointer;
+  outline: none;
+  color: #FFF;
+  font-family: 'Open Sans', 'Oxygen', 'PT Sans', Arial , sans-serif;
+}
+
+select option {
+  color: #000;
+}
+
+select:hover {
+  border: 2px solid #000;
+  background: transparent linear-gradient(#B80101, #500000);
+}
+
+.selectedDropdown {
+  box-shadow: 0px 1px 3px 1px #D0D0D0;
+  border: 2px solid #600;
+  background: transparent linear-gradient(#F00, #C10202);
+}
+
+.selectedDropdown:hover {
+  background: transparent linear-gradient(#C00, #980202);
+}
+
+table.grid {
+  background: #FFF;
+  border: 2px solid #333;
+  box-shadow: 0px 3px 5px 1px #9D9D9D;
+}
+
+table.grid tr:first-child td {
+  height: 20px;
+  border: 2px solid #333;
+  padding: 10px;
+  font-weight: 700;
+  background: transparent linear-gradient(#666, #494949);
+  color: #FFF;
+}
+
+table.grid tr:not(:first-child) td {
+  padding-left: 5px;
+  padding-top: 4px;
+  padding-bottom: 2px;
+  border: 1px solid #BABABA;
+}
+
+table.grid .rowStyle2 {
+  background: linear-gradient(#FAFAFA, #DDD);
+}
+
+.tabsHeader li {
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  border-width: 2px 2px 0px;
+  border-style: solid;
+  background-color: #600;
+  color: #FFF;
+  background: transparent linear-gradient(#666, #494949);
+  cursor: pointer;
+}
+
+.tabsHeader li.selected {
+  border-width: 2px 2px 0px;
+  border-style: solid;
+  border-color: #666 #666 #666;
+  background-color: #F7F7F7;
+}
+
+.tabsHeader li:not(.selected):hover {
+  background: transparent linear-gradient(#B80101, #500000);
+}
+
+ul.tabsHeaderH li {
+  position: relative;
+  top: 2px;
+  z-index: 1;
+  margin-right: 2px;
+  padding: 5px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+ul.tabsHeaderH li.selected{
+  top: 2px;
+}
+
+ul.tabsHeaderH li:not(.selected) {
+  border-width:0;
+  padding:6px;
+}
+
+div.tabsPanel {
+  background-color: #F7F7F7;
+}
+
+div.tabsPanel.selected {
+  border-left-width: 2px;
+  border-width: 2px 2px 2px;
+  border-style: solid;
+  border-color: #E0E0E0;
+  background-color: #F7F7F7;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+  border-bottom-left-radius: 4px;
+  border-image: linear-gradient(to right, #666 0%, #E0E0E0 100%);
+  border-image-slice: 1;
+  margin-right: 6px;
+}
+
+.hint {
+  box-shadow: 5px 5px 5px #888;
+  margin: 1em 0px 0.3em;
+  padding: 10px;
+  background: #FFF;
+  border: 1px solid #888;
+  border-radius: 5px;
+  opacity: 0.9;
+}
+
+.header {
+  margin: 0px auto 10px;
+  width: 100%;
+  background: #666;
+  color: #000;
+}
+
+.ui-widget {
+  font-family: 'Open Sans', 'Oxygen', 'PT Sans', Arial , sans-serif;
+}
+
+.ui-datepicker select.ui-datepicker-month {
+  color: #FFF;
+  font-family: 'Open Sans', 'Oxygen', 'PT Sans', Arial , sans-serif;
+}
+
+.ui-datepicker select.ui-datepicker-year {
+  color: #FFF;
+  font-family: 'Open Sans', 'Oxygen', 'PT Sans', Arial , sans-serif;
+}
+
+.ui-datepicker th {
+  background: transparent linear-gradient(#666, #494949);
+}
+
+.ui-datepicker td {
+  border: 1px solid #CDCDCD;
+}
+
+.ui-datepicker td a {
+  background: transparent linear-gradient(#FFF, #E0E0E0) !important;
+}
+
+.ui-datepicker td a:hover {
+  background: transparent linear-gradient(#F00, #C10202) !important;
+  color: #FFF;
+}
+
+.ui-widget-content .ui-state-active {
+  background: transparent linear-gradient(#F00, #C10202) !important;
+} 
+	    	        
+	    ]]>    
+	    </css>
+	   
+</template>

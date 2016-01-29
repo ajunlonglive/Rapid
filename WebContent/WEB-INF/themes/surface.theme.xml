@@ -1,0 +1,518 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<template xmlVersion="1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/theme.xsd">
+
+<!-- 
+
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
+
+gareth.edwards@rapid-is.co.uk
+
+
+This file is part of the Rapid Application Platform
+
+Rapid is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version. The terms require you to include
+the original copyright, and the license notice in all redistributions.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
+
+ -->
+
+	    <type>surface</type>	 
+	    <name>Surface</name>	   
+	    <css>
+	    <![CDATA[
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Open Sans'), local('OpenSans'), url(https://fonts.gstatic.com/s/opensans/v13/cJZKeOuBrn4kERxqtaUH3VtXRa8TVwTICgirnJhmVJw.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+
+body {
+  font-family: 'Open Sans',Arial,sans-serif;
+}
+
+h1 {
+  color: #000;
+}
+
+h2 {
+  color: #c7c7c7;
+}
+
+h1, h2, h3 {
+  font-size: 150%;
+}
+
+h4, h5, h6 {
+  font-size: 100%;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: normal;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0 0 5px 0;
+}
+
+h2 {
+  margin-bottom: 10px;
+}
+
+h2+h3, h3+h3 {
+  margin-top: 16px;
+}
+
+a {
+  font-weight: inherit;
+  text-decoration: none;
+  color: #2672ec;
+  cursor: pointer;
+}
+
+a:visited {
+  color: #2672ec;
+}
+
+div.footer {
+  font-size: 86%;
+  background-color: #eee;
+  position: fixed;
+  height: 88px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: auto;
+  z-index: 250000;
+}
+
+div.heading {
+  height: 40px;
+  white-space: nowrap;
+  position: relative;
+  z-index: 250000;
+  background-color: #2672ec;
+  overflow: visible;
+}
+
+.spacer {
+  margin-bottom: 20px;
+}
+
+.paddingSmall {
+  padding: 6px;
+}
+
+.paddingMedium {
+  padding: 15px;
+}
+
+.paddingLarge {
+  padding: 24px;
+}
+
+button {
+  background-color: #2672EC;
+  color: #FFF;
+  height: 2.142em;
+  min-width: 6em;
+  font-size: 100%;
+  border: none;
+  outline: none;
+}
+
+button:hover {
+  background: #5a94f1;
+}
+
+button:active {
+  background: #212121;
+  outline: 1px dotted black;
+}
+
+.buttonAction {
+  cursor: pointer;
+  background-color:#0078d7 !important;
+  border-color:#0078d7;
+}
+
+.buttonAction:hover {
+  border-style: solid;
+  border-color: #004E8C;
+}
+
+.buttonAction:active {
+  outline: none;
+  border-color: transparent;
+  background-color: rgba(0,0,0,0.4) !important;
+}
+
+.buttonCheck {
+  padding: 4px 12px 4px 12px;
+  color: #000;
+  border-style: solid;
+  border-color: transparent;
+  background-color: rgba(0,0,0,0.2);
+}
+
+.buttonCheck:hover {
+  cursor: pointer;
+  border-color: rgba(0,0,0,0.4);
+  background-color: rgba(0,0,0,0.2);
+}
+
+.buttonCheck:active {
+  background-color: rgba(0,0,0,0.4);
+  border-color: transparent;
+  outline: 1px dotted black;
+  outline-offset: -2px;
+  outline-style: dotted;
+}
+
+.buttonSubmit {
+  color: #000;
+  background-color: #BAD80A;
+  cursor: pointer;
+}
+
+.buttonSubmit:hover {
+  color: #FFF;
+  background-color: #7FBA00;
+}
+
+.buttonSubmit:active {
+  outline: none;
+}
+
+input {
+  line-height: 1.571em;
+  color: #212121;
+  border: 1px solid #BABABA;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 4px 8px;
+  font-size: 100%;
+}
+
+input:hover {
+  border-color: #8f8f8f;
+}
+
+input:focus {
+  border-color: #5C5C5C;
+  outline: none;
+}
+
+input:disabled {
+  color: rgba(33,33,33,.27);
+  background-color: rgba(202,202,202,.49);
+  border-color: rgba(0,0,0,.15);
+}
+
+input[type=radio] {
+  width: 19px;
+  height: 19px;
+  vertical-align: middle;
+  margin-top: -4px;
+  margin-right: 10px;
+  margin-left: 8px;
+}
+
+input[type=radio]:before {
+  width: 19px;
+  height: 19px;
+  display: block;
+  content: '';
+  background: #FFF;
+  border: 2px solid #BABABA;
+  margin: -1px;
+  border-radius: 100%;
+}
+
+input[type=radio]:active:before {
+  background-color: black;
+  border-color: black;
+}
+
+input[type=radio]:checked:before {
+  width: 19px;
+  height: 19px;
+  display: block;
+  content: '';
+  margin: -1px;
+}
+
+input[type=radio]:checked:after {
+  content: '';
+  position: absolute;
+  margin-top: -19px;
+  margin-left: 7px;
+  border-right: 2px solid black;
+  border-bottom: 2px solid black;
+  width: 5px;
+  height: 12px;
+  transform: rotate(45deg);
+}
+
+input[type=radio]:focus:before {
+  outline: 1px dotted black;
+  outline-offset: 2px;
+  outline-style: dotted;
+}
+
+input[type=checkbox] {
+  width: 19px;
+  height: 19px;
+  vertical-align: middle;
+  margin-top: -4px;
+  margin-right: 10px;
+  margin-left: 8px;
+}
+
+input[type=checkbox]:before {
+  width: 19px;
+  height: 19px;
+  display: block;
+  content: '';
+  background: #FFF;
+  border: 2px solid #BABABA;
+  margin: -1px;
+}
+
+input[type=checkbox]:active:before {
+  background-color: black;
+  border-color: black;
+}
+
+input[type=checkbox]:checked:before {
+  width: 19px;
+  height: 19px;
+  display: block;
+  content: '';
+  margin: -1px;
+}
+
+input[type=checkbox]:checked:after {
+  content: '';
+  position: absolute;
+  margin-top: -19px;
+  margin-left: 7px;
+  border-right: 2px solid black;
+  border-bottom: 2px solid black;
+  width: 5px;
+  height: 12px;
+  transform: rotate(45deg);
+}
+
+input[type=checkbox]:focus:before {
+  outline: 1px dotted black;
+  outline-offset: 2px;
+  outline-style: dotted;
+}
+
+.inputForm {
+  border-width: 2px;
+  border-color: rgba(0, 0, 0, 0.4);
+}
+
+.inputForm:focus {
+  border-color: #0078D7;
+}
+
+.inputSignUp {
+  border-radius: 4px;
+}
+
+.inputSignUp:hover {
+  border-color: #BABABA;
+}
+
+.inputSignUp:focus {
+  border: 1px solid #e81123;
+  box-shadow: rgba(235, 74, 86, 0.4) 0px 0px 1px 1px inset;
+}
+
+.inputSignUpValidation {
+  border: 1px solid #E81123;
+  color: #E81123;
+  font-style: normal;
+}
+
+.inputSignUpValidation:focus {
+  border: 1px solid #e81123;
+  box-shadow: rgba(235, 74, 86, 0.4) 0px 0px 1px 1px inset;
+}
+
+.inputRequired {
+  border-color: #EB1123 !important;
+  border-width: 2px !important;
+}
+
+.linkFeature:hover {
+  color: #666;
+}
+
+.linkFeature:active {
+  color: #999;
+}
+
+select {
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-left: 6px;
+  border: 2px solid rgba(0, 0, 0, 0.4);
+  background-clip: padding-box;
+  font-family: 'Open Sans',Arial,sans-serif;
+}
+
+select:hover {
+  border-color: rgba(0, 0, 0, 0.6);
+}
+
+select:focus {
+  background-color:#3a96dd;
+  outline:0;
+}
+
+select:focus option {
+  background-color:#fff;
+}
+
+table.grid {
+  color: #5D5D5D;
+  background-color: #FFF;
+}
+
+table.grid tr:first-child td {
+  height: 20px;
+  border-bottom: 2px solid #D3D3D3;
+  padding: 10px;
+  font-weight: 700;
+}
+
+table.grid tr:not(:first-child) {
+  border-bottom: 1px solid #D3D3D3;
+}
+
+table.grid tr:not(:first-child) td {
+  padding-left:3px;
+  padding-top:4px;
+  padding-bottom:2px;
+}
+
+table.grid tr.rowStyle1 {
+  background-color: #F1F8FC;
+}
+   
+.tabsHeader li {
+  border: 1px solid #ABB2B6;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+  text-decoration: none;
+  display: block;
+  color: #00c;
+  width: 8em;
+  text-align: center;
+  cursor: pointer;
+  padding: 10px 28px;
+  background-color: #F1F8FC;
+}
+
+.tabsHeader li:hover {
+  background: #CEE4F4;
+}
+
+.tabsHeader li.selected {
+  border: 1px solid #ABB2B6;
+  position: relative;	
+  background: white;
+  color: black;
+  font-weight: bold;
+  cursor: auto;
+}
+
+.tabsHeader li.selected:hover {
+  background: #CEE4F4;
+}
+
+ul.tabsHeaderH li {
+  border-bottom-width: 0;
+  position: relative;
+  top: 1px;
+  color: #1D6893;
+  font-weight: 400;
+}
+
+ul.tabsHeaderH li.selected{
+  position: relative;
+  top: 1px;
+  z-index: 1;
+  border-bottom: 1px solid #FFF;
+}
+
+ul.tabsHeaderV li {
+  border-right-width: 0;
+}
+
+ul.tabsHeaderV li.selected{
+  position: relative;
+  left: 1px;
+  z-index: 1;
+  margin-left: -1px;
+}
+
+div.tabsGroup {
+  clear: both;
+}
+
+div.tabsPanel {
+  display: none;
+  min-height: 2em;
+  vertical-align: top;
+}
+
+div.tabsPanel.selected {
+  border: none;
+  border-top: 1px solid #ABB2B6;
+  clear: both;
+  padding: 0 1em;
+}
+
+.ui-widget {
+  font-family: 'Open Sans', Arial , sans-serif;
+}
+
+.ui-datepicker select.ui-datepicker-month {
+  font-family: 'Open Sans', Arial , sans-serif;
+}
+
+.ui-datepicker select.ui-datepicker-year {
+  font-family: 'Open Sans', Arial , sans-serif;
+}
+
+.ui-datepicker td a:hover {
+  background: #89BBDF;
+  color: #FFF;
+}
+
+.ui-widget-content .ui-state-active {
+  background: #1D6893 !important;
+  box-shadow: none !important;
+}
+	    	        
+	    ]]>    
+	    </css>
+	   
+</template>
+
