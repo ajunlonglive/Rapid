@@ -16,7 +16,7 @@ gareth.edwards@rapid-is.co.uk
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version. The terms require you to include
@@ -112,7 +112,7 @@ $(document).ready( function() {
 		if (securityAdapter.checkUserRole(rapidRequest, "RapidAdmin")) {
 %>
 <div class="body">
-	<a href="~?a=rapid"><img src="images/administration_157x135.png" /><span id="admin">Admin</span></a>
+	<a href="~?a=rapid"><img src="images/RapidAdminLarge.png" /><span id="admin">Admin</span></a>
 </div>
 <% 
 		}
@@ -121,7 +121,7 @@ $(document).ready( function() {
 		if (securityAdapter.checkUserRole(rapidRequest, "RapidDesign")) {
 %>
 <div class="body">
-	<a href="design.jsp"><img src="images/designer_157x135.png" /><span id="design">Design</span></a>
+	<a href="design.jsp"><img src="images/RapidDesignLarge.png" /><span id="design">Design</span></a>
 </div>
 <% 
 		}
@@ -129,7 +129,7 @@ $(document).ready( function() {
 %>
 
 <div class="body">
-	<a href="#" onclick="loadApps();"><img src="images/application_157x135.png" /><span>Applications</span></a>
+	<a href="#" onclick="loadApps();"><img src="images/RapidViewLarge.png" /><span>Applications</span></a>
 </div>
 
 <div class="apps" id="apps"><b style="padding-left:10px;">loading...</b></div>
