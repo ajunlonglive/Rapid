@@ -1,5 +1,5 @@
 body {
-	font-family:arial;
+	font-family: arial;
 	margin:0;
 }	
 
@@ -34,7 +34,7 @@ body {
 	
 	.image img {
 		position:absolute;
-		top:18px;
+		top:8px;
 		right:18px;
 		width:200px;
 		height:134px;
@@ -42,8 +42,8 @@ body {
 	
 	div.title {
 		background-color:#ccc;
-		padding:40px;
-		margin: 10px 0px 20px 0px;
+		padding: 20px 40px 35px;
+		margin: 0px 0px 20px 0px;
 	}
 	
 	.title span {
@@ -51,14 +51,16 @@ body {
 	}
 	
 	.body {
-		padding: 20px 0px 0px 100px;
+		padding: 15px 0px 0px 100px;
 	}
 	
 	.body img {
-	    vertical-align: middle;   
-	    width: 157px;
-		height: 135px;     
+	    vertical-align: top;   
+	    width: 150px;
+	    height: 130px;
 		border: 1px solid black;
+		padding: 2px;
+		box-shadow: 3px 3px 3px #aaa;
 	}
 	
 	.body a { 
@@ -73,7 +75,7 @@ body {
 	}
 	
 	.body a span { 
-		padding: 50px;
+		padding: 20px;
 	}
 	
 	.link a {
@@ -93,15 +95,15 @@ body {
 	}
 	
 	.apps {
-		padding-left: 300px;
+		padding-left: 255px;
 	}
 	
 	.apps ul {
-		margin-top: -40px;
+		margin-top: -80px;
 	}
 	
 	.apps li {
-		padding: 10px;
+		padding: 5px;
 	}
 	
 }
@@ -141,25 +143,25 @@ body {
 	}
 	
 	div.image {
-		height: 51px;
+		height: 47px;
 	}
 	
 	.image img {
 		position:absolute;
-		top:10px;
+		top:6px;
 		right:10px;
 		width:100px;
 		height:67px;
 	}
 	
 	div.body {
-		margin-bottom: 20px;
+		margin-bottom: 10px;
 	}
 	
 	.body img {
-		width: 80px;
-		vertical-align: middle;
-		margin-left: 30px;
+		width: 90px;
+		vertical-align: top;
+		margin-left: 20px;
 	}
 	
 	.body a {
@@ -176,7 +178,7 @@ body {
 				
 	div.title {
 		background-color:#ccc;
-		padding:20px;
+		padding: 10px 20px 10px 20px;
 		margin: 10px 0px 20px 0px;
 		text-align: center;
 	}
@@ -188,13 +190,13 @@ body {
 	
 	ul {
 		list-style-type: none;
-		margin-top: -40px;
-		margin-left: 125px;
-		padding: 5px;
+		margin-top: -50px;
+		margin-left: 135px;
+		padding: 2px;
 	}
 	
 	li {
-		margin-top:20px;
+		margin-top:10px;
 	}
 	
 }

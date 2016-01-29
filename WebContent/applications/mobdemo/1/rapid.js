@@ -5,7 +5,7 @@
 /* Control and Action resource JavaScript */
 
 
-/* Page control resource JavaScript */
+/* Page control javascript resource JavaScript */
 
 function Event_error(eventName, controlId, ex) {
 	if (controlId) {
@@ -15,7 +15,7 @@ function Event_error(eventName, controlId, ex) {
 	}
 }
 
-/* Data store control resource JavaScript */
+/* Data store control javascript resource JavaScript */
 
 function getDataStoreData(id, details, field) {
 	var data;
@@ -66,7 +66,7 @@ function saveDataStoreData(id, details, data) {
 	if (f) f($.Event("change"));
 }
 
-/* Flow layout control resource JavaScript */
+/* Flow layout control javascript resource JavaScript */
 
 $(document).ready( function() {
 								
@@ -124,7 +124,7 @@ function sizeFlowLayout(layout) {
 	
 }
 
-/* Gallery control resource JavaScript */
+/* Gallery control javascript resource JavaScript */
 
 function Gallery_removeImage(ev, id) {
 	// confirm
@@ -164,7 +164,7 @@ function Gallery_showImage(ev, id) {
 	}
 }
 
-/* Grid control resource JavaScript */
+/* Grid control javascript resource JavaScript */
 
 function getGridDataStoreData(id, details) {
 	data = null;
@@ -398,7 +398,7 @@ function getGridSelecteRowNumber(ev) {
 	return index;
 }
 
-/* Link control resource JavaScript */
+/* Link control javascript resource JavaScript */
 
 function linkClick(url, sessionVariablesString) {
 	
@@ -425,7 +425,7 @@ function linkClick(url, sessionVariablesString) {
 	
 }
 
-/* Slide panel control resource JavaScript */
+/* Slide panel control javascript resource JavaScript */
 
 //JQuery is ready! 
 $(document).ready( function() {
@@ -468,7 +468,7 @@ $(document).ready( function() {
 	
 });
 
-/* Database action resource JavaScript */
+/* Database action javascript resource JavaScript */
 
 // this global associative array tracks the databaseAction call sequences for each action	    			
 var _databaseActionSequence = [];	    
@@ -575,7 +575,7 @@ function getDatabaseActionInputData(multiRow, inputs, sourceId, sourceData) {
 	return data
 }
 
-/* Webservice action resource JavaScript */
+/* Webservice action javascript resource JavaScript */
 
 // this global associative array tracks the webserviceAction call sequences for each action	    			
 var _webserviceActionSequence = [];	    
@@ -2419,7 +2419,15 @@ function Action_validation(ev, validations, showMessages) {
 				getValueFunction = window["getData_" + validation.controlType];
 			}
 			if (getValueFunction) {
-				var value = getValueFunction(ev, validation.controlId, validation.field, validation.details);
+				var details = null;
+				if (validation.details) {
+					if (validation.details.indexOf("{") == 0) {
+						details = JSON.parse(details);
+					} else {
+						details = window[validation.details];
+					}
+				}
+				var value = getValueFunction(ev, validation.controlId, validation.field, details);
 				if (validation.validationType == "javascript") {						
 					var validationFunction = new Function(["ev","id","value"], validation.javaScript);
 					var failMessage = validationFunction.apply(this, [ev,validation.controlId,value]);

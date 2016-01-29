@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
-import javax.xml.bind.JAXBException;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;

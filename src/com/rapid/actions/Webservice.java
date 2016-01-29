@@ -7,7 +7,7 @@ gareth.edwards@rapid-is.co.uk
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as 
 published by the Free Software Foundation, either version 3 of the 
 License, or (at your option) any later version. The terms require you 
@@ -31,8 +31,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,6 +55,7 @@ import com.rapid.soa.SOADataWriter;
 import com.rapid.soa.SOADataReader.SOAXMLReader;
 import com.rapid.soa.SOADataWriter.SOARapidWriter;
 import com.rapid.utils.Strings;
+import com.rapid.utils.XML;
 
 public class Webservice extends Action {
 	
@@ -310,7 +309,7 @@ public class Webservice extends Action {
 			// open the ajax call
 			js += "  $.ajax({ url : '~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + page.getId() + controlParam + "&act=" + getId() + "', type: 'POST', dataType: 'json',\n";
 			js += "    data: query,\n";
-			js += "    error: function(error, status, message) {\n";
+			js += "    error: function(server, status, message) {\n";
 			
 			// if there is a working page
 			if (workingPage != null) {
@@ -481,19 +480,25 @@ public class Webservice extends Action {
 			if (jsonData == null) {
 				
 				// get the body into a string
-				String body = _request.getBody();
+				String body = _request.getBody().trim();
+				// remove prolog if present
+				if (body.indexOf("\"?>") > 0) body = body.substring(body.indexOf("\"?>") + 3).trim();
+				// check number of parameters
+				int pCount = Strings.occurrences(body, "?");
+				// throw error if incorrect
+				if (pCount != jsonInputs.length()) throw new Exception("Request has " + pCount + " parameter" + (pCount == 1 ? "" : "s") + ", " + jsonInputs.length() + " provided");
 				// retain the current position
 				int pos = body.indexOf("?");
 				// keep track of the index of the ?
-				int index = 0;
+				int index = 0;				
 				// if there are any question marks
-				if (pos > 0) {				
+				if (pos > 0 && jsonInputs.length() > index) {				
 					// loop, but check condition at the end
 					do {
 						// get the input
 						JSONObject input = jsonInputs.getJSONObject(index);
 						// url escape the value
-						String value = URLEncoder.encode(input.optString("value"),"UTF-8");
+						String value = XML.escape(input.optString("value"));
 						// replace the ? with the input value
 						body = body.substring(0, pos) + value + body.substring(pos + 1);
 						// look for the next question mark

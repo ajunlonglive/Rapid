@@ -10,7 +10,7 @@ gareth.edwards@rapid-is.co.uk
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version. The terms require you to include
@@ -71,7 +71,7 @@ classes = getStyleClasses(this);
 // if they start with "alert" do not include "panel" as this messes up bootstrap
 if (!classes && classes.indexOf("alert") != 1) classes = "panel" + classes;  
 // return our html for adding to our parent object	        
-return "<div id='" + this.id + "' class='panel" + classes + "'" + (this.text ? "" : " style='min-height:15px;'") + ">" + this.text + "</div>";
+return "<div id='" + this.id + "' class='" + classes + "'" + (this.text ? "" : " style='min-height:15px;'") + ">" + this.text + "</div>";
 	        ]]>
 	    </getHtmlFunction> 
 	    

@@ -361,6 +361,7 @@ public class Application {
 		public static final int RAPID = 0;
 		public static final int ACTION = 1;
 		public static final int CONTROL = 2;
+		public static final int THEME = 3;
 		
 		// private instance variables
 		private int _typeClass;
@@ -387,7 +388,7 @@ public class Application {
 				
 	}
 		
-	// the resource is specified in the control or action xml files
+	// the resource is specified in the action, control, or template xml files
 	public static class Resource {
 		
 		// these are the types defined in the control and action .xsd files
@@ -544,7 +545,7 @@ public class Application {
 	
 	// instance variables	
 	private int _xmlVersion, _status, _applicationBackupsMaxSize, _pageBackupsMaxSize;
-	private String _id, _version, _name, _title, _description, _startPageId, _templateType, _styles, _statusBarColour, _statusBarHighlightColour, _statusBarTextColour, _statusBarIconColour, _functions, _securityAdapterType, _formAdapterType, _createdBy, _modifiedBy;
+	private String _id, _version, _name, _title, _description, _startPageId, _themeType, _styles, _statusBarColour, _statusBarHighlightColour, _statusBarTextColour, _statusBarIconColour, _functions, _securityAdapterType, _formAdapterType, _createdBy, _modifiedBy;
 	private boolean _showConrolIds, _showActionIds;
 	private Date _createdDate, _modifiedDate;
 	private Map<String,Integer> _pageOrders;
@@ -622,9 +623,9 @@ public class Application {
 	public String getStartPageId() { return _startPageId; }
 	public void setStartPageId(String startPageId) { _startPageId = startPageId; }
 	
-	// the CSS template type which we'll look up and add to the rapid.css file
-	public String getTemplateType() { return _templateType; }
-	public void setTemplateType(String templateType) { _templateType = templateType; }
+	// the CSS theme type which we'll look up and add to the rapid.css file
+	public String getThemeType() { return _themeType; }
+	public void setThemeType(String themeType) { _themeType = themeType; }
 	
 	// the CSS styles added to the generated application rapid.css file
 	public String getStyles() { return _styles; }
@@ -961,9 +962,7 @@ public class Application {
 	public List<Resource> getResources() { return _resources; }
 			
 	// scan the css for classes
-	private List<String> scanStyleClasses(String css) {
-		
-		ArrayList<String> classes = new ArrayList<String>();
+	private List<String> scanStyleClasses(String css, List<String> classes) {
 		
 		// only if we got something we can use
 		if (css != null) {
@@ -1020,9 +1019,28 @@ public class Application {
 	
 	// this adds resources from either a control or action, they are added to the resources collection for printing in the top of each page if they are files, or amended to the application .js or .css files
 	private void addResources(JSONObject jsonObject, String jsonObjectType, StringBuilder js, StringBuilder css) throws JSONException {
-		
+			
 		// look for a resources object
 		JSONObject jsonResourcesObject = jsonObject.optJSONObject("resources");
+						
+		// if we got one
+		if (jsonResourcesObject != null) {
+			
+			// get a name for the jsonObject
+			String name = jsonObject.optString("name");
+			
+			// get the dependency type
+			String dependencyType = jsonObject.getString("type");
+			
+			// use the override below
+			addResources(jsonResourcesObject, jsonObjectType, name, dependencyType, js, css);
+			
+		}
+		
+	}
+	
+	// this adds resources from either a control or action, they are added to the resources collection for printing in the top of each page if they are files, or amended to the application .js or .css files
+	private void addResources(JSONObject jsonResourcesObject, String jsonObjectType, String name, String dependencyType, StringBuilder js, StringBuilder css) throws JSONException {
 		
 		// if we got one
 		if (jsonResourcesObject != null) {
@@ -1050,9 +1068,10 @@ public class Application {
 				int dependencyTypeClass = ResourceDependency.RAPID;
 				// update if action
 				if ("action".equals(jsonObjectType)) dependencyTypeClass = ResourceDependency.ACTION;
+				// update if control
 				if ("control".equals(jsonObjectType)) dependencyTypeClass = ResourceDependency.CONTROL;
-				// get the dependency type
-				String dependencyType = jsonObject.getString("type");
+				// update if template
+				if ("theme".equals(jsonObjectType)) dependencyTypeClass = ResourceDependency.THEME;
 				
 				// loop them
 				for (int j = 0; j < jsonResources.length(); j++) {
@@ -1062,19 +1081,19 @@ public class Application {
 					// get the type
 					String resourceType = jsonResource.getString("type");
 					// get the contens which is either a path, or the real stuff
-					String resourceContents = jsonResource.getString("contents").trim();
-					// get a name for the jsonObject
-					String name = jsonObject.optString("name");
+					String resourceContents = jsonResource.getString("contents").trim();					
+					// define the comments name as the name 
+					String commentsName = name;
 					// safety check
-					if (name == null) name = resourceType;
-					// add json object type
-					name += " " + jsonObjectType;
-					
+					if (commentsName == null) commentsName = "";
+					// add the json object type and resource type
+					commentsName += " " + jsonObjectType + " " + resourceType;
+										
 					// add as resources if they're files, or append the string builders (the app .js and .css are added as resources at the end)
 					if ("javascript".equals(resourceType)) {
-						js.append("\n/* " + name + " resource JavaScript */\n\n" + resourceContents + "\n");
+						js.append("\n/* " + commentsName + " resource JavaScript */\n\n" + resourceContents + "\n");
 					} else if ("css".equals(resourceType)) {
-						css.append("\n/* " + name + " resource styles */\n\n" + resourceContents + "\n");
+						css.append("\n/* " + commentsName + " resource styles */\n\n" + resourceContents + "\n");
 					} else if ("javascriptFile".equals(resourceType)) {
 						_resources.add(Resource.JAVASCRIPTFILE, resourceContents, dependencyTypeClass, dependencyType);
 					} else if ("cssFile".equals(resourceType)) {
@@ -1239,8 +1258,7 @@ public class Application {
 				    			// if there was something
 				    			if (setDataFunction != null) {
 				        			// clean and print! (if not an empty string)
-				        			if (setDataFunction.trim().length() > 0) dataJS.append("\nfunction setData_" + controlType + "(ev, id, field, details, data, changeEvents) {\n  " + setDataFunction.trim().replace("\n", "\n  ") + "\n}\n");
-				        			
+				        			if (setDataFunction.trim().length() > 0) dataJS.append("\nfunction setData_" + controlType + "(ev, id, field, details, data, changeEvents) {\n  " + setDataFunction.trim().replace("\n", "\n  ") + "\n}\n");				        			
 				    			}	
 				    			
 				    			// retrieve any runtimeProperties
@@ -1390,8 +1408,7 @@ public class Application {
 				    			// only produce rapid action is this is rapid app
 				    			if (js != null && ("rapid".equals(_id) || !"rapid".equals(actionType))) {    				
 				        			// clean and print! (if not an empty string)
-				        			if (js.trim().length() > 0) actionJS.append("\n" + js.trim() + "\n");
-				        			
+				        			if (js.trim().length() > 0) actionJS.append("\n" + js.trim() + "\n");				        			
 				    			}
 			    				
 			    				// move onto the next action type
@@ -1405,7 +1422,35 @@ public class Application {
 	    		} // action types check
 	    		
 	    	} // jsonAction check
-	    		    					    	
+	    	
+	    	// assume no theme css
+	    	String themeCSS = null;
+	    	// assume no theme name
+	    	String themeName = null;
+	    	
+	    	// check the theme type
+	    	if (_themeType != null) {
+	    		// get the templates
+	    		List<Theme> themes =  (List<Theme>) servletContext.getAttribute("themes");
+	    		// check we got some
+	    		if (themes != null) {
+	    			// loop them
+	    			for (Theme theme : themes) {
+	    				// check type
+	    				if (_themeType.equals(theme.getType())) {
+	    					// retain the theme CSS
+	    					themeCSS = theme.getCSS();
+	    					// retain the name
+	    					themeName = theme.getName();
+	    					// get any resources
+	    					addResources(theme.getResources(), "theme", themeName, null, resourceJS, resourceCSS);
+	    					// we're done
+	    					break;
+	    				}
+	    			}
+	    		}
+	    	}
+	    		    		    					    
 	    	// create folders to write the rapid.js file
 			String applicationPath = getWebFolder(servletContext);		
 			File applicationFolder = new File(applicationPath);		
@@ -1486,40 +1531,26 @@ public class Application {
 			pw.close();
 			fosMin.close();
 			
-			// assume no template css
-			String appTemplateCSS = "";
-			// if we have a template
-			if (_templateType != null) {
-				// get the templates
-				List<Template> templates = (List<Template>) servletContext.getAttribute("templates");
-				// if we got some
-				if (templates != null) {
-					// loop them
-					for (Template template : templates) {
-						// if this is the one we want
-						if (_templateType.equals(template.getType())) {
-							// add the css
-							appTemplateCSS = template.getCSS();
-							// we're done
-							break;
-						}
-					}
-				}
-			}
-								
 			// get the rapid CSS into a string and insert parameters
-			String resourceCSSWithParams = insertParameters(servletContext, resourceCSS.toString());			
+			String resourceCSSWithParams = insertParameters(servletContext, resourceCSS.toString());						
+			String appThemeCSSWithParams = insertParameters(servletContext, themeCSS);
 			String appCSSWithParams = insertParameters(servletContext, _styles);
 			
 			// write the rapid.css file
 			fos = new FileOutputStream (applicationPath + "/rapid.css");
 			ps = new PrintStream(fos);
-			ps.print("\n/* This file is auto-generated on application load and save - it is minified when the application status is live */\n");		
-			ps.print(resourceCSSWithParams);
-			ps.print("\n\n/* Application template */\n\n");
-			ps.print(appTemplateCSS);
-			ps.print("\n\n/* Application styles */\n\n");
-			ps.print(appCSSWithParams);
+			ps.print("\n/* This file is auto-generated on application load and save - it is minified when the application status is live */\n\n");		
+			if (resourceCSSWithParams != null) {
+				ps.print(resourceCSSWithParams.trim());
+			}
+			if (appThemeCSSWithParams != null) {
+				ps.print("\n\n/* " + themeName + " theme styles */\n\n");
+				ps.print(appThemeCSSWithParams.trim());
+			}
+			if (appCSSWithParams != null) {
+				ps.print("\n\n/* Application styles */\n\n");
+				ps.print(appCSSWithParams.trim());
+			}
 			ps.close();
 			fos.close();
 			
@@ -1588,11 +1619,15 @@ public class Application {
 				}
 				
 	    	} // loop resources
+			
+			// a list for all of the style classes we're going to send up with
+			_styleClasses = new ArrayList<String>();			
+			// populate the list of style classes by scanning the global styles
+			scanStyleClasses(_styles, _styleClasses);
+			// and any theme
+			scanStyleClasses(appThemeCSSWithParams, _styleClasses);
 								
 		} // create resources
-														
-		// populate the list of style classes by scanning the rapid.css
-		_styleClasses = scanStyleClasses(_styles);
 		
 		// empty the list of page variables so it's regenerated
 		_pageVariables = null;
