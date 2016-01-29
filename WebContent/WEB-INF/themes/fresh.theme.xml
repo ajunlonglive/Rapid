@@ -1,0 +1,551 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<template xmlVersion="1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/theme.xsd">
+
+<!-- 
+
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
+
+gareth.edwards@rapid-is.co.uk
+
+
+This file is part of the Rapid Application Platform
+
+Rapid is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version. The terms require you to include
+the original copyright, and the license notice in all redistributions.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
+
+ -->
+
+	    <type>fresh</type>	 
+	    <name>Fresh</name>	   
+	    
+	    <resources>
+	        <resource>
+	            <type>javascript</type>
+	            <contents>
+	                <![CDATA[
+	                
+$(document).ready( function() {
+  $("select").change( function(ev) {
+    $(this).addClass("selectedDropdown");
+  });
+}); 	          
+      
+	                ]]>	                
+	            </contents>
+	        </resource>
+	        <resource>
+	            <type>css</type>
+	            <contents>
+	                <![CDATA[
+.ui-widget {
+  font-family: 'PT Sans Caption', 'Lato', Arial , sans-serif;
+}
+
+.ui-datepicker select.ui-datepicker-month {
+  padding: 6px 0px 6px 8px;
+  font-family: 'PT Sans Caption', 'Lato', Arial , sans-serif;
+}
+
+.ui-datepicker select.ui-datepicker-year {
+  padding: 6px 0px 6px 8px;
+  font-family: 'PT Sans Caption', 'Lato', Arial , sans-serif;
+}
+
+.ui-datepicker .ui-datepicker-header {
+  border: 1px solid #6C82B4;
+  background: #315A9A !important;
+}
+
+.ui-datepicker tr:first-child {
+  border: 1px solid #6C82B4 !important;
+}
+
+.ui-datepicker th {
+  background: linear-gradient(#1E488C, #2B579C);
+}
+
+.ui-datepicker-unselectable {
+  background: #6785B5 !important;
+}
+
+.ui-datepicker-unselectable .ui-state-default {
+  background: #436499 !important;
+  color: #E8E9EA;
+}
+
+.ui-datepicker td a {
+  background: #4D74B2 !important;
+  color: #E8E9EA !important;
+  text-shadow: none !important;
+}
+
+.ui-datepicker td a:hover {
+  background: #2A60B6 !important;
+  color: #FFF;
+}
+
+.ui-widget-content .ui-state-active {
+  background: #315A9A radial-gradient(at 30% 0px , #4E79E8, #315A9A 25%) !important;
+}	                
+	                ]]>
+	            </contents>
+	        </resource>
+	    </resources>
+	    
+	    <css>
+	    <![CDATA[
+
+@font-face {
+  font-family: 'PT Sans Caption';
+  font-style: normal;
+  font-weight: 400;
+  src: local('PT Sans Caption'), local('PTSans-Caption'), url(https://fonts.gstatic.com/s/ptsanscaption/v9/OXYTDOzBcXU8MTNBvBHeSVu3pQpJXC1E_Hw7zMp8vJM.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+
+@font-face {
+  font-family: 'Lato';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Lato Regular'), local('Lato-Regular'), url(https://fonts.gstatic.com/s/lato/v11/1YwB1sO8YE1Lyjf12WNiUA.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+
+body {
+  font-family: 'PT Sans Caption', 'Lato', Arial, sans-serif;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: normal;
+  background: #1E488C radial-gradient(at 30% 0px , #4E79E8, #1E488C 25%) fixed;
+  color: #FFF;
+}
+
+.spacer {
+  margin-bottom: 20px;
+}
+
+.paddingSmall {
+  padding: 6px;
+}
+
+.paddingMedium {
+  padding: 15px;
+}
+
+.paddingLarge {
+  padding: 24px;
+}
+
+button {
+  background-color: #1C740C;
+  background-image: linear-gradient(#38B132, #1C740C);
+  border-radius: 4px;
+  outline: none;
+  padding: 10px;
+  border: none;
+  color: #FFF;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #38B132;
+  background-image: linear-gradient(#1C740C, #38B132);
+}
+
+button:active {
+  outline: 1px dotted;
+}
+
+.buttonAction {
+  background-color: #E6E6E6;
+  background-image: linear-gradient(#FFF, #B4B4B4);
+  color: #108A00;
+}
+
+.buttonAction:hover {
+  background-color: #FFF;
+  background-image: linear-gradient(#FFF, #FFF);
+  color: #249E14;
+}
+
+.buttonAction:active {
+  border-color: #38B132;
+  box-shadow: 0 0 7px #38B132;
+  outline: none;
+}
+
+.buttonSubmit {
+  box-shadow: 2px 2px 2px 0px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  border-radius: 6px;
+  font-weight: 700;
+  padding: 10px 20px;
+}
+
+.buttonSubmit:hover {
+  background-color: #31AE20;
+  background-image: linear-gradient(#4AC739, #007C00);
+}
+
+.buttonSubmit:active {
+  border-color: #38B132;
+  box-shadow: 0 0 4px #38B132;
+  outline: none;
+}
+
+a {
+  text-decoration: underline;
+  color: #38B132;
+}
+
+a:hover {
+  color: #4DD444;
+}
+
+a:active {
+  outline: 1px dotted;
+}
+
+input {
+  outline: none;
+  border: 2px solid #38B132;
+  padding: 5px 10px;
+border-radius: 4px;
+}
+
+input:focus {
+  box-shadow: 0 0 4px #38B132;
+}
+
+.input:hover {
+  border-color: #108A00;
+}
+
+.input:focus {
+  border-color: #38B132;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 4px #38B132;
+  outline: none;
+}
+
+input[type=radio] {
+  width: 19px;
+  height: 19px;
+  vertical-align: middle;
+  margin-top: -6px;
+  margin-right: 16px;
+  margin-left: 8px;
+  outline: none;
+  cursor: pointer;
+}
+
+input[type=radio]:before {
+  width: 20px;
+  height: 20px;
+  display: block;
+  content: '';
+  background: #FFF;
+  border-radius: 4px;
+  border: 2px solid #CCC;
+  margin: -1px;
+}
+
+input:hover[type=radio]:before {
+  border: 2px solid #108A00;
+  background-image: linear-gradient(#a0d09b, #108a00);
+}
+
+input:focus[type=radio]:before {
+  border: 2px solid #38B132;
+  box-shadow: 0 0 1px 1px #38B132;
+}
+
+input:active[type=radio]:before {
+  border: 2px solid #108A00;
+  box-shadow: none;
+}
+
+input[type=radio]:active:before {
+  background-color: #FFF;
+}
+
+input[type=radio]:checked:before {
+  width: 20px;
+  height: 20px;
+  display: block;
+  content: '';
+  margin: -1px;
+  background-color: #108A00;
+  box-shadow: 0px 1px 2px #108A00 inset;
+  border-color: #108A00;
+}
+
+input:hover[type=radio]:checked:before {
+  border: 2px solid #108A00;
+  background-image: none;
+}
+
+input:focus[type=radio]:checked:before {
+  border: 2px solid #38B132;
+  box-shadow: none;
+}
+
+input:active[type=radio]:checked:before {
+  border: 2px solid #108A00;
+  box-shadow: none;
+}
+
+input[type=radio]:checked:after {
+  content: '';
+  position: absolute;
+  margin-top: -20px;
+  margin-left: 7.5px;
+  border-right: 3px solid #FFF;
+  border-bottom: 3px solid #FFF;
+  width: 4px;
+  height: 12px;
+  transform: rotate(45deg);
+}
+
+input[type=checkbox] {
+  width: 19px;
+  height: 19px;
+  vertical-align: middle;
+  margin-top: -3px;
+  margin-right: 16px;
+  margin-left: 8px;
+  outline: none;
+  cursor: pointer;
+}
+
+input[type=checkbox]:before {
+  width: 20px;
+  height: 20px;
+  display: block;
+  content: '';
+  background: #FFF;
+  border-radius: 4px;
+  border: 2px solid #CCC;
+  margin: -1px;
+}
+
+input:hover[type=checkbox]:before {
+  border: 2px solid #108A00;
+  background-image: linear-gradient(#a0d09b, #108a00);
+}
+
+input:focus[type=checkbox]:before {
+  border: 2px solid #38B132;
+  box-shadow: 0 0 1px 1px #38B132;
+}
+
+input:active[type=checkbox]:before {
+  border: 2px solid #108A00;
+  box-shadow: none;
+}
+
+input[type=checkbox]:active:before {
+  background-color: #FFF;
+}
+
+input[type=checkbox]:checked:before {
+  width: 20px;
+  height: 20px;
+  display: block;
+  content: '';
+  margin: -1px;
+  background-color: #108A00;
+  box-shadow: 0px 1px 2px #108A00 inset;
+  border-color: #108A00;
+}
+
+input:hover[type=checkbox]:checked:before {
+  border: 2px solid #108A00;
+  background-image: none;
+}
+
+input:focus[type=checkbox]:checked:before {
+  border: 2px solid #38B132;
+  box-shadow: 0 0 1px 1px #38B132;
+}
+
+input:active[type=checkbox]:checked:before {
+  border: 2px solid #108A00;
+  box-shadow: none;
+}
+
+input[type=checkbox]:checked:after {
+  content: '';
+  position: absolute;
+  margin-top: -20px;
+  margin-left: 7.5px;
+  border-right: 3px solid #FFF;
+  border-bottom: 3px solid #FFF;
+  width: 4px;
+  height: 12px;
+  transform: rotate(45deg);
+}
+
+.inputSignUp {
+  border-radius: 4px;
+  border: 2px solid #CCC;
+  padding: 5px 10px;
+}
+
+.inputSignUp:hover {
+  border-color: #108A00;
+}
+
+.inputSignUp:focus {
+  border-color: #38B132;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 4px #38B132;
+  outline: none;
+}
+
+.inputSignUpValidation {
+  border-radius: 4px;
+  border: 2px solid #FF5025;
+  padding: 5px 10px;
+}
+
+.inputSignUpValidation:focus {
+  border-color: #38B132;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 4px #38B132;
+  outline: none;
+}
+
+select {
+  background-color: #FFF;
+  border-radius: 6px;
+  border: 2px solid #CCC;
+  color: #3E3E3E;
+  padding: 6px 15px 6px 8px;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: bold;
+  outline: none;
+  font-family: 'PT Sans Caption', 'Lato', Arial , sans-serif;
+}
+
+select:hover {
+  color: #108A00;
+  border-color: #108A00;
+}
+
+select:focus option {
+  color: #3E3E3E;
+}
+
+table.grid {
+  background-color: #315A9A;
+  color: #FCFEFC;
+}
+
+table.grid tr td {
+  border: 1px solid #6C82B4;
+  padding: 10px;
+}
+
+table.grid tr:not(:first-child) td {
+  padding-left:5px;
+  padding-top:4px;
+  padding-bottom:2px;
+  color: #BE8;
+}
+
+.tabsHeader li {
+  border-top-left-radius: 7px;
+  border-top-right-radius: 7px;
+  border-width: 2px 2px 0px;
+  border-style: solid;
+  background-color: #F7F7F7;
+  color: #FFF;
+  background: transparent linear-gradient(#999, #747474);
+  cursor: pointer;
+}
+
+.tabsHeader li.selected {
+  border-width: 2px 2px 0px;
+  border-style: solid;
+  border-color: #E0E0E0 #E0E0E0 #F7F7F7;
+  background-color: #F7F7F7;
+  color: #333;
+  cursor: pointer;
+}
+
+.tabsHeader li:not(.selected):hover {
+  background: transparent linear-gradient(#999, #747474);
+}
+
+ul.tabsHeaderH li {
+  position: relative;
+  top: 2px;
+  z-index: 1;
+  margin-right: 3px;
+  padding: 5px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+ul.tabsHeaderH li.selected{
+  top: 2px;
+}
+
+ul.tabsHeaderH li:not(.selected) {
+  border-width:0;
+  padding:6px;
+}
+
+div.tabsPanel {
+  background-color: #F7F7F7;
+}
+
+div.tabsPanel.selected {
+  border-left-width: 2px;
+  border-width: 2px 2px 2px;
+  border-style: solid;
+  border-color: #E0E0E0;
+  background-color: #F7F7F7;
+  border-top-right-radius: 7px;
+  border-bottom-right-radius: 7px;
+  border-bottom-left-radius: 7px;
+}
+
+.hint {
+  color: #1A3680;
+  box-shadow: 2px 3px 10px 2px rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
+  margin: 1em 0px 0.3em;
+  padding: 1.5%;
+  background: #D9E9F7;
+}
+
+.footer {
+  width: 100%;
+  height: auto;
+  position: fixed;
+  left: 0px;
+  bottom: 0px;
+  z-index: 20;
+  background: #14244D;
+  box-shadow: 0px 1px 3px #071028;
+  font-size: 0.8rem;
+  color: #A8B9D0;
+}
+	    	        
+	    ]]>    
+	    </css>
+	   
+</template>
+
