@@ -1134,7 +1134,7 @@ public class RapidServletContextListener implements ServletContextListener {
 			// load templates
 			loadThemes(servletContext);
 			
-			_logger.info("Loading themes");
+			_logger.info("Loading controls");
 						
 			// load the controls 
 			loadControls(servletContext);	

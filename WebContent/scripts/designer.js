@@ -1390,6 +1390,9 @@ function loadLock(level) {
 	// clear down property dialogues for good measure
 	hideDialogues();
 	
+	// hide the properties panel
+	$("#propertiesPanel").hide();
+	
 	// disable all page buttons
 	$("button").disable();
 	
@@ -2188,9 +2191,6 @@ function doPaste(control, _parent) {
 		// restore the control numbers
 		_controlNumbers = JSON.parse(controlNumbers);
 		
-		// arrange any new non-visible controls
-		arrangeNonVisibleControls();
-		
 		// fire window resize in case scroll bars need adjusting, etc. (this will re-select)
 		windowResize("paste");
 								
@@ -2242,10 +2242,7 @@ function doPaste(control, _parent) {
 		
 		// apply any styling in the new control
 		applyStyleForPaste(_page);
-		
-		// arrange any new non-visible controls
-		arrangeNonVisibleControls();
-		
+				
 		// fire window resize in case scroll bars need adjusting, etc.
 		windowResize("paste");
 		
@@ -3269,6 +3266,9 @@ $(document).ready( function() {
 				
 			} // page paste check
 			
+			// arrange any new non-visible controls
+			arrangeNonVisibleControls();
+						
 			// rebuild the page map
 			buildPageMap();
 					

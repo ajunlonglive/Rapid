@@ -1161,23 +1161,28 @@ public class Rapid extends Action {
 				// get the sessions
 				Map<String, HttpSession> sessions = RapidSessionListener.getSessions();
 				
-				// get a date formatter
-				SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+				// check we got some
+				if (sessions != null) {
 				
-				// loop them
-				for (String key : sessions.keySet()) {
-					// get the session
-					HttpSession httpSession = sessions.get(key);
-					// create object
-					JSONObject jsonSession = new JSONObject();
-					// add name
-					jsonSession.put("name", (String) httpSession.getAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME));
-					// get a new date from the time
-					Date accessTime = new Date(httpSession.getLastAccessedTime());
-					// add last access
-					jsonSession.put("access", df.format(accessTime));
-					// add to collections
-					jsonSessions.put(jsonSession);
+					// get a date formatter
+					SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+					
+					// loop them
+					for (String key : sessions.keySet()) {
+						// get the session
+						HttpSession httpSession = sessions.get(key);
+						// create object
+						JSONObject jsonSession = new JSONObject();
+						// add name
+						jsonSession.put("name", (String) httpSession.getAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME));
+						// get a new date from the time
+						Date accessTime = new Date(httpSession.getLastAccessedTime());
+						// add last access
+						jsonSession.put("access", df.format(accessTime));
+						// add to collections
+						jsonSessions.put(jsonSession);
+					}
+					
 				}
 				
 				// add sessions
