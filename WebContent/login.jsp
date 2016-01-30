@@ -44,7 +44,7 @@ String message = (String) session.getAttribute("message");
 <body onload="document.login.userName.focus();">
 
 <div class="image">
-	<img src="images/RapidLogo_200x134.png" />
+	<a href="http://www.rapid-is.co.uk"><img title="Rapid Information Systems" src="images/RapidLogo_200x134.png" /></a>	
 </div>
 
 <div class="title">

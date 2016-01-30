@@ -42,7 +42,7 @@ session.invalidate();
 </head>
 <body>
 <div class="image">
-	<img src="images/RapidLogo_200x134.png" />
+	<a href="http://www.rapid-is.co.uk"><img title="Rapid Information Systems" src="images/RapidLogo_200x134.png" /></a>	
 </div>
 
 <div class="title">
