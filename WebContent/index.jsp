@@ -112,7 +112,7 @@ $(document).ready( function() {
 		if (securityAdapter.checkUserRole(rapidRequest, "RapidAdmin")) {
 %>
 <div class="body">
-	<a href="~?a=rapid"><img src="images/RapidAdminLarge.png" /><span id="admin">Admin</span></a>
+	<a href="~?a=rapid"><img src="images/administration_157x135.png" /><span id="admin">Admin</span></a>
 </div>
 <% 
 		}
@@ -121,7 +121,7 @@ $(document).ready( function() {
 		if (securityAdapter.checkUserRole(rapidRequest, "RapidDesign")) {
 %>
 <div class="body">
-	<a href="design.jsp"><img src="images/RapidDesignLarge.png" /><span id="design">Design</span></a>
+	<a href="design.jsp"><img src="images/designer_157x135.png" /><span id="design">Design</span></a>
 </div>
 <% 
 		}
@@ -129,7 +129,7 @@ $(document).ready( function() {
 %>
 
 <div class="body">
-	<a href="#" onclick="loadApps();"><img src="images/RapidViewLarge.png" /><span>Applications</span></a>
+	<a href="#" onclick="loadApps();"><img src="images/application_157x135.png" /><span>Applications</span></a>
 </div>
 
 <div class="apps" id="apps"><b style="padding-left:10px;">loading...</b></div>
