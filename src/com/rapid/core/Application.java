@@ -1009,7 +1009,7 @@ public class Application {
 			}
 						
 		}
-		
+				
 		// sort the classes into alphabetical order
 		Collections.sort(classes);
 		
@@ -1622,11 +1622,12 @@ public class Application {
 			
 			// a list for all of the style classes we're going to send up with
 			_styleClasses = new ArrayList<String>();			
+			
 			// populate the list of style classes by scanning the global styles
 			scanStyleClasses(_styles, _styleClasses);
 			// and any theme
 			scanStyleClasses(appThemeCSSWithParams, _styleClasses);
-								
+						
 		} // create resources
 		
 		// empty the list of page variables so it's regenerated

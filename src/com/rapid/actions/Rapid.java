@@ -32,6 +32,7 @@ import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -53,8 +54,6 @@ import com.rapid.core.Application.Parameter;
 import com.rapid.core.Application.RapidLoadingException;
 import com.rapid.core.Application.Resource;
 import com.rapid.core.Application.Resources;
-import com.rapid.core.Application.Value;
-import com.rapid.core.Application.ValueList;
 import com.rapid.core.Applications;
 import com.rapid.core.Control;
 import com.rapid.core.Device;
@@ -84,6 +83,7 @@ import com.rapid.soa.SQLWebservice;
 import com.rapid.soa.Webservice;
 import com.rapid.soa.SOAElementRestriction.*;
 import com.rapid.soa.SOASchema.SOASchemaElement;
+import com.rapid.utils.Comparators;
 import com.rapid.utils.Files;
 
 public class Rapid extends Action {
@@ -775,6 +775,19 @@ public class Rapid extends Action {
 										
 						// check we have some webservices
 						if (app.getWebservices() != null) {
+							// sort them by their name
+							Collections.sort(app.getWebservices(), new Comparator<Webservice>() {
+								@Override
+								public int compare(Webservice o1, Webservice o2) {
+									if (o1 == null) {
+										return -1;
+									} else if (o2 == null) {
+										return 1;
+									} else {
+										return Comparators.AsciiCompare(o1.getName(), o2.getName(), false);
+									}
+								}								
+							});
 							// loop and add to jsonArray
 							for (Webservice webservice : app.getWebservices()) {
 								jsonWebservices.put(webservice.getName());
@@ -788,6 +801,19 @@ public class Rapid extends Action {
 										
 						// check we have some webservices
 						if (app.getParameters() != null) {
+							// sort them by their name
+							Collections.sort(app.getParameters(), new Comparator<Parameter>() {
+								@Override
+								public int compare(Parameter o1, Parameter o2) {
+									if (o1 == null) {
+										return -1;
+									} else if (o2 == null) {
+										return 1;
+									} else {
+										return Comparators.AsciiCompare(o1.getName(), o2.getName(), false);
+									}
+								}								
+							});
 							// loop and add to jsonArray
 							for (Parameter parameter : app.getParameters()) {
 								jsonParameters.put(parameter.getName());
@@ -796,12 +822,25 @@ public class Rapid extends Action {
 						// add webservices connections
 						result.put("parameters", jsonParameters);
 						
-						// create an array for the appresources
+						// create an array for the resources
 						JSONArray jsonResources = new JSONArray();
 										
-						// check we have some webservices
+						// check we have some resources
 						if (app.getAppResources() != null) {
-							// loop and add to jsonArray
+							// sort them by their name
+							Collections.sort(app.getAppResources(), new Comparator<Resource>() {
+								@Override
+								public int compare(Resource o1, Resource o2) {
+									if (o1 == null) {
+										return -1;
+									} else if (o2 == null) {
+										return 1;
+									} else {
+										return Comparators.AsciiCompare(o1.getName(), o2.getName(), false);
+									}
+								}								
+							});							
+							// loop and adds2 to jsonArray
 							for (Resource resource : app.getAppResources()) {
 								jsonResources.put(resource.getName());
 							}					
