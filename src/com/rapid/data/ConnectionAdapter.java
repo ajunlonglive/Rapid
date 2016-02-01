@@ -113,7 +113,7 @@ public abstract class ConnectionAdapter {
 	// this method closes connection for the adapter
 	public abstract void closeConnection(Connection connection) throws SQLException;
 	
-	// close any obejcts we used
+	// close any objects we used
 	public abstract void close() throws SQLException;
 				
 }
