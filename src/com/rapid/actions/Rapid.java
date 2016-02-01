@@ -1809,6 +1809,8 @@ public class Rapid extends Action {
 				
 				// make the new database connection
 				DatabaseConnection dbConn = new DatabaseConnection(
+					app, 
+					servletContext,
 					jsonAction.getString("name").trim(),
 					jsonAction.getString("driver").trim(),
 					jsonAction.getString("connectionString").trim(),
@@ -2264,7 +2266,7 @@ public class Rapid extends Action {
 						
 						// retrieve the details from the json
 						String driverClass = jsonAction.getString("driver").trim();
-						String connectionString = jsonAction.getString("connectionString").trim();
+						String connectionString =app.insertParameters(servletContext, jsonAction.getString("connectionString").trim());
 						String connectionAdapterClass = jsonAction.getString("connectionAdapter").trim();
 						String userName = jsonAction.getString("userName").trim();
 						String password = jsonAction.getString("password");
@@ -2272,8 +2274,17 @@ public class Rapid extends Action {
 						// if the password wasn't set retrieve it via the connection index
 						if ("********".equals(password)) password = dbConns.get(index).getPassword();
 					
-						// instatntiate a DatabaseConnection object for this test
-						DatabaseConnection dbconnection = new DatabaseConnection("test", driverClass, connectionString, connectionAdapterClass, userName, password);
+						// instantiate a DatabaseConnection object for this test
+						DatabaseConnection dbconnection = new DatabaseConnection(
+							app, 
+							servletContext,
+							"test",
+							driverClass, 
+							connectionString, 
+							connectionAdapterClass, 
+							userName, 
+							password
+						);
 						// get the adapter
 						ConnectionAdapter connectionAdapter = dbconnection.getConnectionAdapter(servletContext, app);						
 						// get a data factory

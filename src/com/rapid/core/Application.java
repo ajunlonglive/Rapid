@@ -176,10 +176,10 @@ public class Application {
 		
 		// constructors
 		public DatabaseConnection() {};
-		public DatabaseConnection(String name, String driverClass, String connectionString, String connectionAdapterClass, String userName, String password) {
+		public DatabaseConnection(Application application, ServletContext servletContext, String name, String driverClass, String connectionString, String connectionAdapterClass, String userName, String password) {
 			_name = name;
 			_driverClass = driverClass;
-			_connectionString = connectionString;
+			_connectionString = application.insertParameters(servletContext, connectionString);
 			_connectionAdapterClass = connectionAdapterClass;	
 			_userName = userName;
 			_password = password;
@@ -187,7 +187,7 @@ public class Application {
 		
 		// instance methods
 		
-		// get the connection adapter, instantiating if null as this is quite expensive
+		// get the connection adapter, instantiating only if null as this is quite expensive
 		public synchronized ConnectionAdapter getConnectionAdapter(ServletContext servletContext, Application application) throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
 			
 			// only if the connection adapter has not already been initialised
@@ -197,7 +197,12 @@ public class Application {
 				// initialise a constructor
 				Constructor constructor = classClass.getConstructor(ServletContext.class, String.class, String.class, String.class, String.class);
 				// initialise the class
-				_connectionAdapter = (ConnectionAdapter) constructor.newInstance(servletContext, _driverClass, application.insertParameters(servletContext, _connectionString), _userName, _password) ;
+				_connectionAdapter = (ConnectionAdapter) constructor.newInstance(
+						servletContext, 
+						_driverClass, 
+						application.insertParameters(servletContext, _connectionString), 
+						_userName, 
+						_password) ;
 			}
 			
 			return _connectionAdapter;
@@ -205,7 +210,10 @@ public class Application {
 		}
 		
 		// set the connection adapter to null to for it to be re-initialised
-		public synchronized void reset() {
+		public synchronized void reset() throws SQLException {
+			// close it first
+			close();
+			// set it to null
 			_connectionAdapter = null;
 		}
 		
@@ -742,6 +750,8 @@ public class Application {
 					// appfolder and configfolder are the hidden server app resources
 					string = string.replace("[[appfolder]]", getConfigFolder(servletContext, _id, _version));
 					string = string.replace("[[configfolder]]", getConfigFolder(servletContext, _id, _version));
+					// root folder is WEB-INF
+					string = string.replace("[[rootfolder]]", servletContext.getRealPath("WEB-INF/"));
 					// if we have parameters
 					if (_parameters != null) {
 						// loop them

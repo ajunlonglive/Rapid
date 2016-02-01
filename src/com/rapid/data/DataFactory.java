@@ -357,7 +357,11 @@ public class DataFactory {
 				
 		if (_preparedStatement != null) _preparedStatement.close();
 
-		if (_connection != null) _connectionAdapter.closeConnection(_connection);
+		if (_connectionAdapter != null && _connection != null) {
+			_connectionAdapter.closeConnection(_connection);
+		} else if (_connection != null) {
+			_connection.close();
+		}
 		
 	}
 
