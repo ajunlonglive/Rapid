@@ -26,6 +26,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 package com.rapid.forms;
 
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -55,10 +56,14 @@ import com.rapid.utils.Numbers;
 public abstract class FormAdapter {
 	
 	// details about a user form
-	public static class UserFormDetails {
+	public static class UserFormDetails implements Serializable {
+		
+		// from serializable
+		private static final long serialVersionUID = 101L;
 		
 		// instance variables
-		private String _id, _password, _maxPageId, _submittedDateTime, _submitMessage, _errorMessage;
+		private final String _id, _password;
+		private String _maxPageId, _submittedDateTime, _submitMessage, _errorMessage;
 		boolean _saved, _complete, _error, _showSubmitPage;
 		
 		// properties
@@ -279,7 +284,7 @@ public abstract class FormAdapter {
 	// abstract methods
 					
 	// this method returns a new form id, when allowed, by a given adapter, could be in memory, or database, etc
-	public abstract UserFormDetails getNewFormDetails(RapidRequest rapidRequest) throws Exception;
+	public  abstract UserFormDetails getNewFormDetails(RapidRequest rapidRequest) throws Exception;
 	
 	// this method checks a form id against a password for resuming 
 	public abstract UserFormDetails getResumeFormDetails(RapidRequest rapidRequest, String formId, String password) throws Exception;
@@ -366,7 +371,7 @@ public abstract class FormAdapter {
 	// public instance methods
 			
 	// sets whether the form has been saved
-	public void setUserFormSaved(RapidRequest rapidRequest, boolean saved) throws Exception {
+	public synchronized void setUserFormSaved(RapidRequest rapidRequest, boolean saved) throws Exception {
 		// get the details
 		UserFormDetails details = getUserFormDetails(rapidRequest);
 		// update if we got some
@@ -374,7 +379,7 @@ public abstract class FormAdapter {
 	}
 	
 	// returns the form id in the user session for a given application id and version
-	public UserFormDetails getUserFormDetails(RapidRequest rapidRequest) throws Exception {
+	public synchronized UserFormDetails getUserFormDetails(RapidRequest rapidRequest) throws Exception {
 		// get the user session (without making a new one)
 		HttpSession session = rapidRequest.getRequest().getSession(false);
 		// get the form ids map from the session
@@ -427,7 +432,7 @@ public abstract class FormAdapter {
 	}
 						
 	// sets the form details in the user session for a given application id and version
-	public void setUserFormDetails(RapidRequest rapidRequest, UserFormDetails details) {
+	public synchronized void setUserFormDetails(RapidRequest rapidRequest, UserFormDetails details) {
 		// get the user session (making a new one if need be)
 		HttpSession session = rapidRequest.getRequest().getSession();
 		// get all user form details
@@ -441,7 +446,7 @@ public abstract class FormAdapter {
 	}
 	
 	// a helper method to get the form id via the details
-	public String getFormId(RapidRequest rapidRequest) throws Exception {
+	public synchronized String getFormId(RapidRequest rapidRequest) throws Exception {
 		// get the user form details
 		UserFormDetails formDetails = getUserFormDetails(rapidRequest);
 		// check we got some
@@ -453,7 +458,7 @@ public abstract class FormAdapter {
 	}
 	
 	// checks a given page id against the maximum
-	public boolean checkMaxPage(RapidRequest rapidRequest, UserFormDetails formDetails, String pageId) throws Exception {
+	public synchronized boolean checkMaxPage(RapidRequest rapidRequest, UserFormDetails formDetails, String pageId) throws Exception {
 		// assume not completed
 		boolean check = false;
 		// get the application
@@ -486,7 +491,7 @@ public abstract class FormAdapter {
 		return check;
 	}
 
-	public void doSubmitForm(RapidRequest rapidRequest) throws Exception {
+	public synchronized void doSubmitForm(RapidRequest rapidRequest) throws Exception {
 		// get the form details
 		UserFormDetails formDetails = getUserFormDetails(rapidRequest);
 		try {
@@ -513,7 +518,7 @@ public abstract class FormAdapter {
 	}
 		
 	// used when resuming forms
-	public UserFormDetails doResumeForm(RapidRequest rapidRequest, String formId, String password) throws Exception {
+	public synchronized UserFormDetails doResumeForm(RapidRequest rapidRequest, String formId, String password) throws Exception {
 		// get the application
 		Application application = rapidRequest.getApplication();
 		// if there was one
