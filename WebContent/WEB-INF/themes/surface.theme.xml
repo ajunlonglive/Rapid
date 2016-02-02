@@ -26,8 +26,161 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
  -->
 
-	    <type>surface</type>	 
-	    <name>Surface</name>	   
+	    <type>surface</type>
+	    <name>Surface</name>
+	    
+	    <resources>
+	    	<resource>
+	    		<type>css</type>
+	    		<contents>
+	    			<![CDATA[
+	    			
+a {
+  font-weight: inherit;
+  text-decoration: none;
+  color: #2672ec;
+  cursor: pointer;
+}
+
+a:visited {
+  color: #2672ec;
+}
+
+a:hover {
+  color: #666;
+}
+
+a:active {
+  color: #999;
+}
+
+table.grid {
+  color: #5D5D5D;
+  background-color: #FFF;
+}
+
+table.grid tr:first-child td {
+  height: 20px;
+  border-bottom: 2px solid #D3D3D3;
+  padding: 10px;
+  font-weight: 700;
+}
+
+table.grid tr:not(:first-child) {
+  border-bottom: 1px solid #D3D3D3;
+}
+
+table.grid tr:not(:first-child) td {
+  padding-left:3px;
+  padding-top:4px;
+  padding-bottom:2px;
+}
+
+table.grid tr.rowStyle1 {
+  background-color: #F1F8FC;
+}
+   
+.tabsHeader li {
+  border: 1px solid #ABB2B6;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+  text-decoration: none;
+  display: block;
+  color: #00c;
+  width: 8em;
+  text-align: center;
+  cursor: pointer;
+  padding: 10px 28px;
+  background-color: #F1F8FC;
+}
+
+.tabsHeader li:hover {
+  background: #CEE4F4;
+}
+
+.tabsHeader li.selected {
+  border: 1px solid #ABB2B6;
+  position: relative;	
+  background: white;
+  color: black;
+  font-weight: bold;
+  cursor: auto;
+}
+
+.tabsHeader li.selected:hover {
+  background: #CEE4F4;
+}
+
+ul.tabsHeaderH li {
+  border-bottom-width: 0;
+  position: relative;
+  top: 1px;
+  color: #1D6893;
+  font-weight: 400;
+}
+
+ul.tabsHeaderH li.selected{
+  position: relative;
+  top: 1px;
+  z-index: 1;
+  border-bottom: 1px solid #FFF;
+}
+
+ul.tabsHeaderV li {
+  border-right-width: 0;
+}
+
+ul.tabsHeaderV li.selected{
+  position: relative;
+  left: 1px;
+  z-index: 1;
+  margin-left: -1px;
+}
+
+div.tabsGroup {
+  clear: both;
+}
+
+div.tabsPanel {
+  display: none;
+  min-height: 2em;
+  vertical-align: top;
+}
+
+div.tabsPanel.selected {
+  border: none;
+  border-top: 1px solid #ABB2B6;
+  clear: both;
+  padding: 0 1em;
+}
+
+.ui-widget {
+  font-family: 'Open Sans', Arial , sans-serif;
+}
+
+.ui-datepicker select.ui-datepicker-month {
+  font-family: 'Open Sans', Arial , sans-serif;
+}
+
+.ui-datepicker select.ui-datepicker-year {
+  font-family: 'Open Sans', Arial , sans-serif;
+}
+
+.ui-datepicker td a:hover {
+  background: #89BBDF;
+  color: #FFF;
+}
+
+.ui-widget-content .ui-state-active {
+  background: #1D6893 !important;
+  box-shadow: none !important;
+}
+	    			
+	    			 ]]>
+	    		</contents>
+	    	</resource>
+	    </resources>
+	    
 	    <css>
 	    <![CDATA[
 
@@ -75,38 +228,6 @@ h2+h3, h3+h3 {
   margin-top: 16px;
 }
 
-a {
-  font-weight: inherit;
-  text-decoration: none;
-  color: #2672ec;
-  cursor: pointer;
-}
-
-a:visited {
-  color: #2672ec;
-}
-
-div.footer {
-  font-size: 86%;
-  background-color: #eee;
-  position: fixed;
-  height: 88px;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  width: auto;
-  z-index: 250000;
-}
-
-div.heading {
-  height: 40px;
-  white-space: nowrap;
-  position: relative;
-  z-index: 250000;
-  background-color: #2672ec;
-  overflow: visible;
-}
-
 .spacer {
   margin-bottom: 20px;
 }
@@ -121,6 +242,27 @@ div.heading {
 
 .paddingLarge {
   padding: 24px;
+}
+
+div.footer {
+  font-size: 86%;
+  background-color: #eee;
+  position: fixed;
+  height: 88px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: auto;
+  z-index: 250000;
+}
+
+.header {
+  height: 40px;
+  white-space: nowrap;
+  position: relative;
+  z-index: 250000;
+  background-color: #2672ec;
+  overflow: visible;
 }
 
 button {
@@ -142,24 +284,7 @@ button:active {
   outline: 1px dotted black;
 }
 
-.buttonAction {
-  cursor: pointer;
-  background-color:#0078d7 !important;
-  border-color:#0078d7;
-}
-
-.buttonAction:hover {
-  border-style: solid;
-  border-color: #004E8C;
-}
-
-.buttonAction:active {
-  outline: none;
-  border-color: transparent;
-  background-color: rgba(0,0,0,0.4) !important;
-}
-
-.buttonCheck {
+.button1 {
   padding: 4px 12px 4px 12px;
   color: #000;
   border-style: solid;
@@ -167,13 +292,13 @@ button:active {
   background-color: rgba(0,0,0,0.2);
 }
 
-.buttonCheck:hover {
+.button1:hover {
   cursor: pointer;
   border-color: rgba(0,0,0,0.4);
   background-color: rgba(0,0,0,0.2);
 }
 
-.buttonCheck:active {
+.button1:active {
   background-color: rgba(0,0,0,0.4);
   border-color: transparent;
   outline: 1px dotted black;
@@ -181,18 +306,35 @@ button:active {
   outline-style: dotted;
 }
 
-.buttonSubmit {
+.button2 {
+  cursor: pointer;
+  background-color:#0078d7 !important;
+  border-color:#0078d7;
+}
+
+.button2:hover {
+  border-style: solid;
+  border-color: #004E8C;
+}
+
+.button2:active {
+  outline: none;
+  border-color: transparent;
+  background-color: rgba(0,0,0,0.4) !important;
+}
+
+.button3 {
   color: #000;
   background-color: #BAD80A;
   cursor: pointer;
 }
 
-.buttonSubmit:hover {
+.button3:hover {
   color: #FFF;
   background-color: #7FBA00;
 }
 
-.buttonSubmit:active {
+.button3:active {
   outline: none;
 }
 
@@ -321,50 +463,38 @@ input[type=checkbox]:focus:before {
   outline-style: dotted;
 }
 
-.inputForm {
+.input1 {
   border-width: 2px;
   border-color: rgba(0, 0, 0, 0.4);
 }
 
-.inputForm:focus {
+.input1:focus {
   border-color: #0078D7;
 }
 
-.inputSignUp {
-  border-radius: 4px;
+.input2 {
+  border-color: #EB1123 !important;
+  border-width: 2px !important;
 }
 
-.inputSignUp:hover {
+.input3:hover {
   border-color: #BABABA;
 }
 
-.inputSignUp:focus {
+.input3:focus {
   border: 1px solid #e81123;
   box-shadow: rgba(235, 74, 86, 0.4) 0px 0px 1px 1px inset;
 }
 
-.inputSignUpValidation {
+.input4 {
   border: 1px solid #E81123;
   color: #E81123;
   font-style: normal;
 }
 
-.inputSignUpValidation:focus {
+.input4:focus {
   border: 1px solid #e81123;
   box-shadow: rgba(235, 74, 86, 0.4) 0px 0px 1px 1px inset;
-}
-
-.inputRequired {
-  border-color: #EB1123 !important;
-  border-width: 2px !important;
-}
-
-.linkFeature:hover {
-  color: #666;
-}
-
-.linkFeature:active {
-  color: #999;
 }
 
 select {
@@ -388,131 +518,8 @@ select:focus {
 select:focus option {
   background-color:#fff;
 }
-
-table.grid {
-  color: #5D5D5D;
-  background-color: #FFF;
-}
-
-table.grid tr:first-child td {
-  height: 20px;
-  border-bottom: 2px solid #D3D3D3;
-  padding: 10px;
-  font-weight: 700;
-}
-
-table.grid tr:not(:first-child) {
-  border-bottom: 1px solid #D3D3D3;
-}
-
-table.grid tr:not(:first-child) td {
-  padding-left:3px;
-  padding-top:4px;
-  padding-bottom:2px;
-}
-
-table.grid tr.rowStyle1 {
-  background-color: #F1F8FC;
-}
-   
-.tabsHeader li {
-  border: 1px solid #ABB2B6;
-  border-top-left-radius: 0px;
-  border-top-right-radius: 0px;
-  text-decoration: none;
-  display: block;
-  color: #00c;
-  width: 8em;
-  text-align: center;
-  cursor: pointer;
-  padding: 10px 28px;
-  background-color: #F1F8FC;
-}
-
-.tabsHeader li:hover {
-  background: #CEE4F4;
-}
-
-.tabsHeader li.selected {
-  border: 1px solid #ABB2B6;
-  position: relative;	
-  background: white;
-  color: black;
-  font-weight: bold;
-  cursor: auto;
-}
-
-.tabsHeader li.selected:hover {
-  background: #CEE4F4;
-}
-
-ul.tabsHeaderH li {
-  border-bottom-width: 0;
-  position: relative;
-  top: 1px;
-  color: #1D6893;
-  font-weight: 400;
-}
-
-ul.tabsHeaderH li.selected{
-  position: relative;
-  top: 1px;
-  z-index: 1;
-  border-bottom: 1px solid #FFF;
-}
-
-ul.tabsHeaderV li {
-  border-right-width: 0;
-}
-
-ul.tabsHeaderV li.selected{
-  position: relative;
-  left: 1px;
-  z-index: 1;
-  margin-left: -1px;
-}
-
-div.tabsGroup {
-  clear: both;
-}
-
-div.tabsPanel {
-  display: none;
-  min-height: 2em;
-  vertical-align: top;
-}
-
-div.tabsPanel.selected {
-  border: none;
-  border-top: 1px solid #ABB2B6;
-  clear: both;
-  padding: 0 1em;
-}
-
-.ui-widget {
-  font-family: 'Open Sans', Arial , sans-serif;
-}
-
-.ui-datepicker select.ui-datepicker-month {
-  font-family: 'Open Sans', Arial , sans-serif;
-}
-
-.ui-datepicker select.ui-datepicker-year {
-  font-family: 'Open Sans', Arial , sans-serif;
-}
-
-.ui-datepicker td a:hover {
-  background: #89BBDF;
-  color: #FFF;
-}
-
-.ui-widget-content .ui-state-active {
-  background: #1D6893 !important;
-  box-shadow: none !important;
-}
 	    	        
 	    ]]>    
 	    </css>
 	   
 </template>
-

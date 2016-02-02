@@ -26,126 +26,15 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
  -->
 
-	    <type>infinity</type>	 
-	    <name>Infinity</name>	   
-	    <css>
-	    <![CDATA[
-
-@font-face {
-  font-family: 'Didact Gothic';
-  font-style: normal;
-  font-weight: 400;
-  src: local('Didact Gothic'), local('DidactGothic'), url(https://fonts.gstatic.com/s/didactgothic/v7/v8_72sD3DYMKyM0dn3LtWmYKogTrBb-Yb2DFwx30qLM.woff2) format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
-}
-
-body {
-  background: #f3f4f5
-}
-
-body, input, textarea, button, legend {
-  font-family: 'Lucida Grande', 'Didact Gothic', Helvetica, Arial, Verdana, sans-serif;
-  line-height: 1.5;
-}
-
-.spacer {
-  margin-bottom: 20px;
-}
-
-.buttonAction {
-  background-image: linear-gradient(#37AAEA, #117ED2);
-  border-radius: 4px;
-  border: 1px solid #1992D9;
-  box-shadow: rgba(255, 255, 255, 0.2) 0px 1px 0px 0px inset;
-  color: #FFF;
-  cursor: pointer;
-  display: inline-block;
-  font-size: 13px;
-}
-
-.buttonAction:hover {
-  background: transparent linear-gradient(#2F90D5, #0351B7);
-}
-
-.buttonCheck {
-  color: #FFF;
-  background: transparent linear-gradient(#00C307, #039103);
-  border: 0.1rem solid #20A623;
-  box-shadow: 0px 0.1rem 0px rgba(255, 255, 255, 0.2) inset;
-}
-
-.buttonCheck:hover {
-  background: transparent linear-gradient(#00B300, #006C00);
-}
-
-.buttonGolden {
-  border: 1px solid #D17D33;
-  background: #F4B442;
-  color: #FFF;
-  font-weight: bold;
-}
-
-.buttonGolden:hover {
-  background: #F4B442;
-}
-
-.buttonGolden:active {
-  box-shadow: none;
-}
-
-.inputBig {
-  border-radius: 5px;
-  border: 1px solid #D6D6D6;
-  box-shadow: #AAA 0px 1px 4px 0px inset;
-  color: #333;
-  font-size: 16px;
-  height: 21px;
-  padding: 7px 2px 7px 7px;
-}
-
-.inputThick {
-  height: 24px;
-  background: #FAFAFA;
-  border: 5px solid #E8E8E8;
-  border-radius: 5px;
-  font-size: 16px;
-  padding: 7px 13px 3px;
-}
-
-button {
-  background: linear-gradient(#FFF, #EBEBEB);
-  border-radius: 4px;
-  border: 1px solid #B5B5B5;
-  color: #0085CF;
-  cursor: pointer;
-  line-height: 15px;
-  padding: 9px 15px 9px 15px;
-}
-
-button:hover {
-  background: transparent linear-gradient(#FFF, #D7D7D7);
-}
-
-button:active {
-  box-shadow:0 1px 0 #fff,inset 0 0 9px rgba(0,0,0,0.5)
-}
-
-h1 {
-  color: #333;
-  font-size: 24px;
-  font-weight: 400;
-}
-
-input:not(.inputThick):not(.selectWhite):not([type=radio]):not([type=checkbox]),[type=input], select {
-  font-size: 15px;
-  padding: 6px;
-  line-height: 1;
-  color: #555;
-  border: 1px solid #CCC;
-  border-radius: 4px;
-  font-family: 'Lucida Grande', 'Didact Gothic', Helvetica, Arial, Verdana, sans-serif;
-}
-
+	    <type>infinity</type>
+	    <name>Infinity</name>
+	    
+	    <resources>
+	    	<resource>
+	    		<type>css</type>
+	    		<contents>
+	    			<![CDATA[
+	    			
 a {
   color: #0085CF;
   text-decoration: none;
@@ -154,167 +43,6 @@ a {
 
 a:hover {
   text-decoration: underline;
-}
-
-:focus {
-  outline:none;
-}
-
-.paddingSmall {
-  padding: 6px;
-}
-
-.paddingMedium {
-  padding: 15px;
-}
-
-.paddingLarge {
-  padding: 24px;
-}
-
-div.panel:not(.panelInnerWhite):not(.panelInnerGrey) {
-  box-shadow: 1px 0px 0px 0px #D2D2D2, -1px 0px 0px 0px #D2D2D2, 0px 1px 0px 0px #B6B6B6, 0px 2px 0px 0px #D2D2D2, 2px 0px 0px 0px #E6E6E6, -2px 0px 0px 0px #E6E6E6, 0px 3px 0px 0px #E6E6E6, 0px -1px 0px 0px #E6E6E6;
-  background: #FFF;
-  border-radius: 4px;
-}
-
-.panelGold {
-  margin: 10px auto 20px;
-  border: 1px solid #CCC;
-  color: #333;
-  background: transparent linear-gradient(#FDEFCA 0%, #EFCA6C 90%) !important;
-}
-
-.panelInnerWhite {
-  border-radius: 6px;
-  background-color: #FCFCFC;
-  border: 1px solid #E8E8E8;
-}
-
-.panelInnerGrey {
-  border: 1px solid #DDD;
-  border-radius: 4px;
-}
-
-.selectWhite {
-  background-color: #FFF;
-  cursor: pointer;
-  padding: 6px;
-  color: #333;
-  font-size: 15px;
-  border: 1px solid #D6D6D6;
-  border-radius: 4px;
-}
-
-.selectWhite:focus {
-  border: 1px solid #66afe9;
-  box-shadow:inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 0 2pt rgba(102, 175, 233, 0.6);
-}
-
-input[type=checkbox] {
-  width: 20px;
-  height: 20px;
-  position: relative;
-  top: 2px;
-  vertical-align: middle;
-  margin-top: -4px;
-  margin-right: 10px;
-  margin-left: 8px;
-}
-
-input[type=checkbox]:before {
-  width: 20px;
-  height: 20px;
-  display: block;
-  content: '';
-  background: #FFF;
-  border-radius: 4px;
-  border: 1px solid #c9c9c9;
-  margin: -1px;
-}
-
-input[type=checkbox]:checked:before {
-  width: 20px;
-  height: 20px;
-  display: block;
-  content: '';
-  background: #007bbe;
-  border: 1px solid #007bbe;
-  margin: -1px;
-}
-
-input[type=checkbox]:checked:after {
-  content: '';
-  position: absolute;
-  margin-top: -19px;
-  margin-left: 7px;
-  border-right: 2px solid white;
-  border-bottom: 2px solid white;
-  width: 5px;
-  height: 12px;
-  transform: rotate(45deg);
-}
-
-input[type=checkbox]:hover:before {
-  box-shadow: 0 0 0 2px #87c4e7;
-}
-
-input[type=checkbox]:focus:before {
-  box-shadow: 0 0 0 5px #87c4e7;
-}
-
-input[type=radio] {
-  width: 20px;
-  height: 20px;
-  position: relative;
-  top: -1px;
-  vertical-align: middle;
-  margin-top: -4px;
-  margin-right: 12px;
-}
-
-input[type=radio]:before {
-  width: 20px;
-  height: 20px;
-  display: block;
-  content: '';
-  background: #FFF;
-  border-radius: 100%;
-  border: 1px solid #c9c9c9;
-  margin: -1px;
-}
-
-input[type=radio]:checked {
-  transform: rotate(45deg)
-}
-
-input[type=radio]:checked:before {
-  width: 20px;
-  height: 20px;
-  display: block;
-  content: '';
-  background: #007bbe;
-  border: 1px solid #007bbe;
-  margin: -1px;
-}
-
-input[type=radio]:checked:after {
-  content: '';
-  position: absolute;
-  margin-top: -17px;
-  margin-left: 6px;
-  border-right: 2px solid white;
-  border-bottom: 2px solid white;
-  width: 4px;
-  height: 10px
-}
-
-input[type=radio]:hover:before {
-  box-shadow: 0 0 0 2px #87c4e7
-}
-
-input[type=radio]:focus:before {
-  box-shadow: 0 0 0 5px #87c4e7
 }
 
 .hint {
@@ -430,9 +158,347 @@ table.grid tr:nth-child(3) {
 .ui-datepicker-unselectable .ui-state-default {
   background: #F1F1F1 !important;
 }
+
+.tabsHeader li {
+  border: 1px solid #bbb;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  margin: 0;
+  text-decoration: none;
+  display: block;
+  background: #eee;
+  color: #00c;
+  width: 8em;
+  text-align: center;
+  cursor: pointer;
+  color: #333;
+}
+
+.tabsHeader li:hover {
+  background: transparent linear-gradient(#D7D7D7, #FFF);
+}
+
+.tabsHeader li.selected {
+  position: relative;	
+  background: white;
+  color: black;
+  font-weight: bold;
+  cursor: auto;
+  border-color: #DDD;
+}
+
+ul.tabsHeaderH li {
+  border-bottom-width: 0;
+  position: relative;
+  top: 1px;
+  z-index: 1;
+  margin-right: 3px;
+  padding: 6px;
+  font-size: 18px;
+  font-weight: bold;
+  background: linear-gradient(#EEE 0px, #EAEAEA 6%, #FAFAFA 100%);
+}
+
+div.tabsPanel {
+  display: none;
+  min-height: 2em;
+  vertical-align:top;
+  box-shadow: 1px 0px 0px 0px #D2D2D2, 1px 0px 0px 0px #D2D2D2, 0px 1px 0px 0px #B6B6B6, 0px 2px 0px 0px #D2D2D2, 2px 0px 0px 0px #E6E6E6, 0px 0px 0px 0px #E6E6E6, 0px 3px 0px 0px #E6E6E6, 0px -1px 0px 0px #E6E6E6;
+  background: #FFF;
+  border-radius: 0px 4px 4px 4px;
+}
+
+div.tabsPanel.selected {
+  border: 1px solid #DDD;
+  clear: both;
+  padding: 0 1em;
+}
+	    			
+	    			 ]]>
+	    		</contents>
+	    	</resource>
+	    </resources>
+	    	
+	    <css>
+	    <![CDATA[
+
+@font-face {
+  font-family: 'Didact Gothic';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Didact Gothic'), local('DidactGothic'), url(https://fonts.gstatic.com/s/didactgothic/v7/v8_72sD3DYMKyM0dn3LtWmYKogTrBb-Yb2DFwx30qLM.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+
+body {
+  background: #f3f4f5
+}
+
+body, input, textarea, button, legend {
+  font-family: 'Lucida Grande', 'Didact Gothic', Helvetica, Arial, Verdana, sans-serif;
+  line-height: 1.5;
+}
+
+h1 {
+  color: #333;
+  font-size: 24px;
+  font-weight: 400;
+}
+
+:focus {
+  outline:none;
+}
+
+.spacer {
+  margin-bottom: 20px;
+}
+
+.paddingSmall {
+  padding: 6px;
+}
+
+.paddingMedium {
+  padding: 15px;
+}
+
+.paddingLarge {
+  padding: 24px;
+}
+
+button {
+  background: linear-gradient(#FFF, #EBEBEB);
+  border-radius: 4px;
+  border: 1px solid #B5B5B5;
+  color: #0085CF;
+  cursor: pointer;
+  line-height: 15px;
+  padding: 9px 15px 9px 15px;
+}
+
+button:hover {
+  background: transparent linear-gradient(#FFF, #D7D7D7);
+}
+
+button:active {
+  box-shadow:0 1px 0 #fff,inset 0 0 9px rgba(0,0,0,0.5)
+}
+
+.button1 {
+  background-image: linear-gradient(#37AAEA, #117ED2);
+  border-radius: 4px;
+  border: 1px solid #1992D9;
+  box-shadow: rgba(255, 255, 255, 0.2) 0px 1px 0px 0px inset;
+  color: #FFF;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 13px;
+}
+
+.button1:hover {
+  background: transparent linear-gradient(#2F90D5, #0351B7);
+}
+
+.button2 {
+  color: #FFF;
+  background: transparent linear-gradient(#00C307, #039103);
+  border: 0.1rem solid #20A623;
+  box-shadow: 0px 0.1rem 0px rgba(255, 255, 255, 0.2) inset;
+}
+
+.button2:hover {
+  background: transparent linear-gradient(#00B300, #006C00);
+}
+
+.button3 {
+  border: 1px solid #D17D33;
+  background: #F4B442;
+  color: #FFF;
+  font-weight: bold;
+}
+
+.button3:hover {
+  background: #F4B442;
+}
+
+.button3:active {
+  box-shadow: none;
+}
+
+input:not(.input2):not(.dropdown1):not([type=radio]):not([type=checkbox]),[type=input], select {
+  font-size: 15px;
+  padding: 6px;
+  line-height: 1;
+  color: #555;
+  border: 1px solid #CCC;
+  border-radius: 4px;
+  font-family: 'Lucida Grande', 'Didact Gothic', Helvetica, Arial, Verdana, sans-serif;
+}
+
+input[type=checkbox] {
+  width: 20px;
+  height: 20px;
+  position: relative;
+  top: 2px;
+  vertical-align: middle;
+  margin-top: -4px;
+  margin-right: 10px;
+  margin-left: 8px;
+}
+
+input[type=checkbox]:before {
+  width: 20px;
+  height: 20px;
+  display: block;
+  content: '';
+  background: #FFF;
+  border-radius: 4px;
+  border: 1px solid #c9c9c9;
+  margin: -1px;
+}
+
+input[type=checkbox]:checked:before {
+  width: 20px;
+  height: 20px;
+  display: block;
+  content: '';
+  background: #007bbe;
+  border: 1px solid #007bbe;
+  margin: -1px;
+}
+
+input[type=checkbox]:checked:after {
+  content: '';
+  position: absolute;
+  margin-top: -19px;
+  margin-left: 7px;
+  border-right: 2px solid white;
+  border-bottom: 2px solid white;
+  width: 5px;
+  height: 12px;
+  transform: rotate(45deg);
+}
+
+input[type=checkbox]:hover:before {
+  box-shadow: 0 0 0 2px #87c4e7;
+}
+
+input[type=checkbox]:focus:before {
+  box-shadow: 0 0 0 5px #87c4e7;
+}
+
+input[type=radio] {
+  width: 20px;
+  height: 20px;
+  position: relative;
+  top: -1px;
+  vertical-align: middle;
+  margin-top: -4px;
+  margin-right: 12px;
+}
+
+input[type=radio]:before {
+  width: 20px;
+  height: 20px;
+  display: block;
+  content: '';
+  background: #FFF;
+  border-radius: 100%;
+  border: 1px solid #c9c9c9;
+  margin: -1px;
+}
+
+input[type=radio]:checked {
+  transform: rotate(45deg)
+}
+
+input[type=radio]:checked:before {
+  width: 20px;
+  height: 20px;
+  display: block;
+  content: '';
+  background: #007bbe;
+  border: 1px solid #007bbe;
+  margin: -1px;
+}
+
+input[type=radio]:checked:after {
+  content: '';
+  position: absolute;
+  margin-top: -17px;
+  margin-left: 6px;
+  border-right: 2px solid white;
+  border-bottom: 2px solid white;
+  width: 4px;
+  height: 10px
+}
+
+input[type=radio]:hover:before {
+  box-shadow: 0 0 0 2px #87c4e7
+}
+
+input[type=radio]:focus:before {
+  box-shadow: 0 0 0 5px #87c4e7
+}
+
+.input1 {
+  border-radius: 5px;
+  border: 1px solid #D6D6D6;
+  box-shadow: #AAA 0px 1px 4px 0px inset;
+  color: #333;
+  font-size: 16px;
+  height: 21px;
+  padding: 7px 2px 7px 7px;
+}
+
+.input2 {
+  height: 24px;
+  background: #FAFAFA;
+  border: 5px solid #E8E8E8;
+  border-radius: 5px;
+  font-size: 16px;
+  padding: 7px 13px 3px;
+}
+
+.panel1 {
+  box-shadow: 1px 0px 0px 0px #D2D2D2, -1px 0px 0px 0px #D2D2D2, 0px 1px 0px 0px #B6B6B6, 0px 2px 0px 0px #D2D2D2, 2px 0px 0px 0px #E6E6E6, -2px 0px 0px 0px #E6E6E6, 0px 3px 0px 0px #E6E6E6, 0px -1px 0px 0px #E6E6E6;
+  background: #FFF;
+  border-radius: 4px;
+}
+
+.panel2 {
+  border-radius: 6px;
+  background-color: #FCFCFC;
+  border: 1px solid #E8E8E8;
+}
+
+.panel3 {
+  border: 1px solid #DDD;
+  border-radius: 4px;
+}
+
+.panel4 {
+  margin: 10px auto 20px;
+  border: 1px solid #CCC;
+  color: #333;
+  background: transparent linear-gradient(#FDEFCA 0%, #EFCA6C 90%) !important;
+}
+
+.dropdown1 {
+  background-color: #FFF;
+  cursor: pointer;
+  padding: 6px;
+  color: #333;
+  font-size: 15px;
+  border: 1px solid #D6D6D6;
+  border-radius: 4px;
+}
+
+.dropdown1:focus {
+  border: 1px solid #66afe9;
+  box-shadow:inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 0 2pt rgba(102, 175, 233, 0.6);
+}
 	    	        
 	    ]]>    
 	    </css>
 	   
 </template>
-
