@@ -31,20 +31,6 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    
 	    <resources>
 	        <resource>
-	            <type>javascript</type>
-	            <contents>
-	                <![CDATA[
-	                
-$(document).ready( function() {
-  $("select").change( function(ev) {
-    $(this).addClass("selectedDropdown");
-  });
-}); 	          
-      
-	                ]]>	                
-	            </contents>
-	        </resource>
-	        <resource>
 	            <type>css</type>
 	            <contents>
 	                <![CDATA[
@@ -97,7 +83,126 @@ $(document).ready( function() {
 
 .ui-widget-content .ui-state-active {
   background: #315A9A radial-gradient(at 30% 0px , #4E79E8, #315A9A 25%) !important;
-}	                
+}
+
+table.grid {
+  background-color: #315A9A;
+  color: #FCFEFC;
+}
+
+table.grid tr td {
+  border: 1px solid #6C82B4;
+  padding: 10px;
+}
+
+table.grid tr:not(:first-child) td {
+  padding-left:5px;
+  padding-top:4px;
+  padding-bottom:2px;
+  color: #BE8;
+}
+
+.tabsHeader li {
+  border-top-left-radius: 7px;
+  border-top-right-radius: 7px;
+  border-width: 2px 2px 0px;
+  border-style: solid;
+  background-color: #F7F7F7;
+  color: #FFF;
+  background: transparent linear-gradient(#999, #747474);
+  cursor: pointer;
+}
+
+.tabsHeader li.selected {
+  border-width: 2px 2px 0px;
+  border-style: solid;
+  border-color: #E0E0E0 #E0E0E0 #F7F7F7;
+  background-color: #F7F7F7;
+  color: #333;
+  cursor: pointer;
+}
+
+.tabsHeader li:not(.selected):hover {
+  background: transparent linear-gradient(#999, #747474);
+}
+
+ul.tabsHeaderH li {
+  position: relative;
+  top: 2px;
+  z-index: 1;
+  margin-right: 3px;
+  padding: 5px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+ul.tabsHeaderH li.selected{
+  top: 2px;
+}
+
+ul.tabsHeaderH li:not(.selected) {
+  border-width:0;
+  padding:6px;
+}
+
+div.tabsPanel {
+  background-color: #F7F7F7;
+}
+
+div.tabsPanel.selected {
+  border-left-width: 2px;
+  border-width: 2px 2px 2px;
+  border-style: solid;
+  border-color: #E0E0E0;
+  background-color: #F7F7F7;
+  border-top-right-radius: 7px;
+  border-bottom-right-radius: 7px;
+  border-bottom-left-radius: 7px;
+}
+
+.hint {
+  color: #1A3680;
+  box-shadow: 2px 3px 10px 2px rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
+  margin: 1em 0px 0.3em;
+  padding: 1.5%;
+  background: #D9E9F7;
+}
+
+input {
+  outline: none;
+  border: 2px solid #38B132;
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+
+input:focus {
+  box-shadow: 0 0 4px #38B132;
+}
+
+input:hover {
+  border-color: #108A00;
+}
+
+input:focus {
+  border-color: #38B132;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 4px #38B132;
+  outline: none;
+}
+
+a {
+  text-decoration: underline;
+  color: #38B132;
+}
+
+a:hover {
+  color: #4DD444;
+}
+
+a:active {
+  outline: 1px dotted;
+}
+
 	                ]]>
 	            </contents>
 	        </resource>
@@ -168,25 +273,7 @@ button:active {
   outline: 1px dotted;
 }
 
-.buttonAction {
-  background-color: #E6E6E6;
-  background-image: linear-gradient(#FFF, #B4B4B4);
-  color: #108A00;
-}
-
-.buttonAction:hover {
-  background-color: #FFF;
-  background-image: linear-gradient(#FFF, #FFF);
-  color: #249E14;
-}
-
-.buttonAction:active {
-  border-color: #38B132;
-  box-shadow: 0 0 7px #38B132;
-  outline: none;
-}
-
-.buttonSubmit {
+.button1 {
   box-shadow: 2px 2px 2px 0px rgba(0, 0, 0, 0.1);
   box-sizing: border-box;
   border-radius: 6px;
@@ -194,48 +281,32 @@ button:active {
   padding: 10px 20px;
 }
 
-.buttonSubmit:hover {
+.button1:hover {
   background-color: #31AE20;
   background-image: linear-gradient(#4AC739, #007C00);
 }
 
-.buttonSubmit:active {
+.button1:active {
   border-color: #38B132;
   box-shadow: 0 0 4px #38B132;
   outline: none;
 }
 
-a {
-  text-decoration: underline;
-  color: #38B132;
+.button2 {
+  background-color: #E6E6E6;
+  background-image: linear-gradient(#FFF, #B4B4B4);
+  color: #108A00;
 }
 
-a:hover {
-  color: #4DD444;
+.button2:hover {
+  background-color: #FFF;
+  background-image: linear-gradient(#FFF, #FFF);
+  color: #249E14;
 }
 
-a:active {
-  outline: 1px dotted;
-}
-
-input {
-  outline: none;
-  border: 2px solid #38B132;
-  padding: 5px 10px;
-border-radius: 4px;
-}
-
-input:focus {
-  box-shadow: 0 0 4px #38B132;
-}
-
-.input:hover {
-  border-color: #108A00;
-}
-
-.input:focus {
+.button2:active {
   border-color: #38B132;
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 4px #38B132;
+  box-shadow: 0 0 7px #38B132;
   outline: none;
 }
 
@@ -397,29 +468,29 @@ input[type=checkbox]:checked:after {
   transform: rotate(45deg);
 }
 
-.inputSignUp {
+.input1 {
   border-radius: 4px;
   border: 2px solid #CCC;
   padding: 5px 10px;
 }
 
-.inputSignUp:hover {
+.input1:hover {
   border-color: #108A00;
 }
 
-.inputSignUp:focus {
+.input1:focus {
   border-color: #38B132;
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 4px #38B132;
   outline: none;
 }
 
-.inputSignUpValidation {
+.input2 {
   border-radius: 4px;
   border: 2px solid #FF5025;
   padding: 5px 10px;
 }
 
-.inputSignUpValidation:focus {
+.input2:focus {
   border-color: #38B132;
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 4px #38B132;
   outline: none;
@@ -447,90 +518,6 @@ select:focus option {
   color: #3E3E3E;
 }
 
-table.grid {
-  background-color: #315A9A;
-  color: #FCFEFC;
-}
-
-table.grid tr td {
-  border: 1px solid #6C82B4;
-  padding: 10px;
-}
-
-table.grid tr:not(:first-child) td {
-  padding-left:5px;
-  padding-top:4px;
-  padding-bottom:2px;
-  color: #BE8;
-}
-
-.tabsHeader li {
-  border-top-left-radius: 7px;
-  border-top-right-radius: 7px;
-  border-width: 2px 2px 0px;
-  border-style: solid;
-  background-color: #F7F7F7;
-  color: #FFF;
-  background: transparent linear-gradient(#999, #747474);
-  cursor: pointer;
-}
-
-.tabsHeader li.selected {
-  border-width: 2px 2px 0px;
-  border-style: solid;
-  border-color: #E0E0E0 #E0E0E0 #F7F7F7;
-  background-color: #F7F7F7;
-  color: #333;
-  cursor: pointer;
-}
-
-.tabsHeader li:not(.selected):hover {
-  background: transparent linear-gradient(#999, #747474);
-}
-
-ul.tabsHeaderH li {
-  position: relative;
-  top: 2px;
-  z-index: 1;
-  margin-right: 3px;
-  padding: 5px;
-  font-size: 18px;
-  font-weight: bold;
-}
-
-ul.tabsHeaderH li.selected{
-  top: 2px;
-}
-
-ul.tabsHeaderH li:not(.selected) {
-  border-width:0;
-  padding:6px;
-}
-
-div.tabsPanel {
-  background-color: #F7F7F7;
-}
-
-div.tabsPanel.selected {
-  border-left-width: 2px;
-  border-width: 2px 2px 2px;
-  border-style: solid;
-  border-color: #E0E0E0;
-  background-color: #F7F7F7;
-  border-top-right-radius: 7px;
-  border-bottom-right-radius: 7px;
-  border-bottom-left-radius: 7px;
-}
-
-.hint {
-  color: #1A3680;
-  box-shadow: 2px 3px 10px 2px rgba(0, 0, 0, 0.3);
-  border-radius: 5px;
-  margin: 1em 0px 0.3em;
-  padding: 1.5%;
-  background: #D9E9F7;
-}
-
 .footer {
   width: 100%;
   height: auto;
@@ -548,4 +535,3 @@ div.tabsPanel.selected {
 	    </css>
 	   
 </template>
-

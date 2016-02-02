@@ -26,129 +26,31 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
  -->
 
-	    <type>super</type>	 
-	    <name>Super</name>	   
-	    <css>
-	    <![CDATA[
+	    <type>super</type>
+	    <name>Super</name>
+	    
+	    <resources>
+	    
+	        <resource>
+	            <type>javascript</type>
+	            <contents>
+	                <![CDATA[
 
-@font-face {
-  font-family: 'Josefin Sans';
-  font-style: normal;
-  font-weight: 400;
-  src: local('Josefin Sans'), local('JosefinSans'), url(https://fonts.gstatic.com/s/josefinsans/v9/xgzbb53t8j-Mo-vYa23n5ugdm0LZdjqr5-oayXSOefg.woff2) format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
-}
+$(document).ready( function() {
+  $("select").change( function(ev) {
+    $(this).addClass("dropdown1");
+  });
+});
 
-@font-face {
-  font-family: 'Montserrat';
-  font-style: normal;
-  font-weight: 400;
-  src: local('Montserrat-Regular'), url(https://fonts.gstatic.com/s/montserrat/v6/zhcz-_WihjSQC0oHJ9TCYPk_vArhqVIZ0nv9q090hN8.woff2) format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
-}
-
-body {
-  font-family: 'Montserrat', 'Josefin Sans', Arial,sans-serif;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: normal;
-}
-
-.spacer {
-  margin-bottom: 20px;
-}
-
-.paddingSmall {
-  padding: 6px;
-}
-
-.paddingMedium {
-  padding: 15px;
-}
-
-.paddingLarge {
-  padding: 24px;
-}
-
-button {
-  color: #FFF;
-  font-weight: bold;
-  padding: 13px 15px;
-  background-image: linear-gradient(#805E96, #562873);
-  border: none;
-  box-shadow: 0px 1px 1px 1px #A4A4A4;
-  border-radius: 7px;
-  cursor: pointer;
-  outline: none;
-}
-
-button:hover {
-  background: #5a94f1;
-  box-shadow: none;
-}
-
-.buttonAction {
-  background-image: none;
-  border: 2px solid #00AEEF;
-  padding: 10px 25px;
-  background-color: rgba(0, 174, 239, 0);
-  color: #00AEEF;
-  font-weight: 700;
-  font-size: 18px;
-  border-radius: 40px;
-  transition: all 0.2s ease-in-out 0s;
-  width: initial;
-  box-shadow: none;
-}
-
-.buttonAction:hover {
-  background-color: #00AEEF;
-  color: #FFF;
-}
-
-.buttonCheck {
-  cursor: pointer;
-  padding: 12px;
-  box-shadow: none;
-  font-weight: 900;
-  font-size: 16px;
-  text-shadow: 1px 1px 2px #658E2E;
-  color: #FFF;
-  border: 1px solid #60A628;
-  background-image: linear-gradient(#99C75D, #79B52A);
-}
-
-.buttonCheck:hover {
-  background-image: none;
-  background-color: #79B52A;
-}
-
-.buttonCheck:active {
-  outline: 1px dotted black;
-  outline-offset: -8px;
-}
-
-.buttonSubmit {
-  border: 1px solid #D9D9D9;
-  color: #333;
-  box-shadow: 0px 0px 0px #FFF;
-  border-color: #CCC;
-  font-size: 14px;
-  background-color: #DEDEDE;
-  text-shadow: 0px 0px 0px transparent;
-  background-image: linear-gradient(#FEFEFE, #DEDEDE);
-}
-
-.buttonSubmit:hover {
-  background-color: #DEDEDE;
-}
-
-.buttonSubmit:active {
-  outline: 1px dotted black;
-  outline-offset: -10px;
-}
-
+	                ]]>	                
+	            </contents>
+	        </resource>
+	        
+	    	<resource>
+	    		<type>css</type>
+	    		<contents>
+	    			<![CDATA[
+	    			
 a {
   color: #00ADF2;
   transition: all 400ms ease 0s;
@@ -158,197 +60,6 @@ a {
 
 a:hover {
   color: #562576;
-}
-
-input:not([type=radio]):not([type=checkbox]):not(.inputSignUpValidation):not(.inputSignUp):not(.inputForm):not(.inputFormValidation) {
-  border: 1px solid #D9D9D9;
-  padding: 5px;
-  border-radius: 4px;
-  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2) inset;
-  color: #333;
-  outline: none;
-}
-
-input[type=radio] {
-  width: 17px;
-  height: 17px;
-  vertical-align: middle;
-  margin-top: -9px;
-  margin-right: 13px;
-  margin-left: 8px;
-  outline: none;
-  cursor: pointer;
-}
-
-input[type=radio]:before {
-  width: 20px;
-  height: 20px;
-  display: block;
-  content: '';
-  background: #FFF;
-  border-radius: 100px;
-  margin: -1px;
-  background-color: #F2F8FA;
-  box-shadow: 0px 1px 2px #F1F1F1 inset;
-  border: 2px solid #0083B3;
-}
-
-input[type=radio]:checked:before {
-  width: 20px;
-  height: 20px;
-  display: block;
-  content: '';
-  margin: -1px;
-  background-color: #FFF;
-  box-shadow: 0px 2px 0px 0px #FFF inset;
-  border: 2px solid #005778;
-}
-
-input[type=radio]:checked:after {
-  content: '';
-  position: absolute;
-  margin-top: -16px;
-  margin-left: 6px;
-  border-radius: 500px;
-  background-color: #005778;
-  width: 10px;
-  height: 10px;
-}
-
-input[type=checkbox] {
-  width: 17px;
-  height: 17px;
-  vertical-align: middle;
-  margin-top: -9px;
-  margin-right: 13px;
-  margin-left: 8px;
-  outline: none;
-  cursor: pointer;
-}
-
-input[type=checkbox]:before {
-  width: 20px;
-  height: 20px;
-  display: block;
-  content: '';
-  background: #FFF;
-  border-radius: 4px;
-  margin: -1px;
-  background-color: #F2F8FA;
-  box-shadow: 0px 1px 2px #F1F1F1 inset;
-  border: 2px solid #0083B3;
-}
-
-input[type=checkbox]:checked:before {
-  width: 20px;
-  height: 20px;
-  display: block;
-  content: '';
-  margin: -1px;
-  background-color: #FFF;
-  box-shadow: 0px 2px 0px 0px #FFF inset;
-  border: 2px solid #005778;
-}
-
-input[type=checkbox]:checked:after {
-  content: '';
-  position: absolute;
-  margin-top: -18.5px;
-  margin-left: 7.2px;
-  border-right: 3px solid #005778;
-  border-bottom: 3px solid #005778;
-  width: 4px;
-  height: 10px;
-  transform: rotate(45deg);
-}
-
-.inputForm {
-  box-shadow: 0px 2px 0px 0px #C6CACC inset;
-  background: #EBF0F2;
-  line-height: 20px;
-  padding: 13px 10px 13px 19px;
-  color: #555;
-  border: 1px solid #D9D9D9;
-  padding: 5px;
-  border-radius: 4px;
-  outline: none;
-}
-
-.inputFormValidation {
-  box-shadow: 0px 2px 0px 0px #C6CACC inset;
-  background: #EBF0F2;
-  line-height: 20px;
-  color: #555;
-  border: 1px solid #D9D9D9;
-  padding: 5px;
-  border-radius: 4px;
-  outline: none;
-  transition: all 0.2s ease-in-out 0s;
-}
-
-.inputFormValidation:focus {
-  border-color: #c61017;
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px #f47b7f;
-}
-
-.inputSignUp {
-  background-color: #FFF;
-  border: 2px solid #DEDEDE;
-  border-radius: 5px;
-  padding: 5px;
-  outline: none;
-}
-
-.inputSignUpValidation {
-  border: 3px solid rgba(200, 0, 0, 0.3);
-  color: #B50000;
-  border-radius: 5px;
-  padding: 5px;
-  outline: none;
-}
-
-.inputValidation {
-  border-color: #DC6767;
-}
-
-select {
-  padding: 5px 10px 5px 5px;
-  border-radius: 5px;
-  border: none;
-  background-color: #EBF0F2;
-  box-shadow: 0px -2px 0px 0px #C6CACC inset;
-  display: inline-block;
-  transition: all 0.2s linear 0s;
-  cursor: pointer;
-  outline: none;
-  color: #555;
-  font-family: 'Montserrat', 'Josefin Sans', Arial,sans-serif;
-}
-
-select:hover {
-  background-color: #99DFF9;
-  transition: all 0.2s ease-in-out 0s;
-  width: initial;
-  box-shadow: none;
-}
-
-select:focus option {
-  background-color: #FFF;
-}
-
-.selectedDropdown {
-  color: #FFF;
-  background-color: #00AEEF;
-  box-shadow: 0px 2px 0px 0px #0083B3 inset;
-}
-
-.selectedDropdown:hover {
-  background-color: #0083b3;
-  box-shadow: inset 0 2px 0 0 #005778;
-}
-
-.selectedDropdown:focus option {
-  color: #000;
 }
 
 .tabsHeader li {
@@ -455,9 +166,321 @@ div.tabsPanel.selected {
 .ui-widget-content .ui-state-active {
   background: #562576 !important;
 }
+	    			
+	    			 ]]>
+	    		</contents>
+	    	</resource>
+	    </resources>
+	    
+	    <css>
+	    <![CDATA[
+
+@font-face {
+  font-family: 'Josefin Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Josefin Sans'), local('JosefinSans'), url(https://fonts.gstatic.com/s/josefinsans/v9/xgzbb53t8j-Mo-vYa23n5ugdm0LZdjqr5-oayXSOefg.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Montserrat-Regular'), url(https://fonts.gstatic.com/s/montserrat/v6/zhcz-_WihjSQC0oHJ9TCYPk_vArhqVIZ0nv9q090hN8.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+
+body {
+  font-family: 'Montserrat', 'Josefin Sans', Arial,sans-serif;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: normal;
+}
+
+.spacer {
+  margin-bottom: 20px;
+}
+
+.paddingSmall {
+  padding: 6px;
+}
+
+.paddingMedium {
+  padding: 15px;
+}
+
+.paddingLarge {
+  padding: 24px;
+}
+
+button {
+  color: #FFF;
+  font-weight: bold;
+  padding: 13px 15px;
+  background-image: linear-gradient(#805E96, #562873);
+  border: none;
+  box-shadow: 0px 1px 1px 1px #A4A4A4;
+  border-radius: 7px;
+  cursor: pointer;
+  outline: none;
+}
+
+button:hover {
+  background: #5a94f1;
+  box-shadow: none;
+}
+
+.button1 {
+  border: 1px solid #D9D9D9;
+  color: #333;
+  box-shadow: 0px 0px 0px #FFF;
+  border-color: #CCC;
+  font-size: 14px;
+  background-color: #DEDEDE;
+  text-shadow: 0px 0px 0px transparent;
+  background-image: linear-gradient(#FEFEFE, #DEDEDE);
+}
+
+.button1:hover {
+  background-color: #DEDEDE;
+}
+
+.button1:active {
+  outline: 1px dotted black;
+  outline-offset: -10px;
+}
+
+.button2 {
+  cursor: pointer;
+  padding: 12px;
+  box-shadow: none;
+  font-weight: 900;
+  font-size: 16px;
+  text-shadow: 1px 1px 2px #658E2E;
+  color: #FFF;
+  border: 1px solid #60A628;
+  background-image: linear-gradient(#99C75D, #79B52A);
+}
+
+.button2:hover {
+  background-image: none;
+  background-color: #79B52A;
+}
+
+.button2:active {
+  outline: 1px dotted black;
+  outline-offset: -8px;
+}
+
+.button3 {
+  background-image: none;
+  border: 2px solid #00AEEF;
+  padding: 10px 25px;
+  background-color: rgba(0, 174, 239, 0);
+  color: #00AEEF;
+  font-weight: 700;
+  font-size: 18px;
+  border-radius: 40px;
+  transition: all 0.2s ease-in-out 0s;
+  width: initial;
+  box-shadow: none;
+}
+
+.button3:hover {
+  background-color: #00AEEF;
+  color: #FFF;
+}
+
+input:not([type=radio]):not([type=checkbox]):not(.input1):not(.input2):not(.input3):not(.input4) {
+  border: 1px solid #D9D9D9;
+  padding: 5px;
+  border-radius: 4px;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2) inset;
+  color: #333;
+  outline: none;
+}
+
+input[type=radio] {
+  width: 17px;
+  height: 17px;
+  vertical-align: middle;
+  margin-top: -9px;
+  margin-right: 13px;
+  margin-left: 8px;
+  outline: none;
+  cursor: pointer;
+}
+
+input[type=radio]:before {
+  width: 20px;
+  height: 20px;
+  display: block;
+  content: '';
+  background: #FFF;
+  border-radius: 100px;
+  margin: -1px;
+  background-color: #F2F8FA;
+  box-shadow: 0px 1px 2px #F1F1F1 inset;
+  border: 2px solid #0083B3;
+}
+
+input[type=radio]:checked:before {
+  width: 20px;
+  height: 20px;
+  display: block;
+  content: '';
+  margin: -1px;
+  background-color: #FFF;
+  box-shadow: 0px 2px 0px 0px #FFF inset;
+  border: 2px solid #005778;
+}
+
+input[type=radio]:checked:after {
+  content: '';
+  position: absolute;
+  margin-top: -16px;
+  margin-left: 6px;
+  border-radius: 500px;
+  background-color: #005778;
+  width: 10px;
+  height: 10px;
+}
+
+input[type=checkbox] {
+  width: 17px;
+  height: 17px;
+  vertical-align: middle;
+  margin-top: -9px;
+  margin-right: 13px;
+  margin-left: 8px;
+  outline: none;
+  cursor: pointer;
+}
+
+input[type=checkbox]:before {
+  width: 20px;
+  height: 20px;
+  display: block;
+  content: '';
+  background: #FFF;
+  border-radius: 4px;
+  margin: -1px;
+  background-color: #F2F8FA;
+  box-shadow: 0px 1px 2px #F1F1F1 inset;
+  border: 2px solid #0083B3;
+}
+
+input[type=checkbox]:checked:before {
+  width: 20px;
+  height: 20px;
+  display: block;
+  content: '';
+  margin: -1px;
+  background-color: #FFF;
+  box-shadow: 0px 2px 0px 0px #FFF inset;
+  border: 2px solid #005778;
+}
+
+input[type=checkbox]:checked:after {
+  content: '';
+  position: absolute;
+  margin-top: -18.5px;
+  margin-left: 7.2px;
+  border-right: 3px solid #005778;
+  border-bottom: 3px solid #005778;
+  width: 4px;
+  height: 10px;
+  transform: rotate(45deg);
+}
+
+.input1 {
+  background-color: #FFF;
+  border: 2px solid #DEDEDE;
+  border-radius: 5px;
+  padding: 5px;
+  outline: none;
+}
+
+.input2 {
+  box-shadow: 0px 2px 0px 0px #C6CACC inset;
+  background: #EBF0F2;
+  line-height: 20px;
+  padding: 13px 10px 13px 19px;
+  color: #555;
+  border: 1px solid #D9D9D9;
+  padding: 5px;
+  border-radius: 4px;
+  outline: none;
+}
+
+.input3 {
+  border: 3px solid rgba(200, 0, 0, 0.3);
+  color: #B50000;
+  border-radius: 5px;
+  padding: 5px;
+  outline: none;
+}
+
+.input4 {
+  box-shadow: 0px 2px 0px 0px #C6CACC inset;
+  background: #EBF0F2;
+  line-height: 20px;
+  color: #555;
+  border: 1px solid #D9D9D9;
+  padding: 5px;
+  border-radius: 4px;
+  outline: none;
+  transition: all 0.2s ease-in-out 0s;
+}
+
+.input4:focus {
+  border-color: #c61017;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px #f47b7f;
+}
+
+select {
+  padding: 5px 10px 5px 5px;
+  border-radius: 5px;
+  border: none;
+  background-color: #EBF0F2;
+  box-shadow: 0px -2px 0px 0px #C6CACC inset;
+  display: inline-block;
+  transition: all 0.2s linear 0s;
+  cursor: pointer;
+  outline: none;
+  color: #555;
+  font-family: 'Montserrat', 'Josefin Sans', Arial,sans-serif;
+}
+
+select:hover {
+  background-color: #99DFF9;
+  transition: all 0.2s ease-in-out 0s;
+  width: initial;
+  box-shadow: none;
+}
+
+select:focus option {
+  background-color: #FFF;
+}
+
+.dropdown1 {
+  color: #FFF;
+  background-color: #00AEEF;
+  box-shadow: 0px 2px 0px 0px #0083B3 inset;
+}
+
+.dropdown1:hover {
+  background-color: #0083b3;
+  box-shadow: inset 0 2px 0 0 #005778;
+}
+
+.dropdown1:focus option {
+  color: #000;
+}
 	    	        
 	    ]]>    
 	    </css>
 	   
 </template>
-
