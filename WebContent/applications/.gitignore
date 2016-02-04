@@ -3,10 +3,11 @@
 /formtest/
 /training/
 /formdemo/
+/themetest/
 
 # ignore all rapid generated .js and .cs
-/*/*/rapid.css
-/*/*/rapid.js
-/*/*/rapid.min.css
-/*/*/rapid.min.js
+**/rapid.css
+**/rapid.js
+**/rapid.min.css
+**/rapid.min.js
 
