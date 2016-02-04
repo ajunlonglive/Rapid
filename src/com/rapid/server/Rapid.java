@@ -267,7 +267,7 @@ public class Rapid extends RapidHttpServlet {
 											// get this page position
 											int pageIndex = pageHeaders.indexOf(page.getId());
 											// check the page visibility
-											while (!page.isVisible(rapidRequest, formDetails.getId(), app)) {
+											while (!page.isVisible(rapidRequest, app, formDetails)) {
 												// if we're here the visibility check on the current page failed so increment the index
 												pageIndex ++;
 												// if there are no more pages go to the summary

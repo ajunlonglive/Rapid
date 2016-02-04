@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -74,10 +75,12 @@ import com.rapid.utils.Files;
 import com.rapid.utils.XML;
 import com.rapid.utils.ZipFile;
 import com.rapid.actions.Logic.Condition;
+import com.rapid.core.Action;
 import com.rapid.core.Application;
 import com.rapid.core.Application.DatabaseConnection;
 import com.rapid.core.Application.ValueList;
 import com.rapid.core.Applications.Versions;
+import com.rapid.core.Event;
 import com.rapid.core.Page;
 import com.rapid.core.Page.Lock;
 import com.rapid.core.Control;
@@ -116,6 +119,91 @@ public class Designer extends RapidHttpServlet {
     	
     }
         
+    // print details of an action
+    private void printActionDetails(Action action, PrintWriter out) {
+    	
+    	// print the action															
+    	out.print("\t\tAction\t" + action.getId()+ "\n");
+		
+		// get the properties
+		Map<String, String> properties = action.getProperties();
+		// create a sorted list
+		List<String> sortedKeys = new ArrayList<String>();
+		// loop them
+		for (String key : properties.keySet()) {																																												
+			// add
+			sortedKeys.add(key);
+		}
+		// sort them
+		Collections.sort(sortedKeys);
+		// loop the sorted keys
+		for (String key : sortedKeys) {
+			// print the property															
+			out.print("\t\t\t" + key + "\t" + properties.get(key) + "\n");	
+		}
+		
+		// get a JSONObejct for them
+		JSONObject jsonAction = new JSONObject(action);
+		// get it's properties
+		Iterator<String> keys = jsonAction.keys();		
+		// clear the sorted key list
+		sortedKeys.clear();
+		// loop them
+		while (keys.hasNext()) {
+			// get the next one
+			String key = keys.next();	
+			// add it to the list
+			sortedKeys.add(key);
+		}
+		// sort them
+		Collections.sort(sortedKeys);
+		// loop the sorted keys
+		for (String key : sortedKeys) {
+			// print it 
+			try {
+				out.print("\t\t\t" + key + "\t" + jsonAction.get(key) + "\n");
+			} catch (JSONException e) {	}	
+		}
+				
+		// check child actions
+		if (action.getChildActions() != null) {
+			if (action.getChildActions().size() > 0) {
+				// loop them
+				for (Action childAction : action.getChildActions()) {
+					// print the child actions
+					printActionDetails(childAction, out);										
+				}		
+			}
+		}
+    	
+    }
+    
+    // print details of events (used by page and controls)
+    private void printEventsDetails(List<Event> events, PrintWriter out) {
+    	
+    	// check events
+		if (events!= null) {
+			if (events.size() > 0) {
+				// loop them
+				for (Event event : events) {					
+					// check actions
+					if (event.getActions() != null) {
+						if (event.getActions().size() > 0) {							
+							// print the event															
+							out.print("\tEvent\t" + event.getType() + "\n");							
+							// loop the actions
+							for (Action action : event.getActions()) {
+								// print the action details
+								printActionDetails( action,  out);								
+							}							
+						}
+					}	
+				}
+			}
+		}
+    	
+    }
+    
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 							
 		RapidRequest rapidRequest = new RapidRequest(this, request);
@@ -646,11 +734,17 @@ public class Designer extends RapidHttpServlet {
 															
 						} else if ("pages".equals(actionName) || "summary".equals(actionName) || "detail".equals(actionName)) {
 							
-							// a string builder for the response
-							StringBuilder sb = new StringBuilder(); 
+							// set response as text
+							response.setContentType("text/text");
+														
+							// get a writer from the response
+							PrintWriter out = response.getWriter();
 							
 							// get the application
 							Application application = rapidRequest.getApplication();
+							
+							// print the app name and version
+							out.print(application.getName() + "\t" + application.getVersion() + "\n");
 							
 							// get the page headers
 							PageHeaders pageHeaders = application.getPages().getSortedPages();
@@ -671,22 +765,29 @@ public class Designer extends RapidHttpServlet {
 								}
 								
 								// print the page name
-								sb.append(page.getId() + " " + page.getName() + label);
+								out.print(page.getId() + " " + page.getName() + label);
 								
 								// check summary
 								if ("summary".equals(actionName) || "detail".equals(actionName)) {
-									
+																											
 									// print the number of controls
-									sb.append(" - number of controls: " + page.getAllControls().size() + "<p/>\n");
+									out.print(" - number of controls: " + page.getAllControls().size() + "\r\n");
+																		
 									// if detail
 									if ("detail".equals(actionName)) {
-										// print the page properties										
+										// print the page properties			
+										out.print("Name\t" + page.getName() + "\n");
+										out.print("Title\t" + page.getTitle() + "\n");
+										out.print("Description\t" + page.getDescription() + "\n");
+										out.print("Simple\t" + page.getSimple() + "\n");
 									}
+																		
+									// print the page events details
+									printEventsDetails(page.getEvents(), out);
 								
 									// get the controls
 									List<Control> controls = page.getAllControls();
-									// open a table
-									sb.append("<table>\n");
+
 									// loop them
 									for (Control control : controls) {
 										// get the name 
@@ -694,49 +795,52 @@ public class Designer extends RapidHttpServlet {
 										// null check
 										if (name != null) {
 											if (name.trim().length() > 0) {											
+												
 												// get the label
 												label = control.getLabel();
 												// get the type
 												String type = control.getType();												
+												
 												// exclude panels, hidden values, and datastores for summary
 												if ("detail".equals(actionName) || (!"panel".equals(type) && !("hiddenvalue").equals(type) && !("dataStore").equals(type))) {
+													
 													// print the control name
-													sb.append("<tr><td>" + control.getId() +"</td><td>" + type + "</td><td>" + name + "</td><td>" + label + "</td></tr>\n");
+													out.print(control.getId() +"\t" + type + "\t" + name + "\t" + label + "\n");
+													
 													// if details
 													if ("detail".equals(actionName)) {
+													
 														// get the properties
 														Map<String, String> properties = control.getProperties();
+														// get a list we'll sort for them
+														List<String> sortedKeys = new ArrayList<String>();
 														// loop them
 														for (String key : properties.keySet()) {																																												
+															// add to sorted list
+															sortedKeys.add(key);
+														}
+														// sort them
+														Collections.sort(sortedKeys);
+														// loop them
+														for (String key : sortedKeys) {
 															// print the properties															
-															sb.append("<tr><td>&nbsp;</td><td>" + key + "</td><td>" + properties.get(key) + "</td></tr>\n");														
-															/*
-															// get the this control definition
-															JSONObject jsonControl = this.getJsonControl(type);
-															// get the events for this control
-															JSONObject jsonEvents = jsonControl.optJSONObject("events");
-															// print them
-															*/
-														}					
-													}
+															out.print(key + "\t" + properties.get(key) + "\n");		
+														}														
+														// print the event details
+														printEventsDetails(control.getEvents(), out);
+																																		
+													} // detail check													
 												}													
 											}
 										}
-									}
-									sb.append("</table>\n");																	
-								}																								
-								sb.append("<p/>\n");
+									}														
+								} else {
+									
+									out.print("\n");
+									
+								}
 							}
-													
-							// set response as json
-							response.setContentType("text/html");
-														
-							// get a writer from the response
-							PrintWriter out = response.getWriter();
-							
-							// write the output into the response
-							out.print("<html>\n  <head>\n  <link rel='stylesheet' type='text/css' href='styles/summary.css'></link>\n  </head>\n  <body>\n" + sb.toString() + "  </body>\n</html>");
-							
+																				
 							// close the writer
 							out.close();
 							
