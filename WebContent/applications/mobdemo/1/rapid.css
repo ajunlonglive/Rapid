@@ -76,6 +76,14 @@ table.grid span.sort {
 	text-align: center;	
 }
 
+/* Signature control css resource styles */
+
+.signature {
+width: 200px;
+height: 200px;
+cursor: crosshair;
+}
+
 /* Slide panel control css resource styles */
 
 .slidePanel {

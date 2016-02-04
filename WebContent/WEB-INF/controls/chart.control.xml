@@ -188,9 +188,9 @@ var control = $("#" + id);
 var canvas = control.get(0);
 var ctx = canvas.getContext("2d");
 // the chart data object
-var data = {};
+var chartData = {};
 if (details.chartType == "Pie") {
-	data = [
+	chartData = [
 	    {
 	        value: 300,
 	        color:"#F7464A",
@@ -211,7 +211,7 @@ if (details.chartType == "Pie") {
 	    }
 	]
 } else {
-	data = {
+	chartData = {
 	    labels: ["January", "February", "March", "April", "May", "June", "July"],
 	    datasets: [
 	        {
@@ -238,7 +238,7 @@ if (details.chartType == "Pie") {
 	}
 }
 // make us a chart of the right type
-_charts[this.id] = new Chart(ctx)[details.chartType](data, {});
+_charts[this.id] = new Chart(ctx)[details.chartType](chartData, {});
 			]]>
 	    </setDataJavaScript>
 	    

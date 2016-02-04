@@ -1122,8 +1122,8 @@ public class Page {
 			for (String pageVariable : pageVariables) {
 				// look for a value in the session
 				String value = (String) rapidRequest.getSessionAttribute(pageVariable);
-				// if we got one
-				if (value != null) writer.write("var _pageVariable_" + pageVariable + " = '" + value.replace("'", "''") + "';\n");
+				// if we got one print it as escaped html
+				if (value != null) writer.write("var _pageVariable_" + pageVariable + " = '" + Html.escape(value) + "';\n");
 			}
 		}
 		// close js
@@ -1501,7 +1501,7 @@ public class Page {
 					try {
 						
 						// get the form details
-						UserFormDetails formDetails =  formAdapter.getUserFormDetails(rapidRequest);
+						UserFormDetails formDetails = formAdapter.getUserFormDetails(rapidRequest);
 						
 						// if we got some
 						if (formDetails != null) {
@@ -1872,7 +1872,7 @@ public class Page {
 	}
 	
 	// return a boolean for page visibility
-	public boolean isVisible(RapidRequest rapidRequest, String formId, Application application) throws Exception {
+	public boolean isVisible(RapidRequest rapidRequest, Application application, UserFormDetails userFormDetails) throws Exception {
 		
 		// get a logger
 		Logger logger = rapidRequest.getRapidServlet().getLogger();
@@ -1889,9 +1889,6 @@ public class Page {
 			return true;
 			
 		}  else {
-			
-			// get the user form details
-			UserFormDetails userFormDetails = formAdapter.getUserFormDetails(rapidRequest);
 			
 			 if (userFormDetails == null) {
 				
@@ -1957,11 +1954,11 @@ public class Page {
 					
 					logger.trace("Page " + _id + " visibility condition " + " : " + condition);
 										
-					String value1 = getConditionValue(rapidRequest, formId, formAdapter, application, condition.getValue1());
+					String value1 = getConditionValue(rapidRequest, userFormDetails.getId(), formAdapter, application, condition.getValue1());
 					
 					logger.trace("Value 1 = " + value1);
 					
-					String value2 = getConditionValue(rapidRequest, formId, formAdapter, application, condition.getValue2());
+					String value2 = getConditionValue(rapidRequest, userFormDetails.getId(), formAdapter, application, condition.getValue2());
 					
 					logger.trace("Value 2 = " + value2);
 					
@@ -2017,7 +2014,7 @@ public class Page {
 				logger.debug("Page " + _id + " visibility check, " + _visibilityConditions.size() + " conditions, pass = " + pass);
 				
 				// if we failed set the page values to null
-				if (!pass) formAdapter.setFormPageControlValues(rapidRequest, formId, _id, null);
+				if (!pass) formAdapter.setFormPageControlValues(rapidRequest, userFormDetails.getId(), _id, null);
 				
 				// return the pass
 				return pass;

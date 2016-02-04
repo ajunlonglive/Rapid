@@ -159,6 +159,12 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 			// if it's a resource that requires authentication
 			_logger.trace("FormAuthenticationAdapter checking authorisation");
 			
+			// cast response to http
+			HttpServletResponse response = (HttpServletResponse) res;
+			
+			// only allow in frame if sameorigin
+			response.addHeader("X-FRAME-OPTIONS", "SAMEORIGIN" );
+			
 			// assume no userName
 			String userName = null;
 						
@@ -168,9 +174,7 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 			// look in the session for username
 			userName = (String) session.getAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME);
 
-			// cast response to http
-			HttpServletResponse response = (HttpServletResponse) res;
-			
+			// check if we got one
 			if (userName == null) {
 				
 				_logger.trace("No userName found in session");

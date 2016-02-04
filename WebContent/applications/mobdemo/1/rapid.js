@@ -425,6 +425,25 @@ function linkClick(url, sessionVariablesString) {
 	
 }
 
+/* Signature control javascript resource JavaScript */
+
+var _signatureControls = {};
+var _signatureCanvases = [];
+	                	                
+// JQuery is ready! 
+$(document).ready( function() {
+	
+	var ratio =  Math.max(window.devicePixelRatio || 1, 1);
+	
+	for (var i in _signatureCanvases) {
+		canvas = _signatureCanvases[i];
+    	canvas.width = canvas.offsetWidth * ratio;
+    	canvas.height = canvas.offsetHeight * ratio;
+    	canvas.getContext("2d").scale(ratio, ratio);
+    }
+	
+});
+
 /* Slide panel control javascript resource JavaScript */
 
 //JQuery is ready! 
@@ -943,6 +962,21 @@ function Init_pagePanel(id, details) {
   	    	}        	       	        	        	        	        		
   	    }       	        	        
   	});	        
+  }
+}
+
+function Init_signature(id, details) {
+  var canvas = $("#" + id)[0];
+  if (canvas) {
+  	var signature = new SignaturePad(canvas,{
+  	  backgroundColor : "rgb(255,255,255)"
+  	});
+  	_signatureControls[id] = signature;
+  	var ratio =  Math.max(window.devicePixelRatio || 1, 1);
+  	canvas.width = canvas.offsetWidth * ratio;
+  	canvas.height = canvas.offsetHeight * ratio;
+  	canvas.getContext("2d").scale(ratio, ratio);	        	
+  	_signatureCanvases.push(canvas);	
   }
 }
 
@@ -1979,6 +2013,21 @@ function setData_radiobuttons(ev, id, field, details, data, changeEvents) {
   		}
   		if (changeEvents) button.trigger("change");				
   	}
+  }
+}
+
+function getData_signature(ev, id, field, details) {
+  var signature = _signatureControls[id];
+  return signature.toDataURL();
+}
+
+function setData_signature(ev, id, field, details, data, changeEvents) {
+  var signature = _signatureControls[id];	        
+  var data = makeDataObject(data, field);
+  if (data && data.rows) {
+  	signature.fromDataURL(data.rows[0][0]);
+  } else {
+  	signature.clear();
   }
 }
 
