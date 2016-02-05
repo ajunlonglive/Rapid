@@ -169,7 +169,7 @@ gareth.edwards@rapid-is.co.uk
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version. The terms require you to include
@@ -296,14 +296,24 @@ function addMapMarker(map, pos, details, data, rowIndex, zoomMarkers) {
 		// if we have all the markers now, zoom and centre them
 		if (map.markers.length > 0 && zoomMarkers == rowIndex*1) {
 			if (zoomMarkers == 0) {
-				// single marker, just move centre
-				var latlng = new google.maps.LatLng(map.markers[0].getPosition());
-				map.panTo( latlng );
+				// single marker, check getPosition is present
+				if (map.markers[0].getPosition) {
+					// get the latlng position
+					var latlng = new google.maps.LatLng(map.markers[0].getPosition());
+					// only if valid values
+					if (latlng.lat() > 0 && latlng.lng() > 0) map.panTo( latlng );
+				}
 			} else {
 				// multiple markers set bounds
 				var bounds = new google.maps.LatLngBounds();
 				for (var i in map.markers) {
-					bounds.extend(map.markers[i].getPosition());
+					// check getPosition is present
+					if (map.markers[i].getPosition) {
+						// get position
+						var latlng = map.markers[i].getPosition();
+						// only if valid values
+						if (latlng.lat() > 0 && latlng.lng() > 0) bounds.extend(map.markers[i].getPosition());
+					}
 				}
 				map.fitBounds(bounds);
 			}

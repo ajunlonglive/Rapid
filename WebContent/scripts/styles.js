@@ -189,9 +189,11 @@ function styleRule_border_width_4(value) {
 
 function styleRule_color(value) {	
 	// check #fff and #ffffff
-	if (value.match(/^#(?:[0-9a-f]{3}){1,2}$/)) return true;
+	if (value.match(/^#(?:[0-9a-fA-F]{3}){1,2}$/)) return true;
 	// check rgb(r,g,b)
-	// check rgb(r%,g%,b%)
+	if (value.match(/^rgb\(([12]?[0-9]?[0-9]\,){2}([12]?[0-9]?[0-9])\)$/)) return true;
+	// check rgba(r,g,b,a)
+	if (value.match(/^rgba\(([12]?[0-9]?[0-9]\,){3}([12]?[0-9]?[0-9])\)$/)) return true;
 	// check list of names
 	var values = ["red","orange","yellow","green","blue","purple","white","black","gray","silver","maroon","teal","olive","lime","aqua","navy","fuchsia"];
 	for (var i in values) if (values[i] == value) return true; 
