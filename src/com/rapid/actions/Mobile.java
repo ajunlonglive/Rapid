@@ -561,13 +561,19 @@ public class Mobile extends Action {
 					// get the barcodeDestinations
 					String barcodeDestinations = getProperty("barcodeDestinations");
 					
+					// start the check for the addBarcode function
+					jsBarcode += "  if (_rapidmobile.addBarcode) {\n";
+					
 					// start the add barcode call
-					jsBarcode += "  _rapidmobile.addBarcode(\"[";
+					jsBarcode += "    _rapidmobile.addBarcode(\"[";
 					
 					jsBarcode += getOutputs(rapidServlet, application, page, barcodeDestinations);
 					
 					// call get barcode
 					jsBarcode +=  "]\");\n";
+					
+					// close function check
+					jsBarcode += "  } else alert('Barcode reading is not available in this version of Rapid Mobile');\n";
 					
 					// close mobile check
 					jsBarcode += "}\n";

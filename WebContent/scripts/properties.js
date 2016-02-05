@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2014 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -147,8 +147,19 @@ function showProperties(control) {
 				var property = properties[i];
 				// check that visibility is not false
 				if (property.visible === undefined || !property.visible === false) {
+					// assume no help
+					var help = "";
+					// if the property has help html
+					if (property.helpHtml) {
+						// make the helpId
+						var helpId = control.id + property.key;
+						// create help html
+						help = "<img id='" + helpId + "' style='float:right;margin:-2px -2px -2px 10px;' src='images/help_16x16.png' />"						
+					}
 					// get the property itself from the control
-					propertiesRow.append("<td>" + property.name + "</td><td></td>");
+					propertiesRow.append("<td>" + property.name + help + "</td><td></td>");
+					// add the help listener
+					if (help) addHelp(helpId,true,true,property.helpHtml);
 					// get the cell the property update control is going in
 					var cell = propertiesRow.children().last();
 					// apply the property function if it starts like a function or look for a known Property_[type] function and call that
