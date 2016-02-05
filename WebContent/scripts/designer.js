@@ -456,16 +456,20 @@ function getFloatHeight(control, parentLevel) {
 		if (index == 0) height += getFloatHeight(control._parent,parentLevel);
 		var floatLeftHeight = 0;
 		var floatRightHeight = 0;
-		if (index > 0 && control._parent.childControls && index <  control._parent.childControls.length) {						
+		if (index > 0 && control._parent.childControls && index <  control._parent.childControls.length) {			
+			// get the object
 			var o = control._parent.childControls[index-1].object;
-			// check for a left float the same amount left as the parent
-			if (o.css("float") == "left") {
-				floatLeftHeight += o.height() + toPixels(o.css("margin-top")) + toPixels(o.css("margin-bottom"));
+			// if we got one
+			if (o) {
+				// check for a left float the same amount left as the parent
+				if (o.css("float") == "left") {
+					floatLeftHeight += o.height() + toPixels(o.css("margin-top")) + toPixels(o.css("margin-bottom"));
+				}
+				// check for a right float the same amount right as the parent
+				if (o.css("float") == "right") {
+					floatRightHeight += o.height() + toPixels(o.css("margin-top")) + toPixels(o.css("margin-bottom"));
+				}			
 			}
-			// check for a right float the same amount right as the parent
-			if (o.css("float") == "right") {
-				floatRightHeight += o.height() + toPixels(o.css("margin-top")) + toPixels(o.css("margin-bottom"));
-			}			
 		}
 		height = Math.max(height,floatLeftHeight, floatRightHeight);
 	}
@@ -745,8 +749,10 @@ function getControls(childControls, controls) {
 	if (!controls) controls = [];
 	for (var i in childControls) {
 		var c = childControls[i];
-		controls.push(c);
-		getControls(c.childControls,controls);
+		if (c) {
+			if (c.id) controls.push(c);
+			if (c.childControls || controls.length == 0) getControls(c.childControls, controls);
+		}		
 	}	
 	return controls;
 }
@@ -3690,8 +3696,8 @@ function arrangeNonVisibleControls() {
 			// get the class
 			var childControlClass = _controlTypes[childControl.type];
 			
-			// if it is nonVisible
-			if (childControlClass.getHtmlFunction.indexOf("nonVisibleControl") > 0) {
+			// if we have one and it is nonVisible
+			if (childControlClass && childControlClass.getHtmlFunction.indexOf("nonVisibleControl") > 0) {
 				
 				// get the object
 				var	o = childControl.object;
