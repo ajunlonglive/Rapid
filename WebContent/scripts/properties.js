@@ -1354,13 +1354,28 @@ function Property_controlsForType(cell, propertyObject, property, details) {
 	if (details && details.type) {
 		
 		// find the control class
-		var controlClass = _controlTypes[details.type];
+		var controlClasses = [];
+		// if an array
+		if ($.isArray(details.type)) {
+			// loop it
+			for (var i in details.type) {
+				// get the class
+				var c = _controlTypes[details.type[i]];
+				// add this if we got one
+				if (c) controlClasses.push(c);
+			}
+		} else {
+			// get the class
+			var c = _controlTypes[details.type];
+			// add this if we got one
+			if (c) controlClasses.push(c);
+		}
 		
 		// check we have one
-		if (controlClass) {
+		if (controlClasses.length > 0) {
 			
 			// retrieve or create the dialogue
-			var dialogue = getDialogue(cell, propertyObject, property, details, 200, controlClass.name + " controls", {sizeX: true});		
+			var dialogue = getDialogue(cell, propertyObject, property, details, 200, details.type + " controls", {sizeX: true});		
 			// grab a reference to the table
 			var table = dialogue.children().last().children().last();
 			// remove the dialogue class so it looks like the properties
@@ -1384,8 +1399,7 @@ function Property_controlsForType(cell, propertyObject, property, details) {
 					// add the name to the cell text
 					text += control.name;
 					// add a comma if not the last one
-					if (i < controls.length - 1) text += ",";
-					
+					if (i < controls.length - 1) text += ",";					
 					// add a row with the control name
 					table.append("<tr><td>" + control.name + "</td><td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td><tr>");
 				}				
@@ -1404,8 +1418,16 @@ function Property_controlsForType(cell, propertyObject, property, details) {
 			// add reorder listeners
 			addReorder(controls, table.find("img.reorder"), function() { Property_controlsForType(cell, propertyObject, property, details); });
 			
+			// start the options
+			var options = "<option>add..</option>";
+			// loop the classes
+			for (var i in controlClasses) {
+				// add to the options
+				options += getControlOptions(null, null, controlClasses[i].type);
+			}
+						
 			// have an add row
-			table.append("<tr><td colspan='2'><select><option>add..</option>" + getControlOptions(null, null, details.type) + "</select></td></tr>");
+			table.append("<tr><td colspan='2'><select>" + options + "</select></td></tr>");
 			// get a reference to the add
 			var add = table.find("select").last();
 			// add a listener
@@ -4253,7 +4275,7 @@ function Property_galleryControls(cell, propertyObject, property, details) {
 		propertyObject.galleryControlId = null;		
 	}
 	// run the controls for type
-	Property_controlsForType(cell, propertyObject, property, {type:"gallery"});
+	Property_controlsForType(cell, propertyObject, property, {type:["gallery","signature"]});
 }
 
 // helper function for rebuilding the main control panel page select drop down

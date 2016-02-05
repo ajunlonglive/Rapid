@@ -116,7 +116,7 @@ return "<option value=''>Please select...</option>" + getControlOptions(this.gal
 	        
 	         <property>
 	            <key>galleryControlIds</key>
-	            <name>Gallery controls</name>
+	            <name>Controls</name>
 	            <visible>false</visible>
 	            <changeValueJavaScript>galleryControls</changeValueJavaScript>	            
 	            <refreshProperties>true</refreshProperties>
