@@ -206,6 +206,9 @@ public class Designer extends RapidHttpServlet {
     
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 							
+		// fake a delay for testing slow servers
+		// try { Thread.sleep(3000); } catch (InterruptedException e) {}
+		
 		RapidRequest rapidRequest = new RapidRequest(this, request);
 		
 		try {
@@ -657,16 +660,16 @@ public class Designer extends RapidHttpServlet {
 								jsonPage.put("device", 1);
 								jsonPage.put("zoom", 1);
 								jsonPage.put("orientation", "P");
+								
+								// add the form page type
+								jsonPage.put("formPageType", page.getFormPageType());
 																															
 								// print it to the output
 								output = jsonPage.toString();
 								
 								// send as json response
 								sendJsonOutput(response, output);
-								
-								// override for now as logging seems really slow
-								//output = "[json object - " + output.length() + " characters ]";
-								
+																
 							}
 															
 						} else if ("checkApp".equals(actionName)) {

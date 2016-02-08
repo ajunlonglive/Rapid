@@ -156,6 +156,8 @@ public class Rapid extends Action {
 		if ("F".equals(type)) {
 			// add standard form adapter too
 			newApp.setFormAdapterType("rapid");
+			// add form security
+			newApp.setSecurityAdapterType("rapid");
 		}
 										 								
 		// initialise the application
@@ -192,7 +194,6 @@ public class Rapid extends Action {
 							
 		// assign the list to the application
 		newApp.setActionTypes(actionTypes);
-		
 		
 		// initialise the list of controls
 		List<String> controlTypes = new ArrayList<String>();
@@ -1590,7 +1591,11 @@ public class Rapid extends Action {
 				
 				String securityAdapter = jsonAction.getString("securityAdapter").trim();
 				
+				boolean deviceSecurity = jsonAction.optBoolean("deviceSecurity");
+				
 				app.setSecurityAdapterType(securityAdapter);
+				
+				app.setDeviceSecurity(deviceSecurity);
 				
 				app.save(rapidServlet, rapidRequest, true);
 				

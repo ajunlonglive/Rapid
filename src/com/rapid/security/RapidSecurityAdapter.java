@@ -373,7 +373,15 @@ public class RapidSecurityAdapter extends SecurityAdapter {
 			}
 		}
 		if (user != null && password != null) {
-			if (password.equals(user.getPassword()) && user.checkDevice(rapidRequest)) return true;
+			if (password.equals(user.getPassword())) {
+				// get the application
+				Application application = rapidRequest.getApplication();
+				// if it has device security
+				if (application.getDeviceSecurity()) {
+					// check device security as well
+					if (user.checkDevice(rapidRequest)) return true;
+				} else return true;				
+			}
 		}
 		return false;
 	}

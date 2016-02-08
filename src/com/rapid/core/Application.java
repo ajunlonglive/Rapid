@@ -554,7 +554,7 @@ public class Application {
 	// instance variables	
 	private int _xmlVersion, _status, _applicationBackupsMaxSize, _pageBackupsMaxSize;
 	private String _id, _version, _name, _title, _description, _startPageId, _themeType, _styles, _statusBarColour, _statusBarHighlightColour, _statusBarTextColour, _statusBarIconColour, _functions, _securityAdapterType, _formAdapterType, _createdBy, _modifiedBy;
-	private boolean _showConrolIds, _showActionIds;
+	private boolean _showConrolIds, _showActionIds, _deviceSecurity;
 	private Date _createdDate, _modifiedDate;
 	private Map<String,Integer> _pageOrders;
 	private SecurityAdapter _securityAdapter;
@@ -670,6 +670,10 @@ public class Application {
 	// the type name of the security adapter this application uses
 	public String getSecurityAdapterType() { return _securityAdapterType; }
 	public void setSecurityAdapterType(String securityAdapterType) { _securityAdapterType = securityAdapterType; }
+	
+	// whether to apply device security to this application
+	public boolean getDeviceSecurity() { return _deviceSecurity; }
+	public void setDeviceSecurity(boolean deviceSecurity) { _deviceSecurity = deviceSecurity; }
 	
 	// the type name of the form adapter this application uses (if any)
 	public String getFormAdapterType() { return _formAdapterType; }
@@ -1637,6 +1641,16 @@ public class Application {
 			scanStyleClasses(_styles, _styleClasses);
 			// and any theme
 			scanStyleClasses(appThemeCSSWithParams, _styleClasses);
+			
+			// remove any that have the same name as controls
+			if (jsonControls != null) {
+				// loop them
+				for (int i = 0;  i < jsonControls.length(); i++) {
+					// remove any classes with this controls type
+					_styleClasses.remove(jsonControls.getJSONObject(i).getString("type"));
+				}
+			}
+			
 						
 		} // create resources
 		

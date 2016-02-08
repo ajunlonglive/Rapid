@@ -201,9 +201,12 @@ public abstract class SecurityAdapter {
 		
 		public boolean checkDevice(RapidRequest rapidRequest) {
 			
-			// if there are no device details for this user we're good
-			if (_deviceDetails == null) return true;
-			if (_deviceDetails.trim().length() == 0) return true;
+			// if there are no device details specified for this user fail immediately
+			if (_deviceDetails == null) return false;
+			if (_deviceDetails.length() == 0) return false;
+			
+			// if a * return true immediately
+			if ("*".equals(_deviceDetails)) return true;
 
 			// get the user device details from the user session
 			String deviceDetails = (String) rapidRequest.getRequest().getSession().getAttribute(RapidFilter.SESSION_VARIABLE_USER_DEVICE);
@@ -222,7 +225,7 @@ public abstract class SecurityAdapter {
 					// if we got two parts
 					if (attributeParts.length == 2) {
 						// add key in upper case and value to our device map
-						deviceValues.put(attributeParts[0].toUpperCase(),attributeParts[1]);
+						deviceValues.put(attributeParts[0].toLowerCase().trim(),attributeParts[1].trim());
 					}				
 				}
 
@@ -241,9 +244,9 @@ public abstract class SecurityAdapter {
 						// if we had a key and a value
 						if (conditionParts.length == 2) {
 							// get the key in upper case
-							String key = conditionParts[0].toUpperCase();
+							String key = conditionParts[0].toLowerCase().trim();
 							// get the value
-							String value = conditionParts[1];
+							String value = conditionParts[1].trim();
 							// find a device value for the key
 							String deviceValue = deviceValues.get(key);
 							// if we don't have this a device value for this key
