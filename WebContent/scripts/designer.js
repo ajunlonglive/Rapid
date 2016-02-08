@@ -1129,7 +1129,6 @@ function selectControl(control) {
 		// show the styles
 		showStyles(_selectedControl);
 		
-		
 		// selectChild
 		if (_selectedControl.childControls.length > 0) {
 			$("#selectChild").removeAttr("disabled");
@@ -1392,13 +1391,7 @@ function loadApps(selectedAppId, forceLoad) {
 
 // this function locks the ui whilst either versions, pages, or a page are loading
 function loadLock(level) {
-	
-	// clear down property dialogues for good measure
-	hideDialogues();
-	
-	// hide the properties panel
-	$("#propertiesPanel").hide();
-	
+					
 	// disable all page buttons
 	$("button").disable();
 	
@@ -1437,11 +1430,16 @@ function loadLock(level) {
 		// lose the selected control
 		_selectedControl = null;	
 		// lose the property control
-		_propertiesControl = null;	
+		_propertiesControl = null;			
+		// hide the properties panel so it gets recreated properly
+		hidePropertiesPanel();
 	}
 	
 	// loading version - loadVersion (changed version)
 	if (level <= 2) {
+		
+		// hide the properties panel
+		$("#propertiesPanel").hide();
 		
 		// remove any current pages
 		$("#pageSelect").children().remove();
@@ -1816,7 +1814,7 @@ function loadPages(selectedPageId, forceLoad) {
 // this function loads the controls into the page
 function loadPage() {
 	
-	// lock the ui for loadin
+	// lock the ui for loading
 	loadLock(4);
 	
 	// get the id of the selected page
@@ -2637,6 +2635,9 @@ $(document).ready( function() {
 			        	// update the url
 			        	if (window.history && window.history.replaceState) window.history.replaceState("page", _page.title, "design.jsp?a=" + _version.id + "&v=" + _version.version + "&p=" + _page.id );
 			        				        	
+			        	// set dirty to false
+			        	_dirty = false;
+			        	
 		        	} catch (ex) {
 		        		
 		        		// ensure the designer is visible
@@ -3806,8 +3807,7 @@ function hideControlPanel(resetOffset) {
 	$("#controlPanelInner").hide();
 }
 
-function hidePropertiesPanel() {
-	
+function hidePropertiesPanel() {	
 	// hide the inner
 	$("#propertiesPanelInner").hide();
 	// slide in the panel - note the .stop(true, true) which clears any current animation queue and sets the final settings immediately 

@@ -247,9 +247,12 @@ function updateProperty(cell, propertyObject, property, details, value) {
 									
 				} else {
 					
-					// re-show the properties
-					showProperties(_selectedControl);				
+					// update the properties
+					showProperties(_selectedControl);
 					
+					// update the events
+					showEvents(_selectedControl);		
+										
 				}
 				
 				// resize the page
@@ -4018,30 +4021,6 @@ function Property_mapZoom(cell, propertyObject, property, details) {
 	}));
 }
 
-//this is for the form action dataDestination
-function Property_formDataSource(cell, propertyObject, property, details) {
-	// only if the type is id
-	if (propertyObject.actionType == "val") {
-		// add the Select
-		Property_select(cell, propertyObject, property, details);
-	} else {
-		// remove this row
-		cell.closest("tr").remove();
-	}
-} 
-
-// this is for the form action dataDestination
-function Property_formDataDestination(cell, propertyObject, property, details) {
-	// only if the type is id
-	if (propertyObject.actionType == "id" || propertyObject.actionType == "val" || propertyObject.actionType == "sub" || propertyObject.actionType == "err" || propertyObject.actionType == "res" || propertyObject.actionType == "pdf" ) {
-		// add the select
-		Property_select(cell, propertyObject, property, details);
-	} else {
-		// remove this row
-		cell.closest("tr").remove();
-	}
-} 
-
 // this is displayed as a page property but is actually held in local storage
 function Property_device(cell, propertyObject, property, details) {
 	// holds the options html
@@ -4372,10 +4351,43 @@ function Property_pageOrder(cell, propertyObject, property, details) {
 	
 }
 
-//a handler for text properties where there is a form adapter
+// a handler for text properties where there is a form adapter
 function Property_formPageType(cell, propertyObject, property, details) {
 	// only if there is a form adapter
 	if (_version.formAdapter) {
+		// add the select handler for this property
+		Property_select(cell, propertyObject, property, details);
+	} else {
+		// remove this row
+		cell.closest("tr").remove();
+	}
+}
+
+//a handler for text properties where there is a form adapter
+function Property_formActionType(cell, propertyObject, property, details) {
+	// only if there is a form adapter
+	if (_version.formAdapter) {
+		// start the main get value function with all basic types
+		var getValuesFunction = "return [[\"\",\"Please select...\"],[\"next\",\"next page\"],[\"prev\",\"previous page\"],[\"id\",\"copy form id\"],[\"val\",\"copy form value\"]";
+		// check the page type
+		switch (_page.formPageType * 1) {
+		case 1:
+			// submitted
+			getValuesFunction += ",[\"sub\",\"copy form submit message\"],[\"pdf\",\"copy form pdf url\"]";
+			break;
+		case 2:
+			// error
+			getValuesFunction += ",[\"err\",\"copy form error message\"]";
+			break;
+		case 3:
+			// save
+			getValuesFunction += ",[\"res\",\"copy form resume url\"]";
+			break;
+		}
+		// close the array and add the final semi colon
+		getValuesFunction += "];";		
+		// add to property object
+		property.getValuesFunction = getValuesFunction;
 		// add the select handler for this property
 		Property_select(cell, propertyObject, property, details);
 	} else {
@@ -4395,6 +4407,30 @@ function Property_formText(cell, propertyObject, property, details) {
 		cell.closest("tr").remove();
 	}
 }
+
+// this is for the form action dataDestination
+function Property_formDataSource(cell, propertyObject, property, details) {
+	// only if the type is to copy values
+	if (propertyObject.actionType == "val") {
+		// add the Select
+		Property_select(cell, propertyObject, property, details);
+	} else {
+		// remove this row
+		cell.closest("tr").remove();
+	}
+} 
+
+// this is for the form action dataDestination
+function Property_formDataDestination(cell, propertyObject, property, details) {
+	// only if the type is one that requires a destination
+	if (propertyObject.actionType == "id" || propertyObject.actionType == "val" || propertyObject.actionType == "sub" || propertyObject.actionType == "err" || propertyObject.actionType == "res" || propertyObject.actionType == "pdf" ) {
+		// add the select
+		Property_select(cell, propertyObject, property, details);
+	} else {
+		// remove this row
+		cell.closest("tr").remove();
+	}
+} 
 
 // chart properties
 function Property_chartType(cell, propertyObject, property, details) {

@@ -408,8 +408,13 @@ public abstract class FormAdapter {
 			_logger.debug("No form details of " + formKey + " for user " + rapidRequest.getUserName() + " from " + rapidRequest.getRequest().getRemoteAddr());
 			// get the application
 			Application application = rapidRequest.getApplication();
-			// get the start page header
-			String startPageId = application.getPages().getSortedPages().get(0).getId();
+			// assume no start page
+			String startPageId = ""; 
+			// if there are pages
+			if (application.getPages() != null) {
+				// get the id of the first one
+				if (application.getPages().size() > 0) startPageId = application.getPages().getSortedPages().get(0).getId();
+			}
 			// get the requested Page
 			Page requestPage = rapidRequest.getPage();
 			// get the request page id
@@ -483,8 +488,10 @@ public abstract class FormAdapter {
 		if (allDetails == null) allDetails = new HashMap<String, UserFormDetails>(); 	
 		// store the form if for a given app id / version
 		allDetails.put(getFormMapKey(rapidRequest), details);	
-		// update the session with the new form ids
+		// update the session with the new form details object
 		session.setAttribute(USER_FORM_DETAILS, allDetails);
+		// update the session with the new form id
+		session.setAttribute(USER_FORM_ID, details.getId());
 	}
 	
 	// a helper method to get the form id via the details
