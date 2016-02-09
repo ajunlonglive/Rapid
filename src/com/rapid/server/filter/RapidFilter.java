@@ -160,19 +160,24 @@ public class RapidFilter implements Filter {
 
 	// public static method
 	
-	public static void noCache(HttpServletResponse res) {
+	public static void noCache(HttpServletResponse response) {
 		
-		// try and avoid caching
-		res.setHeader("Expires", "Sat, 15 March 1980 12:00:00 GMT");
-
-		// Set standard HTTP/1.1 no-cache headers.
-		res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
-
-		// Set IE extended HTTP/1.1 no-cache headers (use addHeader).
-		res.addHeader("Cache-Control", "post-check=0, pre-check=0");
-
-		// Set standard HTTP/1.0 no-cache header.
-		res.setHeader("Pragma", "no-cache");
+		// if we were provided with a reponse object
+		if (response != null) {
+		
+			// try and avoid caching
+			response.setHeader("Expires", "Sat, 15 March 1980 12:00:00 GMT");
+	
+			// Set standard HTTP/1.1 no-cache headers.
+			response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+	
+			// Set IE extended HTTP/1.1 no-cache headers (use addHeader).
+			response.addHeader("Cache-Control", "post-check=0, pre-check=0");
+	
+			// Set standard HTTP/1.0 no-cache header.
+			response.setHeader("Pragma", "no-cache");
+			
+		}
 		
 	}
 	
