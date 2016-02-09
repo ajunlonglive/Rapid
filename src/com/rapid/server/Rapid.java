@@ -353,28 +353,16 @@ public class Rapid extends RapidHttpServlet {
 									
 									// set the response type
 									response.setContentType("text/html");
-									
-									// if there was a form adapter
-									if (formAdapter != null) {
-										// set no-cache on the submitted page
-										if (page.getFormPageType() == Page.FORM_PAGE_TYPE_SUBMITTED) RapidFilter.noCache(response);
-									}
-									
+																											
 									// write the page html
-									page.writeHtml(this, rapidRequest,  app, user, out, designerLink);
+									page.writeHtml(this, response, rapidRequest,  app, user, out, designerLink);
 									
 									// close the writer
 									out.close();
 									
 									// flush the writer
 									out.flush();
-									
-									// if there was a form adapter (now the page has been printed)
-									if (formAdapter != null) {
-										// invalidate the form if this was a submission page
-										if (page.getFormPageType() == Page.FORM_PAGE_TYPE_SUBMITTED) formAdapter.setUserFormDetails(rapidRequest, null);
-									}
-									
+																										
 								} else {
 									
 									// redirect user to correct page

@@ -42,6 +42,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -73,6 +74,7 @@ import com.rapid.security.SecurityAdapter.User;
 import com.rapid.server.Rapid;
 import com.rapid.server.RapidHttpServlet;
 import com.rapid.server.RapidRequest;
+import com.rapid.server.filter.RapidFilter;
 import com.rapid.utils.Files;
 import com.rapid.utils.Html;
 import com.rapid.utils.Minify;
@@ -1414,7 +1416,7 @@ public class Page {
 	}
 		
 	// this routine produces the entire page
-	public void writeHtml(RapidHttpServlet rapidServlet, RapidRequest rapidRequest,  Application application, User user, Writer writer, boolean designerLink) throws JSONException, IOException, RapidLoadingException {
+	public void writeHtml(RapidHttpServlet rapidServlet, HttpServletResponse response, RapidRequest rapidRequest,  Application application, User user, Writer writer, boolean designerLink) throws JSONException, IOException, RapidLoadingException {
 				
 		// this doctype is necessary (amongst other things) to stop the "user agent stylesheet" overriding styles
 		writer.write("<!DOCTYPE html>\n");
@@ -1491,6 +1493,9 @@ public class Page {
 		    	
 		    	// if there is a form
 				if (formAdapter != null) {
+					
+					// set no cache on this page
+					RapidFilter.noCache(response);
 											
 					// a placeholder for any form id
 					String formId = null;
@@ -1520,7 +1525,7 @@ public class Page {
 							
 							// if form control values to set
 							if (_formControlValues != null) {
-								
+																																							
 								// loop then
 								for (int i = 0; i < _formControlValues.size(); i++) {
 								
@@ -1611,7 +1616,10 @@ public class Page {
 			    		
 			    		// write the form values
 			    		writer.write(formValues.toString());
-						
+			    		
+			    		// now the page has been printed invalidate the form if this was a submission page
+						if (_formPageType ==FORM_PAGE_TYPE_SUBMITTED) formAdapter.setUserFormDetails(rapidRequest, null);
+							
 					} catch (Exception ex) {						
 						// log the error
 						rapidServlet.getLogger().error("Error create page form values", ex);																		
