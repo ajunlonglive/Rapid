@@ -230,11 +230,11 @@ function getMapPosition(data, rowIndex, callBack, map, details, zoomMarkers) {
 				var pOut = pIn.getWGS84();
 				pos.lat = pOut.latitude;
 				pos.lng = pOut.longitude;												
-			} else {				
+			} else {								
 				// if there is not currently a search term make it the first cell
 				if (!pos.s) pos.s = data.rows[rowIndex][0];
-				// if there is a callback (getting positions for navigate to won't have one so will avoid the geo-coder)
-				if (callBack) {
+				// if there is a callback (getting positions for navigate to won't have one so will avoid the geo-coder) and a search term
+				if (callBack && pos.s) {
 					// create the geocoder if we don't have one already
 					if (!_geocoder) _geocoder = new google.maps.Geocoder();
 					// geocode the search term
