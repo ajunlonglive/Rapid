@@ -125,11 +125,11 @@ function showProperties(control) {
 		// get a reference to the table
 		var propertiesTable = propertiesPanel.children().last().children().last();
 		// add the properties header
-		propertiesTable.append("<tr><td colspan='2'><h3>" + controlClass.name + "</h3></td></tr>");
+		propertiesTable.append("<tr><td colspan='2' class='propertyHeader'><h3>" + controlClass.name + "</h3></td></tr>");
 		// add a small break
 		propertiesTable.append("<tr><td colspan='2'></td></tr>");
 		// show any conflict message
-		if (control._conflict) propertiesTable.append("<tr><td colspan='2' class='conflict'>Page \"" + control._conflict + "\" has a control with the same name</td></tr>");
+		if (control._conflict) propertiesTable.append("<tr><td colspan='2' class='conflict propertyHeader'>Page \"" + control._conflict + "\" has a control with the same name</td></tr>");
 		// show the control id if requested
 		if (_version.showControlIds) propertiesTable.append("<tr><td>ID</td><td class='canSelect'>" + control.id + "</td></tr>");
 		// check there are class properties
@@ -154,7 +154,7 @@ function showProperties(control) {
 						// make the helpId
 						var helpId = control.id + property.key;
 						// create help html
-						help = "<img id='" + helpId + "' style='float:right;margin:-2px -2px -2px 10px;' src='images/help_16x16.png' />"						
+						help = "<img id='" + helpId + "' class='propertyHelp' src='images/help_16x16.png' />"						
 					}
 					// get the property itself from the control
 					propertiesRow.append("<td>" + property.name + help + "</td><td></td>");
@@ -1187,7 +1187,7 @@ function Property_childActions(cell, propertyObject, property, details) {
 	if (_copyAction) actionOptions = "<optgroup label='New action'>" + _actionOptions + "</optgroup><optgroup label='Paste action'><option value='pasteActions'>" + getCopyActionName(propertyObject.id) + "</option></optgroup>";
 		
 	// add an add dropdown
-	var addAction = table.append("<tr><td colspan='2' style='padding-left:0;'><select style='border:0;'><option value=''>Add action...</option>" + actionOptions + "</select></td></tr>").children().last().children().last().children().last();
+	var addAction = table.append("<tr><td colspan='2' class='propertyAdd propertyHeader'><select><option value=''>Add action...</option>" + actionOptions + "</select></td></tr>").children().last().children().last().children().last();
 	
 	addListener( addAction.change( { cell: cell, propertyObject: propertyObject, property: property, details: details }, function(ev) {
 		// get a reference to the dropdown

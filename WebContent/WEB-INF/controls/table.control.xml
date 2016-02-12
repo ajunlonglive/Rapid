@@ -9,7 +9,7 @@ gareth.edwards@rapid-is.co.uk
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version. The terms require you to include
@@ -28,20 +28,21 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	<control>
 	    
 	    <type>tableCell</type>
-	    <name>Table cell</name>	   
+	    <name>Table cell</name>
 	    	    
 	    <noDefaultName>true</noDefaultName>
 	    	    
-	    <canUserInsert>true</canUserInsert>    
+	    <canUserInsert>true</canUserInsert>
 	    <canUserAddPeers>true</canUserAddPeers>
 	    
-	    <properties>    
+	    <properties>
 	             
 	        <property>
 	            <key>name</key>
 	            <name>Name</name>
-	            <changeValueJavaScript>text</changeValueJavaScript>	            
-	        </property>	
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <helpHtml>Name that can be given to the control. Names are used to help identify controls uniquely.</helpHtml>
+	        </property>
 	                    
 	        <property>
 	            <key>text</key>
@@ -52,14 +53,15 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	                ]]>
 	            </setConstructValueFunction>
 	            <changeValueJavaScript>bigtext</changeValueJavaScript>	
-	            <refreshHtml>true</refreshHtml>            
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets the title of the table cell.</helpHtml>
 	        </property>
 	        
 	        <property>
 	            <key>colSpan</key>
 	            <name>Column span</name>
 	            <setConstructValueFunction>return "1";</setConstructValueFunction>
-	            <changeValueJavaScript>select</changeValueJavaScript>	
+	            <changeValueJavaScript>select</changeValueJavaScript>
 	            <getValuesFunction>
 	                <![CDATA[
 var values=[];
@@ -73,25 +75,27 @@ for (var i in this._parent._parent.childControls) {
 for (var i = 1; i < maxCols; i++) values.push(i);
 values.push(i);
 return values;
-					]]>      
-				</getValuesFunction>  
+					]]>
+				</getValuesFunction>
 				<refreshHtml>true</refreshHtml>
+				<helpHtml>Sets the width of the cell, enabling it to span multiple rows.</helpHtml>
 	        </property>
 	        
 	        <property>
 	            <key>rowSpan</key>
 	            <name>Row span</name>
 	            <setConstructValueFunction>return "1";</setConstructValueFunction>
-	            <changeValueJavaScript>select</changeValueJavaScript>	
+	            <changeValueJavaScript>select</changeValueJavaScript>
 	            <getValuesFunction>
 	                <![CDATA[
 var values=[];
 // loop the rows in the table
 for (var i = 1; i <= this._parent._parent.childControls.length; i++) values.push(i);
 return values;
-					]]>      
-				</getValuesFunction>    
-				<refreshHtml>true</refreshHtml>          
+					]]>
+				</getValuesFunction>
+				<refreshHtml>true</refreshHtml>
+				<helpHtml>Sets the length of the cell, enabling it to span multiple columns.</helpHtml>
 	        </property>
 	        
 	    </properties>

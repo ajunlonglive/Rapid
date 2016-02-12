@@ -1,12 +1,12 @@
 table.propertiesPanelTable  {
 	width: 100%;
 	background-color: white;
-	border-left: 1px solid gray;
-	border-top: 1px solid gray;
-	border-right: 1px solid gray;
+	border: 1px solid black;
+	border-radius: 3px;
 	border-spacing: 0px;
 	margin-top: 2px;	
 	font-size: 11px;
+	text-align: left;
 }
 
 .propertiesPanelTable tr {
@@ -16,15 +16,24 @@ table.propertiesPanelTable  {
 .propertiesPanelTable td {
 	text-align: left;
 	vertical-align: top;
-	padding-left: 5px;
 	border-bottom: 1px solid gray;	
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
 
+.propertiesPanelTable td.propertyHeader {
+	padding-left: 5px;
+}
+
+.propertiesPanelTable td:first-child:not(.propertyHeader) {
+	padding-left: 5px;
+	padding-right: 18px;
+}
+
 .propertiesPanelTable td:nth-child(2) {
 	width: 100%;
+	padding-left: 0;
 	max-width: 50px;
 }
 
@@ -32,9 +41,11 @@ table.propertiesPanelTable  {
 	width: 100%;
 	margin-top: -2px;
 	margin-bottom: -2px;
-	font-size: 11px;
+	font-size: 13.5px;
 	text-indent: 3px;
-	border-radius: 0;
+	border-radius: 0 !important;
+	padding: 1px 1px 1px 0px !important;
+	box-shadow: none !important;
 	border: 1px solid #888;
 	background-color: white;
 }
@@ -48,8 +59,8 @@ table.propertiesPanelTable  {
 
 .propertiesPanelTable input[type=checkbox] {
 	width: auto;
-	margin-top: 0px;
-  	margin-left: 0px;
+	margin-top: 0;
+  	margin-left: 2px;
   	vertical-align: top;
 }
 
@@ -77,10 +88,26 @@ table.propertiesPanelTable  {
 	border-radius: 0;
 	border: 1px solid #888;
 	background-color: white;
+	padding: 0;
 }
 
 .propertiesPanelTable b {
 	padding-left: 5px;
+}
+
+.propertiesPanelTable td.propertyAdd {
+	padding: 0;
+}
+
+.propertyAdd select {
+	margin-left: 0;
+	margin-right: 0;
+}
+
+img.propertyHelp {
+	float: right;
+	margin-right: -18px;
+	margin-bottom: -1px;	
 }
 
 div.propertyDialogue {
@@ -166,13 +193,14 @@ div.propertyDialogue {
 }
 
 .dialogueTable select {
-  width: 100%;
+  width: 102%;
   height: 18px; 
   font-size: 11px;
   border-radius: 0;
   border: 1px solid #888;
   background-color: white;  
   outline: 0;
+  margin-left: -4px;
 }
 
 .dialogueTable tr:not(:first-child):not(:last-child) td:not(:last-child) select {

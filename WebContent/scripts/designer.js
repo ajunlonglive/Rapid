@@ -1391,7 +1391,13 @@ function loadApps(selectedAppId, forceLoad) {
 
 // this function locks the ui whilst either versions, pages, or a page are loading
 function loadLock(level) {
-					
+	
+	// clear down property dialogues for good measure
+	hideDialogues();
+	
+	// hide the properties panel
+	$("#propertiesPanel").hide();
+	
 	// disable all page buttons
 	$("button").disable();
 	
@@ -1430,16 +1436,11 @@ function loadLock(level) {
 		// lose the selected control
 		_selectedControl = null;	
 		// lose the property control
-		_propertiesControl = null;			
-		// hide the properties panel so it gets recreated properly
-		hidePropertiesPanel();
+		_propertiesControl = null;	
 	}
 	
 	// loading version - loadVersion (changed version)
 	if (level <= 2) {
-		
-		// hide the properties panel
-		$("#propertiesPanel").hide();
 		
 		// remove any current pages
 		$("#pageSelect").children().remove();
@@ -1449,7 +1450,7 @@ function loadLock(level) {
 		// hide the controls panel
 		designControls.hide();
 		// empty the designControls panel
-		designControls.html("<ul class='design-controls'></ul>").css("height",0);	
+		designControls.html("<ul class='design-controls'></ul>");	
 		// empty the action options global
 		_actionOptions = "";
 		// empty the style classes array
@@ -2263,9 +2264,9 @@ function toggleHeader(ev) {
 	var contents = header.next();
 	contents.slideToggle( 500, function() {
 		if (contents.is(":visible")) {
-			header.children("img.headerToggle").attr("src","images/triangleUp_8x8.png");						
+			header.children("img.headerToggle").attr("src","images/triangleUpWhite_8x8.png");						
 		} else {
-			header.children("img.headerToggle").attr("src","images/triangleDown_8x8.png");
+			header.children("img.headerToggle").attr("src","images/triangleDownWhite_8x8.png");
 		}
 		switch (header.attr("id")) {
 		case "stylesHeader" :
@@ -2629,15 +2630,9 @@ $(document).ready( function() {
 			        		$("#controlControls").show();
 			        	}
 			        	
-			        	// fire the page resize code
-			        	windowResize("pageLoaded");
-			        	
 			        	// update the url
 			        	if (window.history && window.history.replaceState) window.history.replaceState("page", _page.title, "design.jsp?a=" + _version.id + "&v=" + _version.version + "&p=" + _page.id );
 			        				        	
-			        	// set dirty to false
-			        	_dirty = false;
-			        	
 		        	} catch (ex) {
 		        		
 		        		// ensure the designer is visible
@@ -2717,7 +2712,7 @@ $(document).ready( function() {
 		// check pinned
 		if (_panelPinned) {
 			_panelPinned = false;			
-			$("#controlPanelPin").html("<img src='images/triangleDown_8x8.png' title='pin panel'>");
+			$("#controlPanelPin").html("<img src='images/triangleDownWhite_8x8.png' title='pin panel'>");
 			// set the panel pin offset
 			_panelPinnedOffset = 0;			
 			// arrange the non visible controls due to the shift in the panel
@@ -2729,7 +2724,7 @@ $(document).ready( function() {
 		} else {
 			_panelPinned = true;
 			_panelPinnedOffset = $("#controlPanel").width() + 21; // add the padding and border
-			$("#controlPanelPin").html("<img src='images/triangleLeft_8x8.png' title='unpin panel'>");
+			$("#controlPanelPin").html("<img src='images/triangleLeftWhite_8x8.png' title='unpin panel'>");
 			// resize the window
 			windowResize("unpin");
 			// arrange the non visible controls due to the shift in the panel
@@ -2775,7 +2770,7 @@ $(document).ready( function() {
 	// administration, new tab
 	$("#appAdminNewTab").click( function(ev) {
 		if (_version && _version.id) {
-			window.open("~?a=rapid&appId=" + _version.id + "&version=" + _version.version,"blank");
+			window.open("~?a=rapid&appId=" + _version.id + "&version=" + _version.version,"_blank");
 		} else {
 			window.open("~?a=rapid","blank");
 		}		 
@@ -3390,16 +3385,15 @@ function sizeControlsList(width) {
 	$("#controlPanelInner").css("width",width);
 	// get the controls list
 	var controlsList = $("#controlsList");
-	// get the number of children
-	var controls = controlsList.children().size();
+	// get the first control
+	var control = controlsList.find("li").first();
+	// get the width of the first contol
+	var controlWidth = control.outerWidth(true);
 	// get the controls wide
-	var controlsWidth = Math.floor(width / 39);
-	// get the controls high
-	var controlsHigh = Math.ceil(controls / controlsWidth);		
+	var controlsWide = Math.floor(width / controlWidth);
 	// set the fixed height and margin (to allow animation and center controls)
 	controlsList.css({
-		"padding-left" : (width - controlsWidth * 39) / 2,
-		"height" :  controlsHigh * 36
+		"padding-left" : (width - controlsWide * controlWidth) / 2
 	});	
 }
 
@@ -3697,8 +3691,8 @@ function arrangeNonVisibleControls() {
 			// get the class
 			var childControlClass = _controlTypes[childControl.type];
 			
-			// if we have one and it is nonVisible
-			if (childControlClass && childControlClass.getHtmlFunction.indexOf("nonVisibleControl") > 0) {
+			// if it is nonVisible
+			if (childControlClass.getHtmlFunction.indexOf("nonVisibleControl") > 0) {
 				
 				// get the object
 				var	o = childControl.object;

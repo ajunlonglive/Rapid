@@ -3,14 +3,14 @@
 
 <!-- 
 
-Copyright (C) 2014 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version. The terms require you to include
@@ -28,9 +28,9 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
 	<control>
 	    
-	    <type>chart</type>	 
-	    <name>Chart</name>	   
-	    <image>images/chart_24x24.png</image>   
+	    <type>chart</type>
+	    <name>Chart</name>
+	    <image>images/chart_24x24.png</image>
 	    
 	    <addToNewApplications>false</addToNewApplications>
 	         
@@ -43,21 +43,23 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	        <property>
 	            <key>name</key>
 	            <name>Name</name>
-	            <changeValueJavaScript>text</changeValueJavaScript>	            
-	        </property>	 
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <helpHtml>Name that can be given to the control. Names are used to help identify controls uniquely.</helpHtml>
+	        </property>
 	        
 	        <property>
 	            <key>chartType</key>
 	            <name>Type</name>
 	            <setConstructValueFunction>return "Line";</setConstructValueFunction>
-	            <changeValueJavaScript>chartType</changeValueJavaScript>	
+	            <changeValueJavaScript>chartType</changeValueJavaScript>
 	            <getValuesFunction>
 	                <![CDATA[
 return [["Line","Line"],["Bar","Bar"],["Pie","Pie"]];
 					]]>
-	            </getValuesFunction>           
+	            </getValuesFunction>
 	            <refreshHtml>true</refreshHtml>
-	            <refreshProperties>true</refreshProperties>    
+	            <refreshProperties>true</refreshProperties>
+	            <helpHtml>Sets the chart type from line to bar or pie.</helpHtml>
 	        </property>
 	                   	       	        
 	    </properties>
@@ -105,91 +107,16 @@ var width = o.width();
 var height = o.height();
 // remove any explicit style
 o.removeAttr("style");
-// add the width and height (this is neccessary for charts to be regenerated in the designert)
+// add the width and height (this is neccessary for charts to be regenerated in the designer)
 o.attr("style","width:" + Math.max(width,o.width()) + "px;height:" + Math.max(height,o.height()) + "px;");
 // Get context with jQuery - using jQuery's .get() method.
 var ctx = o.get(0).getContext("2d");
 // the chart data object
-var data = {};
+var chartData = {};
 // options object
 var options = {};
 // check type
 if (this.chartType == "Pie") {
-	data = [
-	    {
-	        value: 300,
-	        color:"#F7464A",
-	        highlight: "#FF5A5E",
-	        label: "Red"
-	    },
-	    {
-	        value: 50,
-	        color: "#46BFBD",
-	        highlight: "#5AD3D1",
-	        label: "Green"
-	    },
-	    {
-	        value: 100,
-	        color: "#FDB45C",
-	        highlight: "#FFC870",
-	        label: "Yellow"
-	    }
-	];
-} else {
-	data = {
-	    labels: ["January", "February", "March", "April", "May", "June", "July"],
-	    datasets: [
-	        {
-	            label: "Dataset 1",
-	            fillColor: "rgba(220,220,220,0.2)",
-	            strokeColor: "rgba(220,220,220,1)",
-	            pointColor: "rgba(220,220,220,1)",
-	            pointStrokeColor: "#fff",
-	            pointHighlightFill: "#fff",
-	            pointHighlightStroke: "rgba(220,220,220,1)",
-	            data: [65, 59, 80, 81, 56, 55, 40]
-	        },
-	        {
-	            label: "Dataset 2",
-	            fillColor: "rgba(151,187,205,0.2)",
-	            strokeColor: "rgba(151,187,205,1)",
-	            pointColor: "rgba(151,187,205,1)",
-	            pointStrokeColor: "#fff",
-	            pointHighlightFill: "#fff",
-	            pointHighlightStroke: "rgba(151,187,205,1)",
-	            data: [28, 48, 40, 19, 86, 27, 90]
-	        }
-	    ]
-	}
-}
-
-// make us a chart of the right type
-var chart = new w.Chart(ctx)[this.chartType](data, options);
-// store it
-w._charts[this.id] = chart;
-	        ]]>	        
-	    </initDesignJavaScript>
-	    
-	     <saveJavaScript>
-	        <![CDATA[ 
-this.object.html("").removeAttr("style");      
-	        ]]>
-	    </saveJavaScript>	    
-	    
-	     <getDetailsFunction>
-	        <![CDATA[
-return { name: this.name, chartType: this.chartType };      
-	        ]]>
-	    </getDetailsFunction>
-	    
-	     <setDataJavaScript>
-	        <![CDATA[
-var control = $("#" + id);
-var canvas = control.get(0);
-var ctx = canvas.getContext("2d");
-// the chart data object
-var chartData = {};
-if (details.chartType == "Pie") {
 	chartData = [
 	    {
 	        value: 300,
@@ -209,7 +136,7 @@ if (details.chartType == "Pie") {
 	        highlight: "#FFC870",
 	        label: "Yellow"
 	    }
-	]
+	];
 } else {
 	chartData = {
 	    labels: ["January", "February", "March", "April", "May", "June", "July"],
@@ -237,8 +164,83 @@ if (details.chartType == "Pie") {
 	    ]
 	}
 }
+
 // make us a chart of the right type
-_charts[this.id] = new Chart(ctx)[details.chartType](chartData, {});
+var chart = new w.Chart(ctx)[this.chartType](chartData, options);
+// store it
+w._charts[this.id] = chart;
+	        ]]>	        
+	    </initDesignJavaScript>
+	    
+	     <saveJavaScript>
+	        <![CDATA[ 
+this.object.html("").removeAttr("style");      
+	        ]]>
+	    </saveJavaScript>	    
+	    
+	     <getDetailsFunction>
+	        <![CDATA[
+return { name: this.name, chartType: this.chartType };      
+	        ]]>
+	    </getDetailsFunction>
+	    
+	     <setDataJavaScript>
+	        <![CDATA[
+var control = $("#" + id);
+var canvas = control.get(0);
+var ctx = canvas.getContext("2d");
+// the chart data object
+var data = {};
+if (details.chartType == "Pie") {
+	data = [
+	    {
+	        value: 300,
+	        color:"#F7464A",
+	        highlight: "#FF5A5E",
+	        label: "Red"
+	    },
+	    {
+	        value: 50,
+	        color: "#46BFBD",
+	        highlight: "#5AD3D1",
+	        label: "Green"
+	    },
+	    {
+	        value: 100,
+	        color: "#FDB45C",
+	        highlight: "#FFC870",
+	        label: "Yellow"
+	    }
+	]
+} else {
+	data = {
+	    labels: ["January", "February", "March", "April", "May", "June", "July"],
+	    datasets: [
+	        {
+	            label: "Dataset 1",
+	            fillColor: "rgba(220,220,220,0.2)",
+	            strokeColor: "rgba(220,220,220,1)",
+	            pointColor: "rgba(220,220,220,1)",
+	            pointStrokeColor: "#fff",
+	            pointHighlightFill: "#fff",
+	            pointHighlightStroke: "rgba(220,220,220,1)",
+	            data: [65, 59, 80, 81, 56, 55, 40]
+	        },
+	        {
+	            label: "Dataset 2",
+	            fillColor: "rgba(151,187,205,0.2)",
+	            strokeColor: "rgba(151,187,205,1)",
+	            pointColor: "rgba(151,187,205,1)",
+	            pointStrokeColor: "#fff",
+	            pointHighlightFill: "#fff",
+	            pointHighlightStroke: "rgba(151,187,205,1)",
+	            data: [28, 48, 40, 19, 86, 27, 90]
+	        }
+	    ]
+	}
+}
+// make us a chart of the right type
+_charts[this.id] = new Chart(ctx)[details.chartType](data, {});
 			]]>
 	    </setDataJavaScript>
 	    

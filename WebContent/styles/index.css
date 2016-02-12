@@ -1,7 +1,16 @@
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Open Sans'), local('OpenSans'), url(https://fonts.gstatic.com/s/opensans/v13/cJZKeOuBrn4kERxqtaUH3VtXRa8TVwTICgirnJhmVJw.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+
 body {
-	font-family: arial;
+	font-family: 'Open Sans';
 	margin:0;
-}	
+	background: transparent linear-gradient(#FFF, #E8E8E8) fixed;
+}
 
 @media (min-width: 520px) and (min-height: 400px) {
 
@@ -12,10 +21,20 @@ body {
 	
 	input {
 		width: 200px;
-		padding: 5px;
 		font-size: 18px;
-		border: 1px solid #888;
-		box-shadow: inset -2px 2px 5px 0px #ccc; 
+		box-shadow: 0px 1px 3px 1px #D0D0D0;
+		border: 1px solid #999;
+		padding: 6px 5px;
+		border-radius: 5px;
+		outline: none;
+	}
+
+	input:hover {
+		border-color: #6F6F6F;
+	}
+
+	input:focus {
+		border-color: #660000;
 	}
 	
 	td {
@@ -26,24 +45,37 @@ body {
 	button {
 		font-size: 14px;
 		padding: 5px 20px;
+		border: 2px solid #333;
+		color: #FFF;
+		background: transparent linear-gradient(#666, #494949);
+		box-shadow: 0px 1px 3px 1px #D0D0D0;
+		cursor: pointer;
+		padding: 5px 18px 6px;
+		border-radius: 34px;
+		outline: none;
 	}
 	
-	div.image {
-		height: 110px;
+	button:hover {
+		border: 2px solid #000;
+		background: transparent linear-gradient(#B80101, #500000);
+	}
+
+	button:active {
+		background: transparent linear-gradient(#292929, #121212);
 	}
 	
 	.image img {
-		position:absolute;
-		top:8px;
-		right:18px;
-		width:200px;
-		height:134px;
+		position: absolute;
+		top: 24px;
+		right: 20px;
 	}
 	
 	div.title {
 		background-color:#ccc;
-		padding: 20px 40px 35px;
 		margin: 0px 0px 20px 0px;
+		padding: 5px 25px 35px;
+		color: white;
+		background: linear-gradient(to bottom, #595959 0%,#4c4c4c 10%,#383838 25%,#3d3d3d 37%,#3f3f3f 50%,#262626 51%,#4c4c4c 83%,#5b5b5b 100%);
 	}
 	
 	.title span {
@@ -82,12 +114,13 @@ body {
 		float: left;
 		font-size: 16px;
 		text-decoration: none;
-		color: black;
+		color: white;
 		margin-top: 5px;
 	}
 	
 	.link a:hover {
-		color: #444;
+		color: #E00;
+		text-decoration: underline;
 	}
 	
 	.info {
@@ -128,30 +161,52 @@ body {
 	
 	input {
 		width: 200px;
-		padding: 5px;
 		font-size: 18px;
-		border: 1px solid black;
-		box-shadow: inset -2px 2px 5px 0px #ccc; 
+		box-shadow: 0px 1px 3px 1px #D0D0D0;
+		border: 1px solid #999;
+		padding: 6px 5px;
+		border-radius: 5px;
+		outline: none;
+	}
+
+	input:hover {
+		border-color: #6F6F6F;
+	}
+
+	input:focus {
+		border-color: #660000;
 	}
 			
 	button {
 		font-size: 18px;
+		padding: 5px 20px;
+		border: 2px solid #333;
+		color: #FFF;
+		background: transparent linear-gradient(#666, #494949);
+		box-shadow: 0px 1px 3px 1px #D0D0D0;
+		cursor: pointer;
+		padding: 5px 18px 6px;
+		border-radius: 34px;
+		outline: none;
+	}
+	
+	button:hover {
+		border: 2px solid #000;
+		background: transparent linear-gradient(#B80101, #500000);
+	}
+
+	button:active {
+		background: transparent linear-gradient(#292929, #121212);
 	}
 	
 	.title {
 		min-width: 280px;
 	}
 	
-	div.image {
-		height: 47px;
-	}
-	
 	.image img {
-		position:absolute;
-		top:6px;
-		right:10px;
-		width:100px;
-		height:67px;
+		position: absolute;
+		top: 17px;
+		right: 10px;
 	}
 	
 	div.body {
@@ -162,6 +217,9 @@ body {
 		width: 90px;
 		vertical-align: top;
 		margin-left: 20px;
+		border: 1px solid black;
+		padding: 2px;
+		box-shadow: 3px 3px 3px #aaa;
 	}
 	
 	.body a {
@@ -178,14 +236,29 @@ body {
 				
 	div.title {
 		background-color:#ccc;
-		padding: 10px 20px 10px 20px;
-		margin: 10px 0px 20px 0px;
+		margin: 0px 0px 20px 0px;
 		text-align: center;
+		padding: 5px 25px 35px;
+		color: white;
+		max-height: 33px;
+		background: linear-gradient(to bottom, #595959 0%,#4c4c4c 10%,#383838 25%,#3d3d3d 37%,#3f3f3f 50%,#262626 51%,#4c4c4c 83%,#5b5b5b 100%);
+	}
+
+	div.title span {
+		line-height: 62px;
+	}
+	
+	p {
+		margin-left: 20px;
 	}
 		
 	.info a {
 		color: black;
 		margin-left: 130px;
+	}
+	
+	.info a:hover {
+		color: #E00;
 	}
 	
 	ul {
@@ -197,6 +270,18 @@ body {
 	
 	li {
 		margin-top:10px;
+	}
+	
+	.link a {
+		font-size: 18px;
+		text-decoration: none;
+		color: white;
+		margin: 5px 0px 0px 10px;
+	}
+	
+	.link a:hover {
+		color: #E00;
+		text-decoration: underline;
 	}
 	
 }

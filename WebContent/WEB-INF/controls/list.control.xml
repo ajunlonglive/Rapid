@@ -10,7 +10,7 @@ gareth.edwards@rapid-is.co.uk
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version. The terms require you to include
@@ -28,9 +28,9 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
 	<control>
 	    
-	    <type>list</type>	
-	    <name>List</name>	   
-	    <image>images/list_24x24.png</image>    
+	    <type>list</type>
+	    <name>List</name>
+	    <image>images/list_24x24.png</image>
 	    
 	    <addToNewApplications>false</addToNewApplications>
 	        
@@ -45,51 +45,56 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	        <property>
 	            <key>name</key>
 	            <name>Name</name>
-	            <changeValueJavaScript>text</changeValueJavaScript>	            
-	        </property>	
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <helpHtml>Name that can be given to the control. Names are used to help identify controls uniquely.</helpHtml>
+	        </property>
 	        
 	        <property>
 	            <key>codes</key>
 	            <name>Codes</name>
 	            <visible>false</visible>
-	        </property> 
+	        </property>
 	                   
 	        <property>
 	            <key>options</key>
 	            <name>Options</name>
 	            <setConstructValueFunction>return [{value:"", text:"Value 1"}, {value:"", text:"Value 2"}, {value:"", text:"Value 3"}];</setConstructValueFunction>
-	            <changeValueJavaScript>options</changeValueJavaScript>	
-	            <refreshHtml>true</refreshHtml>            
+	            <changeValueJavaScript>options</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Defines what the list will contain. An option for enabling codes can also be used. Codes allow for more precise visibility and validation conditions.</helpHtml>
 	        </property>
 	        
 	        <property>
 	            <key>value</key>
 	            <name>Initial value</name>
-	            <changeValueJavaScript>text</changeValueJavaScript>	        
-	            <refreshHtml>true</refreshHtml>    
-	        </property>	
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Selects one of the options from the list as its initial value.</helpHtml>
+	        </property>
 	        	        
 	        <property>
 	            <key>header</key>
 	            <name>Header text</name>
-	            <changeValueJavaScript>text</changeValueJavaScript>	      
-	            <refreshHtml>true</refreshHtml>      
-	        </property>	
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets the title of the columns.</helpHtml>
+	        </property>
 	        
 	        <property>
 	            <key>multi</key>
 	            <name>Multi select</name>
-	            <changeValueJavaScript>checkbox</changeValueJavaScript>	
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>
 	            <refreshHtml>true</refreshHtml>
-	        </property> 
+	        </property>
 	        
 	        <property>
 	            <key>slide</key>
 	            <name>Slide down</name>
-	            <changeValueJavaScript>checkbox</changeValueJavaScript>	
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>
 	            <refreshHtml>true</refreshHtml>
 	            <refreshProperties>true</refreshProperties>
-	        </property> 
+	            <helpHtml>Decides whether the list will show all of the contents it has or if it will be first required to make them visible.</helpHtml>
+	        </property>
 	             
 	    </properties>
 	    
