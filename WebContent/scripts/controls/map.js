@@ -328,7 +328,7 @@ function addMapMarker(map, pos, details, data, rowIndex, zoomMarkers) {
 				}
 			} else {
 				// multiple markers, use bounds
-				var bounds = map.getBounds();
+				var bounds = new google.maps.LatLngBounds();
 				for (var i in map.markers) {
 					// check getPosition is present
 					if (map.markers[i].getPosition) {

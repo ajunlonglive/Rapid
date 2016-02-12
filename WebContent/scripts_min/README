@@ -1,4 +1,4 @@
-These files are minified from JavaScript resource files on application initilisation.
+These files are minified from JavaScript resource files on application initialisation.
 
 They are placed here as they need to have the same relative path depth as the original resource files.
 
