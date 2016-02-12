@@ -461,16 +461,18 @@ public abstract class FormAdapter {
 				String formId = (String) rapidRequest.getRequest().getSession(false).getAttribute(USER_FORM_ID);
 				// check it
 				if (formId == null) {
-					throw new Exception("Form session id has not been set for user " + rapidRequest.getUserName() + " from " + rapidRequest.getRequest().getRemoteAddr() + ", form id is " + formDetails.getId());
+					throw new Exception("Form session id has not been set for user " + rapidRequest.getUserName() + " from " + rapidRequest.getRequest().getRemoteAddr() + ", but form details object id is " + formDetails.getId());
 				} else {
 					// compare them
-					if (!formId.equals(formDetails.getId())) throw new Exception("Form session id mismatch for user " + rapidRequest.getUserName() + " from " + rapidRequest.getRequest().getRemoteAddr() + ", form session id is " + formId + " but form details object id " + formDetails.getId());
+					if (!formId.equals(formDetails.getId())) throw new Exception("Form session id mismatch for user " + rapidRequest.getUserName() + " from " + rapidRequest.getRequest().getRemoteAddr() + ", form session id is " + formId + " but form details object id is " + formDetails.getId());
 				}
 			} catch (Exception ex) {
 				// log
 				_logger.error("Error checking session form id and form details ", ex);
-				// store the form id in the session - THIS IS A TEMPORARY MEASURE TO ENSURE USER FORM DETAILS ARE NOT CROSSING OVER TO OTHER USERS !!!!!!!!!!!
-				rapidRequest.getRequest().getSession(false).setAttribute(USER_FORM_ID, formDetails.getId());
+				// empty the session - THIS IS A TEMPORARY MEASURE TO ENSURE USER FORM DETAILS ARE NOT CROSSING OVER TO OTHER USERS !!!!!!!!!!!
+				rapidRequest.getRequest().getSession().invalidate();
+				// set the form details to null - THIS IS A TEMPORARY MEASURE TO ENSURE USER FORM DETAILS ARE NOT CROSSING OVER TO OTHER USERS !!!!!!!!!!!
+				formDetails = null;
 			}
 			
 		}
@@ -488,10 +490,16 @@ public abstract class FormAdapter {
 		if (allDetails == null) allDetails = new HashMap<String, UserFormDetails>(); 	
 		// store the form if for a given app id / version
 		allDetails.put(getFormMapKey(rapidRequest), details);	
-		// update the session with the new form details object
+		// put the updated forms details back in the session
 		session.setAttribute(USER_FORM_DETAILS, allDetails);
-		// update the session with the new form id
-		session.setAttribute(USER_FORM_ID, details.getId());
+		// if we were given details
+		if (details == null) {
+			// put the new form id in the session
+			session.setAttribute(USER_FORM_ID, null);
+		} else {
+			// put the new form id in the session
+			session.setAttribute(USER_FORM_ID, details.getId());
+		}		
 	}
 	
 	// a helper method to get the form id via the details
@@ -769,6 +777,9 @@ public abstract class FormAdapter {
 					} // control values length > 0
 					
 				} // control values non null
+				
+				// stop here if this is the max page that they got to
+				if (pageHeader.getId().equals(formDetails.getMaxPageId())) break;
 																				
 			} // page loop
 						
@@ -870,8 +881,8 @@ public abstract class FormAdapter {
 									String regEx = validation.getRegEx();
 									// set to empty string if null (most seem to be empty)
 									if (regEx == null) regEx = "";
-									// but not JavaScript, and no regex
-									if (!"javascript".equals(validation.getType()) && regEx.length() > 0) {										
+									// not if none, and not if javascript
+									if (regEx.length() > 0 && !"".equals(validation.getType()) && !"none".equals(validation.getType()) && !"javascript".equals(validation.getType())) {										
 										// check for null
 										if (value == null) {
 											// throw error if nulls not allowed and not pass if hidden
@@ -893,10 +904,10 @@ public abstract class FormAdapter {
 												}
 											} catch (PatternSyntaxException ex) {
 												// rethrow
-												throw new ServerSideValidationException("Server side validation error - value " + id + " for  form " + formId+ " regex syntax failed for " + regEx + " regex PatternSyntaxException", ex);
+												throw new ServerSideValidationException("Server side validation error - regex for control " + id + " in form " + formId + " failed regex syntax for " + regEx + " - regex PatternSyntaxException", ex);
 											} catch (IllegalArgumentException  ex) {
 												// rethrow
-												throw new ServerSideValidationException("Server side validation error - value " + value + " for control " + id + " in  form " + formId+ " failed regex " + regEx + " regex ServerSideValidationException", ex);
+												throw new ServerSideValidationException("Server side validation error - value '" + value + "' for control " + id + " in  form " + formId + " failed regex " + regEx + " - regex ServerSideValidationException", ex);
 											}											
 											// compile and check it
 											if (!pattern.matcher(value).find()) throw new ServerSideValidationException("Server side validation error - value " + id + " for  form " + formId+ " failed regex");

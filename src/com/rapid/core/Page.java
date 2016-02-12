@@ -1486,7 +1486,7 @@ public class Page {
 		    		// get the cached head js and css
 		    		writer.write(_cachedHeadCSS);
 		    		// open the script
-					writer.write("    <script  type='text/javascript'>\n\n");
+					writer.write("    <script  type='text/javascript'>\n");
 					// write the ready JS
 					writer.write(_cachedHeadReadyJS);
 		    	}

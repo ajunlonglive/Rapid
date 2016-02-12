@@ -212,8 +212,6 @@ function getMapPosition(data, rowIndex, callBack, map, details, zoomMarkers) {
 				if (f == "e" || f == "east" || f == "easting" || f == "eastings") pos.e = data.rows[rowIndex][i];
 				// do the northing checks
 				if (f == "n" || f == "north" || f == "northing" || f == "northings") pos.n = data.rows[rowIndex][i];
-				// do the address or search checks
-				if (f == "search" || f == "address") pos.s = data.rows[rowIndex][i];
 				// do the title checks
 				if (f == "title") pos.title = data.rows[rowIndex][i];
 				// do the info checks
@@ -231,8 +229,33 @@ function getMapPosition(data, rowIndex, callBack, map, details, zoomMarkers) {
 				pos.lat = pOut.latitude;
 				pos.lng = pOut.longitude;												
 			} else {								
-				// if there is not currently a search term make it the first cell
-				if (!pos.s) pos.s = data.rows[rowIndex][0];
+				// if there is not currently a search term but there are search fields
+				if (!pos.s && details.searchFields) {
+					// get the fields
+					var fields = details.searchFields.split(",");
+					// loop them
+					for (var i in fields) {
+						// get this search field
+						var searchField = fields[i].trim();
+						// if there is one
+						if (searchField) {
+							// loop the data fields
+							for (var j in data.fields) {
+								// get this field
+								var field = data.fields[j];
+								// if there is one and it matches
+								if (field && field.toLowerCase() == searchField.toLowerCase()) {
+									// set the value in this field to the search term
+									pos.s = data.rows[rowIndex][j];
+									// we're done
+									break;
+								}
+							}
+							// if we have a position search term, we're done
+							if (pos.s) break;
+						}
+					}
+				}
 				// if there is a callback (getting positions for navigate to won't have one so will avoid the geo-coder) and a search term
 				if (callBack && pos.s) {
 					// create the geocoder if we don't have one already
@@ -304,15 +327,15 @@ function addMapMarker(map, pos, details, data, rowIndex, zoomMarkers) {
 					if (latlng.lat() > 0 && latlng.lng() > 0) map.panTo( latlng );
 				}
 			} else {
-				// multiple markers set bounds
-				var bounds = new google.maps.LatLngBounds();
+				// multiple markers, use bounds
+				var bounds = map.getBounds();
 				for (var i in map.markers) {
 					// check getPosition is present
 					if (map.markers[i].getPosition) {
 						// get position
-						var latlng = map.markers[i].getPosition();
+						var pos = map.markers[i].getPosition();
 						// only if valid values
-						if (latlng.lat() > 0 && latlng.lng() > 0) bounds.extend(map.markers[i].getPosition());
+						if (pos.lat() != 0 && pos.lng() != 0) bounds.extend(pos);
 					}
 				}
 				map.fitBounds(bounds);
