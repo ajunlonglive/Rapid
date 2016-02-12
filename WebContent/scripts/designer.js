@@ -3391,10 +3391,25 @@ function sizeControlsList(width) {
 	var controlWidth = control.outerWidth(true);
 	// get the controls wide
 	var controlsWide = Math.floor(width / controlWidth);
-	// set the fixed height and margin (to allow animation and center controls)
-	controlsList.css({
-		"padding-left" : (width - controlsWide * controlWidth) / 2
-	});	
+	// assume no controls
+	var controlCount = 0;
+	// loop the ul's to get the greatest number of controls
+	controlsList.find("ul").each( function() {
+		var controls = $(this).children().size();
+		if (controls > controlCount) controlCount = controls;
+	});
+	// if the controls are wrapping
+	if (controlCount > controlsWide) {
+		// set the fixed height and margin (to allow animation and center controls)
+		controlsList.css({
+			"padding-left" : (width - controlsWide * controlWidth) / 2
+		});
+	} else {
+		//
+		controlsList.css({
+			"padding-left" : 0
+		});
+	}
 }
 
 //if the mouse moves anywhere
