@@ -100,14 +100,6 @@ hr {
 	width: 195px; 
 	min-width: 195px;
 	border-right: 1px solid #191919;
-	background: #dedede;
-	background: -moz-linear-gradient(top,  #dedede 0%, #eeeeee 10%, #dddddd 100%);
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#dedede), color-stop(10%,#eeeeee), color-stop(100%,#dddddd));
-	background: -webkit-linear-gradient(top,  #dedede 0%,#eeeeee 10%,#dddddd 100%);
-	background: -o-linear-gradient(top,  #dedede 0%,#eeeeee 10%,#dddddd 100%);
-	background: -ms-linear-gradient(top,  #dedede 0%,#eeeeee 10%,#dddddd 100%);
-	background: linear-gradient(to bottom,  #dedede 0%,#eeeeee 10%,#dddddd 100%);
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dedede', endColorstr='#dddddd',GradientType=0 );
 	overflow: hidden;
 	outline: none;
 	padding: 10px;
@@ -207,8 +199,9 @@ li.design-control {
 	cursor: pointer;
 	width: 25px;
 	height: 25px;
-	float: left;	
-	margin-right: 5px;
+	float: left;
+	margin-left: 2px;	
+	margin-right: 2px;
 	margin-bottom: 5px;
 	padding: 2px 3px;
 	border: 2px solid #191919;	
