@@ -65,7 +65,7 @@ public class Rapid extends RapidHttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	// these are held here and referred to globally
-	public static final String VERSION = "2.3.3"; // the master version of this Rapid server
+	public static final String VERSION = "2.3.3"; // the master version of this Rapid server instance
 	public static final String MOBILE_VERSION = "1"; // the mobile version. update it if you want all mobile devices to run app updates on their next version check
 	public static final String DESIGN_ROLE = "RapidDesign";
 	public static final String ADMIN_ROLE = "RapidAdmin";
@@ -262,8 +262,9 @@ public class Rapid extends RapidHttpServlet {
 										
 										// only if this is not a dialogue
 										if (!"dialogue".equals(action)) {
+														
 											// get all of the pages
-											PageHeaders pageHeaders = app.getPages().getSortedPages();
+											PageHeaders pageHeaders = app.getPages().getSortedPages();											
 											// get this page position
 											int pageIndex = pageHeaders.indexOf(page.getId());
 											// check the page visibility
@@ -276,8 +277,6 @@ public class Rapid extends RapidHttpServlet {
 													pageCheck = false;
 													// but set the the show summary to true
 													showSummary = true;
-													// and set the completed flag so the submit button shows
-													if (!formDetails.getSubmitted()) formAdapter.setFormComplete(rapidRequest, formDetails);
 													// we're done
 													break;
 												} else {
@@ -296,7 +295,7 @@ public class Rapid extends RapidHttpServlet {
 														}
 													}
 												} // pages remaining check									
-											} // page visible loop											
+											} // page visible loop
 										} // dialogue check
 										
 									} else {
@@ -353,16 +352,16 @@ public class Rapid extends RapidHttpServlet {
 									
 									// set the response type
 									response.setContentType("text/html");
-																											
+																		
 									// write the page html
-									page.writeHtml(this, response, rapidRequest,  app, user, out, designerLink);
+									page.writeHtml(this, response, rapidRequest, app, user, out, designerLink);
 									
 									// close the writer
 									out.close();
 									
 									// flush the writer
 									out.flush();
-																										
+																		
 								} else {
 									
 									// redirect user to correct page
@@ -493,65 +492,63 @@ public class Rapid extends RapidHttpServlet {
 								
 								// get the relevant security adapter
 								SecurityAdapter security = app.getSecurityAdapter();
-								
-								
-									
-									// make a rapidRequest for this application
-									RapidRequest getAppsRequest = new RapidRequest(this, request, app);
-															
-									// check the user password
-									if (security.checkUserPassword(getAppsRequest, rapidRequest.getUserName(), rapidRequest.getUserPassword())) {
-										
-										// assume can add
-										boolean canAdd = true;
-																												
-										if ("rapid".equals(app.getId())) {
-											// must have RapidAdmin or RapidSuper to see Rapid app
-											canAdd = security.checkUserRole(rapidRequest, Rapid.ADMIN_ROLE) || security.checkUserRole(rapidRequest, Rapid.SUPER_ROLE);
-										}
-										
-										if (canAdd) {
-											// create a json object for the details of this application
-											JSONObject jsonApp = new JSONObject();
-											// add details
-											jsonApp.put("id", app.getId());
-											jsonApp.put("version", app.getVersion());
-											jsonApp.put("title", app.getTitle());								
-											// add app to our main array
-											jsonApps.put(jsonApp);
-																			
-											// check if we are testing
-											if (forTesting) {
-												
-												// if the user has Rapid Design for this application, (or Rpaid Super if this is the rapid app)
-												if (security.checkUserRole(rapidRequest, Rapid.DESIGN_ROLE) && (!app.getId().equals("rapid") || security.checkUserRole(rapidRequest, Rapid.SUPER_ROLE))) {
-													
-													// loop the versions
-													for (Application version :	getApplications().getVersions(app.getId()).sort()) {
+
+								// make a rapidRequest for this application
+								RapidRequest getAppsRequest = new RapidRequest(this, request, app);
 														
-														// create a json object for the details of this version
-														jsonApp = new JSONObject();
-														// add details
-														jsonApp.put("id", version.getId());
-														jsonApp.put("version", version.getVersion());
-														jsonApp.put("status", version.getStatus());										
-														jsonApp.put("title", version.getTitle());
-														jsonApp.put("test", true);
-														// add app to our main array
-														jsonApps.put(jsonApp);
-													}
-													
-												} // got design role
-																					
-											} // forTesting check
+								// check the user password
+								if (security.checkUserPassword(getAppsRequest, rapidRequest.getUserName(), rapidRequest.getUserPassword())) {
+									
+									// assume can add
+									boolean canAdd = true;
+																											
+									if ("rapid".equals(app.getId())) {
+										// must have RapidAdmin or RapidSuper to see Rapid app
+										canAdd = security.checkUserRole(rapidRequest, Rapid.ADMIN_ROLE) || security.checkUserRole(rapidRequest, Rapid.SUPER_ROLE);
+									}
+									
+									if (canAdd) {
+										// create a json object for the details of this application
+										JSONObject jsonApp = new JSONObject();
+										// add details
+										jsonApp.put("id", app.getId());
+										jsonApp.put("version", app.getVersion());
+										jsonApp.put("title", app.getTitle());								
+										// add app to our main array
+										jsonApps.put(jsonApp);
+																		
+										// check if we are testing
+										if (forTesting) {
 											
-										} // rapid app extra check
+											// if the user has Rapid Design for this application, (or Rpaid Super if this is the rapid app)
+											if (security.checkUserRole(rapidRequest, Rapid.DESIGN_ROLE) && (!app.getId().equals("rapid") || security.checkUserRole(rapidRequest, Rapid.SUPER_ROLE))) {
+												
+												// loop the versions
+												for (Application version :	getApplications().getVersions(app.getId()).sort()) {
+													
+													// create a json object for the details of this version
+													jsonApp = new JSONObject();
+													// add details
+													jsonApp.put("id", version.getId());
+													jsonApp.put("version", version.getVersion());
+													jsonApp.put("status", version.getStatus());										
+													jsonApp.put("title", version.getTitle());
+													jsonApp.put("test", true);
+													// add app to our main array
+													jsonApps.put(jsonApp);
+												}
+												
+											} // got design role
+																				
+										} // forTesting check
 										
-									} // user check
-								
-								} // rapid app and not for testing check
-																																										
-							} // apps loop
+									} // rapid app extra check
+									
+								} // user check
+							
+							} // rapid app and not for testing check
+																																									
+						} // apps loop
 						
 					} catch (Exception ex) {
 						// only log
@@ -730,62 +727,91 @@ public class Rapid extends RapidHttpServlet {
 										// try
 										try {
 											
-											// get the page id
-											String requestPageId = rapidRequest.getPage().getId();
-																																	
-											// if form not submitted
-											if (!formDetails.getSubmitted()) {
-												
-												// get the page control values
-												FormPageControlValues pageControlValues = FormAdapter.getPostPageControlValues(rapidRequest, formData, formDetails.getId());
-																																			
-												// check we got some
-												if (pageControlValues != null) {
-												
-													// loop and print them if trace on
-													if (logger.isTraceEnabled()) {
-														for (FormControlValue controlValue : pageControlValues) {
-															logger.debug(controlValue.getId() + " = " + controlValue.getValue());
-														}
-													}									
-																						
-													// store the form page control values
-													formAdapter.setFormPageControlValues(rapidRequest, formDetails.getId(), requestPageId, pageControlValues);
-													
-												}
-												
-											}
-																									
-											// get all of the app pages
-											PageHeaders pages = app.getPages().getSortedPages();
+											// get the page
+											Page page = rapidRequest.getPage();
 											
-											// get it's position
-											int pageIndex = pages.indexOf(requestPageId);
-																																	
-											// if this is the last page
-											if (pageIndex >= pages.size() - 1) {
+											// if we got one
+											if (page == null) {
 												
-												// mark that this form is complete (if not submitted)
-												if (!formDetails.getSubmitted()) formAdapter.setFormComplete(rapidRequest, formDetails);
-												
-												// send a redirect for the summary (this also avoids ERR_CACH_MISS issues on the back button )
-												response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion() + "&action=summary");
+												// send error
+												sendMessage(response, 403, "Page does not exist", "The page you requested does not exist");
 												
 											} else {
-																						
-												// increment the page index
-												pageIndex++;
-												
-												// get the next page id
-												String nextPageId =  pages.get(pageIndex).getId();
+											
+												// get the page id
+												String requestPageId = rapidRequest.getPage().getId();
+																																		
+												// if form not submitted
+												if (!formDetails.getSubmitted()) {
+													
+													// get the page control values
+													FormPageControlValues pageControlValues = FormAdapter.getPostPageControlValues(rapidRequest, formData, formDetails.getId());
+																																				
+													// check we got some
+													if (pageControlValues != null) {
+													
+														// loop and print them if trace on
+														if (logger.isTraceEnabled()) {
+															for (FormControlValue controlValue : pageControlValues) {
+																logger.debug(controlValue.getId() + " = " + controlValue.getValue());
+															}
+														}									
+																							
+														// store the form page control values
+														formAdapter.setFormPageControlValues(rapidRequest, formDetails.getId(), requestPageId, pageControlValues);
 														
-												// set that we're allowed to this page
-												if (!formDetails.getSubmitted()) formAdapter.setMaxPage(rapidRequest, formDetails, nextPageId);
+													}
+													
+												}
+													
+												// assume we're not going to go to the summary
+												boolean requestSummary = false;
 												
-												// send a redirect for the page (this avoids ERR_CACH_MISS issues on the back button )
-												response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion() + "&p=" + nextPageId);
+												// get all of the app pages
+												PageHeaders pageHeaders = app.getPages().getSortedPages();
+																																		
+												// get the position of the next page in sequence
+												int pageIndex = pageHeaders.indexOf(requestPageId) + 1;
 												
-											} // last page check		
+												// get the next page
+												page = app.getPages().getPage(getServletContext(), pageHeaders.get(pageIndex).getId());
+												
+												// check the page visibility
+												while (!page.isVisible(rapidRequest, app, formDetails)) {
+													// if we're here the visibility check on the current page failed so increment the index
+													pageIndex ++;
+													// if there are no more pages go to the summary
+													if (pageIndex > pageHeaders.size() - 1) {
+														// but set the the show summary to true
+														requestSummary = true;
+														// we're done
+														break;
+													} else {
+														// select the next page to check the visibility of
+														page = app.getPages().getPage(getServletContext(), pageHeaders.get(pageIndex).getId());																
+													} // pages remaining check									
+												} // page visible loop		
+																																																						
+												// if this is the last page
+												if (requestSummary) {
+													
+													// mark that this form is complete (if not submitted)
+													if (!formDetails.getSubmitted()) formAdapter.setFormComplete(rapidRequest, formDetails);
+													
+													// send a redirect for the summary (this also avoids ERR_CACH_MISS issues on the back button )
+													response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion() + "&action=summary");
+													
+												} else {
+																																					
+													// set that we're allowed to this page
+													if (!formDetails.getSubmitted()) formAdapter.setMaxPage(rapidRequest, formDetails, page.getId());
+													
+													// send a redirect for the page (this avoids ERR_CACH_MISS issues on the back button )
+													response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion() + "&p=" + page.getId());
+													
+												} // last page check		
+												
+											} // page check
 											
 										} catch (ServerSideValidationException ex) {
 											

@@ -125,6 +125,12 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <changeValueJavaScript>checkbox</changeValueJavaScript>
 	            <refreshHtml>true</refreshHtml>	     	                 
 	        </property>
+	        
+	        <property>
+	            <key>searchFields</key>
+	            <name>Address search fields</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>	            
+	        </property>	
 	        	        	        	        	        	        
 	    </properties>
 	    
@@ -261,7 +267,8 @@ return {
 	showStreetView: this.showStreetView,
 	showScale: this.showScale,
 	markerImage: this.markerImage,
-	markerClickFunction: markerClickFunction
+	markerClickFunction: markerClickFunction,
+	searchFields: this.searchFields
 };	        
 	        ]]>
 	    </getDetailsFunction>	
