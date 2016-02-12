@@ -111,7 +111,7 @@ table.grid .rowStyle2 {
   border-width: 2px 2px 0px;
   border-style: solid;
   border-color: #666 #666 #666;
-  background-color: #F7F7F7;
+  background-color: #FFF;
 }
 
 .tabsHeader li:not(.selected):hover {
@@ -130,6 +130,7 @@ ul.tabsHeaderH li {
 
 ul.tabsHeaderH li.selected{
   top: 2px;
+  background: linear-gradient(#ddd, #fff 80%);
 }
 
 ul.tabsHeaderH li:not(.selected) {
@@ -146,7 +147,7 @@ div.tabsPanel.selected {
   border-width: 2px 2px 2px;
   border-style: solid;
   border-color: #E0E0E0;
-  background-color: #F7F7F7;
+  background-color: #FFF;
   border-top-right-radius: 4px;
   border-bottom-right-radius: 4px;
   border-bottom-left-radius: 4px;
@@ -246,7 +247,6 @@ h2 {
 button {
   color: #000;
   border: 2px solid #999;
-  background: transparent linear-gradient(#FFF, #E0E0E0);
   box-shadow: 0px 1px 3px 1px #D0D0D0;
   cursor: pointer;
   padding: 5px 18px 6px;
@@ -263,6 +263,10 @@ button:active, button:focus {
 
 button:active {
   background: transparent linear-gradient(#D4D4D4, #AAAAAA);
+}
+
+button:disabled {
+  cursor:not-allowed;
 }
 
 .button1 {
