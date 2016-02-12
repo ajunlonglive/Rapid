@@ -10,7 +10,7 @@ gareth.edwards@rapid-is.co.uk
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version. The terms require you to include
@@ -29,7 +29,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
     <control>
         
         <type>text</type>
-        <name>Text</name>	 
+        <name>Text</name>
         <image>images/text_24x24.png</image>
         
         <addToNewApplications>true</addToNewApplications>
@@ -37,48 +37,52 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
         
 	    <canUserAdd>true</canUserAdd>
 	    <canUserMove>true</canUserMove>
-	    <canUserAddPeers>true</canUserAddPeers>	    
+	    <canUserAddPeers>true</canUserAddPeers>
 	    
 	    <properties>
 	        
 	        <property>
 	            <key>name</key>
 	            <name>Name</name>
-	            <changeValueJavaScript>text</changeValueJavaScript>	            
-	        </property>	
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <helpHtml>Name that can be given to the control. Names are used to help identify controls uniquely.</helpHtml>
+	        </property>
 	                    
 	        <property>
 	            <key>text</key>
 	            <name>Text</name>
 	            <setConstructValueFunction>return "Text"</setConstructValueFunction>
 	            <changeValueJavaScript>bigtext</changeValueJavaScript>	
-	            <refreshHtml>true</refreshHtml>            
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets the contents of the text element.</helpHtml>
 	        </property>
 	        
 	        <property>
 	            <key>format</key>
 	            <name>Format</name>
 	            <setConstructValueFunction>return "N";</setConstructValueFunction>
-	            <changeValueJavaScript>select</changeValueJavaScript>	
+	            <changeValueJavaScript>select</changeValueJavaScript>
 	            <getValuesFunction>
 	                <![CDATA[
 return [{"value":"N","text":"None"},{"value":"P","text":"Paragraph"},{"value":"BF","text":"Line break"},{"value":"H1","text":"Header 1"},{"value":"H2","text":"Header 2"},{"value":"H3","text":"Header 3"},{"value":"H4","text":"Header 4"},{"value":"H5","text":"Header 5"}];
 					]]>
-	            </getValuesFunction>         
-	            <refreshHtml>true</refreshHtml>      
+	            </getValuesFunction>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Enables the text to have a different type of html applied.</helpHtml>
 	        </property>
 	        
 	        <property>
 	            <key>labelFor</key>
 	            <name>Label for</name>
-	             <changeValueJavaScript>select</changeValueJavaScript>	 
+	             <changeValueJavaScript>select</changeValueJavaScript>
 	            <getValuesFunction>
 	                 <![CDATA[
 	                // return the list of all controls on the page with the one for this action selected
 	                return "<option value=''>Please select...</option>" + getControlOptions(this.control);
 	               	]]>
 	            </getValuesFunction>
-	            <refreshHtml>true</refreshHtml>            
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Label for is used to associate a text element to any other named control on the page. This is especially useful for validation.</helpHtml>
 	        </property>
 	        
 	    </properties>

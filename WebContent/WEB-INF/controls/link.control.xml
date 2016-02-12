@@ -10,7 +10,7 @@ gareth.edwards@rapid-is.co.uk
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version. The terms require you to include
@@ -29,10 +29,10 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	<control>
 	    
 	    <type>link</type>	
-	    <name>Link</name>	   
-	    <image>images/link_24x24.png</image>    
+	    <name>Link</name>
+	    <image>images/link_24x24.png</image>
 	    
-	    <addToNewApplications>true</addToNewApplications>   
+	    <addToNewApplications>true</addToNewApplications>
 	    <noDefaultName>true</noDefaultName>
 	    
 	    <canUserAdd>true</canUserAdd>
@@ -43,16 +43,18 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	        <property>
 	            <key>name</key>
 	            <name>Name</name>
-	            <changeValueJavaScript>text</changeValueJavaScript>	            
-	        </property>	 
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <helpHtml>Name that can be given to the control. Names are used to help identify controls uniquely.</helpHtml>
+	        </property>
 	        
 	        <property>
 	            <key>text</key>
 	            <name>Text</name>
-	            <setConstructValueFunction>return this.name;</setConstructValueFunction>  
-	            <changeValueJavaScript>text</changeValueJavaScript>	  
-	            <refreshHtml>true</refreshHtml>          
-	        </property> 
+	            <setConstructValueFunction>return this.name;</setConstructValueFunction>
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets the text of the link.</helpHtml>
+	        </property>
 	           
 	        <property>
 	            <key>linkType</key>
@@ -60,9 +62,10 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <setConstructValueFunction>return "P";</setConstructValueFunction>
 	            <changeValueJavaScript>select</changeValueJavaScript>
 	            <getValuesFunction>return [["P","Page"],["U","URL"]];</getValuesFunction>
-	            <refreshHtml>true</refreshHtml>         
-	            <refreshProperties>true</refreshProperties>	  
-	        </property>  
+	            <refreshHtml>true</refreshHtml>
+	            <refreshProperties>true</refreshProperties>
+	            <helpHtml>Sets the type of link. Page link to other pages on your Rapid app and url links to any webpage placed in the text field.</helpHtml>
+	        </property>
 	        	                
 	        <property>
 	            <key>page</key>
@@ -72,26 +75,29 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	           	    <![CDATA[
 	           	    	return "<option value=\'\'>Please select...</option>" + getPageOptions(this.page, _page.id);
 	           	    ]]>
-	           	</getValuesFunction>	 	            
+	           	</getValuesFunction>
+	           	<helpHtml>Dropdown for selecting the page in your Rapid app that will be linked to.</helpHtml>
 	        </property>
 	        
 	        <property>
 	            <key>url</key>
-	            <name>URL</name>  
-	            <changeValueJavaScript>linkURL</changeValueJavaScript>	            
-	            <refreshHtml>true</refreshHtml>  
+	            <name>URL</name>
+	            <changeValueJavaScript>linkURL</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets the page that will be followed when the user clicks on the link.</helpHtml>
 	        </property>
 	        
 	        <property>
 	            <key>sessionVariables</key>
 	            <name>Page variables</name>
-	            <changeValueJavaScript>navigationSessionVariables</changeValueJavaScript>	
+	            <changeValueJavaScript>navigationSessionVariables</changeValueJavaScript>
 	        </property>
 	        
 	        <property>
 	            <key>popup</key>
 	            <name>New tab</name>
-	            <changeValueJavaScript>checkbox</changeValueJavaScript>	
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>
+	            <helpHtml>Sets the link opening in a new tab or in the same tab.</helpHtml>
 	        </property>
 	        
 	    </properties>

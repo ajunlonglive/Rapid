@@ -9,7 +9,7 @@ gareth.edwards@rapid-is.co.uk
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version. The terms require you to include
@@ -28,11 +28,11 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	<control>
 	    
 	    <type>tabsPanel</type>
-	    <name>Tab panel</name>	 
+	    <name>Tab panel</name>
 	    	    
 	    <noDefaultName>true</noDefaultName>
 	      	    
-	    <canUserInsert>true</canUserInsert>    
+	    <canUserInsert>true</canUserInsert>
 	    <canUserAddPeers>true</canUserAddPeers>
 	    
 	    <properties>
@@ -40,21 +40,24 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	        <property>
 	            <key>name</key>
 	            <name>Name</name>
-	            <changeValueJavaScript>text</changeValueJavaScript>	            
-	        </property>	
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <helpHtml>Name that can be given to the control. Names are used to help identify controls uniquely.</helpHtml>
+	        </property>
 	        
 	        <property>
 	            <key>label</key>
 	            <name>Label</name>
 	            <setConstructValueFunction>return "Tab panel"</setConstructValueFunction>
-	            <changeValueJavaScript>text</changeValueJavaScript>	   
-	            <refreshHtml>true</refreshHtml>         
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets the title of the selected tab.</helpHtml>
 	        </property>
 	        
 	        <property>
 	            <key>roles</key>
 	            <name>User roles</name>
-	            <changeValueJavaScript>roles</changeValueJavaScript>	            
+	            <changeValueJavaScript>roles</changeValueJavaScript>
+	            <helpHtml>Only allows the viewing of the page based on the type of privileges a user has.</helpHtml>
 	        </property>
 	        
 	    </properties>

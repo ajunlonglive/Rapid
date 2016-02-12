@@ -10,7 +10,7 @@ gareth.edwards@rapid-is.co.uk
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version. The terms require you to include
@@ -29,7 +29,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
     <control>
         
         <type>page</type>
-        <name>Page</name>	 
+        <name>Page</name>
 
 		<addToNewApplications>true</addToNewApplications>
 		
@@ -40,111 +40,125 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	        <property>
 	            <key>name</key>
 	            <name>Name</name>
-	            <changeValueJavaScript>pageName</changeValueJavaScript>	            
+	            <changeValueJavaScript>pageName</changeValueJavaScript>
+	            <helpHtml>Name of the page. Can be completely unique, but it makes sense to make it something meaningful.</helpHtml>
 	        </property>
 	        	            
 	        <property>
 	            <key>title</key>
 	            <name>Title</name>
-	            <changeValueJavaScript>text</changeValueJavaScript>	            
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <helpHtml>Title of the page that appears in the browser. It is important to set this as something meaningful.</helpHtml>
 	        </property>
 	        
 	        <property>
 	            <key>formPageType</key>
 	            <name>Form page type</name>
 	            <setConstructValueFunction>return "";</setConstructValueFunction>
-	            <changeValueJavaScript>formPageType</changeValueJavaScript>	        
+	            <changeValueJavaScript>formPageType</changeValueJavaScript>
 	            <getValuesFunction>
 	                <![CDATA[
 return [[0,"Normal"],[1,"Submission confirmation"],[2,"Submission error"],[3,"Saved confirmation"]];
 					]]>
-	            </getValuesFunction>   
-	            <refreshProperties>true</refreshProperties>        
+	            </getValuesFunction>
+	            <refreshProperties>true</refreshProperties>
+	            <helpHtml>Gives the page a special type on the form. Pages set to values other than normal will only appear after meeting certain conditions in validation and visibility, all in relation to the state of a user's form submission.</helpHtml>
 	        </property>
 	        
 	         <property>
 	            <key>label</key>
 	            <name>Form summary label</name>
 	            <setConstructValueFunction>return "";</setConstructValueFunction>
-	            <changeValueJavaScript>formText</changeValueJavaScript>	        
+	            <changeValueJavaScript>formText</changeValueJavaScript>
+	            <helpHtml>Sets the title of the summary at the end of a form submission.</helpHtml>
 	        </property>
 	        
 	        <property>
 	            <key>description</key>
 	            <name>Description</name>
-	            <changeValueJavaScript>bigtext</changeValueJavaScript>	            
+	            <changeValueJavaScript>bigtext</changeValueJavaScript>
+	            <helpHtml>Sets some additional notes that describes the page.</helpHtml>
 	        </property>
 	        
 	         <property>
 	            <key>simple</key>
-	            <name>Simple</name>	            	   
+	            <name>Simple</name>
 	            <setConstructValueFunction>return false;</setConstructValueFunction>
-	            <changeValueJavaScript>simple</changeValueJavaScript>      
+	            <changeValueJavaScript>simple</changeValueJavaScript>
 	            <refreshProperties>true</refreshProperties>
+	            <helpHtml>Setting a page as simple will remove a lot of the common capabilities of the page, such as validation rules. Enabling this will make the page a lot more lightweight and will run a lot faster in your app. This is most helpful when setting up a page that will be repeated commonly throughout your app as a page panel, for example a footer or header.</helpHtml>
 	        </property>
 	        
 	        <property>
 	            <key>roles</key>
 	            <name>User roles</name>
-	            <changeValueJavaScript>roles</changeValueJavaScript>	            
+	            <changeValueJavaScript>roles</changeValueJavaScript>
+	            <helpHtml>Only allows the viewing of the page based on the type of privileges a user has.</helpHtml>
 	        </property>
 	        
 	        <property>
 	            <key>sessionVariables</key>
 	            <name>Variables</name>
-	            <changeValueJavaScript>pageSessionVariables</changeValueJavaScript>	            
+	            <changeValueJavaScript>pageSessionVariables</changeValueJavaScript>
+	            <helpHtml>Enables the current page to be aware of values that are set in other pages. Particularly useful for page visibility rules.</helpHtml>
 	        </property>
 	               	        
 	        <property>
 	            <key>visibilityConditions</key>
-	            <name>Visibility conditions</name>	            	   
-	            <changeValueJavaScript>visibilityConditions</changeValueJavaScript>      
+	            <name>Visibility conditions</name>
+	            <changeValueJavaScript>visibilityConditions</changeValueJavaScript>
+	            <helpHtml>Sets the rules of the page appearing or not. A strong understanding of how your app and Rapid works will help you get the most out of visibility conditions.</helpHtml>
 	        </property>
 	        
 	        <property>
 	            <key>notes</key>
 	            <name>Notes</name>
-	            <changeValueJavaScript>bigtext</changeValueJavaScript>	            
-	        </property>	
+	            <changeValueJavaScript>bigtext</changeValueJavaScript>
+	        </property>
 	        
 	        <property>
 	            <key>gap1</key>
 	            <name>Gap 1</name>
-	            <changeValueJavaScript>gap</changeValueJavaScript>	            
-	        </property>	 
+	            <changeValueJavaScript>gap</changeValueJavaScript>
+	        </property>
 	        
 	        <property>
 	            <key>device</key>
 	            <name>Device</name>
 	            <setConstructValueFunction>return 0;</setConstructValueFunction>
-	            <changeValueJavaScript>device</changeValueJavaScript>	            
-	        </property>	 
+	            <changeValueJavaScript>device</changeValueJavaScript>
+	            <helpHtml>Emulates the views of different devices.</helpHtml>
+	        </property>
 	               
 	        <property>
 	            <key>orientation</key>
 	            <name>Orientation</name>
 	            <setConstructValueFunction>return "P";</setConstructValueFunction>
-	            <changeValueJavaScript>orientation</changeValueJavaScript>	            
+	            <changeValueJavaScript>orientation</changeValueJavaScript>
+	            <helpHtml>Sets the page orientation from portrait to landscape. Better used when emulating mobile or tablet devices.</helpHtml>
 	        </property>
 	        
 	        <property>
 	            <key>zoom</key>
 	            <name>Zoom</name>
 	            <setConstructValueFunction>return 1;</setConstructValueFunction>
-	            <changeValueJavaScript>zoom</changeValueJavaScript>	            
+	            <changeValueJavaScript>zoom</changeValueJavaScript>
+	            <helpHtml>Alters the zoom of the page. Better used when emulating mobile or tablet devices</helpHtml>
 	        </property>
 	        
 	         <property>
 	            <key>guidelines</key>
-	            <name>Show guidelines</name>	            	   
+	            <name>Show guidelines</name>
 	            <setConstructValueFunction>return true;</setConstructValueFunction>
-	            <changeValueJavaScript>guidelines</changeValueJavaScript>      
+	            <changeValueJavaScript>guidelines</changeValueJavaScript>
+	            <helpHtml>Enables a grid to become visible. Particularly useful for arranging controls on the page.</helpHtml>
 	        </property>
 	        
-	          <property>
+	         <property>
 	            <key>pageOrder</key>
-	            <name>Page order</name>	            	   
-	            <changeValueJavaScript>pageOrder</changeValueJavaScript>      
+	            <name>Page order</name>
+	            <changeValueJavaScript>pageOrder</changeValueJavaScript>
+	            <helpHtml>Dropdown list containing the order of all the pages created on your app. These can be rearranged by using the arrow icon in the dropdown menu.</helpHtml>
 	        </property>
 	        
 	    </properties>

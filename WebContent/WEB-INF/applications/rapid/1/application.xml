@@ -1,16 +1,23 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?><application><actionTypes>ajax</actionTypes><actionTypes>control</actionTypes><actionTypes>custom</actionTypes><actionTypes>dataCopy</actionTypes><actionTypes>database</actionTypes><actionTypes>event</actionTypes><actionTypes>existing</actionTypes><actionTypes>logic</actionTypes><actionTypes>navigate</actionTypes><actionTypes>rapid</actionTypes><actionTypes>validation</actionTypes><actionTypes>webservice</actionTypes><controlTypes>page</controlTypes><controlTypes>button</controlTypes><controlTypes>checkbox</controlTypes><controlTypes>dataStore</controlTypes><controlTypes>dropdown</controlTypes><controlTypes>grid</controlTypes><controlTypes>hints</controlTypes><controlTypes>image</controlTypes><controlTypes>input</controlTypes><controlTypes>link</controlTypes><controlTypes>pagePanel</controlTypes><controlTypes>panel</controlTypes><controlTypes>radiobuttons</controlTypes><controlTypes>tabGroup</controlTypes><controlTypes>table</controlTypes><controlTypes>text</controlTypes><controlTypes>tabPanel</controlTypes><controlTypes>tableCell</controlTypes><controlTypes>tableRow</controlTypes><createdDate>2014-10-08T14:53:36.893+01:00</createdDate><description>This is the Rapid application and contains all of the pages which the designer and other screens use as dialogues</description><id>rapid</id><modifiedBy>admin</modifiedBy><modifiedDate>2016-01-10T07:02:53.313Z</modifiedDate><name>Rapid</name><pageBackupsMaxSize>5</pageBackupsMaxSize><pageOrders/><securityAdapterType>rapid</securityAdapterType><showActionIds>true</showActionIds><showControlIds>true</showControlIds><startPageId>P0</startPageId><status>0</status><statusBarColour>#aaaaaa</statusBarColour><statusBarHighlightColour>#999999</statusBarHighlightColour><statusBarIconColour>white</statusBarIconColour><statusBarTextColour>#ffffff</statusBarTextColour><styles>@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,600,700);
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?><application><actionTypes>ajax</actionTypes><actionTypes>control</actionTypes><actionTypes>custom</actionTypes><actionTypes>dataCopy</actionTypes><actionTypes>database</actionTypes><actionTypes>event</actionTypes><actionTypes>existing</actionTypes><actionTypes>logic</actionTypes><actionTypes>navigate</actionTypes><actionTypes>rapid</actionTypes><actionTypes>validation</actionTypes><actionTypes>webservice</actionTypes><controlTypes>page</controlTypes><controlTypes>button</controlTypes><controlTypes>calendar</controlTypes><controlTypes>chart</controlTypes><controlTypes>checkbox</controlTypes><controlTypes>dataStore</controlTypes><controlTypes>date</controlTypes><controlTypes>dropdown</controlTypes><controlTypes>flowLayout</controlTypes><controlTypes>gallery</controlTypes><controlTypes>glyph</controlTypes><controlTypes>grid</controlTypes><controlTypes>hiddenvalue</controlTypes><controlTypes>hints</controlTypes><controlTypes>image</controlTypes><controlTypes>input</controlTypes><controlTypes>link</controlTypes><controlTypes>list</controlTypes><controlTypes>map</controlTypes><controlTypes>pagePanel</controlTypes><controlTypes>panel</controlTypes><controlTypes>radiobuttons</controlTypes><controlTypes>slidePanel</controlTypes><controlTypes>tabGroup</controlTypes><controlTypes>table</controlTypes><controlTypes>text</controlTypes><controlTypes>flowLayoutCell</controlTypes><controlTypes>slidePanelPane</controlTypes><controlTypes>tabPanel</controlTypes><controlTypes>tableCell</controlTypes><controlTypes>tableRow</controlTypes><createdDate>2014-10-08T14:53:36.893+01:00</createdDate><description>This is the Rapid application and contains all of the pages which the designer and other screens use as dialogues</description><formAdapterType></formAdapterType><id>rapid</id><modifiedBy>admin</modifiedBy><modifiedDate>2016-02-10T09:53:03.488Z</modifiedDate><name>Rapid</name><pageBackupsMaxSize>5</pageBackupsMaxSize><pageOrders/><securityAdapterType>rapid</securityAdapterType><showActionIds>false</showActionIds><showControlIds>true</showControlIds><startPageId>P0</startPageId><status>0</status><statusBarColour>#aaaaaa</statusBarColour><statusBarHighlightColour>#999999</statusBarHighlightColour><statusBarIconColour>white</statusBarIconColour><statusBarTextColour>#ffffff</statusBarTextColour><styles>@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,600,700);
 
 body { font-family: 'Open Sans', Arial, Helvetica, sans-serif; font-size: 14px; margin:0; }
 table { font-family: 'Open Sans', Arial, Helvetica, sans-serif; font-size: 14px; margin:0; }
 
+.glossyTitle {
+  
+}
+
 .glossyTitle tr:first-child td {
-  font-weight: bold;
-  background-color: red;
+  background-color: #666;
   color: white;
   padding: 10px;
   text-align: center;
-  background: red url(highlight_red_1x44.png) 50% 50% repeat-x;
-  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+  background: transparent linear-gradient(#666, #494949);
+  height: 20px;
+}
+
+.glossyTitle tr:last-child td {
+  padding-bottom: 5px;
 }
 
 .normalTitle tr:first-child td {
@@ -44,8 +51,8 @@ table { font-family: 'Open Sans', Arial, Helvetica, sans-serif; font-size: 14px;
 /* these make buttons in grid rows a little smaller */
 .grid tr button { font-size: 11px; }
 
-/* makes all text in the first column of a table align to the top */
-table.table tr td:first-child {	vertical-align: top; }
+/* makes all text in the first column of a table align to the top 
+table.table tr td:first-child {	vertical-align: top; }*/
 
 /* make the dialogue cover white */
 .dialogueCover { background-color: white; }
@@ -71,25 +78,93 @@ textarea {
   box-sizing: order-box;
 } 
 
-button {
-  padding: 3px 10px;
+.tabsHeader li {
+  color: #FFF;
 }
 
-.tabsHeader li {
-  color: black;
+button {
+  padding: 5px 8px 6px;
+}
+
+select {
+  padding: 2px 10px 2px 2px;
+  border: 2px solid #333;
+}
+
+table.grid tr:not(:first-child) td {
+  padding-right: 15px;
+}
+
+table.grid tr:last-child td {
+  padding-bottom: 5px;
+}
+
+.tabsHeader li:not(.selected) {
+  background: transparent linear-gradient(#666, #494949);
 }
 
 ul.tabsHeaderH li {
-  background: rgb(214,214,214); /* Old browsers */
-  background: -moz-linear-gradient(top, rgba(214,214,214,1) 0%, rgba(192,192,192,1) 100%);
-  background: -webkit-linear-gradient(top, rgba(214,214,214,1) 0%,rgba(192,192,192,1) 100%);
-  background: linear-gradient(to bottom, rgba(214,214,214,1) 0%,rgba(192,192,192,1) 100%); 
-  border-color: #777;
+  top: 4px;
+  font-size: 14px;
+  font-weight: normal;
 }
 
-ul.tabsHeaderH li.selected{
-  background: rgb(229,229,229); /* Old browsers */
-  background: -moz-linear-gradient(top, rgba(229,229,229,1) 0%, rgba(255,255,255,1) 100%); 
-  background: -webkit-linear-gradient(top, rgba(229,229,229,1) 0%,rgba(255,255,255,1) 100%);
-  background: linear-gradient(to bottom, rgba(229,229,229,1) 0%,rgba(255,255,255,1) 100%); 
-}</styles><title>Rapid Admin</title><version>1</version><XMLVersion>1</XMLVersion></application>
+ul.tabsHeaderH li:not(.selected) {
+  top: 2px;
+}
+
+div.tabsPanel {
+  margin-bottom: 15px;
+}
+
+table.grid .rowStyle1 {
+  background: #FFF;
+}
+
+.dialogue {
+  border: none;
+  box-shadow: none;
+}
+
+.button {
+  border: 2px solid #333;
+  color: #FFF;
+  background: transparent linear-gradient(#666, #494949);
+}
+
+.button:hover {
+  border: 2px solid #000;
+  background: transparent linear-gradient(#B80101, #500000);
+}
+
+.button:active {
+  background: transparent linear-gradient(#292929, #121212);
+}
+
+.button:disabled {
+  background: linear-gradient(to bottom,  #cccccc 0%,#bbbbbb 20%,#a9a9a9 100%);
+}
+
+#rapid_P0_C651_ {
+  position: absolute;
+  cursor: pointer;
+}
+
+#rapid_P0_C653_ {
+  background-color: #ccc;
+  font-size: 36px;
+  font-weight: bold;
+  min-width: 940px;
+  padding: 5px 25px 35px;
+  background: linear-gradient(to bottom, #595959 0%,#4c4c4c 10%,#383838 25%,#3d3d3d 37%,#3f3f3f 50%,#262626 51%,#4c4c4c 83%,#5b5b5b 100%);
+  color: white;
+  margin-top: 0px;
+}
+
+#rapid_P0_C654_ {
+  height: 0px;
+}
+
+h2 {
+  color: #FFF;
+}</styles><themeType>rapid</themeType><title>Rapid Admin</title><version>1</version><XMLVersion>1</XMLVersion></application>

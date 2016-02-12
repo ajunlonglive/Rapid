@@ -83,17 +83,16 @@ function loadApps() {
 }	
 
 //JQuery is ready! 
-$(document).ready( function() { 
+$(document).ready( function() {
 	loadApps();
 });
 	
 	</script>
 	
-	
 </head>
 <body>
 <div class="image">
-	<a href="http://www.rapid-is.co.uk"><img title="Rapid Information Systems" src="images/RapidLogo_200x134.png" /></a>	
+	<a href="http://www.rapid-is.co.uk"><img title="Rapid Information Systems" src="images/RapidLogo_60x40.png" /></a>	
 </div>
 
 <div class="title">

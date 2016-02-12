@@ -28,9 +28,9 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
 	<control>
 	    
-	    <type>button</type>	 
-	    <name>Button</name>	   
-	    <image>images/button_24x24.png</image>   
+	    <type>button</type>
+	    <name>Button</name>
+	    <image>images/button_24x24.png</image>
 	    
 	    <addToNewApplications>true</addToNewApplications>
 	         
@@ -43,22 +43,24 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	        <property>
 	            <key>name</key>
 	            <name>Name</name>
-	            <changeValueJavaScript>text</changeValueJavaScript>	            
-	        </property>	 
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <helpHtml>Name that can be given to the control. Names are used to help identify controls uniquely.</helpHtml>
+	        </property>
 	                   
 	        <property>
 	            <key>label</key>
 	            <name>Label</name>
-	            <setConstructValueFunction>return "button";</setConstructValueFunction>  
-	            <changeValueJavaScript>text</changeValueJavaScript>	    
-	            <refreshHtml>true</refreshHtml> 	                 
+	            <setConstructValueFunction>return "button";</setConstructValueFunction>
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Text to appear on the button.</helpHtml>
 	        </property>
 	        
 	        <property>
 	            <key>title</key>
 	            <name>Title</name>
-	            <changeValueJavaScript>text</changeValueJavaScript>	            
-	        </property>	 
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	        </property>
 	        
 	        <property>
 	            <key>glyphCode</key>
@@ -67,10 +69,10 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	                <![CDATA[
 	                return ""
 	                ]]>
-	            </setConstructValueFunction>  
+	            </setConstructValueFunction>
 	            <changeValueJavaScript>glyphCode</changeValueJavaScript>
-	            <refreshHtml>true</refreshHtml>	 
-	            <refreshProperties>true</refreshProperties>	                   
+	            <refreshHtml>true</refreshHtml>
+	            <refreshProperties>true</refreshProperties>
 	        </property>
 	        
 	        <property>
@@ -82,9 +84,10 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	                <![CDATA[
 return ["left","right","top","bottom"];
 					]]>
-	            </getValuesFunction>          
-	            <refreshHtml>true</refreshHtml>     
-	        </property> 
+	            </getValuesFunction>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets the position of the glyph on the button.</helpHtml>
+	        </property>
 	           
 	        <property>
 	            <key>glyphBackground</key>
@@ -95,9 +98,9 @@ return ["left","right","top","bottom"];
 	                <![CDATA[
 return ["none","circle","circle-o","square","square-o"];
 					]]>
-	            </getValuesFunction>    
-	            <refreshHtml>true</refreshHtml>           
-	        </property> 
+	            </getValuesFunction>
+	            <refreshHtml>true</refreshHtml>
+	        </property>
 	        
 	    </properties>
 	    

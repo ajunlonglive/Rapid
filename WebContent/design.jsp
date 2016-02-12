@@ -126,10 +126,11 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 															
 			<div id="controlPanelInner">
 			
-				<div id="controlPanelPin"><img src="images/triangleLeft_8x8.png" title="unpin panel" /></div>
+				<div id="controlPanelPin"><img src="images/triangleLeftWhite_8x8.png" title="unpin panel" /></div>
 																
 				<div class="buttons">					
-					<button id="appAdmin" class="buttonLeft" title="Open the Rapid Admin screen">Rapid Admin</button><button id="appAdminNewTab" class="buttonRight buttonImage" title="Open the Rapid Admin screen in a new tab"><img src="images/triangleRight_8x8.png" /></button>
+					<button id="appAdmin" class="buttonLeft" title="Open the Rapid Admin screen">Rapid Admin</button>
+					<button id="appAdminNewTab" class="buttonRight buttonImage" title="Open the Rapid Admin screen in a new tab"><img src="images/triangleRightWhite_8x8.png" /></button>
 				</div>
 				
 				<h2>Application<img id="helpApplication" class="headerHelp" src="images/help_16x16.png" /></h2>
@@ -142,7 +143,7 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 					<!-- Application versions are added here as options the designer loads -->
 				</select>					
 				
-				<h2><img id="pagePrev" class="pageNav pageNavDisabled" src="images/triangleLeft_8x8.png" title="previous page" />Page<img id="pageNext" class="pageNav pageNavDisabled" src="images/triangleRight_8x8.png" title="next page" /><img id="helpPage" class="headerHelp" src="images/help_16x16.png" /></h2>
+				<h2><img id="pagePrev" class="pageNav pageNavDisabled" src="images/triangleLeftWhite_8x8.png" title="previous page" />Page<img id="pageNext" class="pageNav pageNavDisabled" src="images/triangleRightWhite_8x8.png" title="next page" /><img id="helpPage" class="headerHelp" src="images/help_16x16.png" /></h2>
 				<select id="pageSelect">
 					<!-- Pages are added here as options the designer loads -->
 				</select>
@@ -158,7 +159,7 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 				<div class="buttons">
 					<button id="pageNew" class="buttonLeft" title="Create a new page for this application">new</button>
 					<button id="pageSave" class="" title="Save this page">save</button>
-					<button id="pageView" class="" title="View this page in the application">view</button><button id="pageViewNewTab" class="buttonRight buttonImage"  title="View this page in a new tab"><img src="images/triangleRight_8x8.png" /></button>
+					<button id="pageView" class="" title="View this page in the application">view</button><button id="pageViewNewTab" class="buttonRight buttonImage"  title="View this page in a new tab"><img src="images/triangleRightWhite_8x8.png" /></button>
 				</div>	
 						
 				<div class="buttons">
@@ -168,7 +169,7 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 								
 				<div id="controlControls" style="margin-top:0;margin-bottom:-3px;">
 					<h2 id="controlsHeader">Controls
-						<img class="headerToggle" src="images/triangleUp_8x8.png" />
+						<img class="headerToggle" src="images/triangleUpWhite_8x8.png" />
 						<img id="helpControls" class="headerHelp" src="images/help_16x16.png" />
 					</h2>
 					
@@ -178,7 +179,7 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 				</div>	
 				
 				<h2 id="controlsMap" style="margin-top:5px;">Page controls
-					<img class="headerToggle" src="images/triangleUp_8x8.png" />
+					<img class="headerToggle" src="images/triangleUpWhite_8x8.png" />
 					<img id="helpMap" class="headerHelp" src="images/help_16x16.png" />
 				</h2>
 				
@@ -203,7 +204,7 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 																					
 			<div id="propertiesPanelInner">
 			
-				<div id="propertiesPanelPin"><img src="images/triangleRight_8x8.png" title="hide panel" /></div>
+				<div id="propertiesPanelPin"><img src="images/triangleRightWhite_8x8.png" title="hide panel" /></div>
 										
 				<div class="untilsPanelDiv">
 							
@@ -229,7 +230,7 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 					</div>								
 				</div>		
 								
-				<h2 id="propertiesHeader">Properties  <img id='helpProperties' class='headerHelp' src='images/help_16x16.png' /><img class='headerToggle' src='images/triangleUp_8x8.png' /></h2>
+				<h2 id="propertiesHeader">Properties  <img id='helpProperties' class='headerHelp' src='images/help_16x16.png' /><img class='headerToggle' src='images/triangleUpWhite_8x8.png' /></h2>
 				<div>
 					<div class="propertiesPanelDiv" data-dialogueId="propertiesPanel"></div>			
 					<div class="validationPanelDiv" data-dialogueId="validationPanel"></div>

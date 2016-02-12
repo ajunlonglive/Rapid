@@ -1,5 +1,13 @@
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Open Sans'), local('OpenSans'), url(https://fonts.gstatic.com/s/opensans/v13/cJZKeOuBrn4kERxqtaUH3VtXRa8TVwTICgirnJhmVJw.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+
 body {
-	font-family: arial;
+	font-family: 'Open Sans', Arial;
 	font-size: 12px;
 	padding: 0px;
 	margin: 0px;	
@@ -13,6 +21,7 @@ body {
 
 optgroup {
 	font-style: normal;
+	color: #000;
 }
 
 hr {
@@ -85,7 +94,6 @@ hr {
 }
 
 #controlPanel {
-	font-family: arial;
 	position: absolute;
 	left: 0px;
 	top: 0px;
@@ -112,7 +120,7 @@ hr {
 	-webkit-user-drag: none;
 	-khtml-user-drag: none;
 	-moz-user-drag: -moz-none;
-	-ms-user-drag: none;	
+	-ms-user-drag: none;
 }
 
 #controlPanelSize {
@@ -136,6 +144,7 @@ hr {
 	font-size: 15px;
 	border-top: 1px solid #777;
 	text-transform: uppercase;
+	color: #FFF;
 }
 
 #controlPanel select {
@@ -199,10 +208,10 @@ li.design-control {
 	width: 25px;
 	height: 25px;
 	float: left;	
-	margin-left: 5px;
+	margin-right: 5px;
 	margin-bottom: 5px;
 	padding: 2px 3px;
-	border: 1px solid #191919;	
+	border: 2px solid #191919;	
 	color: #191919;	
 	font-size: 12px;		
 	text-align: center;	
@@ -336,7 +345,7 @@ img.conflictimgage {
 	height: 90px;
 	margin-left: -20px;
 	margin: 2px;
-	font-family: Arial;
+	font-family: 'Open Sans', Arial;
 	font-size: 12px;
 	font-weight: bold;	
 	border-top: 1px solid #777;
@@ -352,7 +361,6 @@ img.conflictimgage {
 }
 
 div#propertiesPanel {
-	font-family: arial;
 	position: absolute;
 	right: 0px;
 	top: 0px;
@@ -361,8 +369,6 @@ div#propertiesPanel {
 	border-left: 1px solid #191919;
 	background-color: #F5F5F5;
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#E6E6E6', endColorstr='#F5F5F5');
-	background: -webkit-gradient(linear, left top, left bottom, from(#E6E6E6), to(#F5F5F5));
-	background: -moz-linear-gradient(top, #E6E6E6, #F5F5F5);	
 	overflow: hidden;
 	outline: none;
 	padding: 0px 10px 20px 10px;
@@ -419,6 +425,8 @@ div#propertiesPanel h2 {
 	font-size: 15px;
 	border-top: 1px solid #777;
 	text-transform: uppercase;
+	cursor: pointer;
+	color: #FFF;
 }
 
 .propertiesPanelDiv h3 {
@@ -428,7 +436,7 @@ div#propertiesPanel h2 {
 }
 
 table.propertiesPanelTable {
-	font-family: arial;
+	font-family: 'Open Sans', arial;
 }
 
 table.propertiesPanelTable td.conflict {
@@ -475,7 +483,7 @@ table.propertiesPanelTable td.conflict {
 /* properties styles are in their own properties.css file for reuse with Rapid Admin */
 
 table.stylesPanelTable  {
-	font-family: arial;
+	font-family: 'Open Sans', arial;
 	width: 100%;
 	background-color: white;
 	border-left: 1px solid gray;
@@ -578,45 +586,41 @@ div.button {
 }
 
 .buttons button {
+	color: #FFF;
 	height:22px;	
 	margin-top: 5px;
 	margin-left: -3px;
 	margin-right: -4px;
-	padding: 1px 8px 2px 8px;	
-	border: 1px solid black;
 	vertical-align: middle;
-	font-family: arial;
+	padding: 0px 8px 2px 8px;
+	border: 2px solid #333;
+	border-radius: 0px;
+	font-family: 'Open Sans', arial;
 	font-size: 12px; 
 	background-color: #eee;
 	background: #eeeeee;
-	background: -moz-linear-gradient(top,  #eeeeee 0%, #eeeeee 10%, #cccccc 100%);
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#eeeeee), color-stop(10%,#eeeeee), color-stop(100%,#cccccc));
-	background: -webkit-linear-gradient(top,  #eeeeee 0%,#eeeeee 10%,#cccccc 100%);
-	background: -o-linear-gradient(top,  #eeeeee 0%,#eeeeee 10%,#cccccc 100%);
-	background: -ms-linear-gradient(top,  #eeeeee 0%,#eeeeee 10%,#cccccc 100%);	
+	background: -moz-linear-gradient(#666, #494949);
+	background: -webkit-linear-gradient(#666, #494949);
+	background: -o-linear-gradient(#666, #494949);
+	background: -mslinear-gradient(#666, #494949);
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eeeeee', endColorstr='#cccccc',GradientType=0 );
 	-webkit-box-shadow: 0 -1px 1px rgba(0,0,0,0.2) inset,0 1px 1px rgba(255,255,255,0.8) inset,1px 2px 2px -1px rgba(0,0,0,0.3);
 	-moz-box-shadow: 0 -1px 1px rgba(0,0,0,0.2) inset,0 1px 1px rgba(255,255,255,0.8) inset,1px 2px 2px -1px rgba(0,0,0,0.3);
 	box-shadow: 0 -1px 1px rgba(0,0,0,0.2) inset,0 1px 1px rgba(255,255,255,0.8) inset,1px 2px 2px -1px rgba(0,0,0,0.3);
-	background: linear-gradient(to bottom,  #eeeeee 0%,#eeeeee 10%,#cccccc 100%);
+	background: transparent linear-gradient(#666, #494949);
 }
 
 .buttons button:hover {
-	background-color: #ddd;
-	background: #dddddd;
-	background: -moz-linear-gradient(top,  #dddddd 0%, #cccccc 20%, #cccccc 100%);
+	background-color: #500000;
+	background: #B80101;
+	background: -moz-linear-gradient(#B80101, #500000);
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#dddddd), color-stop(20%,#cccccc), color-stop(100%,#cccccc));
-	background: -webkit-linear-gradient(top,  #dddddd 0%,#cccccc 20%,#cccccc 100%);
-	background: -o-linear-gradient(top,  #dddddd 0%,#cccccc 20%,#cccccc 100%);
-	background: -ms-linear-gradient(top,  #dddddd 0%,#cccccc 20%,#cccccc 100%);	
+	background: -webkit-linear-gradient(#B80101, #500000);
+	background: -o-linear-gradient(#B80101, #500000);
+	background: -ms-linear-gradient(#B80101, #500000);
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dddddd', endColorstr='#bbbbbb',GradientType=0 );
-	background: -webkit-linear-gradient(top,  #dddddd 0%,#cccccc 20%,#cccccc 100%);
-	background: linear-gradient(to bottom,  #dddddd 0%,#cccccc 20%,#cccccc 100%);
-}
-
-.buttons button:focus {
-  outline:none;
-  box-shadow: inset 0px 0px 5px 2px #fff;
+	background: -webkit-linear-gradient(#B80101, #500000);
+	background: transparent linear-gradient(#B80101, #500000);
 }
 
 .buttons button:disabled {
@@ -629,7 +633,8 @@ div.button {
 	background: -ms-linear-gradient(top,  #cccccc 0%,#bbbbbb 20%,#a9a9a9 100%);	
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cccccc', endColorstr='#a9a9a9',GradientType=0 );
 	background: linear-gradient(to bottom,  #cccccc 0%,#bbbbbb 20%,#a9a9a9 100%);
-} 
+	color: #6A6A6A;
+}
 
 .buttons .buttonLeft {
 	-moz-border-radius-bottomleft: 1000px;
@@ -658,10 +663,13 @@ div.button {
 #appAdmin {
 	padding-left:20px;
 	padding-right:5px;
+	height:30px;
 }
 
 #appAdminNewTab {
 	margin-top: 0;
+	margin-left: -2px;
+	height:30px;
 }
 
 #pageNew {
@@ -675,11 +683,11 @@ div.button {
 #pageView {
 	padding-left: 8px;
     padding-right: 5px;
-    width: 38px;	
+    width: 42px;	
 }
 
 #pageViewNewTab {
-	width:20px;
+	width: 20px;
 }
 
 
@@ -945,4 +953,204 @@ Tip styles
 #tipDivButtons button:last-child {
 	border-top-right-radius: 5px;
 	border-bottom-right-radius: 5px;
+}
+
+/* Test CSS */
+
+select {
+  padding: 2px 10px 2px 2px;
+  border-radius: 4px;
+  border: 2px solid #333;
+  background: transparent linear-gradient(#666, #494949);
+  display: inline-block;
+  cursor: pointer;
+  outline: none;
+  color: #FFF;
+  font-family: 'Open Sans', 'Oxygen', 'PT Sans', Arial , sans-serif;
+}
+
+select option {
+  color: #000;
+}
+
+.buttons button:disabled {
+  color: #6A6A6A;
+}
+
+.buttons button:disabled:hover {
+  color: #6A6A6A;
+}
+
+#controlPanel, #propertiesPanel, table.propertiesPanelTable, table.stylesPanelTable, .propertyDialogue {
+  font-family: 'Open Sans';
+}
+
+#propertiesPanel #propertiesPanelInner .untilsPanelDiv .buttons button {
+  padding: 1px 8px 2px 8px;
+}
+
+#propertiesPanel #propertiesPanelInner .untilsPanelDiv .buttons #copy, #propertiesPanel #propertiesPanelInner .untilsPanelDiv .buttons #paste {
+  padding: 0px 8px 2px 8px;
+}
+
+.dialogueTable select {
+  padding: 0px 10px 0px 2px;
+}
+
+button {
+  border: 2px solid #333;
+  color: #FFF;
+  background: transparent linear-gradient(#666, #494949);
+  font-family: 'Open Sans';
+  padding: 0px 8px 2px 8px;
+  outline: none;
+}
+
+button:hover {
+  background: transparent linear-gradient(#B80101, #500000);
+}
+
+button:disabled {
+  color: #6A6A6A;
+}
+
+.normalInputs input:not([type]) {
+  font-family: 'Open Sans';
+}
+
+input[type=checkbox] {
+  width: 10px !important;
+  height: 10px !important;
+  vertical-align: middle;
+  outline: none;
+  cursor: pointer;
+}
+
+input[type=checkbox]:before {
+  width: 10px !important;
+  height: 10px !important;
+  display: block;
+  content: '';
+  background: #FFF;
+  border-radius: 4px;
+  margin: 0px !important;
+  cursor: pointer;
+  border: 2px solid #999;
+  background: transparent linear-gradient(#FFF, #E0E0E0);
+}
+
+input:hover[type=checkbox]:before {
+  border: 2px solid #6F6F6F;
+  background: transparent linear-gradient(#EBEBEB, #999);
+}
+
+input:active[type=checkbox]:before {
+  border-color: #999;
+}
+
+input[type=checkbox]:checked:before {
+  width: 10px;
+  height: 10px;
+  display: block;
+  content: '';
+  margin: 0px;
+  background-color: #FFF;
+  border: 2px solid #600;
+  background: transparent linear-gradient(#EBEBEB, #BABABA);
+}
+
+input:hover[type=checkbox]:checked:before {
+  background: transparent linear-gradient(#EBEBEB, #999);
+}
+
+input[type=checkbox]:checked:after {
+  content: '';
+  position: absolute;
+  margin-top: -12.5px !important;
+  margin-left: 4px !important;
+  border-radius: 2px;
+  border-right: 3px solid #4D0000;
+  border-bottom: 3px solid #4D0000;
+  width: 3px !important;
+  height: 7px !important;
+  transform: rotate(45deg);
+}
+
+li.design-control {
+  background-color: #666;
+  background: transparent linear-gradient(#666, #494949);
+}
+
+li.design-control:hover {
+  background: transparent linear-gradient(#B80101, #500000);
+}
+
+li.design-control:active {
+  background: transparent linear-gradient(#292929, #121212)
+}
+
+h2, #controlPanelVersion, #controlsList h3 {
+  color: white;
+}
+
+table.propertiesPanelTable, table.stylesPanelTable {
+  text-align: left;
+  border: 1px solid black;
+  border-radius: 3px;
+}
+
+.propertyDialogue {
+  border-radius: 3px 0px 3px 3px;
+  box-shadow: -1px 0px 5px 1px #9D9D9D;
+}
+
+#controlPanel, #propertiesPanel {
+  background: linear-gradient(to bottom, rgba(122,122,122,1) 0%,rgba(63,63,63,1) 54%,rgba(51,51,51,1) 58%,rgba(58,58,58,1) 60%,rgba(76,76,76,1) 79%,rgba(56,56,56,1) 92%,rgba(27,27,27,1) 100%);
+}
+
+.buttons button:active {
+  background: transparent linear-gradient(#292929, #121212);
+}
+
+.buttons button:disabled {
+  background: linear-gradient(to bottom, #cccccc 0%,#bbbbbb 20%,#a9a9a9 100%);
+}
+
+.buttons button:disabled:hover {
+  cursor: auto;
+  background-color: #bbb;
+  background: #cccccc;
+  background: -moz-linear-gradient(top,  #cccccc 0%, #bbbbbb 20%, #a9a9a9 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#cccccc), color-stop(20%,#bbbbbb), color-stop(100%,#a9a9a9));
+  background: -webkit-linear-gradient(top,  #cccccc 0%,#bbbbbb 20%,#a9a9a9 100%);
+  background: -o-linear-gradient(top,  #cccccc 0%,#bbbbbb 20%,#a9a9a9 100%);
+  background: -ms-linear-gradient(top,  #cccccc 0%,#bbbbbb 20%,#a9a9a9 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cccccc', endColorstr='#a9a9a9',GradientType=0 );
+  background: linear-gradient(to bottom,  #cccccc 0%,#bbbbbb 20%,#a9a9a9 100%);
+}
+
+button:disabled:hover {
+  cursor: auto;
+  background-color: #bbb;
+  background: #cccccc;
+  background: -moz-linear-gradient(top,  #cccccc 0%, #bbbbbb 20%, #a9a9a9 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#cccccc), color-stop(20%,#bbbbbb), color-stop(100%,#a9a9a9));
+  background: -webkit-linear-gradient(top,  #cccccc 0%,#bbbbbb 20%,#a9a9a9 100%);
+  background: -o-linear-gradient(top,  #cccccc 0%,#bbbbbb 20%,#a9a9a9 100%);
+  background: -ms-linear-gradient(top,  #cccccc 0%,#bbbbbb 20%,#a9a9a9 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cccccc', endColorstr='#a9a9a9',GradientType=0 );
+  background: linear-gradient(to bottom,  #cccccc 0%,#bbbbbb 20%,#a9a9a9 100%);
+}
+
+select:hover {
+	background-color: #500000;
+	background: #B80101;
+	background: -moz-linear-gradient(#B80101, #500000);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#dddddd), color-stop(20%,#cccccc), color-stop(100%,#cccccc));
+	background: -webkit-linear-gradient(#B80101, #500000);
+	background: -o-linear-gradient(#B80101, #500000);
+	background: -ms-linear-gradient(#B80101, #500000);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dddddd', endColorstr='#bbbbbb',GradientType=0 );
+	background: -webkit-linear-gradient(#B80101, #500000);
+	background: transparent linear-gradient(#B80101, #500000);
 }

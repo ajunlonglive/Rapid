@@ -10,7 +10,7 @@ gareth.edwards@rapid-is.co.uk
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version. The terms require you to include
@@ -28,8 +28,8 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
 	<control>
 	    
-	    <type>gallery</type>	
-	    <name>Gallery</name>	   
+	    <type>gallery</type>
+	    <name>Gallery</name>
 	    <image>images/gallery_24x24.png</image>
 	    	            
 	    <canUserAdd>true</canUserAdd>
@@ -41,43 +41,45 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	        <property>
 	            <key>name</key>
 	            <name>Name</name>
-	            <changeValueJavaScript>text</changeValueJavaScript>	            
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <helpHtml>Name that can be given to the control. Names are used to help identify controls uniquely.</helpHtml>
 	        </property>
 	        	            
 	        <property>
 	            <key>images</key>
 	            <name>Images</name>
-	            <setConstructValueFunction>return [{url:'images/RapidLogo_60x40.png'},{url:'images/RapidLogo_60x40.png'}]</setConstructValueFunction>  
+	            <setConstructValueFunction>return [{url:'images/RapidLogo_60x40.png'},{url:'images/RapidLogo_60x40.png'}]</setConstructValueFunction>
 	            <changeValueJavaScript>galleryImages</changeValueJavaScript>
-	            <refreshHtml>true</refreshHtml>	     	                 
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets the images to be used. Each image can have its own caption. By default two Rapid logos are placed in as an example of use.</helpHtml>
 	        </property>
 	        
 	        <property>
 	            <key>emptyText</key>
 	            <name>Empty text</name>
-	            <setConstructValueFunction>return "No images";</setConstructValueFunction>  
+	            <setConstructValueFunction>return "No images";</setConstructValueFunction>
 	            <changeValueJavaScript>text</changeValueJavaScript>
-	            <refreshHtml>true</refreshHtml>	     	                 
+	            <refreshHtml>true</refreshHtml>
 	        </property>
 	        
 	        <property>
 	            <key>onImageClick</key>
 	            <name>On image click</name>
-	            <setConstructValueFunction>return "";</setConstructValueFunction>  
+	            <setConstructValueFunction>return "";</setConstructValueFunction>
 	            <changeValueJavaScript>select</changeValueJavaScript>
 	            <getValuesFunction>
 	                <![CDATA[
 						return [["nothing","Do nothing"],["","Prompt to remove image"],["caption","Show image caption"]];
 					]]>
-	            </getValuesFunction>       	                 
+	            </getValuesFunction>
 	        </property>
 	        
 	         <property>
 	            <key>gotCaptions</key>
 	            <name>Got captions</name>
-	            <visible>false</visible>    	    
-	            <setConstructValueFunction>return false;</setConstructValueFunction>  
-	            <changeValueJavaScript>checkbox</changeValueJavaScript>	                         
+	            <visible>false</visible>
+	            <setConstructValueFunction>return false;</setConstructValueFunction>
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>
 	        </property>
 	        
 	    </properties>

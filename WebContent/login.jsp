@@ -32,19 +32,17 @@ String message = (String) session.getAttribute("message");
 %>
 <html>
 <head>
-	
 	<title>Rapid - Log in</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 	<link rel="icon" href="favicon.ico"></link>
 	<link rel="stylesheet" type="text/css" href="styles/index.css"></link>
-	
 </head>
 
 <body onload="document.login.userName.focus();">
 
 <div class="image">
-	<a href="http://www.rapid-is.co.uk"><img title="Rapid Information Systems" src="images/RapidLogo_200x134.png" /></a>	
+	<a href="http://www.rapid-is.co.uk"><img title="Rapid Information Systems" src="images/RapidLogo_60x40.png" /></a>	
 </div>
 
 <div class="title">
