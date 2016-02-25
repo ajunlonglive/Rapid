@@ -66,7 +66,7 @@ public abstract class FormAdapter {
 		// instance variables
 		private final String _id, _password;
 		private String _maxPageId, _submittedDateTime, _submitMessage, _errorMessage;
-		boolean _saved, _complete, _error, _showSubmitPage;
+		boolean _saved, _complete, _showSubmitPage;
 		
 		// properties
 		
@@ -100,13 +100,12 @@ public abstract class FormAdapter {
 		// whether to show the submission page (not allowed for resuming submitted forms)
 		public boolean getShowSubmitPage() { return _showSubmitPage; }
 		public void setShowSubmitPage(boolean showSubmitPage) { _showSubmitPage = showSubmitPage; } 
-		
-		// whether there was an error on recent submission
-		public boolean getError() { return _error; }
-		public void setError(boolean error) { _error = error; }
+				
 		// the recent submission error
 		public String getErrorMessage() { return _errorMessage; }
 		public void setErrorMessage(String errorMessage) { _errorMessage = errorMessage; }
+		// a helper method for the above
+		public boolean getError() { return _errorMessage == null ? false : true; }
 						
 		// constructors		
 		
@@ -407,14 +406,14 @@ public abstract class FormAdapter {
 			// log
 			_logger.debug("No form details of " + formKey + " for user " + rapidRequest.getUserName() + " from " + rapidRequest.getRequest().getRemoteAddr());
 			// get the application
-			Application application = rapidRequest.getApplication();
+			Application application = rapidRequest.getApplication();			
 			// assume no start page
 			String startPageId = ""; 
 			// if there are pages
 			if (application.getPages() != null) {
 				// get the id of the first one
 				if (application.getPages().size() > 0) startPageId = application.getPages().getSortedPages().get(0).getId();
-			}
+			}						
 			// get the requested Page
 			Page requestPage = rapidRequest.getPage();
 			// get the request page id
@@ -565,8 +564,6 @@ public abstract class FormAdapter {
 			// retain that this form was submitted
 			addSubmittedForm(rapidRequest, formDetails.getId());
 		} catch (Exception ex) {
-			// mark user form as error
-			formDetails.setError(true);
 			// retain the error message in the details
 			formDetails.setErrorMessage(ex.getMessage());
 			// rethrow
@@ -924,7 +921,7 @@ public abstract class FormAdapter {
 											// convert to int
 											int max = Integer.parseInt(maxLength);
 											// check length
-											if (value.length() >  max) throw new ServerSideValidationException("Server side validation error - value " + id + " for  form " + formId+ " failed regex");
+											if (value.length() > max) throw new ServerSideValidationException("Server side validation error - value " + id + " for  form " + formId+ " failed regex");
 										}
 									}
 								}

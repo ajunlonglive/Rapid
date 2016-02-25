@@ -361,6 +361,14 @@ public class Rapid extends RapidHttpServlet {
 									
 									// flush the writer
 									out.flush();
+									
+									// if we have a form adapter and form details
+									if (formAdapter != null && formDetails != null) {
+										// if this is an error page we have just shown the error, remove it
+										if (page.getFormPageType() == Page.FORM_PAGE_TYPE_ERROR) formDetails.setErrorMessage(null);
+										// if this is a save page we have just shown it, set to not saved
+										if (page.getFormPageType() == Page.FORM_PAGE_TYPE_SAVED) formDetails.setSaved(false);
+									}
 																		
 								} else {
 									
@@ -788,7 +796,9 @@ public class Rapid extends RapidHttpServlet {
 														break;
 													} else {
 														// select the next page to check the visibility of
-														page = app.getPages().getPage(getServletContext(), pageHeaders.get(pageIndex).getId());																
+														page = app.getPages().getPage(getServletContext(), pageHeaders.get(pageIndex).getId());
+														// if not submitted set that we're allowed to this page
+														if (!formDetails.getSubmitted()) formAdapter.setMaxPage(rapidRequest, formDetails, page.getId());														
 													} // pages remaining check									
 												} // page visible loop		
 																																																						
