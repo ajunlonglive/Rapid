@@ -115,7 +115,11 @@ function calendarGetMonthDays(year, month) {
 function calendarSetDate(id, date) {
 	var calendar = $("#" + id);
 	if (date) {
-		calendar.attr("data-date",date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate());
+		var month = date.getMonth() + 1;
+		if (month.length == 1) month = "0" + month;
+		var day = date.getDate();
+		if (day.length == 1) day = "0" + day;
+		calendar.attr("data-date",date.getFullYear() + "-" + month + "-" + day);
 	} else {
 		calendar.removeAttr("data-date");
 	}
