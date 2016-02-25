@@ -3,10 +3,17 @@
   font-style: normal;
   font-weight: 400;
   src: local('Open Sans'), local('OpenSans'), url(https://fonts.gstatic.com/s/opensans/v13/cJZKeOuBrn4kERxqtaUH3VtXRa8TVwTICgirnJhmVJw.woff2) format('woff2');
+  src: local('Open Sans'), local('OpenSans'), url(https://fonts.gstatic.com/s/opensans/v13/cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw.woff) format('woff');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
 }
 
+html {		
+	height: 100%;		
+}
+
 body {
+	min-height: 100%;		
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#e8e8e8',GradientType=0 );
 	font-family: 'Open Sans';
 	margin:0;
 	background: transparent linear-gradient(#FFF, #E8E8E8) fixed;
@@ -48,6 +55,7 @@ body {
 		padding: 5px 20px;
 		border: 2px solid #333;
 		color: #FFF;
+		background: #494949;
 		background: transparent linear-gradient(#666, #494949);
 		box-shadow: 0px 1px 3px 1px #D0D0D0;
 		cursor: pointer;
@@ -58,10 +66,12 @@ body {
 	
 	button:hover {
 		border: 2px solid #000;
+		background: #500000;
 		background: transparent linear-gradient(#B80101, #500000);
 	}
 
 	button:active {
+		background: #121212;
 		background: transparent linear-gradient(#292929, #121212);
 	}
 	
@@ -69,6 +79,11 @@ body {
 		position: absolute;
 		top: 24px;
 		right: 20px;
+		image-border: 0;		
+		border-style: solid;		
+		border-color: #000;		
+		padding: 0;		
+		border-width: 0;
 	}
 	
 	div.title {
@@ -76,6 +91,7 @@ body {
 		margin: 0px 0px 20px 0px;
 		padding: 5px 25px 35px;
 		color: white;
+		filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#595959', endColorstr='#5b5b5b',GradientType=0 );
 		background: linear-gradient(to bottom, #595959 0%,#4c4c4c 10%,#383838 25%,#3d3d3d 37%,#3f3f3f 50%,#262626 51%,#4c4c4c 83%,#5b5b5b 100%);
 	}
 	
@@ -183,6 +199,7 @@ body {
 		padding: 5px 20px;
 		border: 2px solid #333;
 		color: #FFF;
+		background: #494949;
 		background: transparent linear-gradient(#666, #494949);
 		box-shadow: 0px 1px 3px 1px #D0D0D0;
 		cursor: pointer;
@@ -193,10 +210,12 @@ body {
 	
 	button:hover {
 		border: 2px solid #000;
+		background: #500000;
 		background: transparent linear-gradient(#B80101, #500000);
 	}
 
 	button:active {
+		background: #121212;'
 		background: transparent linear-gradient(#292929, #121212);
 	}
 	
@@ -208,6 +227,9 @@ body {
 		position: absolute;
 		top: 17px;
 		right: 10px;
+		border-color: #000;		
+		padding: 0;		
+		border-width: 0;
 	}
 	
 	div.body {
@@ -242,6 +264,7 @@ body {
 		padding: 5px 25px 35px;
 		color: white;
 		max-height: 33px;
+		filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#595959', endColorstr='#5b5b5b',GradientType=0 );
 		background: linear-gradient(to bottom, #595959 0%,#4c4c4c 10%,#383838 25%,#3d3d3d 37%,#3f3f3f 50%,#262626 51%,#4c4c4c 83%,#5b5b5b 100%);
 	}
 

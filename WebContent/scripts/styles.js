@@ -861,7 +861,7 @@ function showStyles(control) {
 				rebuildHtml(ev.data.control);				
 			}));
 			
-			classesTable.append("<tr><td colspan='2' style='padding:0;'><select class='propertiesPanelTable'></select></td></tr>");
+			classesTable.append("<tr><td colspan='2' style='padding:0; border-bottom:none;'><select class='propertiesPanelTable'></select></td></tr>");
 			// get a reference to the select
 			var addClass = classesTable.find("select").last();
 			// retain a string for the class options

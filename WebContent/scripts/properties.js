@@ -1889,7 +1889,7 @@ function Property_webserviceRequest(cell, propertyObject, property, details) {
 		Property_webserviceRequest(cell, propertyObject, property); 
 	});
 	// add the add input
-	inputsTable.append("<tr><td style='padding:0px;'><select style='margin:0px'><option value=''>Add input...</option>" + getInputOptions() + "</select></td><td>&nbsp;</td><td>&nbsp;</td></tr>");
+	inputsTable.append("<tr><td style='padding:0px;'><select style='margin:0;'><option value=''>Add input...</option>" + getInputOptions() + "</select></td><td>&nbsp;</td><td>&nbsp;</td></tr>");
 	// find the input add
 	var inputAdd = inputsTable.find("tr").last().children().first().children().first();
 	// listener to add input

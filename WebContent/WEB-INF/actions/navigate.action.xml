@@ -106,10 +106,14 @@ $(document).ready( function() {
        	// resize the dialogues
        	$(".dialogue").each(function() {
        		var dialogue = $(this);
-	       	dialogue.css({
-	       		left : ((window.innerWidth ? window.innerWidth : win.width()) - dialogue.outerWidth(true)) / 2,
-	       		top : ((window.innerHeight ? window.innerHeight : win.height()) - dialogue.outerHeight(true)) / 2
-	       	}); 
+       		var w = dialogue.outerWidth(true);
+       		var h = dialogue.outerHeight(true);
+       		if (w > 0 && h > 0) {
+		       	dialogue.css({
+		       		left : ((window.innerWidth ? window.innerWidth : win.width()) - w) / 2,
+		       		top : ((window.innerHeight ? window.innerHeight : win.height()) - h) / 2
+		       	}); 
+		    }
 	    });
 	
 	});

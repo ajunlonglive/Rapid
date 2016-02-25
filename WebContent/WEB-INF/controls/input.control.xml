@@ -73,7 +73,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <setConstructValueFunction>return "";</setConstructValueFunction>
 	            <changeValueJavaScript>text</changeValueJavaScript>
 	            <refreshHtml>true</refreshHtml>
-	            <helpHtml>Sets a faded messages so users can better understand what to type in the input box. Gets erased when typing begins.</helpHtml>
+	            <helpHtml>Sets a faded message so users can better understand what to type in the input box. Gets erased when typing begins.</helpHtml>
 	        </property>
 	        
 	        <property>

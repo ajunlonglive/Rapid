@@ -479,8 +479,19 @@ function showAction(actionsTable, action, collection, refreshFunction) {
 			var property = properties[k];
 			// check that visibility is not explicitly false
 			if (property.visible === undefined || !property.visible === false) {
-				// get the property itself from the action
-				propertiesRow.append("<td>" + property.name + "</td><td></td>");
+				// assume no help
+				var help = "";
+				// if the property has help html
+				if (property.helpHtml) {
+					// make the helpId
+					var helpId = action.id + property.key;
+					// create help html
+					help = "<img id='" + helpId + "' class='propertyHelp' src='images/help_16x16.png' />"						
+				}
+				// get the property itself from the control
+				propertiesRow.append("<td>" + property.name + help + "</td><td></td>");
+				// add the help listener
+				if (help) addHelp(helpId,true,true,property.helpHtml);
 				// get the cell the property update control is going in
 				var cell = propertiesRow.children().last();
 				// apply the property function if it starts like a function or look for a known Property_[type] function and call that
