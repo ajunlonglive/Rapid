@@ -44,7 +44,7 @@ This action runs JQuery functions against specific controls
 		    <property>
 	            <key>control</key>
 	            <name>Control</name>
-	            <changeValueJavaScript>select</changeValueJavaScript>	 
+	            <changeValueJavaScript>select</changeValueJavaScript>
 	            <getValuesFunction>
 	                 <![CDATA[
 	                // default to the selected control if one hasn't been specified
@@ -52,40 +52,45 @@ This action runs JQuery functions against specific controls
 	                // return the list of all controls on the page with the one for this action selected
 	                return "<option value=''>Please select...</option><option value='" + _page.id + "'>page</option>" + getControlOptions(this.control);
 	               	]]>
-	            </getValuesFunction>	            
+	            </getValuesFunction>
+	            <helpHtml>Selects a control on the page to apply the action to.</helpHtml>
 	        </property>
 	        
 	        <property>
 	            <key>actionType</key>
 	            <name>Action</name>
-	            <changeValueJavaScript>controlActionType</changeValueJavaScript>	 
+	            <changeValueJavaScript>controlActionType</changeValueJavaScript>
 	            <getValuesFunction>return ["hide","show","toggle","slideUp","slideDown","slideToggle","fadeOut","fadeIn","fadeToggle","focus","enable","disable","addClass","removeClass","toggleClass","removeChildClasses","hideDialogue","hideAllDialogues","showError","clearQueue","custom"];</getValuesFunction>
-	            <refreshProperties>true</refreshProperties>	            
+	            <refreshProperties>true</refreshProperties>
+	            <helpHtml>Sets a specified action to be carried out. Useful for validation and page load events.</helpHtml>
 	        </property>
 	        
 	        <property>
 	            <key>duration</key>
 	            <name>Duration (milliseconds)</name>
 	            <setConstructValueFunction>return 1000;</setConstructValueFunction>
-	            <changeValueJavaScript>controlActionDuration</changeValueJavaScript>	 	            
+	            <changeValueJavaScript>controlActionDuration</changeValueJavaScript>
+	            <helpHtml>Sets a total time for the action to be carried out in.</helpHtml>
 	        </property>
 	        	        
 	        <property>
 	            <key>styleClass</key>
 	            <name>Class</name>
-	            <changeValueJavaScript>controlActionClasses</changeValueJavaScript>	 
+	            <changeValueJavaScript>controlActionClasses</changeValueJavaScript>
 	            <getValuesFunction>
 	                <![CDATA[
 	                return "<option value=''>Please select...</option>" + getStyleClassesOptions(this.styleClass);
 	               	]]>
 	            </getValuesFunction>
+	            <helpHtml>Dropdown list of currently available classes.</helpHtml>
 	        </property>
 	        
 		    <property>
 	            <key>command</key>
 	            <name>Command</name>
 	            <setConstructValueFunction>return "// Enter JQuery command here. The event object is passed in as \"ev\"";</setConstructValueFunction>
-	            <changeValueJavaScript>controlActionCommand</changeValueJavaScript>	 
+	            <changeValueJavaScript>controlActionCommand</changeValueJavaScript>
+	            <helpHtml>Allows you to create customised actions using jQuery. Recommended for advanced programmers.</helpHtml>
 	        </property>
 	        
 	    </properties>

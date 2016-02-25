@@ -27,7 +27,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
  -->
 
 	    <type>rapid</type>	 
-	    <name>Rapid</name>	  
+	    <name>Rapid</name>
 	    
 	    <resources>
 	    	<resource>
@@ -93,6 +93,7 @@ table.grid tr:not(:first-child) td {
 }
 
 table.grid .rowStyle2 {
+  background: #DDD;
   background: linear-gradient(#FAFAFA, #DDD);
 }
 
@@ -115,6 +116,7 @@ table.grid .rowStyle2 {
 }
 
 .tabsHeader li:not(.selected):hover {
+  background: #500000;
   background: transparent linear-gradient(#B80101, #500000);
 }
 
@@ -146,7 +148,7 @@ div.tabsPanel.selected {
   border-left-width: 2px;
   border-width: 2px 2px 2px;
   border-style: solid;
-  border-color: #E0E0E0;
+  border-color: #666;
   background-color: #FFF;
   border-top-right-radius: 4px;
   border-bottom-right-radius: 4px;
@@ -193,6 +195,7 @@ a:active {
   font-style: normal;
   font-weight: 400;
   src: local('Open Sans'), local('OpenSans'), url(https://fonts.gstatic.com/s/opensans/v13/cJZKeOuBrn4kERxqtaUH3VtXRa8TVwTICgirnJhmVJw.woff2) format('woff2');
+  src: local('Open Sans'), local('OpenSans'), url(https://fonts.gstatic.com/s/opensans/v13/cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw.woff) format('woff');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
 }
 
@@ -201,6 +204,7 @@ a:active {
   font-style: normal;
   font-weight: 400;
   src: local('Oxygen'), local('Oxygen-Regular'), url(https://fonts.gstatic.com/s/oxygen/v5/78wGxsHfFBzG7bRkpfRnCQ.woff2) format('woff2');
+  src: local('Oxygen'), local('Oxygen-Regular'), url(https://fonts.gstatic.com/s/oxygen/v5/RzoNiRR1p2Mqyyz2RwqSMw.woff) format('woff');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
 }
 
@@ -209,6 +213,7 @@ a:active {
   font-style: normal;
   font-weight: 400;
   src: local('PT Sans'), local('PTSans-Regular'), url(https://fonts.gstatic.com/s/ptsans/v8/ATKpv8nLYAKUYexo8iqqrg.woff2) format('woff2');
+  src: local('PT Sans'), local('PTSans-Regular'), url(https://fonts.gstatic.com/s/ptsans/v8/LKf8nhXsWg5ybwEGXk8UBQ.woff) format('woff');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
 }
 
@@ -254,6 +259,7 @@ button {
 }
 
 button:hover {
+  background: #DBDBDB;
   background: transparent linear-gradient(#EBEBEB, #BABABA);
 }
 
@@ -272,6 +278,7 @@ button:disabled {
 .button1 {
   border: 2px solid #333;
   color: #FFF;
+  background: #494949;
   background: transparent linear-gradient(#666, #494949);
 }
 
@@ -470,6 +477,7 @@ select {
   padding: 5px 10px 5px 5px;
   border-radius: 4px;
   border: 2px solid #333;
+  background: #666;
   background: transparent linear-gradient(#666, #494949);
   display: inline-block;
   cursor: pointer;
@@ -480,6 +488,15 @@ select {
 
 select option {
   color: #000;
+}
+
+select:nth-child(n) {
+  color: #FFF;
+}
+
+select option:nth-child(n) {
+  background: #666;
+  color: #FFF;
 }
 
 select:hover {
