@@ -54,6 +54,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.xpath.XPathExpressionException;
@@ -1929,10 +1931,12 @@ public class Application {
 					pageCopyXML = pageCopyXML
 							.replace("/" + _id + "/" + _version + "/", "/" + newId + "/" + newVersion + "/")
 							.replace("~?a=" + _id + "&amp;" + _version + "&amp;", "~?a=" + newId + "&amp;" + newVersion + "&amp;");
+					// get the page file
+					File pageFile = new File(appPagesCopyFolder + "/" + appCopyPageFile.getName());
 					// save it back to it's new location
-					fs = new FileWriter(new File(appPagesCopyFolder + "/" + appCopyPageFile.getName()));
-					fs.write(pageCopyXML);
-					fs.close();
+					FileWriter fsPage = new FileWriter(pageFile);
+					fsPage.write(pageCopyXML);
+					fsPage.close();										
 				}
 			}
 		}
