@@ -150,7 +150,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	        <resource>
 	            <type>javascriptLink</type>
 	            <contents>
-	                https://maps.googleapis.com/maps/api/js?v=3.exp
+	                https://maps.googleapis.com/maps/api/js?v=3
 	            </contents>
 	        </resource>
 	        

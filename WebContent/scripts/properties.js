@@ -3767,7 +3767,7 @@ function Property_datacopyCopies(cell, datacopyAction, property, details) {
 			ev.data.dataCopies[i].destination = target.val();
 		}));
 		// destination field listeners
-		addListener( table.find("input.destination").change( {dataCopies: dataCopies}, function(ev) {
+		addListener( table.find("input.destination").keyup( {dataCopies: dataCopies}, function(ev) {
 			// get the target
 			var target = $(ev.target);
 			// get the index

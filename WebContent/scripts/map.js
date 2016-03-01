@@ -81,18 +81,21 @@ function scrollMapToSelectedControl(scrollPage) {
 	if (_selectedControl) {
 		// find the selected control map entry
 		var selectedMapEntry = list.find("span[data-id=" + _selectedControl.id + "]");
-		// scroll the list so the selected control is in the middle
-		list.scrollTop(list.scrollTop() + selectedMapEntry.offset().top - list.offset().top - list.height()/2);
-		// if we're scrolling the page too
-		if (scrollPage) {
-			// get the verticel scrol bar
-			var vScroll = $("#scrollV");
-			// if it's visible
-			if (vScroll.is(":visible")) {
-				// scroll the scroll bar
-				$("#scrollV").scrollTop(_selectedControl.object.offset().top);
-			} else {
-				$(document).scrollTop(_selectedControl.object.offset().top);
+		// if there is one
+		if (selectedMapEntry[0]) {
+			// scroll the list so the selected control is in the middle
+			list.scrollTop(list.scrollTop() + selectedMapEntry.offset().top - list.offset().top - list.height()/2);
+			// if we're scrolling the page too
+			if (scrollPage) {
+				// get the verticel scrol bar
+				var vScroll = $("#scrollV");
+				// if it's visible
+				if (vScroll.is(":visible")) {
+					// scroll the scroll bar
+					$("#scrollV").scrollTop(_selectedControl.object.offset().top);
+				} else {
+					$(document).scrollTop(_selectedControl.object.offset().top);
+				}
 			}
 		}
 	}
