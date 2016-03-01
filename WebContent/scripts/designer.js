@@ -2582,9 +2582,13 @@ $(document).ready( function() {
 								} // in-page style check
 							} // style sheets loop
 						} // style sheets check
+						
+						// page has just rebuilt so set dirty to false
+						_dirty = false;
 									        				        	
 						// enable all buttons except for undo and redo 
 		        		$("button:not(#undo):not(#redo)").enable();
+		        		
 		        		// enable all drop downs
 		        		$("select").enable();
 		        		
@@ -3234,6 +3238,8 @@ $(document).ready( function() {
 					pasteControl.childControls.push(newControl);
 					// move the html to the right place
 					pasteControl.object.append(newControl.object);
+					// if there is an insert right run it
+					if (newControl._insertRight) newControl._insertRight();
 				} else if (_controlTypes[_copyControl.type].canUserAdd || peerCanAddPeers) {
 					// create the new control as peer of current selection
 					var newControl = doPaste(_copyControl, pasteControl._parent);
