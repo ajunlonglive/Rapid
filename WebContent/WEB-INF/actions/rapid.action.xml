@@ -641,7 +641,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 			};	
 			callback = function(data) {
 				$(data.controlId).hideDialogue();
-				Event_change_rapid_P0_C43();
+				Event_change_rapid_P0_C43(ev);
 				$("#rapid_P0_C662_").click();
 			};														
 		break;
@@ -653,7 +653,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 			};	
 			callback = function(data) {
 				$(data.controlId).hideDialogue();
-				Event_change_rapid_P0_C43();
+				Event_change_rapid_P0_C43(ev);
 				$("#rapid_P0_C662_").click();
 			};															
 		break;
