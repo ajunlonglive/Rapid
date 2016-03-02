@@ -89,10 +89,10 @@ body {
 	div.title {
 		background-color:#ccc;
 		margin: 0px 0px 20px 0px;
-		padding: 5px 25px 35px;
+		padding: 5px 15px 35px;
 		color: white;
 		filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#595959', endColorstr='#5b5b5b',GradientType=0 );
-		background: linear-gradient(to bottom, #595959 0%,#4c4c4c 10%,#383838 25%,#3d3d3d 37%,#3f3f3f 50%,#262626 51%,#4c4c4c 83%,#5b5b5b 100%);
+		background: linear-gradient(#666, #494949);
 	}
 	
 	.title span {
