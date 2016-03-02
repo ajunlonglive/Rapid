@@ -10,7 +10,7 @@ gareth.edwards@rapid-is.co.uk
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version. The terms require you to include
@@ -29,8 +29,8 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
     <action>
         
         <type>dataCopy</type>
-        <name>Data copy</name>	        
-	    <class>com.rapid.actions.Datacopy</class>	 
+        <name>Data copy</name>
+	    <class>com.rapid.actions.Datacopy</class>
 	    
 	    <addToNewApplications>true</addToNewApplications>
 	    
@@ -40,15 +40,27 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <key>copyType</key>
 	            <name>Copy type</name>
 	            <setConstructValueFunction>return false;</setConstructValueFunction>
-	            <changeValueJavaScript>select</changeValueJavaScript>	
+	            <changeValueJavaScript>select</changeValueJavaScript>
 	            <getValuesFunction>
 // for backwards compatibility	                
 if (!this.copyType || this.copyType == "false") this.copyType = "replace";
-// return the values	                
+// return the values
 return [["replace","replace"],["append","append"],["row","row merge"],["child","child merge"],["bulk","bulk"],["search","search"],["trans","transpose"]];
 				</getValuesFunction>
-	            <refreshProperties>true</refreshProperties>	            
-	        </property> 
+	            <refreshProperties>true</refreshProperties>
+	            <helpHtml>
+	            	<![CDATA[
+This powerful control moves data around your application. The following differnt types of data copy are supported:<br/><br/>
+- replace, will empty the destination controls of data beore copying in the source data<br/>
+- append, will add the source data as a new row in the destination data. Any existing fields will be used, new fields will be added<br/>
+- row merge, will keep all destination data and add the source data in the same row. New fields will be added if required<br/>
+- child merge, will uses fields in common between the source and destination to match rows in the source to rows in  the destination where matching rows in the source will be added to child datastores in the destination. Use this for parent/child relationships<br/> 
+- bulk, provides a dialogue where a number of realted datacopies can easily be specified<br/>
+- search, allows a source to be searched against a term and matching rows placed into the destination<br/>
+- transpose, converts a source with lots of columns to one with lots of rows and vice versa. Key fields will appear on every row, igore fields will not be used in the transposition<br/>
+	                ]]>
+				</helpHtml>
+	        </property>
 	    
 	        <property>
 	            <key>dataSource</key>
@@ -61,18 +73,7 @@ if (this.dataSource == "System.user") this.dataSource = "System.user name";
 return "<option value=''>Please select...</option>" + getInputOptions(this.dataSource);         
 	                ]]>
 	            </getValuesFunction>	
-	            <helpHtml>
-	                <![CDATA[
-<p>This powerful control moves data around your application. The following differnt types of data copy are supported:</p>
-- replace, will empty the destination controls of data beore copying in the source data<br/>
-- append, will add the source data as a new row in the destination data. Any existing fields will be used, new fields will be added<br/>
-- row merge, will keep all destination data and add the source data in the same row. New fields will be added if required<br/>
-- child merge, will uses fields in common between the source and destination to match rows in the source to rows in  the destination where matching rows in the source will be added to child datastores in the destination. Use this for parent/child relationships<br/> 
-- bulk, provides a dialogue where a number of realted datacopies can easily be specified<br/>
-- search, allows a source to be searched against a term and matching rows placed into the destination<br/>
-- transpose, converts a source with lots of columns to one with lots of rows and vice versa. Key fields will appear on every row, igore fields will not be used in the transposition<br/>
-	                ]]>
-	            </helpHtml>
+	            <helpHtml></helpHtml>
 	        </property>
 	        	        	      
 	        <property>
@@ -80,17 +81,19 @@ return "<option value=''>Please select...</option>" + getInputOptions(this.dataS
 	            <name>Source field</name>
 	            <changeValueJavaScript>datacopySourceField</changeValueJavaScript>
 	            <getValuesFunction>return "";</getValuesFunction>
-	        </property>	 
-	        	        	        	        	        
+	            <helpHtml>Optionally specify a field or property that holds the data within the source control. An example of this is a specific cloumn's field name in a table or grid.</helpHtml>
+	        </property>
+	        
 	        <property>
 	            <key>searchSource</key>
 	            <name>Search term</name>
 	            <changeValueJavaScript>datacopySearchSource</changeValueJavaScript>
 	            <getValuesFunction>
 	                <![CDATA[
-return "<option value=''>Please select...</option>" + getInputOptions(this.dataSource);         
+return "<option value=''>Please select...</option>" + getInputOptions(this.dataSource);
 	                ]]>
-	            </getValuesFunction>	
+	            </getValuesFunction>
+	            <helpHtml>The control holding the value you are looking for.</helpHtml>
 	        </property>
 	        
 	        <property>
@@ -98,6 +101,7 @@ return "<option value=''>Please select...</option>" + getInputOptions(this.dataS
 	            <name>Search term field</name>
 	            <changeValueJavaScript>datacopySearchField</changeValueJavaScript>
 	            <getValuesFunction>return "";</getValuesFunction>
+	            <helpHtml>Optionally specify a field or property from the term dropdown, like the source field.</helpHtml>
 	        </property>
 	        
 	        <property>
@@ -105,7 +109,8 @@ return "<option value=''>Please select...</option>" + getInputOptions(this.dataS
 	            <name>Search fields</name>
 	            <changeValueJavaScript>datacopySearchField</changeValueJavaScript>
 	            <getValuesFunction>return "";</getValuesFunction>
-	        </property>	
+	            <helpHtml>Fields or properties in the source to search for matches against the search term.</helpHtml>
+	        </property>
 	        
 	        <property>
 	            <key>maxRows</key>
@@ -117,8 +122,9 @@ return "<option value=''>Please select...</option>" + getInputOptions(this.dataS
 	        <property>
 	            <key>dataDestinations</key>
 	            <name>Destinations</name>
-	            <changeValueJavaScript>datacopyDestinations</changeValueJavaScript> 
+	            <changeValueJavaScript>datacopyDestinations</changeValueJavaScript>
 	            <refreshProperties>true</refreshProperties>
+	            <helpHtml>Sets the destination controls and optional fields for your copied data.</helpHtml>
 	        </property>
 	        	         	        
 	        <property>
@@ -134,7 +140,7 @@ return "<option value=''>Please select...</option>" + getInputOptions(this.dataS
 	            <changeValueJavaScript>datacopyFields</changeValueJavaScript>
 	            <getValuesFunction>return "";</getValuesFunction>
 	            <refreshProperties>true</refreshProperties>
-	        </property>		
+	        </property>
 	        
 	         <property>
 	            <key>ignoreFields</key>
@@ -148,7 +154,7 @@ return "<option value=''>Please select...</option>" + getInputOptions(this.dataS
 	            <key>dataCopies</key>
 	            <name>Bulk data copies</name>
 	            <changeValueJavaScript>datacopyCopies</changeValueJavaScript>
-	        </property>	
+	        </property>
 	        
 	        <property>
 	            <key>changeEvents</key>
@@ -160,21 +166,21 @@ return "<option value=''>Please select...</option>" + getInputOptions(this.dataS
 	    </properties>
 	    	    
 	    <actionJavaScript>
-	        <![CDATA[ 
+	        <![CDATA[
 function Action_datacopy(ev, data, outputs, changeEvents, copyType, copyData, field, details) {
 	if (data !== undefined && outputs) {
 		for (var i in outputs) {
-			var output = outputs[i];	
-			var outputData = null;	
+			var output = outputs[i];
+			var outputData = null;
 			switch (copyType) {
-				case "append" :	case "row" : 
+				case "append" :	case "row" :
 					var mergeData = window["getData_" + output.type](ev, output.id, null, output.details);
 					data = makeDataObject(data, output.field);
-					outputData = mergeDataObjects(mergeData, data, copyType, field); 
+					outputData = mergeDataObjects(mergeData, data, copyType, field);
 				break;
 				case "child" :
-					var mergeData = window["getData_" + output.type](ev, output.id, null, output.details);		
-					if (data && data.rows) {								
+					var mergeData = window["getData_" + output.type](ev, output.id, null, output.details);	
+					if (data && data.rows) {
 						outputData = mergeDataObjects(mergeData, data, copyType, field);
 					} else {
 						outputData = mergeData;
@@ -183,8 +189,8 @@ function Action_datacopy(ev, data, outputs, changeEvents, copyType, copyData, fi
 				case "search" :
 					if (data) outputData = mergeDataObjects(copyData, data, copyType, field, details);
 				break;
-				case "trans" :						
-					if (data && data.fields && data.rows) {	
+				case "trans" :
+					if (data && data.fields && data.rows) {
 												
 						var downtoside = false;
 						// checking for down to side transpose is quite expensive so get the easy stuff out the way first
