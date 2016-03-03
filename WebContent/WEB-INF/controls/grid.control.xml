@@ -873,7 +873,7 @@ if (details.dataStorageType) {
 		}
 	}
 }
-if (field && data.fields && data.rows && data.rows.length > 0) {
+if (field && data && data.fields && data.rows && data.rows.length > 0) {
 	var found = false;
 	for (var i in data.fields) {
 		if (data.fields[i] && data.fields[i].toLowerCase() == field.toLowerCase()) {
