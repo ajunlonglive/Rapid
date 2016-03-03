@@ -230,7 +230,7 @@ function getMapPosition(data, rowIndex, callBack, map, details, zoomMarkers) {
 				pos.lng = pOut.longitude;												
 			} else {								
 				// if there is not currently a search term but there are search fields
-				if (!pos.s && details.searchFields) {
+				if (!pos.s && details && details.searchFields) {
 					// get the fields
 					var fields = details.searchFields.split(",");
 					// loop them

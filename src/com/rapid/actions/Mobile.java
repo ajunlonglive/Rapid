@@ -7,7 +7,7 @@ gareth.edwards@rapid-is.co.uk
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as 
 published by the Free Software Foundation, either version 3 of the 
 License, or (at your option) any later version. The terms require you 
@@ -408,10 +408,23 @@ public class Mobile extends Action {
 					js += getMobileCheck(true);
 					// get the data
 					js += "  var data = " + Control.getDataJavaScript(rapidServlet.getServletContext(), application, page, navigateControlId, navigateField) + ";\n";
+					// assume no search fields
+					String searchFields = getProperty("searchFields");
+					// if we got some
+					if (searchFields != null) {
+						// if there's something 
+						if (searchFields.trim().length() > 0) {
+							// build the JavaScript object
+							searchFields = "{searchFields:'" + searchFields.replace("'", "\'") + "'}";
+						} else {
+							// set to null
+							searchFields = null;
+						}
+					}
 					// get a position object
-					js += "  var pos = getMapPosition(data, 0);\n";
+					js += "  var pos = getMapPosition(data, 0, null, null, " + searchFields + ");\n";
 					// add js, replacing any dodgy inverted commas
-					js += "  _rapidmobile.navigateTo(pos.lat, pos.lng, pos.s, " + navigateMode + ");\n";
+					js += "  if (pos && (pos.lat || pos.lng || pos.s)) _rapidmobile.navigateTo(pos.lat, pos.lng, pos.s, " + navigateMode + ");\n";
 					// close mobile check
 					js += "}\n";
 				}
