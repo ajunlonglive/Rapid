@@ -1,13 +1,12 @@
 # ignore some common test apps
 /test
-/formtest/
-/training/
-/formdemo/
-/themetest/
+/formtest
+/testform
+/training
 
 # ignore all rapid generated .js and .cs
-**/rapid.css
-**/rapid.js
-**/rapid.min.css
-**/rapid.min.js
+rapid.css
+rapid.js
+rapid.min.css
+rapid.min.js
 
