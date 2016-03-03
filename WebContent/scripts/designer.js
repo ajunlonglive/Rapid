@@ -1398,8 +1398,8 @@ function loadLock(level) {
 	// hide the properties panel
 	$("#propertiesPanel").hide();
 	
-	// disable all page buttons
-	$("button").disable();
+	// disable all page buttons (except rapid admin)
+	$("button:not(#appAdmin):not(#appAdminNewTab)").disable();
 	
 	// disable all page drop downs
 	$("select").disable();

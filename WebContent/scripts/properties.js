@@ -152,7 +152,7 @@ function showProperties(control) {
 					// if the property has help html
 					if (property.helpHtml) {
 						// make the helpId
-						var helpId = control.id + property.key;
+						var helpId = control.id + property.key + "help";
 						// create help html
 						help = "<img id='" + helpId + "' class='propertyHelp' src='images/help_16x16.png' />"						
 					}
