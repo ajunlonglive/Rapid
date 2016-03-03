@@ -45,7 +45,7 @@ String message = (String) session.getAttribute("message");
 	<a href="http://www.rapid-is.co.uk"><img title="Rapid Information Systems" src="images/RapidLogo_60x40.png" /></a>	
 </div>
 
-<div class="title">
+<div class="midTitle">
 	<span>Rapid - version <%=com.rapid.server.Rapid.VERSION %></span>
 </div>
 
