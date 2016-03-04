@@ -153,6 +153,9 @@ return "<option value=''>Please select...</option>" + getControlOptions(this.gal
 return "<option value=''>Please select...</option>" + getInputOptions(this.navigateControlId);	                
 	                ]]>
 	            </getValuesFunction>
+	            <helpHtml>
+The control that holds the data of where we want to navigate to	                
+	            </helpHtml> 	            
 	        </property>
 	        
 	        <property>
@@ -160,6 +163,16 @@ return "<option value=''>Please select...</option>" + getInputOptions(this.navig
 	            <name>Navigate to source field</name>
 	             <visible>false</visible>
 	            <changeValueJavaScript>text</changeValueJavaScript>	 
+	        </property>
+	        
+	        <property>
+	            <key>navigateSearchFields</key>
+	            <name>Navigate to search fields</name>
+	             <visible>false</visible>
+	            <changeValueJavaScript>text</changeValueJavaScript>	
+	            <helpHtml>
+Fields in the navigate to source control to use to search for the location to navigate to               
+	            </helpHtml> 
 	        </property>
 	        
 	         <property>
