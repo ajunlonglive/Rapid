@@ -1327,34 +1327,7 @@ public class Rapid extends Action {
 				app.setStartPageId(startPageId);
 				app.setShowControlIds(showControlIds);
 				app.setShowActionIds(showActionIds);
-				
-				///////////////////////////////////////////////////////////////////////////////////////////////////
-				
-				/*
-								
-				List<Value> v1 = new ArrayList<Value>();				
-				v1.add(new Value("Male"));
-				v1.add(new Value("Female"));
-				ValueList vl1 = new ValueList("1","List 1", false);
-				vl1.setValues(v1);
-				
-				List<Value> v2 = new ArrayList<Value>();				
-				v2.add(new Value("Male","M"));
-				v2.add(new Value("Female","F"));
-				v2.add(new Value("Unborn","U"));
-				ValueList vl2 = new ValueList("2","List 2", true);
-				vl2.setValues(v2);
-				
-				ArrayList<ValueList> vs = new ArrayList<ValueList>();
-				vs.add(vl1);
-				vs.add(vl2);
-				
-				app.setValueLists(vs);
-				
-				*/
-											
-				/////////////////////////////////////////////////////////////////////////////////////////////////
-								
+												
 				// save
 				app.save(rapidServlet, rapidRequest, true); 
 											
