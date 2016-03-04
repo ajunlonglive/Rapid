@@ -229,33 +229,39 @@ function getMapPosition(data, rowIndex, callBack, map, details, zoomMarkers) {
 				pos.lat = pOut.latitude;
 				pos.lng = pOut.longitude;												
 			} else {								
-				// if there is not currently a search term but there are search fields
-				if (!pos.s && details && details.searchFields) {
-					// get the fields
-					var fields = details.searchFields.split(",");
-					// loop them
-					for (var i in fields) {
-						// get this search field
-						var searchField = fields[i].trim();
-						// if there is one
-						if (searchField) {
-							// loop the data fields
-							for (var j in data.fields) {
-								// get this field
-								var field = data.fields[j];
-								// if there is one and it matches
-								if (field && field.toLowerCase() == searchField.toLowerCase()) {
-									// set the value in this field to the search term
-									pos.s = data.rows[rowIndex][j];
-									// we're done
-									break;
+				// if there is not currently a search term
+				if (!pos.s) {
+					// if there are search fields
+					if (details && details.searchFields) {
+						// get the fields
+						var fields = details.searchFields.split(",");
+						// loop them
+						for (var i in fields) {
+							// get this search field
+							var searchField = fields[i].trim();
+							// if there is one
+							if (searchField) {
+								// loop the data fields
+								for (var j in data.fields) {
+									// get this field
+									var field = data.fields[j];
+									// if there is one and it matches
+									if (field && field.toLowerCase() == searchField.toLowerCase()) {
+										// set the value in this field to the search term
+										pos.s = data.rows[rowIndex][j];
+										// we're done
+										break;
+									}
 								}
+								// if we have a position search term, we're done
+								if (pos.s) break;
 							}
-							// if we have a position search term, we're done
-							if (pos.s) break;
 						}
-					}
-				}
+					} else if (data.fields.length == 1) {
+						// if this is a simple data object
+						pos.s = data.rows[0][0];
+					} 
+				} // no search term
 				// if there is a callback (getting positions for navigate to won't have one so will avoid the geo-coder) and a search term
 				if (callBack && pos.s) {
 					// create the geocoder if we don't have one already

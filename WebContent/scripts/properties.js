@@ -4183,6 +4183,7 @@ function Property_mobileActionType(cell, mobileAction, property, details) {
 	setPropertyVisibilty(mobileAction, "errorActions", false);
 	setPropertyVisibilty(mobileAction, "navigateControlId", false);
 	setPropertyVisibilty(mobileAction, "navigateField", false);
+	setPropertyVisibilty(mobileAction, "navigateSearchFields", false);
 	setPropertyVisibilty(mobileAction, "navigateMode", false);
 	setPropertyVisibilty(mobileAction, "gpsDestinations", false);
 	setPropertyVisibilty(mobileAction, "gpsFrequency", false);	
@@ -4220,6 +4221,7 @@ function Property_mobileActionType(cell, mobileAction, property, details) {
 			setPropertyVisibilty(mobileAction, "navigateMode", true);
 			setPropertyVisibilty(mobileAction, "navigateControlId", true);
 			setPropertyVisibilty(mobileAction, "navigateField", true);			
+			setPropertyVisibilty(mobileAction, "navigateSearchFields", true);
 		break;
 		case "sendGPS" :						
 			setPropertyVisibilty(mobileAction, "gpsDestinations", true);

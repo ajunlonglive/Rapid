@@ -409,7 +409,7 @@ public class Mobile extends Action {
 					// get the data
 					js += "  var data = " + Control.getDataJavaScript(rapidServlet.getServletContext(), application, page, navigateControlId, navigateField) + ";\n";
 					// assume no search fields
-					String searchFields = getProperty("searchFields");
+					String searchFields = getProperty("navigateSearchFields");
 					// if we got some
 					if (searchFields != null) {
 						// if there's something 
