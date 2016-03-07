@@ -398,7 +398,7 @@ public class Application {
 				
 	}
 		
-	// the resource is specified in the action, control, or template xml files
+	// the resource is specified in the action, control, or theme xml files
 	public static class Resource {
 		
 		// these are the types defined in the control and action .xsd files
@@ -544,6 +544,11 @@ public class Application {
 				resource = new Resource(type, content, dependencyTypeClass, dependencyType);
 				// add to this collection
 				this.add(resource);
+				// if this is a theme resource
+				if (dependencyTypeClass == ResourceDependency.THEME) {
+					// add rapid as a dependency so it appears in all pages
+					resource.addDependency(new ResourceDependency(ResourceDependency.RAPID, "rapid"));
+				}
 			} else {
 				// add the dependency to the resource
 				resource.addDependency(new ResourceDependency(dependencyTypeClass, dependencyType));
@@ -1086,7 +1091,7 @@ public class Application {
 				if ("action".equals(jsonObjectType)) dependencyTypeClass = ResourceDependency.ACTION;
 				// update if control
 				if ("control".equals(jsonObjectType)) dependencyTypeClass = ResourceDependency.CONTROL;
-				// update if template
+				// update if theme
 				if ("theme".equals(jsonObjectType)) dependencyTypeClass = ResourceDependency.THEME;
 				
 				// loop them
@@ -1446,7 +1451,7 @@ public class Application {
 	    	
 	    	// check the theme type
 	    	if (_themeType != null) {
-	    		// get the templates
+	    		// get the themes
 	    		List<Theme> themes =  (List<Theme>) servletContext.getAttribute("themes");
 	    		// check we got some
 	    		if (themes != null) {
