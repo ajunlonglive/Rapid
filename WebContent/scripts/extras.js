@@ -363,7 +363,7 @@ function textarea_autoheight() {
     	// get the html height
     	var h = b.height();
     	// set it in css (this stops the document resizing and bouncing us around)
-    	d.css("height",h);
+    	b.css("height",h);
     	// reset the height
     	textarea.height(textarea.attr("data-height"));
     	// max times
@@ -373,8 +373,8 @@ function textarea_autoheight() {
     		textarea.height(textarea.height() + 5);
     		i ++;
         };
-        // set the document height back to auto
-        d.css("height","auto");
+        // set the body height back to auto
+        b.css("height","auto");
     });
 	
 }
