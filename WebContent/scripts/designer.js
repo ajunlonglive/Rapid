@@ -1391,10 +1391,7 @@ function loadApps(selectedAppId, forceLoad) {
 
 // this function locks the ui whilst either versions, pages, or a page are loading
 function loadLock(level) {
-	
-	// clear down property dialogues for good measure
-	hideDialogues();
-	
+		
 	// hide the properties panel
 	$("#propertiesPanel").hide();
 	
@@ -1417,6 +1414,8 @@ function loadLock(level) {
 	
 	// reloading the pages is used to get their new order so is a little different as the page itself is not reloaded
 	if (level != 3) {
+		// clear down property dialogues for good measure
+		hideDialogues();
 		// show loading in iFrame if not pages reloading for updated order
 		$(_pageIframe[0].contentWindow.document).find("body").html("<div><div class='pageLoading'><p><img src='images/wait_220x19.gif' /></p><p style='margin-left:20px;'>loading...</p></div></div>");
 		// hide any selection border
