@@ -3,7 +3,7 @@
 
 <!-- 
 
-Copyright (C) 2014 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -60,15 +60,16 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	               
 	        <property>
 	            <key>checked</key>
-	            <name>Checked</name> 
+	            <name>Checked</name>
 	            <setConstructValueFunction>return "false";</setConstructValueFunction>
-	            <changeValueJavaScript>select</changeValueJavaScript>	
+	            <changeValueJavaScript>select</changeValueJavaScript>
 	            <getValuesFunction>
 	                <![CDATA[
 return ["false","true"];
 					]]>
-	            </getValuesFunction>   
-	            <refreshHtml>true</refreshHtml>  
+	            </getValuesFunction>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets the state of the checkbox to be true or false.</helpHtml>
 	        </property>
 	        
 	        <property>
@@ -77,6 +78,7 @@ return ["false","true"];
 	            <setConstructValueFunction>return "true";</setConstructValueFunction>
 	            <changeValueJavaScript>text</changeValueJavaScript>
 	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Option that can be set to make validating on a checkbox easier.</helpHtml>
 	        </property>
 	        
 	         <property>

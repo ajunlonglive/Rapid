@@ -3,14 +3,14 @@
 
 <!-- 
 
-Copyright (C) 2014 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version. The terms require you to include
@@ -29,41 +29,44 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
     <action>
     
         <type>logic</type>
-        <name>Logic</name>	        
-	    <class>com.rapid.actions.Logic</class>	
+        <name>Logic</name>
+	    <class>com.rapid.actions.Logic</class>
 	    
-	    <addToNewApplications>true</addToNewApplications> 
+	    <addToNewApplications>true</addToNewApplications>
 	    	    	    	    
 	    <properties>
 	        
 	         <property>
 	            <key>conditions</key>
 	            <name>Conditions</name>
-	            <changeValueJavaScript>logicConditions</changeValueJavaScript>	 
+	            <changeValueJavaScript>logicConditions</changeValueJavaScript>
 	            <refreshProperties>true</refreshProperties>
-	        </property>	
+	            <helpHtml>Sets the conditions for the logic to be carried out. This can be particularly useful for setting controls to appear on the page, or checking for correct details on the page.</helpHtml>
+	        </property>
 	        
 	        <property>
 	            <key>conditionsType</key>
 	            <name>Type</name>
 	            <visible>false</visible>
 	            <setConstructValueFunction>return "and";</setConstructValueFunction>
-	            <changeValueJavaScript>text</changeValueJavaScript>	
+	            <changeValueJavaScript>text</changeValueJavaScript>
 	        </property>
 	        
 	        <property>
 	            <key>trueActions</key>
 	            <name>Actions if true</name>
-	            <changeValueJavaScript>childActions</changeValueJavaScript>	 
+	            <changeValueJavaScript>childActions</changeValueJavaScript>
+	            <helpHtml>Defines the actions to be carried out if the above condition is true.</helpHtml>
 	        </property>
 	        
 	        <property>
 	            <key>falseActions</key>
 	            <name>Actions if false</name>
-	            <changeValueJavaScript>childActions</changeValueJavaScript>	 
-	        </property>  
+	            <changeValueJavaScript>childActions</changeValueJavaScript>
+	            <helpHtml>Defines the actions to be carried out if the above condition is false.</helpHtml>
+	        </property>
 	            
-	    </properties>	 
+	    </properties>
 	    	   	    	    	    	    	     	     	    
-    </action> 
+    </action>
 </actions>

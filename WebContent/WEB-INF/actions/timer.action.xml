@@ -3,14 +3,14 @@
  
  <!-- 
 
-Copyright (C) 2014 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version. The terms require you to include
@@ -28,30 +28,33 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
  
     <action>
     
-        <type>timer</type>       
-        <name>Timer</name>	        
-	    <class>com.rapid.actions.Timer</class>	
+        <type>timer</type>
+        <name>Timer</name>
+	    <class>com.rapid.actions.Timer</class>
 	    
 	    <properties>
 	        
 	        <property>
 	            <key>duration</key>
-	            <name>Duration (milliseconds)</name>	            
+	            <name>Duration (milliseconds)</name>
 	            <setConstructValueFunction>return 1000;</setConstructValueFunction>
 	            <changeValueJavaScript>integer</changeValueJavaScript>
-	        </property>	
+	            <helpHtml>Sets how long the timer will last.</helpHtml>
+	        </property>
 	            	
 	    	<property>
 	            <key>repeat</key>
 	            <name>Repeat</name>
 	            <setConstructValueFunction>return false;</setConstructValueFunction>
-	            <changeValueJavaScript>checkbox</changeValueJavaScript>	            	
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>
+	            <helpHtml>Allows you to define whether to repeat the timer action after the ellapsed time has passed.</helpHtml>
 	        </property>
 	        
 	        <property>
 	            <key>actions</key>
 	            <name>Actions</name>
-	            <changeValueJavaScript>childActions</changeValueJavaScript>	
+	            <changeValueJavaScript>childActions</changeValueJavaScript>
+	            <helpHtml>Defines the actions to be carried out after the set duration of time has ellapsed.</helpHtml>
 	        </property>
 	        
 	    </properties>
