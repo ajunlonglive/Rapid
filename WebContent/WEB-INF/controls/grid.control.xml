@@ -223,7 +223,7 @@ function sortGridByColumn(ev, id, details, column, asc) {
 		}
 	
 		// check there is data for the column
-		if (data && data.rows && data.fields[column] && details.columns && details.columns[column]) {
+		if (data && data.rows && data.fields[column]) {
 		
 			// an array for all values in this column
 			var sortedValues = [];
