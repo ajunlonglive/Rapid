@@ -3,14 +3,14 @@
 
 <!-- 
 
-Copyright (C) 2014 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version. The terms require you to include
@@ -28,49 +28,47 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
     <action>
     
-        <type>form</type>        
-        <name>Form</name>	        
+        <type>form</type>
+        <name>Form</name>
 	    <class>com.rapid.actions.Form</class>
 	    
 	    <addToNewApplications>false</addToNewApplications>
-	     
-<!-- 
-
-This action runs form - specifc functions
-		
--->	    	
+	    
 	    <properties>
 	        	        
 	        <property>
 	            <key>actionType</key>
 	            <name>Action</name>
 	            <setConstructValueFunction>return ""</setConstructValueFunction>
-	            <changeValueJavaScript>formActionType</changeValueJavaScript>	 	            	            
-	            <refreshProperties>true</refreshProperties>	            
+	            <changeValueJavaScript>formActionType</changeValueJavaScript>
+	            <refreshProperties>true</refreshProperties>
+	            <helpHtml>Sets the action to be performed when the condition is met. The options include moving forward or backwards a page in your form, copying a form id and copying a form value.</helpHtml>
 	        </property>
 	        
 	        <property>
 	            <key>dataSource</key>
 	            <name>Source</name>
-	            <changeValueJavaScript>formDataSource</changeValueJavaScript> 
+	            <changeValueJavaScript>formDataSource</changeValueJavaScript>
 	            <getValuesFunction>
 	                 <![CDATA[
 	                // return the list of all controls on the page with the one for this action selected
 	                return "<option value=''>Please select...</option>" + getFormValueOptions(this.dataSource);
 	               	]]>
 	            </getValuesFunction>
+	            <helpHtml>Sets the source control for where the form value is being copied from.</helpHtml>
 	        </property>
 	        
 	        <property>
 	            <key>dataDestination</key>
 	            <name>Destination</name>
-	            <changeValueJavaScript>formDataDestination</changeValueJavaScript> 
+	            <changeValueJavaScript>formDataDestination</changeValueJavaScript>
 	            <getValuesFunction>
 	                 <![CDATA[
 	                // return the list of all controls on the page with the one for this action selected
 	                return "<option value=''>Please select...</option>" + getOutputOptions(this.dataDestination);
 	               	]]>
 	            </getValuesFunction>
+	            <helpHtml>Sets the destination for where the form value is being copied to.</helpHtml>
 	        </property>
 	        
 		</properties>
@@ -110,11 +108,11 @@ This action runs form - specifc functions
 
 .formSummarySubmit {
 	margin-left:20px;
-}		    			
-	    			]]>        
+}
+	    			]]>
 	            </contents>
 	        </resource>
 	    </resources>
 	        		    	        
-    </action> 
+    </action>
 </actions>

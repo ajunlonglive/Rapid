@@ -60,6 +60,8 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <key>title</key>
 	            <name>Title</name>
 	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Displays a message when hovered over. Useful for screen readers.</helpHtml>
 	        </property>
 	        
 	        <property>
@@ -73,6 +75,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <changeValueJavaScript>glyphCode</changeValueJavaScript>
 	            <refreshHtml>true</refreshHtml>
 	            <refreshProperties>true</refreshProperties>
+	            <helpHtml>Attaches a glyph to the button. Useful for adding extra direction or improving aesthetics of a button, such as adding a magnifying glass for searching.</helpHtml>
 	        </property>
 	        
 	        <property>
@@ -100,6 +103,7 @@ return ["none","circle","circle-o","square","square-o"];
 					]]>
 	            </getValuesFunction>
 	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Applies an additional style to the glyph.</helpHtml>
 	        </property>
 	        
 	    </properties>
@@ -149,7 +153,7 @@ if (this.glyphCode) {
 	if (this.glyphPosition == "right" || this.glyphPosition == "bottom") html += glyph;
 	html += "</button>";
 } else {
-	html = "<button id='" + this.id + "' " + (this.title ? "title='" + escapeApos(this.title) + "' " : "") + "type='button' class='button" + getStyleClasses(this) + "'>" + this.label + "</button>";
+	html = "<button id='" + this.id + "' type='button' class='button" + getStyleClasses(this) + "' " + (this.title ? "title='" + escapeApos(this.title) + "' " : "") + ">" + this.label + "</button>";
 }
 return html
 	        ]]>
