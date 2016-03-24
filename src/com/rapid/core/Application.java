@@ -1939,9 +1939,7 @@ public class Application {
 					// get the page file
 					File pageFile = new File(appPagesCopyFolder + "/" + appCopyPageFile.getName());
 					// save it back to it's new location
-					FileWriter fsPage = new FileWriter(pageFile);
-					fsPage.write(pageCopyXML);
-					fsPage.close();										
+					Strings.saveString(pageCopyXML, pageFile);							
 				}
 			}
 		}
