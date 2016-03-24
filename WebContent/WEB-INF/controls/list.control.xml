@@ -3,7 +3,7 @@
 
 <!-- 
 
-Copyright (C) 2014 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -85,6 +85,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <name>Multi select</name>
 	            <changeValueJavaScript>checkbox</changeValueJavaScript>
 	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Allows multiple selections when choosing options in the list.</helpHtml>
 	        </property>
 	        
 	        <property>
@@ -93,7 +94,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <changeValueJavaScript>checkbox</changeValueJavaScript>
 	            <refreshHtml>true</refreshHtml>
 	            <refreshProperties>true</refreshProperties>
-	            <helpHtml>Decides whether the list will show all of the contents it has or if it will be first required to make them visible.</helpHtml>
+	            <helpHtml>Makes the contents hide or show when tapped, similar to how a dropdown list functions.</helpHtml>
 	        </property>
 	             
 	    </properties>

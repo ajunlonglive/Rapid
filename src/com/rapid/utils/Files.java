@@ -169,12 +169,14 @@ public class Files {
 			// check each power of 1024
 			if (sizeBytes < 1024) {
 				sizeName = sizeBytes + " bytes";
-			} else if (sizeBytes < 1024 * 1024) {
+			} else if (sizeBytes < Math.pow(1024, 2)) {
 				sizeName = Math.floor(sizeBytes / 1024d * 100) / 100d + " KB";
-			} else if (sizeBytes  < 1024 * 1024 * 1024) {
-				sizeName =  Math.floor(sizeBytes / 1024d / 1024d * 100) / 100d + " MB";
-			} else if (sizeBytes < 1024 * 1024 * 1024 * 1024) {
-				sizeName =  Math.floor(sizeBytes / 1024d / 1024d / 1024d * 100) / 100d + " GB";
+			} else if (sizeBytes  < Math.pow(1024, 3)) {
+				sizeName =  Math.floor(sizeBytes / Math.pow(1024, 2) * 100) / 100d + " MB";
+			} else if (sizeBytes < Math.pow(1024, 4)) {
+				sizeName =  Math.floor(sizeBytes / Math.pow(1024, 3) * 100) / 100d + " GB";
+			} else if (sizeBytes < Math.pow(1024, 5)) {
+				sizeName =  Math.floor(sizeBytes / Math.pow(1024, 4) * 100) / 100d + " TB";
 			} else {
 				sizeName = "huge!";
 			}
