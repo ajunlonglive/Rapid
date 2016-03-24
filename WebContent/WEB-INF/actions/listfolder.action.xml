@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="ISO-8859-1" ?>
 <actions xmlVersion="1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/action.xsd">
 
 <!-- 
@@ -6,7 +6,6 @@
 Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
-
 
 This file is part of the Rapid Application Platform
 
@@ -28,27 +27,39 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
     <action>
     
-        <type>event</type>
-        <name>Event</name>
-	    <class>com.rapid.actions.Event</class>
+        <type>listfolder</type>
+        <name>List folder</name>
+	    <class>com.rapid.actions.ListFolder</class>
 	    
-	    <addToNewApplications>false</addToNewApplications>
-	    	    	    	    
 	    <properties>
-	        
 	        <property>
-	            <key>event</key>
-	            <name>Event</name>
-	            <changeValueJavaScript>select</changeValueJavaScript>
-	            <getValuesFunction>
-	                <![CDATA[
-return "<option value=''>None</option>" + getEventOptions(this.event);
-	                ]]>
-	            </getValuesFunction>
-	            <helpHtml>Selects a set of actions to be carried out as a single event, all at once.</helpHtml>
+	            <key>rootFolder</key>
+	            <name>Root folder</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <helpHtml>Sets the folder to read the file properties from..</helpHtml>
 	        </property>
 	        
+	        <property>
+	            <key>dataDestination</key>
+	            <name>Destination</name>
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	            <getValuesFunction>
+	                 <![CDATA[
+	                // return the list of all controls on the page with the one for this action selected
+	                return "<option value=''>Please select...</option>" + getOutputOptions(this.dataDestination);
+	               	]]>
+	            </getValuesFunction>
+	            <helpHtml>Sets the destination for where the folder listing is being copied to.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>showHidden</key>
+	            <name>Show hidden files</name>
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>
+	            <getValuesFunction>return false;</getValuesFunction>
+	            <helpHtml>Sets whether to show the hidden files in the current root or not.</helpHtml>
+	        </property>
 	    </properties>
-	    	   	    	    	    	    	     	     	    
-    </action>
+	    		    	        
+    </action> 
 </actions>

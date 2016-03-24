@@ -3,7 +3,7 @@
 
 <!-- 
 
-Copyright (C) 2014 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -73,7 +73,7 @@ if (this.dataSource == "System.user") this.dataSource = "System.user name";
 return "<option value=''>Please select...</option>" + getInputOptions(this.dataSource);         
 	                ]]>
 	            </getValuesFunction>	
-	            <helpHtml></helpHtml>
+	            <helpHtml>Dropdown list containing all page controls to be used as a source. System values can also be used.</helpHtml>
 	        </property>
 	        	        	      
 	        <property>
@@ -117,6 +117,7 @@ return "<option value=''>Please select...</option>" + getInputOptions(this.dataS
 	            <name>Maximum rows</name>
 	            <changeValueJavaScript>datacopyMaxRows</changeValueJavaScript>
 	            <getValuesFunction>return "";</getValuesFunction>
+	            <helpHtml>Caps the amount of data that is to be returned upon searching.</helpHtml>
 	        </property>
 	        	        	        
 	        <property>
@@ -132,6 +133,7 @@ return "<option value=''>Please select...</option>" + getInputOptions(this.dataS
 	            <name>Child field</name>
 	            <changeValueJavaScript>datacopyChildField</changeValueJavaScript>
 	            <getValuesFunction>return "";</getValuesFunction>
+	            <helpHtml>Optionally specify a field or property that holds the data within the parent control. An example of this is a specific cloumn's field name in a table or grid.</helpHtml>
 	        </property>
 	        
 	         <property>
@@ -140,6 +142,7 @@ return "<option value=''>Please select...</option>" + getInputOptions(this.dataS
 	            <changeValueJavaScript>datacopyFields</changeValueJavaScript>
 	            <getValuesFunction>return "";</getValuesFunction>
 	            <refreshProperties>true</refreshProperties>
+	            <helpHtml>Sets the fields to appear in every row or column when transposing data.</helpHtml>
 	        </property>
 	        
 	         <property>
@@ -148,12 +151,14 @@ return "<option value=''>Please select...</option>" + getInputOptions(this.dataS
 	            <changeValueJavaScript>datacopyFields</changeValueJavaScript>
 	            <getValuesFunction>return "";</getValuesFunction>
 	            <refreshProperties>true</refreshProperties>
-	        </property>	
+	            <helpHtml>Sets the fields that will not be included in the transposing of data.</helpHtml>
+	        </property>
 	        
 	        <property>
 	            <key>dataCopies</key>
 	            <name>Bulk data copies</name>
 	            <changeValueJavaScript>datacopyCopies</changeValueJavaScript>
+	            <helpHtml>Enables the use of mass data copying. Useful for when large quantities of data needs to be transferred from one location to another within your Rapid application. Similar to normal data copies, it is possible to select a source and source field, a destination and destination field, and the type of copying that is to be carried out.</helpHtml>
 	        </property>
 	        
 	        <property>
@@ -161,6 +166,7 @@ return "<option value=''>Please select...</option>" + getInputOptions(this.dataS
 	            <name>Trigger change events</name>
 	            <changeValueJavaScript>checkbox</changeValueJavaScript>
 	            <getValuesFunction>return false;</getValuesFunction>
+	            <helpHtml>Causes a change event to occur when the data is copied. Useful for validation.</helpHtml>
 	        </property>
 	        	        	        	 	        	        	          
 	    </properties>

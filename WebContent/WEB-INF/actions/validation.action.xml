@@ -29,10 +29,10 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
     <action>
     
         <type>validation</type>
-        <name>Validation</name>	        
-	    <class>com.rapid.actions.Validation</class>	
+        <name>Validation</name>
+	    <class>com.rapid.actions.Validation</class>
 	    
-	    <addToNewApplications>true</addToNewApplications>    
+	    <addToNewApplications>true</addToNewApplications>
 	    
 	    <properties>
 	        
@@ -40,35 +40,40 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <key>controls</key>
 	            <name>Controls</name>
 	            <changeValueJavaScript>validationControls</changeValueJavaScript>
-	            <refreshProperties>true</refreshProperties>		 
+	            <refreshProperties>true</refreshProperties>
+	            <helpHtml>Sets the control/s on the page to validate against.</helpHtml>
 	        </property>
 	        
 	        <property>
 	            <key>showMessages</key>
 	            <name>Apply styling</name>
 	            <setConstructValueFunction>return true;</setConstructValueFunction>
-	            <changeValueJavaScript>checkbox</changeValueJavaScript>	 
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>
+	            <helpHtml>Sets whether to apply a validation style to the selected controls.</helpHtml>
 	        </property>
 	        
 	        <property>
 	            <key>stopActions</key>
 	            <name>Stop further actions</name>
 	            <setConstructValueFunction>return true;</setConstructValueFunction>
-	            <changeValueJavaScript>checkbox</changeValueJavaScript>	 	            
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>
+	            <helpHtml>Sets whether to prevent further actions from being carried out on the page or not, such as progressing to the next page on a form.</helpHtml>
 	        </property>
 	        
 	        <property>
 	            <key>passActions</key>
 	            <name>Pass actions</name>
 	            <changeValueJavaScript>childActions</changeValueJavaScript>
-	            <refreshProperties>true</refreshProperties>		 
+	            <refreshProperties>true</refreshProperties>
+	            <helpHtml>Sets actions to be carried out for when validation has passed.</helpHtml>
 	        </property>
 	        
 	        <property>
 	            <key>failActions</key>
 	            <name>Fail actions</name>
 	            <changeValueJavaScript>childActions</changeValueJavaScript>
-	            <refreshProperties>true</refreshProperties>		 
+	            <refreshProperties>true</refreshProperties>
+	            <helpHtml>Sets actions to be carried out for when validation has failed</helpHtml>
 	        </property>
 	        
 	    </properties>

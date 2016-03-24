@@ -29,61 +29,62 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
     <action>
     
         <type>mobile</type>
-        <name>Mobile</name>	        
+        <name>Mobile</name>
 	    <class>com.rapid.actions.Mobile</class>
 	    
 	    <addToNewApplications>false</addToNewApplications>
-<!-- 
-
-This action runs actions that already exist on other controls		
-		
--->	    	
+	    	
 		<properties>
 		    
 	        <property>
 	            <key>actionType</key>
 	            <name>Type</name>
 	            <setConstructValueFunction>return "dial";</setConstructValueFunction>
-	            <changeValueJavaScript>mobileActionType</changeValueJavaScript>	 
+	            <changeValueJavaScript>mobileActionType</changeValueJavaScript>
 	            <refreshProperties>true</refreshProperties>
+	            <helpHtml>Defines the type of mobile action that will be carried out, such as dialing a number, scanning a barcode or sending a GPS location.</helpHtml>
 	        </property>
 	        
 	        <property>
 	            <key>numberControlId</key>
 	            <name>Phone number source</name>
 	             <visible>false</visible>
-	            <changeValueJavaScript>select</changeValueJavaScript>	 
+	            <changeValueJavaScript>select</changeValueJavaScript>
 	             <getValuesFunction>
 	                <![CDATA[
-return "<option value=''>Please select...</option>" + getInputOptions(this.numberControlId);	                
+return "<option value=''>Please select...</option>" + getInputOptions(this.numberControlId);
 	                ]]>
 	            </getValuesFunction>
+	            <helpHtml>Sets where the phone number is coming from on the page.</helpHtml>
 	        </property>
 	        
 	        <property>
 	            <key>numberField</key>
 	            <name>Phone number source field</name>
 	             <visible>false</visible>
-	            <changeValueJavaScript>text</changeValueJavaScript>	 
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <helpHtml>Defines a more specific field for the phone number source. An example of use would be getting the phone number from a table cell within a table, where the cell is the field and the table is the source.</helpHtml>
 	        </property>
 	        
 	        <property>
 	            <key>messageControlId</key>
 	            <name>Message source</name>
 	             <visible>false</visible>
-	            <changeValueJavaScript>select</changeValueJavaScript>	
+	            <changeValueJavaScript>select</changeValueJavaScript>
 	             <getValuesFunction>
 	                <![CDATA[
-return "<option value=''>Please select...</option>" + getInputOptions(this.messageControlId);	                
+return "<option value=''>Please select...</option>" + getInputOptions(this.messageControlId);
 	                ]]>
-	            </getValuesFunction> 	           
+	            </getValuesFunction>
+	            <helpHtml>Sets where the message is coming from on the page.</helpHtml>
 	        </property>
 	        
 	        <property>
 	            <key>messageField</key>
 	            <name>Message source field</name>
 	             <visible>false</visible>
-	            <changeValueJavaScript>text</changeValueJavaScript>	 	            
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <helpHtml>Defines a more specific field for the message source. An example of use would be getting the message from a table cell within a table, where the cell is the field and the table is the source.</helpHtml>
 	        </property>
 	        
 	        <property>
@@ -93,9 +94,10 @@ return "<option value=''>Please select...</option>" + getInputOptions(this.messa
 	            <changeValueJavaScript>select</changeValueJavaScript>
 	            <getValuesFunction>
 	                <![CDATA[
-return "<option value=''>Please select...</option>" + getControlOptions(this.galleryControlId, null, "gallery");	                
+return "<option value=''>Please select...</option>" + getControlOptions(this.galleryControlId, null, "gallery");
 	                ]]>
-	            </getValuesFunction>	 	            
+	            </getValuesFunction>
+	            <helpHtml>Selects which gallery control to use on the page. You will need to have a gallery control on the page in order to use this.</helpHtml>
 	        </property>
 	        
 	        <property>
@@ -103,7 +105,8 @@ return "<option value=''>Please select...</option>" + getControlOptions(this.gal
 	            <name>Max width/height (px)</name>
 	            <visible>false</visible>
 	            <setConstructValueFunction>return "500";</setConstructValueFunction>
-	            <changeValueJavaScript>integer</changeValueJavaScript>	 
+	            <changeValueJavaScript>integer</changeValueJavaScript>
+	            <helpHtml>Sets the maximum height and width of the gallery. By default it sets to 500 pixels in length and width.</helpHtml>
 	        </property>
 	        
 	        <property>
@@ -111,135 +114,145 @@ return "<option value=''>Please select...</option>" + getControlOptions(this.gal
 	            <name>Quality (%)</name>
 	            <visible>false</visible>
 	            <setConstructValueFunction>return "50";</setConstructValueFunction>
-	            <changeValueJavaScript>integer</changeValueJavaScript>	 
+	            <changeValueJavaScript>integer</changeValueJavaScript>
+	            <helpHtml>Sets the quality of the image, in percentages. By default it sets the quality to 50% of that of the original.</helpHtml>
 	        </property>
 	        
 	         <property>
 	            <key>galleryControlIds</key>
 	            <name>Controls</name>
 	            <visible>false</visible>
-	            <changeValueJavaScript>galleryControls</changeValueJavaScript>	            
+	            <changeValueJavaScript>galleryControls</changeValueJavaScript>
 	            <refreshProperties>true</refreshProperties>
+	            <helpHtml>Sets the gallery or signature control on the page to put the image in to.</helpHtml>
 	        </property>
 	        
 	         <property>
 	            <key>barcodeDestinations</key>
 	            <name>Destinations</name>
 	            <visible>false</visible>
-	            <changeValueJavaScript>datacopyDestinations</changeValueJavaScript>	 
-	        </property> 
+	            <changeValueJavaScript>datacopyDestinations</changeValueJavaScript>
+	            <helpHtml>Sets the destination for where to place the barcode data on the page.</helpHtml>
+	        </property>
 	        
 	        <property>
 	            <key>successActions</key>
 	            <name>Success actions</name>
 	            <visible>false</visible>
-	            <changeValueJavaScript>childActions</changeValueJavaScript>	 
+	            <changeValueJavaScript>childActions</changeValueJavaScript>
+	            <helpHtml>Allows you to set a success action for when the image is successfully imported into the control specified.</helpHtml>
 	        </property>
 	        
 	        <property>
 	            <key>errorActions</key>
 	            <name>Error actions</name>
 	            <visible>false</visible>
-	            <changeValueJavaScript>childActions</changeValueJavaScript>	 
-	        </property> 
+	            <changeValueJavaScript>childActions</changeValueJavaScript>
+	            <helpHtml>Allows you to set an error action for when the image is not successfully imported into the control specified.</helpHtml>
+	        </property>
 	        	        
 	        <property>
 	            <key>navigateControlId</key>
 	            <name>Navigate to source</name>
 	             <visible>false</visible>
-	            <changeValueJavaScript>select</changeValueJavaScript>	 
+	            <changeValueJavaScript>select</changeValueJavaScript>
 	             <getValuesFunction>
 	                <![CDATA[
-return "<option value=''>Please select...</option>" + getInputOptions(this.navigateControlId);	                
+return "<option value=''>Please select...</option>" + getInputOptions(this.navigateControlId);
 	                ]]>
 	            </getValuesFunction>
-	            <helpHtml>
-The control that holds the data of where we want to navigate to	                
-	            </helpHtml> 	            
+	            <helpHtml>The control that holds the data of where we want to navigate to.</helpHtml>
 	        </property>
 	        
 	        <property>
 	            <key>navigateField</key>
 	            <name>Navigate to source field</name>
 	             <visible>false</visible>
-	            <changeValueJavaScript>text</changeValueJavaScript>	 
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <helpHtml>Defines a more specific field for the source of where we want to navigate to. An example of use would be from a table cell within a table, where the cell is the field and the table is the source.</helpHtml>
 	        </property>
 	        
 	        <property>
 	            <key>navigateSearchFields</key>
 	            <name>Navigate to search fields</name>
 	             <visible>false</visible>
-	            <changeValueJavaScript>text</changeValueJavaScript>	
-	            <helpHtml>
-Fields in the navigate to source control to use to search for the location to navigate to               
-	            </helpHtml> 
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <helpHtml>Fields in the navigate to source control to use to search for the location to navigate to.</helpHtml>
 	        </property>
 	        
 	         <property>
 	            <key>navigateMode</key>
 	            <name>Navigation mode</name>
-	            <visible>false</visible>	            
+	            <visible>false</visible>
 	            <setConstructValueFunction>
 	                <![CDATA[
-return "d";	                
+return "d";
 	                ]]>
 	            </setConstructValueFunction>
 	            <changeValueJavaScript>select</changeValueJavaScript>
 	            <getValuesFunction>
 	                <![CDATA[
-return [["d","driving"],["w","walking"],["b","cycling"],["transit","public transport"]];	                
+return [["d","driving"],["w","walking"],["b","cycling"],["transit","public transport"]];
 	                ]]>
-	            </getValuesFunction>	 	            
+	            </getValuesFunction>
+	            <helpHtml>Sets the type of transport being used to navigate, such as public transport.</helpHtml>
 	        </property>
 	        
 	        <property>
 	            <key>message</key>
 	            <name>Message</name>
 	            <visible>false</visible>
-	            <changeValueJavaScript>bigtext</changeValueJavaScript>	 
+	            <changeValueJavaScript>bigtext</changeValueJavaScript>
+	            <helpHtml>Sets a message to display in the status bar.</helpHtml>
 	        </property>
 	        	        	        
 	        <property>
 	            <key>gpsDestinations</key>
 	            <name>Destinations</name>
 	            <visible>false</visible>
-	            <changeValueJavaScript>datacopyDestinations</changeValueJavaScript>	 
-	        </property> 
+	            <changeValueJavaScript>datacopyDestinations</changeValueJavaScript>
+	            <helpHtml>Sets which control on the page will hold the GPS location sent.</helpHtml>
+	        </property>
          	        
 	        <property>
 	            <key>gpsFrequency</key>
 	            <name>Update frequency (seconds)</name>
 	            <visible>false</visible>
 	            <setConstructValueFunction>return 0;</setConstructValueFunction>
-	            <changeValueJavaScript>integer</changeValueJavaScript>	 
+	            <changeValueJavaScript>integer</changeValueJavaScript>
+	            <helpHtml>Sets how long it takes for the GPS position to be updated.</helpHtml>
 	        </property>
 	        
 	        <property>
 	            <key>gpsCheck</key>
 	            <name>Check GPS enabled</name>
 	            <visible>false</visible>
-	            <changeValueJavaScript>checkbox</changeValueJavaScript>	 
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>
+	            <helpHtml>Sets whether to check if the mobile device has GPS enabled or not.</helpHtml>
 	        </property>
 	        
 	        <property>
 	            <key>onlineActions</key>
 	            <name>Actions</name>
 	            <visible>false</visible>
-	            <changeValueJavaScript>childActions</changeValueJavaScript>	 
+	            <changeValueJavaScript>childActions</changeValueJavaScript>
+	            <helpHtml>Allows you to define actions to be carried out if the mobile device has an established Internet connection.</helpHtml>
 	        </property>
 	        
 	        <property>
 	            <key>onlineWorking</key>
 	            <name>Working dialogue</name>
 	            <visible>false</visible>
-	            <changeValueJavaScript>navigationPage</changeValueJavaScript>	 
+	            <changeValueJavaScript>navigationPage</changeValueJavaScript>
+	            <helpHtml>Sets a page to appear as dialogue if the mobile device is connected online.</helpHtml>
 	        </property>
 	        
 	        <property>
 	            <key>onlineFail</key>
 	            <name>Offline dialogue</name>
 	            <visible>false</visible>
-	            <changeValueJavaScript>navigationPage</changeValueJavaScript>	 
+	            <changeValueJavaScript>navigationPage</changeValueJavaScript>
+	            <helpHtml>Sets a page to appear as dialogue if the mobile device is not connected to the Internet.</helpHtml>
 	        </property>
 	        
 	    </properties>

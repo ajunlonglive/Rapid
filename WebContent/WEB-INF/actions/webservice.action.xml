@@ -3,14 +3,14 @@
 
 <!-- 
 
-Copyright (C) 2014 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version. The terms require you to include
@@ -29,7 +29,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
     <action>
     
         <type>webservice</type>
-        <name>Webservice</name>	        
+        <name>Webservice</name>
 	    <class>com.rapid.actions.Webservice</class>
 	    
 	    <addToNewApplications>true</addToNewApplications>
@@ -39,26 +39,30 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	        <property>
 	            <key>request</key>
 	            <name>Request</name>
-	            <changeValueJavaScript>webserviceRequest</changeValueJavaScript>	 
-	        </property>	 
+	            <changeValueJavaScript>webserviceRequest</changeValueJavaScript>
+	            <helpHtml>Enables you to define a webservice request. The request can be entered within the text area and can be of the type SOAP, JSON or XML/Restful. Selected inputs and outputs can be chosen for the request.</helpHtml>
+	        </property>
 	         
 	        <property>
 	            <key>showLoading</key>
 	            <name>Loading animation</name>
-	            <changeValueJavaScript>checkbox</changeValueJavaScript>	 
-	        </property>	
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>
+	            <helpHtml>Sets whether to display a loading animation or not whilst the request is taking place.</helpHtml>
+	        </property>
 	        
 	        <property>
 	            <key>successActions</key>
 	            <name>Success actions</name>
-	            <changeValueJavaScript>childActions</changeValueJavaScript>	 
+	            <changeValueJavaScript>childActions</changeValueJavaScript>
+	            <helpHtml>Sets actions to be carried out for when the webservice has completed successfully.</helpHtml>
 	        </property>
 	        
 	        <property>
 	            <key>errorActions</key>
 	            <name>Error actions</name>
-	            <changeValueJavaScript>childActions</changeValueJavaScript>	 
-	        </property>  
+	            <changeValueJavaScript>childActions</changeValueJavaScript>
+	            <helpHtml>Sets actions to be carried out for when the webservice has not been successful.</helpHtml>
+	        </property>
 	            
 	    </properties>
 	    

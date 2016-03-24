@@ -3,7 +3,7 @@
 
 <!-- 
 
-Copyright (C) 2014 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -77,7 +77,7 @@ return [[0,"Normal"],[1,"Submission confirmation"],[2,"Submission error"],[3,"Sa
 	            <key>description</key>
 	            <name>Description</name>
 	            <changeValueJavaScript>bigtext</changeValueJavaScript>
-	            <helpHtml>Sets some additional notes that describes the page.</helpHtml>
+	            <helpHtml>Sets some additional notes that describes the page. These may appear public to your users.</helpHtml>
 	        </property>
 	        
 	         <property>
@@ -114,6 +114,7 @@ return [[0,"Normal"],[1,"Submission confirmation"],[2,"Submission error"],[3,"Sa
 	            <key>notes</key>
 	            <name>Notes</name>
 	            <changeValueJavaScript>bigtext</changeValueJavaScript>
+	            <helpHtml>Sets additional notes for the page. These notes are more private than the description. Notes left here can be useful for other developers that may use your app.</helpHtml>
 	        </property>
 	        
 	        <property>

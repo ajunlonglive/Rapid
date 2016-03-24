@@ -3,7 +3,7 @@
 
 <!-- 
 
-Copyright (C) 2014 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -62,7 +62,6 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <key>codes</key>
 	            <name>Codes</name>
 	            <visible>false</visible>
-	            
 	        </property>
 	        
 	        <property>
@@ -108,6 +107,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <name>Group</name>
 	            <changeValueJavaScript>text</changeValueJavaScript>
 	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Allows you to assign groups to radio buttons. If different sets of buttons share the same group then only one button can be selected at one time from that group.</helpHtml>
 	        </property>
 	        
 	    </properties>
