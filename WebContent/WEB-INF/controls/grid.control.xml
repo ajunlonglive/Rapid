@@ -211,24 +211,27 @@ function sortGridByColumn(ev, id, details, column, asc) {
 		// get the field
 		var field = details.columns[column].field;
 		
+		// assume data and details columns are the same
+		var dataColumn = column;
+		
 		// check the column matches the field
 		if (data.fields[column] != field) {
 			// didn't match so find what it should be
 			for (var i in data.fields) {
 				if (data.fields[i] && data.fields[i].toLowerCase() == field.toLowerCase()) {
-					column = i;
+					dataColumn = i;
 					break;
 				}
 			}	
 		}
 	
 		// check there is data for the column
-		if (data && data.rows && data.fields[column]) {
+		if (data && data.rows && data.fields[dataColumn]) {
 		
 			// an array for all values in this column
 			var sortedValues = [];
 			// populate the array for each row with an object with the original index and value
-			for (var i in data.rows) sortedValues.push( {index:i, value:data.rows[i][column]} );
+			for (var i in data.rows) sortedValues.push( {index:i, value:data.rows[i][dataColumn]} );
 			// determin the sort type
 			switch (details.columns[column].sort) {
 				// for n, turn both values into numbers and use that
