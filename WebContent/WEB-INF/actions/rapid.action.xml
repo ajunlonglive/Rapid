@@ -354,7 +354,8 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 				appId: $("#rapid_P0_C43").val(), 
 				version: $("#rapid_P0_C1044_").val(),
 				securityAdapter: $("#rapid_P0_C81").val(),
-				deviceSecurity: $("#rapid_P0_C1591_").prop("checked")
+				deviceSecurity: $("#rapid_P0_C1591_").prop("checked"),
+				noRetainPassword: $("#rapid_P0_C1614_").prop("checked")
 			};	
 		break;
 		case "SAVEACTIONS" :
@@ -476,12 +477,14 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 				password: $("#rapid_P7_C35").val()
 			};	
 			callback = function() {
+				// reload version
 				Event_change_rapid_P0_C43(ev);
 			};	
 		break;
 		case "DELDBCONN" :		
 			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), index: $(ev.target).parent().parent().index()-1 };
 			callback = function() {
+				// reload everything
 				Event_change_rapid_P0_C43(ev);
 			};	
 		break;
@@ -532,11 +535,29 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 		break;
 		case "NEWUSER" :	
 			if (rapidApp) {
-				data = { actionType: actionType, appId: "rapid", version : _appVersion, userName: $("#rapid_P16_C8_").val(), description: $("#rapid_P16_C13_").val() , password: $("#rapid_P16_C17_").val(), useAdmin: $("#rapid_P16_C38_").prop("checked"), useDesign: $("#rapid_P16_C39_").prop("checked")};
+				data = { actionType: actionType, 
+					appId: "rapid", 
+					version : _appVersion, 
+					userName: $("#rapid_P16_C8_").val(), 
+					description: $("#rapid_P16_C13_").val() , 
+					password: $("#rapid_P16_C17_").val(), 
+					deviceDetails: $("#rapid_P16_C57_").val(),
+					useAdmin: $("#rapid_P16_C38_").prop("checked"), 
+					useDesign: $("#rapid_P16_C39_").prop("checked")
+				};
 			} else {	
-				data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), userName: $("#rapid_P6_C7").val(), description: $("#rapid_P6_C42_").val() , password: $("#rapid_P6_C18").val() };
+				data = { actionType: actionType, 
+					appId: $("#rapid_P0_C43").val(), 
+					version: $("#rapid_P0_C1044_").val(), 
+					userName: $("#rapid_P6_C7").val(), 
+					description: $("#rapid_P6_C42_").val() , 
+					password: $("#rapid_P6_C18").val(),
+					deviceDetails: $("#rapid_P6_C70_").val(),
+					useAdmin: $("#rapid_P6_C65_").prop("checked"),
+					useDesign: $("#rapid_P6_C66_").prop("checked")
+				 };
 				callback = function() {
-					Event_change_rapid_P0_C43(ev);
+					Event_change_rapid_P0_C81(ev);
 				};
 			}								
 		break;

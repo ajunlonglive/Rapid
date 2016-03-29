@@ -254,6 +254,8 @@ public abstract class SecurityAdapter {
 								// stop checking this condition any further
 								break;
 							} else {						
+								// update agent=RapidMobile to ends with Rapid Mobile
+								if ("agent".equals(key) && "RapidMobile".equals(value)) value = "*RapidMobile";
 								// if there is a direct match or wildcard match
 								if (value.equals(deviceValue) // full match
 										|| ("*".equals(value)) // value can be anything

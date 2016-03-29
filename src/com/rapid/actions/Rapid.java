@@ -739,7 +739,11 @@ public class Rapid extends Action {
 						result.put("statusBarIconColour", app.getStatusBarIconColour());
 						
 						// add the security adapter
-						result.put("securityAdapter", app.getSecurityAdapterType());	
+						result.put("securityAdapter", app.getSecurityAdapterType());
+						// add whether there is device security
+						result.put("deviceSecurity", app.getDeviceSecurity());
+						// add whether password is retained on Rapid Mobile
+						result.put("noRetainPassword", app.getNoRetainPassword());	
 						// add action types
 						result.put("actionTypes", app.getActionTypes());				
 						// add control types
@@ -1566,9 +1570,13 @@ public class Rapid extends Action {
 				
 				boolean deviceSecurity = jsonAction.optBoolean("deviceSecurity");
 				
+				boolean noRetainPassword = jsonAction.optBoolean("noRetainPassword");
+				
 				app.setSecurityAdapterType(securityAdapter);
 				
 				app.setDeviceSecurity(deviceSecurity);
+				
+				app.setNoRetainPassword(noRetainPassword);
 				
 				app.save(rapidServlet, rapidRequest, true);
 				
@@ -1934,6 +1942,10 @@ public class Rapid extends Action {
 				String password = jsonAction.getString("password");
 				// get the device details
 				String deviceDetails = jsonAction.optString("deviceDetails");
+				// check for useAdmin
+				boolean useAdmin = jsonAction.optBoolean("useAdmin");
+				// check for useDesign
+				boolean useDesign = jsonAction.optBoolean("useDesign");
 				
 				// get the security
 				SecurityAdapter security = app.getSecurityAdapter();
@@ -1943,22 +1955,16 @@ public class Rapid extends Action {
 												
 				// add the user
 				security.addUser(rapidRequest, new User(userName, description, password, deviceDetails));
-				
+												
 				// update the Rapid Request to have the new user name
 				rapidRequest.setUserName(userName);
 				
-				// if this is the rapid app
-				if ("rapid".equals(app.getId())) {
-					// check for useAdmin
-					boolean useAdmin = jsonAction.optBoolean("useAdmin");
-					// add role if we were given one
-					if (useAdmin) security.addUserRole(rapidRequest, com.rapid.server.Rapid.ADMIN_ROLE);
-					// check for useDesign
-					boolean useDesign = jsonAction.optBoolean("useDesign");
-					// add role if we were given one
-					if (useDesign) security.addUserRole(rapidRequest, com.rapid.server.Rapid.DESIGN_ROLE);
-				}
+				// add role if we were given one
+				if (useAdmin) security.addUserRole(rapidRequest, com.rapid.server.Rapid.ADMIN_ROLE);
 				
+				// add role if we were given one
+				if (useDesign) security.addUserRole(rapidRequest, com.rapid.server.Rapid.DESIGN_ROLE);
+								
 				// set the result message
 				result.put("message", "User added");					
 								

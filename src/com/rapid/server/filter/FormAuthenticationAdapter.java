@@ -246,15 +246,30 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 				} else {
 					
 					_logger.trace("userName found in request");
-					
-					// look in the request for the password
-					String userPassword = request.getParameter("userPassword");
-										
+																				
 					// remember whether we are authorised for at least one application
 					boolean authorised = false;
 					
 					// get the applications collection
 					Applications applications = (Applications) getServletContext().getAttribute("applications");
+					
+					// look in the request for the password
+					String userPassword = request.getParameter("userPassword");
+					
+					// look in the request for device details
+					String deviceId = request.getParameter("deviceId");
+					
+					// get the address from the request host
+					InetAddress inetAddress = InetAddress.getByName(request.getRemoteHost());
+					
+					// get the request device details 
+					String deviceDetails = "ip=" + inetAddress.getHostAddress() + ",name=" + inetAddress.getHostName() + ",agent=" + request.getHeader("User-Agent");
+					
+					// if we were sent a device id add it to the device details
+					if (deviceId != null)  deviceDetails += "," + deviceId;
+																	
+					// retain device id in the session
+					session.setAttribute(RapidFilter.SESSION_VARIABLE_USER_DEVICE, deviceDetails);
 					
 					// if there are some applications
 					if (applications != null) {
@@ -288,21 +303,6 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 							_logger.error("FormAuthenticationAdapter error storing encrypted password", ex);
 						}
 
-						// get the address from the request host
-						InetAddress inetAddress = InetAddress.getByName(request.getRemoteHost());
-						
-						// start the device details
-						String deviceDetails = "ip=" + inetAddress.getHostAddress() + ",name=" + inetAddress.getHostName() + ",agent=" + request.getHeader("User-Agent");
-						
-						// look in the request for the device id parameter
-						String deviceId = request.getParameter("deviceId");
-						
-						// if we were sent one add it to the device details
-						if (deviceId != null)  deviceDetails += "," + deviceId;
-						
-						// retain device id in the session
-						session.setAttribute(RapidFilter.SESSION_VARIABLE_USER_DEVICE, deviceDetails);
-						
 						// log that authentication was granted
 						_logger.debug("FormAuthenticationAdapter authenticated " + userName + " from " + deviceDetails);
 						
