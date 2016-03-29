@@ -387,12 +387,15 @@ public class Pages {
 		for (String pageId : _pages.keySet()) {
 			// get the header
 			PageHeader pageHeader = _pageHeaders.get(pageId);
-			// if the number of seconds between now and the last get time is greater than our age
-			if (now.getTime() - pageHeader.getLastGetDateTime().getTime() > maxPageAge * 1000) {
-				// initialise if need be
-				if (clearPages == null) clearPages = new ArrayList<PageHeader>();
-				// add this id for clearing
-				clearPages.add(pageHeader);
+			// if we got one
+			if (pageHeader != null) {
+				// if the number of seconds between now and the last get time is greater than our age
+				if (now.getTime() - pageHeader.getLastGetDateTime().getTime() > maxPageAge * 1000) {
+					// initialise if need be
+					if (clearPages == null) clearPages = new ArrayList<PageHeader>();
+					// add this id for clearing
+					clearPages.add(pageHeader);
+				}
 			}
 		}
 		// if the list got intialised (i.e. there are some to clear)

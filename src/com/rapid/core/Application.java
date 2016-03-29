@@ -561,7 +561,7 @@ public class Application {
 	// instance variables	
 	private int _xmlVersion, _status, _applicationBackupsMaxSize, _pageBackupsMaxSize;
 	private String _id, _version, _name, _title, _description, _startPageId, _themeType, _styles, _statusBarColour, _statusBarHighlightColour, _statusBarTextColour, _statusBarIconColour, _functions, _securityAdapterType, _formAdapterType, _createdBy, _modifiedBy;
-	private boolean _showConrolIds, _showActionIds, _deviceSecurity;
+	private boolean _showConrolIds, _showActionIds, _deviceSecurity, _noRetainPassword;
 	private Date _createdDate, _modifiedDate;
 	private Map<String,Integer> _pageOrders;
 	private SecurityAdapter _securityAdapter;
@@ -681,6 +681,10 @@ public class Application {
 	// whether to apply device security to this application
 	public boolean getDeviceSecurity() { return _deviceSecurity; }
 	public void setDeviceSecurity(boolean deviceSecurity) { _deviceSecurity = deviceSecurity; }
+	
+	// whether to not retain the password in Rapid Mobile - note that it's in the negative
+	public boolean getNoRetainPassword() { return _noRetainPassword; }
+	public void setNoRetainPassword(boolean noRetainPassword) { _noRetainPassword = noRetainPassword; }
 	
 	// the type name of the form adapter this application uses (if any)
 	public String getFormAdapterType() { return _formAdapterType; }
@@ -1898,89 +1902,110 @@ public class Application {
 		appCopy.setStatus(Application.STATUS_DEVELOPMENT);
 		// update the created date
 		appCopy.setCreatedDate(new Date());
-						
-		// save the copy to create the folder and, application.xml and page.xml files
-		appCopy.save(rapidServlet, rapidRequest, false);
-				
-		// get the copy of the application.xml file
-		File appCopyFile = new File(appCopy.getConfigFolder(servletContext) + "/application.xml");
-		// read the copy to a string
-		String appCopyXML = Strings.getString(appCopyFile);
-		// replace all app/version references
-		appCopyXML = appCopyXML.replace("/" + _id + "/" + _version + "/", "/" + newId + "/" + newVersion + "/");
-		// save it back
-		FileWriter fs = new FileWriter(appCopyFile);
-		fs.write(appCopyXML);
-		fs.close();
 		
-		// look for a security.xml file
-		File appSecurityFile = new File(getConfigFolder(servletContext) + "/security.xml");
-		// if we have one, copy it
-		if (appSecurityFile.exists()) Files.copyFile(appSecurityFile, new File(appCopy.getConfigFolder(servletContext) + "/security.xml"));
+		// get the app copy folder
+		File appCopyFolder = new File(appCopy.getConfigFolder(servletContext));
+		// get a app web copy folder location
+		File appWebCopyFolder = new File(appCopy.getWebFolder(servletContext));
 		
-		// get the pages config folder
-		File appPagesFolder = new File(getConfigFolder(servletContext) + "/pages");		
-		// check it exists
-		if (appPagesFolder.exists()) {
-			// the folder we are copying to
-			File appPagesCopyFolder = new File(appCopy.getConfigFolder(servletContext) + "/pages");
-			// make the dirs
-			appPagesCopyFolder.mkdirs();
-			// loop the files
-			for (File appCopyPageFile : appPagesFolder.listFiles()) {
-				// if this is a page.xml file
-				if (appCopyPageFile.getName().endsWith(".page.xml")) {
-					// read the copy to a string
-					String pageCopyXML = Strings.getString(appCopyPageFile);
-					// replace all app/version references
-					pageCopyXML = pageCopyXML
-							.replace("/" + _id + "/" + _version + "/", "/" + newId + "/" + newVersion + "/")
-							.replace("~?a=" + _id + "&amp;" + _version + "&amp;", "~?a=" + newId + "&amp;" + newVersion + "&amp;");
-					// get the page file
-					File pageFile = new File(appPagesCopyFolder + "/" + appCopyPageFile.getName());
-					// save it back to it's new location
-					Strings.saveString(pageCopyXML, pageFile);							
+		try {
+			
+			// save the copy to create the folder and, application.xml and page.xml files
+			appCopy.save(rapidServlet, rapidRequest, false);
+					
+			// get the copy of the application.xml file
+			File appCopyFile = new File(appCopyFolder + "/application.xml");
+			// read the copy to a string
+			String appCopyXML = Strings.getString(appCopyFile);
+			// replace all app/version references
+			appCopyXML = appCopyXML.replace("/" + _id + "/" + _version + "/", "/" + newId + "/" + newVersion + "/");
+			// save it back
+			FileWriter fs = new FileWriter(appCopyFile);
+			fs.write(appCopyXML);
+			fs.close();
+			
+			// look for a security.xml file
+			File appSecurityFile = new File(getConfigFolder(servletContext) + "/security.xml");
+			// if we have one, copy it
+			if (appSecurityFile.exists()) Files.copyFile(appSecurityFile, new File(appCopyFolder + "/security.xml"));
+			
+			// get the pages config folder
+			File appPagesFolder = new File(getConfigFolder(servletContext) + "/pages");		
+			// check it exists
+			if (appPagesFolder.exists()) {
+				// the folder we are copying to
+				File appPagesCopyFolder = new File(appCopyFolder + "/pages");
+				// make the dirs
+				appPagesCopyFolder.mkdirs();
+				// loop the files
+				for (File appCopyPageFile : appPagesFolder.listFiles()) {
+					// if this is a page.xml file
+					if (appCopyPageFile.getName().endsWith(".page.xml")) {
+						// read the copy to a string
+						String pageCopyXML = Strings.getString(appCopyPageFile);
+						// replace all app/version references
+						pageCopyXML = pageCopyXML
+								.replace("/" + _id + "/" + _version + "/", "/" + newId + "/" + newVersion + "/")
+								.replace("~?a=" + _id + "&amp;" + _version + "&amp;", "~?a=" + newId + "&amp;" + newVersion + "&amp;");
+						// get the page file
+						File pageFile = new File(appPagesCopyFolder + "/" + appCopyPageFile.getName());
+						// save it back to it's new location
+						Strings.saveString(pageCopyXML, pageFile);							
+					}
 				}
 			}
-		}
-		
-		// get the web folder
-		File appWebFolder = new File(getWebFolder(servletContext));	
-		// if it exists
-		if (appWebFolder.exists()) {
-			// get a folder for the new location
-			File appWebCopyFolder = new File(appCopy.getWebFolder(servletContext));
-			// copy everything
-			Files.copyFolder(appWebFolder, appWebCopyFolder);
-		}
-		
-		// if we want to copy the backups too
-		if (backups) {
-			// get the backups folder
-			File appBackupFolder = new File(getBackupFolder(servletContext, false));
-			// check it exists
-			if (appBackupFolder.exists()) {
-				// create a folder to copy to
-				File appBackupCopyFolder = new File(appCopy.getBackupFolder(servletContext, false));
-				// make the dirs
-				appBackupCopyFolder.mkdirs();
-				// copy the folder
-				Files.copyFolder(appBackupFolder, appBackupCopyFolder);
+			
+			// get the web folder
+			File appWebFolder = new File(getWebFolder(servletContext));	
+			// if it exists
+			if (appWebFolder.exists()) {			
+				// copy everything
+				Files.copyFolder(appWebFolder, appWebCopyFolder);
 			}
-		}
+			
+			// if we want to copy the backups too
+			if (backups) {
+				// get the backups folder
+				File appBackupFolder = new File(getBackupFolder(servletContext, false));
+				// check it exists
+				if (appBackupFolder.exists()) {
+					// create a folder to copy to
+					File appBackupCopyFolder = new File(appCopy.getBackupFolder(servletContext, false));
+					// make the dirs
+					appBackupCopyFolder.mkdirs();
+					// copy the folder
+					Files.copyFolder(appBackupFolder, appBackupCopyFolder);
+				}
+			}
+							
+			// reload the application with the new app and page references
+			appCopy = Application.load(servletContext, appCopyFile);
+											
+			// add this one to the applications collection
+			rapidServlet.getApplications().put(appCopy);
+					
+			// delete this one
+			if (delete) delete(rapidServlet, rapidRequest, false);
+			
+			// return the copy
+			return appCopy;
+			
+		} catch (Exception ex) {
+			
+			// remove the failed copy from the applications collection
+		    rapidServlet.getApplications().remove(appCopy);
+			
+			// delete copy folder
+			Files.deleteRecurring(appCopyFolder);
 						
-		// reload the application with the new app and page references
-		appCopy = Application.load(servletContext, appCopyFile);
-										
-		// add this one to the applications collection
-		rapidServlet.getApplications().put(appCopy);
-				
-		// delete this one
-		if (delete) delete(rapidServlet, rapidRequest, false);
-		
-		// return the copy
-		return appCopy;
-	    		
+			// delete copy web folder
+			Files.deleteRecurring(appWebCopyFolder);
+			
+			// rethrow
+			throw ex;
+			
+		}
+		    		
 	}
 				
 	public void save(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, boolean backup) throws JAXBException, IOException, IllegalArgumentException, SecurityException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException {

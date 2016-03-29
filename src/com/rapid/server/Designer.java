@@ -1605,7 +1605,7 @@ public class Designer extends RapidHttpServlet {
 											throw new Exception("Must be a valid Rapid " + Rapid.VERSION + " file");
 											
 										}
-										
+																														
 									} else {
 										
 										// delete unzip folder
