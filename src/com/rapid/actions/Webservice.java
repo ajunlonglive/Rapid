@@ -371,51 +371,48 @@ public class Webservice extends Action {
 						
 			// get the js to hide the loading (if applicable)
 			if (_showLoading) js += "  " + getLoadingJS(page, outputs, false);
-			
-			// open if data check
-			js += "    if (data) {\n";
-									
+															
 			// check there are outputs
 			if (outputs != null) {
-				// the outputs array we're going to make
-				String jsOutputs = "";				
-				// loop the output parameters
-				for (int i = 0; i < outputs.size(); i++) {
-					
-					// get the parameter
-					Parameter output = outputs.get(i);
-					// get the control the data is going into
-					Control outputControl = page.getControl(output.getItemId());
-					// try the application if still null
-					if (outputControl == null) outputControl = application.getControl(rapidServlet.getServletContext(), output.getItemId());
-					// check the control is still on the page
-					if (outputControl != null) {
-						// get any mappings we may have
-						String details = outputControl.getDetailsJavaScript(application, page);
-						// set to empty string or clean up
-						if (details == null) {
-							details = "";
-						} else {
-							details = ", details: " + details;
+				if (outputs.size() > 0) {
+					// open if data check
+					js += "    if (data) {\n";
+					// the outputs array we're going to make
+					String jsOutputs = "";				
+					// loop the output parameters
+					for (int i = 0; i < outputs.size(); i++) {
+						
+						// get the parameter
+						Parameter output = outputs.get(i);
+						// get the control the data is going into
+						Control outputControl = page.getControl(output.getItemId());
+						// try the application if still null
+						if (outputControl == null) outputControl = application.getControl(rapidServlet.getServletContext(), output.getItemId());
+						// check the control is still on the page
+						if (outputControl != null) {
+							// get any mappings we may have
+							String details = outputControl.getDetailsJavaScript(application, page);
+							// set to empty string or clean up
+							if (details == null) {
+								details = "";
+							} else {
+								details = ", details: " + details;
+							}
+							// append the javascript outputs
+							jsOutputs += "{id: '" + outputControl.getId() + "', type: '" + outputControl.getType() + "', field: '" + output.getField() + "'" + details + "}";
+							// add a comma if not the last
+							if (i < outputs.size() - 1) jsOutputs += ","; 
 						}
-						// append the javascript outputs
-						jsOutputs += "{id: '" + outputControl.getId() + "', type: '" + outputControl.getType() + "', field: '" + output.getField() + "'" + details + "}";
-						// add a comma if not the last
-						if (i < outputs.size() - 1) jsOutputs += ","; 
-					}
-										
-				}			
-				js += "     var outputs = [" + jsOutputs + "];\n";
-				// send them them and the data to the webservice action				
-				js += "     Action_webservice(ev, '" + getId() + "', data, outputs);\n";
-				// add any sucess actions
-				if (_successActions != null) {
-					for (Action action : _successActions) {
-						js += "     " + action.getJavaScript(rapidRequest, application, page, control, jsonDetails).trim().replace("\n", "\n     ") + "\n";
-					}
-				}
+											
+					}			
+					js += "      var outputs = [" + jsOutputs + "];\n";
+					// send them them and the data to the webservice action				
+					js += "      Action_webservice(ev, '" + getId() + "', data, outputs);\n";
+					// close if data check
+					js += "    }\n";	
+				}				
 			}
-			
+									
 			// if there is a working page (from the details)
 			if (workingPage != null) {
 				// remove any working page dialogue 
@@ -425,9 +422,14 @@ public class Webservice extends Action {
 				// remove the working page so as not to affect actions further down the tree
 				jsonDetails.remove("workingPage");
 			}
+									
+			// add any sucess actions
+			if (_successActions != null) {
+				for (Action action : _successActions) {
+					js += "    " + action.getJavaScript(rapidRequest, application, page, control, jsonDetails).trim().replace("\n", "\n    ") + "\n";
+				}
+			}
 			
-			// close if data check
-			js += "    }\n";						
 			// close success function
 			js += "  }\n";
 			
