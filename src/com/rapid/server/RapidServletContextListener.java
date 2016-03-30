@@ -48,6 +48,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -85,6 +88,7 @@ import com.rapid.utils.Classes;
 import com.rapid.utils.Comparators;
 import com.rapid.utils.Encryption.EncryptionProvider;
 import com.rapid.utils.Files;
+import com.rapid.utils.Https;
 import com.rapid.utils.JAXB.EncryptedXmlAdapter;
 import com.rapid.utils.Strings;
 
@@ -1211,6 +1215,12 @@ public class RapidServletContextListener implements ServletContextListener {
 			// start the monitor
 			_monitor = new Monitor(servletContext, pageAgeCheckInterval, pageMaxAge);
 			_monitor.start();
+			
+			// allow calling to https without checking certs (for now)
+			SSLContext sc = SSLContext.getInstance("SSL");
+			TrustManager[] trustAllCerts = new TrustManager[]{ new Https.TrustAllCerts() };
+            sc.init(null, trustAllCerts, new java.security.SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
 								    		  									
 		} catch (Exception ex) {	
 			
