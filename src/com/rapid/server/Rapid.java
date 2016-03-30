@@ -542,6 +542,7 @@ public class Rapid extends RapidHttpServlet {
 													jsonApp.put("version", version.getVersion());
 													jsonApp.put("status", version.getStatus());										
 													jsonApp.put("title", version.getTitle());
+													jsonApp.put("noRetainPassword", version.getNoRetainPassword());	
 													jsonApp.put("test", true);
 													// add app to our main array
 													jsonApps.put(jsonApp);
