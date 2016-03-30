@@ -262,10 +262,10 @@ public class Webservice extends Action {
 			RapidHttpServlet rapidServlet = rapidRequest.getRapidServlet();
 			
 			// get the most recent sequence number for this action to stop slow-running early requests overwriting the results of fast later requests
-			js += "  var sequence = getWebserviceActionSequence('" + getId() + "');\n";
+			js += "var sequence = getWebserviceActionSequence('" + getId() + "');\n";
 			
 			// drop in the query variable which holds our inputs and sequence
-			js += "  var query = { inputs:[], sequence:sequence };\n";
+			js += "var query = { inputs:[], sequence:sequence };\n";
 						
 			// build the inputs
 			if (_request.getInputs() != null) {
@@ -304,19 +304,19 @@ public class Webservice extends Action {
 			if (_showLoading) js += "  " + getLoadingJS(page, outputs, true);
 			
 			// stringify the query
-			js += "  query = JSON.stringify(query);\n";
+			js += "query = JSON.stringify(query);\n";
 									
 			// open the ajax call
-			js += "  $.ajax({ url : '~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + page.getId() + controlParam + "&act=" + getId() + "', type: 'POST', dataType: 'json',\n";
-			js += "    data: query,\n";
-			js += "    error: function(server, status, message) {\n";
+			js += "$.ajax({ url : '~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + page.getId() + controlParam + "&act=" + getId() + "', type: 'POST', contentType: 'application/json', dataType: 'json',\n";
+			js += "  data: query,\n";
+			js += "  error: function(server, status, message) {\n";
 			
 			// if there is a working page
 			if (workingPage != null) {
 				// remove any working page dialogue 
-				js += "      $('#" + workingPage + "dialogue').remove();\n";
+				js += "    $('#" + workingPage + "dialogue').remove();\n";
 				// remove any working page dialogue cover
-				js += "      $('#" + workingPage + "cover').remove();\n";
+				js += "    $('#" + workingPage + "cover').remove();\n";
 				// remove the working page so as not to affect actions further down the tree
 			}
 			
@@ -324,17 +324,17 @@ public class Webservice extends Action {
 			if (_showLoading) js += "    " + getLoadingJS(page, outputs, false);
 							
 			// this avoids doing the errors if the page is unloading or the back button was pressed
-			js += "      if (server.readyState > 0) {\n";
+			js += "    if (server.readyState > 0) {\n";
 			
 			// retain if error actions
 			boolean errorActions = false;
 			
 			// prepare a default error hander we'll show if no error actions, or pass to child actions for them to use
-			String defaultErrorHandler = "alert('Error with database action : ' + server.responseText||message);";			
+			String defaultErrorHandler = "alert('Error with webservice action : ' + server.responseText||message);";			
 			// if we have an offline page
 			if (offlinePage != null) {
 				// update defaultErrorHandler to navigate to offline page
-				defaultErrorHandler = "if (Action_navigate && typeof _rapidmobile != 'undefined' && !_rapidmobile.isOnline()) {\n          Action_navigate('~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + offlinePage + "&action=dialogue',true,'" + getId() + "');\n        } else {\n          " + defaultErrorHandler + "\n        }";
+				defaultErrorHandler = "if (Action_navigate && typeof _rapidmobile != 'undefined' && !_rapidmobile.isOnline()) {\n        Action_navigate('~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + offlinePage + "&action=dialogue',true,'" + getId() + "');\n      } else {\n         " + defaultErrorHandler + "\n      }";
 				// remove the offline page so we don't interfere with actions down the three
 				jsonDetails.remove("offlinePage");
 			}
@@ -358,22 +358,22 @@ public class Webservice extends Action {
 				}
 			}
 			// add default error handler if none in collection
-			if (!errorActions) js += "        " + defaultErrorHandler + "\n";
+			if (!errorActions) js += "      " + defaultErrorHandler + "\n";
 						
 			// close unloading check
-			js += "      }\n";
+			js += "    }\n";
 			
 			// close error actions
-			js += "    },\n";
+			js += "  },\n";
 			
 			// open success function
-			js += "    success: function(data) {\n";
+			js += "  success: function(data) {\n";
 						
 			// get the js to hide the loading (if applicable)
-			if (_showLoading) js += "    " + getLoadingJS(page, outputs, false);
+			if (_showLoading) js += "  " + getLoadingJS(page, outputs, false);
 			
 			// open if data check
-			js += "      if (data) {\n";
+			js += "    if (data) {\n";
 									
 			// check there are outputs
 			if (outputs != null) {
@@ -405,13 +405,13 @@ public class Webservice extends Action {
 					}
 										
 				}			
-				js += "       var outputs = [" + jsOutputs + "];\n";
-				// send them them and the data to the database action				
-				js += "       Action_webservice(ev, '" + getId() + "', data, outputs);\n";
+				js += "     var outputs = [" + jsOutputs + "];\n";
+				// send them them and the data to the webservice action				
+				js += "     Action_webservice(ev, '" + getId() + "', data, outputs);\n";
 				// add any sucess actions
 				if (_successActions != null) {
 					for (Action action : _successActions) {
-						js += "       " + action.getJavaScript(rapidRequest, application, page, control, jsonDetails).trim().replace("\n", "\n       ") + "\n";
+						js += "     " + action.getJavaScript(rapidRequest, application, page, control, jsonDetails).trim().replace("\n", "\n     ") + "\n";
 					}
 				}
 			}
@@ -419,20 +419,20 @@ public class Webservice extends Action {
 			// if there is a working page (from the details)
 			if (workingPage != null) {
 				// remove any working page dialogue 
-				js += "    $('#" + workingPage + "dialogue').remove();\n";
+				js += "  $('#" + workingPage + "dialogue').remove();\n";
 				// remove any working page dialogue cover
-				js += "    $('#" + workingPage + "cover').remove();\n";
+				js += "  $('#" + workingPage + "cover').remove();\n";
 				// remove the working page so as not to affect actions further down the tree
 				jsonDetails.remove("workingPage");
 			}
 			
 			// close if data check
-			js += "      }\n";						
+			js += "    }\n";						
 			// close success function
-			js += "    }\n";
+			js += "  }\n";
 			
 			// close ajax call
-			js += "  });";
+			js += "});";
 		}
 				
 		// return what we built			
