@@ -294,7 +294,7 @@ button:active, button:focus {
 
 .button:focus {
   border: 2px solid #4D0000;
-  background: transparent linear-gradient(#D4D4D4, #AAAAAA);
+  background: transparent linear-gradient(#292929, #121212);
 }
 
 button:active {
