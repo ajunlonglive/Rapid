@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<controls xmlVersion="1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/control.xsd">
+
+<!-- 
+
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
+
+gareth.edwards@rapid-is.co.uk
+
+
+This file is part of the Rapid Application Platform
+
+Rapid is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version. The terms require you to include
+the original copyright, and the license notice in all redistributions.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
+
+ -->
+
+	<control>
+	    
+	    <type>score</type>
+	    <name>Score</name>
+	    <image>images/score_24x24.png</image>
+	    
+	    <addToNewApplications>true</addToNewApplications>
+	        
+	    <canUserAdd>true</canUserAdd>
+	    <canUserMove>true</canUserMove>
+	    <canUserAddPeers>true</canUserAddPeers>
+	     <canBeUsedForFormPageVisibilty>true</canBeUsedForFormPageVisibilty>
+	    <canValidate>true</canValidate>
+	    
+	    <properties>
+	        
+	        <property>
+	            <key>name</key>
+	            <name>Name</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <helpHtml>Name that can be given to the control. Names are used to help identify controls uniquely.</helpHtml>
+	        </property>
+	        
+	         <property>
+	            <key>label</key>
+	            <name>Form summary label</name>
+	            <setConstructValueFunction>return "";</setConstructValueFunction>
+	            <changeValueJavaScript>formText</changeValueJavaScript>
+	            <helpHtml>Summary label to appear at the end of the form. Leave blank to have the control and its value hidden.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>codes</key>
+	            <name>Codes</name>
+	            <visible>false</visible>
+	        </property>
+	                   
+	        <property>
+	            <key>options</key>
+	            <name>Options</name>
+	            <setConstructValueFunction>return [{value:"1", text:"A"}, {value:"2", text:"B"}, {value:"3", text:"C"}, {value:"4", text:"D"}];</setConstructValueFunction>
+	            <changeValueJavaScript>options</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Defines what the score values will be. An option for enabling codes can also be used. Codes allow for more precise visibility and validation conditions.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>value</key>
+	            <name>Initial value</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Selects one of the score values as its initial value.</helpHtml>
+	        </property>
+	         	        
+	    </properties>
+	    
+	    <resources>
+	    	<resource>
+	    		<type>css</type>
+	    			<contents>
+	    				<![CDATA[
+
+span.score span {
+  margin: 10px;
+  color: grey;
+  text-align: center;
+  display: inline-block;
+}
+
+span.score span.selectedScore {
+  color: black;
+}
+
+	    				]]>
+	    			</contents>
+	    	</resource>
+	    </resources>
+	    
+	    <getHtmlFunction>
+	        <![CDATA[
+// return our html for adding to our parent object	
+var html = "";
+// check we have options or a value list
+if (this.options || this.valueList) {
+	// if the options are a string turn them in an array
+	if ($.type(this.options) == "string") this.options = JSON.parse(this.options);
+	// assume we are using the options
+	var options = this.options;
+	// assume we are using this.codes
+	var codes = this.codes;
+	// if it's a value list use that instead
+	if (this.valueList) {
+		for (var i in _version.valueLists) {
+			if (this.valueList == _version.valueLists[i].name) {
+		  		options = _version.valueLists[i].values;
+		  		codes = _version.valueLists[i].usesCodes;
+		  		break;
+			}
+		}
+	}
+	// loop the options
+	for (var i in options) {		
+		if (codes) {
+			html += "<span" + (escapeApos(this.value) == escapeApos(options[i].value) ? " class='selectedScore'" : "") + " data-value='" + escapeApos(options[i].value) + "'>" + options[i].text + "</span>";
+		} else {
+			html += "<span" + (escapeApos(this.value) == escapeApos(options[i].text) ? " class='selectedScore'" : "") + " data-value='" + escapeApos(options[i].text) + "'>" + options[i].text + "</span>";
+		}
+	}
+}
+// place into the span
+var html = "<span id='" + this.id + "' name='" + this.id + "' class='score" + getStyleClasses(this) + "'>" + html + "</span>";
+// return
+return html;
+	        ]]>
+	    </getHtmlFunction> 
+	    
+	    <updateChildObjects>true</updateChildObjects>
+	    
+	    <getDataFunction>
+	        <![CDATA[
+	        // return the data-value of span with .selectedScore class
+return $("#" + id).children(".selectedScore").attr("data-value");
+			]]>
+	    </getDataFunction>
+	    
+	    <setDataJavaScript>
+	        <![CDATA[
+if (data !== undefined) {
+	// remove selectedScore from all child spans
+	var control = $("#" + id);
+	control.children().removeClass("selectedScore");
+	data = makeDataObject(data, field);
+	if (data.rows && data.fields) {
+		var value = null;
+		if (field && data.rows[0]) {
+			for (var i in data.fields) {
+				if (data.fields[i] && field.toLowerCase() == data.fields[i].toLowerCase()) {
+					value = data.rows[0][i];					
+					break;
+				}
+			}
+		}
+		if (!value && !field) value =data.rows[0][0];
+		if (value) {
+			
+			//  apply selectedScore to score item with data-value = value
+			control.children("[data-value='" + value + "']").addClass("selectedScore");
+			
+			if (changeEvents && window["Event_change_" + id]) window["Event_change_" + id](ev);
+		}
+	}
+}
+        
+	        ]]>
+	    </setDataJavaScript>
+	    
+	    <events>
+	        <event>
+	            <type>change</type>
+	            <name>Change</name>
+	        </event>
+	    </events>
+	    	    
+	    <styles>
+	        <style>
+	            <name>Score</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id;
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	        <style>
+	            <name>Score options</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id + " span";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	        <style>
+	            <name>Selected option</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id + " span.selectedScore";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	    </styles>
+	    
+	    <initJavaScript>
+	        <![CDATA[
+$("#" + id).children().click( function(ev) {
+	var option = $(ev.target);
+	var control = option.parent();
+	var id = control.attr("id");
+	var value = control.children(".selectedScore").attr("data-value");
+	control.children().removeClass("selectedScore");
+	option.addClass("selectedScore");
+	if (value != option.attr("data-value") && window["Event_change_" + id]) window["Event_change_" + id](ev);
+});	        
+	        ]]>	        	       	        
+	    </initJavaScript>
+	    
+	</control>
+</controls>

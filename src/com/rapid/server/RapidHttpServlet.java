@@ -270,7 +270,7 @@ public class RapidHttpServlet extends HttpServlet {
 		out.write("<html>\n  <head>\n    <title>Rapid - " + title + "</title>\n    <meta charset=\"utf-8\"/>\n    <link rel='stylesheet' type='text/css' href='styles/index.css'></link>\n  </head>\n");
 					
 		// write no permission
-		out.write("  <body>\n    <div class=\"image\"><img src=\"images/RapidLogo_200x134.png\" /></div>\n    <div class=\"title\"><span>Rapid - " + title + "</span></div>\n    <div class=\"info\"><p>" + message + "</p></div>\n  </body>\n</html>");
+		out.write("  <body>\n    <div class=\"image\"><img src=\"images/RapidLogo_60x40.png\" /></div>\n    <div class=\"title\"><span>Rapid - " + title + "</span></div>\n    <div class=\"info\"><p>" + message + "</p></div>\n  </body>\n</html>");
 		
 		out.println();
 										

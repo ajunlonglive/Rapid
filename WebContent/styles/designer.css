@@ -439,7 +439,7 @@ div#propertiesPanel h2 {
 }
 
 table.propertiesPanelTable {
-	font-family: 'Open Sans', arial;
+	font-family: 'Open Sans', Arial;
 }
 
 table.propertiesPanelTable td.conflict {
@@ -486,7 +486,7 @@ table.propertiesPanelTable td.conflict {
 /* properties styles are in their own properties.css file for reuse with Rapid Admin */
 
 table.stylesPanelTable  {
-	font-family: 'Open Sans', arial;
+	font-family: 'Open Sans', Arial;
 	width: 100%;
 	background-color: white;
 	border-left: 1px solid gray;
@@ -597,7 +597,7 @@ div.button {
 	padding: 0px 8px 2px 8px;
 	border: 2px solid #333;
 	border-radius: 0px;
-	font-family: 'Open Sans', arial;
+	font-family: 'Open Sans', Arial;
 	font-size: 12px; 
 	background-color: #666;
 	background: #666;
@@ -979,7 +979,7 @@ select {
   cursor: pointer;
   outline: none;
   color: #FFF;
-  font-family: 'Open Sans', 'Oxygen', 'PT Sans', Arial , sans-serif;
+  font-family: 'Open Sans', Arial , sans-serif;
 }
 
 select option {
@@ -995,7 +995,7 @@ select option {
 }
 
 #controlPanel, #propertiesPanel, table.propertiesPanelTable, table.stylesPanelTable, .propertyDialogue {
-  font-family: 'Open Sans';
+  font-family: 'Open Sans', Arial;
 }
 
 #propertiesPanel #propertiesPanelInner .untilsPanelDiv .buttons button {
@@ -1016,7 +1016,7 @@ button {
   background: #494949;
   background: transparent linear-gradient(#666, #494949);
   /* filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#666666', endColorstr='#494949',GradientType=0 ); */
-  font-family: 'Open Sans';
+  font-family: 'Open Sans', Arial;
   padding: 0px 8px 2px 8px;
   outline: none;
 }
@@ -1032,7 +1032,7 @@ button:disabled {
 }
 
 .normalInputs input:not([type]) {
-  font-family: 'Open Sans';
+  font-family: 'Open Sans', Arial;
 }
 
 input[type=checkbox] {

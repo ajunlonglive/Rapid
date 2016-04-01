@@ -197,6 +197,25 @@ div.tabsPanel.selected {
 .dialogueCover {
   background: rgba(0, 0, 0, 0.4);
 }
+
+span.score span.selectedScore {
+  background: #0091CD;
+  border-color: #005476;
+  color: white;
+  box-shadow: 0 0 5px #0091CD;
+}
+
+span.score span {
+  margin: 10px;
+  padding: 10px;
+  color: #999;
+  text-align: center;
+  display: inline-block;
+  transition: all 0.4s ease 0s;
+  width: 20px;
+  border: 1px solid #ADADAD;
+  cursor: pointer;
+}
 	    			
 	    			 ]]>
 	    		</contents>
@@ -264,7 +283,7 @@ button {
   border-color: #007FB3;
 }
 
-button:hover {
+button:hover, button:focus {
   box-shadow: 3px 3px 1px rgba(0, 0, 0, 0.2);
   color: #FFF;
   background-color: #006D9A;
@@ -334,7 +353,7 @@ input {
 
 input:focus {
   border-color: #0091CD;
-  box-shadow:inset 0 1px 1px rgba(0,0,0,0.075),0 0 8px rgba(0,145,205,0.6) !important;
+  box-shadow: inset 0 1px 1px rgba(0,0,0,0.075),0 0 8px rgba(0,145,205,0.6) !important;
 }
 
 input[type=radio] {
@@ -359,7 +378,6 @@ input[type=radio]:before {
   margin: -3px;
   background-color: #FFF;
   transition: border 0.15s ease-in-out 0s, color 0.15s ease-in-out 0s;
-
 }
 
 input[type=radio]:focus:before {
