@@ -95,15 +95,15 @@ public class ListFolder extends Action {
 			        
 			        // assume we did click on a folder
 			        js += "var folder = true;\n";
+			        // assume empty data / no path
+			        js += "var data = {};\n";
 			        
-			        // assume no path
-			        String path = "";
 			        // if this is being called from the destination control
 			        if (control.getId().equals(destinationId)) {
-			        	// get the path
-			        	path = "path: \"' + getData_" + destinationControl.getType() + "(ev, '" + destinationId + "', 'path', " + destinationControl.getDetails() + ") + '\"";
 			        	// get whether it's really a folder
 			        	js += "folder = getData_" + destinationControl.getType() + "(ev, '" + destinationId + "', 'folder', " + destinationControl.getDetails() + ");\n";
+			        	// add the path to the data
+			        	js += "data.path = getData_" + destinationControl.getType() + "(ev, '" + destinationId + "', 'path', " + destinationControl.getDetails() + ");\n";
 			        }
 			        
 			        // open if folder is true
@@ -111,7 +111,7 @@ public class ListFolder extends Action {
 
 			        // open the ajax call
 			        js += "  $.ajax({ url : '~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + page.getId() + controlParam + "&act=" + getId() + "', type: 'POST', contentType: 'application/json', dataType: 'json',\n";
-			        js += "    data: '{" + path + "}',\n";
+			        js += "    data: JSON.stringify(data),\n";
 			        js += "    error: function(server, status, fields, rows) {\n";
 			        // this avoids doing the errors if the page is unloading or the back button was pressed
 			        js += "      if (server.readyState > 0) {\n";
