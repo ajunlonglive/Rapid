@@ -472,20 +472,20 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 				name: $("#rapid_P7_C7").val(),
 				driver: $("#rapid_P7_C37").val(),
 				connectionString: $("#rapid_P7_C44").val(),
-				connectionAdapter: $("#rapid_P7_C38").val(),
+				connectionAdapter: $("#rapid_P7_C38").val(),  
 				userName: $("#rapid_P7_C30").val(),
 				password: $("#rapid_P7_C35").val()
 			};	
 			callback = function() {
 				// reload version
-				Event_change_rapid_P0_C43(ev);
+				Event_change_rapid_P0_C1044_(ev);
 			};	
 		break;
 		case "DELDBCONN" :		
 			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), index: $(ev.target).parent().parent().index()-1 };
 			callback = function() {
 				// reload everything
-				Event_change_rapid_P0_C43(ev);
+				Event_change_rapid_P0_C1044_(ev);
 			};	
 		break;
 		case "NEWSOA" :		
@@ -497,13 +497,13 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 				type: $("#rapid_P10_C23_").val()
 			};	
 			callback = function() {
-				Event_change_rapid_P0_C43(ev);
+				Event_change_rapid_P0_C1044_(ev);
 			};	
 		break;
 		case "DELSOA" :		
 			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), index: $(ev.target).parent().parent().index()-1 };
 			callback = function() {
-				Event_change_rapid_P0_C43(ev);
+				Event_change_rapid_P0_C1044_(ev);
 			};	
 		break;
 		case "NEWROLE" :		
@@ -662,7 +662,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 			};	
 			callback = function(data) {
 				$(data.controlId).hideDialogue();
-				Event_change_rapid_P0_C43(ev);
+				Event_change_rapid_P0_C1044_(ev);
 				$("#rapid_P0_C662_").click();
 			};														
 		break;
@@ -674,7 +674,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 			};	
 			callback = function(data) {
 				$(data.controlId).hideDialogue();
-				Event_change_rapid_P0_C43(ev);
+				Event_change_rapid_P0_C1044_(ev);
 				$("#rapid_P0_C662_").click();
 			};															
 		break;
