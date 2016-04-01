@@ -139,6 +139,15 @@ public abstract class SecurityAdapter {
 	// this class is an overridden list of role names with some useful methods
 	public static class UserRoles extends ArrayList<String> {
 		
+		// add a role but check we don't have it first
+		public boolean add(String role) {			
+				if (this.contains(role)) {
+					return false;
+				} else {
+					return super.add(role);
+				}
+		}
+		
 		// sort the roles alphabetically
 		public UserRoles sort() {			
 			Collections.sort(this);			
