@@ -216,6 +216,8 @@ public class Rapid extends Action {
 		if ("M".equals(type)) {
 			// add flow layout control
 			controlTypes.add("flowLayout");
+			// add score control
+			controlTypes.add("score");
 			// remove tabs 
 			controlTypes.remove("tabGroup");			
 		} else if ("F".equals(type)) {
@@ -323,7 +325,7 @@ public class Rapid extends Action {
 		String js = "";
 		
 		// if we are getting the versions for an application remove the appId and version parameters from the url so we don't end up with a version from an app we were previously looking at
-		if ("GETVERSIONS".equals(getProperty("actionType"))) js += "if (window.history && window.history.replaceState) window.history.replaceState(\"rapid\", \"\", \"~?a=rapid\");\n";
+		if ("GETVERSIONS".equals(getProperty("actionType"))) js += "if ($('#rapid_P0_C43').val() != $.getUrlVar('appId') && window.history && window.history.replaceState) window.history.replaceState(\"rapid\", \"\", \"~?a=rapid\");\n";
 		
 		// write success actions variable
 		js += "  var successCallback = function(data) {\n";

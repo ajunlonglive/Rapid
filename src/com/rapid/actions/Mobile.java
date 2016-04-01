@@ -28,6 +28,8 @@ package com.rapid.actions;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.ServletContext;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -178,6 +180,14 @@ public class Mobile extends Action {
 		return js;
 	}
 	
+	// this function is used where an alternative exists that would not require an error message
+	private String getMobileCheckAlternative() {
+		// check that rapidmobile is available
+		String js = "if (typeof _rapidmobile != 'undefined') {\n";
+		// return
+		return js;
+	}
+	
 	// a re-usable function for printing the details of the outputs
 	private String getOutputs(RapidHttpServlet rapidServlet, Application application, Page page, String outputsJSON) throws JSONException {
 		
@@ -256,6 +266,24 @@ public class Mobile extends Action {
 		return outputsString;
 		
 	}
+	
+	// a helper method to check controls exist
+	private boolean checkControl(ServletContext servletContext, Application application, Page page, String controlId) {
+		// assume control not found
+		boolean controlFound = false;
+		// check we got a control id
+		if (controlId != null) {
+			// if i starts with System
+			if (controlId.startsWith("System.")) {
+				// we're ok
+				controlFound = true;
+			} else {
+				// look for the control
+				if (Control.getControl(servletContext, application, page, controlId) != null) controlFound = true;
+			}
+		}
+		return controlFound;
+	}
 			
 	@Override
 	public String getJavaScript(RapidRequest rapidRequest, Application application, Page page, Control control, JSONObject jsonDetails) {
@@ -267,6 +295,7 @@ public class Mobile extends Action {
 		String type = getProperty("actionType");
 		// check we got something
 		if (type != null) {
+			
 			// check the type
 			if ("dial".equals(type) || "sms".equals(type)) {
 				// get the number control id
@@ -307,7 +336,78 @@ public class Mobile extends Action {
 					// close mobile check
 					js += "}";
 				}
-								
+			
+			} else if ("email".equals(type)) {
+				
+				// get the email control id
+				String emailControlId = getProperty("emailControlId");
+				// check we got one
+				if (checkControl(rapidServlet.getServletContext(), application, page, emailControlId)) {
+					// get the email field
+					String emailField = getProperty("emailField");
+					// get the email
+					js += "var email = " + Control.getDataJavaScript(rapidServlet.getServletContext(), application, page, emailControlId, emailField) + ";\n";					
+					// get the subject js
+					String subjectGetDataJS = Control.getDataJavaScript(rapidServlet.getServletContext(), application, page, getProperty("subjectControlId"), getProperty("subjectField"));
+					// add the subject js
+					js += "var subject = " + (("".equals(subjectGetDataJS) || subjectGetDataJS == null) ? "''" : subjectGetDataJS) + ";\n";
+					// subject safety check
+					js += "if (!subject) subject = ''\n";
+					// get the message js					
+					String messageGetDataJS = Control.getDataJavaScript(rapidServlet.getServletContext(), application, page, getProperty("messageControlId"), getProperty("messageField"));
+					// get the message 
+					js += "var message = " + (("".equals(messageGetDataJS) || messageGetDataJS == null) ? "''" : messageGetDataJS) + ";\n";
+					// message safety check
+					js += "if (!message) message = ''\n";
+					
+					// start the alernative mobile check
+					js += getMobileCheckAlternative();				
+					// start the check for the addBarcode function
+					js += "  if (_rapidmobile.openEmail) {\n";
+					// send the message
+					js += "    _rapidmobile.openEmail(email, subject, message);\n";
+					// close the open url check
+					js += "  } else alert('Opening emails is not supported in this version of Rapid Mobile');\n";
+					// else
+					js += "} else {\n";
+					// no rapid mobile so just open in new tab
+					js += "  window.location.href = 'mailto:' + email + '?subject=' + subject + '&body=' + message;\n";
+					// close the mobile check
+					js += "}\n";
+					
+					
+				} else {
+					js += "// email control " + emailControlId + " not found\n";
+				}
+				
+			} else if ("url".equals(type)) {
+				
+				// get the url control id
+				String urlControlId = getProperty("urlControlId");
+				// check we got one
+				if (checkControl(rapidServlet.getServletContext(), application, page, urlControlId)) {
+					// get the field
+					String urlField = getProperty("urlField");	
+					// get the url
+					js += "var url = " + Control.getDataJavaScript(rapidServlet.getServletContext(), application, page, urlControlId, urlField) + ";\n";
+					// start the alernative mobile check
+					js += getMobileCheckAlternative();				
+					// start the check for the addBarcode function
+					js += "  if (_rapidmobile.openURL) {\n";
+					// send the message
+					js += "    _rapidmobile.openURL(url);\n";
+					// close the open url check
+					js += "  } else alert('Opening URLs is not supported in this version of Rapid Mobile');\n";
+					// else
+					js += "} else {\n";
+					// no rapid mobile so just open in new tab
+					js += "  window.open(url, '_blank');\n";
+					// close the mobile check
+					js += "}\n";
+				} else {
+					js += "// url control " + urlControlId + " not found\n";
+				}
+				
 			} else if ("addImage".equals(type)) {
 				
 				// get the gallery control Id
@@ -597,7 +697,7 @@ public class Mobile extends Action {
 				} catch (JSONException ex) {
 					
 					// print an error into the js instead
-					js += "  // error reading gpsDestinations : " + ex.getMessage();
+					js += "  // error reading barcode : " + ex.getMessage();
 					
 				}
 												

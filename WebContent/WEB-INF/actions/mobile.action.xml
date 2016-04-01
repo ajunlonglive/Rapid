@@ -67,6 +67,69 @@ return "<option value=''>Please select...</option>" + getInputOptions(this.numbe
 	        </property>
 	        
 	        <property>
+	            <key>emailControlId</key>
+	            <name>Email address source</name>
+	             <visible>false</visible>
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	             <getValuesFunction>
+	                <![CDATA[
+return "<option value=''>Please select...</option>" + getInputOptions(this.numberControlId);
+	                ]]>
+	            </getValuesFunction>
+	            <helpHtml>Sets where the email address is coming from on the page.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>emailField</key>
+	            <name>Email address source field</name>
+	             <visible>false</visible>
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <helpHtml>Defines a more specific field for the email address source. An example of use would be getting the email address from a table cell within a table, where the cell is the field and the table is the source.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>subjectControlId</key>
+	            <name>Subject source</name>
+	             <visible>false</visible>
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	             <getValuesFunction>
+	                <![CDATA[
+return "<option value=''>Please select...</option>" + getInputOptions(this.numberControlId);
+	                ]]>
+	            </getValuesFunction>
+	            <helpHtml>Sets where the email subject is coming from on the page.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>subjectField</key>
+	            <name>Email source field</name>
+	             <visible>false</visible>
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <helpHtml>Defines a more specific field for the email subject source. An example of use would be getting the email subject from a table cell within a table, where the cell is the field and the table is the source.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>numberControlId</key>
+	            <name>Phone number source</name>
+	             <visible>false</visible>
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	             <getValuesFunction>
+	                <![CDATA[
+return "<option value=''>Please select...</option>" + getInputOptions(this.numberControlId);
+	                ]]>
+	            </getValuesFunction>
+	            <helpHtml>Sets where the phone number is coming from on the page.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>numberField</key>
+	            <name>Phone number source field</name>
+	             <visible>false</visible>
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <helpHtml>Defines a more specific field for the phone number source. An example of use would be getting the phone number from a table cell within a table, where the cell is the field and the table is the source.</helpHtml>
+	        </property>
+	        
+	        <property>
 	            <key>messageControlId</key>
 	            <name>Message source</name>
 	             <visible>false</visible>
@@ -85,6 +148,27 @@ return "<option value=''>Please select...</option>" + getInputOptions(this.messa
 	             <visible>false</visible>
 	            <changeValueJavaScript>text</changeValueJavaScript>
 	            <helpHtml>Defines a more specific field for the message source. An example of use would be getting the message from a table cell within a table, where the cell is the field and the table is the source.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>urlControlId</key>
+	            <name>URL source</name>
+	             <visible>false</visible>
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	             <getValuesFunction>
+	                <![CDATA[
+return "<option value=''>Please select...</option>" + getInputOptions(this.messageControlId);
+	                ]]>
+	            </getValuesFunction>
+	            <helpHtml>Sets where the URL is coming from on the page.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>urlField</key>
+	            <name>URL source field</name>
+	             <visible>false</visible>
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <helpHtml>Defines a more specific field for the URL source. An example of use would be getting the URL from a table cell within a table, where the cell is the field and the table is the source.</helpHtml>
 	        </property>
 	        
 	        <property>

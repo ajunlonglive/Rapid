@@ -4156,7 +4156,7 @@ function Property_guidelines(cell, propertyObject, property, details) {
 }
 
 // possible mobileActionType values used by the mobileActionType property
-var _mobileActionTypes = [["dial","Dial number"],["sms","Send text/sms message"],["addImage","Get image"],["uploadImages","Upload images"],["addBarcode","Scan barcode"],["navigate","Navigate to"],["sendGPS","Send GPS position"],["stopGPS","Stop GPS updates"],["message","Status bar message"],["disableBackButton","Disable back button"],["online","Online actions"]];
+var _mobileActionTypes = [["dial","Dial number"],["sms","Send text/sms message"],["email","Send email"],["url","Open url"],["addImage","Get image"],["uploadImages","Upload images"],["addBarcode","Scan barcode"],["navigate","Navigate to"],["sendGPS","Send GPS position"],["stopGPS","Stop GPS updates"],["message","Status bar message"],["disableBackButton","Disable back button"],["online","Online actions"]];
 
 // this property changes the visibility of other properties according to the chosen type
 function Property_mobileActionType(cell, mobileAction, property, details) {
@@ -4172,8 +4172,14 @@ function Property_mobileActionType(cell, mobileAction, property, details) {
 	// assume all other properties invisible
 	setPropertyVisibilty(mobileAction, "numberControlId", false);
 	setPropertyVisibilty(mobileAction, "numberField", false);
+	setPropertyVisibilty(mobileAction, "emailControlId", false);
+	setPropertyVisibilty(mobileAction, "emailField", false);
+	setPropertyVisibilty(mobileAction, "subjectControlId", false);
+	setPropertyVisibilty(mobileAction, "subjectField", false);
 	setPropertyVisibilty(mobileAction, "messageControlId", false);
 	setPropertyVisibilty(mobileAction, "messageField", false);
+	setPropertyVisibilty(mobileAction, "urlControlId", false);
+	setPropertyVisibilty(mobileAction, "urlField", false);
 	setPropertyVisibilty(mobileAction, "galleryControlId", false);
 	setPropertyVisibilty(mobileAction, "imageMaxSize", false);
 	setPropertyVisibilty(mobileAction, "imageQuality", false);
@@ -4203,6 +4209,18 @@ function Property_mobileActionType(cell, mobileAction, property, details) {
 			setPropertyVisibilty(mobileAction, "numberField", true);
 			setPropertyVisibilty(mobileAction, "messageControlId", true);
 			setPropertyVisibilty(mobileAction, "messageField", true);
+		break;
+		case "email" :
+			setPropertyVisibilty(mobileAction, "emailControlId", true);
+			setPropertyVisibilty(mobileAction, "emailField", true);
+			setPropertyVisibilty(mobileAction, "subjectControlId", true);
+			setPropertyVisibilty(mobileAction, "subjectField", true);
+			setPropertyVisibilty(mobileAction, "messageControlId", true);
+			setPropertyVisibilty(mobileAction, "messageField", true);
+		break;
+		case "url" :
+			setPropertyVisibilty(mobileAction, "urlControlId", true);
+			setPropertyVisibilty(mobileAction, "urlField", true);
 		break;
 		case "addImage" :
 			setPropertyVisibilty(mobileAction, "galleryControlId", true);
