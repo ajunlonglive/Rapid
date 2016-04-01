@@ -108,10 +108,6 @@ table.grid tr:hover {
   */
 }
 
-table.grid tr:nth-child(3) {
-  background: #d9eff9;
-}
-
 .ui-widget {
   font-family: 'Lucida Grande', 'Didact Gothic', Helvetica, Arial, Verdana, sans-serif;
 }
@@ -213,6 +209,26 @@ div.tabsPanel.selected {
   clear: both;
   padding: 0 1em;
 }
+
+span.score span.selectedScore, span.score span.selectedScore:hover {
+  color: #0085CF;
+  box-shadow: 0 0 0 5px #87c4e7;
+  border-color: white;
+}
+
+span.score span {
+  margin: 5px;
+  padding: 5px;
+  color: #555;
+  width: 25px;
+  border-radius: 100%;
+  border: 1px solid #c9c9c9;
+  background: white;
+}
+
+span.score span:hover {
+  box-shadow: 0 0 0 2px #87c4e7;
+}
 	    			
 	    			 ]]>
 	    		</contents>
@@ -275,7 +291,7 @@ button {
   padding: 9px 15px 9px 15px;
 }
 
-button:hover {
+button:hover, button:focus {
   background: transparent linear-gradient(#FFF, #D7D7D7);
 }
 
@@ -334,6 +350,14 @@ input:not(.input2):not(.dropdown1):not([type=radio]):not([type=checkbox]),[type=
   font-family: 'Lucida Grande', 'Didact Gothic', Helvetica, Arial, Verdana, sans-serif;
 }
 
+input:focus:not(.input2):not(.dropdown1):not([type=radio]):not([type=checkbox]),[type=input] {
+  box-shadow: 0 0 0 2px #87c4e7;
+}
+
+select:focus {
+  box-shadow: 0 0 0 2px #87c4e7;
+}
+
 input[type=checkbox] {
   width: 20px;
   height: 20px;
@@ -383,7 +407,7 @@ input[type=checkbox]:hover:before {
 }
 
 input[type=checkbox]:focus:before {
-  box-shadow: 0 0 0 5px #87c4e7;
+  box-shadow: 0 0 0 2px #87c4e7;
 }
 
 input[type=radio] {
@@ -437,7 +461,7 @@ input[type=radio]:hover:before {
 }
 
 input[type=radio]:focus:before {
-  box-shadow: 0 0 0 5px #87c4e7
+  box-shadow: 0 0 0 2px #87c4e7
 }
 
 .input1 {

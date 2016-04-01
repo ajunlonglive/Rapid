@@ -166,6 +166,24 @@ div.tabsPanel.selected {
 .ui-widget-content .ui-state-active {
   background: #562576 !important;
 }
+
+span.score span.selectedScore {
+  color: #005778;
+  border: 4px solid #005778;
+  padding: 8px;
+}
+
+span.score span {
+  margin: 10px;
+  padding: 10px;
+  color: grey;
+  text-align: center;
+  display: inline-block;
+  text-align: center;
+  border: 2px solid #0083B3;
+  width: 20px;
+  border-radius: 100%;
+}
 	    			
 	    			 ]]>
 	    		</contents>
@@ -230,6 +248,10 @@ button {
 button:hover {
   background: #5a94f1;
   box-shadow: none;
+}
+
+button:focus {
+  box-shadow: 0 0 2px 2px #3D1457 inset;
 }
 
 .button1 {
@@ -302,6 +324,10 @@ input:not([type=radio]):not([type=checkbox]):not(.input1):not(.input2):not(.inpu
   outline: none;
 }
 
+input:not([type=radio]):not([type=checkbox]):not(.input1):not(.input2):not(.input3):not(.input4):focus {
+  border: 1px solid #805E96;
+}
+
 input[type=radio] {
   width: 17px;
   height: 17px;
@@ -326,6 +352,10 @@ input[type=radio]:before {
   border: 2px solid #0083B3;
 }
 
+input[type=radio]:focus:before {
+  border: 2px solid #805E96;
+}
+
 input[type=radio]:checked:before {
   width: 20px;
   height: 20px;
@@ -335,6 +365,10 @@ input[type=radio]:checked:before {
   background-color: #FFF;
   box-shadow: 0px 2px 0px 0px #FFF inset;
   border: 2px solid #005778;
+}
+
+input:focus[type=radio]:checked:before {
+  border: 2px solid #562873;
 }
 
 input[type=radio]:checked:after {
@@ -372,6 +406,10 @@ input[type=checkbox]:before {
   border: 2px solid #0083B3;
 }
 
+input[type=checkbox]:focus:before {
+  border: 2px solid #805E96;
+}
+
 input[type=checkbox]:checked:before {
   width: 20px;
   height: 20px;
@@ -381,6 +419,10 @@ input[type=checkbox]:checked:before {
   background-color: #FFF;
   box-shadow: 0px 2px 0px 0px #FFF inset;
   border: 2px solid #005778;
+}
+
+input:focus[type=checkbox]:checked:before {
+  border: 2px solid #562873;
 }
 
 input[type=checkbox]:checked:after {
@@ -461,6 +503,11 @@ select:hover {
   box-shadow: none;
 }
 
+select:focus {
+  box-shadow: 0 0 2px 2px #0083B3 inset;
+  transition: all 0s linear 0s;
+}
+
 select:focus option {
   background-color: #FFF;
 }
@@ -474,6 +521,10 @@ select:focus option {
 .dropdown1:hover {
   background-color: #0083b3;
   box-shadow: inset 0 2px 0 0 #005778;
+}
+
+.dropdown1:focus {
+  box-shadow: 0 0 2px 2px #005778 inset;
 }
 
 .dropdown1:focus option {

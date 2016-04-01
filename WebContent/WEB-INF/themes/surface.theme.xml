@@ -175,6 +175,30 @@ div.tabsPanel.selected {
   background: #1D6893 !important;
   box-shadow: none !important;
 }
+
+span.score span.selectedScore {
+  color: white;
+  background: #2672EC;
+  border: 2px solid #2672EC;
+}
+
+span.score span.selectedScore:hover {
+  border: 2px solid #2672EC;
+}
+
+span.score span {
+  margin: 10px;
+  padding: 10px;
+  color: grey;
+  text-align: center;
+  display: inline-block;
+  border: 2px solid #BABABA;
+  width: 25px;
+}
+
+span.score span:hover {
+  border-color: rgba(0, 0, 0, 0.6);
+}
 	    			
 	    			 ]]>
 	    		</contents>
@@ -279,7 +303,7 @@ button:hover {
   background: #5a94f1;
 }
 
-button:active {
+button:active, button:focus {
   background: #212121;
   outline: 1px dotted black;
 }

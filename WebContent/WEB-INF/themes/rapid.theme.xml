@@ -181,6 +181,31 @@ a:hover {
 a:active {
   outline: 1px dotted black;
 }
+
+span.score span.selectedScore {
+  color: black;
+  border-color: #660000;
+  background: transparent linear-gradient(#FFF, #E0E0E0);
+}
+
+span.score span.selectedScore:hover {
+  border-color: #660000;
+}
+
+span.score span {
+  margin: 5px;
+  padding: 13px 10px;
+  color: grey;
+  border: 2px solid #999;
+  border-radius: 4px;
+  background: white;
+  width: 30px;
+  cursor: pointer;
+}
+
+span.score span:hover {
+  border-color: #6F6F6F;
+}
 	    			
 	    			]]>
 	    		</contents>
@@ -267,6 +292,11 @@ button:active, button:focus {
   outline: none;
 }
 
+.button:focus {
+  border: 2px solid #4D0000;
+  background: transparent linear-gradient(#D4D4D4, #AAAAAA);
+}
+
 button:active {
   background: transparent linear-gradient(#D4D4D4, #AAAAAA);
 }
@@ -285,6 +315,11 @@ button:disabled {
 .button1:hover {
   border: 2px solid #000;
   background: transparent linear-gradient(#B80101, #500000);
+}
+
+.button1:focus {
+  border: 2px solid #4D0000;
+  background: transparent linear-gradient(#292929, #121212);
 }
 
 .button1:active {
@@ -313,7 +348,7 @@ button:disabled {
 
 input:not([type=radio]):not([type=checkbox]):not(.input1):not(.input2) {
   box-shadow: 0px 1px 3px 1px #D0D0D0;
-  border: 1px solid #999;
+  border: 2px solid #999;
   padding: 6px 5px;
   border-radius: 5px;
   outline: none;
@@ -360,6 +395,10 @@ input:active[type=radio]:before {
   border-color: #999;
 }
 
+input[type=radio]:focus:before {
+	border-color: #6F6F6F;
+}
+
 input[type=radio]:checked:before {
   width: 20px;
   height: 20px;
@@ -373,6 +412,10 @@ input[type=radio]:checked:before {
 
 input:hover[type=radio]:checked:before {
   background: transparent linear-gradient(#EBEBEB, #999);
+}
+
+input[type=radio]:checked:focus:before {
+	border-color: #6F6F6F;
 }
 
 input[type=radio]:checked:after {
@@ -419,6 +462,10 @@ input:active[type=checkbox]:before {
   border-color: #999;
 }
 
+input[type=checkbox]:focus:before {
+	border-color: #6F6F6F;
+}
+
 input[type=checkbox]:checked:before {
   width: 20px;
   height: 20px;
@@ -432,6 +479,10 @@ input[type=checkbox]:checked:before {
 
 input:hover[type=checkbox]:checked:before {
   background: transparent linear-gradient(#EBEBEB, #999);
+}
+
+input[type=checkbox]:checked:focus:before {
+	border-color: #6F6F6F;
 }
 
 input[type=checkbox]:checked:after {
@@ -500,8 +551,13 @@ select option:nth-child(n) {
 }
 
 select:hover {
-  border: 2px solid #000;
+  border: 2px solid #600;
   background: transparent linear-gradient(#B80101, #500000);
+}
+
+select:focus {
+  border-color: #4D0000;
+  background: transparent linear-gradient(#292929, #121212);
 }
 
 .dropdown1 {
