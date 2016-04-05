@@ -86,11 +86,11 @@ public class Pages {
 			_file = file;
 		}
 		
-		public PageHeader(Page page, File pageFile) {
+		public PageHeader(Page page, File file) {
 			_id = page.getId();
 			_name = page.getName();
 			_title = page.getTitle();
-			_file = pageFile;
+			_file = file;
 		}
 		
 		@Override
@@ -389,12 +389,15 @@ public class Pages {
 			PageHeader pageHeader = _pageHeaders.get(pageId);
 			// if we got one
 			if (pageHeader != null) {
-				// if the number of seconds between now and the last get time is greater than our age
-				if (now.getTime() - pageHeader.getLastGetDateTime().getTime() > maxPageAge * 1000) {
-					// initialise if need be
-					if (clearPages == null) clearPages = new ArrayList<PageHeader>();
-					// add this id for clearing
-					clearPages.add(pageHeader);
+				// ensure we have a last get time
+				if (pageHeader.getLastGetDateTime() != null) {
+					// if the number of seconds between now and the last get time is greater than our age
+					if (now.getTime() - pageHeader.getLastGetDateTime().getTime() > maxPageAge * 1000) {
+						// initialise if need be
+						if (clearPages == null) clearPages = new ArrayList<PageHeader>();
+						// add this id for clearing
+						clearPages.add(pageHeader);
+					}
 				}
 			}
 		}

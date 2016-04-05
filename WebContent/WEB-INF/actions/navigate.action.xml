@@ -260,6 +260,18 @@ function Action_navigate(url, dialogue, id) {
 		           	// apply the resizing	
 	            	$(window).resize(); 
 	            	
+	            	// find all tabbable elements in the body excluding those in the dialogue 
+	            	body.find("input, select, textarea, button, a").not(dialogue.find("input, select, textarea, button, a")).each( function() {
+	            		// get the element
+	            		var e = $(this);
+	            		// get any existing tab index
+	            		var t = e.attr("tabindex");
+	            		// if there was one add a data attribute for it
+	            		if (t > 0) e.attr("data-tabindex",t);
+	            		// set their tab index to -1
+	            		$(this).attr("tabindex", -1);
+	            	});
+	            	
 	            	// this seems to be the best way to avoid the resizing/flicker when showing
 	            	window.setTimeout( function() {
 	            		// make the dialogue visible
