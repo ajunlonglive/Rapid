@@ -449,11 +449,16 @@ public class JavaWebservice extends Webservice {
 	}
 	
 	// get the class of our named request object
-	private Class getRequestClass() throws Exception {		
-		// get the class
-		Class c = Class.forName(_className);		
-		// make sure it implements JavaWebservice.Response
-		if (!Classes.implementsClass(c, com.rapid.soa.JavaWebservice.Request.class)) throw new WebserviceException("Webservice action class " + c.getCanonicalName() + " must implement com.rapid.soa.JavaWebservice.Response.");						
+	private Class getRequestClass() throws Exception {
+		// the class we are hoping for
+		Class c = null;
+		// if we have a class name
+		if (_className != null) {
+			// get the class
+			c = Class.forName(_className);		
+			// make sure it implements JavaWebservice.Response
+			if (!Classes.implementsClass(c, com.rapid.soa.JavaWebservice.Request.class)) throw new WebserviceException("Webservice action class " + c.getCanonicalName() + " must implement com.rapid.soa.JavaWebservice.Response.");
+		}
 		// return
 		return c;		
 	}
@@ -718,35 +723,38 @@ public class JavaWebservice extends Webservice {
 		
 	@Override
 	public SOASchema getRequestSchema() {
-		//if (_requestSchema == null) {
+		if (_requestSchema == null) {
 			try {
 				// get the request class
 				Class requestClass = getRequestClass();
-				// now make a schema from it
-				_requestSchema = getClassSchema(requestClass);
+				// if we have one make a schema from it
+				if (requestClass != null) _requestSchema = getClassSchema(requestClass);
 			} catch (Exception ex) {
 				_logger.error("Error creating request schema for Java webservice", ex);
 			}
-		//}
+		}
 		return _requestSchema; 
 	}
 	
 	@Override
 	public SOASchema getResponseSchema() {
-		//if (_responseSchema == null) {
+		if (_responseSchema == null) {
 			try {
 				// get the request class
 				Class requestClass = getRequestClass();
-				// get the response method
-				Method responseMethod = requestClass.getMethod("getResponse", RapidRequest.class);
-				// get the response class
-				Class responseClass = responseMethod.getReturnType();
-				// now make a schema from it
-				_responseSchema = getClassSchema(responseClass);
+				// if we have one
+				if (requestClass != null) {
+					// get the response method
+					Method responseMethod = requestClass.getMethod("getResponse", RapidRequest.class);
+					// get the response class
+					Class responseClass = responseMethod.getReturnType();
+					// now make a schema from it
+					_responseSchema = getClassSchema(responseClass);
+				}
 			} catch (Exception ex) {
 				_logger.error("Error creating response schema for Java webservice", ex);
 			}
-		//}
+		}
 		return _responseSchema;
 	}
 

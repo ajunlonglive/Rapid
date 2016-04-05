@@ -111,7 +111,23 @@ $.fn.extend({
 	  if (reload) {
 		  var pageId = $("body").attr("id");
 		  if (window["Event_pageload_" + pageId]) window["Event_pageload_" + pageId]();		  
-	  }	  
+	  } else {
+		  // reset the tabs in the body
+		  $("body").find("input, select, textarea, button, a").each( function() {
+      		// get the element
+      		var e = $(this);
+      		// get any existing data tab index
+      		var t = e.attr("data-tabindex");
+      		// if there was one add a proper attribute for it
+      		if (t > 0) {
+	  			e.attr("tabindex",t);
+	  			e.removeAttr("data-tabindex");
+      		} else {
+      			// remove negative tab index
+      			e.removeAttr("tabindex");
+      		}
+      	});
+	  }
 	  return this;
   },
   hideAllDialogues: function(reload) {	  
@@ -120,7 +136,23 @@ $.fn.extend({
 	  if (reload) {
 		  var pageId = $("body").attr("id");
 		  if (window["Event_pageload_" + pageId]) window["Event_pageload_" + pageId]();		  
-	  }	  
+	  } else {
+		// reset the tabs in the body
+		  $("body").find("input, select, textarea, button, a").each( function() {
+			  // get the element
+			  var e = $(this);
+			  // get any existing data tab index
+			  var t = e.attr("data-tabindex");
+			  // if there was one add a proper attribute for it
+			  if (t > 0) {
+				  e.attr("tabindex",t);
+				  e.removeAttr("data-tabindex");
+			  } else {
+				  // remove negative tab index
+				  e.removeAttr("tabindex");
+			  }
+		  });
+	  }  
 	  return this;
   },
   showError: function(server, status, message) {
