@@ -17,7 +17,9 @@ https://play.google.com/store/apps/details?id=com.rapid.mobile
 
 ##Screenshots
 ######Rapid Designer
-<img src="http://rapid-is.co.uk/images/RapidDesigner-244-01.png" />
+<img src="http://rapid-is.co.uk/images/RapidDesigner-234-01.png" />
+######Rapid Admin
+<img src="http://rapid-is.co.uk/images/RapidAdmin-234-01.png" />
 ######RapidMobile
 <img src="http://rapid-is.co.uk/images/RapidMobile-244-01.png" width="300px" />
 
