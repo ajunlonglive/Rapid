@@ -880,7 +880,7 @@ public class Rapid extends RapidHttpServlet {
 								// check the jpg file signature (from http://en.wikipedia.org/wiki/List_of_file_signatures)
 								if (bodyBytes[0] == (byte)0xFF && bodyBytes[1] == (byte)0xD8 && bodyBytes[2] == (byte)0xFF) {
 									
-									// create the paht
+									// create the path
 									String imagePath = "uploads/" +  app.getId() + "/" + imageName;
 									// create a file
 									File imageFile = new File(getServletContext().getRealPath(imagePath));
