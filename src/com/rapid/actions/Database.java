@@ -906,6 +906,9 @@ public class Database extends Action {
 					
 					// log the error
 					_logger.error(ex);
+					
+					// close the data factory and silently fail
+					try { df.close(); } catch (Exception ex2) {}
 
 					// only throw if no action cache
 					if (actionCache == null) {

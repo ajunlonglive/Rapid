@@ -575,7 +575,8 @@ if (details) {
 			}	    
 			if (data == null && details.dataStorageType) {
 				var dataStore = getGridDataStoreData(id, details);
-				if (dataStore.rows > rowIndex) {
+				rowIndex --;
+				if (dataStore.rows && dataStore.rows.length > rowIndex) {
 					for (var i in dataStore.fields) {
 						if (dataStore.fields[i] && dataStore.fields[i].toLowerCase() == field.toLowerCase()) {
 							data = dataStore.rows[rowIndex][i];

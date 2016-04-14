@@ -1632,7 +1632,7 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 	cell.text(text);
 	
 	// add inputs table, sql, and outputs table
-	table.append("<tr><td colspan='2' style='padding:0px;vertical-align: top;'><table class='dialogueTable inputs'><tr><td><b>Input</b></td><td colspan='2'><b>Field</b></td></tr></table></td><td colspan='3' style='width:50%;padding:2px 10px 0 10px;'><b>SQL</b><br/><textarea style='width:100%;min-width:100%;max-width:100%;min-height:200px;box-sizing:border-box;'></textarea></td><td colspan='2' rowspan='3' style='padding:0px;vertical-align: top;'><table  class='dialogueTable outputs'><tr><td><b>Field</b></td><td colspan='2'><b>Output</b></td></tr></table></td></tr>");
+	table.append("<tr><td colspan='2' style='padding:0px;vertical-align: top;'><table class='dialogueTable inputs'><tr><td><b>Input</b></td><td colspan='2'><b>Field</b></td></tr></table></td><td colspan='3' style='width:50%;padding:2px 10px 0 10px;'><b>SQL</b><br/><textarea style='width:100%;min-width:100%;max-width:100%;min-height:200px;height:95%;box-sizing:border-box;'></textarea></td><td colspan='2' rowspan='3' style='padding:0px;vertical-align: top;'><table  class='dialogueTable outputs'><tr><td><b>Field</b></td><td colspan='2'><b>Output</b></td></tr></table></td></tr>");
 	
 	// find the inputs table
 	var inputsTable = table.find("table.inputs");

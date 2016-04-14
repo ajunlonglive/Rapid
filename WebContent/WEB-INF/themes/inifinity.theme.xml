@@ -35,6 +35,10 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    		<contents>
 	    			<![CDATA[
 	    			
+textarea {
+  border-radius: 4px;
+}
+
 a {
   color: #0085CF;
   text-decoration: none;
@@ -106,6 +110,10 @@ table.grid tr:hover {
   #e5f4fc
   #f4fafd
   */
+}
+
+table.grid tr.rowSelect {
+  background: #BBDDEF;
 }
 
 .ui-widget {
@@ -299,6 +307,11 @@ button:active {
   box-shadow:0 1px 0 #fff,inset 0 0 9px rgba(0,0,0,0.5)
 }
 
+button:disabled {
+  background: linear-gradient(#FFF, #EBEBEB);
+  color: #B5B5B5;
+}
+
 .button1 {
   background-image: linear-gradient(#37AAEA, #117ED2);
   border-radius: 4px;
@@ -358,6 +371,10 @@ select:focus {
   box-shadow: 0 0 0 2px #87c4e7;
 }
 
+select:disabled {
+  background: #F5F5F5;
+}
+
 input[type=checkbox] {
   width: 20px;
   height: 20px;
@@ -388,6 +405,15 @@ input[type=checkbox]:checked:before {
   background: #007bbe;
   border: 1px solid #007bbe;
   margin: -1px;
+}
+
+input[type=checkbox]:disabled:before {
+  background: #E8E8E8;
+}
+
+input[type=checkbox]:disabled:checked:before {
+  background: #AFAFAF;
+  border-color: #8C8C8C;
 }
 
 input[type=checkbox]:checked:after {
@@ -445,6 +471,15 @@ input[type=radio]:checked:before {
   margin: -1px;
 }
 
+input[type=radio]:disabled:before {
+  background: #E8E8E8;
+}
+
+input[type=radio]:disabled:checked:before {
+  background: #AFAFAF;
+  border-color: #8C8C8C;
+}
+
 input[type=radio]:checked:after {
   content: '';
   position: absolute;
@@ -483,6 +518,12 @@ input[type=radio]:focus:before {
   padding: 7px 13px 3px;
 }
 
+.textarea1:focus {
+  box-shadow: 0 0 0 2px #87c4e7;
+  outline: none;
+  border-color: #FFF;
+}
+
 .panel1 {
   box-shadow: 1px 0px 0px 0px #D2D2D2, -1px 0px 0px 0px #D2D2D2, 0px 1px 0px 0px #B6B6B6, 0px 2px 0px 0px #D2D2D2, 2px 0px 0px 0px #E6E6E6, -2px 0px 0px 0px #E6E6E6, 0px 3px 0px 0px #E6E6E6, 0px -1px 0px 0px #E6E6E6;
   background: #FFF;
@@ -501,6 +542,12 @@ input[type=radio]:focus:before {
 }
 
 .panel4 {
+  background: #F3F4F5;
+  border-radius: 6px;
+  border: 1px solid #E8E8E8;
+}
+
+.panel5 {
   margin: 10px auto 20px;
   border: 1px solid #CCC;
   color: #333;
