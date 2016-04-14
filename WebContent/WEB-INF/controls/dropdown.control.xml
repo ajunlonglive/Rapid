@@ -134,7 +134,7 @@ return $("#" + id).val();
 if (data !== undefined) {
 	var control = $("#" + id);
 	if (data == null) {
-		control.children().remove();
+		if (!field) control.children().remove();
 	} else {		
 		data = makeDataObject(data, field);
 		if (data.rows && data.fields) {
