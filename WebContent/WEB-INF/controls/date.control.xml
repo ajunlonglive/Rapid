@@ -33,12 +33,11 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    <image>images/date_24x24.png</image>
 	    <category>Form controls</category>
 	    
-	    <addToNewApplications>true</addToNewApplications>
-	            
+	   	          
 	    <canUserAdd>true</canUserAdd>
 	    <canUserMove>true</canUserMove>
 	    <canUserAddPeers>true</canUserAddPeers>
-	    <canBeUsedForFormPageVisibilty>true</canBeUsedForFormPageVisibilty>
+	     <canBeUsedForFormPageVisibilty>true</canBeUsedForFormPageVisibilty>
 	    <canValidate>true</canValidate>
 	    
 	    <properties>
@@ -57,7 +56,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <changeValueJavaScript>formText</changeValueJavaScript>
 	            <helpHtml>Summary label to appear at the end of the form. Leave blank to have the control and its value hidden.</helpHtml>
 	        </property>
-	                  
+	                    
 	        <property>
 	            <key>value</key>
 	            <name>Value</name>
@@ -70,68 +69,81 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	        <property>
 	            <key>dateFormat</key>
 	            <name>Date format</name>
-	            <setConstructValueFunction>return "d/m/Y";</setConstructValueFunction>
+	            <setConstructValueFunction>return "dd/mm/yy";</setConstructValueFunction>
 	            <changeValueJavaScript>select</changeValueJavaScript>
 	            <getValuesFunction>
 	                <![CDATA[
-return [["d/m/Y","dd/mm/yyyy"],["m/d/Y","mm/dd/yyyy"],["Y-m-d","yyyy-mm-dd"]];
+return [["dd/mm/yy","dd/mm/yyyy"],["mm/dd/yy","mm/dd/yyyy"],["yy-mm-dd","yyyy-mm-dd"],["d MM yy","Short day, full month"],["DD, d MM, yy","Full date details"]];
 					]]>
 	            </getValuesFunction>
 	            <refreshHtml>true</refreshHtml>
 	            <helpHtml>Sets the date format. Useful for other regions.</helpHtml>
-	        </property>	 
+	        </property>
 	        
+	        <property>
+	            <key>minDate</key>
+	            <name>Min date</name>
+	            <setConstructValueFunction>return "";</setConstructValueFunction>
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets the minimum date. Dates will be unable to be selected earlier than this date. Valid periods are "y" for years, "m" for months, "w" for weeks, and "d" for days. For example, "+1m +7d" represents one month and seven days from today.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>maxDate</key>
+	            <name>Max date</name>
+	            <setConstructValueFunction>return "";</setConstructValueFunction>
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets the maximum date. Dates will be unable to be selected past this date. Valid periods are "y" for years, "m" for months, "w" for weeks, and "d" for days. For example, "+1m +7d" represents one month and seven days from today.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>yearRange</key>
+	            <name>Year range</name>
+	            <setConstructValueFunction>return "";</setConstructValueFunction>
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets the range of years that can be selected. For example, "2010:2016" will set the range from the first date in 2010 to the last date in 2016.</helpHtml>
+	        </property>
+	               
 	    </properties>
 	    
-	    <resources>
-            <resource>
-                <type>javascriptFile</type>
-                <contents>scripts/controls/date.js</contents>
-            </resource>
-            <resource>
-                <type>cssFile</type>
-                <contents>styles/controls/date.css</contents>
-            </resource>
-            <resource>
-                <type>file</type>
-                <contents>images/controls/date/date_17x15.gif</contents>
-            </resource>
-            <resource>
-                <type>file</type>
-                <contents>images/controls/date/dateClose_17x15.gif</contents>
-            </resource>
-            <resource>
-                <type>file</type>
-                <contents>images/controls/date/datePrevYear_9x8.gif</contents>
-            </resource>
-            <resource>
-                <type>file</type>
-                <contents>images/controls/date/datePrevMonth_4x8.gif</contents>
-            </resource>
-            <resource>
-                <type>file</type>
-                <contents>images/controls/date/dateNextMonth_4x8.gif</contents>
-            </resource>
-            <resource>
-                <type>file</type>
-                <contents>images/controls/date/dateNextYear_9x8.gif</contents>
-            </resource>
-        </resources>
+		<resources>
+	    
+	    	<resource>
+	    		<type>cssFile</type>
+	    		<contents>styles/controls/date.css</contents>
+	    	</resource>
+	    	
+	    	<resource>
+	    		<type>javascriptFile</type>
+	    		<contents>scripts/controls/date.js</contents>
+	    	</resource>
+	    </resources>
 	    
 	    <getHtmlFunction>
 	        <![CDATA[
-// return our html for adding to our parent object	
-var value = this.value;
-if (!value) value = "";
-return "<input id='" + this.id + "' name='" + this.id + "' value='" + escapeApos(value) + "' readonly='readonly' class='date tcal tcalInput" + getStyleClasses(this) + "'></input>";  
-
+var placeholder = "Choose a date";
+switch (this.dateFormat) {
+	case "dd/mm/yy":
+		placeholder = "dd/mm/yyyy";
+		break;
+	case "mm/dd/yy":
+		placeholder = "mm/dd/yyyy";
+		break;
+	case "yy-mm-dd":
+		placeholder = "yyyy-mm-dd";
+		break;
+}
+return "<input id='" + this.id + "' name='" + this.id + "' " + " class='date" + getStyleClasses(this) + "' value='" + this.value + "'placeholder='" + placeholder + "'/>";
 	        ]]>
 	    </getHtmlFunction> 
 	    
-	    <getDetailsFunction>	        
+	    <getDetailsFunction>
 	        <![CDATA[
-return { dateFormat: this.dateFormat };
-			]]>	        	        
+return {dateFormat : this.dateFormat, minDate : this.minDate, maxDate : this.maxDate, yearRange : (this.yearRange ? this.yearRange : "-100:+10")};
+	        ]]>
 	    </getDetailsFunction>
 	    
 	    <getDataFunction>
@@ -144,71 +156,128 @@ return $("#" + id).val();
 	        <![CDATA[
 var control = $("#" + id);
 var value = "";
-if (data != null && data !== undefined) {	
+if (data != null && data !== undefined) {
 	data = makeDataObject(data, field);
-	if (data.rows && data.rows[0]) {	        		
-		if (field && data.fields) {
+	if (data.rows && data.rows[0]) {
+		if (field && data.fields && data.fields.length > 0) {
 			for (var i in data.fields) {
-				if (data.fields[i].toLowerCase() == field.toLowerCase()) {
+				if (data.fields[i] && data.fields[i].toLowerCase() == field.toLowerCase()) {
 					value = data.rows[0][i];
 					break;
 				}
 			}
 		} else {
-			value = data.rows[0][0];
+			if (data.rows[0][0] != null && data.rows[0][0] !== undefined) {
+				value = data.rows[0][0];
+			}
 		}
-	} 
-}      
-if (value) {
-	var date = f_tcalParseDate(value,'Y-m-d');
-	if (date) value = f_tcalGenerateDate(date, details.dateFormat);
+	}
 }
 control.val(value);
 if (changeEvents) control.trigger("change");
-
 			]]>
 	    </setDataJavaScript>
 	    
 	    <events>
+	         <event>
+	            <type>click</type>
+	            <name>Click</name>
+	        </event>
+	        <event>
+	            <type>keyup</type>
+	            <name>Key up</name>
+	        </event>
 	        <event>
 	            <type>change</type>
 	            <name>Change</name>
 	        </event>
-	    </events> 
-	    	    	    	    
+	        <event>
+	            <type>blur</type>
+	            <name>Blur</name>
+	        </event>
+	    </events>
+	    
 	    <styles>
 	        <style>
-	            <name>Date</name>  
+	            <name>Date</name>
 	            <getAppliesToFunction>
-					<![CDATA[	      
+					<![CDATA[
 return "#" + this.id;
-	       			 ]]>	                
+	       			 ]]>
 	            </getAppliesToFunction>
 	        </style>
 	        <style>
-	            <name>:hover</name>  
+	            <name>:hover</name>
 	            <getAppliesToFunction>
-					<![CDATA[	      
+					<![CDATA[
 return "#" + this.id + ":hover";
-	       			 ]]>	                
+	       			 ]]>
 	            </getAppliesToFunction>
 	        </style>
 	        <style>
-	            <name>:focus</name>  
+	            <name>:focus</name>
 	            <getAppliesToFunction>
-					<![CDATA[	      
+					<![CDATA[
 return "#" + this.id + ":focus";
-	       			 ]]>	                
+	       			 ]]>
 	            </getAppliesToFunction>
 	        </style>
 	    </styles>
 	    
-	    <initJavaScript>
+		<initJavaScript>
 	        <![CDATA[
-A_TCALCONF.format = details.dateFormat;	     
-f_tcalAdd (id);   
+$( "#" + id ).datepicker({
+	changeMonth: true,
+    changeYear: true,
+    dateFormat: details.dateFormat,
+    maxDate: details.maxDate,
+    minDate: details.minDate,
+    yearRange: details.yearRange
+}).change( function (ev) {
+	var datePicker = $(this);
+	var date = datePicker.val();
+	if (date) {
+		var parts = date.split("/");
+		if (parts.length == 3) {
+			if (parts[2].length < 4) {
+				try {
+					var year = parseInt(parts[2]);
+					var now = new Date();
+					var y = now.getFullYear() + "";
+					var y1 = y.substr(0,2) * 1;
+					var y2 = y.substr(2) * 1;
+					if (year > y2 + 10) y1--;
+					if (parts[2].length == 1) date = parts[0] + "/" + parts[1] + "/" + y1 + "0" + parts[2];
+					if (parts[2].length == 2) date = parts[0] + "/" + parts[1] + "/" + y1 + parts[2];
+					if (parts[2].length == 3) date = parts[0] + "/" + parts[1] + "/" + (y1 + "").substr(0,1) + parts[2];
+					datePicker.val(date);
+				} catch (ex) {}
+			}
+		}
+	}
+});
+
 	        ]]>
 	    </initJavaScript>
-	    	   	    
+
+	    <runtimeProperties>
+	    	<runtimeProperty>
+	    		<type>age</type>
+	    		<name>Age</name>
+	    		<getPropertyFunction>
+	    			        <![CDATA[
+var dp = $("#" + id);
+if (dp.val()) {
+	var d = dp.datepicker( "getDate" );
+	var age = (Date.now() - d) / 31557600000;
+	return age;
+} else {
+	return null;
+}
+	    			        ]]>
+	    		</getPropertyFunction>
+	    	</runtimeProperty>
+	    </runtimeProperties>
+	    	    
 	</control>
 </controls>

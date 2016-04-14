@@ -119,6 +119,9 @@ public class Navigate extends Action {
 				for (SessionVariable sessionVariable : _sessionVariables) {					
 					// get the data getter command
 					String getter = Control.getDataJavaScript(rapidRequest.getRapidServlet().getServletContext(), application, page, sessionVariable.getItemId(), sessionVariable.getField());
+					// if we didn't get anything update to empty string
+					if (getter == null) getter = "''";
+					if (getter.length() == 0) getter = "''";
 					// build the concatinating string
 					sessionVariables += "&" + sessionVariable.getName() + "=' + " +  getter + " + '";									
 				}

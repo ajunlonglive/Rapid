@@ -1216,11 +1216,20 @@ public class Designer extends RapidHttpServlet {
 												
 											}
 											
-											if (!gotOutput) throw new Exception("Field \"" + field + "\" from output " + (i + 1) + " is not present in selected columns");
+											if (!gotOutput) {
+												rs.close();
+												df.close();
+												throw new Exception("Field \"" + field + "\" from output " + (i + 1) + " is not present in selected columns");
+											}
 											
 										}
 										
 									}
+									
+									// close the recordset
+									rs.close();									
+									// close the data factory
+									df.close();
 															
 								}
 																		

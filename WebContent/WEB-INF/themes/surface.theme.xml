@@ -35,6 +35,32 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    		<contents>
 	    			<![CDATA[
 	    			
+.dialogue {
+  border: 2px solid #0078d7;
+}
+
+.dialogueCover {
+  background-color: #000;
+  opacity: 0.5;
+}
+
+textarea {
+  border-color: rgba(0, 0, 0, 0.4);
+  border-width: 2px;
+  padding: 4px 8px;
+  font-size: 100%;
+  line-height: 1.571em;
+}
+
+textarea:hover {
+  border-color: #8F8F8F;
+}
+
+textarea:focus {
+  border-color: #0078D7;
+  outline: none;
+}
+
 a {
   font-weight: inherit;
   text-decoration: none;
@@ -57,6 +83,7 @@ a:active {
 table.grid {
   color: #5D5D5D;
   background-color: #FFF;
+  border: 1px solid #ABB2B6;
 }
 
 table.grid tr:first-child td {
@@ -64,6 +91,8 @@ table.grid tr:first-child td {
   border-bottom: 2px solid #D3D3D3;
   padding: 10px;
   font-weight: 700;
+  color: #1570A6;
+  background: #FFF;
 }
 
 table.grid tr:not(:first-child) {
@@ -79,7 +108,16 @@ table.grid tr:not(:first-child) td {
 table.grid tr.rowStyle1 {
   background-color: #F1F8FC;
 }
-   
+
+table.grid tr.rowSelect {
+  background: #BFD6FB;
+  color: #1D6893;
+}
+
+table.grid tr:hover {
+  background: #D5E5FF;
+}
+
 .tabsHeader li {
   border: 1px solid #ABB2B6;
   border-top-left-radius: 0px;
@@ -308,6 +346,14 @@ button:active, button:focus {
   outline: 1px dotted black;
 }
 
+button:disabled {
+  background-color: #5E7394;
+}
+
+button:hover:disabled {
+  background-color: #8CA3C7;
+}
+
 .button1 {
   padding: 4px 12px 4px 12px;
   color: #000;
@@ -362,6 +408,14 @@ button:active, button:focus {
   outline: none;
 }
 
+.button4 {
+  border: 2px solid #004E8C;
+}
+
+.button4:active, .button4:focus {
+  border-color: #000;
+}
+
 input {
   line-height: 1.571em;
   color: #212121;
@@ -411,12 +465,26 @@ input[type=radio]:active:before {
   border-color: black;
 }
 
+input[type=radio]:disabled:before {
+  background-color: #D0D6D8;
+}
+
 input[type=radio]:checked:before {
   width: 19px;
   height: 19px;
   display: block;
   content: '';
   margin: -1px;
+}
+
+input[type=radio]:focus:before {
+  outline: 1px dotted black;
+  outline-offset: 2px;
+  outline-style: dotted;
+}
+
+input[type=radio]:disabled:checked:before {
+  background-color: #D0D6D8;
 }
 
 input[type=radio]:checked:after {
@@ -431,10 +499,8 @@ input[type=radio]:checked:after {
   transform: rotate(45deg);
 }
 
-input[type=radio]:focus:before {
-  outline: 1px dotted black;
-  outline-offset: 2px;
-  outline-style: dotted;
+input[type=radio]:disabled:checked:after {
+  background-color: #73A7BB;
 }
 
 input[type=checkbox] {
@@ -461,12 +527,26 @@ input[type=checkbox]:active:before {
   border-color: black;
 }
 
+input[type=checkbox]:disabled:before {
+  background-color: #D0D6D8;
+}
+
 input[type=checkbox]:checked:before {
   width: 19px;
   height: 19px;
   display: block;
   content: '';
   margin: -1px;
+}
+
+input[type=checkbox]:focus:before {
+  outline: 1px dotted black;
+  outline-offset: 2px;
+  outline-style: dotted;
+}
+
+input[type=checkbox]:disabled:checked:before {
+  background-color: #D0D6D8;
 }
 
 input[type=checkbox]:checked:after {
@@ -481,10 +561,9 @@ input[type=checkbox]:checked:after {
   transform: rotate(45deg);
 }
 
-input[type=checkbox]:focus:before {
-  outline: 1px dotted black;
-  outline-offset: 2px;
-  outline-style: dotted;
+input[type=checkbox]:disabled:checked:after {
+  border-right: 2px solid #B5B5B5;
+  border-bottom: 2px solid #B5B5B5;
 }
 
 .input1 {
@@ -519,6 +598,23 @@ input[type=checkbox]:focus:before {
 .input4:focus {
   border: 1px solid #e81123;
   box-shadow: rgba(235, 74, 86, 0.4) 0px 0px 1px 1px inset;
+}
+
+.panel1 {
+  background: #F1F1F1;
+  border: 1px solid #C5C5C5;
+}
+
+.panel2 {
+  border: 2px solid #004E8C;
+}
+
+.panel3 {
+  border: 2px solid #2672EC;
+}
+
+.panel4 {
+  border: 2px solid #BAD80A;
 }
 
 select {
