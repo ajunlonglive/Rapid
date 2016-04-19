@@ -36,6 +36,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.json.XML;
 
 import com.rapid.core.Application;
 import com.rapid.security.SecurityAdapter;
@@ -168,6 +169,42 @@ public class SOA extends RapidHttpServlet {
 		
 	}
 	
+	// send an exception that matches the type of request
+	private void sendSOAException(HttpServletResponse response, Exception ex, boolean soap) throws IOException {
+		
+		if (soap) {
+			
+			PrintWriter out = response.getWriter();
+			
+			out.print("<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n");
+			out.print("\t<soapenv:Body>\n");
+			out.print("\t\t<soapenv:Fault>\n");
+			out.print("\t\t\t<faultcode>" + XML.escape(ex.getMessage()) + "</faultcode>\n");
+			
+			boolean showStackTrace = Boolean.parseBoolean(getServletContext().getInitParameter("showStackTrace"));
+			
+			if (showStackTrace) {
+				
+				String stackTrace = "";
+				
+				if (ex.getStackTrace() != null) for (StackTraceElement element : ex.getStackTrace()) stackTrace += element + "\n";
+				
+				out.print("\t\t\t<faultstring>" + XML.escape(stackTrace) + "</faultstring>\n");
+				
+			}
+			
+			out.print("\t\t</soapenv:Fault>\n");
+			out.print("\t</soapenv:Body>\n");
+			out.print("</soapenv:Envelope>");
+									
+			out.close();
+			
+		} else {
+			sendException(response, ex);
+		}
+		
+	}
+	
 	// write the response data
 	private void writeResponseData(String contentType, HttpServletResponse response, PrintWriter out, SOAData soaResponseData, boolean soapAction) {
 		
@@ -244,11 +281,14 @@ public class SOA extends RapidHttpServlet {
 		// get the content type
 		String contentType = request.getContentType();
 		
-		// retieve the http session without creating a new one
+		// retrieve the http session without creating a new one
 		HttpSession session = request.getSession(false);
 				
 		// the reader, if an exception occurs we will try and get a session from it's authentication details
 		SOADataReader soaReader = null;
+		
+		// assume not a SOAP action
+		boolean soapAction = false;
 											
 		try {
 			
@@ -264,9 +304,7 @@ public class SOA extends RapidHttpServlet {
 				
 				// if this xml
 				if (contentType.contains("xml") || contentType.contains("json")) {
-					
-					// assume not a SOAP action
-					boolean soapAction = false;
+										
 					// get the action header
 					String action =  request.getHeader("Action");
 					// if not action
@@ -329,7 +367,7 @@ public class SOA extends RapidHttpServlet {
 								
 								if (webservice == null) {
 
-									sendException(response, new Exception("Webservice \"" + name + "\" not found in application " + appId + ", version " + version));
+									throw new Exception("Webservice \"" + name + "\" not found in application " + appId + ", version " + version);
 									
 								} else {
 																		
@@ -348,7 +386,7 @@ public class SOA extends RapidHttpServlet {
 									// if no session could be found send an 
 									if (session == null) {
 										
-										sendException(response, new Exception("Not authenticated"));
+										throw new Exception("Not authenticated");
 										
 									} else {
 										
@@ -417,10 +455,10 @@ public class SOA extends RapidHttpServlet {
 			// check to see if we authenticated
 			if (session == null) {
 				// no authentication so send this instead
-				sendException(response, new Exception("Not authenticated"));
+				sendSOAException(response, new Exception("Not authenticated"), soapAction);
 			} else {
 				// send the exception details as formatted 500 http response
-				sendException(response, ex);
+				sendSOAException(response, ex, soapAction);
 			}
 			
 			
