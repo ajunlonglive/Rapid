@@ -32,7 +32,8 @@
     </users>
     <users>
         <description>Unprivileged user</description>
+        <deviceDetails></deviceDetails>
         <name>user</name>
-        <password>user</password>
+        <password>x</password>
     </users>
 </security>

@@ -731,7 +731,8 @@ public class JavaWebservice extends Webservice {
 		
 	@Override
 	public SOASchema getRequestSchema() {
-		_requestSchema = null;
+		// useful for debugging
+		//_requestSchema = null;
 		if (_requestSchema == null) {
 			try {
 				// get the request class
@@ -747,7 +748,8 @@ public class JavaWebservice extends Webservice {
 	
 	@Override
 	public SOASchema getResponseSchema() {
-		_responseSchema = null;
+		// useful for debugging
+		//_responseSchema = null;
 		if (_responseSchema == null) {
 			try {
 				// get the request class
