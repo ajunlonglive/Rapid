@@ -376,11 +376,16 @@ public class RapidSecurityAdapter extends SecurityAdapter {
 			if (password.equals(user.getPassword())) {
 				// get the application
 				Application application = rapidRequest.getApplication();
-				// if it has device security
-				if (application.getDeviceSecurity()) {
-					// check device security as well
-					if (user.checkDevice(rapidRequest)) return true;
-				} else return true;				
+				// if there was one (soa authentication doesn't)
+				if (application == null) {
+					return true;
+				} else {
+					// if it has device security
+					if (application.getDeviceSecurity()) {
+						// check device security as well
+						if (user.checkDevice(rapidRequest)) return true;
+					} else return true;
+				}
 			}
 		}
 		return false;

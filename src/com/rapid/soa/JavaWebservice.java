@@ -132,7 +132,7 @@ public class JavaWebservice extends Webservice {
 		private static final int TYPE_FIELD = 4;
 		
 		// private instance variables
-		private String _name;
+		private String _name, _elementName;
 		private Class _class; 
 		private Annotation[] _annotations;
 		private int _type;
@@ -140,6 +140,7 @@ public class JavaWebservice extends Webservice {
 		// properties
 		public String getName() { return _name; }
 		public Class getElementClass() { return _class; }
+		public String getElementName() { return _elementName; }
 		public Annotation[] getAnnotations() { return _annotations; }
 		public int getType() { return _type; }
 						
@@ -147,6 +148,7 @@ public class JavaWebservice extends Webservice {
 		public ElementProperty(String name, Class propertyClass, Annotation[] annotations, int type) {
 			_name = name;
 			_class = propertyClass;
+			_elementName = _class.getSimpleName().substring(0,1).toLowerCase() + _class.getSimpleName().substring(1);
 			_annotations = annotations;
 			_type = type;
 		}
@@ -582,7 +584,7 @@ public class JavaWebservice extends Webservice {
 	}
 	
 	// get an SOA element from an object (used to generate the response)
-	private SOAElement getResponseSOAElement(Object object) throws NoSuchMethodException, SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+	private SOAElement getResponseSOAElement(Object object, SOAElement parentElement) throws NoSuchMethodException, SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 		
 		// make sure the schema and all element properties has been cached
 		getResponseSchema();
@@ -596,14 +598,14 @@ public class JavaWebservice extends Webservice {
 				
 		if (properties == null) {
 			
-			element = new SOAElement(c.getSimpleName(),"Properties for " + c.getCanonicalName() + " not found!");
+			element = new SOAElement(properties.getElementName(), "Properties for " + c.getCanonicalName() + " not found!");
 			
 		} else {
 			
 			if (properties.getType() == ElementProperty.TYPE_ARRAY) {
 				
 				// create the array SOA element
-				element = new SOAElement(c.getSimpleName(),true);
+				element = new SOAElement(properties.getElementName(), true);
 				
 				// get the children
 				List<Object> childObjects = (List<Object>) object;
@@ -611,19 +613,25 @@ public class JavaWebservice extends Webservice {
 				// loop them
 				for (Object childObject  : childObjects) {
 					
-					// get a child element from it
-					SOAElement childElement = getResponseSOAElement(childObject);
+					// get the child element into the array
+					getResponseSOAElement(childObject, element);
 					
-					// add if we got one
-					if (childElement != null) element.addChildElement(childElement);
+					// close the array so the next addition goes onto a new child
+					element.closeArray();
 					
 				}
 													
 			} else { 
 				
-				// create the array SOA element
-				element = new SOAElement(c.getSimpleName());
-				
+				// check if we are adding to a parent element
+				if (parentElement == null) {
+					// create the SOA element
+					element = new SOAElement(properties.getElementName());
+				} else {
+					// use the given parent element 
+					element = parentElement;
+				}
+												
 				// get the child element properties
 				List<ElementProperty> childElementProperties = _childElementProperties.get(c.getCanonicalName());
 				
@@ -703,7 +711,7 @@ public class JavaWebservice extends Webservice {
 							} else {
 								
 								// add the child the more complex way
-								element.addChildElement(getResponseSOAElement(childObject));
+								element.addChildElement(getResponseSOAElement(childObject, null));
 								
 							} // simple type check
 							
@@ -723,6 +731,7 @@ public class JavaWebservice extends Webservice {
 		
 	@Override
 	public SOASchema getRequestSchema() {
+		_requestSchema = null;
 		if (_requestSchema == null) {
 			try {
 				// get the request class
@@ -738,6 +747,7 @@ public class JavaWebservice extends Webservice {
 	
 	@Override
 	public SOASchema getResponseSchema() {
+		_responseSchema = null;
 		if (_responseSchema == null) {
 			try {
 				// get the request class
@@ -780,9 +790,12 @@ public class JavaWebservice extends Webservice {
 			
 			// invoke the response method
 			Object responseObject = responseMethod.invoke(requestObject, rapidRequest);
+			
+			// get an SOA element from the object
+			SOAElement responseElement = getResponseSOAElement(responseObject, null);
 						
 			// get the response data
-			SOAData responseData = new SOAData(getResponseSOAElement(responseObject));
+			SOAData responseData = new SOAData(responseElement);
 			
 			// return the response data
 			return responseData;

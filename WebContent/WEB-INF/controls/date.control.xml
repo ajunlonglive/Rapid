@@ -67,13 +67,13 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	        </property>
 	        
 	        <property>
-	            <key>dateFormat</key>
+	            <key>format</key>
 	            <name>Date format</name>
 	            <setConstructValueFunction>return "dd/mm/yy";</setConstructValueFunction>
 	            <changeValueJavaScript>select</changeValueJavaScript>
 	            <getValuesFunction>
 	                <![CDATA[
-return [["dd/mm/yy","dd/mm/yyyy"],["mm/dd/yy","mm/dd/yyyy"],["yy-mm-dd","yyyy-mm-dd"],["d MM yy","Short day, full month"],["DD, d MM, yy","Full date details"]];
+return [["dd/mm/yy","dd/mm/yyyy"],["mm/dd/yy","mm/dd/yyyy"],["yy-mm-dd","yyyy-mm-dd"],["dd-M-yy","dd-MMM-yyyy"],["d MM yy","Short day, full month"],["DD, d MM, yy","Full date details"]];
 					]]>
 	            </getValuesFunction>
 	            <refreshHtml>true</refreshHtml>
@@ -135,6 +135,9 @@ switch (this.dateFormat) {
 	case "yy-mm-dd":
 		placeholder = "yyyy-mm-dd";
 		break;
+	case "dd-M-yy":
+		placeholder = "dd-mmm-yyyy";
+		break;		
 }
 return "<input id='" + this.id + "' name='" + this.id + "' " + " class='date" + getStyleClasses(this) + "' value='" + this.value + "'placeholder='" + placeholder + "'/>";
 	        ]]>
@@ -142,7 +145,7 @@ return "<input id='" + this.id + "' name='" + this.id + "' " + " class='date" + 
 	    
 	    <getDetailsFunction>
 	        <![CDATA[
-return {dateFormat : this.dateFormat, minDate : this.minDate, maxDate : this.maxDate, yearRange : (this.yearRange ? this.yearRange : "-100:+10")};
+return {format : this.format, minDate : this.minDate, maxDate : this.maxDate, yearRange : (this.yearRange ? this.yearRange : "-100:+10")};
 	        ]]>
 	    </getDetailsFunction>
 	    
@@ -226,10 +229,12 @@ return "#" + this.id + ":focus";
 	    
 		<initJavaScript>
 	        <![CDATA[
+var format = details.format;
+if (!format) format = "dd/mm/yy"; 	        
 $( "#" + id ).datepicker({
 	changeMonth: true,
     changeYear: true,
-    dateFormat: details.dateFormat,
+    dateFormat: format,
     maxDate: details.maxDate,
     minDate: details.minDate,
     yearRange: details.yearRange
@@ -254,6 +259,7 @@ $( "#" + id ).datepicker({
 				} catch (ex) {}
 			}
 		}
+		if (details.format == "dd-M-yy") datePicker.val(date.toUpperCase());
 	}
 });
 

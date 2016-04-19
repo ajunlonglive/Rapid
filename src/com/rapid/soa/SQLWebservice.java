@@ -117,12 +117,13 @@ public class SQLWebservice extends Webservice {
 				
 			}
 									
-			// get the resultset!
-			
+			// get the resultset!			
 			ResultSet rs = df.getPreparedResultSet(rapidRequest, _sql, parameters);
 									
+			// get the schema root
 			SOASchemaElement responseSchemaElement = _responseSchema.getRootElement();
 			
+			// get the response element
 			SOAElement responseElement = new SOAElement(responseSchemaElement.getName(), responseSchemaElement.getIsArray());
 															
 			while (rs.next()) {
@@ -158,8 +159,10 @@ public class SQLWebservice extends Webservice {
 							elementValue = rs.getString(fieldName);
 					}
 					
+					// create a child response element
 					SOAElement responseChildElement = new SOAElement(elementName, elementValue);
 					
+					// add it (the method below knows what to do if the responseElement is an array or not)
 					responseElement.addChildElement(responseChildElement);
 					
 				}

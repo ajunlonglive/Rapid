@@ -130,7 +130,7 @@ public class SOA extends RapidHttpServlet {
 				// Set standard HTTP/1.0 no-cache header.
 				response.setHeader("Pragma", "no-cache");
 				
-				Webservice webservice = app.getWebservice(serviceId);
+				Webservice webservice = app.getWebserviceById(serviceId);
 				
 				if (webservice == null) {
 					
@@ -313,10 +313,10 @@ public class SOA extends RapidHttpServlet {
 						if (actionParts.length == 3) {
 							
 							String appId = actionParts[0];
-							String versionId = actionParts[1];
-							String serviceId = actionParts[2];
+							String version = actionParts[1];
+							String name = actionParts[2];
 							
-							Application application = getApplications().get(appId, versionId);
+							Application application = getApplications().get(appId, version);
 							
 							if (application == null) {
 								
@@ -325,11 +325,11 @@ public class SOA extends RapidHttpServlet {
 							} else {
 								
 								// get the webservice from the application
-								Webservice webservice = application.getWebservice(serviceId);
+								Webservice webservice = application.getWebserviceByName(name);
 								
 								if (webservice == null) {
-									
-									throw new Exception("Webservice not found in application");
+
+									sendException(response, new Exception("Webservice \"" + name + "\" not found in application " + appId + ", version " + version));
 									
 								} else {
 																		
