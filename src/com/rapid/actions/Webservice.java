@@ -514,116 +514,128 @@ public class Webservice extends Action {
 				// retrieve the action
 				String action = _request.getAction();				
 				// create a placeholder for the request url
-				URL url = null;				
-				// if the given request url starts with http use it as is, otherwise use the soa servlet
-				if (_request.getUrl().startsWith("http")) {
-					// use the url as is
-					url = new URL(_request.getUrl());
-				} else {
-					// get our request
-					HttpServletRequest httpRequest = rapidRequest.getRequest();
-					// make a url using our own request and add the action
-					url = new URL(httpRequest.getScheme(), httpRequest.getServerName(), httpRequest.getServerPort(), httpRequest.getContextPath() + "/" + _request.getUrl());
-					// check whether we have any id / version seperators
-					String[] actionParts = action.split("/");
-					// add them if none
-					if (actionParts.length < 2) action = application.getId() + "/" + application.getVersion() +  "/" + action;
-				}
-																
-				// establish the connection
-				HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-												
-				// if we are requesting from ourself
-				if (url.getPath().startsWith(rapidRequest.getRequest().getContextPath())) {
-					// get our session id
-					String sessionId = rapidRequest.getRequest().getSession().getId();
-					// add it to the call for internal authentication
-					connection.setRequestProperty("Cookie", "JSESSIONID=" + sessionId);
-				}
+				URL url = null;
+				// get the request url
+				String requestURL = _request.getUrl();
 				
-				// set the content type and action header accordingly
-				if ("SOAP".equals(_request.getType())) {
-					connection.setRequestProperty("Content-Type", "text/xml");
-					connection.setRequestProperty("SOAPAction", action);
-				} else if ("JSON".equals(_request.getType())) {
-					connection.setRequestProperty("Content-Type", "application/json");
-					if (action.length() > 0) connection.setRequestProperty("Action", action);
-				} else if ("XML".equals(_request.getType())) {
-					connection.setRequestProperty("Content-Type", "text/xml");
-					if (action.length() > 0) connection.setRequestProperty("Action", action);
-				}
-				
-				// if a body has been specified
-				if (body.length() > 0) {
-										
-					// Triggers POST.
-					connection.setDoOutput(true); 
+				// if we got one
+				if (requestURL != null) {										
 					
-					// get the output stream from the connection into which we write the request
-					OutputStream output = connection.getOutputStream();		
-					
-					// write the processed body string into the request output stream
-					output.write(body.getBytes("UTF8"));
-				}
-								
-				// check the response code
-				int responseCode = connection.getResponseCode();
-				
-				// read input stream if all ok, otherwise something meaningful should be in error stream
-				if (responseCode == 200) {
-					
-					// get the input stream
-					InputStream response = connection.getInputStream();
-					// prepare an soaData object
-					SOAData soaData = null;
-					
-					// read the response accordingly
-					if ("JSON".equals(_request.getType())) {
-						SOAJSONReader jsonReader = new SOAJSONReader();	
-						String jsonResponse = Strings.getString(response);
-						soaData = jsonReader.read(jsonResponse);
+					// if the given request url starts with http use it as is, otherwise use the soa servlet
+					if (_request.getUrl().startsWith("http")) {
+						// trim it
+						requestURL = requestURL.trim();						
+						// insert any parameters
+						requestURL = application.insertParameters(rapidRequest.getRapidServlet().getServletContext(), requestURL);
+						// use the url 
+						url = new URL(requestURL);
 					} else {
-						SOAXMLReader xmlReader = new SOAXMLReader(_request.getRoot());						
-						soaData = xmlReader.read(response);
+						// get our request
+						HttpServletRequest httpRequest = rapidRequest.getRequest();
+						// make a url for the soa servlet
+						url = new URL(httpRequest.getScheme(), httpRequest.getServerName(), httpRequest.getServerPort(), httpRequest.getContextPath() + "/soa");
+						// check whether we have any id / version seperators
+						String[] actionParts = action.split("/");
+						// add them if none
+						if (actionParts.length < 2) action = application.getId() + "/" + application.getVersion() +  "/" + action;
+					}
+																	
+					// establish the connection
+					HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+													
+					// if we are requesting from ourself
+					if (url.getPath().startsWith(rapidRequest.getRequest().getContextPath())) {
+						// get our session id
+						String sessionId = rapidRequest.getRequest().getSession().getId();
+						// add it to the call for internal authentication
+						connection.setRequestProperty("Cookie", "JSESSIONID=" + sessionId);
 					}
 					
-					SOADataWriter jsonWriter = new SOARapidWriter(soaData);
+					// set the content type and action header accordingly
+					if ("SOAP".equals(_request.getType())) {
+						connection.setRequestProperty("Content-Type", "text/xml");
+						connection.setRequestProperty("SOAPAction", action);
+					} else if ("JSON".equals(_request.getType())) {
+						connection.setRequestProperty("Content-Type", "application/json");
+						if (action.length() > 0) connection.setRequestProperty("Action", action);
+					} else if ("XML".equals(_request.getType())) {
+						connection.setRequestProperty("Content-Type", "text/xml");
+						if (action.length() > 0) connection.setRequestProperty("Action", action);
+					}
 					
-					String jsonString = jsonWriter.write();
+					// if a body has been specified
+					if (body.length() > 0) {
+											
+						// Triggers POST.
+						connection.setDoOutput(true); 
+						
+						// get the output stream from the connection into which we write the request
+						OutputStream output = connection.getOutputStream();		
+						
+						// write the processed body string into the request output stream
+						output.write(body.getBytes("UTF8"));
+					}
+									
+					// check the response code
+					int responseCode = connection.getResponseCode();
 					
-					jsonData = new JSONObject(jsonString);
-										
-					if (actionCache != null) actionCache.put(application.getId(), getId(), jsonInputs.toString(), jsonData);
-					
-					response.close();
-					
-				} else {
-					
-					InputStream response = connection.getErrorStream();
-					
-					BufferedReader rd  = new BufferedReader( new InputStreamReader(response));
-					
-					String errorMessage = rd.readLine();
-					
-					rd.close();
-					
-					// log the error
-					_logger.error(errorMessage);
-					
-					// only if there is no application cache show the error, otherwise it sends an empty response
-					if (actionCache == null) {
-														        
-						throw new JSONException(" response code " + responseCode + " from server : " + errorMessage);
+					// read input stream if all ok, otherwise something meaningful should be in error stream
+					if (responseCode == 200) {
+						
+						// get the input stream
+						InputStream response = connection.getInputStream();
+						// prepare an soaData object
+						SOAData soaData = null;
+						
+						// read the response accordingly
+						if ("JSON".equals(_request.getType())) {
+							SOAJSONReader jsonReader = new SOAJSONReader();	
+							String jsonResponse = Strings.getString(response);
+							soaData = jsonReader.read(jsonResponse);
+						} else {
+							SOAXMLReader xmlReader = new SOAXMLReader(_request.getRoot());						
+							soaData = xmlReader.read(response);
+						}
+						
+						SOADataWriter jsonWriter = new SOARapidWriter(soaData);
+						
+						String jsonString = jsonWriter.write();
+						
+						jsonData = new JSONObject(jsonString);
+											
+						if (actionCache != null) actionCache.put(application.getId(), getId(), jsonInputs.toString(), jsonData);
+						
+						response.close();
 						
 					} else {
 						
-						_logger.debug("Error not shown to user due to cache : " + errorMessage);
+						InputStream response = connection.getErrorStream();
 						
+						BufferedReader rd  = new BufferedReader( new InputStreamReader(response));
+						
+						String errorMessage = rd.readLine();
+						
+						rd.close();
+						
+						// log the error
+						_logger.error(errorMessage);
+						
+						// only if there is no application cache show the error, otherwise it sends an empty response
+						if (actionCache == null) {
+															        
+							throw new JSONException(" response code " + responseCode + " from server : " + errorMessage);
+							
+						} else {
+							
+							_logger.debug("Error not shown to user due to cache : " + errorMessage);
+							
+						}
+																			
 					}
-																		
-				}
-				
-				connection.disconnect();
+					
+					connection.disconnect();
+						
+				} // request url != null
 				
 			} // jsonData == null
 																							

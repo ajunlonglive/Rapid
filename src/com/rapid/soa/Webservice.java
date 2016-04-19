@@ -320,7 +320,7 @@ public abstract class Webservice {
 		if (_isAuthenticate) {
 			_wsdl.append("<soap:operation soapAction=\"authenticate\"/>");
 		} else {
-			_wsdl.append("<soap:operation soapAction=\"" + appId + "/" + appVersion + "/" + id + "\"/>");
+			_wsdl.append("<soap:operation soapAction=\"" + appId + "/" + appVersion + "/" + _name + "\"/>");
 		}
 		
 		_wsdl.append("<wsdl:input>");

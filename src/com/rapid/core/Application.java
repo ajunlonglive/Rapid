@@ -756,17 +756,19 @@ public class Application {
 	public String insertParameters(ServletContext servletContext, String string) {
 		// check for non-null
 		if (string != null) {
+			// get pos of [[
+			int pos = string.indexOf("[[");
 			// check string contains [[ 
-			if (string.contains("[[")) {
+			if (pos > -1) {
 				// if it has ]] thereafter
-				if (string.indexOf("]]") > string.indexOf("[[")) {
+				if (string.indexOf("]]") > pos) {
 					// webfolder is the client web facing resources
-					string = string.replace("[[webfolder]]", getWebFolder(this));
+					if (string.contains("[[webfolder]]")) string = string.replace("[[webfolder]]", getWebFolder(this));
 					// appfolder and configfolder are the hidden server app resources
-					string = string.replace("[[appfolder]]", getConfigFolder(servletContext, _id, _version));
-					string = string.replace("[[configfolder]]", getConfigFolder(servletContext, _id, _version));
+					if (string.contains("[[appfolder]]")) string = string.replace("[[appfolder]]", getConfigFolder(servletContext, _id, _version));
+					if (string.contains("[[configfolder]]")) string = string.replace("[[configfolder]]", getConfigFolder(servletContext, _id, _version));
 					// root folder is WEB-INF
-					string = string.replace("[[rootfolder]]", servletContext.getRealPath("WEB-INF/"));
+					if (string.contains("[[rootfolder]]")) string = string.replace("[[rootfolder]]", servletContext.getRealPath("WEB-INF/"));
 					// if we have parameters
 					if (_parameters != null) {
 						// loop them
@@ -890,7 +892,7 @@ public class Application {
 	}
 	
 	// get a webservice by it's id
-	public Webservice getWebservice(String id) {
+	public Webservice getWebserviceById(String id) {
 		if (_webservices != null) {
 			for (Webservice webservice : _webservices) {
 				if (id.equals(webservice.getId())) return webservice;
@@ -898,6 +900,16 @@ public class Application {
 		}
 		return null;
 	}
+	
+	// get a webservice by it's name
+		public Webservice getWebserviceByName(String name) {
+			if (_webservices != null) {
+				for (Webservice webservice : _webservices) {
+					if (name.equals(webservice.getName())) return webservice;
+				}
+			}
+			return null;
+		}
 	
 	// return the list of style classes
 	public List<String> getStyleClasses() {
