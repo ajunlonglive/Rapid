@@ -81,6 +81,15 @@ return [["dd/mm/yy","dd/mm/yyyy"],["mm/dd/yy","mm/dd/yyyy"],["yy-mm-dd","yyyy-mm
 	        </property>
 	        
 	        <property>
+	            <key>readonly</key>
+	            <name>Read-only</name>
+	            <setConstructValueFunction>return true;</setConstructValueFunction>
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Whether users are able to enter dates using the keyboard. If false additional validation will be required.</helpHtml>
+	        </property>
+	        
+	        <property>
 	            <key>minDate</key>
 	            <name>Min date</name>
 	            <setConstructValueFunction>return "";</setConstructValueFunction>
@@ -115,11 +124,26 @@ return [["dd/mm/yy","dd/mm/yyyy"],["mm/dd/yy","mm/dd/yyyy"],["yy-mm-dd","yyyy-mm
 	    		<type>cssFile</type>
 	    		<contents>styles/controls/date.css</contents>
 	    	</resource>
-	    	
+	    		    		    	
 	    	<resource>
 	    		<type>javascriptFile</type>
 	    		<contents>scripts/controls/date.js</contents>
 	    	</resource>
+	    	
+	    	<resource>
+	    	    <type>file</type>
+	    	    <contents>images/controls/date/date_17x15.gif</contents>
+	    	</resource>
+	    	
+	    	<resource>
+	    	    <type>css</type>
+	    	    <contents>
+input.date {
+	background: url("../../../images/controls/date/date_17x15.gif") 100% 50% no-repeat;
+}	    	        
+	    	    </contents>
+	    	</resource>
+	    	
 	    </resources>
 	    
 	    <getHtmlFunction>
@@ -139,13 +163,14 @@ switch (this.dateFormat) {
 		placeholder = "dd-mmm-yyyy";
 		break;		
 }
-return "<input id='" + this.id + "' name='" + this.id + "' " + " class='date" + getStyleClasses(this) + "' value='" + this.value + "'placeholder='" + placeholder + "'/>";
+if (this.readonly === undefined) this.readonly = true;
+return "<input id='" + this.id + "' name='" + this.id + "' " + " class='date" + getStyleClasses(this) + "' value='" + this.value + "'placeholder='" + placeholder + "'" + (this.readonly ? "readonly='readonly'" : "") + "/>";
 	        ]]>
 	    </getHtmlFunction> 
 	    
 	    <getDetailsFunction>
 	        <![CDATA[
-return {format : this.format, minDate : this.minDate, maxDate : this.maxDate, yearRange : (this.yearRange ? this.yearRange : "-100:+10")};
+return {format: this.format, readonly: this.readonly, minDate: this.minDate, maxDate: this.maxDate, yearRange: (this.yearRange ? this.yearRange: "-100:+10")};
 	        ]]>
 	    </getDetailsFunction>
 	    
@@ -176,7 +201,15 @@ if (data != null && data !== undefined) {
 		}
 	}
 }
-control.val(value);
+
+// try iso dates first, as returned from SOAP webservices
+try {
+	var date = $.datepicker.parseDate( "yy-mm-dd", value);
+	control.datepicker("setDate",date);
+} catch (ex) {
+	control.datepicker("setDate",value);
+}
+
 if (changeEvents) control.trigger("change");
 			]]>
 	    </setDataJavaScript>
@@ -237,7 +270,8 @@ $( "#" + id ).datepicker({
     dateFormat: format,
     maxDate: details.maxDate,
     minDate: details.minDate,
-    yearRange: details.yearRange
+    yearRange: details.yearRange,
+    constrainInput: true
 }).change( function (ev) {
 	var datePicker = $(this);
 	var date = datePicker.val();
@@ -261,6 +295,16 @@ $( "#" + id ).datepicker({
 		}
 		if (details.format == "dd-M-yy") datePicker.val(date.toUpperCase());
 	}
+}).mouseup( function (ev){	
+	if ((details.readonly || details.readonly === undefined)) {
+		var datePicker = $(this);
+		var widget = datePicker.datepicker("widget");
+		if (widget.is(":visible") && widget.css("opacity") == 1) {
+			datePicker.datepicker("hide");
+		} else {
+			datePicker.datepicker("show");
+		}	
+	}		
 });
 
 	        ]]>
