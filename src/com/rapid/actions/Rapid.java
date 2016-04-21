@@ -1797,8 +1797,8 @@ public class Rapid extends Action {
 				
 				// make the new database connection
 				DatabaseConnection dbConn = new DatabaseConnection(
-					app, 
 					servletContext,
+					app, 					
 					jsonAction.getString("name").trim(),
 					jsonAction.getString("driver").trim(),
 					jsonAction.getString("connectionString").trim(),
@@ -2262,8 +2262,8 @@ public class Rapid extends Action {
 					
 						// instantiate a DatabaseConnection object for this test
 						DatabaseConnection dbconnection = new DatabaseConnection(
-							app, 
 							servletContext,
+							app, 							
 							"test",
 							driverClass, 
 							connectionString, 
