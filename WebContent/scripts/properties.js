@@ -481,8 +481,8 @@ function getDataItemDetails(id) {
 
 // escape single apostophe's in values
 function escapeApos(value) {
-	if (value && value.replace) {
-		return value.replace("'","&apos;");
+	if (value && value.replaceAll) {
+		return value.replaceAll("'","&apos;");
 	} else {
 		return value;
 	}

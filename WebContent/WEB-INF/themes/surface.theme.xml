@@ -580,7 +580,7 @@ input[type=checkbox]:disabled:checked:after {
   border-width: 2px !important;
 }
 
-.input3:hover {
+.input3:hover { /* For validation */
   border-color: #BABABA;
 }
 
@@ -589,7 +589,7 @@ input[type=checkbox]:disabled:checked:after {
   box-shadow: rgba(235, 74, 86, 0.4) 0px 0px 1px 1px inset;
 }
 
-.input4 {
+.input4 { /* For validation */
   border: 1px solid #E81123;
   color: #E81123;
   font-style: normal;
@@ -615,6 +615,11 @@ input[type=checkbox]:disabled:checked:after {
 
 .panel4 {
   border: 2px solid #BAD80A;
+}
+
+.panel5 {
+  background: #00188F;
+  color: #FFF;
 }
 
 select {
