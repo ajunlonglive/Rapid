@@ -178,7 +178,7 @@ public class Application {
 		
 		// constructors
 		public DatabaseConnection() {};
-		public DatabaseConnection(Application application, ServletContext servletContext, String name, String driverClass, String connectionString, String connectionAdapterClass, String userName, String password) {
+		public DatabaseConnection(ServletContext servletContext, Application application, String name, String driverClass, String connectionString, String connectionAdapterClass, String userName, String password) {
 			_name = name;
 			_driverClass = driverClass;
 			_connectionString = application.insertParameters(servletContext, connectionString);

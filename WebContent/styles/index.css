@@ -120,9 +120,9 @@ body {
 	    vertical-align: top;   
 	    width: 150px;
 	    height: 130px;
-		border: 1px solid black;
+		border: 2px solid black;
 		padding: 2px;
-		box-shadow: 3px 3px 3px #aaa;
+		box-shadow: 3px 3px 3px #a88;
 	}
 	
 	.body a { 
@@ -253,9 +253,9 @@ body {
 		width: 90px;
 		vertical-align: top;
 		margin-left: 20px;
-		border: 1px solid black;
+		border: 2px solid black;
 		padding: 2px;
-		box-shadow: 3px 3px 3px #aaa;
+		box-shadow: 3px 3px 3px #a88;
 	}
 	
 	.body a {
