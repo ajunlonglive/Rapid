@@ -95,6 +95,10 @@ table.grid tr td {
   padding: 10px;
 }
 
+table.grid tr:first-child td {
+  background: #091A4D;
+}
+
 table.grid tr:not(:first-child) td {
   padding-left:5px;
   padding-top:4px;
@@ -178,6 +182,14 @@ div.tabsPanel.selected {
   background: #D9E9F7;
 }
 
+.dialogue {
+  box-shadow: 0 0 10px 0 rgba(0,0,0,.25);
+  border-radius: 5px;
+  background-color: #FFF;
+  color: #1B407E;
+  border: 8px solid #5A7DBA;
+}
+
 input {
   outline: none;
   border: 2px solid #38B132;
@@ -187,16 +199,13 @@ input {
 
 input:focus {
   box-shadow: 0 0 4px #38B132;
+  border-color: #38B132;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 4px #38B132;
+  outline: none;
 }
 
 input:hover {
   border-color: #108A00;
-}
-
-input:focus {
-  border-color: #38B132;
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 4px #38B132;
-  outline: none;
 }
 
 textarea {
@@ -204,6 +213,10 @@ textarea {
   border: 2px solid #CCC;
   outline: none;
   padding: 5px 10px;
+}
+
+textarea:hover {
+  border-color: #108A00;
 }
 
 a {
@@ -335,21 +348,52 @@ button:disabled {
 }
 
 .button2 {
+  background-color: #1E488C;
+  background-image: linear-gradient(#4E79E8, #1E488C);
+  color: #FFF;
+}
+
+.button2:hover {
+  background-color: #4E79E8;
+  background-image: linear-gradient(#1E488C, #4E79E8);
+}
+
+.button2:focus {
+  box-shadow: 0 0 2px 2px #13366F inset;
+}
+
+.button3 {
   background-color: #E6E6E6;
   background-image: linear-gradient(#FFF, #B4B4B4);
   color: #108A00;
 }
 
-.button2:hover {
+.button3:hover {
   background-color: #FFF;
   background-image: linear-gradient(#FFF, #FFF);
   color: #249E14;
 }
 
-.button2:active {
+.button3:active {
   border-color: #38B132;
   box-shadow: 0 0 7px #38B132;
   outline: none;
+}
+
+.button4 {
+  background-color: #38B132;
+  background-image: none;
+  border-radius: 8px;
+  border: 2px solid #38B132;
+  box-shadow: 0 2px 2px rgba(0,0,0,0.3);
+  text-shadow: 0 1px 1px rgba(0,0,0,0.17);
+  padding: 10px 20px;
+}
+
+button4:hover {
+  color: #FFF;
+  border-color: #45C93E;
+  background: #45C93E;
 }
 
 input[type=radio] {
@@ -572,18 +616,40 @@ input[type=checkbox]:checked:after {
   outline: none;
 }
 
+.textarea1:focus {
+  border-color: #38B132;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 4px #38B132;
+  outline: none;
+}
+
 .panel1 {
   border: 2px solid #CCC;
+  background: #FFF;
+  color: #000;
 }
 
 .panel2 {
   border: 2px solid #4E79E8;
+  background: #EFEFEF;
+  color: #000;
 }
 
 .panel3 {
+  border: 2px solid #4A6CA3;
+  border-radius: 5px;
+  background: #0F397D;
+  color: #FFF;
+}
+
+.panel4 {
   border: 2px solid #0A1038;
   background: #152061;
   color: white;
+}
+
+.panel5 {
+  background-image: linear-gradient(#19397A,#091A4D);
+  color: #FFF;
 }
 
 select {
