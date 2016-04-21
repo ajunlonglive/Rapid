@@ -404,7 +404,7 @@ public class Designer extends RapidHttpServlet {
 											// make an object we're going to return
 											JSONArray jsonRoles = new JSONArray();
 											// retrieve the roles
-											List<Role> roles = security.getRoles(rapidRequest);														
+											List<Role> roles = security.getRoles(appRequest);														
 											// check we got some
 											if (roles != null) {			
 												// create a collection of names
