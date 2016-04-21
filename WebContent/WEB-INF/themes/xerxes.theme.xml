@@ -96,7 +96,7 @@ table.grid tr:not(:first-child) td {
 }
 
 table.grid tr.rowStyle1 {
-  background: #F6F6F6;
+  background: #F1F1F1;
 }
 
 table.grid tr.rowStyle2 {
@@ -109,7 +109,7 @@ table.grid tr.rowSelect {
 }
 
 table.grid tr:hover {
-  background: #F3F3F3;
+  background: #ECECEC;
   transition: all 0.4s ease 0s;
 }
 
@@ -362,6 +362,20 @@ button:hover:disabled {
 }
 
 .button3 {
+  background-color: #1B5067;
+  color: #FFF;
+}
+
+.button3:hover {
+  background: #3C3C41;
+}
+
+.button3:active {
+  outline: 1px dotted white;
+  outline-offset: -2px;
+}
+
+.button4 {
   padding: 9px 16px;
   box-shadow: none;
   font-weight: 900;
@@ -371,7 +385,7 @@ button:hover:disabled {
   color: #164053;
 }
 
-.button3:hover {
+.button4:hover {
   border-color: #D7D7D7;
   background-color: #D7D7D7;
   box-shadow: 3px 3px 1px rgba(0, 0, 0, 0.2);
@@ -379,7 +393,7 @@ button:hover:disabled {
   color: #164053;
 }
 
-.button3:active {
+.button4:active {
   outline: 1px dotted black;
   outline-offset: -2px;
 }
@@ -674,15 +688,25 @@ select:disabled {
 }
 
 .panel4 {
+  border-width: 10px 0 10px 0;
+  border-style: solid;
+  background: #3C3C41;
+  border-color: rgba(60,60,65,0.5);
+  background-clip: padding-box;
+  color: #FFF;
+}
+
+.panel5 {
   margin-left: 4px;
   margin-right: 4px;
   border-color: #0091CD;
   background-color: #0091CD;
   box-shadow: none;
   border: 1px solid transparent;
+  color: #FFF;
 }
 
-.panel4:after {
+.panel5:after {
   content: "";
   width: 0;
   height: 0;

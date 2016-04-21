@@ -733,20 +733,25 @@ public class Database extends Action {
 						// assume rows affected is 0
 						int rows = 0;
 						
-						// perform update for all incoming parameters (one parameters collection for each row)
-						for (Parameters parameters : parametersList) {
-							rows += df.getPreparedUpdate(rapidRequest, sql, parameters);
+						// sql check
+						if (sql.length() > 0) {
+						
+							// perform update for all incoming parameters (one parameters collection for each row)
+							for (Parameters parameters : parametersList) {
+								rows += df.getPreparedUpdate(rapidRequest, sql, parameters);
+							}
+							
+							// add a psuedo field 
+							jsonFields.put("rows");
+							
+							// create a row array
+							JSONArray jsonRow = new JSONArray();
+							// add the rows updated
+							jsonRow.put(rows);
+							// add the row we just made
+							jsonRows.put(jsonRow);
+							
 						}
-						
-						// add a psuedo field 
-						jsonFields.put("rows");
-						
-						// create a row array
-						JSONArray jsonRow = new JSONArray();
-						// add the rows updated
-						jsonRow.put(rows);
-						// add the row we just made
-						jsonRows.put(jsonRow);
 																	
 					}
 					

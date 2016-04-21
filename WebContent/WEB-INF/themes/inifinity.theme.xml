@@ -339,17 +339,26 @@ button:disabled {
 }
 
 .button3 {
+  background: linear-gradient(#FFF, #CAE0FF);
+  border: 1px solid #2680FF;
+}
+
+.button3:hover, .button3:focus, .button3:active {
+  background: linear-gradient(#FFF, #ADCFFF);
+}
+
+.button4 {
   border: 1px solid #D17D33;
   background: #F4B442;
   color: #FFF;
   font-weight: bold;
 }
 
-.button3:hover {
+.button4:hover {
   background: #F4B442;
 }
 
-.button3:active {
+.button4:active {
   box-shadow: none;
 }
 

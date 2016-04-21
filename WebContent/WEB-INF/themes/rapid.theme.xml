@@ -379,6 +379,25 @@ button:disabled {
   box-shadow: 0px 1px 3px 1px #606060;
 }
 
+.button4 {
+  color: #FFF;
+  background: transparent linear-gradient(#C10202, #980202);
+}
+
+.button4:hover {
+  border: 2px solid #000;
+  background: transparent linear-gradient(#B80101, #500000);
+}
+
+.button4:focus {
+  border: 2px solid #4D0000;
+  background: transparent linear-gradient(#292929, #121212);
+}
+
+.button4:active {
+  background: transparent linear-gradient(#292929, #121212);
+}
+
 input:not([type=radio]):not([type=checkbox]):not(.input1):not(.input2) {
   box-shadow: 0px 1px 3px 1px #D0D0D0;
   border: 2px solid #999;
@@ -635,6 +654,10 @@ input[type=checkbox]:disabled:checked:after {
   border: 2px solid #CCC;
   border-image: linear-gradient(to right, #666 0%, #E0E0E0 100%);
   border-image-slice: 1;
+}
+
+.panel5 {
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.5) 0%, rgba(184, 1, 1, 0.5) 100%);
 }
 
 select {
