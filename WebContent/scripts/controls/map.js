@@ -267,9 +267,9 @@ function getMapPosition(data, rowIndex, callBack, map, details, zoomMarkers) {
 					// create the geocoder if we don't have one already
 					if (!_geocoder) _geocoder = new google.maps.Geocoder();
 					// geocode the search term
-					_geocoder.geocode( {address: pos.s}, function(results, status) {
+					_geocoder.geocode( new mapGeocodeRequest(pos.s), function(results, status) {
 					    if (status == google.maps.GeocoderStatus.OK) {							
-							for (var i in results) {
+							for (var i in mapGeocodeResults(results)) {
 								var result = results[i];
 								if (result.geometry && result.geometry.location) {
 									var l = result.geometry.location;
@@ -285,6 +285,16 @@ function getMapPosition(data, rowIndex, callBack, map, details, zoomMarkers) {
 		}		
 	}
 	return pos;	
+}
+
+// this function can be overridden if a more sophisticated GeocoderRequest with bounds or restrictions is required
+function mapGeocodeRequest(address) {
+	this.address = address;
+}
+
+// this function can be overidden if a sophisticated filter of results is required
+function mapGeocodeResults(results) {
+	return results;
 }
 
 // set the map centre, used by both the setData method and the getPosition callback
@@ -328,9 +338,9 @@ function addMapMarker(map, pos, details, data, rowIndex, zoomMarkers) {
 				// single marker, check getPosition is present
 				if (map.markers[0].getPosition) {
 					// get the latlng position
-					var latlng = new google.maps.LatLng(map.markers[0].getPosition());
+					var pos = map.markers[0].getPosition();
 					// only if valid values
-					if (latlng.lat() > 0 && latlng.lng() > 0) map.panTo( latlng );
+					if (pos.lat() != 0 && pos.lng() != 0) map.panTo(pos);
 				}
 			} else {
 				// multiple markers, use bounds

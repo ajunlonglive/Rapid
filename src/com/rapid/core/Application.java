@@ -1350,23 +1350,7 @@ public class Application {
 			    			}
 			    					    					    					    					    					    			
 			    		} // jsonControls loop
-			    		
-			    		// if we've just added the page, put the appResources after
-			    		if ("page".equals(controlType) && _appResources != null) {
-			    			for (Resource resource : _appResources) {
-			    				// create new resource based on this one (so that the dependancy doesn't get written back to the application.xml file)
-			    				Resource appResource = new Resource(resource.getType(), resource.getContent(), ResourceDependency.RAPID);
-			    				// if the type is a file or link prefix with the application folder
-			    				switch (resource.getType()) {
-			    					case Resource.JAVASCRIPTFILE : case Resource.JAVASCRIPTLINK: case Resource.CSSFILE : case Resource.CSSLINK:
-			    						appResource.setContent(getWebFolder(this) + (resource.getContent().endsWith("/") ? "" : "/") + resource.getContent());
-			    					break;
-			    				}
-			    				// add new resource based on this one but with Rapid dependency
-			    				_resources.add(appResource);
-			    			}
-			    		}
-						
+			    					    								
 					} // control types loop
 					
 				} // control types check
@@ -1487,6 +1471,22 @@ public class Application {
 	    			}
 	    		}
 	    	}
+	    	
+	    	// put the appResources at the end so they can be overrides
+    		if (_appResources != null) {
+    			for (Resource resource : _appResources) {
+    				// create new resource based on this one (so that the dependancy doesn't get written back to the application.xml file)
+    				Resource appResource = new Resource(resource.getType(), resource.getContent(), ResourceDependency.RAPID);
+    				// if the type is a file or link prefix with the application folder
+    				switch (resource.getType()) {
+    					case Resource.JAVASCRIPTFILE : case Resource.JAVASCRIPTLINK: case Resource.CSSFILE : case Resource.CSSLINK:
+    						appResource.setContent(getWebFolder(this) + (resource.getContent().endsWith("/") ? "" : "/") + resource.getContent());
+    					break;
+    				}
+    				// add new resource based on this one but with Rapid dependency
+    				_resources.add(appResource);
+    			}
+    		}
 	    		    		    					    
 	    	// create folders to write the rapid.js file
 			String applicationPath = getWebFolder(servletContext);		
