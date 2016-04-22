@@ -587,6 +587,9 @@ input[type=checkbox]:checked:after {
   border-bottom: 3px solid #4D0000;
   width: 5px;
   height: 12px;
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
   transform: rotate(45deg);
 }
 
