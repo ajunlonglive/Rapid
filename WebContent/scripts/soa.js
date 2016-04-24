@@ -102,7 +102,7 @@ function getRestrictionLabel(restriction) {
 	return "unknown";
 }
 
-function showSOARestrictions(collection, control) {
+function showSOARestrictions(collection, control, details) {
 	
 	// get element from collection
 	var element = collection[control.parent().index() - 1];
@@ -122,9 +122,11 @@ function showSOARestrictions(collection, control) {
 		// add close link
 		var close = dialogue.append("<b style='float:left;margin-top:-5px;'>Restrictions</b><a href='#' style='float:right;margin-top:-5px;'>close</a></div>").children().last();
 		// add close listener
-		_listeners.push( close.click( function(ev) {
+		_listeners.push( close.click( {details: details}, function(ev) {
 			// hide the dialogue
 			dialogue.hide();
+			// refresh dialogue
+			loadSOA(ev.data.details);			
 		}));	
 		// add table
 		dialogue.append("<table class='dialogueTable'></table>");		
@@ -134,11 +136,11 @@ function showSOARestrictions(collection, control) {
 	dialogue.find("a.add").last().remove();
 	
 	// replace the add link
-	dialogue.append("<a href='#' class='add'>add...</a>").find("a").last().click( {collection: collection, control : control}, function(ev) {
+	dialogue.append("<a href='#' class='add'>add...</a>").find("a").last().click( {collection: collection, control : control, details:details}, function(ev) {
 		// add new restriction
 		_soaRestrictions.push({type:"MinOccursRestriction", value:"1"});
 		// refresh dialogue
-		showSOARestrictions(ev.data.collection, ev.data.control);				
+		showSOARestrictions(ev.data.collection, ev.data.control, ev.data.details);				
 	});
 	
 	// get a reference to the table
@@ -171,11 +173,11 @@ function showSOARestrictions(collection, control) {
 	});
 	
 	// delete listener
-	table.find("img.delete").click( {collection: collection, control: control}, function(ev) {
+	table.find("img.delete").click( {collection: collection, control: control, details:details}, function(ev) {
 		// remove item
 		_soaRestrictions.splice($(ev.target).parent().parent().index() - 1, 1);
 		// refresh
-		showSOARestrictions(ev.data.collection, ev.data.control);
+		showSOARestrictions(ev.data.collection, ev.data.control, ev.data.details);
 	});
 	
 	// reorder listener
@@ -193,7 +195,7 @@ function showSOARestrictions(collection, control) {
 
 // this function is called from the GETSOA Rapid action
 function loadSOA(details) {
-	
+		
 	// hide the sql webservice panel
 	$("#rapid_P0_C489_").hide();
 	// hide the java class webservice panel
@@ -223,12 +225,14 @@ function loadSOA(details) {
 		
 		// get the cell we write the request properties into
 		var requestCell = $('#rapid_P0_C589_');
+		// add a header
+		requestCell.append("<span class='webserviceTitle'>Child elements :</span>");
 		// look for a table
 		var requestTable = requestCell.children("table");
 		// create one if not there
-		if (!requestTable[0]) requestTable = requestCell.append("<table class='dialogueTable'></table>").children("table");
+		if (!requestTable[0]) requestTable = requestCell.append("<table class='dialogueTable webserviceTable'></table>").children("table");
 		// populate the table header row
-		requestTable.html("<tr><td>Child element name</td><td>Data type</td><td>Restrictions</td><td style='width:32px;min-width:32px;'>&nbsp;</td></tr>");
+		requestTable.html("<tr><td>Name</td><td>Data type</td><td>Restrictions</td><td style='width:32px;min-width:32px;'>&nbsp;</td></tr>");
 		// if there's a request object in the details with a root element
 		if (details.requestSchema && details.requestSchema.rootElement) {
 			// retrieve the request root element
@@ -246,6 +250,7 @@ function loadSOA(details) {
 					text = "";
 					for (var j in element.restrictions) {
 						text += getRestrictionLabel(element.restrictions[j]);
+						if (j < element.restrictions.length -1) text += ",";
 					}
 				}
 				// populate child element
@@ -271,7 +276,7 @@ function loadSOA(details) {
 			// restrictions
 			requestTable.find("td.restriction").click( details, function(ev) {
 				// show details
-				showSOARestrictions(requestElement.childElements, $(ev.target));
+				showSOARestrictions(requestElement.childElements, $(ev.target), ev.data);
 			});
 			
 			// reorder
@@ -293,9 +298,9 @@ function loadSOA(details) {
 		}
 		
 		// add link
-		requestTable.append("<tr><td colspan='4'>add...</td></tr>");
+		requestTable.append("<tr><td colspan='4'><a href='#'>add...</a></td></tr>");
 		// add click
-		requestTable.find("td").last().click(details, function(ev) {
+		requestTable.find("a").last().click(details, function(ev) {
 			// initialise request object if need be
 			if (!ev.data.requestSchema) ev.data.requestSchema = {}; 
 			// get response object
@@ -314,13 +319,19 @@ function loadSOA(details) {
 		
 		// response is ever so slightly different as it has a single/collection radio (for isArray) and field column
 		
+		// set the single/collection to single by default
+		$("#rapid_P0_C598_0").prop("checked", true);
+		
+		// get the cell we're writing this into
 		var responseCell = $('#rapid_P0_C592_');
+		// add a header
+		responseCell.append("<span class='webserviceTitle'>Child elements :</span>");
 		// look for a table
 		var responseTable = responseCell.children("table");
 		// create one if not there
-		if (!responseTable[0]) responseTable = responseCell.append("<table class='dialogueTable'></table>").children("table");
+		if (!responseTable[0]) responseTable = responseCell.append("<table class='dialogueTable webserviceTable'></table>").children("table");
 		// populate the table header row
-		responseTable.html("<tr><td>Child element name</td><td>Field</td><td>Data type</td><td>Restrictions</td><td style='width:32px;min-width:32px;'>&nbsp;</td></tr>");
+		responseTable.html("<tr><td>Name</td><td>Field</td><td>Data type</td><td>Restrictions</td><td style='width:32px;min-width:32px;'>&nbsp;</td></tr>");
 		// if there's a request object in the details with a root element
 		if (details.responseSchema && details.responseSchema.rootElement) {
 			// retrieve the request root element
@@ -328,7 +339,7 @@ function loadSOA(details) {
 			// populate the name
 			$('#rapid_P0_C594_').val(responseElement.name);
 			// populate is array
-			setData_radiobuttons("rapid_P0_C598_","'" + responseElement.isArray + "'");
+			setData_radiobuttons($.Event("loadSOA"), "rapid_P0_C598_",null,null,responseElement.isArray);
 			// loop the child elements
 			for (var i in responseElement.childElements) {
 				// get child element
@@ -340,6 +351,7 @@ function loadSOA(details) {
 					text = "";
 					for (var j in element.restrictions) {
 						text += getRestrictionLabel(element.restrictions[j]);
+						if (j < element.restrictions.length -1) text += ",";
 					}
 				}
 				// populate child element
@@ -373,7 +385,7 @@ function loadSOA(details) {
 			// restrictions
 			responseTable.find("td.restriction").click( details, function(ev) {
 				// show details
-				showSOARestrictions(responseElement.childElements, $(ev.target));
+				showSOARestrictions(responseElement.childElements, $(ev.target), ev.data);
 			});
 			
 			// reorder
@@ -397,9 +409,9 @@ function loadSOA(details) {
 		}
 		
 		// add child element
-		responseTable.append("<tr><td colspan='4'>add...</td></tr>");
+		responseTable.append("<tr><td colspan='4'><a href='#'>add...</a></td></tr>");
 		// add click
-		responseTable.find("td").last().click(details, function(ev) {
+		responseTable.find("a").last().click(details, function(ev) {
 			// initialise response object if need be
 			if (!ev.data.responseSchema) ev.data.responseSchema = {}; 
 			// get response object

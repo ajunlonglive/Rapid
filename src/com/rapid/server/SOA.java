@@ -36,7 +36,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
-import org.json.XML;
 
 import com.rapid.core.Application;
 import com.rapid.security.SecurityAdapter;
@@ -48,6 +47,7 @@ import com.rapid.soa.SOADataReader.SOAJSONReader;
 import com.rapid.soa.SOADataReader.SOAXMLReader;
 import com.rapid.soa.SOADataWriter.SOAJSONWriter;
 import com.rapid.soa.SOADataWriter.SOAXMLWriter;
+import com.rapid.utils.XML;
 
 public class SOA extends RapidHttpServlet {
 			

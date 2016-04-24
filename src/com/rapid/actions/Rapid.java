@@ -1856,11 +1856,12 @@ public class Rapid extends Action {
 				String type = jsonAction.getString("type");
 				
 				if ("SQLWebservice".equals(type)) {
-					// make the new database connection
+					// make the new SQL webservice
 					webservice = new SQLWebservice( 
 						jsonAction.getString("name").trim()
 					); 
 				} else if ("JavaWebservice".equals(type)) {
+					// make the new Java class webservice
 					webservice = new JavaWebservice(
 						jsonAction.getString("name").trim()
 					);

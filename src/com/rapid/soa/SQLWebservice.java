@@ -7,7 +7,7 @@ gareth.edwards@rapid-is.co.uk
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as 
 published by the Free Software Foundation, either version 3 of the 
 License, or (at your option) any later version. The terms require you 
@@ -56,7 +56,7 @@ public class SQLWebservice extends Webservice {
 		
 	// used by Jaxb
 	public SQLWebservice() {}
-	// used by Designer
+	// used by Rapid action
 	public SQLWebservice(String name) {
 		setName(name);
 	}
@@ -86,33 +86,37 @@ public class SQLWebservice extends Webservice {
 			
 			SOAElement requestElement = requestData.getRootElement();
 						
-			for (int i = 0; i < requestSchemaElement.getChildElements().size(); i++) {
-				
-				SOASchemaElement childRequestSchemaElement = requestSchemaElement.getChildElements().get(i);
-				
-				SOAElement childRequestElement = requestElement.getChildElements().get(i);
-				
-				switch (childRequestSchemaElement.getDataType()) {
-					case SOASchema.INTEGER :							
-						parameters.add(Integer.parseInt(childRequestElement.getValue()));
-						break;							
-					case SOASchema.DECIMAL :							
-						parameters.add(Float.parseFloat(childRequestElement.getValue()));							
-						break;							
-					case SOASchema.DATE :	
-						dateFormatter = rapidRequest.getRapidServlet().getXMLDateFormatter();
-						long dateLong = dateFormatter.parse(childRequestElement.getValue()).getTime();
-						date = new Date(dateLong);
-						parameters.add(date);
-						break;						
-					case SOASchema.DATETIME :
-						dateFormatter = rapidRequest.getRapidServlet().getXMLDateTimeFormatter();
-						long dateTimeLong = dateFormatter.parse(childRequestElement.getValue()).getTime();
-						date = new Date(dateTimeLong);
-						parameters.add(date);
-						break;						
-					default:
-						parameters.add(childRequestElement.getValue());
+			if (requestSchemaElement.getChildElements() != null) {
+										
+				for (int i = 0; i < requestSchemaElement.getChildElements().size(); i++) {
+					
+					SOASchemaElement childRequestSchemaElement = requestSchemaElement.getChildElements().get(i);
+					
+					SOAElement childRequestElement = requestElement.getChildElements().get(i);
+					
+					switch (childRequestSchemaElement.getDataType()) {
+						case SOASchema.INTEGER :							
+							parameters.add(Integer.parseInt(childRequestElement.getValue()));
+							break;							
+						case SOASchema.DECIMAL :							
+							parameters.add(Float.parseFloat(childRequestElement.getValue()));							
+							break;							
+						case SOASchema.DATE :	
+							dateFormatter = rapidRequest.getRapidServlet().getXMLDateFormatter();
+							long dateLong = dateFormatter.parse(childRequestElement.getValue()).getTime();
+							date = new Date(dateLong);
+							parameters.add(date);
+							break;						
+						case SOASchema.DATETIME :
+							dateFormatter = rapidRequest.getRapidServlet().getXMLDateTimeFormatter();
+							long dateTimeLong = dateFormatter.parse(childRequestElement.getValue()).getTime();
+							date = new Date(dateTimeLong);
+							parameters.add(date);
+							break;						
+						default:
+							parameters.add(childRequestElement.getValue());
+					}
+					
 				}
 				
 			}
@@ -128,45 +132,49 @@ public class SQLWebservice extends Webservice {
 															
 			while (rs.next()) {
 				
-				for (SOASchemaElement responseChildElementSchema : responseSchemaElement.getChildElements()) {
+				if (responseSchemaElement.getChildElements() != null) {
 					
-					String elementName = responseChildElementSchema.getName();
-					
-					int elementType = responseChildElementSchema.getDataType();
-															
-					String fieldName = responseChildElementSchema.getField();
-					
-					String elementValue = null;
-																																			
-					switch (elementType) {
-						case SOASchema.INTEGER :							
-							elementValue = Integer.toString(rs.getInt(fieldName));							
-							break;							
-						case SOASchema.DECIMAL :							
-							elementValue = Float.toString(rs.getFloat(fieldName));							
-							break;							
-						case SOASchema.DATE :							
-							dateFormatter = rapidRequest.getRapidServlet().getXMLDateFormatter();							
-							date = rs.getDate(fieldName);							
-							if (date != null) elementValue = dateFormatter.format(date);							
-							break;							
-						case SOASchema.DATETIME :							
-							dateFormatter = rapidRequest.getRapidServlet().getXMLDateTimeFormatter();							
-							date = rs.getDate(fieldName);							
-							if (date != null) elementValue = dateFormatter.format(date);							
-							break;
-						default:
-							elementValue = rs.getString(fieldName);
+					for (SOASchemaElement responseChildElementSchema : responseSchemaElement.getChildElements()) {
+						
+						String elementName = responseChildElementSchema.getName();
+						
+						int elementType = responseChildElementSchema.getDataType();
+																
+						String fieldName = responseChildElementSchema.getField();
+						
+						String elementValue = null;
+																																				
+						switch (elementType) {
+							case SOASchema.INTEGER :							
+								elementValue = Integer.toString(rs.getInt(fieldName));							
+								break;							
+							case SOASchema.DECIMAL :							
+								elementValue = Float.toString(rs.getFloat(fieldName));							
+								break;							
+							case SOASchema.DATE :							
+								dateFormatter = rapidRequest.getRapidServlet().getXMLDateFormatter();							
+								date = rs.getDate(fieldName);							
+								if (date != null) elementValue = dateFormatter.format(date);							
+								break;							
+							case SOASchema.DATETIME :							
+								dateFormatter = rapidRequest.getRapidServlet().getXMLDateTimeFormatter();							
+								date = rs.getDate(fieldName);							
+								if (date != null) elementValue = dateFormatter.format(date);							
+								break;
+							default:
+								elementValue = rs.getString(fieldName);
+						}
+						
+						// create a child response element
+						SOAElement responseChildElement = new SOAElement(elementName, elementValue);
+						
+						// add it (the method below knows what to do if the responseElement is an array or not)
+						responseElement.addChildElement(responseChildElement);
+						
 					}
 					
-					// create a child response element
-					SOAElement responseChildElement = new SOAElement(elementName, elementValue);
-					
-					// add it (the method below knows what to do if the responseElement is an array or not)
-					responseElement.addChildElement(responseChildElement);
-					
 				}
-												
+																			
 				// check whether the parent element is an array
 				if (responseSchemaElement.getIsArray()) {
 					// if so close the array, which means further child elements are now added to a new parent element in the array collection
