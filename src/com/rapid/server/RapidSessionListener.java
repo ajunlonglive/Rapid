@@ -63,7 +63,11 @@ public class RapidSessionListener implements HttpSessionListener {
     }
     
     public synchronized static HttpSession  getSession(String sessionId) {
-    	return _sessions.get(sessionId);
+    	if (_sessions == null) {
+    		return null;
+    	} else {
+    		return _sessions.get(sessionId);
+    	}
     }
     
     public synchronized static Map<String,HttpSession>  getSessions() {
@@ -71,8 +75,12 @@ public class RapidSessionListener implements HttpSessionListener {
     }
     
     public synchronized static int getTotalSessionCount() {
-    	Map<String,HttpSession> sessions = Collections.synchronizedMap(_sessions);
-    	return sessions.size();
+    	if (_sessions == null) {
+    		return -1;
+    	} else {
+    		Map<String,HttpSession> sessions = Collections.synchronizedMap(_sessions);
+    		return sessions.size();
+    	}
     }
     
 }

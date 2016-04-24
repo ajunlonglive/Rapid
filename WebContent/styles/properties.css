@@ -295,3 +295,45 @@ td.paddingLeft5 {
 	font-family: "FontAwesome";
 	font-size: 10px;
 }
+
+#restrictionsDialogue .dialogueTable tr td:not(:last-child) {
+	border: 1px solid silver;
+}
+
+#restrictionsDialogue select {
+	padding-top: 0;
+	margin-top: 1px;
+	margin-left: -2px;
+	border-width: 0;
+}
+
+#restrictionsDialogue select:hover {
+	border-width: 0;
+}
+
+#restrictionsDialogue input {
+	padding-top: 2px;
+	border-width: 0;
+	border-radius: 0;
+	height: 18px;
+	margin-top: -1px;
+	margin-left: -2px;
+	box-shadow: none;
+
+}
+
+.webserviceTable input {
+	border-radius: 0;
+	border: none !important;
+	box-shadow: none !important;
+}
+
+.webserviceTable select {
+	height: 20px;
+	margin-top:-1px;
+}
+
+span.webserviceTitle {
+	display: block;
+	margin-top: 4px;
+}
