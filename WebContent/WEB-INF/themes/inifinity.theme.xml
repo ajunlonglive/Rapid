@@ -434,6 +434,9 @@ input[type=checkbox]:checked:after {
   border-bottom: 2px solid white;
   width: 5px;
   height: 12px;
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
   transform: rotate(45deg);
 }
 
@@ -467,7 +470,10 @@ input[type=radio]:before {
 }
 
 input[type=radio]:checked {
-  transform: rotate(45deg)
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
 }
 
 input[type=radio]:checked:before {
