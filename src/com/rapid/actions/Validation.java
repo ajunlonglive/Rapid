@@ -157,21 +157,21 @@ public class Validation extends Action {
 			
 			// insert pass actions
 			if (_passActions != null) {
-				for (Action action : _passActions) js += "    " + action.getJavaScript(rapidRequest, application, page, control, jsonDetails) + "\n";
+				for (Action action : _passActions) js += "  " + action.getJavaScript(rapidRequest, application, page, control, jsonDetails) + "\n";
 			}
 			
-			js += "  } else {\n";
+			js += "} else {\n";
 			
 			// insert fail actions
 			if (_failActions != null) {
-				for (Action action : _failActions) js += "    " + action.getJavaScript(rapidRequest, application, page, control, jsonDetails) + "\n";
+				for (Action action : _failActions) js += "  " + action.getJavaScript(rapidRequest, application, page, control, jsonDetails) + "\n";
 			}
 			
 			// check whether to stop further actions
 			boolean stopActions = Boolean.parseBoolean(getProperty("stopActions"));
-			if (stopActions) js += "    return false;\n";
+			if (stopActions) js += "  return false;\n";
 			
-			js += "  }\n";
+			js += "}\n";
 		}
 		
 		return js;

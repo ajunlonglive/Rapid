@@ -29,22 +29,30 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
 import org.apache.log4j.Logger;
 
+import com.rapid.core.Application;
+import com.rapid.core.Application.RapidLoadingException;
+import com.rapid.core.Applications;
+import com.rapid.core.Applications.Versions;
+import com.rapid.server.filter.RapidFilter;
+
 public class RapidSessionListener implements HttpSessionListener {
 	
     private static Map<String, HttpSession> _sessions;
     private Logger _logger;
     
+    
     public RapidSessionListener() {
     	// instantiate the concurrent hash map which should make it thread safe, alternatively there is the Collections.synchronizedMap
     	_sessions = new ConcurrentHashMap<String,HttpSession>() ;    	
     }
-
+    
     @Override
     public void sessionCreated(HttpSessionEvent event) {   	
     	HttpSession session = event.getSession();
@@ -57,8 +65,28 @@ public class RapidSessionListener implements HttpSessionListener {
     @Override
     public void sessionDestroyed(HttpSessionEvent event) {
     	HttpSession session = event.getSession();
-    	_sessions.remove(session.getId());
+    	String userName = (String) session.getAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME);
     	if (_logger == null) _logger = Logger.getLogger(this.getClass());
+    	_logger.debug("Destorying session " + session.getId() + " for " + userName);
+    	if (userName != null) {
+    		ServletContext servletContext = session.getServletContext();
+    		Applications applications = (Applications) servletContext.getAttribute("applications");
+    		if (applications != null) {
+    			for (String appId : applications.getIds()) {
+    				Versions versions = applications.getVersions(appId);
+    				for (String versionId : versions.keySet()) {
+    					try {
+							if (versions.get(versionId).removeUserPageLocks(servletContext, userName) > 0) {
+								_logger.debug("Removed page locks from " + userName + " for " + appId + "/" + versionId);    	
+							}
+						} catch (RapidLoadingException ex) {
+							_logger.error("Error removing page locks for " + appId + "/" + versionId + " from " + session.getId(), ex);
+						}
+    				}
+    			}
+    		}
+    	}
+    	_sessions.remove(session.getId());    	
     	_logger.debug("Session destroyed " + session.getId());
     }
     
