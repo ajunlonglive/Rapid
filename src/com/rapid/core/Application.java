@@ -1692,7 +1692,7 @@ public class Application {
 			// loop them
 			for (String pageId : _pages.getPageIds()) {
 				// get the page
-				Page page = _pages.getPage(servletContext, pageId);
+				Page page = _pages.getPage(pageId);
 				// if the page is still in memory
 				if (page != null) {
 					// get the page lock

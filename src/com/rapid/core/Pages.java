@@ -244,7 +244,12 @@ public class Pages {
 		return _pageHeaders.keySet();				
 	}
 			
-	// return a specific page (or the start page if pageId is null)
+	// return a page direct from the map
+	public Page getPage(String pageId) {
+		return _pages.get(pageId);
+	}
+	
+	// return a specific page (or the start page if pageId is null) loading as necessary
 	public Page getPage(ServletContext servletContext, String pageId) throws RapidLoadingException {
 		
 		// placeholder for the page
