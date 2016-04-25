@@ -94,6 +94,11 @@ import com.rapid.utils.Strings;
 
 public class RapidServletContextListener implements ServletContextListener {
 	
+	// private static finals
+	private static final int MONITOR_CHECK_INTERVAL = 1800;
+	private static final int MONITOR_MAX_AGE = 1800;
+	
+	
 	// the logger which we will initialise
 	private static Logger _logger;
 	
@@ -1196,7 +1201,7 @@ public class RapidServletContextListener implements ServletContextListener {
 			boolean actionCache = Boolean.parseBoolean(servletContext.getInitParameter("actionCache"));
 			if (actionCache) servletContext.setAttribute("actionCache", new ActionCache(servletContext));
 			
-			int pageAgeCheckInterval = 1800; 
+			int pageAgeCheckInterval = MONITOR_CHECK_INTERVAL; 
 			try { 
 				String pageAgeCheckIntervalString = servletContext.getInitParameter("pageAgeCheckInterval");
 				if (pageAgeCheckIntervalString != null) pageAgeCheckInterval = Integer.parseInt(pageAgeCheckIntervalString);	
@@ -1204,10 +1209,10 @@ public class RapidServletContextListener implements ServletContextListener {
 				_logger.error("pageAgeCheckInterval is not an integer");
 			}
 						
-			int pageMaxAge = 1800;
+			int pageMaxAge = MONITOR_MAX_AGE;
 			try { 
 				String pageMaxAgeString = servletContext.getInitParameter("pageMaxAge");
-				if (pageMaxAgeString != null) pageAgeCheckInterval = Integer.parseInt(pageMaxAgeString);	
+				if (pageMaxAgeString != null) pageMaxAge = Integer.parseInt(pageMaxAgeString);	
 			} catch (Exception ex) {
 				_logger.error("pageMaxAge is not an integer");
 			}
