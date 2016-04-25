@@ -54,8 +54,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.xpath.XPathExpressionException;
@@ -1686,7 +1684,9 @@ public class Application {
 	}
 			
 	// remove any page locks for a given user
-	public void removeUserPageLocks(ServletContext servletContext, String userName) throws RapidLoadingException {
+	public int removeUserPageLocks(ServletContext servletContext, String userName) throws RapidLoadingException {
+		// assume no locks removed
+		int locksRemoved = 0;
 		// check there are pages
 		if (_pages != null) {
 			// loop them
@@ -1700,11 +1700,15 @@ public class Application {
 					// if there was one
 					if (pageLock != null) {
 						// if it matches the user name remove the lock
-						if (userName.equals(pageLock.getUserName())) page.setLock(null);
+						if (userName.equals(pageLock.getUserName())) {
+							page.setLock(null);
+							locksRemoved ++;
+						}
 					}
 				}				
 			}
 		}
+		return locksRemoved;
 	}
 	
 	public List<Backup> getApplicationBackups(RapidHttpServlet rapidServlet) throws JSONException {

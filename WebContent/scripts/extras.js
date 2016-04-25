@@ -857,5 +857,8 @@ function Event_checkForm() {
 		$("input").disable();
 		$("select").disable();
 		$("textarea").disable();
+		$("a:not([target])").unbind("click").click( function(ev){
+			return false;
+		}).addClass("disabled");
 	}
 }

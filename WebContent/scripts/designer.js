@@ -2621,7 +2621,7 @@ $(document).ready( function() {
 			        		$("#controlControls").hide();			        		
 	        		
 			        		// show alert
-			        		alert("This page was locked for editing by " + lock.userDescription + " at " + lock.formattedDateTime + ".\nYou will not be able to make or save changes to this page until they start work on a different page, or an hour has passed.");
+			        		alert("This page was locked for editing by " + lock.userDescription + " at " + lock.formattedDateTime + ".\nYou will not be able to make or save changes to this page until they start work on a different page, or log out.");
 			        					        					        		
 			        	} else {
 			        		
