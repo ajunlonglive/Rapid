@@ -25,10 +25,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
 package com.rapid.actions;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import javax.servlet.ServletContext;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -43,11 +40,7 @@ import com.rapid.server.RapidRequest;
 
 public class Group extends Action {
 	
-	// static variables
-	private static Logger _logger = Logger.getLogger(Group.class);
-	
 	// instance variables
-	private String _conditionsType;
 	private List<Action> _actions;
 
 	// properties
