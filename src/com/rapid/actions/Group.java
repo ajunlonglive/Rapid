@@ -1,13 +1,13 @@
 /*
 
-Copyright (C) 2015 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as 
 published by the Free Software Foundation, either version 3 of the 
 License, or (at your option) any later version. The terms require you 
@@ -25,9 +25,9 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
 package com.rapid.actions;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -42,6 +42,7 @@ public class Group extends Action {
 	
 	// instance variables
 	private List<Action> _actions;
+	private List<String> _redundantActions;
 
 	// properties
 		
@@ -78,6 +79,19 @@ public class Group extends Action {
 	public List<Action> getChildActions() {			
 		// child actions are all actions
 		return _actions;	
+	}
+	
+	@Override
+	public List<String> getRedundantActions() {
+		// if the list is still null
+		if (_redundantActions == null) {
+			// instantiate if so
+			_redundantActions = new ArrayList<String>();
+			// add our actionId
+			_redundantActions.add(getId());			
+		}
+		// return the list we made on initialisation
+		return _redundantActions;
 	}
 		
 	@Override
