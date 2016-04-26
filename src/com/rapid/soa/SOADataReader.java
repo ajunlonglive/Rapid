@@ -1,13 +1,13 @@
 /*
 
-Copyright (C) 2015 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as 
 published by the Free Software Foundation, either version 3 of the 
 License, or (at your option) any later version. The terms require you 
@@ -145,8 +145,16 @@ public interface SOADataReader {
 				} else if (_currentElement != null) {				
 					// instantiate a string using the char array we've been given
 					String value = new String(chars, start, length);
-					// set the value if we don't have one already (note the trim)
-					if (_currentElement.getValue() == null) _currentElement.setValue(value.trim());
+					// get any current value
+					String currentValue = _currentElement.getValue();
+					// check if we have a value already
+					if (currentValue == null) {
+						// if not set value (note the trim)
+						_currentElement.setValue(value.trim());
+					} else {
+						// if so append this to current as SAX may call this multiple times for large values
+						_currentElement.setValue(currentValue + value.trim());
+					}
 				}
 			}
 			
