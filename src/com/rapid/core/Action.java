@@ -1,13 +1,13 @@
 /*
 
-Copyright (C) 2015 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as 
 published by the Free Software Foundation, either version 3 of the 
 License, or (at your option) any later version. The terms require you 
@@ -75,7 +75,7 @@ public abstract class Action {
 	// if any actions have success, fail, or other follow on actions this function must return them all
 	public List<Action> getChildActions() { return null; }	
 	
-	// returns whether this action has been marked for redundancy avoidance and a seperate JavaScript function and reusable calls will be created for it to avoid printing in the whole thing each time 
+	// returns whether this action has been marked for redundancy avoidance and a separate JavaScript function and reusable calls will be created for it to avoid printing in the whole thing each time 
 	public boolean getAvoidRedundancy() { return _avoidRedundancy; }
 	// this doesn't start with set so it's not marshalled to the xml file
 	public void avoidRedundancy(boolean avoidRedundancy) { _avoidRedundancy = avoidRedundancy; }
