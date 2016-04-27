@@ -576,7 +576,7 @@ if (details) {
 			if (data == null && details.dataStorageType) {
 				var dataStore = getGridDataStoreData(id, details);
 				rowIndex --;
-				if (dataStore.rows && dataStore.rows.length > rowIndex) {
+				if (rowIndex > -1 && dataStore.rows && dataStore.rows.length > rowIndex) {
 					for (var i in dataStore.fields) {
 						if (dataStore.fields[i] && dataStore.fields[i].toLowerCase() == field.toLowerCase()) {
 							data = dataStore.rows[rowIndex][i];
@@ -897,7 +897,7 @@ if (details.dataStorageType) {
 	data = getGridDataStoreData(id, details);	
 	var grid = $("#" + id);
 	if (grid[0]) {
-		var rowNumber = getGridSelecteRowNumber(id, ev);
+		var rowNumber = getGridSelectedRowNumber(id, ev);
 		if (rowNumber != data.selectedRowNumber) {
 			data.selectedRowNumber = rowNumber;
 			saveGridDataStoreData(id, details, data);
@@ -939,7 +939,7 @@ gridData = getGridDataStoreData(id, details);
 if (!gridData) gridData = {};
 var grid = $("#" + id);
 if (grid[0]) {
-		var rowNumber = getGridSelecteRowNumber(id, ev);
+		var rowNumber = getGridSelectedRowNumber(id, ev);
 		if (rowNumber != gridData.selectedRowNumber) {
 			gridData.selectedRowNumber = rowNumber;
 			saveGridDataStoreData(id, details, gridData);
