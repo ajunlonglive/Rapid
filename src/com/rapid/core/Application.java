@@ -1477,8 +1477,13 @@ public class Application {
     				Resource appResource = new Resource(resource.getType(), resource.getContent(), ResourceDependency.RAPID);
     				// if the type is a file or link prefix with the application folder
     				switch (resource.getType()) {
-    					case Resource.JAVASCRIPTFILE : case Resource.JAVASCRIPTLINK: case Resource.CSSFILE : case Resource.CSSLINK:
-    						appResource.setContent(getWebFolder(this) + (resource.getContent().endsWith("/") ? "" : "/") + resource.getContent());
+    					case Resource.JAVASCRIPTFILE : case Resource.CSSFILE :
+    						// files are available on the local file system so we prefix with the webfolder
+    						appResource.setContent(getWebFolder(this) + (resource.getContent().startsWith("/") ? "" : "/") + resource.getContent());
+    					break;
+    					case  Resource.JAVASCRIPTLINK: case Resource.CSSLINK:
+    						// links are not so go in as-is
+    						appResource.setContent(resource.getContent());
     					break;
     				}
     				// add new resource based on this one but with Rapid dependency
