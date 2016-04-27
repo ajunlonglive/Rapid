@@ -187,8 +187,8 @@ function Action_validation(ev, validations, showMessages) {
 						// no value but this is allowed
 						pass = true;
 					}
-					// pass, or hidden and allowed this way
-					if (pass || (validationControl.is(":hidden") && validation.passHidden)) {
+					// pass, disabled, or hidden and allowed this way
+					if (pass || validationControl.is(":disabled") || (validationControl.is(":hidden") && validation.passHidden)) {
 						// passed
 						if (showMessages) hideControlValidation(validation.controlId);				
 					} else {
