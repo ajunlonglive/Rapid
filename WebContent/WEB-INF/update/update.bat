@@ -1,4 +1,3 @@
-# run cmd.exe as admin and run update.jar - make sure the folder below is correct!
-%windir%\system32\cmd.exe /C "cd \Tomcat\webapps\rapid\WEB-INF\update & java -jar update.jar"
+REM run cmd.exe as admin and run update.jar - make sure the folder below is correct!
 
-#or make a shortcut for cmd.exe and make the above it's target with 
+%windir%\system32\cmd.exe /C "cd \Tomcat\webapps\rapid\WEB-INF\update & java -jar update.jar"
