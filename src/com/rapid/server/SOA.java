@@ -174,6 +174,8 @@ public class SOA extends RapidHttpServlet {
 		
 		if (soap) {
 			
+			response.setStatus(500);
+			
 			PrintWriter out = response.getWriter();
 			
 			out.print("<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n");
@@ -348,11 +350,19 @@ public class SOA extends RapidHttpServlet {
 						// trim, clean, and split the action using forward slashes
 						String[] actionParts = action.trim().replace("\"", "").replace("'","").split("/");
 						// check we have enough parts
-						if (actionParts.length == 3) {
+						if (actionParts.length > 1) {
 							
 							String appId = actionParts[0];
-							String version = actionParts[1];
-							String name = actionParts[2];
+							String version = null;
+							String name = null;
+							
+							// 3 parts we have a version, 2 parts we want the latest one
+							if (actionParts.length > 2) {
+								version = actionParts[1];
+								name = actionParts[2];
+							} else {
+								name = actionParts[1];
+							}
 							
 							Application application = getApplications().get(appId, version);
 							
@@ -422,9 +432,9 @@ public class SOA extends RapidHttpServlet {
 						} else {
 							
 							if (soapAction) {							
-								throw new Exception("SOAPAction must contain app id, version, and SOA webservice id, seperated by forward slashes. Received " + action);								
+								throw new Exception("SOAPAction must contain app id, optional version, and SOA webservice id, seperated by forward slashes. Received " + action);								
 							} else {
-								throw new Exception("Action must contain app id, version, and SOA webservice id, seperated by forward slashes. Received " + action);
+								throw new Exception("Action must contain app id, optional version, and SOA webservice id, seperated by forward slashes. Received " + action);
 							}
 							
 						} // action format check
