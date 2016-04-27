@@ -536,7 +536,7 @@ public class Webservice extends Action {
 						url = new URL(httpRequest.getScheme(), httpRequest.getServerName(), httpRequest.getServerPort(), httpRequest.getContextPath() + "/soa");
 						// check whether we have any id / version seperators
 						String[] actionParts = action.split("/");
-						// add them if none
+						// add this app and version if none
 						if (actionParts.length < 2) action = application.getId() + "/" + application.getVersion() +  "/" + action;
 					}
 																	
@@ -611,11 +611,25 @@ public class Webservice extends Action {
 						
 						InputStream response = connection.getErrorStream();
 						
-						BufferedReader rd  = new BufferedReader( new InputStreamReader(response));
+						String errorMessage = null;
 						
-						String errorMessage = rd.readLine();
+						if ("SOAP".equals(_request.getType())) {
+							
+							String responseXML = Strings.getString(response);
+							
+							errorMessage = XML.getElementValue(responseXML, "faultcode");
+							
+						} 
 						
-						rd.close();
+						if (errorMessage == null) {
+						
+							BufferedReader rd  = new BufferedReader( new InputStreamReader(response));
+						
+							errorMessage = rd.readLine();
+							
+							rd.close();
+							
+						}
 						
 						// log the error
 						_logger.error(errorMessage);

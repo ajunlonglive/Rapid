@@ -1834,7 +1834,7 @@ function Property_webserviceRequest(cell, propertyObject, property, details) {
 	table.children().remove();
 		
 	// initialise the request object if need be
-	if (!propertyObject.request) propertyObject.request = {inputs:[], type:"SOAP", url: 'soa', action: 'demo.Samplewebservice', body: '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soa="http://soa.rapid-is.co.uk">\n  <soapenv:Body>\n    <soa:personSearchRequest>\n      <soa:surname>A</soa:surname>\n    </soa:personSearchRequest>\n  </soapenv:Body>\n</soapenv:Envelope>', outputs:[]};
+	if (!propertyObject.request) propertyObject.request = {inputs:[], type:"SOAP", url: '', action: 'demo/Sample SQL webservice', body: '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soa="http://soa.rapid-is.co.uk">\n  <soapenv:Body>\n    <soa:personSearchRequest>\n      <soa:surname>A</soa:surname>\n    </soa:personSearchRequest>\n  </soapenv:Body>\n</soapenv:Envelope>', outputs:[]};
 	// get the request
 	var request = propertyObject.request;
 	// get the sql into a variable
