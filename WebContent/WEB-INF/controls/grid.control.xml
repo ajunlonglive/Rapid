@@ -895,6 +895,14 @@ if (details) {
 var data = null;
 if (details.dataStorageType) {
 	data = getGridDataStoreData(id, details);	
+	var grid = $("#" + id);
+	if (grid[0]) {
+		var rowNumber = getGridSelecteRowNumber(id, ev);
+		if (rowNumber != data.selectedRowNumber) {
+			data.selectedRowNumber = rowNumber;
+			saveGridDataStoreData(id, details, data);
+		}
+	}
 	if (data.selectedRowNumber) {
 		data.rows = [data.rows[data.selectedRowNumber - 1]];
 	} else {
@@ -929,6 +937,14 @@ return data;
 	   	            <![CDATA[
 gridData = getGridDataStoreData(id, details);
 if (!gridData) gridData = {};
+var grid = $("#" + id);
+if (grid[0]) {
+		var rowNumber = getGridSelecteRowNumber(id, ev);
+		if (rowNumber != gridData.selectedRowNumber) {
+			gridData.selectedRowNumber = rowNumber;
+			saveGridDataStoreData(id, details, gridData);
+		}
+	}
 data = makeDataObject(data, field);
 if (gridData.selectedRowNumber) {
 	// replace or remove selected row	
@@ -963,17 +979,14 @@ if (gridData.selectedRowNumber) {
 					// retain the position
 					fieldMap[field] = gridData.fields.length - 1;
 				}				
-			}
-			
+			}			
 			// loop the incoming fields one more time
 			for (var i in data.fields) {
 				// add an entry at this position if we need one
 				if (gridData.rows[gridData.selectedRowNumber - 1].length < data.fields.length) gridData.rows[gridData.selectedRowNumber - 1].push(null);
 				// update the selected row field from the map
 				gridData.rows[gridData.selectedRowNumber - 1][fieldMap[data.fields[i]]] = data.rows[0][i];
-			}
-			
-			
+			}			
 		} else {
 			// take them from the incoming data object
 			gridData.fields = data.fields;
