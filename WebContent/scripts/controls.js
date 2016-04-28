@@ -503,7 +503,11 @@ function Control(controlType, parentControl, jsonControl, loadComplexObjects, pa
 				// retain a reference to it
 				this._getDetails = f;
 				// apply it
-				this.details = f.apply(this, []);				
+				this.details = f.apply(this, []);						
+				// add it to this page so the getHtml below can use it
+				window[this.id + "details"] = this.details;
+				// add it into the iframe page so design-time functions called in the page can use it
+				_pageIframeWindow[0][this.id + "details"] = this.details;
 			} catch (ex) {
 				alert("getDetailsFunction failed for " + this.type + ". " + ex + "\r\r" + js);
 				// remember there is an error (stops properties and styles being rendered)
@@ -542,7 +546,13 @@ function rebuildHtml(control) {
 		// assume the panelpin offset 
 		panelPinnedOffset = _panelPinnedOffset;
 		// run any getDetailsJavaScript function (if present) - this creates a "details" object which is used in rebuilding the html and the getData and setData calls
-		if (control._getDetails) control.details = control._getDetails();		
+		if (control._getDetails) {
+			control.details = control._getDetails();
+			// add it to this page so the getHtml below can use it
+			window[control.id + "details"] = control.details;
+			// add it into the iframe page so design-time functions called in the page can use it
+			_pageIframeWindow[0][control.id + "details"] = control.details;
+		}
 		// run any rebuild JavaScript (if present) - and this is not the page
 		if (control._rebuild) {
 			try {

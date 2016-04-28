@@ -64,6 +64,15 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    	    	    
 	    <getHtmlFunction>
 	        <![CDATA[
+// get the page window from the iframe	        
+var pageWindow =  _pageIframe[0].contentWindow || _pageIframe[0];	   
+// resize after 200 ms
+pageWindow.setTimeout( function() {
+	// only if the function is present
+	if (_pageIframeWindow[0] && _pageIframeWindow[0].sizeFlowLayouts) {
+		_pageIframeWindow[0].sizeFlowLayouts();
+	}    			
+ }, 200);	        
 // return our html 
 return "<div id='" + this.id + "' class='flowLayoutCell'" + (this.text ? "" : " style='min-height:20px;'") + ">" + this.text + "</div>";
 	        ]]>
@@ -225,8 +234,6 @@ function sizeFlowLayout(layout) {
 	var cells = layout.children(".flowLayoutCell");
 	// get the details
 	var details = window[layout.attr("id") + "details"];
-	// if no details try the pageIframe
-	if (!details) details = _pageIframeWindow[0][layout.attr("id") + "details"];
 	// set their width to the start width (however it was provided)
 	cells.css("width", details.cellWidth);
 	// get the first cell 
@@ -276,12 +283,9 @@ this.childControls.push(new Control("flowLayoutCell", this));
 	    </constructJavaScript>
 	    	    	    	  	    
 	   	<initDesignJavaScript>
-	        <![CDATA[       
+	        <![CDATA[
+// get the window object for the page	               
 var pageWindow =  _pageIframe[0].contentWindow || _pageIframe[0];
-// add the design-time details object into the page
-pageWindow[this.id + "details"] = {};
-// set the cell width
-pageWindow[this.id + "details"].cellWidth = this.cellWidth;
 // resize after half a sec (needs to be after 200 sec delay for visibility
 pageWindow.setTimeout( function() {
 	// only if the function is present
@@ -293,7 +297,7 @@ pageWindow.setTimeout( function() {
 	   	<getDetailsFunction>
 return { cellWidth: this.cellWidth };	        
 	    </getDetailsFunction>
-	   		    
+	    	   		    
 	    <styles>
 	        <style>
 	            <name>Flow layout</name>
