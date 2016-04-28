@@ -475,6 +475,23 @@ function Control(controlType, parentControl, jsonControl, loadComplexObjects, pa
 			}
 		}
 		
+		// there might also be some pushJavaScript
+		if (controlClass.pushedJavaScript)	{
+			// clean up the JavaScript by triming and removing line breaks and tabs
+			var js = controlClass.pushedJavaScript.trim();
+			// try and apply it
+			try {				
+				// get the js into a new function variable
+				var f = new Function(js);
+				// retain a reference to it - it will be run in designer.js once the object has been pushed into its parent
+				this._pushed = f;
+			} catch (ex) {
+				alert("pushedJavaScript failed for " + this.type + ". " + ex + "\r\r" + js);
+				// remember there is an error (stops properties and styles being rendered)
+				this.error = true;
+			}
+		}
+		
 		// and some saveJavaScript (cleans up the html on saving, can remove any html put in for demonstration)
 		if (controlClass.saveJavaScript)	{
 			// clean up the JavaScript by triming and removing line breaks and tabs

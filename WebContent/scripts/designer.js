@@ -391,6 +391,7 @@ function checkDirty() {
 
 // this function returns a control's height after taking into account floating children
 function getControlHeight(control, childLevel) {
+	
 	// if there is no childLevel set it to 0
 	if (!childLevel) childLevel = 0;
 	// get the object
@@ -570,7 +571,7 @@ function getMouseControl(ev, childControls) {
 					// does the width and height of this object mean we are inside it
 					if  (mouseX <= o.offset().left + width && mouseY <= top + height) {
 						// if there are childObjects check for a hit on one of them
-						if (c.childControls) {
+						if (c.childControls && c.childControls.length > 0) {
 							// use this function recursively
 							var childControl = getMouseControl(ev, c.childControls);
 							// if we got a hit on a child object
@@ -1666,7 +1667,9 @@ function loadVersion(forceLoad) {
 				// set its parent to the _page
 				control._parent = _page;
 				// add it to the _page childControls collection
-				_page.childControls.push(control);					
+				_page.childControls.push(control);			
+				// now run any pushJavaScript
+				if (control._pushed) control._pushed();
 				// retain a reference to the selected control					
 				_selectedControl = control;	
 				// show the properties

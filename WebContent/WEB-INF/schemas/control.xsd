@@ -457,20 +457,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 									</xs:restriction>
 								</xs:simpleType>
 							</xs:element>
-
-							<xs:element name="removeJavaScript" minOccurs="0">
-								<xs:annotation>
-									<xs:documentation>This JavaScript removes any html from the
-										parent object, if not specified "this.object.remove();" is
-										used
-									</xs:documentation>
-								</xs:annotation>
-								<xs:simpleType>
-									<xs:restriction base="xs:string">
-										<xs:minLength value="1" />
-									</xs:restriction>
-								</xs:simpleType>
-							</xs:element>
+														
 							<xs:element name="initDesignJavaScript" minOccurs="0">
 								<xs:annotation>
 									<xs:documentation>Runs in the designer once the control has
@@ -484,6 +471,22 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 									</xs:restriction>
 								</xs:simpleType>
 							</xs:element>
+							
+							<xs:element name="pushedJavaScript" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Runs in the designer once the control has
+									been pushed into its parent. Useful for adding functionality that is only
+									used during design such as re-arranging the order of controls added
+									during constructJavaScript
+									</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="1" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							
 							<xs:element name="saveJavaScript" minOccurs="0">
 								<xs:annotation>
 									<xs:documentation>Runs in the designer as the page is saved.
@@ -497,6 +500,21 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 									</xs:restriction>
 								</xs:simpleType>
 							</xs:element>
+							
+							<xs:element name="removeJavaScript" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>This JavaScript removes any html from the
+										parent object, if not specified "this.object.remove();" is
+										used
+									</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="1" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							
 							<xs:element name="getDetailsFunction" minOccurs="0">
 								<xs:annotation>
 									<xs:documentation>JavaScript that returns an object of details
@@ -513,6 +531,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 									</xs:restriction>
 								</xs:simpleType>
 							</xs:element>
+							
 							<xs:element name="getDataFunction" minOccurs="0">
 								<xs:annotation>
 									<xs:documentation>A function that returns the value of this
@@ -527,6 +546,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 									</xs:restriction>
 								</xs:simpleType>
 							</xs:element>
+							
 							<xs:element name="setDataJavaScript" minOccurs="0">
 								<xs:annotation>
 									<xs:documentation>JavaScript that populates the control with
@@ -542,6 +562,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 									</xs:restriction>
 								</xs:simpleType>
 							</xs:element>
+							
 							<xs:element name="events" minOccurs="0">
 								<xs:complexType>
 									<xs:sequence>
@@ -680,6 +701,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 									</xs:sequence>		
 								</xs:complexType>													
 							</xs:element>
+							
 							<xs:element name="designLinkJQuery" minOccurs="0">
 								<xs:simpleType>
 								<xs:annotation>
@@ -691,6 +713,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 									</xs:restriction>
 								</xs:simpleType>
 							</xs:element>
+							
 						</xs:sequence>
 					</xs:complexType>
 				</xs:element>
