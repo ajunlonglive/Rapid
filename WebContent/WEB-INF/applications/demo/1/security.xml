@@ -34,6 +34,6 @@
         <description>Unprivileged user</description>
         <deviceDetails></deviceDetails>
         <name>user</name>
-        <password>x</password>
+        <password>user</password>
     </users>
 </security>
