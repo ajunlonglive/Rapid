@@ -422,7 +422,7 @@ function sizeGridFixedHeaderColumns(control) {
 }
 
 // get the index of the selected row, ignoring rows without rowStyle1 and rowStyle2 which can be introduced by custom code
-function getGridSelecteRowNumber(id, ev) {
+function getGridSelectedRowNumber(id, ev) {
 	// assume we're not going to find it
 	var index = -1;
 	// get the target of the event
@@ -564,7 +564,7 @@ if (details) {
 	} else if (details.columns) {
 		if (field) {		
 			var row = $("#" + id).find("tr.rowSelect");
-			var rowIndex = getGridSelecteRowNumber(id, ev);
+			var rowIndex = getGridSelectedRowNumber(id, ev);
 			if (rowIndex > 0) {
 				for (var i in details.columns) {
 					if (details.columns[i].field && details.columns[i].field.toLowerCase() == field.toLowerCase()) {
@@ -864,7 +864,7 @@ if (details) {
 		if (data) setData_grid($.Event('gridinit'), id, null, details, data);
 		$("#" + id).click( function(ev) {
 			var data = getGridDataStoreData(id, details);
-			data.selectedRowNumber = getGridSelecteRowNumber(id, ev);
+			data.selectedRowNumber = getGridSelectedRowNumber(id, ev);
 			saveGridDataStoreData(id, details, data);
 		});
 	} // datastorage type check
@@ -910,7 +910,7 @@ if (details.dataStorageType) {
 	}
 } else {
 	var row = $(ev.target).closest("tr");
-	var rowNumber = getGridSelecteRowNumber(id, ev);
+	var rowNumber = getGridSelectedRowNumber(id, ev);
 	if (rowNumber > 0) {
 		data = {fields:[],rows:[[]]};
 		for (var i in details.columns) {
@@ -1093,7 +1093,7 @@ if (details && details.dataStorageType) {
 		return gridData.rowValidation[gridData.selectedRowNumber - 1];
 	} 
 } else {
-	return getGridSelecteRowNumber(id, ev);
+	return getGridSelectedRowNumber(id, ev);
 }
 			        ]]>	  	   	            
 	   	        </getPropertyFunction>	   	
@@ -1108,7 +1108,7 @@ var grid = $("#" + id);
 // if it's present
 if (grid[0]) {
 	// get the selected row number
-	selectedRowNumber = getGridSelecteRowNumber(id, ev);
+	selectedRowNumber = getGridSelectedRowNumber(id, ev);
 	// check the incoming data for a positive
 	if (data[0][0]) {
 		// remove validation class from row if true
@@ -1157,7 +1157,7 @@ if (details && details.dataStorageType) {
 		return null;
 	}
 } else {
-	return getGridSelecteRowNumber(id, ev);
+	return getGridSelectedRowNumber(id, ev);
 }
 			        ]]>	  	   	            
 	   	        </getPropertyFunction>	   	
