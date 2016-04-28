@@ -422,7 +422,7 @@ function sizeGridFixedHeaderColumns(control) {
 }
 
 // get the index of the selected row, ignoring rows without rowStyle1 and rowStyle2 which can be introduced by custom code
-function getGridSelecteRowNumber(id, ev) {
+function getGridSelectedRowNumber(id, ev) {
 	// assume we're not going to find it
 	var index = -1;
 	// get the target of the event
