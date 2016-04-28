@@ -83,15 +83,6 @@ return "<img id='" + this.id + "' class='nonVisibleControl' src='images/magicwan
 	        ]]>
 	    </getHtmlFunction>
 	    
-	     <removeJavaScript>
-	        <![CDATA[        
-// remove any inputs that might be hanging around
-_page.object.find("#" + this.id).remove();
-// remove the image
-this.object.remove();     	    
-	        ]]>
-	    </removeJavaScript> 
-	    
 	    <saveJavaScript>
 	        <![CDATA[
 // remove our image
@@ -101,6 +92,15 @@ _page.object.append("<input id='" + this.id + "' name='" + this.id + "' type='hi
 	        ]]>	        	        
 	    </saveJavaScript>	    
 	    
+	     <removeJavaScript>
+	        <![CDATA[        
+// remove any inputs that might be hanging around
+_page.object.find("#" + this.id).remove();
+// remove the image
+this.object.remove();     	    
+	        ]]>
+	    </removeJavaScript> 
+	    	    
 	    <getDataFunction>
 	        <![CDATA[
 var value = $("#" + id).val();

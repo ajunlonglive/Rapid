@@ -74,31 +74,9 @@ this.object.attr("data-panel",this.slidePanelId);
 this._parent.object.find("#" + this.slidePanelId).attr("data-pane",this.id);	
 	    	]]>
 	    </rebuildJavaScript>
-	    
-	    <removeJavaScript>
-	        <![CDATA[
-var slidePanelId = this.object.attr("data-panel");
-// loop the page child controls
-for (var i in _page.childControls) {
-	// get the potential slide panel
-	var slidePanel = _page.childControls[i];
-	// break when we find our position amongst the page child controls
-	if (slidePanel.id == slidePanelId) {		
-		// remove from page childControls
-		_page.childControls.splice(i - 1, 1);
-		// remove object
-		slidePanel.object.remove();
-		// we're done
-		break;
-	}
-} 	
-// remove the pane
-this.object.remove();
-	        ]]>
-	    </removeJavaScript>	    
-	    
-<initDesignJavaScript>
-	        <![CDATA[
+	    	    
+		<initDesignJavaScript>
+	        <![CDATA[	        
 var slidePanelId = this.object.attr("data-panel");
 // loop the page child controls
 for (var i in _page.childControls) {
@@ -114,7 +92,33 @@ for (var i in _page.childControls) {
 }   
 	        ]]>	   	        
 	    </initDesignJavaScript>
- 	    	   	    	    
+	    
+	    <removeJavaScript>
+	        <![CDATA[	          
+var slidePanelId = this.object.attr("data-panel");
+// loop the page child controls
+for (var i in _page.childControls) {
+	// get the potential slide panel
+	var slidePanel = _page.childControls[i];
+	// break when we find our position amongst the page child controls
+	if (slidePanel.id == slidePanelId) {		
+		// remove from page childControls
+		_page.childControls.splice(i, 1);
+		// remove object
+		slidePanel.object.remove();
+		// we're done
+		break;
+	}
+} 	
+// get the body
+var body =  this.object.closest("body");
+// if we have no panels left remove the cover
+if (body.find("div.slidePanel").length <= 1) body.find("div.slidePanelCover").remove();
+// remove the pane
+this.object.remove();
+	        ]]>
+	    </removeJavaScript>	    
+	     	    	   	    	    
 	    <styles>
 	        <style>
 	            <name>Slide panel</name>
@@ -315,36 +319,11 @@ switch (this.colour) {
 	case "black": image = "slidepanel_black_48x48.png"; break;
 }
 this.object.children("img").attr("src","images/controls/slidepanel/" + image);
-
-
 	        ]]>
 	    </rebuildJavaScript>	
-	    
-	    <removeJavaScript>
-	        <![CDATA[
-var slidePaneId = this.object.attr("data-pane");
-// loop the page child controls
-for (var i in _page.childControls) {
-	// get the potential slide pane
-	var slidePane = _page.childControls[i];
-	// break when we find our position amongst the page child controls
-	if (slidePane.id == slidePaneId) {		
-		// remove from page childControls
-		_page.childControls.splice(i - 1, 1);
-		// remove object
-		slidePane.object.remove();
-		// we're done
-		break;
-	}
-} 	
-// remove the closer
-this.object.remove();
-	        ]]>
-	    </removeJavaScript>
-	    
+	    	    	    
 	   	<initDesignJavaScript>
 	        <![CDATA[
-
 // get a reference to the body
 var body = _page.object;
 // get the pageCover
@@ -373,7 +352,45 @@ this.object.mousedown( {slidePanel : this}, function(ev) {
 rebuildHtml(this);
 	        ]]>	   	        
 	    </initDesignJavaScript>
+	    
+		<pushedJavaScript>
+	        <![CDATA[	        
+// get the parent child controls
+var childControls = this._parent.childControls;
+// remove the last one as it's us
+childControls.splice(childControls.length - 1, 1);
+// insert us above the last one
+childControls.splice(childControls.length - 1, 0, this);
+	        ]]>	   	        
+	    </pushedJavaScript>
 	    	    
+		<removeJavaScript>
+	        <![CDATA[
+var slidePaneId = this.object.attr("data-pane");
+// loop the page child controls
+for (var i in _page.childControls) {
+	// get the potential slide pane
+	var slidePane = _page.childControls[i];
+	// break when we find our position amongst the page child controls
+	if (slidePane.id == slidePaneId) {		
+		// remove from page childControls
+		_page.childControls.splice(i, 1);
+		// remove object
+		slidePane.object.remove();
+		// we're done
+		break;
+	}
+}
+// get the body
+var body =  this.object.closest("body");
+// if we have no panes left remove the cover
+if (body.find("div.slidePanelPane").length <= 1) body.find("div.slidePanelCover").remove();
+// remove the closer
+this.object.remove();
+
+	        ]]>
+	    </removeJavaScript>
+	    	    	    
 	    <styles>
 	        <style>
 	            <name>Opener</name>
@@ -410,8 +427,7 @@ return ".slidePanelCover";
 	    </styles>	
 	    
 	   	<initJavaScript>
-	        <![CDATA[
-	        	        
+	        <![CDATA[	        	        
 // get a reference to the body
 var body = $("body");
 // get the pageCover
@@ -493,7 +509,6 @@ pageCover.click({width: slidePanelPane.css("width"),left: slidePanelPane.css("ma
 		pageCover.hide();		
 	});
 });
-
 	        ]]>	        	       	        
 	    </initJavaScript>
 	    	    	    	            	    	    	        	    	    
