@@ -3176,8 +3176,12 @@ $(document).ready( function() {
 					$("#" + _selectedControl.id + ".nonVisibleControl").remove();
 					// arrange the non visible page controls
 					arrangeNonVisibleControls();
-					// hide the selection and properties panel
+					// hide the selection and properties panel (also resizes)
 					selectControl(null);
+					
+					// call resize in the iframe
+					_pageIframe.resize();
+					
 					// rebuild the page map
 					buildPageMap();
 				}			
@@ -3833,7 +3837,7 @@ function windowResize(ev) {
 	
 	// get the caller of this function
 	var caller = ev.data || ev;
-	
+			
 	// get the window width
 	var width = _window.width();
 		
@@ -3998,6 +4002,7 @@ function windowResize(ev) {
     	}, 500);
 		
 	} else {
+		
 		// adjust iframe position, width and height
 		_pageIframe.css({
 			left: _panelPinnedOffset,

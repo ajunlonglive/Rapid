@@ -77,20 +77,8 @@ pageWindow.setTimeout( function() {
 return "<div id='" + this.id + "' class='flowLayoutCell'" + (this.text ? "" : " style='min-height:20px;'") + ">" + this.text + "</div>";
 	        ]]>
 	    </getHtmlFunction> 
-	    
-	    <insertLeftJavaScript>
-	        <![CDATA[	      
-sizeFlowLayouts();	        
-	        ]]>	        
-	    </insertLeftJavaScript>
-	    
-	    <insertRightJavaScript>
-	        <![CDATA[	      
-sizeFlowLayouts();	        
-	        ]]>	        
-	    </insertRightJavaScript>	    
-	    
-<saveJavaScript>
+ 	    
+		<saveJavaScript>
 	        <![CDATA[
 // get the style attribute 	        
 var style = this.object.attr("style");
