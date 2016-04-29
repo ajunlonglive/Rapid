@@ -2295,15 +2295,20 @@ function updateGuidelines() {
 			showGuidelines = JSON.parse(localStorage.getItem("_guidelines"));
 		} 
 	}
-	// define the guideline style selectors to apply to
-	guidelineStyles = [ ".table td", 	"div.panel", "div.flowLayoutCell" ];
-	// loop the guidline styles
-	for (var i in guidelineStyles) {
-		// remove the style just to be sure
-		removeStyle(guidelineStyles[i],"designPage.css");
-		// if we want the style add it back in
-		if (showGuidelines) addStyle( guidelineStyles[i],"border: 1px dashed #ccc;margin: -1px;");	
+	
+	// find the header section
+	var head = $(_pageIframe[0].contentWindow.document).find("head");
+	// find any existing guildines styles
+	var css = head.find("#guidelines")
+	// if we want guidelines
+	if (showGuidelines) {
+		// add guidelines css if not present - right at the top so other rules can override
+		if (!css[0]) head.prepend("<style id='guidelines'> .table td, div.panel, div.flowLayoutCell { border: 1px dashed #ccc; margin: -1px; } </style>");
+	} else {
+		// remove the guidlines css
+		css.remove();
 	}
+
 }
 
 // a function for which of page prev / next are usable
