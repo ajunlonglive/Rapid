@@ -2,14 +2,13 @@
 
 <!-- 
 
-Copyright (C) 2014 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
-
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as 
 published by the Free Software Foundation, either version 3 of the 
 License, or (at your option) any later version. The terms require you 
@@ -29,11 +28,13 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
 How to use this file in Eclipse
 
-Import the Rapid source into Eclipse as a Dynamic Web Project
+Import the Rapid source into Eclipse as a Dynamic Web Project and set it up with the required facets (Java, and Dynamic web module) - call this project "Rapid"
 
-Create a new, custom, Dynamic Web Project and copy the WebContent/WEB-INF/build folder into your new project
+Create a new Dynamic Web Project - call this project "RapidCustom"
 
-Edit the build.properties file that you just coped over in your new project and set rapid_base to the directory of the imported Rapid sources project above
+Copy the WebContent/WEB-INF/custombuild folder and its contents from "Rapid" to "RapidCustom"
+
+Edit the build.properties file that you just coped over and set rapid_base to the folder path of the "Rapid" project on your file system
 
 View the properties of your new Dynamic Web Project, select "Builders", and click "New...". 
 Choose "Ant Builder".

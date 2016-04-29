@@ -1,8 +1,10 @@
-# ignore some common test apps
-/test
-/formtest
-/testform
-/training
+*
+
+!.gitignore
+
+!rapid
+!demo
+!mobdemo
 
 # ignore all rapid generated .js and .cs
 rapid.css
