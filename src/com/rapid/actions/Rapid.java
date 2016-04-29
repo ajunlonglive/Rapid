@@ -217,6 +217,12 @@ public class Rapid extends Action {
 			// add flow layout control
 			controlTypes.add("flowLayout");
 			// add score control
+			controlTypes.add("pagePanel");
+			// add score control
+			controlTypes.add("slidePanel");
+			// add score control
+			controlTypes.add("signature");
+			// add score control
 			controlTypes.add("score");
 			// remove tabs 
 			controlTypes.remove("tabGroup");			

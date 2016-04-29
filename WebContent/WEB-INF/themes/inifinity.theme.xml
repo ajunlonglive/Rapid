@@ -255,7 +255,8 @@ span.score span:hover {
 }
 
 body {
-  background: #f3f4f5
+  background: #f3f4f5;
+  margin: 0;
 }
 
 body, input, textarea, button, legend {

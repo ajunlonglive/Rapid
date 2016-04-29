@@ -282,6 +282,7 @@ body {
   line-height: normal;
   background: #1E488C radial-gradient(at 30% 0px , #4E79E8, #1E488C 25%) fixed;
   color: #FFF;
+  margin: 0;
 }
 
 .spacer {
