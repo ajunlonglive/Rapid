@@ -36,6 +36,8 @@ Copy the WebContent/WEB-INF/custombuild folder and its contents from "Rapid" to 
 
 Edit the build.properties file that you just coped over and set rapid_base to the folder path of the "Rapid" project on your file system
 
+Make sure the build.properties file is ignored by any source control
+
 View the properties of your new Dynamic Web Project, select "Builders", and click "New...". 
 Choose "Ant Builder".
 In the "Main" tab give it a useful name and choose the "Browse Workspace..." button to set the "Buildfile" to this file.
