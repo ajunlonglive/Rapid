@@ -1,7 +1,5 @@
-/test
-/_backups
-/_backup
-/formtest/
-/formdemo/
-/themetest/
-/testform/
+*
+!.gitignore
+!rapid
+!demo
+!mobdemo
