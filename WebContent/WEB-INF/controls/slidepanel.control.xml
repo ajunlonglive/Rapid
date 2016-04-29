@@ -231,42 +231,48 @@ return ["grey","white","black"];
 	            <type>javascript</type>
 	            <contents>
 	                <![CDATA[
+	                
+function sizeSlidePanelCover() {
+	
+	if (typeof(window.parent._pageIframe) === "undefined") {
+	
+		// get a reference to the document for the full height
+		var doc = $(document);
+		// get a reference to the slidePanelPane if it's there yet
+		var panel = $(".slidePanelPane");
+		// if we got a panel resize it
+		if (panel[0]) panel.css("height",doc.height() - panel.offset().top);
+		
+		// get a reference to the window for the viewport size
+		var win = $(window);			
+		// resize the page cover
+		$(".slidePanelCover").css({
+       		width : win.width(),
+       		height : win.height()
+       	});
+       	
+    } else {
+    
+    	// get the page iframe
+    	var _pageIframe = window.parent._pageIframe;
+    	// get the scale
+    	var _scale = window.parent._scale;
+    		    		    
+    	// resize the page cover
+    	$(_pageIframe[0].contentDocument).find("div.slidePanelCover").css({
+       		width : _pageIframe.width() / _scale,
+       		height : _pageIframe.height() / _scale
+       	});
+    
+    }
+}	                
+	                
 //JQuery is ready! 
 $(document).ready( function() {
 	
 	$(window).resize(function(ex) {
 	
-		if (typeof(window.parent._pageIframe) === "undefined") {
-	
-			// get a reference to the document for the full height
-			var doc = $(document);
-			// get a reference to the slidePanelPane if it's there yet
-			var panel = $(".slidePanelPane");
-			// if we got a panel resize it
-			if (panel[0]) panel.css("height",doc.height() - panel.offset().top);
-			
-			// get a reference to the window for the viewport size
-			var win = $(window);			
-			// resize the page cover
-			$(".slidePanelCover").css({
-	       		width : win.width(),
-	       		height : win.height()
-	       	});
-	       	
-	    } else {
-	    
-	    	// get the page iframe
-	    	var _pageIframe = window.parent._pageIframe;
-	    	// get the scale
-	    	var _scale = window.parent._scale;
-	    		    		    
-	    	// resize the page cover
-			$(".slidePanelCover").css({
-	       		width : _pageIframe.width() / _scale,
-	       		height : _pageIframe.height() / _scale
-	       	});
-	    
-	    }
+		sizeSlidePanelCover();
        	      		
 	});
 	
@@ -361,6 +367,10 @@ var childControls = this._parent.childControls;
 childControls.splice(childControls.length - 1, 1);
 // insert us above the last one
 childControls.splice(childControls.length - 1, 0, this);
+
+// resize the panel cover
+sizeSlidePanelCover();
+
 	        ]]>	   	        
 	    </pushedJavaScript>
 	    	    

@@ -906,7 +906,7 @@ Tip styles
 	border: 5px solid;
 	border-radius: 5px;
 	padding: 10px;	
-	box-shadow: 5px 5px 5px #888;
+	box-shadow: 2px 2px 5px 5px #aaa;
 }
 
 #tipArrow {	
