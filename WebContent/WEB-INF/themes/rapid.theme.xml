@@ -281,6 +281,7 @@ body {
   font-weight: normal;
   line-height: normal;
   background: transparent linear-gradient(#FFF, #E8E8E8) fixed;
+  margin: 0;
 }
 
 .spacer {

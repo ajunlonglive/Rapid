@@ -256,6 +256,7 @@ span.score span:hover {
 
 body {
   font-family: 'Open Sans',Arial,sans-serif;
+  margin: 0;
 }
 
 h1 {
