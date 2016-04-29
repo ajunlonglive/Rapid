@@ -946,7 +946,7 @@ if (grid[0]) {
 		}
 	}
 data = makeDataObject(data, field);
-if (gridData.selectedRowNumber) {
+if (gridData.selectedRowNumber && gridData.selectedRowNumber > 0) {
 	// replace or remove selected row	
 	if (data && data.fields && data.rows && data.rows.length > 0) {
 		// get the gridData fields
