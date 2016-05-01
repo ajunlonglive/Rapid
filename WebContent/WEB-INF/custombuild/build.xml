@@ -69,7 +69,7 @@ In the "Targets" tab empty "After a 'Clean'" and "Manual Build". For "Auto Build
 		<echo>rapid_base is ${rapid_base}</echo>
 		<echo>Copying WebContent</echo>
 		<copy todir="${basedir}/../../../WebContent" includeEmptyDirs="true" verbose="true">
-			<fileset dir="${rapid_base}/WebContent">
+			<fileset dir="${rapid_base}/WebContent" defaultexcludes="no">
 				<exclude name="**/custombuild/build.properties" />  <!-- don't overwrite our own properties -->				
 				<exclude name="**/scripts/propertiescustom.js" /> <!-- don't overwrite the custom properties file -->
 				<exclude name="**/database/databaseDrivers.xml" /> <!-- don't overwrite the database drivers.xml file -->
