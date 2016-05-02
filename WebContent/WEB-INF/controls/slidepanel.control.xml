@@ -246,7 +246,7 @@ function sizeSlidePanelCover() {
 		// get a reference to the window for the viewport size
 		var win = $(window);			
 		// resize the page cover
-		$(".slidePanelCover").css({
+		$("div.slidePanelCover").css({
        		width : win.width(),
        		height : win.height()
        	});
@@ -305,7 +305,7 @@ var paneId = this.object.attr("data-pane");
 // get the pane
 var pane = this._parent.object.find("#" + paneId);	 
 // get the pageCover
-var pageCover = this._parent.object.find(".slidePanelCover");    
+var pageCover = this._parent.object.find("div.slidePanelCover");    
 // check the visibilty property   
 if (this.visible) {
 	pane.show();
@@ -333,13 +333,13 @@ this.object.children("img").attr("src","images/controls/slidepanel/" + image);
 // get a reference to the body
 var body = _page.object;
 // get the pageCover
-var pageCover = body.find(".slidePanelCover");
+var pageCover = body.find("div.slidePanelCover");
 // if we don't have one
 if (!pageCover[0]) {
 	// add one
 	body.append("<div class='slidePanelCover'></div>");
 	// set the reference
-	pageCover = body.find(".slidePanelCover");	
+	pageCover = body.find("div.slidePanelCover");	
 }
         
 // a mousedown for toggling and reapplying the classes		        
@@ -441,13 +441,13 @@ return ".slidePanelCover";
 // get a reference to the body
 var body = $("body");
 // get the pageCover
-var pageCover = body.find(".slidePanelCover");
+var pageCover = body.find("div.slidePanelCover");
 // if we don't have one
 if (!pageCover[0]) {
 	// add one
 	body.append("<div class='slidePanelCover'></div>");
 	// set the reference
-	pageCover = body.find(".slidePanelCover");
+	pageCover = body.find("div.slidePanelCover");
 	// get a reference to the document
 	var doc = $(document);	
 	// size the cover
