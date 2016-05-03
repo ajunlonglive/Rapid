@@ -906,7 +906,7 @@ Tip styles
 	border: 5px solid;
 	border-radius: 5px;
 	padding: 10px;	
-	box-shadow: 2px 2px 5px 5px #aaa;
+	box-shadow: 5px 5px 5px #888;
 }
 
 #tipArrow {	
@@ -945,17 +945,22 @@ Tip styles
 }
 
 #tipDivButtons button {
-	width: 75px;
+	width: 73px;
+	width: -moz-max-content;
 	margin-left:3px;
 	margin-right:3px;
 }
 
 #tipDivButtons select {
-	width: 45px;
+	width: 55px;
 	margin-left:3px;
 	margin-right:3px;
 	padding-top: 1px;
 	padding-bottom: 1px;
+}
+
+#tipDivButtons select option {
+	background: #FFF;
 }
 
 #tipDivButtons button:first-child {
