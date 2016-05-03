@@ -6,6 +6,7 @@ Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
+
 This file is part of the Rapid Application Platform
 
 Rapid is free software: you can redistribute it and/or modify
@@ -28,15 +29,11 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
 How to use this file in Eclipse
 
-Import the Rapid source into Eclipse as a Dynamic Web Project and set it up with the required facets (Java, and Dynamic web module) - call this project "Rapid"
+Import the Rapid source into Eclipse as a Dynamic Web Project
 
-Create a new Dynamic Web Project - call this project "RapidCustom"
+Create a new, custom, Dynamic Web Project and copy the WebContent/WEB-INF/build folder into your new project
 
-Copy the WebContent/WEB-INF/custombuild folder and its contents from "Rapid" to "RapidCustom"
-
-Edit the build.properties file that you just coped over and set rapid_base to the folder path of the "Rapid" project on your file system
-
-Make sure the build.properties file is ignored by any source control
+Edit the build.properties file that you just coped over in your new project and set rapid_base to the directory of the imported Rapid sources project above
 
 View the properties of your new Dynamic Web Project, select "Builders", and click "New...". 
 Choose "Ant Builder".
@@ -72,14 +69,17 @@ In the "Targets" tab empty "After a 'Clean'" and "Manual Build". For "Auto Build
 		<echo>rapid_base is ${rapid_base}</echo>
 		<echo>Copying WebContent</echo>
 		<copy todir="${basedir}/../../../WebContent" includeEmptyDirs="true" verbose="true">
-			<fileset dir="${rapid_base}/WebContent">
-				<exclude name="**/custombuild/build.properties" />  <!-- don't overwrite our own properties -->				
+			<fileset dir="${rapid_base}/WebContent" defaultexcludes="no">
+				<exclude name="**/custombuild/build.properties" />  <!-- don't overwrite our own properties -->
 				<exclude name="**/scripts/propertiescustom.js" /> <!-- don't overwrite the custom properties file -->
 				<exclude name="**/database/databaseDrivers.xml" /> <!-- don't overwrite the database drivers.xml file -->
+				<exclude name="**/logs/Rapid*.log" /> <!-- exclude all log files -->
 				<exclude name="**/web.xml" /> <!-- don't overwrite user web.xml -->
 				<exclude name="**/applications/**" /> <!-- exclude all applications -->
-				<include name="**/applications/rapid/**" /> <!-- include Rapid application -->
-				<exclude name="**/rapid/*/security.xml" />  <!-- don't overwrite user security.xml for Rapid Admin and Rapid Design -->
+			</fileset>
+			<fileset dir="${rapid_base}/WebContent">
+			    <exclude name="**/rapid/*/security.xml" />  <!-- don't overwrite user security.xml for Rapid Admin and Rapid Design -->
+			    <include name="**/applications/rapid/**" /> <!-- include both rapid web and application folders -->
 			</fileset>
 		</copy>
 		<echo>Copying source</echo>
