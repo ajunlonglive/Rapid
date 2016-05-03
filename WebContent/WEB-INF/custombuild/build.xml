@@ -70,15 +70,16 @@ In the "Targets" tab empty "After a 'Clean'" and "Manual Build". For "Auto Build
 		<echo>Copying WebContent</echo>
 		<copy todir="${basedir}/../../../WebContent" includeEmptyDirs="true" verbose="true">
 			<fileset dir="${rapid_base}/WebContent" defaultexcludes="no">
-				<exclude name="**/custombuild/build.properties" />  <!-- don't overwrite our own properties -->				
+				<exclude name="**/custombuild/build.properties" />  <!-- don't overwrite our own properties -->
 				<exclude name="**/scripts/propertiescustom.js" /> <!-- don't overwrite the custom properties file -->
 				<exclude name="**/database/databaseDrivers.xml" /> <!-- don't overwrite the database drivers.xml file -->
+				<exclude name="**/logs/Rapid*.log" /> <!-- exclude all log files -->
 				<exclude name="**/web.xml" /> <!-- don't overwrite user web.xml -->
-				<exclude name="**/applications/**" /> <!-- exclude all applications -->				
+				<exclude name="**/applications/**" /> <!-- exclude all applications -->
 			</fileset>
 			<fileset dir="${rapid_base}/WebContent">
 			    <exclude name="**/rapid/*/security.xml" />  <!-- don't overwrite user security.xml for Rapid Admin and Rapid Design -->
-			    <include name="**/applications/rapid/**" /> <!-- include both rapid web and application folders -->			    
+			    <include name="**/applications/rapid/**" /> <!-- include both rapid web and application folders -->
 			</fileset>
 		</copy>
 		<echo>Copying source</echo>
