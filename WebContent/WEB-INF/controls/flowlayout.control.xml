@@ -138,8 +138,8 @@ if (selectedCell[0]) {
 	<control>
 	    
 	    <type>flowLayout</type>
-	    <name>Flow layout</name>	    
-		<image>images/flow_24x24.png</image>	
+	    <name>Flow layout</name>
+		<image>images/flow_24x24.png</image>
 	    
 	    <dependentTypes>
 	        <dependentType>flowLayoutCell</dependentType>
@@ -154,11 +154,12 @@ if (selectedCell[0]) {
 	        
 	        <property>
 	            <key>cellWidth</key>
-	            <name>Cell width</name>
+	            <name>Minimum cell width</name>
 	            <setConstructValueFunction>return "300px";</setConstructValueFunction>
-	            <changeValueJavaScript>flowLayoutCellWidth</changeValueJavaScript>	
-	            <refreshHtml>true</refreshHtml>	                       
-	        </property>	
+	            <changeValueJavaScript>flowLayoutCellWidth</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>The minimum width of each cell in the flow layout. Cells are then resized proportionally to fill the remaining space.</helpHtml>
+	        </property>
 	        
 	    </properties>
 	    
@@ -173,7 +174,7 @@ div.flowLayout {
 .flowLayoutCell {
 	float: left;
 }
-]]>	                
+]]>
 	            </contents>
 	        </resource>
 	        <resource>
@@ -188,7 +189,7 @@ $(document).ready( function() {
 		sizeFlowLayouts();
 
     });
-    	    			
+    
 });
 
 function sizeFlowLayouts() {

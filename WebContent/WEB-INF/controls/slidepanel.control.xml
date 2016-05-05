@@ -152,21 +152,23 @@ return "#" + this.id;
 	            <key>visible</key>
 	            <name>Visible</name>
 	            <setConstructValueFunction>return false;</setConstructValueFunction>
-	            <changeValueJavaScript>slidePanelVisibility</changeValueJavaScript>		                       
-	        </property>	
+	            <changeValueJavaScript>slidePanelVisibility</changeValueJavaScript>
+	            <helpHtml>Whether the slide panel is open with the pane contents visible, or not.</helpHtml>
+	        </property>
 	        
 	        <property>
 	            <key>colour</key>
-	            <name>Colour</name>
+	            <name>Icon colour</name>
 	            <setConstructValueFunction>return "grey";</setConstructValueFunction>
-	            <changeValueJavaScript>select</changeValueJavaScript>	
+	            <changeValueJavaScript>select</changeValueJavaScript>
 	            <getValuesFunction>
 	                <![CDATA[
 return ["grey","white","black"];
 					]]>
-	            </getValuesFunction>         
-	            <refreshHtml>true</refreshHtml>     
-	        </property>    
+	            </getValuesFunction>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>The colour of the icon that will show or hide the pane.</helpHtml>
+	        </property>
 	        
 	        <property>
 	            <key>slidePanelId</key>
