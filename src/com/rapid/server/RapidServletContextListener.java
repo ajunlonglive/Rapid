@@ -47,6 +47,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
@@ -1268,7 +1269,7 @@ public class RapidServletContextListener implements ServletContextListener {
 		// sleep for 2 seconds to allow any database connection cleanup to complete
 		try { Thread.sleep(2000); } catch (Exception ex) {}
 		
-		// This manually deregisters JDBC drivers, which prevents Tomcat 7 from complaining about memory leaks from this class
+		// This manually deregisters JDBC drivers, which prevents Tomcat from complaining about memory leaks from this class
         Enumeration<Driver> drivers = DriverManager.getDrivers();
         while (drivers.hasMoreElements()) {
             Driver driver = drivers.nextElement();
@@ -1279,6 +1280,25 @@ public class RapidServletContextListener implements ServletContextListener {
             	_logger.error(String.format("Error deregistering driver %s", driver), e);
             }
         }
+        
+        // Thanks to http://stackoverflow.com/questions/11872316/tomcat-guice-jdbc-memory-leak
+        Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
+        Thread[] threadArray = threadSet.toArray(new Thread[threadSet.size()]);
+        for (Thread t:threadArray) {
+            if (t.getName().contains("Abandoned connection cleanup thread")) {
+                synchronized (t) {
+                	try {
+                		_logger.info("Forcing stop of Abandoned connection cleanup thread");
+                		t.stop(); //don't complain, it works
+                	} catch (Exception ex) {
+                		_logger.info("Error forcing stop of Abandoned connection cleanup thread",ex);
+                	}                   
+                }
+            }
+        }
+        
+        // sleep for 1 second to allow any database connection cleanup to complete
+     	try { Thread.sleep(1000); } catch (Exception ex) {}
                 
         // last log
 		_logger.info("Logger shutdown");
