@@ -89,10 +89,22 @@ public class ZipFile {
 		}
 		
 		// instance methods
-		
+
 		public boolean contains(ZipSource zipSource) {
 			for (ZipSource zs : this) {
-				if (zipSource.getFile().getName().equals(zs.getFile().getName()) && zipSource.getPath().equals(zs.getPath())) return true;
+				if (zs.getFile().isDirectory()) {
+					if (zipSource.getPath().startsWith(zs.getPath())) {
+						if (zipSource.getFile().isDirectory()) {
+							if (zipSource.getFile().getName().startsWith(zs.getFile().getName())) {
+								return true;
+							}
+						} else {
+							if (zipSource.getFile().getParentFile().getName().startsWith(zs.getFile().getName())) {
+								return true;
+							}
+						}
+					}
+				} else 	if (zipSource.getFile().getName().equals(zs.getFile().getName()) && zipSource.getPath().equals(zs.getPath())) return true;
 			}
 			return false;
 		}
@@ -147,7 +159,7 @@ public class ZipFile {
     }
 
     private void zipFile(ZipOutputStream zos, String path, File file) throws IOException {
-
+    	
         zos.putNextEntry(new ZipEntry(buildPath(path, file.getName())));
 
         FileInputStream fis = new FileInputStream(file);
