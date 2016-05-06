@@ -50,11 +50,11 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	        <property>
 	            <key>chartType</key>
 	            <name>Type</name>
-	            <setConstructValueFunction>return "Line";</setConstructValueFunction>
+	            <setConstructValueFunction>return "line";</setConstructValueFunction>
 	            <changeValueJavaScript>chartType</changeValueJavaScript>
 	            <getValuesFunction>
 	                <![CDATA[
-return [["Line","Line"],["Bar","Bar"],["Pie","Pie"]];
+return [["line","Line"],["bar","Bar"],["pie","Pie"]];
 					]]>
 	            </getValuesFunction>
 	            <refreshHtml>true</refreshHtml>
@@ -75,6 +75,11 @@ return [["Line","Line"],["Bar","Bar"],["Pie","Pie"]];
 					<![CDATA[
 // global for all charts in the page
 _charts = {};					
+// global config
+Chart.defaults.global.onClick = function(a,b) {
+	debugger;
+}
+Chart.defaults.global.animation.animateRotate = true;
 					]]>	                
 	            </contents>
 	        </resource>		        
@@ -97,6 +102,7 @@ return "<canvas id='" + this.id + "' class='chart" + getStyleClasses(this) + "'>
 	    	    
 	    <initDesignJavaScript>
 	        <![CDATA[
+	        
 // get the iFrame window
 var w = _pageIframe[0].contentWindow;
 // get the object	        
@@ -116,49 +122,26 @@ var chartData = {};
 // options object
 var options = {};
 // check type
-if (this.chartType == "Pie") {
-	chartData = [
-	    {
-	        value: 300,
-	        color:"#F7464A",
-	        highlight: "#FF5A5E",
-	        label: "Red"
-	    },
-	    {
-	        value: 50,
-	        color: "#46BFBD",
-	        highlight: "#5AD3D1",
-	        label: "Green"
-	    },
-	    {
-	        value: 100,
-	        color: "#FDB45C",
-	        highlight: "#FFC870",
-	        label: "Yellow"
-	    }
-	];
+if (this.chartType == "pie") {
+	chartData = {
+		labels: ["January", "February", "March", "April", "May", "June", "July"],
+	    datasets: [
+	        {
+	            label: "Data",
+	            data: [65, 59, 80, 81, 56, 55, 40]
+	        }
+	    ]
+	}
 } else {
 	chartData = {
 	    labels: ["January", "February", "March", "April", "May", "June", "July"],
 	    datasets: [
 	        {
 	            label: "Dataset 1",
-	            fillColor: "rgba(220,220,220,0.2)",
-	            strokeColor: "rgba(220,220,220,1)",
-	            pointColor: "rgba(220,220,220,1)",
-	            pointStrokeColor: "#fff",
-	            pointHighlightFill: "#fff",
-	            pointHighlightStroke: "rgba(220,220,220,1)",
 	            data: [65, 59, 80, 81, 56, 55, 40]
 	        },
 	        {
 	            label: "Dataset 2",
-	            fillColor: "rgba(151,187,205,0.2)",
-	            strokeColor: "rgba(151,187,205,1)",
-	            pointColor: "rgba(151,187,205,1)",
-	            pointStrokeColor: "#fff",
-	            pointHighlightFill: "#fff",
-	            pointHighlightStroke: "rgba(151,187,205,1)",
 	            data: [28, 48, 40, 19, 86, 27, 90]
 	        }
 	    ]
@@ -166,7 +149,11 @@ if (this.chartType == "Pie") {
 }
 
 // make us a chart of the right type
-var chart = new w.Chart(ctx)[this.chartType](chartData, options);
+var chart = new w.Chart(ctx, {
+	type: this.chartType, 
+	data: chartData, 
+	options: options
+});
 // store it
 w._charts[this.id] = chart;
 	        ]]>	        
@@ -190,57 +177,39 @@ var control = $("#" + id);
 var canvas = control.get(0);
 var ctx = canvas.getContext("2d");
 // the chart data object
-var data = {};
-if (details.chartType == "Pie") {
-	data = [
-	    {
-	        value: 300,
-	        color:"#F7464A",
-	        highlight: "#FF5A5E",
-	        label: "Red"
-	    },
-	    {
-	        value: 50,
-	        color: "#46BFBD",
-	        highlight: "#5AD3D1",
-	        label: "Green"
-	    },
-	    {
-	        value: 100,
-	        color: "#FDB45C",
-	        highlight: "#FFC870",
-	        label: "Yellow"
-	    }
-	]
+var chartData = {};
+if (details.chartType == "pie") {
+	chartData = {
+		labels: ["January", "February", "March", "April", "May", "June", "July"],
+	    datasets: [
+	        {
+	            label: "Data",
+	            data: [65, 59, 80, 81, 56, 55, 40]
+	        }
+	    ]
+	}
 } else {
-	data = {
+	chartData = {
 	    labels: ["January", "February", "March", "April", "May", "June", "July"],
 	    datasets: [
 	        {
 	            label: "Dataset 1",
-	            fillColor: "rgba(220,220,220,0.2)",
-	            strokeColor: "rgba(220,220,220,1)",
-	            pointColor: "rgba(220,220,220,1)",
-	            pointStrokeColor: "#fff",
-	            pointHighlightFill: "#fff",
-	            pointHighlightStroke: "rgba(220,220,220,1)",
 	            data: [65, 59, 80, 81, 56, 55, 40]
 	        },
 	        {
 	            label: "Dataset 2",
-	            fillColor: "rgba(151,187,205,0.2)",
-	            strokeColor: "rgba(151,187,205,1)",
-	            pointColor: "rgba(151,187,205,1)",
-	            pointStrokeColor: "#fff",
-	            pointHighlightFill: "#fff",
-	            pointHighlightStroke: "rgba(151,187,205,1)",
 	            data: [28, 48, 40, 19, 86, 27, 90]
 	        }
 	    ]
 	}
 }
 // make us a chart of the right type
-_charts[this.id] = new Chart(ctx)[details.chartType](data, {});
+var chart = new Chart(ctx, {
+	type: details.chartType,
+	data: chartData
+});
+// store it
+_charts[id] = chart;
 			]]>
 	    </setDataJavaScript>
 	    
@@ -286,8 +255,6 @@ ctx.textAlign = "center";
 ctx.fillText(details.name,w / 2, h / 2);
 	        ]]>
 	    </initJavaScript>
-	    
-	    
-	    	    	    
+	        
 	</control>
 </controls>
