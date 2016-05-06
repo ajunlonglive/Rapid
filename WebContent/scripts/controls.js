@@ -1,10 +1,6 @@
 /*
 
-<<<<<<< HEAD
 Copyright (C) 2016- Gareth Edwards / Rapid Information Systems
-=======
-Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
->>>>>>> branch 'master' of ssh://gareth@office.rapid-is.co.uk/var/git/rapid.git
 
 gareth.edwards@rapid-is.co.uk
 

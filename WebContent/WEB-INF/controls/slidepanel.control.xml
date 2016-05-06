@@ -153,7 +153,7 @@ return "#" + this.id;
 	            <name>Visible</name>
 	            <setConstructValueFunction>return false;</setConstructValueFunction>
 	            <changeValueJavaScript>slidePanelVisibility</changeValueJavaScript>
-	            <helpHtml>Whether the slide panel is open with the pane contents visible, or not.</helpHtml>
+	            <helpHtml>Whether or not the slide panel is open with its contents visible.</helpHtml>
 	        </property>
 	        
 	        <property>
