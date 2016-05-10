@@ -100,10 +100,10 @@ public class Form extends Action {
 						value = "_formValues['err']";						
 					} else if ("res".equals(actionType)) {
 						// create the resume url
-						value = "'~?a=" + application.getId() + "&v=" + application.getVersion() + "&action=resume&f=' + _formId + '&pwd=' + _formValues['res'] + '";
+						value = "'~?a=" + application.getId() + "&v=" + application.getVersion() + "&action=resume&f=' + _formId + '&pwd=' + _formValues['res']";
 					} else if ("pdf".equals(actionType)) {
 						// create the pdf url
-						value = "~?a=" + application.getId() + "&v=" + application.getVersion() + "&action=pdf&f='+ _formId + '";
+						value = "'~?a=" + application.getId() + "&v=" + application.getVersion() + "&action=pdf&f='+ _formId";
 					}						
 					// use the set data if we got something
 					if (value != null) js = "setData_" + destinationControl.getType() + "(ev, '" + destinationId + "', null, " + destinationControl.getDetails() + ", " + value + ");\n";
