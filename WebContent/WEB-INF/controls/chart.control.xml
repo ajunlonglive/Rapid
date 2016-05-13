@@ -50,36 +50,282 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	        <property>
 	            <key>chartType</key>
 	            <name>Type</name>
-	            <setConstructValueFunction>return "line";</setConstructValueFunction>
+	            <setConstructValueFunction>return "Line";</setConstructValueFunction>
 	            <changeValueJavaScript>chartType</changeValueJavaScript>
 	            <getValuesFunction>
 	                <![CDATA[
-return [["line","Line"],["bar","Bar"],["pie","Pie"]];
+return [["Line"],["Bar"],["Pie"]];
 					]]>
 	            </getValuesFunction>
 	            <refreshHtml>true</refreshHtml>
 	            <refreshProperties>true</refreshProperties>
 	            <helpHtml>Sets the chart type from line to bar or pie.</helpHtml>
 	        </property>
-	                   	       	        
+	        
+	        <property>
+	            <key>left</key>
+	            <name>Left</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml></helpHtml>
+	        </property>
+	        
+	         <property>
+	            <key>top</key>
+	            <name>Top</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml></helpHtml>
+	        </property>
+	        
+	         <property>
+	            <key>width</key>
+	            <name>Width</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml></helpHtml>
+	        </property>
+	        
+	         <property>
+	            <key>height</key>
+	            <name>Height</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml></helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>legendPosition</key>
+	            <name>Legend position</name>
+	            <setConstructValueFunction>return "right";</setConstructValueFunction>
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	            <getValuesFunction>
+	                <![CDATA[
+return [["top"],["right"],["bottom"],["left"],["in"],["labeled"],["none"]];
+					]]>
+	            </getValuesFunction>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml></helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>legendAlignment</key>
+	            <name>Legend alignment</name>
+	            <setConstructValueFunction>return "auto";</setConstructValueFunction>
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	            <getValuesFunction>
+	                <![CDATA[
+return [["auto"],["start"],["center"],["end"]];
+					]]>
+	            </getValuesFunction>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml></helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>pieSliceText</key>
+	            <name>Pie slice text</name>
+	            <visible>false</visible>
+	            <setConstructValueFunction>return "percentage";</setConstructValueFunction>
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	            <getValuesFunction>
+	                <![CDATA[
+return [["percentage"],["value"],["label"],["none"]];
+					]]>
+	            </getValuesFunction>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>The content of the text displayed on each pie slice.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>sliceVisibilityThreshold</key>
+	            <name>Other threshold</name>
+	            <visible>false</visible>	            
+	            <changeValueJavaScript>integer</changeValueJavaScript>	           
+	             <refreshHtml>true</refreshHtml>
+	             <helpHtml>The percentage value below which pie slices will be combined into an "Other" slice</helpHtml>	              
+	        </property>
+	        
+	        <property>
+	            <key>is3D</key>
+	            <name>3D</name>
+	            <visible>false</visible>
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>	           
+	             <refreshHtml>true</refreshHtml>
+	             <helpHtml>Draws the pie chart in 3 dimensions.</helpHtml>	              
+	        </property>
+	              
 	    </properties>
 	    
 	    <resources>
 	        <resource>
-	            <type>javascriptFile</type>
-	            <contents>scripts/controls/charts.js</contents>
+	            <type>javascriptLink</type>
+	            <contents>https://www.gstatic.com/charts/loader.js</contents>
 	        </resource>	    
 	        <resource>
 	            <type>javascript</type>
 	            <contents>
 					<![CDATA[
-// global for all charts in the page
-_charts = {};					
-// global config
-Chart.defaults.global.onClick = function(a,b) {
-	debugger;
+					
+ // thanks to https://github.com/DelvarWorld/easing-utils
+    
+function easeOutBounce( t ) {
+
+    const scaledTime = t / 1;
+
+    if( scaledTime < ( 1 / 2.75 ) ) {
+
+        return 7.5625 * scaledTime * scaledTime;
+
+    } else if( scaledTime < ( 2 / 2.75 ) ) {
+
+        const scaledTime2 = scaledTime - ( 1.5 / 2.75 );
+        return ( 7.5625 * scaledTime2 * scaledTime2 ) + 0.75;
+
+    } else if( scaledTime < ( 2.5 / 2.75 ) ) {
+
+        const scaledTime2 = scaledTime - ( 2.25 / 2.75 );
+        return ( 7.5625 * scaledTime2 * scaledTime2 ) + 0.9375;
+
+    } else {
+
+        const scaledTime2 = scaledTime - ( 2.625 / 2.75 );
+        return ( 7.5625 * scaledTime2 * scaledTime2 ) + 0.984375;
+
+    }
+
+}					
+					
+// global for all charts					
+_charts = {};
+// whether charts has loaded
+_chartsLoaded = false;
+
+// function for getting chart data from our Rapid data object
+function getChartData(data) {
+
+	var dataArray = [
+		data.fields		
+	];
+	
+	for (var i in data.rows) {
+		dataArray.push(data.rows[i]);
+	}
+	
+	var chartData = google.visualization.arrayToDataTable(dataArray);
+	
+	return chartData;
 }
-Chart.defaults.global.animation.animateRotate = true;
+
+// function for drawing a specific chart
+function drawChart(id, data) {
+
+	if (_chartsLoaded) {
+	
+		var chartData = getChartData(data);
+	    
+	    var element = document.getElementById(id);
+	    
+	    var details = window[id + "details"];
+	    
+	    var options = {
+	    	animation: {
+	    		startup: true,
+        		duration: 1000,
+        		easing: 'out'
+	    	},	    	
+	    	chartArea: {
+	    		left: details.left,
+	    		top: details.top,
+	    		width: details.width,
+	    		height: details.height
+	    	},
+	    	legend: {position: details.legendPosition, alignment: details.legendAlignment}	    	
+		 };
+		 	    
+	    if (details.chartType == "Pie") {
+	    
+		    var chart = new google.visualization.PieChart(element);		    	
+		    
+		    options.is3D = details.is3D;	
+		    options.pieSliceText = details.pieSliceText;
+		    if (details.sliceVisibilityThreshold) options.sliceVisibilityThreshold = details.sliceVisibilityThreshold / 100;
+		   
+		   // explode selected slice
+		    google.visualization.events.addListener(chart, 'select', function (ev) {
+		        var selection = chart.getSelection();
+		        if (selection && selection.length > 0) {
+		        	var row = selection[0].row;
+		        	var slices = {};
+		        	slices[row] = {offset: 0.15};
+		        	options.slices = slices;
+		        	google.visualization.events.addListener(chart, 'ready',	function() {
+		        		chart.setSelection(selection);
+					});
+		        	chart.draw(chartData, options);
+		        }
+		      });
+		      
+		      // slice animation
+		      var counter = 0;		      
+		      var handler = setInterval( function(){     	
+		        var i = (1 - easeOutBounce(counter)) * 0.5; 		     
+		        options.slices = {};
+		        for (var j = 0; j < data.rows.length; j++) {
+		        	options.slices[j] = {offset: i}
+		        }        
+		        chart.draw(chartData, options);
+		        counter = counter + 0.1
+		        if (counter > 1) clearInterval(handler);
+		    }, 50);
+		            		   
+		  } else if (details.chartType == "Line") {
+		  
+		  	var chart = new google.visualization.LineChart(element);
+        	chart.draw(chartData, options);
+		  			  
+		  } else {
+		  		  
+		  	var chart = new google.visualization.ColumnChart(element);
+        	chart.draw(chartData, options); 
+		  
+		}
+		  
+		// selection listener
+		google.visualization.events.addListener(chart, 'select', function (ev) {
+			var selection = chart.getSelection();
+			if (selection && selection.length > 0) {
+		    	$("#" + id).trigger("select");
+			}
+		});
+		
+		// retain chart
+		_charts[id].chart = chart;
+      
+      } else {
+      	
+      	// if we're not in the global collection add for when charts is loaded
+      	if (!_charts[id]) _charts[id] = {data:data};
+
+      }
+	 
+}
+
+// if google and google charts are present
+if (window["google"] && google.charts) {	
+	// load charts
+	google.charts.load('current', {'packages':['corechart']});
+	// draw once loaded	
+	google.charts.setOnLoadCallback( function() {
+		// remember we have loaded
+		_chartsLoaded = true;
+		// draw all charts that may be waiting
+		for (var id in _charts) {
+			drawChart(id, _charts[id].data);
+		}
+	}); 	 	 	
+}
+
 					]]>	                
 	            </contents>
 	        </resource>		        
@@ -87,8 +333,8 @@ Chart.defaults.global.animation.animateRotate = true;
 	            <type>css</type>
 	            <contents>
 .chart {
-	width: 300px;
-	height: 200px;
+	width: 500px;
+	height: 400px;
 }	                
 	            </contents>
 	        </resource>  
@@ -96,120 +342,50 @@ Chart.defaults.global.animation.animateRotate = true;
 	    	    	    
 	    <getHtmlFunction>
 	        <![CDATA[	  
-return "<canvas id='" + this.id + "' class='chart" + getStyleClasses(this) + "'></canvas>";
+return "<div id='" + this.id + "' class='chart" + getStyleClasses(this) + "'></canvas>";
 	        ]]>
 	    </getHtmlFunction> 
-	    	    
-	    <initDesignJavaScript>
-	        <![CDATA[
-	        
-// get the iFrame window
-var w = _pageIframe[0].contentWindow;
-// get the object	        
-var o = this.object;
-// get the current width
-var width = o.width();
-// get the current height
-var height = o.height();
-// remove any explicit style
-o.removeAttr("style");
-// add the width and height (this is neccessary for charts to be regenerated in the designer)
-o.attr("style","width:" + Math.max(width,o.width()) + "px;height:" + Math.max(height,o.height()) + "px;");
-// Get context with jQuery - using jQuery's .get() method.
-var ctx = o.get(0).getContext("2d");
-// the chart data object
-var chartData = {};
-// options object
-var options = {};
-// check type
-if (this.chartType == "pie") {
-	chartData = {
-		labels: ["January", "February", "March", "April", "May", "June", "July"],
-	    datasets: [
-	        {
-	            label: "Data",
-	            data: [65, 59, 80, 81, 56, 55, 40]
-	        }
-	    ]
-	}
-} else {
-	chartData = {
-	    labels: ["January", "February", "March", "April", "May", "June", "July"],
-	    datasets: [
-	        {
-	            label: "Dataset 1",
-	            data: [65, 59, 80, 81, 56, 55, 40]
-	        },
-	        {
-	            label: "Dataset 2",
-	            data: [28, 48, 40, 19, 86, 27, 90]
-	        }
-	    ]
-	}
-}
-
-// make us a chart of the right type
-var chart = new w.Chart(ctx, {
-	type: this.chartType, 
-	data: chartData, 
-	options: options
-});
-// store it
-w._charts[this.id] = chart;
-	        ]]>	        
-	    </initDesignJavaScript>
 	    
+	    <rebuildJavaScript>
+// get the iFrame window
+var w = _pageIframe[0].contentWindow;	        
+// get the id
+var id = this.id;
+// draw it - after a short delay for the library to initialise
+setTimeout(function() { 
+	w.drawChart(id, {fields:['Task','Hours per day'], rows:[['Work',11],['Eat',2],['Commute',2],['Watch TV',1],['Sleep',7]]});	
+}, 100);      	       
+	    </rebuildJavaScript>
+	    	    	    
 	     <saveJavaScript>
 	        <![CDATA[ 
-this.object.html("").removeAttr("style");      
+this.object.html("");
 	        ]]>
 	    </saveJavaScript>	    
 	    
 	     <getDetailsFunction>
 	        <![CDATA[
-return { name: this.name, chartType: this.chartType };      
+var details = { 
+	name: this.name, 
+	chartType: this.chartType,
+	left: this.left,
+	top: this.top,
+	width: this.width,
+	height: this.height,
+	legendPosition: this.legendPosition,
+	legendAlignment: this.legendAlignment,
+	pieSliceText: this.pieSliceText,
+	is3D: this.is3D,
+	sliceVisibilityThreshold: this.sliceVisibilityThreshold
+};
+window[this.id + "details"] = details;
+return details;      
 	        ]]>
 	    </getDetailsFunction>
 	    
 	     <setDataJavaScript>
 	        <![CDATA[
-var control = $("#" + id);
-var canvas = control.get(0);
-var ctx = canvas.getContext("2d");
-// the chart data object
-var chartData = {};
-if (details.chartType == "pie") {
-	chartData = {
-		labels: ["January", "February", "March", "April", "May", "June", "July"],
-	    datasets: [
-	        {
-	            label: "Data",
-	            data: [65, 59, 80, 81, 56, 55, 40]
-	        }
-	    ]
-	}
-} else {
-	chartData = {
-	    labels: ["January", "February", "March", "April", "May", "June", "July"],
-	    datasets: [
-	        {
-	            label: "Dataset 1",
-	            data: [65, 59, 80, 81, 56, 55, 40]
-	        },
-	        {
-	            label: "Dataset 2",
-	            data: [28, 48, 40, 19, 86, 27, 90]
-	        }
-	    ]
-	}
-}
-// make us a chart of the right type
-var chart = new Chart(ctx, {
-	type: details.chartType,
-	data: chartData
-});
-// store it
-_charts[id] = chart;
+drawChart(id, data);
 			]]>
 	    </setDataJavaScript>
 	    
@@ -217,6 +393,10 @@ _charts[id] = chart;
 	        <event>
 	            <type>click</type>
 	            <name>Click</name>
+	        </event>
+	        <event>
+	            <type>select</type>
+	            <name>Select</name>
 	        </event>
 	    </events>
 
@@ -233,28 +413,47 @@ return "#" + this.id;
 	    
 	    <initJavaScript>
 	        <![CDATA[      
-// Get context with jQuery - using jQuery's .get() method.
-var canvas = $("#" + id).get(0); 
-var ctx = canvas.getContext("2d");
-// get the width
-var w = canvas.width;
-// get the height
-var h = canvas.height;
-// chart border
-ctx.beginPath();
-ctx.moveTo(0, 0);
-ctx.lineTo(w, 0);
-ctx.lineTo(w, h);
-ctx.lineTo(0, h);
-ctx.lineTo(0, 0);
-ctx.stroke();
-// write the chart name
-ctx.font = "bold 30px Arial";
-ctx.fillStyle = "#ccc";
-ctx.textAlign = "center";
-ctx.fillText(details.name,w / 2, h / 2);
+$("#" + id).html("loading...");	        
 	        ]]>
 	    </initJavaScript>
+	    
+	    <runtimeProperties>
+	        <runtimeProperty>
+	            <type>selectedData</type>
+	            <name>Selected data</name>
+	            <getPropertyFunction>
+	                <![CDATA[
+var data = null;
+var chart = _charts[id];
+if (chart) { 	                
+	var selection = _charts[id].chart.getSelection();
+	if (selection && selection.length > 0) {
+		var chartData = _charts[id].data;
+		if (chartData && chartData.fields && chartData.rows) {			
+			if (selection[0].column) {
+				data = {
+					fields:[chartData.fields[0],chartData.fields[selection[0].column]], 
+					rows: [chartData.rows[selection[0].row][0],chartData.rows[selection[0].row][selection[0].column]]
+				};
+			} else {
+				data = {fields:chartData.fields, rows: [chartData.rows[selection[0].row]]};
+			}			
+			if (field) {
+				for (var i in chartData.fields) {
+					if (chartData.fields[i] && chartData.fields[i].toLowerCase() == field.toLowerCase()) {
+						data = chartData.rows[selection[0].row][i];
+						break;
+					}
+				}
+			}
+		}
+	}
+}
+return data;
+					]]>
+	            </getPropertyFunction>
+	        </runtimeProperty>
+	    </runtimeProperties>
 	        
 	</control>
 </controls>

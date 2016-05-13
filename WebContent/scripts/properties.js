@@ -275,22 +275,27 @@ function updateProperty(cell, propertyObject, property, details, value) {
 	} // page lock check	
 }
 
+// set the visibility of a known property
 function setPropertyVisibilty(propertyObject, propertyKey, visibile) {
-	// get the class from controls
-	var objectClass = _controlTypes[propertyObject.type];
-	// try actions if not found
-	if (!objectClass) objectClass = _actionTypes[propertyObject.type];
-	
-	if (propertyObject && objectClass && objectClass.properties) {
-		var properties = objectClass.properties;
-		// (if a single it's a class not an array due to JSON class conversionf from xml)
-		if ($.isArray(properties.property)) properties = properties.property; 
-		// loop them
-		for (var i in properties) {
-			var property = properties[i];
-			if (property.key == propertyKey) {
-				property.visible = visibile;
-				break;
+	// if we got a propertyObject
+	if (propertyObject) {
+		// get the class from controls
+		var objectClass = _controlTypes[propertyObject.type];
+		// try actions if not found
+		if (!objectClass) objectClass = _actionTypes[propertyObject.type];
+		// if we have what we need
+		if (objectClass && objectClass.properties) {
+			// get the properties
+			var properties = objectClass.properties;
+			// (if a single it's a class not an array due to JSON class conversionf from xml)
+			if ($.isArray(properties.property)) properties = properties.property; 
+			// loop them
+			for (var i in properties) {
+				var property = properties[i];
+				if (property.key == propertyKey) {
+					property.visible = visibile;
+					break;
+				}
 			}
 		}
 	}
@@ -4454,20 +4459,20 @@ function Property_formDataDestination(cell, propertyObject, property, details) {
 } 
 
 // chart properties
-function Property_chartType(cell, propertyObject, property, details) {
-	Property_select(cell, propertyObject, property, details, function change(ev) {
-		// get the control class
-		var controlClass = _controlTypes[propertyObject.type];		
-		// clean up the JavaScript by triming and removing line breaks and tabs
-		var js = controlClass.initDesignJavaScript.trim();
-		// try and apply it
-		try {				
-			// get the js into a new function variable
-			var f = new Function(js);
-			// run it
-			f.apply(propertyObject, []);
-		} catch (ex) {
-			alert("initDesignJavaScript failed for " + this.type + ". " + ex + "\r\r" + js);
-		}
-	});
+function Property_chartType(cell, chart, property, details) {
+	// create a select property
+	Property_select(cell, chart, property, details);
+	// reset all property visibilities 
+	setPropertyVisibilty(chart, "pieSliceText", false);
+	setPropertyVisibilty(chart, "is3D", false);
+	setPropertyVisibilty(chart, "sliceVisibilityThreshold", false);		
+	// check the type
+	switch (chart.chartType) {
+		case "Pie" :
+			// show pie-only properties
+			setPropertyVisibilty(chart, "pieSliceText", true);
+			setPropertyVisibilty(chart, "is3D", true);
+			setPropertyVisibilty(chart, "sliceVisibilityThreshold", true);			
+		break;
+	}	
 }
