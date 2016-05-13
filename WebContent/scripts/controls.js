@@ -416,6 +416,29 @@ function Control(controlType, parentControl, jsonControl, loadComplexObjects, pa
 		} else {
 			this._remove = function() { this.object.remove(); };
 		}
+		
+		// apply and run any getDetailsFunction JavaScript		
+		if (controlClass.getDetailsFunction)	{
+			// clean up the JavaScript by triming and removing line breaks and tabs
+			var js = controlClass.getDetailsFunction.trim();
+			// try and apply it
+			try {				
+				// get the js into a new function variable
+				var f = new Function(js);
+				// retain a reference to it
+				this._getDetails = f;
+				// apply it
+				this.details = f.apply(this, []);						
+				// add it to this page so the getHtml below can use it
+				window[this.id + "details"] = this.details;
+				// add it into the iframe page so design-time functions called in the page can use it
+				_pageIframeWindow[0][this.id + "details"] = this.details;
+			} catch (ex) {
+				alert("getDetailsFunction failed for " + this.type + ". " + ex + "\r\r" + js);
+				// remember there is an error (stops properties and styles being rendered)
+				this.error = true;
+			}
+		}
 																	
 		// run the constructJavaScript only for brand new controls (needs to be here so the parent object has been created)
 		if (!jsonControl) {			
@@ -508,30 +531,7 @@ function Control(controlType, parentControl, jsonControl, loadComplexObjects, pa
 				this.error = true;
 			}
 		}
-		
-		// apply and run any getDetailsFunction JavaScript		
-		if (controlClass.getDetailsFunction)	{
-			// clean up the JavaScript by triming and removing line breaks and tabs
-			var js = controlClass.getDetailsFunction.trim();
-			// try and apply it
-			try {				
-				// get the js into a new function variable
-				var f = new Function(js);
-				// retain a reference to it
-				this._getDetails = f;
-				// apply it
-				this.details = f.apply(this, []);						
-				// add it to this page so the getHtml below can use it
-				window[this.id + "details"] = this.details;
-				// add it into the iframe page so design-time functions called in the page can use it
-				_pageIframeWindow[0][this.id + "details"] = this.details;
-			} catch (ex) {
-				alert("getDetailsFunction failed for " + this.type + ". " + ex + "\r\r" + js);
-				// remember there is an error (stops properties and styles being rendered)
-				this.error = true;
-			}
-		}
-		
+						
 		// retain that there is initJavaScript (if applicable - this is placed into the page later)
 		this.initJavaScript = (controlClass.initJavaScript ? true : false); 
 		
