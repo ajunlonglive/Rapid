@@ -432,11 +432,14 @@ if (chart) {
 		if (chartData && chartData.fields && chartData.rows) {			
 			if (selection[0].column) {
 				data = {
-					fields:[chartData.fields[0],chartData.fields[selection[0].column]], 
-					rows: [chartData.rows[selection[0].row][0],chartData.rows[selection[0].row][selection[0].column]]
+					fields:[chartData.fields[0],chartData.fields[selection[0].column],"column"], 
+					rows: [[chartData.rows[selection[0].row][0],chartData.rows[selection[0].row][selection[0].column],selection[0].column]]
 				};
 			} else {
-				data = {fields:chartData.fields, rows: [chartData.rows[selection[0].row]]};
+				data = {
+					fields:chartData.fields, 
+					rows: [[chartData.rows[selection[0].row]]]
+				};
 			}			
 			if (field) {
 				for (var i in chartData.fields) {
