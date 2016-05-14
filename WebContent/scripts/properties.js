@@ -4464,6 +4464,7 @@ function Property_chartType(cell, chart, property, details) {
 	Property_select(cell, chart, property, details);
 	// reset all property visibilities
 	setPropertyVisibilty(chart, "curveType", false);
+	setPropertyVisibilty(chart, "isStacked", false);
 	setPropertyVisibilty(chart, "pieSliceText", false);
 	setPropertyVisibilty(chart, "sliceVisibilityThreshold", false);	
 	setPropertyVisibilty(chart, "is3D", false);
@@ -4472,6 +4473,9 @@ function Property_chartType(cell, chart, property, details) {
 	switch (chart.chartType) {
 		case "Line" :
 			setPropertyVisibilty(chart, "curveType", true);
+		break;
+		case "Bar" :
+			setPropertyVisibilty(chart, "isStacked", true);
 		break;
 		case "Pie" :
 			// show pie-only properties
