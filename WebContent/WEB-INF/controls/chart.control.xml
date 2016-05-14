@@ -67,7 +67,7 @@ return [["Line"],["Bar"],["Pie"]];
 	            <name>Left</name>
 	            <changeValueJavaScript>text</changeValueJavaScript>
 	            <refreshHtml>true</refreshHtml>
-	            <helpHtml></helpHtml>
+	            <helpHtml>A number or percentage for how far from the left the chart is within the chart area</helpHtml>
 	        </property>
 	        
 	         <property>
@@ -75,7 +75,7 @@ return [["Line"],["Bar"],["Pie"]];
 	            <name>Top</name>
 	            <changeValueJavaScript>text</changeValueJavaScript>
 	            <refreshHtml>true</refreshHtml>
-	            <helpHtml></helpHtml>
+	            <helpHtml>A number or percentage for how far from the top the chart is within the chart area></helpHtml>
 	        </property>
 	        
 	         <property>
@@ -83,7 +83,7 @@ return [["Line"],["Bar"],["Pie"]];
 	            <name>Width</name>
 	            <changeValueJavaScript>text</changeValueJavaScript>
 	            <refreshHtml>true</refreshHtml>
-	            <helpHtml></helpHtml>
+	            <helpHtml>A number or percentage of the width of the chart relative to the available chart area</helpHtml>
 	        </property>
 	        
 	         <property>
@@ -91,7 +91,15 @@ return [["Line"],["Bar"],["Pie"]];
 	            <name>Height</name>
 	            <changeValueJavaScript>text</changeValueJavaScript>
 	            <refreshHtml>true</refreshHtml>
-	            <helpHtml></helpHtml>
+	            <helpHtml>A number or percentage of the height of the chart relative to the available chart area</helpHtml>
+	        </property>
+	        
+	         <property>
+	            <key>colours</key>
+	            <name>Colours</name>
+	            <changeValueJavaScript>bigtext</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>A comma seperated list of colours to use for the chart elements</helpHtml>
 	        </property>
 	        
 	        <property>
@@ -105,7 +113,7 @@ return [["top"],["right"],["bottom"],["left"],["in"],["labeled"],["none"]];
 					]]>
 	            </getValuesFunction>
 	            <refreshHtml>true</refreshHtml>
-	            <helpHtml></helpHtml>
+	            <helpHtml>The position of the legend or key within the chart area</helpHtml>
 	        </property>
 	        
 	        <property>
@@ -119,7 +127,7 @@ return [["auto"],["start"],["center"],["end"]];
 					]]>
 	            </getValuesFunction>
 	            <refreshHtml>true</refreshHtml>
-	            <helpHtml></helpHtml>
+	            <helpHtml>The alignment of the legend or key to be used at its position</helpHtml>
 	        </property>
 	        
 	         <property>
@@ -129,6 +137,16 @@ return [["auto"],["start"],["center"],["end"]];
 	            <changeValueJavaScript>checkbox</changeValueJavaScript>	           
 	             <refreshHtml>true</refreshHtml>
 	             <helpHtml>Whether to smooth the lines by curving them.</helpHtml>	              
+	        </property>
+	        
+	         <property>
+	            <key>isStacked</key>
+	            <name>Stacked</name>
+	            <visible>false</visible>
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>	           
+	             <refreshHtml>true</refreshHtml>
+	             <refreshProperties>true</refreshProperties>
+	             <helpHtml>Stacks multiple series into the same column</helpHtml>	              
 	        </property>
 	        
 	        <property>
@@ -164,7 +182,7 @@ return [["percentage"],["value"],["label"],["none"]];
 	             <refreshProperties>true</refreshProperties>
 	             <helpHtml>Draws the pie chart in 3 dimensions.</helpHtml>	              
 	        </property>
-	        
+	        	        	        
 	         <property>
 	            <key>pieHole</key>
 	            <name>Pie hole ratio</name>
@@ -254,15 +272,19 @@ function drawChart(id, data) {
 	    		startup: true,
         		duration: 1000,
         		easing: 'out'
-	    	},	    	
-	    	chartArea: {
-	    		left: details.left,
-	    		top: details.top,
-	    		width: details.width,
-	    		height: details.height
-	    	},
+			},	    	
 	    	legend: {position: details.legendPosition, alignment: details.legendAlignment}	    	
 		 };
+		 		 
+		 if (details.left || details.top || details.width || details.height) {
+		 	options.chartArea = {};
+		 	if (details.left) options.chartArea.left = details.left;
+		 	if (details.top) options.chartArea.top = details.top;
+		 	if (details.width) options.chartArea.width = details.width;
+		 	if (details.height) options.chartArea.height = details.height; 
+		 }
+		 
+		 if (details.colours && details.colours.replaceAll(" ","")) options.colors = details.colours.replaceAll(" ","").split(",");
 		 	    
 	    if (details.chartType == "Pie") {
 	    
@@ -309,6 +331,8 @@ function drawChart(id, data) {
         	chart.draw(chartData, options);
 		  			  
 		  } else {
+		  
+		  if (details.isStacked) options.isStacked = details.isStacked;
 		  		  
 		  	var chart = new google.visualization.ColumnChart(element);
         	chart.draw(chartData, options); 
@@ -391,8 +415,10 @@ var details = {
 	top: this.top,
 	width: this.width,
 	height: this.height,
+	colours: this.colours,
 	legendPosition: this.legendPosition,
 	legendAlignment: this.legendAlignment,
+	isStacked: this.isStacked,
 	curveType: this.curveType,
 	pieSliceText: this.pieSliceText,
 	sliceVisibilityThreshold: this.sliceVisibilityThreshold,
