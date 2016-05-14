@@ -122,6 +122,15 @@ return [["auto"],["start"],["center"],["end"]];
 	            <helpHtml></helpHtml>
 	        </property>
 	        
+	         <property>
+	            <key>curveType</key>
+	            <name>Curve lines </name>
+	            <visible>false</visible>
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>	           
+	             <refreshHtml>true</refreshHtml>
+	             <helpHtml>Whether to smooth the lines by curving them.</helpHtml>	              
+	        </property>
+	        
 	        <property>
 	            <key>pieSliceText</key>
 	            <name>Pie slice text</name>
@@ -145,14 +154,23 @@ return [["percentage"],["value"],["label"],["none"]];
 	             <refreshHtml>true</refreshHtml>
 	             <helpHtml>The percentage value below which pie slices will be combined into an "Other" slice</helpHtml>	              
 	        </property>
-	        
+	        	        	        
 	        <property>
 	            <key>is3D</key>
 	            <name>3D</name>
 	            <visible>false</visible>
 	            <changeValueJavaScript>checkbox</changeValueJavaScript>	           
 	             <refreshHtml>true</refreshHtml>
+	             <refreshProperties>true</refreshProperties>
 	             <helpHtml>Draws the pie chart in 3 dimensions.</helpHtml>	              
+	        </property>
+	        
+	         <property>
+	            <key>pieHole</key>
+	            <name>Pie hole ratio</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>A percentage between 0 (no hole) and 99 (greatest hole). Other values are ignored, does not work with 3D</helpHtml>
 	        </property>
 	              
 	    </properties>
@@ -220,6 +238,9 @@ function getChartData(data) {
 // function for drawing a specific chart
 function drawChart(id, data) {
 
+	// if we're not in the global collection yest, add
+    if (!_charts[id]) _charts[id] = {data:data};
+
 	if (_chartsLoaded) {
 	
 		var chartData = getChartData(data);
@@ -245,12 +266,13 @@ function drawChart(id, data) {
 		 	    
 	    if (details.chartType == "Pie") {
 	    
-		    var chart = new google.visualization.PieChart(element);		    	
-		    
+	    	if (details.sliceVisibilityThreshold) options.sliceVisibilityThreshold = details.sliceVisibilityThreshold / 100;
+			options.pieSliceText = details.pieSliceText;
 		    options.is3D = details.is3D;	
-		    options.pieSliceText = details.pieSliceText;
-		    if (details.sliceVisibilityThreshold) options.sliceVisibilityThreshold = details.sliceVisibilityThreshold / 100;
-		   
+		    if (details.pieHole) options.pieHole = details.pieHole / 100;
+		    	    
+		    var chart = new google.visualization.PieChart(element);		    	
+		    		   
 		   // explode selected slice
 		    google.visualization.events.addListener(chart, 'select', function (ev) {
 		        var selection = chart.getSelection();
@@ -281,6 +303,8 @@ function drawChart(id, data) {
 		            		   
 		  } else if (details.chartType == "Line") {
 		  
+		  	options.curveType = details.curveType ? "function" : "none"; 
+		  
 		  	var chart = new google.visualization.LineChart(element);
         	chart.draw(chartData, options);
 		  			  
@@ -302,12 +326,7 @@ function drawChart(id, data) {
 		// retain chart
 		_charts[id].chart = chart;
       
-      } else {
-      	
-      	// if we're not in the global collection add for when charts is loaded
-      	if (!_charts[id]) _charts[id] = {data:data};
-
-      }
+      } 
 	 
 }
 
@@ -374,9 +393,11 @@ var details = {
 	height: this.height,
 	legendPosition: this.legendPosition,
 	legendAlignment: this.legendAlignment,
+	curveType: this.curveType,
 	pieSliceText: this.pieSliceText,
+	sliceVisibilityThreshold: this.sliceVisibilityThreshold,
 	is3D: this.is3D,
-	sliceVisibilityThreshold: this.sliceVisibilityThreshold
+	pieHole: this.pieHole	
 };
 window[this.id + "details"] = details;
 return details;      

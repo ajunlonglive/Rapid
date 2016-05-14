@@ -4462,17 +4462,23 @@ function Property_formDataDestination(cell, propertyObject, property, details) {
 function Property_chartType(cell, chart, property, details) {
 	// create a select property
 	Property_select(cell, chart, property, details);
-	// reset all property visibilities 
+	// reset all property visibilities
+	setPropertyVisibilty(chart, "curveType", false);
 	setPropertyVisibilty(chart, "pieSliceText", false);
+	setPropertyVisibilty(chart, "sliceVisibilityThreshold", false);	
 	setPropertyVisibilty(chart, "is3D", false);
-	setPropertyVisibilty(chart, "sliceVisibilityThreshold", false);		
+	setPropertyVisibilty(chart, "pieHole", false);
 	// check the type
 	switch (chart.chartType) {
+		case "Line" :
+			setPropertyVisibilty(chart, "curveType", true);
+		break;
 		case "Pie" :
 			// show pie-only properties
-			setPropertyVisibilty(chart, "pieSliceText", true);
+			setPropertyVisibilty(chart, "pieSliceText", true);			
+			setPropertyVisibilty(chart, "sliceVisibilityThreshold", true);
 			setPropertyVisibilty(chart, "is3D", true);
-			setPropertyVisibilty(chart, "sliceVisibilityThreshold", true);			
+			if (!chart.is3D)	setPropertyVisibilty(chart, "pieHole", true);
 		break;
 	}	
 }
