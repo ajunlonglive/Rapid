@@ -67,7 +67,7 @@ return [["Line"],["Bar"],["Pie"]];
 	            <name>Left</name>
 	            <changeValueJavaScript>text</changeValueJavaScript>
 	            <refreshHtml>true</refreshHtml>
-	            <helpHtml>A number or percentage for how far from the left the chart is within the chart area</helpHtml>
+	            <helpHtml>A number or percentage for how far from the left the chart is within the chart area.</helpHtml>
 	        </property>
 	        
 	         <property>
@@ -75,7 +75,7 @@ return [["Line"],["Bar"],["Pie"]];
 	            <name>Top</name>
 	            <changeValueJavaScript>text</changeValueJavaScript>
 	            <refreshHtml>true</refreshHtml>
-	            <helpHtml>A number or percentage for how far from the top the chart is within the chart area></helpHtml>
+	            <helpHtml>A number or percentage for how far from the top the chart is within the chart area.</helpHtml>
 	        </property>
 	        
 	         <property>
@@ -83,7 +83,7 @@ return [["Line"],["Bar"],["Pie"]];
 	            <name>Width</name>
 	            <changeValueJavaScript>text</changeValueJavaScript>
 	            <refreshHtml>true</refreshHtml>
-	            <helpHtml>A number or percentage of the width of the chart relative to the available chart area</helpHtml>
+	            <helpHtml>A number or percentage of the width of the chart relative to the available chart area.</helpHtml>
 	        </property>
 	        
 	         <property>
@@ -91,7 +91,7 @@ return [["Line"],["Bar"],["Pie"]];
 	            <name>Height</name>
 	            <changeValueJavaScript>text</changeValueJavaScript>
 	            <refreshHtml>true</refreshHtml>
-	            <helpHtml>A number or percentage of the height of the chart relative to the available chart area</helpHtml>
+	            <helpHtml>A number or percentage of the height of the chart relative to the available chart area.</helpHtml>
 	        </property>
 	        
 	         <property>
@@ -99,7 +99,7 @@ return [["Line"],["Bar"],["Pie"]];
 	            <name>Colours</name>
 	            <changeValueJavaScript>bigtext</changeValueJavaScript>
 	            <refreshHtml>true</refreshHtml>
-	            <helpHtml>A comma seperated list of colours to use for the chart elements</helpHtml>
+	            <helpHtml>A comma separated list of colours to use for the chart elements.</helpHtml>
 	        </property>
 	        
 	        <property>
@@ -113,7 +113,7 @@ return [["top"],["right"],["bottom"],["left"],["in"],["labeled"],["none"]];
 					]]>
 	            </getValuesFunction>
 	            <refreshHtml>true</refreshHtml>
-	            <helpHtml>The position of the legend or key within the chart area</helpHtml>
+	            <helpHtml>The position of the legend or key within the chart area.</helpHtml>
 	        </property>
 	        
 	        <property>
@@ -127,26 +127,26 @@ return [["auto"],["start"],["center"],["end"]];
 					]]>
 	            </getValuesFunction>
 	            <refreshHtml>true</refreshHtml>
-	            <helpHtml>The alignment of the legend or key to be used at its position</helpHtml>
+	            <helpHtml>The alignment of the legend or key to be used at its position.</helpHtml>
 	        </property>
 	        
 	         <property>
 	            <key>curveType</key>
 	            <name>Curve lines </name>
 	            <visible>false</visible>
-	            <changeValueJavaScript>checkbox</changeValueJavaScript>	           
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>
 	             <refreshHtml>true</refreshHtml>
-	             <helpHtml>Whether to smooth the lines by curving them.</helpHtml>	              
+	             <helpHtml>Whether to smooth the lines by curving them.</helpHtml>
 	        </property>
 	        
 	         <property>
 	            <key>isStacked</key>
 	            <name>Stacked</name>
 	            <visible>false</visible>
-	            <changeValueJavaScript>checkbox</changeValueJavaScript>	           
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>
 	             <refreshHtml>true</refreshHtml>
 	             <refreshProperties>true</refreshProperties>
-	             <helpHtml>Stacks multiple series into the same column</helpHtml>	              
+	             <helpHtml>Stacks multiple series into the same column.</helpHtml>
 	        </property>
 	        
 	        <property>
@@ -167,20 +167,20 @@ return [["percentage"],["value"],["label"],["none"]];
 	        <property>
 	            <key>sliceVisibilityThreshold</key>
 	            <name>Other threshold</name>
-	            <visible>false</visible>	            
-	            <changeValueJavaScript>integer</changeValueJavaScript>	           
-	             <refreshHtml>true</refreshHtml>
-	             <helpHtml>The percentage value below which pie slices will be combined into an "Other" slice</helpHtml>	              
+	            <visible>false</visible>
+	            <changeValueJavaScript>integer</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>The percentage value below which pie slices will be combined into an "Other" slice.</helpHtml>
 	        </property>
 	        	        	        
 	        <property>
 	            <key>is3D</key>
 	            <name>3D</name>
 	            <visible>false</visible>
-	            <changeValueJavaScript>checkbox</changeValueJavaScript>	           
-	             <refreshHtml>true</refreshHtml>
-	             <refreshProperties>true</refreshProperties>
-	             <helpHtml>Draws the pie chart in 3 dimensions.</helpHtml>	              
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
+	            <refreshProperties>true</refreshProperties>
+	            <helpHtml>Draws the pie chart in 3 dimensions.</helpHtml>
 	        </property>
 	        	        	        
 	         <property>
@@ -188,7 +188,7 @@ return [["percentage"],["value"],["label"],["none"]];
 	            <name>Pie hole ratio</name>
 	            <changeValueJavaScript>text</changeValueJavaScript>
 	            <refreshHtml>true</refreshHtml>
-	            <helpHtml>A percentage between 0 (no hole) and 99 (greatest hole). Other values are ignored, does not work with 3D</helpHtml>
+	            <helpHtml>A percentage between 0 (no hole) and 99 (greatest hole). Other values are ignored and it does not work with 3D.</helpHtml>
 	        </property>
 	              
 	    </properties>
@@ -197,7 +197,7 @@ return [["percentage"],["value"],["label"],["none"]];
 	        <resource>
 	            <type>javascriptLink</type>
 	            <contents>https://www.gstatic.com/charts/loader.js</contents>
-	        </resource>	    
+	        </resource>
 	        <resource>
 	            <type>javascript</type>
 	            <contents>
@@ -230,9 +230,9 @@ function easeOutBounce( t ) {
 
     }
 
-}					
+}
 					
-// global for all charts					
+// global for all charts
 _charts = {};
 // whether charts has loaded
 _chartsLoaded = false;
@@ -241,7 +241,7 @@ _chartsLoaded = false;
 function getChartData(data) {
 
 	var dataArray = [
-		data.fields		
+		data.fields
 	];
 	
 	for (var i in data.rows) {
@@ -272,8 +272,8 @@ function drawChart(id, data) {
 	    		startup: true,
         		duration: 1000,
         		easing: 'out'
-			},	    	
-	    	legend: {position: details.legendPosition, alignment: details.legendAlignment}	    	
+			},
+	    	legend: {position: details.legendPosition, alignment: details.legendAlignment}
 		 };
 		 		 
 		 if (details.left || details.top || details.width || details.height) {
@@ -281,7 +281,7 @@ function drawChart(id, data) {
 		 	if (details.left) options.chartArea.left = details.left;
 		 	if (details.top) options.chartArea.top = details.top;
 		 	if (details.width) options.chartArea.width = details.width;
-		 	if (details.height) options.chartArea.height = details.height; 
+		 	if (details.height) options.chartArea.height = details.height;
 		 }
 		 
 		 if (details.colours && details.colours.replaceAll(" ","")) options.colors = details.colours.replaceAll(" ","").split(",");
@@ -290,10 +290,10 @@ function drawChart(id, data) {
 	    
 	    	if (details.sliceVisibilityThreshold) options.sliceVisibilityThreshold = details.sliceVisibilityThreshold / 100;
 			options.pieSliceText = details.pieSliceText;
-		    options.is3D = details.is3D;	
+		    options.is3D = details.is3D;
 		    if (details.pieHole) options.pieHole = details.pieHole / 100;
 		    	    
-		    var chart = new google.visualization.PieChart(element);		    	
+		    var chart = new google.visualization.PieChart(element);
 		    		   
 		   // explode selected slice
 		    google.visualization.events.addListener(chart, 'select', function (ev) {
@@ -311,13 +311,13 @@ function drawChart(id, data) {
 		      });
 		      
 		      // slice animation
-		      var counter = 0;		      
-		      var handler = setInterval( function(){     	
-		        var i = (1 - easeOutBounce(counter)) * 0.5; 		     
+		      var counter = 0;
+		      var handler = setInterval( function(){
+		        var i = (1 - easeOutBounce(counter)) * 0.5;
 		        options.slices = {};
 		        for (var j = 0; j < data.rows.length; j++) {
 		        	options.slices[j] = {offset: i}
-		        }        
+		        }
 		        chart.draw(chartData, options);
 		        counter = counter + 0.1
 		        if (counter > 1) clearInterval(handler);
@@ -325,7 +325,7 @@ function drawChart(id, data) {
 		            		   
 		  } else if (details.chartType == "Line") {
 		  
-		  	options.curveType = details.curveType ? "function" : "none"; 
+		  	options.curveType = details.curveType ? "function" : "none";
 		  
 		  	var chart = new google.visualization.LineChart(element);
         	chart.draw(chartData, options);
@@ -335,7 +335,7 @@ function drawChart(id, data) {
 		  if (details.isStacked) options.isStacked = details.isStacked;
 		  		  
 		  	var chart = new google.visualization.ColumnChart(element);
-        	chart.draw(chartData, options); 
+        	chart.draw(chartData, options);
 		  
 		}
 		  
@@ -350,15 +350,15 @@ function drawChart(id, data) {
 		// retain chart
 		_charts[id].chart = chart;
       
-      } 
+      }
 	 
 }
 
 // if google and google charts are present
-if (window["google"] && google.charts) {	
+if (window["google"] && google.charts) {
 	// load charts
 	google.charts.load('current', {'packages':['corechart']});
-	// draw once loaded	
+	// draw once loaded
 	google.charts.setOnLoadCallback( function() {
 		// remember we have loaded
 		_chartsLoaded = true;
@@ -366,50 +366,50 @@ if (window["google"] && google.charts) {
 		for (var id in _charts) {
 			drawChart(id, _charts[id].data);
 		}
-	}); 	 	 	
+	});
 }
 
-					]]>	                
+					]]>
 	            </contents>
-	        </resource>		        
+	        </resource>
 	        <resource>
 	            <type>css</type>
 	            <contents>
 .chart {
 	width: 500px;
 	height: 400px;
-}	                
+}
 	            </contents>
-	        </resource>  
+	        </resource>
 	    </resources>
 	    	    	    
 	    <getHtmlFunction>
-	        <![CDATA[	  
+	        <![CDATA[
 return "<div id='" + this.id + "' class='chart" + getStyleClasses(this) + "'></canvas>";
 	        ]]>
-	    </getHtmlFunction> 
+	    </getHtmlFunction>
 	    
 	    <rebuildJavaScript>
 // get the iFrame window
-var w = _pageIframe[0].contentWindow;	        
+var w = _pageIframe[0].contentWindow;
 // get the id
 var id = this.id;
 // draw it - after a short delay for the library to initialise
-setTimeout(function() { 
-	w.drawChart(id, {fields:['Task','Hours per day'], rows:[['Work',11],['Eat',2],['Commute',2],['Watch TV',1],['Sleep',7]]});	
-}, 100);      	       
+setTimeout(function() {
+	w.drawChart(id, {fields:['Task','Hours per day'], rows:[['Work',11],['Eat',2],['Commute',2],['Watch TV',1],['Sleep',7]]});
+}, 100);
 	    </rebuildJavaScript>
 	    	    	    
 	     <saveJavaScript>
-	        <![CDATA[ 
+	        <![CDATA[
 this.object.html("");
 	        ]]>
-	    </saveJavaScript>	    
+	    </saveJavaScript>
 	    
 	     <getDetailsFunction>
 	        <![CDATA[
-var details = { 
-	name: this.name, 
+var details = {
+	name: this.name,
 	chartType: this.chartType,
 	left: this.left,
 	top: this.top,
@@ -423,10 +423,10 @@ var details = {
 	pieSliceText: this.pieSliceText,
 	sliceVisibilityThreshold: this.sliceVisibilityThreshold,
 	is3D: this.is3D,
-	pieHole: this.pieHole	
+	pieHole: this.pieHole
 };
 window[this.id + "details"] = details;
-return details;      
+return details;
 	        ]]>
 	    </getDetailsFunction>
 	    
@@ -449,18 +449,18 @@ drawChart(id, data);
 
 	    <styles>
 	        <style>
-	            <name>Chart</name>  
+	            <name>Chart</name>
 	            <getAppliesToFunction>
-					<![CDATA[	      
+					<![CDATA[
 return "#" + this.id;
-	       			 ]]>	                
+	       			 ]]>
 	            </getAppliesToFunction>
 	        </style>
 	    </styles>
 	    
 	    <initJavaScript>
-	        <![CDATA[      
-$("#" + id).html("loading...");	        
+	        <![CDATA[
+$("#" + id).html("loading...");
 	        ]]>
 	    </initJavaScript>
 	    
@@ -472,22 +472,22 @@ $("#" + id).html("loading...");
 	                <![CDATA[
 var data = null;
 var chart = _charts[id];
-if (chart) { 	                
+if (chart) {
 	var selection = _charts[id].chart.getSelection();
 	if (selection && selection.length > 0) {
 		var chartData = _charts[id].data;
-		if (chartData && chartData.fields && chartData.rows) {			
+		if (chartData && chartData.fields && chartData.rows) {
 			if (selection[0].column) {
 				data = {
-					fields:[chartData.fields[0],chartData.fields[selection[0].column],"column"], 
+					fields:[chartData.fields[0],chartData.fields[selection[0].column],"column"],
 					rows: [[chartData.rows[selection[0].row][0],chartData.rows[selection[0].row][selection[0].column],selection[0].column]]
 				};
 			} else {
 				data = {
-					fields:chartData.fields, 
+					fields:chartData.fields,
 					rows: [[chartData.rows[selection[0].row]]]
 				};
-			}			
+			}
 			if (field) {
 				for (var i in chartData.fields) {
 					if (chartData.fields[i] && chartData.fields[i].toLowerCase() == field.toLowerCase()) {
