@@ -182,7 +182,11 @@ public class RapidSecurityAdapter extends SecurityAdapter {
 				// record that we modified
 				modified = true;
 			}
-				
+
+			/*			 
+			
+			 17/05/2016 GE - admin/admin and user/user should not be added automatically to all new applications. Rapid action will add current user
+			 
 			// add default users if there aren't any
 			if (_security.getUsers().size() == 0) {
 				
@@ -207,6 +211,8 @@ public class RapidSecurityAdapter extends SecurityAdapter {
 				modified = true;
 				
 			}
+			
+			*/
 			
 			// save the files if we modified it							
 			if (modified) save();
