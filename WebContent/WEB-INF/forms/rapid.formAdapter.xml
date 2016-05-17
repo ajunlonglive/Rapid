@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <formAdapter xmlVersion="1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/formAdapter.xsd">
   <type>rapid</type>
-  <name>Rapid</name>
+  <name>Rapid form adapter</name>
   <class>com.rapid.forms.RapidFormAdapter</class>
   <canSaveForms>true</canSaveForms>
   <canGeneratePDF>true</canGeneratePDF>
