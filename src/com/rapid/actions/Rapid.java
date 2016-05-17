@@ -157,7 +157,7 @@ public class Rapid extends Action {
 			// add standard form adapter too
 			newApp.setFormAdapterType("rapid");
 			// add form security
-			newApp.setSecurityAdapterType("rapid");
+			newApp.setSecurityAdapterType("form");
 		}
 										 								
 		// initialise the application

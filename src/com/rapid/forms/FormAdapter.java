@@ -866,14 +866,14 @@ public abstract class FormAdapter {
 								// url decode value 
 								try { value = URLDecoder.decode(parts[1],"UTF-8"); } catch (UnsupportedEncodingException ex) {}				
 							} // parts > 0	
-							// find the control in the page
-							Control control = rapidRequest.getPage().getControl(id);
-							// only if we found it
-							if (control != null) {																										
-								// get any control validation
-								Validation validation = control.getValidation();
-								// if we had some
-								if (validation != null) {
+							// null can't do any harm so don't check them
+							if (value != null) {
+								// find the control in the page
+								Control control = rapidRequest.getPage().getControl(id);
+								// only if we found it
+								if (control != null) {																										
+									// get any control validation
+									Validation validation = control.getValidation();
 									// get the RegEx
 									String regEx = validation.getRegEx();
 									// set to empty string if null (most seem to be empty)
@@ -881,10 +881,7 @@ public abstract class FormAdapter {
 									// not if none, and not if javascript
 									if (regEx.length() > 0 && !"".equals(validation.getType()) && !"none".equals(validation.getType()) && !"javascript".equals(validation.getType())) {										
 										// check for null
-										if (value == null) {
-											// throw error if nulls not allowed and not pass if hidden
-											if (!validation.getAllowNulls() && !validation.getPassHidden()) throw new ServerSideValidationException("Server side validation error - value " + id + " for  form " + formId+ " can't be null");								
-										} else {
+										if (value != null) {
 											// place holder for the patter
 											Pattern pattern = null;
 											// this exception is uncaught but we want to know about it
@@ -907,12 +904,10 @@ public abstract class FormAdapter {
 												throw new ServerSideValidationException("Server side validation error - value '" + value + "' for control " + id + " in  form " + formId + " failed regex " + regEx + " - regex ServerSideValidationException", ex);
 											}											
 											// compile and check it
-											if (!pattern.matcher(value).find()) throw new ServerSideValidationException("Server side validation error - value " + id + " for  form " + formId+ " failed regex");
-										} // value check
-									} // javascript type check		
-								} // validation check
-								// check value again
-								if (value != null) {
+											if (!pattern.matcher(value).find()) throw new ServerSideValidationException("Server side validation error - value " + id + " for  form " + formId+ " failed regex");										
+										} // javascript type check		
+									} // validation check
+									
 									// look for a maxLength property
 									String maxLength = control.getProperty("maxLength");
 									// if we got one
@@ -924,8 +919,9 @@ public abstract class FormAdapter {
 											if (value.length() > max) throw new ServerSideValidationException("Server side validation error - value " + id + " for  form " + formId+ " failed regex");
 										}
 									}
-								}
-							} // found control in page
+									
+								} // found control in page
+							} // null check
 							// if this is the hidden values
 							if (id.endsWith("_hiddenControls") && value != null) {
 								// retain the hidden values

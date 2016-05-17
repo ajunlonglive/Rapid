@@ -661,7 +661,7 @@ public class Rapid extends RapidHttpServlet {
 									logger.debug("Returning to start - could not retrieve form details");
 									
 									// we've lost the form id so start the form again
-									gotoStartPage(request, response, app, true);
+									gotoStartPage(request, response, app, !security.checkUserRole(rapidRequest, DESIGN_ROLE));
 									
 								} else {
 							
@@ -680,7 +680,7 @@ public class Rapid extends RapidHttpServlet {
 											logger.debug("Returning to start - submit action but form not submitted");
 											
 											// go to the start page
-											gotoStartPage(request, response, app, true);
+											gotoStartPage(request, response, app, !security.checkUserRole(rapidRequest, DESIGN_ROLE));
 											
 										} else {
 																															
@@ -700,8 +700,8 @@ public class Rapid extends RapidHttpServlet {
 													
 													logger.debug("Returning to start - form has been submitted, no submission page");
 													
-													// go to the start page
-													gotoStartPage(request, response, app, true);
+													// go to the start page unless user has the design role
+													gotoStartPage(request, response, app, !security.checkUserRole(rapidRequest, DESIGN_ROLE));
 													
 												} else {
 													
@@ -783,27 +783,35 @@ public class Rapid extends RapidHttpServlet {
 												// get the position of the next page in sequence
 												int pageIndex = pageHeaders.indexOf(requestPageId) + 1;
 												
-												// get the next page
-												page = app.getPages().getPage(getServletContext(), pageHeaders.get(pageIndex).getId());
-												
-												// check the page visibility
-												while (!page.isVisible(rapidRequest, app, formDetails)) {
-													// if we're here the visibility check on the current page failed so increment the index
-													pageIndex ++;
-													// if there are no more pages go to the summary
-													if (pageIndex > pageHeaders.size() - 1) {
-														// but set the the show summary to true
-														requestSummary = true;
-														// we're done
-														break;
-													} else {
-														// select the next page to check the visibility of
-														page = app.getPages().getPage(getServletContext(), pageHeaders.get(pageIndex).getId());
-														// if not submitted set that we're allowed to this page
-														if (!formDetails.getSubmitted()) formAdapter.setMaxPage(rapidRequest, formDetails, page.getId());														
-													} // pages remaining check									
-												} // page visible loop		
-																																																						
+												// if there are any pages next to check
+												if (pageHeaders.size() < pageIndex) {
+													
+													// get the next page
+													page = app.getPages().getPage(getServletContext(), pageHeaders.get(pageIndex).getId());
+													
+													// check the page visibility
+													while (!page.isVisible(rapidRequest, app, formDetails)) {
+														// if we're here the visibility check on the current page failed so increment the index
+														pageIndex ++;
+														// if there are no more pages go to the summary
+														if (pageIndex > pageHeaders.size() - 1) {
+															// but set the the show summary to true
+															requestSummary = true;
+															// we're done
+															break;
+														} else {
+															// select the next page to check the visibility of
+															page = app.getPages().getPage(getServletContext(), pageHeaders.get(pageIndex).getId());
+															// if not submitted set that we're allowed to this page
+															if (!formDetails.getSubmitted()) formAdapter.setMaxPage(rapidRequest, formDetails, page.getId());														
+														} // pages remaining check									
+													} // page visible loop
+													
+												} else {
+													// go straight for the summary
+													requestSummary = true;
+												}
+																										
 												// if this is the last page
 												if (requestSummary) {
 													
@@ -831,7 +839,7 @@ public class Rapid extends RapidHttpServlet {
 											logger.error("Form data failed server side validation : " + ex.getMessage(), ex);
 											
 											// send a redirect back to the beginning - there's no reason except for tampering  that this would happen
-											gotoStartPage(request, response, app, true);
+											gotoStartPage(request, response, app, !security.checkUserRole(rapidRequest, DESIGN_ROLE));
 											
 										}
 									
