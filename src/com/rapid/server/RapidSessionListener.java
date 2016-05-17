@@ -67,7 +67,7 @@ public class RapidSessionListener implements HttpSessionListener {
     	HttpSession session = event.getSession();
     	String userName = (String) session.getAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME);
     	if (_logger == null) _logger = Logger.getLogger(this.getClass());
-    	_logger.debug("Destorying session " + session.getId() + " for " + userName);
+    	_logger.debug("Destroying session " + session.getId() + " for " + userName);
     	if (userName != null) {
     		ServletContext servletContext = session.getServletContext();
     		Applications applications = (Applications) servletContext.getAttribute("applications");
