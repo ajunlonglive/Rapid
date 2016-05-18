@@ -282,7 +282,7 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 %>
 
 	<div class="image">
-		<img src="images/RapidLogo_200x134.png" />
+		<img src="images/RapidLogo_60x40.png" />
 	</div>
 	
 	<div class="title">

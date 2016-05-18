@@ -54,7 +54,7 @@ public class RapidSecurityAdapter extends SecurityAdapter {
 		private Roles _roles;
 		private Users _users;
 		
-		// properties (these are mashalled in and out of the security.xml file)
+		// properties (these are marshalled in and out of the security.xml file)
 		
 		public Roles getRoles() { return _roles; }
 		public void setRoles(Roles roles) { _roles = roles; }

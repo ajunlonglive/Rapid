@@ -784,7 +784,7 @@ public class Rapid extends RapidHttpServlet {
 												int pageIndex = pageHeaders.indexOf(requestPageId) + 1;
 												
 												// if there are any pages next to check
-												if (pageHeaders.size() < pageIndex) {
+												if (pageIndex < pageHeaders.size()) {
 													
 													// get the next page
 													page = app.getPages().getPage(getServletContext(), pageHeaders.get(pageIndex).getId());

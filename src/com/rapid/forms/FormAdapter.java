@@ -463,7 +463,26 @@ public abstract class FormAdapter {
 					throw new Exception("Form session id has not been set for user " + rapidRequest.getUserName() + " from " + rapidRequest.getRequest().getRemoteAddr() + ", but form details object id is " + formDetails.getId());
 				} else {
 					// compare them
-					if (!formId.equals(formDetails.getId())) throw new Exception("Form session id mismatch for user " + rapidRequest.getUserName() + " from " + rapidRequest.getRequest().getRemoteAddr() + ", form session id is " + formId + " but form details object id is " + formDetails.getId());
+					if (!formId.equals(formDetails.getId())) {
+						// they're different so check for designer security before throwing an exception, assume not designer
+						boolean isDesigner = false;
+						// get the application
+						Application app = rapidRequest.getApplication();
+						// check it
+						if (app != null) {
+							// get it's security
+							SecurityAdapter security = app.getSecurityAdapter();
+							// check we got one
+							if (security != null) {
+								// check the role (fail silently)
+								try {
+									if (security.checkUserRole(rapidRequest, Rapid.DESIGN_ROLE)) isDesigner = true;
+								} catch (Exception ex) {}
+							}
+						}
+						// throw the exception if not the designer
+						if (!isDesigner) throw new Exception("Form session id mismatch for user " + rapidRequest.getUserName() + " from " + rapidRequest.getRequest().getRemoteAddr() + ", form session id is " + formId + " but form details object id is " + formDetails.getId());
+					}
 				}
 			} catch (Exception ex) {
 				// log
