@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2014 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -29,6 +29,7 @@ var _styleRules = {
 "background-color" : {"values" : "<color>|transparent"},
 "background-image" : {"values" : "<uri>|none"},
 "background-position" : {"values" : "<percentage>|<length>|left|center|right|top|bottom"},
+"background-size" : {"values" : "<percentage>|<length>|auto|cover|contain|initial|inherit"},
 "background-repeat" : {"values" : "repeat|repeat-x|repeat-y|no-repeat"},
 "border" : {"values" : "<border-width>|<border-width> <border-style> border-top-color"},
 "border-collapse" : {"values" : "collapse|separate"},
