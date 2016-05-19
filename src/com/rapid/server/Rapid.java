@@ -522,7 +522,7 @@ public class Rapid extends RapidHttpServlet {
 										jsonApp.put("id", app.getId());
 										jsonApp.put("version", app.getVersion());
 										jsonApp.put("title", app.getTitle());
-										jsonApp.put("noRetainPassword", app.getNoRetainPassword());	
+										jsonApp.put("storePasswordDuration", app.getStorePasswordDuration());
 										// add app to our main array
 										jsonApps.put(jsonApp);
 																		
@@ -542,7 +542,7 @@ public class Rapid extends RapidHttpServlet {
 													jsonApp.put("version", version.getVersion());
 													jsonApp.put("status", version.getStatus());										
 													jsonApp.put("title", version.getTitle());
-													jsonApp.put("noRetainPassword", version.getNoRetainPassword());	
+													jsonApp.put("storePasswordDuration", version.getStorePasswordDuration());	
 													jsonApp.put("test", true);
 													// add app to our main array
 													jsonApps.put(jsonApp);
