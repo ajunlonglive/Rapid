@@ -866,6 +866,19 @@ public interface SOADataReader {
 		            // get the next object (this can create new columns)
 		            Object o = x.nextValue();
 		            
+		            if (o instanceof String) {
+		            	// do nothing
+		            } else  if (o instanceof Integer) {
+		            	int i = (Integer) o;
+		            	o = Integer.toString(i);
+		            } else  if (o instanceof Double) {
+		            	Double d = (Double) o;
+		            	o = Double.toString(d);
+		            } else if (o instanceof Boolean) {
+		            	Boolean b = (Boolean) o;
+		            	o = Boolean.toString(b);
+		            }
+		            
 		            // dec the column
 					_currentColumn --;
 					
