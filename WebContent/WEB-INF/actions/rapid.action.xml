@@ -355,7 +355,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 				version: $("#rapid_P0_C1044_").val(),
 				securityAdapter: $("#rapid_P0_C81").val(),
 				deviceSecurity: $("#rapid_P0_C1591_").prop("checked"),
-				noRetainPassword: $("#rapid_P0_C1614_").prop("checked")
+				storePasswordDuration: $("#rapid_P0_C1621_").val()
 			};	
 		break;
 		case "SAVEACTIONS" :

@@ -751,7 +751,7 @@ public class Rapid extends Action {
 						// add whether there is device security
 						result.put("deviceSecurity", app.getDeviceSecurity());
 						// add whether password is retained on Rapid Mobile
-						result.put("noRetainPassword", app.getNoRetainPassword());	
+						result.put("storePasswordDuration", app.getStorePasswordDuration());	
 						// add action types
 						result.put("actionTypes", app.getActionTypes());				
 						// add control types
@@ -1578,13 +1578,13 @@ public class Rapid extends Action {
 				
 				boolean deviceSecurity = jsonAction.optBoolean("deviceSecurity");
 				
-				boolean noRetainPassword = jsonAction.optBoolean("noRetainPassword");
+				String storePasswordDuration = jsonAction.optString("storePasswordDuration");
 				
 				app.setSecurityAdapterType(securityAdapter);
 				
 				app.setDeviceSecurity(deviceSecurity);
 				
-				app.setNoRetainPassword(noRetainPassword);
+				app.setStorePasswordDuration(storePasswordDuration);
 				
 				app.save(rapidServlet, rapidRequest, true);
 				

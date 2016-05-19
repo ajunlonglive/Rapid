@@ -558,8 +558,8 @@ public class Application {
 	
 	// instance variables	
 	private int _xmlVersion, _status, _applicationBackupsMaxSize, _pageBackupsMaxSize;
-	private String _id, _version, _name, _title, _description, _startPageId, _themeType, _styles, _statusBarColour, _statusBarHighlightColour, _statusBarTextColour, _statusBarIconColour, _functions, _securityAdapterType, _formAdapterType, _createdBy, _modifiedBy;
-	private boolean _showConrolIds, _showActionIds, _deviceSecurity, _noRetainPassword;
+	private String _id, _version, _name, _title, _description, _startPageId, _themeType, _styles, _statusBarColour, _statusBarHighlightColour, _statusBarTextColour, _statusBarIconColour, _functions, _securityAdapterType, _storePasswordDuration, _formAdapterType, _createdBy, _modifiedBy;
+	private boolean _showConrolIds, _showActionIds, _deviceSecurity;
 	private Date _createdDate, _modifiedDate;
 	private Map<String,Integer> _pageOrders;
 	private SecurityAdapter _securityAdapter;
@@ -681,8 +681,8 @@ public class Application {
 	public void setDeviceSecurity(boolean deviceSecurity) { _deviceSecurity = deviceSecurity; }
 	
 	// whether to not retain the password in Rapid Mobile - note that it's in the negative
-	public boolean getNoRetainPassword() { return _noRetainPassword; }
-	public void setNoRetainPassword(boolean noRetainPassword) { _noRetainPassword = noRetainPassword; }
+	public String getStorePasswordDuration() { return _storePasswordDuration; }
+	public void setStorePasswordDuration(String storePasswordDuration) { _storePasswordDuration = storePasswordDuration; }
 	
 	// the type name of the form adapter this application uses (if any)
 	public String getFormAdapterType() { return _formAdapterType; }
