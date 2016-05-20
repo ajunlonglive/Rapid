@@ -1542,6 +1542,8 @@ public class Designer extends RapidHttpServlet {
 														user = new User(userName, rapidUser.getDescription(), rapidUser.getPassword());
 														// add the new user 
 														security.addUser(rapidRequest, user);
+														// if there is device security in place allow this new user
+														if (appNew.getDeviceSecurity()) user.setDeviceDetails("IP=*");
 													}
 													
 													// add Admin and Design roles for the new user if required
