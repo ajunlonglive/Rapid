@@ -207,12 +207,14 @@ if (data && data.selectedRowNumber && data.rows && data.rows[data.selectedRowNum
 	            <setPropertyJavaScript>
 	                <![CDATA[	
 var dataStoreData = getDataStoreData(id, details);	                
-if (dataStoreData && dataStoreData.selectedRowNumber) {	
+if (dataStoreData && dataStoreData.selectedRowNumber && dataStoreData.rows && dataStoreData.rows.length >= dataStoreData.selectedRowNumber) {	
 	data = makeDataObject(data, field);
 	if (data && data.rows) {
-		dataStoreData.rows[dataStoreData.selectedRowNumber] = data.rows[0][0];
-		saveDataStoreData(id, details, dataStoreData);
+		dataStoreData.rows[dataStoreData.selectedRowNumber - 1] = data.rows[0][0];		
+	} else {
+		dataStoreData.rows.splice(dataStoreData.selectedRowNumber - 1,1);
 	}
+	saveDataStoreData(id, details, dataStoreData);
 }            
 	                ]]>
 	            </setPropertyJavaScript>
