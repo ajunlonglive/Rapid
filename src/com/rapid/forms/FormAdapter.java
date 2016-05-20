@@ -893,40 +893,43 @@ public abstract class FormAdapter {
 								if (control != null) {																										
 									// get any control validation
 									Validation validation = control.getValidation();
-									// get the RegEx
-									String regEx = validation.getRegEx();
-									// set to empty string if null (most seem to be empty)
-									if (regEx == null) regEx = "";
-									// not if none, and not if javascript
-									if (regEx.length() > 0 && !"".equals(validation.getType()) && !"none".equals(validation.getType()) && !"javascript".equals(validation.getType())) {										
-										// check for null
-										if (value != null) {
-											// place holder for the patter
-											Pattern pattern = null;
-											// this exception is uncaught but we want to know about it
-											try {
-												// we recognise a small subset of switches
-												if (regEx.endsWith("/i")) {
-													// trim out the switch
-													regEx = regEx.substring(0, regEx.length() - 2);
-													// build the pattern with case insensitivity
-													pattern = Pattern.compile(regEx, Pattern.CASE_INSENSITIVE);		
-												} else {
-													// build the patter as-is
-													pattern = Pattern.compile(regEx);
-												}
-											} catch (PatternSyntaxException ex) {
-												// rethrow
-												throw new ServerSideValidationException("Server side validation error - regex for control " + id + " in form " + formId + " failed regex syntax for " + regEx + " - regex PatternSyntaxException", ex);
-											} catch (IllegalArgumentException  ex) {
-												// rethrow
-												throw new ServerSideValidationException("Server side validation error - value '" + value + "' for control " + id + " in  form " + formId + " failed regex " + regEx + " - regex ServerSideValidationException", ex);
-											}											
-											// compile and check it
-											if (!pattern.matcher(value).find()) throw new ServerSideValidationException("Server side validation error - value " + id + " for  form " + formId+ " failed regex");										
-										} // javascript type check		
+									// if there was some
+									if (validation != null) {
+										// get the RegEx
+										String regEx = validation.getRegEx();
+										// set to empty string if null (most seem to be empty)
+										if (regEx == null) regEx = "";
+										// not if none, and not if javascript
+										if (regEx.length() > 0 && !"".equals(validation.getType()) && !"none".equals(validation.getType()) && !"javascript".equals(validation.getType())) {										
+											// check for null
+											if (value != null) {
+												// place holder for the patter
+												Pattern pattern = null;
+												// this exception is uncaught but we want to know about it
+												try {
+													// we recognise a small subset of switches
+													if (regEx.endsWith("/i")) {
+														// trim out the switch
+														regEx = regEx.substring(0, regEx.length() - 2);
+														// build the pattern with case insensitivity
+														pattern = Pattern.compile(regEx, Pattern.CASE_INSENSITIVE);		
+													} else {
+														// build the patter as-is
+														pattern = Pattern.compile(regEx);
+													}
+												} catch (PatternSyntaxException ex) {
+													// rethrow
+													throw new ServerSideValidationException("Server side validation error - regex for control " + id + " in form " + formId + " failed regex syntax for " + regEx + " - regex PatternSyntaxException", ex);
+												} catch (IllegalArgumentException  ex) {
+													// rethrow
+													throw new ServerSideValidationException("Server side validation error - value '" + value + "' for control " + id + " in  form " + formId + " failed regex " + regEx + " - regex ServerSideValidationException", ex);
+												}											
+												// compile and check it
+												if (!pattern.matcher(value).find()) throw new ServerSideValidationException("Server side validation error - value " + id + " for  form " + formId+ " failed regex");										
+											} // javascript type check		
+										} // regex check
 									} // validation check
-									
+																		
 									// look for a maxLength property
 									String maxLength = control.getProperty("maxLength");
 									// if we got one

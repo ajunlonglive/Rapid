@@ -1036,9 +1036,27 @@ public class Rapid extends Action {
 						result.put("roleNames", roleNames);
 					}
 					
-					// add the users to the response
-					result.put("users", security.getUsers(rapidRequest));					
-																				
+					// get the users
+					Users users = security.getUsers(rapidRequest);
+					
+					// if we got some
+					if (users != null) {
+						// prepare a JSON array to send them in
+						JSONArray jsonUsers = new JSONArray();
+						// loop them
+						for (User user : users) {
+							// create a JSON object for them
+							JSONObject jsonUser = new JSONObject();
+							// add the details of this user
+							jsonUser.put("name", user.getName());
+							jsonUser.put("description", user.getDescription());
+							// add the object to the collection
+							jsonUsers.put(jsonUser);
+						}
+						// add the users to the response
+						result.put("users", jsonUsers);
+					}
+													
 				} // got security
 				
 			} else if ("GETUSER".equals(action)) { 
