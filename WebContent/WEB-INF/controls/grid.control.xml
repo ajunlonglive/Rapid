@@ -1075,7 +1075,9 @@ if (gridData.selectedRowNumber && gridData.selectedRowNumber > 0) {
 		// set the selected row number
 		gridData.selectedRowNumber = gridData.rows.length;
 		// save the grid
-		saveGridDataStoreData(id, details, gridData);	
+		saveGridDataStoreData(id, details, gridData);
+		// if the grid is visible, refresh it
+		if (grid[0]) setData_grid(ev, id, null, details, gridData, changeEvents);
 	}	
 }	   	            
 	   	            ]]>

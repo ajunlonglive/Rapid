@@ -152,11 +152,14 @@ return $("#" + id).children(".selectedScore").attr("data-value");
 	    <setDataJavaScript>
 	        <![CDATA[
 if (data !== undefined) {
-	// remove selectedScore from all child spans
+	// get a reference to the control
 	var control = $("#" + id);
+	// remove selectedScore from all child spans
 	control.children().removeClass("selectedScore");
+	// make the data object
 	data = makeDataObject(data, field);
-	if (data.rows && data.fields) {
+	// if there was data
+	if (data && data.rows && data.fields) {
 		var value = null;
 		if (field && data.rows[0]) {
 			for (var i in data.fields) {
@@ -167,11 +170,10 @@ if (data !== undefined) {
 			}
 		}
 		if (!value && !field) value =data.rows[0][0];
-		if (value) {
-			
+		if (value) {			
 			//  apply selectedScore to score item with data-value = value
 			control.children("[data-value='" + value + "']").addClass("selectedScore");
-			
+			// fire any change event if requested
 			if (changeEvents && window["Event_change_" + id]) window["Event_change_" + id](ev);
 		}
 	}
