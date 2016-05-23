@@ -245,23 +245,33 @@ public class Rapid extends Action {
 		
 		// check there is one
 		if (security != null) {
-			
-			// get the current user's name
-			String userName = rapidRequest.getUserName();
-			
+									
 			// get the current user's record from the adapter
 			User user = security.getUser(rapidRequest);
+									
+			// assume we don't need a new user
+			boolean newUserRequired = false;
 			
-			// get the rapid application
-			Application rapidApplication = rapidServlet.getApplications().get("rapid");
-			
-			// check the current user is present in the app's security adapter
+			// if user is null
 			if (user == null) {
-				// get the Rapid user object
+				// we need a new one
+				newUserRequired = true;
+			} else {
+				// get the current user's name
+				String userName = rapidRequest.getUserName();
+				// we also need a new one if the names don't match (the forms adapter can return "public")
+				if (!userName.equals(user.getName())) newUserRequired = true;
+			}
+
+			// if we didn't get a user from the security adapter or the one we got had a different name (the form security adapter will return "public")
+			if (newUserRequired) {
+				// get the rapid application
+				Application rapidApplication = rapidServlet.getApplications().get("rapid");
+				// get the user object from rapid application
 				User rapidUser = rapidApplication.getSecurityAdapter().getUser(rapidRequest);
 				// create a new user based on the current user
-				user = new User(userName, rapidUser.getDescription(), rapidUser.getPassword(), rapidUser.getDeviceDetails());
-				// add the new user 
+				user = new User(rapidUser.getName(), rapidUser.getDescription(), rapidUser.getPassword(), rapidUser.getDeviceDetails());
+				// add the new user to the new application
 				security.addUser(rapidRequest, user);
 			}
 			
@@ -2067,20 +2077,51 @@ public class Rapid extends Action {
 				String password = jsonAction.getString("password");
 				// get the device details
 				String deviceDetails = jsonAction.getString("deviceDetails");
-				
+	
 				// get the security
 				SecurityAdapter security = app.getSecurityAdapter();
 				// get the user
 				User user = security.getUser(rapidRequest);
 				// update the description
 				user.setDescription(description);
-				// update the password if different from the mask
-				if (!"********".equals(password)) user.setPassword(password);
 				// update the device details
 				user.setDeviceDetails(deviceDetails);
 				// update the user
 				security.updateUser(rapidRequest, user);
-				
+				// update the password if different from the mask
+				if (!"********".equals(password)) {
+					// update the session password as well if we are changing our own password (this is required when changing the rapid app password)
+					if (user.getName().equals(rapidRequest.getUserName())) rapidRequest.getRequest().getSession().setAttribute(RapidFilter.SESSION_VARIABLE_USER_PASSWORD, password);
+					// get the old password
+					String oldPassword = user.getPassword();					
+					// if there is one
+					if (oldPassword != null) {			
+						// get all applications
+						Applications applications = rapidRequest.getRapidServlet().getApplications();
+						// loop them
+						for (String id : applications.getIds()) {
+							// get their versions
+							Versions versions = applications.getVersions(id);
+							// loop the versions
+							for (String version : versions.keySet()) {
+								// get this version
+								Application v = applications.get(id, version);
+								// get it's security adapter
+								SecurityAdapter s = v.getSecurityAdapter();
+								// check the user password
+								if (s.checkUserPassword(rapidRequest, userName, oldPassword)) {
+									// get this user
+									User u = s.getUser(rapidRequest);
+									// set user password
+									u.setPassword(password);
+									// update user
+									s.updateUser(rapidRequest, user);
+								} // password match check
+							} // version loop
+						} // app id loop																		
+					} // password check
+				} // password provided
+																
 				// if we are updating the rapid application we have used checkboxes for the Rapid Admin and Rapid Designer roles
 				if ("rapid".equals(app.getId())) {
 					// get the valud of rapidAdmin
