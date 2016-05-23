@@ -18,9 +18,9 @@
     </roles>
     <users>
         <description>Admin user</description>
+        <deviceDetails></deviceDetails>
         <name>admin</name>
         <password>admin</password>
-        <roles>Demo role 1</roles>
         <roles>RapidAdmin</roles>
         <roles>RapidDesign</roles>
     </users>
