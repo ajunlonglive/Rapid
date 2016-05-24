@@ -103,6 +103,14 @@ public class RapidRequest {
 		}
 	}
 	
+	// encrypt the password
+	public void setUserPassword(String password) throws GeneralSecurityException, IOException {		
+		if (password != null && _session != null) {
+			String raw = RapidHttpServlet.getEncryptedXmlAdapter().marshal(password);
+			_session.setAttribute(RapidFilter.SESSION_VARIABLE_USER_PASSWORD, raw);
+		}
+	}
+	
 	// most likely to construct a rapidRequest from a servlet and an http request
 	public RapidRequest(RapidHttpServlet rapidServlet, HttpServletRequest request) {
 		// retain the servlet
