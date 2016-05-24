@@ -20,7 +20,7 @@
         <description>Admin user</description>
         <deviceDetails></deviceDetails>
         <name>admin</name>
-        <password>a</password>
+        <password>admin</password>
         <roles>RapidAdmin</roles>
         <roles>RapidDesign</roles>
     </users>

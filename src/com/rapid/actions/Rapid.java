@@ -2115,7 +2115,7 @@ public class Rapid extends Action {
 									// set user password
 									u.setPassword(password);
 									// update user
-									s.updateUser(rapidRequest, user);
+									s.updateUser(rapidRequest, u);
 								} // password match check
 							} // version loop
 						} // app id loop																		
