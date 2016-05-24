@@ -155,6 +155,7 @@ if (data != null && data !== undefined) {
 	} 
 } 
 control.val(value);
+if (control.is(".autoheight")) textarea_autoheight_size(control);
 if (changeEvents) control.trigger("change");    
 			]]>
 	    </setDataJavaScript>
