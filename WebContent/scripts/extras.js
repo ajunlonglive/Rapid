@@ -369,13 +369,19 @@ function textarea_maxlength() {
 function textarea_autoheight_size(textarea, resetHeight) {
 	// reset height if required on setData and blur
 	if (resetHeight) textarea.height(textarea.attr("data-height"));
-	// max times
-	var i = 0;
-	// grow 
-	while(i < 1000 && textarea.outerHeight() < textarea[0].scrollHeight + parseFloat(textarea.css("borderTopWidth")) + parseFloat(textarea.css("borderBottomWidth"))) {
-		textarea.height(textarea.height() + 1);
-		i ++;
-    };
+	// if scroll height is already at the max
+	if (textarea[0].scrollHeight > 1000) {
+		// set height to max
+		textarea.height(1000);
+	} else {
+		// max times
+		var i = 0;
+		// grow 
+		while(i < 1000 && textarea.outerHeight() < textarea[0].scrollHeight + parseFloat(textarea.css("borderTopWidth")) + parseFloat(textarea.css("borderBottomWidth"))) {
+			textarea.height(textarea.height() + 1);
+			i ++;
+	    };
+	}
 }
 
 // function for apply the autoheight to a textarea  (reused when dialogue loads)

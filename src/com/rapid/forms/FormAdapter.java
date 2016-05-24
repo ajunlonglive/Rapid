@@ -937,6 +937,8 @@ public abstract class FormAdapter {
 										if (Numbers.isInteger(maxLength)) {
 											// convert to int
 											int max = Integer.parseInt(maxLength);
+											// make line breaks \n instead of \n\r so the Java length matches the front end
+											value = value.replace("\r\n", "\n");
 											// check length
 											if (value.length() > max) throw new ServerSideValidationException("Server side validation error - value " + id + " for  form " + formId+ " failed regex");
 										}
