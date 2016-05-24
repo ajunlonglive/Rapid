@@ -428,7 +428,7 @@ try {
 				// get the offset
 				var os = li.offset();
 				// check if the mouse is over it
-				if (winEvent.clientY + _pageIframeWindow.scrollTop() + _window.scrollTop() < os.top + li.outerHeight() && winEvent.clientX - _panelPinnedOffset > os.left && winEvent.clientX - _panelPinnedOffset < os.left + li.outerWidth()) {
+				if (winEvent.clientY + _window.scrollTop() < os.top + li.outerHeight() && winEvent.clientX + _window.scrollLeft() - _panelPinnedOffset > os.left && winEvent.clientX + _window.scrollLeft() - _panelPinnedOffset < os.left + li.outerWidth()) {
 					// add an undo snapshot
 					addUndo();
 					// update selected tab
