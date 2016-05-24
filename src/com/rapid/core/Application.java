@@ -1726,28 +1726,32 @@ public class Application {
 			
 			for (File backup : backupFolder.listFiles()) {
 				
-				String id = backup.getName();
-				
-				String[] nameParts = id.split("_");
-				
-				if (id.contains(_id) && nameParts.length >= 3) {
+				if (backup.isDirectory()) {
 					
-					String size = Files.getSizeName(backup);
+					String id = backup.getName();
 					
-					SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd HHmmss");
+					String[] nameParts = id.split("_");
 					
-					Date date = new Date();
+					if (id.startsWith(_id + _version) && nameParts.length >= 3) {
+						
+						String size = Files.getSizeName(backup);
+						
+						SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd HHmmss");
+						
+						Date date = new Date();
+						
+						try { 
+							date = df.parse(nameParts[nameParts.length - 3] + " " + nameParts[nameParts.length - 2]); 
+						} catch (ParseException ex) {
+							throw new JSONException(ex);
+						}
+						
+						backups.add(new Backup(id, date, nameParts[nameParts.length - 1], size));
+																
+					} // name parts > 3
 					
-					try { 
-						date = df.parse(nameParts[nameParts.length - 3] + " " + nameParts[nameParts.length - 2]); 
-					} catch (ParseException ex) {
-						throw new JSONException(ex);
-					}
-					
-					backups.add(new Backup(id, date, nameParts[nameParts.length - 1], size));
-															
-				} // name parts > 3
-				
+				} // directory check
+												
 			} // file loop
 			
 			// sort the list by date

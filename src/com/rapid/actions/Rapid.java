@@ -2065,7 +2065,7 @@ public class Rapid extends Action {
 													
 			} else if ("SAVEUSER".equals(action)) {
 			
-				// get the userName
+				// get the userName of the user being changed
 				String userName = jsonAction.getString("userName").trim();
 				// recreate the rapidRequest with the selected app (so app parameters etc are available from the app in the rapidRequest)
 				rapidRequest = new RapidRequest(rapidServlet, rapidRequest.getRequest(), app);
@@ -2078,7 +2078,7 @@ public class Rapid extends Action {
 				// get the device details
 				String deviceDetails = jsonAction.getString("deviceDetails");
 	
-				// get the security
+				// get the security for this app
 				SecurityAdapter security = app.getSecurityAdapter();
 				// get the user
 				User user = security.getUser(rapidRequest);
@@ -2088,10 +2088,11 @@ public class Rapid extends Action {
 				user.setDeviceDetails(deviceDetails);
 				// update the user
 				security.updateUser(rapidRequest, user);
+				
 				// update the password if different from the mask
 				if (!"********".equals(password)) {
-					// update the session password as well if we are changing our own password (this is required when changing the rapid app password)
-					if (user.getName().equals(rapidRequest.getUserName())) rapidRequest.getRequest().getSession().setAttribute(RapidFilter.SESSION_VARIABLE_USER_PASSWORD, password);
+					// update the session password as well if we are changing our own password (this is required especially when changing the rapid app password)
+					if (user.getName().equals(rapidRequest.getSessionAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME))) rapidRequest.setUserPassword(password);
 					// get the old password
 					String oldPassword = user.getPassword();					
 					// if there is one
@@ -2108,6 +2109,10 @@ public class Rapid extends Action {
 								Application v = applications.get(id, version);
 								// get it's security adapter
 								SecurityAdapter s = v.getSecurityAdapter();
+								// recreate the rapidRequest with the selected version (so app parameters etc are available from the app in the rapidRequest)
+								rapidRequest = new RapidRequest(rapidServlet, rapidRequest.getRequest(), v);
+								// override the standard request user
+								rapidRequest.setUserName(userName);	
 								// check the user password
 								if (s.checkUserPassword(rapidRequest, userName, oldPassword)) {
 									// get this user
