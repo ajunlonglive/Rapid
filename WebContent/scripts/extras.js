@@ -366,12 +366,14 @@ function textarea_maxlength() {
 }
 
 // function 
-function textarea_autoheight_size(textarea) {
+function textarea_autoheight_size(textarea, resetHeight) {
+	// reset height if required on setData and blur
+	if (resetHeight) textarea.height(textarea.attr("data-height"));
 	// max times
 	var i = 0;
 	// grow 
-	while(i < 100 && textarea.outerHeight() < textarea[0].scrollHeight + parseFloat(textarea.css("borderTopWidth")) + parseFloat(textarea.css("borderBottomWidth"))) {
-		textarea.height(textarea.height() + 5);
+	while(i < 1000 && textarea.outerHeight() < textarea[0].scrollHeight + parseFloat(textarea.css("borderTopWidth")) + parseFloat(textarea.css("borderBottomWidth"))) {
+		textarea.height(textarea.height() + 1);
 		i ++;
     };
 }
@@ -380,7 +382,7 @@ function textarea_autoheight_size(textarea) {
 function textarea_autoheight(textarea) {
 	
 	// get a reference to the textarea if we weren't given one
-	if (!textarea) textarea = $(this);
+	if (!textarea || !$(textarea).is("textarea")) textarea = $(this);
 	
 	// get the starting height
 	var height = Math.max(textarea.height(), 10);
@@ -394,7 +396,8 @@ function textarea_autoheight(textarea) {
 		textarea_autoheight_size(textarea);
     })
     .on('show', function(ev) {
-		textarea_autoheight_size(textarea);
+    	// size it
+		textarea_autoheight_size(textarea, true);
     })   
     .on('blur', function(ev) {
     	// small delay to allow any click events to fire
@@ -404,11 +407,9 @@ function textarea_autoheight(textarea) {
         	// get the html height
         	var h = b.height();
         	// set it in css (this stops the document resizing and bouncing us around)
-        	b.css("height",h);
-        	// reset the height
-        	textarea.height(textarea.attr("data-height"));
-        	// do the sizing
-        	textarea_autoheight_size(textarea);
+        	b.css("height",h);        	
+        	// do the sizing after resetting the height
+        	textarea_autoheight_size(textarea, true);
             // set the body height back to auto
             b.css("height","auto");
     	}, 500);
