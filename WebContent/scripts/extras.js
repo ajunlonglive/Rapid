@@ -44,7 +44,7 @@ String.prototype.replaceAll = function( find, replace ) {
 	    var el = $.fn[ev];
 	    $.fn[ev] = function () {
 	    	el.apply(this, arguments);
-	    	this.trigger(ev);	      
+	    	this.trigger(ev);	 
 	      return this;
 	    };
 	  });
@@ -365,11 +365,22 @@ function textarea_maxlength() {
 	
 }
 
+// function 
+function textarea_autoheight_size(textarea) {
+	// max times
+	var i = 0;
+	// grow 
+	while(i < 100 && textarea.outerHeight() < textarea[0].scrollHeight + parseFloat(textarea.css("borderTopWidth")) + parseFloat(textarea.css("borderBottomWidth"))) {
+		textarea.height(textarea.height() + 5);
+		i ++;
+    };
+}
+
 // function for apply the autoheight to a textarea  (reused when dialogue loads)
-function textarea_autoheight() {
+function textarea_autoheight(textarea) {
 	
-	// get a reference to the textarea
-	var textarea = $(this);
+	// get a reference to the textarea if we weren't given one
+	if (!textarea) textarea = $(this);
 	
 	// get the starting height
 	var height = Math.max(textarea.height(), 10);
@@ -377,36 +388,30 @@ function textarea_autoheight() {
 	// retain original height
 	textarea.attr("data-height", height);
 	
-	// use keypress instead of keydown as that's the only
-  	// place keystrokes could be canceled in Opera
-	textarea.on('keypress', function(ev) {
-		// max times
-		var i = 0;
-    	// grow 
-    	while(i < 100 && textarea.outerHeight() < this.scrollHeight + parseFloat(textarea.css("borderTopWidth")) + parseFloat(textarea.css("borderBottomWidth"))) {
-    		textarea.height(textarea.height() + 5);
-    		i ++;
-        };
+	// use keypress instead of keydown as that's the only place keystrokes could be cancelled in Opera
+	textarea
+	.on('keypress', function(ev) {
+		textarea_autoheight_size(textarea);
     })
-    
+    .on('show', function(ev) {
+		textarea_autoheight_size(textarea);
+    })   
     .on('blur', function(ev) {
-    	// get the body element
-    	var b = $("body");
-    	// get the html height
-    	var h = b.height();
-    	// set it in css (this stops the document resizing and bouncing us around)
-    	b.css("height",h);
-    	// reset the height
-    	textarea.height(textarea.attr("data-height"));
-    	// max times
-		var i = 0;
-    	// grow again
-    	while(i < 100 && textarea.outerHeight() < this.scrollHeight + parseFloat(textarea.css("borderTopWidth")) + parseFloat(textarea.css("borderBottomWidth"))) {
-    		textarea.height(textarea.height() + 5);
-    		i ++;
-        };
-        // set the body height back to auto
-        b.css("height","auto");
+    	// small delay to allow any click events to fire
+    	setTimeout(function(){ 
+    		// get the body element
+        	var b = $("body");
+        	// get the html height
+        	var h = b.height();
+        	// set it in css (this stops the document resizing and bouncing us around)
+        	b.css("height",h);
+        	// reset the height
+        	textarea.height(textarea.attr("data-height"));
+        	// do the sizing
+        	textarea_autoheight_size(textarea);
+            // set the body height back to auto
+            b.css("height","auto");
+    	}, 500);
     });
 	
 }
