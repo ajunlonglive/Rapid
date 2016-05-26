@@ -67,6 +67,7 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.rapid.security.RapidSecurityAdapter;
 import com.rapid.security.SecurityAdapter;
 import com.rapid.security.SecurityAdapter.Role;
 import com.rapid.security.SecurityAdapter.User;
@@ -1540,6 +1541,13 @@ public class Designer extends RapidHttpServlet {
 														User rapidUser = rapidSecurity.getUser(rapidRequest);
 														// create a new user based on the Rapid user
 														user = new User(userName, rapidUser.getDescription(), rapidUser.getPassword());
+														// if the app is not using a rapid security adapter - could be anything so best to switch back to something we know
+														if (!"rapid".equals(appNew.getSecurityAdapterType())) {
+															// change the security adapter to the Rapid security adapter - this sets the type and makes a new one														
+															appNew.setSecurityAdapter(getServletContext(), "rapid");
+															// get the new security adapter
+															security = appNew.getSecurityAdapter();
+														}														
 														// add the new user 
 														security.addUser(rapidRequest, user);
 														// if there is device security in place allow this new user
