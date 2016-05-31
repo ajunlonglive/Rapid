@@ -51,7 +51,7 @@ String message = (String) session.getAttribute("message");
 
 <div class="body">
 
-	<form name="login" id="RapidLogin">
+	<form name="login" id="RapidLogin" method="post">
 		<table>
 			<tr>
 				<td>User name</td><td><input name="userName" /></td>

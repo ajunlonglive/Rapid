@@ -15,20 +15,12 @@
         <password>admin</password>
         <roles>RapidAdmin</roles>
         <roles>RapidDesign</roles>
-        <!-- <roles>RapidSuper</roles> -->
     </users>
     <users>
         <description>Design user</description>
+        <deviceDetails></deviceDetails>
         <name>design</name>
         <password>design</password>
-        <roles>RapidDesign</roles>
-    </users>
-    <users>
-        <description>test</description>
-        <deviceDetails></deviceDetails>
-        <name>test</name>
-        <password>test</password>
-        <roles>RapidAdmin</roles>
         <roles>RapidDesign</roles>
     </users>
 </security>
