@@ -245,14 +245,9 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 					
 				} else {
 					
+					// log that we were provided with a user name
 					_logger.trace("userName found in request");
-																				
-					// remember whether we are authorised for at least one application
-					boolean authorised = false;
-					
-					// get the applications collection
-					Applications applications = (Applications) getServletContext().getAttribute("applications");
-					
+																														
 					// look in the request for the password
 					String userPassword = request.getParameter("userPassword");
 					
@@ -268,8 +263,14 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 					// if we were sent a device id add it to the device details
 					if (deviceId != null)  deviceDetails += "," + deviceId;
 																	
-					// retain device id in the session
+					// retain device id in the session so it's used when check app authorisation
 					session.setAttribute(RapidFilter.SESSION_VARIABLE_USER_DEVICE, deviceDetails);
+					
+					// remember whether we are authorised for at least one application
+					boolean authorised = false;
+					
+					// get the applications collection
+					Applications applications = (Applications) getServletContext().getAttribute("applications");
 					
 					// if there are some applications
 					if (applications != null) {
@@ -330,6 +331,9 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 						return null;
 						
 					} else {
+						
+						// log that authentication was unsuccessful
+						_logger.debug("FormAuthenticationAdapter failed for " + userName + " from " + deviceDetails);
 						
 						// retain the authorisation attempt in the session
 						session.setAttribute("message", "Your user name / password has not been recognised");
