@@ -239,7 +239,7 @@ function styleRule_padding_width_4(value) {
 }
 
 function styleRule_percentage(value) {
-	return value && !isNaN(value.replace("%","")) && (value.indexOf("%") == value.length(value) - 1);
+	return value && !isNaN(value.replace("%","")) && (value.indexOf("%") == value.length - 1);
 }
 
 function styleRule_relative_size(value) {
