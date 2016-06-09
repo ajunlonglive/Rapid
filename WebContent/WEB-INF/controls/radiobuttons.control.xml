@@ -112,6 +112,17 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	        
 	    </properties>
 	    
+	    <resources>
+	    	<resource>
+	    		<type>css</type>
+	    		<contents>
+.radiobuttons span {
+	display: inline-block;
+}	    		
+	    		</contents>
+	    	</resource>
+	    </resources>
+	    
 	    <getHtmlFunction>
 	        <![CDATA[
 // return our html for adding to our parent object	
@@ -141,14 +152,16 @@ if (this.buttons || this.valueList) {
 		// get the button
 		var button = buttons[i];
 		// get the label
-		var label = button.label;				
+		var label = button.label;
 		// if valueList
-		if (this.valueList) label = button.text;		
+		if (this.valueList) label = button.text;
 		var value = (codes ? button.value : label);
+		radiobuttonHtml += "<span>";
 		if (this.buttonposition == 'R') radiobuttonHtml += label;
 		radiobuttonHtml += "<input type='radio' name='" + (this.group ? escapeApos(this.group) : this.id) + "' id='" + this.id + i + "' value='" + escapeApos(value) + "' " + (this.value == value ? "checked='checked'" :  "") + "></input>";
 		if (this.buttonposition == 'L') radiobuttonHtml += label;
 		if (this.layout == 'V') radiobuttonHtml += "<br/>";
+		radiobuttonHtml += "</span>";
 	}
 } else {
 	radiobuttonHtml = "No buttons";
@@ -158,7 +171,7 @@ var html = "<label id='" + this.id + "' class='radiobuttons" + getStyleClasses(t
 // return
 return html;
 	        ]]>
-	    </getHtmlFunction> 
+	    </getHtmlFunction>
 	    
 		<updateChildObjects>true</updateChildObjects>
 	    
@@ -175,28 +188,28 @@ if (data != null && data !== undefined) {
 	radiobuttons.children("input[type=radio]").prop('checked',false);
 	data = makeDataObject(data, field);
 	var value = null;
-	if (data.rows && data.rows[0]) {	        		
+	if (data.rows && data.rows[0]) {
 		if (field && data.fields) {
 			for (var i in data.fields) {
 				if (data.fields[i].toLowerCase() == field.toLowerCase()) {
-					value = data.rows[0][i];					
+					value = data.rows[0][i];
 					break;
 				}
 			}
 		} else {
 			value = data.rows[0][0];
 		}
-	} 
+	}
 	if (value !== undefined) {
 		var button = radiobuttons.children("input[type=radio][value='" + value + "']");
 		if (button[0]) {
-			button.prop('checked',true);				
+			button.prop('checked',true);
 		} else {
-			radiobuttons.children("input[type=radio]").prop('checked',false);	
+			radiobuttons.children("input[type=radio]").prop('checked',false);
 		}
-		if (changeEvents) button.trigger("change");				
+		if (changeEvents) button.trigger("change");
 	}
-}		        
+}
         
 	        ]]>
 	    </setDataJavaScript>
@@ -210,27 +223,27 @@ if (data != null && data !== undefined) {
 	    
 	    <styles>
 	        <style>
-	            <name>Radio button group</name>  
+	            <name>Radio button group</name>
 	            <getAppliesToFunction>
-					<![CDATA[	      
+					<![CDATA[
 return "#" + this.id;
-	       			 ]]>	                
+	       			 ]]>
 	            </getAppliesToFunction>
 	        </style>
 	        <style>
-	            <name>Radio buttons</name>  
+	            <name>Radio buttons</name>
 	            <getAppliesToFunction>
-					<![CDATA[	      
+					<![CDATA[
 return "#" + this.id + " input[type=radio]";
-	       			 ]]>	                
+	       			 ]]>
 	            </getAppliesToFunction>
 	        </style>
 	        <style>
-	            <name>Labels</name>  
+	            <name>Labels</name>
 	            <getAppliesToFunction>
-					<![CDATA[	      
+					<![CDATA[
 return "#" + this.id + " span";
-	       			 ]]>	                
+	       			 ]]>
 	            </getAppliesToFunction>
 	        </style>
 	    </styles>
