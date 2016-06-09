@@ -139,95 +139,98 @@ function buildPageMap() {
 				// stop bubbling
 				event.stopPropagation();
 			}));	
-			// add a mouseover listener for all controls
-			addMapListener( list.find("li").on("mousemove touchmove", function(ev) {				
-				// only if mouse is down and we're not in the process of adding a control
-				if (_mouseDown && !_addedControl) {
-					// get the target
-					var t = $(ev.target);					
-					// get the id
-					var id = t.attr("data-id");
-					// get the control
-					var c = getControlById(id);
-					// if we got one
-					if (c) {
-						// if different from current movedover control
-						if (c != _movedoverControl || !_movingControl) {
-							// remove all insert covers
-							$("#pageMapList").find("span.selectionInsertCover").removeClass("selectionInsertCover");
-							// add the insert cover if not the selected control too
-							t.addClass("selectionInsertCover");
-							// rememeber we are moving a control
-							_movingControl = true;
-						}
-						// set the movedoverControl
-						_movedoverControl = c;							
-						// check whether a decendent,
-						if (isDecendant(_selectedControl,_movedoverControl) || _movedoverControl == null) {
-							// null the movedoverControl
-							_movedoverControl = null;	
-						} else {
-							
-							var movedOverType = _controlTypes[_movedoverControl.type];
-							
-							// get the span width
-							var width =  t.width();
-							// calculate a move threshold which is the number of pixels to the left or right of the object the users needs to be within
-							var moveThreshold = Math.min(50, width/3);
-							// if it's not possible to insert make the move thresholds half the width to cover the full object
-							if (!movedOverType.canUserInsert) moveThreshold = width/2;
-							
-							// get the current cusor
-							var cursor = t.css("cursor");
-							// are we within the move threshold on the left or the right controls that can be moved, or in the middle with an addChildControl method?
-							if (movedOverType.canUserMove && ev.pageX  < t.offset().left + moveThreshold) {								
-								// set the cursor if need be
-								if (!cursor || cursor.indexOf("moveLeft") < 0) t.css("cursor","url(images/moveLeft_32x32.png) 16 16,w-resize");
-								// remember it's on the left
-								_movedoverDirection = "L";
-							} else if (movedOverType.canUserMove && ev.pageX > t.offset().left + width - moveThreshold) {
-								// set the cursor if need be
-								if (!cursor || cursor.indexOf("moveRight") < 0) t.css("cursor","url(images/moveRight_32x32.png) 16 16,e-resize");
-								// remember it's on the right
-								_movedoverDirection = "R";
-							} else if (movedOverType.canUserInsert) {
-								// set the cursor if need be
-								if (!cursor || cursor.indexOf("insert") < 0) t.css("cursor","url(images/insert_32x32.png) 16 30, s-resize");
-								// remember it's in the the centre
-								_movedoverDirection = "C";
-							} else {
-								// reset the cursor
-								t.css("cursor","initial");
-								// null the direction
-								_movedoverDirection = null;
+			// if the page isn't locked
+			if (!_locked) {							
+				// add a mouseover listener for all controls
+				addMapListener( list.find("li").on("mousemove touchmove", function(ev) {				
+					// only if mouse is down and we're not in the process of adding a control
+					if (_mouseDown && !_addedControl) {
+						// get the target
+						var t = $(ev.target);					
+						// get the id
+						var id = t.attr("data-id");
+						// get the control
+						var c = getControlById(id);
+						// if we got one
+						if (c) {
+							// if different from current movedover control
+							if (c != _movedoverControl || !_movingControl) {
 								// remove all insert covers
 								$("#pageMapList").find("span.selectionInsertCover").removeClass("selectionInsertCover");
-							}		
-														
-						} // decendant check 								
-					} // new moved over controls							
-
-				} // mouse down
-				// stop bubbling
-				event.stopPropagation();
-			}));	
-			// add a mouseover listener an up anywhere in the box
-			addMapListener( list.on("mouseup touchend", function(ev) {				
-				// if there is a moved over control
-				if (_movedoverControl) {
-					// fire the main page mouse up
-					
-				}
-			}));	
-			// add a mouseout listener for the box
-			addMapListener( list.on("mouseleave touchcancel", function(ev) {				
-				// reset moved over control
-				_movedoverControl = null;
-				// remove all insert covers
-				$("#pageMapList").find("span.selectionInsertCover").removeClass("selectionInsertCover");
-				// set all cursors to default
-				$("#pageMapList").find("span").css("cursor","initial");
-			}));	
+								// add the insert cover if not the selected control too
+								t.addClass("selectionInsertCover");
+								// rememeber we are moving a control
+								_movingControl = true;
+							}
+							// set the movedoverControl
+							_movedoverControl = c;							
+							// check whether a decendent,
+							if (isDecendant(_selectedControl,_movedoverControl) || _movedoverControl == null) {
+								// null the movedoverControl
+								_movedoverControl = null;	
+							} else {
+								
+								var movedOverType = _controlTypes[_movedoverControl.type];
+								
+								// get the span width
+								var width =  t.width();
+								// calculate a move threshold which is the number of pixels to the left or right of the object the users needs to be within
+								var moveThreshold = Math.min(50, width/3);
+								// if it's not possible to insert make the move thresholds half the width to cover the full object
+								if (!movedOverType.canUserInsert) moveThreshold = width/2;
+								
+								// get the current cusor
+								var cursor = t.css("cursor");
+								// are we within the move threshold on the left or the right controls that can be moved, or in the middle with an addChildControl method?
+								if (movedOverType.canUserMove && ev.pageX  < t.offset().left + moveThreshold) {								
+									// set the cursor if need be
+									if (!cursor || cursor.indexOf("moveLeft") < 0) t.css("cursor","url(images/moveLeft_32x32.png) 16 16,w-resize");
+									// remember it's on the left
+									_movedoverDirection = "L";
+								} else if (movedOverType.canUserMove && ev.pageX > t.offset().left + width - moveThreshold) {
+									// set the cursor if need be
+									if (!cursor || cursor.indexOf("moveRight") < 0) t.css("cursor","url(images/moveRight_32x32.png) 16 16,e-resize");
+									// remember it's on the right
+									_movedoverDirection = "R";
+								} else if (movedOverType.canUserInsert) {
+									// set the cursor if need be
+									if (!cursor || cursor.indexOf("insert") < 0) t.css("cursor","url(images/insert_32x32.png) 16 30, s-resize");
+									// remember it's in the the centre
+									_movedoverDirection = "C";
+								} else {
+									// reset the cursor
+									t.css("cursor","initial");
+									// null the direction
+									_movedoverDirection = null;
+									// remove all insert covers
+									$("#pageMapList").find("span.selectionInsertCover").removeClass("selectionInsertCover");
+								}		
+															
+							} // decendant check 								
+						} // new moved over controls							
+	
+					} // mouse down
+					// stop bubbling
+					event.stopPropagation();
+				}));	
+				// add a mouseover listener an up anywhere in the box
+				addMapListener( list.on("mouseup touchend", function(ev) {				
+					// if there is a moved over control
+					if (_movedoverControl) {
+						// fire the main page mouse up
+						
+					}
+				}));	
+				// add a mouseout listener for the box
+				addMapListener( list.on("mouseleave touchcancel", function(ev) {				
+					// reset moved over control
+					_movedoverControl = null;
+					// remove all insert covers
+					$("#pageMapList").find("span.selectionInsertCover").removeClass("selectionInsertCover");
+					// set all cursors to default
+					$("#pageMapList").find("span").css("cursor","initial");
+				}));	
+			}
 			// highlight the selected control
 			if (_selectedControl) {
 				// highlight selected control span and parent li
