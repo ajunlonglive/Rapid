@@ -2610,10 +2610,7 @@ $(document).ready( function() {
 			        				        				        	
 			        	// make everything visible
 			        	showDesigner();
-			        	
-			        	// refresh the page map
-			        	buildPageMap();
-			        	
+			        				        				        	
 			        	// get the page lock object
 			        	var lock = _page.lock;
 			        	
@@ -2628,9 +2625,11 @@ $(document).ready( function() {
 			        		$("#pageSave").attr("disabled","disabled");
 			        		$("#controlControls").hide();			        		
 	        		
-			        		// show alert
-			        		alert("This page was locked for editing by " + lock.userDescription + " at " + lock.formattedDateTime + ".\nYou will not be able to make or save changes to this page until they start work on a different page, or log out.");
-			        					        					        		
+			        		// show alert (after a small delay while the page map is built)
+			        		setTimeout( function() {
+			        			alert("This page was locked for editing by " + lock.userDescription + " at " + lock.formattedDateTime + ".\nYou will not be able to make or save changes to this page until they start work on a different page, or log out.");
+			        		}, 100);			        		
+			        		
 			        	} else {
 			        		
 			        		// no lock make sure all functionality is present
@@ -2640,6 +2639,9 @@ $(document).ready( function() {
 			        		$("#pageSave").removeAttr("disabled");
 			        		$("#controlControls").show();
 			        	}
+			        	
+			        	// refresh the page map to take the lock into account
+			        	buildPageMap();
 			        	
 			        	// update the url
 			        	if (window.history && window.history.replaceState) window.history.replaceState("page", _page.title, "design.jsp?a=" + _version.id + "&v=" + _version.version + "&p=" + _page.id );
@@ -3491,7 +3493,7 @@ $(document).on("mousemove touchmove", function(ev) {
 		var c = getMouseControl(ev);
 		
 		// if a control is selected and the mouse is down look for the controls new destination
-		if (_selectedControl) {
+		if (_selectedControl && !_locked) {
 			
 			// check the mouse is down (and the selected control has an object)
 			if (_mouseDown && _selectedControl.object[0]) {		
