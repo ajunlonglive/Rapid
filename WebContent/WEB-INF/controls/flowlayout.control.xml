@@ -24,122 +24,13 @@ You should have received a copy of the GNU General Public License
 in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
  -->
-	
-	<control>
-	    
-	    <type>flowLayoutCell</type>
-	    <name>Flow layout cell</name>	 	     
-	    	    
-	    <noDefaultName>true</noDefaultName>
-	      	    
-	    <canUserInsert>true</canUserInsert>   
-	    <canUserAddPeers>true</canUserAddPeers> 
-	    
-	    <properties>
-	        
-	        <property>
-	            <key>name</key>
-	            <name>Name</name>
-	            <changeValueJavaScript>text</changeValueJavaScript>
-	            <helpHtml>Name that can be given to the control. Names are used to help identify controls uniquely.</helpHtml>
-	        </property>
-	        
-	        <property>
-	            <key>text</key>
-	            <name>Text</name>
-	            <setConstructValueFunction>return "";</setConstructValueFunction>
-	            <changeValueJavaScript>bigtext</changeValueJavaScript>
-	            <refreshHtml>true</refreshHtml>
-	            <helpHtml>Inputs text directly into the flow layout cell.</helpHtml>
-	        </property>
-	        
-	        <property>
-	            <key>roles</key>
-	            <name>User roles</name>
-	            <changeValueJavaScript>roles</changeValueJavaScript>
-	            <helpHtml>Restricts access to the flow layout cell based on the user role defined.</helpHtml>
-	        </property>
-	        
-	    </properties>
-	    	    	    
-	    <getHtmlFunction>
-	        <![CDATA[
-// get the page window from the iframe	        
-var pageWindow =  _pageIframe[0].contentWindow || _pageIframe[0];	   
-// resize after 200 ms
-pageWindow.setTimeout( function() {
-	// only if the function is present
-	if (_pageIframeWindow[0] && _pageIframeWindow[0].sizeFlowLayouts) {
-		_pageIframeWindow[0].sizeFlowLayouts();
-	}    			
- }, 200);	        
-// return our html 
-return "<div id='" + this.id + "' class='flowLayoutCell'" + (this.text ? "" : " style='min-height:20px;'") + ">" + this.text + "</div>";
-	        ]]>
-	    </getHtmlFunction> 
- 	    
-		<saveJavaScript>
-	        <![CDATA[
-// get the style attribute 	        
-var style = this.object.attr("style");
-// if the min-height:20 is present but there are children
-if (style && style.indexOf("min-height:20px;") > -1 && this.childControls && this.childControls.length > 0) {
-	// remove the min-height
-	style = style.replace("min-height:20px;","");
-	// if there are other attributes
-	if (style) {
-		// update changed style
-		this.object.attr("style",style );
-	} else {
-		// remove empty style
-		this.object.removeAttr("style");
-	}
-}	        
-	        ]]>
-	    </saveJavaScript>
 
-	    <events>
-	        <event>
-	            <type>click</type>
-	            <name>Click</name>
-	        </event>
-	    </events>
-	    	    
-	    <styles>
-	        <style>
-	            <name>Flow layout cell</name>
-	            <getAppliesToFunction>
-					<![CDATA[	      
-return "div#" + this.id + ".flowLayoutCell";
-	       			 ]]>	                
-	            </getAppliesToFunction>
-	        </style>   
-	    </styles>
-	    
-	    <runtimeProperties>
-	   	    <runtimeProperty>
-	   	        <type>cellIndex</type>
-	   	        <name>Selected cell</name>
-	   	        <getPropertyFunction>
-			        <![CDATA[
-var selectedCell = $("#" + id).children("div.selected");
-if (selectedCell[0]) {
-	return selectedCell.index();
-} else {		        
-	return -1;
-}     
-			        ]]>	  	   	            
-	   	        </getPropertyFunction>
-	   	    </runtimeProperty>
-	   	</runtimeProperties>
-	   		    	    	    	    	   	    	           
-	</control>
-		
 	<control>
 	    
 	    <type>flowLayout</type>
 	    <name>Flow layout</name>
 		<image>images/flow_24x24.png</image>
+		<helpHtml>Most effective for mobile and tablet devices, the flow layout control excels at displaying multiple controls side by side with responsive design. Each cell can be copied in order to gain more and place a variety of controls inside of them, and all cells can be stylised using CSS. Each flow layout cell is contained within a single parent flow layout object.</helpHtml>
 	    
 	    <dependentTypes>
 	        <dependentType>flowLayoutCell</dependentType>
@@ -331,4 +222,114 @@ $("#" + id).children("div").click( function(ev) {
 	    	    	    	    	    	            	    	    	        	    	    
 	</control>
 	
-</controls>	
+	<control>
+	    
+	    <type>flowLayoutCell</type>
+	    <name>Flow layout cell</name>
+	    	    
+	    <noDefaultName>true</noDefaultName>
+	      	    
+	    <canUserInsert>true</canUserInsert>
+	    <canUserAddPeers>true</canUserAddPeers>
+	    
+	    <properties>
+	        
+	        <property>
+	            <key>name</key>
+	            <name>Name</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <helpHtml>Name that can be given to the control. Names are used to help identify controls uniquely.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>text</key>
+	            <name>Text</name>
+	            <setConstructValueFunction>return "";</setConstructValueFunction>
+	            <changeValueJavaScript>bigtext</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Inputs text directly into the flow layout cell.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>roles</key>
+	            <name>User roles</name>
+	            <changeValueJavaScript>roles</changeValueJavaScript>
+	            <helpHtml>Restricts access to the flow layout cell based on the user role defined.</helpHtml>
+	        </property>
+	        
+	    </properties>
+	    	    	    
+	    <getHtmlFunction>
+	        <![CDATA[
+// get the page window from the iframe	        
+var pageWindow =  _pageIframe[0].contentWindow || _pageIframe[0];	   
+// resize after 200 ms
+pageWindow.setTimeout( function() {
+	// only if the function is present
+	if (_pageIframeWindow[0] && _pageIframeWindow[0].sizeFlowLayouts) {
+		_pageIframeWindow[0].sizeFlowLayouts();
+	}    			
+ }, 200);	        
+// return our html 
+return "<div id='" + this.id + "' class='flowLayoutCell'" + (this.text ? "" : " style='min-height:20px;'") + ">" + this.text + "</div>";
+	        ]]>
+	    </getHtmlFunction> 
+ 	    
+		<saveJavaScript>
+	        <![CDATA[
+// get the style attribute 	        
+var style = this.object.attr("style");
+// if the min-height:20 is present but there are children
+if (style && style.indexOf("min-height:20px;") > -1 && this.childControls && this.childControls.length > 0) {
+	// remove the min-height
+	style = style.replace("min-height:20px;","");
+	// if there are other attributes
+	if (style) {
+		// update changed style
+		this.object.attr("style",style );
+	} else {
+		// remove empty style
+		this.object.removeAttr("style");
+	}
+}	        
+	        ]]>
+	    </saveJavaScript>
+
+	    <events>
+	        <event>
+	            <type>click</type>
+	            <name>Click</name>
+	        </event>
+	    </events>
+	    	    
+	    <styles>
+	        <style>
+	            <name>Flow layout cell</name>
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "div#" + this.id + ".flowLayoutCell";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>   
+	    </styles>
+	    
+	    <runtimeProperties>
+	   	    <runtimeProperty>
+	   	        <type>cellIndex</type>
+	   	        <name>Selected cell</name>
+	   	        <getPropertyFunction>
+			        <![CDATA[
+var selectedCell = $("#" + id).children("div.selected");
+if (selectedCell[0]) {
+	return selectedCell.index();
+} else {		        
+	return -1;
+}     
+			        ]]>	  	   	            
+	   	        </getPropertyFunction>
+	   	    </runtimeProperty>
+	   	</runtimeProperties>
+	   		    	    	    	    	   	    	           
+	</control>
+	
+</controls>

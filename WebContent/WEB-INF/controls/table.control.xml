@@ -24,6 +24,207 @@ You should have received a copy of the GNU General Public License
 in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
  -->
+ 
+ 	<control>
+	    
+	    <type>table</type>
+	    <name>Table</name>
+	    <image>images/table_24x24.png</image>
+	    <helpHtml>The table control allows you to enter data or controls into each cell. Options for setting the cell column span and row span are also available. The table control is split into rows and cells, contained within a parent table object. Each one can have a name given to it, however only the cell has text, and spans for columns and rows..</helpHtml>
+	    
+	    <dependentTypes>
+	        <dependentType>tableCell</dependentType>
+	        <dependentType>tableRow</dependentType>
+	    </dependentTypes>
+	    	    
+	   	<addToNewApplications>true</addToNewApplications>
+	   	
+	    <noDefaultName>true</noDefaultName>
+	    
+	    <canUserAdd>true</canUserAdd>
+	    <canUserMove>true</canUserMove>
+	    
+	    <properties>
+	        <property>
+	            <key>name</key>
+	            <name>Name</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <helpHtml>Name that can be given to the control. Names are used to help identify controls uniquely.</helpHtml>
+	        </property>
+	    </properties>
+	    	    
+		<getHtmlFunction>
+	        <![CDATA[
+// return the html for adding to our parent object
+return "<table id='" + this.id + "' class='table" + getStyleClasses(this) + "'><tbody></tbody></table>";
+	        ]]>
+	    </getHtmlFunction>
+	    
+	    <constructJavaScript>
+	        <![CDATA[
+this.childControls = new Array();
+this.childControls.push(new Control("tableRow", this));
+this.childControls.push(new Control("tableRow", this));
+	        ]]>
+	    </constructJavaScript>
+	    	    	    	    	    	    
+	    <initDesignJavaScript>
+	        <![CDATA[
+	                   	           
+$("#dialogues").append("<img id='" + this.id + "_addRow' class='tableEditImage' src='images/addDown_16x16.png' style='z-index:10004;position:absolute' />");
+var addRow = $("#" + this.id + "_addRow");
+addRow.mousedown( this, function(ev) {
+	addUndo();
+	var control = ev.data;
+	var row = new Control("tableRow", control);
+	control.childControls.push(row);
+});
+addRow.hide();
+
+$("#dialogues").append("<img id='" + this.id + "_addCol' class='tableEditImage' src='images/addRight_16x16.png' style='z-index:10004;position:absolute' />");
+var addCol = $("#" + this.id + "_addCol");
+addCol.mousedown( this, function(ev) {
+	addUndo();
+	var control = ev.data;
+	for (var i in control.childControls) {
+		var row = control.childControls[i];
+		row.childControls.push(new Control("tableCell", row));
+	}
+});
+addCol.hide();
+
+this.object.mouseover( this, function(ev) {
+	if (_selectedControl) {
+		var control = ev.data;
+		if (_selectedControl.type == "table" && _selectedControl.id == control.id && control.object.is(":visible")) {
+			var b = $("#selectionBorder");
+			var os = b.offset();
+			$("#" + control.id + "_addRow").css({
+				top : os.top + b.height() - 8,
+				left : os.left + b.width()/2
+			}).show();
+			$("#" + control.id + "_addCol").css({
+				top : os.top + b.height()/2,
+				left : os.left + b.width() - 8
+			}).show();
+		} else {
+			$("#" + control.id + "_addRow").hide();
+			$("#" + control.id + "_addCol").hide();
+		}
+	}
+});
+
+this.object.mouseout( this, function(ev, evInner) {
+    if (!$(evInner.toElement).is("img.tableEditImage")) {
+		var control = ev.data;
+		$("#" + control.id + "_addRow").hide();
+		$("#" + control.id + "_addCol").hide();
+	}
+});
+	        ]]>
+	    </initDesignJavaScript>
+	    
+	    <styles>
+	        <style>
+	            <name>Table</name>
+	            <getAppliesToFunction>
+					<![CDATA[
+return "#" + this.id;
+	       			 ]]>
+	            </getAppliesToFunction>
+	        </style>
+	        <style>
+	            <name>Rows</name>
+	            <getAppliesToFunction>
+					<![CDATA[
+return "#" + this.id + " tr";
+	       			 ]]>
+	            </getAppliesToFunction>
+	        </style>
+	        <style>
+	            <name>Cells</name>
+	            <getAppliesToFunction>
+					<![CDATA[
+return "#" + this.id + " td";
+	       			 ]]>
+	            </getAppliesToFunction>
+	        </style>
+	    </styles>
+	    	    
+	</control>
+
+	<control>
+	    
+	    <type>tableRow</type>
+	    <name>Table row</name>
+	     
+	    <noDefaultName>true</noDefaultName>
+	    
+	    <canUserAddPeers>true</canUserAddPeers>
+	    
+	    <properties>
+	        
+	        <property>
+	            <key>name</key>
+	            <name>Name</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <helpHtml>Name that can be given to the control. Names are used to help identify controls uniquely.</helpHtml>
+	        </property>
+	                   
+	    </properties>
+	    
+	    <getHtmlFunction>
+	        <![CDATA[
+// return the html for adding to our parent object  
+return "<tr id='" + this.id + "' class='tableRow" + getStyleClasses(this) + "'></tr>";
+	        ]]>
+	    </getHtmlFunction>   	
+	    
+	    <createJavaScript>
+	        <![CDATA[
+// set this object to the tr (which is under the tbody)
+this.object = this._parent.object.children().last().children().last();
+	        ]]>
+	    </createJavaScript> 
+	        
+	    <constructJavaScript>
+	        <![CDATA[
+// make an array to hold the cells in this row	        
+this.childControls = new Array();
+// check if the table object already has rows
+if (this._parent.childControls.length > 0) {
+	// if so make cells in this row for as many cells as there are in the bottom row
+	var cells =  this._parent.childControls[ Math.max(this._parent.childControls.length - 1,0)].childControls.length;
+	for (var i = 0; i < cells; i++) {
+		this.childControls.push(new Control("tableCell", this));
+	}
+} else {	       
+	// otherwise just add two cells
+	this.childControls.push(new Control("tableCell", this));
+	this.childControls.push(new Control("tableCell", this));
+}
+	        ]]>
+	    </constructJavaScript> 
+	    
+	    <appendJavaScript>
+	        <![CDATA[        
+// this makes sure the row is added to the tbody
+this._parent.object.children().last().append(this._html);
+	        ]]>
+	    </appendJavaScript> 
+	    
+	    <styles>
+	        <style>
+	            <name>Table row</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id;
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	    </styles>
+	    
+	</control>
 	
 	<control>
 	    
@@ -133,204 +334,6 @@ if (style && style.indexOf("min-width:15px;height:15px;") > -1 && this.childCont
 	            <getAppliesToFunction>
 					<![CDATA[	      
 return "#" + this.id;
-	       			 ]]>	                
-	            </getAppliesToFunction>
-	        </style>
-	    </styles>
-	    	    
-	</control>
-	
-	<control>
-	    
-	    <type>tableRow</type>	
-	    <name>Table row</name>	   
-	     
-	    <noDefaultName>true</noDefaultName>
-	    
-	    <canUserAddPeers>true</canUserAddPeers>
-	    
-	    <properties>
-	        
-	        <property>
-	            <key>name</key>
-	            <name>Name</name>
-	            <changeValueJavaScript>text</changeValueJavaScript>	            
-	        </property>	 
-	                   
-	    </properties>
-	    
-	    <getHtmlFunction>
-	        <![CDATA[
-// return the html for adding to our parent object  
-return "<tr id='" + this.id + "' class='tableRow" + getStyleClasses(this) + "'></tr>";
-	        ]]>
-	    </getHtmlFunction>   	
-	    
-	    <createJavaScript>
-	        <![CDATA[
-// set this object to the tr (which is under the tbody)
-this.object = this._parent.object.children().last().children().last();
-	        ]]>
-	    </createJavaScript> 
-	        
-	    <constructJavaScript>
-	        <![CDATA[
-// make an array to hold the cells in this row	        
-this.childControls = new Array();
-// check if the table object already has rows
-if (this._parent.childControls.length > 0) {
-	// if so make cells in this row for as many cells as there are in the bottom row
-	var cells =  this._parent.childControls[ Math.max(this._parent.childControls.length - 1,0)].childControls.length;
-	for (var i = 0; i < cells; i++) {
-		this.childControls.push(new Control("tableCell", this));
-	}
-} else {	       
-	// otherwise just add two cells
-	this.childControls.push(new Control("tableCell", this));
-	this.childControls.push(new Control("tableCell", this));
-}
-	        ]]>
-	    </constructJavaScript> 
-	    
-	    <appendJavaScript>
-	        <![CDATA[        
-// this makes sure the row is added to the tbody
-this._parent.object.children().last().append(this._html);
-	        ]]>
-	    </appendJavaScript> 
-	    
-	    <styles>
-	        <style>
-	            <name>Table row</name>  
-	            <getAppliesToFunction>
-					<![CDATA[	      
-return "#" + this.id;
-	       			 ]]>	                
-	            </getAppliesToFunction>
-	        </style>
-	    </styles>
-	    
-	</control>
-	
-	<control>
-	    
-	    <type>table</type>
-	    <name>Table</name>	    
-	    <image>images/table_24x24.png</image>  
-	    
-	    <dependentTypes>
-	        <dependentType>tableCell</dependentType>
-	        <dependentType>tableRow</dependentType>
-	    </dependentTypes>
-	    	    
-	   	<addToNewApplications>true</addToNewApplications>
-	   	
-	    <noDefaultName>true</noDefaultName>
-	    
-	    <canUserAdd>true</canUserAdd>
-	    <canUserMove>true</canUserMove>
-	    
-	    <properties>
-	        <property>
-	            <key>name</key>
-	            <name>Name</name>
-	            <changeValueJavaScript>text</changeValueJavaScript>	            
-	        </property>	            
-	    </properties>
-	    	    
-		<getHtmlFunction>
-	        <![CDATA[
-// return the html for adding to our parent object  
-return "<table id='" + this.id + "' class='table" + getStyleClasses(this) + "'><tbody></tbody></table>";
-	        ]]>
-	    </getHtmlFunction>  
-	    
-	    <constructJavaScript>
-	        <![CDATA[	        
-this.childControls = new Array();
-this.childControls.push(new Control("tableRow", this));
-this.childControls.push(new Control("tableRow", this));
-	        ]]>
-	    </constructJavaScript>
-	    	    	    	    	    	    
-	    <initDesignJavaScript>
-	        <![CDATA[     
-	                   	           
-$("#dialogues").append("<img id='" + this.id + "_addRow' class='tableEditImage' src='images/addDown_16x16.png' style='z-index:10004;position:absolute' />");
-var addRow = $("#" + this.id + "_addRow");	        
-addRow.mousedown( this, function(ev) {
-	addUndo();
-	var control = ev.data;
-	var row = new Control("tableRow", control);
-	control.childControls.push(row);
-});
-addRow.hide();
-
-$("#dialogues").append("<img id='" + this.id + "_addCol' class='tableEditImage' src='images/addRight_16x16.png' style='z-index:10004;position:absolute' />");
-var addCol = $("#" + this.id + "_addCol");	        
-addCol.mousedown( this, function(ev) {
-	addUndo();
-	var control = ev.data;
-	for (var i in control.childControls) {
-		var row = control.childControls[i];
-		row.childControls.push(new Control("tableCell", row));
-	}	
-});
-addCol.hide();     
-
-this.object.mouseover( this, function(ev) {
-	if (_selectedControl) { 
-		var control = ev.data;
-		if (_selectedControl.type == "table" && _selectedControl.id == control.id && control.object.is(":visible")) {			
-			var b = $("#selectionBorder");
-			var os = b.offset();
-			$("#" + control.id + "_addRow").css({
-				top : os.top + b.height() - 8,
-				left : os.left + b.width()/2
-			}).show();
-			$("#" + control.id + "_addCol").css({
-				top : os.top + b.height()/2,
-				left : os.left + b.width() - 8
-			}).show();
-		} else {
-			$("#" + control.id + "_addRow").hide();
-			$("#" + control.id + "_addCol").hide();
-		}
-	}
-});	    
-
-this.object.mouseout( this, function(ev, evInner) {
-    if (!$(evInner.toElement).is("img.tableEditImage")) {
-		var control = ev.data; 
-		$("#" + control.id + "_addRow").hide();
-		$("#" + control.id + "_addCol").hide();
-	}	
-});	 
-	        ]]>
-	    </initDesignJavaScript>
-	    
-	    <styles>
-	        <style>
-	            <name>Table</name>  
-	            <getAppliesToFunction>
-					<![CDATA[	      
-return "#" + this.id;
-	       			 ]]>	                
-	            </getAppliesToFunction>
-	        </style>
-	        <style>
-	            <name>Rows</name>  
-	            <getAppliesToFunction>
-					<![CDATA[	      
-return "#" + this.id + " tr";
-	       			 ]]>	                
-	            </getAppliesToFunction>
-	        </style>
-	        <style>
-	            <name>Cells</name>  
-	            <getAppliesToFunction>
-					<![CDATA[	      
-return "#" + this.id + " td";
 	       			 ]]>	                
 	            </getAppliesToFunction>
 	        </style>

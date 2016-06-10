@@ -28,9 +28,10 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
 	<control>
 	    
-	    <type>link</type>	
+	    <type>link</type>
 	    <name>Link</name>
 	    <image>images/link_24x24.png</image>
+	    <helpHtml>A simple control that allows you to set whether to go to a different page on your app or a different, pre-existing URL. An option for opening the link in a new tab is also available.</helpHtml>
 	    
 	    <addToNewApplications>true</addToNewApplications>
 	    <noDefaultName>true</noDefaultName>
