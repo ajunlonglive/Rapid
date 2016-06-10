@@ -33,6 +33,7 @@ table.propertiesPanelTable  {
 
 .propertiesPanelTable td.propertyHeader {
 	padding-left: 5px;
+	padding-right: 18px;
 }
 
 .propertiesPanelTable td:first-child:not(.propertyHeader) {
@@ -44,6 +45,11 @@ table.propertiesPanelTable  {
 	width: 100%;
 	padding-left: 0;
 	max-width: 50px;
+}
+
+.propertiesPanelTable h3 {
+	display: inline;
+	margin-right: 18px;
 }
 
 .propertiesPanelTable input {
@@ -112,6 +118,22 @@ table.propertiesPanelTable  {
 .propertyAdd select {
 	margin-left: 0;
 	margin-right: 0;
+}
+
+img.controlHelp {
+	float: right;
+	margin-right: -18px;
+}
+
+img.validationHelp {
+	float: right;
+	margin-right: -18px;
+}
+
+img.actionHelp {
+	float: right;
+	margin-top: 1px;
+	margin-right: -18px;
 }
 
 img.propertyHelp {

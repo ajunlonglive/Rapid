@@ -39,6 +39,9 @@ var _validationTypes = [
   {value:'javascript',text:'javascript',regex:''}
   ];
 
+// the validation help html
+var _validationHelpHtml = "Use validation to ensure values are entered correctly. Specify the type of value you require and an optional message to display if this is incorrect. Use validation actions to check control values and show or hide the styling and messages.";
+
 function getValidationOptions(type) {
 	var options = "";
 	for (var i in _validationTypes) {
@@ -118,7 +121,9 @@ function showValidation(control) {
 			// get a reference to the table
 			var validationTable = validationPanel.children().last().children().last();
 			// add a heading for the event
-			validationTable.append("<tr><td colspan='2'><h3>Validation</h3></td></tr>");
+			validationTable.append("<tr><td><h3>Validation</h3><img id='" + control.id + "helpVal' class='validationHelp' src='images/help_16x16.png' /></td><td>&nbsp;</td></tr>");
+			// add the help listener
+			addHelp(control.id + "helpVal",true,true,_validationHelpHtml);
 			// add a small break
 			validationTable.append("<tr><td colspan='2'></td></tr>");
 			// add a type drop down
