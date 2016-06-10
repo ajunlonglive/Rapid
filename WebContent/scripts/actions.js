@@ -256,7 +256,7 @@ function showEvents(control) {
 						// get a reference to the table
 						var actionsTable = actionsPanel.children().last().children().last();
 						// add a heading for the event
-						actionsTable.append("<tr><td colspan='2' class='propertyHeader'><h3>" + event.name + " event</h3><img class='copyEvent' src='images/copy_16x16.png' title='Copy all event actions'/></td></tr>");																	
+						actionsTable.append("<tr><td class='propertyHeader'><h3>" + event.name + " event</h3></td><td><img class='copyEvent' src='images/copy_16x16.png' title='Copy all event actions'/></td></tr>");																	
 						// add a small break
 						actionsTable.append("<tr><td colspan='2'></td></tr>");
 						// check if copyAction
@@ -430,7 +430,14 @@ function showAction(actionsTable, action, collection, refreshFunction) {
 	// add a small break
 	insertRow.before("<tr><td colspan='2'></td></tr>");
 	// write action name into the table						
-	insertRow.before("<tr><td colspan='2' class='propertyHeader'><h3>" + actionClass.name + " action</h3><img class='delete' src='images/bin_16x16.png' title='Delete this action'/><img class='reorder' src='images/moveUpDown_16x16.png' title='Reorder this action'/><img class='copyAction' src='images/copy_16x16.png' title='Copy this action'/></td></tr>");
+	insertRow.before("<tr><td class='propertyHeader'><h3>" + actionClass.name + " action</h3></td><td><img class='delete' src='images/bin_16x16.png' title='Delete this action'/><img class='reorder' src='images/moveUpDown_16x16.png' title='Reorder this action'/><img class='copyAction' src='images/copy_16x16.png' title='Copy this action'/></td></tr>");
+	// if there is helpHtml
+	if (actionClass.helpHtml) {
+		// add a help icon after the title
+		actionsTable.find("h3").last().after("<img id='" + action.id + "help' class='actionHelp' src='images/help_16x16.png' />");
+		// add the help listener
+		addHelp(action.id + "help",true,true,actionClass.helpHtml);
+	}
 	// get a reference to the delete image
 	var deleteImage = actionsTable.find("img.delete").last(); 
 	// add a click listener to the delete image

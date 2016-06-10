@@ -125,7 +125,14 @@ function showProperties(control) {
 		// get a reference to the table
 		var propertiesTable = propertiesPanel.children().last().children().last();
 		// add the properties header
-		propertiesTable.append("<tr><td colspan='2' class='propertyHeader'><h3>" + controlClass.name + "</h3></td></tr>");
+		propertiesTable.append("<tr><td class='propertyHeader'><h3>" + controlClass.name + "</h3></td><td>&nbsp;</tr></tr>");
+		// if there is helpHtml
+		if (controlClass.helpHtml) {
+			// add a help icon after the title
+			propertiesTable.find("h3").after("<img id='" + control.id + "help' class='controlHelp' src='images/help_16x16.png' />");
+			// add the help listener
+			addHelp(control.id + "help",true,true,controlClass.helpHtml);
+		}
 		// add a small break
 		propertiesTable.append("<tr><td colspan='2'></td></tr>");
 		// show any conflict message
