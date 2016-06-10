@@ -27,196 +27,6 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	
 	<control>
 	    
-	    <type>tabsPanel</type>
-	    <name>Tab panel</name>
-	    	    
-	    <noDefaultName>true</noDefaultName>
-	      	    
-	    <canUserInsert>true</canUserInsert>
-	    <canUserAddPeers>true</canUserAddPeers>
-	    
-	    <properties>
-	        
-	        <property>
-	            <key>name</key>
-	            <name>Name</name>
-	            <changeValueJavaScript>text</changeValueJavaScript>
-	            <helpHtml>Name that can be given to the control. Names are used to help identify controls uniquely.</helpHtml>
-	        </property>
-	        
-	        <property>
-	            <key>label</key>
-	            <name>Label</name>
-	            <setConstructValueFunction>return "Tab panel"</setConstructValueFunction>
-	            <changeValueJavaScript>text</changeValueJavaScript>
-	            <refreshHtml>true</refreshHtml>
-	            <helpHtml>Sets the title of the selected tab.</helpHtml>
-	        </property>
-	        
-	        <property>
-	            <key>roles</key>
-	            <name>User roles</name>
-	            <changeValueJavaScript>roles</changeValueJavaScript>
-	            <helpHtml>Only allows the viewing of the page based on the type of privileges a user has.</helpHtml>
-	        </property>
-	        
-	    </properties>
-	    
-	    <getHtmlFunction>
-	        <![CDATA[
-// return our html for adding to our parent object
-return "<li id='" + this.id + "' class='tabsPanel'>" + this.label + "</li>";
-	        ]]>
-	    </getHtmlFunction> 
-
-	    <createJavaScript>
-	        <![CDATA[
-// add a div for the panel into the tab group div (that leading space is important for creating the same gap we see at runtime)	           
-this._parent.object.append(" <div class='tabsPanel' data-id='" + this.id + "'></div>");
-// set this object to the div
-this.object = this._parent.object.children().last();
-	        ]]>
-	    </createJavaScript>   
-  	    	    	    	    	    	    	    	   	    	   	    
-	    <rebuildJavaScript>
-	        <![CDATA[        
-// update the label
-this._parent.object.children("ul").children("li:nth(" + (this.object.index() - 1) + ")").text(this.label);
-	        ]]>
-	    </rebuildJavaScript>
-	    	    	    	    
-	    <appendJavaScript>
-	        <![CDATA[   
-// add the li to the ul in the tab group	             
-this._parent.object.children().first().append(this._html);
-	        ]]>
-	    </appendJavaScript> 
-	    
-	    <selectLeftJavaScript>
-			<![CDATA[        
-// change the selected panel down one
-this._parent.selectedPanel = this._parent.selectedPanel * 1 - 1;
-// rebuild the parent
-this._parent._rebuild();
-	        ]]>	        
-	    </selectLeftJavaScript>
-	    
-	    <selectRightJavaScript>
-			<![CDATA[        
-// change the selected panel up one
-this._parent.selectedPanel = this._parent.selectedPanel * 1 + 1;
-// rebuild the parent
-this._parent._rebuild();
-	        ]]>	        
-	    </selectRightJavaScript>
-	    
-	    <swapLeftJavaScript>
-			<![CDATA[        
-// get the index of the tab we're dealing with
-var index = this._parent.selectedPanel * 1 - 1;
-// get the tab header object
-var tabHeader = this._parent.object.children().first().find("li:nth(" + index + ")");
-// get the tab header we're swapping with
-var tabHeaderSwap = tabHeader.prev();
-// swap them
-tabHeader.insertBefore(tabHeaderSwap);
-// get the tab body object
-var tabBody = this._parent.object.children("div:nth(" + index + ")");
-// get the tab body we're swapping with
-var tabBodySwap = tabBody.prev();
-// swap them
-tabBody.insertBefore(tabBodySwap);
-// change the selected panel down one
-this._parent.selectedPanel = this._parent.selectedPanel * 1 - 1;
-	        ]]>	        
-	    </swapLeftJavaScript>
-	    
-	    <swapRightJavaScript>
-			<![CDATA[        
-// get the index of the tab we're dealing with
-var index = this._parent.selectedPanel * 1 - 1;
-// get the tab header object
-var tabHeader = this._parent.object.children().first().find("li:nth(" + index + ")");
-// get the tab header we're swapping with
-var tabHeaderSwap = tabHeader.next();
-// swap them
-tabHeader.insertAfter(tabHeaderSwap);
-// get the tab body object
-var tabBody = this._parent.object.children("div:nth(" + index + ")");
-// get the tab body we're swapping with
-var tabBodySwap = tabBody.next();
-// swap them
-tabBody.insertAfter(tabBodySwap);
-// change the selected panel down one
-this._parent.selectedPanel = this._parent.selectedPanel * 1 + 1;
-	        ]]>	        
-	    </swapRightJavaScript>
-	    
-	    <insertLeftJavaScript>
-			<![CDATA[        
-// append and initDesign have already been called when the object was constructed so now we just need to move things around
-var selected = this._parent.selectedPanel*1;
-this._parent.childControls.splice(selected-1,0,this);
-// move the li
-this._parent.object.children().first().children("li:last").insertBefore(this._parent.object.children().first().children("li:nth(" + (selected - 1) + ")"));
-// move the div
-this.object.insertBefore(this._parent.object.children("div:nth(" + (selected - 1) + ")"));
-// rebuild the parent (selection won't have changed as we're taking over as such)
-this._parent._rebuild();
-	        ]]>	        
-	    </insertLeftJavaScript>
-	    
-	    <insertRightJavaScript>
-			<![CDATA[        
-// append and initDesign have already been called when the object was constructed so now we just need to move things around
-var selected = this._parent.selectedPanel*1;
-this._parent.childControls.splice(selected,0,this);
-// move the li
-this._parent.object.children().first().children("li:last").insertAfter(this._parent.object.children().first().children("li:nth(" + (selected - 1) + ")"));
-// move the div
-this.object.insertAfter(this._parent.object.children("div:nth(" + (selected - 1) + ")"));
-// change the selection
-this._parent.selectedPanel = selected+1;
-// rebuild the parent 
-this._parent._rebuild();
-	        ]]>	        
-	    </insertRightJavaScript>
-	    
-	    <removeJavaScript>
-	        <![CDATA[        
-// remove the html for the li
-this._parent.object.children().first().children("li:nth(" + (this.object.index() - 1) + ")").remove();
-// remove the div
-this.object.remove();
-// update the selected tab
-this._parent.selectedPanel = "1";
-// rebuild the parent
-this._parent._rebuild();
-	        ]]>
-	    </removeJavaScript> 
-	    
-	    <events>
-	        <event>
-	            <type>click</type>
-	            <name>Click</name>
-	        </event>
-	    </events>
-	    	    
-	    <styles>
-	        <style>
-	            <name>Tab header</name>
-	            <getAppliesToFunction>
-					<![CDATA[	      
-return "#" + this.id + ".tabsPanel";
-	       			 ]]>	                
-	            </getAppliesToFunction>
-	        </style>   
-	    </styles>	    
-	    	    	    	   	    	        	    
-	</control>
-		
-	<control>
-	    
 	    <type>tabGroup</type>	    
 	    <name>Tabs</name>	    
 	    <image>images/tabs_24x24.png</image>  	
@@ -237,7 +47,8 @@ return "#" + this.id + ".tabsPanel";
 	        <property>
 	            <key>name</key>
 	            <name>Name</name>
-	            <changeValueJavaScript>text</changeValueJavaScript>	            
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <helpHtml>Name that can be given to the control. Names are used to help identify controls uniquely.</helpHtml>
 	        </property>	
 	        
 	        <property>
@@ -250,28 +61,31 @@ return "#" + this.id + ".tabsPanel";
 var values = [];
 for (var i = 1; i <= this.childControls.length; i++) values.push(i);
 return values;
-	        		]]>        
-	            </getValuesFunction>	
-	            <refreshHtml>true</refreshHtml>            
+	        		]]>
+	            </getValuesFunction>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Changes the panel that has the current focus.</helpHtml>
 	        </property>
 	        
 	        <property>
 	            <key>tabType</key>
-	            <name>Direction</name> 
+	            <name>Direction</name>
 	            <setConstructValueFunction>return "H";</setConstructValueFunction>
-	            <changeValueJavaScript>select</changeValueJavaScript>	
+	            <changeValueJavaScript>select</changeValueJavaScript>
 	            <getValuesFunction>
 	                <![CDATA[
 return [["H","Horizontal"],["V","Vertical"]];
 					]]>
-	            </getValuesFunction>    
-	            <refreshHtml>true</refreshHtml> 
-	        </property>	
+	            </getValuesFunction>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Alters the direction of the tabs. Available tabs are on the side or on the top.</helpHtml>
+	        </property>
 	          
 	        <property>
 	            <key>roles</key>
 	            <name>User roles</name>
-	            <changeValueJavaScript>roles</changeValueJavaScript>	            
+	            <changeValueJavaScript>roles</changeValueJavaScript>
+	            <helpHtml>Only allows the viewing of the page based on the type of privileges a user has.</helpHtml>
 	        </property>
 	        
 	    </properties>
@@ -549,6 +363,197 @@ $("#" + id).children("ul").children("li").each( function() {
 	        ]]>	        	       	        
 	    </initJavaScript>	
 	    	    	    	    	            	    	    	        	    	    
+	</control>
+	
+	<control>
+	    
+	    <type>tabsPanel</type>
+	    <name>Tab panel</name>
+	    <helpHtml>The tabs control is useful for displaying different windows of controls without moving onto a different page entirely. Each theme has a differently styled tabs group, and can also be personalised using CSS. Each tab panel is contained within a parent tab object.</helpHtml>
+	    	    
+	    <noDefaultName>true</noDefaultName>
+	      	    
+	    <canUserInsert>true</canUserInsert>
+	    <canUserAddPeers>true</canUserAddPeers>
+	    
+	    <properties>
+	        
+	        <property>
+	            <key>name</key>
+	            <name>Name</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <helpHtml>Name that can be given to the control. Names are used to help identify controls uniquely.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>label</key>
+	            <name>Label</name>
+	            <setConstructValueFunction>return "Tab panel"</setConstructValueFunction>
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets the title of the selected tab.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>roles</key>
+	            <name>User roles</name>
+	            <changeValueJavaScript>roles</changeValueJavaScript>
+	            <helpHtml>Only allows the viewing of the page based on the type of privileges a user has.</helpHtml>
+	        </property>
+	        
+	    </properties>
+	    
+	    <getHtmlFunction>
+	        <![CDATA[
+// return our html for adding to our parent object
+return "<li id='" + this.id + "' class='tabsPanel'>" + this.label + "</li>";
+	        ]]>
+	    </getHtmlFunction> 
+
+	    <createJavaScript>
+	        <![CDATA[
+// add a div for the panel into the tab group div (that leading space is important for creating the same gap we see at runtime)	           
+this._parent.object.append(" <div class='tabsPanel' data-id='" + this.id + "'></div>");
+// set this object to the div
+this.object = this._parent.object.children().last();
+	        ]]>
+	    </createJavaScript>   
+  	    	    	    	    	    	    	    	   	    	   	    
+	    <rebuildJavaScript>
+	        <![CDATA[        
+// update the label
+this._parent.object.children("ul").children("li:nth(" + (this.object.index() - 1) + ")").text(this.label);
+	        ]]>
+	    </rebuildJavaScript>
+	    	    	    	    
+	    <appendJavaScript>
+	        <![CDATA[   
+// add the li to the ul in the tab group	             
+this._parent.object.children().first().append(this._html);
+	        ]]>
+	    </appendJavaScript> 
+	    
+	    <selectLeftJavaScript>
+			<![CDATA[        
+// change the selected panel down one
+this._parent.selectedPanel = this._parent.selectedPanel * 1 - 1;
+// rebuild the parent
+this._parent._rebuild();
+	        ]]>	        
+	    </selectLeftJavaScript>
+	    
+	    <selectRightJavaScript>
+			<![CDATA[        
+// change the selected panel up one
+this._parent.selectedPanel = this._parent.selectedPanel * 1 + 1;
+// rebuild the parent
+this._parent._rebuild();
+	        ]]>	        
+	    </selectRightJavaScript>
+	    
+	    <swapLeftJavaScript>
+			<![CDATA[        
+// get the index of the tab we're dealing with
+var index = this._parent.selectedPanel * 1 - 1;
+// get the tab header object
+var tabHeader = this._parent.object.children().first().find("li:nth(" + index + ")");
+// get the tab header we're swapping with
+var tabHeaderSwap = tabHeader.prev();
+// swap them
+tabHeader.insertBefore(tabHeaderSwap);
+// get the tab body object
+var tabBody = this._parent.object.children("div:nth(" + index + ")");
+// get the tab body we're swapping with
+var tabBodySwap = tabBody.prev();
+// swap them
+tabBody.insertBefore(tabBodySwap);
+// change the selected panel down one
+this._parent.selectedPanel = this._parent.selectedPanel * 1 - 1;
+	        ]]>	        
+	    </swapLeftJavaScript>
+	    
+	    <swapRightJavaScript>
+			<![CDATA[        
+// get the index of the tab we're dealing with
+var index = this._parent.selectedPanel * 1 - 1;
+// get the tab header object
+var tabHeader = this._parent.object.children().first().find("li:nth(" + index + ")");
+// get the tab header we're swapping with
+var tabHeaderSwap = tabHeader.next();
+// swap them
+tabHeader.insertAfter(tabHeaderSwap);
+// get the tab body object
+var tabBody = this._parent.object.children("div:nth(" + index + ")");
+// get the tab body we're swapping with
+var tabBodySwap = tabBody.next();
+// swap them
+tabBody.insertAfter(tabBodySwap);
+// change the selected panel down one
+this._parent.selectedPanel = this._parent.selectedPanel * 1 + 1;
+	        ]]>	        
+	    </swapRightJavaScript>
+	    
+	    <insertLeftJavaScript>
+			<![CDATA[        
+// append and initDesign have already been called when the object was constructed so now we just need to move things around
+var selected = this._parent.selectedPanel*1;
+this._parent.childControls.splice(selected-1,0,this);
+// move the li
+this._parent.object.children().first().children("li:last").insertBefore(this._parent.object.children().first().children("li:nth(" + (selected - 1) + ")"));
+// move the div
+this.object.insertBefore(this._parent.object.children("div:nth(" + (selected - 1) + ")"));
+// rebuild the parent (selection won't have changed as we're taking over as such)
+this._parent._rebuild();
+	        ]]>	        
+	    </insertLeftJavaScript>
+	    
+	    <insertRightJavaScript>
+			<![CDATA[        
+// append and initDesign have already been called when the object was constructed so now we just need to move things around
+var selected = this._parent.selectedPanel*1;
+this._parent.childControls.splice(selected,0,this);
+// move the li
+this._parent.object.children().first().children("li:last").insertAfter(this._parent.object.children().first().children("li:nth(" + (selected - 1) + ")"));
+// move the div
+this.object.insertAfter(this._parent.object.children("div:nth(" + (selected - 1) + ")"));
+// change the selection
+this._parent.selectedPanel = selected+1;
+// rebuild the parent 
+this._parent._rebuild();
+	        ]]>	        
+	    </insertRightJavaScript>
+	    
+	    <removeJavaScript>
+	        <![CDATA[        
+// remove the html for the li
+this._parent.object.children().first().children("li:nth(" + (this.object.index() - 1) + ")").remove();
+// remove the div
+this.object.remove();
+// update the selected tab
+this._parent.selectedPanel = "1";
+// rebuild the parent
+this._parent._rebuild();
+	        ]]>
+	    </removeJavaScript> 
+	    
+	    <events>
+	        <event>
+	            <type>click</type>
+	            <name>Click</name>
+	        </event>
+	    </events>
+	    	    
+	    <styles>
+	        <style>
+	            <name>Tab header</name>
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id + ".tabsPanel";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>   
+	    </styles>	    
+	    	    	    	   	    	        	    
 	</control>
 	
 </controls>	

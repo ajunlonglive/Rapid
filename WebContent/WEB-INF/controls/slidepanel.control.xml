@@ -24,119 +24,13 @@ You should have received a copy of the GNU General Public License
 in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
  -->
-	
-	<control>
-	    
-	    <type>slidePanelPane</type>
-	    <name>Slide panel</name>	
-	    	    
-	    <noDefaultName>true</noDefaultName>
-	      	    
-	    <canUserInsert>true</canUserInsert>
-
-	    <properties>
-	        
-	        <property>
-	            <key>name</key>
-	            <name>Name</name>
-	            <changeValueJavaScript>text</changeValueJavaScript>
-	            <helpHtml>Name that can be given to the control. Names are used to help identify controls uniquely.</helpHtml>
-	        </property>
-	        
-	       	<property>
-	       		<key>panelId</key>
-	       		<name>panelId</name>
-	       		<visible>false</visible>
-	       		<helpHtml>Sets whether the menu is visible or not.</helpHtml>
-	       	</property>
-	       	
-	    </properties>
-	    	    
-	    <getHtmlFunction>
-	        <![CDATA[
-// return our html 
-return "<div id='" + this.id + "' class='slidePanelPane' style='display:none;'></div>";
-	        ]]>
-	    </getHtmlFunction> 
-	    
-	    <createJavaScript>
-	    	<![CDATA[
-// retain the slide panel Id once only
-if (!this.slidePanelId) this.slidePanelId = this.object.prev().attr("id");	    	
-	    	]]>
-	    </createJavaScript> 
-	    
-	    <rebuildJavaScript>
-	    	<![CDATA[
-// add the opener id to this control's object
-this.object.attr("data-panel",this.slidePanelId);
-// add this control's id to the opener object	    
-this._parent.object.find("#" + this.slidePanelId).attr("data-pane",this.id);	
-	    	]]>
-	    </rebuildJavaScript>
-	    	    
-		<initDesignJavaScript>
-	        <![CDATA[	        
-var slidePanelId = this.object.attr("data-panel");
-// loop the page child controls
-for (var i in _page.childControls) {
-	// get the potential slide panel
-	var slidePanel = _page.childControls[i];
-	// break when we find our position amongst the page child controls
-	if (slidePanel.id == slidePanelId) {		
-		// rebuild it
-		rebuildHtml(slidePanel);
-		// we're done
-		break;
-	}
-}   
-	        ]]>	   	        
-	    </initDesignJavaScript>
-	    
-	    <removeJavaScript>
-	        <![CDATA[	          
-var slidePanelId = this.object.attr("data-panel");
-// loop the page child controls
-for (var i in _page.childControls) {
-	// get the potential slide panel
-	var slidePanel = _page.childControls[i];
-	// break when we find our position amongst the page child controls
-	if (slidePanel.id == slidePanelId) {		
-		// remove from page childControls
-		_page.childControls.splice(i, 1);
-		// remove object
-		slidePanel.object.remove();
-		// we're done
-		break;
-	}
-} 	
-// get the body
-var body =  this.object.closest("body");
-// if we have no panels left remove the cover
-if (body.find("div.slidePanel").length <= 1) body.find("div.slidePanelCover").remove();
-// remove the pane
-this.object.remove();
-	        ]]>
-	    </removeJavaScript>	    
-	     	    	   	    	    
-	    <styles>
-	        <style>
-	            <name>Slide panel</name>
-	            <getAppliesToFunction>
-					<![CDATA[	      
-return "#" + this.id;
-	       			 ]]>	                
-	            </getAppliesToFunction>
-	        </style>
-	    </styles>	    	    	    	    
-	    	        	    
-	</control>
-		
+ 
 	<control>
 	    
 	    <type>slidePanel</type>
-	    <name>Slide panel</name>	    
-	    <image>images/slidepanel_24x24.png</image>  	
+	    <name>Slide panel</name>
+	    <image>images/slidepanel_24x24.png</image>
+	    <helpHtml>A handy control that is especially effective on mobile and tablet devices. The slide panel control displays a small bar menu that can have a multitude of controls placed inside of it. A common way to use it is to place styled panels inside of it, and place text controls and glyph controls within the panels that lead to other pages. The slide panel pane is contained within a parent slide panel object. When open, the slide panel pane is what holds other controls. Remember to close the slide panel pane before saving the page, otherwise it will remain open on any page it is present on.</helpHtml>
 	    
 	    <dependentTypes>
 	        <dependentType>slidePanelPane</dependentType>
@@ -526,4 +420,111 @@ pageCover.click({width: slidePanelPane.css("width"),left: slidePanelPane.css("ma
 	    	    	    	            	    	    	        	    	    
 	</control>
 	
-</controls>	
+	<control>
+	    
+	    <type>slidePanelPane</type>
+	    <name>Slide panel</name>
+	    	    
+	    <noDefaultName>true</noDefaultName>
+	      	    
+	    <canUserInsert>true</canUserInsert>
+
+	    <properties>
+	        
+	        <property>
+	            <key>name</key>
+	            <name>Name</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <helpHtml>Name that can be given to the control. Names are used to help identify controls uniquely.</helpHtml>
+	        </property>
+	        
+	       	<property>
+	       		<key>panelId</key>
+	       		<name>panelId</name>
+	       		<visible>false</visible>
+	       		<helpHtml>Sets whether the menu is visible or not.</helpHtml>
+	       	</property>
+	       	
+	    </properties>
+	    	    
+	    <getHtmlFunction>
+	        <![CDATA[
+// return our html 
+return "<div id='" + this.id + "' class='slidePanelPane' style='display:none;'></div>";
+	        ]]>
+	    </getHtmlFunction> 
+	    
+	    <createJavaScript>
+	    	<![CDATA[
+// retain the slide panel Id once only
+if (!this.slidePanelId) this.slidePanelId = this.object.prev().attr("id");	    	
+	    	]]>
+	    </createJavaScript> 
+	    
+	    <rebuildJavaScript>
+	    	<![CDATA[
+// add the opener id to this control's object
+this.object.attr("data-panel",this.slidePanelId);
+// add this control's id to the opener object	    
+this._parent.object.find("#" + this.slidePanelId).attr("data-pane",this.id);	
+	    	]]>
+	    </rebuildJavaScript>
+	    	    
+		<initDesignJavaScript>
+	        <![CDATA[	        
+var slidePanelId = this.object.attr("data-panel");
+// loop the page child controls
+for (var i in _page.childControls) {
+	// get the potential slide panel
+	var slidePanel = _page.childControls[i];
+	// break when we find our position amongst the page child controls
+	if (slidePanel.id == slidePanelId) {		
+		// rebuild it
+		rebuildHtml(slidePanel);
+		// we're done
+		break;
+	}
+}   
+	        ]]>	   	        
+	    </initDesignJavaScript>
+	    
+	    <removeJavaScript>
+	        <![CDATA[	          
+var slidePanelId = this.object.attr("data-panel");
+// loop the page child controls
+for (var i in _page.childControls) {
+	// get the potential slide panel
+	var slidePanel = _page.childControls[i];
+	// break when we find our position amongst the page child controls
+	if (slidePanel.id == slidePanelId) {		
+		// remove from page childControls
+		_page.childControls.splice(i, 1);
+		// remove object
+		slidePanel.object.remove();
+		// we're done
+		break;
+	}
+} 	
+// get the body
+var body =  this.object.closest("body");
+// if we have no panels left remove the cover
+if (body.find("div.slidePanel").length <= 1) body.find("div.slidePanelCover").remove();
+// remove the pane
+this.object.remove();
+	        ]]>
+	    </removeJavaScript>	    
+	     	    	   	    	    
+	    <styles>
+	        <style>
+	            <name>Slide panel</name>
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id;
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	    </styles>	    	    	    	    
+	    	        	    
+	</control>
+	
+</controls>
