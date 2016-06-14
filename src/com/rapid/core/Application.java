@@ -946,7 +946,7 @@ public class Application {
 	// an instance of the security adapter used by this object
 	public SecurityAdapter getSecurityAdapter() { return _securityAdapter; }
 	// set the security to a given type
-	public void setSecurityAdapter(ServletContext servletContext, String securityAdapterType) throws IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException, IOException {
+	public void setSecurityAdapter(ServletContext servletContext, String securityAdapterType) throws IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException, IOException {		
 		// set the security adaper type from the incoming parameter
 		_securityAdapterType = securityAdapterType;
 		// if it was null update to rapid
@@ -971,10 +971,22 @@ public class Application {
 	public FormAdapter getFormAdapter() { return _formAdapter; }
 	// set the security to a given type
 	public void setFormAdapter(ServletContext servletContext, String formAdapterType) throws IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException, IOException {
+		// get the logger		
+		Logger logger = (Logger) servletContext.getAttribute("logger");
+		// if there is a current one
+		if (_formAdapter != null) {
+			try {
+				// close it
+				_formAdapter.close();
+			} catch (Exception ex) {
+				// log any error
+				logger.error("Error closing form adapter for " + _id + "/" + _version, ex);
+			}
+		}
 		// set the security adaper type from the incoming parameter
 		_formAdapterType = formAdapterType;
 		// if it was null
-		if (_formAdapterType == null || "".equals(_formAdapterType)) {
+		if (_formAdapterType == null || "".equals(_formAdapterType)) {						
 			// clear the current one
 			_formAdapter = null;
 		} else {			
@@ -983,12 +995,16 @@ public class Application {
 			// get the constructor for our type
 			Constructor<FormAdapter> constructor = constructors.get(_formAdapterType);
 			// if we got this constructor
-			if (constructor != null) {
+			if (constructor == null) {
+				// log
+				logger.trace("Instantiating Rapid form adapter for " + _id + "/" + _version);
+				// revert to rapid form adapter
+				_formAdapter = new RapidFormAdapter(servletContext, this);				
+			} else {
+				// log
+				logger.trace("Instantiating form adapter " + _formAdapterType + " for " + _id + "/" + _version);
 				// instantiate the specified form adapter
 				_formAdapter = constructor.newInstance(servletContext, this);
-			} else {
-				// revert to rapid form adapter
-				_formAdapter = new RapidFormAdapter(servletContext, this);
 			}
 		}
 	}

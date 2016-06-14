@@ -800,12 +800,14 @@ public class RapidServletContextListener implements ServletContextListener {
 	
 	// Here we loop all of the folders under "applications" looking for a application.xml file, copying to the latest version if found before loading the versions
 	public static int loadApplications(ServletContext servletContext) throws JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException, IOException, ParserConfigurationException, SAXException, TransformerFactoryConfigurationError, TransformerException, RapidLoadingException, XPathExpressionException {
-		
+				
 		// get any existing applications
 		Applications applications = (Applications) servletContext.getAttribute("applications");
 		
 		// check we got some
 		if (applications != null) {
+			// log
+			_logger.info("Closing applications");
 			// loop the application ids
 			for (String appId : applications.getIds()) {
 				// loop the versions
@@ -817,6 +819,8 @@ public class RapidServletContextListener implements ServletContextListener {
 				}				
 			}			
 		}
+		
+		_logger.info("Loading applications");
 		
 		// make a new set of applications
 		applications = new Applications();
@@ -972,7 +976,7 @@ public class RapidServletContextListener implements ServletContextListener {
 						} catch (Exception ex) {
 							
 							// log the exception
-							_logger.error(ex);
+							_logger.error("Error loading app " + applicationFile, ex);
 							
 						} // version load catch
 						
