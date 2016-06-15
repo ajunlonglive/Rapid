@@ -504,7 +504,7 @@ public class Database extends Action {
 						if (details == null) {
 							details = "";
 						} else {
-							details = ", details: " + outputControl.getId() + "details";
+							details = ", details: " + details;
 						}
 						// append the javascript outputs
 						jsOutputs += "{id: '" + outputControl.getId() + "', type: '" + outputControl.getType() + "', field: '" + output.getField() + "'" + details + "}";
