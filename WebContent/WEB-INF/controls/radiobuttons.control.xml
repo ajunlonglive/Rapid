@@ -178,7 +178,7 @@ return html;
 	    
 	    <getDataFunction>
 	        <![CDATA[
-return $("#" + id).children("input[type=radio]:checked").val();
+return $("#" + id).find("input[type=radio]:checked").val();
 			]]>
 	    </getDataFunction>
 	    
@@ -186,7 +186,7 @@ return $("#" + id).children("input[type=radio]:checked").val();
 	        <![CDATA[
 if (data != null && data !== undefined) {
 	var radiobuttons = $("#" + id);
-	radiobuttons.children("input[type=radio]").prop('checked',false);
+	radiobuttons.find("input[type=radio]").prop('checked',false);
 	data = makeDataObject(data, field);
 	var value = null;
 	if (data.rows && data.rows[0]) {
@@ -202,11 +202,11 @@ if (data != null && data !== undefined) {
 		}
 	}
 	if (value !== undefined) {
-		var button = radiobuttons.children("input[type=radio][value='" + value + "']");
+		var button = radiobuttons.find("input[type=radio][value='" + value + "']");
 		if (button[0]) {
 			button.prop('checked',true);
 		} else {
-			radiobuttons.children("input[type=radio]").prop('checked',false);
+			radiobuttons.find("input[type=radio]").prop('checked',false);
 		}
 		if (changeEvents) button.trigger("change");
 	}
