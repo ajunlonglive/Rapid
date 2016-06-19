@@ -157,12 +157,12 @@ if (this.buttons || this.valueList) {
 		// if valueList
 		if (this.valueList) label = button.text;
 		var value = (codes ? button.value : label);
-		radiobuttonHtml += "<span>";
+		radiobuttonHtml += "<label>";
 		if (this.buttonposition == 'R') radiobuttonHtml += label;
 		radiobuttonHtml += "<input type='radio' name='" + (this.group ? escapeApos(this.group) : this.id) + "' id='" + this.id + i + "' value='" + escapeApos(value) + "' " + (this.value == value ? "checked='checked'" :  "") + "></input>";
 		if (this.buttonposition == 'L') radiobuttonHtml += label;
 		if (this.layout == 'V') radiobuttonHtml += "<br/>";
-		radiobuttonHtml += "</span>";
+		radiobuttonHtml += "</label>";
 	}
 } else {
 	radiobuttonHtml = "No buttons";
