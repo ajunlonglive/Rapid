@@ -459,7 +459,11 @@ function getGridSelectedRowNumber(id, ev) {
 	// check if in a row
 	if (row[0]) {
 		// the event occured from within a row so find the table, and the index of the row from the official rows
-		index = row.closest("table").find("tr.rowStyle1,tr.rowStyle2").index(row);
+		var rows = row.closest("table").find("tr.rowStyle1,tr.rowStyle2").not("[data-ignore]");
+		// if this was a row to be ignored, find the previous most non-ignored row
+		if (row.is("[data-ignore]")) row = row.prevAll("tr.rowStyle1,tr.rowStyle2").not("[data-ignore]").first();
+		// get the position of relevant row
+		index = rows.index(row);		
 	} else {
 		// the event occured outside a row so get the table using the id
 		var grid = $("#" + id);
