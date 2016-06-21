@@ -383,11 +383,11 @@ function sizeGridFixedHeaderColumns(control) {
 		hidden = true;
 		control.parent().show();
 	}
-	// get the header cells
+	// get the visible header cells
 	var hcells = control.prev().find("tr:first-child").children(":visible");
 	// remove any css for width
 	hcells.css("width","");
-	// get the body cells
+	// get the visible body cells
 	var bcells = control.find("tr:nth-child(2)").children(":visible");
 	// if there are body cells
 	if (bcells.length > 0) {
@@ -399,24 +399,50 @@ function sizeGridFixedHeaderColumns(control) {
 			// get the header cell
 			var hcell = $(hcells.get(i));
 			// get the header cell width
-			var hwidth = hcell.outerWidth();
+			var hwidth = hcell.outerWidth(); // must be outer width so h and b include padding and can be compared
+			
 			// get the body cell
 			var bcell = $(bcells.get(i));
 			// get the body cell width
 			var bwidth = bcell.outerWidth();
+			
 			// compare widths
 			if (hwidth < bwidth) {
-				// only adjust for padding on the last column - tested in Chrome
-				if (i == bcells.length - 1) bwidth = bwidth - parseInt(hcell.css("padding-left")) - parseInt(hcell.css("padding-right"));
-				// set the min width 
+				
+				// subtract padding from all header cells
+				bwidth = bwidth - parseInt(hcell.css("padding-left")) - parseInt(hcell.css("padding-right")) - parseInt(hcell.css("border-left")) - parseInt(hcell.css("border-right"));
+				
+				// adjust for borders - first cell
+				if (i == 0) bwidth = bwidth + parseInt(bcell.css("border-left")) + Math.max(0, parseInt(bcell.next().css("border-left")) - parseInt(bcell.css("border-right")))/2;
+				
+				// middle cells width must be shorter by half the difference between this cells left border and previous cells right border (but only from 2nd cell to 2nd last)
+				if (i > 0 && i < bcells.length - 1) bwidth = bwidth - (Math.max(0, parseInt(bcell.prev().css("border-right")) - parseInt(bcell.css("border-left"))) - Math.max(0, parseInt(bcell.next().css("border-left")) - parseInt(bcell.css("border-right"))))/2;
+				
+				// last cell
+				if (i == bcells.length - 1) bwidth = bwidth - Math.max(0, parseInt(bcell.prev().css("border-right")) - parseInt(bcell.css("border-left")))/2;
+				
+				// set the min width
 				hcell.css("min-width",bwidth);
+				
 			} else if (hwidth > bwidth) {
-				// only adjust for padding on the last column - tested in Chrome
-				if (i == bcells.length - 1) hwidth = hwidth - parseInt(bcell.css("padding-left")) - parseInt(bcell.css("padding-right"));
-				// set the min width 
-				bcell.css("min-width",hwidth); 
-			}			
-		}			
+			
+				// subtract padding from all body cells
+				hwidth = hwidth - parseInt(bcell.css("padding-left")) - parseInt(bcell.css("padding-right")) - parseInt(bcell.css("border-left")) - parseInt(bcell.css("border-right"));
+				
+				// adjust for borders - first cell
+				if (i == 0) hwidth = hwidth + parseInt(hcell.css("border-left")) + Math.max(0, parseInt(hcell.next().css("border-left")) - parseInt(hcell.css("border-right")))/2;
+				
+				// middle cells width must be shorter by half the difference between this cells left border and previous cells right border (but only from 2nd cell to 2nd last)
+				if (i > 0 && i < bcells.length - 1) hwidth = hwidth - (Math.max(0, parseInt(hcell.prev().css("border-right")) - parseInt(hcell.css("border-left"))) - Math.max(0, parseInt(hcell.next().css("border-left")) - parseInt(hcell.css("border-right"))))/2;
+				
+				// last cell
+				if (i == bcells.length - 1) hwidth = hwidth - Math.max(0, parseInt(hcell.prev().css("border-right")) - parseInt(hcell.css("border-left")))/2;
+				
+				// set the min width (less body padding left and right)
+				bcell.css("min-width",hwidth);
+				
+			}
+		}
 	}
 	// hide again if that was the initial state
 	if (hidden) control.parent().hide();
@@ -453,7 +479,7 @@ function getGridSelectedRowNumber(id, ev) {
 	        <![CDATA[
 	        
 var headerHtml = "";
-var rowHtml = "<tr><td>No columns</td></tr>";	        
+var rowHtml = "<tr><td>No columns</td></tr>";
 if (this.columns.length > 0) {
 	var headerHtml = "<tr" + (this.columnHeadings ? "" : " style='display:none;'") + ">";
 	var rowHtml = "<tr>";
@@ -482,26 +508,26 @@ if (this.columns.length > 0) {
 	}
 	headerHtml += "</tr>";
 	rowHtml += "</tr>";
-}        	        	        
+}
 	        
 var style = "";
-if (this.scrollV) style += "display:inline-block;overflow-y:" + this.scrollV + ";max-height:" + this.scrollHeight + ";";	        
+if (this.scrollV) style += "display:inline-block;overflow-y:" + this.scrollV + ";max-height:" + this.scrollHeight + ";";
 	        
 // check for fixed header
 if (this.scrollV && this.fixedHeader) {
-	// return a container div with the table inside (not that scroll h is on the container)
+	// return a container div with the table inside (note that scroll h is on the container)
 	return "<div id='" + this.id + "' style='display:inline-block;" + (this.scrollH ? "overflow-x:" + this.scrollH + ";max-width:" + this.scrollWidth + ";" : "") + "' class='" + getStyleClasses(this) + "'><table style='" + style + "' class='grid'>" + headerHtml + rowHtml.replace("<tr>","<tr class='rowStyle1'>") + rowHtml.replace("<tr>","<tr class='rowStyle2'>") + "</table></div>";
 } else {
 	// h styling is on the table if no fixed header row
-	if (this.scrollH) style += "display:inline-block;overflow-x:" + this.scrollH + ";max-width:" + this.scrollWidth + ";";	
+	if (this.scrollH) style += "display:inline-block;overflow-x:" + this.scrollH + ";max-width:" + this.scrollWidth + ";";
 	// return a simple table
 	return "<table id='" + this.id + "' style='" + style + "' class='grid" + getStyleClasses(this) + "'>" + headerHtml + rowHtml.replace("<tr>","<tr class='rowStyle1'>") + rowHtml.replace("<tr>","<tr class='rowStyle2'>") + "</table>";
 }
 	        ]]>
-	    </getHtmlFunction> 	 
+	    </getHtmlFunction>
  	    
 	    <saveJavaScript>
-	        <![CDATA[ 
+	        <![CDATA[
 var table = this.object;
 if (!table.is("table")) table = table.find("table").last();
 // remove all sample rows, leaving the header row
@@ -651,7 +677,8 @@ control.find("span.sort").html("&#xf0dc");
 // make sure it's a table
 if (!control.is("table")) control = control.find("table").last();
 // if we have data
-if (data !== undefined) {	
+if (data !== undefined) {
+
 	data = makeDataObject(data, field);
 	if (data && data.rows) {	        		
 		if (details && details.columns && data.fields) {
@@ -718,7 +745,7 @@ if (data !== undefined) {
 	
 	// if we have a fixed header row
 	if (details && details.fixedHeader) sizeGridFixedHeaderColumns(control);
-		
+	
 	// if we click on a row that isn't the first one
 	control.children().last().children("tr:not(:first)").click( function() {
 		// get the row 
