@@ -103,6 +103,10 @@ input.validation {
 	border: 2px solid red;
 }
 
+select.validation {
+	border: 2px solid red;
+}
+
 textarea.validation {
 	border: 2px solid red;
 }  
