@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2015 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -736,7 +736,7 @@ public class Designer extends RapidHttpServlet {
 								
 							}
 															
-						} else if ("pages".equals(actionName) || "summary".equals(actionName) || "detail".equals(actionName)) {
+						} else if ("pages".equals(actionName) || "text".equals(actionName) || "summary".equals(actionName) || "detail".equals(actionName)) {
 							
 							// set response as text
 							response.setContentType("text/text");
@@ -748,7 +748,7 @@ public class Designer extends RapidHttpServlet {
 							Application application = rapidRequest.getApplication();
 							
 							// print the app name and version
-							out.print(application.getName() + "\t" + application.getVersion() + "\n");
+							out.print(application.getName() + "\t" + application.getVersion() + "\n\n");
 							
 							// get the page headers
 							PageHeaders pageHeaders = application.getPages().getSortedPages();
@@ -763,23 +763,29 @@ public class Designer extends RapidHttpServlet {
 								String label = page.getLabel();
 								// if we got one
 								if (label == null) {
-									label = "";									
+									label = "";
 								} else {
-									if (label.length() > 0) label = " - " + label;									
+									if (label.length() > 0) label = " - " + label;
 								}
 								
-								// print the page name
-								out.print(page.getId() + " " + page.getName() + label);
+								// print the page id unless text
+								if (!"text".equals(actionName)) out.print(page.getId() + " ");
 								
-								// check summary
-								if ("summary".equals(actionName) || "detail".equals(actionName)) {
+								// print the page name
+								out.print(page.getName() + label);
+								
+								// check report type and add sophistication
+								if (!"pages".equals(actionName)) {
 																											
-									// print the number of controls
-									out.print(" - number of controls: " + page.getAllControls().size() + "\r\n");
+									// print the number of controls if not for text
+									if (!"text".equals(actionName)) out.print(" - number of controls: " + page.getAllControls().size());
+									
+									// line break after page name
+									out.print("\r\n\r\n");
 																		
 									// if detail
 									if ("detail".equals(actionName)) {
-										// print the page properties			
+										// print the page properties
 										out.print("Name\t" + page.getName() + "\n");
 										out.print("Title\t" + page.getTitle() + "\n");
 										out.print("Description\t" + page.getDescription() + "\n");
@@ -787,62 +793,101 @@ public class Designer extends RapidHttpServlet {
 									}
 																		
 									// print the page events details
-									printEventsDetails(page.getEvents(), out);
+									if (!"text".equals(actionName)) printEventsDetails(page.getEvents(), out);
 								
 									// get the controls
 									List<Control> controls = page.getAllControls();
+									
+									// old text for avoiding repeated questions
+									String oldText = null;
 
 									// loop them
 									for (Control control : controls) {
-										// get the name 
-										String name = control.getName();
-										// null check
-										if (name != null) {
-											if (name.trim().length() > 0) {											
+										
+										// if text
+										if ("text".equals(actionName)) {
+											
+											// get the text
+											String text = control.getProperty("text");
+											
+											// print if we got some
+											if (text != null) {
+												// clean up simple characters
+												text = text.replace("&nbsp;", " ");
 												
-												// get the label
-												label = control.getLabel();
-												// get the type
-												String type = control.getType();												
+												// find all html tags and replace contents with nothing
+												text = text.replaceAll("<(.*?)>", "");
 												
-												// exclude panels, hidden values, and datastores for summary
-												if ("detail".equals(actionName) || (!"panel".equals(type) && !("hiddenvalue").equals(type) && !("dataStore").equals(type))) {
+												// trim it
+												text = text.trim();
+												// check different from old text
+												if (!text.equals(oldText)) {
+													// if there is some text
+													if (text.length() > 0) {
+														// print it
+														out.print(" - " + text + "\n");
+														// remember this was the old text
+														oldText = text;
+													}
+												}
+											}
+											
+										} else {
+										
+											// get the name
+											String name = control.getName();
+											// null check
+											if (name != null) {
+												if (name.trim().length() > 0) {
 													
-													// print the control name
-													out.print(control.getId() +"\t" + type + "\t" + name + "\t" + label + "\n");
+													// get the label
+													label = control.getLabel();
+													// get the type
+													String type = control.getType();
 													
-													// if details
-													if ("detail".equals(actionName)) {
-													
-														// get the properties
-														Map<String, String> properties = control.getProperties();
-														// get a list we'll sort for them
-														List<String> sortedKeys = new ArrayList<String>();
-														// loop them
-														for (String key : properties.keySet()) {																																												
-															// add to sorted list
-															sortedKeys.add(key);
-														}
-														// sort them
-														Collections.sort(sortedKeys);
-														// loop them
-														for (String key : sortedKeys) {
-															// print the properties															
-															out.print(key + "\t" + properties.get(key) + "\n");		
-														}														
-														// print the event details
-														printEventsDetails(control.getEvents(), out);
-																																		
-													} // detail check													
-												}													
+													// exclude panels, hidden values, and datastores for summary
+													if ("detail".equals(actionName) || (!"panel".equals(type) && !("hiddenvalue").equals(type) && !("dataStore").equals(type))) {
+														
+														// print the control name
+														out.print(control.getId() +"\t" + type + "\t" + name + "\t" + label + "\n");
+														
+														// if details
+														if ("detail".equals(actionName)) {
+														
+															// get the properties
+															Map<String, String> properties = control.getProperties();
+															// get a list we'll sort for them
+															List<String> sortedKeys = new ArrayList<String>();
+															// loop them
+															for (String key : properties.keySet()) {
+																// add to sorted list
+																sortedKeys.add(key);
+															}
+															// sort them
+															Collections.sort(sortedKeys);
+															// loop them
+															for (String key : sortedKeys) {
+																// print the properties
+																out.print(key + "\t" + properties.get(key) + "\n");
+															}
+															// print the event details
+															printEventsDetails(control.getEvents(), out);
+																																			
+														} // detail check
+													}
+												}
 											}
 										}
-									}														
+									}
 								} else {
 									
 									out.print("\n");
 									
 								}
+								
+								// all reports except for pages have a line break after each page
+								if (!"pages".equals(actionName)) out.print("\n");
+								
 							}
 																				
 							// close the writer
