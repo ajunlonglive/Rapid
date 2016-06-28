@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2015 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -151,11 +151,11 @@ public class Webservice extends Action {
 			// get the parameters						
 			ArrayList<Parameter> inputs = getParameters(jsonQuery.optJSONArray("inputs"));
 			String type = jsonQuery.optString("type");
-			String url = jsonQuery.optString("url");
-			String action = jsonQuery.optString("action");
+			String url = jsonQuery.optString("url").trim();
+			String action = jsonQuery.optString("action").trim();
 			String body = jsonQuery.optString("body");
 			String transform = jsonQuery.optString("transform");
-			String root = jsonQuery.optString("root");
+			String root = jsonQuery.optString("root").trim();
 			ArrayList<Parameter> outputs = getParameters(jsonQuery.optJSONArray("outputs"));
 			// make the object
 			_request = new Request(inputs, type, url, action, body, transform, root, outputs);
@@ -560,7 +560,24 @@ public class Webservice extends Action {
 						if (action.length() > 0) connection.setRequestProperty("Action", action);
 					} else if ("XML".equals(_request.getType())) {
 						connection.setRequestProperty("Content-Type", "text/xml");
-						if (action.length() > 0) connection.setRequestProperty("Action", action);
+						// if there is an action
+						if (action.length() > 0) {
+							// if it's one of the special restful verbs
+							if ("GET".equals(action.toUpperCase()) 
+								|| "POST".equals(action.toUpperCase())
+								|| "HEAD".equals(action.toUpperCase())
+								|| "OPTIONS".equals(action.toUpperCase())
+								|| "PUT".equals(action.toUpperCase())
+								|| "DELETE".equals(action.toUpperCase())
+								|| "TRACE".equals(action.toUpperCase())
+							) {
+								// set the request method
+								connection.setRequestMethod(action.toUpperCase());
+							} else { 
+								connection.setRequestProperty("Action", action);
+							}
+						}
+																								
 					}
 					
 					// if a body has been specified
@@ -596,10 +613,10 @@ public class Webservice extends Action {
 							SOAXMLReader xmlReader = new SOAXMLReader(_request.getRoot());						
 							soaData = xmlReader.read(response);
 						}
-						
-						SOADataWriter jsonWriter = new SOARapidWriter(soaData);
-						
-						String jsonString = jsonWriter.write();
+										
+						SOADataWriter rapidWriter = new SOARapidWriter(soaData);
+												
+						String jsonString = rapidWriter.write();
 						
 						jsonData = new JSONObject(jsonString);
 											

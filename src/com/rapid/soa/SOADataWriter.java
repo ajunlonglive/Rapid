@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2015 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -138,7 +138,7 @@ public abstract class SOADataWriter {
 		}	
 		
 		private String jsonEscape(String value) {
-			return value.replace("'", "\\'").replace("\"", "\\\"");
+			return value.replace("'", "\\'").replace("\"", "\\\"").replace("\n", "\\n");
 		}
 				
 		private void append(SOAElement element) {
@@ -260,7 +260,7 @@ public abstract class SOADataWriter {
 			if (value == null) {
 				return value;
 			} else {
-				return value.replace("'", "\\'").replace("\"", "\\\"");
+				return value.replace("'", "\\'").replace("\"", "\\\"").replace("\n", "\\n");
 			}
 		}
 		
