@@ -41,7 +41,7 @@ public abstract class SOADataWriter {
 	
 	public SOADataWriter(SOAData soaData) {
 		_soaData = soaData;
-	}
+	}	
 		
 	// abstract methods
 	
@@ -136,11 +136,7 @@ public abstract class SOADataWriter {
 		public SOAJSONWriter(SOAData soaData) {
 			super(soaData);
 		}	
-		
-		private String jsonEscape(String value) {
-			return value.replace("'", "\\'").replace("\"", "\\\"").replace("\n", "\\n");
-		}
-				
+						
 		private void append(SOAElement element) {
 			
 			if (element.getIsArray()) {
@@ -256,13 +252,6 @@ public abstract class SOADataWriter {
 			super(soaData);
 		}
 		
-		private String jsonEscape(String value) {
-			if (value == null) {
-				return value;
-			} else {
-				return value.replace("'", "\\'").replace("\"", "\\\"").replace("\n", "\\n");
-			}
-		}
 		
 		private void append(SOAElement element) {
 			
@@ -387,6 +376,16 @@ public abstract class SOADataWriter {
 			}
 		}
 		
+	}
+	
+	// shared public static methods
+	
+	private static String jsonEscape(String value) {
+		if (value == null) {
+			return value;
+		} else {
+			return value.replace("'", "\\'").replace("\"", "\\\"").replace("\\", "\\\\").replace("\n", "\\n");
+		}
 	}
 	
 }
