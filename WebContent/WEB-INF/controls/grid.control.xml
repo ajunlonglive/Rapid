@@ -908,8 +908,9 @@ if (details) {
 		headerTable.find("tr:not(:first-child)").remove();
 		// remove the style attribute as this all applies only to the second table with the data in it
 		headerTable.removeAttr("style");
-		// add a simple style back
+		// add 100% widths (this is temporary)
 		headerTable.css({"width":"100%"});
+		control.css({"width":"100%"});
 		// hide the top row from the proper table
 		control.find("tr:first-child").hide();
 		// append the header table above control
