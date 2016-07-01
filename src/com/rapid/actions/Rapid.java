@@ -798,8 +798,10 @@ public class Rapid extends Action {
 										
 						// check we have some webservices
 						if (app.getWebservices() != null) {
+							// get a synchronised list for multithreaded sorting
+							List<Webservice> webservices = Collections.synchronizedList(app.getWebservices());
 							// sort them by their name
-							Collections.sort(app.getWebservices(), new Comparator<Webservice>() {
+							Collections.sort(webservices, new Comparator<Webservice>() {
 								@Override
 								public int compare(Webservice o1, Webservice o2) {
 									if (o1 == null) {
@@ -812,7 +814,7 @@ public class Rapid extends Action {
 								}								
 							});
 							// loop and add to jsonArray
-							for (Webservice webservice : app.getWebservices()) {
+							for (Webservice webservice : webservices) {
 								jsonWebservices.put(webservice.getName());
 							}					
 						}	
@@ -824,8 +826,10 @@ public class Rapid extends Action {
 										
 						// check we have some webservices
 						if (app.getParameters() != null) {
+							// get a synchronised list for multithreaded sorting
+							List<Parameter> parameters = Collections.synchronizedList(app.getParameters());
 							// sort them by their name
-							Collections.sort(app.getParameters(), new Comparator<Parameter>() {
+							Collections.sort(parameters, new Comparator<Parameter>() {
 								@Override
 								public int compare(Parameter o1, Parameter o2) {
 									if (o1 == null) {
@@ -838,7 +842,7 @@ public class Rapid extends Action {
 								}								
 							});
 							// loop and add to jsonArray
-							for (Parameter parameter : app.getParameters()) {
+							for (Parameter parameter : parameters) {
 								jsonParameters.put(parameter.getName());
 							}					
 						}	
@@ -850,8 +854,10 @@ public class Rapid extends Action {
 										
 						// check we have some resources
 						if (app.getAppResources() != null) {
+							// get a synchronised list for multithreaded sorting
+							List<Resource> resources = Collections.synchronizedList(app.getAppResources());
 							// sort them by their name
-							Collections.sort(app.getAppResources(), new Comparator<Resource>() {
+							Collections.sort(resources, new Comparator<Resource>() {
 								@Override
 								public int compare(Resource o1, Resource o2) {
 									if (o1 == null) {
@@ -864,7 +870,7 @@ public class Rapid extends Action {
 								}								
 							});							
 							// loop and adds2 to jsonArray
-							for (Resource resource : app.getAppResources()) {
+							for (Resource resource : resources) {
 								jsonResources.put(resource.getName());
 							}					
 						}	
