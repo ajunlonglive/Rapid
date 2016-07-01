@@ -189,7 +189,7 @@ public class Mobile extends Action {
 	}
 	
 	// a re-usable function for printing the details of the outputs
-	private String getOutputs(RapidHttpServlet rapidServlet, Application application, Page page, String outputsJSON) throws JSONException {
+	private String getMobileOutputs(RapidHttpServlet rapidServlet, Application application, Page page, String outputsJSON) throws JSONException {
 		
 		// start the outputs string
 		String outputsString = "";
@@ -247,11 +247,11 @@ public class Mobile extends Action {
 					String property = idParts[1];
 
 					// make the getGps call to the bridge
-					outputsString += "{f:'setProperty_" + destinationControl.getType() +  "_" + property + "',id:'" + itemId + "',field:'" + field + "',details:'" + details + "'}";
+					outputsString += "{\\\"f\\\":\\\"setProperty_" + destinationControl.getType() +  "_" + property + "\\\",id:\\\"" + itemId + "\\\",field:\\\"" + field + "\\\",details:\\\"" + details + "\\\"}";
 				
 				} else {
 					
-					outputsString += "{f:'setData_" + destinationControl.getType() + "',id:'" + itemId + "',field:'" + field + "',details:'" + details + "'}";
+					outputsString += "{\\\"f\\\":\\\"setData_" + destinationControl.getType() + "\\\",id:\\\"" + itemId + "\\\",field:\\\"" + field + "\\\",details:\\\"" + details + "\\\"}";
 					
 				} // copy / set property check
 				
@@ -266,6 +266,85 @@ public class Mobile extends Action {
 		return outputsString;
 		
 	}
+	
+	// a re-usable function for printing the details of the outputs
+		private String getOutputs(RapidHttpServlet rapidServlet, Application application, Page page, String outputsJSON, String data) throws JSONException {
+			
+			// start the outputs string
+			String outputsString = "";
+						
+			// read into json Array
+			JSONArray jsonOutputs = new JSONArray(outputsJSON);
+			
+			// loop
+			for (int i = 0; i < jsonOutputs.length(); i++) {
+										
+				// get the gps desintation
+				JSONObject jsonGpsDestination = jsonOutputs.getJSONObject(i);
+				
+				// get the itemId
+				String itemId = jsonGpsDestination.getString("itemId");
+				// split by escaped .
+				String idParts[] = itemId.split("\\.");
+				// if there is more than 1 part we are dealing with set properties, for now just update the destintation id
+				if (idParts.length > 1) itemId = idParts[0];
+				
+				// get the field
+				String field = jsonGpsDestination.optString("field","");
+				
+				// first try and look for the control in the page
+				Control destinationControl = page.getControl(itemId);
+				// assume we found it
+				boolean pageControl = true;
+				// check we got a control
+				if (destinationControl == null) {
+					// now look for the control in the application
+					destinationControl = application.getControl(rapidServlet.getServletContext(), itemId);
+					// set page control to false
+					pageControl = false;
+				} 
+				
+				// check we got one from either location
+				if (destinationControl != null) {				
+													
+					// get any details we may have
+					String details = destinationControl.getDetailsJavaScript(application, page);
+						
+					// if we have some details
+					if (details != null) {
+						// if this is a page control
+						if (pageControl) {
+							// the details will already be in the page so we can use the short form
+							details = destinationControl.getId() + "details";
+						} 
+					}
+					
+					// if the idParts is greater then 1 this is a set property
+					if (idParts.length > 1) {
+						
+						// get the property from the second id part
+						String property = idParts[1];
+
+						// make the getGps call to the bridge
+						outputsString += "setProperty_" + destinationControl.getType() +  "_" + property + "(ev,'" + itemId + "','" + field + "'," + details + "," + data + ")";
+					
+					} else {
+						
+						outputsString += "setData_" + destinationControl.getType() + "(ev,'" + itemId + "','" + field + "'," + details + "," + data + ")";
+						
+					} // copy / set property check
+					
+					// add a comma if more are to come
+					if (i < jsonOutputs.length() - 1) outputsString += ", ";
+					
+				} // destination control check	
+																																
+			} // destination loop
+			
+			// return
+			return outputsString;
+			
+		}
 	
 	// a helper method to check controls exist
 	private boolean checkControl(ServletContext servletContext, Application application, Page page, String controlId) {
@@ -553,22 +632,46 @@ public class Mobile extends Action {
 				
 			} else if ("sendGPS".equals(type)) {
 				
-				// mobile check with alert
-				js += getMobileCheck(true);
-				
-				// get whether to check if gps is enabled
-				boolean checkGPS = Boolean.parseBoolean(getProperty("gpsCheck"));
-				// if we had one call it
-				if (checkGPS) js += "  _rapidmobile.checkGPS();\n";
-				
-				// get the gps frequency into an int
-				int gpsFrequency = Integer.parseInt(getProperty("gpsFrequency"));
-				
 				// get the gps destinations
 				String gpsDestinationsString = getProperty("gpsDestinations");
-				
+																
 				// if we had some
-				if (gpsDestinationsString != null) {					
+				if (gpsDestinationsString != null) {
+					
+					// mobile check manually
+					js +="if (typeof _rapidmobile == 'undefined') {\n";
+					
+					// not on Rapid Mobile - check for location
+					js += "  if (navigator.geolocation) {\n";
+				    js += "    navigator.geolocation.getCurrentPosition(function(pos) {\n";
+				    js += "      var data = {fields:['lat','lng'],rows:[[pos.coords.latitude,pos.coords.longitude]]};\n";
+				    
+				    try {
+						
+						// add the gpsDestinationsString
+						String getGPSjs = "      " + getOutputs(rapidServlet, application, page, gpsDestinationsString,"data") + ";\n";
+						
+						// add it into the js
+						js += getGPSjs + "\n";
+						
+					} catch (JSONException ex) {
+						
+						// print an error into the js instead
+						js += "  // error reading gpsDestinations : " + ex.getMessage();
+						
+					}
+				    
+				    js	+= "    });\n";
+				    js += "  } else {\n    alert('Location is not available');\n  }\n";
+				    js += "} else {\n";
+					
+					// get whether to check if gps is enabled
+					boolean checkGPS = Boolean.parseBoolean(getProperty("gpsCheck"));
+					// if we had one call it
+					if (checkGPS) js += "  _rapidmobile.checkGPS();\n";
+					
+					// get the gps frequency into an int
+					int gpsFrequency = Integer.parseInt(getProperty("gpsFrequency"));
 															
 					try {
 						
@@ -576,7 +679,7 @@ public class Mobile extends Action {
 						String getGPSjs = "  _rapidmobile.getGPS(" + gpsFrequency + ",\"[";
 
 						// add the gpsDestinationsString
-						getGPSjs += getOutputs(rapidServlet, application, page, gpsDestinationsString);
+						getGPSjs += getMobileOutputs(rapidServlet, application, page, gpsDestinationsString);
 
 						// close the get gps string
 						getGPSjs += "]\");\n";
@@ -591,10 +694,10 @@ public class Mobile extends Action {
 						
 					}
 					
+					// close mobile check
+					js += "}\n";
+					
 				} // gps destinations check			
-				
-				// close mobile check
-				js += "}\n";
 				
 			} else if ("stopGPS".equals(type)) {
 				
@@ -680,7 +783,7 @@ public class Mobile extends Action {
 					// start the add barcode call
 					jsBarcode += "    _rapidmobile.addBarcode(\"[";
 					
-					jsBarcode += getOutputs(rapidServlet, application, page, barcodeDestinations);
+					jsBarcode += getMobileOutputs(rapidServlet, application, page, barcodeDestinations);
 					
 					// call get barcode
 					jsBarcode +=  "]\");\n";
