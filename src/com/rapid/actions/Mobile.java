@@ -652,7 +652,7 @@ public class Mobile extends Action {
 						String getGPSjs = "      " + getOutputs(rapidServlet, application, page, gpsDestinationsString,"data") + ";\n";
 						
 						// add it into the js
-						js += getGPSjs + "\n";
+						js += getGPSjs;
 						
 					} catch (JSONException ex) {
 						
