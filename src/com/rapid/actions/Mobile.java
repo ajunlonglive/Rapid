@@ -237,7 +237,10 @@ public class Mobile extends Action {
 					if (pageControl) {
 						// the details will already be in the page so we can use the short form
 						details = destinationControl.getId() + "details";
-					} 
+					} else {
+						// escape the object
+						details = "\\\"" + details.replace("\"","\\\\\\\"") + "\\\"";
+					}
 				}
 				
 				// if the idParts is greater then 1 this is a set property
@@ -247,11 +250,11 @@ public class Mobile extends Action {
 					String property = idParts[1];
 
 					// make the getGps call to the bridge
-					outputsString += "{\\\"f\\\":\\\"setProperty_" + destinationControl.getType() +  "_" + property + "\\\",id:\\\"" + itemId + "\\\",field:\\\"" + field + "\\\",details:\\\"" + details + "\\\"}";
+					outputsString += "{\\\"f\\\":\\\"setProperty_" + destinationControl.getType() +  "_" + property + "\\\",\\\"id\\\":\\\"" + itemId + "\\\",\\\"field\\\":\\\"" + field + "\\\",\\\"details\\\":" + details + "}";
 				
 				} else {
 					
-					outputsString += "{\\\"f\\\":\\\"setData_" + destinationControl.getType() + "\\\",id:\\\"" + itemId + "\\\",field:\\\"" + field + "\\\",details:\\\"" + details + "\\\"}";
+					outputsString += "{\\\"f\\\":\\\"setData_" + destinationControl.getType() + "\\\",\\\"id\\\":\\\"" + itemId + "\\\",\\\"field\\\":\\\"" + field + "\\\",\\\"details\\\":" + details + "}";
 					
 				} // copy / set property check
 				
