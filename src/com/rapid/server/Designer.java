@@ -124,7 +124,7 @@ public class Designer extends RapidHttpServlet {
     private void printActionDetails(Action action, PrintWriter out) {
     	
     	// print the action															
-    	out.print("\t\tAction\t" + action.getId()+ "\n");
+    	out.print("\t\tAction\t" + action.getId()+ "\n\r");
 		
 		// get the properties
 		Map<String, String> properties = action.getProperties();
@@ -140,7 +140,7 @@ public class Designer extends RapidHttpServlet {
 		// loop the sorted keys
 		for (String key : sortedKeys) {
 			// print the property															
-			out.print("\t\t\t" + key + "\t" + properties.get(key) + "\n");	
+			out.print("\t\t\t" + key + "\t" + properties.get(key) + "\n\r");	
 		}
 		
 		// get a JSONObejct for them
@@ -162,7 +162,7 @@ public class Designer extends RapidHttpServlet {
 		for (String key : sortedKeys) {
 			// print it 
 			try {
-				out.print("\t\t\t" + key + "\t" + jsonAction.get(key) + "\n");
+				out.print("\t\t\t" + key + "\t" + jsonAction.get(key) + "\n\r");
 			} catch (JSONException e) {	}	
 		}
 				
@@ -191,11 +191,11 @@ public class Designer extends RapidHttpServlet {
 					if (event.getActions() != null) {
 						if (event.getActions().size() > 0) {							
 							// print the event															
-							out.print("\tEvent\t" + event.getType() + "\n");							
+							out.print("\tEvent\t" + event.getType() + "\n\r");
 							// loop the actions
 							for (Action action : event.getActions()) {
 								// print the action details
-								printActionDetails( action,  out);								
+								printActionDetails( action,  out);
 							}							
 						}
 					}	
@@ -748,7 +748,7 @@ public class Designer extends RapidHttpServlet {
 							Application application = rapidRequest.getApplication();
 							
 							// print the app name and version
-							out.print(application.getName() + "\t" + application.getVersion() + "\n\n");
+							out.print(application.getName() + "\t" + application.getVersion() + "\r\r\n\n");
 							
 							// get the page headers
 							PageHeaders pageHeaders = application.getPages().getSortedPages();
@@ -781,15 +781,15 @@ public class Designer extends RapidHttpServlet {
 									if (!"text".equals(actionName)) out.print(" - number of controls: " + page.getAllControls().size());
 									
 									// line break after page name
-									out.print("\r\n\r\n");
+									out.print("\n\r\n\r");
 																		
 									// if detail
 									if ("detail".equals(actionName)) {
 										// print the page properties
-										out.print("Name\t" + page.getName() + "\n");
-										out.print("Title\t" + page.getTitle() + "\n");
-										out.print("Description\t" + page.getDescription() + "\n");
-										out.print("Simple\t" + page.getSimple() + "\n");
+										out.print("Name\t" + page.getName() + "\n\r");
+										out.print("Title\t" + page.getTitle() + "\n\r");
+										out.print("Description\t" + page.getDescription() + "\n\r");
+										out.print("Simple\t" + page.getSimple() + "\n\r");
 									}
 																		
 									// print the page events details
@@ -825,7 +825,7 @@ public class Designer extends RapidHttpServlet {
 													// if there is some text
 													if (text.length() > 0) {
 														// print it
-														out.print(" - " + text + "\n");
+														out.print(" - " + text + "\n\r");
 														// remember this was the old text
 														oldText = text;
 													}
@@ -849,7 +849,7 @@ public class Designer extends RapidHttpServlet {
 													if ("detail".equals(actionName) || (!"panel".equals(type) && !("hiddenvalue").equals(type) && !("dataStore").equals(type))) {
 														
 														// print the control name
-														out.print(control.getId() +"\t" + type + "\t" + name + "\t" + label + "\n");
+														out.print(control.getId() +"\t" + type + "\t" + name + "\t" + label + "\n\r");
 														
 														// if details
 														if ("detail".equals(actionName)) {
@@ -868,7 +868,7 @@ public class Designer extends RapidHttpServlet {
 															// loop them
 															for (String key : sortedKeys) {
 																// print the properties
-																out.print(key + "\t" + properties.get(key) + "\n");
+																out.print(key + "\t" + properties.get(key) + "\n\r");
 															}
 															// print the event details
 															printEventsDetails(control.getEvents(), out);
@@ -881,12 +881,12 @@ public class Designer extends RapidHttpServlet {
 									}
 								} else {
 									
-									out.print("\n");
+									out.print("\n\r");
 									
 								}
 								
 								// all reports except for pages have a line break after each page
-								if (!"pages".equals(actionName)) out.print("\n");
+								if (!"pages".equals(actionName)) out.print("\n\r");
 								
 							}
 																				
@@ -1223,7 +1223,7 @@ public class Designer extends RapidHttpServlet {
 								
 								String sql = jsonQuery.getString("SQL");
 								// some jdbc drivers need the line breaks removing before they'll work properly - here's looking at you MS SQL Server!
-								sql = sql.replace("\n", " ");
+								sql = sql.replace("\n\r", " ");
 																												
 								if (outputs == 0) {
 									
@@ -1472,7 +1472,7 @@ public class Designer extends RapidHttpServlet {
 												        
 												        while ((line = reader.readLine()) != null ) {
 												            stringBuilder.append(line);
-												            stringBuilder.append("\n");
+												            stringBuilder.append("\n\r");
 												        }
 												        reader.close();
 												        
@@ -1614,14 +1614,14 @@ public class Designer extends RapidHttpServlet {
 													// loop the entries
 													for (String type : removedActions.keySet()) {
 														int count = removedActions.get(type);
-														removed += "removed " + count + " " + type + " action" + (count == 1 ? "" : "s") + " on import\n";
+														removed += "removed " + count + " " + type + " action" + (count == 1 ? "" : "s") + " on import\n\r";
 													}
 													// get the current description
 													String description = appNew.getDescription();
 													// if null set to empty string
 													if (description == null) description = "";
 													// add a line break if need be
-													if (description.length() > 0) description += "\n";
+													if (description.length() > 0) description += "\n\r";
 													// add the removed
 													description += removed;
 													// set it back

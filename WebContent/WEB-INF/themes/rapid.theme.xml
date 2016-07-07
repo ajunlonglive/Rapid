@@ -236,6 +236,10 @@ span.score span {
 span.score span:hover {
   border-color: #6F6F6F;
 }
+
+label.validation {
+  padding: 2px 7px 2px 0px;
+}
 	    			
 	    			]]>
 	    		</contents>

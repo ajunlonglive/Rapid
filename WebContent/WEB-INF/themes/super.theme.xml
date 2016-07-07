@@ -228,6 +228,23 @@ span.score span {
   width: 20px;
   border-radius: 100%;
 }
+
+input.validation {
+  border: 1px solid red !important;
+}
+
+select.validation {
+  border-width: 1px;
+}
+
+label.validation {
+  border-width: 1px;
+  padding: 4px 8px 4px 0;
+}
+
+textarea.validation {
+  border-width: 1px;
+}
 	    			
 	    			 ]]>
 	    		</contents>
