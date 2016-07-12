@@ -1,3 +1,4 @@
+
 #http://logging.apache.org/log4j/docs/api/index.html
 
 #------------------------------------------------------------------------------
@@ -13,7 +14,7 @@
 #log4j.rootLogger = ERROR, C, F
 #log4j.rootLogger = WARN, C, F
 #log4j.rootLogger = INFO, C, F 
-log4j.rootLogger = DEBUG, C, F
+l#og4j.rootLogger = DEBUG, C, F
 #log4j.rootLogger = TRACE, C, F
 
 #------------------------------------------------------------------------------
@@ -21,8 +22,8 @@ log4j.rootLogger = DEBUG, C, F
 # set levels  for apache web client classes, and c3p0 as they can be quite noisy
 #
 #------------------------------------------------------------------------------
-log4j.logger.org.apache.http = WARN
-log4j.logger.com.mchange = WARN
+#log4j.logger.org.apache.http = WARN
+#log4j.logger.com.mchange = WARN
 
 #------------------------------------------------------------------------------
 #
@@ -30,9 +31,9 @@ log4j.logger.com.mchange = WARN
 #
 #------------------------------------------------------------------------------
 
-log4j.appender.C = org.apache.log4j.ConsoleAppender
-log4j.appender.C.layout = org.apache.log4j.PatternLayout
-log4j.appender.C.layout.ConversionPattern = %d %5p - %m%n
+#log4j.appender.C = org.apache.log4j.ConsoleAppender
+#log4j.appender.C.layout = org.apache.log4j.PatternLayout
+#log4j.appender.C.layout.ConversionPattern = %d %5p - %m%n
 
 
 
@@ -43,8 +44,8 @@ log4j.appender.C.layout.ConversionPattern = %d %5p - %m%n
 #
 #------------------------------------------------------------------------------
 
-log4j.appender.F = org.apache.log4j.DailyRollingFileAppender
-log4j.appender.F.File = ${logPath}
-log4j.appender.F.DatePattern ='_'yyyyMMdd'.log'
-log4j.appender.F.layout = org.apache.log4j.PatternLayout
-log4j.appender.F.layout.ConversionPattern = %d %5p - %m \r\n
+#log4j.appender.F = org.apache.log4j.DailyRollingFileAppender
+#log4j.appender.F.File = ${logPath}
+#log4j.appender.F.DatePattern ='_'yyyyMMdd'.log'
+#log4j.appender.F.layout = org.apache.log4j.PatternLayout
+#log4j.appender.F.layout.ConversionPattern = %d %5p - %m \r\n

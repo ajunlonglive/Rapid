@@ -68,8 +68,8 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 import javax.xml.xpath.XPathExpressionException;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -77,14 +77,11 @@ import org.xml.sax.SAXException;
 
 import com.rapid.core.Action;
 import com.rapid.core.Application;
-import com.rapid.core.Application.DatabaseConnection;
 import com.rapid.core.Application.RapidLoadingException;
 import com.rapid.core.Applications;
 import com.rapid.core.Applications.Versions;
 import com.rapid.core.Device.Devices;
 import com.rapid.core.Theme;
-import com.rapid.data.ConnectionAdapter;
-import com.rapid.forms.FormAdapter;
 import com.rapid.utils.Classes;
 import com.rapid.utils.Comparators;
 import com.rapid.utils.Encryption.EncryptionProvider;
@@ -1017,10 +1014,10 @@ public class RapidServletContextListener implements ServletContextListener {
 		try {
 			
 			// set the log path
-			System.setProperty("logPath", servletContext.getRealPath("/") + "/WEB-INF/logs/Rapid.log");
+			System.setProperty("logPath", servletContext.getRealPath("/") + "/WEB-INF/logs/");
 			
 			// get a logger
-			_logger = Logger.getLogger(RapidHttpServlet.class);
+			_logger = LogManager.getLogger(RapidHttpServlet.class);
 			
 			// set the logger and store in servletConext
 			servletContext.setAttribute("logger", _logger);

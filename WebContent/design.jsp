@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <%@ page language="java" contentType="text/html;charset=utf-8" pageEncoding="utf-8"%>
 <%@ page import="java.util.Map" %>
-<%@ page import="org.apache.log4j.Logger" %>
+<%@ page import="org.apache.logging.log4j.LogManager" %>
 <%@ page import="com.rapid.core.*" %>
 <%@ page import="com.rapid.server.Rapid" %>
 <%@ page import="com.rapid.server.RapidRequest" %>
@@ -35,7 +35,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 */
 
 //log that this is loading
-Logger.getLogger(this.getClass()).debug("design.jsp request : " + request.getQueryString());
+LogManager.getLogger(this.getClass()).debug("design.jsp request : " + request.getQueryString());
 //get the applications
 Applications applications = (Applications) getServletContext().getAttribute("applications");
 // retain a ref to rapid app

@@ -34,12 +34,11 @@ This class wraps an HttpRequest and provides a number of useful methods for retr
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Enumeration;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import com.rapid.core.Action;
 import com.rapid.core.Application;

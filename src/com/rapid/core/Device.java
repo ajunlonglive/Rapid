@@ -35,7 +35,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.rapid.server.RapidHttpServlet;
 
@@ -72,7 +72,7 @@ public class Device {
 					devices = (Devices) unmarshaller.unmarshal(file);
 				} catch (Exception ex) {
 					// log
-					Logger.getLogger(Device.class).error("Error loading devices", ex);
+					LogManager.getLogger(Device.class).error("Error loading devices", ex);
 				}
 			} 
 			

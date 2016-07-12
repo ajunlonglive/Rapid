@@ -49,7 +49,8 @@ import javax.xml.bind.ValidationEvent;
 import javax.xml.bind.ValidationEventHandler;
 import javax.xml.bind.ValidationEventLocator;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -64,7 +65,7 @@ public class RapidHttpServlet extends HttpServlet {
 	
 	// private static variables
 	
-	private static Logger _logger = Logger.getLogger(RapidHttpServlet.class);
+	private static Logger _logger = LogManager.getLogger(RapidHttpServlet.class);
 	private static JAXBContext _jaxbContext;	
 	private static EncryptedXmlAdapter _encryptedXmlAdapter;
 		

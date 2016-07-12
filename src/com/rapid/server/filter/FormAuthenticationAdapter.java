@@ -38,7 +38,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.rapid.core.Application;
 import com.rapid.core.Applications;
@@ -51,7 +52,7 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 	public static final String INIT_PARAM_PUBLIC_ACCESS = "public";
 	public static final String PUBLIC_ACCESS_USER = "public";
 		
-	private static Logger _logger = Logger.getLogger(RapidAuthenticationAdapter.class);
+	private static Logger _logger = LogManager.getLogger(RapidAuthenticationAdapter.class);
 	
 	private boolean _publicAccess = false;
 	private String[] _ipChecks = null;

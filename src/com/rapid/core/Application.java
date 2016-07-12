@@ -58,7 +58,9 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.xpath.XPathExpressionException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -2266,7 +2268,7 @@ public class Application {
 					Files.deleteRecurring(deleteFolder);
 				} catch (Exception ex) {
 					// log exception
-					Logger.getLogger(this.getClass()).error("Error deleting temp file " + deleteFolder, ex);
+					LogManager.getLogger(this.getClass()).error("Error deleting temp file " + deleteFolder, ex);
 				}
 								
 			}

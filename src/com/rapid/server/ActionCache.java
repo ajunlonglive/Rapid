@@ -38,7 +38,8 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -47,7 +48,7 @@ import com.rapid.utils.Files;
 public class ActionCache {
 	
 	// private static variables
-	private static Logger _logger = Logger.getLogger(ActionCache.class);	
+	private static Logger _logger = LogManager.getLogger(ActionCache.class);	
 	private static Marshaller _marshaller;
 	private static Unmarshaller _unmarshaller;
 	
