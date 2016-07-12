@@ -405,10 +405,32 @@ var map = _maps[id];
 if (map) {
 	// get the centre
 	var centre = map.getCenter();
+	// get lat
+	var lat = centre.lat();
+	// get lng
+	var lng = centre.lng();
 	// add lat to the data object
-	data.rows[0].push(centre.lat());
+	data.rows[0].push(lat);
 	// add lng to the data object
-	data.rows[0].push(centre.lng());	
+	data.rows[0].push(lng);
+
+	// make a new easting / northing
+	var pIn = new GT_WGS84();
+	// add lat/lng
+	pIn.setDegrees(lat,lng);
+	// if in Great Britiain
+	if (pIn.isGreatBritain()) {
+		// get the easting / northing
+		var pOut = pIn.getOSGB();
+		// add east / north fields
+		data.fields.push("east");
+		data.fields.push("north");
+		// set the east
+		data.rows[0].push(pOut.eastings);
+		// set the north
+		data.rows[0].push(pOut.northings);
+	}
+
 }
 // return what we got
 return data;
