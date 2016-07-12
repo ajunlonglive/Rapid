@@ -1013,8 +1013,11 @@ public class RapidServletContextListener implements ServletContextListener {
 		// set up logging
 		try {
 			
+			// derive the log path
+			String logPath = servletContext.getRealPath("/") + "/WEB-INF/logs/";
+			
 			// set the log path
-			System.setProperty("logPath", servletContext.getRealPath("/") + "/WEB-INF/logs/");
+			System.setProperty("logPath", logPath);
 			
 			// get a logger
 			_logger = LogManager.getLogger(RapidHttpServlet.class);
@@ -1023,7 +1026,7 @@ public class RapidServletContextListener implements ServletContextListener {
 			servletContext.setAttribute("logger", _logger);
 			
 			// log!
-			_logger.info("Logger created");
+			_logger.info("Logger created, path is " + logPath);
 		
 		} catch (Exception e) {	
 			
@@ -1084,7 +1087,7 @@ public class RapidServletContextListener implements ServletContextListener {
 							}
 							// check we got what we want
 							if (constructor == null) {
-								_logger.error("Encyption not initialised : Class in security.txt class must have a parameterless constructor");								
+								_logger.error("Encryption not initialised : Class in security.txt class must have a parameterless constructor");								
 							} else {
 								// construct the class
 								EncryptionProvider encryptionProvider = (EncryptionProvider) constructor.newInstance();
@@ -1093,11 +1096,11 @@ public class RapidServletContextListener implements ServletContextListener {
 								// get the salt
 								salt = encryptionProvider.getSalt();
 								// log
-								_logger.info("Encyption initialised");
+								_logger.info("Encryption initialised");
 							}
 						}
 					} else {
-						_logger.error("Encyption not initialised : Class in security.txt class must extend com.rapid.utils.Encryption.EncryptionProvider");
+						_logger.error("Encryption not initialised : Class in security.txt class must extend com.rapid.utils.Encryption.EncryptionProvider");
 					}
 				} catch (Exception ex) {
 					_logger.error("Encyption not initialised : " + ex.getMessage(), ex);
