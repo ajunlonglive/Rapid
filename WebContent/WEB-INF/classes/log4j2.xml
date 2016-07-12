@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO">
+	<Appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d %5p - %m %c %n" />
+		</Console>
+		<!-- system logPath property is set in RapidServletContextListener.java -->
+		<RollingFile name="File" fileName="${sys:logPath}/Rapid.log" filePattern="${sys:logPath}/Rapid%d{yyyyMMdd}-%i.log">
+			<PatternLayout pattern="%d %5p - %m \r\n" />
+			<Policies>
+			    <!-- Create a new log file every day, or if it exceeds 1 MB -->
+				<TimeBasedTriggeringPolicy interval="1" modulate="true" />
+				<SizeBasedTriggeringPolicy size="1 MB" />
+			</Policies>
+		</RollingFile>
+	</Appenders>
+	<Loggers>
+	    <!-- only warn messages for apache http as it can be very noisy -->
+	    <Logger name="org.apache.http" level="warn">
+  			<AppenderRef ref="Console" />
+			<AppenderRef ref="File" />
+		</Logger>
+		<!-- only warn messages for C3P0 as it can be very noisy -->
+		<Logger name="com.mchange" level="warn">
+  			<AppenderRef ref="Console" />
+			<AppenderRef ref="File" />
+		</Logger>
+	    <!-- level can be error, warn, info, debug, trace -->
+		<Root level="debug">
+			<AppenderRef ref="Console" />
+			<AppenderRef ref="File" />
+		</Root>
+	</Loggers>
+</Configuration>

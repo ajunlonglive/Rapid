@@ -36,7 +36,8 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.rapid.core.Application;
 import com.rapid.server.Rapid;
@@ -73,7 +74,7 @@ public class RapidSecurityAdapter extends SecurityAdapter {
 						
 	// instance variables
 	
-	private static Logger _logger = Logger.getLogger(RapidSecurityAdapter.class);	
+	private static Logger _logger = LogManager.getLogger(RapidSecurityAdapter.class);	
 	private Marshaller _marshaller;
 	private Unmarshaller _unmarshaller;
 	private Security _security;

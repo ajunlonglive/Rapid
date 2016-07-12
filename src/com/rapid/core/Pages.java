@@ -49,7 +49,8 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -162,7 +163,7 @@ public class Pages {
 	
 	public Pages(Application application) throws RapidLoadingException, ParserConfigurationException, XPathExpressionException, SAXException, IOException {
 		// get a logger
-		_logger = Logger.getLogger(Pages.class);
+		_logger = LogManager.getLogger(Pages.class);
 		// store the application
 		_application = application;
 		// initialise the page headers collection

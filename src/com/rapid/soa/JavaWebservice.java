@@ -45,7 +45,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.rapid.server.RapidRequest;
 import com.rapid.soa.SOASchema.SOASchemaElement;
@@ -185,7 +186,7 @@ public class JavaWebservice extends Webservice {
 	
 	// used by Jaxb
 	public JavaWebservice() {
-		_logger = Logger.getLogger(this.getClass());
+		_logger = LogManager.getLogger(this.getClass());
 		_elementProperties = new HashMap<String,ElementProperty>();
 		_childElementProperties = new HashMap<String,List<ElementProperty>>();
 		_dateFormat = new SimpleDateFormat("yyyy-MM-dd");

@@ -36,7 +36,8 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.mozilla.javascript.ErrorReporter;
 import org.mozilla.javascript.EvaluatorException;
 
@@ -169,7 +170,7 @@ public class Minify {
 					String compressed = string;
 					
 					// get a logger
-					Logger logger = Logger.getLogger(Minify.class);
+					Logger logger = LogManager.getLogger(Minify.class);
 					
 					// detailed logging
 					logger.trace("Starting css minify");

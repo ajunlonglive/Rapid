@@ -40,7 +40,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.rapid.core.Application;
 import com.rapid.core.Control;
@@ -273,7 +274,7 @@ public abstract class FormAdapter {
 	public FormAdapter(ServletContext servletContext, Application application) {
 		_servletContext = servletContext;
 		_application = application;
-		_logger = Logger.getLogger(FormAdapter.class);
+		_logger = LogManager.getLogger(FormAdapter.class);
 	}
 	
 	// private instance methods

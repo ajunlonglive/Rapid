@@ -34,7 +34,8 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.rapid.core.Application;
 import com.rapid.core.Application.RapidLoadingException;
@@ -58,7 +59,7 @@ public class RapidSessionListener implements HttpSessionListener {
     	HttpSession session = event.getSession();
     	String sessionId = session.getId(); 
     	_sessions.put(sessionId, session);
-    	if (_logger == null) _logger = Logger.getLogger(this.getClass());
+    	if (_logger == null) _logger = LogManager.getLogger(this.getClass());
     	_logger.debug("Session created " + sessionId);
     }
 
@@ -66,7 +67,7 @@ public class RapidSessionListener implements HttpSessionListener {
     public void sessionDestroyed(HttpSessionEvent event) {
     	HttpSession session = event.getSession();
     	String userName = (String) session.getAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME);
-    	if (_logger == null) _logger = Logger.getLogger(this.getClass());
+    	if (_logger == null) _logger = LogManager.getLogger(this.getClass());
     	_logger.debug("Destroying session " + session.getId() + " for " + userName);
     	if (userName != null) {
     		ServletContext servletContext = session.getServletContext();

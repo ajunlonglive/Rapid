@@ -36,7 +36,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.rapid.utils.Classes;
 
@@ -47,7 +48,7 @@ public class RapidFilter implements Filter {
 	public static final String SESSION_VARIABLE_USER_PASSWORD = "password";
 	public static final String SESSION_VARIABLE_USER_DEVICE = "device";	
 	
-	private static Logger _logger = Logger.getLogger(RapidFilter.class);
+	private static Logger _logger = LogManager.getLogger(RapidFilter.class);
 		
 	private RapidAuthenticationAdapter _authenticationAdapter;
 	private boolean _noCaching;
