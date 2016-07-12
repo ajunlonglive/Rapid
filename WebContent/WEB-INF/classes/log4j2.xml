@@ -2,7 +2,7 @@
 <Configuration status="INFO">
 	<Appenders>
 		<Console name="Console" target="SYSTEM_OUT">
-			<PatternLayout pattern="%d %5p - %m %c %n" />
+			<PatternLayout pattern="%d %5p - %m%n" />
 		</Console>
 		<!-- system logPath property is set in RapidServletContextListener.java -->
 		<RollingFile name="File" fileName="${sys:logPath}/Rapid.log" filePattern="${sys:logPath}/Rapid%d{yyyyMMdd}-%i.log">
