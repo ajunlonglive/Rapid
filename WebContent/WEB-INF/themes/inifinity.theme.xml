@@ -237,6 +237,23 @@ span.score span {
 span.score span:hover {
   box-shadow: 0 0 0 2px #87c4e7;
 }
+
+input.validation {
+  border: 1px solid red !important;
+}
+
+select.validation {
+  border-width: 1px;
+}
+
+label.validation {
+  border-width: 1px;
+  padding: 2px 5px 2px 0;
+}
+
+textarea.validation {
+  border-width: 1px;
+}
 	    			
 	    			 ]]>
 	    		</contents>

@@ -250,6 +250,31 @@ span.score span {
   background: white;
 }
 
+label.validation {
+  border: 2px solid orange;
+  padding: 4px 8px 4px 0;
+}
+
+div.validation {
+  color: orange;
+}
+
+input.validation {
+  border-color: orange;
+}
+
+select.validation {
+  border-color: orange;
+}
+
+textarea.validation {
+  border-color: orange;
+}
+
+li.validation {
+  color: orange;
+}
+
 	                ]]>
 	            </contents>
 	        </resource>
