@@ -124,7 +124,7 @@ public class Designer extends RapidHttpServlet {
     private void printActionDetails(Action action, PrintWriter out) {
     	
     	// print the action															
-    	out.print("\t\tAction\t" + action.getId()+ "\n\r");
+    	out.print("\t\tAction\t" + action.getType() + "\t" + action.getId()+ "\n\r");
 		
 		// get the properties
 		Map<String, String> properties = action.getProperties();
