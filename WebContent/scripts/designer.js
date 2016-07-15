@@ -2179,11 +2179,23 @@ function doPaste(control, _parent) {
 		
 		// loop all entries in the paste map
 		for (var i in _pasteMap) {
-			// update all references
-			newControlString = newControlString.replaceAll(_pasteMap[i],i);
+			// get the old id
+			var oldId = _pasteMap[i];
+			// get the new id
+			var newId = i;
+			// check the end of the old id for _ (very old controls in the Rapid app may still not end in _ which is a problem for the search and replace and we need to avoid, say C629 being replaced with C62)
+			if (oldId[oldId.length - 1] == "_") {
+				// this is fine so update references as is
+				newControlString = newControlString.replaceAll(oldId, newId);
+			} else {
+				// update references with quotes to avoid collisions in old ids
+				newControlString = newControlString.replaceAll(oldId + '"', newId + '"');
+				// update references with spaces to avoid collisions in old ids
+				newControlString = newControlString.replaceAll(oldId + " ", newId + " ");				
+			}
 		}
 		
-		// turned the replaced string back into an object
+		// turn the replaced string back into an object
 		var mappedControl = JSON.parse(newControlString);
 		
 		// reload the control with all the new references
