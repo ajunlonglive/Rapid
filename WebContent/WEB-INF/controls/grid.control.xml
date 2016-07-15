@@ -392,8 +392,8 @@ function sizeGridFixedHeaderColumns(control) {
 	// if there are body cells
 	if (bcells.length > 0) {
 		// remove any previous min-widths
-		hcells.css("min-width","0");
-		bcells.css("min-width","0");
+		hcells.css("min-width","initial");
+		bcells.css("min-width","initial");
 		// loop them
 		for (var i = 0; i < bcells.length; i++) {
 			// get the header cell
@@ -410,7 +410,7 @@ function sizeGridFixedHeaderColumns(control) {
 			if (hwidth < bwidth) {
 				
 				// subtract padding from all header cells
-				bwidth = bwidth - parseInt(hcell.css("padding-left")) - parseInt(hcell.css("padding-right")) - parseInt(hcell.css("border-left")) - parseInt(hcell.css("border-right"));
+				//bwidth = bwidth - parseInt(hcell.css("padding-left")) - parseInt(hcell.css("padding-right")) - parseInt(hcell.css("border-left")) - parseInt(hcell.css("border-right"));
 				
 				// adjust for borders - first cell
 				if (i == 0) bwidth = bwidth + parseInt(bcell.css("border-left")) + Math.max(0, parseInt(bcell.next().css("border-left")) - parseInt(bcell.css("border-right")))/2;
@@ -908,9 +908,6 @@ if (details) {
 		headerTable.find("tr:not(:first-child)").remove();
 		// remove the style attribute as this all applies only to the second table with the data in it
 		headerTable.removeAttr("style");
-		// add 100% widths (this is temporary)
-		headerTable.css({"width":"100%"});
-		control.css({"width":"100%"});
 		// hide the top row from the proper table
 		control.find("tr:first-child").hide();
 		// append the header table above control
