@@ -242,7 +242,7 @@ public class Datacopy extends Action {
 								}
 								
 								// do the data copy
-								js += "Action_datacopy(ev, data, [{id:'" + destinationControl.getId() + "',type: '" + destinationControl.getType() + "',field:'" + destinationField + "'" + details + "}], " + Boolean.parseBoolean(getProperty("changeEvents")) + type + ");\n";
+								js += "Action_datacopy(ev, data, [{id:'" + destinationControl.getId() + "',type:'" + destinationControl.getType() + "',field:'" + destinationField + "'" + details + "}], " + Boolean.parseBoolean(getProperty("changeEvents")) + type + ");\n";
 								
 							} // copy / set property check
 							
@@ -366,7 +366,7 @@ public class Datacopy extends Action {
 									}
 									
 									// add the properties we need as a js object it will go into the array
-									jsOutputs += "{id:'" + destinationControl.getId() + "',type: '" + destinationControl.getType() + "',field:'" + destinationField + "'" + details + "},";
+									jsOutputs += "{id:'" + destinationControl.getId() + "',type:'" + destinationControl.getType() + "',field:'" + destinationField + "'" + details + "},";
 									
 								}
 								
