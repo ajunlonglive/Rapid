@@ -482,49 +482,85 @@ public class Database extends Action {
 									
 			// hide the loading javascript (if applicable)
 			if (_showLoading) js += "  " + getLoadingJS(page, outputs, false);
-			
-			// open if data check
-			js += "    if (data) {\n";
-						
+									
 			// check there are outputs
 			if (outputs != null) {
+				// open if data check
+				js += "    if (data) {\n";
 				// the outputs array we're going to make
 				String jsOutputs = "";				
 				// loop the output parameters
 				for (int i = 0; i < outputs.size(); i++) {
 					// get the parameter
 					Parameter output = outputs.get(i);
+					// get the id
+					String outputId = output.getItemId();
+					// get the id parts
+					String[] idParts = outputId.split("\\.");
+					// if there is more than 1 part we are dealing with set properties, for now just update the output id
+					if (idParts.length > 1) outputId = idParts[0];
+					
 					// get the control the data is going into
-					Control outputControl = page.getControl(output.getItemId());
-					// try the application if still null
-					if (outputControl == null) outputControl = application.getControl(rapidServlet.getServletContext(), output.getItemId());
-					// check we got one
-					if (outputControl != null) {
-						// get any mappings we may have
+					Control outputControl = page.getControl(outputId);
+					// assume we found it
+					boolean pageControl = true;
+					// if not found in the page
+					if (outputControl == null) {
+						// try the application
+						outputControl = application.getControl(rapidServlet.getServletContext(), outputId);
+						// set page control to false
+						pageControl = false;
+					}
+					// check we got one					
+					if (outputControl == null) {
+						js += "      // output not found for " + outputId + "\n";
+					} else {
+						
+						// get any details we may have
 						String details = outputControl.getDetailsJavaScript(application, page);
-						// set to empty string or clean up
-						if (details == null) {
-							details = "";
+						
+						// if there are two parts this is a property
+						if (idParts.length > 1) {
+							
+							// if we have some details
+							if (details != null) {
+								// if this is a page control
+								if (pageControl) {
+									// the details will already be in the page so we can use the short form
+									details = outputControl.getId() + "details";
+								} 
+							}
+							
+							// get the property from the second id part
+							String property = idParts[1];
+							// append the set property call
+							js += "      setProperty_" + outputControl.getType() +  "_" + property + "(ev,'" + outputControl.getId() + "','" + output.getField() + "'," + details + ",data);\n";
+							
 						} else {
-							details = ", details: " + details;
-						}
-						// append the javascript outputs
-						jsOutputs += "{id: '" + outputControl.getId() + "', type: '" + outputControl.getType() + "', field: '" + output.getField() + "'" + details + "}";
-						// add a comma if not the last
-						if (i < outputs.size() - 1) jsOutputs += ","; 
-					}					
-				}			
-				js += "     var outputs = [" + jsOutputs + "];\n";
-				// send them them and the data to the database action				
-				js += "     Action_database(ev,'" + getId() + "', data, outputs);\n";				
-			}
-			
-			// add any sucess actions
-			if (_successActions != null) {							
-				for (Action action : _successActions) {
-					js += "     " + action.getJavaScript(rapidRequest, application, page, control, jsonDetails).trim().replace("\n", "\n       ") + "\n";
-				}
-			}
+							
+							// set to empty string or clean up
+							if (details == null) {
+								details = "";
+							} else {
+								details = ", details: " + details;
+							}
+							// append the javascript outputs
+							jsOutputs += "{id: '" + outputControl.getId() + "', type: '" + outputControl.getType() + "', field: '" + output.getField() + "'" + details + "},";				
+						} // property / control check
+					} // control found check
+				} // outputs loop
+				// if we added to outputs
+				if (jsOutputs.length() > 0) {
+					// remove the last comma
+					jsOutputs = jsOutputs.substring(0, jsOutputs.length() - 1);
+					// add the outputs property
+					js += "      var outputs = [" + jsOutputs + "];\n";
+					// send them them and the data to the database action				
+					js += "      Action_database(ev,'" + getId() + "', data, outputs);\n";
+				} // outputs js length check
+				// close if data check
+				js += "    }\n";		
+			} // outputs null check				
 			
 			// if there is a working page (from the details)
 			if (workingPage != null) {
@@ -536,8 +572,13 @@ public class Database extends Action {
 				jsonDetails.remove("workingPage");
 			}
 			
-			// close if data check
-			js += "    }\n";						
+			// add any success actions
+			if (_successActions != null) {							
+				for (Action action : _successActions) {
+					js += "     " + action.getJavaScript(rapidRequest, application, page, control, jsonDetails).trim().replace("\n", "\n       ") + "\n";
+				}
+			}
+										
 			// close success function
 			js += "  }\n";
 			
