@@ -1012,13 +1012,7 @@ public class RapidServletContextListener implements ServletContextListener {
 		
 		// set up logging
 		try {
-			
-			// derive the log path
-			String logPath = servletContext.getRealPath("/") + "/WEB-INF/logs/";
-			
-			// set the log path
-			System.setProperty("logPath", logPath);
-			
+						
 			// get a logger
 			_logger = LogManager.getLogger(RapidHttpServlet.class);
 			
@@ -1026,7 +1020,7 @@ public class RapidServletContextListener implements ServletContextListener {
 			servletContext.setAttribute("logger", _logger);
 			
 			// log!
-			_logger.info("Logger created, path is " + logPath);
+			_logger.info("Logger created");
 		
 		} catch (Exception e) {	
 			
