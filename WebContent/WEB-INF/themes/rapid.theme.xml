@@ -240,6 +240,10 @@ span.score span:hover {
 label.validation {
   padding: 2px 7px 2px 0px;
 }
+
+input.validation {
+  border-color: red !important;
+}
 	    			
 	    			]]>
 	    		</contents>
