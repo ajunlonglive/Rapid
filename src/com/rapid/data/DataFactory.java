@@ -48,12 +48,14 @@ public class DataFactory {
 		public static final int DATE = 3;
 		public static final int INTEGER = 4;		
 		public static final int FLOAT = 5;
+		public static final int DOUBLE = 5;
 		
 		private int _type;
 		private String _string;
 		private Date _date;
 		private int _int;		
 		private float _float;
+		private double _double;
 		
 		public Parameter() {
 			_type = NULL;
@@ -79,11 +81,17 @@ public class DataFactory {
 			_float = value;
 		}
 		
+		public Parameter(double value) {
+			_type = DOUBLE;
+			_double = value;
+		}
+		
 		public int getType() { return _type; }
 		public String getString() { return _string; }
 		public Date getDate() { return _date; }
 		public int getInteger() { return _int; }		
 		public float getFloat() { return _float; }
+		public double getDouble() { return _double; }
 		
 		@Override
 		public String toString() {
@@ -93,6 +101,7 @@ public class DataFactory {
 			case 3 : return _date.toString();
 			case 4 : return Integer.toString(_int);
 			case 5 : return Float.toString(_float);
+			case 6 : return Double.toString(_double);
 			}
 			return "unknown type";
 		}
@@ -128,6 +137,9 @@ public class DataFactory {
 					} else if (object instanceof Float) {
 						Float v = (Float) object;
 						this.add(new Parameter(v));
+					} else if (object instanceof Double) {
+						Double d = (Double) object;
+						this.add(new Parameter(d));
 					} else if (object instanceof Date) {
 						Date v = (Date) object;
 						this.add(new Parameter(v));
@@ -236,8 +248,14 @@ public class DataFactory {
 						
 	public PreparedStatement getPreparedStatement(RapidRequest rapidRequest, String sql, ArrayList<Parameter> parameters) throws SQLException, ClassNotFoundException, ConnectionAdapterException  {
 		
-		// some jdbc drivers need the line breaks in the sql replacing - here's looking at you MS SQL!
-		_sql = sql.replace("\n", " ");
+		// some jdbc drivers need various modifications to the sql
+		if (_connectionAdapter.getDriverClass().contains("sqlserver")) {
+			// line breaks in the sql replacing - here's looking at you MS SQL!
+			_sql = sql.replace("\n", " ");
+		} else {
+			// otherwise just retain
+			_sql = sql;
+		}
 		
 		if (_connection == null) _connection = getConnection(rapidRequest);
 				

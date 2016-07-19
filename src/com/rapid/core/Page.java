@@ -1795,8 +1795,8 @@ public class Page {
 						writer.write(
 						" <link rel='stylesheet' type='text/css' href='styles/designlinks.css'></link>"
 						+ " <script type='text/javascript' src='scripts/designlinks.js'></script>"
-						+	"<div id='designShow' style='position:fixed;left:0;bottom:0;width:30px;height:30px;z-index:10000;'></div>\n"
-						+ "<div id='designLinks' style='position:fixed;left:0;bottom:0;z-index:10001;padding:5px;display:none;'>"
+						+	"<div id='designShow'></div>\n"
+						+ "<div id='designLinks' style='display:none;'>"
 				    	+ "<a id='designLink' href='#'><img src='images/gear_24x24.png' title='Open Rapid Design'/></a>\n"
 				    	+ "<a id='designLinkNewTab' style='margin-left:-3px;' href='#'><img src='images/triangleRight_8x8.png' title='Open Rapid Design in a new tab'/></a>\n"
 						+ designLinkStringBuilder.toString()
