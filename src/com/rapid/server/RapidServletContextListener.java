@@ -1041,64 +1041,66 @@ public class RapidServletContextListener implements ServletContextListener {
 				// get a file reader
 				BufferedReader br = new BufferedReader(new FileReader(secretsFile));
 				// read the first line
-				String className = br.readLine();
-				// read the next line
-				String s = br.readLine();
+				String className = br.readLine().trim();
 				// close the reader
 				br.close();
 				
-				try {
-					// get the class 
-					Class classClass = Class.forName(className);
-					// get the interfaces
-					Class[] classInterfaces = classClass.getInterfaces();
-					// assume it doesn't have the interface we want
-					boolean gotInterface = false;
-					// check we got some
-					if (classInterfaces != null) {
-						for (Class classInterface : classInterfaces) {
-							if (com.rapid.utils.Encryption.EncryptionProvider.class.equals(classInterface)) {
-								gotInterface = true;
-								break;
-							}
-						}
-					}
-					// check the class extends com.rapid.Action
-					if (gotInterface) {
-						// get the constructors
-						Constructor[] classConstructors = classClass.getDeclaredConstructors(); 
+				// if the class name does not start with #
+				if (!className.startsWith("#")) {
+				
+					try {
+						// get the class 
+						Class classClass = Class.forName(className);
+						// get the interfaces
+						Class[] classInterfaces = classClass.getInterfaces();
+						// assume it doesn't have the interface we want
+						boolean gotInterface = false;
 						// check we got some
-						if (classConstructors != null) {
-							// assume we don't get the parameterless one we need
-							Constructor constructor = null;
-							// loop them
-							for (Constructor classConstructor : classConstructors) {
-								// check parameters
-								if (classConstructor.getParameterTypes().length == 0) {
-									constructor = classConstructor;
+						if (classInterfaces != null) {
+							for (Class classInterface : classInterfaces) {
+								if (com.rapid.utils.Encryption.EncryptionProvider.class.equals(classInterface)) {
+									gotInterface = true;
 									break;
 								}
 							}
-							// check we got what we want
-							if (constructor == null) {
-								_logger.error("Encryption not initialised : Class in security.txt class must have a parameterless constructor");								
-							} else {
-								// construct the class
-								EncryptionProvider encryptionProvider = (EncryptionProvider) constructor.newInstance();
-								// get the password
-								password = encryptionProvider.getPassword();
-								// get the salt
-								salt = encryptionProvider.getSalt();
-								// log
-								_logger.info("Encryption initialised");
-							}
 						}
-					} else {
-						_logger.error("Encryption not initialised : Class in security.txt class must extend com.rapid.utils.Encryption.EncryptionProvider");
+						// check the class extends com.rapid.Action
+						if (gotInterface) {
+							// get the constructors
+							Constructor[] classConstructors = classClass.getDeclaredConstructors(); 
+							// check we got some
+							if (classConstructors != null) {
+								// assume we don't get the parameterless one we need
+								Constructor constructor = null;
+								// loop them
+								for (Constructor classConstructor : classConstructors) {
+									// check parameters
+									if (classConstructor.getParameterTypes().length == 0) {
+										constructor = classConstructor;
+										break;
+									}
+								}
+								// check we got what we want
+								if (constructor == null) {
+									_logger.error("Encryption not initialised : Class in security.txt class must have a parameterless constructor");								
+								} else {
+									// construct the class
+									EncryptionProvider encryptionProvider = (EncryptionProvider) constructor.newInstance();
+									// get the password
+									password = encryptionProvider.getPassword();
+									// get the salt
+									salt = encryptionProvider.getSalt();
+									// log
+									_logger.info("Encryption initialised");
+								}
+							}
+						} else {
+							_logger.error("Encryption not initialised : Class in security.txt class must extend com.rapid.utils.Encryption.EncryptionProvider");
+						}
+					} catch (Exception ex) {
+						_logger.error("Encyption not initialised : " + ex.getMessage(), ex);
 					}
-				} catch (Exception ex) {
-					_logger.error("Encyption not initialised : " + ex.getMessage(), ex);
-				}								
+				}
 			} else {
 				_logger.info("Encyption not initialised");
 			}
