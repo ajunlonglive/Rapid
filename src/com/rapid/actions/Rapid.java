@@ -36,12 +36,21 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
+
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -58,6 +67,7 @@ import com.rapid.core.Applications;
 import com.rapid.core.Control;
 import com.rapid.core.Device;
 import com.rapid.core.Device.Devices;
+import com.rapid.core.Email;
 import com.rapid.core.Page;
 import com.rapid.core.Application.DatabaseConnection;
 import com.rapid.core.Applications.Versions;
@@ -84,6 +94,7 @@ import com.rapid.soa.Webservice;
 import com.rapid.soa.SOAElementRestriction.*;
 import com.rapid.soa.SOASchema.SOASchemaElement;
 import com.rapid.utils.Comparators;
+import com.rapid.utils.Exceptions;
 import com.rapid.utils.Files;
 
 public class Rapid extends Action {
@@ -634,6 +645,31 @@ public class Rapid extends Action {
 					
 					// add the devices
 					result.put("devices", rapidServlet.getDevices());
+					
+					// create a json object for our email settings
+					JSONObject jsonEmail = new JSONObject();
+					// get the email settings object
+					Email email = Email.getEmailSettings();
+					// if not null
+					if (email != null) {
+						// add email settings properties
+						jsonEmail.put("host", email.getHost());
+						jsonEmail.put("port", email.getPort());
+						jsonEmail.put("security", email.getSecurity());
+						jsonEmail.put("userName", email.getUserName());
+						// for password use ******** or empty string if not set
+						if (email.getPassword() == null) {
+							jsonEmail.put("password", "");
+						} else {
+							if ("".equals(email.getPassword())) {
+								jsonEmail.put("password", "");
+							} else {
+								jsonEmail.put("password", "********");
+							}
+						}
+					}
+					// add the email settings
+					result.put("email", jsonEmail);
 					
 				} // at least one app check
 				
@@ -2319,12 +2355,12 @@ public class Rapid extends Action {
 				// get the database connections
 				List<DatabaseConnection> dbConns = app.getDatabaseConnections();
 				
-				// remeber whether we found the connection
+				// remember whether we found the connection
 				boolean foundConnection = false;
 				
 				// check we have database connections
 				if (dbConns != null) {
-					// check the index we where given will retieve a database connection
+					// check the index we where given will retrieve a database connection
 					if (index > -1 && index < dbConns.size()) {
 						
 						// retrieve the details from the json
@@ -2367,6 +2403,63 @@ public class Rapid extends Action {
 				}
 				
 				if (!foundConnection) result.put("message", "Database connection could not be found");
+				
+			} else if ("TESTEMAIL".equals(action)) {
+				
+				String host = jsonAction.getString("host");
+				int port = jsonAction.getInt("port");
+				String security = jsonAction.getString("security").trim();
+				String userName = jsonAction.getString("userName").trim();
+				String password = jsonAction.getString("password");
+				
+				// if password is ********
+				if ("********".equals(password)) {
+					// get the current email settings
+					Email emailSettings = Email.getEmailSettings();
+					// if we got one use that password
+					if (emailSettings != null) password = emailSettings.getPassword();
+				}
+				
+				// set the properties we've just received
+				Email.setProperties(host, port, security, userName, password);
+				
+				try {
+					
+					// send a test email					
+			        Email.send("test@dev.rapid-is.co.uk", "test@dev.rapid-is.co.uk", "Rapid test email", "It's working!");
+			        
+				} catch (Exception ex) {
+					
+					// reload the saved values
+			        Email.load(servletContext);
+			        
+			        // rethrow
+			        throw ex;
+					
+				}
+
+		        // reload the saved values
+		        Email.load(servletContext);
+		        
+		        // add a meaningful response message which the success callback is expecting
+		        result.put("message", "Test email sent OK");
+
+			} else if ("SAVEEMAIL".equals(action)) {
+				
+				String host = jsonAction.getString("host");
+				int port = jsonAction.getInt("port");
+				String security = jsonAction.getString("security").trim();
+				String userName = jsonAction.getString("userName").trim();
+				String password = jsonAction.getString("password");
+
+				// set the properties we've just loaded
+	            Email.setProperties(host, port, security, userName, password);
+		        
+	            // construct an object
+		        Email email = new Email(host, port, security, userName, password);
+		        
+		        // save it
+		        email.save(servletContext);
 					
 			} else if ("DELAPPBACKUP".equals(action)) {
 				

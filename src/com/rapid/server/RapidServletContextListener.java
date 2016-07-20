@@ -81,6 +81,7 @@ import com.rapid.core.Application.RapidLoadingException;
 import com.rapid.core.Applications;
 import com.rapid.core.Applications.Versions;
 import com.rapid.core.Device.Devices;
+import com.rapid.core.Email;
 import com.rapid.core.Theme;
 import com.rapid.utils.Classes;
 import com.rapid.utils.Comparators;
@@ -1169,6 +1170,7 @@ public class RapidServletContextListener implements ServletContextListener {
 			_jaxbClasses.add(com.rapid.core.Application.class);
 			_jaxbClasses.add(com.rapid.core.Device.class);
 			_jaxbClasses.add(com.rapid.core.Device.Devices.class);
+			_jaxbClasses.add(com.rapid.core.Email.class);
 									
 			// convert arraylist to array
 			Class[] classes = _jaxbClasses.toArray(new Class[_jaxbClasses.size()]);			
@@ -1183,6 +1185,9 @@ public class RapidServletContextListener implements ServletContextListener {
 										
 			// load the devices
 			Devices.load(servletContext);
+			
+			// load the email settings
+			Email.load(servletContext);
 						
 			// load the applications!
 			loadApplications(servletContext);	
