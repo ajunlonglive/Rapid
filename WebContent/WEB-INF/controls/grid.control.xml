@@ -454,8 +454,8 @@ function getGridSelectedRowNumber(id, ev) {
 	var index = -1;
 	// get the target of the event
 	var target = $(ev.target);
-	// look for whether the target was in a row
-	var row = target.closest("tr");
+	// look for whether the target was in a grid row
+	var row = target.closest("tr.rowStyle1,tr.rowStyle2");
 	// check if in a row
 	if (row[0]) {
 		// the event occured from within a row so find the table, and the index of the row from the official rows
