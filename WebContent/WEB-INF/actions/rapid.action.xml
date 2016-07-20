@@ -99,6 +99,8 @@ return [
  ["SAVEDEVICE","Save device"],
  ["REBUILDPAGES","Rebuild application pages"],
  ["TESTDBCONN","Test database connection"],
+ ["TESTEMAIL","Test SMTP server"],
+ ["SAVEEMAIL","Save SMTP server details"],
  ["DELAPPBACKUP","Delete application backup"],
  ["DELPAGEBACKUP","Delete page backup"],
  ["RESTOREAPPBACKUP","Restore application backup"],
@@ -654,6 +656,31 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 			callback = function(data) {
 				alert(data.message);
 			};															
+		break;
+		case "TESTEMAIL" :
+			data = {
+				actionType: actionType,
+				appId: "rapid",
+				host: $("#rapid_P0_C1790_").val(),
+				port: $("#rapid_P0_C1791_").val(),
+				security: $("#rapid_P0_C1794_").val(),
+				userName: $("#rapid_P0_C1792_").val(),
+				password: $("#rapid_P0_C1793_").val()
+			};
+			callback = function(data) {
+				alert(data.message);
+			};
+		break;
+		case "SAVEEMAIL" :
+			data = {
+				actionType: actionType,
+				appId: "rapid",
+				host: $("#rapid_P0_C1790_").val(),
+				port: $("#rapid_P0_C1791_").val(),
+				security: $("#rapid_P0_C1794_").val(),
+				userName: $("#rapid_P0_C1792_").val(),
+				password: $("#rapid_P0_C1793_").val()
+			};
 		break;
 		case "DELAPPBACKUP" : case "RESTOREAPPBACKUP" : 
 			data = { actionType: actionType, 
