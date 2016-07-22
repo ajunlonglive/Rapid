@@ -108,29 +108,79 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    		<type>javascript</type>
 	    		<contents>
 	    			<![CDATA[
-function linkClick(url, sessionVariablesString) {
+function linkClick(url, sessionVariablesString, popup) {
 	
 	var sessionVariables = JSON.parse(sessionVariablesString);
 	
 	for (var i in sessionVariables) {
 	
+		var value = null;
+	
 		var item = sessionVariables[i];
 		
-		if (item.type) {
+		var itemId = item.itemId;
 		
-			var value = window["getData_" + item.type](null, item.itemId, item.field, item.details);
+		if (itemId) {
+		
+			if (item.type) {
+		
+				var idParts = itemId.split(".");
+				
+				var ev = $.Event("linkClick");
+				
+				if (idParts.length == 1) {
 			
+					value = window["getData_" + item.type](ev, itemId, item.field, item.details);
+					
+				} else if (idParts.length == 2) {
+							
+					value = window["getProperty_" + item.type + "_" + idParts[1]](ev, idParts[0], item.field, item.details);
+									
+				}
+				
+			} else if (itemId.indexOf("System") == 0) {
+			
+				var idParts = itemId.split(".");
+			
+				switch (idParts[1]) {
+					case "app id" : value = _appId;
+					break;
+					case "app version" : value = _appVersion;
+					break;
+					case "page id" : value = _pageId;
+					break;
+					case "user name" : value = _userName;
+					break;
+					case "online" : value = (typeof _rapidmobile == 'undefined' ? true : _rapidmobile.isOnline() == true || _rapidmobile.isOnline() == 'true');
+					break;
+					case "mobile" : value = (typeof _rapidmobile == 'undefined' ? false : true);
+					break;
+					case "mobile version" : value = (typeof _rapidmobile == 'undefined' ? -1 : (_rapidmobile.getVersion ? _rapidmobile.getVersion() : 0));
+					break;
+					case "true" : value = "true";
+					break;
+					case "false" : value = "false";
+					break;
+					case "field" : value = item.field;
+					break;
+				}
+				
+			}
+		
 		} else {
 		
-			var value = $.getUrlVar(item.itemId);
+			value = $.getUrlVar(item.itemId);
 		
 		}
 	
-		if (value !== undefined) url += "&" + item.name + "=" + value;
+		if (value != null && value !== undefined) url += "&" + item.name + "=" + value;
 	}
 	
-	window.location = url;
-	
+	if (popup) {
+		window.open(url, "_blank");
+	} else {
+		window.location = url;
+	}
 }	    			
 	    			]]>
 	    		</contents>
@@ -143,7 +193,10 @@ function linkClick(url, sessionVariablesString) {
 var text = this.text;
 
 // if text isn't specified add a message
-if (!text) text = "link text required";	        
+if (!text) text = "link text required";
+
+var popup = "";
+if (this.popup) popup = " target='_blank'";
 
 // if the link is to a page	
 if (this.linkType == "P") {
@@ -164,14 +217,25 @@ if (this.linkType == "P") {
 				var item = this.sessionVariables[i];
 				
 				// create an object for the item
-				var itemObject = {name:item.name, itemId:item.itemId};
+				var itemObject = {name:item.name, itemId:item.itemId, field:item.field};
+				
+				// assume the item id is just the control id
+				var controlId = item.itemId;
+				
+				// split the id parts - this tells us if we have a run-time or system property
+				var idParts = controlId.split(".");
+				
+				// if we had more than 1 part
+				if (idParts.length > 1) {
+					// overrwrite the item id with just the control id
+					controlId = idParts[0];
+				}
 				
 				// try and find a control for the item id
-				var control = getControlById(item.itemId);
+				var control = getControlById(controlId);
 				
 				// if we got a control add the field, type, and details			
 				if (control) {
-					itemObject.field = item.field;
 					itemObject.type = control.type;
 					if (control.details) itemObject.details = control.details;					
 				} 
@@ -187,22 +251,21 @@ if (this.linkType == "P") {
 			sessionVariables = sessionVariables.replace(/\"/g,'&quot;');
 		
 			// return the link
-			return "<a id='" + this.id + "' href='#' class='link" + getStyleClasses(this) + "' onclick=\"linkClick('~?a=" + _version.id + "&v=" + _version.version + "&p=" + this.page + "','" + sessionVariables + "');\">" + text + "</a>";
+			return "<a id='" + this.id + "' href='#' class='link" + getStyleClasses(this) + "' onclick=\"linkClick('~?a=" + _version.id + "&v=" + _version.version + "&p=" + this.page + "','" + sessionVariables + "'," + this.popup + ");\">" + text + "</a>";
 			
 		} else {
 		
-			return "<a id='" + this.id + "' href='~?a=" + _version.id + "&v=" + _version.version + "&p=" + this.page + "' class='link" + getStyleClasses(this) + "'>" + text + "</a>";
+			return "<a id='" + this.id + "' href='~?a=" + _version.id + "&v=" + _version.version + "&p=" + this.page + "'" +  popup + " class='link" + getStyleClasses(this) + "'>" + text + "</a>";
 							
 		}
 								
 	} else {
     	return "<a id='" + this.id + "' href='#' class='link" + getStyleClasses(this) + "'>link page required</a>";
     }
+    
 } else {
-	if (this.url) {
-		var popup = "";
-		if (this.popup) popup = "target='_blank'";
-		return "<a id='" + this.id + "' href='" + this.url + "' " + popup + " class='link" + getStyleClasses(this) + "'>" + text + "</a>";
+	if (this.url) {		
+		return "<a id='" + this.id + "' href='" + this.url + "'" + popup + " class='link" + getStyleClasses(this) + "'>" + text + "</a>";
 	} else {
     	return "<a id='" + this.id + "' href='#' class='link" + getStyleClasses(this) + "'>link url required</a>";
     }
