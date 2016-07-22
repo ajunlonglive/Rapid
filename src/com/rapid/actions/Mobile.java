@@ -236,7 +236,7 @@ public class Mobile extends Action {
 					// if this is a page control
 					if (pageControl) {
 						// the details will already be in the page so we can use the short form
-						details = destinationControl.getId() + "details";
+						details ="\\\"" +  destinationControl.getId() + "details" + "\\\"";
 					} else {
 						// escape the object
 						details = "\\\"" + details.replace("\"","\\\\\\\"") + "\\\"";
