@@ -301,11 +301,11 @@ return [["d","driving"],["w","walking"],["b","cycling"],["transit","public trans
          	        
 	        <property>
 	            <key>gpsFrequency</key>
-	            <name>Update frequency (seconds)</name>
+	            <name>Update frequency</name>
 	            <visible>false</visible>
 	            <setConstructValueFunction>return 0;</setConstructValueFunction>
 	            <changeValueJavaScript>integer</changeValueJavaScript>
-	            <helpHtml>Sets how long it takes for the GPS position to be updated.</helpHtml>
+	            <helpHtml>Sets the number of seconds between the latest GPS position being sent. A value of 0 means the position will only be sent once.</helpHtml>
 	        </property>
 	        
 	        <property>
