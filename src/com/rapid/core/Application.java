@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2015 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -558,22 +558,22 @@ public class Application {
 			
 	}
 	
-	// instance variables	
+	// instance variables
 	private int _xmlVersion, _status, _applicationBackupsMaxSize, _pageBackupsMaxSize;
-	private String _id, _version, _name, _title, _description, _startPageId, _themeType, _styles, _statusBarColour, _statusBarHighlightColour, _statusBarTextColour, _statusBarIconColour, _functions, _securityAdapterType, _storePasswordDuration, _formAdapterType, _createdBy, _modifiedBy;
-	private boolean _showConrolIds, _showActionIds, _deviceSecurity;
+	private String _id, _version, _name, _title, _description, _startPageId, _themeType, _styles, _statusBarColour, _statusBarHighlightColour, _statusBarTextColour, _statusBarIconColour, _functions, _securityAdapterType, _storePasswordDuration, _formAdapterType, _createdBy, _modifiedBy, _formEmailTo, _formEmailAttachmentType, _formFileType, _formFilePath, _formFileUserName, _formFilePassword, _formWebserviceURL, _formWebserviceType, _formWebserviceSOAPAction;
+	private boolean _isForm, _showConrolIds, _showActionIds, _deviceSecurity, _formEmail, _formFile, _formWebservice;
 	private Date _createdDate, _modifiedDate;
 	private Map<String,Integer> _pageOrders;
 	private SecurityAdapter _securityAdapter;
-	private FormAdapter _formAdapter;	
-	private List<DatabaseConnection> _databaseConnections;	
+	private FormAdapter _formAdapter;
+	private List<DatabaseConnection> _databaseConnections;
 	private List<Webservice> _webservices;
 	private List<ValueList> _valueLists;
 	private List<Parameter> _parameters;
 	private List<String> _controlTypes, _actionTypes;
 	private Pages _pages;
 	private Resources _appResources, _resources;
-	private List<String> _styleClasses;	
+	private List<String> _styleClasses;
 	private List<String> _pageVariables;
 	
 	// properties
@@ -626,6 +626,10 @@ public class Application {
 	public Map<String,Integer> getPageOrders() { return _pageOrders; }
 	public void setPageOrders(Map<String,Integer> pageOrders) { _pageOrders = pageOrders; _pages.clearCachedOrder(); }
 		
+	// whether form settings checkbox has been ticked or not
+	public boolean getIsForm() { return _isForm; }
+	public void setIsForm(boolean isForm) { _isForm = isForm; }
+	
 	// whether control ids should be shown when designing this app
 	public boolean getShowControlIds() { return _showConrolIds; }
 	public void setShowControlIds(boolean showConrolIds) { _showConrolIds = showConrolIds; }
@@ -637,6 +641,54 @@ public class Application {
 	// the application start page which will be supplied if no page is explicitly provided
 	public String getStartPageId() { return _startPageId; }
 	public void setStartPageId(String startPageId) { _startPageId = startPageId; }
+	
+	// whether email form checkbox has been ticked or not
+	public boolean getFormEmail() { return _formEmail; }
+	public void setFormEmail(boolean formEmail) { _formEmail = formEmail; }
+	
+	// email address to send to
+	public String getFormEmailTo() { return _formEmailTo; }
+	public void setFormEmailTo(String formEmailTo) { _formEmailTo = formEmailTo; }
+	
+	// whether to set the email attachment type to none, CSV or PDF
+	public String getFormEmailAttachmentType() { return _formEmailAttachmentType; }
+	public void setFormEmailAttachmentType(String formEmailAttachmentType) { _formEmailAttachmentType = formEmailAttachmentType; }
+	
+	// whether the form details file checkbox has been ticked or not
+	public boolean getFormFile() { return _formFile; }
+	public void setFormFile(boolean formFile) { _formFile = formFile; }
+	
+	// whether to send the form file as a CSV or PDF
+	public String getFormFileType() { return _formFileType; }
+	public void setFormFileType(String formFileType) { _formFileType = formFileType; }
+	
+	// file path of the form
+	public String getFormFilePath() { return _formFilePath; }
+	public void setFormFilePath(String formFilePath) { _formFilePath = formFilePath; }
+	
+	// username of the form
+	public String getFormFileUserName() { return _formFileUserName; }
+	public void setFormFileUserName(String formFileUserName) { _formFileUserName = formFileUserName; }
+	
+	// password of the form
+	public String getFormFilePassword() { return _formFilePassword; }
+	public void setFormFilePassword(String formFilePassword) { _formFilePassword = formFilePassword; }
+	
+	// whether the checkbox for called a webservice is ticked or not
+	public boolean getFormWebservice() { return _formWebservice; }
+	public void setFormWebservice(boolean formWebservice) { _formWebservice = formWebservice; }
+	
+	// webservice url
+	public String getFormWebserviceURL() { return _formWebserviceURL; }
+	public void setFormWebserviceURL(String formWebserviceURL) { _formWebserviceURL = formWebserviceURL; }
+	
+	// webservice type of either SOAP, JSON or Restful XML
+	public String getFormWebserviceType() { return _formWebserviceType; }
+	public void setFormWebserviceType(String formWebserviceType) { _formWebserviceType = formWebserviceType; }
+	
+	// what the SOAP action is set to
+	public String getFormWebserviceSOAPAction() { return _formWebserviceSOAPAction; }
+	public void setFormWebserviceSOAPAction(String formWebserviceSOAPAction) { _formWebserviceSOAPAction = formWebserviceSOAPAction; }
 	
 	// the CSS theme type which we'll look up and add to the rapid.css file
 	public String getThemeType() { return _themeType; }

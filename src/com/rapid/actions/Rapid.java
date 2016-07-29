@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2015 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -549,7 +549,7 @@ public class Rapid extends Action {
 						}
 						// add the security adapters to the result
 						result.put("securityAdapters", jsonAdapters);
-					}						
+					}
 					
 					// fetch the form adapters
 					JSONArray jsonFormAdapters = rapidServlet.getJsonFormAdapters();
@@ -560,11 +560,11 @@ public class Rapid extends Action {
 					// no value
 					jsonSendAdapter.put("value", "");
 					// None as text
-					jsonSendAdapter.put("text", "None");					
+					jsonSendAdapter.put("text", "Please select...");
 					// add the None member first
 					jsonAdapters.put(jsonSendAdapter);
 					// check we have some database drivers
-					if (jsonFormAdapters != null) {						
+					if (jsonFormAdapters != null) {
 						// loop what we have
 						for (int i = 0; i < jsonFormAdapters.length(); i++) {
 							// get the item
@@ -760,10 +760,37 @@ public class Rapid extends Action {
 						result.put("description", app.getDescription());
 						// add the form adapter
 						result.put("formAdapterType", app.getFormAdapterType());
+						// add the form settings
+						result.put("isForm", app.getIsForm());
 						// add whether to show control ids
 						result.put("showControlIds", app.getShowControlIds());
 						// add whether to show action ids
 						result.put("showActionIds", app.getShowActionIds());
+						
+						// add forms email setting
+						result.put("formEmail", app.getFormEmail());
+						// add forms email to address
+						result.put("formEmailTo", app.getFormEmailTo());
+						// add forms attachment type
+						result.put("formEmailAttachmentType", app.getFormEmailAttachmentType());
+						// add form file details
+						result.put("formFile", app.getFormFile());
+						// add form file type
+						result.put("formFileType", app.getFormFileType());
+						// add form file path
+						result.put("formFilePath", app.getFormFilePath());
+						// add form file username
+						result.put("formFileUserName", app.getFormFileUserName());
+						// add form file password
+						result.put("formFilePassword", app.getFormFilePassword());
+						// add form webservice
+						result.put("formWebservice", app.getFormWebservice());
+						// add form webservice URL
+						result.put("formWebserviceURL", app.getFormWebserviceURL());
+						// add form webservice type
+						result.put("formWebserviceType", app.getFormWebserviceType());
+						// add form webservice SOAP action
+						result.put("formWebserviceSOAPAction", app.getFormWebserviceSOAPAction());
 						
 						// create a simplified array to hold the pages
 						JSONArray jsonPages = new JSONArray();
@@ -1385,9 +1412,23 @@ public class Rapid extends Action {
 				String title = jsonAction.getString("title");
 				String description = jsonAction.getString("description");
 				String formAdapter = jsonAction.optString("formAdapter");
-				String startPageId = jsonAction.optString("startPageId","");				
+				boolean isForm = jsonAction.optBoolean("isForm");
+				String startPageId = jsonAction.optString("startPageId","");
 				boolean showControlIds = jsonAction.optBoolean("showControlIds");
 				boolean showActionIds = jsonAction.optBoolean("showActionIds");
+				
+				boolean formEmail = jsonAction.optBoolean("formEmail");
+				String formEmailTo = jsonAction.optString("formEmailTo");
+				String formEmailAttachmentType = jsonAction.optString("formEmailAttachmentType");
+				boolean formFile = jsonAction.optBoolean("formFile");
+				String formFileType = jsonAction.optString("formFileType");
+				String formFilePath = jsonAction.optString("formFilePath");
+				String formFileUserName = jsonAction.optString("formFileUserName");
+				String formFilePassword = jsonAction.optString("formFilePassword");
+				boolean formWebservice = jsonAction.optBoolean("formWebservice");
+				String formWebserviceURL = jsonAction.optString("formWebserviceURL");
+				String formWebserviceType = jsonAction.optString("formWebserviceType");
+				String formWebserviceSOAPAction = jsonAction.optString("formWebserviceSOAPAction");
 						
 				// assume we do not need to update the applications drop down
 				boolean appUpdated = false;				
@@ -1406,9 +1447,23 @@ public class Rapid extends Action {
 				app.setTitle(title);
 				app.setDescription(description);
 				app.setFormAdapterType(formAdapter);
+				app.setIsForm(isForm);
 				app.setStartPageId(startPageId);
 				app.setShowControlIds(showControlIds);
 				app.setShowActionIds(showActionIds);
+				
+				app.setFormEmail(formEmail);
+				app.setFormEmailTo(formEmailTo);
+				app.setFormEmailAttachmentType(formEmailAttachmentType);
+				app.setFormFile(formFile);
+				app.setFormFileType(formFileType);
+				app.setFormFilePath(formFilePath);
+				app.setFormFileUserName(formFileUserName);
+				app.setFormFilePassword(formFilePassword);
+				app.setFormWebservice(formWebservice);
+				app.setFormWebserviceURL(formWebserviceURL);
+				app.setFormWebserviceType(formWebserviceType);
+				app.setFormWebserviceSOAPAction(formWebserviceSOAPAction);
 												
 				// save
 				app.save(rapidServlet, rapidRequest, true); 

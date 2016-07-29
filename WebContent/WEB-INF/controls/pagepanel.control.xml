@@ -60,31 +60,81 @@ return "<option value=''>None</option>" + getPageOptions(this.pageId,_page.id);
 	            <refreshHtml>true</refreshHtml>
 	            <helpHtml>Sets the page to be loaded into the panel.</helpHtml>
 	        </property>
+	        
+	        <property>
+	            <key>footer</key>
+	            <name>Footer</name>
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets whether the page is to perform as a footer or not.</helpHtml>
+	        </property>
 	        	        
 	    </properties>
 	    
+	    <resources>
+	    	<resource>
+	    		<type>css</type>
+	    		<contents>
+.pagePanelStickyFooter {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+	    		</contents>
+	    	</resource>
+	    	<resource>
+	    		<type>javascript</type>
+	    		<contents>
+					<![CDATA[
+
+function checkPagePanelFooter() {
+	var footer = $("div.pagePanelFooter");
+	if (footer[0]) {
+		var fh = footer.height();
+		var bh = $(document.body).height();
+		if (!footer.is(".pagePanelStickyFooter")) bh -= fh;
+		if (bh + fh < $(window).height()) {
+			// Add sticky footer
+			footer.addClass("pagePanelStickyFooter");
+		}	else {
+			// Remove sticky footer
+			footer.removeClass("pagePanelStickyFooter");
+		}
+	}
+}
+
+$(document).ready( function() {
+	$(window).resize(checkPagePanelFooter);
+	window.setTimeout( function(ev) { checkPagePanelFooter(); }, 200);
+});
+					]]>
+	    		</contents>
+	    	</resource>
+	    </resources>
+	    
 	    <getHtmlFunction>
 	        <![CDATA[
-// return the placeholder for the page we're bringing in	        
-return "<div id='" + this.id + "' class='pagepanel" + getStyleClasses(this) + "'><center><h1>Page</h1></center></div>";
+// return the placeholder for the page we're bringing in
+return "<div id='" + this.id + "' class='pagepanel" + (this.footer ? " pagePanelFooter": "") + getStyleClasses(this) + "'><center><h1>Page</h1></center></div>";
 	        ]]>
-	    </getHtmlFunction> 
+	    </getHtmlFunction>
 	    
 	    <rebuildJavaScript>
 	        <![CDATA[
-// inject the page html	
+// inject the page html
 if (this.pageId) {
 
 	var html = "";
 
-	// request the page		
+	// request the page
 	$.ajax({
     	url: "~?a=" + _version.id + "&v=" + _version.version + "&p=" + this.pageId + "&action=dialogue",
-    	type: "GET",          
-        data: null,   
-        async: false,         
-        error: function(server, status, error) { 
-        	var bodyHtml = "Error loading page : " + error; 
+    	type: "GET",
+        data: null,
+        async: false,
+        error: function(server, status, error) {
+        	var bodyHtml = "Error loading page : " + error;
         },
         success: function(page) {
         	
@@ -122,29 +172,29 @@ if (this.pageId) {
            					// add if not in the head already
            					if (!head.find("script[src='" + src + "']")[0]) head.append(text);
            				}
-           			} 
+           			}
 	           		break;
 	           		case "LINK" :
 	           			// fetch the text
-	           			var text = items[i].outerHTML;	           			
+	           			var text = items[i].outerHTML;
 	           			// look for an href="
 	           			if (!items[i].innerHTML && text.indexOf("href=\"") > 0) {
 	           				var startPos = text.indexOf("href=\"")+6;
 	           				var href = text.substr(startPos,text.indexOf("\"", startPos) - startPos);
 	           				// add this link to the page if not there already
 	           				if (!head.find("link[href='" + href + "']")[0]) head.append(text);
-	           			}	         			
+	           			}
 	           		break;
             		default :
             			if (items[i].outerHTML) {
             				// retain the script in our body html
-            				bodyHtml += items[i].outerHTML;        				
+            				bodyHtml += items[i].outerHTML;
             			}
             		break;
             		}
             	}
             	            	            	            	
-        	} 
+        	}
         	       	        	        	        	        		
         }
         	        	        
@@ -155,30 +205,14 @@ if (this.pageId) {
 	
 } else {
 	this.object.html("#" + this.id).html("<center><h1>Page</h1></center>");
-}     
+}
 	         ]]>
 	    </rebuildJavaScript>
 	    
 	    <saveJavaScript>
 	        <![CDATA[
 // assume the target page is not simple
-var simple = false;	        
-// loop all pages
-for (var i in _pages) {
-	if (_pages[i].id == this.pageId) {
-		simple = _pages[i].simple;
-		break;
-	}
-}	        
-// empty the contents prior to saving, if reloading for non-simple pages	        
-if (!simple) this.object.html("");	        
-	        ]]>
-	    </saveJavaScript>
-	    
-	    <getDetailsFunction>
-	        <![CDATA[
-// assume the target page is not simple
-var simple = false;	        
+var simple = false;
 // loop all pages
 for (var i in _pages) {
 	if (_pages[i].id == this.pageId) {
@@ -186,18 +220,35 @@ for (var i in _pages) {
 		break;
 	}
 }
-// return the details	        
-return {pageId: this.pageId, simple: simple};	        
+// empty the contents prior to saving, if reloading for non-simple pages
+if (!simple) this.object.html("");
+	        ]]>
+	    </saveJavaScript>
+	    
+	    <getDetailsFunction>
+	        <![CDATA[
+// assume the target page is not simple
+var simple = false;
+// loop all pages
+for (var i in _pages) {
+	if (_pages[i].id == this.pageId) {
+		simple = _pages[i].simple;
+		break;
+	}
+}
+
+// return the details
+return {pageId: this.pageId, footer: this.footer, simple: simple};
 	        ]]>
 	    </getDetailsFunction>
 	    
 	    <styles>       
 	        <style>
-	            <name>Page</name>  
+	            <name>Page panel</name>
 	            <getAppliesToFunction>
-					<![CDATA[	      
+					<![CDATA[
 return "#" + this.id;
-	       			 ]]>	                
+	       			 ]]>
 	            </getAppliesToFunction>
 	        </style>
 	    </styles>
@@ -285,7 +336,13 @@ if (details.simple === undefined || !details.simple) {
 	    	}        	       	        	        	        	        		
 	    }       	        	        
 	});	        
-}	
+}
+
+if (details.sticky == true) {
+	$("#" + id).addClass("stickyFooter");
+} else {
+	$("#" + id).removeClass("stickyFooter");
+}
 	        ]]>	        
 	    </initJavaScript>
 	    

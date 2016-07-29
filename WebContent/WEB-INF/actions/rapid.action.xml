@@ -281,18 +281,31 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 		break;
 		case "SAVEAPP" :		
 			data = { 
-				actionType: actionType, 
-				appId: $("#rapid_P0_C43").val(), 
+				actionType: actionType,
+				appId: $("#rapid_P0_C43").val(),
 				version: $("#rapid_P0_C1044_").val(),
-				status: $("#rapid_P0_C1098_").val(),					
+				status: $("#rapid_P0_C1098_").val(),
 				name: $("#rapid_P0_C392_").val(),
 				saveVersion: $("#rapid_P0_C1077_").val(),
 				title: $("#rapid_P0_C394_").val(),
 				description: $("#rapid_P0_C393_").val(),
 				formAdapter: $("#rapid_P0_C1406_").val(),
+				isForm: $("#rapid_P0_C1826_").prop("checked"),
 				startPageId: $("#rapid_P0_C644_").val(),
 				showControlIds: $("#rapid_P0_C381_").prop("checked"),
-				showActionIds: $("#rapid_P0_C382_").prop("checked")				
+				showActionIds: $("#rapid_P0_C382_").prop("checked"),
+				formEmail: $("#rapid_P0_C1874_").prop("checked"),
+				formEmailTo: $("#rapid_P0_C1875_").val(),
+				formEmailAttachmentType: $("#rapid_P0_C1876_").val(),
+				formFile: $("#rapid_P0_C1878_").prop("checked"),
+				formFileType: $("#rapid_P0_C1897_").val(),
+				formFilePath: $("#rapid_P0_C1898_").val(),
+				formFileUserName: $("#rapid_P0_C1899_").val(),
+				formFilePassword: $("#rapid_P0_C1900_").val(),
+				formWebservice: $("#rapid_P0_C1905_").prop("checked"),
+				formWebserviceURL: $("#rapid_P0_C1903_").val(),
+				formWebserviceType: $("#rapid_P0_C1902_").val(),
+				formWebserviceSOAPAction: $("#rapid_P0_C1901_").val()
 			};	
 		break;
 		case "SAVESTYLES" :		
