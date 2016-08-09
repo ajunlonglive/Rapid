@@ -34,6 +34,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.Enumeration;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -223,14 +224,32 @@ public class Rapid extends RapidHttpServlet {
 							// if there is a formAdapter, make sure there's a form id, unless it's for a simple page
 							if (formAdapter != null) {
 								
-								// if there is a start parameter
+								// if there is a start parameter, nuke the session and then move on one page without the start parameter so users can go back to the beginning without loosing values
 								if (request.getParameter("start") != null) {
-									// invalidate the session
+									// invalidate the session 
 									request.getSession().invalidate();
-									// create a new session
-									request.getSession();
-									// recreate the rapidRequest
-									rapidRequest = new RapidRequest(this, request);
+									// start the url
+									String url = "~?";
+									// start the position
+									int pos = 0;
+									// get the parameter map
+									Enumeration<String> parameterNames = request.getParameterNames();
+									// loop the current parameters
+									while (parameterNames.hasMoreElements()) {
+										// get the name
+										String parameterName = parameterNames.nextElement();
+										// ignore start
+										if (!"start".equals(parameterName)) {
+											// if 1 or more add &
+											if (pos > 0) url += "&";
+											// add to url
+											url += parameterName + "=" + request.getParameter(parameterName);
+											// inc pos
+											pos ++;
+										}
+									}
+									// redirect !
+									response.sendRedirect(url);									
 								}
 																														
 								// if this is a form resume
