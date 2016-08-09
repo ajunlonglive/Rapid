@@ -810,16 +810,26 @@ public class Designer extends RapidHttpServlet {
 											// get the text
 											String text = control.getProperty("text");
 											
-											// print if we got some
+											// print if we got some (other controls without text are checked in the next block)
 											if (text != null) {
+												
 												// clean up simple characters
 												text = text.replace("&nbsp;", " ");
 												
 												// find all html tags and replace contents with nothing
 												text = text.replaceAll("<(.*?)>", "");
 												
+												// replace line breaks
+												text = text.replaceAll("/n", "");
+												
 												// trim it
 												text = text.trim();
+												
+												// certain controls have more detail
+												if (control.getType().contains("checkbox")) {
+													text += " (checkbox)";
+												} 
+																								
 												// check different from old text
 												if (!text.equals(oldText)) {
 													// if there is some text
@@ -830,7 +840,86 @@ public class Designer extends RapidHttpServlet {
 														oldText = text;
 													}
 												}
-											}
+												
+											} else if (control.getType().contains("dropdown")) {
+												
+												out.print(" - Dropdown : ");
+												
+												JSONArray jsonOptions = new JSONArray(control.getProperty("options"));
+												
+												boolean usesCodes = Boolean.parseBoolean(control.getProperty("codes"));
+												
+												for (int i = 0; i < jsonOptions.length(); i++) {
+													
+													JSONObject jsonOption = jsonOptions.getJSONObject(i);
+													
+													text = jsonOption.optString("text","");
+													
+													if (text.length() == 0) {
+														out.print("[BLANK]");
+													} else {
+														out.print(text);
+													}
+													
+													if (usesCodes) {
+														
+														String value = jsonOption.optString("value","");
+														
+														if (value != "null") {
+															if (value.length() > 0) {
+																out.print( " (" + value + ")");
+															}
+														}
+
+													}
+													
+													if (i < jsonOptions.length() - 1) out.print(", ");
+													
+												}
+												
+												// close it
+												out.print("\n\r");
+												
+											}  else if (control.getType().contains("radiobutton")) {
+												
+												out.print(" - Radio buttons : ");
+												
+												JSONArray jsonOptions = new JSONArray(control.getProperty("buttons"));
+												
+												boolean usesCodes = Boolean.parseBoolean(control.getProperty("codes"));
+												
+												for (int i = 0; i < jsonOptions.length(); i++) {
+													
+													JSONObject jsonOption = jsonOptions.getJSONObject(i);
+													
+													text = jsonOption.optString("label","");
+													
+													if (text.length() == 0) {
+														out.print("[BLANK]");
+													} else {
+														out.print(text);
+													}
+													
+													if (usesCodes) {
+														
+														String value = jsonOption.optString("value","");
+														
+														if (value != "null") {
+															if (value.length() > 0) {
+																out.print( " (" + value + ")");
+															}
+														}
+
+													}
+													
+													if (i < jsonOptions.length() - 1) out.print(", ");
+													
+												}
+												
+												// close it
+												out.print("\n\r");
+												
+											}  
 											
 										} else {
 										
