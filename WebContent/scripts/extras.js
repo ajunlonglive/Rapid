@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2014 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -70,11 +70,17 @@ $.extend({
 // extend JQuery object methods
 $.fn.extend({
   enable: function() {
-    this.removeAttr("disabled");
+	  this.removeAttr("disabled");
+	  if (!this.is("input")) {
+		  this.children("input").removeAttr("disabled");
+	  }
     return this;
   },
   disable: function() {
-	this.attr("disabled","disabled");
+	  this.attr("disabled","disabled");
+	  if (!this.is("input")) {
+		  this.children("input").attr("disabled","disabled");
+	  }
     return this;
   },
   showLoading: function() {
