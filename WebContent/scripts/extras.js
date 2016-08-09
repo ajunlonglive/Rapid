@@ -72,14 +72,14 @@ $.fn.extend({
   enable: function() {
 	  this.removeAttr("disabled");
 	  if (!this.is("input")) {
-		  this.children("input").removeAttr("disabled");
+		  this.find("input").removeAttr("disabled");
 	  }
     return this;
   },
   disable: function() {
 	  this.attr("disabled","disabled");
 	  if (!this.is("input")) {
-		  this.children("input").attr("disabled","disabled");
+		  this.find("input").attr("disabled","disabled");
 	  }
     return this;
   },
