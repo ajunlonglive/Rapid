@@ -100,11 +100,8 @@ if (this.checked == "true" || this.checked == true) checked=" checked='checked'"
 var value = "true";
 if (this.value) value = this.value;
 
-if (this.text) {
-	return "<label id='" + this.id + "' class='checkbox" + getStyleClasses(this) + "' for='" + this.id + "checkbox'><input type='hidden' name='" +  this.id + "' value=''></input><input id='" + this.id + "checkbox' name='" + this.id + "' type='checkbox'" + checked + " value='" + escapeApos(value) + "'></input>" + this.text + "</label>";
-} else {
-	return "<input type='hidden' name='" +  this.id + "' value=''></input><input id='" + this.id + "'  name='" + this.id + "' type='checkbox' class='checkbox" + getStyleClasses(this) + "'" + checked + " value='" + escapeApos(value) + "'></input>";
-}
+return "<label id='" + this.id + "' class='checkbox" + getStyleClasses(this) + "' for='" + this.id + "checkbox'><input type='hidden' name='" +  this.id + "' value=''></input><input id='" + this.id + "checkbox' name='" + this.id + "' type='checkbox'" + checked + " value='" + escapeApos(value) + "'></input>" + (this.text ? this.text : "") + "</label>";
+
 	        ]]>
 	    </getHtmlFunction> 
 	    
@@ -119,17 +116,17 @@ this.object.remove();
 	    
 	    <getDataFunction>
 	        <![CDATA[
-return $("#" + id).prop("checked") ? "true" : "false";
+return $("#" + id + "checkbox").prop("checked") ? "true" : "false";
 			]]>
 	    </getDataFunction>
 	    
 	    <setDataJavaScript>
 	        <![CDATA[
-var control = $("#" + id);	      
-var value = false;  
-if (data != null && data !== undefined) {	
+var control = $("#" + id + "checkbox");
+var value = false;
+if (data != null && data !== undefined) {
 	data = makeDataObject(data, field);
-	if (data.rows && data.rows[0]) {	        		
+	if (data.rows && data.rows[0]) {
 		if (field && data.fields) {
 			for (var i in data.fields) {
 				if (data.fields[i].toLowerCase() == field.toLowerCase()) {
@@ -140,11 +137,11 @@ if (data != null && data !== undefined) {
 		} else {
 			value = data.rows[0][0];
 		}
-	} 
+	}
 }
 if (value == "false") value = false;
 control.prop('checked', value);
-if (changeEvents) control.trigger("change");    
+if (changeEvents) control.trigger("change");
 			]]>
 	    </setDataJavaScript>
 	    	    
