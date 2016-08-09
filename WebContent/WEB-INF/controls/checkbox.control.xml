@@ -95,21 +95,15 @@ return ["false","true"];
 	    <getHtmlFunction>
 	        <![CDATA[	    
 var checked = "";
-
 if (this.checked == "true" || this.checked == true) checked=" checked='checked'";
 
 var value = "true";
 if (this.value) value = this.value;
 
-// this is the hidden input with no value to stand in for the checkbox on a form post when the checkbox is null
-var html = "<input type='hidden' name='" +  this.id + "' value=''></input>"; 
-// the checkbox proper
-html += "<input id='" + this.id + "'  name='" + this.id + "' type='checkbox' class='checkbox" + getStyleClasses(this) + "'" + checked + " value='" + escapeApos(value) + "'></input>";
-
 if (this.text) {
-	return "<label for='" + this.id + "'>" + html + this.text + "</label>";
+	return "<label id='" + this.id + "' class='checkbox" + getStyleClasses(this) + "' for='" + this.id + "checkbox'><input type='hidden' name='" +  this.id + "' value=''></input><input id='" + this.id + "checkbox' name='" + this.id + "' type='checkbox'" + checked + " value='" + escapeApos(value) + "'></input>" + this.text + "</label>";
 } else {
-	return html
+	return "<input type='hidden' name='" +  this.id + "' value=''></input><input id='" + this.id + "'  name='" + this.id + "' type='checkbox' class='checkbox" + getStyleClasses(this) + "'" + checked + " value='" + escapeApos(value) + "'></input>";
 }
 	        ]]>
 	    </getHtmlFunction> 
@@ -158,6 +152,11 @@ if (changeEvents) control.trigger("change");
 	        <event>
 	            <type>click</type>
 	            <name>Click</name>
+	        </event>
+	        
+	        <event>
+	            <type>change</type>
+	            <name>Change</name>
 	        </event>
 	    </events>
 	    
