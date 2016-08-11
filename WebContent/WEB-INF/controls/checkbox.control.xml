@@ -116,13 +116,16 @@ this.object.remove();
 	    
 	    <getDataFunction>
 	        <![CDATA[
-return $("#" + id + "checkbox").prop("checked") ? "true" : "false";
+var control = $("#" + id);
+if (!control[0]) control = control.find("#" + id + "checkbox");	        
+return control.prop("checked") ? "true" : "false";
 			]]>
 	    </getDataFunction>
 	    
 	    <setDataJavaScript>
 	        <![CDATA[
-var control = $("#" + id + "checkbox");
+var control = $("#" + id);
+if (!control[0]) control = control.find("#" + id + "checkbox");
 var value = false;
 if (data != null && data !== undefined) {
 	data = makeDataObject(data, field);
@@ -141,7 +144,7 @@ if (data != null && data !== undefined) {
 }
 if (value == "false") value = false;
 control.prop('checked', value);
-if (changeEvents) control.trigger("change");
+if (changeEvents) $("#" + id).trigger("change");
 			]]>
 	    </setDataJavaScript>
 	    	    
