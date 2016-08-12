@@ -196,6 +196,8 @@ public class Rapid extends Action {
 			// if mobile, add mobile action
 			actionTypes.add("mobile");
 		} else if ("F".equals(type)) {
+			// set form to true
+			newApp.setIsForm(true);
 			// add form control if form
 			actionTypes.add("form");
 		}
