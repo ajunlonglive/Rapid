@@ -150,11 +150,19 @@ public class Email {
 	    props.put("mail.smtp.host", host);
 	    props.put("mail.smtp.port", port);
 	    
+	    // check security - this article was very useful at describing the difference: https://luxsci.com/blog/ssl-versus-tls-whats-the-difference.html
+	    if ("ssl".equals(security)) {
+	    		    	
+	        props.put("mail.smtp.auth", "true");
+	        props.put("mail.smtp.ssl.enable", "true");
+	    	
+	    } else if ("tls".equals(security)) {
 	    
-	    
-	    props.put("mail.smtp.auth", "true");
-	    props.put("mail.smtp.starttls.enable", "true"); 
-	    props.put("mail.smtp.socketFactory.fallback", "true");
+	    	props.put("mail.smtp.auth", "true");
+		    props.put("mail.smtp.starttls.enable", "true"); 
+		    props.put("mail.smtp.socketFactory.fallback", "true");
+	    	
+	    } 
 	    
 	    // retain these in a static
 	    _properties = props;
