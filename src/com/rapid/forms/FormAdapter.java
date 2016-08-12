@@ -25,9 +25,12 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
 package com.rapid.forms;
 
+import java.io.File;
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,6 +48,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.rapid.core.Application;
 import com.rapid.core.Control;
+import com.rapid.core.Email;
 import com.rapid.core.Page;
 import com.rapid.core.Pages;
 import com.rapid.core.Pages.PageHeader;
@@ -55,6 +59,7 @@ import com.rapid.security.SecurityAdapter.SecurityAdapaterException;
 import com.rapid.server.Rapid;
 import com.rapid.server.RapidRequest;
 import com.rapid.utils.Numbers;
+import com.rapid.utils.Strings;
 
 public abstract class FormAdapter {
 	
@@ -263,6 +268,7 @@ public abstract class FormAdapter {
 	protected ServletContext _servletContext;
 	protected Application _application;
 	protected Logger _logger;
+	protected String _css;
 	
 	// properties
 	
@@ -374,7 +380,7 @@ public abstract class FormAdapter {
 	}
 	
 	// public instance methods
-			
+	
 	// sets whether the form has been saved
 	public synchronized void setUserFormSaved(RapidRequest rapidRequest, boolean saved) throws Exception {
 		// get the details
@@ -571,18 +577,43 @@ public abstract class FormAdapter {
 		// get the form details
 		UserFormDetails formDetails = getUserFormDetails(rapidRequest);
 		try {
+			
 			// if submitted already throw exception
 			if (formDetails.getSubmitted()) throw new Exception("This form has already been submitted");
+			
+			// get the application and perform any 3rd party submission first so if they fail the whole thing fails
+			Application application = rapidRequest.getApplication();
+			
+			// email
+			if (application.getFormEmail()) {
+				
+				// get a string writer which the summary html will be written to
+				StringWriter writer = new StringWriter();
+				
+				// write to the writer
+				writeFormSummaryHTML(rapidRequest, formDetails, writer, true);
+				
+				// send the email				
+				Email.send("forms@rapid-is.co.uk", application.getFormEmailTo(), _application.getTitle() + " form " + formDetails.getId() + " submitted", "HTML preview not available", writer.toString());
+			}
+			
+			// file
+			
+			// webservice
+			
 			// get the submission details
-			SubmissionDetails submissionDetails = submitForm(rapidRequest);						
+			SubmissionDetails submissionDetails = submitForm(rapidRequest);
+			
 			// retain the submitted date/time in the details
 			formDetails.setSubmittedDateTime(submissionDetails.getDateTime());
 			// retain the submit message in the details
 			formDetails.setSubmitMessage(submissionDetails.getMessage());
 			// allow the submission page to be seen
 			formDetails.setShowSubmitPage(true);
+			
 			// retain that this form was submitted
 			addSubmittedForm(rapidRequest, formDetails.getId());
+			
 		} catch (Exception ex) {
 			// retain the error message in the details
 			formDetails.setErrorMessage(ex.getMessage());
@@ -671,7 +702,7 @@ public abstract class FormAdapter {
 		
 	}
 		
-	// this writes the form summary page
+	// this writes the form summary page to the request
 	public void writeFormSummary(RapidRequest rapidRequest, HttpServletResponse response) throws Exception {
 		
 		// get the user form details
@@ -691,137 +722,8 @@ public abstract class FormAdapter {
 			// set the response type
 			response.setContentType("text/html");
 			
-			// this doctype is necessary (amongst other things) to stop the "user agent stylesheet" overriding styles
-			writer.write("<!DOCTYPE html>\n");
-																							
-			// open the html
-			writer.write("<html>\n");
-			
-			// open the head
-			writer.write("  <head>\n");
-			
-			// write a title
-			writer.write("    <title>Form summary - by Rapid</title>\n");
-			
-			// get the servletContext
-			ServletContext servletContext = rapidRequest.getRapidServlet().getServletContext();
-			
-			// get app start page
-			Page startPage = _application.getStartPage(servletContext);
-						
-			// write the start page head (and it's resources)
-			writer.write(startPage.getResourcesHtml(_application, true));
-			
-			// close the head
-			writer.write("  </head>\n");
-			
-			// open the body
-			writer.write("  <body>\n");
-			
-			// write the summary start
-			writer.write(getSummaryStartHtml(rapidRequest, _application));
-			
-			// get the sorted pages
-			PageHeaders pageHeaders = _application.getPages().getSortedPages();
-			
-			// assume the page return link is edit
-			String pageReturn = "edit";
-			// update to view if submitted
-			if (formDetails.getSubmitted()) pageReturn = "view";
-						
-			// loop the page headers
-			for (PageHeader pageHeader : pageHeaders) {
-																						
-				// a string builder for the page values
-				StringBuilder valuesStringBuilder = new StringBuilder();
-				
-				// get any page control values
-				FormPageControlValues pageControlValues = _application.getFormAdapter().getFormPageControlValues(rapidRequest, formDetails.getId(), pageHeader.getId());
-				
-				// if non null
-				if (pageControlValues != null) {
-					
-					// if we got some
-					if (pageControlValues.size() > 0) {
-						
-						// get the page with this id
-						Page page = _application.getPages().getPage(servletContext, pageHeader.getId());
-					
-						// get all page controls (in display order)
-						List<Control> pageControls = page.getAllControls();
-					
-						// loop the page controls
-						for (Control control : pageControls) {
-							
-							// loop the page control values
-							for (FormControlValue controlValue : pageControlValues) {
-																						
-								// look for an id match
-								if (control.getId().equals(controlValue.getId())) {
-							
-									// write the control value!
-									valuesStringBuilder.append(getSummaryControlValueHtml(rapidRequest, _application, page, controlValue));
-
-									// exit this loop
-									break;
-																		
-								}
-								
-							}
-							
-							// if there are no controlValues left we can stop entirely
-							if (pageControlValues.size() == 0) break;
-							
-						} // page control loop
-						
-						// if there are some values in thre string builder
-						if (valuesStringBuilder.length() > 0) {
-							
-							// write the page start html
-							writer.write(getSummaryPageStartHtml(rapidRequest, _application, page));
-							
-							// write the values
-							writer.write(valuesStringBuilder.toString());
-														
-							// write the edit link
-							writer.write("<a href='~?a=" + _application.getId() + "&v=" + _application.getVersion() + "&p=" + page.getId() + "'>" + pageReturn + "</a>\n");
-							
-							// write the page end html
-							writer.write(getSummaryPageEndHtml(rapidRequest, _application, page));
-							
-						} // values written check
-						
-					} // control values length > 0
-					
-				} // control values non null
-				
-				// stop here if this is the max page that they got to
-				if (pageHeader.getId().equals(formDetails.getMaxPageId())) break;
-																				
-			} // page loop
-						
-			// write the pages end
-			writer.write(getSummaryPagesEndHtml(rapidRequest, _application));
-						
-			// if the form has been completed
-			if (formDetails.getComplete()) {
-				// if it has been submitted
-				if (formDetails.getSubmitted()) {
-					// look for a submitted date/time
-					String submittedDateTime = formDetails.getSubmittedDateTime();
-					// add if we got one
-					if (submittedDateTime != null) writer.write("<span class='formSubmittedDateTime'>" + submittedDateTime + "</span>");					
-				} else {
-					// add the submit button
-					writer.write("<form action='~?a=" + _application.getId() + "&v=" + _application.getVersion()  + "&action=submit' method='POST'><button type='submit' class='formSummarySubmit'>Submit</button></form>");
-				}
-			}
-			
-			// write the summary end 
-			writer.write(getSummaryEndHtml(rapidRequest, _application));
-									
-			// close the remaining elements
-			writer.write("  </body>\n</html>");
+			// write the html to the print writer
+			writeFormSummaryHTML(rapidRequest, formDetails, writer, false);
 																																		
 			// close the writer
 			writer.close();
@@ -833,6 +735,161 @@ public abstract class FormAdapter {
 		
 	}
 		
+	// this writes the form summary HTML to a writer (used by both the summary method above and the email submit)
+	public void writeFormSummaryHTML(RapidRequest rapidRequest, UserFormDetails formDetails, Writer writer, Boolean email) throws Exception {
+		
+		// this doctype is necessary (amongst other things) to stop the "user agent stylesheet" overriding styles
+		writer.write("<!DOCTYPE html>\n");
+																						
+		// open the html
+		writer.write("<html>\n");
+		
+		// open the head
+		writer.write("  <head>\n");
+		
+		// write a title
+		writer.write("    <title>Form summary - by Rapid</title>\n");
+		
+		// get the servletContext
+		ServletContext servletContext = rapidRequest.getRapidServlet().getServletContext();
+		
+		// get app start page
+		Page startPage = _application.getStartPage(servletContext);
+		
+		// if this is for an email
+		if (email) {
+			
+			// if the css has not been set yet
+			if (_css == null) {
+				// get the minified file
+				File minifiedCssFile = new File(_application.getWebFolder(servletContext) + "/rapid.min.css");
+				// if it exists read it
+				if (minifiedCssFile.exists()) _css = Strings.getString(minifiedCssFile);
+			}
+			
+			// add the application stylesheet
+			writer.write("    <style>\n" + _css + "\n    </style>\n");
+			
+		} else {
+			
+			// write the start page head (and it's resources)
+			writer.write(startPage.getResourcesHtml(_application, true));
+			
+		}
+					
+		// close the head
+		writer.write("  </head>\n");
+		
+		// open the body
+		writer.write("  <body>\n");
+		
+		// write the summary start
+		writer.write(getSummaryStartHtml(rapidRequest, _application));
+		
+		// get the sorted pages
+		PageHeaders pageHeaders = _application.getPages().getSortedPages();
+		
+		// assume the page return link is edit
+		String pageReturn = "edit";
+		// update to view if submitted
+		if (formDetails.getSubmitted()) pageReturn = "view";
+					
+		// loop the page headers
+		for (PageHeader pageHeader : pageHeaders) {
+																					
+			// a string builder for the page values
+			StringBuilder valuesStringBuilder = new StringBuilder();
+			
+			// get any page control values
+			FormPageControlValues pageControlValues = _application.getFormAdapter().getFormPageControlValues(rapidRequest, formDetails.getId(), pageHeader.getId());
+			
+			// if non null
+			if (pageControlValues != null) {
+				
+				// if we got some
+				if (pageControlValues.size() > 0) {
+					
+					// get the page with this id
+					Page page = _application.getPages().getPage(servletContext, pageHeader.getId());
+				
+					// get all page controls (in display order)
+					List<Control> pageControls = page.getAllControls();
+				
+					// loop the page controls
+					for (Control control : pageControls) {
+						
+						// loop the page control values
+						for (FormControlValue controlValue : pageControlValues) {
+																					
+							// look for an id match
+							if (control.getId().equals(controlValue.getId())) {
+						
+								// write the control value!
+								valuesStringBuilder.append(getSummaryControlValueHtml(rapidRequest, _application, page, controlValue));
+	
+								// exit this loop
+								break;
+																	
+							}
+							
+						}
+						
+						// if there are no controlValues left we can stop entirely
+						if (pageControlValues.size() == 0) break;
+						
+					} // page control loop
+					
+					// if there are some values in the string builder
+					if (valuesStringBuilder.length() > 0) {
+						
+						// write the page start html
+						writer.write(getSummaryPageStartHtml(rapidRequest, _application, page));
+						
+						// write the values
+						writer.write(valuesStringBuilder.toString());
+													
+						// if not email write the edit link 
+						if (!email) writer.write("<a href='~?a=" + _application.getId() + "&v=" + _application.getVersion() + "&p=" + page.getId() + "'>" + pageReturn + "</a>\n");
+						
+						// write the page end html
+						writer.write(getSummaryPageEndHtml(rapidRequest, _application, page));
+						
+					} // values written check
+					
+				} // control values length > 0
+				
+			} // control values non null
+			
+			// stop here if this is the max page that they got to
+			if (pageHeader.getId().equals(formDetails.getMaxPageId())) break;
+																			
+		} // page loop
+					
+		// write the pages end
+		writer.write(getSummaryPagesEndHtml(rapidRequest, _application));
+					
+		// if the form has been completed and it not for email
+		if (formDetails.getComplete() && !email) {
+			// if it has been submitted
+			if (formDetails.getSubmitted()) {
+				// look for a submitted date/time
+				String submittedDateTime = formDetails.getSubmittedDateTime();
+				// add if we got one
+				if (submittedDateTime != null) writer.write("<span class='formSubmittedDateTime'>" + submittedDateTime + "</span>");					
+			} else {
+				// add the submit button
+				writer.write("<form action='~?a=" + _application.getId() + "&v=" + _application.getVersion()  + "&action=submit' method='POST'><button type='submit' class='formSummarySubmit'>Submit</button></form>");
+			}
+		}
+		
+		// write the summary end 
+		writer.write(getSummaryEndHtml(rapidRequest, _application));
+								
+		// close the remaining elements
+		writer.write("  </body>\n</html>");
+		
+	}
+	
 	// static methods
 	
 	public static FormPageControlValues getPostPageControlValues(RapidRequest rapidRequest, String postBody, String formId) throws ServerSideValidationException  {

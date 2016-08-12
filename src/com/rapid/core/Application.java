@@ -1665,7 +1665,7 @@ public class Application {
 			fos.close();
 			
 			// minify it to a rapid.min.css file
-			Minify.toFile(resourceCSSWithParams + appCSSWithParams, applicationPath + "/rapid.min.css", Minify.CSS);
+			Minify.toFile(resourceCSSWithParams + appThemeCSSWithParams + appCSSWithParams, applicationPath + "/rapid.min.css", Minify.CSS);
 			
 			// check the status
 	    	if (_status == STATUS_LIVE) {

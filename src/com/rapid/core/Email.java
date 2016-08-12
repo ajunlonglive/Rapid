@@ -1,3 +1,29 @@
+/*
+
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
+
+gareth.edwards@rapid-is.co.uk
+
+
+This file is part of the Rapid Application Platform
+
+Rapid is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as 
+published by the Free Software Foundation, either version 3 of the 
+License, or (at your option) any later version. The terms require you 
+to include the original copyright, and the license notice in all redistributions.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
+
+*/
+
+
 package com.rapid.core;
 
 import java.io.File;
@@ -6,7 +32,6 @@ import java.util.Properties;
 
 import javax.mail.Authenticator;
 import javax.mail.Message;
-import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
@@ -175,7 +200,16 @@ public class Email {
 
 	}
     
-    public static void send(String from, String to, String subject, String text) throws MessagingException {
+    public static void send(String from, String to, String subject, String text, String html) throws Exception {
+    	
+    	// if email is null throw exception
+    	if (_email == null) throw new Exception("Email settings must be specified");
+    	
+    	// if properties are null
+    	if (_properties == null) {
+    		// set email properties from object properties
+    		setProperties(_email.getHost(), _email.getPort(), _email.getSecurity(), _email.getUserName(), _email.getPassword());
+    	}
     	
 	    // if _authenticator is null
 	    if (_authenticator == null) {
@@ -196,10 +230,16 @@ public class Email {
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
         message.setSubject(subject);
         message.setText(text);
+        if (html != null) message.setContent(html, "text/html");
 
         // send it!
         Transport.send(message);
     	
+    }
+    
+    // overload to above for non-html
+    public static void send(String from, String to, String subject, String text) throws Exception {
+    	send(from, to, subject, text, null);
     }
     
     // 
