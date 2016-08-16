@@ -162,7 +162,7 @@ GT_Math.Lat_Long_to_North=function(PHI,LAM,a,b,e0,n0,f0,PHI0,LAM0)
 
 /*
 
-Copyright (C) 2014 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -185,10 +185,124 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-//an array to manage the in-page maps	                
+// an array to manage the in-page maps	                
 var _maps = [];	    
-//a global for the geo-coder (if required)
+// an object of map details for use in the loaded call back
+var _mapDetails = {};
+// a global for the geo-coder (if required)
 var _geocoder = null;
+
+// dynamically load the map javascript with the given key
+function loadMapJavaScript(id, details) {
+	// append loading script only if not there already
+	if (!$("#mapJavaScript")[0])	{
+		// assume no key provided
+		var url = "https://maps.googleapis.com/maps/api/js?v=3&callback=loadedMapJavaScript"
+		// if there was one
+		if (details.key) url += "&key=" + details.key;
+		// append to the head and start loading
+		$("head").append("<script async defer id='mapJavaScript' type='text/javascript' src='" + url + "'></script>");
+	}
+	// retain the details for use in the loaded callback
+	_mapDetails[id] = details;
+}
+
+// call back for once map JavaScript is loaded
+function loadedMapJavaScript() {
+	
+	// loop the stored details
+	for (var id in _mapDetails) {
+
+		// build or rebuild the map by id
+		rebuildLoadedMap(id);
+			
+	}
+	
+}
+
+function rebuildLoadedMap(id) {
+	
+	// if google has loaded - might not if offline
+	if (window["google"]) {
+	
+		// get the details
+		var details = _mapDetails[id];
+	
+		// make the zoom a number
+		var zoom = parseInt(details.zoom);
+		
+		// assume we want a roadmap
+		var mapTypeId =  google.maps.MapTypeId.ROADMAP;
+		
+		// update if one provided
+		switch (details.mapType) {
+			case ("R") :
+				mapTypeId =  google.maps.MapTypeId.ROADMAP;
+			break;
+			case ("S") :
+				mapTypeId =  google.maps.MapTypeId.SATELLITE;
+			break;
+		} 
+		
+		// create a map in our control object
+		var map = new google.maps.Map($("#" + id)[0], {
+		   	zoom: zoom,
+			center: new google.maps.LatLng(details.lat, details.lng),
+			mapTypeControlOptions: {mapTypeIds:[google.maps.MapTypeId.ROADMAP, google.maps.MapTypeId.SATELLITE]},
+			mapTypeId: mapTypeId,
+			mapTypeControl: details.showMapType,
+			zoomControl: details.showZoom,
+		   	panControl: details.showPan,
+		   	streetViewControl: details.showStreetView,
+		   	scaleControl: details.showScale
+		});
+		
+		// add it to the collections
+		_maps[id] = map;
+		
+		// turn off the labels for all points of interest
+		map.setOptions({'styles':[{featureType:"poi",elementType: "labels",stylers:[{visibility:"off"}]}]});
+		
+		// get any map click event listener
+		var f_click = window["Event_mapClick_" + id];
+		// if there is a map click event listener
+		if (f_click) {
+			// attach a listener to the mapClick event
+			google.maps.event.addListener(map, 'click', function() {
+				// fire mapClick event
+	    		f_click($.Event("mapClick"));
+			});
+		}
+		
+		// get any map drag start event listener
+		var f_dragStart = window["Event_dragStart_" + id];
+		// if there is a map drag event listener
+		if (f_dragStart) {
+			// attach a listener to the dragstart event
+			google.maps.event.addListener(map, 'dragstart', function() {
+				// fire touch event
+	    		f_dragStart($.Event("drag"));
+			});
+		}
+		
+		// get any map drag end event listener
+		var f_dragEnd = window["Event_dragEnd_" + id];
+		// if there is a map drag event listener
+		if (f_dragEnd) {
+			// attach a listener to the dragstart event
+			google.maps.event.addListener(map, 'dragend', function() {
+				// fire touch event
+	    		f_dragEnd($.Event("drag"));
+			});
+		}
+		
+	} else {
+
+		$("#" + id).html("Map not available");
+
+	}	
+	
+}
 
 // get the standard map position object a data object a varierty of ways, including the async geocoder
 function getMapPosition(data, rowIndex, callBack, map, details, zoomMarkers) {
