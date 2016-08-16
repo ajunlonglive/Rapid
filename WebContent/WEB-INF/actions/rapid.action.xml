@@ -295,6 +295,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 				showControlIds: getData_checkbox(ev, "rapid_P0_C381_"),
 				showActionIds: getData_checkbox(ev, "rapid_P0_C382_"),
 				formEmail: getData_checkbox(ev, "rapid_P0_C1874_"),
+				formEmailFrom: $("#rapid_P0_C1994_").val(),
 				formEmailTo: $("#rapid_P0_C1875_").val(),
 				formEmailAttachmentType: $("#rapid_P0_C1876_").val(),
 				formFile: getData_checkbox(ev, "rapid_P0_C1878_"),
