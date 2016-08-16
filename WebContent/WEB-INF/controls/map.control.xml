@@ -292,7 +292,7 @@ var map = _maps[id];
 // if there was a map
 if (map) {
 	// make a data object
-	data = {fields:["lat","lng"],rows:[[]]};
+	data = {fields:["lat","latitude","lng","longitude"],rows:[[]]};
 	// get the centre
 	var centre = map.getCenter();
 	// get lat
@@ -301,9 +301,12 @@ if (map) {
 	var lng = centre.lng();
 	// add lat to the data object
 	data.rows[0].push(lat);
+	// add latitude to the data object
+	data.rows[0].push(lat);
 	// add lng to the data object
 	data.rows[0].push(lng);
-
+	// add longitude to the data object
+	data.rows[0].push(lng);
 	// make a new easting / northing
 	var pIn = new GT_WGS84();
 	// add lat/lng
