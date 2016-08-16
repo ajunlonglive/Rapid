@@ -560,7 +560,7 @@ public class Application {
 	
 	// instance variables
 	private int _xmlVersion, _status, _applicationBackupsMaxSize, _pageBackupsMaxSize;
-	private String _id, _version, _name, _title, _description, _startPageId, _themeType, _styles, _statusBarColour, _statusBarHighlightColour, _statusBarTextColour, _statusBarIconColour, _functions, _securityAdapterType, _storePasswordDuration, _formAdapterType, _createdBy, _modifiedBy, _formEmailTo, _formEmailAttachmentType, _formFileType, _formFilePath, _formFileUserName, _formFilePassword, _formWebserviceURL, _formWebserviceType, _formWebserviceSOAPAction;
+	private String _id, _version, _name, _title, _description, _startPageId, _themeType, _styles, _statusBarColour, _statusBarHighlightColour, _statusBarTextColour, _statusBarIconColour, _functions, _securityAdapterType, _storePasswordDuration, _formAdapterType, _createdBy, _modifiedBy, _formEmailFrom, _formEmailTo, _formEmailAttachmentType, _formFileType, _formFilePath, _formFileUserName, _formFilePassword, _formWebserviceURL, _formWebserviceType, _formWebserviceSOAPAction;
 	private boolean _isForm, _showConrolIds, _showActionIds, _deviceSecurity, _formEmail, _formFile, _formWebservice;
 	private Date _createdDate, _modifiedDate;
 	private Map<String,Integer> _pageOrders;
@@ -645,6 +645,10 @@ public class Application {
 	// whether email form checkbox has been ticked or not
 	public boolean getFormEmail() { return _formEmail; }
 	public void setFormEmail(boolean formEmail) { _formEmail = formEmail; }
+	
+	// who the email is sent from
+	public String getFormEmailFrom() { return _formEmailFrom; }
+	public void setFormEmailFrom(String formEmailFrom) { _formEmailFrom = formEmailFrom; }
 	
 	// email address to send to
 	public String getFormEmailTo() { return _formEmailTo; }

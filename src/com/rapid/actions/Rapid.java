@@ -771,6 +771,8 @@ public class Rapid extends Action {
 						
 						// add forms email setting
 						result.put("formEmail", app.getFormEmail());
+						// add forms from address
+						result.put("formEmailFrom", app.getFormEmailFrom());
 						// add forms email to address
 						result.put("formEmailTo", app.getFormEmailTo());
 						// add forms attachment type
@@ -1420,6 +1422,7 @@ public class Rapid extends Action {
 				boolean showActionIds = jsonAction.optBoolean("showActionIds");
 				
 				boolean formEmail = jsonAction.optBoolean("formEmail");
+				String formEmailFrom = jsonAction.optString("formEmailFrom");
 				String formEmailTo = jsonAction.optString("formEmailTo");
 				String formEmailAttachmentType = jsonAction.optString("formEmailAttachmentType");
 				boolean formFile = jsonAction.optBoolean("formFile");
@@ -1455,6 +1458,7 @@ public class Rapid extends Action {
 				app.setShowActionIds(showActionIds);
 				
 				app.setFormEmail(formEmail);
+				app.setFormEmailFrom(formEmailFrom);
 				app.setFormEmailTo(formEmailTo);
 				app.setFormEmailAttachmentType(formEmailAttachmentType);
 				app.setFormFile(formFile);
