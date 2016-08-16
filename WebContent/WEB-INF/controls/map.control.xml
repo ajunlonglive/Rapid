@@ -94,6 +94,14 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	        </property>
 	        
 	        <property>
+	            <key>key</key>
+	            <name>API Key</name>
+	            <setConstructValueFunction>return ""</setConstructValueFunction>
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <helpHtml>Google Maps API key, may be needed to verify your map and make it usable. If multiple maps are used only the first map will be required to have this key.</helpHtml>
+	        </property>
+	        
+	        <property>
 	            <key>showStreetView</key>
 	            <name>Show street view control</name>
 	            <setConstructValueFunction>return false;</setConstructValueFunction>
@@ -132,21 +140,14 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	        <property>
 	            <key>searchFields</key>
 	            <name>Address search fields</name>
-	            <changeValueJavaScript>text</changeValueJavaScript>	            
+	            <changeValueJavaScript>text</changeValueJavaScript>
 	            <helpHtml>When markers are added to the map and the data object does not have lat/lng or east/north, the value in the first of these comma-seperated fields will be searched on and the marker added to the results</helpHtml>
-	        </property>	
+	        </property>
 	        	        	        	        	        	        
 	    </properties>
 	    
 	    <resources>
-	        
-	        <resource>
-	            <type>javascriptLink</type>
-	            <contents>
-	                https://maps.googleapis.com/maps/api/js?v=3
-	            </contents>
-	        </resource>
-	        
+	    
 	        <resource>
 	            <type>javascriptFile</type>
 	            <contents>
@@ -161,8 +162,8 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 .map {
 	width: 300px;
 	height: 300px;
-	text-align: center;	
-}	                
+	text-align: center;
+}
 	                ]]>
 	            </contents>
 	        </resource>
@@ -170,84 +171,47 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    </resources>
 	    
 	    <getHtmlFunction>
-	        <![CDATA[	      
+	        <![CDATA[
 return "<div id='" + this.id + "' style='width:" + this.width + ";height:" + this.height + "' class='map" + getStyleClasses(this) + "'>Map not available</div>"
 	        ]]>
-	    </getHtmlFunction> 
-	    	    	    	    	    	    	    	    	    
+	    </getHtmlFunction>
+	   
 	    <rebuildJavaScript>
-	        <![CDATA[        
-        
+	        <![CDATA[
+	        
 // get a reference to the iFrame window
-var w = _pageIframe[0].contentWindow;     
+var w = _pageIframe[0].contentWindow;
+	        
+// use loadMapJavaScript from /scripts/controls/map.js
+w.loadMapJavaScript(this.id, this._getDetails());
 
-// turn the zoom into a number
-var zoom = parseInt(this.zoom);
+// call rebuildLoadedMap map manually
+w.rebuildLoadedMap(this.id);
 
-// get a reference to the google object loaded in the iFrame
-var google = w.google;
-
-// check we got google and maps
-if (google && google.maps) {
-
-	// assume we want a roadmap
-	var mapTypeId =  google.maps.MapTypeId.ROADMAP;
-	
-	// update if one provided
-	switch (this.mapType) {
-		case ("R") :
-			mapTypeId =  google.maps.MapTypeId.ROADMAP;
-		break;
-		case ("S") :
-			mapTypeId =  google.maps.MapTypeId.SATELLITE;
-		break;
-	} 
-	
-	// create a map in our control object
-	var map = new google.maps.Map(this.object[0], {
-	   	zoom: zoom,
-		center: new google.maps.LatLng(this.lat, this.lng),
-		mapTypeControlOptions: {mapTypeIds:[google.maps.MapTypeId.ROADMAP, google.maps.MapTypeId.SATELLITE]},
-		mapTypeId: mapTypeId,
-		mapTypeControl: this.showMapType,
-		zoomControl: this.showZoom,	   	
-	   	panControl: this.showPan,
-	   	streetViewControl: this.showStreetView,
-	   	scaleControl: this.showScale
-	});
-	
-	// add it to the collections
-	w._maps[this.id] = map;       
-	
-	// turn off the labels for all points of interest
-	map.setOptions({'styles':[{featureType:"poi",elementType: "labels",stylers:[{visibility:"off"}]}]});
-	
-} // got google and google.maps
-        
 	        ]]>
 	    </rebuildJavaScript>
 	    
 	    <initDesignJavaScript>
 	        <![CDATA[
-// rebuild the map after a small delay so all tiles are present	        
-var control = this;	        
+// rebuild the map after a small delay so all tiles are present
+var control = this;
 setTimeout( function() {
     rebuildHtml(control);
-}, 500);	        
+}, 500);
 	        ]]>
 	    </initDesignJavaScript>
 	    	    
 	    <saveJavaScript>
-	        <![CDATA[ 
-// remove any objects google as put in our div	        
-this.object.html("Map not available");       
+	        <![CDATA[
+// remove any objects google as put in our div
+this.object.html("Map not available");
 	        ]]>
 	    </saveJavaScript>
 	    
 	    <getDetailsFunction>
 	        <![CDATA[
-// look for any actions on the markerClick event	        
-var markerClickFunction = null;	        
+// look for any actions on the markerClick event
+var markerClickFunction = null;
 if (this.events && this.events.length > 0) {
 	for (var i in this.events) {
 		var event = this.events[i];
@@ -261,8 +225,8 @@ if (this.events && this.events.length > 0) {
 }
 // return the object
 return {
-	lat: this.lat, 
-	lng: this.lng, 
+	lat: this.lat,
+	lng: this.lng,
 	zoom: this.zoom,
 	mapType: this.mapType,
 	showMapType: this.showMapType,
@@ -271,11 +235,12 @@ return {
 	showStreetView: this.showStreetView,
 	showScale: this.showScale,
 	markerImage: this.markerImage,
+	key: this.key,
 	markerClickFunction: markerClickFunction,
 	searchFields: this.searchFields
-};	        
+};
 	        ]]>
-	    </getDetailsFunction>	
+	    </getDetailsFunction>
 	    
 	    <events>
 	        <event>
@@ -308,85 +273,8 @@ return "#" + this.id;
 	    </styles>
 	    
 	    <initJavaScript>
-	        <![CDATA[
-
-// if google has loaded - might not if offline
-if (window["google"]) {
-
-	// make the zoom a number
-	var zoom = parseInt(details.zoom);	 
-	
-	// assume we want a roadmap
-	var mapTypeId =  google.maps.MapTypeId.ROADMAP;
-	
-	// update if one provided
-	switch (details.mapType) {
-		case ("R") :
-			mapTypeId =  google.maps.MapTypeId.ROADMAP;
-		break;
-		case ("S") :
-			mapTypeId =  google.maps.MapTypeId.SATELLITE;
-		break;
-	} 
-	
-	// create a map in our control object
-	var map = new google.maps.Map($("#" + id)[0], {
-	   	zoom: zoom,
-		center: new google.maps.LatLng(details.lat, details.lng),
-		mapTypeControlOptions: {mapTypeIds:[google.maps.MapTypeId.ROADMAP, google.maps.MapTypeId.SATELLITE]},
-		mapTypeId: mapTypeId,
-		mapTypeControl: details.showMapType,
-		zoomControl: details.showZoom,	   	
-	   	panControl: details.showPan,
-	   	streetViewControl: details.showStreetView,
-	   	scaleControl: details.showScale
-	});
-	
-	// add it to the collections
-	_maps[id] = map;
-	
-	// turn off the labels for all points of interest
-	map.setOptions({'styles':[{featureType:"poi",elementType: "labels",stylers:[{visibility:"off"}]}]});
-	
-	// get any map click event listener
-	var f_click = window["Event_mapClick_" + id];
-	// if there is a map click event listner
-	if (f_click) {
-		// attach a listener to the mapClick event
-		google.maps.event.addListener(map, 'click', function() {
-			// fire mapClick event
-    		f_click($.Event("mapClick"));
-		});
-	}
-	
-	// get any map drag start event listener
-	var f_dragStart = window["Event_dragStart_" + id];
-	// if there is a map drag event listener
-	if (f_dragStart) {
-		// attach a listener to the dragstart event
-		google.maps.event.addListener(map, 'dragstart', function() {
-			// fire touch event
-    		f_dragStart($.Event("drag"));
-		});
-	}
-	
-	// get any map drag end event listener
-	var f_dragEnd = window["Event_dragEnd_" + id];
-	// if there is a map drag event listener
-	if (f_dragEnd) {
-		// attach a listener to the dragstart event
-		google.maps.event.addListener(map, 'dragend', function() {
-			// fire touch event
-    		f_dragEnd($.Event("drag"));
-		});
-	}
-	
-} else {
-
-	$("#" + id).html("Map not available");
-
-}	
-	        
+	        <![CDATA[	        
+loadMapJavaScript(id, details);
 	        ]]>	        
 	    </initJavaScript>	    
 	    
