@@ -36,21 +36,12 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
-
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -94,7 +85,6 @@ import com.rapid.soa.Webservice;
 import com.rapid.soa.SOAElementRestriction.*;
 import com.rapid.soa.SOASchema.SOASchemaElement;
 import com.rapid.utils.Comparators;
-import com.rapid.utils.Exceptions;
 import com.rapid.utils.Files;
 
 public class Rapid extends Action {
@@ -867,19 +857,22 @@ public class Rapid extends Action {
 						if (app.getWebservices() != null) {
 							// get a synchronised list for multithreaded sorting
 							List<Webservice> webservices = Collections.synchronizedList(app.getWebservices());
-							// sort them by their name
-							Collections.sort(webservices, new Comparator<Webservice>() {
-								@Override
-								public int compare(Webservice o1, Webservice o2) {
-									if (o1 == null) {
-										return -1;
-									} else if (o2 == null) {
-										return 1;
-									} else {
-										return Comparators.AsciiCompare(o1.getName(), o2.getName(), false);
-									}
-								}								
-							});
+							// synchronize this block
+							synchronized (webservices) {
+								// sort them by their name
+								Collections.sort(webservices, new Comparator<Webservice>() {
+									@Override
+									public int compare(Webservice o1, Webservice o2) {
+										if (o1 == null) {
+											return -1;
+										} else if (o2 == null) {
+											return 1;
+										} else {
+											return Comparators.AsciiCompare(o1.getName(), o2.getName(), false);
+										}
+									}								
+								});
+							}							
 							// loop and add to jsonArray
 							for (Webservice webservice : webservices) {
 								jsonWebservices.put(webservice.getName());
@@ -895,19 +888,22 @@ public class Rapid extends Action {
 						if (app.getParameters() != null) {
 							// get a synchronised list for multithreaded sorting
 							List<Parameter> parameters = Collections.synchronizedList(app.getParameters());
-							// sort them by their name
-							Collections.sort(parameters, new Comparator<Parameter>() {
-								@Override
-								public int compare(Parameter o1, Parameter o2) {
-									if (o1 == null) {
-										return -1;
-									} else if (o2 == null) {
-										return 1;
-									} else {
-										return Comparators.AsciiCompare(o1.getName(), o2.getName(), false);
-									}
-								}								
-							});
+							// synchronize this block
+							synchronized (parameters) {
+								// sort them by their name
+								Collections.sort(parameters, new Comparator<Parameter>() {
+									@Override
+									public int compare(Parameter o1, Parameter o2) {
+										if (o1 == null) {
+											return -1;
+										} else if (o2 == null) {
+											return 1;
+										} else {
+											return Comparators.AsciiCompare(o1.getName(), o2.getName(), false);
+										}
+									}								
+								});
+							}							
 							// loop and add to jsonArray
 							for (Parameter parameter : parameters) {
 								jsonParameters.put(parameter.getName());
@@ -923,19 +919,22 @@ public class Rapid extends Action {
 						if (app.getAppResources() != null) {
 							// get a synchronised list for multithreaded sorting
 							List<Resource> resources = Collections.synchronizedList(app.getAppResources());
-							// sort them by their name
-							Collections.sort(resources, new Comparator<Resource>() {
-								@Override
-								public int compare(Resource o1, Resource o2) {
-									if (o1 == null) {
-										return -1;
-									} else if (o2 == null) {
-										return 1;
-									} else {
-										return Comparators.AsciiCompare(o1.getName(), o2.getName(), false);
-									}
-								}								
-							});							
+							// synchronize this block
+							synchronized (resources) {
+								// sort them by their name
+								Collections.sort(resources, new Comparator<Resource>() {
+									@Override
+									public int compare(Resource o1, Resource o2) {
+										if (o1 == null) {
+											return -1;
+										} else if (o2 == null) {
+											return 1;
+										} else {
+											return Comparators.AsciiCompare(o1.getName(), o2.getName(), false);
+										}
+									}								
+								});			
+							}								
 							// loop and adds2 to jsonArray
 							for (Resource resource : resources) {
 								jsonResources.put(resource.getName());
@@ -953,8 +952,6 @@ public class Rapid extends Action {
 							for (Application.Backup appBackup : app.getApplicationBackups(rapidServlet)) {
 								// create the backup json object
 								JSONObject jsonBackup = new JSONObject();
-								// create a date formatter
-								//SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 								// populate it
 								jsonBackup.append("id", appBackup.getId());
 								jsonBackup.append("date", rapidServlet.getLocalDateTimeFormatter().format(appBackup.getDate()));
