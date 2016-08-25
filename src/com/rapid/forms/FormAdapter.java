@@ -26,6 +26,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 package com.rapid.forms;
 
 import java.io.File;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
@@ -45,10 +46,14 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import com.rapid.core.Application;
 import com.rapid.core.Control;
 import com.rapid.core.Email;
+import com.rapid.core.Email.Attachment;
+import com.rapid.core.Email.StringDataSource;
 import com.rapid.core.Page;
 import com.rapid.core.Pages;
 import com.rapid.core.Pages.PageHeader;
@@ -58,8 +63,12 @@ import com.rapid.security.SecurityAdapter;
 import com.rapid.security.SecurityAdapter.SecurityAdapaterException;
 import com.rapid.server.Rapid;
 import com.rapid.server.RapidRequest;
+import com.rapid.utils.CIFS;
+import com.rapid.utils.Html;
+import com.rapid.utils.Http;
 import com.rapid.utils.Numbers;
 import com.rapid.utils.Strings;
+import com.rapid.utils.XML;
 
 public abstract class FormAdapter {
 	
@@ -320,25 +329,7 @@ public abstract class FormAdapter {
 	
 	// gets the value of a form control value	
 	public abstract String getFormControlValue(RapidRequest rapidRequest, String formId, String controlId, boolean notHidden) throws Exception;
-						
-	// this html is written after the body tag
-	public abstract String getSummaryStartHtml(RapidRequest rapidRequest, Application application);
-	
-	// this html is written after the submit button, before the body close tag 
-	public abstract String getSummaryEndHtml(RapidRequest rapidRequest, Application application);
-		
-	// this html is written for the start of each page
-	public abstract String getSummaryPageStartHtml(RapidRequest rapidRequest, Application application, Page page);
-	
-	// this html is written for the end of each page
-	public abstract String getSummaryPageEndHtml(RapidRequest rapidRequest, Application application, Page page);
-	
-	// this html contains the control value
-	public abstract String getSummaryControlValueHtml(RapidRequest rapidRequest, Application application, Page page, FormControlValue controlValue);
-	
-	// this html is written after the end of the pages, before the submit button
-	public abstract String getSummaryPagesEndHtml(RapidRequest rapidRequest, Application application);
-		
+
 	// submits the form and receives a message for the submitted page
 	public abstract SubmissionDetails submitForm(RapidRequest rapidRequest) throws Exception;
 	
@@ -347,9 +338,389 @@ public abstract class FormAdapter {
 				
 	// protected instance methods
 	
-	// this writes the form pdf
-	protected void writeFormPDF(RapidRequest rapidRequest, HttpServletResponse response, String formId) throws Exception {}
+	// the start of the form summary	page
+	protected String getSummaryStartHtml(RapidRequest rapidRequest, Application application, boolean email) {
+		if (email) {
+			return "<h1 class='formSummaryTitle'>" + application.getTitle() + " summary</h1>\n";			
+		} else {
+			return "<h1 class='formSummaryTitle'>Form summary</h1>\n";
+		}
+	}
+	
+	// the end of the form summary page
+	protected String getSummaryEndHtml(RapidRequest rapidRequest, Application application, boolean email) {
+		return "";
+	}
 		
+	// the start of a page block in the form summary
+	protected String getSummaryPageStartHtml(RapidRequest rapidRequest, Application application, Page page, boolean email) {
+		String label = page.getLabel();
+		if (label == null) {
+			label = page.getTitle();
+		} else {
+			if (label.trim().length() == 0) label = page.getTitle();
+		}
+		return "<div class='formSummaryPage'><h2>" + label + "</h2>\n";
+	}
+	
+	// the end of a page block in the form summary
+	protected String getSummaryPageEndHtml(RapidRequest rapidRequest, Application application, Page page, boolean email) {
+		return "</div>\n";
+	}
+	
+	// a page control's value in the form summary
+	protected String getSummaryControlValueHtml(RapidRequest rapidRequest, Application application, Page page, FormControlValue controlValue, boolean email) {
+		if (controlValue.getHidden()) {
+			return "";
+		} else {
+			Control control = page.getControl(controlValue.getId());
+			if (control == null) {
+				return "control " + controlValue.getId() + " cannot be found";
+			} else {
+				String label = control.getLabel();
+				if (label == null) {
+					return "";
+				} else {
+					String value = controlValue.getValue();
+					// check for nulls
+					if (value == null) value = "(no value)";
+					// check for json
+					if (value.startsWith("{") && value.endsWith("}")) {
+						try {
+							JSONObject jsonValue = new JSONObject(value);
+							value = jsonValue.optString("text");
+						} catch (Exception ex) {}
+					}
+					return "<span class='formSummaryControl'>" + label + " : " + Html.escape(control.getCodeText(application, value)) + "</span>\n";
+				}		
+			}
+		}
+	}
+	
+	// the end of the page block
+	protected String getSummaryPagesEndHtml(RapidRequest rapidRequest, Application application, boolean email) {
+		return "";
+	}
+	
+	// return a forms CSV as a string (for attaching or saving to file)
+	protected String getFormCSV(RapidRequest rapidRequest, UserFormDetails formDetails) throws Exception {
+		
+		// get the form id
+		String formId = formDetails.getId();
+		
+		// the string builder we'll make the attachment with
+		StringBuilder sb = new StringBuilder();
+		
+		// create the header line
+		sb.append("page id, control id, name, label, value, hidden\n");
+		
+		// loop the page ids
+		for (String pageId : _application.getPages().getPageIds()) {
+			
+			// get the page values
+			FormPageControlValues pageControlValues = getFormPageControlValues(rapidRequest, formId, pageId);
+			
+			// if we got some
+			if (pageControlValues != null) {
+			
+				// loop them
+				for (FormControlValue pageControlValue : pageControlValues) {
+
+					// get the control
+					Control control = _application.getControl(rapidRequest.getRapidServlet().getServletContext(), pageControlValue.getId());
+					// if we got one
+					if (control != null) {
+						
+						// get the user -defined values
+						String name = control.getName();
+						String label = control.getLabel();
+						String value = pageControlValue.getValue();
+						
+						// quote enclose and escape if not null
+						if (name != null) name = "\"" + name.replace("\"", "\"\"") + "\"";
+						if (label != null) label = "\"" + label.replace("\"", "\"\"") + "\"";
+						if (value != null) value = "\"" + value.replace("\"", "\"\"") + "\"";
+												
+						// create the line for the value
+						sb.append(pageId + "," + control.getId() + "," + name + "," + label + "," + value + "," + pageControlValue.getHidden() + "\n");
+															
+					} // control null check
+
+				} // page control values loop
+				
+			} //page control values null check
+						
+		} //  page id loop
+		
+		// return 
+		return sb.toString();
+		
+	}
+	
+	// return a forms XML as a string (for attaching or saving to file)
+	protected String getFormXML(RapidRequest rapidRequest, UserFormDetails formDetails) throws Exception {
+		
+		// get the form id
+		String formId = formDetails.getId();
+		
+		// the string builder we'll make the attachment with
+		StringBuilder sb = new StringBuilder();
+		
+		// create the root element
+		sb.append("<form>\n\t<id>" + formId + "</id>\n");
+		
+		// loop the page ids
+		for (String pageId : _application.getPages().getPageIds()) {
+			
+			// get the page values
+			FormPageControlValues pageControlValues = getFormPageControlValues(rapidRequest, formId, pageId);
+			
+			// if we got some
+			if (pageControlValues != null) {
+				
+				// open a controls array
+				sb.append("\t<controls>\n");
+			
+				// loop them
+				for (FormControlValue pageControlValue : pageControlValues) {
+
+					// get the control
+					Control control = _application.getControl(rapidRequest.getRapidServlet().getServletContext(), pageControlValue.getId());
+					// if we got one
+					if (control != null) {
+						
+						// get the user -defined values
+						String name = control.getName();
+						String label = control.getLabel();
+						String value = pageControlValue.getValue();
+						
+						// quote enclose and escape if not null
+						if (name != null) name = XML.escape(name);
+						if (label != null) label = XML.escape(label);
+						if (value != null) value = XML.escape(value);
+						
+						// create the line for the value
+						sb.append("\t\t<control id=\"" + control.getId() + "\" name=\"" + name + "\" label=\"" + label + "\">" + value + "</control>\n");
+																					
+					} // control null check
+
+				} // page control values loop
+				
+				// close controls array
+				sb.append("\t</controls>\n");
+				
+			} //page control values null check
+						
+		} //  page id loop
+		
+		// close the root element
+		sb.append("</form>");
+		
+		// return 
+		return sb.toString();
+		
+	}
+	
+	// return a forms CSV as a string (for attaching or saving to file)
+		protected String getFormJSON(RapidRequest rapidRequest, UserFormDetails formDetails) throws Exception {
+			
+			// get the form id
+			String formId = formDetails.getId();
+			
+			// create the object
+			JSONObject jsonForm = new JSONObject();
+			
+			// add the id
+			jsonForm.put("id", formId);
+			
+			// create the controls array
+			JSONArray jsonControls = new JSONArray();
+			
+			// loop the page ids
+			for (String pageId : _application.getPages().getPageIds()) {
+				
+				// get the page values
+				FormPageControlValues pageControlValues = getFormPageControlValues(rapidRequest, formId, pageId);
+				
+				// if we got some
+				if (pageControlValues != null) {
+				
+					// loop them
+					for (FormControlValue pageControlValue : pageControlValues) {
+
+						// get the control
+						Control control = _application.getControl(rapidRequest.getRapidServlet().getServletContext(), pageControlValue.getId());
+						// if we got one
+						if (control != null) {
+							
+							// create a json object for the controls
+							JSONObject jsonControl = new JSONObject();
+							
+							// add the control details
+							jsonControl.put("pageId", pageId);
+							jsonControl.put("id", control.getId());
+							jsonControl.put("name", control.getName());
+							jsonControl.put("label", control.getLabel());
+							jsonControl.put("value", pageControlValue.getValue());
+							jsonControl.put("hidden", pageControlValue.getHidden());
+							
+							// add to controls
+							jsonControls.put(jsonControl);
+																	
+						} // control null check
+
+					} // page control values loop
+					
+				} //page control values null check
+							
+			} //  page id loop
+			
+			// add the controls
+			jsonForm.put("controls", jsonControls);
+			
+			// return 
+			return jsonForm.toString();
+			
+		}
+	
+	// this returns the .pdf file name
+	protected String getFormFileName(RapidRequest rapidRequest, UserFormDetails formDetails, String extenstion, boolean email) { return _application.getName() + formDetails.getId() + "." + extenstion; }
+	
+	// this returns the input stream for the attachment file
+	protected Attachment getEmailAttachment(RapidRequest rapidRequest, UserFormDetails formDetails) throws Exception {
+		
+		// get the type
+		String attachmentType = _application.getFormEmailAttachmentType();
+		
+		if("csv".equals(attachmentType)) {
+			
+			// return the csv attachment
+			return new Attachment(getFormFileName(rapidRequest, formDetails, attachmentType, true), new StringDataSource("text/csv", getFormCSV(rapidRequest, formDetails)));
+			
+		} else 	if("xml".equals(attachmentType)) {
+			
+			// return the xml attachment
+			return new Attachment(getFormFileName(rapidRequest, formDetails, attachmentType, true), new StringDataSource("text/xml", getFormXML(rapidRequest, formDetails)));
+			
+		} else 	if("pdf".equals(attachmentType)) {
+			
+			//mimeType = "application/pdf";
+			
+			return null;
+			
+		} else {
+			
+			return null;
+			
+		}
+		
+	}
+	
+	// this returns the form email subject and can be overridden if need be
+	protected String getEmailSubject(RapidRequest rapidRequest, UserFormDetails formDetails) { return _application.getTitle() + " " + formDetails.getId() + " submitted";	}
+								
+	// saves the form file to the file system
+	public void saveFormFile(RapidRequest rapidRequest, UserFormDetails formDetails) throws Exception {
+		
+		// get the form path
+		String path = _application.getFormFilePath();
+		
+		// add a closing / if need be
+		if (!path.endsWith("/") && !path.endsWith("\\")) path += "/";
+		
+		// get the fileType
+		String fileType = _application.getFormFileType();
+		
+		// if empty or null go for csv
+		if (fileType == null) fileType = "csv";
+		if (fileType.length() == 0) fileType = "csv";
+		
+		// get the file name
+		String fileName = getFormFileName(rapidRequest, formDetails, fileType, false);
+						
+		// check for a network user
+		String user = _application.getFormFileUserName();
+		// if null update to empty string
+		if (user == null) user = "";		
+		
+		// if there's a network user
+		if (user.length() > 0) {
+			
+			// if there is a domain - replace with ;
+			user = user.replace("\\", ";");
+			
+			// add the file name to the path
+			path += fileName;
+			
+			// check the type
+			if ("csv".equals(fileType)) {
+				
+				// get the file and save the network way
+				CIFS.saveFile(user, _application.getFormFilePassword(), path, getFormCSV(rapidRequest, formDetails));									
+				
+			} else if ("xml".equals(fileType)) {
+				
+				CIFS.saveFile(user, _application.getFormFilePassword(), path, getFormXML(rapidRequest, formDetails));
+													
+			} else if ("pdf".equals(fileType)) {
+				
+			}  // file type for network save
+
+		} else {
+			
+			// get the form file
+			File formFile = new File(path + fileName);
+			
+			// make any directories
+			formFile.getParentFile().mkdirs();
+			
+			// check the type
+			if ("csv".equals(fileType)) {
+				
+				// get the file and save the simple way
+				Strings.saveString(getFormCSV(rapidRequest, formDetails), formFile);
+
+			} else if ("xml".equals(fileType)) {
+				
+				// get the file and save the simple way
+				Strings.saveString(getFormXML(rapidRequest, formDetails), formFile);
+					
+			} else if ("pdf".equals(fileType)) {
+				
+			}  // file type check local save
+			
+		} // network check				
+		
+	}
+	
+	public void sendFormWebservice(RapidRequest rapidRequest, UserFormDetails formDetails) throws Exception {
+		
+		// get the data type
+		String dataType = _application.getFormWebserviceType();
+		
+		if ("json".equals(dataType)) {
+			
+			// POST the JSON
+			Http.post(_application.getFormWebserviceURL(), getFormJSON(rapidRequest, formDetails));
+			
+		} else if ("restful".equals(dataType)) {
+			
+			// POST the XML
+			Http.post(_application.getFormWebserviceURL(), getFormXML(rapidRequest, formDetails));
+			
+		} else {
+			
+			// Wrap the XML in SOAP			
+			String xml = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n\t<soapenv:Body>\n" + getFormXML(rapidRequest, formDetails).replace("<form", "<form xmlns=\"http://www.rapid-is.co.uk\"") + "\n\t</soapenv:Body>\n</soapenv:Envelope>";
+			
+			// POST it
+			Http.postSOAP(_application.getFormWebserviceURL(), _application.getFormWebserviceSOAPAction(), xml);
+			
+		}
+		
+	}
+	
+	
 	// this gets the list of submitted forms from the users session
 	protected List<String> getSubmittedForms(RapidRequest rapidRequest) {
 		// first try and get from the session
@@ -572,10 +943,201 @@ public abstract class FormAdapter {
 		// return
 		return check;
 	}
-
+		
+	// this writes the form summary HTML to a writer (used by both the summary method above and the email submit)
+	public void writeFormSummaryHTML(RapidRequest rapidRequest, UserFormDetails formDetails, Writer writer, Boolean email) throws Exception {
+		
+		// this doctype is necessary (amongst other things) to stop the "user agent stylesheet" overriding styles
+		writer.write("<!DOCTYPE html>\n");
+																						
+		// open the html
+		writer.write("<html>\n");
+		
+		// open the head
+		writer.write("  <head>\n");
+		
+		// write a title
+		writer.write("    <title>Form summary - by Rapid</title>\n");
+		
+		// get the servletContext
+		ServletContext servletContext = rapidRequest.getRapidServlet().getServletContext();
+		
+		// get app start page
+		Page startPage = _application.getStartPage(servletContext);
+		
+		// if this is for an email
+		if (email) {
+			
+			// if the css has not been set yet
+			if (_css == null) {
+				// get the minified file
+				File minifiedCssFile = new File(_application.getWebFolder(servletContext) + "/rapid.min.css");
+				// if it exists read it
+				if (minifiedCssFile.exists()) _css = Strings.getString(minifiedCssFile);
+			}
+			
+			// add the application stylesheet
+			writer.write("    <style>\n" + _css + "\n    </style>\n");
+			
+		} else {
+			
+			// write the start page head (and it's resources)
+			writer.write(startPage.getResourcesHtml(_application, true));
+			
+		}
+					
+		// close the head
+		writer.write("  </head>\n");
+		
+		// open the body
+		writer.write("  <body>\n");
+		
+		// write the summary start
+		writer.write(getSummaryStartHtml(rapidRequest, _application, email));
+		
+		// get the sorted pages
+		PageHeaders pageHeaders = _application.getPages().getSortedPages();
+		
+		// assume the page return link is edit
+		String pageReturn = "edit";
+		// update to view if submitted
+		if (formDetails.getSubmitted()) pageReturn = "view";
+					
+		// loop the page headers
+		for (PageHeader pageHeader : pageHeaders) {
+																					
+			// a string builder for the page values
+			StringBuilder valuesStringBuilder = new StringBuilder();
+			
+			// get any page control values
+			FormPageControlValues pageControlValues = _application.getFormAdapter().getFormPageControlValues(rapidRequest, formDetails.getId(), pageHeader.getId());
+			
+			// if non null
+			if (pageControlValues != null) {
+				
+				// if we got some
+				if (pageControlValues.size() > 0) {
+					
+					// get the page with this id
+					Page page = _application.getPages().getPage(servletContext, pageHeader.getId());
+				
+					// get all page controls (in display order)
+					List<Control> pageControls = page.getAllControls();
+				
+					// loop the page controls
+					for (Control control : pageControls) {
+						
+						// loop the page control values
+						for (FormControlValue controlValue : pageControlValues) {
+																					
+							// look for an id match
+							if (control.getId().equals(controlValue.getId())) {
+						
+								// write the control value!
+								valuesStringBuilder.append(getSummaryControlValueHtml(rapidRequest, _application, page, controlValue, email));
+	
+								// exit this loop
+								break;
+																	
+							}
+							
+						}
+						
+						// if there are no controlValues left we can stop entirely
+						if (pageControlValues.size() == 0) break;
+						
+					} // page control loop
+					
+					// if there are some values in the string builder
+					if (valuesStringBuilder.length() > 0) {
+						
+						// write the page start html
+						writer.write(getSummaryPageStartHtml(rapidRequest, _application, page, email));
+						
+						// write the values
+						writer.write(valuesStringBuilder.toString());
+													
+						// if not email write the edit link 
+						if (!email) writer.write("<a href='~?a=" + _application.getId() + "&v=" + _application.getVersion() + "&p=" + page.getId() + "'>" + pageReturn + "</a>\n");
+						
+						// write the page end html
+						writer.write(getSummaryPageEndHtml(rapidRequest, _application, page, email));
+						
+					} // values written check
+					
+				} // control values length > 0
+				
+			} // control values non null
+			
+			// stop here if this is the max page that they got to
+			if (pageHeader.getId().equals(formDetails.getMaxPageId())) break;
+																			
+		} // page loop
+					
+		// write the pages end
+		writer.write(getSummaryPagesEndHtml(rapidRequest, _application, email));
+					
+		// if the form has been completed and it not for email
+		if (formDetails.getComplete() && !email) {
+			// if it has been submitted
+			if (formDetails.getSubmitted()) {
+				// look for a submitted date/time
+				String submittedDateTime = formDetails.getSubmittedDateTime();
+				// add if we got one
+				if (submittedDateTime != null) writer.write("<span class='formSubmittedDateTime'>" + submittedDateTime + "</span>");					
+			} else {
+				// add the submit button
+				writer.write("<form action='~?a=" + _application.getId() + "&v=" + _application.getVersion()  + "&action=submit' method='POST'><button type='submit' class='formSummarySubmit'>Submit</button></form>");
+			}
+		}
+		
+		// write the summary end 
+		writer.write(getSummaryEndHtml(rapidRequest, _application, email));
+								
+		// close the remaining elements
+		writer.write("  </body>\n</html>");
+		
+	}
+		
+	// this writes the form summary page to the request
+	public void writeFormSummary(RapidRequest rapidRequest, HttpServletResponse response) throws Exception {
+		
+		// get the user form details
+		UserFormDetails formDetails = getUserFormDetails(rapidRequest);
+		
+		// check for a form id - should be null if form not commence properly
+		if (formDetails == null) {
+			
+			// send users back to the start
+			response.sendRedirect("~?a=" + _application.getId() + "&v=" + _application.getVersion());
+			
+		} else {
+		
+			// create a writer
+			PrintWriter writer = response.getWriter();
+					
+			// set the response type
+			response.setContentType("text/html");
+			
+			// write the html to the print writer
+			writeFormSummaryHTML(rapidRequest, formDetails, writer, false);
+																																		
+			// close the writer
+			writer.close();
+			
+			// flush the writer
+			writer.flush();
+			
+		} // form id check
+		
+	}
+			
+	// processes the submitting of  the form via the abstract submitForm method as well as generating emails and attachments
 	public synchronized void doSubmitForm(RapidRequest rapidRequest) throws Exception {
+		
 		// get the form details
 		UserFormDetails formDetails = getUserFormDetails(rapidRequest);
+		
 		try {
 			
 			// if submitted already throw exception
@@ -593,13 +1155,19 @@ public abstract class FormAdapter {
 				// write to the writer
 				writeFormSummaryHTML(rapidRequest, formDetails, writer, true);
 				
+				// get the attachment (might not be one)
+				Attachment attachment = getEmailAttachment(rapidRequest, formDetails);
+				
 				// send the email				
-				Email.send("forms@rapid-is.co.uk", application.getFormEmailTo(), _application.getTitle() + " form " + formDetails.getId() + " submitted", "HTML preview not available", writer.toString());
+				Email.send(application.getFormEmailFrom(), application.getFormEmailTo(), getEmailSubject(rapidRequest, formDetails), "HTML preview not available", writer.toString(), attachment);
+				
 			}
 			
 			// file
-			
+			if (application.getFormFile()) saveFormFile(rapidRequest, formDetails);
+							
 			// webservice
+			if (application.getFormWebservice()) sendFormWebservice(rapidRequest, formDetails);
 			
 			// get the submission details
 			SubmissionDetails submissionDetails = submitForm(rapidRequest);
@@ -621,7 +1189,46 @@ public abstract class FormAdapter {
 			throw ex;
 		}		
 	}
+	
+	// this writes the form pdf to an Output stream
+	public void writeFormPDF(RapidRequest rapidRequest, OutputStream outputStream, String formId, boolean email) throws Exception {}
+	
+	// writes the form PDF to the http response
+	public void doWriteFormPDF(RapidRequest rapidRequest, HttpServletResponse response, String formId, boolean email) throws Exception {
 		
+		// assume not passed
+		boolean passed = false;
+		
+		// check we got a form id
+		if (formId != null) {
+			// check this has been submitted
+			if (getSubmittedForms(rapidRequest).contains(formId)) passed = true;
+		}
+		
+		// check for a form id - should be null if form not commence properly
+		if (passed) {
+			
+			// get the form details
+			UserFormDetails formDetails = getUserFormDetails(rapidRequest);
+			
+			// set the appropriate content type
+			response.setContentType("application/pdf");
+			
+			// set a suggested filename without forcing save as
+			response.setHeader("Content-disposition","attachment; filename=" + getFormFileName(rapidRequest, formDetails, "pdf", email));
+			
+			// write the pdf
+			writeFormPDF(rapidRequest, response.getOutputStream(), formId, email);
+			
+		} else {
+			
+			// send users back to the start
+			response.sendRedirect("~?a=" + _application.getId() + "&v=" + _application.getVersion());
+															
+		}
+		
+	}
+	
 	// used when resuming forms
 	public synchronized UserFormDetails doResumeForm(RapidRequest rapidRequest, String formId, String password) throws Exception {
 		// get the application
@@ -675,220 +1282,6 @@ public abstract class FormAdapter {
 		return details;
 	}
 	
-	// used when resuming forms
-	public void doWriteFormPDF(RapidRequest rapidRequest, HttpServletResponse response, String formId) throws Exception {
-		
-		// assume not passed
-		boolean passed = false;
-		
-		// check we got a form id
-		if (formId != null) {
-			// check this has been submitted
-			if (getSubmittedForms(rapidRequest).contains(formId)) passed = true;
-		}
-		
-		// check for a form id - should be null if form not commence properly
-		if (passed) {
-			
-			// write the pdf
-			writeFormPDF(rapidRequest, response, formId);
-			
-		} else {
-			
-			// send users back to the start
-			response.sendRedirect("~?a=" + _application.getId() + "&v=" + _application.getVersion());
-															
-		}
-		
-	}
-		
-	// this writes the form summary page to the request
-	public void writeFormSummary(RapidRequest rapidRequest, HttpServletResponse response) throws Exception {
-		
-		// get the user form details
-		UserFormDetails formDetails = getUserFormDetails(rapidRequest);
-		
-		// check for a form id - should be null if form not commence properly
-		if (formDetails == null) {
-			
-			// send users back to the start
-			response.sendRedirect("~?a=" + _application.getId() + "&v=" + _application.getVersion());
-			
-		} else {
-		
-			// create a writer
-			PrintWriter writer = response.getWriter();
-					
-			// set the response type
-			response.setContentType("text/html");
-			
-			// write the html to the print writer
-			writeFormSummaryHTML(rapidRequest, formDetails, writer, false);
-																																		
-			// close the writer
-			writer.close();
-			
-			// flush the writer
-			writer.flush();
-			
-		} // form id check
-		
-	}
-		
-	// this writes the form summary HTML to a writer (used by both the summary method above and the email submit)
-	public void writeFormSummaryHTML(RapidRequest rapidRequest, UserFormDetails formDetails, Writer writer, Boolean email) throws Exception {
-		
-		// this doctype is necessary (amongst other things) to stop the "user agent stylesheet" overriding styles
-		writer.write("<!DOCTYPE html>\n");
-																						
-		// open the html
-		writer.write("<html>\n");
-		
-		// open the head
-		writer.write("  <head>\n");
-		
-		// write a title
-		writer.write("    <title>Form summary - by Rapid</title>\n");
-		
-		// get the servletContext
-		ServletContext servletContext = rapidRequest.getRapidServlet().getServletContext();
-		
-		// get app start page
-		Page startPage = _application.getStartPage(servletContext);
-		
-		// if this is for an email
-		if (email) {
-			
-			// if the css has not been set yet
-			if (_css == null) {
-				// get the minified file
-				File minifiedCssFile = new File(_application.getWebFolder(servletContext) + "/rapid.min.css");
-				// if it exists read it
-				if (minifiedCssFile.exists()) _css = Strings.getString(minifiedCssFile);
-			}
-			
-			// add the application stylesheet
-			writer.write("    <style>\n" + _css + "\n    </style>\n");
-			
-		} else {
-			
-			// write the start page head (and it's resources)
-			writer.write(startPage.getResourcesHtml(_application, true));
-			
-		}
-					
-		// close the head
-		writer.write("  </head>\n");
-		
-		// open the body
-		writer.write("  <body>\n");
-		
-		// write the summary start
-		writer.write(getSummaryStartHtml(rapidRequest, _application));
-		
-		// get the sorted pages
-		PageHeaders pageHeaders = _application.getPages().getSortedPages();
-		
-		// assume the page return link is edit
-		String pageReturn = "edit";
-		// update to view if submitted
-		if (formDetails.getSubmitted()) pageReturn = "view";
-					
-		// loop the page headers
-		for (PageHeader pageHeader : pageHeaders) {
-																					
-			// a string builder for the page values
-			StringBuilder valuesStringBuilder = new StringBuilder();
-			
-			// get any page control values
-			FormPageControlValues pageControlValues = _application.getFormAdapter().getFormPageControlValues(rapidRequest, formDetails.getId(), pageHeader.getId());
-			
-			// if non null
-			if (pageControlValues != null) {
-				
-				// if we got some
-				if (pageControlValues.size() > 0) {
-					
-					// get the page with this id
-					Page page = _application.getPages().getPage(servletContext, pageHeader.getId());
-				
-					// get all page controls (in display order)
-					List<Control> pageControls = page.getAllControls();
-				
-					// loop the page controls
-					for (Control control : pageControls) {
-						
-						// loop the page control values
-						for (FormControlValue controlValue : pageControlValues) {
-																					
-							// look for an id match
-							if (control.getId().equals(controlValue.getId())) {
-						
-								// write the control value!
-								valuesStringBuilder.append(getSummaryControlValueHtml(rapidRequest, _application, page, controlValue));
-	
-								// exit this loop
-								break;
-																	
-							}
-							
-						}
-						
-						// if there are no controlValues left we can stop entirely
-						if (pageControlValues.size() == 0) break;
-						
-					} // page control loop
-					
-					// if there are some values in the string builder
-					if (valuesStringBuilder.length() > 0) {
-						
-						// write the page start html
-						writer.write(getSummaryPageStartHtml(rapidRequest, _application, page));
-						
-						// write the values
-						writer.write(valuesStringBuilder.toString());
-													
-						// if not email write the edit link 
-						if (!email) writer.write("<a href='~?a=" + _application.getId() + "&v=" + _application.getVersion() + "&p=" + page.getId() + "'>" + pageReturn + "</a>\n");
-						
-						// write the page end html
-						writer.write(getSummaryPageEndHtml(rapidRequest, _application, page));
-						
-					} // values written check
-					
-				} // control values length > 0
-				
-			} // control values non null
-			
-			// stop here if this is the max page that they got to
-			if (pageHeader.getId().equals(formDetails.getMaxPageId())) break;
-																			
-		} // page loop
-					
-		// write the pages end
-		writer.write(getSummaryPagesEndHtml(rapidRequest, _application));
-					
-		// if the form has been completed and it not for email
-		if (formDetails.getComplete() && !email) {
-			// if it has been submitted
-			if (formDetails.getSubmitted()) {
-				// look for a submitted date/time
-				String submittedDateTime = formDetails.getSubmittedDateTime();
-				// add if we got one
-				if (submittedDateTime != null) writer.write("<span class='formSubmittedDateTime'>" + submittedDateTime + "</span>");					
-			} else {
-				// add the submit button
-				writer.write("<form action='~?a=" + _application.getId() + "&v=" + _application.getVersion()  + "&action=submit' method='POST'><button type='submit' class='formSummarySubmit'>Submit</button></form>");
-			}
-		}
-		
-		// write the summary end 
-		writer.write(getSummaryEndHtml(rapidRequest, _application));
-								
-		// close the remaining elements
-		writer.write("  </body>\n</html>");
-		
-	}
 	
 	// static methods
 	
