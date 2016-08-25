@@ -26,17 +26,26 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
 package com.rapid.core;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Properties;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
 import javax.mail.Authenticator;
+import javax.mail.BodyPart;
 import javax.mail.Message;
+import javax.mail.Multipart;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 import javax.servlet.ServletContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -52,7 +61,8 @@ import com.rapid.utils.JAXB.EncryptedXmlAdapter;
 @XmlRootElement
 public class Email {
 	
-	// public static class
+	// public static classes
+	
 	public static class RapidMailAuthenticator extends javax.mail.Authenticator {
     	
     	private String _userName, _password;
@@ -66,6 +76,92 @@ public class Email {
             return new PasswordAuthentication(_userName, _password);
         }
     }
+	
+	// attachments have a file name and a data source
+	public static class Attachment {
+		
+		private String _name;
+		private DataSource _dataSource;
+		
+		public Attachment(String name, DataSource dataSource) {
+			_name = name;
+			_dataSource = dataSource;
+		}
+		
+		public String getName() { return _name; }
+		public DataSource getDataSource() { return _dataSource; }
+		
+	}
+	
+	// useful for attachments created in memory from strings
+	public static class StringDataSource implements DataSource {
+		
+		private String _mimeType, _string;
+		
+		public StringDataSource(String mimeType, String string) {
+			_mimeType = mimeType;
+			_string = string;
+		}
+		
+		public StringDataSource(String string) {
+			this("text/plain",string);
+		}
+
+		@Override
+		public String getContentType() { 
+			return _mimeType; 
+		}
+
+		@Override
+		public InputStream getInputStream() throws IOException { 
+			return new ByteArrayInputStream(_string.getBytes());
+		}
+
+		@Override
+		public String getName() { 
+			return _mimeType;
+		}
+
+		@Override
+		public OutputStream getOutputStream() throws IOException { 
+			return null; 
+		}
+		
+	}
+	
+	// useful for attachments created in memory from streams
+	public static class InputStreamDataSource implements DataSource {
+		
+		private String _mimeType;
+		private InputStream _inputStream;
+		
+		public InputStreamDataSource(String mimeType, InputStream inputStream) {
+			_mimeType = mimeType;
+			_inputStream = inputStream;
+		}
+		
+		@Override
+		public String getContentType() { 
+			return _mimeType; 
+		}
+
+		@Override
+		public InputStream getInputStream() throws IOException { 
+			return _inputStream;
+		}
+
+		@Override
+		public String getName() { 
+			return _mimeType;
+		}
+
+		@Override
+		public OutputStream getOutputStream() throws IOException { 
+			return null; 
+		}
+		
+	}
+	
 	
 	// private static variables
 	private static Properties _properties;
@@ -200,7 +296,7 @@ public class Email {
 
 	}
     
-    public static void send(String from, String to, String subject, String text, String html) throws Exception {
+    public static void send(String from, String to, String subject, String text, String html, Attachment... attachments) throws Exception {
     	
     	// if email is null throw exception
     	if (_email == null) throw new Exception("Email settings must be specified");
@@ -229,8 +325,35 @@ public class Email {
         message.setFrom(new InternetAddress(from));
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
         message.setSubject(subject);
-        message.setText(text);
-        if (html != null) message.setContent(html, "text/html");
+        message.setText(text);        
+        
+        // if there were any attachments
+        if (attachments == null) {
+        	// html is easy to set with no attachments
+        	if (html != null) message.setContent(html, "text/html");
+        } else {
+        	// Create the message part
+            BodyPart messageBodyPart = new MimeBodyPart();
+
+            // Now set the actual message
+            messageBodyPart.setContent(html, "text/html");
+
+            // Create a multipar message
+            Multipart multipart = new MimeMultipart();
+
+            // Set html message part
+            multipart.addBodyPart(messageBodyPart);
+
+            // loop the attachments
+            for (Attachment attachment : attachments) {
+	            messageBodyPart = new MimeBodyPart();
+	            messageBodyPart.setFileName(attachment.getName());
+	            messageBodyPart.setDataHandler(new DataHandler(attachment.getDataSource()));	            
+	            multipart.addBodyPart(messageBodyPart);	                      
+            }
+            // add the complete message parts
+            message.setContent(multipart);	 
+        }
 
         // send it!
         Transport.send(message);
@@ -239,10 +362,12 @@ public class Email {
     
     // overload to above for non-html
     public static void send(String from, String to, String subject, String text) throws Exception {
-    	send(from, to, subject, text, null);
+    	send(from, to, subject, text, null, null);
     }
     
-    // 
-    
+    // overload to above for no attachments
+    public static void send(String from, String to, String subject, String text, String html) throws Exception {
+    	send(from, to, subject, text, html, null);
+    }
 	
 }

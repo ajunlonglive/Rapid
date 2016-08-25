@@ -156,7 +156,7 @@ public class Rapid extends RapidHttpServlet {
 							
 							if ("pdf".equals(action)) {
 								// write the form pdf
-								formAdapter.doWriteFormPDF(rapidRequest, response, request.getParameter("f"));
+								formAdapter.doWriteFormPDF(rapidRequest, response, request.getParameter("f"), false);
 							} else {		
 								// summary is never cached
 								RapidFilter.noCache(response);
