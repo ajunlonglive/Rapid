@@ -51,7 +51,7 @@ session.invalidate();
 
 	<p>You have been logged out</p>
 	
-	<p><a href=".">Log in again</a></p>
+	<p><a href="login.jsp">Log in again</a></p>
 	
 </div>
 
