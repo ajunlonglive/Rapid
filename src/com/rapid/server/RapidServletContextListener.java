@@ -70,6 +70,7 @@ import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.web.Log4jServletContainerInitializer;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -91,7 +92,7 @@ import com.rapid.utils.Https;
 import com.rapid.utils.JAXB.EncryptedXmlAdapter;
 import com.rapid.utils.Strings;
 
-public class RapidServletContextListener implements ServletContextListener {
+public class RapidServletContextListener extends Log4jServletContainerInitializer implements ServletContextListener {
 	
 	// private static finals
 	private static final int MONITOR_CHECK_INTERVAL = 1800;
