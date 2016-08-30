@@ -645,6 +645,7 @@ public class Rapid extends Action {
 					// if not null
 					if (email != null) {
 						// add email settings properties
+						jsonEmail.put("enable", email.getEnabled());
 						jsonEmail.put("host", email.getHost());
 						jsonEmail.put("port", email.getPort());
 						jsonEmail.put("security", email.getSecurity());
@@ -2504,17 +2505,39 @@ public class Rapid extends Action {
 
 			} else if ("SAVEEMAIL".equals(action)) {
 				
-				String host = jsonAction.getString("host");
-				int port = jsonAction.getInt("port");
-				String security = jsonAction.getString("security").trim();
-				String userName = jsonAction.getString("userName").trim();
-				String password = jsonAction.getString("password");
-
-				// set the properties we've just loaded
-	            Email.setProperties(host, port, security, userName, password);
-		        
-	            // construct an object
-		        Email email = new Email(host, port, security, userName, password);
+				// get whether enabled
+				boolean enable = jsonAction.optBoolean("enable");
+				
+				// get any current email settings
+				Email email = Email.getEmailSettings();
+				
+				// check whether enabled
+				if (enable) {
+					
+					String host = jsonAction.getString("host");
+					int port = jsonAction.getInt("port");
+					String security = jsonAction.getString("security").trim();
+					String userName = jsonAction.getString("userName").trim();
+					String password = jsonAction.getString("password");
+		
+					// set the properties we've just loaded
+		            Email.setProperties(host, port, security, userName, password);
+			        
+		            // construct a new object
+			        email = new Email(host, port, security, userName, password);
+			        
+			        // set enabled
+			        email.setEnabled(true);
+			        
+				} else {
+					
+					// for safety, make a new one if not yet set
+					if (email == null) email = new Email();
+					
+					// set not enabled
+			        email.setEnabled(false);
+					
+				}
 		        
 		        // save it
 		        email.save(servletContext);
