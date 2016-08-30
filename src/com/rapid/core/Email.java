@@ -51,6 +51,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.logging.log4j.LogManager;
@@ -59,6 +60,7 @@ import com.rapid.server.RapidHttpServlet;
 import com.rapid.utils.JAXB.EncryptedXmlAdapter;
 
 @XmlRootElement
+@XmlType(namespace="http://rapid-is.co.uk/core")
 public class Email {
 	
 	// public static classes
@@ -171,8 +173,12 @@ public class Email {
 	// private instance variables
 	private String _host, _security, _userName, _password;
 	private int _port;
+	private boolean _enable;
 	
 	// properties
+	public boolean getEnabled() { return _enable; }
+	public void setEnabled(boolean enable) { _enable = enable; }
+	
 	public String getHost() { return _host; }
 	public void setHost(String host) { _host = host; }
 	
