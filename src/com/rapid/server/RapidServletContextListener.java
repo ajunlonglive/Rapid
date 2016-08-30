@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2015 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -33,6 +33,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Driver;
@@ -46,6 +47,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -83,6 +85,7 @@ import com.rapid.core.Applications;
 import com.rapid.core.Applications.Versions;
 import com.rapid.core.Device.Devices;
 import com.rapid.core.Email;
+import com.rapid.core.Process;
 import com.rapid.core.Theme;
 import com.rapid.utils.Classes;
 import com.rapid.utils.Comparators;
@@ -91,91 +94,19 @@ import com.rapid.utils.Files;
 import com.rapid.utils.Https;
 import com.rapid.utils.JAXB.EncryptedXmlAdapter;
 import com.rapid.utils.Strings;
+import com.rapid.utils.XML;
 
 public class RapidServletContextListener extends Log4jServletContainerInitializer implements ServletContextListener {
-	
-	// private static finals
-	private static final int MONITOR_CHECK_INTERVAL = 1800;
-	private static final int MONITOR_MAX_AGE = 1800;
-	
-	
+		
 	// the logger which we will initialise
 	private static Logger _logger;
-	
-	// this monitor class runs on it's own thread and removed pages from memory that have not been accessed in more than a specified time
-	private static class Monitor extends Thread {
-
-		// private instance variables
-		private ServletContext _servletContext;
-		private int _interval, _maxPageAge;
-		private boolean _stopped;
-		
-		// constructor
-		public Monitor(ServletContext servletContext, int interval, int maxPageAge) {
-			_servletContext = servletContext;
-			_interval = interval;
-			_maxPageAge = maxPageAge;
-		}
-		
-		// worker method
-		@Override
-		public void run() {
-			
-			// log that we've started
-			_logger.info("Monitor has started, checking every " + _interval + " seconds for pages not accessed in the last " + _maxPageAge + " seconds");
-			
-			// loop until stopped
-			while (!_stopped) {
-								
-				// sleep for set interval
-				try {
-					Thread.sleep(_interval * 1000);
-				} catch (InterruptedException ex) {
-					_stopped = true;
-				}
-				
-				// if we're still running
-				if (!_stopped) {
-					
-					// log start of checking
-					_logger.debug("Monitor is checking for stale pages");
-					
-					// get the current date / time
-					Date now = new Date();
-					
-					// get the applications
-					Applications applications = (Applications) _servletContext.getAttribute("applications");
-					
-					// loop them
-					for (Application application : applications.get()) {
-						// get old pages
-						application.getPages().clearOldPages(now, _maxPageAge);						
-					}										
-				}
-			}
-			
-			_logger.info("Monitor has stopped");
-						
-		}
-
-		// interrupt
-		@Override
-		public void interrupt() {
-			_stopped = true;
-			super.interrupt();
-		}
-		
-	}
 	
 	// the schema factory that we will load the actions and controls schemas into
 	private static SchemaFactory _schemaFactory;
 	
 	// all of the classes we are going to put into our jaxb context
 	private static ArrayList<Class> _jaxbClasses;
-	
-	// our monitor class
-	private Monitor _monitor;
-	
+		
 	public static void logFileNames(File dir, String rootPath) {
 		
 		for (File file : dir.listFiles()) {
@@ -1001,7 +932,91 @@ public class RapidServletContextListener extends Log4jServletContainerInitialize
 		
 	}
 					
-	public RapidServletContextListener() {	}
+	public static int loadProcesses(ServletContext servletContext) throws Exception {
+					
+		// get any existing processes
+		List<Process> processes = (List<Process>) servletContext.getAttribute("processes");
+		
+		// check we got some
+		if (processes != null) {
+			// log
+			_logger.info("Stopping processes");
+			// loop the application ids
+			for (Process process : processes) {
+				// interrupt the process
+				process.interrupt();
+			}			
+		}
+		
+		_logger.info("Loading processes");
+		
+		// make a new set of applications
+		processes = new ArrayList<Process>();
+		
+		// get the directory in which the process xml files are stored
+		File dir = new File(servletContext.getRealPath("/WEB-INF/processes/"));
+		
+		// create a filter for finding .control.xml files
+		FilenameFilter xmlFilenameFilter = new FilenameFilter() {
+	    	public boolean accept(File dir, String name) {
+	    		return name.toLowerCase().endsWith(".process.xml");
+	    	}
+	    };
+	    
+	    // create a schema object for the xsd
+	    Schema schema = _schemaFactory.newSchema(new File(servletContext.getRealPath("/WEB-INF/schemas/") + "/process.xsd"));
+	    // create a validator
+	    Validator validator = schema.newValidator();
+	    	
+		// loop the xml files in the folder
+		for (File xmlFile : dir.listFiles(xmlFilenameFilter)) { 
+			
+			// get a scanner to read the file
+			Scanner fileScanner = new Scanner(xmlFile).useDelimiter("\\A");
+			
+			// read the xml into a string
+			String xml = fileScanner.next();
+			
+			// close the scanner (and file)
+			fileScanner.close();
+			
+			// validate the control xml file against the schema
+			validator.validate(new StreamSource(new ByteArrayInputStream(xml.getBytes("UTF-8"))));
+			
+			// convert the xml into JSON
+			JSONObject jsonProcess = org.json.XML.toJSONObject(xml).getJSONObject("process");
+			
+			// get the name from the json
+			String name = jsonProcess.getString("name");
+			// get the class name from the json
+			String className = jsonProcess.getString("class");
+			// get the class 
+			Class classClass = Class.forName(className);
+			// check the class extends com.rapid.security.SecurityAdapter
+			if (!Classes.extendsClass(classClass, com.rapid.core.Process.class)) throw new Exception(name + " process class " + classClass.getCanonicalName() + " must extend com.rapid.core.Process"); 
+			// get a constructor
+			Constructor constructor = classClass.getConstructor(ServletContext.class, String.class, Integer.TYPE);
+			
+			// create a process object from the xml
+			Process process = (Process) constructor.newInstance(servletContext, name, jsonProcess.getInt("interval"));
+			// start it
+			process.start();
+			// add it to our collection
+			processes.add(process);
+										
+		}
+				
+		// store them in the context
+		servletContext.setAttribute("processes", processes);
+						
+		// log that we've loaded them
+		_logger.info(processes.size() + " processes loaded");
+		
+		// return the size
+		return processes.size();
+		
+	}
+	
 	
 	@Override
 	public void contextInitialized(ServletContextEvent event) {   
@@ -1191,7 +1206,10 @@ public class RapidServletContextListener extends Log4jServletContainerInitialize
 			Email.load(servletContext);
 						
 			// load the applications!
-			loadApplications(servletContext);	
+			loadApplications(servletContext);
+			
+			// load the processes
+			loadProcesses(servletContext);	
 									
 			// add some useful global objects 
 			servletContext.setAttribute("xmlDateFormatter", new SimpleDateFormat("yyyy-MM-dd"));
@@ -1207,27 +1225,7 @@ public class RapidServletContextListener extends Log4jServletContainerInitialize
 			
 			boolean actionCache = Boolean.parseBoolean(servletContext.getInitParameter("actionCache"));
 			if (actionCache) servletContext.setAttribute("actionCache", new ActionCache(servletContext));
-			
-			int pageAgeCheckInterval = MONITOR_CHECK_INTERVAL; 
-			try { 
-				String pageAgeCheckIntervalString = servletContext.getInitParameter("pageAgeCheckInterval");
-				if (pageAgeCheckIntervalString != null) pageAgeCheckInterval = Integer.parseInt(pageAgeCheckIntervalString);	
-			} catch (Exception ex) {
-				_logger.error("pageAgeCheckInterval is not an integer");
-			}
-						
-			int pageMaxAge = MONITOR_MAX_AGE;
-			try { 
-				String pageMaxAgeString = servletContext.getInitParameter("pageMaxAge");
-				if (pageMaxAgeString != null) pageMaxAge = Integer.parseInt(pageMaxAgeString);	
-			} catch (Exception ex) {
-				_logger.error("pageMaxAge is not an integer");
-			}
-
-			// start the monitor
-			_monitor = new Monitor(servletContext, pageAgeCheckInterval, pageMaxAge);
-			_monitor.start();
-			
+																		
 			// allow calling to https without checking certs (for now)
 			SSLContext sc = SSLContext.getInstance("SSL");
 			TrustManager[] trustAllCerts = new TrustManager[]{ new Https.TrustAllCerts() };
@@ -1249,7 +1247,7 @@ public class RapidServletContextListener extends Log4jServletContainerInitialize
 		_logger.info("Shutting down...");
 		
 		// interrupt the page monitor if we have one
-		if (_monitor != null) _monitor.interrupt();
+		//if (_monitor != null) _monitor.interrupt();
 		
 		// get the servletContext
 		ServletContext servletContext = event.getServletContext();
