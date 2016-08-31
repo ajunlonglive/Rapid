@@ -1387,6 +1387,15 @@ public class Rapid extends Action {
 					devices + " device" + (devices == 1 ? "" : "s") + " reloaded"
 				);
 								
+			} else if ("RELOADPROCESSES".equals(action)) {
+				
+				int processes = 0;
+				
+				processes = RapidServletContextListener.loadProcesses(servletContext);
+				
+				// load processes and set the result message
+				result.put("message", processes + " process " + (processes == 1 ? "" : "es") + " reloaded");  
+			
 			} else if ("RELOADVERSION".equals(action)) {
 				
 				// look for an application file in the application folder

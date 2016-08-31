@@ -59,6 +59,7 @@ return [
  ["RELOADCONTROLS","Reload controls"],
  ["RELOADAPPLICATIONS","Reload applications"], 
  ["RELOADADAPTERS","Reload adapters"],
+ ["RELOADPROCESSES","Reload processes"],
  ["RELOADVERSION","Reload version"],
  ["SAVEAPP","Save application details"], 
  ["SAVESTYLES","Save styles"],
