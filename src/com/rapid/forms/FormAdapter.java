@@ -276,8 +276,8 @@ public abstract class FormAdapter {
 	
 	protected ServletContext _servletContext;
 	protected Application _application;
-	protected Logger _logger;
 	protected String _css;
+	protected static Logger _logger;
 	
 	// properties
 	
@@ -1340,8 +1340,55 @@ public abstract class FormAdapter {
 							if (value != null) {
 								// find the control in the page
 								Control control = rapidRequest.getPage().getControl(id);
-								// only if we found it
-								if (control != null) {																										
+								// check we found a control
+								if (control == null) {
+									// if this is the recapcha
+									if ("g-recaptcha-response".equals(id)) {
+										// get the response from the value now
+										String response = value;
+										// assume return value is false
+										value = "false";
+										// try
+										try {
+											// get the page
+											Page page = rapidRequest.getPage();
+											// get all of the controls
+											List<Control> controls = page.getAllControls();
+											// loop them
+											for (Control pageControl : controls) {
+												// if this is the captcha control
+												if ("recaptcha".equals(pageControl.getType())) {
+													// get the secret
+													String secret = pageControl.getProperty("secret");													
+													// get the check response
+													String checkResponse = Http.post("https://www.google.com/recaptcha/api/siteverify", "secret=" + secret + "&response=" + response);
+													// read it into json
+													JSONObject jsonCheck = new JSONObject(checkResponse);
+													// check the success
+													if (jsonCheck.optBoolean("success")) {
+														// update the id to the reCAPTCHA control
+														id = pageControl.getId();
+														// set the value to true!
+														value = "true";
+													} else {
+														// get any error codes
+														JSONArray jsonErrorCodes = jsonCheck.optJSONArray("error-codes");
+														// assume no errors
+														String errorCodes = "no errors";
+														// set if we got some
+														if (jsonErrorCodes != null) errorCodes = jsonErrorCodes.toString();
+														// log the issue
+														_logger.info("reCAPTCHA check failed for form " + formId + " page " + page.getId() + " : " + errorCodes);
+													}
+													// we're done
+													break;
+												}
+											}
+										} catch (Exception ex) {
+											_logger.error("Error getting reCAPTCHA value", ex);
+										}
+									}
+								} else {
 									// get any control validation
 									Validation validation = control.getValidation();
 									// if there was some
