@@ -33,7 +33,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Driver;
@@ -43,11 +42,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -94,7 +91,6 @@ import com.rapid.utils.Files;
 import com.rapid.utils.Https;
 import com.rapid.utils.JAXB.EncryptedXmlAdapter;
 import com.rapid.utils.Strings;
-import com.rapid.utils.XML;
 
 public class RapidServletContextListener extends Log4jServletContainerInitializer implements ServletContextListener {
 		
