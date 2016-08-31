@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<controls xmlVersion="1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/control.xsd">
+
+<!-- 
+
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
+
+gareth.edwards@rapid-is.co.uk
+
+
+This file is part of the Rapid Application Platform
+
+Rapid is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version. The terms require you to include
+the original copyright, and the license notice in all redistributions.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
+
+ -->
+
+	<control>
+	    
+	    <type>recaptcha</type>
+	    <name>reCAPTCHA</name>
+	    <image>images/penknife_24x24.png</image>
+	    <helpHtml>This control will generate a reCAPTCHA and provide a value of whether it was successful.</helpHtml>
+	    
+	    <canUserAdd>true</canUserAdd>
+	    <canUserMove>true</canUserMove>
+	    <canUserAddPeers>true</canUserAddPeers>
+	    <canBeUsedForFormPageVisibilty>true</canBeUsedForFormPageVisibilty>
+	    
+	    <properties>
+	        
+	        <property>
+	            <key>name</key>
+	            <name>Name</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <helpHtml>Name that can be given to the control. Names are used to help identify controls uniquely.</helpHtml>
+	        </property>
+	                   
+	        <property>
+	            <key>key</key>
+	            <name>Site key</name>
+	            <setConstructValueFunction>return "";</setConstructValueFunction>
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Once you have registered at https://www.google.com/recaptcha enter your site key here. Save the page to apply it.</helpHtml>
+	        </property>
+	        
+	         <property>
+	            <key>secret</key>
+	            <name>Secret</name>
+	            <setConstructValueFunction>return "";</setConstructValueFunction>
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Once you have registered at https://www.google.com/recaptcha enter your secret here. Save the page to apply it.</helpHtml>
+	        </property>
+	        
+	         <property>
+	            <key>size</key>
+	            <name>Size</name>
+	            <setConstructValueFunction>return "normal";</setConstructValueFunction>
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	            <getValuesFunction>
+	                <![CDATA[
+return [["normal"],["compact"]];
+					]]>
+	            </getValuesFunction>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets the size of the control. Save the page to apply the change.</helpHtml>
+	        </property>
+	        
+	         <property>
+	            <key>theme</key>
+	            <name>Theme</name>
+	            <setConstructValueFunction>return "light";</setConstructValueFunction>
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	            <getValuesFunction>
+	                <![CDATA[
+return [["light"],["dark"]];
+					]]>
+	            </getValuesFunction>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets the theme of the control. Save the page to apply the change.</helpHtml>
+	        </property>
+	        
+	    </properties>
+	    
+	    <resources>
+	        <resource>
+	            <type>javascriptFile</type>
+	            <contents>https://www.google.com/recaptcha/api.js</contents>
+	        </resource>   
+	    </resources>
+	    	    	    
+	    <getHtmlFunction>
+	        <![CDATA[
+if (this.key && this.secret) {	        
+	return "<div id='" + this.id + "' class='g-recaptcha' data-sitekey='" + this.key + "' data-size='" + this.size + "' data-theme='" + this.theme + "' data-callback='Event_success_" + this.id + "'></div>";
+} else {
+	if (!this.key && !this.secret)	{
+		return "<div id='" + this.id + "'>Site key and secret must be provided</div>";
+	} else if (this.secret) {
+		return "<div id='" + this.id + "'>Site key must be provided</div>";
+	} else {
+		return "<div id='" + this.id + "'>Secret must be provided</div>";
+	}
+}
+	        ]]>
+	    </getHtmlFunction> 
+	    
+	    <rebuildJavaScript>
+	        <![CDATA[             
+// just update the attribute values - the whole thing will be regenerated on save
+this.object.attr("data-sitekey",this.key);
+this.object.attr("data-size",this.size);
+this.object.attr("data-theme",this.theme);
+	        ]]>
+	    </rebuildJavaScript>	    	    
+  
+	    <initDesignJavaScript>
+	        <![CDATA[       
+// get a reference to the iFrame window
+var w = _pageIframe[0].contentWindow;
+// render the captcha if we have a key	        
+if (this.key && this.secret) w.grecaptcha.render(this.id, { 'sitekey':this.key, 'size':this.size, 'theme':this.theme });
+	        ]]>
+	    </initDesignJavaScript>
+	    
+	    <saveJavaScript>
+	        <![CDATA[
+// empty control on save	        
+this.object.children().remove();	        
+	        ]]>
+	    </saveJavaScript>
+	    
+	    <getDataFunction>
+	        <![CDATA[
+return grecaptcha.getResponse(); 	        
+	        ]]>
+	    </getDataFunction>
+	    
+	    <events>
+	        <event>
+	            <type>success</type>
+	            <name>Success</name>
+	        </event>
+	    </events>
+	    
+	    <styles>
+	        <style>
+	            <name>reCAPTCHA</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id;
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	    </styles>
+	    
+	</control>
+</controls>
