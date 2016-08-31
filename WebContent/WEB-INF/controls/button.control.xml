@@ -114,6 +114,10 @@ return ["none","circle","circle-o","square","square-o"];
 	            <type>cssFile</type>
 	            <contents>styles/fonts/fontawesome/css/font-awesome.css</contents>
 	        </resource>
+	        <resource>
+	            <type>cssFile</type>
+	            <contents>styles/fonts/rapid/font-rapid.css</contents>
+	        </resource>
 	        <!-- Some browsers choose the tff instead of the woff so both are included -->
 	        <resource>
 	            <type>file</type>
@@ -122,6 +126,14 @@ return ["none","circle","circle-o","square","square-o"];
 	        <resource>
 	            <type>file</type>
 	            <contents>styles/fonts/fontawesome/fonts/fontawesome-webfont.ttf</contents>
+	        </resource>
+	        <resource>
+	            <type>file</type>
+	            <contents>styles/fonts/rapid/rapid.ttf</contents>
+	        </resource>
+	        <resource>
+	            <type>file</type>
+	            <contents>styles/fonts/rapid/rapid.woff</contents>
 	        </resource>
 	        <resource>
 	            <type>css</type>
@@ -138,10 +150,13 @@ return ["none","circle","circle-o","square","square-o"];
 var html = "";	            
 if (this.glyphCode) {	
 
-	var glyph = "<span class='fa buttonGlyph'>" + this.glyphCode + "</span>";	 
+	var fontClass = "fa";
+	if (this.glyphCode == "&#xe900") fontClass = "fr";
+
+	var glyph = "<span class='" + fontClass + " buttonGlyph'>" + this.glyphCode + "</span>";	 
 
 	if (this.glyphBackground && this.glyphBackground != "none") {
-		glyph = "<span class='fa-stack fa-lg buttonGlyphWithBackground buttonGlyph'><i class='fa fa-" + this.glyphBackground + " fa-stack-2x buttonGlyphBackground'></i><i class='fa fa-stack-1x'>" + this.glyphCode + "</i></span>";
+		glyph = "<span class='fa-stack fa-lg buttonGlyphWithBackground buttonGlyph'><i class='fa fa-" + this.glyphBackground + " fa-stack-2x buttonGlyphBackground'></i><i class='" + fontClass + " fa-stack-1x'>" + this.glyphCode + "</i></span>";
 	}
 		       
 	var html = "<button id='" + this.id + "' type='button' class='button" + getStyleClasses(this) + "' " + (this.title ? "title='" + escapeApos(this.title) + "'" : "") + ">";
