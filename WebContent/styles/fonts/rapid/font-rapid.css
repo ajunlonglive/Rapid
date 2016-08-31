@@ -1,0 +1,25 @@
+
+@font-face {
+  font-family: 'Rapid';
+  
+   src:url('./rapid.ttf') format('truetype');
+   src:url('./rapid.woff') format('woff'),
+   url('./rapid.eot') format('embedded-opentype'),   
+   url('./rapid.ttf') format('truetype');
+   
+  font-weight: normal;
+  font-style: normal;
+}
+
+.fr {
+  display: inline-block;
+  font: normal normal normal 14px/1 Rapid;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.fr-logo:before {
+  content: "\e900";
+}
