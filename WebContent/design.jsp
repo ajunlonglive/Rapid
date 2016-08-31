@@ -85,6 +85,7 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 	<link rel="stylesheet" type="text/css" href="styles/designer.css"></link>
 	<link rel="stylesheet" type="text/css" href="styles/properties.css"></link>
 	<link rel="stylesheet" type="text/css" href="styles/fonts/fontawesome/css/font-awesome.css"></link>
+	<link rel="stylesheet" type="text/css" href="styles/fonts/rapid/font-rapid.css"></link>
 <%
 	} else {
 %>
