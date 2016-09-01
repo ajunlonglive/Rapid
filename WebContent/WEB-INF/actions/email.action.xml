@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<actions xmlVersion="1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/action.xsd">
+
+<!-- 
+
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
+
+gareth.edwards@rapid-is.co.uk
+
+
+This file is part of the Rapid Application Platform
+
+Rapid is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version. The terms require you to include
+the original copyright, and the license notice in all redistributions.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
+
+ -->
+ 
+     <action>
+    
+        <type>email</type>        
+        <name>Email</name>	        
+	    <class>com.rapid.actions.Email</class>
+	    <helpHtml>This action defines the details when sending a form. Emails can only be sent with a valid from and to address.</helpHtml>
+	    
+	    <addToNewApplications>true</addToNewApplications>
+	     
+<!-- 
+
+This action runs JQuery functions against specific controls		
+		
+-->	    	
+	    <properties>
+	    	
+        <property>
+	            <key>from</key>
+	            <name>From email address</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <getValuesFunction>return "";</getValuesFunction>
+	     </property>	
+	    	
+	    <property>
+            <key>to</key>
+            <name>To address source</name>
+            <changeValueJavaScript>select</changeValueJavaScript>
+            <getValuesFunction>
+                <![CDATA[
+return "<option value=''>Please select...</option>" + getInputOptions(this.to);
+                    ]]>
+            </getValuesFunction>
+            <helpHtml>Address that the email will be to. Multiple addresses can be separated with commas or semi-colons. Valid email addresses are needed otherwise the email will not be sent.</helpHtml>
+        </property>
+        
+        <property>
+	            <key>toField</key>
+	            <name>To address field</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <getValuesFunction>return "";</getValuesFunction>
+	     </property>	
+	     
+	     <property>
+	            <key>subject</key>
+	            <name>Subject</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <getValuesFunction>return "";</getValuesFunction>
+	     </property>
+	     
+	     <property>
+	            <key>emailType</key>
+	            <name>Type</name>
+	            <setConstructValueFunction>return "text";</setConstructValueFunction>
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	            <getValuesFunction>return ["text","html"];</getValuesFunction>
+	        </property>
+	        
+	        <property>
+	            <key>body</key>
+	            <name>Body</name>
+	            <changeValueJavaScript>emailBody</changeValueJavaScript>
+	            <refreshProperties>true</refreshProperties>
+	        </property>
+	    	
+	    </properties>
+     </action>
+</actions>
