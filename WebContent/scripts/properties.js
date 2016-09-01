@@ -4503,7 +4503,7 @@ function Property_chartType(cell, chart, property, details) {
 function Property_emailBody(cell, propertyObject, property, details) {
 	
 	// retrieve or create the dialogue
-	var dialogue = getDialogue(cell, propertyObject, property, details, 650, "Body", {sizeX: true});		
+	var dialogue = getDialogue(cell, propertyObject, property, details, 650, "Email body", {sizeX: true});		
 	// grab a reference to the table
 	var table = dialogue.children().last().children().last();
 	// make sure its empty
@@ -4524,7 +4524,7 @@ function Property_emailBody(cell, propertyObject, property, details) {
 	cell.text(text);
 	
 	// add inputs table, sql, and outputs table
-	table.append("<tr><td colspan='2' style='padding:0px;vertical-align: top;'><table class='dialogueTable inputs'><tr><td><b>Input</b></td><td colspan='2'><b>Field</b></td></tr></table></td><td colspan='3' style='width:50%;padding:2px 10px 0 10px;'><b>SQL</b><br/><textarea style='width:100%;min-width:100%;max-width:100%;min-height:200px;height:95%;box-sizing:border-box;'></textarea></td></tr>");
+	table.append("<tr><td colspan='2' style='padding:0px;vertical-align: top;'><table class='dialogueTable inputs'><tr><td><b>Input</b></td><td><b>Field</b></td></tr></table></td><td style='width:65%;padding:2px 10px 0 10px;'><b>SQL</b><br/><textarea style='width:100%;min-width:100%;max-width:100%;min-height:200px;height:95%;box-sizing:border-box;'></textarea></td></tr>");
 	
 	// find the inputs table
 	var inputsTable = table.find("table.inputs");
