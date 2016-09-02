@@ -38,10 +38,12 @@ import javax.activation.DataSource;
 import javax.mail.Authenticator;
 import javax.mail.BodyPart;
 import javax.mail.Message;
+import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
@@ -110,23 +112,23 @@ public class Email {
 		}
 
 		@Override
-		public String getContentType() { 
-			return _mimeType; 
-		}
-
-		@Override
-		public InputStream getInputStream() throws IOException { 
-			return new ByteArrayInputStream(_string.getBytes());
-		}
-
-		@Override
-		public String getName() { 
+		public String getContentType() {
 			return _mimeType;
 		}
 
 		@Override
-		public OutputStream getOutputStream() throws IOException { 
-			return null; 
+		public InputStream getInputStream() throws IOException {
+			return new ByteArrayInputStream(_string.getBytes());
+		}
+
+		@Override
+		public String getName() {
+			return _mimeType;
+		}
+
+		@Override
+		public OutputStream getOutputStream() throws IOException {
+			return null;
 		}
 		
 	}
@@ -143,22 +145,22 @@ public class Email {
 		}
 		
 		@Override
-		public String getContentType() { 
-			return _mimeType; 
-		}
-
-		@Override
-		public InputStream getInputStream() throws IOException { 
-			return _inputStream;
-		}
-
-		@Override
-		public String getName() { 
+		public String getContentType() {
 			return _mimeType;
 		}
 
 		@Override
-		public OutputStream getOutputStream() throws IOException { 
+		public InputStream getInputStream() throws IOException {
+			return _inputStream;
+		}
+
+		@Override
+		public String getName() {
+			return _mimeType;
+		}
+
+		@Override
+		public OutputStream getOutputStream() throws IOException {
 			return null; 
 		}
 		
@@ -236,7 +238,7 @@ public class Email {
         if (file.exists()) {
             try {
                 // get the unmarshaller from the context
-                Unmarshaller unmarshaller = RapidHttpServlet.getUnmarshaller();   
+                Unmarshaller unmarshaller = RapidHttpServlet.getUnmarshaller();
                 // unmarshall the devices
                 email = (Email) unmarshaller.unmarshal(file);
             } catch (Exception ex) {
@@ -259,7 +261,7 @@ public class Email {
         // retain this object in our static
         _email = email;
            
-        // return the email object   
+        // return the email object
         return email;
        
     }
@@ -286,7 +288,7 @@ public class Email {
 	    } else if ("tls".equals(security)) {
 	    
 	    	props.put("mail.smtp.auth", "true");
-		    props.put("mail.smtp.starttls.enable", "true"); 
+		    props.put("mail.smtp.starttls.enable", "true");
 		    props.put("mail.smtp.socketFactory.fallback", "true");
 	    	
 	    } 
@@ -302,10 +304,10 @@ public class Email {
 
 	}
     
-    public static void send(String from, String to, String subject, String text, String html, Attachment... attachments) throws Exception {
+    public static void send(String from, String to, String subject, String text, String html, Attachment... attachments) throws AddressException, MessagingException  {
     	
     	// if email is null throw exception
-    	if (_email == null) throw new Exception("Email settings must be specified");
+    	if (_email == null) throw new MessagingException("Email settings must be specified");
     	
     	// if properties are null
     	if (_properties == null) {
@@ -331,7 +333,7 @@ public class Email {
         message.setFrom(new InternetAddress(from));
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
         message.setSubject(subject);
-        message.setText(text);        
+        message.setText(text);
         
         // if there were any attachments
         if (attachments == null) {
@@ -354,11 +356,11 @@ public class Email {
             for (Attachment attachment : attachments) {
 	            messageBodyPart = new MimeBodyPart();
 	            messageBodyPart.setFileName(attachment.getName());
-	            messageBodyPart.setDataHandler(new DataHandler(attachment.getDataSource()));	            
-	            multipart.addBodyPart(messageBodyPart);	                      
+	            messageBodyPart.setDataHandler(new DataHandler(attachment.getDataSource()));
+	            multipart.addBodyPart(messageBodyPart);
             }
             // add the complete message parts
-            message.setContent(multipart);	 
+            message.setContent(multipart);
         }
 
         // send it!
@@ -367,12 +369,12 @@ public class Email {
     }
     
     // overload to above for non-html
-    public static void send(String from, String to, String subject, String text) throws Exception {
+    public static void send(String from, String to, String subject, String text) throws AddressException, MessagingException {
     	send(from, to, subject, text, null, null);
     }
     
     // overload to above for no attachments
-    public static void send(String from, String to, String subject, String text, String html) throws Exception {
+    public static void send(String from, String to, String subject, String text, String html) throws AddressException, MessagingException {
     	send(from, to, subject, text, html, null);
     }
 	
