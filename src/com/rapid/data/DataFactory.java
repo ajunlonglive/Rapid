@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2015 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -48,7 +48,8 @@ public class DataFactory {
 		public static final int DATE = 3;
 		public static final int INTEGER = 4;		
 		public static final int FLOAT = 5;
-		public static final int DOUBLE = 5;
+		public static final int DOUBLE = 6;
+		public static final int LONG = 7;
 		
 		private int _type;
 		private String _string;
@@ -56,6 +57,7 @@ public class DataFactory {
 		private int _int;		
 		private float _float;
 		private double _double;
+		private long _long;
 		
 		public Parameter() {
 			_type = NULL;
@@ -86,22 +88,29 @@ public class DataFactory {
 			_double = value;
 		}
 		
+		public Parameter(long value) {
+			_type = LONG;
+			_long = value;
+		}
+		
 		public int getType() { return _type; }
 		public String getString() { return _string; }
 		public Date getDate() { return _date; }
 		public int getInteger() { return _int; }		
 		public float getFloat() { return _float; }
 		public double getDouble() { return _double; }
+		public long getLong() { return _long; }
 		
 		@Override
 		public String toString() {
 			switch (_type) {
-			case 1 : return "null";
-			case 2 : return _string;
-			case 3 : return _date.toString();
-			case 4 : return Integer.toString(_int);
-			case 5 : return Float.toString(_float);
-			case 6 : return Double.toString(_double);
+			case NULL : return "null";
+			case STRING : return _string;
+			case DATE : return _date.toString();
+			case INTEGER : return Integer.toString(_int);
+			case FLOAT : return Float.toString(_float);
+			case DOUBLE : return Double.toString(_double);
+			case LONG : return Long.toString(_long);
 			}
 			return "unknown type";
 		}
@@ -116,11 +125,15 @@ public class DataFactory {
 		public void addInt(int value) { this.add(new Parameter(value)); }
 		public void addDate(Date value) { this.add(new Parameter(value)); }
 		public void addFloat(float value) { this.add(new Parameter(value)); }
+		public void addDouble(double value) { this.add(new Parameter(value)); }
+		public void addLong(long value) { this.add(new Parameter(value)); }
 		public void add() { this.add(new Parameter()); }
 		public void add(String value) { this.add(new Parameter(value)); }
 		public void add(int value) { this.add(new Parameter(value)); }
 		public void add(Date value) { this.add(new Parameter(value)); }
 		public void add(float value) { this.add(new Parameter(value)); }
+		public void add(double value) { this.add(new Parameter(value)); }
+		public void add(long value) { this.add(new Parameter(value)); }
 		
 		public Parameters() {}
 		public Parameters(Object...parameters) {
@@ -134,16 +147,19 @@ public class DataFactory {
 					} else if (object instanceof Integer) {
 						Integer v = (Integer) object;
 						this.add(new Parameter(v));
+					} else if (object instanceof Date) {
+						Date v = (Date) object;
+						this.add(new Parameter(v));
 					} else if (object instanceof Float) {
 						Float v = (Float) object;
 						this.add(new Parameter(v));
 					} else if (object instanceof Double) {
-						Double d = (Double) object;
-						this.add(new Parameter(d));
-					} else if (object instanceof Date) {
-						Date v = (Date) object;
+						Double v = (Double) object;
 						this.add(new Parameter(v));
-					}  					
+					} else if (object instanceof Long) {
+						Long v = (Long) object;
+						this.add(new Parameter(v));
+					}  			
 				}
 			}
 		}
@@ -238,6 +254,12 @@ public class DataFactory {
 					break;
 				case Parameter.FLOAT : 
 					statement.setFloat(i, parameter.getFloat()); 
+					break;
+				case Parameter.DOUBLE : 
+					statement.setDouble(i, parameter.getDouble()); 
+					break;
+				case Parameter.LONG : 
+					statement.setLong(i, parameter.getLong()); 
 					break;
 				}						
 			}
