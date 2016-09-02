@@ -89,6 +89,10 @@ import com.rapid.utils.Files;
 
 public class Rapid extends Action {
 	
+	// private static finals
+	private static final String TEST_EMAIL_TO = "test@dev.rapid-is.co.uk";
+	private static final String TEST_EMAIL_FROM = "test@dev.rapid-is.co.uk";
+	
 	// instance variables
 	
 	private ArrayList<Action> _successActions, _errorActions, _childActions;
@@ -2491,10 +2495,24 @@ public class Rapid extends Action {
 				// set the properties we've just received
 				Email.setProperties(host, port, security, userName, password);
 				
+				// assume to email is the constant				
+				String from = TEST_EMAIL_FROM;
+				// look for a setting in the web.xml
+				String fromSetting = servletContext.getInitParameter("email.test.from");
+				// if we got one use this value
+				if (fromSetting != null) from = fromSetting;
+				
+				// assume to email is the constant				
+				String to = TEST_EMAIL_TO;
+				// look for a setting in the web.xml
+				String toSetting = servletContext.getInitParameter("email.test.to");
+				// if we got one use this value
+				if (toSetting != null) to = toSetting;
+								
 				try {
 					
 					// send a test email					
-			        Email.send("test@dev.rapid-is.co.uk", "test@dev.rapid-is.co.uk", "Rapid test email", "It's working!");
+			        Email.send(from, to, "Rapid test email", "It's working!");
 			        
 				} catch (Exception ex) {
 					
