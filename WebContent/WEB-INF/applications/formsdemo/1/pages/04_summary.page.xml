@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><page><conditionsType>and</conditionsType><controls><childControls><events><filter/><type>click</type></events><events><filter/><type>mouseover</type></events><events><filter/><type>mouseout</type></events><properties><entry><key>initJavaScript</key><value>false</value></entry><entry><key>classes</key><value>["spacer"]</value></entry><entry><key>format</key><value>N</value></entry><entry><key>canBeUsedFromOtherPages</key><value>false</value></entry><entry><key>id</key><value>P7_C2_</value></entry><entry><key>text</key><value>Thank you for taking the time to fill in your details.</value></entry><entry><key>type</key><value>text</value></entry><entry><key>canBeUsedForFormPageVisibilty</key><value>false</value></entry></properties><styles><appliesTo>#P7_C2_</appliesTo><rules>text-align:center;</rules><rules>display:block;</rules></styles><XMLVersion>1</XMLVersion></childControls><childControls><events><filter/><type>click</type></events><events><filter/><type>mouseover</type></events><events><filter/><type>mouseout</type></events><properties><entry><key>initJavaScript</key><value>false</value></entry><entry><key>classes</key><value>[]</value></entry><entry><key>format</key><value>N</value></entry><entry><key>canBeUsedFromOtherPages</key><value>false</value></entry><entry><key>id</key><value>P7_C3_</value></entry><entry><key>text</key><value>When Rapid applications are set as a form it is possible to assign pages as either submission confirmation pages,
+
+
+submission error pages, or saved submission pages. For our form example we are showcasing the submission confirmation
+
+
+type. This page will show after the user has accepted that their form is complete, after the summary page. At this point
+
+
+the form has already been submitted. As there is no back-end database behind this form the details will not go anywhere,
+
+
+but it is possible in Rapid to save your form details. These can then be accessed later on, by revisiting the form and
+
+
+offering users the option to change their previous information.</value></entry><entry><key>type</key><value>text</value></entry><entry><key>canBeUsedForFormPageVisibilty</key><value>false</value></entry></properties><XMLVersion>1</XMLVersion></childControls><events><filter/><type>mouseover</type></events><events><filter/><type>mouseout</type></events><events><filter/><type>click</type></events><properties><entry><key>initJavaScript</key><value>false</value></entry><entry><key>classes</key><value>["paddingMedium","panel5"]</value></entry><entry><key>canBeUsedFromOtherPages</key><value>false</value></entry><entry><key>id</key><value>P7_C1_</value></entry><entry><key>text</key><value/></entry><entry><key>type</key><value>panel</value></entry><entry><key>canBeUsedForFormPageVisibilty</key><value>false</value></entry></properties><styles><appliesTo>#P7_C1_</appliesTo><rules>margin:10px;</rules><rules>color:white;</rules></styles><XMLVersion>1</XMLVersion></controls><description/><events><filter/><type>pageload</type></events><events><filter/><type>resume</type></events><events><filter/><type>reusable</type></events><formPageType>1</formPageType><htmlBody>&lt;div id="P7_C1_" class=" paddingMedium panel5"&gt;&lt;span id="P7_C2_" class="text spacer"&gt;Thank you for taking the time to fill in your details.&lt;/span&gt;&lt;span id="P7_C3_" class="text"&gt;When Rapid applications are set as a form it is possible to assign pages as either submission confirmation pages,
+
+
+submission error pages, or saved submission pages. For our form example we are showcasing the submission confirmation
+
+
+type. This page will show after the user has accepted that their form is complete, after the summary page. At this point
+
+
+the form has already been submitted. As there is no back-end database behind this form the details will not go anywhere,
+
+
+but it is possible in Rapid to save your form details. These can then be accessed later on, by revisiting the form and
+
+
+offering users the option to change their previous information.&lt;/span&gt;&lt;/div&gt;</htmlBody><id>P7</id><label/><modifiedBy>admin</modifiedBy><modifiedDate>2016-08-08T18:09:33.720+01:00</modifiedDate><name>04_summary</name><rolesHtml><html>&lt;div id="P7_C1_" class=" paddingMedium panel5"&gt;&lt;span id="P7_C2_" class="text spacer"&gt;Thank you for taking the time to fill in your details.&lt;/span&gt;&lt;span id="P7_C3_" class="text"&gt;When Rapid applications are set as a form it is possible to assign pages as either submission confirmation pages,
+
+
+submission error pages, or saved submission pages. For our form example we are showcasing the submission confirmation
+
+
+type. This page will show after the user has accepted that their form is complete, after the summary page. At this point
+
+
+the form has already been submitted. As there is no back-end database behind this form the details will not go anywhere,
+
+
+but it is possible in Rapid to save your form details. These can then be accessed later on, by revisiting the form and
+
+
+offering users the option to change their previous information.&lt;/span&gt;&lt;/div&gt;</html></rolesHtml><simple>false</simple><title>Summary</title><XMLVersion>1</XMLVersion></page>
