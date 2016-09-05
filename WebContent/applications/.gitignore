@@ -4,6 +4,7 @@
 
 !rapid
 !demo
+!formsdemo
 !mobdemo
 
 # ignore all rapid generated .js and .cs

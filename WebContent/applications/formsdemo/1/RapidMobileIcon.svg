@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="170"
+   height="120"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="RapidMobileIcon.svg"
+   inkscape:export-filename="C:\Documents and Settings\Gareth.GEANDA\Desktop\Rapid Mobile\RapidMobileIcon.png"
+   inkscape:export-xdpi="3.6174369"
+   inkscape:export-ydpi="3.6174369">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.7"
+     inkscape:cx="570.26084"
+     inkscape:cy="527.88588"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1280"
+     inkscape:window-height="1000"
+     inkscape:window-x="0"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     style="display:inline"
+     transform="translate(0,-932.36218)">
+    <g
+       id="g3400"
+       inkscape:transform-center-x="127.02835"
+       inkscape:transform-center-y="-454.28571"
+       transform="translate(-33.428571,900)">
+      <path
+         sodipodi:nodetypes="ccccccccccccccccc"
+         inkscape:connector-curvature="0"
+         id="text2985-48"
+         d="M 115.83648,38.738821 91.937053,149.76753 c 9.812497,0 19.624997,0 29.437497,0 3.00301,-14.22412 5.96133,-28.45772 8.9375,-42.6875 6.80813,-0.52228 16.03589,-0.46929 18.5625,7.40625 6.22385,11.14522 10.25799,23.30177 14.5625,35.28125 10.53125,0 21.0625,0 31.59375,0 -6.56225,-15.33014 -11.97291,-31.42515 -21.6875,-45.09375 14.79164,-2.97246 27.30126,-16.023289 27.90625,-31.406249 1.82942,-14.69475 -7.16658,-31.77125 -22.98478,-33.36129 -21.16134,-2.24274 -40.95256,-0.75061 -62.42829,-1.16742 z m 45.69432,25.12246 c 4.52166,-0.42464 11.7633,1.03756 10.53125,7.09375 -1.14212,9.80858 -12.34314,12.97468 -20.875,12.4375 -5.31851,0.28214 -10.64518,0.21649 -15.96875,0.21875 1.36458,-6.5625 2.72917,-13.125 4.09375,-19.6875 7.40548,-0.0514 14.81509,0.0974 22.21875,-0.0625 z"
+         style="font-style:oblique;font-weight:bold;font-size:144px;line-height:125%;font-family:Sans;-inkscape-font-specification:'Sans Bold Oblique';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none" />
+      <path
+         sodipodi:nodetypes="ccc"
+         inkscape:connector-curvature="0"
+         id="path3058"
+         d="m 116.17818,39.240731 c -34.785357,-0.75761 -36.915797,30.80966 -69.716477,23.74514 34.19788,19.2506 40.4964,-5.01594 66.349307,-2.01374"
+         style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.9336977px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+      <path
+         sodipodi:nodetypes="ccc"
+         inkscape:connector-curvature="0"
+         id="path3058-7"
+         d="m 108.65211,83.731421 c -34.785357,-0.75761 -36.915797,30.809659 -69.716477,23.745139 34.19788,19.2506 40.4964,-5.01594 66.349307,-2.01374"
+         style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.9336977px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    </g>
+  </g>
+</svg>

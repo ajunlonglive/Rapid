@@ -2546,6 +2546,17 @@ public class Rapid extends Action {
 					String security = jsonAction.getString("security").trim();
 					String userName = jsonAction.getString("userName").trim();
 					String password = jsonAction.getString("password");
+					// if we just got 8 *'s for the password
+					if ("********".equals(password)) {
+						// if we had an email object
+						if (email == null) {
+							// make it a blank space
+							password = "";
+						} else {
+							// set it back to stop being overridden with 8 *'s
+							password = email.getPassword();
+						}
+					}
 		
 					// set the properties we've just loaded
 		            Email.setProperties(host, port, security, userName, password);
