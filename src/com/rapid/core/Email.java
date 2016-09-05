@@ -175,11 +175,11 @@ public class Email {
 	// private instance variables
 	private String _host, _security, _userName, _password;
 	private int _port;
-	private boolean _emailEnable;
+	private boolean _enabled;
 	
 	// properties
-	public boolean getEnabled() { return _emailEnable; }
-	public void setEnabled(boolean emailEnable) { _emailEnable = emailEnable; }
+	public boolean getEnabled() { return _enabled; }
+	public void setEnabled(boolean enabled) { _enabled = enabled; }
 	
 	public String getHost() { return _host; }
 	public void setHost(String host) { _host = host; }
