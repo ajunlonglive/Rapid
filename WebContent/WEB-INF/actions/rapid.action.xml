@@ -307,8 +307,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 				formWebservice: getData_checkbox(ev, "rapid_P0_C1905_"),
 				formWebserviceURL: $("#rapid_P0_C1903_").val(),
 				formWebserviceType: $("#rapid_P0_C1902_").val(),
-				formWebserviceSOAPAction: $("#rapid_P0_C1901_").val(),
-				emailEnable: getData_checkbox(ev, "rapid_P0_C2023_")
+				formWebserviceSOAPAction: $("#rapid_P0_C1901_").val()
 			};	
 		break;
 		case "SAVESTYLES" :		
@@ -691,7 +690,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 			data = {
 				actionType: actionType,
 				appId: "rapid",
-				emailEnable: getData_checkbox(ev, "rapid_P0_C2023_"),
+				enabled: getData_checkbox(ev, "rapid_P0_C2023_"),
 				host: $("#rapid_P0_C1790_").val(),
 				port: $("#rapid_P0_C1791_").val(),
 				security: $("#rapid_P0_C1794_").val(),
