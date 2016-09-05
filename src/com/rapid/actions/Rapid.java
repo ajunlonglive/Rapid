@@ -649,7 +649,7 @@ public class Rapid extends Action {
 					// if not null
 					if (email != null) {
 						// add email settings properties
-						jsonEmail.put("emailEnable", email.getEnabled());
+						jsonEmail.put("enabled", email.getEnabled());
 						jsonEmail.put("host", email.getHost());
 						jsonEmail.put("port", email.getPort());
 						jsonEmail.put("security", email.getSecurity());
@@ -2533,13 +2533,13 @@ public class Rapid extends Action {
 			} else if ("SAVEEMAIL".equals(action)) {
 				
 				// get whether enabled
-				boolean emailEnable = jsonAction.optBoolean("emailEnable");
+				boolean enabled = jsonAction.optBoolean("enabled");
 				
 				// get any current email settings
 				Email email = Email.getEmailSettings();
 				
 				// check whether enabled
-				if (emailEnable) {
+				if (enabled) {
 					
 					String host = jsonAction.getString("host");
 					int port = jsonAction.getInt("port");
