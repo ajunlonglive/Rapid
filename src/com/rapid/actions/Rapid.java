@@ -1398,7 +1398,7 @@ public class Rapid extends Action {
 				processes = RapidServletContextListener.loadProcesses(servletContext);
 				
 				// load processes and set the result message
-				result.put("message", processes + " process " + (processes == 1 ? "" : "es") + " reloaded");  
+				result.put("message", processes + " process" + (processes == 1 ? "" : "es") + " reloaded");  
 			
 			} else if ("RELOADVERSION".equals(action)) {
 				
