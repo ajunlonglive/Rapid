@@ -117,15 +117,24 @@ this.object.remove();
 	    <getDataFunction>
 	        <![CDATA[
 var control = $("#" + id);
-if (!control.is("input")) control = control.find("#" + id + "checkbox");	        
-return control.prop("checked") ? "true" : "false";
+if (!control.is("input")) control = control.find("#" + id + "checkbox");
+var value = null;
+var attr = control.attr("value");
+if (attr) {
+	if (control.prop("checked")) value = attr;
+} else {
+	if (control.prop("checked")) {
+		value = "true";
+	} else {
+		value = "false";
+	}
+}
+return value;
 			]]>
 	    </getDataFunction>
 	    
 	    <setDataJavaScript>
 	        <![CDATA[
-var control = $("#" + id);
-if (!control.is("input")) control = control.find("#" + id + "checkbox");
 var value = false;
 if (data != null && data !== undefined) {
 	data = makeDataObject(data, field);
@@ -142,9 +151,18 @@ if (data != null && data !== undefined) {
 		}
 	}
 }
-if (value == "false") value = false;
+var control = $("#" + id);
+if (!control.is("input")) control = control.find("#" + id + "checkbox");
+var attr = control.attr("value");
+var checked = false;
+if (attr) {
+	if (value == attr) checked = true;	
+} else {
+	if (value) checked = true;
+	if (value == "false") checked = false;
+}
 control.prop('checked', value);
-if (changeEvents) $("#" + id).trigger("change");
+if (changeEvents) control.trigger("change");    
 			]]>
 	    </setDataJavaScript>
 	    	    
