@@ -180,26 +180,26 @@ function buildPageMap() {
 								if (!movedOverType.canUserInsert) moveThreshold = width/2;
 								
 								// get the current cusor
-								var cursor = t.css("cursor");
+								var cursor = t.attr("move");
 								// are we within the move threshold on the left or the right controls that can be moved, or in the middle with an addChildControl method?
 								if (movedOverType.canUserMove && ev.pageX  < t.offset().left + moveThreshold) {								
 									// set the cursor if need be
-									if (!cursor || cursor.indexOf("moveLeft") < 0) t.css("cursor","url(images/moveLeft_32x32.png) 16 16,w-resize");
+									if (!cursor || cursor.indexOf("moveLeft") < 0) t.removeClass("mapMoveRight mapInsert").addClass("mapMoveLeft").attr("move","moveLeft");									
 									// remember it's on the left
 									_movedoverDirection = "L";
 								} else if (movedOverType.canUserMove && ev.pageX > t.offset().left + width - moveThreshold) {
 									// set the cursor if need be
-									if (!cursor || cursor.indexOf("moveRight") < 0) t.css("cursor","url(images/moveRight_32x32.png) 16 16,e-resize");
+									if (!cursor || cursor.indexOf("moveRight") < 0) t.removeClass("mapMoveLeft mapInsert").addClass("mapMoveRight").attr("move","moveRight");								
 									// remember it's on the right
 									_movedoverDirection = "R";
 								} else if (movedOverType.canUserInsert) {
 									// set the cursor if need be
-									if (!cursor || cursor.indexOf("insert") < 0) t.css("cursor","url(images/insert_32x32.png) 16 30, s-resize");
+									if (!cursor || cursor.indexOf("insert") < 0) t.removeClass("mapMoveLeft mapMoveRight").addClass("mapInsert").attr("move","insert");	
 									// remember it's in the the centre
 									_movedoverDirection = "C";
 								} else {
 									// reset the cursor
-									t.css("cursor","initial");
+									t.removeClass("mapMoveLeft mapMoveRight mapInsert").attr("move","");	
 									// null the direction
 									_movedoverDirection = null;
 									// remove all insert covers
