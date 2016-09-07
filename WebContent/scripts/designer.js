@@ -398,6 +398,13 @@ function getControlHeight(control, childLevel) {
 	var o = control.object;
 	// assume height is straightforwards (includes border but not margin)
 	var height = o.outerHeight();	
+	
+	/*
+
+	  This code allows children floating outside of their parents to be selected but it also caused some incorrect heights to be returned so controls
+	  above the intended controls were selected. It appears the float height should add only the portion floating below the parent, to the parent height
+	  (not the sum of all left or right float height)
+	 
 	// assume child height = zero
 	var childHeight = 0;
 	// if we are below the max child levels (the recursion can get quite fierce)
@@ -442,6 +449,8 @@ function getControlHeight(control, childLevel) {
 		} 
 	}	
 	height += getFloatHeight(control);
+	*/
+	
 	// return it
 	return height;
 
@@ -645,7 +654,7 @@ function removeControlFromParent(control) {
 // this sizes a border around the geometry of a control (it must be visible at the time, however briefly)
 function sizeBorder(control) {
 	// get the height of the control's object
-	var height = getControlHeight(control);
+	var height = control.object.outerHeight();
 	// get the width
 	var width = control.object.outerWidth();
 	// check if nonVisualControl
