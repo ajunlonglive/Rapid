@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2014 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2015 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -398,13 +398,7 @@ function getControlHeight(control, childLevel) {
 	var o = control.object;
 	// assume height is straightforwards (includes border but not margin)
 	var height = o.outerHeight();	
-	
-	/*
-
-	  This code allows children floating outside of their parents to be selected but it also caused some incorrect heights to be returned so controls
-	  above the intended controls were selected. It appears the float height should add only the portion floating below the parent, to the parent height
-	  (not the sum of all left or right float height)
-	 
+		 
 	// assume child height = zero
 	var childHeight = 0;
 	// if we are below the max child levels (the recursion can get quite fierce)
@@ -448,6 +442,13 @@ function getControlHeight(control, childLevel) {
 			height = Math.max(height, o.outerHeight(), floatLeftHeight, floatRightHeight);
 		} 
 	}	
+	
+	/*
+	  
+	  This code allows children floating outside of their parents to be selected but it also caused some incorrect heights to be returned so controls
+	  above the intended controls were selected. It appears the float height should add only the portion floating below the parent, to the parent height
+	  (not the sum of all left or right float height)
+	
 	height += getFloatHeight(control);
 	*/
 	
@@ -455,6 +456,8 @@ function getControlHeight(control, childLevel) {
 	return height;
 
 }
+
+/*
   
 // controls that are preceeded by floating ones are actually lower then offset().top reports we want to add the heights  
 function getFloatHeight(control, parentLevel) {
@@ -485,6 +488,8 @@ function getFloatHeight(control, parentLevel) {
 	}
 	return height;
 }
+
+*/
  
 // this function is useful for calling from the JavaScript terminal to find out why certain objects have not been found
 function debuggMouseControl(ev, childControls) {	
@@ -1317,11 +1322,11 @@ function showDesigner() {
 	// show the control panel and properties panel
 	$("#designerTools").show();
 	// show the page
-	$("#page").show();
-	// resize the elements on the page
-	windowResize("showDesigner");
+	$("#page").show();		
 	// arrange any non-visible controls
-	arrangeNonVisibleControls();	
+	arrangeNonVisibleControls();
+	// resize the elements on the page after a small delay
+	windowResize("showDesigner");
 	// show the first tip, if function is present
 	if (window["showTip"]) showTip(0);
 }
@@ -2664,6 +2669,9 @@ $(document).ready( function() {
 			        	// refresh the page map to take the lock into account
 			        	buildPageMap();
 			        	
+			        	// resize to set correct scroll bars
+			        	windowResize("page loaded");
+			        	
 			        	// update the url
 			        	if (window.history && window.history.replaceState) window.history.replaceState("page", _page.title, "design.jsp?a=" + _version.id + "&v=" + _version.version + "&p=" + _page.id );
 			        				        	
@@ -3865,9 +3873,11 @@ function hidePropertiesPanel() {
 
 // called whenever the page is resized
 function windowResize(ev) {
-	
+			
 	// get the caller of this function
 	var caller = ev.data || ev;
+	
+	console.log("windowResize caller = " + caller);
 			
 	// get the window width
 	var width = _window.width();
