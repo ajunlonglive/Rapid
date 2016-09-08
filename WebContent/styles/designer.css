@@ -327,12 +327,12 @@ img.conflictimgage {
 
 .design-map li {
 	display: block;
-	cursor: pointer;	
 	vertical-align: middle;
 }
 
 .design-map span {
 	display: block;
+	cursor: pointer;	
 	white-space: nowrap;
 	background-color: none;
 }
@@ -346,6 +346,18 @@ img.conflictimgage {
 	height: 16px;
 	width: 16px;
 	margin-top: -2px;
+}
+
+.mapMoveLeft {
+	cursor: url(../images/moveLeft_32x32.png) 16 16,w-resize !important
+}
+
+.mapMoveRight {
+	cursor: url(../images/moveRight_32x32.png) 16 16,w-resize !important
+}
+
+.mapInsert {
+	cursor: url(../images/insert_32x32.png) 16 28,w-resize !important
 }
 
 .controlPanelVersion {
@@ -1188,16 +1200,4 @@ select:hover {
 	background: -ms-linear-gradient(#B80101, #500000);
 	background: -webkit-linear-gradient(#B80101, #500000);
 	background: transparent linear-gradient(#B80101, #500000);
-}
-
-.mapMoveLeft {
-	cursor: url(../images/moveLeft_32x32.png) 16 16,w-resize
-}
-
-.mapMoveRight {
-	cursor: url(../images/moveRight_32x32.png) 16 16,w-resize
-}
-
-.mapInsert {
-	cursor: url(../images/insert_32x32.png) 16 28,w-resize
 }
