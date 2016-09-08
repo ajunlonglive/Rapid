@@ -67,7 +67,6 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.rapid.security.RapidSecurityAdapter;
 import com.rapid.security.SecurityAdapter;
 import com.rapid.security.SecurityAdapter.Role;
 import com.rapid.security.SecurityAdapter.User;
@@ -1561,7 +1560,7 @@ public class Designer extends RapidHttpServlet {
 												        
 												        while ((line = reader.readLine()) != null ) {
 												            stringBuilder.append(line);
-												            stringBuilder.append("\n\r");
+												            stringBuilder.append("\n");
 												        }
 												        reader.close();
 												        
