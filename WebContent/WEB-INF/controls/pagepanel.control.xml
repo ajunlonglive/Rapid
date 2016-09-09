@@ -32,7 +32,6 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    <name>Page panel</name>
 	    <image>images/page_24x24.png</image>
 	    <helpHtml>This control gives you the capability of displaying a whole page onto another. This is especially useful for displaying pages that are supposed to be re-used on multiple pages, such as menus, headers and footers.</helpHtml>
-	    
 	    <addToNewApplications>false</addToNewApplications>
 	    <noDefaultName>true</noDefaultName>
 	    
@@ -91,22 +90,26 @@ return "<option value=''>None</option>" + getPageOptions(this.pageId,_page.id);
 function checkPagePanelFooter() {
 	var footer = $("div.pagePanelFooter");
 	if (footer[0]) {
-		var fh = footer.height();
-		var bh = $(document.body).height();
-		if (!footer.is(".pagePanelStickyFooter")) bh -= fh;
-		if (bh + fh < $(window).height()) {
-			// Add sticky footer
-			footer.addClass("pagePanelStickyFooter");
-		}	else {
-			// Remove sticky footer
-			footer.removeClass("pagePanelStickyFooter");
-		}
+		window.setTimeout( function(ev) {
+			var fh = footer.height();
+			var bh = $("html").height();
+			if (!footer.is(".pagePanelStickyFooter")) bh -= fh;
+			if (bh + fh < $(window).height()) {
+				// Add sticky footer
+				footer.addClass("pagePanelStickyFooter");
+			}	else {
+				// Remove sticky footer
+				footer.removeClass("pagePanelStickyFooter");
+			}
+		}, 200);
 	}
 }
 
 $(document).ready( function() {
 	$(window).resize(checkPagePanelFooter);
-	window.setTimeout( function(ev) { checkPagePanelFooter(); }, 200);
+	$("select").change(checkPagePanelFooter);
+	$("input").change(checkPagePanelFooter);
+	checkPagePanelFooter();
 });
 					]]>
 	    		</contents>
@@ -144,7 +147,7 @@ if (this.pageId) {
         		// get the iframe head
         		var head = $(_pageIframe[0].contentDocument).find("head");
         		// empty the body html
-        		bodyHtml = "";        		
+        		bodyHtml = "";
         		// assume the script is empty
        			script = "";
         		        		
@@ -193,11 +196,11 @@ if (this.pageId) {
             		break;
             		}
             	}
-            	            	            	            	
+            	  
         	}
-        	       	        	        	        	        		
+        	 
         }
-        	        	        
+       
 	});
 	
 	// set the html
@@ -242,7 +245,7 @@ return {pageId: this.pageId, footer: this.footer, simple: simple};
 	        ]]>
 	    </getDetailsFunction>
 	    
-	    <styles>       
+	    <styles>
 	        <style>
 	            <name>Page panel</name>
 	            <getAppliesToFunction>
@@ -256,18 +259,18 @@ return "#" + this.id;
 	    <initJavaScript>
 	        <![CDATA[
 	        
-// if this page is not static reload it	        
+// if this page is not static reload it
 if (details.simple === undefined || !details.simple) {
 	        
 	var bodyHtml = "<center><h1>Page</h1></center>";
 	
-	// request the page		
+	// request the page
 	$.ajax({
 	   	url: "~?a=" + _appId + "&v=" + _appVersion + "&p=" + details.pageId + "&action=dialogue",  // reuse the design link hiding from dialogues
-	   	type: "GET",          
-	       data: null,        
-	       error: function(server, status, error) { 
-	       	var bodyHtml = "Error loading page : " + error; 
+	   	type: "GET",
+	       data: null,
+	       error: function(server, status, error) {
+	       	var bodyHtml = "Error loading page : " + error;
 	       },
 	       success: function(page) {
 	       	
@@ -305,37 +308,36 @@ if (details.simple === undefined || !details.simple) {
 	           					// add if not in the head already
 	           					if (!head.find("script[src='" + src + "']")[0]) head.append(text);
 	           				}
-	           			} 
+	           			}
 	           		break;
 	           		case "LINK" :
 	           			// fetch the text
-	           			var text = items[i].outerHTML;	           			
+	           			var text = items[i].outerHTML;
 	           			// look for an href="
 	           			if (!items[i].innerHTML && text.indexOf("href=\"") > 0) {
 	           				var startPos = text.indexOf("href=\"")+6;
 	           				var href = text.substr(startPos,text.indexOf("\"", startPos) - startPos);
 	           				// add this link to the page if not there already
 	           				if (!head.find("link[href='" + href + "']")[0]) head.append(text);
-	           			}	         			
+	           			}
 	           		break;
 	           		default :
 	           			if (items[i].outerHTML) {
 	           				// retain the script in our body html
-	           				bodyHtml += items[i].outerHTML;        				
+	           				bodyHtml += items[i].outerHTML;
 	           			}
 	           		break;
 	           		}
-	           	}   
+	           	}
 	           	// apply the injected html
 	           	$("#" + id).html(bodyHtml);
 	           	// add script into the page (if applicable)
 	           	if (script) $("#" + id).append(script);
 	           	// fire the window resize event
 	           	$(window).resize();
-	           	           	        	            	            	            
-	    	}        	       	        	        	        	        		
-	    }       	        	        
-	});	        
+	    	}
+	    }
+	});
 }
 
 if (details.sticky == true) {
@@ -343,7 +345,7 @@ if (details.sticky == true) {
 } else {
 	$("#" + id).removeClass("stickyFooter");
 }
-	        ]]>	        
+	        ]]>
 	    </initJavaScript>
 	    
 	</control>
