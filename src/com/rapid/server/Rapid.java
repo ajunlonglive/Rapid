@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2015 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -801,29 +801,27 @@ public class Rapid extends RapidHttpServlet {
 												PageHeaders pageHeaders = app.getPages().getSortedPages();
 																																		
 												// get the position of the next page in sequence
-												int pageIndex = pageHeaders.indexOf(requestPageId) + 1;
+												int requestPageIndex = pageHeaders.indexOf(requestPageId) + 1;
 												
 												// if there are any pages next to check
-												if (pageIndex < pageHeaders.size()) {
+												if (requestPageIndex < pageHeaders.size()) {
 													
 													// get the next page
-													page = app.getPages().getPage(getServletContext(), pageHeaders.get(pageIndex).getId());
+													page = app.getPages().getPage(getServletContext(), pageHeaders.get(requestPageIndex).getId());
 													
 													// check the page visibility
 													while (!page.isVisible(rapidRequest, app, formDetails)) {
 														// if we're here the visibility check on the current page failed so increment the index
-														pageIndex ++;
+														requestPageIndex ++;
 														// if there are no more pages go to the summary
-														if (pageIndex > pageHeaders.size() - 1) {
+														if (requestPageIndex > pageHeaders.size() - 1) {
 															// but set the the show summary to true
 															requestSummary = true;
 															// we're done
 															break;
 														} else {
 															// select the next page to check the visibility of
-															page = app.getPages().getPage(getServletContext(), pageHeaders.get(pageIndex).getId());
-															// if not submitted set that we're allowed to this page
-															if (!formDetails.getSubmitted()) formAdapter.setMaxPage(rapidRequest, formDetails, page.getId());														
+															page = app.getPages().getPage(getServletContext(), pageHeaders.get(requestPageIndex).getId());												
 														} // pages remaining check									
 													} // page visible loop
 													
@@ -843,8 +841,17 @@ public class Rapid extends RapidHttpServlet {
 													
 												} else {
 																																					
-													// set that we're allowed to this page
-													if (!formDetails.getSubmitted()) formAdapter.setMaxPage(rapidRequest, formDetails, page.getId());
+													// if this form has not been submitted update the max page id if what we're about to request is less
+													if (!formDetails.getSubmitted()) {
+														// get current max page id
+														String maxPageId = formDetails.getMaxPageId();
+														// assume not max page yet
+														int maxPageIndex = -1;
+														// if there was a max page update to it's index
+														if (maxPageId != null) maxPageIndex = pageHeaders.indexOf(maxPageId);
+														// if update value is greater than current value
+														if (requestPageIndex > maxPageIndex) formAdapter.setMaxPage(rapidRequest, formDetails, page.getId());
+													}
 													
 													// send a redirect for the page (this avoids ERR_CACH_MISS issues on the back button )
 													response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion() + "&p=" + page.getId());
