@@ -829,7 +829,19 @@ public class Rapid extends RapidHttpServlet {
 													// go straight for the summary
 													requestSummary = true;
 												}
-																										
+												
+												// if this form has not been submitted update the max page id if what we're about to request is less
+												if (!formDetails.getSubmitted()) {
+													// get current max page id
+													String maxPageId = formDetails.getMaxPageId();
+													// assume not max page yet
+													int maxPageIndex = -1;
+													// if there was a max page update to it's index
+													if (maxPageId != null) maxPageIndex = pageHeaders.indexOf(maxPageId);
+													// if update value is greater than current value
+													if (requestPageIndex > maxPageIndex) formAdapter.setMaxPage(rapidRequest, formDetails, page.getId());
+												}
+												
 												// if this is the last page
 												if (requestSummary) {
 													
@@ -841,18 +853,6 @@ public class Rapid extends RapidHttpServlet {
 													
 												} else {
 																																					
-													// if this form has not been submitted update the max page id if what we're about to request is less
-													if (!formDetails.getSubmitted()) {
-														// get current max page id
-														String maxPageId = formDetails.getMaxPageId();
-														// assume not max page yet
-														int maxPageIndex = -1;
-														// if there was a max page update to it's index
-														if (maxPageId != null) maxPageIndex = pageHeaders.indexOf(maxPageId);
-														// if update value is greater than current value
-														if (requestPageIndex > maxPageIndex) formAdapter.setMaxPage(rapidRequest, formDetails, page.getId());
-													}
-													
 													// send a redirect for the page (this avoids ERR_CACH_MISS issues on the back button )
 													response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion() + "&p=" + page.getId());
 													
