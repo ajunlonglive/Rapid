@@ -845,8 +845,10 @@ public class Rapid extends RapidHttpServlet {
 													if (!formDetails.getSubmitted()) {
 														// get current max page id
 														String maxPageId = formDetails.getMaxPageId();
-														// get current max page index
-														int maxPageIndex = pageHeaders.indexOf(maxPageId);
+														// assume not max page yet
+														int maxPageIndex = -1;
+														// if there was a max page update to it's index
+														if (maxPageId != null) maxPageIndex = pageHeaders.indexOf(maxPageId);
 														// if update value is greater than current value
 														if (requestPageIndex > maxPageIndex) formAdapter.setMaxPage(rapidRequest, formDetails, page.getId());
 													}
