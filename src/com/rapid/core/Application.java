@@ -2164,10 +2164,14 @@ public class Application {
 		if (appFolder.exists()) {
 			// backup the application
 			backup(rapidServlet, rapidRequest, allVersions);
-			// delete the app folder
+			// delete the version app folder
 			Files.deleteRecurring(appFolder);
-			// delete the web folder
-			Files.deleteRecurring(webFolder);			
+			// if the parent is empty now delete too
+			if (appFolder.getParentFile().list().length == 0) appFolder.getParentFile().delete();
+			// delete the version web folder
+			Files.deleteRecurring(webFolder);
+			// if the parent is empty now delete too
+			if (webFolder.getParentFile().list().length == 0) webFolder.getParentFile().delete();
 		}
 		
 		// close the application
