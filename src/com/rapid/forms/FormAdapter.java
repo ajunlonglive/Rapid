@@ -338,6 +338,12 @@ public abstract class FormAdapter {
 				
 	// protected instance methods
 	
+	// overload for the above abstract method
+	public String getFormControlValue(RapidRequest rapidRequest, String formId, String controlId) throws Exception {
+		// default notHidden to false so the standard behaviour is to return the value whether hidden or not
+		return getFormControlValue(rapidRequest, formId, controlId, false);
+	}
+	
 	// the start of the form summary	page
 	protected String getSummaryStartHtml(RapidRequest rapidRequest, Application application, boolean email) {
 		if (email) {
