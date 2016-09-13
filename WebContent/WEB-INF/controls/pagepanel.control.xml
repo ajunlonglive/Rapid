@@ -128,16 +128,16 @@ return "<div id='" + this.id + "' class='pagepanel" + (this.footer ? " pagePanel
 // inject the page html
 if (this.pageId) {
 
-	var html = "";
+	// closure for control
+	var control = this;
 
 	// request the page
 	$.ajax({
     	url: "~?a=" + _version.id + "&v=" + _version.version + "&p=" + this.pageId + "&action=dialogue",
     	type: "GET",
         data: null,
-        async: false,
         error: function(server, status, error) {
-        	var bodyHtml = "Error loading page : " + error;
+        	control.object.html("Error loading page : " + error);
         },
         success: function(page) {
         	
@@ -196,15 +196,20 @@ if (this.pageId) {
             		break;
             		}
             	}
+            	
+            	// set the html
+    			control.object.html(bodyHtml);
             	  
-        	}
-        	 
+        	} else {
+        		
+        		// set the html
+    			control.object.html("Error loading page : no page provided");
+        	
+        	} //page object check
+
         }
        
 	});
-	
-	// set the html
-    this.object.html("#" + this.id).html(bodyHtml);
 	
 } else {
 	this.object.html("#" + this.id).html("<center><h1>Page</h1></center>");
