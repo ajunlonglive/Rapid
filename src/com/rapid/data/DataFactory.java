@@ -73,6 +73,12 @@ public class DataFactory {
 			_date = value;
 		}
 		
+		public Parameter(java.util.Date value) {
+			Date date = new Date(value.getTime());
+			_type = DATE;
+			_date = date;
+		}
+		
 		public Parameter(int value) {
 			_type = INTEGER;
 			_int = value;
@@ -131,6 +137,7 @@ public class DataFactory {
 		public void add(String value) { this.add(new Parameter(value)); }
 		public void add(int value) { this.add(new Parameter(value)); }
 		public void add(Date value) { this.add(new Parameter(value)); }
+		public void add(java.util.Date value) { this.add(new Parameter(value)); }
 		public void add(float value) { this.add(new Parameter(value)); }
 		public void add(double value) { this.add(new Parameter(value)); }
 		public void add(long value) { this.add(new Parameter(value)); }
@@ -149,6 +156,9 @@ public class DataFactory {
 						this.add(new Parameter(v));
 					} else if (object instanceof Date) {
 						Date v = (Date) object;
+						this.add(new Parameter(v));
+					} else if (object instanceof java.util.Date) {
+						java.util.Date v = (java.util.Date) object;
 						this.add(new Parameter(v));
 					} else if (object instanceof Float) {
 						Float v = (Float) object;
