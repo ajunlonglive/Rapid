@@ -223,7 +223,7 @@ function loadedMapJavaScript() {
 function rebuildLoadedMap(id) {
 	
 	// if google has loaded - might not if offline
-	if (window["google"]) {
+	if (window["google"] && window["google"].maps) {
 	
 		// get the details
 		var details = _mapDetails[id];
