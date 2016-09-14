@@ -119,20 +119,33 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 			}
 			// if this is a sensitive resource
 			if (requestPath.startsWith("/login.jsp") || requestPath.startsWith("/logout.jsp") || requestPath.startsWith("/design.jsp") || requestPath.startsWith("/designpage.jsp") || requestPath.startsWith("/designer") || (requestPath.startsWith("/~") && queryString.contains("a=rapid"))) {
-				// get the client IP
-				String ip = request.getRemoteAddr();
 				// assume no pass
 				boolean pass = false;
-				// log
-				_logger.debug("Checking IP " + ip + " for " + requestPath);				
-				// loop the ip checks
-				for (String ipCheck : _ipChecks) {
-					// check the ip starts with the filter, this allows full, or partial IPs (we remove the * for good measure)
-					if (ip.startsWith(ipCheck)) {
-						// we passed
-						pass = true;
-						// we're done
-						break;
+				// get the client IP
+				String ip = request.getRemoteAddr();
+				// if this is for login.jsp
+				if (requestPath.startsWith("/login.jsp")) {
+					// get the user agent
+					String agent = request.getHeader("User-Agent");
+					// if we got one
+					if (agent != null) {
+						// Rapid Mobile exempts just login.jsp from the IP checks
+						if (agent.contains("RapidMobile")) pass = true;
+					}
+				}
+				// if we haven't passed yet
+				if (!pass) {										
+					// log
+					_logger.debug("Checking IP " + ip + " for " + requestPath);				
+					// loop the ip checks
+					for (String ipCheck : _ipChecks) {
+						// check the ip starts with the filter, this allows full, or partial IPs (we remove the * for good measure)
+						if (ip.startsWith(ipCheck)) {
+							// we passed
+							pass = true;
+							// we're done
+							break;
+						}
 					}
 				}
 				// if we failed
