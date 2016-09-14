@@ -3877,8 +3877,6 @@ function windowResize(ev) {
 	// get the caller of this function
 	var caller = ev.data || ev;
 	
-	console.log("windowResize caller = " + caller);
-			
 	// get the window width
 	var width = _window.width();
 		
