@@ -16,7 +16,7 @@ public abstract class Process extends Thread {
 	protected boolean _stopped;
 		
 	// protected static variables
-	protected static Logger _logger;
+	protected Logger _logger;
 	
 	// constructor
 	public Process(ServletContext servletContext, String name, int interval) {
@@ -31,6 +31,12 @@ public abstract class Process extends Thread {
 	// abstract methods
 	public abstract void doProcess();
 	
+	// protected methods
+	protected Applications getApplications() {
+		return (Applications) _servletContext.getAttribute("applications");
+	}
+	
+	// override methods
 	@Override
 	public void start() {
 		super.start();
@@ -38,7 +44,6 @@ public abstract class Process extends Thread {
 		_logger.info("Process " + _name + " has started, checking every " + _interval + " seconds");
 	}
 		
-	// override methods
 	@Override
 	public void run() {
 		// loop until stopped
