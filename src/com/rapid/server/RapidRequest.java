@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2015 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -200,12 +200,14 @@ public class RapidRequest {
 	
 	// can also instantiate a rapid request with just an HttpServletRequest and an application
 	public RapidRequest(HttpServletRequest request, Application application) {
-		// store the request
-		_request = request;
-		// retain the session
-		_session = request.getSession(false);
-		// store the user name from the session
-		_userName = (String) getSessionAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME);
+		if (request != null) {
+			// store the request
+			_request = request;
+			// retain the session
+			_session = request.getSession(false);
+			// store the user name from the session
+			_userName = (String) getSessionAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME);
+		}
 		// store the application
 		_application = application;
 		// if we got an application
