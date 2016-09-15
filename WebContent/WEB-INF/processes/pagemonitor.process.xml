@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <process xmlVersion="1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/process.xsd">
   	<name>Page monitor</name>
-  	<class>com.rapid.processes.PageMonitor</class>
+  	<class>com.rapid.processes.PageMonitorProcess</class>
   	<interval>1800</interval>
 </process>
