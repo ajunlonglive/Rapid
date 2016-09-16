@@ -67,8 +67,6 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 	public FormAuthenticationAdapter(FilterConfig filterConfig) {
 		// call the super
 		 super(filterConfig);
-		 // get the login pages
-		 _jsonLogins = (List<JSONObject>) filterConfig.getServletContext().getAttribute("jsonLogins");		 
 		// look for ip check for sensitive pages
 		 String ipCheck = filterConfig.getInitParameter(INIT_PARAM_IP_CHECK);
 		 // if we got some, build the array now
@@ -218,6 +216,8 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 				// look in the request for the username
 				userName = request.getParameter("userName");
 				
+				// if jsonLogs is null try and get some from the servlet context
+				if (_jsonLogins == null) _jsonLogins = (List<JSONObject>) req.getServletContext().getAttribute("jsonLogins");		 
 				// if we have custom logins
 				if (_jsonLogins != null) {
 					// loop the login pages
