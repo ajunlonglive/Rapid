@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.security.GeneralSecurityException;
 import java.util.Enumeration;
+import java.util.List;
 
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
@@ -40,9 +41,11 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.JSONObject;
 
 import com.rapid.core.Application;
 import com.rapid.core.Applications;
+import com.rapid.security.SecurityAdapter.SecurityAdapaterException;
 import com.rapid.server.RapidHttpServlet;
 import com.rapid.server.RapidRequest;
 
@@ -51,14 +54,21 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 	public static final String INIT_PARAM_IP_CHECK = "ipcheck";
 	public static final String INIT_PARAM_PUBLIC_ACCESS = "public";
 	public static final String PUBLIC_ACCESS_USER = "public";
+	
+	public static final String LOGIN_PATH = "login.jsp";
+	public static final String INDEX_PATH = "index.jsp";
 		
 	private static Logger _logger = LogManager.getLogger(RapidAuthenticationAdapter.class);
 	
-	private boolean _publicAccess = false;
+	private List<JSONObject> _jsonLogins = null;	
 	private String[] _ipChecks = null;
-	
+	private boolean _publicAccess = false;
+		
 	public FormAuthenticationAdapter(FilterConfig filterConfig) {
+		// call the super
 		 super(filterConfig);
+		 // get the login pages
+		 _jsonLogins = (List<JSONObject>) filterConfig.getServletContext().getAttribute("jsonLogins");		 
 		// look for ip check for sensitive pages
 		 String ipCheck = filterConfig.getInitParameter(INIT_PARAM_IP_CHECK);
 		 // if we got some, build the array now
@@ -72,11 +82,12 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 			 }
 			 // log
 			 _logger.info("IP addresses will be checked against " + ipCheck + " for access to sensitive resources.");	
-		 }
+		 }		 		 
 		 // look for whether public access is allowed
-		 _publicAccess  = Boolean.parseBoolean(filterConfig.getInitParameter(INIT_PARAM_PUBLIC_ACCESS));
+		 _publicAccess  = Boolean.parseBoolean(filterConfig.getInitParameter(INIT_PARAM_PUBLIC_ACCESS));		 
 		 // log
 		 _logger.info("Form authentication filter initialised.");		
+		 		 
 	}
 		
 	@Override
@@ -84,7 +95,7 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 		
 		// cast the ServletRequest to a HttpServletRequest
 		HttpServletRequest request = (HttpServletRequest) req;
-		
+				
 		// log the full request
 		if (_logger.isTraceEnabled()) {
 			_logger.debug("FormAuthenticationAdapter request : " + request.getMethod() + " " + request.getRequestURL() + (request.getQueryString() == null ? "" : "?" + request.getQueryString()));
@@ -102,8 +113,6 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 		// if null set to root
 		if (requestPath == null) requestPath = "/";
 		if (requestPath.length() == 0) requestPath = "/"; 
-		// make lower case - just to be sure
-		requestPath = requestPath.toLowerCase();
 		
 		// if ip checking is in place
 		if (_ipChecks != null) {
@@ -159,8 +168,8 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 					// no further processing
 					return null;
 				}			
-			}
-		}
+			} // sensitive resource
+		} // ip checks
 				
 		// if we can return this resource without authentication
 		if (requestPath.endsWith("favicon.ico") || requestPath.startsWith("/images/") || requestPath.startsWith("/scripts") || requestPath.startsWith("/styles")) {
@@ -179,6 +188,11 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 			// only allow in frame if sameorigin
 			response.addHeader("X-FRAME-OPTIONS", "SAMEORIGIN" );
 			
+			// assume default login page
+			String loginPath = LOGIN_PATH;
+			// assume default index page
+			String indexPath = INDEX_PATH;
+			
 			// assume no userName
 			String userName = null;
 						
@@ -187,24 +201,48 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 			
 			// look in the session for username
 			userName = (String) session.getAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME);
+															
+			// look in the session for index path
+			String sessionIndexPath = (String) session.getAttribute(RapidFilter.SESSION_VARIABLE_INDEX_PATH);
+			// if we got one use it
+			if (sessionIndexPath != null) indexPath= sessionIndexPath;
 
 			// check if we got one
 			if (userName == null) {
 				
 				_logger.trace("No userName found in session");
-																				
+																												
 				// look for a sessionRequestPath attribute in the session
 				String sessionRequestPath = (String) session.getAttribute("requestPath");
 				
 				// look in the request for the username
-				userName = request.getParameter("userName");				
-			
+				userName = request.getParameter("userName");
+				
+				// if we have custom logins
+				if (_jsonLogins != null) {
+					// loop the login pages
+					for (JSONObject jsonLogin : _jsonLogins) {
+						// get the login path
+						String jsonLoginPath = jsonLogin.optString("path","").trim();
+						// if the request is for a login page
+						if (requestPath.endsWith(jsonLoginPath)) {
+							// remember this page
+							loginPath = jsonLoginPath;
+							// put the index path in the session
+							session.setAttribute(RapidFilter.SESSION_VARIABLE_INDEX_PATH,  jsonLogin.optString("index","").trim());
+							// we're done
+							break;
+						}
+					}
+				}
+				
+				// check for a user in the request
 				if (userName == null) {
 					
 					_logger.trace("No userName found in request");
 																									
 					// if we are attempting to authorise 
-					if (requestPath.endsWith("login.jsp") && sessionRequestPath != null) {
+					if (requestPath.endsWith(loginPath) && sessionRequestPath != null) {
 												
 						// check the url for a requestPath
 						String urlRequestPath = request.getParameter("requestPath");
@@ -216,7 +254,7 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 					} else {
 						
 						// if we're allowing public access, but not if this is the login page
-						if (_publicAccess && !requestPath.endsWith("login.jsp")) {
+						if (_publicAccess && !requestPath.endsWith(loginPath)) {
 							
 							// set the user name to public
 							session.setAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME, PUBLIC_ACCESS_USER);
@@ -250,7 +288,7 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 						session.setAttribute("requestPath", authorisationRequestPath);
 						
 						// send a redirect to load the login page
-						response.sendRedirect("login.jsp");
+						response.sendRedirect(loginPath);
 						
 					}
 									
@@ -288,18 +326,51 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 					
 					// if there are some applications
 					if (applications != null) {
-						// loop them
-						for (Application application : applications.get()) {
-							try {
-								// get a Rapid request
-								RapidRequest rapidRequest = new RapidRequest(request, application);
-								// see if the user is known to this application
-								authorised = application.getSecurityAdapter().checkUserPassword(rapidRequest, userName, userPassword);
-								// we can exit if so as we only need one
-								if (authorised) break;								
-							} catch (Exception ex) {
-								// log the error
-								_logger.error("FormAuthenticationAdapter error checking user", ex);
+						// if the index path is for a specific app
+						if (indexPath.contains("a=")) {
+							// get the app id
+							String appId = indexPath.substring(indexPath.indexOf("a=") + 2);
+							// assume no version
+							String version = null;							
+							// see if the user is known to this application
+							try {								
+								// if other parameters clean to there
+								if (appId.indexOf("&") > 0) appId = appId.substring(0, appId.indexOf("&"));
+								// if version parameter
+								if (indexPath.contains("v=")) {
+									// get the version
+									version = indexPath.substring(indexPath.indexOf("v=") + 2);
+									// if other parameters clean to there
+									if (version.indexOf("&") > 0) version = version.substring(0, version.indexOf("&"));
+								}
+								// get this application
+								Application application = applications.get(appId, version);
+								// if we got it
+								if (application == null) {
+									_logger.error("Error checking permission for app " + appId + " - can't be found");
+								} else {
+									// get a Rapid request
+									RapidRequest rapidRequest = new RapidRequest(request, application);
+									// check if authorised
+									authorised = application.getSecurityAdapter().checkUserPassword(rapidRequest, userName, userPassword);
+								}
+							} catch (SecurityAdapaterException ex) {
+								_logger.error("Error checking permission for app " + appId + " in login index : ", ex);
+							}
+						} else {
+							// loop all applications
+							for (Application application : applications.get()) {
+								try {
+									// get a Rapid request
+									RapidRequest rapidRequest = new RapidRequest(request, application);
+									// see if the user is known to this application
+									authorised = application.getSecurityAdapter().checkUserPassword(rapidRequest, userName, userPassword);
+									// we can exit if so as we only need one
+									if (authorised) break;								
+								} catch (Exception ex) {
+									// log the error
+									_logger.error("FormAuthenticationAdapter error checking user", ex);
+								}
 							}
 						}
 					}
@@ -322,7 +393,7 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 						_logger.debug("FormAuthenticationAdapter authenticated " + userName + " from " + deviceDetails);
 						
 						// make the sessionRequest path the root just in case it was null (or login.jsp itself)
-						if (sessionRequestPath == null || "login.jsp".equals(sessionRequestPath)) sessionRequestPath = ".";
+						if (sessionRequestPath == null || loginPath.equals(sessionRequestPath)) sessionRequestPath = ".";
 												
 						// if we had a requestApp in the sessionRequestPath, go straight to the app
 						if (sessionRequestPath.indexOf("requestApp") > 0) {
@@ -356,28 +427,28 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 						try { Thread.sleep(1000); } catch (InterruptedException e) {}
 						
 						// send a redirect to load the login page
-						response.sendRedirect("login.jsp");
+						response.sendRedirect(loginPath);
 											
 						// return immediately
 						return null;
 						
-					}
+					} // authorised
 																			
-				}
+				} // check for a username parameter in request data
 												
-			}
+			} // authentication check (whether username is in session)
 			
-			// if we are requesting the login.jsp but have authenticated go to index instead
-			if (requestPath.contains("login.jsp") && "GET".equals(request.getMethod())) {
+			// if we are requesting the login.jsp or root but have authenticated, go to index instead
+			if ((requestPath.contains(loginPath) || "/".equals(requestPath)) && "GET".equals(request.getMethod())) {
 				
-				// send a redirect to load the index page
-				response.sendRedirect("index.jsp");
+				// send a redirect to load the index
+				response.sendRedirect(indexPath);
 				
 				// return immediately
 				return null;
 				
 			}
-				
+							
 			// return the request which will process the chain
 			// hold a reference to the original request
 			HttpServletRequest filteredReq = request;

@@ -44,6 +44,7 @@ import com.rapid.utils.Classes;
 public class RapidFilter implements Filter {
 
 	// different applications' security adapters will retrieve different user objects
+	public static final String SESSION_VARIABLE_INDEX_PATH = "index";	
 	public static final String SESSION_VARIABLE_USER_NAME = "user";
 	public static final String SESSION_VARIABLE_USER_PASSWORD = "password";
 	public static final String SESSION_VARIABLE_USER_DEVICE = "device";	
