@@ -123,6 +123,61 @@ public class RapidServletContextListener extends Log4jServletContainerInitialize
 		
 	}
 	
+	public static int loadLogins(ServletContext servletContext) throws Exception {
+		
+		int loginCount = 0;
+								
+		// get the directory in which the control xml files are stored
+		File dir = new File(servletContext.getRealPath("/WEB-INF/logins/"));
+		
+		// if the directory exists
+		if (dir.exists()) {
+		
+			// create an array list of json objects to hold the logins
+			ArrayList<JSONObject> logins = new ArrayList<JSONObject>();
+			
+			// create a filter for finding .control.xml files
+			FilenameFilter xmlFilenameFilter = new FilenameFilter() {
+		    	public boolean accept(File dir, String name) {
+		    		return name.toLowerCase().endsWith(".login.xml");
+		    	}
+		    };
+		    
+		    // create a schema object for the xsd
+		    Schema schema = _schemaFactory.newSchema(new File(servletContext.getRealPath("/WEB-INF/schemas/") + "/login.xsd"));
+		    // create a validator
+		    Validator validator = schema.newValidator();
+		    	
+			// loop the xml files in the folder
+			for (File xmlFile : dir.listFiles(xmlFilenameFilter)) { 
+	
+				// read the xml into a string
+				String xml = Strings.getString(xmlFile);
+				
+				// validate the control xml file against the schema
+				validator.validate(new StreamSource(new ByteArrayInputStream(xml.getBytes("UTF-8"))));
+				
+				// convert the string into JSON
+				JSONObject jsonLogin = org.json.XML.toJSONObject(xml).getJSONObject("login");
+				
+				// add to array list
+				logins.add(jsonLogin);
+													
+				// increment the count
+				loginCount++;
+				
+			}
+			
+			// put the logins in a context attribute (this is available to the security adapters on initialisation)
+			servletContext.setAttribute("jsonLogins", logins);
+																										
+		}
+		
+		_logger.info(loginCount + " logins loaded from .login.xml files");
+		
+		return loginCount;
+		
+	}
 		
 	public static int loadDatabaseDrivers(ServletContext servletContext) throws Exception {
 		
@@ -1127,9 +1182,15 @@ public class RapidServletContextListener extends Log4jServletContainerInitialize
 			// initialise the list of classes we're going to want in the JAXB context (the loaders will start adding to it)
 			_jaxbClasses = new ArrayList<Class>();	
 			
-			_logger.info("Loading database drivers");
+			// load the logins first
+			_logger.info("Loading logins");
 			
 			// load the database drivers first
+			loadLogins(servletContext);
+			
+			_logger.info("Loading database drivers");
+			
+			// load the database drivers 
 			loadDatabaseDrivers(servletContext);
 			
 			_logger.info("Loading connection adapters");
