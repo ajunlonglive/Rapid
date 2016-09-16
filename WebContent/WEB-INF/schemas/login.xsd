@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+<!-- 
+
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
+
+gareth.edwards@rapid-is.co.uk
+
+
+This file is part of the Rapid Application Platform
+
+Rapid is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version. The terms require you to include
+the original copyright, and the license notice in all redistributions.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
+
+ -->
+
+	<xs:annotation>
+		<xs:documentation>The schema for .login.xml files - The FormAuthenticationAdapter will use them to process logging in to Rapid. If there is no index specified "index.jsp" will be used. The logout path should be provided on the index, and/or in the app(s).
+		</xs:documentation>
+	</xs:annotation>
+	<xs:element name="login">
+		<xs:complexType>
+			<xs:sequence>				
+				<xs:element name="path">
+					<xs:annotation>
+						<xs:documentation>The path of the login. Typically a jsp page like "login.jsp"
+						</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:minLength value="1" />
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="index">
+					<xs:annotation>
+						<xs:documentation>The path of the index, shown after login, or if already logged in. Typically a jsp page like "index.jsp", or the default app like "~?a=demo"
+						</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:minLength value="1" />
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="xmlVersion" type="xs:integer" use="required">
+				<xs:annotation>
+					<xs:documentation>This attribute defines the version of the xml file</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
