@@ -1230,7 +1230,7 @@ public class RapidServletContextListener extends Log4jServletContainerInitialize
 								    		  									
 		} catch (Exception ex) {	
 			
-			_logger.error("Error loading applications : " + ex.getMessage());
+			_logger.error("Error initialising Rapid : " + ex.getMessage());
 			
 			ex.printStackTrace();
 		}
