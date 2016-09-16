@@ -14,7 +14,7 @@ html {
 body {
 	min-height: 100%;		
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#e8e8e8',GradientType=0 );
-	font-family: 'Open Sans';
+	font-family: 'Open Sans', Arial, sans-serif;
 	margin:0;
 	background: transparent linear-gradient(#FFF, #E8E8E8) fixed;
 }
