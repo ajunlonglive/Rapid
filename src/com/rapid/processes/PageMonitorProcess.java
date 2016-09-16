@@ -9,7 +9,7 @@ import com.rapid.core.Applications;
 import com.rapid.core.Process;
 
 // this monitor class runs on it's own thread and removed pages from memory that have not been accessed in more than a specified time
-public class PageMonitor extends Process {
+public class PageMonitorProcess extends Process {
 	
 	// private static finals
 	private static final int MAX_AGE = 1800;
@@ -18,7 +18,7 @@ public class PageMonitor extends Process {
 	private int  _maxPageAge;
 		
 	// constructor
-	public PageMonitor(ServletContext servletContext, String name, int interval) {
+	public PageMonitorProcess(ServletContext servletContext, String name, int interval) {
 		
 		// required to invoke super
 		super(servletContext, name, interval);
@@ -32,15 +32,10 @@ public class PageMonitor extends Process {
 		} catch (Exception ex) {
 			_logger.error("pageMaxAge is not an integer");
 		}
-				
-	}
-	
-	@Override
-	public void start() {
-		// call the super method so it actually starts!
-		super.start();
+		
 		// log our details
-		_logger.info("Page monitor will check for pages not accessed in the last " + _maxPageAge + " seconds");
+		_logger.info("Page monitor process will check for pages not accessed in the last " + _maxPageAge + " seconds");
+				
 	}
 	
 	@Override
