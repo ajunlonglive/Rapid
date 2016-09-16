@@ -143,6 +143,7 @@ function Action_validation(ev, validations, showMessages) {
 						details = window[validation.details];
 					}
 				}
+				ev.validation = true;
 				var value = getValueFunction(ev, validation.controlId, validation.field, details);
 				if (validation.validationType == "javascript") {						
 					var validationFunction = new Function(["ev","id","value"], validation.javaScript);
