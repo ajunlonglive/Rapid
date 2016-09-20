@@ -3070,7 +3070,7 @@ function Property_gridColumns(cell, grid, property, details) {
 		// get the type
 		var type = textArea.attr("data-type");	
 		// update the td text if known cell function
-		if (index >= 0 && type == "f") table.find("tr:nth(" + (index + 1) + ")").last().children("td:nth(6)").html(value);
+		if (index >= 0 && type == "f") table.find("tr:nth(" + (index + 1) + ")").last().children("td:nth(6)").text(value);
 		// empty the value
 		textArea.val("");
 		// hide it
