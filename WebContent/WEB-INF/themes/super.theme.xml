@@ -51,7 +51,6 @@ $(document).ready( function() {
 	    		<contents>
 	    			<![CDATA[
 	    			
-
 .dialogue {
   border: 10px solid #542A75;
   border-radius: 7px;
@@ -700,8 +699,142 @@ select:disabled:hover {
 .dropdown1:disabled:hover {
   background-color: #729EAF;
 }
-	    	        
-	    ]]>    
+
+/* Mozilla custom stylings */
+@-moz-document url-prefix() {  
+  label.checkbox label:hover::before { /* Our tick on hover */
+    border: none;
+  }
+
+  input[type=checkbox] { /* Hide moz standard */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: transparent;
+    position: relative;
+    visibility: hidden;
+    display: none;
+  }
+
+  input[type=checkbox], input[type=checkbox] + span::before {
+    vertical-align: middle;
+    margin-top: -9px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  input[type=checkbox] + span::before { /* Our custom radio button */
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    content: '';
+    background: #F2F8FA;
+    border-radius: 4px;
+    margin: -1px;
+    border: 2px solid #0083B3;
+    margin-right: 13px;
+    margin-left: 8px;
+    box-shadow: 0px 2px 0px 0px #FFF inset;
+    transition: all 0.2s linear 0s;
+  }
+
+  input[type=checkbox]:hover {
+    cursor: pointer;
+  }
+
+  input[type=checkbox]:checked + span::before {
+    background: #FFF;
+    content: '\2713';
+    color: #005778;
+    font-size: 25px;
+    line-height: 20px;
+    text-align: center;
+    border-color: #005778;
+    transition: all 0.2s linear 0s;
+  }
+
+  /* Disabled properties */
+  input[type=checkbox]:disabled + span::before {
+    background: #D0D6D8;
+  }
+
+  label.checkbox[disabled]::before {
+    border: none;
+  }
+
+  input[type=checkbox]:disabled:checked + span::before {
+    color: #73A7BB;
+  }
+
+/* Radio buttons */
+  label.radiobuttons label:hover::before { /* Our tick on hover */
+    border: none;
+  }
+
+  input[type=radio] { /* Hide moz standard */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: transparent;
+    position: relative;
+    visibility: hidden;
+    display: none;
+  }
+
+  input[type=radio], input[type=radio] + span::before {
+    vertical-align: middle;
+    margin-top: -9px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  input[type=radio] + span::before { /* Our custom radio button */
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    content: '';
+    background: #F2F8FA;
+    border-radius: 100px;
+    margin: -1px;
+    border: 2px solid #0083B3;
+    margin-right: 13px;
+    margin-left: 8px;
+    box-shadow: 0px 1px 2px #F1F1F1 inset;
+    transition: all 0.2s linear 0s;
+  }
+
+  input[type=radio]:hover {
+    cursor: pointer;
+  }
+
+  input[type=radio]:checked + span::before {
+    background: #FFF;
+    border-color: #005778;
+    content: '\2022';
+    color: #005778;
+    font-size: 37px;
+    line-height: 17px;
+    text-align: center;
+    box-shadow: 0px 2px 0px 0px #FFF inset;
+    transition: all 0.2s linear 0s;
+  }
+
+  /* Disabled properties */
+
+  input[type=radio]:disabled + span::before {
+    background: #D0D6D8;
+    border-color: #005778;
+  }
+
+  label.radiobuttons[disabled]::before {
+    border: none;
+  }
+
+  input[type=radio]:disabled:checked + span::before {
+    color: #73A7BB;
+  }
+}
+	    ]]>
 	    </css>
 	   
 </template>

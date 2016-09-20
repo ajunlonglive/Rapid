@@ -601,8 +601,122 @@ input[type=radio]:focus:before {
   border: 1px solid #66afe9;
   box-shadow:inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 0 2pt rgba(102, 175, 233, 0.6);
 }
-	    	        
-	    ]]>    
+
+/* Mozilla custom stylings */
+@-moz-document url-prefix() {
+  label.checkbox:hover::before { /* Our tick on hover */
+    border: none;
+  }
+
+  label.checkbox input[type="checkbox"]:checked + label::before {
+    border-right: 3px solid #FFF;
+    border-bottom: 3px solid #FFF;
+  }
+
+  input[type=checkbox] { /* Hide moz standard */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: transparent;
+    position: relative;
+    visibility: hidden;
+    display: none;
+  }
+
+  input[type=checkbox], input[type=checkbox] + span::before {
+    vertical-align: middle;
+    margin-top: -3px;
+    margin-right: 16px;
+    outline: none;
+  }
+
+  input[type=checkbox] + span::before { /* Our custom checkbox */
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    content: '';
+    background: #FFF;
+    border: 1px solid #C9C9C9;
+    margin-left: 8px;
+    margin-right: 10px;
+    border-radius: 4px;
+  }
+
+  input[type=checkbox]:hover + span::before {
+    box-shadow: 0 0 0 2px #87C4E7;
+  }
+
+  input[type=checkbox]:checked + span::before {
+    content: '\2713';
+    color: #FFF;
+    font-size: 22px;
+    line-height: 18px;
+    border-color: #007BBE;
+    background: #007BBE;
+    text-align: center;
+  }
+
+  input[type=checkbox]:disabled + span::before {
+    background: #E8E8E8;
+  }
+
+  input[type=checkbox]:disabled:checked + span::before {
+    background: #AFAFAF;
+    border-color: #8C8C8C;
+  }
+
+  input[type=radio] { /* Hide moz standard */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: transparent;
+    position: relative;
+    visibility: hidden;
+    display: none;
+  }
+
+  input[type=radio], input[type=radio] + span::before {
+    vertical-align: middle;
+    margin-top: -3px;
+    outline: none;
+  }
+
+  input[type=radio] + span::before { /* Our custom radio button */
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    content: '';
+    background: #FFF;
+    border-radius: 100px;
+    border: 1px solid #C9C9C9;
+    margin-right: 10px;
+    margin-left: 8px;
+  }
+
+  input[type=radio]:hover + span::before {
+    box-shadow: 0 0 0 2px #87C4E7;
+  }
+
+  input[type=radio]:checked + span::before {
+    content: '\2713';
+    color: #FFF;
+    font-size: 23px;
+    line-height: 17px;
+    text-align: center;
+    border-color: #007BBE;
+    background: #007BBE;
+  }
+
+  input[type=radio]:disabled + span::before {
+    background: #E8E8E8;
+  }
+  
+  input[type=radio]:checked:disabled + span::before {
+    background: #AFAFAF;
+    border-color: #8C8C8C;
+  }
+}
+	    ]]>
 	    </css>
 	   
 </template>
