@@ -684,6 +684,9 @@ public class Rapid extends RapidHttpServlet {
 									gotoStartPage(request, response, app, !security.checkUserRole(rapidRequest, DESIGN_ROLE));
 									
 								} else {
+									
+									// mark the form as started
+									formDetails.setStarted(true);
 							
 									// this is a form page's data being submitted
 									String formData = new String(bodyBytes, "UTF-8");
