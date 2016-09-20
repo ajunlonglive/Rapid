@@ -283,14 +283,15 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 %>
 
 	<div class="image">
-		<img src="images/RapidLogo_60x40.png" />
+		<a href="http://www.rapid-is.co.uk"><img src="images/RapidLogo_60x40.png" /></a>
 	</div>
 	
 	<div class="title">
-		<span>Rapid - version <%=com.rapid.server.Rapid.VERSION %></span>
+		<span>Rapid - No permission</span>
+		<span class="link"><a href="logout.jsp">log out</a></span>
 	</div>
 
-	<div style="text-align:center;"><h3>You do not have permission to use the Rapid Designer</h3></div>
+	<div class="info"><p>You do not have permission to use the Rapid Designer</p></div>
 		
 <%		
 	}
