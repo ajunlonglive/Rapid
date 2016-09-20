@@ -654,8 +654,139 @@ select:focus {
 select:focus option {
   background-color:#fff;
 }
-	    	        
-	    ]]>    
+
+/* Mozilla custom stylings */
+@-moz-document url-prefix() {
+  label.checkbox:hover::before { /* Our tick on hover */
+    border: none;
+  }
+
+  label.checkbox input[type="checkbox"]:checked + label::before {
+    border-right: 3px solid #FFF;
+    border-bottom: 3px solid #FFF;
+  }
+
+  input[type=checkbox] { /* Hide moz standard */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: transparent;
+    position: relative;
+    visibility: hidden;
+    display: none;
+  }
+
+  input[type=checkbox], input[type=checkbox] + span::before {
+    vertical-align: middle;
+    margin-top: -3px;
+    margin-right: 16px;
+    outline: none;
+  }
+
+  input[type=checkbox] + span::before { /* Our custom checkbox */
+    width: 19px;
+    height: 19px;
+    display: inline-block;
+    content: '';
+    background: #FFF;
+    border: 2px solid #BABABA;
+    margin-left: 8px;
+  }
+
+  input[type=checkbox]:active + span::before {
+    background-color: black;
+    border-color: black;
+  }
+
+  input[type=checkbox]:checked + span::before {
+    content: '\2713';
+    color: black;
+    font-size: 25px;
+    line-height: 17px;
+  }
+
+  input[type=checkbox]:checked:active + span::before {
+    border-color: #BABABA;
+  }
+
+  input[type=checkbox]:disabled + span::before {
+    background: #D0D6D8;
+  }
+
+  label.checkbox[disabled]::before {
+    border: none;
+  }
+
+  input[type=checkbox]:disabled:checked + span::before {
+    background: #D0D6D8;
+    color: #B5B5B5;
+  }
+  
+  input[type=checkbox]:disabled:active + span::before {
+    border-color: #BABABA;
+  }
+
+  input[type=radio] { /* Hide moz standard */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: transparent;
+    position: relative;
+    visibility: hidden;
+    display: none;
+  }
+
+  input[type=radio], input[type=radio] + span::before {
+    vertical-align: middle;
+    margin-top: -3px;
+    outline: none;
+  }
+
+  input[type=radio] + span::before { /* Our custom radio button */
+    width: 19px;
+    height: 19px;
+    display: inline-block;
+    content: '';
+    background: #FFF;
+    border-radius: 100%;
+    border: 2px solid #BABABA;
+    margin-right: 16px;
+    margin-left: 8px;
+  }
+
+  input[type=radio]:active + span::before {
+    background-color: black;
+    border-color: black;
+  }
+
+  input[type=radio]:checked + span::before {
+    content: '\2713';
+    color: black;
+    font-size: 23px;
+    line-height: 19px;
+  }
+
+  input[type=checkbox]:checked:active + span::before {
+    border-color: #BABABA;
+  }
+
+  input[type=radio]:disabled + span::before {
+    background: #D0D6D8;
+  }
+
+  label.radiobuttons[disabled]::before {
+    border: none;
+  }
+
+  input[type=radio]:disabled:checked + span::before {
+    background: #D0D6D8;
+  }
+  
+  input[type=radio]:disabled:active + span::before {
+    border-color: #BABABA;
+  }
+}
+	    ]]>
 	    </css>
 	   
 </template>
