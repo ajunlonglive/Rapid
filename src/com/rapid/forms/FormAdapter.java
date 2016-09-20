@@ -25,6 +25,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
 package com.rapid.forms;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -40,6 +41,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import javax.mail.util.ByteArrayDataSource;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -413,16 +415,13 @@ public abstract class FormAdapter {
 	}
 	
 	// return a forms CSV as a string (for attaching or saving to file)
-	protected String getFormCSV(RapidRequest rapidRequest, UserFormDetails formDetails) throws Exception {
-		
-		// get the form id
-		String formId = formDetails.getId();
+	protected String getFormCSV(RapidRequest rapidRequest, String formId) throws Exception {
 		
 		// the string builder we'll make the attachment with
 		StringBuilder sb = new StringBuilder();
 		
 		// create the header line
-		sb.append("page id, control id, name, label, value, hidden\n");
+		sb.append("\"page id\",\"control id\",\"name\",\"label\",\"value\",\"hidden\"\n");
 		
 		// loop the page ids
 		for (String pageId : _application.getPages().getPageIds()) {
@@ -468,10 +467,7 @@ public abstract class FormAdapter {
 	}
 	
 	// return a forms XML as a string (for attaching or saving to file)
-	protected String getFormXML(RapidRequest rapidRequest, UserFormDetails formDetails) throws Exception {
-		
-		// get the form id
-		String formId = formDetails.getId();
+	protected String getFormXML(RapidRequest rapidRequest, String formId) throws Exception {
 		
 		// the string builder we'll make the attachment with
 		StringBuilder sb = new StringBuilder();
@@ -532,10 +528,7 @@ public abstract class FormAdapter {
 	}
 	
 	// return a forms CSV as a string (for attaching or saving to file)
-		protected String getFormJSON(RapidRequest rapidRequest, UserFormDetails formDetails) throws Exception {
-			
-			// get the form id
-			String formId = formDetails.getId();
+		protected String getFormJSON(RapidRequest rapidRequest, String formId) throws Exception {
 			
 			// create the object
 			JSONObject jsonForm = new JSONObject();
@@ -594,29 +587,39 @@ public abstract class FormAdapter {
 		}
 	
 	// this returns the .pdf file name
-	protected String getFormFileName(RapidRequest rapidRequest, UserFormDetails formDetails, String extenstion, boolean email) { return _application.getName() + formDetails.getId() + "." + extenstion; }
+	protected String getFormFileName(RapidRequest rapidRequest, String formId, String extenstion, boolean email) { 
+		return _application.getName() + formId + "." + extenstion; 
+	}
 	
 	// this returns the input stream for the attachment file
-	protected Attachment getEmailAttachment(RapidRequest rapidRequest, UserFormDetails formDetails) throws Exception {
+	protected Attachment getEmailAttachment(RapidRequest rapidRequest, String formId) throws Exception {
 		
 		// get the type
 		String attachmentType = _application.getFormEmailAttachmentType();
 		
+		// get the file name
+		String fileName = getFormFileName(rapidRequest, formId, attachmentType, true);
+		
 		if("csv".equals(attachmentType)) {
 			
 			// return the csv attachment
-			return new Attachment(getFormFileName(rapidRequest, formDetails, attachmentType, true), new StringDataSource("text/csv", getFormCSV(rapidRequest, formDetails)));
+			return new Attachment(fileName, new StringDataSource("text/csv", getFormCSV(rapidRequest, formId)));
 			
 		} else 	if("xml".equals(attachmentType)) {
 			
 			// return the xml attachment
-			return new Attachment(getFormFileName(rapidRequest, formDetails, attachmentType, true), new StringDataSource("text/xml", getFormXML(rapidRequest, formDetails)));
+			return new Attachment(fileName, new StringDataSource("text/xml", getFormXML(rapidRequest, formId)));
 			
 		} else 	if("pdf".equals(attachmentType)) {
 			
-			//mimeType = "application/pdf";
+			// get an in-memory output stream
+			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 			
-			return null;
+			// write the pdf
+			writeFormPDF(rapidRequest, outputStream, formId, true); 
+						
+			// return the pdf attachment with a ByteArrayDataSource
+			return new Attachment(fileName, new ByteArrayDataSource(outputStream.toByteArray(), "application/pdf"));
 			
 		} else {
 			
@@ -627,10 +630,10 @@ public abstract class FormAdapter {
 	}
 	
 	// this returns the form email subject and can be overridden if need be
-	protected String getEmailSubject(RapidRequest rapidRequest, UserFormDetails formDetails) { return _application.getTitle() + " " + formDetails.getId() + " submitted";	}
+	protected String getEmailSubject(RapidRequest rapidRequest, String formId) { return _application.getTitle() + " " + formId + " submitted";	}
 								
 	// saves the form file to the file system
-	public void saveFormFile(RapidRequest rapidRequest, UserFormDetails formDetails) throws Exception {
+	public void saveFormFile(RapidRequest rapidRequest, String formId) throws Exception {
 		
 		// get the form path
 		String path = _application.getFormFilePath();
@@ -646,7 +649,7 @@ public abstract class FormAdapter {
 		if (fileType.length() == 0) fileType = "csv";
 		
 		// get the file name
-		String fileName = getFormFileName(rapidRequest, formDetails, fileType, false);
+		String fileName = getFormFileName(rapidRequest, formId, fileType, false);
 						
 		// check for a network user
 		String user = _application.getFormFileUserName();
@@ -666,11 +669,11 @@ public abstract class FormAdapter {
 			if ("csv".equals(fileType)) {
 				
 				// get the file and save the network way
-				CIFS.saveFile(user, _application.getFormFilePassword(), path, getFormCSV(rapidRequest, formDetails));									
+				CIFS.saveFile(user, _application.getFormFilePassword(), path, getFormCSV(rapidRequest, formId));									
 				
 			} else if ("xml".equals(fileType)) {
 				
-				CIFS.saveFile(user, _application.getFormFilePassword(), path, getFormXML(rapidRequest, formDetails));
+				CIFS.saveFile(user, _application.getFormFilePassword(), path, getFormXML(rapidRequest, formId));
 													
 			} else if ("pdf".equals(fileType)) {
 				
@@ -688,12 +691,12 @@ public abstract class FormAdapter {
 			if ("csv".equals(fileType)) {
 				
 				// get the file and save the simple way
-				Strings.saveString(getFormCSV(rapidRequest, formDetails), formFile);
+				Strings.saveString(getFormCSV(rapidRequest, formId), formFile);
 
 			} else if ("xml".equals(fileType)) {
 				
 				// get the file and save the simple way
-				Strings.saveString(getFormXML(rapidRequest, formDetails), formFile);
+				Strings.saveString(getFormXML(rapidRequest, formId), formFile);
 					
 			} else if ("pdf".equals(fileType)) {
 				
@@ -703,7 +706,7 @@ public abstract class FormAdapter {
 		
 	}
 	
-	public void sendFormWebservice(RapidRequest rapidRequest, UserFormDetails formDetails) throws Exception {
+	public void sendFormWebservice(RapidRequest rapidRequest, String formId) throws Exception {
 		
 		// get the data type
 		String dataType = _application.getFormWebserviceType();
@@ -711,17 +714,17 @@ public abstract class FormAdapter {
 		if ("json".equals(dataType)) {
 			
 			// POST the JSON
-			Http.post(_application.getFormWebserviceURL(), getFormJSON(rapidRequest, formDetails));
+			Http.post(_application.getFormWebserviceURL(), getFormJSON(rapidRequest, formId));
 			
 		} else if ("restful".equals(dataType)) {
 			
 			// POST the XML
-			Http.post(_application.getFormWebserviceURL(), getFormXML(rapidRequest, formDetails));
+			Http.post(_application.getFormWebserviceURL(), getFormXML(rapidRequest, formId));
 			
 		} else {
 			
 			// Wrap the XML in SOAP			
-			String xml = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n\t<soapenv:Body>\n" + getFormXML(rapidRequest, formDetails).replace("<form", "<form xmlns=\"http://www.rapid-is.co.uk\"") + "\n\t</soapenv:Body>\n</soapenv:Envelope>";
+			String xml = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n\t<soapenv:Body>\n" + getFormXML(rapidRequest, formId).replace("<form", "<form xmlns=\"http://www.rapid-is.co.uk\"") + "\n\t</soapenv:Body>\n</soapenv:Envelope>";
 			
 			// POST it
 			Http.postSOAP(_application.getFormWebserviceURL(), _application.getFormWebserviceSOAPAction(), xml);
@@ -1155,6 +1158,9 @@ public abstract class FormAdapter {
 		
 		try {
 			
+			// get the form Id
+			String formId = formDetails.getId();
+			
 			// if submitted already throw exception
 			if (formDetails.getSubmitted()) throw new Exception("This form has already been submitted");
 			
@@ -1171,18 +1177,18 @@ public abstract class FormAdapter {
 				writeFormSummaryHTML(rapidRequest, formDetails, writer, true);
 				
 				// get the attachment (might not be one)
-				Attachment attachment = getEmailAttachment(rapidRequest, formDetails);
+				Attachment attachment = getEmailAttachment(rapidRequest, formId);
 				
 				// send the email				
-				Email.send(application.getFormEmailFrom(), application.getFormEmailTo(), getEmailSubject(rapidRequest, formDetails), "HTML preview not available", writer.toString(), attachment);
+				Email.send(application.getFormEmailFrom(), application.getFormEmailTo(), getEmailSubject(rapidRequest, formId), "HTML preview not available", writer.toString(), attachment);
 				
 			}
 			
 			// file
-			if (application.getFormFile()) saveFormFile(rapidRequest, formDetails);
+			if (application.getFormFile()) saveFormFile(rapidRequest, formId);
 							
 			// webservice
-			if (application.getFormWebservice()) sendFormWebservice(rapidRequest, formDetails);
+			if (application.getFormWebservice()) sendFormWebservice(rapidRequest, formId);
 			
 			// get the submission details
 			SubmissionDetails submissionDetails = submitForm(rapidRequest);
@@ -1230,7 +1236,7 @@ public abstract class FormAdapter {
 			response.setContentType("application/pdf");
 			
 			// set a suggested filename without forcing save as
-			response.setHeader("Content-disposition","attachment; filename=" + getFormFileName(rapidRequest, formDetails, "pdf", email));
+			response.setHeader("Content-disposition","attachment; filename=" + getFormFileName(rapidRequest, formId, "pdf", email));
 			
 			// write the pdf
 			writeFormPDF(rapidRequest, response.getOutputStream(), formId, email);
