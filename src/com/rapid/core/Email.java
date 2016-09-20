@@ -133,40 +133,6 @@ public class Email {
 		
 	}
 	
-	// useful for attachments created in memory from streams
-	public static class InputStreamDataSource implements DataSource {
-		
-		private String _mimeType;
-		private InputStream _inputStream;
-		
-		public InputStreamDataSource(String mimeType, InputStream inputStream) {
-			_mimeType = mimeType;
-			_inputStream = inputStream;
-		}
-		
-		@Override
-		public String getContentType() {
-			return _mimeType;
-		}
-
-		@Override
-		public InputStream getInputStream() throws IOException {
-			return _inputStream;
-		}
-
-		@Override
-		public String getName() {
-			return _mimeType;
-		}
-
-		@Override
-		public OutputStream getOutputStream() throws IOException {
-			return null; 
-		}
-		
-	}
-	
-	
 	// private static variables
 	private static Properties _properties;
 	private static Authenticator _authenticator;
@@ -237,7 +203,7 @@ public class Email {
         // if it exists
         if (file.exists()) {
             try {
-                // get the unmarshaller from the context
+                // get the unmarshaller from the context 
                 Unmarshaller unmarshaller = RapidHttpServlet.getUnmarshaller();
                 // unmarshall the devices
                 email = (Email) unmarshaller.unmarshal(file);
@@ -354,10 +320,13 @@ public class Email {
 
             // loop the attachments
             for (Attachment attachment : attachments) {
-	            messageBodyPart = new MimeBodyPart();
-	            messageBodyPart.setFileName(attachment.getName());
-	            messageBodyPart.setDataHandler(new DataHandler(attachment.getDataSource()));
-	            multipart.addBodyPart(messageBodyPart);
+            	// may be null
+            	if (attachment != null) {
+		            messageBodyPart = new MimeBodyPart();
+		            messageBodyPart.setFileName(attachment.getName());
+		            messageBodyPart.setDataHandler( new DataHandler(attachment.getDataSource()));
+		            multipart.addBodyPart(messageBodyPart);
+            	}
             }
             // add the complete message parts
             message.setContent(multipart);
