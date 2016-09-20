@@ -732,8 +732,170 @@ select:focus {
   background: #666;
   color: #000;
 }
-	    	        
-	    ]]>    
+
+/* Mozilla custom stylings */
+@-moz-document url-prefix() {
+  label.checkbox label:hover::before { /* Our tick on hover */
+    border: none;
+  }
+
+  input[type=checkbox] { /* Hide moz standard */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: transparent;
+    position: relative;
+    visibility: hidden;
+    display: none;
+  }
+
+  input[type=checkbox], input[type=checkbox] + span::before {
+    vertical-align: middle;
+    margin-top: -9px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  input[type=checkbox] + span::before { /* Our custom radio button */
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    content: '';
+    background: #FFF;
+    border-radius: 4px;
+    margin: -1px;
+    border: 2px solid #999;
+    margin-right: 13px;
+    margin-left: 8px;
+    background: transparent linear-gradient(#FFF, #E0E0E0);
+  }
+
+  input[type=checkbox]:hover {
+    cursor: pointer;
+  }
+
+  input[type=checkbox]:hover + span::before {
+    border: 2px solid #6F6F6F;
+    background: transparent linear-gradient(#EBEBEB, #999);
+  }
+
+  input[type=checkbox]:checked + span::before {
+    background: transparent linear-gradient(#EBEBEB, #BABABA);
+    border-color: #6F6F6F;
+    content: '\2713';
+    color: #4D0000;
+    font-size: 25px;
+    line-height: 20px;
+    text-align: center;
+  }
+
+  input[type=checkbox]:checked:hover + span::before {
+    background: transparent linear-gradient(#EBEBEB, #999);
+  }
+
+  /* Disabled properties */
+  input[type=checkbox]:disabled:hover + span::before {
+    border-color: #BCBCBC;
+  }
+
+  input[type=checkbox]:disabled + span::before {
+    background: transparent linear-gradient(#E0E0E0, #B7B7B7);
+    border-color: #999;
+  }
+
+  label.checkbox[disabled]::before {
+    border: none;
+  }
+
+  input[type=checkbox]:disabled:checked + span::before {
+    color: #929292;
+  }
+
+  input[type=checkbox]:disabled:checked:hover + span::before {
+    border-color: #D2D2D2;
+  }
+
+  label.radiobuttons label:hover::before { /* Our tick on hover */
+    border: none;
+  }
+
+  input[type=radio] { /* Hide moz standard */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: transparent;
+    position: relative;
+    visibility: hidden;
+    display: none;
+  }
+
+  input[type=radio], input[type=radio] + span::before {
+    vertical-align: middle;
+    margin-top: -9px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  input[type=radio] + span::before { /* Our custom radio button */
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    content: '';
+    background: #FFF;
+    border-radius: 100px;
+    margin: -1px;
+    border: 2px solid #999;
+    margin-right: 13px;
+    margin-left: 8px;
+    background: transparent linear-gradient(#FFF, #E0E0E0);
+  }
+
+  input[type=radio]:hover {
+    cursor: pointer;
+  }
+
+  input[type=radio]:hover + span::before {
+    border: 2px solid #6F6F6F;
+    background: transparent linear-gradient(#EBEBEB, #999);
+  }
+
+  input[type=radio]:checked + span::before {
+    background: transparent linear-gradient(#EBEBEB, #BABABA);
+    border-color: #6F6F6F;
+    content: '\2022';
+    color: #4D0000;
+    font-size: 31px;
+    line-height: 20px;
+    text-align: center;
+  }
+
+  input[type=radio]:checked:hover + span::before {
+    background: transparent linear-gradient(#EBEBEB, #999);
+  }
+
+  /* Disabled properties */
+  input[type=radio]:disabled:hover + span::before {
+    border-color: #BCBCBC;
+  }
+
+  input[type=radio]:disabled + span::before {
+    background: transparent linear-gradient(#E0E0E0, #B7B7B7);
+    border-color: #999;
+  }
+
+  label.radiobuttons[disabled]::before {
+    border: none;
+  }
+
+  input[type=radio]:disabled:checked + span::before {
+    color: #929292;
+  }
+
+  input[type=radio]:disabled:checked:hover + span::before {
+    border-color: #D2D2D2;
+  }
+}
+	    ]]>
 	    </css>
 	   
 </template>
