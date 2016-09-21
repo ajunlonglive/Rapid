@@ -83,7 +83,7 @@ public abstract class FormAdapter {
 		// instance variables
 		private final String _id, _password;
 		private String _maxPageId, _submittedDateTime, _submitMessage, _errorMessage;
-		boolean _started, _saved, _complete, _showSubmitPage;
+		boolean _saved, _complete, _showSubmitPage;
 		
 		// properties
 		
@@ -91,11 +91,7 @@ public abstract class FormAdapter {
 		public String getId() { return _id; }
 		// password
 		public String getPassword() { return _password; }
-		
-		// whether this form has been started
-		public boolean getStarted() { return _started; }
-		public void setStarted(boolean started) { _started = started; }
-				
+						
 		// whether this form has been saved
 		public boolean getSaved() { return _saved; }
 		public void setSaved(boolean saved) { _saved = saved; }
@@ -1124,9 +1120,9 @@ public abstract class FormAdapter {
 			// send users back to the start if no form details
 			Rapid.gotoStartPage(rapidRequest.getRequest(), response, _application, false);
 						
-		} else if (!formDetails.getStarted()) {
+		} else if (!formDetails.getComplete()) {
 			
-			// send users back to the start if form has not started yet
+			// send users back to the start if form not completed yet
 			Rapid.gotoStartPage(rapidRequest.getRequest(), response, _application, false);
 						
 		} else {
