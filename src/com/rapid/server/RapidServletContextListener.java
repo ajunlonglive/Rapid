@@ -69,7 +69,7 @@ import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.web.Log4jServletContainerInitializer;
+import org.apache.logging.log4j.web.Log4jServletContextListener;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -92,7 +92,7 @@ import com.rapid.utils.Https;
 import com.rapid.utils.JAXB.EncryptedXmlAdapter;
 import com.rapid.utils.Strings;
 
-public class RapidServletContextListener extends Log4jServletContainerInitializer implements ServletContextListener {
+public class RapidServletContextListener extends Log4jServletContextListener implements ServletContextListener {
 		
 	// the logger which we will initialise
 	private static Logger _logger;
@@ -1072,6 +1072,9 @@ public class RapidServletContextListener extends Log4jServletContainerInitialize
 	@Override
 	public void contextInitialized(ServletContextEvent event) {   
 		
+		// set up logging
+		super.contextInitialized(event);
+		
 		// request windows line breaks to make the files easier to edit (in particular the marshalled .xml files)
 		System.setProperty("line.separator", "\r\n");
 		
@@ -1365,6 +1368,9 @@ public class RapidServletContextListener extends Log4jServletContainerInitialize
 		_logger.info("Logger shutdown");
 		// shutdown logger
 		if (_logger != null) LogManager.shutdown();
+		
+		// shut down logging 		
+		super.contextDestroyed(event);
 		
 	}
 
