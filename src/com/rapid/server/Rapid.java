@@ -684,9 +684,6 @@ public class Rapid extends RapidHttpServlet {
 									
 								} else {
 									
-									// mark the form as started
-									formDetails.setStarted(true);
-							
 									// this is a form page's data being submitted
 									String formData = new String(bodyBytes, "UTF-8");
 									
@@ -848,7 +845,12 @@ public class Rapid extends RapidHttpServlet {
 												if (requestSummary) {
 													
 													// mark that this form is complete (if not submitted)
-													if (!formDetails.getSubmitted()) formAdapter.setFormComplete(rapidRequest, formDetails);
+													if (!formDetails.getSubmitted()) {
+														// update form details
+														formDetails.setComplete(true);
+														// update form adapter (for storage)
+														formAdapter.setFormComplete(rapidRequest, formDetails);
+													}
 													
 													// send a redirect for the summary (this also avoids ERR_CACH_MISS issues on the back button )
 													response.sendRedirect("~?a=" + app.getId() + "&v=" + app.getVersion() + "&action=summary");
