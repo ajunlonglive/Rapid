@@ -51,7 +51,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -1236,25 +1235,31 @@ public class Page {
 				
 		// get any control initJavaScript event listeners into he pageloadLine (goes into $(document).ready function)
 		getPageLoadLines(_pageloadLines, _controls);
-								      					
-		// sort the page load lines
-		Collections.sort(_pageloadLines, new Comparator<String>() {
-			@Override
-			public int compare(String l1, String l2) {				
-				if (l1.isEmpty()) return -1;
-				if (l2.isEmpty()) return 1;
-				char i1 = l1.charAt(0);
-				char i2 = l2.charAt(0);
-				return i2 - i1;						
-			}}
-		);
+		
+		// get a synchronised list to avoid concurrency exception in sort
+		List<String> pageLoadLines = Collections.synchronizedList(_pageloadLines);
+						
+		// synchronised block for sorting in thread-safe manner
+		synchronized (pageLoadLines) {
+			// sort the page load lines
+			Collections.sort(pageLoadLines, new Comparator<String>() {
+				@Override
+				public int compare(String l1, String l2) {				
+					if (l1.isEmpty()) return -1;
+					if (l2.isEmpty()) return 1;
+					char i1 = l1.charAt(0);
+					char i2 = l2.charAt(0);
+					return i2 - i1;						
+				}}
+			);
+		}
 		
 		// if there is a form adapter in place
 		if (formAdapter != null) {
 			// add a line to set any form values before the load event is run
-			_pageloadLines.add("Event_setFormValues($.Event('setValues'));\n");
+			pageLoadLines.add("Event_setFormValues($.Event('setValues'));\n");
 			// add an init form function - in extras.js
-			_pageloadLines.add("Event_initForm('" + _id + "');\n");
+			pageLoadLines.add("Event_initForm('" + _id + "');\n");
 		}
 														
 		// check for page events (this is here so all listeners are registered by now) and controls (there should not be none but nothing happens without them)
@@ -1266,12 +1271,12 @@ public class Page {
 					if (event.getActions().size() > 0) {
 						// page is a special animal so we need to do each of it's event types differently
 						if ("pageload".equals(event.getType())) {
-							_pageloadLines.add("if (!_mobileResume) Event_pageload_" + _id + "($.Event('pageload'));\n");							
+							pageLoadLines.add("if (!_mobileResume) Event_pageload_" + _id + "($.Event('pageload'));\n");							
         				}    			
 						// resume is also a special animal
 						if ("resume".equals(event.getType())) {
 							// fire the resume event immediately if there is no rapidMobile (it will be done by the Rapid Mobile app if present)
-							_pageloadLines.add("if (!window['_rapidmobile']) Event_resume_" + _id + "($.Event('resume'));\n");
+							pageLoadLines.add("if (!window['_rapidmobile']) Event_resume_" + _id + "($.Event('resume'));\n");
 						}
 						// reusable action is only invoked via reusable actions on other events - there is no listener
 					}
@@ -1282,11 +1287,11 @@ public class Page {
 		// if there is a form adapter in place
 		if (formAdapter != null) {
 			// add a line to check the form now all load events have been run
-			_pageloadLines.add("Event_checkForm();\n");
+			pageLoadLines.add("Event_checkForm();\n");
 		}
 														
 		// if this is not a dialogue or there are any load lines
-		if (!isDialogue || _pageloadLines.size() > 0) {
+		if (!isDialogue || pageLoadLines.size() > 0) {
 			
 			// open the page loaded function
 			jsStringBuilder.append("$(document).ready( function() {\n");
@@ -1295,7 +1300,7 @@ public class Page {
 			jsStringBuilder.append("  try {\n");
 			
 			// print any page load lines such as initialising controls
-			for (String line : _pageloadLines) jsStringBuilder.append("    " + line);
+			for (String line : pageLoadLines) jsStringBuilder.append("    " + line);
 															
 			// close the try
 			jsStringBuilder.append("  } catch(ex) { $('body').html(ex); }\n");
