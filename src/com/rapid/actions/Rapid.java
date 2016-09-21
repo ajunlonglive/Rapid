@@ -862,7 +862,7 @@ public class Rapid extends Action {
 						if (app.getWebservices() != null) {
 							// get a synchronised list for multithreaded sorting
 							List<Webservice> webservices = Collections.synchronizedList(app.getWebservices());
-							// synchronize this block
+							// synchronise this block for thread-safety
 							synchronized (webservices) {
 								// sort them by their name
 								Collections.sort(webservices, new Comparator<Webservice>() {
