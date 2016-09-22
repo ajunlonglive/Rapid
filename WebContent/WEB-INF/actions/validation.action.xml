@@ -121,13 +121,14 @@ li.validation {
 	    </resources>
 	    	    	    
 	    <actionJavaScript>
-	        <![CDATA[   
+	        <![CDATA[
 function Action_validation(ev, validations, showMessages) {
-	var valid = true;		
+	var valid = true;
+	ev.validation = true;
 	for (var i in validations) {
 		var validation = validations[i];
 		var validationControl = $("#" + validation.controlId);
-		if (validationControl[0]) {		
+		if (validationControl[0]) {
 			var getValueFunction = null;
 			if (validation.validationProperty) {
 				getValueFunction = window["getProperty_" + validation.controlType + "_" + validation.validationProperty];
@@ -143,9 +144,8 @@ function Action_validation(ev, validations, showMessages) {
 						details = window[validation.details];
 					}
 				}
-				ev.validation = true;
 				var value = getValueFunction(ev, validation.controlId, validation.field, details);
-				if (validation.validationType == "javascript") {						
+				if (validation.validationType == "javascript") {
 					var validationFunction = new Function(["ev","id","value"], validation.javaScript);
 					var failMessage = validationFunction.apply(this, [ev,validation.controlId,value]);
 					if (failMessage != null && failMessage !== false && failMessage !== undefined) {
@@ -169,7 +169,7 @@ function Action_validation(ev, validations, showMessages) {
 							exp = exp.substr(0, exp.length - 2);
 							// remake the regex with the case insensitivity
 							regex = new RegExp(exp, "i")
-						} 					
+						}
 						// get the matches from the reg ex
 						var matches = value.match(regex);
 						// ensure the first match is for the whole value
@@ -188,7 +188,7 @@ function Action_validation(ev, validations, showMessages) {
 									}
 								}
 							}
-						} 
+						}
 					} else if (validation.allowNulls) {
 						// no value but this is allowed
 						pass = true;
@@ -196,23 +196,25 @@ function Action_validation(ev, validations, showMessages) {
 					// pass, disabled, or hidden and allowed this way
 					if (pass || validationControl.is(":disabled") || (validationControl.is(":hidden") && validation.passHidden)) {
 						// passed
-						if (showMessages) hideControlValidation(validation.controlId);				
+						if (showMessages) hideControlValidation(validation.controlId);
 					} else {
 						// failed, and there is a message to show, but not on tab keyup
 						if (showMessages && !(ev.type == "keyup" && ev.keyCode == 9)) showControlValidation(validation.controlId, validation.message);
-						valid = false;					
-					}	
-				}	
+						valid = false;
+					}
+				}
 			} else {
 				if (showMessages) showControlValidation(validation.controlId, validation.message);
 				valid = false;
 			}
-		}		
-	}	
+		}
+	}
+	ev.validation = false;
 	return valid;
-}	        ]]>
-	    </actionJavaScript> 
+}
+		]]>
+	    </actionJavaScript>
 	    
-    </action> 
+    </action>
     
 </actions>
