@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2015 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -799,18 +799,20 @@ public abstract class FormAdapter {
 			// if there are pages
 			if (application.getPages() != null) {
 				// get the id of the first one
-				if (application.getPages().size() > 0) startPageId = application.getPages().getSortedPages().get(0).getId();
+				if (application.getPages().size() > 0) startPageId = application.getStartPageId();
 			}						
 			// get the requested Page
 			Page requestPage = rapidRequest.getPage();
 			// get the request page id
 			String requestPageId = null;
 			// if there was a page get the id
-			if (requestPage  != null) requestPageId = requestPage.getId();
+			if (requestPage != null) requestPageId = requestPage.getId();
+			// get the action
+			String action = rapidRequest.getRequest().getParameter("action");
 			// assume no new id allowed
 			boolean newFormAllowed = false;
-			// if this is the start page
-			if  (startPageId.equals(requestPageId)) {
+			// if this is the start page with no action other than dialogue
+			if  (startPageId.equals(requestPageId) && (action == null || "dialogue".equals(action))) {
 				// we're ok to request new form details
 				newFormAllowed = true;
 				// log
@@ -828,8 +830,9 @@ public abstract class FormAdapter {
 					}
 				} catch (SecurityAdapaterException e) {}				
 			}
+			
 			// there are some rules for creating new form ids - there must be no action and the page must be the start page
-			if (rapidRequest.getRequest().getParameter("action") == null && newFormAllowed) {				
+			if (newFormAllowed) {				
 				// get a new form details from the adapter
 				formDetails = getNewFormDetails(rapidRequest);
 				// set the new user form details
