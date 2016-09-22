@@ -773,7 +773,7 @@ public class RapidServletContextListener extends Log4jServletContextListener imp
 		// put the jsonControls in a context attribute (this is available via the getJsonControls method in RapidHttpServlet)
 		servletContext.setAttribute("themes", themes);
 							
-		_logger.info(themeCount + " templates loaded in .template.xml files");
+		_logger.info(themeCount + " themes loaded in .theme.xml files");
 		
 		return themeCount;
 		
