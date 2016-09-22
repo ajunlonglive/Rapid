@@ -994,11 +994,12 @@ public class RapidServletContextListener extends Log4jServletContextListener imp
 			_logger.info("Stopping processes");
 			// loop the application ids
 			for (Process process : processes) {
-				// interrupt the process
+				// interrupt the process (which will stop it)
 				process.interrupt();
 			}			
 		}
 		
+		// log
 		_logger.info("Loading processes");
 		
 		// make a new set of applications
@@ -1061,7 +1062,7 @@ public class RapidServletContextListener extends Log4jServletContextListener imp
 		servletContext.setAttribute("processes", processes);
 						
 		// log that we've loaded them
-		_logger.info(processes.size() + " processes loaded");
+		_logger.info(processes.size() + " process" + (processes.size() == 1 ? "" : "es") + " loaded");
 		
 		// return the size
 		return processes.size();
@@ -1304,14 +1305,25 @@ public class RapidServletContextListener extends Log4jServletContextListener imp
 	@Override
 	public void contextDestroyed(ServletContextEvent event){
 			
+		// log
 		_logger.info("Shutting down...");
-		
-		// interrupt the page monitor if we have one
-		//if (_monitor != null) _monitor.interrupt();
 		
 		// get the servletContext
 		ServletContext servletContext = event.getServletContext();
 		
+		// get all processes
+		List<Process> processes = (List<Process>) servletContext.getAttribute("processes");
+		// if we got some
+		if (processes != null) {			
+			// loop them
+			for (Process process : processes) {
+				// log
+				_logger.info("Stopping process ." + process.getName() + "...");
+				// interrupt the process (which stops it)
+				process.interrupt();
+			}
+		}
+				
 		// get all of the applications
 		Applications applications = (Applications) servletContext.getAttribute("applications");
 		// if we got some
@@ -1322,6 +1334,8 @@ public class RapidServletContextListener extends Log4jServletContextListener imp
 				Versions versions = applications.getVersions(id);
 				// loop the versions of each app
 				for (String version : versions.keySet()) {
+					// log
+					_logger.info("Closing application " + id + "/" + version + "...");
 					// get the application
 					Application application = applications.get(id, version);
 					// have it close any sensitive resources 
