@@ -199,7 +199,7 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 			
 			// look in the session for username
 			userName = (String) session.getAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME);
-															
+			
 			// look in the session for index path
 			String sessionIndexPath = (String) session.getAttribute(RapidFilter.SESSION_VARIABLE_INDEX_PATH);
 			// if we got one use it
