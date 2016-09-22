@@ -132,7 +132,7 @@ this.object.attr("data-theme",this.theme);
 // get a reference to the iFrame window
 var w = _pageIframe[0].contentWindow;
 // render the captcha if we have a key	        
-if (this.key && this.secret) w.grecaptcha.render(this.id, { 'sitekey':this.key, 'size':this.size, 'theme':this.theme });
+if (this.key && this.secret && w.grecaptcha) w.grecaptcha.render(this.id, { 'sitekey':this.key, 'size':this.size, 'theme':this.theme });
 	        ]]>
 	    </initDesignJavaScript>
 	    
@@ -145,7 +145,11 @@ this.object.children().remove();
 	    
 	    <getDataFunction>
 	        <![CDATA[
-return grecaptcha.getResponse(); 	        
+if (grecaptcha) {	        
+	return grecaptcha.getResponse();
+} else {
+	return null;
+} 	        
 	        ]]>
 	    </getDataFunction>
 	    
