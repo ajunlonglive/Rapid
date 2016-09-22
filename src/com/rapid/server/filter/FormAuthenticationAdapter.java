@@ -203,7 +203,7 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 			// look in the session for index path
 			String sessionIndexPath = (String) session.getAttribute(RapidFilter.SESSION_VARIABLE_INDEX_PATH);
 			// if we got one use it
-			if (sessionIndexPath != null) indexPath= sessionIndexPath;
+			if (sessionIndexPath != null) indexPath = sessionIndexPath;
 
 			// check if we got one
 			if (userName == null) {
@@ -393,7 +393,16 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 						_logger.debug("FormAuthenticationAdapter authenticated " + userName + " from " + deviceDetails);
 						
 						// make the sessionRequest path the root just in case it was null (or login.jsp itself)
-						if (sessionRequestPath == null || loginPath.equals(sessionRequestPath)) sessionRequestPath = ".";
+						if (sessionRequestPath == null || loginPath.equals(sessionRequestPath)) {
+							// if index path is the default (usually index.jsp)
+							if (INDEX_PATH.equals(indexPath)) {
+								// convert to . to hide index.jsp from url
+								sessionRequestPath = ".";
+							} else {
+								// request custom index path
+								sessionRequestPath = indexPath;
+							}
+						}
 												
 						// if we had a requestApp in the sessionRequestPath, go straight to the app
 						if (sessionRequestPath.indexOf("requestApp") > 0) {
