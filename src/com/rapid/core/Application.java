@@ -866,7 +866,12 @@ public class Application {
 			// get the start page from the id
 			startPage = _pages.getPage(servletContext, _startPageId);
 			// if it's null the start page has probably been deleted without updating the application object
-			if (startPage == null) startPage = getStartPageUsingOrder(servletContext);
+			if (startPage == null) {
+				// set the start page
+				startPage = getStartPageUsingOrder(servletContext);
+				// update the _startPageId
+				_startPageId = startPage.getId();
+			}
 		}
 		// return
 		return startPage;
