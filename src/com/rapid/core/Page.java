@@ -152,7 +152,7 @@ public class Page {
 	private String _id, _name, _title, _label, _description, _createdBy, _modifiedBy, _htmlBody, _cachedHeadLinks, _cachedHeadCSS, _cachedHeadReadyJS, _cachedHeadJS;
 	private boolean _simple;
 	private Date _createdDate, _modifiedDate;		
-	private List<Control> _controls;
+	private List<Control> _controls, _reCaptchaControls;
 	private List<Event> _events;
 	private List<Style> _styles;
 	private List<String> _controlTypes, _actionTypes, _sessionVariables, _roles;
@@ -2037,6 +2037,22 @@ public class Page {
 			
 		} // form adapter check
 		
+	}
+	
+	// return any reCaptcha controls in the page
+	public List<Control> getRecaptchaControls() {
+		if (_reCaptchaControls == null) {
+			// make a new list
+			_reCaptchaControls = new ArrayList<Control>();
+			// loop page controls
+			for (Control control : getAllControls()) {
+				// if this is a recapthca add it
+				if ("recaptcha".equals(control.getType())) {
+					_reCaptchaControls.add(control);
+				}
+			}
+		} 
+		return _reCaptchaControls;		
 	}
 	
 	// overrides
