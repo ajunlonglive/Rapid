@@ -87,14 +87,15 @@ return "<option value=''>None</option>" + getPageOptions(this.pageId,_page.id);
 	    		<contents>
 					<![CDATA[
 
+var _stickyFooterHeight = 0;
+
 function checkPagePanelFooter() {
 	var footer = $("div.pagePanelFooter");
 	if (footer[0]) {
 		window.setTimeout( function(ev) {
 			var fh = footer.height();
-			var bh = $("html").height();
-			if (!footer.is(".pagePanelStickyFooter")) bh -= fh;
-			if (bh + fh < $(window).height()) {
+			if (fh > 0) _stickyFooterHeight = fh;
+			if ($(document.body).height() + _stickyFooterHeight < $(window).height()) {
 				// Add sticky footer
 				footer.addClass("pagePanelStickyFooter");
 			}	else {
@@ -119,13 +120,14 @@ $(document).ready( function() {
 	    
 	    <getHtmlFunction>
 	        <![CDATA[
-// return the placeholder for the page we're bringing in
-return "<div id='" + this.id + "' class='pagepanel" + (this.footer ? " pagePanelFooter": "") + getStyleClasses(this) + "'><center><h1>Page</h1></center></div>";
+// return html
+return "<div id='" + this.id + "' class='pagepanel" + getStyleClasses(this) + "'><center><h1>Page</h1></center></div>";
 	        ]]>
 	    </getHtmlFunction>
 	    
 	    <rebuildJavaScript>
 	        <![CDATA[
+
 // inject the page html
 if (this.pageId) {
 
@@ -197,6 +199,9 @@ if (this.pageId) {
             		break;
             		}
             	}
+            	
+            	// if this is a footer
+            	if (control.footer) bodyHtml = "<div class='pagePanelFooter'>" + bodyHtml + "</div>";
             	
             	// set the html
     			control.object.html(bodyHtml);
@@ -335,6 +340,8 @@ if (details.simple === undefined || !details.simple) {
 	           		break;
 	           		}
 	           	}
+	           	// wrap in sticky footer if need be
+	           	if (details.footer) bodyHtml = "<div class='pagePanelFooter'>" + bodyHtml + "</div>";
 	           	// apply the injected html
 	           	$("#" + id).html(bodyHtml);
 	           	// add script into the page (if applicable)
@@ -346,11 +353,6 @@ if (details.simple === undefined || !details.simple) {
 	});
 }
 
-if (details.sticky == true) {
-	$("#" + id).addClass("stickyFooter");
-} else {
-	$("#" + id).removeClass("stickyFooter");
-}
 	        ]]>
 	    </initJavaScript>
 	    
