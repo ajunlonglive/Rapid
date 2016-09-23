@@ -799,7 +799,7 @@ public abstract class FormAdapter {
 			// if there are pages
 			if (application.getPages() != null) {
 				// get the id of the first one
-				if (application.getPages().size() > 0) startPageId = application.getStartPageId();
+				if (application.getPages().size() > 0) startPageId = application.getStartPage(rapidRequest.getRapidServlet().getServletContext()).getId();
 			}						
 			// get the requested Page
 			Page requestPage = rapidRequest.getPage();
@@ -1317,178 +1317,182 @@ public abstract class FormAdapter {
 			String[] params = postBody.split("&");			
 			// hidden control values
 			String[] hiddenControls = null;
-			// loop the pairs
-			for (int i = 0; i < params.length; i++) {
-				// get the param
-				String param = params[i];
-				// split on =
-				String[] parts = param.split("=");						
-				// the key/name is the control id
-				String id = null;
-				// assume it's not hidden
-				boolean hidden = false;
-				// try and decode the if with a silent fail
-				try { id = URLDecoder.decode(parts[0],"UTF-8");	} catch (UnsupportedEncodingException e) {}		
-				// check we got something
-				if (id != null) {
-					// if there was a name but not the _hiddenControls
-					if (id.length() > 0) {
-						// assume there are no more of this parameter
-						boolean lastValue = true;
-						// now check there are no more (check boxes get sent with a null in front, in case they are not ticked so we know it update their value)
-						for (int j = i + 1; j < params.length; j++) {
-							// get the check param
-							String checkParam = params[j];
-							// if this starts with the id
-							if (checkParam.startsWith(id)) {
-								// update last value
-								lastValue = false;
+			// assume no reCaptcha value
+			String recaptcha = null;
+			// get the page
+			Page page = rapidRequest.getPage();
+			// check there was one
+			if (page != null) {
+				// loop the pairs
+				for (int i = 0; i < params.length; i++) {
+					// get the param
+					String param = params[i];
+					// split on =
+					String[] parts = param.split("=");						
+					// the key/name is the control id
+					String id = null;
+					// assume it's not hidden
+					boolean hidden = false;
+					// try and decode the if with a silent fail
+					try { id = URLDecoder.decode(parts[0],"UTF-8");	} catch (UnsupportedEncodingException e) {}		
+					// check we got something
+					if (id != null) {
+						// if there was a name but not the _hiddenControls
+						if (id.length() > 0) {
+							// assume there are no more of this parameter
+							boolean lastValue = true;
+							// now check there are no more (check boxes get sent with a null in front, in case they are not ticked so we know it update their value)
+							for (int j = i + 1; j < params.length; j++) {
+								// get the check param
+								String checkParam = params[j];
+								// if this starts with the id
+								if (checkParam.startsWith(id)) {
+									// update last value
+									lastValue = false;
+									// we're done
+									break;
+								}
+							}
+							// if this was the last value for the control
+							if (lastValue) {
+								// assume no value
+								String value = null;	
+								// if more than 1 part
+								if (parts.length > 1) {
+									// url decode value 
+									try { value = URLDecoder.decode(parts[1],"UTF-8"); } catch (UnsupportedEncodingException ex) {}				
+								} // parts > 0	
+								// null can't do any harm so don't check them
+								if (value != null) {
+									// find the control in the page
+									Control control = page.getControl(id);
+									// check we found a control
+									if (control == null) {
+										// if this is the recapcha store it
+										if ("g-recaptcha-response".equals(id)) recaptcha = value;									
+									} else {
+										// get any control validation
+										Validation validation = control.getValidation();
+										// if there was some
+										if (validation != null) {
+											// get the RegEx
+											String regEx = validation.getRegEx();
+											// set to empty string if null (most seem to be empty)
+											if (regEx == null) regEx = "";
+											// not if none, and not if javascript
+											if (regEx.length() > 0 && !"".equals(validation.getType()) && !"none".equals(validation.getType()) && !"javascript".equals(validation.getType())) {										
+												// check for null
+												if (value != null) {
+													// place holder for the patter
+													Pattern pattern = null;
+													// this exception is uncaught but we want to know about it
+													try {
+														// we recognise a small subset of switches
+														if (regEx.endsWith("/i")) {
+															// trim out the switch
+															regEx = regEx.substring(0, regEx.length() - 2);
+															// build the pattern with case insensitivity
+															pattern = Pattern.compile(regEx, Pattern.CASE_INSENSITIVE);		
+														} else {
+															// build the patter as-is
+															pattern = Pattern.compile(regEx);
+														}
+													} catch (PatternSyntaxException ex) {
+														// rethrow
+														throw new ServerSideValidationException("Server side validation error - regex for control " + id + " in form " + formId + " failed regex syntax for " + regEx + " - regex PatternSyntaxException", ex);
+													} catch (IllegalArgumentException  ex) {
+														// rethrow
+														throw new ServerSideValidationException("Server side validation error - value '" + value + "' for control " + id + " in form " + formId + " failed regex " + regEx + " - regex ServerSideValidationException", ex);
+													}											
+													// compile and check it
+													if (!pattern.matcher(value).find()) throw new ServerSideValidationException("Server side validation error - value " + id + " for form " + formId+ " failed regex");
+												} // javascript type check		
+											} // regex check
+										} // validation check
+																			
+										// look for a maxLength property
+										String maxLength = control.getProperty("maxLength");
+										// if we got one
+										if (maxLength != null) {
+											if (Numbers.isInteger(maxLength)) {
+												// convert to int
+												int max = Integer.parseInt(maxLength);
+												// make line breaks \n instead of \n\r so the Java length matches the front end
+												value = value.replace("\r\n", "\n");
+												// check length
+												if (value.length() > max) throw new ServerSideValidationException("Server side validation error - value " + id + " for form " + formId+ " failed regex");
+											}
+										}
+										
+									} // found control in page
+								} // null check
+								// if this is the hidden values
+								if (id.endsWith("_hiddenControls") && value != null) {
+									// retain the hidden values
+									hiddenControls = value.split(",");
+								} else	{
+									// if we have hidden controls to check
+									if (hiddenControls != null) {								
+										// loop the hidden controls
+										for (String hiddenControl : hiddenControls) {
+											// if there's a match
+											if (id.equals(hiddenControl)) {
+												// retain as hidden
+												hidden = true;
+												// we're done
+												break;
+											} // this is a hidden control
+										} // loop the hidden controls
+									} // got hidden controls to check
+									// add name value pair
+									pageControlValues.add(id, value, hidden);
+								} // ends with hidden controls	
+							} // last value						
+						}	// id .length > 0
+					} // id != null																
+				} // param loop
+				// get any recapture controls
+				List<Control> recaptureControls = page.getRecaptchaControls();
+				// if the page had a reCaptcha
+				if (page.getRecaptchaControls().size() > 0) {
+					// assume we failed
+					boolean passRecapture = false;
+					// loop the controls
+					for (Control control : recaptureControls) {
+						// get the secret
+						String secret = control.getProperty("secret");
+						// try
+						try {
+							// get the check response
+							String checkResponse = Http.post("https://www.google.com/recaptcha/api/siteverify", "secret=" + secret + "&response=" + recaptcha);
+							// read it into json
+							JSONObject jsonCheck = new JSONObject(checkResponse);
+							// check the success
+							if (jsonCheck.optBoolean("success")) {
+								// update the id to the reCAPTCHA control
+								passRecapture = true;
+								// record the control value as true
+								pageControlValues.add(control.getId(), "true");
 								// we're done
 								break;
+							} else {
+								// get any error codes
+								JSONArray jsonErrorCodes = jsonCheck.optJSONArray("error-codes");
+								// assume no errors
+								String errorCodes = "no errors";
+								// set if we got some
+								if (jsonErrorCodes != null) errorCodes = jsonErrorCodes.toString();
+								// log the issue
+								_logger.info("reCAPTCHA check failed for form " + formId + " page " + page.getId() + " : " + errorCodes);
 							}
-						}
-						// if this was the last value for the control
-						if (lastValue) {
-							// assume no value
-							String value = null;	
-							// if more than 1 part
-							if (parts.length > 1) {
-								// url decode value 
-								try { value = URLDecoder.decode(parts[1],"UTF-8"); } catch (UnsupportedEncodingException ex) {}				
-							} // parts > 0	
-							// null can't do any harm so don't check them
-							if (value != null) {
-								// find the control in the page
-								Control control = rapidRequest.getPage().getControl(id);
-								// check we found a control
-								if (control == null) {
-									// if this is the recapcha
-									if ("g-recaptcha-response".equals(id)) {
-										// get the response from the value now
-										String response = value;
-										// assume return value is false
-										value = "false";
-										// try
-										try {
-											// get the page
-											Page page = rapidRequest.getPage();
-											// get all of the controls
-											List<Control> controls = page.getAllControls();
-											// loop them
-											for (Control pageControl : controls) {
-												// if this is the captcha control
-												if ("recaptcha".equals(pageControl.getType())) {
-													// get the secret
-													String secret = pageControl.getProperty("secret");													
-													// get the check response
-													String checkResponse = Http.post("https://www.google.com/recaptcha/api/siteverify", "secret=" + secret + "&response=" + response);
-													// read it into json
-													JSONObject jsonCheck = new JSONObject(checkResponse);
-													// check the success
-													if (jsonCheck.optBoolean("success")) {
-														// update the id to the reCAPTCHA control
-														id = pageControl.getId();
-														// set the value to true!
-														value = "true";
-													} else {
-														// get any error codes
-														JSONArray jsonErrorCodes = jsonCheck.optJSONArray("error-codes");
-														// assume no errors
-														String errorCodes = "no errors";
-														// set if we got some
-														if (jsonErrorCodes != null) errorCodes = jsonErrorCodes.toString();
-														// log the issue
-														_logger.info("reCAPTCHA check failed for form " + formId + " page " + page.getId() + " : " + errorCodes);
-													}
-													// we're done
-													break;
-												}
-											}
-										} catch (Exception ex) {
-											_logger.error("Error getting reCAPTCHA value", ex);
-										}
-									}
-								} else {
-									// get any control validation
-									Validation validation = control.getValidation();
-									// if there was some
-									if (validation != null) {
-										// get the RegEx
-										String regEx = validation.getRegEx();
-										// set to empty string if null (most seem to be empty)
-										if (regEx == null) regEx = "";
-										// not if none, and not if javascript
-										if (regEx.length() > 0 && !"".equals(validation.getType()) && !"none".equals(validation.getType()) && !"javascript".equals(validation.getType())) {										
-											// check for null
-											if (value != null) {
-												// place holder for the patter
-												Pattern pattern = null;
-												// this exception is uncaught but we want to know about it
-												try {
-													// we recognise a small subset of switches
-													if (regEx.endsWith("/i")) {
-														// trim out the switch
-														regEx = regEx.substring(0, regEx.length() - 2);
-														// build the pattern with case insensitivity
-														pattern = Pattern.compile(regEx, Pattern.CASE_INSENSITIVE);		
-													} else {
-														// build the patter as-is
-														pattern = Pattern.compile(regEx);
-													}
-												} catch (PatternSyntaxException ex) {
-													// rethrow
-													throw new ServerSideValidationException("Server side validation error - regex for control " + id + " in form " + formId + " failed regex syntax for " + regEx + " - regex PatternSyntaxException", ex);
-												} catch (IllegalArgumentException  ex) {
-													// rethrow
-													throw new ServerSideValidationException("Server side validation error - value '" + value + "' for control " + id + " in  form " + formId + " failed regex " + regEx + " - regex ServerSideValidationException", ex);
-												}											
-												// compile and check it
-												if (!pattern.matcher(value).find()) throw new ServerSideValidationException("Server side validation error - value " + id + " for  form " + formId+ " failed regex");										
-											} // javascript type check		
-										} // regex check
-									} // validation check
-																		
-									// look for a maxLength property
-									String maxLength = control.getProperty("maxLength");
-									// if we got one
-									if (maxLength != null) {
-										if (Numbers.isInteger(maxLength)) {
-											// convert to int
-											int max = Integer.parseInt(maxLength);
-											// make line breaks \n instead of \n\r so the Java length matches the front end
-											value = value.replace("\r\n", "\n");
-											// check length
-											if (value.length() > max) throw new ServerSideValidationException("Server side validation error - value " + id + " for  form " + formId+ " failed regex");
-										}
-									}
-									
-								} // found control in page
-							} // null check
-							// if this is the hidden values
-							if (id.endsWith("_hiddenControls") && value != null) {
-								// retain the hidden values
-								hiddenControls = value.split(",");
-							} else	{
-								// if we have hidden controls to check
-								if (hiddenControls != null) {								
-									// loop the hidden controls
-									for (String hiddenControl : hiddenControls) {
-										// if there's a match
-										if (id.equals(hiddenControl)) {
-											// retain as hidden
-											hidden = true;
-											// we're done
-											break;
-										} // this is a hidden control
-									} // loop the hidden controls
-								} // got hidden controls to check
-								// add name value pair
-								pageControlValues.add(id, value, hidden);
-							} // ends with hidden controls	
-						} // last value						
-					}	// id .length > 0
-				} // id != null																
-			} // param loop			
+						} catch (Exception ex) {
+							_logger.error("Error checking reCAPTCHA for form " + formId + " page " + page.getId() + " : " + ex.getMessage(), ex);
+						}						
+					}
+					// error is we didn't pass recapture
+					if (!passRecapture) throw new ServerSideValidationException("Server side validation error - recapture failed on page " + page.getId() + " for form " + formId);
+				}
+			}			
 			return pageControlValues;						
 		} // postBody check				
 	}
