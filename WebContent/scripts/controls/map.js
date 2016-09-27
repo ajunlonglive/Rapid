@@ -193,9 +193,11 @@ var _mapDetails = {};
 var _geocoder = null;
 
 // dynamically load the map javascript with the given key
-function loadMapJavaScript(id, details) {
+function loadMapJavaScript(id, details) {	
 	// append loading script only if not there already
 	if (!$("#mapJavaScript")[0])	{
+		// inc loading controls
+		_loadingControls ++;
 		// assume no key provided
 		var url = "https://maps.googleapis.com/maps/api/js?v=3&callback=loadedMapJavaScript"
 		// if there was one
@@ -209,15 +211,20 @@ function loadMapJavaScript(id, details) {
 
 // call back for once map JavaScript is loaded
 function loadedMapJavaScript() {
-	
+	// dec loading controls
+	_loadingControls --;
 	// loop the stored details
 	for (var id in _mapDetails) {
-
 		// build or rebuild the map by id
-		rebuildLoadedMap(id);
-			
+		rebuildLoadedMap(id);			
 	}
-	
+	// if all controls are loaded
+	if (_loadingControls < 1) {
+		// get any pageload method
+		var pageload = window["Event_pageload_" + _pageId];
+		// call it if there was one
+		if (pageload) pageload($.Event('pageload'));	
+	}
 }
 
 function rebuildLoadedMap(id) {
