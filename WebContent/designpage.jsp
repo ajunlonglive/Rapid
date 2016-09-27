@@ -105,6 +105,10 @@ if (appPage != null && designerPermission) {
 	
 %>
 	<link rel="stylesheet" type="text/css" href="styles/designPage.css"></link>
+	<script type="text/javascript">
+	// used for controls that load asychronously at run time
+	var _loadingControls = 0;
+	</script>
 	<style></style>
 <%
 } else {
