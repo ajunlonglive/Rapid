@@ -331,7 +331,7 @@ public class DataFactory {
 		
 		if (sql.trim().toLowerCase().startsWith("begin")) {
 			
-			CallableStatement cs = getConnection(rapidRequest).prepareCall(_sql);
+			CallableStatement cs = getConnection(rapidRequest).prepareCall(sql);
 			
 			populateStatement(cs, parameters, 0);
 						
@@ -351,7 +351,7 @@ public class DataFactory {
 		
 		Parameters params = new Parameters(parameters);
 		
-		return getPreparedStatement(rapidRequest, SQL, params).executeUpdate();
+		return getPreparedUpdate(rapidRequest, SQL, params);
 		
 	}
 	
