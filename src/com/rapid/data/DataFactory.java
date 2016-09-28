@@ -329,7 +329,21 @@ public class DataFactory {
 	
 	public int getPreparedUpdate(RapidRequest rapidRequest, String sql, ArrayList<Parameter> parameters) throws SQLException, ClassNotFoundException, ConnectionAdapterException {
 		
-		return getPreparedStatement(rapidRequest, sql, parameters).executeUpdate();
+		if (sql.trim().toLowerCase().startsWith("begin")) {
+			
+			CallableStatement cs = getConnection(rapidRequest).prepareCall(_sql);
+			
+			populateStatement(cs, parameters, 0);
+						
+			cs.execute();
+			
+			return cs.getUpdateCount();
+			
+		} else {
+				
+			return getPreparedStatement(rapidRequest, sql, parameters).executeUpdate();
+			
+		}
 		
 	}
 	
