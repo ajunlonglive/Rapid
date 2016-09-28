@@ -26,8 +26,6 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
  -->
 
-
-
 <type>responsive</type>
 <name>Responsive</name>
 
@@ -50,6 +48,31 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
 .spacer {
   margin-bottom: 20px;
+}
+
+.panel1 {
+  border: 2px solid #2E6DA4;
+  border-radius: 4px;
+}
+
+.panel2 {
+  border: 2px solid #46B8DA;
+  border-radius: 4px;
+}
+
+.panel3 {
+  border: 2px solid #EEA236;
+  border-radius: 4px;
+}
+
+.panel4 {
+  border: 2px solid #4CAE4C;
+  border-radius: 4px;
+}
+
+.panel5 {
+  border: 2px solid #D43F3A;
+  border-radius: 4px;
 }
 
 /* 
