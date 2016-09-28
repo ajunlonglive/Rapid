@@ -572,6 +572,66 @@ public class Control {
 		return js;		
 	}
 	
+	// this method returns JavaScript for retrieving a control's data, or runtime property value
+	public static String setDataJavaScript(ServletContext servletContext, Application application, Page page, String id, String field) {
+		
+		// assume an empty string
+		String js = "";
+		
+		// if id is not null
+		if (id != null) {
+			
+			// split by escaped .
+			String idParts[] = id.split("\\.");
+									
+			// find the control in the page
+			Control control = page.getControl(idParts[0]);
+			// assume it is in the page
+			boolean pageControl = true;
+			// if not found 
+			if (control == null) {
+				// have another last go in the whole application
+				control = application.getControl(servletContext, idParts[0]);
+				// mark as not in the page
+				pageControl = false;
+			}
+			// check control
+			if (control != null) {
+				// assume no field
+				String fieldJS = "null";
+				// add if present
+				if (field != null) fieldJS = "'" + field + "'";
+				// assume no control details
+				String detailsJS = control.getDetailsJavaScript(application, page);
+				// look for them
+				if (control.getDetails() == null) {
+					// update to empty string
+					detailsJS = "";
+				} else {
+					// check if control is in the page
+					if (pageControl) {
+						// use the abbreviated details
+						detailsJS = "," + control.getId() + "details";
+					} else {
+						// use the long details
+						detailsJS = "," + detailsJS;
+					}
+				}
+				// check if there was another
+				if (idParts.length > 1) {
+					// get the runtime property
+					return "setProperty_" + control.getType() + "_" + idParts[1] + "(ev,'" + control.getId() + "'," + fieldJS + detailsJS + ", data, true)";
+				} else {
+					// no other parts return getData call
+					return "setData_" + control.getType() + "(ev,'" + control.getId() + "'," + fieldJS + detailsJS + ", data, true)";
+				}
+				
+			} // control check
+							
+		}
+		return js;		
+	}
+	
 	// this method checks the xml versions and upgrades any xml nodes before the xml document is unmarshalled
 	public static Node upgrade(Node actionNode) { return actionNode; }
 		
