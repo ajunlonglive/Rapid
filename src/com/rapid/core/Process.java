@@ -39,9 +39,16 @@ public abstract class Process extends Thread {
 	// override methods
 	@Override
 	public void start() {
-		super.start();
-		// log that we've started
-		_logger.info("Process " + _name + " has started, checking every " + _interval + " seconds");
+		if (_interval > 0) {
+			super.start();
+			// log that we've started
+			_logger.info("Process " + _name + " has started, checking every " + _interval + " seconds");
+		} else {
+			// set stopped
+			_stopped = true;
+			// log that we won't be started
+			_logger.info("Process " + _name + " will not be started, interval must be greater than 0");
+		}
 	}
 		
 	@Override
