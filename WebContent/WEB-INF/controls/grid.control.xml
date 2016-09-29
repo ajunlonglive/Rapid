@@ -632,6 +632,7 @@ if (details) {
 			}	    
 			if (data == null && details.dataStorageType) {
 				var dataStore = getGridDataStoreData(id, details);
+				var rowIndex = getGridSelectedRowNumber(id, ev);
 				rowIndex --;
 				if (rowIndex > -1 && dataStore.rows && dataStore.rows.length > rowIndex) {
 					for (var i in dataStore.fields) {
