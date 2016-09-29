@@ -26,6 +26,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 package com.rapid.actions;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,11 +43,11 @@ public class Validation extends Action {
 	
 	// instance variables
 	private ArrayList<String> _controls;
-	private ArrayList<Action> _passActions, _failActions;
+	private ArrayList<Action> _passActions, _failActions, _childActions;
 	
 	// properties
 	
-	public ArrayList<String> getControls() { return _controls; }	
+	public ArrayList<String> getControls() { return _controls; }
 	public void setControls(ArrayList<String> controls) { _controls = controls; }
 	
 	public ArrayList<Action> getPassActions() { return _passActions; }
@@ -63,7 +64,7 @@ public class Validation extends Action {
 	public Validation(RapidHttpServlet rapidServlet, JSONObject jsonAction) throws Exception {
 		// set the xml version
 		super();
-		// save all key/values from the json into the properties 
+		// save all key/values from the json into the properties
 		for (String key : JSONObject.getNames(jsonAction)) {
 			// add all json properties to our properties, except for controls
 			if (!"controls".equals(key) && !"passActions".equals(key) && !"failActions".equals(key)) addProperty(key, jsonAction.get(key).toString());
@@ -101,6 +102,24 @@ public class Validation extends Action {
 	// methods
 	
 	@Override
+	public List<Action> getChildActions() {
+		// initialise and populate on first get
+		if (_childActions == null) {
+			// our list of all child actions
+			_childActions = new ArrayList<Action>();
+			// add child success actions
+			if (_passActions != null) {
+				for (Action action : _passActions) _childActions.add(action);
+			}
+			// add child error actions
+			if (_failActions != null) {
+				for (Action action : _failActions) _childActions.add(action);
+			}
+		}
+		return _childActions;
+	}
+	
+	@Override
 	public String getJavaScript(RapidRequest rapidRequest, Application application, Page page, Control control, JSONObject jsonDetails) throws Exception {
 		
 		String js = "";
@@ -110,9 +129,9 @@ public class Validation extends Action {
 			// the validations is a JavaScript array
 			JSONArray jsonValidations = new JSONArray();
 			// loop the controls (which are actually controlIds)
-			for (String controlId : _controls) {				
+			for (String controlId : _controls) {
 				// find the control proper
-				Control validateControl = page.getControl(controlId);								
+				Control validateControl = page.getControl(controlId);
 				// check we have a control
 				if (validateControl != null) {
 					// get the control validation
@@ -125,13 +144,13 @@ public class Validation extends Action {
 						
 						// check a type has been specified and we could find it
 						if (jsonControl != null && !"".equals(controlValidation.getType())) {
-							// this method can't throw so catch here					
+							// this method can't throw so catch here
 							try {
 								
 								// build the validations object
 								JSONObject jsonValidation = new JSONObject();
 							
-								// add the properties						
+								// add the properties
 								jsonValidation.put("controlId", validateControl.getId());
 								jsonValidation.put("controlType", validateControl.getType());
 								jsonValidation.put("validationType", controlValidation.getType());
@@ -149,7 +168,7 @@ public class Validation extends Action {
 								jsonValidations.put(jsonValidation);
 								
 							} catch (JSONException ex) {}
-						}												
+						}
 					}
 				}
 			}
