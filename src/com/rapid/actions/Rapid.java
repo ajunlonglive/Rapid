@@ -2200,11 +2200,16 @@ public class Rapid extends Action {
 				user.setDescription(description);
 				// update the device details
 				user.setDeviceDetails(deviceDetails);
-				// update the user
-				security.updateUser(rapidRequest, user);
-				
-				// update the password if different from the mask
-				if (!"********".equals(password)) {
+								
+				// if password is different from the mask
+				if ("********".equals(password)) {
+					// update the user
+					security.updateUser(rapidRequest, user);
+				} else {
+					// update the password
+					user.setPassword(password);
+					// update the user
+					security.updateUser(rapidRequest, user);
 					// update the session password as well if we are changing our own password (this is required especially when changing the rapid app password)
 					if (user.getName().equals(rapidRequest.getSessionAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME))) rapidRequest.setUserPassword(password);
 					// get the old password
