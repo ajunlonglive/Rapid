@@ -156,7 +156,7 @@ if (!control.is("input")) control = control.find("#" + id + "checkbox");
 var attr = control.attr("value");
 var checked = false;
 if (attr) {
-	if (value == attr) checked = true;	
+	if (value == attr || (value == true && attr == "true")) checked = true;	
 } else {
 	if (value && !value == "false") checked = true;
 }
