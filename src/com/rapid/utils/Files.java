@@ -40,9 +40,12 @@ public class Files {
 		if (file.isDirectory()) {
 			// get a list of contents
 			File[] files = file.listFiles();
-			// loop contents recursively calling itself to delete those contents
-			for (int i = 0; i < files.length; i ++) {
-				deleteRecurring(files[i]);
+			// if we got some
+			if (files != null) {
+				// loop contents recursively calling itself to delete those contents
+				for (int i = 0; i < files.length; i ++) {
+					deleteRecurring(files[i]);
+				}
 			}			
 		} 
 		// if we're here we've arrived at a physical file, return its delete	
@@ -99,14 +102,17 @@ public class Files {
 	    		if (!dest.exists()) dest.mkdirs();
 	    		// list all the directory contents
 	    		String files[] = src.list();
-	    		// loop directory contents
-	    		for (String file : files) {
-	    		   // create a file object for the source
-	    		   File srcFile = new File(src, file);
-	    		   // create a file object for the destination, note the dest folder is the parent
-	    		   File destFile = new File(dest, file);
-	    		   // recursive copy
-	    		   copyFolder(srcFile, destFile, ignoreFiles);
+	    		// if we got some
+	    		if (files != null) {
+		    		// loop directory contents
+		    		for (String file : files) {
+		    		   // create a file object for the source
+		    		   File srcFile = new File(src, file);
+		    		   // create a file object for the destination, note the dest folder is the parent
+		    		   File destFile = new File(dest, file);
+		    		   // recursive copy
+		    		   copyFolder(srcFile, destFile, ignoreFiles);
+		    		}
 	    		}
 	    	} else {
 	    		// not a directory so only copy the file to the destination
@@ -145,11 +151,16 @@ public class Files {
 		// instantiate the return value
 		long size = 0;		
 		// if the file is a directory
-		if (file.isDirectory()) {				
-			// loop the contents constantly incrimenting the size
-			for (File childFile : file.listFiles()) {
-				size += getSize(childFile);			
-			}			
+		if (file.isDirectory()) {
+			// get the file
+			File[] childFiles = file.listFiles();
+			// if we got some
+			if (childFiles != null) {
+				// loop the contents constantly incrimenting the size
+				for (File childFile : childFiles) {
+					size += getSize(childFile);			
+				}
+			}
 		} else {			
 			// just return the size
 			return file.length();			
