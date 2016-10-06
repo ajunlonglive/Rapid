@@ -297,7 +297,7 @@ public class Email {
     	// create the message
     	Message message = new MimeMessage(session);
         message.setFrom(new InternetAddress(from));
-        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
+        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to.replace(";", ",")));
         message.setSubject(subject);
         message.setText(text);
         
