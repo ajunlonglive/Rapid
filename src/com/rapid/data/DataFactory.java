@@ -191,12 +191,16 @@ public class DataFactory {
 		
 	}
 			
+	// private instance variables
+	
 	private ConnectionAdapter _connectionAdapter;
 	private String _sql;
 	private boolean _autoCommit, _readOnly;
 	private Connection _connection; 	
 	private PreparedStatement _preparedStatement;
 	private ResultSet _resultset;
+	
+	// constructors
 		
 	public DataFactory(ConnectionAdapter connectionAdapter) {
 		_connectionAdapter = connectionAdapter;
@@ -208,16 +212,17 @@ public class DataFactory {
 		_autoCommit = autoCommit;
 	}
 	
-	public Connection getConnection(RapidRequest rapidRequest) throws SQLException, ClassNotFoundException, ConnectionAdapterException {
-			
-		_connection = _connectionAdapter.getConnection(rapidRequest);
-		
-		_connection.setAutoCommit(_autoCommit);
-		
-		_connection.setReadOnly(_readOnly);
-							
-		return _connection;
-				
+	// public methods
+	
+	public ConnectionAdapter getConnectionAdapter() {
+		return _connectionAdapter;
+	}
+	
+	public Connection getConnection(RapidRequest rapidRequest) throws SQLException, ClassNotFoundException, ConnectionAdapterException {		
+		_connection = _connectionAdapter.getConnection(rapidRequest);		
+		_connection.setAutoCommit(_autoCommit);		
+		_connection.setReadOnly(_readOnly);							
+		return _connection;				
 	}
 	
 	public boolean getReadOnly(boolean readOnly) { return _readOnly; }	
