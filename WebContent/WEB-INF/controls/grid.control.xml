@@ -668,25 +668,37 @@ if (details) {
 				if (dataStore) {
 					// make a field map of data from the grid to data from the dataStore
 					var fieldMap = {};
+					// loop the fields from the control in the page
 					for (var i in data.fields) {
+						// assume we can't find this field
+						var found = false;
+						// loop the fields from the dataStore
 						for (var j in dataStore.fields) {
+							// if this is the field they both have
 							if (data.fields[i] && dataStore.fields[j] && data.fields[i].toLowerCase() == dataStore.fields[j].toLowerCase()) {
 								fieldMap[i] = j;
+								found = true;
 								break;
-							}
+							}							
 						}
+						// if not found 
+						if (!found) {
+							//add to dataStore fields
+							dataStore.fields.push(data.fields[i]);
+							// add to map
+							fieldMap[i] = dataStore.fields.length - 1;
+						}	
 					}
 					// loop the rows in the data from the grid
 					for (var i in data.rows) {
-						// add an empty row to the dataStore if there are more in the page
-						if (dataStore.rows.length < i - 1) {
-							dataStore.rows.push([]);
-							for (k in dataStore.fields) dataStore.rows[i].push(null);
-						}
-						for (j in fieldMap) {							
-							dataStore.rows[i][fieldMap[j]] = data.rows[i][j];
-						}
+						// add an empty row to the dataStore rows if there are more in the page
+						if (dataStore.rows.length < i - 1) dataStore.rows.push([]);
+						// if there are less cells in the rows than it's fields add more
+						while (dataStore.rows[i].length < dataStore.fields.length) dataStore.rows[i].push(null);						
+						// loop the fieldMap and update dataStore with values from page
+						for (j in fieldMap) dataStore.rows[i][fieldMap[j]] = data.rows[i][j];						
 					}
+					// set data to our merged dataStore
 					data = dataStore;	
 				}							
 			}						
