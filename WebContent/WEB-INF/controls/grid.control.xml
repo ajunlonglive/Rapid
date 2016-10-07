@@ -625,7 +625,7 @@ if (details) {
 			if (row[0]) {
 				for (var i in details.columns) {
 					if (details.columns[i].field && details.columns[i].field.toLowerCase() == field.toLowerCase()) {
-						data = row.children(":nth(" + i + ")").html();
+						data = row.children(":nth(" + i + ")").text();
 						break;
 					}
 				}
@@ -656,7 +656,7 @@ if (details) {
 			table.find("tr:not(:first):not([data-ignore])").each(function(i) {
 				var row = [];
 				$(this).children().each(function(i) {
-					if (details.columns[i].field) row.push($(this).html());
+					if (details.columns[i].field) row.push($(this).text());
 				});
 				data.rows.push(row);
 			});
@@ -973,7 +973,7 @@ if (details.dataStorageType) {
 		data = {fields:[],rows:[[]]};
 		for (var i in details.columns) {
 			data.fields.push(details.columns[i].field);
-			data.rows[0].push(row.children(":nth(" + i + ")").html());
+			data.rows[0].push(row.children(":nth(" + i + ")").text());
 		}
 	}
 }
