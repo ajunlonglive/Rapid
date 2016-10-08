@@ -1122,12 +1122,14 @@ public abstract class FormAdapter {
 			
 			// send users back to the start if no form details
 			Rapid.gotoStartPage(rapidRequest.getRequest(), response, _application, false);
-						
+			
+			/* Problem with this is unsubmitted forms could not be resumed			
 		} else if (!formDetails.getComplete()) {
 			
 			// send users back to the start if form not completed yet
 			Rapid.gotoStartPage(rapidRequest.getRequest(), response, _application, false);
-						
+			*/
+			
 		} else {
 		
 			// create a writer
@@ -1165,8 +1167,17 @@ public abstract class FormAdapter {
 			
 			// get the application and perform any 3rd party submission first so if they fail the whole thing fails
 			Application application = rapidRequest.getApplication();
+									
+			// file
+			if (application.getFormFile()) saveFormFile(rapidRequest, formId);
+							
+			// webservice
+			if (application.getFormWebservice()) sendFormWebservice(rapidRequest, formId);
 			
-			// email
+			// get the submission details
+			SubmissionDetails submissionDetails = submitForm(rapidRequest);
+			
+			// only email if 3rd party and internal submission did not fail
 			if (application.getFormEmail()) {
 				
 				// get a string writer which the summary html will be written to
@@ -1183,15 +1194,6 @@ public abstract class FormAdapter {
 				
 			}
 			
-			// file
-			if (application.getFormFile()) saveFormFile(rapidRequest, formId);
-							
-			// webservice
-			if (application.getFormWebservice()) sendFormWebservice(rapidRequest, formId);
-			
-			// get the submission details
-			SubmissionDetails submissionDetails = submitForm(rapidRequest);
-			
 			// retain the submitted date/time in the details
 			formDetails.setSubmittedDateTime(submissionDetails.getDateTime());
 			// retain the submit message in the details
@@ -1201,6 +1203,8 @@ public abstract class FormAdapter {
 			
 			// retain that this form was submitted
 			addSubmittedForm(rapidRequest, formDetails.getId());
+			
+			
 			
 		} catch (Exception ex) {
 			// retain the error message in the details
