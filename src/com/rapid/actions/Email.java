@@ -59,6 +59,11 @@ public class Email extends Action {
         String controlParam = "";
         if (control != null) controlParam = "&c=" + control.getId();
         
+        // get the from control id
+        String fromControlId = getProperty("from");
+        // get the from field
+        String fromField = getProperty("fromField");
+        
         // get the to control id
         String toControlId = getProperty("to");
         // get the to field
@@ -66,6 +71,9 @@ public class Email extends Action {
         
         // assume empty data
         js += "var data = {};\n";
+        
+        // get the get data js call for the to and to field
+        String getFromJs = Control.getDataJavaScript(servletContext, application, page, fromControlId, fromField);
         
         // get the get data js call for the to and to field
         String getToJs = Control.getDataJavaScript(servletContext, application, page, toControlId, toField);
@@ -77,6 +85,9 @@ public class Email extends Action {
         	
         } else {
         	
+        	// add the from address
+	        js += "data.from = " + getFromJs + ";\n";
+	        
 	        // add the to address
 	        js += "data.to = " + getToJs + ";\n";
 	        
@@ -118,33 +129,34 @@ public class Email extends Action {
 	        js += "});\n";
         }
 
-		
 		return js;
 	}
 	
 	@Override
     public JSONObject doAction(RapidRequest rapidRequest, JSONObject jsonData) throws Exception {
 		
-		// get the from address
-		String from = getProperty("from");
-		// get the subject
-		String subject = getProperty("subject");
 		// get the type
 		String type = getProperty("emailType");
-		// get the body as a string
-        String stringBody = getProperty("body");
+		// get the content as a string
+        String stringContent = getProperty("content");
         // if we got one
-        if (stringBody == null) {
-        	throw new Exception("Email body must be provided");
+        if (stringContent == null) {
+        	throw new Exception("Email content must be provided");
         } else {
         	// get it into json
-        	JSONObject jsonBody = new JSONObject(stringBody);
-        	// get the template
-        	String template = jsonBody.optString("template");
+        	JSONObject jsonContent = new JSONObject(stringContent);
+        	// get the subject template
+        	String subject = jsonContent.optString("subject");
+        	// get the body template
+        	String body = jsonContent.optString("body");
         	// if we got one
-        	if (template == null) {
-        		throw new Exception("Email template must be provided");
+        	if (subject == null) {
+        		throw new Exception("Email subject must be provided");
+        	} else if (body == null) {
+        		throw new Exception("Email body must be provided");
         	} else {
+        		// get the from address
+        		String from = jsonData.getString("from");
         		// get the to address
         		String to = jsonData.getString("to");
         		// set the text to  an empty string
@@ -157,16 +169,16 @@ public class Email extends Action {
         		if (jsonInputs != null) {
         			// check any inputs to look for
         			if (jsonInputs.length() > 0) {
-        				// update the template with any parameters
-        				template = rapidRequest.getApplication().insertParameters(rapidRequest.getRapidServlet().getServletContext(), template);
+        				// update the body template with any parameters
+        				body = rapidRequest.getApplication().insertParameters(rapidRequest.getRapidServlet().getServletContext(), body);
 	        			// split the template on [[?]]
-	        			templateParts = template.split("\\?");
+	        			templateParts = body.split("\\?");
         			}
         		}
         		// if we merge
         		if (templateParts == null) {
         			// no template parts to merge so just set text to template
-        			text = template;        			
+        			text = body;        			
         		} else {
         			// loop the template parts
         			for (int i = 0; i < templateParts.length; i++) {
