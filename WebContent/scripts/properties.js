@@ -4614,7 +4614,7 @@ function Property_emailBody(cell, propertyObject, property, details) {
 	table.children().remove();
 	
 	// sample template
-	var sample = "Dear [[?]],\n\nThanks for your letter sent on [[?]]";
+	var sample = "Dear ?,\n\nThanks for your letter sent on ?";
 		
 	// initialise the body object if need be
 	if (!propertyObject.body) propertyObject.body = {inputs:[], template:sample};
@@ -4627,8 +4627,8 @@ function Property_emailBody(cell, propertyObject, property, details) {
 	// put the elipses in the cell
 	cell.text(text);
 	
-	// add inputs table, sql, and outputs table
-	table.append("<tr><td colspan='2' style='padding:0px;vertical-align: top;'><table class='dialogueTable inputs'><tr><td><b>Input</b></td><td><b>Field</b></td></tr></table></td><td style='width:65%;padding:2px 10px 0 10px;'><b>SQL</b><br/><textarea style='width:100%;min-width:100%;max-width:100%;min-height:200px;height:95%;box-sizing:border-box;'></textarea></td></tr>");
+	// add inputs table, and body
+	table.append("<tr><td colspan='2' style='padding:0px;vertical-align: top;'><table class='dialogueTable inputs'><tr><td><b>Input</b></td><td><b>Field</b></td></tr></table></td><td style='width:65%;padding:2px 10px 0 10px;'><b>Body</b><br/><textarea style='width:100%;min-width:100%;max-width:100%;min-height:200px;height:95%;box-sizing:border-box;'></textarea></td></tr>");
 	
 	// find the inputs table
 	var inputsTable = table.find("table.inputs");

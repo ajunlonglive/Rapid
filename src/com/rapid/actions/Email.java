@@ -155,12 +155,12 @@ public class Email extends Action {
         		JSONArray jsonInputs = jsonData.optJSONArray("inputs");
         		// check we got inputs
         		if (jsonInputs != null) {
-        			// check input size size
-        			if (jsonInputs.length() > 1) {
+        			// check any inputs to look for
+        			if (jsonInputs.length() > 0) {
         				// update the template with any parameters
         				template = rapidRequest.getApplication().insertParameters(rapidRequest.getRapidServlet().getServletContext(), template);
 	        			// split the template on [[?]]
-	        			templateParts = template.split("\\[\\[\\?\\]\\]");
+	        			templateParts = template.split("\\?");
         			}
         		}
         		// if we merge
@@ -172,14 +172,26 @@ public class Email extends Action {
         			for (int i = 0; i < templateParts.length; i++) {
         				// append the part to text
         				text += templateParts[i];
-        				// add any input
-        				if (jsonInputs.length() > i && i < templateParts.length - 1) text += jsonInputs.getString(i);
+        				// if this ? was preceeded by a \ escape
+        				if (text.endsWith("\\")) {
+        					// decrement i so we use it's value in the next run
+        					i--;
+        				} else {
+        					// if we're due an input value
+        					if (jsonInputs.length() > i && i < templateParts.length - 1) {
+        						// add it
+        						text += jsonInputs.getString(i);
+        					} else {
+        						// otherwise put the question mark back
+        						text += "?";
+        					}
+        				}
         			}
         		}
         		// if the type is html
         		if ("html".equals(type)) {
         			// send email as html
-        			com.rapid.core.Email.send(from, to, subject, "Please view this email with a tool that supports HTML", text);
+        			com.rapid.core.Email.send(from, to, subject, "Please view this email with an application that supports HTML", text);
         		} else {
         			// send email as text
         			com.rapid.core.Email.send(from, to, subject, text);
