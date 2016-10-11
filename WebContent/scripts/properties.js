@@ -4603,53 +4603,55 @@ function Property_chartType(cell, chart, property, details) {
 	}	
 }
 
-//this is a dialogue to specify the inputs, sql, and outputs for the database action
-function Property_emailBody(cell, propertyObject, property, details) {
+// this is a dialogue to specify the inputs, sql, and outputs for the database action
+function Property_emailContent(cell, propertyObject, property, details) {
 	
 	// retrieve or create the dialogue
-	var dialogue = getDialogue(cell, propertyObject, property, details, 650, "Email body", {sizeX: true});		
+	var dialogue = getDialogue(cell, propertyObject, property, details, 650, "Email content", {sizeX: true});		
 	// grab a reference to the table
 	var table = dialogue.children().last().children().last();
 	// make sure its empty
 	table.children().remove();
 	
-	// sample template
-	var sample = "Dear ?,\n\nThanks for your letter sent on ?";
+	// sample subject template
+	var subjectSample = "Email subject";
+	// sample body template
+	var bodySample = "Dear ?,\n\nThanks for your letter sent on ?";
 		
 	// initialise the body object if need be
-	if (!propertyObject.body) propertyObject.body = {inputs:[], template:sample};
-	// get the body
-	var body = propertyObject.body;
-	// get the template into a variable
-	var text = body.template;
+	if (!propertyObject.content) propertyObject.content = {inputs:[], subject:subjectSample, body:bodySample};
+	// get the content
+	var content = propertyObject.content;
+	// get the body template into a variable
+	var text = content.body;
 	// change to message if not provided
-	if (!text || text == sample) text = "Click to define...";
+	if (!text || text == bodySample) text = "Click to define...";
 	// put the elipses in the cell
 	cell.text(text);
 	
-	// add inputs table, and body
-	table.append("<tr><td colspan='2' style='padding:0px;vertical-align: top;'><table class='dialogueTable inputs'><tr><td><b>Input</b></td><td><b>Field</b></td></tr></table></td><td style='width:65%;padding:2px 10px 0 10px;'><b>Body</b><br/><textarea style='width:100%;min-width:100%;max-width:100%;min-height:200px;height:95%;box-sizing:border-box;'></textarea></td></tr>");
+	// add inputs table, subject, and body
+	table.append("<tr><td colspan='2' style='padding:0px;vertical-align: top;'><table class='dialogueTable inputs'><tr><td><b>Input</b></td><td><b>Field</b></td></tr></table></td><td style='width:65%;padding:2px 10px 0 10px;'><b>Subject</b><br/><input class='subject' style='padding:2px;width:100%;box-sizing:border-box;border:1px solid #aaa;' /><br/><b>Body</b><br/><textarea style='width:100%;min-height:180px;height:80%;box-sizing:border-box;'></textarea></td></tr>");
 	
 	// find the inputs table
 	var inputsTable = table.find("table.inputs");
 	// loop input parameters
-	for (var i in body.inputs) {		
+	for (var i in content.inputs) {		
 		// get the input name
-		var itemName = body.inputs[i].itemId;
+		var itemName = content.inputs[i].itemId;
 		// look for a control with an item of this item
 		var control = getDataItemDetails(itemName);
 		// if we found a control use this as the name
 		if (control && control.name) itemName = control.name;		
 		// get the field
-		var field = body.inputs[i].field;
+		var field = content.inputs[i].field;
 		// make it an empty space if null
 		if (!field) field = "";
 		// add the row
-		inputsTable.append("<tr><td>" + (body.multiRow && i > 0 ? "&nbsp;" : itemName) + "</td><td><input value='" + escapeApos(field) + "' /></td><td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
+		inputsTable.append("<tr><td>" + itemName + "</td><td><input value='" + escapeApos(field) + "' /></td><td style='width:32px;'><img class='delete' src='images/bin_16x16.png' style='float:right;' /><img class='reorder' src='images/moveUpDown_16x16.png' style='float:right;' /></td></tr>");
 		// get the field input
 		var fieldInput = inputsTable.find("tr").last().children(":nth(1)").last().children().last();
 		// add a listener
-		addListener( fieldInput.keyup( {parameters: body.inputs}, function(ev) {
+		addListener( fieldInput.keyup( {parameters: content.inputs}, function(ev) {
 			// get the input
 			var input = $(ev.target);
 			// update field value
@@ -4658,7 +4660,7 @@ function Property_emailBody(cell, propertyObject, property, details) {
 		// get the delete
 		var fieldDelete = inputsTable.find("tr").last().children().last().children("img.delete");
 		// add a listener
-		addListener( fieldDelete.click( {parameters: body.inputs}, function(ev) {
+		addListener( fieldDelete.click( {parameters: content.inputs}, function(ev) {
 			// get the input
 			var input = $(ev.target);
 			// remove from parameters
@@ -4668,8 +4670,8 @@ function Property_emailBody(cell, propertyObject, property, details) {
 		}));
 	}
 	// add reorder listeners
-	addReorder(body.inputs, inputsTable.find("img.reorder"), function() { 
-		Property_emailBody(cell, propertyObject, property); 
+	addReorder(content.inputs, inputsTable.find("img.reorder"), function() { 
+		Property_emailContent(cell, propertyObject, property, details); 
 	});
 	
 	// add the add input select
@@ -4679,21 +4681,29 @@ function Property_emailBody(cell, propertyObject, property, details) {
 	// listener to add input
 	addListener( inputAdd.change( {cell: cell, propertyObject: propertyObject, property: property, details: details}, function(ev) {
 		// initialise array if need be
-		if (!ev.data.propertyObject.body.inputs) ev.data.propertyObject.body.inputs = [];
+		if (!ev.data.propertyObject.content.inputs) ev.data.propertyObject.content.inputs = [];
 		// get the parameters (inputs or outputs)
-		var parameters = ev.data.propertyObject.body.inputs;
+		var parameters = ev.data.propertyObject.content.inputs;
 		// add a new one
 		parameters.push({itemId: $(ev.target).val(), field: ""});
-		// rebuild the dialgue
-		Property_emailBody(ev.data.cell, ev.data.propertyObject, ev.data.property, ev.data.details);
+		// rebuild the dialogue
+		Property_emailContent(ev.data.cell, ev.data.propertyObject, ev.data.property, ev.data.details);
 	}));
 	
-	// find the template textarea
-	var templateControl = table.find("textarea").first();
-	templateControl.text(body.template);
-	// listener for the sql
-	addListener( templateControl.keyup( {body: body}, function(ev) {
-		body.template = $(ev.target).val();
+	// find the subject input
+	var subjectControl = table.find("input.subject").first();
+	subjectControl.val(content.subject);
+	// listener for the subject
+	addListener( subjectControl.keyup( {content: content}, function(ev) {
+		ev.data.content.subject = $(ev.target).val();
+	}));
+	
+	// find the body textarea
+	var bodyControl = table.find("textarea").first();
+	bodyControl.text(content.body);
+	// listener for the body
+	addListener( bodyControl.keyup( {content: content}, function(ev) {
+		ev.data.content.body = $(ev.target).val();
 	}));
 	
 }
