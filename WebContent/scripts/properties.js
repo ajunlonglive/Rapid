@@ -4615,17 +4615,32 @@ function Property_emailContent(cell, propertyObject, property, details) {
 	
 	// sample subject template
 	var subjectSample = "Email subject";
-	// sample body template
-	var bodySample = "Dear ?,\n\nThanks for your letter sent on ?";
+	// sample body for type text
+	var bodySampleText = "Dear ?,\n\nThanks for your letter sent on ?";
+	// sample body  for type html
+	var bodySampleHtml = "<html>\n  <body>\nDear ?,\n\nThanks for your letter sent on ?\n  </body>\n</html>";
 		
-	// initialise the body object if need be
-	if (!propertyObject.content) propertyObject.content = {inputs:[], subject:subjectSample, body:bodySample};
+	// initialise the content according to the type object if need be
+	if (!propertyObject.content) propertyObject.content = {inputs:[], subject:subjectSample, body:(propertyObject.emailType == "html" ? bodySampleHtml : bodySampleText )};
 	// get the content
 	var content = propertyObject.content;
+	// if content is a string
+	if ($.type(content) === "string") {
+		// parse the JSON string back into proper objects
+		content = JSON.parse(content);
+		// update the propertyObject
+		propertyObject.content = content;
+	}
+	// swap the default types if need be	
+	if (propertyObject.emailType == "html") {
+		if (content.body == bodySampleText) content.body = bodySampleHtml;
+	} else {
+		if (content.body == bodySampleHtml) content.body = bodySampleText;
+	}
 	// get the body template into a variable
 	var text = content.body;
 	// change to message if not provided
-	if (!text || text == bodySample) text = "Click to define...";
+	if (!text || text == bodySampleText || text == bodySampleHtml) text = "Click to define...";
 	// put the elipses in the cell
 	cell.text(text);
 	
