@@ -50,12 +50,12 @@ public class Email extends Action {
 	// protected instance methods
 	
 	// produced any js required for additional data from the client
-	protected String getAdditionalDataJS() {
+	protected String getAdditionalDataJS(RapidRequest rapidRequest, Application application, Page page, Control control, JSONObject jsonDetails) throws Exception {
 		return "";
 	}
 	
 	// produces any attachment
-	protected Attachment getAttachment() {
+	protected Attachment getAttachment(RapidRequest rapidRequest, JSONObject jsonData) throws Exception {
 		return null;
 	}
 	
@@ -129,7 +129,7 @@ public class Email extends Action {
 	        }
 	        
 	        // add any js for additional data
-	        js += getAdditionalDataJS();
+	        js += getAdditionalDataJS(rapidRequest, application, page, control, jsonDetails);
 	        	       			
 			// open the ajax call
 	        js += "$.ajax({ url : '~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + page.getId() + controlParam + "&act=" + getId() + "', type: 'POST', contentType: 'application/json', dataType: 'json',\n";
@@ -204,9 +204,11 @@ public class Email extends Action {
                 			// set subject to first part
                 			subject = subjectParts[0];
                 			// loop the remaining parts
-                			for (int j = 1; i < subjectParts.length; i++) {
+                			for (int j = 1; j < subjectParts.length; j++) {
                 				// if there is an escape character or not more inputs
                 				if (subject.endsWith("\\") || i >= jsonInputs.length()) {
+                					// trim the \
+                					subject = subject.substring(0, body.length() - 1);
                 					// add back the ?
                 					subject += "?";
                 				} else {
@@ -242,9 +244,11 @@ public class Email extends Action {
                 			// set body to first part
                 			body = bodyParts[0];
                 			// loop the remaining parts
-                			for (int j = 1; i < bodyParts.length; i++) {
+                			for (int j = 1; j < bodyParts.length; j++) {
                 				// if there is an escape character or not more inputs
                 				if (body.endsWith("\\") || i >= jsonInputs.length()) {
+                					// trim the \
+                					body = body.substring(0, body.length() - 1);
                 					// add back the ?
                 					body += "?";
                 				} else {
@@ -279,10 +283,10 @@ public class Email extends Action {
         		// if the type is html
         		if ("html".equals(type)) {
         			// send email as html
-        			com.rapid.core.Email.send(from, to, subject, "Please view this email with an application that supports HTML", body, getAttachment());
+        			com.rapid.core.Email.send(from, to, subject, "Please view this email with an application that supports HTML", body, getAttachment(rapidRequest, jsonContent));
         		} else {
         			// send email as text
-        			com.rapid.core.Email.send(from, to, subject, body, null, getAttachment());
+        			com.rapid.core.Email.send(from, to, subject, body, null, getAttachment(rapidRequest, jsonContent));
         		}
         	}
         }
