@@ -28,8 +28,8 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
  
      <action>
     
-        <type>email</type>        
-        <name>Email</name>	        
+        <type>email</type>
+        <name>Email</name>
 	    <class>com.rapid.actions.Email</class>
 	    <helpHtml>This action defines the details when sending a form. Emails can only be sent with a valid from and to address.</helpHtml>
 	    
@@ -46,7 +46,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 return "<option value=''>Please select...</option>" + getInputOptions(this.to);
                     ]]>
             </getValuesFunction>
-            <helpHtml>Address that the email will be to. Multiple addresses can be separated with commas or semi-colons. Valid email addresses are needed otherwise the email will not be sent.</helpHtml>
+            <helpHtml>Address that the email will be from. Valid email addresses are needed otherwise the email will not be sent.</helpHtml>
         </property>
         
         <property>
@@ -54,6 +54,7 @@ return "<option value=''>Please select...</option>" + getInputOptions(this.to);
 	            <name>From address field</name>
 	            <changeValueJavaScript>text</changeValueJavaScript>
 	            <getValuesFunction>return "";</getValuesFunction>
+	            <helpHtml>Allows you to manually enter an email from address. Multiple addresses can be specified by separating with commas or semi-colons. Valid email addresses are needed otherwise the email will not be sent.</helpHtml>
 	     </property>
 	    	
 	    <property>
@@ -65,7 +66,7 @@ return "<option value=''>Please select...</option>" + getInputOptions(this.to);
 return "<option value=''>Please select...</option>" + getInputOptions(this.to);
                     ]]>
             </getValuesFunction>
-            <helpHtml>Address that the email will be to. Multiple addresses can be separated with commas or semi-colons. Valid email addresses are needed otherwise the email will not be sent.</helpHtml>
+            <helpHtml>Address that the email will be to. Valid email addresses are needed otherwise the email will not be sent.</helpHtml>
         </property>
         
         <property>
@@ -73,7 +74,8 @@ return "<option value=''>Please select...</option>" + getInputOptions(this.to);
 	            <name>To address field</name>
 	            <changeValueJavaScript>text</changeValueJavaScript>
 	            <getValuesFunction>return "";</getValuesFunction>
-	     </property>	
+	            <helpHtml>Allows you to manually enter an email to address. Multiple addresses can be specified by separating with commas or semi-colons. Valid email addresses are needed otherwise the email will not be sent.</helpHtml>
+	     </property>
 	     	     
 	     <property>
 	            <key>emailType</key>
@@ -81,6 +83,7 @@ return "<option value=''>Please select...</option>" + getInputOptions(this.to);
 	            <setConstructValueFunction>return "text";</setConstructValueFunction>
 	            <changeValueJavaScript>select</changeValueJavaScript>
 	            <getValuesFunction>return ["text","html"];</getValuesFunction>
+	            <helpHtml>Defines whether the email will be sent as plain text or HTML.</helpHtml>
 	        </property>
 	        
 	        <property>
@@ -88,6 +91,7 @@ return "<option value=''>Please select...</option>" + getInputOptions(this.to);
 	            <name>Content</name>
 	            <changeValueJavaScript>emailContent</changeValueJavaScript>
 	            <refreshProperties>true</refreshProperties>
+	            <helpHtml>Specifies the email subject and body. Data from your app can be referenced inside the body and will be displayed when using ?. If you need a ? before the control reference it can be escaped using \.</helpHtml>
 	        </property>
 	    	
 	    </properties>
