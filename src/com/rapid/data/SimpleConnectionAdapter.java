@@ -31,6 +31,7 @@ import java.sql.SQLException;
 
 import javax.servlet.ServletContext;
 
+import com.rapid.core.Application.DatabaseConnection;
 import com.rapid.server.RapidRequest;
 
 /*
@@ -42,7 +43,23 @@ The simplest adapter there is. Does nothing special.
 public class SimpleConnectionAdapter extends ConnectionAdapter {
 
 	public SimpleConnectionAdapter(ServletContext servletContext, String driverClassName, String connectionString, String userName, String password) {
-		super(servletContext, driverClassName, connectionString, userName, password);
+		super(
+			servletContext, 
+			driverClassName, 
+			connectionString, 
+			userName, 
+			password
+		);
+	}
+	
+	public SimpleConnectionAdapter(ServletContext servletContext, DatabaseConnection databaseConnection) {
+		super(
+			servletContext, 
+			databaseConnection.getDriverClass(), 
+			databaseConnection.getConnectionString(), 
+			databaseConnection.getUserName(), 
+			databaseConnection.getPassword()
+		);
 	}
 	
 	@Override
