@@ -59,6 +59,28 @@ public abstract class Action {
 	// properties
 	public HashMap<String,String> getProperties() { return _properties; }
 	public void setProperties(HashMap<String,String> properties) { _properties = properties; }
+	
+	// a parameterless constructor is required so they can go in the JAXB context and be unmarshalled 
+	public Action() {
+		// set the xml version
+		_xmlVersion = XML_VERSION;
+		// initialise properties
+		_properties = new HashMap<String,String>();
+	}
+	
+	// json constructor allowing properties to be sent in from the designer
+	public Action(RapidHttpServlet rapidServlet, JSONObject jsonAction) throws Exception {
+		// run the parameterless constructor
+		this();
+		// if we got any properties
+		if (jsonAction != null) {
+			// save all key/values from the json into the properties 
+			for (String key : JSONObject.getNames(jsonAction)) {
+				// add all json properties to our properties
+				addProperty(key, jsonAction.get(key).toString());
+			}
+		}
+	}
 				
 	// these are some helper methods for common properties, ignoring some common ones that will always have their own getters/setters
 	public void addProperty(String key, String value) {	
@@ -92,31 +114,13 @@ public abstract class Action {
 	// this is where any serverside action happens! (some actions are client side only)
 	public JSONObject doAction(RapidRequest rapidRequest, JSONObject jsonData) throws Exception { return null; };
 	
+	// static method for returning any data that might be required by the designer
+	public JSONObject getData(RapidRequest rapidRequest, JSONObject jsonData) throws Exception { return null; }
+	
 	// this method can be overridden to check the xml versions, and upgrade any xml nodes representing specific actions before the xml document is unmarshalled
 	public Node upgrade(Node actionNode) { return actionNode; }
-	
-	// a parameterless constructor is required so they can go in the JAXB context and be unmarshalled 
-	public Action() {
-		// set the xml version
-		_xmlVersion = XML_VERSION;
-		// initialise properties
-		_properties = new HashMap<String,String>();
-	}
-	
-	// json constructor allowing properties to be sent in from the designer
-	public Action(RapidHttpServlet rapidServlet, JSONObject jsonAction) throws Exception {
-		// run the parameterless constructor
-		this();
-		// save all key/values from the json into the properties 
-		for (String key : JSONObject.getNames(jsonAction)) {
-			// add all json properties to our properties
-			addProperty(key, jsonAction.get(key).toString());
-		}
-	}
-	
+			
 	@Override
-	public String toString() {
-		return getClass().getName() + " - " + getId();
-	}
-	
+	public String toString() { return getClass().getName() + " - " + getId(); }
+			
 }
