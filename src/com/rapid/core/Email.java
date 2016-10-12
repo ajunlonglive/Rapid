@@ -301,21 +301,35 @@ public class Email {
         message.setSubject(subject);
         message.setText(text);
         
+     // assume no attachments
+        boolean gotAttachments = false;
+        // if something was provided
+        if (attachments != null) {
+        	 // loop the attachments
+            for (Attachment attachment : attachments) {
+            	// if non- null
+            	if (attachment != null) {
+            		// remember we have attachments            	
+            		gotAttachments = true;
+            		// we're done
+            		break;
+            	}
+            }
+        }
+        
         // if there were any attachments
-        if (attachments == null) {
-        	// html is easy to set with no attachments
-        	if (html != null) message.setContent(html, "text/html");
-        } else {
+        if (gotAttachments) {
+        	
         	// Create the message part
             BodyPart messageBodyPart = new MimeBodyPart();
 
-            // Now set the actual message
-            messageBodyPart.setContent(html, "text/html");
+            // if html specify body type 
+            if (html != null) messageBodyPart.setContent(html, "text/html");
 
-            // Create a multipar message
+            // Create a multipart message
             Multipart multipart = new MimeMultipart();
 
-            // Set html message part
+            // Set body message part
             multipart.addBodyPart(messageBodyPart);
 
             // loop the attachments
@@ -330,7 +344,13 @@ public class Email {
             }
             // add the complete message parts
             message.setContent(multipart);
-        }
+            
+        } else {
+        	
+        	// set message content type for html
+        	if (html != null) message.setContent(html, "text/html");
+        	
+        } // attachment check
 
         // send it!
         Transport.send(message);
