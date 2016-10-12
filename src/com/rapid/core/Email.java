@@ -323,7 +323,10 @@ public class Email {
         	// Create the message part
             BodyPart messageBodyPart = new MimeBodyPart();
 
-            // if html specify body type 
+            // set the text part
+            messageBodyPart.setText(text);
+            
+            // add html if present 
             if (html != null) messageBodyPart.setContent(html, "text/html");
 
             // Create a multipart message
