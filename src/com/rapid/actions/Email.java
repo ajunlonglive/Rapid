@@ -33,6 +33,7 @@ import org.json.JSONObject;
 import com.rapid.core.Action;
 import com.rapid.core.Application;
 import com.rapid.core.Control;
+import com.rapid.core.Email.Attachment;
 import com.rapid.core.Page;
 import com.rapid.server.RapidHttpServlet;
 import com.rapid.server.RapidRequest;
@@ -45,6 +46,20 @@ public class Email extends Action {
 	public Email(RapidHttpServlet rapidServlet, JSONObject jsonAction) throws Exception { 
 		super(rapidServlet, jsonAction);				
 	}
+	
+	// protected instance methods
+	
+	// produced any js required for additional data from the client
+	protected String getAdditionalDataJS() {
+		return "";
+	}
+	
+	// produces any attachment
+	protected Attachment getAttachment() {
+		return null;
+	}
+	
+	// overrides
 	
 	@Override
 	public String getJavaScript(RapidRequest rapidRequest, Application application, Page page, Control control, JSONObject jsonDetails) throws Exception {
@@ -91,14 +106,14 @@ public class Email extends Action {
 	        // add the to address
 	        js += "data.to = " + getToJs + ";\n";
 	        
-	        // get the body as a string
-	        String stringBody = getProperty("body");
+	        // get the contents as a string
+	        String stringContent = getProperty("content");
 	        // if we got one
-	        if (stringBody != null) {
+	        if (stringContent != null) {
 	        	// get it into json
-	        	JSONObject jsonBody = new JSONObject(stringBody);
+	        	JSONObject jsonContent = new JSONObject(stringContent);
 	        	// get the inputs
-	        	JSONArray jsonInputs = jsonBody.optJSONArray("inputs");
+	        	JSONArray jsonInputs = jsonContent.optJSONArray("inputs");
 	        	// if we got some
 	        	if (jsonInputs != null) {
 	        		// add to the data object
@@ -112,6 +127,9 @@ public class Email extends Action {
 	        		}
 	        	}
 	        }
+	        
+	        // add any js for additional data
+	        js += getAdditionalDataJS();
 	        	       			
 			// open the ajax call
 	        js += "$.ajax({ url : '~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + page.getId() + controlParam + "&act=" + getId() + "', type: 'POST', contentType: 'application/json', dataType: 'json',\n";
@@ -135,12 +153,20 @@ public class Email extends Action {
 	@Override
     public JSONObject doAction(RapidRequest rapidRequest, JSONObject jsonData) throws Exception {
 		
-		// get the type
-		String type = getProperty("emailType");
+		// get the from address
+		String from = jsonData.getString("from");
+		// get the to address
+		String to = jsonData.getString("to");
 		// get the content as a string
         String stringContent = getProperty("content");
+		// get the type
+		String type = getProperty("emailType");		
         // if we got one
-        if (stringContent == null) {
+        if (from == null) {
+        	throw new Exception("Email from address must be provided");
+        } else if (to == null) {
+        	throw new Exception("Email to address must be provided");
+        } else if (stringContent == null) {
         	throw new Exception("Email content must be provided");
         } else {
         	// get it into json
@@ -155,58 +181,108 @@ public class Email extends Action {
         	} else if (body == null) {
         		throw new Exception("Email body must be provided");
         	} else {
-        		// get the from address
-        		String from = jsonData.getString("from");
-        		// get the to address
-        		String to = jsonData.getString("to");
-        		// set the text to  an empty string
-        		String text = "";
-        		// assume no template parts to merge
-        		String[] templateParts = null;
+        		
+        		// update the subject template with any parameters
+				if (subject.contains("[[")) subject = rapidRequest.getApplication().insertParameters(rapidRequest.getRapidServlet().getServletContext(), subject);
+        		// update the body template with any parameters
+				if (body.contains("[[")) body = rapidRequest.getApplication().insertParameters(rapidRequest.getRapidServlet().getServletContext(), body);
+        		
+				// the index in the input values
+				int i = 0;
+				
         		// get any inputs
         		JSONArray jsonInputs = jsonData.optJSONArray("inputs");
         		// check we got inputs
         		if (jsonInputs != null) {
         			// check any inputs to look for
         			if (jsonInputs.length() > 0) {
-        				// update the body template with any parameters
-        				body = rapidRequest.getApplication().insertParameters(rapidRequest.getRapidServlet().getServletContext(), body);
-	        			// split the template on [[?]]
-	        			templateParts = body.split("\\?");
-        			}
-        		}
-        		// if we merge
-        		if (templateParts == null) {
-        			// no template parts to merge so just set text to template
-        			text = body;        			
-        		} else {
-        			// loop the template parts
-        			for (int i = 0; i < templateParts.length; i++) {
-        				// append the part to text
-        				text += templateParts[i];
-        				// if this ? was preceeded by a \ escape
-        				if (text.endsWith("\\")) {
-        					// decrement i so we use it's value in the next run
-        					i--;
-        				} else {
-        					// if we're due an input value
-        					if (jsonInputs.length() > i && i < templateParts.length - 1) {
-        						// add it
-        						text += jsonInputs.getString(i);
-        					} else {
-        						// otherwise put the question mark back
-        						text += "?";
-        					}
-        				}
-        			}
-        		}
+        				        				
+        				// split the subject part
+                		String[] subjectParts = subject.split("\\?");
+                		// if there is more than 1 part
+                		if (subjectParts.length > 1) {
+                			// set subject to first part
+                			subject = subjectParts[0];
+                			// loop the remaining parts
+                			for (int j = 1; i < subjectParts.length; i++) {
+                				// if there is an escape character or not more inputs
+                				if (subject.endsWith("\\") || i >= jsonInputs.length()) {
+                					// add back the ?
+                					subject += "?";
+                				} else {
+                					// add the input value
+                					subject += jsonInputs.getString(i);
+                					// increment for next value
+                					i ++;                					
+                				}
+                				// add this part
+                				subject += subjectParts[j];
+                			} // loop subject parts                			
+                		} // got subject parts
+                		// if we need an input at the end 
+            			if (jsonContent.getString("subject").endsWith("?")) {
+            				// if we have some left 
+            				if (i < jsonInputs.length()) {
+            					// remove last ? if still there
+                				if (subjectParts.length == 1) subject = subject.substring(0, subject.length() - 1);
+                				// add input value
+                				subject += jsonInputs.getString(i);
+                				// increment
+                				i ++;
+            				} else {
+            					// add back ? if need be
+            					if (subjectParts.length > 1) subject += "?";
+            				} // got inputs
+            			} // subject ends in ?
+
+                		// split the body parts
+                		String[] bodyParts = body.split("\\?");
+                		// if there is more than 1 part
+                		if (bodyParts.length > 1) {
+                			// set body to first part
+                			body = bodyParts[0];
+                			// loop the remaining parts
+                			for (int j = 1; i < bodyParts.length; i++) {
+                				// if there is an escape character or not more inputs
+                				if (body.endsWith("\\") || i >= jsonInputs.length()) {
+                					// add back the ?
+                					body += "?";
+                				} else {
+                					// add the input value
+                					body += jsonInputs.getString(i);
+                					// increment for next value
+                					i ++;                					
+                				}
+                				// add this part
+                				body += bodyParts[j];
+                			} // loop body parts                			
+                		} // got body parts
+                		// if we need an input at the end 
+            			if (jsonContent.getString("body").endsWith("?")) {
+            				// if we have inputs some left 
+            				if (i < jsonInputs.length()) {
+            					// remove last ? if still there
+                				if (bodyParts.length == 1) body = body.substring(0, body.length() - 1);
+                				// add input value
+                				body += jsonInputs.getString(i);
+                				// increment
+                				i ++;
+            				} else {
+            					// add back ? if need be
+            					if (bodyParts.length > 1) body += "?";
+            				} // got inputs
+            			} // body ends with ?
+            			
+        			} // got inputs
+        		} // inputs not null
+        		
         		// if the type is html
         		if ("html".equals(type)) {
         			// send email as html
-        			com.rapid.core.Email.send(from, to, subject, "Please view this email with an application that supports HTML", text);
+        			com.rapid.core.Email.send(from, to, subject, "Please view this email with an application that supports HTML", body, getAttachment());
         		} else {
         			// send email as text
-        			com.rapid.core.Email.send(from, to, subject, text);
+        			com.rapid.core.Email.send(from, to, subject, body, null, getAttachment());
         		}
         	}
         }
