@@ -4640,7 +4640,7 @@ function Property_emailContent(cell, propertyObject, property, details) {
 	// get the body template into a variable
 	var text = content.body;
 	// change to message if not provided
-	if (!text || text == bodySampleText || text == bodySampleHtml) text = "Click to define...";
+	if (!text || (propertyObject.emailType != "html" && text == bodySampleText) || (propertyObject.emailType == "html" && text == bodySampleHtml)) text = "Click to define...";
 	// put the elipses in the cell
 	cell.text(text);
 	
