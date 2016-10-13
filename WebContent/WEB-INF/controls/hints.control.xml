@@ -69,6 +69,65 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	                ]]>
 				</contents>
 	        </resource>
+	        <resource>
+	            <type>javascript</type>
+	            <contents>
+	                <![CDATA[       
+function addControlHint(id, style, type, text) {
+
+	if (!$("#" + id + "hint")[0]) {
+	
+		if (style) {
+			style = " style='" + style + "'";
+		} else {
+			style = "";
+		}
+		
+		$("body").append("<span class='hint' id='" + id + "hint'" + style + ">" + text + "</span>");
+		
+		$("#" + id + "hint").hide();
+		
+	}
+		
+	$("#" + id).mouseout(id, function(ev) {
+		$("#" + ev.data + "hint").hide();
+	});
+		
+	switch (type) {		
+		case "click" :
+			$("#" + id).click(id, function(ev) { 
+				var hint = $("#" + ev.data + "hint");
+				hint.show();
+				var left = ev.pageX + 5;
+				var top = ev.pageY + 5;
+				if (ev.pageX + 5 + hint.outerWidth(true) > $(window).width()) left = ev.pageX - hint.outerWidth(true) - 5;
+				if (ev.pageY + 5 + hint.outerHeight(true) > $(window).height()) top = ev.pageY - hint.outerHeight(true) - 5;
+				hint.css({
+					left: left,
+					top: top
+				}); 
+			});
+			break;
+		case "hover" :
+			$("#" + id).mouseover(id, function(ev) { 
+				var hint = $("#" + ev.data + "hint");
+				hint.show();
+				var left = ev.pageX + 5;
+				var top = ev.pageY + 5;
+				if (ev.pageX + 5 + hint.outerWidth(true) > $(window).width()) left = ev.pageX - hint.outerWidth(true) - 5;
+				if (ev.pageY + 5 + hint.outerHeight(true) > $(window).height()) top = ev.pageY - hint.outerHeight(true) - 5;
+				hint.css({
+					left: left,
+					top: top
+				});  
+			});
+		break;
+	}
+	
+}           
+	                ]]>
+				</contents>
+	        </resource>
 	    </resources>
 	    
 	    <getHtmlFunction>
@@ -102,63 +161,10 @@ return ".hint";
 	    </styles>
 	    
 	    <initJavaScript>
-	    	<![CDATA[	    	
-var body = $("body");
-	    	
+	    	<![CDATA[	    	    	
 for (var i in details.controlHints) {
-
-	var controlHint = details.controlHints[i];
-	
-	if (!$("#" + controlHint.controlId + "hint")[0]) {
-	
-		var style = controlHint.style;
-		if (style) {
-			style = " style='" + style + "'";
-		} else {
-			style = "";
-		}
-		
-		body.append("<span class='hint' id='" + controlHint.controlId + "hint'" + style + ">" + controlHint.text + "</span>");
-		
-		$("#" + controlHint.controlId + "hint").hide();
-		
-	}
-		
-	$("#" + controlHint.controlId).mouseout({controlId: controlHint.controlId}, function(ev) {
-		$("#" + ev.data.controlId + "hint").hide();
-	});
-		
-	switch (controlHint.type) {		
-		case "click" :
-			$("#" + controlHint.controlId).click({controlId: controlHint.controlId}, function(ev) { 
-				var hint = $("#" + ev.data.controlId + "hint");
-				hint.show();
-				var left = ev.pageX + 5;
-				var top = ev.pageY + 5;
-				if (ev.pageX + 5 + hint.outerWidth(true) > $(window).width()) left = ev.pageX - hint.outerWidth(true) - 5;
-				if (ev.pageY + 5 + hint.outerHeight(true) > $(window).height()) top = ev.pageY - hint.outerHeight(true) - 5;
-				hint.css({
-					left: left,
-					top: top
-				}); 
-			});
-			break;
-		case "hover" :
-			$("#" + controlHint.controlId).mouseover({controlId: controlHint.controlId}, function(ev) { 
-				var hint = $("#" + ev.data.controlId + "hint");
-				hint.show();
-				var left = ev.pageX + 5;
-				var top = ev.pageY + 5;
-				if (ev.pageX + 5 + hint.outerWidth(true) > $(window).width()) left = ev.pageX - hint.outerWidth(true) - 5;
-				if (ev.pageY + 5 + hint.outerHeight(true) > $(window).height()) top = ev.pageY - hint.outerHeight(true) - 5;
-				hint.css({
-					left: left,
-					top: top
-				});  
-			});
-		break;
-	}
-	
+	var controlHint = details.controlHints[i];	
+	addControlHint(controlHint.controlId, controlHint.style, controlHint.type, controlHint.text);	
 }   	
 	    	]]>
 	    </initJavaScript>
