@@ -1,13 +1,13 @@
 /*
 
-Copyright (C) 2015 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as 
 published by the Free Software Foundation, either version 3 of the 
 License, or (at your option) any later version. The terms require you 
@@ -171,24 +171,25 @@ public abstract class SOAElementRestriction {
 			String value = element.getValue();
 			int elementDataType = schemaElement.getDataType();
 			
+			if (elementDataType > SOASchema.STRING && value == null) failNull(schemaElement);
+			
 			switch (elementDataType) {
-			case SOASchema.INTEGER :
-				if (value == null) failNull(schemaElement);
-				if (!value.matches("^\\d+$")) failType(schemaElement, value);
+			case SOASchema.INTEGER :				
+				if (!value.matches("^[-]?\\d+$")) failType(schemaElement, value);
 				break;
 			case SOASchema.DECIMAL :
-				if (value == null) failNull(schemaElement);
-				if (!value.matches("^\\d+|\\d+\\.\\d+$")) failType(schemaElement, value);
+				if (!value.matches("^[-]?\\d*[.]?\\d*$")) failType(schemaElement, value);
 				break;
 			case SOASchema.DATE :
-				if (value == null) failNull(schemaElement);
 				if (!value.matches("^(19|20)\\d\\d[-](0[1-9]|1[012])[-](0[1-9]|[12][0-9]|3[01])$")) failType(schemaElement, value);
 				if (value.matches("^(19|20)\\d\\d[-](0[1-9]|1[012])[-](29|30|31)$")) checkMonth(schemaElement, value);
 				break;
 			case SOASchema.DATETIME :
-				if (value == null) failNull(schemaElement);
 				if (!value.matches("^(19|20)\\d\\d[-](0[1-9]|1[012])[-](0[1-9]|[12][0-9]|3[01])[T]([01][0-9]|20|21|22|23)[:]([0-5][0-9])[:]([0-5][0-9])[Z]?$")) failType(schemaElement, value);
 				if (value.matches("(19|20)\\d\\d[-](0[1-9]|1[012])[-](29|30|31).*?")) checkMonth(schemaElement, value);
+				break;
+			case SOASchema.BOOLEAN :
+				if (!value.matches("^true|false$")) failType(schemaElement, value);
 				break;
 			}
 		}
