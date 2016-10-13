@@ -617,6 +617,7 @@ public class Rapid extends Action {
 							JSONObject jsonSendAction = new JSONObject();
 							jsonSendAction.put("name", jsonSysAction.get("name"));
 							jsonSendAction.put("type", jsonSysAction.get("type"));
+							jsonSendAction.put("helpHtml", jsonSysAction.optString("helpHtml"));
 							jsonSendActions.put(jsonSendAction);
 						}					
 					}				
@@ -631,8 +632,9 @@ public class Rapid extends Action {
 						// only present controls users can add
 						if (jsonSysControl.optBoolean("canUserAdd")) {
 							JSONObject jsonSendControl = new JSONObject();
-							jsonSendControl.put("name", jsonSysControl.get("name"));
-							jsonSendControl.put("type", jsonSysControl.get("type"));
+							jsonSendControl.put("name", jsonSysControl.getString("name"));
+							jsonSendControl.put("type", jsonSysControl.getString("type"));
+							jsonSendControl.put("helpHtml", jsonSysControl.optString("helpHtml"));
 							jsonSendControls.put(jsonSendControl);
 						}					
 					}				
