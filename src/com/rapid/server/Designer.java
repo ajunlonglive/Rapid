@@ -36,7 +36,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
@@ -213,12 +215,12 @@ public class Designer extends RapidHttpServlet {
 		
 		try {
 			
+			// log
 			getLogger().debug("Designer GET request : " + request.getQueryString());
-											
-			String actionName = rapidRequest.getActionName();
 			
+			// assume empty output
 			String output = "";
-			
+															
 			// get the rapid application
 			Application rapidApplication = getApplications().get("rapid");
 			
@@ -258,6 +260,9 @@ public class Designer extends RapidHttpServlet {
 							response.setHeader("Pragma", "no-cache");
 							
 				    	}
+				    	
+				    	// get the actionName
+						String actionName = rapidRequest.getActionName();
 															
 						if ("getSystemData".equals(actionName)) {
 							
@@ -1117,8 +1122,11 @@ public class Designer extends RapidHttpServlet {
 						Application application = rapidRequest.getApplication();
 						
 						if (application != null) {
+							
+							// get the action name
+							String actionName = rapidRequest.getActionName();
 													
-							if ("savePage".equals(rapidRequest.getActionName())) {
+							if ("savePage".equals(actionName)) {
 								
 								String bodyString = new String(bodyBytes, "UTF-8");
 								
@@ -1280,7 +1288,7 @@ public class Designer extends RapidHttpServlet {
 								// set the response type to json
 								response.setContentType("application/json");
 							
-							} else if ("testSQL".equals(rapidRequest.getActionName())) {
+							} else if ("testSQL".equals(actionName)) {
 								
 								// turn the body bytes into a string
 								String bodyString = new String(bodyBytes, "UTF-8");
@@ -1373,7 +1381,7 @@ public class Designer extends RapidHttpServlet {
 								// set the response type to json
 								response.setContentType("application/json");
 								
-							} else if ("uploadImage".equals(rapidRequest.getActionName()) || "import".equals(rapidRequest.getActionName())) {
+							} else if ("uploadImage".equals(actionName) || "import".equals(actionName)) {
 											
 								// get the content type from the request
 								String contentType = request.getContentType();
@@ -1396,7 +1404,7 @@ public class Designer extends RapidHttpServlet {
 								// extract the file type
 								String fileType = header.substring(fileTypePosition + 6);
 													
-								if ("uploadImage".equals(rapidRequest.getActionName())) {
+								if ("uploadImage".equals(actionName)) {
 
 									// check the file type
 									if (!fileType.equals("image/jpeg") && !fileType.equals("image/gif") && !fileType.equals("image/png")) throw new Exception("Unsupported file type");
@@ -1414,9 +1422,9 @@ public class Designer extends RapidHttpServlet {
 									getLogger().debug("Saved image file " + path + filename);
 									
 									// create the response with the file name and upload type
-									output = "{\"file\":\"" + filename + "\",\"type\":\"" + rapidRequest.getActionName() + "\"}";
+									output = "{\"file\":\"" + filename + "\",\"type\":\"" + actionName + "\"}";
 									
-								} else if ("import".equals(rapidRequest.getActionName())) {
+								} else if ("import".equals(actionName)) {
 									
 									// check the file type
 									if (!"application/x-zip-compressed".equals(fileType) && !"application/zip".equals(fileType)) throw new Exception("Unsupported file type");
@@ -1770,7 +1778,35 @@ public class Designer extends RapidHttpServlet {
 									
 								}
 																		
-							}
+							}  else if ("invoke".equals(actionName)) {
+								
+								// look for a class name
+								String actionType = request.getParameter("actionType");
+								
+								// check we got one
+								if (actionType != null) {
+									
+									// turn the body bytes into a string
+									String bodyString = new String(bodyBytes, "UTF-8");
+									
+									// read it into JSON
+									JSONObject jsonData = new JSONObject(bodyString);
+									
+									// get the constructor
+									Constructor con = this.getActionConstructor(actionType);
+									// get a new instance
+									Action action = (Action) con.newInstance(this, jsonData);
+									// get the method
+									Method m = action.getClass().getMethod("doAction", RapidRequest.class, JSONObject.class);
+									// invoke it
+									JSONObject jsonResult = (JSONObject) m.invoke(action, rapidRequest, jsonData);
+									
+									// set to output
+									output = jsonResult.toString();
+																											
+								}
+								
+							} // action check
 							
 							getLogger().debug("Designer POST response : " + output);
 																

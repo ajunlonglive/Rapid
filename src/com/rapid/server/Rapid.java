@@ -956,8 +956,8 @@ public class Rapid extends RapidHttpServlet {
 								
 							} // upload file name check
 							
-						} // action check
-																																	
+						} // action type check
+
 					} else {
 						
 						// send forbidden response			

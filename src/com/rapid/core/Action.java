@@ -72,14 +72,11 @@ public abstract class Action {
 	public Action(RapidHttpServlet rapidServlet, JSONObject jsonAction) throws Exception {
 		// run the parameterless constructor
 		this();
-		// if we got any properties
-		if (jsonAction != null) {
-			// save all key/values from the json into the properties 
-			for (String key : JSONObject.getNames(jsonAction)) {
-				// add all json properties to our properties
-				addProperty(key, jsonAction.get(key).toString());
-			}
-		}
+		// save all key/values from the json into the properties 
+		for (String key : JSONObject.getNames(jsonAction)) {
+			// add all json properties to our properties
+			addProperty(key, jsonAction.get(key).toString());
+		}		
 	}
 				
 	// these are some helper methods for common properties, ignoring some common ones that will always have their own getters/setters
@@ -113,10 +110,7 @@ public abstract class Action {
 
 	// this is where any serverside action happens! (some actions are client side only)
 	public JSONObject doAction(RapidRequest rapidRequest, JSONObject jsonData) throws Exception { return null; };
-	
-	// static method for returning any data that might be required by the designer
-	public JSONObject getData(RapidRequest rapidRequest, JSONObject jsonData) throws Exception { return null; }
-	
+		
 	// this method can be overridden to check the xml versions, and upgrade any xml nodes representing specific actions before the xml document is unmarshalled
 	public Node upgrade(Node actionNode) { return actionNode; }
 			
