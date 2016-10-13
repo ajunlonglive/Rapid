@@ -54,8 +54,8 @@ public class Email extends Action {
 		return "";
 	}
 	
-	// produces any attachment
-	protected Attachment getAttachment(RapidRequest rapidRequest, JSONObject jsonData) throws Exception {
+	// produces any attachments
+	protected Attachment[] getAttachments(RapidRequest rapidRequest, JSONObject jsonData) throws Exception {
 		return null;
 	}
 	
@@ -283,10 +283,10 @@ public class Email extends Action {
         		// if the type is html
         		if ("html".equals(type)) {
         			// send email as html
-        			com.rapid.core.Email.send(from, to, subject, "Please view this email with an application that supports HTML", body, getAttachment(rapidRequest, jsonContent));
+        			com.rapid.core.Email.send(from, to, subject, "Please view this email with an application that supports HTML", body, getAttachments(rapidRequest, jsonContent));
         		} else {
         			// send email as text
-        			com.rapid.core.Email.send(from, to, subject, body, null, getAttachment(rapidRequest, jsonContent));
+        			com.rapid.core.Email.send(from, to, subject, body, null, getAttachments(rapidRequest, jsonContent));
         		}
         	}
         }
