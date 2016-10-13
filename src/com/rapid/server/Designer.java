@@ -1798,8 +1798,15 @@ public class Designer extends RapidHttpServlet {
 									Action action = (Action) con.newInstance(this, jsonData);
 									// get the method
 									Method m = action.getClass().getMethod("doAction", RapidRequest.class, JSONObject.class);
-									// invoke it
-									JSONObject jsonResult = (JSONObject) m.invoke(action, rapidRequest, jsonData);
+									// assign variable for jsonResult
+									JSONObject jsonResult = null;
+									try {
+										// invoke it
+										jsonResult = (JSONObject) m.invoke(action, rapidRequest, jsonData);
+									} catch (Exception ex) {										
+										// rethrow the cause
+										throw new Exception(ex.getCause());										
+									}
 									
 									// set to output
 									output = jsonResult.toString();
