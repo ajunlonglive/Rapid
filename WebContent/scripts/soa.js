@@ -1,13 +1,13 @@
 /*
 
-Copyright (C) 2014 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version. The terms require you to include
@@ -32,7 +32,8 @@ var _soaDataTypes = [
 	{name: "integer", value: 2},
 	{name: "decimal", value: 3},
 	{name: "date", value: 4},
-	{name: "dateTime", value: 5}
+	{name: "dateTime", value: 5},
+	{name: "boolean", value: 6}
 ];
 
 // these are the restrictions of the element current being viewed
@@ -224,13 +225,16 @@ function loadSOA(details) {
 		
 		
 		// get the cell we write the request properties into
-		var requestCell = $('#rapid_P0_C589_');
-		// add a header
-		requestCell.append("<span class='webserviceTitle'>Child elements :</span>");
+		var requestCell = $('#rapid_P0_C589_');		
 		// look for a table
 		var requestTable = requestCell.children("table");
-		// create one if not there
-		if (!requestTable[0]) requestTable = requestCell.append("<table class='dialogueTable webserviceTable'></table>").children("table");
+		// if not there
+		if (!requestTable[0]) {
+			// add a header
+			requestCell.append("<span class='webserviceTitle'>Child elements :</span>");
+			// create table
+			requestTable = requestCell.append("<table class='dialogueTable webserviceTable'></table>").children("table");
+		}
 		// populate the table header row
 		requestTable.html("<tr><td>Name</td><td>Data type</td><td>Restrictions</td><td style='width:32px;min-width:32px;'>&nbsp;</td></tr>");
 		// if there's a request object in the details with a root element
@@ -323,13 +327,16 @@ function loadSOA(details) {
 		$("#rapid_P0_C598_0").prop("checked", true);
 		
 		// get the cell we're writing this into
-		var responseCell = $('#rapid_P0_C592_');
-		// add a header
-		responseCell.append("<span class='webserviceTitle'>Child elements :</span>");
+		var responseCell = $('#rapid_P0_C592_');		
 		// look for a table
 		var responseTable = responseCell.children("table");
-		// create one if not there
-		if (!responseTable[0]) responseTable = responseCell.append("<table class='dialogueTable webserviceTable'></table>").children("table");
+		// if not there
+		if (!responseTable[0]) {
+			// add a header
+			responseCell.append("<span class='webserviceTitle'>Child elements :</span>");
+			// create table
+			responseTable = responseCell.append("<table class='dialogueTable webserviceTable'></table>").children("table");
+		}
 		// populate the table header row
 		responseTable.html("<tr><td>Name</td><td>Field</td><td>Data type</td><td>Restrictions</td><td style='width:32px;min-width:32px;'>&nbsp;</td></tr>");
 		// if there's a request object in the details with a root element
