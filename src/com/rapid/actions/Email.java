@@ -283,10 +283,10 @@ public class Email extends Action {
         		// if the type is html
         		if ("html".equals(type)) {
         			// send email as html
-        			com.rapid.core.Email.send(from, to, subject, "Please view this email with an application that supports HTML", body, getAttachments(rapidRequest, jsonContent));
+        			com.rapid.core.Email.send(from, to, subject, "Please view this email with an application that supports HTML", body, getAttachments(rapidRequest, jsonData));
         		} else {
         			// send email as text
-        			com.rapid.core.Email.send(from, to, subject, body, null, getAttachments(rapidRequest, jsonContent));
+        			com.rapid.core.Email.send(from, to, subject, body, null, getAttachments(rapidRequest, jsonData));
         		}
         	}
         }
