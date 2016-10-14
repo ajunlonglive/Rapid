@@ -3354,17 +3354,17 @@ function Property_controlHints(cell, hints, property, details) {
 	// add text listeners
 	var texts = table.find("span");
 	// loop them
-	texts.each(function() {		
+	texts.each( function() {		
 		// get a reference to the span
 		var span = $(this);
-		//function Property_bigtext(cell, propertyObject, property, refreshHtml) {
+		// add a bigtext property for it
 		Property_bigtext(span.parent(), controlHints[span.parent().parent().index()-1], {key: "text"});		
 	});
 	
 	// add style listeners
 	var styles = table.find("input");
 	// add a listener
-	addListener( styles.change( {controlHints: controlHints}, function(ev) {
+	addListener( styles.keyup( {controlHints: controlHints}, function(ev) {
 		// get the input
 		var input = $(ev.target);
 		// update the control id
