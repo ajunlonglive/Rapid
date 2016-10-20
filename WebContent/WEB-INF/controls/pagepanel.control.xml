@@ -93,9 +93,13 @@ function checkPagePanelFooter() {
 	var footer = $("div.pagePanelFooter");
 	if (footer[0]) {
 		window.setTimeout( function(ev) {
+			// set html height back to auto
+			$("html").css("height","auto");
+			$("body").css("min-height","0");
 			var fh = footer.height();
 			if (fh > 0) _stickyFooterHeight = fh;
-			if ($(document.body).height() + _stickyFooterHeight < $(window).height()) {
+			var body = $(document.body);
+			if (body.height() + body.offset().top + _stickyFooterHeight < $(window).height()) {
 				// Add sticky footer
 				footer.addClass("pagePanelStickyFooter");
 			}	else {
