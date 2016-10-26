@@ -869,8 +869,8 @@ public class Application {
 			if (startPage == null) {
 				// set the start page
 				startPage = getStartPageUsingOrder(servletContext);
-				// update the _startPageId
-				_startPageId = startPage.getId();
+				// try and update the _startPageId again if we got one
+				if (startPage != null) _startPageId = startPage.getId();
 			}
 		}
 		// return
