@@ -325,40 +325,46 @@ public abstract class SOADataWriter {
 				
 				List<SOAElement> childElements = element.getChildElements();
 				
-				_stringBuilder.append("'fields':[");
+				if (childElements != null) {
 				
-				for (int i = 0; i < childElements.size(); i++) {
+					_stringBuilder.append("'fields':[");
 					
-					SOAElement childElement = childElements.get(i);
-																						
-					_stringBuilder.append("'" + childElement.getName() + "'");
+					for (int i = 0; i < childElements.size(); i++) {
 						
-					if (i < childElements.size() - 1) _stringBuilder.append(",");
-																						
-				}
-				
-				_stringBuilder.append("],rows:[[");
-														
+						SOAElement childElement = childElements.get(i);
+																							
+						_stringBuilder.append("'" + childElement.getName() + "'");
+							
+						if (i < childElements.size() - 1) _stringBuilder.append(",");
+																							
+					}
 					
-				for (int i = 0; i < childElements.size(); i++) {
-					
-					SOAElement childElement = childElements.get(i);
-					
-					if (childElement.getChildElements() == null || childElement.getChildElements().size() == 0) {
-					
-						_stringBuilder.append("'" + jsonEscape(childElement.getValue()) + "'");
+					_stringBuilder.append("],rows:[[");
+															
 						
-					} else {
+					for (int i = 0; i < childElements.size(); i++) {
 						
-						append(childElement);
+						SOAElement childElement = childElements.get(i);
+						
+						if (childElement.getChildElements() == null || childElement.getChildElements().size() == 0) {
+						
+							_stringBuilder.append("'" + jsonEscape(childElement.getValue()) + "'");
+							
+						} else {
+							
+							append(childElement);
+							
+						}
+																										
+						if (i < childElements.size() - 1) _stringBuilder.append(",");
 						
 					}
-																									
-					if (i < childElements.size() - 1) _stringBuilder.append(",");
+					
+					_stringBuilder.append("]]");
 					
 				}
 				
-				_stringBuilder.append("]]}");
+				_stringBuilder.append("}");
 								
 			}
 			
