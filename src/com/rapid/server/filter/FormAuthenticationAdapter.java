@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2015 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -216,22 +216,38 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 				// look in the request for the username
 				userName = request.getParameter("userName");
 				
-				// if jsonLogs is null try and get some from the servlet context
+				// if jsonLogins is null try and get some from the servlet context
 				if (_jsonLogins == null) _jsonLogins = (List<JSONObject>) req.getServletContext().getAttribute("jsonLogins");		 
 				// if we have custom logins
 				if (_jsonLogins != null) {
 					// loop the login pages
 					for (JSONObject jsonLogin : _jsonLogins) {
-						// get the login path
-						String jsonLoginPath = jsonLogin.optString("path","").trim();
-						// if the request is for a login page
-						if (requestPath.endsWith(jsonLoginPath)) {
-							// remember this page
-							loginPath = jsonLoginPath;
+						// get the custom login path
+						String customLoginPath = jsonLogin.optString("path","").trim();						
+						// if the request is for a custom login page
+						if (requestPath.endsWith(customLoginPath)) {							
 							// put the index path in the session
 							session.setAttribute(RapidFilter.SESSION_VARIABLE_INDEX_PATH,  jsonLogin.optString("index","").trim());
+							// remember this custom login
+							loginPath = customLoginPath;
 							// we're done
 							break;
+						}						
+						// get the application parameter
+						String appId = request.getParameter("a");
+						// check we got one
+						if (appId != null) {
+							// get the custom index
+							String customIndexPath = jsonLogin.optString("index","").trim();
+							// if custom index is the app which has just been requested
+							if (customIndexPath.contains("a=" + appId)) {
+								// put the index path in the session
+								session.setAttribute(RapidFilter.SESSION_VARIABLE_INDEX_PATH,  jsonLogin.optString("index","").trim());
+								// send a redirect to load the custom login
+								response.sendRedirect(customLoginPath);								
+								// return immediately
+								return null;
+							}
 						}
 					}
 				}
