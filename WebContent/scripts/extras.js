@@ -532,6 +532,8 @@ if (window["_rapidmobile"]) {
 			if (jqXHR.status == 401) {
 				// start with a basic login page url
 				var location = "login.jsp";
+				// if an errorThrown was provided this might contain the location from a custom login
+				if (errorThrown && errorThrown.indexOf("location=") == 0) location = errorThrown.substr(9);
 				// if we're viewing an app we want to go back to it once logged in
 				if (window.location.href.indexOf("/~?a=") > -1) {
 					// look for an application parameter

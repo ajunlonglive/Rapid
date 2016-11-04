@@ -223,11 +223,13 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 					// loop the login pages
 					for (JSONObject jsonLogin : _jsonLogins) {
 						// get the custom login path
-						String customLoginPath = jsonLogin.optString("path","").trim();						
+						String customLoginPath = jsonLogin.optString("path").trim();
+						// get the custom index
+						String customIndexPath = jsonLogin.optString("index").trim();
 						// if the request is for a custom login page
 						if (requestPath.endsWith(customLoginPath)) {							
 							// put the index path in the session
-							session.setAttribute(RapidFilter.SESSION_VARIABLE_INDEX_PATH,  jsonLogin.optString("index","").trim());
+							session.setAttribute(RapidFilter.SESSION_VARIABLE_INDEX_PATH, customIndexPath);
 							// remember this custom login
 							loginPath = customLoginPath;
 							// we're done
@@ -237,12 +239,10 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 						String appId = request.getParameter("a");
 						// check we got one
 						if (appId != null) {
-							// get the custom index
-							String customIndexPath = jsonLogin.optString("index","").trim();
 							// if custom index is the app which has just been requested
-							if (customIndexPath.contains("a=" + appId)) {
+							if (customIndexPath.endsWith("a=" + appId) || customIndexPath.contains("a=" + appId + "&")) {
 								// put the index path in the session
-								session.setAttribute(RapidFilter.SESSION_VARIABLE_INDEX_PATH,  jsonLogin.optString("index","").trim());
+								session.setAttribute(RapidFilter.SESSION_VARIABLE_INDEX_PATH, customIndexPath);
 								// send a redirect to load the custom login
 								response.sendRedirect(customLoginPath);								
 								// return immediately
@@ -286,12 +286,22 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 					String acceptHeader = request.getHeader("Accept");
 					if (acceptHeader == null) acceptHeader = ""; 
 					
-					// if this is json just send a 401
+					// if this is json and not a login page just send a 401
 					if (acceptHeader.contains("application/json")) {
 						
-						// set the 401 - access denied
-						response.sendError(401);
-												
+						// if this a request for a login page that came through an ajax json request
+						if (requestPath.endsWith(loginPath)) {
+							
+							// send a 401 with the login path
+							response.sendError(401, "location=" + loginPath);
+							
+						} else {
+							
+							// send a standard 401 - access denied
+							response.sendError(401);
+							
+						}
+					
 					} else {
 						
 						// retain the request path less the leading /
