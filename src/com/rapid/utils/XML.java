@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2015 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -123,13 +123,33 @@ public class XML {
 		
 		String value = null;
 		
-		int startPos = xml.indexOf("<" + elementName + ">");
-	    
+		int startPos = xml.indexOf("<" + elementName);
+					    
 	    if (startPos > 0) {
 	    	
-	    	int endPos = xml.indexOf("</" + elementName + ">");
+	    	char c = xml.charAt(startPos + elementName.length() + 1);
+	    	
+	    	if (c == '>') {
+	    		
+	    		startPos += elementName.length() + 2;
+	    		
+	    	} else if (c == ' ') {
+	    		
+	    		startPos = xml.indexOf(">", startPos) + 1;
+	    		
+	    	} else {
+	    		
+	    		startPos =-1;
+	    		
+	    	}
+	    	
+	    	if (startPos > 0) {
+	    	
+	    		int endPos = xml.indexOf("</" + elementName + ">");
 	    
-	    	value = xml.substring(startPos + elementName.length() + 2, endPos);
+	    		value = xml.substring(startPos, endPos);
+	    		
+	    	}
 	    	
 	    }
 		
