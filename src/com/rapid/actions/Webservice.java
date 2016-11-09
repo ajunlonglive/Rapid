@@ -676,13 +676,21 @@ public class Webservice extends Action {
 							
 							errorMessage = XML.getElementValue(responseXML, "faultcode");
 							
+							if (errorMessage != null) {
+								
+								String faultString = XML.getElementValue(responseXML, "faultstring");
+								
+								if (faultString != null) errorMessage += " " + faultString;
+								
+							}
+							
 						} 
 						
 						if (errorMessage == null) {
 						
-							BufferedReader rd  = new BufferedReader( new InputStreamReader(response));
-						
-							errorMessage = rd.readLine();
+							BufferedReader rd = new BufferedReader( new InputStreamReader(response));
+							
+							if (rd.ready())	errorMessage = rd.readLine();
 							
 							rd.close();
 							
