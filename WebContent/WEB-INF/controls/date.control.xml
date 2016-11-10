@@ -116,7 +116,7 @@ return [["dd/mm/yy","dd/mm/yyyy"],["mm/dd/yy","mm/dd/yyyy"],["yy-mm-dd","yyyy-mm
 	        <property>
 	        	<key>showOtherMonths</key>
 	        	<name>Show other months</name>
-	        	<setConstructValueFunction>return true;</setConstructValueFunction>
+	        	<setConstructValueFunction>return false;</setConstructValueFunction>
 	            <changeValueJavaScript>checkbox</changeValueJavaScript>
 	            <refreshProperties>true</refreshProperties>
 	            <helpHtml>Displays dates from the next and previous months.</helpHtml>
@@ -125,7 +125,7 @@ return [["dd/mm/yy","dd/mm/yyyy"],["mm/dd/yy","mm/dd/yyyy"],["yy-mm-dd","yyyy-mm
 	        <property>
 	        	<key>selectOtherMonths</key>
 	        	<name>Select other months</name>
-	        	<setConstructValueFunction>return true;</setConstructValueFunction>
+	        	<setConstructValueFunction>return false;</setConstructValueFunction>
 	            <changeValueJavaScript>dateSelectOtherMonths</changeValueJavaScript>
 	            <helpHtml>Allows you to select dates from the next and previous months.</helpHtml>
 	        </property>
@@ -296,7 +296,18 @@ $( "#" + id ).datepicker({
     yearRange: details.yearRange,
     showOtherMonths: details.showOtherMonths,
     selectOtherMonths: details.selectOtherMonths,
-    constrainInput: true
+    constrainInput: true,
+    onChangeMonthYear: function(year, month, inst) {
+    	try {
+    		var dp = $(this);
+	    	var d = dp.datepicker("getDate");
+	    	if (d) {
+		      	d.setMonth(month-1);
+		      	d.setFullYear(year);
+		      	dp.datepicker("setDate", d);
+			}
+		} catch(ex){}	   
+    }
 }).change( function (ev) {
 	var datePicker = $(this);
 	var date = datePicker.val();
