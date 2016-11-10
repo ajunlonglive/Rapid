@@ -382,8 +382,8 @@ public class Designer extends RapidHttpServlet {
 											jsonVersion.put("status", application.getStatus());
 											// add the title
 											jsonVersion.put("title", application.getTitle());
-											// add a formAdapter if present
-											if (application.getFormAdapter() != null) jsonVersion.put("formAdapter", true);
+											// add whether a form
+											jsonVersion.put("isForm", (application.getIsForm() && application.getFormAdapter() != null) ? true : false);
 											// add whether to show control Ids
 											jsonVersion.put("showControlIds", application.getShowControlIds());
 											// add whether to show action Ids

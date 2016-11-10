@@ -740,12 +740,12 @@ public class Rapid extends Action {
 				if (security.checkUserPassword(rapidActionRequest, rapidRequest.getUserName(), rapidRequest.getUserPassword())) {
 					
 					// check the users permission to design this application
-					boolean adminPermission = security.checkUserRole(rapidActionRequest, com.rapid.server.Rapid.DESIGN_ROLE);
+					boolean designPermission = security.checkUserRole(rapidActionRequest, com.rapid.server.Rapid.DESIGN_ROLE);
 					
 					// if app is rapid do a further check
-					if (adminPermission && "rapid".equals(app.getId())) adminPermission = app.getSecurityAdapter().checkUserRole(rapidActionRequest, com.rapid.server.Rapid.SUPER_ROLE);
+					if (designPermission && "rapid".equals(app.getId())) designPermission = app.getSecurityAdapter().checkUserRole(rapidActionRequest, com.rapid.server.Rapid.SUPER_ROLE);
 					
-					if (adminPermission) {
+					if (designPermission) {
 						
 						// add the name
 						result.put("name", app.getName());
@@ -756,16 +756,16 @@ public class Rapid extends Action {
 						// add the title
 						result.put("title", app.getTitle());
 						// add the description
-						result.put("description", app.getDescription());
-						// add the form adapter
-						result.put("formAdapterType", app.getFormAdapterType());
-						// add the form settings
-						result.put("isForm", app.getIsForm());
+						result.put("description", app.getDescription());						
 						// add whether to show control ids
 						result.put("showControlIds", app.getShowControlIds());
 						// add whether to show action ids
 						result.put("showActionIds", app.getShowActionIds());
 						
+						// add the form settings
+						result.put("isForm", app.getIsForm());
+						// add the form adapter
+						result.put("formAdapterType", app.getFormAdapterType());												
 						// add forms email setting
 						result.put("formEmail", app.getFormEmail());
 						// add forms from address
@@ -833,8 +833,7 @@ public class Rapid extends Action {
 						
 						// create an array for the database connections
 						JSONArray jsonDatabaseConnections = new JSONArray();
-						
-						
+												
 						// check we have some database connections
 						if (app.getDatabaseConnections() != null) {
 							// remember the index
@@ -855,8 +854,7 @@ public class Rapid extends Action {
 						}
 						// add database connections
 						result.put("databaseConnections", jsonDatabaseConnections);
-						
-						
+												
 						// create an array for the soa webservices
 						JSONArray jsonWebservices = new JSONArray();
 										

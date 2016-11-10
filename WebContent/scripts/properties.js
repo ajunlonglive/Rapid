@@ -2820,7 +2820,7 @@ function Property_logicConditions(cell, action, property, details) {
 // this very similar to the above but hidden if no form adapter
 function Property_visibilityConditions(cell, control, property, details) {
 	// if this is not a simple page
-	if (_version.formAdapter && !_page.simple) {
+	if (_version.isForm && !_page.simple) {
 		Property_logicConditions(cell, control, property, details)
 	} else {
 		// remove this row
@@ -4495,8 +4495,8 @@ function Property_pageOrder(cell, propertyObject, property, details) {
 
 // a handler for text properties where there is a form adapter
 function Property_formPageType(cell, propertyObject, property, details) {
-	// only if there is a form adapter
-	if (_version.formAdapter) {
+	// only if this is a form with an adapter
+	if (_version.isForm) {
 		// add the select handler for this property
 		Property_select(cell, propertyObject, property, details);
 	} else {
@@ -4507,8 +4507,8 @@ function Property_formPageType(cell, propertyObject, property, details) {
 
 //a handler for text properties where there is a form adapter
 function Property_formActionType(cell, propertyObject, property, details) {
-	// only if there is a form adapter
-	if (_version.formAdapter) {
+	// only if this is a form with a form adapter
+	if (_version.isForm) {
 		// start the main get value function with all basic types
 		var getValuesFunction = "return [[\"\",\"Please select...\"],[\"next\",\"next page\"],[\"prev\",\"previous page\"],[\"id\",\"copy form id\"],[\"val\",\"copy form value\"]";
 		// check the page type
@@ -4540,8 +4540,8 @@ function Property_formActionType(cell, propertyObject, property, details) {
 
 // a handler for text properties where there is a form adapter
 function Property_formText(cell, propertyObject, property, details) {
-	// only if there is a form adapter
-	if (_version.formAdapter && (!_page.formPageType || _page.formPageType == 0)) {
+	// only if this is a form with a form adapter and we're not not any of the special (post summary) pages
+	if (_version.isForm && (!_page.formPageType || _page.formPageType == 0)) {
 		// add the text handler for this property
 		Property_text(cell, propertyObject, property, details);
 	} else {
