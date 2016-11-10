@@ -1522,9 +1522,9 @@ public class Application {
 	    	} // jsonAction check
 	    	
 	    	// assume no theme css
-	    	String themeCSS = null;
+	    	String themeCSS = "";
 	    	// assume no theme name
-	    	String themeName = null;
+	    	String themeName = "No theme";
 	    	
 	    	// check the theme type
 	    	if (_themeType != null) {
@@ -1674,7 +1674,7 @@ public class Application {
 			fos.close();
 			
 			// minify it to a rapid.min.css file
-			Minify.toFile(resourceCSSWithParams + appThemeCSSWithParams + appCSSWithParams, applicationPath + "/rapid.min.css", Minify.CSS);
+			Minify.toFile(resourceCSSWithParams + "/n" + appThemeCSSWithParams + "/n" + appCSSWithParams, applicationPath + "/rapid.min.css", Minify.CSS);
 			
 			// check the status
 	    	if (_status == STATUS_LIVE) {
