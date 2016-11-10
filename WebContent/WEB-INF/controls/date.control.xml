@@ -34,7 +34,6 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    <category>Form controls</category>
 	    <helpHtml>Similar to the calendar control, the date control excels at allowing users to enter a more personalised date, in a more stylised way over the calendar control. The date control can have a variety of different formats, have a pre-set value, can block manual data entry, and more.</helpHtml>
 	    <addToNewApplications>true</addToNewApplications>
-	    
 	   	          
 	    <canUserAdd>true</canUserAdd>
 	    <canUserMove>true</canUserMove>
@@ -78,7 +77,6 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 return [["dd/mm/yy","dd/mm/yyyy"],["mm/dd/yy","mm/dd/yyyy"],["yy-mm-dd","yyyy-mm-dd"],["dd-M-yy","dd-MMM-yyyy"],["d MM yy","Short day, full month"],["DD, d MM, yy","Full date details"]];
 					]]>
 	            </getValuesFunction>
-	            <refreshHtml>true</refreshHtml>
 	            <helpHtml>Sets the date format. Useful for other regions.</helpHtml>
 	        </property>
 	        
@@ -88,7 +86,7 @@ return [["dd/mm/yy","dd/mm/yyyy"],["mm/dd/yy","mm/dd/yyyy"],["yy-mm-dd","yyyy-mm
 	            <setConstructValueFunction>return true;</setConstructValueFunction>
 	            <changeValueJavaScript>checkbox</changeValueJavaScript>
 	            <refreshHtml>true</refreshHtml>
-	            <helpHtml>Whether users are able to enter dates using the keyboard. If false additional validation will be required.</helpHtml>
+	            <helpHtml>Whether users are able to enter dates using the keyboard. If not checked additional validation will be required.</helpHtml>
 	        </property>
 	        
 	        <property>
@@ -96,7 +94,6 @@ return [["dd/mm/yy","dd/mm/yyyy"],["mm/dd/yy","mm/dd/yyyy"],["yy-mm-dd","yyyy-mm
 	            <name>Min date</name>
 	            <setConstructValueFunction>return "";</setConstructValueFunction>
 	            <changeValueJavaScript>text</changeValueJavaScript>
-	            <refreshHtml>true</refreshHtml>
 	            <helpHtml>Sets the minimum date. Dates will be unable to be selected earlier than this date. Valid periods are "y" for years, "m" for months, "w" for weeks, and "d" for days. For example, "+1m +7d" represents one month and seven days from today.</helpHtml>
 	        </property>
 	        
@@ -105,7 +102,6 @@ return [["dd/mm/yy","dd/mm/yyyy"],["mm/dd/yy","mm/dd/yyyy"],["yy-mm-dd","yyyy-mm
 	            <name>Max date</name>
 	            <setConstructValueFunction>return "";</setConstructValueFunction>
 	            <changeValueJavaScript>text</changeValueJavaScript>
-	            <refreshHtml>true</refreshHtml>
 	            <helpHtml>Sets the maximum date. Dates will be unable to be selected past this date. Valid periods are "y" for years, "m" for months, "w" for weeks, and "d" for days. For example, "+1m +7d" represents one month and seven days from today.</helpHtml>
 	        </property>
 	        
@@ -114,8 +110,24 @@ return [["dd/mm/yy","dd/mm/yyyy"],["mm/dd/yy","mm/dd/yyyy"],["yy-mm-dd","yyyy-mm
 	            <name>Year range</name>
 	            <setConstructValueFunction>return "";</setConstructValueFunction>
 	            <changeValueJavaScript>text</changeValueJavaScript>
-	            <refreshHtml>true</refreshHtml>
 	            <helpHtml>Sets the range of years that can be selected. For example, "2010:2016" will set the range from the first date in 2010 to the last date in 2016.</helpHtml>
+	        </property>
+	        
+	        <property>
+	        	<key>showOtherMonths</key>
+	        	<name>Show other months</name>
+	        	<setConstructValueFunction>return true;</setConstructValueFunction>
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>
+	            <refreshProperties>true</refreshProperties>
+	            <helpHtml>Displays dates from the next and previous months.</helpHtml>
+	        </property>
+	        
+	        <property>
+	        	<key>selectOtherMonths</key>
+	        	<name>Select other months</name>
+	        	<setConstructValueFunction>return true;</setConstructValueFunction>
+	            <changeValueJavaScript>dateSelectOtherMonths</changeValueJavaScript>
+	            <helpHtml>Allows you to select dates from the next and previous months.</helpHtml>
 	        </property>
 	               
 	    </properties>
@@ -173,7 +185,15 @@ return "<input id='" + this.id + "' name='" + this.id + "' " + " class='date" + 
 	    
 	    <getDetailsFunction>
 	        <![CDATA[
-return {format: this.format, readonly: this.readonly, minDate: this.minDate, maxDate: this.maxDate, yearRange: (this.yearRange ? this.yearRange: "-100:+10")};
+return {
+	format: this.format,
+	readonly: this.readonly,
+	minDate: this.minDate,
+	maxDate: this.maxDate,
+	yearRange: (this.yearRange ? this.yearRange: "-100:+10"),
+	showOtherMonths: this.showOtherMonths,
+	selectOtherMonths: this.showOtherMonths && this.selectOtherMonths
+};
 	        ]]>
 	    </getDetailsFunction>
 	    
@@ -274,6 +294,8 @@ $( "#" + id ).datepicker({
     maxDate: details.maxDate,
     minDate: details.minDate,
     yearRange: details.yearRange,
+    showOtherMonths: details.showOtherMonths,
+    selectOtherMonths: details.selectOtherMonths,
     constrainInput: true
 }).change( function (ev) {
 	var datePicker = $(this);
@@ -309,7 +331,6 @@ $( "#" + id ).datepicker({
 		}	
 	}		
 });
-
 	        ]]>
 	    </initJavaScript>
 

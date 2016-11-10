@@ -4722,3 +4722,15 @@ function Property_emailContent(cell, propertyObject, property, details) {
 	}));
 	
 }
+
+//this is for the date select other months which is conditional upon showing other months
+function Property_dateSelectOtherMonths(cell, propertyObject, property, details) {
+	// only if the type is to copy values
+	if (propertyObject.showOtherMonths == "true" || propertyObject.showOtherMonths == true) {
+		// add the checkbox
+		Property_checkbox(cell, propertyObject, property, details);
+	} else {
+		// remove this row
+		cell.closest("tr").remove();
+	}
+} 
