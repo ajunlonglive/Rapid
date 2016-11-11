@@ -97,7 +97,7 @@ return [["light"],["dark"]];
 	    
 	    <resources>
 	        <resource>
-	            <type>javascriptFile</type>
+	            <type>javascriptLink</type>
 	            <contents>https://www.google.com/recaptcha/api.js</contents>
 	        </resource>   
 	    </resources>
