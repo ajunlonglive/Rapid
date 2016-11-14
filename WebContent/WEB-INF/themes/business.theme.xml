@@ -1,0 +1,684 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<template xmlVersion="1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/theme.xsd">
+
+<!-- 
+
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
+
+gareth.edwards@rapid-is.co.uk
+
+
+This file is part of the Rapid Application Platform
+
+Rapid is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version. The terms require you to include
+the original copyright, and the license notice in all redistributions.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
+
+ -->
+
+	    <type>business</type>
+	    <name>Business</name>
+	    
+	    <resources>
+	    	<resource>
+	    		<type>css</type>
+	    		<contents>
+	    			<![CDATA[
+.ui-datepicker {
+  border: 1px solid #000;
+}
+
+.ui-datepicker select.ui-datepicker-month {
+  font-family: 'Noto Sans', Verdana, Helvetica, Arial, sans-serif;
+  font-size: 11px;
+  border: 1px solid #999;
+  border-radius: 4px;
+  height: 20px;
+  padding: 0 5px;
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#FFF', endColorstr='#E1E1E1',GradientType=0 );
+  background: linear-gradient(to bottom, #F3F3F3 0%, #F6F6F6 50%, #F1F1F1 62%, #E1E1E1 100%);
+}
+
+.ui-datepicker select.ui-datepicker-year {
+  font-family: 'Noto Sans', Verdana, Helvetica, Arial, sans-serif;
+  font-size: 11px;
+  border: 1px solid #999;
+  border-radius: 4px;
+  height: 20px;
+  padding: 0 5px;
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#FFF', endColorstr='#E1E1E1',GradientType=0 );
+  background: linear-gradient(to bottom, #F3F3F3 0%, #F6F6F6 50%, #F1F1F1 62%, #E1E1E1 100%);
+}
+
+.ui-datepicker table {
+  line-height: 26px;
+}
+
+.ui-datepicker th {
+  background: linear-gradient(to bottom, #D3EFFF 0%, #428ED4 100%);
+  text-shadow: 1px 1px 1px #FFF;
+  font-size: 11px;
+  color: #000 !important;
+  font-weight: normal;
+  padding: 0px;
+}
+
+.ui-widget-content .ui-state-active {
+  background: #428ED4 !important;
+  font-weight: normal !important;
+}
+
+.ui-datepicker td a.ui-state-default {
+  font-weight: normal !important;
+  color: #000;
+  background: #F5F5F5;
+  background: -moz-linear-gradient(top, #F5F5F5 0, #F5F5F5 100%);
+  background: -webkit-linear-gradient(top, #F5F5F5 0, #F5F5F5 100%);
+  filter:progid: DXImageTransform.Microsoft.gradient(startColorstr='#F5F5F5', endColorstr='#F5F5F5', GradientType=0);
+}
+
+.ui-datepicker td a.ui-state-hover {     
+  background: #DDDFE2 !important;
+  background: -moz-linear-gradient(top, #DDDFE2 0, #DDDFE2 100%) !important;
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #DDDFE2), color-stop(100%, #DDDFE2)) !important;
+  background: -webkit-linear-gradient(top, #DDDFE2 0, #DDDFE2 100%) !important;
+  background: -o-linear-gradient(top, #DDDFE2 0, #DDDFE2 100%) !important;
+  background: -ms-linear-gradient(top, #DDDFE2 0, #DDDFE2 100%) !important;
+  background: linear-gradient(top, #DDDFE2 0, #DDDFE2 100%) !important;
+  filter:progid: DXImageTransform.Microsoft.gradient(startColorstr='#DDDFE2', endColorstr='#DDDFE2', GradientType=0) !important;
+}
+
+.ui-datepicker td a, .ui-datepicker td span {
+  font-size: 11px;
+  width: 26px;
+  height: 26px;
+  line-height: 26px;
+  font-weight: normal !important;
+}
+
+.ui-datepicker td span {
+  color: #828282 !important;
+}
+
+td.ui-datepicker-unselectable {
+  border-color: #CDCDCD !important;
+}
+
+.ui-datepicker-today a {
+  text-shadow: none !important;
+  -webkit-box-shadow: 0px 0px 3px #428ED4 inset !important;
+  -moz-box-shadow: 0px 0px 3px #428ED4 inset !important;
+  box-shadow: 0px 0px 3px #428ED4 inset !important;
+}
+
+.ui-state-highlight {
+  color: #000 !important;
+}
+
+.ui-priority-secondary {
+  color: #828282 !important;
+  background: #FFF !important;
+  background: -webkit-linear-gradient(top, #FFF 0, #FFF 100%) !important;
+  background: -moz-linear-gradient(top, #FFF 0, #FFF 100%) !important;
+  filter:progid: DXImageTransform.Microsoft.gradient(startColorstr='#FFF', endColorstr='#FFF', GradientType=0) !important;
+}
+
+.ui-datepicker-current-day a {
+  box-shadow: none !important;
+  text-shadow: 0 1px 0 rgba(255,255,255,.5) !important;
+}
+
+a.ui-state-default.ui-state-highlight.ui-state-active.ui-state-hover {
+  background: #428ED4 !important;
+}
+
+table.grid {
+  border: 1px solid #CCC;
+  color: #000;
+}
+
+table.grid tr td {
+  border: 1px solid #CCC;
+}
+
+table.grid tr:first-child td {
+  color: #EEE;
+  padding: 4px 6px;
+  font-weight: 700;
+  background: #428ED4;
+}
+
+table.grid tr:not(:first-child) td {
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+table.grid tr {
+  background: #FFF;
+}
+
+table.grid tr.rowSelect {
+  background: #E8E8E8;
+}
+
+textarea {
+  height: 40px;
+  border-radius: 2px;
+  border: 1px solid #999;
+  padding: 5px 5px;
+  font-family: 'Noto Sans', Verdana, Helvetica, Arial, sans-serif;
+}
+
+.tabsHeader li {
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+  border-width: 1px 1px 0px;
+  border-style: solid;
+  border-color: #000;
+  color: #828282;
+  cursor: pointer;
+  background: #FFF;
+}
+
+.tabsHeader li.selected {
+  border-width: 1px 1px 0px;
+  border-style: solid;
+  border-color: #000 #000;
+  background-color: #E8E8E8;
+  cursor: pointer;
+  font-weight: normal;
+}
+
+.tabsHeader li:not(.selected):hover {
+  background-color: #FFF;
+}
+
+ul.tabsHeaderH li {
+  position: relative;
+  z-index: 1;
+  margin-right: 3px;
+  padding: 6px;
+}
+
+ul.tabsHeaderH li.selected {
+  top: 0px;
+}
+
+div.tabsPanel {
+  background-color: #F7F7F7;
+  border: 1px solid transparent;
+  border-color: #D7D7D7;
+  box-shadow: 5px 5px 5px -1px #B3B3B3;
+}
+
+div.tabsPanel.selected {
+  border-left-width: 2px;
+  border-width: 1px 1px 1px;
+  border-style: solid;
+  border-color: #000;
+  background-color: #F5F5F5;
+}
+	    			 ]]>
+	    		</contents>
+	    	</resource>
+	    </resources>
+	    
+	    <css>
+	    <![CDATA[
+@font-face {
+  font-family: 'Noto Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Noto Sans'), local('NotoSans'), url(https://fonts.gstatic.com/s/notosans/v6/C7bP6N8yXZ-PGLzbFLtQKRJtnKITppOI_IvcXXDNrsc.woff2) format('woff2');
+  unicode-range: U+0460-052F, U+20B4, U+2DE0-2DFF, U+A640-A69F;
+}
+
+body {
+  margin: 10px;
+  font-family: 'Noto Sans', Verdana, Helvetica, Arial, sans-serif;
+  font-size: 11px;
+}
+
+body, input, textarea, button, select {
+  font-size: 11px;
+}
+
+.spacer {
+  margin-bottom: 20px;
+}
+
+.paddingSmall {
+  padding: 6px;
+}
+
+.paddingMedium {
+  padding: 15px;
+}
+
+.paddingLarge {
+  padding: 24px;
+}
+
+button {
+  border: 1px solid #999;
+  border-radius: 4px;
+  padding: 5px 10px;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F3F3F3', endColorstr='#E1E1E1', GradientType=0);
+  background: linear-gradient(to bottom, #F3F3F3 0%, #F6F6F6 50%, #F1F1F1 62%, #E1E1E1 100%);
+  color: #000;
+  cursor: pointer;
+}
+
+button:hover {
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F8F8F8', endColorstr='#E4E4E4', GradientType=0);
+  background: linear-gradient(to bottom, #F8F8F8 0%, #FFF 50%, #F6F6F6 62%, #E4E4E4 100%);
+}
+
+button:active {
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ECECEC', endColorstr='#D9D9D9', GradientType=0);
+  background: linear-gradient(to bottom, #ECECEC 0%, #F1F1F1 50%, #E6E6E6 62%, #D9D9D9 100%);
+}
+
+button:disabled, .dropdown:disabled {
+  color: graytext;
+}
+
+.button1 {
+  background: #DDDFE2;
+  border: 1px solid black;
+}
+
+.button1:hover {
+  background: #F0F2F5;
+}
+
+.button1:active {
+  background: #D5D7DA;
+}
+
+.button2 {
+  background: #F5F5F5;
+  border: 1px solid black;
+}
+
+.button2:hover {
+  background: #EFEFEF;
+}
+
+.button2:active {
+  background: #DADADA;
+}
+
+.button3 {
+  background: linear-gradient(to bottom, #D3EFFF 0%, #428ED4 100%);
+}
+
+.button3:hover {
+  background: linear-gradient(to bottom, #E5F5FF 0%, #6CB8FF 100%);
+}
+
+.button3:active {
+  background: linear-gradient(to bottom, #B3E3FF 0%, #307DC3 100%);
+  color: #FFF;
+}
+
+.button4 {
+  color: #EEE;
+  background: #428ED4;
+  font-weight: 700;
+  border: 1px solid #CCC;
+  border-radius: 0;
+}
+
+.button4:hover {
+  background: #5CA3E4;
+}
+
+.button4:active {
+  background: #2077C7;
+}
+
+.button4:disabled {
+  color: #AEC6DC;
+}
+
+input {
+  height: 20px;
+  border-radius: 2px;
+  border: 1px solid #999;
+  padding: 1px 5px;
+  color: #000;
+}
+
+input:disabled {
+  color: #545454;
+}
+
+input[type=checkbox] {
+  width: 14px;
+  height: 14px;
+  vertical-align: middle;
+  margin-top: -1px;
+  margin-right: 10px;
+  margin-left: 8px;
+  outline: none;
+  cursor: pointer;
+}
+
+input[type=checkbox]:before {
+  width: 14px;
+  height: 14px;
+  display: block;
+  content: '';
+  border-radius: 4px;
+  border: 1px solid #999;
+  margin: -2px;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F3F3F3', endColorstr='#E1E1E1', GradientType=0);
+  background: linear-gradient(to bottom, #F3F3F3 0%, #F6F6F6 50%, #F1F1F1 62%, #E1E1E1 100%);
+}
+
+input[type=checkbox]:focus:before {
+  border-color: #0091CD;
+  box-shadow: 0 0 1px #0091CD;
+}
+
+input[type=checkbox]:active:before {
+  border-color: #D7D7D7;
+  box-shadow: none;
+}
+
+input[type=checkbox]:disabled:before {
+  background-color: #D0D6D8;
+  border-color: #C3C3C3;
+}
+
+input[type=checkbox]:checked:before {
+  width: 14px;
+  height: 14px;
+  display: block;
+  content: '';
+  margin: -2px;
+}
+
+input[type=checkbox]:disabled:checked:before {
+  background-color: #D0D6D8;
+  border-color: #C3C3C3;
+}
+
+input[type=checkbox]:checked:after {
+  content: '';
+  position: absolute;
+  margin-top: -12px;
+  margin-left: 2.8px;
+  border-right: 2px solid #000;
+  border-bottom: 2px solid #000;
+  width: 4px;
+  height: 8px;
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+input[type=checkbox]:checked:disabled:after {
+  border-right: 2px solid #777;
+  border-bottom: 2px solid #777;
+}
+
+input[type=radio] {
+  width: 14px;
+  height: 14px;
+  vertical-align: middle;
+  margin-top: -1px;
+  margin-right: 10px;
+  margin-left: 8px;
+  outline: none;
+  cursor: pointer;
+}
+
+input[type=radio]:before {
+  width: 14px;
+  height: 14px;
+  display: block;
+  content: '';
+  border-radius: 100%;
+  border: 1px solid #999;
+  margin: -2px;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F3F3F3', endColorstr='#E1E1E1', GradientType=0);
+  background: linear-gradient(to bottom, #F3F3F3 0%, #F6F6F6 50%, #F1F1F1 62%, #E1E1E1 100%);
+}
+
+input[type=radio]:focus:before {
+  border-color: #0091CD;
+  box-shadow: 0 0 1px #0091CD;
+}
+
+input[type=radio]:active:before {
+  border-color: #D7D7D7;
+  box-shadow: none;
+}
+
+input[type=radio]:disabled:before {
+  background-color: #D0D6D8;
+  border-color: #C3C3C3;
+}
+
+input[type=radio]:checked:before {
+  width: 14px;
+  height: 14px;
+  display: block;
+  content: '';
+  margin: -2px;
+}
+
+input[type=radio]:disabled:checked:before {
+  background-color: #D0D6D8;
+  border-color: #C3C3C3;
+}
+
+input[type=radio]:checked:after {
+  content: '';
+  position: absolute;
+  margin-top: -9px;
+  margin-left: 2.8px;
+  border-radius: 100%;
+  width: 6px;
+  height: 6px;
+  background: #000;
+}
+
+input[type=radio]:checked:disabled:after {
+  background: #777;
+}
+
+.input1 {
+  background: #F5F5F5;
+  border-color: #000;
+}
+
+.input2 {
+  border-color: #428ED4;
+}
+
+.dropdown {
+  border: 1px solid #999;
+  border-radius: 4px;
+  min-width: 150px;
+  height: 25px;
+  padding: 0 5px;
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#F3F3F3', endColorstr='#E1E1E1',GradientType=0 );
+  background: linear-gradient(to bottom, #F3F3F3 0%, #F6F6F6 50%, #F1F1F1 62%, #E1E1E1 100%);
+  color: #000
+}
+
+.panel1 {
+  border: 1px solid black;
+  background: #F5F5F5;
+  box-shadow: 5px 5px 5px -1px #B3B3B3;
+}
+
+.panel2 {
+  background: #DDDFE2;
+  border-bottom: 1px solid black;
+  padding: 5px 0 5px 5px;
+}
+
+.panel3 {
+  border: 1px solid #999;
+  padding: 5px 0 5px 5px;
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#F3F3F3', endColorstr='#E1E1E1',GradientType=0 );
+  background: linear-gradient(to bottom, #F3F3F3 0%, #F6F6F6 50%, #F1F1F1 62%, #E1E1E1 100%);
+}
+
+.panel4 {
+  background: linear-gradient(to bottom, #D3EFFF 0%, #428ED4 100%);
+  padding: 20px;
+  box-shadow: none;
+  background: -webkit-linear-gradient(-45deg, #FFF, #FFF 100px, transparent 105px), -webkit-linear-gradient(top, #D3EFFF, #428ED4);
+  background: -moz-linear-gradient(-45deg, #FFF, #FFF 100px, transparent 105px), -moz-linear-gradient(top, #D3EFFF, #428ED4);
+}
+
+.panel4 > :first-child {
+  margin-left: 10%;
+}
+
+/* Mozilla custom stylings */
+@-moz-document url-prefix() {
+  label.checkbox:hover::before { /* Our tick on hover */
+    border: none;
+  }
+
+  label.checkbox input[type="checkbox"]:checked + label::before {
+    border-right: 3px solid #FFF;
+    border-bottom: 3px solid #FFF;
+  }
+
+  input[type=checkbox] { /* Hide moz standard */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: transparent;
+    position: relative;
+    visibility: hidden;
+    display: none;
+  }
+
+  input[type=checkbox], input[type=checkbox] + span::before {
+    vertical-align: middle;
+    margin-top: -3px;
+    margin-right: 16px;
+    outline: none;
+  }
+
+  input[type=checkbox] + span::before { /* Our custom checkbox */
+    width: 14px;
+    height: 14px;
+    display: inline-block;
+    content: '';
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F3F3F3', endColorstr='#E1E1E1', GradientType=0);
+    background: linear-gradient(to bottom, #F3F3F3 0%, #F6F6F6 50%, #F1F1F1 62%, #E1E1E1 100%);
+    border-radius: 4px;
+    border: 1px solid #999;
+    margin: -2px;
+    margin-right: 10px;
+    cursor: pointer;
+  }
+
+  input[type=checkbox]:active + span::before {
+    border-color: #D7D7D7;
+    box-shadow: none;
+  }
+
+  input[type=checkbox]:checked + span::before {
+    content: '\2713';
+    color: #000;
+    font-size: 17px;
+    line-height: 14px;
+  }
+
+  input[type=checkbox]:disabled + span::before {
+    background-color: #D0D6D8;
+    border-color: #C3C3C3;
+  }
+
+  input[type=checkbox]:disabled:checked + span::before {
+    background-color: #D0D6D8;
+    border-color: #C3C3C3;
+    color: #777;
+  }
+  
+  input[type=checkbox]:disabled:active + span::before {
+    border-color: #C3C3C3;
+  }
+
+  input[type=radio] { /* Hide moz standard */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: transparent;
+    position: relative;
+    visibility: hidden;
+    display: none;
+  }
+
+  input[type=radio], input[type=radio] + span::before {
+    vertical-align: middle;
+    margin-top: -3px;
+    outline: none;
+  }
+
+  input[type=radio] + span::before { /* Our custom radio button */
+    width: 14px;
+    height: 14px;
+    display: inline-block;
+    content: '';
+    background: #FFF;
+    border-radius: 100%;
+    border: 1px solid #999;
+    margin: -2px 10px;
+    cursor: pointer;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F3F3F3', endColorstr='#E1E1E1', GradientType=0);
+    background: linear-gradient(to bottom, #F3F3F3 0%, #F6F6F6 50%, #F1F1F1 62%, #E1E1E1 100%);
+  }
+
+  input[type=radio]:active + span::before {
+    border-color: #D7D7D7;
+    box-shadow: none;
+  }
+
+  input[type=radio]:checked + span::before {
+    content: '\2022';
+    color: #000;
+    font-size: 29px;
+    line-height: 17px;
+    text-align: center;
+    border: 1px solid #999;
+  }
+
+  input[type=radio]:disabled + span::before {
+    border-color: #C3C3C3;
+  }
+
+  input[type=radio]:disabled:checked + span::before {
+    border-color: #C3C3C3;
+    color: #777;
+  }
+  
+  input[type=radio]:disabled:active + span::before {
+    border-color: #C3C3C3;
+  }
+}
+	    ]]>
+	    </css>
+	   
+</template>
