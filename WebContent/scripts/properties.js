@@ -610,7 +610,7 @@ function Property_select(cell, propertyObject, property, details, changeFunction
 				} else {
 					// this allows value/text pairs either in the form [{"v1":"t1"},{"v2":"t2"}] or [{"value":"v1","text":"t1"},{"value":"v2","text":"t2"}] 
 					var value = values[i].value;
-					if (!value) value = values[i][0];
+					if (value === undefined) value = values[i][0];
 					var text = values[i].text;
 					if (!text) text = values[i][1];
 					if (!text) text = value;
