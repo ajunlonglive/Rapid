@@ -125,7 +125,7 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 				queryString = queryString.toLowerCase();
 			}
 			// if this is a sensitive resource
-			if (requestPath.startsWith("/login.jsp") || requestPath.startsWith("/logout.jsp") || requestPath.startsWith("/design.jsp") || requestPath.startsWith("/designpage.jsp") || requestPath.startsWith("/designer") || (requestPath.startsWith("/~") && queryString.contains("a=rapid"))) {
+			if (requestPath.startsWith("/login.jsp") || requestPath.startsWith("/design.jsp") || requestPath.startsWith("/designpage.jsp") || requestPath.startsWith("/designer") || (requestPath.startsWith("/~") && queryString.contains("a=rapid"))) {
 				// assume no pass
 				boolean pass = false;
 				// get the client IP
