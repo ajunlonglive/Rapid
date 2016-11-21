@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<controls xmlVersion="1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/control.xsd">
+
+<!-- 
+
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
+
+gareth.edwards@rapid-is.co.uk
+
+
+This file is part of the Rapid Application Platform
+
+Rapid is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version. The terms require you to include
+the original copyright, and the license notice in all redistributions.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
+
+ -->
+
+	<control>
+	    
+	    <type>responsivedropdown</type>
+	    <name>Responsive drop down</name>
+	    <image>images/responsivedropdown_24x24.png</image>
+	    <category>Responsive controls</category>
+	    <helpHtml>A version of the dropdown control that offers responsive design. This control will alter its size based on the parent control it is in, as well as alter to suit the screen size it is viewed on.</helpHtml>
+	    
+	    <addToNewApplications>true</addToNewApplications>
+	        
+	    <canUserAdd>true</canUserAdd>
+	    <canUserMove>true</canUserMove>
+	    <canUserAddPeers>true</canUserAddPeers>
+	     <canBeUsedForFormPageVisibilty>true</canBeUsedForFormPageVisibilty>
+	    <canValidate>true</canValidate>
+	    
+	    <properties>
+	        
+	        <property>
+	            <key>name</key>
+	            <name>Name</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <helpHtml>Name that can be given to the control. Names are used to help identify controls uniquely.</helpHtml>
+	        </property>
+	        
+	         <property>
+	            <key>label</key>
+	            <name>Form summary label</name>
+	            <setConstructValueFunction>return "";</setConstructValueFunction>
+	            <changeValueJavaScript>formText</changeValueJavaScript>
+	            <helpHtml>Summary label to appear at the end of the form. Leave blank to have the control and its value hidden.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>codes</key>
+	            <name>Codes</name>
+	            <visible>false</visible>
+	        </property>
+	                   
+	        <property>
+	            <key>options</key>
+	            <name>Options</name>
+	            <setConstructValueFunction>return [{value:"", text:"Value 1"}, {value:"", text:"Value 2"}, {value:"", text:"Value 3"}];</setConstructValueFunction>
+	            <changeValueJavaScript>options</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Defines what the dropdown will contain. An option for enabling codes can also be used. Codes allow for more precise visibility and validation conditions.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>value</key>
+	            <name>Initial value</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Selects one of the options from the dropdown as its initial value.</helpHtml>
+	        </property>
+	         	        
+	    </properties>
+	    
+	    <resources>
+			<resource>
+				<type>cssLink</type>
+				<contents>styles/bootstrap.css</contents>
+			</resource>
+
+			<resource>
+				<type>javascriptLink</type>
+				<contents>scripts_min/bootstrap.min.js</contents>
+			</resource>
+		</resources>
+	    
+	    <getHtmlFunction>
+	        <![CDATA[
+// return our html for adding to our parent object
+var html = "";
+// check we have options or a value list
+if (this.options || this.valueList) {
+	// if the options are a string turn them in an array
+	if ($.type(this.options) == "string") this.options = JSON.parse(this.options);
+	// assume we are using the options
+	var options = this.options;
+	// assume we are using this.codes
+	var codes = this.codes;
+	// if it's a value list use that instead
+	if (this.valueList) {
+		for (var i in _version.valueLists) {
+			if (this.valueList == _version.valueLists[i].name) {
+		  		options = _version.valueLists[i].values;
+		  		codes = _version.valueLists[i].usesCodes;
+		  		break;
+			}
+		}
+	}
+	// loop the options
+	for (var i in options) {
+		if (codes) {
+			html += "<option value='" + escapeApos(options[i].value) + "'" + (escapeApos(this.value) == escapeApos(options[i].value) ? " selected='selected'" : "") + ">" + options[i].text + "</option>";
+		} else {
+			html += "<option" + (escapeApos(this.value) == options[i].text ? " selected='selected'" : "") + ">" + options[i].text + "</option>";
+		}
+	}
+}
+// place into the select
+var html = "<select id='" + this.id + "' name='" + this.id + "' class='dropdown form-control" + getStyleClasses(this) + "'>" + html + "</select>";
+// return
+return html;
+	        ]]>
+	    </getHtmlFunction>
+	    
+	    <updateChildObjects>true</updateChildObjects>
+	    
+	    <getDataFunction>
+	        <![CDATA[
+return $("#" + id).val();
+			]]>
+	    </getDataFunction>
+	    
+	    <setDataJavaScript>
+	        <![CDATA[
+if (data !== undefined) {
+	var control = $("#" + id);
+	if (data == null) {
+		if (!field) control.children().remove();
+	} else {
+		data = makeDataObject(data, field);
+		if (data.rows && data.fields) {
+			if (field && data.rows[0]) {
+				var foundField = false;
+				for (var i in data.fields) {
+					if (data.fields[i] && field.toLowerCase() == data.fields[i].toLowerCase()) {
+						control.val(data.rows[0][i]);
+						if (changeEvents) control.trigger("change");
+						foundField = true;
+						break;
+					}
+				}
+				if (!foundField) control.val(data.rows[0][0]);
+			} else {
+				for (var i in data.rows) {
+					var row = data.rows[i];
+					var text = "";
+					var value = null;
+					if (data.fields) {
+						for (var j in data.fields) {
+							if (data.fields[j]) {
+								if (data.fields[j].toLowerCase() == "text") text = data.rows[i][j];
+								if (data.fields[j].toLowerCase() == "value") value = data.rows[i][j];
+							}
+						}
+					}
+					if (!text) text = row[0];
+					if (value == null && row[1]) value = row[1];
+					if (value != null) value = "value='" + value + "'";
+					control.append("<option " + value + ">" + text + "</option>");
+				}
+			}
+		}
+	}
+}
+        
+	        ]]>
+	    </setDataJavaScript>
+	    
+	    <events>
+	        <event>
+	            <type>change</type>
+	            <name>Change</name>
+	        </event>
+	    </events>
+	    	    
+	    <styles>
+	        <style>
+	            <name>Responsive drop down</name>
+	            <getAppliesToFunction>
+					<![CDATA[
+return "#" + this.id;
+	       			 ]]>
+	            </getAppliesToFunction>
+	        </style>
+	    </styles>
+	    
+	   	<runtimeProperties>
+	        <runtimeProperty>
+	            <type>value</type>
+	            <name>Value</name>
+	            <setPropertyJavaScript>
+	                <![CDATA[
+var	data = makeDataObject(data, field);
+var control = $("#" + id);
+if (data && data.rows) {
+	control.val(data.rows[0][0]);
+} else {
+	control.val("");
+}
+if (changeEvents) control.trigger("change");
+	                ]]>
+	            </setPropertyJavaScript>
+	        </runtimeProperty>
+	    </runtimeProperties>
+	    
+	</control>
+</controls>

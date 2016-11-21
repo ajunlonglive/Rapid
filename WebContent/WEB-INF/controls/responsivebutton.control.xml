@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<controls xmlVersion="1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/control.xsd">
+
+<!-- 
+
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
+
+gareth.edwards@rapid-is.co.uk
+
+
+This file is part of the Rapid Application Platform
+
+Rapid is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version. The terms require you to include
+the original copyright, and the license notice in all redistributions.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
+
+ -->
+
+	<control>
+	    
+	    <type>responsivebutton</type>
+	    <name>Responsive button</name>
+	    <image>images/responsivebutton_24x24.png</image>
+	    <category>Responsive controls</category>
+	    <helpHtml>A version of the button control that offers responsive design through the use of a set of dropdowns. Different styles of button can also be selected. The different width options will alter the size of the button depending on the page size. Pages are broken into grids 12 columns wide.</helpHtml>
+	    <addToNewApplications>true</addToNewApplications>
+	    
+	    <canUserAdd>true</canUserAdd>
+	    <canUserMove>true</canUserMove>
+	    <canUserAddPeers>true</canUserAddPeers>
+	    
+	    <properties>
+	        
+	        <property>
+	            <key>name</key>
+	            <name>Name</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <helpHtml>Name that can be given to the control. Names are used to help identify controls uniquely.</helpHtml>
+	        </property>
+	                   
+	        <property>
+	            <key>label</key>
+	            <name>Label</name>
+	            <setConstructValueFunction>return "button";</setConstructValueFunction>
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Text to appear on the button.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>title</key>
+	            <name>Title</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Displays a message when hovered over. Useful for screen readers.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>glyphCode</key>
+	            <name>Glyph</name>
+	            <setConstructValueFunction>
+	                <![CDATA[
+	                return ""
+	                ]]>
+	            </setConstructValueFunction>
+	            <changeValueJavaScript>glyphCode</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
+	            <refreshProperties>true</refreshProperties>
+	            <helpHtml>Attaches a glyph to the button. Useful for adding extra direction or improving aesthetics of a button, such as adding a magnifying glass for searching.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>glyphPosition</key>
+	            <name>Glyph position</name>
+	            <setConstructValueFunction>return "left";</setConstructValueFunction>
+	            <changeValueJavaScript>buttonGlyphPosition</changeValueJavaScript>
+	            <getValuesFunction>
+	                <![CDATA[
+return ["left","right","top","bottom"];
+					]]>
+	            </getValuesFunction>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets the position of the glyph on the button.</helpHtml>
+	        </property>
+	           
+	        <property>
+	            <key>glyphBackground</key>
+	            <name>Glyph background</name>
+	            <setConstructValueFunction>return "none";</setConstructValueFunction>
+	            <changeValueJavaScript>buttonGlyphBackground</changeValueJavaScript>
+	            <getValuesFunction>
+	                <![CDATA[
+return ["none","circle","circle-o","square","square-o"];
+					]]>
+	            </getValuesFunction>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Applies an additional style to the glyph.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>extraSmall</key>
+	            <name>Extra small width</name>
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	            <getValuesFunction>
+	                <![CDATA[
+return [{value:"", text:"Please select..."}, {value:"xs-1", text:"1/12"}, {value:"xs-2", text:"2/12s"}, {value:"xs-3", text:"3/12s"}, {value:"xs-4", text:"4/12s"}, {value:"xs-5", text:"5/12s"}, {value:"xs-6", text:"6/12s"}, {value:"xs-7", text:"7/12s"}, {value:"xs-8", text:"8/12s"}, {value:"xs-9", text:"9/12s"}, {value:"xs-10", text:"10/12s"}, {value:"xs-11", text:"11/12s"}, {value:"xs-12", text:"12/12s"}];
+					]]>
+	            </getValuesFunction>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets the width of the panel when the screen size is very small. Pages are broken into grids 12 columns wide.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>small</key>
+	            <name>Small width</name>
+	            <setConstructValueFunction>return "";</setConstructValueFunction>
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	            <getValuesFunction>
+	                <![CDATA[
+return [{value:"", text:"Please select..."}, {value:"sm-1", text:"1/12"}, {value:"sm-2", text:"2/12s"}, {value:"sm-3", text:"3/12s"}, {value:"sm-4", text:"4/12s"}, {value:"sm-5", text:"5/12s"}, {value:"sm-6", text:"6/12s"}, {value:"sm-7", text:"7/12s"}, {value:"sm-8", text:"8/12s"}, {value:"sm-9", text:"9/12s"}, {value:"sm-10", text:"10/12s"}, {value:"sm-11", text:"11/12s"}, {value:"sm-12", text:"12/12s"}];
+					]]>
+	            </getValuesFunction>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets the width of the panel when the screen size is small. Pages are broken into grids 12 columns wide.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>medium</key>
+	            <name>Medium width</name>
+	            <setConstructValueFunction>return "";</setConstructValueFunction>
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	            <getValuesFunction>
+	                <![CDATA[
+return [{value:"", text:"Please select..."}, {value:"md-1", text:"1/12"}, {value:"md-2", text:"2/12s"}, {value:"md-3", text:"3/12s"}, {value:"md-4", text:"4/12s"}, {value:"md-5", text:"5/12s"}, {value:"md-6", text:"6/12s"}, {value:"md-7", text:"7/12s"}, {value:"md-8", text:"8/12s"}, {value:"md-9", text:"9/12s"}, {value:"md-10", text:"10/12s"}, {value:"md-11", text:"11/12s"}, {value:"md-12", text:"12/12s"}];
+					]]>
+	            </getValuesFunction>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets the width of the panel when the screen size is of a medium size. Pages are broken into grids 12 columns wide.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>large</key>
+	            <name>Large width</name>
+	            <setConstructValueFunction>return "";</setConstructValueFunction>
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	            <getValuesFunction>
+	                <![CDATA[
+return [{value:"", text:"Please select..."}, {value:"lg-1", text:"1/12"}, {value:"lg-2", text:"2/12s"}, {value:"lg-3", text:"3/12s"}, {value:"lg-4", text:"4/12s"}, {value:"lg-5", text:"5/12s"}, {value:"lg-6", text:"6/12s"}, {value:"lg-7", text:"7/12s"}, {value:"lg-8", text:"8/12s"}, {value:"lg-9", text:"9/12s"}, {value:"lg-10", text:"10/12s"}, {value:"lg-11", text:"11/12s"}, {value:"lg-12", text:"12/12s"}];
+					]]>
+	            </getValuesFunction>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets the width of the panel when the screen size is large. Pages are broken into grids 12 columns wide.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>option</key>
+	            <name>Option</name>
+	            <setConstructValueFunction>return "";</setConstructValueFunction>
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	            <getValuesFunction>
+	                <![CDATA[
+return [{value:"", text:"None"}, {value:"-default", text:"Default"}, {value:"-primary", text:"Primary"}, {value:"-success", text:"Success"}, {value:"-info", text:"Info"}, {value:"-warning", text:"Warning"}, {value:"-danger", text:"Danger"}, {value:"-link", text:"Link"}];
+					]]>
+	            </getValuesFunction>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Adds an additional style to the button.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>size</key>
+	            <name>Size</name>
+	            <setConstructValueFunction>return "";</setConstructValueFunction>
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	            <getValuesFunction>
+	                <![CDATA[
+return [{value:"-lg", text:"Large"}, {value:"", text:"Default"}, {value:"-sm", text:"Small"}, {value:"-xs", text:"Extra small"}];
+					]]>
+	            </getValuesFunction>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets the size of the button, different to the default.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>block</key>
+	            <name>Display as block</name>
+	            <setConstructValueFunction>return false;</setConstructValueFunction>
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets whether the button spans the length of the page or parent control.</helpHtml>
+	        </property>
+	        
+	    </properties>
+	    
+	    <resources>
+	    	<resource>
+				<type>cssLink</type>
+				<contents>styles/bootstrap.css</contents>
+			</resource>
+			<resource>
+				<type>javascriptLink</type>
+				<contents>scripts_min/bootstrap.min.js</contents>
+			</resource>
+	        <resource>
+	            <type>cssFile</type>
+	            <contents>styles/fonts/fontawesome/css/font-awesome.css</contents>
+	        </resource>
+	        <resource>
+	            <type>cssFile</type>
+	            <contents>styles/fonts/rapid/font-rapid.css</contents>
+	        </resource>
+	        <!-- Some browsers choose the tff instead of the woff so both are included -->
+	        <resource>
+	            <type>file</type>
+	            <contents>styles/fonts/fontawesome/fonts/fontawesome-webfont.woff</contents>
+	        </resource>
+	        <resource>
+	            <type>file</type>
+	            <contents>styles/fonts/fontawesome/fonts/fontawesome-webfont.ttf</contents>
+	        </resource>
+	        <resource>
+	            <type>file</type>
+	            <contents>styles/fonts/rapid/rapid.ttf</contents>
+	        </resource>
+	        <resource>
+	            <type>file</type>
+	            <contents>styles/fonts/rapid/rapid.woff</contents>
+	        </resource>
+	        <resource>
+	            <type>css</type>
+	            <contents>
+.buttonGlyphWithBackground {
+	font-size: 0.5em;
+}
+	            </contents>
+	        </resource>
+	    </resources>
+	    	    	    
+	    <getHtmlFunction>
+	        <![CDATA[
+var html = "";
+
+var classes = getStyleClasses(this);
+
+// add appropriate col width classes if they are specified
+if (this.extraSmall) classes += " col-" + this.extraSmall;
+if (this.small) classes += " col-" + this.small;
+if (this.medium) classes += " col-" + this.medium;
+if (this.large) classes += " col-" + this.large;
+if (this.option) classes += " btn" + this.option;
+if (this.size) classes += " btn" + this.size;
+if (this.block) classes += " btn-block";
+
+if (this.glyphCode) {
+
+	var fontClass = "fa";
+	if (this.glyphCode == "&#xe900") fontClass = "fr";
+
+	var glyph = "<span class='" + fontClass + " buttonGlyph'>" + this.glyphCode + "</span>";
+
+	if (this.glyphBackground && this.glyphBackground != "none") {
+		glyph = "<span class='fa-stack fa-lg buttonGlyphWithBackground buttonGlyph'><i class='fa fa-" + this.glyphBackground + " fa-stack-2x buttonGlyphBackground'></i><i class='" + fontClass + " fa-stack-1x'>" + this.glyphCode + "</i></span>";
+	}
+	
+	var html = "<button id='" + this.id + "' type='button' class='button btn" + classes + "' " + (this.title ? "title='" + escapeApos(this.title) + "'" : "") + ">";
+	if (this.glyphPosition == "left" || this.glyphPosition == "top") html += glyph;
+	if (this.glyphPosition == "left") html += "&nbsp;";
+	if (this.glyphPosition == "top") html += "<br/>";
+	html += this.label;
+	if (this.glyphPosition == "bottom") html += "<br/>";
+	if (this.glyphPosition == "right") html += "&nbsp;";
+	if (this.glyphPosition == "right" || this.glyphPosition == "bottom") html += glyph;
+	html += "</button>";
+} else {
+	html = "<button id='" + this.id + "' type='button' class='button btn" + classes + "' " + (this.title ? "title='" + escapeApos(this.title) + "' " : "") + ">" + this.label + "</button>";
+}
+return html
+	        ]]>
+	    </getHtmlFunction>
+	    
+	    <events>
+	        <event>
+	            <type>click</type>
+	            <name>Click</name>
+	        </event>
+	    </events>
+	    
+	    <styles>
+	        <style>
+	            <name>Responsive button</name>
+	            <getAppliesToFunction>
+					<![CDATA[
+return "#" + this.id;
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	        <style>
+	            <name>Responsive button glyph</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id + " .buttonGlyph";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	        <style>
+	            <name>Responsive button glyph background</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id + " .buttonGlyphBackground";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	        <style>
+	            <name>:hover</name>
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id + ":hover";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	    </styles>
+	    
+	</control>
+</controls>
