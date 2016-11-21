@@ -30,7 +30,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    
 	    <type>recaptcha</type>
 	    <name>reCAPTCHA</name>
-	    <image>images/penknife_24x24.png</image>
+	    <image>images/recaptcha_24x24.png</image>
 	    <helpHtml>This control will generate a reCAPTCHA and provide a value of whether it was successful.</helpHtml>
 	    
 	    <canUserAdd>true</canUserAdd>
@@ -99,12 +99,12 @@ return [["light"],["dark"]];
 	        <resource>
 	            <type>javascriptLink</type>
 	            <contents>https://www.google.com/recaptcha/api.js</contents>
-	        </resource>   
+	        </resource>
 	    </resources>
 	    	    	    
 	    <getHtmlFunction>
 	        <![CDATA[
-if (this.key && this.secret) {	        
+if (this.key && this.secret) {
 	return "<div id='" + this.id + "' class='g-recaptcha' data-sitekey='" + this.key + "' data-size='" + this.size + "' data-theme='" + this.theme + "' data-callback='Event_success_" + this.id + "'></div>";
 } else {
 	if (!this.key && !this.secret)	{
@@ -116,40 +116,40 @@ if (this.key && this.secret) {
 	}
 }
 	        ]]>
-	    </getHtmlFunction> 
+	    </getHtmlFunction>
 	    
 	    <rebuildJavaScript>
-	        <![CDATA[             
+	        <![CDATA[
 // just update the attribute values - the whole thing will be regenerated on save
 this.object.attr("data-sitekey",this.key);
 this.object.attr("data-size",this.size);
 this.object.attr("data-theme",this.theme);
 	        ]]>
-	    </rebuildJavaScript>	    	    
+	    </rebuildJavaScript>
   
 	    <initDesignJavaScript>
-	        <![CDATA[       
+	        <![CDATA[
 // get a reference to the iFrame window
 var w = _pageIframe[0].contentWindow;
-// render the captcha if we have a key	        
+// render the captcha if we have a key
 if (this.key && this.secret && w.grecaptcha) w.grecaptcha.render(this.id, { 'sitekey':this.key, 'size':this.size, 'theme':this.theme });
 	        ]]>
 	    </initDesignJavaScript>
 	    
 	    <saveJavaScript>
 	        <![CDATA[
-// empty control on save	        
-this.object.children().remove();	        
+// empty control on save
+this.object.children().remove();
 	        ]]>
 	    </saveJavaScript>
 	    
 	    <getDataFunction>
 	        <![CDATA[
-if (grecaptcha) {	        
+if (grecaptcha) {
 	return grecaptcha.getResponse();
 } else {
 	return null;
-} 	        
+}
 	        ]]>
 	    </getDataFunction>
 	    
@@ -162,11 +162,11 @@ if (grecaptcha) {
 	    
 	    <styles>
 	        <style>
-	            <name>reCAPTCHA</name>  
+	            <name>reCAPTCHA</name>
 	            <getAppliesToFunction>
-					<![CDATA[	      
+					<![CDATA[
 return "#" + this.id;
-	       			 ]]>	                
+	       			 ]]>
 	            </getAppliesToFunction>
 	        </style>
 	    </styles>
