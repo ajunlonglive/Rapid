@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<controls xmlVersion="1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schemas/control.xsd">
+
+<!-- 
+
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
+
+gareth.edwards@rapid-is.co.uk
+
+
+This file is part of the Rapid Application Platform
+
+Rapid is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version. The terms require you to include
+the original copyright, and the license notice in all redistributions.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
+
+ -->
+
+	<control>
+	    
+	    <type>responsivecheckbox</type>
+	    <name>Responsive checkbox</name>
+	    <image>images/responsivecheckbox_24x24.png</image>
+	    <category>Responsive controls</category>
+	    <helpHtml>A version of the checkbox control that offers responsive design. This control will alter its size based on the parent control it is in, as well as alter to suit the screen size it is viewed on.</helpHtml>
+	    
+	    <addToNewApplications>true</addToNewApplications>
+	    
+	    <canUserAdd>true</canUserAdd>
+	    <canUserMove>true</canUserMove>
+	    <canUserAddPeers>true</canUserAddPeers>
+	    <canBeUsedForFormPageVisibilty>true</canBeUsedForFormPageVisibilty>
+	    <canValidate>true</canValidate>
+	    
+	    <properties>
+	        
+	        <property>
+	            <key>name</key>
+	            <name>Name</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <helpHtml>Name that can be given to the control. Names are used to help identify controls uniquely.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>label</key>
+	            <name>Form summary label</name>
+	            <setConstructValueFunction>return "";</setConstructValueFunction>
+	            <changeValueJavaScript>formText</changeValueJavaScript>
+	            <helpHtml>Summary label to appear at the end of the form. Leave blank to have the control and its value hidden.</helpHtml>
+	        </property>
+	               
+	        <property>
+	            <key>checked</key>
+	            <name>Checked</name>
+	            <setConstructValueFunction>return "false";</setConstructValueFunction>
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	            <getValuesFunction>
+	                <![CDATA[
+return ["false","true"];
+					]]>
+	            </getValuesFunction>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets the state of the checkbox to be true or false.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>value</key>
+	            <name>Value</name>
+	            <setConstructValueFunction>return "true";</setConstructValueFunction>
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Option that can be set to make validating on a checkbox easier.</helpHtml>
+	        </property>
+	        
+	         <property>
+	            <key>text</key>
+	            <name>Text</name>
+	            <changeValueJavaScript>bigtext</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets a text like description for the checkbox.</helpHtml>
+	        </property>
+	              
+	    </properties>
+	    
+	    <resources>
+			<resource>
+				<type>cssLink</type>
+				<contents>styles/bootstrap.css</contents>
+			</resource>
+
+			<resource>
+				<type>javascriptLink</type>
+				<contents>scripts_min/bootstrap.min.js</contents>
+			</resource>
+		</resources>
+	    
+	    <getHtmlFunction>
+	        <![CDATA[
+var checked = "";
+if (this.checked == "true" || this.checked == true) checked=" checked='checked'";
+
+var value = "true";
+if (this.value) value = this.value;
+
+var html = ""
+html += "<div id='" + this.id + "' class='wrapper responsivecheckbox" + getStyleClasses(this) + "'>";
+html += "<div class='row" + "'>";
+html += "<div class='col-md-12" + "'>";
+html += "<div class='check-input form-group" + "'>";
+html+= "<label id='" + this.id + "label' for='" + this.id + "checkbox'>";
+html += "<input name='" + this.id + "' type='hidden' value=''></input>"; // the stand-in if unticked
+html += "<input id='" + this.id + "checkbox' name='" + this.id + "' type='checkbox' " + checked + " value='" + value + "'></input>";
+html += this.text;
+html += "</label></div></div></div></div>";
+return html;
+	        ]]>
+	    </getHtmlFunction>
+	    
+	    <removeJavaScript>
+	        <![CDATA[
+// remove the hidden input
+this.object.closest("body").find("input[type=hidden][name='" + this.id + "']").remove();
+// remove the control
+this.object.remove();
+	        ]]>
+	    </removeJavaScript>
+	    
+	    <getDataFunction>
+	        <![CDATA[
+var control = $("#" + id).find("input:not([type=hidden])");
+var value = null;
+if (ev.validation) {
+	var container = control.closest(".validated");
+	if (!container[0]) container = control.closest(".responsivecheckbox");
+	container = container.parent();
+	container.find("input:not([type=hidden])").each( function() {
+		if ($(this).prop("checked")) {
+			value = "true";
+		}
+	});
+} else {
+	var attr = control.attr("value");
+	if (attr) {
+		if (control.prop("checked")) value = attr;
+	} else {
+		if (control.prop("checked")) {
+			value = "true";
+		} else {
+			value = "false";
+		}
+	}
+}
+return value;
+			]]>
+	    </getDataFunction>
+	    
+	    <setDataJavaScript>
+	        <![CDATA[
+var value = false;
+if (data != null && data !== undefined) {
+	data = makeDataObject(data, field);
+	if (data.rows && data.rows[0]) {
+		if (field && data.fields) {
+			for (var i in data.fields) {
+				if (data.fields[i].toLowerCase() == field.toLowerCase()) {
+					value = data.rows[0][i];
+					break;
+				}
+			}
+		} else {
+			value = data.rows[0][0];
+		}
+	}
+}
+var control = $("#" + id);
+if (!control.is("input")) control = control.find("#" + id + "checkbox");
+var attr = control.attr("value");
+var checked = false;
+if (attr) {
+	if (value == attr || (value == true && attr == "true")) checked = true;
+} else {
+	if (value && !value == "false") checked = true;
+}
+control.prop('checked', checked);
+if (changeEvents) control.trigger("change");
+			]]>
+	    </setDataJavaScript>
+	    	    
+	    <events>
+	        <event>
+	            <type>click</type>
+	            <name>Click</name>
+	        </event>
+	        
+	        <event>
+	            <type>change</type>
+	            <name>Change</name>
+	        </event>
+	    </events>
+	    
+	    <styles>
+	        <style>
+	            <name>Responsive checkbox</name>
+	            <getAppliesToFunction>
+					<![CDATA[
+return "#" + this.id;
+	       			 ]]>
+	            </getAppliesToFunction>
+	        </style>
+	        <style>
+	            <name>:hover</name>
+	            <getAppliesToFunction>
+					<![CDATA[
+return "#" + this.id + " :hover";
+	       			 ]]>
+	            </getAppliesToFunction>
+	        </style>
+	    </styles>
+	    
+	</control>
+</controls>
