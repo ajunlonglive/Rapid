@@ -111,6 +111,8 @@ function Control(controlType, parentControl, jsonControl, loadComplexObjects, pa
 					var event = {};
 					// set the type
 					event.type = classEvents[i].type;
+					// set the extra
+					event.extra = classEvents[i].extra;
 					// set the filterFunction
 					event.filterFunction = classEvents[i].filterFunction;
 					// make an actions array

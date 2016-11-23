@@ -330,6 +330,7 @@ public class Control {
 				// create an event object
 				Event event = new Event(
 					jsonEvent.getString("type"),
+					jsonEvent.optString("extra"),
 					jsonEvent.optString("filterFunction")
 				);
 
