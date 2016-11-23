@@ -587,6 +587,17 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 															</xs:restriction>
 														</xs:simpleType>
 													</xs:element>
+													<xs:element name="extra" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>If present, added after the jQuery reference to the control, and before the type for finer targeting of elements
+															</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:minLength value="1" />
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
 													<xs:element name="name">
 														<xs:simpleType>
 															<xs:restriction base="xs:string">
