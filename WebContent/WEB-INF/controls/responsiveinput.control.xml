@@ -107,36 +107,99 @@ return [["N","Normal"],["L","Large"],["Num","Number"],["Tel","Telephone number"]
 	            <changeValueJavaScript>inputAutoHeight</changeValueJavaScript>
 	            <refreshHtml>true</refreshHtml>
 	        </property>
+	        
+	        <property>
+	            <key>extraSmall</key>
+	            <name>Extra small width</name>
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	            <getValuesFunction>
+	                <![CDATA[
+return [{value:"", text:"Please select..."}, {value:"xs-1", text:"1/12"}, {value:"xs-2", text:"2/12s"}, {value:"xs-3", text:"3/12s"}, {value:"xs-4", text:"4/12s"}, {value:"xs-5", text:"5/12s"}, {value:"xs-6", text:"6/12s"}, {value:"xs-7", text:"7/12s"}, {value:"xs-8", text:"8/12s"}, {value:"xs-9", text:"9/12s"}, {value:"xs-10", text:"10/12s"}, {value:"xs-11", text:"11/12s"}, {value:"xs-12", text:"12/12s"}];
+					]]>
+	            </getValuesFunction>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets the width of the panel when the screen size is very small. Pages are broken into grids 12 columns wide.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>small</key>
+	            <name>Small width</name>
+	            <setConstructValueFunction>return "";</setConstructValueFunction>
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	            <getValuesFunction>
+	                <![CDATA[
+return [{value:"", text:"Please select..."}, {value:"sm-1", text:"1/12"}, {value:"sm-2", text:"2/12s"}, {value:"sm-3", text:"3/12s"}, {value:"sm-4", text:"4/12s"}, {value:"sm-5", text:"5/12s"}, {value:"sm-6", text:"6/12s"}, {value:"sm-7", text:"7/12s"}, {value:"sm-8", text:"8/12s"}, {value:"sm-9", text:"9/12s"}, {value:"sm-10", text:"10/12s"}, {value:"sm-11", text:"11/12s"}, {value:"sm-12", text:"12/12s"}];
+					]]>
+	            </getValuesFunction>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets the width of the panel when the screen size is small. Pages are broken into grids 12 columns wide.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>medium</key>
+	            <name>Medium width</name>
+	            <setConstructValueFunction>return "";</setConstructValueFunction>
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	            <getValuesFunction>
+	                <![CDATA[
+return [{value:"", text:"Please select..."}, {value:"md-1", text:"1/12"}, {value:"md-2", text:"2/12s"}, {value:"md-3", text:"3/12s"}, {value:"md-4", text:"4/12s"}, {value:"md-5", text:"5/12s"}, {value:"md-6", text:"6/12s"}, {value:"md-7", text:"7/12s"}, {value:"md-8", text:"8/12s"}, {value:"md-9", text:"9/12s"}, {value:"md-10", text:"10/12s"}, {value:"md-11", text:"11/12s"}, {value:"md-12", text:"12/12s"}];
+					]]>
+	            </getValuesFunction>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets the width of the panel when the screen size is of a medium size. Pages are broken into grids 12 columns wide.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>large</key>
+	            <name>Large width</name>
+	            <setConstructValueFunction>return "";</setConstructValueFunction>
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	            <getValuesFunction>
+	                <![CDATA[
+return [{value:"", text:"Please select..."}, {value:"lg-1", text:"1/12"}, {value:"lg-2", text:"2/12s"}, {value:"lg-3", text:"3/12s"}, {value:"lg-4", text:"4/12s"}, {value:"lg-5", text:"5/12s"}, {value:"lg-6", text:"6/12s"}, {value:"lg-7", text:"7/12s"}, {value:"lg-8", text:"8/12s"}, {value:"lg-9", text:"9/12s"}, {value:"lg-10", text:"10/12s"}, {value:"lg-11", text:"11/12s"}, {value:"lg-12", text:"12/12s"}];
+					]]>
+	            </getValuesFunction>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets the width of the panel when the screen size is large. Pages are broken into grids 12 columns wide.</helpHtml>
+	        </property>
 	               
 	    </properties>
 	    
 	    <getHtmlFunction>
 	        <![CDATA[
 // return our html for adding to our parent object
+var html = "";
 var value = "";
 var classes = getStyleClasses(this);
+
+// add appropriate col width classes if they are specified
+if (this.extraSmall) classes += " col-" + this.extraSmall;
+if (this.small) classes += " col-" + this.small;
+if (this.medium) classes += " col-" + this.medium;
+if (this.large) classes += " col-" + this.large;
+
 if (this.value) value = this.value
 switch (this.controlType) {
-	case "N" : return "<input id='" + this.id + "' name='" + this.id + "' value='" + escapeApos(value) + "' type='text'" + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + " " + (this.placeholder ? " placeholder='" + this.placeholder + "'" : "") + " class='input form-control" + classes + "'></input>";
-	case "L" : return "<textarea id='" + this.id + "' name='" + this.id + "' class='input form-control" + classes + (this.autoHeight ? " autoheight" : "")  + "' " + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + (this.placeholder ? " placeholder='" + escapeApos(this.placeholder) + "'" : "") + ">" + value + "</textarea>";
-	case "Num" : return "<input id='" + this.id + "' name='" + this.id + "' value='" + escapeApos(value) + "' type='number'" + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + " " + (this.placeholder ? " placeholder='" + this.placeholder + "'" : "") + " class='input form-control" + classes + "'></input>";
-	case "Tel" : return "<input id='" + this.id + "' name='" + this.id + "' value='" + escapeApos(value) + "' type='tel'" + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + " " + (this.placeholder ? " placeholder='" + this.placeholder + "'" : "") + " class='input form-control" + classes + "'></input>";
-	case "Eml" : return "<input id='" + this.id + "' name='" + this.id + "' value='" + escapeApos(value) + "' type='email'" + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + " " + (this.placeholder ? " placeholder='" + this.placeholder + "'" : "") + " class='input form-control" + classes + "'></input>";
-	case "P" : return "<input id='" + this.id + "' name='" + this.id + "' value='" + escapeApos(value) + "' type='password'" + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + " " + (this.placeholder ? " placeholder='" + this.placeholder + "'" : "") + " class='input form-control" + classes + "'></input>";
-	case "R" : return "<input id='" + this.id + "' name='" + this.id + "' value='" + escapeApos(value) + "' type='text'" + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + " " + (this.placeholder ? " placeholder='" + this.placeholder + "'" : "") + " class='input form-control" + classes + "' readonly='readonly'></input>";
+	case "N" : html = "<input name='" + this.id + "' value='" + escapeApos(value) + "' type='text'" + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + " " + (this.placeholder ? " placeholder='" + this.placeholder + "'" : "") + " class='input form-control" + classes + "'></input>"; break;
+	case "L" : html = "<textarea name='" + this.id + "' class='input form-control" + classes + (this.autoHeight ? " autoheight" : "")  + "' " + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + (this.placeholder ? " placeholder='" + escapeApos(this.placeholder) + "'" : "") + ">" + value + "</textarea>"; break;
+	case "Num" : html = "<input name='" + this.id + "' value='" + escapeApos(value) + "' type='number'" + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + " " + (this.placeholder ? " placeholder='" + this.placeholder + "'" : "") + " class='input form-control" + classes + "'></input>"; break;
+	case "Tel" : html = "<input name='" + this.id + "' value='" + escapeApos(value) + "' type='tel'" + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + " " + (this.placeholder ? " placeholder='" + this.placeholder + "'" : "") + " class='input form-control" + classes + "'></input>"; break;
+	case "Eml" : html = "<input name='" + this.id + "' value='" + escapeApos(value) + "' type='email'" + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + " " + (this.placeholder ? " placeholder='" + this.placeholder + "'" : "") + " class='input form-control" + classes + "'></input>"; break;
+	case "P" : html = "<input name='" + this.id + "' value='" + escapeApos(value) + "' type='password'" + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + " " + (this.placeholder ? " placeholder='" + this.placeholder + "'" : "") + " class='input form-control" + classes + "'></input>"; break;
+	case "R" : html = "<input name='" + this.id + "' value='" + escapeApos(value) + "' type='text'" + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + " " + (this.placeholder ? " placeholder='" + this.placeholder + "'" : "") + " class='input form-control" + classes + "' readonly='readonly'></input>"; break;
 }
+return "<div id='" + this.id + "' class='r-inputbox" + classes + "'>" + html + "</div>";
 	        ]]>
 	    </getHtmlFunction>
 	    
 	    <getDataFunction>
 	        <![CDATA[
-return $("#" + id).val();
+return $("#" + id).find("input,textarea").val();
 			]]>
 	    </getDataFunction>
 	    
 	    <setDataJavaScript>
 	        <![CDATA[
-var control = $("#" + id);
 var value = "";
 if (data != null && data !== undefined) {
 	data = makeDataObject(data, field);
@@ -155,9 +218,13 @@ if (data != null && data !== undefined) {
 		}
 	}
 }
+// get control container
+var control = $("#" + id);
+if (changeEvents) control.trigger("change");
+// update control to input
+control = control.find("input,textarea");
 control.val(value);
 if (control.is(".autoheight")) textarea_autoheight_size(control, true);
-if (changeEvents) control.trigger("change");
 			]]>
 	    </setDataJavaScript>
 	    
@@ -176,6 +243,7 @@ if (changeEvents) control.trigger("change");
 	        </event>
 	        <event>
 	            <type>blur</type>
+	            <extra>.find("input,textarea")</extra>
 	            <name>Blur</name>
 	        </event>
 	    </events>
@@ -185,7 +253,7 @@ if (changeEvents) control.trigger("change");
 	            <name>Responsive input box</name>
 	            <getAppliesToFunction>
 					<![CDATA[
-return "#" + this.id;
+return "#" + this.id + " input, #" + this.id + " textarea";
 	       			 ]]>
 	            </getAppliesToFunction>
 	        </style>
@@ -193,7 +261,7 @@ return "#" + this.id;
 	            <name>:hover</name>
 	            <getAppliesToFunction>
 					<![CDATA[
-return "#" + this.id + ":hover";
+return "#" + this.id + " input:hover, #" + this.id + " textarea:hover";
 	       			 ]]>
 	            </getAppliesToFunction>
 	        </style>
@@ -201,7 +269,15 @@ return "#" + this.id + ":hover";
 	            <name>:focus</name>
 	            <getAppliesToFunction>
 					<![CDATA[
-return "#" + this.id + ":focus";
+return "#" + this.id + " input:focus, #" + this.id + " textarea:focus";
+	       			 ]]>
+	            </getAppliesToFunction>
+	        </style>
+	        <style>
+	            <name>Responsive container</name>
+	            <getAppliesToFunction>
+					<![CDATA[
+return "#" + this.id;
 	       			 ]]>
 	            </getAppliesToFunction>
 	        </style>

@@ -89,6 +89,61 @@ return ["false","true"];
 	            <refreshHtml>true</refreshHtml>
 	            <helpHtml>Sets a text like description for the checkbox.</helpHtml>
 	        </property>
+	        
+	         <property>
+	            <key>extraSmall</key>
+	            <name>Extra small width</name>
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	            <getValuesFunction>
+	                <![CDATA[
+return [{value:"", text:"Please select..."}, {value:"xs-1", text:"1/12"}, {value:"xs-2", text:"2/12s"}, {value:"xs-3", text:"3/12s"}, {value:"xs-4", text:"4/12s"}, {value:"xs-5", text:"5/12s"}, {value:"xs-6", text:"6/12s"}, {value:"xs-7", text:"7/12s"}, {value:"xs-8", text:"8/12s"}, {value:"xs-9", text:"9/12s"}, {value:"xs-10", text:"10/12s"}, {value:"xs-11", text:"11/12s"}, {value:"xs-12", text:"12/12s"}];
+					]]>
+	            </getValuesFunction>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets the width of the panel when the screen size is very small. Pages are broken into grids 12 columns wide.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>small</key>
+	            <name>Small width</name>
+	            <setConstructValueFunction>return "";</setConstructValueFunction>
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	            <getValuesFunction>
+	                <![CDATA[
+return [{value:"", text:"Please select..."}, {value:"sm-1", text:"1/12"}, {value:"sm-2", text:"2/12s"}, {value:"sm-3", text:"3/12s"}, {value:"sm-4", text:"4/12s"}, {value:"sm-5", text:"5/12s"}, {value:"sm-6", text:"6/12s"}, {value:"sm-7", text:"7/12s"}, {value:"sm-8", text:"8/12s"}, {value:"sm-9", text:"9/12s"}, {value:"sm-10", text:"10/12s"}, {value:"sm-11", text:"11/12s"}, {value:"sm-12", text:"12/12s"}];
+					]]>
+	            </getValuesFunction>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets the width of the panel when the screen size is small. Pages are broken into grids 12 columns wide.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>medium</key>
+	            <name>Medium width</name>
+	            <setConstructValueFunction>return "";</setConstructValueFunction>
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	            <getValuesFunction>
+	                <![CDATA[
+return [{value:"", text:"Please select..."}, {value:"md-1", text:"1/12"}, {value:"md-2", text:"2/12s"}, {value:"md-3", text:"3/12s"}, {value:"md-4", text:"4/12s"}, {value:"md-5", text:"5/12s"}, {value:"md-6", text:"6/12s"}, {value:"md-7", text:"7/12s"}, {value:"md-8", text:"8/12s"}, {value:"md-9", text:"9/12s"}, {value:"md-10", text:"10/12s"}, {value:"md-11", text:"11/12s"}, {value:"md-12", text:"12/12s"}];
+					]]>
+	            </getValuesFunction>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets the width of the panel when the screen size is of a medium size. Pages are broken into grids 12 columns wide.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>large</key>
+	            <name>Large width</name>
+	            <setConstructValueFunction>return "";</setConstructValueFunction>
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	            <getValuesFunction>
+	                <![CDATA[
+return [{value:"", text:"Please select..."}, {value:"lg-1", text:"1/12"}, {value:"lg-2", text:"2/12s"}, {value:"lg-3", text:"3/12s"}, {value:"lg-4", text:"4/12s"}, {value:"lg-5", text:"5/12s"}, {value:"lg-6", text:"6/12s"}, {value:"lg-7", text:"7/12s"}, {value:"lg-8", text:"8/12s"}, {value:"lg-9", text:"9/12s"}, {value:"lg-10", text:"10/12s"}, {value:"lg-11", text:"11/12s"}, {value:"lg-12", text:"12/12s"}];
+					]]>
+	            </getValuesFunction>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets the width of the panel when the screen size is large. Pages are broken into grids 12 columns wide.</helpHtml>
+	        </property>
 	              
 	    </properties>
 	    
@@ -109,19 +164,25 @@ return ["false","true"];
 var checked = "";
 if (this.checked == "true" || this.checked == true) checked=" checked='checked'";
 
+var classes = getStyleClasses(this);
+
+// add appropriate col width classes if they are specified
+if (this.extraSmall) classes += " col-" + this.extraSmall;
+if (this.small) classes += " col-" + this.small;
+if (this.medium) classes += " col-" + this.medium;
+if (this.large) classes += " col-" + this.large;
+
 var value = "true";
 if (this.value) value = this.value;
 
 var html = ""
-html += "<div id='" + this.id + "' class='wrapper responsivecheckbox" + getStyleClasses(this) + "'>";
-html += "<div class='row" + "'>";
-html += "<div class='col-md-12" + "'>";
+html += "<div id='" + this.id + "' class='r-checkbox" + classes + "'>";
 html += "<div class='check-input form-group" + "'>";
 html+= "<label id='" + this.id + "label' for='" + this.id + "checkbox'>";
 html += "<input name='" + this.id + "' type='hidden' value=''></input>"; // the stand-in if unticked
 html += "<input id='" + this.id + "checkbox' name='" + this.id + "' type='checkbox' " + checked + " value='" + value + "'></input>";
-html += this.text;
-html += "</label></div></div></div></div>";
+html += "<span>" + (this.text ? this.text : "") + "</span>";
+html += "</label></div></div>";
 return html;
 	        ]]>
 	    </getHtmlFunction>
@@ -213,7 +274,7 @@ if (changeEvents) control.trigger("change");
 	            <name>Responsive checkbox</name>
 	            <getAppliesToFunction>
 					<![CDATA[
-return "#" + this.id;
+return "#" + this.id + " .check-input";
 	       			 ]]>
 	            </getAppliesToFunction>
 	        </style>
@@ -222,6 +283,14 @@ return "#" + this.id;
 	            <getAppliesToFunction>
 					<![CDATA[
 return "#" + this.id + " :hover";
+	       			 ]]>
+	            </getAppliesToFunction>
+	        </style>
+	        <style>
+	            <name>Responsive container</name>
+	            <getAppliesToFunction>
+					<![CDATA[
+return "#" + this.id;
 	       			 ]]>
 	            </getAppliesToFunction>
 	        </style>

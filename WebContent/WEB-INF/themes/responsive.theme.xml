@@ -41,6 +41,45 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 		<contents>scripts_min/bootstrap.min.js</contents>
 	</resource>
 	
+	<resource>
+		<type>css</type>
+		<contents>
+.check-radio, .check-input {
+	background-color: #FFF;
+	padding: 5px;
+	border: 2px solid #999;
+}
+
+.check-input label {
+	cursor: pointer;
+	font-weight: normal;
+	margin-bottom: 0;
+	min-height: 20px;
+	padding-left: 20px;
+	width: 100%;
+}
+
+.check-radio label {
+	cursor: pointer;
+	font-weight: normal;
+	margin-bottom: 0;
+	min-height: 20px;
+	padding-left: 20px;
+	width: 100%;
+}
+
+.check-input input[type="checkbox"] {
+	margin-left: -20px;
+	position: absolute;
+}
+
+.check-radio input[type="radio"] {
+	margin-left: -20px;
+	position: absolute;
+}
+		</contents>
+	</resource>
+	
 </resources>
 
 <css>

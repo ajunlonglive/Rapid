@@ -81,7 +81,62 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <refreshHtml>true</refreshHtml>
 	            <helpHtml>Selects one of the options from the dropdown as its initial value.</helpHtml>
 	        </property>
-	         	        
+	        
+	        <property>
+	            <key>extraSmall</key>
+	            <name>Extra small width</name>
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	            <getValuesFunction>
+	                <![CDATA[
+return [{value:"", text:"Please select..."}, {value:"xs-1", text:"1/12"}, {value:"xs-2", text:"2/12s"}, {value:"xs-3", text:"3/12s"}, {value:"xs-4", text:"4/12s"}, {value:"xs-5", text:"5/12s"}, {value:"xs-6", text:"6/12s"}, {value:"xs-7", text:"7/12s"}, {value:"xs-8", text:"8/12s"}, {value:"xs-9", text:"9/12s"}, {value:"xs-10", text:"10/12s"}, {value:"xs-11", text:"11/12s"}, {value:"xs-12", text:"12/12s"}];
+					]]>
+	            </getValuesFunction>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets the width of the panel when the screen size is very small. Pages are broken into grids 12 columns wide.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>small</key>
+	            <name>Small width</name>
+	            <setConstructValueFunction>return "";</setConstructValueFunction>
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	            <getValuesFunction>
+	                <![CDATA[
+return [{value:"", text:"Please select..."}, {value:"sm-1", text:"1/12"}, {value:"sm-2", text:"2/12s"}, {value:"sm-3", text:"3/12s"}, {value:"sm-4", text:"4/12s"}, {value:"sm-5", text:"5/12s"}, {value:"sm-6", text:"6/12s"}, {value:"sm-7", text:"7/12s"}, {value:"sm-8", text:"8/12s"}, {value:"sm-9", text:"9/12s"}, {value:"sm-10", text:"10/12s"}, {value:"sm-11", text:"11/12s"}, {value:"sm-12", text:"12/12s"}];
+					]]>
+	            </getValuesFunction>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets the width of the panel when the screen size is small. Pages are broken into grids 12 columns wide.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>medium</key>
+	            <name>Medium width</name>
+	            <setConstructValueFunction>return "";</setConstructValueFunction>
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	            <getValuesFunction>
+	                <![CDATA[
+return [{value:"", text:"Please select..."}, {value:"md-1", text:"1/12"}, {value:"md-2", text:"2/12s"}, {value:"md-3", text:"3/12s"}, {value:"md-4", text:"4/12s"}, {value:"md-5", text:"5/12s"}, {value:"md-6", text:"6/12s"}, {value:"md-7", text:"7/12s"}, {value:"md-8", text:"8/12s"}, {value:"md-9", text:"9/12s"}, {value:"md-10", text:"10/12s"}, {value:"md-11", text:"11/12s"}, {value:"md-12", text:"12/12s"}];
+					]]>
+	            </getValuesFunction>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets the width of the panel when the screen size is of a medium size. Pages are broken into grids 12 columns wide.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>large</key>
+	            <name>Large width</name>
+	            <setConstructValueFunction>return "";</setConstructValueFunction>
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	            <getValuesFunction>
+	                <![CDATA[
+return [{value:"", text:"Please select..."}, {value:"lg-1", text:"1/12"}, {value:"lg-2", text:"2/12s"}, {value:"lg-3", text:"3/12s"}, {value:"lg-4", text:"4/12s"}, {value:"lg-5", text:"5/12s"}, {value:"lg-6", text:"6/12s"}, {value:"lg-7", text:"7/12s"}, {value:"lg-8", text:"8/12s"}, {value:"lg-9", text:"9/12s"}, {value:"lg-10", text:"10/12s"}, {value:"lg-11", text:"11/12s"}, {value:"lg-12", text:"12/12s"}];
+					]]>
+	            </getValuesFunction>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets the width of the panel when the screen size is large. Pages are broken into grids 12 columns wide.</helpHtml>
+	        </property>
+	        
 	    </properties>
 	    
 	    <resources>
@@ -100,6 +155,14 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	        <![CDATA[
 // return our html for adding to our parent object
 var html = "";
+var classes = getStyleClasses(this);
+
+// add appropriate col width classes if they are specified
+if (this.extraSmall) classes += " col-" + this.extraSmall;
+if (this.small) classes += " col-" + this.small;
+if (this.medium) classes += " col-" + this.medium;
+if (this.large) classes += " col-" + this.large;
+
 // check we have options or a value list
 if (this.options || this.valueList) {
 	// if the options are a string turn them in an array
@@ -128,9 +191,9 @@ if (this.options || this.valueList) {
 	}
 }
 // place into the select
-var html = "<select id='" + this.id + "' name='" + this.id + "' class='dropdown form-control" + getStyleClasses(this) + "'>" + html + "</select>";
+var html = "<select name='" + this.id + "' class='dropdown form-control" + classes + "'>" + html + "</select>";
 // return
-return html;
+return "<div id='" + this.id + "' class='r-dropdown" + classes + "'>" + html + "</div>";
 	        ]]>
 	    </getHtmlFunction>
 	    
@@ -138,7 +201,7 @@ return html;
 	    
 	    <getDataFunction>
 	        <![CDATA[
-return $("#" + id).val();
+return $("#" + id).find("select").val();
 			]]>
 	    </getDataFunction>
 	    
@@ -198,6 +261,14 @@ if (data !== undefined) {
 	    <styles>
 	        <style>
 	            <name>Responsive drop down</name>
+	            <getAppliesToFunction>
+					<![CDATA[
+return "#" + this.id + " select";
+	       			 ]]>
+	            </getAppliesToFunction>
+	        </style>
+	        <style>
+	            <name>Responsive container</name>
 	            <getAppliesToFunction>
 					<![CDATA[
 return "#" + this.id;

@@ -140,8 +140,6 @@ return [{value:"", text:"Please select..."}, {value:"lg-1", text:"1/12"}, {value
 	        <![CDATA[
 // get the style classes for this control
 classes = getStyleClasses(this);
-// if they start with "alert" do not include "panel" as this messes up bootstrap
-if (!classes && classes.indexOf("alert") != 1) classes = "panel" + classes;
 
 // add appropriate col width classes if they are specified
 if (this.extraSmall) classes += " col-" + this.extraSmall;
@@ -150,7 +148,7 @@ if (this.medium) classes += " col-" + this.medium;
 if (this.large) classes += " col-" + this.large;
 
 // return our html for adding to our parent object
-return "<div id='" + this.id + "' class='responsivepanel " + classes + "'" + (this.text ? "" : " style='min-height:15px;'") + ">" + this.text + "</div>";
+return "<div id='" + this.id + "' class='r-panel" + classes + "'" + (this.text ? "" : " style='min-height:15px;'") + ">" + this.text + "</div>";
 	        ]]>
 	    </getHtmlFunction>
 	    
