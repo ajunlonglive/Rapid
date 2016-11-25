@@ -108,6 +108,60 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <changeValueJavaScript>checkbox</changeValueJavaScript>
 	            <refreshHtml>true</refreshHtml>
 	        </property>
+	        <property>
+	            <key>extraSmall</key>
+	            <name>Extra small width</name>
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	            <getValuesFunction>
+	                <![CDATA[
+return [{value:"", text:"Please select..."}, {value:"xs-1", text:"1/12"}, {value:"xs-2", text:"2/12s"}, {value:"xs-3", text:"3/12s"}, {value:"xs-4", text:"4/12s"}, {value:"xs-5", text:"5/12s"}, {value:"xs-6", text:"6/12s"}, {value:"xs-7", text:"7/12s"}, {value:"xs-8", text:"8/12s"}, {value:"xs-9", text:"9/12s"}, {value:"xs-10", text:"10/12s"}, {value:"xs-11", text:"11/12s"}, {value:"xs-12", text:"12/12s"}];
+					]]>
+	            </getValuesFunction>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets the width of the panel when the screen size is very small. Pages are broken into grids 12 columns wide.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>small</key>
+	            <name>Small width</name>
+	            <setConstructValueFunction>return "";</setConstructValueFunction>
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	            <getValuesFunction>
+	                <![CDATA[
+return [{value:"", text:"Please select..."}, {value:"sm-1", text:"1/12"}, {value:"sm-2", text:"2/12s"}, {value:"sm-3", text:"3/12s"}, {value:"sm-4", text:"4/12s"}, {value:"sm-5", text:"5/12s"}, {value:"sm-6", text:"6/12s"}, {value:"sm-7", text:"7/12s"}, {value:"sm-8", text:"8/12s"}, {value:"sm-9", text:"9/12s"}, {value:"sm-10", text:"10/12s"}, {value:"sm-11", text:"11/12s"}, {value:"sm-12", text:"12/12s"}];
+					]]>
+	            </getValuesFunction>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets the width of the panel when the screen size is small. Pages are broken into grids 12 columns wide.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>medium</key>
+	            <name>Medium width</name>
+	            <setConstructValueFunction>return "";</setConstructValueFunction>
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	            <getValuesFunction>
+	                <![CDATA[
+return [{value:"", text:"Please select..."}, {value:"md-1", text:"1/12"}, {value:"md-2", text:"2/12s"}, {value:"md-3", text:"3/12s"}, {value:"md-4", text:"4/12s"}, {value:"md-5", text:"5/12s"}, {value:"md-6", text:"6/12s"}, {value:"md-7", text:"7/12s"}, {value:"md-8", text:"8/12s"}, {value:"md-9", text:"9/12s"}, {value:"md-10", text:"10/12s"}, {value:"md-11", text:"11/12s"}, {value:"md-12", text:"12/12s"}];
+					]]>
+	            </getValuesFunction>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets the width of the panel when the screen size is of a medium size. Pages are broken into grids 12 columns wide.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>large</key>
+	            <name>Large width</name>
+	            <setConstructValueFunction>return "";</setConstructValueFunction>
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	            <getValuesFunction>
+	                <![CDATA[
+return [{value:"", text:"Please select..."}, {value:"lg-1", text:"1/12"}, {value:"lg-2", text:"2/12s"}, {value:"lg-3", text:"3/12s"}, {value:"lg-4", text:"4/12s"}, {value:"lg-5", text:"5/12s"}, {value:"lg-6", text:"6/12s"}, {value:"lg-7", text:"7/12s"}, {value:"lg-8", text:"8/12s"}, {value:"lg-9", text:"9/12s"}, {value:"lg-10", text:"10/12s"}, {value:"lg-11", text:"11/12s"}, {value:"lg-12", text:"12/12s"}];
+					]]>
+	            </getValuesFunction>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets the width of the panel when the screen size is large. Pages are broken into grids 12 columns wide.</helpHtml>
+	        </property>
 	        
 	    </properties>
 	    
@@ -119,12 +173,12 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	display: inline-block;
 }
 
-.responsiveRadioInline {
+.r-radioInline {
 	display: inline-block;
 	margin-right: 10px;
 }
 
-.responsiveRadioInline:not(:last-child) {
+.r-radioInline:not(:last-child) {
 	margin-bottom: 10px;
 }
 	    		</contents>
@@ -135,6 +189,15 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	        <![CDATA[
 // return our html for adding to our parent object
 var radiobuttonHtml = "";
+
+var classes = getStyleClasses(this);
+
+// add appropriate col width classes if they are specified
+if (this.extraSmall) classes += " col-" + this.extraSmall;
+if (this.small) classes += " col-" + this.small;
+if (this.medium) classes += " col-" + this.medium;
+if (this.large) classes += " col-" + this.large;
+
 // check we have buttons
 if (this.buttons || this.valueList) {
 	// if the options are a string turn them in an array
@@ -164,7 +227,7 @@ if (this.buttons || this.valueList) {
 		// if valueList
 		if (this.valueList) label = button.text;
 		var value = (codes ? button.value : label);
-		radiobuttonHtml += "<div class='" + (this.inline ? "responsiveRadioInline" : "form-group") + "'> <div class='check-radio'> <label for='" + this.id + i  + "'>";
+		radiobuttonHtml += "<div class='" + (this.inline ? "r-radioInline" : "form-group") + "'> <div class='check-radio'> <label for='" + this.id + i  + "'>";
 		if (this.buttonposition == 'R') radiobuttonHtml += label;
 		radiobuttonHtml += "<input type='radio' name='" + (this.group ? escapeApos(this.group) : this.id) + "' id='" + this.id + i + "' value='" + escapeApos(value) + "' " + (this.value == value ? "checked='checked'" :  "") + "></input>";
 		if (this.buttonposition == 'L') radiobuttonHtml += label;
@@ -175,7 +238,7 @@ if (this.buttons || this.valueList) {
 	radiobuttonHtml = "No buttons";
 }
 // place into the select
-var html = "<div id='" + this.id + "' class='radiobuttons" + getStyleClasses(this) + "'>" + radiobuttonHtml + "</div>";
+var html = "<div id='" + this.id + "' class='radiobuttons r-radio" + classes + "'>" + radiobuttonHtml + "</div>";
 // return
 return html;
 	        ]]>
@@ -218,7 +281,6 @@ if (data != null && data !== undefined) {
 		if (changeEvents) button.trigger("change");
 	}
 }
-        
 	        ]]>
 	    </setDataJavaScript>
 	    
@@ -231,18 +293,10 @@ if (data != null && data !== undefined) {
 	    
 	    <styles>
 	        <style>
-	            <name>Radio button group</name>
-	            <getAppliesToFunction>
-					<![CDATA[
-return "#" + this.id;
-	       			 ]]>
-	            </getAppliesToFunction>
-	        </style>
-	        <style>
 	            <name>Radio button box</name>  
 	            <getAppliesToFunction>
 					<![CDATA[	      
-return "#" + this.id + " div.form-group, #" + this.id + " div.responsiveRadioInline";
+return "#" + this.id + " div.form-group, #" + this.id + " div.r-radioInline";
 	       			 ]]>	                
 	            </getAppliesToFunction>
 	        </style>
@@ -250,7 +304,8 @@ return "#" + this.id + " div.form-group, #" + this.id + " div.responsiveRadioInl
 	            <name>Responsive radio buttons</name>
 	            <getAppliesToFunction>
 					<![CDATA[
-return "#" + this.id + " input[type=radio]";
+//return "#" + this.id + " input[type=radio]";
+return "#" + this.id + " .check-radio";
 	       			 ]]>
 	            </getAppliesToFunction>
 	        </style>
@@ -259,6 +314,14 @@ return "#" + this.id + " input[type=radio]";
 	            <getAppliesToFunction>
 					<![CDATA[
 return "#" + this.id + " span";
+	       			 ]]>
+	            </getAppliesToFunction>
+	        </style>
+	        <style>
+	            <name>Responsive container</name>
+	            <getAppliesToFunction>
+					<![CDATA[
+return "#" + this.id;
 	       			 ]]>
 	            </getAppliesToFunction>
 	        </style>

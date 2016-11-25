@@ -281,7 +281,7 @@ if (this.glyphCode) {
 	if (this.glyphPosition == "right" || this.glyphPosition == "bottom") html += glyph;
 	html += "</button>";
 } else {
-	html = "<button id='" + this.id + "' type='button' class='button btn" + classes + "' " + (this.title ? "title='" + escapeApos(this.title) + "' " : "") + ">" + this.label + "</button>";
+	html = "<button id='" + this.id + "' type='button' class='r-button button btn" + classes + "' " + (this.title ? "title='" + escapeApos(this.title) + "' " : "") + ">" + this.label + "</button>";
 }
 return html
 	        ]]>

@@ -129,6 +129,61 @@ return [["dd/mm/yy","dd/mm/yyyy"],["mm/dd/yy","mm/dd/yyyy"],["yy-mm-dd","yyyy-mm
 	            <changeValueJavaScript>dateSelectOtherMonths</changeValueJavaScript>
 	            <helpHtml>Allows you to select dates from the next and previous months.</helpHtml>
 	        </property>
+	        
+	        <property>
+	            <key>extraSmall</key>
+	            <name>Extra small width</name>
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	            <getValuesFunction>
+	                <![CDATA[
+return [{value:"", text:"Please select..."}, {value:"xs-1", text:"1/12"}, {value:"xs-2", text:"2/12s"}, {value:"xs-3", text:"3/12s"}, {value:"xs-4", text:"4/12s"}, {value:"xs-5", text:"5/12s"}, {value:"xs-6", text:"6/12s"}, {value:"xs-7", text:"7/12s"}, {value:"xs-8", text:"8/12s"}, {value:"xs-9", text:"9/12s"}, {value:"xs-10", text:"10/12s"}, {value:"xs-11", text:"11/12s"}, {value:"xs-12", text:"12/12s"}];
+					]]>
+	            </getValuesFunction>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets the width of the panel when the screen size is very small. Pages are broken into grids 12 columns wide.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>small</key>
+	            <name>Small width</name>
+	            <setConstructValueFunction>return "";</setConstructValueFunction>
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	            <getValuesFunction>
+	                <![CDATA[
+return [{value:"", text:"Please select..."}, {value:"sm-1", text:"1/12"}, {value:"sm-2", text:"2/12s"}, {value:"sm-3", text:"3/12s"}, {value:"sm-4", text:"4/12s"}, {value:"sm-5", text:"5/12s"}, {value:"sm-6", text:"6/12s"}, {value:"sm-7", text:"7/12s"}, {value:"sm-8", text:"8/12s"}, {value:"sm-9", text:"9/12s"}, {value:"sm-10", text:"10/12s"}, {value:"sm-11", text:"11/12s"}, {value:"sm-12", text:"12/12s"}];
+					]]>
+	            </getValuesFunction>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets the width of the panel when the screen size is small. Pages are broken into grids 12 columns wide.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>medium</key>
+	            <name>Medium width</name>
+	            <setConstructValueFunction>return "";</setConstructValueFunction>
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	            <getValuesFunction>
+	                <![CDATA[
+return [{value:"", text:"Please select..."}, {value:"md-1", text:"1/12"}, {value:"md-2", text:"2/12s"}, {value:"md-3", text:"3/12s"}, {value:"md-4", text:"4/12s"}, {value:"md-5", text:"5/12s"}, {value:"md-6", text:"6/12s"}, {value:"md-7", text:"7/12s"}, {value:"md-8", text:"8/12s"}, {value:"md-9", text:"9/12s"}, {value:"md-10", text:"10/12s"}, {value:"md-11", text:"11/12s"}, {value:"md-12", text:"12/12s"}];
+					]]>
+	            </getValuesFunction>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets the width of the panel when the screen size is of a medium size. Pages are broken into grids 12 columns wide.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>large</key>
+	            <name>Large width</name>
+	            <setConstructValueFunction>return "";</setConstructValueFunction>
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	            <getValuesFunction>
+	                <![CDATA[
+return [{value:"", text:"Please select..."}, {value:"lg-1", text:"1/12"}, {value:"lg-2", text:"2/12s"}, {value:"lg-3", text:"3/12s"}, {value:"lg-4", text:"4/12s"}, {value:"lg-5", text:"5/12s"}, {value:"lg-6", text:"6/12s"}, {value:"lg-7", text:"7/12s"}, {value:"lg-8", text:"8/12s"}, {value:"lg-9", text:"9/12s"}, {value:"lg-10", text:"10/12s"}, {value:"lg-11", text:"11/12s"}, {value:"lg-12", text:"12/12s"}];
+					]]>
+	            </getValuesFunction>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets the width of the panel when the screen size is large. Pages are broken into grids 12 columns wide.</helpHtml>
+	        </property>
 	               
 	    </properties>
 	    
@@ -173,6 +228,16 @@ input.date {
 	    
 	    <getHtmlFunction>
 	        <![CDATA[
+// return our html for adding to our parent object
+var html = "";
+var classes = getStyleClasses(this);
+
+// add appropriate col width classes if they are specified
+if (this.extraSmall) classes += " col-" + this.extraSmall;
+if (this.small) classes += " col-" + this.small;
+if (this.medium) classes += " col-" + this.medium;
+if (this.large) classes += " col-" + this.large;
+
 var placeholder = "Choose a date";
 switch (this.dateFormat) {
 	case "dd/mm/yy":
@@ -189,7 +254,9 @@ switch (this.dateFormat) {
 		break;
 }
 if (this.readonly === undefined) this.readonly = true;
-return "<input id='" + this.id + "' name='" + this.id + "' " + " class='date form-control" + getStyleClasses(this) + "' value='" + this.value + "'placeholder='" + placeholder + "'" + (this.readonly ? "readonly='readonly'" : "") + "/>";
+html = "<input name='" + this.id + "' " + " class='date form-control" + classes + " ' value='" + this.value + "'placeholder='" + placeholder + "'" + (this.readonly ? "readonly='readonly'" : "") + "/>";
+
+return "<div id='" + this.id + "' class='r-date" + classes + "'>" + html + "</div>";
 	        ]]>
 	    </getHtmlFunction> 
 	    
@@ -209,13 +276,12 @@ return {
 	    
 	    <getDataFunction>
 	        <![CDATA[
-return $("#" + id).val();
+return $("#" + id).find("input").val();
 			]]>
 	    </getDataFunction>
 	    
 	    <setDataJavaScript>
 	        <![CDATA[
-var control = $("#" + id);
 var value = "";
 if (data != null && data !== undefined) {
 	data = makeDataObject(data, field);
@@ -234,7 +300,11 @@ if (data != null && data !== undefined) {
 		}
 	}
 }
-
+// get control container
+var control = $("#" + id);
+if (changeEvents) control.trigger("change");
+// update control to input
+control = control.find("input");
 // try iso dates first, as returned from SOAP webservices
 try {
 	var date = $.datepicker.parseDate( "yy-mm-dd", value);
@@ -242,8 +312,6 @@ try {
 } catch (ex) {
 	control.datepicker("setDate",value);
 }
-
-if (changeEvents) control.trigger("change");
 			]]>
 	    </setDataJavaScript>
 	    
@@ -268,10 +336,10 @@ if (changeEvents) control.trigger("change");
 	    
 	    <styles>
 	        <style>
-	            <name>Date</name>
+	            <name>Responsive date</name>
 	            <getAppliesToFunction>
 					<![CDATA[
-return "#" + this.id;
+return "#" + this.id + " input";
 	       			 ]]>
 	            </getAppliesToFunction>
 	        </style>
@@ -279,7 +347,7 @@ return "#" + this.id;
 	            <name>:hover</name>
 	            <getAppliesToFunction>
 					<![CDATA[
-return "#" + this.id + ":hover";
+return "#" + this.id + " input:hover";
 	       			 ]]>
 	            </getAppliesToFunction>
 	        </style>
@@ -287,7 +355,15 @@ return "#" + this.id + ":hover";
 	            <name>:focus</name>
 	            <getAppliesToFunction>
 					<![CDATA[
-return "#" + this.id + ":focus";
+return "#" + this.id + " input:focus";
+	       			 ]]>
+	            </getAppliesToFunction>
+	        </style>
+	        <style>
+	            <name>Responsive container</name>
+	            <getAppliesToFunction>
+					<![CDATA[
+return "#" + this.id;
 	       			 ]]>
 	            </getAppliesToFunction>
 	        </style>
@@ -297,7 +373,7 @@ return "#" + this.id + ":focus";
 	        <![CDATA[
 var format = details.format;
 if (!format) format = "dd/mm/yy";
-$( "#" + id ).datepicker({
+$( "#" + id ).find("input").datepicker({
 	changeMonth: true,
     changeYear: true,
     dateFormat: format,
@@ -361,7 +437,7 @@ $( "#" + id ).datepicker({
 	    		<name>Age</name>
 	    		<getPropertyFunction>
 	    			        <![CDATA[
-var dp = $("#" + id);
+var dp = $("#" + id).find("input");
 if (dp.val()) {
 	var d = dp.datepicker( "getDate" );
 	var age = (Date.now() - d) / 31557600000;
