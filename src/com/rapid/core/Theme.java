@@ -31,7 +31,7 @@ import org.json.JSONObject;
 public class Theme  {
 	
 	// private instance variables
-	private String _type, _name, _css;
+	private String _type, _name, _css, _headerHtml, _footerHtml;
 	private JSONObject _resources;
 
 	// properties
@@ -39,7 +39,9 @@ public class Theme  {
 	public String getName() { return _name; }
 	public String getCSS() { return _css; }
 	public JSONObject getResources()  { return _resources; }
-
+	public String getHeaderHtml() { return _headerHtml; }
+	public String getFooterHtml() { return _footerHtml; }
+	
 	// constructor
 	public Theme(String xml) throws JSONException {		
 		// convert the xml string into JSON
@@ -49,6 +51,8 @@ public class Theme  {
 		_name = jsonTemplate.getString("name");
 		_css = jsonTemplate.getString("css");
 		_resources = jsonTemplate.optJSONObject("resources");
+		_headerHtml = jsonTemplate.optString("headerHtml");
+		_footerHtml = jsonTemplate.optString("footerHtml");
 	}
 	
 }

@@ -35,98 +35,122 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 			</xs:documentation>
 		</xs:annotation>
 		
+		<xs:complexType>
+			<xs:sequence>
+			
+				<xs:element name="type">
+					<xs:annotation>
+						<xs:documentation>The template type is used to uniquely identify
+							this control, it should not contain spaces or punctuation
+						</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:pattern value="[a-zA-Z0-9_]{1,}" />
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>		
+									
+				<xs:element name="name">
+					<xs:annotation>
+						<xs:documentation>The template name is used presented to users
+							when describing, or logging something about this control
+						</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:minLength value="1" />
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>				
+				
+				<xs:element name="resources" minOccurs="0">
 					<xs:complexType>
 						<xs:sequence>
-						
-							<xs:element name="type">
-								<xs:annotation>
-									<xs:documentation>The template type is used to uniquely identify
-										this control, it should not contain spaces or punctuation
-									</xs:documentation>
-								</xs:annotation>
-								<xs:simpleType>
-									<xs:restriction base="xs:string">
-										<xs:pattern value="[a-zA-Z0-9_]{1,}" />
-									</xs:restriction>
-								</xs:simpleType>
-							</xs:element>		
-												
-							<xs:element name="name">
-								<xs:annotation>
-									<xs:documentation>The template name is used presented to users
-										when describing, or logging something about this control
-									</xs:documentation>
-								</xs:annotation>
-								<xs:simpleType>
-									<xs:restriction base="xs:string">
-										<xs:minLength value="1" />
-									</xs:restriction>
-								</xs:simpleType>
-							</xs:element>				
-							
-							<xs:element name="resources" minOccurs="0">
+							<xs:element name="resource" minOccurs="1"
+								maxOccurs="unbounded">
 								<xs:complexType>
 									<xs:sequence>
-										<xs:element name="resource" minOccurs="1"
-											maxOccurs="unbounded">
-											<xs:complexType>
-												<xs:sequence>
-													<xs:element name="type">
-														<xs:annotation>
-															<xs:documentation>
-																The contents of the plain javascript is written to the rapid.js file and the plain css is written to the application rapid.css file. 
-																The javascriptFile and cssFile are written into the html head section includes as links, these are replaced with minified versions for live applications.
-																The javascriptLink and cssLink are written into the html head section includes as links, but no minified version are made. 
-																The file type resources	are included in the off-line download
-															</xs:documentation>
-														</xs:annotation>
-														<xs:simpleType>
-															<xs:restriction base="xs:string">
-																<xs:enumeration value="javascript" />
-																<xs:enumeration value="css" />																
-																<xs:enumeration value="javascriptFile" />
-																<xs:enumeration value="cssFile" />																
-																<xs:enumeration value="javascriptLink" />
-																<xs:enumeration value="cssLink" />
-																<xs:enumeration value="file" />
-															</xs:restriction>
-														</xs:simpleType>
-													</xs:element>
-													<xs:element name="contents">
-														<xs:simpleType>
-															<xs:restriction base="xs:string">
-																<xs:minLength value="1" />
-															</xs:restriction>
-														</xs:simpleType>
-													</xs:element>
-												</xs:sequence>
-											</xs:complexType>
+										<xs:element name="type">
+											<xs:annotation>
+												<xs:documentation>
+													The contents of the plain javascript is written to the rapid.js file and the plain css is written to the application rapid.css file. 
+													The javascriptFile and cssFile are written into the html head section includes as links, these are replaced with minified versions for live applications.
+													The javascriptLink and cssLink are written into the html head section includes as links, but no minified version are made. 
+													The file type resources	are included in the off-line download
+												</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:enumeration value="javascript" />
+													<xs:enumeration value="css" />																
+													<xs:enumeration value="javascriptFile" />
+													<xs:enumeration value="cssFile" />																
+													<xs:enumeration value="javascriptLink" />
+													<xs:enumeration value="cssLink" />
+													<xs:enumeration value="file" />
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="contents">
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:minLength value="1" />
+												</xs:restriction>
+											</xs:simpleType>
 										</xs:element>
 									</xs:sequence>
 								</xs:complexType>
 							</xs:element>
-							
-							<xs:element name="css">
-								<xs:annotation>
-									<xs:documentation>The template name is used presented to users
-										when describing, or logging something about this control
-									</xs:documentation>
-								</xs:annotation>
-								<xs:simpleType>
-									<xs:restriction base="xs:string">
-										<xs:minLength value="1" />
-									</xs:restriction>
-								</xs:simpleType>
-							</xs:element>
-							
 						</xs:sequence>
-						<xs:attribute name="xmlVersion" type="xs:integer" use="required">
-							<xs:annotation>
-								<xs:documentation>This attribute defines the version of the xml file</xs:documentation>
-							</xs:annotation>
-						</xs:attribute>
-			
 					</xs:complexType>
+				</xs:element>
+				
+				<xs:element name="css">
+					<xs:annotation>
+						<xs:documentation>The template name is used presented to users
+							when describing, or logging something about this control
+						</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:minLength value="1" />
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				
+			<xs:element name="headerHtml" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>HTML that will be included immediately after the body element in all pages, including form summary.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="1" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+	
+			<xs:element name="footerHtml" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>HTML that will be included immediately before the closing body element in all pages, including form summary.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="1" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+				
+			</xs:sequence>
+			<xs:attribute name="xmlVersion" type="xs:integer" use="required">
+				<xs:annotation>
+					<xs:documentation>This attribute defines the version of the xml file</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+	
+		</xs:complexType>
 				
 	</xs:element>
 </xs:schema>

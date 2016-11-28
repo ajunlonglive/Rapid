@@ -187,7 +187,7 @@ public class RapidHttpServlet extends HttpServlet {
 	public List<Theme> getThemes() {
 		return (List<Theme>) getServletContext().getAttribute("themes");
 	}
-	
+		
 	public String getSecureInitParameter(String name) {
 		return getInitParameter(name);
 	}
