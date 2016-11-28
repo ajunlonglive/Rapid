@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2015 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -26,47 +26,25 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 package com.rapid.utils;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 
-import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
-import javax.crypto.spec.PBEParameterSpec;
 import javax.xml.bind.DatatypeConverter;
 
 public class Encryption {
 	
 	public interface EncryptionProvider {
 		
-		public char[] getPassword();		
-		public byte[] getSalt();
+		public String encrypt(String value) throws GeneralSecurityException, IOException;
+		public String decrypt(String value) throws GeneralSecurityException, IOException;
 		
 	}
-        
-    public static String base64Encode(byte[] bytes) {
+	
+	public static String base64Encode(byte[] bytes) {
         return DatatypeConverter.printBase64Binary(bytes);
     }
     
     public static byte[] base64Decode(String value) throws IOException {
         return DatatypeConverter.parseBase64Binary(value);
-    }
-
-    public static String encrypt(String value, char[] password, byte[] salt) throws GeneralSecurityException, UnsupportedEncodingException {
-        SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("PBEWithMD5AndDES");
-        SecretKey key = keyFactory.generateSecret(new PBEKeySpec(password));
-        Cipher pbeCipher = Cipher.getInstance("PBEWithMD5AndDES");
-        pbeCipher.init(Cipher.ENCRYPT_MODE, key, new PBEParameterSpec(salt, 20));
-        return base64Encode(pbeCipher.doFinal(value.getBytes("UTF-8")));
-    }
-    
-    public static String decrypt(String value, char[] password, byte[] salt) throws GeneralSecurityException, IOException {
-        SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("PBEWithMD5AndDES");
-        SecretKey key = keyFactory.generateSecret(new PBEKeySpec(password));
-        Cipher pbeCipher = Cipher.getInstance("PBEWithMD5AndDES");
-        pbeCipher.init(Cipher.DECRYPT_MODE, key, new PBEParameterSpec(salt, 20));
-        return new String(pbeCipher.doFinal(base64Decode(value)), "UTF-8");
     }
 
 }

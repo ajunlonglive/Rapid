@@ -1103,9 +1103,8 @@ public class RapidServletContextListener extends Log4jServletContextListener imp
 			
 		try {
 			
-			// we're looking for a password and salt for the encryption
-			char[] password = null;			
-			byte[] salt = null;
+			// assume no encryptionProvider
+			EncryptionProvider encryptionProvider = null;
 			// look for the rapid.txt file with the saved password and salt
 			File secretsFile = new File(servletContext.getRealPath("/") + "/WEB-INF/security/encryption.txt");
 			// if it exists
@@ -1157,11 +1156,7 @@ public class RapidServletContextListener extends Log4jServletContextListener imp
 									_logger.error("Encryption not initialised : Class in security.txt class must have a parameterless constructor");								
 								} else {
 									// construct the class
-									EncryptionProvider encryptionProvider = (EncryptionProvider) constructor.newInstance();
-									// get the password
-									password = encryptionProvider.getPassword();
-									// get the salt
-									salt = encryptionProvider.getSalt();
+									encryptionProvider = (EncryptionProvider) constructor.newInstance();
 									// log
 									_logger.info("Encryption initialised");
 								}
@@ -1178,7 +1173,7 @@ public class RapidServletContextListener extends Log4jServletContextListener imp
 			}
 			
 			// create the encypted xml adapter (if the file above is not found there no encryption will occur)
-			RapidHttpServlet.setEncryptedXmlAdapter(new EncryptedXmlAdapter(password, salt));
+			RapidHttpServlet.setEncryptedXmlAdapter(new EncryptedXmlAdapter(encryptionProvider));
 			
 			// initialise the schema factory (we'll reuse it in the various loaders)
 			_schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
