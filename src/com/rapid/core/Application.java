@@ -1074,6 +1074,24 @@ public class Application {
 	
 	// this is a list of elements to go in the head section of the page for any resources the applications controls or actions may require
 	public List<Resource> getResources() { return _resources; }
+	
+	public Theme getTheme(ServletContext servletContext) {
+		// check the theme type
+    	if (_themeType != null) {
+    		// get the themes
+    		List<Theme> themes =  (List<Theme>) servletContext.getAttribute("themes");
+    		// check we got some
+    		if (themes != null) {
+    			// loop them
+    			for (Theme theme : themes) {
+    				// check type
+    				if (_themeType.equals(theme.getType())) return theme;
+    			}
+    		}
+    	}
+    	// not found
+    	return null;
+	}
 			
 	// scan the css for classes
 	private List<String> scanStyleClasses(String css, List<String> classes) {
@@ -1525,30 +1543,18 @@ public class Application {
 	    	String themeCSS = "";
 	    	// assume no theme name
 	    	String themeName = "No theme";
-	    	
-	    	// check the theme type
-	    	if (_themeType != null) {
-	    		// get the themes
-	    		List<Theme> themes =  (List<Theme>) servletContext.getAttribute("themes");
-	    		// check we got some
-	    		if (themes != null) {
-	    			// loop them
-	    			for (Theme theme : themes) {
-	    				// check type
-	    				if (_themeType.equals(theme.getType())) {
-	    					// retain the theme CSS
-	    					themeCSS = theme.getCSS();
-	    					// retain the name
-	    					themeName = theme.getName();
-	    					// get any resources
-	    					addResources(theme.getResources(), "theme", themeName, null, resourceJS, resourceCSS);
-	    					// we're done
-	    					break;
-	    				}
-	    			}
-	    		}
+	    	// get the theme
+	    	Theme theme = getTheme(servletContext);
+	    	// if the was one
+	    	if (theme != null) {
+	    		// retain the theme CSS
+				themeCSS = theme.getCSS();
+				// retain the name
+				themeName = theme.getName();
+				// get any resources
+				addResources(theme.getResources(), "theme", themeName, null, resourceJS, resourceCSS);
 	    	}
-	    	
+	    		    	
 	    	// put the appResources at the end so they can be overrides
     		if (_appResources != null) {
     			for (Resource resource : _appResources) {

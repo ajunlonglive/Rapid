@@ -1433,6 +1433,9 @@ public class Page {
 										
 		// open the html
 		writer.write("<html>\n");
+		
+		// get any theme
+    	Theme theme = application.getTheme(rapidServlet.getServletContext());
 						
 		// check for undermaintenance status
 		if (application.getStatus() == Application.STATUS_MAINTENANCE) {
@@ -1443,7 +1446,7 @@ public class Page {
 				
 			// get the security
 			SecurityAdapter security = application.getSecurityAdapter();
-			
+									
 			// get any form adapter
 	    	FormAdapter formAdapter = application.getFormAdapter();
 			
@@ -1655,6 +1658,14 @@ public class Page {
 		    	
 				// start the body		
 		    	writer.write("  <body id='" + _id + "' style='visibility:hidden;'>\n");
+		    			    	
+		    	// if there was a theme
+		    	if (theme != null) {
+		    		// get any header html
+		    		String headerHtml = theme.getHeaderHtml();
+		    		// write the header html if there is something to write
+		    		if (headerHtml != null) if (headerHtml.length() > 0) writer.write(headerHtml);
+		    	}
 		    			    			    	
 		    	// start the form if in use (but not for dialogues and other cases where the page is partial)		
 		    	if (formAdapter != null && designerLink) {
@@ -1827,9 +1838,17 @@ public class Page {
 	
 				rapidServlet.getLogger().error("Error checking for the designer link", ex);
 				
-			}
+			} // design permssion check
 			
-		}
+		} // design link check
+		
+		// if there was a theme
+    	if (theme != null) {
+    		// get any header html
+    		String footerHtml = theme.getHeaderHtml();
+    		// write the header html if there is something to write
+    		if (footerHtml != null) if (footerHtml.length() > 0) writer.write(footerHtml);
+    	}
 
 		// add the remaining elements
 		writer.write("  </body>\n</html>");
