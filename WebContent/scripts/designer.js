@@ -2329,7 +2329,7 @@ function updateGuidelines() {
 	// if we want guidelines
 	if (showGuidelines) {
 		// add guidelines css if not present - right at the top so other rules can override
-		if (!css[0]) head.prepend("<style id='guidelines'> .table td, div.panel, div.r-panel, div.flowLayoutCell { border: 1px dashed #ccc; margin: -1px; } </style>");
+		if (!css[0]) head.prepend("<style id='guidelines'> .table td, .panel, .r-panel, .flowLayoutCell { border: 1px dashed #ccc; margin: -1px; } </style>");
 	} else {
 		// remove the guidlines css
 		css.remove();
