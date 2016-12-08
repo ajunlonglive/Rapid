@@ -28,10 +28,12 @@ package com.rapid.utils;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Scanner;
@@ -51,7 +53,7 @@ public class Strings {
 	
 	public static String getString(File file) throws IOException {
 		
-		BufferedReader reader = new BufferedReader( new FileReader (file));
+		BufferedReader reader = new BufferedReader( new InputStreamReader( new FileInputStream(file), "UTF-8"));
 	    String line = null;
 	    StringBuilder stringBuilder = new StringBuilder();
 	    String ls = System.getProperty("line.separator");
@@ -70,8 +72,7 @@ public class Strings {
 	
 	public static void saveString(String text, File file) throws IOException {
 		
-		Writer out = new BufferedWriter(new OutputStreamWriter(
-		new FileOutputStream(file), "UTF-8"));
+		Writer out = new BufferedWriter(new OutputStreamWriter( new FileOutputStream(file), "UTF-8"));
 		try {
 		    out.write(text);
 		} finally {
