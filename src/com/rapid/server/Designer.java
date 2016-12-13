@@ -25,7 +25,6 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
 package com.rapid.server;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,12 +32,9 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
@@ -74,6 +70,7 @@ import com.rapid.security.SecurityAdapter.Role;
 import com.rapid.security.SecurityAdapter.User;
 import com.rapid.utils.Bytes;
 import com.rapid.utils.Files;
+import com.rapid.utils.Strings;
 import com.rapid.utils.XML;
 import com.rapid.utils.ZipFile;
 import com.rapid.actions.Logic.Condition;
@@ -125,7 +122,7 @@ public class Designer extends RapidHttpServlet {
     private void printActionDetails(Action action, PrintWriter out) {
     	
     	// print the action															
-    	out.print("\t\tAction\t" + action.getType() + "\t" + action.getId()+ "\n\r");
+    	out.print("\t\tAction\t" + action.getId()+ "\n");
 		
 		// get the properties
 		Map<String, String> properties = action.getProperties();
@@ -141,7 +138,7 @@ public class Designer extends RapidHttpServlet {
 		// loop the sorted keys
 		for (String key : sortedKeys) {
 			// print the property															
-			out.print("\t\t\t" + key + "\t" + properties.get(key) + "\n\r");	
+			out.print("\t\t\t" + key + "\t" + properties.get(key) + "\n");	
 		}
 		
 		// get a JSONObejct for them
@@ -163,7 +160,7 @@ public class Designer extends RapidHttpServlet {
 		for (String key : sortedKeys) {
 			// print it 
 			try {
-				out.print("\t\t\t" + key + "\t" + jsonAction.get(key) + "\n\r");
+				out.print("\t\t\t" + key + "\t" + jsonAction.get(key) + "\n");
 			} catch (JSONException e) {	}	
 		}
 				
@@ -192,11 +189,11 @@ public class Designer extends RapidHttpServlet {
 					if (event.getActions() != null) {
 						if (event.getActions().size() > 0) {							
 							// print the event															
-							out.print("\tEvent\t" + event.getType() + "\n\r");
+							out.print("\tEvent\t" + event.getType() + "\n");							
 							// loop the actions
 							for (Action action : event.getActions()) {
 								// print the action details
-								printActionDetails( action,  out);
+								printActionDetails( action,  out);								
 							}							
 						}
 					}	
@@ -215,12 +212,12 @@ public class Designer extends RapidHttpServlet {
 		
 		try {
 			
-			// log
 			getLogger().debug("Designer GET request : " + request.getQueryString());
+											
+			String actionName = rapidRequest.getActionName();
 			
-			// assume empty output
 			String output = "";
-															
+			
 			// get the rapid application
 			Application rapidApplication = getApplications().get("rapid");
 			
@@ -260,9 +257,6 @@ public class Designer extends RapidHttpServlet {
 							response.setHeader("Pragma", "no-cache");
 							
 				    	}
-				    	
-				    	// get the actionName
-						String actionName = rapidRequest.getActionName();
 															
 						if ("getSystemData".equals(actionName)) {
 							
@@ -382,8 +376,8 @@ public class Designer extends RapidHttpServlet {
 											jsonVersion.put("status", application.getStatus());
 											// add the title
 											jsonVersion.put("title", application.getTitle());
-											// add whether a form
-											jsonVersion.put("isForm", (application.getIsForm() && application.getFormAdapter() != null) ? true : false);
+											// add a formAdapter if present
+											if (application.getFormAdapter() != null) jsonVersion.put("formAdapter", true);
 											// add whether to show control Ids
 											jsonVersion.put("showControlIds", application.getShowControlIds());
 											// add whether to show action Ids
@@ -740,7 +734,7 @@ public class Designer extends RapidHttpServlet {
 								
 							}
 															
-						} else if ("pages".equals(actionName) || "text".equals(actionName) || "summary".equals(actionName) || "detail".equals(actionName)) {
+						} else if ("pages".equals(actionName) || "summary".equals(actionName) || "detail".equals(actionName)) {
 							
 							// set response as text
 							response.setContentType("text/text");
@@ -752,7 +746,7 @@ public class Designer extends RapidHttpServlet {
 							Application application = rapidRequest.getApplication();
 							
 							// print the app name and version
-							out.print(application.getName() + "\t" + application.getVersion() + "\r\r\n\n");
+							out.print(application.getName() + "\t" + application.getVersion() + "\n");
 							
 							// get the page headers
 							PageHeaders pageHeaders = application.getPages().getSortedPages();
@@ -767,220 +761,86 @@ public class Designer extends RapidHttpServlet {
 								String label = page.getLabel();
 								// if we got one
 								if (label == null) {
-									label = "";
+									label = "";									
 								} else {
-									if (label.length() > 0) label = " - " + label;
+									if (label.length() > 0) label = " - " + label;									
 								}
 								
-								// print the page id unless text
-								if (!"text".equals(actionName)) out.print(page.getId() + " ");
-								
 								// print the page name
-								out.print(page.getName() + label);
+								out.print(page.getId() + " " + page.getName() + label);
 								
-								// check report type and add sophistication
-								if (!"pages".equals(actionName)) {
+								// check summary
+								if ("summary".equals(actionName) || "detail".equals(actionName)) {
 																											
-									// print the number of controls if not for text
-									if (!"text".equals(actionName)) out.print(" - number of controls: " + page.getAllControls().size());
-									
-									// line break after page name
-									out.print("\n\r\n\r");
+									// print the number of controls
+									out.print(" - number of controls: " + page.getAllControls().size() + "\r\n");
 																		
 									// if detail
 									if ("detail".equals(actionName)) {
-										// print the page properties
-										out.print("Name\t" + page.getName() + "\n\r");
-										out.print("Title\t" + page.getTitle() + "\n\r");
-										out.print("Description\t" + page.getDescription() + "\n\r");
-										out.print("Simple\t" + page.getSimple() + "\n\r");
+										// print the page properties			
+										out.print("Name\t" + page.getName() + "\n");
+										out.print("Title\t" + page.getTitle() + "\n");
+										out.print("Description\t" + page.getDescription() + "\n");
+										out.print("Simple\t" + page.getSimple() + "\n");
 									}
 																		
 									// print the page events details
-									if (!"text".equals(actionName)) printEventsDetails(page.getEvents(), out);
+									printEventsDetails(page.getEvents(), out);
 								
 									// get the controls
 									List<Control> controls = page.getAllControls();
-									
-									// old text for avoiding repeated questions
-									String oldText = null;
 
 									// loop them
 									for (Control control : controls) {
-										
-										// if text
-										if ("text".equals(actionName)) {
-											
-											// get the text
-											String text = control.getProperty("text");
-											
-											// print if we got some (other controls without text are checked in the next block)
-											if (text != null) {
+										// get the name 
+										String name = control.getName();
+										// null check
+										if (name != null) {
+											if (name.trim().length() > 0) {											
 												
-												// clean up simple characters
-												text = text.replace("&nbsp;", " ");
+												// get the label
+												label = control.getLabel();
+												// get the type
+												String type = control.getType();												
 												
-												// find all html tags and replace contents with nothing
-												text = text.replaceAll("<(.*?)>", "");
-												
-												// replace line breaks
-												text = text.replaceAll("/n", "");
-												
-												// trim it
-												text = text.trim();
-												
-												// certain controls have more detail
-												if (control.getType().contains("checkbox")) {
-													text += " (checkbox)";
-												} 
-																								
-												// check different from old text
-												if (!text.equals(oldText)) {
-													// if there is some text
-													if (text.length() > 0) {
-														// print it
-														out.print(" - " + text + "\n\r");
-														// remember this was the old text
-														oldText = text;
-													}
-												}
-												
-											} else if (control.getType().contains("dropdown")) {
-												
-												out.print(" - Dropdown : ");
-												
-												JSONArray jsonOptions = new JSONArray(control.getProperty("options"));
-												
-												boolean usesCodes = Boolean.parseBoolean(control.getProperty("codes"));
-												
-												for (int i = 0; i < jsonOptions.length(); i++) {
+												// exclude panels, hidden values, and datastores for summary
+												if ("detail".equals(actionName) || (!"panel".equals(type) && !("hiddenvalue").equals(type) && !("dataStore").equals(type))) {
 													
-													JSONObject jsonOption = jsonOptions.getJSONObject(i);
+													// print the control name
+													out.print(control.getId() +"\t" + type + "\t" + name + "\t" + label + "\n");
 													
-													text = jsonOption.optString("text","");
+													// if details
+													if ("detail".equals(actionName)) {
 													
-													if (text.length() == 0) {
-														out.print("[BLANK]");
-													} else {
-														out.print(text);
-													}
-													
-													if (usesCodes) {
-														
-														String value = jsonOption.optString("value","");
-														
-														if (value != "null") {
-															if (value.length() > 0) {
-																out.print( " (" + value + ")");
-															}
+														// get the properties
+														Map<String, String> properties = control.getProperties();
+														// get a list we'll sort for them
+														List<String> sortedKeys = new ArrayList<String>();
+														// loop them
+														for (String key : properties.keySet()) {																																												
+															// add to sorted list
+															sortedKeys.add(key);
 														}
-
-													}
-													
-													if (i < jsonOptions.length() - 1) out.print(", ");
-													
-												}
-												
-												// close it
-												out.print("\n\r");
-												
-											}  else if (control.getType().contains("radiobutton")) {
-												
-												out.print(" - Radio buttons : ");
-												
-												JSONArray jsonOptions = new JSONArray(control.getProperty("buttons"));
-												
-												boolean usesCodes = Boolean.parseBoolean(control.getProperty("codes"));
-												
-												for (int i = 0; i < jsonOptions.length(); i++) {
-													
-													JSONObject jsonOption = jsonOptions.getJSONObject(i);
-													
-													text = jsonOption.optString("label","");
-													
-													if (text.length() == 0) {
-														out.print("[BLANK]");
-													} else {
-														out.print(text);
-													}
-													
-													if (usesCodes) {
-														
-														String value = jsonOption.optString("value","");
-														
-														if (value != "null") {
-															if (value.length() > 0) {
-																out.print( " (" + value + ")");
-															}
-														}
-
-													}
-													
-													if (i < jsonOptions.length() - 1) out.print(", ");
-													
-												}
-												
-												// close it
-												out.print("\n\r");
-												
-											}  
-											
-										} else {
-										
-											// get the name
-											String name = control.getName();
-											// null check
-											if (name != null) {
-												if (name.trim().length() > 0) {
-													
-													// get the label
-													label = control.getLabel();
-													// get the type
-													String type = control.getType();
-													
-													// exclude panels, hidden values, and datastores for summary
-													if ("detail".equals(actionName) || (!"panel".equals(type) && !("hiddenvalue").equals(type) && !("dataStore").equals(type))) {
-														
-														// print the control name
-														out.print(control.getId() +"\t" + type + "\t" + name + "\t" + label + "\n\r");
-														
-														// if details
-														if ("detail".equals(actionName)) {
-														
-															// get the properties
-															Map<String, String> properties = control.getProperties();
-															// get a list we'll sort for them
-															List<String> sortedKeys = new ArrayList<String>();
-															// loop them
-															for (String key : properties.keySet()) {
-																// add to sorted list
-																sortedKeys.add(key);
-															}
-															// sort them
-															Collections.sort(sortedKeys);
-															// loop them
-															for (String key : sortedKeys) {
-																// print the properties
-																out.print(key + "\t" + properties.get(key) + "\n\r");
-															}
-															// print the event details
-															printEventsDetails(control.getEvents(), out);
-																																			
-														} // detail check
-													}
-												}
+														// sort them
+														Collections.sort(sortedKeys);
+														// loop them
+														for (String key : sortedKeys) {
+															// print the properties															
+															out.print(key + "\t" + properties.get(key) + "\n");		
+														}														
+														// print the event details
+														printEventsDetails(control.getEvents(), out);
+																																		
+													} // detail check													
+												}													
 											}
 										}
-									}
+									}														
 								} else {
 									
-									out.print("\n\r");
+									out.print("\n");
 									
 								}
-								
-								// all reports except for pages have a line break after each page
-								if (!"pages".equals(actionName)) out.print("\n\r");
-								
 							}
 																				
 							// close the writer
@@ -1122,11 +982,8 @@ public class Designer extends RapidHttpServlet {
 						Application application = rapidRequest.getApplication();
 						
 						if (application != null) {
-							
-							// get the action name
-							String actionName = rapidRequest.getActionName();
 													
-							if ("savePage".equals(actionName)) {
+							if ("savePage".equals(rapidRequest.getActionName())) {
 								
 								String bodyString = new String(bodyBytes, "UTF-8");
 								
@@ -1288,7 +1145,7 @@ public class Designer extends RapidHttpServlet {
 								// set the response type to json
 								response.setContentType("application/json");
 							
-							} else if ("testSQL".equals(actionName)) {
+							} else if ("testSQL".equals(rapidRequest.getActionName())) {
 								
 								// turn the body bytes into a string
 								String bodyString = new String(bodyBytes, "UTF-8");
@@ -1319,7 +1176,7 @@ public class Designer extends RapidHttpServlet {
 								
 								String sql = jsonQuery.getString("SQL");
 								// some jdbc drivers need the line breaks removing before they'll work properly - here's looking at you MS SQL Server!
-								sql = sql.replace("\n\r", " ");
+								sql = sql.replace("\n", " ");
 																												
 								if (outputs == 0) {
 									
@@ -1381,7 +1238,7 @@ public class Designer extends RapidHttpServlet {
 								// set the response type to json
 								response.setContentType("application/json");
 								
-							} else if ("uploadImage".equals(actionName) || "import".equals(actionName)) {
+							} else if ("uploadImage".equals(rapidRequest.getActionName()) || "import".equals(rapidRequest.getActionName())) {
 											
 								// get the content type from the request
 								String contentType = request.getContentType();
@@ -1404,7 +1261,7 @@ public class Designer extends RapidHttpServlet {
 								// extract the file type
 								String fileType = header.substring(fileTypePosition + 6);
 													
-								if ("uploadImage".equals(actionName)) {
+								if ("uploadImage".equals(rapidRequest.getActionName())) {
 
 									// check the file type
 									if (!fileType.equals("image/jpeg") && !fileType.equals("image/gif") && !fileType.equals("image/png")) throw new Exception("Unsupported file type");
@@ -1422,9 +1279,9 @@ public class Designer extends RapidHttpServlet {
 									getLogger().debug("Saved image file " + path + filename);
 									
 									// create the response with the file name and upload type
-									output = "{\"file\":\"" + filename + "\",\"type\":\"" + actionName + "\"}";
+									output = "{\"file\":\"" + filename + "\",\"type\":\"" + rapidRequest.getActionName() + "\"}";
 									
-								} else if ("import".equals(actionName)) {
+								} else if ("import".equals(rapidRequest.getActionName())) {
 									
 									// check the file type
 									if (!"application/x-zip-compressed".equals(fileType) && !"application/zip".equals(fileType)) throw new Exception("Unsupported file type");
@@ -1562,18 +1419,8 @@ public class Designer extends RapidHttpServlet {
 												    // loop the .page.xml files 
 												    for (File pageFile : pagesFolder.listFiles(xmlFilenameFilter)) {
 												    	
-												    	BufferedReader reader = new BufferedReader( new InputStreamReader( new FileInputStream(pageFile), "UTF-8"));
-												        String line = null;
-												        StringBuilder stringBuilder = new StringBuilder();
-												        
-												        while ((line = reader.readLine()) != null ) {
-												            stringBuilder.append(line);
-												            stringBuilder.append("\n");
-												        }
-												        reader.close();
-												        
-												        // retrieve the xml into a string
-												        String fileString = stringBuilder.toString();
+												    	// read the file into a string
+												    	String fileString = Strings.getString(pageFile);
 												        
 												        // prepare a new file string which will update into
 												        String newFileString = null;
@@ -1682,17 +1529,8 @@ public class Designer extends RapidHttpServlet {
 														User rapidUser = rapidSecurity.getUser(rapidRequest);
 														// create a new user based on the Rapid user
 														user = new User(userName, rapidUser.getDescription(), rapidUser.getPassword());
-														// if the app is not using a rapid security adapter - could be anything so best to switch back to something we know
-														if (!"rapid".equals(appNew.getSecurityAdapterType())) {
-															// change the security adapter to the Rapid security adapter - this sets the type and makes a new one														
-															appNew.setSecurityAdapter(getServletContext(), "rapid");
-															// get the new security adapter
-															security = appNew.getSecurityAdapter();
-														}														
 														// add the new user 
 														security.addUser(rapidRequest, user);
-														// if there is device security in place allow this new user
-														if (appNew.getDeviceSecurity()) user.setDeviceDetails("IP=*");
 													}
 													
 													// add Admin and Design roles for the new user if required
@@ -1710,14 +1548,14 @@ public class Designer extends RapidHttpServlet {
 													// loop the entries
 													for (String type : removedActions.keySet()) {
 														int count = removedActions.get(type);
-														removed += "removed " + count + " " + type + " action" + (count == 1 ? "" : "s") + " on import\n\r";
+														removed += "removed " + count + " " + type + " action" + (count == 1 ? "" : "s") + " on import\n";
 													}
 													// get the current description
 													String description = appNew.getDescription();
 													// if null set to empty string
 													if (description == null) description = "";
 													// add a line break if need be
-													if (description.length() > 0) description += "\n\r";
+													if (description.length() > 0) description += "\n";
 													// add the removed
 													description += removed;
 													// set it back
@@ -1778,42 +1616,7 @@ public class Designer extends RapidHttpServlet {
 									
 								}
 																		
-							}  else if ("invoke".equals(actionName)) {
-								
-								// look for a class name
-								String actionType = request.getParameter("actionType");
-								
-								// check we got one
-								if (actionType != null) {
-									
-									// turn the body bytes into a string
-									String bodyString = new String(bodyBytes, "UTF-8");
-									
-									// read it into JSON
-									JSONObject jsonData = new JSONObject(bodyString);
-									
-									// get the constructor
-									Constructor con = this.getActionConstructor(actionType);
-									// get a new instance
-									Action action = (Action) con.newInstance(this, jsonData);
-									// get the method
-									Method m = action.getClass().getMethod("doAction", RapidRequest.class, JSONObject.class);
-									// assign variable for jsonResult
-									JSONObject jsonResult = null;
-									try {
-										// invoke it
-										jsonResult = (JSONObject) m.invoke(action, rapidRequest, jsonData);
-									} catch (Exception ex) {										
-										// rethrow the cause
-										throw new Exception(ex.getCause());										
-									}
-									
-									// set to output
-									output = jsonResult.toString();
-																											
-								}
-								
-							} // action check
+							}
 							
 							getLogger().debug("Designer POST response : " + output);
 																
