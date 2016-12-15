@@ -2235,10 +2235,16 @@ public class Application {
 				// write the details
 				fw.write(_id + "\r\n" +  Rapid.MOBILE_VERSION + " - " + _version + "\r\n" + _title + "\r\n");				
 				// lines 4 to 7 are for the status bar colours
-				if (_statusBarColour != null) fw.write(_statusBarColour  + "\r\n");
-				if (_statusBarHighlightColour != null) fw.write(_statusBarHighlightColour  + "\r\n");
-				if (_statusBarTextColour != null) fw.write(_statusBarTextColour  + "\r\n");
-				if (_statusBarIconColour != null) fw.write(_statusBarIconColour  + "\r\n");
+				if (_statusBarColour != null) fw.write(_statusBarColour);
+				fw.write("\r\n");
+				if (_statusBarHighlightColour != null) fw.write(_statusBarHighlightColour);
+				fw.write("\r\n");
+				if (_statusBarTextColour != null) fw.write(_statusBarTextColour);
+				fw.write("\r\n");
+				if (_statusBarIconColour != null) fw.write(_statusBarIconColour);
+				fw.write("\r\n");
+				// line 8 is the password retention
+				fw.write(_storePasswordDuration + "\r\n");
 				// close the file writer
 				fw.close();
 				// add the file to the zip with a root path
