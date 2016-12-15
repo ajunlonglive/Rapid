@@ -34,7 +34,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    <category>Responsive controls</category>
 	    <helpHtml>A version of the input control that offers responsive design. This control will alter its size based on the parent control it is in, as well as alter to suit the screen size it is viewed on.</helpHtml>
 	    
-	    <addToNewApplications>true</addToNewApplications>
+	    <addToNewResponsiveApplications>true</addToNewResponsiveApplications>
 	          
 	    <canUserAdd>true</canUserAdd>
 	    <canUserMove>true</canUserMove>

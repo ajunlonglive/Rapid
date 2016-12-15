@@ -35,6 +35,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    <helpHtml>An essential control for forms, the radio button control will place a set of buttons on the page, where users can select one of the available options. It is possible to have more than 2 options available, and different radio button controls can be linking together by giving them the same group.</helpHtml>
 	    
 	    <addToNewApplications>true</addToNewApplications>
+	    <addToNewResponsiveApplications>false</addToNewResponsiveApplications>
 	     
 	    <canUserAdd>true</canUserAdd>
 	    <canUserMove>true</canUserMove>

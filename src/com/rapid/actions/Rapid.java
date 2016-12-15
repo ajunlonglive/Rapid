@@ -139,7 +139,7 @@ public class Rapid extends Action {
 	
 	// internal methods
 	
-	private Application createApplication(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, String name, String version, String title, String type, String themeType, String description) throws IllegalArgumentException, SecurityException, JAXBException, IOException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, SecurityAdapaterException, ParserConfigurationException, XPathExpressionException, RapidLoadingException, SAXException {
+	private Application createApplication(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, String name, String version, String title, String type, boolean responsive, String themeType, String description) throws IllegalArgumentException, SecurityException, JAXBException, IOException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, SecurityAdapaterException, ParserConfigurationException, XPathExpressionException, RapidLoadingException, SAXException {
 		
 		String newAppId = Files.safeName(name).toLowerCase();
 		String newAppVersion = Files.safeName(version);
@@ -214,8 +214,20 @@ public class Rapid extends Action {
 			for (int i = 0; i < jsonControlTypes.length(); i++) {
 				// get the control
 				JSONObject jsonControlType = jsonControlTypes.getJSONObject(i);
-				// add to list if addToNewApplications is set
-				if (jsonControlType.optBoolean("addToNewApplications")) controlTypes.add(jsonControlType.getString("type"));
+				// get the type
+				String controlType = jsonControlType.getString("type");
+				// get whether to add to new applications
+				boolean addNew = jsonControlType.optBoolean("addToNewApplications");
+				String addResponsiveString = jsonControlType.optString("addToNewResponsiveApplications", null);
+				boolean addResponsive = jsonControlType.optBoolean("addToNewResponsiveApplications");
+				// if this is a reponsive app
+				if (responsive) {
+					// add to list if addToNewApplications is set and not addToNewResponsiveApplications, or just addToNewResponsiveApplications
+					if ((addNew &&  addResponsiveString == null) || addResponsive) controlTypes.add(controlType);
+				} else {
+					// add to list if addToNewApplications is set and addToNewResponsiveApplications is not set
+					if (addNew && !addResponsive) controlTypes.add(controlType);
+				}
 			}
 		}
 		
@@ -1805,11 +1817,12 @@ public class Rapid extends Action {
 				String version = jsonAction.getString("newVersion").trim();
 				String title = jsonAction.optString("title").trim();
 				String type = jsonAction.optString("type");
+				boolean responsive = jsonAction.optBoolean("responsive");
 				String themeType = jsonAction.optString("themeType");
 				String description = jsonAction.optString("description").trim();
 				
 				// create a new application with our reusable, private method
-				Application newApp = createApplication(rapidServlet, rapidRequest, name, version, title, type, themeType, description);
+				Application newApp = createApplication(rapidServlet, rapidRequest, name, version, title, type, responsive, themeType, description);
 										
 				// set the result message
 				result.put("message", "Application " + app.getTitle() + " created");
@@ -1878,7 +1891,7 @@ public class Rapid extends Action {
 				String description = jsonAction.optString("description").trim();
 				
 				// create a new application with our reusable, private method
-				Application newApp = createApplication(rapidServlet, rapidRequest, id, version, title, "", "", description);
+				Application newApp = createApplication(rapidServlet, rapidRequest, id, version, title, "", false, "", description);
 											
 				// set the result message
 				result.put("message", "Version " + newApp.getVersion() + " created for " + newApp.getTitle());
