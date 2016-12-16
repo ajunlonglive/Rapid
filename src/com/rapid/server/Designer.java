@@ -85,6 +85,7 @@ import com.rapid.core.Page.Lock;
 import com.rapid.core.Control;
 import com.rapid.core.Pages.PageHeader;
 import com.rapid.core.Pages.PageHeaders;
+import com.rapid.core.Theme;
 import com.rapid.data.ConnectionAdapter;
 import com.rapid.data.DataFactory;
 import com.rapid.data.DataFactory.Parameters;
@@ -662,6 +663,17 @@ public class Designer extends RapidHttpServlet {
 								
 								// add the form page type
 								jsonPage.put("formPageType", page.getFormPageType());
+								
+								// get any theme
+								Theme theme = application.getTheme(getServletContext());
+								// if there was one
+								if (theme != null) {
+									// add header html
+									jsonPage.put("headerHtml", theme.getHeaderHtml());
+									// add footer html
+									jsonPage.put("footerHtml", theme.getFooterHtml());
+									
+								}
 																															
 								// print it to the output
 								output = jsonPage.toString();
