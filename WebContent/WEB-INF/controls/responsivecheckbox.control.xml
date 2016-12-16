@@ -198,23 +198,23 @@ this.object.remove();
 	    
 	    <getDataFunction>
 	        <![CDATA[
-var control = $("#" + id).find("input:not([type=hidden])");
+var control = $("#" + id);
+var input = control.find("input:not([type=hidden])");
 var value = null;
 if (ev.validation) {
 	var container = control.closest(".validated");
-	if (!container[0]) container = control.closest(".responsivecheckbox");
-	container = container.parent();
+	if (!container[0]) container = control.parent();
 	container.find("input:not([type=hidden])").each( function() {
 		if ($(this).prop("checked")) {
 			value = "true";
 		}
 	});
 } else {
-	var attr = control.attr("value");
+	var attr = input.attr("value");
 	if (attr) {
-		if (control.prop("checked")) value = attr;
+		if (input.prop("checked")) value = attr;
 	} else {
-		if (control.prop("checked")) {
+		if (input.prop("checked")) {
 			value = "true";
 		} else {
 			value = "false";
