@@ -2589,6 +2589,9 @@ $(document).ready( function() {
 			    		// make sure the page styling is correct (this can go wrong if the back button was clicked which loads the current page but the previous styling)
 			    		head.append("<style type=\"text/css\">" + page.css + "</style>");
 	     	
+			    		// add any page header html
+			    		_page.object.append(_page.headerHtml);
+			    		
 			        	// if we have childControls
 			        	if (childControls) {
 				        	// loop the page childControls and create
@@ -2599,6 +2602,9 @@ $(document).ready( function() {
 				        		_page.childControls.push(loadControl(childControl, _page, true));
 				        	}
 			        	}
+			        	
+			        	// add any page footer html
+			    		_page.object.append(_page.footerHtml);
 			        	
 			        	// get all of the stylesheets (we might be using pagepanels where the styling )
 						var styleSheets = _pageIframe[0].contentWindow.document.styleSheets;
