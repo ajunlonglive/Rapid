@@ -49,10 +49,10 @@ public class Theme  {
 		// retain properties
 		_type = jsonTemplate.getString("type");
 		_name = jsonTemplate.getString("name");
-		_css = jsonTemplate.getString("css");
+		_css = jsonTemplate.getString("css").trim();
 		_resources = jsonTemplate.optJSONObject("resources");
-		_headerHtml = jsonTemplate.optString("headerHtml");
-		_footerHtml = jsonTemplate.optString("footerHtml");
+		_headerHtml = jsonTemplate.optString("headerHtml").trim();
+		_footerHtml = jsonTemplate.optString("footerHtml").trim();
 	}
 	
 }

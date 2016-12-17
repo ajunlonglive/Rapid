@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2015 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -1884,6 +1884,33 @@ function getSavePageData() {
 	// retain the id of any selected control
 	var selectedControlId = null;
 	if (_selectedControl) selectedControlId = _selectedControl.id;
+	
+	// remove the header and footer - loop all child elements of the page object
+	_page.object.children().each( function() {
+		// get ref to element
+		var e = $(this);
+		// get id
+		var id = e.attr("id");
+		// assume this will be removed
+		var remove = true;
+		// check if no id
+		if (id) {			
+			// loop control children
+			if (_page.childControls) {
+				for (var i in _page.childControls) {
+					if (id == _page.childControls[i].id) {
+						// we're keeping it						
+						remove = false;
+						// we're done
+						break;
+					}
+				}
+			}
+		}
+		// remove if required
+		if (remove) e.remove();
+		
+	});
 		
 	// get all of the controls
 	var controls = getControls();
@@ -2074,6 +2101,11 @@ function getSavePageData() {
 		
 	// stringify the page control object and add to the page (this creates an array called childControls)
 	var pageData = JSON.stringify(pageObject);
+	
+	// add any theme header
+	_page.object.prepend(_page.headerHtml);
+	// add any theme footer
+	_page.object.append(_page.footerHtml);
 	
 	// re-selected any selected control
 	if (selectedControlId) {
@@ -2590,7 +2622,7 @@ $(document).ready( function() {
 			    		head.append("<style type=\"text/css\">" + page.css + "</style>");
 	     	
 			    		// add any page header html
-			    		_page.object.append(_page.headerHtml);
+			    		_page.object.prepend(_page.headerHtml);
 			    		
 			        	// if we have childControls
 			        	if (childControls) {
