@@ -31,7 +31,7 @@ import org.json.JSONObject;
 public class Theme  {
 	
 	// private instance variables
-	private String _type, _name, _css, _headerHtml, _footerHtml;
+	private String _type, _name, _css, _headerHtml, _footerHtml, _formSummaryHeaderHtml, _formSummaryPageStartHtml, _formSummaryPageEndHtml, _formSummaryPagesEndHtml, _formSummaryFooterHtml;
 	private JSONObject _resources;
 
 	// properties
@@ -41,6 +41,11 @@ public class Theme  {
 	public JSONObject getResources()  { return _resources; }
 	public String getHeaderHtml() { return _headerHtml; }
 	public String getFooterHtml() { return _footerHtml; }
+	public String getFormSummaryHeaderHtml() { return _formSummaryHeaderHtml; }
+	public String getFormSummaryPageStartHtml() { return _formSummaryPageStartHtml; }
+	public String getFormSummaryPageEndHtml() { return _formSummaryPageEndHtml; }
+	public String getFormSummaryPagesEndHtml() { return _formSummaryPagesEndHtml; }
+	public String getFormSummaryFooterHtml() { return _formSummaryFooterHtml; }
 	
 	// constructor
 	public Theme(String xml) throws JSONException {		
@@ -53,6 +58,11 @@ public class Theme  {
 		_resources = jsonTemplate.optJSONObject("resources");
 		_headerHtml = jsonTemplate.optString("headerHtml").trim();
 		_footerHtml = jsonTemplate.optString("footerHtml").trim();
+		_formSummaryHeaderHtml = jsonTemplate.optString("formSummaryHeaderHtml",null);
+		_formSummaryPageStartHtml = jsonTemplate.optString("formSummaryPageStartHtml",null);
+		_formSummaryPageEndHtml = jsonTemplate.optString("formSummaryPageEndHtml",null);
+		_formSummaryPagesEndHtml = jsonTemplate.optString("formSummaryPagesEndHtml",null);
+		_formSummaryFooterHtml = jsonTemplate.optString("formSummaryFooterHtml",null);
 	}
 	
 }
