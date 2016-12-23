@@ -785,7 +785,7 @@ public class Page {
 	    tempFile.delete();
 
 		// replace the old page with the new page
-		application.getPages().addPage(this, newFile);
+		application.getPages().addPage(this, newFile, application.getIsForm());
 
 		// empty the cached page html
 		_cachedHeadLinks = null;

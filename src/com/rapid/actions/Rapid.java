@@ -2721,8 +2721,6 @@ public class Rapid extends Action {
 					
 				}
 														
-				
-								
 			} else if ("RESTOREPAGEBACKUP".equals(action)) {
 				
 				// get the id
@@ -2757,7 +2755,7 @@ public class Rapid extends Action {
 				page = Page.load(servletContext, backupFile);
 				
 				// replace the current entry
-				app.getPages().addPage(page, pageFile);
+				app.getPages().addPage(page, pageFile, app.getIsForm());
 									
 				// set the result message
 				result.put("message", "Page backup " + appId + "/" + backupId + " restored");

@@ -4439,7 +4439,7 @@ function Property_pageOrder(cell, propertyObject, property, details) {
 	// get the dialogue title
 	var title = dialogue.find(".dialogueTitle").first();
 	if (!title.next().is("button")) {
-		title.after("<button style='float:left;margin-top:-7px;' class='titleButton sources' title='Reset page order'><span>&#xf0e2;</span></button>");
+		title.after("<button style='float:left;margin-top:-7px;' class='titleButton sources' title='Reset page order to be alphabetical'><span>&#xf0e2;</span></button>");
 		// listener for resetting the page order
 		addListener( dialogue.find("button.titleButton").first().click( function(ev) {
 			// sort the pages
