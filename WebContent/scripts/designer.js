@@ -389,6 +389,45 @@ function checkDirty() {
 	}
 }
 
+// reusable function for removing the header and footer before adding new controls or saving
+function removeHeaderAndFooter() {
+	// remove the header and footer - loop all child elements of the page object
+	if (_page && _page.object) {
+		_page.object.children().each( function() {
+			// get ref to element
+			var e = $(this);
+			// get id
+			var id = e.attr("id");
+			// assume this will be removed
+			var remove = true;
+			// check if no id
+			if (id) {			
+				// loop control children
+				if (_page.childControls) {
+					for (var i in _page.childControls) {
+						if (id == _page.childControls[i].id) {
+							// we're keeping it						
+							remove = false;
+							// we're done
+							break;
+						}
+					}
+				}
+			}
+			// remove if required
+			if (remove) e.remove();		
+		});
+	}
+}
+
+//  put them back!
+function addHeaderAndFooter() {
+	// add any theme header
+	if (_page.headerHtml) _page.object.prepend(_page.headerHtml);
+	// add any theme footer
+	if (_page.footerHtml) _page.object.append(_page.footerHtml);
+}
+
 // this function returns a control's height after taking into account floating children
 function getControlHeight(control, childLevel) {
 	
@@ -1666,9 +1705,13 @@ function loadVersion(forceLoad) {
 			var controlClass = _controlTypes[className];
 			
 			// there is a function to create this control
-			if (controlClass) {    						
+			if (controlClass) {
+				// remove the header and footer
+				removeHeaderAndFooter();
 				// instantiate the control with the _page as the parent
-				var control = new Control(className, _page, null, true);										
+				var control = new Control(className, _page, null, true);
+				// add back header and footer
+				addHeaderAndFooter();
 				// size the border for the control while it is still visible		
 				sizeBorder(control);
 				// set the mouseDown offsets so when we drag the mouse is in the center
@@ -1884,34 +1927,10 @@ function getSavePageData() {
 	// retain the id of any selected control
 	var selectedControlId = null;
 	if (_selectedControl) selectedControlId = _selectedControl.id;
-	
-	// remove the header and footer - loop all child elements of the page object
-	_page.object.children().each( function() {
-		// get ref to element
-		var e = $(this);
-		// get id
-		var id = e.attr("id");
-		// assume this will be removed
-		var remove = true;
-		// check if no id
-		if (id) {			
-			// loop control children
-			if (_page.childControls) {
-				for (var i in _page.childControls) {
-					if (id == _page.childControls[i].id) {
-						// we're keeping it						
-						remove = false;
-						// we're done
-						break;
-					}
-				}
-			}
-		}
-		// remove if required
-		if (remove) e.remove();
-		
-	});
-		
+
+	// remove header and footer
+	removeHeaderAndFooter();
+
 	// get all of the controls
 	var controls = getControls();
 	// create a list of roles used on this page
@@ -2102,10 +2121,8 @@ function getSavePageData() {
 	// stringify the page control object and add to the page (this creates an array called childControls)
 	var pageData = JSON.stringify(pageObject);
 	
-	// add any theme header
-	_page.object.prepend(_page.headerHtml);
-	// add any theme footer
-	_page.object.append(_page.footerHtml);
+	// restore any header / footer
+	addHeaderAndFooter();
 	
 	// re-selected any selected control
 	if (selectedControlId) {
