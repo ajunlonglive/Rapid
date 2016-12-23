@@ -115,19 +115,21 @@ public class Pages {
 		public int compare(PageHeader page1, PageHeader page2) {
 			Map<String,Integer> pageOrders = _application.getPageOrders();			
 			if (pageOrders != null) {
-				String id1 = page1.getId();
-				String id2 = page2.getId();
-				int o1 = -1;			
-				int o2 = -1;
-				if (pageOrders.get(id1) != null) o1 = pageOrders.get(id1);
-				if (pageOrders.get(id2) != null) o2 = pageOrders.get(id2);
-				if (o1 >= 0 && o2 >= 0) {
-					return o1 - o2;
-				} else if (o1 == -1 && o2 >= 0) {
-					return 1;
-				} else if (o2 == -1 && o1 >= 0) {
-					return -1;
-				} 
+				if (pageOrders.size() > 0) {
+					String id1 = page1.getId();
+					String id2 = page2.getId();
+					int o1 = -1;			
+					int o2 = -1;
+					if (pageOrders.get(id1) != null) o1 = pageOrders.get(id1);
+					if (pageOrders.get(id2) != null) o2 = pageOrders.get(id2);
+					if (o1 >= 0 && o2 >= 0) {
+						return o1 - o2;
+					} else if (o1 == -1 && o2 >= 0) {
+						return 1;
+					} else if (o2 == -1 && o1 >= 0) {
+						return -1;
+					}
+				}
 			}			
 			return Comparators.AsciiCompare(page1.getName(), page2.getName(), false);
 		}
@@ -211,13 +213,22 @@ public class Pages {
 	// public methods
 	
 	// add them singly 
-	public void addPage(Page page, File pageFile) {
+	public void addPage(Page page, File pageFile, boolean isForm) {
+		// get the page id
+		String pageId = page.getId();
 		// add to page headers
-		_pageHeaders.put(page.getId(), new PageHeader(page, pageFile));
+		_pageHeaders.put(pageId, new PageHeader(page, pageFile));
 		// add to pages collection
-		_pages.put(page.getId(), page); 
+		_pages.put(pageId, page); 
 		// force the pages list to be resorted on next fetch
 		_sortedPageHeaders = null;
+		// if this is a form 
+		if (isForm) {
+			// get the page order object
+			Map<String,Integer> pageOrders = _application.getPageOrders();
+			// if there is one - there should be! - set it up with sequential page order, rather than alphabetical
+			if (pageOrders != null) pageOrders.put(pageId, pageOrders.size());
+		}
 	}
 	
 	// remove them one by one too
