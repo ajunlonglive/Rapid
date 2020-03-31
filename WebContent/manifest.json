@@ -24,8 +24,8 @@
       "type": "image/png"
     }
   ],
-  "start_url": "/RapidCustom/index.jsp",
-  "scope": "/RapidCustom/",
+  "start_url": "index.jsp",
+  "scope": "/",
   "display": "browser",
   "background_color": "#FF9800",
   "theme_color": "#FF9800"
