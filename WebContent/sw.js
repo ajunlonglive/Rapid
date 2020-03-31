@@ -92,7 +92,38 @@ self.addEventListener("fetch", function(event) {
 	
 	// get the url from the event request
 	var url = event.request.url;
-		
+	
+	// if request is for root
+	if (url === _contextPath) {
+		event.respondWith(
+			new Promise((resolve, reject) =>
+				fetchAndCache(_contextPath + "index.jsp")
+				.then(freshResponse => {
+					if (freshResponse && freshResponse.ok || freshResponse.type === "opaqueredirect") {
+						resolve(freshResponse);
+					} else {
+						getFromCache(_contextPath + "index.jsp").then(cachedResponse =>
+							resolve(cachedResponse || freshResponse)
+						)
+					}
+				})
+				.catch(_ => {
+					getFromCache(_contextPath + "index.jsp").then(cachedResponse =>
+						resolve(cachedResponse || freshResponse)
+					)
+				})
+			)
+		);
+		return;
+	}
+
+	// if request is for index
+
+	// if request is for app
+
+	// if request is for other resource
+	
+	
 	// We only check the cache for GET requests to the Rapid server, unless it's part of what we want to refresh each time
 	if (url && url.startsWith(_contextPath) && (event.request.method === "GET" || url.endsWith("~?action=getApps"))) {
 		
@@ -204,7 +235,7 @@ self.addEventListener("fetch", function(event) {
 									);
 								}
 							})
-						);
+						).catch(reason => console.log(reason));
 						
 						// always produce freshResponse to update the cache for the next request
 						return cachedResponse || freshResponseWithCachedOfflineFallback;
@@ -384,3 +415,20 @@ self.addEventListener('sync', function(event) {
 		(() => {})()
 	);
 });
+
+function fetchAndCache(url) {
+	return fetch(url, { redirect: "manual" }).then(freshResponse => {
+		if (freshResponse && freshResponse.ok) {
+			caches.open(_swVersion + 'offline').then(cache =>
+				cache.put(url, freshResponse.clone())
+			);
+		}
+		return freshResponse;
+	});
+}
+
+function getFromCache(url) {
+	return caches.open(_swVersion + 'offline').then(cache =>
+		cache.match(url)
+	);
+}
