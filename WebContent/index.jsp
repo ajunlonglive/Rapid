@@ -42,6 +42,7 @@ RapidRequest rapidRequest = new RapidRequest(request, rapid);
 		<link rel="stylesheet" type="text/css" href="styles/index.css"></link>
 		<link rel='stylesheet' type='text/css' href='styles/fonts/fontawesome/css/font-awesome.css'></link>
 		<script type='text/javascript' src='scripts/<%=com.rapid.server.Rapid.JQUERY%>'></script>
+		<link rel="manifest" href="manifest.json">
 		<script type="text/javascript">
 
 if ('serviceWorker' in navigator) {
