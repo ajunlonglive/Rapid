@@ -213,6 +213,9 @@ public class RapidFilter implements Filter {
 		// safety doesn't need authentication
 		if ("/safety".equals(path)) requiresAuthentication = false;
 
+		// manifest.json doesn't need authentication
+		if ("/manifest.json".equals(path)) requiresAuthentication = false;
+
 		// if we have no auth resources
 		if (_noAuthResources.size() > 0) {
 			// loop them
@@ -349,45 +352,45 @@ public class RapidFilter implements Filter {
 					// forward the newly reconstructed URL
 					forwardRequest(filteredRequest, response, rapidForwardURL);
 
-				} else { 
+				} else {
 
 					// for uploads there must be a known app and a file requested
 					if (pathPart.length > 1 && "uploads".equals(pathPart[0])) {
-						
+
 						// assume we won't pass
 						boolean pass = false;
-						
+
 						// get the app
 						Application app = applications.get(pathPart[1]);
-						
+
 						// get the user session without making a new one
 						HttpSession session = req.getSession(false);
-						
+
 						// if there is an app and an existing session
 						if (app != null && session != null) {
-							
+
 							// get the security adapter
 							SecurityAdapter security = app.getSecurityAdapter();
-							
+
 							// create a rapid request
 							RapidRequest rapidRequest = new RapidRequest(req, app);
-							
+
 							// set the user name
 							rapidRequest.setUserName((String) session.getAttribute(SESSION_VARIABLE_USER_NAME));
-							
+
 							// check the security for this user and password
 							pass = security.checkPasswordComplexity(rapidRequest, (String) session.getAttribute(SESSION_VARIABLE_USER_PASSWORD));
-							
+
 						}
-						
+
 						// return an empty response if we didn't pass
 						if (!pass) return;
-						
+
 					}
 
 					// for regular rapid url formats
 					filterChain.doFilter(filteredRequest, response);
-						
+
 				}
 
 			}
