@@ -44,7 +44,18 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 						</xs:restriction>
 					</xs:simpleType>
 				</xs:element>
-				<xs:element name="index">
+				<xs:element name="logout" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>An optional path for a logout page login. Typically a jsp page like "logout.jsp"
+						</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:minLength value="1" />
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="index" minOccurs="0">
 					<xs:annotation>
 						<xs:documentation>The path of the index, shown after login, or if already logged in. Typically a jsp page like "index.jsp", or the default app like "~?a=demo"
 						</xs:documentation>
