@@ -328,7 +328,7 @@ public class Webservice extends Action {
 			if (_showLoading) js += "    " + getLoadingJS(page, outputs, false);
 
 			// this avoids doing the errors if the page is unloading or the back button was pressed
-			js += "    if (server.readyState > 0) {\n";
+			js += "    if (server.readyState > 0 || !navigator.onLine) {\n";
 
 			// retain if error actions
 			boolean errorActions = false;
