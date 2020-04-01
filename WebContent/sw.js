@@ -76,9 +76,9 @@ var _refreshes = [
 	"~?action=getApps"
 ];
 
-var _trimUrls = [
-	".woff", ".woff2", ".ttf"
-];
+var _trimUrls = [".js", ".css", ".woff", ".woff2", ".ttf"];
+
+var _appStatus;
 
 var _contextPath;
 
@@ -150,16 +150,17 @@ self.addEventListener("fetch", function(event) {
 		// if requesting an app
 		if (appId) {
 			var versionParameter = parameters.v ? "&v=" + parameters.v : "";
-			var appResourcesUrl = _contextPath + "~?a=" + appId + versionParameter + "&action=resources";
+			var appResourcesUrl = _contextPath + "~?a=" + appId + "&action=resources";
 			var latestAppVersion = appVersionCached(appId);
 			// check for app updates to update cache
 			fetch(appResourcesUrl, fetchOptions)
 			.then(response => {
-				if (!response.url.endsWith("login.jsp")) {
+				if (!response.url.endsWith("login.jsp") && !parameters.v) {
 					return response.json()
 					.then(resources => {
+						_appStatus = resources.status;
 						if (resources.resources) {
-							var urlsToCache = resources.resources.map(url => _contextPath + url);
+							var urlsToCache = resources.resources.map(url => (_contextPath.startsWith("http") ? "" : _contextPath) + url);
 							caches.open(_swVersion + 'offline').then(cache => {
 								cache.match(urlsToCache[0]).then(response => {
 									// if this app version is not cached, do
@@ -213,7 +214,7 @@ self.addEventListener("fetch", function(event) {
 									} else {
 										resolve(freshResponse);
 									}
-								} else if (![".js", ".css", ".woff", ".woff2", ".ttf"].some(ext => url.endsWith(ext))) {
+								} else if (!_trimUrls.some(ext => url.endsWith(ext))) {
 									var fallback = _contextPath + (url === _contextPath ? "index.jsp" : "offline.htm");
 									cache.match(fallback).then(page =>
 										page ? resolve(page) : reject("WORKER: could not fetch resource and offline page was unavailable")
@@ -223,7 +224,7 @@ self.addEventListener("fetch", function(event) {
 								}
 							})
 							.catch(reason => {
-								if (![".js", ".css", ".woff", ".woff2", ".ttf"].some(ext => url.endsWith(ext))) {
+								if (!_trimUrls.some(ext => url.endsWith(ext))) {
 									var fallback = _contextPath + (url === _contextPath ? "index.jsp" : "offline.htm");
 									cache.match(fallback).then(page =>
 										page ? resolve(page) : reject("WORKER: could not fetch resource and offline page was unavailable")
@@ -232,8 +233,19 @@ self.addEventListener("fetch", function(event) {
 							})
 						).catch(reason => console.log(reason));
 						
-						// always produce freshResponse to update the cache for the next request
-						return cachedResponse || freshResponseWithCachedOfflineFallback;
+						if (_appStatus === "development") {
+							return new Promise((resolve, reject) => {
+								fetch(url).then(response => {
+									if (response && (response.ok || response.type === "opaqueredirect")) {
+										resolve(response);
+									} else {
+										resolve(cachedResponse);
+									}
+								}).catch(_ => cachedResponse ? resolve(cachedResponse) : reject("Offline and nothing in cache for: " + url));
+							});
+						} else {
+							return cachedResponse || freshResponseWithCachedOfflineFallback;
+						}
 					});
 				})
 			)
