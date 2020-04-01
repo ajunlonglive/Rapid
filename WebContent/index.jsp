@@ -91,6 +91,36 @@ $(document).ready( function() {
 	});
 	
 	if (!navigator.onLine) $(document.body).addClass("offline");
+	
+	var deferredPrompt;
+	var addBtn = document.querySelector('.addButton');
+
+	window.addEventListener('beforeinstallprompt', (e) => {
+
+	  // Prevent Chrome 67 and earlier from automatically showing the prompt
+	  e.preventDefault();
+	  // Stash the event so it can be triggered later.
+	  deferredPrompt = e;
+	  // Update UI to notify the user they can add to home screen
+	  addBtn.style.display = 'block';
+
+	  addBtn.addEventListener('click', (e) => {
+	    // hide our user interface that shows our A2HS button
+	    addBtn.style.display = 'none';
+	    // Show the prompt
+	    deferredPrompt.prompt();
+	    // Wait for the user to respond to the prompt
+	    deferredPrompt.userChoice.then((choiceResult) => {
+	        if (choiceResult.outcome === 'accepted') {
+	          console.log('User accepted the A2HS prompt');
+	        } else {
+	          console.log('User dismissed the A2HS prompt');
+	        }
+	        deferredPrompt = null;
+	      });
+	  });
+	});
+	
 });
 
 $(window).on("offline", function() {
@@ -119,7 +149,10 @@ $(window).on("online", function() {
 		</div>
 
 		<div class="body">
-			<div class="columnMiddle" style="">
+
+			<div class="columnMiddle">
+			
+				<div><button class="addButton" title="Add a Rapid shortcut to your home screen">Add to home screen</button></div>
 <% 
 			// get the rapid application security
 			SecurityAdapter securityAdapter = rapid.getSecurityAdapter();
