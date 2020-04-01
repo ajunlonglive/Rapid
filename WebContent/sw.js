@@ -69,6 +69,8 @@ var _rapidResourceFolders = [
 	"styles_min/"
 ];
 
+var _appResources = [];
+
 // these resources must be sychronised with the server when they are available - if online look for them in fetches and update cache, use cache if offline
 var _refreshes = [
 	"~?action=getApps"
@@ -159,7 +161,7 @@ self.addEventListener("fetch", function(event) {
 								cache.match(urlsToCache[0]).then(response => {
 									// if this app version is not cached, do
 									if (!response) {
-										removeAppFromCache(appId)
+										removeAppResources(appId)
 										.then(_ => updateCache(urlsToCache));
 									}
 								})
@@ -201,7 +203,7 @@ self.addEventListener("fetch", function(event) {
 							.then(freshResponse => {
 								if (freshResponse && (freshResponse.ok || freshResponse.type === "opaqueredirect")) {
 									var clonedResponse = freshResponse.clone()
-									if (_rapidResourceFolders.concat(_rapidResources).some(res => url.includes(res))
+									if (_rapidResourceFolders.concat(_rapidResources).concat(_appResources).some(res => url.includes(res))
 											&& !freshResponse.redirected) {
 										cache.put(url, clonedResponse)
 											.then(_ => resolve(freshResponse));
@@ -284,7 +286,10 @@ function updateCache(resourcesToCache) {
 					// if we got a response and the code is 200 - we want to ignore redirects and authentication failures
 					if (response && response.ok) {
 						return cache.put(url, response)
-						.then(() => console.debug('WORKER: added to cache: ' + url))
+						.then(() => {
+							_appResources.push(url);
+							console.debug('WORKER: added to cache: ' + url);
+						})
 						.catch(reason =>  console.error('WORKER: failed to cache ' + url + ' : ' + String(reason)));
 					} else {
 						return console.debug('WORKER: not caching ' + url + ' : response status ' + response.status);
@@ -329,16 +334,20 @@ self.addEventListener("activate", function(event) {
 });
 
 
-function removeAppFromCache(appId) {
+function removeAppResources(appId) {
+	
+	var appFilter = key =>
+		key.match(_contextPath.replace(/\//g, "\\/") + "appId$")
+		|| key.includes("a=" + appId)
+		|| key.includes("applications/" + appId);
+	
+	_appResources = _appResources.filter(appFilter);
+	
 	return caches.open(_swVersion + 'offline').then(cache =>
 		cache.keys()
 		.then(keys =>
 			Promise.all(
-				keys.filter(key =>
-					key.url.match(_contextPath.replace(/\//g, "\\/") + "appId$")
-					|| key.url.includes("a=" + appId)
-					|| key.url.includes("applications/" + appId)
-				)
+				keys.filter(key => appFilter(key.url))
 				.map(key => cache.delete(key))
 			)
 		)
