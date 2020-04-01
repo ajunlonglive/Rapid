@@ -95,6 +95,7 @@ self.addEventListener("fetch", function(event) {
 	// get the url from the event request
 	var url = event.request.url;
 	
+	
 	// if request is for root
 	if (url === _contextPath) {
 		event.respondWith(
@@ -111,8 +112,10 @@ self.addEventListener("fetch", function(event) {
 	if (url.endsWith("index.jsp")) return;
 
 	// if request is for app
+	// TODO
 
 	// if request is for other resource
+	// TODO
 	
 	
 	// We only check the cache for GET requests to the Rapid server, unless it's part of what we want to refresh each time
@@ -433,9 +436,15 @@ function fetchAndCache(url) {
 }
 
 function getFromCache(url) {
-	return new Promise((resolve, reject) =>
+	return new Promise((resolve, reject) => {
 		caches.open(_swVersion + 'offline')
 		.then(cache => cache.match(url))
-		.then(cachedResponse => cachedResponse ? resolve(cachedResponse) : reject("Nothing in cache for: " + url))
-	)
+		.then(cachedResponse => {
+			if (cachedResponse) {
+				resolve(cachedResponse);
+			} else {
+				reject("Nothing in cache for: " + url);
+			}
+		})
+	});
 }
