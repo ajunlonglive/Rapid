@@ -98,26 +98,15 @@ self.addEventListener("fetch", function(event) {
 		event.respondWith(
 			new Promise((resolve, reject) =>
 				fetchAndCache(_contextPath + "index.jsp")
-				.then(freshResponse => {
-					if (freshResponse && freshResponse.ok || freshResponse.type === "opaqueredirect") {
-						resolve(freshResponse);
-					} else {
-						getFromCache(_contextPath + "index.jsp").then(cachedResponse =>
-							resolve(cachedResponse || freshResponse)
-						)
-					}
-				})
-				.catch(_ => {
-					getFromCache(_contextPath + "index.jsp").then(cachedResponse =>
-						resolve(cachedResponse || freshResponse)
-					)
-				})
+				.then(response => resolve(response))
+				.catch(_ => resolve(getFromCache(_contextPath + "index.jsp")))
 			)
 		);
 		return;
 	}
 
 	// if request is for index
+	if (url.endsWith("index.jsp")) return;
 
 	// if request is for app
 
@@ -211,9 +200,10 @@ self.addEventListener("fetch", function(event) {
 							fetch(url, fetchOptions)
 							.then(freshResponse => {
 								if (freshResponse && (freshResponse.ok || freshResponse.type === "opaqueredirect")) {
+									var clonedResponse = freshResponse.clone()
 									if (_rapidResourceFolders.concat(_rapidResources).some(res => url.includes(res))
 											&& !freshResponse.redirected) {
-										cache.put(url, freshResponse.clone())
+										cache.put(url, clonedResponse)
 											.then(_ => resolve(freshResponse));
 									} else {
 										resolve(freshResponse);
@@ -416,19 +406,27 @@ self.addEventListener('sync', function(event) {
 	);
 });
 
+
 function fetchAndCache(url) {
-	return fetch(url, { redirect: "manual" }).then(freshResponse => {
-		if (freshResponse && freshResponse.ok) {
-			caches.open(_swVersion + 'offline').then(cache =>
-				cache.put(url, freshResponse.clone())
-			);
-		}
-		return freshResponse;
+	return new Promise((resolve, reject) => {
+		fetch(url, { redirect: "manual" }).then(freshResponse => {
+			if (freshResponse && freshResponse.ok || freshResponse.type === "opaqueredirect") {
+				caches.open(_swVersion + 'offline').then(cache =>
+					cache.put(url, freshResponse.clone())
+				);
+			} else {
+				reject("Fetch failed: response was not ok.");
+			}
+			resolve(freshResponse);
+		})
+		.catch(reason => reject(reason));
 	});
 }
 
 function getFromCache(url) {
-	return caches.open(_swVersion + 'offline').then(cache =>
-		cache.match(url)
-	);
+	return new Promise((resolve, reject) =>
+		caches.open(_swVersion + 'offline')
+		.then(cache => cache.match(url))
+		.then(cachedResponse => cachedResponse ? resolve(cachedResponse) : reject("Nothing in cache for: " + url))
+	)
 }
