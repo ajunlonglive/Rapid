@@ -434,9 +434,10 @@ self.addEventListener('sync', function(event) {
 function fetchAndCache(url) {
 	return new Promise((resolve, reject) => {
 		fetch(url, { redirect: "manual" }).then(freshResponse => {
+			var clonedResponse = freshResponse.clone();
 			if (freshResponse && freshResponse.ok || freshResponse.type === "opaqueredirect") {
 				caches.open(_swVersion + 'offline').then(cache =>
-					cache.put(url, freshResponse.clone())
+					cache.put(url, clonedResponse)
 				);
 			} else {
 				reject("Fetch failed: response was not ok.");
