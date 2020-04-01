@@ -1,5 +1,5 @@
 {
-  "name": "Rapid offline web appliction",
+  "name": "Rapid offline web application",
   "short_name": "Rapid",
   "icons": [{
     "src": "images/RapidLogo_128x128.png",
@@ -23,7 +23,7 @@
       "type": "image/png"
     }
   ],
-  "start_url": "index.jsp",
+  "start_url": ".",
   "scope": ".",
   "display": "minimal-ui",
   "background_color": "#f4091b",
