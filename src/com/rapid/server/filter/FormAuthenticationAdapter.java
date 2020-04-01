@@ -55,10 +55,12 @@ import com.rapid.server.RapidRequest;
 public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 
 	public static final String SESSION_VARIABLE_LOGIN_PATH = "login";
+	public static final String SESSION_VARIABLE_LOGOUT_PATH = "logout";
 	public static final String SESSION_VARIABLE_PASSWORDRESET_PATH = "passwordreset";
 	public static final String SESSION_VARIABLE_PASSWORDUPDATE_PATH = "passwordupdate";
 
 	public static final String LOGIN_PATH = "login.jsp";
+	public static final String LOGOUT_PATH = "logout.jsp";
 	public static final String INDEX_PATH = "index.jsp";
 	public static final String RESET_PATH = "reset.jsp";
 	public static final String UPDATE_PATH = "update.jsp";
@@ -214,7 +216,7 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 			// if we got one use it
 			if (sessionResetPath != null) resetPath = sessionResetPath;
 
-			// look in the session for the password reset path
+			// look in the session for the password update path
 			String sessionUpdatePath = (String) session.getAttribute(SESSION_VARIABLE_PASSWORDUPDATE_PATH);
 			// if we got one use it
 			if (sessionUpdatePath != null) updatePath = sessionUpdatePath;
@@ -327,6 +329,8 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 
 						// get the custom login path
 						String customLoginPath = jsonLogin.optString("path").trim();
+						// get the custom login path
+						String customLogoutPath = jsonLogin.optString("logout").trim();
 						// get the custom index
 						String customIndexPath = jsonLogin.optString("index").trim();
 						// get any password reset
@@ -352,6 +356,8 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 							loginPath = customLoginPath;
 							// put the login path in the session
 							session.setAttribute(SESSION_VARIABLE_LOGIN_PATH, customLoginPath);
+							// put the logout path in the session
+							session.setAttribute(SESSION_VARIABLE_LOGOUT_PATH, customLogoutPath);
 							// put the index path in the session
 							session.setAttribute(RapidFilter.SESSION_VARIABLE_INDEX_PATH, customIndexPath);
 							// put the password reset page in the session if there is one
@@ -533,7 +539,7 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 						}
 
 						// make the sessionRequest path the root, in case it was null, or login.jsp itself, or other resources that don't make sense
-						if (sessionRequestPath == null || loginPath.equals(sessionRequestPath) || sessionRequestPath.endsWith(".js") || sessionRequestPath.endsWith(".css")) {
+						if (sessionRequestPath == null || loginPath.equals(sessionRequestPath) || sessionRequestPath.endsWith(".js") || sessionRequestPath.endsWith(".css") || sessionRequestPath.contains("&action=")) {
 							// if index path is the default (usually index.jsp)
 							if (INDEX_PATH.equals(indexPath)) {
 								// convert to . to hide index.jsp from url

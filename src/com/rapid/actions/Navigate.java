@@ -36,6 +36,7 @@ import com.rapid.core.Control;
 import com.rapid.core.Page;
 import com.rapid.server.RapidHttpServlet;
 import com.rapid.server.RapidRequest;
+import com.rapid.server.filter.FormAuthenticationAdapter;
 
 public class Navigate extends Action {
 
@@ -121,6 +122,28 @@ public class Navigate extends Action {
 			String url = getProperty("url");
 			// set the js, including optional popup
 			js = "Action_navigate('" + url + "', false, null," +  popup + ");\n";
+
+		} else if ("R".equals(navigationType)) {
+
+			// get the rapidPage
+			String rapidPage = getProperty("rapidPage");
+			// if it's the back button
+			if ("B".equals(rapidPage)) {
+				// go back
+				js = "window.history.back();\n";
+			} else {
+				// assume we want the index page
+				String url = ".";
+				// if its the logout
+				if ("L".equals(rapidPage)) {
+					// get the logout from the session
+					url = (String) rapidRequest.getSessionAttribute(FormAuthenticationAdapter.SESSION_VARIABLE_LOGOUT_PATH);
+					// if there wasn't one, set to default
+					if  (url == null) url = FormAuthenticationAdapter.LOGOUT_PATH;
+				}
+				// set the js, including optional popup
+				js = "Action_navigate('" + url + "', false, null, false);\n";
+			}
 
 		} else {
 

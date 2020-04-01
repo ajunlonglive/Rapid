@@ -47,10 +47,10 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 // for backwards compatibility	                
 if (!this.navigationType) this.navigationType = "P";
 // return the types	            
-return [["P","Page"],["U","URL"]];
+return [["P","Page"],["U","URL"],["R","Rapid"]];
 				</getValuesFunction>
 	            <refreshProperties>true</refreshProperties>
-	            <helpHtml>Sets the type of link. Page link to other pages on your Rapid app and url links to any webpage placed in the text field.</helpHtml>
+	            <helpHtml>Sets the type of link. Page links to other pages on your Rapid app, URL links to any webpage placed in the text field, and Rapid provides Rapid pages like main menu, logout, and back.</helpHtml>
 	        </property>
 	           
 	        <property>
@@ -105,10 +105,23 @@ return [["P","Page"],["U","URL"]];
 	            <helpHtml>Opens the link in a new tab.</helpHtml>
 	        </property>
 	        
+	        <property>
+	            <key>rapidPage</key>
+	            <name>Page</name>
+	            <setConstructValueFunction>return "I";</setConstructValueFunction>
+	            <changeValueJavaScript>navigateRapid</changeValueJavaScript>
+	            <getValuesFunction>
+// return the types	            
+return [["I","Main menu"],["L","Logout"],["B","Back"]];
+				</getValuesFunction>
+	            <refreshProperties>true</refreshProperties>
+	            <helpHtml>Main menu is the index page. Both the index page and logout page can be set by custom logins.</helpHtml>
+	        </property>
+	        
 	    </properties>
 	    
 	    <resources>
-	                    <resource>
+	    	<resource>
                 <type>css</type>
                 <contents>
                     <![CDATA[

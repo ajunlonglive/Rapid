@@ -62,10 +62,10 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <name>Type</name>
 	            <setConstructValueFunction>return "P";</setConstructValueFunction>
 	            <changeValueJavaScript>select</changeValueJavaScript>
-	            <getValuesFunction>return [["P","Page"],["U","URL"]];</getValuesFunction>
+	            <getValuesFunction>return [["P","Page"],["U","URL"],["R","Rapid"]];</getValuesFunction>
 	            <refreshHtml>true</refreshHtml>
 	            <refreshProperties>true</refreshProperties>
-	            <helpHtml>Sets the type of link. Page link to other pages on your Rapid app and url links to any webpage placed in the text field.</helpHtml>
+	            <helpHtml>Sets the type of link. Page links to other pages on your Rapid app, URL links to any webpage. Rapid links to pages like main menu, logout, and back.</helpHtml>
 	        </property>
 	        	                
 	        <property>
@@ -99,12 +99,25 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	        <property>
 	            <key>popup</key>
 	            <name>New tab</name>
-	            <changeValueJavaScript>checkbox</changeValueJavaScript>
+	            <changeValueJavaScript>navigateNewtab</changeValueJavaScript>
 	            <helpHtml>Sets the link opening in a new tab or in the same tab.</helpHtml>
 	        </property>
 	        
+	        <property>
+	            <key>rapidPage</key>
+	            <name>Page</name>
+	            <setConstructValueFunction>return "I";</setConstructValueFunction>
+	            <changeValueJavaScript>navigateRapid</changeValueJavaScript>
+	            <getValuesFunction>
+// return the types	            
+return [["I","Main menu"],["L","Logout"],["B","Back"]];
+				</getValuesFunction>
+	            <refreshProperties>true</refreshProperties>
+	            <helpHtml>Main menu is the index page. Both the index page and logout page can be set by custom logins.</helpHtml>
+	        </property>
+	        
 	    </properties>
-	    
+
 	    <resources>
 	    	<resource>
 	    		<type>javascript</type>
@@ -265,12 +278,29 @@ if (this.linkType == "P") {
     	return "<a id='" + this.id + "' href='#' class='link" + getStyleClasses(this) + "'>link page required</a>";
     }
     
+} else if (this.linkType == "R") {
+
+	if (this.rapidPage == "B") {
+	
+		return "<a id='" + this.id + "' href='#' onclick='window.history.back();' class='link" + getStyleClasses(this) + "'>" + text + "</a>";
+		
+	} else {
+	
+		var url = ".";
+		if (this.rapidPage == "L") url = "logout.jsp";
+		
+		return "<a id='" + this.id + "' href='" + url + "' class='link" + getStyleClasses(this) + "'>" + text + "</a>";
+	
+	}
+
 } else {
+
 	if (this.url) {		
 		return "<a id='" + this.id + "' href='" + this.url + "'" + popup + " class='link" + getStyleClasses(this) + "'>" + text + "</a>";
 	} else {
     	return "<a id='" + this.id + "' href='#' class='link" + getStyleClasses(this) + "'>link url required</a>";
     }
+    
 }
 
 	        ]]>

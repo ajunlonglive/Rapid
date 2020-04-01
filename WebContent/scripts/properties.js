@@ -3217,19 +3217,6 @@ function Property_navigateDialogue(cell, propertyObject, property, details) {
 	Property_checkbox(cell, propertyObject, property, details);
 }
 
-function Property_navigateNewtab(cell, propertyObject, property, details) {
-	//if property 'show as dialogue' is checked
-	if(propertyObject.dialogue == true || propertyObject.dialogue == "true") {
-		// remove this row
-		cell.parent().remove();
-		// stop going any further
-		return false;
-	}
-	
-	Property_checkbox(cell, propertyObject, property, details);
-
-}
-
 // this is a dialogue to specify the session variables to set when navigating
 function Property_navigationSessionVariables(cell, navigation, property, details) {
 	
@@ -3336,6 +3323,29 @@ function Property_navigationSessionVariables(cell, navigation, property, details
 		
 	}
 					
+}
+
+function Property_navigateNewtab(cell, propertyObject, property, details) {
+	//if property 'show as dialogue' is checked
+	if (propertyObject.dialogue == true || propertyObject.dialogue == "true" || propertyObject.linkType == "R" || propertyObject.navigationType == "R") {
+		// remove this row
+		cell.parent().remove();
+	} else {
+		// show the checkbox
+		Property_checkbox(cell, propertyObject, property, details);
+	}
+
+}
+
+function Property_navigateRapid(cell, propertyObject, property, details) {
+	// if the type is Rapid
+	if (propertyObject.linkType == "R" || propertyObject.navigationType == "R")	{
+		// add options
+		Property_select(cell, propertyObject, property, details);
+	} else {
+		// remove the row
+		cell.parent().remove();
+	}
 }
 
 //whether this page is simple, and no events
@@ -6616,23 +6626,30 @@ function Property_dropdownCustomValue(cell, propertyObject, property, details) {
 		// create the drop down, function for values is above.
 		Property_checkbox(cell, propertyObject, property, details);
 	} else {
-		// remove rows for custom value and its max length
+		// remove this row
 		cell.closest("tr").remove();
 	}
 }
 
-//allows users to enter their own custom value into the drop down if searching is on, and codes are off
+// allows users to enter their own custom value into the drop down if searching is on, and codes are off
 function Property_inputMaxLength(cell, propertyObject, property, details) {
 	// only if searching and custom is on
 	if (propertyObject.filter && propertyObject.customValue) {
 		// create the drop down, function for values is above.
 		Property_text(cell, propertyObject, property, details);
 	} else {
-		// remove rows for custom value and its max length
+		// remove this row
 		cell.closest("tr").remove();
 	}
 }
 
+// allows a dialogue to be cancelled by clicking its background
 function Property_dismissibleDialogue(cell, propertyObject, property, details) {
-	if (propertyObject.dialogue) Property_checkbox(cell, propertyObject, property, details);
+	// only for dialouges
+	if (propertyObject.dialogue == true || propertyObject.dialogue == "true") {
+		Property_checkbox(cell, propertyObject, property, details);
+	} else {
+		// remove this row
+		cell.closest("tr").remove();
+	}
 }
