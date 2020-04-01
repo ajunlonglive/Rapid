@@ -131,7 +131,10 @@ public class Navigate extends Action {
 			if ("B".equals(rapidPage)) {
 				// go back
 				js = "window.history.back();\n";
-			} else {
+			} else if ("C".equals(rapidPage)) {
+				// close window
+				js = "window.close();\n";
+			} else{
 				// assume we want the index page
 				String url = ".";
 				// if its the logout
