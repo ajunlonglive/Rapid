@@ -260,8 +260,8 @@ self.addEventListener("fetch", function(event) {
 									} else {
 										resolve(cachedResponse);
 									}
-								}).catch(_ => cachedResponse ? resolve(cachedResponse) : reject("Offline and nothing in cache for: " + url));
-							});
+								}).catch(_ => cachedResponse ? resolve(cachedResponse) : resolve(getFromCache(_contextPath + "offline.htm")));
+							})
 						} else {
 							return cachedResponse || freshResponseWithCachedOfflineFallback;
 						}
