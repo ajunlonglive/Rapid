@@ -104,7 +104,7 @@ self.addEventListener("fetch", function(event) {
 	if (url === _contextPath || url.endsWith("index.jsp")) {
 		event.respondWith(
 			new Promise((resolve, reject) =>
-				fetchAndCache(url)
+				fetchAndCache(url, { redirect: "manual" })
 				.then(response => resolve(response))
 				.catch(_ => resolve(getFromCache(_contextPath + "index.jsp")))
 			)
@@ -118,7 +118,7 @@ self.addEventListener("fetch", function(event) {
 	if (url.endsWith("login.jsp") || url.endsWith("logout.jsp")) {
 		event.respondWith(
 			new Promise((resolve, reject) =>
-				fetchFromNetwork(url)
+				fetchFromNetwork(url, { redirect: "manual" })
 				.then(response => resolve(response))
 				.catch(_ => resolve(getFromCache(_contextPath + "index.jsp")))
 			)
@@ -129,13 +129,13 @@ self.addEventListener("fetch", function(event) {
 	// if request is for getApps
 	if (url.endsWith("~?action=getApps")) {
 		event.respondWith(
-				new Promise((resolve, reject) =>
-					fetchFromNetwork(url, { method: "POST" })
-					.then(response => resolve(response))
-					.catch(_ => resolve(getFromCache(_contextPath + "~?action=getApps")))
-				)
-			);
-			return;
+			new Promise((resolve, reject) =>
+				fetchAndCache(url, { method: "POST", redirect: "manual" })
+				.then(response => resolve(response))
+				.catch(_ => resolve(getFromCache(_contextPath + "~?action=getApps")))
+			)
+		);
+		return;
 	}
 
 	// if request is for app
@@ -461,7 +461,7 @@ self.addEventListener('sync', function(event) {
 });
 
 
-function fetchFromNetwork(url, options = { redirect: "manual" }) {
+function fetchFromNetwork(url, options) {
 	return new Promise((resolve, reject) => {
 		fetch(url, options).then(freshResponse => {
 			if (freshResponse && (freshResponse.ok || freshResponse.type === "opaqueredirect")) {
@@ -474,9 +474,9 @@ function fetchFromNetwork(url, options = { redirect: "manual" }) {
 	});
 }
 
-function fetchAndCache(url) {
+function fetchAndCache(url, options) {
 	return new Promise((resolve, reject) => {
-		fetchFromNetwork(url)
+		fetchFromNetwork(url, options)
 		.then(freshResponse => {
 			var clonedResponse = freshResponse.clone();
 			if (freshResponse.url === url) {
