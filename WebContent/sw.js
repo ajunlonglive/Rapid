@@ -95,48 +95,38 @@ self.addEventListener("fetch", function(event) {
 	// get the url from the event request
 	var url = event.request.url;
 	
+	if (url === _contextPath) url += "index.jsp";
+	
+	// if request is for service worker
+	if (url.endsWith("sw.js")) return;
+	
+	// if request is for root, index, login, or logout
+	if (["index.jsp", "login.jsp", "logout.jsp"].some(end => url.endsWith(end)) && event.request.method === "GET") {
+		event.respondWith(
+			new Promise((resolve, reject) =>
+				fetchAndCache(url)
+				.then(response => resolve(response))
+				.catch(_ => resolve(getFromCache(_contextPath + "index.jsp")))
+			)
+		);
+		return;
+	}
+	
+	// if request is for getApps
+	// TODO
+
+	// if request is for app
+	// TODO
+
+	// if request is for other resource
+	// TODO
+	
+	// TODO: delete everything below once everything above has killed it
+	
+	
+	
 	// We only check the cache for GET requests to the Rapid server, unless it's part of what we want to refresh each time
 	if (url && url.startsWith(_contextPath) && (event.request.method === "GET" || url.endsWith("~?action=getApps"))) {
-		
-		// if request is for service worker
-		if (url.endsWith("sw.js")) return;
-		
-		// if request is for root or index
-		if (url === _contextPath || url.endsWith("index.jsp")) {
-			event.respondWith(
-				new Promise((resolve, reject) =>
-					fetchAndCache(_contextPath + "index.jsp")
-					.then(response => resolve(response))
-					.catch(_ => resolve(getFromCache(_contextPath + "index.jsp")))
-				)
-			);
-			return;
-		}
-		
-		// if request is for getApps
-		// TODO
-	
-		// if request is for login or logout
-		if (url.endsWith("login.jsp") || url.endsWith("logout.jsp")) {
-			if (event.method === "GET") {
-				event.respondWith(
-					new Promise((resolve, reject) =>
-						fetchFromNetwork(url)
-						.then(response => resolve(response))
-						.catch(_ => resolve(getFromCache(_contextPath + "index.jsp")))
-					)
-				);
-			}
-			return;
-		}
-	
-		// if request is for app
-		// TODO
-	
-		// if request is for other resource
-		// TODO
-		
-		// TODO: delete everything below once everything above has killed it
 		
 		if (url.endsWith("sw.js")) event.respondWith(fetch(event.request));
 		
@@ -172,11 +162,11 @@ self.addEventListener("fetch", function(event) {
 			// check for app updates to update cache
 			fetch(appResourcesUrl, fetchOptions)
 			.then(response => {
-				if (!response.url.endsWith("login.jsp") && !parameters.v) {
+				if (!response.url.endsWith("login.jsp")) {
 					return response.json()
 					.then(resources => {
 						_appStatus = resources.status;
-						if (resources.resources) {
+						if (resources.resources && !parameters.v) {
 							var urlsToCache = resources.resources.map(url => (_contextPath.startsWith("http") ? "" : _contextPath) + url);
 							caches.open(_swVersion + 'offline').then(cache => {
 								cache.match(urlsToCache[0]).then(response => {
