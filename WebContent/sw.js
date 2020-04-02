@@ -56,6 +56,8 @@ var _rapidResources = [
 	"styles/fonts/fontawesome/css/font-awesome.css",
 	"styles/fonts/fontawesome/fonts/fontawesome-webfont.woff",
 	"styles/fonts/fontawesome/fonts/fontawesome-webfont.ttf?v=4.2.0",
+	"styles/fonts/OpenSans-Regular.woff",
+	"styles/fonts/OpenSans-Regular.woff2",
 	"styles/fonts/rapid/font-rapid.css",
 	"index.jsp",
 	"~?action=getApps"
@@ -172,7 +174,7 @@ self.addEventListener("fetch", function(event) {
 			// check for app updates to update cache
 			fetch(appResourcesUrl, fetchOptions)
 			.then(response => {
-				if (!response.url.endsWith("login.jsp")) {
+				if (response.ok && !response.url.endsWith("login.jsp")) {
 					return response.json()
 					.then(resources => {
 						_appStatus = resources.status;
@@ -252,7 +254,7 @@ self.addEventListener("fetch", function(event) {
 						
 						if (_appStatus === "development") {
 							return new Promise((resolve, reject) => {
-								fetch(url).then(response => {
+								fetch(url, fetchOptions).then(response => {
 									if (response && (response.ok || response.type === "opaqueredirect")) {
 										resolve(response);
 									} else {
