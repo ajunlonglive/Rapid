@@ -113,7 +113,9 @@ self.addEventListener("fetch", function(event) {
 	}
 	
 	// if request is for login, or logout
-	if ((url.endsWith("login.jsp") && event.request.method === "GET") || url.endsWith("logout.jsp")) {
+	if (url.endsWith("login.jsp") && event.request.method === "POST") return;
+	
+	if (url.endsWith("login.jsp") || url.endsWith("logout.jsp")) {
 		event.respondWith(
 			new Promise((resolve, reject) =>
 				fetchFromNetwork(url)
@@ -125,7 +127,16 @@ self.addEventListener("fetch", function(event) {
 	}
 	
 	// if request is for getApps
-	// TODO
+	if (url.endsWith("~?action=getApps")) {
+		event.respondWith(
+				new Promise((resolve, reject) =>
+					fetchFromNetwork(url, { method: "POST" })
+					.then(response => resolve(response))
+					.catch(_ => resolve(getFromCache(_contextPath + "~?action=getApps")))
+				)
+			);
+			return;
+	}
 
 	// if request is for app
 	// TODO
@@ -450,9 +461,9 @@ self.addEventListener('sync', function(event) {
 });
 
 
-function fetchFromNetwork(url) {
+function fetchFromNetwork(url, options = { redirect: "manual" }) {
 	return new Promise((resolve, reject) => {
-		fetch(url, { redirect: "manual" }).then(freshResponse => {
+		fetch(url, options).then(freshResponse => {
 			if (freshResponse && (freshResponse.ok || freshResponse.type === "opaqueredirect")) {
 				resolve(freshResponse);
 			} else {
