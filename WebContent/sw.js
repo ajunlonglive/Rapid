@@ -95,31 +95,48 @@ self.addEventListener("fetch", function(event) {
 	// get the url from the event request
 	var url = event.request.url;
 	
-	
-	// if request is for root
-	if (url === _contextPath) {
-		event.respondWith(
-			new Promise((resolve, reject) =>
-				fetchAndCache(_contextPath + "index.jsp")
-				.then(response => resolve(response))
-				.catch(_ => resolve(getFromCache(_contextPath + "index.jsp")))
-			)
-		);
-		return;
-	}
-
-	// if request is for index
-	if (url.endsWith("index.jsp")) return;
-
-	// if request is for app
-	// TODO
-
-	// if request is for other resource
-	// TODO
-	
-	
 	// We only check the cache for GET requests to the Rapid server, unless it's part of what we want to refresh each time
 	if (url && url.startsWith(_contextPath) && (event.request.method === "GET" || url.endsWith("~?action=getApps"))) {
+		
+		// if request is for service worker
+		if (url.endsWith("sw.js")) return;
+		
+		// if request is for root or index
+		if (url === _contextPath || url.endsWith("index.jsp")) {
+			event.respondWith(
+				new Promise((resolve, reject) =>
+					fetchAndCache(_contextPath + "index.jsp")
+					.then(response => resolve(response))
+					.catch(_ => resolve(getFromCache(_contextPath + "index.jsp")))
+				)
+			);
+			return;
+		}
+		
+		// if request is for getApps
+		// TODO
+	
+		// if request is for login or logout
+		if (url.endsWith("login.jsp") || url.endsWith("logout.jsp")) {
+			if (event.method === "GET") {
+				event.respondWith(
+					new Promise((resolve, reject) =>
+						fetchFromNetwork(url)
+						.then(response => resolve(response))
+						.catch(_ => resolve(getFromCache(_contextPath + "index.jsp")))
+					)
+				);
+			}
+			return;
+		}
+	
+		// if request is for app
+		// TODO
+	
+		// if request is for other resource
+		// TODO
+		
+		// TODO: delete everything below once everything above has killed it
 		
 		if (url.endsWith("sw.js")) event.respondWith(fetch(event.request));
 		
@@ -431,16 +448,27 @@ self.addEventListener('sync', function(event) {
 });
 
 
-function fetchAndCache(url) {
+function fetchFromNetwork(url) {
 	return new Promise((resolve, reject) => {
 		fetch(url, { redirect: "manual" }).then(freshResponse => {
-			var clonedResponse = freshResponse.clone();
-			if (freshResponse && freshResponse.ok || freshResponse.type === "opaqueredirect") {
+			if (freshResponse && (freshResponse.ok || freshResponse.type === "opaqueredirect")) {
+				resolve(freshResponse);
+			} else {
+				reject("Fetch failed for: " + url);
+			}
+		})
+		.catch(reason => reject(reason));
+	});
+}
+
+function fetchAndCache(url) {
+	return new Promise((resolve, reject) => {
+		fetchFromNetwork(url)
+		.then(freshResponse => {
+			if (freshResponse.url === url) {
 				caches.open(_swVersion + 'offline').then(cache =>
 					cache.put(url, clonedResponse)
 				);
-			} else {
-				reject("Fetch failed: response was not ok.");
 			}
 			resolve(freshResponse);
 		})
