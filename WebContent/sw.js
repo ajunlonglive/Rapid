@@ -95,16 +95,26 @@ self.addEventListener("fetch", function(event) {
 	// get the url from the event request
 	var url = event.request.url;
 	
-	if (url === _contextPath) url += "index.jsp";
-	
 	// if request is for service worker
 	if (url.endsWith("sw.js")) return;
 	
-	// if request is for root, index, login, or logout
-	if (["index.jsp", "login.jsp", "logout.jsp"].some(end => url.endsWith(end)) && event.request.method === "GET") {
+	// if request is for root or index
+	if (url === _contextPath || url.endsWith("index.jsp")) {
 		event.respondWith(
 			new Promise((resolve, reject) =>
 				fetchAndCache(url)
+				.then(response => resolve(response))
+				.catch(_ => resolve(getFromCache(_contextPath + "index.jsp")))
+			)
+		);
+		return;
+	}
+	
+	// if request is for login, or logout
+	if ((url.endsWith("login.jsp") && event.request.method === "GET") || url.endsWith("logout.jsp")) {
+		event.respondWith(
+			new Promise((resolve, reject) =>
+				fetchFromNetwork(url)
 				.then(response => resolve(response))
 				.catch(_ => resolve(getFromCache(_contextPath + "index.jsp")))
 			)
@@ -455,6 +465,7 @@ function fetchAndCache(url) {
 	return new Promise((resolve, reject) => {
 		fetchFromNetwork(url)
 		.then(freshResponse => {
+			var clonedResponse = freshResponse.clone();
 			if (freshResponse.url === url) {
 				caches.open(_swVersion + 'offline').then(cache =>
 					cache.put(url, clonedResponse)
