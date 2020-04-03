@@ -208,6 +208,8 @@ div.gridScrollBody table.grid tr:first-child {
 				<contents>
 	                <![CDATA[
 	                
+var _gridLoaders = {};	                
+	                
 function getGridDataStoreData(id, details) {
 	data = null;
 	dataString = null;
@@ -791,9 +793,16 @@ return data;
 
 		<setDataJavaScript>
 	        <![CDATA[
-	        
-clearTimeout(window[id + "timeout"]);
-window[id + "timeout"] = undefined;
+
+// clear any existing timeouts for the grid
+if (_gridLoaders[id] && _gridLoaders[id].timeouts && _gridLoaders[id].timeouts.length > 0) {
+	for (var i in _gridLoaders[id].timeouts) {
+		clearTimeout(_gridLoaders[id].timeouts[i]);
+	}
+}
+
+// create an empty load
+_gridLoaders[id] = {timeouts:[]};
 
 // get the grid control	        
 var grid = $("#" + id);
@@ -822,6 +831,9 @@ if (data !== undefined) {
 	
 		// assume the grid has no row html 
 		var rowsHtml = "";
+		
+		// retain number of rows we're about to load
+		_gridLoaders[id].rows = data.rows.length;
 		
 		// check we have details and columns
 		if (details && details.columns && data.fields) {
@@ -987,8 +999,10 @@ if (data !== undefined) {
 		
 				if (data.rows[rowIndex]) {
 					var timeoutId = setTimeout(function() { addRows(grid, data, rowIndex + 1); });
-					window[id + "timeout"] = timeoutId;
+					_gridLoaders[id].timeouts.push(timeoutId);
 				} else {
+					_gridLoaders[id].loaded = true;
+					_gridLoaders[id].timeouts = [];
 					if (window["Event_gridLoaded_" + id]) window["Event_gridLoaded_" + id](ev);
 				}
 				
@@ -1084,8 +1098,10 @@ if (data !== undefined) {
 		        
 		        if (rows[rowIndex]) {
 		        	var timeoutId = setTimeout(function() { addRowsSimple(grid, rows, rowIndex + 1); });
-		        	window[id + "timeout"] = timeoutId;
+		        	_gridLoaders[id].timeouts.push(timeoutId);
 		        } else {
+		        	_gridLoaders[id].loaded = true;
+		        	_gridLoaders[id].timeouts = [];
                     if (window["Event_gridLoaded_" + id]) window["Event_gridLoaded_" + id](ev);
                 }
                 
@@ -1311,11 +1327,6 @@ if (target.is("td:first-child") && target.children("input.gridMultiSelect")[0]) 
 			<event>
 				<type>gridLoaded</type>
 				<name>Loaded</name>
-				<filterFunction>
-<![CDATA[
-
-]]>	                
-	            </filterFunction>
 			</event>
 		</events>
 
@@ -1855,7 +1866,7 @@ if (data) {
 	if (grid) grid.find("tr:eq(" + selectedRowNumber + ")").addClass("rowSelect");
 }
 gridData.selectedRowNumber = selectedRowNumber;	
-saveGridDataStoreData(id, details, gridData);	            
+saveGridDataStoreData(id, details, gridData);
 	   	            ]]>
 	   	        </setPropertyJavaScript>
 			</runtimeProperty>
@@ -1865,20 +1876,24 @@ saveGridDataStoreData(id, details, gridData);
 				<name>Row count</name>
 				<getPropertyFunction>
 			        <![CDATA[
-if (details && details.dataStorageType) {
-	var gridData = getGridDataStoreData(id, details);
-	if (gridData && gridData.rows) {
-		return gridData.rows.length;
+if (!_gridLoaders[id] || _gridLoaders[id].loaded) {
+	if (details && details.dataStorageType) {
+		var gridData = getGridDataStoreData(id, details);
+		if (gridData && gridData.rows) {
+			return gridData.rows.length;
+		} else {
+			return 0;
+		}
 	} else {
-		return 0;
+		// get the grid
+		var grid = $("#" + id);
+		// make sure it's a table
+		if (!grid.is("table")) grid = grid.find("table").last();
+		// return number of rows
+		return grid.find("tr").length - 1;
 	}
 } else {
-	// get the grid
-	var grid = $("#" + id);
-	// make sure it's a table
-	if (!grid.is("table")) grid = grid.find("table").last();
-	// return number of rows
-	return grid.find("tr").length - 1;
+	return _gridLoaders[id].rows;
 }
 			        ]]>	  	   	            
 	   	        </getPropertyFunction>
