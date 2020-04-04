@@ -827,7 +827,7 @@ if (data !== undefined) {
 	data = makeDataObject(data, field);
 	
 	// if we have some rows to load
-	if (data && data.rows) {
+	if (data && data.rows && data.rows.length > 0) {
 	
 		// assume the grid has no row html 
 		var rowsHtml = "";
