@@ -574,7 +574,7 @@ public class Database extends Action {
 					// add indent
 					js += "      ";
 					// if there are child queries, add child queries check
-					if (childQueries) js += "if (data.fields && data.fields.length > 0) {\n        if (data.fields[0].indexOf('childAction') == 0) {\n          Action_database(ev,'" + getId() + "', {sequence:data.sequence}, outputs);\n        } else {\n          ";
+					if (childQueries) js += "if (data.fields && data.fields.length > 0) {\n        if (data.fields[0].indexOf('childAction') == 0) {\n          Action_database(ev,'" + getId() + "', {sequence:data.sequence, fields:[], rows:[]}, outputs);\n        } else {\n          ";
 					// send them and the data to the database action (unless there are children and this parent has been skipped)
 					js += "Action_database(ev,'" + getId() + "', data, outputs);\n";
 					// close the extra child queries check
