@@ -96,6 +96,7 @@ self.addEventListener("fetch", function(event) {
 	
 	// get the url from the event request
 	var url = event.request.url;
+	const method = event.request.method;
 	
 	// if request is for service worker
 	if (url.endsWith("sw.js")) return;
@@ -104,8 +105,8 @@ self.addEventListener("fetch", function(event) {
 	if (url === _contextPath || url.endsWith("index.jsp")) {
 		event.respondWith(
 			new Promise((resolve, reject) =>
-				fetchAndCache(url, { redirect: "manual" })
-				.then(response => resolve(response))
+				fetchAndCache(_contextPath + "index.jsp", { redirect: "manual" })
+				.then(resolve)
 				.catch(_ => resolve(getFromCache(_contextPath + "index.jsp")))
 			)
 		);
@@ -113,13 +114,11 @@ self.addEventListener("fetch", function(event) {
 	}
 	
 	// if request is for login, or logout
-	if (url.endsWith("login.jsp") && event.request.method === "POST") return;
-	
-	if (url.endsWith("login.jsp") || url.endsWith("logout.jsp")) {
+	if ((url.endsWith("login.jsp") && method === "GET") || url.endsWith("logout.jsp")) {
 		event.respondWith(
 			new Promise((resolve, reject) =>
-				fetchFromNetwork(url, { redirect: "manual" })
-				.then(response => resolve(response))
+				fetchOrReject(url, { redirect: "manual" })
+				.then(resolve)
 				.catch(_ => resolve(getFromCache(_contextPath + "index.jsp")))
 			)
 		);
@@ -131,18 +130,82 @@ self.addEventListener("fetch", function(event) {
 		event.respondWith(
 			new Promise((resolve, reject) =>
 				fetchAndCache(url, { method: "POST", redirect: "manual" })
-				.then(response => resolve(response))
+				.then(resolve)
 				.catch(_ => resolve(getFromCache(_contextPath + "~?action=getApps")))
 			)
 		);
 		return;
 	}
-
+	
 	// if request is for app
-	// TODO
-
-	// if request is for other resource
-	// TODO
+	const prettyAppUrlParts = url.match(_contextPath.replace(/\//g, "\\/") + "(\\w+)$");
+	const prettyAppName = prettyAppUrlParts && prettyAppUrlParts[1];
+	
+	const appName = prettyAppName || getUrlParameter(url, "a");
+	/*
+	// if initial app request
+	if (prettyAppName) {
+		const appResourcesUrl = _contextPath + "~?a=" + prettyAppName + "&action=resources";
+		
+		fetchOrReject(appResourcesUrl)
+		.then(response => {
+			if (!response.url.endsWith("login.jsp")) {
+				return response.json()
+				.then(json => {
+					_appStatus = json.status;
+					removeOtherAppVersionsFromCache(json.id, json.version);
+					const appResourceUrls = json.resources.map(qualify);
+					return addToCache(appResourceUrls);
+				})
+			}
+		});
+	}
+	*/
+	const urlTailParts = url.match(_contextPath.replace(/\//g, "\\/") + "(.*)");
+	const urlTail = urlTailParts && urlTailParts[1];
+	
+	const strippedUrl = url.replace(/(p=P\d+).*$/, "$1");
+	/*
+	// if request is for app
+	if (appName) {
+		
+		if (_appStatus === "developer") {
+			event.respondWith(
+				new Promise((resolve, reject) =>
+					fetchAndCache(strippedAppUrl, { redirect: "manual" })
+					.then(resolve)
+					.catch(_ => resolve(getFromCache(strippedAppUrl)))
+				)
+			);
+		} else {
+			const freshResponse = fetchAndCache(strippedAppUrl, { redirect: "manual" })
+			event.respondWith(
+				new Promise((resolve, reject) =>
+					getFromCache(strippedAppUrl)
+					.then(resolve)
+					.catch(_ => {
+						freshResponse
+						.then(resolve)
+						.catch(_ => resolve(getFromCache(_contextPath + "offline.jsp")))
+					})
+				)
+			)
+		}
+		return;
+	}
+	*/
+	// if request is for other resource to cache
+	if (_rapidResources.concat(_rapidResourceFolders).includes(urlTail)) {
+		const freshResponse = fetchAndCache(urlTail, { redirect: "follow", mode: "no-cors" });
+		event.respondWith(
+			new Promise(resolve => {
+				getFromCache(urlTail)
+				.then(resolve)
+				.catch(_ => resolve(freshResponse))
+			})
+		)
+		return;
+	}
 	
 	// TODO: delete everything below once everything above has killed it
 	
@@ -174,7 +237,7 @@ self.addEventListener("fetch", function(event) {
 		});
 		
 		var altUrlComponents = url.match(_contextPath.replace(/\//g, "\\/") + "(\\w+)$");
-		var altUrlAppId = altUrlComponents && altUrlComponents[1]
+		var altUrlAppId = altUrlComponents && altUrlComponents[1];
 		var appId = parameters.a || altUrlAppId;
 		
 		// if requesting an app
@@ -323,7 +386,7 @@ function updateCache(resourcesToCache) {
 		return Promise.all(
 			// loop the resources array passing in the url
 			resourcesToCache.map(function (url) {
-				var fetchOptions = { redirect: "manual" };
+				var fetchOptions = { redirect: "manual", mode: "no-cors" };
 				if (url.endsWith("~?action=getApps")) fetchOptions.method = "POST";
 				// fetch the url (we do this rather than use the add method, so we can check the response codes
 				fetch(url, fetchOptions)
@@ -382,7 +445,7 @@ self.addEventListener("activate", function(event) {
 function removeAppResources(appId) {
 	
 	var appFilter = key =>
-		key.match(_contextPath.replace(/\//g, "\\/") + "appId$")
+		key.match(_contextPath.replace(/\//g, "\\/") + appId + "$")
 		|| key.includes("a=" + appId)
 		|| key.includes("applications/" + appId);
 	
@@ -461,7 +524,7 @@ self.addEventListener('sync', function(event) {
 });
 
 
-function fetchFromNetwork(url, options) {
+function fetchOrReject(url, options) {
 	return new Promise((resolve, reject) => {
 		fetch(url, options).then(freshResponse => {
 			if (freshResponse && (freshResponse.ok || freshResponse.type === "opaqueredirect")) {
@@ -470,15 +533,15 @@ function fetchFromNetwork(url, options) {
 				reject("Fetch failed for: " + url);
 			}
 		})
-		.catch(reason => reject(reason));
+		.catch(reject);
 	});
 }
 
 function fetchAndCache(url, options) {
 	return new Promise((resolve, reject) => {
-		fetchFromNetwork(url, options)
+		fetchOrReject(url, options)
 		.then(freshResponse => {
-			var clonedResponse = freshResponse.clone();
+			const clonedResponse = freshResponse.clone();
 			if (freshResponse.url === url) {
 				caches.open(_swVersion + 'offline').then(cache =>
 					cache.put(url, clonedResponse)
@@ -486,7 +549,7 @@ function fetchAndCache(url, options) {
 			}
 			resolve(freshResponse);
 		})
-		.catch(reason => reject(reason));
+		.catch(reject);
 	});
 }
 
@@ -502,4 +565,34 @@ function getFromCache(url) {
 			}
 		})
 	});
+}
+
+function addToCache(urls) {
+	return caches.open(_swVersion + 'offline')
+	.then(cache =>
+		cache.addAll(urls)
+	);
+}
+
+function removeOtherAppVersionsFromCache(appName, version) {
+	return caches.open(_swVersion + 'offline')
+	.then(cache => cache.keys())
+	.then(keys =>
+		keys.filter(key => {
+			const a = getUrlParameter(key, "a");
+			const v = getUrlParameter(key, "v");
+			return a && a === appName && (!v || v !== version);
+		})
+		.map(key => cache.delete(key))
+	);
+}
+
+function qualify(url) {
+	if (!url.startsWith("http")) url = _contextPath + url;
+	return url;
+}
+
+function getUrlParameter(url, parameterName) {
+	const matches = url.match("[?&]" + parameterName + "=([^&]+)[&$]");
+	return matches && matches[1];
 }
