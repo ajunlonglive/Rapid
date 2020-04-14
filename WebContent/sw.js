@@ -386,7 +386,7 @@ function updateCache(resourcesToCache) {
 		return Promise.all(
 			// loop the resources array passing in the url
 			resourcesToCache.map(function (url) {
-				var fetchOptions = { redirect: "manual", mode: "no-cors" };
+				var fetchOptions = { redirect: "follow", mode: "no-cors" };
 				if (url.endsWith("~?action=getApps")) fetchOptions.method = "POST";
 				// fetch the url (we do this rather than use the add method, so we can check the response codes
 				fetch(url, fetchOptions)
