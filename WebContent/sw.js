@@ -193,7 +193,7 @@ self.addEventListener("fetch", function(event) {
 		}
 		return;
 	}
-	*/
+	
 	// if request is for other resource to cache
 	if (_rapidResources.concat(_rapidResourceFolders).includes(urlTail)) {
 		const freshResponse = fetchAndCache(urlTail, { redirect: "follow", mode: "no-cors" });
@@ -206,7 +206,7 @@ self.addEventListener("fetch", function(event) {
 		)
 		return;
 	}
-	
+	*/
 	// TODO: delete everything below once everything above has killed it
 	
 	
