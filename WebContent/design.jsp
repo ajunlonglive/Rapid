@@ -245,12 +245,6 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 			<div id="propertiesTitlebar">
 			
 				<div id="propertiesPanelPin"></div>
-				
-			</div>
-			
-			<div id="propertiesPanelSize" ></div>
-																					
-			<div id="propertiesPanelInner">
 			
 				<div class="untilsPanelDiv">
 							
@@ -291,7 +285,13 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 						<button id="copy" class="buttonLeft" title="copy this control">&nbsp;copy</button>
 						<button id="paste" class="buttonRight" title="paste this control">paste</button>
 					</div>								
-				</div>		
+				</div>	
+				
+			</div>
+			
+			<div id="propertiesPanelSize" ></div>
+																					
+			<div id="propertiesPanelInner">	
 								
 				<h2 id="propertiesHeader">Properties  <i id="helpProperties" class="headerHelp glyph fa hintIcon"></i><i class="headerToggle fa"></i></h2>
 				<div>
