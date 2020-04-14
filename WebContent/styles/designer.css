@@ -462,6 +462,10 @@ div#propertiesPanelInner, div#controlPanelInner {
 	text-align: center;
 }
 
+div#propertiesPanelInner {
+	margin: 92px 0 30px;
+}
+
 .propertiesPanelDiv {
 	padding-top:0px;
 }
@@ -1100,13 +1104,12 @@ select optgroup {
   font-family: 'Open Sans', Arial;
 }
 
-#propertiesPanel #propertiesPanelInner .untilsPanelDiv .buttons button {
+.untilsPanelDiv .buttons button {
     padding: 0 6px;
     height: 24px;
 }
 
 #propertiesTitlebar, #controlPanelTitlebar {
-	height: 30px;
 	width: inherit;
 	position: fixed;
 	margin-left: -10px;
@@ -1114,6 +1117,16 @@ select optgroup {
 	border-bottom: 1px solid #777;
 	z-index: 1;
 	cursor: move;
+	
+}
+
+#propertiesTitlebar {
+	padding: 5px 0;
+	text-align: center;
+}
+
+#controlPanelTitlebar {
+	height: 30px;
 }
 
 .untilsPanelDiv {
