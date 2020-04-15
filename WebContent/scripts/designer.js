@@ -4458,9 +4458,14 @@ function windowResize(ev) {
 		// adjust iframe position, width and height (less border)
 		_pageIframe.css({
 			left: _panelPinnedOffset,
-			width: width - _panelPinnedOffset - 1,
-			height: height - 2
+			height: height
 		});
+		setTimeout(function() {
+			_pageIframe.css({
+				width: _window.width() - _panelPinnedOffset
+			});
+		});
+		
 		// adjust the cover to be full-screen
 		_designCover.css({
 			position: "fixed",
