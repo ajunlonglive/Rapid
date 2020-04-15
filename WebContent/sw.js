@@ -160,12 +160,12 @@ self.addEventListener("fetch", function(event) {
 			}
 		});
 	}
-	*/
+	
 	const urlTailParts = url.match(_contextPath.replace(/\//g, "\\/") + "(.*)");
 	const urlTail = urlTailParts && urlTailParts[1];
 	
 	const strippedUrl = url.replace(/(p=P\d+).*$/, "$1");
-	/*
+	
 	// if request is for app
 	if (appName) {
 		
