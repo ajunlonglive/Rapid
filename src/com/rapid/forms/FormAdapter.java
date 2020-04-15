@@ -2656,25 +2656,31 @@ public abstract class FormAdapter {
 						try {
 							// get the check response
 							String checkResponse = Http.post("https://www.google.com/recaptcha/api/siteverify", "secret=" + secret + "&response=" + recaptcha);
-							// read it into json
-							JSONObject jsonCheck = new JSONObject(checkResponse);
-							// check the success
-							if (jsonCheck.optBoolean("success")) {
-								// update the id to the reCAPTCHA control
-								passRecapture = true;
-								// record the control value as true
-								pageControlValues.add(control.getId(), "true");
-								// we're done
-								break;
+							// make sure the respons looks like JSON
+							if (checkResponse != null && checkResponse.trim().startsWith("{")) {
+								// read it into json
+								JSONObject jsonCheck = new JSONObject(checkResponse);
+								// check the success
+								if (jsonCheck.optBoolean("success")) {
+									// update the id to the reCAPTCHA control
+									passRecapture = true;
+									// record the control value as true
+									pageControlValues.add(control.getId(), "true");
+									// we're done
+									break;
+								} else {
+									// get any error codes
+									JSONArray jsonErrorCodes = jsonCheck.optJSONArray("error-codes");
+									// assume no errors
+									String errorCodes = "no errors";
+									// set if we got some
+									if (jsonErrorCodes != null) errorCodes = jsonErrorCodes.toString();
+									// log the issue
+									_logger.info("reCAPTCHA check failed for form " + formId + " page " + page.getId() + " : " + errorCodes);
+								}
 							} else {
-								// get any error codes
-								JSONArray jsonErrorCodes = jsonCheck.optJSONArray("error-codes");
-								// assume no errors
-								String errorCodes = "no errors";
-								// set if we got some
-								if (jsonErrorCodes != null) errorCodes = jsonErrorCodes.toString();
 								// log the issue
-								_logger.info("reCAPTCHA check failed for form " + formId + " page " + page.getId() + " : " + errorCodes);
+								_logger.info("reCAPTCHA check failed for form " + formId + " page " + page.getId() + " : " + checkResponse);
 							}
 						} catch (Exception ex) {
 							_logger.error("Error checking reCAPTCHA for form " + formId + " page " + page.getId() + " : " + ex.getMessage(), ex);
