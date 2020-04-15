@@ -307,6 +307,10 @@ self.addEventListener("fetch", function(event) {
 									} else {
 										resolve(freshResponse);
 									}
+								} else if (freshResponse.status === 404) {
+									fetch(_contextPath + "page404.htm", { redirect: "follow" }).then(resolve);
+								} else if (freshResponse.status === 500) {
+									fetch(_contextPath + "page500.htm", { redirect: "follow" }).then(resolve);
 								} else if (!_trimUrls.some(ext => url.endsWith(ext))) {
 									var fallback = _contextPath + (url === _contextPath ? "index.jsp" : "offline.htm");
 									cache.match(fallback).then(page =>
@@ -331,6 +335,10 @@ self.addEventListener("fetch", function(event) {
 								fetch(url, fetchOptions).then(response => {
 									if (response && (response.ok || response.type === "opaqueredirect")) {
 										resolve(response);
+									} else if (response.status === 404) {
+										fetch(_contextPath + "page404.htm").then(resolve);
+									} else if (response.status === 500) {
+										fetch(_contextPath + "page500.htm").then(resolve);
 									} else {
 										resolve(cachedResponse);
 									}
