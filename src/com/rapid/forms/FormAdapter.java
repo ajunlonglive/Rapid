@@ -2490,6 +2490,8 @@ public abstract class FormAdapter {
 			String[] hiddenControls = null;
 			// assume no reCaptcha value
 			String recaptcha = null;
+			// get the app
+			Application app = rapidRequest.getApplication();
 			// get the page
 			Page page = rapidRequest.getPage();
 			// assume not passed CSRF
@@ -2656,7 +2658,7 @@ public abstract class FormAdapter {
 						try {
 							// get the check response
 							String checkResponse = Http.post("https://www.google.com/recaptcha/api/siteverify", "secret=" + secret + "&response=" + recaptcha);
-							// make sure the respons looks like JSON
+							// make sure the response looks like JSON
 							if (checkResponse != null && checkResponse.trim().startsWith("{")) {
 								// read it into json
 								JSONObject jsonCheck = new JSONObject(checkResponse);
@@ -2668,22 +2670,14 @@ public abstract class FormAdapter {
 									pageControlValues.add(control.getId(), "true");
 									// we're done
 									break;
-								} else {
-									// get any error codes
-									JSONArray jsonErrorCodes = jsonCheck.optJSONArray("error-codes");
-									// assume no errors
-									String errorCodes = "no errors";
-									// set if we got some
-									if (jsonErrorCodes != null) errorCodes = jsonErrorCodes.toString();
-									// log the issue
-									_logger.info("reCAPTCHA check failed for form " + formId + " page " + page.getId() + " : " + errorCodes);
 								}
-							} else {
+							}
+							if (!passRecapture) {
 								// log the issue
-								_logger.info("reCAPTCHA check failed for form " + formId + " page " + page.getId() + " : " + checkResponse);
+								_logger.info("reCAPTCHA check failed for form " + formId + " app " + app.getId() + " page " + page.getId() + " : " + checkResponse);
 							}
 						} catch (Exception ex) {
-							_logger.error("Error checking reCAPTCHA for form " + formId + " page " + page.getId() + " : " + ex.getMessage(), ex);
+							_logger.error("Error checking reCAPTCHA for form " + formId + " app " + app.getId() + " page " + page.getId() + " : " + ex.getMessage(), ex);
 						}
 					}
 					// error is we didn't pass recapture
