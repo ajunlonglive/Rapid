@@ -452,13 +452,16 @@ public class Rapid extends RapidHttpServlet {
 							jsonResponse.put("status", status);
 
 							// put whether latest version
-							jsonResponse.put("latest", app.getVersion().equals(rapidRequest.getRapidServlet().getApplications().get(app.getId()).getVersion()));
+							jsonResponse.put("latest", app.getVersion().equals(getApplications().get(app.getId()).getVersion()));
 
-							// add rapid.js for app
-							jsonResources.put("applications/" + app.getId() + "/" + app.getVersion() + "/rapid.js");
+							// get a file of the application files
+							File resourcesFolder = new File(getServletContext().getRealPath("/") + "/applications/" + app.getId() + "/" + app.getVersion());
 
-							// add rapid.css for app
-							jsonResources.put("applications/" + app.getId() + "/" + app.getVersion() + "/rapid.css");
+							// loop it's files - this adds rapid.css, rapid.js, their mins, and images etc.
+							for (File resourceFile : resourcesFolder.listFiles()) {
+								// add this resource
+								jsonResources.put("applications/" + app.getId() + "/" + app.getVersion() + "/" + resourceFile.getName());
+							}
 
 							// get pages
 							Pages pages = app.getPages();
