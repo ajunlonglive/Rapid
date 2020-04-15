@@ -2522,7 +2522,7 @@ $(document).ready( function() {
 			        	}
 			        	
 			        	// refresh the page map to take the lock into account
-			        	buildPageMap();
+			        	buildPageMap(!_locked);
 			        	
 			        	// show the page object
 			        	_page.object.show();	
