@@ -1214,7 +1214,7 @@ input[type=checkbox]:checked:after {
   content: '';
   position: absolute;
   margin-top: -12.5px !important;
-  margin-left: 1px !important;
+  margin-left: 4px !important;
   border-radius: 2px;
   border-right: 3px solid #4D0000;
   border-bottom: 3px solid #4D0000;
