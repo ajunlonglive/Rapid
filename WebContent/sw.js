@@ -113,8 +113,20 @@ self.addEventListener("fetch", function(event) {
 		return;
 	}
 	
-	// if request is for login, or logout
-	if ((url.endsWith("login.jsp") && method === "GET") || url.endsWith("logout.jsp")) {
+	// if request is for login
+	if (url.endsWith("login.jsp") && method === "GET") {
+		event.respondWith(
+			new Promise((resolve, reject) =>
+				fetchOrReject(url, { redirect: "manual" })
+				.then(resolve)
+				.catch(_ => resolve(getFromCache(_contextPath + "offline.htm")))
+			)
+		);
+		return;
+	}
+	
+	// if request is for logout
+	if (url.endsWith("logout.jsp")) {
 		event.respondWith(
 			new Promise((resolve, reject) =>
 				fetchOrReject(url, { redirect: "manual" })
@@ -131,84 +143,23 @@ self.addEventListener("fetch", function(event) {
 			new Promise((resolve, reject) =>
 				fetchAndCache(url, { method: "POST", redirect: "manual" })
 				.then(resolve)
-				.catch(_ => resolve(getFromCache(_contextPath + "~?action=getApps")))
+				.catch(_ => resolve(
+					getFromCache(_contextPath + "~?action=getApps")
+					.then(response => response.json())
+					.then(apps =>
+						Promise.all(apps.map(app =>
+							isAppInCache(app.id).then(appIsCached => {
+								app.isCached = appIsCached;
+								return app;
+							})
+						))
+					)
+					.then(apps => new Response(new Blob([JSON.stringify(apps)], {type : "application/json"}), { statusText: "OK", url: _contextPath + "~?action=getApps" }))
+				))
 			)
 		);
 		return;
 	}
-	
-	// if request is for app
-	const prettyAppUrlParts = url.match(_contextPath.replace(/\//g, "\\/") + "(\\w+)$");
-	const prettyAppName = prettyAppUrlParts && prettyAppUrlParts[1];
-	
-	const appName = prettyAppName || getUrlParameter(url, "a");
-	/*
-	// if initial app request
-	if (prettyAppName) {
-		const appResourcesUrl = _contextPath + "~?a=" + prettyAppName + "&action=resources";
-		
-		fetchOrReject(appResourcesUrl)
-		.then(response => {
-			if (!response.url.endsWith("login.jsp")) {
-				return response.json()
-				.then(json => {
-					_appStatus = json.status;
-					removeOtherAppVersionsFromCache(json.id, json.version);
-					const appResourceUrls = json.resources.map(qualify);
-					return addToCache(appResourceUrls);
-				})
-			}
-		});
-	}
-	
-	const urlTailParts = url.match(_contextPath.replace(/\//g, "\\/") + "(.*)");
-	const urlTail = urlTailParts && urlTailParts[1];
-	
-	const strippedUrl = url.replace(/(p=P\d+).*$/, "$1");
-	
-	// if request is for app
-	if (appName) {
-		
-		if (_appStatus === "developer") {
-			event.respondWith(
-				new Promise((resolve, reject) =>
-					fetchAndCache(strippedAppUrl, { redirect: "manual" })
-					.then(resolve)
-					.catch(_ => resolve(getFromCache(strippedAppUrl)))
-				)
-			);
-		} else {
-			const freshResponse = fetchAndCache(strippedAppUrl, { redirect: "manual" })
-			event.respondWith(
-				new Promise((resolve, reject) =>
-					getFromCache(strippedAppUrl)
-					.then(resolve)
-					.catch(_ => {
-						freshResponse
-						.then(resolve)
-						.catch(_ => resolve(getFromCache(_contextPath + "offline.jsp")))
-					})
-				)
-			)
-		}
-		return;
-	}
-	
-	// if request is for other resource to cache
-	if (_rapidResources.concat(_rapidResourceFolders).includes(urlTail)) {
-		const freshResponse = fetchAndCache(urlTail, { redirect: "follow", mode: "no-cors" });
-		event.respondWith(
-			new Promise(resolve => {
-				getFromCache(urlTail)
-				.then(resolve)
-				.catch(_ => resolve(freshResponse))
-			})
-		)
-		return;
-	}
-	*/
-	// TODO: delete everything below once everything above has killed it
-	
 	
 	
 	// We only check the cache for GET requests to the Rapid server, unless it's part of what we want to refresh each time
@@ -523,14 +474,6 @@ self.addEventListener('message', function(event) {
     
 });
 
-self.addEventListener('sync', function(event) {
-	console.log("WORKER: heard sync event");
-	
-	event.waitUntil(
-		(() => {})()
-	);
-});
-
 
 function fetchOrReject(url, options) {
 	return new Promise((resolve, reject) => {
@@ -587,11 +530,22 @@ function removeOtherAppVersionsFromCache(appName, version) {
 	.then(cache => cache.keys())
 	.then(keys =>
 		keys.filter(key => {
-			const a = getUrlParameter(key, "a");
-			const v = getUrlParameter(key, "v");
+			const a = getUrlParameter(key.url, "a");
+			const v = getUrlParameter(key.url, "v");
 			return a && a === appName && (!v || v !== version);
 		})
 		.map(key => cache.delete(key))
+	);
+}
+
+function isAppInCache(appName) {
+	return caches.open(_swVersion + 'offline')
+	.then(cache => cache.keys())
+	.then(keys =>
+		!!keys.find(key => {
+			const a = getUrlParameter(key.url, "a");
+			return a && a === appName;
+		})
 	);
 }
 

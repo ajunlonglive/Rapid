@@ -172,10 +172,6 @@ section:hover {
 	text-decoration: none;
 }
 
-.body a:hover { 
-	text-decoration: underline;
-}
-
 .body a span { 
 	padding: 20px;
 }
@@ -235,13 +231,13 @@ p.message a{
 }
 
 .apps li {
-	padding: 5px;
+	padding: 10px 5px;
 	background: #2c3035;
-	margin-bottom: 10px;
+	margin-bottom: 2px;
 }
 
 .apps li:hover {
-	background-color: #2a2d32;
+	background: #3c4045;
 }
 
 div.title {
@@ -313,4 +309,8 @@ div.fa-stack i.fa-stack-1x {
 .addButton {
 	display: none;
 	margin-top: 40px;
+}
+
+.appCached > li {
+	background: #4c5055;
 }
