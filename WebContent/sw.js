@@ -143,20 +143,18 @@ self.addEventListener("fetch", function(event) {
 			new Promise((resolve, reject) =>
 				fetchAndCache(url, { method: "POST", redirect: "manual" })
 				.then(resolve)
-				.catch(_ => resolve(
-					getFromCache(_contextPath + "~?action=getApps")
-					.then(response => response.json())
-					.then(apps =>
-						Promise.all(apps.map(app =>
-							isAppInCache(app.id).then(appIsCached => {
-								app.isCached = appIsCached;
-								return app;
-							})
-						))
-					)
-					.then(apps => new Response(new Blob([JSON.stringify(apps)], {type : "application/json"}), { statusText: "OK", url: _contextPath + "~?action=getApps" }))
+				.catch(_ => resolve(getFromCache(_contextPath + "~?action=getApps")))
+			)
+			.then(response => response.json())
+			.then(apps =>
+				Promise.all(apps.map(app =>
+					isAppInCache(app.id).then(appIsCached => {
+						app.isCached = appIsCached;
+						return app;
+					})
 				))
 			)
+			.then(apps => new Response(new Blob([JSON.stringify(apps)], {type : "application/json"}), { statusText: "OK", url: _contextPath + "~?action=getApps" }))
 		);
 		return;
 	}
