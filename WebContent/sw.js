@@ -101,6 +101,15 @@ self.addEventListener("fetch", function(event) {
 	// if request is for service worker
 	if (url.endsWith("sw.js")) return;
 	
+	// if request is for designer
+	if (url === _contextPath + "designer" || url.includes("a=designer")) return;
+	
+	// if request is for admin
+	if (url === _contextPath + "rapid" || url.includes("a=rapid")) return;
+	
+	// if request is for admin
+	if (url.includes( "designPage.jsp")) return;
+	
 	// if request is for root or index
 	if (url === _contextPath || url.endsWith("index.jsp")) {
 		event.respondWith(
