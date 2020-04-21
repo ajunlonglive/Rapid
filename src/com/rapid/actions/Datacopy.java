@@ -361,6 +361,8 @@ public class Datacopy extends Action {
 								// get any details we may have
 								String details = destinationControl.getDetailsJavaScript(application, page);
 
+								/*
+
 								// if the idParts is greater then 1 this is a set property
 								if (idParts.length > 1) {
 
@@ -380,6 +382,8 @@ public class Datacopy extends Action {
 
 								} else {
 
+									*/
+
 									// we will need an outputs array
 									outputsArray = true;
 
@@ -397,10 +401,15 @@ public class Datacopy extends Action {
 										}
 									}
 
-									// add the properties we need as a js object it will go into the array
-									jsOutputs += "{id:'" + destinationControl.getId() + "',type:'" + destinationControl.getType() + "',field:'" + destinationField + "'" + details + "},";
+									// put any property back on the id
+									if (idParts.length > 1) destinationId += "." + idParts[1];
 
+									// add the properties we need as a js object it will go into the array
+									jsOutputs += "{id:'" + destinationId + "',type:'" + destinationControl.getType() + "',field:'" + destinationField + "'" + details + "},";
+
+									/*
 								}
+								*/
 
 							}
 

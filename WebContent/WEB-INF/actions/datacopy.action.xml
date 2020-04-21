@@ -3,7 +3,7 @@
 
 <!-- 
 
-Copyright (C) 2018 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -224,14 +224,16 @@ function Action_datacopy(ev, data, outputs, changeEvents, copyType, copyData, fi
 		for (var i in outputs) {
 			var output = outputs[i];
 			var outputData = null;
+			var idParts = output.id.split(".");
+			var outputId = idParts[0];
 			switch (copyType) {
 				case "append" :	case "row" :
-					var mergeData = window["getData_" + output.type](ev, output.id, null, output.details);
+					var mergeData = window["getData_" + output.type](ev, outputId, null, output.details);
 					data = makeDataObject(data, output.field);
 					outputData = mergeDataObjects(mergeData, data, copyType, field, null, output.details);
 				break;
 				case "child" :
-					var mergeData = window["getData_" + output.type](ev, output.id, null, output.details);	
+					var mergeData = window["getData_" + output.type](ev, outputId, null, output.details);	
 					if (data && data.rows) {
 						outputData = mergeDataObjects(mergeData, data, copyType, field);
 					} else {
@@ -385,8 +387,13 @@ function Action_datacopy(ev, data, outputs, changeEvents, copyType, copyData, fi
 				break;
 				default:
 					outputData = data;
-			}	
-			window["setData_" + output.type](ev, output.id, output.field, output.details, outputData, changeEvents);
+			}
+			
+			if (idParts.length > 1) {
+				window["setProperty_" + output.type + "_" + idParts[1]](ev, outputId, output.field, output.details, outputData, changeEvents);
+			} else {
+				window["setData_" + output.type](ev, outputId, output.field, output.details, outputData, changeEvents);
+			}
 		}
 	}
 }	        ]]>
