@@ -111,3 +111,12 @@ function getDesignerUrl() {
 	}
 	return url;
 }
+
+window.addEventListener("storage", function(storageEvent) {
+	if (storageEvent.key === "pageSaved") {
+		var message = JSON.parse(storageEvent.newValue);
+		if (message.a === _appId && message.v === _appVersion && message.p === _pageId) {
+			location.reload();
+		}
+	}
+});
