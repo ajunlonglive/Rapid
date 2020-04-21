@@ -696,12 +696,19 @@ if (details) {
 		var grid = $("#" + id);
 		// promote to last in case of fixed header
 		if (!grid.is("table")) grid = grid.find("table").last();
-		// get the columns from the details
-		var columns = details.columns;
-		// if we had no columns, must be dynamic
-		if (!columns) columns = details.dynamicColumns;
 		// return null if grid is empty
-		if (!columns) return data;
+		if (grid.children().length < 1) return data;
+		// get the columns from the details
+		var columns = details.columns || details.dynamicColumns;
+		
+		
+		// if we had no columns, must be dynamic, read them from the first row cell contents
+		if (!columns) columns = grid.find("tr").first().children().map(function(field) {
+			var f = $(this).text(); 
+			return { visible: true, field: f }; 
+		});
+		
+		// if a field was specified
 		if (field) {
 			var row = getGridSelectedRow(id, ev);
 			if (row[0]) {
