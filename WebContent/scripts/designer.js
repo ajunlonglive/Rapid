@@ -2908,6 +2908,8 @@ $(document).ready( function() {
 		        	positionAndSizeBorder(_selectedControl);
 		        	// rebuild the page map to clear up any conflict messages
 		        	buildPageMap(true);
+		        	// refresh any instances of url page
+		        	window.localStorage.setItem("pageSaved", JSON.stringify({ a: _version.id, v: _version.version, time: Date.now() }));
 		        }
 			});
 				
@@ -4569,3 +4571,12 @@ function fileuploaded(fileuploadframe) {
     }
 
 }
+
+window.addEventListener("storage", function(storageEvent) {
+	if (storageEvent.key === "pageSaved") {
+		var message = JSON.parse(storageEvent.newValue);
+		if (message.a === _version.id && message.v === _version.version) {
+			location.reload();
+		}
+	}
+});
