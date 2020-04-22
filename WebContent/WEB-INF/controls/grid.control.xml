@@ -697,7 +697,7 @@ if (details) {
 		// promote to last in case of fixed header
 		if (!grid.is("table")) grid = grid.find("table").last();
 		// return null if grid is empty
-		if (grid.children("tr").length < 1) return data;
+		if (grid.children().length < 1) return data;
 		// get the columns from the details
 		var columns = details.columns || details.dynamicColumns;
 		
@@ -888,6 +888,9 @@ if (data !== undefined && data !== "") {
 			// inline function for adding rows which we'll call asychronously from a timer
 			var addRows = function(grid, data, rowIndex) {
 			
+				// get the tbody for the native methods
+				var tbody = grid.firstElementChild;
+			
 				// loop the chunks rows
 				for (var chunkIndex = 0; chunkIndex < 40 && data.rows[rowIndex]; chunkIndex++, rowIndex++) {
 	
@@ -938,7 +941,7 @@ if (data !== undefined && data !== "") {
 						td.appendChild(document.createTextNode(value));
 						tr.appendChild(td);
 					}
-					grid.appendChild(tr);
+					tbody.appendChild(tr);
 	
 					// get a jquery reference to the row
 					var rowObject = $(tr);
@@ -1043,6 +1046,9 @@ if (data !== undefined && data !== "") {
 			// inline function for adding rows which we'll call asychronously from a timer
 			var addRowsSimple = function(grid, rows, rowIndex) {
 			
+				// get the tbody for the native methods
+				var tbody = grid.firstElementChild;
+			
 				// loop the rows
 		        for (var chunkIndex = 0; chunkIndex < 40 && rows[rowIndex]; chunkIndex++, rowIndex++) {
 		            // start the row object with the styling
@@ -1057,7 +1063,7 @@ if (data !== undefined && data !== "") {
 		                td.appendChild(document.createTextNode(row[cellIndex]));
 		                tr.appendChild(td);
 		            }
-		            grid.appendChild(tr);
+		            tbody.appendChild(tr);
 	 
 					// if we click on a row that isn't the first one
 					$(tr).click( function(ev) {
