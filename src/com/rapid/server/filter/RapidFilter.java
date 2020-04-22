@@ -91,9 +91,6 @@ public class RapidFilter implements Filter {
 
 		try {
 
-			// set the value from stopCaching from the init parameter in web.xml
-			_noCaching = Boolean.parseBoolean(filterConfig.getServletContext().getInitParameter("noCaching"));
-
 			// look for a specified authentication adapter
 			authenticationAdapterClass = filterConfig.getInitParameter("authenticationAdapterClass");
 
@@ -113,6 +110,9 @@ public class RapidFilter implements Filter {
 				_authenticationAdapter = (RapidAuthenticationAdapter) classClass.getConstructor(FilterConfig.class).newInstance(filterConfig);
 
 			}
+
+			// set the value from stopCaching from the init parameter in web.xml
+			_noCaching = Boolean.parseBoolean(filterConfig.getServletContext().getInitParameter("noCaching"));
 
 			// look for a specified xFrameOptions header, the default is SAMEORIGIN
 			_xFrameOptions = filterConfig.getInitParameter("xFrameOptions");
@@ -161,26 +161,34 @@ public class RapidFilter implements Filter {
 		// cast the response to http servlet
 		HttpServletResponse res = (HttpServletResponse) response;
 
-		// get the user agent
-		String ua = req.getHeader("User-Agent");
-
-		// if IE send X-UA-Compatible to prevent compatibility view
-		if (ua != null && ua.indexOf("MSIE") != -1) res.addHeader("X-UA-Compatible", "IE=edge,chrome=1");
+		// set all responses as UTF-8
+		response.setCharacterEncoding("utf-8");
 
 		// add x frame option for iframe's etc
 		if (_xFrameOptions != null && _xFrameOptions.length() > 0) res.addHeader("X-FRAME-OPTIONS", _xFrameOptions);
 
-		// set all responses as UTF-8
-		response.setCharacterEncoding("utf-8");
+		// get the user agent
+		String ua = req.getHeader("User-Agent");
 
-		// if no caching is on, try and prevent cache
-		if (_noCaching) noCache(res);
+		// assume not IE
+		boolean isIE = false;
+
+		// if IE
+		if (ua != null && ua.indexOf("MSIE") != -1) {
+			// remember IE
+			isIE = true;
+			// send X-UA-Compatible to prevent compatibility view
+			res.addHeader("X-UA-Compatible", "IE=edge,chrome=1");
+		}
+
+		// get the requested URI without the hostname, port, or application context - we'll use this both for caching and authentication
+		String path = req.getServletPath();
+
+		// if no caching is on, try and prevent cache, unless IE and request is for Font Awesome (fix for it not displaying sometimes)
+		if (_noCaching && !(isIE && path.contains("fontawesome-webfont."))) noCache(res);
 
 		// assume this request requires authentication
 		boolean requiresAuthentication = true;
-
-		// get the requested URI without the hostname, port, or application context
-		String path = req.getServletPath();
 
 		// all webservice related requests got to the soa servelet
 		if (path.startsWith("/soa")) {
