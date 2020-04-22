@@ -697,10 +697,9 @@ if (details) {
 		// promote to last in case of fixed header
 		if (!grid.is("table")) grid = grid.find("table").last();
 		// return null if grid is empty
-		if (grid.children().length < 1) return data;
+		if (grid.children("tr").length < 1) return data;
 		// get the columns from the details
 		var columns = details.columns || details.dynamicColumns;
-		
 		
 		// if we had no columns, must be dynamic, read them from the first row cell contents
 		if (!columns) columns = grid.find("tr").first().children().map(function(field) {
@@ -745,6 +744,12 @@ if (details) {
 				$(this).children().each(function(i) {
 					if (details.multiSelect) i--;
 					var value = getGridUnescapedValue($(this).html());
+					// if the value looks like JSON
+					if (value.startsWith("{") && value.endsWith("{")) {
+						try {
+							value = JSON.parse(value);
+						} catch(e) {}
+					}
 					if (i >= 0 && columns[i] && columns[i].field !== undefined) row.push(value);
 				});
 				data.rows.push(row);
@@ -828,7 +833,7 @@ if (details.columns) {
 // reset any sort indicators if not being used for sorting
 grid.find("span.sort").html("&#xf0dc");
 // if we have data
-if (data !== undefined) {
+if (data !== undefined && data !== "") {
 
 	// make a data object
 	data = makeDataObject(data, field);
@@ -923,6 +928,12 @@ if (data !== undefined) {
 						var mappedCol = columnMap[cellIndex];
 						// if we can find the column and it has data use it as the value
 						if (mappedCol && row[mappedCol] !== null) value = row[columnMap[cellIndex]];
+						// if the value is an object, stringify it
+						if ($.isPlainObject(value)) {
+							try {
+								value = JSON.stringify(value);
+							} catch(ex) {}
+						}
 						// add the cell with the value
 						td.appendChild(document.createTextNode(value));
 						tr.appendChild(td);
