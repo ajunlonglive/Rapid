@@ -227,17 +227,22 @@ function Action_datacopy(ev, data, outputs, changeEvents, copyType, copyData, fi
 			var idParts = output.id.split(".");
 			var outputId = idParts[0];
 			switch (copyType) {
-				case "append" :	case "row" :
-					var mergeData = window["getData_" + output.type](ev, outputId, null, output.details);
-					data = makeDataObject(data, output.field);
-					outputData = mergeDataObjects(mergeData, data, copyType, field, null, output.details);
-				break;
-				case "child" :
-					var mergeData = window["getData_" + output.type](ev, outputId, null, output.details);	
-					if (data && data.rows) {
-						outputData = mergeDataObjects(mergeData, data, copyType, field);
+				case "append" :	case "row" : case "child" :
+					var mergeData = null;
+					if (idParts.length > 1) {
+						mergeData = window["getProperty_" + output.type + "_" + idParts[1]](ev, outputId, null, output.details);
 					} else {
-						outputData = mergeData;
+						mergeData = window["getData_" + output.type](ev, outputId, null, output.details);
+					}
+					if (copyType == "child") {
+						if (data && data.rows) {
+							outputData = mergeDataObjects(mergeData, data, copyType, field);
+						} else {
+							outputData = mergeData;
+						}
+					} else {
+						data = makeDataObject(data, output.field);
+						outputData = mergeDataObjects(mergeData, data, copyType, field, null, output.details);
 					}
 				break;
 				case "search" :
@@ -245,7 +250,6 @@ function Action_datacopy(ev, data, outputs, changeEvents, copyType, copyData, fi
 				break;
 				case "trans" :
 					if (data && data.fields && data.rows) {
-												
 						var downtoside = false;
 						// checking for down to side transpose is quite expensive so get the easy stuff out the way first
 						if (data.rows.length >= details.keyFields.length + 2) {
