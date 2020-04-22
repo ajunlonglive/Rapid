@@ -1139,9 +1139,7 @@ if (data !== undefined && data !== "") {
 		} // got details and columns and data fields
 								
 	} // got data
-	
-	if (details && details.dataStorageType) saveGridDataStoreData(id, details, data);
-		
+
 	// if we vertical scrolling
 	if (details && details.scrollV && details.scrollHeight) {
 	
@@ -1328,7 +1326,15 @@ if (data !== undefined && data !== "") {
 	// apply the resizing	
 	$(window).resize();
 	
+} else {
+
+	// update data to null
+	data = null;
+	
 }
+
+// save any datastore data
+if (details && details.dataStorageType) saveGridDataStoreData(id, details, data);
 			]]>
 	    </setDataJavaScript>
 
