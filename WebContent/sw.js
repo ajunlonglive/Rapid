@@ -227,10 +227,14 @@ self.addEventListener("fetch", function(event) {
 			})
 			.catch(reason => console.log("WORKER: failed getting app resources: " + reason));
 		}
+		var dialogueParameter = url.includes("action=dialogue") ? "&action=dialogue" : "";
 		
 		// remove all url parameters, except for the page ($1)
-		var url = url.replace(/(p=P\d+).*$/, "$1");
-				
+		url = url.replace(/(p=P\d+).*$/, "$1");
+		
+		url = url + dialogueParameter;
+		if (dialogueParameter) _appResources.push(url);
+		
 		console.debug('WORKER: fetch event in progress for ' + event.request.method, event.request.url);
 		/*   Similar to event.waitUntil in that it blocks the fetch event on a promise.
 			 Fulfilment result will be used as the response, and rejection will end in a
@@ -254,7 +258,7 @@ self.addEventListener("fetch", function(event) {
 						// respond with a previously cached response, falling back to a freshly fresh response, caching the fresh response
 						
 						var freshResponseWithCachedOfflineFallback = new Promise((resolve, reject) =>
-							fetch(url, fetchOptions)
+							fetch(url, fetchOptions )
 							.then(freshResponse => {
 								if (freshResponse && (freshResponse.ok || freshResponse.type === "opaqueredirect")) {
 									var clonedResponse = freshResponse.clone()
@@ -290,7 +294,7 @@ self.addEventListener("fetch", function(event) {
 						
 						if (_appStatus === "development") {
 							return new Promise((resolve, reject) => {
-								fetch(url, fetchOptions).then(response => {
+								fetch(url).then(response => {
 									if (response && (response.ok || response.type === "opaqueredirect")) {
 										resolve(response);
 									} else if (response.status === 404) {
@@ -298,9 +302,9 @@ self.addEventListener("fetch", function(event) {
 									} else if (response.status === 500) {
 										fetch(_contextPath + "page500.htm").then(resolve);
 									} else {
-										resolve(cachedResponse);
+										resolve(cachedResponse ? cachedResponse : resolve(getFromCache(_contextPath + "offline.htm")));
 									}
-								}).catch(_ => cachedResponse ? resolve(cachedResponse) : resolve(getFromCache(_contextPath + "offline.htm")));
+								}).catch(_ => resolve(cachedResponse ? cachedResponse : resolve(getFromCache(_contextPath + "offline.htm"))));
 							})
 						} else {
 							return cachedResponse || freshResponseWithCachedOfflineFallback;
