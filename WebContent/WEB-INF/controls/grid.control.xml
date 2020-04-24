@@ -884,12 +884,12 @@ if (data !== undefined && data !== "") {
 
 			// append all of the new rows in bulk - much faster!
 			grid.append(rowsHtml);
+			
+			// get the tbody
+			var tbody = $("#" + id).find("tbody");
 
 			// inline function for adding rows which we'll call asychronously from a timer
 			var addRows = function(grid, data, rowIndex) {
-			
-				// get the tbody for the native methods
-				var tbody = grid.firstElementChild;
 			
 				// loop the chunks rows
 				for (var chunkIndex = 0; chunkIndex < 40 && data.rows[rowIndex]; chunkIndex++, rowIndex++) {
@@ -941,7 +941,7 @@ if (data !== undefined && data !== "") {
 						td.appendChild(document.createTextNode(value));
 						tr.appendChild(td);
 					}
-					tbody.appendChild(tr);
+					tbody.append(tr);
 	
 					// get a jquery reference to the row
 					var rowObject = $(tr);
@@ -1043,11 +1043,11 @@ if (data !== undefined && data !== "") {
 			// close the row
 			rowsHtml += "</tr>";
 			
+			// get the tbody
+			var tbody = $("#" + id).find("tbody");
+			
 			// inline function for adding rows which we'll call asychronously from a timer
 			var addRowsSimple = function(grid, rows, rowIndex) {
-			
-				// get the tbody for the native methods
-				var tbody = grid.firstElementChild;
 			
 				// loop the rows
 		        for (var chunkIndex = 0; chunkIndex < 40 && rows[rowIndex]; chunkIndex++, rowIndex++) {
@@ -1063,7 +1063,7 @@ if (data !== undefined && data !== "") {
 		                td.appendChild(document.createTextNode(row[cellIndex]));
 		                tr.appendChild(td);
 		            }
-		            tbody.appendChild(tr);
+		            tbody.append(tr);
 	 
 					// if we click on a row that isn't the first one
 					$(tr).click( function(ev) {
