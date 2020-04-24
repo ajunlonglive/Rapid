@@ -1571,7 +1571,7 @@ function Property_galleryImages(cell, gallery, property, details) {
 function Property_imageFile(cell, propertyObject, property, details) {
 	
 	// retrieve or create the dialogue
-	var dialogue = getDialogue(cell, propertyObject, property, details, 200, "Image file", {sizeX: true});		
+	var dialogue = getDialogue(cell, propertyObject, property, details, 260, "Image file", {sizeX: true});		
 	// grab a reference to the table
 	var table = dialogue.find("table").first();
 	// make sure table is empty
