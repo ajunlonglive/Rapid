@@ -3,7 +3,13 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="../schemas/control.xsd">
 
-	<!-- Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems gareth.edwards@rapid-is.co.uk 
+	<!-- 
+	
+	    Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems 
+	
+		gareth.edwards@rapid-is.co.uk 
+	
+	
 		This file is part of the Rapid Application Platform Rapid is free software: 
 		you can redistribute it and/or modify it under the terms of the GNU General 
 		Public License as published by the Free Software Foundation, either version 
@@ -13,7 +19,9 @@
 		ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
 		FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. 
 		You should have received a copy of the GNU General Public License in a file 
-		named "COPYING". If not, see <http://www.gnu.org/licenses/>. -->
+		named "COPYING". If not, see <http://www.gnu.org/licenses/>. 
+		
+	-->
 
 	<control>
 
@@ -531,11 +539,22 @@ function getGridMutiSelectedRows(id, ev) {
 
 // selectively un-escapes html escape sequences which are escaped for us in in the setter .html(value), but not unescaped in the getter .html()
 function getGridUnescapedValue(value) {
-	return value.replace(/&lt;/,"<")
-	            .replace(/&gt;/,">")
-	            .replace(/&amp;/,"&");
-}
-           	
+	// if the value is a string
+	if ($.type(value) === "string") {
+		// un-escape common escape sequences
+		value = value.replace(/&lt;/,"<")
+		            .replace(/&gt;/,">")
+		            .replace(/&amp;/,"&");
+		// if the value looks like JSON
+		if (value.startsWith("{") && value.endsWith("}")) {
+			try {
+				value = JSON.parse(value);
+			} catch(e) {}
+		}
+	}
+	// return
+	return value;
+}      	
 	                ]]>
 	            </contents>
 			</resource>
@@ -744,12 +763,7 @@ if (details) {
 				$(this).children().each(function(i) {
 					if (details.multiSelect) i--;
 					var value = getGridUnescapedValue($(this).html());
-					// if the value looks like JSON
-					if (value.startsWith("{") && value.endsWith("{")) {
-						try {
-							value = JSON.parse(value);
-						} catch(e) {}
-					}
+					// add this value to the row if there is a field for it
 					if (i >= 0 && columns[i] && columns[i].field !== undefined) row.push(value);
 				});
 				data.rows.push(row);
@@ -840,9 +854,6 @@ if (data !== undefined && data !== "") {
 	
 	// if we have some rows to load
 	if (data && data.rows && data.rows.length > 0) {
-	
-		// assume the grid has no row html 
-		var rowsHtml = "";
 		
 		// retain number of rows we're about to load
 		_gridLoaders[id].rows = data.rows.length;
@@ -881,9 +892,6 @@ if (data !== undefined && data !== "") {
 					if (!details.columns[i].f) details.columns[i].f = new Function(["id", "data", "field", "details", "value"], details.columns[i].cellFunction);
 				}
 			}
-
-			// append all of the new rows in bulk - much faster!
-			grid.append(rowsHtml);
 			
 			// get the tbody
 			var tbody = $("#" + id).find("tbody");
@@ -1033,15 +1041,18 @@ if (data !== undefined && data !== "") {
 
 		} else {
 
-			// start the row object with the styling
-			rowsHtml += "<tr" + (details.columnHeadings == false ? " style='display:none'" : "") + ">";
-			// loop the fields				
+			// start the header row with the styling
+			var headerHtml = "<tr" + (details.columnHeadings == false ? " style='display:none'" : "") + ">";
+			// loop the fields
 			for (var i in data.fields) {
 				// add cell with field to row
-				rowsHtml += "<td>" +data.fields[i] + "</td>";
+				headerHtml += "<td>" + data.fields[i] + "</td>";
 			}
 			// close the row
-			rowsHtml += "</tr>";
+			headerHtml += "</tr>";
+			
+			// append the header html
+			grid.append(headerHtml);
 			
 			// get the tbody
 			var tbody = $("#" + id).find("tbody");
@@ -1130,10 +1141,7 @@ if (data !== undefined && data !== "") {
                 }
                 
 			}
-			
-			// append all of the new rows in bulk - much faster!
-			grid.append(rowsHtml);
-			
+
 			addRowsSimple(grid.get(0), data.rows, 0);
 			
 		} // got details and columns and data fields
@@ -1616,7 +1624,7 @@ if (field && data && data.fields && data.rows && data.rows.length > 0) {
 			// loop rows - non multi select will have only 1
 			for (var i in data.rows) {				
 				// get the value
-				var value = data.rows[i][fieldIndex];
+				var value = getGridUnescapedValue(data.rows[i][fieldIndex]);
 				// add an empty row array
 				multiRowData.rows.push([]);
 				// put the value in the row array
@@ -1626,7 +1634,7 @@ if (field && data && data.fields && data.rows && data.rows.length > 0) {
 			data = multiRowData;
 		} else {
 			// get the value from the first row
-			data = data.rows[0][fieldIndex];
+			data = getGridUnescapedValue(data.rows[0][fieldIndex]);
 		}
 	} else {
 		// could not find field
