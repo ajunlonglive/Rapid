@@ -989,8 +989,16 @@ if (data !== undefined && data !== "") {
 								row.parent().find("tr.rowSelect").removeClass("rowSelect");
 								// add rowSelect to this row
 								row.addClass("rowSelect");
-								// if there is a hanlder uncheck all inputs, what happens next is the handler fires and the select row is just this one
-								if (handler) $("#" + id).find("input.gridMultiSelectHeader, input.gridMultiSelect").prop("checked",false);
+								// if there is a handler
+								if (handler) {
+									// uncheck all inputs, what happens next is the handler fires and the selected row is just this one
+									$("#" + id).find("input.gridMultiSelectHeader, input.gridMultiSelect").prop("checked",false);
+									// put this row's tick back for show
+									target.closest("tr").children().first().find("input.gridMultiSelect").prop("checked",true);
+								} else {
+									// no handler so fire row select
+									target.closest("tr").children().first().find("input.gridMultiSelect").first().click();
+								}
 							}
 						} else {
 							// remove rowSelect class from all rows in the table
