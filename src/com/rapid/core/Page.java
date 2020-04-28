@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2019 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -544,6 +544,15 @@ public class Page {
 							if (type.equals(eventAction.getType())) {
 								// add this action, including it's children
 								addAction(actions, eventAction);
+							}
+							// Child actions
+							List<Action> eventActionChildren = eventAction.getChildActions();
+							if (eventActionChildren != null) {
+								for (Action childAction : eventActionChildren) {
+									if (type.equals(childAction.getType())) {
+										addAction(actions, childAction);
+									}
+								}
 							}
 						}
 					}
