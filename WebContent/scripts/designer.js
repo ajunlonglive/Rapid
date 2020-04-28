@@ -3495,7 +3495,7 @@ $(document).ready( function() {
 	            draggable.offsetLeft + event.clientX - cursorX,
 	            0), document.body.offsetWidth - draggable.offsetWidth);
 	        // is the panel on the right edge of the screen
-	        var draggableOnRight = draggableLeft === document.body.offsetWidth - draggable.offsetWidth;
+	        var draggableOnRight = draggableLeft >= document.body.offsetWidth - draggable.offsetWidth;
 
 	        draggable.style.transition =
 	            "top 0.15s ease-out, left 0.15s ease-out, height 0.15s ease-out";
@@ -4001,7 +4001,12 @@ $(document).on("mouseup", function(ev) {
 			_panelPinnedOffset = $("#controlPanel").width() + 21;
 			// size the window
 			windowResize("controlPanelSize");			
+		} else if (controlPanel.offset().left + controlPanel.width() + 21 > document.body.offsetWidth) {
+			// pin to right edge
+			controlPanel.css("left", "unset");
+			controlPanel.css("right", "0px");
 		}
+		
 		if (propertiesPanel.offset().left <= 0 && propertiesPanel.css("display") !== "none") {
 			_panelPinned = true;
 			var propertiesPanelWidth = propertiesPanel.width() + 21;
@@ -4025,10 +4030,16 @@ $(document).on("mouseup", function(ev) {
 		if (propertiesPanel.offset().left <= 0) {
 			_panelPinned = true;
 			// set the latest panel pinned offset (plus padding and border)
-			_panelPinnedOffset = $("#propertiesPanel").width() + 21;
+			_panelPinnedOffset = $(propertiesPanel).width() + 21;
 			// size the window
 			windowResize("propertiesPanelSize");			
+		} else if (propertiesPanel.offset().left + propertiesPanel.width() + 21 > document.body.offsetWidth) {
+			// pin to right edge
+			propertiesPanel.css("left", "unset");
+			propertiesPanel.css("right", "0px");
 		}
+		
+		
 		if (controlPanel.offset().left <= 0) {
 			_panelPinned = true;
 			// set the latest panel pinned offset (plus padding and border)
