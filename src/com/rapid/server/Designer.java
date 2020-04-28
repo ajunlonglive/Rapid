@@ -1772,6 +1772,8 @@ public class Designer extends RapidHttpServlet {
 
 								JSONArray jsonOutputs = jsonQuery.optJSONArray("outputs");
 
+								boolean childQuery = jsonQuery.optBoolean("childQuery");
+
 								int index = jsonQuery.optInt("databaseConnectionIndex",0);
 
 								if (application.getDatabaseConnections() == null || index > application.getDatabaseConnections().size() - 1) {
@@ -1843,8 +1845,8 @@ public class Designer extends RapidHttpServlet {
 
 										}
 
-										// check outputs
-										if (outputs == 0) {
+										// check outputs (unless a child query)
+										if (outputs == 0 && !childQuery) {
 
 											// check verb
 											if (sql.toLowerCase().startsWith("select")) {

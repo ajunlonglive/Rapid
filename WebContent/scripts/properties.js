@@ -2656,14 +2656,20 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 	
 	// assume no database connection drop down in dialogue
 	var databaseConnection = "";
-		
+	
 	// check there is a parent (database) property object
-	if (details && details.parentObject) {
+	var childQuery = (details && details.parentObject); 
+		
+	// if this is a child query
+	if (childQuery) {
 		
 		// set this DatabaseConnectionIndex to the parent one
 		query.databaseConnectionIndex = details.parentObject.query.databaseConnectionIndex;
+		// set a property telling us it's a child
+		query.childQuery = true;
 		
 	} else {
+
 		// build this databaseConnection html
 		databaseConnection = "Database connection <select style='width:auto;margin:0 10px 5px 0'>" + getDatabaseConnectionOptions(query.databaseConnectionIndex) + "</select>";
 	}
