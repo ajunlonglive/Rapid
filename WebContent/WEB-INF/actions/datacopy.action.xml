@@ -228,15 +228,17 @@ function Action_datacopy(ev, data, outputs, changeEvents, copyType, copyData, fi
 			var outputId = idParts[0];
 			switch (copyType) {
 				case "append" :	case "row" : case "child" :
+					// add details object if there isn't one, we're going to inspect it in the mergeDataObjects
+					if (!output.details) output.details = {};
 					var mergeData = null;
 					if (idParts.length > 1) {
-						// add details object if there isn't one
-						if (!output.details) output.details = {};
 						// set noFieldMatch to true
 						output.details.noFieldMatch = true;
 						// get the merge data with the property in the second part of the id
 						mergeData = window["getProperty_" + output.type + "_" + idParts[1]](ev, outputId, null, output.details);
 					} else {
+						// set noFieldMatch to false, just in case default behavour is required to the default get data at some point after using a property
+						output.details.noFieldMatch = false;
 						// get the merge data with the main get data method
 						mergeData = window["getData_" + output.type](ev, outputId, null, output.details);
 					}
