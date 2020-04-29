@@ -858,6 +858,9 @@ if (data !== undefined && data !== "") {
 		// retain number of rows we're about to load
 		_gridLoaders[id].rows = data.rows.length;
 		
+		// retain that we are loading
+		_gridLoaders[id].loading = true;
+		
 		// check we have details and columns
 		if (details && details.columns && data.fields) {
 		
@@ -1034,12 +1037,16 @@ if (data !== undefined && data !== "") {
 								
 				} // row loop
 		
+				// if there is a row at the current index
 				if (data.rows[rowIndex]) {
+					// create a new timeout to add these rows
 					var timeoutId = setTimeout(function() { addRows(grid, data, rowIndex + 1); });
+					// add timeout to grid loader object
 					_gridLoaders[id].timeouts.push(timeoutId);
 				} else {
-					_gridLoaders[id].loaded = true;
-					_gridLoaders[id].timeouts = [];
+					// update that we've finished loading
+					_gridLoaders[id].loading = false;
+					// fire the loaded event
 					if (window["Event_gridLoaded_" + id]) window["Event_gridLoaded_" + id](ev);
 				}
 				
@@ -1139,12 +1146,16 @@ if (data !== undefined && data !== "") {
 					
 		        } // row loop
 		        
+		        // if there is a row the current index
 		        if (rows[rowIndex]) {
+		        	// create a timer to load next batch of rows
 		        	var timeoutId = setTimeout(function() { addRowsSimple(grid, rows, rowIndex + 1); });
+		        	// retain this timer
 		        	_gridLoaders[id].timeouts.push(timeoutId);
 		        } else {
-		        	_gridLoaders[id].loaded = true;
-		        	_gridLoaders[id].timeouts = [];
+		        	// update that we have finished loading
+		        	_gridLoaders[id].loading = false;
+		        	// run any loaded handler
                     if (window["Event_gridLoaded_" + id]) window["Event_gridLoaded_" + id](ev);
                 }
                 
@@ -1927,7 +1938,7 @@ saveGridDataStoreData(id, details, gridData);
 				<name>Row count</name>
 				<getPropertyFunction>
 			        <![CDATA[
-if (!_gridLoaders[id] || _gridLoaders[id].loaded) {
+if (!_gridLoaders[id] || !_gridLoaders[id].loading) {
 	if (details && details.dataStorageType) {
 		var gridData = getGridDataStoreData(id, details);
 		if (gridData && gridData.rows) {
