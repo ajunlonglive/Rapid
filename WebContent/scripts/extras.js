@@ -806,10 +806,13 @@ function mergeDataObjects(data1, data2, mergeType, field, maxRows, details) {
 					var fieldIndex = -1;
 					// make a map of positions for fields common to parent and child data objects
 					for (var i in data1.fields) {
-						for (var j in data2.fields) {
-							if (data1.fields[i] !== undefined && data2.fields[j] !== undefined && data1.fields[i].toLowerCase() == data2.fields[j].toLowerCase()) {
-								fieldMap[i] = j;
-								fieldCount ++;
+						// if noFieldMatch is set don't build the map
+						if (!details || !details.noFieldMatch) {
+							for (var j in data2.fields) {
+								if (data1.fields[i] !== undefined && data2.fields[j] !== undefined && data1.fields[i].toLowerCase() == data2.fields[j].toLowerCase()) {
+									fieldMap[i] = j;
+									fieldCount ++;
+								}
 							}
 						}
 						if (field && field.toLowerCase() == data1.fields[i].toLowerCase()) fieldIndex = i;
