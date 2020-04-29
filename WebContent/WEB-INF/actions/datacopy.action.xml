@@ -230,13 +230,19 @@ function Action_datacopy(ev, data, outputs, changeEvents, copyType, copyData, fi
 				case "append" :	case "row" : case "child" :
 					var mergeData = null;
 					if (idParts.length > 1) {
+						// add details object if there isn't one
+						if (!output.details) output.details = {};
+						// set noFieldMatch to true
+						output.details.noFieldMatch = true;
+						// get the merge data with the property in the second part of the id
 						mergeData = window["getProperty_" + output.type + "_" + idParts[1]](ev, outputId, null, output.details);
 					} else {
+						// get the merge data with the main get data method
 						mergeData = window["getData_" + output.type](ev, outputId, null, output.details);
 					}
 					if (copyType == "child") {
 						if (data && data.rows) {
-							outputData = mergeDataObjects(mergeData, data, copyType, field);
+							outputData = mergeDataObjects(mergeData, data, copyType, field, null, output.details);
 						} else {
 							outputData = mergeData;
 						}
