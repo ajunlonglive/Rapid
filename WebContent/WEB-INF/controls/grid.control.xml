@@ -808,8 +808,18 @@ if (details) {
 					}
 					// set data to our merged dataStore
 					data = dataStore;	
-				}							
-			}						
+				} // datastore check							
+			} // storage type check
+			
+			// if multiSelect
+			if (details.multiSelect) {
+				// get multi selected rows
+				data.selectedRowNumber = getGridMultiSelectedRowNumber(id, ev, details);
+			} else {
+				// get a single selected row
+				data.selectedRowNumber = getGridSelectedRowNumber(id, ev, details);
+			}
+			
 		} // field check
 	}
 }
