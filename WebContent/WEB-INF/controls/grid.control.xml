@@ -1501,8 +1501,10 @@ if (details) {
 			var select = $(this).prop("checked");
 			// update rowSelect accordingly
 			if (select) {
-				grid.find("tr").addClass("rowSelect");
+				// select all rows, except the top one
+				grid.find("tr:not(:first-child)").addClass("rowSelect");
 			} else {
+				// remove select from all rows
 				grid.find("tr").removeClass("rowSelect");
 			}
 			// update row checkboxes
