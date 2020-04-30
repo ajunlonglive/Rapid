@@ -92,23 +92,25 @@ var _contextPath;
 */
 self.addEventListener("fetch", function(event) {
 	
+	// derive the context path from the sw.js location
 	_contextPath = location.href.replace("sw.js", "");
 	
 	// get the url from the event request
 	var url = event.request.url;
+	// get the method from the event request
 	const method = event.request.method;
 	
-	// if request is for service worker
+	// proceed to direct server response if request is for service worker
 	if (url.endsWith("sw.js")) return;
 	
-	// if request is for designer
+	// proceed to direct server response  if request is for designer
 	if (url.startsWith(_contextPath + "designer") || url.includes("a=designer")) return;
 	
-	// if request is for admin
-	if (url === _contextPath + "rapid" || url.includes("a=rapid")) return;
+	// proceed to direct server response  if request is for design page
+	if (url.includes("designPage.jsp")) return;
 	
-	// if request is for admin
-	if (url.includes( "designPage.jsp")) return;
+	// proceed to direct server response  if request is for admin app
+	if (url.startsWith(_contextPath + "rapid") || url.includes("a=rapid")) return;
 	
 	// if request is for root or index
 	if (url === _contextPath || url.endsWith("index.jsp")) {
