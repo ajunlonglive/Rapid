@@ -102,7 +102,7 @@ self.addEventListener("fetch", function(event) {
 	if (url.endsWith("sw.js")) return;
 	
 	// if request is for designer
-	if (url === _contextPath + "designer" || url.includes("a=designer")) return;
+	if (url.startsWith(_contextPath + "designer") || url.includes("a=designer")) return;
 	
 	// if request is for admin
 	if (url === _contextPath + "rapid" || url.includes("a=rapid")) return;
