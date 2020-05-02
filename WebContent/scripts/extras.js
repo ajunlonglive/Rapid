@@ -967,8 +967,8 @@ function formatDatetime(format, date) {
 	var formatParts = format.split(" ");
 	var result = "";
 
-	//if we have date and time parts
-	if(formatParts.length > 1) {
+	// if we have date and time parts
+	if (formatParts.length > 1) {
 		
 		var dateFormatPart = formatParts[0];
 		var timeFormatPart = formatParts[1];
@@ -978,11 +978,10 @@ function formatDatetime(format, date) {
 		
 		result = dateString + " " + timeString;
 		
-	} else {	// we only have one part - either time or date
+	} else { // we only have one part - either time or date
 		
-		if(formatParts[0].indexOf("yy") > -1) {
+		if (formatParts[0].indexOf("yy") > -1) {
 			result = $.datepicker.formatDate(formatParts[0], date);
-			
 		} else { // its just a time
 			result = formatTime(formatParts[0], date);
 		}
@@ -994,9 +993,8 @@ function formatDatetime(format, date) {
 
 function formatTime(timeFormat, date) {
 	var timePart = "";
-	if(timeFormat == "24") {
+	if (timeFormat == "24") {
 		timePart = padNumberWithZeros(date.getHours()) + ":" + padNumberWithZeros(date.getMinutes(), 2);
-		
 	} else {
 		timePart = format12hour(date);
 	} 
@@ -1015,7 +1013,7 @@ function format12hour(date) {
 	  return strTime;
 }
 
-function padNumberWithZeros(number,length) {
+function padNumberWithZeros(number, length) {
 	number += "";
 	while (number.length < length) {
 		number = "0" + number;
