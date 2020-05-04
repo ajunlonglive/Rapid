@@ -460,7 +460,7 @@ public class Page {
 			// loop them
 			for (Action childAction : action.getChildActions()) {
 				// add their actions too
-				getChildActions(actions, childAction, type);
+				if (childAction != null) getChildActions(actions, childAction, type);
 			}
 		}
 	}
@@ -480,7 +480,7 @@ public class Page {
 					// loop the actions
 					for (Action action : event.getActions()) {
 						// add any child actions too
-						getChildActions(actions, action, type);
+						if (action != null) getChildActions(actions, action, type);
 					}
 				}
 			}
@@ -1372,10 +1372,13 @@ public class Page {
 				JSONObject jsonPageVariables = new JSONObject();
 				// loop them
 				for (String pageVariable : pageVariables) {
-					// look for a value in the session
-					String value = (String) rapidRequest.getSessionAttribute(pageVariable);
-					// if we got one add it
-					if (value != null) jsonPageVariables.put(pageVariable, value);
+					// null safety
+					if (pageVariable != null) {
+						// look for a value in the session
+						String value = (String) rapidRequest.getSessionAttribute(pageVariable);
+						// if we got one add it
+						if (value != null) jsonPageVariables.put(pageVariable, value);
+					}
 				}
 				// write page variables
 				writer.write("var _pageVariables_" + _id + " = " + jsonPageVariables + ";\n");
