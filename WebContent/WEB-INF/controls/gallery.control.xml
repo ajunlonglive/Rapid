@@ -167,6 +167,7 @@ function Gallery_removeImage(ev, id, galleryImg) {
 		var imageRemoved = window["Event_imageRemoved_" + id];
 		// fire it if we found it
 		if (imageRemoved) window["Event_imageRemoved_" + id]();
+		setTimeout(function() { $(window).resize(); });
 	}
 }
 
@@ -696,6 +697,7 @@ if (data == null || data === undefined) {
 							var imageAdded = window["Event_imageAdded_" + id];
 							// fire it if we found it
 							if (imageAdded) window["Event_imageAdded_" + id]();
+							setTimeout(function() { $(window).resize(); });
 							
 						} // image already there check
 						
