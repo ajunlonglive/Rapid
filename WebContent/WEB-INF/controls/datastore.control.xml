@@ -3,7 +3,7 @@
 
 <!-- 
 
-Copyright (C) 2018 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -228,31 +228,38 @@ if (data != null && data !== undefined) {
 // get datastore data             
 var data = getDataStoreData(id, details);
 // if we have data and some rows
-if (data && data.selectedRowNumber && data.rows && data.rows[data.selectedRowNumber - 1]) {
-	// get a row for the currently selected
-	data = {fields:data.fields,rows:[data.rows[data.selectedRowNumber - 1]]};
-	// if we were provided with a field to drill into the row data
-	if (field && data && data.fields && data.rows && data.rows.length > 0) {
-		// assume we can't find it	
-		var fieldIndex = -1;
-		// loop the fields
-		for (var i in data.fields) {
-			if (data.fields[i] && data.fields[i].toLowerCase() == field.toLowerCase()) {
-				fieldIndex = i;
-				break;
+if (data && data.rows) {
+	// get the selected row number
+	var selectedRowNumber = data.selectedRowNumber;
+	// if the selectedRowNumber has not been set but there is one row, set it to that row
+	if (selectedRowNumber === undefined && data.rows.length == 1) selectedRowNumber = 1;
+	// if we had, or could derive, a row number and there is data there
+	if (selectedRowNumber && data.rows[selectedRowNumber - 1]) {
+		// get a row for the currently selected
+		data = {fields:data.fields,rows:[data.rows[selectedRowNumber - 1]]};
+		// if we were provided with a field to drill into the row data
+		if (field && data && data.fields && data.rows && data.rows.length > 0) {
+			// assume we can't find it	
+			var fieldIndex = -1;
+			// loop the fields
+			for (var i in data.fields) {
+				if (data.fields[i] && data.fields[i].toLowerCase() == field.toLowerCase()) {
+					fieldIndex = i;
+					break;
+				}
+			}
+			// if we found the field
+			if (fieldIndex > -1) {
+				// get the value at this field position
+				data = data.rows[0][fieldIndex];
+			} else {
+				// could not find field
+				data = null;
 			}
 		}
-		// if we found the field
-		if (fieldIndex > -1) {
-			// get the value at this field position
-			data = data.rows[0][fieldIndex];
-		} else {
-			// could not find field
-			data = null;
-		}
+		// return data
+		return data
 	}
-	// return data
-	return data
 }	     	                
 	                ]]>
 	            </getPropertyFunction>
