@@ -554,7 +554,25 @@ function getGridUnescapedValue(value) {
 	}
 	// return
 	return value;
-}      	
+} 
+
+// global function to set the grid header multi-select, used in both control init, and dynamic column header add
+function setGridHeaderMultiSelect(id, grid) {
+	$("#" + id).find("input.gridMultiSelectHeader").change(function(ev) {
+		// get the header value
+		var select = $(this).prop("checked");
+		// update rowSelect accordingly
+		if (select) {
+			// select all rows, except the top one
+			grid.find("tr:not(:first-child)").addClass("rowSelect");
+		} else {
+			// remove select from all rows
+			grid.find("tr").removeClass("rowSelect");
+		}
+		// update row checkboxes
+		grid.find("input.gridMultiSelect").prop("checked",select);
+	});
+}     	
 	                ]]>
 	            </contents>
 			</resource>
@@ -563,13 +581,12 @@ function getGridUnescapedValue(value) {
 		<getHtmlFunction>
 	        <![CDATA[ 
 var headerHtml = "<tr" + (this.columnHeadings ? "" : " style='display:none'") + ">";
-var rowHtml = "<tr><td>No columns</td></tr>";
-if (this.columns.length > 0) {
-	var rowHtml = "<tr>";
-	if (this.multiSelect) {
-		headerHtml += "<td><input type='checkbox' class='gridMultiSelectHeader'/></td>";
-		rowHtml += "<td><input type='checkbox' class='gridMultiSelect'/></td>";
-	}
+var rowHtml = "<tr>";
+if (this.multiSelect) {
+	headerHtml += "<td><input type='checkbox' class='gridMultiSelectHeader'/></td>";
+	rowHtml += "<td><input type='checkbox' class='gridMultiSelect'/></td>";
+}
+if (this.columns.length > 0) {	
 	var columnCount = 0;
 	for (var i in this.columns) {
 		var column = this.columns[i];
@@ -588,15 +605,12 @@ if (this.columns.length > 0) {
 			rowHtml += "<td style='display:none;'></td>"
 		}
 	}
-	if (columnCount == 0) {
-		headerHtml += "<td>No visible columns</td>"
-		rowHtml += "<td>No visible columns</td>";
-	}
-	headerHtml += "</tr>";
-	rowHtml += "</tr>";
 } else {
-	headerHtml += "<td>No columns</td>"
+	headerHtml += "<td>No columns</td>";
+	rowHtml += "<td>No columns</td>";
 }
+rowHtml += "</tr>";
+headerHtml += "</tr>";
 	                
 // check for scrolling
 if (this.scrollH || this.scrollV) {
@@ -867,12 +881,83 @@ if (data !== undefined && data !== "") {
 		
 		// retain number of rows we're about to load
 		_gridLoaders[id].rows = data.rows.length;
+		// retain any selected rows we're about to load
+		_gridLoaders[id].selectedRowNumber = data.selectedRowNumber;
 		
 		// retain that we are loading
 		_gridLoaders[id].loading = true;
 		
+		// the row handler that is shared by grids with columns and those without
+		var rowHandler = function(ev) {
+			// get the row 
+			var row = $(this);
+			// if this grid has multiselect things are more confusing
+			if (details.multiSelect) {
+				// get the target
+				var target = $(ev.target);
+				// get the grid id
+				var id = row.closest("[id]").attr("id");
+				// get any table row click handler
+				var handler = window["Event_click_" + id];
+				// if we're here because we clicked the gridMultiSelect checkbox - in this case row selection is done in the input click listener, above, also do nothing is cell around the multiselect clicked
+				if (!target.is("input.gridMultiSelect") && !target.children("input.gridMultiSelect")[0]) {
+					// remove rowSelect class from all rows in the table
+					row.parent().find("tr.rowSelect").removeClass("rowSelect");
+					// add rowSelect to this row
+					row.addClass("rowSelect");
+					// if there is a handler
+					if (handler) {
+						// uncheck all inputs, what happens next is the handler fires and the selected row is just this one
+						$("#" + id).find("input.gridMultiSelectHeader, input.gridMultiSelect").prop("checked",false);
+						// put this row's tick back for show
+						target.closest("tr").children().first().find("input.gridMultiSelect").prop("checked",true);
+					} else {
+						// no handler so fire row select
+						target.closest("tr").children().first().find("input.gridMultiSelect").first().click();
+					}
+				}
+			} else {
+				// remove rowSelect class from all rows in the table
+				row.parent().find("tr.rowSelect").removeClass("rowSelect");
+				// add rowSelect to this row
+				//row.addClass("rowSelect");
+				var e = row.get(0);
+				e.className = e.className + " rowSelect";
+			}
+		}
+		
+		// a function for selecting rows
+		var rowSelect = function(data, rowObject, rowIndex) {
+			// if there is a selected row
+			if (data.selectedRowNumber) {
+				// check for array, used by multi-select
+				if ($.isArray(data.selectedRowNumber)) {
+					// loop array
+					for (var i in data.selectedRowNumber) {
+						// if this is a selected row 
+						if (rowIndex == data.selectedRowNumber[i]-1) {
+							// add rowSelect class
+							rowObject.addClass("rowSelect");
+							// tick any select box
+							rowObject.children().first().find("input[type=checkbox].gridMultiSelect").prop("checked",true);
+						}
+					}
+				} else {
+					// if this is the selected row
+					if (rowIndex == data.selectedRowNumber-1) {
+						// add rowSelect class
+						rowObject.addClass("rowSelect");
+						// tick any select box
+						rowObject.children().first().find("input[type=checkbox].gridMultiSelect").prop("checked",true);
+					}
+				} // array check
+			} // data.selectedRowNumber check
+		}
+		
 		// check we have details and columns
 		if (details && details.columns && data.fields) {
+		
+			// header row is added in designer with getHtml method above
 		
 			// assume no columns (we're about to check)
 			var columnMap = [];
@@ -914,12 +999,13 @@ if (data !== undefined && data !== "") {
 			
 				// loop the chunks rows
 				for (var chunkIndex = 0; chunkIndex < 40 && data.rows[rowIndex]; chunkIndex++, rowIndex++) {
+				
+					// get the row
+	 				var row = data.rows[rowIndex];
 	
 					// start the row object with the styling
 	 				var tr = document.createElement("tr");
-	 				tr.className = "rowStyle" + (rowIndex % 2 + 1) + (data.rowValidation && i < data.rowValidation.length && !data.rowValidation[i] ? " validation" : "");
-	 				// get the row
-	 				var row = data.rows[rowIndex];
+	 				tr.className = "rowStyle" + (rowIndex % 2 + 1) + (data.rowValidation && i < data.rowValidation.length && !data.rowValidation[i] ? " validation" : "");	 				
 	
 					// add multiselect
 					if (details.multiSelect) {
@@ -984,66 +1070,12 @@ if (data !== undefined && data !== "") {
 						}
 					}
 	
-					// if we click on a row that isn't the first one
-					rowObject.click( function(ev) {
-						// get the row 
-						var row = $(this);
-						// if this grid has multiselect thhings are more confusing
-						if (details.multiSelect) {
-							// get the target
-							var target = $(ev.target);
-							// get the grid id
-							var id = row.closest("[id]").attr("id");
-							// get any table row click handler
-							var handler = window["Event_click_" + id];
-							// if we're here because we clicked the gridMultiSelect checkbox - in this case row selection is done in the input click listener, above, also do nothing is cell around the multiselect clicked
-							if (!target.is("input.gridMultiSelect") && !target.children("input.gridMultiSelect")[0]) {
-								// remove rowSelect class from all rows in the table
-								row.parent().find("tr.rowSelect").removeClass("rowSelect");
-								// add rowSelect to this row
-								row.addClass("rowSelect");
-								// if there is a handler
-								if (handler) {
-									// uncheck all inputs, what happens next is the handler fires and the selected row is just this one
-									$("#" + id).find("input.gridMultiSelectHeader, input.gridMultiSelect").prop("checked",false);
-									// put this row's tick back for show
-									target.closest("tr").children().first().find("input.gridMultiSelect").prop("checked",true);
-								} else {
-									// no handler so fire row select
-									target.closest("tr").children().first().find("input.gridMultiSelect").first().click();
-								}
-							}
-						} else {
-							// remove rowSelect class from all rows in the table
-							row.parent().find("tr.rowSelect").removeClass("rowSelect");
-							// add rowSelect to this row
-							//row.addClass("rowSelect");
-							var e = row.get(0);
-							e.className = e.className + " rowSelect";
-						}
-					});
+					// call the row handler if we click on a row that isn't the first one
+					rowObject.click(rowHandler);
 					
-					// if there is a selected row
-					if (data.selectedRowNumber) {
-						// check for array, used by multi-select
-						if ($.isArray(data.selectedRowNumber)) {
-							// loop array
-							for (var i in data.selectedRowNumber) {
-								// if this is a selected row 
-								if (rowIndex == data.selectedRowNumber[i]-1) {
-									// add rowSelect class
-									rowObject.addClass("rowSelect");
-									// tick any select box
-									rowObject.children().first().find("input[type=checkbox].gridMultiSelect").prop("checked",true);
-									// we're done for now
-									break;
-								}
-							}
-						} else {
-							// if this is the selected row
-							if (rowIndex == data.selectedRowNumber-1) rowObject.addClass("rowSelect");
-						}
-					} // data.selectedRowNumber
+					// do any row selections
+					rowSelect(data, rowObject, rowIndex)
+					
 								
 				} // row loop
 		
@@ -1068,6 +1100,8 @@ if (data !== undefined && data !== "") {
 
 			// start the header row with the styling
 			var headerHtml = "<tr" + (details.columnHeadings == false ? " style='display:none'" : "") + ">";
+			// if multiselect
+			if (details.multiSelect) headerHtml += "<td><input type='checkbox' class='gridMultiSelectHeader'/></td>";
 			// loop the fields
 			for (var i in data.fields) {
 				// add cell with field to row
@@ -1079,6 +1113,9 @@ if (data !== undefined && data !== "") {
 			// append the header html
 			grid.append(headerHtml);
 			
+			// if multiselect apply the header multiselect
+			if (details.multiSelect) setGridHeaderMultiSelect(id, grid);
+			
 			// get the tbody
 			var tbody = $("#" + id).find("tbody");
 			
@@ -1087,72 +1124,50 @@ if (data !== undefined && data !== "") {
 			
 				// loop the rows
 		        for (var chunkIndex = 0; chunkIndex < 40 && rows[rowIndex]; chunkIndex++, rowIndex++) {
+		            
+		            // get the row
+		            var row = rows[rowIndex];
+		            
 		            // start the row object with the styling
 		            var tr = document.createElement("tr");
 		            tr.className = "rowStyle" + (rowIndex % 2 + 1);
-		            // get the row
-		            var row = rows[rowIndex];
+
+		            // add multiselect
+					if (details.multiSelect) {
+						var td = document.createElement("td");
+						var input = document.createElement("input");
+						input.setAttribute("type", "checkbox")
+						input.className = "gridMultiSelect"
+						td.appendChild(input);
+						tr.appendChild(td);
+					}
+		            
 		            // loop the row cells
 		            for (var cellIndex in row) {
 		                // add cell with value to row
 		                var td = document.createElement("td");
-		                td.appendChild(document.createTextNode(row[cellIndex]));
+		                // get the value
+		                var value = row[cellIndex];
+		                // if the value is an object, stringify it
+						if ($.isPlainObject(value)) {
+							try {
+								value = JSON.stringify(value);
+							} catch(ex) {}
+						}
+		                td.appendChild(document.createTextNode(value));
 		                tr.appendChild(td);
 		            }
 		            tbody.append(tr);
+
+					// get the rowObject
+					var rowObject = $(tr);
 	 
 					// if we click on a row that isn't the first one
-					$(tr).click( function(ev) {
-						// get the row 
-						var row = $(this);
-						// if this grid has multiselect thhings are more confusing
-						if (details.multiSelect) {
-							// get the target
-							var target = $(ev.target);
-							// get the grid id
-							var id = row.closest("[id]").attr("id");
-							// get any table row click handler
-							var handler = window["Event_click_" + id];
-							// if we're here because we clicked the gridMultiSelect checkbox - in this case row selection is done in the input click listener, above, also do nothing is cell around the multiselect clicked
-							if (!target.is("input.gridMultiSelect") && !target.children("input.gridMultiSelect")[0]) {
-								// remove rowSelect class from all rows in the table
-								row.parent().find("tr.rowSelect").removeClass("rowSelect");
-								// add rowSelect to this row
-								row.addClass("rowSelect");
-								// if there is a hanlder uncheck all inputs, what happens next is the handler fires and the select row is just this one
-								if (handler) $("#" + id).find("input.gridMultiSelectHeader, input.gridMultiSelect").prop("checked",false);
-							}
-						} else {
-							// remove rowSelect class from all rows in the table
-							row.parent().find("tr.rowSelect").removeClass("rowSelect");
-							// add rowSelect to this row
-							//row.addClass("rowSelect");
-							var e = row.get(0);
-							e.className = e.className + " rowSelect";
-						}
-					});
+					rowObject.click(rowHandler);
 					
-					// if there is a selected row
-					if (data.selectedRowNumber) {
-						// check for array, used by multi-select
-						if ($.isArray(data.selectedRowNumber)) {
-							// loop array
-							for (var i in data.selectedRowNumber) {
-								// if this is a selected row 
-								if (rowIndex == data.selectedRowNumber[i]-1) {
-									// add rowSelect class
-									rowObject.addClass("rowSelect");
-									// tick any select box
-									rowObject.children().first().find("input[type=checkbox].gridMultiSelect").prop("checked",true);
-									// we're done for now
-									break;
-								}
-							}
-						} else {
-							// if this is the selected row
-							if (rowIndex == data.selectedRowNumber-1) rowObject.addClass("rowSelect");
-						}
-					} // data.selectedRowNumber
+					// do any row selection
+					rowSelect(data, rowObject, rowIndex);
+					
 					
 		        } // row loop
 		        
@@ -1494,23 +1509,8 @@ if (details) {
 		});
 	
 	}
-	// if this is multiSelect, set up the header checkbox listener
-	if (details.multiSelect) {
-		$("#" + id).find("input.gridMultiSelectHeader").change(function(ev) {
-			// get the header value
-			var select = $(this).prop("checked");
-			// update rowSelect accordingly
-			if (select) {
-				// select all rows, except the top one
-				grid.find("tr:not(:first-child)").addClass("rowSelect");
-			} else {
-				// remove select from all rows
-				grid.find("tr").removeClass("rowSelect");
-			}
-			// update row checkboxes
-			grid.find("input.gridMultiSelect").prop("checked",select);
-		});
-	}
+	// if this is multiSelect, set up the header checkbox listener, global as it's shared by the no column dynamic header
+	if (details.multiSelect) setGridHeaderMultiSelect(id, grid);
 	// if there is a data store
 	if (details.dataStorageType) {
 		var data = getGridDataStoreData(id, details);
@@ -1908,16 +1908,25 @@ if (details && details.dataStorageType) {
 				<name>Selected row number</name>
 				<getPropertyFunction>
 			        <![CDATA[
-if (details && details.dataStorageType) {
-	var gridData = getGridDataStoreData(id, details);
-	if (gridData && gridData.selectedRowNumber) {
-		return gridData.selectedRowNumber;
-	} else {
-		return null;
-	}
+// check if the grid is loading			        
+if (_gridLoaders[id] && _gridLoaders[id].loading) {
+	// if loading send the retained selected row number
+	return _gridLoaders[id].selectedRowNumber;
 } else {
-	return getGridSelectedRowNumber(id, ev, details);
-}
+	// not loading so check details and storage
+	if (details && details.dataStorageType) {
+		// there is storage so use that
+		var gridData = getGridDataStoreData(id, details);
+		if (gridData && gridData.selectedRowNumber) {
+			return gridData.selectedRowNumber;
+		} else {
+			return null;
+		}
+	} else {
+		// no storage so use the grid
+		return getGridSelectedRowNumber(id, ev, details);
+	}
+} 
 			        ]]>	  	   	            
 	   	        </getPropertyFunction>
 				<setPropertyJavaScript>
@@ -1950,8 +1959,14 @@ saveGridDataStoreData(id, details, gridData);
 				<name>Row count</name>
 				<getPropertyFunction>
 			        <![CDATA[
-if (!_gridLoaders[id] || !_gridLoaders[id].loading) {
+// check if the grid is loading			        
+if (_gridLoaders[id] && _gridLoaders[id].loading) {
+	// if loading send the retained row count
+	return _gridLoaders[id].rows;
+} else {
+	// not loading so check details and storage
 	if (details && details.dataStorageType) {
+		// there is storage so use that
 		var gridData = getGridDataStoreData(id, details);
 		if (gridData && gridData.rows) {
 			return gridData.rows.length;
@@ -1966,8 +1981,6 @@ if (!_gridLoaders[id] || !_gridLoaders[id].loading) {
 		// return number of rows
 		return grid.find("tr").length - 1;
 	}
-} else {
-	return _gridLoaders[id].rows;
 }
 			        ]]>	  	   	            
 	   	        </getPropertyFunction>
