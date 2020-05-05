@@ -133,7 +133,15 @@ public class SOA extends RapidHttpServlet {
 
 				} else if (serviceId == null) {
 
-					out.print("<html><head><title>Rapid SOA Webservices</title></head><script type='text/javascript' src='" + Rapid.JQUERY + "'></script><script type='text/javascript' src='scripts/soa.js'></script><body>Wsdls:<p/>");
+					out.print("<html><head><title>Rapid SOA Webservices</title></head><link rel='stylesheet' type='text/css' href='styles/index.css'></link><script type='text/javascript' src='scripts/" + Rapid.JQUERY + "'></script><script type='text/javascript' src='scripts/soa.js'></script><body style='padding:10px;'>");
+
+					out.print("App: " + app.getName() + "<p/>");
+
+					out.print("App id: " + app.getId() + "<p/>");
+
+					if (appVersion != null) out.print("Version: " + appVersion + "<p/>");
+
+					out.print("Wsdls:<p/>");
 
 					String dropDown = "<select id='action'>";
 
@@ -143,8 +151,8 @@ public class SOA extends RapidHttpServlet {
 						out.print("This application has no webservices");
 					} else {
 						for (Webservice webservice : webservices) {
-							dropDown += "<option value='" + app.getId() + "." + webservice.getId() + "'>" + webservice.getName() + "</option>";
-							out.print("<a href='soa?a=" + app.getId() + "&s=" + webservice.getId() + "'>" + webservice.getName() + "</a><p/>");
+							dropDown += "<option value='" + app.getId() + "/" + (appVersion == null ? "" : appVersion + "/") + webservice.getId() + "'>" + webservice.getName() + "</option>";
+							out.print("<a target='blank' href='soa?a=" + app.getId() + "&s=" + webservice.getId() + "'>" + webservice.getName() + "</a><p/>");
 						}
 					}
 
