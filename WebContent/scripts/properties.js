@@ -6649,6 +6649,18 @@ function Property_inputMaxLength(cell, propertyObject, property, details) {
 	}
 }
 
+// allows users to disallow users from deleting images in preview mode
+function Property_checkboxAllowDelete(cell, propertyObject, property, details) {
+	// only if onImageClick is preview
+	if (propertyObject.onImageClick === "preview") {
+		// create the drop down, function for values is above.
+		Property_checkbox(cell, propertyObject, property, details);
+	} else {
+		// remove this row
+		cell.closest("tr").remove();
+	}
+}
+
 // allows a dialogue to be cancelled by clicking its background
 function Property_dismissibleDialogue(cell, propertyObject, property, details) {
 	// only for dialouges
