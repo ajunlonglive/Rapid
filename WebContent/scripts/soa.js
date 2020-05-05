@@ -462,6 +462,7 @@ function loadSOA(details) {
 
 function submitWebservice() {
 		
+	var url = "soa";
 	var action = $("#action").val();	
 	var header = { SOAPAction : action };
 	
@@ -474,7 +475,7 @@ function submitWebservice() {
 	
 	// request the dialogue		
 	$.ajax({
-    	url: "soa",
+    	url: url,
     	type: "POST",          
         data: data,  
         headers: header,
