@@ -226,24 +226,24 @@ if (data != null && data !== undefined) {
 	            <getPropertyFunction>
 	                <![CDATA[
 // get datastore data             
-var data = getDataStoreData(id, details);
+var dataStoreData = getDataStoreData(id, details);
 // if we have data and some rows
-if (data && data.rows) {
+if (dataStoreData && dataStoreData.rows) {
 	// get the selected row number
-	var selectedRowNumber = data.selectedRowNumber;
+	var selectedRowNumber = dataStoreData.selectedRowNumber;
 	// if the selectedRowNumber has not been set but there is one row, set it to that row
-	if (selectedRowNumber === undefined && data.rows.length == 1) selectedRowNumber = 1;
+	if (selectedRowNumber === undefined && dataStoreData.rows.length == 1) selectedRowNumber = 1;
 	// if we had, or could derive, a row number and there is data there
-	if (selectedRowNumber && data.rows[selectedRowNumber - 1]) {
-		// get a row for the currently selected
-		data = {fields:data.fields,rows:[data.rows[selectedRowNumber - 1]]};
+	if (selectedRowNumber && dataStoreData.rows[selectedRowNumber - 1]) {
+		// start the return data object
+		var data = null;
 		// if we were provided with a field to drill into the row data
-		if (field && data && data.fields && data.rows && data.rows.length > 0) {
+		if (field && dataStoreData.fields) {
 			// assume we can't find it	
 			var fieldIndex = -1;
 			// loop the fields
-			for (var i in data.fields) {
-				if (data.fields[i] && data.fields[i].toLowerCase() == field.toLowerCase()) {
+			for (var i in dataStoreData.fields) {
+				if (dataStoreData.fields[i] && dataStoreData.fields[i].toLowerCase() == field.toLowerCase()) {
 					fieldIndex = i;
 					break;
 				}
@@ -251,11 +251,11 @@ if (data && data.rows) {
 			// if we found the field
 			if (fieldIndex > -1) {
 				// get the value at this field position
-				data = data.rows[0][fieldIndex];
-			} else {
-				// could not find field
-				data = null;
+				data = dataStoreData.rows[selectedRowNumber - 1][fieldIndex];
 			}
+		} else {
+			// return a whole object with just the selected row
+			data = {fields:dataStoreData.fields,rows:[dataStoreData.rows[selectedRowNumber - 1]]};
 		}
 		// return data
 		return data
@@ -264,17 +264,36 @@ if (data && data.rows) {
 	                ]]>
 	            </getPropertyFunction>
 	            <setPropertyJavaScript>
-	                <![CDATA[	
-var dataStoreData = getDataStoreData(id, details);	                
-if (dataStoreData && dataStoreData.selectedRowNumber && dataStoreData.rows && dataStoreData.rows.length >= dataStoreData.selectedRowNumber) {	
-	data = makeDataObject(data, field);
-	if (data && data.rows) {
-		dataStoreData.rows[dataStoreData.selectedRowNumber - 1] = data.rows[0][0];		
-	} else {
-		dataStoreData.rows.splice(dataStoreData.selectedRowNumber - 1,1);
+	                <![CDATA[
+// get datastore data             
+var dataStoreData = getDataStoreData(id, details);
+// if we have data and some rows
+if (dataStoreData && dataStoreData.rows) {
+	// get the selected row number
+	var selectedRowNumber = dataStoreData.selectedRowNumber;
+	// if the selectedRowNumber has not been set but there is one row, set it to that row
+	if (selectedRowNumber === undefined && dataStoreData.rows.length == 1) selectedRowNumber = 1;
+	// if we had, or could derive, a row number and there is data there
+	if (selectedRowNumber && dataStoreData.rows[selectedRowNumber - 1]) {
+	
+		// make a data object from the passed in data
+		data = makeDataObject(data, field);
+		// if we have data to pass in and it has at least one row
+		if (data && data.rows && data.rows.length > 0) {
+		
+			dataStoreData.fields = data.fields;
+			dataStoreData.rows[selectedRowNumber - 1] = data.rows[0];
+					
+		} else {
+			// remove the row at that position
+			dataStoreData.rows.splice(selectedRowNumber - 1, 1);
+		}
+		// save the data store
+		saveDataStoreData(id, details, dataStoreData);	
+	
+	
 	}
-	saveDataStoreData(id, details, dataStoreData);
-}            
+}	                       
 	                ]]>
 	            </setPropertyJavaScript>
 	        </runtimeProperty>
