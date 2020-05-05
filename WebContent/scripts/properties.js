@@ -6651,6 +6651,7 @@ function Property_inputMaxLength(cell, propertyObject, property, details) {
 
 // allows users to disallow users from deleting images in preview mode
 function Property_checkboxAllowDelete(cell, propertyObject, property, details) {
+	propertyObject.allowDelete = propertyObject.allowDelete != false;
 	// only if onImageClick is preview
 	if (propertyObject.onImageClick === "preview") {
 		// create the drop down, function for values is above.
