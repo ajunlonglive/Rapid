@@ -76,17 +76,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 						return [["nothing","Do nothing"],["","Prompt to remove image"],["caption","Show image caption"],["preview","Show fullscreen"]];
 					]]>
 	            </getValuesFunction>
-	            <refreshProperties>true</refreshProperties>
-	            <helpHtml>What to do when an image in the gallery is clicked on.</helpHtml>
-	        </property>
-	        
-	         <property>
-	            <key>allowDelete</key>
-	            <name>Allow delete</name>
-	            <visible>true</visible>
-	            <setConstructValueFunction>return true;</setConstructValueFunction>
-	            <changeValueJavaScript>checkboxAllowDelete</changeValueJavaScript>
-	            <helpHtml>Whether images can be deleted from the gallery when shown full screen.</helpHtml>
+	            <helpHtml>What to do when an image in the gallery is clicked on..</helpHtml>
 	        </property>
 	        
 	         <property>
@@ -246,7 +236,7 @@ function setNextPrevImgAndButton(currentImage, direction, prevButton, nextButton
 	
 }        	
 
-function Gallery_showImage(ev, id, allowDelete) {	
+function Gallery_showImage(ev, id) {	
 
 	// get the image
 	var img = $(ev.target);
@@ -269,7 +259,6 @@ function Gallery_showImage(ev, id, allowDelete) {
 		var btnPrev = gallery.append("<button id='btnPrev' class='galleryControlDirectionButton' style='position:absolute; left:0; top:50%;'><i class='fa fa-chevron-left'></i></button>").find("#btnPrev");
 		var btnNext = gallery.append("<button id='btnNext' class='galleryControlDirectionButton' style='position:absolute; right:0; top:50%;'><i class='fa fa-chevron-right'></i></button>").find("#btnNext");
 		
-		if (!allowDelete) btnDelete.hide();
 	
 		// Add click listeners to the buttons
 		btnPrev.click(function(){
@@ -427,7 +416,7 @@ return html;
 	    
 	    <getDetailsFunction>
 	        <![CDATA[
-var details = {type:"gallery", onImageClick: this.onImageClick, emptyText: this.emptyText, allowDelete: this.allowDelete};
+var details = {type:"gallery", onImageClick: this.onImageClick, emptyText: this.emptyText};
 if (this.images && this.gotCaptions) {
 	details.captions = [];
 	for (var i in this.images) {
@@ -693,7 +682,7 @@ if (data == null || data === undefined) {
 								if (!details) details = window[id + "details"];
 								if (details) {
 									if (details.onImageClick == "preview") {
-										Gallery_showImage(ev,id,details.allowDelete);
+										Gallery_showImage(ev,id);
 									} else if (details.onImageClick == "caption") {
 										var index = $(ev.target).index();
 										if (details.captions && details.captions[index]) alert(details.captions[index]);
@@ -764,7 +753,7 @@ $("#" + id).children("img").click( function(ev) {
 	if (details) {
 		// changes here need to be replicated in setData
 		if (details.onImageClick == "preview") {
-			Gallery_showImage(ev,id,details.allowDelete);
+			Gallery_showImage(ev,id);
 		} else if (details.onImageClick == "caption") {
 			var index = $(ev.target).index();
 			if (details.captions && details.captions[index]) alert(details.captions[index]);
