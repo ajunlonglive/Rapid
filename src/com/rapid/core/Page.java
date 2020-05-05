@@ -1501,8 +1501,8 @@ public class Page {
 			Collections.sort(pageLoadLines, new Comparator<String>() {
 				@Override
 				public int compare(String l1, String l2) {
-					if (l1.isEmpty()) return -1;
-					if (l2.isEmpty()) return 1;
+					if (l1 == null || l1.isEmpty()) return -1;
+					if (l2 == null || l2.isEmpty()) return 1;
 					char i1 = l1.charAt(0);
 					char i2 = l2.charAt(0);
 					return i2 - i1;
