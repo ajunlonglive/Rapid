@@ -176,6 +176,10 @@ public abstract class SOADataWriter {
 
 			if (element.getIsArray()) {
 
+				// a root array element needs to enclosed as an object
+				if (element.getParentElement() == null) _stringBuilder.append("{");
+
+				// add the name
 				_stringBuilder.append("\"" + element.getName() + "\":[");
 
 				List<SOAElement> childElements = element.getChildElements();
@@ -195,6 +199,9 @@ public abstract class SOADataWriter {
 				}
 
 				_stringBuilder.append("]");
+
+				// a root array element needs to enclosed as an object
+				if (element.getParentElement() == null) _stringBuilder.append("}");
 
 			} else {
 
