@@ -484,7 +484,7 @@ div#propertiesPanelInner {
 #controlPanelSizeLeft, #propertiesPanelSize {
 	float: left;
     margin-left: -10px;
-    position: relative;
+    position: fixed;
 }
 
 #controlPanelSize, #propertiesPanelSizeRight {
