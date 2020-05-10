@@ -3500,14 +3500,14 @@ $(document).ready( function() {
 	        draggable.style.transition =
 	            "top 0.15s ease-out, left 0.15s ease-out, height 0.15s ease-out";
 	        // if snapped to an edge
-	        if (draggableLeft === 0 || draggableOnRight) {
+	        if (draggableLeft <= 0 || draggableOnRight) {
 	        	// fill height of screen
 	        	draggableTop = 0;
 		        draggable.style.height = window.innerHeight + "px";
 		        
 	        } else {
 	        	// prevent overflowing bottom of window
-		        draggable.style.height = (window.innerHeight - draggableTop) + "px";
+		        draggable.style.height = (window.innerHeight - draggableTop - 10) + "px";
 	        }
 	        
 	        draggable.style.top = draggableTop + "px";
@@ -3626,7 +3626,7 @@ $(document).ready( function() {
 	        	) + "px";
 	    	}
 	    	// prevent overflowing bottom of window
-	    	draggable.style.height = window.innerHeight - draggable.offsetTop;
+	    	draggable.style.height = window.innerHeight - draggable.offsetTop - 10;
 		})
 	});
 
@@ -3638,7 +3638,7 @@ $(document).ready( function() {
 	        draggable.style.top = (draggable.offsetTop + event.clientY - cursorY) + "px";
 	        draggable.style.left = (draggable.offsetLeft + event.clientX - cursorX) + "px";
 	        // prevent overflowing bottom of window
-	        draggable.style.height = (window.innerHeight - draggable.offsetTop) + "px";
+	        draggable.style.height = (window.innerHeight - draggable.offsetTop - 10) + "px";
 	    }
 	    // store that last mouse position
 	    cursorX = event.clientX;
@@ -4306,12 +4306,12 @@ function windowResize(ev) {
 	// get the control panel
 	var controlPanel = $("#controlPanel");		
 	// set it's height to auto
-	controlPanel.css("height","auto");
+	//controlPanel.css("height","auto");
 	
 	// get the properties panel
 	var propertiesPanel = $("#propertiesPanel");
 	// set it's height to auto
-	propertiesPanel.css("height","auto");
+	//propertiesPanel.css("height","auto");
 	
 	// only reset the height of the Iframe when mouse is not down. This was causing the controls to be move out of position when selected
 	if (!_mouseDown) {
@@ -4323,10 +4323,10 @@ function windowResize(ev) {
 	var height = getHeight();
 				
 	// adjust controlPanel height, less it's padding
-	controlPanel.css({height: height});
+	//controlPanel.css({height: height});
 	
 	// adjust propertiesPanel height, less it's padding
-	propertiesPanel.css({height: height});
+	//propertiesPanel.css({height: height});
 			
 	// get the device
 	var device = _devices[_device];
