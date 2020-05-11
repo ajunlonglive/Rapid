@@ -906,9 +906,9 @@ if (data !== undefined && data !== "") {
 					// add rowSelect to this row
 					row.addClass("rowSelect");
 					// if there is a handler
+					// uncheck all inputs, what happens next is the handler fires and the selected row is just this one
+					$("#" + id).find("input.gridMultiSelectHeader, input.gridMultiSelect").prop("checked",false);
 					if (handler) {
-						// uncheck all inputs, what happens next is the handler fires and the selected row is just this one
-						$("#" + id).find("input.gridMultiSelectHeader, input.gridMultiSelect").prop("checked",false);
 						// put this row's tick back for show
 						target.closest("tr").children().first().find("input.gridMultiSelect").prop("checked",true);
 					} else {
