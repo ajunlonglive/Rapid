@@ -458,10 +458,7 @@ return data;
 // get the control	        
 var control = $("#" + id);
 // check we have some data       
-if (data == null || data === undefined) {
-	// no data so remove all images
-	control.find("img").remove();
-} else {
+if (data) {
 	// make a proper data object	
 	data = makeDataObject(data, field);
 	// if it has rows
@@ -725,6 +722,9 @@ if (data == null || data === undefined) {
 		// remove the no pictures message if set
 		if (imageSet) control.find("span").remove();
 	} 
+} else {
+	// no data so remove all images
+	control.find("img").remove();
 }
 	        ]]>
 	    </setDataJavaScript>
