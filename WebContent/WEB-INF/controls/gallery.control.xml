@@ -162,7 +162,8 @@ function Gallery_removeImage(ev, id, galleryImg) {
 		if (galleryImg) galleryImg.remove();
 		// get the image
 		var img = $(".bigGallery img:visible");
-		if (img.length === 0) img = $(ev.target);
+		// use the event target if we didn't get one from the big gallery
+		if (img.length == 0) img = $(ev.target);
 		// check if Rapid Mobile is present
 		if (typeof _rapidmobile == "undefined") {
 			// remove from storage
@@ -173,6 +174,15 @@ function Gallery_removeImage(ev, id, galleryImg) {
 		} 
 		// remove it
 		img.remove();
+		// get the gallery control
+		var control = $("#" + id);
+		// if there are no images left in the gallery
+		if (control.find("img").length == 0) {
+			// get the details
+			var details = window[id + "details"];
+			// if there were some details and an emptyText add it to the control
+			if (details && details.emptyText) control.append("<span>" + details.emptyText + "</span>");
+		}
 		// look for our custom imageRemoved handler for this control
 		var imageRemoved = window["Event_imageRemoved_" + id];
 		// fire it if we found it
@@ -308,11 +318,11 @@ function Gallery_showImage(ev, id, allowDelete) {
 			// Loop through only the images in the gallery, and get the currently shown img object in the big gallery
 			gallery.children("img").each(function(index, element) {
 				// get this image
-				let self = $(this);
+				var self = $(this);
 				// if it is the one showing
 				if (self.is(":visible")) {
 					// get the source gallery
-					let sourceGallery = $("#" + gallery.attr("data-gallery"));
+					var sourceGallery = $("#" + gallery.attr("data-gallery"));
 					// Find  and delete this image 
 					var img = sourceGallery.children("img").eq(index);
 					// remove from storage
@@ -373,8 +383,9 @@ function Gallery_showImage(ev, id, allowDelete) {
 	
 	// Get all the siblings of the clicked img in the main gallery including itself, and put it in the bigGallery
     mainGallery.children().each(function(){
+    
     	// Make a clone of this children to copy into big gallery
-    	let self = $(this).clone(); 	
+    	var self = $(this).clone(); 	
     	self.css({"width":"100%", "height":"100%", "object-fit":"contain", "display":"none"});
     	gallery.append(self);
     	
@@ -688,10 +699,11 @@ if (data) {
 							
 							// find the image element and add a click handler
 							control.find("img").last().click( function(ev) {
+								var img = this;
 								if (!details) details = window[id + "details"];
 								if (details) {
 									if (details.onImageClick == "preview") {
-										Gallery_showImage(ev,id,details.allowDelete);
+										Gallery_showImage(ev, id, details.allowDelete);
 									} else if (details.onImageClick == "caption") {
 										var index = $(ev.target).index();
 										if (details.captions && details.captions[index]) alert(details.captions[index]);
@@ -725,6 +737,10 @@ if (data) {
 } else {
 	// no data so remove all images
 	control.find("img").remove();
+	// find the message span
+	var span = control.find("span");
+	// if there wasn't one, add one with the message
+	if (!span[0]) control.append("<span>" + details.emptyText + "</span>")
 }
 	        ]]>
 	    </setDataJavaScript>
@@ -766,7 +782,7 @@ $("#" + id).children("img").click( function(ev) {
 	if (details) {
 		// changes here need to be replicated in setData
 		if (details.onImageClick == "preview") {
-			Gallery_showImage(ev,id,details.allowDelete);
+			Gallery_showImage(ev, id, details.allowDelete);
 		} else if (details.onImageClick == "caption") {
 			var index = $(ev.target).index();
 			if (details.captions && details.captions[index]) alert(details.captions[index]);
