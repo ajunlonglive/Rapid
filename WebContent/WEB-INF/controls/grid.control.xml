@@ -1082,7 +1082,7 @@ if (data !== undefined && data !== "") {
 				// if there is a row at the current index
 				if (data.rows[rowIndex]) {
 					// create a new timeout to add these rows
-					var timeoutId = setTimeout(function() { addRows(grid, data, rowIndex + 1); });
+					var timeoutId = setTimeout(function() { addRows(grid, data, rowIndex); });
 					// add timeout to grid loader object
 					_gridLoaders[id].timeouts.push(timeoutId);
 				} else {
@@ -1174,7 +1174,7 @@ if (data !== undefined && data !== "") {
 		        // if there is a row the current index
 		        if (rows[rowIndex]) {
 		        	// create a timer to load next batch of rows
-		        	var timeoutId = setTimeout(function() { addRowsSimple(grid, rows, rowIndex + 1); });
+		        	var timeoutId = setTimeout(function() { addRowsSimple(grid, rows, rowIndex); });
 		        	// retain this timer
 		        	_gridLoaders[id].timeouts.push(timeoutId);
 		        } else {
