@@ -176,7 +176,8 @@ function Gallery_removeImage(ev, id, galleryImg) {
 		// look for our custom imageRemoved handler for this control
 		var imageRemoved = window["Event_imageRemoved_" + id];
 		// fire it if we found it
-		if (imageRemoved) window["Event_imageRemoved_" + id]();
+		if (imageRemoved) imageRemoved(ev);
+		// resize - usually for any dialogues
 		setTimeout(function() { $(window).resize(); });
 	}
 }
@@ -707,7 +708,8 @@ if (data == null || data === undefined) {
 							// look for our custom imageAddedEvent handler for this control
 							var imageAdded = window["Event_imageAdded_" + id];
 							// fire it if we found it
-							if (imageAdded) window["Event_imageAdded_" + id]();
+							if (imageAdded) imageAdded(ev);
+							// fire resize - usally for any dialogues
 							setTimeout(function() { $(window).resize(); });
 							
 						} // image already there check
