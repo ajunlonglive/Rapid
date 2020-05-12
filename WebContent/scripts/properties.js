@@ -6672,3 +6672,18 @@ function Property_dismissibleDialogue(cell, propertyObject, property, details) {
 		cell.closest("tr").remove();
 	}
 }
+
+function Property_checkboxDefaultChecked(cell, propertyObject, property, details) {
+	var checked = "";
+	// set the value if it exists
+	if (propertyObject[property.key] != false) checked = "checked='checked'";
+	// append the adjustable form control
+	cell.append("<input class='propertiesPanelTable' type='checkbox' " + checked + " />");
+	// get a reference to the form control
+	var input = cell.children().last();
+	// add a listener to update the property
+	addListener( input.change({cell: cell, propertyObject: propertyObject, property: property, details: details}, function(ev) {
+		// update the property
+		updateProperty(ev.data.cell, ev.data.propertyObject, ev.data.property, ev.data.details, ev.target.checked);
+	}));
+}
