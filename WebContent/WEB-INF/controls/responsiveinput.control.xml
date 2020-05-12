@@ -113,9 +113,8 @@ return [["N","Normal"],["L","Large"],["Num","Number"],["Tel","Telephone number"]
 	        <property>
 	            <key>autoHeight</key>
 	            <name>Auto height</name>
-	            <setConstructValueFunction>return false;</setConstructValueFunction>
+	            <setConstructValueFunction>return true;</setConstructValueFunction>
 	            <changeValueJavaScript>inputAutoHeight</changeValueJavaScript>
-	            <refreshHtml>true</refreshHtml>
 	        </property>
 	        
 	        <property>
@@ -173,6 +172,16 @@ return [{value:"", text:"Please select..."}, {value:"lg-1", text:"1/12"}, {value
 	            <refreshHtml>true</refreshHtml>
 	            <helpHtml>Sets the width of the panel when the screen size is large. Pages are broken into grids 12 columns wide.</helpHtml>
 	        </property>
+	        
+	         <property>
+	            <key>autocomplete</key>
+	            <name>Allow autocomplete</name>
+	            <visible>true</visible>
+	            <setConstructValueFunction>return true;</setConstructValueFunction>
+	            <changeValueJavaScript>checkboxDefaultChecked</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Whether the browser can offer autocomplete suggestions.</helpHtml>
+	        </property>
 	               
 	    </properties>
 	    
@@ -210,13 +219,13 @@ if (this.responsiveLabel) inputId = " id='" + this.id + "input'";
 
 if (this.value) value = this.value
 switch (this.controlType) {
-	case "N" : html = "<input" + inputId + " name='" + this.id + "' value='" + escapeApos(value) + "' type='text'" + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + " " + (this.placeholder ? " placeholder='" + this.placeholder + "'" : "") + " class='form-control'></input>"; break;
-	case "L" : html = "<textarea" + inputId + " name='" + this.id + "' class='form-control " + (this.autoHeight ? " autoheight" : "")  + "' " + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + (this.placeholder ? " placeholder='" + escapeApos(this.placeholder) + "'" : "") + ">" + value + "</textarea>"; break;
-	case "Num" : html = "<input" + inputId + " name='" + this.id + "' value='" + escapeApos(value) + "' type='number'" + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + " " + (this.placeholder ? " placeholder='" + this.placeholder + "'" : "") + " class='form-control'></input>"; break;
-	case "Tel" : html = "<input" + inputId + " name='" + this.id + "' value='" + escapeApos(value) + "' type='tel'" + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + " " + (this.placeholder ? " placeholder='" + this.placeholder + "'" : "") + " class='form-control'></input>"; break;
-	case "Eml" : html = "<input" + inputId + " name='" + this.id + "' value='" + escapeApos(value) + "' type='email'" + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + " " + (this.placeholder ? " placeholder='" + this.placeholder + "'" : "") + " class='form-control'></input>"; break;
-	case "P" : html = "<input" + inputId + " name='" + this.id + "' value='" + escapeApos(value) + "' type='password'" + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + " " + (this.placeholder ? " placeholder='" + this.placeholder + "'" : "") + " class='form-control'></input>"; break;
-	case "R" : html = "<input" + inputId + " name='" + this.id + "' value='" + escapeApos(value) + "' type='text'" + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + " " + (this.placeholder ? " placeholder='" + this.placeholder + "'" : "") + " class='form-control' readonly='readonly'></input>"; break;
+	case "N" : html = "<input" + inputId + " name='" + this.id + "' value='" + escapeApos(value) + "' type='text'" + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + " " + (this.placeholder ? " placeholder='" + this.placeholder + "'" : "") + " autocomplete='" + (this.autocomplete == false ? "off" : "on") + "'" + " class='form-control'></input>"; break;
+	case "L" : html = "<textarea" + inputId + " name='" + this.id + "' class='form-control " + (this.autoHeight ? " autoheight" : "")  + "' " + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + (this.placeholder ? " placeholder='" + escapeApos(this.placeholder) + "'" : "") + " autocomplete='" + (this.autocomplete == false ? "off" : "on") + "'" + ">" + value + "</textarea>"; break;
+	case "Num" : html = "<input" + inputId + " name='" + this.id + "' value='" + escapeApos(value) + "' type='number'" + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + " " + (this.placeholder ? " placeholder='" + this.placeholder + "'" : "") + " autocomplete='" + (this.autocomplete == false ? "off" : "on") + "'" + " class='form-control'></input>"; break;
+	case "Tel" : html = "<input" + inputId + " name='" + this.id + "' value='" + escapeApos(value) + "' type='tel'" + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + " " + (this.placeholder ? " placeholder='" + this.placeholder + "'" : "") + " autocomplete='" + (this.autocomplete == false ? "off" : "on") + "'" + " class='form-control'></input>"; break;
+	case "Eml" : html = "<input" + inputId + " name='" + this.id + "' value='" + escapeApos(value) + "' type='email'" + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + " " + (this.placeholder ? " placeholder='" + this.placeholder + "'" : "") + " autocomplete='" + (this.autocomplete == false ? "off" : "on") + "'" + " class='form-control'></input>"; break;
+	case "P" : html = "<input" + inputId + " name='" + this.id + "' value='" + escapeApos(value) + "' type='password'" + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + " " + (this.placeholder ? " placeholder='" + this.placeholder + "'" : "") + " autocomplete='" + (this.autocomplete == false ? "off" : "on") + "'" + " class='form-control'></input>"; break;
+	case "R" : html = "<input" + inputId + " name='" + this.id + "' value='" + escapeApos(value) + "' type='text'" + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + " " + (this.placeholder ? " placeholder='" + this.placeholder + "'" : "") + " autocomplete='" + (this.autocomplete == false ? "off" : "on") + "'" + " class='form-control' readonly='readonly'></input>"; break;
 }
 
 if (this.responsiveLabel) {
