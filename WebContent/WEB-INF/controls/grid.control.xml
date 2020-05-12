@@ -274,7 +274,7 @@ function sortGridByColumn(ev, id, details, column, asc) {
 		if (data.fields[column] != field) {
 			// didn't match so find what it should be
 			for (var i in data.fields) {
-				if (data.fields[i] && data.fields[i].toLowerCase() == field.toLowerCase()) {
+				if (data.fields[i] && field && data.fields[i].toLowerCase() == field.toLowerCase()) {
 					dataColumn = i;
 					break;
 				}
@@ -755,7 +755,7 @@ if (details) {
 				var dataStore = getGridDataStoreData(id, details);
 				var rowIndex = getGridSelectedRowNumber(id, ev, details);
 				rowIndex --;
-				if (rowIndex > -1 && dataStore.rows && dataStore.rows.length > rowIndex) {
+				if (field && rowIndex > -1 && dataStore.rows && dataStore.rows.length > rowIndex) {
 					for (var i in dataStore.fields) {
 						if (dataStore.fields[i] && dataStore.fields[i].toLowerCase() == field.toLowerCase()) {
 							data = dataStore.rows[rowIndex][i];
@@ -1713,25 +1713,28 @@ if (gridData && gridData.selectedRowNumber && gridData.selectedRowNumber > 0) {
 			for (var i in data.fields) {
 				// get it's name
 				var field = data.fields[i];
-				// assume it wasn't found in the grid's list of fields	
-				var foundField = false;							
-				// loop the grid's fields
-				for (var j in gridData.fields) {
-					// if there's a match					
-					if (field.toLowerCase() == gridData.fields[j].toLowerCase()) {
-						// store it's position
-						fieldMap[field] = j;
-						foundField = true;
-						break;
+				// make sure there was one
+				if (field) {
+					// assume it wasn't found in the grid's list of fields	
+					var foundField = false;							
+					// loop the grid's fields
+					for (var j in gridData.fields) {
+						// if there's a match					
+						if (field.toLowerCase() == gridData.fields[j].toLowerCase()) {
+							// store it's position
+							fieldMap[field] = j;
+							foundField = true;
+							break;
+						}
+					}
+					// if the field wasn't found in the grid
+					if (!foundField) {
+						// add it to the grid's fields
+						gridData.fields.push(field);
+						// retain the position
+						fieldMap[field] = gridData.fields.length - 1;
 					}
 				}
-				// if the field wasn't found in the grid
-				if (!foundField) {
-					// add it to the grid's fields
-					gridData.fields.push(field);
-					// retain the position
-					fieldMap[field] = gridData.fields.length - 1;
-				}				
 			}			
 			// loop the incoming fields one more time
 			for (var i in data.fields) {
@@ -1782,25 +1785,28 @@ if (gridData && gridData.selectedRowNumber && gridData.selectedRowNumber > 0) {
 			for (var i in data.fields) {
 				// get it's name
 				var field = data.fields[i];
-				// assume it wasn't found in the grid's list of fields	
-				var foundField = false;							
-				// loop the grid's fields
-				for (var j in gridData.fields) {
-					// if there's a match					
-					if (field.toLowerCase() == gridData.fields[j].toLowerCase()) {
-						// store it's position
-						fieldMap[field] = j;
-						foundField = true;
-						break;
+				// make sure there was one
+				if (field) {
+					// assume it wasn't found in the grid's list of fields	
+					var foundField = false;							
+					// loop the grid's fields
+					for (var j in gridData.fields) {
+						// if there's a match					
+						if (field.toLowerCase() == gridData.fields[j].toLowerCase()) {
+							// store it's position
+							fieldMap[field] = j;
+							foundField = true;
+							break;
+						}
+					}
+					// if the field wasn't found in the grid
+					if (!foundField) {
+						// add it to the grid's fields
+						gridData.fields.push(field);
+						// retain the position
+						fieldMap[field] = gridData.fields.length - 1;
 					}
 				}
-				// if the field wasn't found in the grid
-				if (!foundField) {
-					// add it to the grid's fields
-					gridData.fields.push(field);
-					// retain the position
-					fieldMap[field] = gridData.fields.length - 1;
-				}				
 			}
 			
 			// make a row
