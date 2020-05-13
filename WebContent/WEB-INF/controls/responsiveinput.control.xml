@@ -115,17 +115,18 @@ return [["N","Normal"],["L","Large"],["Num","Number"],["Tel","Telephone number"]
 	            <name>Auto height</name>
 	            <setConstructValueFunction>return false;</setConstructValueFunction>
 	            <changeValueJavaScript>inputAutoHeight</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
 	        </property>
 	        
 	         <property>
 	            <key>autocomplete</key>
 	            <name>Autocomplete</name>
 	            <visible>true</visible>
-	            <setConstructValueFunction>return "on";</setConstructValueFunction>
+	            <setConstructValueFunction>return "";</setConstructValueFunction>
 	            <changeValueJavaScript>select</changeValueJavaScript>
 	            <getValuesFunction>
 	                <![CDATA[
-return [{value:"on", text:"on"}, {value:"off", text:"off"}, {value:"name", text:"name"}, {value:"bday", text:"bday"}, {value:"sex", text:"sex"}, {value:"language", text:"language"}, {value:"email", text:"email"}, {value:"tel", text:"tel"}, {value:"lg-8", text:"8/12"}, {value:"url", text:"url"}, {value:"street-address", text:"street-address"}, {value:"country", text:"country"}, {value:"postal-code", text:"postal-code"}, {value:"organization", text:"organization"}, {value:"username", text:"username"}, {value:"new-password", text:"new-password"}, {value:"current-password", text:"current-password"}];
+return [["", "Please select..."], ["on", "on"], ["off", "off"], ["name", "name"], ["bday", "bday"], ["sex", "sex"], ["language", "language"], ["email", "email"], ["tel", "tel"], ["url", "url"], ["street-address", "street-address"], ["country", "country"], ["postal-code", "postal-code"], ["organization", "organization"], ["username", "username"], ["new-password", "new-password"], ["current-password", "current-password"]];
 					]]>
 	            </getValuesFunction>
 	            <refreshHtml>true</refreshHtml>
@@ -221,8 +222,8 @@ if (this.large) classes += " col-" + this.large;
 var inputId = "";
 // if we have a label set the id
 if (this.responsiveLabel) inputId = " id='" + this.id + "input'";
-debugger;
-var autocompleteHtml = [undefined, 'on'].includes(this.autocomplete) ? "" : " autocomplete='" + this.autocomplete + "'";
+
+var autocompleteHtml = this.autocomplete ? " autocomplete='" + this.autocomplete + "'" : "";
 
 if (this.value) value = this.value
 switch (this.controlType) {
