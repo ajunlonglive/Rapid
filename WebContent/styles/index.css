@@ -89,18 +89,20 @@ form{
 }
 
 .columnUserIcon {
-	width:45px; 
-	background:#e6e6e6;; 
-	position:absolute; 
+	width: 45px; 
+	background: #e6e6e6;; 
+	position: absolute; 
 	padding: 10px 0; 
-	height:30px;
+	height: 30px;
 	border-right: 1px solid #ccc;
+	z-index: 1;
 }
 
 .columnUserIcon span {
 	font-size: 18px; 
 	font-weight: bold;
 	vertical-align: middle;
+	padding-top: 6px;
 }
 
 .columnUserInput {
@@ -116,8 +118,8 @@ input[type=text], input[type=password] {
 	box-sizing: border-box;
 	text-indent: 40px;	
 	transition: background 0.5s ease;
-	font-family: inherit;
 	font-size: 18px;
+	font-family: inherit;
 }
 
 input[type="text"]:hover, input[type="password"]:hover {
