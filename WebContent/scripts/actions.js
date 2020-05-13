@@ -403,8 +403,8 @@ function showEvents(control) {
 // this renders the actions for a control's event into a properties panel
 function showActions(control, eventType) {
 	
-	// if this control has events
-	if (control.events) {
+	// if there was a control and it has events
+	if (control && control.events) {
 		
 		// get a reference to the div we are writing in to
 		var actionsPanel = $("#actionsPanelDiv");		
