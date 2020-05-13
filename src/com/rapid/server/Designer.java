@@ -1729,8 +1729,6 @@ public class Designer extends RapidHttpServlet {
 								JSONArray jsonPages = jsonPage.optJSONArray("pages");
 								// if we got some
 								if (jsonPages != null) {
-									// the start page id
-									String startPageId = null;
 									// make a new map for the page orders
 									Map<String, Integer> pageOrders = new HashMap<>();
 									// loop the page orders
@@ -1739,21 +1737,17 @@ public class Designer extends RapidHttpServlet {
 										String pageId = jsonPages.getJSONObject(i).getString("id");
 										// add the order to the map
 										pageOrders.put(pageId, i);
-										// retain page id if first one
-										if (i == 0) startPageId = pageId;
 									}
 									// replace the application pageOrders map
 									application.setPageOrders(pageOrders);
-									// update the application start page
-									application.setStartPageId(startPageId);
+									// update the application start page (forms only)
+									if (application.getIsForm() && jsonPages.length() > 0) application.setStartPageId(jsonPages.getJSONObject(0).getString("id"));
 									// save the application and the new orders
 									application.save(this, rapidRequest, true);
 								}
 								boolean jsonPageOrderReset = jsonPage.optBoolean("pageOrderReset");
-								if (jsonPageOrderReset) {
-									// empty the application pageOrders map so everything goes alphabetical
-									application.setPageOrders(null);
-								}
+								// empty the application pageOrders map so everything goes alphabetical
+								if (jsonPageOrderReset) application.setPageOrders(null);
 
 								// send a positive message
 								output = "{\"message\":\"Saved!\"}";
