@@ -116,9 +116,10 @@ return [["N","Normal"],["L","Large"],["Num","Number"],["Tel","Telephone number"]
 	            <setConstructValueFunction>return false;</setConstructValueFunction>
 	            <changeValueJavaScript>inputAutoHeight</changeValueJavaScript>
 	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Whether the control's height should automatically adjust to display all of its contents.</helpHtml>
 	        </property>
 	        
-	         <property>
+	        <property>
 	            <key>autocomplete</key>
 	            <name>Autocomplete</name>
 	            <visible>true</visible>
@@ -126,11 +127,11 @@ return [["N","Normal"],["L","Large"],["Num","Number"],["Tel","Telephone number"]
 	            <changeValueJavaScript>select</changeValueJavaScript>
 	            <getValuesFunction>
 	                <![CDATA[
-return [["", "Please select..."], ["on", "on"], ["off", "off"], ["name", "name"], ["bday", "bday"], ["sex", "sex"], ["language", "language"], ["email", "email"], ["tel", "tel"], ["url", "url"], ["street-address", "street-address"], ["country", "country"], ["postal-code", "postal-code"], ["organization", "organization"], ["username", "username"], ["new-password", "new-password"], ["current-password", "current-password"]];
+return ["", "on", "off", "name", "bday", "sex", "language", "email", "tel", "url", "street-address", "country", "postal-code", "organization", "username", "new-password", "current-password"];
 					]]>
 	            </getValuesFunction>
 	            <refreshHtml>true</refreshHtml>
-	            <helpHtml>Whether the browser can offer autocomplete suggestions.</helpHtml>
+	            <helpHtml>The autocomplete suggestion the browser will offer.</helpHtml>
 	        </property>
 	        
 	        <property>
