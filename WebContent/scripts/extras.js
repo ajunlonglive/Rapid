@@ -622,6 +622,7 @@ function getDataObjectFieldIndex(data, field, caseSensitive) {
 	return null;
 }
 
+// makes a Rapid data object, can drill into objects by field, and convert JSON
 function makeDataObject(data, field) {
 	// check we were passed something to work with
 	if (data != null && data !== undefined) {
@@ -646,15 +647,20 @@ function makeDataObject(data, field) {
 				// prepare a row
 				var row = [];
 				// if it's an object build data object from it's properties
-				if ($.isPlainObject(item)) {				
-					var fieldPos = 0;				
+				if ($.isPlainObject(item)) {
+					// if we were given a field and it's a property of the object, promote that property value into the object (this is useful for JSON arrays of objects)
+					if (field && item[field]) item = item[field];
+					// start at first field
+					var fieldPos = 0;
+					// loop the properties
 					for (var j in item) {
-						// check for a field mapping				 
+						// check for a field mapping
 						if (fieldMap[fieldPos]) {
-							// if the mapping is different 
-							if (fieldMap[fieldPos] != j) {						
+							// if the mapping is different
+							if (fieldMap[fieldPos] != j) {
 								// assume field isn't there
 								fieldPos = -1;
+								// loop the map
 								for (var k in fieldMap) {
 									if (j == fieldMap[k]) {
 										fieldPos =k;
