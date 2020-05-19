@@ -4377,7 +4377,7 @@ function windowResize(ev) {
 			top: 0,
 			left: _panelPinnedOffset,
 			right: "auto",
-			bottom: "auto",			
+			bottom: "auto",
 			width: devWidth,
 			height: devHeight
 		});						
@@ -4464,6 +4464,9 @@ function windowResize(ev) {
     			$("#propertiesPanel").css("right", 0);
     		}
     		
+    		// resize / reposition the selection
+    		positionAndSizeBorder(_selectedControl);
+    		
     	}, 500);
 		
 	} else {
@@ -4471,14 +4474,10 @@ function windowResize(ev) {
 		// adjust iframe position, width and height (less border)
 		_pageIframe.css({
 			left: _panelPinnedOffset,
-			height: height
+			height: height,
+			width: _window.width() - _panelPinnedOffset
 		});
-		setTimeout(function() {
-			_pageIframe.css({
-				width: _window.width() - _panelPinnedOffset
-			});
-		});
-		
+
 		// adjust the cover to be full-screen
 		_designCover.css({
 			position: "fixed",
@@ -4489,12 +4488,13 @@ function windowResize(ev) {
 			width: "auto",
 			height: "auto"
 		});
+		
 		// hide the scroll bars
 		$("#scrollV").hide();
 		$("#scrollV").hide();
 		// hide the desktop covers
 		$(".desktopCover").hide();
-		
+
 	}
 					
 	// get the control inner
@@ -4533,11 +4533,16 @@ function windowResize(ev) {
 		$("#propertiesPanelPin").css({"top":controlPanel.css("padding-top"), "left":propertiesPanel.css("padding-left")});
 	}
 	
-	// resize / reposition the selection
-	positionAndSizeBorder(_selectedControl);
-	
 	// revert any scroll top
 	if (scrollTop > 0) _window.scrollTop(scrollTop);
+	
+	// allow a small delay for the changes above to settle
+	setTimeout(function() {
+		
+		// resize / reposition the selection
+		positionAndSizeBorder(_selectedControl);
+		
+	}, 500);
 	
 }
 
