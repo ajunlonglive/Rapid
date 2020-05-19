@@ -213,8 +213,7 @@ self.addEventListener("fetch", function(event) {
 					.then(resources => {
 						_appStatus = resources.status;
 						if (resources.resources && !parameters.v) {
-							var urlsToCache = resources.resources.map(url => (url.startsWith("http") ? "" : _contextPath) + url);
-							urlsToCache.push(_contextPath + appId);
+							var urlsToCache = resources.resources.map(url => (_contextPath.startsWith("http") ? "" : _contextPath) + url);
 							caches.open(_swVersion + 'offline').then(cache => {
 								cache.match(urlsToCache[0]).then(response => {
 									// if this app version is not cached, do
@@ -245,87 +244,77 @@ self.addEventListener("fetch", function(event) {
 		*/
 		
 		// use the modified url as the cache key
-		
-		if (_appStatus === "development") {
-			
-			event.respondWith(
-				caches.open(_swVersion + 'offline').then(cache =>
-					cache.keys().then(keys =>
-						cache.match(url).then(cachedResponse =>
-							
-							new Promise((resolve, reject) =>
-								fetch(url, fetchOptions).then(freshResponse => {
-									if (freshResponse && (freshResponse.ok || freshResponse.type === "opaqueredirect")) {
-										if (_rapidResourceFolders.concat(_rapidResources).concat(_appResources).some(res => url.includes(res))
-												&& !freshResponse.redirected) {
-											cache.put(url, freshResponse.clone())
-												.then(_ => resolve(freshResponse));
-										} else {
-											resolve(freshResponse);
-										}
-									} else if (freshResponse.status === 404) {
+		event.respondWith(
+			caches.open(_swVersion + 'offline').then(cache =>
+				
+				cache.keys().then(keys => {
+					
+					var cachedUrls = keys
+						.filter(key => key.url.match("a=" + altUrlAppId + "[&$]"))
+						.map(key => key.url)
+						.sort();
+					
+					if (altUrlAppId && cachedUrls[0]) url = cachedUrls[0];
+					
+					return cache.match(url).then(cachedResponse => {
+						// respond with a previously cached response, falling back to a freshly fresh response, caching the fresh response
+						
+						var freshResponseWithCachedOfflineFallback = new Promise((resolve, reject) =>
+							fetch(url, fetchOptions )
+							.then(freshResponse => {
+								if (freshResponse && (freshResponse.ok || freshResponse.type === "opaqueredirect")) {
+									var clonedResponse = freshResponse.clone()
+									if (_rapidResourceFolders.concat(_rapidResources).concat(_appResources).some(res => url.includes(res))
+											&& !freshResponse.redirected) {
+										cache.put(url, clonedResponse)
+											.then(_ => resolve(freshResponse));
+									} else {
+										resolve(freshResponse);
+									}
+								} else if (freshResponse.status === 404) {
+									fetch(_contextPath + "page404.htm", { redirect: "follow" }).then(resolve);
+								} else if (freshResponse.status === 500) {
+									fetch(_contextPath + "page500.htm", { redirect: "follow" }).then(resolve);
+								} else if (!_trimUrls.some(ext => url.endsWith(ext))) {
+									var fallback = _contextPath + (url === _contextPath ? "index.jsp" : "offline.htm");
+									cache.match(fallback).then(page =>
+										page ? resolve(page) : reject("WORKER: could not fetch resource and offline page was unavailable")
+									);
+								} else {
+									reject("WORKER: could not fetch resource");
+								}
+							})
+							.catch(reason => {
+								if (!_trimUrls.some(ext => url.endsWith(ext))) {
+									var fallback = _contextPath + (url === _contextPath ? "index.jsp" : "offline.htm");
+									cache.match(fallback).then(page =>
+										page ? resolve(page) : reject("WORKER: could not fetch resource and offline page was unavailable")
+									);
+								}
+							})
+						).catch(reason => console.log(reason));
+						
+						if (_appStatus === "development") {
+							return new Promise((resolve, reject) => {
+								fetch(url).then(response => {
+									if (response && (response.ok || response.type === "opaqueredirect")) {
+										resolve(response);
+									} else if (response.status === 404) {
 										fetch(_contextPath + "page404.htm").then(resolve);
-									} else if (freshResponse.status === 500) {
+									} else if (response.status === 500) {
 										fetch(_contextPath + "page500.htm").then(resolve);
 									} else {
-										resolve(cachedResponse ? cachedResponse : resolve(getFromCache("offline.htm")));
+										resolve(cachedResponse ? cachedResponse : resolve(getFromCache(_contextPath + "offline.htm")));
 									}
-								}).catch(_ => resolve(cachedResponse ? cachedResponse : resolve(getFromCache("offline.htm"))))
-							)
-						)
-					)
-				)
-			); // event respondWith
-		
-		} else { // live mode (non-development)
-			
-			event.respondWith(
-				caches.open(_swVersion + 'offline').then(cache =>
-					cache.keys().then(keys => {
-						return cache.match(url).then(cachedResponse => {
-							// respond with a previously cached response, falling back to a freshly fresh response, caching the fresh response
-							
-							var freshResponseWithCachedFallback = new Promise((resolve, reject) =>
-								fetch(url, fetchOptions)
-								.then(freshResponse => {
-									if (freshResponse && (freshResponse.ok || freshResponse.type === "opaqueredirect")) {
-										if (_rapidResourceFolders.concat(_rapidResources).concat(_appResources).some(res => url.includes(res))
-												&& !freshResponse.redirected) {
-											cache.put(url, freshResponse.clone())
-												.then(_ => resolve(freshResponse));
-										} else {
-											resolve(freshResponse);
-										}
-									} else if (freshResponse.status === 404) {
-										fetch(_contextPath + "page404.htm", { redirect: "follow" }).then(resolve);
-									} else if (freshResponse.status === 500) {
-										fetch(_contextPath + "page500.htm", { redirect: "follow" }).then(resolve);
-									} else if (!_trimUrls.some(ext => url.endsWith(ext))) {
-										var fallback = _contextPath + (url === _contextPath ? "index.jsp" : "offline.htm");
-										cache.match(fallback).then(page =>
-											page ? resolve(page) : reject("WORKER: could not fetch resource and offline page was unavailable")
-										);
-									} else {
-										reject("WORKER: could not fetch resource");
-									}
-								})
-								.catch(reason => {
-									if (!_trimUrls.some(ext => url.endsWith(ext))) {
-										var fallback = _contextPath + (url === _contextPath ? "index.jsp" : "offline.htm");
-										cache.match(fallback).then(page =>
-											page ? resolve(page) : reject("WORKER: could not fetch resource and offline page was unavailable")
-										);
-									}
-								})
-							).catch(reason => console.log(reason));
-							
-							return cachedResponse || freshResponseWithCachedFallback;
-						});
-					})
-				)
-			); // event respondWith
-		
-		}
+								}).catch(_ => resolve(cachedResponse ? cachedResponse : resolve(getFromCache(_contextPath + "offline.htm"))));
+							})
+						} else {
+							return cachedResponse || freshResponseWithCachedOfflineFallback;
+						}
+					});
+				})
+			)
+		); // event respondWith
 		
 	} else {
 		
@@ -430,7 +419,7 @@ function removeAppResources(appId) {
 	var appFilter = key =>
 		key.match(_contextPath.replace(/\//g, "\\/") + appId + "$")
 		|| key.includes("a=" + appId)
-		|| key.includes("/" + appId);
+		|| key.includes("applications/" + appId);
 	
 	_appResources = _appResources.filter(appFilter);
 	
@@ -516,8 +505,8 @@ function fetchAndCache(url, options) {
 	return new Promise((resolve, reject) => {
 		fetchOrReject(url, options)
 		.then(freshResponse => {
+			const clonedResponse = freshResponse.clone();
 			if (freshResponse.url === url) {
-				const clonedResponse = freshResponse.clone();
 				caches.open(_swVersion + 'offline').then(cache =>
 					cache.put(url, clonedResponse)
 				);
