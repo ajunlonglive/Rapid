@@ -1154,6 +1154,9 @@ if (data !== undefined && data !== "") {
 								value = JSON.stringify(value);
 							} catch(ex) {}
 						}
+						// update to blank space if null
+						if (value === null) value = "";
+						// create the td with the value
 		                td.appendChild(document.createTextNode(value));
 		                tr.appendChild(td);
 		            }
