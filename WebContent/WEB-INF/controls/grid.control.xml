@@ -546,7 +546,7 @@ function getGridUnescapedValue(value) {
 		            .replace(/&gt;/,">")
 		            .replace(/&amp;/,"&");
 		// if the value looks like JSON
-		if (value.startsWith("{") && value.endsWith("}")) {
+		if (value[0] === "{" && value[value.length - 1] === "}") {
 			try {
 				value = JSON.parse(value);
 			} catch(e) {}
