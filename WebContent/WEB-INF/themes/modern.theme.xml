@@ -23,53 +23,21 @@
 			<type>javascript</type>
 			<contents>
 					<![CDATA[
-var P1_C27_details = {
-	"orientation" : "h",
-	"minValue" : 0,
-	"maxValue" : 100
-};
-var P1_C6_details = {};
-var P1_C13_details = {
-	"minDate" : "",
-	"readonly" : true,
-	"yearRange" : "-100:+10",
-	"selectOtherMonths" : false,
-	"format" : "dd/mm/yy",
-	"maxDate" : "",
-	"value" : "",
-	"showOtherMonths" : false
-};
-var P1_C30_details = {
-	"minDate" : "",
-	"readonly" : false,
-	"yearRange" : "-100:+10",
-	"selectOtherMonths" : false,
-	"format" : "dd/mm/yy",
-	"maxDate" : "",
-	"value" : "",
-	"showOtherMonths" : false
-};
-var P1_C14_details = {};
-var P1_C21_details = {
-	"filter" : true
-};
-var P1_C7_details = {
-	"storageType" : "L",
-	"type" : "dataStore"
-};
-var P1_C8_details = {};
-var P1_C37_details = {
-	"tabType" : "H"
-};
 $(document).ready(function() {
+	// listen for blur on input controls
 	$(".r-inputbox input").blur(function() {
+		// get a reference the input control
 		var c = $(this);
+		// if there was a value
 		if (c.val()) {
 			c.prev("label").addClass("filled");
 		} else {
 			c.prev("label").removeClass("filled");
 		};
-	});
+	})
+	// apply filled class to all input boxes with a value attribute
+	$(".r-inputbox input[value]").prev("label").addClass("filled");
+	// apply flex to the tabs group tabs header
 	$("div.tabsGroup ul.tabsHeader").css("display", "flex");
 });
 					]]>		
@@ -134,8 +102,11 @@ button.button, div.r-inputbox, div.r-dropdown, div.r-date,
 	margin-top: 8px;
 }
 
-div.r-dropdown select.dropdown, div.check-radio span, div.check-input span
-	{
+div.gridScrollHeader table.grid {
+	margin-top: 0;
+}
+
+div.r-dropdown select.dropdown, div.check-radio span, div.check-input span {
 	cursor: pointer;
 }
 
