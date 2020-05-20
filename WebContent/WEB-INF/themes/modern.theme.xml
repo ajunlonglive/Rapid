@@ -1,0 +1,682 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<template xmlVersion="1"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="../schemas/theme.xsd">
+
+	<!-- Copyright (C) 2018 - Gareth Edwards / Rapid Information Systems gareth.edwards@rapid-is.co.uk 
+		This file is part of the Rapid Application Platform Rapid is free software: 
+		you can redistribute it and/or modify it under the terms of the GNU General 
+		Public License as published by the Free Software Foundation, either version 
+		3 of the License, or (at your option) any later version. The terms require 
+		you to include the original copyright, and the license notice in all redistributions. 
+		This program is distributed in the hope that it will be useful, but WITHOUT 
+		ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+		FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. 
+		You should have received a copy of the GNU General Public License in a file 
+		named "COPYING". If not, see <http://www.gnu.org/licenses/>. -->
+
+	<type>modern</type>
+	<name>Modern</name>
+
+	<resources>
+		<resource>
+			<type>javascript</type>
+			<contents>
+					<![CDATA[
+var P1_C27_details = {
+	"orientation" : "h",
+	"minValue" : 0,
+	"maxValue" : 100
+};
+var P1_C6_details = {};
+var P1_C13_details = {
+	"minDate" : "",
+	"readonly" : true,
+	"yearRange" : "-100:+10",
+	"selectOtherMonths" : false,
+	"format" : "dd/mm/yy",
+	"maxDate" : "",
+	"value" : "",
+	"showOtherMonths" : false
+};
+var P1_C30_details = {
+	"minDate" : "",
+	"readonly" : false,
+	"yearRange" : "-100:+10",
+	"selectOtherMonths" : false,
+	"format" : "dd/mm/yy",
+	"maxDate" : "",
+	"value" : "",
+	"showOtherMonths" : false
+};
+var P1_C14_details = {};
+var P1_C21_details = {
+	"filter" : true
+};
+var P1_C7_details = {
+	"storageType" : "L",
+	"type" : "dataStore"
+};
+var P1_C8_details = {};
+var P1_C37_details = {
+	"tabType" : "H"
+};
+$(document).ready(function() {
+	$(".r-inputbox input").blur(function() {
+		var c = $(this);
+		if (c.val()) {
+			c.prev("label").addClass("filled");
+		} else {
+			c.prev("label").removeClass("filled");
+		};
+	});
+	$("div.tabsGroup ul.tabsHeader").css("display", "flex");
+});
+					]]>		
+		    </contents>
+		</resource>
+		<resource>
+			<type>css</type>
+			<contents>
+					<![CDATA[
+@font-face {
+	font-family: 'Roboto Regular';
+	src: url('../../../styles/modern/fonts/Roboto-Regular.ttf') format('truetype');
+	font-weight: 400;
+}
+
+@font-face {
+	font-family: 'Roboto Bold';
+	src: url('../../../styles/modern/fonts/Roboto-Bold.ttf') format('truetype');
+	font-weight: 700;
+}
+
+* {
+	font-family: 'Roboto Regular', sans-serif;
+	font-size: 14px;
+}
+
+body, div.tabsGroup div.tabsPanel, div.upload {
+	padding: 0 8px 8px;
+}
+
+div.r-panel, div.r-inputbox, div.r-dropdown, div.r-date, span.r-text, div.r-checkbox,
+	div.check-input, div.check-input label, div.check-input input, div.r-radio,
+	.form-group, label, span.score span, table.table {
+	margin: 0;
+	padding: 0 6px;
+}
+
+h1.r-text, h2.r-text, h3.r-text {
+	margin: 8px 0 0;
+	padding: 0;
+	font-family: 'Roboto Regular', sans-serif;
+}
+
+h1.r-text {
+	font-size: 60px;
+}
+
+h2.r-text {
+	font-size: 48px;
+}
+
+h3.r-text {
+	font-size: 34px;
+}
+
+/* MARGIN TOP */
+
+button.button, div.r-inputbox, div.r-dropdown, div.r-date,
+	span.r-text, a.link, div.r-checkbox, div.r-radio div.form-group,
+	button.btn-primary, ul.list, div.tabsGroup, div.addresspicker, div.upload,
+	label.switch, span.score span, table.grid, div.gallery, img.image {
+	margin-top: 8px;
+}
+
+div.r-dropdown select.dropdown, div.check-radio span, div.check-input span
+	{
+	cursor: pointer;
+}
+
+div.r-dropdown select.dropdown, div.r-date input, div.r-dropdown input, div.addresspicker select {
+	appearance: none;
+	-moz-appearance: none;
+	-webkit-appearance: none;
+	background-image: url("../../../images/down.dark.svg");
+	background-repeat: no-repeat;
+	background-position: right 4px center;
+}
+
+div.r-dropdown select.dropdown:focus, div.r-date input:focus, div.r-dropdown input:focus,
+	div.addresspicker select:focus {
+	background-image: url("../../../images/up.dark.svg");
+}
+
+div.r-dropdown:focus-within select.dropdown, div.r-date:focus-within input
+	{
+	background-position: right 3px center;
+}
+
+span.custom-combobox a {
+	display: none;
+}
+
+/* PANEL */
+
+div.r-panel.panel-visible {
+	border: solid 1px rgb(220, 220, 220);
+	border-radius: 8px;
+	background-color: white;
+}
+
+div.r-panel.panel-visible {
+	margin-top: 8px;
+	padding: 0 8px 8px;
+}
+
+/* INPUT BOX + DROPDOWN + DATE/MED PICKER */
+
+div.r-inputbox, div.r-dropdown, div.r-date, div.addresspicker {
+	background-color: white;
+}
+
+div.r-inputbox label, div.r-inputbox input.form-control, div.r-dropdown label,
+	div.r-dropdown .form-control, div.r-date label, div.r-date input.hasDatepicker,
+	div.addresspicker label, div.addresspicker div {
+	background-color: inherit;
+	font-family: 'Roboto Regular', sans-serif;
+}
+
+div.r-inputbox label, div.r-dropdown label, div.r-date label {
+	z-index: 1;
+	position: absolute;
+	margin: 0 7px;
+	padding: 0 5px;
+	color: gray;
+}
+
+div.r-inputbox label {
+	transition: font-size 0.15s, color 0.15s, margin-top 0.15s;
+	margin-top: 0.93em;
+	cursor: text;
+}
+
+div.r-inputbox input, div.r-dropdown select, div.r-dropdown input, div.r-date input,
+div.addresspicker select, div.addresspicker input {
+	transition: border-color 0.15s;
+	padding: 6px 12px;
+	border: solid 1px rgb(220, 220, 220);
+	border-radius: 4px;
+	box-shadow: none;
+	color: rgb(35, 35, 35);
+}
+
+div.r-inputbox label+input,
+div.r-dropdown label+select,
+div.r-dropdown label+input,
+div.r-date label+input,
+div.r-dropdown div.ui-widget {
+	margin-top: 0.5em;
+}
+
+div.r-inputbox:focus-within label, div.r-dropdown:focus-within label,
+div.r-date:focus-within label, div:focus-within>label {
+	color: rgb(40, 120, 220);
+}
+
+div.r-inputbox input:focus, div.r-dropdown select:focus, div.r-dropdown input:focus,
+div.r-date input:focus, div.addresspicker select:focus, div.addresspicker input:focus {
+	transition: border-color 0.15s;
+	padding: 5px 11px;
+	border: solid 2px rgb(40, 120, 220);
+}
+
+div.r-inputbox label.filled, div.r-inputbox:focus-within label, div.r-dropdown label,
+div.r-date label, div.addresspicker label {
+	transition: font-size 0.15s, color 0.15s, margin-top 0.15s;
+	margin-top: 0;
+	font-size: 0.7em;
+	cursor: default;
+}
+
+/* BUTTON */
+
+button.button,
+button.button:hover,
+button.btn-primary,
+button.btn-primary:hover,
+button.btn-primary:focus,
+button.btn-primary:active {
+	transition: box-shadow 0.15s, filter 0.15s, border-color 0.15s;
+	padding: 0 8px;
+	height: 34px;
+	background-color: white;
+	border: solid 1px rgb(220, 220, 220);
+	border-radius: 4px;
+	font-family: 'Roboto Bold', sans-serif;
+	font-weight: 700;
+	color: rgb(40, 120, 220);
+}
+
+button.button.button-primary, button.btn-primary.button-primary {
+	transition: box-shadow 0.15s, filter 0.15s, border-color 0.15s;
+	background-color: rgb(40, 120, 220);
+	border-color: rgb(40, 120, 220);
+	color: white;
+}
+
+button.button.button-destructive, button.btn-primary.button-destructive {
+	transition: box-shadow 0.15s, filter 0.15s, border-color 0.15s;
+	background-color: rgb(210, 40, 20);
+	border-color: rgb(210, 40, 20);
+	color: white;
+}
+
+button.button-primary:hover,
+button.button-destructive:hover {
+	filter: brightness(105%);
+}
+
+button.button:hover,
+button.btn-primary:hover {
+	box-shadow: 0 3px 3px rgba(0, 0, 0, 0.15);
+}
+
+button.button:not(.button-primary):not(.button-destructive):hover,
+button.btn-primary:not(.button-primary):not(.button-destructive):hover {
+	border-color: rgb(210, 210, 210);
+}
+
+button.button:active,
+button.btn-primary:active,
+button.button.button-primary:active,
+button.button.button-destructive:active {
+	transition: box-shadow 0.15s, filter 0.15s, border-color 0.15s;
+	filter: brightness(90%);
+	box-shadow: none;
+}
+
+/* TEXT */
+
+span.r-text {
+	cursor: default;
+}
+
+/* CHECKBOX */
+
+div.r-checkbox {
+	padding: 0;
+}
+
+div.r-checkbox label {
+	cursor: pointer;
+}
+
+input[type='checkbox'] {
+	display: none;
+}
+
+input[type='checkbox']+span:not(.switchslider) {
+	transition: background-color 0.15s, border-color 0.15s;
+	content: '';
+	width: 16px;
+	height: 16px;
+	display: inline-block;
+	background: white;
+	border: 2px solid rgb(160, 160, 160);
+	border-radius: 2px;
+	margin: 0;
+	margin-right: 0;
+	vertical-align: text-bottom;
+}
+
+input[type='checkbox']:checked+span {
+	transition: background-color 0.15s, border-color 0.15s;
+	background-color: rgb(40, 120, 220);
+	border-color: rgb(40, 120, 220);
+}
+
+input[type='checkbox']:active+span {
+	transition: background-color 0.15s;
+	border-color: rgb(40, 120, 220);
+}
+
+input[type='checkbox']+span:not(.switchslider):after {
+	content: url(../../../images/check.svg);
+	position: absolute;
+	top: 0;
+}
+
+/* RADIO BUTTONS */
+
+div.check-input span:last-child, div.check-radio span:last-child {
+	margin-left: 8px;
+	color: black;
+}
+
+div.r-radio label {
+	cursor: pointer;
+	margin: 0;
+}
+
+input[type='radio'] {
+	display: none;
+}
+
+input[type='radio']+span {
+	transition: border-color 0.15s;
+	border: 2px solid rgb(160, 160, 160);
+	width: 18px;
+	height: 18px;
+	display: inline-block;
+	border-radius: 50%;
+	opacity: 1;
+	visibility: visible;
+	vertical-align: text-bottom;
+	margin: 0;
+}
+
+input[type='radio']:checked+span, input[type='radio']:active+span {
+	transition: border-color 0.15s;
+	border-color: rgb(40, 120, 220);
+}
+
+input[type='radio']+span:after {
+	transition: background-color 0.15s;
+	content: "";
+	background-color: white;
+	margin: 3px;
+	border-radius: 50%;
+	position: absolute;
+	width: 8px;
+	height: 8px;
+}
+
+input[type='radio']:checked+span:after {
+	background-color: rgb(40, 120, 220);
+}
+
+div.check-input span:last-child, div.check-radio span:last-child {
+	margin-left: 8px;
+}
+
+/* LINK */
+
+a.link {
+	display: inline-block;
+	font-weight: 700;
+	color: rgb(40, 120, 220);
+}
+
+a.link:active {
+	color: rgb(20, 100, 200);
+}
+
+/* SLIDER */
+
+div.slider {
+	height: 2px;
+	border: none;
+	background-color: rgba(40, 120, 220, 0.4);
+	margin: 13px 6px 5px;
+}
+
+div.slider .ui-slider-range, div.slider span.ui-slider-handle {
+	background-color: rgb(40, 120, 220);
+}
+
+div.slider span.ui-slider-handle {
+	border: none;
+	width: 12px;
+	height: 12px;
+	border-radius: 50%;
+	top: -5px;
+	margin-left: -6px;
+}
+
+div.slider span.ui-slider-handle::after {
+    position: absolute;
+	content: "";
+	width: 28px;
+	height: 28px;
+	margin: -8px;
+	border-radius: 50%;
+}
+
+/* TABS */
+
+div.tabsGroup, div.tabsPanel {
+	display: inline-block;
+}
+
+div.tabsGroup li.tabsPanel {
+	border: none;
+	background: none;
+	color: rgb(160, 160, 160);
+	font-weight: 700;
+	padding: 0 0 6px;
+	margin-right: 16px;
+	width: auto;
+}
+
+div.tabsGroup li.tabsPanel:not(.selected) {
+	padding-top: 1px;
+}
+
+div.tabsGroup li.tabsPanel:not(.selected):hover {
+	color: rgb(40, 120, 220);
+}
+
+div.tabsGroup li.selected {
+	border-bottom: solid 2px rgb(40, 120, 220);
+	color: rgb(40, 120, 220);
+	cursor: default;
+}
+
+div.tabsGroup ul.tabsHeader {
+	margin-left: 12px;
+}
+
+div.tabsPanel.selected {
+	width: 100%;
+	border: none;
+}
+
+div.tabsGroup ul.tabsHeader {
+	display: flex;
+    border-bottom: solid 1px rgb(220,220,220);
+}
+
+/* ADDRESS PICKER */
+
+div.addresspicker select, div.addresspicker input {
+	margin-top: -8px;
+}
+
+div.addresspicker label {
+	margin: 8px 7px 0;
+	padding: 0 5px;
+	color: gray;
+}
+
+/* UPLOAD */
+
+div.upload {
+	transition: background-color 0.15s;
+	background-color: rgb(240, 240, 240);
+	border-radius: 4px;
+	border: none;
+}
+
+div.upload:hover {
+	background-color: rgb(230, 230, 230);
+}
+
+div.upload div.dz-message {
+	margin: 0;
+	height: 150px;
+	line-height: 150px;
+}
+
+/* SWITCH */
+
+label.switch {
+	height: 14px;
+}
+
+input + span.switchslider {
+	height: 14px;
+    width: 34px;
+    margin-top: 3px;
+    background-color: rgb(160, 160, 160);
+}
+
+input:checked + span.switchslider {
+	background-color: rgba(40, 120, 220, 0.4);
+}
+
+input + span.switchslider:before {
+    transition-duration: 0.15s;
+	width: 20px;
+	height: 20px;
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+	background-color: white;
+	top: -3px;
+    left: -3px;
+}
+
+input:checked + span.switchslider:before {
+	background-color: rgb(40, 120, 220);
+}
+
+/* SCORE */
+
+span.score span,
+ul.list li.listOption {
+	padding: 1px 4px;
+	cursor: pointer;
+	font-weight: 700;
+	color: rgb(100, 100, 100);
+}
+
+/* LIST */
+
+ul.list li.listSelected, span.score span.selectedScore {
+	background-color: rgb(40, 120, 220);
+	border-radius: 4px;
+	color: white;
+}
+
+ul.list li.listOption {
+	margin-top: 8px;
+}
+
+ul.list:not(.validation) li.listOption:not(.listSelected):hover,
+span.score:not(.validation) span:not(.selectedScore):hover {
+	color: rgb(40, 120, 220);
+}
+
+/* TABLE */
+table.table td.tabelCell {
+	border: none;
+	padding: 0;
+}
+
+/* GRID */
+
+table.grid td {
+	padding: 2px 4px;
+	border-right: solid 1px rgb(220, 220, 220);
+}
+
+table.grid td:last-child {
+	border-right: none;
+}
+
+table.grid tr:first-child td {
+	font-weight: 700;
+}
+
+table.grid tr:nth-child(odd) {
+	background-color: rgb(240, 240, 240);
+}
+
+/* VALIDATION */
+
+div.validationMessage, div.validation, div.validation label {
+	color: rgb(210, 40, 20);
+}
+
+label.validation {
+	border: none;
+}
+
+div.validationMessage {
+	clear: both;
+	padding: 2px 0 0;
+}
+
+div.validation input, div.validation select {
+	border-color: rgb(210, 40, 20);
+	border-width: 2px;
+	color: black;
+}
+
+div.validation input[type='checkbox']+span:not(.switchslider),
+div.validation input[type='radio']+span {
+	border-color: rgb(210, 40, 20);
+}
+
+div.validation input[type='checkbox']:checked+span:not(.switchslider),
+div.validation input[type='radio']:checked+span:after {
+	background-color: rgb(210, 40, 20);
+}
+
+ul.list.validation li.listOption, span.score.validation span {
+	padding: 0 3px;
+	border: solid 1px rgb(210, 40, 20);
+	border-radius: 4px;
+	color: black;
+}
+
+ul.list.validation li.listSelected, span.score.validation span.selectedScore {
+	color: white;
+	background-color: rgb(210, 40, 20);
+	border-radius: 4px;
+}
+					]]>		
+		    		</contents>
+		</resource>
+
+	</resources>
+
+	<css>
+	    <![CDATA[
+
+
+.button-primary {
+}
+
+.button-destructive {
+}
+
+.panel-visible {
+}
+
+	    ]]>
+	    </css>
+
+	<headerHtml>
+	    <![CDATA[
+	    
+	    ]]>
+	    </headerHtml>
+
+	<footerHtml>
+	    <![CDATA[
+		<footer>
+		</footer>
+	    ]]>
+	    </footerHtml>
+</template>
