@@ -615,7 +615,7 @@ headerHtml += "</tr>";
 // check for scrolling
 if (this.scrollH || this.scrollV) {
 	// return a container div with the table inside
-	return "<div id='" + this.id + "' style='display:inline-block;" + (this.scrollH ? "overflow-x:" + this.scrollH + ";max-width:" + this.scrollWidth + ";" : "") + "' class='gridScroll" + getStyleClasses(this) + "'><table class='grid'>" + headerHtml + rowHtml.replace("<tr>","<tr class='rowStyle1'>") + rowHtml.replace("<tr>","<tr class='rowStyle2'>") + "</table></div>";
+	return "<div id='" + this.id + "' style='display:inline-block;" + (this.scrollH ? "overflow-x:" + this.scrollH + ";max-width:" + this.scrollWidth + ";" : "") + (this.scrollV ? "overflow-y:" + this.scrollV + ";max-height:" + this.scrollHeight + ";" : "") + "' class='gridScroll" + getStyleClasses(this) + "'><table class='grid'>" + headerHtml + rowHtml.replace("<tr>","<tr class='rowStyle1'>") + rowHtml.replace("<tr>","<tr class='rowStyle2'>") + "</table></div>";
 } else {
 	// return a simple table
 	return "<table id='" + this.id + "' class='grid" + getStyleClasses(this) + "'>" + headerHtml + rowHtml.replace("<tr>","<tr class='rowStyle1'>") + rowHtml.replace("<tr>","<tr class='rowStyle2'>") + "</table>";
@@ -1201,7 +1201,7 @@ if (data !== undefined && data !== "") {
 		// get scroll height
 		var scrollHeight = details.scrollHeight.trim();
 		// add px if no other unit specified
-		if (parseInt(scrollHeight)+'' == scrollHeight+'') scrollHeight += "px";
+		if (parseInt(scrollHeight) + '' == scrollHeight + '') scrollHeight += "px";
 	
 		// if we have a fixed header
 		if (details.fixedHeader) {
