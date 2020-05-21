@@ -36,7 +36,7 @@ $(document).ready(function() {
 		};
 	})
 	// apply filled class to all input boxes with a value attribute
-	$(".r-inputbox input[value]").prev("label").addClass("filled");
+	$(".r-inputbox input[value!='']").prev("label").addClass("filled");
 	// apply flex to the tabs group tabs header
 	$("div.tabsGroup ul.tabsHeader").css("display", "flex");
 });
