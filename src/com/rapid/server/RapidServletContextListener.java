@@ -310,7 +310,7 @@ public class RapidServletContextListener implements ServletContextListener {
 			// check the class extends com.rapid.data.ConnectionAdapter
 			if (!Classes.extendsClass(classClass, com.rapid.data.ConnectionAdapter.class)) throw new Exception(classClass.getCanonicalName() + " must extend com.rapid.data.ConnectionAdapter");
 			// check this class is unique
-			if (connectionConstructors.get(className) != null) throw new Exception(className + " connection adapter already loaded.");
+			if (connectionConstructors.get(className) != null) throw new Exception(className + " connection adapter in " + xmlFile + " already loaded.");
 			// add to constructors hashmap referenced by type
 			connectionConstructors.put(className, classClass.getConstructor(ServletContext.class, String.class, String.class, String.class, String.class));
 
@@ -400,7 +400,7 @@ public class RapidServletContextListener implements ServletContextListener {
 			// check the class extends com.rapid.security.SecurityAdapter
 			if (!Classes.extendsClass(classClass, com.rapid.security.SecurityAdapter.class)) throw new Exception(type + " security adapter class " + classClass.getCanonicalName() + " must extend com.rapid.security.SecurityAdapter");
 			// check this type is unique
-			if (securityConstructors.get(type) != null) throw new Exception(type + " security adapter already loaded. Type names must be unique.");
+			if (securityConstructors.get(type) != null) throw new Exception(type + " security adapter in " + xmlFile + " already loaded. Type names must be unique.");
 			// add to constructors hashmap referenced by type
 			securityConstructors.put(type, classClass.getConstructor(ServletContext.class, Application.class));
 
@@ -476,7 +476,7 @@ public class RapidServletContextListener implements ServletContextListener {
 			// check the class extends com.rapid.forms.FormAdapter
 			if (!Classes.extendsClass(classClass, com.rapid.forms.FormAdapter.class)) throw new Exception(type + " form adapter class " + classClass.getCanonicalName() + " must extend com.rapid.forms.FormsAdapter");
 			// check this type is unique
-			if (formConstructors.get(type) != null) throw new Exception(type + " form adapter already loaded. Type names must be unique.");
+			if (formConstructors.get(type) != null) throw new Exception(type + " form adapter in " + xmlFile + " already loaded. Type names must be unique.");
 			// add to constructors hashmap referenced by type
 			formConstructors.put(type, classClass.getConstructor(ServletContext.class, Application.class, String.class));
 
@@ -579,17 +579,19 @@ public class RapidServletContextListener implements ServletContextListener {
 
 			do {
 
-				// check this type does not already exist
-				for (int i = 0; i < jsonActions.size(); i++) {
-					if (jsonAction.getString("type").equals(jsonActions.get(i).getString("type"))) throw new Exception(" action type is loaded already. Type names must be unique");
-				}
-
-				// add the jsonControl to our array
-				jsonActions.add(jsonAction);
 				// get the named type from the json
 				String type = jsonAction.getString("type");
 				// get the class name from the json
 				String className = jsonAction.getString("class");
+
+				// check this type does not already exist
+				for (int i = 0; i < jsonActions.size(); i++) {
+					if (jsonAction.getString("type").equals(jsonActions.get(i).getString("type"))) throw new Exception(type + " action type in " + xmlFile.getName() + " is loaded already. Type names must be unique");
+				}
+
+				// add the jsonControl to our array
+				jsonActions.add(jsonAction);
+
 				// get the class
 				Class classClass = Class.forName(className);
 				// check the class extends com.rapid.Action
