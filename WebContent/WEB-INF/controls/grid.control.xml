@@ -193,7 +193,6 @@ div.gridScroll table {
 
 div.gridScrollHeader {
 	overflow-y: hidden;
-	margin-right: 16px; /* space for the scroll bar */
 }
 
 div.gridScrollHeader table.grid tr:not(:first-child) {
@@ -615,7 +614,7 @@ headerHtml += "</tr>";
 // check for scrolling
 if (this.scrollH || this.scrollV) {
 	// return a container div with the table inside
-	return "<div id='" + this.id + "' style='display:inline-block;" + (this.scrollH ? "overflow-x:" + this.scrollH + ";max-width:" + this.scrollWidth + ";" : "") + (this.scrollV ? "overflow-y:" + this.scrollV + ";max-height:" + this.scrollHeight + ";" : "") + "' class='gridScroll" + getStyleClasses(this) + "'><table class='grid'>" + headerHtml + rowHtml.replace("<tr>","<tr class='rowStyle1'>") + rowHtml.replace("<tr>","<tr class='rowStyle2'>") + "</table></div>";
+	return "<div id='" + this.id + "' style='display:inline-block;" + (this.scrollH && !(this.scrollV && this.fixedHeader) ? "overflow-x:" + this.scrollH + ";max-width:" + this.scrollWidth + ";" : "") + (this.scrollV && !this.fixedHeader ? "overflow-y:" + this.scrollV + ";max-height:" + this.scrollHeight + ";" : "") + "' class='gridScroll" + getStyleClasses(this) + "'><table class='grid'>" + headerHtml + rowHtml.replace("<tr>","<tr class='rowStyle1'>") + rowHtml.replace("<tr>","<tr class='rowStyle2'>") + "</table></div>";
 } else {
 	// return a simple table
 	return "<table id='" + this.id + "' class='grid" + getStyleClasses(this) + "'>" + headerHtml + rowHtml.replace("<tr>","<tr class='rowStyle1'>") + rowHtml.replace("<tr>","<tr class='rowStyle2'>") + "</table>";
@@ -952,7 +951,91 @@ if (data !== undefined && data !== "") {
 					}
 				} // array check
 			} // data.selectedRowNumber check
-		}
+		} // rowSelect function
+		
+		// code like vertical scrolling to be applied by columns and no columns once they have finished rendering
+		var afterLoaded = function() {
+		
+			// if we have vertical scrolling
+			if (details && details.scrollV && details.scrollHeight) {
+			
+				// get scroll height
+				var scrollHeight = details.scrollHeight.trim();
+				// add px if no other unit specified
+				if (parseInt(scrollHeight) + '' == scrollHeight + '') scrollHeight += "px";
+			
+				// if we have a fixed header
+				if (details.fixedHeader) {
+				
+					// if we haven't applied it yet
+					if (!grid.parent().is(".gridScrollBody")) {
+				
+					    // create and style the wrapper
+					    var oTblDiv = $("<div class='gridScrollBody' />");
+					    oTblDiv.css({
+					    	"max-height": scrollHeight,
+					    	"overflow-y": details.scrollV
+					    });
+					    // wrap it
+					    grid.wrap(oTblDiv);
+					
+					    // clone the original grid
+					    var newTbl = grid.clone();
+					    // update it's id
+					    newTbl.attr("id",id + "header");
+					    				
+						// set the class on the parent on the new table (this is the grid root)
+					    newTbl.parent().addClass("gridScroll");	      
+						// get the old table parent
+					    var parent = grid.parent();
+						// add the new table
+					    parent.parent().prepend(newTbl);			    
+					    // move the old table parent after the new table
+					    parent.insertAfter(newTbl);
+					    // wrap the new table
+					    newTbl.wrap("<div class='gridScrollHeader' />");
+					    
+					} // fixed header applied
+					
+					// get the header
+					
+					// if scrollV is yes or auto and present we need to check the height and adjust margin that might not be needed
+					if (details.scrollV == "scroll" || $("#" + id).find("div.gridScrollBody").get(0).scrollHeight > $("#" + id).find("div.gridScrollBody").height()) {
+						// add some margin for the scroll that we know is there
+						$("#" + id).find("div.gridScrollHeader").css({"margin-right":"15px"});
+					} else {
+						// remove margin for the scroll that we know is not there
+						$("#" + id).find("div.gridScrollHeader").css({"margin-right":"0"});
+					}
+				    
+				} else {
+				
+					// check not applied already
+					if (!grid.parent().is(".gridScrollApplied")) {
+		
+						// remove the table id
+						grid.removeAttr("id")
+						// create and style the wrapper
+					    var oTblDiv = $("<div class='gridScroll' id='" + id + "' />");
+					    oTblDiv.css({
+					    	"max-height": scrollHeight,
+					    	"overflow-y": details.scrollV
+					    });
+					    // retain that we have applied the scroll
+					    oTblDiv.addClass("gridScrollApplied");
+					    // wrap it
+					    grid.wrap(oTblDiv);
+					    
+					} // v scroll applied check
+				
+				} // fixed header
+						
+			} // vertical scrolling
+			
+			// apply the resizing - which also measures the vertical scrolling heights
+			$(window).resize();
+		
+		}  // afterLoaded function
 		
 		// check we have details and columns
 		if (details && details.columns && data.fields) {
@@ -1075,8 +1158,7 @@ if (data !== undefined && data !== "") {
 					
 					// do any row selections
 					rowSelect(data, rowObject, rowIndex)
-					
-								
+
 				} // row loop
 		
 				// if there is a row at the current index
@@ -1088,12 +1170,15 @@ if (data !== undefined && data !== "") {
 				} else {
 					// update that we've finished loading
 					_gridLoaders[id].loading = false;
+					// add any after loaded code, like vertical scrolling
+					afterLoaded();
 					// fire the loaded event
 					if (window["Event_gridLoaded_" + id]) window["Event_gridLoaded_" + id](ev);
 				}
 				
 			} // addRows function
 
+			// add the first set of rows on the main thread
 			addRows(grid.get(0), data, 0);
 
 		} else {
@@ -1183,115 +1268,22 @@ if (data !== undefined && data !== "") {
 		        } else {
 		        	// update that we have finished loading
 		        	_gridLoaders[id].loading = false;
+		        	// apply any after loaded code
+					afterLoaded();
 		        	// run any loaded handler
                     if (window["Event_gridLoaded_" + id]) window["Event_gridLoaded_" + id](ev);
                 }
                 
 			}
 
+			// add the first set of rows on the main thread
 			addRowsSimple(grid.get(0), data.rows, 0);
 			
 		} // got details and columns and data fields
 								
 	} // got data
-
-	// if we vertical scrolling
-	if (details && details.scrollV && details.scrollHeight) {
 	
-		// get scroll height
-		var scrollHeight = details.scrollHeight.trim();
-		// add px if no other unit specified
-		if (parseInt(scrollHeight) + '' == scrollHeight + '') scrollHeight += "px";
-	
-		// if we have a fixed header
-		if (details.fixedHeader) {
-		
-			// if we haven't applied it yet
-			if (!grid.parent().is(".gridScrollBody")) {
-		
-			    // create and style the wrapper
-			    var oTblDiv = $("<div class='gridScrollBody' />");
-			    oTblDiv.css({
-			    	"max-height": scrollHeight,
-			    	"overflow-y": details.scrollV
-			    });
-			    // wrap it
-			    grid.wrap(oTblDiv);
-			    
-			    /*
-			    
-			    Not sure this and the setting below are neccessary due to the full clone
-
-			    // save original column widths			    			    
-			    grid.find('thead tr td').each(function(){
-			        $(this).attr("data-item-original-width",$(this).width());
-			    }); 
-			    grid.find('tbody tr:eq(0) td').each(function(){
-			        $(this).attr("data-item-original-width",$(this).width());
-			    });
-			    
-			    */                 
-			
-			    // clone the original grid
-			    var newTbl = grid.clone();
-			    // update it's id
-			    newTbl.attr("id",id + "header");
-			    				
-				// set the class on the parent on the new table (this is the grid root)
-			    newTbl.parent().addClass("gridScroll");	      
-				// get the old table parent
-			    var parent = grid.parent();
-				// add the new table
-			    parent.parent().prepend(newTbl);			    
-			    // move the old table parent after the new table
-			    parent.insertAfter(newTbl);
-			    // wrap the new table
-			    newTbl.wrap("<div class='gridScrollHeader' />")
-
-				/*
-			    				    			
-			    // replace original column widths
-			    newTbl.find('thead tr td').each(function(){
-			    	var w = $(this).attr("data-item-original-width");
-			        if (w) $(this).width(w);
-			    });     
-			    grid.width(grid.attr('data-item-original-width'));      
-			    grid.find('tbody tr:eq(0) td').each(function(){
-			    	var w = $(this).attr("data-item-original-width");
-			        $(this).width(w);
-			    });
-			    
-			    */
-			    
-			    // positioning the header has been moved to the init on window resize
-			    
-			} // fixed header applied
-		    
-		} else {
-		
-			// check not applied already
-			if (!grid.parent().is(".gridScrollApplied")) {
-
-				// remove the table id
-				grid.removeAttr("id")
-				// create and style the wrapper
-			    var oTblDiv = $("<div class='gridScroll' id='" + id + "' />");
-			    oTblDiv.css({
-			    	"max-height": scrollHeight,
-			    	"overflow-y": details.scrollV
-			    });
-			    // retain that we have applied the scroll
-			    oTblDiv.addClass("gridScrollApplied");
-			    // wrap it
-			    grid.wrap(oTblDiv);
-			    
-			} // v scroll applied check
-		
-		} // fixed header
-				
-	} // vertical scrolling
-	
-	// if have not applied sorts yet
+	// if we have not applied sorts yet
 	if (details && !grid.parent().is(".gridSortsApplied")) {
 	
 		// assume no headers
@@ -1377,9 +1369,6 @@ if (data !== undefined && data !== "") {
 			if (grid.find("tr.rowStyle1,tr.rowStyle2").not("[data-ignore]").not(".rowSelect").length > 0) $("#" + id).find("input.gridMultiSelectHeader").prop("checked",false);
 		});
 	}
-	
-	// apply the resizing	
-	$(window).resize();
 	
 } else {
 
