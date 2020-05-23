@@ -3,7 +3,7 @@
 
 <!-- 
 
-Copyright (C) 2018 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -272,12 +272,15 @@ if (data != null && data !== undefined) {
 	}
 }
 // get control container
-var control = $("#" + id);
-if (changeEvents) control.trigger("change");
-// update control to input
-control = control.find("input,textarea");
+var container = $("#" + id);
+// get control input
+var control = container.find("input,textarea");
+// set the value
 control.val(value);
+// fire any autoheight
 if (control.is(".autoheight")) textarea_autoheight_size(control, true);
+// fire any change events
+if (changeEvents) container.trigger("change");
 			]]>
 	    </setDataJavaScript>
 	    
