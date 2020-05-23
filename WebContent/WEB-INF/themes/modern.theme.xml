@@ -34,7 +34,10 @@ $(document).ready(function() {
 		} else {
 			c.prev("label").removeClass("filled");
 		};
-	})
+	}).parent().change(function() { 
+	// fire the blur above on changes to the control too
+		$(this).find("input").blur();
+	});
 	// apply filled class to all input boxes with a value attribute
 	$(".r-inputbox input[value!='']").prev("label").addClass("filled");
 	// apply flex to the tabs group tabs header
@@ -124,8 +127,7 @@ div.r-dropdown select.dropdown:focus, div.r-date input:focus, div.r-dropdown inp
 	background-image: url("../../../images/up.dark.svg");
 }
 
-div.r-dropdown:focus-within select.dropdown, div.r-date:focus-within input
-	{
+div.r-dropdown:focus-within select.dropdown, div.r-date:focus-within input {
 	background-position: right 3px center;
 }
 
@@ -171,6 +173,12 @@ div.r-inputbox label {
 	transition: font-size 0.15s, color 0.15s, margin-top 0.15s;
 	margin-top: 0.93em;
 	cursor: text;
+}
+
+span.r-text span[data-for=label] {
+	z-index: 1;
+ font-size: 13px;
+	color: gray;
 }
 
 div.r-inputbox input, div.r-dropdown select, div.r-dropdown input, div.r-date input,
