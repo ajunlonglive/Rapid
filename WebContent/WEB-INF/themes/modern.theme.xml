@@ -34,15 +34,32 @@ $(document).ready(function() {
 		} else {
 			c.prev("label").removeClass("filled");
 		};
-	}).parent().change(function() { 
-	// fire the blur above on changes to the control too
-		$(this).find("input").blur();
 	});
 	// apply filled class to all input boxes with a value attribute
 	$(".r-inputbox input[value!='']").prev("label").addClass("filled");
 	// apply flex to the tabs group tabs header
 	$("div.tabsGroup ul.tabsHeader").css("display", "flex");
 });
+
+// this overrides the val method so can can check the filled class for control labels
+(function($) {
+	// a reference to the original val method
+    var original = $.fn.val; // maintain a reference to the existing function
+    // override the focus method
+    $.fn.val = function(val) {
+    	// check setter
+    	if (arguments.length >= 1) {
+	    	// check val
+			if (val) {
+				this.prev("label").addClass("filled");
+			} else {
+				this.prev("label").removeClass("filled");
+			};
+		}
+		// apply and return the original method
+        return original.apply(this, arguments);
+    };
+})(jQuery);
 					]]>		
 		    </contents>
 		</resource>
