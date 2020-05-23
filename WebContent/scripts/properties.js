@@ -4853,6 +4853,8 @@ function getPageControlsBulkCopies(datacopyAction, input) {
 function getDataCopyFieldFromControl(id) {
 	// assume empty string
 	var field = "";
+	// split the id for properties
+	id = id.split(".")[0];
 	// get control
 	var control = getControlById(id);
 	// if we got one
