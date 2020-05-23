@@ -3,7 +3,7 @@
 
 <!-- 
 
-Copyright (C) 2019 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -309,10 +309,22 @@ if (this.filter) return {codes:this.codes,filter:this.filter,customValue:this.cu
 	    
 	    <getDataFunction>
 	        <![CDATA[
+// if this is a searchable dropdown with a custom value
 if (details && !details.codes && details.customValue) {
 	return $("#" + id).find("input").val();
 } else {
-	return $("#" + id).find("select").val();
+	// get the control
+	var control = $("#" + id).find("select");
+	// look for a set value
+	var setValue = control.attr("data-value");
+	// if the was one
+	if (setValue) {
+		// return the pre-set value or an empty string
+		return (setValue || "");
+	} else {
+		// return the selected value
+		return control.val();
+	}
 }
 			]]>
 	    </getDataFunction>
@@ -342,6 +354,8 @@ if (data !== undefined) {
 				}
 				// set control value
 				control.val(value);
+				// also set the pre-set value in case the options arrive later
+				control.attr("data-value", value);
 				// look for jquery ui input
 				var input = $("#" + id).find("input");
 				// if we there was one
@@ -361,6 +375,7 @@ if (data !== undefined) {
 					// update the jquery input
 					input.val(value);
 				}
+				// trigger change events
 				if (changeEvents) control.trigger("change");
 			} else {
 				// html we are creating
@@ -415,6 +430,8 @@ if (data !== undefined) {
 				if (lastGroup) html += "</optgroup>";
 				// add html if there was some
 				if (html) control.append(html);
+				// remove any preset value
+				control.removeAttr("data-value");
 			}
 		}
 	}
