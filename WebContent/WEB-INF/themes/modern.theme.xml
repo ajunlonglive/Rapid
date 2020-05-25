@@ -3,17 +3,30 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="../schemas/theme.xsd">
 
-	<!-- Copyright (C) 2018 - Gareth Edwards / Rapid Information Systems gareth.edwards@rapid-is.co.uk 
-		This file is part of the Rapid Application Platform Rapid is free software: 
-		you can redistribute it and/or modify it under the terms of the GNU General 
-		Public License as published by the Free Software Foundation, either version 
-		3 of the License, or (at your option) any later version. The terms require 
-		you to include the original copyright, and the license notice in all redistributions. 
-		This program is distributed in the hope that it will be useful, but WITHOUT 
-		ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
-		FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. 
-		You should have received a copy of the GNU General Public License in a file 
-		named "COPYING". If not, see <http://www.gnu.org/licenses/>. -->
+<!-- 
+
+Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
+
+gareth.edwards@rapid-is.co.uk
+
+
+This file is part of the Rapid Application Platform
+
+Rapid is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version. The terms require you to include
+the original copyright, and the license notice in all redistributions.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
+
+ -->
 
 	<type>modern</type>
 	<name>Modern</name>
@@ -284,19 +297,31 @@ div.r-button.button-destructive button {
 	color: white;
 }
 
-div.r-button.button-primary button:hover,
-button.button-destructive:hover {
-	filter: brightness(105%);
+div.r-button button:hover {
+	box-shadow: 0 3px 3px rgba(0, 0, 0, 0.15);
 }
 
 div.r-button button:hover {
-	box-shadow: 0 3px 3px rgba(0, 0, 0, 0.15);
-	filter: brightness(105%);
+	color: rgb(71, 160, 218);
+	border-color: rgb(210, 210, 210);
 }
 
-div.r-button button:not(.button-primary):not(.button-destructive):hover,
-div.r-button button.btn-primary:not(.button-primary):not(.button-destructive):hover {
-	border-color: rgb(210, 210, 210);
+div.r-button.button-primary button:hover {
+	color: white;
+	background-color: rgb(71, 160, 218);
+}
+
+div.r-button.button-destructive button:hover {
+	color: white;
+	background-color: rgb(230, 80, 48);
+}
+
+div.r-button.button-primary button:focus {
+	color: white;
+}
+
+div.r-button.button-destructive button:focus {
+	color: white;
 }
 
 div.r-button button:active,
@@ -304,7 +329,6 @@ div.r-button.btn-primary button:active,
 div.r-button..button-primary button:active,
 div.r-button.button-destructive button:active {
 	transition: box-shadow 0.15s, filter 0.15s, border-color 0.15s;
-	filter: brightness(90%);
 	box-shadow: none;
 }
 
@@ -661,7 +685,7 @@ ul.list.validation li.listSelected, span.score.validation span.selectedScore {
 	border-radius: 4px;
 }
 					]]>		
-		    		</contents>
+			</contents>
 		</resource>
 
 	</resources>
@@ -682,16 +706,4 @@ ul.list.validation li.listSelected, span.score.validation span.selectedScore {
 	    ]]>
 	    </css>
 
-	<headerHtml>
-	    <![CDATA[
-	    
-	    ]]>
-	    </headerHtml>
-
-	<footerHtml>
-	    <![CDATA[
-		<footer>
-		</footer>
-	    ]]>
-	    </footerHtml>
 </template>
