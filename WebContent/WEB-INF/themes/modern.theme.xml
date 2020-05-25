@@ -88,7 +88,7 @@ body, div.tabsGroup div.tabsPanel, div.upload {
 	padding: 0 8px 8px;
 }
 
-div.r-panel, div.r-inputbox, div.r-dropdown, div.r-date, span.r-text, div.r-checkbox,
+div.r-panel, div.r-button, div.r-inputbox, div.r-dropdown, div.r-date, span.r-text, div.r-checkbox,
 	div.check-input, div.check-input label, div.check-input input, div.r-radio,
 	.form-group, label, span.score span, table.table {
 	margin: 0;
@@ -115,9 +115,9 @@ h3.r-text {
 
 /* MARGIN TOP */
 
-button.button, div.r-inputbox, div.r-dropdown, div.r-date,
+div.r-button, div.r-inputbox, div.r-dropdown, div.r-date,
 	span.r-text, a.link, div.r-checkbox, div.r-radio div.form-group,
-	button.btn-primary, ul.list, div.tabsGroup, div.addresspicker, div.upload,
+	ul.list, div.tabsGroup, div.addresspicker, div.upload,
 	label.switch, span.score span, table.grid, div.gallery, img.image {
 	margin-top: 8px;
 }
@@ -171,14 +171,21 @@ div.r-inputbox, div.r-dropdown, div.r-date, div.addresspicker {
 	background-color: white;
 }
 
-div.r-inputbox label, div.r-inputbox input.form-control, div.r-dropdown label,
-	div.r-dropdown .form-control, div.r-date label, div.r-date input.hasDatepicker,
-	div.addresspicker label, div.addresspicker div {
+div.r-inputbox label, 
+div.r-inputbox input.form-control, 
+div.r-dropdown label,
+div.r-dropdown .form-control, 
+div.r-date label, 
+div.r-date input.hasDatepicker,
+div.addresspicker label, 
+div.addresspicker div {
 	background-color: inherit;
 	font-family: 'Roboto Regular', sans-serif;
 }
 
-div.r-inputbox label, div.r-dropdown label, div.r-date label {
+div.r-inputbox label, 
+div.r-dropdown label, 
+div.r-date label {
 	z-index: 1;
 	position: absolute;
 	margin: 0 7px;
@@ -188,18 +195,22 @@ div.r-inputbox label, div.r-dropdown label, div.r-date label {
 
 div.r-inputbox label {
 	transition: font-size 0.15s, color 0.15s, margin-top 0.15s;
-	margin-top: 0.93em;
 	cursor: text;
 }
 
 span.r-text span[data-for=label] {
 	z-index: 1;
- font-size: 13px;
+ 	font-size: 0.98em;
+	line-height: 0.9em;
 	color: gray;
 }
 
-div.r-inputbox input, div.r-dropdown select, div.r-dropdown input, div.r-date input,
-div.addresspicker select, div.addresspicker input {
+div.r-inputbox input, 
+div.r-dropdown select, 
+div.r-dropdown input, 
+div.r-date input,
+div.addresspicker select, 
+div.addresspicker input {
 	transition: border-color 0.15s;
 	padding: 6px 12px;
 	border: solid 1px rgb(220, 220, 220);
@@ -228,22 +239,25 @@ div.r-date input:focus, div.addresspicker select:focus, div.addresspicker input:
 	border: solid 2px rgb(40, 120, 220);
 }
 
-div.r-inputbox label.filled, div.r-inputbox:focus-within label, div.r-dropdown label,
-div.r-date label, div.addresspicker label {
+div.r-inputbox label.filled, 
+div.r-inputbox:focus-within label, 
+div.r-dropdown label,
+div.r-date label, 
+div.addresspicker label {
 	transition: font-size 0.15s, color 0.15s, margin-top 0.15s;
-	margin-top: 0;
-	font-size: 0.7em;
+	font-size: 0.98em;
+	line-height: 0.9em;
 	cursor: default;
 }
 
 /* BUTTON */
 
-button.button,
-button.button:hover,
-button.btn-primary,
-button.btn-primary:hover,
-button.btn-primary:focus,
-button.btn-primary:active {
+div.r-button button,
+div.r-button button:hover,
+div.r-button.btn-primary button,
+div.r-button.btn-primary button:hover,
+div.r-button.btn-primary button:focus,
+div.r-button.btn-primary button:active {
 	transition: box-shadow 0.15s, filter 0.15s, border-color 0.15s;
 	padding: 0 8px;
 	height: 34px;
@@ -253,44 +267,49 @@ button.btn-primary:active {
 	font-family: 'Roboto Bold', sans-serif;
 	font-weight: 700;
 	color: rgb(40, 120, 220);
+	width: 100%;
 }
 
-button.button.button-primary, button.btn-primary.button-primary {
+div.r-button.button-primary button {
 	transition: box-shadow 0.15s, filter 0.15s, border-color 0.15s;
 	background-color: rgb(40, 120, 220);
 	border-color: rgb(40, 120, 220);
 	color: white;
 }
 
-button.button.button-destructive, button.btn-primary.button-destructive {
+div.r-button.button-destructive button {
 	transition: box-shadow 0.15s, filter 0.15s, border-color 0.15s;
 	background-color: rgb(210, 40, 20);
 	border-color: rgb(210, 40, 20);
 	color: white;
 }
 
-button.button-primary:hover,
+div.r-button.button-primary button:hover,
 button.button-destructive:hover {
 	filter: brightness(105%);
 }
 
-button.button:hover,
-button.btn-primary:hover {
+div.r-button button:hover {
 	box-shadow: 0 3px 3px rgba(0, 0, 0, 0.15);
+	filter: brightness(105%);
 }
 
-button.button:not(.button-primary):not(.button-destructive):hover,
-button.btn-primary:not(.button-primary):not(.button-destructive):hover {
+div.r-button button:not(.button-primary):not(.button-destructive):hover,
+div.r-button button.btn-primary:not(.button-primary):not(.button-destructive):hover {
 	border-color: rgb(210, 210, 210);
 }
 
-button.button:active,
-button.btn-primary:active,
-button.button.button-primary:active,
-button.button.button-destructive:active {
+div.r-button button:active,
+div.r-button.btn-primary button:active,
+div.r-button..button-primary button:active,
+div.r-button.button-destructive button:active {
 	transition: box-shadow 0.15s, filter 0.15s, border-color 0.15s;
 	filter: brightness(90%);
 	box-shadow: none;
+}
+
+div.r-button button:focus {
+	color: rgb(40, 120, 220);
 }
 
 /* TEXT */
