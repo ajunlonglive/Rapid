@@ -3,7 +3,7 @@
 
 <!-- 
 
-Copyright (C) 2018 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -275,7 +275,7 @@ if (this.glyphCode) {
 		glyph = "<span class='fa-stack fa-lg buttonGlyphWithBackground buttonGlyph'><i class='fa fa-" + this.glyphBackground + " fa-stack-2x buttonGlyphBackground'></i><i class='" + fontClass + " fa-stack-1x'>" + this.glyphCode + "</i></span>";
 	}
 	
-	var html = "<button id='" + this.id + "' type='button' class='button btn" + classes + "' " + (this.title ? "title='" + escapeApos(this.title) + "'" : "") + ">";
+	var html = "<button type='button' class='btn'" + (this.title ? " title='" + escapeApos(this.title) + "'" : "") + ">";
 	if (this.glyphPosition == "left" || this.glyphPosition == "top") html += glyph;
 	if (this.glyphPosition == "left") html += "&nbsp;";
 	if (this.glyphPosition == "top") html += "<br/>";
@@ -285,9 +285,9 @@ if (this.glyphCode) {
 	if (this.glyphPosition == "right" || this.glyphPosition == "bottom") html += glyph;
 	html += "</button>";
 } else {
-	html = "<button id='" + this.id + "' type='button' class='r-button button btn" + classes + "' " + (this.title ? "title='" + escapeApos(this.title) + "' " : "") + ">" + this.label + "</button>";
+	html = "<button type='button' class='btn'" + (this.title ? " title='" + escapeApos(this.title) + "' " : "") + ">" + this.label + "</button>";
 }
-return html
+return "<div id='" + this.id + "' class='r-button" + classes + "'>" + html + "</div>";
 	        ]]>
 	    </getHtmlFunction>
 	    
@@ -300,7 +300,7 @@ return html
 	    
 	    <styles>
 	        <style>
-	            <name>Responsive button</name>
+	            <name>Responsive container</name>
 	            <getAppliesToFunction>
 					<![CDATA[
 return "#" + this.id;
@@ -308,7 +308,15 @@ return "#" + this.id;
 	            </getAppliesToFunction>
 	        </style>
 	        <style>
-	            <name>Responsive button glyph</name>  
+	            <name>Button</name>
+	            <getAppliesToFunction>
+					<![CDATA[
+return "#" + this.id + " button";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	        <style>
+	            <name>Button glyph</name>  
 	            <getAppliesToFunction>
 					<![CDATA[	      
 return "#" + this.id + " .buttonGlyph";
@@ -316,7 +324,7 @@ return "#" + this.id + " .buttonGlyph";
 	            </getAppliesToFunction>
 	        </style>
 	        <style>
-	            <name>Responsive button glyph background</name>  
+	            <name>Button glyph background</name>  
 	            <getAppliesToFunction>
 					<![CDATA[	      
 return "#" + this.id + " .buttonGlyphBackground";
@@ -327,7 +335,7 @@ return "#" + this.id + " .buttonGlyphBackground";
 	            <name>:hover</name>
 	            <getAppliesToFunction>
 					<![CDATA[	      
-return "#" + this.id + ":hover";
+return "#" + this.id + " button:hover";
 	       			 ]]>	                
 	            </getAppliesToFunction>
 	        </style>
@@ -335,7 +343,7 @@ return "#" + this.id + ":hover";
 	            <name>:focus</name>
 	            <getAppliesToFunction>
 					<![CDATA[
-return "#" + this.id + ":focus";
+return "#" + this.id + " button:focus";
 	       			 ]]>
 	            </getAppliesToFunction>
 	        </style>	        
