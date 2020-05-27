@@ -194,8 +194,26 @@ public class RapidFilter implements Filter {
 		if (path.startsWith("/soa")) {
 			// if this is a get request
 			if ("GET".equals(req.getMethod())) {
+
+
 				// remember we don't need authentication
 				requiresAuthentication = false;
+
+				// get the resource
+				String resource = req.getRequestURI();
+
+				// position of any important context folders in the path
+				int pos = Math.max(resource.indexOf("/scripts/"), resource.indexOf("/styles/"));
+
+				// if we one of these folders in the path
+				if (pos > 0) {
+
+					// forward to just the important bit
+					RequestDispatcher dispatcher = request.getRequestDispatcher(resource.substring(pos));
+					dispatcher.forward(request, response);
+
+				}
+
 			} else {
 				// get the content type (only present for POST)
 				String contentType = request.getContentType();

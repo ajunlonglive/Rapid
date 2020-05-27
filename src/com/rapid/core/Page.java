@@ -443,35 +443,38 @@ public class Page {
 	}
 
 	// recursively append to a list of actions from an action and it's children
-	public void getChildActions(List<Action> actions, Action action, String type) {
-		// if there is a type
-		if (type == null) {
-			// add this one action
-			actions.add(action);
-		} else {
-			// if types match
-			if (type.equals(action.getType())) {
-				// add action
+	public void getChildActions(List<Action> actions, Action action, String type, boolean isWebserviceOnly) {
+		// check if web service actions only
+		if (!isWebserviceOnly || action.isWebService()) {
+			// check there is a type
+			if (type == null) {
+				// no type so add this action
 				actions.add(action);
+			} else {
+				// if types match
+				if (type.equals(action.getType())) {
+					// add action
+					actions.add(action);
+				}
 			}
-		}
-		// check there are child actions
-		if (action.getChildActions() != null) {
-			// loop them
-			for (Action childAction : action.getChildActions()) {
-				// add their actions too
-				if (childAction != null) getChildActions(actions, childAction, type);
+			// check there are child actions
+			if (action.getChildActions() != null) {
+				// loop them
+				for (Action childAction : action.getChildActions()) {
+					// add their actions too
+					if (childAction != null) getChildActions(actions, childAction, type, isWebserviceOnly);
+				}
 			}
 		}
 	}
 
 	// overide for the above
-	public void getChildActions(List<Action> actions, Action action) {
-		getChildActions(actions, action, null);
+	public void getChildActions(List<Action> actions, Action action,boolean isWebserviceOnly) {
+		getChildActions(actions, action, null, isWebserviceOnly);
 	}
 
 	// recursively append to a list of actions from a control and it's children
-	public void getChildActions(List<Action> actions, Control control, String type) {
+	public void getChildActions(List<Action> actions, Control control, String type, boolean isWebserviceOnly) {
 		// check this control has events
 		if (control.getEvents() != null) {
 			for (Event event : control.getEvents()) {
@@ -480,7 +483,7 @@ public class Page {
 					// loop the actions
 					for (Action action : event.getActions()) {
 						// add any child actions too
-						if (action != null) getChildActions(actions, action, type);
+						if (action != null) getChildActions(actions, action, type, isWebserviceOnly);
 					}
 				}
 			}
@@ -490,22 +493,22 @@ public class Page {
 			// loop the child controls
 			for (Control childControl : control.getChildControls()) {
 				// add their actions too
-				getChildActions(actions, childControl, type);
+				getChildActions(actions, childControl, type, isWebserviceOnly);
 			}
 		}
 	}
 
 	// override for the above
-	public void getChildActions(List<Action> actions, Control control) {
-		getChildActions(actions, control, null);
+	public void getChildActions(List<Action> actions, Control control, boolean isWebserviceOnly) {
+		getChildActions(actions, control, null, isWebserviceOnly);
 	}
 
 	// add actions and child actions
-	public void addAction(List<Action> actions, Action action) {
+	public void addAction(List<Action> actions, Action action, boolean webServiceOnly) {
 		// if we have an action
 		if (action != null) {
 			// add it
-			actions.add(action);
+			if (!webServiceOnly || action.isWebService()) actions.add(action);
 			// get any child actions
 			List<Action> childActions = action.getChildActions();
 			// if there where some
@@ -513,14 +516,14 @@ public class Page {
 				// loop the children
 				for (Action childAction : childActions) {
 					// add this action recursively
-					addAction(actions, childAction);
+					addAction(actions, childAction, webServiceOnly);
 				}
 			}
 		}
 	}
 
 	// get all actions in the page of a specified type
-	public List<Action> getAllActions(String type) {
+	public List<Action> getAllActions(String type, boolean webServiceOnly) {
 		// instantiate the list we're going to return
 		List<Action> actions = new ArrayList<>();
 		// check the page events first
@@ -535,7 +538,7 @@ public class Page {
 						// loop actions
 						for (Action eventAction : eventActions) {
 							// add this action, including it's children
-							addAction(actions, eventAction);
+							addAction(actions, eventAction, webServiceOnly);
 						}
 					} else {
 						// loop them
@@ -543,14 +546,14 @@ public class Page {
 							// if right type
 							if (type.equals(eventAction.getType())) {
 								// add this action, including it's children
-								addAction(actions, eventAction);
+								addAction(actions, eventAction, webServiceOnly);
 							}
 							// Child actions
 							List<Action> eventActionChildren = eventAction.getChildActions();
 							if (eventActionChildren != null) {
 								for (Action childAction : eventActionChildren) {
 									if (type.equals(childAction.getType())) {
-										addAction(actions, childAction);
+										addAction(actions, childAction, webServiceOnly);
 									}
 								}
 							}
@@ -562,7 +565,7 @@ public class Page {
 		// uses the tree walking function above to add all actions
 		if (_controls != null) {
 			for (Control control : _controls) {
-				getChildActions(actions, control, type);
+				getChildActions(actions, control, type, webServiceOnly);
 			}
 		}
 		// sort them by action id
@@ -595,7 +598,19 @@ public class Page {
 	// get all actions in the page
 	public List<Action> getAllActions() {
 		// override for the above
-		return getAllActions(null);
+		return getAllActions(null, false);
+	}
+
+	// get all actions in the page of a certain type
+	public List<Action> getAllActions(String type) {
+		// override for the above
+		return getAllActions(type, false);
+	}
+
+	// get all web-service actions in the page
+	public List<Action> getAllWebServiceActions() {
+		// override for the above
+		return getAllActions(null, true);
 	}
 
 	// an iterative function for tree-walking child controls when searching for a specific action's control

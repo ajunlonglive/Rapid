@@ -1083,6 +1083,66 @@ public class Application {
 		return null;
 	}
 
+	// get all actions in the app
+	public List<Action> getAllActions(ServletContext servletContext) {
+		List<Action> actions = null;
+		// check we have pages
+		if (_pages != null) {
+			try {
+				// loop all pages
+				for (String loopPageId : _pages.getPageIds()) {
+					// fetch this page
+					Page page = _pages.getPage(servletContext, loopPageId);
+					// get all actions for this page
+					List<Action> pageActions = page.getAllActions();
+					// if we found it return it!
+					if (pageActions != null) {
+						// instantiate actions if we need to
+						if (actions == null) actions = new ArrayList<Action>();
+						// add these actions
+						actions.addAll(pageActions);
+					}
+				}
+			} catch (Exception ex) {
+				// get the logger
+				Logger logger = (Logger) servletContext.getAttribute("logger");
+				// log this exception
+				logger.error("Error getting all actions for application", ex);
+			}
+		}
+		return actions;
+	}
+
+	// get all web service actions in the app
+	public List<Action> getAllWebServiceActions(ServletContext servletContext) {
+		List<Action> actions = null;
+		// check we have pages
+		if (_pages != null) {
+			try {
+				// loop all pages
+				for (String loopPageId : _pages.getPageIds()) {
+					// fetch this page
+					Page page = _pages.getPage(servletContext, loopPageId);
+					// get all actions for this page
+					List<Action> pageActions = page.getAllWebServiceActions();
+					// if we found it return it!
+					if (pageActions != null) {
+						// instantiate actions if we need to
+						if (actions == null) actions = new ArrayList<Action>();
+						// add these actions
+						actions.addAll(pageActions);
+					}
+				}
+			} catch (Exception ex) {
+				// get the logger
+				Logger logger = (Logger) servletContext.getAttribute("logger");
+				// log this exception
+				logger.error("Error getting all actions for application", ex);
+			}
+		}
+		return actions;
+	}
+
 	// get a webservice by it's id
 	public Webservice getWebserviceById(String id) {
 		if (_webservices != null) {

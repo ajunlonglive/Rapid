@@ -118,8 +118,11 @@ public abstract class Action {
 		return "/* " + getType() + " action " + getId() + comments + " */\n" + getJavaScript(rapidRequest, application, page, control, jsonDetails);
 	};
 
-	// this is where any serverside action happens! (some actions are client side only)
+	// this is where any server-side action happens! (some actions are client side only)
 	public JSONObject doAction(RapidRequest rapidRequest, JSONObject jsonData) throws Exception { return null; };
+
+	// whether this action is a webservice
+	public boolean isWebService() { return false; }
 
 	// this method can be overridden to check the xml versions, and upgrade any xml nodes representing specific actions before the xml document is unmarshalled
 	public Node upgrade(Node actionNode) { return actionNode; }
