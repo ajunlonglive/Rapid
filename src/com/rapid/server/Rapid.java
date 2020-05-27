@@ -57,7 +57,6 @@ import org.json.JSONObject;
 import com.rapid.core.Application;
 import com.rapid.core.Application.RapidLoadingException;
 import com.rapid.core.Application.Resource;
-import com.rapid.core.Application.Resources;
 import com.rapid.core.Page;
 import com.rapid.core.Pages;
 import com.rapid.core.Pages.PageHeader;
@@ -476,7 +475,7 @@ public class Rapid extends RapidHttpServlet {
 							}
 
 							// get app resources
-							Resources resources = app.getAppResources();
+							List<Resource> resources = app.getResources();
 
 							// if we had some
 							if (resources != null) {
