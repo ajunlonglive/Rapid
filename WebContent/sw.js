@@ -548,11 +548,3 @@ function getUrlParameter(url, parameterName) {
 	const matches = url.match("[?&]" + parameterName + "=([^&]+)[&$]");
 	return matches && matches[1];
 }
-
-indexedDB.open("appsResourcesDB")
-.onupgradeneeded = function(versionChangeEvent) {
-	var appsResourcesDB = versionChangeEvent.target.result;
-	if (!appsResourcesDB.objectStoreNames.contains("appsResources")) {
-		appsResourcesDB.createObjectStore("appsResources", { keyPath: "id" });
-	}
-};
