@@ -1217,4 +1217,9 @@ public class Database extends Action {
 
 	}
 
+	@Override
+	public boolean isWebService() {
+		return true;
+	}
+
 }

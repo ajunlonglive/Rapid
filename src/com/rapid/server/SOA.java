@@ -39,6 +39,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.rapid.core.Action;
 import com.rapid.core.Application;
 import com.rapid.security.SecurityAdapter;
 import com.rapid.soa.AuthenticationWebservice;
@@ -141,25 +142,45 @@ public class SOA extends RapidHttpServlet {
 
 					if (appVersion != null) out.print("Version: " + appVersion + "<p/>");
 
-					out.print("Wsdls:<p/>");
 
+					// start the webservice drop down
 					String dropDown = "<select id='action'>";
 
-					// print a list of webservices for this app
+					// get the "proper" webservices for this app
 					List<Webservice> webservices = app.getWebservices();
-					if (webservices == null) {
-						out.print("This application has no webservices");
-					} else {
+					// if we got some
+					if (webservices != null) {
+						// add a wsdl header
+						out.print("Wsdls:<p/>");
+						// loop the webservices
 						for (Webservice webservice : webservices) {
+							// append to the webservice drop down
 							dropDown += "<option value='" + app.getId() + "/" + (appVersion == null ? "" : appVersion + "/") + webservice.getId() + "'>" + webservice.getName() + "</option>";
+							// print a hyper-link to the .wsdl
 							out.print("<a target='blank' href='soa?a=" + app.getId() + "&s=" + webservice.getId() + "'>" + webservice.getName() + "</a><p/>");
 						}
 					}
 
+					// get all web service actions for the app
+					List<Action> actions = app.getAllWebServiceActions(request.getServletContext());
+					// if we got some
+					if (actions != null) {
+						// add a header
+						out.print("Actions:<p/>");
+						// loop them
+						for (Action action : actions) {
+							// print a hyper-link to the .wsdl
+							out.print(action.getType() + " (" + action.getId() + ") " + action.getProperty("comments") + "<p/>");
+						}
+					}
+
+					// close the webservice dropdown
 					dropDown += "</select>";
 
+					// print the request box
 					out.print("<p>&nbsp;</p>Request:<p/>" + dropDown + "<input type='radio' name='contentType' value='text/xml' checked='checked'/>soap<input type='radio' name='contentType' value='application/json' />json<p/><textarea id='request' style='width:100%;height:200px;'></textarea><p/><button onclick='submitWebservice();'>Submit</button><p/>Response:<p/><div id='response' style='min-height:200px;border:1px solid grey;'></div>");
 
+					// finish the page
 					out.print("</body></html>");
 
 				} else {
