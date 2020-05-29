@@ -110,6 +110,9 @@ self.addEventListener("fetch", function(event) {
 	// proceed to direct server response  if request is for designer
 	if (url.startsWith("designer") || url.startsWith("design.jsp") || url.includes("a=designer")) return;
 	
+	var referrer = event.request.referrer;
+	if (referrer.includes("designer") || referrer.includes("design.jsp") || referrer.includes("a=designer")) return;
+	
 	// proceed to direct server response  if request is for design page
 	if (url.includes("designPage.jsp")) return;
 	
