@@ -115,8 +115,9 @@ self.addEventListener("fetch", function(event) {
 	
 	// proceed to direct server response  if request is for designer
 	var designerIndicators = ["designer", "design.jsp", "a=designer"];
+	var adminIndicators = ["rapid", "a=rapid"];
 	
-	if (designerIndicators.some(indicator => url.startsWith(indicator))) {
+	if (designerIndicators.concat(adminIndicators).some(indicator => url.startsWith(indicator))) {
 		
 		event.respondWith(new Promise(resolve =>
 			fetch(_contextPath + url)
@@ -132,7 +133,7 @@ self.addEventListener("fetch", function(event) {
 	// ignore resources referred by designer.jsp, allowing resources referred by offline.jsp
 	var referrer = event.request.referrer;
 	
-	if ((designerIndicators.some(indicator => referrer.includes(indicator)))
+	if ((designerIndicators.concat(adminIndicators).some(indicator => referrer.includes(indicator)))
 		&& !_offlinePageResources.some(resource => url.endsWith(resource))) {
 		return;
 	}
