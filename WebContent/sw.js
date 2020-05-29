@@ -116,6 +116,9 @@ self.addEventListener("fetch", function(event) {
 	// proceed to direct server response  if request is for admin app
 	if (url.startsWith("rapid") || url.includes("a=rapid")) return;
 	
+	// proceed to direct server response  if request is for soa
+	if (url.startsWith("soa/")) return;
+	
 	// if request is for root or index
 	if (url === "" || url.endsWith("index.jsp")) {
 		event.respondWith(
