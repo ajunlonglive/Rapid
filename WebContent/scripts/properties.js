@@ -2535,7 +2535,7 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 	}
 	// add reorder listeners
 	addReorder(query.inputs, inputsTable.find("div.reorder"), function() { 
-		Property_databaseQuery(cell, propertyObject, property); 
+		Property_databaseQuery(cell, propertyObject, property, details); 
 	});
 	// get the delete
 	var fieldDelete = inputsTable.find("div.delete");
@@ -2548,7 +2548,7 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 		// remove row
 		input.closest("tr").remove();
 		// refresh the query so that the reorder collection is synchronised and the numbers are updated
-		Property_databaseQuery(cell, propertyObject, property); 
+		Property_databaseQuery(cell, propertyObject, property, details); 
 	}));
 	
 	// if multi row and at least one input
@@ -2623,7 +2623,7 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 	}
 	// add reorder listeners
 	addReorder(query.outputs, outputsTable.find("div.reorder"), function() { 
-		Property_databaseQuery(cell, propertyObject, property); 
+		Property_databaseQuery(cell, propertyObject, property, details); 
 	});
 	// get the delete
 	var fieldDelete = outputsTable.find("div.delete");
@@ -2636,7 +2636,7 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 		// remove row
 		input.closest("tr").remove();
 		// refresh the query so that the reorder collection is synchronised
-		Property_databaseQuery(cell, propertyObject, property); 
+		Property_databaseQuery(cell, propertyObject, property, details); 
 	}));
 	// add the add
 	outputsTable.append("<tr><td style='padding:0px;' colspan='2'><select class='addOutput' style='margin:0px'><option value=''>add output...</option>" + getOutputOptions() + "</select></td><td></td></tr>");
