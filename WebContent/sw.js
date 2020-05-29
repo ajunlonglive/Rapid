@@ -66,6 +66,12 @@ var _rapidResources = [
 	"~?action=getApps"
 ];
 
+var _offlinePageResources = [
+	"index.css",
+	"RapidLogo.svg",
+	"favicon.ico"
+];
+
 var _rapidResourceFolders = [
 	"images/",
 	"scripts/",
@@ -108,10 +114,28 @@ self.addEventListener("fetch", function(event) {
 	if (url.endsWith("sw.js")) return;
 	
 	// proceed to direct server response  if request is for designer
-	if (url.startsWith("designer") || url.startsWith("design.jsp") || url.includes("a=designer")) return;
+	var designerIndicators = ["designer", "design.jsp", "a=designer"];
 	
+	if (designerIndicators.some(indicator => url.startsWith(indicator))) {
+		
+		event.respondWith(new Promise(resolve =>
+			fetch(_contextPath + url)
+			.then(resolve)
+			.catch(_ => resolve(
+				caches.open(_swVersion + 'offline')
+				.then(cache => cache.match("offline.htm"))
+			))
+		));
+		return;
+	}
+	
+	// ignore resources referred by designer.jsp, allowing resources referred by offline.jsp
 	var referrer = event.request.referrer;
-	if (referrer.includes("designer") || referrer.includes("design.jsp") || referrer.includes("a=designer")) return;
+	
+	if ((designerIndicators.some(indicator => referrer.includes(indicator)))
+		&& !_offlinePageResources.some(resource => url.endsWith(resource))) {
+		return;
+	}
 	
 	// proceed to direct server response  if request is for design page
 	if (url.includes("designPage.jsp")) return;
