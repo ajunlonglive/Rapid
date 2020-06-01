@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2019 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -37,6 +37,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.List;
 
 import com.rapid.data.ConnectionAdapter.ConnectionAdapterException;
 import com.rapid.server.RapidRequest;
@@ -334,6 +335,10 @@ public class DataFactory {
 		return _connection;
 	}
 
+	public Connection getCurrentConnection() {
+		return _connection;
+	}
+
 	public boolean getAutoCommit() { return _autoCommit; }
 	public void setAutoCommit(boolean autoCommit) {	_autoCommit = autoCommit; }
 
@@ -342,7 +347,7 @@ public class DataFactory {
 
 	// protected methods
 
-	protected void populateStatement(RapidRequest rapidRequest, PreparedStatement statement, ArrayList<Parameter> parameters, int startColumn, boolean checkParameters) throws SQLException {
+	protected void populateStatement(RapidRequest rapidRequest, PreparedStatement statement, List<Parameter> parameters, int startColumn, boolean checkParameters) throws SQLException {
 
 		// get the parameter metadata - some jdbc drivers will return null, especially for more complex things like insert/update, or stored procedures
 		ParameterMetaData parameterMetaData = null;
@@ -467,7 +472,7 @@ public class DataFactory {
 
 	// public methods
 
-	public PreparedStatement getPreparedStatement(RapidRequest rapidRequest, String sql, ArrayList<Parameter> parameters) throws SQLException, ClassNotFoundException, ConnectionAdapterException  {
+	public PreparedStatement getPreparedStatement(RapidRequest rapidRequest, String sql, List<Parameter> parameters) throws SQLException, ClassNotFoundException, ConnectionAdapterException  {
 
 		// some jdbc drivers need various modifications to the sql
 		if (_connectionAdapter.getDriverClass().contains("sqlserver")) {
@@ -501,7 +506,7 @@ public class DataFactory {
 
 	}
 
-	public ResultSet getPreparedResultSet(RapidRequest rapidRequest, String sql, ArrayList<Parameter> parameters) throws SQLException, ClassNotFoundException, ConnectionAdapterException {
+	public ResultSet getPreparedResultSet(RapidRequest rapidRequest, String sql, List<Parameter> parameters) throws SQLException, ClassNotFoundException, ConnectionAdapterException {
 
 		return getFirstResultSet(getPreparedStatement(rapidRequest, sql, parameters));
 
@@ -515,7 +520,7 @@ public class DataFactory {
 
 	}
 
-	public int getPreparedUpdate(RapidRequest rapidRequest, String sql, ArrayList<Parameter> parameters) throws SQLException, ClassNotFoundException, ConnectionAdapterException {
+	public int getPreparedUpdate(RapidRequest rapidRequest, String sql, List<Parameter> parameters) throws SQLException, ClassNotFoundException, ConnectionAdapterException {
 
 		int rows = -1;
 
@@ -579,7 +584,7 @@ public class DataFactory {
 
 	}
 
-	public String getPreparedScalar(RapidRequest rapidRequest, String sql, ArrayList<Parameter> parameters) throws SQLException, ClassNotFoundException, ConnectionAdapterException {
+	public String getPreparedScalar(RapidRequest rapidRequest, String sql, List<Parameter> parameters) throws SQLException, ClassNotFoundException, ConnectionAdapterException {
 
 		String result = null;
 
