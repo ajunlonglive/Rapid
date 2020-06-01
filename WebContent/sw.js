@@ -118,15 +118,17 @@ self.addEventListener("fetch", function(event) {
 	var adminIndicators = ["rapid", "a=rapid"];
 	
 	if (designerIndicators.concat(adminIndicators).some(indicator => url.startsWith(indicator))) {
-		
-		event.respondWith(new Promise(resolve =>
-			fetch(_contextPath + url)
-			.then(resolve)
-			.catch(_ => resolve(
-				caches.open(_swVersion + 'offline')
-				.then(cache => cache.match("offline.htm"))
-			))
-		));
+		if (method === "GET") {
+			
+			event.respondWith(new Promise(resolve =>
+				fetch(_contextPath + url)
+				.then(resolve)
+				.catch(_ => resolve(
+					caches.open(_swVersion + 'offline')
+					.then(cache => cache.match("offline.htm"))
+				))
+			));
+		}
 		return;
 	}
 	
