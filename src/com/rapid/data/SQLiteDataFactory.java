@@ -28,8 +28,8 @@ package com.rapid.data;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.sqlite.SQLiteConnection;
@@ -79,7 +79,7 @@ public class SQLiteDataFactory extends DataFactory {
 	}
 
 	// this new method ensures the connection used on update calls is the static one and is used in a synchronised way
-	public PreparedStatement getPreparedUpdateStatement(RapidRequest rapidRequest, String sql, ArrayList<Parameter> parameters) throws SQLException, ClassNotFoundException, ConnectionAdapterException  {
+	public PreparedStatement getPreparedUpdateStatement(RapidRequest rapidRequest, String sql, List<Parameter> parameters) throws SQLException, ClassNotFoundException, ConnectionAdapterException  {
 
 		// trim and retain sql
 		_sql = sql.trim();
@@ -132,7 +132,7 @@ public class SQLiteDataFactory extends DataFactory {
 
 	// this override uses the new getPreparedUpdateStatement
 	@Override
-	public int getPreparedUpdate(RapidRequest rapidRequest, String sql, ArrayList<Parameter> parameters) throws SQLException, ClassNotFoundException, ConnectionAdapterException {
+	public int getPreparedUpdate(RapidRequest rapidRequest, String sql, List<Parameter> parameters) throws SQLException, ClassNotFoundException, ConnectionAdapterException {
 
 		// get a prepared statement (also synchronised)
 		PreparedStatement ps = getPreparedUpdateStatement(rapidRequest, sql, parameters);
