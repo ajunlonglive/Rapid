@@ -119,7 +119,7 @@ return [["N","Normal"],["L","Large"],["Num","Number"],["Tel","Telephone number"]
 	            <changeValueJavaScript>select</changeValueJavaScript>
 	            <getValuesFunction>
 	                <![CDATA[
-return ["", "on", "off", "name", "bday", "sex", "language", "email", "tel", "url", "street-address", "country", "postal-code", "organization", "username", "new-password", "current-password"];
+return ["", "on", "off", "name", "bday", "sex", "language", "email", "tel", "url", "street-address", "country", "postal-code", "organization", "username", "new-login", "new-password", "current-login", "current-password"];
 					]]>
 	            </getValuesFunction>
 	            <refreshHtml>true</refreshHtml>
