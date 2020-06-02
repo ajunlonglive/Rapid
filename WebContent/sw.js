@@ -221,10 +221,15 @@ self.addEventListener("fetch", function(event) {
 		}
 		
 		var urlParts = url.split("?");
-		var urlParameters = urlParts[1]; // end of the url with parameter assignments
-		var parameterAssignments = urlParameters && urlParameters.split("&"); // array of parameter assignments
-		var parameterPairs = parameterAssignments && parameterAssignments.map(a => a.split("=")); // array of parameter assignments
-		var parameters = parameterPairs ? Object.fromEntries(parameterPairs) : {};
+		var urlParameters = urlParts[1] || ""; // end of the url with parameter assignments
+		var parameterAssignments = urlParameters.split("&") // array of parameter assignments
+		var parameters = {};
+		parameterAssignments
+		.filter(assignment => assignment !== "")
+		.forEach(assignment => {
+			var nameValue = assignment.split("="); // array of name and value
+			parameters[nameValue[0]] = nameValue[1];
+		});
 		
 		var altUrlComponents = url.match("(\\w+)(\/(\\w+))*$"); // TODO: FIX THIS
 		var notApp = _trimUrls.some(ext => url.endsWith(ext));
