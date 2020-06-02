@@ -105,6 +105,8 @@ self.addEventListener("fetch", function(event) {
 	// get the url from the event request
 	var url = event.request.url;
 	
+	if (!url.startsWith(_contextPath)) return;
+	
 	url = url.replace(_contextPath, "");
 	
 	// get the method from the event request
