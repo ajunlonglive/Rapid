@@ -116,8 +116,8 @@ self.addEventListener("fetch", function(event) {
 	if (url.endsWith("sw.js")) return;
 	
 	// proceed to direct server response  if request is for designer
-	var designerIndicators = ["designer", "design.jsp", "a=designer"];
-	var adminIndicators = ["rapid", "a=rapid"];
+	var designerIndicators = ["/designer/", "design.jsp", "a=designer", "designpage.jsp"];
+	var adminIndicators = ["/rapid/", "a=rapid"];
 	
 	if (designerIndicators.concat(adminIndicators).some(indicator => url.startsWith(indicator))) {
 		if (method === "GET") {
@@ -209,9 +209,11 @@ self.addEventListener("fetch", function(event) {
 		return;
 	}
 	
+	// ignore image uploads
+	if (url.endsWith(".png") && method === "POST") return;
 	
 	// We only check the cache for GET requests to the Rapid server, unless it's part of what we want to refresh each time
-	if (url && event.request.method === "GET") {
+	if (url && method === "GET") {
 		
 		// set the standard fetch options
 		var fetchOptions = { redirect: "manual" };
