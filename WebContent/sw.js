@@ -12,7 +12,7 @@ var _rapidpwa = {
 /* A version number is useful when updating the worker logic,
 	 allowing you to remove outdated cache entries during the update.
 */
-var _swVersion = 'v1';
+var _swVersion = 'v1.1';
 
 /* These resources will be downloaded and cached by the service worker
 	 during the installation process. If any resource fails to be downloaded,
