@@ -12,7 +12,7 @@ var _rapidpwa = {
 /* A version number is useful when updating the worker logic,
 	 allowing you to remove outdated cache entries during the update.
 */
-var _swVersion = 'v1.1';
+var _swVersion = 'v1.2';
 
 /* These resources will be downloaded and cached by the service worker
 	 during the installation process. If any resource fails to be downloaded,
@@ -210,7 +210,7 @@ self.addEventListener("fetch", function(event) {
 	}
 	
 	// ignore image uploads
-	if (url.endsWith(".png") && method === "POST") return;
+	if (method === "POST") return;
 	
 	// We only check the cache for GET requests to the Rapid server, unless it's part of what we want to refresh each time
 	if (url && method === "GET") {
