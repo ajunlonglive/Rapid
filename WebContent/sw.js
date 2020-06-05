@@ -116,8 +116,8 @@ self.addEventListener("fetch", function(event) {
 	if (url.endsWith("sw.js")) return;
 	
 	// proceed to direct server response  if request is for designer
-	var designerIndicators = ["/designer/", "design.jsp", "a=designer", "designpage.jsp"];
-	var adminIndicators = ["/rapid/", "a=rapid"];
+	var designerIndicators = ["/designer/", "design.jsp", "~?a=designer", "designpage.jsp"];
+	var adminIndicators = ["/rapid/", "~?a=rapid"];
 	
 	if (designerIndicators.concat(adminIndicators).some(indicator => url.startsWith(indicator))) {
 		if (method === "GET") {
