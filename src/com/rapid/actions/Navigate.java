@@ -148,6 +148,10 @@ public class Navigate extends Action {
 				js = "Action_navigate('" + url + "', false, null, false);\n";
 			}
 
+		} else if ("PR".equals(navigationType)) {
+			
+			js = "window.print();\n";
+			
 		} else {
 
 			// this code only for type == P
