@@ -3332,8 +3332,8 @@ function Property_navigationSessionVariables(cell, navigation, property, details
 }
 
 function Property_navigateNewtab(cell, propertyObject, property, details) {
-	//if property 'show as dialogue' is checked
-	if (propertyObject.dialogue == true || propertyObject.dialogue == "true" || propertyObject.linkType == "R" || propertyObject.navigationType == "R") {
+	//if property 'show as dialogue' is checked or navigationType is Printer PR
+	if (propertyObject.dialogue == true || propertyObject.dialogue == "true" || propertyObject.linkType == "R" || propertyObject.navigationType == "R" || propertyObject.navigationType == "PR") {
 		// remove this row
 		cell.parent().remove();
 	} else {

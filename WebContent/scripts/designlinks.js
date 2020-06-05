@@ -113,10 +113,19 @@ function getDesignerUrl() {
 }
 
 window.addEventListener("storage", function(storageEvent) {
-	if (storageEvent.key === "pageSaved") {
-		var message = JSON.parse(storageEvent.newValue);
-		if (message.a === _appId && message.v === _appVersion && message.p === _pageId) {
-			location.reload();
+	if (storageEvent.key === "rapidWindowBroadcast") {
+		var broadcast = JSON.parse(storageEvent.newValue);
+		switch (broadcast.message) {
+		case "pageSaved":
+			if (broadcast.a === _appId && broadcast.v === _appVersion && broadcast.p === _pageId) {
+				location.reload();
+			}
+			break;
+		case "applicationReloaded":
+			if (broadcast.a === _appId && broadcast.v === _appVersion) {
+				location.reload();
+			}
+			break;
 		}
 	}
 });
