@@ -4621,6 +4621,23 @@ window.addEventListener("storage", function(storageEvent) {
 				$(appSelect).change();
 				break;
 			}
+		case "applicationNewVersion":
+			if (!_dirty && broadcast.a === _version.id) {
+				$(appSelect).change();
+				break;
+			}
+		case "applicationDeletedVersion":
+			if (!_dirty && broadcast.a === _version.id) {
+				$(appSelect).change();
+				break;
+			}
+		case "applicationImportedVersion":
+			if (!_dirty && broadcast.a === _version.id) {
+				setTimeout(function() {
+					$(appSelect).change();
+				}, 3000);
+				break;
+			}
 		}
 	}
 });
