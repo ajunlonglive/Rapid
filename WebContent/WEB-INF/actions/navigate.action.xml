@@ -47,7 +47,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 // for backwards compatibility	                
 if (!this.navigationType) this.navigationType = "P";
 // return the types	            
-return [["P","Page"],["U","URL"],["R","Rapid"]];
+return [["P","Page"],["U","URL"],["R","Rapid"],["PR","Printer"]];
 				</getValuesFunction>
 	            <refreshProperties>true</refreshProperties>
 	            <helpHtml>Sets the type of link. Page links to other pages on your Rapid app, URL links to any webpage placed in the text field, and Rapid provides Rapid pages like main menu, logout, and back.</helpHtml>
