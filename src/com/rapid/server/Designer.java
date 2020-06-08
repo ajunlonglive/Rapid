@@ -1059,6 +1059,9 @@ public class Designer extends RapidHttpServlet {
 							// get the application
 							Application application = rapidRequest.getApplication();
 
+							// get the page headers
+							PageHeaders pageHeaders = application.getPages().getSortedPages();
+
 							// get the root path
 							String rootPath = getServletContext().getRealPath("/");
 
@@ -1085,7 +1088,6 @@ public class Designer extends RapidHttpServlet {
 							// title
 							out.print("Title:\t" + application.getTitle() + "\r\n");
 
-
 							// app details
 							if ("summary".equals(actionName) || "detail".equals(actionName)) {
 
@@ -1106,14 +1108,14 @@ public class Designer extends RapidHttpServlet {
 								out.print("Theme:\t" + application.getThemeType() + "\r\n");
 							}
 
+							// pages
+							out.print("Pages:\t" + pageHeaders.size() + "\r\n");
+
 							// double line break
 							out.print("\r\n");
 
 							// get any page id
 							String pageId = request.getParameter("p");
-
-							// get the page headers
-							PageHeaders pageHeaders = application.getPages().getSortedPages();
 
 							// loop the page headers
 							for (PageHeader pageHeader : pageHeaders) {
@@ -1197,11 +1199,11 @@ public class Designer extends RapidHttpServlet {
 
 									// action summary
 									if ("pages".equals(actionName) || "summary".equals(actionName)) {
-										out.print("Number of actions:\t" + page.getAllActions().size() + "\r\n");
+										out.print("Actions:\t" + page.getAllActions().size() + "\r\n");
 									}
 
 									// print the number of controls
-									out.print("Number of controls:\t" + page.getAllControls().size() + "\r\n");
+									out.print("Controls:\t" + page.getAllControls().size() + "\r\n");
 
 									// events, action, and details
 									if ("summary".equals(actionName)) {
