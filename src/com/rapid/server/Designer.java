@@ -126,59 +126,130 @@ public class Designer extends RapidHttpServlet {
 
     }
 
+    // print indentation
+    private void printIndentation(PrintWriter out, int level) {
+    	// loop level
+    	for (int i = 0; i < level; i++) {
+    		out.print("\t");
+    	}
+    }
+
     // print details of an action
-    private void printActionDetails(Action action, PrintWriter out) {
+    private void printAction(Action action, PrintWriter out, boolean details, int level) {
+
+    	// print any indentation
+    	printIndentation(out, level);
+
+    	// retain the level at this point
+    	int thislevel = level + 2;
 
     	// print the action
-    	out.print("\t\tAction\t" + action.getId()+ "\n");
+    	out.print("\t\tAction:\t" + action.getId() + "\t" + action.getType() + "\r\n");
 
-		// get the properties
-		Map<String, String> properties = action.getProperties();
 		// create a sorted list
 		List<String> sortedKeys = new ArrayList<>();
-		// loop them
-		for (String key : properties.keySet()) {
-			// add
-			sortedKeys.add(key);
-		}
-		// sort them
-		Collections.sort(sortedKeys);
-		// loop the sorted keys
-		for (String key : sortedKeys) {
-			// print the property
-			out.print("\t\t\t" + key + "\t" + properties.get(key) + "\n");
+		// a map for the properties we're going to print
+		Map<String, String> keyValues = new HashMap<>();
+
+		// only required for details
+		if (details) {
+			// get the object properties
+			Map<String, String> objectProperties = action.getProperties();
+
+			// loop them
+			for (String key : objectProperties.keySet()) {
+				// add the key
+				sortedKeys.add(key);
+				// add the value
+				keyValues.put(key, objectProperties.get(key));
+			}
 		}
 
-		// get a JSONObejct for this action which will turn the get/set properties into keys
+		// get a JSONObject for this action which will turn the get/set properties into keys
 		JSONObject jsonAction = new JSONObject(action);
 		// get it's properties
 		Iterator<String> keys = jsonAction.keys();
-		// clear the sorted key list
-		sortedKeys.clear();
+
+		// a map of child actions
+		Map<String, List<Action>> keyChildActions = new HashMap<>();
+
 		// loop them
 		while (keys.hasNext()) {
 			// get the next one
 			String key = keys.next();
-			// add it to the list if not id
-			if (!"id".equals(key)) sortedKeys.add(key);
-		}
-		// sort them
-		Collections.sort(sortedKeys);
-		// loop the sorted keys
-		for (String key : sortedKeys) {
-			// print it
-			try {
-				out.print("\t\t\t" + key + "\t" + jsonAction.get(key) + "\n");
-			} catch (JSONException e) {	}
+			// if not there already and details or actions
+			if (!sortedKeys.contains(key) && (details || key.endsWith("Actions"))) {
+				// add the key
+				sortedKeys.add(key);
+				try {
+					// if the key ends with actions
+					if (key.endsWith("Actions") && action.getChildActions() != null && action.getChildActions().size() > 0) {
+						// get the child actions
+						JSONArray jsonChildActions = jsonAction.optJSONArray(key);
+						// if we got some
+						if (jsonChildActions != null) {
+
+							// list of child actions for this key
+							List<Action> childActions = new ArrayList<>();
+
+							// loop the child actions
+							for (int i = 0; i < jsonChildActions.length(); i++) {
+								// get this one
+								JSONObject jsonChildAction = jsonChildActions.getJSONObject(i);
+								// get its id
+								String childId = jsonChildAction.optString("id", null);
+								// if there was one
+								if (childId != null) {
+									// loop them
+									for (Action childAction : action.getChildActions()) {
+										// print the child actions
+										if (childId.equals(childAction.getId())) {
+											// add the child action
+											childActions.add(childAction);
+											// we're done
+											break;
+										}
+									}
+								}
+							}
+
+							// add the child actions for this key
+							keyChildActions.put(key, childActions);
+
+						}
+					} else {
+						// add the value
+						keyValues.put(key, JSONObject.valueToString(jsonAction.get(key)));
+					}
+				} catch (JSONException e) {}
+			}
 		}
 
-		// check child actions
-		if (action.getChildActions() != null) {
-			if (action.getChildActions().size() > 0) {
-				// loop them
-				for (Action childAction : action.getChildActions()) {
-					// print the child actions
-					printActionDetails(childAction, out);
+		// sort the keys
+		Collections.sort(sortedKeys, String.CASE_INSENSITIVE_ORDER);
+
+		// loop the sorted keys
+		for (String key : sortedKeys) {
+			// print it if not id, nor properties itself
+			if (!"id".equals(key) && !"properties".equals(key) && !"type".equals(key) && !"childActions".equals(key)) {
+				// print any indentation
+		    	printIndentation(out, level);
+		    	// print the key
+				out.print("\t\t\t" + key);
+				// get any child actions
+				List<Action> childActions = keyChildActions.get(key);
+				// if there are child actions for this key
+				if (childActions != null) {
+					// loop the child actions
+					for (Action childAction : childActions) {
+						// print a new line
+						out.print("\r\n");
+						// print the child actions
+						printAction(childAction, out, details, thislevel);
+					}
+				} else {
+					// print the value
+					out.print("\t" + keyValues.get(key) + "\r\n");
 				}
 			}
 		}
@@ -186,7 +257,7 @@ public class Designer extends RapidHttpServlet {
     }
 
     // print details of events (used by page and controls)
-    private void printEventsDetails(List<Event> events, PrintWriter out) {
+    private void printEvents(List<Event> events, PrintWriter out, boolean details) {
 
     	// check events
 		if (events!= null) {
@@ -197,11 +268,11 @@ public class Designer extends RapidHttpServlet {
 					if (event.getActions() != null) {
 						if (event.getActions().size() > 0) {
 							// print the event
-							out.print("\tEvent\t" + event.getType() + "\n");
+							out.print("\tEvent:\t" + event.getType() + "\r\n");
 							// loop the actions
 							for (Action action : event.getActions()) {
 								// print the action details
-								printActionDetails( action,  out);
+								printAction(action,  out, details, 0);
 							}
 						}
 					}
@@ -1132,7 +1203,13 @@ public class Designer extends RapidHttpServlet {
 									// print the number of controls
 									out.print("Number of controls:\t" + page.getAllControls().size() + "\r\n");
 
-									// further details
+									// events, action, and details
+									if ("summary".equals(actionName)) {
+										// print page events
+										printEvents(page.getEvents(), out, false);
+									}
+
+									// events, action, and details
 									if ("detail".equals(actionName)) {
 
 										out.print("Description:\t" + page.getDescription() + "\r\n");
@@ -1140,7 +1217,8 @@ public class Designer extends RapidHttpServlet {
 										out.print("HideHeaderFooter:\t" + page.getHideHeaderFooter() + "\r\n");
 
 										// print page events
-										printEventsDetails(page.getEvents(), out);
+										printEvents(page.getEvents(), out, true);
+
 									}
 
 								}
@@ -1311,6 +1389,9 @@ public class Designer extends RapidHttpServlet {
 													out.print("\r\n");
 												}
 
+												// if summary
+												if ("summary".equals(actionName)) printEvents(control.getEvents(), out, false);
+
 												// if details
 												if ("detail".equals(actionName)) {
 
@@ -1327,11 +1408,12 @@ public class Designer extends RapidHttpServlet {
 													Collections.sort(sortedKeys);
 													// loop them
 													for (String key : sortedKeys) {
-														// print the properties
-														out.print(key + "\t" + properties.get(key) + "\r\n");
+														// print the properties (but not the properties itself)
+														if (!"properties".equals(key)) out.print(key + "\t" + properties.get(key) + "\r\n");
 													}
+
 													// print the event details
-													printEventsDetails(control.getEvents(), out);
+													printEvents(control.getEvents(), out, true);
 
 												} // detail check
 
