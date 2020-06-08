@@ -1051,7 +1051,7 @@ public class Designer extends RapidHttpServlet {
 						} else if ("pages".equals(actionName) || "questions".equals(actionName) || "text".equals(actionName) || "summary".equals(actionName) || "detail".equals(actionName)) {
 
 							// set response as text
-							response.setContentType("text/text");
+							response.setContentType("text/plain;charset=utf-8");
 
 							// get a writer from the response
 							PrintWriter out = response.getWriter();
