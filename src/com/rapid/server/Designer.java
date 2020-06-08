@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
+import java.net.InetAddress;
 import java.sql.PreparedStatement;
 import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
@@ -986,8 +987,13 @@ public class Designer extends RapidHttpServlet {
 							// get the application
 							Application application = rapidRequest.getApplication();
 
-							// print the app name and version
-							out.print(application.getName() + "\t" + application.getVersion() + "\r\n");
+							// write some useful things at the top
+							out.print("Server name:\t" + InetAddress.getLocalHost().getHostName() + "\r\n");
+							out.print("Application:\t" + application.getName() + "\r\n");
+							out.print("Version:\t" + application.getVersion() + "\r\n");
+							out.print("Date and time:\t" + getLocalDateTimeFormatter().format(new Date()) + "\r\n\r\n");
+
+							out.print("Rapid " + actionName + " report:\r\n\r\n\r\n");
 
 							// get any page id
 							String pageId = request.getParameter("p");
@@ -1014,7 +1020,8 @@ public class Designer extends RapidHttpServlet {
 								}
 
 								if ("questions".equals(actionName))  {
-									out.print(page.getName() + label);
+									// print the name and label
+									out.print(page.getTitle());
 									// get any visibility conditions
 									List<Logic.Condition> visibilityConditions = page.getVisibilityConditions();
 									// if we got some
@@ -1051,33 +1058,30 @@ public class Designer extends RapidHttpServlet {
 										}
 										out.print(")");
 									}
-
+									// closing line break
+									out.print("\r\n");
 								} else if ("text".equals(actionName))  {
 									// print the page name with some space around it
-									out.print("\r\n" + page.getName() + label);
+									out.print(page.getTitle() + "\r\n");
 								} else {
 									// print the page id
-									if (!"text".equals(actionName)) out.print(page.getId() + "\t");
+									out.print(page.getId() + "\t");
 									// print the page name
-									 out.print(page.getName() + label);
+									out.print(page.getName() + label);
 								}
 
 								// check questions, summary, detail
 								if ("questions".equals(actionName) || "text".equals(actionName) || "summary".equals(actionName) || "detail".equals(actionName)) {
 
-									// print the number of controls
-									if ("questions".equals(actionName) || "text".equals(actionName)) {
-										out.print("\r\n");
-									} else if("summary".equals(actionName)){
-										out.print("\t" + page.getTitle() + "\tnumber of controls: " + page.getAllControls().size() + "\r\n");
-									} else {
-										out.print("\t" + "number of controls: " + page.getAllControls().size() + "\r\n");
+									// summary page header
+									if ("summary".equals(actionName)) {
+										out.print("\t" + page.getTitle() + "\tNumber of controls: " + page.getAllControls().size() + "\r\n");
 									}
 
-									// if detail
+									// detail page header
 									if ("detail".equals(actionName)) {
+										out.print("\t" + "Number of controls: " + page.getAllControls().size() + "\r\n");
 										// print the page properties
-										out.print("Name\t" + page.getName() + "\r\n");
 										out.print("Title\t" + page.getTitle() + "\r\n");
 										out.print("Description\t" + page.getDescription() + "\r\n");
 										out.print("Simple\t" + page.getSimple() + "\r\n");
@@ -1165,8 +1169,8 @@ public class Designer extends RapidHttpServlet {
 
 														// print the text if there was some
 														if (text != null) {
-															// trim it
-															text = text.trim();
+															// trim it and remove any line breaks
+															text = text.trim().replace("\r", "").replace("\n", "");
 															// if we have some
 															if (text.length() > 0) out.print(text + "\r\n");
 														}
@@ -1206,7 +1210,7 @@ public class Designer extends RapidHttpServlet {
 
 														}
 
-														// print the label if there was some
+														// print a line break if there was pritning above
 														if (label != null && label.trim().length() > 0) out.print("\r\n");
 
 														// if this is a grid
@@ -1270,12 +1274,12 @@ public class Designer extends RapidHttpServlet {
 										}
 									}
 
-								} else {
-
-									out.print("\r\n");
-
 								}
-							}
+
+								// add space after the page
+								out.print("\r\n");
+
+							} // page loop
 
 							// close the writer
 							out.close();

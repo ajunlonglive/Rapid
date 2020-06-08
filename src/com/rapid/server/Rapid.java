@@ -375,11 +375,13 @@ public class Rapid extends RapidHttpServlet {
 								PrintWriter out = response.getWriter();
 
 								// write some useful things at the top
-								out.print("Server name " + InetAddress.getLocalHost().getHostName() + "\r\n");
-								out.print("Instance name " + root.getName() + "\r\n");
-								out.print("Rapid version " + VERSION + "\r\n");
-								out.print(getLocalDateTimeFormatter().format(new Date()) + "\r\n");
-								out.print("\r\n");
+								out.print("Server name:\t" + InetAddress.getLocalHost().getHostName() + "\r\n");
+								out.print("Instance name:\t" + root.getName() + "\r\n");
+								out.print("Rapid version:\t" + VERSION + "\r\n");
+								out.print("Date and time:\t" + getLocalDateTimeFormatter().format(new Date()) + "\r\n\r\n");
+								out.print("Rapid configuration report:\r\n\r\n\r\n");
+
+								// headers
 								out.print("File\tsize\tMD5 hash\r\n");
 
 								// get the md5 digest
