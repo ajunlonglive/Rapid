@@ -119,10 +119,13 @@ public class Rapid extends RapidHttpServlet {
 	}
 
 	// print the config information of a directory
-	private void printConfig(PrintWriter out, MessageDigest digest, int rootLength, File dir) throws IOException {
+	private int printConfig(PrintWriter out, MessageDigest digest, int rootLength, File dir) throws IOException {
 
 		// get the dir contents
 		File[] files = dir.listFiles();
+
+		// get the file count so far
+		int fileCount = files.length;
 
 		// sort the files, folder at the top
 		Arrays.sort(files, new Comparator<File>() {
@@ -162,12 +165,24 @@ public class Rapid extends RapidHttpServlet {
 			if (!file.isDirectory()) sizeAndChecksum = "\t" + Files.getChecksum(digest, file);
 
 			// if not .gitignore print it (from the end of the root)
-			if (!".gitignore".equals(file.getName())) out.print(file.getPath().substring(rootLength) + "\t" + (file.isDirectory() ? "" : file.length()) + sizeAndChecksum + "\r\n");
+			if (".gitignore".equals(file.getName())) {
+				// reduce the file count
+				fileCount --;
+			} else {
+				// print the file details
+				out.print(file.getPath().substring(rootLength) + "\t" + (file.isDirectory() ? "" : file.length()) + sizeAndChecksum + "\r\n");
+			}
 
-			// if it is a directory, but not the applications nor logs nor temp nor update nor uploads one go iterative
-			if (file.isDirectory() && !"applications".equals(file.getName()) && !"logs".equals(file.getName()) && !"temp".equals(file.getName()) && !"update".equals(file.getName()) && !"uploads".equals(file.getName())) printConfig(out, digest, rootLength, file);
+			// if it is a directory, but not the applications nor logs nor temp nor update nor uploads one
+			if (file.isDirectory() && !"applications".equals(file.getName()) && !"logs".equals(file.getName()) && !"temp".equals(file.getName()) && !"update".equals(file.getName()) && !"uploads".equals(file.getName())) {
+				// go iterative, and add to fileCount
+				fileCount += printConfig(out, digest, rootLength, file);
+			}
 
 		}
+
+		// return the file count of this branch
+		return fileCount;
 
 	}
 
@@ -363,7 +378,7 @@ public class Rapid extends RapidHttpServlet {
 							if (security.checkUserRole(rapidRequest, ADMIN_ROLE)) {
 
 								// set response to text
-								response.setContentType("text/text;charset=UTF-8");
+								response.setContentType("text/plain;charset=utf-8");
 
 								// get the root path
 								String rootPath = getServletContext().getRealPath("/");
@@ -388,7 +403,10 @@ public class Rapid extends RapidHttpServlet {
 								MessageDigest digest = MessageDigest.getInstance("MD5");
 
 								// start printing!
-								printConfig(out, digest, root.getAbsolutePath().length(), root);
+								int fileCount = printConfig(out, digest, root.getAbsolutePath().length(), root);
+
+								// total files
+								out.print("\r\nCount:\t" + fileCount + "\r\n");
 
 								// flush and close writer
 								out.flush();
