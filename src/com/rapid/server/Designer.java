@@ -36,6 +36,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.sql.PreparedStatement;
 import java.sql.ResultSetMetaData;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -535,7 +536,7 @@ public class Designer extends RapidHttpServlet {
 										    		return name.toLowerCase().endsWith(".png") || name.toLowerCase().endsWith(".gif") || name.toLowerCase().endsWith(".jpg") || name.toLowerCase().endsWith(".jpeg") || name.toLowerCase().endsWith(".svg");
 										    	}
 										    };
-										    // a array to hold the images as they come out of the filter
+										    // an array to hold the images as they come out of the filter
 										    List<String> images = new ArrayList<>();
 											// loop the image files in the folder
 											for (File imageFile : dir.listFiles(xmlFilenameFilter)) {
@@ -987,13 +988,55 @@ public class Designer extends RapidHttpServlet {
 							// get the application
 							Application application = rapidRequest.getApplication();
 
+							// get the root path
+							String rootPath = getServletContext().getRealPath("/");
+
+							// get the root file
+							File root = new File(rootPath);
+
+							// get a date/time formatter
+							SimpleDateFormat df = getLocalDateTimeFormatter();
+
 							// write some useful things at the top
 							out.print("Server name:\t" + InetAddress.getLocalHost().getHostName() + "\r\n");
-							out.print("Application:\t" + application.getName() + "\r\n");
-							out.print("Version:\t" + application.getVersion() + "\r\n");
-							out.print("Date and time:\t" + getLocalDateTimeFormatter().format(new Date()) + "\r\n\r\n");
+							out.print("Instance name:\t" + root.getName() + "\r\n");
+							out.print("Rapid version:\t" + Rapid.VERSION + "\r\n");
+							out.print("Date and time:\t" + df.format(new Date()) + "\r\n\r\n");
 
 							out.print("Rapid " + actionName + " report:\r\n\r\n\r\n");
+
+							// id
+							out.print("Application id:\t" + application.getId() + "\r\n");
+							// version
+							out.print("Version:\t" + application.getVersion() + "\r\n");
+							// name
+							out.print("Name:\t" + application.getName() + "\r\n");
+							// title
+							out.print("Title:\t" + application.getTitle() + "\r\n");
+
+
+							// app details
+							if ("summary".equals(actionName) || "detail".equals(actionName)) {
+
+								// safe created date
+								if (application.getCreatedDate() != null) out.print("Created date:\t" + df.format(application.getCreatedDate()) + "\r\n");
+								// safe created by
+								if (application.getCreatedBy() != null) out.print("Created by:\t" + application.getCreatedBy() + "\r\n");
+								// safe modified date
+								if (application.getModifiedDate() != null) out.print("Modified date:\t" + df.format(application.getModifiedDate()) + "\r\n");
+								// safe modified by
+								if (application.getModifiedBy() != null) out.print("Modified by:\t" + application.getModifiedBy() + "\r\n");
+
+								// description
+								if (application.getDescription() != null && application.getDescription().trim().length() > 0) out.print("Description:\t" + application.getDescription() + "\r\n");
+								// form
+								if (application.getIsForm()) out.print("Form adapter:\t" + application.getFormAdapterType() + "\r\n");
+								// theme
+								out.print("Theme:\t" + application.getThemeType() + "\r\n");
+							}
+
+							// double line break
+							out.print("\r\n");
 
 							// get any page id
 							String pageId = request.getParameter("p");
@@ -1063,33 +1106,47 @@ public class Designer extends RapidHttpServlet {
 								} else if ("text".equals(actionName))  {
 									// print the page name with some space around it
 									out.print(page.getTitle() + "\r\n");
-								} else {
-									// print the page id
-									out.print(page.getId() + "\t");
-									// print the page name
-									out.print(page.getName() + label);
+								}
+
+								// page headers
+								if ("pages".equals(actionName) || "detail".equals(actionName) || "summary".equals(actionName)) {
+
+									// page id
+									out.print("Page:\t" + page.getId() + "\r\n");
+									// page title
+									out.print("Title:\t" + page.getTitle() + "\r\n");
+									// safe created date
+									if (page.getCreatedDate() != null) out.print("Created date:\t" + df.format(page.getCreatedDate()) + "\r\n");
+									// safe created by
+									if (page.getCreatedBy() != null) out.print("Created by:\t" + page.getCreatedBy() + "\r\n");
+									// safe modified date
+									if (page.getModifiedDate() != null) out.print("Modified date:\t" + df.format(page.getModifiedDate()) + "\r\n");
+									// safe modified by
+									if (page.getModifiedBy() != null) out.print("Modified by:\t" + page.getModifiedBy() + "\r\n");
+
+									// action summary
+									if ("pages".equals(actionName) || "summary".equals(actionName)) {
+										out.print("Number of actions:\t" + page.getAllActions().size() + "\r\n");
+									}
+
+									// print the number of controls
+									out.print("Number of controls:\t" + page.getAllControls().size() + "\r\n");
+
+									// further details
+									if ("detail".equals(actionName)) {
+
+										out.print("Description:\t" + page.getDescription() + "\r\n");
+										out.print("Simple:\t" + page.getSimple() + "\r\n");
+										out.print("HideHeaderFooter:\t" + page.getHideHeaderFooter() + "\r\n");
+
+										// print page events
+										printEventsDetails(page.getEvents(), out);
+									}
+
 								}
 
 								// check questions, summary, detail
 								if ("questions".equals(actionName) || "text".equals(actionName) || "summary".equals(actionName) || "detail".equals(actionName)) {
-
-									// summary page header
-									if ("summary".equals(actionName)) {
-										out.print("\t" + page.getTitle() + "\tNumber of controls: " + page.getAllControls().size() + "\r\n");
-									}
-
-									// detail page header
-									if ("detail".equals(actionName)) {
-										out.print("\t" + "Number of controls: " + page.getAllControls().size() + "\r\n");
-										// print the page properties
-										out.print("Title\t" + page.getTitle() + "\r\n");
-										out.print("Description\t" + page.getDescription() + "\r\n");
-										out.print("Simple\t" + page.getSimple() + "\r\n");
-										out.print("HideHeaderFooter\t" + page.getHideHeaderFooter() + "\r\n");
-									}
-
-									// not if questions or text
-									if (!"questions".equals(actionName) && !"text".equals(actionName)) printEventsDetails(page.getEvents(), out);
 
 									// get the controls
 									List<Control> controls = page.getAllControls();
@@ -1100,8 +1157,8 @@ public class Designer extends RapidHttpServlet {
 										// get the name
 										String name = control.getName();
 
-										// null check
-										if ((name != null && name.trim().length() > 0) || "text".equals(actionName)) {
+										// name null check
+										if ((name != null && name.trim().length() > 0) || "summary".equals(actionName) || "detail".equals(actionName) || "text".equals(actionName)) {
 
 											// get the label
 											label = control.getLabel();
@@ -1109,7 +1166,7 @@ public class Designer extends RapidHttpServlet {
 											String type = control.getType();
 
 											// exclude panels, hidden values (except for questions), and datastores for summary
-											if ("detail".equals(actionName) || (!type.contains("panel") && (!("hiddenvalue").equals(type) || "questions".equals(actionName)) && !("dataStore").equals(type))) {
+											if ("summary".equals(actionName) || "detail".equals(actionName) || (!type.contains("panel") && (!("hiddenvalue").equals(type) || "questions".equals(actionName)) && !("dataStore").equals(type))) {
 
 												// if questions it's likely to be a form
 												if ("questions".equals(actionName))  {
@@ -1128,6 +1185,7 @@ public class Designer extends RapidHttpServlet {
 
 														// if we got one
 														if (formObject != null) {
+
 															// Get form integration values
 															String formObjectAttribute = control.getProperty("formObjectAttribute");
 															String formObjectRole = control.getProperty("formObjectRole");
@@ -1244,7 +1302,13 @@ public class Designer extends RapidHttpServlet {
 												} else {
 
 													// print the control details
-													out.print(control.getId() +"\t" + type + "\t" + name + "\t" + label + "\r\n");
+													out.print("Control:\t" + control.getId() +"\t" + type + "\t");
+													// name
+													if (name != null && name.length() > 0) out.print(name);
+													// label
+													if (label != null && label.length() > 0) out.print("\t" + label);
+													// line break
+													out.print("\r\n");
 												}
 
 												// if details
@@ -1270,11 +1334,14 @@ public class Designer extends RapidHttpServlet {
 													printEventsDetails(control.getEvents(), out);
 
 												} // detail check
-											}
-										}
-									}
 
-								}
+											} // exclusion check
+
+										} // name check
+
+									} // control loop
+
+								} // report action check
 
 								// add space after the page
 								out.print("\r\n");
