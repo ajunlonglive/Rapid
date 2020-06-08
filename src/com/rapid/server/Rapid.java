@@ -155,14 +155,14 @@ public class Rapid extends RapidHttpServlet {
 		// loop the files
 		for (File file : files) {
 
-			// assume no checksum
-			String checksum = "";
+			// assume no size and checksum
+			String sizeAndChecksum = "";
 
-			// if not a diretory, get checksum
-			if (!file.isDirectory()) checksum = "\t" + Files.getChecksum(digest, file);
+			// if not a diretory, get size and checksum
+			if (!file.isDirectory()) sizeAndChecksum = "\t" + Files.getChecksum(digest, file);
 
 			// if not .gitignore print it (from the end of the root)
-			if (!".gitignore".equals(file.getName())) out.print(file.getPath().substring(rootLength) + "\t" + file.length() + checksum + "\r\n");
+			if (!".gitignore".equals(file.getName())) out.print(file.getPath().substring(rootLength) + "\t" + (file.isDirectory() ? "" : file.length()) + sizeAndChecksum + "\r\n");
 
 			// if it is a directory, but not the applications nor logs nor temp nor update nor uploads one go iterative
 			if (file.isDirectory() && !"applications".equals(file.getName()) && !"logs".equals(file.getName()) && !"temp".equals(file.getName()) && !"update".equals(file.getName()) && !"uploads".equals(file.getName())) printConfig(out, digest, rootLength, file);
