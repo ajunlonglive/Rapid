@@ -4638,6 +4638,11 @@ window.addEventListener("storage", function(storageEvent) {
 				}, 3000);
 				break;
 			}
+		case "applicationStyleSaved":
+			if (!_dirty && broadcast.a === _version.id && broadcast.v === _version.version) {
+				$(appSelect).change();
+			}
+			break;
 		}
 	}
 });
