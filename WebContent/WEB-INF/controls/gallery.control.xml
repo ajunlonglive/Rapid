@@ -151,309 +151,8 @@ div.gallery img {
 	            <type>javascript</type>
 	            <contents>
 	                <![CDATA[
-
-var _oneDaysMilliseconds = 1000 * 60 * 60 * 24;
-var _threeMonthsMilliseconds = _oneDaysMilliseconds * 30 * 3;
-
-indexedDB.open("imagesDB", 2)
-.onupgradeneeded = function(versionChangeEvent) {
-	var imagesDB = versionChangeEvent.target.result;
-	if (!imagesDB.objectStoreNames.contains("imageStore")) {
-		imagesDB.createObjectStore("imageStore", { keyPath: "filename" });
-	}
-	if (!imagesDB.objectStoreNames.contains("metadataStore")) {
-		imagesDB.createObjectStore("metadataStore", { keyPath: "name" });
-	}
-};
-
-indexedDB.open("imagesDB")
-.onsuccess = function(requestEvent) {
-	var metadataStore = requestEvent.target.result
-	.transaction("metadataStore", "readwrite")
-	.objectStore("metadataStore");
-	metadataStore.get("dateLastDeletedOldObjects")
-	.onsuccess = function(getRequest) {
-		metadataStore.put({ name: "dateLastDeletedOldObjects", value: Date.now() });
-		var dateLastDeletedOldObjects = getRequest.target.result;
-		if (!dateLastDeletedOldObjects || dateLastDeletedOldObjects.value < Date.now() - _oneDaysMilliseconds) {
-			IDBforEachObject(function(object) {
-				if (object.accessedDate < Date.now() - _threeMonthsMilliseconds) {
-					IDBdeleteByKey(object.filename);
-				}
-			});
-		}
-	};
-};
-
-function IDBforEachObject(objectCallback, completionCallback) {
-	indexedDB.open("imagesDB")
-	.onsuccess = function(requestEvent) {
-		var transaction = requestEvent.target.result
-		.transaction("imageStore", "readonly");
-		transaction.objectStore("imageStore")
-		.openCursor()
-		.onsuccess = function(requestEvent) {
-			var cursor = requestEvent.target.result;
-			if (cursor) {
-				if (objectCallback) objectCallback(cursor.value);
-				cursor.continue();
-			}
-		};
-		transaction.oncomplete = completionCallback;
-	};
-}
-
-function IDBgetBestObject(criterion, callback) {
-	var bestObject;
-	indexedDB.open("imagesDB")
-	.onsuccess = function(requestEvent) {
-		var transaction = requestEvent.target.result
-		.transaction("imageStore", "readonly");
-		transaction.objectStore("imageStore")
-		.openCursor()
-		.onsuccess = function(requestEvent) {
-			var cursor = requestEvent.target.result;
-			if (cursor) {
-				if (!bestObject || criterion(cursor.value, bestObject)) {
-					bestObject = cursor.value;
-				}
-				cursor.continue();
-			}
-		};
-		transaction.oncomplete = function() {
-			callback(bestObject);
-		};
-	};
-}
-
-function IDBgetOldestObject(callback) {
-	return IDBgetBestObject(function(one, another) {
-		return one.date < another.date;
-	}, callback);
-}
-
-function IDBgetNewestObject(callback) {
-	return IDBgetBestObject(function(one, another) {
-		return one.date > another.date;
-	}, callback);
-}
-
-function IDBgetLeastUsedObject(callback) {
-	return IDBgetBestObject(function(one, another) {
-		return one.accessedDate < another.accessedDate;
-	}, callback);
-}
-
-function IDBputObject(object, callback, retrys) {
-	if (!object.createdDate) object.createdDate = Date.now();
-	object.accessedDate = Date.now();
-	indexedDB.open("imagesDB")
-	.onsuccess = function(requestEvent) {
-		var transaction = requestEvent.target.result
-		.transaction("imageStore", "readwrite");
-		transaction.oncomplete = callback;
-		transaction.onerror = function(error) {
-			if (retrys === undefined) retrys = 10;
-			if (retrys > 0) {
-				getLeastUsedObject(function(oldObject) {
-					if (oldObject) {
-						deleteByKey(oldObject.filename, function() {
-							IDBputObject(object, callback, retrys - 1);
-						});
-					} else {
-						callback(undefined);
-					}
-				});
-			} else {
-				callback(undefined);
-			}
-		};
-		transaction.objectStore("imageStore")
-		.put(object);
-	};
-}
-
-function IDBgetByKey(key, callback) {
-	indexedDB.open("imagesDB")
-	.onsuccess = function(requestEvent) {
-		requestEvent.target.result
-		.transaction("imageStore", "readwrite")
-		.objectStore("imageStore")
-		.get(key)
-		.onsuccess = function(getRequest) {
-			var storedObject = getRequest.target.result;
-			if (storedObject) {
-				var newObject = Object.assign({}, storedObject);
-				newObject.accessedDate = Date.now();
-				IDBputObject(newObject);
-			}
-			if (callback) callback(storedObject, key);
-		};
-	};
-}
-
-function IDBdeleteByKey(key, callback) {
-	if (key) {
-		indexedDB.open("imagesDB")
-		.onsuccess = function(requestEvent) {
-			requestEvent.target.result
-			.transaction("imageStore", "readwrite")
-			.objectStore("imageStore")
-			.delete(key)
-			.onsuccess = callback;
-		};
-	} else if (callback) callback();
-}
-
-function addToImageControl(control, filename, url) {
-	
-	// assume no image has been added
-	var imageSet = false;
-	
-	if (!typeof _rapidmobile == "undefined") {
-	
-		// if it doesn't start with http or data
-		if (filename.indexOf("http") != 0 && filename.indexOf("data:") != 0) {
-
-			if (navigator.userAgent.indexOf("Android") > 0) {
-
-				// add a psuedo host for Rapid Mobile on Android
-				filename = "http://images/" + filename;
-										
-			} else {
-			
-				// add a psuedo host for Rapid Mobile on iOS
-				filename = window.location.origin + "/_images/" + filename;
-			
-			}							
-			
-		}
-	
-	}
-
-	// if we got a url - images which we no longer have in storage will empty this
-	if (filename) {
-		// assume we're adding the image
-		var addImage = true;
-		// loop existing images
-		control.find("img").each( function() {
-			// get image
-			var img = $(this);
-			// get this image filename attr
-			var fileNameAttr = img.attr("data-filename");
-			// if its the same as the filename
-			if (fileNameAttr && fileNameAttr == filename) {
-				// don't add this image
-				addImage = false;
-				// we're done
-				return false;
-			} // fileName check
-			// get this image src
-			var src = img.attr("src");
-			// if there was a src
-			if (src && filename) {
-				// get position of source within url
-				var pos = filename.indexOf(src);
-				// if it was found at the end
-				if (pos >= 0 && pos == filename.length - src.length) {
-					// don't add this image
-					addImage = false;
-					// we're done
-					return false;
-				} // pos check
-			} // src check
-		});
-	
-		// only if we don't have the image alreay in there
-		if (addImage) {
-			
-			// add an image element with the url
-			control.append("<img src='" + (url || filename) + "' data-filename='" + filename + "'></img>");
-
-			// remember we set an image in the gallery
-			imageSet = true;
-			
-			var id = control.attr("id");
-			
-			// find the image element and add a click handler
-			control.find("img").last().click( function(ev) {
-				var img = this;
-				var details = details || window[id + "details"];
-				if (details) {
-					if (details.onImageClick == "preview") {
-						Gallery_showImage(ev, id, details.allowDelete);
-					} else if (details.onImageClick == "caption") {
-						var index = $(ev.target).index();
-						if (details.captions && details.captions[index]) alert(details.captions[index]);
-					} else if (details.onImageClick != "nothing") {
-						Gallery_removeImage(ev, id, img);
-					}
-				} else {
-					Gallery_removeImage(ev, id, img);
-				}				
-			});
-			// look for our custom imageAddedEvent handler for this control
-			var imageAdded = window["Event_imageAdded_" + id];
-			// fire it if we found it
-			if (imageAdded) imageAdded(ev);
-			// fire resize - usally for any dialogues
-			setTimeout(function() { $(window).resize(); });
-			
-		} // image already there check
-		
-	} // url check
-	
-	// remove the no pictures message if set
-	if (imageSet) control.find("span").remove();
-	
-} // function addToImageControl
-
-function makeFilename(url) {
-
-	// Split the data and base64 byte payload part
-	var urlParts = url.split(",");
-	// Further split the data part
-	var dataParts = urlParts[0].split(";");
-	// Obtain the file extension from the dataPart
-	var fileExtension = dataParts[0].substring("data:image/".length);
-	// Get the current date
-	var date = new Date();
-	// Make the date string for the file
-	var dateString = date.getFullYear() + "" + padNumberWithZeros(date.getMonth() + 1, 2) + "" + padNumberWithZeros(date.getDate(),2) + "_" + padNumberWithZeros(date.getHours(),2) + "" + padNumberWithZeros(date.getMinutes(),2) + "" + padNumberWithZeros(date.getSeconds(),2) + "" + padNumberWithZeros(date.getMilliseconds(),3);
-	// Make a file name with the dateString and extension
-	return dateString + "." + fileExtension;
-
-} // function makeFilename
-
-function specifyUrl(filename) {
-	
-	var specifiedUrl = filename;
-	
-	if (navigator.userAgent.includes(" iPhone") || navigator.userAgent.includes(" iPad")) {
-
-		// add a psuedo host for Rapid Mobile on iOS
-		specifiedUrl = window.location.origin + "/_images/" + filename;
-
-	} else {
-
-		// add the path to this url from our app - check for ~, if not is pretty url use _appId
-		if (window.location.pathname.indexOf("~") > -1) {
-	
-			specifiedUrl = window.location.origin + window.location.pathname.replace("~","") + "uploads/" + _appId + "/" + filename;
-	
-		} else {
-	
-			// This is the pretty url request
-			var context = window.location.pathname.substring(0, window.location.pathname.toLowerCase().indexOf(_appId.toLowerCase()));
-			if(!context || context.length < 1) context = "/";
-			specifiedUrl = window.location.origin + context + "uploads/" + _appId + "/" + filename;
-		}
-	}
-	
-	return specifiedUrl;
-	
-} // function specifyUrl
-
+	                
+	                
 var _swipeHandlers = {};
        
 function Gallery_removeImage(ev, id, galleryImg) {
@@ -494,8 +193,18 @@ function Gallery_removeImage(ev, id, galleryImg) {
 }
 
 function Gallery_removeImageFromStorage(id, filename) {
-	IDBdeleteByKey(filename);
-}
+	// get the gallery images
+	var galImages = sessionStorage.getItem(_appId + "_" + "images");
+	// if there was anything
+	if (galImages) {
+		// convert to JSON
+		galImages = JSON.parse(galImages);
+		// remove from session storage
+		delete galImages[filename];
+		// save back
+		sessionStorage.setItem(_appId + "_" + "images", JSON.stringify(galImages));
+	}
+} 
 
 function setNextPrevButton(currentImage, prevButton, nextButton) {
 	
@@ -761,99 +470,277 @@ return data;
 var control = $("#" + id);
 // check we have some data       
 if (data) {
-  	// make a proper data object	
-  	data = makeDataObject(data, field);
-  	// if it has rows
-  	if (data.rows) {	
-  		// assume image not set
-  		var imageSet = false;
-  		// look for url or urls in the fields or use the first column if not found	
-  		var urlIndex = 0;
-  		if (data.fields) {
-  			for (var i in data.fields) {
-  				if ((field && data.fields[i] == field) || data.fields[i] == "url" || data.fields[i] == "urls") {
-  					urlIndex = i;
-  					break;
-  				}
-  			}
-  		}			
-  		// loop the rows
-  		for (var i in data.rows) {
-  		
-  			// make sure there is something to set
-  			if (data.rows[i][urlIndex]) {
-  
-  				// get the urls
-  				var urls = data.rows[i][urlIndex];
-  				
-  				// if urls do not start with data allow comma seperated list of urls in single field too
-  				if (urls.indexOf("data:") == 0) {
-  					urls = [urls];
-  				} else {
-  					urls = data.rows[i][urlIndex].split(",");
-  				}
-  				
-  				// loop the urls
-  				for (var j in urls) {
-	  				
-  					// get the url
-  					var url = urls[j];
-					
-  					// url type check
-					if (url.indexOf("data:") == 0) { // if url is a data url
+	// make a proper data object	
+	data = makeDataObject(data, field);
+	// if it has rows
+	if (data.rows) {	
+		// assume image not set
+		var imageSet = false;
+		// look for url or urls in the fields or use the first column if not found	
+		var urlIndex = 0;
+		if (data.fields) {
+			for (var i in data.fields) {
+				if ((field && data.fields[i] == field) || data.fields[i] == "url" || data.fields[i] == "urls") {
+					urlIndex = i;
+					break;
+				}
+			}
+		}			
+		// loop the rows
+		for (var i in data.rows) {
+		
+			// make sure there is something to set
+			if (data.rows[i][urlIndex]) {
+
+				// get the urls
+				var urls = data.rows[i][urlIndex];
+				
+				// if urls do not start with data allow comma seperated list of urls in single field too
+				if (urls.indexOf("data:") == 0) {
+					urls = [urls];
+				} else {
+					urls = data.rows[i][urlIndex].split(",");
+				}
+				
+				// loop the urls
+				for (var j in urls) {
+				
+					// get the url
+					var url = urls[j];
+
+					// check if Rapid Mobile is present - for some reason iOS client doesn't think so at page load
+					if (typeof _rapidmobile == "undefined") {
 						
-						var imageRecord = { url: url };
- 							imageRecord.filename = makeFilename(url);
- 							IDBputObject(imageRecord);
-						addToImageControl(control, imageRecord.filename, imageRecord.url);
-						
-					} else { // if url is a filename
-						var fileType = url.match(/\.(\w+)$/)[1];
-						
-						IDBgetByKey(url, function(imageRecord, key) {
+						// assume not in storage already
+						var inStorage = false;
+						// assume no filename attribute required
+						var fileNameAttr = "";
+
+						// get the gallery images - we will use this later to store the image anyway
+						var galImages = sessionStorage.getItem(_appId + "_" + "images");
+
+						// make object if we need one
+						if (galImages) {
+							galImages = JSON.parse(galImages);
+						} else {
+							galImages = {};
+						}
+
+						// if it doesn't start with http or data look for it in the page, or storage
+						if (url.indexOf("http") != 0 && url.indexOf("data:") != 0) {
+
+							// if we have this image in session storage
+							if (galImages[url]) {
+								
+								// retain url in fileNameAttr
+								fileNameAttr = " data-filename='" + url + "'";
+								// retrieve from session storage
+								url = galImages[url];
+								// remember it was in storage
+								inStorage = true;
 							
-							if (imageRecord) { // if an image is stored by this filename
+							} else {
+
+								// look for an image with the filename attribute
+								var fileNameImage = $("img[data-filename='" + url + "']");
+
+								// if we got one
+								if (fileNameImage.length > 0) {
+
+									// retain url in fileNameAttr
+									fileNameAttr = " data-filename='" + url + "'";
+									// update the url to the data in the src attribute
+									url = fileNameImage.attr("src");
+									// remember it was in storage
+									inStorage = true;						
 								
-								addToImageControl(control, imageRecord.filename, imageRecord.url);
-								
-							} else { // if url is for the rapid logo etc.
-								
-								var filename = key;
-								var specifiedUrl = specifyUrl(filename);
-								var xhr = new XMLHttpRequest();
-								xhr.onload = function() {
-									var reader = new FileReader();
-									reader.onloadend = function() {
-										var dataUrl = reader.result;
-										IDBputObject({ filename: filename, url: dataUrl });
-										addToImageControl(control, filename, dataUrl);
-									};
-									reader.readAsDataURL(xhr.response);
-								};
-								xhr.onerror = function() {
-									addToImageControl(control, filename, specifiedUrl);
-								};
-								xhr.open('GET', specifiedUrl);
-								xhr.responseType = 'blob';
-								xhr.send();
+								}
+
 							}
-						});
-						
-					} // url type check
+
+							if (!inStorage) {
+
+								if (navigator.userAgent.indexOf(" Apple") > 0) {
+							
+									// add a psuedo host for Rapid Mobile on iOS
+									url = window.location.origin + "/_images/" + url;
+							
+								} else {
+
+									// add the path to this url from our app - check for ~, if not is pretty url use _appId
+									if (window.location.pathname.indexOf("~") > -1) {
+								
+										url = window.location.origin + window.location.pathname.replace("~","") + "uploads/" + _appId + "/" + url;
+								
+									} else {
+								
+										// This is the pretty url request
+										var context = window.location.pathname.substring(0, window.location.pathname.toLowerCase().indexOf(_appId.toLowerCase()));
+										if(!context || context.length < 1) context = "/";
+										url = window.location.origin + context + "uploads/" + _appId + "/" + url;
+									}
+								
+								}
+
+							}
+
+						}
+
+						// assume no image data
+						var dataString = "data:";
+						// if this url is data, make a filename, unless in storage already
+						if (!inStorage && url.indexOf("data:") == 0) {
+							// Split the data and base64 byte payload part
+							var urlParts = url.split(",");
+							// Further split the data part
+							var dataParts = urlParts[0].split(";");
+							// Obtain the file extension from the dataPart
+							var fileExtension = dataParts[0].substring("data:image/".length);
+							// Get the current date
+							var date = new Date();
+							// get the 
+							// Make the date string for the file
+							var dateString = date.getFullYear() + "" + padNumberWithZeros(date.getMonth() + 1, 2) + "" + padNumberWithZeros(date.getDate(),2) + "_" + padNumberWithZeros(date.getHours(),2) + "" + padNumberWithZeros(date.getMinutes(),2) + "" + padNumberWithZeros(date.getSeconds(),2) + "" + padNumberWithZeros(date.getMilliseconds(),3);
+							// Make a file name with the dateString and extension
+							var fileName = dateString + "." + fileExtension;
+							// make a file name attribute
+							fileNameAttr = " data-filename='" + fileName + "'";
+							// store the url in session storage
+							galImages[fileName] = url;
+							try {
+								// store!
+								sessionStorage.setItem(_appId + "_" + "images", JSON.stringify(galImages));
+							} catch(ex) {
+								// alert message
+								//alert(ex);
+								console.info(ex);
+							}
+						}
+
+					} else {
 					
-  				} // urls loop
-  				
-  			} // url index check
-  			
-  		} // row loop
-  	} 
+						// if it doesn't start with http or data
+						if (url.indexOf("http") != 0 && url.indexOf("data:") != 0) {
+
+							if (navigator.userAgent.indexOf("Android") > 0) {
+
+								// add a psuedo host for Rapid Mobile on Android
+								url = "http://images/" + url;
+														
+							} else {
+							
+								// add a psuedo host for Rapid Mobile on iOS
+								url = window.location.origin + "/_images/" + url;
+							
+							}							
+							
+						}
+					
+					}
+
+					// if we got a url - images which we no longer have in storage will empty this
+					if (url) {
+					
+						// assume we're adding the image
+						var addImage = true;
+						
+						// loop existing images
+						control.find("img").each( function() {
+						
+							// get image
+							var img = $(this);
+						
+							// get this image filename attr
+							var fileNameAttr = img.attr("data-filename");
+							
+							// if its the same as the filename
+							if (fileNameAttr && fileNameAttr == fileName) {
+							
+								// don't add this image
+								addImage = false;
+								
+								// we're done
+								return false;
+							
+							} // fileName check
+						
+							// get this image src
+							var src = img.attr("src");
+							
+							// if there was a src
+							if (src) {
+							
+								// get position of source within url
+								var pos = url.indexOf(src);
+								
+								// if it was found at the end
+								if (pos >= 0 && pos == url.length - src.length) {
+								
+									// don't add this image
+									addImage = false;
+									
+									// we're done
+									return false;
+								
+								} // pos check
+								
+							} // src check
+							
+						});
+					
+						// only if we don't have the image alreay in there
+						if (addImage) {
+										
+							// add an image element with the url
+							control.append("<img src='" + url  + "'" + fileNameAttr + "></img>");
+		
+							// remember we set an image in the gallery
+							imageSet = true;
+							
+							// find the image element and add a click handler
+							control.find("img").last().click( function(ev) {
+								var img = this;
+								if (!details) details = window[id + "details"];
+								if (details) {
+									if (details.onImageClick == "preview") {
+										Gallery_showImage(ev, id, details.allowDelete);
+									} else if (details.onImageClick == "caption") {
+										var index = $(ev.target).index();
+										if (details.captions && details.captions[index]) alert(details.captions[index]);
+									} else if (details.onImageClick != "nothing") {
+										Gallery_removeImage(ev, id, img);
+									}
+								} else {
+									Gallery_removeImage(ev, id, img);
+								}				
+							});
+							// look for our custom imageAddedEvent handler for this control
+							var imageAdded = window["Event_imageAdded_" + id];
+							// fire it if we found it
+							if (imageAdded) imageAdded(ev);
+							// fire resize - usally for any dialogues
+							setTimeout(function() { $(window).resize(); });
+							
+						} // image already there check
+						
+					} // url check
+
+				} // urls loop
+				
+			} // url index check
+			
+		} // row loop
+		
+		// remove the no pictures message if set
+		if (imageSet) control.find("span").remove();
+	} 
 } else {
-  	// no data so remove all images
-  	control.find("img").remove();
-  	// find the message span
-  	var span = control.find("span");
-  	// if there wasn't one, add one with the message
-  	if (!span[0]) control.append("<span>" + details.emptyText + "</span>");
+	// no data so remove all images
+	control.find("img").remove();
+	// find the message span
+	var span = control.find("span");
+	// if there wasn't one, add one with the message
+	if (!span[0]) control.append("<span>" + details.emptyText + "</span>")
 }
 	        ]]>
 	    </setDataJavaScript>
