@@ -737,8 +737,8 @@ public class Designer extends RapidHttpServlet {
 												List<String> dialoguePageIds = page.getDialoguePageIds();
 												// if designerPageId is provided and this page is different from the one we're loading in the designer
 												if (dialoguePageIds != null) {
-													// if the page in the designer is one this page navigates to on a dialogue
-													if (dialoguePageIds.contains(pageId)) includeFromDialogue = true;
+													// if the page in the designer is one this page can navigate to as a dialogue
+													if (dialoguePageIds.contains(designPage.getId())) includeFromDialogue = true;
 												}
 											}
 										}
