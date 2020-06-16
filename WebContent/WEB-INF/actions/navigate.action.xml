@@ -143,16 +143,18 @@ return [["I","Main menu"],["L","Logout"],["B","Back"],["C","Close"]];
                     ]]>
                 </contents>                
             </resource> 
-	    </resources>
-	    
-	    
-	        	    
-	    <actionJavaScript>
-	        <![CDATA[
-	        
+            
+            <resource>
+            	<type>javascript</type>
+            	<contents>
+            		<![CDATA[
 //JQuery is ready! 
 $(document).ready( function() {
-	
+
+	// create an empty page params map if there isn't one already	
+	if (!window["_pageParams"]) window["_pageParams"] = {};
+		
+	// re-measure / resize all dialogue when the window resizes
 	$(window).resize(function(ex) {
 	
 		var doc = $(document);
@@ -179,12 +181,67 @@ $(document).ready( function() {
 	
 	});
 	
-});		        
-	        
+});
+
+
+            		]]>
+            	</contents>
+            </resource>
+            
+	    </resources>
+
+	    <actionJavaScript>
+	        <![CDATA[
+
 function Action_navigate(url, dialogue, dismissibleDialogue, id, popup) {
 	
 	if (dialogue) {
 	
+		// map of url parameters we use to allow caching of dialogues without query string / parameters
+		var params = {};
+		
+		// page id of dialogue we are opening
+		var pageId = null;
+		
+		// if there was a url
+		if (url) {
+		
+			// get the query string and split on &
+			var vars = url.slice(url.indexOf('?') + 1).split('&');
+			
+			// loop the variable key=value pairs
+			for (var i = 0; i < vars.length; i++) {
+			
+				// split the pairs
+				var pair = vars[i].split('=');
+				
+				// if there is a key and a value
+				if (pair.length > 1) {
+				
+					// get the key
+					var k = pair[0];
+					
+					// retain the page id from "p"
+					if (k == 'p') pageId = pair[1];
+					
+					// ignore certain keys: a for action, v for version
+					if (k != 'a' && k != 'v' && k != 'p' && k != 'action') {
+					
+						// retain this parameter value to its key in the map
+						params[pair[0]] = decodeURIComponent(pair[1].replace('#',''));
+					
+					} // key ignore
+				
+				} // key/pair length
+			
+			} // key/pair loop
+		
+		} // url check
+		
+		// retain the parameters for this page in our global variable
+		window["_pageParams"][pageId] = params;
+	
+		// start the body html for the dialogue
 		var bodyHtml = "<div><h1 style='margin-left:auto;margin-right:auto;'>Page</h1></div>";
 		
 		// request the page		
