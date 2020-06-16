@@ -533,7 +533,7 @@ function turnOnCamera(galleryControlId, size, quality, cameraSelectImage) {
 		if (!_cameraPlayer) {
 		
 		    var inputImageHtml = _cameraSelectImage ? "<div style='position:fixed; top:0; width:100%; text-align:center;'><label id='btnInputImage' for='inputImage' class='cameraControlBasic'><i class='fa fa-folder-open cameraIcon' style='margin-left: 2px;'></i></label>"
-								  + "<input type='file' id='inputImage' style='display:none;'></div>" : "";
+								  + "<input type='file' accept='image/*' id='inputImage' style='display:none;'></div>" : "";
 		
 			// Add the divs
 			var cameraPreviewHtml = "<div id='cameraVideoContainer'>"
@@ -690,8 +690,10 @@ function selectImage(galleryControlId, size) {
 	_size = size;
 	
 	var galleryDetails = window[galleryControlId + "details"];
-	var inputHtml = "<input type='file' id='inputImage' style='display:none;'>"
+	
+	var inputHtml = "<input type='file' accept='image/*' id='inputImage' style='display:none;'>"
 		+ "<label for='inputImage' class='r-button button btn col-xs-12' style='margin-top:1em;'>Choose from my files</label>";
+		
 	var closeButtonHtml = "<button id='closeInputPage' class='r-button button btn col-xs-12' style='min-width:200px; margin-top:1em; background:none; color:black;'>Cancel</button>";
 	
 	var inputPageHtml = "<div class='inputImagePage dialogueCover' style='position:absolute; left:0px; top:0px; z-index:1001; width:100vw; height:100vh;'>"
