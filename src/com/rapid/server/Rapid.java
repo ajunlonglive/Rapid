@@ -1294,8 +1294,9 @@ public class Rapid extends RapidHttpServlet {
 											String[] headerParts = header.split(":");
 											// if we had a pair
 											if (headerParts.length > 1) {
-												// content disposition - where the filename is, but only if this server isn't allowing public access
-												if (!this.isPublic()) {
+												//  if this server isn't allowing public access, and has public uploads turned off
+												if (!this.isPublic() && !this.isPublicUploads()) {
+													// content disposition - where the filename is
 													if (headerParts[0].toLowerCase().trim().equals("content-disposition")) {
 														// get content parts
 														String[] contentParts = headerParts[1].split(";");

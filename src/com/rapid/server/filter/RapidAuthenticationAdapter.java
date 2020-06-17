@@ -40,35 +40,42 @@ public abstract class RapidAuthenticationAdapter {
 	public static final String INIT_PARAM_IP_CHECK = "ipcheck";
 	public static final String INIT_PARAM_PUBLIC_ACCESS = "public";
 	public static final String INIT_PARAM_PUBLIC_ACCESS_RESOURCES = "publicResources";
+	public static final String INIT_PARAM_PUBLIC_UPLOADS = "publicUploads";
 	public static final String PUBLIC_ACCESS_USER = "public";
 
 	protected ServletContext _servletContext;
 	protected boolean _publicAccess = false;
 	protected List<String> _publicResources;
+	protected boolean _publicUploads = false;
+
 	public ServletContext getServletContext() { return _servletContext; }
 
 	public RapidAuthenticationAdapter(FilterConfig filterConfig) {
 		_servletContext = filterConfig.getServletContext();
-		 // look for whether public access is allowed
-		 _publicAccess = Boolean.parseBoolean(filterConfig.getInitParameter(INIT_PARAM_PUBLIC_ACCESS));
-		 // look for any resources that will be given public authentication
-		 String publicResources = filterConfig.getInitParameter(INIT_PARAM_PUBLIC_ACCESS_RESOURCES);
-		 // make our list
-		 _publicResources = new ArrayList<String>();
-		 // if we got some
-		 if (publicResources != null) {
-			 // split and loop
-			 for (String publicResource : publicResources.split(",")) {
+		// look for whether public access is allowed
+		_publicAccess = Boolean.parseBoolean(filterConfig.getInitParameter(INIT_PARAM_PUBLIC_ACCESS));
+		// add this to the context
+		filterConfig.getServletContext().setAttribute(INIT_PARAM_PUBLIC_ACCESS, _publicAccess);
+		// look for any resources that will be given public authentication
+		String publicResources = filterConfig.getInitParameter(INIT_PARAM_PUBLIC_ACCESS_RESOURCES);
+		// make our list
+		_publicResources = new ArrayList<>();
+		// if we got some
+		if (publicResources != null) {
+			// split and loop
+			for (String publicResource : publicResources.split(",")) {
 				// trim to remove any spaces
 				String publicResourceTrimmed = publicResource.trim();
 				// trim and add to list if's greater than 3 characters (for protection)
 				if (publicResourceTrimmed.length() > 3) _publicResources.add(publicResourceTrimmed);
-				 // add to our list
-				 _publicResources.add(publicResourceTrimmed);
+				// add to our list
+				_publicResources.add(publicResourceTrimmed);
 			 }
 		 }
-		 // add this to the context
-		 filterConfig.getServletContext().setAttribute(INIT_PARAM_PUBLIC_ACCESS, _publicAccess);
+		// look for whether public uploads is enabled
+		_publicUploads = Boolean.parseBoolean(filterConfig.getInitParameter(INIT_PARAM_PUBLIC_UPLOADS));
+		// add this to the context
+		filterConfig.getServletContext().setAttribute(INIT_PARAM_PUBLIC_UPLOADS, _publicUploads);
 	}
 
 	public abstract ServletRequest process(ServletRequest request, ServletResponse response) throws IOException, ServletException;
