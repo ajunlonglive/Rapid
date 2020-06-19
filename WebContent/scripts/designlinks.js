@@ -126,6 +126,11 @@ window.addEventListener("storage", function(storageEvent) {
 				location.reload();
 			}
 			break;
+		case "applicationsReloaded":
+			if (broadcast.a !== "rapid") {
+				location.reload();
+			}
+			break;
 		}
 	}
 });
