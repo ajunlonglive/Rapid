@@ -931,7 +931,7 @@ function toPixels(size) {
 function getPageVariableValue(name, pageId) {
 	
 	// check global parameters from navigate action first
-	if (window["_pageParams"] && window["_pageParams"][pageId]) return window["_pageParams"][pageId][key];
+	if (window["_pageParams"] && window["_pageParams"][pageId]) return window["_pageParams"][pageId][name];
 	
 	// use the query string
 	var value = $.getUrlVar(name);
