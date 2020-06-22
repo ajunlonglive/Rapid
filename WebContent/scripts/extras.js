@@ -930,14 +930,25 @@ function toPixels(size) {
 
 function getPageVariableValue(name, pageId) {
 	
-	// check global parameters from navigate action first
-	if (window["_pageParams"] && window["_pageParams"][pageId]) return window["_pageParams"][pageId][name];
-	
-	// use the query string
+	// look for the variable in the query string
 	var value = $.getUrlVar(name);
-	if (!value && pageId && window["_pageVariables_" + pageId]) {
-		value = window["_pageVariables_" + pageId][name];
+
+	// if there was no value and a pageId
+	if (!value && pageId) {
+		
+		// check client-side parameters from navigate action first
+		if (window["_pageParams"] && window["_pageParams"][pageId]) {
+			value = window["_pageParams"][pageId][name];
+		}
+			
+		// if we didn't find anything use the _pageVariables server-populated object
+		if (window["_pageVariables_" + pageId]) {
+			value = window["_pageVariables_" + pageId][name];
+		}
+		
 	}
+
+	// we're done
 	return value;
 }
 
