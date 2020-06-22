@@ -942,7 +942,7 @@ function getPageVariableValue(name, pageId) {
 		}
 			
 		// if we didn't find anything use the _pageVariables server-populated object
-		if (window["_pageVariables_" + pageId]) {
+		if (!value && window["_pageVariables_" + pageId]) {
 			value = window["_pageVariables_" + pageId][name];
 		}
 		
