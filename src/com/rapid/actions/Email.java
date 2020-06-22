@@ -25,6 +25,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
 package com.rapid.actions;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -469,29 +470,88 @@ public class Email extends Action {
 	// produces any attachments
 	protected Attachment[] getAttachments(RapidRequest rapidRequest, String attachmentFiles) throws Exception {
 
-		if(attachmentFiles == null) return null;
+		// return immediately if no files provided
+		if (attachmentFiles == null) return null;
 
-		// Decide on the base path
-		String basePath = "uploads/" +  rapidRequest.getAppId();
-		// servers with public access must use the secure upload location
-		if (rapidRequest.getRapidServlet().isPublic()) basePath = "WEB-INF/" + basePath;
+		// clean any Rapid data objects
+		while (attachmentFiles.contains("{\"fields\"")) {
 
-		JSONArray attachedFiles = new JSONArray(attachmentFiles.replace("\"", ""));
-		//String[] attachedFiles = .split(",");
-		int size = attachedFiles.length();
-		Attachment[] attachments = new Attachment[size];
-		//loop through the attachedFile strings and accumulate the attachment objects in an array
-		for(int i = 0; i < size; i++){
-			String file = attachedFiles.optString(i, null);
+			// get the start of the data object
+			int fieldsStart = attachmentFiles.indexOf("{\"fields\"");
+			// get where the rows start
+			int rowsStart = attachmentFiles.indexOf("\"rows\":[", fieldsStart + 10);
+			// get where the rows/object ends
+			int rowsEnd = attachmentFiles.indexOf("}", rowsStart + 8);
 
-			if (file != null) {
-				String filePath = rapidRequest.getRapidServlet().getServletContext().getRealPath(basePath + "/" + file);
-				attachments[i] = new Attachment(file, new FileDataSource(filePath));
+			// get the files and remove any square brackets
+			String files = attachmentFiles.substring(rowsStart + 8, rowsEnd - 1).replace("[", "").replace("]", "");
+
+			// trim the data object field and rows and add back the files
+			attachmentFiles = attachmentFiles.substring(0, fieldsStart) + files + attachmentFiles.substring(rowsEnd + 1);
+
+		}
+
+		// remove any empty leading commas
+		attachmentFiles = attachmentFiles.replace("[,", "[");
+
+		// remove all double commas
+		while (attachmentFiles.contains(",,")) attachmentFiles = attachmentFiles.replace(",,", ",");
+
+		// turn into a json array
+		JSONArray jsonFiles = new JSONArray(attachmentFiles);
+
+		// determine the size of the array
+		int size = jsonFiles.length();
+
+		// a list of attachments
+		List<Attachment> attachments = new ArrayList<>();
+
+		// loop through the attachedFile strings and accumulate the attachment objects in an array
+		for (int i = 0; i < size; i++) {
+
+			// get the file name parts for the attachment
+			String fileName = jsonFiles.optString(i, null);
+
+			// if there was one
+			if (fileName != null) {
+
+				// split into parts
+				String[] fileNameParts = fileName.split(",");
+
+				// loop the parts
+				for (int j = 0; j < fileNameParts.length; j++) {
+
+					// assume no base path
+					String basePath = "";
+
+					// if not in images
+					if (!fileNameParts[j].startsWith("images")) {
+
+						// build simple application base path
+						basePath = "uploads/" + rapidRequest.getAppId();
+
+						// servers with public access must use the secure upload location
+						if (rapidRequest.getRapidServlet().isPublic()) basePath = "WEB-INF/" + basePath;
+
+					}
+
+					// determine the file path
+					String filePath = rapidRequest.getRapidServlet().getServletContext().getRealPath(basePath + "/" + fileNameParts[j]);
+
+					// get a file
+					File file = new File(filePath);
+
+					// if the file exists, add it as an attachment
+					if (file.exists()) attachments.add(new Attachment(fileNameParts[j], new FileDataSource(file)));
+
+				}
+
 			}
 
 		}
 
-		return attachments;
+		// return the list as an array
+		return attachments.toArray(new Attachment[attachments.size()]);
 
 	}
 
