@@ -398,14 +398,21 @@ public class RapidFilter implements Filter {
 							// get the security adapter
 							SecurityAdapter security = app.getSecurityAdapter();
 
+							// get the user name
+							String userName = (String) session.getAttribute(SESSION_VARIABLE_USER_NAME);
+
+							// log
+							_logger.debug("Checking user security for uploads folder, app = " + app.getId() + ", user = " + userName + ", path = " + path);
+
 							// create a rapid request
 							RapidRequest rapidRequest = new RapidRequest(req, app);
 
-							// set the user name
-							rapidRequest.setUserName((String) session.getAttribute(SESSION_VARIABLE_USER_NAME));
-
 							// check the security for this user and password
-							pass = security.checkPasswordComplexity(rapidRequest, (String) session.getAttribute(SESSION_VARIABLE_USER_PASSWORD));
+							try {
+								pass = security.checkUserPassword(rapidRequest, userName, (String) session.getAttribute(SESSION_VARIABLE_USER_PASSWORD));
+							} catch (SecurityAdapaterException ex) {
+								_logger.error("Error checking user security for uploads folder, app = " + app.getId() + ", user = " + userName + ", path = " + path, ex);
+							}
 
 						}
 
