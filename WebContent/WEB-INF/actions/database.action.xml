@@ -35,6 +35,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    <helpHtml>Runs an SQL query and outputs the result to controls.</helpHtml>
 	    
 	    <addToNewApplications>true</addToNewApplications>
+	    <addToNewFormApplications>false</addToNewFormApplications>
 	    <canUseWorkflow>true</canUseWorkflow>
 	    	    	    	    
 	    <properties>

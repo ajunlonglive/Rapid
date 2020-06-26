@@ -23,6 +23,7 @@
 		<helpHtml>Sends an email to a given address, with optional attachments.</helpHtml>
 
 		<addToNewApplications>true</addToNewApplications>
+		<addToNewFormApplications>false</addToNewFormApplications>
 		<canUseWorkflow>true</canUseWorkflow>
 
 		<properties>

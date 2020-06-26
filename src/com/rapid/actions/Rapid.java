@@ -235,14 +235,31 @@ public class Rapid extends Action {
 				JSONObject jsonActionType = jsonActionTypes.getJSONObject(i);
 				// get it's type
 				String actionType = jsonActionType.getString("type");
-				// add to list if addToNewApplications is set
-				if (jsonActionType.optBoolean("addToNewApplications")) actionTypes.add(actionType);
-				// add to list if app type is D and action has addToNewDesktopApplications
-				if ("D".equals(type) && jsonActionType.optBoolean("addToNewDesktopApplications")) actionTypes.add(actionType);
-				// add to list if app type is M and action has addToNewDesktopApplications
-				if ("M".equals(type) && jsonActionType.optBoolean("addToNewMobileApplications")) actionTypes.add(actionType);
-				// add to list if app type is F and action has addToNewDesktopApplications
-				if ("F".equals(type) && jsonActionType.optBoolean("addToNewFormApplications")) actionTypes.add(actionType);
+
+				// assume we should not add this action
+				boolean addAction = false;
+
+				// get the default add
+				boolean addDefault= jsonActionType.optBoolean("addToNewApplications");
+
+				// check the application type, for when to avoid the action if default but explicit app type is false;
+				if ("D".equals(type)) {
+					// add to list if app type is D and action has addToNewDesktopApplications
+					if (jsonActionType.optBoolean("addToNewDesktopApplications", addDefault)) addAction = true;
+				} else if ("M".equals(type)) {
+					// add to list if app type is M and action has addToNewDesktopApplications
+					if (jsonActionType.optBoolean("addToNewMobileApplications", addDefault)) addAction = true;
+				} else if ("F".equals(type)) {
+					// add to list if app type is F and action has addToNewDesktopApplications
+					if (jsonActionType.optBoolean("addToNewFormApplications", addDefault)) addAction = true;
+				} else {
+					// not a special type so just use the default
+					addAction = addDefault;
+				}
+
+				// add it if we should
+				if (addAction) actionTypes.add(actionType);
+
 			}
 		}
 
@@ -266,24 +283,33 @@ public class Rapid extends Action {
 				JSONObject jsonControlType = jsonControlTypes.getJSONObject(i);
 				// get the type
 				String controlType = jsonControlType.getString("type");
-				// get whether to add to new applications
-				boolean addNew = jsonControlType.optBoolean("addToNewApplications");
-				String addResponsiveString = jsonControlType.optString("addToNewResponsiveApplications", null);
-				boolean addResponsive = jsonControlType.optBoolean("addToNewResponsiveApplications");
+
+				// assume we should not add this control
+				boolean addControl = false;
+
+				// get whether to add to new applications by default
+				boolean addDefault = jsonControlType.optBoolean("addToNewApplications");
 				// if this is a responsive app
-				if (responsive) {
-					// add to list if addToNewApplications is set and not addToNewResponsiveApplications, or just addToNewResponsiveApplications
-					if ((addNew &&  addResponsiveString == null) || addResponsive) controlTypes.add(controlType);
+				if (responsive) addDefault = jsonControlType.optBoolean("addToNewResponsiveApplications", addDefault);
+
+				// check the application type
+				if ("D".equals(type)) {
+					// add to list if app type is D and action has addToNewDesktopApplications
+					if (jsonControlType.optBoolean("addToNewDesktopApplications", addDefault)) addControl = true;
+				} else if ("M".equals(type)) {
+					// add to list if app type is M and action has addToNewDesktopApplications
+					if (jsonControlType.optBoolean("addToNewMobileApplications", addDefault)) addControl = true;
+				} else if ("F".equals(type)) {
+					// add to list if app type is F and action has addToNewFormApplications
+					if (jsonControlType.optBoolean("addToNewFormApplications", addDefault)) addControl = true;
 				} else {
-					// add to list if addToNewApplications is set and addToNewResponsiveApplications is not set
-					if (addNew && !addResponsive) controlTypes.add(controlType);
+					// not one of the special types use the default
+					addControl = addDefault;
 				}
-				// add to list if app type is D and action has addToNewDesktopApplications
-				if ("D".equals(type) && jsonControlType.optBoolean("addToNewDesktopApplications")) controlTypes.add(controlType);
-				// add to list if app type is M and action has addToNewDesktopApplications
-				if ("M".equals(type) && jsonControlType.optBoolean("addToNewMobileApplications")) controlTypes.add(controlType);
-				// add to list if app type is F and action has addToNewDesktopApplications
-				if ("F".equals(type) && jsonControlType.optBoolean("addToNewFormApplications")) controlTypes.add(controlType);
+
+				// add he control if we're supposed to
+				if (addControl) controlTypes.add(controlType);
+
 			}
 		}
 
