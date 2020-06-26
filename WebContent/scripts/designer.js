@@ -3721,24 +3721,26 @@ function isDecendant(control1, control2) {
 
 // size the controls list box (used when resizing control panel and starting / loading versions)
 function sizeControlsList(width) {
+	// get a reference to the control panel
+	var controlPanel = $("#controlPanel");
 	// check if a width was provided
 	if (width) {
 		// set the new width 
-		$("#controlPanel").css("width", width);
+		controlPanel.css("width", width);
 	} else {
 		// read in the current width
-		width = parseInt($("#controlPanel").css("width"));
+		width = parseInt(controlPanel.css("width"));
 	}
-	// size the inner
-	$("#controlPanelInner").css("width",width);
+	// get the controlPanel padding
+	var controlPanelPadding = parseInt(controlPanel.css("padding-left"));
 	// get the controls list
 	var controlsList = $("#controlsList");
 	// get the first control
 	var control = controlsList.find("li").first();
-	// get the width of the first contol
+	// get the width of the first control
 	var controlWidth = control.outerWidth(true);
 	// get the controls wide
-	var controlsWide = Math.floor(width / controlWidth);
+	var controlsWide = Math.floor((width - controlPanelPadding * 2) / controlWidth);
 	// assume no controls
 	var controlCount = 0;
 	// loop the ul's to get the greatest number of controls
@@ -3750,7 +3752,7 @@ function sizeControlsList(width) {
 	if (controlCount > controlsWide) {
 		// set the fixed height and margin (to allow animation and center controls)
 		controlsList.css({
-			"padding-left" : Math.floor((width - controlsWide * controlWidth) / 2)
+			"padding-left" : Math.floor((width - controlsWide * controlWidth) / 2) - controlPanelPadding
 		});
 	} else {
 		//
