@@ -31,6 +31,7 @@
 		<helpHtml>A structure for the layout of controls according to rows and columns.</helpHtml>
 
 		<addToNewApplications>true</addToNewApplications>
+		<addToNewFormApplications>false</addToNewFormApplications>
 
 		<canUserAdd>true</canUserAdd>
 		<canUserMove>true</canUserMove>
