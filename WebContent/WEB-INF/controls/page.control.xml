@@ -117,7 +117,7 @@ return [[0,"Normal"],[1,"Submission confirmation"],[2,"Submission error"],[3,"Sa
 	            <key>visibilityConditions</key>
 	            <name>Visibility conditions</name>
 	            <changeValueJavaScript>visibilityConditions</changeValueJavaScript>
-	            <helpHtml>Sets the rules of the page appearing or not. A strong understanding of how your app and Rapid works will help you get the most out of visibility conditions.</helpHtml>
+	            <helpHtml>Sets the rules of the page appearing or not based on earlier values in the form.</helpHtml>
 	        </property>
 	        
 	        <property>
