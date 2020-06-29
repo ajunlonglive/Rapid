@@ -496,6 +496,10 @@ public class DataFactory {
 
 		} catch (SQLException ex) {
 
+			// Oracle does not honour the auto commit = false in its own driver on error so manually roll back
+			if (_connection != null && !_autoCommit) _connection.rollback();
+
+			// close the connection
 			close();
 
 			throw new RethrownSQLException(ex);
@@ -544,6 +548,10 @@ public class DataFactory {
 
 				cs.close();
 
+				// Oracle does not honour the auto commit = false in its own driver on error so manually roll back
+				if (_connection != null && !_autoCommit) _connection.rollback();
+
+				// close the connection
 				close();
 
 				throw new RethrownSQLException(ex);
@@ -564,6 +572,10 @@ public class DataFactory {
 
 				ps.close();
 
+				// Oracle does not honour the auto commit = false in its own driver on error so manually roll back
+				if (_connection != null && !_autoCommit) _connection.rollback();
+
+				// close the connection
 				close();
 
 				throw new RethrownSQLException(ex);
@@ -630,6 +642,10 @@ public class DataFactory {
 
 					st.close();
 
+					// Oracle does not honour the auto commit = false in its own driver on error so manually roll back
+					if (_connection != null && !_autoCommit) _connection.rollback();
+
+					// close the connection
 					close();
 
 					throw new RethrownSQLException(ex);
