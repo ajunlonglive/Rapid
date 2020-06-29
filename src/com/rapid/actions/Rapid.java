@@ -738,6 +738,8 @@ public class Rapid extends Action {
 							jsonDriver.put("value", jsonDatabaseDriver.get("class"));
 							// add name
 							jsonDriver.put("text", jsonDatabaseDriver.get("name"));
+							// add optional jdbc
+							jsonDriver.put("jdbc", jsonDatabaseDriver.opt("jdbc"));
 							// add to collection
 							jsonDrivers.put(jsonDriver);
 						}
