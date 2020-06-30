@@ -286,6 +286,12 @@ public class RapidFilter implements Filter {
 				// set second last path part if there was one
 				if (pathPart.length > 1) secondLastPathPart = pathPart[pathPart.length - 2];
 
+				// assume no query string
+				String queryString = "";
+
+				// if there is one
+				if (req.getQueryString() != null) queryString = "?" + req.getQueryString();
+
 				// get the list of applications to try to find any in the parts
 				Applications applications = (Applications) request.getServletContext().getAttribute("applications");
 
@@ -302,13 +308,16 @@ public class RapidFilter implements Filter {
 					forwardRequest(filteredRequest, response, "/" + secondLastPathPart + "/" + lastPathPart);
 
 				// if user has provided at least 1 path part (i.e. part1/) and is requesting known resources like login.jsp
-				} else if (pathPart.length > 1 && (lastPathPartLower.endsWith("login.jsp") || lastPathPartLower.endsWith("logout.jsp") || lastPathPartLower.endsWith("index.jsp") || lastPathPartLower.endsWith("reset.jsp") || lastPathPartLower.endsWith("update.jsp"))) {
+				} else if (pathPart.length > 1 && (lastPathPartLower.endsWith(".jsp"))) {
 
 					// redirect to the root of the context - which is the root when seen from outside
-					res.sendRedirect(req.getContextPath() + "/" + lastPathPart);
+					res.sendRedirect(req.getContextPath() + "/" + lastPathPart + queryString);
 
 					// send redirect immediately
 					return;
+
+					// if user has provided at least 1 path part (i.e. part1/) and is requesting any .jsp
+				} else if (pathPart.length > 1 && (lastPathPartLower.endsWith(".jsp"))) {
 
 				// if user has provided at least 1 path part (i.e. part1/) and the first part is a known application
 				} else if (pathPart.length > 0 && applications.get(pathPart[0]) != null) {
@@ -321,7 +330,7 @@ public class RapidFilter implements Filter {
 
 					if ("POST".equals(req.getMethod()) || ("GET".equals(req.getMethod()) && "~".equals(lastPathPart))) {
 
-						rapidForwardURL = "/~?" + req.getQueryString();
+						rapidForwardURL = "/~" + queryString;
 
 					} else { //any other get requests
 
