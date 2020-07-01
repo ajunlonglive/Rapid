@@ -1129,7 +1129,7 @@ if (data !== undefined && data !== "") {
 							} catch(ex) {}
 						}
 						// add the cell with the value
-						td.appendChild(document.createTextNode(value));
+						td.innerHTML = value;
 						tr.appendChild(td);
 					}
 					tbody.append(tr);
@@ -1243,7 +1243,7 @@ if (data !== undefined && data !== "") {
 						// update to blank space if null
 						if (value === null) value = "";
 						// create the td with the value
-		                td.appendChild(document.createTextNode(value));
+		                td.innerHTML = value;
 		                tr.appendChild(td);
 		            }
 		            tbody.append(tr);
