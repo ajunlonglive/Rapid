@@ -86,11 +86,15 @@ public class DatabaseConnection {
 			Class classClass = Class.forName(_connectionAdapterClass);
 			// initialise a constructor
 			Constructor constructor = classClass.getConstructor(ServletContext.class, String.class, String.class, String.class, String.class);
+			// get the connection string
+			String connectionString = _connectionString;
+			// if there is an app, insert the parameters to the connection string
+			if (application != null) connectionString = application.insertParameters(servletContext, _connectionString);
 			// initialise the class
 			_connectionAdapter = (ConnectionAdapter) constructor.newInstance(
 					servletContext,
 					_driverClass,
-					application.insertParameters(servletContext, _connectionString),
+					connectionString,
 					_userName,
 					_password) ;
 		}
