@@ -96,7 +96,7 @@ public class DatabaseConnection {
 					_driverClass,
 					connectionString,
 					_userName,
-					_password) ;
+					_password);
 		}
 
 		return _connectionAdapter;
