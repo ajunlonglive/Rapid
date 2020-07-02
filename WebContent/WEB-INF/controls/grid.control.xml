@@ -1014,6 +1014,58 @@ if (data !== undefined && data !== "") {
 						
 			} // vertical scrolling
 			
+			// if we have not applied sorts yet
+			if (details && !grid.parent().is(".gridSortsApplied")) {
+			
+				// assume no headers
+				var headers = null;
+				// if there is vertical scrolling
+				if (details.scrollV && details.scrollHeight && details.fixedHeader) {
+					// get the visible header cells
+					headers = $("#" + id).find("table").first().find("tr:first-child td");
+				} else {
+					headers = grid.find("tr:first-child td");
+				}
+			
+				// loop the columns
+				for (var i in details.columns) {
+					// if it has a sort (but not a fuxed)
+					if (details.columns[i].sort) {
+						// assume the index is i
+						var index = i;
+						// if we have multiselect move the index on one
+						if (details.multiSelect) index ++;
+						// get the header cell - move one on if we have multiselect
+						var cell = $(headers.get(index));
+						// change the cursor
+						cell.css("cursor","pointer");
+						// add a listener
+						cell.click( {index:index},function(ev) {
+							// get the span
+							var span = $(ev.target);
+							// drill down if need be
+							if (!span.is("span")) span = span.find("span");
+							// get the column
+							var column = ev.data.index;
+							// if this is multiselect subtract 1 column
+							if (details.multiSelect) column--;
+							// if ascending or not set (note the unicode escape)
+							if (span.html() == "\uf0de") {
+								sortGridByColumn(ev, id, details, column, false);
+								span.html("&#xf0dd;");
+							} else {
+								sortGridByColumn(ev, id, details, column, true);
+								span.html("&#xf0de;");
+							}
+						});
+					}
+				}
+				
+				// mark grid as having sorts applied
+				grid.parent().addClass("gridSortsApplied");
+			
+			}
+			
 			// apply the resizing - which also measures the vertical scrolling heights
 			$(window).resize();
 		
@@ -1264,58 +1316,6 @@ if (data !== undefined && data !== "") {
 		} // got details and columns and data fields
 								
 	} // got data
-	
-	// if we have not applied sorts yet
-	if (details && !grid.parent().is(".gridSortsApplied")) {
-	
-		// assume no headers
-		var headers = null;
-		// if there is vertical scrolling
-		if (details.scrollV && details.scrollHeight && details.fixedHeader) {
-			// get the visible header cells
-			headers = $("#" + id).find("table").first().find("tr:first-child td");
-		} else {
-			headers = grid.find("tr:first-child td");
-		}
-	
-		// loop the columns
-		for (var i in details.columns) {
-			// if it has a sort (but not a fuxed)
-			if (details.columns[i].sort) {
-				// assume the index is i
-				var index = i;
-				// if we have multiselect move the index on one
-				if (details.multiSelect) index ++;
-				// get the header cell - move one on if we have multiselect
-				var cell = $(headers.get(index));
-				// change the cursor
-				cell.css("cursor","pointer");
-				// add a listener
-				cell.click( {index:index},function(ev) {
-					// get the span
-					var span = $(ev.target);
-					// drill down if need be
-					if (!span.is("span")) span = span.find("span");
-					// get the column
-					var column = ev.data.index;
-					// if this is multiselect subtract 1 column
-					if (details.multiSelect) column--;
-					// if ascending or not set (note the unicode escape)
-					if (span.html() == "\uf0de") {
-						sortGridByColumn(ev, id, details, column, false);
-						span.html("&#xf0dd;");
-					} else {
-						sortGridByColumn(ev, id, details, column, true);
-						span.html("&#xf0de;");
-					}
-				});
-			}
-		}
-		
-		// mark grid as having sorts applied
-		grid.parent().addClass("gridSortsApplied");
-	
-	}
 	
 	// if we have multiSelect
 	if (details.multiSelect) {
