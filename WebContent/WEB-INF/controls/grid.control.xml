@@ -995,7 +995,35 @@ if (data !== undefined && data !== "") {
 					    // move the old table parent after the new table
 					    parent.insertAfter(newTbl);
 					    // wrap the new table
-					    newTbl.wrap("<div class='gridScrollHeader' />");
+					    var gridScrollHeader = $("<div class='gridScrollHeader' />");
+					    newTbl.wrap(gridScrollHeader);
+						
+						// apply the resizing - which also measures the vertical scrolling heights
+						$(window).resize();
+						
+						var gridScrollHeader = $(".gridScrollHeader");
+						var gridScrollBody = $(".gridScrollBody");
+						
+						if (gridScrollHeader.length && gridScrollBody.length) {
+						
+							var gridBodyElement = gridScrollBody[0];
+							
+							var setScrollPosition = function() {
+								gridScrollHeader.scrollLeft(gridBodyElement.scrollLeft);
+							};
+							
+							var betweenFrames = false;
+							
+							$(".gridScrollBody").scroll(function(scrollEvent) {
+								if (!betweenFrames) {
+									requestAnimationFrame(function() {
+										setScrollPosition();
+										betweenFrames = false;
+									});
+									betweenFrames = true;
+								}
+							});
+						}
 					    
 					} // fixed header applied
 					
@@ -1065,9 +1093,6 @@ if (data !== undefined && data !== "") {
 				grid.parent().addClass("gridSortsApplied");
 			
 			}
-			
-			// apply the resizing - which also measures the vertical scrolling heights
-			$(window).resize();
 		
 		}  // afterLoaded function
 		
