@@ -859,6 +859,19 @@ _gridLoaders[id] = {timeouts:[]};
 var grid = $("#" + id);
 // make sure it's the tables
 if (!grid.is("table")) grid = grid.find("table");
+
+// if we have a fixed header
+if (details.fixedHeader) {
+	// if we haven't applied it yet
+	if (grid.parent().is(".gridScroll")) {
+  		// create and style the wrapper
+  		grid.parent().css({
+  			"max-height": details.scrollHeight,
+  			"overflow-y": details.scrollV
+  		});
+	}
+}
+
 // if there are columns defined for this grid
 if (details.columns) {
 	// remove all rows except for the first one (the header)
@@ -971,7 +984,12 @@ if (data !== undefined && data !== "") {
 				
 					// if we haven't applied it yet
 					if (!grid.parent().is(".gridScrollBody")) {
-				
+						
+						grid.parent().css({
+					    	"max-height": "unset",
+					    	"overflow-y": "unset"
+						});
+						
 					    // create and style the wrapper
 					    var oTblDiv = $("<div class='gridScrollBody' />");
 					    oTblDiv.css({
