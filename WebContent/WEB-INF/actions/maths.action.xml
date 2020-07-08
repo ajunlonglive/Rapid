@@ -80,7 +80,6 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    <actionJavaScript>
 	        <![CDATA[ 
 function Action_maths(ev, data, operation, outputId, outputField) {
-	debugger;
 	// check we got data and somewhere to put it
 	if (data.inputs && output) {
 	    var result = data.inputs[0];
@@ -102,7 +101,6 @@ function Action_maths(ev, data, operation, outputId, outputField) {
 		    default:	//divide
 		        result /= data.inputs[i];
 			}
-			
 		}
 	}
 	
