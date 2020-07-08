@@ -680,22 +680,19 @@ public class Page {
 	// gets the pages that this page can navigate to as a dialogue - we check all pages to see which can come back
 	public List<String> getDialoguePageIds() {
 		// if the internal variable has not been initialised yet
-		if (_dialoguePageIds == null) {
-			// initialise
-			_dialoguePageIds = new ArrayList<>();
-			// get all navigation actions on this page
-			List<Action> actions = getAllActions("navigate");
-			// loop them
-			for (Action action : actions) {
-				// if this is a dialogue
-				if (Boolean.parseBoolean(action.getProperty("dialogue"))) {
-					// get the page id
-					String pageId = action.getProperty("page");
-					// if we got one
-					if (pageId != null) {
-						// add if it is something
-						if (pageId.length() > 0) _dialoguePageIds.add(pageId);
-					}
+		if (_dialoguePageIds == null) _dialoguePageIds = new ArrayList<>();
+		// get all navigation actions on this page
+		List<Action> actions = getAllActions("navigate");
+		// loop them
+		for (Action action : actions) {
+			// if this is a dialogue
+			if (Boolean.parseBoolean(action.getProperty("dialogue"))) {
+				// get the page id
+				String pageId = action.getProperty("page");
+				// if we got one
+				if (pageId != null) {
+					// add if it is something
+					if (pageId.length() > 0) _dialoguePageIds.add(pageId);
 				}
 			}
 		}
@@ -848,12 +845,71 @@ public class Page {
 	public JSONArray getOtherPageComponents(RapidHttpServlet rapidServlet, boolean includePageVisibiltyControls, boolean includeFromDialogue) throws JSONException {
 		// the list of controls we're about to return
 		JSONArray controls = new JSONArray();
+		
+		if (includeFromDialogue) {
+			// make a JSON object with what we need about this page
+			JSONObject jsonPageControl = new JSONObject();
+			jsonPageControl.put("id", _id);
+			jsonPageControl.put("type", "page");
+			jsonPageControl.put("name", _name);
+			
+			// if we have events, add them too
+			if (_events != null && _events.size() > 0) jsonPageControl.put("events", getJsonEvents(_events));
+			
+			// add the page control to the list
+			controls.put(jsonPageControl);
+		}
 		// start building the array using the page controls
 		getOtherPageControls(rapidServlet, controls, _controls, includePageVisibiltyControls, includeFromDialogue);
 		// return the components
 		return controls;
 	}
 
+	private static JSONArray getJsonEvents(List<Event> events) throws JSONException {
+		
+		// an array of events
+		JSONArray jsonEvents = new JSONArray();
+		
+		// if we got some
+		if (events != null) {
+			// loop them
+			for (Event event : events) {
+				// make a jsonObject for this event
+				JSONObject jsonEvent = new JSONObject();
+				// get any actions
+				List<Action> actions = event.getActions();
+				// if there were some
+				if (actions != null) {
+					// if there were some
+					if (actions.size() > 0) {
+						// make a jsonArray for the actions
+						JSONArray jsonActions = new JSONArray();
+						// loop the actions
+						for (Action action : actions) {
+							// make a json object for the action
+							JSONObject jsonAction = new JSONObject();
+							// add id
+							jsonAction.put("id", action.getId());
+							// add type
+							jsonAction.put("type", action.getType());
+							// add comments
+							jsonAction.put("type", action.getProperty("comments"));
+							// add to array
+							jsonActions.put(jsonAction);
+						}
+						// add the event id
+						jsonEvent.put("type", event.getType());
+						// add the jsonActions to the event
+						jsonEvent.put("actions", jsonActions);
+						// as jsonEvent to collection
+						jsonEvents.put(jsonEvent);
+					}
+				}
+			}
+		}
+		
+		return jsonEvents;
+	}
 	// used to turn either a page or control style into text for the css file
 	public String getStyleCSS(Style style) {
 		// start the text we are going to return
