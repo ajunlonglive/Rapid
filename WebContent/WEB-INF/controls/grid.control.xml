@@ -1203,9 +1203,13 @@ if (data !== undefined && data !== "") {
 							try {
 								value = JSON.stringify(value);
 							} catch(ex) {}
+							// set the value as text
+							td.innerText = value;
+						} else {
+							// set the value as html
+							td.innerHTML = value;
 						}
-						// add the cell with the value
-						td.innerHTML = value;
+						// add the cell
 						tr.appendChild(td);
 					}
 					tbody.append(tr);
