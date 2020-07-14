@@ -156,8 +156,8 @@ public class RapidServletContextListener implements ServletContextListener {
 			// loop the xml files in the folder
 			for (File xmlFile : dir.listFiles(xmlFilenameFilter)) {
 
-				// read the xml into a string
-				String xml = Strings.getString(xmlFile);
+				// read the xml into a string and trim for safety
+				String xml = Strings.getString(xmlFile).trim();
 
 				// validate the control xml file against the schema
 				validator.validate(new StreamSource(new ByteArrayInputStream(xml.getBytes("UTF-8"))));
@@ -191,8 +191,8 @@ public class RapidServletContextListener implements ServletContextListener {
 	    // create a validator
 	    Validator validator = schema.newValidator();
 
-		// read the xml into a string
-		String xml = Strings.getString(new File(servletContext.getRealPath("/") + "/WEB-INF/database/" + "/databaseDrivers.xml"));
+		// read the xml into a string and trim for safety
+		String xml = Strings.getString(new File(servletContext.getRealPath("/") + "/WEB-INF/database/" + "/databaseDrivers.xml")).trim();
 
 		// validate the control xml file against the schema
 		validator.validate(new StreamSource(new ByteArrayInputStream(xml.getBytes("UTF-8"))));
@@ -294,8 +294,8 @@ public class RapidServletContextListener implements ServletContextListener {
 		// loop the xml files in the folder
 		for (File xmlFile : dir.listFiles(xmlFilenameFilter)) {
 
-			// read the xml into a string
-			String xml = Strings.getString(xmlFile);
+			// read the xml into a string and trim for safety
+			String xml = Strings.getString(xmlFile).trim();
 
 			// validate the control xml file against the schema
 			validator.validate(new StreamSource(new ByteArrayInputStream(xml.getBytes("UTF-8"))));
@@ -457,8 +457,8 @@ public class RapidServletContextListener implements ServletContextListener {
 		// loop the xml files in the folder
 		for (File xmlFile : dir.listFiles(xmlFilenameFilter)) {
 
-			// read the xml into a string
-			String xml = Strings.getString(xmlFile);
+			// read the xml into a string and trim for safety
+			String xml = Strings.getString(xmlFile).trim();
 
 			// validate the control xml file against the schema
 			validator.validate(new StreamSource(new ByteArrayInputStream(xml.getBytes("UTF-8"))));
@@ -550,14 +550,8 @@ public class RapidServletContextListener implements ServletContextListener {
 		// loop the xml files in the folder
 		for (File xmlFile : dir.listFiles(xmlFilenameFilter)) {
 
-			// get a scanner to read the file
-			Scanner fileScanner = new Scanner(xmlFile).useDelimiter("\\A");
-
-			// read the xml into a string
-			String xml = fileScanner.next();
-
-			// close the scanner (and file)
-			fileScanner.close();
+			// read the xml into a string and trim for safety
+			String xml = Strings.getString(xmlFile).trim();
 
 			// validate the control xml file against the schema
 			validator.validate(new StreamSource(new ByteArrayInputStream(xml.getBytes("UTF-8"))));
@@ -670,14 +664,8 @@ public class RapidServletContextListener implements ServletContextListener {
 		// loop the xml files in the folder
 		for (File xmlFile : dir.listFiles(xmlFilenameFilter)) {
 
-			// get a scanner to read the file
-			Scanner fileScanner = new Scanner(xmlFile).useDelimiter("\\A");
-
-			// read the xml into a string
-			String xml = fileScanner.next();
-
-			// close the scanner (and file)
-			fileScanner.close();
+			// read the xml into a string and trim for safety
+			String xml = Strings.getString(xmlFile).trim();
 
 			// validate the control xml file against the schema
 			validator.validate(new StreamSource(new ByteArrayInputStream(xml.getBytes("UTF-8"))));
@@ -771,14 +759,8 @@ public class RapidServletContextListener implements ServletContextListener {
 		// loop the xml files in the folder
 		for (File xmlFile : dir.listFiles(xmlFilenameFilter)) {
 
-			// get a scanner to read the file
-			Scanner fileScanner = new Scanner(xmlFile).useDelimiter("\\A");
-
-			// read the xml into a string
-			String xml = fileScanner.next();
-
-			// close the scanner (and file)
-			fileScanner.close();
+			// read the xml into a string and trim for safety
+			String xml = Strings.getString(xmlFile).trim();
 
 			// validate the control xml file against the schema
 			validator.validate(new StreamSource(new ByteArrayInputStream(xml.getBytes("UTF-8"))));
