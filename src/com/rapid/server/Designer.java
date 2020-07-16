@@ -516,7 +516,7 @@ public class Designer extends RapidHttpServlet {
 												// loop the sorted connections
 												for (String roleName : roleNames) {
 													// only add role if this is the rapid app, or it's not a special rapid permission
-													if ("rapid".equals(application.getId()) || (!Rapid.ADMIN_ROLE.equals(roleName) && !Rapid.DESIGN_ROLE.equals(roleName)&& !Rapid.SUPER_ROLE.equals(roleName))) jsonRoles.put(roleName);
+													if ("rapid".equals(application.getId()) || (!Rapid.ADMIN_ROLE.equals(roleName)&& !Rapid.SUPER_ROLE.equals(roleName) && !Rapid.USERS_ROLE.equals(roleName) && !Rapid.DESIGN_ROLE.equals(roleName))) jsonRoles.put(roleName);
 												}
 											}
 											// add the security roles to the app
