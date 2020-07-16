@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2015 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -27,13 +27,9 @@ package com.rapid.actions;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import javax.servlet.ServletContext;
 import javax.xml.bind.annotation.XmlType;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -95,14 +91,10 @@ public class Maths extends Action {
 		}
 
 	}
-	
-	// static variables
-	private static Logger _logger = LogManager.getLogger(Maths.class);
 
 	// private instance variables
 
 	private List<Input> _inputs;
-	private List<Output> _outputs;
 
 	// properties
 
@@ -157,28 +149,63 @@ public class Maths extends Action {
      	
         // check if we have inputs
      	if (_inputs != null) {
-			// loop them
-			for (int i = 0; i < _inputs.size(); i++) {
-				
-				// get the input
-				Input input = _inputs.get(i);
-				// get this item id
-				String itemId = input.getItemId();
-				// get this item field
-				String itemField = input.getField();
-				// get the inpute field
-				String inputField = input.getInputField();
-				// update the input field with the index if blank
-				if (inputField == null || "".equals(inputField)) inputField = Integer.toString(i);
-				
-				// set data for first input then use assignment operator for operations
-				if (i == 0) {
-					js += "data = parseFloat(" + Control.getDataJavaScript(rapidRequest.getRapidServlet().getServletContext(), application, page, itemId, itemField) + ");\n";
-				} else {
-					js += "data " + operation + "= parseFloat(" + Control.getDataJavaScript(rapidRequest.getRapidServlet().getServletContext(), application, page, itemId, itemField) + ");\n";
+     		if ("custom".equals(operation)) {
+     	     	String customOperation = getProperty("customOperation");
+     	     	customOperation = customOperation.replace("'", "\\'");
+     	     	
+     	     	String arguments = "";
+     	     	String parameters = "";
+     			
+     			for (int i = 0; i < _inputs.size(); i++) {
+					Input input = _inputs.get(i);
+					String itemId = input.getItemId();
+					String itemField = input.getField();
+     				// append argument value
+					String argName = "v" + (i + 1);
+					js += "var " + argName + " = " + Control.getDataJavaScript(rapidRequest.getRapidServlet().getServletContext(), application, page, itemId, itemField) + ";\n";
+     				// append parameter name (all with comma and space)
+     				String inputField = input.getInputField();
+     				
+     				if (inputField.isEmpty()) {
+     					arguments += (i == 0 ? "" : ", ") + argName;
+     					parameters += "'" + argName + "', ";
+     				} else {
+     					arguments += (i == 0 ? "" : ", ") + argName + ", " + argName;
+         				parameters += "'" + inputField + "', '" + argName + "', ";
+     				}
+     			}
+     	     	
+     			js += "try {\n";
+     			js += "    var operation = new Function(" + parameters + "'" + customOperation + "');\n";
+     			js += "    data = operation(" + arguments + ");\n";
+     			js += "} catch (ex) {\n";
+     			js += "    alert('Error in maths action: ' + ex);\n";
+     			js += "}\n";
+     			
+     		} else {
+				// loop them
+				for (int i = 0; i < _inputs.size(); i++) {
+					
+					// get the input
+					Input input = _inputs.get(i);
+					// get this item id
+					String itemId = input.getItemId();
+					// get this item field
+					String itemField = input.getField();
+					// get the inpute field
+					String inputField = input.getInputField();
+					// update the input field with the index if blank
+					if (inputField == null || "".equals(inputField)) inputField = Integer.toString(i);
+					
+					// set data for first input then use assignment operator for operations
+					if (i == 0) {
+						js += "data = parseFloat(" + Control.getDataJavaScript(rapidRequest.getRapidServlet().getServletContext(), application, page, itemId, itemField) + ");\n";
+					} else {
+						js += "data " + operation + "= parseFloat(" + Control.getDataJavaScript(rapidRequest.getRapidServlet().getServletContext(), application, page, itemId, itemField) + ");\n";
+					}
+					
 				}
-				
-			}
+	     	}
      	}
      	
      	// get the output control details
@@ -188,7 +215,7 @@ public class Maths extends Action {
      	// send data into the output control
      	js += Control.setDataJavaScript(rapidRequest.getRequest().getServletContext(), application, page, outputId, outputField) + ";\n";
      	
-		return js.toString();
+		return js;
 
 	}
 	
