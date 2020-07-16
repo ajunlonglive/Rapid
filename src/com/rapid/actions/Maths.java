@@ -151,6 +151,7 @@ public class Maths extends Action {
      	if (_inputs != null) {
      		if ("custom".equals(operation)) {
      	     	String customOperation = getProperty("customOperation");
+     	     	customOperation = "try { " + customOperation + " } catch (ex) { alert('Error in maths action operation: ' + ex); }";
      	     	customOperation = customOperation.replace("'", "\\'");
      	     	
      	     	String arguments = "";
@@ -163,6 +164,8 @@ public class Maths extends Action {
      				// append argument value
 					String argName = "v" + (i + 1);
 					js += "var " + argName + " = " + Control.getDataJavaScript(rapidRequest.getRapidServlet().getServletContext(), application, page, itemId, itemField) + ";\n";
+					js += "var " + argName + "Num = parseFloat(" + argName + ");\n";
+					js += "if (" + argName + "Num.toString() === " + argName + ") " + argName + " = " + argName + "Num;\n";
      				// append parameter name (all with comma and space)
      				String inputField = input.getInputField();
      				
