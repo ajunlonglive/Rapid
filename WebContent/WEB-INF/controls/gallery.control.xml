@@ -122,6 +122,7 @@ div.gallery img {
 	border-radius: 50%;
 	width: 60px;
 	text-align: center;
+	z-index: 1;
 }
 
 .galleryControlButton i {
@@ -305,7 +306,9 @@ function IDBdeleteByKey(key, callback) {
 	} else if (callback) callback();
 }
 
-function addToImageControl(control, filename, url) {
+function addToImageControl(control, filename, url, type) {
+	
+	var type = type || "img";
 	
 	// assume no image has been added
 	var imageSet = false;
@@ -336,7 +339,7 @@ function addToImageControl(control, filename, url) {
 		// assume we're adding the image
 		var addImage = true;
 		// loop existing images
-		control.find("img").each( function() {
+		control.find(".galleryItem").each( function() {
 			// get image
 			var img = $(this);
 			// get this image filename attr
@@ -368,7 +371,7 @@ function addToImageControl(control, filename, url) {
 		if (addImage) {
 			
 			// add an image element with the url
-			control.append("<img src='" + (url || filename) + "' data-filename='" + filename + "'></img>");
+			control.append("<" + type + " class='galleryItem' src='" + (url || filename) + "' data-filename='" + filename + "'></" + type + ">");
 
 			// remember we set an image in the gallery
 			imageSet = true;
@@ -376,12 +379,12 @@ function addToImageControl(control, filename, url) {
 			var id = control.attr("id");
 			
 			// find the image element and add a click handler
-			control.find("img").last().click( function(ev) {
+			control.find(".galleryItem").last().click( function(ev) {
 				var img = this;
 				var details = details || window[id + "details"];
 				if (details) {
 					if (details.onImageClick == "preview") {
-						Gallery_showImage(ev, id, details.allowDelete);
+						Gallery_showImage(ev, id, img, details.allowDelete);
 					} else if (details.onImageClick == "caption") {
 						var index = $(ev.target).index();
 						if (details.captions && details.captions[index]) alert(details.captions[index]);
@@ -462,7 +465,7 @@ function Gallery_removeImage(ev, id, galleryImg) {
 	    // remove the image
 		if (galleryImg) galleryImg.remove();
 		// get the image
-		var img = $(".bigGallery img:visible");
+		var img = $(".bigGallery .galleryItem:visible");
 		// use the event target if we didn't get one from the big gallery
 		if (img.length == 0) img = $(ev.target);
 		// check if Rapid Mobile is present
@@ -478,7 +481,7 @@ function Gallery_removeImage(ev, id, galleryImg) {
 		// get the gallery control
 		var control = $("#" + id);
 		// if there are no images left in the gallery
-		if (control.find("img").length == 0) {
+		if (control.find(".galleryItem").length == 0) {
 			// get the details
 			var details = window[id + "details"];
 			// if there were some details and an emptyText add it to the control
@@ -490,6 +493,10 @@ function Gallery_removeImage(ev, id, galleryImg) {
 		if (imageRemoved) imageRemoved(ev);
 		// resize - usually for any dialogues
 		setTimeout(function() { $(window).resize(); });
+		
+		return true;
+	} else {
+		return false;
 	}
 }
 
@@ -502,9 +509,9 @@ function setNextPrevButton(currentImage, prevButton, nextButton) {
 	prevButton.hide();
 	nextButton.hide();
 	
-	if (currentImage.next("img").length) nextButton.show();
+	if (currentImage.next(".galleryItem").length) nextButton.show();
 	
-	if (currentImage.prev("img").length) prevButton.show();
+	if (currentImage.prev(".galleryItem").length) prevButton.show();
 	
 }
 
@@ -512,7 +519,7 @@ function setNextPrevImgAndButton(currentImage, direction, prevButton, nextButton
 	
 	if (direction == "next") {
 		
-		let nextImage = currentImage.next("img");
+		let nextImage = currentImage.next(".galleryItem");
 		
 		if (nextImage.length) {
 			
@@ -529,7 +536,7 @@ function setNextPrevImgAndButton(currentImage, direction, prevButton, nextButton
 		
 	} else {
 	
-		let prevImage = currentImage.prev("img");
+		let prevImage = currentImage.prev(".galleryItem");
 		
 		if (prevImage.length) {
 			
@@ -548,10 +555,10 @@ function setNextPrevImgAndButton(currentImage, direction, prevButton, nextButton
 	
 }        	
 
-function Gallery_showImage(ev, id, allowDelete) {	
+function Gallery_showImage(ev, id, img, allowDelete) {	
 
 	// get the image
-	var img = $(ev.target);
+	var img = $(img);
 	
 	// look for the big gallery div
 	var gallery = $("div.bigGallery");
@@ -597,7 +604,7 @@ function Gallery_showImage(ev, id, allowDelete) {
 			// Hide the gallery
 			gallery.hide();
 			// Clear the images in the gallery	
-			gallery.children("img").each(function() {
+			gallery.children(".galleryItem").each(function() {
 				// Remove this object
 				$(this).remove();
 			});
@@ -607,7 +614,7 @@ function Gallery_showImage(ev, id, allowDelete) {
 		btnDelete.click(function(ev){
 		
 			// Loop through only the images in the gallery, and get the currently shown img object in the big gallery
-			gallery.children("img").each(function(index, element) {
+			gallery.children(".galleryItem").each(function(index, element) {
 				// get this image
 				var self = $(this);
 				// if it is the one showing
@@ -615,11 +622,11 @@ function Gallery_showImage(ev, id, allowDelete) {
 					// get the source gallery
 					var sourceGallery = $("#" + gallery.attr("data-gallery"));
 					// Find  and delete this image 
-					var img = sourceGallery.children("img").eq(index);
+					var img = sourceGallery.children(".galleryItem").eq(index);
 					// remove from storage
-					Gallery_removeImage(ev, id, img);
+					var removed = Gallery_removeImage(ev, id, img);
 					// hide the gallery
-					gallery.hide();
+					if (removed) gallery.hide();
 					// we're done
 					return false;
 				}
@@ -661,7 +668,7 @@ function Gallery_showImage(ev, id, allowDelete) {
 	
 	// Empty the big gallery
 	// Clear the images in the gallery	
-	gallery.children("img").each(function() {
+	gallery.children(".galleryItem").each(function() {
 		// Remove this object
 		$(this).remove();
 	});
@@ -678,6 +685,7 @@ function Gallery_showImage(ev, id, allowDelete) {
     	// Make a clone of this children to copy into big gallery
     	var self = $(this).clone(); 	
     	self.css({"width":"100%", "height":"100%", "object-fit":"contain", "display":"none"});
+		self.attr("controls", "controls");
     	gallery.append(self);
     	
     	// If clicked img is this image - then show this image
@@ -745,7 +753,7 @@ return details;
 	        <![CDATA[
 var data = {fields:["url"],rows:[]};
 var control = $("#" + id);
-var images = control.children("img");
+var images = control.children(".galleryItem");
 images.each( function(i) {
 	var url = $(this).attr("data-filename");
 	if (!url) url = $(this).attr("src");
@@ -803,12 +811,15 @@ if (data) {
 					if (url.indexOf("data:") == 0) { // if url is a data url
 						
 						var imageRecord = { url: url };
- 							imageRecord.filename = makeFilename(url);
- 							IDBputObject(imageRecord);
+ 						imageRecord.filename = makeFilename(url);
+ 						IDBputObject(imageRecord);
 						addToImageControl(control, imageRecord.filename, imageRecord.url);
 						
+					} else if (url.indexOf("blob:") == 0) { // if object url for video blob
+					
+						addToImageControl(control, url, url, "video");
+						
 					} else { // if url is a filename
-						var fileType = url.match(/\.(\w+)$/)[1];
 						
 						IDBgetByKey(url, function(imageRecord, key) {
 							
@@ -849,7 +860,7 @@ if (data) {
   	} 
 } else {
   	// no data so remove all images
-  	control.find("img").remove();
+  	control.find(".galleryItem").remove();
   	// find the message span
   	var span = control.find("span");
   	// if there wasn't one, add one with the message
@@ -879,10 +890,10 @@ return "#" + this.id;
 	            </getAppliesToFunction>
 	        </style>
 	        <style>
-	            <name>Images</name>  
+	            <name>Items</name>  
 	            <getAppliesToFunction>
 					<![CDATA[	      
-return "#" + this.id + " img";
+return "#" + this.id + " .galleryItem";
 	       			 ]]>	                
 	            </getAppliesToFunction>
 	        </style>
@@ -890,12 +901,12 @@ return "#" + this.id + " img";
 	    
 	   	<initJavaScript>
 	        <![CDATA[
-$("#" + id).children("img").click( function(ev) {
+$("#" + id).children(".galleryItem").click( function(ev) {
 	var details = window[id + "details"];
 	if (details) {
 		// changes here need to be replicated in setData
 		if (details.onImageClick == "preview") {
-			Gallery_showImage(ev, id, details.allowDelete);
+			Gallery_showImage(ev, id, this, details.allowDelete);
 		} else if (details.onImageClick == "caption") {
 			var index = $(ev.target).index();
 			if (details.captions && details.captions[index]) alert(details.captions[index]);
@@ -913,7 +924,7 @@ $("#" + id).children("img").click( function(ev) {
 	   	        <name>Image count</name>
 	   	        <getPropertyFunction>
 			        <![CDATA[
-return $("#" + id).children("img").length;     
+return $("#" + id).children(".galleryItem").length;     
 			        ]]>	  	   	            
 	   	        </getPropertyFunction>
 	   	    </runtimeProperty>
@@ -924,7 +935,7 @@ return $("#" + id).children("img").length;
 			        <![CDATA[
 var urls = "";
 var control = $("#" + id);
-var images = control.children("img");
+var images = control.children(".galleryItem");
 images.each( function(i) {
 	var url = $(this).attr("data-filename");
 	if (!url) url = $(this).attr("src");

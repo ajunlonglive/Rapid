@@ -173,6 +173,20 @@ return "<option value=''>Please select...</option>" + getInputOptions(this.messa
 	        </property>
 	        
 	        <property>
+	            <key>captureMode</key>
+	            <name>Mode</name>
+	            <visible>false</visible>
+	            <setConstructValueFunction>return "closePreview";</setConstructValueFunction>
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	             <getValuesFunction>
+	                <![CDATA[
+return [["closePreview","Close preview"],["keepPreview","Keep preview open"],["showCapture","Show captured image/video"]];
+	                ]]>
+	            </getValuesFunction>
+	            <helpHtml>Sets what to do after an image/video is captured.</helpHtml>
+	        </property>
+	        
+	        <property>
 	            <key>galleryControlId</key>
 	            <name>Gallery control</name>
 	            <visible>false</visible>
@@ -210,6 +224,24 @@ return "<option value=''>Please select...</option>" + getControlOptions(this.gal
 	            <setConstructValueFunction>return true;</setConstructValueFunction>
 	            <changeValueJavaScript>checkbox</changeValueJavaScript>
 	            <helpHtml>Sets whether or not to offer the option of selecting an image from the device.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>remoteSource</key>
+	            <name>Remote</name>
+	            <visible>false</visible>
+	            <setConstructValueFunction>return "false";</setConstructValueFunction>
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>
+	            <helpHtml>Sets whether to capture the device's cameras or another running application.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>imageQuality</key>
+	            <name>Quality (%)</name>
+	            <visible>false</visible>
+	            <setConstructValueFunction>return "50";</setConstructValueFunction>
+	            <changeValueJavaScript>integer</changeValueJavaScript>
+	            <helpHtml>Sets the quality of the image, in percentages. By default it sets the quality to 50% of that of the original.</helpHtml>
 	        </property>
 	        
 	         <property>
@@ -418,10 +450,22 @@ return "<option value=''>Please select...</option><option value ='html'" + (this
 
 .cameraControl {
 	background: black;
-	outline: none; 
-	padding: 14px; 
+	outline: none;
 	border-radius: 50%; 
 	border-color: white;
+    height: 70px;
+    width: 70px;
+    color: #FFF;
+}
+
+.cameraControl + .cameraControl {
+    margin-left: 20px;
+}
+
+#captureCount {
+    font-size: 16px;
+    font-weight: 700;
+    color: #FFF;
 }
 
 .cameraIcon {
@@ -446,6 +490,10 @@ return "<option value=''>Please select...</option><option value ='html'" + (this
 	width:100%; 
 	height:100%; 
 	object-fit:contain;
+}
+
+.btnRecording {
+	background: #800;
 }
 
 	        	</contents>
@@ -519,7 +567,7 @@ function getAvailableCameras() {
 	
 }
 
-function turnOnCamera(galleryControlId, size, quality, cameraSelectImage) {
+function turnOnCamera(galleryControlId, size, quality, cameraSelectImage, mediums, remoteSource, captureMode) {
 	
 	_size = size;
 	_cameraSelectImage = cameraSelectImage;
@@ -530,63 +578,61 @@ function turnOnCamera(galleryControlId, size, quality, cameraSelectImage) {
 		_quality = quality;
 		_cameraPlayer = document.getElementById("cameraPlayer");
 		
-		if (!_cameraPlayer) {
+	    var inputImageHtml = _cameraSelectImage ? "<div style='position:fixed; top:0; width:100%; text-align:center;'><label id='btnInputImage' for='inputImage' class='cameraControlBasic'><i class='fa fa-folder-open cameraIcon' style='margin-left: 2px;'></i></label>"
+							  + "<input type='file' accept='image/*' id='inputImage' style='display:none;'></div>" : "";
+	
+		// Add the divs
+		var cameraPreviewHtml = "<div id='cameraVideoContainer'>"
+							+ "<video id='cameraPlayer' autoplay></video>"
+							+ inputImageHtml
+							+ "<button id='btnToggleCamera' class='cameraControlBasic' style='position:absolute; left:0;'><i class='fa fa-retweet cameraIcon' style='margin-left:-2px;'></i></button>"								  
+							+ "<button id ='btnCloseCamera' class='cameraControlBasic' style='position:absolute; right:0;'><i class='fa fa-times cameraIcon'></i></button>"
+							+ "<div style='position:fixed; bottom:0; width:100%; text-align:center; padding:20px;'>"
+							+ (captureMode === "keepPreview" ? "<p id='captureCount'></p>" : "")
+							+ (mediums.includes('image') ? "<button id ='btnTakePicture' class='cameraControl'><i class='fa fa-camera cameraIcon'></i></button>" : "")
+							+ (mediums.includes('video') ? "<button id ='btnRecordVideo' class='cameraControl'><i class='fa fa-video-camera cameraIcon'></i></button>" : "")
+							+ "</div>"
+							+ "</div>";
 		
-		    var inputImageHtml = _cameraSelectImage ? "<div style='position:fixed; top:0; width:100%; text-align:center;'><label id='btnInputImage' for='inputImage' class='cameraControlBasic'><i class='fa fa-folder-open cameraIcon' style='margin-left: 2px;'></i></label>"
-								  + "<input type='file' accept='image/*' id='inputImage' style='display:none;'></div>" : "";
+		var galleryDetails = window[galleryControlId + "details"];
 		
-			// Add the divs
-			var cameraPreviewHtml = "<div id='cameraVideoContainer'>"
-								  + "<video id='cameraPlayer' autoplay></video>"
-								  + inputImageHtml
-								  + "<button id='btnToggleCamera' class='cameraControlBasic' style='position:absolute; left:0;'><i class='fa fa-retweet cameraIcon' style='margin-left:-2px;'></i></button>"								  
-								  + "<button id ='btnCloseCamera' class='cameraControlBasic' style='position:absolute; right:0;'><i class='fa fa-times cameraIcon'></i></button>"
-								  + "<div style='position:fixed; bottom:0; width:100%; text-align:center; padding:20px;'><button id ='btnTakePicture' class='cameraControl'><i class='fa fa-camera cameraIcon'></i></button></div>"
-								  + "</div>";
-								 
-			$("body").append(cameraPreviewHtml);
-			
-			$("#btnTakePicture").click(takePicture);
-			
-			$("#btnToggleCamera").click(toggleCameraFacing);
-			
-			$("#btnCloseCamera").click(turnOffCamera);
-			
-			$("#btnInputImage").click(turnOffCamera);
-			
-			$("#inputImage").on("change", function(changeEvent) {
-			
-				var galleryDetails = window[galleryControlId + "details"];
-					
-				var fileReader = new FileReader();
+		$("body").append(cameraPreviewHtml);
+		
+		$("#btnToggleCamera").click(toggleCameraFacing);
+		
+		$("#btnCloseCamera").click(turnOffCamera);
+		
+		$("#btnInputImage").click(turnOffCamera);
+		
+		$("#inputImage").on("change", function(changeEvent) {
 				
-				$(fileReader).on("load", function(loadEvent) {
-					
-					var image = new Image();
-					image.src = loadEvent.target.result;
-					
-					$(image).on("load", function(loadEvent) {
-						
-						var imageWidth = loadEvent.target.width;
-						var imageHeight = loadEvent.target.height;
-						
-						// Get a data url of the canvas, containing a representation of the image
-						// Default format type is image/png
-						var dataURL = scaleImageToDataURL(image, image.width, image.height) || image.src;
+			var fileReader = new FileReader();
+			
+			$(fileReader).on("load", function(loadEvent) {
 				
-						// call gallery set data to display image
-						setData_gallery(loadEvent, galleryControlId, "url", galleryDetails, dataURL);
-						
-						$(".inputImagePage").remove();
-					});
+				var image = new Image();
+				image.src = loadEvent.target.result;
+				
+				$(image).on("load", function(loadEvent) {
+					
+					var imageWidth = loadEvent.target.width;
+					var imageHeight = loadEvent.target.height;
+					
+					// Get a data url of the canvas, containing a representation of the image
+					// Default format type is image/png
+					var dataURL = scaleImageToDataURL(image, image.width, image.height) || image.src;
+			
+					// call gallery set data to display image
+					setData_gallery(loadEvent, galleryControlId, "url", galleryDetails, dataURL);
+					
+					$(".inputImagePage").remove();
 				});
-				
-				fileReader.readAsDataURL(this.files[0]);
 			});
-				
-			_cameraPlayer = document.getElementById("cameraPlayer");
-		
-		}
+			
+			fileReader.readAsDataURL(this.files[0]);
+		});
+			
+		_cameraPlayer = document.getElementById("cameraPlayer");
 		
 		_cameraPlayer.setAttribute("data-galleryId",galleryControlId);
 		
@@ -594,53 +640,79 @@ function turnOnCamera(galleryControlId, size, quality, cameraSelectImage) {
 		var constraints = {
 		   video: {facingMode: _currentFacingMode}
 		};
+			
+		// Display the cameraPlayer
+		$("#cameraVideoContainer").show();
+		
+		var getStream =
+			remoteSource ? function() { return navigator.mediaDevices.getDisplayMedia(); } :
+			function() { return navigator.mediaDevices.getUserMedia(constraints); };
 
 		// Obtain the user media object
-		navigator.mediaDevices.getUserMedia(constraints)
+		getStream()
 		.then(function(stream) {
+			
 			// Use the stream
 			// Now attach the video stream to the video element and auto play
 			_cameraPlayer.srcObject = stream;
 			
+			if (!$("#cameraVideoContainer").length) {
+				turnOffCamera();
+				return;
+			}
+			
+			$("#btnTakePicture").click(function() {
+				capureMedia(takePicture(), captureMode);
+			});
+			
+			if ($("#btnRecordVideo").length) btnRecordVideo.onclick = function() {
+				recordVideo(stream, function(data) {
+					capureMedia(data, captureMode);
+				});
+			};
+			
+			$("#btnPause").click(function(ev) {
+				pauseCamera(ev, galleryControlId, galleryDetails);
+			});
+			
 			// Get all the available cameras into global array
 			getAvailableCameras();
-			
-		    // Wait for the loadedmetadata event, before displaying the cameraDiv
-			_cameraPlayer.onloadedmetadata = function() {
-				// Display the cameraPlayer
-				$("#cameraVideoContainer").show();
-			};
 		})
 		.catch(function(err) {
+			// Close the preview
+			$("#cameraVideoContainer").remove();
 			// Handle the error
-			//alert("Not allowed: " + err);
 			console.log(err.name + ": " + err.message);
-			selectImage(galleryControlId, _size);
+			if (source === "camera") selectImage(galleryControlId, _size);
 		});
 		
 	} else {
 	
+		$("#cameraVideoContainer").remove();
 		//alert("getUserMedia() is not supported by your browser");
 		console.log("getUserMedia() is not supported by your browser");
-		selectImage(galleryControlId, _size);
+		if (source === "camera") selectImage(galleryControlId, _size);
 	}
 	
 }
 
-function turnOffCamera () {
+function turnOffCamera() {
 
 	if (hasGetUserMedia()) {
+		// Close the preview
+		$("#cameraVideoContainer").remove();
+		
 		// Stop all video streams attached to the video element
-		_cameraPlayer.srcObject.getVideoTracks().forEach(function(track){
-			// Close the preview
-			$("#cameraVideoContainer").hide();
-			track.stop();
-		});
+		if (_cameraPlayer && _cameraPlayer.srcObject && _cameraPlayer.srcObject.getVideoTracks) {
+			_cameraPlayer.srcObject.getVideoTracks().forEach(function(track){
+				track.stop();
+			});
+		}
 	}
 	
 }
 
-function stopCameraStream () {
+function stopCameraStream() {
 
 	if (hasGetUserMedia()) {
 		// Stop all video streams attached to the video element
@@ -741,12 +813,34 @@ function selectImage(galleryControlId, size) {
 	});
 }
 
-function takePicture (ev) {
+function capureMedia(data, captureMode) {
+	
+	var galleryControlId = _cameraPlayer.getAttribute("data-galleryId");
+	var galleryDetails = window[galleryControlId + "details"];
+	
+	if (captureMode === "keepPreview") {
+		
+		var captureCount = parseInt($("#captureCount").text() || 0);
+		$("#captureCount").text(captureCount + 1);
+		setData_gallery(data.ev, galleryControlId, "url", galleryDetails, data.dataURL);
+		
+	} else if (captureMode === "showCapture") {
+		
+		setData_gallery(data.ev, galleryControlId, "url", galleryDetails, data.dataURL);
+		var img = $("#" + galleryControlId).find(".galleryItem").last();
+		Gallery_showImage(data.ev, galleryControlId, img, true);
+		
+	} else { // send captured media to gallery and close preview
+		
+		setData_gallery(data.ev, galleryControlId, "url", galleryDetails, data.dataURL);
+		turnOffCamera();
+		
+	}
+}
+
+function takePicture(ev) {
 	
 	if (hasGetUserMedia()) {
-		
-		var galleryControlId = _cameraPlayer.getAttribute("data-galleryId");
-		var galleryDetails = window[galleryControlId + "details"];
 		
 		// Get the intrinsic width and height of the videoplayer
 		var vWidth = _cameraPlayer.videoWidth;
@@ -756,14 +850,41 @@ function takePicture (ev) {
 		// Default format type is image/png
 		var dataURL = scaleImageToDataURL(_cameraPlayer, _cameraPlayer.videoWidth, _cameraPlayer.videoHeight);
 		
-		// Turn-off the camera
-		turnOffCamera();
-		
-		// call gallery set data to display image
-		setData_gallery(ev, galleryControlId, "url", galleryDetails, dataURL);
-		
+		return { dataURL, ev };
 	}
+}
+
+function recordVideo(stream, callback) {
 	
+	var chunks = [];
+	
+	var mediaRecorder = new MediaRecorder(stream, { mimeType: "video/webm" });
+	mediaRecorder.start();
+	
+	$("#btnRecordVideo").addClass("btnRecording");
+	
+	btnRecordVideo.onclick = function() {
+		$("#btnRecordVideo").removeClass("btnRecording");
+		mediaRecorder.stop();
+	};
+	
+	mediaRecorder.onstop = function(ev) {
+		var blob = new Blob(chunks, { type: "video/webm" });
+		var dataURL = URL.createObjectURL(blob);
+		callback({ dataURL, ev });
+		/*
+		var reader = new FileReader();
+		reader.onloadend = function() {
+			var dataURL = reader.result;
+			callback({ dataURL, ev });
+		};
+		reader.readAsDataURL(blob);
+		*/
+	};
+	
+	mediaRecorder.ondataavailable = function(ev) {
+		chunks.push(ev.data);
+	};
 }
 
 function toggleCameraFacing () {
@@ -777,7 +898,7 @@ function toggleCameraFacing () {
 		}
 		
 		stopCameraStream ();
-		turnOnCamera(_galleryControlId, _size, _quality);
+		turnOnCamera(_galleryControlId, _size, _quality, 'camera', false);
 		
 	}
 

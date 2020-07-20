@@ -5558,7 +5558,7 @@ function Property_scrollbars(cell, propertyObject, property, details) {
 }
 
 // possible mobileActionType values used by the mobileActionType property
-var _mobileActionTypes = [["dial","Dial number"],["sms","Send text/sms message"],["email","Send email"],["url","Open url"],["addImage","Get image"],["selectImage","Select image"],["uploadImages","Upload images"],["addBarcode","Scan barcode"],["navigate","Navigate to"],["sendGPS","Send GPS position"],["stopGPS","Stop GPS updates"],["message","Status bar message"],["disableBackButton","Disable back button"],["swipe","Swipe"],["online","Online actions"]];
+var _mobileActionTypes = [["dial","Dial number"],["sms","Send text/sms message"],["email","Send email"],["url","Open url"],["addImage","Get image"],["addVideo","Get video"],["addImageVideo","Get image or video"],["selectImage","Select image"],["uploadImages","Upload images"],["addBarcode","Scan barcode"],["navigate","Navigate to"],["sendGPS","Send GPS position"],["stopGPS","Stop GPS updates"],["message","Status bar message"],["disableBackButton","Disable back button"],["swipe","Swipe"],["online","Online actions"]];
 
 // this property changes the visibility of other properties according to the chosen type
 function Property_mobileActionType(cell, mobileAction, property, details) {
@@ -5592,6 +5592,8 @@ function Property_mobileActionType(cell, mobileAction, property, details) {
 	setPropertyVisibilty(mobileAction, "galleryControlId", false);
 	setPropertyVisibilty(mobileAction, "imageMaxSize", false);
 	setPropertyVisibilty(mobileAction, "imageQuality", false);
+	setPropertyVisibilty(mobileAction, "remoteSource", false);
+	setPropertyVisibilty(mobileAction, "captureMode", false);
 	setPropertyVisibilty(mobileAction, "cameraSelectImage", false);
 	setPropertyVisibilty(mobileAction, "galleryControlIds", false);
 	setPropertyVisibilty(mobileAction, "barcodeDestinations", false);
@@ -5635,11 +5637,13 @@ function Property_mobileActionType(cell, mobileAction, property, details) {
 			setPropertyVisibilty(mobileAction, "urlControlId", true);
 			setPropertyVisibilty(mobileAction, "urlField", true);
 		break;
-		case "addImage" :
+		case "addImage" : case "addVideo" : case "addImageVideo" :
 			setPropertyVisibilty(mobileAction, "galleryControlId", true);
 			setPropertyVisibilty(mobileAction, "imageMaxSize", true);
 			setPropertyVisibilty(mobileAction, "imageQuality", true);
 			setPropertyVisibilty(mobileAction, "cameraSelectImage", true);
+			setPropertyVisibilty(mobileAction, "remoteSource", true);
+			setPropertyVisibilty(mobileAction, "captureMode", true);
 		break;
 		case "selectImage" :
 			setPropertyVisibilty(mobileAction, "galleryControlId", true);
