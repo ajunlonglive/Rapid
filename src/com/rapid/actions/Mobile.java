@@ -502,7 +502,7 @@ public class Mobile extends Action {
 					js += "// url control " + urlControlId + " not found\n";
 				}
 
-			} else if ("addImage".equals(type)) {
+			} else if ("addImage".equals(type) || "addVideo".equals(type) || "addImageVideo".equals(type)) {
 
 				// get the gallery control Id
 				String galleryControlId = getProperty("galleryControlId");
@@ -515,9 +515,18 @@ public class Mobile extends Action {
 					int maxSize = Integer.parseInt(getProperty("imageMaxSize"));
 					int quality = Integer.parseInt(getProperty("imageQuality"));
 					Boolean cameraSelectImage = Boolean.parseBoolean(getProperty("cameraSelectImage"));
+					String remoteSource = getProperty("remoteSource");
+					String captureMode = getProperty("captureMode");
+					
+					String mediums =
+							"addImage".equals(type) ? "['image']" :
+							"addVideo".equals(type) ? "['video']" :
+							"addImageVideo".equals(type) ? "['image','video']" :
+							"[]";
+					
 					// mobile check, use
 					js += "if (typeof _rapidmobile == 'undefined') {\n"
-						+ "  turnOnCamera('" + galleryControlId + "'," + maxSize + "," + quality + "," + cameraSelectImage + ");\n"
+						+ "  turnOnCamera('" + galleryControlId + "'," + maxSize + "," + quality + "," + cameraSelectImage + ", " + mediums + ", " + remoteSource + ", '" + captureMode + "');\n"
 						+ "} else {\n";
 					js += "  _rapidmobile.addImage('" + galleryControlId + "'," + maxSize + "," + quality + ");\n";
 					// close mobile check
