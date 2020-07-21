@@ -244,6 +244,15 @@ return "<option value=''>Please select...</option>" + getControlOptions(this.gal
 	            <helpHtml>Sets the quality of the image, in percentages. By default it sets the quality to 50% of that of the original.</helpHtml>
 	        </property>
 	        
+	        <property>
+	            <key>videoMaxDuration</key>
+	            <name>Max duration (sec)</name>
+	            <visible>false</visible>
+	            <setConstructValueFunction>return "";</setConstructValueFunction>
+	            <changeValueJavaScript>integer</changeValueJavaScript>
+	            <helpHtml>Sets the maximum number of seconds a video can last.</helpHtml>
+	        </property>
+	        
 	         <property>
 	            <key>galleryControlIds</key>
 	            <name>Controls</name>
@@ -493,7 +502,7 @@ return "<option value=''>Please select...</option><option value ='html'" + (this
 }
 
 .btnRecording {
-	background: #800;
+	background: #A00;
 }
 
 	        	</contents>
@@ -567,7 +576,43 @@ function getAvailableCameras() {
 	
 }
 
-function turnOnCamera(galleryControlId, size, quality, cameraSelectImage, mediums, remoteSource, captureMode) {
+var camera = {
+	getStream() {
+		return navigator.mediaDevices.getUserMedia(constraints);
+	},
+	turnOffCamera() {
+		if (hasGetUserMedia()) {
+			// Close the preview
+			$("#cameraVideoContainer").remove();
+			
+			// Stop all video streams attached to the video element
+			if (_cameraPlayer && _cameraPlayer.srcObject && _cameraPlayer.srcObject.getVideoTracks) {
+				_cameraPlayer.srcObject.getVideoTracks().forEach(function(track){
+					track.stop();
+				});
+			}
+		}
+	}
+};
+
+var remote = {
+	stream: undefined,
+	getStream() {
+		if (this.stream) {
+			return this.stream;
+		} else {
+			return this.stream = navigator.mediaDevices.getDisplayMedia()
+		}
+	},
+	turnOffCamera() {
+		if (hasGetUserMedia()) {
+			// Close the preview
+			$("#cameraVideoContainer").remove();
+		}
+	}
+};
+
+function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelectImage, mediums, remoteSource, captureMode) {
 	
 	_size = size;
 	_cameraSelectImage = cameraSelectImage;
@@ -594,15 +639,17 @@ function turnOnCamera(galleryControlId, size, quality, cameraSelectImage, medium
 							+ "</div>"
 							+ "</div>";
 		
+		var source = remoteSource ? remote : camera;
+		
 		var galleryDetails = window[galleryControlId + "details"];
 		
 		$("body").append(cameraPreviewHtml);
 		
 		$("#btnToggleCamera").click(toggleCameraFacing);
 		
-		$("#btnCloseCamera").click(turnOffCamera);
+		$("#btnCloseCamera").click(source.turnOffCamera);
 		
-		$("#btnInputImage").click(turnOffCamera);
+		$("#btnInputImage").click(source.turnOffCamera);
 		
 		$("#inputImage").on("change", function(changeEvent) {
 				
@@ -643,13 +690,9 @@ function turnOnCamera(galleryControlId, size, quality, cameraSelectImage, medium
 			
 		// Display the cameraPlayer
 		$("#cameraVideoContainer").show();
-		
-		var getStream =
-			remoteSource ? function() { return navigator.mediaDevices.getDisplayMedia(); } :
-			function() { return navigator.mediaDevices.getUserMedia(constraints); };
 
 		// Obtain the user media object
-		getStream()
+		source.getStream()
 		.then(function(stream) {
 			
 			// Use the stream
@@ -657,17 +700,19 @@ function turnOnCamera(galleryControlId, size, quality, cameraSelectImage, medium
 			_cameraPlayer.srcObject = stream;
 			
 			if (!$("#cameraVideoContainer").length) {
-				turnOffCamera();
+				source.turnOffCamera();
 				return;
 			}
 			
 			$("#btnTakePicture").click(function() {
-				capureMedia(takePicture(), captureMode);
+				capureMedia(takePicture(), captureMode, source);
 			});
 			
+			var bitsPerSecond = (quality / 100) * (2500000 + 128000);
+			
 			if ($("#btnRecordVideo").length) btnRecordVideo.onclick = function() {
-				recordVideo(stream, function(data) {
-					capureMedia(data, captureMode);
+				recordVideo(stream, bitsPerSecond, maxDuration, function(data) {
+					capureMedia(data, captureMode, source);
 				});
 			};
 			
@@ -692,22 +737,6 @@ function turnOnCamera(galleryControlId, size, quality, cameraSelectImage, medium
 		//alert("getUserMedia() is not supported by your browser");
 		console.log("getUserMedia() is not supported by your browser");
 		if (source === "camera") selectImage(galleryControlId, _size);
-	}
-	
-}
-
-function turnOffCamera() {
-
-	if (hasGetUserMedia()) {
-		// Close the preview
-		$("#cameraVideoContainer").remove();
-		
-		// Stop all video streams attached to the video element
-		if (_cameraPlayer && _cameraPlayer.srcObject && _cameraPlayer.srcObject.getVideoTracks) {
-			_cameraPlayer.srcObject.getVideoTracks().forEach(function(track){
-				track.stop();
-			});
-		}
 	}
 	
 }
@@ -813,7 +842,7 @@ function selectImage(galleryControlId, size) {
 	});
 }
 
-function capureMedia(data, captureMode) {
+function capureMedia(data, captureMode, source) {
 	
 	var galleryControlId = _cameraPlayer.getAttribute("data-galleryId");
 	var galleryDetails = window[galleryControlId + "details"];
@@ -833,7 +862,7 @@ function capureMedia(data, captureMode) {
 	} else { // send captured media to gallery and close preview
 		
 		setData_gallery(data.ev, galleryControlId, "url", galleryDetails, data.dataURL);
-		turnOffCamera();
+		source.turnOffCamera();
 		
 	}
 }
@@ -854,32 +883,28 @@ function takePicture(ev) {
 	}
 }
 
-function recordVideo(stream, callback) {
+function recordVideo(stream, bitsPerSecond, maxDuration, callback) {
 	
 	var chunks = [];
 	
-	var mediaRecorder = new MediaRecorder(stream, { mimeType: "video/webm" });
+	var mediaRecorder = new MediaRecorder(stream, { mimeType: "video/webm", bitsPerSecond });
 	mediaRecorder.start();
 	
 	$("#btnRecordVideo").addClass("btnRecording");
 	
-	btnRecordVideo.onclick = function() {
+	function stopRecording() {
 		$("#btnRecordVideo").removeClass("btnRecording");
 		mediaRecorder.stop();
 	};
+	
+	btnRecordVideo.onclick = stopRecording;
+	
+	if (maxDuration) setTimeout(stopRecording, maxDuration * 1000);
 	
 	mediaRecorder.onstop = function(ev) {
 		var blob = new Blob(chunks, { type: "video/webm" });
 		var dataURL = URL.createObjectURL(blob);
 		callback({ dataURL, ev });
-		/*
-		var reader = new FileReader();
-		reader.onloadend = function() {
-			var dataURL = reader.result;
-			callback({ dataURL, ev });
-		};
-		reader.readAsDataURL(blob);
-		*/
 	};
 	
 	mediaRecorder.ondataavailable = function(ev) {
