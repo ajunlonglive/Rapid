@@ -151,7 +151,6 @@ public class Maths extends Action {
      	if (_inputs != null) {
      		if ("custom".equals(operation)) {
      	     	String customOperation = getProperty("customOperation");
-     	     	customOperation = "try { " + customOperation + " } catch (ex) { alert('Error in maths action operation: ' + ex); }";
      	     	customOperation = customOperation.replace("'", "\\'");
      	     	
      	     	String arguments = "";
