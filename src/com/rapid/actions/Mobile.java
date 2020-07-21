@@ -514,6 +514,7 @@ public class Mobile extends Action {
 				} else {
 					int maxSize = Integer.parseInt(getProperty("imageMaxSize"));
 					int quality = Integer.parseInt(getProperty("imageQuality"));
+					int maxDuration = Integer.parseInt(getProperty("videoMaxDuration"));
 					Boolean cameraSelectImage = Boolean.parseBoolean(getProperty("cameraSelectImage"));
 					String remoteSource = getProperty("remoteSource");
 					String captureMode = getProperty("captureMode");
@@ -526,7 +527,7 @@ public class Mobile extends Action {
 					
 					// mobile check, use
 					js += "if (typeof _rapidmobile == 'undefined') {\n"
-						+ "  turnOnCamera('" + galleryControlId + "'," + maxSize + "," + quality + "," + cameraSelectImage + ", " + mediums + ", " + remoteSource + ", '" + captureMode + "');\n"
+						+ "  turnOnCamera('" + galleryControlId + "'," + maxSize + "," + quality + "," + maxDuration + "," + cameraSelectImage + ", " + mediums + ", " + remoteSource + ", '" + captureMode + "');\n"
 						+ "} else {\n";
 					js += "  _rapidmobile.addImage('" + galleryControlId + "'," + maxSize + "," + quality + ");\n";
 					// close mobile check

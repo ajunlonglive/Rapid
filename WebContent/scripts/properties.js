@@ -5592,6 +5592,7 @@ function Property_mobileActionType(cell, mobileAction, property, details) {
 	setPropertyVisibilty(mobileAction, "galleryControlId", false);
 	setPropertyVisibilty(mobileAction, "imageMaxSize", false);
 	setPropertyVisibilty(mobileAction, "imageQuality", false);
+	setPropertyVisibilty(mobileAction, "videoMaxDuration", false);
 	setPropertyVisibilty(mobileAction, "remoteSource", false);
 	setPropertyVisibilty(mobileAction, "captureMode", false);
 	setPropertyVisibilty(mobileAction, "cameraSelectImage", false);
@@ -5637,10 +5638,27 @@ function Property_mobileActionType(cell, mobileAction, property, details) {
 			setPropertyVisibilty(mobileAction, "urlControlId", true);
 			setPropertyVisibilty(mobileAction, "urlField", true);
 		break;
-		case "addImage" : case "addVideo" : case "addImageVideo" :
+		case "addImage" :
 			setPropertyVisibilty(mobileAction, "galleryControlId", true);
 			setPropertyVisibilty(mobileAction, "imageMaxSize", true);
 			setPropertyVisibilty(mobileAction, "imageQuality", true);
+			setPropertyVisibilty(mobileAction, "cameraSelectImage", true);
+			setPropertyVisibilty(mobileAction, "remoteSource", true);
+			setPropertyVisibilty(mobileAction, "captureMode", true);
+		break;
+		case "addVideo" :
+			setPropertyVisibilty(mobileAction, "galleryControlId", true);
+			setPropertyVisibilty(mobileAction, "imageQuality", true);
+			setPropertyVisibilty(mobileAction, "cameraSelectImage", true);
+			setPropertyVisibilty(mobileAction, "videoMaxDuration", true);
+			setPropertyVisibilty(mobileAction, "remoteSource", true);
+			setPropertyVisibilty(mobileAction, "captureMode", true);
+		break;
+		case "addImageVideo" :
+			setPropertyVisibilty(mobileAction, "galleryControlId", true);
+			setPropertyVisibilty(mobileAction, "imageMaxSize", true);
+			setPropertyVisibilty(mobileAction, "imageQuality", true);
+			setPropertyVisibilty(mobileAction, "videoMaxDuration", true);
 			setPropertyVisibilty(mobileAction, "cameraSelectImage", true);
 			setPropertyVisibilty(mobileAction, "remoteSource", true);
 			setPropertyVisibilty(mobileAction, "captureMode", true);
