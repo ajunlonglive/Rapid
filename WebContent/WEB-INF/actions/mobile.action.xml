@@ -218,6 +218,15 @@ return "<option value=''>Please select...</option>" + getControlOptions(this.gal
 	        </property>
 	        
 	        <property>
+	            <key>videoMaxDuration</key>
+	            <name>Max duration (sec)</name>
+	            <visible>false</visible>
+	            <setConstructValueFunction>return "";</setConstructValueFunction>
+	            <changeValueJavaScript>integer</changeValueJavaScript>
+	            <helpHtml>Sets the maximum number of seconds a video can last.</helpHtml>
+	        </property>
+	        
+	        <property>
 	            <key>cameraSelectImage</key>
 	            <name>Option to select</name>
 	            <visible>false</visible>
@@ -233,24 +242,6 @@ return "<option value=''>Please select...</option>" + getControlOptions(this.gal
 	            <setConstructValueFunction>return "false";</setConstructValueFunction>
 	            <changeValueJavaScript>checkbox</changeValueJavaScript>
 	            <helpHtml>Sets whether to capture the device's cameras or another running application.</helpHtml>
-	        </property>
-	        
-	        <property>
-	            <key>imageQuality</key>
-	            <name>Quality (%)</name>
-	            <visible>false</visible>
-	            <setConstructValueFunction>return "50";</setConstructValueFunction>
-	            <changeValueJavaScript>integer</changeValueJavaScript>
-	            <helpHtml>Sets the quality of the image, in percentages. By default it sets the quality to 50% of that of the original.</helpHtml>
-	        </property>
-	        
-	        <property>
-	            <key>videoMaxDuration</key>
-	            <name>Max duration (sec)</name>
-	            <visible>false</visible>
-	            <setConstructValueFunction>return "";</setConstructValueFunction>
-	            <changeValueJavaScript>integer</changeValueJavaScript>
-	            <helpHtml>Sets the maximum number of seconds a video can last.</helpHtml>
 	        </property>
 	        
 	         <property>
@@ -576,11 +567,11 @@ function getAvailableCameras() {
 	
 }
 
-var camera = {
+var _mobileCamera = {
 	getStream() {
 		return navigator.mediaDevices.getUserMedia(constraints);
 	},
-	turnOffCamera() {
+	close() {
 		if (hasGetUserMedia()) {
 			// Close the preview
 			$("#cameraVideoContainer").remove();
@@ -595,7 +586,7 @@ var camera = {
 	}
 };
 
-var remote = {
+var _mobileRemote = {
 	stream: undefined,
 	getStream() {
 		if (this.stream) {
@@ -604,7 +595,7 @@ var remote = {
 			return this.stream = navigator.mediaDevices.getDisplayMedia()
 		}
 	},
-	turnOffCamera() {
+	close() {
 		if (hasGetUserMedia()) {
 			// Close the preview
 			$("#cameraVideoContainer").remove();
@@ -639,7 +630,7 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 							+ "</div>"
 							+ "</div>";
 		
-		var source = remoteSource ? remote : camera;
+		var source = remoteSource ? _mobileRemote : _mobileCamera;
 		
 		var galleryDetails = window[galleryControlId + "details"];
 		
@@ -647,9 +638,9 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 		
 		$("#btnToggleCamera").click(toggleCameraFacing);
 		
-		$("#btnCloseCamera").click(source.turnOffCamera);
+		$("#btnCloseCamera").click(source.close);
 		
-		$("#btnInputImage").click(source.turnOffCamera);
+		$("#btnInputImage").click(source.close);
 		
 		$("#inputImage").on("change", function(changeEvent) {
 				
@@ -700,7 +691,7 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 			_cameraPlayer.srcObject = stream;
 			
 			if (!$("#cameraVideoContainer").length) {
-				source.turnOffCamera();
+				source.close();
 				return;
 			}
 			
@@ -862,7 +853,7 @@ function capureMedia(data, captureMode, source) {
 	} else { // send captured media to gallery and close preview
 		
 		setData_gallery(data.ev, galleryControlId, "url", galleryDetails, data.dataURL);
-		source.turnOffCamera();
+		source.close();
 		
 	}
 }
@@ -899,7 +890,7 @@ function recordVideo(stream, bitsPerSecond, maxDuration, callback) {
 	
 	btnRecordVideo.onclick = stopRecording;
 	
-	if (maxDuration) setTimeout(stopRecording, maxDuration * 1000);
+	if (maxDuration > 0) setTimeout(stopRecording, maxDuration * 1000);
 	
 	mediaRecorder.onstop = function(ev) {
 		var blob = new Blob(chunks, { type: "video/webm" });
