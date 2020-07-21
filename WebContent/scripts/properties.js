@@ -128,7 +128,7 @@ function getDateTimeValueOptions(selectId) {
 }
 
 // different system properties for inputs
-var _systemValues = ["app id","app version","parameter", "page id","page name","page title","user name","device","online","mobile","mobile version","true","false","null","empty","field"];
+var _systemValues = ["app id","app version","parameter", "page id","page name","page title","user name","user description", "device","online","mobile","mobile version","true","false","null","empty","field"];
 
 // this function returns system values
 function getSystemValueOptions(selectId) {

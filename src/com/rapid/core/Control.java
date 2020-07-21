@@ -515,6 +515,11 @@ public class Control {
 						// if rapid mobile and the getUserName method is present use that, otherwise use the in-page variable
 						return "(typeof _rapidmobile == 'undefined' ? _userName : (_rapidmobile.getUserName ? _rapidmobile.getUserName() : _userName))";
 
+					} else if ("user description".equals(type)) {
+
+						// if rapid mobile and the getUserDescription method is present use that, otherwise use the in-page variable
+						return "(typeof _rapidmobile == 'undefined' ? _userDescription : (_rapidmobile.getUserDescription ? _rapidmobile.getUserDescription() : _userDescription))";
+
 					} else if ("empty".equals(type)) {
 
 						// empty equates to null
