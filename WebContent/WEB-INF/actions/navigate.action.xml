@@ -344,23 +344,11 @@ function Action_navigate(url, dialogue, dismissibleDialogue, id, popup) {
 		           	dialogue = body.append("<div id='" + id + "' class='dialogue' style='position:fixed;z-index:1001;'></div>").children().last(); 
 		           	
 					if (dismissibleDialogue) {
-						history.replaceState("pre-dialogue" + id, "");
-						history.pushState("dialogue" + id, "");
-						
-						var popListener = function(event) {
-							if (event.state === "pre-dialogue" + id) {
-								dialogue.remove();
-								dialogueCover.remove();
-							} else if (event.state === "dialogue" + id) {
-								removeEventListener("popstate", popListener);
-								Action_navigate(url, dialogue, dismissibleDialogue, id, popup);
-							}
-						};
-						
-						window.addEventListener("popstate", popListener);
-						
-						dialogueCover.on("click", function() { history.back() });
-					}
+		           	    dialogueCover.on("click", function() {
+		           	        dialogue.remove();
+		           	        $(this).remove();
+		           	    })
+		           	}
 		           	
 		           	// make sure it's hidden
 		           	dialogue.css("visibility","hidden");
