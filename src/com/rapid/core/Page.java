@@ -698,9 +698,9 @@ public class Page {
 		}
 		return _dialoguePageIds;
 	}
-	
+
 	private JSONArray getEventsJSON(List<Event> events) throws JSONException {
-		
+
 		// an array of events
 		JSONArray jsonEvents = new JSONArray();
 		// loop them
@@ -737,9 +737,9 @@ public class Page {
 				}
 			}
 		}
-		
+
 		return jsonEvents;
-		
+
 	}
 
 	// iterative function for building a flat JSONArray of controls that can be used on other pages, will also add events if including from a dialogue
@@ -856,14 +856,14 @@ public class Page {
 	public JSONArray getOtherPageComponents(RapidHttpServlet rapidServlet, boolean includePageVisibiltyControls, boolean includeFromDialogue) throws JSONException {
 		// the list of controls we're about to return
 		JSONArray controls = new JSONArray();
-		
+
 		if (includeFromDialogue) {
 			// make a JSON object with what we need about this page
 			JSONObject jsonPageControl = new JSONObject();
 			jsonPageControl.put("id", _id);
 			jsonPageControl.put("type", "page");
 			jsonPageControl.put("name", _name);
-			
+
 			// if we have events, add them too
 			if (_events != null && _events.size() > 0) {
 				// an array of events and actions in JSON
@@ -880,7 +880,7 @@ public class Page {
 		// return the components
 		return controls;
 	}
-	
+
 	// used to turn either a page or control style into text for the css file
 	public String getStyleCSS(Style style) {
 		// start the text we are going to return
@@ -1401,11 +1401,14 @@ public class Page {
 		if (download) {
 			// just write RapidMobile
 			//writer.write("var _userName = 'RapidMobile';\n");
+			//writer.write("var _userName = 'RapidDescription';\n");
 			// print user - the above is turned off for now until enough people download Rapid Mobile 2.4.1.3 which can send the authenticated user
 			if (user != null) writer.write("var _userName = '" + user.getName() + "';\n");
+			if (user != null) writer.write("var _userDescription = '" + user.getDescription() + "';\n");
 		} else {
 			// print user
 			if (user != null) writer.write("var _userName = '" + user.getName() + "';\n");
+			if (user != null) writer.write("var _userDescription = '" + user.getDescription() + "';\n");
 			// get app page variables
 			List<String> pageVariables = application.getPageVariables(rapidRequest.getRapidServlet().getServletContext());
 			// if we got some
@@ -1426,6 +1429,7 @@ public class Page {
 				writer.write("var _pageVariables_" + _id + " = " + jsonPageVariables + ";\n");
 			}
 		}
+		if (user != null) writer.write("var _userRoles = " + new JSONArray(user.getRoles()) + ";\n");
 		// close js
 		writer.write("    </script>\n");
 	}
