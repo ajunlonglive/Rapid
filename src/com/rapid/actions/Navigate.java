@@ -134,24 +134,31 @@ public class Navigate extends Action {
 			} else if ("C".equals(rapidPage)) {
 				// close window
 				js = "window.close();\n";
-			} else{
+			} else {
 				// assume we want the index page
 				String url = ".";
-				// if its the logout
+				// if it's the logout
 				if ("L".equals(rapidPage)) {
 					// get the logout from the session
 					url = (String) rapidRequest.getSessionAttribute(FormAuthenticationAdapter.SESSION_VARIABLE_LOGOUT_PATH);
 					// if there wasn't one, set to default
 					if  (url == null) url = FormAuthenticationAdapter.LOGOUT_PATH;
 				}
-				// set the js, including optional popup
+				// if it's the password update
+				if ("P".equals(rapidPage)) {
+					// get the logout from the session
+					url = (String) rapidRequest.getSessionAttribute(FormAuthenticationAdapter.SESSION_VARIABLE_PASSWORDUPDATE_PATH);
+					// if there wasn't one, set to default
+					if  (url == null) url = FormAuthenticationAdapter.UPDATE_PATH;
+				}
+				// set the js
 				js = "Action_navigate('" + url + "', false, null, false);\n";
 			}
 
 		} else if ("PR".equals(navigationType)) {
-			
+
 			js = "window.print();\n";
-			
+
 		} else {
 
 			// this code only for type == P

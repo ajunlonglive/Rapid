@@ -112,7 +112,7 @@ return [["P","Page"],["U","URL"],["R","Rapid"],["PR","Printer"]];
 	            <changeValueJavaScript>navigateRapid</changeValueJavaScript>
 	            <getValuesFunction>
 // return the types	            
-return [["I","Main menu"],["L","Logout"],["B","Back"],["C","Close"]];
+return [["I","Main menu"],["L","Logout"],["P","Change password"],["B","Back"],["C","Close"]];
 				</getValuesFunction>
 	            <refreshProperties>true</refreshProperties>
 	            <helpHtml>Main menu is the index page. Both the index page and logout page can be set by custom logins.</helpHtml>
