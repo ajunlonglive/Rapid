@@ -28,14 +28,19 @@ package com.rapid.actions;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletContext;
 
@@ -771,7 +776,11 @@ public class Database extends Action {
 				jsonData = actionCache.get(application.getId(), getId(), parametersList.toString());
 
 			}
-
+			
+			// unmap numbered numbered parameters
+			parametersList.set(0, unmappedParameters(sql, parametersList.get(0)));
+			sql = sql.replaceAll("\\?\\d*", "\\?");
+			
 			// if there isn't a cache or no data was retrieved
 			if (jsonData == null) {
 
@@ -1158,6 +1167,50 @@ public class Database extends Action {
 
 	}
 
+	public static Parameters unmappedParameters(String sql, Parameters oldParameters) throws SQLException {
+		
+		Matcher matcher = Pattern.compile("\\?\\d*").matcher(sql);
+		
+		Parameters newParameters = new Parameters();
+		
+		Set<Integer> oldParametersNumbers = new HashSet<>();
+		for (int number = 1; number <= oldParameters.size(); number++) {
+			oldParametersNumbers.add(number);
+		}
+		Set<String> newParametersSet = new HashSet<>();
+		
+		int unspecifiedSlots = 0;
+		while (matcher.find()) {
+			String slot = matcher.group();
+			newParametersSet.add(slot);
+			
+			int parameterIndex = unspecifiedSlots;
+			if (slot.length() == 1) {
+				unspecifiedSlots++;
+			} else {
+				parameterIndex = Integer.parseInt(slot.substring(1)) - 1;
+			}
+			
+			if (parameterIndex < oldParameters.size()) {
+				newParameters.add(oldParameters.get(parameterIndex));
+				oldParametersNumbers.remove(parameterIndex + 1);
+			} else {
+				throw new SQLException("Parameter " + (parameterIndex + 1) + " not provided in inputs list");
+			}
+		}
+		
+		if (oldParametersNumbers.size() > 0) {
+			String s = newParametersSet.size() > 1 ? "s" : "";
+			throw new SQLException("SQL has " + newParametersSet.size() + " parameter" + s + ", " + oldParameters.size() + " provided");
+		}
+		
+		if (oldParameters.size() > newParameters.size()) {
+			return oldParameters;
+		} else {
+			return newParameters;
+		}
+	}
+	
 	@Override
 	public JSONObject doAction(RapidRequest rapidRequest, JSONObject jsonAction) throws Exception {
 
@@ -1171,7 +1224,7 @@ public class Database extends Action {
 		Page page = rapidRequest.getPage();
 
 		// fetch in the sequence
-		int sequence = jsonAction.optInt("sequence",1);
+		int sequence = jsonAction.optInt("sequence", 1);
 
 		// place holder for the object we're going to return
 		JSONObject jsonData = null;

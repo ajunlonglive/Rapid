@@ -67,6 +67,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.rapid.actions.Database;
 import com.rapid.actions.Logic;
 import com.rapid.actions.Logic.Condition;
 import com.rapid.core.Action;
@@ -1991,6 +1992,9 @@ public class Designer extends RapidHttpServlet {
 											parameters = new Parameters();
 											// populate it with nulls
 											for (int i = 0; i < jsonInputs.length(); i++) parameters.addNull();
+											
+											parameters = Database.unmappedParameters(sql, parameters);
+											sql = sql.replaceAll("\\?\\d*", "\\?");
 
 										}
 
