@@ -1177,12 +1177,10 @@ public class Database extends Action {
 		for (int number = 1; number <= oldParameters.size(); number++) {
 			oldParametersNumbers.add(number);
 		}
-		Set<String> newParametersSet = new HashSet<>();
 		
 		int unspecifiedSlots = 0;
 		while (matcher.find()) {
 			String slot = matcher.group();
-			newParametersSet.add(slot);
 			
 			int parameterIndex = unspecifiedSlots;
 			if (slot.length() == 1) {
@@ -1200,8 +1198,8 @@ public class Database extends Action {
 		}
 		
 		if (oldParametersNumbers.size() > 0) {
-			String s = newParametersSet.size() > 1 ? "s" : "";
-			throw new SQLException("SQL has " + newParametersSet.size() + " parameter" + s + ", " + oldParameters.size() + " provided");
+			int firstUnusedInputNumber = oldParametersNumbers.iterator().next();
+			throw new SQLException("Input " + firstUnusedInputNumber + " not used");
 		}
 		
 		if (oldParameters.size() > newParameters.size()) {
