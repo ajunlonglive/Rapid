@@ -47,6 +47,7 @@ import com.rapid.server.RapidRequest;
 import com.rapid.server.filter.RapidFilter;
 import com.rapid.utils.Comparators;
 import com.rapid.utils.JAXB.EncryptedXmlAdapter;
+import com.rapid.utils.JAXB.FalseXmlAdapter;
 
 /*
 
@@ -91,7 +92,7 @@ public abstract class SecurityAdapter {
 
 		public List<String> getNames() {
 			// a list of strings
-			List<String> names = new ArrayList<String>();
+			List<String> names = new ArrayList<>();
 			// loop entries and add names
 			for (Role role : this) {
 				// get the role name
@@ -193,6 +194,7 @@ public abstract class SecurityAdapter {
 		public UserRoles getRoles() { return _userRoles; }
 		public void setRoles(UserRoles roles) { _userRoles = roles; }
 
+		@XmlJavaTypeAdapter(type=boolean.class, value=FalseXmlAdapter.class )
 		public boolean getIsLocked() { return _isLocked; }
 		public void setIsLocked(boolean isLocked) { _isLocked = isLocked; }
 
@@ -255,7 +257,7 @@ public abstract class SecurityAdapter {
 			if (deviceDetails != null) {
 
 				// a map to hold of all values found
-				Map<String,String> deviceValues = new HashMap<String,String>();
+				Map<String,String> deviceValues = new HashMap<>();
 				// split the various device attributes by a comma (IMEI, MAC, etc)
 				String[] deviceAttributes = deviceDetails.split(",");
 				// loop the attributes
@@ -336,7 +338,7 @@ public abstract class SecurityAdapter {
 
 		public List<String> getNames() {
 			// a list of strings
-			List<String> names = new ArrayList<String>();
+			List<String> names = new ArrayList<>();
 			// loop entries and add names
 			for (User user : this) names.add(user.getName());
 			// return
@@ -473,6 +475,18 @@ public abstract class SecurityAdapter {
 	public abstract boolean checkUserPassword(RapidRequest rapidRequest, String userName, String password) throws SecurityAdapaterException;
 
 	// public methods
+
+	// checks that userName and key go together
+	public boolean checkKey(RapidRequest rapidRequest, String userName, String key)  {
+		// most cases this will be true
+		return true;
+	}
+
+	// an overload to the abstract updateUser above for backwards compatibility
+	public void updateUser(RapidRequest rapidRequest, User user, String key) throws SecurityAdapaterException {
+		// check the key before updating, default implementation is true
+        if (checkKey(rapidRequest, user.getName(), key)) updateUser(rapidRequest, user);
+	 }
 
 	// check a passwords for whether it is complex enough
 	public boolean checkPasswordComplexity(RapidRequest rapidRequest, String password) {

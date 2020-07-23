@@ -8,9 +8,9 @@ gareth.edwards@rapid-is.co.uk
 This file is part of the Rapid Application Platform
 
 Rapid is free software: you can redistribute it and/or modify
-it under the terms of the GNU Affero General Public License as 
-published by the Free Software Foundation, either version 3 of the 
-License, or (at your option) any later version. The terms require you 
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version. The terms require you
 to include the original copyright, and the license notice in all redistributions.
 
 This program is distributed in the hope that it will be useful,
@@ -33,15 +33,15 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 import com.rapid.utils.Encryption.EncryptionProvider;
 
 public class JAXB {
-	
+
 	public static class EncryptedXmlAdapter extends XmlAdapter<String, String> {
-				
+
 		private EncryptionProvider _encryptionProvider;
-		
+
 		public EncryptedXmlAdapter(EncryptionProvider encryptionProvider) {
 			_encryptionProvider = encryptionProvider;
 		}
-		
+
 	    @Override
 	    public String unmarshal(String s) throws GeneralSecurityException, IOException {
 	    	if (s == null) {
@@ -50,7 +50,7 @@ public class JAXB {
         		return s;
         	} else {
         		return _encryptionProvider.decrypt(s);
-        	}			
+        	}
 	    }
 
 	    @Override
@@ -63,6 +63,20 @@ public class JAXB {
         		return _encryptionProvider.encrypt(s);
         	}
 	    }
+	}
+
+	public static class FalseXmlAdapter extends XmlAdapter<String, Boolean> {
+
+		@Override
+		public Boolean unmarshal(String v) throws Exception {
+			return false;
+		}
+
+		@Override
+		public String marshal(Boolean v) throws Exception {
+			// TODO Auto-generated method stub
+			return "false";
+		}
 	}
 
 }

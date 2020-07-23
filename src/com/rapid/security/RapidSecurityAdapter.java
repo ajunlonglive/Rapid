@@ -28,6 +28,7 @@ package com.rapid.security;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,19 +76,41 @@ public class RapidSecurityAdapter extends SecurityAdapter {
 
 	}
 
+	public static class LockCount {
+
+		private int _count;
+		private long _time;
+
+		public LockCount() {
+			_time = new Date().getTime();
+			_count = 1;
+		}
+
+		public int inc() {
+			return _count ++;
+		}
+
+		public boolean isExpired() {
+			return (new Date().getTime() - _time) > 300000;
+		}
+
+	}
+
 	// instance variables
 
 	private static Logger _logger = LogManager.getLogger(RapidSecurityAdapter.class);
 	private Marshaller _marshaller;
 	private Unmarshaller _unmarshaller;
 	private Security _security;
-	private Map<String, Integer> failedPasswordCheckAttempts = new HashMap<>();
+	private Map<String, LockCount> _failedPasswordCheckAttempts;
 
 	// constructor
 
 	public RapidSecurityAdapter(ServletContext servletContext, Application application) {
 		// call the super method which retains the context and application
 		super(servletContext, application);
+		// init the lock map
+		_failedPasswordCheckAttempts = new HashMap<>();
 		// init the marshaller and ununmarshaller
 		try {
 			JAXBContext jaxb = JAXBContext.newInstance(Security.class);
@@ -293,7 +316,7 @@ public class RapidSecurityAdapter extends SecurityAdapter {
 		// get this user name
 		String userName = user.getName();
 		// users to remove - their may be more than one for legacy reasons
-		List<User> removeUsers = new ArrayList<User>();
+		List<User> removeUsers = new ArrayList<>();
 		// loop the users looking for anyone with the same name as the current user
 		for (User u : users) if (u.getName().equalsIgnoreCase(userName)) {
 			// remember to remove this user
@@ -413,6 +436,14 @@ public class RapidSecurityAdapter extends SecurityAdapter {
 
 		// check we got a user
 		if (user != null) {
+
+			if (_failedPasswordCheckAttempts.containsKey(userName)) {
+				if (_failedPasswordCheckAttempts.get(userName).isExpired()) {
+					user.setIsLocked(false);
+					_failedPasswordCheckAttempts.remove(userName);
+				};
+			}
+
 			// if we were provided with a password and their're not locked
 			if (password != null && !user.getIsLocked()) {
 				// if the password matches
@@ -436,11 +467,19 @@ public class RapidSecurityAdapter extends SecurityAdapter {
 
 			// if we passed
 			if (pass)
-				failedPasswordCheckAttempts.remove(userName);
+				// remove any locks
+				_failedPasswordCheckAttempts.remove(userName);
 			else {
-				Integer failedCount = 0;
-				if (failedPasswordCheckAttempts.containsKey(userName)) failedCount = failedPasswordCheckAttempts.get(userName) + 1;
-				failedPasswordCheckAttempts.put(userName, failedCount);
+				// start with having not failed yet
+				int failedCount = 0;
+				// if we have an entry for this lock count
+				if (_failedPasswordCheckAttempts.containsKey(userName)) {
+					// increment the lock count
+					failedCount = _failedPasswordCheckAttempts.get(userName).inc();
+				} else {
+					// add a new lock count at 1
+					_failedPasswordCheckAttempts.put(userName, new LockCount());
+				}
 				if (failedCount >= 5) {
 					user.setIsLocked(true);
 					updateUser(rapidRequest, user);
