@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2018 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -106,5 +106,92 @@ public class JSON {
 		return strings;
 
 	}
+	
+	public static class JSONData {
 
+		private Fields _fields;
+		private JSONArray _rows;
+		
+		public static class Fields {
+			
+			private JSONArray _fields;
+			
+			Fields(JSONArray fields) throws Exception {
+				_fields = fields;
+			}
+			
+			public int indexOf(Object field) throws Exception {
+				for (int fieldIndex = 0; fieldIndex < _fields.length(); fieldIndex++) {
+					if (field.equals(_fields.get(fieldIndex))) {
+						return fieldIndex;
+					}
+				}
+				throw new Exception("Field was not found in fields.");
+			}
+			
+			public int length() {
+				return _fields.length();
+			}
+		}
+		
+		public static class Row {
+			
+			private Fields _fields;
+			private JSONArray _row;
+			
+			Row(Fields fields, JSONArray row) throws Exception {
+				_fields = fields;
+				_row = row;
+				
+				if (_fields.length() != _row.length()) {
+					throw new Exception("Fields and row are of different length");
+				}
+			}
+			
+			public int length() {
+				return _fields.length();
+			}
+			
+			public String getString(String field) throws Exception {
+				return _row.getString(_fields.indexOf(field));
+			}
+			
+			public JSONObject getJSONObject(String field) throws Exception {
+				return _row.getJSONObject(_fields.indexOf(field));
+			}
+			
+			public JSONData getJSONTable(String field) throws Exception {
+				return new JSONData(getJSONObject(field));
+			}
+		}
+		
+		public JSONData(JSONObject jsonObject) throws Exception {
+			
+			_fields = new Fields(jsonObject.getJSONArray("fields"));
+			_rows = jsonObject.getJSONArray("rows");
+			
+			for (int rowIndex = 0; rowIndex < rowCount(); rowIndex++) {
+				int rowCellCount = getRow(rowIndex).length();
+				if (rowCellCount != columnCount()) {
+					throw new Exception("Row " + rowIndex + " has " + rowCellCount + " cells in a table of " + columnCount() + " columns.");
+				}
+			}
+		}
+		
+		public JSONData(String json) throws Exception {
+			this(new JSONObject(json));
+		}
+		
+		public Row getRow(int rowIndex) throws Exception {
+			return new Row(_fields, _rows.getJSONArray(rowIndex));
+		}
+		
+		public int columnCount() throws JSONException {
+			return _fields.length();
+		}
+		
+		public int rowCount() throws JSONException {
+			return _rows.length();
+		}
+	}
 }
