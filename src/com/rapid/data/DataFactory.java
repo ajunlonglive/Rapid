@@ -509,6 +509,13 @@ public class DataFactory {
 		return _preparedStatement;
 
 	}
+	
+	public PreparedStatement getPreparedStatement(RapidRequest rapidRequest, String sql, Object... parameters) throws SQLException, ClassNotFoundException, ConnectionAdapterException  {
+
+		Parameters params = new Parameters(parameters);
+
+		return getPreparedStatement(rapidRequest, sql, params);
+	}
 
 	public ResultSet getPreparedResultSet(RapidRequest rapidRequest, String sql, List<Parameter> parameters) throws SQLException, ClassNotFoundException, ConnectionAdapterException {
 
@@ -518,9 +525,7 @@ public class DataFactory {
 
 	public ResultSet getPreparedResultSet(RapidRequest rapidRequest, String sql, Object... parameters) throws SQLException, ClassNotFoundException, ConnectionAdapterException {
 
-		Parameters params = new Parameters(parameters);
-
-		return getFirstResultSet(getPreparedStatement(rapidRequest, sql, params));
+		return getFirstResultSet(getPreparedStatement(rapidRequest, sql, parameters));
 
 	}
 
