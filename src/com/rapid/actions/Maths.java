@@ -151,7 +151,7 @@ public class Maths extends Action {
      	if (_inputs != null) {
      		if ("custom".equals(operation)) {
      	     	String customOperation = getProperty("customOperation");
-     	     	customOperation = customOperation.replace("'", "\\'");
+     	     	customOperation = customOperation.replace("'", "\\'").replace('"', '\"').replace("\\", "\\\\").replace("\n", "");
      	     	
      	     	String arguments = "";
      	     	String parameters = "";
@@ -177,9 +177,11 @@ public class Maths extends Action {
      				}
      			}
      	     	
+     			String functionName = "window[\"customMaths" + getId() + "\"]";
+     			
      			js += "try {\n";
-     			js += "    var operation = new Function(" + parameters + "'" + customOperation + "');\n";
-     			js += "    data = operation(" + arguments + ");\n";
+     			js += "    " + functionName + " = " + functionName + " || new Function(" + parameters + "'" + customOperation + "');\n";
+     			js += "    data = " + functionName + "(" + arguments + ");\n";
      			js += "} catch (ex) {\n";
      			js += "    alert('Error in maths action: ' + ex);\n";
      			js += "}\n";
