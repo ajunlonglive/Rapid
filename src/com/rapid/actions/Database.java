@@ -779,13 +779,13 @@ public class Database extends Action {
 			
 			// unmap numbered numbered parameters
 			parametersList.set(0, unmappedParameters(sql, parametersList.get(0)));
-			String[] stringParts = sql.split("\'");
-			sql = stringParts[0];
+			String[] stringParts = sql.split("'");
+			sql = stringParts[0].replaceAll("\\?\\d*", "\\?");
 			for (int partIndex = 1; partIndex < stringParts.length; partIndex++) {
 				if (partIndex % 2 == 0) {
-					sql += "\'" + stringParts[partIndex];
+					sql += "'" + stringParts[partIndex].replaceAll("\\?\\d*", "\\?");
 				} else {
-					sql += "\'" + stringParts[partIndex].replaceAll("\\?\\d*", "\\?");
+					sql += "'" + stringParts[partIndex];
 				}
 			}
 			
