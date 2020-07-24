@@ -779,6 +779,7 @@ public class Database extends Action {
 			
 			// unmap numbered numbered parameters
 			parametersList.set(0, unmappedParameters(sql, parametersList.get(0)));
+			sql = sql + " ";
 			String[] stringParts = sql.split("'");
 			sql = stringParts[0].replaceAll("\\?\\d*", "\\?");
 			for (int partIndex = 1; partIndex < stringParts.length; partIndex++) {

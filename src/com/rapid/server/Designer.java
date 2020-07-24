@@ -1994,6 +1994,7 @@ public class Designer extends RapidHttpServlet {
 											for (int i = 0; i < jsonInputs.length(); i++) parameters.addNull();
 											
 											parameters = Database.unmappedParameters(sql, parameters);
+											sql = sql + " ";
 											String[] stringParts = sql.split("'");
 											sql = stringParts[0].replaceAll("\\?\\d*", "\\?");
 											for (int partIndex = 1; partIndex < stringParts.length; partIndex++) {
