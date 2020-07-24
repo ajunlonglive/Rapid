@@ -25,6 +25,9 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
 package com.rapid.utils;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -109,38 +112,15 @@ public class JSON {
 	
 	public static class JSONData {
 
-		private Fields _fields;
+		private JSONArray _fields;
+		private Map<String, Integer> _fieldIndexes = new HashMap<String, Integer>();
 		private JSONArray _rows;
 		
-		public static class Fields {
-			
-			private JSONArray _fields;
-			
-			Fields(JSONArray fields) throws Exception {
-				_fields = fields;
-			}
-			
-			public int indexOf(Object field) throws Exception {
-				for (int fieldIndex = 0; fieldIndex < _fields.length(); fieldIndex++) {
-					if (field.equals(_fields.get(fieldIndex))) {
-						return fieldIndex;
-					}
-				}
-				throw new Exception("Field was not found in fields.");
-			}
-			
-			public int length() {
-				return _fields.length();
-			}
-		}
-		
-		public static class Row {
-			
-			private Fields _fields;
+		public class Row {
 			private JSONArray _row;
 			
-			Row(Fields fields, JSONArray row) throws Exception {
-				_fields = fields;
+			Row(JSONArray row) throws Exception {
+				
 				_row = row;
 				
 				if (_fields.length() != _row.length()) {
@@ -152,23 +132,39 @@ public class JSON {
 				return _fields.length();
 			}
 			
+			public Boolean getBoolean(String field) throws Exception {
+				return _row.getBoolean(_fieldIndexes.get(field));
+			}
+			
+			public int getInt(String field) throws Exception {
+				return _row.getInt(_fieldIndexes.get(field));
+			}
+			
+			public double getDouble(String field) throws Exception {
+				return _row.getDouble(_fieldIndexes.get(field));
+			}
+			
 			public String getString(String field) throws Exception {
-				return _row.getString(_fields.indexOf(field));
+				return _row.getString(_fieldIndexes.get(field));
 			}
 			
 			public JSONObject getJSONObject(String field) throws Exception {
-				return _row.getJSONObject(_fields.indexOf(field));
+				return _row.getJSONObject(_fieldIndexes.get(field));
 			}
 			
-			public JSONData getJSONTable(String field) throws Exception {
+			public JSONData getJSONData(String field) throws Exception {
 				return new JSONData(getJSONObject(field));
 			}
 		}
 		
 		public JSONData(JSONObject jsonObject) throws Exception {
 			
-			_fields = new Fields(jsonObject.getJSONArray("fields"));
+			_fields = jsonObject.getJSONArray("fields");
 			_rows = jsonObject.getJSONArray("rows");
+
+			for (int fieldIndex = 0; fieldIndex < _fields.length(); fieldIndex++) {
+				_fieldIndexes.put(_fields.getString(fieldIndex), fieldIndex);
+			}
 			
 			for (int rowIndex = 0; rowIndex < rowCount(); rowIndex++) {
 				int rowCellCount = getRow(rowIndex).length();
@@ -183,7 +179,7 @@ public class JSON {
 		}
 		
 		public Row getRow(int rowIndex) throws Exception {
-			return new Row(_fields, _rows.getJSONArray(rowIndex));
+			return new Row(_rows.getJSONArray(rowIndex));
 		}
 		
 		public int columnCount() throws JSONException {
