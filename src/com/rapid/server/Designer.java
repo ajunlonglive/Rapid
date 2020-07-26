@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2018 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -1994,8 +1994,16 @@ public class Designer extends RapidHttpServlet {
 											for (int i = 0; i < jsonInputs.length(); i++) parameters.addNull();
 											
 											parameters = Database.unmappedParameters(sql, parameters);
-											sql = sql.replaceAll("\\?\\d*", "\\?");
-
+											sql = sql + " ";
+											String[] stringParts = sql.split("'");
+											sql = stringParts[0].replaceAll("\\?\\d*", "\\?");
+											for (int partIndex = 1; partIndex < stringParts.length; partIndex++) {
+												if (partIndex % 2 == 0) {
+													sql += "'" + stringParts[partIndex].replaceAll("\\?\\d*", "\\?");
+												} else {
+													sql += "'" + stringParts[partIndex];
+												}
+											}
 										}
 
 										// check outputs (unless a child query)

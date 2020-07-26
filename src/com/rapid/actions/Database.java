@@ -779,7 +779,16 @@ public class Database extends Action {
 			
 			// unmap numbered numbered parameters
 			parametersList.set(0, unmappedParameters(sql, parametersList.get(0)));
-			sql = sql.replaceAll("\\?\\d*", "\\?");
+			sql = sql + " ";
+			String[] stringParts = sql.split("'");
+			sql = stringParts[0].replaceAll("\\?\\d*", "\\?");
+			for (int partIndex = 1; partIndex < stringParts.length; partIndex++) {
+				if (partIndex % 2 == 0) {
+					sql += "'" + stringParts[partIndex].replaceAll("\\?\\d*", "\\?");
+				} else {
+					sql += "'" + stringParts[partIndex];
+				}
+			}
 			
 			// if there isn't a cache or no data was retrieved
 			if (jsonData == null) {
@@ -1168,6 +1177,12 @@ public class Database extends Action {
 	}
 
 	public static Parameters unmappedParameters(String sql, Parameters oldParameters) throws SQLException {
+		
+		String[] stringParts = sql.split("'");
+		sql = "";
+		for (int partIndex = 0; partIndex < stringParts.length; partIndex += 2) {
+			sql += stringParts[partIndex];
+		}
 		
 		Matcher matcher = Pattern.compile("\\?\\d*").matcher(sql);
 		
