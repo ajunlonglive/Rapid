@@ -93,6 +93,15 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	        </property>
 	        
 	        <property>
+	            <key>placeholder</key>
+	            <name>Placeholder</name>
+	            <setConstructValueFunction>return "";</setConstructValueFunction>
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets a faded message so users can better understand what to select. Gets erased when search starts.</helpHtml>
+	        </property>
+	        
+	        <property>
 	            <key>filter</key>
 	            <name>Searching</name>
 	            <changeValueJavaScript>checkbox</changeValueJavaScript>
@@ -275,13 +284,27 @@ if (this.options || this.valueList) {
 			}
 		}
 	}
+	// add placeholder
+	if (this.placeholder) {
+		html += "<option value='' selected='true' disabled='disabled'>" + this.placeholder + "</option>";
+	}
 	// loop the options
 	for (var i in options) {
+		html += "<option ";
+		if (codes) {
+			html += "value='" + escapeApos(options[i].value) + "'";
+			if (escapeApos(this.value) == options[i].value) html += " selected='selected'";
+		} else {
+			if (escapeApos(this.value) == options[i].text) html += " selected='selected'";
+		}
+		html += ">" + options[i].text + "</option>"; 
+		/*
 		if (codes) {
 			html += "<option value='" + escapeApos(options[i].value) + "'" + (escapeApos(this.value) == escapeApos(options[i].value) ? " selected='selected'" : "") + ">" + options[i].text + "</option>";
 		} else {
 			html += "<option" + (escapeApos(this.value) == options[i].text ? " selected='selected'" : "") + ">" + options[i].text + "</option>";
 		}
+		*/
 	}
 }
 // place into the select
@@ -303,7 +326,7 @@ if (this.responsiveLabel) {
 	    
 	    <getDetailsFunction>
 	    	<![CDATA[
-if (this.filter) return {codes:this.codes,filter:this.filter,customValue:this.customValue,maxLength:this.maxLength};
+if (this.filter) return {codes:this.codes, filter:this.filter, placeholder:this.placeholder, customValue:this.customValue, maxLength:this.maxLength};
 			]]>
 	    </getDetailsFunction>
 	    
@@ -528,6 +551,8 @@ if (details && details.filter) {
               input.autocomplete( "widget" ).hide();
               return;
             }
+            // if showing placeholder empty
+            if (details.placeholder && details.placeholder == input.val()) input.val("").removeClass("placeholder");
             // Pass empty string as value to search for, displaying all results
             input.autocomplete( "search", "" );
           });
@@ -543,6 +568,9 @@ if (details && details.filter) {
           },
           autocompletechange: "_changed"
         });
+        
+        if (details.placeholder) this.input.val(details.placeholder).addClass("placeholder");
+        
       },
       
       _createShowAllButton: function() {
@@ -575,7 +603,7 @@ if (details && details.filter) {
             text = " ";
             value = "";
           }
-          if (!request.term || matcher.test(text)) {
+          if ((!request.term || matcher.test(text)) && !(details.placeholder && details.placeholder == text)) {
             return {
               label: text,
               value: text,
@@ -590,24 +618,34 @@ if (details && details.filter) {
         if (!ui.item) {
 	        // Search for a match (case-insensitive)
 	        var value = this.input.val(), valueLowerCase = value.toLowerCase(), valid = false;
-	        this.element.children( "option" ).each( function() {
+	        this.element.children( "option:not([disabled])" ).each( function() {
 	          if ( $(this).text().toLowerCase() === valueLowerCase ) {
 	            this.selected = valid = true;
 	            return false;
 	          }
 	        });
-	        // if not valid
-	        if (!valid) {
-	          // if custom values are off
-	          if (details.codes || !details.customValue) {
-		        // Remove invalid value
-		        this.input.val( "" )
-		        this.element.val( "" );
-		        this.input.autocomplete( "instance" ).term = "";
-		      }
-		      // fire the change event for the cleanup, or custom value - getData method will need enhancing to retrieve custom value
-		      $( "#" + id).trigger("change");
-		    }
+	        // check valid
+			if (valid) {
+				// remove placeholder class
+				if (details.placeholder) this.input.removeClass("placeholder");
+			} else {
+				// if custom values are off
+				if (details.codes || !details.customValue) {
+					// if there is a placeholder
+					if (details.placeholder) {
+						// add placeholder back
+						this.input.val( details.placeholder );
+						this.input.addClass("placeholder");
+					} else {
+						this.input.val( "" );
+					}
+					// Remove invalid value
+					this.element.val( "" );
+					this.input.autocomplete( "instance" ).term = "";
+				}
+				// fire the change event for the cleanup, or custom value
+				$( "#" + id).trigger("change");
+			}
 	     }
       },
  
@@ -615,6 +653,7 @@ if (details && details.filter) {
         this.wrapper.remove();
         this.element.show();
       }
+      
     });
  
     $( "#" + id + "input" ).combobox();
