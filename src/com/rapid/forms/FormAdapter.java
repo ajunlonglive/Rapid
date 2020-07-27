@@ -29,7 +29,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
@@ -58,9 +57,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.PDPageContentStream.AppendMode;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
-import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.encoding.WinAnsiEncoding;
@@ -1798,17 +1795,17 @@ public abstract class FormAdapter {
 	}
 
 	// this writes the form pdf to an Output stream
-	protected static final float FONT_SIZE_HEADER1 = 14;
-	protected static final float FONT_SIZE_HEADER2 = 12;
-	protected static final float FONT_SIZE = 12;
-	protected static final float MARGIN_LEFT = 20;
-	protected static final float MARGIN_TOP = 10;
-	protected static final float MARGIN_RIGHT = 20;
-	protected static final float MARGIN_BOTTOM = 10;
-	protected static final float MARGIN_HEADER_BOTTOM = 10;
-	protected static final float MARGIN_SECTION_BOTTOM = 5;
-	protected static final float MARGIN_TEXT_BOTTOM = 3;
-	protected static final float MARGIN_GRID_COLUMN = 5;
+	protected float FONT_SIZE_HEADER1 = 14;
+	protected float FONT_SIZE_HEADER2 = 12;
+	protected float FONT_SIZE = 12;
+	protected float MARGIN_LEFT = 20;
+	protected float MARGIN_TOP = 10;
+	protected float MARGIN_RIGHT = 20;
+	protected float MARGIN_BOTTOM = 10;
+	protected float MARGIN_HEADER_BOTTOM = 10;
+	protected float MARGIN_SECTION_BOTTOM = 5;
+	protected float MARGIN_TEXT_BOTTOM = 3;
+	protected float MARGIN_GRID_COLUMN = 5;
 
 	protected float getFontHeight(PDFont font, float fontSize) {
 		return (float) (font.getFontDescriptor().getFontBoundingBox().getHeight() / 1000 * fontSize * 0.865);
@@ -1849,43 +1846,6 @@ public abstract class FormAdapter {
 		return file;
 	}
 
-	protected PDPage _template;
-
-	protected PDPage getNewPage(RapidRequest rapidRequest, PDDocument document) throws InvalidPasswordException, IOException {
-
-		// get the application
-		Application application = rapidRequest.getApplication();
-		// if we got one and haven't loaded the template yet
-		if (application != null && _template == null) {
-			// look for a template.pdf.logo parameter
-			String template = application.getParameterValue("form.pdf.template");
-			// if we got one
-			if (template != null) {
-				// get a file for it
-				File templateFile = new File(getAppFilePath(rapidRequest, template));
-				// if it exists
-				if (templateFile.exists()) {
-					// load the template
-					_template = PDDocument.load(templateFile).getPage(0);
-				}
-			}
-		}
-
-		// make a new page from the template
-		PDPage p = _template;
-
-		// if we didn't get a page from a template
-		if (p == null) {
-			// make a new page
-			p = new PDPage(PDRectangle.A4);
-			// add page to document
-			document.addPage(p);
-		}
-
-		return p;
-
-	}
-
 	// remove any non-printable characters
 	public String cleanString(String string) {
 
@@ -1901,29 +1861,69 @@ public abstract class FormAdapter {
 
 	public void writeFormPDF(RapidRequest rapidRequest, OutputStream outputStream, String formId, boolean email) throws Exception {
 
-		// make a new document
-		PDDocument document = new PDDocument();
-
-		// add a page
-		PDPage p = getNewPage(rapidRequest, document);
-
-		// Start a new content stream which will "hold" the content we are making
-		PDPageContentStream cs = null;
-
-		// if we have a template we are appending which has a different mode
-		if (_template == null) {
-			// Start a new content stream which will "hold" the content we are making
-			cs = new PDPageContentStream(document, p);
-		} else {
-			// Start a new content stream which will "hold" the content we are making
-			cs = new PDPageContentStream(document, p, AppendMode.APPEND, true);
-		}
-
 		// get the application
 		Application application = rapidRequest.getApplication();
 
-		// if we got one
+		// check we got an application
 		if (application != null) {
+
+			// get and set any parameter values
+			String paramFontHeader1Size = application.getParameterValue("form.pdf.font.header1.size");
+			if (paramFontHeader1Size != null) FONT_SIZE_HEADER1 = Float.parseFloat(paramFontHeader1Size);
+			String paramFontHeader2Size = application.getParameterValue("form.pdf.font.header2.size");
+			if (paramFontHeader2Size != null) FONT_SIZE_HEADER2 = Float.parseFloat(paramFontHeader2Size);
+			String paramFontSize = application.getParameterValue("form.pdf.font.size");
+			if (paramFontSize != null) FONT_SIZE = Float.parseFloat(paramFontSize);
+
+			String paramMarginTop = application.getParameterValue("form.pdf.margin.top");
+			if (paramMarginTop != null) MARGIN_TOP = Float.parseFloat(paramMarginTop);
+			String paramMarginBottom = application.getParameterValue("form.pdf.margin.bottom");
+			if (paramMarginBottom != null) MARGIN_BOTTOM = Float.parseFloat(paramMarginBottom);
+			String paramMarginLeft = application.getParameterValue("form.pdf.margin.left");
+			if (paramMarginLeft != null) MARGIN_LEFT = Float.parseFloat(paramMarginLeft);
+			String paramMarginRight = application.getParameterValue("form.pdf.margin.right");
+			if (paramMarginRight != null) MARGIN_RIGHT = Float.parseFloat(paramMarginRight);
+
+			String paramMarginHeader = application.getParameterValue("form.pdf.margin.header");
+			if (paramMarginHeader != null) MARGIN_HEADER_BOTTOM = Float.parseFloat(paramMarginHeader);
+			String paramMarginSection = application.getParameterValue("form.pdf.margin.section");
+			if (paramMarginSection != null) MARGIN_SECTION_BOTTOM = Float.parseFloat(paramMarginSection);
+			String paramMarginText = application.getParameterValue("form.pdf.margin.text");
+			if (paramMarginText != null) MARGIN_TEXT_BOTTOM = Float.parseFloat(paramMarginText);
+			String paramMarginGrid = application.getParameterValue("form.pdf.margin.grid");
+			if (paramMarginGrid != null) MARGIN_GRID_COLUMN = Float.parseFloat(paramMarginGrid);
+
+			// our document
+			PDDocument document = null;
+
+			// our page
+			PDPage p = null;
+
+			// our page content stream
+			PDPageContentStream cs = null;
+
+			String template = application.getParameterValue("form.pdf.template");
+			// if we got one
+			if (template != null) {
+				// get a file for it
+				File templateFile = new File(getAppFilePath(rapidRequest, template));
+				// if it exists
+				if (templateFile.exists()) {
+					// load the template into our document
+					document = PDDocument.load(templateFile);
+					// get the first page for the template
+					p = document.getPage(0);
+					// make an ammendable content stream
+					cs = new PDPageContentStream(document, p, PDPageContentStream.AppendMode.APPEND, true, true);
+				}
+			} else {
+				// standard empty document
+				document = new PDDocument();
+				// make a new blank page
+				p = new PDPage(PDRectangle.A4);
+				// make new content stream
+				cs = new PDPageContentStream(document, p);
+			}
 
 			// Create a new font object selecting one of the PDF base fonts
 			PDFont fontBold = PDType1Font.HELVETICA_BOLD;
@@ -2281,21 +2281,21 @@ public abstract class FormAdapter {
 
 			// check there is space for the submitted details
 			if (y + getFontHeight(fontBold, FONT_SIZE) + MARGIN_SECTION_BOTTOM > h) {
-				p = getNewPage(rapidRequest, document);
+				p = new PDPage(PDRectangle.A4);
 				cs.close();
 				cs = new PDPageContentStream(document, p);
 				y = MARGIN_TOP;
 			}
 
+			// Make sure that the content stream is closed:
+			cs.close();
+
+			// write to response output stream
+			document.save(outputStream);
+			// close
+			document.close();
+
 		} // application check
-
-		// Make sure that the content stream is closed:
-		cs.close();
-
-		// write to response output stream
-		document.save(outputStream);
-		// close
-		document.close();
 
 	}
 
@@ -2510,7 +2510,7 @@ public abstract class FormAdapter {
 	protected void populateControlParametersMap(RapidRequest rapidRequest, String string) {
 
 		// make a new parameters map - this will be emptied each time the app is saved in Rapid Admin as the form adapter is re-initalised
-		if (_ControlParametersMap == null) _ControlParametersMap = new HashMap<String,String>();
+		if (_ControlParametersMap == null) _ControlParametersMap = new HashMap<>();
 
 		// get any startPos
 		int startPos = string.indexOf("[[");
