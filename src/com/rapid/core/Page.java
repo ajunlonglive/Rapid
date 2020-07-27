@@ -1858,6 +1858,9 @@ public class Page {
 							// set whether submitted
 							formValues.append("var _formSubmitted = " + formDetails.getSubmitted() + ";\n\n");
 
+							// set form page type
+							formValues.append("var _formPageType = " + this.getFormPageType() + ";\n\n");
+
 							// start the form values object (to supply previous form values)
 							formValues.append("var _formValues = {");
 
