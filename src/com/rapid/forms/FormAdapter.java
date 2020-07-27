@@ -29,6 +29,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
@@ -57,7 +58,9 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.PDPageContentStream.AppendMode;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.encoding.WinAnsiEncoding;
@@ -1723,13 +1726,24 @@ public abstract class FormAdapter {
 	protected static final float MARGIN_TOP = 10;
 	protected static final float MARGIN_RIGHT = 20;
 	protected static final float MARGIN_BOTTOM = 10;
-	protected static final float MARGIN_HEADER_BOTTOM = 5;
-	protected static final float MARGIN_SECTION_BOTTOM = 3;
-	protected static final float MARGIN_TEXT_BOTTOM = 2;
+	protected static final float MARGIN_HEADER_BOTTOM = 10;
+	protected static final float MARGIN_SECTION_BOTTOM = 5;
+	protected static final float MARGIN_TEXT_BOTTOM = 3;
 	protected static final float MARGIN_GRID_COLUMN = 5;
 
 	protected float getFontHeight(PDFont font, float fontSize) {
 		return (float) (font.getFontDescriptor().getFontBoundingBox().getHeight() / 1000 * fontSize * 0.865);
+	}
+
+	protected String getAppFilePath(RapidRequest rapidRequest, String file) {
+		// check for /
+		if (file.contains("/")) {
+			// update with context
+			return rapidRequest.getRequest().getServletContext().getRealPath("/") + file;
+		} else {
+			// prefix with path for app
+			return rapidRequest.getApplication().getWebFolder(rapidRequest.getRequest().getServletContext()) + "/" + file;
+		}
 	}
 
 	protected File getPDFLogoFile(RapidRequest rapidRequest) {
@@ -1739,12 +1753,71 @@ public abstract class FormAdapter {
 		Application application = rapidRequest.getApplication();
 		// if we got one
 		if (application != null) {
-			// look for the a pdfLogo image in the root images folder
-			File pdfFile = new File(application.getWebFolder(rapidRequest.getRapidServlet().getServletContext()) + "/images/pdfLogo.png");
+			// assume no pdf file
+			File pdfFile = null;
+			// look for a form.pdf.logo parameter
+			String logoParam = application.getParameterValue("form.pdf.logo");
+			// if we got one
+			if (logoParam != null) {
+				// get a file for it
+				pdfFile = new File(getAppFilePath(rapidRequest, logoParam));
+			}
+			// if we didn't get one look for the a pdfLogo image in the root images folder
+			if (pdfFile == null) pdfFile = new File(application.getWebFolder(rapidRequest.getRapidServlet().getServletContext()) + "/images/pdfLogo.png");
 			// if we got one, set it
-			if (pdfFile.exists()) file = pdfFile;
+			if (pdfFile != null && pdfFile.exists()) file = pdfFile;
 		}
 		return file;
+	}
+
+	protected PDPage _template;
+
+	protected PDPage getNewPage(RapidRequest rapidRequest, PDDocument document) throws InvalidPasswordException, IOException {
+
+		// get the application
+		Application application = rapidRequest.getApplication();
+		// if we got one and haven't loaded the template yet
+		if (application != null && _template == null) {
+			// look for a template.pdf.logo parameter
+			String template = application.getParameterValue("form.pdf.template");
+			// if we got one
+			if (template != null) {
+				// get a file for it
+				File templateFile = new File(getAppFilePath(rapidRequest, template));
+				// if it exists
+				if (templateFile.exists()) {
+					// load the template
+					_template = PDDocument.load(templateFile).getPage(0);
+				}
+			}
+		}
+
+		// make a new page from the template
+		PDPage p = _template;
+
+		// if we didn't get a page from a template
+		if (p == null) {
+			// make a new page
+			p = new PDPage(PDRectangle.A4);
+			// add page to document
+			document.addPage(p);
+		}
+
+		return p;
+
+	}
+
+	// remove any non-printable characters
+	public String cleanString(String string) {
+
+		// clean the value to only contain printable characters
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < string.length(); i++) {
+			if (WinAnsiEncoding.INSTANCE.contains(string.charAt(i))) sb.append(string.charAt(i));
+		}
+		// update value to only printable characters
+		return sb.toString();
+
 	}
 
 	public void writeFormPDF(RapidRequest rapidRequest, OutputStream outputStream, String formId, boolean email) throws Exception {
@@ -1752,13 +1825,20 @@ public abstract class FormAdapter {
 		// make a new document
 		PDDocument document = new PDDocument();
 
-		// make a new page
-		PDPage p = new PDPage(PDRectangle.A4);
-		// add page to document
-		document.addPage(p);
+		// add a page
+		PDPage p = getNewPage(rapidRequest, document);
 
 		// Start a new content stream which will "hold" the content we are making
-		PDPageContentStream cs = new PDPageContentStream(document, p);
+		PDPageContentStream cs = null;
+
+		// if we have a template we are appending which has a different mode
+		if (_template == null) {
+			// Start a new content stream which will "hold" the content we are making
+			cs = new PDPageContentStream(document, p);
+		} else {
+			// Start a new content stream which will "hold" the content we are making
+			cs = new PDPageContentStream(document, p, AppendMode.APPEND, true);
+		}
 
 		// get the application
 		Application application = rapidRequest.getApplication();
@@ -1771,7 +1851,7 @@ public abstract class FormAdapter {
 			PDFont font = PDType1Font.HELVETICA;
 
 			float h = p.getMediaBox().getHeight() - MARGIN_TOP - MARGIN_BOTTOM;
-			float w = p.getMediaBox().getWidth() - MARGIN_LEFT - MARGIN_RIGHT * 2;
+			float w = p.getMediaBox().getWidth() - MARGIN_LEFT - MARGIN_RIGHT;
 
 			PDDocumentInformation info = document.getDocumentInformation();
 			info.setTitle(application.getTitle());
@@ -1788,7 +1868,7 @@ public abstract class FormAdapter {
 					// pass to pdf image
 					PDImageXObject ximage = LosslessFactory.createFromImage(document, awtImage);
 					// draw at half resolution in top right corner
-					cs.drawImage( ximage, w - MARGIN_RIGHT - ximage.getWidth()/2, h - MARGIN_TOP, ximage.getWidth()/2, ximage.getHeight()/2);
+					cs.drawImage( ximage, w - ximage.getWidth()/2, h - ximage.getHeight()/2, ximage.getWidth()/2, ximage.getHeight()/2);
 				}
 			}
 
@@ -1867,100 +1947,95 @@ public abstract class FormAdapter {
 											String type = control.getType();
 											// get the value
 											String value = controlValue.getValue();
-											// don't show any nulls
-											if (value != null) {
 
-												// check for grid control
-												if ("grid".equals(type)) {
+											// update value to no vaue
+											if (value == null) value = "(no value)";
 
-													// add the label
-													controlValues.add(control.getLabel() + " : ");
+											// check for grid control
+											if ("grid".equals(type)) {
 
-													// hold the detail for later
-													controlValues.add("[[grid," + control.getId() + "]]:" + value);
+												// add the label
+												controlValues.add(control.getLabel());
+
+												// hold the detail for later
+												controlValues.add("[[grid," + control.getId() + "]]:" + value);
+
+											} else {
+
+												// check for json
+												if (value.startsWith("{") && value.endsWith("}")) {
+													try {
+														JSONObject jsonValue = new JSONObject(value);
+														value = jsonValue.optString("text");
+													} catch (Exception ex) {}
+												}
+
+												// add the table
+												controlValues.add(cleanString(control.getLabel()));
+
+												// check for checkboxes
+												if (!"checkbox".equals(type)) {
+													// get the value
+													value = cleanString(control.getCodeText(_application, value));
+												}
+
+												// get the width required to print the value
+												float vw = font.getStringWidth(value) / 1000 * FONT_SIZE;
+
+												// if this fits into our allowed width
+												if (vw <= w) {
+
+													// add this value
+													controlValues.add(value);
+													// increment the height by one line
+													sh += fh + MARGIN_SECTION_BOTTOM;
 
 												} else {
 
-													// check for json
-													if (value.startsWith("{") && value.endsWith("}")) {
-														try {
-															JSONObject jsonValue = new JSONObject(value);
-															value = jsonValue.optString("text");
-														} catch (Exception ex) {}
-													}
+													// split the value into parts
+													String[] parts = value.split(" ");
+													// start at the beginning
+													int pos = 0;
 
-													// check for checkboxes
-													if ("checkbox".equals(type)) {
-														// just show the label
-														value = control.getLabel();
-													} else {
-														// show the label and value
-														value = control.getLabel() + " : " + control.getCodeText(_application, value);
-													}
+													// while we have more parts
+													while (pos < parts.length) {
 
-													// clean the value to only contain printable characters
-													StringBuilder sb = new StringBuilder();
-													for (int i = 0; i < value.length(); i++) {
-														if (WinAnsiEncoding.INSTANCE.contains(value.charAt(i))) sb.append(value.charAt(i));
-													}
-													// update value to only printable characters
-													value = sb.toString();
+														String line = parts[pos];
+														pos ++;
+														vw = 0;
 
-													// get the width required to print the value
-													float vw = font.getStringWidth(value) / 1000 * FONT_SIZE;
-
-													// if this fits into our allowed width
-													if (vw <= w) {
-
-														// add this value
-														controlValues.add(value);
-														// increment the height by one line
-														sh += fh + MARGIN_SECTION_BOTTOM;
-
-													} else {
-
-														// split the value into parts
-														String[] parts = value.split(" ");
-														// start at the beginning
-														int pos = 0;
-
-														// while we have more parts
-														while (pos < parts.length) {
-
-															String line = parts[pos];
-															pos ++;
-															vw = 0;
-
-															// while we haven't crossed the end of the available width yet
-															while (vw < w) {
-																if (pos < parts.length) {
-																	String part = parts[pos];
-																	int breakPos = part.indexOf("\n");
-																	if (breakPos > 0) {
-																		controlValues.add(line + " " + part.substring(0, breakPos));
-																		controlValues.add("");
-																		line = part.substring(breakPos).trim();
-																	} else {
-																		line = line + " " + part;
-																	}
+														// while we haven't crossed the end of the available width yet
+														while (vw < w) {
+															if (pos < parts.length) {
+																String part = parts[pos];
+																int breakPos = part.indexOf("\n");
+																if (breakPos > 0) {
+																	controlValues.add(line + " " + part.substring(0, breakPos));
+																	controlValues.add("");
+																	line = part.substring(breakPos).trim();
+																} else {
+																	line = line + " " + part;
 																}
-																pos ++;
-																if (pos >= parts.length) break;
-																vw = font.getStringWidth(line + parts[pos]) / 1000 * FONT_SIZE;
 															}
+															pos ++;
+															if (pos >= parts.length) break;
+															vw = font.getStringWidth(line + parts[pos]) / 1000 * FONT_SIZE;
+														}
 
-															// add this line
-															controlValues.add(line);
-															// increment the height by one line and add
-															sh += fh + MARGIN_TEXT_BOTTOM;
+														// add this line
+														controlValues.add(line);
+														// increment the height by one line and add
+														sh += fh + MARGIN_TEXT_BOTTOM;
 
-														} // parts left
+													} // parts left
 
-													} // width fit
+												} // width fit
 
-												} // control type / grid check
+											} // control type / grid check
 
-											} // value null check
+											// add an empty line after the value
+											controlValues.add("");
+
 
 											// exit this loop
 											break;
@@ -2127,8 +2202,7 @@ public abstract class FormAdapter {
 
 			// check there is space for the submitted details
 			if (y + getFontHeight(fontBold, FONT_SIZE) + MARGIN_SECTION_BOTTOM > h) {
-				p = new PDPage(PDRectangle.A4);
-				document.addPage(p);
+				p = getNewPage(rapidRequest, document);
 				cs.close();
 				cs = new PDPageContentStream(document, p);
 				y = MARGIN_TOP;
