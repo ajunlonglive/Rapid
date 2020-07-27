@@ -3,7 +3,7 @@
 
 <!-- 
 
-Copyright (C) 2018 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -52,6 +52,14 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <helpHtml>Name that can be given to the control. Names are used to help identify controls uniquely.</helpHtml>
 	        </property>
 	        
+	         <property>
+	            <key>text</key>
+	            <name>Text</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Sets a text like description for the checkbox.</helpHtml>
+	        </property>
+	        
 	        <property>
 	            <key>label</key>
 	            <name>Form summary label</name>
@@ -81,14 +89,6 @@ return ["false","true"];
 	            <changeValueJavaScript>text</changeValueJavaScript>
 	            <refreshHtml>true</refreshHtml>
 	            <helpHtml>The value of this control when checked. If this box is blank the value when checked will be true.</helpHtml>
-	        </property>
-	        
-	         <property>
-	            <key>text</key>
-	            <name>Text</name>
-	            <changeValueJavaScript>bigtext</changeValueJavaScript>
-	            <refreshHtml>true</refreshHtml>
-	            <helpHtml>Sets a text like description for the checkbox.</helpHtml>
 	        </property>
 	              
 	    </properties>
