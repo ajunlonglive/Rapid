@@ -971,8 +971,8 @@ function Event_initForm(id) {
 
 // disables all form controls and links for submitted forms
 function Event_checkForm() {
-	// if the form has been submitted
-	if (_formSubmitted) {
+	// if the form has been submitted and its not a post-submit page
+	if (_formSubmitted && !_formPageType == 1) {
 		// disable controls
 		$("input").disable();
 		$("select").disable();
