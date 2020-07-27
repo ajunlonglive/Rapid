@@ -3,7 +3,7 @@
 
 <!-- 
 
-Copyright (C) 2018 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -52,20 +52,27 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	        </property>
 	        
 	        <property>
-	            <key>label</key>
-	            <name>Form summary label</name>
-	            <setConstructValueFunction>return "";</setConstructValueFunction>
-	            <changeValueJavaScript>formText</changeValueJavaScript>
-	            <helpHtml>Summary label to appear at the end of the form. Leave blank to have the control and its value hidden.</helpHtml>
-	        </property>
-	        
-	        <property>
 	            <key>responsiveLabel</key>
 	            <name>Label</name>
 	            <setConstructValueFunction>return "";</setConstructValueFunction>
 	            <changeValueJavaScript>text</changeValueJavaScript>
 	            <refreshHtml>true</refreshHtml>
 	            <helpHtml>Label to appear above the control</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>label</key>
+	            <name>Form summary label</name>
+	            <setConstructValueFunction>return "";</setConstructValueFunction>
+	            <changeValueJavaScript>formTextSummary</changeValueJavaScript>
+	            <helpHtml>Summary label to appear at the end of the form. Leave blank to have the control and its value hidden.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>formSummaryLabelSet</key>
+	            <name>Manual form summary label</name>
+	            <changeValueJavaScript>labelCheckbox</changeValueJavaScript>
+	            <helpHtml>Hidden property saying if the user has manually set the Form summary label.</helpHtml>
 	        </property>
 	        
 	        <property>

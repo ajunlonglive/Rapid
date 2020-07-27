@@ -50,14 +50,6 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <changeValueJavaScript>text</changeValueJavaScript>
 	            <helpHtml>Name that can be given to the control. Names are used to help identify controls uniquely.</helpHtml>
 	        </property>
-	        
-	         <property>
-	            <key>label</key>
-	            <name>Form summary label</name>
-	            <setConstructValueFunction>return "";</setConstructValueFunction>
-	            <changeValueJavaScript>formText</changeValueJavaScript>
-	            <helpHtml>Summary label to appear at the end of the form. Leave blank to have the control and its value hidden.</helpHtml>
-	        </property>
 
 	        <property>
 	            <key>responsiveLabel</key>
@@ -66,6 +58,21 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <changeValueJavaScript>text</changeValueJavaScript>
 	            <refreshHtml>true</refreshHtml>
 	            <helpHtml>Label to appear above the control</helpHtml>
+	        </property>
+	        
+	         <property>
+	            <key>label</key>
+	            <name>Form summary label</name>
+	            <setConstructValueFunction>return "";</setConstructValueFunction>
+	            <changeValueJavaScript>formTextSummary</changeValueJavaScript>
+	            <helpHtml>Summary label to appear at the end of the form. Leave blank to have the control and its value hidden.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>formSummaryLabelSet</key>
+	            <name>Manual form summary label</name>
+	            <changeValueJavaScript>labelCheckbox</changeValueJavaScript>
+	            <helpHtml>Hidden property saying if the user has manually set the Form summary label.</helpHtml>
 	        </property>
 	        
 	        <property>

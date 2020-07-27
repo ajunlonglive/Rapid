@@ -6707,3 +6707,37 @@ function Property_customOperation(cell, propertyObject, property, details) {
 		cell.closest("tr").remove();
 	}
 }
+
+function Property_formTextSummary(cell, datacopyAction, property, details) {
+	
+	Property_formText(cell, datacopyAction, property, details);
+	
+	var labelInput = cell.closest("tr").prev().find("input");
+	var summaryLabelInput = cell.find("input");
+	
+	summaryLabelInput.keyup(function() {
+		if (summaryLabelInput.val() === labelInput.val()) {
+			setTimeout(function() {
+				var labelCheckbox = cell.closest("tr").next().find("input");
+				labelCheckbox.prop('checked', false).change();
+			})
+		}
+	});
+	
+	labelInput.keyup(function() {
+		if (!datacopyAction.formSummaryLabelSet) summaryLabelInput.val(labelInput.val()).keyup();
+	});
+}
+
+function Property_labelCheckbox(cell, propertyObject, property, details) {
+	
+	Property_checkbox(cell, propertyObject, property, details);
+	
+	cell.closest("tr").hide();
+	
+	var summaryLabelInput = cell.closest("tr").prev().find("input");
+	
+	summaryLabelInput.keyup(function() {
+		cell.find("input").prop("checked", "true").change();
+	});
+}
