@@ -1673,6 +1673,85 @@ public abstract class FormAdapter {
 		return attachmentList;
 	}
 
+	// get a list of control values by their names
+	public Map<String,String> getNamedControlValues(RapidRequest rapidRequest, String formId, String... controlNames) throws Exception {
+
+		// the value
+		Map<String, String> values = new HashMap<>();
+
+		// get the application
+		Application application = rapidRequest.getApplication();
+
+		// get the pages
+		Pages pages = application.getPages();
+
+		// loop the pages
+		for (String pageId : pages.getPageIds()) {
+
+			// get the page values
+			FormPageControlValues pageControlValues = getFormPageControlValues(rapidRequest, formId, pageId);
+
+			// if there were controls with values on this page
+			if (pageControlValues != null) {
+
+				// if controls were named
+				if (controlNames == null || controlNames.length == 0) {
+
+					// loop the values
+					for (FormControlValue pageControlValue : pageControlValues) {
+						// get the control
+						Control control = application.getControl(rapidRequest.getRapidServlet().getServletContext(), pageControlValue.getId());
+						// if we got one
+						if (control != null) {
+							// add this to our values
+							values.put(control.getName(), pageControlValue.getValue());
+						}
+					}
+
+				} else {
+
+					// loop the control names
+					for (String name : controlNames) {
+						// loop the values
+						for (FormControlValue pageControlValue : pageControlValues) {
+							// get the control
+							Control control = application.getControl(rapidRequest.getRapidServlet().getServletContext(), pageControlValue.getId());
+							// if we got one
+							if (control != null) {
+								// check the name
+								if (name.equals(control.getName())) {
+									// add this to our values
+									values.put(name, pageControlValue.getValue());
+									// remove from collection to check
+									pageControlValues.remove(pageControlValue);
+									// we're done with this loop
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+
+		}
+
+		// return values
+		return values;
+
+	}
+
+	// an overload to the above
+	public Map<String,String> getNamedControlValues(RapidRequest rapidRequest, String... controlNames) throws Exception {
+		// get the form id
+		String formId = this.getFormId(rapidRequest);
+		// check we got one
+		if (formId == null) {
+			return null;
+		} else {
+			return getNamedControlValues(rapidRequest, formId, controlNames);
+		}
+	}
+
 	// returns all values of all the controls of the specified type
 	private List<String> getAllControlValues(RapidRequest rapidRequest, String formId, String controlType) throws Exception {
 
