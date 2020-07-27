@@ -1992,7 +1992,7 @@ public class Designer extends RapidHttpServlet {
 											parameters = new Parameters();
 											// populate it with nulls
 											for (int i = 0; i < jsonInputs.length(); i++) parameters.addNull();
-											
+
 											parameters = Database.unmappedParameters(sql, parameters);
 											sql = sql + " ";
 											String[] stringParts = sql.split("'");
@@ -2169,7 +2169,7 @@ public class Designer extends RapidHttpServlet {
 								if ("uploadImage".equals(rapidRequest.getActionName())) {
 
 									// check the file type
-									if (!fileType.equals("image/jpeg") && !fileType.equals("image/gif") && !fileType.equals("image/png") && !fileType.equals("image/svg+xml")) throw new Exception("Unsupported file type");
+									if (!fileType.equals("image/jpeg") && !fileType.equals("image/gif") && !fileType.equals("image/png") && !fileType.equals("image/svg+xml") && !fileType.equals("application/pdf")) throw new Exception("Unsupported file type");
 
 									// get the web folder from the application
 									String path = rapidRequest.getApplication().getWebFolder(getServletContext());
