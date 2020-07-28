@@ -54,7 +54,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	         <property>
 	            <key>text</key>
 	            <name>Label</name>
-	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <changeValueJavaScript>textLabel</changeValueJavaScript>
 	            <refreshHtml>true</refreshHtml>
 	            <helpHtml>Sets a text like description for the checkbox.</helpHtml>
 	        </property>
@@ -63,13 +63,14 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <key>label</key>
 	            <name>Form summary label</name>
 	            <setConstructValueFunction>return "";</setConstructValueFunction>
-	            <changeValueJavaScript>formText</changeValueJavaScript>
+	            <changeValueJavaScript>formTextSummary</changeValueJavaScript>
 	            <helpHtml>Summary label to appear at the end of the form. Leave blank to have the control and its value hidden.</helpHtml>
 	        </property>
 	        
 	        <property>
-	            <key>formSummaryLabelSet</key>
+	            <key>useLabelAsSummary</key>
 	            <name>Manual form summary label</name>
+	            <visible>false</visible>
 	            <changeValueJavaScript>checkbox</changeValueJavaScript>
 	            <helpHtml>Hidden property saying if the user has manually set the Form summary label.</helpHtml>
 	        </property>

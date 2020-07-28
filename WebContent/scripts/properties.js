@@ -6708,45 +6708,27 @@ function Property_customOperation(cell, propertyObject, property, details) {
 	}
 }
 
+function Property_textLabel(cell, datacopyAction, property, details) {
+	
+	Property_text(cell, datacopyAction, property, details);
+	
+	$(cell).find("input").keyup(function() {
+		var useLabelAsSummary = datacopyAction.useLabelAsSummary === true || datacopyAction.useLabelAsSummary === null;
+		if (useLabelAsSummary) {
+			datacopyAction.label = this.value;
+			var summaryInput = $(this).closest("tr").next().find("input");
+			summaryInput.val(this.value);
+		}
+	});
+	
+}
+
 function Property_formTextSummary(cell, datacopyAction, property, details) {
 	
 	Property_formText(cell, datacopyAction, property, details);
 	
-	var labelInput = cell.closest("tr").prev().find("input");
-	var summaryLabelInput = cell.find("input");
-	
-	summaryLabelInput.keyup(function() {
-		if (summaryLabelInput.val() === labelInput.val()) {
-			setTimeout(function() {
-				var labelCheckbox = cell.closest("tr").next().find("input");
-				labelCheckbox.prop('checked', false).change();
-			})
-		}
+	$(cell).find("input").keyup(function() {
+		var summarySetToLabelValue = datacopyAction.label === datacopyAction.responsiveLabel;
+		datacopyAction.useLabelAsSummary = summarySetToLabelValue;
 	});
-	
-	labelInput.keyup(function() {
-		if (!datacopyAction.formSummaryLabelSet) summaryLabelInput.val(labelInput.val()).keyup();
-	});
-}
-
-function Property_textLabel(cell, datacopyAction, property, details) {
-	/*
-	Property_formText(cell, datacopyAction, property, details);
-	
-	var labelInput = cell.closest("tr").prev().find("input");
-	var summaryLabelInput = cell.find("input");
-	
-	summaryLabelInput.keyup(function() {
-		if (summaryLabelInput.val() === labelInput.val()) {
-			setTimeout(function() {
-				var labelCheckbox = cell.closest("tr").next().find("input");
-				labelCheckbox.prop('checked', false).change();
-			})
-		}
-	});
-	
-	labelInput.keyup(function() {
-		if (!datacopyAction.formSummaryLabelSet) summaryLabelInput.val(labelInput.val()).keyup();
-	});
-	*/
 }
