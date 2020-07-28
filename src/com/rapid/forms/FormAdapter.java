@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2019 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -1799,9 +1799,9 @@ public abstract class FormAdapter {
 	protected float FONT_SIZE_HEADER2 = 12;
 	protected float FONT_SIZE = 12;
 	protected float MARGIN_LEFT = 20;
-	protected float MARGIN_TOP = 10;
+	protected float MARGIN_TOP = 20;
 	protected float MARGIN_RIGHT = 20;
-	protected float MARGIN_BOTTOM = 20;
+	protected float MARGIN_BOTTOM = 10;
 	protected float MARGIN_HEADER_BOTTOM = 10;
 	protected float MARGIN_SECTION_BOTTOM = 5;
 	protected float MARGIN_TEXT_BOTTOM = 3;
@@ -1861,6 +1861,19 @@ public abstract class FormAdapter {
 
 	}
 
+	// get's a parameter value from either the application or theme
+	public String getParameterValue(ServletContext servletContext, Application application, String name) {
+
+		String value = application.getParameterValue(name);
+		if (value != null) return value;
+
+		Theme theme = application.getTheme(servletContext);
+		if (theme != null) value = theme.getParameterValue(name);
+
+		return value;
+
+	}
+
 	public void writeFormPDF(RapidRequest rapidRequest, OutputStream outputStream, String formId, boolean email) throws Exception {
 
 		// get the application
@@ -1869,35 +1882,39 @@ public abstract class FormAdapter {
 		// check we got an application
 		if (application != null) {
 
+			// get the servlet context
+			ServletContext context = rapidRequest.getServletContext();
+
 			// get and set any parameter values
-			String paramFontHeader1Size = application.getParameterValue("form.pdf.font.header1.size");
+			String paramFontHeader1Size = getParameterValue(context, application, "form.pdf.font.header1.size");
 			if (paramFontHeader1Size != null) FONT_SIZE_HEADER1 = Float.parseFloat(paramFontHeader1Size);
-			String paramFontHeader2Size = application.getParameterValue("form.pdf.font.header2.size");
+			String paramFontHeader2Size = getParameterValue(context, application, "form.pdf.font.header2.size");
 			if (paramFontHeader2Size != null) FONT_SIZE_HEADER2 = Float.parseFloat(paramFontHeader2Size);
-			String paramFontSize = application.getParameterValue("form.pdf.font.size");
+			String paramFontSize = getParameterValue(context, application, "form.pdf.font.size");
 			if (paramFontSize != null) FONT_SIZE = Float.parseFloat(paramFontSize);
 
-			String paramMarginTop = application.getParameterValue("form.pdf.margin.top");
+			String paramMarginTop = getParameterValue(context, application, "form.pdf.margin.top");
 			if (paramMarginTop != null) MARGIN_TOP = Float.parseFloat(paramMarginTop);
-			String paramMarginBottom = application.getParameterValue("form.pdf.margin.bottom");
+			String paramMarginBottom = getParameterValue(context, application, "form.pdf.margin.bottom");
 			if (paramMarginBottom != null) MARGIN_BOTTOM = Float.parseFloat(paramMarginBottom);
-			String paramMarginLeft = application.getParameterValue("form.pdf.margin.left");
+			String paramMarginLeft = getParameterValue(context, application, "form.pdf.margin.left");
 			if (paramMarginLeft != null) MARGIN_LEFT = Float.parseFloat(paramMarginLeft);
-			String paramMarginRight = application.getParameterValue("form.pdf.margin.right");
+			String paramMarginRight = getParameterValue(context, application, "form.pdf.margin.right");
 			if (paramMarginRight != null) MARGIN_RIGHT = Float.parseFloat(paramMarginRight);
 
-			String paramMarginNextTop = application.getParameterValue("form.pdf.margin.next.top");
+			String paramMarginNextTop = getParameterValue(context, application, "form.pdf.margin.next.top");
 			if (paramMarginNextTop != null) MARGIN_NEXT_TOP = Float.parseFloat(paramMarginNextTop);
-			String paramMarginNextBottom = application.getParameterValue("form.pdf.margin.next.bottom");
+			String paramMarginNextBottom = getParameterValue(context, application, "form.pdf.margin.next.bottom");
 			if (paramMarginNextBottom != null) MARGIN_NEXT_BOTTOM = Float.parseFloat(paramMarginNextBottom);
 
-			String paramMarginHeader = application.getParameterValue("form.pdf.margin.header");
+
+			String paramMarginHeader = getParameterValue(context, application, "form.pdf.margin.header");
 			if (paramMarginHeader != null) MARGIN_HEADER_BOTTOM = Float.parseFloat(paramMarginHeader);
-			String paramMarginSection = application.getParameterValue("form.pdf.margin.section");
+			String paramMarginSection = getParameterValue(context, application, "form.pdf.margin.section");
 			if (paramMarginSection != null) MARGIN_SECTION_BOTTOM = Float.parseFloat(paramMarginSection);
-			String paramMarginText = application.getParameterValue("form.pdf.margin.text");
+			String paramMarginText = getParameterValue(context, application, "form.pdf.margin.text");
 			if (paramMarginText != null) MARGIN_TEXT_BOTTOM = Float.parseFloat(paramMarginText);
-			String paramMarginGrid = application.getParameterValue("form.pdf.margin.grid");
+			String paramMarginGrid = getParameterValue(context, application, "form.pdf.margin.grid");
 			if (paramMarginGrid != null) MARGIN_GRID_COLUMN = Float.parseFloat(paramMarginGrid);
 
 			// our document
@@ -1909,7 +1926,7 @@ public abstract class FormAdapter {
 			// our page content stream
 			PDPageContentStream cs = null;
 
-			String template = application.getParameterValue("form.pdf.template");
+			String template = getParameterValue(context, application, "form.pdf.template");
 			// if we got one
 			if (template != null) {
 				// get a file for it
@@ -2145,6 +2162,15 @@ public abstract class FormAdapter {
 							// add the header height
 							sh += getFontHeight(fontBold, FONT_SIZE_HEADER2) + MARGIN_HEADER_BOTTOM;
 
+							// if this is going to push us past the page height make a new page and reset heights
+							if (y + sh > h) {
+								p = new PDPage(PDRectangle.A4);
+								document.addPage(p);
+								cs.close();
+								cs = new PDPageContentStream(document, p);
+								y = MARGIN_TOP;
+							}
+
 							String pageTitle = page.getLabel();
 							if (pageTitle == null) {
 								pageTitle = page.getTitle();
@@ -2153,7 +2179,7 @@ public abstract class FormAdapter {
 							}
 
 							if (pageTitle != null) {
-
+								
 								// if this is going to push us past the page height make a new page and reset heights
 								if (y + sh > h - MARGIN_BOTTOM) {
 									p = new PDPage(PDRectangle.A4);
@@ -2261,8 +2287,8 @@ public abstract class FormAdapter {
 														cs.endText();
 
 														y += getFontHeight(font, FONT_SIZE) + MARGIN_TEXT_BOTTOM;
-
-												} // end of inner loop
+														
+												}// end of inner loop
 
 												//set the x position for the new column
 												newXOffset += maxWidth + MARGIN_GRID_COLUMN;
@@ -2271,10 +2297,10 @@ public abstract class FormAdapter {
 
 											}
 
-										} // end of outer loop
+										}// end of outer loop
 
 									} else {
-
+										
 										// if this is going to push us past the page height make a new page and reset heights
 										if (y + fh + MARGIN_TEXT_BOTTOM > h - MARGIN_BOTTOM) {
 											p = new PDPage(PDRectangle.A4);
@@ -2627,10 +2653,10 @@ public abstract class FormAdapter {
 				// if we have this key in our string
 				if (string.contains(key)) {
 
-					// get the value
-					String value = this.getFormControlValue(rapidRequest, formId, _ControlParametersMap.get(key));
+					// get the value if not hidden
+					String value = this.getFormControlValue(rapidRequest, formId, _ControlParametersMap.get(key), true);
 
-					// update to empty if null (unrecognised [[entries]] should still appear as such)
+					// update to blank (unrecognised [[names]] will still appear)
 					if (value == null) value = "";
 
 					// put it in!
