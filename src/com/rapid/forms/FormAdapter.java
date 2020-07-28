@@ -2630,13 +2630,11 @@ public abstract class FormAdapter {
 					// get the value
 					String value = this.getFormControlValue(rapidRequest, formId, _ControlParametersMap.get(key));
 
-					// if we got one
-					if (value != null) {
+					// update to empty if null (unrecognised [[entries]] should still appear as such)
+					if (value == null) value = "";
 
-						// put it in!
-						string = string.replace("[[" + key + "]]", value);
-
-					} // check for value
+					// put it in!
+					string = string.replace("[[" + key + "]]", value);
 
 				} // check for key
 
