@@ -1801,11 +1801,13 @@ public abstract class FormAdapter {
 	protected float MARGIN_LEFT = 20;
 	protected float MARGIN_TOP = 10;
 	protected float MARGIN_RIGHT = 20;
-	protected float MARGIN_BOTTOM = 10;
+	protected float MARGIN_BOTTOM = 20;
 	protected float MARGIN_HEADER_BOTTOM = 10;
 	protected float MARGIN_SECTION_BOTTOM = 5;
 	protected float MARGIN_TEXT_BOTTOM = 3;
 	protected float MARGIN_GRID_COLUMN = 5;
+	protected float MARGIN_NEXT_TOP = 20;
+	protected float MARGIN_NEXT_BOTTOM = 20;
 
 	protected float getFontHeight(PDFont font, float fontSize) {
 		return (float) (font.getFontDescriptor().getFontBoundingBox().getHeight() / 1000 * fontSize * 0.865);
@@ -1883,6 +1885,11 @@ public abstract class FormAdapter {
 			if (paramMarginLeft != null) MARGIN_LEFT = Float.parseFloat(paramMarginLeft);
 			String paramMarginRight = application.getParameterValue("form.pdf.margin.right");
 			if (paramMarginRight != null) MARGIN_RIGHT = Float.parseFloat(paramMarginRight);
+
+			String paramMarginNextTop = application.getParameterValue("form.pdf.margin.next.top");
+			if (paramMarginNextTop != null) MARGIN_NEXT_TOP = Float.parseFloat(paramMarginNextTop);
+			String paramMarginNextBottom = application.getParameterValue("form.pdf.margin.next.bottom");
+			if (paramMarginNextBottom != null) MARGIN_NEXT_BOTTOM = Float.parseFloat(paramMarginNextBottom);
 
 			String paramMarginHeader = application.getParameterValue("form.pdf.margin.header");
 			if (paramMarginHeader != null) MARGIN_HEADER_BOTTOM = Float.parseFloat(paramMarginHeader);
@@ -2138,15 +2145,6 @@ public abstract class FormAdapter {
 							// add the header height
 							sh += getFontHeight(fontBold, FONT_SIZE_HEADER2) + MARGIN_HEADER_BOTTOM;
 
-							// if this is going to push us past the page height make a new page and reset heights
-							if (y + sh > h) {
-								p = new PDPage(PDRectangle.A4);
-								document.addPage(p);
-								cs.close();
-								cs = new PDPageContentStream(document, p);
-								y = MARGIN_TOP;
-							}
-
 							String pageTitle = page.getLabel();
 							if (pageTitle == null) {
 								pageTitle = page.getTitle();
@@ -2155,6 +2153,16 @@ public abstract class FormAdapter {
 							}
 
 							if (pageTitle != null) {
+
+								// if this is going to push us past the page height make a new page and reset heights
+								if (y + sh > h - MARGIN_BOTTOM) {
+									p = new PDPage(PDRectangle.A4);
+									document.addPage(p);
+									cs.close();
+									cs = new PDPageContentStream(document, p);
+									h = p.getMediaBox().getHeight() - MARGIN_NEXT_TOP - MARGIN_NEXT_BOTTOM;
+									y = MARGIN_NEXT_TOP - FONT_SIZE_HEADER2;
+								}
 
 								cs.beginText();
 								cs.setFont(fontBold, FONT_SIZE_HEADER2);
@@ -2185,15 +2193,25 @@ public abstract class FormAdapter {
 										//get all the properties for all the fields
 										JSONArray columnsProperties = new JSONArray(control.getProperty("columns"));
 
+										// if this is going to push us past the page height make a new page and reset heights
+										if (y + fh * rows.length() > h - MARGIN_BOTTOM) {
+											p = new PDPage(PDRectangle.A4);
+											document.addPage(p);
+											cs.close();
+											cs = new PDPageContentStream(document, p);
+											h = p.getMediaBox().getHeight() - MARGIN_NEXT_TOP - MARGIN_NEXT_BOTTOM;
+											y = MARGIN_NEXT_TOP - FONT_SIZE;
+										}
+
 										//get a list of the visible fields
 										List<String> visibleFields = new ArrayList<>();
-										for(int i = 0; i < fields.length(); i++){
+										for (int i = 0; i < fields.length(); i++){
 											//a field
 											String field = fields.getString(i);
 
-											if(columnsProperties != null){
+											if (columnsProperties != null){
 												//loop through the columnsProperties
-												for(int c = 0; c < columnsProperties.length(); c++){
+												for (int c = 0; c < columnsProperties.length(); c++){
 													//for each column, get its properties
 													JSONObject column_properties = columnsProperties.getJSONObject(c);
 													//find the properties for 'this' field and make sure its visible
@@ -2208,10 +2226,10 @@ public abstract class FormAdapter {
 
 										float newXOffset = MARGIN_LEFT;
 										float initialYOffset = y;
-										for(int i = 0; i < fields.length(); i++){
+										for (int i = 0; i < fields.length(); i++){
 											//a field
 											String field = fields.getString(i);
-											if(visibleFields.contains(field)){
+											if (visibleFields.contains(field)){
 
 												//keep a track of the maxWidth - assume maxWidth is the field
 												float maxWidth = font.getStringWidth(field) / 1000 * FONT_SIZE;
@@ -2224,14 +2242,14 @@ public abstract class FormAdapter {
 
 												y += getFontHeight(font, FONT_SIZE) + MARGIN_TEXT_BOTTOM;
 
-												for(int j = 0; j < rows.length(); j++){
+												for (int j = 0; j < rows.length(); j++){
 
 														JSONArray row = rows.getJSONArray(j);
 														String columnCell = row.getString(i);
 
 														float cellWidth = font.getStringWidth(columnCell) / 1000 * FONT_SIZE;
 
-														if(cellWidth > maxWidth){
+														if (cellWidth > maxWidth){
 															maxWidth = cellWidth;
 														}
 
@@ -2243,7 +2261,8 @@ public abstract class FormAdapter {
 														cs.endText();
 
 														y += getFontHeight(font, FONT_SIZE) + MARGIN_TEXT_BOTTOM;
-												}// end of inner loop
+
+												} // end of inner loop
 
 												//set the x position for the new column
 												newXOffset += maxWidth + MARGIN_GRID_COLUMN;
@@ -2252,22 +2271,33 @@ public abstract class FormAdapter {
 
 											}
 
-										}// end of outer loop
+										} // end of outer loop
 
 									} else {
 
+										// if this is going to push us past the page height make a new page and reset heights
+										if (y + fh + MARGIN_TEXT_BOTTOM > h - MARGIN_BOTTOM) {
+											p = new PDPage(PDRectangle.A4);
+											document.addPage(p);
+											cs.close();
+											cs = new PDPageContentStream(document, p);
+											h = p.getMediaBox().getHeight() - MARGIN_NEXT_TOP - MARGIN_NEXT_BOTTOM;
+											y = MARGIN_NEXT_TOP - FONT_SIZE;
+										}
+
+										// write the value text
 										cs.beginText();
 										cs.setFont(font, FONT_SIZE);
 										cs.newLineAtOffset(MARGIN_LEFT, h - y);
 										cs.showText(value);
 										cs.endText();
 
-										y += getFontHeight(font, FONT_SIZE) + MARGIN_TEXT_BOTTOM;
+										// move to the next line
+										y += fh + MARGIN_TEXT_BOTTOM;
 
-									}
+									} // grid check
 
-								}
-
+								} // control values loop
 
 							} // page title check
 
@@ -2278,14 +2308,6 @@ public abstract class FormAdapter {
 				} // control values non null
 
 			} // page loop
-
-			// check there is space for the submitted details
-			if (y + getFontHeight(fontBold, FONT_SIZE) + MARGIN_SECTION_BOTTOM > h) {
-				p = new PDPage(PDRectangle.A4);
-				cs.close();
-				cs = new PDPageContentStream(document, p);
-				y = MARGIN_TOP;
-			}
 
 			// Make sure that the content stream is closed:
 			cs.close();
