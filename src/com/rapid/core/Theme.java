@@ -74,4 +74,13 @@ public class Theme  {
 		_formSummaryFooterHtml = jsonTheme.optString("formSummaryFooterHtml", null);
 	}
 
+	// public methods
+
+	// return the value of parameter in the theme
+	public String getParameterValue(String name) {
+		String value = null;
+		if (_parameters != null) value = _parameters.optString(name, null);
+		return value;
+	}
+
 }
