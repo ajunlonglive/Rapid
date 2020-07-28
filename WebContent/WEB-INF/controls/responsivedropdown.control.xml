@@ -434,16 +434,20 @@ if (data !== undefined) {
 							}
 						}
 					}
+					// if there wasn't a value in the field called "text" but there is something in the first column use that as text
 					if (!text && row[0] != null) text = row[0];
-					if (value == null && row[1] != null) value = row[1];
+					// if the value is null but there is something in the second column use that, but only if codes are on
+					if (value == null && row[1] != null && details.codes) value = row[1];
+					// if we still don't have a seperate value
 					if (value == null) {
+						// make value an empty string
 						value = "";
 						// if there is a previously set value and it matches this text, set selected
 						if (setValue && setValue == text) selected = " selected='true'";
 					} else {
 						// if there is a previously set value and it matches this value, set selected
 						if (setValue && setValue == value) selected = " selected='true'";
-						// wrap the value
+						// wrap the value to set it as an attribute
 						value = "value='" + value + "'";
 					}
 					// check for group and/or change
