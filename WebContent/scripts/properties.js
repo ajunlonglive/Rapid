@@ -5950,7 +5950,7 @@ function Property_chartType(cell, chart, property, details) {
 			setPropertyVisibilty(chart, "pieSliceText", true);			
 			setPropertyVisibilty(chart, "sliceVisibilityThreshold", true);
 			setPropertyVisibilty(chart, "is3D", true);
-			if (!chart.is3D)	setPropertyVisibilty(chart, "pieHole", true);
+			if (!chart.is3D) setPropertyVisibilty(chart, "pieHole", true);
 		break;
 	}	
 }
@@ -6708,14 +6708,14 @@ function Property_customOperation(cell, propertyObject, property, details) {
 	}
 }
 
-function Property_textLabel(cell, datacopyAction, property, details) {
+function Property_textLabel(cell, propertyObject, property, details) {
 	
-	Property_text(cell, datacopyAction, property, details);
+	Property_text(cell, propertyObject, property, details);
 	
 	$(cell).find("input").keyup(function() {
-		var useLabelAsSummary = datacopyAction.useLabelAsSummary === true || datacopyAction.useLabelAsSummary === null;
+		var useLabelAsSummary = propertyObject.useLabelAsSummary === true || propertyObject.useLabelAsSummary === null;
 		if (useLabelAsSummary) {
-			datacopyAction.label = this.value;
+			propertyObject.label = this.value;
 			var summaryInput = $(this).closest("tr").next().find("input");
 			summaryInput.val(this.value);
 		}
@@ -6723,12 +6723,12 @@ function Property_textLabel(cell, datacopyAction, property, details) {
 	
 }
 
-function Property_formTextSummary(cell, datacopyAction, property, details) {
+function Property_formTextSummary(cell, propertyObject, property, details) {
 	
-	Property_formText(cell, datacopyAction, property, details);
+	Property_formText(cell, propertyObject, property, details);
 	
 	$(cell).find("input").keyup(function() {
-		var summarySetToLabelValue = datacopyAction.label === datacopyAction.responsiveLabel;
-		datacopyAction.useLabelAsSummary = summarySetToLabelValue;
+		var summarySetToLabelValue = (propertyObject.label === propertyObject.responsiveLabel || propertyObject.label === propertyObject.text);
+		propertyObject.useLabelAsSummary = summarySetToLabelValue;
 	});
 }
