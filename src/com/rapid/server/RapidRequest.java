@@ -42,6 +42,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Random;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -73,6 +74,7 @@ public class RapidRequest {
 	// properties
 
 	public RapidHttpServlet getRapidServlet() { return _rapidServlet; }
+	public ServletContext getServletContext() { if (_rapidServlet == null) return null; return _rapidServlet.getServletContext(); }
 	public HttpServletRequest getRequest() { return _request; }
 	public String getAppId() { return _appId; }
 	public String getVersion() { return _version; }
