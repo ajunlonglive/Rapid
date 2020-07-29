@@ -514,8 +514,12 @@ public class Mobile extends Action {
 				} else {
 					int maxSize = Integer.parseInt(getProperty("imageMaxSize"));
 					int quality = Integer.parseInt(getProperty("imageQuality"));
-					int maxDuration = Integer.parseInt(getProperty("videoMaxDuration"));
-					Boolean cameraSelectImage = Boolean.parseBoolean(getProperty("cameraSelectImage"));
+					int maxDuration = 0;
+					if(getProperty("videoMaxDuration")!=null)
+						maxDuration = Integer.parseInt(getProperty("videoMaxDuration"));
+					Boolean cameraSelectImage = false;
+					if(getProperty("cameraSelectImage")!=null)
+						cameraSelectImage = Boolean.parseBoolean(getProperty("cameraSelectImage"));
 					String remoteSource = getProperty("remoteSource");
 					String captureMode = getProperty("captureMode");
 					
