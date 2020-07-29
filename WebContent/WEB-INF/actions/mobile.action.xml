@@ -462,10 +462,11 @@ return "<option value=''>Please select...</option><option value ='html'" + (this
     margin-left: 20px;
 }
 
-#captureCount {
+#captureCount, #videoRecordTimer {
     font-size: 16px;
     font-weight: 700;
     color: #FFF;
+    text-shadow: 0 1px 10px #000, 0 1px 2px #000;
 }
 
 .cameraIcon {
@@ -568,7 +569,7 @@ function getAvailableCameras() {
 }
 
 var _mobileCamera = {
-	getStream() {
+	getStream(constraints) {
 		return navigator.mediaDevices.getUserMedia(constraints);
 	},
 	close() {
@@ -625,6 +626,7 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 							+ "<button id ='btnCloseCamera' class='cameraControlBasic' style='position:absolute; right:0;'><i class='fa fa-times cameraIcon'></i></button>"
 							+ "<div style='position:fixed; bottom:0; width:100%; text-align:center; padding:20px;'>"
 							+ (captureMode === "keepPreview" ? "<p id='captureCount'></p>" : "")
+							+ (mediums.includes('video') ? "<p id='videoRecordTimer'></p>" : "")
 							+ (mediums.includes('image') ? "<button id ='btnTakePicture' class='cameraControl'><i class='fa fa-camera cameraIcon'></i></button>" : "")
 							+ (mediums.includes('video') ? "<button id ='btnRecordVideo' class='cameraControl'><i class='fa fa-video-camera cameraIcon'></i></button>" : "")
 							+ "</div>"
@@ -683,7 +685,7 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 		$("#cameraVideoContainer").show();
 
 		// Obtain the user media object
-		source.getStream()
+		source.getStream(constraints)
 		.then(function(stream) {
 			
 			// Use the stream
@@ -840,8 +842,10 @@ function capureMedia(data, captureMode, source) {
 	
 	if (captureMode === "keepPreview") {
 		
-		var captureCount = parseInt($("#captureCount").text() || 0);
-		$("#captureCount").text(captureCount + 1);
+		var captureCount = $("#captureCount");
+		captureCount.text(
+			parseInt(captureCount.text() || 0) + 1 + " added to gallery"
+		);
 		setData_gallery(data.ev, galleryControlId, "url", galleryDetails, data.dataURL);
 		
 	} else if (captureMode === "showCapture") {
@@ -883,9 +887,24 @@ function recordVideo(stream, bitsPerSecond, maxDuration, callback) {
 	
 	$("#btnRecordVideo").addClass("btnRecording");
 	
+	var videoRecordTimer = $("#videoRecordTimer");
+	videoRecordTimer.text("0s");
+	var timerId = setInterval(function() {
+		videoRecordTimer.text(
+			parseInt(videoRecordTimer.text() || 0) + 1 + "s"
+		);
+	}, 1000);
+	
 	function stopRecording() {
 		$("#btnRecordVideo").removeClass("btnRecording");
+		clearInterval(timerId);
+		$("#videoRecordTimer").text("");
 		mediaRecorder.stop();
+		
+		if ($("#btnRecordVideo").length) btnRecordVideo.onclick = function() {
+			recordVideo(stream, bitsPerSecond, maxDuration, callback);
+		};
+		
 	};
 	
 	btnRecordVideo.onclick = stopRecording;
