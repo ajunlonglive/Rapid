@@ -62,6 +62,26 @@ public class Files {
 		return file.delete();
 	}
 
+	public static boolean deleteRecurring(File file, boolean deleteParentFolder) {
+		// check file is directory
+		if (file.isDirectory()) {
+			// get a list of contents
+			File[] files = file.listFiles();
+			// if we got some
+			if (files != null) {
+				// loop contents recursively calling itself to delete those contents
+				for (int i = 0; i < files.length; i ++) {
+					deleteRecurring(files[i]);
+				}
+			}
+		}
+		// if we're here we've arrived at a physical file, return its delete
+		if(deleteParentFolder)
+			return file.delete();
+		else
+			return true;
+	}
+	
 	// byte copies one file to another
 	public static void copyFile(File src, File dest) throws IOException {
 
