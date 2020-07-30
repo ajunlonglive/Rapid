@@ -248,7 +248,7 @@ self.addEventListener("fetch", function(event) {
 		
 		// if   mobdemo/applications/test/3/rapid.css
 		// then mobdemo/3/rapid.css
-		url = url.replace(/.+\/(applications|images|scripts|styles|scripts_min|styles_min\/.+)/, "$1");
+		url = url.replace(/.+\/(applications|scripts|styles|scripts_min|styles_min|images\/.+)/, "$1");
 		
 		var dialogueParameter = url.includes("action=dialogue") ? "&action=dialogue" : "";
 		
