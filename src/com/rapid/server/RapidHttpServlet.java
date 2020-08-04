@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2018 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -300,7 +300,7 @@ public class RapidHttpServlet extends HttpServlet {
 			// get the allowed upload mimetypes from the web.xml file
 			String uploadMimeTypes = getServletContext().getInitParameter("uploadMimeTypes");
 			// default if null
-			if (uploadMimeTypes == null) uploadMimeTypes = "image/bmp,image/gif,image/jpeg,image/png,application/pdf";
+			if (uploadMimeTypes == null) uploadMimeTypes = "image/bmp,image/gif,image/jpeg,image/png,video/mp4,video/webm,application/pdf";
 			// get list and loop
 			for (String mimeType : uploadMimeTypes.split(",")) {
 				// add to list
@@ -320,7 +320,7 @@ public class RapidHttpServlet extends HttpServlet {
 			// get the allowed upload mimetype bytes from the web.xml file
 			String uploadMimeTypeBytes = getServletContext().getInitParameter("uploadMimeTypeBytes");
 			// default if null
-			if (uploadMimeTypeBytes == null) uploadMimeTypeBytes = "424D,47494638,FFD8FF,89504E47,25504446";
+			if (uploadMimeTypeBytes == null) uploadMimeTypeBytes = "424D,47494638,FFD8FF,89504E47,6674797069736F6D,1A45DFA3,25504446";
 			// get string bytes
 			String[] signatureBytes = uploadMimeTypeBytes.split(",");
 
