@@ -586,13 +586,15 @@ function Gallery_showImage(ev, id, galleryItem, allowDelete) {
 		var btnPrev = gallery.append("<button id='btnPrev' class='galleryControlDirectionButton' style='position:absolute; left:0; top:50%;'><i class='fa fa-chevron-left'></i></button>").find("#btnPrev");
 		var btnNext = gallery.append("<button id='btnNext' class='galleryControlDirectionButton' style='position:absolute; right:0; top:50%;'><i class='fa fa-chevron-right'></i></button>").find("#btnNext");
 		
-		var tools = gallery.append("<div id='tools' style='position:absolute; top:0; left:0; width:100%;'>").find("#tools").css({"text-align":"center", "color":"#FFF", "z-index":"1"});
+		var tools = gallery.append("<div id='tools' style='position:absolute; top:0; left:0; width:100%;'>").find("#tools").css({"text-align":"center", "color":"#FFF", "z-index":"1", "pointer-events": "none"});
 		var btnDelete = tools.append("<button id ='btnDeleteImage' class='galleryControlButton' style='float: left;'><i class='fa fa-trash'></i></button>").find("#btnDeleteImage");
-		var btnClose = tools.append("<button id ='btnCloseGallery' class='galleryControlButton' style='float: right;'><i class='fa fa-times'></i></button>").find("#btnCloseGallery");		
+		var btnClose = tools.append("<button id ='btnCloseGallery' class='galleryControlButton' style='float: right;'><i class='fa fa-times'></i></button>").find("#btnCloseGallery");
 		if (galleryItem.is("img")) {
 			var btnEdit = tools.append("<button id='btnEdit' class='galleryControlButton' style='float: right;'><i class='fa fa-pencil'></i></button>").find("#btnEdit");
 			var btnSave = tools.append("<button id='btnSave' class='galleryControlButton' style='float: right; display:none'><i class='fa fa-check'></i></button>").find("#btnSave");
 		}
+		$(tools).find("button").css({"pointer-events": "all"});
+		
 		if (allowDelete == false) btnDelete.hide();
 	
 		// Add click listeners to the buttons
@@ -792,12 +794,13 @@ function editImage(gallery) {
 	
 	var color = "#000";
 	
-	var pallet = gallery.append("<div id='pallet' class='galleryEditor' style='position:absolute; bottom:0; left:0; width:100%;'>").find("#pallet").css({"text-align":"center", "color":"#FFF", "z-index":"1"});
+	var pallet = gallery.append("<div id='pallet' class='galleryEditor' style='position:absolute; bottom:0; left:0; width:100%;'>").find("#pallet").css({"text-align":"center", "color":"#FFF", "z-index":"1", "pointer-events": "none"});
 	var btnBlack = pallet.append("<button id='btnBlack' class='galleryControlButton' data-color='#000'></button>").find("#btnBlack").css("background","#000");
 	var btnWhite = pallet.append("<button id='btnWhite' class='galleryControlButton' data-color='#FFF'></button>").find("#btnWhite").css({"background":"#FFF", "color":"#000"});
 	var btnRed = pallet.append("<button id='btnRed' class='galleryControlButton' data-color='#F00'></button>").find("#btnRed").css("background","#F00");
 	var btnGreen = pallet.append("<button id='btnGreen' class='galleryControlButton' data-color='#0C0'></button>").find("#btnGreen").css("background","#0C0");
 	var btnBlue= pallet.append("<button id='btnBlue' class='galleryControlButton' data-color='#00F'></button>").find("#btnBlue").css("background","#00F");
+	pallet.find("button").css({"pointer-events": "all"});
 	
 	var allColorButtons = $("#btnBlack, #btnWhite, #btnRed, #btnGreen, #btnBlue");
 	
@@ -888,6 +891,7 @@ function editImage(gallery) {
 	var historyButtons = $("#tools").append("<div id='historyButtons' class='galleryEditor' style='float: left;'>").find("#historyButtons");
 	var btnUndo = $("#historyButtons").append("<button id='btnUndo' class='galleryControlButton galleryEditor' style='float: left;'><i class='fa fa-undo'></i></button>").find("#btnUndo");
 	var btnRedo = $("#historyButtons").append("<button id='btnRedo' class='galleryControlButton galleryEditor' style='float: left;'><i class='fa fa-repeat'></i></button>").find("#btnRedo");
+	$(tools).find("button").css({"pointer-events": "all"});
 	
 	btnUndo.click(function() {
 		if (pastDrawings.length > 1) {

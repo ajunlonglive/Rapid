@@ -121,19 +121,25 @@ if (this.options || this.valueList) {
 var html = "<select id='" + this.id + "' name='" + this.id + "' class='dropdown" + getStyleClasses(this) + "'>" + html + "</select>";
 // return
 return html;
-	        ]]>
-	    </getHtmlFunction> 
-	    
-	    <updateChildObjects>true</updateChildObjects>
-	    
-	    <getDataFunction>
-	        <![CDATA[
+			]]>
+		</getHtmlFunction> 
+		
+		<updateChildObjects>true</updateChildObjects>
+		
+		<getDetailsFunction>
+			<![CDATA[
+return {codes:this.codes};
+			]]>
+		</getDetailsFunction>
+		
+		<getDataFunction>
+			<![CDATA[
 return $("#" + id).val();
 			]]>
-	    </getDataFunction>
-	    
-	    <setDataJavaScript>
-	        <![CDATA[
+		</getDataFunction>
+		
+		<setDataJavaScript>
+		<![CDATA[
 if (data !== undefined) {
 	var control = $("#" + id);
 	if (data == null) {
