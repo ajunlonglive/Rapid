@@ -2450,8 +2450,10 @@ $(document).ready( function() {
 				        	for (var i = 0; i < childControls.length; i++) {
 				        		// get an instance of the control properties (which is what we really need from the JSON)
 				        		var childControl = childControls[i];
-				        		// create and add
-				        		_page.childControls.push(loadControl(childControl, _page, true));
+				        		// create this control
+				        		var newControl = loadControl(childControl, _page, true);
+				        		// add if we got one with a type
+				        		if (newControl && newControl.type) _page.childControls.push(newControl);
 				        	}
 			        	}
 			        	
@@ -4148,8 +4150,8 @@ function arrangeNonVisibleControls() {
 			// get the class
 			var childControlClass = _controlTypes[childControl.type];
 						
-			// if it is nonVisible
-			if (childControlClass.getHtmlFunction.indexOf("nonVisibleControl") > 0) {
+			// if we had one and it is nonVisible
+			if (childControlClass && childControlClass.getHtmlFunction.indexOf("nonVisibleControl") > 0) {
 
 				// retain current position of this non-vis control - we will check if any vis controls are after it
 				lastNonVisControlPos = i;

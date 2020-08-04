@@ -45,7 +45,7 @@ function loadControl(jsonControl, parentControl, loadActions, paste, undo, check
 			// load us up the child control (using this function called iteratively)
 			var childControl = loadControl(jsonChildControl, control, loadActions, paste, undo, checkNameConflicts);
 			// add it to our childControls
-			control.childControls.push(childControl);
+			if (childControl && childControl.type) control.childControls.push(childControl);
 		}
 	}
 	// run any rebuild JavaScript (if present)

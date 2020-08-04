@@ -64,6 +64,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -81,7 +82,6 @@ import com.rapid.core.Page.Lock;
 import com.rapid.core.Page.RoleControlHtml;
 import com.rapid.core.Pages.PageHeader;
 import com.rapid.core.Pages.PageHeaders;
-import com.rapid.core.Parameter;
 import com.rapid.core.Theme;
 import com.rapid.core.Workflow;
 import com.rapid.core.Workflows;
@@ -1716,7 +1716,7 @@ public class Designer extends RapidHttpServlet {
 
 		// get the rapidServlet
 		RapidHttpServlet rapidServlet = rapidRequest.getRapidServlet();
-		
+
 		ServletContext context = rapidServlet.getServletContext();
 
 		// get a reference to our logger
@@ -1996,7 +1996,7 @@ public class Designer extends RapidHttpServlet {
 
 											// make a parameters object to send
 											parameters = new Parameters();
-											List<String> inputs = new ArrayList<String>();
+											List<String> inputs = new ArrayList<>();
 											// populate it with nulls
 											for (int i = 0; i < jsonInputs.length(); i++) {
 												parameters.addNull();
@@ -2005,7 +2005,7 @@ public class Designer extends RapidHttpServlet {
 												String field = input.getString("field");
 												if (!field.isEmpty()) inputId += "." + input.getString("field");
 												inputs.add(inputId);
-												
+
 											}
 
 											parameters = Database.unmappedParameters(sql, parameters, inputs, application, context);
@@ -2312,8 +2312,10 @@ public class Designer extends RapidHttpServlet {
 												// set the status to In development
 												appNew.setStatus(Application.STATUS_DEVELOPMENT);
 
-												// a map of actions that might be removed from any of the pages
-												Map<String,Integer> removedActions = new HashMap<>();
+												// a map of actions that might be unrecognised in any of the pages
+												Map<String,Integer> unknownActions = new HashMap<>();
+												// a map of actions that might be unrecognised in any of the pages
+												Map<String,Integer> unknownControls = new HashMap<>();
 
 												// look for page files
 												File pagesFolder = new File(appFolderDest.getAbsolutePath() + "/pages");
@@ -2360,7 +2362,7 @@ public class Designer extends RapidHttpServlet {
 														// get an xpath factory
 														XPathFactory xPathfactory = XPathFactory.newInstance();
 														XPath xpath = xPathfactory.newXPath();
-														// an expression for any attributes with a local name of "type"
+														// an expression for any attributes with a local name of "type" - to find actions
 														XPathExpression expr = xpath.compile("//@*[local-name()='type']");
 														// get them
 														NodeList nl = (NodeList) expr.evaluate(pageDocument, XPathConstants.NODESET);
@@ -2371,7 +2373,12 @@ public class Designer extends RapidHttpServlet {
 															// a list of action types
 															List<String> types = new ArrayList<>();
 															// loop the json actions
-															for (int i = 0; i < jsonActions.length(); i++) types.add(jsonActions.getJSONObject(i).optString("type").toLowerCase());
+															for (int i = 0; i < jsonActions.length(); i++) {
+																// get the type
+																String type = jsonActions.getJSONObject(i).optString("type").toLowerCase();
+																// if don't have it already add it
+																if (!types.contains(type)) types.add(type);
+															}
 															// loop the action attributes we found
 															for (int i = 0; i < nl.getLength(); i++) {
 																// get this attribute
@@ -2384,22 +2391,59 @@ public class Designer extends RapidHttpServlet {
 																Node n = a.getOwnerElement();
 																// if we don't know about this action type
 																if (!types.contains(type)) {
-																	// get the parent node
-																	Node p = n.getParentNode();
-																	// remove this node
-																	p.removeChild(n);
-																	// if we have removed this type already
-																	if (removedActions.containsKey(type)) {
-																		// increment the entry for this type
-																		removedActions.put(type, removedActions.get(type) + 1);
-																	} else {
-																		// add an entry for this type
-																		removedActions.put(type, 1);
-																	}
+
+																	// assume this is the first
+																	int unknownCount = 1;
+																	// increment the count of unknown controls
+																	if (unknownActions.containsKey(type)) unknownCount = unknownActions.get(type) + 1;
+																	// store it
+																	unknownActions.put(type, unknownCount);
+
 																} // got type check
 															} // attribute loop
 
 														} // attribute and system action check
+
+														// an expression for any controls to get their type
+														expr = xpath.compile("//controls/properties/entry[key='type']/value");
+														// get them
+														nl = (NodeList) expr.evaluate(pageDocument, XPathConstants.NODESET);
+														// get out system controls
+														JSONArray jsonControls = getJsonControls();
+														// if we found any elements with a type attribute and we have system actions
+														if (nl.getLength() > 0 && jsonControls.length() > 0) {
+
+															// a list of action types
+															List<String> types = new ArrayList<>();
+															// loop the json actions
+															for (int i = 0; i < jsonControls.length(); i++) {
+																// get the type
+																String type = jsonControls.getJSONObject(i).optString("type").toLowerCase();
+																// if don't have it already add it
+																if (!types.contains(type)) types.add(type);
+															}
+															// loop the control elements we found
+															for (int i = 0; i < nl.getLength(); i++) {
+																// get this element
+																Element e = (Element) nl.item(i);
+																// get the value of the type
+																String type = e.getTextContent().toLowerCase();
+																// remove any namespace
+																if (type.contains(":")) type = type.substring(type.indexOf(":") + 1);
+																// if we don't know about this action type
+																if (!types.contains(type)) {
+
+																	// assume this is the first
+																	int unknownCount = 1;
+																	// increment the count of unknown controls
+																	if (unknownControls.containsKey(type)) unknownCount = unknownControls.get(type) + 1;
+																	// store it
+																	unknownControls.put(type, unknownCount);
+
+																} // got type check
+															} // control loop
+
+														} // control node loop
 
 														// use the transformer to write to disk
 														TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -2411,6 +2455,39 @@ public class Designer extends RapidHttpServlet {
 												    } // page xml file loop
 
 												} // pages folder check
+
+												// if any items were removed
+												if (unknownActions.keySet().size() > 0 || unknownControls.keySet().size() > 0) {
+
+													// delete unzip folder
+													Files.deleteRecurring(unZipFolder);
+
+													// start error message
+													String error = "Application can't be imported: ";
+
+													// loop unknown actions
+													for (String key : unknownActions.keySet()) {
+														// get the number
+														int count = unknownActions.get(key);
+														// add message with correct plural
+														error += count + " unrecognised action" + (count == 1 ? "" : "s") + " of type \"" + key + "\", ";
+													}
+
+													// loop unknown controls
+													for (String key : unknownControls.keySet()) {
+														// get the number
+														int count = unknownControls.get(key);
+														// add message with correct plural
+														error += unknownControls.get(key) + " unrecognised control" + (count == 1 ? "" : "s") + " of type \"" + key + "\", ";
+													}
+
+													// remove the last comma
+													error = error.substring(0, error.length() - 2);
+
+													// throw the exception
+													throw new Exception(error);
+
+												}
 
 												// now initialise with the new id but don't make the resource files (this reloads the pages and sets up the security adapter)
 												appNew.initialise(getServletContext(), false);
@@ -2459,27 +2536,6 @@ public class Designer extends RapidHttpServlet {
 													if (!security.checkUserRole(importRapidRequest, com.rapid.server.Rapid.DESIGN_ROLE))
 														security.addUserRole(importRapidRequest, com.rapid.server.Rapid.DESIGN_ROLE);
 
-												}
-
-												// if any items were removed
-												if (removedActions.keySet().size() > 0) {
-													// a description of what was removed
-													String removed = "";
-													// loop the entries
-													for (String type : removedActions.keySet()) {
-														int count = removedActions.get(type);
-														removed += "removed " + count + " " + type + " action" + (count == 1 ? "" : "s") + " on import\n";
-													}
-													// get the current description
-													String description = appNew.getDescription();
-													// if null set to empty string
-													if (description == null) description = "";
-													// add a line break if need be
-													if (description.length() > 0) description += "\n";
-													// add the removed
-													description += removed;
-													// set it back
-													appNew.setDescription(description);
 												}
 
 												// reload the pages (actually clears down the pages collection and reloads the headers)
