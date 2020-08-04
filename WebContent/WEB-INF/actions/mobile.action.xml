@@ -244,6 +244,15 @@ return "<option value=''>Please select...</option>" + getControlOptions(this.gal
 	            <helpHtml>Sets whether to capture the device's cameras or another running application.</helpHtml>
 	        </property>
 	        
+	        <property>
+	            <key>includeAudio</key>
+	            <name>Audio</name>
+	            <visible>false</visible>
+	            <setConstructValueFunction>return "false";</setConstructValueFunction>
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>
+	            <helpHtml>Sets whether to record audio.</helpHtml>
+	        </property>
+	        
 	         <property>
 	            <key>galleryControlIds</key>
 	            <name>Controls</name>
@@ -494,7 +503,7 @@ return "<option value=''>Please select...</option><option value ='html'" + (this
 }
 
 .btnRecording {
-	background: #A00;
+	background: #C00;
 }
 
 	        	</contents>
@@ -532,6 +541,8 @@ var _currentFacingMode = "user";
 var _galleryControlId;
 var _size;
 var _quality;
+var _includeAudio;
+var _videoMimeType;
 
 function hasGetUserMedia() {
 
@@ -568,9 +579,11 @@ function getAvailableCameras() {
 	
 }
 
+// media sources
+
 var _mobileCamera = {
-	getStream(constraints) {
-		return navigator.mediaDevices.getUserMedia(constraints);
+	getStream() {
+		return navigator.mediaDevices.getUserMedia({ audio: _includeAudio, video: {facingMode: _currentFacingMode} });
 	},
 	close() {
 		if (hasGetUserMedia()) {
@@ -579,10 +592,24 @@ var _mobileCamera = {
 			
 			// Stop all video streams attached to the video element
 			if (_cameraPlayer && _cameraPlayer.srcObject && _cameraPlayer.srcObject.getVideoTracks) {
-				_cameraPlayer.srcObject.getVideoTracks().forEach(function(track){
+				_cameraPlayer.srcObject.getVideoTracks().concat(_cameraPlayer.srcObject.getAudioTracks())
+				.forEach(function(track) {
 					track.stop();
 				});
 			}
+		}
+	},
+	toggleCamera() {
+		if (_availableCameras.length > 1) {
+			if (_currentFacingMode === "environment") {
+				_currentFacingMode = "user";
+			} else {
+				_currentFacingMode = "environment";
+			}
+			navigator.mediaDevices.getUserMedia({ audio: _includeAudio, video: {facingMode: _currentFacingMode} })
+			.then(function(stream) {
+				_cameraPlayer.srcObject = stream;
+			}).catch(function() {});
 		}
 	}
 };
@@ -590,21 +617,134 @@ var _mobileCamera = {
 var _mobileRemote = {
 	stream: undefined,
 	getStream() {
-		if (this.stream) {
-			return this.stream;
+		if (_mobileRemote.stream) {
+			return Promise.resolve(_mobileRemote.stream);
 		} else {
-			return this.stream = navigator.mediaDevices.getDisplayMedia()
+			return _mobileRemote.getNewStream()
+			.then(function(stream) {
+				return _mobileRemote.stream = stream;
+			});
 		}
+	},
+	getNewStream() {
+		var desktop = navigator.mediaDevices.getDisplayMedia({ audio: _includeAudio, video: true });
+		var microphone = navigator.mediaDevices.getUserMedia({ audio: _includeAudio });
+		
+		return desktop.then(function(desktopStream) {
+			return microphone.then(function(microphoneStream) {
+				
+				var desktopAudio = desktopStream.getAudioTracks()[0];
+				var tracks = desktopStream.getVideoTracks().concat(desktopStream.getAudioTracks()).concat(microphoneStream.getAudioTracks());
+				
+				tracks.forEach(function(track) {
+					track.onended = function() {
+						_mobileRemote.close();
+						_mobileRemote.stream = undefined;
+						tracks.forEach(function(track) {
+							track.stop();
+						});
+					};
+				});
+				
+				var microphoneAudio = microphoneStream.getAudioTracks()[0];
+				
+				var mergedAudioTrack = desktopAudio && microphoneAudio ? mergeAudioStreams(desktopStream, microphoneStream) :
+					(desktopAudio || microphoneAudio);
+				
+				if (desktopAudio) desktopStream.removeTrack(desktopAudio);
+				if (mergedAudioTrack) desktopStream.addTrack(mergedAudioTrack);
+				
+				return desktopStream;
+			});
+		});
 	},
 	close() {
 		if (hasGetUserMedia()) {
 			// Close the preview
 			$("#cameraVideoContainer").remove();
 		}
+	},
+	toggleCamera() {
+		_mobileRemote.getNewStream()
+		.then(function(stream) {
+			
+			_cameraPlayer.srcObject = stream;
+			_mobileRemote.stream.getVideoTracks().forEach(function(track) {
+				track.stop();
+			});
+			_mobileRemote.stream = stream;
+			
+		}).catch(function() {});
 	}
 };
 
-function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelectImage, mediums, remoteSource, captureMode) {
+// media capturers
+
+var _closePreview = {
+	capture(data, source) {
+		var galleryControlId = _cameraPlayer.getAttribute("data-galleryId");
+		var galleryDetails = window[galleryControlId + "details"];
+		
+		setData_gallery(data.ev, galleryControlId, "url", galleryDetails, data.dataURL);
+		source.close();
+	},
+	indicator() {
+		return "";
+	}
+}
+
+var _keepPreview = {
+	capture(data, source) {
+		var galleryControlId = _cameraPlayer.getAttribute("data-galleryId");
+		var galleryDetails = window[galleryControlId + "details"];
+		
+		var captureCount = $("#captureCount");
+		captureCount.text(
+			parseInt(captureCount.text() || 0) + 1 + " added to gallery"
+		);
+		setData_gallery(data.ev, galleryControlId, "url", galleryDetails, data.dataURL);
+	},
+	indicator() {
+		return "<p id='captureCount'></p>";
+	}
+}
+
+var _showCapture = {
+	capture(data, source) {
+		var galleryControlId = _cameraPlayer.getAttribute("data-galleryId");
+		var galleryDetails = window[galleryControlId + "details"];
+		
+		setData_gallery(data.ev, galleryControlId, "url", galleryDetails, data.dataURL);
+		var img = $("#" + galleryControlId).find(".galleryItem").last();
+		Gallery_showImage(data.ev, galleryControlId, img, true);
+	},
+	indicator() {
+		return "";
+	}
+}
+
+var _formats = ["mp4", "webm"];
+var _codecs = ["h264", "vp9", "vp8", "av1", ""];
+
+function orderedByPreference(array, preference) {
+	array.sort(function(a, b) {
+		return a === preference ? -1 :
+			   b === preference ? 1 :
+			   0;
+	});
+	return array;
+}
+
+function optimalVideoMimeType(formats, codecs) {
+	for (format of formats) {
+		for (codec of codecs) {
+			var mimeType = "video/" + format + (codec && ";codec=") + codec;
+			if (MediaRecorder.isTypeSupported(mimeType)) return mimeType;
+		}
+	}
+}
+
+function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelectImage, mediums, remoteSource, includeAudio, captureMode) {
 	
 	_size = size;
 	_cameraSelectImage = cameraSelectImage;
@@ -613,6 +753,18 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 		
 		_galleryControlId = galleryControlId;
 		_quality = quality;
+		_includeAudio = includeAudio;
+		
+		if (mediums.includes('video')) {
+			_videoMimeType = optimalVideoMimeType(_formats, _codecs);
+		}
+		
+		var source = remoteSource ? _mobileRemote : _mobileCamera;
+		
+		var mediaCapturer = captureMode === "keepPreview" ? _keepPreview :
+							captureMode === "showCapture" ? _showCapture :
+							_closePreview;
+		
 		_cameraPlayer = document.getElementById("cameraPlayer");
 		
 	    var inputImageHtml = _cameraSelectImage ? "<div style='position:fixed; top:0; width:100%; text-align:center;'><label id='btnInputImage' for='inputImage' class='cameraControlBasic'><i class='fa fa-folder-open cameraIcon' style='margin-left: 2px;'></i></label>"
@@ -620,25 +772,23 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 	
 		// Add the divs
 		var cameraPreviewHtml = "<div id='cameraVideoContainer'>"
-							+ "<video id='cameraPlayer' autoplay></video>"
+							+ "<video id='cameraPlayer' autoplay muted='true'></video>"
 							+ inputImageHtml
 							+ "<button id='btnToggleCamera' class='cameraControlBasic' style='position:absolute; left:0;'><i class='fa fa-retweet cameraIcon' style='margin-left:-2px;'></i></button>"								  
 							+ "<button id ='btnCloseCamera' class='cameraControlBasic' style='position:absolute; right:0;'><i class='fa fa-times cameraIcon'></i></button>"
 							+ "<div style='position:fixed; bottom:0; width:100%; text-align:center; padding:20px;'>"
-							+ (captureMode === "keepPreview" ? "<p id='captureCount'></p>" : "")
+							+ mediaCapturer.indicator()
 							+ (mediums.includes('video') ? "<p id='videoRecordTimer'></p>" : "")
 							+ (mediums.includes('image') ? "<button id ='btnTakePicture' class='cameraControl'><i class='fa fa-camera cameraIcon'></i></button>" : "")
 							+ (mediums.includes('video') ? "<button id ='btnRecordVideo' class='cameraControl'><i class='fa fa-video-camera cameraIcon'></i></button>" : "")
 							+ "</div>"
 							+ "</div>";
 		
-		var source = remoteSource ? _mobileRemote : _mobileCamera;
-		
 		var galleryDetails = window[galleryControlId + "details"];
 		
 		$("body").append(cameraPreviewHtml);
 		
-		$("#btnToggleCamera").click(toggleCameraFacing);
+		$("#btnToggleCamera").click(source.toggleCamera);
 		
 		$("#btnCloseCamera").click(source.close);
 		
@@ -675,17 +825,12 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 		_cameraPlayer = document.getElementById("cameraPlayer");
 		
 		_cameraPlayer.setAttribute("data-galleryId",galleryControlId);
-		
-		// Specify the types of media to request, along with any requirements for each type
-		var constraints = {
-		   video: {facingMode: _currentFacingMode}
-		};
 			
 		// Display the cameraPlayer
 		$("#cameraVideoContainer").show();
 
 		// Obtain the user media object
-		source.getStream(constraints)
+		source.getStream()
 		.then(function(stream) {
 			
 			// Use the stream
@@ -697,17 +842,21 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 				return;
 			}
 			
-			$("#btnTakePicture").click(function() {
-				capureMedia(takePicture(), captureMode, source);
-			});
+			if (mediums.includes('image')) {
+				$("#btnTakePicture").click(function() {
+					mediaCapturer.capture(takePicture(), source);
+				});
+			}
 			
 			var bitsPerSecond = (quality / 100) * (2500000 + 128000);
 			
-			if ($("#btnRecordVideo").length) btnRecordVideo.onclick = function() {
-				recordVideo(stream, bitsPerSecond, maxDuration, function(data) {
-					capureMedia(data, captureMode, source);
-				});
-			};
+			if (mediums.includes('video')) {
+				btnRecordVideo.onclick = function() {
+					recordVideo(stream, bitsPerSecond, maxDuration, function(data) {
+						mediaCapturer.capture(data, source);
+					});
+				};
+			}
 			
 			$("#btnPause").click(function(ev) {
 				pauseCamera(ev, galleryControlId, galleryDetails);
@@ -744,6 +893,25 @@ function stopCameraStream() {
 		});
 	}
 	
+}
+
+function mergeAudioStreams(stream1, stream2) {
+	
+	var context = new AudioContext();
+	
+	var source1 = context.createMediaStreamSource(stream1);
+	var source2 = context.createMediaStreamSource(stream2);
+	var destination = context.createMediaStreamDestination();
+	
+	var gain1 = context.createGain();
+	var gain2 = context.createGain();
+	gain1.gain.value = 0.7;
+	gain2.gain.value = 0.7;
+	
+	source1.connect(gain1).connect(destination);
+	source2.connect(gain2).connect(destination);
+	
+	return destination.stream.getAudioTracks()[0];
 }
 
 function scaleImageToDataURL(image, imageWidth, imageHeight) {
@@ -835,33 +1003,6 @@ function selectImage(galleryControlId, size) {
 	});
 }
 
-function capureMedia(data, captureMode, source) {
-	
-	var galleryControlId = _cameraPlayer.getAttribute("data-galleryId");
-	var galleryDetails = window[galleryControlId + "details"];
-	
-	if (captureMode === "keepPreview") {
-		
-		var captureCount = $("#captureCount");
-		captureCount.text(
-			parseInt(captureCount.text() || 0) + 1 + " added to gallery"
-		);
-		setData_gallery(data.ev, galleryControlId, "url", galleryDetails, data.dataURL);
-		
-	} else if (captureMode === "showCapture") {
-		
-		setData_gallery(data.ev, galleryControlId, "url", galleryDetails, data.dataURL);
-		var img = $("#" + galleryControlId).find(".galleryItem").last();
-		Gallery_showImage(data.ev, galleryControlId, img, true);
-		
-	} else { // send captured media to gallery and close preview
-		
-		setData_gallery(data.ev, galleryControlId, "url", galleryDetails, data.dataURL);
-		source.close();
-		
-	}
-}
-
 function takePicture(ev) {
 	
 	if (hasGetUserMedia()) {
@@ -882,7 +1023,7 @@ function recordVideo(stream, bitsPerSecond, maxDuration, callback) {
 	
 	var chunks = [];
 	
-	var mediaRecorder = new MediaRecorder(stream, { mimeType: "video/webm", bitsPerSecond });
+	var mediaRecorder = new MediaRecorder(stream, { mimeType: _videoMimeType, bitsPerSecond });
 	mediaRecorder.start();
 	
 	$("#btnRecordVideo").addClass("btnRecording");
@@ -895,48 +1036,36 @@ function recordVideo(stream, bitsPerSecond, maxDuration, callback) {
 		);
 	}, 1000);
 	
-	function stopRecording() {
+	var previewControls = $("#btnToggleCamera, #btnCloseCamera");
+	previewControls.hide();
+	
+	if (maxDuration > 0) setTimeout(stopRecording, maxDuration * 1000);
+	
+	mediaRecorder.onstop = function(ev) {
 		$("#btnRecordVideo").removeClass("btnRecording");
 		clearInterval(timerId);
 		$("#videoRecordTimer").text("");
-		mediaRecorder.stop();
+		previewControls.show();
 		
 		if ($("#btnRecordVideo").length) btnRecordVideo.onclick = function() {
 			recordVideo(stream, bitsPerSecond, maxDuration, callback);
 		};
 		
+		var blob = new Blob(chunks, { type: "video/webm" });
+		var reader = new FileReader();
+		reader.onload = function() {
+			callback({ dataURL: reader.result, ev });
+		};
+		reader.readAsDataURL(blob);
 	};
 	
-	btnRecordVideo.onclick = stopRecording;
-	
-	if (maxDuration > 0) setTimeout(stopRecording, maxDuration * 1000);
-	
-	mediaRecorder.onstop = function(ev) {
-		var blob = new Blob(chunks, { type: "video/webm" });
-		var dataURL = URL.createObjectURL(blob);
-		callback({ dataURL, ev });
+	btnRecordVideo.onclick = function() {
+		mediaRecorder.stop();
 	};
 	
 	mediaRecorder.ondataavailable = function(ev) {
 		chunks.push(ev.data);
 	};
-}
-
-function toggleCameraFacing () {
-	
-	if (_availableCameras.length > 1) {
-		
-		if (_currentFacingMode === "environment") {
-			_currentFacingMode = "user";
-		} else {
-			_currentFacingMode = "environment";
-		}
-		
-		stopCameraStream ();
-		turnOnCamera(_galleryControlId, _size, _quality, 'camera', false);
-		
-	}
-
 }
 
 function base64toBlob(base64Data, contentType) {
@@ -985,17 +1114,15 @@ function uploadImages(controlIds, ev, successCallback, errorCallback) {
 		for (var idx in controlIds) {
 		
 			var controlId = controlIds[idx];
-		
 			var control = $("#" + controlId);
 			
 			// Check if this is a gallery control or signature
 			if (control.hasClass("gallery")) {
 			
 				// Get all the images from the control
-				control.find("img").each(function(){
+				control.find(".galleryItem").each(function() {
 					
 					var img = $(this);
-					
 					var src = img.attr("src");
 					
 					if (src.indexOf("data") == 0) images.push({url:"~?a=" + _appId + "&action=uploadImage&name=" + img.attr("data-filename"), dataURL:src});
@@ -1133,9 +1260,65 @@ function uploadImage(url, dataSource, progress, ev, successCallback, errorCallba
 		} else {
 			throw ex;
 		}
-	
 	}
+}
 
+function downloadImages(controlIds, ev, successCallback, errorCallback) {
+	
+	// If we have one
+	if (controlIds && controlIds.length > 0) {
+		
+		// Loop the control ids, will be gallery or a signature, for gallery get all images, download use data-filename attribute as file name, on success
+		
+		// images we are going to download
+		var images = [];
+		
+		for (var idx in controlIds) {
+		
+			var controlId = controlIds[idx];
+			var control = $("#" + controlId);
+			
+			// Check if this is a gallery control or signature
+			if (control.hasClass("gallery")) {
+			
+				// Get all the images from the control
+				control.find(".galleryItem").each(function() {
+					
+					var img = $(this);
+					var src = img.attr("src");
+					
+					if (src.indexOf("data") == 0) {
+						downloadMedia(src);
+					}
+										
+				});
+			
+			} else if (control.hasClass("signature")) {
+												
+				// Its a signature control - get the dataUrl from the signature
+				// Get a data url of the canvas, containing a representation of the image
+				// Default format type is image/png
+				
+				var signature = _signatureControls[controlId];
+
+				// Get the current date
+				var date = new Date();
+				var dateString = date.getFullYear() + "" + padNumberWithZeros(date.getMonth() + 1,2) + "" + padNumberWithZeros(date.getDate(),2) + "_" + padNumberWithZeros(date.getHours(),2) + "" + padNumberWithZeros(date.getMinutes(),2) + "" + padNumberWithZeros(date.getSeconds(),2) + "" + padNumberWithZeros(date.getMilliseconds(),3);
+				var fileName = 	dateString + ".png";
+
+				downloadMedia(signature.toDataURL());
+			}
+		}
+	}
+}
+
+function downloadMedia(dataURL) {
+	// alternative:  https://web.dev/native-file-system/
+	chrome.downloads.download(
+		URL.createObjectURL(
+  			base64toBlob(dataURL, _videoMimeType)
+		)
+	);
 }
 			]]>
 	    </actionJavaScript>

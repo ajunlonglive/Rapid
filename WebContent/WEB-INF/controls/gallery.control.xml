@@ -145,6 +145,18 @@ div.gallery img {
 	background: #111;
 	z-index: 1010;
 }
+
+.galleryItem {
+	cursor: pointer;
+}
+
+@media only screen and (max-width: 500px) {
+	
+	#historyButtons, #btnRedo {
+		clear: left;
+	}
+}
+
 	                ]]>
 	            </contents>
 	        </resource>
@@ -371,7 +383,7 @@ function addToImageControl(control, filename, url, type) {
 		if (addImage) {
 			
 			// add an image element with the url
-			control.append("<" + type + " class='galleryItem' src='" + (url || filename) + "' data-filename='" + filename + "'></" + type + ">");
+			control.append("<" + type + " class='galleryItem' src='" + (url || filename) + "' data-filename='" + filename + "'>");
 
 			// remember we set an image in the gallery
 			imageSet = true;
@@ -519,7 +531,7 @@ function setNextPrevImgAndButton(currentImage, direction, prevButton, nextButton
 	
 	if (direction == "next") {
 		
-		let nextImage = currentImage.next(".galleryItem");
+		var nextImage = currentImage.next(".galleryItem");
 		
 		if (nextImage.length) {
 			
@@ -536,7 +548,7 @@ function setNextPrevImgAndButton(currentImage, direction, prevButton, nextButton
 		
 	} else {
 	
-		let prevImage = currentImage.prev(".galleryItem");
+		var prevImage = currentImage.prev(".galleryItem");
 		
 		if (prevImage.length) {
 			
@@ -555,36 +567,39 @@ function setNextPrevImgAndButton(currentImage, direction, prevButton, nextButton
 	
 }        	
 
-function Gallery_showImage(ev, id, img, allowDelete) {	
+function Gallery_showImage(ev, id, galleryItem, allowDelete) {	
 
 	// get the image
-	var img = $(img);
+	var galleryItem = $(galleryItem);
 	
 	// look for the big gallery div
 	var gallery = $("div.bigGallery");
 	
 	// if we couldn't find one create
-	if (!gallery[0]) {
+	if (!gallery[0]) {	
 		
 		// Create a new gallery
 		gallery = $("body").append("<div class='bigGallery'></div>").find("div.bigGallery");
-		
-		// Hide the big gallery
-		gallery.hide();
+		gallery.css({"position":"fixed", "top":0, "left":0, "right":0, "bottom":0});
 		
 		// buttons to the gallery
-		var btnDelete = gallery.append("<button id ='btnDeleteImage' class='galleryControlButton' style='position:absolute; left:0;'><i class='fa fa-trash'></i></button>").find("#btnDeleteImage");
-		var btnClose = gallery.append("<button id ='btnCloseGallery' class='galleryControlButton' style='position:absolute; right:0;'><i class='fa fa-times'></i></button>").find("#btnCloseGallery");		
 		var btnPrev = gallery.append("<button id='btnPrev' class='galleryControlDirectionButton' style='position:absolute; left:0; top:50%;'><i class='fa fa-chevron-left'></i></button>").find("#btnPrev");
 		var btnNext = gallery.append("<button id='btnNext' class='galleryControlDirectionButton' style='position:absolute; right:0; top:50%;'><i class='fa fa-chevron-right'></i></button>").find("#btnNext");
 		
+		var tools = gallery.append("<div id='tools' style='position:absolute; top:0; left:0; width:100%;'>").find("#tools").css({"text-align":"center", "color":"#FFF", "z-index":"1"});
+		var btnDelete = tools.append("<button id ='btnDeleteImage' class='galleryControlButton' style='float: left;'><i class='fa fa-trash'></i></button>").find("#btnDeleteImage");
+		var btnClose = tools.append("<button id ='btnCloseGallery' class='galleryControlButton' style='float: right;'><i class='fa fa-times'></i></button>").find("#btnCloseGallery");		
+		if (galleryItem.is("img")) {
+			var btnEdit = tools.append("<button id='btnEdit' class='galleryControlButton' style='float: right;'><i class='fa fa-pencil'></i></button>").find("#btnEdit");
+			var btnSave = tools.append("<button id='btnSave' class='galleryControlButton' style='float: right; display:none'><i class='fa fa-check'></i></button>").find("#btnSave");
+		}
 		if (allowDelete == false) btnDelete.hide();
 	
 		// Add click listeners to the buttons
 		btnPrev.click(function(){
 		
 			// Get the currently shown img object in the big gallery
-			let currentImage = gallery.find("img:visible");
+			var currentImage = gallery.find(".galleryItem:visible");
 			// Display the previous image, and decide whether next/prev button should be shown
 			setNextPrevImgAndButton(currentImage, "previous", btnPrev, btnNext);
 			
@@ -593,7 +608,7 @@ function Gallery_showImage(ev, id, img, allowDelete) {
 		btnNext.click(function(){
 		
 			// Get the currently shown img object in the big gallery
-			let currentImage = gallery.find("img:visible");
+			var currentImage = gallery.find(".galleryItem:visible");
 			// Display the previous image, and decide whether next/prev button should be shown
 			setNextPrevImgAndButton(currentImage, "next", btnPrev, btnNext);
 			
@@ -602,8 +617,8 @@ function Gallery_showImage(ev, id, img, allowDelete) {
 		btnClose.click(function(){
 			
 			// Hide the gallery
-			gallery.hide();
-			// Clear the images in the gallery	
+			gallery.remove();
+			// Clear the images in the gallery
 			gallery.children(".galleryItem").each(function() {
 				// Remove this object
 				$(this).remove();
@@ -622,17 +637,31 @@ function Gallery_showImage(ev, id, img, allowDelete) {
 					// get the source gallery
 					var sourceGallery = $("#" + gallery.attr("data-gallery"));
 					// Find  and delete this image 
-					var img = sourceGallery.children(".galleryItem").eq(index);
+					var galleryItem = sourceGallery.children(".galleryItem").eq(index);
 					// remove from storage
-					var removed = Gallery_removeImage(ev, id, img);
+					var removed = Gallery_removeImage(ev, id, galleryItem);
 					// hide the gallery
-					if (removed) gallery.hide();
+					if (removed) gallery.remove();
 					// we're done
 					return false;
 				}
 			});
 			
 		});
+		
+		if (btnEdit) {
+			btnEdit.click(function(ev) {
+				btnEdit.hide();
+				editImage(gallery);
+				btnSave.show();
+			});
+			btnSave.click(function(ev) {
+				btnSave.hide();
+				$(".galleryEditor").remove();
+				saveEdit(gallery, galleryItem);
+				btnEdit.show();
+			});
+		}
 		
 		// Include swipe actions, only if global has been set by mobile action and this is a mobile browser
 		if (_swipeHandlers && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
@@ -674,7 +703,7 @@ function Gallery_showImage(ev, id, img, allowDelete) {
 	});
 	
 	// Get a reference of the main gallery
-	var mainGallery = img.parent();
+	var mainGallery = galleryItem.parent();
 	
 	// set an attribute for the source gallery
 	gallery.attr("data-gallery", mainGallery.attr("id"));
@@ -689,11 +718,11 @@ function Gallery_showImage(ev, id, img, allowDelete) {
     	gallery.append(self);
     	
     	// If clicked img is this image - then show this image
-    	if (img[0] === this) self.show();
+    	if (galleryItem[0] === this) self.show();
     });
 	
 	// get the index
-	var index = img.index();
+	var index = galleryItem.index();
 	// get the details
 	var details = window[id + "details"];
 	// if we've got the details
@@ -704,13 +733,200 @@ function Gallery_showImage(ev, id, img, allowDelete) {
 	
 	// Now show the gallery
 	gallery.show();
-	gallery.css({"position":"fixed", "top":0, "left":0, "right":0, "bottom":0});
 	
 	// Initialise the next/prev button - depending on whether there are more than one img in the gallery
-	setNextPrevButton(img, $("#btnPrev"), $("#btnNext"));
+	setNextPrevButton(galleryItem, $("#btnPrev"), $("#btnNext"));
 }
 
+function newImageDrawing(img) {
+	return {
+		draw(context) {
+			context.drawImage(img, 0, 0);
+		}
+	}
+}
 
+function newStrokeDrawing(x1, y1, x2, y2, color) {
+	return {
+		draw(context) {
+			context.strokeStyle = color;
+			context.beginPath();
+			context.moveTo(x1, y1)
+			context.lineTo(x2, y2);
+			context.stroke();
+		}
+	}
+}
+
+function newGroupDrawing() {
+	return {
+		drawings: [],
+		draw(context) {
+			this.drawings.forEach(function(drawing) {
+				drawing.draw(context);
+			});
+		},
+		push(drawing) {
+			this.drawings.push(drawing);
+		}
+	}
+}
+
+function draw(drawings, context) {
+	drawings.forEach(function(drawing) {
+		drawing.draw(context);
+	});
+}
+
+function editImage(gallery) {
+	
+	var img = gallery.find("img.galleryItem:visible");
+	var horizontalResolution = img[0].naturalWidth;
+	var verticalResolution = img[0].naturalHeight;
+	
+	var canvas = document.createElement("canvas");
+	canvas.width = horizontalResolution;
+	canvas.height = verticalResolution;
+	$(canvas).css({"width":"100%", "height":"100%", "object-fit":"contain", "cursor":"crosshair"});
+	var context = canvas.getContext('2d');
+	
+	var color = "#000";
+	
+	var pallet = gallery.append("<div id='pallet' class='galleryEditor' style='position:absolute; bottom:0; left:0; width:100%;'>").find("#pallet").css({"text-align":"center", "color":"#FFF", "z-index":"1"});
+	var btnBlack = pallet.append("<button id='btnBlack' class='galleryControlButton' data-color='#000'></button>").find("#btnBlack").css("background","#000");
+	var btnWhite = pallet.append("<button id='btnWhite' class='galleryControlButton' data-color='#FFF'></button>").find("#btnWhite").css({"background":"#FFF", "color":"#000"});
+	var btnRed = pallet.append("<button id='btnRed' class='galleryControlButton' data-color='#F00'></button>").find("#btnRed").css("background","#F00");
+	var btnGreen = pallet.append("<button id='btnGreen' class='galleryControlButton' data-color='#0C0'></button>").find("#btnGreen").css("background","#0C0");
+	var btnBlue= pallet.append("<button id='btnBlue' class='galleryControlButton' data-color='#00F'></button>").find("#btnBlue").css("background","#00F");
+	
+	var allColorButtons = $("#btnBlack, #btnWhite, #btnRed, #btnGreen, #btnBlue");
+	
+	allColorButtons.css({"height": "40px", "width": "40px"});
+	
+	var selectedColorShadow = "0 0 0 2px #000, 0 0 0 4px #FFF, 0 2px 8px 4px #000";
+	$(btnBlack).css("box-shadow", selectedColorShadow);
+	
+	allColorButtons.click(function() {
+		allColorButtons.css("box-shadow", "none");
+	});
+	
+	allColorButtons.click(function() {
+		color = $(this).attr("data-color");
+		$(this).css("box-shadow", selectedColorShadow);
+	});
+	
+	function scaleX(dimension) {
+	
+		var canvasIsNarrower = (horizontalResolution / verticalResolution) < (canvas.offsetWidth / canvas.offsetHeight);
+		
+		var scale = canvasIsNarrower ?
+			verticalResolution / canvas.offsetHeight :
+			horizontalResolution / canvas.offsetWidth;
+		
+		var imageWidth = horizontalResolution / scale;
+		var canvasOffset = canvasIsNarrower ? ((canvas.offsetWidth - imageWidth) / 2) : 0;
+		
+		return (dimension - canvasOffset) * scale;
+	}
+	
+	function scaleY(dimension) {
+	
+		var canvasIsShorter = (verticalResolution / horizontalResolution) < (canvas.offsetHeight / canvas.offsetWidth);
+		
+		var scale = canvasIsShorter ?
+			horizontalResolution / canvas.offsetWidth :
+			verticalResolution / canvas.offsetHeight;
+		
+		var imageHeight = verticalResolution / scale;
+		var canvasOffset = canvasIsShorter ? ((canvas.offsetHeight - imageHeight) / 2) : 0;
+		
+		return (dimension - canvasOffset) * scale;
+	}
+	
+	var pastDrawings = [];
+	var futureDrawings = [];
+	
+	var imageDrawing = newImageDrawing(img[0]);
+	imageDrawing.draw(context);
+	pastDrawings.push(imageDrawing);
+	
+	$(canvas).on("mousedown touchstart", function(mousedown) {
+		
+		$("#tools, #pallet").hide();
+		
+		var x = scaleX(mousedown.offsetX);
+		var y = scaleY(mousedown.offsetY);
+		
+		var groupDrawing = newGroupDrawing();
+		
+		function moveListener(mousemove) {
+			
+			var newX = scaleX(mousemove.offsetX);
+			var newY = scaleY(mousemove.offsetY);
+			
+			var strokeDrawing = newStrokeDrawing(x, y, newX, newY, color);
+			strokeDrawing.draw(context);
+			groupDrawing.push(strokeDrawing);
+			
+			x = newX;
+			y = newY;
+		}
+		
+		$(window).on("mousemove touchmove", moveListener);
+	
+		$(window).one("mouseup touchend", function(mouseup) {
+			$(window).off("mousemove touchmove", moveListener);
+			
+			$("#tools, #pallet").show();
+			
+			pastDrawings.push(groupDrawing);
+			futureDrawings = [];
+			
+		});
+	});
+	
+	var historyButtons = $("#tools").append("<div id='historyButtons' class='galleryEditor' style='float: left;'>").find("#historyButtons");
+	var btnUndo = $("#historyButtons").append("<button id='btnUndo' class='galleryControlButton galleryEditor' style='float: left;'><i class='fa fa-undo'></i></button>").find("#btnUndo");
+	var btnRedo = $("#historyButtons").append("<button id='btnRedo' class='galleryControlButton galleryEditor' style='float: left;'><i class='fa fa-repeat'></i></button>").find("#btnRedo");
+	
+	btnUndo.click(function() {
+		if (pastDrawings.length > 1) {
+			var undoneDrawing = pastDrawings.pop();
+			futureDrawings.push(undoneDrawing);
+			draw(pastDrawings, context);
+		}
+	});
+	
+	btnRedo.click(function() {
+		if (futureDrawings.length > 0) {
+			var redoneDrawing = futureDrawings.pop();
+			pastDrawings.push(redoneDrawing);
+			redoneDrawing.draw(context);
+		}
+	});
+	
+	img.addClass("editing").hide();
+	gallery.append(canvas);
+}
+
+function saveEdit(gallery, galleryItem) {
+	var canvas = gallery.find("canvas")[0];
+	var img = gallery.find("img.galleryItem.editing");
+	img.removeClass("editing");
+	var dataURL = canvas.toDataURL();
+	
+	// gallery viewer
+	galleryItem[0].src = dataURL;
+	// thumbnail in gallery in page
+	img[0].src = dataURL;
+	// storage
+	IDBputObject({ filename: img.attr("data-filename"), url: dataURL },
+		function() {
+			canvas.remove();
+			img.show();
+		}
+	);
+}
 
 	                ]]>
 	            </contents>
@@ -813,11 +1029,10 @@ if (data) {
 						var imageRecord = { url: url };
  						imageRecord.filename = makeFilename(url);
  						IDBputObject(imageRecord);
-						addToImageControl(control, imageRecord.filename, imageRecord.url);
-						
-					} else if (url.indexOf("blob:") == 0) { // if object url for video blob
-					
-						addToImageControl(control, url, url, "video");
+ 						
+ 						var type = url.indexOf("data:video") == 0 ? "video" : "img";
+ 						
+						addToImageControl(control, imageRecord.filename, imageRecord.url, type);
 						
 					} else { // if url is a filename
 						
@@ -825,7 +1040,9 @@ if (data) {
 							
 							if (imageRecord) { // if an image is stored by this filename
 								
-								addToImageControl(control, imageRecord.filename, imageRecord.url);
+								var type = imageRecord.url.indexOf("data:video") == 0 ? "video" : "img";
+								
+								addToImageControl(control, imageRecord.filename, imageRecord.url, type);
 								
 							} else { // if url is for the rapid logo etc.
 								
