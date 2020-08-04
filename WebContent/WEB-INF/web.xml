@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">
+
+<!-- 
+
+Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
+
+gareth.edwards@rapid-is.co.uk
+
+
+This file is part of the Rapid Application Platform
+
+Rapid is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version. The terms require you to include
+the original copyright, and the license notice in all redistributions.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
+
+ -->
+
+  <display-name>Rapid Application Platform</display-name>
+  
+  <welcome-file-list>
+    <welcome-file>/</welcome-file>
+  </welcome-file-list>
+  
+  <error-page>
+    <error-code>404</error-code>
+    <location>/page404.htm</location>
+  </error-page>
+  <error-page>
+   <error-code>500</error-code>
+   <location>/page500.htm</location>
+  </error-page>
+  
+  <session-config>
+      <session-timeout>30</session-timeout>
+	 <cookie-config>
+	  	<http-only>true</http-only>
+	  	<!-- <secure>true</secure> -->
+	 </cookie-config>
+</session-config>
+
+<!-- Require HTTPS for everything except simple resources. 
+	<security-constraint>
+        <web-resource-collection>
+            <web-resource-name>HTTPSOnly</web-resource-name>
+            <url-pattern>/*</url-pattern>
+        </web-resource-collection>
+        <user-data-constraint>
+            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>HTTPSOrHTTP</web-resource-name>
+            <url-pattern>*.ico</url-pattern>
+            <url-pattern>/applications/*</url-pattern>
+            <url-pattern>/scripts/*</url-pattern>
+            <url-pattern>/scripts_min/*</url-pattern>
+            <url-pattern>/styles/*</url-pattern>
+            <url-pattern>/styles_min/*</url-pattern>
+            <url-pattern>/images/*</url-pattern>
+        </web-resource-collection>
+        <user-data-constraint>
+            <transport-guarantee>NONE</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
+  -->
+  
+  <filter>
+    <filter-name>RapidFilter</filter-name>
+    <filter-class>com.rapid.server.filter.RapidFilter</filter-class>
+    <!-- 
+    <init-param>
+      <description>Whether unauthenticated users will be allowed access to application security providers (but not important resources)</description>
+      <param-name>public</param-name>
+      <param-value>true</param-value>
+    </init-param>
+    -->
+    <!-- 
+    <init-param>
+      <description>Comma separated values that the client IP address must start with in order to see sensitive pages such as login.jsp, logout.jsp, design.jsp, the designer servlet, and the Rapid Admin application</description>
+      <param-name>ipcheck</param-name>
+      <param-value>127.0.0.1,0:0:0:0:0:0:0:1,10.,192.</param-value>
+    </init-param>
+    -->
+    <!-- 
+    <init-param>
+      <description>Value for the X-FRAME-OPTIONS header to prevent click-jacking, etc. If not specified will be SAMEORIGIN</description>
+      <param-name>xFrameOptions</param-name>
+      <param-value>ALLOWALL</param-value>
+    </init-param>
+    -->
+    <!--
+    <init-param>
+      <description>Comma-separated list of resources that do not require authentication to be served to the client</description>
+      <param-name>noAuthResources</param-name>
+      <param-value>/favicon.ico</param-value>
+    </init-param>
+    -->
+  </filter>
+  <filter-mapping>
+    <filter-name>RapidFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  
+  <listener>
+    <description>This class initialises Rapid when the application context is started</description>
+    <listener-class>com.rapid.server.RapidServletContextListener</listener-class>
+  </listener>
+  
+  <listener>
+      	<description>This class tracks user sessions being created and destroyed</description>
+        <listener-class>com.rapid.server.RapidSessionListener</listener-class>
+   </listener>
+  
+  <servlet>
+    <description>This is the main working servlet for delivering pages and dealing with actions</description>
+    <display-name>Rapid</display-name>
+    <servlet-name>Rapid</servlet-name>
+    <servlet-class>com.rapid.server.Rapid</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Rapid</servlet-name>
+    <url-pattern>/~</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>Rapid</servlet-name>
+    <url-pattern>/rapid</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <description>This servlet provides all of the more complex functionality for the designer</description>
+    <display-name>Designer</display-name>
+    <servlet-name>Designer</servlet-name>
+    <servlet-class>com.rapid.server.Designer</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Designer</servlet-name>
+    <url-pattern>/designer</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <description>This serlvet provides the SOA functionality</description>
+    <description>SOA</description>
+    <display-name>SOA</display-name>
+    <servlet-name>SOA</servlet-name>
+    <servlet-class>com.rapid.server.SOA</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>SOA</servlet-name>
+    <url-pattern>/soa/*</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <description>This serlvet provides the Safety functionality</description>
+    <description>Safety</description>
+    <display-name>Safety</display-name>
+    <servlet-name>Safety</servlet-name>
+    <servlet-class>com.rapid.server.Safety</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Safety</servlet-name>
+    <url-pattern>/safety</url-pattern>
+  </servlet-mapping>
+  
+  <!-- These parameters are for local date / time formats -->
+  
+  <context-param>
+    <description>The display format to be used for local dates</description>
+    <param-name>localDateFormat</param-name>
+    <param-value>dd/MM/yyyy</param-value>
+  </context-param>
+  
+  <context-param>
+    <description>The display format to be used for local date / times</description>
+    <param-name>localDateTimeFormat</param-name>
+    <param-value>dd/MM/yyyy HH:mm</param-value>
+  </context-param>
+  
+  <!-- These parameters define how often (in seconds) to check for pages that haven't been accessed for a while and how long (in seconds) is allowed to ellapse before a page is removed from memory -->
+  
+  <context-param>
+    <description>Number of seconds between checking the how long has passed since each page was accessed</description>
+    <param-name>pageAgeCheckInterval</param-name>
+    <param-value>1800</param-value>
+  </context-param>
+  
+  <context-param>
+    <description>If more seconds have passed than the age below the page is removed from memory at the next interval</description>
+    <param-name>pageMaxAge</param-name>
+    <param-value>1800</param-value>
+  </context-param>
+  
+  <!-- This parameter adds a prefix to all new control and action ids. This allows different customers to extend the same app and then merge it without collisions in ids -->
+  
+  <context-param>
+    <description>Control and action id prefix</description>
+    <param-name>controlAndActionPrefix</param-name>
+    <param-value></param-value>
+  </context-param>
+  
+    <!-- This parameter assigns the page name as the page id if true. This is useful in large systems, rather than the P1, P2, etc generated ids -->
+    
+  <context-param>
+    <description>Page name as id</description>
+    <param-name>pageNameIds</param-name>
+    <param-value>false</param-value>
+  </context-param>
+      
+  <!-- The parameters below are for developement and should be false (or removed) for production -->
+  
+  <context-param>
+    <description>Whether or not to attempt to defeat the client-side cache</description>
+    <param-name>noCaching</param-name>
+    <param-value>true</param-value>
+  </context-param>
+  
+  <context-param>
+    <description>Whether or not to show the full stack trace in errors</description>
+    <param-name>showStackTrace</param-name>
+    <param-value>true</param-value>
+  </context-param>
+      
+  <context-param>
+    <description>Whether or not to rebuild the pages each time they are requested</description>
+    <param-name>rebuildPages</param-name>
+    <param-value>true</param-value>
+  </context-param>
+  
+
+  <!-- This is useful for doing demos on different networks, the cache is exported with the application -->
+  
+  <!-- 
+  <context-param>
+    <description>Whether to cache the database and webservice action requests / responses</description>
+    <param-name>actionCache</param-name>
+    <param-value>true</param-value>
+  </context-param>
+   -->
+ 
+   
+  <!-- These are for when a http proxy is required -->
+  
+  <!-- 
+  <context-param>
+    <description>HTTP proxy host name or IP address</description>
+    <param-name>http.proxyHost</param-name>
+    <param-value>127.0.0.1</param-value>
+  </context-param>
+  <context-param>
+    <description>HTTP proxy port</description>
+    <param-name>http.proxyPort</param-name>
+    <param-value>3128</param-value>
+  </context-param>
+   -->
+   
+</web-app>
