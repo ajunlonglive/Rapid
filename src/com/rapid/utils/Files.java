@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.StandardWatchEventKinds;
@@ -37,6 +38,7 @@ import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -81,7 +83,7 @@ public class Files {
 		else
 			return true;
 	}
-	
+
 	// byte copies one file to another
 	public static void copyFile(File src, File dest) throws IOException {
 
@@ -240,30 +242,26 @@ public class Files {
 		return path;
 	}
 
+	// the checksum of an input stream, use with MessageDigest.getInstance("MD5"), or MessageDigest.getInstance("SHA-1"), etc
+	public static String getChecksum(MessageDigest digest, InputStream is) throws IOException {
 
-	// the checksum of a file, use with MessageDigest.getInstance("MD5"), or MessageDigest.getInstance("SHA-1"), etc
-	public static String getChecksum(MessageDigest digest, File file) throws IOException {
-
-	    // Get file input stream for reading the file content
-	    FileInputStream fis = new FileInputStream(file);
-
-	    // Create byte array to read data in chunks
+		// Create byte array to read data in chunks
 	    byte[] byteArray = new byte[1024];
 	    int bytesCount = 0;
 
 	    // Read file data and update in message digest
-	    while ((bytesCount = fis.read(byteArray)) != -1) {
+	    while ((bytesCount = is.read(byteArray)) != -1) {
 	        digest.update(byteArray, 0, bytesCount);
 	    };
 
 	    // close the stream; We don't need it now.
-	    fis.close();
+	    is.close();
 
-	    //Get the hash's bytes
+	    // Get the hash's bytes
 	    byte[] bytes = digest.digest();
 
 	    // This bytes[] has bytes in decimal format;
-	    //Convert it to hexadecimal format
+	    // Convert it to hexadecimal format
 	    StringBuilder sb = new StringBuilder();
 	    for (int i=0; i< bytes.length ;i++) {
 	        sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
@@ -271,16 +269,44 @@ public class Files {
 
 	    //return complete hash
 	   return sb.toString();
+
 	}
-	
+
+	// the checksum of a file, use with MessageDigest.getInstance("MD5"), or MessageDigest.getInstance("SHA-1"), etc
+	public static String getChecksum(MessageDigest digest, File file) throws IOException {
+
+	    // Get file input stream for reading the file content
+	    FileInputStream fis = new FileInputStream(file);
+
+	    // use the method above
+	    return getChecksum(digest, fis);
+
+	}
+
+	// easy override to the above
+	public static String getChecksum(InputStream is) throws IOException, NoSuchAlgorithmException {
+
+		 // use the method above
+	    return getChecksum(MessageDigest.getInstance("MD5"), is);
+
+	}
+
+	// easy override to the above
+	public static String getChecksum(File file) throws IOException, NoSuchAlgorithmException {
+
+		 // use the method above
+	    return getChecksum(MessageDigest.getInstance("MD5"), file);
+
+	}
+
 	// a file watcher on it's own thread to copy new files from one location to another - use with new Files.Watcher(from, to).start();
 	public static class Watcher extends Thread {
-		
+
 		private Logger _logger;
 		private Path _from, _to;
 		private WatchService _watchService;
 		private boolean _running, _delete;
-		
+
 		public Watcher(Path from, Path to) {
 			_from = from;
 			_to = to;
@@ -289,85 +315,85 @@ public class Files {
 			// get a logger for this class
 			_logger = LogManager.getLogger(this.getClass());
 		}
-		
+
 		public Watcher(Path from, Path to, boolean delete) {
 			this(from, to);
-			_delete = delete;			
+			_delete = delete;
 		}
-		
+
 		@Override
 		public void run() {
-						
+
 			try {
-			
+
 				// get a new watch service
 				_watchService = FileSystems.getDefault().newWatchService();
-				
+
 				// register watch service on the from path for created files
 				_from.register(_watchService, StandardWatchEventKinds.ENTRY_CREATE);
-				
+
 			} catch (IOException ex) {
-				
+
 				_logger.error("Error registering Watcher for " + _from, ex);
-				
+
 			}
-			
+
 			// if we got a watch service
 			if (_watchService != null) {
-				
+
 				// loop until interrupted
 				while (_running) {
-					
+
 					try {
-					
+
 						// this blocks until an event occurs
 						WatchKey key = _watchService.take();
-						
+
 						// retrieve all the accumulated events
 						for (WatchEvent<?> event : key.pollEvents()) {
-							
+
 							// get the kind of event
-							WatchEvent.Kind<?> kind = event.kind();               
-	
+							WatchEvent.Kind<?> kind = event.kind();
+
 							// if this was the create that we are watching for
 							if (kind.equals(StandardWatchEventKinds.ENTRY_CREATE)) {
-								
-								// get the file name 
+
+								// get the file name
 								Path fileName = (Path) event.context();
-								
+
 								// log
 								_logger.debug("Watcher event for " + fileName);
-								
+
 								// get from file
 								File fromFile = new File(_from + "/" + fileName);
-								
+
 								// get to file
 								File toFile = new File(_to + "/" + fileName);
-																
-								// copy the from file to the to file 
+
+								// copy the from file to the to file
 								Files.copyFile(fromFile, toFile);
-								
+
 								// delete the from file if set to
 								if (_delete) Files.deleteRecurring(fromFile);
-								
+
 							}
-							
-						}             
+
+						}
 						// resetting the key goes back ready state
 						key.reset();
-						
+
 					} catch (Exception ex) {
-						
+
 						_logger.error("Error with Watcher for " + _from + " / " + _to, ex);
-						
+
 					}
-					
+
 				} // loop forever
-					
+
 			} // watcher null check
 
 		}
-		
+
 		@Override
 		public void interrupt() {
 			// set running to false to exit loop
@@ -383,7 +409,7 @@ public class Files {
 			}
 			super.interrupt();
 		}
-		
+
 	}
 
 }

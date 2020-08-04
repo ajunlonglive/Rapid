@@ -35,6 +35,7 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -1438,7 +1439,7 @@ public class Application {
 	}
 
 	// this function initialises the application when its first loaded, initialises the security adapter and builds the rapid.js and rapid.css files
-	public void initialise(ServletContext servletContext, boolean createResources) throws JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, InvocationTargetException, SecurityException, NoSuchMethodException, IOException {
+	public void initialise(ServletContext servletContext, boolean createResources) throws JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, InvocationTargetException, SecurityException, NoSuchMethodException, IOException, NoSuchAlgorithmException {
 
 		// get the logger
 		Logger logger = (Logger) servletContext.getAttribute("logger");
@@ -1921,11 +1922,55 @@ public class Application {
 							String fileNameMin = "scripts_min/" + fileName.substring(8, fileName.length() - 3) + ".min.js";
 							// get a file for minifying
 							File jsFileMin = new File(servletContext.getRealPath("/") + "/" + fileNameMin);
-							// if this file does not exist
-							if (!jsFileMin.exists()) {
+
+							// if this file exists
+							if (jsFileMin.exists()) {
+
+								// add replaceIfDifferent element to resources, etc.
+
+								/*
+
+								// get a byte array output stream
+								ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+								// get a writer for the output stream
+								Writer wos = new BufferedWriter(new OutputStreamWriter(bos));
+
+								// read the existing minified file
+								String js = Strings.getString(jsFileMin);
+
+								// minify the raw js to a new writer
+								Writer win = Minify.toWriter(js, wos, Minify.JAVASCRIPT, "JavaScript file " + fileName);
+
+								// get the input stream
+								ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+
+								// get the new hash
+								String hashNew = Files.getChecksum(bis);
+
+								// get the old hash
+								String hashOld = Files.getChecksum(jsFileMin);
+
+								// if they are different
+								if (!hashNew.equals(hashOld)) {
+
+									// some files should not be overwritten! like jquery.. maybe leave the root files alone...
+
+									String jsMin = null;
+
+									win.write(jsMin);
+
+									// write the jsMin to a new file
+									Strings.saveString(jsMin, jsFileMin);
+
+								}
+
+								*/
+
+							} else {
 								// make any dirs it may need
 								jsFileMin.getParentFile().mkdirs();
-								// minify to it
+								// minify to the file
 								Minify.toFile(jsFile, jsFileMin, Minify.JAVASCRIPT, "JavaScript file " + fileName);
 							}
 							// if this application is live, update the resource to the min file
@@ -2360,7 +2405,7 @@ public class Application {
 
 	}
 
-	public long save(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, boolean backup) throws JAXBException, IOException, IllegalArgumentException, SecurityException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException {
+	public long save(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, boolean backup) throws JAXBException, IOException, IllegalArgumentException, SecurityException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, NoSuchAlgorithmException {
 
 		// create folders to save the app
 		String folderPath = getConfigFolder(rapidServlet.getServletContext());
@@ -2682,12 +2727,12 @@ public class Application {
 	}
 
 	// this is a simple overload for default loading of applications where the resources are all regenerated
-	public static Application load(ServletContext servletContext, File file) throws JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException, IOException, ParserConfigurationException, SAXException, TransformerFactoryConfigurationError, TransformerException, RapidLoadingException, XPathExpressionException {
+	public static Application load(ServletContext servletContext, File file) throws JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException, IOException, ParserConfigurationException, SAXException, TransformerFactoryConfigurationError, TransformerException, RapidLoadingException, XPathExpressionException, NoSuchAlgorithmException {
 		return load(servletContext, file, true);
 	}
 
 	// this method loads the application by ummarshelling the xml, and then doing the same for all page .xmls, before calling the initialise method
-	public static Application load(ServletContext servletContext, File file, boolean initialise) throws JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException, IOException, ParserConfigurationException, SAXException, TransformerFactoryConfigurationError, TransformerException, RapidLoadingException, XPathExpressionException {
+	public static Application load(ServletContext servletContext, File file, boolean initialise) throws JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException, IOException, ParserConfigurationException, SAXException, TransformerFactoryConfigurationError, TransformerException, RapidLoadingException, XPathExpressionException, NoSuchAlgorithmException {
 
 		// get the logger
 		Logger logger = (Logger) servletContext.getAttribute("logger");
