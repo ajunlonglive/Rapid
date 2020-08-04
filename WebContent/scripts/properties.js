@@ -5558,7 +5558,7 @@ function Property_scrollbars(cell, propertyObject, property, details) {
 }
 
 // possible mobileActionType values used by the mobileActionType property
-var _mobileActionTypes = [["dial","Dial number"],["sms","Send text/sms message"],["email","Send email"],["url","Open url"],["addImage","Get image"],["addVideo","Get video"],["addImageVideo","Get image or video"],["selectImage","Select image"],["uploadImages","Upload images"],["addBarcode","Scan barcode"],["navigate","Navigate to"],["sendGPS","Send GPS position"],["stopGPS","Stop GPS updates"],["message","Status bar message"],["disableBackButton","Disable back button"],["swipe","Swipe"],["online","Online actions"]];
+var _mobileActionTypes = [["dial","Dial number"],["sms","Send text/sms message"],["email","Send email"],["url","Open url"],["addImage","Get image"],["addVideo","Get video"],["addImageVideo","Get image or video"],["selectImage","Select image"],["uploadImages","Upload images"],/*["downloadImages","Download images"],*/["addBarcode","Scan barcode"],["navigate","Navigate to"],["sendGPS","Send GPS position"],["stopGPS","Stop GPS updates"],["message","Status bar message"],["disableBackButton","Disable back button"],["swipe","Swipe"],["online","Online actions"]];
 
 // this property changes the visibility of other properties according to the chosen type
 function Property_mobileActionType(cell, mobileAction, property, details) {
@@ -5594,6 +5594,7 @@ function Property_mobileActionType(cell, mobileAction, property, details) {
 	setPropertyVisibilty(mobileAction, "imageQuality", false);
 	setPropertyVisibilty(mobileAction, "videoMaxDuration", false);
 	setPropertyVisibilty(mobileAction, "remoteSource", false);
+	setPropertyVisibilty(mobileAction, "includeAudio", false);
 	setPropertyVisibilty(mobileAction, "captureMode", false);
 	setPropertyVisibilty(mobileAction, "cameraSelectImage", false);
 	setPropertyVisibilty(mobileAction, "galleryControlIds", false);
@@ -5652,6 +5653,7 @@ function Property_mobileActionType(cell, mobileAction, property, details) {
 			setPropertyVisibilty(mobileAction, "cameraSelectImage", true);
 			setPropertyVisibilty(mobileAction, "videoMaxDuration", true);
 			setPropertyVisibilty(mobileAction, "remoteSource", true);
+			setPropertyVisibilty(mobileAction, "includeAudio", true);
 			setPropertyVisibilty(mobileAction, "captureMode", true);
 		break;
 		case "addImageVideo" :
@@ -5661,6 +5663,7 @@ function Property_mobileActionType(cell, mobileAction, property, details) {
 			setPropertyVisibilty(mobileAction, "videoMaxDuration", true);
 			setPropertyVisibilty(mobileAction, "cameraSelectImage", true);
 			setPropertyVisibilty(mobileAction, "remoteSource", true);
+			setPropertyVisibilty(mobileAction, "includeAudio", true);
 			setPropertyVisibilty(mobileAction, "captureMode", true);
 		break;
 		case "selectImage" :
@@ -5672,6 +5675,13 @@ function Property_mobileActionType(cell, mobileAction, property, details) {
 			setPropertyVisibilty(mobileAction, "successActions", true);
 			setPropertyVisibilty(mobileAction, "errorActions", true);
 		break;
+		/*
+		case "downloadImages" :
+			setPropertyVisibilty(mobileAction, "galleryControlIds", true);
+			setPropertyVisibilty(mobileAction, "successActions", true);
+			setPropertyVisibilty(mobileAction, "errorActions", true);
+		break;
+		*/
 		case "addBarcode" :
 			setPropertyVisibilty(mobileAction, "barcodeDestinations", true);
 		break;

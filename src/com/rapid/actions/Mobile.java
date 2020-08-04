@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2019 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -522,6 +522,7 @@ public class Mobile extends Action {
 						cameraSelectImage = Boolean.parseBoolean(getProperty("cameraSelectImage"));
 					String remoteSource = getProperty("remoteSource");
 					String captureMode = getProperty("captureMode");
+					String includeAudio = getProperty("includeAudio");
 					
 					String mediums =
 							"addImage".equals(type) ? "['image']" :
@@ -531,7 +532,7 @@ public class Mobile extends Action {
 					
 					// mobile check, use
 					js += "if (typeof _rapidmobile == 'undefined') {\n"
-						+ "  turnOnCamera('" + galleryControlId + "'," + maxSize + "," + quality + "," + maxDuration + "," + cameraSelectImage + ", " + mediums + ", " + remoteSource + ", '" + captureMode + "');\n"
+						+ "  turnOnCamera('" + galleryControlId + "'," + maxSize + "," + quality + "," + maxDuration + "," + cameraSelectImage + ", " + mediums + ", " + remoteSource + ", " + includeAudio + ", '" + captureMode + "');\n"
 						+ "} else {\n";
 					js += "  _rapidmobile.addImage('" + galleryControlId + "'," + maxSize + "," + quality + ");\n";
 					// close mobile check
@@ -615,7 +616,7 @@ public class Mobile extends Action {
 							if ("signature".equals(imageControl.getType())) {
 								js += "urls += getData_signature(ev, '" + id + "');\n";
 							} else {
-								js += "$('#" + id + "').find('img').each( function() { urls += $(this).attr('src') + ',' });\n";
+								js += "$('#" + id + "').find('.galleryItem').each( function() { urls += $(this).attr('src') + ',' });\n";
 							}
 						}
 
@@ -631,6 +632,91 @@ public class Mobile extends Action {
 						+ "   } else {\n"
 						+ "      _rapidmobile.uploadImages('" + getId() + "', urls, " + successCallback + ", " + errorCallback + ");\n"
 						+ "   }\n"
+						+ "}";
+
+					// if there is a successCallback call it now
+					if (!"null".equals(successCallback) && successCallback.length() > 0) js += " else {\n  " + successCallback.replace("'", "") + "(ev);\n}";
+
+					// a line-break for either option above
+					js += "\n";
+
+				}
+
+			} else if ("downloadImages".equals(type)) {
+
+				// make a list of control ids
+				List<String> controlIds = new ArrayList<>();
+
+				// get the old style gallery id
+				String galleryControlIdProperty = getProperty("galleryControlId");
+				// if we got one
+				if (galleryControlIdProperty != null) {
+					//  add to list if it contains something
+					if (galleryControlIdProperty.trim().length() > 0) controlIds.add(galleryControlIdProperty);
+				}
+
+				// get the new style gallery ids
+				String galleryControlIdsProperty = getProperty("galleryControlIds");
+				// if we got one
+				if (galleryControlIdsProperty != null) {
+					// clean it up
+					galleryControlIdsProperty = galleryControlIdsProperty.replace("\"","").replace("[", "").replace("]", "");
+					// if anything is left
+					if (galleryControlIdsProperty.length() > 0) {
+						// split and loop
+						for (String id : galleryControlIdsProperty.split(",")) {
+							// add to collection
+							controlIds.add(id);
+						}
+					}
+				}
+
+				// check if we got one
+				if (controlIds.size() == 0) {
+					js += "  // no controls specified\n";
+				} else {
+
+					// assume no success call back
+					String successCallback = "null";
+					// update to name of callback if we have any success actions
+					if (_successActions != null) successCallback = "'" + getId() + "success'";
+					// assume no error call back
+					String errorCallback = "null";
+					// update to name of callback  if we have any error actions
+					if (_errorActions != null) errorCallback = "'" + getId() + "error'";
+
+					// start building the js
+					js += "var urls = '';\n";
+
+					// a collection of control id's we won't be using, as we can't find them in the page
+					List<String> removeControlIds = new ArrayList<>();
+
+					// get any urls from the gallery controls
+					for (String id : controlIds) {
+
+						// get the control object from its id
+						Control imageControl = page.getControl(id);
+						// if we got one
+						if (imageControl == null) {
+							// retain that we will remove this control
+							removeControlIds.add(id);
+						} else {
+							// Check whether this control is a signature
+							if ("signature".equals(imageControl.getType())) {
+								js += "urls += getData_signature(ev, '" + id + "');\n";
+							} else {
+								js += "$('#" + id + "').find('.galleryItem').each( function() { urls += $(this).attr('src') + ',' });\n";
+							}
+						}
+
+					}
+
+					// remove any controls we couldn't find
+					controlIds.removeAll(removeControlIds);
+
+					// if we got any urls check whether request is from a mobile - upload the images
+					js += "if (urls) { \n"
+						+ "    downloadImages(" + new JSONArray(controlIds) + ", ev, " + successCallback + ", " + errorCallback + ");\n"
 						+ "}";
 
 					// if there is a successCallback call it now
