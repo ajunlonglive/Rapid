@@ -81,6 +81,7 @@ import com.rapid.core.Page.Lock;
 import com.rapid.core.Page.RoleControlHtml;
 import com.rapid.core.Pages.PageHeader;
 import com.rapid.core.Pages.PageHeaders;
+import com.rapid.core.Parameter;
 import com.rapid.core.Theme;
 import com.rapid.core.Workflow;
 import com.rapid.core.Workflows;
@@ -1713,6 +1714,11 @@ public class Designer extends RapidHttpServlet {
 		// get the rapid request
 		RapidRequest rapidRequest = new RapidRequest(this, request);
 
+		// get the rapidServlet
+		RapidHttpServlet rapidServlet = rapidRequest.getRapidServlet();
+		
+		ServletContext context = rapidServlet.getServletContext();
+
 		// get a reference to our logger
 		Logger logger = getLogger();
 
@@ -1990,20 +1996,20 @@ public class Designer extends RapidHttpServlet {
 
 											// make a parameters object to send
 											parameters = new Parameters();
+											List<String> inputs = new ArrayList<String>();
 											// populate it with nulls
-											for (int i = 0; i < jsonInputs.length(); i++) parameters.addNull();
-
-											parameters = Database.unmappedParameters(sql, parameters);
-											sql = sql + " ";
-											String[] stringParts = sql.split("'");
-											sql = stringParts[0].replaceAll("\\?\\d*", "\\?");
-											for (int partIndex = 1; partIndex < stringParts.length; partIndex++) {
-												if (partIndex % 2 == 0) {
-													sql += "'" + stringParts[partIndex].replaceAll("\\?\\d*", "\\?");
-												} else {
-													sql += "'" + stringParts[partIndex];
-												}
+											for (int i = 0; i < jsonInputs.length(); i++) {
+												parameters.addNull();
+												JSONObject input = jsonInputs.getJSONObject(i);
+												String inputId = input.getString("itemId");
+												String field = input.getString("field");
+												if (!field.isEmpty()) inputId += "." + input.getString("field");
+												inputs.add(inputId);
+												
 											}
+
+											parameters = Database.unmappedParameters(sql, parameters, inputs, application, context);
+											sql = Database.unspecifySqlSlots(sql);
 										}
 
 										// check outputs (unless a child query)

@@ -659,6 +659,8 @@ public class Database extends Action {
 
 		// get the rapidServlet
 		RapidHttpServlet rapidServlet = rapidRequest.getRapidServlet();
+		
+		ServletContext context = rapidServlet.getServletContext();
 
 		// retrieve the sql
 		String sql = _query.getSQL();
@@ -667,7 +669,7 @@ public class Database extends Action {
 		if (sql != null) {
 
 			// merge in any application parameters
-			sql = application.insertParameters(rapidServlet.getServletContext(), sql);
+			sql = application.insertParameters(context, sql);
 
 			// get any json inputs
 			JSONObject jsonInputData = jsonAction.optJSONObject("data");
@@ -778,17 +780,19 @@ public class Database extends Action {
 			}
 			
 			// unmap numbered numbered parameters
-			parametersList.set(0, unmappedParameters(sql, parametersList.get(0)));
-			sql = sql + " ";
-			String[] stringParts = sql.split("'");
-			sql = stringParts[0].replaceAll("\\?\\d*", "\\?");
-			for (int partIndex = 1; partIndex < stringParts.length; partIndex++) {
-				if (partIndex % 2 == 0) {
-					sql += "'" + stringParts[partIndex].replaceAll("\\?\\d*", "\\?");
-				} else {
-					sql += "'" + stringParts[partIndex];
-				}
+			List<Parameter> originalInputs = _query.getInputs();
+			if (originalInputs == null) originalInputs = new ArrayList<>(); 
+			List<String> inputs = new ArrayList<String>();
+			// populate it with nulls
+			for (int i = 0; i < originalInputs.size(); i++) {
+				Parameter input = originalInputs.get(i);
+				String inputName = input.getItemId();
+				if (!input.getField().isEmpty()) inputName += "." + input.getField();
+				inputs.add(inputName);
 			}
+			
+			parametersList.set(0, unmappedParameters(sql, parametersList.get(0), inputs, application, context));
+			sql = unspecifySqlSlots(sql);
 			
 			// if there isn't a cache or no data was retrieved
 			if (jsonData == null) {
@@ -1176,7 +1180,38 @@ public class Database extends Action {
 
 	}
 
-	public static Parameters unmappedParameters(String sql, Parameters oldParameters) throws SQLException {
+	private static String parameterSlotRegex = "(\\?\"[^\"]+\")|(\\?\\w\\S*)|\\?";
+	private static String namedParameterSlotRegex = "(\\?\"[^\"]+\")|(\\?(?=[a-z])\\w*)";
+	
+	public static Parameters unmappedParameters(String sql, Parameters oldParameters, List<String> inputIds, Application application, ServletContext context) throws SQLException {
+		
+		Map<String, Integer> parameterIndexesByControlName = new HashMap<String, Integer>();
+		
+		if (Pattern.compile(namedParameterSlotRegex).matcher(sql).find()) {
+			for (int inputIndex = 0; inputIndex < inputIds.size(); inputIndex++) {
+				String id = inputIds.get(inputIndex);
+				if (id.startsWith("System.")) {
+					String name = "\"" + id + "\"";
+					parameterIndexesByControlName.put(name, inputIndex);
+				} else {
+					
+					String[] parts = id.split("\\.");
+					String controlId = parts[0];
+					
+					Control control = application.getControl(context, controlId);
+					if (control != null) {
+						
+						String name = control.getName();
+						id = id.replaceAll(".+\\.", name + ".");
+						if (parts.length > 1) name += "." + parts[1].toLowerCase().replace(" ", "");
+						for (int idIndex = 2; idIndex < parts.length; idIndex++) name += "." + parts[idIndex];
+						
+						parameterIndexesByControlName.put("\"" + name + "\"", inputIndex);
+						if (!name.contains(" ")) parameterIndexesByControlName.put(name, inputIndex);
+					}
+				}
+			}
+		}
 		
 		String[] stringParts = sql.split("'");
 		sql = "";
@@ -1184,7 +1219,7 @@ public class Database extends Action {
 			sql += stringParts[partIndex];
 		}
 		
-		Matcher matcher = Pattern.compile("\\?\\d*").matcher(sql);
+		Matcher matcher = Pattern.compile(parameterSlotRegex).matcher(sql);
 		
 		Parameters newParameters = new Parameters();
 		
@@ -1201,7 +1236,19 @@ public class Database extends Action {
 			if (slot.length() == 1) {
 				unspecifiedSlots++;
 			} else {
-				parameterIndex = Integer.parseInt(slot.substring(1)) - 1;
+				String specifier = slot.substring(1);
+				
+				if (specifier.matches("\\d+")) {
+					parameterIndex = Integer.parseInt(specifier) - 1;
+				} else {
+					
+					String[] parts = specifier.split("\\.");
+					String name = parts[0];
+					if (parts.length > 1) name += "." + parts[1].toLowerCase().replace(" ", "");
+					for (int idIndex = 2; idIndex < parts.length; idIndex++) name += "." + parts[idIndex];
+					
+					parameterIndex = parameterIndexesByControlName.get(name);
+				}
 			}
 			
 			if (parameterIndex < oldParameters.size()) {
@@ -1222,6 +1269,20 @@ public class Database extends Action {
 		} else {
 			return newParameters;
 		}
+	}
+	
+	public static String unspecifySqlSlots(String sql) {
+		sql = sql + " ";
+		String[] stringParts = sql.split("'");
+		sql = stringParts[0].replaceAll(parameterSlotRegex, "\\?");
+		for (int partIndex = 1; partIndex < stringParts.length; partIndex++) {
+			if (partIndex % 2 == 0) {
+				sql += "'" + stringParts[partIndex].replaceAll(parameterSlotRegex, "\\?");
+			} else {
+				sql += "'" + stringParts[partIndex];
+			}
+		}
+		return sql;
 	}
 	
 	@Override
