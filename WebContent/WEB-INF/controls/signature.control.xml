@@ -81,6 +81,7 @@ return [["rgb(0,0,0)","black"],["rgb(255,0,0)","red"],["rgb(232,116,37)","orange
 	        <resource>
 	            <type>javascriptFile</type>
 	            <contents>scripts/controls/signature.js</contents>
+	            <replaceMinIfDifferent>true</replaceMinIfDifferent>
 	        </resource>
 	        <resource>
 	            <type>javascript</type>
