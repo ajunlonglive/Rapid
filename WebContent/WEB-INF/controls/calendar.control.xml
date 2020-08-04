@@ -115,10 +115,12 @@ return [["d/m/Y","dd/mm/yyyy"],["m/d/Y","mm/dd/yyyy"],["Y-m-d","yyyy-mm-dd"]];
 	        <resource>
 	            <type>cssFile</type>
 	            <contents>styles/controls/calendar.css</contents>
+	            <replaceMinIfDifferent>true</replaceMinIfDifferent>
 	        </resource>
 	        <resource>
 	            <type>javascriptFile</type>
 	            <contents>scripts/controls/calendar.js</contents>
+	            <replaceMinIfDifferent>true</replaceMinIfDifferent>
 	        </resource>
 	    </resources>
 	    	    	    

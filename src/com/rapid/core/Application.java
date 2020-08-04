@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2019 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -26,12 +26,14 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 package com.rapid.core;
 
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -101,6 +103,9 @@ public class Application {
 
 	// the name of the folder in which to store backups
 	public static final String BACKUP_FOLDER = "_backups";
+
+	// static variables
+	private static Logger _logger = LogManager.getLogger(Application.class);
 
 	// public static classes
 
@@ -349,6 +354,7 @@ public class Application {
 		private int _type;
 		private String _name, _content;
 		private List<ResourceDependency> _dependancies;
+		private boolean _replaceMinIfDifferent;
 
 		// properties
 		public String getName() { return _name; }
@@ -363,27 +369,30 @@ public class Application {
 		public List<ResourceDependency> getDependencies() { return _dependancies; }
 		public void setDependencies(List<ResourceDependency> dependancies) {  _dependancies = dependancies; }
 
+		public boolean replaceMinIfDifferent() { return _replaceMinIfDifferent; }
+
 		// constructors
 		public Resource() {};
 
-		public Resource(int type, String content, int dependencyTypeClass) {
+		public Resource(int type, String content, int dependencyTypeClass, boolean replaceMinIfDifferent) {
 			_type = type;
 			_content = content;
 			_dependancies = new ArrayList<>();
 			_dependancies.add(new ResourceDependency(dependencyTypeClass));
+			_replaceMinIfDifferent = replaceMinIfDifferent;
 		}
-
-		public Resource(int type, String content, int dependencyTypeClass, String dependencyType) {
+		public Resource(int type, String content, int dependencyTypeClass, String dependencyType, boolean replaceMinIfDifferent) {
 			_type = type;
 			_content = content;
 			_dependancies = new ArrayList<>();
 			_dependancies.add(new ResourceDependency(dependencyTypeClass, dependencyType));
+			_replaceMinIfDifferent = replaceMinIfDifferent;
 		}
-
-		public Resource(String name, int type, String content) {
+		public Resource(String name, int type, String content, boolean replaceMinIfDifferent) {
 			_name = name;
 			_type = type;
 			_content = content;
+			_replaceMinIfDifferent = replaceMinIfDifferent;
 		}
 
 		// methods
@@ -456,7 +465,7 @@ public class Application {
 			}
 		}
 
-		public void add(int type, String content, int dependencyTypeClass, String dependencyType) {
+		public void add(int type, String content, int dependencyTypeClass, String dependencyType, boolean replaceMinIfDifferent) {
 			// assume we can't find the resource
 			Resource resource = null;
 			// loop all resources
@@ -472,7 +481,7 @@ public class Application {
 			// check for an existing resource
 			if (resource == null) {
 				// didn't find one so create
-				resource = new Resource(type, content, dependencyTypeClass, dependencyType);
+				resource = new Resource(type, content, dependencyTypeClass, dependencyType, replaceMinIfDifferent);
 				// add to this collection
 				this.add(resource);
 				// if this is a theme resource
@@ -938,10 +947,8 @@ public class Application {
 						if (control != null) return control;
 					}
 				} catch (Exception ex) {
-					// get the logger
-					Logger logger = (Logger) servletContext.getAttribute("logger");
 					// log this exception
-					logger.error("Error getting control from application", ex);
+					_logger.error("Error getting control from application", ex);
 				}
 			} // id length > 0 check
 		} // id and page non-null check
@@ -983,10 +990,8 @@ public class Application {
 					}
 				}
 			} catch (Exception ex) {
-				// get the logger
-				Logger logger = (Logger) servletContext.getAttribute("logger");
 				// log this exception
-				logger.error("Error getting all controls for application", ex);
+				_logger.error("Error getting all controls for application", ex);
 			}
 		} // id and page non-null check
 		// return controls
@@ -1030,10 +1035,8 @@ public class Application {
 					}
 				}
 			} catch (Exception ex) {
-				// get the logger
-				Logger logger = (Logger) servletContext.getAttribute("logger");
 				// log this exception
-				logger.error("Error getting all controls for application", ex);
+				_logger.error("Error getting all controls for application", ex);
 			}
 		} // id and page non-null check
 		// return controls
@@ -1073,10 +1076,8 @@ public class Application {
 						if (action != null) return action;
 					}
 				} catch (Exception ex) {
-					// get the logger
-					Logger logger = (Logger) servletContext.getAttribute("logger");
 					// log this exception
-					logger.error("Error getting action from application", ex);
+					_logger.error("Error getting action from application", ex);
 				}
 			} // id length > 0 check
 		} // id and page non-null check
@@ -1099,16 +1100,14 @@ public class Application {
 					// if we found it return it!
 					if (pageActions != null) {
 						// instantiate actions if we need to
-						if (actions == null) actions = new ArrayList<Action>();
+						if (actions == null) actions = new ArrayList<>();
 						// add these actions
 						actions.addAll(pageActions);
 					}
 				}
 			} catch (Exception ex) {
-				// get the logger
-				Logger logger = (Logger) servletContext.getAttribute("logger");
 				// log this exception
-				logger.error("Error getting all actions for application", ex);
+				_logger.error("Error getting all actions for application", ex);
 			}
 		}
 		return actions;
@@ -1129,16 +1128,14 @@ public class Application {
 					// if we found it return it!
 					if (pageActions != null) {
 						// instantiate actions if we need to
-						if (actions == null) actions = new ArrayList<Action>();
+						if (actions == null) actions = new ArrayList<>();
 						// add these actions
 						actions.addAll(pageActions);
 					}
 				}
 			} catch (Exception ex) {
-				// get the logger
-				Logger logger = (Logger) servletContext.getAttribute("logger");
 				// log this exception
-				logger.error("Error getting all actions for application", ex);
+				_logger.error("Error getting all actions for application", ex);
 			}
 		}
 		return actions;
@@ -1226,8 +1223,6 @@ public class Application {
 	public FormAdapter getFormAdapter() { return _formAdapter; }
 	// set the security to a given type
 	public void setFormAdapter(ServletContext servletContext, String formAdapterType) throws IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException, IOException {
-		// get the logger
-		Logger logger = (Logger) servletContext.getAttribute("logger");
 		// if there is a current one
 		if (_formAdapter != null) {
 			try {
@@ -1235,7 +1230,7 @@ public class Application {
 				_formAdapter.close();
 			} catch (Exception ex) {
 				// log any error
-				logger.error("Error closing form adapter for " + _id + "/" + _version, ex);
+				_logger.error("Error closing form adapter for " + _id + "/" + _version, ex);
 			}
 		}
 		// set the security adaper type from the incoming parameter
@@ -1252,12 +1247,12 @@ public class Application {
 			// if we got this constructor
 			if (constructor == null) {
 				// log
-				logger.trace("Instantiating Rapid form adapter for " + _id + "/" + _version);
+				_logger.trace("Instantiating Rapid form adapter for " + _id + "/" + _version);
 				// revert to rapid form adapter
 				_formAdapter = new RapidFormAdapter(servletContext, this, "rapid");
 			} else {
 				// log
-				logger.trace("Instantiating form adapter " + _formAdapterType + " for " + _id + "/" + _version);
+				_logger.trace("Instantiating form adapter " + _formAdapterType + " for " + _id + "/" + _version);
 				// instantiate the specified form adapter
 				_formAdapter = constructor.newInstance(servletContext, this, _formAdapterType);
 			}
@@ -1413,21 +1408,24 @@ public class Application {
 					// add the json object type and resource type
 					commentsName += " " + jsonObjectType + " " + resourceType;
 
+					// get the replaceMinIfDifferent (default is false)
+					boolean replaceMinIfDifferent = jsonResource.optBoolean("replaceMinIfDifferent");
+
 					// add as resources if they're files, or append the string builders (the app .js and .css are added as resources at the end)
 					if ("javascript".equals(resourceType)) {
 						js.append("\n/* " + commentsName + " resource JavaScript */\n\n" + resourceContents + "\n");
 					} else if ("css".equals(resourceType)) {
 						css.append("\n/* " + commentsName + " resource styles */\n\n" + resourceContents + "\n");
 					} else if ("javascriptFile".equals(resourceType)) {
-						_resources.add(Resource.JAVASCRIPTFILE, resourceContents, dependencyTypeClass, dependencyType);
+						_resources.add(Resource.JAVASCRIPTFILE, resourceContents, dependencyTypeClass, dependencyType, replaceMinIfDifferent);
 					} else if ("cssFile".equals(resourceType)) {
-						_resources.add(Resource.CSSFILE, resourceContents, dependencyTypeClass, dependencyType);
+						_resources.add(Resource.CSSFILE, resourceContents, dependencyTypeClass, dependencyType, replaceMinIfDifferent);
 					} else if ("javascriptLink".equals(resourceType)) {
-						_resources.add(Resource.JAVASCRIPTLINK, resourceContents, dependencyTypeClass, dependencyType);
+						_resources.add(Resource.JAVASCRIPTLINK, resourceContents, dependencyTypeClass, dependencyType, replaceMinIfDifferent);
 					} else if ("cssLink".equals(resourceType)) {
-						_resources.add(Resource.CSSLINK, resourceContents, dependencyTypeClass, dependencyType);
+						_resources.add(Resource.CSSLINK, resourceContents, dependencyTypeClass, dependencyType, replaceMinIfDifferent);
 					} else if ("file".equals(resourceType)) {
-						_resources.add(Resource.FILE, resourceContents, dependencyTypeClass, dependencyType);
+						_resources.add(Resource.FILE, resourceContents, dependencyTypeClass, dependencyType, replaceMinIfDifferent);
 					}
 
 				} // resource loop
@@ -1441,11 +1439,8 @@ public class Application {
 	// this function initialises the application when its first loaded, initialises the security adapter and builds the rapid.js and rapid.css files
 	public void initialise(ServletContext servletContext, boolean createResources) throws JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, InvocationTargetException, SecurityException, NoSuchMethodException, IOException, NoSuchAlgorithmException {
 
-		// get the logger
-		Logger logger = (Logger) servletContext.getAttribute("logger");
-
 		// trace log that we're initialising
-		logger.trace("Initialising application " + _name + "/" + _version);
+		_logger.trace("Initialising application " + _name + "/" + _version);
 
 		// initialise the security adapter
 		setSecurityAdapter(servletContext, _securityAdapterType);
@@ -1461,7 +1456,7 @@ public class Application {
 			// initialise app resources if need be
 			if (_appResources == null) _appResources = new Resources();
 			// add _functions as JavaScript resource to top of list
-			_appResources.add(0, new Resource("Application functions", 1, _functions));
+			_appResources.add(0, new Resource("Application functions", 1, _functions, true));
 			// remove the _functions
 			_functions = null;
 		}
@@ -1771,7 +1766,7 @@ public class Application {
     		if (_appResources != null) {
     			for (Resource resource : _appResources) {
     				// create new resource based on this one (so that the dependancy doesn't get written back to the application.xml file)
-    				Resource appResource = new Resource(resource.getType(), resource.getContent(), ResourceDependency.RAPID);
+    				Resource appResource = new Resource(resource.getType(), resource.getContent(), ResourceDependency.RAPID, true);
     				// if the type is a file or link prefix with the application folder
     				switch (resource.getType()) {
     					case Resource.JAVASCRIPTFILE : case Resource.CSSFILE :
@@ -1897,14 +1892,14 @@ public class Application {
 			// check the status
 	    	if (_status == STATUS_LIVE) {
 	    		// add the application js min file as a resource
-	    		_resources.add(new Resource(Resource.JAVASCRIPTFILE, getWebFolder(this) + "/rapid.min.js", ResourceDependency.RAPID));
+	    		_resources.add(new Resource(Resource.JAVASCRIPTFILE, getWebFolder(this) + "/rapid.min.js", ResourceDependency.RAPID, true));
 	    		// add the application css min file as a resource
-	    		_resources.add(new Resource(Resource.CSSFILE, getWebFolder(this) + "/rapid.min.css", ResourceDependency.RAPID));
+	    		_resources.add(new Resource(Resource.CSSFILE, getWebFolder(this) + "/rapid.min.css", ResourceDependency.RAPID, true));
 	    	} else {
 	    		// add the application js file as a resource
-	    		_resources.add(new Resource(Resource.JAVASCRIPTFILE, getWebFolder(this) + "/rapid.js", ResourceDependency.RAPID));
+	    		_resources.add(new Resource(Resource.JAVASCRIPTFILE, getWebFolder(this) + "/rapid.js", ResourceDependency.RAPID, true));
 	    		// add the application css file as a resource
-	    		_resources.add(new Resource(Resource.CSSFILE, getWebFolder(this) + "/rapid.css", ResourceDependency.RAPID));
+	    		_resources.add(new Resource(Resource.CSSFILE, getWebFolder(this) + "/rapid.css", ResourceDependency.RAPID, true));
 	    	}
 
 	    	// loop all resources and minify js and css files
@@ -1914,87 +1909,135 @@ public class Application {
 				// only interested in js and css files
 				switch (resource.getType()) {
 					case Resource.JAVASCRIPTFILE :
+
 						// get a file for this
 						File jsFile = new File(servletContext.getRealPath("/") + (fileName.startsWith("/") ? "" : "/")  + fileName);
+
 						// if the file exists, and it's in the scripts folder and ends with .js
 						if (jsFile.exists() && fileName.startsWith("scripts/") && fileName.endsWith(".js")) {
+
 							// derive the min file name by modifying the start and end
 							String fileNameMin = "scripts_min/" + fileName.substring(8, fileName.length() - 3) + ".min.js";
 							// get a file for minifying
 							File jsFileMin = new File(servletContext.getRealPath("/") + "/" + fileNameMin);
 
-							// if this file exists
+							// if the min file exists
 							if (jsFileMin.exists()) {
 
-								// add replaceIfDifferent element to resources, etc.
+								// if replaceIfDifferent - we need to check, otherwise nothing to do!
+								if (resource.replaceMinIfDifferent()) {
 
-								/*
+									// read the existing un-minified file
+									String jsOld = Strings.getString(jsFile);
 
-								// get a byte array output stream
-								ByteArrayOutputStream bos = new ByteArrayOutputStream();
+									// get a writer that we're going to minify into
+									StringWriter swr = new StringWriter();
 
-								// get a writer for the output stream
-								Writer wos = new BufferedWriter(new OutputStreamWriter(bos));
+									// minify the raw old js into the writer
+									Minify.toWriter(jsOld, swr, Minify.JAVASCRIPT, "JavaScript file " + fileName);
 
-								// read the existing minified file
-								String js = Strings.getString(jsFileMin);
+									// get the new minified js into a string
+									String jsNew = swr.toString();
 
-								// minify the raw js to a new writer
-								Writer win = Minify.toWriter(js, wos, Minify.JAVASCRIPT, "JavaScript file " + fileName);
+									// get an input stream of what we just minified
+									ByteArrayInputStream bis = new ByteArrayInputStream(jsNew.getBytes());
 
-								// get the input stream
-								ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+									// get the new hash from the input stream
+									String hashNew = Files.getChecksum(bis);
 
-								// get the new hash
-								String hashNew = Files.getChecksum(bis);
+									// get the old hash from the existing minified file
+									String hashOld = Files.getChecksum(jsFileMin);
 
-								// get the old hash
-								String hashOld = Files.getChecksum(jsFileMin);
+									// if they are different
+									if (!hashNew.equals(hashOld)) {
 
-								// if they are different
-								if (!hashNew.equals(hashOld)) {
+										// write the new minified js to the file
+										Strings.saveString(jsNew, jsFileMin);
 
-									// some files should not be overwritten! like jquery.. maybe leave the root files alone...
+										// log
+										_logger.info("Updated " + resource.getContent());
 
-									String jsMin = null;
-
-									win.write(jsMin);
-
-									// write the jsMin to a new file
-									Strings.saveString(jsMin, jsFileMin);
+									}
 
 								}
 
-								*/
-
 							} else {
+
 								// make any dirs it may need
 								jsFileMin.getParentFile().mkdirs();
 								// minify to the file
 								Minify.toFile(jsFile, jsFileMin, Minify.JAVASCRIPT, "JavaScript file " + fileName);
+
 							}
 							// if this application is live, update the resource to the min file
 							if (_status == STATUS_LIVE) resource.setContent(fileNameMin);
 						}
 					break;
 					case Resource.CSSFILE :
+
 						// get a file for this
 						File cssFile = new File(servletContext.getRealPath("/") + (fileName.startsWith("/") ? "" : "/")  + fileName);
+
 						// if the file exists, and it's in the scripts folder and ends with .js
 						if (cssFile.exists() && fileName.startsWith("styles/") && fileName.endsWith(".css")) {
+
 							// derive the min file name by modifying the start and end
 							String fileNameMin = "styles_min/" + fileName.substring(7, fileName.length() - 4) + ".min.css";
 							// get a file for minifying
 							File cssFileMin = new File(servletContext.getRealPath("/") + "/" + fileNameMin);
-							// if this file does not exist
-							if (!cssFileMin.exists()) {
+
+							// if the min file does not exist
+							if (cssFileMin.exists()) {
+
+								// if replaceIfDifferent - we need to check, otherwise nothing to do!
+								if (resource.replaceMinIfDifferent()) {
+
+									// read the existing un-minified file
+									String cssOld = Strings.getString(cssFile);
+
+									// get a writer that we're going to minify into
+									StringWriter swr = new StringWriter();
+
+									// minify the raw old js into the writer
+									Minify.toWriter(cssOld, swr, Minify.CSS, "CSS file " + fileName);
+
+									// get the new minified js into a string
+									String cssNew = swr.toString();
+
+									// get an input stream of what we just minified
+									ByteArrayInputStream bis = new ByteArrayInputStream(cssNew.getBytes());
+
+									// get the new hash from the input stream
+									String hashNew = Files.getChecksum(bis);
+
+									// get the old hash from the existing minified file
+									String hashOld = Files.getChecksum(cssFileMin);
+
+									// if they are different
+									if (!hashNew.equals(hashOld)) {
+
+										// write the new minified css to the file
+										Strings.saveString(cssNew, cssFileMin);
+
+										// log
+										_logger.info("Updated " + resource.getContent());
+
+									}
+
+								}
+
+							} else {
+
 								// make any dirs it may need
 								cssFileMin.getParentFile().mkdirs();
 								// minify to it
 								Minify.toFile(cssFile, cssFileMin, Minify.CSS, "CSS file " + fileName);
+
 							}
+
 							// if this application is live, update the resource to the min file
 							if (_status == STATUS_LIVE) resource.setContent(fileNameMin);
+
 						}
 					break;
 				}
@@ -2025,7 +2068,7 @@ public class Application {
 		_pageVariables = null;
 
 		// debug log that we initialised
-		logger.debug("Initialised application " + _name + "/" + _version + (createResources ? "" : " (no resources)"));
+		_logger.debug("Initialised application " + _name + "/" + _version + (createResources ? "" : " (no resources)"));
 
 	}
 
@@ -2641,7 +2684,7 @@ public class Application {
 					Files.deleteRecurring(deleteFolder);
 				} catch (Exception ex) {
 					// log exception
-					LogManager.getLogger(this.getClass()).error("Error deleting temp file " + deleteFolder, ex);
+					_logger.error("Error deleting temp file " + deleteFolder, ex);
 				}
 
 			}
@@ -2665,10 +2708,8 @@ public class Application {
 
 	// close the database connections and form adapters before reload
 	public void close(ServletContext servletContext) {
-		// get the logger
-		Logger logger = (Logger) servletContext.getAttribute("logger");
 		// closing
-		logger.debug("Closing application " + _id + "/" + _version + "...");
+		_logger.debug("Closing application " + _id + "/" + _version + "...");
 		// if we got some
 		if (_databaseConnections != null) {
 			// loop them
@@ -2678,9 +2719,9 @@ public class Application {
 					// call the close method
 					databaseConnection.close();
 					// log
-					logger.debug("Closed " + databaseConnection.getName());
+					_logger.debug("Closed " + databaseConnection.getName());
 				} catch (SQLException ex) {
-					logger.error("Error closing database connection " + databaseConnection.getName() + " for application " + _id + "/" + _version, ex);
+					_logger.error("Error closing database connection " + databaseConnection.getName() + " for application " + _id + "/" + _version, ex);
 				}
 			}
 		}
@@ -2690,9 +2731,9 @@ public class Application {
 				// call the close method
 				_formAdapter.close();
 				// log
-				logger.debug("Closed form adapter");
+				_logger.debug("Closed form adapter");
 			} catch (Exception ex) {
-				logger.error("Error closing form adapter for application " + _id + "/" + _version, ex);
+				_logger.error("Error closing form adapter for application " + _id + "/" + _version, ex);
 			}
 		}
 	}
@@ -2734,11 +2775,8 @@ public class Application {
 	// this method loads the application by ummarshelling the xml, and then doing the same for all page .xmls, before calling the initialise method
 	public static Application load(ServletContext servletContext, File file, boolean initialise) throws JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException, IOException, ParserConfigurationException, SAXException, TransformerFactoryConfigurationError, TransformerException, RapidLoadingException, XPathExpressionException, NoSuchAlgorithmException {
 
-		// get the logger
-		Logger logger = (Logger) servletContext.getAttribute("logger");
-
 		// trace log that we're about to load a page
-		logger.trace("Loading application from " + file);
+		_logger.trace("Loading application from " + file);
 
 		// open the xml file into a document
 		Document appDocument = XML.openDocument(file);
@@ -2759,7 +2797,7 @@ public class Application {
 			String name = XML.getChildElementValue(appDocument.getFirstChild(), "name");
 
 			// log the difference
-			logger.debug("Application " + name + " with xml version " + xmlVersion + ", current xml version is " + XML_VERSION);
+			_logger.debug("Application " + name + " with xml version " + xmlVersion + ", current xml version is " + XML_VERSION);
 
 			//
 			// Here we would have code to update from known versions of the file to the current version
@@ -2779,7 +2817,7 @@ public class Application {
 			// save it
 			XML.saveDocument(appDocument, file);
 
-			logger.debug("Updated " + name + " application xml version to " + XML_VERSION);
+			_logger.debug("Updated " + name + " application xml version to " + XML_VERSION);
 
 		}
 
@@ -2803,7 +2841,7 @@ public class Application {
 			}
 
 			// log that the application was loaded
-			logger.info("Loaded application " + application.getName() + "/" + application.getVersion() + (initialise ? "" : " (no initialisation)"));
+			_logger.info("Loaded application " + application.getName() + "/" + application.getVersion() + (initialise ? "" : " (no initialisation)"));
 
 			// this can be memory intensive so garbage collect
 			if(appDocument != null){
