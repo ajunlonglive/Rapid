@@ -742,20 +742,24 @@ function Gallery_showImage(ev, id, galleryItem, allowDelete) {
 
 function newImageDrawing(img) {
 	return {
-		draw(context) {
+		draw: function(context) {
 			context.drawImage(img, 0, 0);
 		}
 	}
 }
 
-function newStrokeDrawing(x1, y1, x2, y2, color) {
+function newStrokeDrawing(x1, y1, x2, y2) {
 	return {
-		draw(context) {
-			context.strokeStyle = color;
+		color: "#000",
+		draw: function(context) {
+			context.strokeStyle = this.color;
 			context.beginPath();
 			context.moveTo(x1, y1)
 			context.lineTo(x2, y2);
 			context.stroke();
+		},
+		setColor: function(color) {
+			this.color = color;
 		}
 	}
 }
@@ -763,12 +767,12 @@ function newStrokeDrawing(x1, y1, x2, y2, color) {
 function newGroupDrawing() {
 	return {
 		drawings: [],
-		draw(context) {
+		draw: function(context) {
 			this.drawings.forEach(function(drawing) {
 				drawing.draw(context);
 			});
 		},
-		push(drawing) {
+		push: function(drawing) {
 			this.drawings.push(drawing);
 		}
 	}
@@ -867,7 +871,8 @@ function editImage(gallery) {
 			var newX = scaleX(mousemove.offsetX);
 			var newY = scaleY(mousemove.offsetY);
 			
-			var strokeDrawing = newStrokeDrawing(x, y, newX, newY, color);
+			var strokeDrawing = newStrokeDrawing(x, y, newX, newY);
+			strokeDrawing.setColor(color);
 			strokeDrawing.draw(context);
 			groupDrawing.push(strokeDrawing);
 			

@@ -582,10 +582,10 @@ function getAvailableCameras() {
 // media sources
 
 var _mobileCamera = {
-	getStream() {
+	getStream: function() {
 		return navigator.mediaDevices.getUserMedia({ audio: _includeAudio, video: {facingMode: _currentFacingMode} });
 	},
-	close() {
+	closeStream: function() {
 		if (hasGetUserMedia()) {
 			// Close the preview
 			$("#cameraVideoContainer").remove();
@@ -599,7 +599,7 @@ var _mobileCamera = {
 			}
 		}
 	},
-	toggleCamera() {
+	toggleCamera: function() {
 		if (_availableCameras.length > 1) {
 			if (_currentFacingMode === "environment") {
 				_currentFacingMode = "user";
@@ -611,12 +611,15 @@ var _mobileCamera = {
 				_cameraPlayer.srcObject = stream;
 			}).catch(function() {});
 		}
+	},
+	fallback: function(alternative) {
+		alternative();
 	}
 };
 
 var _mobileRemote = {
 	stream: undefined,
-	getStream() {
+	getStream: function() {
 		if (_mobileRemote.stream) {
 			return Promise.resolve(_mobileRemote.stream);
 		} else {
@@ -626,7 +629,7 @@ var _mobileRemote = {
 			});
 		}
 	},
-	getNewStream() {
+	getNewStream: function() {
 		var desktop = navigator.mediaDevices.getDisplayMedia({ audio: _includeAudio, video: true });
 		var microphone = navigator.mediaDevices.getUserMedia({ audio: _includeAudio });
 		
@@ -658,13 +661,13 @@ var _mobileRemote = {
 			});
 		});
 	},
-	close() {
+	closeStream: function() {
 		if (hasGetUserMedia()) {
 			// Close the preview
 			$("#cameraVideoContainer").remove();
 		}
 	},
-	toggleCamera() {
+	toggleCamera: function() {
 		_mobileRemote.getNewStream()
 		.then(function(stream) {
 			
@@ -675,26 +678,27 @@ var _mobileRemote = {
 			_mobileRemote.stream = stream;
 			
 		}).catch(function() {});
-	}
+	},
+	fallback: function() {}
 };
 
 // media capturers
 
 var _closePreview = {
-	capture(data, source) {
+	capture: function(data, source) {
 		var galleryControlId = _cameraPlayer.getAttribute("data-galleryId");
 		var galleryDetails = window[galleryControlId + "details"];
 		
 		setData_gallery(data.ev, galleryControlId, "url", galleryDetails, data.dataURL);
-		source.close();
+		source.closeStream();
 	},
-	indicator() {
+	indicator: function() {
 		return "";
 	}
 }
 
 var _keepPreview = {
-	capture(data, source) {
+	capture: function(data, source) {
 		var galleryControlId = _cameraPlayer.getAttribute("data-galleryId");
 		var galleryDetails = window[galleryControlId + "details"];
 		
@@ -704,13 +708,13 @@ var _keepPreview = {
 		);
 		setData_gallery(data.ev, galleryControlId, "url", galleryDetails, data.dataURL);
 	},
-	indicator() {
+	indicator: function() {
 		return "<p id='captureCount'></p>";
 	}
 }
 
 var _showCapture = {
-	capture(data, source) {
+	capture: function(data, source) {
 		var galleryControlId = _cameraPlayer.getAttribute("data-galleryId");
 		var galleryDetails = window[galleryControlId + "details"];
 		
@@ -718,7 +722,7 @@ var _showCapture = {
 		var img = $("#" + galleryControlId).find(".galleryItem").last();
 		Gallery_showImage(data.ev, galleryControlId, img, true);
 	},
-	indicator() {
+	indicator: function() {
 		return "";
 	}
 }
@@ -736,8 +740,13 @@ function orderedByPreference(array, preference) {
 }
 
 function optimalVideoMimeType(formats, codecs) {
-	for (format of formats) {
-		for (codec of codecs) {
+	
+	for (formatIndex = 0; formatIndex < formats.length; formatIndex++) {
+		var format = formats[formatIndex];
+		
+		for (codecIndex = 0; codecIndex < codecs.length; codecIndex++) {
+		var codec = codecs[codecIndex];
+		
 			var mimeType = "video/" + format + (codec && ";codec=") + codec;
 			if (MediaRecorder.isTypeSupported(mimeType)) return mimeType;
 		}
@@ -790,9 +799,9 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 		
 		$("#btnToggleCamera").click(source.toggleCamera);
 		
-		$("#btnCloseCamera").click(source.close);
+		$("#btnCloseCamera").click(source.closeStream);
 		
-		$("#btnInputImage").click(source.close);
+		$("#btnInputImage").click(source.closeStream);
 		
 		$("#inputImage").on("change", function(changeEvent) {
 				
@@ -838,7 +847,7 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 			_cameraPlayer.srcObject = stream;
 			
 			if (!$("#cameraVideoContainer").length) {
-				source.close();
+				source.closeStream();
 				return;
 			}
 			
@@ -870,7 +879,13 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 			$("#cameraVideoContainer").remove();
 			// Handle the error
 			console.log(err.name + ": " + err.message);
-			if (source === "camera") selectImage(galleryControlId, _size);
+			if (err.name === "NotAllowedError") {
+				source.fallback(function() {
+					selectImage(galleryControlId, _size, "Camera-access permission was denied");
+				});
+			} else {
+				selectImage(galleryControlId, _size);
+			}
 		});
 		
 	} else {
@@ -878,7 +893,7 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 		$("#cameraVideoContainer").remove();
 		//alert("getUserMedia() is not supported by your browser");
 		console.log("getUserMedia() is not supported by your browser");
-		if (source === "camera") selectImage(galleryControlId, _size);
+		selectImage(galleryControlId, _size, "Media is not supported by your browser");
 	}
 	
 }
@@ -947,21 +962,21 @@ function scaleImageToDataURL(image, imageWidth, imageHeight) {
 	}
 }
 
-function selectImage(galleryControlId, size) {
+function selectImage(galleryControlId, size, message) {
 
 	_size = size;
 	
 	var galleryDetails = window[galleryControlId + "details"];
 	
 	var inputHtml = "<input type='file' accept='image/*' id='inputImage' style='display:none;'>"
-		+ "<label for='inputImage' class='r-button button btn col-xs-12' style='margin-top:1em;'>Choose from my files</label>";
+		+ "<label for='inputImage' class='r-button button btn col-xs-12' style='margin-top:1em;'><h2 class='r-text col-xs-12'>Select an image</h2></label>";
 		
 	var closeButtonHtml = "<button id='closeInputPage' class='r-button button btn col-xs-12' style='min-width:200px; margin-top:1em; background:none; color:black;'>Cancel</button>";
 	
 	var inputPageHtml = "<div class='inputImagePage dialogueCover' style='position:absolute; left:0px; top:0px; z-index:1001; width:100vw; height:100vh;'>"
 		+ "</div>"
 		+ "<div class='inputImagePage dialogue' style='position:fixed; visibility:visible; z-index:1001;'>"
-		+ "<h2 class='r-text col-xs-12'>Select an image</h2>"
+		+ (message ? "<p>" + message + "</p>" : "")
 		+ inputHtml
 		+ closeButtonHtml
 		+ "</div>"
@@ -1015,7 +1030,7 @@ function takePicture(ev) {
 		// Default format type is image/png
 		var dataURL = scaleImageToDataURL(_cameraPlayer, _cameraPlayer.videoWidth, _cameraPlayer.videoHeight);
 		
-		return { dataURL, ev };
+		return { dataURL: dataURL, ev: ev };
 	}
 }
 
@@ -1023,7 +1038,7 @@ function recordVideo(stream, bitsPerSecond, maxDuration, callback) {
 	
 	var chunks = [];
 	
-	var mediaRecorder = new MediaRecorder(stream, { mimeType: _videoMimeType, bitsPerSecond });
+	var mediaRecorder = new MediaRecorder(stream, { mimeType: _videoMimeType, bitsPerSecond: bitsPerSecond });
 	mediaRecorder.start();
 	
 	$("#btnRecordVideo").addClass("btnRecording");
@@ -1054,7 +1069,7 @@ function recordVideo(stream, bitsPerSecond, maxDuration, callback) {
 		var blob = new Blob(chunks, { type: "video/webm" });
 		var reader = new FileReader();
 		reader.onload = function() {
-			callback({ dataURL: reader.result, ev });
+			callback({ dataURL: reader.result, ev: ev });
 		};
 		reader.readAsDataURL(blob);
 	};
