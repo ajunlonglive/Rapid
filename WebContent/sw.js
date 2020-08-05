@@ -115,6 +115,9 @@ self.addEventListener("fetch", function(event) {
 	// proceed to direct server response if request is for service worker
 	if (url.endsWith("sw.js")) return;
 	
+	// proceed to direct server response if request is a database action etc
+	if (method === "POST" && url.includes("act=")) return;
+	
 	// proceed to direct server response  if request is for designer
 	var designerIndicators = ["designer", "design.jsp", "~?a=designer", "designpage.jsp"];
 	var adminIndicators = ["rapid", "~?a=rapid"];
