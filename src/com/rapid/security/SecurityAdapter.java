@@ -541,7 +541,7 @@ public abstract class SecurityAdapter {
 					// if they have one
 					if (userEmail != null) {
 						// if we got an email for the user
-						if (userEmail.equals(email)) {
+						if (userEmail.equalsIgnoreCase(email)) {
 							// get a new password
 							String password = getPasswordReset(rapidRequest);
 							// set the password
