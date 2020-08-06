@@ -893,7 +893,7 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 		$("#cameraVideoContainer").remove();
 		//alert("getUserMedia() is not supported by your browser");
 		console.log("getUserMedia() is not supported by your browser");
-		selectImage(galleryControlId, _size, "Media is not supported by your browser");
+		selectImage(galleryControlId, _size, "Media capture is not supported by your browser");
 	}
 	
 }
@@ -969,7 +969,7 @@ function selectImage(galleryControlId, size, message) {
 	var galleryDetails = window[galleryControlId + "details"];
 	
 	var inputHtml = "<input type='file' accept='image/*' id='inputImage' style='display:none;'>"
-		+ "<label for='inputImage' class='r-button button btn col-xs-12' style='margin-top:1em;'><h2 class='r-text col-xs-12'>Select an image</h2></label>";
+		+ "<label for='inputImage' class='r-button button btn col-xs-12' style='margin-top:1em; font-size:1.2em;'><strong>Select an image</strong></label>";
 		
 	var closeButtonHtml = "<button id='closeInputPage' class='r-button button btn col-xs-12' style='min-width:200px; margin-top:1em; background:none; color:black;'>Cancel</button>";
 	

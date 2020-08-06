@@ -118,7 +118,7 @@ div.gallery img {
 	background: black;
 	outline: none;
 	padding: 10px;
-	margin: 20px;
+	margin: 10px;
 	border-radius: 50%;
 	width: 60px;
 	text-align: center;
@@ -616,19 +616,15 @@ function Gallery_showImage(ev, id, galleryItem, allowDelete) {
 			
 		});
 		
-		btnClose.click(function(){
-			
-			// Hide the gallery
-			gallery.remove();
-			// Clear the images in the gallery
-			gallery.children(".galleryItem").each(function() {
-				// Remove this object
-				$(this).remove();
-			});
-			
+		btnClose.on("click touchend", function(){
+			gallery.css({opacity:"0"});
+			setTimeout(function() {
+				// Hide the gallery
+				gallery.remove();
+			}, 200);
 		});
 		
-		btnDelete.click(function(ev){
+		btnDelete.on("click touchend", function(ev){
 		
 			// Loop through only the images in the gallery, and get the currently shown img object in the big gallery
 			gallery.children(".galleryItem").each(function(index, element) {
@@ -652,12 +648,12 @@ function Gallery_showImage(ev, id, galleryItem, allowDelete) {
 		});
 		
 		if (btnEdit) {
-			btnEdit.click(function(ev) {
+			btnEdit.on("click touchend", function(ev) {
 				btnEdit.hide();
 				editImage(gallery);
 				btnSave.show();
 			});
-			btnSave.click(function(ev) {
+			btnSave.on("click touchend", function(ev) {
 				btnSave.hide();
 				$(".galleryEditor").remove();
 				saveEdit(gallery, galleryItem);
@@ -813,12 +809,9 @@ function editImage(gallery) {
 	var selectedColorShadow = "0 0 0 2px #000, 0 0 0 4px #FFF, 0 2px 8px 4px #000";
 	$(btnBlack).css("box-shadow", selectedColorShadow);
 	
-	allColorButtons.click(function() {
-		allColorButtons.css("box-shadow", "none");
-	});
-	
-	allColorButtons.click(function() {
+	allColorButtons.on("click touchend", function() {
 		color = $(this).attr("data-color");
+		allColorButtons.css("box-shadow", "none");
 		$(this).css("box-shadow", selectedColorShadow);
 	});
 	
@@ -857,19 +850,26 @@ function editImage(gallery) {
 	imageDrawing.draw(context);
 	pastDrawings.push(imageDrawing);
 	
-	$(canvas).on("mousedown touchstart", function(mousedown) {
+	$(document.body).css({overflow:"hidden", "touch-action":"none"});
+	$(window).css({overflow:"hidden", "touch-action":"none"});
+	$("#btnDelete, #btnClose").on("click touchend", function() {
+		$(document.body).css({overflow:"unset", "touch-action":"auto"});
+		$(window).css({overflow:"unset", "touch-action":"auto"});
+	});
+	
+	function startListener(x, y) {
+		
+		var x = scaleX(x);
+		var y = scaleY(y);
 		
 		$("#tools, #pallet").hide();
 		
-		var x = scaleX(mousedown.offsetX);
-		var y = scaleY(mousedown.offsetY);
-		
 		var groupDrawing = newGroupDrawing();
 		
-		function moveListener(mousemove) {
+		function moveListener(newX, newY) {
 			
-			var newX = scaleX(mousemove.offsetX);
-			var newY = scaleY(mousemove.offsetY);
+			var newX = scaleX(newX);
+			var newY = scaleY(newY);
 			
 			var strokeDrawing = newStrokeDrawing(x, y, newX, newY);
 			strokeDrawing.setColor(color);
@@ -880,10 +880,19 @@ function editImage(gallery) {
 			y = newY;
 		}
 		
-		$(window).on("mousemove touchmove", moveListener);
+		function mousemoveListener(mousemove) {
+			moveListener(mousemove.offsetX, mousemove.offsetY);
+		}
+		function touchmoveListener(touchmove) {
+			moveListener(touchmove.targetTouches[0].pageX, touchmove.targetTouches[0].pageY);
+		}
+		
+		$(window).on("mousemove", mousemoveListener);
+		$(window).on("touchmove", touchmoveListener);
 	
 		$(window).one("mouseup touchend", function(mouseup) {
-			$(window).off("mousemove touchmove", moveListener);
+			$(window).off("mousemove", mousemoveListener);
+			$(window).off("touchmove", touchmoveListener);
 			
 			$("#tools, #pallet").show();
 			
@@ -891,6 +900,14 @@ function editImage(gallery) {
 			futureDrawings = [];
 			
 		});
+	};
+	
+	$(canvas).on("mousedown", function(mousedown) {
+		startListener(mousedown.offsetX, mousedown.offsetY);
+	});
+	
+	$(canvas).on("touchstart", function(touchstart) {
+		startListener(touchstart.targetTouches[0].pageX, touchstart.targetTouches[0].pageY);
 	});
 	
 	var historyButtons = $("#tools").append("<div id='historyButtons' class='galleryEditor' style='float: left;'>").find("#historyButtons");
@@ -898,7 +915,7 @@ function editImage(gallery) {
 	var btnRedo = $("#historyButtons").append("<button id='btnRedo' class='galleryControlButton galleryEditor' style='float: left;'><i class='fa fa-repeat'></i></button>").find("#btnRedo");
 	$(tools).find("button").css({"pointer-events": "all"});
 	
-	btnUndo.click(function() {
+	btnUndo.on("click touchend", function() {
 		if (pastDrawings.length > 1) {
 			var undoneDrawing = pastDrawings.pop();
 			futureDrawings.push(undoneDrawing);
@@ -906,7 +923,7 @@ function editImage(gallery) {
 		}
 	});
 	
-	btnRedo.click(function() {
+	btnRedo.on("click touchend", function() {
 		if (futureDrawings.length > 0) {
 			var redoneDrawing = futureDrawings.pop();
 			pastDrawings.push(redoneDrawing);
