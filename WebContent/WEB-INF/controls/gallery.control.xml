@@ -150,6 +150,16 @@ div.gallery img {
 	cursor: pointer;
 }
 
+#tools button, #pallet button {
+	transition: opacity 0.3s;
+	opacity: 1;
+}
+
+#tools button.faded, #pallet button.faded {
+	opacity: 0.3;
+	pointer-events: none !important;
+}
+
 @media only screen and (max-width: 500px) {
 	
 	#historyButtons, #btnRedo {
@@ -741,7 +751,7 @@ function newImageDrawing(img) {
 		draw: function(context) {
 			context.drawImage(img, 0, 0);
 		}
-	}
+	};
 }
 
 function newStrokeDrawing(x1, y1, x2, y2) {
@@ -757,7 +767,7 @@ function newStrokeDrawing(x1, y1, x2, y2) {
 		setColor: function(color) {
 			this.color = color;
 		}
-	}
+	};
 }
 
 function newGroupDrawing() {
@@ -771,7 +781,7 @@ function newGroupDrawing() {
 		push: function(drawing) {
 			this.drawings.push(drawing);
 		}
-	}
+	};
 }
 
 function draw(drawings, context) {
@@ -781,6 +791,8 @@ function draw(drawings, context) {
 }
 
 function editImage(gallery) {
+	
+	var touch = false;
 	
 	var img = gallery.find("img.galleryItem:visible");
 	var horizontalResolution = img[0].naturalWidth;
@@ -815,32 +827,26 @@ function editImage(gallery) {
 		$(this).css("box-shadow", selectedColorShadow);
 	});
 	
-	function scaleX(dimension) {
+	function canvasIsNarrower() {
+		return (horizontalResolution / verticalResolution) < (canvas.offsetWidth / canvas.offsetHeight);
+	}
 	
-		var canvasIsNarrower = (horizontalResolution / verticalResolution) < (canvas.offsetWidth / canvas.offsetHeight);
-		
-		var scale = canvasIsNarrower ?
+	function scale() {
+		return canvasIsNarrower() ?
 			verticalResolution / canvas.offsetHeight :
 			horizontalResolution / canvas.offsetWidth;
-		
-		var imageWidth = horizontalResolution / scale;
-		var canvasOffset = canvasIsNarrower ? ((canvas.offsetWidth - imageWidth) / 2) : 0;
-		
-		return (dimension - canvasOffset) * scale;
+	}
+	
+	function scaleX(dimension) {
+		var imageWidth = horizontalResolution / scale();
+		var canvasOffset = (canvas.offsetWidth - imageWidth) / 2;
+		return (dimension - canvasOffset) * scale();
 	}
 	
 	function scaleY(dimension) {
-	
-		var canvasIsShorter = (verticalResolution / horizontalResolution) < (canvas.offsetHeight / canvas.offsetWidth);
-		
-		var scale = canvasIsShorter ?
-			horizontalResolution / canvas.offsetWidth :
-			verticalResolution / canvas.offsetHeight;
-		
-		var imageHeight = verticalResolution / scale;
-		var canvasOffset = canvasIsShorter ? ((canvas.offsetHeight - imageHeight) / 2) : 0;
-		
-		return (dimension - canvasOffset) * scale;
+		var imageHeight = verticalResolution / scale();
+		var canvasOffset = (canvas.offsetHeight - imageHeight) / 2;
+		return (dimension - canvasOffset) * scale();
 	}
 	
 	var pastDrawings = [];
@@ -862,7 +868,7 @@ function editImage(gallery) {
 		var x = scaleX(x);
 		var y = scaleY(y);
 		
-		$("#tools, #pallet").hide();
+		$("#tools button, #pallet button").addClass("faded");
 		
 		var groupDrawing = newGroupDrawing();
 		
@@ -887,27 +893,31 @@ function editImage(gallery) {
 			moveListener(touchmove.targetTouches[0].pageX, touchmove.targetTouches[0].pageY);
 		}
 		
-		$(window).on("mousemove", mousemoveListener);
-		$(window).on("touchmove", touchmoveListener);
+		if (touch) $(window).on("touchmove", touchmoveListener);
+		if (!touch) $(window).on("mousemove", mousemoveListener);
 	
-		$(window).one("mouseup touchend", function(mouseup) {
-			$(window).off("mousemove", mousemoveListener);
-			$(window).off("touchmove", touchmoveListener);
+		function endListener() {
+			if (!touch) $(window).off("mousemove", mousemoveListener);
+			if (touch) $(window).off("touchmove", touchmoveListener);
 			
-			$("#tools, #pallet").show();
+			$("#tools button, #pallet button").removeClass("faded");
 			
 			pastDrawings.push(groupDrawing);
 			futureDrawings = [];
 			
-		});
-	};
-	
-	$(canvas).on("mousedown", function(mousedown) {
-		startListener(mousedown.offsetX, mousedown.offsetY);
-	});
+		}
+		
+		if (touch) $(window).one("touchend", endListener);
+		if (!touch) $(window).one("mouseup", endListener);
+	}
 	
 	$(canvas).on("touchstart", function(touchstart) {
+		touch = true;
 		startListener(touchstart.targetTouches[0].pageX, touchstart.targetTouches[0].pageY);
+	});
+	
+	$(canvas).on("mousedown", function(mousedown) {
+		if (!touch) startListener(mousedown.offsetX, mousedown.offsetY);
 	});
 	
 	var historyButtons = $("#tools").append("<div id='historyButtons' class='galleryEditor' style='float: left;'>").find("#historyButtons");
@@ -915,21 +925,27 @@ function editImage(gallery) {
 	var btnRedo = $("#historyButtons").append("<button id='btnRedo' class='galleryControlButton galleryEditor' style='float: left;'><i class='fa fa-repeat'></i></button>").find("#btnRedo");
 	$(tools).find("button").css({"pointer-events": "all"});
 	
-	btnUndo.on("click touchend", function() {
+	function undo() {
 		if (pastDrawings.length > 1) {
 			var undoneDrawing = pastDrawings.pop();
 			futureDrawings.push(undoneDrawing);
 			draw(pastDrawings, context);
 		}
-	});
+	}
 	
-	btnRedo.on("click touchend", function() {
+	function redo() {
 		if (futureDrawings.length > 0) {
 			var redoneDrawing = futureDrawings.pop();
 			pastDrawings.push(redoneDrawing);
 			redoneDrawing.draw(context);
 		}
-	});
+	}
+	
+	if (touch) btnUndo.on("touchstart", undo);
+	if (touch) btnRedo.on("touchstart", redo);
+	
+	if (!touch) btnUndo.on("click", undo);
+	if (!touch) btnRedo.on("click", redo);
 	
 	img.addClass("editing").hide();
 	gallery.append(canvas);
