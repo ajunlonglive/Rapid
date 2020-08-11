@@ -537,7 +537,7 @@ function handleSwipe(event, direction, distance, duration, fingers, fingerData, 
 
 var _cameraPlayer;
 var _availableCameras = [];
-var _currentFacingMode = "user";
+var _currentFacingMode = "environment";
 var _galleryControlId;
 var _size;
 var _quality;
