@@ -641,7 +641,7 @@ var _mobileRemote = {
 				
 				tracks.forEach(function(track) {
 					track.onended = function() {
-						_mobileRemote.close();
+						_mobileRemote.closeStream();
 						_mobileRemote.stream = undefined;
 						tracks.forEach(function(track) {
 							track.stop();
