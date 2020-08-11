@@ -614,8 +614,11 @@ var _mobileCamera = {
 			}).catch(function() {});
 		}
 	},
-	fallback: function(alternative) {
+	permissionDenied: function(alternative) {
 		alternative();
+	},
+	ifAvailable: function(todo) {
+		if (navigator.mediaDevices.getUserMedia) todo();
 	}
 };
 
@@ -688,7 +691,10 @@ var _mobileRemote = {
 			
 		}).catch(function() {});
 	},
-	fallback: function() {}
+	permissionDenied: function() {},
+	ifAvailable: function(todo) {
+		if(_mobileRemote.stream || navigator.mediaDevices.getDisplayMedia) todo();
+	}
 };
 
 // media capturers
@@ -858,13 +864,16 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 		_cameraPlayer = document.getElementById("cameraPlayer");
 		
 		_cameraPlayer.setAttribute("data-galleryId",galleryControlId);
-			
-		// Display the cameraPlayer (if we have a stream already)
-		$("#cameraVideoContainer").show();
-
+		
+		source.ifAvailable(function() {
+			$("#cameraVideoContainer").show();
+		});
+		
 		// Obtain the user media object
 		source.getStream()
 		.then(function(stream) {
+			
+			$("#cameraVideoContainer").show();
 			
 			// Use the stream
 			// Now attach the video stream to the video element and auto play
@@ -904,7 +913,7 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 			// Handle the error
 			console.log(err.name + ": " + err.message);
 			if (err.name === "NotAllowedError" && err.message !== "Invalid state") {
-				source.fallback(function() {
+				source.permissionDenied(function() {
 					selectImage(galleryControlId, _size, "Camera-access permission was denied");
 				});
 			} else {
