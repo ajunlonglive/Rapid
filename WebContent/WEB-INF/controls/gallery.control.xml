@@ -608,11 +608,6 @@ function Gallery_showImage(ev, id, galleryItem, allowDelete, openEditor) {
 		}
 		$(tools).find("button").css({"pointer-events": "all"});
 		
-		$(btnDelete, btnClose).on("click touchend", function() {
-			$(document.body).css({overflow:"unset", "touch-action":"auto"});
-			$(window).css({overflow:"unset", "touch-action":"auto"});
-		});
-		
 		if (allowDelete == false) btnDelete.hide();
 	
 		// Add click listeners to the buttons
@@ -642,14 +637,16 @@ function Gallery_showImage(ev, id, galleryItem, allowDelete, openEditor) {
 			}, 200);
 		});
 		
-		btnDelete.on("click touchend", function(ev){
+		btnDelete.on("click touchend", function(ev) {
+			$(document.body).css({overflow:"unset", "touch-action":"auto"});
+			$(window).css({overflow:"unset", "touch-action":"auto"});
 		
 			// Loop through only the images in the gallery, and get the currently shown img object in the big gallery
 			gallery.children(".galleryItem").each(function(index, element) {
 				// get this image
 				var self = $(this);
 				// if it is the one showing
-				if (self.is(":visible")) {
+				if (self.is(":visible") || self.is(".editing")) {
 					// get the source gallery
 					var sourceGallery = $("#" + gallery.attr("data-gallery"));
 					// Find  and delete this image 
