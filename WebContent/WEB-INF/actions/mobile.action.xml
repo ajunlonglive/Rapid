@@ -631,13 +631,15 @@ var _mobileRemote = {
 	},
 	getNewStream: function() {
 		var desktop = navigator.mediaDevices.getDisplayMedia({ audio: _includeAudio, video: { frameRate: 30 } });
-		var microphone = navigator.mediaDevices.getUserMedia({ audio: _includeAudio });
+		var microphone = _includeAudio ? navigator.mediaDevices.getUserMedia({ audio: true }) : Promise.resolve(undefined);
 		
 		return desktop.then(function(desktopStream) {
 			return microphone.then(function(microphoneStream) {
 				
-				var desktopAudio = desktopStream.getAudioTracks()[0];
-				var tracks = desktopStream.getVideoTracks().concat(desktopStream.getAudioTracks()).concat(microphoneStream.getAudioTracks());
+				var desktopVideoTracks = desktopStream.getVideoTracks();
+				var desktopAudioTracks = desktopStream.getAudioTracks();
+				var microphoneTracks = microphoneStream ? microphoneStream.getAudioTracks() : [];
+				var tracks = desktopVideoTracks.concat(desktopAudioTracks).concat(microphoneTracks);
 				
 				tracks.forEach(function(track) {
 					track.onended = function() {
@@ -649,7 +651,8 @@ var _mobileRemote = {
 					};
 				});
 				
-				var microphoneAudio = microphoneStream.getAudioTracks()[0];
+				var desktopAudio = desktopAudioTracks[0];
+				var microphoneAudio = microphoneTracks[0];
 				
 				var mergedAudioTrack = desktopAudio && microphoneAudio ? mergeAudioStreams(desktopStream, microphoneStream) :
 					(desktopAudio || microphoneAudio);
