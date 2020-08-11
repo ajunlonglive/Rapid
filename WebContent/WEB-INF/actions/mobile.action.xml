@@ -635,7 +635,7 @@ var _mobileRemote = {
 		
 		var desktop = navigator.mediaDevices.getDisplayMedia ?
 			navigator.mediaDevices.getDisplayMedia({ audio: _includeAudio, video: { frameRate: 30 } }) :
-			navigator.mediaDevices.getUserMedia({ audio: _includeAudio, video: { frameRate: 30, mandatory: { chromeMediaSource: "desktop" } } });
+			navigator.mediaDevices.getUserMedia({ video: { mandatory: { chromeMediaSource: "desktop" } } });
 		
 		var microphone = _includeAudio ? navigator.mediaDevices.getUserMedia({ audio: true }) : Promise.resolve(undefined);
 		
@@ -859,7 +859,7 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 		
 		_cameraPlayer.setAttribute("data-galleryId",galleryControlId);
 			
-		// Display the cameraPlayer
+		// Display the cameraPlayer (if we have a stream already)
 		$("#cameraVideoContainer").show();
 
 		// Obtain the user media object
@@ -903,7 +903,7 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 			$("#cameraVideoContainer").remove();
 			// Handle the error
 			console.log(err.name + ": " + err.message);
-			if (err.name === "NotAllowedError") {
+			if (err.name === "NotAllowedError" && err.message !== "Invalid state") {
 				source.fallback(function() {
 					selectImage(galleryControlId, _size, "Camera-access permission was denied");
 				});
