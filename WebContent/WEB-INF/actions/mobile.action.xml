@@ -585,7 +585,7 @@ function getAvailableCameras() {
 
 var _mobileCamera = {
 	getStream: function() {
-		return navigator.mediaDevices.getUserMedia({ audio: _includeAudio, video: {facingMode: _currentFacingMode} });
+		return navigator.mediaDevices.getUserMedia({ audio: _includeAudio, video: { facingMode: _currentFacingMode, height: { ideal: _size } } });
 	},
 	closeStream: function() {
 		if (hasGetUserMedia()) {
@@ -636,10 +636,9 @@ var _mobileRemote = {
 	},
 	getNewStream: function() {
 		
-		var desktop = navigator.mediaDevices.getDisplayMedia ?
-			navigator.mediaDevices.getDisplayMedia({ audio: _includeAudio, video: { frameRate: 30 } }) :
-			navigator.mediaDevices.getUserMedia({ video: { mandatory: { chromeMediaSource: "desktop" } } });
+		if (!navigator.mediaDevices.getDisplayMedia) return Promise.reject("Can't find navigator.mediaDevices.getDisplayMedia");
 		
+		var desktop = navigator.mediaDevices.getDisplayMedia({ audio: _includeAudio, video: { frameRate: 30, height: { ideal: _size } } });
 		var microphone = _includeAudio ? navigator.mediaDevices.getUserMedia({ audio: true }) : Promise.resolve(undefined);
 		
 		return desktop.then(function(desktopStream) {
