@@ -110,8 +110,9 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <type>css</type>
 	            <contents>
 	                <![CDATA[
-div.gallery img {
+div.gallery .galleryItem {
 	cursor:pointer;
+	vertical-align:top;
 }
 
 .galleryControlButton {
@@ -1160,6 +1161,22 @@ return "#" + this.id;
 	            <getAppliesToFunction>
 					<![CDATA[	      
 return "#" + this.id + " .galleryItem";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	        <style>
+	            <name>Images</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id + " img";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	        <style>
+	            <name>Videos</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id + " video";
 	       			 ]]>	                
 	            </getAppliesToFunction>
 	        </style>
