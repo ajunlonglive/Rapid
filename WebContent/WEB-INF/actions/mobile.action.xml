@@ -180,7 +180,7 @@ return "<option value=''>Please select...</option>" + getInputOptions(this.messa
 	            <changeValueJavaScript>select</changeValueJavaScript>
 	             <getValuesFunction>
 	                <![CDATA[
-return [["closePreview","Close preview"],["keepPreview","Keep preview open"],["showCapture","Show captured image/video"]];
+return [["closePreview","Close preview"],["keepPreview","Keep preview open"],["showCapture","Show captured image/video"],["editCapture","Edit captured image/video"]];
 	                ]]>
 	            </getValuesFunction>
 	            <helpHtml>Sets what to do after an image/video is captured.</helpHtml>
@@ -630,7 +630,7 @@ var _mobileRemote = {
 		}
 	},
 	getNewStream: function() {
-		var desktop = navigator.mediaDevices.getDisplayMedia({ audio: _includeAudio, video: true });
+		var desktop = navigator.mediaDevices.getDisplayMedia({ audio: _includeAudio, video: { frameRate: 30 } });
 		var microphone = navigator.mediaDevices.getUserMedia({ audio: _includeAudio });
 		
 		return desktop.then(function(desktopStream) {
@@ -727,6 +727,20 @@ var _showCapture = {
 	}
 }
 
+var _editCapture = {
+	capture: function(data, source) {
+		var galleryControlId = _cameraPlayer.getAttribute("data-galleryId");
+		var galleryDetails = window[galleryControlId + "details"];
+		
+		setData_gallery(data.ev, galleryControlId, "url", galleryDetails, data.dataURL);
+		var img = $("#" + galleryControlId).find(".galleryItem").last();
+		Gallery_showImage(data.ev, galleryControlId, img, true, true);
+	},
+	indicator: function() {
+		return "";
+	}
+}
+
 var _formats = ["mp4", "webm"];
 var _codecs = ["h264", "vp9", "vp8", "av1", ""];
 
@@ -772,6 +786,7 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 		
 		var mediaCapturer = captureMode === "keepPreview" ? _keepPreview :
 							captureMode === "showCapture" ? _showCapture :
+							captureMode === "editCapture" ? _editCapture :
 							_closePreview;
 		
 		_cameraPlayer = document.getElementById("cameraPlayer");

@@ -515,7 +515,7 @@ public class Mobile extends Action {
 					int maxSize = Integer.parseInt(getProperty("imageMaxSize"));
 					int quality = Integer.parseInt(getProperty("imageQuality"));
 					int maxDuration = 0;
-					if(getProperty("videoMaxDuration")!=null)
+					if(getProperty("videoMaxDuration") != null && !getProperty("videoMaxDuration").isEmpty())
 						maxDuration = Integer.parseInt(getProperty("videoMaxDuration"));
 					Boolean cameraSelectImage = false;
 					if(getProperty("cameraSelectImage")!=null)

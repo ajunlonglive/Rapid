@@ -577,8 +577,11 @@ function setNextPrevImgAndButton(currentImage, direction, prevButton, nextButton
 	
 }        	
 
-function Gallery_showImage(ev, id, galleryItem, allowDelete) {	
-
+function Gallery_showImage(ev, id, galleryItem, allowDelete, openEditor) {
+	
+	$(document.body).css({overflow:"hidden", "touch-action":"none"});
+	$(window).css({overflow:"hidden", "touch-action":"none"});
+	
 	// get the image
 	var galleryItem = $(galleryItem);
 	
@@ -604,6 +607,11 @@ function Gallery_showImage(ev, id, galleryItem, allowDelete) {
 			var btnSave = tools.append("<button id='btnSave' class='galleryControlButton' style='float: right; display:none'><i class='fa fa-check'></i></button>").find("#btnSave");
 		}
 		$(tools).find("button").css({"pointer-events": "all"});
+		
+		$(btnDelete, btnClose).on("click touchend", function() {
+			$(document.body).css({overflow:"unset", "touch-action":"auto"});
+			$(window).css({overflow:"unset", "touch-action":"auto"});
+		});
 		
 		if (allowDelete == false) btnDelete.hide();
 	
@@ -663,11 +671,18 @@ function Gallery_showImage(ev, id, galleryItem, allowDelete) {
 				editImage(gallery);
 				btnSave.show();
 			});
+			if (openEditor) setTimeout(function() { $("#btnEdit").click(); });
+			
 			btnSave.on("click touchend", function(ev) {
 				btnSave.hide();
 				$(".galleryEditor").remove();
 				saveEdit(gallery, galleryItem);
-				btnEdit.show();
+				if (openEditor) {
+					gallery.remove();
+				} else {
+					$(btnPrev, btnNext).show();
+					btnEdit.show();
+				}
 			});
 		}
 		
@@ -794,6 +809,8 @@ function editImage(gallery) {
 	
 	var touch = false;
 	
+	$("#btnPrev, #btnNext").hide();
+	
 	var img = gallery.find("img.galleryItem:visible");
 	var horizontalResolution = img[0].naturalWidth;
 	var verticalResolution = img[0].naturalHeight;
@@ -855,13 +872,6 @@ function editImage(gallery) {
 	var imageDrawing = newImageDrawing(img[0]);
 	imageDrawing.draw(context);
 	pastDrawings.push(imageDrawing);
-	
-	$(document.body).css({overflow:"hidden", "touch-action":"none"});
-	$(window).css({overflow:"hidden", "touch-action":"none"});
-	$("#btnDelete, #btnClose").on("click touchend", function() {
-		$(document.body).css({overflow:"unset", "touch-action":"auto"});
-		$(window).css({overflow:"unset", "touch-action":"auto"});
-	});
 	
 	function startListener(x, y) {
 		
