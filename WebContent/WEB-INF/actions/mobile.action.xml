@@ -632,6 +632,9 @@ var _mobileRemote = {
 		}
 	},
 	getNewStream: function() {
+		
+		if (!navigator.mediaDevices.getDisplayMedia) return Promise.reject("Can't find navigator.mediaDevices.getDisplayMedia");
+		
 		var desktop = navigator.mediaDevices.getDisplayMedia({ audio: _includeAudio, video: { frameRate: 30 } });
 		var microphone = _includeAudio ? navigator.mediaDevices.getUserMedia({ audio: true }) : Promise.resolve(undefined);
 		
