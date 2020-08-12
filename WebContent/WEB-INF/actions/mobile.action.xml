@@ -1083,32 +1083,40 @@ function recordVideo(stream, bitsPerSecond, maxDuration, callback) {
 		);
 	}, 1000);
 	
-	var previewControls = $("#btnToggleCamera, #btnCloseCamera");
-	previewControls.hide();
+	var btnToggleCamera = $("#btnToggleCamera");
+	btnToggleCamera.hide();
 	
-	if (maxDuration > 0) setTimeout(stopRecording, maxDuration * 1000);
-	
-	mediaRecorder.onstop = function(ev) {
-		$("#btnRecordVideo").removeClass("btnRecording");
-		clearInterval(timerId);
-		$("#videoRecordTimer").text("");
-		previewControls.show();
-		
-		if ($("#btnRecordVideo").length) btnRecordVideo.onclick = function() {
-			recordVideo(stream, bitsPerSecond, maxDuration, callback);
+	function keepRecording() {
+		mediaRecorder.onstop = function(ev) {
+			$("#btnRecordVideo").removeClass("btnRecording");
+			clearInterval(timerId);
+			$("#videoRecordTimer").text("");
+			btnToggleCamera.show();
+			
+			if ($("#btnRecordVideo").length) btnRecordVideo.onclick = function() {
+				recordVideo(stream, bitsPerSecond, maxDuration, callback);
+			};
+			
+			var blob = new Blob(chunks, { type: "video/webm" });
+			var reader = new FileReader();
+			reader.onload = function() {
+				callback({ dataURL: reader.result, ev: ev });
+			};
+			reader.readAsDataURL(blob);
 		};
-		
-		var blob = new Blob(chunks, { type: "video/webm" });
-		var reader = new FileReader();
-		reader.onload = function() {
-			callback({ dataURL: reader.result, ev: ev });
-		};
-		reader.readAsDataURL(blob);
-	};
-	
-	btnRecordVideo.onclick = function() {
 		mediaRecorder.stop();
-	};
+	}
+	
+	if (maxDuration > 0) setTimeout(
+		function() { if (mediaRecorder.state === "recording") keepRecording(); },
+		maxDuration * 1000
+	);
+	
+	btnRecordVideo.onclick = keepRecording;
+	
+	$("#btnCloseCamera").one("click", function() {
+		if (mediaRecorder.state === "recording") mediaRecorder.stop();
+	});
 	
 	mediaRecorder.ondataavailable = function(ev) {
 		chunks.push(ev.data);
