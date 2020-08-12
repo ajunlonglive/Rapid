@@ -589,9 +589,6 @@ var _mobileCamera = {
 	},
 	closeStream: function() {
 		if (hasGetUserMedia()) {
-			// Close the preview
-			$("#cameraVideoContainer").remove();
-			
 			// Stop all video streams attached to the video element
 			if (_cameraPlayer && _cameraPlayer.srcObject && _cameraPlayer.srcObject.getVideoTracks) {
 				_cameraPlayer.srcObject.getVideoTracks().concat(_cameraPlayer.srcObject.getAudioTracks())
@@ -672,12 +669,7 @@ var _mobileRemote = {
 			});
 		});
 	},
-	closeStream: function() {
-		if (hasGetUserMedia()) {
-			// Close the preview
-			$("#cameraVideoContainer").remove();
-		}
-	},
+	closeStream: function() {},
 	toggleCamera: function() {
 		_mobileRemote.getNewStream()
 		.then(function(stream) {
@@ -705,6 +697,9 @@ var _closePreview = {
 		
 		setData_gallery(data.ev, galleryControlId, "url", galleryDetails, data.dataURL);
 		source.closeStream();
+		$("#cameraVideoContainer").remove();
+		$(document.body).css({overflow:"unset", "touch-action":"auto"});
+		$(window).css({overflow:"unset", "touch-action":"auto"});
 	},
 	indicator: function() {
 		return "";
@@ -792,7 +787,7 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 		_quality = quality;
 		_includeAudio = includeAudio;
 		
-		if (mediums.includes('video')) {
+		if (mediums.includes('video') && MediaRecorder) {
 			_videoMimeType = optimalVideoMimeType(_formats, _codecs);
 		}
 		
@@ -805,8 +800,51 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 		
 		_cameraPlayer = document.getElementById("cameraPlayer");
 		
-	    var inputImageHtml = _cameraSelectImage ? "<div style='position:fixed; top:0; width:100%; text-align:center;'><label id='btnInputImage' for='inputImage' class='cameraControlBasic'><i class='fa fa-folder-open cameraIcon' style='margin-left: 2px;'></i></label>"
-							  + "<input type='file' accept='image/*' id='inputImage' style='display:none;'></div>" : "";
+		var mimeTypes = mediums
+			.map(function(medium) { return medium + "/*"; })
+			.join(",");
+		
+		if (!$("#inputImage").length) {
+			$(document.body).append("<input type='file' accept='" + mimeTypes + "' id='inputImage' style='display:none;'>");
+			
+			$("#inputImage").on("change", function(changeEvent) {
+				
+				$("#cameraVideoContainer").remove();
+				$(document.body).css({overflow:"unset", "touch-action":"auto"});
+				$(window).css({overflow:"unset", "touch-action":"auto"});
+				
+				var fileReader = new FileReader();
+				
+				$(fileReader).on("load", function(loadEvent) {
+					
+					var image = new Image();
+					image.src = loadEvent.target.result;
+					
+					$(image).on("load", function(loadEvent) {
+						
+						var imageWidth = loadEvent.target.width;
+						var imageHeight = loadEvent.target.height;
+						
+						// Get a data url of the canvas, containing a representation of the image
+						// Default format type is image/png
+						var dataURL = scaleImageToDataURL(image, image.width, image.height) || image.src;
+				
+						// call gallery set data to display image
+						setData_gallery(loadEvent, galleryControlId, "url", galleryDetails, dataURL);
+						
+						$(".inputImagePage").remove();
+					});
+				});
+				
+				fileReader.readAsDataURL(this.files[0]);
+			});
+		} else {
+			$(inputImage).attr("accept", mimeTypes);
+		}
+		
+		var inputImageHtml = _cameraSelectImage ? "<div style='position:fixed; top:0; width:100%; text-align:center;'>"
+	    					+ "<label id='btnInputImage' for='inputImage' class='cameraControlBasic'><i class='fa fa-folder-open cameraIcon' style='margin-left: 2px;'></i></label></div>"
+							: "";
 	
 		// Add the divs
 		var cameraPreviewHtml = "<div id='cameraVideoContainer'>"
@@ -818,7 +856,7 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 							+ mediaCapturer.indicator()
 							+ (mediums.includes('video') ? "<p id='videoRecordTimer'></p>" : "")
 							+ (mediums.includes('image') ? "<button id ='btnTakePicture' class='cameraControl'><i class='fa fa-camera cameraIcon'></i></button>" : "")
-							+ (mediums.includes('video') ? "<button id ='btnRecordVideo' class='cameraControl'><i class='fa fa-video-camera cameraIcon'></i></button>" : "")
+							+ (mediums.includes('video') && MediaRecorder ? "<button id ='btnRecordVideo' class='cameraControl'><i class='fa fa-video-camera cameraIcon'></i></button>" : "")
 							+ "</div>"
 							+ "</div>";
 		
@@ -826,42 +864,19 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 		
 		$("body").append(cameraPreviewHtml);
 		
+		$(document.body).css({overflow:"hidden", "touch-action":"none"});
+		$(window).css({overflow:"hidden", "touch-action":"none"});
+		
 		$("#btnToggleCamera").click(source.toggleCamera);
 		
-		$("#btnCloseCamera").click(source.closeStream);
-		
-		$("#btnInputImage").click(function() {
+		$("#btnCloseCamera").click(function() {
 			source.closeStream();
-			selectImage(galleryControlId, _size);
+			$("#cameraVideoContainer").remove();
+			$(document.body).css({overflow:"unset", "touch-action":"auto"});
+			$(window).css({overflow:"unset", "touch-action":"auto"});
 		});
 		
-		$("#inputImage").on("change", function(changeEvent) {
-				
-			var fileReader = new FileReader();
-			
-			$(fileReader).on("load", function(loadEvent) {
-				
-				var image = new Image();
-				image.src = loadEvent.target.result;
-				
-				$(image).on("load", function(loadEvent) {
-					
-					var imageWidth = loadEvent.target.width;
-					var imageHeight = loadEvent.target.height;
-					
-					// Get a data url of the canvas, containing a representation of the image
-					// Default format type is image/png
-					var dataURL = scaleImageToDataURL(image, image.width, image.height) || image.src;
-			
-					// call gallery set data to display image
-					setData_gallery(loadEvent, galleryControlId, "url", galleryDetails, dataURL);
-					
-					$(".inputImagePage").remove();
-				});
-			});
-			
-			fileReader.readAsDataURL(this.files[0]);
-		});
+		$("#btnInputImage").click(source.closeStream);
 			
 		_cameraPlayer = document.getElementById("cameraPlayer");
 		
@@ -894,7 +909,7 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 			
 			var bitsPerSecond = (quality / 100) * (2500000 + 128000);
 			
-			if (mediums.includes('video')) {
+			if (mediums.includes('video') && MediaRecorder) {
 				btnRecordVideo.onclick = function() {
 					recordVideo(stream, bitsPerSecond, maxDuration, function(data) {
 						mediaCapturer.capture(data, source);
@@ -916,10 +931,10 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 			console.log(err.name + ": " + err.message);
 			if (err.name === "NotAllowedError" && err.message !== "Invalid state") {
 				source.permissionDenied(function() {
-					selectImage(galleryControlId, _size, "Camera-access permission was denied");
+					selectItem(galleryControlId, _size, mediums, "Camera-access permission was denied");
 				});
 			} else {
-				selectImage(galleryControlId, _size);
+				selectItem(galleryControlId, _size, mediums);
 			}
 		});
 		
@@ -928,7 +943,7 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 		$("#cameraVideoContainer").remove();
 		//alert("getUserMedia() is not supported by your browser");
 		console.log("getUserMedia() is not supported by your browser");
-		selectImage(galleryControlId, _size, "Media capture is not supported by your browser");
+		selectItem(galleryControlId, _size, mediums, "Media capture is not supported by your browser");
 	}
 	
 }
@@ -993,14 +1008,20 @@ function scaleImageToDataURL(image, imageWidth, imageHeight) {
 	return canvas.toDataURL();
 }
 
-function selectImage(galleryControlId, size, message) {
+function selectItem(galleryControlId, size, mediums, message) {
 
 	_size = size;
 	
 	var galleryDetails = window[galleryControlId + "details"];
 	
-	var inputHtml = "<input type='file' accept='image/*' id='inputImage' style='display:none;'>"
-		+ "<label for='inputImage' class='r-button button btn col-xs-12' style='margin-top:1em; font-size:1.2em;'><strong>Select an image</strong></label>";
+	var mimeTypes = mediums
+		.map(function(medium) { return medium + "/*"; })
+		.join(",");
+	
+	var selectWhat = mediums.join(" or ");
+	
+	var inputHtml = "<input type='file' accept='" + mimeTypes + "' id='inputImage' style='display:none;'>"
+		+ "<label for='inputImage' class='r-button button btn col-xs-12' style='margin-top:1em; font-size:1.2em;'><strong>Select " + selectWhat + "</strong></label>";
 		
 	var closeButtonHtml = "<button id='closeInputPage' class='r-button button btn col-xs-12' style='min-width:200px; margin-top:1em; background:none; color:black;'>Cancel</button>";
 	

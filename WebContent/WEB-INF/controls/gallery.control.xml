@@ -631,6 +631,8 @@ function Gallery_showImage(ev, id, galleryItem, allowDelete, openEditor) {
 		});
 		
 		btnClose.on("click touchend", function(){
+			$(document.body).css({overflow:"unset", "touch-action":"auto"});
+			$(window).css({overflow:"unset", "touch-action":"auto"});
 			gallery.css({opacity:"0"});
 			setTimeout(function() {
 				// Hide the gallery
