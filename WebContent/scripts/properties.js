@@ -131,22 +131,21 @@ function getDateTimeValueOptions(selectId) {
 var _systemValues = ["app id","app version","parameter", "page id","page name","page title","user name","user description", "device","online","mobile","mobile version","true","false","null","empty","field"];
 
 // this function returns system values
-function getSystemValueOptions(selectId) {
+function getSystemValueOptions(selectId, input) {
+	if (input === undefined) input = true;
 	var options = "";
 	// system values
-	if (_systemValues) {
-		options += "<optgroup label='System values'>";
-		for (var i in _systemValues) {
-			var val = "System." + _systemValues[i];
-			options += "<option value='" + val + "'" + (val == selectId ? " selected='selected'" : "") + ">" + _systemValues[i] + "</option>";
-		}
-		options += "</optgroup>";
+	options += "<optgroup label='System values'>";
+	for (var i in _systemValues) {
+		var val = "System." + _systemValues[i];
+		options += "<option value='" + val + "'" + (val == selectId ? " selected='selected'" : "") + ">" + _systemValues[i] + "</option>";
 	}
+	options += "</optgroup>";
 	return options;
 }
 
 // this function returns a set of options for a dropdown for inputs or outputs (depending on input true/false), can be controls, control properties (input only), other page controls, page variables (input only), system values (input only)
-function getDataOptions(selectId, ignoreId, input, hasDatetime) {
+function getDataOptions(selectId, ignoreId, input, hasDatetime, hasClipboard) {
 	var options = "";	
 	var controls = getControls();
 	var gotSelected = false;
@@ -258,8 +257,11 @@ function getDataOptions(selectId, ignoreId, input, hasDatetime) {
 	}
 	// date time value, only for the datacopy inputs, set with dateTime = true
 	if (input && hasDatetime) options += getDateTimeValueOptions(selectId);
+	
+	if (hasClipboard) options += "<optgroup label='Clipboard'><option value='System.clipboard'" + ("System.clipboard" == selectId && !gotSelected ? " selected='selected'" : "") + ">clipboard</option></optgroup>";
+	
 	// system values, only for inputs - these are defined in an array above this function
-	if (input && _systemValues) options += getSystemValueOptions(selectId);
+	options += getSystemValueOptions(selectId, input);
 	// return
 	return options;
 }
@@ -324,13 +326,13 @@ function getFormValueOptions(selectId) {
 
 
 // this function returns a set of options for a dropdown of sessionVariables and controls with a getData method
-function getInputOptions(selectId, ignoreId, hasDatetime) {
-	return getDataOptions(selectId, ignoreId, true, hasDatetime);
+function getInputOptions(selectId, ignoreId, hasDatetime, hasClipboard) {
+	return getDataOptions(selectId, ignoreId, true, hasDatetime, hasClipboard);
 }
 
 // this function returns a set of options for a dropdown of sessionVariables and controls with a setData method
-function getOutputOptions(selectId, ignoreId) {
-	return getDataOptions(selectId, ignoreId, false);
+function getOutputOptions(selectId, ignoreId, hasClipboard) {
+	return getDataOptions(selectId, ignoreId, false, false, hasClipboard);
 }
 
 // this function returns a set of options for use in page visibility logic
@@ -4660,7 +4662,7 @@ function Property_datacopyDestinations(cell, propertyObject, property, details) 
 		}));
 		
 		// add the add
-		table.append("<tr><td colspan='3' style='padding:0px;'><select style='margin:0px'><option value=''>Add destination...</option>" + getOutputOptions() + "</select></td></tr>");
+		table.append("<tr><td colspan='3' style='padding:0px;'><select style='margin:0px'><option value=''>Add destination...</option>" + getOutputOptions(null, null, true) + "</select></td></tr>");
 		// find the add
 		var destinationAdd = table.find("tr").last().children().last().children().last();
 		// listener to add output
@@ -5036,7 +5038,7 @@ function Property_datacopyCopies(cell, datacopyAction, property, details) {
 			var dataCopy = dataCopies[i];
 						
 			// add a row
-			table.append("<tr><td><select class='source'><option value=''>Please select...</option>" + getInputOptions(dataCopy.source) + "</select></td><td><input  class='source' value='" + escapeApos(dataCopy.sourceField) + "' /></td><td><select class='destination'><option value=''>Please select...</option>" + getOutputOptions(dataCopy.destination) + "</select></td><td><input class='destination' value='" + escapeApos(dataCopy.destinationField) + "' /></td><td><select class='type' style='min-width:80px;'>" + getCopyTypeOptions(dataCopy.type) + "</select></td><td style='width:45px'>" +
+			table.append("<tr><td><select class='source'><option value=''>Please select...</option>" + getInputOptions(dataCopy.source, null, true, true) + "</select></td><td><input  class='source' value='" + escapeApos(dataCopy.sourceField) + "' /></td><td><select class='destination'><option value=''>Please select...</option>" + getOutputOptions(dataCopy.destination, null, true) + "</select></td><td><input class='destination' value='" + escapeApos(dataCopy.destinationField) + "' /></td><td><select class='type' style='min-width:80px;'>" + getCopyTypeOptions(dataCopy.type) + "</select></td><td style='width:45px'>" +
 					"<div class='iconsPanel'>" +
 					"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fa fa-arrow-up fa-stack-1x'></i><i class='fa fa-arrow-down fa-stack-1x'></i></div>" +
 					"<div class='delete fa-stack fa-sm'><i class='delete fa fa-trash' title='Click to delete'></i></div>" +

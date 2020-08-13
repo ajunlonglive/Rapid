@@ -159,7 +159,7 @@ public class Datacopy extends Action {
 						String getDataFunction = Control.getDataJavaScript(rapidServlet.getServletContext(), application, page, dataCopy.getSource(), dataCopy.getSourceField());
 
 						// add the getData if different from the last one
-						if (!getDataFunction.equals(lastGetDataFunction)) js += "var data = "  + Control.getDataJavaScript(rapidServlet.getServletContext(), application, page, dataCopy.getSource(), dataCopy.getSourceField()) + ";\n";
+						if (!getDataFunction.equals(lastGetDataFunction)) js += "var data = " + Control.getDataJavaScript(rapidServlet.getServletContext(), application, page, dataCopy.getSource(), dataCopy.getSourceField()) + ";\n";
 
 						// remember this one
 						lastGetDataFunction = getDataFunction;
@@ -212,7 +212,7 @@ public class Datacopy extends Action {
 								// get the property from the second id part
 								String property = idParts[1];
 								// append the set property call
-								js += "setProperty_" + destinationControl.getType() +  "_" + property + "(ev, '" + destinationControl.getId() + "', '" + destinationField + "', " + details + ", data, " + Boolean.parseBoolean(getProperty("changeEvents")) + ");\n";
+								js += "setProperty_" + destinationControl.getType() + "_" + property + "(ev, '" + destinationControl.getId() + "', '" + destinationField + "', " + details + ", data, " + Boolean.parseBoolean(getProperty("changeEvents")) + ");\n";
 
 							} else {
 
@@ -299,7 +299,7 @@ public class Datacopy extends Action {
 
 				} else {
 
-					js = "var data = "  + Control.getDataJavaScript(rapidServlet.getServletContext(), application, page, dataSourceId, dataSourceField) + ";\n";
+					js = "var data = " + Control.getDataJavaScript(rapidServlet.getServletContext(), application, page, dataSourceId, dataSourceField) + ";\n";
 
 				}
 
@@ -378,7 +378,7 @@ public class Datacopy extends Action {
 									// get the property from the second id part
 									String property = idParts[1];
 									// append the set property call
-									js += "setProperty_" + destinationControl.getType() +  "_" + property + "(ev,'" + destinationControl.getId() + "','" + destinationField + "'," + details + ",data, " + Boolean.parseBoolean(getProperty("changeEvents")) + ");\n";
+									js += "setProperty_" + destinationControl.getType() + "_" + property + "(ev,'" + destinationControl.getId() + "','" + destinationField + "'," + details + ",data, " + Boolean.parseBoolean(getProperty("changeEvents")) + ");\n";
 
 								} else {
 

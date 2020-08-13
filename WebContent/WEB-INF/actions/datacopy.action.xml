@@ -76,7 +76,8 @@ if (this.dataSource == "System.user") this.dataSource = "System.user name";
 // assume no date time
 var hasDatetime = false;
 if (this.copyType == 'replace') hasDatetime = true;
-return "<option value=''>Please select...</option>" + getInputOptions(this.dataSource, true, hasDatetime);         
+var hasClipboard = true;
+return "<option value=''>Please select...</option>" + getInputOptions(this.dataSource, true, hasDatetime, hasClipboard);
 	                ]]>
 	            </getValuesFunction>
 	            <refreshProperties>true</refreshProperties>
@@ -221,6 +222,14 @@ return "<option value=''>Please select...</option>" + getInputOptions(this.dataS
 	    <actionJavaScript>
 	        <![CDATA[
 function Action_datacopy(ev, data, outputs, changeEvents, copyType, copyData, field, details) {
+
+	if (data instanceof Promise) {
+		data.then(function(data) {
+			Action_datacopy(ev, data, outputs, changeEvents, copyType, copyData, field, details)
+		});
+		return;
+	}
+
 	if (data !== undefined && outputs) {
 		for (var i in outputs) {
 			var output = outputs[i];
@@ -409,7 +418,14 @@ function Action_datacopy(ev, data, outputs, changeEvents, copyType, copyData, fi
 			}
 		}
 	}
-}	        ]]>
+}
+
+function clipboardWriteText(data) {
+	if (navigator.clipboard) {
+		navigator.clipboard.writeText(data);
+	}
+}
+	        ]]>
 	    </actionJavaScript>
 	    	    	    	    
     </action>     

@@ -525,6 +525,10 @@ public class Control {
 						// empty equates to null
 						return "null";
 
+					} else if ("clipboard".equals(type)) {
+						// return the promise of data
+						return "navigator.clipboard.readText()";
+						
 					} else if ("field".equals(type)) {
 
 						// work out if field is numeric
@@ -658,8 +662,14 @@ public class Control {
 				}
 				// check if there was another
 				if (idParts.length > 1) {
-					// get the runtime property
-					return "setProperty_" + control.getType() + "_" + idParts[1] + "(ev,'" + control.getId() + "'," + fieldJS + detailsJS + ", data, true)";
+					
+					if ("System".equals(idParts[0])) {
+						if ("clipboard".equals(idParts[1])) return "clipboardWriteValue(data)";
+					} else {
+						// get the runtime property
+						return "setProperty_" + control.getType() + "_" + idParts[1] + "(ev,'" + control.getId() + "'," + fieldJS + detailsJS + ", data, true)";
+					}
+					
 				} else {
 					// no other parts return getData call
 					return "setData_" + control.getType() + "(ev,'" + control.getId() + "'," + fieldJS + detailsJS + ", data, true)";
