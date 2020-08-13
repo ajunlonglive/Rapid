@@ -223,7 +223,7 @@ return "<option value=''>Please select...</option>" + getInputOptions(this.dataS
 	        <![CDATA[
 function Action_datacopy(ev, data, outputs, changeEvents, copyType, copyData, field, details) {
 
-	if (data instanceof Promise) {
+	if (promiseSupported() && data instanceof Promise) {
 		data.then(function(data) {
 			Action_datacopy(ev, data, outputs, changeEvents, copyType, copyData, field, details)
 		});

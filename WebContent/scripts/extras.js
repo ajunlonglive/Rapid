@@ -1042,3 +1042,7 @@ function padNumberWithZeros(number, length) {
 	}
 	return number;
 }
+
+function promiseSupported() {
+	return typeof Promise !== "undefined" && Promise.toString().indexOf("[native code]") !== -1;
+}
