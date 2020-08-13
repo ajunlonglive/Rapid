@@ -2111,7 +2111,7 @@ public class Designer extends RapidHttpServlet {
 												df.getPreparedStatement(rapidRequest, sql, parameters);
 
 												// check the verb
-												if (sql.toLowerCase().startsWith("insert") || sql.toLowerCase().startsWith("update")) {
+												if (sql.toLowerCase().startsWith("insert") || sql.toLowerCase().startsWith("update") || sql.toLowerCase().startsWith("delete")) {
 
 													// loop the outputs
 													for (int i = 0; i < outputs; i++) {
