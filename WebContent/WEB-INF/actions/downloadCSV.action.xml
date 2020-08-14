@@ -49,6 +49,14 @@ return "<option value=''>Please select...</option>" + getControlOptions(this.gri
 			</property>
 
 			<property>
+				<key>includeHiddenColumns</key>
+				<name>Include hidden columns</name>
+				<changeValueJavaScript>checkbox</changeValueJavaScript>
+				<getValuesFunction>return "";</getValuesFunction>
+				<helpHtml>Include all columns.</helpHtml>
+			</property>
+
+			<property>
 				<key>outputFilename</key>
 				<name>Output file name</name>
 				<changeValueJavaScript>text</changeValueJavaScript>
@@ -73,7 +81,7 @@ $(document).ready( function() {
 	}
 });
 
-function Action_downloadCSV(ev, actionId, controlId, fileName, details) {
+function Action_downloadCSV(ev, actionId, controlId, fileName, includeHiddenColumns, details) {
 
 	// set the output filename of the form
 	$('#downloadFileName').attr({"value": fileName});
@@ -85,7 +93,7 @@ function Action_downloadCSV(ev, actionId, controlId, fileName, details) {
     var control = $("#" + controlId);
     
     // if the control is a grid in the page
-    if (control.is(".grid")) {
+    if (control.is(".grid") || control.is(".gridScroll")) {
     	
     	// use the control as the grid
 	    var grid = control;
@@ -101,7 +109,7 @@ function Action_downloadCSV(ev, actionId, controlId, fileName, details) {
 			    // get a ref to the cell
 			    var c = $(this);
 			     // ignore hidden columns
-			    if (c.is(':visible')) {
+			    if (includeHiddenColumns || c.is(':visible')) {
 				    // if this the header row
 				    if (idx == 0) {
 					    // add to headers
