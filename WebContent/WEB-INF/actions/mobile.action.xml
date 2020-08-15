@@ -943,7 +943,7 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 		$("#cameraVideoContainer").remove();
 		//alert("getUserMedia() is not supported by your browser");
 		console.log("getUserMedia() is not supported by your browser");
-		selectItem(galleryControlId, _size, mediums, "Media capture is not supported by your browser");
+		selectItem(galleryControlId, _size, mediums, "Video capture is not supported by your browser");
 	}
 	
 }
