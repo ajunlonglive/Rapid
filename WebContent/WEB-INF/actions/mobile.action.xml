@@ -549,7 +549,7 @@ if (navigator.mediaDevices && !!navigator.mediaDevices.getDisplayMedia && naviga
 function hasGetUserMedia() {
 
 	// Return the value's truthy boolean value (e.g. if its null, will return false)
-	return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)
+	return !!(typeof MediaRecorder != "undefined" && navigator.mediaDevices && navigator.mediaDevices.getUserMedia)
 	
 }
 
