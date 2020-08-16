@@ -27,6 +27,7 @@ div#designLinks {
 #designLinks img {
 	vertical-align: middle;
 	border: 0;
+	cursor: pointer;
 }
 
 .designData {

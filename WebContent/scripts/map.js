@@ -235,7 +235,7 @@ function buildPageMap(force) {
 					// remove all insert covers
 					$("#pageMapList").find("span.selectionInsertCover").removeClass("selectionInsertCover");
 					// set all cursors to default
-					$("#pageMapList").find("span").css("cursor","initial");
+					$("#pageMapList").find("span").css("cursor","pointer");
 				}));	
 			}
 			// highlight the selected control

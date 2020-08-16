@@ -907,6 +907,7 @@ Selection Styles
 	box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.4);
 	padding: 3px;
     border: 2px solid white;
+    cursor: pointer;
 }
 
 .desktopCover {
