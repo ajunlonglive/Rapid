@@ -147,7 +147,9 @@ function newClipboard(storage, key) {
 	});
 	return {
 		set: function(data) {
-			storage.setItem(key, JSON.stringify(data));
+			cacheJSON = JSON.stringify(data);
+			cacheData = data;
+			storage.setItem(key, cacheJSON);
 		},
 		get: function() {
 			if (!storage) return undefined;
