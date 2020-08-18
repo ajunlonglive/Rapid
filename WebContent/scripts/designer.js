@@ -136,10 +136,38 @@ var _styleClassesHidden = false;
 // scroll bar width
 var _scrollBarWidth = 0;
 
+function newClipboard(storage, key) {
+	var cacheJSON;
+	var cacheData;
+	window.addEventListener("storage", function(storageEvent) {
+		if (storageEvent.key === key) {
+			cacheJSON = storageEvent.newValue;
+			cacheData = undefined;
+		}
+	});
+	return {
+		set: function(data) {
+			storage.setItem(key, JSON.stringify(data));
+		},
+		get: function() {
+			if (!storage) return undefined;
+			cacheJSON = cacheJSON || storage.getItem(key);
+			if (!cacheJSON) return undefined;
+			try {
+				return cacheData = cacheData || JSON.parse(cacheJSON);
+			} catch (ex) {
+				return undefined;
+			}
+		}
+	};
+}
+
 // retain the copied control
-var _copyControl;
+var controlClipboard = newClipboard(localStorage, "controlClipboardJSON");
+
 // retain the copied action(s)
-var _copyAction;
+var actionClipboard = newClipboard(localStorage, "actionClipboardJSON");
+
 // undo stack
 var _undo = [];
 // redo stack
@@ -951,24 +979,25 @@ function selectControl(control) {
 			// control that don't have canUserAdd can be pasted as a peer if any parent.childControls of the same type have canUserAddPeers
 			var childCanAddPeers = false;
 			var peerCanAddPeers = false;
-			if (_copyControl) {
+			var copiedControl = controlClipboard.get();
+			if (copiedControl) {
 				// find out if there are childControls with the same type with canUserAddPeers			
 				for (i in _selectedControl.childControls) {
-					if (_copyControl._parent && _copyControl.type == _selectedControl.childControls[i].type && _controlTypes[_selectedControl.childControls[i].type].canUserAddPeers) {
+					if (copiedControl._parent && copiedControl.type == _selectedControl.childControls[i].type && _controlTypes[_selectedControl.childControls[i].type].canUserAddPeers) {
 						childCanAddPeers = true;
 						break;
 					}
 				}
 				// find out if there are peers with the same type with canUserAddPeers			
 				for (i in _selectedControl._parent.childControls) {
-					if (_copyControl._parent && _copyControl.type == _selectedControl._parent.childControls[i].type && _controlTypes[_selectedControl._parent.childControls[i].type].canUserAddPeers) {
+					if (copiedControl._parent && copiedControl.type == _selectedControl._parent.childControls[i].type && _controlTypes[_selectedControl._parent.childControls[i].type].canUserAddPeers) {
 						peerCanAddPeers = true;
 						break;
 					}
 				}
 			}		
 			// once we know if something allowed enabling/disabling is a lot easier
-			if (_copyControl && (controlClass.canUserInsert || childCanAddPeers || peerCanAddPeers)) {
+			if (copiedControl && (controlClass.canUserInsert || childCanAddPeers || peerCanAddPeers)) {
 				$("#paste").removeAttr("disabled");
 			} else {
 				$("#paste").attr("disabled","disabled");
@@ -990,8 +1019,9 @@ function selectControl(control) {
 			$("#addPeerLeft").attr("disabled","disabled");
 			$("#addPeerRight").attr("disabled","disabled");
 			
+			var copiedControl = controlClipboard.get();
 			// if the copy control is a canUserAdd or the page we can paste
-			if (_copyControl && (!_copyControl._parent || _controlTypes[_copyControl.type].canUserAdd)) {
+			if (copiedControl && (!copiedControl._parent || _controlTypes[copiedControl.type].canUserAdd)) {
 				$("#paste").removeAttr("disabled");
 			} else {
 				$("#paste").attr("disabled","disabled");
@@ -3231,23 +3261,32 @@ $(document).ready( function() {
 	});
 	
 	// copy
-	$("#copy").click( function(ev) {
-		// if there is a selected control
-		if (_selectedControl) {
-			// treat the page differently
-			if (_selectedControl._parent) {
-				_copyControl = _selectedControl;
-			} else {
-				_copyControl = cleanControlForPaste(_selectedControl);
+    $("#copy").click( function(ev) {
+        // if there is a selected control
+        if (_selectedControl) {
+           
+            // remove all object reference so we can use JSON stringify
+            copyControl = cleanControlForPaste(_selectedControl);
+           
+            // if there is a parent it's a control
+            if (_selectedControl._parent) {
+                // fake a parent on the copy object as this is how we tell the difference between a page and a control when pasting
+                copyControl._parent = {};
+            }
+           
+            if (copyControl) {
+				$("#paste").removeAttr("disabled");
+				controlClipboard.set(copyControl);
 			}
-		}
-		if (_copyControl) $("#paste").removeAttr("disabled");
-	});
+
+        }       
+    });
 	
 	// paste
 	$("#paste").click( function(ev) {
+		var copiedControl = controlClipboard.get();
 		// see the enable/disable rules for the past button to see all the rules but basically we're working out whether we can insert into the selected control, into the parent, or not at all
-		if (_copyControl) {
+		if (copiedControl) {
 			// assume we're pasting into the selected control
 			var pasteControl = _selectedControl;
 			// if no selected control use the page
@@ -3259,7 +3298,7 @@ $(document).ready( function() {
 				// find out if there are childControls with the same type with canUserAddPeers
 				var childCanAddPeers = false;
 				for (i in pasteControl.childControls) {
-					if (_copyControl.type == pasteControl.childControls[i].type && _controlTypes[pasteControl.childControls[i].type].canUserAddPeers) {
+					if (copiedControl.type == pasteControl.childControls[i].type && _controlTypes[pasteControl.childControls[i].type].canUserAddPeers) {
 						childCanAddPeers = true;
 						break;
 					}
@@ -3267,18 +3306,18 @@ $(document).ready( function() {
 				// find out if there are peers with the same type with canUserAddPeers
 				var peerCanAddPeers = false;
 				for (i in pasteControl._parent.childControls) {
-					if (_copyControl.type == pasteControl._parent.childControls[i].type && _controlTypes[pasteControl._parent.childControls[i].type].canUserAddPeers) {
+					if (copiedControl.type == pasteControl._parent.childControls[i].type && _controlTypes[pasteControl._parent.childControls[i].type].canUserAddPeers) {
 						peerCanAddPeers = true;
 						break;
 					}
 				}
 				// can we do an insert, or add as a peer - but stop controls pasting into themselves - panels especially!
-				if (_controlTypes[pasteControl.type].canUserInsert && pasteControl.id != _copyControl.id) {
+				if (_controlTypes[pasteControl.type].canUserInsert && pasteControl.id != copiedControl.id) {
 					
-					if (_controlTypes[_copyControl.type].canUserAdd || childCanAddPeers) {
+					if (_controlTypes[copiedControl.type].canUserAdd || childCanAddPeers) {
 						
 						// create the new control and place in child collection of current parent
-						var newControl = doPaste(_copyControl, pasteControl);
+						var newControl = doPaste(copiedControl, pasteControl);
 						// add to childControl collection of current parent
 						pasteControl.childControls.push(newControl);
 						// move the html to the right place
@@ -3286,10 +3325,10 @@ $(document).ready( function() {
 						// if there is an insert right run it
 						if (newControl._insertRight) newControl._insertRight();
 						
-					} else if (_copyControl.type == "page") {
+					} else if (copiedControl.type == "page") {
 						
 						// create the new control and place in child collection of current parent, avoiding the control name check / increment
-						var newControlParent = doPaste(_copyControl, pasteControl, true);
+						var newControlParent = doPaste(copiedControl, pasteControl, true);
 						// loop the new control children
 						for (var i in newControlParent.childControls) {
 							// get the new control
@@ -3304,9 +3343,9 @@ $(document).ready( function() {
 						
 					}
 					
-				} else if (_controlTypes[_copyControl.type].canUserAdd || peerCanAddPeers) {
+				} else if (_controlTypes[copiedControl.type].canUserAdd || peerCanAddPeers) {
 					// create the new control as peer of current selection
-					var newControl = doPaste(_copyControl, pasteControl._parent);
+					var newControl = doPaste(copiedControl, pasteControl._parent);
 					// use the insert right routine if we've got one
 					if (newControl._insertRight) {
 						newControl._insertRight();
@@ -3322,16 +3361,16 @@ $(document).ready( function() {
 				
 			} else {
 								
-				if (_copyControl._parent && _controlTypes[_copyControl.type].canUserAdd) {
+				if (copiedControl._parent && _controlTypes[copiedControl.type].canUserAdd) {
 					// create the new control and place in child collection of current parent
-					var newControl = doPaste(_copyControl, pasteControl);
+					var newControl = doPaste(copiedControl, pasteControl);
 					// add to childControl collection of current parent (which is the page)
 					pasteControl.childControls.push(newControl);
 					// select the new control
 					selectControl(newControl);
 				} else {
 					// create the new page control with paste
-					var newControl = doPaste(_copyControl);
+					var newControl = doPaste(copiedControl);
 					// select the new control
 					selectControl(newControl);
 				} // page copy check
@@ -3379,7 +3418,7 @@ $(document).ready( function() {
 	        case 'v':
 	        	if (t.is("body")) {
 		            ev.preventDefault();
-		            if (_copyControl) $("#paste").click();
+		            if (controlClipboard.get()) $("#paste").click();
 	        	}
 	            break;
 	        }

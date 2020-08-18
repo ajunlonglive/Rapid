@@ -210,16 +210,19 @@ function Action(actionType, jsonAction, paste, undo) {
 function getCopyActionName(sourceId) {
 	// assume we're not going to find it
 	var actionName = "unknown";
+	
+	var copiedAction = actionClipboard.get();
 	// look for an actions collection
-	if (_copyAction.actions) {
+	if (copiedAction.actions) {
 		// assume number of actions is simple
-		var actionsCount = _copyAction.actions.length;
+		var actionsCount = copiedAction.actions.length;
 		// if there is a source id
 		if (sourceId) {
+			var copiedAction = actionClipboard.get();
 			// loop the actions
-			for (var i in _copyAction.actions) {
+			for (var i in copiedAction.actions) {
 				// if there's a match on the source id
-				if (sourceId == _copyAction.actions[i].id) {
+				if (sourceId == copiedAction.actions[i].id) {
 					// lose an action as we don't want to paste our own parent 
 					actionsCount --;
 					// bail
@@ -228,35 +231,35 @@ function getCopyActionName(sourceId) {
 			}
 		}
 		// look for a controlType
-		if (_copyAction.controlType) {
+		if (copiedAction.controlType) {
 			// get the source control class
-			var sourceControlClass = _controlTypes[_copyAction.controlType];
+			var sourceControlClass = _controlTypes[copiedAction.controlType];
 			// JSON library single member check
 			if ($.isArray(sourceControlClass.events.event)) sourceControlClass.events = sourceControlClass.events.event;
 			// loop the source control events
 			for (var j in sourceControlClass.events) {
 				// look for a match
-				if (sourceControlClass.events[j].type == _copyAction.event.type) {
+				if (sourceControlClass.events[j].type == copiedAction.event.type) {
 					// use the event name and the number of actions
 					actionName = sourceControlClass.events[j].name + " event (" + actionsCount + ")";
 					// we're done
 					break;
 				}
 			}
-		} else if (_copyAction.actionType) {
+		} else if (copiedAction.actionType) {
 			// use the property name
-			actionName = _copyAction.propertyName + " (" + actionsCount + ")";			
+			actionName = copiedAction.propertyName + " (" + actionsCount + ")";			
 		}
 								
 	} 
 	// if we haven't got a name yet which may happen with single controls, or ones with their own actions collection
 	if (actionName == "unknown") {
 		// get the action class
-		var actionClass = _actionTypes[_copyAction.type];
+		var actionClass = _actionTypes[copiedAction.type];
 		// get the name
 		actionName = actionClass.name;
 		// specify to ignore the actions collection
-		_copyAction.ignoreActionsCollection = true;
+		copiedAction.ignoreActionsCollection = true;
 	}
 	return actionName;
 }
@@ -311,9 +314,10 @@ function showEvents(control) {
 						
 						// add a small gap - this is used to add the actions
 						actionsTable.append("<tr style='display:none'><td colspan='2'></td></tr>");
-
+						
+						var copiedAction = actionClipboard.get();
 						// check if copyAction
-						if (_copyAction) {
+						if (copiedAction) {
 							// start the action name
 							var actionName = getCopyActionName();									 
 							// add an add facility
@@ -338,22 +342,22 @@ function showEvents(control) {
 									var actionType = $(ev.target).val();
 									// check if pasteActions
 									if (actionType == "pasteActions") {
-										// if _copyAction
-										if (_copyAction) {
+										// if copiedAction
+										if (copiedAction) {
 											// reset the paste map
 											_pasteMap = {};
 											// check for actions collection that we want to be the root of the paste
-											if (_copyAction.actions && !_copyAction.ignoreActionsCollection) {
+											if (copiedAction.actions && !copiedAction.ignoreActionsCollection) {
 												// loop them
-												for (var j in _copyAction.actions) {
+												for (var j in copiedAction.actions) {
 													// create a new object from the action
-													var action = JSON.parse(JSON.stringify(_copyAction.actions[j]));
+													var action = JSON.parse(JSON.stringify(copiedAction.actions[j]));
 													// add the action using the paste functionality
 													control.events[i].actions.push( new Action(action.type, action, true) );
 												}										
 											} else {
 												// create a new object from the action
-												var action = JSON.parse(JSON.stringify(_copyAction));
+												var action = JSON.parse(JSON.stringify(copiedAction));
 												// add the action using the paste functionality
 												control.events[i].actions.push( new Action(action.type, action, true) );
 											}
@@ -453,7 +457,7 @@ function showActions(control, eventType) {
 					// add a click listener to the copy image
 					addListener( copyImage.click( {controlType: control.type, event: control.events[i], actions: actions}, function(ev) {
 						// retain a copy of the event data in copyAction
-						_copyAction = JSON.parse(JSON.stringify(ev.data));		
+						copiedAction.set(ev.data);		
 						// rebuild the dialogues
 						showEvents(_selectedControl);
 					}));
@@ -527,7 +531,7 @@ function showAction(actionsTable, action, collection, refreshFunction, details) 
 		// get the action
 		var a = ev.data.action;
 		// copy the action
-		_copyAction = JSON.parse(JSON.stringify(a));		
+		actionClipboard.set(a);		
 		// rebuild actions
 		showEvents(_selectedControl);
 	}));

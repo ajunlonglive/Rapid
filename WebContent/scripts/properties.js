@@ -1894,7 +1894,7 @@ function Property_childActions(cell, propertyObject, property, details) {
 		// add the listener
 		addListener( table.find("div.copyActions").last().click( { actionType:propertyObject.type, propertyName:property.name, actions:actions, cell: cell, propertyObject: propertyObject, property: property, details: details }, function(ev) {
 			// copy the actions
-			_copyAction = ev.data;
+			actionClipboard(ev.data);
 			// rebuild the dialogue so the paste is available immediately
 			Property_childActions(ev.data.cell, ev.data.propertyObject, ev.data.property, ev.data.details);	
 		}));
@@ -1905,7 +1905,7 @@ function Property_childActions(cell, propertyObject, property, details) {
 	// assume we will use the default action options
 	var actionOptions = _actionOptions;
 	// if there is a a copied item add it in
-	if (_copyAction) actionOptions = "<optgroup label='New action'>" + _actionOptions + "</optgroup><optgroup label='Paste action'><option value='pasteActions'>" + getCopyActionName(propertyObject.id) + "</option></optgroup>";
+	if (actionClipboard.get()) actionOptions = "<optgroup label='New action'>" + _actionOptions + "</optgroup><optgroup label='Paste action'><option value='pasteActions'>" + getCopyActionName(propertyObject.id) + "</option></optgroup>";
 		
 	// add an add dropdown
 	var addAction = table.append("<tr><td colspan='2' class='propertyAdd propertyHeader'><select><option value=''>Add action...</option>" + actionOptions + "</select></td></tr>").children().last().children().last().children().last();
@@ -1929,22 +1929,23 @@ function Property_childActions(cell, propertyObject, property, details) {
 			var actions = propertyObject[property.key];
 			
 			if (actionType == "pasteActions") {
-				// if _copyAction
-				if (_copyAction) {
+				var copiedAction = actionClipboard.get();
+				// if copiedAction
+				if (copiedAction) {
 					// reset the paste map
 					_pasteMap = {};
 					// check for actions collection
-					if (_copyAction.actions) {
+					if (copiedAction.actions) {
 						// loop them
-						for (var j in _copyAction.actions) {
+						for (var j in copiedAction.actions) {
 							// get the action
-							var action = _copyAction.actions[j];
+							var action = copiedAction.actions[j];
 							// add the action using the paste functionality if it's not going to be it's own parent
 							if (ev.data.propertyObject.id != action.id) actions.push( new Action(action.type, action, true) );
 						}										
 					} else {
 						// add the action using the paste functionality
-						actions.push( new Action(_copyAction.type, _copyAction, true) );
+						actions.push( new Action(copiedAction.type, copiedAction, true) );
 					}
 				}
 				
@@ -2395,8 +2396,9 @@ function Property_childActionsForType(cell, propertyObject, property, details) {
 				}		
 			}));
 			
-			// if there is a _copyAction of the same type
-			if (_copyAction && _copyAction.type == details.type) {
+			var copiedAction = actionClipboard.get();
+			// if there is a copiedAction of the same type
+			if (copiedAction && copiedAction.type == details.type) {
 				// add a paste link
 				var pasteAction = addAction.after("<span class='propertyAction' style='float:right;margin-right:5px;'>paste...</span>").next();
 				// add a listener
@@ -2406,7 +2408,7 @@ function Property_childActionsForType(cell, propertyObject, property, details) {
 					var propertyObject = ev.data.propertyObject;
 					
 					// check get the type
-					if (_copyAction && _copyAction.type == propertyObject.type ) {
+					if (copiedAction && copiedAction.type == propertyObject.type ) {
 												
 						// retrieve the property
 						var property = ev.data.property;
@@ -2416,8 +2418,8 @@ function Property_childActionsForType(cell, propertyObject, property, details) {
 						// get the actions
 						var actions = propertyObject[property.key];
 						
-						// add a new action based on the _copyAction
-						actions.push( new Action(_copyAction.type, _copyAction, true) );
+						// add a new action based on the copiedAction
+						actions.push( new Action(copiedAction.type, copiedAction, true) );
 						
 						// rebuild the dialogue
 						Property_childActionsForType(ev.data.cell, propertyObject, property, ev.data.details);	
