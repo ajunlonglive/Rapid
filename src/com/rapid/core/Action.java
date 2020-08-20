@@ -130,4 +130,28 @@ public abstract class Action {
 	@Override
 	public String toString() { return getClass().getName() + " - " + getId(); }
 
+	protected final String errorSourceMessage(Application application, Control control) {
+		
+		String errorSourceMessage = "";
+		
+		if (application.getShowActionIds()) {
+			errorSourceMessage += (" " + getId());
+		}
+		
+		if (control != null) {
+			String controlName = control.getName();
+			errorSourceMessage += " on " + control.getType();
+			if (controlName != null && !"".equals(controlName)) {
+				errorSourceMessage += " " + controlName;
+			} else if (application.getShowControlIds()) {
+				errorSourceMessage += " " + control.getId();
+			}
+		}
+		
+		if (getProperties().containsKey("comments")) {
+			errorSourceMessage += ("\\n\\n" + getProperty("comments"));
+		}
+		
+		return errorSourceMessage;
+	}
 }
