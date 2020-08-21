@@ -127,31 +127,33 @@ public abstract class Action {
 	// this method can be overridden to check the xml versions, and upgrade any xml nodes representing specific actions before the xml document is unmarshalled
 	public Node upgrade(Node actionNode) { return actionNode; }
 
-	@Override
-	public String toString() { return getClass().getName() + " - " + getId(); }
+	// this produces a helpful string with the source of of the action / control, including ids if selected on the application
+	protected String errorSourceMessage(Application application, Control control) {
 
-	protected final String errorSourceMessage(Application application, Control control) {
-		
 		String errorSourceMessage = "";
-		
-		if (application.getShowActionIds()) {
-			errorSourceMessage += (" " + getId());
-		}
-		
-		if (control != null) {
+
+		if (application.getShowActionIds()) errorSourceMessage += " " + getId();
+
+		if (control == null) {
+			errorSourceMessage += " on page";
+		} else {
 			String controlName = control.getName();
 			errorSourceMessage += " on " + control.getType();
-			if (controlName != null && !"".equals(controlName)) {
-				errorSourceMessage += " " + controlName;
-			} else if (application.getShowControlIds()) {
+			if (application.getShowControlIds() || controlName == null || "".equals(controlName)) {
 				errorSourceMessage += " " + control.getId();
+			} else {
+				errorSourceMessage += " " + controlName;
 			}
 		}
-		
+
 		if (getProperties().containsKey("comments")) {
 			errorSourceMessage += ("\\n\\n" + getProperty("comments"));
 		}
-		
+
 		return errorSourceMessage;
 	}
+
+	@Override
+	public String toString() { return getClass().getName() + " - " + getId(); }
+
 }
