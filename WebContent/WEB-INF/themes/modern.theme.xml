@@ -186,6 +186,7 @@ div.r-inputbox, div.r-dropdown, div.r-date, div.addresspicker {
 
 div.r-inputbox label, 
 div.r-inputbox input.form-control, 
+div.r-inputbox textarea.form-control,
 div.r-dropdown label,
 div.r-dropdown .form-control, 
 div.r-date label, 
@@ -218,7 +219,8 @@ span.r-text span[data-for=label] {
 	color: gray;
 }
 
-div.r-inputbox input, 
+div.r-inputbox input,
+div.r-inputbox textarea,
 div.r-dropdown select, 
 div.r-dropdown input, 
 div.r-date input,
@@ -233,6 +235,7 @@ div.addresspicker input {
 }
 
 div.r-inputbox label+input,
+div.r-inputbox label+textarea,
 div.r-dropdown label+select,
 div.r-dropdown label+input,
 div.r-date label+input,
@@ -245,7 +248,7 @@ div.r-date:focus-within label, div:focus-within>label {
 	color: rgb(40, 120, 220);
 }
 
-div.r-inputbox input:focus, div.r-dropdown select:focus, div.r-dropdown input:focus,
+div.r-inputbox input:focus, div.r-inputbox textarea:focus, div.r-dropdown select:focus, div.r-dropdown input:focus,
 div.r-date input:focus, div.addresspicker select:focus, div.addresspicker input:focus {
 	transition: border-color 0.15s;
 	padding: 5px 11px;
