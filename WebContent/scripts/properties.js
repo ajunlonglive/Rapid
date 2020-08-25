@@ -894,7 +894,7 @@ function getDialogue(cell, propertyObject, property, details, width, title, opti
 			"z-index": _dialogueZindex++
 		});
 		// show this drop down
-		dialogue.slideDown(500, function() {
+		dialogue.slideDown(300, function() {
 			windowResize("PropertyDialogue show");
 		});			
 	}));
@@ -1894,7 +1894,7 @@ function Property_childActions(cell, propertyObject, property, details) {
 		// add the listener
 		addListener( table.find("div.copyActions").last().click( { actionType:propertyObject.type, propertyName:property.name, actions:actions, cell: cell, propertyObject: propertyObject, property: property, details: details }, function(ev) {
 			// copy the actions
-			actionClipboard(ev.data);
+			_actionClipboard.set(ev.data);
 			// rebuild the dialogue so the paste is available immediately
 			Property_childActions(ev.data.cell, ev.data.propertyObject, ev.data.property, ev.data.details);	
 		}));
@@ -1905,7 +1905,7 @@ function Property_childActions(cell, propertyObject, property, details) {
 	// assume we will use the default action options
 	var actionOptions = _actionOptions;
 	// if there is a a copied item add it in
-	if (actionClipboard.get()) actionOptions = "<optgroup label='New action'>" + _actionOptions + "</optgroup><optgroup label='Paste action'><option value='pasteActions'>" + getCopyActionName(propertyObject.id) + "</option></optgroup>";
+	if (_actionClipboard.get()) actionOptions = "<optgroup label='New action'>" + _actionOptions + "</optgroup><optgroup label='Paste action'><option value='pasteActions'>" + getCopyActionName(propertyObject.id) + "</option></optgroup>";
 		
 	// add an add dropdown
 	var addAction = table.append("<tr><td colspan='2' class='propertyAdd propertyHeader'><select><option value=''>Add action...</option>" + actionOptions + "</select></td></tr>").children().last().children().last().children().last();
@@ -1929,7 +1929,7 @@ function Property_childActions(cell, propertyObject, property, details) {
 			var actions = propertyObject[property.key];
 			
 			if (actionType == "pasteActions") {
-				var copiedAction = actionClipboard.get();
+				var copiedAction = _actionClipboard.get();
 				// if copiedAction
 				if (copiedAction) {
 					// reset the paste map
@@ -2396,7 +2396,7 @@ function Property_childActionsForType(cell, propertyObject, property, details) {
 				}		
 			}));
 			
-			var copiedAction = actionClipboard.get();
+			var copiedAction = _actionClipboard.get();
 			// if there is a copiedAction of the same type
 			if (copiedAction && copiedAction.type == details.type) {
 				// add a paste link
@@ -5287,6 +5287,17 @@ function Property_glyphCode(cell, controlAction, property, details) {
 		updateProperty(ev.data.cell, ev.data.controlAction, ev.data.property, ev.data.details, code);
 	}));
 	
+}
+
+function Property_GlyphBackground(cell, propertyObject, property, details) {
+	// only if glyph code is specified
+	if (propertyObject.code) {
+		// add the drop down property
+		Property_select(cell, propertyObject, property, details);
+	} else {
+		// remove this row
+		cell.closest("tr").remove();
+	}
 }
 
 function Property_buttonGlyphPosition(cell, propertyObject, property, details) {

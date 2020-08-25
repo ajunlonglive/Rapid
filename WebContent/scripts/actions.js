@@ -211,14 +211,14 @@ function getCopyActionName(sourceId) {
 	// assume we're not going to find it
 	var actionName = "unknown";
 	
-	var copiedAction = actionClipboard.get();
+	var copiedAction = _actionClipboard.get();
 	// look for an actions collection
 	if (copiedAction.actions) {
 		// assume number of actions is simple
 		var actionsCount = copiedAction.actions.length;
 		// if there is a source id
 		if (sourceId) {
-			var copiedAction = actionClipboard.get();
+			var copiedAction = _actionClipboard.get();
 			// loop the actions
 			for (var i in copiedAction.actions) {
 				// if there's a match on the source id
@@ -315,7 +315,7 @@ function showEvents(control) {
 						// add a small gap - this is used to add the actions
 						actionsTable.append("<tr style='display:none'><td colspan='2'></td></tr>");
 						
-						var copiedAction = actionClipboard.get();
+						var copiedAction = _actionClipboard.get();
 						// check if copyAction
 						if (copiedAction) {
 							// start the action name
@@ -457,7 +457,7 @@ function showActions(control, eventType) {
 					// add a click listener to the copy image
 					addListener( copyImage.click( {controlType: control.type, event: control.events[i], actions: actions}, function(ev) {
 						// retain a copy of the event data in copyAction
-						copiedAction.set(ev.data);		
+						_actionClipboard.set(ev.data);		
 						// rebuild the dialogues
 						showEvents(_selectedControl);
 					}));
@@ -531,7 +531,7 @@ function showAction(actionsTable, action, collection, refreshFunction, details) 
 		// get the action
 		var a = ev.data.action;
 		// copy the action
-		actionClipboard.set(a);		
+		_actionClipboard.set(a);		
 		// rebuild actions
 		showEvents(_selectedControl);
 	}));

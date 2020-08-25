@@ -165,10 +165,10 @@ function newClipboard(storage, key) {
 }
 
 // retain the copied control
-var controlClipboard = newClipboard(localStorage, "controlClipboardJSON");
+var _controlClipboard = newClipboard(localStorage, "controlClipboardJSON");
 
 // retain the copied action(s)
-var actionClipboard = newClipboard(localStorage, "actionClipboardJSON");
+var _actionClipboard = newClipboard(localStorage, "actionClipboardJSON");
 
 // undo stack
 var _undo = [];
@@ -981,7 +981,7 @@ function selectControl(control) {
 			// control that don't have canUserAdd can be pasted as a peer if any parent.childControls of the same type have canUserAddPeers
 			var childCanAddPeers = false;
 			var peerCanAddPeers = false;
-			var copiedControl = controlClipboard.get();
+			var copiedControl = _controlClipboard.get();
 			if (copiedControl) {
 				// find out if there are childControls with the same type with canUserAddPeers			
 				for (i in _selectedControl.childControls) {
@@ -1021,7 +1021,7 @@ function selectControl(control) {
 			$("#addPeerLeft").attr("disabled","disabled");
 			$("#addPeerRight").attr("disabled","disabled");
 			
-			var copiedControl = controlClipboard.get();
+			var copiedControl = _controlClipboard.get();
 			// if the copy control is a canUserAdd or the page we can paste
 			if (copiedControl && (!copiedControl._parent || _controlTypes[copiedControl.type].canUserAdd)) {
 				$("#paste").removeAttr("disabled");
@@ -3278,7 +3278,7 @@ $(document).ready( function() {
            
             if (copyControl) {
 				$("#paste").removeAttr("disabled");
-				controlClipboard.set(copyControl);
+				_controlClipboard.set(copyControl);
 			}
 
         }       
@@ -3286,7 +3286,7 @@ $(document).ready( function() {
 	
 	// paste
 	$("#paste").click( function(ev) {
-		var copiedControl = controlClipboard.get();
+		var copiedControl = _controlClipboard.get();
 		// see the enable/disable rules for the past button to see all the rules but basically we're working out whether we can insert into the selected control, into the parent, or not at all
 		if (copiedControl) {
 			// assume we're pasting into the selected control
@@ -3420,7 +3420,7 @@ $(document).ready( function() {
 	        case 'v':
 	        	if (t.is("body")) {
 		            ev.preventDefault();
-		            if (controlClipboard.get()) $("#paste").click();
+		            if (_controlClipboard.get()) $("#paste").click();
 	        	}
 	            break;
 	        }
