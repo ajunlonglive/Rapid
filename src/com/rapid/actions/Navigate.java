@@ -121,7 +121,7 @@ public class Navigate extends Action {
 			// get the url
 			String url = getProperty("url");
 			// set the js, including optional popup
-			js = "Action_navigate('" + url + "', false, null," +  popup + ");\n";
+			js = "Action_navigate('" + url + "', false, null," +  popup + ", null);\n";
 
 		} else if ("R".equals(navigationType)) {
 
@@ -152,7 +152,7 @@ public class Navigate extends Action {
 					if  (url == null) url = FormAuthenticationAdapter.UPDATE_PATH;
 				}
 				// set the js
-				js = "Action_navigate('" + url + "', false, null, false);\n";
+				js = "Action_navigate('" + url + "', false, null, false, null);\n";
 			}
 
 		} else if ("PR".equals(navigationType)) {
@@ -206,7 +206,7 @@ public class Navigate extends Action {
 				boolean dismissibleDialogue = Boolean.parseBoolean(getProperty("dismissibleDialogue"));
 				if (dialogue) js += "&action=dialogue";
 				// now add the other parameters
-				js += sessionVariables + "'," + dialogue + "," + dismissibleDialogue + ",'" + pageId + "'," + popup + ");\n";
+				js += sessionVariables + "'," + dialogue + ",'" + pageId + "'," + popup + "," + dismissibleDialogue + ");\n";
 				// replace any unnecessary characters
 				js = js.replace(" + ''", "");
 

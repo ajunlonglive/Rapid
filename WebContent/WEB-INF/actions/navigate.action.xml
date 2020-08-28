@@ -322,7 +322,7 @@ function Action_navigate(url, dialogue, dismissibleDialogue, id, popup) {
 		           			}
 		           		break;
 		           		}
-		           	}   
+		           	}
 		           	
 		           	// if this is the login page go to the real thing, requesting to come back to this location
             		if (bodyHtml.indexOf("<form name=\"login\" id=\"RapidLogin\" method=\"post\">") > 0) window.location = "login.jsp?requestPath=" + window.location; 
@@ -337,7 +337,7 @@ function Action_navigate(url, dialogue, dismissibleDialogue, id, popup) {
 		           	
 		           	// add the cover and return reference
 		           	dialogueCover = body.append("<div id='" + id + "cover' class='dialogueCover' style='position:absolute;left:0px;top:0px;z-index:1001;'></div>").children().last();
-		           			      		           			           		            	
+		           	
 	            	// remove any existing dialogue container for this action
 		           	$("#" + id).remove();
 		           	// add the dialogue container and remove the reference
@@ -354,7 +354,7 @@ function Action_navigate(url, dialogue, dismissibleDialogue, id, popup) {
 		           	dialogue.css("visibility","hidden");
 					
 					// add any links into the page (if applicable)
-		           	if (links) dialogue.append(links);		           			           	
+		           	if (links) dialogue.append(links);
 		           	
 		           	// append the injected html
 		           	dialogue.append(bodyHtml);
@@ -362,7 +362,7 @@ function Action_navigate(url, dialogue, dismissibleDialogue, id, popup) {
 					dialogue.children().each( function(i) {
 						// thanks to http://viralpatel.net/blogs/jquery-trigger-custom-event-show-hide-element/	
 						var el = $.fn["hide"];
-						$.fn["hide"] = function () {							
+						$.fn["hide"] = function () {
 		           			// if we're hiding an immediate child of the dialogue
 		           			if (this.parent().is(dialogue)) {
 		           				dialogue.prev("div.dialogueCover").remove();
@@ -374,9 +374,11 @@ function Action_navigate(url, dialogue, dismissibleDialogue, id, popup) {
 							}
 						};
 					});
-							           	
+					
 		           	// add any scripts into the page (if applicable)
 		           	if (script) dialogue.append(script);
+					
+					convertBetweenFontAwesome4and5();
 		           	
 		           	// handle textareas with maxlength attribute
 					dialogue.find('textarea[maxlength]').each( textarea_maxlength );
