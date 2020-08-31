@@ -193,7 +193,7 @@ $(document).ready( function() {
 	    <actionJavaScript>
 	        <![CDATA[
 
-function Action_navigate(url, dialogue, dismissibleDialogue, id, popup) {
+function Action_navigate(url, dialogue, id, popup, dismissibleDialogue) {
 	
 	if (dialogue) {
 	

@@ -523,13 +523,13 @@ public class Mobile extends Action {
 					String remoteSource = getProperty("remoteSource");
 					String captureMode = getProperty("captureMode");
 					String includeAudio = getProperty("includeAudio");
-					
+
 					String mediums =
 							"addImage".equals(type) ? "['image']" :
 							"addVideo".equals(type) ? "['video']" :
 							"addImageVideo".equals(type) ? "['image','video']" :
 							"[]";
-					
+
 					// mobile check, use
 					js += "if (typeof _rapidmobile == 'undefined') {\n"
 						+ "  turnOnCamera('" + galleryControlId + "'," + maxSize + "," + quality + "," + maxDuration + "," + cameraSelectImage + ", " + mediums + ", " + remoteSource + ", " + includeAudio + ", '" + captureMode + "');\n"
@@ -957,7 +957,7 @@ public class Mobile extends Action {
 							// if there was one
 							if (workingPage != null && !workingPage.equals("")) {
 								// show working page as a dialogue
-								js += "  if (Action_navigate) Action_navigate('~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + workingPage + "&action=dialogue',true,'" + getId() + "');\n";
+								js += "  if (Action_navigate) Action_navigate('~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + workingPage + "&action=dialogue', true, '" + getId() + "');\n";
 								// record that we have a working page in the details
 								jsonDetails.put("workingPage", getId());
 							}
@@ -982,7 +982,7 @@ public class Mobile extends Action {
 							js += "} else {\n";
 
 							// if we have an offline page one show it
-							if (offlinePage != null) js += "  if (Action_navigate) Action_navigate('~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + offlinePage + "&action=dialogue',true,'" + getId() + "');\n";
+							if (offlinePage != null) js += "  if (Action_navigate) Action_navigate('~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + offlinePage + "&action=dialogue', true, '" + getId() + "');\n";
 
 							// close online check
 							js += "}\n";
