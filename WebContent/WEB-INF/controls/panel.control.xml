@@ -69,10 +69,17 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	        </property>
 	        
 	        <property>
+	            <key>form</key>
+	            <name>Form</name>
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>
+	            <helpHtml>Whether the panel is a form (autofill traget group).</helpHtml>
+	        </property>
+	        
+	        <property>
 	            <key>hidden</key>
 	            <name>Hidden</name>
 	            <changeValueJavaScript>checkbox</changeValueJavaScript>
-	            <helpHtml>Whether the panel hidden when the page first loads.</helpHtml>
+	            <helpHtml>Whether the panel is hidden when the page first loads.</helpHtml>
 	        </property>
 	        
 	    </properties>
@@ -82,9 +89,11 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 // get the style classes for this control	        
 classes = getStyleClasses(this); 	      
 // if they start with "alert" do not include "panel" as this messes up bootstrap
-if (!classes && classes.indexOf("alert") != 1) classes = "panel" + classes;  
+if (!classes && classes.indexOf("alert") != 1) classes = "panel" + classes;
+// element type based on form property
+var type = this.form ? "form" : "div";
 // return our html for adding to our parent object	        
-return "<div id='" + this.id + "' class='" + classes + "'" + (this.text ? "" : " style='min-height:15px;'") + ">" + this.text + "</div>";
+return "<" + type + " id='" + this.id + "' class='" + classes + "'" + (this.text ? "" : " style='min-height:15px;'") + ">" + this.text + "</" + type + ">";
 	        ]]>
 	    </getHtmlFunction> 
 	    

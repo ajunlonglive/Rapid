@@ -69,6 +69,13 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	        </property>
 	        
 	        <property>
+	            <key>form</key>
+	            <name>Form</name>
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>
+	            <helpHtml>Whether the panel is a form (autofill traget group).</helpHtml>
+	        </property>
+	        
+	        <property>
 	            <key>hidden</key>
 	            <name>Hidden</name>
 	            <changeValueJavaScript>checkbox</changeValueJavaScript>
@@ -156,8 +163,11 @@ if (this.small) classes += (this.small.indexOf("hidden") == 0 ? " " : " col-") +
 if (this.medium) classes += (this.medium.indexOf("hidden") == 0 ? " " : " col-") + this.medium;
 if (this.large) classes += (this.large.indexOf("hidden") == 0 ? " " : " col-") + this.large;
 
+// element type based on form property
+var type = this.form ? "form" : "div";
+
 // return our html for adding to our parent object
-return "<div id='" + this.id + "' class='r-panel" + classes + "'" + (this.text ? "" : " style='min-height:15px;'") + ">" + this.text + "</div>";
+return "<" + type + " id='" + this.id + "' class='r-panel" + classes + "'" + (this.text ? "" : " style='min-height:15px;'") + ">" + this.text + "</" + type + ">";
 	        ]]>
 	    </getHtmlFunction>
 	    
