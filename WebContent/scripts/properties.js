@@ -3180,7 +3180,7 @@ function Property_roles(cell, control, property, details) {
 				"<div class='delete fa-stack fa-sm'><i class='delete fas fa-trash-alt' title='Click to delete'></i></div></td></tr>");
 						
 		// find the delete
-		var optionDelete = table.find("div.delete");
+		var optionDelete = table.find("tr").last().find("div.delete");
 		// add a listener
 		addListener( optionDelete.click( {roles: roles, cell: cell, control: control, property: property, details: details}, function(ev) {
 			// get the input
