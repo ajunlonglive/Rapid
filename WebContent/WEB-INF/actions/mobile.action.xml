@@ -571,7 +571,7 @@ function getAvailableCameras() {
 			});
 		
 		})
-		.catch(function(err){
+		["catch"](function(err){
 			
 			console.log(err.name + ": " + err.message);
 			
@@ -608,7 +608,7 @@ var _mobileCamera = {
 			navigator.mediaDevices.getUserMedia({ audio: _includeAudio, video: {facingMode: _currentFacingMode} })
 			.then(function(stream) {
 				_cameraPlayer.srcObject = stream;
-			}).catch(function() {});
+			})["catch"](function() {});
 		}
 	},
 	permissionDenied: function(alternative) {
@@ -680,7 +680,7 @@ var _mobileRemote = {
 			});
 			_mobileRemote.stream = stream;
 			
-		}).catch(function() {});
+		})["catch"](function() {});
 	},
 	permissionDenied: function() {},
 	ifAvailable: function(todo) {
@@ -804,43 +804,40 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 			.map(function(medium) { return medium + "/*"; })
 			.join(",");
 		
-		if (!$("#inputImage").length) {
-			$(document.body).append("<input type='file' accept='" + mimeTypes + "' id='inputImage' style='display:none;'>");
+		$("#inputImage").remove();
+		$(document.body).append("<input type='file' accept='" + mimeTypes + "' id='inputImage' style='display:none;'>");
+		
+		$("#inputImage").on("change", function(changeEvent) {
 			
-			$("#inputImage").on("change", function(changeEvent) {
+			$("#cameraVideoContainer").remove();
+			$(document.body).css({overflow:"unset", "touch-action":"auto"});
+			$(window).css({overflow:"unset", "touch-action":"auto"});
+			
+			var fileReader = new FileReader();
+			
+			$(fileReader).on("load", function(loadEvent) {
 				
-				$("#cameraVideoContainer").remove();
-				$(document.body).css({overflow:"unset", "touch-action":"auto"});
-				$(window).css({overflow:"unset", "touch-action":"auto"});
+				var image = new Image();
+				image.src = loadEvent.target.result;
 				
-				var fileReader = new FileReader();
-				
-				$(fileReader).on("load", function(loadEvent) {
+				$(image).on("load", function(loadEvent) {
 					
-					var image = new Image();
-					image.src = loadEvent.target.result;
+					var imageWidth = loadEvent.target.width;
+					var imageHeight = loadEvent.target.height;
 					
-					$(image).on("load", function(loadEvent) {
-						
-						var imageWidth = loadEvent.target.width;
-						var imageHeight = loadEvent.target.height;
-						
-						// Get a data url of the canvas, containing a representation of the image
-						// Default format type is image/png
-						var dataURL = scaleImageToDataURL(image, image.width, image.height) || image.src;
-				
-						// call gallery set data to display image
-						setData_gallery(loadEvent, galleryControlId, "url", galleryDetails, dataURL);
-						
-						$(".inputImagePage").remove();
-					});
+					// Get a data url of the canvas, containing a representation of the image
+					// Default format type is image/png
+					var dataURL = scaleImageToDataURL(image, image.width, image.height) || image.src;
+			
+					// call gallery set data to display image
+					setData_gallery(loadEvent, galleryControlId, "url", galleryDetails, dataURL);
+					
+					$(".inputImagePage").remove();
 				});
-				
-				fileReader.readAsDataURL(this.files[0]);
 			});
-		} else {
-			$(inputImage).attr("accept", mimeTypes);
-		}
+			
+			fileReader.readAsDataURL(this.files[0]);
+		});
 		
 		var inputImageHtml = _cameraSelectImage ? "<div style='position:fixed; top:0; width:100%; text-align:center;'>"
 	    					+ "<label id='btnInputImage' for='inputImage' class='cameraControlBasic'><i class='fas fa-folder-open cameraIcon'></i></label></div>"
@@ -924,7 +921,7 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 			// Get all the available cameras into global array
 			getAvailableCameras();
 		})
-		.catch(function(err) {
+		["catch"](function(err) {
 			// Close the preview
 			$("#cameraVideoContainer").remove();
 			// Handle the error
@@ -1019,6 +1016,8 @@ function selectItem(galleryControlId, size, mediums, message) {
 		.join(",");
 	
 	var selectWhat = mediums.join(" or ");
+	
+	$("#inputImage").remove();
 	
 	var inputHtml = "<input type='file' accept='" + mimeTypes + "' id='inputImage' style='display:none;'>"
 		+ "<label for='inputImage' class='r-button button btn col-xs-12' style='margin-top:1em; font-size:1.2em;'><strong>Select " + selectWhat + "</strong></label>";
