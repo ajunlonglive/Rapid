@@ -131,7 +131,7 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 			</div>
 			<div>		
 				<div style="height:77px; position:relative; bottom:15px;">
-					<i style="margin-top: 5px; margin-bottom: 5px; font-size:40px;" class="glyph fa fa-spin"></i>
+					<i style="margin-top: 5px; margin-bottom: 5px; font-size:40px;" class="glyph fas fa-spin"></i>
 					<div>loading...</div>
 				</div>		
 			</div>
@@ -175,17 +175,17 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 					
 				</div>
 				
-				<h2 style="">Application<i id="helpApplication" class="headerHelp glyph fa hintIcon"></i></h2>
+				<h2 style="">Application<i id="helpApplication" class="headerHelp glyph fas hintIcon"></i></h2>
 				<select id="appSelect">
 					<!-- Applications are added here as options the designer loads -->
 				</select>
 				
-				<h2 style="border:none;">Version<i id="helpVersion" class="headerHelp glyph fa hintIcon"></i></h2>
+				<h2 style="border:none;">Version<i id="helpVersion" class="headerHelp glyph fas hintIcon"></i></h2>
 				<select id="versionSelect">
 					<!-- Application versions are added here as options the designer loads -->
 				</select>					
 				
-				<h2 style="border:none;"><img id="pagePrev" class="pageNav pageNavDisabled" src="images/left.light.svg" title="previous page" />Page<img id="pageNext" class="pageNav pageNavDisabled" src="images/right.light.svg" title="next page" /><i id="helpPage" class="headerHelp glyph fa hintIcon"></i></h2>
+				<h2 style="border:none;"><img id="pagePrev" class="pageNav pageNavDisabled" src="images/left.light.svg" title="previous page" />Page<img id="pageNext" class="pageNav pageNavDisabled" src="images/right.light.svg" title="next page" /><i id="helpPage" class="headerHelp glyph fas hintIcon"></i></h2>
 				<select id="pageSelect">
 					<!-- Pages are added here as options the designer loads -->
 				</select>
@@ -212,7 +212,7 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 								
 				<div id="controlControls" style="margin-top:0;margin-bottom:-3px;">
 					<h2 id="controlsHeader">Controls
-						<i class="headerToggle fa" title="Hide controls" style="color:white;"></i>
+						<i class="headerToggle fas" title="Hide controls" style="color:white;"></i>
 					</h2>
 					
 					<div id="controlsList">
@@ -221,13 +221,13 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 				</div>	
 				
 				<h2 id="controlsMap" style="margin-top:5px;">Page controls
-					<i class="headerToggle fa" title="Hide page controls" style="color:white;"></i>
-					<i id="helpMap" class="headerHelp glyph fa hintIcon"></i>
+					<i class="headerToggle fas" title="Hide page controls" style="color:white;"></i>
+					<i id="helpMap" class="headerHelp glyph fas hintIcon"></i>
 				</h2>
 				
 				<div id="pageMap" class="design-map" >
 					<ul id="pageMapList"></ul>
-					<button id="pageMapHighlight" class="fa" title="Locate selected control">&#xf140;</button>		
+					<button id="pageMapHighlight" class="fas" title="Locate selected control">&#xf002;</button>		
 					<input id="pageMapSearch" placeholder="search"></input>				
 				</div>	
 
@@ -248,36 +248,36 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 			
 				<div class="untilsPanelDiv">
 							
-					<i id="helpPropertiesPanel" class="headerHelp glyph fa hintIcon" style="color:white; font-size:15px;"></i>
+					<i id="helpPropertiesPanel" class="headerHelp glyph fas hintIcon" style="color:white; font-size:15px;"></i>
 					<div class="buttons">		
 						<button id="selectPeerLeft" class="buttonLeft">
-							<i class="fa" title="Select the control before this one"></i>
+							<i class="fas fa-angle-left" title="Select the control before this one"></i>
 						</button>
 						<button id="selectParent">
-							<i class="fa" title="Select the parent of this control"></i>
+							<i class="fas fa-angle-up" title="Select the parent of this control"></i>
 						</button>
 						<button id="selectChild">
-							<i class="fa" title="Select the first child of this control"></i>
+							<i class="fas fa-angle-down" title="Select the first child of this control"></i>
 						</button>
 						<button id="selectPeerRight" class="buttonRight">
-							<i class="fa" title="Select the control after this one"></i>
+							<i class="fas fa-angle-right" title="Select the control after this one"></i>
 						</button>
 					</div>					
 											
 					<div class="buttons">
 						<button id="swapPeerLeft" class="buttonLeft" style="line-height:20px;">
-							<i class="fa" aria-hidden="true" title="Swap position with control before this one" style="font-size:15px; vertical-align:middle;"></i>
+							<i class="fas" aria-hidden="true" title="Swap position with control before this one" style="font-size:15px; vertical-align:middle;"></i>
 						</button>
 						<button id="addPeerLeft">
-							<div class="fa fa-lg" title="Add a new control before this one" style="height:20px;"></div>
+							<div class="fas fa-lg" title="Add a new control before this one" style="height:20px;"></div>
 						</button>
-						<button id="deleteControl" style="line-height:20px;">&nbsp;<i class="delete fa fa-trash" title="Delete this control"></i>&nbsp;</button>
+						<button id="deleteControl" style="line-height:20px;">&nbsp;<i class="delete fas fa-trash-alt" title="Delete this control"></i>&nbsp;</button>
 						<button id="addPeerRight">
-						<div class="fa fa-lg" title="Add a new control after this one" style="height:20px;">
+						<div class="fas fa-lg" title="Add a new control after this one" style="height:20px;">
 						</div>
 						</button>
 						<button id="swapPeerRight" class="buttonRight" style="line-height:20px;">
-							<i class="fa" aria-hidden="true" title="Swap position with control after this one" style="font-size:15px; vertical-align:middle;"></i>
+							<i class="fas" aria-hidden="true" title="Swap position with control after this one" style="font-size:15px; vertical-align:middle;"></i>
 						</button>
 					</div>						
 					
@@ -293,7 +293,7 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 																					
 			<div id="propertiesPanelInner">	
 								
-				<h2 id="propertiesHeader">Properties  <i id="helpProperties" class="headerHelp glyph fa hintIcon"></i><i class="headerToggle fa"></i></h2>
+				<h2 id="propertiesHeader">Properties  <i id="helpProperties" class="headerHelp glyph fas hintIcon"></i><i class="headerToggle fas"></i></h2>
 				<div>
 					<div class="propertiesPanelDiv" data-dialogueId="propertiesPanel"></div>			
 					<div class="validationPanelDiv" data-dialogueId="validationPanel"></div>
@@ -344,7 +344,7 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 	<div id="dialogues"></div>
 	
 	<div id="save">
-		<span id="saveAnimation" class="fa fa-cog fa-spin"></span>
+		<span id="saveAnimation" class="fas fa-cog fa-spin"></span>
 		<span id="saveMessage">saving...</span>
 	</div>
 

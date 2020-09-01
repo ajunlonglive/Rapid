@@ -177,12 +177,15 @@ function getDataOptions(selectId, ignoreId, input, hasDatetime, hasClipboard) {
 					for (var i in properties) {
 						// get the property
 						var property = properties[i];
+						
+						var tooAdvanced = control.advancedProperties !== true && property.advanced === true;
+						var isSelected = key == selectId;
 						// if we want inputs and there's is a get function, or outputs and there's set javascript
-						if ((input && property.getPropertyFunction) || (!input && property.setPropertyJavaScript)) {
+						if (((input && property.getPropertyFunction) || (!input && property.setPropertyJavaScript)) && (!tooAdvanced || isSelected)) {
 							// derive the key
 							var key = control.id + "." + property.type;
 							// add the option
-							options += "<option value='" + key  +  "' " + (key == selectId ? "selected='selected'" : "") + ">" + control.name + "." + property.name + "</option>";
+							options += "<option value='" + key  +  "' " + (isSelected ? "selected='selected'" : "") + ">" + control.name + "." + property.name + "</option>";
 						}	
 					}
 				}
@@ -632,7 +635,7 @@ function showProperties(control) {
 						// make the helpId
 						var helpId = control.id + property.key + "help";
 						// create help html
-						help = "<i id='" + helpId + "' class='propertyHelp glyph fa hintIcon'></i>";
+						help = "<i id='" + helpId + "' class='propertyHelp glyph fas hintIcon'></i>";
 					}
 					// get the property itself from the control
 					propertiesRow.append("<td>" + property.name + help + "</td><td></td>");
@@ -837,7 +840,7 @@ function getDialogue(cell, propertyObject, property, details, width, title, opti
 		}
 		
 		// add a close link
-		var close = dialogue.append("<b class='dialogueTitle' style='float:left;margin-top:-5px;'>" + title + "</b><i class='fa dialogueClose fa-external-link-square' style='float:right; font-size:18px; color:#494949; padding-bottom:5px;' title='Close dialogue'></i></div>").children().last();
+		var close = dialogue.append("<b class='dialogueTitle' style='float:left;margin-top:-5px;'>" + title + "</b><i class='fas dialogueClose fa-window-close' style='float:right; font-size:18px; color:#494949; padding-bottom:5px;' title='Close dialogue'></i></div>").children().last();
 	
 		// add the close listener (it's put in the listener collection above)
 		addListener(close.click({dialogueId: dialogueId}, function(ev) {
@@ -856,7 +859,7 @@ function getDialogue(cell, propertyObject, property, details, width, title, opti
 				// if we got one
 				if (childDialogue[0]) {
 					// find the close link
-					var close = childDialogue.find("fa.dialogueClose");
+					var close = childDialogue.find(".fas.dialogueClose");
 					// click it
 					close.click();
 				}
@@ -897,6 +900,8 @@ function getDialogue(cell, propertyObject, property, details, width, title, opti
 		dialogue.slideDown(300, function() {
 			windowResize("PropertyDialogue show");
 		});			
+		
+		dialogue.find("input:first-of-type").focus();
 	}));
 	
 	// if there is a saved size of the dialogue, set it, otherwise use the given width
@@ -913,7 +918,7 @@ function getDialogue(cell, propertyObject, property, details, width, title, opti
 // this function clears down all of the property dialogues
 function hideDialogues() {		
 	// execute the click on all visible dialogue close links to update the property and even the html
-	$("i.fa.dialogueClose:visible").click();
+	$("i.fas.dialogueClose:visible").click();
 	// remove all listeners
 	removeListeners();	
 	// empty any propertyDialogues that we may have used before
@@ -1169,7 +1174,7 @@ function Property_bigtext(cell, propertyObject, property, details) {
 		});
 		
 		//display animated with slideDown effect
-		myCodeMirrorDialogue.slideDown(500, function() {	
+		myCodeMirrorDialogue.slideDown(300, function() {	
 			// focus it so a click anywhere else fires the unfocus and hides the textbox
 			myCodeMirror.focus();
 			// set the cursor at the end of existing content
@@ -1319,7 +1324,7 @@ function Property_gap(cell, propertyObject, property, details) {
 		// if there is helphtml
 		if (property.helpHtml) {
 			// add the icon
-			cell.parent().next().find("td").last().append("<i id='" + propertyObject.id + "help_gap' class='actionHelp glyph fa hintIcon'></i>");
+			cell.parent().next().find("td").last().append("<i id='" + propertyObject.id + "help_gap' class='actionHelp glyph fas hintIcon'></i>");
 			// add the listener
 			addHelp(propertyObject.id + "help_gap",true,true,property.helpHtml);
 		}
@@ -1359,8 +1364,8 @@ function Property_fields(cell, action, property, details) {
 			// add reorder 			
 			table.append("<tr><td><input value='" + escapeApos(fields[i]) + "'/></td><td style='width:45px'>" +
 					"<div class='iconsPanel'>" +
-					"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fa fa-arrow-up fa-stack-1x'></i><i class='fa fa-arrow-down fa-stack-1x'></i></div>" +
-					"<div class='delete fa-stack fa-sm'><i class='delete fa fa-trash' title='Click to delete'></i></div>" +
+					"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fas fa-arrow-up fa-stack-1x'></i><i class='fas fa-arrow-down fa-stack-1x'></i></div>" +
+					"<div class='delete fa-stack fa-sm'><i class='delete fas fa-trash-alt' title='Click to delete'></i></div>" +
 					"</div></td></tr>");
 		}	
 	}
@@ -1476,8 +1481,8 @@ function Property_galleryImages(cell, gallery, property, details) {
 		// append
 		table.append("<tr><td><input class='url' value='" + escapeApos(image.url) + "' /></td>" + (gallery.gotCaptions ? "<td><input class='caption' value='" + escapeApos(image.caption) + "' /></td>" : "") + "<td>" +
 				"<div class='iconsPanel'>" +
-				"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fa fa-arrow-up fa-stack-1x'></i><i class='fa fa-arrow-down fa-stack-1x'></i></div>" +
-				"<div class='delete fa-stack fa-sm'><i class='delete fa fa-trash' title='Click to delete'></i></div>" +
+				"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fas fa-arrow-up fa-stack-1x'></i><i class='fas fa-arrow-down fa-stack-1x'></i></div>" +
+				"<div class='delete fa-stack fa-sm'><i class='delete fas fa-trash-alt' title='Click to delete'></i></div>" +
 				"</div></td></tr>");
 	}
 	
@@ -1708,7 +1713,7 @@ function Property_pageName(cell, page, property, details) {
 function Property_validationControls(cell, propertyObject, property, details) {
 		
 	// retrieve or create the dialogue
-	var dialogue = getDialogue(cell, propertyObject, property, details, 200, "Controls<button class='titleButton' title='Add all page controls with validation'><span>&#xf055;</span></button>", {sizeX: true});		
+	var dialogue = getDialogue(cell, propertyObject, property, details, 200, "Controls<button class='titleButton' title='Add all page controls with validation'><span class='fas'>&#xf055;</span></button>", {sizeX: true});		
 	// grab a reference to the table
 	var table = dialogue.find("table").first();
 	// add the borders
@@ -1746,8 +1751,8 @@ function Property_validationControls(cell, propertyObject, property, details) {
 			// add the row for this value
 			table.append("<tr><td>" + control.name + "</td><td style='width:45px'>" +
 					"<div class='iconsPanel'>" +
-					"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fa fa-arrow-up fa-stack-1x'></i><i class='fa fa-arrow-down fa-stack-1x'></i></div>" +
-					"<div class='delete fa-stack fa-sm'><i class='delete fa fa-trash' title='Click to delete'></i></div>" +
+					"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fas fa-arrow-up fa-stack-1x'></i><i class='fas fa-arrow-down fa-stack-1x'></i></div>" +
+					"<div class='delete fa-stack fa-sm'><i class='delete fas fa-trash-alt' title='Click to delete'></i></div>" +
 					"</div></td></tr>");			
 		} else {
 			// remove this control
@@ -1889,7 +1894,7 @@ function Property_childActions(cell, propertyObject, property, details) {
 	if (actions.length > 0) {
 		// add the copy row and image
 		table.append("<tr><td colspan='2' style='padding-bottom:3px;'>" +
-				"<div class='copyActions fa-stack fa-xs' title='Copy all actions'><i class='fa fa-file fa-stack-1x'></i><i class='bottomFile fa fa-file fa-stack-1x'></i>" +
+				"<div class='copyActions fa-stack fa-xs' title='Copy all actions'><i class='fas fa-file fa-stack-1x'></i><i class='bottomFile fas fa-file fa-stack-1x'></i>" +
 				"</td></tr>");
 		// add the listener
 		addListener( table.find("div.copyActions").last().click( { actionType:propertyObject.type, propertyName:property.name, actions:actions, cell: cell, propertyObject: propertyObject, property: property, details: details }, function(ev) {
@@ -2013,8 +2018,8 @@ function Property_inputs(cell, propertyObject, property, details) {
 			// add a row
 			table.append("<tr><td>" + dataItem.name + "</td><td><input value='" + input.field + "' /></td><td><input value='" + input.inputField + "' /></td><td style='width:45px'>" +
 					"<div class='iconsPanel'>" +
-					"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fa fa-arrow-up fa-stack-1x'></i><i class='fa fa-arrow-down fa-stack-1x'></i></div>" +
-					"<div class='delete fa-stack fa-sm'><i class='delete fa fa-trash' title='Click to delete'></i></div>" +
+					"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fas fa-arrow-up fa-stack-1x'></i><i class='fas fa-arrow-down fa-stack-1x'></i></div>" +
+					"<div class='delete fa-stack fa-sm'><i class='delete fas fa-trash-alt' title='Click to delete'></i></div>" +
 					"</div></td></tr>");
 			// get the field
 			var editField = table.find("tr").last().children("td:nth(1)").children("input");
@@ -2129,8 +2134,8 @@ function Property_outputs(cell, propertyObject, property, details) {
 			// add a row
 			table.append("<tr><td><input value='" + output.outputField + "' /></td><td>" + dataItem.name + "</td><td><input value='" + output.field + "' /></td><td style='width:45px'>" +
 					"<div class='iconsPanel'>" +
-					"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fa fa-arrow-up fa-stack-1x'></i><i class='fa fa-arrow-down fa-stack-1x'></i></div>" +
-					"<div class='delete fa-stack fa-sm'><i class='delete fa fa-trash' title='Click to delete'></i></div>" +
+					"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fas fa-arrow-up fa-stack-1x'></i><i class='fas fa-arrow-down fa-stack-1x'></i></div>" +
+					"<div class='delete fa-stack fa-sm'><i class='delete fas fa-trash-alt' title='Click to delete'></i></div>" +
 					"</div></td></tr>");			
 			// get the outputfield
 			var editOutputField = table.find("tr").last().children("td:nth(0)").children("input");
@@ -2260,8 +2265,8 @@ function Property_controlsForType(cell, propertyObject, property, details) {
 					// add a row with the control name
 					table.append("<tr><td>" + control.name + "</td><td>" +
 							"<div class='iconsPanel'>" +
-							"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fa fa-arrow-up fa-stack-1x'></i><i class='fa fa-arrow-down fa-stack-1x'></i></div>" +
-							"<div class='delete fa-stack fa-sm'><i class='delete fa fa-trash' title='Click to delete'></i></div>" +
+							"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fas fa-arrow-up fa-stack-1x'></i><i class='fas fa-arrow-down fa-stack-1x'></i></div>" +
+							"<div class='delete fa-stack fa-sm'><i class='delete fas fa-trash-alt' title='Click to delete'></i></div>" +
 							"</div></td></tr>");
 				}				
 			}
@@ -2523,8 +2528,8 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 		// add the row
 		inputsTable.append("<tr><td style='text-align:center;'>" + (+i + 1) + ".</td><td>" + (query.multiRow && i > 0 ? "&nbsp;" : itemName) + "</td><td><input value='" + escapeApos(field) + "' /></td><td style='width:45px;'>" +
 				   "<div class='iconsPanel'>" +
-				   "<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fa fa-arrow-up fa-stack-1x'></i><i class='fa fa-arrow-down fa-stack-1x'></i></div>" +
-				   "<div class='delete fa-stack fa-sm'><i class='delete fa fa-trash' title='Click to delete'></i></div>" +
+				   "<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fas fa-arrow-up fa-stack-1x'></i><i class='fas fa-arrow-down fa-stack-1x'></i></div>" +
+				   "<div class='delete fa-stack fa-sm'><i class='delete fas fa-trash-alt' title='Click to delete'></i></div>" +
 				   "</div></td></tr>");
 		
 		// get the field input
@@ -2611,8 +2616,8 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 		// add the row
 		outputsTable.append("<tr><td><input value='" + escapeApos(field) + "' /></td><td>" + itemName + "</td><td style='width:45px;'>" +
 				"<div class='iconsPanel'>" +
-				"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fa fa-arrow-up fa-stack-1x'></i><i class='fa fa-arrow-down fa-stack-1x'></i></div>" +
-				"<div class='delete fa-stack fa-sm'><i class='delete fa fa-trash' title='Click to delete'></i></div>" +
+				"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fas fa-arrow-up fa-stack-1x'></i><i class='fas fa-arrow-down fa-stack-1x'></i></div>" +
+				"<div class='delete fa-stack fa-sm'><i class='delete fas fa-trash-alt' title='Click to delete'></i></div>" +
 				"</div></td></tr>");
 		// get the field input
 		var fieldOutput = outputsTable.find("tr").last().children().first().children().last();
@@ -2861,8 +2866,8 @@ function Property_webserviceRequest(cell, propertyObject, property, details) {
 		// add the row
 		inputsTable.append("<tr><td style='text-align:center;'>" + (+i + 1) + ".</td><td>" + itemName + "</td><td><input value='" + escapeApos(field) + "' /></td><td style='width:45px;'>" +
 				"<div class='iconsPanel'>" +
-				"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fa fa-arrow-up fa-stack-1x'></i><i class='fa fa-arrow-down fa-stack-1x'></i></div>" +
-				"<div class='delete fa-stack fa-sm'><i class='delete fa fa-trash' title='Click to delete'></i></div>" +
+				"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fas fa-arrow-up fa-stack-1x'></i><i class='fas fa-arrow-down fa-stack-1x'></i></div>" +
+				"<div class='delete fa-stack fa-sm'><i class='delete fas fa-trash-alt' title='Click to delete'></i></div>" +
 				"</div></td></tr>");
 		
 		// get the field input
@@ -2979,8 +2984,8 @@ function Property_webserviceRequest(cell, propertyObject, property, details) {
 		// add the row
 		outputsTable.append("<tr><td><input value='" + escapeApos(field) + "' /></td><td>" + itemName + "</td><td style='width:45px;'>" +
 				"<div class='iconsPanel'>" +
-				"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fa fa-arrow-up fa-stack-1x'></i><i class='fa fa-arrow-down fa-stack-1x'></i></div>" +
-				"<div class='delete fa-stack fa-sm'><i class='delete fa fa-trash' title='Click to delete'></i></div>" +
+				"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fas fa-arrow-up fa-stack-1x'></i><i class='fas fa-arrow-down fa-stack-1x'></i></div>" +
+				"<div class='delete fa-stack fa-sm'><i class='delete fas fa-trash-alt' title='Click to delete'></i></div>" +
 				"</div></td></tr>");
 		// get the field input
 		var fieldOutput = outputsTable.find("tr").last().children().first().children().last();
@@ -3085,7 +3090,7 @@ function Property_pageSessionVariables(cell, page, property, details, textOnly) 
 			for (var i in variables) {
 				// add the line
 				table.append("<tr><td><input class='variable' value='" + escapeApos(variables[i]) + "' /></td><td style='width:25px; text-align:right;'>" +
-						"<div class='delete fa-stack fa-sm'><i class='delete fa fa-trash' title='Click to delete'></i></div></td></tr>");
+						"<div class='delete fa-stack fa-sm'><i class='delete fas fa-trash-alt' title='Click to delete'></i></div></td></tr>");
 				
 				// find the text
 				var valueEdit = table.find("input.variable").last();
@@ -3172,7 +3177,7 @@ function Property_roles(cell, control, property, details) {
 	for (var i in roles) {
 		// add the line
 		table.append("<tr><td>" + roles[i] + "</td><td style='width:25px; text-align:right;'>" +
-				"<div class='delete fa-stack fa-sm'><i class='delete fa fa-trash' title='Click to delete'></i></div></td></tr>");
+				"<div class='delete fa-stack fa-sm'><i class='delete fas fa-trash-alt' title='Click to delete'></i></div></td></tr>");
 						
 		// find the delete
 		var optionDelete = table.find("div.delete");
@@ -3443,8 +3448,8 @@ function Property_radiobuttons(cell, control, property, details) {
 			// add the line
 			table.append("<tr><td><input class='label' value='" + escapeApos(buttons[i].label) + "' /></td>" + (control.codes ? "<td><input class='value' value='" + escapeApos(buttons[i].value) + "' /></td>" : "") + "<td>" +
 					"<div class='iconsPanel'>" +
-					"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fa fa-arrow-up fa-stack-1x'></i><i class='fa fa-arrow-down fa-stack-1x'></i></div>" +
-					"<div class='delete fa-stack fa-sm'><i class='delete fa fa-trash' title='Click to delete'></i></div>" +
+					"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fas fa-arrow-up fa-stack-1x'></i><i class='fas fa-arrow-down fa-stack-1x'></i></div>" +
+					"<div class='delete fa-stack fa-sm'><i class='delete fas fa-trash-alt' title='Click to delete'></i></div>" +
 					"</div></td></tr>");
 			
 			// find the code
@@ -3717,8 +3722,8 @@ function Property_logicConditions(cell, action, property, details) {
 		// add cells
 		table.append("<tr><td></td><td style='width:150px;'></td><td></td><td style='width:40px;'>" +
 				"<div class='iconsPanel'>" +
-				"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fa fa-arrow-up fa-stack-1x'></i><i class='fa fa-arrow-down fa-stack-1x'></i></div>" +
-				"<div class='delete fa-stack fa-sm'><i class='delete fa fa-trash' title='Click to delete'></i></div>" +
+				"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fas fa-arrow-up fa-stack-1x'></i><i class='fas fa-arrow-down fa-stack-1x'></i></div>" +
+				"<div class='delete fa-stack fa-sm'><i class='delete fas fa-trash-alt' title='Click to delete'></i></div>" +
 				"</div></td></tr>");
 		
 		// get last row
@@ -3879,8 +3884,8 @@ function Property_options(cell, control, property, details) {
 			// add the line
 			table.append("<tr><td><input class='text' value='" + escapeApos(options[i].text) + "' /></td>" + (control.codes ? "<td><input class='value' value='" + escapeApos(options[i].value) + "' /></td>" : "") + "<td>" +
 					"<div class='iconsPanel'>" +
-					"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fa fa-arrow-up fa-stack-1x'></i><i class='fa fa-arrow-down fa-stack-1x'></i></div>" +
-					"<div class='delete fa-stack fa-sm'><i class='delete fa fa-trash' title='Click to delete'></i></div>" +
+					"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fas fa-arrow-up fa-stack-1x'></i><i class='fas fa-arrow-down fa-stack-1x'></i></div>" +
+					"<div class='delete fa-stack fa-sm'><i class='delete fas fa-trash-alt' title='Click to delete'></i></div>" +
 					"</div></td></tr>");
 			
 			// find the text
@@ -4014,7 +4019,7 @@ var _gridSortFunctionHelpText = "// enter JavaScript here that returns a number 
 // the cell function help text
 var _gridCellFunctionHelpText = "// enter JavaScript here that can alter the contents when this\n// cell is populated. The value is available in the \"value\"\n// variable, and the cell in \"this\"";
 // the cell content edit html
-var _gridCellEditHtml = "<i class='fa fa-pencil' title='Edit function'></i>";
+var _gridCellEditHtml = "<i class='fas fa-pencil-alt' title='Edit function'></i>";
 
 // this is a dialogue to refine the options available in a grid control
 function Property_gridColumns(cell, grid, property, details) {
@@ -4064,8 +4069,8 @@ function Property_gridColumns(cell, grid, property, details) {
 		// add the line
 		table.append("<tr><td class='center'><input type='checkbox' " + (columns[i].visible ? "checked='checked'" : "")  + " /></td><td><input value='" + escapeApos(columns[i].title) + "' /></td><td><input value='" + escapeApos(columns[i].titleStyle) + "' /></td><td><input value='" + escapeApos(columns[i].field) + "' /></td><td><input value='" + escapeApos(columns[i].fieldStyle) + "' /></td><td>" + sortSelect + "&nbsp;" + _gridCellEditHtml + "</td><td class='paddingLeft5'>" + cellFunctionText + "</td><td>" +
 				"<div class='iconsPanel'>" +
-				"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fa fa-arrow-up fa-stack-1x'></i><i class='fa fa-arrow-down fa-stack-1x'></i></div>" +
-				"<div class='delete fa-stack fa-sm'><i class='delete fa fa-trash' title='Delete this column'></i></div>" +
+				"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fas fa-arrow-up fa-stack-1x'></i><i class='fas fa-arrow-down fa-stack-1x'></i></div>" +
+				"<div class='delete fa-stack fa-sm'><i class='delete fas fa-trash-alt' title='Delete this column'></i></div>" +
 				"</div></td></tr>");
 		
 		// find the visible checkbox
@@ -4362,8 +4367,8 @@ function Property_controlHints(cell, hints, property, details) {
 		// add the row
 		table.append("<tr class='nopadding'><td><select class='control'><option value=''>Please select...</option>" + getControlOptions(controlHint.controlId) + "</select></td><td><select class='type'>" + typeOptions + "</select></td><td style='max-width:150px;'><span>" + controlHint.text + "</span></td><td><input value='" + escapeApos(controlHint.style) + "'/></td><td style='width:45px;'>" +
 				"<div class='iconsPanel'>" +
-				"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fa fa-arrow-up fa-stack-1x'></i><i class='fa fa-arrow-down fa-stack-1x'></i></div>" +
-				"<div class='delete fa-stack fa-sm'><i class='delete fa fa-trash' title='Click to delete'></i></div>" +
+				"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fas fa-arrow-up fa-stack-1x'></i><i class='fas fa-arrow-down fa-stack-1x'></i></div>" +
+				"<div class='delete fa-stack fa-sm'><i class='delete fas fa-trash-alt' title='Click to delete'></i></div>" +
 				"</div></td></tr>");
 	
 		// add a seperating comma to the text if not the last hint
@@ -4624,8 +4629,8 @@ function Property_datacopyDestinations(cell, propertyObject, property, details) 
 				// add a row
 				table.append("<tr><td>" + dataItem.name + "</td><td><input value='" + dataDestination.field + "' /></td><td style='width:45px'>" +
 						"<div class='iconsPanel'>" +
-						"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fa fa-arrow-up fa-stack-1x'></i><i class='fa fa-arrow-down fa-stack-1x'></i></div>" +
-						"<div class='delete fa-stack fa-sm'><i class='delete fa fa-trash' title='Click to delete'></i></div>" +
+						"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fas fa-arrow-up fa-stack-1x'></i><i class='fas fa-arrow-down fa-stack-1x'></i></div>" +
+						"<div class='delete fa-stack fa-sm'><i class='delete fas fa-trash-alt' title='Click to delete'></i></div>" +
 						"</div></td></tr>");
 				// get the field
 				var editField = table.find("tr").last().children("td:nth(1)").children("input");
@@ -4911,7 +4916,7 @@ function Property_datacopyCopies(cell, datacopyAction, property, details) {
 		var text = "";
 		
 		// add a header
-		table.append("<tr><td><b>Source</b><button class='titleButton setSources' title='Set all sources to the same as the top one'><span>&#xf063;</span></button><button class='titleButton sources' title='Add all page controls as sources'><span>&#xf055;</span></button></td><td><b>Source field</b><button class='titleButton sourceFields' title='Derive source field from destination control name'><span>&#xf021;</span></button></td><td><b>Destination</b><button class='titleButton setDestinations' title='Set all destinations to the same as the top one'><span>&#xf063;</span></button><button class='titleButton destinations' title='Add all page controls as destinations'><span>&#xf055;</span></button></td><td><b>Destination field</b><button class='titleButton destinationFields' title='Derive destination field from source control name'><span>&#xf021;</span></button></td><td><b>Copy type</b><button class='titleButton setCopyTypes' title='Set all copy types to the same as the top one'><span>&#xf063;</span></button></td><td><button class='titleButton swap' title='Swap all source and destinations'><span>&#xf0ec;</span></button></td></tr>");
+		table.append("<tr><td><b>Source</b><button class='titleButton setSources' title='Set all sources to the same as the top one'><span class='fas'>&#xf358;</span></button><button class='titleButton sources' title='Add all page controls as sources'><span class='fas'>&#xf055;</span></button></td><td><b>Source field</b><button class='titleButton sourceFields' title='Derive source field from destination control name'><span class='fas'>&#xf021;</span></button></td><td><b>Destination</b><button class='titleButton setDestinations' title='Set all destinations to the same as the top one'><span class='fas'>&#xf358;</span></button><button class='titleButton destinations' title='Add all page controls as destinations'><span class='fas'>&#xf055;</span></button></td><td><b>Destination field</b><button class='titleButton destinationFields' title='Derive destination field from source control name'><span class='fas'>&#xf021;</span></button></td><td><b>Copy type</b><button class='titleButton setCopyTypes' title='Set all copy types to the same as the top one'><span class='fas'>&#xf358;</span></button></td><td><button class='titleButton swap' title='Swap all source and destinations'><span class='fas'>&#xf362;</span></button></td></tr>");
 			
 		// add sources listener
 		addListener( table.find("button.sources").click( {cell:cell, datacopyAction:datacopyAction, property:property}, function(ev) {
@@ -5042,8 +5047,8 @@ function Property_datacopyCopies(cell, datacopyAction, property, details) {
 			// add a row
 			table.append("<tr><td><select class='source'><option value=''>Please select...</option>" + getInputOptions(dataCopy.source, null, true, true) + "</select></td><td><input  class='source' value='" + escapeApos(dataCopy.sourceField) + "' /></td><td><select class='destination'><option value=''>Please select...</option>" + getOutputOptions(dataCopy.destination, null, true) + "</select></td><td><input class='destination' value='" + escapeApos(dataCopy.destinationField) + "' /></td><td><select class='type' style='min-width:80px;'>" + getCopyTypeOptions(dataCopy.type) + "</select></td><td style='width:45px'>" +
 					"<div class='iconsPanel'>" +
-					"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fa fa-arrow-up fa-stack-1x'></i><i class='fa fa-arrow-down fa-stack-1x'></i></div>" +
-					"<div class='delete fa-stack fa-sm'><i class='delete fa fa-trash' title='Click to delete'></i></div>" +
+					"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fas fa-arrow-up fa-stack-1x'></i><i class='fas fa-arrow-down fa-stack-1x'></i></div>" +
+					"<div class='delete fa-stack fa-sm'><i class='delete fas fa-trash-alt' title='Click to delete'></i></div>" +
 					"</div></td></tr>");
 			
 			// get the source data item
@@ -5200,24 +5205,22 @@ function Property_controlActionCommand(cell, controlAction, property, details) {
 	}
 }
 
-var _fontGlyphs = [["","none"],["&#xe900","rapid"],["&#xf042;","adjust"],["&#xf170;","adn"],["&#xf037;","align-center"],["&#xf039;","align-justify"],["&#xf036;","align-left"],["&#xf038;","align-right"],["&#xf0f9;","ambulance"],["&#xf13d;","anchor"],["&#xf17b;","android"],["&#xf209;","angellist"],["&#xf103;","angle-double-down"],["&#xf100;","angle-double-left"],["&#xf101;","angle-double-right"],["&#xf102;","angle-double-up"],["&#xf107;","angle-down"],["&#xf104;","angle-left"],["&#xf105;","angle-right"],["&#xf106;","angle-up"],["&#xf179;","apple"],["&#xf187;","archive"],["&#xf1fe;","area-chart"],["&#xf0ab;","arrow-circle-down"],["&#xf0a8;","arrow-circle-left"],["&#xf01a;","arrow-circle-o-down"],["&#xf190;","arrow-circle-o-left"],["&#xf18e;","arrow-circle-o-right"],["&#xf01b;","arrow-circle-o-up"],["&#xf0a9;","arrow-circle-right"],["&#xf0aa;","arrow-circle-up"],["&#xf063;","arrow-down"],["&#xf060;","arrow-left"],["&#xf061;","arrow-right"],["&#xf047;","arrows"],["&#xf0b2;","arrows-alt"],["&#xf07e;","arrows-h"],["&#xf07d;","arrows-v"],["&#xf062;","arrow-up"],["&#xf069;","asterisk"],["&#xf1fa;","at"],["&#xf04a;","backward"],["&#xf05e;","ban"],["&#xf080;","bar-chart"],["&#xf02a;","barcode"],["&#xf0c9;","bars"],["&#xf0fc;","beer"],["&#xf1b4;","behance"],["&#xf1b5;","behance-square"],["&#xf0f3;","bell"],["&#xf0a2;","bell-o"],["&#xf1f6;","bell-slash"],["&#xf1f7;","bell-slash-o"],["&#xf206;","bicycle"],["&#xf1e5;","binoculars"],["&#xf1fd;","birthday-cake"],["&#xf171;","bitbucket"],["&#xf172;","bitbucket-square"],["&#xf032;","bold"],["&#xf0e7;","bolt"],["&#xf1e2;","bomb"],["&#xf02d;","book"],["&#xf02e;","bookmark"],["&#xf097;","bookmark-o"],["&#xf0b1;","briefcase"],["&#xf15a;","btc"],["&#xf188;","bug"],["&#xf1ad;","building"],["&#xf0f7;","building-o"],["&#xf0a1;","bullhorn"],["&#xf140;","bullseye"],["&#xf207;","bus"],["&#xf1ec;","calculator"],["&#xf073;","calendar"],["&#xf133;","calendar-o"],["&#xf030;","camera"],["&#xf083;","camera-retro"],["&#xf1b9;","car"],["&#xf0d7;","caret-down"],["&#xf0d9;","caret-left"],["&#xf0da;","caret-right"],["&#xf150;","caret-square-o-down"],["&#xf191;","caret-square-o-left"],["&#xf152;","caret-square-o-right"],["&#xf151;","caret-square-o-up"],["&#xf0d8;","caret-up"],["&#xf20a;","cc"],["&#xf1f3;","cc-amex"],["&#xf1f2;","cc-discover"],["&#xf1f1;","cc-mastercard"],["&#xf1f4;","cc-paypal"],["&#xf1f5;","cc-stripe"],["&#xf1f0;","cc-visa"],["&#xf0a3;","certificate"],["&#xf127;","chain-broken"],["&#xf00c;","check"],["&#xf058;","check-circle"],["&#xf05d;","check-circle-o"],["&#xf14a;","check-square"],["&#xf046;","check-square-o"],["&#xf13a;","chevron-circle-down"],["&#xf137;","chevron-circle-left"],["&#xf138;","chevron-circle-right"],["&#xf139;","chevron-circle-up"],["&#xf078;","chevron-down"],["&#xf053;","chevron-left"],["&#xf054;","chevron-right"],["&#xf077;","chevron-up"],["&#xf1ae;","child"],["&#xf111;","circle"],["&#xf10c;","circle-o"],["&#xf1ce;","circle-o-notch"],["&#xf1db;","circle-thin"],["&#xf0ea;","clipboard"],["&#xf017;","clock-o"],["&#xf0c2;","cloud"],["&#xf0ed;","cloud-download"],["&#xf0ee;","cloud-upload"],["&#xf121;","code"],["&#xf126;","code-fork"],["&#xf1cb;","codepen"],["&#xf0f4;","coffee"],["&#xf013;","cog"],["&#xf085;","cogs"],["&#xf0db;","columns"],["&#xf075;","comment"],["&#xf0e5;","comment-o"],["&#xf086;","comments"],["&#xf0e6;","comments-o"],["&#xf14e;","compass"],["&#xf066;","compress"],["&#xf1f9;","copyright"],["&#xf09d;","credit-card"],["&#xf125;","crop"],["&#xf05b;","crosshairs"],["&#xf13c;","css3"],["&#xf1b2;","cube"],["&#xf1b3;","cubes"],["&#xf0f5;","cutlery"],["&#xf1c0;","database"],["&#xf1a5;","delicious"],["&#xf108;","desktop"],["&#xf1bd;","deviantart"],["&#xf1a6;","digg"],["&#xf192;","dot-circle-o"],["&#xf019;","download"],["&#xf17d;","dribbble"],["&#xf16b;","dropbox"],["&#xf1a9;","drupal"],["&#xf052;","eject"],["&#xf141;","ellipsis-h"],["&#xf142;","ellipsis-v"],["&#xf1d1;","empire"],["&#xf0e0;","envelope"],["&#xf003;","envelope-o"],["&#xf199;","envelope-square"],["&#xf12d;","eraser"],["&#xf153;","eur"],["&#xf0ec;","exchange"],["&#xf12a;","exclamation"],["&#xf06a;","exclamation-circle"],["&#xf071;","exclamation-triangle"],["&#xf065;","expand"],["&#xf08e;","external-link"],["&#xf14c;","external-link-square"],["&#xf06e;","eye"],["&#xf1fb;","eyedropper"],["&#xf070;","eye-slash"],["&#xf09a;","facebook"],["&#xf082;","facebook-square"],["&#xf049;","fast-backward"],["&#xf050;","fast-forward"],["&#xf1ac;","fax"],["&#xf182;","female"],["&#xf0fb;","fighter-jet"],["&#xf15b;","file"],["&#xf1c6;","file-archive-o"],["&#xf1c7;","file-audio-o"],["&#xf1c9;","file-code-o"],["&#xf1c3;","file-excel-o"],["&#xf1c5;","file-image-o"],["&#xf016;","file-o"],["&#xf1c1;","file-pdf-o"],["&#xf1c4;","file-powerpoint-o"],["&#xf0c5;","files-o"],["&#xf15c;","file-text"],["&#xf0f6;","file-text-o"],["&#xf1c8;","file-video-o"],["&#xf1c2;","file-word-o"],["&#xf008;","film"],["&#xf0b0;","filter"],["&#xf06d;","fire"],["&#xf134;","fire-extinguisher"],["&#xf024;","flag"],["&#xf11e;","flag-checkered"],["&#xf11d;","flag-o"],["&#xf0c3;","flask"],["&#xf16e;","flickr"],["&#xf0c7;","floppy-o"],["&#xf07b;","folder"],["&#xf114;","folder-o"],["&#xf07c;","folder-open"],["&#xf115;","folder-open-o"],["&#xf031;","font"],["&#xf04e;","forward"],["&#xf180;","foursquare"],["&#xf119;","frown-o"],["&#xf1e3;","futbol-o"],["&#xf11b;","gamepad"],["&#xf0e3;","gavel"],["&#xf154;","gbp"],["&#xf06b;","gift"],["&#xf1d3;","git"],["&#xf09b;","github"],["&#xf113;","github-alt"],["&#xf092;","github-square"],["&#xf1d2;","git-square"],["&#xf184;","gittip"],["&#xf000;","glass"],["&#xf0ac;","globe"],["&#xf1a0;","google"],["&#xf0d5;","google-plus"],["&#xf0d4;","google-plus-square"],["&#xf1ee;","google-wallet"],["&#xf19d;","graduation-cap"],["&#xf1d4;","hacker-news"],["&#xf0a7;","hand-o-down"],["&#xf0a5;","hand-o-left"],["&#xf0a4;","hand-o-right"],["&#xf0a6;","hand-o-up"],["&#xf0a0;","hdd-o"],["&#xf1dc;","header"],["&#xf025;","headphones"],["&#xf004;","heart"],["&#xf08a;","heart-o"],["&#xf1da;","history"],["&#xf015;","home"],["&#xf0f8;","hospital-o"],["&#xf0fd;","h-square"],["&#xf13b;","html5"],["&#xf20b;","ils"],["&#xf01c;","inbox"],["&#xf03c;","indent"],["&#xf129;","info"],["&#xf05a;","info-circle"],["&#xf156;","inr"],["&#xf16d;","instagram"],["&#xf208;","ioxhost"],["&#xf033;","italic"],["&#xf1aa;","joomla"],["&#xf157;","jpy"],["&#xf1cc;","jsfiddle"],["&#xf084;","key"],["&#xf11c;","keyboard-o"],["&#xf159;","krw"],["&#xf1ab;","language"],["&#xf109;","laptop"],["&#xf202;","lastfm"],["&#xf203;","lastfm-square"],["&#xf06c;","leaf"],["&#xf094;","lemon-o"],["&#xf149;","level-down"],["&#xf148;","level-up"],["&#xf1cd;","life-ring"],["&#xf0eb;","lightbulb-o"],["&#xf201;","line-chart"],["&#xf0c1;","link"],["&#xf0e1;","linkedin"],["&#xf08c;","linkedin-square"],["&#xf17c;","linux"],["&#xf03a;","list"],["&#xf022;","list-alt"],["&#xf0cb;","list-ol"],["&#xf0ca;","list-ul"],["&#xf124;","location-arrow"],["&#xf023;","lock"],["&#xf175;","long-arrow-down"],["&#xf177;","long-arrow-left"],["&#xf178;","long-arrow-right"],["&#xf176;","long-arrow-up"],["&#xf0d0;","magic"],["&#xf076;","magnet"],["&#xf183;","male"],["&#xf041;","map-marker"],["&#xf136;","maxcdn"],["&#xf20c;","meanpath"],["&#xf0fa;","medkit"],["&#xf11a;","meh-o"],["&#xf130;","microphone"],["&#xf131;","microphone-slash"],["&#xf068;","minus"],["&#xf056;","minus-circle"],["&#xf146;","minus-square"],["&#xf147;","minus-square-o"],["&#xf10b;","mobile"],["&#xf0d6;","money"],["&#xf186;","moon-o"],["&#xf001;","music"],["&#xf1ea;","newspaper-o"],["&#xf19b;","openid"],["&#xf03b;","outdent"],["&#xf18c;","pagelines"],["&#xf1fc;","paint-brush"],["&#xf0c6;","paperclip"],["&#xf1d8;","paper-plane"],["&#xf1d9;","paper-plane-o"],["&#xf1dd;","paragraph"],["&#xf04c;","pause"],["&#xf1b0;","paw"],["&#xf1ed;","paypal"],["&#xf040;","pencil"],["&#xf14b;","pencil-square"],["&#xf044;","pencil-square-o"],["&#xf095;","phone"],["&#xf098;","phone-square"],["&#xf03e;","picture-o"],["&#xf200;","pie-chart"],["&#xf1a7;","pied-piper"],["&#xf1a8;","pied-piper-alt"],["&#xf0d2;","pinterest"],["&#xf0d3;","pinterest-square"],["&#xf072;","plane"],["&#xf04b;","play"],["&#xf144;","play-circle"],["&#xf01d;","play-circle-o"],["&#xf1e6;","plug"],["&#xf067;","plus"],["&#xf055;","plus-circle"],["&#xf0fe;","plus-square"],["&#xf196;","plus-square-o"],["&#xf011;","power-off"],["&#xf02f;","print"],["&#xf12e;","puzzle-piece"],["&#xf1d6;","qq"],["&#xf029;","qrcode"],["&#xf128;","question"],["&#xf059;","question-circle"],["&#xf10d;","quote-left"],["&#xf10e;","quote-right"],["&#xf074;","random"],["&#xf1d0;","rebel"],["&#xf1b8;","recycle"],["&#xf1a1;","reddit"],["&#xf1a2;","reddit-square"],["&#xf021;","refresh"],["&#xf18b;","renren"],["&#xf01e;","repeat"],["&#xf112;","reply"],["&#xf122;","reply-all"],["&#xf079;","retweet"],["&#xf018;","road"],["&#xf135;","rocket"],["&#xf09e;","rss"],["&#xf143;","rss-square"],["&#xf158;","rub"],["&#xf0c4;","scissors"],["&#xf002;","search"],["&#xf010;","search-minus"],["&#xf00e;","search-plus"],["&#xf064;","share"],["&#xf1e0;","share-alt"],["&#xf1e1;","share-alt-square"],["&#xf14d;","share-square"],["&#xf045;","share-square-o"],["&#xf132;","shield"],["&#xf07a;","shopping-cart"],["&#xf012;","signal"],["&#xf090;","sign-in"],["&#xf08b;","sign-out"],["&#xf0e8;","sitemap"],["&#xf17e;","skype"],["&#xf198;","slack"],["&#xf1de;","sliders"],["&#xf1e7;","slideshare"],["&#xf118;","smile-o"],["&#xf0dc;","sort"],["&#xf15d;","sort-alpha-asc"],["&#xf15e;","sort-alpha-desc"],["&#xf160;","sort-amount-asc"],["&#xf161;","sort-amount-desc"],["&#xf0de;","sort-asc"],["&#xf0dd;","sort-desc"],["&#xf162;","sort-numeric-asc"],["&#xf163;","sort-numeric-desc"],["&#xf1be;","soundcloud"],["&#xf197;","space-shuttle"],["&#xf110;","spinner"],["&#xf1b1;","spoon"],["&#xf1bc;","spotify"],["&#xf0c8;","square"],["&#xf096;","square-o"],["&#xf18d;","stack-exchange"],["&#xf16c;","stack-overflow"],["&#xf005;","star"],["&#xf089;","star-half"],["&#xf123;","star-half-o"],["&#xf006;","star-o"],["&#xf1b6;","steam"],["&#xf1b7;","steam-square"],["&#xf048;","step-backward"],["&#xf051;","step-forward"],["&#xf0f1;","stethoscope"],["&#xf04d;","stop"],["&#xf0cc;","strikethrough"],["&#xf1a4;","stumbleupon"],["&#xf1a3;","stumbleupon-circle"],["&#xf12c;","subscript"],["&#xf0f2;","suitcase"],["&#xf185;","sun-o"],["&#xf12b;","superscript"],["&#xf0ce;","table"],["&#xf10a;","tablet"],["&#xf0e4;","tachometer"],["&#xf02b;","tag"],["&#xf02c;","tags"],["&#xf0ae;","tasks"],["&#xf1ba;","taxi"],["&#xf1d5;","tencent-weibo"],["&#xf120;","terminal"],["&#xf034;","text-height"],["&#xf035;","text-width"],["&#xf00a;","th"],["&#xf009;","th-large"],["&#xf00b;","th-list"],["&#xf165;","thumbs-down"],["&#xf088;","thumbs-o-down"],["&#xf087;","thumbs-o-up"],["&#xf164;","thumbs-up"],["&#xf08d;","thumb-tack"],["&#xf145;","ticket"],["&#xf00d;","times"],["&#xf057;","times-circle"],["&#xf05c;","times-circle-o"],["&#xf043;","tint"],["&#xf204;","toggle-off"],["&#xf205;","toggle-on"],["&#xf1f8;","trash"],["&#xf014;","trash-o"],["&#xf1bb;","tree"],["&#xf181;","trello"],["&#xf091;","trophy"],["&#xf0d1;","truck"],["&#xf195;","try"],["&#xf1e4;","tty"],["&#xf173;","tumblr"],["&#xf174;","tumblr-square"],["&#xf1e8;","twitch"],["&#xf099;","twitter"],["&#xf081;","twitter-square"],["&#xf0e9;","umbrella"],["&#xf0cd;","underline"],["&#xf0e2;","undo"],["&#xf19c;","university"],["&#xf09c;","unlock"],["&#xf13e;","unlock-alt"],["&#xf093;","upload"],["&#xf155;","usd"],["&#xf007;","user"],["&#xf0f0;","user-md"],["&#xf0c0;","users"],["&#xf03d;","video-camera"],["&#xf194;","vimeo-square"],["&#xf1ca;","vine"],["&#xf189;","vk"],["&#xf027;","volume-down"],["&#xf026;","volume-off"],["&#xf028;","volume-up"],["&#xf18a;","weibo"],["&#xf1d7;","weixin"],["&#xf193;","wheelchair"],["&#xf1eb;","wifi"],["&#xf17a;","windows"],["&#xf19a;","wordpress"],["&#xf0ad;","wrench"],["&#xf168;","xing"],["&#xf169;","xing-square"],["&#xf19e;","yahoo"],["&#xf1e9;","yelp"],["&#xf167;","youtube"],["&#xf16a;","youtube-play"],["&#xf166;","youtube-square"]];
+var _fontGlyphs = [["","none"],["e900","rapid"],["b.f26e","500px"],["b.f368","accessible-icon"],["b.f369","accusoft"],["b.f6af","acquisitions-incorporated"],["s.f641","ad"],["s.f2b9","address-book"],["r.f2b9","address-book"],["s.f2bb","address-card"],["r.f2bb","address-card"],["s.f042","adjust"],["b.f170","adn"],["b.f778","adobe"],["b.f36a","adversal"],["b.f36b","affiliatetheme"],["s.f5d0","air-freshener"],["b.f834","airbnb"],["b.f36c","algolia"],["s.f037","align-center"],["s.f039","align-justify"],["s.f036","align-left"],["s.f038","align-right"],["b.f642","alipay"],["s.f461","allergies"],["b.f270","amazon"],["b.f42c","amazon-pay"],["s.f0f9","ambulance"],["s.f2a3","american-sign-language-interpreting"],["b.f36d","amilia"],["s.f13d","anchor"],["b.f17b","android"],["b.f209","angellist"],["s.f103","angle-double-down"],["s.f100","angle-double-left"],["s.f101","angle-double-right"],["s.f102","angle-double-up"],["s.f107","angle-down"],["s.f104","angle-left"],["s.f105","angle-right"],["s.f106","angle-up"],["s.f556","angry"],["r.f556","angry"],["b.f36e","angrycreative"],["b.f420","angular"],["s.f644","ankh"],["b.f36f","app-store"],["b.f370","app-store-ios"],["b.f371","apper"],["b.f179","apple"],["s.f5d1","apple-alt"],["b.f415","apple-pay"],["s.f187","archive"],["s.f557","archway"],["s.f358","arrow-alt-circle-down"],["r.f358","arrow-alt-circle-down"],["s.f359","arrow-alt-circle-left"],["r.f359","arrow-alt-circle-left"],["s.f35a","arrow-alt-circle-right"],["r.f35a","arrow-alt-circle-right"],["s.f35b","arrow-alt-circle-up"],["r.f35b","arrow-alt-circle-up"],["s.f358","arrow-circle-down"],["s.f0a8","arrow-circle-left"],["s.f0a9","arrow-circle-right"],["s.f0aa","arrow-circle-up"],["s.f358","arrow-down"],["s.f060","arrow-left"],["s.f061","arrow-right"],["s.f062","arrow-up"],["s.f0b2","arrows-alt"],["s.f337","arrows-alt-h"],["s.f338","arrows-alt-v"],["b.f77a","artstation"],["s.f2a2","assistive-listening-systems"],["s.f069","asterisk"],["b.f372","asymmetrik"],["s.f1fa","at"],["s.f558","atlas"],["b.f77b","atlassian"],["s.f5d2","atom"],["b.f373","audible"],["s.f29e","audio-description"],["b.f41c","autoprefixer"],["b.f374","avianex"],["b.f421","aviato"],["s.f559","award"],["b.f375","aws"],["s.f77c","baby"],["s.f77d","baby-carriage"],["s.f55a","backspace"],["s.f04a","backward"],["s.f7e5","bacon"],["s.e059","bacteria"],["s.e05a","bacterium"],["s.f666","bahai"],["s.f24e","balance-scale"],["s.f515","balance-scale-left"],["s.f516","balance-scale-right"],["s.f05e","ban"],["s.f462","band-aid"],["b.f2d5","bandcamp"],["s.f02a","barcode"],["s.f0c9","bars"],["s.f433","baseball-ball"],["s.f434","basketball-ball"],["s.f2cd","bath"],["s.f244","battery-empty"],["s.f240","battery-full"],["s.f242","battery-half"],["s.f243","battery-quarter"],["s.f241","battery-three-quarters"],["b.f835","battle-net"],["s.f236","bed"],["s.f0fc","beer"],["b.f1b4","behance"],["b.f1b5","behance-square"],["s.f0f3","bell"],["r.f0f3","bell"],["s.f1f6","bell-slash"],["r.f1f6","bell-slash"],["s.f55b","bezier-curve"],["s.f647","bible"],["s.f206","bicycle"],["s.f84a","biking"],["b.f378","bimobject"],["s.f1e5","binoculars"],["s.f780","biohazard"],["s.f1fd","birthday-cake"],["b.f171","bitbucket"],["b.f379","bitcoin"],["b.f37a","bity"],["b.f27e","black-tie"],["b.f37b","blackberry"],["s.f517","blender"],["s.f6b6","blender-phone"],["s.f29d","blind"],["s.f781","blog"],["b.f37c","blogger"],["b.f37d","blogger-b"],["b.f293","bluetooth"],["b.f294","bluetooth-b"],["s.f032","bold"],["s.f0e7","bolt"],["s.f1e2","bomb"],["s.f5d7","bone"],["s.f55c","bong"],["s.f02d","book"],["s.f6b7","book-dead"],["s.f7e6","book-medical"],["s.f518","book-open"],["s.f5da","book-reader"],["s.f02e","bookmark"],["r.f02e","bookmark"],["b.f836","bootstrap"],["s.f84c","border-all"],["s.f850","border-none"],["s.f853","border-style"],["s.f436","bowling-ball"],["s.f466","box"],["s.f49e","box-open"],["s.e05b","box-tissue"],["s.f468","boxes"],["s.f2a1","braille"],["s.f5dc","brain"],["s.f7ec","bread-slice"],["s.f0b1","briefcase"],["s.f469","briefcase-medical"],["s.f519","broadcast-tower"],["s.f51a","broom"],["s.f55d","brush"],["b.f15a","btc"],["b.f837","buffer"],["s.f188","bug"],["s.f1ad","building"],["r.f1ad","building"],["s.f0a1","bullhorn"],["s.f140","bullseye"],["s.f46a","burn"],["b.f37f","buromobelexperte"],["s.f207","bus"],["s.f55e","bus-alt"],["s.f64a","business-time"],["b.f8a6","buy-n-large"],["b.f20d","buysellads"],["s.f1ec","calculator"],["s.f133","calendar"],["r.f133","calendar"],["s.f073","calendar-alt"],["r.f073","calendar-alt"],["s.f274","calendar-check"],["r.f274","calendar-check"],["s.f783","calendar-day"],["s.f272","calendar-minus"],["r.f272","calendar-minus"],["s.f271","calendar-plus"],["r.f271","calendar-plus"],["s.f273","calendar-times"],["r.f273","calendar-times"],["s.f784","calendar-week"],["s.f030","camera"],["s.f083","camera-retro"],["s.f6bb","campground"],["b.f785","canadian-maple-leaf"],["s.f786","candy-cane"],["s.f55f","cannabis"],["s.f46b","capsules"],["s.f1b9","car"],["s.f5de","car-alt"],["s.f5df","car-battery"],["s.f5e1","car-crash"],["s.f5e4","car-side"],["s.f8ff","caravan"],["s.f0d7","caret-down"],["s.f0d9","caret-left"],["s.f0da","caret-right"],["s.f150","caret-square-down"],["r.f150","caret-square-down"],["s.f191","caret-square-left"],["r.f191","caret-square-left"],["s.f152","caret-square-right"],["r.f152","caret-square-right"],["s.f151","caret-square-up"],["r.f151","caret-square-up"],["s.f0d8","caret-up"],["s.f787","carrot"],["s.f218","cart-arrow-down"],["s.f217","cart-plus"],["s.f788","cash-register"],["s.f6be","cat"],["b.f42d","cc-amazon-pay"],["b.f1f3","cc-amex"],["b.f416","cc-apple-pay"],["b.f24c","cc-diners-club"],["b.f1f2","cc-discover"],["b.f24b","cc-jcb"],["b.f1f1","cc-mastercard"],["b.f1f4","cc-paypal"],["b.f1f5","cc-stripe"],["b.f1f0","cc-visa"],["b.f380","centercode"],["b.f789","centos"],["s.f0a3","certificate"],["s.f6c0","chair"],["s.f51b","chalkboard"],["s.f51c","chalkboard-teacher"],["s.f5e7","charging-station"],["s.f1fe","chart-area"],["s.f080","chart-bar"],["r.f080","chart-bar"],["s.f201","chart-line"],["s.f200","chart-pie"],["s.f00c","check"],["s.f058","check-circle"],["r.f058","check-circle"],["s.f560","check-double"],["s.f14a","check-square"],["r.f14a","check-square"],["s.f7ef","cheese"],["s.f439","chess"],["s.f43a","chess-bishop"],["s.f43c","chess-board"],["s.f43f","chess-king"],["s.f441","chess-knight"],["s.f443","chess-pawn"],["s.f445","chess-queen"],["s.f447","chess-rook"],["s.f13a","chevron-circle-down"],["s.f137","chevron-circle-left"],["s.f138","chevron-circle-right"],["s.f139","chevron-circle-up"],["s.f078","chevron-down"],["s.f053","chevron-left"],["s.f054","chevron-right"],["s.f077","chevron-up"],["s.f1ae","child"],["b.f268","chrome"],["b.f838","chromecast"],["s.f51d","church"],["s.f111","circle"],["r.f111","circle"],["s.f1ce","circle-notch"],["s.f64f","city"],["s.f7f2","clinic-medical"],["s.f328","clipboard"],["r.f328","clipboard"],["s.f46c","clipboard-check"],["s.f46d","clipboard-list"],["s.f017","clock"],["r.f017","clock"],["s.f24d","clone"],["r.f24d","clone"],["s.f20a","closed-captioning"],["r.f20a","closed-captioning"],["s.f0c2","cloud"],["s.f381","cloud-download-alt"],["s.f73b","cloud-meatball"],["s.f6c3","cloud-moon"],["s.f73c","cloud-moon-rain"],["s.f73d","cloud-rain"],["s.f740","cloud-showers-heavy"],["s.f6c4","cloud-sun"],["s.f743","cloud-sun-rain"],["s.f382","cloud-upload-alt"],["b.f383","cloudscale"],["b.f384","cloudsmith"],["b.f385","cloudversify"],["s.f561","cocktail"],["s.f121","code"],["s.f126","code-branch"],["b.f1cb","codepen"],["b.f284","codiepie"],["s.f0f4","coffee"],["s.f013","cog"],["s.f085","cogs"],["s.f51e","coins"],["s.f0db","columns"],["s.f075","comment"],["r.f075","comment"],["s.f27a","comment-alt"],["r.f27a","comment-alt"],["s.f651","comment-dollar"],["s.f4ad","comment-dots"],["r.f4ad","comment-dots"],["s.f7f5","comment-medical"],["s.f4b3","comment-slash"],["s.f086","comments"],["r.f086","comments"],["s.f653","comments-dollar"],["s.f51f","compact-disc"],["s.f14e","compass"],["r.f14e","compass"],["s.f066","compress"],["s.f422","compress-alt"],["s.f78c","compress-arrows-alt"],["s.f562","concierge-bell"],["b.f78d","confluence"],["b.f20e","connectdevelop"],["b.f26d","contao"],["s.f563","cookie"],["s.f564","cookie-bite"],["s.f0c5","copy"],["r.f0c5","copy"],["s.f1f9","copyright"],["r.f1f9","copyright"],["b.f89e","cotton-bureau"],["s.f4b8","couch"],["b.f388","cpanel"],["b.f25e","creative-commons"],["b.f4e7","creative-commons-by"],["b.f4e8","creative-commons-nc"],["b.f4e9","creative-commons-nc-eu"],["b.f4ea","creative-commons-nc-jp"],["b.f4eb","creative-commons-nd"],["b.f4ec","creative-commons-pd"],["b.f4ed","creative-commons-pd-alt"],["b.f4ee","creative-commons-remix"],["b.f4ef","creative-commons-sa"],["b.f4f0","creative-commons-sampling"],["b.f4f1","creative-commons-sampling-plus"],["b.f4f2","creative-commons-share"],["b.f4f3","creative-commons-zero"],["s.f09d","credit-card"],["r.f09d","credit-card"],["b.f6c9","critical-role"],["s.f125","crop"],["s.f565","crop-alt"],["s.f654","cross"],["s.f05b","crosshairs"],["s.f520","crow"],["s.f521","crown"],["s.f7f7","crutch"],["b.f13c","css3"],["b.f38b","css3-alt"],["s.f1b2","cube"],["s.f1b3","cubes"],["s.f0c4","cut"],["b.f38c","cuttlefish"],["b.f38d","d-and-d"],["b.f6ca","d-and-d-beyond"],["b.e052","dailymotion"],["b.f210","dashcube"],["s.f1c0","database"],["s.f2a4","deaf"],["b.e077","deezer"],["b.f1a5","delicious"],["s.f747","democrat"],["b.f38e","deploydog"],["b.f38f","deskpro"],["s.f108","desktop"],["b.f6cc","dev"],["b.f1bd","deviantart"],["s.f655","dharmachakra"],["b.f790","dhl"],["s.f470","diagnoses"],["b.f791","diaspora"],["s.f522","dice"],["s.f6cf","dice-d20"],["s.f6d1","dice-d6"],["s.f523","dice-five"],["s.f524","dice-four"],["s.f525","dice-one"],["s.f526","dice-six"],["s.f527","dice-three"],["s.f528","dice-two"],["b.f1a6","digg"],["b.f391","digital-ocean"],["s.f566","digital-tachograph"],["s.f5eb","directions"],["b.f392","discord"],["b.f393","discourse"],["s.f7fa","disease"],["s.f529","divide"],["s.f567","dizzy"],["r.f567","dizzy"],["s.f471","dna"],["b.f394","dochub"],["b.f395","docker"],["s.f6d3","dog"],["s.f155","dollar-sign"],["s.f472","dolly"],["s.f474","dolly-flatbed"],["s.f4b9","donate"],["s.f52a","door-closed"],["s.f52b","door-open"],["s.f192","dot-circle"],["r.f192","dot-circle"],["s.f4ba","dove"],["s.f019","download"],["b.f396","draft2digital"],["s.f568","drafting-compass"],["s.f6d5","dragon"],["s.f5ee","draw-polygon"],["b.f17d","dribbble"],["b.f397","dribbble-square"],["b.f16b","dropbox"],["s.f569","drum"],["s.f56a","drum-steelpan"],["s.f6d7","drumstick-bite"],["b.f1a9","drupal"],["s.f44b","dumbbell"],["s.f793","dumpster"],["s.f794","dumpster-fire"],["s.f6d9","dungeon"],["b.f399","dyalog"],["b.f39a","earlybirds"],["b.f4f4","ebay"],["b.f282","edge"],["b.e078","edge-legacy"],["s.f044","edit"],["r.f044","edit"],["s.f7fb","egg"],["s.f052","eject"],["b.f430","elementor"],["s.f141","ellipsis-h"],["s.f142","ellipsis-v"],["b.f5f1","ello"],["b.f423","ember"],["b.f1d1","empire"],["s.f0e0","envelope"],["r.f0e0","envelope"],["s.f2b6","envelope-open"],["r.f2b6","envelope-open"],["s.f658","envelope-open-text"],["s.f199","envelope-square"],["b.f299","envira"],["s.f52c","equals"],["s.f12d","eraser"],["b.f39d","erlang"],["b.f42e","ethereum"],["s.f796","ethernet"],["b.f2d7","etsy"],["s.f153","euro-sign"],["b.f839","evernote"],["s.f362","exchange-alt"],["s.f12a","exclamation"],["s.f06a","exclamation-circle"],["s.f071","exclamation-triangle"],["s.f065","expand"],["s.f424","expand-alt"],["s.f31e","expand-arrows-alt"],["b.f23e","expeditedssl"],["s.f35d","external-link-alt"],["s.f360","external-link-square-alt"],["s.f06e","eye"],["r.f06e","eye"],["s.f1fb","eye-dropper"],["s.f070","eye-slash"],["r.f070","eye-slash"],["b.f09a","facebook"],["b.f39e","facebook-f"],["b.f39f","facebook-messenger"],["b.f082","facebook-square"],["s.f863","fan"],["b.f6dc","fantasy-flight-games"],["s.f049","fast-backward"],["s.f050","fast-forward"],["s.e005","faucet"],["s.f1ac","fax"],["s.f52d","feather"],["s.f56b","feather-alt"],["b.f797","fedex"],["b.f798","fedora"],["s.f182","female"],["s.f0fb","fighter-jet"],["b.f799","figma"],["s.f15b","file"],["r.f15b","file"],["s.f15c","file-alt"],["r.f15c","file-alt"],["s.f1c6","file-archive"],["r.f1c6","file-archive"],["s.f1c7","file-audio"],["r.f1c7","file-audio"],["s.f1c9","file-code"],["r.f1c9","file-code"],["s.f56c","file-contract"],["s.f6dd","file-csv"],["s.f56d","file-download"],["s.f1c3","file-excel"],["r.f1c3","file-excel"],["s.f56e","file-export"],["s.f1c5","file-image"],["r.f1c5","file-image"],["s.f56f","file-import"],["s.f570","file-invoice"],["s.f571","file-invoice-dollar"],["s.f477","file-medical"],["s.f478","file-medical-alt"],["s.f1c1","file-pdf"],["r.f1c1","file-pdf"],["s.f1c4","file-powerpoint"],["r.f1c4","file-powerpoint"],["s.f572","file-prescription"],["s.f573","file-signature"],["s.f574","file-upload"],["s.f1c8","file-video"],["r.f1c8","file-video"],["s.f1c2","file-word"],["r.f1c2","file-word"],["s.f575","fill"],["s.f576","fill-drip"],["s.f008","film"],["s.f0b0","filter"],["s.f577","fingerprint"],["s.f06d","fire"],["s.f7e4","fire-alt"],["s.f134","fire-extinguisher"],["b.f269","firefox"],["b.e007","firefox-browser"],["s.f479","first-aid"],["b.f2b0","first-order"],["b.f50a","first-order-alt"],["b.f3a1","firstdraft"],["s.f578","fish"],["s.f6de","fist-raised"],["s.f024","flag"],["r.f024","flag"],["s.f11e","flag-checkered"],["s.f74d","flag-usa"],["s.f0c3","flask"],["b.f16e","flickr"],["b.f44d","flipboard"],["s.f579","flushed"],["r.f579","flushed"],["b.f417","fly"],["s.f07b","folder"],["r.f07b","folder"],["s.f65d","folder-minus"],["s.f07c","folder-open"],["r.f07c","folder-open"],["s.f65e","folder-plus"],["s.f031","font"],["b.f2b4","font-awesome"],["b.f35c","font-awesome-alt"],["b.f425","font-awesome-flag"],["b.f280","fonticons"],["b.f3a2","fonticons-fi"],["s.f44e","football-ball"],["b.f286","fort-awesome"],["b.f3a3","fort-awesome-alt"],["b.f211","forumbee"],["s.f04e","forward"],["b.f180","foursquare"],["b.f2c5","free-code-camp"],["b.f3a4","freebsd"],["s.f52e","frog"],["s.f119","frown"],["r.f119","frown"],["s.f57a","frown-open"],["r.f57a","frown-open"],["b.f50b","fulcrum"],["s.f662","funnel-dollar"],["s.f1e3","futbol"],["r.f1e3","futbol"],["b.f50c","galactic-republic"],["b.f50d","galactic-senate"],["s.f11b","gamepad"],["s.f52f","gas-pump"],["s.f0e3","gavel"],["s.f3a5","gem"],["r.f3a5","gem"],["s.f22d","genderless"],["b.f265","get-pocket"],["b.f260","gg"],["b.f261","gg-circle"],["s.f6e2","ghost"],["s.f06b","gift"],["s.f79c","gifts"],["b.f1d3","git"],["b.f841","git-alt"],["b.f1d2","git-square"],["b.f09b","github"],["b.f113","github-alt"],["b.f092","github-square"],["b.f3a6","gitkraken"],["b.f296","gitlab"],["b.f426","gitter"],["s.f79f","glass-cheers"],["s.f000","glass-martini"],["s.f57b","glass-martini-alt"],["s.f7a0","glass-whiskey"],["s.f530","glasses"],["b.f2a5","glide"],["b.f2a6","glide-g"],["s.f0ac","globe"],["s.f57c","globe-africa"],["s.f57d","globe-americas"],["s.f57e","globe-asia"],["s.f7a2","globe-europe"],["b.f3a7","gofore"],["s.f450","golf-ball"],["b.f3a8","goodreads"],["b.f3a9","goodreads-g"],["b.f1a0","google"],["b.f3aa","google-drive"],["b.e079","google-pay"],["b.f3ab","google-play"],["b.f2b3","google-plus"],["b.f0d5","google-plus-g"],["b.f0d4","google-plus-square"],["b.f1ee","google-wallet"],["s.f664","gopuram"],["s.f19d","graduation-cap"],["b.f184","gratipay"],["b.f2d6","grav"],["s.f531","greater-than"],["s.f532","greater-than-equal"],["s.f57f","grimace"],["r.f57f","grimace"],["s.f580","grin"],["r.f580","grin"],["s.f581","grin-alt"],["r.f581","grin-alt"],["s.f582","grin-beam"],["r.f582","grin-beam"],["s.f583","grin-beam-sweat"],["r.f583","grin-beam-sweat"],["s.f584","grin-hearts"],["r.f584","grin-hearts"],["s.f585","grin-squint"],["r.f585","grin-squint"],["s.f586","grin-squint-tears"],["r.f586","grin-squint-tears"],["s.f587","grin-stars"],["r.f587","grin-stars"],["s.f588","grin-tears"],["r.f588","grin-tears"],["s.f589","grin-tongue"],["r.f589","grin-tongue"],["s.f58a","grin-tongue-squint"],["r.f58a","grin-tongue-squint"],["s.f58b","grin-tongue-wink"],["r.f58b","grin-tongue-wink"],["s.f58c","grin-wink"],["r.f58c","grin-wink"],["s.f58d","grip-horizontal"],["s.f7a4","grip-lines"],["s.f7a5","grip-lines-vertical"],["s.f58e","grip-vertical"],["b.f3ac","gripfire"],["b.f3ad","grunt"],["s.f7a6","guitar"],["b.f3ae","gulp"],["s.f0fd","h-square"],["b.f1d4","hacker-news"],["b.f3af","hacker-news-square"],["b.f5f7","hackerrank"],["s.f805","hamburger"],["s.f6e3","hammer"],["s.f665","hamsa"],["s.f4bd","hand-holding"],["s.f4be","hand-holding-heart"],["s.e05c","hand-holding-medical"],["s.f4c0","hand-holding-usd"],["s.f4c1","hand-holding-water"],["s.f258","hand-lizard"],["r.f258","hand-lizard"],["s.f806","hand-middle-finger"],["s.f256","hand-paper"],["r.f256","hand-paper"],["s.f25b","hand-peace"],["r.f25b","hand-peace"],["s.f0a7","hand-point-down"],["r.f0a7","hand-point-down"],["s.f0a5","hand-point-left"],["r.f0a5","hand-point-left"],["s.f0a4","hand-point-right"],["r.f0a4","hand-point-right"],["s.f0a6","hand-point-up"],["r.f0a6","hand-point-up"],["s.f25a","hand-pointer"],["r.f25a","hand-pointer"],["s.f255","hand-rock"],["r.f255","hand-rock"],["s.f257","hand-scissors"],["r.f257","hand-scissors"],["s.e05d","hand-sparkles"],["s.f259","hand-spock"],["r.f259","hand-spock"],["s.f4c2","hands"],["s.f4c4","hands-helping"],["s.e05e","hands-wash"],["s.f2b5","handshake"],["r.f2b5","handshake"],["s.e05f","handshake-alt-slash"],["s.e060","handshake-slash"],["s.f6e6","hanukiah"],["s.f807","hard-hat"],["s.f292","hashtag"],["s.f8c0","hat-cowboy"],["s.f8c1","hat-cowboy-side"],["s.f6e8","hat-wizard"],["s.f0a0","hdd"],["r.f0a0","hdd"],["s.e061","head-side-cough"],["s.e062","head-side-cough-slash"],["s.e063","head-side-mask"],["s.e064","head-side-virus"],["s.f1dc","heading"],["s.f025","headphones"],["s.f58f","headphones-alt"],["s.f590","headset"],["s.f004","heart"],["r.f004","heart"],["s.f7a9","heart-broken"],["s.f21e","heartbeat"],["s.f533","helicopter"],["s.f591","highlighter"],["s.f6ec","hiking"],["s.f6ed","hippo"],["b.f452","hips"],["b.f3b0","hire-a-helper"],["s.f1da","history"],["s.f453","hockey-puck"],["s.f7aa","holly-berry"],["s.f015","home"],["b.f427","hooli"],["b.f592","hornbill"],["s.f6f0","horse"],["s.f7ab","horse-head"],["s.f0f8","hospital"],["r.f0f8","hospital"],["s.f47d","hospital-alt"],["s.f47e","hospital-symbol"],["s.f80d","hospital-user"],["s.f593","hot-tub"],["s.f80f","hotdog"],["s.f594","hotel"],["b.f3b1","hotjar"],["s.f254","hourglass"],["r.f254","hourglass"],["s.f253","hourglass-end"],["s.f252","hourglass-half"],["s.f251","hourglass-start"],["s.f6f1","house-damage"],["s.e065","house-user"],["b.f27c","houzz"],["s.f6f2","hryvnia"],["b.f13b","html5"],["b.f3b2","hubspot"],["s.f246","i-cursor"],["s.f810","ice-cream"],["s.f7ad","icicles"],["s.f86d","icons"],["s.f2c1","id-badge"],["r.f2c1","id-badge"],["s.f2c2","id-card"],["r.f2c2","id-card"],["s.f47f","id-card-alt"],["b.e013","ideal"],["s.f7ae","igloo"],["s.f03e","image"],["r.f03e","image"],["s.f302","images"],["r.f302","images"],["b.f2d8","imdb"],["s.f01c","inbox"],["s.f03c","indent"],["s.f275","industry"],["s.f534","infinity"],["s.f129","info"],["s.f05a","info-circle"],["b.f16d","instagram"],["b.e055","instagram-square"],["b.f7af","intercom"],["b.f26b","internet-explorer"],["b.f7b0","invision"],["b.f208","ioxhost"],["s.f033","italic"],["b.f83a","itch-io"],["b.f3b4","itunes"],["b.f3b5","itunes-note"],["b.f4e4","java"],["s.f669","jedi"],["b.f50e","jedi-order"],["b.f3b6","jenkins"],["b.f7b1","jira"],["b.f3b7","joget"],["s.f595","joint"],["b.f1aa","joomla"],["s.f66a","journal-whills"],["b.f3b8","js"],["b.f3b9","js-square"],["b.f1cc","jsfiddle"],["s.f66b","kaaba"],["b.f5fa","kaggle"],["s.f084","key"],["b.f4f5","keybase"],["s.f11c","keyboard"],["r.f11c","keyboard"],["b.f3ba","keycdn"],["s.f66d","khanda"],["b.f3bb","kickstarter"],["b.f3bc","kickstarter-k"],["s.f596","kiss"],["r.f596","kiss"],["s.f597","kiss-beam"],["r.f597","kiss-beam"],["s.f598","kiss-wink-heart"],["r.f598","kiss-wink-heart"],["s.f535","kiwi-bird"],["b.f42f","korvue"],["s.f66f","landmark"],["s.f1ab","language"],["s.f109","laptop"],["s.f5fc","laptop-code"],["s.e066","laptop-house"],["s.f812","laptop-medical"],["b.f3bd","laravel"],["b.f202","lastfm"],["b.f203","lastfm-square"],["s.f599","laugh"],["r.f599","laugh"],["s.f59a","laugh-beam"],["r.f59a","laugh-beam"],["s.f59b","laugh-squint"],["r.f59b","laugh-squint"],["s.f59c","laugh-wink"],["r.f59c","laugh-wink"],["s.f5fd","layer-group"],["s.f06c","leaf"],["b.f212","leanpub"],["s.f094","lemon"],["r.f094","lemon"],["b.f41d","less"],["s.f536","less-than"],["s.f537","less-than-equal"],["s.f3be","level-down-alt"],["s.f3bf","level-up-alt"],["s.f1cd","life-ring"],["r.f1cd","life-ring"],["s.f0eb","lightbulb"],["r.f0eb","lightbulb"],["b.f3c0","line"],["s.f0c1","link"],["b.f08c","linkedin"],["b.f0e1","linkedin-in"],["b.f2b8","linode"],["b.f17c","linux"],["s.f195","lira-sign"],["s.f03a","list"],["s.f022","list-alt"],["r.f022","list-alt"],["s.f0cb","list-ol"],["s.f0ca","list-ul"],["s.f124","location-arrow"],["s.f023","lock"],["s.f3c1","lock-open"],["s.f309","long-arrow-alt-down"],["s.f30a","long-arrow-alt-left"],["s.f30b","long-arrow-alt-right"],["s.f30c","long-arrow-alt-up"],["s.f2a8","low-vision"],["s.f59d","luggage-cart"],["s.f604","lungs"],["s.e067","lungs-virus"],["b.f3c3","lyft"],["b.f3c4","magento"],["s.f0d0","magic"],["s.f076","magnet"],["s.f674","mail-bulk"],["b.f59e","mailchimp"],["s.f183","male"],["b.f50f","mandalorian"],["s.f279","map"],["r.f279","map"],["s.f59f","map-marked"],["s.f5a0","map-marked-alt"],["s.f041","map-marker"],["s.f3c5","map-marker-alt"],["s.f276","map-pin"],["s.f277","map-signs"],["b.f60f","markdown"],["s.f5a1","marker"],["s.f222","mars"],["s.f227","mars-double"],["s.f229","mars-stroke"],["s.f22b","mars-stroke-h"],["s.f22a","mars-stroke-v"],["s.f6fa","mask"],["b.f4f6","mastodon"],["b.f136","maxcdn"],["b.f8ca","mdb"],["s.f5a2","medal"],["b.f3c6","medapps"],["b.f23a","medium"],["b.f3c7","medium-m"],["s.f0fa","medkit"],["b.f3c8","medrt"],["b.f2e0","meetup"],["b.f5a3","megaport"],["s.f11a","meh"],["r.f11a","meh"],["s.f5a4","meh-blank"],["r.f5a4","meh-blank"],["s.f5a5","meh-rolling-eyes"],["r.f5a5","meh-rolling-eyes"],["s.f538","memory"],["b.f7b3","mendeley"],["s.f676","menorah"],["s.f223","mercury"],["s.f753","meteor"],["b.e01a","microblog"],["s.f2db","microchip"],["s.f130","microphone"],["s.f3c9","microphone-alt"],["s.f539","microphone-alt-slash"],["s.f131","microphone-slash"],["s.f610","microscope"],["b.f3ca","microsoft"],["s.f068","minus"],["s.f056","minus-circle"],["s.f146","minus-square"],["r.f146","minus-square"],["s.f7b5","mitten"],["b.f3cb","mix"],["b.f289","mixcloud"],["b.e056","mixer"],["b.f3cc","mizuni"],["s.f10b","mobile"],["s.f3cd","mobile-alt"],["b.f285","modx"],["b.f3d0","monero"],["s.f0d6","money-bill"],["s.f3d1","money-bill-alt"],["r.f3d1","money-bill-alt"],["s.f53a","money-bill-wave"],["s.f53b","money-bill-wave-alt"],["s.f53c","money-check"],["s.f53d","money-check-alt"],["s.f5a6","monument"],["s.f186","moon"],["r.f186","moon"],["s.f5a7","mortar-pestle"],["s.f678","mosque"],["s.f21c","motorcycle"],["s.f6fc","mountain"],["s.f8cc","mouse"],["s.f245","mouse-pointer"],["s.f7b6","mug-hot"],["s.f001","music"],["b.f3d2","napster"],["b.f612","neos"],["s.f6ff","network-wired"],["s.f22c","neuter"],["s.f1ea","newspaper"],["r.f1ea","newspaper"],["b.f5a8","nimblr"],["b.f419","node"],["b.f3d3","node-js"],["s.f53e","not-equal"],["s.f481","notes-medical"],["b.f3d4","npm"],["b.f3d5","ns8"],["b.f3d6","nutritionix"],["s.f247","object-group"],["r.f247","object-group"],["s.f248","object-ungroup"],["r.f248","object-ungroup"],["b.f263","odnoklassniki"],["b.f264","odnoklassniki-square"],["s.f613","oil-can"],["b.f510","old-republic"],["s.f679","om"],["b.f23d","opencart"],["b.f19b","openid"],["b.f26a","opera"],["b.f23c","optin-monster"],["b.f8d2","orcid"],["b.f41a","osi"],["s.f700","otter"],["s.f03b","outdent"],["b.f3d7","page4"],["b.f18c","pagelines"],["s.f815","pager"],["s.f1fc","paint-brush"],["s.f5aa","paint-roller"],["s.f53f","palette"],["b.f3d8","palfed"],["s.f482","pallet"],["s.f1d8","paper-plane"],["r.f1d8","paper-plane"],["s.f0c6","paperclip"],["s.f4cd","parachute-box"],["s.f1dd","paragraph"],["s.f540","parking"],["s.f5ab","passport"],["s.f67b","pastafarianism"],["s.f0ea","paste"],["b.f3d9","patreon"],["s.f04c","pause"],["s.f28b","pause-circle"],["r.f28b","pause-circle"],["s.f1b0","paw"],["b.f1ed","paypal"],["s.f67c","peace"],["s.f304","pen"],["s.f305","pen-alt"],["s.f5ac","pen-fancy"],["s.f5ad","pen-nib"],["s.f14b","pen-square"],["s.f303","pencil-alt"],["s.f5ae","pencil-ruler"],["b.f704","penny-arcade"],["s.e068","people-arrows"],["s.f4ce","people-carry"],["s.f816","pepper-hot"],["s.f295","percent"],["s.f541","percentage"],["b.f3da","periscope"],["s.f756","person-booth"],["b.f3db","phabricator"],["b.f3dc","phoenix-framework"],["b.f511","phoenix-squadron"],["s.f095","phone"],["s.f879","phone-alt"],["s.f3dd","phone-slash"],["s.f098","phone-square"],["s.f87b","phone-square-alt"],["s.f2a0","phone-volume"],["s.f87c","photo-video"],["b.f457","php"],["b.f2ae","pied-piper"],["b.f1a8","pied-piper-alt"],["b.f4e5","pied-piper-hat"],["b.f1a7","pied-piper-pp"],["b.e01e","pied-piper-square"],["s.f4d3","piggy-bank"],["s.f484","pills"],["b.f0d2","pinterest"],["b.f231","pinterest-p"],["b.f0d3","pinterest-square"],["s.f818","pizza-slice"],["s.f67f","place-of-worship"],["s.f072","plane"],["s.f5af","plane-arrival"],["s.f5b0","plane-departure"],["s.e069","plane-slash"],["s.f04b","play"],["s.f144","play-circle"],["r.f144","play-circle"],["b.f3df","playstation"],["s.f1e6","plug"],["s.f067","plus"],["s.f055","plus-circle"],["s.f0fe","plus-square"],["r.f0fe","plus-square"],["s.f2ce","podcast"],["s.f681","poll"],["s.f682","poll-h"],["s.f2fe","poo"],["s.f75a","poo-storm"],["s.f619","poop"],["s.f3e0","portrait"],["s.f154","pound-sign"],["s.f011","power-off"],["s.f683","pray"],["s.f684","praying-hands"],["s.f5b1","prescription"],["s.f485","prescription-bottle"],["s.f486","prescription-bottle-alt"],["s.f02f","print"],["s.f487","procedures"],["b.f288","product-hunt"],["s.f542","project-diagram"],["s.e06a","pump-medical"],["s.e06b","pump-soap"],["b.f3e1","pushed"],["s.f12e","puzzle-piece"],["b.f3e2","python"],["b.f1d6","qq"],["s.f029","qrcode"],["s.f128","question"],["s.f059","question-circle"],["r.f059","question-circle"],["s.f458","quidditch"],["b.f459","quinscape"],["b.f2c4","quora"],["s.f10d","quote-left"],["s.f10e","quote-right"],["s.f687","quran"],["b.f4f7","r-project"],["s.f7b9","radiation"],["s.f7ba","radiation-alt"],["s.f75b","rainbow"],["s.f074","random"],["b.f7bb","raspberry-pi"],["b.f2d9","ravelry"],["b.f41b","react"],["b.f75d","reacteurope"],["b.f4d5","readme"],["b.f1d0","rebel"],["s.f543","receipt"],["s.f8d9","record-vinyl"],["s.f1b8","recycle"],["b.f3e3","red-river"],["b.f1a1","reddit"],["b.f281","reddit-alien"],["b.f1a2","reddit-square"],["b.f7bc","redhat"],["s.f01e","redo"],["s.f2f9","redo-alt"],["s.f25d","registered"],["r.f25d","registered"],["s.f87d","remove-format"],["b.f18b","renren"],["s.f3e5","reply"],["s.f122","reply-all"],["b.f3e6","replyd"],["s.f75e","republican"],["b.f4f8","researchgate"],["b.f3e7","resolving"],["s.f7bd","restroom"],["s.f079","retweet"],["b.f5b2","rev"],["s.f4d6","ribbon"],["s.f70b","ring"],["s.f018","road"],["s.f544","robot"],["s.f135","rocket"],["b.f3e8","rocketchat"],["b.f3e9","rockrms"],["s.f4d7","route"],["s.f09e","rss"],["s.f143","rss-square"],["s.f158","ruble-sign"],["s.f545","ruler"],["s.f546","ruler-combined"],["s.f547","ruler-horizontal"],["s.f548","ruler-vertical"],["s.f70c","running"],["s.f156","rupee-sign"],["b.e07a","rust"],["s.f5b3","sad-cry"],["r.f5b3","sad-cry"],["s.f5b4","sad-tear"],["r.f5b4","sad-tear"],["b.f267","safari"],["b.f83b","salesforce"],["b.f41e","sass"],["s.f7bf","satellite"],["s.f7c0","satellite-dish"],["s.f0c7","save"],["r.f0c7","save"],["b.f3ea","schlix"],["s.f549","school"],["s.f54a","screwdriver"],["b.f28a","scribd"],["s.f70e","scroll"],["s.f7c2","sd-card"],["s.f002","search"],["s.f688","search-dollar"],["s.f689","search-location"],["s.f010","search-minus"],["s.f00e","search-plus"],["b.f3eb","searchengin"],["s.f4d8","seedling"],["b.f2da","sellcast"],["b.f213","sellsy"],["s.f233","server"],["b.f3ec","servicestack"],["s.f61f","shapes"],["s.f064","share"],["s.f1e0","share-alt"],["s.f1e1","share-alt-square"],["s.f14d","share-square"],["r.f14d","share-square"],["s.f20b","shekel-sign"],["s.f3ed","shield-alt"],["s.e06c","shield-virus"],["s.f21a","ship"],["s.f48b","shipping-fast"],["b.f214","shirtsinbulk"],["s.f54b","shoe-prints"],["b.e057","shopify"],["s.f290","shopping-bag"],["s.f291","shopping-basket"],["s.f07a","shopping-cart"],["b.f5b5","shopware"],["s.f2cc","shower"],["s.f5b6","shuttle-van"],["s.f4d9","sign"],["s.f2f6","sign-in-alt"],["s.f2a7","sign-language"],["s.f2f5","sign-out-alt"],["s.f012","signal"],["s.f5b7","signature"],["s.f7c4","sim-card"],["b.f215","simplybuilt"],["s.e06d","sink"],["b.f3ee","sistrix"],["s.f0e8","sitemap"],["b.f512","sith"],["s.f7c5","skating"],["b.f7c6","sketch"],["s.f7c9","skiing"],["s.f7ca","skiing-nordic"],["s.f54c","skull"],["s.f714","skull-crossbones"],["b.f216","skyatlas"],["b.f17e","skype"],["b.f198","slack"],["b.f3ef","slack-hash"],["s.f715","slash"],["s.f7cc","sleigh"],["s.f1de","sliders-h"],["b.f1e7","slideshare"],["s.f118","smile"],["r.f118","smile"],["s.f5b8","smile-beam"],["r.f5b8","smile-beam"],["s.f4da","smile-wink"],["r.f4da","smile-wink"],["s.f75f","smog"],["s.f48d","smoking"],["s.f54d","smoking-ban"],["s.f7cd","sms"],["b.f2ab","snapchat"],["b.f2ac","snapchat-ghost"],["b.f2ad","snapchat-square"],["s.f7ce","snowboarding"],["s.f2dc","snowflake"],["r.f2dc","snowflake"],["s.f7d0","snowman"],["s.f7d2","snowplow"],["s.e06e","soap"],["s.f696","socks"],["s.f5ba","solar-panel"],["s.f0dc","sort"],["s.f15d","sort-alpha-down"],["s.f881","sort-alpha-down-alt"],["s.f15e","sort-alpha-up"],["s.f882","sort-alpha-up-alt"],["s.f160","sort-amount-down"],["s.f884","sort-amount-down-alt"],["s.f161","sort-amount-up"],["s.f885","sort-amount-up-alt"],["s.f0dd","sort-down"],["s.f162","sort-numeric-down"],["s.f886","sort-numeric-down-alt"],["s.f163","sort-numeric-up"],["s.f887","sort-numeric-up-alt"],["s.f0de","sort-up"],["b.f1be","soundcloud"],["b.f7d3","sourcetree"],["s.f5bb","spa"],["s.f197","space-shuttle"],["b.f3f3","speakap"],["b.f83c","speaker-deck"],["s.f891","spell-check"],["s.f717","spider"],["s.f110","spinner"],["s.f5bc","splotch"],["b.f1bc","spotify"],["s.f5bd","spray-can"],["s.f0c8","square"],["r.f0c8","square"],["s.f45c","square-full"],["s.f698","square-root-alt"],["b.f5be","squarespace"],["b.f18d","stack-exchange"],["b.f16c","stack-overflow"],["b.f842","stackpath"],["s.f5bf","stamp"],["s.f005","star"],["r.f005","star"],["s.f699","star-and-crescent"],["s.f089","star-half"],["r.f089","star-half"],["s.f5c0","star-half-alt"],["s.f69a","star-of-david"],["s.f621","star-of-life"],["b.f3f5","staylinked"],["b.f1b6","steam"],["b.f1b7","steam-square"],["b.f3f6","steam-symbol"],["s.f048","step-backward"],["s.f051","step-forward"],["s.f0f1","stethoscope"],["b.f3f7","sticker-mule"],["s.f249","sticky-note"],["r.f249","sticky-note"],["s.f04d","stop"],["s.f28d","stop-circle"],["r.f28d","stop-circle"],["s.f2f2","stopwatch"],["s.e06f","stopwatch-20"],["s.f54e","store"],["s.f54f","store-alt"],["s.e070","store-alt-slash"],["s.e071","store-slash"],["b.f428","strava"],["s.f550","stream"],["s.f21d","street-view"],["s.f0cc","strikethrough"],["b.f429","stripe"],["b.f42a","stripe-s"],["s.f551","stroopwafel"],["b.f3f8","studiovinari"],["b.f1a4","stumbleupon"],["b.f1a3","stumbleupon-circle"],["s.f12c","subscript"],["s.f239","subway"],["s.f0f2","suitcase"],["s.f5c1","suitcase-rolling"],["s.f185","sun"],["r.f185","sun"],["b.f2dd","superpowers"],["s.f12b","superscript"],["b.f3f9","supple"],["s.f5c2","surprise"],["r.f5c2","surprise"],["b.f7d6","suse"],["s.f5c3","swatchbook"],["b.f8e1","swift"],["s.f5c4","swimmer"],["s.f5c5","swimming-pool"],["b.f83d","symfony"],["s.f69b","synagogue"],["s.f1b8","sync"],["s.f2f1","sync-alt"],["s.f48e","syringe"],["s.f0ce","table"],["s.f45d","table-tennis"],["s.f10a","tablet"],["s.f3fa","tablet-alt"],["s.f490","tablets"],["s.f3fd","tachometer-alt"],["s.f02b","tag"],["s.f02c","tags"],["s.f4db","tape"],["s.f0ae","tasks"],["s.f1ba","taxi"],["b.f4f9","teamspeak"],["s.f62e","teeth"],["s.f62f","teeth-open"],["b.f2c6","telegram"],["b.f3fe","telegram-plane"],["s.f769","temperature-high"],["s.f76b","temperature-low"],["b.f1d5","tencent-weibo"],["s.f7d7","tenge"],["s.f120","terminal"],["s.f034","text-height"],["s.f035","text-width"],["s.f00a","th"],["s.f009","th-large"],["s.f00b","th-list"],["b.f69d","the-red-yeti"],["s.f630","theater-masks"],["b.f5c6","themeco"],["b.f2b2","themeisle"],["s.f491","thermometer"],["s.f2cb","thermometer-empty"],["s.f2c7","thermometer-full"],["s.f2c9","thermometer-half"],["s.f2ca","thermometer-quarter"],["s.f2c8","thermometer-three-quarters"],["b.f731","think-peaks"],["s.f165","thumbs-down"],["r.f165","thumbs-down"],["s.f164","thumbs-up"],["r.f164","thumbs-up"],["s.f08d","thumbtack"],["s.f3ff","ticket-alt"],["b.e07b","tiktok"],["s.f00d","times"],["s.f057","times-circle"],["r.f057","times-circle"],["s.f043","tint"],["s.f5c7","tint-slash"],["s.f5c8","tired"],["r.f5c8","tired"],["s.f204","toggle-off"],["s.f205","toggle-on"],["s.f7d8","toilet"],["s.f71e","toilet-paper"],["s.e072","toilet-paper-slash"],["s.f552","toolbox"],["s.f7d9","tools"],["s.f5c9","tooth"],["s.f6a0","torah"],["s.f6a1","torii-gate"],["s.f722","tractor"],["b.f513","trade-federation"],["s.f25c","trademark"],["s.f637","traffic-light"],["s.e041","trailer"],["s.f238","train"],["s.f7da","tram"],["s.f224","transgender"],["s.f225","transgender-alt"],["s.f1f8","trash"],["s.f2ed","trash-alt"],["r.f2ed","trash-alt"],["s.f829","trash-restore"],["s.f82a","trash-restore-alt"],["s.f1bb","tree"],["b.f181","trello"],["b.f262","tripadvisor"],["s.f091","trophy"],["s.f0d1","truck"],["s.f4de","truck-loading"],["s.f63b","truck-monster"],["s.f4df","truck-moving"],["s.f63c","truck-pickup"],["s.f553","tshirt"],["s.f1e4","tty"],["b.f173","tumblr"],["b.f174","tumblr-square"],["s.f26c","tv"],["b.f1e8","twitch"],["b.f099","twitter"],["b.f081","twitter-square"],["b.f42b","typo3"],["b.f402","uber"],["b.f7df","ubuntu"],["b.f403","uikit"],["b.f8e8","umbraco"],["s.f0e9","umbrella"],["s.f5ca","umbrella-beach"],["s.f0cd","underline"],["s.f0e2","undo"],["s.f2ea","undo-alt"],["b.f404","uniregistry"],["b.e049","unity"],["s.f29a","universal-access"],["s.f19c","university"],["s.f127","unlink"],["s.f09c","unlock"],["s.f13e","unlock-alt"],["b.e07c","unsplash"],["b.f405","untappd"],["s.f093","upload"],["b.f7e0","ups"],["b.f287","usb"],["s.f007","user"],["r.f007","user"],["s.f406","user-alt"],["s.f4fa","user-alt-slash"],["s.f4fb","user-astronaut"],["s.f4fc","user-check"],["s.f2bd","user-circle"],["r.f2bd","user-circle"],["s.f4fd","user-clock"],["s.f4fe","user-cog"],["s.f4ff","user-edit"],["s.f500","user-friends"],["s.f501","user-graduate"],["s.f728","user-injured"],["s.f502","user-lock"],["s.f0f0","user-md"],["s.f503","user-minus"],["s.f504","user-ninja"],["s.f82f","user-nurse"],["s.f234","user-plus"],["s.f21b","user-secret"],["s.f505","user-shield"],["s.f506","user-slash"],["s.f507","user-tag"],["s.f508","user-tie"],["s.f235","user-times"],["s.f0c0","users"],["s.f509","users-cog"],["s.e073","users-slash"],["b.f7e1","usps"],["b.f407","ussunnah"],["s.f2e5","utensil-spoon"],["s.f2e7","utensils"],["b.f408","vaadin"],["s.f5cb","vector-square"],["s.f221","venus"],["s.f226","venus-double"],["s.f228","venus-mars"],["b.f237","viacoin"],["b.f2a9","viadeo"],["b.f2aa","viadeo-square"],["s.f492","vial"],["s.f493","vials"],["b.f409","viber"],["s.f03d","video"],["s.f4e2","video-slash"],["s.f6a7","vihara"],["b.f40a","vimeo"],["b.f194","vimeo-square"],["b.f27d","vimeo-v"],["b.f1ca","vine"],["s.e074","virus"],["s.e075","virus-slash"],["s.e076","viruses"],["b.f189","vk"],["b.f40b","vnv"],["s.f897","voicemail"],["s.f45f","volleyball-ball"],["s.f027","volume-down"],["s.f6a9","volume-mute"],["s.f026","volume-off"],["s.f028","volume-up"],["s.f772","vote-yea"],["s.f729","vr-cardboard"],["b.f41f","vuejs"],["s.f554","walking"],["s.f555","wallet"],["s.f494","warehouse"],["s.f773","water"],["s.f83e","wave-square"],["b.f83f","waze"],["b.f5cc","weebly"],["b.f18a","weibo"],["s.f496","weight"],["s.f5cd","weight-hanging"],["b.f1d7","weixin"],["b.f232","whatsapp"],["b.f40c","whatsapp-square"],["s.f193","wheelchair"],["b.f40d","whmcs"],["s.f1eb","wifi"],["b.f266","wikipedia-w"],["s.f72e","wind"],["s.f410","window-close"],["r.f410","window-close"],["s.f2d0","window-maximize"],["r.f2d0","window-maximize"],["s.f2d1","window-minimize"],["r.f2d1","window-minimize"],["s.f2d2","window-restore"],["r.f2d2","window-restore"],["b.f17a","windows"],["s.f72f","wine-bottle"],["s.f4e3","wine-glass"],["s.f5ce","wine-glass-alt"],["b.f5cf","wix"],["b.f730","wizards-of-the-coast"],["b.f514","wolf-pack-battalion"],["s.f159","won-sign"],["b.f19a","wordpress"],["b.f411","wordpress-simple"],["b.f297","wpbeginner"],["b.f2de","wpexplorer"],["b.f298","wpforms"],["b.f3e4","wpressr"],["s.f0ad","wrench"],["s.f497","x-ray"],["b.f412","xbox"],["b.f168","xing"],["b.f169","xing-square"],["b.f23b","y-combinator"],["b.f19e","yahoo"],["b.f840","yammer"],["b.f413","yandex"],["b.f414","yandex-international"],["b.f7e3","yarn"],["b.f1e9","yelp"],["s.f157","yen-sign"],["s.f6ad","yin-yang"],["b.f2b1","yoast"],["b.f167","youtube"],["b.f431","youtube-square"],["b.f63f","zhihu"]];
 
-function getGlyphNameByCode(code) {
+function getGlyphName(code) {
 	for (var i in _fontGlyphs) {
-		if (_fontGlyphs[i][0] == code) return _fontGlyphs[i][1];
+		if (_fontGlyphs[i][0] === code) return _fontGlyphs[i][1];
 	}
 }
 
 function Property_glyphCode(cell, controlAction, property, details) {
 	
 	// retieve the glyph code
-	var code = controlAction[property.key];
+	var selectedCode = controlAction[property.key];
+	selectedGlyph = newGlyph(selectedCode);
 	// if we got one
-	if (code) {
-		// add it and it's name into the cell
-		var fontClass = "fa";
-		if (code == "&#xe900") fontClass = "fr";
-		cell.append("<span class='" + fontClass + "'>" + code + "</span>&nbsp;" + getGlyphNameByCode(code));
+	if (selectedGlyph.code) {
+		cell.html("<span class='" + selectedGlyph.class + "'>&#x" + selectedGlyph.code + ";</span>&nbsp;" + getGlyphName(selectedGlyph.toString()));
 	} else {
 		// add message
 		cell.append("Please select...");
@@ -5235,10 +5238,10 @@ function Property_glyphCode(cell, controlAction, property, details) {
 	table = dialogue.find("table").first();
 	// add all of the glyphs, with the current one highlighted
 	for (var i in _fontGlyphs) {
-		var fontClass = "fa";
-		var fontCode = _fontGlyphs[i][0];
-		if (fontCode == "&#xe900") fontClass = "fr";
-		table.append("<tr><td data-code='" + fontCode.replace("&","&amp;") + "' class='hover" + (code && code == fontCode ? " selected" : "") + "'><span class='" + fontClass + "'>" + fontCode + "</span><span class='fa_name'>&nbsp;" + _fontGlyphs[i][1] + "</span></td></tr>");
+		var name = _fontGlyphs[i][1];
+		var glyph = newGlyph(_fontGlyphs[i][0]);
+		
+		table.append("<tr><td data-code='" + glyph + "' class='hover" + (selectedGlyph.toString() === glyph.toString() ? " selected" : "") + "'><span class='" + glyph.class + "'>" + glyph.html + "</span><span class='fa_name'>&nbsp;" + name + "</span></td></tr>");
 	}
 	// if a position was set go back to it
 	if (dialogue.attr("data-scroll")) table.parent().scrollTop(dialogue.attr("data-scroll"));
@@ -5793,7 +5796,7 @@ function Property_pageOrder(cell, propertyObject, property, details) {
 	// get the dialogue title
 	var title = dialogue.find(".dialogueTitle").first();
 	if (!title.next().is("button")) {
-		title.after("<button style='float:left;margin-top:-7px;' class='titleButton sources' title='Reset page order to be alphabetical'><span>&#xf0e2;</span></button>");
+		title.after("<button style='float:left;margin-top:-7px;' class='titleButton sources' title='Reset page order to be alphabetical'><span class='fas'>&#xf15d;</span></button>");
 		// listener for resetting the page order
 		addListener( dialogue.find("button.titleButton").first().click( function(ev) {
 			// sort the pages
@@ -5827,7 +5830,7 @@ function Property_pageOrder(cell, propertyObject, property, details) {
 			
 		// add a page name row
 		table.append("<tr><td>" + page.name + " - " + page.title + "</td><td style='text-align:right;'>" +
-				"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fa fa-arrow-up fa-stack-1x'></i><i class='fa fa-arrow-down fa-stack-1x'></i></div></td></tr>");
+				"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fas fa-arrow-up fa-stack-1x'></i><i class='fas fa-arrow-down fa-stack-1x'></i></div></td></tr>");
 		
 	}
 		
@@ -6041,8 +6044,8 @@ function Property_emailContent(cell, propertyObject, property, details) {
 		// add the row
 		inputsTable.append("<tr><td>" + itemName + "</td><td><input value='" + escapeApos(field) + "' /></td><td style='width:45px;'>" +
 				"<div class='iconsPanel'>" +
-				"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fa fa-arrow-up fa-stack-1x'></i><i class='fa fa-arrow-down fa-stack-1x'></i></div>" +
-				"<div class='delete fa-stack fa-sm'><i class='delete fa fa-trash' title='Click to delete'></i></div>" +
+				"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fas fa-arrow-up fa-stack-1x'></i><i class='fas fa-arrow-down fa-stack-1x'></i></div>" +
+				"<div class='delete fa-stack fa-sm'><i class='delete fas fa-trash-alt' title='Click to delete'></i></div>" +
 				"</div></td></tr>");
 		// get the field input
 		var fieldInput = inputsTable.find("tr").last().children(":nth(1)").last().children().last();
@@ -6382,8 +6385,8 @@ function Property_validationLogic(cell, propertyObject, property, details) {
 		// add the condition row
 		table.append("<tr data-index='" + i + "'><td style='width:60px;'>Conditions</td><td></td><td style='min-width:45px'>" +
 					"<div class='iconsPanel'>" +
-					"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fa fa-arrow-up fa-stack-1x'></i><i class='fa fa-arrow-down fa-stack-1x'></i></div>" +
-					"<div class='delete fa-stack fa-sm'><i class='delete fa fa-trash' title='Click to delete'></i></div>" +
+					"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fas fa-arrow-up fa-stack-1x'></i><i class='fas fa-arrow-down fa-stack-1x'></i></div>" +
+					"<div class='delete fa-stack fa-sm'><i class='delete fas fa-trash-alt' title='Click to delete'></i></div>" +
 					"</div></td></tr>");
 		// get the conditions cell
 		var conditionsCell = table.find("tr").last().children(":nth-child(2)");
@@ -6491,7 +6494,7 @@ function Property_pdfInputs(cell, propertyObject, property, details) {
 	var text = "";
 	
 	// add a header
-	table.append("<tr><td><b>Control</b></td><td><b>Field</b></td><td colspan='2'><b>Label</b><button class='titleButton' title='Add all page data controls'><span>&#xf055;</span></td></tr>");
+	table.append("<tr><td><b>Control</b></td><td><b>Field</b></td><td colspan='2'><b>Label</b><button class='titleButton' title='Add all page data controls'><span class='fas'>&#xf055;</span></td></tr>");
 		
 	// show current choices (with delete and move)
 	for (var i = 0; i < inputs.length; i++) {
@@ -6506,8 +6509,8 @@ function Property_pdfInputs(cell, propertyObject, property, details) {
 			// add a row
 			table.append("<tr><td>" + dataItem.name + "</td><td><input value='" + input.field + "' /></td><td><input value='" + input.label + "' /></td><td style='width:45px'>" +
 					"<div class='iconsPanel'>" +
-					"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fa fa-arrow-up fa-stack-1x'></i><i class='fa fa-arrow-down fa-stack-1x'></i></div>" +
-					"<div class='delete fa-stack fa-sm'><i class='delete fa fa-trash' title='Click to delete'></i></div>" +
+					"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fas fa-arrow-up fa-stack-1x'></i><i class='fas fa-arrow-down fa-stack-1x'></i></div>" +
+					"<div class='delete fa-stack fa-sm'><i class='delete fas fa-trash-alt' title='Click to delete'></i></div>" +
 					"</div></td></tr>");
 			// get the field
 			var editField = table.find("tr").last().children("td:nth(1)").children("input");

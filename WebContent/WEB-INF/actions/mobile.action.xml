@@ -531,7 +531,7 @@ function handleSwipe(event, direction, distance, duration, fingers, fingerData, 
 		// get the hanlder
 		var handler = handlers[i];
 		// if the directions match and either the fingers match too, or are all/any, run the function!
-		if (handler.direction == direction && (handler.fingers == fingers || handler.fingers == 0)) handler.function(ev);
+		if (handler.direction == direction && (handler.fingers == fingers || handler.fingers == 0)) handler["function"](ev);
 	}
 }
 
@@ -843,20 +843,20 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 		}
 		
 		var inputImageHtml = _cameraSelectImage ? "<div style='position:fixed; top:0; width:100%; text-align:center;'>"
-	    					+ "<label id='btnInputImage' for='inputImage' class='cameraControlBasic'><i class='fa fa-folder-open cameraIcon' style='margin-left: 2px;'></i></label></div>"
+	    					+ "<label id='btnInputImage' for='inputImage' class='cameraControlBasic'><i class='fas fa-folder-open cameraIcon'></i></label></div>"
 							: "";
 	
 		// Add the divs
 		var cameraPreviewHtml = "<div id='cameraVideoContainer'>"
 							+ "<video id='cameraPlayer' autoplay muted='true'></video>"
 							+ inputImageHtml
-							+ "<button id='btnToggleCamera' class='cameraControlBasic' style='position:absolute; left:0;'><i class='fa fa-retweet cameraIcon' style='margin-left:-2px;'></i></button>"								  
-							+ "<button id ='btnCloseCamera' class='cameraControlBasic' style='position:absolute; right:0;'><i class='fa fa-times cameraIcon'></i></button>"
+							+ "<button id='btnToggleCamera' class='cameraControlBasic' style='position:absolute; left:0;'><i class='fas fa-retweet cameraIcon' style='margin-left:-5px;'></i></button>"								  
+							+ "<button id ='btnCloseCamera' class='cameraControlBasic' style='position:absolute; right:0;'><i class='fas fa-times cameraIcon'></i></button>"
 							+ "<div style='position:fixed; bottom:0; width:100%; text-align:center; padding:20px;'>"
 							+ mediaCapturer.indicator()
 							+ (mediums.includes('video') ? "<p id='videoRecordTimer'></p>" : "")
-							+ (mediums.includes('image') ? "<button id ='btnTakePicture' class='cameraControl'><i class='fa fa-camera cameraIcon'></i></button>" : "")
-							+ (mediums.includes('video') && MediaRecorder ? "<button id ='btnRecordVideo' class='cameraControl'><i class='fa fa-video-camera cameraIcon'></i></button>" : "")
+							+ (mediums.includes('image') ? "<button id ='btnTakePicture' class='cameraControl'><i class='fas fa-camera cameraIcon'></i></button>" : "")
+							+ (mediums.includes('video') && MediaRecorder ? "<button id ='btnRecordVideo' class='cameraControl'><i class='fas fa-video cameraIcon'></i></button>" : "")
 							+ "</div>"
 							+ "</div>";
 		

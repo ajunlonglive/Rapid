@@ -597,15 +597,15 @@ function Gallery_showImage(ev, id, galleryItem, allowDelete, openEditor) {
 		gallery.css({"position":"fixed", "top":0, "left":0, "right":0, "bottom":0});
 		
 		// buttons to the gallery
-		var btnPrev = gallery.append("<button id='btnPrev' class='galleryControlDirectionButton' style='position:absolute; left:0; top:50%;'><i class='fa fa-chevron-left'></i></button>").find("#btnPrev");
-		var btnNext = gallery.append("<button id='btnNext' class='galleryControlDirectionButton' style='position:absolute; right:0; top:50%;'><i class='fa fa-chevron-right'></i></button>").find("#btnNext");
+		var btnPrev = gallery.append("<button id='btnPrev' class='galleryControlDirectionButton' style='position:absolute; left:0; top:50%;'><i class='fas fa-chevron-left'></i></button>").find("#btnPrev");
+		var btnNext = gallery.append("<button id='btnNext' class='galleryControlDirectionButton' style='position:absolute; right:0; top:50%;'><i class='fas fa-chevron-right'></i></button>").find("#btnNext");
 		
 		var tools = gallery.append("<div id='tools' style='position:absolute; top:0; left:0; width:100%;'>").find("#tools").css({"text-align":"center", "color":"#FFF", "z-index":"1", "pointer-events": "none"});
-		var btnDelete = tools.append("<button id ='btnDeleteImage' class='galleryControlButton' style='float: left;'><i class='fa fa-trash'></i></button>").find("#btnDeleteImage");
-		var btnClose = tools.append("<button id ='btnCloseGallery' class='galleryControlButton' style='float: right;'><i class='fa fa-times'></i></button>").find("#btnCloseGallery");
+		var btnDelete = tools.append("<button id ='btnDeleteImage' class='galleryControlButton' style='float: left;'><i class='fas fa-trash'></i></button>").find("#btnDeleteImage");
+		var btnClose = tools.append("<button id ='btnCloseGallery' class='galleryControlButton' style='float: right;'><i class='fas fa-times'></i></button>").find("#btnCloseGallery");
 		if (galleryItem.is("img")) {
-			var btnEdit = tools.append("<button id='btnEdit' class='galleryControlButton' style='float: right;'><i class='fa fa-pencil'></i></button>").find("#btnEdit");
-			var btnSave = tools.append("<button id='btnSave' class='galleryControlButton' style='float: right; display:none'><i class='fa fa-check'></i></button>").find("#btnSave");
+			var btnEdit = tools.append("<button id='btnEdit' class='galleryControlButton' style='float: right;'><i class='fas fa-pen'></i></button>").find("#btnEdit");
+			var btnSave = tools.append("<button id='btnSave' class='galleryControlButton' style='float: right; display:none'><i class='fas fa-check'></i></button>").find("#btnSave");
 		}
 		$(tools).find("button").css({"pointer-events": "all"});
 		
@@ -931,8 +931,8 @@ function editImage(gallery) {
 	});
 	
 	var historyButtons = $("#tools").append("<div id='historyButtons' class='galleryEditor' style='float: left;'>").find("#historyButtons");
-	var btnUndo = $("#historyButtons").append("<button id='btnUndo' class='galleryControlButton galleryEditor' style='float: left;'><i class='fa fa-undo'></i></button>").find("#btnUndo");
-	var btnRedo = $("#historyButtons").append("<button id='btnRedo' class='galleryControlButton galleryEditor' style='float: left;'><i class='fa fa-repeat'></i></button>").find("#btnRedo");
+	var btnUndo = $("#historyButtons").append("<button id='btnUndo' class='galleryControlButton galleryEditor' style='float: left;'><i class='fas fa-undo'></i></button>").find("#btnUndo");
+	var btnRedo = $("#historyButtons").append("<button id='btnRedo' class='galleryControlButton galleryEditor' style='float: left;'><i class='fas fa-redo'></i></button>").find("#btnRedo");
 	$(tools).find("button").css({"pointer-events": "all"});
 	
 	function undo() {

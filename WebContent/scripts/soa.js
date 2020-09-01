@@ -156,7 +156,7 @@ function showSOARestrictions(collection, control, details) {
 		// add a row for this restriction
 		table.append("<tr><td>" + getSOARestrictionSelect(element.dataType, restriction.type) + "</td><td><input value='" + restriction.value + "'/></td><td><div class='iconsPanel'>" +
 					"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fa fa-arrow-up fa-stack-1x'></i><i class='fa fa-arrow-down fa-stack-1x'></i></div>" +
-					"<div class='delete fa-stack fa-sm'><i class='delete fa fa-trash' title='Click to delete'></i></div>" +
+					"<div class='delete fa-stack fa-sm'><i class='delete fas fa-trash-alt' title='Click to delete'></i></div>" +
 					"</div></td></tr>");				
 	}
 	
@@ -258,7 +258,7 @@ function loadSOA(details) {
 					}
 				}
 				// populate child element
-				requestTable.append("<tr><td class='elementName'><input value='" + element.name + "' /></td><td>" + getSOADataTypeSelect(element.dataType) + "</td><td class='restriction'>" + text + "</td><td><div class='reorder fa-stack fa-sm' title='Reorder this action' style='top:0; right:0;'><i class='fa fa-arrow-up fa-stack-1x'></i><i class='fa fa-arrow-down fa-stack-1x'></i></div><i class='delete fa fa-trash' style='margin-left:1px;'></i></td></tr>");				
+				requestTable.append("<tr><td class='elementName'><input value='" + element.name + "' /></td><td>" + getSOADataTypeSelect(element.dataType) + "</td><td class='restriction'>" + text + "</td><td><div class='reorder fa-stack fa-sm' title='Reorder this action' style='top:0; right:0;'><i class='fa fa-arrow-up fa-stack-1x'></i><i class='fa fa-arrow-down fa-stack-1x'></i></div><i class='delete fas fa-trash-alt' style='margin-left:1px;'></i></td></tr>");				
 			}  
 			
 			// name
@@ -362,7 +362,7 @@ function loadSOA(details) {
 					}
 				}
 				// populate child element
-				responseTable.append("<tr><td class='elementName'><input class='elementName' value='" + element.name + "' /></td><td class='elementField'><input class='elementField' value='" + element.field + "' /></td><td>" + getSOADataTypeSelect(element.dataType) + "</td><td class='restriction'>" + text + "</td><td><div class='reorder fa-stack fa-sm' title='Reorder this action' style='top:0; right:0;'><i class='fa fa-arrow-up fa-stack-1x'></i><i class='fa fa-arrow-down fa-stack-1x'></i></div><i class='delete fa fa-trash' style='margin-left:1px;'></i></td></tr>");				
+				responseTable.append("<tr><td class='elementName'><input class='elementName' value='" + element.name + "' /></td><td class='elementField'><input class='elementField' value='" + element.field + "' /></td><td>" + getSOADataTypeSelect(element.dataType) + "</td><td class='restriction'>" + text + "</td><td><div class='reorder fa-stack fa-sm' title='Reorder this action' style='top:0; right:0;'><i class='fa fa-arrow-up fa-stack-1x'></i><i class='fa fa-arrow-down fa-stack-1x'></i></div><i class='delete fas fa-trash-alt' style='margin-left:1px;'></i></td></tr>");				
 			}
 			
 			// name

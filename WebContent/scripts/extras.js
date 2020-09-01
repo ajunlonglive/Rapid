@@ -1046,3 +1046,148 @@ function padNumberWithZeros(number, length) {
 function promiseSupported() {
 	return typeof Promise !== "undefined" && Promise.toString().indexOf("[native code]") !== -1;
 }
+
+// font awesome 4 icons that have changed - and their changes
+var _fontAwesome4to5 = [["f170","b"],["f17b","b"],["f209","b"],["f179","b"],["f01a","r.f358"],["f190","r.f359"],["f18e","r.f35a"],["f01b","r.f35b"],["f047","f0b2"],["f0b2","f31e"],["f07e","f337"],["f07d","f338"],["f1b4","b"],["f1b5","b"],["f0a2","r.f0f3"],["f1f7","r.f1f6"],["f171","b"],["f172","b.f171"],["f097","r.f02e"],["f15a","b"],["f0f7","r.f1ad"],["f133","r.f133"],["f150","r.f150"],["f191","r.f191"],["f152","r.f152"],["f151","r.f151"],["f20a","r"],["f1f3","b"],["f1f2","b"],["f1f1","b"],["f1f4","b"],["f1f5","b"],["f1f0","b"],["f05d","r.f058"],["f046","r.f14a"],["f10c","r.f111"],["f017","r"],["f1db","r.f111"],["f0ed","f381"],["f0ee","f382"],["f1cb","b"],["f0e5","r.f075"],["f0e6","r.f086"],["f14e","r.f14e"],["f066","f422"],["f1f9","r.f1f9"],["f09d","r.f09d"],["f13c","b"],["f0f5","f2e7"],["f1a5","b"],["f1bd","b"],["f1a6","b"],["f192","r"],["f17d","b"],["f16b","b"],["f1a9","b"],["f1d1","b"],["f003","r.f0e0"],["f0ec","f362"],["f065","f424"],["f08e","f35d"],["f14c","f360"],["f09a","b"],["f082","b"],["f1c6","r"],["f1c7","r"],["f1c9","r"],["f1c3","r"],["f1c5","r"],["f016","r.f15b"],["f1c1","r"],["f1c4","r"],["f0c5","r"],["f0f6","r.f15c"],["f1c8","r"],["f1c2","r"],["f11d","r.f024"],["f16e","b"],["f0c7","r"],["f114","r.f07b"],["f115","r.f07c"],["f180","b"],["f119","r"],["f1d3","b"],["f09b","b"],["f113","b"],["f092","b"],["f1d2","b"],["f184","b"],["f0ac","f57d"],["f1a0","b"],["f0d5","b"],["f0d4","b"],["f1ee","b"],["f1d4","b"],["f0a7","r"],["f0a5","r"],["f0a4","r"],["f0a6","r"],["f0a0","r"],["f08a","r.f004"],["f0f8","r"],["f13b","b"],["f16d","b"],["f208","b"],["f1aa","b"],["f1cc","b"],["f11c","r"],["f202","b"],["f203","b"],["f094","r"],["f149","f3be"],["f148","f3bf"],["f0eb","r"],["f0e1","b"],["f08c","b"],["f17c","b"],["f175","f309"],["f177","f30a"],["f178","f30b"],["f176","f30c"],["f041","f3c5"],["f136","b"],["f20c","b.f2b4"],["f11a","r"],["f147","r.f146"],["f10b","f3cd"],["f0d6","r.f3d1"],["f06e","r.f06e"],["f070","r"],["f186","r"],["f1ea","r"],["f19b","b"],["f18c","b"],["f1d9","r.f1d8"],["f1ed","b"],["f040","f303"],["f03e","r.f302"],["f1a7","b"],["f1a8","b"],["f0d2","b"],["f0d3","b"],["f01d","r.f144"],["f196","r.f0fe"],["f1d6","b"],["f1d0","b"],["f1a1","b"],["f1a2","b"],["f18b","b"],["f112","f3e5"],["f045","r.f14d"],["f132","f3ed"],["f090","f2f6"],["f08b","f2f5"],["f17e","b"],["f198","b"],["f1e7","b"],["f118","r"],["f1be","b"],["f1b1","f2e5"],["f1bc","b"],["f096","r.f0c8"],["f18d","b"],["f16c","b"],["f123","r.f089"],["f006","r.f005"],["f1b6","b"],["f1b7","b"],["f1a4","b"],["f1a3","b"],["f185","r"],["f10a","f3fa"],["f0e4","f3fd"],["f1d5","b"],["f088","r.f165"],["f087","r.f164"],["f145","f3ff"],["f05c","r.f057"],["f1f8","f2ed"],["f014","r.f2ed"],["f181","b"],["f173","b"],["f174","b"],["f1e8","b"],["f099","b"],["f081","b"],["f194","b"],["f1ca","b"],["f189","b"],["f18a","b"],["f1d7","b"],["f17a","b"],["f19a","b"],["f168","b"],["f169","b"],["f19e","b"],["f1e9","b"],["f167","b"],["f16a","b.f167"],["f166","b.f431"]];
+
+function differenceFrom4to5(code) {
+	for (var i = 0; i < _fontAwesome4to5.length; i++) {
+		var map = _fontAwesome4to5[i];
+		if (map[0] === code) return map[1];
+	}
+}
+
+function differenceFrom5to4(code, letter) {
+	for (var i = 0; i < _fontAwesome4to5.length; i++) {
+		var map4to5 = _fontAwesome4to5[i];
+		var map5 = map4to5[1].split(".");
+		var map5Letter = "s";
+		var map5Code;
+		if (map5.length === 2) {
+			map5Code = map5[1];
+			map5Letter = map5[0];
+		} else {
+			var dif = map5[0];
+			if (dif.length > 1) {
+				map5Code = dif;
+			} else {
+				map5Code = map4to5[0];
+				map5Letter = dif;
+			}
+		}
+		if (code == map5Code && letter == map5Letter) return map4to5[0];
+	}
+}
+
+function upgadePageFontAwesome4to5() {
+	$(".fa").each(function() {
+		var control = $(this);
+		var code = control.html().charCodeAt(0).toString(16);
+		var glyph = newGlyph(code);
+		control.removeClass("fa");
+		control.addClass(glyph.class);
+		control.html(glyph.html);
+	});
+}
+
+function downgadePageFontAwesome5to4() {
+	var downgade = function(letter) {
+		$(".fa" + letter).each(function() {
+			var control = $(this);
+			var code = control.html().charCodeAt(0).toString(16);
+			var oldCode = differenceFrom5to4(code, letter);
+			if (oldCode) {
+				control.removeClass("fa" + letter);
+				control.addClass("fa");
+				control.html("&#x" + oldCode + ";");
+			}
+		});
+	};
+	downgade("s");
+	downgade("r");
+	downgade("b");
+}
+
+function convertBetweenFontAwesome4and5() {
+	// this is being called by dialogue navigate action
+	// app built with fa 4 on platform with fa 5: upgadePageFontAwesome4to5
+	// app built with fa 5 on platform with fa 4: downgadePageFontAwesome5to4
+	upgadePageFontAwesome4to5();
+}
+
+$(convertBetweenFontAwesome4and5);
+
+function newGlyph(code) {
+	
+	if (code && code != "NaN") {
+	
+		// replace leading bits
+		if (code.indexOf("&#x") == 0) code = code.substring(3, 7);
+		
+		if (code === "e900") { // rapid glyph
+			return {
+				code,
+				letter: "",
+				html: "&#x" + code + ";",
+				class: "fr",
+				toString: function() {
+					return this.code;
+				}
+			}
+		} else { // got a code
+			var parts = code.split(".");
+			
+			if (parts.length === 2) { // modern code: s.f1d8;
+				var letter = parts[0];
+				return {
+					code: parts[1],
+					letter,
+					html: "&#x" + parts[1] + ";",
+					class: "fa" + letter,
+					toString: function() {
+						return letter + "." + this.code;
+					}
+				};
+			} else { // old code: f1d8;
+				var letter = "s";
+				var difference = differenceFrom4to5(code);
+				if (difference) {
+					var differenceParts = difference.split(".");
+					if (differenceParts.length === 2) {
+						letter = differenceParts[0];
+						code = differenceParts[1];
+					} else { // 1
+						var difference = differenceParts[0];
+						if (difference.length === 1) { // letter
+							letter = difference;
+						} else { // code
+							code = difference;
+						}
+					}
+				}
+				return {
+					code,
+					letter,
+					html: "&#x" + code + ";",
+					class: "fa" + letter,
+					toString: function() {
+						return letter + "." + this.code;
+					}
+				};
+			}
+		}
+		
+	} else {
+		
+		return {
+			code: "",
+			letter: "",
+			html: "",
+			class: "",
+			toString: function() {
+				return "";
+			}
+		}
+		
+	}
+}

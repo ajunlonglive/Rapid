@@ -1136,7 +1136,11 @@ select optgroup {
 }
 
 .untilsPanelDiv i:not(.headerHelp){
-	font-size:20px;
+	font-size: 16px;
+}
+
+.untilsPanelDiv i.delete{
+	    margin-top: 2px;
 }
 
 .dialogueGrid {
@@ -1420,20 +1424,11 @@ div.CodeMirror-scroll {
 	min-width: 24px;
 }
 
-#selectPeerLeft > i {
-    background-image: url("../images/left.light.svg");
-}
-
-#selectParent > i {
-    background-image: url("../images/up.light.svg");
-}
-
-#selectChild > i {
-    background-image: url("../images/down.light.svg");
-}
-
+#selectPeerLeft > i,
+#selectParent > i,
+#selectChild > i,
 #selectPeerRight > i {
-    background-image: url("../images/right.light.svg");
+    margin-top: 4px;
 }
 
 #swapPeerLeft > i {

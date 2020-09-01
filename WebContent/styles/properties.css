@@ -62,6 +62,7 @@ table.propertiesPanelTable  {
 	width: 100%;
 	font-size: 12px;
 	padding-left: 5px;
+	box-sizing: border-box;
 	border: none;
 	/*transition: background 0.3s ease;*/
 }
@@ -174,30 +175,30 @@ img.validationHelp {
 i.actionHelp, img.actionHelp {
 	float: right;
 	margin-top: 1px;
-	color: #494949;
+	color: #777;
 	margin-right: -17px;
 }
 
 i.propertyHelp, img.propertyHelp {
 	float: right;
 	margin-right: -17px;
-	color: #494949;
+	color: #777;
 	font-size: 15px;	
 }
 
-.fa {
+[class^="fa"] {
 	cursor: pointer;
 	transition: transform 0.2s;
 }
-button[disabled] i.fa {
+button[disabled] i[class^="fa"] {
 	cursor: default;
 }
 
-.fa:not(.fa-stack):not(.fa-stack-1x):hover{
+[class^="fa"]:not(.fa-stack):not(.fa-stack-1x):hover {
 	transform: scale(1.2);
 }
 
-button[disabled] .fa:not(.fa-stack):not(.fa-stack-1x):hover{
+button[disabled] [class^="fa"]:not(.fa-stack):not(.fa-stack-1x):hover {
 	transform: scale(1);
 }
 
@@ -209,30 +210,31 @@ button[disabled] .fa:not(.fa-stack):not(.fa-stack-1x):hover{
 	vertical-align:top;
 	font-size:15px;
 	right: 5px;
+	transition: transform 0.2s;
 }
 
 .fa-stack:hover {
 	transform: scale(1.2);
 }
 
-i.fa.fa-arrow-up.fa-stack-1x {
+i[class^="fa"].fa-arrow-up.fa-stack-1x {
 	top:-3px;
 }
 
-i.fa.fa-arrow-down.fa-stack-1x {
+i[class^="fa"].fa-arrow-down.fa-stack-1x {
 	top:3px;
 }
 
-i.fa.fa-file.fa-stack-1x {
+i[class^="fa"].fa-file.fa-stack-1x {
 	font-size: 11px;
 }
 
-.reorder.fa-stack, .copyAction.fa-stack {
+.reorder.fa-stack {
 	top: 2px;
 }
 
 
-i.bottomFile.fa.fa-file.fa-stack-1x {
+i.bottomFile[class^="fa"].fa-file.fa-stack-1x {
 	top: 5px;
 	left: 5px;	
 }
@@ -249,7 +251,7 @@ i.bottomFile.fa.fa-file.fa-stack-1x {
 	bottom: 1px;
 }
 
-i.delete.fa.fa-trash {
+i.delete[class^="fa"].fa-trash {
 	font-size: 18px;
 	vertical-align:middle;
 	margin-top: -3px;
@@ -264,6 +266,19 @@ i.delete.fa.fa-trash {
 
 .propertyHeader > .iconsPanel {
 	min-width: unset;
+}
+
+.iconsPanel i {
+	cursor: pointer;
+}
+
+.copyEvent {
+	display: inline-block;
+}
+
+.copyAction {
+	margin-top: -1px;
+	margin-right: -1px;
 }
 
 div.resizeX {
@@ -294,14 +309,13 @@ div.propertyDialogue {
 	box-shadow: 0 0 0px 1px rgba(0, 0, 0, 0.1), 0 1px 5px 2px rgba(0, 0, 0, 0.25);
 }
 
-.propertyDialogue span {
-	vertical-align:middle;
-	min-height: 20px;
-}
-
 .propertyDialogue span.fa {
 	font-size: 20px;
 	min-width: 25px;
+}
+
+.propertyDialogue [class^="fa"]:not(.fa_name) {
+    font-size: 12px;
 }
 
 .propertyDialogue table {
@@ -357,7 +371,8 @@ td.propertySubHeader {
 }
 
 .propertySubHeader i.actionHelp {
-	font-size: 17px;
+	color: #000;
+	font-size: 16px;
 }
 
 .dialogueTable {
@@ -584,9 +599,7 @@ td.paddingLeft5 {
 }
 
 .titleButton {
-	padding-top: 0;
-  	padding-right: 5px;
-  	padding-left: 5px;
+  	padding: 2px 5px;
   	margin-left:5px;
 	margin-right:1px;
 	margin-bottom:1px;
@@ -594,7 +607,6 @@ td.paddingLeft5 {
 }
 
 .titleButton span {
-	font-family: "FontAwesome";
 	font-size: 10px;
 }
 

@@ -605,7 +605,7 @@ function applyStyles() {
 				_styleCell.removeAttr("colspan");
 				_styleCell.after("<td><div class='iconsPanel'>" +
 						"<div class='reorder fa-stack fa-sm' title='Reorder this action'><i class='fa fa-arrow-up fa-stack-1x'></i><i class='fa fa-arrow-down fa-stack-1x'></i></div>" +
-						"<div class='delete fa-stack fa-sm'><i class='delete fa fa-trash' title='Delete this action'></i></div>" +
+						"<div class='delete fa-stack fa-sm'><i class='delete fas fa-trash-alt' title='Delete this action'></i></div>" +
 						"</div></td>");
 				// attach a delete listener 
 				addListener( _styleCell.parent().find("div.delete").click( function(ev) {
@@ -811,7 +811,7 @@ function showStyles(control) {
 								stylesTable.append("<tr><td class='styleCell'><span class='styleAttr'>" + parts[0] + "</span><span class='styleColon'>:</span><span class='styleValue'>" + parts[1] + "</span></td><td>" +
 										"<div class='iconsPanel'>" +
 										"<div class='reorder fa-stack fa-sm' title='Reorder this rule'><i class='fa fa-arrow-up fa-stack-1x'></i><i class='fa fa-arrow-down fa-stack-1x'></i></div>" +
-										"<div class='delete fa-stack fa-sm'><i class='delete fa fa-trash' title='Delete this rule'></i></div>" +
+										"<div class='delete fa-stack fa-sm'><i class='delete fas fa-trash-alt' title='Delete this rule'></i></div>" +
 										"</td></tr></div>");
 					
 							}		
@@ -858,7 +858,7 @@ function showStyles(control) {
 			if (!control.classes) control.classes = [];
 			// loop array
 			for (var i in control.classes) {
-				classesTable.append("<tr><td>" + control.classes[i] + "<div class='iconsPanel'><div class='delete fa-stack fa-sm'><i class='delete fa fa-trash' title='Remove this class'></i></div></div></td></tr>");
+				classesTable.append("<tr><td>" + control.classes[i] + "<div class='iconsPanel'><div class='delete fa-stack fa-sm'><i class='delete fas fa-trash-alt' title='Remove this class'></i></div></div></td></tr>");
 			}
 			// find the delete
 			var deletes = classesTable.find("div.delete");

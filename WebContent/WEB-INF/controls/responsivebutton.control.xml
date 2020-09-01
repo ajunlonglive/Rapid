@@ -219,17 +219,68 @@ return [{value:"-lg", text:"Large"}, {value:"", text:"Default"}, {value:"-sm", t
 	            <contents>styles/fonts/fontawesome/css/font-awesome.css</contents>
 	        </resource>
 	        <resource>
+	            <type>file</type>
+	            <contents>styles/fonts/fontawesome/fonts/fa-brands-400.eot</contents>
+	        </resource>
+	        <resource>
+	            <type>file</type>
+	            <contents>styles/fonts/fontawesome/fonts/fa-brands-400.svg</contents>
+	        </resource>
+	        <resource>
+	            <type>file</type>
+	            <contents>styles/fonts/fontawesome/fonts/fa-brands-400.ttf</contents>
+	        </resource>
+	        <resource>
+	            <type>file</type>
+	            <contents>styles/fonts/fontawesome/fonts/fa-brands-400.woff</contents>
+	        </resource>
+	        <resource>
+	            <type>file</type>
+	            <contents>styles/fonts/fontawesome/fonts/fa-brands-400.woff2</contents>
+	        </resource>
+	        <resource>
+	            <type>file</type>
+	            <contents>styles/fonts/fontawesome/fonts/fa-regular-400.eot</contents>
+	        </resource>
+	        <resource>
+	            <type>file</type>
+	            <contents>styles/fonts/fontawesome/fonts/fa-regular-400.svg</contents>
+	        </resource>
+	        <resource>
+	            <type>file</type>
+	            <contents>styles/fonts/fontawesome/fonts/fa-regular-400.ttf</contents>
+	        </resource>
+	        <resource>
+	            <type>file</type>
+	            <contents>styles/fonts/fontawesome/fonts/fa-regular-400.woff</contents>
+	        </resource>
+	        <resource>
+	            <type>file</type>
+	            <contents>styles/fonts/fontawesome/fonts/fa-regular-400.woff2</contents>
+	        </resource>
+	        <resource>
+	            <type>file</type>
+	            <contents>styles/fonts/fontawesome/fonts/fa-solid-900.eot</contents>
+	        </resource>
+	        <resource>
+	            <type>file</type>
+	            <contents>styles/fonts/fontawesome/fonts/fa-solid-900.svg</contents>
+	        </resource>
+	        <resource>
+	            <type>file</type>
+	            <contents>styles/fonts/fontawesome/fonts/fa-solid-900.ttf</contents>
+	        </resource>
+	        <resource>
+	            <type>file</type>
+	            <contents>styles/fonts/fontawesome/fonts/fa-solid-900.woff</contents>
+	        </resource>
+	        <resource>
+	            <type>file</type>
+	            <contents>styles/fonts/fontawesome/fonts/fa-solid-900.woff2</contents>
+	        </resource>
+	        <resource>
 	            <type>cssFile</type>
 	            <contents>styles/fonts/rapid/font-rapid.css</contents>
-	        </resource>
-	        <!-- Some browsers choose the tff instead of the woff so both are included -->
-	        <resource>
-	            <type>file</type>
-	            <contents>styles/fonts/fontawesome/fonts/fontawesome-webfont.woff</contents>
-	        </resource>
-	        <resource>
-	            <type>file</type>
-	            <contents>styles/fonts/fontawesome/fonts/fontawesome-webfont.ttf</contents>
 	        </resource>
 	        <resource>
 	            <type>file</type>
@@ -277,24 +328,23 @@ if (this.size) classes += " btn" + this.size;
 if (this.block) classes += " btn-block";
 
 if (this.glyphCode) {
+	
+	var glyph = newGlyph(this.glyphCode);
 
-	var fontClass = "fa";
-	if (this.glyphCode == "&#xe900") fontClass = "fr";
-
-	var glyph = "<span class='" + fontClass + " buttonGlyph'>" + this.glyphCode + "</span>";
+	var glyphHtml = "<span class='" + glyph.class + " buttonGlyph'>" + glyph.html + "</span>";
 
 	if (this.glyphBackground && this.glyphBackground != "none") {
-		glyph = "<span class='fa-stack fa-lg buttonGlyphWithBackground buttonGlyph'><i class='fa fa-" + this.glyphBackground + " fa-stack-2x buttonGlyphBackground'></i><i class='" + fontClass + " fa-stack-1x'>" + this.glyphCode + "</i></span>";
+		glyphHtml = "<span class='fa-stack fa-lg buttonGlyphWithBackground buttonGlyph'><i class='fa fa-" + this.glyphBackground + " fa-stack-2x buttonGlyphBackground'></i><i class='" + glyph.class + " fa-stack-1x'>" + glyph.html + "</i></span>";
 	}
 	
 	var html = "<button type='button' class='btn'" + (this.title ? " title='" + escapeApos(this.title) + "'" : "") + ">";
-	if (this.glyphPosition == "left" || this.glyphPosition == "top") html += glyph;
+	if (this.glyphPosition == "left" || this.glyphPosition == "top") html += glyphHtml;
 	if (this.glyphPosition == "left") html += "&nbsp;";
 	if (this.glyphPosition == "top") html += "<br/>";
 	html += this.label;
 	if (this.glyphPosition == "bottom") html += "<br/>";
 	if (this.glyphPosition == "right") html += "&nbsp;";
-	if (this.glyphPosition == "right" || this.glyphPosition == "bottom") html += glyph;
+	if (this.glyphPosition == "right" || this.glyphPosition == "bottom") html += glyphHtml;
 	html += "</button>";
 } else {
 	html = "<button type='button' class='btn'" + (this.title ? " title='" + escapeApos(this.title) + "' " : "") + ">" + this.label + "</button>";

@@ -73,7 +73,7 @@ String message = (String) session.getAttribute("message");
 					<div class="columnUserInput"><input type="password" placeholder="Password" name="userPassword" autocomplete="current-password"></div>
 				</div>
 				 
-				<button type="submit"><i class="fa fa-sign-in"></i>Log in</button>
+				<button type="submit"><i class="fas fa-sign-in-alt"></i>Log in</button>
 				
 			</form>
 				
