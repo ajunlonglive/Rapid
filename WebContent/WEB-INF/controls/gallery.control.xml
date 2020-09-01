@@ -220,7 +220,7 @@ function IDBforEachObject(objectCallback, completionCallback) {
 			var cursor = requestEvent.target.result;
 			if (cursor) {
 				if (objectCallback) objectCallback(cursor.value);
-				cursor.continue();
+				cursor["continue"]();
 			}
 		};
 		transaction.oncomplete = completionCallback;
@@ -241,7 +241,7 @@ function IDBgetBestObject(criterion, callback) {
 				if (!bestObject || criterion(cursor.value, bestObject)) {
 					bestObject = cursor.value;
 				}
-				cursor.continue();
+				cursor["continue"]();
 			}
 		};
 		transaction.oncomplete = function() {
@@ -323,7 +323,7 @@ function IDBdeleteByKey(key, callback) {
 			requestEvent.target.result
 			.transaction("imageStore", "readwrite")
 			.objectStore("imageStore")
-			.delete(key)
+			["delete"](key)
 			.onsuccess = callback;
 		};
 	} else if (callback) callback();
