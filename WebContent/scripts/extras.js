@@ -1080,7 +1080,7 @@ function differenceFrom5to4(code, letter) {
 }
 
 function upgadePageFontAwesome4to5() {
-	$(".fa").each(function() {
+	$("[class^='fa'],[class*='fa-']").each(function() {
 		var control = $(this);
 		var code = control.html().charCodeAt(0).toString(16);
 		var glyph = newGlyph(code);

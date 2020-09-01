@@ -1115,6 +1115,7 @@ function Property_bigtext(cell, propertyObject, property, details) {
 	if (propertyObject[property.key]) value = propertyObject[property.key];
 	// add the visible bit
 	cell.text(value);
+	cell.css({ cursor: "pointer" });
 	
 	//track whether the property is created
 	var dialogueId;

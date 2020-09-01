@@ -201,7 +201,7 @@ $(document).ready( function() {
 	    <getHtmlFunction>
 	        <![CDATA[
 // return html for adding to our parent object      
-return "<div id='" + this.id + "' class='slidePanel'><span class='fa fa-bars'></span></div>";
+return "<div id='" + this.id + "' class='slidePanel'><span class='fas'>&#xf0c9;</span></div>";
 	        ]]>
 	    </getHtmlFunction>
 	    	    
