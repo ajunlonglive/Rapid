@@ -177,15 +177,17 @@ function getDataOptions(selectId, ignoreId, input, hasDatetime, hasClipboard) {
 					for (var i in properties) {
 						// get the property
 						var property = properties[i];
-						
-						var tooAdvanced = control.advancedProperties !== true && property.advanced === true;
-						var isSelected = key == selectId;
 						// if we want inputs and there's is a get function, or outputs and there's set javascript
-						if (((input && property.getPropertyFunction) || (!input && property.setPropertyJavaScript)) && (!tooAdvanced || isSelected)) {
+						if ((input && property.getPropertyFunction) || (!input && property.setPropertyJavaScript)) {
 							// derive the key
 							var key = control.id + "." + property.type;
+							var propertyTooAdvanced = control.advancedProperties !== true && property.advanced === true;
+							var propertyIsSelected = key === selectId;
 							// add the option
-							options += "<option value='" + key  +  "' " + (isSelected ? "selected='selected'" : "") + ">" + control.name + "." + property.name + "</option>";
+							// don't show advanced properties unless the control allows or if the advanced property is already selected
+							if (!propertyTooAdvanced || propertyIsSelected) {
+								options += "<option value='" + key  +  "' " + (propertyIsSelected ? "selected='selected'" : "") + ">" + control.name + "." + property.name + "</option>";
+							}
 						}	
 					}
 				}

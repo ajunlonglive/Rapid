@@ -147,6 +147,15 @@ return [["","No"],["scroll","Yes"],["auto","Auto"]];
 				<helpHtml>Whether the header row will not scroll with the other rows.</helpHtml>
 			</property>
 
+			<property>
+				<key>advancedProperties</key>
+				<name>Advanced properties</name>
+				<setConstructValueFunction>return false;</setConstructValueFunction>
+				<changeValueJavaScript>checkbox</changeValueJavaScript>
+				<refreshHtml>true</refreshHtml>
+				<helpHtml>Whether to show advanced properties to actions.</helpHtml>
+			</property>
+
 		</properties>
 
 		<resources>
@@ -1870,6 +1879,7 @@ if (gridData && gridData.selectedRowNumber && gridData.selectedRowNumber > 0) {
 			<runtimeProperty>
 				<type>selectedRowValidation</type>
 				<name>Selected row validation</name>
+				<advanced>true</advanced>
 				<getPropertyFunction>
 			        <![CDATA[
 if (details && details.dataStorageType) {
@@ -1984,6 +1994,7 @@ saveGridDataStoreData(id, details, gridData);
 			<runtimeProperty>
 				<type>rowCount</type>
 				<name>Row count</name>
+				<advanced>true</advanced>
 				<getPropertyFunction>
 			        <![CDATA[
 // check if the grid is loading			        
