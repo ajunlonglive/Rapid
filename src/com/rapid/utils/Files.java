@@ -364,17 +364,37 @@ public class Files {
 								// log
 								_logger.debug("Watcher event for " + fileName);
 
-								// get from file
-								File fromFile = new File(_from + "/" + fileName);
-
 								// get to file
 								File toFile = new File(_to + "/" + fileName);
 
-								// copy the from file to the to file
-								Files.copyFile(fromFile, toFile);
+								// check file exists
+								if (toFile.exists()) {
 
-								// delete the from file if set to
-								if (_delete) Files.deleteRecurring(fromFile);
+									_logger.debug("Watcher will not copy " + fileName + " as it exists already");
+
+								} else {
+
+									// get from file
+									File fromFile = new File(_from + "/" + fileName);
+
+									// copy the from file to the to file
+									Files.copyFile(fromFile, toFile);
+
+									// log
+									_logger.debug("Watcher copied " + fromFile + " to " + toFile);
+
+									// if deleting (this is the default)
+									if (_delete) {
+
+										// delete the file
+										Files.deleteRecurring(fromFile);
+
+										// log
+										_logger.debug("Watcherd deleted " + fromFile);
+
+									}
+
+								}
 
 							}
 
