@@ -571,7 +571,7 @@ function getAvailableCameras() {
 			});
 		
 		})
-		["catch"](function(err){
+		.catch(function(err){
 			
 			console.log(err.name + ": " + err.message);
 			
@@ -608,7 +608,7 @@ var _mobileCamera = {
 			navigator.mediaDevices.getUserMedia({ audio: _includeAudio, video: {facingMode: _currentFacingMode} })
 			.then(function(stream) {
 				_cameraPlayer.srcObject = stream;
-			})["catch"](function() {});
+			}).catch(function() {});
 		}
 	},
 	permissionDenied: function(alternative) {
@@ -680,7 +680,7 @@ var _mobileRemote = {
 			});
 			_mobileRemote.stream = stream;
 			
-		})["catch"](function() {});
+		}).catch(function() {});
 	},
 	permissionDenied: function() {},
 	ifAvailable: function(todo) {
@@ -921,7 +921,7 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 			// Get all the available cameras into global array
 			getAvailableCameras();
 		})
-		["catch"](function(err) {
+		.catch(function(err) {
 			// Close the preview
 			$("#cameraVideoContainer").remove();
 			// Handle the error
