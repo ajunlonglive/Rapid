@@ -139,7 +139,6 @@ span.listSelectedCount {
 
 span.listSlider {
 	float: right;
-	font-family: FontAwesome;
 } 
 	                ]]>
 	            </contents>
@@ -187,9 +186,9 @@ if (this.header || this.slide) {
 	if (!headerText) headerText = "Header text";
 	if (this.slide && selectedCount > 0) {
 		headerText = headerText.substr(0, headerText.length - 2);
-		options = "<span class='listSelectedCount'>" + selectedCount + "</span><span class='listSlider'>&#xf078;</span><li class='listHeader" + (this.slide ? "" : " listVisible") + "'>" + headerText + "</li>" + options;
+		options = "<span class='listSelectedCount'>" + selectedCount + "</span><span class='fas listSlider'>&#xf078;</span><li class='listHeader" + (this.slide ? "" : " listVisible") + "'>" + headerText + "</li>" + options;
 	} else {
-		options = "<span class='listSelectedCount' style='display:none;'></span><span class='listSlider'>&#xf078;</span><li class='listHeader" + (this.slide ? "" : " listVisible") + "'>" + headerText + "</li>" + options;
+		options = "<span class='listSelectedCount' style='display:none;'></span><span class='fas listSlider'>&#xf078;</span><li class='listHeader" + (this.slide ? "" : " listVisible") + "'>" + headerText + "</li>" + options;
 	}
 }
 // place into the list

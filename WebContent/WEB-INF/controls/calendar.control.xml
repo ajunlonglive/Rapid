@@ -149,10 +149,10 @@ if (details) {
 }
 
 var html = '<div class="calendarHeader">';
-html += '<span class="calendarBack calendarMonthChange" href="#" title="Back one month" onclick="calendarMove(this,\'m\',-1);">&#xf104;</span>';
-if (this.showYearChange) html += '<span class="calendarBack calendarYearChange" href="#" title="Back one year" onclick="calendarMove(this,\'y\',-1);">&#xf100;</span>';				
-html += '<span class="calendarForward calendarMonthChange" href="#" title="Forward one month" onclick="calendarMove(this,\'m\',1);">&#xf105;</span>';
-if (this.showYearChange) html += '<span class="calendarForward calendarYearChange" href="#" title="Forward one year" onclick="calendarMove(this,\'y\',1);">&#xf101;</span>';			
+html += '<span class="fas calendarBack calendarMonthChange" href="#" title="Back one month" onclick="calendarMove(this,\'m\',-1);">&#xf104;</span>';
+if (this.showYearChange) html += '<span class="fas calendarBack calendarYearChange" href="#" title="Back one year" onclick="calendarMove(this,\'y\',-1);">&#xf100;</span>';				
+html += '<span class="fas calendarForward calendarMonthChange" href="#" title="Forward one month" onclick="calendarMove(this,\'m\',1);">&#xf105;</span>';
+if (this.showYearChange) html += '<span class="fas calendarForward calendarYearChange" href="#" title="Forward one year" onclick="calendarMove(this,\'y\',1);">&#xf101;</span>';			
 html += '<div class="calendarLabel"></div>';
 html += '</div><table class="calendarTable"><thead><tr>';
 for (var i = 0; i < 7; i++) {

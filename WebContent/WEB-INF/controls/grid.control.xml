@@ -189,7 +189,6 @@ table.grid td {
 }     
 
 table.grid span.sort {
-	font-family: FontAwesome;
 	margin-left: 5px;
 }
 
@@ -602,7 +601,7 @@ if (this.columns.length > 0) {
 		var column = this.columns[i];
 		if (column.visible) {
 			headerHtml += "<td" + (column.titleStyle ? " style='" + escapeApos(column.titleStyle) + "'" : "") + ">" + column.title;
-			if (column.sort) headerHtml += "<span class='sort'>&#xf0dc;</span>";
+			if (column.sort) headerHtml += "<span class='fas sort'>&#xf0dc;</span>";
 			headerHtml += "</td>";
 			if (i % 2 == 1) {
 			 	rowHtml += "<td " + (column.fieldStyle ? " style='" + escapeApos(column.fieldStyle) + "'" : "") + ">123.00</td>"

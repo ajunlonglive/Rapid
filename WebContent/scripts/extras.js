@@ -1084,9 +1084,12 @@ function upgadePageFontAwesome4to5() {
 		var control = $(this);
 		var code = control.html().charCodeAt(0).toString(16);
 		var glyph = newGlyph(code);
-		control.removeClass("fa");
-		control.addClass(glyph.class);
-		control.html(glyph.html);
+		control.removeClass("fa")
+			.removeClass("fas")
+			.removeClass("far")
+			.removeClass("fab")
+			.addClass(glyph.class)
+			.html(glyph.html);
 	});
 }
 
@@ -1097,9 +1100,9 @@ function downgadePageFontAwesome5to4() {
 			var code = control.html().charCodeAt(0).toString(16);
 			var oldCode = differenceFrom5to4(code, letter);
 			if (oldCode) {
-				control.removeClass("fa" + letter);
-				control.addClass("fa");
-				control.html("&#x" + oldCode + ";");
+				control.removeClass("fa" + letter)
+					.addClass("fa")
+					.html("&#x" + oldCode + ";");
 			}
 		});
 	};

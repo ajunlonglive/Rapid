@@ -100,10 +100,13 @@ hr {
 
 .hideScrollbars #controlPanelPin {
 	right: 3px !important;
+	background-color: #49494900;
+	transition: transform 0.2s, background-color 0.2s;
 }
 
 #controlPanelPin:hover {
-	background-color: #494949;
+	background-color: #494949ff;
+	transform: scale(1.2);
 }
 
 #controlPanel {
@@ -372,6 +375,13 @@ img.conflictimgage {
 	margin-top: 1px
 }
 
+.design-map span.actionCount {
+	display: inline;
+	float: right;
+	padding: 0 4px;
+	opacity: 0.4
+}
+
 .design-map span.selected {
 	background-color: #ccc;
 }
@@ -508,10 +518,13 @@ div#propertiesPanelInner {
  	background-image: url("../images/close.light.svg");
  	background-repeat: no-repeat;
  	background-position: left 0px center;
+	background-color: #49494900;
+	transition: transform 0.2s, background-color 0.2s;
 }
 
 #propertiesPanelPin:hover {
-	background-color: #494949;
+	background-color: #494949ff;
+	transform: scale(1.2);
 }
 
 div#propertiesPanel h2 {
@@ -1140,7 +1153,7 @@ select optgroup {
 }
 
 .untilsPanelDiv i.delete{
-	    margin-top: 2px;
+	margin-top: 3px;
 }
 
 .dialogueGrid {
