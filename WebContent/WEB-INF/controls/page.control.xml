@@ -190,6 +190,7 @@ return [[0,"Normal"],[1,"Submission confirmation"],[2,"Submission error"],[3,"Sa
 	        <resource>
 	            <type>javascriptFile</type>
 	            <contents>scripts/extras.js</contents>
+	            <replaceMinIfDifferent>true</replaceMinIfDifferent>
 	        </resource>
 	        <resource>
 	            <type>javascriptFile</type>
@@ -210,6 +211,10 @@ function Event_error(eventName, controlId, ex) {
 var _pwa = true;
 
 if ('serviceWorker' in navigator) {
+	navigator.serviceWorker.addEventListener('message', function(event) {
+		debugger;
+		if (event.data.newAppInstalled && confirm("Refresh to install?")) navigator.refresh();
+	});
 	console.log('CLIENT: service worker registration in progress.');
 	navigator.serviceWorker.register('sw.js')
 	.then(function(registration) {
