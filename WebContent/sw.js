@@ -138,8 +138,10 @@ self.addEventListener("fetch", function(event) {
 		if (method === "GET") {
 			
 			event.respondWith(new Promise(resolve =>
-				fetch(_contextPath + url)
-				.then(resolve)
+				fetchOrReject(_contextPath + url, { redirect: "manual" })
+				.then(function(response) {
+					resolve(response);
+				})
 				.catch(_ => resolve(
 					caches.open(_swVersion + 'offline')
 					.then(cache => cache.match("offline.htm"))
@@ -523,8 +525,8 @@ function removeAppResourcesByKeys(resources) {
 
 function fetchOrReject(url, options) {
 	return new Promise((resolve, reject) => {
-		fetch(_contextPath + url, options).then(freshResponse => {
-			if (freshResponse && (freshResponse.ok || freshResponse.type === "opaqueredirect")) {
+		fetch(url, options).then(freshResponse => {
+			if (freshResponse && (freshResponse.ok || freshResponse.type === "opaqueredirect" || freshResponse.type === "basic")) {
 				resolve(freshResponse);
 			} else {
 				reject("Fetch failed for: " + url);
