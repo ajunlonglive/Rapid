@@ -136,6 +136,9 @@ var _styleClassesHidden = false;
 // scroll bar width
 var _scrollBarWidth = 0;
 
+// for admin refreshes
+var _stayOnAppPage;
+
 function newClipboard(storage, key) {
 	var cacheJSON;
 	var cacheData;
@@ -1586,6 +1589,8 @@ function loadPages(selectedPageId, forceLoad, fromSave) {
         	}        	
         	// put the options into the dropdown and ebable
         	$("#pageSelect").html(options);
+			if (_stayOnAppPage) $("#pageSelect").val(_stayOnAppPage);
+			_stayOnAppPage = undefined;
         	// enabled all dropdowns
 			$("select").enable();
         	// check we got some pages
@@ -4653,38 +4658,45 @@ window.addEventListener("storage", function(storageEvent) {
 			break;
 		case "controlsSaved":
 			if (!_dirty && broadcast.a === _version.id && broadcast.v === _version.version) {
+				_stayOnAppPage = $("#pageSelect").val();
 				$(appSelect).change();
 				break;
 			}
 		case "actionsSaved":
 			if (!_dirty && broadcast.a === _version.id && broadcast.v === _version.version) {
+				_stayOnAppPage = $("#pageSelect").val();
 				$(appSelect).change();
 				break;
 			}
 		case "databaseConnectionSaved":
 			if (!_dirty && broadcast.a === _version.id && broadcast.v === _version.version) {
+				_stayOnAppPage = $("#pageSelect").val();
 				$(appSelect).change();
 				break;
 			}
 		case "applicationNewVersion":
 			if (!_dirty && broadcast.a === _version.id) {
+				_stayOnAppPage = $("#pageSelect").val();
 				$(appSelect).change();
 				break;
 			}
 		case "applicationDeletedVersion":
 			if (!_dirty && broadcast.a === _version.id) {
+				_stayOnAppPage = $("#pageSelect").val();
 				$(appSelect).change();
 				break;
 			}
 		case "applicationImportedVersion":
 			if (!_dirty && broadcast.a === _version.id) {
 				setTimeout(function() {
+					_stayOnAppPage = $("#pageSelect").val();
 					$(appSelect).change();
 				}, 3000);
 				break;
 			}
 		case "applicationStyleSaved":
 			if (!_dirty && broadcast.a === _version.id && broadcast.v === _version.version) {
+				_stayOnAppPage = $("#pageSelect").val();
 				$(appSelect).change();
 			}
 			break;
