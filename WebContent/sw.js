@@ -12,7 +12,7 @@ var _rapidpwa = {
 /* A version number is useful when updating the worker logic,
 	 allowing you to remove outdated cache entries during the update.
 */
-var _swVersion = 'v1.2';
+var _swVersion = 'v1.3';
 
 /* These resources will be downloaded and cached by the service worker
 	 during the installation process. If any resource fails to be downloaded,
@@ -53,14 +53,26 @@ var _rapidResources = [
 	"styles/designlinks.css",
 	"styles/index.css",
 	"styles/fonts/fontawesome/css/font-awesome.css",
+	"styles/fonts/fontawesome/fonts/fa-brands-400.eot",
+	"styles/fonts/fontawesome/fonts/fa-brands-400.svg",
+	"styles/fonts/fontawesome/fonts/fa-brands-400.ttf",
+	"styles/fonts/fontawesome/fonts/fa-brands-400.woff",
+	"styles/fonts/fontawesome/fonts/fa-brands-400.woff2",
+	"styles/fonts/fontawesome/fonts/fa-regular-400.eot",
+	"styles/fonts/fontawesome/fonts/fa-regular-400.svg",
+	"styles/fonts/fontawesome/fonts/fa-regular-400.ttf",
+	"styles/fonts/fontawesome/fonts/fa-regular-400.woff",
+	"styles/fonts/fontawesome/fonts/fa-regular-400.woff2",
+	"styles/fonts/fontawesome/fonts/fa-solid-900.eot",
+	"styles/fonts/fontawesome/fonts/fa-solid-900.svg",
+	"styles/fonts/fontawesome/fonts/fa-solid-900.ttf",
+	"styles/fonts/fontawesome/fonts/fa-solid-900.woff",
+	"styles/fonts/fontawesome/fonts/fa-solid-900.woff2",
+	"styles/fonts/fontawesome/fonts/FontAwesome.otf",
+	"styles/fonts/fontawesome/fonts/fontawesome-webfont.eot",
+	"styles/fonts/fontawesome/fonts/fontawesome-webfont.svg",
+	"styles/fonts/fontawesome/fonts/fontawesome-webfont.ttf",
 	"styles/fonts/fontawesome/fonts/fontawesome-webfont.woff",
-	"styles/fonts/fontawesome/fonts/fontawesome-webfont.ttf?v=4.2.0",
-	"styles/fonts/OpenSans-Regular.woff",
-	"styles/fonts/OpenSans-Regular.woff2",
-	"styles/fonts/rapid/font-rapid.css",
-	"styles_min/fonts/fontawesome/css/font-awesome.min.css",
-	"styles_min/fonts/fontawesome/fonts/fontawesome-webfont.woff?v=4.2.0",
-	"styles_min/fonts/fontawesome/fonts/fontawesome-webfont.ttf?v=4.2.0",
 	"styles_min/fonts/rapid/font-rapid.min.css",
 	"index.jsp",
 	"~?action=getApps"
