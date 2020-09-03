@@ -1080,16 +1080,19 @@ function differenceFrom5to4(code, letter) {
 }
 
 function upgadePageFontAwesome4to5() {
-	$("[class^='fa'],[class*='fa-']").each(function() {
+	$("[class^='fa']:not([class^='fa-'], .fas, .far, .fab)").each(function() {
 		var control = $(this);
 		var code = control.html().charCodeAt(0).toString(16);
 		var glyph = newGlyph(code);
 		control.removeClass("fa")
-			.removeClass("fas")
-			.removeClass("far")
-			.removeClass("fab")
 			.addClass(glyph.class)
 			.html(glyph.html);
+	});
+	$("[class*='fa-']:not(.fa").each(function() {
+		var control = $(this);
+		var code = control.html().charCodeAt(0).toString(16);
+		var glyph = newGlyph(code);
+		control.html(glyph.html);
 	});
 }
 
