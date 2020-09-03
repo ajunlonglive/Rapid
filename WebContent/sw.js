@@ -436,10 +436,10 @@ self.addEventListener("install", function(event) {
 	
 	// Using event.waitUntil(p) blocks the installation process on the provided promise. If the promise is rejected, the service worker won't be installed.
 	event.waitUntil(
-		 updateCache(_rapidResources)
-		 .then(function() {
-			 console.debug('WORKER: install completed');
-		 })
+		updateCache(_rapidResources)
+		.then(function() {
+			console.debug('WORKER: install completed');
+		})
 	);
 });
 
