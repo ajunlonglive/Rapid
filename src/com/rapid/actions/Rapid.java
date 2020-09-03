@@ -45,6 +45,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -102,6 +104,9 @@ public class Rapid extends Action {
 	// private static finals
 	private static final String TEST_EMAIL_TO = "test@dev.rapid-is.co.uk";
 	private static final String TEST_EMAIL_FROM = "test@dev.rapid-is.co.uk";
+
+	// static variables
+	private static Logger _logger = LogManager.getLogger(Rapid.class);
 
 	// instance variables
 
@@ -1848,10 +1853,25 @@ public class Rapid extends Action {
 
 						// get whether user has the rapid master, or app admin role
 						boolean appAdmin = rapidMaster || security.checkUserRole(rapidActionRequest, com.rapid.server.Rapid.ADMIN_ROLE);
-						// get whether user has the app users role
-						boolean appUsers = security.checkUserRole(rapidActionRequest, com.rapid.server.Rapid.USERS_ROLE);
-						// get whether user has the app design role
-						boolean appDesign = security.checkUserRole(rapidActionRequest, com.rapid.server.Rapid.DESIGN_ROLE);
+
+						// assume the user does not have the app users role
+						boolean appUsers = false;
+						// assume the user does not have the app designers role
+						boolean appDesign = false;
+
+						try {
+
+							// get whether user has the app users role
+							appUsers = security.checkUserRole(rapidActionRequest, com.rapid.server.Rapid.USERS_ROLE);
+							// get whether user has the app design role
+							appDesign = security.checkUserRole(rapidActionRequest, com.rapid.server.Rapid.DESIGN_ROLE);
+
+						} catch (SecurityAdapaterException ex) {
+
+							// log
+							_logger.error("Error checking users and design roles", ex);
+
+						}
 
 						// check user app admin role
 						if (appAdmin) {
