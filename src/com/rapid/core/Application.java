@@ -1803,7 +1803,7 @@ public class Application {
 				if (_functions.length() > 0) {
 					// header (this is removed by minify)
 					ps.print("\n\n/* Application functions JavaScript */\n\n");
-					// escape js reserved words 
+					// escape js reserved words
 					String jsEscaped = escapeJSreservedWords(_functions);
 					// insert params
 					String functionsParamsInserted = insertParameters(servletContext, jsEscaped);
@@ -1817,7 +1817,7 @@ public class Application {
 			if (resourceJS.length() > 0) {
 				// header
 				ps.print("\n\n/* Control and Action resource JavaScript */\n\n");
-				// escape js reserved words 
+				// escape js reserved words
 				String jsEscaped = escapeJSreservedWords(resourceJS.toString());
 				// insert params
 				String resourceJSParamsInserted = insertParameters(servletContext, jsEscaped);
@@ -1830,7 +1830,7 @@ public class Application {
 			if (initJS.length() > 0) {
 				// header
 				ps.print("\n\n/* Control initialisation methods */\n\n");
-				// escape js reserved words 
+				// escape js reserved words
 				String jsEscaped = escapeJSreservedWords(initJS.toString());
 				// insert params
 				String initJSParamsInserted = insertParameters(servletContext, jsEscaped);
@@ -1843,7 +1843,7 @@ public class Application {
 			if (dataJS.length() > 0) {
 				// header
 				ps.print("\n\n/* Control getData and setData methods */\n\n");
-				// escape js reserved words 
+				// escape js reserved words
 				String jsEscaped = escapeJSreservedWords(dataJS.toString());
 				// insert params
 				String dataJSParamsInserted = insertParameters(servletContext, jsEscaped);
@@ -1856,7 +1856,7 @@ public class Application {
 			if (actionJS.length() > 0) {
 				// header
 				ps.print("\n\n/* Action methods */\n\n");
-				// escape js reserved words 
+				// escape js reserved words
 				String jsEscaped = escapeJSreservedWords(actionJS.toString());
 				// insert params
 				String actionParamsInserted = insertParameters(servletContext, jsEscaped);
@@ -2712,8 +2712,8 @@ public class Application {
 	}
 
 	// an overload for the above which will include the for export rather than offlineUse files
-	public void zip(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, User user, String fileName) throws JAXBException, IOException, JSONException, RapidLoadingException {
-		zip(rapidServlet, rapidRequest, user, fileName, false);
+	public File zip(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, User user, String fileName) throws JAXBException, IOException, JSONException, RapidLoadingException {
+		return zip(rapidServlet, rapidRequest, user, fileName, false);
 	}
 
 	// close the database connections and form adapters before reload
@@ -2869,12 +2869,12 @@ public class Application {
 		}
 
 	}
-	
+
 	public static String escapeJSreservedWords(String js) {
 		return js.replaceAll("\\.catch\\(", "[\"catch\"]\\(")
 				.replaceAll("\\.continue\\(", "[\"continue\"]\\(")
 				.replaceAll("\\.delete\\(", "[\"delete\"]\\(");
-		
+
 	}
 
 }

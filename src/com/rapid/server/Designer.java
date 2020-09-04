@@ -1448,20 +1448,17 @@ public class Designer extends RapidHttpServlet {
 							// check we've got one
 							if (application != null) {
 
-								// create the zip file
-								application.zip(this, rapidRequest, rapidUser, application.getId() + ".zip");
+								// the file name is the app id, an under score and then an underscore-safe version
+								String fileName = application.getId() + "_" + application.getVersion().replace("_", "-") + ".zip";
+
+								// get the file for the zip we're about to create
+								File zipFile = application.zip(this, rapidRequest, rapidUser, fileName);
 
 								// set the type as a .zip
 								response.setContentType("application/x-zip-compressed");
 
-								// the file name is the app id, an under score and then an underscore-safe version
-								String fileName = application.getId() + "_" + application.getVersion().replace("_", "-");
-
 								// Shows the download dialog
-								response.setHeader("Content-disposition","attachment; filename=" + fileName + ".zip");
-
-								// get the file for the zip we're about to create
-								File zipFile = new File(getServletContext().getRealPath("/") + "/WEB-INF/temp/" + fileName + ".zip");
+								response.setHeader("Content-disposition","attachment; filename=" + fileName);
 
 								// send the file to browser
 								OutputStream out = response.getOutputStream();
