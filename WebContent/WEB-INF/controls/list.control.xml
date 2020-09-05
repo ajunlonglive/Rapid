@@ -139,6 +139,7 @@ span.listSelectedCount {
 
 span.listSlider {
 	float: right;
+	font-family: FontAwesome-solid;
 } 
 	                ]]>
 	            </contents>

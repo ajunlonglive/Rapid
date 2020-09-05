@@ -189,6 +189,7 @@ table.grid td {
 }     
 
 table.grid span.sort {
+	font-family: FontAwesome-solid;
 	margin-left: 5px;
 }
 
