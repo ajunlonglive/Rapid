@@ -1939,10 +1939,10 @@ public class Application {
 
 									// read the existing un-minified file
 									String jsOld = Strings.getString(jsFile);
-									
+
 									// replace any use of ex-js reserved words as members with indexing syntax
 									String jsEscaped = makeJsReservedWordsMinifiable(jsOld);
-									
+
 									// get a writer that we're going to minify into
 									StringWriter swr = new StringWriter();
 
@@ -2870,18 +2870,20 @@ public class Application {
 		}
 
 	}
-	
+
 	public static String[] jsReservedWords = {"catch", "finally", "continue", "delete", "class", "function", "get", "set"};
-	
+
 	// the Yahoo minifier expects all uses of jsReservedWords to be javascript key words, while they can be used as property/method names in newer browsers.
 	// usage of these words as property/method names prevent the minifier from working.
-	// solution: replace all with record-indexing syntax
+	// solution: replace all with record-indexing syntax before minifying
 	public static String makeJsReservedWordsMinifiable(String js) {
 		for (String word : jsReservedWords) {
 			js = js.replaceAll("\\." + word + "\\(", "[\"" + word + "\"]\\(")
 					.replaceAll("\\." + word + " ", "[\"" + word + "\"] ")
 					.replaceAll("\\." + word + "\\)", "[\"" + word + "\"]\\)")
-					.replaceAll(word + ":", "\"" + word + "\":");
+					.replaceAll("\\{" + word + ":", "\\{\"" + word + "\":")
+					.replaceAll(" " + word + ":", " \"" + word + "\":")
+					.replaceAll("," + word + ":", ",\"" + word + "\":");
 		}
 		return js;
 	}
