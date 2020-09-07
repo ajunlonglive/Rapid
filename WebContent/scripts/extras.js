@@ -1133,7 +1133,7 @@ function newGlyph(code, control) {
 		
 		if (code === "e900") { // rapid glyph
 			return {
-				code,
+				code: code,
 				letter: "",
 				html: "&#x" + code + ";",
 				class: "fr",
@@ -1148,7 +1148,7 @@ function newGlyph(code, control) {
 				var letter = parts[0];
 				return {
 					code: parts[1],
-					letter,
+					letter: letter,
 					html: "&#x" + parts[1] + ";",
 					class: "fa" + letter,
 					toString: function() {
@@ -1173,8 +1173,8 @@ function newGlyph(code, control) {
 					}
 				}
 				return {
-					code,
-					letter,
+					code: code,
+					letter: letter,
 					html: "&#x" + code + ";",
 					class: "fa" + letter,
 					toString: function() {
