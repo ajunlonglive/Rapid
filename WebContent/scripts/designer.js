@@ -139,6 +139,9 @@ var _scrollBarWidth = 0;
 // for admin refreshes
 var _stayOnAppPage;
 
+// for admin refreshes
+var _stayOnAppPage;
+
 function newClipboard(storage, key) {
 	var cacheJSON;
 	var cacheData;
@@ -1586,7 +1589,9 @@ function loadPages(selectedPageId, forceLoad, fromSave) {
         		options += "<option value='" + page.id + "' " + selected + ">" + page.name + " - " + page.title + "</option>";
         		// check the next pageId
         		if (parseInt(page.id.substring(1)) >= _nextPageId) _nextPageId = parseInt(page.id.substring(1)) + 1; 
-        	}        	
+        	}
+			if (_stayOnAppPage) $("#pageSelect").val(_stayOnAppPage);
+			_stayOnAppPage = undefined;
         	// put the options into the dropdown and ebable
         	$("#pageSelect").html(options);
 			if (_stayOnAppPage) $("#pageSelect").val(_stayOnAppPage);
