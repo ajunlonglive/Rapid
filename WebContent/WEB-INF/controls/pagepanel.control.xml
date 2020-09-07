@@ -362,7 +362,7 @@ if (details.simple === undefined || !details.simple) {
 	           	// add script into the page (if applicable)
 	           	if (script) $("#" + id).append(script);
 	           	// deal with any font awesome compatibility problems
-	           	convertBetweenFontAwesome4and5();
+	           	upgadePageFontAwesome4to5();
 	           	// fire the window resize event
 	           	$(window).resize();
 	    	}

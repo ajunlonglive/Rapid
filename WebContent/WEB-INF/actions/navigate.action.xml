@@ -378,7 +378,7 @@ function Action_navigate(url, dialogue, id, popup, dismissibleDialogue) {
 		           	// add any scripts into the page (if applicable)
 		           	if (script) dialogue.append(script);
 					
-					convertBetweenFontAwesome4and5();
+					upgadePageFontAwesome4to5();
 		           	
 		           	// handle textareas with maxlength attribute
 					dialogue.find('textarea[maxlength]').each( textarea_maxlength );

@@ -1056,28 +1056,6 @@ function differenceFrom4to5(code) {
 	return _fontAwesome4to5[code];
 }
 
-function differenceFrom5to4(code, letter) {
-	for (var i = 0; i < _fontAwesome4to5.length; i++) {
-		var map4to5 = _fontAwesome4to5[i];
-		var map5 = map4to5.split(".");
-		var map5Letter = "s";
-		var map5Code;
-		if (map5.length === 2) {
-			map5Code = map5[1];
-			map5Letter = map5[0];
-		} else {
-			var dif = map5[0];
-			if (dif.length > 1) {
-				map5Code = dif;
-			} else {
-				map5Code = i;
-				map5Letter = dif;
-			}
-		}
-		if (code == map5Code && letter == map5Letter) return i;
-	}
-}
-
 function upgadePageFontAwesome4to5() {
 	$("[class*='fa']:not([class*='fa-'], .fas, .far, .fab)").each(function() {
 		var control = $(this);
@@ -1097,32 +1075,7 @@ function upgadePageFontAwesome4to5() {
 	});
 }
 
-function downgadePageFontAwesome5to4() {
-	var downgade = function(letter) {
-		$(".fa" + letter).each(function() {
-			var control = $(this);
-			var code = control.html().charCodeAt(0).toString(16);
-			var oldCode = differenceFrom5to4(code, letter);
-			if (oldCode) {
-				control.removeClass("fa" + letter)
-					.addClass("fa")
-					.html("&#x" + oldCode + ";");
-			}
-		});
-	};
-	downgade("s");
-	downgade("r");
-	downgade("b");
-}
-
-function convertBetweenFontAwesome4and5() {
-	// this is being called by dialogue navigate action
-	// app built with fa 4 on platform with fa 5: upgadePageFontAwesome4to5
-	// app built with fa 5 on platform with fa 4: downgadePageFontAwesome5to4
-	upgadePageFontAwesome4to5();
-}
-
-$(convertBetweenFontAwesome4and5);
+$(upgadePageFontAwesome4to5);
 
 function newGlyph(code, control) {
 	
