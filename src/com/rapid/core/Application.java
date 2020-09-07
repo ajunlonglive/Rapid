@@ -1804,7 +1804,7 @@ public class Application {
 					// header (this is removed by minify)
 					ps.print("\n\n/* Application functions JavaScript */\n\n");
 					// escape js reserved words
-					String jsEscaped = escapeJSreservedWords(_functions);
+					String jsEscaped = makeJsReservedWordsMinifiable(_functions);
 					// insert params
 					String functionsParamsInserted = insertParameters(servletContext, jsEscaped);
 					// print
@@ -1818,7 +1818,7 @@ public class Application {
 				// header
 				ps.print("\n\n/* Control and Action resource JavaScript */\n\n");
 				// escape js reserved words
-				String jsEscaped = escapeJSreservedWords(resourceJS.toString());
+				String jsEscaped = makeJsReservedWordsMinifiable(resourceJS.toString());
 				// insert params
 				String resourceJSParamsInserted = insertParameters(servletContext, jsEscaped);
 				// print
@@ -1831,7 +1831,7 @@ public class Application {
 				// header
 				ps.print("\n\n/* Control initialisation methods */\n\n");
 				// escape js reserved words
-				String jsEscaped = escapeJSreservedWords(initJS.toString());
+				String jsEscaped = makeJsReservedWordsMinifiable(initJS.toString());
 				// insert params
 				String initJSParamsInserted = insertParameters(servletContext, jsEscaped);
 				// print
@@ -1844,7 +1844,7 @@ public class Application {
 				// header
 				ps.print("\n\n/* Control getData and setData methods */\n\n");
 				// escape js reserved words
-				String jsEscaped = escapeJSreservedWords(dataJS.toString());
+				String jsEscaped = makeJsReservedWordsMinifiable(dataJS.toString());
 				// insert params
 				String dataJSParamsInserted = insertParameters(servletContext, jsEscaped);
 				// print
@@ -1857,7 +1857,7 @@ public class Application {
 				// header
 				ps.print("\n\n/* Action methods */\n\n");
 				// escape js reserved words
-				String jsEscaped = escapeJSreservedWords(actionJS.toString());
+				String jsEscaped = makeJsReservedWordsMinifiable(actionJS.toString());
 				// insert params
 				String actionParamsInserted = insertParameters(servletContext, jsEscaped);
 				// print
@@ -1939,12 +1939,15 @@ public class Application {
 
 									// read the existing un-minified file
 									String jsOld = Strings.getString(jsFile);
-
+									
+									// replace any use of ex-js reserved words as members with indexing syntax
+									String jsEscaped = makeJsReservedWordsMinifiable(jsOld);
+									
 									// get a writer that we're going to minify into
 									StringWriter swr = new StringWriter();
 
 									// minify the raw old js into the writer
-									Minify.toWriter(jsOld, swr, Minify.JAVASCRIPT, "JavaScript file " + fileName);
+									Minify.toWriter(jsEscaped, swr, Minify.JAVASCRIPT, "JavaScript file " + fileName);
 
 									// get the new minified js into a string
 									String jsNew = swr.toString();
@@ -2854,11 +2857,9 @@ public class Application {
 			_logger.info("Loaded application " + application.getName() + "/" + application.getVersion() + (initialise ? "" : " (no initialisation)"));
 
 			// this can be memory intensive so garbage collect
-			if(appDocument != null){
-				appDocument = null;
-	            System.runFinalization();
-	            System.gc();
-	        }
+			appDocument = null;
+			System.runFinalization();
+			System.gc();
 
 			return application;
 
@@ -2869,12 +2870,19 @@ public class Application {
 		}
 
 	}
-
-	public static String escapeJSreservedWords(String js) {
-		return js.replaceAll("\\.catch\\(", "[\"catch\"]\\(")
-				.replaceAll("\\.continue\\(", "[\"continue\"]\\(")
-				.replaceAll("\\.delete\\(", "[\"delete\"]\\(");
-
+	
+	public static String[] jsReservedWords = {"catch", "finally", "continue", "delete", "class", "function", "get", "set"};
+	
+	// the Yahoo minifier expects all uses of jsReservedWords to be javascript key words, while they can be used as property/method names in newer browsers.
+	// usage of these words as property/method names prevent the minifier from working.
+	// solution: replace all with record-indexing syntax
+	public static String makeJsReservedWordsMinifiable(String js) {
+		for (String word : jsReservedWords) {
+			js = js.replaceAll("\\." + word + "\\(", "[\"" + word + "\"]\\(")
+					.replaceAll("\\." + word + " ", "[\"" + word + "\"] ")
+					.replaceAll("\\." + word + "\\)", "[\"" + word + "\"]\\)")
+					.replaceAll(word + ":", "\"" + word + "\":");
+		}
+		return js;
 	}
-
 }
