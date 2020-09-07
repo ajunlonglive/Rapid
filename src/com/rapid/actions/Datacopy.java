@@ -163,90 +163,94 @@ public class Datacopy extends Action {
 
 						// remember this one
 						lastGetDataFunction = getDataFunction;
-
-						// split if by escaped .
-						String idParts[] = destinationId.split("\\.");
-						// if there is more than 1 part we are dealing with set properties, for now just update the destintation id
-						if (idParts.length > 1) destinationId = idParts[0];
-
-						// first try and look for the control in the page
-						Control destinationControl = page.getControl(destinationId);
-						// assume we found it
-						boolean pageControl = true;
-						// check we got a control
-						if (destinationControl == null) {
-							// now look for the control in the application
-							destinationControl = application.getControl(rapidServlet.getServletContext(), destinationId);
-							// set page control to false
-							pageControl = false;
-						}
-
-						// check we got one from either location
-						if (destinationControl == null) {
-
-							// data copies not found return a comment
-							js += "// data destination not found for " + destinationId + "\n";
-
+						
+						if ("System.clipboard".equals(destinationId)) {
+							// do the data copy
+							js += "Action_datacopy(ev, data, [{id:'" + destinationId + "'}]);\n";
 						} else {
+							// split if by escaped .
+							String idParts[] = destinationId.split("\\.");
+							// if there is more than 1 part we are dealing with set properties, for now just update the destintation id
+							if (idParts.length > 1) destinationId = idParts[0];
+							// first try and look for the control in the page
+							Control destinationControl = page.getControl(destinationId);
+							// assume we found it
+							boolean pageControl = true;
+							// check we got a control
+							if (destinationControl == null) {
+								// now look for the control in the application
+								destinationControl = application.getControl(rapidServlet.getServletContext(), destinationId);
+								// set page control to false
+								pageControl = false;
+							}
+							// check we got one from either location
+							if (destinationControl == null) {
 
-							// get the field
-							String destinationField = dataCopy.getDestinationField();
-							// clean up the field
-							if (destinationField == null) destinationField = "";
-
-							// get any details we may have
-							String details = destinationControl.getDetailsJavaScript(application, page);
-
-							// if the idParts is greater then 1 this is a set property
-							if (idParts.length > 1) {
-
-								// if we have some details
-								if (details != null) {
-									// if this is a page control
-									if (pageControl) {
-										// the details will already be in the page so we can use the short form
-										details = destinationControl.getId() + "details";
-									}
-								}
-
-								// get the property from the second id part
-								String property = idParts[1];
-								// append the set property call
-								js += "setProperty_" + destinationControl.getType() + "_" + property + "(ev, '" + destinationControl.getId() + "', '" + destinationField + "', " + details + ", data, " + Boolean.parseBoolean(getProperty("changeEvents")) + ");\n";
+								// data copies not found return a comment
+								js += "// data destination not found for " + destinationId + "\n";
 
 							} else {
 
-								// set details to empty string or clean up
-								if (details == null) {
-									details = "";
-								} else {
-									// if this is a page control
-									if (pageControl) {
-										// the details will already be in the page so we can use the short form
-										details = ",details:" + destinationControl.getId() + "details";
-									} else {
-										// write the full details
-										details = ",details:" + details;
+								// get the field
+								String destinationField = dataCopy.getDestinationField();
+								// clean up the field
+								if (destinationField == null) destinationField = "";
+
+								// get any details we may have
+								String details = destinationControl.getDetailsJavaScript(application, page);
+
+								// if the idParts is greater then 1 this is a set property
+								if (idParts.length > 1) {
+
+									// if we have some details
+									if (details != null) {
+										// if this is a page control
+										if (pageControl) {
+											// the details will already be in the page so we can use the short form
+											details = destinationControl.getId() + "details";
+										}
 									}
-								}
 
-								// try and get the type
-								String type = dataCopy.getType();
-								// check it
-								if (type == null || "false".equals(type)) {
-									// update to empty string
-									type = "";
+									// get the property from the second id part
+									String property = idParts[1];
+									// append the set property call
+									js += "setProperty_" + destinationControl.getType() + "_" + property + "(ev, '" + destinationControl.getId() + "', '" + destinationField + "', " + details + ", data, " + Boolean.parseBoolean(getProperty("changeEvents")) + ");\n";
+
 								} else {
-									// update to comma-prefixed, string escaped
-									type = ",'" + type + "'";
-								}
 
-								// do the data copy
-								js += "Action_datacopy(ev, data, [{id:'" + destinationControl.getId() + "',type:'" + destinationControl.getType() + "',field:'" + destinationField + "'" + details + "}], " + Boolean.parseBoolean(getProperty("changeEvents")) + type + ");\n";
+									// set details to empty string or clean up
+									if (details == null) {
+										details = "";
+									} else {
+										// if this is a page control
+										if (pageControl) {
+											// the details will already be in the page so we can use the short form
+											details = ",details:" + destinationControl.getId() + "details";
+										} else {
+											// write the full details
+											details = ",details:" + details;
+										}
+									}
 
-							} // copy / set property check
+									// try and get the type
+									String type = dataCopy.getType();
+									// check it
+									if (type == null || "false".equals(type)) {
+										// update to empty string
+										type = "";
+									} else {
+										// update to comma-prefixed, string escaped
+										type = ",'" + type + "'";
+									}
 
-						} // destination control check
+									// do the data copy
+									js += "Action_datacopy(ev, data, [{id:'" + destinationControl.getId() + "',type:'" + destinationControl.getType() + "',field:'" + destinationField + "'" + details + "}], " + Boolean.parseBoolean(getProperty("changeEvents")) + type + ");\n";
+
+								} // copy / set property check
+
+							} // destination control check
+						
+						} // System.clipboard check
 
 					} // destination id check
 
@@ -333,6 +337,13 @@ public class Datacopy extends Action {
 							// get the control id
 							String destinationId = jsonDataDesintation.getString("itemId");
 
+							if ("System.clipboard".equals(destinationId)) {
+								jsOutputs += "{id:'" + destinationId + "'},";
+								// we will need an outputs array
+								outputsArray = true;
+								continue;
+							}
+							
 							// split by escaped .
 							idParts = destinationId.split("\\.");
 							// if there is more than 1 part we are dealing with set properties, for now just update the destintation id
@@ -361,55 +372,28 @@ public class Datacopy extends Action {
 								// get any details we may have
 								String details = destinationControl.getDetailsJavaScript(application, page);
 
-								/*
+								// we will need an outputs array
+								outputsArray = true;
 
-								// if the idParts is greater then 1 this is a set property
-								if (idParts.length > 1) {
-
-									// if we have some details
-									if (details != null) {
-										// if this is a page control
-										if (pageControl) {
-											// the details will already be in the page so we can use the short form
-											details = destinationControl.getId() + "details";
-										}
-									}
-
-									// get the property from the second id part
-									String property = idParts[1];
-									// append the set property call
-									js += "setProperty_" + destinationControl.getType() + "_" + property + "(ev,'" + destinationControl.getId() + "','" + destinationField + "'," + details + ",data, " + Boolean.parseBoolean(getProperty("changeEvents")) + ");\n";
-
+								// set details to empty string or clean up
+								if (details == null) {
+									details = "";
 								} else {
-
-									*/
-
-									// we will need an outputs array
-									outputsArray = true;
-
-									// set details to empty string or clean up
-									if (details == null) {
-										details = "";
+									// if this is a page control
+									if (pageControl) {
+										// the details will already be in the page so we can use the short form
+										details = ",details:" + destinationControl.getId() + "details";
 									} else {
-										// if this is a page control
-										if (pageControl) {
-											// the details will already be in the page so we can use the short form
-											details = ",details:" + destinationControl.getId() + "details";
-										} else {
-											// write the full details
-											details = ",details:" + details;
-										}
+										// write the full details
+										details = ",details:" + details;
 									}
-
-									// put any property back on the id
-									if (idParts.length > 1) destinationId += "." + idParts[1];
-
-									// add the properties we need as a js object it will go into the array
-									jsOutputs += "{id:'" + destinationId + "',type:'" + destinationControl.getType() + "',field:'" + destinationField + "'" + details + "},";
-
-									/*
 								}
-								*/
+
+								// put any property back on the id
+								if (idParts.length > 1) destinationId += "." + idParts[1];
+
+								// add the properties we need as a js object it will go into the outputs array, simple, property, and system (clipboard) data sets are called from the JavaScript in the dataCopy.action.xml file
+								jsOutputs += "{id:'" + destinationId + "',type:'" + destinationControl.getType() + "',field:'" + destinationField + "'" + details + "},";
 
 							}
 

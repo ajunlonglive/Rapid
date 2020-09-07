@@ -412,7 +412,11 @@ function Action_datacopy(ev, data, outputs, changeEvents, copyType, copyData, fi
 			}
 			
 			if (idParts.length > 1) {
-				window["setProperty_" + output.type + "_" + idParts[1]](ev, outputId, output.field, output.details, outputData, changeEvents);
+				if (output.id === "System.clipboard") {
+					clipboardWriteText(data);
+				} else {
+					window["setProperty_" + output.type + "_" + idParts[1]](ev, outputId, output.field, output.details, outputData, changeEvents);
+				}
 			} else {
 				window["setData_" + output.type](ev, outputId, output.field, output.details, outputData, changeEvents);
 			}
