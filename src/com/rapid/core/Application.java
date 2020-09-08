@@ -2884,7 +2884,7 @@ public class Application {
 					.replaceAll("\\{" + word + ":",   "\\{\"" + word + "\":")
 					.replaceAll(" " + word + ":",     " \"" + word + "\":")
 					.replaceAll("," + word + ":",     ",\"" + word + "\":")
-					.replaceAll("\\t" + word + ":",   "\\t\"" + word + "\":");
+					.replaceAll("\\t" + word + ":",   "\"" + word + "\":");
 		}
 		return js;
 	}
