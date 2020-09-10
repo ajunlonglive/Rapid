@@ -77,7 +77,6 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <name>Merge child data</name>
 	            <changeValueJavaScript>databaseNoChildrenCheckbox</changeValueJavaScript>
 	            <getValuesFunction>return false;</getValuesFunction>
-	            <refreshProperties>true</refreshProperties>
 	            <helpHtml>Whether to use values in columns with the same name in the parent and child queries to create child data objects for each matching parent row.</helpHtml>
 	        </property>
 	        
