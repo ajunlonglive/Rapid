@@ -200,7 +200,7 @@ public class Validation extends Action {
 													// loop the arguments
 													for (String argument : arguments) {
 														// add the null check
-														jsLogic += argument + " == null || ";
+														jsLogic += argument + " == null || " + argument + " == \"\" || ";
 													}
 												}
 												// open the condition logic

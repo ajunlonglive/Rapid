@@ -166,7 +166,7 @@ function showValidation(control) {
 					// add a validationLogic property listener	
 					Property_validationLogic(cell, validation, {key: "logicMessages"});
 					// add the help listener
-					addHelp(control.id + "helpValLogic",true,true,"Specify any number of logic conditions and the messages to show should they not be true.");
+					addHelp(control.id + "helpValLogic",true,true,"Specify any number of messages to show when their conditions fail (are false).");
 				break;
 				case "javascript" :
 					// add a javascript box

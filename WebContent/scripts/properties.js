@@ -6385,22 +6385,25 @@ function Property_validationLogic(cell, propertyObject, property, details) {
 		// add a trailing comma if not last one
 		if (i < propertyObject.logicMessages.length - 1) cellText += ", ";
 		
-		// add the condition row
-		table.append("<tr data-index='" + i + "'><td style='width:60px;'>Conditions</td><td></td><td style='min-width:45px'>" +
+		// add the message row and cell - listener is below
+		table.append("<tr><td style='width:60px;'>Message</td><td>" + message.text + "</td><td style='min-width:45px'>" +
 					"<div class='iconsPanel'>" +
 					"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fas fa-arrow-up fa-stack-1x'></i><i class='fas fa-arrow-down fa-stack-1x'></i></div>" +
 					"<div class='delete fa-stack fa-sm'><i class='delete fas fa-trash-alt' title='Click to delete'></i></div>" +
 					"</div></td></tr>");
+		
+		// add the condition row
+		table.append("<tr data-index='" + i + "'><td style='width:60px;'>Conditions</td><td></td><td></td></tr>");
 		// get the conditions cell
 		var conditionsCell = table.find("tr").last().children(":nth-child(2)");
 		// add a dialogue id attribute
 		conditionsCell.attr("data-dialogueId", cell.attr("data-dialogueId") + "conditions_" + i);
 		// add a logic conditions property for the conditions cell
 		Property_logicConditions(conditionsCell, message, {key:"conditions"}, details);
-		// add the message row and cell - listener is below
-		table.append("<tr><td style='width:60px;'>Message</td><td>" + message.text + "</td></tr>");
+		
+		messageRowNumber = i * 2 + 1;
 		// get the text cell
-		var textCell = table.find("td").last();
+		var textCell = table.find("tr:nth-child(" + messageRowNumber + ")").children(":nth-child(2)");
 		// add a dialogue id attribute
 		textCell.attr("data-dialogueId", cell.attr("data-dialogueId") + "text_" + i);
 		// add a logic conditions property for the conditions cell
