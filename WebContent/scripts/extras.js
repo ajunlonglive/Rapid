@@ -1151,36 +1151,70 @@ function newGlyph(code, control) {
 
 // upgrade older app fontawesome 4 glyphs to 5
 function upgadePageFontAwesome4to5() {
+	console.log("Updated FA");
 	// elements with "fa" in their class attribute that isn't a named class, i.e. fa-next, nor one of our known version 5 classes 
-	$("[class*='fa']:not([class*='fa-'], .fas, .far, .fab)").each(function() {
+	$(".fa:not([class*='fa-'], .fas, .far, .fab, .updated-fa)").each(function() {
 		var control = $(this);
 		var code = control.html().charCodeAt(0).toString(16);
 		var glyph = newGlyph(code, control);
 		if (glyph.class) {
 			control.removeClass("fa")
 				.addClass(glyph.class)
+				.addClass("updated-fa")
 				.html(glyph.html);
 		}
 	});
 	// elements with a named font awesome class that haven't been upgraded yet
-	$("[class*='fa-']:not(.fa, .fas, .far, .fab)").each(function() {
+	$("[class*='fa-']:not(.fa, .fas, .far, .fab, .updated-fa)").each(function() {
 		var control = $(this, control);
 		var code = control.html().charCodeAt(0).toString(16);
-		var glyph = newGlyph(code);
+		var glyph = newGlyph(code).addClass("updated-fa");
 		if (glyph.html) control.html(glyph.html);
 	});
 	// elements where fontawesome was put directly onto the style attribute
-	$("span[style^=\"font-family:'fontawesome'\"]").each(function() {
+	$("span[style^=\"font-family:'fontawesome'\"]:not(.updated-fa)").each(function() {
 		var control = $(this);
 		var code = control.html().charCodeAt(0).toString(16);
 		var glyph = newGlyph(code, control);
 		if (glyph.class) {
 			control.css({"font-family":""})
 				.addClass(glyph.class)
+				.addClass("updated-fa")
 				.html(glyph.html);
 		}
 	});
 }
 
-// do the upgrade when jquery is ready, also used in some controls  
-$(upgadePageFontAwesome4to5);
+// Function-call coalescing
+function limitCallFrequency(f, period) {
+	
+	var inPeriod = false;
+	var callWithinPeriod = false;
+	
+	var afterPeriod = function() {
+		inPeriod = callWithinPeriod;
+		if (callWithinPeriod) {
+			callWithinPeriod = false;
+			f();
+			setTimeout(afterPeriod, period);
+		}
+	};
+	return function() {
+		if (inPeriod) {
+			callWithinPeriod = true;
+		} else {
+			f();
+			setTimeout(afterPeriod, period);
+			inPeriod = true;
+		}
+	};
+}
+
+// do the upgrade when jquery is ready, also used in some controls
+$(function() {
+	var callback = limitCallFrequency(upgadePageFontAwesome4to5, 1000);
+	var observer = new MutationObserver(function(ev) {
+		callback();
+	});
+	observer.observe(document.body, {subtree:true, childList:true});
+});
