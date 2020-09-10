@@ -52,6 +52,7 @@ var _rapidResources = [
 	"styles/bootstrap.css",
 	"styles/designlinks.css",
 	"styles/index.css",
+	"styles/fonts/OpenSans-Regular.woff",
 	"styles/fonts/fontawesome/css/font-awesome.css",
 	"styles/fonts/fontawesome/fonts/fa-brands-400.eot",
 	"styles/fonts/fontawesome/fonts/fa-brands-400.svg",
