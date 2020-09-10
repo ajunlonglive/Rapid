@@ -2878,13 +2878,13 @@ public class Application {
 	// solution: replace all with record-indexing syntax before minifying
 	public static String makeJsReservedWordsMinifiable(String js) {
 		for (String word : jsReservedWords) {
-			js = js.replaceAll("\\." + word + "\\(",  "[\"" + word + "\"]\\(")
-					.replaceAll("\\." + word + " ",   "[\"" + word + "\"] ")
-					.replaceAll("\\." + word + "\\)", "[\"" + word + "\"]\\)")
-					.replaceAll("\\{" + word + ":",   "\\{\"" + word + "\":")
-					.replaceAll(" " + word + ":",     " \"" + word + "\":")
-					.replaceAll("," + word + ":",     ",\"" + word + "\":")
-					.replaceAll("\\t" + word + ":",   "\"" + word + " \":");
+			js = js.replaceAll("\\." + word + "\\(","[\"" + word + "\"]\\(")
+				.replaceAll("\\." + word + " ","[\"" + word + "\"] ")
+				.replaceAll("\\." + word + "\\)","[\"" + word + "\"]\\)")
+				.replaceAll("\\{" + word + ":","\\{\"" + word + "\":")
+				.replaceAll(" " + word + ":"," \"" + word + "\":")
+				.replaceAll("," + word + ":",",\"" + word + "\":")
+				.replaceAll("\\t" + word + ":","\"" + word + "\":");
 		}
 		return js;
 	}
