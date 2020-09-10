@@ -83,15 +83,24 @@ public class Datacopy extends Action {
 
 	// private instance variables
 	private List<DataCopy> _dataCopies;
+	private boolean _mergeChildren;
 
 	// properties
 	public List<DataCopy> getDataCopies() { return _dataCopies; }
 	public void setDataCopies(List<DataCopy> dataCopies) { _dataCopies = dataCopies; }
 
+	public boolean getMergeChildren() { return _mergeChildren; }
+	public void setMergeChildren(boolean mergeChildren) { _mergeChildren = mergeChildren; }
+
 	// constructors
 
 	// used by jaxb
-	public Datacopy() { super(); }
+	public Datacopy() {
+		// set the xml version, etc
+		super();
+		// default merge children to true for older applications - new ones will have it set to false by default by the designer
+		_mergeChildren = true;
+	}
 	// used by designer
 	public Datacopy(RapidHttpServlet rapidServlet, JSONObject jsonAction) throws Exception {
 		// call the super parameterless constructor which sets the xml version
@@ -100,13 +109,15 @@ public class Datacopy extends Action {
 		for (String key : JSONObject.getNames(jsonAction)) {
 			// add all json properties to our properties, except for dataCopies
 			if (!"dataCopies".equals(key)) addProperty(key, jsonAction.get(key).toString());
+			// if this is mergeChildren we need to update our property variable too, to deal with legacy values
+			if ("mergeChildren".equals(key)) _mergeChildren = jsonAction.optBoolean(key);
 		}
 		// look for a dataCopies array
 		JSONArray jsonDataCopies = jsonAction.optJSONArray("dataCopies");
 		// if we got one
 		if (jsonDataCopies != null) {
 			// instantiate our collection
-			_dataCopies = new ArrayList<DataCopy>();
+			_dataCopies = new ArrayList<>();
 			// loop it
 			for (int i = 0; i < jsonDataCopies.length(); i++) {
 				// add this one
@@ -163,7 +174,7 @@ public class Datacopy extends Action {
 
 						// remember this one
 						lastGetDataFunction = getDataFunction;
-						
+
 						if ("System.clipboard".equals(destinationId)) {
 							// do the data copy
 							js += "Action_datacopy(ev, data, [{id:'" + destinationId + "'}]);\n";
@@ -249,7 +260,7 @@ public class Datacopy extends Action {
 								} // copy / set property check
 
 							} // destination control check
-						
+
 						} // System.clipboard check
 
 					} // destination id check
@@ -338,12 +349,12 @@ public class Datacopy extends Action {
 							String destinationId = jsonDataDesintation.getString("itemId");
 
 							if ("System.clipboard".equals(destinationId)) {
-								jsOutputs += "{id:'" + destinationId + "'},";
+								jsOutputs += "{id: '" + destinationId + "'},";
 								// we will need an outputs array
 								outputsArray = true;
 								continue;
 							}
-							
+
 							// split by escaped .
 							idParts = destinationId.split("\\.");
 							// if there is more than 1 part we are dealing with set properties, for now just update the destintation id
@@ -382,10 +393,10 @@ public class Datacopy extends Action {
 									// if this is a page control
 									if (pageControl) {
 										// the details will already be in the page so we can use the short form
-										details = ",details:" + destinationControl.getId() + "details";
+										details = ", details:" + destinationControl.getId() + "details";
 									} else {
 										// write the full details
-										details = ",details:" + details;
+										details = ", details:" + details;
 									}
 								}
 
@@ -393,7 +404,7 @@ public class Datacopy extends Action {
 								if (idParts.length > 1) destinationId += "." + idParts[1];
 
 								// add the properties we need as a js object it will go into the outputs array, simple, property, and system (clipboard) data sets are called from the JavaScript in the dataCopy.action.xml file
-								jsOutputs += "{id:'" + destinationId + "',type:'" + destinationControl.getType() + "',field:'" + destinationField + "'" + details + "},";
+								jsOutputs += "{id: '" + destinationId + "', type: '" + destinationControl.getType() + "', field: '" + destinationField + "'" + details + "},";
 
 							}
 
@@ -425,13 +436,15 @@ public class Datacopy extends Action {
 							// look for a merge field
 							String childField = getProperty("childField");
 							// check if got we got one
-							if (childField == null) {
+							if (childField == null || childField.length() == 0) {
 								// call it child if not
 								js += ", 'child'";
 							} else {
 								// add it
 								js += ", '" + childField + "'";
 							}
+							// add the details with _mergeChildren
+							js += ", {mergeChildren: " + _mergeChildren + "}";
 
 						} else if ("search".equals(copyType)) {
 
@@ -471,7 +484,7 @@ public class Datacopy extends Action {
 							}
 
 							// add the details
-							js += ", null, null, {keyFields:" + keyFields + ",ignoreFields:" + ignoreFields + "}";
+							js += ", null, null, {keyFields:" + keyFields + ", ignoreFields:" + ignoreFields + "}";
 
 						} // copy type
 

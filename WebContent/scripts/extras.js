@@ -837,7 +837,7 @@ function mergeDataObjects(data1, data2, mergeType, field, maxRows, details) {
 						// get the parent row
 						var r1 = data1.rows[i];
 						// make sure we have as many cells in our row as there are fields
-						while (r1.length < data1.fields.length)  r1.push(null);							
+						while (r1.length < data1.fields.length) r1.push(null);							
 						// if there are matching fields between the parent (destination) and child (source)
 						if (fieldCount > 0) {
 							// create a child rows array 
@@ -861,11 +861,23 @@ function mergeDataObjects(data1, data2, mergeType, field, maxRows, details) {
 									childRows.push(row);									
 								}
 							}
-							// if data was put in the child rows use it to create a child data object in the parent
-							if (childRows.length > 0) r1[fieldIndex] = {fields:fields,rows:childRows};
+							// if data was put in the child rows
+							if (childRows.length > 0) {
+								// use it to create a child data object in the parent
+								r1[fieldIndex] = {fields:fields,rows:childRows};
+							} else {
+								// empty it
+								r1[fieldIndex] = null;
+							}
 						} else {
-							// assign the whole child data object to the parent row
-							 r1[fieldIndex] = data2;
+							// if there is data to merge in and it has rows
+							if (data2 && data2.rows && data2.rows.length > 0) {
+								// assign the whole child data object to the parent row cell
+								r1[fieldIndex] = data2;
+							} else {
+								// empty the parent row cell
+								r1[fieldIndex] = null;
+							}
 						} // has fields to match on
 					} // parent row loop
 					data = data1;					

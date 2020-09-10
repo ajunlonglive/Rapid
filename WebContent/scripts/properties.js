@@ -4702,6 +4702,18 @@ function Property_datacopyDestinations(cell, propertyObject, property, details) 
 	
 }
 
+// only show this checkbox if copy type is child
+function Property_datacopyNoChildrenCheckbox(cell, propertyObject, property, details) {
+	// only if this is not a child database action
+	if (propertyObject.copyType == "child") {
+		// use the standard child actions as anything is allowed
+		Property_checkbox(cell, propertyObject, property, details);
+	} else {
+		// remove this row
+		cell.closest("tr").remove();
+	}	
+}
+
 var _dataCopyTypes = [[false,"replace"],["append","append"],["row","row merge"]];
 
 function getCopyTypeOptions(type) {
