@@ -2209,6 +2209,9 @@ public class Designer extends RapidHttpServlet {
 									// check we were given one
 									if (appVersion == null) throw new Exception("Version must be provided");
 
+									// look for keep settings
+									boolean keepSettings = "true".equals(request.getParameter("settings"));
+
 									// make the id from the safe and lower case name
 									String appId = Files.safeName(appName).toLowerCase();
 
@@ -2311,6 +2314,25 @@ public class Designer extends RapidHttpServlet {
 
 												// set the status to In development
 												appNew.setStatus(Application.STATUS_DEVELOPMENT);
+
+												// if we're keeping settings
+												if (keepSettings) {
+
+													// get the previous version
+													Application appOld = getApplications().get(appOldId);
+
+													// if we had one
+													if (appOld != null) {
+
+														// update database connections from old version
+														appNew.setDatabaseConnections(appOld.getDatabaseConnections());
+
+														// update parameters from old version
+														appNew.setParameters(appOld.getParameters());
+
+													} // old version check
+
+												} // keepSettings
 
 												// a map of actions that might be unrecognised in any of the pages
 												Map<String,Integer> unknownActions = new HashMap<>();
