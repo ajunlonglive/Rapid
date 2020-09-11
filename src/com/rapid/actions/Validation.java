@@ -176,8 +176,10 @@ public class Validation extends Action {
 											if (conditions != null && conditions.size() > 0) {
 												// open the null logic
 												jsLogic += "if (";
+												// open the condition logic
+												jsLogic += "!(";
 												// if nulls not allowed
-												if (!controlValidation.getAllowNulls()) {
+												if (controlValidation.getAllowNulls()) {
 													// list of arguments
 													List<String> arguments = new ArrayList<>();
 													// loop the conditions
@@ -203,8 +205,6 @@ public class Validation extends Action {
 														jsLogic += argument + " == null || " + argument + " == \"\" || ";
 													}
 												}
-												// open the condition logic
-												jsLogic += "!(";
 												// loop them
 												for (int i = 0; i < conditions.size(); i++) {
 													// add the condition
