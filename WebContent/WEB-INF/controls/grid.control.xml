@@ -1877,6 +1877,90 @@ if (gridData && gridData.selectedRowNumber && gridData.selectedRowNumber > 0) {
 			</runtimeProperty>
 
 			<runtimeProperty>
+				<type>rowCount</type>
+				<name>Row count</name>				
+				<getPropertyFunction>
+			        <![CDATA[
+// check if the grid is loading			        
+if (_gridLoaders[id] && _gridLoaders[id].loading) {
+	// if loading send the retained row count
+	return _gridLoaders[id].rows;
+} else {
+	// not loading so check details and storage
+	if (details && details.dataStorageType) {
+		// there is storage so use that
+		var gridData = getGridDataStoreData(id, details);
+		if (gridData && gridData.rows) {
+			return gridData.rows.length;
+		} else {
+			return 0;
+		}
+	} else {
+		// get the grid
+		var grid = $("#" + id);
+		// make sure it's a table
+		if (!grid.is("table")) grid = grid.find("table").last();
+		// return number of rows
+		return grid.find("tr").length - 1;
+	}
+}
+			        ]]>	  	   	            
+	   	        </getPropertyFunction>
+			</runtimeProperty>
+
+			<runtimeProperty>
+				<type>selectedRowNumber</type>
+				<name>Selected row number</name>
+				<advanced>true</advanced>
+				<getPropertyFunction>
+			        <![CDATA[
+// check if the grid is loading			        
+if (_gridLoaders[id] && _gridLoaders[id].loading) {
+	// if loading send the retained selected row number
+	return _gridLoaders[id].selectedRowNumber;
+} else {
+	// not loading so check details and storage
+	if (details && details.dataStorageType) {
+		// there is storage so use that
+		var gridData = getGridDataStoreData(id, details);
+		if (gridData && gridData.selectedRowNumber) {
+			return gridData.selectedRowNumber;
+		} else {
+			return null;
+		}
+	} else {
+		// no storage so use the grid
+		return getGridSelectedRowNumber(id, ev, details);
+	}
+} 
+			        ]]>	  	   	            
+	   	        </getPropertyFunction>
+				<setPropertyJavaScript>
+	   	            <![CDATA[
+gridData = getGridDataStoreData(id, details);
+if (!gridData) gridData = {fields:[],rows:[]};
+data = makeDataObject(data, field);
+var selectedRowNumber = null;
+var grid = $("#" + id);
+// make sure it's a table
+if (!grid.is("table")) grid = grid.find("table").last();
+if (grid) grid.find("tr.rowSelect").removeClass("rowSelect");
+if (data) {
+	data.rows.map(function(row) {
+		if (grid) grid.find("tr:eq(" + row[0] + ")").each(function(i, row) {
+			$(row).addClass("rowSelect");
+			$(row).find(".gridMultiSelect").prop('checked', true);
+		});
+		
+	});
+}
+gridData.selectedRowNumber = selectedRowNumber;	
+saveGridDataStoreData(id, details, gridData);
+	   	            ]]>
+	   	        </setPropertyJavaScript>
+			</runtimeProperty>
+			
+			<runtimeProperty>
 				<type>selectedRowValidation</type>
 				<name>Selected row validation</name>
 				<advanced>true</advanced>
@@ -1938,90 +2022,6 @@ if (details && details.dataStorageType) {
 } 
 	   	            ]]>
 	   	        </setPropertyJavaScript>
-			</runtimeProperty>
-
-			<runtimeProperty>
-				<type>selectedRowNumber</type>
-				<name>Selected row number</name>
-				<getPropertyFunction>
-			        <![CDATA[
-// check if the grid is loading			        
-if (_gridLoaders[id] && _gridLoaders[id].loading) {
-	// if loading send the retained selected row number
-	return _gridLoaders[id].selectedRowNumber;
-} else {
-	// not loading so check details and storage
-	if (details && details.dataStorageType) {
-		// there is storage so use that
-		var gridData = getGridDataStoreData(id, details);
-		if (gridData && gridData.selectedRowNumber) {
-			return gridData.selectedRowNumber;
-		} else {
-			return null;
-		}
-	} else {
-		// no storage so use the grid
-		return getGridSelectedRowNumber(id, ev, details);
-	}
-} 
-			        ]]>	  	   	            
-	   	        </getPropertyFunction>
-				<setPropertyJavaScript>
-	   	            <![CDATA[
-gridData = getGridDataStoreData(id, details);
-if (!gridData) gridData = {fields:[],rows:[]};
-data = makeDataObject(data, field);
-var selectedRowNumber = null;
-var grid = $("#" + id);
-// make sure it's a table
-if (!grid.is("table")) grid = grid.find("table").last();
-if (grid) grid.find("tr.rowSelect").removeClass("rowSelect");
-if (data) {
-	data.rows.map(function(row) {
-		if (grid) grid.find("tr:eq(" + row[0] + ")").each(function(i, row) {
-			$(row).addClass("rowSelect");
-			$(row).find(".gridMultiSelect").prop('checked', true);
-		});
-		
-	});
-}
-gridData.selectedRowNumber = selectedRowNumber;	
-saveGridDataStoreData(id, details, gridData);
-	   	            ]]>
-	   	        </setPropertyJavaScript>
-			</runtimeProperty>
-
-			<runtimeProperty>
-				<type>rowCount</type>
-				<name>Row count</name>
-				<advanced>true</advanced>
-				<getPropertyFunction>
-			        <![CDATA[
-// check if the grid is loading			        
-if (_gridLoaders[id] && _gridLoaders[id].loading) {
-	// if loading send the retained row count
-	return _gridLoaders[id].rows;
-} else {
-	// not loading so check details and storage
-	if (details && details.dataStorageType) {
-		// there is storage so use that
-		var gridData = getGridDataStoreData(id, details);
-		if (gridData && gridData.rows) {
-			return gridData.rows.length;
-		} else {
-			return 0;
-		}
-	} else {
-		// get the grid
-		var grid = $("#" + id);
-		// make sure it's a table
-		if (!grid.is("table")) grid = grid.find("table").last();
-		// return number of rows
-		return grid.find("tr").length - 1;
-	}
-}
-			        ]]>	  	   	            
-	   	        </getPropertyFunction>
 			</runtimeProperty>
 
 		</runtimeProperties>
