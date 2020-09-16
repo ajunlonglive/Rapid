@@ -235,34 +235,43 @@ function easeOutBounce( t ) {
 					
 // global for all charts
 _charts = {};
-// whether charts has loaded
+// whether charts have loaded
 _chartsLoaded = false;
 
 // function for getting chart data from our Rapid data object
 function getChartData(data) {
 
-	var dataArray = [
-		data.fields
-	];
+	// style and annotation are special properties that we pass as objects with a role value in first (header) row to arrayToDataTable
 	
-	for (var i in data.rows) {
-		dataArray.push(data.rows[i]);
+	// loop field values looking for "style" or "annotation"
+	for (var i = 0; i < data.fields.length; i++) {
+		// update expected fields to objects with role property
+		if (data.fields[i] == "style") data.fields[i] = { role: "style" };
+		if (data.fields[i] == "annotation") data.fields[i] = { role: "annotation" };
 	}
 	
+	// start the array with the fields
+	var dataArray = [ data.fields ];
+	
+	// loop and add the rows
+	for (var i in data.rows) dataArray.push(data.rows[i]);
+	
+	// convert the data
 	var chartData = google.visualization.arrayToDataTable(dataArray);
 	
+	// we're done
 	return chartData;
-	
+
 }
 
-// function that advanced Rapid application builders can override to introduce their own options before the chart is draw
+// function that advanced Rapid application builders can override to introduce their own options before the chart is drawn
 function updateChartOptions(id, details, chartData, options) {}
 
 // function for drawing a specific chart
 function drawChart(id, data) {
 
-	// if we're not in the global collection yest, add
-    if (!_charts[id]) _charts[id] = {data:data};
+	// if we're not in the global collection yet, add
+    if (!_charts[id]) _charts[id] = {data: data};
 
 	if (_chartsLoaded) {
 	
@@ -393,9 +402,7 @@ if (window["google"] && google.charts) {
 		// remember we have loaded
 		_chartsLoaded = true;
 		// draw all charts that may be waiting
-		for (var id in _charts) {
-			drawChart(id, _charts[id].data);
-		}
+		for (var id in _charts) drawChart(id, _charts[id].data);		
 	});
 }
 
