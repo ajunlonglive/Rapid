@@ -3,7 +3,7 @@
 
 <!-- 
 
-Copyright (C) 2018 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -474,14 +474,15 @@ drawChart(id, data);
 	    </setDataJavaScript>
 	    
 	    <events>
+	    	<event>
+	            <type>select</type>
+	            <name>Select</name>
+	            <helpHtml>Occurs when a pie chart slice or bar chart bar has been selected.</helpHtml>
+	        </event>
 	        <event>
 	            <type>click</type>
 	            <name>Click</name>
-	        </event>
-	        <event>
-	            <type>select</type>
-	            <name>Select</name>
-	        </event>
+	        </event>	        
 	    </events>
 
 	    <styles>

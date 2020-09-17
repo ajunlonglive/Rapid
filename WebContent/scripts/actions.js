@@ -1,7 +1,7 @@
 /*
 
 
-Copyright (C) 2019 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -303,8 +303,8 @@ function showEvents(control) {
 								"<div class='iconsPanel'><div class='copyEvent fa-xs' title='Click to copy all event actions'><i class='fas fa-copy'></i></div>" +
 								"<i id='" + event.type + "help' class='eventHelp glyph fa hintIcon'></i></div></td></tr>");
 						
-						// look for any event help html
-						var eventHelpHtml = _eventHelpHtml[event.type];
+						// look for any event help html, then check the default
+						var eventHelpHtml = event.helpHtml || _eventHelpHtml[event.type];
 						
 						// if this event has helpHtml
 						if (eventHelpHtml) {
