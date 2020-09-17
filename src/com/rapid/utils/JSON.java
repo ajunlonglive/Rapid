@@ -155,12 +155,21 @@ public class JSON {
 			public JSONData getJSONData(String field) throws Exception {
 				return new JSONData(getJSONObject(field));
 			}
+			
+			public String toString() {
+				return "{"
+						+ "\n    fields: " + _fields
+						+ "\n    rows: ["
+						+ _row
+						+ "\n    ]"
+						+ "\n}";
+			}
 		}
 		
-		public JSONData(JSONObject jsonObject) throws Exception {
+		public JSONData(JSONArray jsonFields, JSONArray jsonRows) throws Exception {
 			
-			_fields = jsonObject.getJSONArray("fields");
-			_rows = jsonObject.getJSONArray("rows");
+			_fields = jsonFields;
+			_rows = jsonRows;
 
 			for (int fieldIndex = 0; fieldIndex < _fields.length(); fieldIndex++) {
 				_fieldIndexes.put(_fields.getString(fieldIndex), fieldIndex);
@@ -172,6 +181,10 @@ public class JSON {
 					throw new Exception("Row " + rowIndex + " has " + rowCellCount + " cells in a table of " + columnCount() + " columns.");
 				}
 			}
+		}
+		
+		public JSONData(JSONObject jsonObject) throws Exception {
+			this(jsonObject.getJSONArray("fields"), jsonObject.getJSONArray("rows"));
 		}
 		
 		public JSONData(String json) throws Exception {
@@ -188,6 +201,21 @@ public class JSON {
 		
 		public int rowCount() throws JSONException {
 			return _rows.length();
+		}
+		
+		public String toString() {
+			String rowsString = "";
+			for (int rowIndex = 0; rowIndex < _rows.length(); rowIndex++) {
+				try {
+					rowsString += "\n        " + _rows.getJSONArray(rowIndex).toString();
+				} catch (Exception e) {}
+			}
+			return "{"
+					+ "\n    fields: " + _fields
+					+ "\n    rows: ["
+					+ rowsString
+					+ "\n    ]"
+					+ "\n}";
 		}
 	}
 }
