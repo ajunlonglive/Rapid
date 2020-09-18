@@ -1761,6 +1761,9 @@ if (gridData && gridData.selectedRowNumber && gridData.selectedRowNumber > 0) {
 					if (!foundField) {
 						// add it to the grid's fields
 						gridData.fields.push(field);
+						gridData.rows.forEach(function(row) {
+							row.push("");
+						});
 						// retain the position
 						fieldMap[field] = gridData.fields.length - 1;
 					}
@@ -1833,6 +1836,9 @@ if (gridData && gridData.selectedRowNumber && gridData.selectedRowNumber > 0) {
 					if (!foundField) {
 						// add it to the grid's fields
 						gridData.fields.push(field);
+						gridData.rows.forEach(function(row) {
+							row.push("");
+						});
 						// retain the position
 						fieldMap[field] = gridData.fields.length - 1;
 					}
