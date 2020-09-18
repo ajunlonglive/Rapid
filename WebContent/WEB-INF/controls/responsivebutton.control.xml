@@ -306,7 +306,12 @@ div.r-button {
 
 div.r-button button.btn {
 	width: 100%;
-	background-color: inherit;
+	height: inherit;
+	background: inherit;
+	font: inherit;
+	padding: inherit;
+	margin: inherit;
+	border: inherit;
 }
 	            </contents>
 	        </resource>
