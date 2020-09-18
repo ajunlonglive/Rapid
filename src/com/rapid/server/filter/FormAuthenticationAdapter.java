@@ -200,6 +200,9 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 			// assume no userName
 			String userName = null;
 
+			// if we are POSTing from a login.jsp page, and we already have a session, invalidate it
+			if ("POST".equals(request.getMethod()) && requestPath.toLowerCase().contains("login.jsp") && request.getSession(false) != null) request.getSession().invalidate();
+
 			// create a new session, if we need one
 			HttpSession session = request.getSession();
 
@@ -611,8 +614,8 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 			// log the request path - see how it is cleaned up a bit at the top of this method
 			_logger.trace("FormAuthenticationAdapter requestpath=" + requestPath + ", loginPath=");
 
-			// if we are requesting the login.jsp or root but have authenticated, go to index instead
-			if ((requestPath.contains(loginPath) || "/".equals(requestPath)) && "GET".equals(request.getMethod())) {
+			// if we are requesting the root but have authenticated, go to index instead
+			if ("GET".equals(request.getMethod()) && "/".equals(requestPath)) {
 
 				// log that we are being redirected to the index path - this can be modified by custom logins, on Jetty the root is /, on Tomcat/AWS it's .
 				_logger.trace("Redirecting to index: " + indexPath);
