@@ -273,7 +273,8 @@ self.addEventListener("fetch", function(event) {
 		// remove all url parameters, except for the page ($1)
 		url = url.replace(/(p=P\d+).*$/, "$1");
 		
-		url = url.replace(/&v=\d+/, "");
+		// remove any version
+		url = url.replace(/&v=[^&\/]+/, "");
 		
 		// if requesting an app
 		event.respondWith(
