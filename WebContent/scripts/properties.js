@@ -177,16 +177,18 @@ function getDataOptions(selectId, ignoreId, input, hasDatetime, hasClipboard) {
 					for (var i in properties) {
 						// get the property
 						var property = properties[i];
-						// if we want inputs and there's is a get function, or outputs and there's set javascript
+						// if we want inputs and there is a get function, or outputs and there is a set javascript
 						if ((input && property.getPropertyFunction) || (!input && property.setPropertyJavaScript)) {
 							// derive the key
 							var key = control.id + "." + property.type;
-							var propertyTooAdvanced = control.advancedProperties !== true && property.advanced === true;
-							var propertyIsSelected = key === selectId;
-							// add the option
+							// is this an advanced property and this is off for the control?
+							var propertyTooAdvanced = control.advancedProperties != true && property.advanced == true;
+							// is this property selected?
+							var propertyIsSelected = (key == selectId && !gotSelected) ;
 							// don't show advanced properties unless the control allows or if the advanced property is already selected
 							if (!propertyTooAdvanced || propertyIsSelected) {
-								options += "<option value='" + key  +  "' " + (propertyIsSelected ? "selected='selected'" : "") + ">" + control.name + "." + property.name + "</option>";
+								// add the option
+								options += "<option value='" + key + "' " + (propertyIsSelected ? "selected='selected'" : "") + ">" + control.name + "." + property.name + "</option>";
 							}
 						}	
 					}
@@ -230,6 +232,7 @@ function getDataOptions(selectId, ignoreId, input, hasDatetime, hasClipboard) {
 							if (selectId == control.id && !gotSelected) {
 								// add the option for the control input/output with it selected
 								pageControlOptions += "<option value='" + control.id + "' selected='selected' >" +  control.name + "</option>";
+								// retain selected
 								gotSelected = true;
 							} else {
 								// just add an option for the input/output
@@ -242,14 +245,17 @@ function getDataOptions(selectId, ignoreId, input, hasDatetime, hasClipboard) {
 							for (var k in control.runtimeProperties) {
 								// if we're looking for inputs and this is one, or we're not looking for inputs (outputs) and this isn't
 								if ((input && control.runtimeProperties[k].input) || (!input && control.runtimeProperties[k].output)) {
-									// if this is the property we're looking to select
-									if (selectId == control.id + "." + control.runtimeProperties[k].type && !gotSelected) {
-										// add the option for the property with it selected
-										pageControlOptions += "<option value='" + control.id + "." + control.runtimeProperties[k].type + "' selected='selected' >" + control.name + "." + control.runtimeProperties[k].name + "</option>";
-									} else {
-										// just add an option for the property
-										pageControlOptions += "<option value='" + control.id + "." + control.runtimeProperties[k].type + "' >" + control.name + "." + control.runtimeProperties[k].name + "</option>";
-									}
+									// derive the key
+									var key = control.id + "." + control.runtimeProperties[k].type;
+									// is this an advanced property and this is off for the control?
+									var propertyTooAdvanced = control.advancedProperties != true && property.advanced == true;
+									// is this property selected?
+									var propertyIsSelected = (key == selectId && !gotSelected);
+									// don't show advanced properties unless the control allows or if the advanced property is already selected
+									if (!propertyTooAdvanced || propertyIsSelected) {
+										// add the option
+										pageControlOptions += "<option value='" + key + "' " + (propertyIsSelected ? "selected='selected'" : "") + ">" + control.name + "." + control.runtimeProperties[k].name + "</option>";
+									}	
 								}
 							}
 						}
