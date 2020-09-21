@@ -1171,8 +1171,8 @@ function newGlyph(code, control) {
 // upgrade older app fontawesome 4 glyphs to 5
 function upgadePageFontAwesome4to5() {
 	console.log("Updated FA");
-	// elements with "fa" in their class attribute that isn't a named class, i.e. fa-next, nor one of our known version 5 classes 
-	$(".fa:not([class*='fa-'], .fas, .far, .fab, .updated-fa)").each(function() {
+	// elements with "fa" in their class attribute that isn't a div or named class, i.e. fa-next, nor one of our known version 5 classes 
+	$(".fa:not(div, [class*='fa-'], .fas, .far, .fab, .updated-fa)").each(function() {
 		var control = $(this);
 		var code = control.html().charCodeAt(0).toString(16);
 		var glyph = newGlyph(code, control);
@@ -1184,14 +1184,17 @@ function upgadePageFontAwesome4to5() {
 		}
 	});
 	// elements with a named font awesome class that haven't been upgraded yet
-	$("[class*='fa-']:not(.fa, .fas, .far, .fab, .updated-fa)").each(function() {
+	$("[class*='fa-']:not(div, .fa, .fas, .far, .fab, .updated-fa)").each(function() {
 		var control = $(this, control);
 		var code = control.html().charCodeAt(0).toString(16);
-		var glyph = newGlyph(code).addClass("updated-fa");
-		if (glyph.html) control.html(glyph.html);
+		var glyph = newGlyph(code);
+		if (glyph.html) {
+			control.html(glyph.html)
+				.addClass("updated-fa");
+		}
 	});
 	// elements where fontawesome was put directly onto the style attribute
-	$("span[style^=\"font-family:'fontawesome'\"]:not(.updated-fa)").each(function() {
+	$("span[style^=\"font-family:'fontawesome'\"]:not(div, .updated-fa)").each(function() {
 		var control = $(this);
 		var code = control.html().charCodeAt(0).toString(16);
 		var glyph = newGlyph(code, control);
