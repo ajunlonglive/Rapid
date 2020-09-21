@@ -62,6 +62,15 @@ return [["L","Local storage"],["S","Session storage"],["P","Page storage"]];
 	            <helpHtml>Sets the method of data storage. Page storage is for as long as the page is open, session is for as long as the tab/window is open and local is for files to be stored locally on devices.</helpHtml>
 	        </property>
 	        
+	        <property>
+				<key>advancedProperties</key>
+				<name>Advanced properties</name>
+				<setConstructValueFunction>return false;</setConstructValueFunction>
+				<changeValueJavaScript>checkbox</changeValueJavaScript>
+				<refreshHtml>true</refreshHtml>
+				<helpHtml>Whether to show advanced properties to actions.</helpHtml>
+			</property>
+	        
 	    </properties>
 	    
 	    <resources>
@@ -224,6 +233,7 @@ if (data != null && data !== undefined) {
 	        <runtimeProperty>
 	            <type>selectedRowData</type>
 	            <name>Selected row data</name>
+	            <advanced>true</advanced>
 	            <getPropertyFunction>
 	                <![CDATA[
 // get datastore data             
@@ -302,6 +312,7 @@ if (dataStoreData && dataStoreData.rows) {
 	       	<runtimeProperty>
 	            <type>selectedRowNumber</type>
 	            <name>Selected row number</name>
+	            <advanced>true</advanced>
 	            <getPropertyFunction>
 	                <![CDATA[
 var data = getDataStoreData(id, details);
@@ -325,6 +336,7 @@ if (dataStoreData) {
 	        <runtimeProperty>
 	   	        <type>rowCount</type>
 	   	        <name>Row count</name>
+	   	        <advanced>true</advanced>
 	   	        <getPropertyFunction>
 			        <![CDATA[
 var rows = -1;
@@ -341,6 +353,7 @@ return rows;
 	        <runtimeProperty>
 	            <type>append</type>
 	            <name>Append data</name>
+	            <advanced>true</advanced>
 	            <setPropertyJavaScript>
 	                <![CDATA[	 
 var dataStoreData = getDataStoreData(id, details);
