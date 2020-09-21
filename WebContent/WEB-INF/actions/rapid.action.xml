@@ -252,7 +252,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 								users.rows[i][0] = users.rows[i][1];
 							}
 						}
-						setData_dropdown(ev, 'rapid_P0_C3193_', null, null, users);
+						setData_dropdown(ev, 'rapid_P0_C3193_', null, rapid_P0_C3193_details, users);
 					}
 				}
 				if (getData_dataStore(null, "rapid_P0_C210", "canManageUsers", rapid_P0_C210details)) {
