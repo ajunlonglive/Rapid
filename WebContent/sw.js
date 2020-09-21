@@ -273,9 +273,6 @@ self.addEventListener("fetch", function(event) {
 		// remove all url parameters, except for the page ($1)
 		url = url.replace(/(p=P\d+).*$/, "$1");
 		
-		// remove any version
-		url = url.replace(/&v=[^&\/]+/, "");
-		
 		// if requesting an app
 		event.respondWith(
 			caches.open(_swVersion + 'offline').then(cache =>
@@ -287,9 +284,10 @@ self.addEventListener("fetch", function(event) {
 					cache.match(url).then(cachedResponse => {
 						
 						var disambiguatedUrl = requestedAppId ? (appResources && appResources.redirects[url] || url) + dialogueParameter : url;
+						var onStartPageOnline = false;
 						
 						// if this app version is not cached, do
-						if (requestedAppId && !cachedResponse) {
+						if (requestedAppId && (!cachedResponse || onStartPageOnline)) {
 							
 							var requestedAppVersion = requestedAppId && parameters.v || altUrlAppVersion || (appResources && appResources.version);
 							var versionParameter = requestedAppVersion ? "&v=" + requestedAppVersion : "";
@@ -318,7 +316,7 @@ self.addEventListener("fetch", function(event) {
 												});
 												
 												// Ambiguous urls
-												[requestedAppId, requestedAppId + "/" + resources.version, "~?a=" + requestedAppId]
+												[requestedAppId, requestedAppId + "/" + resources.version, "~?a=" + requestedAppId, "~?a=" + requestedAppId + "&v=" + resources.version]
 												.forEach(url => {
 													resources.redirects[url] = startUrl;
 													resources.resources.push(url);
