@@ -812,6 +812,7 @@ public class Page {
 									if (jsonProperty.optString("getPropertyFunction", null) != null) jsonRuntimeProperty.put("input", true);
 									if (jsonProperty.optString("setPropertyJavaScript", null) != null) jsonRuntimeProperty.put("output", true);
 									if (jsonProperty.optBoolean("canBeUsedForFormPageVisibilty")) jsonRuntimeProperty.put("visibility", true);
+									if (jsonProperty.optBoolean("advanced")) jsonRuntimeProperty.put("advanced", true);
 
 									// add to the collection - note further check for dialogue controls having to add in
 									jsonRunTimeProperties.put(jsonRuntimeProperty);

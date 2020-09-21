@@ -243,10 +243,12 @@ function getDataOptions(selectId, ignoreId, input, hasDatetime, hasClipboard) {
 						if (control.runtimeProperties) {
 							// loop them
 							for (var k in control.runtimeProperties) {
+								// get the property
+								var property = control.runtimeProperties[k];
 								// if we're looking for inputs and this is one, or we're not looking for inputs (outputs) and this isn't
-								if ((input && control.runtimeProperties[k].input) || (!input && control.runtimeProperties[k].output)) {
+								if ((input && property.input) || (!input && property.output)) {
 									// derive the key
-									var key = control.id + "." + control.runtimeProperties[k].type;
+									var key = control.id + "." + property.type;
 									// is this an advanced property and this is off for the control?
 									var propertyTooAdvanced = control.advancedProperties != true && property.advanced == true;
 									// is this property selected?
@@ -254,7 +256,7 @@ function getDataOptions(selectId, ignoreId, input, hasDatetime, hasClipboard) {
 									// don't show advanced properties unless the control allows or if the advanced property is already selected
 									if (!propertyTooAdvanced || propertyIsSelected) {
 										// add the option
-										pageControlOptions += "<option value='" + key + "' " + (propertyIsSelected ? "selected='selected'" : "") + ">" + control.name + "." + control.runtimeProperties[k].name + "</option>";
+										pageControlOptions += "<option value='" + key + "' " + (propertyIsSelected ? "selected='selected'" : "") + ">" + control.name + "." + property.name + "</option>";
 									}	
 								}
 							}
