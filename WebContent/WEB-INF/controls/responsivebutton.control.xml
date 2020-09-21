@@ -301,17 +301,11 @@ return [{value:"-lg", text:"Large"}, {value:"", text:"Default"}, {value:"-sm", t
 
 div.r-button {
 	padding: 0;
-	border-radius: 4px;
 }
 
 div.r-button button.btn {
 	width: 100%;
-	height: inherit;
-	background: inherit;
-	font: inherit;
-	padding: inherit;
-	margin: inherit;
-	border: inherit;
+	height: 100%;
 }
 	            </contents>
 	        </resource>
