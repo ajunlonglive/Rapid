@@ -258,7 +258,7 @@ self.addEventListener("fetch", function(event) {
 		var resourceAppId = url.match("applications\/([^\/]+)\/");
 		var requestedAppId = parameters.a || altUrlAppId || (resourceAppId && resourceAppId[1]);
 		
-		var altUrlAppVersion = altUrlComponents && altUrlComponents[3];
+		if (!parameters.v && altUrlComponents) parameters.v = altUrlComponents[3];
 		
 		// if   mobdemo/~?a=mobdemo&v=3&p=P3
 		// then ~?a=mobdemo&v=3&p=P3
@@ -287,12 +287,12 @@ self.addEventListener("fetch", function(event) {
 					cache.match(url).then(cachedResponse => {
 						
 						var disambiguatedUrl = requestedAppId ? (appResources && appResources.redirects[url] || url) + dialogueParameter : url;
-						var onStartPage = parameters.v === undefined && !altUrlAppVersion && parameters.p === undefined && url.split("/").length === 1;
+						var onStartPage = parameters.v === undefined && parameters.p === undefined && url.split("/").length === 1;
 						
 						// if this app version is not cached, do
-						if (requestedAppId && (!cachedResponse || onStartPage)) {
+						if (requestedAppId && ((!cachedResponse) || onStartPage) && ![".js", ".css"].some(ext => url.endsWith(ext))) {
 							
-							var requestedAppVersion = requestedAppId && parameters.v || altUrlAppVersion || (appResources && appResources.version);
+							var requestedAppVersion = requestedAppId && parameters.v || (appResources && appResources.version);
 							var versionParameter = (requestedAppVersion && !onStartPage) ? "&v=" + requestedAppVersion : "";
 							var appResourcesUrl = _contextPath + "~?a=" + requestedAppId + versionParameter + "&action=resources";
 							// check for app updates to update cache
