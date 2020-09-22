@@ -330,7 +330,7 @@ function IDBdeleteByKey(key, callback) {
 	} else if (callback) callback();
 }
 
-function addToImageControl(control, filename, url, type) {
+function addToImageControl(ev, control, filename, url, type) {
 	
 	var type = type || "img";
 	
@@ -1085,7 +1085,7 @@ if (data) {
  						
  						var type = url.indexOf("data:video") == 0 ? "video" : "img";
  						
-						addToImageControl(control, imageRecord.filename, imageRecord.url, type);
+						addToImageControl(ev, control, imageRecord.filename, imageRecord.url, type);
 						
 					} else { // if url is a filename
 						
@@ -1095,7 +1095,7 @@ if (data) {
 								
 								var type = imageRecord.url.indexOf("data:video") == 0 ? "video" : "img";
 								
-								addToImageControl(control, imageRecord.filename, imageRecord.url, type);
+								addToImageControl(ev, control, imageRecord.filename, imageRecord.url, type);
 								
 							} else { // if url is for the rapid logo etc.
 								
@@ -1107,12 +1107,12 @@ if (data) {
 									reader.onloadend = function() {
 										var dataUrl = reader.result;
 										IDBputObject({ filename: filename, url: dataUrl });
-										addToImageControl(control, filename, dataUrl);
+										addToImageControl(ev, control, filename, dataUrl);
 									};
 									reader.readAsDataURL(xhr.response);
 								};
 								xhr.onerror = function() {
-									addToImageControl(control, filename, specifiedUrl);
+									addToImageControl(ev, control, filename, specifiedUrl);
 								};
 								xhr.open('GET', specifiedUrl);
 								xhr.responseType = 'blob';

@@ -695,11 +695,11 @@ var _closePreview = {
 		var galleryControlId = _cameraPlayer.getAttribute("data-galleryId");
 		var galleryDetails = window[galleryControlId + "details"];
 		
-		setData_gallery(data.ev, galleryControlId, "url", galleryDetails, data.dataURL);
-		source.closeStream();
 		$("#cameraVideoContainer").remove();
+		source.closeStream();
 		$(document.body).css({overflow:"unset", "touch-action":"auto"});
 		$(window).css({overflow:"unset", "touch-action":"auto"});
+		setData_gallery(data.ev, galleryControlId, "url", galleryDetails, data.dataURL);
 	},
 	indicator: function() {
 		return "";
@@ -899,8 +899,8 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 			}
 			
 			if (mediums.includes('image')) {
-				$("#btnTakePicture").click(function() {
-					mediaCapturer.capture(takePicture(), source);
+				$("#btnTakePicture").click(function(ev) {
+					mediaCapturer.capture(takePicture(ev), source);
 				});
 			}
 			
