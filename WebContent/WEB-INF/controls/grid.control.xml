@@ -568,7 +568,8 @@ function getGridUnescapedValue(value) {
 
 // global function to set the grid header multi-select, used in both control init, and dynamic column header add
 function setGridHeaderMultiSelect(id, grid) {
-	$("#" + id).find("input.gridMultiSelectHeader").change(function(ev) {
+	// this must fire before the row click
+	$("#" + id).find("input.gridMultiSelectHeader").click(function(ev) {
 		// get the header value
 		var select = $(this).prop("checked");
 		// update rowSelect accordingly
@@ -924,18 +925,18 @@ if (data !== undefined && data !== "") {
 				var handler = window["Event_click_" + id];
 				// if we're here because we clicked the gridMultiSelect checkbox - in this case row selection is done in the input click listener, above, also do nothing is cell around the multiselect clicked
 				if (!target.is("input.gridMultiSelect") && !target.children("input.gridMultiSelect")[0]) {
-					// remove rowSelect class from all rows in the table
-					row.parent().find("tr.rowSelect").removeClass("rowSelect");
-					// add rowSelect to this row
-					row.addClass("rowSelect");
-					// if there is a handler
-					// uncheck all inputs, what happens next is the handler fires and the selected row is just this one
-					$("#" + id).find("input.gridMultiSelectHeader, input.gridMultiSelect").prop("checked",false);
+					// if there is a handler clicking off the checkbox must select just the clicked on row and fire the handler for the one row, if no hander the row click can act like the checkbox
 					if (handler) {
-						// put this row's tick back for show
-						target.closest("tr").children().first().find("input.gridMultiSelect").prop("checked",true);
+						// remove rowSelect class from all rows in the table
+						row.parent().find("tr.rowSelect").removeClass("rowSelect");
+						// add rowSelect to this row
+						row.addClass("rowSelect");
+						// uncheck all inputs, what happens next is the handler fires and the selected row is just this one
+						grid.find("input.gridMultiSelectHeader, input.gridMultiSelect").prop("checked", false);
+						// check this one
+						target.closest("tr").children().first().find("input.gridMultiSelect").prop("checked", true);
 					} else {
-						// no handler so fire row select
+						// toggle this rows checkbox by firing it's click event
 						target.closest("tr").children().first().find("input.gridMultiSelect").first().click();
 					}
 				}
