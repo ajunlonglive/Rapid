@@ -136,10 +136,7 @@ var _styleClassesHidden = false;
 // scroll bar width
 var _scrollBarWidth = 0;
 
-// for admin refreshes
-var _stayOnAppPage;
-
-// for admin refreshes
+// for refreshe from Rapid Admin
 var _stayOnAppPage;
 
 function newClipboard(storage, key) {
@@ -1590,12 +1587,15 @@ function loadPages(selectedPageId, forceLoad, fromSave) {
         		// check the next pageId
         		if (parseInt(page.id.substring(1)) >= _nextPageId) _nextPageId = parseInt(page.id.substring(1)) + 1; 
         	}
-			if (_stayOnAppPage) $("#pageSelect").val(_stayOnAppPage);
-			_stayOnAppPage = undefined;
-        	// put the options into the dropdown and ebable
+        	// put the page options into the dropdown
         	$("#pageSelect").html(options);
-			if (_stayOnAppPage) $("#pageSelect").val(_stayOnAppPage);
-			_stayOnAppPage = undefined;
+        	// if we retained a page to stay on
+			if (_stayOnAppPage) {
+				// set the page select to the one we want
+				$("#pageSelect").val(_stayOnAppPage);
+				// empty for next time
+				_stayOnAppPage = undefined;
+			}			
         	// enabled all dropdowns
 			$("select").enable();
         	// check we got some pages
@@ -4643,68 +4643,39 @@ function fileuploaded(fileuploadframe) {
 
 }
 
+// listen for changes to storage which is how Rapid Admin communicated events to Rapid Design
 window.addEventListener("storage", function(storageEvent) {
+	// if this is a change for us
 	if (storageEvent.key === "rapidWindowBroadcast") {
+		// get the new data
 		var broadcast = JSON.parse(storageEvent.newValue);
+		// check the message
 		switch (broadcast.message) {
-		case "applicationsReloaded":
+		case "controlsReloaded": case "actionsReloaded":
+			// always reload the whole designer if controls, or actions are reloaded to get full update
 			location.reload();
 			break;
 		case "applicationReloaded":
+			// if the application is reloaded and its the one we have loaded, reload the whole window for full update of all related files
 			if (broadcast.a === _version.id && broadcast.v === _version.version) {
 				location.reload();
 			}
 			break;
-		case "controlsReloaded":
-			location.reload();
-			break;
-		case "actionsReloaded":
-			location.reload();
-			break;
-		case "controlsSaved":
+		case "controlsSaved": case "actionsSaved": case "databaseConnectionSaved": case "applicationStyleSaved":
+			// reload the current app and keep the page we're on
 			if (!_dirty && broadcast.a === _version.id && broadcast.v === _version.version) {
 				_stayOnAppPage = $("#pageSelect").val();
-				$(appSelect).change();
+				$("#appSelect").change();
 				break;
 			}
-		case "actionsSaved":
-			if (!_dirty && broadcast.a === _version.id && broadcast.v === _version.version) {
-				_stayOnAppPage = $("#pageSelect").val();
-				$(appSelect).change();
-				break;
-			}
-		case "databaseConnectionSaved":
-			if (!_dirty && broadcast.a === _version.id && broadcast.v === _version.version) {
-				_stayOnAppPage = $("#pageSelect").val();
-				$(appSelect).change();
-				break;
-			}
-		case "applicationNewVersion":
-			if (!_dirty && broadcast.a === _version.id) {
-				_stayOnAppPage = $("#pageSelect").val();
-				$(appSelect).change();
-				break;
-			}
-		case "applicationDeletedVersion":
-			if (!_dirty && broadcast.a === _version.id) {
-				_stayOnAppPage = $("#pageSelect").val();
-				$(appSelect).change();
-				break;
-			}
-		case "applicationImportedVersion":
+		case "applicationNewVersion": case "applicationDeletedVersion": case "applicationImportedVersion":
 			if (!_dirty && broadcast.a === _version.id) {
 				setTimeout(function() {
 					_stayOnAppPage = $("#pageSelect").val();
-					$(appSelect).change();
+					$("#appSelect").change();
 				}, 3000);
 				break;
 			}
-		case "applicationStyleSaved":
-			if (!_dirty && broadcast.a === _version.id && broadcast.v === _version.version) {
-				_stayOnAppPage = $("#pageSelect").val();
-				$(appSelect).change();
-			}
-			break;
 		}
 	}
 });
