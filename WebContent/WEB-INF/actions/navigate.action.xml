@@ -270,7 +270,8 @@ function Action_navigate(url, dialogue, id, popup, dismissibleDialogue) {
 		       		
 		       		// get the page document head
 		       		var head = $("head");
-		       		
+					var headElement = head[0];
+					
 		           	// loop the items
 		           	var items = $(page);
 		           	for (var i in items) {
@@ -279,26 +280,34 @@ function Action_navigate(url, dialogue, id, popup, dismissibleDialogue) {
 		           		case "#text" : case "TITLE" : // ignore these types
 		           		break;
 		           		case "SCRIPT" :
+							var element = document.createElement("script");
+							element.type = "text/javascript";
 		           			// check whether a script block or link
 		           			if (items[i].innerHTML) {
 		           				var s = items[i].outerHTML;
 		           				// exclude the app id, version, page, mobile resume link
-		           				if (s.indexOf("var _appId =") == -1 && s.indexOf("var _appVersion =") == -1 && s.indexOf("var _pageId =") == -1 && s.indexOf("var _mobileResume =") == -1)
-		           					script += s;
+		           				if (s.indexOf("var _appId =") == -1 && s.indexOf("var _appVersion =") == -1 && s.indexOf("var _pageId =") == -1 && s.indexOf("var _mobileResume =") == -1) {
+		           					// script += s;
+									element.src = URL.createObjectURL(new Blob([items[i].innerText], {type : "text/javascript"}));
+									element.async = false;
+		       						try { headElement.appendChild(element); } catch(ex) {}
+								}
 		           			} else {
 		           				// fetch the text
 		           				var text = items[i].outerHTML;
 		           				// look for a src
 		           				if (text.indexOf("src=\"") > 0) {
 		           					var startPos = text.indexOf("src=\"")+5;
-		           					var src = text.substr(startPos,text.indexOf("\"", startPos) - startPos);		           					
+		           					var src = text.substr(startPos,text.indexOf("\"", startPos) - startPos);
 		           					// add this to the page if not there already
 		           					if (!head.find("script[src='" + src + "']")[0]) {
+										element.src = src;
+										element.async = false;
+			       						try { headElement.appendChild(element); } catch(ex) {}
 		           						// append to the head section of the page and fail silently if any issue - for some reason Rapid Mobile throws a TypeError: undefined is not a function for calendar.js
-		           						try { head.append(text); } catch(ex) {}
 		           					}
 		           				}
-		           			}          			
+		           			}
 		           		break;
 		           		case "LINK" :
 		           			// fetch the text

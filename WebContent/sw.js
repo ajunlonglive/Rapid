@@ -12,7 +12,7 @@ var _rapidpwa = {
 /* A version number is useful when updating the worker logic,
 	 allowing you to remove outdated cache entries during the update.
 */
-var _swVersion = 'v1.3';
+var _swVersion = 'v1.4';
 
 /* These resources will be downloaded and cached by the service worker
 	 during the installation process. If any resource fails to be downloaded,
@@ -232,7 +232,6 @@ self.addEventListener("fetch", function(event) {
 	
 	// We only check the cache for GET requests to the Rapid server, unless it's part of what we want to refresh each time
 	if (url && method === "GET") {
-		
 		// set the standard fetch options
 		var fetchOptions = { redirect: "manual" };
 		
@@ -253,10 +252,11 @@ self.addEventListener("fetch", function(event) {
 			parameters[nameValue[0]] = nameValue[1];
 		});
 		
-		var altUrlComponents = url.match("(\\w+)(\/(\\w+))*$"); // TODO: FIX THIS
+		var altUrlComponents = url.match("(\\w+)(\/(\\w+))*$");
 		var notApp = _trimUrls.some(ext => url.endsWith(ext));
 		var altUrlAppId = !parameters.a && !notApp && altUrlComponents && altUrlComponents[1];
-		var requestedAppId = parameters.a || altUrlAppId;
+		var resourceAppId = url.match("applications\/([^\/]+)\/");
+		var requestedAppId = parameters.a || altUrlAppId || (resourceAppId && resourceAppId[1]);
 		
 		var altUrlAppVersion = altUrlComponents && altUrlComponents[3];
 		
@@ -273,6 +273,9 @@ self.addEventListener("fetch", function(event) {
 		// remove all url parameters, except for the page ($1)
 		url = url.replace(/(p=P\d+).*$/, "$1");
 		
+		// remove any version
+		if (dialogueParameter) var url = url.replace(/&v=[^&\/]+/, "");
+		
 		// if requesting an app
 		event.respondWith(
 			caches.open(_swVersion + 'offline').then(cache =>
@@ -284,63 +287,70 @@ self.addEventListener("fetch", function(event) {
 					cache.match(url).then(cachedResponse => {
 						
 						var disambiguatedUrl = requestedAppId ? (appResources && appResources.redirects[url] || url) + dialogueParameter : url;
-						var onStartPageOnline = false;
+						var onStartPage = parameters.v === undefined && !altUrlAppVersion && parameters.p === undefined && url.split("/").length === 1;
 						
 						// if this app version is not cached, do
-						if (requestedAppId && (!cachedResponse || onStartPageOnline)) {
+						if (requestedAppId && (!cachedResponse || onStartPage)) {
 							
 							var requestedAppVersion = requestedAppId && parameters.v || altUrlAppVersion || (appResources && appResources.version);
-							var versionParameter = requestedAppVersion ? "&v=" + requestedAppVersion : "";
+							var versionParameter = (requestedAppVersion && !onStartPage) ? "&v=" + requestedAppVersion : "";
 							var appResourcesUrl = _contextPath + "~?a=" + requestedAppId + versionParameter + "&action=resources";
 							// check for app updates to update cache
 							
-							fetch(appResourcesUrl, fetchOptions)
-							.then(freshResponse => {
-								if (freshResponse.ok && !freshResponse.url.endsWith("login.jsp")) {
-									return freshResponse.json()
-									.then(resources => {
-										if (resources.resources) {
-											
-											return removeAppResourcesByKeys(appResources && appResources.resources || [])
-											.then(_ => {
+							if (navigator.onLine) {
+								fetch(appResourcesUrl, fetchOptions)
+								.then(freshResponse => {
+									if (freshResponse.ok && !freshResponse.url.endsWith("login.jsp")) {
+										return freshResponse.json()
+										.then(resources => {
+											if (resources.resources) {
 												
-												var startUrl = "~?a=" + resources.id + "&v=" + resources.version + "&p=" + resources.startPageId;
-												
-												resources.redirects = {};
-												resources.resources.forEach((resource, index) => {
-													if (resource.startsWith("~")) {
-														const versionFree = resource.replace(/&v=\d+/, "");
-														resources.redirects[versionFree] = resource;
-														resources.resources[index] = versionFree;
-													}
+												return removeAppResourcesByKeys(appResources && appResources.resources || [])
+												.then(_ => {
+													
+													var startUrl = "~?a=" + resources.id + "&v=" + resources.version + "&p=" + resources.startPageId;
+													
+													resources.redirects = {};
+													resources.resources.forEach((resource, index) => {
+														if (resource.startsWith("~")) {
+															const versionFree = resource.replace(/&v=\d+/, "");
+															resources.redirects[versionFree] = resource;
+															resources.resources[index] = versionFree;
+														}
+													});
+													
+													// Ambiguous urls
+													[requestedAppId, requestedAppId + "/" + resources.version, "~?a=" + requestedAppId, "~?a=" + requestedAppId + "&v=" + resources.version]
+													.forEach(url => {
+														resources.redirects[url] = startUrl;
+														resources.resources.push(url);
+													});
+													
+													cache.put("last_resources_" + requestedAppId, new Response(new Blob([JSON.stringify(resources)], {type : "application/json"}), { statusText: "OK", url: appResourcesUrl }))
+													
+													if (navigator.onLine) updateCache(resources.resources, resources.redirects);
 												});
-												
-												// Ambiguous urls
-												[requestedAppId, requestedAppId + "/" + resources.version, "~?a=" + requestedAppId, "~?a=" + requestedAppId + "&v=" + resources.version]
-												.forEach(url => {
-													resources.redirects[url] = startUrl;
-													resources.resources.push(url);
-												});
-												
-												cache.put("last_resources_" + requestedAppId, new Response(new Blob([JSON.stringify(resources)], {type : "application/json"}), { statusText: "OK", url: appResourcesUrl }))
-												
-												updateCache(resources.resources, resources.redirects);
-											});
-										}
-									});
-								}
-							});
+											}
+										});
+									}
+								});
+							}
 							return new Promise(resolve =>
-								fetch(_contextPath + url + dialogueParameter, fetchOptions)
+								(navigator.onLine ? fetch(_contextPath + url + dialogueParameter, fetchOptions) : Promise.reject())
 								.then(resolve)
-								.catch(_ => resolve(cache.match(requestedAppId ? "offline.htm" : url)))
+								.catch(_ => resolve(cache.match(
+									(!requestedAppId || onStartPage) ? url : "offline.htm"
+								)
+								.then(response =>
+									response || cache.match("offline.htm")
+								)))
 							);
 							
 						} else if (appResources && appResources.status === "live") { // live mode (non-development)
 							// respond with a previously cached response, falling back to a freshly fresh response, caching the fresh response
 							
 							var freshResponseWithCachedFallback = new Promise((resolve, reject) =>
-								fetch(disambiguatedUrl, fetchOptions)
+								(navigator.onLine ? fetch(disambiguatedUrl, fetchOptions) : Promise.reject())
 								.then(freshResponse => {
 									if (freshResponse && (freshResponse.ok || freshResponse.type === "opaqueredirect")) {
 										if (_rapidResourceFolders.concat(_rapidResources).concat(appResources.resources).some(res => url.includes(res))
@@ -378,7 +388,7 @@ self.addEventListener("fetch", function(event) {
 						} else { // development mode / resources
 							
 							return new Promise((resolve, reject) =>
-								fetch(disambiguatedUrl, fetchOptions)
+								(navigator.onLine ? fetch(disambiguatedUrl, fetchOptions) : Promise.reject())
 								.then(freshResponse => {
 									if (freshResponse && (freshResponse.ok || freshResponse.type === "opaqueredirect")) {
 										var currentAppResources = appResources && appResources.resources || [];
@@ -395,9 +405,9 @@ self.addEventListener("fetch", function(event) {
 									} else if (freshResponse.status === 500) {
 										fetch(_contextPath + "page500.htm").then(resolve);
 									} else {
-										resolve(cachedResponse ? cachedResponse : getFromCache("offline.htm"));
+										resolve(cachedResponse || getFromCache("offline.htm"));
 									}
-								}).catch(_ => resolve(cachedResponse ? cachedResponse : getFromCache("offline.htm")))
+								}).catch(_ => resolve(cachedResponse || getFromCache("offline.htm")))
 							);
 						}
 					}) // cache.match(url)
