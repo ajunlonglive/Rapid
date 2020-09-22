@@ -4656,7 +4656,7 @@ window.addEventListener("storage", function(storageEvent) {
 			location.reload();
 			break;
 		case "applicationReloaded":
-			// if the application is reloaded and its the one we have loaded, reload the whole window for full update of all related files
+			// if the application is reloaded and its the one being designed at the moment, reload the whole window for full update of all related files
 			if (broadcast.a === _version.id && broadcast.v === _version.version) {
 				location.reload();
 			}
@@ -4669,11 +4669,12 @@ window.addEventListener("storage", function(storageEvent) {
 				break;
 			}
 		case "applicationNewVersion": case "applicationDeletedVersion": case "applicationImportedVersion":
+			// if the versions have been changed for the current app reload - this will move to the last version
 			if (!_dirty && broadcast.a === _version.id) {
 				setTimeout(function() {
 					_stayOnAppPage = $("#pageSelect").val();
 					$("#appSelect").change();
-				}, 3000);
+				}, 1000);
 				break;
 			}
 		}
