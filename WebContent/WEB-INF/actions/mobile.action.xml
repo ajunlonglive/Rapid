@@ -199,7 +199,7 @@ return [["closePreview","Close preview"],["keepPreview","Keep preview open"],["s
 return "<option value=''>Please select...</option>" + getControlOptions(this.galleryControlId, null, "gallery");
 	                ]]>
 	            </getValuesFunction>
-	            <helpHtml>Selects which gallery control to use on the page. You will need to have a gallery control on the page in order to use this.</helpHtml>
+	            <helpHtml>Selects which gallery control to use on the page. You will need to have a gallery control on the page in order to display the images.</helpHtml>
 	        </property>
 	        
 	        <property>
@@ -208,7 +208,7 @@ return "<option value=''>Please select...</option>" + getControlOptions(this.gal
 	            <visible>false</visible>
 	            <setConstructValueFunction>return "500";</setConstructValueFunction>
 	            <changeValueJavaScript>integer</changeValueJavaScript>
-	            <helpHtml>Sets the maximum height and width of the gallery. By default it sets to 500 pixels in length and width.</helpHtml>
+	            <helpHtml>Sets the maximum height and width of the captured image in pixels. Images with either side larger will be scaled down.</helpHtml>
 	        </property>
 	        
 	        <property>
@@ -217,7 +217,7 @@ return "<option value=''>Please select...</option>" + getControlOptions(this.gal
 	            <visible>false</visible>
 	            <setConstructValueFunction>return "50";</setConstructValueFunction>
 	            <changeValueJavaScript>integer</changeValueJavaScript>
-	            <helpHtml>Sets the quality of the image, in percentages. By default it sets the quality to 50% of that of the original.</helpHtml>
+	            <helpHtml>Sets the quality of the image as a percentage. The better the quality, the larger the image file size.</helpHtml>
 	        </property>
 	        
 	        <property>
