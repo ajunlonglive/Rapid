@@ -449,13 +449,13 @@ return "<option value=''>Please select...</option><option value ='html'" + (this
 
 .cameraControlBasic {
 	background: black;
-	border: 2px solid #ccc;
 	outline: none;
 	padding: 10px;
 	margin: 20px;
 	border-radius: 50%;
-	border: none;
-	width: 60px;
+	border-width: 2px;
+	border-color: white;
+	width: 62px;
 	text-align: center;
 	display: inline-block;
 	cursor: pointer;
@@ -464,15 +464,15 @@ return "<option value=''>Please select...</option><option value ='html'" + (this
 .cameraControl {
 	background: black;
 	outline: none;
-	border-radius: 50%; 
-	border: none;
+	border-radius: 50%;
+	border-width: 2px;
+	border-color: white;
     height: 70px;
     width: 70px;
     color: #FFF;
 }
 
-.cameraControlBasic:hover,
-.cameraControl:hover {
+.cameraControlBasic:hover, .cameraControl:hover {
 	background: #444;
 }
 
@@ -849,7 +849,7 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 		});
 		
 		var inputImageHtml = _cameraSelectImage ? "<div style='position:fixed; top:0; width:100%; text-align:center;'>"
-	    					+ "<label id='btnInputImage' for='inputImage' class='cameraControlBasic'><i class='fas fa-folder-open cameraIcon'></i></label></div>"
+	    					+ "<button id='btnInputImage' class='cameraControlBasic'><i class='fas fa-folder-open cameraIcon'></i></button></div>"
 							: "";
 	
 		// Add the divs

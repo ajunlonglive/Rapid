@@ -131,7 +131,7 @@ div.gallery .galleryItem {
 	margin: 10px;
 	border-radius: 50%;
 	border-color: white;
-	width: 60px;
+	width: 62px;
 	text-align: center;
 	z-index: 1;
 }
@@ -164,7 +164,6 @@ div.gallery .galleryItem {
 #tools button, #pallet button {
 	transition: opacity 0.3s;
 	opacity: 1;
-	border: none;
 }
 
 
