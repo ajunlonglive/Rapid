@@ -268,13 +268,16 @@ function getDataOptions(selectId, ignoreId, input, hasDatetime, hasClipboard) {
 			}
 		}
 	}
+	
 	// date time value, only for the datacopy inputs, set with dateTime = true
 	if (input && hasDatetime) options += getDateTimeValueOptions(selectId);
 	
+	// clipboard is used as input/output by datacopy action
 	if (hasClipboard) options += "<optgroup label='Clipboard'><option value='System.clipboard'" + ("System.clipboard" == selectId && !gotSelected ? " selected='selected'" : "") + ">clipboard</option></optgroup>";
 	
-	// system values, only for inputs - these are defined in an array above this function
-	options += getSystemValueOptions(selectId, input);
+	// system values are readonly so only for inputs - these are defined in an array above this function
+	if (input) options += getSystemValueOptions(selectId, input);
+	
 	// return
 	return options;
 }
@@ -6519,8 +6522,8 @@ function Property_pdfInputs(cell, propertyObject, property, details) {
 	// make some text for our cell (we're going to build in in the loop)
 	var text = "";
 	
-	// add a header
-	table.append("<tr><td><b>Control</b></td><td><b>Field</b></td><td colspan='2'><b>Label</b><button class='titleButton' title='Add all page data controls'><span class='fas'>&#xf055;</span></td></tr>");
+	// add a header (change between "Style" or "Label" on third column if PDFWriter)
+	table.append("<tr><td><b>Control</b></td><td><b>Field</b></td><td colspan='2'><b>" + (propertyObject.type == "pdfwriter" ? "Style" : "Label") + "</b><button class='titleButton' title='Add all page data controls'><span class='fas'>&#xf055;</span></td></tr>");
 		
 	// show current choices (with delete and move)
 	for (var i = 0; i < inputs.length; i++) {
