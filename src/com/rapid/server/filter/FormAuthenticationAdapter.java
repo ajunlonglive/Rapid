@@ -56,6 +56,7 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 
 	public static final String SESSION_VARIABLE_LOGIN_PATH = "login";
 	public static final String SESSION_VARIABLE_LOGOUT_PATH = "logout";
+	public static final String SESSION_VARIABLE_REQUEST_PATH = "request";
 	public static final String SESSION_VARIABLE_PASSWORDRESET_PATH = "passwordreset";
 	public static final String SESSION_VARIABLE_PASSWORDUPDATE_PATH = "passwordupdate";
 
@@ -200,8 +201,15 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 			// assume no userName
 			String userName = null;
 
-			// if we are POSTing from a login.jsp page, and we already have a session, invalidate it
-			if ("POST".equals(request.getMethod()) && requestPath.toLowerCase().contains("login.jsp") && request.getSession(false) != null) request.getSession().invalidate();
+			// if we are POSTing from a login.jsp page, and we already have a session
+			if ("POST".equals(request.getMethod()) && requestPath.toLowerCase().contains("login.jsp") && request.getSession(false) != null) {
+				// get the current session
+				HttpSession sessionCheck = request.getSession();
+				// empty the user name
+				sessionCheck.setAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME, null);
+				// empty the password
+				sessionCheck.setAttribute(RapidFilter.SESSION_VARIABLE_USER_PASSWORD, null);
+			}
 
 			// create a new session, if we need one
 			HttpSession session = request.getSession();
@@ -314,7 +322,7 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 				_logger.trace("No userName found in session");
 
 				// look for a sessionRequestPath attribute in the session
-				String sessionRequestPath = (String) session.getAttribute("requestPath");
+				String sessionRequestPath = (String) session.getAttribute(SESSION_VARIABLE_REQUEST_PATH);
 
 				// look in the request for the username
 				userName = request.getParameter("userName");
@@ -398,9 +406,9 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 					if (requestPath.endsWith(loginPath) && sessionRequestPath != null) {
 
 						// check the url for a requestPath
-						String urlRequestPath = request.getParameter("requestPath");
+						String urlRequestPath = request.getParameter(SESSION_VARIABLE_REQUEST_PATH);
 						// overide the session one if so
-						if (urlRequestPath != null) session.setAttribute("requestPath", urlRequestPath);
+						if (urlRequestPath != null) session.setAttribute(SESSION_VARIABLE_REQUEST_PATH, urlRequestPath);
 						// progress to the next step in the filter
 						return req;
 
@@ -465,7 +473,7 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 						// append the query string if there was one
 						if (request.getQueryString() != null) authorisationRequestPath += "?" + request.getQueryString();
 						// retain the request path in the session
-						session.setAttribute("requestPath", authorisationRequestPath);
+						session.setAttribute(SESSION_VARIABLE_REQUEST_PATH, authorisationRequestPath);
 
 						// send a redirect to load the login page unless the login path (from the custom login) is the request path (this creates a redirect)
 						if (authorisationRequestPath.equals(loginPath) && request.getHeader("User-Agent") != null && request.getHeader("User-Agent").contains("RapidMobile")) {
@@ -569,7 +577,7 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
  						}
 
 						// remove the authorisation session attribute
-						session.setAttribute("requestPath", null);
+						session.setAttribute(SESSION_VARIABLE_REQUEST_PATH, null);
 
 						// send a redirect to reload what we wanted before
 						response.sendRedirect(sessionRequestPath);
