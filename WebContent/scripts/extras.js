@@ -1170,7 +1170,7 @@ function newGlyph(code, control) {
 
 // upgrade older app fontawesome 4 glyphs to 5
 function upgadePageFontAwesome4to5() {
-	console.log("Updated FA");
+	
 	// elements with "fa" in their class attribute that isn't a div or named class, i.e. fa-next, nor one of our known version 5 classes 
 	$(".fa:not(div, [class*='fa-'], .fas, .far, .fab, .updated-fa)").each(function() {
 		var control = $(this);
@@ -1205,6 +1205,8 @@ function upgadePageFontAwesome4to5() {
 				.html(glyph.html);
 		}
 	});
+	
+	console.log("Updated FA");
 }
 
 // Function-call coalescing
@@ -1234,9 +1236,14 @@ function limitCallFrequency(f, period) {
 
 // do the upgrade when jquery is ready, also used in some controls
 $(function() {
-	var callback = limitCallFrequency(upgadePageFontAwesome4to5, 1000);
+	// set a function to time-limit the calls to, and how often
+	var f = limitCallFrequency(upgadePageFontAwesome4to5, 1000);
+	// run the function as the page loads
+	f();
+	// create the observer which will call our limited function
 	var observer = new MutationObserver(function(ev) {
-		callback();
+		f();
 	});
+	// start the observation
 	observer.observe(document.body, {subtree:true, childList:true});
 });
