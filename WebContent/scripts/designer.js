@@ -173,6 +173,36 @@ var _controlClipboard = newClipboard(localStorage, "controlClipboardJSON");
 // retain the copied action(s)
 var _actionClipboard = newClipboard(localStorage, "actionClipboardJSON");
 
+// if designer opens alone, clear clipboards
+var clearClipboardsTimeout = setTimeout(function() {
+	_controlClipboard.set("");
+	_actionClipboard.set("");
+}, 250);
+
+var windowOpenTime = Date.now();
+
+window.addEventListener("storage", function(storageEvent) {
+	if (storageEvent.key === "rapidWindowBroadcast") {
+		var broadcast = JSON.parse(storageEvent.newValue);
+		if (broadcast.message === "designerHeardDesignerOpened" && broadcast.time !== windowOpenTime) {
+			console.log("designerHeardDesignerOpened");
+			clearTimeout(clearClipboardsTimeout);
+		}
+	}
+}, { once: true });
+
+window.addEventListener("storage", function(storageEvent) {
+	if (storageEvent.key === "rapidWindowBroadcast") {
+		var broadcast = JSON.parse(storageEvent.newValue);
+		if (broadcast.message === "designerOpened") {
+			console.log("designerOpened");
+			window.localStorage.setItem("rapidWindowBroadcast", JSON.stringify({ message: "designerHeardDesignerOpened", time: windowOpenTime }));
+		}
+	}
+});
+
+window.localStorage.setItem("rapidWindowBroadcast", JSON.stringify({ message: "designerOpened", time: Date.now() }));
+
 // undo stack
 var _undo = [];
 // redo stack
