@@ -121,6 +121,12 @@ public class RapidFilter implements Filter {
 
 			// initialise _noAuthResources
 			_noAuthResources = new ArrayList<>();
+			// add system no-auth resources
+			_noAuthResources.add("/online.htm");
+			_noAuthResources.add("/safety");
+			_noAuthResources.add("/manifest.json");
+			_noAuthResources.add("/sw.js");
+
 			// look for a specified noAuthResources in web.xml
 			String noAuthResourcesParam = filterConfig.getInitParameter("noAuthResources");
 			// if we got some
@@ -187,6 +193,14 @@ public class RapidFilter implements Filter {
 		// if no caching is on, try and prevent cache, unless IE and request is for Font Awesome (fix for it not displaying sometimes)
 		if (_noCaching && !(isIE && path.contains("fontawesome-webfont."))) noCache(res);
 
+		// if this is the resources request from the service worker
+		if (path.startsWith("/~") && req.getQueryString() != null && req.getQueryString().endsWith("action=resources")) {
+
+			// if there is no session return an empty response
+			if (req.getSession(false) == null) return;
+
+		}
+
 		// assume this request requires authentication
 		boolean requiresAuthentication = true;
 
@@ -194,7 +208,6 @@ public class RapidFilter implements Filter {
 		if (path.startsWith("/soa")) {
 			// if this is a get request
 			if ("GET".equals(req.getMethod())) {
-
 
 				// remember we don't need authentication
 				requiresAuthentication = false;
@@ -233,26 +246,14 @@ public class RapidFilter implements Filter {
 			}
 		}
 
-		// online.htm doesn't need authentication
-		if ("/online.htm".equals(path)) requiresAuthentication = false;
-
-		// safety doesn't need authentication
-		if ("/safety".equals(path)) requiresAuthentication = false;
-
-		// manifest.json doesn't need authentication
-		if ("/manifest.json".equals(path)) requiresAuthentication = false;
-
-		// if we have no auth resources
-		if (_noAuthResources.size() > 0) {
-			// loop them
-			for (String noAuthResource : _noAuthResources) {
-				// check any parameterises no authentication resources;
-				if (path.startsWith(noAuthResource)) {
-					// record we don't need authentication
-					requiresAuthentication = false;
-					// we're done
-					break;
-				}
+		// loop the no auth resources - /online.htm, /safety, /manifest.json, /sw.js have been moved to system no auth resources in this filters constructor
+		for (String noAuthResource : _noAuthResources) {
+			// check any parameterises no authentication resources;
+			if (path.startsWith(noAuthResource)) {
+				// record we don't need authentication
+				requiresAuthentication = false;
+				// we're done
+				break;
 			}
 		}
 

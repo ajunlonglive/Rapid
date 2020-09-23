@@ -321,9 +321,6 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 
 				_logger.trace("No userName found in session");
 
-				// look for a sessionRequestPath attribute in the session
-				String sessionRequestPath = (String) session.getAttribute(SESSION_VARIABLE_REQUEST_PATH);
-
 				// look in the request for the username
 				userName = request.getParameter("userName");
 
@@ -397,6 +394,9 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 					}
 				}
 
+				// look for a sessionRequestPath attribute in the session - that this user will want to go back to
+				String sessionRequestPath = (String) session.getAttribute(SESSION_VARIABLE_REQUEST_PATH);
+
 				// check for a user in the request
 				if (userName == null) {
 
@@ -407,7 +407,7 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 
 						// check the url for a requestPath
 						String urlRequestPath = request.getParameter(SESSION_VARIABLE_REQUEST_PATH);
-						// overide the session one if so
+						// override the session one if so
 						if (urlRequestPath != null) session.setAttribute(SESSION_VARIABLE_REQUEST_PATH, urlRequestPath);
 						// progress to the next step in the filter
 						return req;
@@ -472,8 +472,8 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 						authorisationRequestPath = authorisationRequestPath.replace("designpage.jsp", "design.jsp");
 						// append the query string if there was one
 						if (request.getQueryString() != null) authorisationRequestPath += "?" + request.getQueryString();
-						// retain the request path in the session
-						session.setAttribute(SESSION_VARIABLE_REQUEST_PATH, authorisationRequestPath);
+						// retain the request path in the session if we don't have one already, we empty it once used and other requests, especially from the service worker can replace what the user wants
+						if (session.getAttribute(SESSION_VARIABLE_REQUEST_PATH) == null) session.setAttribute(SESSION_VARIABLE_REQUEST_PATH, authorisationRequestPath);
 
 						// send a redirect to load the login page unless the login path (from the custom login) is the request path (this creates a redirect)
 						if (authorisationRequestPath.equals(loginPath) && request.getHeader("User-Agent") != null && request.getHeader("User-Agent").contains("RapidMobile")) {
