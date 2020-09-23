@@ -455,6 +455,7 @@ return "<option value=''>Please select...</option><option value ='html'" + (this
 	border-radius: 50%;
 	border-width: 2px;
 	border-color: white;
+	border-style: outset;
 	width: 62px;
 	text-align: center;
 	display: inline-block;
@@ -467,6 +468,7 @@ return "<option value=''>Please select...</option><option value ='html'" + (this
 	border-radius: 50%;
 	border-width: 2px;
 	border-color: white;
+	border-style: outset;
     height: 70px;
     width: 70px;
     color: #FFF;
@@ -849,7 +851,7 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 		});
 		
 		var inputImageHtml = _cameraSelectImage ? "<div style='position:fixed; top:0; width:100%; text-align:center;'>"
-	    					+ "<button id='btnInputImage' class='cameraControlBasic'><i class='fas fa-folder-open cameraIcon'></i></button></div>"
+	    					+ "<label id='btnInputImage' for='inputImage' class='cameraControlBasic'><i class='fas fa-folder-open cameraIcon'></i></label></div>"
 							: "";
 	
 		// Add the divs
