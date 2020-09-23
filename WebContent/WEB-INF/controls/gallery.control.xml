@@ -164,6 +164,13 @@ div.gallery .galleryItem {
 #tools button, #pallet button {
 	transition: opacity 0.3s;
 	opacity: 1;
+	border: none;
+}
+
+
+
+#tools button:hover, #pallet button:hover {
+	background: #444;
 }
 
 #tools button.faded, #pallet button.faded {
