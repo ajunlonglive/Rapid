@@ -180,6 +180,9 @@ return "<option value=''>Please select...</option>" + getInputOptions(this.messa
 	            <changeValueJavaScript>select</changeValueJavaScript>
 	             <getValuesFunction>
 	                <![CDATA[
+// for backwards redudancy, set undefined to previous default behaviour
+if (!this.captureMode) this.captureMode = "closePreview";
+// return the values as usual
 return [["closePreview","Close preview"],["keepPreview","Keep preview open"],["showCapture","Show captured image/video"],["editCapture","Edit captured image/video"]];
 	                ]]>
 	            </getValuesFunction>
@@ -785,7 +788,7 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 		
 		_galleryControlId = galleryControlId;
 		_quality = quality;
-		_includeAudio = includeAudio;
+		_includeAudio = Boolean(includeAudio);
 		
 		if (mediums.includes('video') && MediaRecorder) {
 			_videoMimeType = optimalVideoMimeType(_formats, _codecs);
