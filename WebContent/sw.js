@@ -68,12 +68,7 @@ var _rapidResources = [
 	"styles/fonts/fontawesome/fonts/fa-solid-900.svg",
 	"styles/fonts/fontawesome/fonts/fa-solid-900.ttf",
 	"styles/fonts/fontawesome/fonts/fa-solid-900.woff",
-	"styles/fonts/fontawesome/fonts/fa-solid-900.woff2",
-	"styles/fonts/fontawesome/fonts/FontAwesome.otf",
-	"styles/fonts/fontawesome/fonts/fontawesome-webfont.eot",
-	"styles/fonts/fontawesome/fonts/fontawesome-webfont.svg",
-	"styles/fonts/fontawesome/fonts/fontawesome-webfont.ttf",
-	"styles/fonts/fontawesome/fonts/fontawesome-webfont.woff",
+	"styles/fonts/fontawesome/fonts/fa-solid-900.woff2",	
 	"styles_min/fonts/rapid/font-rapid.min.css",
 	"index.jsp",
 	"~?action=getApps"
