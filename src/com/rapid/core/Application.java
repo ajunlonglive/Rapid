@@ -470,8 +470,7 @@ public class Application {
 			if (o.getClass() == Resource.class) {
 				Resource r = (Resource) o;
 				for (Resource resource : this) {
-					//if (r.getType() == resource.getType() && r.getContent().equals(resource.getContent())) return true;
-					if (r.getType() == resource.getType() && r.getContent() == resource.getContent()) return true;
+					if (r.getType() == resource.getType() && r.getContent().equals(resource.getContent())) return true;
 				}
 			}
 			return false;
@@ -499,7 +498,7 @@ public class Application {
 			// loop all resources
 			for (Resource r : this) {
 				// if we can match the type and content
-				if (r.getType() == type && r.getContent() == content) {
+				if (r.getType() == type && r.getContent().equals(content)) {
 					// retain this resource
 					resource = r;
 					// we're done with this loop
