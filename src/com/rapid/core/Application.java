@@ -431,6 +431,31 @@ public class Application {
 			return hasDependency;
 		}
 
+		// override
+		@Override
+		public String toString() {
+			String string = "";
+			switch (_type) {
+				case (JAVASCRIPT) : string += "JAVASCRIPT"; break;
+				case (CSS) : string += "CSS"; break;
+				case (JAVASCRIPTFILE) : string += "JAVASCRIPTFILE"; break;
+				case (CSSFILE) : string += "CSSFILE"; break;
+				case (JAVASCRIPTLINK) : string += "JAVASCRIPTLINK"; break;
+				case (CSSLINK) : string += "CSSLINK"; break;
+				case (FILE) : string += "FILE"; break;
+			}
+			if (_name != null) string += " " + _name;
+			if (_content != null) {
+				string += " : ";
+				if (_content.length() > 100) {
+					string += _content.substring(0, 100) + "...";
+				} else {
+					string += _content;
+				}
+			}
+			return string;
+		}
+
 	}
 
 	// some overridden methods for the Resource collection
@@ -443,7 +468,7 @@ public class Application {
 			if (o.getClass() == Resource.class) {
 				Resource r = (Resource) o;
 				for (Resource resource : this) {
-					if (r.getType() == resource.getType() && r.getContent() == resource.getContent()) return true;
+					if (r.getType() == resource.getType() && r.getContent().equals(resource.getContent())) return true;
 				}
 			}
 			return false;
