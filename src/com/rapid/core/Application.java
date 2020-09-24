@@ -410,7 +410,8 @@ public class Application {
 				// loop them
 				for (ResourceDependency dependency : _dependancies) {
 					// check and return immediately
-					if (typeClass == dependency.getTypeClass()) return true;
+					if (typeClass == dependency.getTypeClass())
+						return true;
 				}
 			}
 			return hasDependency;
@@ -425,7 +426,8 @@ public class Application {
 				// loop them
 				for (ResourceDependency dependency : _dependancies) {
 					// check and return immediately
-					if (typeClass == dependency.getTypeClass() && types.contains(dependency.getType())) return true;
+					if (typeClass == dependency.getTypeClass() && types.contains(dependency.getType()))
+						return true;
 				}
 			}
 			return hasDependency;
@@ -468,7 +470,8 @@ public class Application {
 			if (o.getClass() == Resource.class) {
 				Resource r = (Resource) o;
 				for (Resource resource : this) {
-					if (r.getType() == resource.getType() && r.getContent().equals(resource.getContent())) return true;
+					//if (r.getType() == resource.getType() && r.getContent().equals(resource.getContent())) return true;
+					if (r.getType() == resource.getType() && r.getContent() == resource.getContent()) return true;
 				}
 			}
 			return false;
