@@ -482,6 +482,11 @@ public class Rapid extends RapidHttpServlet {
 								jsonResources.put("applications/" + app.getId() + "/" + app.getVersion() + "/" + resourceFile.getName());
 							}
 
+							// get the application modified date
+							Date modifiedDate = app.getModifiedDate();
+							// update to created date if null
+							if (modifiedDate == null) modifiedDate = app.getCreatedDate();
+
 							// get pages
 							Pages pages = app.getPages();
 
@@ -491,8 +496,25 @@ public class Rapid extends RapidHttpServlet {
 								for (String pageId : pages.getPageIds()) {
 									// add url to retrieve page to resources
 									jsonResources.put("~?a=" + app.getId() + "&v=" + app.getVersion() + "&p=" + pageId);
+									// if we have an app modified date
+									if (modifiedDate != null) {
+										// get this page (loading it if we need to)
+										Page page = pages.getPage(getServletContext(), pageId);
+										// get page modified date
+										Date pageModifiedDate = page.getModifiedDate();
+										// update to created date if null
+										if (pageModifiedDate == null) pageModifiedDate = page.getCreatedDate();
+										// if we have a page modified date
+										if (pageModifiedDate != null) {
+											// update modified date if page is greater
+											if (page.getModifiedDate().after(modifiedDate)) modifiedDate = pageModifiedDate;
+										}
+									}
 								}
 							}
+
+							// get the modified as an epoch (which is what the resources below use by default)
+							Long modified = modifiedDate.getTime();
 
 							// get app resources
 							List<Resource> resources = app.getResources();
@@ -505,12 +527,25 @@ public class Rapid extends RapidHttpServlet {
 									if (resource.getType() == Resource.JAVASCRIPTFILE || resource.getType() == Resource.CSSFILE || resource.getType() == Resource.JAVASCRIPTLINK || resource.getType() == Resource.CSSLINK || resource.getType() == Resource.FILE) {
 										// add resource
 										jsonResources.put(resource.getContent());
+										// if a file type
+										if (modifiedDate != null && (resource.getType() == Resource.JAVASCRIPTFILE || resource.getType() == Resource.CSSFILE || resource.getType() == Resource.FILE)) {
+											// make a file for this resource
+											File resourceFile = new File(this.getServletContext().getRealPath("") + "/" + resource.getContent());
+											// if the file exists check and update our modified date
+											if (resourceFile.exists()) {
+												// check the resource file modified date
+												if (resourceFile.lastModified() > modified) modified = resourceFile.lastModified();
+											}
+										}
 									}
 								}
 							}
 
 							// add resources to response
 							jsonResponse.put("resources", jsonResources);
+
+							// add the modified date to the json
+							jsonResponse.put("modified", modified);
 
 						} // has mobile action check
 
