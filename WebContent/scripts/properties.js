@@ -6614,24 +6614,36 @@ function Property_pdfInputs(cell, propertyObject, property, details) {
 		var pageControls = getControls();
 		// prepare a list of controls to insert
 		var insertControls = [];
+		// count the eligible controls
+		var count = 0;
 		// loop the page controls
 		for (var i in pageControls) {
 			// get the pageControl
 			var pageControl = pageControls[i];
 			// if it has a name
 			if (pageControl.name) {
+				// inc the count
+				count ++;
 				// get the control class
 				var controlClass = _controlTypes[pageControl.type];
 				// if this has a get data method
 				if (controlClass.getDataFunction) {
-					// get the label
-					var label = pageControl.label;
-					// if not got one yet 
-					if (!label) {
-						// look for responsive label
+					// assume no label
+					var label = null;
+					// the writer is different, the label holds the style are the style
+					if (propertyObject.type == "pdfwriter") {
+						// set a default style
+						label = "top: " + count*20 + "; left: 10";
+					} else {
+						// get the responsive label
 						label = pageControl.responsiveLabel;
-						// if still not got one and control control is text, set label to text property
-						if (!label && i > 0 && (pageControls[i-1].type == "text" || pageControls[i-1].type == "responsivetext")) label = pageControls[i-1].text; 
+						// if not got one yet 
+						if (!label) {
+							// look for old-style label
+							label = pageControl.label;
+							// if still not got one and control control is text, set label to text property
+							if (!label && i > 0 && (pageControls[i-1].type == "text" || pageControls[i-1].type == "responsivetext")) label = pageControls[i-1].text;
+						}
 					}
 					// if there is a label
 					if (label) {
