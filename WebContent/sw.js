@@ -269,7 +269,8 @@ self.addEventListener("fetch", function(event) {
 		url = url.replace(/(p=P\d+).*$/, "$1");
 		
 		// remove any version
-		if (dialogueParameter) var url = url.replace(/&v=[^&\/]+/, "");
+		var versionFreeUrl = url.replace(/&v=[^&\/]+/, "");
+		if (dialogueParameter) url = versionFreeUrl;
 		
 		// if requesting an app
 		event.respondWith(
@@ -298,7 +299,7 @@ self.addEventListener("fetch", function(event) {
 									if (freshResponse.ok && !freshResponse.url.endsWith("login.jsp")) {
 										return freshResponse.json()
 										.then(resources => {
-											if (resources.resources) {
+											if (resources.resources && ((!appResources) || appResources.modified < freshResponse.modified)) {
 												
 												return removeAppResourcesByKeys(appResources && appResources.resources || [])
 												.then(_ => {
