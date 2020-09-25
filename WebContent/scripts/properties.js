@@ -3686,15 +3686,15 @@ function logicConditionValue(cell, action, key, conditionIndex, valueId) {
 			}));
 		break;
 		case "SYS" :
-			if (value.id == "System.field") {
+			if (value.id == "System.field" || value.id == "System.parameter") {
 				// set the html
-				table.append("<tr><td>Value</td><td><input /></td></tr>");
+				table.append("<tr><td>" + ( value.id == "System.parameter" ? "Name" : "Value") + "</td><td><input /></td></tr>");
 				// get the input
 				var input = table.find("input").last();
 				// set any current value
 				if (value.field) input.val(value.field);
 				// add the listeners
-				addListener( input.keyup( function(ev) {		
+				addListener( input.keyup( function(ev) {
 					// set the new value into the field
 					value.field = $(ev.target).val();
 				}));
