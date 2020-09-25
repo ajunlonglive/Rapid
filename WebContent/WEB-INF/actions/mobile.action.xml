@@ -988,7 +988,7 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 					var videoPixelsPerScreenPixel = videoWiderThanPlayer ? (videoWidth / playerWidth) : (videoHeight / playerHeight);
 					
 					var videoScreenWidth = videoWiderThanPlayer ? playerWidth : (playerHeight * videoRatio);
-					var videoScreenHeight = videoWiderThanPlayer ? (playerWidth / videoRatio) : videoHeight;
+					var videoScreenHeight = videoWiderThanPlayer ? (playerWidth / videoRatio) : playerHeight;
 					
 					var videoOffsetX = (playerWidth - videoScreenWidth) / 2;
 					var videoOffsetY = (playerHeight - videoScreenHeight) / 2;
