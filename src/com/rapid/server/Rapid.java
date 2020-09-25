@@ -345,7 +345,7 @@ public class Rapid extends RapidHttpServlet {
 						if (fileName!=null && applicationId!=null) {
 
 							// determine the storage from the applications id, also different if server is public
-							String uploadPath = (rapidRequest.getRapidServlet().isPublic() ? "WEB-INF/" : "") + "uploads/" + applicationId;
+							String uploadPath = (rapidRequest.getRapidServlet().isPublic() ? "WEB-INF/" : "") + "uploads/" + applicationId.toLowerCase();
 
 							// get the file path
 							String filePath = getServletContext().getRealPath("/") + "/" + uploadPath + "/" + fileName;
@@ -1424,7 +1424,7 @@ public class Rapid extends RapidHttpServlet {
 													try {
 
 														// create the path
-														String imagePath = "uploads/" +  app.getId() + "/" + imageName;
+														String imagePath = "uploads/" +  app.getId().toLowerCase() + "/" + imageName;
 														// servers with public access must use the secure upload location
 														if (this.isPublic()) imagePath = "WEB-INF/" + imagePath;
 														// create a file
