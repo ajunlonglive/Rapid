@@ -297,7 +297,7 @@ public class RapidFilter implements Filter {
 				Applications applications = (Applications) request.getServletContext().getAttribute("applications");
 
 				// assets that we know are in the root
-				if (pathPart.length > 1 && "favicon.ico".equals(lastPathPart)) {
+				if (pathPart.length > 1 && ("favicon.ico".equals(lastPathPart) || "sw.js".equals(lastPathPart))) {
 
 					// forward to off the root
 					forwardRequest(filteredRequest, response, "/" + lastPathPart);
