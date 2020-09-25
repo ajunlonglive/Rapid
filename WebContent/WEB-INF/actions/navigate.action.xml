@@ -127,9 +127,15 @@ return [["I","Main menu"],["L","Logout"],["P","Change password"],["B","Back"],["
                     <![CDATA[
                                      
 .dialogueCover {
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
 	background-color: white;
 	opacity:0.8;
 	filter:alpha(opacity=80);
+	z-index: 1001;
 }
 
 .dialogue {
@@ -159,13 +165,7 @@ $(document).ready( function() {
 	
 		var doc = $(document);
 		var win = $(window);
-				
-		// resize the cover
-		$(".dialogueCover").css({
-       		width : doc.width(),
-       		height : doc.height()
-       	});
-       	      	
+
        	// resize the dialogues
        	$(".dialogue").each(function() {
        		var dialogue = $(this);
@@ -345,7 +345,7 @@ function Action_navigate(url, dialogue, id, popup, dismissibleDialogue) {
 		           	$("#" + id + "cover").remove();
 		           	
 		           	// add the cover and return reference
-		           	dialogueCover = body.append("<div id='" + id + "cover' class='dialogueCover' style='position:absolute;left:0px;top:0px;z-index:1001;'></div>").children().last();
+		           	dialogueCover = body.append("<div id='" + id + "cover' class='dialogueCover'></div>").children().last();
 		           	
 	            	// remove any existing dialogue container for this action
 		           	$("#" + id).remove();
