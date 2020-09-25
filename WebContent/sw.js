@@ -12,7 +12,7 @@ var _rapidpwa = {
 /* A version number is useful when updating the worker logic,
 	 allowing you to remove outdated cache entries during the update.
 */
-var _swVersion = 'v1.4';
+var _swVersion = 'v1.5';
 
 /* These resources will be downloaded and cached by the service worker
 	 during the installation process. If any resource fails to be downloaded,
@@ -261,7 +261,13 @@ self.addEventListener("fetch", function(event) {
 		
 		// if   mobdemo/applications/test/3/rapid.css
 		// then mobdemo/3/rapid.css
-		url = url.replace(/.+\/(applications|scripts|styles|scripts_min|styles_min|images\/.+)/, "$1");
+		
+		var lowestDirectoryIndex = ["applications", "scripts", "styles", "scripts_min", "styles_min", "images"]
+			.map(directory => url.indexOf(directory))
+			.filter(directoryIndex => directoryIndex > -1)
+			.reduce((lowestDirectoryIndex, directoryIndex) => Math.min(lowestDirectoryIndex, directoryIndex), url.length);
+		
+		if (lowestDirectoryIndex < url.length) url = url.slice(lowestDirectoryIndex);
 		
 		var dialogueParameter = url.includes("action=dialogue") ? "&action=dialogue" : "";
 		
