@@ -47,17 +47,17 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 // for backwards compatibility	                
 if (!this.copyType || this.copyType == "false") this.copyType = "replace";
 // return the values
-return [["replace","replace"],["append","append"],["row","row merge"],["child","child merge"],["bulk","bulk"],["search","search"],["trans","transpose"]];
+return [["replace","replace"],["bulk","bulk"],["row","row merge"],["child","child insert"],["append","append"],["search","search"],["trans","transpose"]];
 				</getValuesFunction>
 	            <refreshProperties>true</refreshProperties>
 	            <helpHtml>
 	            	<![CDATA[
 This powerful control moves data around your application. The following differnt types of data copy are supported:<br/><br/>
 - replace, will empty the destination controls of data before copying in the source data<br/>
-- append, will add the source data as a new row in the destination data. Any existing fields will be used, new fields will be added<br/>
-- row merge, will keep all destination data and add the source data in the same row. New fields will be added if required<br/>
-- child merge, will use fields in common between the source and destination to match rows in the source to rows in the destination where matching rows in the source will be added to child datastores in the destination. Use this for parent/child relationships<br/> 
 - bulk, provides a dialogue where a number of related datacopies can easily be specified<br/>
+- row merge, will keep all destination data and add the source data in the same row. New fields will be added if required<br/>
+- child insert, inserts the source data object as a child into the destination under the specified field. The merge option will use fields in common between the source and destination to match rows in the source to rows in the destination and matching rows in the source will be added to child datastores in the rows of the destination. Use this for parent/child relationships<br/> 
+- append, will add the source data as a new row in the destination data. Any existing fields will be used, new fields will be added<br/>
 - search, allows a source to be searched against a term and matching rows placed into the destination<br/>
 - transpose, converts a source with lots of columns to one with lots of rows and vice versa. Key fields will appear on every row, ignore fields will not be used in the transposition<br/>
 	                ]]>
