@@ -286,7 +286,7 @@ self.addEventListener("fetch", function(event) {
 				.then(response => response && response.json())
 				.then(appResources =>
 					
-					cache.match(url).then(cachedResponse => {
+					cache.match(versionFreeUrl).then(cachedResponse => {
 						
 						var disambiguatedUrl = requestedAppId ? (appResources && appResources.redirects[url] || url) + dialogueParameter : url;
 						var onStartPage = parameters.v === undefined && parameters.p === undefined && url.split("/").length === 1;
