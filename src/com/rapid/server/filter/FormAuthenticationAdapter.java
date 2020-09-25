@@ -373,7 +373,7 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 							// add cache defeating to try and stop the 302 from custom login .jsp pages to index.jsp
 							RapidFilter.noCache(response);
 							// log
-							_logger.trace("Custom login " + customLoginPath + " identified. Index set to " + customIndexPath);
+							_logger.debug("Custom login " + customLoginPath + " identified. Index=" + customIndexPath + ", logout=" + customLogoutPath + ", reset=" + customPasswordReset);
 							// we're done
 							break;
 						}
@@ -588,7 +588,7 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 					} else {
 
 						// log that authentication was unsuccessful
-						_logger.debug("FormAuthenticationAdapter failed for " + userName + " from " + deviceDetails);
+						_logger.debug("FormAuthenticationAdapter failed for " + userName + " from " + requestPath + "  " + deviceDetails);
 
 						// start the message
 						String message = "Your user name or password has not been recognised";
