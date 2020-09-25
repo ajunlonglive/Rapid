@@ -305,7 +305,7 @@ self.addEventListener("fetch", function(event) {
 									if (freshResponse.ok && !freshResponse.url.endsWith("login.jsp")) {
 										return freshResponse.json()
 										.then(resources => {
-											if (resources.resources && ((!appResources) || appResources.modified < freshResponse.modified)) {
+											if (resources.resources && ((!appResources) || appResources.modified < resources.modified)) {
 												
 												return removeAppResourcesByKeys(appResources && appResources.resources || [])
 												.then(_ => {
