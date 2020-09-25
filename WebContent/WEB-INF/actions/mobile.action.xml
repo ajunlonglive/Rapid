@@ -517,6 +517,23 @@ return "<option value=''>Please select...</option><option value ='html'" + (this
 	background: #C00;
 }
 
+#cropBox {
+	position: fixed;
+	box-sizing: content-box;
+	margin: -2px;
+	pointer-events: none;
+	border: solid 2px #FFF;
+	outline: solid 10px #00000033;
+	width: 0;
+	height: 0;
+	opacity: 1;
+	transition: opacity 0.15s linear;
+}
+
+#cropBox.hiddenCrop {
+	opacity: 0;
+}
+
 	        	</contents>
 	        </resource>
             
@@ -857,6 +874,7 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 		// Add the divs
 		var cameraPreviewHtml = "<div id='cameraVideoContainer'>"
 							+ "<video id='cameraPlayer' autoplay muted='true'></video>"
+							+ "<div id='cropBox' class='hiddenCrop'></div>"
 							+ inputImageHtml
 							+ "<button id='btnToggleCamera' class='cameraControlBasic' style='position:absolute; left:0;'><i class='fas fa-retweet cameraIcon' style='margin-left:-5px;'></i></button>"								  
 							+ "<button id ='btnCloseCamera' class='cameraControlBasic' style='position:absolute; right:0;'><i class='fas fa-times cameraIcon'></i></button>"
@@ -910,8 +928,96 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 			}
 			
 			if (mediums.includes('image')) {
+				
+				var photoOptions = {};
+				var cropBox = $("#cropBox");
+				
+				var left = 0;
+				var top = 0;
+				var width = 0;
+				var height = 0;
+				
+				function setCropBox(left, top, width, height, videoOffsetX, videoOffsetY, videoPixelsPerScreenPixel) {
+					
+					cropBox.css({
+						left: left,
+						top: top,
+						width: width,
+						height: height
+					});
+					
+					if (width > 10 && height > 10) {
+						photoOptions.crop = {
+							left: (left - videoOffsetX) * videoPixelsPerScreenPixel,
+							top: (top - videoOffsetY) * videoPixelsPerScreenPixel,
+							width: width * videoPixelsPerScreenPixel,
+							height: height * videoPixelsPerScreenPixel
+						};
+						cropBox.removeClass("hiddenCrop");
+					} else {
+						photoOptions.crop = undefined;
+						cropBox.addClass("hiddenCrop");
+					}
+				}
+				
+				var cropOptions = sessionStorage.getItem("corpBoxStreamID_" + stream.id);
+				if (cropOptions) {
+					var cropOptions = JSON.parse(cropOptions);
+					if (cropOptions) setCropBox(cropOptions.left, cropOptions.top, cropOptions.width, cropOptions.height, cropOptions.videoOffsetX, cropOptions.videoOffsetY, cropOptions.videoPixelsPerScreenPixel);
+				}
+				
+				_cameraPlayer.addEventListener("mousedown", function(ev) {
+					
+					photoOptions.crop = undefined;
+					cropBox.addClass("hiddenCrop");
+					
+					var startX = ev.clientX;
+					var startY = ev.clientY;
+						
+					var videoWidth = _cameraPlayer.videoWidth;
+					var videoHeight = _cameraPlayer.videoHeight;
+					
+					var playerWidth = _cameraPlayer.offsetWidth;
+					var playerHeight = _cameraPlayer.offsetHeight;
+					
+					var videoRatio = videoWidth / videoHeight;
+					var playerRatio = playerWidth / playerHeight;
+					
+					var videoWiderThanPlayer = videoRatio >= playerRatio;
+					
+					var videoPixelsPerScreenPixel = videoWiderThanPlayer ? (videoWidth / playerWidth) : (videoHeight / playerHeight);
+					
+					var videoScreenWidth = videoWiderThanPlayer ? playerWidth : (playerHeight * videoRatio);
+					var videoScreenHeight = videoWiderThanPlayer ? (playerWidth / videoRatio) : videoHeight;
+					
+					var videoOffsetX = (playerWidth - videoScreenWidth) / 2;
+					var videoOffsetY = (playerHeight - videoScreenHeight) / 2;
+					
+					function mouseMoveListener(ev) {
+						
+						var currentX = ev.clientX;
+						var currentY = ev.clientY;
+						
+						left = Math.min(currentX, startX);
+						top = Math.min(currentY, startY);
+						width = Math.abs(currentX - startX);
+						height = Math.abs(currentY - startY);
+						
+						setCropBox(left, top, width, height, videoOffsetX, videoOffsetY, videoPixelsPerScreenPixel);
+					}
+					
+					_cameraPlayer.addEventListener("mousemove", mouseMoveListener);
+					
+					window.addEventListener("mouseup", function(ev) {
+						
+						_cameraPlayer.removeEventListener("mousemove", mouseMoveListener);
+						sessionStorage.setItem("corpBoxStreamID_" + stream.id, JSON.stringify({ left: left, top: top, width: width, height: height, videoOffsetX: videoOffsetX, videoOffsetY: videoOffsetY, videoPixelsPerScreenPixel: videoPixelsPerScreenPixel }));
+						
+					}, { once: true });
+				});
+				
 				$("#btnTakePicture").click(function(ev) {
-					mediaCapturer.capture(takePicture(ev), source);
+					mediaCapturer.capture(takePicture(ev, photoOptions), source);
 				});
 			}
 			
@@ -998,17 +1104,17 @@ function scaleImageToDataURL(image, imageWidth, imageHeight) {
 	// Find the longest side of the videoplayer
 	if (imageHeight > imageWidth) {
 		
-		canvas.height = maxSize;
-		canvas.width = (imageWidth / imageHeight) * maxSize;
+		canvas.height = Math.min(imageHeight ,maxSize);
+		canvas.width = Math.min(imageWidth ,(imageWidth / imageHeight) * maxSize);
 		
 	} else {
 	
-		canvas.height = (imageHeight / imageWidth) * maxSize;
-		canvas.width = maxSize;
+		canvas.height = Math.min(imageHeight ,(imageHeight / imageWidth) * maxSize);
+		canvas.width = Math.min(imageWidth ,maxSize);
 		
 	}
 	
-	// Draw a single video frame in the player to the canvas
+	// Draw a single frame in the player to the canvas
 	canvasContext.drawImage(image, 0, 0, canvas.width, canvas.height);
 	
 	// Get a data url of the canvas, containing a representation of the image
@@ -1080,17 +1186,31 @@ function selectItem(galleryControlId, size, mediums, message) {
 	});
 }
 
-function takePicture(ev) {
+function takePicture(ev, options) {
 	
 	if (hasGetUserMedia()) {
 		
+		var source = _cameraPlayer;
+		
 		// Get the intrinsic width and height of the videoplayer
-		var vWidth = _cameraPlayer.videoWidth;
-		var vHeight = _cameraPlayer.videoHeight;
+		var vWidth = source.videoWidth;
+		var vHeight = source.videoHeight;
+		
+		if (options.crop) {
+			var crop = options.crop;
+			vWidth = crop.width;
+			vHeight = crop.height;
+			var canvas = document.createElement("canvas");
+			canvas.width = vWidth;
+			canvas.height = vHeight;
+			var canvasContext = canvas.getContext("2d");
+			canvasContext.drawImage(source, -crop.left, -crop.top, source.videoWidth, source.videoHeight);
+			source = canvas;
+		}
 		
 		// Get a data url of the canvas, containing a representation of the image
 		// Default format type is image/png
-		var dataURL = scaleImageToDataURL(_cameraPlayer, _cameraPlayer.videoWidth, _cameraPlayer.videoHeight);
+		var dataURL = scaleImageToDataURL(source, vWidth, vHeight);
 		
 		return { dataURL: dataURL, ev: ev };
 	}
