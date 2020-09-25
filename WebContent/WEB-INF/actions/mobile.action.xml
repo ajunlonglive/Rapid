@@ -613,7 +613,7 @@ function getAvailableCameras() {
 
 var _mobileCamera = {
 	getStream: function() {
-		return navigator.mediaDevices.getUserMedia({ audio: _includeAudio, video: { facingMode: _currentFacingMode, height: { max: _size }, width: { max: _size } } });
+		return navigator.mediaDevices.getUserMedia({ audio: _includeAudio, video: { facingMode: _currentFacingMode } });
 	},
 	closeStream: function() {
 		if (hasGetUserMedia()) {
