@@ -960,7 +960,7 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 					}
 				}
 				
-				var cropOptions = sessionStorage.getItem("corpBoxStreamID_" + stream.id);
+				var cropOptions = sessionStorage.getItem("cropBoxStreamID_" + stream.id);
 				if (cropOptions) {
 					var cropOptions = JSON.parse(cropOptions);
 					if (cropOptions) setCropBox(cropOptions.left, cropOptions.top, cropOptions.width, cropOptions.height, cropOptions.videoOffsetX, cropOptions.videoOffsetY, cropOptions.videoPixelsPerScreenPixel);
@@ -1011,7 +1011,7 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 					window.addEventListener("mouseup", function(ev) {
 						
 						_cameraPlayer.removeEventListener("mousemove", mouseMoveListener);
-						sessionStorage.setItem("corpBoxStreamID_" + stream.id, JSON.stringify({ left: left, top: top, width: width, height: height, videoOffsetX: videoOffsetX, videoOffsetY: videoOffsetY, videoPixelsPerScreenPixel: videoPixelsPerScreenPixel }));
+						sessionStorage.setItem("cropBoxStreamID_" + stream.id, JSON.stringify({ left: left, top: top, width: width, height: height, videoOffsetX: videoOffsetX, videoOffsetY: videoOffsetY, videoPixelsPerScreenPixel: videoPixelsPerScreenPixel }));
 						
 					}, { once: true });
 				});
