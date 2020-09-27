@@ -217,7 +217,7 @@ public class Navigate extends Action {
 		// return false if we're stopping further actions
 		if (Boolean.parseBoolean(getProperty("stopActions"))) js += "return false;\n";
 		// stop event bubbling (both navigation types need this)
-		js += "ev.stopPropagation();\n";
+		js += "if (ev.stopPropagation) ev.stopPropagation();\n";
 		// stop the form being submitted
 		js += "ev.preventDefault();\n";
 		// return it into the page!
