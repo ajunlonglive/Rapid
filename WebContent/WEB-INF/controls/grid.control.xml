@@ -1589,6 +1589,38 @@ if (details) {
 	    </initJavaScript>
 
 		<runtimeProperties>
+		
+			<runtimeProperty>
+				<type>rowCount</type>
+				<name>Row count</name>				
+				<getPropertyFunction>
+			        <![CDATA[
+// check if the grid is loading			        
+if (_gridLoaders[id] && _gridLoaders[id].loading) {
+	// if loading send the retained row count
+	return _gridLoaders[id].rows;
+} else {
+	// not loading so check details and storage
+	if (details && details.dataStorageType) {
+		// there is storage so use that
+		var gridData = getGridDataStoreData(id, details);
+		if (gridData && gridData.rows) {
+			return gridData.rows.length;
+		} else {
+			return 0;
+		}
+	} else {
+		// get the grid
+		var grid = $("#" + id);
+		// make sure it's a table
+		if (!grid.is("table")) grid = grid.find("table").last();
+		// return number of rows
+		return grid.find("tr").length - 1;
+	}
+}
+			        ]]>	  	   	            
+	   	        </getPropertyFunction>
+			</runtimeProperty>
 
 			<runtimeProperty>
 				<type>selectedRowData</type>
@@ -1887,41 +1919,8 @@ if (gridData && gridData.selectedRowNumber && gridData.selectedRowNumber > 0) {
 			</runtimeProperty>
 
 			<runtimeProperty>
-				<type>rowCount</type>
-				<name>Row count</name>				
-				<getPropertyFunction>
-			        <![CDATA[
-// check if the grid is loading			        
-if (_gridLoaders[id] && _gridLoaders[id].loading) {
-	// if loading send the retained row count
-	return _gridLoaders[id].rows;
-} else {
-	// not loading so check details and storage
-	if (details && details.dataStorageType) {
-		// there is storage so use that
-		var gridData = getGridDataStoreData(id, details);
-		if (gridData && gridData.rows) {
-			return gridData.rows.length;
-		} else {
-			return 0;
-		}
-	} else {
-		// get the grid
-		var grid = $("#" + id);
-		// make sure it's a table
-		if (!grid.is("table")) grid = grid.find("table").last();
-		// return number of rows
-		return grid.find("tr").length - 1;
-	}
-}
-			        ]]>	  	   	            
-	   	        </getPropertyFunction>
-			</runtimeProperty>
-
-			<runtimeProperty>
 				<type>selectedRowNumber</type>
 				<name>Selected row number</name>
-				<advanced>true</advanced>
 				<getPropertyFunction>
 			        <![CDATA[
 // check if the grid is loading			        
