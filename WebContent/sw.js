@@ -52,7 +52,9 @@ var _rapidResources = [
 	"styles/bootstrap.css",
 	"styles/designlinks.css",
 	"styles/index.css",
+	"styles/fonts/OpenSans-Regular.ttf",
 	"styles/fonts/OpenSans-Regular.woff",
+	"styles/fonts/OpenSans-Regular.woff2",
 	"styles/fonts/fontawesome/css/font-awesome.css",
 	"styles/fonts/fontawesome/fonts/fa-brands-400.eot",
 	"styles/fonts/fontawesome/fonts/fa-brands-400.svg",
@@ -68,7 +70,7 @@ var _rapidResources = [
 	"styles/fonts/fontawesome/fonts/fa-solid-900.svg",
 	"styles/fonts/fontawesome/fonts/fa-solid-900.ttf",
 	"styles/fonts/fontawesome/fonts/fa-solid-900.woff",
-	"styles/fonts/fontawesome/fonts/fa-solid-900.woff2",	
+	"styles/fonts/fontawesome/fonts/fa-solid-900.woff2",
 	"styles_min/fonts/rapid/font-rapid.min.css",
 	"index.jsp",
 	"~?action=getApps"
@@ -147,8 +149,8 @@ self.addEventListener("fetch", function(event) {
 		return;
 	}
 	
-	// ignore resources referred by designer.jsp, allowing resources referred by offline.jsp
-	var referrer = event.request.referrer;
+	// ignore resources referred by designer.jsp, allowing resources referred by offline.htm
+	var referrer = event.request.referrer.replace(_contextPath,"");
 	
 	if ((designerIndicators.concat(adminIndicators).some(indicator => referrer.includes(indicator)))
 		&& !_offlinePageResources.some(resource => url.endsWith(resource))) {
