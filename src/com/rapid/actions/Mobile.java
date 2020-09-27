@@ -446,14 +446,13 @@ public class Mobile extends Action {
 					// add the subject js
 					js += "var subject = " + (("".equals(subjectGetDataJS) || subjectGetDataJS == null) ? "''" : subjectGetDataJS) + ";\n";
 					// subject safety check
-					js += "if (!subject) subject = ''\n";
+					js += "if (!subject) subject = '';\n";
 					// get the message js
 					String messageGetDataJS = Control.getDataJavaScript(rapidServlet.getServletContext(), application, page, getProperty("messageControlId"), getProperty("messageField"));
 					// get the message
 					js += "var message = " + (("".equals(messageGetDataJS) || messageGetDataJS == null) ? "''" : messageGetDataJS) + ";\n";
 					// message safety check
-					js += "if (!message) message = ''\n";
-
+					js += "if (!message) message = '';\n";
 					// start the alernative mobile check
 					js += getMobileCheckAlternative();
 					// start the check for rapid mobile function
@@ -464,7 +463,9 @@ public class Mobile extends Action {
 					js += "  } else alert('Opening emails is not supported in this version of Rapid Mobile');\n";
 					// else
 					js += "} else {\n";
-					// no rapid mobile so just open in new tab
+					// comma's seem to affect the line breaking in our body
+					js += "  message = message.replace(',','%2c').replace(' ','%20').replace('.','%2e');\n";
+					// open mail link
 					js += "  window.location.href = 'mailto:' + email + '?subject=' + subject + '&body=' + message;\n";
 					// close the mobile check
 					js += "}\n";
@@ -733,8 +734,8 @@ public class Mobile extends Action {
 				String navigateControlId = getProperty("navigateControlId");
 				// get the control
 				Control navigateControl = Control.getControl(rapidServlet.getServletContext(), application, page, navigateControlId);
-				// check we got one
-				if (navigateControl == null) {
+				// check we got one (but allow System.field)
+				if ((navigateControlId == null || navigateControl == null) && !"System.field".equals(navigateControlId)) {
 					js += "// navigate to control " + navigateControlId + " not found\n";
 				} else {
 					// get the navigate to field
