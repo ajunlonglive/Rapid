@@ -51,7 +51,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	        <property>
 	            <key>images</key>
 	            <name>Images</name>
-	            <setConstructValueFunction>return [{url:'images/RapidLogo_60x40.png'},{url:'images/RapidLogo_60x40.png'}]</setConstructValueFunction>
+	            <setConstructValueFunction>return []</setConstructValueFunction>
 	            <changeValueJavaScript>galleryImages</changeValueJavaScript>
 	            <refreshHtml>true</refreshHtml>
 	            <helpHtml>Sets the images to be used. Each image can have its own caption. By default two Rapid logos are placed in as an example of use.</helpHtml>
@@ -1009,7 +1009,7 @@ if (this.images && this.images.length > 0) {
   for (var i in this.images) {
   	var url = this.images[i].url;
   	if (url.indexOf("/") < 0) url = "applications/" + _version.id + "/" + _version.version + "/" + url
-    html += "<img src='" + url + "'/>";    
+    html += "<img class='galleryItem' src='" + url + "'/>";
   }
 } else {
 	html += "<span>" + this.emptyText + "</span>";
@@ -1023,7 +1023,7 @@ return html;
 	    
 	    <getDetailsFunction>
 	        <![CDATA[
-var details = {type:"gallery", onImageClick: this.onImageClick, emptyText: this.emptyText, allowDelete: this.allowDelete != false};
+var details = {type:"gallery", onImageClick: this.onImageClick, emptyText: this.emptyText, allowDelete: this.allowDelete != false, allowEdit: this.allowEdit != false};
 if (this.images && this.gotCaptions) {
 	details.captions = [];
 	for (var i in this.images) {
