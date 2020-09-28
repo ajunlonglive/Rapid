@@ -1072,6 +1072,9 @@ public class Page {
 		// empty the page variables so they are rebuilt the next time
 		application.emptyPageVariables();
 
+		// empty the resources JSON so it's rebuilt next time
+		application.emptyResourcesJSON();
+
 		return fileSize;
 	}
 

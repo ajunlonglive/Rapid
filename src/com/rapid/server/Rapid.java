@@ -56,9 +56,7 @@ import org.json.JSONObject;
 
 import com.rapid.core.Application;
 import com.rapid.core.Application.RapidLoadingException;
-import com.rapid.core.Application.Resource;
 import com.rapid.core.Page;
-import com.rapid.core.Pages;
 import com.rapid.core.Pages.PageHeader;
 import com.rapid.core.Pages.PageHeaders;
 import com.rapid.forms.FormAdapter;
@@ -428,135 +426,14 @@ public class Rapid extends RapidHttpServlet {
 
 					} else if ("resources".equals(actionName)) {
 
-						// start a JSON response
-						JSONObject jsonResponse = new JSONObject();
-
-						// start a JSON array
-						JSONArray jsonResources = new JSONArray();
-
-						// assume no mobile action
-						boolean hasMobileAction = false;
-
-						// loop app actions
-						for (String actionType : app.getActionTypes()) {
-							// if it's mobile
-							if ("mobile".equals(actionType)) {
-								// set has mobile action
-								hasMobileAction = true;
-								// we're done
-								break;
-							}
-						}
-
-						// only if we have the mobile action as this is how offline support is provided
-						if (hasMobileAction) {
-
-							// add app id
-							jsonResponse.put("id", app.getId());
-
-							// add version
-							jsonResponse.put("version", app.getVersion());
-
-							// add start page
-							jsonResponse.put("startPageId", app.getStartPageId());
-
-							// assume status is development
-							String status = "development";
-							// update to live
-							if (app.getStatus() == Application.STATUS_LIVE) status = "live";
-							// update to in maintenance
-							if (app.getStatus() == Application.STATUS_MAINTENANCE) status = "maintenance";
-
-							// add status
-							jsonResponse.put("status", status);
-
-							// put whether latest version
-							jsonResponse.put("latest", app.getVersion().equals(getApplications().get(app.getId()).getVersion()));
-
-							// get a file of the application files
-							File resourcesFolder = new File(getServletContext().getRealPath("/") + "/applications/" + app.getId() + "/" + app.getVersion());
-
-							// loop it's files - this adds rapid.css, rapid.js, their mins, and images etc.
-							for (File resourceFile : resourcesFolder.listFiles()) {
-								// add this resource
-								jsonResources.put("applications/" + app.getId() + "/" + app.getVersion() + "/" + resourceFile.getName());
-							}
-
-							// get the application modified date
-							Date modifiedDate = app.getModifiedDate();
-							// update to created date if null
-							if (modifiedDate == null) modifiedDate = app.getCreatedDate();
-
-							// get pages
-							Pages pages = app.getPages();
-
-							// if we got some
-							if (pages != null) {
-								// loop page ids
-								for (String pageId : pages.getPageIds()) {
-									// add url to retrieve page to resources
-									jsonResources.put("~?a=" + app.getId() + "&v=" + app.getVersion() + "&p=" + pageId);
-									// if we have an app modified date
-									if (modifiedDate != null) {
-										// get this page (loading it if we need to)
-										Page page = pages.getPage(getServletContext(), pageId);
-										// get page modified date
-										Date pageModifiedDate = page.getModifiedDate();
-										// update to created date if null
-										if (pageModifiedDate == null) pageModifiedDate = page.getCreatedDate();
-										// if we have a page modified date
-										if (pageModifiedDate != null) {
-											// update modified date if page is greater
-											if (page.getModifiedDate().after(modifiedDate)) modifiedDate = pageModifiedDate;
-										}
-									}
-								}
-							}
-
-							// get the modified as an epoch (which is what the resources below use by default)
-							Long modified = modifiedDate.getTime();
-
-							// get app resources
-							List<Resource> resources = app.getResources();
-
-							// if we had some
-							if (resources != null) {
-								// loop application resources and add to JSON array
-								for (Resource resource : resources) {
-									// check they're any of our file types
-									if (resource.getType() == Resource.JAVASCRIPTFILE || resource.getType() == Resource.CSSFILE || resource.getType() == Resource.JAVASCRIPTLINK || resource.getType() == Resource.CSSLINK || resource.getType() == Resource.FILE) {
-										// add resource
-										jsonResources.put(resource.getContent());
-										// if a file type
-										if (modifiedDate != null && (resource.getType() == Resource.JAVASCRIPTFILE || resource.getType() == Resource.CSSFILE || resource.getType() == Resource.FILE)) {
-											// make a file for this resource
-											File resourceFile = new File(this.getServletContext().getRealPath("") + "/" + resource.getContent());
-											// if the file exists check and update our modified date
-											if (resourceFile.exists()) {
-												// check the resource file modified date
-												if (resourceFile.lastModified() > modified) modified = resourceFile.lastModified();
-											}
-										}
-									}
-								}
-							}
-
-							// add resources to response
-							jsonResponse.put("resources", jsonResources);
-
-							// add the modified date to the json
-							jsonResponse.put("modified", modified);
-
-						} // has mobile action check
-
 						// set response to text
 						response.setContentType("application/json;charset=UTF-8");
 
 						// create a writer
 						PrintWriter out = response.getWriter();
 
-						// output the array
-						out.print(jsonResponse.toString());
+						// output the json
+						out.print(app.getResourcesJSON(this));
 
 						// flush and close writer
 						out.flush();
