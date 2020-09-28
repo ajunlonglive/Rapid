@@ -513,6 +513,20 @@ return "<option value=''>Please select...</option><option value ='html'" + (this
 	object-fit:contain;
 }
 
+.inputImagePage {
+	text-align: center;
+}
+
+.inputImagePage p {
+	margin-top: 1em;
+}
+
+.inputImagePageButton {
+	min-width: 200px; 
+	margin-top: 1em;
+	border: 1px solid black;
+}
+
 .btnRecording {
 	background: #C00;
 }
@@ -1155,9 +1169,9 @@ function selectItem(galleryControlId, size, mediums, message) {
 	$("#inputImage").remove();
 	
 	var inputHtml = "<input type='file' accept='" + mimeTypes + "' id='inputImage' style='display:none;'>"
-		+ "<label for='inputImage' class='r-button button btn col-xs-12' style='margin-top:1em; font-size:1.2em;'><strong>Select " + selectWhat + "</strong></label>";
+		+ "<label for='inputImage' class='r-button button btn inputImagePageButton col-xs-12'>Select " + selectWhat + "</label>";
 		
-	var closeButtonHtml = "<button id='closeInputPage' class='r-button button btn col-xs-12' style='min-width:200px; margin-top:1em; background:none; color:black;'>Cancel</button>";
+	var closeButtonHtml = "<button id='closeInputPage' class='r-button button btn inputImagePageButton col-xs-12'>Cancel</button>";
 	
 	var inputPageHtml = "<div class='inputImagePage dialogueCover' style='position:absolute; left:0px; top:0px; z-index:1001; width:100vw; height:100vh;'>"
 		+ "</div>"
