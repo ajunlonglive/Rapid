@@ -1060,7 +1060,7 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 					selectItem(galleryControlId, _size, mediums, "Permission to access your camera was denied");
 				});
 			} else {
-				selectItem(galleryControlId, _size, mediums, err.name + ": " + err.message);
+				selectItem(galleryControlId, _size, mediums, err);
 			}
 		});
 		
