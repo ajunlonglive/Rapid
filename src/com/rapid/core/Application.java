@@ -527,7 +527,7 @@ public class Application {
 
 	// instance variables
 	private int _xmlVersion, _status, _applicationBackupsMaxSize, _pageBackupsMaxSize;
-	private String _id, _version, _name, _title, _description, _startPageId, _formAdapterType, _formEmailFrom, _formEmailTo, _formEmailAttachmentType, _formEmailCustomerControlId, _formEmailCustomerSubject, _formEmailCustomerType, _formEmailCustomerBody, _formEmailCustomerAttachmentType, _formFileType, _formFilePath, _formFileUserName, _formFilePassword, _formWebserviceURL, _formWebserviceType, _formWebserviceSOAPAction, _themeType, _styles, _statusBarColour, _statusBarHighlightColour, _statusBarTextColour, _statusBarIconColour, _securityAdapterType, _storePasswordDuration, _functions, _createdBy, _modifiedBy;
+	private String _id, _version, _name, _title, _description, _startPageId, _formAdapterType, _formEmailFrom, _formEmailTo, _formEmailAttachmentType, _formEmailCustomerControlId, _formEmailCustomerSubject, _formEmailCustomerType, _formEmailCustomerBody, _formEmailCustomerAttachmentType, _formFileType, _formFilePath, _formFileUserName, _formFilePassword, _formWebserviceURL, _formWebserviceType, _formWebserviceSOAPAction, _themeType, _styles, _statusBarColour, _statusBarHighlightColour, _statusBarTextColour, _statusBarIconColour, _securityAdapterType, _storePasswordDuration, _functions, _createdBy, _modifiedBy, _resourcesJSON;
 	private boolean _isForm, _pageNameIds, _showConrolIds, _showActionIds, _isHidden, _deviceSecurity, _formShowSummary, _formDisableAutoComplete, _formEmail, _formEmailCustomer, _formFile, _formWebservice;
 	private Date _createdDate, _modifiedDate;
 	private Map<String,Integer> _pageOrders;
@@ -2107,6 +2107,9 @@ public class Application {
 		// empty the list of page variables so it's regenerated
 		_pageVariables = null;
 
+		// empty the resources JSON so it's regenerated
+		_resourcesJSON = null;
+
 		// debug log that we initialised
 		_logger.debug("Initialised application " + _name + "/" + _version + (createResources ? "" : " (no resources)"));
 
@@ -2777,6 +2780,150 @@ public class Application {
 			}
 		}
 	}
+
+	// get the resources for this app as a json string
+	public String getResourcesJSON(RapidHttpServlet rapidServlet) throws JSONException, RapidLoadingException {
+
+		// check if we need to make it
+		if (_resourcesJSON == null) {
+
+			// get the servlet context
+			ServletContext servletContext = rapidServlet.getServletContext();
+
+			// start a JSON response
+			JSONObject jsonResponse = new JSONObject();
+
+			// start a JSON array
+			JSONArray jsonResources = new JSONArray();
+
+			// assume no mobile action
+			boolean hasMobileAction = false;
+
+			// loop app actions
+			for (String actionType : getActionTypes()) {
+				// if it's mobile
+				if ("mobile".equals(actionType)) {
+					// set has mobile action
+					hasMobileAction = true;
+					// we're done
+					break;
+				}
+			}
+
+			// only if we have the mobile action as this is how offline support is provided
+			if (hasMobileAction) {
+
+				// add app id
+				jsonResponse.put("id", getId());
+
+				// add version
+				jsonResponse.put("version", getVersion());
+
+				// add start page
+				jsonResponse.put("startPageId", getStartPageId());
+
+				// assume status is development
+				String status = "development";
+				// update to live
+				if (getStatus() == Application.STATUS_LIVE) status = "live";
+				// update to in maintenance
+				if (getStatus() == Application.STATUS_MAINTENANCE) status = "maintenance";
+
+				// add status
+				jsonResponse.put("status", status);
+
+				// put whether latest version
+				jsonResponse.put("latest", getVersion().equals(rapidServlet.getApplications().get(getId()).getVersion()));
+
+				// get a file of the application files
+				File resourcesFolder = new File(servletContext.getRealPath("/") + "/applications/" + getId() + "/" + getVersion());
+
+				// loop it's files - this adds rapid.css, rapid.js, their mins, and images etc.
+				for (File resourceFile : resourcesFolder.listFiles()) {
+					// add this resource
+					jsonResources.put("applications/" + getId() + "/" + getVersion() + "/" + resourceFile.getName());
+				}
+
+				// get the application modified date
+				Date modifiedDate = getModifiedDate();
+				// update to created date if null
+				if (modifiedDate == null) modifiedDate = getCreatedDate();
+
+				// get pages
+				Pages pages = getPages();
+
+				// if we got some
+				if (pages != null) {
+					// loop page ids
+					for (String pageId : pages.getPageIds()) {
+						// add url to retrieve page to resources
+						jsonResources.put("~?a=" + getId() + "&v=" + getVersion() + "&p=" + pageId);
+						// if we have an app modified date
+						if (modifiedDate != null) {
+							// get this page (loading it if we need to)
+							Page page = pages.getPage(servletContext, pageId);
+							// get page modified date
+							Date pageModifiedDate = page.getModifiedDate();
+							// update to created date if null
+							if (pageModifiedDate == null) pageModifiedDate = page.getCreatedDate();
+							// if we have a page modified date
+							if (pageModifiedDate != null) {
+								// update modified date if page is greater
+								if (page.getModifiedDate().after(modifiedDate)) modifiedDate = pageModifiedDate;
+							}
+						}
+					}
+				}
+
+				// get the modified as an epoch (which is what the resources below use by default)
+				Long modified = modifiedDate.getTime();
+
+				// get app resources
+				List<Resource> resources = getResources();
+
+				// if we had some
+				if (resources != null) {
+					// loop application resources and add to JSON array
+					for (Resource resource : resources) {
+						// check they're any of our file types
+						if (resource.getType() == Resource.JAVASCRIPTFILE || resource.getType() == Resource.CSSFILE || resource.getType() == Resource.JAVASCRIPTLINK || resource.getType() == Resource.CSSLINK || resource.getType() == Resource.FILE) {
+							// add resource
+							jsonResources.put(resource.getContent());
+							// if a file type
+							if (modifiedDate != null && (resource.getType() == Resource.JAVASCRIPTFILE || resource.getType() == Resource.CSSFILE || resource.getType() == Resource.FILE)) {
+								// make a file for this resource
+								File resourceFile = new File(servletContext.getRealPath("") + "/" + resource.getContent());
+								// if the file exists check and update our modified date
+								if (resourceFile.exists()) {
+									// check the resource file modified date
+									if (resourceFile.lastModified() > modified) modified = resourceFile.lastModified();
+								}
+							}
+						}
+					}
+				}
+
+				// add resources to response
+				jsonResponse.put("resources", jsonResources);
+
+				// add the modified date to the json
+				jsonResponse.put("modified", modified);
+
+				// retain response as a string
+				_resourcesJSON = jsonResources.toString();
+
+			} // has mobile action check
+
+		}
+
+		return _resourcesJSON;
+
+	}
+	// different name from above to stop jaxb writing it to xml
+	public void emptyResourcesJSON() {
+		_resourcesJSON = null;
+	}
+
 
 	// static methods
 
