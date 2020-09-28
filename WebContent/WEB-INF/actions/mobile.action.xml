@@ -523,7 +523,7 @@ return "<option value=''>Please select...</option><option value ='html'" + (this
 	margin: -2px;
 	pointer-events: none;
 	border: solid 2px #FFF;
-	outline: solid 10px #00000033;
+	outline: solid 1500px #00000066;
 	width: 0;
 	height: 0;
 	opacity: 1;
@@ -613,7 +613,7 @@ function getAvailableCameras() {
 
 var _mobileCamera = {
 	getStream: function() {
-		return navigator.mediaDevices.getUserMedia({ audio: _includeAudio, video: { facingMode: _currentFacingMode } });
+		return navigator.mediaDevices.getUserMedia({ audio: _includeAudio, video: { facingMode: _currentFacingMode, width: { ideal: 1920 }, height: { ideal: 1080 } } });
 	},
 	closeStream: function() {
 		if (hasGetUserMedia()) {
@@ -1045,10 +1045,10 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 			console.log(err.name + ": " + err.message);
 			if (err.name === "NotAllowedError" && err.message !== "Invalid state") {
 				source.permissionDenied(function() {
-					selectItem(galleryControlId, _size, mediums, "Camera-access permission was denied");
+					selectItem(galleryControlId, _size, mediums, "Permission to access your camera was denied");
 				});
 			} else {
-				selectItem(galleryControlId, _size, mediums);
+				selectItem(galleryControlId, _size, mediums, err.name + ": " + err.message);
 			}
 		});
 		
@@ -1220,7 +1220,7 @@ function recordVideo(stream, bitsPerSecond, maxDuration, callback) {
 	
 	var chunks = [];
 	
-	var mediaRecorder = new MediaRecorder(stream, { mimeType: _videoMimeType, bitsPerSecond: bitsPerSecond });
+	var mediaRecorder = new MediaRecorder(stream, { mimeType: _videoMimeType, bitsPerSecond: bitsPerSecond, height: { max: _size }, width: { max: _size } });
 	mediaRecorder.start();
 	
 	$("#btnRecordVideo").addClass("btnRecording");
