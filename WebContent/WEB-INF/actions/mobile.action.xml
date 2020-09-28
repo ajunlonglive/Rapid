@@ -653,6 +653,9 @@ var _mobileCamera = {
 	},
 	ifAvailable: function(todo) {
 		if (navigator.mediaDevices.getUserMedia) todo();
+	},
+	getNotSupportedMessage: function() {
+		return "Video capture is not supported by your browser";
 	}
 };
 
@@ -722,6 +725,9 @@ var _mobileRemote = {
 	permissionDenied: function() {},
 	ifAvailable: function(todo) {
 		if(_mobileRemote.stream || navigator.mediaDevices.getDisplayMedia) todo();
+	},
+	getNotSupportedMessage: function() {
+		return "Remote capture is not supported by your browser";
 	}
 };
 
@@ -1060,7 +1066,7 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 					selectItem(galleryControlId, _size, mediums, "Permission to access your camera was denied");
 				});
 			} else {
-				selectItem(galleryControlId, _size, mediums, err);
+				selectItem(galleryControlId, _size, mediums, source.getNotSupportedMessage());
 			}
 		});
 		
