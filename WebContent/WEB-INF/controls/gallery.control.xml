@@ -418,7 +418,7 @@ function addToImageControl(ev, control, filename, url, type) {
 			var id = control.attr("id");
 			
 			// find the image element and add a click handler
-			control.find(".galleryItem").last().click( function(ev) {
+			control.find(".galleryItem").last().on(START_EV, function(ev) {
 				var img = this;
 				var details = details || window[id + "details"];
 				if (details) {
@@ -594,6 +594,19 @@ function setNextPrevImgAndButton(currentImage, direction, prevButton, nextButton
 	
 }        	
 
+// pointer events support from http://labs.rampinteractive.co.uk/touchSwipe/demos/index.html
+var SUPPORTS_TOUCH = 'ontouchstart' in window;
+var SUPPORTS_POINTER_IE10 = window.navigator.msPointerEnabled && !window.PointerEvent && !SUPPORTS_TOUCH;
+var SUPPORTS_POINTER = (window.PointerEvent || window.navigator.msPointerEnabled) && !SUPPORTS_TOUCH;
+
+var useTouchEvents = (SUPPORTS_TOUCH || SUPPORTS_POINTER || !options.fallbackToMouseEvents);
+var START_EV = useTouchEvents ? (SUPPORTS_POINTER ? (SUPPORTS_POINTER_IE10 ? 'MSPointerDown' : 'pointerdown') : 'touchstart') : 'mousedown';
+var MOVE_EV = useTouchEvents ? (SUPPORTS_POINTER ? (SUPPORTS_POINTER_IE10 ? 'MSPointerMove' : 'pointermove') : 'touchmove') : 'mousemove';
+var END_EV = useTouchEvents ? (SUPPORTS_POINTER ? (SUPPORTS_POINTER_IE10 ? 'MSPointerUp' : 'pointerup') : 'touchend') : 'mouseup';
+var LEAVE_EV = useTouchEvents ? (SUPPORTS_POINTER ? 'mouseleave' : null) : 'mouseleave'; //we manually detect leave on touch devices, so null event here
+var CANCEL_EV = (SUPPORTS_POINTER ? (SUPPORTS_POINTER_IE10 ? 'MSPointerCancel' : 'pointercancel') : 'touchcancel');
+
+
 function Gallery_showImage(ev, id, galleryItem, allowDelete, openEditor, allowEdit) {
 	
 	$(document.body).css({overflow:"hidden", "touch-action":"none"});
@@ -629,7 +642,7 @@ function Gallery_showImage(ev, id, galleryItem, allowDelete, openEditor, allowEd
 		if (allowEdit == false) btnEdit.hide();
 	
 		// Add click listeners to the buttons
-		btnPrev.click(function(){
+		btnPrev.on(START_EV,function(){
 		
 			// Get the currently shown img object in the big gallery
 			var currentImage = gallery.find(".galleryItem:visible");
@@ -638,7 +651,7 @@ function Gallery_showImage(ev, id, galleryItem, allowDelete, openEditor, allowEd
 			
 		});
 		
-		btnNext.click(function(){
+		btnNext.on(START_EV, function(){
 		
 			// Get the currently shown img object in the big gallery
 			var currentImage = gallery.find(".galleryItem:visible");
@@ -647,7 +660,7 @@ function Gallery_showImage(ev, id, galleryItem, allowDelete, openEditor, allowEd
 			
 		});
 		
-		btnClose.on("click touchend", function(){
+		btnClose.on(START_EV, function(){
 			$(document.body).css({overflow:"unset", "touch-action":"auto"});
 			$(window).css({overflow:"unset", "touch-action":"auto"});
 			gallery.css({opacity:"0"});
@@ -657,7 +670,7 @@ function Gallery_showImage(ev, id, galleryItem, allowDelete, openEditor, allowEd
 			}, 200);
 		});
 		
-		btnDelete.on("click touchend", function(ev) {
+		btnDelete.on(START_EV, function(ev) {
 			$(document.body).css({overflow:"unset", "touch-action":"auto"});
 			$(window).css({overflow:"unset", "touch-action":"auto"});
 		
@@ -683,14 +696,14 @@ function Gallery_showImage(ev, id, galleryItem, allowDelete, openEditor, allowEd
 		});
 		
 		if (btnEdit) {
-			btnEdit.on("click touchend", function(ev) {
+			btnEdit.on(START_EV, function(ev) {
 				btnEdit.hide();
 				editImage(gallery);
 				btnSave.show();
 			});
 			if (openEditor) setTimeout(function() { $("#btnEdit").click(); });
 			
-			btnSave.on("click touchend", function(ev) {
+			btnSave.on(START_EV, function(ev) {
 				btnSave.hide();
 				$(".galleryEditor").remove();
 				saveEdit(gallery, galleryItem);
@@ -855,7 +868,7 @@ function editImage(gallery) {
 	var selectedColorShadow = "0 0 0 2px #000, 0 0 0 4px #FFF, 0 2px 8px 4px #000";
 	$(btnBlack).css("box-shadow", selectedColorShadow);
 	
-	allColorButtons.on("click touchend", function() {
+	allColorButtons.on(START_EV, function() {
 		color = $(this).attr("data-color");
 		allColorButtons.css("box-shadow", "none");
 		$(this).css("box-shadow", selectedColorShadow);
@@ -934,8 +947,7 @@ function editImage(gallery) {
 			
 		}
 		
-		if (touch) $(window).one("touchend", endListener);
-		if (!touch) $(window).one("mouseup", endListener);
+		$(window).one(END_EV, endListener);
 	}
 	
 	$(canvas).on("touchstart", function(touchstart) {
@@ -968,11 +980,8 @@ function editImage(gallery) {
 		}
 	}
 	
-	if (touch) btnUndo.on("touchstart", undo);
-	if (touch) btnRedo.on("touchstart", redo);
-	
-	if (!touch) btnUndo.on("click", undo);
-	if (!touch) btnRedo.on("click", redo);
+	btnUndo.on(START_EV, undo);
+	btnRedo.on(START_EV, redo);
 	
 	img.addClass("editing").hide();
 	gallery.append(canvas);
@@ -1203,7 +1212,7 @@ return "#" + this.id + " video";
 	    
 	   	<initJavaScript>
 	        <![CDATA[
-$("#" + id).children(".galleryItem").click( function(ev) {
+$("#" + id).children(".galleryItem").on(START_EV, function(ev) {
 	var details = window[id + "details"];
 	if (details) {
 		// changes here need to be replicated in setData
