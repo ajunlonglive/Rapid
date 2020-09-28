@@ -495,16 +495,17 @@ return "<option value=''>Please select...</option><option value ='html'" + (this
 }
 
 #cameraVideoContainer {
-	position:fixed; 
-	left:0; 
-	right:0; 
-	top:0; 
-	bottom:0; 
-	width:100%; 
+	position:fixed;
+	left:0;
+	right:0;
+	top:0;
+	bottom:0;
+	width:100%;
 	height:100%;
 	background: #111;
 	z-index:1010;
 	display: none;
+	user-select: none;
 }
 
 #cameraPlayer {
@@ -555,6 +556,14 @@ return "<option value=''>Please select...</option><option value ='html'" + (this
 #cameraVideoContainer :not(video) {
 	transition: opacity 0.3s;
 	opacity: 1;
+}
+
+#cameraVideoContainer div {
+	pointer-events: none;
+}
+
+#cameraVideoContainer div * {
+	pointer-events: all;
 }
 
 	        	</contents>
@@ -997,7 +1006,7 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 				
 				_cameraPlayer.addEventListener("mousedown", function(ev) {
 					
-					var tools = $("#cameraVideoContainer :not(video, #cropBox)");
+					var tools = $("#cameraVideoContainer button, #cameraVideoContainer label");
 					tools.css({ "pointer-events": "none", opacity: 0.3 });
 					photoOptions.crop = undefined;
 					cropBox.addClass("hiddenCrop");
@@ -1041,7 +1050,7 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 					
 					window.addEventListener("mouseup", function(ev) {
 						
-						tools.css({ "pointer-events": "unset", opacity: 1 });
+						tools.css({ "pointer-events": "all", opacity: 1 });
 						_cameraPlayer.removeEventListener("mousemove", mouseMoveListener);
 						sessionStorage.setItem("cropBoxStreamID_" + stream.id, JSON.stringify({ left: left, top: top, width: width, height: height, videoOffsetX: videoOffsetX, videoOffsetY: videoOffsetY, videoPixelsPerScreenPixel: videoPixelsPerScreenPixel }));
 						
