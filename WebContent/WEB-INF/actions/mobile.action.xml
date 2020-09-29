@@ -691,12 +691,20 @@ var _mobileCamera = {
 		}
 	},
 	toggleCamera: function() {
+		// if there is more than camera available
 		if (_availableCameras.length > 1) {
+			// check and toggle the facing mode
 			if (getFacingMode() === "environment") {
 				setFacingMode("user");
 			} else {
 				setFacingMode("environment");
 			}
+			// stop any current preview
+			_cameraPlayer.srcObject.getVideoTracks().forEach(function(track){
+				// Close the preview
+				track.stop();
+			});
+			// request the new camera
 			navigator.mediaDevices.getUserMedia({ audio: _includeAudio, video: {facingMode: getFacingMode()} })
 			.then(function(stream) {
 				_cameraPlayer.srcObject = stream;
