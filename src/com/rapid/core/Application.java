@@ -2909,13 +2909,14 @@ public class Application {
 				// add the modified date to the json
 				jsonResponse.put("modified", modified);
 
-				// retain response as a string
-				_resourcesJSON = jsonResources.toString();
-
 			} // has mobile action check
+
+			// retain response as a string
+			_resourcesJSON = jsonResponse.toString();
 
 		}
 
+		// return the cached resources response JSON, saving the app will wipe it, and saving pages calls the empty routine below
 		return _resourcesJSON;
 
 	}
