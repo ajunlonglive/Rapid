@@ -597,7 +597,7 @@ function handleSwipe(event, direction, distance, duration, fingers, fingerData, 
 
 var _cameraPlayer;
 var _availableCameras = [];
-var _currentFacingMode = "environment";
+var _currentFacingMode;
 var _galleryControlId;
 var _size;
 var _quality;
@@ -605,6 +605,23 @@ var _includeAudio;
 var _videoMimeType;
 
 if (navigator.mediaDevices && !!navigator.mediaDevices.getDisplayMedia && navigator.getDisplayMedia) navigator.mediaDevices.getDisplayMedia = navigator.getDisplayMedia;
+
+function getFacingMode() {
+
+	// if local storage is supported read the value from that
+	if (typeof(Storage) !== "undefined") _currentFacingMode = localStorage.getItem("currentFacingMode");
+	// set the default if no value held yet
+	if (!_currentFacingMode) setFacingMode("environment");
+	return _currentFacingMode;
+	
+}
+
+function setFacingMode(mode) {
+
+	// if local storage is supported save the value into that
+	if (typeof(Storage) !== "undefined") localStorage.setItem("currentFacingMode", mode);
+	_currentFacingMode = mode;
+}
 
 function hasGetUserMedia() {
 
@@ -645,7 +662,8 @@ function getAvailableCameras() {
 
 var _mobileCamera = {
 	getStream: function() {
-		return navigator.mediaDevices.getUserMedia({ audio: _includeAudio, video: { facingMode: _currentFacingMode, width: { ideal: 1920 }, height: { ideal: 1080 } } });
+		// requesting height or with, max or ideal, fails to get the camera in older browsers
+		return navigator.mediaDevices.getUserMedia({ audio: _includeAudio, video: { facingMode: getFacingMode() } });
 	},
 	closeStream: function() {
 		if (hasGetUserMedia()) {
@@ -660,12 +678,12 @@ var _mobileCamera = {
 	},
 	toggleCamera: function() {
 		if (_availableCameras.length > 1) {
-			if (_currentFacingMode === "environment") {
-				_currentFacingMode = "user";
+			if (getFacingMode() === "environment") {
+				setFacingMode("user");
 			} else {
-				_currentFacingMode = "environment";
+				setFacingMode("environment");
 			}
-			navigator.mediaDevices.getUserMedia({ audio: _includeAudio, video: {facingMode: _currentFacingMode} })
+			navigator.mediaDevices.getUserMedia({ audio: _includeAudio, video: {facingMode: getFacingMode()} })
 			.then(function(stream) {
 				_cameraPlayer.srcObject = stream;
 			}).catch(function() {});
