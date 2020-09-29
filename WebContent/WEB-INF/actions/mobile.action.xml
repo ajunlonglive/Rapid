@@ -538,7 +538,7 @@ return "<option value=''>Please select...</option><option value ='html'" + (this
 	margin: -2px;
 	pointer-events: none;
 	border: solid 2px #FFF;
-	outline: solid 1500px #00000066;
+	outline: solid 2000px #00000066;
 	width: 0;
 	height: 0;
 	opacity: 1;
@@ -578,6 +578,18 @@ function Action_mobile(actionId, type) {
 	// action callback
 	alert("Callback for " + actionId + "." + type);
 }
+
+// pointer events support from http://labs.rampinteractive.co.uk/touchSwipe/demos/index.html
+var SUPPORTS_TOUCH = 'ontouchstart' in window;
+var SUPPORTS_POINTER_IE10 = window.navigator.msPointerEnabled && !window.PointerEvent && !SUPPORTS_TOUCH;
+var SUPPORTS_POINTER = (window.PointerEvent || window.navigator.msPointerEnabled) && !SUPPORTS_TOUCH;
+
+var useTouchEvents = (SUPPORTS_TOUCH || SUPPORTS_POINTER || !options.fallbackToMouseEvents);
+var START_EV = useTouchEvents ? (SUPPORTS_POINTER ? (SUPPORTS_POINTER_IE10 ? 'MSPointerDown' : 'pointerdown') : 'touchstart') : 'mousedown';
+var MOVE_EV = useTouchEvents ? (SUPPORTS_POINTER ? (SUPPORTS_POINTER_IE10 ? 'MSPointerMove' : 'pointermove') : 'touchmove') : 'mousemove';
+var END_EV = useTouchEvents ? (SUPPORTS_POINTER ? (SUPPORTS_POINTER_IE10 ? 'MSPointerUp' : 'pointerup') : 'touchend') : 'mouseup';
+var LEAVE_EV = useTouchEvents ? (SUPPORTS_POINTER ? 'mouseleave' : null) : 'mouseleave'; //we manually detect leave on touch devices, so null event here
+var CANCEL_EV = (SUPPORTS_POINTER ? (SUPPORTS_POINTER_IE10 ? 'MSPointerCancel' : 'pointercancel') : 'touchcancel');
 
 // a map of swipe handlers as the plugin only allows one handler to be registerd at a time
 _swipeHandlers = {};
@@ -624,10 +636,12 @@ function setFacingMode(mode) {
 }
 
 function hasGetUserMedia() {
-
 	// Return the value's truthy boolean value (e.g. if its null, will return false)
-	return !!(typeof MediaRecorder != "undefined" && navigator.mediaDevices && navigator.mediaDevices.getUserMedia)
-	
+	return Boolean(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+}
+
+function hasMediaRecorder() {
+	return typeof MediaRecorder != "undefined";
 }
 
 function getAvailableCameras() {
@@ -713,7 +727,6 @@ var _mobileRemote = {
 		}
 	},
 	getNewStream: function() {
-		
 		if (!navigator.mediaDevices.getDisplayMedia) return Promise.reject("Can't find navigator.mediaDevices.getDisplayMedia");
 		
 		var desktop = navigator.mediaDevices.getDisplayMedia({ audio: _includeAudio, video: { frameRate: 30, height: { max: _size }, width: { max: _size } } });
@@ -871,7 +884,9 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 		_quality = quality;
 		_includeAudio = Boolean(includeAudio);
 		
-		if (mediums.includes('video') && MediaRecorder) {
+		if (!hasMediaRecorder()) mediums = mediums.filter(function(medium) { return medium !== "video"; });
+		
+		if (mediums.includes("video")) {
 			_videoMimeType = optimalVideoMimeType(_formats, _codecs);
 		}
 		
@@ -929,7 +944,7 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 	
 		// Add the divs
 		var cameraPreviewHtml = "<div id='cameraVideoContainer'>"
-							+ "<video id='cameraPlayer' autoplay muted='true'></video>"
+							+ "<video id='cameraPlayer' autoplay playsinline muted='true'></video>"
 							+ "<div id='cropBox' class='hiddenCrop'></div>"
 							+ inputImageHtml
 							+ "<button id='btnToggleCamera' class='cameraControlBasic' style='position:absolute; left:0;'><i class='fas fa-retweet cameraIcon' style='margin-left:-5px;'></i></button>"								  
@@ -1022,15 +1037,15 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 					if (cropOptions) setCropBox(cropOptions.left, cropOptions.top, cropOptions.width, cropOptions.height, cropOptions.videoOffsetX, cropOptions.videoOffsetY, cropOptions.videoPixelsPerScreenPixel);
 				}
 				
-				_cameraPlayer.addEventListener("mousedown", function(ev) {
+				_cameraPlayer.addEventListener(START_EV, function(ev) {
 					
 					var tools = $("#cameraVideoContainer button, #cameraVideoContainer label");
 					tools.css({ "pointer-events": "none", opacity: 0.3 });
 					photoOptions.crop = undefined;
 					cropBox.addClass("hiddenCrop");
 					
-					var startX = ev.clientX;
-					var startY = ev.clientY;
+					var startX = ev.clientX || ev.pageX;
+					var startY = ev.clientY || ev.pageY;
 						
 					var videoWidth = _cameraPlayer.videoWidth;
 					var videoHeight = _cameraPlayer.videoHeight;
@@ -1053,8 +1068,8 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 					
 					function mouseMoveListener(ev) {
 						
-						var currentX = ev.clientX;
-						var currentY = ev.clientY;
+						var currentX = ev.clientX || ev.pageX;
+						var currentY = ev.clientY || ev.pageY;
 						
 						left = Math.min(currentX, startX);
 						top = Math.min(currentY, startY);
@@ -1064,12 +1079,12 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 						setCropBox(left, top, width, height, videoOffsetX, videoOffsetY, videoPixelsPerScreenPixel);
 					}
 					
-					_cameraPlayer.addEventListener("mousemove", mouseMoveListener);
+					_cameraPlayer.addEventListener(MOVE_EV, mouseMoveListener);
 					
-					window.addEventListener("mouseup", function(ev) {
+					window.addEventListener(END_EV, function(ev) {
 						
 						tools.css({ "pointer-events": "all", opacity: 1 });
-						_cameraPlayer.removeEventListener("mousemove", mouseMoveListener);
+						_cameraPlayer.removeEventListener(MOVE_EV, mouseMoveListener);
 						sessionStorage.setItem("cropBoxStreamID_" + stream.id, JSON.stringify({ left: left, top: top, width: width, height: height, videoOffsetX: videoOffsetX, videoOffsetY: videoOffsetY, videoPixelsPerScreenPixel: videoPixelsPerScreenPixel }));
 						
 					}, { once: true });
@@ -1122,7 +1137,6 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 }
 
 function stopCameraStream() {
-
 	if (hasGetUserMedia()) {
 		// Stop all video streams attached to the video element
 		_cameraPlayer.srcObject.getVideoTracks().forEach(function(track){
@@ -1182,7 +1196,7 @@ function scaleImageToDataURL(image, imageWidth, imageHeight) {
 }
 
 function selectItem(galleryControlId, size, mediums, message) {
-
+	
 	_size = size;
 	
 	var galleryDetails = window[galleryControlId + "details"];
