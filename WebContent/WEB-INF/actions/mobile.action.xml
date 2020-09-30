@@ -679,7 +679,15 @@ var _mobileCamera = {
 		_mobileCamera.closeStream();
 		var ignoreAudio = options && options.ignoreAudio;
 		// requesting height or with, max or ideal, fails to get the camera in older browsers
-		return navigator.mediaDevices.getUserMedia({ audio: !ignoreAudio && _includeAudio, video: { facingMode: getFacingMode() } });
+		return new Promise(function(resolve, reject) {
+			navigator.mediaDevices.getUserMedia({ audio: !ignoreAudio && _includeAudio, video: { facingMode: getFacingMode() } })
+			.then(resolve)
+			.catch(function(err) {
+				if (err.name === "NotAllowedError") resolve(
+					navigator.mediaDevices.getUserMedia({ audio: false, video: { facingMode: getFacingMode() } })
+				);
+			});
+		});
 	},
 	closeStream: function() {
 		if (hasGetUserMedia()) {
@@ -1123,18 +1131,25 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 			
 			if (mediums.includes('video') && MediaRecorder) {
 				btnRecordVideo.onclick = function() {
-					source.getStream({ ignoreAudio: false })
-					.then(function(stream) {
-						_cameraPlayer.srcObject = stream;
+				
+				if (_includeAudio) {
+						source.getStream({ ignoreAudio: false })
+						.then(function(stream) {
+							_cameraPlayer.srcObject = stream;
+							recordVideo(stream, bitsPerSecond, maxDuration, function(data) {
+								mediaCapturer.capture(data, source);
+							});
+						})
+						.catch(function(err) {
+							if (err.name === "NotAllowedError") recordVideo(stream, bitsPerSecond, maxDuration, function(data) {
+								mediaCapturer.capture(data, source);
+							});
+						});
+					} else {
 						recordVideo(stream, bitsPerSecond, maxDuration, function(data) {
 							mediaCapturer.capture(data, source);
 						});
-					})
-					.catch(function(err) {
-						if (err.name === "NotAllowedError") recordVideo(stream, bitsPerSecond, maxDuration, function(data) {
-							mediaCapturer.capture(data, source);
-						});
-					});
+					}
 				};
 			}
 			
