@@ -675,9 +675,11 @@ function getAvailableCameras() {
 // media sources
 
 var _mobileCamera = {
-	getStream: function() {
+	getStream: function(options) {
+		_mobileCamera.closeStream();
+		var ignoreAudio = options && options.ignoreAudio;
 		// requesting height or with, max or ideal, fails to get the camera in older browsers
-		return navigator.mediaDevices.getUserMedia({ audio: _includeAudio, video: { facingMode: getFacingMode() } });
+		return navigator.mediaDevices.getUserMedia({ audio: !ignoreAudio && _includeAudio, video: { facingMode: getFacingMode() } });
 	},
 	closeStream: function() {
 		if (hasGetUserMedia()) {
@@ -699,14 +701,11 @@ var _mobileCamera = {
 			} else {
 				setFacingMode("environment");
 			}
-			// stop any current preview
-			_cameraPlayer.srcObject.getVideoTracks().forEach(function(track){
-				// Close the preview
-				track.stop();
-			});
 			// request the new camera
-			navigator.mediaDevices.getUserMedia({ audio: _includeAudio, video: {facingMode: getFacingMode()} })
+			navigator.mediaDevices.getUserMedia({ audio: false, video: {facingMode: getFacingMode()} })
 			.then(function(stream) {
+				// stop any current preview
+				_mobileCamera.closeStream();
 				_cameraPlayer.srcObject = stream;
 			}).catch(function() {});
 		}
@@ -724,17 +723,17 @@ var _mobileCamera = {
 
 var _mobileRemote = {
 	stream: undefined,
-	getStream: function() {
+	getStream: function(options) {
 		if (_mobileRemote.stream) {
 			return Promise.resolve(_mobileRemote.stream);
 		} else {
-			return _mobileRemote.getNewStream()
+			return _mobileRemote.getNewStream(options)
 			.then(function(stream) {
 				return _mobileRemote.stream = stream;
 			});
 		}
 	},
-	getNewStream: function() {
+	getNewStream: function(options) {
 		if (!navigator.mediaDevices.getDisplayMedia) return Promise.reject("Can't find navigator.mediaDevices.getDisplayMedia");
 		
 		var desktop = navigator.mediaDevices.getDisplayMedia({ audio: _includeAudio, video: { frameRate: 30, height: { max: _size }, width: { max: _size } } });
@@ -778,6 +777,9 @@ var _mobileRemote = {
 			
 			_cameraPlayer.srcObject = stream;
 			_mobileRemote.stream.getVideoTracks().forEach(function(track) {
+				track.stop();
+			});
+			_mobileRemote.stream.getAudioTracks().forEach(function(track) {
 				track.stop();
 			});
 			_mobileRemote.stream = stream;
@@ -992,7 +994,7 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 		});
 		
 		// Obtain the user media object
-		source.getStream()
+		source.getStream({ ignoreAudio: true })
 		.then(function(stream) {
 			
 			$("#cameraVideoContainer").show();
@@ -1107,8 +1109,17 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 			
 			if (mediums.includes('video') && MediaRecorder) {
 				btnRecordVideo.onclick = function() {
-					recordVideo(stream, bitsPerSecond, maxDuration, function(data) {
-						mediaCapturer.capture(data, source);
+					source.getStream({ ignoreAudio: false })
+					.then(function(stream) {
+						_cameraPlayer.srcObject = stream;
+						recordVideo(stream, bitsPerSecond, maxDuration, function(data) {
+							mediaCapturer.capture(data, source);
+						});
+					})
+					.catch(function(err) {
+						if (err.name === "NotAllowedError") recordVideo(stream, bitsPerSecond, maxDuration, function(data) {
+							mediaCapturer.capture(data, source);
+						});
 					});
 				};
 			}
@@ -1301,7 +1312,7 @@ function recordVideo(stream, bitsPerSecond, maxDuration, callback) {
 	
 	var chunks = [];
 	
-	var mediaRecorder = new MediaRecorder(stream, { mimeType: _videoMimeType, bitsPerSecond: bitsPerSecond, height: { max: _size }, width: { max: _size } });
+	var mediaRecorder = new MediaRecorder(stream, { mimeType: _videoMimeType, bitsPerSecond: bitsPerSecond });
 	mediaRecorder.start();
 	
 	$("#btnRecordVideo").addClass("btnRecording");
@@ -1317,7 +1328,7 @@ function recordVideo(stream, bitsPerSecond, maxDuration, callback) {
 	var btnToggleCamera = $("#btnToggleCamera");
 	btnToggleCamera.hide();
 	
-	function keepRecording() {
+	function doRecording() {
 		mediaRecorder.onstop = function(ev) {
 			$("#btnRecordVideo").removeClass("btnRecording");
 			clearInterval(timerId);
@@ -1339,11 +1350,11 @@ function recordVideo(stream, bitsPerSecond, maxDuration, callback) {
 	}
 	
 	if (maxDuration > 0) setTimeout(
-		function() { if (mediaRecorder.state === "recording") keepRecording(); },
+		function() { if (mediaRecorder.state === "recording") doRecording(); },
 		maxDuration * 1000
 	);
 	
-	btnRecordVideo.onclick = keepRecording;
+	btnRecordVideo.onclick = doRecording;
 	
 	$("#btnCloseCamera").one("click", function() {
 		if (mediaRecorder.state === "recording") mediaRecorder.stop();
