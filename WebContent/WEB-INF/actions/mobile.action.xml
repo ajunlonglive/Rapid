@@ -674,6 +674,8 @@ function getAvailableCameras() {
 
 // media sources
 
+var gainedAudioPermission = false;
+
 var _mobileCamera = {
 	getStream: function(options) {
 		_mobileCamera.closeStream();
@@ -681,8 +683,10 @@ var _mobileCamera = {
 		// requesting height or with, max or ideal, fails to get the camera in older browsers
 		return new Promise(function(resolve, reject) {
 			navigator.mediaDevices.getUserMedia({ audio: !ignoreAudio && _includeAudio, video: { facingMode: getFacingMode() } })
-			.then(resolve)
-			.catch(function(err) {
+			.then(function(stream) {
+				if (!ignoreAudio) gainedAudioPermission = true;
+				resolve(stream);
+			}).catch(function(err) {
 				if (err.name === "NotAllowedError") resolve(
 					navigator.mediaDevices.getUserMedia({ audio: false, video: { facingMode: getFacingMode() } })
 				);
@@ -778,6 +782,7 @@ var _mobileRemote = {
 				_mobileRemote.desktopAudioTrack = desktopAudio;
 				
 				var microphoneAudio = microphoneTracks[0];
+				if (microphoneAudio) gainedAudioPermission = true;
 				
 				var mergedAudioTrack = desktopAudio && microphoneAudio ? mergeAudioStreams(desktopStream, microphoneStream) :
 					(desktopAudio || microphoneAudio);
@@ -1133,8 +1138,7 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 			
 			if (mediums.includes('video') && MediaRecorder) {
 				btnRecordVideo.onclick = function() {
-				
-				if (_includeAudio) {
+					if (_includeAudio && (!gainedAudioPermission && _cameraPlayer.srcObject)) {
 						source.getStream({ ignoreAudio: false })
 						.then(function(stream) {
 							_cameraPlayer.srcObject = stream;
