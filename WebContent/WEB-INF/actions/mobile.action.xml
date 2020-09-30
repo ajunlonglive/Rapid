@@ -723,8 +723,11 @@ var _mobileCamera = {
 
 var _mobileRemote = {
 	stream: undefined,
+	desktopStream: undefined,
+	desktopAudioTrack: undefined,
 	getStream: function(options) {
-		if (_mobileRemote.stream) {
+		var ignoreAudio = options && options.ignoreAudio;
+		if (_mobileRemote.stream && ignoreAudio) {
 			return Promise.resolve(_mobileRemote.stream);
 		} else {
 			return _mobileRemote.getNewStream(options)
@@ -736,10 +739,14 @@ var _mobileRemote = {
 	getNewStream: function(options) {
 		if (!navigator.mediaDevices.getDisplayMedia) return Promise.reject("Can't find navigator.mediaDevices.getDisplayMedia");
 		
-		var desktop = navigator.mediaDevices.getDisplayMedia({ audio: _includeAudio, video: { frameRate: 30, height: { max: _size }, width: { max: _size } } });
-		var microphone = _includeAudio ? navigator.mediaDevices.getUserMedia({ audio: true }) : Promise.resolve(undefined);
+		var ignoreAudio = options && options.ignoreAudio;
+		
+		var desktop = !ignoreAudio ? Promise.resolve(_mobileRemote.desktopStream) : navigator.mediaDevices.getDisplayMedia({ audio: _includeAudio, video: { frameRate: 30, height: { max: _size }, width: { max: _size } } });
+		var microphone = (!ignoreAudio && _includeAudio) ? navigator.mediaDevices.getUserMedia({ audio: true }) : Promise.resolve(undefined);
 		
 		return desktop.then(function(desktopStream) {
+			_mobileRemote.desktopStream = desktopStream;
+			
 			return microphone.then(function(microphoneStream) {
 				
 				var desktopVideoTracks = desktopStream.getVideoTracks();
@@ -757,7 +764,9 @@ var _mobileRemote = {
 					};
 				});
 				
-				var desktopAudio = desktopAudioTracks[0];
+				var desktopAudio = _mobileRemote.desktopAudioTrack || desktopAudioTracks[0];
+				_mobileRemote.desktopAudioTrack = desktopAudio;
+				
 				var microphoneAudio = microphoneTracks[0];
 				
 				var mergedAudioTrack = desktopAudio && microphoneAudio ? mergeAudioStreams(desktopStream, microphoneStream) :
@@ -772,16 +781,21 @@ var _mobileRemote = {
 	},
 	closeStream: function() {},
 	toggleCamera: function() {
-		_mobileRemote.getNewStream()
+		
+		_mobileRemote.stream.getVideoTracks().forEach(function(track) {
+			track.stop();
+		});
+		_mobileRemote.stream.getAudioTracks().forEach(function(track) {
+			track.stop();
+		});
+		_mobileRemote.stream = undefined;
+		_mobileRemote.desktopStream = undefined;
+		_mobileRemote.desktopAudioTrack = undefined;
+		
+		_mobileRemote.getNewStream({ ignoreAudio: true })
 		.then(function(stream) {
 			
 			_cameraPlayer.srcObject = stream;
-			_mobileRemote.stream.getVideoTracks().forEach(function(track) {
-				track.stop();
-			});
-			_mobileRemote.stream.getAudioTracks().forEach(function(track) {
-				track.stop();
-			});
 			_mobileRemote.stream = stream;
 			
 		}).catch(function() {});
