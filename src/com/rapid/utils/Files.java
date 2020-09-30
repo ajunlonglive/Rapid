@@ -87,7 +87,17 @@ public class Files {
 	// byte copies one file to another
 	public static void copyFile(File src, File dest) throws IOException {
 
+		// if dest is a directory
+		if (dest.isDirectory()) {
+			// make any folders we might need
+			dest.mkdirs();
+			// update dest to same name as src, but in its location
+			dest = new File(dest + "/" + src.getName());
+		}
+
+		// get src input stream
 		FileInputStream fis = new FileInputStream(src.getPath());
+		// get destination output stream
 		FileOutputStream fos = new FileOutputStream(dest.getPath());
 
 		int size = 1024;
