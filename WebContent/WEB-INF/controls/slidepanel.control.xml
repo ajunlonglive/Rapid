@@ -99,14 +99,16 @@ return ["grey","white","black", "green"];
 	        <resource>
 	            <type>css</type>
 	            <contents>
-	                <![CDATA[	                
+	                <![CDATA[
+/* This is the opener */
 .slidePanel {
 	position: absolute;
 	padding: 5px;
-	width: 20px;
-	height: 20px;
+	top: 0;
+	left: 0;
 	z-index: 101;
-	padding-top: 0px;
+	font-size: 55px;
+	padding: 0 0.35em;
 }
 
 .slidePanel img {
@@ -251,12 +253,6 @@ switch (this.colour) {
 	case "green": this.object.addClass("slidePanelOpener-green"); break;
 	default: this.object.addClass("slidePanelOpener-grey");
 }
-
-var height = this.object.height();
-this.object.css({
-	'font-size': height + 'px',
-	'line-height': height + 'px'
-})
 
 	        ]]>
 	    </rebuildJavaScript>	
