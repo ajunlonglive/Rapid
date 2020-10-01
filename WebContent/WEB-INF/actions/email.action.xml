@@ -68,6 +68,14 @@ return "<option value=''>Please select...</option>" + getInputOptions(this.to);
 				<helpHtml>Allows you to manually enter an email to address. Multiple addresses can be specified by separating with commas or semi-colons. Valid email addresses are needed otherwise the email will not be sent.</helpHtml>
 			</property>
 
+	        <property>
+	            <key>separateEmails</key>
+	            <name>Separate emails</name>
+	            	<setConstructValueFunction>return false;</setConstructValueFunction>
+				<changeValueJavaScript>checkbox</changeValueJavaScript>
+	            <helpHtml>Whether the email is sent as a single comma separated list of addresses or one email per address.</helpHtml>
+	        </property>
+
 			<property>
 				<key>emailType</key>
 				<name>Type</name>

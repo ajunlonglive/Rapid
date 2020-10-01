@@ -27,6 +27,7 @@ package com.rapid.actions;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.activation.FileDataSource;
@@ -332,7 +333,9 @@ public class Email extends Action {
 		String type = getProperty("emailType");
 		// get the attachments
 		String attachments = jsonData.optString("attachments", null);
-
+		// separate emails
+		boolean separateEmails = Boolean.parseBoolean(getProperty("separateEmails"));
+		
         // if we got one
         if (from == null) {
         	throw new Exception("Email from address must be provided");
@@ -452,13 +455,24 @@ public class Email extends Action {
         			} // got inputs
         		} // inputs not null
 
-        		// if the type is html
-        		if ("html".equals(type)) {
-        			// send email as html
-        			com.rapid.core.Email.send(from, to, subject, "Please view this email with an application that supports HTML", body, getAttachments(rapidRequest, attachments));
-        		} else {
-        			// send email as text
-        			com.rapid.core.Email.send(from, to, subject, body, null, getAttachments(rapidRequest, attachments));
+        		// if separate emails then split 'to' string on the comma and load into recipients list otherwise just create a list with one (to) entry
+        		List<String> recipients;
+        		if(separateEmails) 
+        			recipients = Arrays.asList(to.split(","));
+        		else {
+        			recipients = new ArrayList<>();
+        			recipients.add(to);
+        		}
+
+        		for(String recipient : recipients) {
+	        		// if the type is html
+	        		if ("html".equals(type)) {
+	        			// send email as html
+	        			com.rapid.core.Email.send(from, recipient.trim(), subject, "Please view this email with an application that supports HTML", body, getAttachments(rapidRequest, attachments));
+	        		} else {
+	        			// send email as text
+	        			com.rapid.core.Email.send(from, recipient.trim(), subject, body, null, getAttachments(rapidRequest, attachments));
+	        		}
         		}
         	}
         }
@@ -513,7 +527,7 @@ public class Email extends Action {
 			String fileName = jsonFiles.optString(i, null);
 
 			// if there was one
-			if (fileName != null) {
+			if (fileName != null && !fileName.equals("")) {
 
 				// split into parts
 				String[] fileNameParts = fileName.split(",");
