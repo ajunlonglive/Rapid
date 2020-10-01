@@ -111,10 +111,6 @@ return ["grey","white","black", "green"];
 	padding: 0 0.35em;
 }
 
-.slidePanel span {
-	font-size: 55px;
-}
-
 .slidePanel img {
 	width: 100%;
 	height: 100%;
