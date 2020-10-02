@@ -338,6 +338,8 @@ function showEvents(control) {
 							for (var i in control.events) {
 								// check whether this is the event we want
 								if (control.events[i].type == eventType) {
+									// add undo snapshot
+									addUndo();
 									// get the type of action we selected
 									var actionType = $(ev.target).val();
 									// check if pasteActions

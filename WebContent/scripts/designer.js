@@ -237,14 +237,38 @@ var _scale = 1;
 // the scale * zoom
 var _mouseScale;
 
+//set the dirty indicator
+function setDirty(dirty) {
+	// if null / undefined set to true
+	if (dirty === undefined || dirty == null) dirty = true;
+	// set value
+	_dirty = dirty;
+	// update save button highlight
+	if (_dirty) {
+		$("#pageSave").addClass("buttonHighlight");
+	} else {
+		$("#pageSave").removeClass("buttonHighlight");
+	}
+	
+}
+
+// if the page is dirty prompt the user that they will lose unsaved changes
+function checkDirty() {
+	if (_dirty) {
+		return confirm("You will lose your unsaved changes. Are you sure?");
+	} else {
+		return true;
+	}
+}
+
 // takes a snapshot of the current page and adds it to the undo stack
 function addUndo(usePage, keepRedo) {	
 	
 	// must have a selected control or page
 	if (_selectedControl || usePage) {	
 		
-		// set dirty
-		_dirty = true;		
+		// set dirty to true
+		setDirty(true);	
 		
 		// the undo control
 		var undoControl = null;
@@ -268,7 +292,7 @@ function addUndo(usePage, keepRedo) {
 		if (_undo.length == 0 || (_undo.length > 0 && undoControl != _undo[_undo.length - 1])) _undo.push(undoControl);
 		
 		// remove an item from the bottom of the stack if it's too big
-		if (_undo.length > 50) _undo.splice(0, 1);
+		if (_undo.length > 20) _undo.splice(0, 1);
 		
 		// enable undo button
 		$("#undo").enable();
@@ -434,7 +458,7 @@ function doUndo() {
 		// disable undo button
 		$("#undo").disable();
 		// page can't be dirty either
-		_dirty = false;
+		setDirty(false);
 	}
 }
 
@@ -453,15 +477,7 @@ function doRedo() {
 	if (_redo.length == 0) $("#redo").disable();
 }
 
-// if the page is dirty prompt the user that they will lose unsaved changes
-function checkDirty() {
-	if (_dirty) {
-		return confirm("You will lose your unsaved changes. Are you sure?");
-	} else {
-		return true;
-	}
-}
-
+// check if we are online (or at least we know that we are offline)
 function checkOnline() {
 	if (navigator.onLine) {
 		return true;
@@ -2549,7 +2565,7 @@ $(document).ready( function() {
 						} // style sheets check
 						
 						// page has just rebuilt so set dirty to false
-						_dirty = false;
+						setDirty(false);
 									        				        	
 						// enable all buttons except for undo and redo 
 		        		$("button:not(#undo):not(#redo)").enable();
@@ -2972,7 +2988,7 @@ $(document).ready( function() {
 						"margin-top": -45
 					}, 500);
 		        	// set dirty to false
-		        	_dirty = false;
+		        	setDirty(false);
 		        	// reload the pages as the order may have changed, but keep the current one selected, also specify that we are going to want controls from dialogues in the collection
 		        	loadPages(_page.id, false, true);
 		        	// reposition the selection in case controls moved during the reload

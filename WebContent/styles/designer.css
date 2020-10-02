@@ -739,6 +739,10 @@ div.button {
     margin-left: 0px;
 }
 
+.buttons button.buttonHighlight {
+	border-bottom: 1px solid white;
+}
+
 #appAdmin {
 	padding-left:20px;
 	padding-right:5px;
