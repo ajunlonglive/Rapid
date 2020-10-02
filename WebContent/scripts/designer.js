@@ -1232,8 +1232,8 @@ function loadLock(level) {
 		$("#propertiesPanel").hide();
 		// clear down property dialogues for good measure
 		hideDialogues();
-		// show loading in iFrame if not pages reloading for updated order
-		$(_pageIframe[0].contentWindow.document).find("body").html("<div><div class='pageLoading'><p><img src='images/wait_220x19.gif' /></p><p style='margin-left:20px;'>loading...</p></div></div>");
+		// empty iFrame
+		$(_pageIframe[0].contentWindow.document).find("body").html("");
 		// hide any selection border
 		if (_selectionBorder) _selectionBorder.hide();
 		// remove any nonVisibleControls

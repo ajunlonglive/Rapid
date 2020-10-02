@@ -96,6 +96,7 @@ if (appId != null && pageId != null) {
 <head>	
 	<title>Rapid Desktop - Design Page</title>
 	<meta charset="utf-8">	
+	<link rel="stylesheet" type="text/css" href="styles/designer.css"></link>
 <%
 
 if (appPage != null && designerPermission) {
@@ -104,16 +105,11 @@ if (appPage != null && designerPermission) {
 	out.print(appPage.getResourcesHtml(app, true));	
 	
 %>
-	<link rel="stylesheet" type="text/css" href="styles/designPage.css"></link>
 	<script type="text/javascript">
 	// used for controls that load asychronously at run time
 	var _loadingControls = 0;
 	</script>
 	<style></style>
-<%
-} else {
-%>
-	<link rel="stylesheet" type="text/css" href="styles/designer.css"></link>
 <%
 }
 %>
@@ -134,7 +130,21 @@ if (app == null) {
 <%
 } else {
 %>
-	<div><div class="pageLoading"><p><img src="images/wait_220x19.gif" /></p><p style='margin-left:20px;'>loading...</p></div></div>
+	<div id="loading">
+		<div id="loadingPanel">
+			<div>
+				<div><img style="width: 200px; height:135px; margin-right: 25px;" src="images/RapidLogo.svg" /></div>
+				<div style="position:relative; bottom:30px;"><b>Rapid <%=com.rapid.server.Rapid.VERSION %></b></div>
+			</div>
+			<div>		
+				<div style="height:77px; position:relative; bottom:15px;">
+					<i style="margin-top: 5px; margin-bottom: 5px; font-size:40px;" class="glyph fas fa-spin"></i>
+					<div>loading...</div>
+				</div>		
+			</div>
+			<div class="subBar" style="background:#ff0004; height:30px;"></div>
+		</div>
+	</div>
 <%
 } 
 %>
