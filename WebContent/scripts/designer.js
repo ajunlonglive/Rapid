@@ -4599,6 +4599,11 @@ function windowResize(ev) {
 		// adjust pin
 		$("#controlPanelPin").css({"top":controlPanel.css("padding-top"), "right":controlPanel.css("padding-right")});
 	}
+	// get panel height (less the header and padding)
+	var cHeight = Math.max(_window.height()-50, cinner.height());
+	// set sizer heights
+	$("#controlPanelSize").css({height:cHeight});
+	$("#controlPanelSizeLeft").css({height:cHeight});
 	
 	// get the properties inner
 	var pinner = $("#propertiesPanelInner");
@@ -4617,7 +4622,12 @@ function windowResize(ev) {
 		// adjust pin - note that the height is matched to the padding on the control panel as properties has no padding top and we want pins on the same level
 		$("#propertiesPanelPin").css({"top":controlPanel.css("padding-top"), "left":propertiesPanel.css("padding-left")});
 	}
-	
+	// get panel height (less the header and padding)
+	var pHeight = Math.max(_window.height()-200, pinner.height());
+	// set sizer heights
+	$("#propertiesPanelSize").css({height:pHeight});
+	$("#propertiesPanelSizeRight").css({height:pHeight-112});
+
 	// revert any scroll top
 	if (scrollTop > 0) _window.scrollTop(scrollTop);
 	
