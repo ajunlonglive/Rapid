@@ -1877,6 +1877,18 @@ function Property_validationControls(cell, propertyObject, property, details) {
 	
 }
 
+// only show if validation messages are on
+function Property_validationScrollTo(cell, propertyObject, property, details) {
+	// only if this is not a child database action
+	if (propertyObject.showMessages) {
+		// use the standard child actions as anything is allowed
+		Property_checkbox(cell, propertyObject, property, details);
+	} else {
+		// remove this row
+		cell.closest("tr").remove();
+	}	
+}
+
 function Property_childActions(cell, propertyObject, property, details) {
 		
 	// retrieve or create the dialogue

@@ -251,7 +251,7 @@ public class Validation extends Action {
 					}
 				}
 			}
-			js = "if (Action_validation(ev, " + jsonValidations.toString() + "," + getProperty("showMessages") + ")) {\n";
+			js = "if (Action_validation(ev, " + jsonValidations.toString() + "," + getProperty("showMessages") + "," + getProperty("scrollToFirst") + ")) {\n";
 
 			// insert pass actions
 			if (_passActions != null) {
