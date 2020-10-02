@@ -71,7 +71,7 @@ return "<option value=''>Please select...</option>" + getInputOptions(this.to);
 	        <property>
 	            <key>separateEmails</key>
 	            <name>Separate emails</name>
-	            	<setConstructValueFunction>return false;</setConstructValueFunction>
+	            <setConstructValueFunction>return false;</setConstructValueFunction>
 				<changeValueJavaScript>checkbox</changeValueJavaScript>
 	            <helpHtml>Whether the email is sent as a single comma separated list of addresses or one email per address.</helpHtml>
 	        </property>
