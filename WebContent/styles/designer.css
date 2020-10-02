@@ -96,6 +96,12 @@ hr {
 	cursor: pointer;
 	width: 24px;
 	height: 24px;
+    z-index: 1;
+    background-image: url(../images/close.light.svg);
+    background-repeat: no-repeat;
+    background-position: left 0px center;
+    background-color: #49494900;
+    transition: transform 0.2s, background-color 0.2s;
 }
 
 .hideScrollbars #controlPanelPin {

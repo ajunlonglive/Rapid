@@ -2720,8 +2720,7 @@ $(document).ready( function() {
 		
 		// check pinned
 		if (_panelPinned) {
-			_panelPinned = false;			
-			$("#controlPanelPin").html("<img src='images/down.light.svg' title='pin panel'>");
+			_panelPinned = false;
 			// set the panel pin offset
 			_panelPinnedOffset = 0;			
 			// arrange the non visible controls due to the shift in the panel
@@ -2734,8 +2733,6 @@ $(document).ready( function() {
 		} else {
 			_panelPinned = true;
 			_panelPinnedOffset = $("#controlPanel").width() + 21; // add the padding and border
-			$("#controlPanelPin").html("<img src='images/left.light.svg' title='unpin panel'>");
-			
 			if ($("#controlPanel").offset().left <= 0) {
 				// resize the window
 				windowResize("unpin");
@@ -2752,7 +2749,7 @@ $(document).ready( function() {
 		// show the panel if we're not moving a control
 		if (!_movingControl) {
 			// show the panel
-			$("#controlPanel").stop(true, true).show("slide", {direction: "left"}, 200, function() {
+			$("#controlPanel").stop(true, true).show("slide", {direction: "right"}, 200, function() {
 				// show the inner when the animation has finished
 				$("#controlPanelInner").show();
 			});
@@ -4362,7 +4359,7 @@ function hideControlPanel(resetOffset) {
 		if (resetOffset) _panelPinnedOffset = 0;
 		// resize the window
 		windowResize("pin");
-		
+		// reset panel position
 		$("#controlPanel").css({"top":0, "left":0});
 	});
 	// hide the inner

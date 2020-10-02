@@ -157,9 +157,7 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 			
 			<div id="controlPanelTitlebar">
 				
-				<div id="controlPanelPin">
-					<img src='images/left.light.svg' title='unpin panel'>
-				</div>
+				<div id="controlPanelPin"></div>
 				
 			</div>
 		
