@@ -184,7 +184,7 @@ var windowOpenTime = Date.now();
 window.addEventListener("storage", function(storageEvent) {
 	if (storageEvent.key === "rapidWindowBroadcast") {
 		var broadcast = JSON.parse(storageEvent.newValue);
-		if (broadcast.message === "designerHeardDesignerOpened" && broadcast.time !== windowOpenTime) {
+		if (broadcast && broadcast.message === "designerHeardDesignerOpened" && broadcast.time !== windowOpenTime) {
 			console.log("designerHeardDesignerOpened");
 			clearTimeout(clearClipboardsTimeout);
 		}
@@ -194,7 +194,7 @@ window.addEventListener("storage", function(storageEvent) {
 window.addEventListener("storage", function(storageEvent) {
 	if (storageEvent.key === "rapidWindowBroadcast") {
 		var broadcast = JSON.parse(storageEvent.newValue);
-		if (broadcast.message === "designerOpened") {
+		if (broadcast && broadcast.message === "designerOpened") {
 			console.log("designerOpened");
 			window.localStorage.setItem("rapidWindowBroadcast", JSON.stringify({ message: "designerHeardDesignerOpened", time: windowOpenTime }));
 		}
@@ -4686,33 +4686,36 @@ window.addEventListener("storage", function(storageEvent) {
 	if (storageEvent.key === "rapidWindowBroadcast") {
 		// get the new data
 		var broadcast = JSON.parse(storageEvent.newValue);
-		// check the message
-		switch (broadcast.message) {
-		case "controlsReloaded": case "actionsReloaded":
-			// always reload the whole designer if controls, or actions are reloaded to get full update
-			location.reload();
-			break;
-		case "applicationReloaded":
-			// if the application is reloaded and its the one being designed at the moment, reload the whole window for full update of all related files
-			if (broadcast.a === _version.id && broadcast.v === _version.version) {
+		// if there was some
+		if (broadcast) {
+			// check the message
+			switch (broadcast.message) {
+			case "controlsReloaded": case "actionsReloaded":
+				// always reload the whole designer if controls, or actions are reloaded to get full update
 				location.reload();
-			}
-			break;
-		case "controlsSaved": case "actionsSaved": case "databaseConnectionSaved": case "applicationStyleSaved":
-			// reload the current app and keep the page we're on
-			if (!_dirty && broadcast.a === _version.id && broadcast.v === _version.version) {
-				_stayOnAppPage = $("#pageSelect").val();
-				$("#appSelect").change();
 				break;
-			}
-		case "applicationNewVersion": case "applicationDeletedVersion": case "applicationImportedVersion":
-			// if the versions have been changed for the current app reload - this will move to the last version
-			if (!_dirty && broadcast.a === _version.id) {
-				setTimeout(function() {
+			case "applicationReloaded":
+				// if the application is reloaded and its the one being designed at the moment, reload the whole window for full update of all related files
+				if (broadcast.a === _version.id && broadcast.v === _version.version) {
+					location.reload();
+				}
+				break;
+			case "controlsSaved": case "actionsSaved": case "databaseConnectionSaved": case "applicationStyleSaved":
+				// reload the current app and keep the page we're on
+				if (!_dirty && broadcast.a === _version.id && broadcast.v === _version.version) {
 					_stayOnAppPage = $("#pageSelect").val();
 					$("#appSelect").change();
-				}, 1000);
-				break;
+					break;
+				}
+			case "applicationNewVersion": case "applicationDeletedVersion": case "applicationImportedVersion":
+				// if the versions have been changed for the current app reload - this will move to the last version
+				if (!_dirty && broadcast.a === _version.id) {
+					setTimeout(function() {
+						_stayOnAppPage = $("#pageSelect").val();
+						$("#appSelect").change();
+					}, 1000);
+					break;
+				}
 			}
 		}
 	}
