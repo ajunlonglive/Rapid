@@ -5251,6 +5251,8 @@ function getGlyphName(code) {
 	}
 }
 
+var _glyphRowsHtml = "";
+
 function Property_glyphCode(cell, controlAction, property, details) {
 	
 	// retieve the glyph code
@@ -5269,18 +5271,53 @@ function Property_glyphCode(cell, controlAction, property, details) {
 	// remove any previous table
 	dialogue.find("table").remove();
 	// add a scrolling div with the search inside, if we need one
-	if (!dialogue.find("div")[0]) dialogue.append("<div style='overflow-y:scroll;max-height:400px;margin-top:10px;'><input class='glyphSearch' placeholder='Search'></div>");
+	if (!dialogue.find("div")[0]) dialogue.append("<input class='glyphSearch' placeholder='Search' /><div style='overflow-y:scroll;max-height:400px;margin-top:5px;'></div>");
 	// add the table
 	dialogue.find("div").append("<table></table>");
 	// get the new table
 	table = dialogue.find("table").first();
-	// add all of the glyphs, with the current one highlighted
-	for (var i in _fontGlyphs) {
-		var name = _fontGlyphs[i][1];
-		var glyph = newGlyph(_fontGlyphs[i][0]);
-		
-		table.append("<tr><td data-code='" + glyph + "' class='hover" + (selectedGlyph.toString() === glyph.toString() ? " selected" : "") + "'><span class='" + glyph.class + "'>" + glyph.html + "</span><span class='fa_name'>&nbsp;" + name + "</span></td></tr>");
+	
+	// if we haven't yet cached glyph row html
+	if (!_glyphRowsHtml) {
+		// add all of the glyphs, with the current one highlighted, var _fontGlyphs = [["","none"],["e900","rapid"],["b.f26e","500px"],["b.f368","accessible-icon"]
+		for (var i in _fontGlyphs) {
+			// get the gylph entry
+			var glyph = _fontGlyphs[i];
+			// get the code
+			var code = glyph[0];
+			// get it's name
+			var name = glyph[1];
+			// get it's parts
+			var parts = glyph[0].split(".");
+			// assume no class
+			var clazz = "";			
+			// assume no html
+			var html = "";
+			// if we have enough parts
+			if (parts.length > 1) {
+				// get the clazz 
+				clazz = "fa" + parts[0];
+				// set the html
+				html = "&#x" + parts[1] + ";"
+			} else {
+				// rapid glyph
+				if (parts == "e900") {
+					// set class
+					clazz = "fr";
+					// set the html
+					html = "&#x" + code + ";"
+				}
+			}
+			// make the html
+			_glyphRowsHtml += "<tr><td data-code='" + code + "'><span class='" + clazz + "'>" + html + "</span><span class='fa_name'>&nbsp;" + name + "</span></td></tr>";
+		}
 	}
+	
+	// append it to the table
+	table.append(_glyphRowsHtml);
+	// add any selected class
+	table.find("td[data-code='" + controlAction.code + "']").addClass("gylphSelected");
+		
 	// if a position was set go back to it
 	if (dialogue.attr("data-scroll")) table.parent().scrollTop(dialogue.attr("data-scroll"));
 	
@@ -5314,17 +5351,13 @@ function Property_glyphCode(cell, controlAction, property, details) {
 	addListener( table.find("td").click({cell: cell, controlAction: controlAction, property: property, details: details}, function(ev) {
 		// get the cell
 		var cell = $(ev.target).closest("td");
-		// remove selected from others
-		cell.closest("table").find("td").removeClass("selected");
-		// apply selected to this
-		cell.addClass("selected");
 		// get the code
 		var code = cell.attr("data-code");
 		// get the table
 		var table = cell.closest("table");
 		// add the scroll position
 		dialogue.attr("data-scroll",table.parent().scrollTop());
-		// update the property - this will apply the html change
+		// update the property - this will apply the html change - and select the td
 		updateProperty(ev.data.cell, ev.data.controlAction, ev.data.property, ev.data.details, code);
 	}));
 	

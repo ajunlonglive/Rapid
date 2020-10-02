@@ -673,3 +673,13 @@ textarea {
 	overflow: auto;
 	overflow-x: hidden;
 }
+
+.glyphSearch {
+	width: 100%;
+	margin-top: 0;
+	box-sizing: border-box;
+}
+
+.gylphSelected {
+	background-color: white;
+}
