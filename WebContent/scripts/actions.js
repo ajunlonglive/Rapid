@@ -559,8 +559,17 @@ function showAction(actionsTable, action, collection, refreshFunction, details) 
 			var propertiesRow = actionsTable.children("tr:nth-last-child(3)");
 			// retrieve a property object from the control class
 			var property = properties[k];
+			// assume the property is visible
+			var visible = (property.visible === undefined || !property.visible === false);
+			// if property has visibility
+			if (property.visibility) {
+				// get the key value
+				var value = action[property.visibility.key];
+				// update visibility base on values matching
+				if (value !== property.visibility.value) visible = false;
+			}
 			// check that visibility is not explicitly false
-			if (property.visible === undefined || !property.visible === false) {
+			if (visible) {
 				// assume no help
 				var help = "";
 				// if the property has help html

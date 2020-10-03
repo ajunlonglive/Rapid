@@ -638,9 +638,18 @@ function showProperties(control) {
 				// add a row
 				propertiesTable.append("<tr></tr>");
 				// get a reference to the row
-				var propertiesRow = propertiesTable.children().last();				
-				// check that visibility is not false
-				if (property.visible === undefined || !property.visible === false) {
+				var propertiesRow = propertiesTable.children().last();
+				// assume the property is visible
+				var visible = (property.visible === undefined || !property.visible === false);
+				// if property has visibility
+				if (property.visibility) {
+					// get the key value
+					var value = control[property.visibility.key];
+					// update visibility base on values matching
+					if (value !== property.visibility.value) visible = false;
+				}
+				// check that visible is not false
+				if (visible) {
 					// assume no help
 					var help = "";
 					// if the property has help html

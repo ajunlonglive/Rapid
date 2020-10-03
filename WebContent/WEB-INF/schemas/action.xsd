@@ -117,12 +117,11 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 									</xs:sequence>									
 								</xs:complexType>							
 							</xs:element>
-							<xs:element name="visible" type="xs:boolean"	minOccurs="0">
+							<xs:element name="visible" type="xs:boolean" minOccurs="0">
 								<xs:annotation>
-									<xs:documentation>For legacy actions. If set to false the control will not be available in Rapid Admin to select for adding to applications
-									</xs:documentation>
+									<xs:documentation>If set to false the control will not be available in Rapid Admin to select for adding to applications. Often used for legacy and deprecated action, or those used with specialised controls.</xs:documentation>
 								</xs:annotation>
-							</xs:element>							
+							</xs:element>
 							<xs:element name="addToNewApplications" type="xs:boolean" minOccurs="0">
 								<xs:annotation>
 									<xs:documentation>If set to true the action will be added to
@@ -189,12 +188,33 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 															</xs:restriction>															
 														</xs:simpleType>														
 													</xs:element>
-													<xs:element name="visible" type="xs:boolean"	minOccurs="0">
+													<xs:element name="visible" type="xs:boolean" minOccurs="0">
 														<xs:annotation>
-															<xs:documentation>Set this optional item to false to not
-																render the property
-															</xs:documentation>
+															<xs:documentation>Set this optional item to false to not display the property</xs:documentation>
 														</xs:annotation>
+													</xs:element>
+													<xs:element name="visibility" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Use the value of another property to determine whether this property shows</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="key">								
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:minLength value="1" />
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="value">								
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:minLength value="1" />
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+															</xs:sequence>									
+														</xs:complexType>							
 													</xs:element>
 													<xs:element name="setConstructValueFunction"
 														minOccurs="0">
