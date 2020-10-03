@@ -34,13 +34,55 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    <helpHtml>Runs any JavaScript you write.</helpHtml>
 	    
 	    <properties>
+
 	        <property>
 	            <key>javascript</key>
 	            <name>JavaScript</name>
 	            <setConstructValueFunction>return "// Enter JavaScript here. The event object is passed in as \"ev\"";</setConstructValueFunction>
 	            <changeValueJavaScript>bigtext</changeValueJavaScript>
-	            <helpHtml>Allows you to create customised actions using JavaScript. Recommended for advanced programmers.</helpHtml>
+	            <helpHtml>Allows you to create customised actions using JavaScript. Executes in the client in-place, or on the server with inputs, outputs, success actions, and error actions. Recommended for advanced programmers.</helpHtml>
 	        </property>
+	        
+	        <property>
+	        	<key>server</key>
+	            <name>Server side</name>
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>
+	            <refreshProperties>true</refreshProperties>
+	            <helpHtml>Whether this JavaScript runs on the server in the Nashorn script engine.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>inputs</key>
+	            <name>Inputs</name>
+	            <visibility><key>server</key><value>true</value></visibility>
+	            <changeValueJavaScript>inputs</changeValueJavaScript>
+	            <helpHtml>Inputs that will be available inside your server-side JavaScript. All inputs are available with their input field in the "data" object.</helpHtml>
+	        </property>	
+	        
+	        <property>
+	            <key>outputs</key>
+	            <name>Outputs</name>
+	            <visibility><key>server</key><value>true</value></visibility>
+	            <changeValueJavaScript>outputs</changeValueJavaScript>
+	            <helpHtml>Where the output of the return statement in the JavaScript will be sent to.</helpHtml>
+	        </property>	
+	          	        
+	        <property>
+	            <key>successActions</key>
+	            <name>Success actions</name>
+	            <visibility><key>server</key><value>true</value></visibility>
+	            <changeValueJavaScript>childActions</changeValueJavaScript>
+	            <helpHtml>Actions that will be run after the output data is successfully returned.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>errorActions</key>
+	            <name>Error actions</name>
+	            <visibility><key>server</key><value>true</value></visibility>
+	            <changeValueJavaScript>childActions</changeValueJavaScript>
+	            <helpHtml>Actions that will be run if there are any errors when running the script.</helpHtml>
+	        </property>
+	        
 	    </properties>
 	    
     </action> 
