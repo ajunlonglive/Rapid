@@ -13,7 +13,7 @@
 /*
 
 
-Copyright (C) 2018 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -170,7 +170,6 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 				<div id="adminButtons" class="buttons">					
 					<button id="appAdmin" class="buttonLeft" title="Open the Rapid Admin screen">Rapid Admin</button>
 					<button id="appAdminNewTab" class="buttonRight buttonImage" title="Open the Rapid Admin screen in a new tab"></button>
-					
 				</div>
 				
 				<h2 style="">Application<i id="helpApplication" class="headerHelp glyph fas hintIcon"></i></h2>
@@ -225,7 +224,7 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 				
 				<div id="pageMap" class="design-map" >
 					<ul id="pageMapList"></ul>
-					<button id="pageMapHighlight" class="fas" title="Locate selected control">&#xf002;</button>		
+					<button id="pageMapHighlight" class="fas button" title="Locate selected control">&#xf002;</button>		
 					<input id="pageMapSearch" placeholder="search"></input>				
 				</div>	
 

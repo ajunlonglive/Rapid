@@ -722,8 +722,22 @@ div.button {
 	margin-top: 0;
 }
 
+.button {
+  border: none;
+  color: white;
+  background: #494949;
+  padding: 0px 8px 2px 8px;
+  outline: none;
+  transition: background 0.3s ease;
+  cursor:pointer;
+}
+
+.button:not([disabled]):hover {
+	background: #b2b2b2;
+}
+
 .buttons button {
-	color: white;	
+	color: white;
 	margin-top: 5px;
 	margin-right: -4px;
 	vertical-align: middle;
@@ -732,6 +746,10 @@ div.button {
 	font-family: 'Open Sans', Arial;
 	font-size: 12px; 
 	background: #494949;
+}
+
+.buttons button:not([disabled]):hover {
+	background: #b2b2b2;
 }
 
 .buttons .buttonImage {
@@ -1175,21 +1193,6 @@ select optgroup {
 
 .dialogueGrid select {
   border: none !important;
-}
-
-button {
-  border: none;
-  color: #FFF;
-  background: #494949;
-  font-family: 'Open Sans', Arial;
-  padding: 0px 8px 2px 8px;
-  outline: none;
-  transition: background 0.3s ease;
-  cursor:pointer;
-}
-
-button:not([disabled]):hover {
-	background: #b2b2b2;
 }
 
 .normalInputs input:not([type]) {
