@@ -625,30 +625,7 @@ function getMouseControl(ev, childControls) {
 		var mouseY = ev.pageY + _pageIframeWindow.scrollTop();
 				
 		//console.log("X: " + mouseX + ", Y: " + mouseY);
-												
-		// check if we hit the border first		
-		var o = $("#selectionBorder");				
-		// if we didn't find a control but the selection border is visible, return the current control
-		if (o.is(":visible") && !_movingControl) {						
-			// did we click on the border (it's position already has the pinned panel taken into account so no need to offset)
-			if (ev.pageX >= o.offset().left && ev.pageY >= o.offset().top && ev.pageX <= o.offset().left + o.outerWidth() && ev.pageY <= o.offset().top + o.outerHeight()) {				
-				// get the height of the object
-				var height = getControlHeight(_selectedControl) * _scale;
-				// grab the selected object
-				o = _selectedControl.object;
-				// get the width
-				var width = o.outerWidth() * _scale;
-				// if we clicked in the object space we skip this section and process the event thoroughly
-				if (!(mouseX >= o.offset().left && mouseY >= o.offset().top && mouseX <= o.offset().left + width && mouseY <= o.offset().top + height)) {					
-					// return the selected control
-					return _selectedControl;
-				}
-			}
-		}
-		
-		// we use this function recursively so start at the page if no array specified
-		if (childControls == null) childControls = _page.childControls;
-		
+
 		// don't be tempted to sort the controls unless it's done very carefully as the object/control order can get out of sync and objects will move on saves and undos
 		
 		// loop all of our objects for non-visual controls
@@ -3768,8 +3745,71 @@ function coverMouseDown(ev) {
 		// if unapplied styles, apply now before wiping everything out
 		if (!_stylesApplied) applyStyles();
 	}
-	// get the control under the mouse X/Y
-	var c = getMouseControl(ev);
+	
+	// assume we don't find a control
+	var c = null;
+	
+	// if there is a selected control
+	if (_selectedControl) {
+		
+		// assume we did not click within the current select
+		var currentSelectClick = false;
+		
+		// check if we hit the border first		
+		var o = $("#selectionBorder");				
+		
+		// if we didn't find a control but the selection border is visible, return the current control
+		if (o.is(":visible")) {
+			
+			// did we click on the border (it's position already has the pinned panel taken into account so no need to offset)
+			if (ev.pageX >= o.offset().left && ev.pageY >= o.offset().top && ev.pageX <= o.offset().left + o.outerWidth() && ev.pageY <= o.offset().top + o.outerHeight()) {
+				
+				// we clicked on the current selection
+				currentSelectClick = true;
+				
+				// get the height of the object
+				var height = getControlHeight(_selectedControl) * _scale;
+				// grab the selected object
+				o = _selectedControl.object;
+				// get the width
+				var width = o.outerWidth() * _scale;
+				
+				// get the mouse X and Y, relative to what's visible in the iframe
+				var mouseX = ev.pageX + _pageIframeWindow.scrollLeft() - _panelPinnedOffset;
+				var mouseY = ev.pageY + _pageIframeWindow.scrollTop();
+				
+				// if we clicked in the object space we skip this section and process the event thoroughly
+				if (!(mouseX >= o.offset().left && mouseY >= o.offset().top && mouseX <= o.offset().left + width && mouseY <= o.offset().top + height)) {					
+					// return the selected control
+					c = _selectedControl;
+				} // not on border
+				
+			} // within border
+			
+		} // selection border visible
+		
+		// if we didn't find the control from the border but we did click within the border
+		if (!c && currentSelectClick) {
+		
+			// get cloned peers of the selected control
+			var childControls = _selectedControl._parent.childControls.slice();
+			// loop until we find the selected on
+			for (var i in childControls) {
+				if (childControls[i].id == _selectedControl.id) break;
+			}
+			// remove selected control and above if there is room
+			if (childControls.length > i) childControls = childControls.splice(i + 1);
+			
+			// get the control under the mouse X/Y using our modified child controls
+			c = getMouseControl(ev, childControls);
+			
+		} // no object from within order check - skip past currently selected
+
+	} // selected control check
+	
+	// if we didn't get one above, do it again from the root
+	if (!c) c = getMouseControl(ev, _page.childControls);
+	
 	// if we got one
 	if (c) {		
 		// retain reference to the selected object
@@ -3955,7 +3995,7 @@ $(document).on("mousemove", function(ev) {
 		var t = $(ev.target);
 					
 		// get a reference to the control
-		var c = getMouseControl(ev);
+		var c = getMouseControl(ev, _page.childControls);
 		
 		// if a control is selected and the mouse is down look for the controls new destination
 		if (_selectedControl && !_locked) {
