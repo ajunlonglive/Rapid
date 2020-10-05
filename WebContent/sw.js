@@ -1,5 +1,30 @@
 "use strict";
 
+/*
+
+
+Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
+
+gareth.edwards@rapid-is.co.uk
+
+This file is part of the Rapid Application Platform
+
+Rapid is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version. The terms require you to include
+the original copyright, and the license notice in all redistributions.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
+
+*/
+
 console.debug('WORKER: executing.');
 
 // rapid pwa namesapce
@@ -97,8 +122,10 @@ var _refreshes = [
 	"~?action=getApps"
 ];
 
-var _trimUrls = [".js", ".css", ".json", ".woff", ".woff2", ".ttf", ".ico", ".svg", ".png"];
+// extensions that will have any parameters trimmed off when saving/checking for them in the cache, in addition they are used to identify whether a request was for an app and whether to check for its resources
+var _trimUrls = [".js", ".css", ".json", ".woff", ".woff2", ".ttf", ".ico", ".svg", ".gif", ".png", ".jpg", ".jpeg", ".pdf"];
 
+// the root context path of the web application deteremined from the loading path of this sw.js file
 var _contextPath;
 
 
