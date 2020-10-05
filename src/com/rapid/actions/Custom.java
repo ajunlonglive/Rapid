@@ -33,6 +33,7 @@ import javax.script.Invocable;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
+import javax.xml.bind.annotation.XmlType;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -52,6 +53,7 @@ import jdk.nashorn.api.scripting.ScriptObjectMirror;
 public class Custom extends Action {
 
 	// this action has generic inputs
+	@XmlType(namespace="http://rapid-is.co.uk/custom")
 	public static class Input {
 
 		private String _itemId, _field, _inputField;
@@ -75,6 +77,7 @@ public class Custom extends Action {
 	}
 
 	// this action has generic outputs
+	@XmlType(namespace="http://rapid-is.co.uk/custom")
 	public static class Output {
 
 		private String _outputField, _itemId, _field;
