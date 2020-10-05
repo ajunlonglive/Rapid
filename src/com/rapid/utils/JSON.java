@@ -156,6 +156,10 @@ public class JSON {
 				return new JSONData(getJSONObject(field));
 			}
 			
+			public String getType(String field) throws Exception {
+				return _row.get(_fieldIndexes.get(field)).getClass().getName();
+			}
+			
 			public String toString() {
 				return "{"
 						+ "\n    fields: " + _fields
