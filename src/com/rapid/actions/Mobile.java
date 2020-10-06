@@ -373,6 +373,8 @@ public class Mobile extends Action {
 		String js = "";
 		// get the servlet
 		RapidHttpServlet rapidServlet = rapidRequest.getRapidServlet();
+		// get the context
+		ServletContext servletContext = rapidServlet.getServletContext();
 		// get the type
 		String type = getProperty("actionType");
 		// check we got something
@@ -383,7 +385,7 @@ public class Mobile extends Action {
 				// get the number control id
 				String numberControlId = getProperty("numberControlId");
 				// get the control
-				Control numberControl = Control.getControl(rapidServlet.getServletContext(), application, page, numberControlId);
+				Control numberControl = Control.getControl(servletContext, application, page, numberControlId);
 				// check we got one, unless it's System.field
 				if (numberControl == null && !"System.field".equals(numberControlId)) {
 					js += "// phone number control " + numberControlId + " not found\n";
@@ -391,13 +393,13 @@ public class Mobile extends Action {
 					// get the number field
 					String numberField = getProperty("numberField");
 					// get number
-					js += "  var number = " + Control.getDataJavaScript(rapidServlet.getServletContext(), application, page, numberControlId, numberField) + ";\n";
+					js += "  var number = " + Control.getDataJavaScript(servletContext, application, page, numberControlId, numberField) + ";\n";
 					// sms has a message too
 					if ("sms".equals(type)) {
 						// get the message control id
 						String messageControlId = getProperty("messageControlId");
 						// get the messagecontrol
-						Control messageControl = Control.getControl(rapidServlet.getServletContext(), application, page, messageControlId);
+						Control messageControl = Control.getControl(servletContext, application, page, messageControlId);
 						// check we got one
 						if (messageControl == null && !"System.field".equals(messageControlId)) {
 							js += "// message control " + numberControlId + " not found\n";
@@ -405,7 +407,7 @@ public class Mobile extends Action {
 							// get the field
 							String messageField = getProperty("messageField");
 							// get the message
-							js += "var message = " + Control.getDataJavaScript(rapidServlet.getServletContext(), application, page, messageControlId, messageField) + ";\n";
+							js += "var message = " + Control.getDataJavaScript(servletContext, application, page, messageControlId, messageField) + ";\n";
 							// start mobile check
 							js += getMobileCheckAlternative();
 							// send the message
@@ -436,19 +438,19 @@ public class Mobile extends Action {
 				// get the email control id
 				String emailControlId = getProperty("emailControlId");
 				// check we got one
-				if (checkControl(rapidServlet.getServletContext(), application, page, emailControlId)) {
+				if (checkControl(servletContext, application, page, emailControlId)) {
 					// get the email field
 					String emailField = getProperty("emailField");
 					// get the email
-					js += "var email = " + Control.getDataJavaScript(rapidServlet.getServletContext(), application, page, emailControlId, emailField) + ";\n";
+					js += "var email = " + Control.getDataJavaScript(servletContext, application, page, emailControlId, emailField) + ";\n";
 					// get the subject js
-					String subjectGetDataJS = Control.getDataJavaScript(rapidServlet.getServletContext(), application, page, getProperty("subjectControlId"), getProperty("subjectField"));
+					String subjectGetDataJS = Control.getDataJavaScript(servletContext, application, page, getProperty("subjectControlId"), getProperty("subjectField"));
 					// add the subject js
 					js += "var subject = " + (("".equals(subjectGetDataJS) || subjectGetDataJS == null) ? "''" : subjectGetDataJS) + ";\n";
 					// subject safety check
 					js += "if (!subject) subject = '';\n";
 					// get the message js
-					String messageGetDataJS = Control.getDataJavaScript(rapidServlet.getServletContext(), application, page, getProperty("messageControlId"), getProperty("messageField"));
+					String messageGetDataJS = Control.getDataJavaScript(servletContext, application, page, getProperty("messageControlId"), getProperty("messageField"));
 					// get the message
 					js += "var message = " + (("".equals(messageGetDataJS) || messageGetDataJS == null) ? "''" : messageGetDataJS) + ";\n";
 					// message safety check
@@ -480,11 +482,11 @@ public class Mobile extends Action {
 				// get the url control id
 				String urlControlId = getProperty("urlControlId");
 				// check we got one
-				if (checkControl(rapidServlet.getServletContext(), application, page, urlControlId)) {
+				if (checkControl(servletContext, application, page, urlControlId)) {
 					// get the field
 					String urlField = getProperty("urlField");
 					// get the url
-					js += "var url = " + Control.getDataJavaScript(rapidServlet.getServletContext(), application, page, urlControlId, urlField) + ";\n";
+					js += "var url = " + Control.getDataJavaScript(servletContext, application, page, urlControlId, urlField) + ";\n";
 					// start the alernative mobile check
 					js += getMobileCheckAlternative();
 					// start the check for the addBarcode function
@@ -608,6 +610,8 @@ public class Mobile extends Action {
 
 						// get the control object from its id
 						Control imageControl = page.getControl(id);
+						// if we couldn't find it in the page, try the rest of the application
+						if (imageControl == null) application.getControl(servletContext, galleryControlIdsProperty);
 						// if we got one
 						if (imageControl == null) {
 							// retain that we will remove this control
@@ -733,7 +737,7 @@ public class Mobile extends Action {
 				// get the naviagte source control id
 				String navigateControlId = getProperty("navigateControlId");
 				// get the control
-				Control navigateControl = Control.getControl(rapidServlet.getServletContext(), application, page, navigateControlId);
+				Control navigateControl = Control.getControl(servletContext, application, page, navigateControlId);
 				// check we got one (but allow System.field)
 				if ((navigateControlId == null || navigateControl == null) && !"System.field".equals(navigateControlId)) {
 					js += "// navigate to control " + navigateControlId + " not found\n";
@@ -743,7 +747,7 @@ public class Mobile extends Action {
 					// get the mode
 					String navigateMode = getProperty("navigateMode");
 					// get the data
-					js += "var data = " + Control.getDataJavaScript(rapidServlet.getServletContext(), application, page, navigateControlId, navigateField) + ";\n";
+					js += "var data = " + Control.getDataJavaScript(servletContext, application, page, navigateControlId, navigateField) + ";\n";
 					// assume no search fields
 					String searchFields = getProperty("navigateSearchFields");
 					// if we got some
