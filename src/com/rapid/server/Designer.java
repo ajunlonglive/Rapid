@@ -602,23 +602,29 @@ public class Designer extends RapidHttpServlet {
 											JSONArray jsonImages = new JSONArray();
 											// get the directory in which the control xml files are stored
 											File dir = new File (application.getWebFolder(getServletContext()));
-											// create a filter for finding image files
-											FilenameFilter xmlFilenameFilter = new FilenameFilter() {
-										    	@Override
-												public boolean accept(File dir, String name) {
-										    		return name.toLowerCase().endsWith(".png") || name.toLowerCase().endsWith(".gif") || name.toLowerCase().endsWith(".jpg") || name.toLowerCase().endsWith(".jpeg") || name.toLowerCase().endsWith(".svg");
-										    	}
-										    };
-										    // an array to hold the images as they come out of the filter
-										    List<String> images = new ArrayList<>();
-											// loop the image files in the folder
-											for (File imageFile : dir.listFiles(xmlFilenameFilter)) {
-												images.add(imageFile.getName());
+											// if it exists (might not if deleted from the file system and apps not refreshed)
+											if (dir.exists()) {
+
+												// create a filter for finding image files
+												FilenameFilter xmlFilenameFilter = new FilenameFilter() {
+											    	@Override
+													public boolean accept(File dir, String name) {
+											    		return name.toLowerCase().endsWith(".png") || name.toLowerCase().endsWith(".gif") || name.toLowerCase().endsWith(".jpg") || name.toLowerCase().endsWith(".jpeg") || name.toLowerCase().endsWith(".svg");
+											    	}
+											    };
+
+											    // an array to hold the images as they come out of the filter
+											    List<String> images = new ArrayList<>();
+												// loop the image files in the folder
+												for (File imageFile : dir.listFiles(xmlFilenameFilter)) {
+													images.add(imageFile.getName());
+												}
+
+												// sort the images
+												Collections.sort(images);
+												// loop the sorted images and add to json
+												for (String image : images) jsonImages.put(image);
 											}
-											// sort the images
-											Collections.sort(images);
-											// loop the sorted images and add to json
-											for (String image : images) jsonImages.put(image);
 
 											// put the images collection we've just built into the app
 											jsonVersion.put("images", jsonImages);
