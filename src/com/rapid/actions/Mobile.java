@@ -611,7 +611,8 @@ public class Mobile extends Action {
 						// get the control object from its id
 						Control imageControl = page.getControl(id);
 						// if we couldn't find it in the page, try the rest of the application
-						if (imageControl == null) application.getControl(servletContext, galleryControlIdsProperty);
+						if (imageControl == null)
+							imageControl = application.getControl(servletContext, id);
 						// if we got one
 						if (imageControl == null) {
 							// retain that we will remove this control
