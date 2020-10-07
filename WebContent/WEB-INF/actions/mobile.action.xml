@@ -1659,6 +1659,7 @@ function scanQrCodeAction(callback) {
 	pageCover.style.position = "fixed";
 	pageCover.style.width = "100%";
 	pageCover.style.height = "100%";
+	pageCover.style.top = "0";
 	pageCover.style.backgroundColor = "#000";
 	document.body.appendChild(pageCover);
 	
