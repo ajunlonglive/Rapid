@@ -1006,14 +1006,11 @@ public class Mobile extends Action {
 
 				try {
 
-					// mobile check with fail
-					String jsBarcode = getMobileCheck(true);
-
 					// get the barcodeDestinations
 					String barcodeDestinations = getProperty("barcodeDestinations");
 
 					// start the check for the addBarcode function
-					jsBarcode += "  if (_rapidmobile.addBarcode) {\n";
+					String jsBarcode = "  if (typeof _rapidmobile != 'undefined' && _rapidmobile.addBarcode) {\n";
 
 					// start the add barcode call
 					jsBarcode += "    _rapidmobile.addBarcode(\"[";
@@ -1022,11 +1019,16 @@ public class Mobile extends Action {
 
 					// call get barcode
 					jsBarcode +=  "]\");\n";
-
-					// close function check
-					jsBarcode += "  } else alert('Barcode reading is not available in this version of Rapid Mobile');\n";
-
-					// close mobile check
+					
+					jsBarcode += "} else {\n";
+					
+					//jsBarcode += "    alert('Barcode reading is not available in this version of Rapid Mobile');\n";
+					
+					jsBarcode += "  scanQrCodeAction(function(data) { ";
+					jsBarcode += getOutputs(rapidServlet, application, page, barcodeDestinations,"data");
+					jsBarcode +=  " });\n";
+					
+					// close if (_rapidmobile.addBarcode)
 					jsBarcode += "}\n";
 
 					// now safe to add back into main js
