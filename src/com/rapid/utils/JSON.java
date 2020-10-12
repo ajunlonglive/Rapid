@@ -34,7 +34,7 @@ import org.json.JSONObject;
 
 public class JSON {
 
-	// turns a JSONArray, either from a single member, or muliple if they exist - solves the issue when creating JSON from XML if there is only one member
+	// returns a JSONArray, either from a single member, or multiple if they exist - solves the issue when creating JSON from XML if there is only one member
 	public static JSONArray getJSONArray(JSONObject jsonObject, String memberName) throws JSONException {
 
 		// if we got one
@@ -109,52 +109,53 @@ public class JSON {
 		return strings;
 
 	}
-	
+
 	public static class JSONData {
 
 		private JSONArray _fields;
-		private Map<String, Integer> _fieldIndexes = new HashMap<String, Integer>();
+		private Map<String, Integer> _fieldIndexes = new HashMap<>();
 		private JSONArray _rows;
-		
+
 		public class Row {
 			private JSONArray _row;
-			
+
 			Row(JSONArray row) throws Exception {
 				_row = row;
 			}
-			
+
 			public int length() {
 				return _fields.length();
 			}
-			
+
 			public Boolean getBoolean(String field) throws Exception {
 				return _row.getBoolean(_fieldIndexes.get(field));
 			}
-			
+
 			public int getInt(String field) throws Exception {
 				return _row.getInt(_fieldIndexes.get(field));
 			}
-			
+
 			public double getDouble(String field) throws Exception {
 				return _row.getDouble(_fieldIndexes.get(field));
 			}
-			
+
 			public String getString(String field) throws Exception {
 				return _row.getString(_fieldIndexes.get(field));
 			}
-			
+
 			public JSONObject getJSONObject(String field) throws Exception {
 				return _row.getJSONObject(_fieldIndexes.get(field));
 			}
-			
+
 			public JSONData getJSONData(String field) throws Exception {
 				return new JSONData(getJSONObject(field));
 			}
-			
+
 			public String getType(String field) throws Exception {
 				return _row.get(_fieldIndexes.get(field)).getClass().getName();
 			}
-			
+
+			@Override
 			public String toString() {
 				return "{"
 						+ "\n    fields: " + _fields
@@ -164,16 +165,16 @@ public class JSON {
 						+ "\n}";
 			}
 		}
-		
+
 		public JSONData(JSONArray jsonFields, JSONArray jsonRows) throws Exception {
-			
+
 			_fields = jsonFields;
 			_rows = jsonRows;
 
 			for (int fieldIndex = 0; fieldIndex < _fields.length(); fieldIndex++) {
 				_fieldIndexes.put(_fields.getString(fieldIndex), fieldIndex);
 			}
-			
+
 			for (int rowIndex = 0; rowIndex < rowCount(); rowIndex++) {
 				int rowCellCount = getRow(rowIndex).length();
 				if (rowCellCount != columnCount()) {
@@ -181,27 +182,28 @@ public class JSON {
 				}
 			}
 		}
-		
+
 		public JSONData(JSONObject jsonObject) throws Exception {
 			this(jsonObject.getJSONArray("fields"), jsonObject.getJSONArray("rows"));
 		}
-		
+
 		public JSONData(String json) throws Exception {
 			this(new JSONObject(json));
 		}
-		
+
 		public Row getRow(int rowIndex) throws Exception {
 			return new Row(_rows.getJSONArray(rowIndex));
 		}
-		
+
 		public int columnCount() throws JSONException {
 			return _fields.length();
 		}
-		
+
 		public int rowCount() throws JSONException {
 			return _rows.length();
 		}
-		
+
+		@Override
 		public String toString() {
 			String rowsString = "";
 			for (int rowIndex = 0; rowIndex < _rows.length(); rowIndex++) {
