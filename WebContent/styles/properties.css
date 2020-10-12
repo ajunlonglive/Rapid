@@ -112,8 +112,8 @@ table.propertiesPanelTable  {
 	font-size: 11px;
 }
 
-.propertiesPanelTable select,
-.propertiesPanelTable tr:hover td:nth-child(2) select {
+#propertiesPanel .propertiesPanelTable select,
+propertiesPanel .propertiesPanelTable tr:hover td:nth-child(2) select {
 	width: 100%;
 	height: 19px;
 	background: none;
@@ -337,7 +337,7 @@ div.propertyDialogue {
     outline: 0;
 }
 
-div.propertyDialogue td>select {
+#propertiesPanel div.propertyDialogue td>select {
     -moz-appearance: none;
     -webkit-appearance: none;
 	background-image: url("../images/down.dark.svg");
@@ -347,7 +347,7 @@ div.propertyDialogue td>select {
     
 }
 
-div.propertyDialogue td>select:focus {
+#propertiesPanel div.propertyDialogue td>select:focus {
     -moz-appearance: none;
     -webkit-appearance: none;
 	background-image: url("../images/up.dark.svg");
@@ -355,7 +355,7 @@ div.propertyDialogue td>select:focus {
     background-position: right 2px center;
 }
 
-.propertyAction{
+.propertyAction {
 	cursor:pointer;
 	color: #00e;
 	text-decoration: underline;
@@ -430,7 +430,7 @@ table.outputTable.dialogueTable td:last-child {
 	padding-left: 8px;
 }
 
-.dialogueTable select:hover, .dialogueTable input:hover{
+#propertiesPanel .dialogueTable select:hover, #propertiesPanel .dialogueTable input:hover{
 	background: #f2f2f2;
 }
 
@@ -458,8 +458,8 @@ table.outputTable.dialogueTable td:last-child {
 	margin-left: -1px;
 }
 
-.dialogueTable select,
-.dialogueTable select:hover {
+#propertiesDialogues .dialogueTable select,
+#propertiesDialogues .dialogueTable select:hover {
     width: 100%;
     height: 100%;
     padding: 2px 26px 2px 5px;
