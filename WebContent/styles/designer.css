@@ -621,7 +621,7 @@ table.stylesPanelTable  {
     font-size: 12px;
 }
 
-.stylesPanelTable select {
+#designerTools .stylesPanelTable select {
 	width: 100%;
 	font-size: 11px;
 	border-width: 0;
