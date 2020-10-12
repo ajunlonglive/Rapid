@@ -120,12 +120,7 @@ public class JSON {
 			private JSONArray _row;
 			
 			Row(JSONArray row) throws Exception {
-				
 				_row = row;
-				
-				if (_fields.length() != _row.length()) {
-					throw new Exception("Fields and row are of different length");
-				}
 			}
 			
 			public int length() {
