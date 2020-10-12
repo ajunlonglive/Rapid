@@ -448,6 +448,11 @@ return "<option value=''>Please select...</option><option value ='html'" + (this
 	    		<contents>scripts_min/controls/instascan.min.js</contents>
 	        </resource>
 	        
+	    	<resource>
+	    		<type>javascriptLink</type>
+	    		<contents>scripts_min/controls/qrcodereader.min.js</contents>
+	        </resource>
+	        
 	        <resource>
 	        	<type>css</type>
 	        	<contents>
@@ -1652,6 +1657,12 @@ function downloadImages(controlIds, ev, successCallback, errorCallback) {
 
 function scanQrCodeAction(callback) {
 	
+	var getNewStream = function() {
+		return navigator.mediaDevices.getUserMedia({ video: { facingMode: getFacingMode() } });
+	};
+	
+	var initialStream = getNewStream();
+	
 	document.body.style.overflow = "hidden";
 	document.body.style.touchAction = "none";
 	
@@ -1666,10 +1677,7 @@ function scanQrCodeAction(callback) {
 	var toolBar = document.createElement("div");
 	pageCover.appendChild(toolBar);
 	
-	var id = Date.now();
-	
 	var video = document.createElement("video");
-	video.id = id;
 	video.setAttribute("autoplay", true);
 	video.setAttribute("playsinline", true);
 	video.style.position = "fixed";
@@ -1678,6 +1686,37 @@ function scanQrCodeAction(callback) {
 	video.style.height = "100%";
 	video.style.objectFit = "contain";
 	video.style.pointerEvents = "none";
+	pageCover.appendChild(video);
+	
+	var canvas = document.createElement("canvas");
+	canvas.id = "qr-canvas";
+	canvas.style.display = "none";
+	pageCover.appendChild(canvas);
+	
+	var context = undefined;
+	
+	var copyVideoToCanvasId = undefined;
+	
+	var copyVideoToCanvas = function() {
+		copyVideoToCanvasId = setInterval(function() {
+			context.drawImage(video, 0, 0);
+			try {
+				qrcode.decode();
+			} catch (e) {}
+		}, 300);
+	};
+	
+	var setVideoStream = function(stream) {
+		video.srcObject = stream;
+		var settings = stream.getVideoTracks()[0].getSettings();
+		canvas.width = settings.width;
+		canvas.height = settings.height;
+		context = canvas.getContext("2d");
+		copyVideoToCanvas();
+	};
+	
+	
+	initialStream.then(setVideoStream);
 	
 	var stopAllTracks = function() {
 		video.srcObject.getVideoTracks().forEach(function(track) {
@@ -1686,7 +1725,7 @@ function scanQrCodeAction(callback) {
 	};
 	
 	var close = function() {
-		stopQRScanner(id);
+		clearInterval(copyVideoToCanvasId);
 		stopAllTracks();
 		pageCover.remove();
 		
@@ -1694,29 +1733,20 @@ function scanQrCodeAction(callback) {
 		document.body.style.touchAction = "auto";
 	};
 	
-	var takeValue = function(value) {
+	qrcode.callback = function(data) {
 		close();
-		callback(value);
+		callback(data);
 	};
-	
-	navigator.mediaDevices.getUserMedia({ video: { facingMode: getFacingMode() } })
-	.then(function(stream) {
-		video.srcObject = stream;
-		startQRScanner(id, {}, takeValue);
-	});
 	
 	var toggleCamera = function() {
 		setFacingMode(
 			getFacingMode() === "environment" ? "user" : "environment"
 		);
 		
+		clearInterval(copyVideoToCanvasId);
 		stopAllTracks();
 		
-		navigator.mediaDevices.getUserMedia({ video: { facingMode: getFacingMode() } })
-		.then(function(stream) {
-			video.srcObject = stream;
-			startQRScanner(id, {}, takeValue);
-		});
+		getNewStream().then(setVideoStream);
 	};
 	
 	var toggleButton = document.createElement("button");
@@ -1729,63 +1759,9 @@ function scanQrCodeAction(callback) {
 	closeButton.style.float = "right";
 	closeButton.innerHTML = "<i class='fas fa-times cameraIcon'></i>";
 	closeButton.classList.add("cameraControlBasic");
-	
 	closeButton.addEventListener("click", close);
 	toolBar.appendChild(closeButton);
 	
-	pageCover.appendChild(video);
-	
-}
-
-var _qrscanners = [];	
-
-function startQRScanner(id, details, callback) {
-	// get the qr scan control
-	var qrscanControl = $("#" + id);
-	// if it's visible
-	if (qrscanControl.is(":visible")) {
-		// get the scanner
-		var scanner = _qrscanners[id];
-		// if we didn't get one
-		if (!scanner) {
-		
-			// make a scanner
-			let scanner = new Instascan.Scanner({ video: qrscanControl[0] });
-			// store it
-			_qrscanners[id] = scanner;
-			
-			// Callback function, which listens to the scanned camera object calculates and then returns the qrCode
-			scanner.addListener("scan", callback);
-		}
-		
-		// ask the system for cameras
-		Instascan.Camera.getCameras().then( function (cameras) {
-		   if (cameras.length > 0) {
-		   	 // get the scanner
-		   	 var scanner = _qrscanners[id];
-		   	 // get the first camera
-		   	 var camera = cameras[0];
-		   	 // if there are more than 1 cameras and we wanted the back camera, switch to that
-		   	 if (cameras.length > 1 && details && details.camera == "Back") camera = cameras[cameras.length - 1];   //get the last camera in the list
-			 // activates the available camera object and starts scanning
-		     if (scanner) scanner.start(camera);
-		   } else {
-		     console.error('No cameras found.');
-		     alert('No cameras found.');
-		   }
-		 })["catch"](function (e) {
-		   console.error(e);
-		   alert('Error getting cameras. ' + e);
-		 });
-	
-	} // visibility check
-}
-
-function stopQRScanner(id) {
-	// get the scanner
-	var scanner = _qrscanners[id];
-	// stop the scanning
-	if (scanner) scanner.stop();
 }
 
 function downloadMedia(dataURL) {
