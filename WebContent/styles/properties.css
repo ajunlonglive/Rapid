@@ -112,8 +112,10 @@ table.propertiesPanelTable  {
 	font-size: 11px;
 }
 
+#propertiesDialogues .propertiesPanelTable select,
+#propertiesDialogues .propertiesPanelTable tr:hover td:nth-child(2) select,
 #propertiesPanel .propertiesPanelTable select,
-propertiesPanel .propertiesPanelTable tr:hover td:nth-child(2) select {
+#propertiesPanel .propertiesPanelTable tr:hover td:nth-child(2) select {
 	width: 100%;
 	height: 19px;
 	background: none;
