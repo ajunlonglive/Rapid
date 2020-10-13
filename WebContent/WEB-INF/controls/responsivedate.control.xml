@@ -108,6 +108,15 @@ return [["dd/mm/yy","dd/mm/yyyy"],["mm/dd/yy","mm/dd/yyyy"],["yy-mm-dd","yyyy-mm
 	        </property>
 	        
 	        <property>
+	            <key>clearable</key>
+	            <name>Clearable</name>
+	            <setConstructValueFunction>return true;</setConstructValueFunction>
+	            <changeValueJavaScript>dateClearButton</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Whether users are able to clear the date value.</helpHtml>
+	        </property>
+	        
+	        <property>
 	            <key>minDate</key>
 	            <name>Min date</name>
 	            <setConstructValueFunction>return "";</setConstructValueFunction>
@@ -247,6 +256,16 @@ input.date {
 .r-date input[readonly] {
   cursor: pointer;
 }
+
+.r-date .dateClearButton {
+	width: 34px;
+	height: 34px;
+	position: absolute;
+	right: 12px;
+	top: 0;
+	background: none;
+	border: none;
+}
 	    	    </contents>
 	    	</resource>
 	    	
@@ -295,6 +314,8 @@ switch (this.format) {
 if (this.readonly === undefined) this.readonly = true;
 // setting the value has been moved to the init
 html = "<input " + inputId + " name='" + this.id + "' " + " class='form-control' placeholder='" + placeholder + "'" + (this.readonly ? "readonly='readonly'" : "") + "/>";
+
+if (this.clearable !== false) html += "<button id='" + this.id + "dateClearButton' class='dateClearButton'><i class='fas fa-times'></i></button>";
 
 if (this.responsiveLabel) {
 	return "<div id='" + this.id + "' class='r-date" + classes + "'><label for='"+ inputId + "'>" + this.responsiveLabel + "</label>" + html + "</div>";
@@ -357,6 +378,14 @@ if (this.responsiveLabel) {
 } else {
 	l.remove();
 }
+// clear command
+if (this.clearable === false) {
+	this.object.find(".dateClearButton").remove();
+} else {
+	if (this.object.find(".dateClearButton").length === 0) {
+		o.after("<button id='" + this.id + "dateClearButton' class='dateClearButton'><i class='fas fa-times'></i></button>");
+	}
+}
 	        ]]>		    
 		</rebuildJavaScript>
 				 
@@ -372,6 +401,7 @@ this.object.find("input").removeClass("hasDatepicker");
 return {
 	format: this.format,
 	readonly: this.readonly,
+	clearable: this.clearable,
 	minDate: this.minDate,
 	maxDate: this.maxDate,
 	yearRange: (this.yearRange ? this.yearRange: "-100:+10"),
@@ -573,6 +603,20 @@ $( "#" + id ).find("input").datepicker({
 });
 // now set any value
 $( "#" + id ).find("input").datepicker("setDate", details.value);
+
+// clear command
+if (details.clearable !== false) {
+	
+	if (details.readonly) {
+		$("#" + id).keyup(function(ev) {
+			if (ev.keyCode === 8 || ev.keyCode === 46) setData_responsivedate(ev, id, undefined, details, null, true);
+		});
+	}
+	
+	$("#" + id + "dateClearButton").click(function(ev) {
+		setData_responsivedate(ev, id, null, details, null, true);
+	});
+}
 	        ]]>
 	    </initJavaScript>
 
