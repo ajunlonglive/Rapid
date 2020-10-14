@@ -262,7 +262,7 @@ input.date {
 	height: 34px;
 	position: absolute;
 	right: 12px;
-	top: 0;
+	bottom: 0;
 	background: none;
 	border: none;
 }
