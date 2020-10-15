@@ -6868,10 +6868,3 @@ function Property_formTextSummary(cell, propertyObject, property, details) {
 		propertyObject.useLabelAsSummary = summarySetToLabelValue;
 	});
 }
-
-function Property_dateClearButton(cell, propertyObject, property, details) {
-	
-	if (propertyObject.clearable === undefined) propertyObject.clearable = true;
-	
-	Property_checkbox(cell, propertyObject, property, details);
-}
