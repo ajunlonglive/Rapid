@@ -660,9 +660,9 @@ function getAvailableCameras() {
 		
 		navigator.mediaDevices.enumerateDevices()
 		.then(function(devices){
+			_availableCameras = [];
 			
 			devices.forEach(function(device){
-			
 				if (device.kind === "videoinput") {
 					console.log(device.kind + ": " + device.label + " id = " + device.deviceId);
 					_availableCameras.push(device.deviceId);
