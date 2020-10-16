@@ -37,7 +37,7 @@ var _rapidpwa = {
 /* A version number is useful when updating the worker logic,
 	 allowing you to remove outdated cache entries during the update.
 */
-var _swVersion = 'v1.5';
+var _swVersion = 'v1.6';
 
 /* These resources will be downloaded and cached by the service worker
 	 during the installation process. If any resource fails to be downloaded,
@@ -300,12 +300,12 @@ self.addEventListener("fetch", function(event) {
 		
 		var dialogueParameter = url.includes("action=dialogue") ? "&action=dialogue" : "";
 		
-		// remove all url parameters, except for the page ($1)
-		url = url.replace(/(p=P\d+).*$/, "$1");
+		// for the cache remove all url parameters, except for the page ($1)
+		var cacheUrl = url.replace(/(p=P\d+).*$/, "$1");
 		
 		// remove any version
-		var versionFreeUrl = url.replace(/&v=[^&\/]+/, "");
-		if (dialogueParameter) url = versionFreeUrl;
+		var versionFreeUrl = cacheUrl.replace(/&v=[^&\/]+/, "");
+		if (dialogueParameter) cacheUrl = versionFreeUrl;
 		
 		// if requesting an app
 		event.respondWith(
@@ -317,11 +317,11 @@ self.addEventListener("fetch", function(event) {
 					
 					cache.match(versionFreeUrl).then(cachedResponse => {
 						
-						var disambiguatedUrl = requestedAppId ? (appResources && appResources.redirects[url] || url) + dialogueParameter : url;
-						var onStartPage = parameters.v === undefined && parameters.p === undefined && url.split("/").length === 1;
+						var disambiguatedUrl = requestedAppId ? (appResources && appResources.redirects[cacheUrl] || cacheUrl) + dialogueParameter : cacheUrl;
+						var onStartPage = parameters.v === undefined && parameters.p === undefined && cacheUrl.split("/").length === 1;
 						
 						// if this app version is not cached, do
-						if (requestedAppId && ((!cachedResponse) || onStartPage) && ![".js", ".css"].some(ext => url.endsWith(ext))) {
+						if (requestedAppId && ((!cachedResponse) || onStartPage) && ![".js", ".css"].some(ext => cacheUrl.endsWith(ext))) {
 							
 							var requestedAppVersion = requestedAppId && parameters.v || (appResources && appResources.version);
 							var versionParameter = (requestedAppVersion && !onStartPage) ? "&v=" + requestedAppVersion : "";
@@ -352,12 +352,12 @@ self.addEventListener("fetch", function(event) {
 													
 													// Ambiguous urls
 													[requestedAppId, requestedAppId + "/" + resources.version, "~?a=" + requestedAppId, "~?a=" + requestedAppId + "&v=" + resources.version]
-													.forEach(url => {
-														resources.redirects[url] = startUrl;
-														resources.resources.push(url);
+													.forEach(cacheUrl => {
+														resources.redirects[cacheUrl] = startUrl;
+														resources.resources.push(cacheUrl);
 													});
 													
-													cache.put("last_resources_" + requestedAppId, new Response(new Blob([JSON.stringify(resources)], {type : "application/json"}), { statusText: "OK", url: appResourcesUrl }))
+													cache.put("last_resources_" + requestedAppId, new Response(new Blob([JSON.stringify(resources)], {type : "application/json"}), { statusText: "OK", cacheUrl: appResourcesUrl }))
 													
 													if (navigator.onLine) updateCache(resources.resources, resources.redirects);
 												});
@@ -370,7 +370,7 @@ self.addEventListener("fetch", function(event) {
 								(navigator.onLine ? fetch(_contextPath + url + dialogueParameter, fetchOptions) : Promise.reject())
 								.then(resolve)
 								.catch(_ => resolve(cache.match(
-									(!requestedAppId || onStartPage) ? url : "offline.htm"
+									(!requestedAppId || onStartPage) ? cacheUrl : "offline.htm"
 								)
 								.then(response =>
 									response || cache.match("offline.htm")
@@ -384,9 +384,9 @@ self.addEventListener("fetch", function(event) {
 								(navigator.onLine ? fetch(disambiguatedUrl, fetchOptions) : Promise.reject())
 								.then(freshResponse => {
 									if (freshResponse && (freshResponse.ok || freshResponse.type === "opaqueredirect")) {
-										if (_rapidResourceFolders.concat(_rapidResources).concat(appResources.resources).some(res => url.includes(res))
+										if (_rapidResourceFolders.concat(_rapidResources).concat(appResources.resources).some(res => cacheUrl.includes(res))
 												&& !freshResponse.redirected) {
-											cache.put(url, freshResponse.clone())
+											cache.put(cacheUrl, freshResponse.clone())
 												.then(_ => resolve(freshResponse));
 										} else {
 											resolve(freshResponse);
@@ -395,8 +395,8 @@ self.addEventListener("fetch", function(event) {
 										fetch(_contextPath + "page404.htm", { redirect: "follow" }).then(resolve);
 									} else if (freshResponse.status === 500) {
 										fetch(_contextPath + "page500.htm", { redirect: "follow" }).then(resolve);
-									} else if (!_trimUrls.some(ext => url.endsWith(ext))) {
-										var fallback = (url === "" ? "index.jsp" : "offline.htm");
+									} else if (!_trimUrls.some(ext => cacheUrl.endsWith(ext))) {
+										var fallback = (cacheUrl === "" ? "index.jsp" : "offline.htm");
 										cache.match(fallback).then(page =>
 											page ? resolve(page) : reject("WORKER: could not fetch resource and offline page was unavailable")
 										);
@@ -405,8 +405,8 @@ self.addEventListener("fetch", function(event) {
 									}
 								})
 								.catch(reason => {
-									if (!_trimUrls.some(ext => url.endsWith(ext))) {
-										var fallback = (url === "" ? "index.jsp" : "offline.htm");
+									if (!_trimUrls.some(ext => cacheUrl.endsWith(ext))) {
+										var fallback = (cacheUrl === "" ? "index.jsp" : "offline.htm");
 										cache.match(fallback).then(page =>
 											page ? resolve(page) : reject("WORKER: could not fetch resource and offline page was unavailable")
 										);
@@ -423,10 +423,10 @@ self.addEventListener("fetch", function(event) {
 								.then(freshResponse => {
 									if (freshResponse && (freshResponse.ok || freshResponse.type === "opaqueredirect")) {
 										var currentAppResources = appResources && appResources.resources || [];
-										if (_rapidResourceFolders.concat(_rapidResources).concat(currentAppResources).some(res => url.includes(res)) && !freshResponse.redirected
-											|| _trimUrls.some(ext => url.endsWith(ext))) {
+										if (_rapidResourceFolders.concat(_rapidResources).concat(currentAppResources).some(res => cacheUrl.includes(res)) && !freshResponse.redirected
+											|| _trimUrls.some(ext => cacheUrl.endsWith(ext))) {
 										
-											cache.put(url, freshResponse.clone())
+											cache.put(cacheUrl, freshResponse.clone())
 												.then(_ => resolve(freshResponse));
 										} else {
 											resolve(freshResponse);
