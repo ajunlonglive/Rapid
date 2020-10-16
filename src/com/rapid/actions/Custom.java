@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2015 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -142,7 +142,7 @@ public class Custom extends Action {
 		// if we got some
 		if (jsonInputs != null) {
 			// instantiate our array
-			_inputs = new ArrayList<Input>();
+			_inputs = new ArrayList<>();
 			// loop them
 			for (int i = 0; i < jsonInputs.length(); i++) {
 				// get the input
@@ -158,7 +158,7 @@ public class Custom extends Action {
 		// if we got some
 		if (jsonOutputs != null) {
 			// instantiate our array
-			_outputs = new ArrayList<Output>();
+			_outputs = new ArrayList<>();
 			// loop them
 			for (int i = 0; i < jsonOutputs.length(); i++) {
 				// get the input
@@ -188,7 +188,7 @@ public class Custom extends Action {
 		// initialise and populate on first get
 		if (_childActions == null) {
 			// our list of all child actions
-			_childActions = new ArrayList<Action>();
+			_childActions = new ArrayList<>();
 			// add child success actions
 			if (_successActions != null) {
 				for (Action action : _successActions) _childActions.add(action);
