@@ -2925,6 +2925,13 @@ public class Application {
 		_resourcesJSON = null;
 	}
 
+	// overrides
+
+	@Override
+	public String toString() {
+		return "Application " + _id + "/" + _version + ", " + _name + " - " + _title;
+	}
+
 
 	// static methods
 
