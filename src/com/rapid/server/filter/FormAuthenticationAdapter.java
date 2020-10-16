@@ -176,7 +176,13 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 		} // ip checks
 
 		// if we can return this resource without authentication
-		if (requestPath.endsWith("favicon.ico") || requestPath.startsWith("/images/") || requestPath.startsWith("/scripts") || requestPath.startsWith("/styles")) {
+		if ("GET".equals(request.getMethod()) && (
+				requestPath.endsWith("logout.jsp") ||
+				requestPath.endsWith("favicon.ico") ||
+				requestPath.startsWith("/images/") ||
+				requestPath.startsWith("/scripts") ||
+				requestPath.startsWith("/styles")
+			)) {
 
 			// proceed to the next step
 			return req;
@@ -362,6 +368,8 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 						if (requestPath.endsWith(customLoginPath) || (requestPath + queryString).contains(customIndexApp)) {
 							// remember this custom login
 							loginPath = customLoginPath;
+							// remember this index path
+							indexPath = customIndexPath;
 							// put the login path in the session
 							session.setAttribute(SESSION_VARIABLE_LOGIN_PATH, customLoginPath);
 							// put the logout path in the session
@@ -472,8 +480,13 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 						authorisationRequestPath = authorisationRequestPath.replace("designpage.jsp", "design.jsp");
 						// append the query string if there was one
 						if (request.getQueryString() != null) authorisationRequestPath += "?" + request.getQueryString();
-						// retain the request path in the session if we don't have one already, we empty it once used and other requests, especially from the service worker can replace what the user wants
-						if (session.getAttribute(SESSION_VARIABLE_REQUEST_PATH) == null) session.setAttribute(SESSION_VARIABLE_REQUEST_PATH, authorisationRequestPath);
+						// if we don't have a request in the session already, we empty it once used and other requests, especially from the service worker can replace what the user wants
+						if (session.getAttribute(SESSION_VARIABLE_REQUEST_PATH) == null) {
+							// retain the request path in the session
+							session.setAttribute(SESSION_VARIABLE_REQUEST_PATH, authorisationRequestPath);
+							// log
+							_logger.debug("Login request path set to " + authorisationRequestPath);
+						}
 
 						// send a redirect to load the login page unless the login path (from the custom login) is the request path (this creates a redirect)
 						if (authorisationRequestPath.equals(loginPath) && request.getHeader("User-Agent") != null && request.getHeader("User-Agent").contains("RapidMobile")) {
@@ -560,7 +573,7 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 								sessionRequestPath = indexPath;
 							}
 							// log
-							_logger.trace("Session request path set to " + sessionRequestPath);
+							_logger.debug("Login request path set to " + sessionRequestPath);
 						}
 
 						// if we had a requestApp in the sessionRequestPath, go straight to the app
@@ -573,7 +586,7 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 								sessionRequestPath = "~?a=" + requestAppParts[1];
 							}
 							// log
-							_logger.trace("Session request path set to " + sessionRequestPath);
+							_logger.debug("Login request path set to " + sessionRequestPath);
  						}
 
 						// remove the authorisation session attribute
