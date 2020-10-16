@@ -1,4 +1,5 @@
 *
 !.gitignore
+!bootstrap*.js
 !jquery*.js
 !README
