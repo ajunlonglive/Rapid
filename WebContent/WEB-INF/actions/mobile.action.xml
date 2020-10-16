@@ -445,12 +445,7 @@ return "<option value=''>Please select...</option><option value ='html'" + (this
 	        
 	    	<resource>
 	    		<type>javascriptLink</type>
-	    		<contents>scripts_min/controls/instascan.min.js</contents>
-	        </resource>
-	        
-	    	<resource>
-	    		<type>javascriptLink</type>
-	    		<contents>scripts_min/controls/qrcodereader.min.js</contents>
+	    		<contents>scripts_min/actions/llqrcode.min.js</contents>
 	        </resource>
 	        
 	        <resource>
