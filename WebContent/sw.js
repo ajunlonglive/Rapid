@@ -37,7 +37,7 @@ var _rapidpwa = {
 /* A version number is useful when updating the worker logic,
 	 allowing you to remove outdated cache entries during the update.
 */
-var _swVersion = 'v1.6';
+var _swVersion = 'v1.7';
 
 /* These resources will be downloaded and cached by the service worker
 	 during the installation process. If any resource fails to be downloaded,
@@ -192,6 +192,9 @@ self.addEventListener("fetch", function(event) {
 	
 	// proceed to direct server response  if request is for soa
 	if (url.startsWith("soa")) return;
+	
+	// proceed to direct server response  if request is for an uploaded file
+	if (url.includes("/uploads/")) return;
 	
 	// if request is for root or index
 	if (url === "" || url.endsWith("index.jsp")) {
