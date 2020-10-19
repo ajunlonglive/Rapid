@@ -1213,7 +1213,15 @@ public class Database extends Action {
 			}
 		}
 		
-		String[] stringParts = sql.split("'");
+		// remove comment blocks
+		String[] stringParts = sql.split("\\/\\*|\\*\\/");
+		sql = "";
+		for (int partIndex = 0; partIndex < stringParts.length; partIndex += 2) {
+			sql += stringParts[partIndex];
+		}
+		
+		// remove quote blocks
+		stringParts = sql.split("'");
 		sql = "";
 		for (int partIndex = 0; partIndex < stringParts.length; partIndex += 2) {
 			sql += stringParts[partIndex];

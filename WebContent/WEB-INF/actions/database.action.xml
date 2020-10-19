@@ -45,7 +45,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <name>Query</name>
 	            <changeValueJavaScript>databaseQuery</changeValueJavaScript>
 	            <refreshProperties>true</refreshProperties>	            
-	            <helpHtml>Enables you to define a database query. SQL can be entered within the text area and selected inputs and outputs can be chosen. There is also a capability to test your SQL against a specified database connection.</helpHtml>
+	            <helpHtml>Enables you to define a database query. SQL can be entered within the text area and selected inputs and outputs can be chosen. There is also a capability to test your SQL against a specified database connection. Reference inputs in your SQL with a question mark, or reuse them by their name or number prefixed with a question mark (?1, ?inpName).</helpHtml>
 	        </property>
 	          
 	        <property>
