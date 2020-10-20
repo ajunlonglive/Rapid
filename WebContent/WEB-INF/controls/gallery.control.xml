@@ -471,24 +471,27 @@ function specifyUrl(filename) {
 	
 	var specifiedUrl = filename;
 	
-	if (navigator.userAgent.includes(" iPhone") || navigator.userAgent.includes(" iPad")) {
-
-		// add a psuedo host for Rapid Mobile on iOS
-		specifiedUrl = window.location.origin + "/_images/" + filename;
-
-	} else {
-
-		// add the path to this url from our app - check for ~, if not is pretty url use _appId
-		if (window.location.pathname.indexOf("~") > -1) {
-	
-			specifiedUrl = window.location.origin + window.location.pathname.replace("~","") + "uploads/" + _appId + "/" + filename;
-	
+	if (filename.indexOf("http") != 0) {
+		
+		if (navigator.userAgent.includes(" iPhone") || navigator.userAgent.includes(" iPad")) {
+			
+			// add a psuedo host for Rapid Mobile on iOS
+			specifiedUrl = window.location.origin + "/_images/" + filename;
+			
 		} else {
-	
-			// This is the pretty url request
-			var context = window.location.pathname.substring(0, window.location.pathname.toLowerCase().indexOf(_appId.toLowerCase()));
-			if(!context || context.length < 1) context = "/";
-			specifiedUrl = window.location.origin + context + "uploads/" + _appId + "/" + filename;
+			
+			// add the path to this url from our app - check for ~, if not is pretty url use _appId
+			if (window.location.pathname.indexOf("~") > -1) {
+				
+				specifiedUrl = window.location.origin + window.location.pathname.replace("~","") + "uploads/" + _appId + "/" + filename;
+				
+			} else {
+				
+				// This is the pretty url request
+				var context = window.location.pathname.substring(0, window.location.pathname.toLowerCase().indexOf(_appId.toLowerCase()));
+				if(!context || context.length < 1) context = "/";
+				specifiedUrl = window.location.origin + context + "uploads/" + _appId + "/" + filename;
+			}
 		}
 	}
 	
@@ -1126,13 +1129,18 @@ if (data) {
 								
 								var filename = key;
 								var specifiedUrl = specifyUrl(filename);
+								
 								var xhr = new XMLHttpRequest();
 								xhr.onload = function() {
 									var reader = new FileReader();
 									reader.onloadend = function() {
 										var dataUrl = reader.result;
-										IDBputObject({ filename: filename, url: dataUrl });
-										addToImageControl(ev, control, filename, dataUrl);
+										if (dataUrl.indexOf("data:image") === 0) {
+											IDBputObject({ filename: filename, url: dataUrl });
+											addToImageControl(ev, control, filename, dataUrl);
+										} else {
+											addToImageControl(ev, control, filename, filename);
+										}
 									};
 									reader.readAsDataURL(xhr.response);
 								};
