@@ -367,12 +367,32 @@ public class Files {
 
 							// if this was the create that we are watching for
 							if (kind.equals(StandardWatchEventKinds.ENTRY_CREATE)) {
-
+								
 								// get the file name
 								Path fileName = (Path) event.context();
-
+								
 								// log
 								_logger.debug("Watcher event for " + fileName);
+								
+								// get from file
+								File fromFile = new File(_from + "/" + fileName);
+								
+								// the size of the file
+								long size;
+								
+								// some safety to stop the loop below being non-terminating
+								int safety = 0;
+								
+								do {
+									// get the current size of the file
+									size = fromFile.length();
+									// a small pause in case we are still writing to the file, if so it will get bigger during this time
+									Thread.sleep(100);
+									// inc safety
+									safety ++;
+									// log
+									_logger.debug("Watcher waiting for " + fileName + " to finish being written to");
+								} while (size < fromFile.length() && safety < 100);
 
 								// get to file
 								File toFile = new File(_to + "/" + fileName);
@@ -380,18 +400,15 @@ public class Files {
 								// check file exists
 								if (toFile.exists()) {
 
-									_logger.debug("Watcher will not copy " + fileName + " as it exists already");
+									_logger.debug("File watcher will not copy " + fileName + " as it exists already");
 
-								} else {
-
-									// get from file
-									File fromFile = new File(_from + "/" + fileName);
+								} else {									
 
 									// copy the from file to the to file
 									Files.copyFile(fromFile, toFile);
 
 									// log
-									_logger.debug("Watcher copied " + fromFile + " to " + toFile);
+									_logger.debug("File watcher copied " + fromFile + " to " + toFile);
 
 									// if deleting (this is the default)
 									if (_delete) {
@@ -400,7 +417,7 @@ public class Files {
 										Files.deleteRecurring(fromFile);
 
 										// log
-										_logger.debug("Watcherd deleted " + fromFile);
+										_logger.debug("File watcher deleted " + fromFile);
 
 									}
 
