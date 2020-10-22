@@ -256,6 +256,10 @@ return [{value:"", text:"Please select..."}, {value:"lg-1", text:"1/12"}, {value
   min-height: 1.5em;
 }
 
+.ui-menu.ui-widget.ui-widget-content.ui-autocomplete.ui-front {
+  z-index: 1005;
+}
+
 				</contents>
 			</resource>
 			
