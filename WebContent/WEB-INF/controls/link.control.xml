@@ -345,6 +345,7 @@ if (data != null && data !== undefined) {
 	} 
 } 
 control.attr("href",value);
+if (changeEvents) control.trigger("change");
 			]]>
 	    </setDataJavaScript>
 	    
@@ -382,6 +383,38 @@ return "#" + this.id + ":hover";
 	            </getAppliesToFunction>
 	        </style>
 	    </styles>
+	    
+	    <runtimeProperties>
+	        <runtimeProperty>
+	            <type>text</type>
+	            <name>Text</name>
+	            <setPropertyJavaScript>
+	                <![CDATA[
+var control = $("#" + id);
+var value = "";
+if (data != null && data !== undefined) {	
+	data = makeDataObject(data, field);
+	if (data.rows && data.rows[0]) {	        		
+		if (field && data.fields && data.fields.length > 0) {
+			for (var i in data.fields) {
+				if (data.fields[i] && data.fields[i].toLowerCase() == field.toLowerCase()) {
+					value = data.rows[0][i];
+					break;
+				}
+			}
+		} else {
+			if (data.rows[0][0] != null && data.rows[0][0] !== undefined) {
+				value = data.rows[0][0];
+			} 			
+		}
+	} 
+} 
+control.html(value);
+if (changeEvents) control.trigger("change");
+	                ]]>
+	            </setPropertyJavaScript>
+	        </runtimeProperty>
+	    </runtimeProperties>
 	    
 	</control>
 </controls>
