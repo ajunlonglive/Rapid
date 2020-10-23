@@ -1286,6 +1286,7 @@ function selectItem(galleryControlId, size, mediums, message) {
 	$(window).resize();
 	
 	$("#closeInputPage, .inputImagePage.dialogueCover").on("click", function() {
+		$("body").css({"overflow":"unset"});
 		$(".inputImagePage").remove();
 	});
 	
@@ -1310,7 +1311,9 @@ function selectItem(galleryControlId, size, mediums, message) {
 				// call gallery set data to display image
 				setData_gallery(loadEvent, galleryControlId, "url", galleryDetails, dataURL);
 				
+				$("body").css({"overflow":"unset"});
 				$(".inputImagePage").remove();
+				
 			});
 		});
 		
