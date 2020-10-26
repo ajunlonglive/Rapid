@@ -117,42 +117,89 @@ public class JSON {
 		private JSONArray _rows;
 
 		public class Row {
+
 			private JSONArray _row;
 
-			Row(JSONArray row) throws Exception {
+			Row(JSONArray row) {
 				_row = row;
+			}
+
+			public String getType(String field) {
+				Integer index = _fieldIndexes.get(field);
+				if (index != null) {
+					Object element = _row.opt(index);
+					if (element != null) {
+						return element.getClass().getSimpleName();
+					}
+				}
+				return "undefined";
+			}
+
+			public boolean has(String field) {
+				Integer index = _fieldIndexes.get(field);
+				return index != null;
+			}
+
+			public boolean has(String type, String field) {
+				String fieldType = getType(field);
+				return has(field) && fieldType.equals(type);
 			}
 
 			public int length() {
 				return _fields.length();
 			}
 
-			public Boolean getBoolean(String field) throws Exception {
-				return _row.getBoolean(_fieldIndexes.get(field));
+			public Boolean getBoolean(String field) {
+				if (has("Boolean", field)) {
+					return _row.optBoolean(_fieldIndexes.get(field));
+				} else {
+					return null;
+				}
+				
 			}
 
-			public int getInt(String field) throws Exception {
-				return _row.getInt(_fieldIndexes.get(field));
+			public Integer getInteger(String field) {
+				if (has("Integer", field)) {
+					return _row.optInt(_fieldIndexes.get(field));
+				} else {
+					return null;
+				}
 			}
 
-			public double getDouble(String field) throws Exception {
-				return _row.getDouble(_fieldIndexes.get(field));
+			public Double getDouble(String field) {
+				if (has("Double", field)) {
+					return _row.optDouble(_fieldIndexes.get(field));
+				} else {
+					return null;
+				}
 			}
 
-			public String getString(String field) throws Exception {
-				return _row.getString(_fieldIndexes.get(field));
+			public String getString(String field) {
+				if (has("String", field)) {
+					return _row.optString(_fieldIndexes.get(field));
+				} else {
+					return null;
+				}
 			}
 
-			public JSONObject getJSONObject(String field) throws Exception {
-				return _row.getJSONObject(_fieldIndexes.get(field));
+			public JSONObject getJSONObject(String field) {
+				if (has("JSONObject", field)) {
+					return _row.optJSONObject(_fieldIndexes.get(field));
+				} else {
+					return null;
+				}
 			}
 
-			public JSONData getJSONData(String field) throws Exception {
-				return new JSONData(getJSONObject(field));
-			}
-
-			public String getType(String field) throws Exception {
-				return _row.get(_fieldIndexes.get(field)).getClass().getName();
+			public JSONData getJSONData(String field) {
+				if (has("JSONObject", field)) {
+					try {
+						return new JSONData(getJSONObject(field));
+					} catch (Exception ex) {
+						return null;
+					}
+				} else {
+					return null;
+				}
 			}
 
 			@Override
@@ -199,8 +246,13 @@ public class JSON {
 			return _fields.length();
 		}
 
-		public int rowCount() throws JSONException {
+		public int rowCount() {
 			return _rows.length();
+		}
+
+		public boolean has(String field) {
+			Integer index = _fieldIndexes.get(field);
+			return index != null;
 		}
 
 		@Override
