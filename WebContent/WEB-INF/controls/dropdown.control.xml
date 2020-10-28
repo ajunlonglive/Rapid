@@ -190,11 +190,11 @@ if (data !== undefined) {
 								if (data.fields[j].toLowerCase() == "group") group = data.rows[i][j];
 							}
 						}
-					}				
+					}			
 					// if there wasn't a value in the field called "text" but there is something in the first column use that as text
 					if (!text && row[0] != null) text = row[0];
-					// if the value is null but there is something in the second column use that, but only if codes are on
-					if (value == null && row[1] != null && details && details.codes) value = row[1];
+					// if the value is null but there is something in the second column use that, but only if codes are on or there are no details which was the previous behaviour
+					if (value == null && row[1] != null && (!details || details.codes)) value = row[1];
 					// if we still don't have a seperate value
 					if (value == null) {
 						value = "";
