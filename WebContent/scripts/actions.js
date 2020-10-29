@@ -551,6 +551,7 @@ function showAction(actionsTable, action, collection, refreshFunction, details) 
 		}
 		// add a comments property to the end, if not there already
 		if (properties.length > 0 && properties[properties.length - 1].key != "comments")	properties.push({"key":"comments","name":"Comments","changeValueJavaScript":"bigtext","helpHtml":"Comments left here can be useful for other developers that may work on your app."});
+		
 		// loop them
 		for (var k in properties) {
 			// add a row
@@ -559,7 +560,7 @@ function showAction(actionsTable, action, collection, refreshFunction, details) 
 			var propertiesRow = actionsTable.children("tr:nth-last-child(3)");
 			// retrieve a property object from the control class
 			var property = properties[k];
-			// assume the property is visible
+			// assume the property is visible, unless it has an explicit false
 			var visible = (property.visible === undefined || !property.visible === false);
 			// if property has visibility
 			if (property.visibility) {
@@ -600,7 +601,24 @@ function showAction(actionsTable, action, collection, refreshFunction, details) 
 						alert("Error - There is no known Property_" + property.changeValueJavaScript + " function");
 					}
 				}			
-			} // visibility check
+			} else {
+				// snapshot the properties - this is to avoid child actions hiding properties for parent actions that haven't been rendered yet, particularly in the mobile action
+				var propertiesCopy = {};
+				// loop the properties
+				for (var l in properties) {
+					// make a copy of the property object, this is as deep of a copy as we need
+					var propertyCopy = {};
+					// loop the property keys
+					for (var m in properties[l]) {
+						// set the property key on the copy from the source
+						propertyCopy[m] = properties[l][m];
+					}
+					// put the property copy in the properties copy
+					propertiesCopy[l] = propertyCopy;
+				}
+				// update the properties object with the copy
+				properties = propertiesCopy;
+			}// visibility check
 		} // properties loop
 	} // properties check
 	
