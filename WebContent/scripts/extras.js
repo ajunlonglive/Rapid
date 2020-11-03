@@ -942,11 +942,11 @@ function toPixels(size) {
 
 function getPageVariableValue(name, pageId) {
 	
-	// look for the variable in the query string
-	var value = $.getUrlVar(name);
+	// assume variable not found
+	var value = null;
 
-	// if there was no value and a pageId
-	if (!value && pageId) {
+	// if there was a pageId
+	if (pageId) {
 		
 		// check client-side parameters from navigate action first
 		if (window["_pageParams"] && window["_pageParams"][pageId]) {
@@ -957,8 +957,11 @@ function getPageVariableValue(name, pageId) {
 		if (!value && window["_pageVariables_" + pageId]) {
 			value = window["_pageVariables_" + pageId][name];
 		}
-		
+
 	}
+	
+	// if we still haven't found a value (which should be more current from navigation actions, etc.) look for the variable in the query string
+	if (value == null) value = $.getUrlVar(name);
 
 	// we're done
 	return value;
