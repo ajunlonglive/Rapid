@@ -949,12 +949,12 @@ function getPageVariableValue(name, pageId) {
 	if (pageId) {
 		
 		// check client-side parameters from navigate action first
-		if (window["_pageParams"] && window["_pageParams"][pageId]) {
+		if (window["_pageParams"] && window["_pageParams"][pageId] !== undefined) {
 			value = window["_pageParams"][pageId][name];
 		}
 			
 		// if we didn't find anything use the _pageVariables server-populated object
-		if (!value && window["_pageVariables_" + pageId]) {
+		if (!value && window["_pageVariables_" + pageId] !== undefined) {
 			value = window["_pageVariables_" + pageId][name];
 		}
 
