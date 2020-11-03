@@ -3314,11 +3314,22 @@ $(document).ready( function() {
         }       
     });
 	
+	function descendentControls(control) {
+		if (control.childControls) {
+			return control.childControls.concat(
+				control.childControls.flatMap(descendentControls)
+			);
+		} else {
+			return [];
+		}
+	}
+	
 	// paste
 	$("#paste").click( function(ev) {
 		var copiedControl = _controlClipboard.get();
 		// see the enable/disable rules for the past button to see all the rules but basically we're working out whether we can insert into the selected control, into the parent, or not at all
 		if (copiedControl) {
+			_pasteControls = [copiedControl].concat(descendentControls(copiedControl));
 			// assume we're pasting into the selected control
 			var pasteControl = _selectedControl;
 			// if no selected control use the page
@@ -3417,6 +3428,8 @@ $(document).ready( function() {
 			
 			// check for duplicate control ids'
 			checkForDuplicateIds();
+			
+			_pasteControls = [];
 
 		}		
 	});		
