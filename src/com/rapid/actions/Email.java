@@ -428,7 +428,8 @@ public class Email extends Action {
                 					body += "?";
                 				} else {
                 					// add the input value
-                					body += jsonInputs.getString(i);
+                					String inputValue = jsonInputs.optString(i);
+                					if (inputValue != null) body += inputValue;
                 					// increment for next value
                 					i ++;
                 				}
@@ -443,7 +444,8 @@ public class Email extends Action {
             					// remove last ? if still there
                 				if (bodyParts.length == 1) body = body.substring(0, body.length() - 1);
                 				// add input value
-                				body += jsonInputs.getString(i);
+            					String inputValue = jsonInputs.optString(i);
+            					if (inputValue != null) body += inputValue;
                 				// increment
                 				i ++;
             				} else {
