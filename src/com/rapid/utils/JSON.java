@@ -135,6 +135,11 @@ public class JSON {
 				return "undefined";
 			}
 
+			public boolean isNull(String field) {
+				Integer index = _fieldIndexes.get(field);
+				return index == null || _row.isNull(index);
+			}
+
 			public boolean has(String field) {
 				Integer index = _fieldIndexes.get(field);
 				return index != null;
