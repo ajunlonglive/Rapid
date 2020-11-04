@@ -254,7 +254,7 @@ input.date {
 	background: url("../../../images/controls/date/date_17x15.gif") 100% 50% no-repeat;
 }
 .r-date input[readonly] {
-  cursor: pointer;
+  cursor: default;
 }
 
 .r-date .dateClearButton {
