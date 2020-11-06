@@ -200,7 +200,8 @@ button[disabled] i[class*="fa-"] {
 }
 
 [class^="fa"]:not(.fa-stack):not(.fa-stack-1x):hover,
-[class*="fa-"]:not(.fa-stack):not(.fa-stack-1x):hover {
+[class*="fa-"]:not(.fa-stack):not(.fa-stack-1x):hover,
+.fa-stack.reorder:hover {
 	transform: scale(1.2);
 }
 
@@ -218,10 +219,6 @@ button[disabled] [class*="fa-"]:not(.fa-stack):not(.fa-stack-1x):hover {
 	font-size:15px;
 	right: 5px;
 	transition: transform 0.2s;
-}
-
-.fa-stack:hover {
-	transform: scale(1.3);
 }
 
 i[class^="fa"].fa-arrow-up.fa-stack-1x,

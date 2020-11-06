@@ -300,7 +300,7 @@ function showEvents(control) {
 						var actionsTable = actionsPanel.find("table[data-eventType=" + event.type + "]");
 						// add a heading for the event																
 						actionsTable.append("<tr><td colspan='2' class='propertyHeader'><h3>" + event.name + " event</h3>" +
-								"<div class='iconsPanel'><div class='copyEvent fa-xs' title='Click to copy all event actions'><i class='fas fa-copy'></i></div>" +
+								"<div class='iconsPanel'><div class='copyEvent fa-stack fa-xs' title='Click to copy all event actions'><i class='fas fa-copy'></i></div>" +
 								"<i id='" + event.type + "help' class='eventHelp glyph fa hintIcon'></i></div></td></tr>");
 						
 						// look for any event help html, then check the default
@@ -494,7 +494,7 @@ function showAction(actionsTable, action, collection, refreshFunction, details) 
 	// add a small break
 	insertRow.before("<tr><td colspan='2' class='propertySubHeader'><h3>" + actionClass.name + " action</h3>" +
 			"<div class='iconsPanel'><div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fa fa-arrow-up fa-stack-1x'></i><i class='fa fa-arrow-down fa-stack-1x'></i></div>" +
-			"<div class='delete fa-stack fa-sm'><i class='delete fas fa-trash-alt' title='Click to delete'></i></div>" +
+			"<div class='delete fa-stack fa-sm'><i class='fas fa-trash-alt' title='Click to delete'></i></div>" +
 			"<div class='copyAction fa-stack fa-xs' title='Click to copy this action'><i class='fas fa-copy'></i>" +
 			"</div></div></td></tr>");
 	

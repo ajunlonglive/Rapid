@@ -1388,7 +1388,7 @@ function Property_fields(cell, action, property, details) {
 			table.append("<tr><td><input value='" + escapeApos(fields[i]) + "'/></td><td style='width:45px'>" +
 					"<div class='iconsPanel'>" +
 					"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fas fa-arrow-up fa-stack-1x'></i><i class='fas fa-arrow-down fa-stack-1x'></i></div>" +
-					"<div class='delete fa-stack fa-sm'><i class='delete fas fa-trash-alt' title='Click to delete'></i></div>" +
+					"<div class='delete fa-stack fa-sm'><i class='fas fa-trash-alt' title='Click to delete'></i></div>" +
 					"</div></td></tr>");
 		}	
 	}
@@ -1775,7 +1775,7 @@ function Property_validationControls(cell, propertyObject, property, details) {
 			table.append("<tr><td>" + control.name + "</td><td style='width:45px'>" +
 					"<div class='iconsPanel'>" +
 					"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fas fa-arrow-up fa-stack-1x'></i><i class='fas fa-arrow-down fa-stack-1x'></i></div>" +
-					"<div class='delete fa-stack fa-sm'><i class='delete fas fa-trash-alt' title='Click to delete'></i></div>" +
+					"<div class='delete fa-stack fa-sm'><i class='fas fa-trash-alt' title='Click to delete'></i></div>" +
 					"</div></td></tr>");			
 		} else {
 			// remove this control
