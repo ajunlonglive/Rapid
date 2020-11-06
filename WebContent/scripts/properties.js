@@ -862,7 +862,7 @@ function getDialogue(cell, propertyObject, property, details, width, title, opti
 		}
 		
 		// add a close link
-		var close = dialogue.append("<b class='dialogueTitle' style='float:left;margin-top:-5px;'>" + title + "</b><i class='fas dialogueClose fa-window-close' style='float:right; font-size:18px; color:#494949; padding-bottom:5px;' title='Close dialogue'></i></div>").children().last();
+		var close = dialogue.append("<b class='dialogueTitle' style='float:left;margin-top:-5px;'>" + title + "</b><i class='fas dialogueClose fa-window-close' title='Close dialogue'></i></div>").children().last();
 	
 		// add the close listener (it's put in the listener collection above)
 		addListener(close.click({dialogueId: dialogueId}, function(ev) {

@@ -177,8 +177,8 @@ img.validationHelp {
 
 i.actionHelp, img.actionHelp {
 	float: right;
-	margin-top: 1px;
 	color: #777;
+	margin-top: 2px;
 	margin-right: -17px;
 }
 
@@ -282,6 +282,7 @@ i.delete[class*="fa-"].fa-trash {
 
 .copyEvent {
 	display: inline-block;
+	margin-right: 4px;
 }
 
 .copyAction {
@@ -314,7 +315,7 @@ div.propertyDialogue {
   	-moz-user-select: -moz-none;
   	-ms-user-select: none;
   	user-select: none;
-	box-shadow: 0 0 0px 1px rgba(0, 0, 0, 0.1), 0 1px 5px 2px rgba(0, 0, 0, 0.25);
+	box-shadow: 0 2px 3px 3px rgba(0, 0, 0, 0.25), 0 1px 5px 2px rgba(0, 0, 0, 0.25);
 }
 
 .propertyDialogue span.fa {
@@ -379,9 +380,21 @@ td.propertySubHeader {
 	padding-top: 2px;
 }
 
-.propertySubHeader i.actionHelp {
-	color: #000;
+.propertySubHeader i {
+	color: #444;
 	font-size: 16px;
+}
+
+b.dialogueTitle {
+	padding-top: 4px;
+}
+
+i.dialogueClose {
+	float: right; 
+	font-size: 18px; 
+	color: #494949; 
+	padding-bottom: 5px;
+	margin-right: 2px;
 }
 
 .dialogueTable {
