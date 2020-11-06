@@ -269,12 +269,16 @@ i.delete[class*="fa-"].fa-trash {
 	text-align: right;
 }
 
-.propertyHeader > .iconsPanel {
-	min-width: unset;
-}
-
 .iconsPanel i {
 	cursor: pointer;
+}
+
+.iconsPanel .delete, .iconsPanel .reorder {
+    color: #494949;
+}
+
+.propertyHeader > .iconsPanel {
+	min-width: unset;
 }
 
 .copyEvent {
