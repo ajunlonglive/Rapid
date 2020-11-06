@@ -103,6 +103,7 @@ span.score span {
   color: grey;
   text-align: center;
   display: inline-block;
+  cursor: pointer;
 }
 
 span.score span.selectedScore {
@@ -242,12 +243,11 @@ return "#" + this.id + " span.selectedScore";
 $("#" + id).children().click( function(ev) {
 	var option = $(ev.target);
 	var control = option.parent();
-	var id = control.attr("id");
-	var value = control.children(".selectedScore").attr("data-value");
 	var multiple = control.attr("multiple-selection") === "true";
 	if (!multiple) control.children().removeClass("selectedScore");
 	option.toggleClass("selectedScore");
-	if (value != option.attr("data-value") && window["Event_change_" + id]) window["Event_change_" + id](ev);
+	var id = control.attr("id");
+	if (window["Event_change_" + id]) window["Event_change_" + id](ev);
 });	        
 	        ]]>	        	       	        
 	    </initJavaScript>
