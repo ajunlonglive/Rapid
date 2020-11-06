@@ -136,10 +136,15 @@ button {
 	box-shadow: none;
 	text-transform: uppercase;
 	transition: background 0.5s ease;
+	transition: transform 0.2s;
 }
 
 button:hover {
 	background: #ff3336;
+}
+
+button.addButton:hover {
+	transform: scale(1.05);
 }
 	
 section {
@@ -159,6 +164,11 @@ section:last-child {
 	
 section:hover {
 	background:#23262a;
+}
+
+section:hover .fa-stack .fa-stack-1x {
+	transition: transform 0.2s;
+	transform: scale(1.1);
 }
 
 /*************************************************/

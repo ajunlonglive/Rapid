@@ -57,8 +57,7 @@ if ('serviceWorker' in navigator) {
   console.log('CLIENT: service worker is not supported.');
 }
 
-// JQuery is ready! 
-$(document).ready( function() {	
+function loadApps() {
 	
 	// find the div we're going to put the apps in
 	var appsDiv = $("#apps");
@@ -89,6 +88,13 @@ $(document).ready( function() {
         	}   		       	
         }
 	});
+	
+}
+
+// JQuery is ready! 
+$(document).ready( function() {
+	
+	loadApps();
 	
 	if (!navigator.onLine) document.body.classList.add("offline");
 	
