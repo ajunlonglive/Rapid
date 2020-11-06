@@ -620,6 +620,17 @@ td.paddingLeft5 {
 	padding: 0;
 }
 
+.propertyDialogue button {
+	background-color: #494949;
+  	color:white;
+  	border: 1px solid #000;
+  	transition: background 0.3s ease;
+}
+
+.propertyDialogue button:hover {
+	background-color: #aaa;
+}
+
 .titleButton {
   	padding: 2px 5px;
   	margin-left:5px;
@@ -630,6 +641,10 @@ td.paddingLeft5 {
 
 .titleButton span {
 	font-size: 10px;
+}
+
+.propertyButton {
+	
 }
 
 #restrictionsDialogue .dialogueTable tr:first-child td:not(:last-child) {
