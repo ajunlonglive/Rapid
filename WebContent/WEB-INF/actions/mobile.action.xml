@@ -470,6 +470,7 @@ return "<option value=''>Please select...</option><option value ='html'" + (this
 .cameraControl {
 	background: black;
 	outline: none;
+	padding: 0;
 	border-radius: 50%;
 	border-width: 2px;
 	border-color: white;
