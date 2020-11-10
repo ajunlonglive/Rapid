@@ -120,7 +120,7 @@ hr {
 	position: fixed;
 	overflow-y: scroll !important;
     max-height: 100vh;
-    padding: 0px 10px 20px 10px;
+    padding: 0px 10px 00px 10px;
     box-sizing: border-box;
 	left: 0px;
 	top: 0px;
@@ -472,7 +472,7 @@ div#controlPanel.hideScrollbars::-webkit-scrollbar {
 
 div#propertiesPanelInner, div#controlPanelInner {
 	right: 10px;
-	margin: 30px 0 30px;
+	margin-top: 30px;
 	position: absolute !important;
 	width: calc(100% - 20px) !important;
 	text-align: center;
@@ -491,7 +491,6 @@ div#propertiesPanelInner {
   	background-color: red;
   	opacity: 0;
   	width: 10px;
-  	margin-top: 30px;
   	margin-left: -10px;
   	cursor: ew-resize;
 }
@@ -509,7 +508,8 @@ div#propertiesPanelInner {
 }
 
 .untilsPanelDiv .headerHelp {
-	padding-top:5px;
+	padding-top: 5px;
+	padding-right: 5px;
 }
 
 #propertiesPanelPin {

@@ -109,7 +109,6 @@ if (appPage != null && designerPermission) {
 	// used for controls that load asychronously at run time
 	var _loadingControls = 0;
 	</script>
-	<style></style>
 <%
 }
 %>
@@ -138,7 +137,7 @@ if (app == null) {
 			</div>
 			<div>		
 				<div style="height:77px; position:relative; bottom:15px;">
-					<i style="margin-top: 5px; margin-bottom: 5px; font-size:40px;" class="glyph fas fa-spin"></i>
+					<i style="margin-top: 5px; margin-bottom: 5px; font-size:40px; color:white;" class="fas fa-spin"></i>
 					<div>loading...</div>
 				</div>		
 			</div>

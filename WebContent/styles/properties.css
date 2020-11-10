@@ -281,6 +281,10 @@ i.delete[class*="fa-"].fa-trash {
 	min-width: unset;
 }
 
+.eventHelp {
+	margin-top: 2px;
+}
+
 .copyEvent {
 	display: inline-block;
 	margin-right: 4px;

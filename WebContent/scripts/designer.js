@@ -4666,10 +4666,11 @@ function windowResize(ev) {
 		$("#controlPanelPin").css({"top":controlPanel.css("padding-top"), "right":controlPanel.css("padding-right")});
 	}
 	// get panel height (less the header and padding)
-	var cHeight = Math.max(_window.height()-50, cinner.height());
-	// set sizer heights
+	var cHeight = Math.max(_window.height(), cinner.height() + 40);
+	// regular sizer is derived height
 	$("#controlPanelSize").css({height:cHeight});
-	$("#controlPanelSizeLeft").css({height:cHeight});
+	// set left sizer height
+	$("#controlPanelSizeLeft").css({height:_window.height()});	
 	
 	// get the properties inner
 	var pinner = $("#propertiesPanelInner");
@@ -4689,10 +4690,10 @@ function windowResize(ev) {
 		$("#propertiesPanelPin").css({"top":controlPanel.css("padding-top"), "left":propertiesPanel.css("padding-left")});
 	}
 	// get panel height (less the header and padding)
-	var pHeight = Math.max(_window.height()-200, pinner.height());
+	var pHeight = Math.max(_window.height(), pinner.height());
 	// set sizer heights
 	$("#propertiesPanelSize").css({height:pHeight});
-	$("#propertiesPanelSizeRight").css({height:pHeight-112});
+	$("#propertiesPanelSizeRight").css({height:pHeight - 20});
 
 	// revert any scroll top
 	if (scrollTop > 0) _window.scrollTop(scrollTop);
