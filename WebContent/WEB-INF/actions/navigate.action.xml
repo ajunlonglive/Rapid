@@ -287,10 +287,8 @@ function Action_navigate(url, dialogue, id, popup, dismissibleDialogue) {
 		           				var s = items[i].outerHTML;
 		           				// exclude the app id, version, page, mobile resume link
 		           				if (s.indexOf("var _appId =") == -1 && s.indexOf("var _appVersion =") == -1 && s.indexOf("var _pageId =") == -1 && s.indexOf("var _mobileResume =") == -1) {
-		           					// script += s;
-									element.src = URL.createObjectURL(new Blob([items[i].innerText], {type : "text/javascript"}));
-									element.async = false;
-		       						try { headElement.appendChild(element); } catch(ex) {}
+		           					// append to script variable - we will make one combined string and add as a blob
+		           					script += items[i].innerText.trim() + "\n\n";									
 								}
 		           			} else {
 		           				// fetch the text
@@ -303,8 +301,8 @@ function Action_navigate(url, dialogue, id, popup, dismissibleDialogue) {
 		           					if (!head.find("script[src='" + src + "']")[0]) {
 										element.src = src;
 										element.async = false;
-			       						try { headElement.appendChild(element); } catch(ex) {}
-		           						// append to the head section of the page and fail silently if any issue - for some reason Rapid Mobile throws a TypeError: undefined is not a function for calendar.js
+										// append to the head section of the page and fail silently if any issue - for some reason Rapid Mobile throws a TypeError: undefined is not a function for calendar.js
+			       						try { headElement.appendChild(element); } catch(ex) {}		           						
 		           					}
 		           				}
 		           			}
@@ -332,7 +330,7 @@ function Action_navigate(url, dialogue, id, popup, dismissibleDialogue) {
 		           		break;
 		           		}
 		           	}
-		           	
+
 		           	// if this is the login page go to the real thing, requesting to come back to this location
             		if (bodyHtml.indexOf("<form name=\"login\" id=\"RapidLogin\" method=\"post\">") > 0) window.location = "login.jsp?requestPath=" + window.location; 
             	
@@ -385,7 +383,11 @@ function Action_navigate(url, dialogue, id, popup, dismissibleDialogue) {
 					});
 					
 		           	// add any scripts into the page (if applicable)
-		           	if (script) dialogue.append(script);
+		           	if (script) {
+		           		element.src = URL.createObjectURL(new Blob([script], {type : "text/javascript"}));
+						element.async = false;
+      					try { headElement.appendChild(element); } catch(ex) {}
+		           	}
 		           	
 		           	// handle textareas with maxlength attribute
 					dialogue.find('textarea[maxlength]').each( textarea_maxlength );
