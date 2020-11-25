@@ -91,6 +91,8 @@ public class Logic extends Action {
 				}
 
 			}
+			// cast to numbers if appropriate
+			arg = "(function() { var v = " + arg + "; return (typeof v === 'string' && v.match('^[-]?\\\\d+\\\\.?\\\\d*$')) ? parseFloat(v) : v; })()";
 			// return it
 			return arg;
 
