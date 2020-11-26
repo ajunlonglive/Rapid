@@ -102,7 +102,6 @@ public abstract class FormAdapter {
 		private String _maxPageId, _submittedDateTime, _submitMessage, _errorMessage;
 		boolean _saved, _complete, _showSubmitPage, _paymentStarted;
 
-
 		// properties
 
 		// app id
@@ -1292,18 +1291,8 @@ public abstract class FormAdapter {
 		// open the html
 		writer.write("<html>\n");
 
-		// open the head
-		writer.write("  <head>\n");
-
-		// write a title
-		writer.write("    <title>Form summary - by Rapid</title>\n");
-
-		// write responsive header
-		writer.write("    <meta description=\"Created using Rapid - www.rapid-is.co.uk\"/>\n" +
-				"    <meta charset=\"utf-8\"/>\n" +
-				"    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no\" />\n" +
-				(_application != null ? "    <meta name=\"theme-color\" content=\"" + _application.getStatusBarColour() + "\" />\n" : "" )+
-				"    <link rel=\"icon\" href=\"favicon.ico\"></link>\n");
+		// start the head and title
+		writer.write(Page.getHeadStart(rapidRequest.getRapidServlet(), _application, "Form summary"));
 
 		// get the servletContext
 		ServletContext servletContext = this.getServletContext();
@@ -2179,7 +2168,7 @@ public abstract class FormAdapter {
 							}
 
 							if (pageTitle != null) {
-								
+
 								// if this is going to push us past the page height make a new page and reset heights
 								if (y + sh > h - MARGIN_BOTTOM) {
 									p = new PDPage(PDRectangle.A4);
@@ -2287,7 +2276,7 @@ public abstract class FormAdapter {
 														cs.endText();
 
 														y += getFontHeight(font, FONT_SIZE) + MARGIN_TEXT_BOTTOM;
-														
+
 												}// end of inner loop
 
 												//set the x position for the new column
@@ -2300,7 +2289,7 @@ public abstract class FormAdapter {
 										}// end of outer loop
 
 									} else {
-										
+
 										// if this is going to push us past the page height make a new page and reset heights
 										if (y + fh + MARGIN_TEXT_BOTTOM > h - MARGIN_BOTTOM) {
 											p = new PDPage(PDRectangle.A4);

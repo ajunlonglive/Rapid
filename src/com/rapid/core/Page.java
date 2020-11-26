@@ -1350,28 +1350,11 @@ public class Page {
     	}
     }
 
-    // this method produces the start of the head (which is shared by the no permission response)
-    private String getHeadStart(RapidHttpServlet rapidServlet, Application application) {
-    	// look for the page title suffix
-    	String pageTitleSuffix = rapidServlet.getServletContext().getInitParameter("pageTitleSuffix");
-    	// if null make default
-    	if (pageTitleSuffix == null) pageTitleSuffix = " - by Rapid";
-    	// create start of head html and return
-    	return
-    	"  <head>\n" +
-		"    <title>" + Html.escape(_title) + pageTitleSuffix + "</title>\n" +
-		"    <meta description=\"Created using Rapid - www.rapid-is.co.uk\"/>\n" +
-		"    <meta charset=\"utf-8\"/>\n" +
-		"    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no\" />\n" +
-		(application != null ? "    <meta name=\"theme-color\" content=\"" + application.getStatusBarColour() + "\" />\n" : "" ) +
-		"    <link rel=\"icon\" href=\"favicon.ico\"></link>\n";
-    }
-
     // this private method produces the head of the page which is often cached, if resourcesOnly is true only page resources are included which is used when sending no permission
 	private String getHeadLinks(RapidHttpServlet rapidServlet, Application application, boolean isDialogue) throws JSONException {
 
 		// create a string builder containing the head links
-    	StringBuilder stringBuilder = new StringBuilder(getHeadStart(rapidServlet, application));
+    	StringBuilder stringBuilder = new StringBuilder(getHeadStart(rapidServlet, application, _title));
 
 		// if you're looking for where the jquery link is added it's the first resource in the page.control.xml file
 		stringBuilder.append("    " + getResourcesHtml(application, false).trim() + "\n");
@@ -2497,6 +2480,23 @@ public class Page {
 	}
 
 	// static methods
+
+	// this method produces the start of the head (which is shared by the no permission response, and form adapter)
+    public static String getHeadStart(RapidHttpServlet rapidServlet, Application application, String title) {
+    	// look for the page title suffix
+    	String pageTitleSuffix = rapidServlet.getServletContext().getInitParameter("pageTitleSuffix");
+    	// if null make default
+    	if (pageTitleSuffix == null) pageTitleSuffix = " - by Rapid";
+    	// create start of head html and return
+    	return
+    	"  <head>\n" +
+		"    <title>" + Html.escape(title) + pageTitleSuffix + "</title>\n" +
+		"    <link rel=\"icon\" href=\"favicon.ico\"></link>\n" +
+		"    <meta description=\"Created using Rapid - www.rapid-is.co.uk\"/>\n" +
+		"    <meta charset=\"utf-8\"/>\n" +
+		(application != null && application.getIsForm() ? "    <meta name=\"viewport\" content=\"width=device-width\" />\n" : "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no\" />\n") +
+		(application != null ? "    <meta name=\"theme-color\" content=\"" + application.getStatusBarColour() + "\" />\n" : "" );
+    }
 
 	// static function to load a new page
 	public static Page load(ServletContext servletContext, File file) throws JAXBException, ParserConfigurationException, SAXException, IOException, TransformerFactoryConfigurationError, TransformerException {
