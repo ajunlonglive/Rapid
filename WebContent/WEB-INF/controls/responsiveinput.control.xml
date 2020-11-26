@@ -356,5 +356,18 @@ return "#" + this.id + " input:focus, #" + this.id + " textarea:focus";
 	        </style>
 	    </styles>
 	    
+	    <initJavaScript>
+			<![CDATA[
+var control = $("#" + id).find("input[type='number']")[0];
+if (control && control.max) {
+	control.addEventListener("change", function(change) {
+		if (control.value.length > control.max.length) {
+			control.value = control.value.slice(0, control.max.length);
+		}
+	});
+}
+			 ]]>
+	    </initJavaScript>
+	    
 	</control>
 </controls>
