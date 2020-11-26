@@ -2807,6 +2807,8 @@ public abstract class FormAdapter {
 											if (Numbers.isInteger(maxLength)) {
 												// convert to int
 												int max = Integer.parseInt(maxLength);
+												// only check the decimal length of the integer part of a number (e.g. "123.45" -> 3)
+												if ("Num".equals(control.getProperty("controlType")) && value.contains(".")) value = value.substring(0, value.indexOf("."));
 												// make line breaks \n instead of \n\r so the Java length matches the front end
 												value = value.replace("\r\n", "\n");
 												// check length
