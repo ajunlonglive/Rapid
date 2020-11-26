@@ -523,7 +523,7 @@ public class Database extends Action {
 
 			// retain if error actions
 			boolean errorActions = false;
-			
+
 			// prepare a default error hander we'll show if no error actions, or pass to child actions for them to use
 			String defaultErrorHandler = "alert('Error with database action" + errorSourceMessage(application, control) + "\\n\\n' + server.responseText||message);";
 			// if we have an offline page
@@ -659,7 +659,7 @@ public class Database extends Action {
 
 		// get the rapidServlet
 		RapidHttpServlet rapidServlet = rapidRequest.getRapidServlet();
-		
+
 		ServletContext context = rapidServlet.getServletContext();
 
 		// retrieve the sql
@@ -778,10 +778,10 @@ public class Database extends Action {
 				jsonData = actionCache.get(application.getId(), getId(), parametersList.toString());
 
 			}
-			
+
 			// unmap numbered numbered parameters
 			List<Parameter> originalInputs = _query.getInputs();
-			if (originalInputs == null) originalInputs = new ArrayList<>(); 
+			if (originalInputs == null) originalInputs = new ArrayList<>();
 			List<String> inputs = new ArrayList<String>();
 			// populate it with nulls
 			for (int i = 0; i < originalInputs.size(); i++) {
@@ -790,10 +790,10 @@ public class Database extends Action {
 				if (!input.getField().isEmpty()) inputName += "." + input.getField();
 				inputs.add(inputName);
 			}
-			
+
 			parametersList.set(0, unmappedParameters(sql, parametersList.get(0), inputs, application, context));
 			sql = unspecifySqlSlots(sql);
-			
+
 			// if there isn't a cache or no data was retrieved
 			if (jsonData == null) {
 
@@ -1182,11 +1182,11 @@ public class Database extends Action {
 
 	private static String parameterSlotRegex = "(\\?\"[^\"]+\")|(\\?\\w\\S*)|\\?";
 	private static String namedParameterSlotRegex = "(\\?\"[^\"]+\")|(\\?(?=[a-z])\\w*)";
-	
+
 	public static Parameters unmappedParameters(String sql, Parameters oldParameters, List<String> inputIds, Application application, ServletContext context) throws SQLException {
-		
+
 		Map<String, Integer> parameterIndexesByControlName = new HashMap<String, Integer>();
-		
+
 		if (Pattern.compile(namedParameterSlotRegex).matcher(sql).find()) {
 			for (int inputIndex = 0; inputIndex < inputIds.size(); inputIndex++) {
 				String id = inputIds.get(inputIndex);
@@ -1194,71 +1194,71 @@ public class Database extends Action {
 					String name = "\"" + id + "\"";
 					parameterIndexesByControlName.put(name, inputIndex);
 				} else {
-					
+
 					String[] parts = id.split("\\.");
 					String controlId = parts[0];
-					
+
 					Control control = application.getControl(context, controlId);
 					if (control != null) {
-						
+
 						String name = control.getName();
 						id = id.replaceAll(".+\\.", name + ".");
 						if (parts.length > 1) name += "." + parts[1].toLowerCase().replace(" ", "");
 						for (int idIndex = 2; idIndex < parts.length; idIndex++) name += "." + parts[idIndex];
-						
+
 						parameterIndexesByControlName.put("\"" + name + "\"", inputIndex);
 						if (!name.contains(" ")) parameterIndexesByControlName.put(name, inputIndex);
 					}
 				}
 			}
 		}
-		
+
 		// remove comment blocks
 		String[] stringParts = sql.split("\\/\\*|\\*\\/");
 		sql = "";
 		for (int partIndex = 0; partIndex < stringParts.length; partIndex += 2) {
 			sql += stringParts[partIndex];
 		}
-		
+
 		// remove quote blocks
 		stringParts = sql.split("'");
 		sql = "";
 		for (int partIndex = 0; partIndex < stringParts.length; partIndex += 2) {
 			sql += stringParts[partIndex];
 		}
-		
+
 		Matcher matcher = Pattern.compile(parameterSlotRegex).matcher(sql);
-		
+
 		Parameters newParameters = new Parameters();
-		
+
 		Set<Integer> oldParametersNumbers = new HashSet<>();
 		for (int number = 1; number <= oldParameters.size(); number++) {
 			oldParametersNumbers.add(number);
 		}
-		
+
 		int unspecifiedSlots = 0;
 		while (matcher.find()) {
 			String slot = matcher.group();
-			
+
 			int parameterIndex = unspecifiedSlots;
 			if (slot.length() == 1) {
 				unspecifiedSlots++;
 			} else {
 				String specifier = slot.substring(1);
-				
+
 				if (specifier.matches("\\d+")) {
 					parameterIndex = Integer.parseInt(specifier) - 1;
 				} else {
-					
+
 					String[] parts = specifier.split("\\.");
 					String name = parts[0];
 					if (parts.length > 1) name += "." + parts[1].toLowerCase().replace(" ", "");
 					for (int idIndex = 2; idIndex < parts.length; idIndex++) name += "." + parts[idIndex];
-					
+
 					parameterIndex = parameterIndexesByControlName.get(name);
 				}
 			}
-			
+
 			if (parameterIndex < oldParameters.size()) {
 				newParameters.add(oldParameters.get(parameterIndex));
 				oldParametersNumbers.remove(parameterIndex + 1);
@@ -1266,19 +1266,19 @@ public class Database extends Action {
 				throw new SQLException("Parameter " + (parameterIndex + 1) + " not provided in inputs list");
 			}
 		}
-		
+
 		if (oldParametersNumbers.size() > 0) {
 			int firstUnusedInputNumber = oldParametersNumbers.iterator().next();
 			throw new SQLException("Input " + firstUnusedInputNumber + " not used");
 		}
-		
+
 		if (oldParameters.size() > newParameters.size()) {
 			return oldParameters;
 		} else {
 			return newParameters;
 		}
 	}
-	
+
 	public static String unspecifySqlSlots(String sql) {
 		sql = sql + " ";
 		String[] stringParts = sql.split("'");
@@ -1292,7 +1292,7 @@ public class Database extends Action {
 		}
 		return sql;
 	}
-	
+
 	@Override
 	public JSONObject doAction(RapidRequest rapidRequest, JSONObject jsonAction) throws Exception {
 
@@ -1311,8 +1311,8 @@ public class Database extends Action {
 		// place holder for the object we're going to return
 		JSONObject jsonData = null;
 
-		// only if there is a query object, application, and page
-		if (_query != null && application != null && page != null) {
+		// only if there is a query object, application, and page, and connection
+		if (_query != null && application != null && page != null && application.getDatabaseConnections() != null && application.getDatabaseConnections().size() > _query.getDatabaseConnectionIndex()) {
 
 			// get the relevant connection
 			DatabaseConnection databaseConnection = application.getDatabaseConnections().get(_query.getDatabaseConnectionIndex());
