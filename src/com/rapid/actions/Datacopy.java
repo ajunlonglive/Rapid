@@ -160,110 +160,119 @@ public class Datacopy extends Action {
 				// loop them
 				for (DataCopy dataCopy : _dataCopies) {
 
-					// get the destination id
-					String destinationId = dataCopy.getDestination();
+					if (dataCopy.getSource() == null ) {
 
-					// check we got one
-					if (destinationId.length() > 0) {
+						// data copies not found return a comment
+						js += "// data source not specified\n";
 
-						// get the get data function
-						String getDataFunction = Control.getDataJavaScript(rapidServlet.getServletContext(), application, page, dataCopy.getSource(), dataCopy.getSourceField());
+					} else {
 
-						// add the getData if different from the last one
-						if (!getDataFunction.equals(lastGetDataFunction)) js += "var data = " + Control.getDataJavaScript(rapidServlet.getServletContext(), application, page, dataCopy.getSource(), dataCopy.getSourceField()) + ";\n";
+						// get the destination id
+						String destinationId = dataCopy.getDestination();
 
-						// remember this one
-						lastGetDataFunction = getDataFunction;
+						// check we got one
+						if (destinationId.length() > 0) {
 
-						if ("System.clipboard".equals(destinationId)) {
-							// do the data copy
-							js += "Action_datacopy(ev, data, [{id:'" + destinationId + "'}]);\n";
-						} else {
-							// split if by escaped .
-							String idParts[] = destinationId.split("\\.");
-							// if there is more than 1 part we are dealing with set properties, for now just update the destintation id
-							if (idParts.length > 1) destinationId = idParts[0];
-							// first try and look for the control in the page
-							Control destinationControl = page.getControl(destinationId);
-							// assume we found it
-							boolean pageControl = true;
-							// check we got a control
-							if (destinationControl == null) {
-								// now look for the control in the application
-								destinationControl = application.getControl(rapidServlet.getServletContext(), destinationId);
-								// set page control to false
-								pageControl = false;
-							}
-							// check we got one from either location
-							if (destinationControl == null) {
+							// get the get data function
+							String getDataFunction = Control.getDataJavaScript(rapidServlet.getServletContext(), application, page, dataCopy.getSource(), dataCopy.getSourceField());
 
-								// data copies not found return a comment
-								js += "// data destination not found for " + destinationId + "\n";
+							// add the getData if different from the last one
+							if (!getDataFunction.equals(lastGetDataFunction)) js += "var data =" + getDataFunction + ";\n";
 
+							// remember this one
+							lastGetDataFunction = getDataFunction;
+
+							if ("System.clipboard".equals(destinationId)) {
+								// do the data copy
+								js += "Action_datacopy(ev, data, [{id:'" + destinationId + "'}]);\n";
 							} else {
+								// split if by escaped .
+								String idParts[] = destinationId.split("\\.");
+								// if there is more than 1 part we are dealing with set properties, for now just update the destintation id
+								if (idParts.length > 1) destinationId = idParts[0];
+								// first try and look for the control in the page
+								Control destinationControl = page.getControl(destinationId);
+								// assume we found it
+								boolean pageControl = true;
+								// check we got a control
+								if (destinationControl == null) {
+									// now look for the control in the application
+									destinationControl = application.getControl(rapidServlet.getServletContext(), destinationId);
+									// set page control to false
+									pageControl = false;
+								}
+								// check we got one from either location
+								if (destinationControl == null) {
 
-								// get the field
-								String destinationField = dataCopy.getDestinationField();
-								// clean up the field
-								if (destinationField == null) destinationField = "";
-
-								// get any details we may have
-								String details = destinationControl.getDetailsJavaScript(application, page);
-
-								// if the idParts is greater then 1 this is a set property
-								if (idParts.length > 1) {
-
-									// if we have some details
-									if (details != null) {
-										// if this is a page control
-										if (pageControl) {
-											// the details will already be in the page so we can use the short form
-											details = destinationControl.getId() + "details";
-										}
-									}
-
-									// get the property from the second id part
-									String property = idParts[1];
-									// append the set property call
-									js += "setProperty_" + destinationControl.getType() + "_" + property + "(ev, '" + destinationControl.getId() + "', '" + destinationField + "', " + details + ", data, " + Boolean.parseBoolean(getProperty("changeEvents")) + ");\n";
+									// data copies not found return a comment
+									js += "// data destination not found for " + destinationId + "\n";
 
 								} else {
 
-									// set details to empty string or clean up
-									if (details == null) {
-										details = "";
-									} else {
-										// if this is a page control
-										if (pageControl) {
-											// the details will already be in the page so we can use the short form
-											details = ",details:" + destinationControl.getId() + "details";
-										} else {
-											// write the full details
-											details = ",details:" + details;
+									// get the field
+									String destinationField = dataCopy.getDestinationField();
+									// clean up the field
+									if (destinationField == null) destinationField = "";
+
+									// get any details we may have
+									String details = destinationControl.getDetailsJavaScript(application, page);
+
+									// if the idParts is greater then 1 this is a set property
+									if (idParts.length > 1) {
+
+										// if we have some details
+										if (details != null) {
+											// if this is a page control
+											if (pageControl) {
+												// the details will already be in the page so we can use the short form
+												details = destinationControl.getId() + "details";
+											}
 										}
-									}
 
-									// try and get the type
-									String type = dataCopy.getType();
-									// check it
-									if (type == null || "false".equals(type)) {
-										// update to empty string
-										type = "";
+										// get the property from the second id part
+										String property = idParts[1];
+										// append the set property call
+										js += "setProperty_" + destinationControl.getType() + "_" + property + "(ev, '" + destinationControl.getId() + "', '" + destinationField + "', " + details + ", data, " + Boolean.parseBoolean(getProperty("changeEvents")) + ");\n";
+
 									} else {
-										// update to comma-prefixed, string escaped
-										type = ",'" + type + "'";
-									}
 
-									// do the data copy
-									js += "Action_datacopy(ev, data, [{id:'" + destinationControl.getId() + "',type:'" + destinationControl.getType() + "',field:'" + destinationField + "'" + details + "}], " + Boolean.parseBoolean(getProperty("changeEvents")) + type + ");\n";
+										// set details to empty string or clean up
+										if (details == null) {
+											details = "";
+										} else {
+											// if this is a page control
+											if (pageControl) {
+												// the details will already be in the page so we can use the short form
+												details = ",details:" + destinationControl.getId() + "details";
+											} else {
+												// write the full details
+												details = ",details:" + details;
+											}
+										}
 
-								} // copy / set property check
+										// try and get the type
+										String type = dataCopy.getType();
+										// check it
+										if (type == null || "false".equals(type)) {
+											// update to empty string
+											type = "";
+										} else {
+											// update to comma-prefixed, string escaped
+											type = ",'" + type + "'";
+										}
 
-							} // destination control check
+										// do the data copy
+										js += "Action_datacopy(ev, data, [{id:'" + destinationControl.getId() + "',type:'" + destinationControl.getType() + "',field:'" + destinationField + "'" + details + "}], " + Boolean.parseBoolean(getProperty("changeEvents")) + type + ");\n";
 
-						} // System.clipboard check
+									} // copy / set property check
 
-					} // destination id check
+								} // destination control check
+
+							} // System.clipboard check
+
+						} // destination id check
+
+					} // source check
 
 				} // data copies loop
 

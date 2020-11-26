@@ -528,7 +528,7 @@ public class Control {
 					} else if ("clipboard".equals(type)) {
 						// return the promise of data
 						return "navigator.clipboard.readText()";
-						
+
 					} else if ("field".equals(type)) {
 
 						// work out if field is numeric
@@ -573,8 +573,14 @@ public class Control {
 				}
 				// check control
 				if (control == null) {
-					// if still null look for it in page variables (removing any leading id part, like Sesssion.)
-					return " getPageVariableValue('" + idParts[idParts.length-1] + "','" + page.getId() + "')";
+					// if there is a something to get the value from
+					if (idParts[idParts.length-1].length() > 0) {
+						// if still null look for it in page variables (removing any leading id part, like Sesssion.)
+						return " getPageVariableValue('" + idParts[idParts.length-1] + "','" + page.getId() + "')";
+					} else {
+						// return null
+						return " null";
+					}
 				} else {
 					// assume no field
 					String fieldJS = "null";
@@ -662,14 +668,14 @@ public class Control {
 				}
 				// check if there was another
 				if (idParts.length > 1) {
-					
+
 					if ("System".equals(idParts[0])) {
 						if ("clipboard".equals(idParts[1])) return "clipboardWriteValue(data)";
 					} else {
 						// get the runtime property
 						return "setProperty_" + control.getType() + "_" + idParts[1] + "(ev,'" + control.getId() + "'," + fieldJS + detailsJS + ", data, true)";
 					}
-					
+
 				} else {
 					// no other parts return getData call
 					return "setData_" + control.getType() + "(ev,'" + control.getId() + "'," + fieldJS + detailsJS + ", data, true)";
