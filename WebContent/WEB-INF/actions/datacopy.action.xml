@@ -75,7 +75,7 @@ if (this.dataSource == "System.user") this.dataSource = "System.user name";
 // dateTime only available for copyType replace
 // assume no date time
 var hasDatetime = false;
-if (this.copyType == 'replace') hasDatetime = true;
+if (['replace', 'child', 'row', 'append'].includes(this.copyType)) hasDatetime = true;
 var hasClipboard = true;
 return "<option value=''>Please select...</option>" + getInputOptions(this.dataSource, true, hasDatetime, hasClipboard);
 	                ]]>
