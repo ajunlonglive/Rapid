@@ -141,17 +141,14 @@ var _stayOnAppPage;
 
 function newClipboard(storage, key) {
 	var cacheJSON;
-	var cacheData;
 	window.addEventListener("storage", function(storageEvent) {
 		if (storageEvent.key === key) {
 			cacheJSON = storageEvent.newValue;
-			cacheData = undefined;
 		}
 	});
 	return {
 		set: function(data) {
 			cacheJSON = JSON.stringify(data);
-			cacheData = data;
 			storage.setItem(key, cacheJSON);
 		},
 		get: function() {
@@ -159,7 +156,7 @@ function newClipboard(storage, key) {
 			cacheJSON = cacheJSON || storage.getItem(key);
 			if (!cacheJSON) return undefined;
 			try {
-				return cacheData = cacheData || JSON.parse(cacheJSON);
+				return JSON.parse(cacheJSON);
 			} catch (ex) {
 				return undefined;
 			}
