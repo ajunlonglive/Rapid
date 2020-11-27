@@ -169,15 +169,25 @@ public class Datacopy extends Action {
 
 						// get the destination id
 						String destinationId = dataCopy.getDestination();
+						String[] sourceParts = dataCopy.getSource().split("\\.");
 
 						// check we got one
 						if (destinationId.length() > 0) {
+							
+							String getDataFunction = null;
+							
+							// if this is a datetime value, and it has a type
+							if ("Datetime".equals(sourceParts[0]) && sourceParts.length > 1) {
+								// make the js!
+								getDataFunction = makeDateGetter(sourceParts[1]);
 
-							// get the get data function
-							String getDataFunction = Control.getDataJavaScript(rapidServlet.getServletContext(), application, page, dataCopy.getSource(), dataCopy.getSourceField());
-
+							} else {
+								// get the get data function
+								getDataFunction = Control.getDataJavaScript(rapidServlet.getServletContext(), application, page, dataCopy.getSource(), dataCopy.getSourceField());
+							}
+							
 							// add the getData if different from the last one
-							if (!getDataFunction.equals(lastGetDataFunction)) js += "var data =" + getDataFunction + ";\n";
+							if (!getDataFunction.equals(lastGetDataFunction)) js += "var data = " + getDataFunction + ";\n";
 
 							// remember this one
 							lastGetDataFunction = getDataFunction;
@@ -299,27 +309,8 @@ public class Datacopy extends Action {
 
 				// if this is a datetime value, and it has a type
 				if ("Datetime".equals(idParts[0]) && idParts.length > 1) {
-					// get the type from the second part
-					String type = idParts[1];
-					// make format with dateFormat and timeFormat properties
-					String format = "";
-					//generate the date/time at run time
-					if("current date".equals(type)){
-						// get its, format
-						format = getProperty("dateFormat");
-
-					} else if ("current time".equals(type)){
-						// get its, format
-						format = getProperty("timeFormat");
-
-					} else { // if the date and time format is selected
-						// get its, format
-						format = getProperty("dateFormat") + " " + getProperty("timeFormat");
-					}
-
-					String formatter = "current date and time".startsWith(idParts[1]) ? "formatDatetime" : "formatTime";
 					// make the js!
-					js = "var data = " + formatter + "('" + format + "', new Date());\n";
+					js = "var data = " + makeDateGetter(idParts[1]);
 
 				} else {
 
@@ -510,6 +501,28 @@ public class Datacopy extends Action {
 
 		return js;
 
+	}
+	
+	private String makeDateGetter(String type) {
+		// make format with dateFormat and timeFormat properties
+		String format = "";
+		//generate the date/time at run time
+		if("current date".equals(type)){
+			// get its, format
+			format = getProperty("dateFormat");
+
+		} else if ("current time".equals(type)){
+			// get its, format
+			format = getProperty("timeFormat");
+
+		} else { // if the date and time format is selected
+			// get its, format
+			format = getProperty("dateFormat") + " " + getProperty("timeFormat");
+		}
+
+		String formatter = "current date and time".startsWith(type) ? "formatDatetime" : "formatTime";
+		// make the js!
+		return formatter + "('" + format + "', new Date());\n";
 	}
 
 }
