@@ -180,12 +180,12 @@ public class Designer extends RapidHttpServlet {
 			// get the next one
 			String key = keys.next();
 			// if not there already and details or actions
-			if (!sortedKeys.contains(key) && (details || key.endsWith("Actions"))) {
+			if (!sortedKeys.contains(key) && (details || key.endsWith("Actions") || "actions".equals(key))) {
 				// add the key
 				sortedKeys.add(key);
 				try {
 					// if the key ends with actions
-					if (key.endsWith("Actions") && action.getChildActions() != null && action.getChildActions().size() > 0) {
+					if ((key.endsWith("Actions") || "actions".equals(key)) && action.getChildActions() != null && action.getChildActions().size() > 0) {
 						// get the child actions
 						JSONArray jsonChildActions = jsonAction.optJSONArray(key);
 						// if we got some
@@ -203,7 +203,8 @@ public class Designer extends RapidHttpServlet {
 								// if there was one
 								if (childId != null) {
 									// loop them
-									for (Action childAction : action.getChildActions()) {
+									List<Action> as = action.getChildActions();
+									for (Action childAction : as) {
 										// print the child actions
 										if (childId.equals(childAction.getId())) {
 											// add the child action
@@ -220,8 +221,22 @@ public class Designer extends RapidHttpServlet {
 
 						}
 					} else {
+						
+						String str = JSONObject.valueToString(jsonAction.get(key));
+						
+						if (looksLikeJSONObject(str)) {
+							
+							JSONObject jsonObject = jsonAction.getJSONObject(key);
+							str =  printJSONObject(jsonObject, thislevel).replaceAll("\r\n\t*\r\n", "\r\n");
+							
+						} else if (looksLikeJSONArray(str)) {
+							
+							JSONArray jsonArray = jsonAction.getJSONArray(key);
+							str = printJSONArray(jsonArray, thislevel).replaceAll("\r\n\t*\r\n", "\r\n");
+						}
+						
 						// add the value
-						keyValues.put(key, JSONObject.valueToString(jsonAction.get(key)));
+						keyValues.put(key, str);
 					}
 				} catch (JSONException e) {}
 			}
@@ -258,7 +273,62 @@ public class Designer extends RapidHttpServlet {
 
     }
 
-    // print details of events (used by page and controls)
+    private static String printJSONObject(JSONObject jsonObject, int level) throws JSONException {
+		
+    	int thisLevel = level + 2;
+    	String output = "";
+    	Iterator<String> keys = jsonObject.keys();
+		
+    	while (keys.hasNext()) {
+    		String key = keys.next();
+    		output += "\r\n";
+    		for (int i = 0; i < thisLevel; i++) output += "\t";
+    		String value = JSONObject.valueToString(jsonObject.get(key));
+    		
+    		if (looksLikeJSONObject(value)) {
+    			value = printJSONObject(jsonObject.getJSONObject(key), thisLevel);
+    		} else if (looksLikeJSONArray(value)) {
+    			value = printJSONArray(jsonObject.getJSONArray(key), thisLevel);
+    		}
+    		
+    		output += key + "\t" + value;
+    	}
+    	
+    	return output;
+	}
+
+	private static String printJSONArray(JSONArray jsonArray, int level) throws JSONException {
+		
+    	int thisLivel = level + 1;
+    	String output = "";
+		
+    	for (int i = 0; i < jsonArray.length(); i++) {
+    		
+    		String value = JSONObject.valueToString(jsonArray.get(i));
+    		output += "\r\n";
+    		for (int j = 0; j < thisLivel; j++) output += "\t";
+    		
+    		if (looksLikeJSONObject(value)) {
+    			value = printJSONObject(jsonArray.getJSONObject(i), thisLivel);
+    		} else if (looksLikeJSONArray(value)) {
+    			value = printJSONArray(jsonArray.getJSONArray(i), thisLivel);
+    		}
+    		
+    		output += value;
+    	}
+    	
+    	return output;
+	}
+	
+	private static boolean looksLikeJSONObject(String str) {
+		return str.startsWith("{") && str.endsWith("}");
+	}
+	
+	private static boolean looksLikeJSONArray(String str) {
+		return str.startsWith("[") && str.endsWith("]");
+	}
+
+	// print details of events (used by page and controls)
     private void printEvents(List<Event> events, PrintWriter out, boolean details) {
 
     	// check events
