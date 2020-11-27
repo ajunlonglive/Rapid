@@ -283,6 +283,7 @@ public class Designer extends RapidHttpServlet {
     		String key = keys.next();
     		output += "\r\n";
     		for (int i = 0; i < thisLevel; i++) output += "\t";
+    		
     		String value = JSONObject.valueToString(jsonObject.get(key));
     		
     		if (looksLikeJSONObject(value)) {
@@ -299,19 +300,20 @@ public class Designer extends RapidHttpServlet {
 
 	private static String printJSONArray(JSONArray jsonArray, int level) throws JSONException {
 		
-    	int thisLivel = level + 1;
+    	int thisLevel = level + 2;
     	String output = "";
 		
     	for (int i = 0; i < jsonArray.length(); i++) {
+    		output += "\r\n";
     		
     		String value = JSONObject.valueToString(jsonArray.get(i));
-    		output += "\r\n";
-    		for (int j = 0; j < thisLivel; j++) output += "\t";
     		
     		if (looksLikeJSONObject(value)) {
-    			value = printJSONObject(jsonArray.getJSONObject(i), thisLivel);
+    			value = printJSONObject(jsonArray.getJSONObject(i), level);
     		} else if (looksLikeJSONArray(value)) {
-    			value = printJSONArray(jsonArray.getJSONArray(i), thisLivel);
+    			value = printJSONArray(jsonArray.getJSONArray(i), level);
+    		} else {
+        		for (int j = 0; j < thisLevel; j++) output += "\t";
     		}
     		
     		output += value;
