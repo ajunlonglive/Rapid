@@ -235,6 +235,10 @@ public class Database extends Action {
 			if (_errorActions != null) {
 				for (Action action : _errorActions) _childActions.add(action);
 			}
+			// add child error actions
+			if (_childDatabaseActions != null) {
+				for (Action action : _childDatabaseActions) _childActions.add(action);
+			}
 		}
 		return _childActions;
 	}
