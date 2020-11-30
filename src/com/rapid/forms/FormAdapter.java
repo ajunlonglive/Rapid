@@ -1689,8 +1689,8 @@ public abstract class FormAdapter {
 						Control control = application.getControl(rapidRequest.getRapidServlet().getServletContext(), pageControlValue.getId());
 						// if we got one
 						if (control != null) {
-							// add this to our values
-							values.put(control.getName(), pageControlValue.getValue());
+							// add this to our values, if it's not hidden
+							if (!pageControlValue.getHidden()) values.put(control.getName(), pageControlValue.getValue());
 						}
 					}
 
@@ -1700,18 +1700,21 @@ public abstract class FormAdapter {
 					for (String name : controlNames) {
 						// loop the values
 						for (FormControlValue pageControlValue : pageControlValues) {
-							// get the control
-							Control control = application.getControl(rapidRequest.getRapidServlet().getServletContext(), pageControlValue.getId());
-							// if we got one
-							if (control != null) {
-								// check the name
-								if (name.equals(control.getName())) {
-									// add this to our values
-									values.put(name, pageControlValue.getValue());
-									// remove from collection to check
-									pageControlValues.remove(pageControlValue);
-									// we're done with this loop
-									break;
+							// exclude hidden controls
+							if (!pageControlValue.getHidden()) {
+								// get the control
+								Control control = application.getControl(rapidRequest.getRapidServlet().getServletContext(), pageControlValue.getId());
+								// if we got one
+								if (control != null) {
+									// check the name
+									if (name.equals(control.getName())) {
+										// add this to our values
+										values.put(name, pageControlValue.getValue());
+										// remove from collection to check
+										pageControlValues.remove(pageControlValue);
+										// we're done with this loop
+										break;
+									}
 								}
 							}
 						}
