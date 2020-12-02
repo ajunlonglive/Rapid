@@ -92,7 +92,7 @@ return [["dd/mm/yy","dd/mm/yyyy"],["mm/dd/yy","mm/dd/yyyy"],["yy-mm-dd","yyyy-mm
 	        
 	        <property>
 	            <key>readonly</key>
-	            <name>Mouse-only</name>
+	            <name>Mouse only</name>
 	            <setConstructValueFunction>return true;</setConstructValueFunction>
 	            <changeValueJavaScript>checkbox</changeValueJavaScript>
 	            <refreshHtml>true</refreshHtml>
