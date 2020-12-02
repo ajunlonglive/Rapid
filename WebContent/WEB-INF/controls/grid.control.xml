@@ -1921,6 +1921,7 @@ if (gridData && gridData.selectedRowNumber && gridData.selectedRowNumber > 0) {
 			<runtimeProperty>
 				<type>selectedRowNumber</type>
 				<name>Selected row number</name>
+				<advanced>true</advanced>
 				<getPropertyFunction>
 			        <![CDATA[
 // check if the grid is loading			        
