@@ -92,7 +92,7 @@ return [["dd/mm/yy","dd/mm/yyyy"],["mm/dd/yy","mm/dd/yyyy"],["yy-mm-dd","yyyy-mm
 	        
 	        <property>
 	            <key>readonly</key>
-	            <name>Read-only</name>
+	            <name>Mouse-only</name>
 	            <setConstructValueFunction>return true;</setConstructValueFunction>
 	            <changeValueJavaScript>checkbox</changeValueJavaScript>
 	            <refreshHtml>true</refreshHtml>
@@ -139,6 +139,15 @@ return [["dd/mm/yy","dd/mm/yyyy"],["mm/dd/yy","mm/dd/yyyy"],["yy-mm-dd","yyyy-mm
 	            <changeValueJavaScript>dateSelectOtherMonths</changeValueJavaScript>
 	            <helpHtml>Allows you to select dates from the next and previous months.</helpHtml>
 	        </property>
+	        
+	        <property>
+				<key>advancedProperties</key>
+				<name>Advanced properties</name>
+				<setConstructValueFunction>return false;</setConstructValueFunction>
+				<changeValueJavaScript>checkbox</changeValueJavaScript>
+				<refreshHtml>true</refreshHtml>
+				<helpHtml>Whether to show advanced properties to actions.</helpHtml>
+			</property>
 	               
 	    </properties>
 	    
@@ -454,6 +463,7 @@ $( "#" + id ).datepicker("setDate", details.value);
 	    	<runtimeProperty>
 	    		<type>age</type>
 	    		<name>Age</name>
+	    		<advanced>true</advanced>
 	    		<getPropertyFunction>
 	    			        <![CDATA[
 // get the value
