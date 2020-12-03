@@ -2548,6 +2548,8 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 	
 	// find the inputs table
 	var inputsTable = table.find("table.inputs");
+	// control
+	var controlSelect = "<select style='margin:0px'>" + getInputOptions() + "</select>";
 	// loop input parameters
 	for (var i in query.inputs) {		
 		// get the input name
@@ -2561,12 +2563,19 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 		// make it an empty space if null
 		if (!field) field = "";
 		// add the row
-		inputsTable.append("<tr><td style='text-align:center;'>" + (+i + 1) + ".</td><td>" + (query.multiRow && i > 0 ? "&nbsp;" : itemName) + "</td><td><input value='" + escapeApos(field) + "' /></td><td style='width:45px;'>" +
+		inputsTable.append("<tr><td style='text-align:center;'>" + (+i + 1) + ".</td><td>" + (query.multiRow && i > 0 ? "&nbsp;" : controlSelect) + "</td><td><input value='" + escapeApos(field) + "' /></td><td style='width:45px;'>" +
 				   "<div class='iconsPanel'>" +
 				   "<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fas fa-arrow-up fa-stack-1x'></i><i class='fas fa-arrow-down fa-stack-1x'></i></div>" +
 				   "<div class='delete fa-stack fa-sm'><i class='delete fas fa-trash-alt' title='Click to delete'></i></div>" +
 				   "</div></td></tr>");
 		
+		var inputSelect = inputsTable.find("tr").last().find("select").val(query.inputs[i].itemId);
+		addListener( inputSelect.change( {parameters: query.inputs}, function(ev) {
+			// get the input
+			var select = $(ev.target);
+			// update field value
+			ev.data.parameters[select.parent().parent().index()-1].itemId = select.val();
+		}));
 		// get the field input
 		var fieldInput = inputsTable.find("tr").last().find("input");
 		// add a listener
@@ -2649,11 +2658,18 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 		// make it an empty space if null
 		if (!field) field = "";
 		// add the row
-		outputsTable.append("<tr><td><input value='" + escapeApos(field) + "' /></td><td>" + itemName + "</td><td style='width:45px;'>" +
+		outputsTable.append("<tr><td><input value='" + escapeApos(field) + "' /></td><td>" + controlSelect + "</td><td style='width:45px;'>" +
 				"<div class='iconsPanel'>" +
 				"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fas fa-arrow-up fa-stack-1x'></i><i class='fas fa-arrow-down fa-stack-1x'></i></div>" +
 				"<div class='delete fa-stack fa-sm'><i class='delete fas fa-trash-alt' title='Click to delete'></i></div>" +
 				"</div></td></tr>");
+		var outputSelect = outputsTable.find("tr").last().find("select").val(query.outputs[i].itemId);
+		addListener( outputSelect.change( {parameters: query.outputs}, function(ev) {
+			// get the input
+			var select = $(ev.target);
+			// update field value
+			ev.data.parameters[select.parent().parent().index()-1].itemId = select.val();
+		}));
 		// get the field input
 		var fieldOutput = outputsTable.find("tr").last().children().first().children().last();
 		// add a listener
@@ -6867,4 +6883,12 @@ function Property_formTextSummary(cell, propertyObject, property, details) {
 		var summarySetToLabelValue = (propertyObject.label === propertyObject.responsiveLabel || propertyObject.label === propertyObject.text);
 		propertyObject.useLabelAsSummary = summarySetToLabelValue;
 	});
+}
+
+function Property_textNotForm(cell, propertyObject, property, details) {
+	if (!_version.isForm) {
+		Property_text(cell, propertyObject, property, details);
+	} else {
+		cell.closest("tr").remove();
+	}
 }
