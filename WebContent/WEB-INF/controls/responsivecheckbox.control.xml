@@ -98,6 +98,15 @@ return ["false","true"];
 	            <helpHtml>The value of this control when checked. If this box is blank the value when checked will be true.</helpHtml>
 	        </property>
 	        
+	        <property>
+	            <key>valueUnchecked</key>
+	            <name>Unchecked value</name>
+	            <setConstructValueFunction>return "";</setConstructValueFunction>
+	            <changeValueJavaScript>textNotForm</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>The value of this control when not checked. If this box is blank the value when checked will be null.</helpHtml>
+	        </property>
+	        
 	         <property>
 	            <key>extraSmall</key>
 	            <name>Extra small width</name>
@@ -183,13 +192,15 @@ if (this.large) classes += " col-" + this.large;
 
 var value = "true";
 if (this.value) value = this.value;
+var valueUnchecked = "";
+if (this.valueUnchecked) valueUnchecked = this.valueUnchecked;
 
 var html = ""
 html += "<div id='" + this.id + "' class='r-checkbox" + classes + "'>";
 html += "<div class='check-input form-group" + "'>";
 html+= "<label id='" + this.id + "label' for='" + this.id + "checkbox'>";
 html += "<input name='" + this.id + "' type='hidden' value=''></input>"; // the stand-in if unticked
-html += "<input id='" + this.id + "checkbox' name='" + this.id + "' type='checkbox' " + checked + " value='" + value + "'></input><span></span>";
+html += "<input id='" + this.id + "checkbox' name='" + this.id + "' type='checkbox' " + checked + " value='" + value + "' data-valueUnchecked='" + valueUnchecked + "'></input><span></span>";
 html += "<span>" + (this.text ? this.text : "") + "</span>";
 html += "</label></div></div>";
 return html;
@@ -219,15 +230,15 @@ if (ev.validation) {
 		}
 	});
 } else {
-	var attr = input.attr("value");
-	if (attr) {
-		if (input.prop("checked")) value = attr;
+	
+	if (input.prop("checked")) {
+		value = "true";
+		var attr = input.attr("value");
+		if (attr) value = attr;
 	} else {
-		if (input.prop("checked")) {
-			value = "true";
-		} else {
-			value = "false";
-		}
+		value = null;
+		var attr = input.attr("data-valueUnchecked");
+		if (attr) value = attr;
 	}
 }
 return value;
