@@ -77,7 +77,7 @@ if (this.dataSource == "System.user") this.dataSource = "System.user name";
 var hasDatetime = false;
 if (['replace', 'child', 'row', 'append'].includes(this.copyType)) hasDatetime = true;
 var hasClipboard = true;
-return "<option value=''>Please select...</option>" + getInputOptions(this.dataSource, true, hasDatetime, hasClipboard, this.control.id);
+return "<option value=''>Please select...</option>" + getInputOptions(this.dataSource, true, hasDatetime, hasClipboard);
 	                ]]>
 	            </getValuesFunction>
 	            <refreshProperties>true</refreshProperties>

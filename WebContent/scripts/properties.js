@@ -145,61 +145,58 @@ function getSystemValueOptions(selectId, input) {
 }
 
 // this function returns a set of options for a dropdown for inputs or outputs (depending on input true/false), can be controls, control properties (input only), other page controls, page variables (input only), system values (input only)
-function getDataOptions(selectId, ignoreId, input, hasDatetime, hasClipboard, thisControlId) {
+function getDataOptions(selectId, ignoreId, input, hasDatetime, hasClipboard) {
 	var options = "";	
 	var controls = getControls();
 	var gotSelected = false;
 	if (controls) {
-		
-		if (thisControlId) {
-			options += "<optgroup label='This control'>";
-			for (var i in controls) {	
-				// retrieve the control
-				var control = controls[i];
-				// get the control class
-				var controlClass = _controlTypes[control.type];
-				// if we're not ignoring the control and it has a name
-				if (controlClass && control.id === thisControlId) {
-					// if it has a get data function (for input), or a setDataJavaScript
-					if ((input && controlClass.getDataFunction) || (!input && controlClass.setDataJavaScript)) {
-						var name = control.name || controlClass.name;
-						if (control.id == selectId && !gotSelected) {
-							options += "<option value='" + control.id + "' selected='selected'>" + name + "</option>";
-							gotSelected = true;
-						} else {
-							options += "<option value='" + control.id + "' >" + name + "</option>";
-						}				
+		var name = _selectedControl.name || _controlTypes[_selectedControl.type].name;
+		options += "<optgroup label='" + name + "'>";
+		for (var i in controls) {	
+			// retrieve the control
+			var control = controls[i];
+			// get the control class
+			var controlClass = _controlTypes[control.type];
+			// if we're not ignoring the control and it has a name
+			if (controlClass && control.id === _selectedControl.id) {
+				// if it has a get data function (for input), or a setDataJavaScript
+				if ((input && controlClass.getDataFunction) || (!input && controlClass.setDataJavaScript)) {
+					if (control.id == selectId && !gotSelected) {
+						options += "<option value='" + control.id + "' selected='selected'>" + name + "</option>";
+						gotSelected = true;
+					} else {
+						options += "<option value='" + control.id + "' >" + name + "</option>";
 					}				
-					// get any run time properties
-					var properties = controlClass.runtimeProperties;
-					// if there are runtimeProperties in the class
-					if (properties) {
-						// promote if array
-						if ($.isArray(properties.runtimeProperty)) properties = properties.runtimeProperty;
-						// loop them
-						for (var i in properties) {
-							// get the property
-							var property = properties[i];
-							// if we want inputs and there is a get function, or outputs and there is a set javascript
-							if ((input && property.getPropertyFunction) || (!input && property.setPropertyJavaScript)) {
-								// derive the key
-								var key = control.id + "." + property.type;
-								// is this an advanced property and this is off for the control?
-								var propertyTooAdvanced = control.advancedProperties != true && property.advanced == true;
-								// is this property selected?
-								var propertyIsSelected = (key == selectId && !gotSelected) ;
-								// don't show advanced properties unless the control allows or if the advanced property is already selected
-								if (!propertyTooAdvanced || propertyIsSelected) {
-									// add the option
-									options += "<option value='" + key + "' " + (propertyIsSelected ? "selected='selected'" : "") + ">" + control.name + "." + property.name + "</option>";
-								}
-							}	
-						}
+				}				
+				// get any run time properties
+				var properties = controlClass.runtimeProperties;
+				// if there are runtimeProperties in the class
+				if (properties) {
+					// promote if array
+					if ($.isArray(properties.runtimeProperty)) properties = properties.runtimeProperty;
+					// loop them
+					for (var i in properties) {
+						// get the property
+						var property = properties[i];
+						// if we want inputs and there is a get function, or outputs and there is a set javascript
+						if ((input && property.getPropertyFunction) || (!input && property.setPropertyJavaScript)) {
+							// derive the key
+							var key = control.id + "." + property.type;
+							// is this an advanced property and this is off for the control?
+							var propertyTooAdvanced = control.advancedProperties != true && property.advanced == true;
+							// is this property selected?
+							var propertyIsSelected = (key == selectId && !gotSelected) ;
+							// don't show advanced properties unless the control allows or if the advanced property is already selected
+							if (!propertyTooAdvanced || propertyIsSelected) {
+								// add the option
+								options += "<option value='" + key + "' " + (propertyIsSelected ? "selected='selected'" : "") + ">" + control.name + "." + property.name + "</option>";
+							}
+						}	
 					}
-				}												
-			}
-			options += "</optgroup>";
+				}
+			}												
 		}
+		options += "</optgroup>";
 		
 		options += "<optgroup label='Page controls'>";
 		for (var i in controls) {	
@@ -393,13 +390,13 @@ function getFormValueOptions(selectId) {
 
 
 // this function returns a set of options for a dropdown of sessionVariables and controls with a getData method
-function getInputOptions(selectId, ignoreId, hasDatetime, hasClipboard, thisControlId) {
-	return getDataOptions(selectId, ignoreId, true, hasDatetime, hasClipboard, thisControlId);
+function getInputOptions(selectId, ignoreId, hasDatetime, hasClipboard) {
+	return getDataOptions(selectId, ignoreId, true, hasDatetime, hasClipboard);
 }
 
 // this function returns a set of options for a dropdown of sessionVariables and controls with a setData method
-function getOutputOptions(selectId, ignoreId, hasClipboard, thisControlId) {
-	return getDataOptions(selectId, ignoreId, false, false, hasClipboard, thisControlId);
+function getOutputOptions(selectId, ignoreId, hasClipboard) {
+	return getDataOptions(selectId, ignoreId, false, false, hasClipboard);
 }
 
 // this function returns a set of options for use in page visibility logic
@@ -2600,7 +2597,7 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 	// find the inputs table
 	var inputsTable = table.find("table.inputs");
 	// control
-	var controlSelect = "<select style='margin:0px'>" + getInputOptions(null, null, null, null, propertyObject.control.id) + "</select>";
+	var controlSelect = "<select style='margin:0px'>" + getInputOptions(null, null, null, null) + "</select>";
 	// loop input parameters
 	for (var i in query.inputs) {		
 		// get the input name
@@ -2672,7 +2669,7 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 		}));
 	} else {
 		// add the add input select
-		inputsTable.append("<tr><td style='padding:0px;' colspan='3'><select style='margin:0px'><option value=''>add input...</option>" + getInputOptions(null, null, null, null, propertyObject.control.id) + "</select></td><td></td></tr>");
+		inputsTable.append("<tr><td style='padding:0px;' colspan='3'><select style='margin:0px'><option value=''>add input...</option>" + getInputOptions(null, null, null, null) + "</select></td><td></td></tr>");
 		// find the input add
 		var inputAdd = inputsTable.find("tr").last().children().first().children("select");
 		// listener to add input
@@ -2750,7 +2747,7 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 		Property_databaseQuery(cell, propertyObject, property, details); 
 	}));
 	// add the add
-	outputsTable.append("<tr><td style='padding:0px;' colspan='2'><select class='addOutput' style='margin:0px'><option value=''>add output...</option>" + getOutputOptions(null, null, null, propertyObject.control.id) + "</select></td><td></td></tr>");
+	outputsTable.append("<tr><td style='padding:0px;' colspan='2'><select class='addOutput' style='margin:0px'><option value=''>add output...</option>" + getOutputOptions(null, null, null) + "</select></td><td></td></tr>");
 	// find the output add
 	var outputAdd = outputsTable.find("select.addOutput");
 	// listener to add output
@@ -4771,7 +4768,7 @@ function Property_datacopyDestinations(cell, propertyObject, property, details) 
 		}));
 		
 		// add the add
-		table.append("<tr><td colspan='3' style='padding:0px;'><select style='margin:0px'><option value=''>Add destination...</option>" + getOutputOptions(null, null, true, propertyObject.control.id) + "</select></td></tr>");
+		table.append("<tr><td colspan='3' style='padding:0px;'><select style='margin:0px'><option value=''>Add destination...</option>" + getOutputOptions(null, null, true) + "</select></td></tr>");
 		// find the add
 		var destinationAdd = table.find("tr").last().children().last().children().last();
 		// listener to add output

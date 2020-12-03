@@ -441,8 +441,7 @@ function showActions(control, eventType) {
 						// inc the count
 						actionsCount ++;
 						// get the action
-						var action = actions[j];											
-						action.control = { id: control.id, name: control.name, type: control.type };
+						var action = actions[j];
 						// show the action
 						showAction(actionsTable, action, actions);
 						
