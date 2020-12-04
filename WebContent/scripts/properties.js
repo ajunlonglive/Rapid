@@ -149,8 +149,8 @@ function getDataOptions(selectId, ignoreId, input, hasDatetime, hasClipboard) {
 	var options = "";	
 	var controls = getControls();
 	var gotSelected = false;
-	if (controls) {
-		var name = _selectedControl.name || _controlTypes[_selectedControl.type].name;
+		var name = _selectedControl.name;
+	if (controls && name) {
 		options += "<optgroup label='" + name + "'>";
 		for (var i in controls) {	
 			// retrieve the control
@@ -158,7 +158,7 @@ function getDataOptions(selectId, ignoreId, input, hasDatetime, hasClipboard) {
 			// get the control class
 			var controlClass = _controlTypes[control.type];
 			// if we're not ignoring the control and it has a name
-			if (controlClass && control.id === _selectedControl.id) {
+			if (controlClass && control.id === _selectedControl.id && name) {
 				// if it has a get data function (for input), or a setDataJavaScript
 				if ((input && controlClass.getDataFunction) || (!input && controlClass.setDataJavaScript)) {
 					if (control.id == selectId && !gotSelected) {
