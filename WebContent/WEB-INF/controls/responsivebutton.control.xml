@@ -193,14 +193,14 @@ return [{value:"-lg", text:"Large"}, {value:"", text:"Default"}, {value:"-sm", t
 	            <refreshHtml>true</refreshHtml>
 	            <helpHtml>Sets the size of the button, different to the default.</helpHtml>
 	        </property>
-	        
+
 	        <property>
-	            <key>block</key>
-	            <name>Display as block</name>
+	            <key>container</key>
+	            <name>Use container</name>
 	            <setConstructValueFunction>return false;</setConstructValueFunction>
 	            <changeValueJavaScript>checkbox</changeValueJavaScript>
 	            <refreshHtml>true</refreshHtml>
-	            <helpHtml>Sets whether the button spans the length of the page or parent control.</helpHtml>
+	            <helpHtml>Whether the button is within a responsive container for consistency with other responsive controls.</helpHtml>
 	        </property>
 	        
 	    </properties>
@@ -313,7 +313,7 @@ div.r-button button.btn {
 	            </contents>
 	        </resource>
 	    </resources>
-	    	    	    
+
 	    <getHtmlFunction>
 	        <![CDATA[
 var html = "";
@@ -329,6 +329,14 @@ if (this.option) classes += " btn" + this.option;
 if (this.size) classes += " btn" + this.size;
 if (this.block) classes += " btn-block";
 
+// derive where we might specify the button id, otherwise it will be on the container
+var buttonId = "";
+if (this.container) {
+	buttonId = "class='btn'";
+} else {
+	buttonId = "id='" + this.id + "' class='r-button button btn" + classes + "'";
+}
+
 if (this.glyphCode) {
 	
 	var glyph = newGlyph(this.glyphCode);
@@ -338,8 +346,8 @@ if (this.glyphCode) {
 	if (this.glyphBackground && this.glyphBackground != "none") {
 		glyphHtml = "<span class='fa-stack fa-lg buttonGlyphWithBackground buttonGlyph'><i class='fa fa-" + this.glyphBackground + " fa-stack-2x buttonGlyphBackground'></i><i class='" + glyph.class + " fa-stack-1x'>" + glyph.html + "</i></span>";
 	}
-	
-	var html = "<button type='button' class='btn'" + (this.title ? " title='" + escapeApos(this.title) + "'" : "") + ">";
+
+	var html = "<button " + buttonId + " type='button'" + (this.title ? " title='" + escapeApos(this.title) + "'" : "") + ">";
 	if (this.glyphPosition == "left" || this.glyphPosition == "top") html += glyphHtml;
 	if (this.glyphPosition == "left") html += "&nbsp;";
 	if (this.glyphPosition == "top") html += "<br/>";
@@ -349,11 +357,26 @@ if (this.glyphCode) {
 	if (this.glyphPosition == "right" || this.glyphPosition == "bottom") html += glyphHtml;
 	html += "</button>";
 } else {
-	html = "<button type='button' class='btn'" + (this.title ? " title='" + escapeApos(this.title) + "' " : "") + ">" + this.label + "</button>";
+	html = "<button " + buttonId + " type='button'" + (this.title ? " title='" + escapeApos(this.title) + "' " : "") + ">" + this.label + "</button>";
 }
-return "<div id='" + this.id + "' class='r-button" + classes + "'>" + html + "</div>";
+
+if (this.container) html = "<div id='" + this.id + "' class='r-button" + classes + "'>" + html + "</div>";
+
+return html;
 	        ]]>
 	    </getHtmlFunction>
+	    
+	    <initDesignJavaScript>
+	    	<![CDATA[
+// backwards compatibility update for styles
+if (this.styles) {
+	for (var i = 0; i < this.styles.length; i++) {
+		if (this.styles[i].appliesTo == "#" + this.id + ":hover") this.styles[i].appliesTo = "#" + this.id + " button:hover, #" + this.id + "[type=button]:hover";
+		if (this.styles[i].appliesTo == "#" + this.id + ":focus") this.styles[i].appliesTo = "#" + this.id + " button:focus, #" + this.id + "[type=button]:focus";
+	}
+}
+			]]>
+	    </initDesignJavaScript>
 	    
 	    <events>
 	        <event>
@@ -398,8 +421,8 @@ return "#" + this.id + " .buttonGlyphBackground";
 	        <style>
 	            <name>:hover</name>
 	            <getAppliesToFunction>
-					<![CDATA[	      
-return "#" + this.id + " button:hover";
+					<![CDATA[
+return "#" + this.id + " button:hover, #" + this.id + "[type=button]:hover";
 	       			 ]]>	                
 	            </getAppliesToFunction>
 	        </style>
@@ -407,11 +430,11 @@ return "#" + this.id + " button:hover";
 	            <name>:focus</name>
 	            <getAppliesToFunction>
 					<![CDATA[
-return "#" + this.id + " button:focus";
+return "#" + this.id + " button:focus, #" + this.id + "[type=button]:focus";
 	       			 ]]>
 	            </getAppliesToFunction>
 	        </style>	        
 	    </styles>
-	    
+
 	</control>
 </controls>
