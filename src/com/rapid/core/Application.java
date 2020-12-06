@@ -528,7 +528,7 @@ public class Application {
 	// instance variables
 	private int _xmlVersion, _status, _applicationBackupsMaxSize, _pageBackupsMaxSize;
 	private String _id, _version, _name, _title, _description, _startPageId, _formAdapterType, _formEmailFrom, _formEmailTo, _formEmailAttachmentType, _formEmailCustomerControlId, _formEmailCustomerSubject, _formEmailCustomerType, _formEmailCustomerBody, _formEmailCustomerAttachmentType, _formFileType, _formFilePath, _formFileUserName, _formFilePassword, _formWebserviceURL, _formWebserviceType, _formWebserviceSOAPAction, _themeType, _styles, _statusBarColour, _statusBarHighlightColour, _statusBarTextColour, _statusBarIconColour, _securityAdapterType, _storePasswordDuration, _functions, _createdBy, _modifiedBy, _resourcesJSON;
-	private boolean _isForm, _pageNameIds, _showConrolIds, _showActionIds, _isHidden, _deviceSecurity, _formShowSummary, _formDisableAutoComplete, _formEmail, _formEmailCustomer, _formFile, _formWebservice;
+	private boolean _isForm, _isMobile, _pageNameIds, _showConrolIds, _showActionIds, _isHidden, _deviceSecurity, _formShowSummary, _formDisableAutoComplete, _formEmail, _formEmailCustomer, _formFile, _formWebservice;
 	private Date _createdDate, _modifiedDate;
 	private Map<String,Integer> _pageOrders;
 	private SecurityAdapter _securityAdapter;
@@ -596,6 +596,9 @@ public class Application {
 	// whether form settings checkbox has been ticked or not - implies app has form support
 	public boolean getIsForm() { return _isForm; }
 	public void setIsForm(boolean isForm) { _isForm = isForm; }
+
+	// readonly property
+	public boolean getIsMobile() { return _isMobile; }
 
 	// whether control ids should be shown when designing this app
 	public boolean getShowControlIds() { return _showConrolIds; }
@@ -2110,6 +2113,20 @@ public class Application {
 		// empty the resources JSON so it's regenerated
 		_resourcesJSON = null;
 
+		// if we have action types
+		if (_actionTypes != null) {
+			// loop app actions
+			for (String actionType : _actionTypes) {
+				// if it's mobile
+				if ("mobile".equals(actionType)) {
+					// set has mobile action
+					_isMobile = true;
+					// we're done
+					break;
+				}
+			}
+		}
+
 		// debug log that we initialised
 		_logger.debug("Initialised application " + _name + "/" + _version + (createResources ? "" : " (no resources)"));
 
@@ -2796,22 +2813,8 @@ public class Application {
 			// start a JSON array
 			JSONArray jsonResources = new JSONArray();
 
-			// assume no mobile action
-			boolean hasMobileAction = false;
-
-			// loop app actions
-			for (String actionType : getActionTypes()) {
-				// if it's mobile
-				if ("mobile".equals(actionType)) {
-					// set has mobile action
-					hasMobileAction = true;
-					// we're done
-					break;
-				}
-			}
-
 			// only if we have the mobile action as this is how offline support is provided
-			if (hasMobileAction) {
+			if (_isMobile) {
 
 				// add app id
 				jsonResponse.put("id", getId());

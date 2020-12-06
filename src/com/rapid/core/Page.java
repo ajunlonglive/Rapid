@@ -2494,7 +2494,7 @@ public class Page {
 		"    <link rel=\"icon\" href=\"favicon.ico\"></link>\n" +
 		"    <meta description=\"Created using Rapid - www.rapid-is.co.uk\"/>\n" +
 		"    <meta charset=\"utf-8\"/>\n" +
-		(application != null && application.getIsForm() ? "    <meta name=\"viewport\" content=\"width=device-width\" />\n" : "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no\" />\n") +
+		(application != null && application.getIsMobile() ? "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no\" />\n" : "    <meta name=\"viewport\" content=\"width=device-width\" />\n") +
 		(application != null ? "    <meta name=\"theme-color\" content=\"" + application.getStatusBarColour() + "\" />\n" : "" );
     }
 
