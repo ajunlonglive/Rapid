@@ -149,63 +149,16 @@ function getDataOptions(selectId, ignoreId, input, hasDatetime, hasClipboard) {
 	var options = "";	
 	var controls = getControls();
 	var gotSelected = false;
-		var name = _selectedControl.name;
-	if (controls && name) {
-		options += "<optgroup label='" + name + "'>";
+	
+	function getPageControlOptionsFilteredBy(predicate) {
+		var options = "";
 		for (var i in controls) {	
 			// retrieve the control
 			var control = controls[i];
 			// get the control class
 			var controlClass = _controlTypes[control.type];
 			// if we're not ignoring the control and it has a name
-			if (controlClass && control.id === _selectedControl.id && name) {
-				// if it has a get data function (for input), or a setDataJavaScript
-				if ((input && controlClass.getDataFunction) || (!input && controlClass.setDataJavaScript)) {
-					if (control.id == selectId && !gotSelected) {
-						options += "<option value='" + control.id + "' selected='selected'>" + name + "</option>";
-						gotSelected = true;
-					} else {
-						options += "<option value='" + control.id + "' >" + name + "</option>";
-					}				
-				}				
-				// get any run time properties
-				var properties = controlClass.runtimeProperties;
-				// if there are runtimeProperties in the class
-				if (properties) {
-					// promote if array
-					if ($.isArray(properties.runtimeProperty)) properties = properties.runtimeProperty;
-					// loop them
-					for (var i in properties) {
-						// get the property
-						var property = properties[i];
-						// if we want inputs and there is a get function, or outputs and there is a set javascript
-						if ((input && property.getPropertyFunction) || (!input && property.setPropertyJavaScript)) {
-							// derive the key
-							var key = control.id + "." + property.type;
-							// is this an advanced property and this is off for the control?
-							var propertyTooAdvanced = control.advancedProperties != true && property.advanced == true;
-							// is this property selected?
-							var propertyIsSelected = (key == selectId && !gotSelected) ;
-							// don't show advanced properties unless the control allows or if the advanced property is already selected
-							if (!propertyTooAdvanced || propertyIsSelected) {
-								// add the option
-								options += "<option value='" + key + "' " + (propertyIsSelected ? "selected='selected'" : "") + ">" + control.name + "." + property.name + "</option>";
-							}
-						}	
-					}
-				}
-			}												
-		}
-		options += "</optgroup>";
-		
-		options += "<optgroup label='Page controls'>";
-		for (var i in controls) {	
-			// retrieve the control
-			var control = controls[i];
-			// get the control class
-			var controlClass = _controlTypes[control.type];
-			// if we're not ignoring the control and it has a name
-			if (controlClass && control.id != ignoreId && control.name) {
+			if (controlClass && predicate(control.id) && control.name) {
 				// if it has a get data function (for input), or a setDataJavaScript
 				if ((input && controlClass.getDataFunction) || (!input && controlClass.setDataJavaScript)) {
 					if (control.id == selectId && !gotSelected) {
@@ -241,8 +194,20 @@ function getDataOptions(selectId, ignoreId, input, hasDatetime, hasClipboard) {
 						}	
 					}
 				}
-			}												
+			}
 		}
+		return options;
+	}
+	
+	if (controls) {
+		if (_selectedControl.type !== "page") {
+			options += "<optgroup label='" + _selectedControl.name + "'>";
+			options += getPageControlOptionsFilteredBy(function(controlId) { return controlId === _selectedControl.id; });
+			options += "</optgroup>";
+		}
+		
+		options += "<optgroup label='Page controls'>";
+		options += getPageControlOptionsFilteredBy(function(controlId) { return controlId != ignoreId; });
 		options += "</optgroup>";
 	}
 	
