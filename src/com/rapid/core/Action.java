@@ -150,7 +150,7 @@ public abstract class Action {
 			errorSourceMessage += ("\\n\\n" + getProperty("comments"));
 		}
 
-		return errorSourceMessage;
+		return errorSourceMessage.replace("'", "\'");
 	}
 
 	@Override
