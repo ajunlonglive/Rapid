@@ -629,10 +629,10 @@ headerHtml += "</tr>";
 // check for scrolling
 if (this.scrollH || this.scrollV) {
 	// return a container div with the table inside
-	return "<div id='" + this.id + "' style='display:inline-block;" + (this.scrollH ? "overflow-x:" + this.scrollH + ";max-width:" + this.scrollWidth + ";" : "") + (this.scrollV && !this.fixedHeader ? "overflow-y:" + this.scrollV + ";max-height:" + this.scrollHeight + ";" : "") + "' class='gridScroll" + getStyleClasses(this) + "'><table class='grid' style='margin:0;'>" + headerHtml + rowHtml.replace("<tr>","<tr class='rowStyle1'>") + rowHtml.replace("<tr>","<tr class='rowStyle2'>") + "</table></div>";
+	return "<div id='" + this.id + "' style='display:inline-block;" + (this.scrollH ? "overflow-x:" + this.scrollH + ";max-width:" + this.scrollWidth + ";" : "") + (this.scrollV && !this.fixedHeader ? "overflow-y:" + this.scrollV + ";max-height:" + this.scrollHeight + ";" : "") + "' class='gridScroll" + getStyleClasses(this) + "'><table class='grid" + (this.multiSelect ? " multiSelect" : "") + "' style='margin:0;'>" + headerHtml + rowHtml.replace("<tr>","<tr class='rowStyle1'>") + rowHtml.replace("<tr>","<tr class='rowStyle2'>") + "</table></div>";
 } else {
 	// return a simple table
-	return "<table id='" + this.id + "' class='grid" + getStyleClasses(this) + "'>" + headerHtml + rowHtml.replace("<tr>","<tr class='rowStyle1'>") + rowHtml.replace("<tr>","<tr class='rowStyle2'>") + "</table>";
+	return "<table id='" + this.id + "' class='grid" + (this.multiSelect ? " multiSelect" : "") + getStyleClasses(this) + "'>" + headerHtml + rowHtml.replace("<tr>","<tr class='rowStyle1'>") + rowHtml.replace("<tr>","<tr class='rowStyle2'>") + "</table>";
 }
 	        ]]>
 	    </getHtmlFunction>
