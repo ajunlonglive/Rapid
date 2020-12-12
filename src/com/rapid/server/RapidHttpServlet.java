@@ -61,6 +61,7 @@ import org.json.JSONObject;
 
 import com.rapid.core.Applications;
 import com.rapid.core.Device.Devices;
+import com.rapid.core.Process;
 import com.rapid.core.Theme;
 import com.rapid.core.Workflows;
 import com.rapid.server.filter.RapidAuthenticationAdapter;
@@ -80,6 +81,7 @@ public class RapidHttpServlet extends HttpServlet {
 	private static EncryptionProvider _encryptionProvider;
 
 	// private instance variables
+
 	private List<String> _uploadMimeTypes;
 	private Map<String, List<byte[]>> _uploadMimeTypeBytes;
 
@@ -212,13 +214,17 @@ public class RapidHttpServlet extends HttpServlet {
 		return (List<Theme>) getServletContext().getAttribute("themes");
 	}
 
+	public List<Process> getProcesses() {
+		return (List<Process>) getServletContext().getAttribute("processes");
+	}
+
 	public String getSecureInitParameter(String name) {
 		String value = getInitParameter(name);
 		try {
-			if(value!=null && _encryptionProvider!=null)
+			if (value!=null && _encryptionProvider!=null)
 				return _encryptionProvider.decrypt(value);
 		} catch (GeneralSecurityException | IOException e) {
-			_logger.debug("Did not decrypt parameter value: "+value);
+			_logger.debug("Did not decrypt parameter value: " + value);
 		}
 		return value;
 	}
@@ -435,7 +441,6 @@ public class RapidHttpServlet extends HttpServlet {
 	}
 
 	// public static methods
-
 
 	// encrypt a value with the encryption adapter, if there is one
 	public static String encryptValue(String value) throws GeneralSecurityException, IOException {

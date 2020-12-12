@@ -22,10 +22,17 @@ public abstract class Process extends Thread {
 	protected String _name;
 	protected int _interval;
 	protected JSONObject _config;
-	protected boolean _stopped;
+	protected boolean _visible, _stopped;
 
 	// protected static variables
 	protected Logger _logger;
+
+	// properties
+	public ServletContext getServletContext() { return _servletContext; }
+	public JSONObject getConfig() { return _config; }
+	public String getProcessName() { return _name; }
+	public int getInterval() { return _interval; }
+	public boolean isVisible() { return _visible; }
 
 	// constructor
 	public Process(ServletContext servletContext, JSONObject config) throws JSONException {
@@ -35,6 +42,8 @@ public abstract class Process extends Thread {
 		_config = config;
 		// get the name from the config
 		_name = config.getString("name");
+		// get whether visible, default is true
+		_visible = config.optBoolean("visible", true);
 		// get the interval from  the config
 		_interval = config.getInt("interval");
 
@@ -47,18 +56,6 @@ public abstract class Process extends Thread {
 
 	// protected methods
 
-	protected ServletContext getServletContext() {
-		return _servletContext;
-	}
-
-	protected String getProcessName() {
-		return _name;
-	}
-
-	protected int getInterval() {
-		return _interval;
-	}
-	
 	// get a named parameter value from the parameters collection in the .process.xml file
 	public String getParameterValue(String name) {
 		String value = null;
@@ -98,6 +95,7 @@ public abstract class Process extends Thread {
 
 		// loop until stopped
 		while (!_stopped) {
+
 			Date now = new Date();
 			DateFormat dateFormat = null;
 			boolean runToday = false;

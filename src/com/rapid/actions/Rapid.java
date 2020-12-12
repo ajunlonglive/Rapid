@@ -66,6 +66,7 @@ import com.rapid.core.Device.Devices;
 import com.rapid.core.Email;
 import com.rapid.core.Page;
 import com.rapid.core.Pages.PageHeader;
+import com.rapid.core.Process;
 import com.rapid.core.Theme;
 import com.rapid.core.Workflow;
 import com.rapid.core.Workflows;
@@ -835,7 +836,22 @@ public class Rapid extends Action {
 					// add the email settings
 					result.put("email", jsonEmail);
 
-					// add the version
+					// create a json object for our processes
+					JSONArray jsonProcesses = new JSONArray();
+					// get the processes
+					List<Process> processes = rapidServlet.getProcesses();
+					// if not null
+					if (processes != null) {
+						// loop them
+						for (Process process : processes) {
+							// if visible, add to our collection
+							if (process.isVisible()) jsonProcesses.put(process);
+						}
+					}
+					// add the email settings
+					result.put("processes", jsonProcesses);
+
+					// add the Rapid version
 					result.put("version", com.rapid.server.Rapid.VERSION);
 
 				} // rapid admin check
@@ -1597,8 +1613,10 @@ public class Rapid extends Action {
 
 					} else if ("RELOADPROCESSES".equals(action)) {
 
+						// assume no processes
 						int processes = 0;
 
+						// (re)load the processes, this interrupts/stops all of the current process objects and then makes new ones
 						processes = RapidServletContextListener.loadProcesses(servletContext);
 
 						// load processes and set the result message
@@ -1840,6 +1858,25 @@ public class Rapid extends Action {
 
 				        // save it
 				        email.save(servletContext);
+
+					} else if ("NEWPROCESS".equals(action)) {
+
+						// get our list of processes
+						List<Process> processes = rapidServlet.getProcesses();
+
+						// make our new process! ... (including un-packing the jsonAction JSON we got in, using the new process name to make a safe file name for WEB-INF/processes)
+						// this will come from a new dialogue page called 20_ProcessNew - it should just ask for the new name, save below will be used to set all of the details
+
+						// update the centrally held processes (not sure this is necessary, probably just object reference being set to itself)
+						servletContext.setAttribute("procsses", processes);
+
+					} else if ("DELPROCESS".equals(action)) {
+
+						// similar to above, but find and remove by name property
+
+					} else if ("SAVEPROCESS".equals(action)) {
+
+						// similar to new, but will have all process details, but find old object, call its interrupt(), and replace a new one into collection by name/property index.
 
 					} // action type check
 

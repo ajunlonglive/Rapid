@@ -1154,7 +1154,7 @@ public class RapidServletContextListener implements ServletContextListener {
 		if (processes != null) {
 			// log
 			_logger.info("Stopping processes");
-			// loop the application ids
+			// loop the processes
 			for (Process process : processes) {
 				// interrupt the process (which will stop it)
 				process.interrupt();
@@ -1200,6 +1200,9 @@ public class RapidServletContextListener implements ServletContextListener {
 
 			// convert the xml into JSON
 			JSONObject jsonProcess = org.json.XML.toJSONObject(xml).getJSONObject("process");
+
+			// add the filename to the json so we can save/overwrite later
+			jsonProcess.put("filename", xmlFile.getName());
 
 			// get the name from the json
 			String name = jsonProcess.getString("name");
