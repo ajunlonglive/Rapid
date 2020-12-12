@@ -1202,7 +1202,7 @@ public class RapidServletContextListener implements ServletContextListener {
 			JSONObject jsonProcess = org.json.XML.toJSONObject(xml).getJSONObject("process");
 
 			// add the filename to the json so we can save/overwrite later
-			jsonProcess.put("filename", xmlFile.getName());
+			jsonProcess.put("fileName", xmlFile.getName());
 
 			// get the name from the json
 			String name = jsonProcess.getString("name");

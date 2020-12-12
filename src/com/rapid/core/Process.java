@@ -19,7 +19,7 @@ public abstract class Process extends Thread {
 
 	// protected instance variables
 	protected ServletContext _servletContext;
-	protected String _name;
+	protected String _name, _fileName;
 	protected int _interval;
 	protected JSONObject _config;
 	protected boolean _visible, _stopped;
@@ -31,6 +31,7 @@ public abstract class Process extends Thread {
 	public ServletContext getServletContext() { return _servletContext; }
 	public JSONObject getConfig() { return _config; }
 	public String getProcessName() { return _name; }
+	public String getFileName() { return _fileName; }
 	public int getInterval() { return _interval; }
 	public boolean isVisible() { return _visible; }
 
@@ -42,6 +43,8 @@ public abstract class Process extends Thread {
 		_config = config;
 		// get the name from the config
 		_name = config.getString("name");
+		// get the name from the config
+		_fileName = config.getString("fileName");
 		// get whether visible, default is true
 		_visible = config.optBoolean("visible", true);
 		// get the interval from  the config
@@ -56,11 +59,21 @@ public abstract class Process extends Thread {
 
 	// protected methods
 
+	// get the days from the parameters
+	public JSONObject getDays() {
+		return _config.optJSONObject("days");
+	}
+
+	// get all parameters (after controlling for the xml to json conversion)
+	public JSONArray getParameters() throws JSONException {
+		return JSON.getJSONArray(_config.optJSONObject("parameters"), "parameter");
+	}
+
 	// get a named parameter value from the parameters collection in the .process.xml file
 	public String getParameterValue(String name) {
 		String value = null;
 		try {
-			JSONArray jsonParameters = JSON.getJSONArray(_config.optJSONObject("parameters"), "parameter");
+			JSONArray jsonParameters = getParameters();
 			if (jsonParameters != null) {
 				for (int i=0; i < jsonParameters.length(); i++) {
 					JSONObject jsonParameter = jsonParameters.getJSONObject(i);

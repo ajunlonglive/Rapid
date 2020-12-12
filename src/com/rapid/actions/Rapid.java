@@ -844,8 +844,21 @@ public class Rapid extends Action {
 					if (processes != null) {
 						// loop them
 						for (Process process : processes) {
-							// if visible, add to our collection
-							if (process.isVisible()) jsonProcesses.put(process);
+							// if visible
+							if (process.isVisible()) {
+								// make a json object for this process from it's config
+								JSONObject jsonProcess = new JSONObject();
+								// add the properties we need
+								jsonProcess.put("name", process.getProcessName());
+								jsonProcess.put("class", process.getClass());
+								jsonProcess.put("visible", process.isVisible());
+								jsonProcess.put("interval", process.getInterval());
+								jsonProcess.put("days", process.getDays());
+								jsonProcess.put("parameters", process.getParameters());
+								jsonProcess.put("fileName", process.getFileName());
+								// add the json process object to our collection
+								jsonProcesses.put(jsonProcess);
+							}
 						}
 					}
 					// add the email settings
@@ -1877,6 +1890,10 @@ public class Rapid extends Action {
 					} else if ("SAVEPROCESS".equals(action)) {
 
 						// similar to new, but will have all process details, but find old object, call its interrupt(), and replace a new one into collection by name/property index.
+						// will have to (re)create the xml file manually (make a temp one first and then copy over/delete)
+						// use com.rapid.utils.XML and created methods like addChildElement(Node node, String elementName, value) and addAtribute(Node node, String attributeName, String value)
+						// add the namespace and schema attribues so the xml files you save are exactly like the existing ones! (particually that they validate against the schema)
+						// processes and their info are added to the UI in the GETAPPS action type
 
 					} // action type check
 
