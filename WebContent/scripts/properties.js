@@ -144,21 +144,20 @@ function getSystemValueOptions(selectId, input) {
 	return options;
 }
 
-// this function returns a set of options for a dropdown for inputs or outputs (depending on input true/false), can be controls, control properties (input only), other page controls, page variables (input only), system values (input only)
+//this function returns a set of options for a dropdown for inputs or outputs (depending on input true/false), can be controls, control properties (input only), other page controls, page variables (input only), system values (input only)
 function getDataOptions(selectId, ignoreId, input, hasDatetime, hasClipboard) {
 	var options = "";	
 	var controls = getControls();
 	var gotSelected = false;
-	
-	function getPageControlOptionsFilteredBy(predicate) {
-		var options = "";
+	if (controls) {
+		options += "<optgroup label='Page controls'>";
 		for (var i in controls) {	
 			// retrieve the control
 			var control = controls[i];
 			// get the control class
 			var controlClass = _controlTypes[control.type];
 			// if we're not ignoring the control and it has a name
-			if (controlClass && predicate(control.id) && control.name) {
+			if (controlClass && control.id != ignoreId && control.name) {
 				// if it has a get data function (for input), or a setDataJavaScript
 				if ((input && controlClass.getDataFunction) || (!input && controlClass.setDataJavaScript)) {
 					if (control.id == selectId && !gotSelected) {
@@ -166,7 +165,13 @@ function getDataOptions(selectId, ignoreId, input, hasDatetime, hasClipboard) {
 						gotSelected = true;
 					} else {
 						options += "<option value='" + control.id + "' >" + control.name + "</option>";
-					}				
+					}
+					if (control.id == _selectedControl.id && _selectedControl.name && _selectedControl.type !== "page") {	
+						var selectedOption = "<optgroup label='Selected control'>";
+						selectedOption += "<option value='" + control.id + "'>" + control.name + "</option>";
+						selectedOption += "</optgroup>";
+						options = selectedOption + options;
+					}
 				}				
 				// get any run time properties
 				var properties = controlClass.runtimeProperties;
@@ -191,23 +196,11 @@ function getDataOptions(selectId, ignoreId, input, hasDatetime, hasClipboard) {
 								// add the option
 								options += "<option value='" + key + "' " + (propertyIsSelected ? "selected='selected'" : "") + ">" + control.name + "." + property.name + "</option>";
 							}
-						}	
+						}
 					}
-				}
-			}
-		}
-		return options;
-	}
-	
-	if (controls) {
-		if (_selectedControl.type !== "page") {
-			options += "<optgroup label='" + _selectedControl.name + "'>";
-			options += getPageControlOptionsFilteredBy(function(controlId) { return controlId === _selectedControl.id; });
-			options += "</optgroup>";
-		}
-		
-		options += "<optgroup label='Page controls'>";
-		options += getPageControlOptionsFilteredBy(function(controlId) { return controlId != ignoreId; });
+				} // properties check				
+			} // controls loop				
+		} // controls check
 		options += "</optgroup>";
 	}
 	
@@ -2561,8 +2554,8 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 	
 	// find the inputs table
 	var inputsTable = table.find("table.inputs");
-	// control
-	var controlSelect = "<select style='margin:0px'>" + getInputOptions(null, null, null, null) + "</select>";
+	// make the inputs select
+	var inputsSelect = "<select style='margin:0px'>" + getInputOptions(null, null, null, null) + "</select>";
 	// loop input parameters
 	for (var i in query.inputs) {		
 		// get the input name
@@ -2576,7 +2569,7 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 		// make it an empty space if null
 		if (!field) field = "";
 		// add the row
-		inputsTable.append("<tr><td style='text-align:center;'>" + (+i + 1) + ".</td><td>" + (query.multiRow && i > 0 ? "&nbsp;" : controlSelect) + "</td><td><input value='" + escapeApos(field) + "' /></td><td style='width:45px;'>" +
+		inputsTable.append("<tr><td style='text-align:center;'>" + (+i + 1) + ".</td><td>" + (query.multiRow && i > 0 ? "&nbsp;" : inputsSelect) + "</td><td><input value='" + escapeApos(field) + "' /></td><td style='width:45px;'>" +
 				   "<div class='iconsPanel'>" +
 				   "<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fas fa-arrow-up fa-stack-1x'></i><i class='fas fa-arrow-down fa-stack-1x'></i></div>" +
 				   "<div class='delete fa-stack fa-sm'><i class='delete fas fa-trash-alt' title='Click to delete'></i></div>" +
@@ -2658,6 +2651,8 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 	
 	// find the outputs table
 	var outputsTable = table.find("table.outputs");
+	// make the outputs select
+	var outputsSelect = "<select style='margin:0px'>" + getOutputOptions(null, null, null, null) + "</select>";
 	// loop output parameters
 	for (var i in query.outputs) {
 		// get the output id
@@ -2671,7 +2666,7 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 		// make it an empty space if null
 		if (!field) field = "";
 		// add the row
-		outputsTable.append("<tr><td><input value='" + escapeApos(field) + "' /></td><td>" + controlSelect + "</td><td style='width:45px;'>" +
+		outputsTable.append("<tr><td><input value='" + escapeApos(field) + "' /></td><td>" + outputsSelect + "</td><td style='width:45px;'>" +
 				"<div class='iconsPanel'>" +
 				"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fas fa-arrow-up fa-stack-1x'></i><i class='fas fa-arrow-down fa-stack-1x'></i></div>" +
 				"<div class='delete fa-stack fa-sm'><i class='delete fas fa-trash-alt' title='Click to delete'></i></div>" +
