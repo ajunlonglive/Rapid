@@ -168,7 +168,7 @@ div.tabsPanel.selected {
 
 textarea {
 	border: none;
-  	/*box-shadow: 0px 0px 15px 0px #C6CACC;*/
+  	font-family: "Open Sans", Arial, sans-serif;
   	background: white;
   	padding: 6px 15px;
   	outline: none;
@@ -712,17 +712,21 @@ input {
 }
 
 input:not([type=radio]):not([type=checkbox]):not(.input1):not(.input2) {
+	outline: none;
+	border: none;
     padding: 7px 15px;
   	width: 250px;
   	border: none;
   	transition: background 0.5s ease;
 }
 
-input:not([type=radio]):not([type=checkbox]):not(.input1):not(.input2):hover {
-	background: #e6e6e6;
+input:not([type=radio]):not([type=checkbox]):not(.input1):not(.input2):hover {	
+	background: #e6e6e6;	
 }
 
 input:not([type=radio]):not([type=checkbox]):not(.input1):not(.input2):focus {
+	border-color: #AA0F0F;
+	box-shadow: 0px 0px 1px 1px #A60000;
 }
 
 input[type=file] {
@@ -787,9 +791,14 @@ input[type=checkbox]:checked:after, input[type=radio]:checked:after {
   transform: rotate(45deg);
 }
 
-input[type=checkbox]:disabled:checked:after,  input[type=radio]:disabled:checked:after{
+input[type=checkbox]:disabled:checked:after, input[type=radio]:disabled:checked:after {
   border-right: 3px solid #929292;
   border-bottom: 3px solid #929292;
+}
+
+input[type=checkbox]:focus:before, input[type=radio]:focus:before {
+  border-color: #AA0F0F;
+  box-shadow: 0px 0px 1px 1px #A60000;
 }
 
 .input1 {
