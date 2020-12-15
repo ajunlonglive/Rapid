@@ -50,6 +50,13 @@ import com.rapid.server.RapidRequest;
 
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 
+/*
+
+If Eclipse underlines the import above as an error, right click "RapidCustom" -> Properties -> "Java Build Path" -> "Libraries".
+Expand the JRE library entry, select "Access rules", "Edit..." and "Add..." a "Resolution: Accessible" with a corresponding rule pattern "jdk/nashorn/**".
+
+*/
+
 public class Custom extends Action {
 
 	// this action has generic inputs
