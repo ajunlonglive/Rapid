@@ -195,9 +195,12 @@ public class Main {
 							} else if (folder.getName().equals("custombuild") ||
 									folder.getName().equals("database") ||
 									folder.getName().equals("devices") ||
+									folder.getName().equals("email") ||
 									folder.getName().equals("logs") ||
 									folder.getName().equals("processes") ||
-									folder.getName().equals("temp")) {
+									folder.getName().equals("temp") ||
+									folder.getName().equals("uploads")
+									) {
 
 								// log that we're ignoring
 								_output.log("Ignoring " + folder.getName() + " folder");
