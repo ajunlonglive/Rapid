@@ -59,7 +59,12 @@ public abstract class Process extends Thread {
 
 	// protected methods
 
-	// get the days from the parameters
+	// get the duration from the config
+	public JSONObject getDuration() {
+		return _config.optJSONObject("duration");
+	}
+
+	// get the days from the config
 	public JSONObject getDays() {
 		return _config.optJSONObject("days");
 	}
