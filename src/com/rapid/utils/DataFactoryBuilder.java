@@ -2,6 +2,7 @@ package com.rapid.utils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
+import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -30,16 +31,23 @@ public class DataFactoryBuilder {
 
 		return dataFactory;
 	}
-	
+
 	public static DataFactory createDataFactory(RapidRequest rapidRequest) throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
 		DatabaseConnection connection = rapidRequest.getApplication().getDatabaseConnections().get(0);
 		return createDataFactory(rapidRequest, connection);
 	}
-	
+
+	public static DataFactory createDataFactory(RapidRequest rapidRequest, int connectionNumber) throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
+		DatabaseConnection connection = rapidRequest.getApplication().getDatabaseConnections().get(connectionNumber);
+		return createDataFactory(rapidRequest, connection);
+	}
+
 	public static DataFactory createMasterDataFactory(RapidRequest rapidRequest) throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
 		DataFactory dataFactory = null;
 
-		DatabaseConnection connection = rapidRequest.getApplication().getDatabaseConnections().get(0);		
+		Application application = rapidRequest.getApplication();
+		List<DatabaseConnection> connections = application.getDatabaseConnections();
+		DatabaseConnection connection = connections.get(0);
 		HttpServletRequest request = rapidRequest.getRequest();
 		if(request!=null) {
 			ServletContext context = request.getServletContext();
@@ -57,10 +65,10 @@ public class DataFactoryBuilder {
 	}
 
 	public static DataFactory createMasterDataFactory(ServletContext context, Application application) throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
-		DatabaseConnection connection = application.getDatabaseConnections().get(0);		
+		DatabaseConnection connection = application.getDatabaseConnections().get(0);
 		return createMasterDataFactory(context, application, connection);
 	}
-	
+
 	public static DataFactory createMasterDataFactory(ServletContext context, Application application, DatabaseConnection connection) throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
 		DataFactory dataFactory = null;
 
@@ -73,7 +81,7 @@ public class DataFactoryBuilder {
 
 		return dataFactory;
 	}
-	
+
 	public static DataFactory checkDataFactoryConnection(RapidRequest rapidRequest, DataFactory dataFactory) throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException, SQLException, ConnectionAdapterException {
 		if(dataFactory.getConnection(rapidRequest).isClosed())
 			dataFactory = createMasterDataFactory(rapidRequest.getRapidServlet().getServletContext(), rapidRequest.getApplication());
