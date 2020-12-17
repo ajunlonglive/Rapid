@@ -2283,9 +2283,14 @@ $(document).ready( function() {
 	//  if we move away from this page
 	_window.on('beforeunload', function(){
 		// save the _sizes object if local storage
-		if (typeof(localStorage) !== "undefined") localStorage["_sizes"] = JSON.stringify(_sizes);
+		if (typeof(localStorage) !== "undefined") localStorage["_sizes"] = JSON.stringify(_sizes);		
 		// check for unsaved page changes
-		if (_dirty) return 'You have unsaved changes.';
+		if (_dirty) {
+			// enable save button in case there was a server-side or authentication error and users want to cancel the unload and try to save again later
+			$("#pageSave").removeAttr("disabled");
+			// allow user to cancel unload
+			return 'You have unsaved changes.';
+		}
 	});
 	
 	// attach a call to the window resize function to the window resize event listener
@@ -2980,13 +2985,13 @@ $(document).ready( function() {
 	
 	// view page
 	$("#pageView").click( function(ev) {
-		// page unload will prompet the user if the page is dirty
+		// page unload will prompt the user if the page is dirty
 		window.location = "~?a=" + _version.id + "&v=" + _version.version + "&p=" + _page.id;
 	});
 	
 	// view page, new tab
 	$("#pageViewNewTab").click( function(ev) {
-		// page unload will prompet the user if the page is dirty
+		// page unload will prompt the user if the page is dirty
 		window.open("~?a=" + _version.id + "&v=" + _version.version + "&p=" + _page.id);
 	});
 	
