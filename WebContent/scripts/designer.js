@@ -136,7 +136,7 @@ var _styleClassesHidden = false;
 // scroll bar width
 var _scrollBarWidth = 0;
 
-// for refreshe from Rapid Admin
+// for refreshes from Rapid Admin
 var _stayOnAppPage;
 
 function newClipboard(storage, key) {
@@ -2149,8 +2149,28 @@ function toggleHeader(ev) {
 	return false;	
 }
 
-// a function for updating whether guidlines are visible
-function updateGuidelines() {	
+//a function for updating whether guidlines are visible
+function updateReloadOnSave() {
+	
+	// assume we want to
+	var reloadOnSave = true;
+	// if we have local storage
+	if (typeof(localStorage) !== "undefined") {
+		// if we have a local storage item for this
+		if (localStorage.getItem("_reloadOnSave")) {
+			// parse it to a boolean
+			reloadOnSave = JSON.parse(localStorage.getItem("_reloadOnSave"));
+		} 
+	}
+	
+	// update the page object accordingly
+	_page.reloadOnSave = reloadOnSave;
+
+}
+
+// a function for updating whether guidelines are visible
+function updateGuidelines() {
+	
 	// assume we want guidelines
 	var showGuidelines = true;
 	// if we have local storage
@@ -2161,6 +2181,9 @@ function updateGuidelines() {
 			showGuidelines = JSON.parse(localStorage.getItem("_guidelines"));
 		} 
 	}
+	
+	// update the page object accordingly
+	_page.guidelines = showGuidelines;
 	
 	// find the header section
 	var head = $(_pageIframe[0].contentWindow.document).find("head");
@@ -2554,6 +2577,9 @@ $(document).ready( function() {
 		        		
 		        		// enable all drop downs
 		        		$("select").enable();
+		        		
+		        		// update whether we should reload app pages on saves
+		        		updateReloadOnSave();
 		        		
 		        		// update whether guidelines are visible
 		        		updateGuidelines();	
@@ -2977,8 +3003,8 @@ $(document).ready( function() {
 		        	positionAndSizeBorder(_selectedControl);
 		        	// rebuild the page map to clear up any conflict messages
 		        	buildPageMap(true);
-		        	// refresh any instances of url page
-		        	window.localStorage.setItem("rapidWindowBroadcast", JSON.stringify({ message: "pageSaved", a: _version.id, v: _version.version, p: _page.id, time: Date.now() }));
+		        	// if enabled refresh any instances of url page
+		        	if (_page.reloadOnSave) window.localStorage.setItem("rapidWindowBroadcast", JSON.stringify({ message: "pageSaved", a: _version.id, v: _version.version, p: _page.id, time: Date.now() }));
 		        }
 			});
 				
@@ -4761,8 +4787,8 @@ window.addEventListener("storage", function(storageEvent) {
 	if (storageEvent.key === "rapidWindowBroadcast") {
 		// get the new data
 		var broadcast = JSON.parse(storageEvent.newValue);
-		// if there was some
-		if (broadcast) {
+		// if allowed and there was some
+		if (_reloadOnSave && broadcast) {
 			// check the message
 			switch (broadcast.message) {
 			case "controlsReloaded": case "actionsReloaded":

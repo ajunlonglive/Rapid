@@ -5615,6 +5615,38 @@ function Property_zoom(cell, propertyObject, property, details) {
 	}));	
 }
 
+//this function controls whether guidline table borders are visible
+function Property_reloadOnSave(cell, propertyObject, property, details) {
+	// assume we want to
+	var reloadOnSave = true;
+	// if we have local storage
+	if (typeof(localStorage) !== "undefined") {
+		// if we have a local storage item for this
+		if (localStorage.getItem("_reloadOnSave")) {
+			// parse it to a boolean
+			reloadOnSave = JSON.parse(localStorage.getItem("_reloadOnSave"));
+		} 
+	}
+	// add the checkbox
+	cell.html("<input type='checkbox' />");
+	// get the check box
+	var checkbox =  cell.find("input");
+	// set the checked value
+	checkbox.prop("checked",reloadOnSave);
+	// add a listener for it to update local storage
+	addListener(checkbox.change( function(ev) {
+		// if we have local storage
+		if (typeof(localStorage) !== "undefined") {
+			// retain the new value
+			localStorage.setItem("_reloadOnSave", JSON.stringify($(ev.target).prop("checked"))); 
+			// update
+			Property_reloadOnSave(cell, propertyObject, property, details);
+		}
+	}));
+	// update the reloadOnSave (this function is in desginer.js)
+	updateReloadOnSave();
+}
+
 // this function controls whether guidline table borders are visible
 function Property_guidelines(cell, propertyObject, property, details) {
 	// assume we want them

@@ -157,7 +157,15 @@ return [[0,"Normal"],[1,"Submission confirmation"],[2,"Submission error"],[3,"Sa
 	            <helpHtml>Alters the zoom of the page. Better used when emulating mobile or tablet devices</helpHtml>
 	        </property>
 	        
-	         <property>
+	        <property>
+	            <key>reloadOnSave</key>
+	            <name>Reload on save</name>
+	            <setConstructValueFunction>return true;</setConstructValueFunction>
+	            <changeValueJavaScript>reloadOnSave</changeValueJavaScript>
+	            <helpHtml>Whether to automatically reload the app page when saved in the designer.</helpHtml>
+	        </property>
+	        
+	        <property>
 	            <key>guidelines</key>
 	            <name>Show guidelines</name>
 	            <setConstructValueFunction>return true;</setConstructValueFunction>
@@ -165,7 +173,7 @@ return [[0,"Normal"],[1,"Submission confirmation"],[2,"Submission error"],[3,"Sa
 	            <helpHtml>Enables a grid to become visible. Particularly useful for arranging controls on the page.</helpHtml>
 	        </property>
 	        
-	         <property>
+	        <property>
 	            <key>scrollbars</key>
 	            <name>Show scroll bars</name>
 	            <setConstructValueFunction>return false;</setConstructValueFunction>
@@ -173,7 +181,7 @@ return [[0,"Normal"],[1,"Submission confirmation"],[2,"Submission error"],[3,"Sa
 	            <helpHtml>Shows the scroll bars on panels.</helpHtml>
 	        </property>
 	        
-	         <property>
+	        <property>
 	            <key>pageOrder</key>
 	            <name>Page order</name>
 	            <changeValueJavaScript>pageOrder</changeValueJavaScript>
