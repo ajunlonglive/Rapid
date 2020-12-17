@@ -168,7 +168,7 @@ return [[0,"Normal"],[1,"Submission confirmation"],[2,"Submission error"],[3,"Sa
 	         <property>
 	            <key>scrollbars</key>
 	            <name>Show scroll bars</name>
-	            <setConstructValueFunction>return true;</setConstructValueFunction>
+	            <setConstructValueFunction>return false;</setConstructValueFunction>
 	            <changeValueJavaScript>scrollbars</changeValueJavaScript>
 	            <helpHtml>Shows the scroll bars on panels.</helpHtml>
 	        </property>

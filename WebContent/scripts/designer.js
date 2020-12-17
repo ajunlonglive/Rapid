@@ -2189,6 +2189,9 @@ function updateScrollbars() {
 		} 
 	}
 	
+	// update the page object accordingly
+	_page.scrollbars = showScrollbars;
+	
 	if (showScrollbars) {
 		$("#propertiesPanel").removeClass("hideScrollbars");
 		$("#controlPanel").removeClass("hideScrollbars");
