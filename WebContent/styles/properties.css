@@ -308,7 +308,7 @@ div.resizeX {
 }
 
 div.propertyDialogue {
-	position: absolute;
+	position: fixed;
 	right: 10px;
 	display: none;
 	z-index:10012;

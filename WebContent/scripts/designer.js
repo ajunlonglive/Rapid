@@ -3559,7 +3559,7 @@ $(document).ready( function() {
 	// last known cursor position on the window
 	var cursorX = 0;
 	var cursorY = 0;
-	
+
 	propertiesPanel.addEventListener("mousedown", function(event) {
 	    controlPanel.style.zIndex = "10011";
 	    propertiesPanel.style.zIndex = "10012";
@@ -3581,6 +3581,8 @@ $(document).ready( function() {
 	    draggable.style.transition = "none";
 	    // store state of mouse button
 	    mouseDownOnHeader = true;
+	
+		window.visibleDialogues = $(".propertyDialogue:visible");
 	});
 
 	controlHeader.addEventListener("mousedown", function(event) {
@@ -3613,9 +3615,15 @@ $(document).ready( function() {
 	            0), document.body.offsetWidth - draggable.offsetWidth);
 	        // is the panel on the right edge of the screen
 	        var draggableOnRight = draggableLeft >= document.body.offsetWidth - draggable.offsetWidth;
-
+			
+			var animationDurationSeconds = 0.15;
 	        draggable.style.transition =
-	            "top 0.15s ease-out, left 0.15s ease-out, height 0.15s ease-out";
+	            "top " + animationDurationSeconds + "s ease-out, left " + animationDurationSeconds + "s ease-out, height " + animationDurationSeconds + "s ease-out";
+			
+			visibleDialogues.each(function() {
+				this.style.transition = "top " + animationDurationSeconds + "s ease-out, right " + animationDurationSeconds + "s ease-out";
+			});
+			
 	        // if snapped to an edge
 	        if (draggableLeft <= 0 || draggableOnRight) {
 	        	// fill height of screen
@@ -3626,15 +3634,25 @@ $(document).ready( function() {
 	        	// prevent overflowing bottom of window
 		        draggable.style.height = (window.innerHeight - draggableTop - 10) + "px";
 	        }
+
+			visibleDialogues.each(function() {
+				this.style.right = (window.innerWidth - (this.offsetLeft + this.offsetWidth) - 17 - (draggableLeft - draggable.offsetLeft)) + "px";
+				this.style.top = this.offsetTop + (draggableTop - draggable.offsetTop) + "px";
+			});
 	        
 	        draggable.style.top = draggableTop + "px";
 	        
 	        draggable.style.right = "unset";
 	        draggable.style.left = draggableLeft + "px";
-	            
+	        
 	        setTimeout(function() {
 	        	// remove animation after animations have ended
 	        	draggable.style.transition = "none";
+
+				visibleDialogues.each(function() {
+					this.style.transition = "none";
+				});
+
 	        	// if now on right edge
 	        	if (draggableOnRight) {
 	        		// pin to right edge
@@ -3668,7 +3686,7 @@ $(document).ready( function() {
 	    	    
 	    	    dockLeft();
 	            	
-	        }, 150); // same duration as css transitions
+	        }, animationDurationSeconds * 1000);
 	        
 		    // blow up page if no panel is docked
 		    if ((controlPanel.offsetLeft != 0 || controlPanel.style.display == "none")
@@ -3679,7 +3697,7 @@ $(document).ready( function() {
 		    	_panelPinnedOffset = 0;
 		    }
 	    }
-	};
+	}
 	
 	// listen for end of drags
 	window.addEventListener("mouseup", rescueDraggable);
@@ -3749,19 +3767,24 @@ $(document).ready( function() {
 
 	// listen for mouse dragging panel header
 	document.addEventListener("mousemove", function(event) {
-	    // if drag started (not just mouse moving over header)
-	    if (mouseDownOnHeader) {
-	        // move panel according to mouse
-	        draggable.style.top = (draggable.offsetTop + event.clientY - cursorY) + "px";
-	        draggable.style.left = (draggable.offsetLeft + event.clientX - cursorX) + "px";
-	        // prevent overflowing bottom of window
-	        draggable.style.height = (window.innerHeight - draggable.offsetTop - 10) + "px";
-	    }
-	    // store that last mouse position
-	    cursorX = event.clientX;
-	    cursorY = event.clientY;
+		// if drag started (not just mouse moving over header)
+		if (mouseDownOnHeader) {
+			// move panel according to mouse
+			draggable.style.top = (draggable.offsetTop + event.clientY - cursorY) + "px";
+			draggable.style.left = (draggable.offsetLeft + event.clientX - cursorX) + "px";
+			// prevent overflowing bottom of window
+			draggable.style.height = (window.innerHeight - draggable.offsetTop - 10) + "px";
+			
+			visibleDialogues.each(function() {
+				this.style.right = (window.innerWidth - (this.offsetLeft + this.offsetWidth) - 17 - (event.clientX - cursorX)) + "px";
+				this.style.top = this.offsetTop + (event.clientY - cursorY) + "px";
+			});
+		}
+		// store that last mouse position
+		cursorX = event.clientX;
+		cursorY = event.clientY;
 		
-	    // blow up page if no panel is docked
+		// blow up page if no panel is docked
 		if (mouseDownOnHeader
 				&& (controlPanel.offsetLeft != 0 || controlPanel.style.display == "none")
 				&& (propertiesPanel.offsetLeft != 0 || propertiesPanel.style.display == "none")
@@ -4023,8 +4046,11 @@ $(document).on("mousemove", function(ev) {
 		var dialogue = $("#" + _dialogueSizeId);
 		// get the min-width
 		var minWidth = parseInt(dialogue.css("min-width"));
+		
+		var rightSideOffsetLeft = dialogue.offset().left + dialogue.outerWidth();
+		var offsetRight = window.innerWidth - rightSideOffsetLeft;
 		// calculate the new width less offset and padding
-		var width = _window.width() - ev.pageX - 32 + _mouseDownXOffset;
+		var width = _window.width() - ev.pageX + _mouseDownXOffset - offsetRight;
 		// if width is greater than min
 		if (width >= minWidth) {
 			// size the properties panel
@@ -4307,6 +4333,18 @@ $(document).on("mouseup", function(ev) {
 	}; // if selectedObject
 	_movingControl = false;	
 }); // mouseup
+
+
+
+$(function() {
+	var propertiesPanelLastScrollPostition = 0;
+	propertiesPanel.addEventListener("scroll", function(scroll) {
+		$(".propertyDialogue:visible").each(function() {
+			this.style.top = this.offsetTop - (propertiesPanel.scrollTop - propertiesPanelLastScrollPostition) + "px";
+		});
+		propertiesPanelLastScrollPostition = propertiesPanel.scrollTop;
+	});
+});
 
 // called whenever a control is added or deleted in case one was a non-visible control and needs rearranging
 function arrangeNonVisibleControls() {	

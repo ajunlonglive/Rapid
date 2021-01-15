@@ -920,8 +920,11 @@ function getDialogue(cell, propertyObject, property, details, width, title, opti
 			dialogue = $("#propertiesDialogues").find("#" + ev.data.dialogueId);
 		}		
 		// position the dialogue
+		var rightSideOffsetLeft = $(propertiesPanel).offset().left + $(propertiesPanel).outerWidth()
+		var offsetRight = window.innerWidth - rightSideOffsetLeft;
 		dialogue.css({
 			"top": cell.offset().top,
+			"right": offsetRight,
 			"z-index": _dialogueZindex++
 		});
 		// show this drop down
