@@ -37,7 +37,7 @@ var _rapidpwa = {
 /* A version number is useful when updating the worker logic,
 	 allowing you to remove outdated cache entries during the update.
 */
-var _swVersion = 'v1.7';
+var _swVersion = 'v1.8';
 
 /* These resources will be downloaded and cached by the service worker
 	 during the installation process. If any resource fails to be downloaded,
@@ -128,6 +128,7 @@ var _trimUrls = [".js", ".css", ".json", ".woff", ".woff2", ".ttf", ".ico", ".sv
 // the root context path of the web application deteremined from the loading path of this sw.js file
 var _contextPath;
 
+var lastAppUrl;
 
 /* The fetch event fires whenever a page controlled by this service worker requests
 	 a resource. This isn't limited to `fetch` or even XMLHttpRequest. Instead, it
@@ -289,7 +290,12 @@ self.addEventListener("fetch", function(event) {
 		
 		// if   mobdemo/~?a=mobdemo&v=3&p=P3
 		// then ~?a=mobdemo&v=3&p=P3
-		if (parameters.a) url = "~?" + urlParameters;
+		if (parameters.a) {
+			url = "~?" + urlParameters;
+			var currentAppUrl = url;
+			if (referrer === "login.jsp" && lastAppUrl) url = lastAppUrl;
+			lastAppUrl = currentAppUrl;
+		}
 		
 		// if   mobdemo/applications/test/3/rapid.css
 		// then mobdemo/3/rapid.css
@@ -342,7 +348,7 @@ self.addEventListener("fetch", function(event) {
 												return removeAppResourcesByKeys(appResources && appResources.resources || [])
 												.then(_ => {
 													
-													var startUrl = "~?a=" + resources.id + "&v=" + resources.version + "&p=" + resources.startPageId;
+													var startUrl = "~?a=" + resources.id + "&v=" + resources.version + "&p=" + (resources.startPageId || "P1");
 													
 													resources.redirects = {};
 													resources.resources.forEach((resource, index) => {
@@ -422,7 +428,7 @@ self.addEventListener("fetch", function(event) {
 						} else { // development mode / resources
 							
 							return new Promise((resolve, reject) =>
-								(navigator.onLine ? fetch(disambiguatedUrl, fetchOptions) : Promise.reject())
+								(navigator.onLine ? fetch(url, fetchOptions) : Promise.reject())
 								.then(freshResponse => {
 									if (freshResponse && (freshResponse.ok || freshResponse.type === "opaqueredirect")) {
 										var currentAppResources = appResources && appResources.resources || [];
@@ -584,7 +590,7 @@ function fetchAndCache(url, options) {
 	return new Promise((resolve, reject) => {
 		fetchOrReject(url, options)
 		.then(freshResponse => {
-			if (freshResponse.url === url) {
+			if (freshResponse.url.endsWith(url)) {
 				const clonedResponse = freshResponse.clone();
 				caches.open(_swVersion + 'offline').then(cache =>
 					cache.put(url, clonedResponse)
