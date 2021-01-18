@@ -293,7 +293,7 @@ self.addEventListener("fetch", function(event) {
 		if (parameters.a) {
 			url = "~?" + urlParameters;
 			var currentAppUrl = url;
-			if (referrer === "login.jsp" && lastAppUrl) url = lastAppUrl;
+			if ((referrer === "login.jsp" || referrer === "") && lastAppUrl) url = lastAppUrl;
 			lastAppUrl = currentAppUrl;
 		}
 		
@@ -590,7 +590,7 @@ function fetchAndCache(url, options) {
 	return new Promise((resolve, reject) => {
 		fetchOrReject(url, options)
 		.then(freshResponse => {
-			if (freshResponse.url.endsWith(url)) {
+			if (freshResponse.url.endsWith(url) && freshResponse.ok) {
 				const clonedResponse = freshResponse.clone();
 				caches.open(_swVersion + 'offline').then(cache =>
 					cache.put(url, clonedResponse)
