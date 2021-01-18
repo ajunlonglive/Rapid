@@ -166,8 +166,11 @@ section:hover {
 	background:#23262a;
 }
 
-section:hover .fa-stack .fa-stack-1x {
+section .fa-stack .fa-stack-1x {
 	transition: transform 0.2s;
+}
+
+section:hover .fa-stack .fa-stack-1x {
 	transform: scale(1.1);
 }
 
