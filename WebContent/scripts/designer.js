@@ -4826,7 +4826,7 @@ window.addEventListener("storage", function(storageEvent) {
 		// get the new data
 		var broadcast = JSON.parse(storageEvent.newValue);
 		// if allowed and there was some
-		if (_reloadOnSave && broadcast) {
+		if (broadcast && (!_page || _page.reloadOnSave || _page.reloadOnSave === undefined)) {
 			// check the message
 			switch (broadcast.message) {
 			case "controlsReloaded": case "actionsReloaded":
