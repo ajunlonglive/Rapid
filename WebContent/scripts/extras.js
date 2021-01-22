@@ -880,7 +880,7 @@ function mergeDataObjects(data1, data2, mergeType, field, maxRows, details) {
 							}
 						} // has fields to match on
 					} // parent row loop
-					data = data1;					
+					data = data1;
 				break;
 				case "search" :
 					var fieldIndexes = [];
@@ -899,7 +899,7 @@ function mergeDataObjects(data1, data2, mergeType, field, maxRows, details) {
 					}
 					var data = {fields: data2.fields, rows: []};
 					var value = data1.rows[0][0];
-					if (value != null && fieldIndexes.length > 0) {
+					if ((value || value == "") && fieldIndexes.length > 0) {
 						value = value.toLowerCase();
 						for (var i in data2.rows) {
 							for (var j in fieldIndexes) {
@@ -916,7 +916,7 @@ function mergeDataObjects(data1, data2, mergeType, field, maxRows, details) {
 					}
 				break;
 			}
-							
+
 		} else {
 			data = data1;
 		}
