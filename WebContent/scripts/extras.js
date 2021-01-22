@@ -736,7 +736,7 @@ function makeObjectFromData(data, fields) {
 
 function mergeDataObjects(data1, data2, mergeType, field, maxRows, details) {
 	var data = null;
-	if (data1) {
+	if (data1 || (data1 == "" && mergeType == "search")) {
 		data1 = makeDataObject(data1);
 		if (data2) {
 			data2 = makeDataObject(data2);
@@ -895,25 +895,25 @@ function mergeDataObjects(data1, data2, mergeType, field, maxRows, details) {
 									}
 								}
 							}
-						}						
+						}
 					}
-					var data = {fields: data2.fields, rows: []};			
+					var data = {fields: data2.fields, rows: []};
 					var value = data1.rows[0][0];
-					if (value && fieldIndexes.length > 0) {
-						value = value.toLowerCase();								
+					if (value != null && fieldIndexes.length > 0) {
+						value = value.toLowerCase();
 						for (var i in data2.rows) {
 							for (var j in fieldIndexes) {
 								var v = data2.rows[i][fieldIndexes[j]];
 								if (v != null && typeof v !== "undefined") {
-									if (v.toLowerCase().indexOf(value) > -1) {
+									if (v !== "" && v.toLowerCase().indexOf(value) > -1) {
 										data.rows.push(data2.rows[i]);
 										break;
 									}
 								}
-							}	
+							}
 							if (data.rows.length >= maxRows) break;
 						}
-					}															
+					}
 				break;
 			}
 							
