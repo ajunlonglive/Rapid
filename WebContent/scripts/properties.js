@@ -1,7 +1,7 @@
 /*
 
 
-Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -149,9 +149,8 @@ function getDataOptions(selectId, ignoreId, input, hasDatetime, hasClipboard) {
 	var options = "";	
 	var controls = getControls();
 	var gotSelected = false;
-	if (controls) {
-		options += "<optgroup label='Page controls'>";
-		for (var i in controls) {	
+	if (controls && controls.length > 0) {		
+		for (var i in controls) {
 			// retrieve the control
 			var control = controls[i];
 			// get the control class
@@ -201,7 +200,8 @@ function getDataOptions(selectId, ignoreId, input, hasDatetime, hasClipboard) {
 				} // properties check				
 			} // controls loop				
 		} // controls check
-		options += "</optgroup>";
+		// wrap if we had some and we're allowing groups
+		if (options) options = "<optgroup label='Page controls'>" + options + "</optgroup>";
 	}
 	
 	// page variables are for input only
