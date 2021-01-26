@@ -128,7 +128,7 @@ var _trimUrls = [".js", ".css", ".json", ".woff", ".woff2", ".ttf", ".ico", ".sv
 // the root context path of the web application deteremined from the loading path of this sw.js file
 var _contextPath;
 
-var lastAppUrl;
+var _lastAppUrl;
 
 /* The fetch event fires whenever a page controlled by this service worker requests
 	 a resource. This isn't limited to `fetch` or even XMLHttpRequest. Instead, it
@@ -293,8 +293,8 @@ self.addEventListener("fetch", function(event) {
 		if (parameters.a) {
 			url = "~?" + urlParameters;
 			var currentAppUrl = url;
-			if ((referrer === "login.jsp" || referrer === "") && lastAppUrl) url = lastAppUrl;
-			lastAppUrl = currentAppUrl;
+			if ((referrer === "login.jsp") && _lastAppUrl) url = _lastAppUrl;
+			_lastAppUrl = currentAppUrl;
 		}
 		
 		// if   mobdemo/applications/test/3/rapid.css
