@@ -296,9 +296,9 @@ i.delete[class*="fa-"].fa-trash {
 }
 
 div.resizeX {
-	position:absolute;
-	top:0;
-	left:0;
+	position: absolute;
+	top: 0;
+	left: 0;
 	width: 5px;
 	height: 100%;
 	background-color: red;
@@ -308,11 +308,11 @@ div.resizeX {
 }
 
 div.propertyDialogue {
-	position: fixed;
+	position: absolute;
 	right: 10px;
 	display: none;
-	z-index:10012;
-	background:#D5D6D2;
+	z-index: 10012;
+	background: #D5D6D2;
 	padding: 10px;
 	-webkit-touch-callout: none;
   	-webkit-user-select: none;

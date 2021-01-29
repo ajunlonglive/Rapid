@@ -3774,9 +3774,9 @@ $(document).ready( function() {
 			draggable.style.left = (draggable.offsetLeft + event.clientX - cursorX) + "px";
 			// prevent overflowing bottom of window
 			draggable.style.height = (window.innerHeight - draggable.offsetTop - 10) + "px";
-			
+			// reposition any visible dialogues
 			visibleDialogues.each(function() {
-				this.style.right = (window.innerWidth - (this.offsetLeft + this.offsetWidth) - 17 - (event.clientX - cursorX)) + "px";
+				this.style.right = (window.innerWidth - (draggable.offsetLeft + draggable.offsetWidth)) + "px";
 				this.style.top = this.offsetTop + (event.clientY - cursorY) + "px";
 			});
 		}
@@ -3788,8 +3788,8 @@ $(document).ready( function() {
 		if (mouseDownOnHeader
 				&& (controlPanel.offsetLeft != 0 || controlPanel.style.display == "none")
 				&& (propertiesPanel.offsetLeft != 0 || propertiesPanel.style.display == "none")
-				&& $("#page").offset().left != 0)
-		{
+				&& $("#page").offset().left != 0
+		){
 			$("#page").css({width:"100%", left:"0"});
 			_panelPinnedOffset = 0;
 	    	arrangeNonVisibleControls();
@@ -4734,7 +4734,7 @@ function windowResize(ev) {
 		// adjust pin
 		$("#controlPanelPin").css({"top":controlPanel.css("padding-top"), "right":controlPanel.css("padding-right")});
 	}
-	// get panel height (less the header and padding)
+	// get panel height (add the header and padding)
 	var cHeight = Math.max(_window.height(), cinner.height() + 40);
 	// regular sizer is derived height
 	$("#controlPanelSize").css({height:cHeight});
@@ -4758,8 +4758,8 @@ function windowResize(ev) {
 		// adjust pin - note that the height is matched to the padding on the control panel as properties has no padding top and we want pins on the same level
 		$("#propertiesPanelPin").css({"top":controlPanel.css("padding-top"), "left":propertiesPanel.css("padding-left")});
 	}
-	// get panel height (less the header and padding)
-	var pHeight = Math.max(_window.height(), pinner.height());
+	// get panel height (add the header and padding)
+	var pHeight = Math.max(_window.height(), pinner.height() + 100);
 	// set sizer heights
 	$("#propertiesPanelSize").css({height:pHeight});
 	$("#propertiesPanelSizeRight").css({height:pHeight - 20});
