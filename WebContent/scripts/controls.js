@@ -65,6 +65,8 @@ function loadControl(jsonControl, parentControl, loadActions, paste, undo, check
 function ControlClass(controlClass) {
 	// retain all values passed in the json for the control (from the .control.xml file)
 	for (var i in controlClass) this[i] = controlClass[i];
+	// make it's html function
+	this._getHtml = new Function(controlClass.getHtmlFunction.trim());
 }
 
 // this object function will create the control as specified in the controlClass, jsonControl is from a previously saved control, or paste, loadActions can avoid loading the action objects into the control (the page renderer doesn't need them), and paste can generate new id's
@@ -330,10 +332,8 @@ function Control(controlType, parentControl, jsonControl, loadComplexObjects, pa
 				
 		// set and run the getHtml statement
 		try {			
-			// create a function from this text and retain a reference to it
-			this._getHtml = new Function(controlClass.getHtmlFunction.trim());
-			// run it against this control
-			this._html = this._getHtml.apply(this, []);
+			// run the class _getHtml against this control
+			this._html = controlClass._getHtml.apply(this, []);
 		} catch (ex) {
 			// show error message in place of xml
 			this._html = "<span>getHtmlFunction failed for " + this.type + ". " + ex + "</span>";
@@ -622,7 +622,7 @@ function rebuildHtml(control) {
 			if (control.classes) for (var i in control.classes) _page.object.attr("class", control.classes[i]);
 		} else if (control._parent) {
 			// get the new html - trim to avoid issues with role control html
-			var html = control._getHtml().trim();
+			var html = controlClass._getHtml.apply(control, []).trim();
 			// append the new html to the page object 
 			_page.object.append(html);
 			// get a reference to the new object

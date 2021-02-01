@@ -2375,9 +2375,9 @@ $(document).ready( function() {
     	    		// get a reference to a single control
     	    		var c = controls[i];
     	    		// create a new control ControlClass object/function (this is a closure)
-    	    		var f = new ControlClass(c);        		        		     			
+    	    		var cc = new ControlClass(c);
     				// retain the control controlClass function function globally
-    				_controlTypes[c.type] = f; 	
+    				_controlTypes[c.type] = cc;
     	    	}
         		
         		// if we got devices store them globally
