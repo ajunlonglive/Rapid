@@ -333,7 +333,7 @@ function Control(controlType, parentControl, jsonControl, loadComplexObjects, pa
 		// set and run the getHtml statement
 		try {			
 			// run the class _getHtml against this control
-			this._html = controlClass._getHtml.apply(this, []);
+			this._html = controlClass._getHtml.apply(this).trim();
 		} catch (ex) {
 			// show error message in place of xml
 			this._html = "<span>getHtmlFunction failed for " + this.type + ". " + ex + "</span>";
@@ -622,7 +622,7 @@ function rebuildHtml(control) {
 			if (control.classes) for (var i in control.classes) _page.object.attr("class", control.classes[i]);
 		} else if (control._parent) {
 			// get the new html - trim to avoid issues with role control html
-			var html = controlClass._getHtml.apply(control, []).trim();
+			var html = controlClass._getHtml.apply(control).trim();
 			// append the new html to the page object 
 			_page.object.append(html);
 			// get a reference to the new object
