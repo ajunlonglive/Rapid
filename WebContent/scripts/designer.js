@@ -2314,6 +2314,13 @@ $(document).ready( function() {
 		if (_dirty) {
 			// enable save button in case there was a server-side or authentication error and users want to cancel the unload and try to save again later
 			$("#pageSave").removeAttr("disabled");
+			// if save is visible update message
+			if ($("#save").is(":visible")) {
+				// update the icon
+				$("#saveAnimation").removeClass("fa-cog fa-spin").addClass("fa-exclamation-triangle");
+				// update the message
+				$("#saveMessage").text("Save did not complete");
+			}
 			// allow user to cancel unload
 			return 'You have unsaved changes.';
 		}
@@ -2947,10 +2954,10 @@ $(document).ready( function() {
 			// hide all property dialogues
 			hideDialogues();
 			
+			// show cog
+        	$("#saveAnimation").removeClass("fa-check fa-exclamation-triangle").addClass("fa-cog fa-spin");
 			// show message
         	$("#saveMessage").html("Saving page...");
-        	// show cog
-        	$("#saveAnimation").removeClass("fa-check").addClass("fa-cog fa-spin");
 			
 			// slide down save panel
 			$("#save").animate({
@@ -2970,7 +2977,7 @@ $(document).ready( function() {
 		        	// use error if present
 		        	if (server.status > 0) message = error;
 		        	// hide cog
-		        	$("#saveAnimation").removeClass("fa-cog fa-spin").addClass("fa-close");
+		        	$("#saveAnimation").removeClass("fa-cog fa-spin").addClass("fa-exclamation-triangle");
 		        	// show message
 		        	$("#saveMessage").html("Page NOT saved! " + message);
 		        	// show error
