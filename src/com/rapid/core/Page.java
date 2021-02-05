@@ -78,6 +78,7 @@ import com.rapid.server.RapidRequest;
 import com.rapid.server.filter.RapidFilter;
 import com.rapid.utils.Files;
 import com.rapid.utils.Html;
+import com.rapid.utils.JSON;
 import com.rapid.utils.Minify;
 import com.rapid.utils.XML;
 
@@ -1232,7 +1233,7 @@ public class Page {
 
     }
 
-    private void getEventJavaScriptFunction(RapidRequest rapidRequest, StringBuilder stringBuilder, Application application, Control control, Event event) {
+    private void getEventJavaScriptFunction(RapidRequest rapidRequest, StringBuilder stringBuilder, Application application, Control control, Event event) throws JSONException {
     	// check actions are initialised
 		if (event.getActions() != null) {
 			// check there are some to loop
@@ -1258,15 +1259,40 @@ public class Page {
 				// open a try/catch
 				eventStringBuilder.append("  try {\n");
 
-				// get any filter javascript
-				String filter = event.getFilter();
-				// if we have any add it now
-				if (filter != null) {
-					// only bother if not an empty string
-					if (!"".equals(filter)) {
-						eventStringBuilder.append("    " + filter.trim().replace("\n", "\n    ") + "\n");
+				// if there is a control
+				if (control != null) {
+
+					// get the control json
+					JSONObject jsonControl = rapidRequest.getRapidServlet().getJsonControl(control.getType());
+					// get the events as an array
+					JSONArray jsonEvents = JSON.getJSONArray(jsonControl.optJSONObject("events"),"event");
+					// if there were some
+					if (jsonEvents != null && jsonEvents.length() > 0) {
+						// loop it
+						for (int i = 0; i < jsonEvents.length(); i++) {
+							// get this json event
+							JSONObject jsonEvent = jsonEvents.getJSONObject(i);
+							// if this is the event we want
+							if (event.getType().equals(jsonEvent.getString("type"))) {
+
+								// get any filter javascript
+								String filter = jsonEvent.optString("filterFunction", null);
+								// if we have any add it now
+								if (filter != null) {
+									// only bother if not an empty string
+									if (!"".equals(filter)) {
+										eventStringBuilder.append("    /* " + control.getType() + " control " + event.getType() + " event filter */\n    " + filter.trim().replace("\n", "\n    ") + "\n");
+									}
+								}
+								// we're done
+								break;
+							}
+
+						}
+
 					}
-				}
+
+				} // control check
 
 				// loop the actions and produce the handling JavaScript
 				for (Action action : event.getActions()) {
@@ -1288,8 +1314,7 @@ public class Page {
 									+ "  return true;\n"
 									+ "}\n\n");
 									// add an action function call to the event string builder
-									eventStringBuilder.append("    if (!Action_" + action.getId() + "(ev)) return false;\n");
-									//eventStringBuilder.append("    Action_" + action.getId() + "(ev);\n");
+									eventStringBuilder.append("    /* redundancy avoidance for action " + action.getId() + " */\n    if (!Action_" + action.getId() + "(ev)) return false;\n");
 								} else {
 									// go straight into the event
 									eventStringBuilder.append("    " + actionJavaScript.trim().replace("\n", "\n    ") + "\n");
