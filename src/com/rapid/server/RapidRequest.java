@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2018 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -194,18 +194,24 @@ public class RapidRequest {
 				}
 				// there must be a page to check the following
 				if (_page != null) {
+					// get any control id
+					String controlId = request.getParameter("c");
+					// get any action id
+					String actionId = request.getParameter("act");
 					// if there is no control parameter could still have a page action
-					if (request.getParameter("c") == null) {
-						if (request.getParameter("act") != null) {
+					if (controlId == null) {
+						// if there is an action id
+						if (actionId != null) {
 							// get action from the page
-							_action = _page.getAction(request.getParameter("act"));
+							_action = _page.getAction(actionId);
 						}
 					} else {
-						_control = _page.getControl(request.getParameter("c"));
+						// find the control in the page
+						_control = _page.getControl(controlId);
 						// if we've found the control and have an action parameter
-						if (_control != null && request.getParameter("act") != null) {
+						if (_control != null && actionId != null) {
 							// get action from the control
-							_action = _control.getAction(request.getParameter("act"));
+							_action = _control.getAction(actionId);
 						}
 					}
 				}

@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2019 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -150,27 +150,40 @@ public class Control {
 	}
 
 	private Action getActionRecursive(String actionId, List<Action> actions) {
+		// assume not found
 		Action returnAction = null;
+		// loop actions
 		for (Action action : actions) {
-			// return the action if it matches
-			if (actionId.equals(action.getId())) return action;
-			// if the action has child actions
-			if (action.getChildActions() != null) {
-				// check them too
-				returnAction = getActionRecursive(actionId, action.getChildActions());
-				// bail here if we got one
-				if (returnAction != null) break;
+			// null safety
+			if (action != null) {
+				// return the action if it matches
+				if (actionId.equals(action.getId())) return action;
+				// if the action has child actions
+				if (action.getChildActions() != null) {
+					// check them too
+					returnAction = getActionRecursive(actionId, action.getChildActions());
+					// bail here if we got one
+					if (returnAction != null) break;
+				}
 			}
 		}
 		return returnAction;
 	}
 
 	public Action getAction(String actionId) {
+		// assume not found
 		Action action = null;
-		if (_events != null) {
+		// if we have an action id and events
+		if (actionId != null && _events != null) {
+			// loop the events
 			for (Event event : _events) {
-				if (event.getActions() != null) {
-					action = getActionRecursive(actionId, event.getActions());
+				// get any event actions
+				List<Action> actions = event.getActions();
+				// if we got some
+				if (actions != null) {
+					// use them to check recursively
+					action = getActionRecursive(actionId, actions);
+					// if we got an action we can stop
 					if (action != null) break;
 				}
 			}
