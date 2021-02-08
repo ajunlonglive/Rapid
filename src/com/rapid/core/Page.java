@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -365,29 +365,44 @@ public class Page {
 		return getChildControl(_controls, id);
 	}
 
+	// append child controls of those in a list of controls
 	public void getChildControls(List<Control> controls, List<Control> childControls) {
+		// if there are control to check
 		if (controls != null) {
+			// loop the controls
 			for (Control control : controls) {
+				// add this control
 				childControls.add(control);
+				// add this controls children
 				getChildControls(control.getChildControls(), childControls);
 			}
 		}
 	}
 
+	// return all controls in the page
 	public List<Control> getAllControls() {
+		// start the list of all controls
 		ArrayList<Control> controls = new ArrayList<>();
+		// use the recursive function above to tree-walk all controls and add them and their children
 		getChildControls(_controls, controls);
 		return controls;
 	}
 
 	// find an action from a list of actions, including checking child actions
 	public Action getChildAction(List<Action> actions, String actionId) {
+		// assume not found
 		Action foundAction = null;
-		if (actions != null) {
+		// if we have action and an id
+		if (actions != null && actionId != null) {
+			// loop  the actions
 			for (Action action : actions) {
+				// if this action is not null
 				if (action != null) {
+					// return if it's the one we're looking for
 					if (actionId.equals(action.getId())) return action;
+					// check through and child actions
 					foundAction = getChildAction(action.getChildActions(), actionId);
+					// break if we found one
 					if (foundAction != null) break;
 				}
 			}
@@ -397,11 +412,19 @@ public class Page {
 
 	// find an action amongst a controls events - faster to use if we have the control already
 	public Action getChildEventsAction(List<Event> events, String actionId) {
+		// assume not found
 		Action foundAction = null;
-		if (events != null) {
+		// if we have events and an action id
+		if (events != null && actionId != null) {
+			// loop the events
 			for (Event event : events) {
-				if (event.getActions() != null) {
-					foundAction = getChildAction(event.getActions(), actionId);
+				// get any event actions
+				List<Action> actions = event.getActions();
+				// if we got some
+				if (actions != null) {
+					// look for child actions
+					foundAction = getChildAction(actions, actionId);
+					// break if we found one
 					if (foundAction != null) break;
 				}
 			}
@@ -411,8 +434,10 @@ public class Page {
 
 	// an iterative function for tree-walking child controls when searching for a specific action
 	public Action getChildControlsAction(List<Control> controls, String actionId) {
+		// assume not found
 		Action foundAction = null;
-		if (controls != null) {
+		// if we have controls and an action id
+		if (controls != null && actionId != null) {
 			for (Control control : controls) {
 				// look in the control events for the action
 				foundAction = getChildEventsAction(control.getEvents(), actionId);
@@ -429,18 +454,24 @@ public class Page {
 	}
 
 	// find an action in the page by its id
-	public Action getAction(String id) {
+	public Action getAction(String actionId) {
 		// check the page actions first
-		if (_events != null) {
+		if (actionId != null && _events != null) {
+			// loop the events
 			for (Event event : _events) {
-				if (event.getActions() != null) {
-					Action action = getChildAction(event.getActions(), id);
+				// get any event actions
+				List<Action> actions = event.getActions();
+				// if we got some
+				if (actions != null) {
+					// use them to check recursively
+					Action action = getChildAction(actions, actionId);
+					// if we got one return it
 					if (action != null) return action;
 				}
 			}
 		}
 		// uses the tree walking function above to the find a particular action
-		return getChildControlsAction(_controls, id);
+		return getChildControlsAction(_controls, actionId);
 	}
 
 	// recursively append to a list of actions from an action and it's children
