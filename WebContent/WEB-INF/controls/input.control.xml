@@ -3,7 +3,7 @@
 
 <!-- 
 
-Copyright (C) 2018 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -194,6 +194,10 @@ if (changeEvents) control.trigger("change");
 	        <event>
 	            <type>keyup</type>
 	            <name>Key up</name>
+	        </event>
+	        <event>
+	            <type>input</type>
+	            <name>Input</name>
 	        </event>
 	        <event>
 	            <type>change</type>

@@ -36,7 +36,7 @@ import javax.xml.bind.annotation.XmlType;
 public class Event {
 
 	// a list of all jQuery event types which if we recognise we'll add a listener for
-	public static final String _jQueryEventTypes[] = {"bind","blur","change","click","dblclick","delegate","die","error","focus","focusin","focusout","hover","keydown","keypress","keyup","live","load","mousedown","mouseenter","mouseleave","mousemove","mouseout","mouseover","mouseup","off","on","one","ready","resize","scroll","select","submit","toggle","trigger","triggerHandler","unbind","undelegate","unload"};
+	public static final String _jQueryEventTypes[] = {"bind","blur","change","click","dblclick","delegate","die","error","focus","focusin","focusout","hover","input","keydown","keypress","keyup","live","load","mousedown","mouseenter","mouseleave","mousemove","mouseout","mouseover","mouseup","off","on","one","ready","resize","scroll","select","submit","toggle","trigger","triggerHandler","unbind","undelegate","unload"};
 
 	// instance variables
 
@@ -100,7 +100,7 @@ public class Event {
 				// add leading . if there is something and no . already
 				if (extra.length() > 0 && !extra.startsWith(".")) extra = "." + extra;
 			}
-			return "$('#" + control.getId() + "')" + extra + "." + _type + "(Event_" + _type + "_" + control.getId() + ");\n";
+			return "$('#" + control.getId() + "')" + extra + ".on('" + _type + "', Event_" + _type + "_" + control.getId() + ");\n";
 		}
 
 	}

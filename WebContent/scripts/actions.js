@@ -1,7 +1,6 @@
 /*
 
-
-Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -37,6 +36,7 @@ var _eventHelpHtml = {
 	"focusin" : "Occurs when a control, or child control, receives focus, generally when clicked on or tabbed to.",
 	"focusout" : "Occurs when a control, or child control, loses focus, generally when clicked or tabbed away from.",
 	"hover" : "Occurs when the mouse is placed over a control.",
+	"input" : "Occurs immediately when a form control's value changes in any way.",
 	"keydown" : "Occurs when a control is selected and a key is pushed down.",
 	"keypress" : "Occurs when a control is selected and a key represnting a printable character is released after being pushed down.",
 	"keyup" : "Occurs when a control is selected and a key is pushed down and then released.",
