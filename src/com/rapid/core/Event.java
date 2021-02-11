@@ -36,7 +36,7 @@ import javax.xml.bind.annotation.XmlType;
 public class Event {
 
 	// a list of all jQuery event types which if we recognise we'll add a listener for
-	public static final String _jQueryEventTypes[] = {"bind","blur","change","click","dblclick","delegate","die","error","focus","focusin","focusout","hover","input","keydown","keypress","keyup","live","load","mousedown","mouseenter","mouseleave","mousemove","mouseout","mouseover","mouseup","off","on","one","ready","resize","scroll","select","submit","toggle","trigger","triggerHandler","unbind","undelegate","unload"};
+	public static final String _jQueryEventTypes[] = {"blur","change","click","dblclick","focus","focusin","focusout","hover","input","keydown","keypress","keyup","load","mousedown","mouseenter","mouseleave","mousemove","mouseout","mouseover","mouseup","resize","scroll","select","submit","unload"};
 
 	// instance variables
 
