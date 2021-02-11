@@ -301,6 +301,22 @@ function sortGridByColumn(ev, id, details, column, asc) {
 			var sortedValues = [];
 			// populate the array for each row with an object with the original index and value
 			for (var i in data.rows) sortedValues.push( {index:i, value:data.rows[i][dataColumn]} );
+			
+			// if selected rows
+			if (data.selectedRowNumber) {
+				// if old-style single value or array
+				if ($.isArray(data.selectedRowNumber)) {
+					// loop selected row numbers
+					for (var i = 0; i < data.selectedRowNumber.length; i++) {
+						// mark value as selected
+						sortedValues[data.selectedRowNumber[i] - 1].selected = true;
+					}
+				} else {
+					// mark value as selected
+					sortedValues[data.selectedRowNumber - 1].selected = true;
+				}
+			}
+			
 			// determin the sort type
 			switch (details.columns[column].sort) {
 				// for n, turn both values into numbers and use that
@@ -443,16 +459,30 @@ function sortGridByColumn(ev, id, details, column, asc) {
 					
 			// create a new rows array
 			var rows = [];
-			// if asc
+			// created a bew selectedRowNumber array
+			var selectedRowNumber = [];
+			// if ascending
 			if (asc) {
-				// loop the returned sorted column values and add into the rows array from their original position
-				for (var i in sortedValues)  rows.push(data.rows[sortedValues[i].index]);
+				// loop the returned sorted column values
+				for (var i in sortedValues) {
+					// add into the rows array from their original position
+					rows.push(data.rows[sortedValues[i].index]);
+					// if this value was selected add it's new position
+					if (sortedValues[i].selected) selectedRowNumber.push(i*1 + 1);
+				}
 			} else {
-				// loop the returned sorted column values in reverse  and add into the rows array from their original position
-				for (var i in sortedValues)  rows.push(data.rows[sortedValues[sortedValues.length - i - 1].index]);
+				// loop the returned sorted column values in reverse
+				for (var i in sortedValues) {
+					// and add into the rows array from their original position
+					rows.push(data.rows[sortedValues[sortedValues.length - i - 1].index]);
+					// if this value was selected add it's new position
+					if (sortedValues[i].selected) selectedRowNumber.push(sortedValues.length - i);
+				}
 			}
 			// replace the data rows with the placed rows
 			data.rows = rows;
+			// replace the selectedRowNumber if need be
+			if (selectedRowNumber.length) data.selectedRowNumber = selectedRowNumber;
 			// set the sorted data
 			setData_grid(ev, id, null, details, data);
 		}
