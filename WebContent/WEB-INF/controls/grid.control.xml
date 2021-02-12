@@ -1030,7 +1030,7 @@ if (data !== undefined && data !== "") {
 						
 						grid.parent().css({
 					    	"max-height": "unset",
-					    	"overflow-y": "unset"
+					    	"overflow": "unset"
 						});
 						
 					    // create and style the wrapper
