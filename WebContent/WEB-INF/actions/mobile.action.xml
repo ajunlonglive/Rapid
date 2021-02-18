@@ -997,8 +997,8 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 							+ "<div style='position:fixed; bottom:0; width:100%; text-align:center; padding:20px;'>"
 							+ mediaCapturer.indicator()
 							+ (mediums.includes('video') ? "<p id='videoRecordTimer'></p>" : "")
-							+ (mediums.includes('image') ? "<button id ='btnTakePicture' class='cameraControl'><i class='fas fa-camera cameraIcon'></i></button>" : "")
-							+ (mediums.includes('video') && MediaRecorder ? "<button id ='btnRecordVideo' class='cameraControl'><i class='fas fa-video cameraIcon'></i></button>" : "")
+							+ (mediums.includes('image') ? "<button id ='btnTakePicture' class='cameraControl' disabled><i class='fas fa-camera cameraIcon'></i></button>" : "")
+							+ (mediums.includes('video') && MediaRecorder ? "<button id ='btnRecordVideo' class='cameraControl' disabled><i class='fas fa-video cameraIcon'></i></button>" : "")
 							+ "</div>"
 							+ "</div>";
 		
@@ -1033,6 +1033,9 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 		.then(function(stream) {
 			
 			$("#cameraVideoContainer").show();
+			setTimeout(function() {
+				$("#btnTakePicture, #btnRecordVideo").removeAttr("disabled");
+			}, 500);
 			
 			// Use the stream
 			// Now attach the video stream to the video element and auto play
