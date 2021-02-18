@@ -1852,7 +1852,7 @@ public class Page {
 		    		// get fresh js and css
 		    		writer.write(getHeadCSS(rapidRequest, application, !designerLink));
 		    		// open the script
-					writer.write("    <script  type='text/javascript'>\n");
+					writer.write("    <script type='text/javascript'>\n");
 		    		// write the ready JS
 		    		writer.write(getHeadReadyJS(rapidRequest, application, !designerLink, formAdapter));
 		    	} else {
@@ -1867,7 +1867,7 @@ public class Page {
 		    		// get the cached head js and css
 		    		writer.write(_cachedHeadCSS);
 		    		// open the script
-					writer.write("    <script  type='text/javascript'>\n");
+					writer.write("    <script type='text/javascript'>\n");
 					// write the ready JS
 					writer.write(_cachedHeadReadyJS);
 		    	}
