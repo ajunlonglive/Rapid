@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -478,13 +478,29 @@ if (window["_rapidmobile"]) {
 	
 	// add save page html function for saving
 	_rapidmobile.savePage = function() {
-		// explicity push each input val in as an attribute
+		// explicitly push each input val in as an attribute
 		$("input").each( function() {
 			$(this).attr("value", $(this).val());
 		});
 		// explicitly push textarea value into it's html
 		$("textarea").each( function() {
 			$(this).html($(this).val());
+		});
+		// explicitly set each selected option val
+		$("select").each( function() {
+			// get the select
+			var s = $(this);
+			// get the value
+			var v = s.val();
+			// if there was a value
+			if (v) {
+				// find the option by the value
+				var o = s.find("option[value='" + v.replace("'","\\'") + "']");
+				// if no option found, find an option by the text
+				if (o.length == 0) o = s.find("option").filter(function() { return $(this).text() == v; });
+				// select it
+				o.attr("selected","selected");
+			}
 		});
 		// remove any script reference to the google maps api as they cause problems on reload
 		$("head").find("script[src*='//maps.gstatic.com']").remove();
