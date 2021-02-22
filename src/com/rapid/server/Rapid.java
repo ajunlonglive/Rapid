@@ -1171,202 +1171,215 @@ public class Rapid extends RapidHttpServlet {
 
 						} else if ("uploadImage".equals(actionName)) {
 
-							// get the name
-							String imageName = request.getParameter("name");
-							// get the content / mime type
-							String contentType = request.getHeader("content-type");
-
-							// if octet stream (from iOS Rapid Mobile client), update content type from file name
-							if ((contentType == null || "application/octet-stream".equals(contentType))  && imageName != null) contentType = URLConnection.guessContentTypeFromName(imageName);
-
-							// assume bytes offset is 0
-							int bytesOffset = 0;
-							// assume no boundary
-							String boundary = "";
-
-							// if name not in the parameter try the more complex boundary way
-							if (imageName == null) {
-								// if we have a content type
-								if (contentType != null) {
-									// check boundary
-									if (contentType.contains("boundary=")) {
-										// get the boundary
-										boundary  = contentType.substring(contentType.indexOf("boundary=") + 10);
-										// find the end of the double break
-										bytesOffset = Bytes.findPattern(bodyBytes, Bytes.DOUBLE_BREAK_BYTES, boundary.length()) + Bytes.DOUBLE_BREAK_BYTES.length;
-										// get the headers string
-										String headersString = new String(bodyBytes, boundary.length() + 5, bytesOffset - boundary.length() - 8);
-										// split the parts
-										String[] headers = headersString.split("\r\n");
-										// assume no extension
-										String ext = null;
-										// loop them
-										for (String header : headers) {
-											// get the parts
-											String[] headerParts = header.split(":");
-											// if we had a pair
-											if (headerParts.length > 1) {
-												//  if this server isn't allowing public access, and has public uploads turned off
-												if (!this.isPublic() && !this.isPublicUploads()) {
-													// content disposition - where the filename is
-													if (headerParts[0].toLowerCase().trim().equals("content-disposition")) {
-														// get content parts
-														String[] contentParts = headerParts[1].split(";");
-														// loop them
-														for (String contentPart : contentParts) {
-															// if this is the file name
-															if (contentPart.trim().toLowerCase().startsWith("filename=")) {
-																// split by =
-																String[] fileNameParts = contentPart.split("=");
-																// if got enough
-																if (fileNameParts.length > 1) imageName = fileNameParts[1].trim().replace("\"", "");
-															}
-														}
-													}
-												}
-												// content type
-												if (headerParts[0].toLowerCase().trim().equals("content-type")) {
-													// get content parts
-													String[] contentParts = headerParts[1].split("/");
-													// update content part to exclude
-													contentType = headerParts[1].trim();
-													// if there are enough parts
-													if (contentParts.length > 1) {
-														// set the file extension
-														ext = contentParts[1].toLowerCase().trim();
-														// adjust jpeg to jpg
-														if ("jpeg".equals(ext)) ext = "jpg";
-													}
-												}
-											}
-										}
-										// if we got an extension
-										if (ext != null) {
-											// instances with public access have their files renamed for safety - if non-public we will already have dug the name out of the headers above, and not set the imageName
-											if (imageName == null) {
-												// date formatter
-												SimpleDateFormat df = new SimpleDateFormat("yyMMddhhmmssS");
-												// get the form adapter
-												FormAdapter formAdapter = app.getFormAdapter();
-												// check if we got one
-												if (formAdapter == null) {
-													// update the file name with random number
-													imageName = df.format(new Date()) + "-" + (new Random().nextInt(89999) + 10000) + "." + ext;
-												} else {
-													// update the file name with form id and random number
-													imageName = df.format(new Date()) + "-" + formAdapter.getFormId(rapidRequest) + "-" + (new Random().nextInt(899) + 100) + "." + ext;
-												}
-											}
-										}
-										// add closer to boundary as we take the bytes off later
-										boundary += "--";
-									}
-								}
-							}
-
-							// create a writer
-							PrintWriter out = response.getWriter();
-							// assume not passed
-							boolean passed = false;
-
-							// check we got one
-							if (imageName == null) {
+							// must have body bytes
+							if (bodyBytes == null) {
 
 								// send forbidden response
-								sendMessage(response, 400, "Name required", "Image name must be provided");
+								sendMessage(response, 400, "Image required", "Image must be provided");
 
 								// log
-								logger.error("Rapid POST response (400) : Image name must be provided");
+								logger.error("Rapid POST response (400) : Image must be provided");
 
 							} else {
 
-								// check image name does not contain any control characters
-								if (imageName.indexOf("..") < 0 && imageName.indexOf("/") < 0 && imageName.indexOf("\\") < 0) {
+								// get the name
+								String imageName = request.getParameter("name");
+								// get the content / mime type
+								String contentType = request.getHeader("content-type");
+								// assume bytes offset is 0
+								int bytesOffset = 0;
+								// assume no boundary
+								String boundary = "";
 
-									// check the content type is allowed
-									if (getUploadMimeTypes().contains(contentType)) {
+								// if octet stream (from iOS Rapid Mobile client), update content type from file name
+								if ((contentType == null || "application/octet-stream".equals(contentType))  && imageName != null) contentType = URLConnection.guessContentTypeFromName(imageName);
 
-										// get the bytes
-										List<byte[]> bytes = getUploadMimeTypeBytes().get(contentType);
-
-										// if we got some
-										if (bytes != null) {
-
-											// for each byte[] in the bytes list
-											for (int i = 0; i < bytes.size(); i++) {
-
-												// check the jpg, gif, png, bmp, or pdf file signature (from http://en.wikipedia.org/wiki/List_of_file_signatures)
-												if (Bytes.findPattern(bodyBytes, bytes.get(i), bytesOffset, bytes.get(i).length) > -1) {
-
-													try {
-
-														// create the path
-														String imagePath = "uploads/" +  app.getId().toLowerCase() + "/" + imageName;
-														// servers with public access must use the secure upload location
-														if (this.isPublic()) imagePath = "WEB-INF/" + imagePath;
-														// create a file
-														File imageFile = new File(getServletContext().getRealPath(imagePath));
-														// create app folder if need be
-														imageFile.getParentFile().mkdir();
-														// create a file output stream to save the data to
-														FileOutputStream fos = new FileOutputStream(imageFile);
-														// write the body bytes to the stream
-														fos.write(bodyBytes, bytesOffset, bodyBytes.length - bytesOffset - boundary.length());
-														// close the stream
-														fos.close();
-
-														// store the file length
-														responseLength = imageFile.length();
-
-														// log the file creation
-														logger.debug("Saved image file " + imagePath);
-
-														// print just the file name
-														out.print(imageFile.getName());
-
-														// close the writer
-														out.close();
-
-														// we passed the checks
-														passed = true;
-
-													} catch (Exception ex) {
-
-														// log
-														logger.error("Error saving uploaded file " + imageName + " of type " + contentType + " size " + bodyBytes.length + " : " + ex.getMessage(), ex);
-
-														// rethrow
-														throw new Exception("Error uploading file");
-
+								// if name not in the parameter try the more complex boundary way
+								if (imageName == null) {
+									// if we have a content type
+									if (contentType != null) {
+										// check boundary
+										if (contentType.contains("boundary=")) {
+											// get the boundary
+											boundary  = contentType.substring(contentType.indexOf("boundary=") + 10);
+											// find the end of the double break
+											bytesOffset = Bytes.findPattern(bodyBytes, Bytes.DOUBLE_BREAK_BYTES, boundary.length()) + Bytes.DOUBLE_BREAK_BYTES.length;
+											// get the headers string
+											String headersString = new String(bodyBytes, boundary.length() + 5, bytesOffset - boundary.length() - 8);
+											// split the parts
+											String[] headers = headersString.split("\r\n");
+											// assume no extension
+											String ext = null;
+											// loop them
+											for (String header : headers) {
+												// get the parts
+												String[] headerParts = header.split(":");
+												// if we had a pair
+												if (headerParts.length > 1) {
+													//  if this server isn't allowing public access, and has public uploads turned off
+													if (!this.isPublic() && !this.isPublicUploads()) {
+														// content disposition - where the filename is
+														if (headerParts[0].toLowerCase().trim().equals("content-disposition")) {
+															// get content parts
+															String[] contentParts = headerParts[1].split(";");
+															// loop them
+															for (String contentPart : contentParts) {
+																// if this is the file name
+																if (contentPart.trim().toLowerCase().startsWith("filename=")) {
+																	// split by =
+																	String[] fileNameParts = contentPart.split("=");
+																	// if got enough
+																	if (fileNameParts.length > 1) imageName = fileNameParts[1].trim().replace("\"", "");
+																}
+															}
+														}
 													}
+													// content type
+													if (headerParts[0].toLowerCase().trim().equals("content-type")) {
+														// get content parts
+														String[] contentParts = headerParts[1].split("/");
+														// update content part to exclude
+														contentType = headerParts[1].trim();
+														// if there are enough parts
+														if (contentParts.length > 1) {
+															// set the file extension
+															ext = contentParts[1].toLowerCase().trim();
+															// adjust jpeg to jpg
+															if ("jpeg".equals(ext)) ext = "jpg";
+														}
+													}
+												}
+											}
+											// if we got an extension
+											if (ext != null) {
+												// instances with public access have their files renamed for safety - if non-public we will already have dug the name out of the headers above, and not set the imageName
+												if (imageName == null) {
+													// date formatter
+													SimpleDateFormat df = new SimpleDateFormat("yyMMddhhmmssS");
+													// get the form adapter
+													FormAdapter formAdapter = app.getFormAdapter();
+													// check if we got one
+													if (formAdapter == null) {
+														// update the file name with random number
+														imageName = df.format(new Date()) + "-" + (new Random().nextInt(89999) + 10000) + "." + ext;
+													} else {
+														// update the file name with form id and random number
+														imageName = df.format(new Date()) + "-" + formAdapter.getFormId(rapidRequest) + "-" + (new Random().nextInt(899) + 100) + "." + ext;
+													}
+												}
+											}
+											// add closer to boundary as we take the bytes off later
+											boundary += "--";
+										}
+									}
+								}
 
-												} else {
 
-													logger.error("Error uploading file " + imageName + " of type " + contentType + " size " + bodyBytes.length + ", did not match file type byte signature");
+								// create a writer
+								PrintWriter out = response.getWriter();
+								// assume not passed
+								boolean passed = false;
 
-												} // signature check
+								// check we got one
+								if (imageName == null) {
 
-											} //end of bytes for
+									// send forbidden response
+									sendMessage(response, 400, "Name required", "Image name must be provided");
 
-										} // bytes check
+									// log
+									logger.error("Rapid POST response (400) : Image name must be provided");
 
-									}  // content type check
+								} else {
 
-								} // control character check
+									// check image name does not contain any control characters
+									if (imageName.indexOf("..") < 0 && imageName.indexOf("/") < 0 && imageName.indexOf("\\") < 0) {
 
-							} // upload file name check
+										// check the content type is allowed
+										if (getUploadMimeTypes().contains(contentType)) {
 
-							// if we didn't pass the file checks
-							if (!passed) {
+											// get the bytes
+											List<byte[]> bytes = getUploadMimeTypeBytes().get(contentType);
 
-								logger.debug("Rapid POST response (403) : Unrecognised file type must be .jpg, .gif, .png, .bmp, or .pdf or set in uploadMimeTypes in web.xml");
+											// if we got some
+											if (bytes != null) {
 
-								// send forbidden response
-								response.setStatus(400);
-								// write message
-								out.print("Unrecognised file type");
+												// for each byte[] in the bytes list
+												for (int i = 0; i < bytes.size(); i++) {
 
-							}
+													// check the jpg, gif, png, bmp, or pdf file signature (from http://en.wikipedia.org/wiki/List_of_file_signatures)
+													if (Bytes.findPattern(bodyBytes, bytes.get(i), bytesOffset, bytes.get(i).length) > -1) {
+
+														try {
+
+															// create the path
+															String imagePath = "uploads/" +  app.getId().toLowerCase() + "/" + imageName;
+															// servers with public access must use the secure upload location
+															if (this.isPublic()) imagePath = "WEB-INF/" + imagePath;
+															// create a file
+															File imageFile = new File(getServletContext().getRealPath(imagePath));
+															// create app folder if need be
+															imageFile.getParentFile().mkdir();
+															// create a file output stream to save the data to
+															FileOutputStream fos = new FileOutputStream(imageFile);
+															// write the body bytes to the stream
+															fos.write(bodyBytes, bytesOffset, bodyBytes.length - bytesOffset - boundary.length());
+															// close the stream
+															fos.close();
+
+															// store the file length
+															responseLength = imageFile.length();
+
+															// log the file creation
+															logger.debug("Saved image file " + imagePath);
+
+															// print just the file name
+															out.print(imageFile.getName());
+
+															// close the writer
+															out.close();
+
+															// we passed the checks
+															passed = true;
+
+														} catch (Exception ex) {
+
+															// log
+															logger.error("Error saving uploaded file " + imageName + " of type " + contentType + " size " + bodyBytes.length + " : " + ex.getMessage(), ex);
+
+															// rethrow
+															throw new Exception("Error uploading file");
+
+														}
+
+													} else {
+
+														logger.error("Error uploading file " + imageName + " of type " + contentType + " size " + bodyBytes.length + ", did not match file type byte signature");
+
+													} // signature check
+
+												} //end of bytes for
+
+											} // bytes check
+
+										}  // content type check
+
+									} // control character check
+
+								} // upload file name check
+
+								// if we didn't pass the file checks
+								if (!passed) {
+
+									logger.debug("Rapid POST response (403) : Unrecognised file type must be .jpg, .gif, .png, .bmp, or .pdf or set in uploadMimeTypes in web.xml");
+
+									// send forbidden response
+									response.setStatus(400);
+									// write message
+									out.print("Unrecognised file type");
+
+								}
+
+							} // body bytes check
 
 						}  else if ("application/x-www-form-urlencoded".equals(request.getContentType())) {
 
