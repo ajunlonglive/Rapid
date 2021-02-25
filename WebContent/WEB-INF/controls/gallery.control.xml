@@ -3,7 +3,7 @@
 
 <!-- 
 
-Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -316,19 +316,23 @@ function IDBputObject(object, callback, retrys) {
 function IDBgetByKey(key, callback) {
 	indexedDB.open("imagesDB")
 	.onsuccess = function(requestEvent) {
-		requestEvent.target.result
-		.transaction("imageStore", "readwrite")
-		.objectStore("imageStore")
-		.get(key)
-		.onsuccess = function(getRequest) {
-			var storedObject = getRequest.target.result;
-			if (storedObject) {
-				var newObject = Object.assign({}, storedObject);
-				newObject.accessedDate = Date.now();
-				IDBputObject(newObject);
-			}
-			if (callback) callback(storedObject, key);
-		};
+		if (requestEvent && requestEvent.target && requestEvent.target.result && requestEvent.target.result.objectStoreNames && requestEvent.target.result.objectStoreNames.length > 0) {
+			requestEvent.target.result
+			.transaction("imageStore", "readwrite")
+			.objectStore("imageStore")
+			.get(key)
+			.onsuccess = function(getRequest) {
+				var storedObject = getRequest.target.result;
+				if (storedObject) {
+					var newObject = Object.assign({}, storedObject);
+					newObject.accessedDate = Date.now();
+					IDBputObject(newObject);
+				}
+				if (callback) callback(storedObject, key);
+			};
+		} else {
+			if (callback) callback(null, key);
+		}
 	};
 }
 
@@ -352,11 +356,13 @@ function addToImageControl(ev, control, filename, url, type) {
 	// assume no image has been added
 	var imageSet = false;
 	
+	// if we're in Rapid Mobile
 	if (!typeof _rapidmobile == "undefined") {
 	
 		// if it doesn't start with http or data
 		if (filename.indexOf("http") != 0 && filename.indexOf("data:") != 0) {
 
+			// if this is Android
 			if (navigator.userAgent.indexOf("Android") > 0) {
 
 				// add a psuedo host for Rapid Mobile on Android
@@ -471,15 +477,12 @@ function specifyUrl(filename) {
 	
 	var specifiedUrl = filename;
 	
-	if (filename.indexOf("http") != 0) {
+	// not if full url, or aggregator already
+	if (filename.indexOf("http") != 0 && filename.indexOf("data:") != 0 && filename.indexOf(".jsp?") < 0) {
+	
+		// check Rapid Mobile
+		if (typeof _rapidmobile == "undefined") {
 		
-		if (navigator.userAgent.includes(" iPhone") || navigator.userAgent.includes(" iPad")) {
-			
-			// add a psuedo host for Rapid Mobile on iOS
-			specifiedUrl = window.location.origin + "/_images/" + filename;
-			
-		} else {
-			
 			// add the path to this url from our app - check for ~, if not is pretty url use _appId
 			if (window.location.pathname.indexOf("~") > -1) {
 				
@@ -489,10 +492,27 @@ function specifyUrl(filename) {
 				
 				// This is the pretty url request
 				var context = window.location.pathname.substring(0, window.location.pathname.toLowerCase().indexOf(_appId.toLowerCase()));
-				if(!context || context.length < 1) context = "/";
+				if (!context || context.length < 1) context = "/";
 				specifiedUrl = window.location.origin + context + "uploads/" + _appId + "/" + filename;
 			}
+		
+		} else {
+	
+			// if this is Android
+			if (navigator.userAgent.indexOf("Android") > 0) {
+
+				// add a psuedo host for Rapid Mobile on Android
+				specifiedUrl = "http://images/" + filename;
+										
+			} else {
+			
+				// add a psuedo host for Rapid Mobile on iOS
+				specifiedUrl = window.location.origin + "/_images/" + filename;
+			
+			}
+
 		}
+
 	}
 	
 	return specifiedUrl;
@@ -1062,51 +1082,51 @@ return data;
 	    
 	    <setDataJavaScript>
 	        <![CDATA[
-// get the control	        
+// get the control	 
 var control = $("#" + id);
-// check we have some data       
+// check we have some data 
 if (data) {
-  	// make a proper data object	
-  	data = makeDataObject(data, field);
-  	// if it has rows
-  	if (data.rows) {	
-  		// assume image not set
-  		var imageSet = false;
-  		// look for url or urls in the fields or use the first column if not found	
-  		var urlIndex = 0;
-  		if (data.fields) {
-  			for (var i in data.fields) {
-  				if ((field && data.fields[i] == field) || data.fields[i] == "url" || data.fields[i] == "urls") {
-  					urlIndex = i;
-  					break;
-  				}
-  			}
-  		}			
-  		// loop the rows
-  		for (var i in data.rows) {
-  		
-  			// make sure there is something to set
-  			if (data.rows[i][urlIndex]) {
-  
-  				// get the urls
-  				var urls = data.rows[i][urlIndex];
-  				
-  				// if urls do not start with data allow comma seperated list of urls in single field too
-  				if (urls.indexOf("data:") == 0) {
-  					urls = [urls];
-  				} else {
-  					urls = data.rows[i][urlIndex].split(",");
-  				}
-  				
-  				// loop the urls
-  				for (var j in urls) {
-	  				
-  					// get the url
-  					var url = urls[j];
-					
-  					// url type check
+	// make a proper data object	
+	data = makeDataObject(data, field);
+	// if it has rows
+	if (data.rows) {	
+		// assume image not set
+		var imageSet = false;
+		// look for url or urls in the fields or use the first column if not found	
+		var urlIndex = 0;
+		if (data.fields) {
+			for (var i in data.fields) {
+				if ((field && data.fields[i] == field) || data.fields[i] == "url" || data.fields[i] == "urls") {
+					urlIndex = i;
+					break;
+				}
+			}
+		}			
+		// loop the rows
+		for (var i in data.rows) {
+		
+			// make sure there is something to set
+			if (data.rows[i][urlIndex]) {
+
+				// get the urls
+				var urls = data.rows[i][urlIndex];
+				
+				// if urls do not start with data allow comma seperated list of urls in single field too
+				if (urls.indexOf("data:") == 0) {
+					urls = [urls];
+				} else {
+					urls = data.rows[i][urlIndex].split(",");
+				}
+				
+				// loop the urls
+				for (var j in urls) {
+ 				
+					// get the url
+					var url = urls[j];
+				
+					// url type check
 					if (url.indexOf("data:") == 0) { // if url is a data url
-						
+					
 						var imageRecord = { url: url };
  						imageRecord.filename = makeFilename(url);
  						IDBputObject(imageRecord);
@@ -1136,7 +1156,6 @@ if (data) {
 									reader.onloadend = function() {
 										var dataUrl = reader.result;
 										if (dataUrl.indexOf("data:image") === 0) {
-											IDBputObject({ filename: filename, url: dataUrl });
 											addToImageControl(ev, control, filename, dataUrl);
 										} else {
 											addToImageControl(ev, control, filename, filename);
@@ -1152,22 +1171,22 @@ if (data) {
 								xhr.send();
 							}
 						});
-						
-					} // url type check
 					
-  				} // urls loop
-  				
-  			} // url index check
-  			
-  		} // row loop
-  	} 
+					} // url type check
+				
+				} // urls loop
+				
+			} // url index check
+ 			
+		} // row loop
+	} 
 } else {
-  	// no data so remove all images
-  	control.find(".galleryItem").remove();
-  	// find the message span
-  	var span = control.find("span");
-  	// if there wasn't one, add one with the message
-  	if (!span[0]) control.append("<span>" + details.emptyText + "</span>");
+	// no data so remove all images
+	control.find(".galleryItem").remove();
+	// find the message span
+	var span = control.find("span");
+	// if there wasn't one, add one with the message
+	if (!span[0]) control.append("<span>" + details.emptyText + "</span>");
 }
 	        ]]>
 	    </setDataJavaScript>
