@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -465,16 +465,16 @@ public abstract class FormAdapter {
 	protected String getSummaryStartHtml(RapidRequest rapidRequest, Application application, boolean email) {
 		// if this is the email use the title
 		if (email) {
-			return "<h1 class='formSummaryTitle'>" + application.getTitle() + " summary</h1>\n";
+			return "<div class='formSummary'>\n  <h1 class='formSummaryTitle'>" + application.getTitle() + " summary</h1>\n";
 		} else {
 			// assume no theme header
 			String themeHeader = "";
 			// get the theme
 			Theme theme = application.getTheme(getServletContext());
 			// check we got one
-			if (theme != null && theme.getHeaderHtml() != null) themeHeader = theme.getHeaderHtml();
+			if (theme != null && theme.getHeaderHtml() != null) themeHeader = theme.getHeaderHtml() + "\n";
 			// return theme header and summary
-			return themeHeader + "<h1 class='formSummaryTitle'>Form summary</h1>\n";
+			return themeHeader + "<div class='formSummary'>\n  <h1 class='formSummaryTitle'>Form summary</h1>\n";
 		}
 	}
 
@@ -483,16 +483,16 @@ public abstract class FormAdapter {
 		// check if email
 		if (email) {
 			// no theme footer on email
-			return "";
+			return "\n</div>";
 		} else {
 			// assume no theme footer
 			String themeFooter = "";
 			// get the theme
 			Theme theme = application.getTheme(getServletContext());
 			// check we got a theme and it has a footer
-			if (theme != null && theme.getFooterHtml() != null) themeFooter = theme.getFooterHtml();
+			if (theme != null && theme.getFooterHtml() != null) themeFooter = "\n" + theme.getFooterHtml();
 			// return theme footer
-			return themeFooter;
+			return "\n</div>" + themeFooter;
 
 		}
 	}
