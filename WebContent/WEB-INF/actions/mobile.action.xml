@@ -448,6 +448,11 @@ return "<option value=''>Please select...</option><option value ='html'" + (this
 	    		<contents>scripts_min/actions/llqrcode.min.js</contents>
 	        </resource>
 	        
+	    	<resource>
+	    		<type>javascriptLink</type>
+	    		<contents>scripts_min/actions/quagga.min.js</contents>
+	        </resource>
+	        
 	        <resource>
 	        	<type>css</type>
 	        	<contents>
@@ -1660,7 +1665,7 @@ function downloadImages(controlIds, ev, successCallback, errorCallback) {
 function scanQrCodeAction(callback) {
 	
 	var getNewStream = function() {
-		return navigator.mediaDevices.getUserMedia({ video: { facingMode: getFacingMode() } });
+		return navigator.mediaDevices.getUserMedia({ video: { facingMode: getFacingMode(), height: { ideal: 1080 } } });
 	};
 	
 	var initialStream = getNewStream();
@@ -1688,6 +1693,7 @@ function scanQrCodeAction(callback) {
 	video.style.height = "100%";
 	video.style.objectFit = "contain";
 	video.style.pointerEvents = "none";
+	video.style.zIndex = "-1";
 	pageCover.appendChild(video);
 	
 	var canvas = document.createElement("canvas");
@@ -1699,13 +1705,16 @@ function scanQrCodeAction(callback) {
 	
 	var copyVideoToCanvasId = undefined;
 	
-	var copyVideoToCanvas = function() {
+	var copyVideoToCanvas = function(process) {
 		copyVideoToCanvasId = setInterval(function() {
 			context.drawImage(video, 0, 0);
-			try {
-				qrcode.decode();
-			} catch (e) {}
+			process();
 		}, 300);
+	};
+	
+	var codeDetected = function(data) {
+		close();
+		callback(data);
 	};
 	
 	var setVideoStream = function(stream) {
@@ -1714,7 +1723,21 @@ function scanQrCodeAction(callback) {
 		canvas.width = settings.width;
 		canvas.height = settings.height;
 		context = canvas.getContext("2d");
-		copyVideoToCanvas();
+		copyVideoToCanvas(function() {
+			try { qrcode.decode(); } catch (e) {}
+			Quagga.decodeSingle({
+				inputStream : {
+					name : "Live",
+					type : "LiveStream",
+					target: video
+				},
+				decoder : {
+					readers : ["code_128_reader", "ean_reader", "ean_8_reader", "upc_reader"]
+				}
+			}, function(data) {
+				if (data && data.codeResult && data.codeResult.code) codeDetected(data.codeResult.code);
+			});
+		});
 	};
 	
 	
@@ -1735,10 +1758,7 @@ function scanQrCodeAction(callback) {
 		document.body.style.touchAction = "auto";
 	};
 	
-	qrcode.callback = function(data) {
-		close();
-		callback(data);
-	};
+	qrcode.callback = codeDetected;
 	
 	var toggleCamera = function() {
 		setFacingMode(
