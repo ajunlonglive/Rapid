@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -541,25 +541,32 @@ public class Application {
 					break;
 				}
 			}
+			// assume not existing
+			boolean exists = false;
 			// check for an existing resource
 			if (resource == null) {
 				// didn't find one so create
 				resource = new Resource(type, content, dependencyTypeClass, dependencyType, replaceMinIfDifferent);
 				// add to this collection
 				this.add(resource);
-				// if this is a theme resource
-				if (dependencyTypeClass == ResourceDependency.THEME) {
-					// add rapid as a dependency so it appears in all pages
-					resource.addDependency(new ResourceDependency(ResourceDependency.RAPID, "rapid"));
-				}
 			} else {
+				// remember it exists
+				exists = true;
 				// add the dependency to the resource
 				resource.addDependency(new ResourceDependency(dependencyTypeClass, dependencyType));
 			}
-			// if filter was provided
-			if (filterProperty != null && filterValue != null) {
-				// a new filiter
-				resource.addFilter(new ResourceFilter(dependencyType, filterProperty, filterValue));
+			// if this is a theme resource
+			if (dependencyTypeClass == ResourceDependency.THEME) {
+				// add rapid as a dependency so it appears in all pages
+				resource.addDependency(new ResourceDependency(ResourceDependency.RAPID, "rapid"));
+			}
+			// if no filter was provided
+			if (filterProperty == null || filterValue == null) {
+				// remove any filters
+				resource.setFilters(null);
+			} else {
+				// add this filter if the resource is not in the list already
+				if (!exists) resource.addFilter(new ResourceFilter(dependencyType, filterProperty, filterValue));
 			}
 
 		}

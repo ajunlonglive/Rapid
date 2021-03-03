@@ -1239,10 +1239,13 @@ public class Page {
     	// manage the resources links added already so we don't add twice
     	ArrayList<String> addedResources = new ArrayList<>();
 
+    	// get all resources
+    	List<Resource> resources = application.getResources();
+
 		// if this application has resources add during initialisation
-		if (application.getResources() != null) {
+		if (resources != null && resources.size() > 0) {
 			// loop and add the resources required by this application's controls and actions (created when application loads)
-			for (Resource resource : application.getResources()) {
+			for (Resource resource : resources) {
 				// if we want all the resources (for the designer) or there is a dependency for this resource
 				if (allResources || resource.hasDependency(ResourceDependency.RAPID) || resource.hasDependency(ResourceDependency.ACTION, _actionTypes) || resource.hasDependency(ResourceDependency.CONTROL, _controlTypes)) {
 					// assume filiters have been passed
