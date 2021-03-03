@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2016- Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -65,8 +65,8 @@ function loadControl(jsonControl, parentControl, loadActions, paste, undo, check
 function ControlClass(controlClass) {
 	// retain all values passed in the json for the control (from the .control.xml file)
 	for (var i in controlClass) this[i] = controlClass[i];
-	// make it's html function
-	this._getHtml = new Function(controlClass.getHtmlFunction.trim());
+	// make it's html function if one is there
+	if (controlClass.getHtmlFunction) this._getHtml = new Function(controlClass.getHtmlFunction.trim());
 }
 
 // this object function will create the control as specified in the controlClass, jsonControl is from a previously saved control, or paste, loadActions can avoid loading the action objects into the control (the page renderer doesn't need them), and paste can generate new id's
@@ -333,9 +333,11 @@ function Control(controlType, parentControl, jsonControl, loadComplexObjects, pa
 		// set and run the getHtml statement
 		try {			
 			// run the class _getHtml against this control
-			this._html = controlClass._getHtml.apply(this).trim();
+			var html = controlClass._getHtml.apply(this);
+			// set trimmed value if we got some
+			if (html) this._html = html.trim();
 		} catch (ex) {
-			// show error message in place of xml
+			// show error message in place of html
 			this._html = "<span>getHtmlFunction failed for " + this.type + ". " + ex + "</span>";
 			// remember there is an error (stops properties and styles being rendered)
 			this.error = true;
