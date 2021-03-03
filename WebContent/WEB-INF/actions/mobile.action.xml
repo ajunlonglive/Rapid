@@ -712,9 +712,11 @@ var _mobileCamera = {
 				if (!ignoreAudio) gainedAudioPermission = true;
 				resolve(stream);
 			}).catch(function(err) {
-				if (err.name === "NotAllowedError") resolve(
-					navigator.mediaDevices.getUserMedia({ audio: false, video: { facingMode: getFacingMode() } })
-				);
+				if (err.name === "NotAllowedError") {
+					resolve(navigator.mediaDevices.getUserMedia({ audio: false, video: { facingMode: getFacingMode() } }));
+				} else if (err.name === "NotReadableError") {
+					reject(err);
+				}
 			});
 		});
 	},
@@ -1011,7 +1013,7 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 							+ "<video id='cameraPlayer' autoplay playsinline muted='true'></video>"
 							+ "<div id='cropBox' class='hiddenCrop'></div>"
 							+ inputImageHtml
-							+ "<button id='btnToggleCamera' class='cameraControlBasic' style='position:absolute; left:0;'><i class='fas fa-retweet cameraIcon' style='margin-left:-5px;'></i></button>"								  
+							+ "<button id='btnToggleCamera' class='cameraControlBasic' style='position:absolute; left:0;'><i class='fas fa-retweet cameraIcon' style='margin-left:-5px;'></i></button>"
 							+ "<button id ='btnCloseCamera' class='cameraControlBasic' style='position:absolute; right:0;'><i class='fas fa-times cameraIcon'></i></button>"
 							+ "<div style='position:fixed; bottom:0; width:100%; text-align:center; padding:20px;'>"
 							+ mediaCapturer.indicator()
@@ -1203,6 +1205,8 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 				source.permissionDenied(function() {
 					selectItem(galleryControlId, _size, mediums, "Permission to access your camera was denied");
 				});
+			} else if (err.name === "NotReadableError") {
+				if (_cameraSelectImage) selectItem(galleryControlId, _size, mediums, "The camera is not available");
 			} else {
 				selectItem(galleryControlId, _size, mediums, source.getNotSupportedMessage());
 			}
@@ -1754,17 +1758,20 @@ function scanQrCodeAction(callback) {
 	};
 	
 	
-	initialStream.then(setVideoStream);
+	initialStream.then(setVideoStream)
+	.catch(function() {
+		noCameraWarning.style.visibility = "visible";
+	});
 	
 	var stopAllTracks = function() {
-		video.srcObject.getVideoTracks().forEach(function(track) {
+		if (video.srcObject) video.srcObject.getVideoTracks().forEach(function(track) {
 			track.stop();
 		});
 	};
 	
 	var close = function() {
 		clearInterval(copyVideoToCanvasId);
-		Quagga.stop();
+		try { Quagga.stop(); } catch (e) {}
 		stopAllTracks();
 		pageCover.remove();
 		
@@ -1778,15 +1785,20 @@ function scanQrCodeAction(callback) {
 	});
 	
 	var toggleCamera = function() {
+		noCameraWarning.style.visibility = "hidden";
+		
 		setFacingMode(
 			getFacingMode() === "environment" ? "user" : "environment"
 		);
 		
 		clearInterval(copyVideoToCanvasId);
-		Quagga.stop();
+		try { Quagga.stop(); } catch (e) {}
 		stopAllTracks();
 		
-		getNewStream().then(setVideoStream);
+		getNewStream().then(setVideoStream)
+		.catch(function() {
+			noCameraWarning.style.visibility = "visible";
+		});;
 	};
 	
 	var toggleButton = document.createElement("button");
@@ -1794,6 +1806,15 @@ function scanQrCodeAction(callback) {
 	toggleButton.classList.add("cameraControlBasic");
 	toggleButton.addEventListener("click", toggleCamera);
 	toolBar.appendChild(toggleButton);
+	
+	var noCameraWarning = document.createElement("p");
+	noCameraWarning.style.color = "#FFF";
+	noCameraWarning.style.fontSize = "30px";
+	noCameraWarning.style.display = "inline-block";
+	noCameraWarning.style.float = "none";
+	noCameraWarning.style.visibility = "hidden";
+	noCameraWarning.innerText = "No camera available";
+	toolBar.appendChild(noCameraWarning);
 	
 	var closeButton = document.createElement("button");
 	closeButton.style.float = "right";

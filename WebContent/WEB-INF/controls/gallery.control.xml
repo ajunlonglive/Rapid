@@ -114,6 +114,11 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    		<type>javascriptFile</type>
 	    		<contents>scripts_min/jquery-ui-1.12.1.min.js</contents>
 	    	</resource>
+	        
+	        <resource>
+	            <type>javascriptFile</type>
+	            <contents>scripts_min/jquery-touchSwipe-1.6.18.min.js</contents>
+	        </resource>
 	    
 	        <resource>
 	            <type>css</type>
@@ -746,7 +751,7 @@ function Gallery_showImage(ev, id, galleryItem, allowDelete, openEditor, allowEd
 			var fingers = 1;
 			var target = gallery;
 			
-			target.swipe({ 
+			$(target).swipe({ 
 				swipe:function(event, direction, distance, duration, fingers, fingerData) { 
 					handleSwipe(event, direction, distance, duration, fingers, fingerData, target, ev); 
 				},fingers:'all'
@@ -756,11 +761,11 @@ function Gallery_showImage(ev, id, galleryItem, allowDelete, openEditor, allowEd
 		  	
 		  	// Create the functions, that handles what should happen when there is a swipe
 		  	var swipeLeftHandler = function(ev) { 
-		  		btnNext.trigger("click");
+		  		btnNext.trigger(START_EV);
 		  	};
 		  	
 		  	var swipeRightHandler = function(ev) { 
-		  		btnPrev.trigger("click");
+		  		btnPrev.trigger(START_EV);
 		  	};
 		  	
 		  	// Add the handlers to the map
