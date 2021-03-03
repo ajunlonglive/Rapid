@@ -65,6 +65,7 @@ import com.rapid.actions.Logic.Value;
 import com.rapid.core.Application.RapidLoadingException;
 import com.rapid.core.Application.Resource;
 import com.rapid.core.Application.ResourceDependency;
+import com.rapid.core.Application.ResourceFilter;
 import com.rapid.forms.FormAdapter;
 import com.rapid.forms.FormAdapter.FormControlValue;
 import com.rapid.forms.FormAdapter.FormPageControlValues;
@@ -1244,14 +1245,46 @@ public class Page {
 			for (Resource resource : application.getResources()) {
 				// if we want all the resources (for the designer) or there is a dependency for this resource
 				if (allResources || resource.hasDependency(ResourceDependency.RAPID) || resource.hasDependency(ResourceDependency.ACTION, _actionTypes) || resource.hasDependency(ResourceDependency.CONTROL, _controlTypes)) {
-					// the html we're hoping to get
-					String resourceHtml = getResourceHtml(application, resource);
-					// if we got some html and don't have it already
-					if (resourceHtml != null && !addedResources.contains(resourceHtml)) {
-						// append it
-						stringBuilder.append(resourceHtml + "\n");
-						// remember we've added it
-						addedResources.add(resourceHtml);
+					// assume filiters have been passed
+					boolean passedFilters = true;
+					// get any filters
+					List<ResourceFilter> filters = resource.getFilters();
+					// if this resource has filters
+					if (filters != null && filters.size() > 0) {
+						// assume we've not passed
+						passedFilters = false;
+						// loop the filters
+						for (ResourceFilter filter : filters) {
+							// only actions for now (if we use controls or themes we'll have to check the source type)
+							List<Action> actions = this.getAllActions(filter.getType());
+							// loop the actions
+							for (Action action : actions) {
+								// get the value
+								String value = action.getProperty(filter.getProperty());
+								// if this equals our value we're good
+								if (filter.getValue().equals(value)) {
+									// set pass true
+									passedFilters = true;
+									// we're done
+									break;
+								}
+							}
+							// break here too if done
+							if (passedFilters) break;
+						}
+
+					}
+					// if we passed filters
+					if (passedFilters) {
+						// the html we're hoping to get
+						String resourceHtml = getResourceHtml(application, resource);
+						// if we got some html and don't have it already
+						if (resourceHtml != null && !addedResources.contains(resourceHtml)) {
+							// append it
+							stringBuilder.append(resourceHtml + "\n");
+							// remember we've added it
+							addedResources.add(resourceHtml);
+						}
 					}
 
 				} // dependency check

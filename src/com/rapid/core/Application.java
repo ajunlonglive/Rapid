@@ -334,6 +334,33 @@ public class Application {
 
 	}
 
+	// the resource dependency is the control or action dependent on the resource
+	public static class ResourceFilter {
+
+		// private instance variables
+		private String _type, _property, _value;
+
+		// properties
+		public String getType() { return _type; }
+		public void setType(String type) { _type = type; }
+
+		public String getProperty() { return _property; }
+		public void setProperty(String property) { _property = property; }
+
+		public String getValue() { return _value; }
+		public void setValue(String value) { _value = value; }
+
+		// constructors
+		public ResourceFilter() {};
+
+		public ResourceFilter(String type, String property, String value) {
+			_type = type;
+			_property = property;
+			_value = value;
+		}
+
+	}
+
 	// the resource is specified in the action, control, or theme xml files
 	public static class Resource {
 
@@ -354,6 +381,7 @@ public class Application {
 		private int _type;
 		private String _name, _content;
 		private List<ResourceDependency> _dependancies;
+		private List<ResourceFilter> _filters;
 		private boolean _replaceMinIfDifferent;
 
 		// properties
@@ -368,6 +396,9 @@ public class Application {
 
 		public List<ResourceDependency> getDependencies() { return _dependancies; }
 		public void setDependencies(List<ResourceDependency> dependancies) {  _dependancies = dependancies; }
+
+		public List<ResourceFilter> getFilters() { return _filters; }
+		public void setFilters(List<ResourceFilter> filters) { _filters = filters; }
 
 		public boolean replaceMinIfDifferent() { return _replaceMinIfDifferent; }
 
@@ -399,6 +430,11 @@ public class Application {
 		public void addDependency(ResourceDependency dependency) {
 			if (_dependancies == null) _dependancies = new ArrayList<>();
 			_dependancies.add(dependency);
+		}
+
+		public void addFilter(ResourceFilter filter) {
+			if (_filters == null) _filters = new ArrayList<>();
+			_filters.add(filter);
 		}
 
 		// check for dependencies on a single type (usually Rapid)
@@ -492,7 +528,7 @@ public class Application {
 			}
 		}
 
-		public void add(int type, String content, int dependencyTypeClass, String dependencyType, boolean replaceMinIfDifferent) {
+		public void add(int type, String content, int dependencyTypeClass, String dependencyType, boolean replaceMinIfDifferent, String filterProperty, String filterValue) {
 			// assume we can't find the resource
 			Resource resource = null;
 			// loop all resources
@@ -519,6 +555,11 @@ public class Application {
 			} else {
 				// add the dependency to the resource
 				resource.addDependency(new ResourceDependency(dependencyTypeClass, dependencyType));
+			}
+			// if filter was provided
+			if (filterProperty != null && filterValue != null) {
+				// a new filiter
+				resource.addFilter(new ResourceFilter(dependencyType, filterProperty, filterValue));
 			}
 
 		}
@@ -1441,21 +1482,33 @@ public class Application {
 					// get the replaceMinIfDifferent (default is false)
 					boolean replaceMinIfDifferent = jsonResource.optBoolean("replaceMinIfDifferent");
 
+					// assume no filter
+					String filterProperty = null;
+					String filterValue = null;
+
+					// look for filter object
+					JSONObject jsonFilter = jsonResource.optJSONObject("filter");
+					// if we got one set property and value
+					if (jsonFilter != null) {
+						filterProperty = jsonFilter.getString("property");
+						filterValue = jsonFilter.getString("value");
+					}
+
 					// add as resources if they're files, or append the string builders (the app .js and .css are added as resources at the end)
 					if ("javascript".equals(resourceType)) {
 						js.append("\n/* " + commentsName + " resource JavaScript */\n\n" + resourceContents + "\n");
 					} else if ("css".equals(resourceType)) {
 						css.append("\n/* " + commentsName + " resource styles */\n\n" + resourceContents + "\n");
 					} else if ("javascriptFile".equals(resourceType)) {
-						_resources.add(Resource.JAVASCRIPTFILE, resourceContents, dependencyTypeClass, dependencyType, replaceMinIfDifferent);
+						_resources.add(Resource.JAVASCRIPTFILE, resourceContents, dependencyTypeClass, dependencyType, replaceMinIfDifferent, filterProperty, filterValue);
 					} else if ("cssFile".equals(resourceType)) {
-						_resources.add(Resource.CSSFILE, resourceContents, dependencyTypeClass, dependencyType, replaceMinIfDifferent);
+						_resources.add(Resource.CSSFILE, resourceContents, dependencyTypeClass, dependencyType, replaceMinIfDifferent, filterProperty, filterValue);
 					} else if ("javascriptLink".equals(resourceType)) {
-						_resources.add(Resource.JAVASCRIPTLINK, resourceContents, dependencyTypeClass, dependencyType, replaceMinIfDifferent);
+						_resources.add(Resource.JAVASCRIPTLINK, resourceContents, dependencyTypeClass, dependencyType, replaceMinIfDifferent, filterProperty, filterValue);
 					} else if ("cssLink".equals(resourceType)) {
-						_resources.add(Resource.CSSLINK, resourceContents, dependencyTypeClass, dependencyType, replaceMinIfDifferent);
+						_resources.add(Resource.CSSLINK, resourceContents, dependencyTypeClass, dependencyType, replaceMinIfDifferent, filterProperty, filterValue);
 					} else if ("file".equals(resourceType)) {
-						_resources.add(Resource.FILE, resourceContents, dependencyTypeClass, dependencyType, replaceMinIfDifferent);
+						_resources.add(Resource.FILE, resourceContents, dependencyTypeClass, dependencyType, replaceMinIfDifferent, filterProperty, filterValue);
 					}
 
 				} // resource loop
