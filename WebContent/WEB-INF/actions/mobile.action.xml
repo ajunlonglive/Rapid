@@ -1739,18 +1739,17 @@ function scanQrCodeAction(callback) {
 		context = canvas.getContext("2d");
 		copyVideoToCanvas(function() {
 			try { qrcode.decode(); } catch (e) {}
-			Quagga.decodeSingle({
-				inputStream : {
-					name : "Live",
-					type : "LiveStream",
-					target: video
-				},
-				decoder : {
-					readers : ["code_128_reader", "ean_reader", "ean_8_reader", "upc_reader"]
-				}
-			}, function(data) {
-				if (data && data.codeResult && data.codeResult.code) codeDetected(data.codeResult.code);
-			});
+		});
+		Quagga.init({
+			inputStream : { name : "Live", type : "LiveStream", target: video },
+			decoder : { readers : ["code_128_reader", "ean_reader", "ean_8_reader", "upc_reader"] }
+		}, function(err) {
+			if (err) {
+				console.log(err);
+				return;
+			}
+			console.log("Initialization finished. Ready to start");
+			Quagga.start();
 		});
 	};
 	
@@ -1765,6 +1764,7 @@ function scanQrCodeAction(callback) {
 	
 	var close = function() {
 		clearInterval(copyVideoToCanvasId);
+		Quagga.stop();
 		stopAllTracks();
 		pageCover.remove();
 		
@@ -1773,6 +1773,9 @@ function scanQrCodeAction(callback) {
 	};
 	
 	qrcode.callback = codeDetected;
+	Quagga.onDetected(function(data) {
+		codeDetected(data.codeResult.code);
+	});
 	
 	var toggleCamera = function() {
 		setFacingMode(
@@ -1780,6 +1783,7 @@ function scanQrCodeAction(callback) {
 		);
 		
 		clearInterval(copyVideoToCanvasId);
+		Quagga.stop();
 		stopAllTracks();
 		
 		getNewStream().then(setVideoStream);
