@@ -1754,17 +1754,20 @@ function scanQrCodeAction(callback) {
 	};
 	
 	
-	initialStream.then(setVideoStream);
+	initialStream.then(setVideoStream)
+	.catch(function() {
+		noCameraWarning.style.visibility = "visible";
+	});
 	
 	var stopAllTracks = function() {
-		video.srcObject.getVideoTracks().forEach(function(track) {
+		if (video.srcObject) video.srcObject.getVideoTracks().forEach(function(track) {
 			track.stop();
 		});
 	};
 	
 	var close = function() {
 		clearInterval(copyVideoToCanvasId);
-		Quagga.stop();
+		try { Quagga.stop(); } catch (e) {}
 		stopAllTracks();
 		pageCover.remove();
 		
@@ -1778,15 +1781,20 @@ function scanQrCodeAction(callback) {
 	});
 	
 	var toggleCamera = function() {
+		noCameraWarning.style.visibility = "hidden";
+		
 		setFacingMode(
 			getFacingMode() === "environment" ? "user" : "environment"
 		);
 		
 		clearInterval(copyVideoToCanvasId);
-		Quagga.stop();
+		try { Quagga.stop(); } catch (e) {}
 		stopAllTracks();
 		
-		getNewStream().then(setVideoStream);
+		getNewStream().then(setVideoStream)
+		.catch(function() {
+			noCameraWarning.style.visibility = "visible";
+		});;
 	};
 	
 	var toggleButton = document.createElement("button");
@@ -1794,6 +1802,15 @@ function scanQrCodeAction(callback) {
 	toggleButton.classList.add("cameraControlBasic");
 	toggleButton.addEventListener("click", toggleCamera);
 	toolBar.appendChild(toggleButton);
+	
+	var noCameraWarning = document.createElement("p");
+	noCameraWarning.style.color = "#FFF";
+	noCameraWarning.style.fontSize = "30px";
+	noCameraWarning.style.display = "inline-block";
+	noCameraWarning.style.float = "none";
+	noCameraWarning.style.visibility = "hidden";
+	noCameraWarning.innerText = "No camera available";
+	toolBar.appendChild(noCameraWarning);
 	
 	var closeButton = document.createElement("button");
 	closeButton.style.float = "right";
