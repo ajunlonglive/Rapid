@@ -432,25 +432,39 @@ return "<option value=''>Please select...</option><option value ='html'" + (this
 		<resources>
 		    
 	        <resource>
-	            <type>javascriptFile</type>
-	            <contents>
-	               scripts/controls/map.js
-	            </contents>
-            </resource>
-            
-	        <resource>
-	            <type>javascriptLink</type>
-	            <contents>scripts_min/jquery-touchSwipe-1.6.18.min.js</contents>
-	        </resource>
-	        
-	    	<resource>
+	    		<filter>
+	    			<property>actionType</property>
+	    			<value>addBarcode</value>
+	    		</filter>
 	    		<type>javascriptLink</type>
 	    		<contents>scripts_min/actions/llqrcode.min.js</contents>
 	        </resource>
 	        
 	    	<resource>
+	    		<filter>
+	    			<property>actionType</property>
+	    			<value>addBarcode</value>
+	    		</filter>
 	    		<type>javascriptLink</type>
 	    		<contents>scripts_min/actions/quagga.min.js</contents>
+	        </resource>
+	        
+	        <resource>
+	        	<filter>
+	    			<property>actionType</property>
+	    			<value>sendGPS</value>
+	    		</filter>
+	            <type>javascriptFile</type>
+	            <contents>scripts/controls/map.js</contents>
+            </resource>
+	        
+	        <resource>
+				<filter>
+	    			<property>actionType</property>
+	    			<value>swipe</value>
+	    		</filter>
+	            <type>javascriptLink</type>
+	            <contents>scripts_min/jquery-touchSwipe-1.6.18.min.js</contents>
 	        </resource>
 	        
 	        <resource>

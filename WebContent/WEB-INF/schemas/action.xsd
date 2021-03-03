@@ -38,16 +38,14 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 			<xs:sequence>
 				<xs:element name="action" minOccurs="1" maxOccurs="unbounded">
 					<xs:annotation>
-						<xs:documentation>The action xml is turned into json and loaded
-							into the designer where it is used to create new objects
+						<xs:documentation>The action xml is turned into json and loaded	into the designer where it is used to create new objects
 						</xs:documentation>
 					</xs:annotation>
 					<xs:complexType>
 						<xs:sequence>
 							<xs:element name="type">
 								<xs:annotation>
-									<xs:documentation>The action type is used to uniquely identify
-										this control, it should not contain spaces or punctuation
+									<xs:documentation>The action type is used to uniquely identify this control, it should not contain spaces or punctuation
 									</xs:documentation>
 								</xs:annotation>
 								<xs:simpleType>
@@ -58,8 +56,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 							</xs:element>							
 							<xs:element name="name">
 								<xs:annotation>
-									<xs:documentation>The action name is presented to users when
-										describing, or logging something about this action
+									<xs:documentation>The action name is presented to users when describing, or logging something about this action
 									</xs:documentation>
 								</xs:annotation>
 								<xs:simpleType>
@@ -70,8 +67,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 							</xs:element>
 							<xs:element name="class">
 								<xs:annotation>
-									<xs:documentation>Each action must have a Java class, in the
-										classpath, that extends com.rapid.core.Action
+									<xs:documentation>Each action must have a Java class, in the classpath, that extends com.rapid.core.Action
 									</xs:documentation>
 								</xs:annotation>
 								<xs:simpleType>
@@ -82,8 +78,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 							</xs:element>
 							<xs:element name="image" minOccurs="0">
 								<xs:annotation>
-									<xs:documentation>A url for the action image relative to the
-										workflow.jsp document
+									<xs:documentation>A url for the action image relative to the workflow.jsp document
 									</xs:documentation>
 								</xs:annotation>
 								<xs:simpleType>
@@ -101,8 +96,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 							</xs:element>	
 							<xs:element name="dependentTypes" minOccurs="0">
 								<xs:annotation>
-									<xs:documentation>Further control types that this control depends on.
-									This will ensure that all necessary resources are created.
+									<xs:documentation>Further control types that this control depends on. This will ensure that all necessary resources are created.
 									</xs:documentation>
 								</xs:annotation>
 								<xs:complexType>
@@ -165,10 +159,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 												<xs:sequence>
 													<xs:element name="key">
 													<xs:annotation>
-															<xs:documentation>The property keys are all copied into
-																the object when saving/restoring so there are some
-																reserved words used by the system that should not be used
-																such as: type, name, and comments
+															<xs:documentation>The property keys are all copied into the object when saving/restoring so there are some reserved words used by the system that should not be used such as: type, name, and comments
 															</xs:documentation>
 														</xs:annotation>
 														<xs:simpleType>
@@ -278,10 +269,47 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 							<xs:element name="resources" minOccurs="0">
 								<xs:complexType>
 									<xs:sequence>
-										<xs:element name="resource" minOccurs="1"
-											maxOccurs="unbounded">
+										<xs:element name="resource" minOccurs="1" maxOccurs="unbounded">
 											<xs:complexType>
 												<xs:sequence>
+													<xs:element name="filter" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>
+															Use this element to only include a link to this resource in pages where there is an action with the set property value or values
+															</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:sequence>
+																
+																<xs:element name="property">
+																	<xs:annotation>
+																		<xs:documentation>
+																		The name of a property of this action to filter on
+																		</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:minLength value="1" />
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																
+																<xs:element name="value">
+																	<xs:annotation>
+																		<xs:documentation>
+																		The value of the property when this resource is required
+																		</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:minLength value="1" />
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
 													<xs:element name="type">
 														<xs:annotation>
 															<xs:documentation>
@@ -325,9 +353,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 							</xs:element>
 							<xs:element name="actionJavaScript" minOccurs="0">
 								<xs:annotation>
-									<xs:documentation>This is the client-side JavaScript that will
-										be called, that actually performs the action. Typically the
-										properties will be passed in
+									<xs:documentation>This is the client-side JavaScript that will be called, that actually performs the action. Typically the properties will be passed in
 									</xs:documentation>
 								</xs:annotation>
 								<xs:simpleType>
