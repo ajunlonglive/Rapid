@@ -480,7 +480,16 @@ if (window["_rapidmobile"]) {
 	_rapidmobile.savePage = function() {
 		// explicitly push each input val in as an attribute
 		$("input").each( function() {
-			$(this).attr("value", $(this).val());
+			// get a reference to this input
+			var i = $(this);
+			// if it's a radio or checkbox
+			if (i.is("[type=radio],[type=checkbox]")) {
+				// if checked set selected property
+				if (i.prop("checked")) i.attr("checked","checked");
+			} else {
+				// set value attribute
+				i.attr("value", $(this).val());
+			}
 		});
 		// explicitly push textarea value into it's html
 		$("textarea").each( function() {
