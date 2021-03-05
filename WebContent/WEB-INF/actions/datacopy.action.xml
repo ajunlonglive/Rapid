@@ -41,7 +41,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	        <property>
 	            <key>copyType</key>
 	            <name>Copy type</name>
-	            <setConstructValueFunction>return false;</setConstructValueFunction>
+	            <setConstructValueFunction>return "replace";</setConstructValueFunction>
 	            <changeValueJavaScript>select</changeValueJavaScript>
 	            <getValuesFunction>
 // for backwards compatibility	                
@@ -72,12 +72,12 @@ This powerful control moves data around your application. The following differnt
 	                <![CDATA[
 // for backwards compatibility	                
 if (this.dataSource == "System.user") this.dataSource = "System.user name";
-// dateTime only available for copyType replace
 // assume no date time
 var hasDatetime = false;
+// dateTime only available for certain copy types
 if (['replace', 'child', 'row', 'append'].includes(this.copyType)) hasDatetime = true;
-var hasClipboard = true;
-return "<option value=''>Please select...</option>" + getInputOptions(this.dataSource, true, hasDatetime, hasClipboard);
+// return applicable options
+return "<option value=''>Please select...</option>" + getInputOptions(this.dataSource, true, hasDatetime, true);
 	                ]]>
 	            </getValuesFunction>
 	            <refreshProperties>true</refreshProperties>
