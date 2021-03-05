@@ -80,7 +80,18 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <name>Form</name>
 	            <changeValueJavaScript>checkbox</changeValueJavaScript>
 	            <refreshHtml>true</refreshHtml>
-	            <helpHtml>Whether the panel is a form (autofill traget group).</helpHtml>
+	            <refreshProperties>true</refreshProperties>
+	            <helpHtml>Whether the panel is a form (autofill target group).</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>autocomplete</key>	            
+	            <name>Allow autocomplete</name>
+	            <visibility><key>form</key><value>true</value></visibility>	            
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>
+	            <getValuesFunction>return true;</getValuesFunction>
+	            <refreshHtml>true</refreshHtml>	            
+	            <helpHtml>Whether the form is allowed to autocomplete.</helpHtml>
 	        </property>
 	        
 	    </properties>
@@ -93,8 +104,12 @@ classes = getStyleClasses(this);
 if (!classes && classes.indexOf("alert") != 1) classes = "panel" + classes;
 // element type based on form property
 var type = this.form ? "form" : "div";
+// assume not autocomplete
+var autocomplete = "";
+// if a form and no autocomplete add attribute
+if (this.form && !this.autocomplete) autocomplete=" autocomplete='off'";
 // return our html for adding to our parent object	        
-return "<" + type + " id='" + this.id + "' class='" + classes + "'" + (this.text ? "" : " style='min-height:15px;'") + ">" + this.text + "</" + type + ">";
+return "<" + type + " id='" + this.id + "' " + autocomplete + "class='" + classes + "'" + (this.text ? "" : " style='min-height:15px;'") + ">" + this.text + "</" + type + ">";
 	        ]]>
 	    </getHtmlFunction> 
 	    
