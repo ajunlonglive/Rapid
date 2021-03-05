@@ -1519,6 +1519,65 @@ public abstract class FormAdapter {
 				// if there was a back office email
 				if (backOfficeEmailTo != null && backOfficeEmailTo.trim().length() > 0) {
 
+					// check for form.emails which can change the backOfficeEmail depending on control values
+					String formEmails = application.getParameterValue("form.emails");
+
+					// if there was one
+					if (formEmails != null) {
+
+						// trim it for good meeasue
+						formEmails = formEmails.trim();
+
+						// if it looks like a JSON array
+						if (formEmails.startsWith("[") && formEmails.endsWith("]")) {
+
+							try {
+
+								// turn it into a json array
+								JSONArray jsonFormEmails = new JSONArray(formEmails);
+
+								// loop it
+								for (int i = 0; i < jsonFormEmails.length(); i++) {
+
+									// get this one
+									JSONObject jsonFormEmail = jsonFormEmails.getJSONObject(i);
+
+									// get the bits
+									String controlId = jsonFormEmail.optString("controlId", null);
+									String value = jsonFormEmail.optString("value", null);
+									String email = jsonFormEmail.optString("email", null);
+
+									// if all bits are there
+									if (controlId != null && value != null && email != null) {
+
+										// get the control value
+										String controlValue = this.getFormControlValue(rapidRequest, formId, controlId);
+
+										// if they match
+										if (value.equals(controlValue)) {
+
+											// update email
+											backOfficeEmailTo = email.trim();
+
+											// we'll take the first match
+											break;
+
+										} // value check
+
+									} // bits check
+
+								} // jsonFormEmails loop
+
+							} catch (JSONException ex) {
+
+								_logger.error("Error parsing form.emails " + ex.getMessage(), ex);
+
+							}
+
+						} // json [] check
+
+					} // form.emails check
+
 					// get a string writer which the summary html will be written to
 					StringWriter writer = new StringWriter();
 
