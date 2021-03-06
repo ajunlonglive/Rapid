@@ -113,6 +113,9 @@ public class RapidRequest {
 	// get the device details
 	public String getDevice() {  return (String) getSessionAttribute(RapidFilter.SESSION_VARIABLE_USER_DEVICE); }
 
+	// get the csrf token
+	public String getCSRFToken() throws UnsupportedEncodingException { return getCSRFToken(_session); }
+
 	// decrypt the password
 	public String getUserPassword() throws GeneralSecurityException, IOException {
 		String raw = (String) getSessionAttribute(RapidFilter.SESSION_VARIABLE_USER_PASSWORD);
@@ -134,6 +137,7 @@ public class RapidRequest {
 
 	// most likely to construct a rapidRequest from a servlet and an http request
 	public RapidRequest(RapidHttpServlet rapidServlet, HttpServletRequest request) {
+
 		// retain the servlet
 		_rapidServlet = rapidServlet;
 		// retain the http request
@@ -142,6 +146,7 @@ public class RapidRequest {
 		_session = request.getSession(false);
 		// get the user name from the session
 		_userName = (String) getSessionAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME);
+
 		// read the body bytes if POST - this must be done before reading parameters to have first dibs on the input stream
 		if ("POST".equals(request.getMethod())) {
 			// this byte buffer is used for reading the post data
@@ -240,8 +245,9 @@ public class RapidRequest {
 					if (sessionVariables.contains(parameterName)
 							&& !RapidFilter.SESSION_VARIABLE_INDEX_PATH.equals(parameterName)
 							&& !RapidFilter.SESSION_VARIABLE_USER_NAME.equals(parameterName)
-							&& !RapidFilter.SESSION_VARIABLE_USER_DEVICE.equals(parameterName)
 							&& !RapidFilter.SESSION_VARIABLE_USER_PASSWORD.equals(parameterName)
+							&& !RapidFilter.SESSION_VARIABLE_USER_DEVICE.equals(parameterName)
+							&& !RapidFilter.SESSION_VARIABLE_USER_RESOURCE.equals(parameterName)
 					) {
 						// get any values
 						String[] values = _request.getParameterValues(parameterName);
@@ -361,11 +367,6 @@ public class RapidRequest {
 		return details;
 
 	}
-
-	public String getCSRFToken() throws UnsupportedEncodingException {
-		return getCSRFToken(_session);
-	}
-
 
 	// public static methods
 

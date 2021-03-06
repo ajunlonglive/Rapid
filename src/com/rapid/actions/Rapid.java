@@ -1563,7 +1563,15 @@ public class Rapid extends Action {
 								JSONObject jsonSession = new JSONObject();
 								// add name
 								jsonSession.put("name", httpSession.getAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME));
-								// get a new date from the time
+								// add device
+								jsonSession.put("device", httpSession.getAttribute(RapidFilter.SESSION_VARIABLE_USER_DEVICE));
+								// add last resource
+								jsonSession.put("resource", httpSession.getAttribute(RapidFilter.SESSION_VARIABLE_USER_RESOURCE));
+								// get a new date from the created time
+								Date createTime = new Date(httpSession.getCreationTime());
+								// add created date
+								jsonSession.put("created", df.format(createTime));
+								// get a new date from the last access time
 								Date accessTime = new Date(httpSession.getLastAccessedTime());
 								// add last access
 								jsonSession.put("access", df.format(accessTime));

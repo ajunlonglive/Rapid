@@ -26,7 +26,6 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 package com.rapid.server.filter;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.security.GeneralSecurityException;
 import java.util.Enumeration;
 import java.util.List;
@@ -513,17 +512,18 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 					// look in the request for device details
 					String deviceId = request.getParameter("deviceId");
 
-					// get the address from the request host
-					InetAddress inetAddress = InetAddress.getByName(request.getRemoteHost());
+					// retrieve device details that are set in the RapidFiliter
+					String deviceDetails = (String) session.getAttribute(RapidFilter.SESSION_VARIABLE_USER_DEVICE);
 
-					// get the request device details
-					String deviceDetails = "ip=" + inetAddress.getHostAddress() + ",name=" + inetAddress.getHostName() + ",agent=" + request.getHeader("User-Agent");
+					// if we were sent a device id, usually from Rapid Mobile, and we don't have it in the session already
+					if (deviceId != null && deviceDetails != null && !deviceDetails.contains(deviceId)) {
 
-					// if we were sent a device id add it to the device details
-					if (deviceId != null)  deviceDetails += "," + deviceId;
+						// append the device id to the details
+						deviceDetails += "," + deviceId;
 
-					// retain device id in the session so it's used when check app authorisation
-					session.setAttribute(RapidFilter.SESSION_VARIABLE_USER_DEVICE, deviceDetails);
+						// update the device details in the session so they're used when we check app authorisation
+						session.setAttribute(RapidFilter.SESSION_VARIABLE_USER_DEVICE, deviceDetails);
+					}
 
 					// remember whether we are authorised for at least one application
 					boolean authorised = RapidFilter.isAuthorised(req, userName, userPassword, indexPath);

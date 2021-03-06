@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2019 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -27,6 +27,7 @@ package com.rapid.server.filter;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -55,12 +56,12 @@ import com.rapid.utils.Classes;
 
 public class RapidFilter implements Filter {
 
-	// different applications' security adapters will retrieve different user
-	// objects
+	// different applications' security adapters will retrieve different user attributes
 	public static final String SESSION_VARIABLE_INDEX_PATH = "index";
 	public static final String SESSION_VARIABLE_USER_NAME = "user";
 	public static final String SESSION_VARIABLE_USER_PASSWORD = "password";
 	public static final String SESSION_VARIABLE_USER_DEVICE = "device";
+	public static final String SESSION_VARIABLE_USER_RESOURCE = "resource";
 
 	private static Logger _logger = LogManager.getLogger(RapidFilter.class);
 
@@ -122,6 +123,7 @@ public class RapidFilter implements Filter {
 			// initialise _noAuthResources
 			_noAuthResources = new ArrayList<>();
 			// add system no-auth resources
+			_noAuthResources.add("/favicon.ico");
 			_noAuthResources.add("/online.htm");
 			_noAuthResources.add("/safety");
 			_noAuthResources.add("/manifest.json");
@@ -190,14 +192,46 @@ public class RapidFilter implements Filter {
 		// get the requested URI without the hostname, port, or application context - we'll use this both for caching and authentication
 		String path = req.getServletPath();
 
+		// assume no query string
+		String queryString = "";
+
+		// if there is one
+		if (req.getQueryString() != null) queryString = "?" + req.getQueryString();
+
 		// if no caching is on, try and prevent cache, unless IE and request is for Font Awesome (fix for it not displaying sometimes)
 		if (_noCaching && !(isIE && path.contains("fontawesome-webfont."))) noCache(res);
 
-		// if this is the resources request from the service worker
-		if (path.startsWith("/~") && req.getQueryString() != null && req.getQueryString().endsWith("action=resources")) {
+		// get the user session without making a new one
+		HttpSession session = req.getSession(false);
 
-			// if there is no session return an empty response
-			if (req.getSession(false) == null) return;
+		// check session
+		if (session == null) {
+
+			// if this is the resources request from the service worker return an empty response
+			if (path.startsWith("/~") && queryString != null && queryString.endsWith("action=resources")) return;
+
+		} else {
+
+			// retain device if not set already - the form authentication adapter will modify it on login so we musn't overwrite it each time
+			if (session.getAttribute(RapidFilter.SESSION_VARIABLE_USER_DEVICE) == null) {
+
+				// get the address from the request host
+				InetAddress inetAddress = InetAddress.getByName(request.getRemoteHost());
+
+				// get the request device details
+				String deviceDetails = "ip=" + inetAddress.getHostAddress() + ",name=" + inetAddress.getHostName() + ",agent=" + ua;
+
+				// store the device details
+				session.setAttribute(RapidFilter.SESSION_VARIABLE_USER_DEVICE, deviceDetails);
+			}
+			// retain uri as resource request in the session (only if it requires authentication and is not common)
+			if (!_noAuthResources.contains(path)
+				&& !path.startsWith("/images")
+				&& !path.startsWith("/scripts")
+				&& !path.startsWith("/styles")
+			) {
+				session.setAttribute(RapidFilter.SESSION_VARIABLE_USER_RESOURCE, path + queryString);
+			}
 
 		}
 
@@ -206,6 +240,7 @@ public class RapidFilter implements Filter {
 
 		// all webservice related requests got to the soa servelet
 		if (path.startsWith("/soa")) {
+
 			// if this is a get request
 			if ("GET".equals(req.getMethod())) {
 
@@ -228,6 +263,7 @@ public class RapidFilter implements Filter {
 				}
 
 			} else {
+
 				// get the content type (only present for POST)
 				String contentType = request.getContentType();
 				// if we got one
@@ -261,7 +297,7 @@ public class RapidFilter implements Filter {
 		if (requiresAuthentication) {
 
 			// log full url
-			_logger.trace("RapidFilter request " + ((HttpServletRequest)request).getRequestURL().toString());
+			_logger.trace("RapidFilter request " + path + queryString);
 
 			// get a filtered request
 			ServletRequest filteredRequest = _authenticationAdapter.process(request, response);
@@ -286,12 +322,6 @@ public class RapidFilter implements Filter {
 
 				// set second last path part if there was one
 				if (pathPart.length > 1) secondLastPathPart = pathPart[pathPart.length - 2];
-
-				// assume no query string
-				String queryString = "";
-
-				// if there is one
-				if (req.getQueryString() != null) queryString = "?" + req.getQueryString();
 
 				// get the list of applications to try to find any in the parts
 				Applications applications = (Applications) request.getServletContext().getAttribute("applications");
@@ -398,9 +428,6 @@ public class RapidFilter implements Filter {
 
 						// get the app
 						Application app = applications.get(pathPart[1]);
-
-						// get the user session without making a new one
-						HttpSession session = req.getSession(false);
 
 						// if there is an app and an existing session
 						if (app != null && session != null) {
