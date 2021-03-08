@@ -308,12 +308,14 @@ function sortGridByColumn(ev, id, details, column, asc) {
 				if ($.isArray(data.selectedRowNumber)) {
 					// loop selected row numbers
 					for (var i = 0; i < data.selectedRowNumber.length; i++) {
-						// mark value as selected
-						sortedValues[data.selectedRowNumber[i] - 1].selected = true;
+						// get the selected row number
+						var selectedRowNumber = data.selectedRowNumber[i] - 1;
+						// mark value as selected if possible
+						if (data.selectedRowNumber >= 0 && sortedValues.length > selectedRowNumber) sortedValues[selectedRowNumber].selected = true;
 					}
 				} else {
 					// mark value as selected
-					sortedValues[data.selectedRowNumber - 1].selected = true;
+					if (data.selectedRowNumber > 0 && sortedValues.length >= data.selectedRowNumber) sortedValues[data.selectedRowNumber - 1].selected = true;
 				}
 			}
 			
