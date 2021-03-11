@@ -3,7 +3,7 @@
 
 <!-- 
 
-Copyright (C) 2018 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -247,6 +247,16 @@ return "#" + this.id;
 	            </getAppliesToFunction>
 	        </style>
 	    </styles>
+	    
+	    <initJavaScript>
+	    	<![CDATA[
+// if there is a data-value attribute, update it on change
+$("#" + id).on("change", function(ev){
+	var i = $(this);
+	if (i.is("[data-value]")) i.attr("data-value", i.val());
+});
+	    	]]>
+	    </initJavaScript>
 	    
 	   	<runtimeProperties>
 	        <runtimeProperty>

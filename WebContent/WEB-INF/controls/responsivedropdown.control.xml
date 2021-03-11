@@ -528,6 +528,7 @@ return "#" + this.id + " select:focus";
 	    
 	  	<initJavaScript>
 	    	<![CDATA[
+// add the search / filter if required
 if (details && details.filter) {
 
 	// jQuery UI overrides to suport blank entries
@@ -678,7 +679,17 @@ if (details && details.filter) {
  
     $( "#" + id + "input" ).combobox();
 
-}    
+}
+
+// if there is a data-value attribute, update it on change
+$( "#" + id + "input" ).on("change", function(ev){
+
+	var i = $(this);
+	
+	if (i.is("[data-value]")) i.attr("data-value", i.val());
+
+});
+
 	    	]]>
 	    </initJavaScript>
 
