@@ -795,7 +795,8 @@ public class Database extends Action {
 				inputs.add(inputName);
 			}
 
-			parametersList.set(0, unmappedParameters(sql, parametersList.get(0), inputs, application, context));
+			// if there were parameters in the list unmap and reset them
+			if (parametersList.size() > 0) parametersList.set(0, unmappedParameters(sql, parametersList.get(0), inputs, application, context));
 			sql = unspecifySqlSlots(sql);
 
 			// if there isn't a cache or no data was retrieved
