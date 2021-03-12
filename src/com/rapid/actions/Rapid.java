@@ -26,7 +26,9 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 package com.rapid.actions;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
@@ -99,6 +101,9 @@ import com.rapid.soa.SQLWebservice;
 import com.rapid.soa.Webservice;
 import com.rapid.utils.Comparators;
 import com.rapid.utils.Files;
+import com.rapid.utils.XML.XMLGroup;
+import com.rapid.utils.XML.XMLValue;
+import com.rapid.utils.XML.XMLAttribute;
 
 public class Rapid extends Action {
 
@@ -1586,6 +1591,53 @@ public class Rapid extends Action {
 
 						return jsonDetails;
 
+					} else if ("GETPROCESSES".equals(action)) {
+						
+						// to return
+						JSONObject jsonDetails = new JSONObject();
+						// create a json object for our processes
+						JSONArray jsonProcesses = new JSONArray();
+						// get the processes
+						List<Process> processes = rapidServlet.getProcesses();
+						
+						if (processes != null) {
+							for (Process process : processes) {
+								if (process.isVisible()) {
+									jsonProcesses.put(process.getProcessName());
+								}
+							}
+						}
+						
+						// add the email settings
+						jsonDetails.put("processes", jsonProcesses);
+						return jsonDetails;
+						
+					} else if ("GETPROCESS".equals(action)) {
+						
+						// to return
+						JSONObject jsonDetails = new JSONObject();
+						// get the processes
+						List<Process> processes = rapidServlet.getProcesses();
+						
+						String processName = jsonAction.getString("processName");
+						
+						if (processes != null) {
+							for (Process process : processes) {
+								if (process.getProcessName().equals(processName)) {
+									// add the properties we need
+									jsonDetails.put("className", process.getClassName());
+									jsonDetails.put("interval", process.getInterval());
+									jsonDetails.put("duration", process.getDuration());
+									jsonDetails.put("days", process.getDays());
+									jsonDetails.put("parameters", process.getParameters());
+									jsonDetails.put("fileName", process.getFileName());
+									break;
+								}
+							}
+						}
+						
+						return jsonDetails;
+						
 					} else if ("RELOADACTIONS".equals(action)) {
 
 						// load actions and set the result message
@@ -1884,16 +1936,131 @@ public class Rapid extends Action {
 
 						// get our list of processes
 						List<Process> processes = rapidServlet.getProcesses();
-
+						
 						// make our new process! ... (including un-packing the jsonAction JSON we got in, using the new process name to make a safe file name for WEB-INF/processes)
 						// this will come from a new dialogue page called 20_ProcessNew - it should just ask for the new name, save below will be used to set all of the details
-
-						// update the centrally held processes (not sure this is necessary, probably just object reference being set to itself)
-						servletContext.setAttribute("procsses", processes);
-
+						
+						String newProcessName = jsonAction.getString("processName");
+						String className = jsonAction.getString("processClassName");
+						
+						String[] nameWords = newProcessName.split(" ");
+						String camelCaseName = "";
+						for (int wordIndex = 0; wordIndex < nameWords.length; wordIndex++) {
+							String word = nameWords[wordIndex];
+							if (wordIndex == 0) {
+								camelCaseName += word.toLowerCase();
+							} else {
+								String capitalised = word.substring(0, 1).toUpperCase() + word.substring(1);
+								camelCaseName += capitalised;
+							}
+						}
+						String filename = camelCaseName + ".process.xml";
+						
+						boolean nameInUse = false;
+						nameSearch: for (Process process : processes) {
+							if (process.getProcessName().equals(newProcessName) || process.getFileName().equals(filename)) {
+								nameInUse = true;
+								break nameSearch;
+							}
+						}
+						
+						if (!nameInUse) {
+							
+							String dir = servletContext.getRealPath("/") + "/WEB-INF/processes/" + filename;
+							File newTheme = new File(dir);
+							if (newTheme.exists()) throw new Exception("Name is already used");
+							newTheme.createNewFile();
+							
+							XMLGroup processXML = new XMLGroup("process")
+							.add(new XMLAttribute("xmlVersion", "1"))
+							.add(new XMLAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance"))
+							.add(new XMLAttribute("xsi:noNamespaceSchemaLocation", "../schemas/process.xsd"))
+							.add(new XMLValue("name", newProcessName))
+							.add(new XMLValue("class", "com.rapid.processes." + className))
+							.add(new XMLValue("interval", "-1"))
+							.add(new XMLGroup("duration")
+								.add(new XMLValue("start", "0:00"))
+								.add(new XMLValue("stop", "23:00"))
+							)
+							.add(new XMLGroup("days")
+								.add(new XMLValue("monday", "false"))
+								.add(new XMLValue("tuesday", "false"))
+								.add(new XMLValue("wednesday", "false"))
+								.add(new XMLValue("thursday", "false"))
+								.add(new XMLValue("friday", "false"))
+								.add(new XMLValue("saturday", "false"))
+								.add(new XMLValue("sunday", "false"))
+							);
+							
+							String newDocumentBody = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+								+ processXML;
+							
+							Writer writer = new FileWriter(newTheme);
+							
+							writer.write(newDocumentBody);
+							writer.close();
+							
+							// assume no processes
+							int processesCount = 0;
+							
+							// (re)load the processes, this interrupts/stops all of the current process objects and then makes new ones
+							try {
+								processesCount = RapidServletContextListener.loadProcesses(servletContext);
+							} catch (ClassNotFoundException ex) {
+								newTheme.delete();
+								throw new Exception("Process class not found");
+							}
+							
+							// load processes and set the result message
+							result.put("message", processes + " process" + (processesCount == 1 ? "" : "es") + " reloaded");
+							
+						} else {
+							
+							throw new Exception("Name is already used");
+							
+						}
+						
 					} else if ("DELPROCESS".equals(action)) {
-
+						
 						// similar to above, but find and remove by name property
+						
+						String processName = jsonAction.getString("processName");
+						
+						// get the processes
+						List<Process> processes = rapidServlet.getProcesses();
+						
+						// use the process name to get its process - to get its filename - to get its xml file
+						if (processes != null) {
+							
+							// get the directory in which the process xml files are stored
+							File dir = new File(servletContext.getRealPath("/") + "/WEB-INF/processes/");
+							
+							searchForProcess:
+							for (Process process : processes) {
+								if (process.getProcessName().equals(processName)) {
+									
+									String fileName = process.getFileName();
+									for (File xmlFile : dir.listFiles()) {
+										
+										if ((fileName).equals(xmlFile.getName())) {
+											
+											xmlFile.delete();
+											
+											break searchForProcess;
+										}
+									}
+								}
+							}
+						}
+						
+						// assume no processes
+						int processesCount = 0;
+						
+						// (re)load the processes, this interrupts/stops all of the current process objects and then makes new ones
+						processesCount = RapidServletContextListener.loadProcesses(servletContext);
+						
+						// load processes and set the result message
+						result.put("message", processes + " process" + (processesCount == 1 ? "" : "es") + " reloaded");
 
 					} else if ("SAVEPROCESS".equals(action)) {
 
@@ -1902,6 +2069,36 @@ public class Rapid extends Action {
 						// use com.rapid.utils.XML and created methods like addChildElement(Node node, String elementName, value) and addAtribute(Node node, String attributeName, String value)
 						// add the namespace and schema attribues so the xml files you save are exactly like the existing ones! (particually that they validate against the schema)
 						// processes and their info are added to the UI in the GETAPPS action type
+						
+						String processName = jsonAction.getString("processName");
+						JSONObject details = jsonAction.getJSONObject("details");
+						
+						List<Process> processes = rapidServlet.getProcesses();
+						
+						// use the process name to get its process - to get its filename - to get its xml file
+						if (processes != null) {
+							
+							// get the directory in which the process xml files are stored
+							File dir = new File(servletContext.getRealPath("/") + "/WEB-INF/processes/");
+							
+							searchForProcess:
+							for (Process process : processes) {
+								if (process.getProcessName().equals(processName)) {
+									for (File xmlFile : dir.listFiles()) {
+										if (process.getFileName().equals(xmlFile.getName())) {
+											
+											process.interrupt();
+											
+											process.save(details, xmlFile);
+											
+											break searchForProcess;
+										}
+									}
+								}
+							}
+						}
+						
+						doAction(rapidRequest, new JSONObject().put("actionType", "RELOADPROCESSES").put("appId", appId));
 
 					} // action type check
 

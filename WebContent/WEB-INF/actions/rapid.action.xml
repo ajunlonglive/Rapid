@@ -55,7 +55,9 @@ return [
  ["GETSESSIONS","Get session details"],
  ["GETPARAM","Get parameter details"],
  ["GETRESOURCE","Get resource details"],
- ["GETDEVICE","Get device details"],    
+ ["GETDEVICE","Get device details"],
+ ["GETPROCESSES","Get processes"],
+ ["GETPROCESS","Get process"],
  ["RELOADACTIONS","Reload actions"],
  ["RELOADCONTROLS","Reload controls"],
  ["RELOADAPPLICATIONS","Reload applications"], 
@@ -112,7 +114,10 @@ return [
  ["RESTOREPAGEBACKUP","Restore page backup"],
  ["SAVEAPPBACKUPSIZE","Save number of application backups"],
  ["SAVEPAGEBACKUPSIZE","Save number of page backups"],
- ["ADDADMINUSER","Add Rapid Admin user to the app"]
+ ["ADDADMINUSER","Add Rapid Admin user to the app"],
+ ["NEWPROCESS","New process"],
+ ["DELPROCESS","Delete"],
+ ["SAVEPROCESS","Save process"]
 ];
 					]]>
 	            </getValuesFunction>  
@@ -302,6 +307,170 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 			data = { actionType: actionType, appId: "rapid", version: _appVersion, index: $("#rapid_P0_C1199_").find("tr.rowSelect").index()-1 };
 			callback = function(data) {
 				setData_dataStore(ev, 'rapid_P0_C1269_', "device", {storageType:"S"}, data);
+			};
+		break;
+		case "GETPROCESSES" :
+			data = { actionType: actionType, appId: "rapid" };
+			callback = function(data) {
+				data = {
+					fields: ["name"],
+					rows: data.processes.map(function(process) { return [process]; })
+				};
+				Action_datacopy(
+					ev,
+					data,
+					[{
+						id:'rapid_P0_C3325_',
+						type:'grid',
+						field:'',
+						details:rapid_P0_C3325_details
+					}],
+					false
+				);
+			};
+		break;
+		case "GETPROCESS" :
+			data = { actionType: actionType, appId: "rapid", processName: getProperty_grid_selectedRowData(ev,'rapid_P0_C3325_','name',rapid_P0_C3325_details) };
+			callback = function(data) {
+				
+				Action_datacopy(
+					ev,
+					data.className,
+					[{
+						id:'rapid_P0_C3356_',
+						type:'input',
+						field:''
+					}],
+					false
+				);
+				Action_datacopy(
+					ev,
+					data.interval,
+					[{
+						id:'rapid_P0_C3357_',
+						type:'input',
+						field:''
+					}],
+					false
+				);
+				Action_datacopy(
+					ev,
+					data.interval > 0,
+					[{
+						id: 'rapid_P0_C3435_',
+						type: 'checkbox',
+						field: ''}],
+					true,
+					'replace'
+				);
+				Action_datacopy(
+					ev,
+					data.duration && data.duration.start,
+					[{
+						id:'rapid_P0_C3358_',
+						type:'input',
+						field:''
+					}],
+					false
+				);
+				Action_datacopy(
+					ev,
+					data.duration && data.duration.stop,
+					[{
+						id:'rapid_P0_C3359_',
+						type:'input',
+						field:''
+					}],
+					false
+				);
+				Action_datacopy(
+					ev,
+					data.days ? data.days.monday : false,
+					[{
+						id:'rapid_P0_C3364_',
+						type:'checkbox',
+						field:''
+					}],
+					false
+				);
+				Action_datacopy(
+					ev,
+					data.days ? data.days.tuesday : false,
+					[{
+						id:'rapid_P0_C3373_',
+						type:'checkbox',
+						field:''
+					}],
+					false
+				);
+				Action_datacopy(
+					ev,
+					data.days ? data.days.wednesday : false,
+					[{
+						id:'rapid_P0_C3376_',
+						type:'checkbox',
+						field:''
+					}],
+					false
+				);
+				Action_datacopy(
+					ev,
+					data.days ? data.days.thursday : false,
+					[{
+						id:'rapid_P0_C3379_',
+						type:'checkbox',
+						field:''
+					}],
+					false
+				);
+				Action_datacopy(
+					ev,
+					data.days ? data.days.friday : false,
+					[{
+						id:'rapid_P0_C3382_',
+						type:'checkbox',
+						field:''
+					}],
+					false
+				);
+				Action_datacopy(
+					ev,
+					data.days ? data.days.saturday : false,
+					[{
+						id:'rapid_P0_C3385_',
+						type:'checkbox',
+						field:''
+					}],
+					false
+				);
+				Action_datacopy(
+					ev,
+					data.days ? data.days.sunday : false,
+					[{
+						id:'rapid_P0_C3388_',
+						type:'checkbox',
+						field:''
+					}],
+					false
+				);
+				
+				var data = {
+					fields: ["name", "value"],
+					rows: data.parameters && data.parameters.map(function(parameter) {
+						return [parameter.name, parameter.value];
+					}) || []
+				};
+				Action_datacopy(
+					ev,
+					data,
+					[{
+						id:'rapid_P0_C3389_',
+						type:'grid',
+						field:'',
+						details:rapid_P0_C3389_details
+					}],
+					false
+				);
 			};
 		break;
 		case "GETSESSIONS" :	
@@ -914,6 +1083,37 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 				appId: $("#rapid_P0_C43").val(), 
 				version: $("#rapid_P0_C1044_").val(),
 				user: $("#rapid_P0_C3193_").val()  
+			};
+		break;
+		case "NEWPROCESS" :
+			data = { actionType: actionType, appId: "rapid", processName: getData_input(ev,'rapid_P22_C11_',null), processClassName: getData_input(ev,'rapid_P22_C36_',null) };
+		break;
+		case "DELPROCESS" :
+			data = { actionType: actionType, appId: "rapid", processName: getProperty_grid_selectedRowData(ev,'rapid_P0_C3325_','name',rapid_P0_C3325_details) };
+		break;
+		case "SAVEPROCESS" :
+			data = { actionType: actionType, appId: "rapid", processName: getProperty_grid_selectedRowData(ev,'rapid_P0_C3325_','name',rapid_P0_C3325_details),
+				details: { 
+					className: getData_input(ev,'rapid_P0_C3356_',null),
+					interval: getData_input(ev,'rapid_P0_C3357_',null),
+					duration: {
+						start: getData_input(ev,'rapid_P0_C3358_',null),
+						stop: getData_input(ev,'rapid_P0_C3359_',null)
+					},
+					days: {
+						monday: getData_checkbox(ev,'rapid_P0_C3364_',null) || "false",
+						tuesday: getData_checkbox(ev,'rapid_P0_C3373_',null) || "false",
+						wednesday: getData_checkbox(ev,'rapid_P0_C3376_',null) || "false",
+						thursday: getData_checkbox(ev,'rapid_P0_C3379_',null) || "false",
+						friday: getData_checkbox(ev,'rapid_P0_C3382_',null) || "false",
+						saturday: getData_checkbox(ev,'rapid_P0_C3385_',null) || "false",
+						sunday: getData_checkbox(ev,'rapid_P0_C3388_',null) || "false",
+					},
+					parameters:
+						getData_grid(ev,'rapid_P0_C3389_',null,rapid_P0_C3389_details).rows.map(function(row) {
+							return { name: row[0], value: row[1] };
+						}),
+				}
 			};
 		break;
 		default :

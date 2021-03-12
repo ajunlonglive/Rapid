@@ -1,9 +1,17 @@
 package com.rapid.core;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletContext;
 
@@ -14,6 +22,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.rapid.utils.JSON;
+import com.rapid.utils.XML.XMLAttribute;
+import com.rapid.utils.XML.XMLValue;
+import com.rapid.utils.XML.XMLGroup;
 
 public abstract class Process extends Thread {
 
@@ -69,6 +80,11 @@ public abstract class Process extends Thread {
 		return _config.optJSONObject("days");
 	}
 
+	// get the class name
+	public String getClassName() {
+		return this.getClass().getName();
+	}
+
 	// get all parameters (after controlling for the xml to json conversion)
 	public JSONArray getParameters() throws JSONException {
 		return JSON.getJSONArray(_config.optJSONObject("parameters"), "parameter");
@@ -91,6 +107,75 @@ public abstract class Process extends Thread {
 
 	protected Applications getApplications() {
 		return (Applications) _servletContext.getAttribute("applications");
+	}
+	
+	public void save(JSONObject details, File xmlFile) throws JSONException, IOException {
+		
+		XMLGroup processXML = new XMLGroup("process")
+		.add(new XMLAttribute("xmlVersion", "1"))
+		.add(new XMLAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance"))
+		.add(new XMLAttribute("xsi:noNamespaceSchemaLocation", "../schemas/process.xsd"))
+		.add(new XMLValue("name", getProcessName()))
+		.add(new XMLValue("class", details.optString("className")));
+		
+		XMLGroup parametersXML = new XMLGroup("parameters");
+		JSONArray parametersJSON = details.optJSONArray("parameters");
+		
+		for (int parameterIndex = 0; parameterIndex < parametersJSON.length(); parameterIndex++) {
+			JSONObject parameter = parametersJSON.getJSONObject(parameterIndex);
+			String name = parameter.optString("name");
+			String value = parameter.optString("value");
+			parametersXML.add(
+				new XMLGroup("parameter")
+				.add(new XMLValue("name", name))
+				.add(new XMLValue("value", value))
+			);
+		}
+		
+		if (parametersJSON.length() > 0) processXML.add(parametersXML);
+		
+		processXML.add(new XMLValue("interval", details.optString("interval")));
+		
+		JSONObject durationJSON = details.optJSONObject("duration");
+		String start = durationJSON.optString("start");
+		String stop = durationJSON.optString("stop");
+		
+		processXML.add(
+			new XMLGroup("duration")
+			.add(new XMLValue("start", start))
+			.add(new XMLValue("stop", stop))
+		);
+		
+		JSONObject daysJSON = details.optJSONObject("days");
+		
+		XMLGroup daysXML = new XMLGroup("days");
+		
+		for (String day : new String[] {"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"}) {
+			daysXML.add(new XMLValue(day, daysJSON.optString(day)));
+		}
+		
+		processXML.add(daysXML);
+		
+		String newDocumentBody = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+			+ processXML;
+
+		Path path = xmlFile.toPath();
+		String filename = path.toString();
+		String extensionRegex = "(\\.process\\.xml)$";
+		Pattern extensionPattern = Pattern.compile(extensionRegex);
+		Matcher extensionMatcher = extensionPattern.matcher(filename);
+		if (extensionMatcher.find()) {
+			String extension = extensionMatcher.group(0);
+			String savingFilename = filename.replaceAll(extensionRegex, "-saving" + extension);
+			File savingFile = new File(savingFilename);
+			Path savingPath = savingFile.toPath();
+			FileWriter writer = new FileWriter(savingFile);
+			writer.write(newDocumentBody);
+			writer.close();
+			Files.copy(savingPath, path, StandardCopyOption.REPLACE_EXISTING);
+			savingFile.delete();
+		}
+		
 	}
 
 	// override methods

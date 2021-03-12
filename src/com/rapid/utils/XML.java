@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -34,6 +34,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -70,7 +72,7 @@ public class XML {
         InputSource is = new InputSource(reader);
         is.setEncoding("UTF-8");
 
-        Document document = getDocBuilder().parse (is);
+        Document document = getDocBuilder().parse(is);
 
         return document;
 
@@ -268,5 +270,114 @@ public class XML {
 
         return xmlOut;
 	}
+	
+	public static <T extends Node> T removeAllChildren(T parent) {
+		
+		NodeList children = parent.getChildNodes();
+		
+		for (int childIndex = 0; childIndex < children.getLength(); childIndex++) {
+			Node childNode = children.item(childIndex);
+			parent.removeChild(childNode);
+		}
+		
+		return parent;
+	}
+	
+	public static abstract class XMLElement {
+		
+		protected String name;
+		protected AttributesList attributes = new AttributesList();
+		
+		XMLElement(String name) {
+			this.name = name; 
+		}
+		
+		abstract XMLElement add(XMLAttribute attribute);
+		abstract String getContent();
 
+		@Override
+		public String toString() {
+			return "<" + name + attributes + ">" + getContent() + "</" + name + ">";
+		}
+	}
+	
+	public static final class XMLGroup extends XMLElement {
+		
+		protected List<XMLElement> content = new ArrayList<XMLElement>();
+		
+		public XMLGroup(String name) {
+			super(name);
+		}
+		
+		@Override
+		protected String getContent() {
+			if (content.isEmpty()) {
+				return "";
+			} else {
+				String contentString = "";
+				for (int childIndex = 0; childIndex < content.size(); childIndex++) {
+					contentString += "\n";
+					contentString += content.get(childIndex);
+				}
+				return contentString.replaceAll("\n", "\n\t") + "\n";
+			}
+		}
+		
+		@Override
+		public XMLGroup add(XMLAttribute attribute) {
+			attributes.add(attribute);
+			return this;
+		}
+		
+		public XMLGroup add(XMLElement child) {
+			content.add(child);
+			return this;
+		}
+	}
+	
+	public static final class XMLValue extends XMLElement {
+		
+		private String value;
+		
+		public XMLValue(String name, String value) {
+			super(name);
+			this.value = value;
+		}
+		
+		@Override
+		public XMLValue add(XMLAttribute attribute) {
+			attributes.add(attribute);
+			return this;
+		}
+
+		@Override
+		String getContent() {
+			return value;
+		}
+	}
+	
+	public static final class AttributesList extends ArrayList<XMLAttribute> {
+		
+		@Override
+		public String toString() {
+			String attributesListString = "";
+			for (XMLAttribute attribute : this) attributesListString += " " + attribute;
+			return attributesListString;
+		}
+	}
+	
+	public static final class XMLAttribute {
+		public String name;
+		public String value;
+		
+		public XMLAttribute(String name, String value) {
+			this.name = name;
+			this.value = value;
+		}
+		
+		@Override
+		public String toString() {
+			return name + "=\"" + value + "\"";
+		}
+	}
 }
