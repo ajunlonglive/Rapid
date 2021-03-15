@@ -1,13 +1,13 @@
 /*
 
-Copyright (C) 2019 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as
 published by the Free Software Foundation, either version 3 of the
 License, or (at your option) any later version. The terms require you
@@ -335,7 +335,7 @@ public class Email extends Action {
 		String attachments = jsonData.optString("attachments", null);
 		// separate emails
 		boolean separateEmails = Boolean.parseBoolean(getProperty("separateEmails"));
-		
+
         // if we got one
         if (from == null) {
         	throw new Exception("Email from address must be provided");
@@ -367,106 +367,47 @@ public class Email extends Action {
 
         		// get any inputs
         		JSONArray jsonInputs = jsonData.optJSONArray("inputs");
+
         		// check we got inputs
         		if (jsonInputs != null) {
+
         			// check any inputs to look for
         			if (jsonInputs.length() > 0) {
 
-        				// split the subject part
-                		String[] subjectParts = subject.split("\\?");
-                		// if there is more than 1 part
-                		if (subjectParts.length > 1) {
-                			// set subject to first part
-                			subject = subjectParts[0];
-                			// loop the remaining parts
-                			for (int j = 1; j < subjectParts.length; j++) {
-                				// if there is an escape character or not more inputs
-                				if (subject.endsWith("\\") || i >= jsonInputs.length()) {
-                					// trim the \
-                					subject = subject.substring(0, body.length() - 1);
-                					// add back the ?
-                					subject += "?";
-                				} else {
-                					// add the input value
-                					subject += jsonInputs.optString(i);
-                					// increment for next value
-                					i ++;
-                				}
-                				// add this part
-                				subject += subjectParts[j];
-                			} // loop subject parts
-                		} // got subject parts
-                		// if we need an input at the end
-            			if (jsonContent.getString("subject").endsWith("?")) {
-            				// if we have some left
-            				if (i < jsonInputs.length()) {
-            					// remove last ? if still there
-                				if (subjectParts.length == 1) subject = subject.substring(0, subject.length() - 1);
-                				// add input value
-                				subject += jsonInputs.getString(i);
-                				// increment
-                				i ++;
-            				} else {
-            					// add back ? if need be
-            					if (subjectParts.length > 1) subject += "?";
-            				} // got inputs
-            			} // subject ends in ?
+                		// if we need inputs and we have them to give out
+            			while (subject.contains("?") && i < jsonInputs.length()) {
+        					// get input value, opt will be empty string if null
+        					String inputValue = jsonInputs.optString(i);
+        					// replace first ?
+            				subject = subject.substring(0, subject.indexOf("?")) + inputValue + subject.substring(subject.indexOf("?") + 1, subject.length());
+            				// increment
+            				i ++;
+            			}
 
-                		// split the body parts
-                		String[] bodyParts = body.split("\\?");
-                		// if there is more than 1 part
-                		if (bodyParts.length > 1) {
-                			// set body to first part
-                			body = bodyParts[0];
-                			// loop the remaining parts
-                			for (int j = 1; j < bodyParts.length; j++) {
-                				// if there is an escape character or not more inputs
-                				if (body.endsWith("\\") || i >= jsonInputs.length()) {
-                					// trim the \
-                					body = body.substring(0, body.length() - 1);
-                					// add back the ?
-                					body += "?";
-                				} else {
-                					// add the input value
-                					String inputValue = jsonInputs.optString(i);
-                					if (inputValue != null) body += inputValue;
-                					// increment for next value
-                					i ++;
-                				}
-                				// add this part
-                				body += bodyParts[j];
-                			} // loop body parts
-                		} // got body parts
-                		// if we need an input at the end
-            			if (jsonContent.getString("body").endsWith("?")) {
-            				// if we have inputs some left
-            				if (i < jsonInputs.length()) {
-            					// remove last ? if still there
-                				if (bodyParts.length == 1) body = body.substring(0, body.length() - 1);
-                				// add input value
-            					String inputValue = jsonInputs.optString(i);
-            					if (inputValue != null) body += inputValue;
-                				// increment
-                				i ++;
-            				} else {
-            					// add back ? if need be
-            					if (bodyParts.length > 1) body += "?";
-            				} // got inputs
-            			} // body ends with ?
+            			// if we need inputs and we have them to give out
+            			while (body.contains("?") && i < jsonInputs.length()) {
+        					// get input value, opt will be empty string if null
+        					String inputValue = jsonInputs.optString(i);
+        					// replace first ?
+        					body = body.substring(0, body.indexOf("?")) + inputValue + body.substring(body.indexOf("?") + 1, body.length());
+            				// increment
+            				i ++;
+            			}
 
         			} // got inputs
+
         		} // inputs not null
 
         		// if separate emails then split 'to' string on the comma and load into recipients list otherwise just create a list with one (to) entry
         		List<String> recipients;
-        		if(separateEmails) 
+        		if (separateEmails) {
         			recipients = Arrays.asList(to.split(","));
-        		else {
+        		} else {
         			recipients = new ArrayList<>();
         			recipients.add(to);
         		}
 
-        		for(String recipient : recipients) {
+        		for (String recipient : recipients) {
 	        		// if the type is html
 	        		if ("html".equals(type)) {
 	        			// send email as html
