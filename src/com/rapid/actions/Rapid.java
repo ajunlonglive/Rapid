@@ -40,6 +40,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
@@ -2096,10 +2097,31 @@ public class Rapid extends Action {
 									}
 								}
 							}
+						
 						}
 						
 						doAction(rapidRequest, new JSONObject().put("actionType", "RELOADPROCESSES").put("appId", appId));
-
+					} else if ("GETRAPIDLOG".equals(action)) {
+							
+							int nLines = jsonAction.optInt("nLines");
+							
+							JSONObject jsonDetails = new JSONObject();
+							JSONArray lines = new JSONArray();
+							jsonDetails.put("lines", lines);
+							
+							File logFile = new File(servletContext.getRealPath("/") + "/WEB-INF/logs/Rapid.log/");
+							Scanner logScanner = new Scanner(logFile);
+							
+							int lineIndex;
+							for (lineIndex = 0; logScanner.hasNextLine(); lineIndex++) {
+								lines.put(lineIndex % nLines, logScanner.nextLine());
+							}
+							logScanner.close();
+							
+							jsonDetails.put("firstLineIndex", lineIndex % nLines);
+							
+							return jsonDetails;
+							
 					} // action type check
 
 				}

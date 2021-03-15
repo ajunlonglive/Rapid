@@ -58,6 +58,7 @@ return [
  ["GETDEVICE","Get device details"],
  ["GETPROCESSES","Get processes"],
  ["GETPROCESS","Get process"],
+ ["GETRAPIDLOG","Get Rapid log"],
  ["RELOADACTIONS","Reload actions"],
  ["RELOADCONTROLS","Reload controls"],
  ["RELOADAPPLICATIONS","Reload applications"], 
@@ -477,6 +478,25 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 			data = { actionType: actionType, appId: "rapid", version: _appVersion };
 			callback = function(data) {
 				setData_grid(ev, 'rapid_P0_C1485_', "sessions", rapid_P0_C1485_details, data);
+			};
+		break;
+		case "GETRAPIDLOG" :	
+			data = { actionType: actionType, appId: "rapid", version: _appVersion, nLines: getData_radiobuttons(ev, "rapid_P0_C3543_") };
+			callback = function(data) {
+				var lines = data.lines;
+				var firstLineIndex = data.firstLineIndex;
+				var nLines = lines.length;
+				
+				var reorderedLines = lines.slice(firstLineIndex, nLines).concat(lines.slice(0, firstLineIndex));
+				
+				var log = "<ul>"
+				
+				log += reorderedLines.map(function(line) {
+					return "<li>" + line + "</li>";
+				}).join("");
+				
+				log += "</ul>";
+				setData_text(ev, 'rapid_P0_C3534_', null, rapid_P0_C1485_details, log);
 			};
 		break;
 		case "RELOADVERSION" :		
