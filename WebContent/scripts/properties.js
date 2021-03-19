@@ -3953,37 +3953,75 @@ function Property_options(cell, control, property, details) {
 			// find the text
 			var textEdit = table.find("input.text").last();
 			
+			// focus this row if retained to do so
 			if (details && details.rowToFocus && details.rowToFocus == i) textEdit.focus();
-			
-			// add a listener
-			addListener( textEdit.keyup( {control: control, options: options}, function(ev) {
-				if (ev.keyCode == 13) { // if enter key pressed
-					addOptionNext(ev, input, cell, property, details);
-				} else {
-					// get the input
-					var input = $(ev.target);
-					// update text
-					ev.data.options[input.parent().parent().index()-1].text = input.val();
-					// update html if top row
-					if (input.parent().parent().index() == 1 || control.type != "dropdown") rebuildHtml(control);
-				}
-			}));
-			
-			// find the code
-			var valueEdit = table.find("input.value").last();
-			// add a listener
-			addListener( valueEdit.keyup( {control: control, options: options}, function(ev) {
-				if (ev.keyCode == 13) { // if enter key pressed
-					addOptionNext(ev, input, cell, property, details);
-				} else {
-					// get the input
-					var input = $(ev.target);
-					// update value
-					ev.data.options[input.parent().parent().index()-1].value = input.val();
-				}
-			}));
 					
 		}
+		
+		// find all text inputs
+		var textEdit = table.find("input.text");
+		
+		// add a listener for the text keyup
+		addListener( textEdit.keyup({control: control, options: options}, function(ev) {
+			if (ev.keyCode == 13) { // if enter key pressed
+				addOptionNext(ev, input, cell, property, details);
+			} else {
+				// get the input
+				var input = $(ev.target);					
+				// update text
+				ev.data.options[input.parent().parent().index()-1].text = input.val();
+				// update html if top row
+				if (input.parent().parent().index() == 1 || control.type != "dropdown") rebuildHtml(control);
+			}
+		}));
+		
+		// add a listen for paste event
+		addListener( textEdit.on("paste", {control: control, options: options}, function(ev) {
+			// get the input
+			var input = $(ev.target);
+			// check for tab and clipboard and promises support
+			if (navigator.clipboard && typeof Promise !== "undefined" && Promise.toString().indexOf("[native code]") !== -1) {					
+				// get the lines from the clipboard (the input box removes the line breaks)
+				navigator.clipboard.readText().then(function (value) {
+					// get the lines
+					var lines = value.split("\n");
+					// get the start index
+					var startIndex = input.parent().parent().index()-1;
+					// loop the lines
+					for (var j in lines) {
+						// if there is a line here
+						if (lines[j]) {
+							// add an option if we need one
+							if (ev.data.options.length <= startIndex + j*1) ev.data.options.push({});
+							// get the parts
+							var parts = lines[j].split("\t");
+							// update text
+							ev.data.options[startIndex + j*1].text = parts[0];
+							// update code if there is a part for it
+							if (parts.length > 1) ev.data.options[startIndex + j*1].value = parts[1];
+						}
+					}
+					// rebuild if top line
+					if (startIndex == 0) rebuildHtml(control);
+					// refresh to show new options
+					Property_options(cell, ev.data.control, property, details);
+				})
+			} // value and clipboard		
+		})); // input
+		
+		// find the code inputs
+		var valueEdit = table.find("input.value");
+		// add a listener
+		addListener( valueEdit.keyup({control: control, options: options}, function(ev) {
+			if (ev.keyCode == 13) { // if enter key pressed
+				addOptionNext(ev, input, cell, property, details);
+			} else {
+				// get the input
+				var input = $(ev.target);
+				// update value
+				ev.data.options[input.parent().parent().index()-1].value = input.val();
+			}
+		}));
 		
 		// add reorder listeners
 		addReorder(options, table.find("div.reorder"), function() { 
