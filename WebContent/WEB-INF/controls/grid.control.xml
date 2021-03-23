@@ -1798,14 +1798,13 @@ if (grid[0]) {
 	gridData = getGridDataStoreData(id, details);	
 }
 // check we have a selected row
-if (gridData.selectedRowNumber && gridData.selectedRowNumber > 0) {
+if (gridData && gridData.selectedRowNumber && gridData.selectedRowNumber > 0) {
 	// replace or remove selected row	
 	if (data && data.fields && data.rows && data.rows.length > 0) {
 		// get the gridData fields
 		var gridDataFields = gridData.fields;
 		// check there are some
 		if (gridDataFields) {
-			
 			// set up a field map which will hold the location of the incoming fields in the grid fields
 			var fieldMap = {};
 			// loop the incoming fields
