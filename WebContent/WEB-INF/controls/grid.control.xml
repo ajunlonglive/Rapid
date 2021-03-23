@@ -1775,6 +1775,8 @@ return data;
 	   	        </getPropertyFunction>
 				<setPropertyJavaScript>
 	   	            <![CDATA[
+// make a data object
+data = makeDataObject(data, field);
 // assume no grid data
 var gridData = null;
 // get the grid select row number which priorities grid in page then data
@@ -1793,11 +1795,10 @@ if (grid[0]) {
 	saveGridDataStoreData(id, details, gridData);
 } else {
 	// grid not in page so go straight for data store
-	gridData = getGridDataStoreData(id, details);
+	gridData = getGridDataStoreData(id, details);	
 }
-data = makeDataObject(data, field);
-// check we have grid data and a selected row
-if (gridData && gridData.selectedRowNumber && gridData.selectedRowNumber > 0) {
+// check we have a selected row
+if (gridData.selectedRowNumber && gridData.selectedRowNumber > 0) {
 	// replace or remove selected row	
 	if (data && data.fields && data.rows && data.rows.length > 0) {
 		// get the gridData fields
@@ -1875,11 +1876,12 @@ if (gridData && gridData.selectedRowNumber && gridData.selectedRowNumber > 0) {
 } else {
 	// append if no selected row
 	if (data) {
+		// if no grid data make an empty one so appending will work later
+		if (!gridData) gridData = {};
 		// create a rows array if not present
 		if (!gridData.rows) gridData.rows = [];
 		// look for existing fields
 		if (gridData.fields) {
-		
 			// set up a field map which will hold the location of the incoming fields in the grid fields
 			var fieldMap = {};
 			// loop the incoming fields
