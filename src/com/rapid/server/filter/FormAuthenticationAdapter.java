@@ -176,6 +176,7 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 
 		// if we can return this resource without authentication
 		if ("GET".equals(request.getMethod()) && (
+				requestPath.endsWith("login.jsp") ||
 				requestPath.endsWith("logout.jsp") ||
 				requestPath.endsWith("favicon.ico") ||
 				requestPath.startsWith("/images/") ||
@@ -183,7 +184,7 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 				requestPath.startsWith("/styles")
 			)) {
 
-			// proceed to the next step
+			// avoid authentication and proceed directly to the next step in the request chain
 			return req;
 
 		} else {

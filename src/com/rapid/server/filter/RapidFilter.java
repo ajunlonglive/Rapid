@@ -120,7 +120,7 @@ public class RapidFilter implements Filter {
 			// if we didn't get one set to SAMEORIGIN, the default
 			if (_xFrameOptions == null) _xFrameOptions = "SAMEORIGIN";
 
-			// initialise _noAuthResources
+			// initialise _noAuthResources, authentication adapters may go further and allow no-auth for login/logout, images, styles, scripts, etc
 			_noAuthResources = new ArrayList<>();
 			// add system no-auth resources
 			_noAuthResources.add("/favicon.ico");
