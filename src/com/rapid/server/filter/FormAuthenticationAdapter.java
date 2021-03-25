@@ -174,9 +174,8 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 			} // sensitive resource
 		} // ip checks
 
-		// if we can return this resource without authentication
+		// if we can return this resource without authentication, we'll do the same for login.jsp later, after we've got any userName / password parameters
 		if ("GET".equals(request.getMethod()) && (
-				requestPath.endsWith("login.jsp") ||
 				requestPath.endsWith("logout.jsp") ||
 				requestPath.endsWith("favicon.ico") ||
 				requestPath.startsWith("/images/") ||
@@ -621,11 +620,21 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 						// delay by 1sec to make brute force attacks a little harder
 						try { Thread.sleep(1000); } catch (InterruptedException e) {}
 
-						// send a redirect to load the login page
-						response.sendRedirect(loginPath);
+						// if this was for a login page
+						if (requestPath.endsWith("login.jsp")) {
 
-						// return immediately
-						return null;
+							// allow the login page to be provided
+							return req;
+
+						} else {
+
+							// send a redirect to load the login page
+							response.sendRedirect(loginPath);
+
+							// return immediately
+							return null;
+
+						}
 
 					} // authorised
 
