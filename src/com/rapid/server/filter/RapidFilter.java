@@ -125,7 +125,6 @@ public class RapidFilter implements Filter {
 			// add system no-auth resources
 			_noAuthResources.add("/favicon.ico");
 			_noAuthResources.add("/online.htm");
-			_noAuthResources.add("/safety");
 			_noAuthResources.add("/manifest.json");
 			_noAuthResources.add("/sw.js");
 
