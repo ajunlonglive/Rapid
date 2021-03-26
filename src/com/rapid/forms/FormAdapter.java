@@ -1996,6 +1996,7 @@ public abstract class FormAdapter {
 				document = new PDDocument();
 				// make a new blank page
 				p = new PDPage(PDRectangle.A4);
+				document.addPage(p);
 				// make new content stream
 				cs = new PDPageContentStream(document, p);
 			}
@@ -2302,6 +2303,7 @@ public abstract class FormAdapter {
 										}
 
 										float newXOffset = MARGIN_LEFT;
+										float maxYOffset = y;
 										float initialYOffset = y;
 										for (int i = 0; i < fields.length(); i++){
 											//a field
@@ -2343,12 +2345,17 @@ public abstract class FormAdapter {
 
 												//set the x position for the new column
 												newXOffset += maxWidth + MARGIN_GRID_COLUMN;
+												if (y > maxYOffset){
+													maxYOffset = y;
+												}
 												//reset the y position for the new column
 												y = initialYOffset;
 
 											}
 
 										}// end of outer loop
+										
+										y = maxYOffset;
 
 									} else {
 
