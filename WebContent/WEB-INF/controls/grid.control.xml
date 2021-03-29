@@ -1031,14 +1031,17 @@ if (data !== undefined && data !== "") {
 					if (!grid.parent().is(".gridScrollBody")) {
 						
 						grid.parent().css({
-					    	"max-height": "unset",
-					    	"overflow": "unset"
+							"max-height": "100%",
+					    	"overflow-x": "hidden",
+					    	"overflow-y": "hidden"
 						});
 						
 					    // create and style the wrapper
 					    var oTblDiv = $("<div class='gridScrollBody' />");
 					    oTblDiv.css({
-					    	"max-height": scrollHeight,
+					    	"max-width": details.scrollWidth,
+					    	"max-height": details.scrollHeight,
+					    	"overflow-x": details.scrollH,
 					    	"overflow-y": details.scrollV
 					    });
 					    // wrap it
