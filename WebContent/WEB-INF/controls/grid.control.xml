@@ -324,9 +324,9 @@ function sortGridByColumn(ev, id, details, column, asc) {
 				// for n, turn both values into numbers and use that
 				case "n" : sortedValues.sort( function(i1, i2) {
 					var v1 = i1.value;
-					if (v1) v1 = parseFloat(v1.replace(",",""));
+					if (v1) v1 = parseFloat(v1.replaceAll(",",""));
 					var v2 = i2.value;
-					if (v2) v2 = parseFloat(v2.replace(",",""));
+					if (v2) v2 = parseFloat(v2.replaceAll(",",""));
 					return v1 - v2; 
 				});			
 				break;
@@ -584,12 +584,12 @@ function getGridMutiSelectedRows(id, ev) {
 
 // selectively un-escapes html escape sequences which are escaped for us in in the setter .html(value), but not unescaped in the getter .html()
 function getGridUnescapedValue(value) {
-	// if the value is a string
-	if ($.type(value) === "string") {
+	// if the value is present and a string
+	if (value && $.type(value) === "string") {
 		// un-escape common escape sequences
-		value = value.replace(/&lt;/,"<")
-		            .replace(/&gt;/,">")
-		            .replace(/&amp;/,"&");
+		value = value.replaceAll("&lt;","<")
+		            .replaceAll("&gt;",">")
+		            .replaceAll("&amp;","&");
 		// if the value looks like JSON
 		if (value[0] === "{" && value[value.length - 1] === "}") {
 			try {
@@ -821,8 +821,12 @@ if (details) {
 			grid.find("tr:not(:first):not([data-ignore])").each(function(i) {
 				var row = [];
 				$(this).children().each(function(i) {
+					// if applicable remove one from the column index for the multiselect checkbox
 					if (details.multiSelect) i--;
-					var value = getGridUnescapedValue($(this).html());
+					// get the html in the cell
+					var html = $(this).html();
+					// convert the html to a value
+					var value = getGridUnescapedValue(html);
 					// add this value to the row if there is a field for it
 					if (i >= 0 && columns[i] && columns[i].field !== undefined) row.push(value);
 				});
@@ -909,11 +913,11 @@ if (!grid.is("table")) grid = grid.find("table");
 if (details.fixedHeader) {
 	// if we haven't applied it yet
 	if (grid.parent().is(".gridScroll")) {
-  		// create and style the wrapper
-  		grid.parent().css({
-  			"max-height": details.scrollHeight,
-  			"overflow-y": details.scrollV
-  		});
+		// create and style the wrapper
+		grid.parent().css({
+			"max-height": details.scrollHeight,
+			"overflow-y": details.scrollV
+		});
 	}
 }
 
