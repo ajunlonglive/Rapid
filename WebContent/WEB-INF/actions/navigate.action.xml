@@ -384,9 +384,7 @@ function Action_navigate(url, dialogue, id, popup, dismissibleDialogue) {
 					
 		           	// add any scripts into the page (if applicable)
 		           	if (script) {
-						var objectURL = URL.createObjectURL(new Blob([script], {type : "text/javascript"}));
-						if (objectURL.indexOf(window.location.origin) === -1) objectURL = objectURL.replace(":", ":" + window.location.origin + "/");
-		           		element.src = objectURL;
+		           		element.src = URL.createObjectURL(new Blob([script], {type : "text/javascript"}));
 						element.async = false;
       					try { headElement.appendChild(element); } catch(ex) {}
 		           	}
