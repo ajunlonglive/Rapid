@@ -663,6 +663,53 @@ if (val) {
 }
 	    			        ]]>
 	    		</getPropertyFunction>
+	    		<setPropertyJavaScript>
+	    			        <![CDATA[
+var d = new Date();
+d.setFullYear(d.getFullYear() - parseFloat(data));
+var value = $.datepicker.formatDate(details.format, d);
+$("#" + id).find("input").val(value);
+	    			        ]]>
+	    		</setPropertyJavaScript>
+	    	</runtimeProperty>
+	    	
+	    	<runtimeProperty>
+	    		<type>ageDays</type>
+	    		<name>Age in days</name>
+	    		<advanced>true</advanced>
+	    		<getPropertyFunction>
+	    			        <![CDATA[
+// get the value
+var val = $("#" + id).find("input").val();
+// if there was a value and it is a valid date
+if (val) {
+	// assume not passing validation
+	var d = null;
+	// parse the date to check it's valid, with a silent fail
+	try { d = $.datepicker.parseDate(details.format, val); } catch(ex) {}
+	// if we got a valid date
+	if (d) {
+		// get the age
+		var age = (Date.now() - d) / (1000 * 60 * 60 * 24);
+		// return the age
+		return age;
+	} else {
+		// return not a number
+		return NaN;
+	}
+} else {
+	return null;
+}
+	    			        ]]>
+	    		</getPropertyFunction>
+	    		<setPropertyJavaScript>
+	    			        <![CDATA[
+var d = new Date();
+d.setDate(d.getDate() - parseFloat(data));
+var value = $.datepicker.formatDate(details.format, d);
+$("#" + id).find("input").val(value);
+	    			        ]]>
+	    		</setPropertyJavaScript>
 	    	</runtimeProperty>
 	    </runtimeProperties>
 	    	    
