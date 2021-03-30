@@ -146,7 +146,8 @@ function getSystemValueOptions(selectId, input) {
 
 //this function returns a set of options for a dropdown for inputs or outputs (depending on input true/false), can be controls, control properties (input only), other page controls, page variables (input only), system values (input only)
 function getDataOptions(selectId, ignoreId, input, hasDatetime, hasClipboard) {
-	var options = "";	
+	var options = "";
+	var selectedOption = "";
 	var controls = getControls();
 	var gotSelected = false;
 	if (controls && controls.length > 0) {		
@@ -166,10 +167,9 @@ function getDataOptions(selectId, ignoreId, input, hasDatetime, hasClipboard) {
 						options += "<option value='" + control.id + "' >" + control.name + "</option>";
 					}
 					if (control.id == _selectedControl.id && _selectedControl.name && _selectedControl.type !== "page") {	
-						var selectedOption = "<optgroup label='Selected control'>";
+						selectedOption = "<optgroup label='Selected control'>";
 						selectedOption += "<option value='" + control.id + "'>" + control.name + "</option>";
 						selectedOption += "</optgroup>";
-						options = selectedOption + options;
 					}
 				}				
 				// get any run time properties
@@ -201,7 +201,7 @@ function getDataOptions(selectId, ignoreId, input, hasDatetime, hasClipboard) {
 			} // controls loop				
 		} // controls check
 		// wrap if we had some and we're allowing groups
-		if (options) options = "<optgroup label='Page controls'>" + options + "</optgroup>";
+		if (selectedOption || options) options = selectedOption + "<optgroup label='Page controls'>" + options + "</optgroup>";
 	}
 	
 	// page variables are for input only
