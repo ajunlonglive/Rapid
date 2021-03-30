@@ -2862,16 +2862,13 @@ public class Application {
 	public String getResourcesJSON(RapidHttpServlet rapidServlet) throws JSONException, RapidLoadingException {
 
 		// check if we need to make it
-		if (_resourcesJSON == null) {
+		if (_resourcesJSON == null || getStatus() != Application.STATUS_LIVE) {
 
 			// get the servlet context
 			ServletContext servletContext = rapidServlet.getServletContext();
 
 			// start a JSON response
 			JSONObject jsonResponse = new JSONObject();
-
-			// start a JSON array
-			JSONArray jsonResources = new JSONArray();
 
 			// only if we have the mobile action as this is how offline support is provided
 			if (_isMobile) {
@@ -2898,19 +2895,18 @@ public class Application {
 				// put whether latest version
 				jsonResponse.put("latest", getVersion().equals(rapidServlet.getApplications().get(getId()).getVersion()));
 
-				// get a file of the application files
-				File resourcesFolder = new File(servletContext.getRealPath("/") + "/applications/" + getId() + "/" + getVersion());
-
-				// loop it's files - this adds rapid.css, rapid.js, their mins, and images etc.
-				for (File resourceFile : resourcesFolder.listFiles()) {
-					// add this resource
-					jsonResources.put("applications/" + getId() + "/" + getVersion() + "/" + resourceFile.getName());
-				}
-
 				// get the application modified date
 				Date modifiedDate = getModifiedDate();
 				// update to created date if null
 				if (modifiedDate == null) modifiedDate = getCreatedDate();
+				// get the modified as an epoch (which is what the resources below use by default)
+				Long modified = modifiedDate.getTime();
+
+				// add the modified date to the json
+				jsonResponse.put("modified", modified);
+
+				// start a JSON array - which we will add all required resources to, and then put in the response
+				JSONArray jsonResources = new JSONArray();
 
 				// get pages
 				Pages pages = getPages();
@@ -2938,8 +2934,14 @@ public class Application {
 					}
 				}
 
-				// get the modified as an epoch (which is what the resources below use by default)
-				Long modified = modifiedDate.getTime();
+				// get a file of the application files
+				File resourcesFolder = new File(servletContext.getRealPath("/") + "/applications/" + getId() + "/" + getVersion());
+
+				// loop it's files - this adds rapid.css, rapid.js, their mins, and images etc.
+				for (File resourceFile : resourcesFolder.listFiles()) {
+					// add this resource
+					jsonResources.put("applications/" + getId() + "/" + getVersion() + "/" + resourceFile.getName());
+				}
 
 				// get app resources
 				List<Resource> resources = getResources();
@@ -2968,9 +2970,6 @@ public class Application {
 
 				// add resources to response
 				jsonResponse.put("resources", jsonResources);
-
-				// add the modified date to the json
-				jsonResponse.put("modified", modified);
 
 			} // has mobile action check
 
