@@ -72,10 +72,8 @@ This powerful control moves data around your application. The following differnt
 	                <![CDATA[
 // for backwards compatibility	                
 if (this.dataSource == "System.user") this.dataSource = "System.user name";
-// assume no date time
-var hasDatetime = false;
 // dateTime only available for certain copy types
-if (['replace', 'child', 'row', 'append'].includes(this.copyType)) hasDatetime = true;
+var hasDatetime = ['replace', 'child', 'row', 'append'].some(function(val) { return val === this.copyType; });
 // return applicable options
 return "<option value=''>Please select...</option>" + getInputOptions(this.dataSource, true, hasDatetime, true);
 	                ]]>
