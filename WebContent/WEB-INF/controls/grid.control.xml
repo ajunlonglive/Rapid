@@ -1466,11 +1466,11 @@ if (details && details.dataStorageType) saveGridDataStoreData(id, details, data)
 				<filterFunction>
 <![CDATA[
 var target = $(ev.target);
-// don't fire if any ancestor is disabled, and the target was within the grid
+/* don't fire if any ancestor is disabled, and the target was within the grid */
 if (target.closest("table.grid")[0] && target.closest("[disabled]")[0]) return true;
-// don't fire if the target is the top row or tbody, but allow the multi select
+/* don't fire if the target is the top row or tbody, but allow the multi select */
 if ((target.closest("tr").index() == 0 || target.is("tbody")) && !target.is("input.gridMultiSelectHeader")) return true;
-// don't fire if the target is the cell around the multiselect
+/* don't fire if the target is the cell around the multiselect */
 if (target.is("td:first-child") && target.children("input.gridMultiSelect")[0]) return true;
 ]]>	                
 	            </filterFunction>
