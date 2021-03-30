@@ -34,17 +34,12 @@ var _rapidpwa = {
 	}
 }
 
-/* A version number is useful when updating the worker logic,
-	 allowing you to remove outdated cache entries during the update.
-*/
-var _swVersion = 'v1.8';
+// A version number is useful when updating the worker logic, allowing you to remove outdated cache entries during the update.
 
-/* These resources will be downloaded and cached by the service worker
-	 during the installation process. If any resource fails to be downloaded,
-	 then the service worker won't be installed either.
-*/
+var _swVersion = 'v1.9';
 
-// these are resources that we do not expect to change much, we will request them when the service worker installs but not refresh the cache with the latest online fetch
+// These resources will be downloaded and cached by the service worker during the installation process. If any resource fails to be downloaded, then the service worker won't be installed either.
+// We do not expect them to change much, so will request them when the service worker installs but not refresh the cache with the latest online fetch
 var _rapidResources = [
 	"offline.htm",
 	"manifest.json",
@@ -353,7 +348,8 @@ self.addEventListener("fetch", function(event) {
 													resources.redirects = {};
 													resources.resources.forEach((resource, index) => {
 														if (resource.startsWith("~")) {
-															const versionFree = resource.replace(/&v=\d+/, "");
+															// version can be any string
+															const versionFree = resource.replace(/&v=.+(?=&)/, "");
 															resources.redirects[versionFree] = resource;
 															resources.resources[index] = versionFree;
 														}
@@ -491,6 +487,7 @@ self.addEventListener("install", function(event) {
 			console.debug('WORKER: install completed');
 		})
 	);
+	
 });
 
 /* 
@@ -501,9 +498,8 @@ we delete old caches that don't match the version in the worker we just finished
 installing.
 */
 self.addEventListener("activate", function(event) {
-	/* Just like with the install event, event.waitUntil blocks activate on a promise.
-		 Activation will fail unless the promise is fulfilled.
-	*/
+	
+	// Just like with the install event, event.waitUntil blocks activate on a promise. Activation will fail unless the promise is fulfilled.
 	console.debug('WORKER: activate event in progress.');
 
 	_contextPath = location.href.replace("sw.js", "");
@@ -539,9 +535,11 @@ function updateCache(resourcesToCache, redirects) {
 			// loop the resources array passing in the url
 			resourcesToCache.map(function (url) {
 				var fetchOptions = { redirect: "manual" };
+				// getApps is a POST
 				if (url.endsWith("~?action=getApps")) fetchOptions.method = "POST";
-				// fetch the url (we do this rather than use the add method, so we can check the response codes
+				// if we have redirects and this is one, use the redirected url instead
 				var redirectedUrl = redirects && redirects[url] || url
+				// fetch the url (we do this rather than use the add method, so we can check the response codes
 				fetch(_contextPath + redirectedUrl, fetchOptions)
 				.then(response => {
 					// if we got a response and the code is 200 - we want to ignore redirects and authentication failures
@@ -550,7 +548,9 @@ function updateCache(resourcesToCache, redirects) {
 						.then(() => {
 							console.debug('WORKER: added to cache: ' + url);
 						})
-						.catch(reason =>  console.error('WORKER: failed to cache ' + url + ' : ' + String(reason)));
+						.catch(reason => {
+							console.error('WORKER: failed to cache ' + url + ' : ' + String(reason))
+						});
 					} else {
 						return console.debug('WORKER: not caching ' + url + ' : response status ' + response.status);
 					}
