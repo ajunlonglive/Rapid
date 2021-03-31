@@ -809,15 +809,22 @@ function mergeDataObjects(data1, data2, mergeType, field, maxRows, details) {
 							var row = [];
 							for (var j in fields) {
 								var value = null;
+								
+								// we need to know if we find a value
+								var valueFound = false;
 								if (i < data2.rows.length) {
 									for (var k in data2.fields) {
 										if (fields[j] !== undefined && data2.fields[k] !== undefined && fields[j].toLowerCase() == data2.fields[k].toLowerCase()) {
 											value = data2.rows[i][k];
+											
+											// record that we found a value in the source data
+											valueFound = true;
 											break;
 										}
 									}
 								}
-								if (i < data1.rows.length && value == null) {
+								// only do this if we didn't find a value in the source data
+								if (i < data1.rows.length && value == null && !valueVound) {
 									for (var k in data1.fields) {
 										if (fields[j] !== undefined && data1.fields[k] !== undefined && fields[j].toLowerCase() == data1.fields[k].toLowerCase()) {
 											value = data1.rows[i][k];
