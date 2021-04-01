@@ -1653,7 +1653,7 @@ public class Page {
 						// page is a special animal so we need to do each of it's event types differently
 						if ("pageload".equals(event.getType())) {
 							// call the page load if safe to do so - controls with asynchronous loading will need to check and call this method themselves
-							pageLoadLines.add("if (!_mobileResume) { if (_loadingControls < 1) { Event_pageload_" + _id + "($.Event('pageload')) } else { _loadingPages.push('" + _id + "');} };\n");
+							pageLoadLines.add("if (!_mobileResume) { if (_loadingControls < 1) { Event_pageload_" + _id + "($.Event('pageload')) } else { _loadingPages.push('" + _id + "');} }\n");
         				}
 						// resume is also a special animal
 						if ("resume".equals(event.getType())) {
