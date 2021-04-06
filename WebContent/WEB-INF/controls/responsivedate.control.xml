@@ -618,16 +618,22 @@ $( "#" + id ).find("input").datepicker({
 $( "#" + id ).find("input").datepicker("setDate", details.value);
 
 // clear command
-if (details.clearable === true) {
+if (details.clearable == true) {
 	
 	if (details.readonly) {
 		$("#" + id).keyup(function(ev) {
-			if (ev.keyCode === 8 || ev.keyCode === 46) setData_responsivedate(ev, id, undefined, details, null, true);
+			// back space and delete can clear the value
+			if (ev.keyCode == 8 || ev.keyCode == 46) setData_responsivedate(ev, id, undefined, details, null, true);
 		});
 	}
 	
 	$("#" + id + "dateClearButton").click(function(ev) {
+		// empty date value
 		setData_responsivedate(ev, id, null, details, null, true);
+		// stop event bubbling to submit form on Rapid form pages
+		ev.stopPropagation();
+		// this might do it too
+		return false;
 	});
 }
 	        ]]>
