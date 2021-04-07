@@ -374,25 +374,57 @@ public class Email extends Action {
         			// check any inputs to look for
         			if (jsonInputs.length() > 0) {
 
+        				// start pos
+        				int pos = 0;
+
                 		// if we need inputs and we have them to give out
             			while (subject.contains("?") && i < jsonInputs.length()) {
         					// get input value, opt will be empty string if null
         					String inputValue = jsonInputs.optString(i);
+        					// get the position of the first pos, which must be past where it was last
+        					pos = subject.indexOf("?", pos);
+        					// move on if escaped
+        					while (pos > 0 && subject.substring(pos - 1, pos).equals("\\")) {
+        						// remove the escape
+        						subject = subject.substring(0, pos - 1) + subject.substring(pos, subject.length());
+        						// get the next pos
+        						pos = subject.indexOf("?", pos + 1);
+        					}
         					// replace first ?
-            				subject = subject.substring(0, subject.indexOf("?")) + inputValue + subject.substring(subject.indexOf("?") + 1, subject.length());
+            				subject = subject.substring(0, pos) + inputValue + subject.substring(pos + 1, subject.length());
+            				// move pos on by the length of the input value
+            				pos += inputValue.length();
             				// increment
             				i ++;
             			}
+            			// replace any further escapes
+            			subject = subject.replace("\\?", "?");
+
+            			// reset pos
+            			pos = 0;
 
             			// if we need inputs and we have them to give out
             			while (body.contains("?") && i < jsonInputs.length()) {
         					// get input value, opt will be empty string if null
         					String inputValue = jsonInputs.optString(i);
+        					// get the position of the first pos, which must be past where it was last
+        					pos = body.indexOf("?", pos);
+        					// move on if escaped
+        					while (pos > 0 && body.substring(pos - 1, pos).equals("\\")) {
+        						// remove the escape
+        						body = body.substring(0, pos - 1) + body.substring(pos, body.length());
+        						// get the next pos
+        						pos = body.indexOf("?", pos + 1);
+        					}
         					// replace first ?
-        					body = body.substring(0, body.indexOf("?")) + inputValue + body.substring(body.indexOf("?") + 1, body.length());
+        					body = body.substring(0, pos) + inputValue + body.substring(pos + 1, body.length());
+        					// move pos on by the length of the input value
+            				pos += inputValue.length();
             				// increment
             				i ++;
             			}
+            			// replace any further escapes
+            			body = body.replace("\\?", "?");
 
         			} // got inputs
 
