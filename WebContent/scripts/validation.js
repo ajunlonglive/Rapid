@@ -125,11 +125,11 @@ function showValidation(control) {
 			// get a reference to the table
 			var validationTable = validationPanel.children().last().children().last();
 			// add a heading for the event
-			validationTable.append("<tr><td colspan='2' class='propertySubHeader'><h3>Validation</h3><i id='" + control.id + "helpVal' class='actionHelp glyph fa hintIcon'></i></td></tr>");
+			validationTable.append("<tr><td colspan='2' class='propertySubHeader'><h3>Validation</h3><i id='" + control.id + "helpVal' class='actionHelp glyph fa hintIcon'>&#Xf059;</i></td></tr>");
 			// add the help listener
 			addHelp(control.id + "helpVal",true,true,_validationHelpHtml);
 			// add a type drop down
-			validationTable.append("<tr><td>Type<i id='" + control.id + "helpValType' class='propertyHelp glyph fa hintIcon'></i></td><td><select>" + getValidationOptions(type) + "</select></td></tr>");
+			validationTable.append("<tr><td>Type<i id='" + control.id + "helpValType' class='propertyHelp glyph fa hintIcon'>&#Xf059;</i></td><td><select>" + getValidationOptions(type) + "</select></td></tr>");
 			// get a reference to the type drop down
 			var typeDropDown = validationTable.children().last().children().last().children().last();
 			// add a listener
@@ -150,7 +150,7 @@ function showValidation(control) {
 				switch (type) {
 				case "custom" :
 					// add a javascript box
-					validationTable.append("<tr><td>RegEx<i id='" + control.id + "helpValRegEx' class='propertyHelp glyph fa hintIcon'></i></td><td>" + validation.regEx + "</td></tr>");
+					validationTable.append("<tr><td>RegEx<i id='" + control.id + "helpValRegEx' class='propertyHelp glyph fa hintIcon'>&#Xf059;</i></td><td>" + validation.regEx + "</td></tr>");
 					// get a reference to  the cell
 					var cell = validationTable.find("td").last();
 					// add a bigtext property listener	
@@ -160,7 +160,7 @@ function showValidation(control) {
 				break;
 				case "logic" :
 					// add a javascript box
-					validationTable.append("<tr><td>Messages<i id='" + control.id + "helpValLogic' class='propertyHelp glyph fa hintIcon'></i></td><td></td></tr>");
+					validationTable.append("<tr><td>Messages<i id='" + control.id + "helpValLogic' class='propertyHelp glyph fa hintIcon'>&#Xf059;</i></td><td></td></tr>");
 					// get a reference to  the cell
 					var cell = validationTable.find("td").last();
 					// add a validationLogic property listener	
@@ -170,7 +170,7 @@ function showValidation(control) {
 				break;
 				case "javascript" :
 					// add a javascript box
-					validationTable.append("<tr><td>JavaScript<i id='" + control.id + "helpValJavaScript' class='propertyHelp glyph fa hintIcon'></i></td><td></td></tr>");
+					validationTable.append("<tr><td>JavaScript<i id='" + control.id + "helpValJavaScript' class='propertyHelp glyph fa hintIcon'>&#Xf059;</i></td><td></td></tr>");
 					// get a reference to  the cell
 					var cell = validationTable.find("td").last();
 					// set a helpful default value for the
@@ -188,7 +188,7 @@ function showValidation(control) {
 					// logic has its own messages
 					if (type != "logic") {
 						// add a message box
-						validationTable.append("<tr><td>Message<i id='" + control.id + "helpValMessage' class='propertyHelp glyph fa hintIcon'></i></td><td></td></tr>");
+						validationTable.append("<tr><td>Message<i id='" + control.id + "helpValMessage' class='propertyHelp glyph fa hintIcon'>&#Xf059;</i></td><td></td></tr>");
 						// get a reference to  the cell
 						var cell = validationTable.children().last().children().last();
 						// add a bigtext property listener	
@@ -198,7 +198,7 @@ function showValidation(control) {
 					}
 					
 					// add a allowNulls checkbox
-					validationTable.append("<tr><td>Pass if no value<i id='" + control.id + "helpValNoValue' class='propertyHelp glyph fa hintIcon'></i></td><td></td></tr>");
+					validationTable.append("<tr><td>Pass if no value<i id='" + control.id + "helpValNoValue' class='propertyHelp glyph fa hintIcon'>&#Xf059;</i></td><td></td></tr>");
 					// get a reference to  the cell
 					cell = validationTable.children().last().children().last();
 					// add a checkbox property listener	
@@ -207,7 +207,7 @@ function showValidation(control) {
 					addHelp(control.id + "helpValNoValue",true,true,"If checked, validation will pass if the control has no value.");
 					
 					// add a allowNulls checkbox
-					validationTable.append("<tr><td>Pass if hidden<i id='" + control.id + "helpValHidden' class='propertyHelp glyph fa hintIcon'></i></td><td></td></tr>");
+					validationTable.append("<tr><td>Pass if hidden<i id='" + control.id + "helpValHidden' class='propertyHelp glyph fa hintIcon'>&#Xf059;</i></td><td></td></tr>");
 					// get a reference to  the cell
 					cell = validationTable.children().last().children().last();
 					// add a checkbox property listener	

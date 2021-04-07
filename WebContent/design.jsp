@@ -162,17 +162,17 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 					<button id="appAdminNewTab" class="buttonRight buttonImage" title="Open the Rapid Admin screen in a new tab"></button>
 				</div>
 				
-				<h2 style="">Application<i id="helpApplication" class="headerHelp glyph fas hintIcon"></i></h2>
+				<h2 style="">Application<i id="helpApplication" class="headerHelp glyph fas hintIcon">&#Xf059;</i></h2>
 				<select id="appSelect">
 					<!-- Applications are added here as options the designer loads -->
 				</select>
 				
-				<h2 style="border:none;">Version<i id="helpVersion" class="headerHelp glyph fas hintIcon"></i></h2>
+				<h2 style="border:none;">Version<i id="helpVersion" class="headerHelp glyph fas hintIcon">&#Xf059;</i></h2>
 				<select id="versionSelect">
 					<!-- Application versions are added here as options the designer loads -->
 				</select>					
 				
-				<h2 style="border:none;"><img id="pagePrev" class="pageNav pageNavDisabled" src="images/left.light.svg" title="previous page" />Page<img id="pageNext" class="pageNav pageNavDisabled" src="images/right.light.svg" title="next page" /><i id="helpPage" class="headerHelp glyph fas hintIcon"></i></h2>
+				<h2 style="border:none;"><img id="pagePrev" class="pageNav pageNavDisabled" src="images/left.light.svg" title="previous page" />Page<img id="pageNext" class="pageNav pageNavDisabled" src="images/right.light.svg" title="next page" /><i id="helpPage" class="headerHelp glyph fas hintIcon">&#Xf059;</i></h2>
 				<select id="pageSelect">
 					<!-- Pages are added here as options the designer loads -->
 				</select>
@@ -209,7 +209,7 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 				
 				<h2 id="controlsMap" style="margin-top:5px;">Page controls
 					<i class="headerToggle fas" title="Hide page controls" style="color:white;"></i>
-					<i id="helpMap" class="headerHelp glyph fas hintIcon"></i>
+					<i id="helpMap" class="headerHelp glyph fas hintIcon">&#Xf059;</i>
 				</h2>
 				
 				<div id="pageMap" class="design-map" >
@@ -235,7 +235,7 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 			
 				<div class="untilsPanelDiv">
 							
-					<i id="helpPropertiesPanel" class="headerHelp glyph fas hintIcon" style="color:white; font-size:15px;"></i>
+					<i id="helpPropertiesPanel" class="headerHelp glyph fas hintIcon" style="color:white; font-size:15px;">&#Xf059;</i>
 					<div class="buttons">		
 						<button id="selectPeerLeft" class="buttonLeft">
 							<i class="fas fa-angle-left" title="Select the control before this one"></i>
@@ -280,7 +280,7 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 																					
 			<div id="propertiesPanelInner">	
 								
-				<h2 id="propertiesHeader">Properties  <i id="helpProperties" class="headerHelp glyph fas hintIcon"></i><i class="headerToggle fas"></i></h2>
+				<h2 id="propertiesHeader">Properties  <i id="helpProperties" class="headerHelp glyph fas hintIcon">&#Xf059;</i><i class="headerToggle fas"></i></h2>
 				<div>
 					<div class="propertiesPanelDiv" data-dialogueId="propertiesPanel"></div>			
 					<div class="validationPanelDiv" data-dialogueId="validationPanel"></div>

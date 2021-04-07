@@ -301,7 +301,7 @@ function showEvents(control) {
 						// add a heading for the event																
 						actionsTable.append("<tr><td colspan='2' class='propertyHeader'><h3>" + event.name + " event</h3>" +
 								"<div class='iconsPanel'><div class='copyEvent fa-stack fa-xs' title='Click to copy all event actions'><i class='fas fa-copy'></i></div>" +
-								"<i id='" + event.type + "help' class='eventHelp glyph fa hintIcon'></i></div></td></tr>");
+								"<i id='" + event.type + "help' class='eventHelp glyph fa hintIcon'>&#Xf059;</i></div></td></tr>");
 						
 						// look for any event help html, then check the default
 						var eventHelpHtml = event.helpHtml || _eventHelpHtml[event.type];
@@ -500,7 +500,7 @@ function showAction(actionsTable, action, collection, refreshFunction, details) 
 	// if there is helpHtml
 	if (actionClass.helpHtml) {
 		// add a help icon after the title
-		actionsTable.find("h3").last().after("<i id='" + action.id + "help' class='actionHelp glyph fa hintIcon'></i>");
+		actionsTable.find("h3").last().after("<i id='" + action.id + "help' class='actionHelp glyph fa hintIcon'>&#Xf059;</i>");
 		// add the help listener
 		addHelp(action.id + "help",true,true,actionClass.helpHtml);
 	}
@@ -577,7 +577,7 @@ function showAction(actionsTable, action, collection, refreshFunction, details) 
 					// make the helpId
 					var helpId = action.id + property.key + "help";
 					// create help html
-					help = "<i id='" + helpId + "' class='actionHelp glyph fa hintIcon'></i>"
+					help = "<i id='" + helpId + "' class='actionHelp glyph fa hintIcon'>&#Xf059;</i>"
 				}
 				// get the property itself from the control
 				propertiesRow.append("<td>" + property.name + help + "</td><td></td>");

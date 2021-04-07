@@ -606,8 +606,7 @@ function showProperties(control) {
 		// if there is helpHtml
 		if (controlClass.helpHtml) {
 			// add a help icon after the title
-			propertiesTable.find("h3").after("<i id='" + control.id + "help' class='controlHelp glyph fa hintIcon'></i>");
-			//<i id="helpApplication" class="headerHelp glyph fa hintIcon"></i>
+			propertiesTable.find("h3").after("<i id='" + control.id + "help' class='controlHelp glyph fa hintIcon'>&#Xf059;</i>");
 			// add the help listener
 			addHelp(control.id + "help",true,true,controlClass.helpHtml);
 		}
@@ -663,7 +662,7 @@ function showProperties(control) {
 						// make the helpId
 						var helpId = control.id + property.key + "help";
 						// create help html
-						help = "<i id='" + helpId + "' class='propertyHelp glyph fas hintIcon'></i>";
+						help = "<i id='" + helpId + "' class='propertyHelp glyph fas hintIcon'>&#Xf059;</i>";
 					}
 					// get the property itself from the control
 					propertiesRow.append("<td>" + property.name + help + "</td><td></td>");
@@ -1356,7 +1355,7 @@ function Property_gap(cell, propertyObject, property, details) {
 		// if there is helphtml
 		if (property.helpHtml) {
 			// add the icon
-			cell.parent().next().find("td").last().append("<i id='" + propertyObject.id + "help_gap' class='actionHelp glyph fas hintIcon'></i>");
+			cell.parent().next().find("td").last().append("<i id='" + propertyObject.id + "help_gap' class='actionHelp glyph fas hintIcon'>&#Xf059;</i>");
 			// add the listener
 			addHelp(propertyObject.id + "help_gap",true,true,property.helpHtml);
 		}
