@@ -1,14 +1,4 @@
-<!DOCTYPE html>
-<%@ page language="java" contentType="text/html;charset=utf-8" pageEncoding="utf-8"%>
-<%@ page import="java.util.Map" %>
-<%@ page import="org.apache.logging.log4j.LogManager"%>
-<%@ page import="org.apache.logging.log4j.Logger" %>
-<%@ page import="com.rapid.core.*" %>
-<%@ page import="com.rapid.server.Rapid" %>
-<%@ page import="com.rapid.server.RapidRequest" %>
-<%@ page import="com.rapid.server.filter.*" %>
-<%@ page import="com.rapid.security.SecurityAdapter" %>
-<%
+<!DOCTYPE html><%@ page language="java" contentType="text/html;charset=utf-8" pageEncoding="utf-8"%><%@ page import="java.util.Map" %><%@ page import="org.apache.logging.log4j.LogManager"%><%@ page import="org.apache.logging.log4j.Logger" %><%@ page import="com.rapid.core.*" %><%@ page import="com.rapid.server.Rapid" %><%@ page import="com.rapid.server.RapidRequest" %><%@ page import="com.rapid.server.filter.*" %><%@ page import="com.rapid.security.SecurityAdapter" %><%
 
 /*
 

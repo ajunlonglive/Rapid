@@ -1,5 +1,4 @@
-<!DOCTYPE html><%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%><%@ page import="com.rapid.core.Email" %><%@ page import="com.rapid.security.SecurityAdapter" %><%@ page import="com.rapid.server.RapidRequest" %>
-<%
+<!DOCTYPE html><%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%><%@ page import="com.rapid.core.Email" %><%@ page import="com.rapid.security.SecurityAdapter" %><%@ page import="com.rapid.server.RapidRequest" %><%
 
 /*
 
