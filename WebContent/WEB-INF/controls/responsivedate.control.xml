@@ -3,7 +3,7 @@
 
 <!-- 
 
-Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -255,6 +255,32 @@ return [{value:"", text:"Please select..."}, {value:"lg-1", text:"1/12"}, {value
 				<type>javascriptLink</type>
 				<contents>scripts_min/bootstrap.min.js</contents>
 			</resource>
+			
+	        <resource>
+	            <type>file</type>
+	            <contents>styles/fonts/fontawesome/fonts/fa-solid-900.eot</contents>
+	        </resource>
+	        <resource>
+	            <type>file</type>
+	            <contents>styles/fonts/fontawesome/fonts/fa-solid-900.svg</contents>
+	        </resource>
+	        <resource>
+	            <type>file</type>
+	            <contents>styles/fonts/fontawesome/fonts/fa-solid-900.ttf</contents>
+	        </resource>
+	        <resource>
+	            <type>file</type>
+	            <contents>styles/fonts/fontawesome/fonts/fa-solid-900.woff</contents>
+	        </resource>
+	        <resource>
+	            <type>file</type>
+	            <contents>styles/fonts/fontawesome/fonts/fa-solid-900.woff2</contents>
+	        </resource>
+			
+	        <resource>
+	            <type>cssFile</type>
+	            <contents>styles/fonts/fontawesome/css/font-awesome.css</contents>
+	        </resource>
 	    	
 	    	<resource>
 	    	    <type>css</type>
@@ -328,7 +354,7 @@ if (this.readonly === undefined) this.readonly = true;
 // setting the value has been moved to the init
 html = "<input " + inputId + " name='" + this.id + "' " + " class='form-control' placeholder='" + placeholder + "'" + (this.readonly ? "readonly='readonly'" : "") + "/>";
 
-if (this.clearable === true) html += "<button id='" + this.id + "dateClearButton' class='dateClearButton'><i class='fas fa-times'></i></button>";
+if (this.clearable === true) html += "<button type='button' id='" + this.id + "dateClearButton' class='dateClearButton'><i class='fas fa-times'></i></button>";
 
 if (this.responsiveLabel) {
 	return "<div id='" + this.id + "' class='r-date" + classes + "'><label for='"+ inputId + "'>" + this.responsiveLabel + "</label>" + html + "</div>";
@@ -394,7 +420,7 @@ if (this.responsiveLabel) {
 // clear command
 if (this.clearable === true) {
 	if (this.object.find(".dateClearButton").length === 0) {
-		o.after("<button id='" + this.id + "dateClearButton' class='dateClearButton'><i class='fas fa-times'></i></button>");
+		o.after("<button type='button' id='" + this.id + "dateClearButton' class='dateClearButton'><i class='fas fa-times'></i></button>");
 	}
 } else {
 	this.object.find(".dateClearButton").remove();
@@ -630,10 +656,6 @@ if (details.clearable == true) {
 	$("#" + id + "dateClearButton").click(function(ev) {
 		// empty date value
 		setData_responsivedate(ev, id, null, details, null, true);
-		// stop event bubbling to submit form on Rapid form pages
-		ev.stopPropagation();
-		// this might do it too
-		return false;
 	});
 }
 	        ]]>
