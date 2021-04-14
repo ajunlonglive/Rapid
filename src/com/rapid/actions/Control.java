@@ -59,15 +59,15 @@ public class Control extends Action {
 		String targetingType = getProperty("targetingType");
 		// get the control Id and command
 		String controlId = getProperty("control");
+		String controlsJSON = getProperty("controls");
 		// get the action type
 		String actionType = getProperty("actionType");
 		// prepare the js
 		String js = "";
 		// if we have a control id
-		if (controlId != null && !"".equals(controlId)) {
+		if ((controlId != null && !"".equals(controlId)) || (controlsJSON != null && !"".equals(controlsJSON))) {
 			// update the js to use the control
 			if ("bulk".equals(targetingType)) {
-				String controlsJSON = getProperty("controls");
 				try {
 					JSONArray controls = new JSONArray(controlsJSON);
 					js += "$(\"";
