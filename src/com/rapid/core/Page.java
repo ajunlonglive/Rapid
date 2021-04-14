@@ -1331,28 +1331,32 @@ public class Page {
 
 					// get the control json
 					JSONObject jsonControl = rapidRequest.getRapidServlet().getJsonControl(control.getType());
-					// get the events as an array
-					JSONArray jsonEvents = JSON.getJSONArray(jsonControl.optJSONObject("events"),"event");
-					// if there were some
-					if (jsonEvents != null && jsonEvents.length() > 0) {
-						// loop it
-						for (int i = 0; i < jsonEvents.length(); i++) {
-							// get this json event
-							JSONObject jsonEvent = jsonEvents.getJSONObject(i);
-							// if this is the event we want
-							if (event.getType().equals(jsonEvent.getString("type"))) {
+					// if there is some
+					if (jsonControl != null) {
+						// get the events as an array
+						JSONArray jsonEvents = JSON.getJSONArray(jsonControl.optJSONObject("events"),"event");
+						// if there were some
+						if (jsonEvents != null && jsonEvents.length() > 0) {
+							// loop it
+							for (int i = 0; i < jsonEvents.length(); i++) {
+								// get this json event
+								JSONObject jsonEvent = jsonEvents.getJSONObject(i);
+								// if this is the event we want
+								if (event.getType().equals(jsonEvent.getString("type"))) {
 
-								// get any filter javascript
-								String filter = jsonEvent.optString("filterFunction", null);
-								// if we have any add it now
-								if (filter != null) {
-									// only bother if not an empty string
-									if (!"".equals(filter)) {
-										eventStringBuilder.append("    /* " + control.getType() + " control " + event.getType() + " event filter */\n    " + filter.trim().replace("\n", "\n    ") + "\n");
+									// get any filter javascript
+									String filter = jsonEvent.optString("filterFunction", null);
+									// if we have any add it now
+									if (filter != null) {
+										// only bother if not an empty string
+										if (!"".equals(filter)) {
+											eventStringBuilder.append("    /* " + control.getType() + " control " + event.getType() + " event filter */\n    " + filter.trim().replace("\n", "\n    ") + "\n");
+										}
 									}
+									// we're done
+									break;
 								}
-								// we're done
-								break;
+
 							}
 
 						}
