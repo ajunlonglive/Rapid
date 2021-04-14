@@ -41,6 +41,8 @@ Choose "Ant Builder".
 In the "Main" tab give it a useful name (like Custom build) and choose the "Browse Workspace..." button to set the "Buildfile" to this file.
 In the "Targets" tab empty "After a 'Clean'" and "Manual Build". For "Auto Build" click the "Set Targets..." button and choose compile. 
 
+To force it to do the build you might need to change a file slightly and save it. You can do so with this file. Then right click the project and choose refresh.
+
 -->
 
 <project name="Custom Rapid instance builder" default="info">
