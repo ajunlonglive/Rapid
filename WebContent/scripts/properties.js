@@ -2269,6 +2269,14 @@ function Property_controlsForType(cell, propertyObject, property, details) {
 				// add this if we got one
 				if (c) controlClasses.push(c);
 			}
+		} else if (details.type.any) {
+			// loop all control classes
+			for (var typeName in _controlTypes) {
+				// get the class
+				var c = _controlTypes[typeName];
+				// add this if we got one
+				if (c) controlClasses.push(c);
+			}
 		} else {
 			// get the class
 			var c = _controlTypes[details.type];
@@ -2279,8 +2287,9 @@ function Property_controlsForType(cell, propertyObject, property, details) {
 		// check we have one
 		if (controlClasses.length > 0) {
 			
+			var dialogueTitle = details.type.any ? "Controls" : details.type + " controls";
 			// retrieve or create the dialogue
-			var dialogue = getDialogue(cell, propertyObject, property, details, 200, details.type + " controls", {sizeX: true});		
+			var dialogue = getDialogue(cell, propertyObject, property, details, 200, dialogueTitle, {sizeX: true});		
 			// grab a reference to the table
 			var table = dialogue.children().last().children().last();
 			// remove the dialogue class so it looks like the properties
@@ -6969,6 +6978,26 @@ function Property_textNotForm(cell, propertyObject, property, details) {
 	if (!_version.isForm) {
 		Property_text(cell, propertyObject, property, details);
 	} else {
+		cell.closest("tr").remove();
+	}
+}
+
+function Property_controlActionSingle(cell, propertyObject, property, details) {
+	// only for single control actions or unspecified
+	if (!propertyObject.targetingType || propertyObject.targetingType === "single") {
+		Property_select(cell, propertyObject, property, details);
+	} else {
+		// remove this row
+		cell.closest("tr").remove();
+	}
+}
+
+function Property_controlActionBulk(cell, propertyObject, property, details) {
+	// only for bulk control actions
+	if (propertyObject.targetingType && propertyObject.targetingType === "bulk") {
+		Property_controlsForType(cell, propertyObject, property, {type:{any:true}});
+	} else {
+		// remove this row
 		cell.closest("tr").remove();
 	}
 }

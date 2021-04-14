@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2015 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -33,6 +33,9 @@ import com.rapid.core.Page;
 import com.rapid.server.RapidHttpServlet;
 import com.rapid.server.RapidRequest;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 /*
 
 This action runs JQuery against a specified control. Can be entered with or without the leading "." Such as hide(), or .css("disabled","disabled");
@@ -52,6 +55,8 @@ public class Control extends Action {
 
 	@Override
 	public String getJavaScript(RapidRequest rapidRequest, Application application, Page page, com.rapid.core.Control control, JSONObject jsonDetails) {
+		// get the action targets
+		String targetingType = getProperty("targetingType");
 		// get the control Id and command
 		String controlId = getProperty("control");
 		// get the action type
@@ -61,7 +66,22 @@ public class Control extends Action {
 		// if we have a control id
 		if (controlId != null && !"".equals(controlId)) {
 			// update the js to use the control
-			js = "$(\"#" + getProperty("control") + "\").";
+			if ("bulk".equals(targetingType)) {
+				String controlsJSON = getProperty("controls");
+				try {
+					JSONArray controls = new JSONArray(controlsJSON);
+					js += "$(\"";
+					for (int controlIndex = 0; controlIndex < controls.length(); controlIndex++) {
+						js += "#" + controls.optString(controlIndex);
+						if (controlIndex < controls.length() - 1) js += ", ";
+					}
+					js += "\").";
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			} else {
+				js += "$(\"#" + getProperty("control") + "\").";
+			}
 			// check the type
 			if ("custom".equals(actionType) || actionType == null) {
 				// get the command

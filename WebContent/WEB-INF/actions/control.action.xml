@@ -3,7 +3,7 @@
 
 <!-- 
 
-Copyright (C) 2018 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -42,10 +42,20 @@ This action runs JQuery functions against specific controls
 -->	    	
 	    <properties>
 	        
+	        <property>
+	            <key>targetingType</key>
+	            <name>Type</name>
+	            <setConstructValueFunction>return "single";</setConstructValueFunction>
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	            <getValuesFunction>return [["single","Single"],["bulk","Bulk"]];</getValuesFunction>
+	            <refreshProperties>true</refreshProperties>
+	            <helpHtml>Sets a specified action to be carried out. Useful for validation and page load events.</helpHtml>
+	        </property>
+	        
 		    <property>
 	            <key>control</key>
 	            <name>Control</name>
-	            <changeValueJavaScript>select</changeValueJavaScript>
+	            <changeValueJavaScript>controlActionSingle</changeValueJavaScript>
 	            <getValuesFunction>
 	                 <![CDATA[
 	                // default to the selected control if one hasn't been specified
@@ -55,6 +65,14 @@ This action runs JQuery functions against specific controls
 	               	]]>
 	            </getValuesFunction>
 	            <helpHtml>Selects a control on the page to apply the action to.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>controls</key>
+	            <name>Controls</name>
+	            <changeValueJavaScript>controlActionBulk</changeValueJavaScript>
+	            <refreshProperties>true</refreshProperties>
+	            <helpHtml>Selects a controls on the page to apply the action to.</helpHtml>
 	        </property>
 	        
 	        <property>
@@ -101,8 +119,8 @@ function Action_control(actions) {
 	for (var i in actions) {
 		var action = actions[i];
 		$("#" + action.id)[action["function"]](action.value);
-	}	
-}	        
+	}
+}
 	    </actionJavaScript>
 	        
     </action> 
