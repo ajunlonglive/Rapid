@@ -3,7 +3,7 @@
 /*
 
 
-Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -36,7 +36,7 @@ var _rapidpwa = {
 
 // A version number is useful when updating the worker logic, allowing you to remove outdated cache entries during the update.
 
-var _swVersion = 'v1.9';
+var _swVersion = 'v1.10';
 
 // These resources will be downloaded and cached by the service worker during the installation process. If any resource fails to be downloaded, then the service worker won't be installed either.
 // We do not expect them to change much, so will request them when the service worker installs but not refresh the cache with the latest online fetch
@@ -118,7 +118,7 @@ var _refreshes = [
 ];
 
 // extensions that will have any parameters trimmed off when saving/checking for them in the cache, in addition they are used to identify whether a request was for an app and whether to check for its resources
-var _trimUrls = [".js", ".css", ".json", ".woff", ".woff2", ".ttf", ".ico", ".svg", ".gif", ".png", ".jpg", ".jpeg", ".pdf"];
+var _trimUrls = [".js", ".css", ".json", ".woff", ".woff2", ".ttf", ".ico", ".svg", ".gif", ".png", ".jpg", ".jpeg", ".pdf", ".htm", ".html", ".jsp"];
 
 // the root context path of the web application deteremined from the loading path of this sw.js file
 var _contextPath;
