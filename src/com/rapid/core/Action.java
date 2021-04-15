@@ -130,24 +130,47 @@ public abstract class Action {
 	// this produces a helpful string with the source of of the action / control, including ids if selected on the application
 	protected String errorSourceMessage(Application application, Control control) {
 
+		// start with a blank message
 		String errorSourceMessage = "";
 
-		if (application.getShowActionIds()) errorSourceMessage += " " + getId();
+		// if we're in development and showing id's add that to the message
+		if (application.getStatus() == Application.STATUS_DEVELOPMENT && application.getShowActionIds()) errorSourceMessage += " " + getId();
 
+		// if the control is null it's the page
 		if (control == null) {
 			errorSourceMessage += " on page";
 		} else {
-			String controlName = control.getName();
-			errorSourceMessage += " on " + control.getType();
-			if (application.getShowControlIds() || controlName == null || "".equals(controlName)) {
-				errorSourceMessage += " " + control.getId();
-			} else {
-				errorSourceMessage += " " + controlName;
-			}
-		}
 
+			// add the control type
+			errorSourceMessage += " on " + control.getType();
+
+			// get the control name
+			String controlName = control.getName();
+
+			// if we're in development and showing id's
+			if (application.getStatus() == Application.STATUS_DEVELOPMENT && application.getShowControlIds()) {
+				// add id to the message
+				errorSourceMessage += " " + control.getId();
+				// add name if there is one
+				if (controlName != null && !"".equals(controlName)) errorSourceMessage += " " + controlName;
+			} else {
+				// if there is no name
+				if (controlName == null || "".equals(controlName)) {
+					// add the id
+					errorSourceMessage += " " + control.getId();
+				} else {
+					// add the name
+					errorSourceMessage += " " + controlName;
+				}
+
+			} // development status check
+
+		} // control null check
+
+		// if this action has comments
 		if (getProperties().containsKey("comments")) {
-			errorSourceMessage += ("\\n\\n" + getProperty("comments"));
+			// add the comments to the message with the apostrophes escaped
+			errorSourceMessage += ("\\n\\n" + getProperty("comments").replace("'", "\\'"));
 		}
 
 		return errorSourceMessage.replace("'", "\'");
