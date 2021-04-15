@@ -139,6 +139,7 @@ li.validation {
 function Action_validation(ev, validations, showMessages, scrollToFirst) {
 	var valid = true;
 	ev.validation = true;
+	var firstFailedControl = null;
 	for (var i in validations) {
 		var validation = validations[i];
 		var validationControl = $("#" + validation.controlId);
@@ -215,6 +216,8 @@ function Action_validation(ev, validations, showMessages, scrollToFirst) {
 						// failed, and there is a message to show, but not on tab keyup
 						if (showMessages && !(ev.type == "keyup" && ev.keyCode == 9)) showControlValidation(validation.controlId, validation.message);
 						valid = false;
+						// retain as first failed control if visible
+						if (firstFailedControl == null && validationControl.is(":visible")) firstFailedControl = validationControl;
 					}
 				}
 			} else {
@@ -223,20 +226,16 @@ function Action_validation(ev, validations, showMessages, scrollToFirst) {
 			}
 		}
 	}
-	if (scrollToFirst && !valid) {
-		// first visible validation control
-		var firstControl = $(".validation:visible").first();
-		// if there is one
-		if (firstControl[0]) {
-			// get its top
-			var t = firstControl.offset().top;
-			// get a reference to the window
-			var w = $(window);
-			// if we can't see it
-			if (w.scrollTop() > t || w.scrollTop() + w.height() < t) {
-				// scroll to it
-				w.scrollTop(t);
-			}
+	// if requested scroll to the first failed control in this set of validations
+	if (scrollToFirst && firstFailedControl && firstFailedControl[0]) {
+		// get its top
+		var t = firstFailedControl.offset().top;
+		// get a reference to the window
+		var w = $(window);
+		// if we can't see it
+		if (w.scrollTop() > t || w.scrollTop() + w.height() < t) {
+			// scroll to it
+			w.scrollTop(t);
 		}
 	}
 	ev.validation = false;
