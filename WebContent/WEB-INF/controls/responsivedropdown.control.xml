@@ -191,6 +191,15 @@ return [{value:"", text:"Please select..."}, {value:"lg-1", text:"1/12"}, {value
 	            <refreshHtml>true</refreshHtml>
 	            <helpHtml>Sets the width of the panel when the screen size is large. Pages are broken into grids 12 columns wide.</helpHtml>
 	        </property>
+
+			<property>
+				<key>advancedProperties</key>
+				<name>Advanced properties</name>
+				<setConstructValueFunction>return false;</setConstructValueFunction>
+				<changeValueJavaScript>checkbox</changeValueJavaScript>
+				<refreshHtml>true</refreshHtml>
+				<helpHtml>Whether to show advanced properties to actions.</helpHtml>
+			</property>
 	        
 	    </properties>
 	    
@@ -748,6 +757,33 @@ if (data && data.rows && data.rows.length > 0) {
 if (changeEvents) control.trigger("change");
 	                ]]>
 	            </setPropertyJavaScript>
+	        </runtimeProperty>
+	        <runtimeProperty>
+	            <type>text</type>
+	            <name>Text</name>
+				<advanced>true</advanced>
+	            <getPropertyFunction>
+	                <![CDATA[
+// if this is a searchable dropdown with a custom value
+if (details && !details.codes && details.customValue) {
+	// return the value from the search input
+	return $("#" + id).find("input").val();
+} else {
+	// get the control
+	var control = $("#" + id).find("select");
+	// look for a set value
+	var setValue = control.attr("data-value");
+	// if the was one, and there is 1 child or fewer
+	if (setValue && control.children().length <= 1) {
+		// return the pre-set value
+		return setValue;
+	} else {
+		// return the selected value
+		return control.find("option:selected").text();
+	}
+}
+	                ]]>
+	            </getPropertyFunction>
 	        </runtimeProperty>
 	    </runtimeProperties>
 	    

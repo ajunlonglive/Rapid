@@ -111,6 +111,15 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <refreshHtml>true</refreshHtml>
 	            <helpHtml>Allows you to assign groups to radio buttons. If different sets of buttons share the same group then only one button can be selected at one time from that group.</helpHtml>
 	        </property>
+
+			<property>
+				<key>advancedProperties</key>
+				<name>Advanced properties</name>
+				<setConstructValueFunction>return false;</setConstructValueFunction>
+				<changeValueJavaScript>checkbox</changeValueJavaScript>
+				<refreshHtml>true</refreshHtml>
+				<helpHtml>Whether to show advanced properties to actions.</helpHtml>
+			</property>
 	        
 	    </properties>
 	    
@@ -251,6 +260,18 @@ return "#" + this.id + " label";
 	            </getAppliesToFunction>
 	        </style>
 	    </styles>
+	    <runtimeProperties>
+	        <runtimeProperty>
+	            <type>text</type>
+	            <name>Text</name>
+				<advanced>true</advanced>
+	            <getPropertyFunction>
+	                <![CDATA[
+return $("#" + id + " input[type=radio]:checked").parent().text().trim();
+	                ]]>
+	            </getPropertyFunction>
+	        </runtimeProperty>
+	    </runtimeProperties>
 	    
 	</control>
 </controls>
