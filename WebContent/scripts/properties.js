@@ -6695,7 +6695,7 @@ function Property_pdfInputs(cell, propertyObject, property, details) {
 			// apend to the text
 			text += dataItem.name + ",";
 			// add a row
-			table.append("<tr><td>" + dataItem.name + "</td><td><input value='" + input.field + "' /></td><td><input value='" + input.label + "' /></td><td style='width:45px'>" +
+			table.append("<tr><td>" + dataItem.name + "</td><td><input value='" + escapeApos(input.field) + "' /></td><td><input value='" + escapeApos(input.label) + "' /></td><td style='width:45px'>" +
 					"<div class='iconsPanel'>" +
 					"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fas fa-arrow-up fa-stack-1x'></i><i class='fas fa-arrow-down fa-stack-1x'></i></div>" +
 					"<div class='delete fa-stack fa-sm'><i class='delete fas fa-trash-alt' title='Click to delete'></i></div>" +
