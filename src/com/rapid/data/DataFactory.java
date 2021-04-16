@@ -509,7 +509,7 @@ public class DataFactory {
 		return _preparedStatement;
 
 	}
-	
+
 	public PreparedStatement getPreparedStatement(RapidRequest rapidRequest, String sql, Object... parameters) throws SQLException, ClassNotFoundException, ConnectionAdapterException  {
 
 		Parameters params = new Parameters(parameters);
@@ -675,13 +675,13 @@ public class DataFactory {
 
 	public void commit() throws SQLException {
 
-		if (_connection != null) _connection.commit();
+		if (_connection != null && !_connection.isClosed()) _connection.commit();
 
 	}
 
 	public void rollback() throws SQLException {
 
-		if (_connection != null) _connection.rollback();
+		if (_connection != null && !_connection.isClosed()) _connection.rollback();
 
 	}
 
