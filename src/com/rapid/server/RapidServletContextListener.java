@@ -1183,6 +1183,9 @@ public class RapidServletContextListener implements ServletContextListener {
 	    // create a validator
 	    Validator validator = schema.newValidator();
 
+	    // users should just be informed of visible processes
+	    int visibleProcesses = 0;
+
 		// loop the xml files in the folder
 		for (File xmlFile : dir.listFiles(xmlFilenameFilter)) {
 
@@ -1221,14 +1224,16 @@ public class RapidServletContextListener implements ServletContextListener {
 			process.start();
 			// add it to our collection
 			processes.add(process);
+			// inc the visible count if visible
+			if (process.isVisible()) visibleProcesses ++;
 
 		}
 
 		// store them in the context
 		servletContext.setAttribute("processes", processes);
 
-		// log that we've loaded them
-		_logger.info(processes.size() + " process" + (processes.size() == 1 ? "" : "es") + " loaded");
+		// log that we've loaded the visible ones
+		_logger.info(visibleProcesses + " process" + (visibleProcesses == 1 ? "" : "es") + " loaded");
 
 		// return the size
 		return processes.size();
