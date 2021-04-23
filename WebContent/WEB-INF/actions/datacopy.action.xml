@@ -261,6 +261,8 @@ function Action_datacopy(ev, data, outputs, changeEvents, copyType, copyData, fi
 					if (copyType == "child") {
 						// use the new mergeChildren property to override noFieldMatch if it's set
 						if (details && details.mergeChildren !== undefined) output.details.noFieldMatch = !details.mergeChildren;
+						// convert any object to data objects
+						data = makeDataObject(data);
 						// check we have rows
 						if (data && data.rows) {
 							// do the merge
