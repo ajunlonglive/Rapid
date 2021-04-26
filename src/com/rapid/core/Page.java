@@ -805,7 +805,8 @@ public class Page {
 							jsonControl.put("id", control.getId());
 							jsonControl.put("type", control.getType());
 							jsonControl.put("name", controlName);
-							if (jsonControlClass.optString("getDataFunction", null) != null) 	jsonControl.put("input", true);
+							if (Boolean.parseBoolean(control.getProperty("advancedProperties"))) jsonControl.put("advancedProperties", true);
+							if (jsonControlClass.optString("getDataFunction", null) != null) jsonControl.put("input", true);
 							if (jsonControlClass.optString("setDataJavaScript", null) != null) jsonControl.put("output", true);
 							if (canBeUsedFromOtherPages) jsonControl.put("otherPages", true);
 							if (canBeUsedForFormPageVisibilty) jsonControl.put("pageVisibility", true);
