@@ -146,11 +146,30 @@ function getSystemValueOptions(selectId, input) {
 
 //this function returns a set of options for a dropdown for inputs or outputs (depending on input true/false), can be controls, control properties (input only), other page controls, page variables (input only), system values (input only)
 function getDataOptions(selectId, ignoreId, input, hasDatetime, hasClipboard) {
+
 	var options = "";
 	var selectedOption = "";
 	var controls = getControls();
 	var gotSelected = false;
-	if (controls && controls.length > 0) {		
+	
+	// page variables are for input only, put them at the top
+	if (input && _page && _page.sessionVariables) {
+		options += "<optgroup label='Page variables'>";
+		for (var i in _page.sessionVariables) {
+			if (selectId == _page.sessionVariables[i] && !gotSelected) {
+				options += "<option value='" + escapeApos(_page.sessionVariables[i]) + "' selected='selected' >" + _page.sessionVariables[i] + "</option>";
+				gotSelected = true;
+			} else {
+				options += "<option value='" + escapeApos(_page.sessionVariables[i]) + "' >" + _page.sessionVariables[i] + "</option>";
+			}			
+		}
+		options += "</optgroup>";
+	}
+	
+	// if there are controls
+	if (controls && controls.length > 0) {
+		// start control options
+		var controlOptions = "";
 		for (var i in controls) {
 			// retrieve the control
 			var control = controls[i];
@@ -161,10 +180,10 @@ function getDataOptions(selectId, ignoreId, input, hasDatetime, hasClipboard) {
 				// if it has a get data function (for input), or a setDataJavaScript
 				if ((input && controlClass.getDataFunction) || (!input && controlClass.setDataJavaScript)) {
 					if (control.id == selectId && !gotSelected) {
-						options += "<option value='" + control.id + "' selected='selected'>" + control.name + "</option>";
+						controlOptions += "<option value='" + control.id + "' selected='selected'>" + control.name + "</option>";
 						gotSelected = true;
 					} else {
-						options += "<option value='" + control.id + "' >" + control.name + "</option>";
+						controlOptions += "<option value='" + control.id + "' >" + control.name + "</option>";
 					}
 					if (control.id == _selectedControl.id && _selectedControl.name && _selectedControl.type !== "page") {	
 						selectedOption = "<optgroup label='Selected control'>";
@@ -193,7 +212,7 @@ function getDataOptions(selectId, ignoreId, input, hasDatetime, hasClipboard) {
 							// don't show advanced properties unless the control allows or if the advanced property is already selected
 							if (!propertyTooAdvanced || propertyIsSelected) {
 								// add the option
-								options += "<option value='" + key + "' " + (propertyIsSelected ? "selected='selected'" : "") + ">" + control.name + "." + property.name + "</option>";
+								controlOptions += "<option value='" + key + "' " + (propertyIsSelected ? "selected='selected'" : "") + ">" + control.name + "." + property.name + "</option>";
 							}
 						}
 					}
@@ -201,23 +220,9 @@ function getDataOptions(selectId, ignoreId, input, hasDatetime, hasClipboard) {
 			} // controls loop				
 		} // controls check
 		// wrap if we had some and we're allowing groups
-		if (selectedOption || options) options = selectedOption + "<optgroup label='Page controls'>" + options + "</optgroup>";
+		if (selectedOption || controlOptions) options += selectedOption + "<optgroup label='Page controls'>" + controlOptions + "</optgroup>";
 	}
-	
-	// page variables are for input only
-	if (input && _page && _page.sessionVariables) {
-		options += "<optgroup label='Page variables'>";
-		for (var i in _page.sessionVariables) {
-			if (selectId == _page.sessionVariables[i] && !gotSelected) {
-				options += "<option value='" + escapeApos(_page.sessionVariables[i]) + "' selected='selected' >" + _page.sessionVariables[i] + "</option>";
-				gotSelected = true;
-			} else {
-				options += "<option value='" + escapeApos(_page.sessionVariables[i]) + "' >" + _page.sessionVariables[i] + "</option>";
-			}			
-		}
-		options += "</optgroup>";
-	}
-	
+
 	// other page controls can be used for input
 	if (_page && _pages) {
 		// loop the other pages
@@ -284,7 +289,7 @@ function getDataOptions(selectId, ignoreId, input, hasDatetime, hasClipboard) {
 	// system values are readonly so only for inputs - these are defined in an array above this function
 	if (input) options += getSystemValueOptions(selectId, input);
 	
-	// return
+	// return the options html
 	return options;
 }
 
