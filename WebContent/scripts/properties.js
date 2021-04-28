@@ -7006,3 +7006,8 @@ function Property_controlActionBulk(cell, propertyObject, property, details) {
 		cell.closest("tr").remove();
 	}
 }
+
+function Property_controlTargetingType(cell, propertyObject, property, details) {
+	if (propertyObject.targetingType == undefined) propertyObject.targetingType = "single";
+	Property_select(cell, datacopyAction, property, details);
+}
