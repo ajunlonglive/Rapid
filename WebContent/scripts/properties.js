@@ -7006,7 +7006,7 @@ function Property_controlControls(cell, controlAction, property, details) {
 		var text = "";
 		
 		// add a header
-		table.append("<tr><td><b>Source</b><button class='titleButton setSources' title='Set all sources to the same as the top one'><span class='fas'>&#xf358;</span></button><button class='titleButton sources' title='Add all page controls as sources'><span class='fas'>&#xf055;</span></button></td><td><b>Action</b><button class='titleButton setActionTypes' title='Set all action types to the same as the top one'><span class='fas'>&#xf358;</span></button></td><td><b>Parameter</b><button class='titleButton setCommands' title='Set all action types to the same as the top one'><span class='fas'>&#xf358;</span></button></td><td></td></tr>");
+		table.append("<tr><td><b>Control</b><button class='titleButton setSources' title='Set all controls to the same as the top one'><span class='fas'>&#xf358;</span></button><button class='titleButton sources' title='Add all page controls as sources'><span class='fas'>&#xf055;</span></button></td><td><b>Action</b><button class='titleButton setActionTypes' title='Set all action types to the same as the top one'><span class='fas'>&#xf358;</span></button></td><td><b>Parameter</b><button class='titleButton setParameters' title='Set all properties to the same as the top one'><span class='fas'>&#xf358;</span></button></td><td></td></tr>");
 			
 		// add sources listener
 		addListener( table.find("button.sources").click( {cell:cell, controlAction:controlAction, property:property}, function(ev) {
@@ -7014,14 +7014,14 @@ function Property_controlControls(cell, controlAction, property, details) {
 			addUndo();
 			// bring in all source controls
 			if (!controlAction.controls) controlAction.controls = [];
-			var currentSources = controlAction.controls.map(function(control) { return control.source });
-			if (!ev.data.controlAction.controls) ev.data.controlAction.controls = [];
-			getControls().forEach(function(control) {
-				if (!currentSources.some(function(source) { return source === control.id })
-					&& control.name) {
-					ev.data.controlAction.controls.push({source:control.id,actionType:"hide",parameter:""});
-				}
+			
+			ev.data.controlAction.controls = getControls()
+			.filter(function(control) { return Boolean(control.name) })
+			.map(function(control) {
+				var existingControlAction = controlAction.controls.find(function(pageControl) { return pageControl.source === control.id });
+				return existingControlAction || {source:control.id,actionType:"hide",parameter:""};
 			});
+			
 			// refresh
 			Property_controlControls(ev.data.cell, ev.data.controlAction, ev.data.property); 
 		}));
@@ -7057,7 +7057,7 @@ function Property_controlControls(cell, controlAction, property, details) {
 		}));
 		
 		// set action types listener
-		addListener( table.find("button.setCommands").click( {cell:cell, controlAction:controlAction, property:property}, function(ev) {			
+		addListener( table.find("button.setParameters").click( {cell:cell, controlAction:controlAction, property:property}, function(ev) {			
 			// get the data copies
 			var controls = ev.data.controlAction[ev.data.property.key];
 			// if there are 2 or more copies
@@ -7065,7 +7065,7 @@ function Property_controlControls(cell, controlAction, property, details) {
 				// add an undo snapshot
 				addUndo();
 				// loop all other sources and set
-				for (var i = 1; i < controls.length; i++) controls[i].command = controls[0].command;
+				for (var i = 1; i < controls.length; i++) controls[i].parameter = controls[0].parameter;
 				// refresh
 				Property_controlControls(ev.data.cell, ev.data.controlAction, ev.data.property); 
 			}						
