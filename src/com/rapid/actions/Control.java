@@ -60,104 +60,133 @@ public class Control extends Action {
 		// get the control Id and command
 		String controlId = getProperty("control");
 		String controlsJSON = getProperty("controls");
-		// get the action type
-		String actionType = getProperty("actionType");
+		
 		// prepare the js
 		String js = "";
+		
 		// if we have a control id
 		if ((controlId != null && !"".equals(controlId)) || (controlsJSON != null && !"".equals(controlsJSON))) {
-			// update the js to use the control
-			if ("bulk".equals(targetingType)) {
-				try {
-					JSONArray controls = new JSONArray(controlsJSON);
-					js += "$(\"";
-					for (int controlIndex = 0; controlIndex < controls.length(); controlIndex++) {
-						js += "#" + controls.optString(controlIndex);
-						if (controlIndex < controls.length() - 1) js += ", ";
+			
+			try {
+				// normalise single and bulk actions
+				JSONArray controlActions;
+				if ("bulk".equals(targetingType)) {
+					// give bulk additional properties
+					controlActions = new JSONArray(controlsJSON);
+					for (int controlIndex = 0; controlIndex < controlActions.length(); controlIndex++) {
+						JSONObject ca = controlActions.getJSONObject(controlIndex);
+						String actionParameter = ca.getString("parameter");
+						ca.put("command", actionParameter);
+						ca.put("duration", actionParameter);
+						ca.put("styleClass", actionParameter);
 					}
-					js += "\").";
-				} catch (JSONException e) {
-					e.printStackTrace();
+				} else {
+					// make single a bulk
+					controlActions = new JSONArray();
+					JSONObject singleControl = new JSONObject();
+					controlActions.put(singleControl);
+					singleControl.put("source", controlId);
+					singleControl.put("actionType", getProperty("actionType"));
+					singleControl.put("command", getProperty("command"));
+					singleControl.put("duration", getProperty("duration"));
+					singleControl.put("styleClass", getProperty("styleClass"));
 				}
-			} else {
-				js += "$(\"#" + getProperty("control") + "\").";
-			}
-			// check the type
-			if ("custom".equals(actionType) || actionType == null) {
-				// get the command
-				String command = getProperty("command");
-				// check command
-				if (command != null) {
-					// trim
-					command = command.trim();
-					// check length and whether only comments
-					if (command.length() == 0 || ((command.startsWith("//") || (command.startsWith("/*") && command.endsWith("*/"))) && command.indexOf("\n") == -1)) {
-						// set to null, if empty or only comments
-						command = null;
+				
+				for (int controlIndex = 0; controlIndex < controlActions.length(); controlIndex++) {
+					JSONObject controlAction = controlActions.getJSONObject(controlIndex);
+					
+					String source = controlAction.getString("source");
+					if (source.isEmpty()) continue;
+					// select the control
+					js += "$(\"#" + source + "\")";
+					
+					String actionType = controlAction.getString("actionType");
+					
+					// check the type
+					if ("custom".equals(actionType) || actionType == null) {
+						// get the command
+						String command = controlAction.getString("command");
+						// check command
+						if (command != null) {
+							// trim
+							command = command.trim();
+							// check length and whether only comments
+							if (command.length() == 0 || ((command.startsWith("//") || (command.startsWith("/*") && command.endsWith("*/"))) && command.indexOf("\n") == -1)) {
+								// set to null, if empty or only comments
+								command = null;
+							} else {
+								// command can be cleaned up - remove starting dot (we've already got it above)
+								if (command.startsWith(".")) command = command.substring(1);
+								// add brackets if there aren't any at the end
+								if (!command.endsWith(")") && !command.endsWith(");")) command += "();";
+								// add a semi colon if there isn't one on the end
+								if (!command.endsWith(";")) command += ";";
+							}
+						}
+						// check for null / empty
+						if (command == null) {
+							// show that there's no command
+							js += "; /* no command for custom control action " + getId() + " */";
+						} else {
+							// add the command
+							js += "." + command;
+						}
 					} else {
-						// command can be cleaned up - remove starting dot (we've already got it above)
-						if (command.startsWith(".")) command = command.substring(1);
-						// add brackets if there aren't any at the end
-						if (!command.endsWith(")") && !command.endsWith(");")) command += "();";
-						// add a semi colon if there isn't one on the end
-						if (!command.endsWith(";")) command += ";";
+						js += ".";
+						if ("focus".equals(actionType)) {
+							js += actionType + "('rapid');";
+						} else if ("slideUp".equals(actionType) || "slideDown".equals(actionType) || "slideToggle".equals(actionType)) {
+							js += actionType + "(" + controlAction.getString("duration") + ");";
+						} else if ("fadeOut".equals(actionType) || "fadeIn".equals(actionType) || "fadeToggle".equals(actionType)) {
+							js += actionType + "(" + controlAction.getString("duration") + ");";
+						} else if ("enable".equals(actionType)) {
+							js += "enable();";
+						} else if ("disable".equals(actionType)) {
+							js += "disable();";
+						} else if ("addClass".equals(actionType)) {
+							js += "addClass('" + controlAction.getString("styleClass") + "');";
+						} else if ("removeClass".equals(actionType)) {
+							js += "removeClass('" + controlAction.getString("styleClass") + "');";
+						} else if ("toggleClass".equals(actionType)) {
+							js += "toggleClass('" + controlAction.getString("styleClass") + "');";
+						} else if ("removeChildClasses".equals(actionType)) {
+							String style = controlAction.getString("styleClass");
+							js += "find('." + style + "').removeClass('" + style + "');";
+						} else if ("removeValidation".equals(actionType)) {
+							js = "hideControlValidation('" + controlId + "');";
+						} else if ("showError".equals(actionType)) {
+							js += "showError(server, status, message);";
+						} else if ("scrollTo".equals(actionType)) {
+							// check if page (or control js not populated)
+							if (page.getId().equals(controlId) || js.length() == 0) {
+								// scroll to top of page
+								js = "$('html, body').scrollTop(0);";
+							} else {
+								// scroll to control y position
+								js = "$('html, body').scrollTop(" + js + "offset().top);";
+							}
+						} else if ("hideDialogue".equals(actionType)) {
+							js += "hideDialogue(false,'" + controlId + "');";
+						} else {
+							// just call the action type (hide/show/toggle)
+							js += actionType + "();";
+						}
+					}
+					// add a line break;
+					js += "\n";
+					// if the stopPropagation is checked
+					if (Boolean.parseBoolean(getProperty("stopPropagation"))) {
+						js += "ev.stopImmediatePropagation();";
 					}
 				}
-				// check for null / empty
-				if (command == null) {
-					// show that there's no command
-					js = "/* no command for custom control action " + getId() + " */";
-				} else {
-					// add the command
-					js += command;
-				}
-			} else if ("focus".equals(actionType)) {
-				js += actionType + "('rapid');";
-			} else if ("slideUp".equals(actionType) || "slideDown".equals(actionType) || "slideToggle".equals(actionType)) {
-				js += actionType + "(" + getProperty("duration") + ");";
-			} else if ("fadeOut".equals(actionType) || "fadeIn".equals(actionType) || "fadeToggle".equals(actionType)) {
-				js += actionType + "(" + getProperty("duration") + ");";
-			} else if ("enable".equals(actionType)) {
-				js += "enable();";
-			} else if ("disable".equals(actionType)) {
-				js += "disable();";
-			} else if ("addClass".equals(actionType)) {
-				js += "addClass('" + getProperty("styleClass") + "');";
-			} else if ("removeClass".equals(actionType)) {
-				js += "removeClass('" + getProperty("styleClass") + "');";
-			} else if ("toggleClass".equals(actionType)) {
-				js += "toggleClass('" + getProperty("styleClass") + "');";
-			} else if ("removeChildClasses".equals(actionType)) {
-				String styleClass = getProperty("styleClass");
-				js += "find('." + styleClass + "').removeClass('" + styleClass + "');";
-			} else if ("removeValidation".equals(actionType)) {
-				js = "hideControlValidation('" + controlId + "');";
-			} else if ("showError".equals(actionType)) {
-				js += "showError(server, status, message);";
-			} else if ("scrollTo".equals(actionType)) {
-				// check if page (or control js not populated)
-				if (page.getId().equals(controlId) || js.length() == 0) {
-					// scroll to top of page
-					js = "$('html, body').scrollTop(0);";
-				} else {
-					// scroll to control y position
-					js = "$('html, body').scrollTop(" + js + "offset().top);";
-				}
-			} else if ("hideDialogue".equals(actionType)) {
-				js += "hideDialogue(false,'" + controlId + "');";
-			} else {
-				// just call the action type (hide/show/toggle)
-				js += actionType + "();";
-			}
-			// add a line break;
-			js += "\n";
-			// if the stopPropagation is checked
-			if (Boolean.parseBoolean(getProperty("stopPropagation"))) {
-				js += "ev.stopImmediatePropagation();";
+				
+			} catch (JSONException e) {
+				e.printStackTrace();
 			}
 		} else {
 			js = "/* no control specified for control action " + getId() + " */";
 		}
+		
 		// return the js
 		return js;
 	}

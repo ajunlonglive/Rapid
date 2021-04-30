@@ -6987,27 +6987,196 @@ function Property_textNotForm(cell, propertyObject, property, details) {
 	}
 }
 
-function Property_controlActionSingle(cell, propertyObject, property, details) {
-	// only for single control actions or unspecified
-	if (!propertyObject.targetingType || propertyObject.targetingType === "single") {
-		Property_select(cell, propertyObject, property, details);
-	} else {
-		// remove this row
-		cell.closest("tr").remove();
-	}
-}
-
-function Property_controlActionBulk(cell, propertyObject, property, details) {
+function Property_controlControls(cell, controlAction, property, details) {
 	// only for bulk control actions
-	if (propertyObject.targetingType && propertyObject.targetingType === "bulk") {
-		Property_controlsForType(cell, propertyObject, property, {type:{any:true}});
+	if (controlAction.targetingType === "bulk") {
+		
+		// retrieve or create the dialogue
+		var dialogue = getDialogue(cell, controlAction, property, details, 710, "Bulk control actions", {sizeX: true});		
+		// grab a reference to the table
+		var table = dialogue.find("table").first();
+		// make sure table is empty
+		table.children().remove();
+		
+		// build what we show in the parent cell
+		var controls = [];
+		// get the value if it exists
+		if (controlAction[property.key]) controls = controlAction[property.key];	
+		// make some text for our cell (we're going to build in in the loop)
+		var text = "";
+		
+		// add a header
+		table.append("<tr><td><b>Source</b><button class='titleButton setSources' title='Set all sources to the same as the top one'><span class='fas'>&#xf358;</span></button><button class='titleButton sources' title='Add all page controls as sources'><span class='fas'>&#xf055;</span></button></td><td><b>Action</b><button class='titleButton setActionTypes' title='Set all action types to the same as the top one'><span class='fas'>&#xf358;</span></button></td><td><b>Parameter</b><button class='titleButton setCommands' title='Set all action types to the same as the top one'><span class='fas'>&#xf358;</span></button></td><td></td></tr>");
+			
+		// add sources listener
+		addListener( table.find("button.sources").click( {cell:cell, controlAction:controlAction, property:property}, function(ev) {
+			// add an undo snapshot
+			addUndo();
+			// bring in all source controls
+			if (!controlAction.controls) controlAction.controls = [];
+			var currentSources = controlAction.controls.map(function(control) { return control.source });
+			if (!ev.data.controlAction.controls) ev.data.controlAction.controls = [];
+			getControls().forEach(function(control) {
+				if (!currentSources.some(function(source) { return source === control.id })
+					&& control.name) {
+					ev.data.controlAction.controls.push({source:control.id,actionType:"hide",parameter:""});
+				}
+			});
+			// refresh
+			Property_controlControls(ev.data.cell, ev.data.controlAction, ev.data.property); 
+		}));
+		
+		// set sources listener
+		addListener( table.find("button.setSources").click( {cell:cell, controlAction:controlAction, property:property}, function(ev) {			
+			// get the data copies
+			var controls = ev.data.controlAction[ev.data.property.key];
+			// if there are 2 or more copies
+			if (controls && controls.length > 1) {
+				// add an undo snapshot
+				addUndo();
+				// loop all other sources and set
+				for (var i = 1; i < controls.length; i++) controls[i].source = controls[0].source;
+				// refresh
+				Property_controlControls(ev.data.cell, ev.data.controlAction, ev.data.property); 
+			}						
+		}));
+		
+		// set action types listener
+		addListener( table.find("button.setActionTypes").click( {cell:cell, controlAction:controlAction, property:property}, function(ev) {			
+			// get the data copies
+			var controls = ev.data.controlAction[ev.data.property.key];
+			// if there are 2 or more copies
+			if (controls && controls.length > 1) {
+				// add an undo snapshot
+				addUndo();
+				// loop all other sources and set
+				for (var i = 1; i < controls.length; i++) controls[i].actionType = controls[0].actionType;
+				// refresh
+				Property_controlControls(ev.data.cell, ev.data.controlAction, ev.data.property); 
+			}						
+		}));
+		
+		// set action types listener
+		addListener( table.find("button.setCommands").click( {cell:cell, controlAction:controlAction, property:property}, function(ev) {			
+			// get the data copies
+			var controls = ev.data.controlAction[ev.data.property.key];
+			// if there are 2 or more copies
+			if (controls && controls.length > 1) {
+				// add an undo snapshot
+				addUndo();
+				// loop all other sources and set
+				for (var i = 1; i < controls.length; i++) controls[i].command = controls[0].command;
+				// refresh
+				Property_controlControls(ev.data.cell, ev.data.controlAction, ev.data.property); 
+			}						
+		}));
+		
+		// show current choices (with delete and move)
+		for (var i = 0; i < controls.length; i++) {
+			
+			// get this data copy
+			var control = controls[i];
+						
+			// add a row
+			table.append("<tr><td><select class='source'><option value=''>Please select...</option>" + getControlOptions(control.source) + "</select></td><td><select class='action' style='min-width:80px;'>" + getControlActionOptions(control.actionType) + "</select></td><td><input class='parameter' value='" + control.parameter + "'></td><td style='width:45px'>" +
+					"<div class='iconsPanel'>" +
+					"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fas fa-arrow-up fa-stack-1x'></i><i class='fas fa-arrow-down fa-stack-1x'></i></div>" +
+					"<div class='delete fa-stack fa-sm'><i class='delete fas fa-trash-alt' title='Click to delete'></i></div>" +
+					"</div></td></tr>");
+			
+			// get the source data item
+			var source = getDataItemDetails(control.source);
+			// get the destination data item
+			var destination = getDataItemDetails(control.destination);
+			// apend to the text
+			text += control.actionType + ": " + source.name + ", ";
+			
+		}
+		
+		// source listeners
+		addListener( table.find("select.source").change( {controls: controls}, function(ev) {
+			// get the target
+			var target = $(ev.target);
+			// get the index
+			var i = target.closest("tr").index() - 1;
+			// update the source
+			ev.data.controls[i].source = target.val();
+		}));
+		// action listeners
+		addListener( table.find("select.action").change( {controls: controls}, function(ev) {
+			// get the target
+			var target = $(ev.target);
+			// get the index
+			var i = target.closest("tr").index() - 1;
+			// update the source
+			ev.data.controls[i].actionType = target.val();
+		}));
+		// parameter listeners
+		addListener( table.find("input.parameter").keyup( {controls: controls}, function(ev) {
+			// get the target
+			var target = $(ev.target);
+			// get the index
+			var i = target.closest("tr").index() - 1;
+			// update the source
+			ev.data.controls[i].parameter = target.val();
+		}));
+		
+		// add reorder listeners
+		addReorder(controls, table.find("div.reorder"), function() { 
+			Property_controlControls(cell, controlAction, property);
+		});
+		
+		// get the delete images
+		var imgDelete = table.find("div.delete");
+		// add a listener
+		addListener( imgDelete.click( {controls: controls}, function(ev) {
+			// get the input
+			var imgDelete = $(ev.target);
+			// remove from parameters
+			ev.data.controls.splice(imgDelete.closest("tr").index()-1,1);
+			// remove row
+			imgDelete.closest("tr").remove();
+			// update dialogue
+			Property_controlControls(cell, controlAction, property);
+		}));
+
+		// add the add
+		table.append("<tr><td colspan='8'><span class='propertyAction' style='margin-left:5px;'>add...</span></td></tr>");
+		// find the add
+		var destinationAdd = table.find("span.propertyAction").last();
+		// listener to add output
+		addListener( destinationAdd.click( {cell: cell, controlAction: controlAction, property: property, details: details}, function(ev) {
+			// initialise array if need be
+			if (!ev.data.controlAction.controls) ev.data.controlAction.controls = [];
+			// get the parameters (inputs or outputs)
+			var controls = ev.data.controlAction.controls;
+			// add a new one
+			controls.push({source:"",actionType:"hide",parameter:""});
+			// rebuild the dialogue
+			Property_controlControls(ev.data.cell, ev.data.controlAction, ev.data.property, ev.data.details);	
+		}));
+		
+		// if we got text 
+		if (text) {
+			// remove the trailing comma
+			text = text.substring(0,text.length - 1);
+		} else {
+			// add friendly message
+			text = "Click to add...";
+		}
+		// put the text into the cell
+		cell.text(text);
+		
 	} else {
 		// remove this row
 		cell.closest("tr").remove();
 	}
 }
 
-function Property_controlTargetingType(cell, propertyObject, property, details) {
-	if (propertyObject.targetingType == undefined) propertyObject.targetingType = "single";
-	Property_select(cell, datacopyAction, property, details);
+function getControlActionOptions(controlType) {
+	var actions = ["hide","show","toggle","slideUp","slideDown","slideToggle","fadeOut","fadeIn","fadeToggle","focus","enable","disable","addClass","removeClass","toggleClass","removeChildClasses","removeValidation","scrollTo", "hideDialogue","hideAllDialogues","showError","clearQueue","custom"];
+	return actions.map(function(value) {
+		var isSelected = value === controlType ? " selected" : "";
+		return "<option" + isSelected + ">" + value + "</option>";
+	}).join("");
 }

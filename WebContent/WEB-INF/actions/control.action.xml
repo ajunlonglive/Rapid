@@ -46,16 +46,25 @@ This action runs JQuery functions against specific controls
 	            <key>targetingType</key>
 	            <name>Type</name>
 	            <setConstructValueFunction>return "single";</setConstructValueFunction>
-	            <changeValueJavaScript>controlTargetingType</changeValueJavaScript>
-	            <getValuesFunction>return [["single","Single"],["bulk","Bulk"]];</getValuesFunction>
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	            <getValuesFunction>
+                // for backwards compatibility
+                if (!this.targetingType) this.targetingType = "single";
+                // return the values
+                return [["single","Single"],["bulk","Bulk"]];
+                </getValuesFunction>
 	            <refreshProperties>true</refreshProperties>
-	            <helpHtml>Sets a specified action to be carried out. Useful for validation and page load events.</helpHtml>
+	            <helpHtml>Whether to target a single control or show a dialogue for many controls.</helpHtml>
 	        </property>
 	        
 		    <property>
 	            <key>control</key>
 	            <name>Control</name>
-	            <changeValueJavaScript>controlActionSingle</changeValueJavaScript>
+	            <visibility>
+					<key>targetingType</key>
+                    <value>single</value>
+                </visibility>
+	            <changeValueJavaScript>select</changeValueJavaScript>
 	            <getValuesFunction>
 	                 <![CDATA[
 	                // default to the selected control if one hasn't been specified
@@ -70,14 +79,22 @@ This action runs JQuery functions against specific controls
 	        <property>
 	            <key>controls</key>
 	            <name>Controls</name>
-	            <changeValueJavaScript>controlActionBulk</changeValueJavaScript>
+	            <visibility>
+					<key>targetingType</key>
+                    <value>bulk</value>
+                </visibility>
+	            <changeValueJavaScript>controlControls</changeValueJavaScript>
 	            <refreshProperties>true</refreshProperties>
-	            <helpHtml>Selects a controls on the page to apply the action to.</helpHtml>
+	            <helpHtml>Selects controls on the page to apply actions to.</helpHtml>
 	        </property>
 	        
 	        <property>
 	            <key>actionType</key>
 	            <name>Action</name>
+	            <visibility>
+					<key>targetingType</key>
+                    <value>single</value>
+                </visibility>
 	            <changeValueJavaScript>controlActionType</changeValueJavaScript>
 	            <getValuesFunction>return ["hide","show","toggle","slideUp","slideDown","slideToggle","fadeOut","fadeIn","fadeToggle","focus","enable","disable","addClass","removeClass","toggleClass","removeChildClasses","removeValidation","scrollTo", "hideDialogue","hideAllDialogues","showError","clearQueue","custom"];</getValuesFunction>
 	            <refreshProperties>true</refreshProperties>
@@ -87,6 +104,10 @@ This action runs JQuery functions against specific controls
 	        <property>
 	            <key>duration</key>
 	            <name>Duration (milliseconds)</name>
+	            <visibility>
+					<key>targetingType</key>
+                    <value>single</value>
+                </visibility>
 	            <setConstructValueFunction>return 1000;</setConstructValueFunction>
 	            <changeValueJavaScript>controlActionDuration</changeValueJavaScript>
 	            <helpHtml>Sets a total time for the action to be carried out in.</helpHtml>
@@ -95,6 +116,10 @@ This action runs JQuery functions against specific controls
 	        <property>
 	            <key>styleClass</key>
 	            <name>Class</name>
+	            <visibility>
+					<key>targetingType</key>
+                    <value>single</value>
+                </visibility>
 	            <changeValueJavaScript>controlActionClasses</changeValueJavaScript>
 	            <getValuesFunction>
 	                <![CDATA[
@@ -107,6 +132,10 @@ This action runs JQuery functions against specific controls
 		    <property>
 	            <key>command</key>
 	            <name>Command</name>
+	            <visibility>
+					<key>targetingType</key>
+                    <value>single</value>
+                </visibility>
 	            <setConstructValueFunction>return "// Enter JQuery command here. The event object is passed in as \"ev\"";</setConstructValueFunction>
 	            <changeValueJavaScript>controlActionCommand</changeValueJavaScript>
 	            <helpHtml>Allows you to create customised actions using jQuery. Recommended for advanced programmers.</helpHtml>
