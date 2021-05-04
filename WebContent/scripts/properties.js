@@ -1839,60 +1839,12 @@ function Property_validationControls(cell, propertyObject, property, details) {
 	addListener( dialogue.find("button").click( {controls:controls,cell: cell, propertyObject: propertyObject, property: property, details: details}, function(ev) {
 		// add an undo snapshot
 		addUndo();
-		// get the list of controls
-		var controls = ev.data.controls;
-		// initialise if need be
-		if (!controls) controls = [];
-		// get all page controls
-		var pageControls = getControls();
-		// prepare a list of controls to insert
-		var insertControls = [];
-		// loop the page controls
-		for (var i in pageControls) {
-			// get the pageControl
-			var pageControl = pageControls[i];
-			// if there is validation
-			if (pageControl.validation && pageControl.validation.type) {
-				// assume we don't have this control already
-				var gotControl = false;
-				// loop our controls
-				for (var i in controls) {
-					if (controls[i] == pageControl.id) {
-						gotControl = true;
-						break;
-					}
-				}
-				// if not add to insert collection
-				if (!gotControl) insertControls.push(pageControl.id);
-			} 
-		}
-		// now loop the insert controls
-		for (var i in insertControls) {
-			// get the insert control
-			var insertControl = insertControls[i];
-			// get the insert control position in the page
-			var insertPos = getKeyIndexControls(pageControls, insertControl);
-			// assume we haven't inserted it
-			var inserted = false;
-			// now loop the existing validation controls
-			for (var j in controls) {
-				// get the existing position 
-				var existingPos = getKeyIndexControls(pageControls, controls[j]);
-				// if the existing pos is after the insert control position
-				if (existingPos > insertPos) {
-					// insert here
-					controls.splice(j, 0, insertControl);
-					// retain insert
-					inserted = true;
-					// we're done
-					break;
-				} // found a control after this one so insert before the found one
-			} // loop dataCopies
-			// if we haven't inserted yet do so now
-			if (!inserted) controls.push(insertControl);
-		} // loop inserts
-		// add back the changed controls
-		ev.data.propertyObject.controls = controls;
+		
+		// add the IDs of all page controls with validation
+		ev.data.propertyObject.controls = getControls()
+		.filter(function(control) { return Boolean(control.validation && control.validation.type) })
+		.map(function(control) { return control.id });
+		
 		// update dialogue
 		Property_validationControls(ev.data.cell, ev.data.propertyObject, ev.data.property, ev.data.details);
 	}));
@@ -4844,12 +4796,14 @@ function getKeyIndexBulkCopies(dataCopies, key, input) {
 
 // this function returns the position of a key in the page controls 
 function getKeyIndexControls(controls, key) {
-	// get the control id (properties will have some stuff after the .)
-	key = key.split("/.")[0];
-	// loop all the controls
-	for (var i in controls) {
-		// return position on match
-		if (controls[i].id == key) return i*1;
+	if (key) {
+		// get the control id (properties will have some stuff after the .)
+		key = key.split("\.")[0];
+		// loop all the controls
+		for (var i in controls) {
+			// return position on match
+			if (controls[i].id == key) return i*1;
+		}
 	}
 	return -1;
 }
@@ -4857,131 +4811,45 @@ function getKeyIndexControls(controls, key) {
 // this function ammends the dataCopies collection to have all get or set data controls depending on whether input is true or false
 function getPageControlsBulkCopies(datacopyAction, input) {
 	
-	// create array if need be
-	if (!datacopyAction.dataCopies) datacopyAction.dataCopies = [];
-	// retain a reference to it
-	var dataCopies = datacopyAction.dataCopies;	
-	// get all controls
-	var controls = getControls();
-	// store bulk copy inserts as we discover them
-	var bulkCopyInserts = [];
-	// loop them
-	for (var i in controls) {
-		// get the control
-		var control = controls[i];
-		// we'll set the key if we find the get/set data method we need
-		var key = null;
-		// get the control class
+	var inputColumn = {
+		isValidData: function(controlClass) { return Boolean(controlClass.getDataFunction) },
+		isValidProperty: function(property) { return Boolean(property.getPropertyFunction) },
+		isUnset: function(dataCopy) { return !Boolean(dataCopy.source) },
+		contains: function(control, dataCopy) { return control.id === dataCopy.source },
+		newDataCopy: function(id) { return {source: id, sourceField: "", destination: null, destinationField: ""} }
+	};
+	
+	var destinationColumn = {
+		isValidData: function(controlClass) { return Boolean(controlClass.setDataJavaScript) },
+		isValidProperty: function(property) { return Boolean(property.setPropertyJavaScript) },
+		isUnset: function(dataCopy) { return !Boolean(dataCopy.destination) },
+		contains: function(control, dataCopy) { return control.id === dataCopy.destination },
+		newDataCopy: function(id) { return {source: null, sourceField: "", destination: id, destinationField: ""} }
+	};
+	
+	var column = input ? inputColumn : destinationColumn;
+	
+	var dataCopies = datacopyAction.dataCopies || [];
+	
+	// make actions for all controls, keeping existing actions
+	var copiesForAllControls = getControls()
+	.filter(function(control) {
 		var controlClass = _controlTypes[control.type];
-		// if we got one  and the control is named
-		if (controlClass && control.name) {			
-			// if there is a getdata method
-			if ((input && controlClass.getDataFunction) || (!input && controlClass.setDataJavaScript)) {
-				// set the key to the control id
-				key = control.id;
-			} else {
-				// get any run time properties
-				var properties = controlClass.runtimeProperties;
-				// if there are runtimeProperties in the class
-				if (properties) {
-					// promote if array
-					if ($.isArray(properties.runtimeProperty)) properties = properties.runtimeProperty;
-					// loop them
-					for (var i in properties) {
-						// get the property
-						var property = properties[i];
-						// if we want inputs and there's is a get function, or outputs and there's set javascript
-						if ((input && property.getPropertyFunction) || (!input && property.setPropertyJavaScript)) {
-							// use this as the key
-							key = control.id + "." + property.type;
-							// we only want the first one
-							break;
-						} // property check
-						
-					} // properties loop
-					
-				} // properties check
-				
-			} // get / set check
-
-		} // control class check
-		
-		// if there's a key it should be in dataCopies
-		if (key) {
-			// get it's position
-			var index = getKeyIndexBulkCopies(dataCopies, key, input);
-			// if it's not there
-			if (index < 0) {
-				// make a new object for it
-				var dataCopy = {source: null, sourceField: "", destination: null, destinationField: ""};
-				// if for source / destination
-				if (input) {
-					// set the source
-					dataCopy.source = key;					
-					// also most likely to be a row merge
-					dataCopy.type = "row";
-				} else {
-					// set the destination
-					dataCopy.destination = key;
-				}				
-				// rememeber that we don't have this control
-				bulkCopyInserts.push(dataCopy);
-			} // index check
-			
-		} // key check
-		
-	} // controls loop
-	
-	// now loop the inserts finding where they should go
-	for (var i in bulkCopyInserts) {
-		// get the copy to insert
-		var copy = bulkCopyInserts[i];
-		// set an added property
-		copy.added = true;
-		// assume no copy above
-		var copyAbove = null;
-		// get the key
-		var key = copy.source || copy.destination;		
-		// get the control postion
-		var controlPos = getKeyIndexControls(controls, key);
-		// assume we haven't inserted it
-		var inserted = false;
-		// now loop the existing bulkCopies
-		for (var j in dataCopies) {
-			// get the existing position 
-			var existingPos = getKeyIndexControls(controls, input ? dataCopies[j].source : dataCopies[j].destination);
-			// if the existing pos is after the insert control position
-			if (existingPos > controlPos) {
-				// set the copyAbove
-				copyAbove = dataCopies[j];				
-				// insert here
-				dataCopies.splice(j, 0, copy);
-				// retain insert
-				inserted = true;
-				// we're done
-				break;
-			} // found a control after this one so insert before the found one
-		} // loop dataCopies
-		// if we haven't inserted yet do so now
-		if (!inserted) {
-			// check there is an existing data copy above and set if so
-			if (dataCopies.length > 0) copyAbove = dataCopies[dataCopies.length - 1];							
-			// insert it now
-			dataCopies.push(copy);
+		if (column.isValidData(controlClass)) return true;
+		var properties = controlClass.runtimeProperties;
+		if (properties) {
+			if ($.isArray(properties.runtimeProperty)) properties = properties.runtimeProperty;
+			return properties.some(column.isValidProperty);
 		}
-		// if there was a copy above
-		if (copyAbove) {
-			// check if source / destination
-			if (input) {
-				// if the data copy we've just moved past has a destination field, we can assume this copy will have the same destination
-				if (copyAbove.destinationField || (copyAbove.destination && copyAbove.added)) copy.destination = copyAbove.destination;
-			} else {
-				// if the data copy we've just moved past has a source field, we can assume this copy will have the same source
-				if (copyAbove.sourceField || (copyAbove.source && copyAbove.added)) copy.source = copyAbove.source;
-			}
-		}		
-	} // loop inserts
+	})
+	.flatMap(function(control) {
+		var existingDataCopies = dataCopies.filter(function(dataCopy) { return column.contains(control, dataCopy) });
+		return existingDataCopies.length > 0 ? existingDataCopies : [column.newDataCopy(control.id)];
+	});
 	
+	var unsetActions = dataCopies.filter(column.isUnset);
+	
+	datacopyAction.dataCopies = copiesForAllControls.concat(unsetActions);
 }
 
 function getDataCopyFieldFromControl(id) {
@@ -5077,7 +4945,13 @@ function Property_datacopyCopies(cell, datacopyAction, property, details) {
 				// add an undo snapshot
 				addUndo();
 				// loop all copies sources and set
-				for (var i = 0; i < dataCopies.length; i++) dataCopies[i].sourceField = getDataCopyFieldFromControl(dataCopies[i].destination);
+				for (var i = 0; i < dataCopies.length; i++) {
+					if (dataCopies[i].destination) {
+						dataCopies[i].sourceField = getDataCopyFieldFromControl(dataCopies[i].destination);
+					} else {
+						dataCopies[i].sourceField = "";
+					}
+				}
 				// refresh
 				Property_datacopyCopies(ev.data.cell, ev.data.datacopyAction, ev.data.property); 
 			}						
@@ -5117,7 +4991,13 @@ function Property_datacopyCopies(cell, datacopyAction, property, details) {
 				// add an undo snapshot
 				addUndo();
 				// loop all copies sources and set
-				for (var i = 0; i < dataCopies.length; i++) dataCopies[i].destinationField = getDataCopyFieldFromControl(dataCopies[i].source);
+				for (var i = 0; i < dataCopies.length; i++) {
+					if (dataCopies[i].source) {
+						dataCopies[i].destinationField = getDataCopyFieldFromControl(dataCopies[i].source);
+					} else {
+						dataCopies[i].destinationField = "";
+					}
+				}
 				// refresh
 				Property_datacopyCopies(ev.data.cell, ev.data.datacopyAction, ev.data.property); 
 			}						
@@ -7015,11 +6895,11 @@ function Property_controlControls(cell, controlAction, property, details) {
 			// bring in all source controls
 			if (!controlAction.controls) controlAction.controls = [];
 			
-			ev.data.controlAction.controls = getControls()
+		ev.data.controlAction.controls = getControls()
 			.filter(function(control) { return Boolean(control.name) })
-			.map(function(control) {
-				var existingControlAction = controlAction.controls.find(function(pageControl) { return pageControl.source === control.id });
-				return existingControlAction || {source:control.id,actionType:"hide",parameter:""};
+			.flatMap(function(control) {
+				var existingActions = controlAction.controls.filter(function(existingControl) { return existingControl.source === control.id });
+				return existingActions.length > 0 ? existingActions : [{source:control.id,actionType:"hide",parameter:""}];
 			});
 			
 			// refresh
