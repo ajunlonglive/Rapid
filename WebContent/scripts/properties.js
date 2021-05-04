@@ -4867,7 +4867,7 @@ function getDataCopyFieldFromControl(id) {
 		if (field.length > 3) {
 			// loop the letters from 3rd
 			for (var i = 2; i < field.length - 1; i ++) {
-				// get first upper case letter
+				// get first upper case letter (or space)
 				if (field[i] == field[i].toUpperCase()) {
 					// get rest of field
 					var f = field.substring(i + 1);
@@ -4879,6 +4879,8 @@ function getDataCopyFieldFromControl(id) {
 						// change first letter to lower case and use the rest
 						field = field[i].toLowerCase() + f;
 					}
+					// trim for good measure
+					if (field) field = field.trim();
 					// we're done
 					break;
 				}
