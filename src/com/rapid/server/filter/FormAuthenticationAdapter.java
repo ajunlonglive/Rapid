@@ -492,8 +492,14 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 							// send a 401 with the login path to get RapidMobile to authenticate
 							response.sendError(401, "location=" + loginPath);
 						} else {
-							// send a redirect with . in front to allow for Rapid instances below the root
-							response.sendRedirect("./" + loginPath);
+							// if the request is for the login
+							if (requestPath.replace("/", "").equals(loginPath)) {
+								// allow the request as-is
+								return request;
+							} else {
+								// otherwise send a redirect to the login path with . in front to allow for Rapid instances below the root
+								response.sendRedirect("./" + loginPath);
+							}
 						}
 
 					}
