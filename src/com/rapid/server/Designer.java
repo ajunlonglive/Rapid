@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -92,6 +92,7 @@ import com.rapid.data.DatabaseConnection;
 import com.rapid.forms.FormAdapter;
 import com.rapid.security.SecurityAdapter;
 import com.rapid.security.SecurityAdapter.Role;
+import com.rapid.security.SecurityAdapter.SecurityAdapaterException;
 import com.rapid.security.SecurityAdapter.User;
 import com.rapid.utils.Bytes;
 import com.rapid.utils.Files;
@@ -221,20 +222,20 @@ public class Designer extends RapidHttpServlet {
 
 						}
 					} else {
-						
+
 						String str = JSONObject.valueToString(jsonAction.get(key));
-						
+
 						if (looksLikeJSONObject(str)) {
-							
+
 							JSONObject jsonObject = jsonAction.getJSONObject(key);
 							str =  printJSONObject(jsonObject, thislevel).replaceAll("\r\n\t*\r\n", "\r\n");
-							
+
 						} else if (looksLikeJSONArray(str)) {
-							
+
 							JSONArray jsonArray = jsonAction.getJSONArray(key);
 							str = printJSONArray(jsonArray, thislevel).replaceAll("\r\n\t*\r\n", "\r\n");
 						}
-						
+
 						// add the value
 						keyValues.put(key, str);
 					}
@@ -274,40 +275,40 @@ public class Designer extends RapidHttpServlet {
     }
 
     private static String printJSONObject(JSONObject jsonObject, int level) throws JSONException {
-		
+
     	int thisLevel = level + 2;
     	String output = "";
     	Iterator<String> keys = jsonObject.keys();
-		
+
     	while (keys.hasNext()) {
     		String key = keys.next();
     		output += "\r\n";
     		for (int i = 0; i < thisLevel; i++) output += "\t";
-    		
+
     		String value = JSONObject.valueToString(jsonObject.get(key));
-    		
+
     		if (looksLikeJSONObject(value)) {
     			value = printJSONObject(jsonObject.getJSONObject(key), thisLevel);
     		} else if (looksLikeJSONArray(value)) {
     			value = printJSONArray(jsonObject.getJSONArray(key), thisLevel);
     		}
-    		
+
     		output += key + "\t" + value;
     	}
-    	
+
     	return output;
 	}
 
 	private static String printJSONArray(JSONArray jsonArray, int level) throws JSONException {
-		
+
     	int thisLevel = level + 2;
     	String output = "";
-		
+
     	for (int i = 0; i < jsonArray.length(); i++) {
     		output += "\r\n";
-    		
+
     		String value = JSONObject.valueToString(jsonArray.get(i));
-    		
+
     		if (looksLikeJSONObject(value)) {
     			value = printJSONObject(jsonArray.getJSONObject(i), level);
     		} else if (looksLikeJSONArray(value)) {
@@ -315,17 +316,17 @@ public class Designer extends RapidHttpServlet {
     		} else {
         		for (int j = 0; j < thisLevel; j++) output += "\t";
     		}
-    		
+
     		output += value;
     	}
-    	
+
     	return output;
 	}
-	
+
 	private static boolean looksLikeJSONObject(String str) {
 		return str.startsWith("{") && str.endsWith("}");
 	}
-	
+
 	private static boolean looksLikeJSONArray(String str) {
 		return str.startsWith("[") && str.endsWith("]");
 	}
@@ -1795,6 +1796,7 @@ public class Designer extends RapidHttpServlet {
 		// get the rapidServlet
 		RapidHttpServlet rapidServlet = rapidRequest.getRapidServlet();
 
+		// retain the servlet context
 		ServletContext context = rapidServlet.getServletContext();
 
 		// get a reference to our logger
@@ -2595,48 +2597,58 @@ public class Designer extends RapidHttpServlet {
 												// get the security for this application
 												SecurityAdapter security = appNew.getSecurityAdapter();
 
-												// if we have one
-												if (security != null) {
+												// make a rapid request in the name of the import application
+												RapidRequest importRapidRequest = new RapidRequest(this, request, appNew);
 
-													// make a rapid request in the name of the import application
-													RapidRequest importRapidRequest = new RapidRequest(this, request, appNew);
+												// assume we don't have the user
+												boolean gotUser = false;
+												// allow for the user to be outside the try/catch below
+												User user = null;
 
-													// assume we don't have the user
-													boolean gotUser = false;
+												try {
 
 													// get the current users record from the adapter
-													User user = security.getUser(importRapidRequest);
+													user = security.getUser(importRapidRequest);
 
-													// check the current user is present in the app's security adapter
-													if (user != null) {
-														// now check the current user password is correct too
-														if (security.checkUserPassword(importRapidRequest, userName, rapidRequest.getUserPassword())) {
-															// we have the right user with the right password
-															gotUser = true;
-														} else {
-															// remove this user in case there is one with the same name but the password does not match
-															security.deleteUser(importRapidRequest);
-														}
-													}
+												} catch (SecurityAdapaterException ex) {
 
-													// if we don't have the user
-													if (!gotUser) {
-														// get the current user from the Rapid application
-														User rapidUser = rapidSecurity.getUser(importRapidRequest);
-														// create a new user based on the Rapid user
-														user = new User(rapidUser);
-														// add the new user
-														security.addUser(importRapidRequest, user);
-													}
-
-													// add Admin and Design roles for the new user if required
-													if (!security.checkUserRole(importRapidRequest, com.rapid.server.Rapid.ADMIN_ROLE))
-														security.addUserRole(importRapidRequest, com.rapid.server.Rapid.ADMIN_ROLE);
-
-													if (!security.checkUserRole(importRapidRequest, com.rapid.server.Rapid.DESIGN_ROLE))
-														security.addUserRole(importRapidRequest, com.rapid.server.Rapid.DESIGN_ROLE);
-
+													// log
+													logger.error("Error getting user on app import : " + ex.getMessage(), ex);
+													// set a new Rapid security adapter for the app (it will construct it)
+													appNew.setSecurityAdapter(context, "rapid");
+													// retrieve the security adapter we just asked to be made
+													security = appNew.getSecurityAdapter();
 												}
+
+												// check the current user is present in the app's security adapter
+												if (user != null) {
+													// now check the current user password is correct too
+													if (security.checkUserPassword(importRapidRequest, userName, rapidRequest.getUserPassword())) {
+														// we have the right user with the right password
+														gotUser = true;
+													} else {
+														// remove this user in case there is one with the same name but the password does not match
+														security.deleteUser(importRapidRequest);
+													}
+												}
+
+												// if we don't have the user
+												if (!gotUser) {
+													// get the current user from the Rapid application
+													User rapidUser = rapidSecurity.getUser(importRapidRequest);
+													// create a new user based on the Rapid user
+													user = new User(rapidUser);
+													// add the new user to this application
+													security.addUser(importRapidRequest, user);
+												}
+
+												// add Admin roles for the new user if not present
+												if (!security.checkUserRole(importRapidRequest, com.rapid.server.Rapid.ADMIN_ROLE))
+													security.addUserRole(importRapidRequest, com.rapid.server.Rapid.ADMIN_ROLE);
+
+												// add Design role for the new user if not present
+												if (!security.checkUserRole(importRapidRequest, com.rapid.server.Rapid.DESIGN_ROLE))
+													security.addUserRole(importRapidRequest, com.rapid.server.Rapid.DESIGN_ROLE);
 
 												// reload the pages (actually clears down the pages collection and reloads the headers)
 												appNew.getPages().loadpages(getServletContext());
