@@ -1197,7 +1197,7 @@ public class Page {
 				if (application.getStatus() == Application.STATUS_LIVE) {
 					try {
 						resourceHtml = "    <script type='text/javascript'>" + Minify.toString(resource.getContent(),Minify.JAVASCRIPT, "JavaScript resource " + resource.getName()) + "</script>";
-					} catch (IOException ex) {
+					} catch (Exception ex) {
 						resourceHtml = "    <script type='text/javascript'>/* Failed to minify resource " + resource.getName() + " JavaScript : " + ex.getMessage() + "*/</script>";
 					}
 				} else {
@@ -1208,7 +1208,7 @@ public class Page {
 				if (application.getStatus() == Application.STATUS_LIVE) {
 					try {
 						resourceHtml = "    <style>" + Minify.toString(resource.getContent(), Minify.CSS, "") + "</style>";
-					} catch (IOException ex) {
+					} catch (Exception ex) {
 						resourceHtml = "    <style>/* Failed to minify resource " + resource.getName() + " CSS : " + ex.getMessage() + "*/<style>";
 					}
 				} else {
