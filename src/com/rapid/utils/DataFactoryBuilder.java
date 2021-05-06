@@ -19,15 +19,24 @@ import com.rapid.server.RapidRequest;
 public class DataFactoryBuilder {
 
 	public static DataFactory createDataFactory(RapidRequest rapidRequest, DatabaseConnection connection) throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
-		DataFactory dataFactory = null;
 
-		RapidHttpServlet rapidServlet = rapidRequest.getRapidServlet();
-		if(rapidServlet!=null) {
-			ServletContext context = rapidServlet.getServletContext();
-			Application application = rapidRequest.getApplication();
-			ConnectionAdapter connectionAdapter = connection.getConnectionAdapter(context, application);
-			dataFactory = new DataFactory(connectionAdapter, false);
+		DataFactory dataFactory = null;
+		ServletContext context = null;
+		Application application = null;
+
+		if (rapidRequest != null) {
+
+			RapidHttpServlet rapidServlet = rapidRequest.getRapidServlet();
+
+			if (rapidServlet != null) {
+				context = rapidServlet.getServletContext();
+				application = rapidRequest.getApplication();
+			}
+
 		}
+
+		ConnectionAdapter connectionAdapter = connection.getConnectionAdapter(context, application);
+		dataFactory = new DataFactory(connectionAdapter, false);
 
 		return dataFactory;
 	}
