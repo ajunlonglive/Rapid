@@ -81,8 +81,8 @@ public class Minify {
 		// constructor
 		public MinifyErrorReporter(String sourceName) {
 			_sourceName = sourceName;
-			_errors = new ArrayList<MinifyIssue>();
-			_warnings = new ArrayList<MinifyIssue>();
+			_errors = new ArrayList<>();
+			_warnings = new ArrayList<>();
 		}
 
 		// properties
@@ -148,117 +148,120 @@ public class Minify {
 		// get an error reporter
 		MinifyErrorReporter errorReporter = new MinifyErrorReporter(sourceName);
 
-		// get a string reader
-		StringReader sr = new StringReader(string);
+		// the string we're going to compress everything into
+		String compressed = string;
 
-		try {
-			// check the type
-			switch (type) {
-				case CSS :
-					/*
-					// get the css compressor
-					CssCompressor cssCompressor = new CssCompressor(sr);
-					// compress
-					cssCompressor.compress(writer, 0)
-					*/
+		// get a logger
+		Logger logger = LogManager.getLogger(Minify.class);
 
-					// The css compression is maxing out memory and requiring a higher, non standard, stack size so for now we'll make do with the simple techniques below
+		// detailed logging
+		logger.trace("Starting minify");
 
-					// the string we're going to compress everything into
-					String compressed = string;
-
-					// get a logger
-					Logger logger = LogManager.getLogger(Minify.class);
-
-					// detailed logging
-					logger.trace("Starting css minify");
-
-					// remove all comments
-					int start = compressed.indexOf("/*");
-					int end = 0;
-					while (start > -1) {
-						end = compressed.indexOf("*/", start);
-						if (end > -1) {
-							compressed = compressed.substring(0, start) + compressed.substring(end + 2);
-						} else {
-							compressed = compressed.substring(0, start);
-						}
-						start = compressed.indexOf("/*");
-					}
-
-					// detailed logging
-					logger.trace("CSS comments stripped");
-
-					// replace all double spaces with a single until none are left
-					start = compressed.indexOf("  ");
-					while (start > -1) {
-						compressed = compressed.substring(0, start) + compressed.substring(start + 1);
-						start = compressed.indexOf("  ");
-					}
-
-					// detailed logging
-					logger.trace("CSS double spaces removed");
-
-					// now do the simple patterns
-					compressed = compressed.replace("\t", "")
-					.replace("\r", "")
-					.replace("\n", "")
-					.replace("\n ", "")
-					.replace(" { ", "{")
-					.replace(" {", "{")
-					.replace("{ ", "{")
-					.replace(" }", "}")
-					.replace("} ", "}")
-					.replace(";}", "}")
-					.replace(" ; ", ";")
-					.replace("; ", ";")
-					.replace(" ;", ";")
-					.replace(" : ", ":")
-					.replace(" :", ":")
-					.replace(": ", ":")
-					.replace("}", "}\n");
-
-					logger.trace("CSS minified");
-
-					// write the result
-					writer.write(compressed);
-
-				break;
-				default :
-					// the error reporter is only used with js
-					JavaScriptCompressor jsCompressor = new JavaScriptCompressor(sr, errorReporter);
-					// compress
-					jsCompressor.compress(writer, 1000, true, false, false, false);
-					// check for any errors
-					if (errorReporter.getErrors().size() > 0) {
-						// write the original string
-						writer.write(string);
-						// add the details
-						writer.write("\n\n" + errorReporter.getDetails());
-						// return the original string and the details
-						return writer;
-					}
-					// check for any warnings
-					if (errorReporter.getWarnings().size() > 0) {
-						// add the details
-						writer.write("\n\n" + errorReporter.getDetails());
-					}
+		// remove all comments
+		int start = compressed.indexOf("/*");
+		int end = 0;
+		while (start > -1) {
+			end = compressed.indexOf("*/", start);
+			if (end > -1) {
+				compressed = compressed.substring(0, start) + compressed.substring(end + 2);
+			} else {
+				compressed = compressed.substring(0, start);
 			}
-			// return the writer
-			return writer;
-
-		} catch (EvaluatorException ex) {
-
-			// write the original string
-			writer.write(string);
-
-			// return the original string and the error details
-			writer.write("\n\n" + errorReporter.getDetails());
-
-			// return
-			return writer;
-
+			start = compressed.indexOf("/*");
 		}
+
+		// detailed logging
+		logger.trace("Comments stripped");
+
+		// if there is anything left to compress
+		if (compressed.trim().length() > 0) {
+
+			// get a string reader
+			StringReader sr = new StringReader(compressed);
+
+			try {
+				// check the type
+				switch (type) {
+					case CSS :
+						/*
+						// get the css compressor
+						CssCompressor cssCompressor = new CssCompressor(sr);
+						// compress
+						cssCompressor.compress(writer, 0)
+						*/
+
+						// The css compression is maxing out memory and requiring a higher, non standard, stack size so for now we'll make do with the simple techniques below
+
+						// replace all double spaces with a single until none are left
+						start = compressed.indexOf("  ");
+						while (start > -1) {
+							compressed = compressed.substring(0, start) + compressed.substring(start + 1);
+							start = compressed.indexOf("  ");
+						}
+
+						// detailed logging
+						logger.trace("CSS double spaces removed");
+
+						// now do the simple patterns
+						compressed = compressed.replace("\t", "")
+						.replace("\r", "")
+						.replace("\n", "")
+						.replace("\n ", "")
+						.replace(" { ", "{")
+						.replace(" {", "{")
+						.replace("{ ", "{")
+						.replace(" }", "}")
+						.replace("} ", "}")
+						.replace(";}", "}")
+						.replace(" ; ", ";")
+						.replace("; ", ";")
+						.replace(" ;", ";")
+						.replace(" : ", ":")
+						.replace(" :", ":")
+						.replace(": ", ":")
+						.replace("}", "}\n");
+
+						logger.trace("CSS minified");
+
+						// write the result
+						writer.write(compressed);
+
+					break;
+					default :
+						// the error reporter is only used with js
+						JavaScriptCompressor jsCompressor = new JavaScriptCompressor(sr, errorReporter);
+						// compress
+						jsCompressor.compress(writer, 1000, true, false, false, false);
+						// check for any errors
+						if (errorReporter.getErrors().size() > 0) {
+							// write the original string
+							writer.write(string);
+							// add the details
+							writer.write("\n\n" + errorReporter.getDetails());
+							// return the original string and the details
+							return writer;
+						}
+						// check for any warnings
+						if (errorReporter.getWarnings().size() > 0) {
+							// add the details
+							writer.write("\n\n" + errorReporter.getDetails());
+						}
+				}
+
+			} catch (EvaluatorException ex) {
+
+				// write the original string
+				writer.write(string);
+
+				// return the original string and the error details
+				writer.write("\n\n" + errorReporter.getDetails());
+
+			}
+
+		} // compressed contents check
+
+		// return the writer
+		return writer;
 
 	}
 
