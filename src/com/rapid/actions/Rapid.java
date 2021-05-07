@@ -2368,6 +2368,12 @@ public class Rapid extends Action {
 									appUpdated = true;
 								}
 
+								// assume we do not need to reload the application
+								boolean appReload = false;
+
+								// if the status has changed we do want to reload
+								if (app.getStatus() != status) appReload = true;
+
 								// update the values
 								app.setName(name);
 								app.setStatus(status);
@@ -2408,12 +2414,21 @@ public class Rapid extends Action {
 								app.setFormWebserviceType(formWebserviceType);
 								app.setFormWebserviceSOAPAction(formWebserviceSOAPAction);
 
+								// reload
+								if (appReload) {
+
+									// load the pages (actually clears down the pages collection and reloads the headers)
+									app.getPages().loadpages(servletContext);
+
+								}
+
 								// save
 								app.save(rapidServlet, rapidActionRequest, true);
 
 								// add the application to the response
 								result.put("message", "Application details saved");
 								result.put("update", appUpdated);
+								result.put("reload", appReload);
 
 							} else if ("SAVESTYLES".equals(action)) {
 
