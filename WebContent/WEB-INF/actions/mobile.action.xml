@@ -916,15 +916,6 @@ var _editCapture = {
 var _formats = ["mp4", "webm"];
 var _codecs = ["h264", "vp9", "vp8", "av1", ""];
 
-function orderedByPreference(array, preference) {
-	array.sort(function(a, b) {
-		return a === preference ? -1 :
-			   b === preference ? 1 :
-			   0;
-	});
-	return array;
-}
-
 function optimalVideoMimeType(formats, codecs) {
 	
 	for (formatIndex = 0; formatIndex < formats.length; formatIndex++) {
@@ -966,7 +957,7 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 		_cameraPlayer = document.getElementById("cameraPlayer");
 		
 		var mimeTypes = mediums
-			.map(function(medium) { return medium + "/*"; })
+			.map(function(medium) { return medium + "/" + "*" })
 			.join(",");
 		
 		$("#inputImage").remove();
@@ -1288,7 +1279,7 @@ function selectItem(galleryControlId, size, mediums, message) {
 	var galleryDetails = window[galleryControlId + "details"];
 	
 	var mimeTypes = mediums
-		.map(function(medium) { return medium + "/*"; })
+		.map(function(medium) { return medium + "/" + "*" })
 		.join(",");
 	
 	var selectWhat = mediums.join(" or ");
@@ -1813,13 +1804,13 @@ function scanQrCodeAction(callback) {
 		noCameraWarning.style.color = "#FFF";
 		noCameraWarning.style.fontSize = "30px";
 		noCameraWarning.style.display = "inline-block";
-		noCameraWarning.style.float = "none";
+		noCameraWarning.style["float"] = "none";
 		noCameraWarning.style.visibility = "hidden";
 		noCameraWarning.innerText = "No camera available";
 		toolBar.appendChild(noCameraWarning);
 		
 		var closeButton = document.createElement("button");
-		closeButton.style.float = "right";
+		closeButton.style["float"] = "right";
 		closeButton.innerHTML = "<i class='fas fa-times cameraIcon'></i>";
 		closeButton.classList.add("cameraControlBasic");
 		closeButton.addEventListener("click", close);
