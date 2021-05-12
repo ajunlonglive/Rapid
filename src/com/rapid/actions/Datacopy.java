@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -126,6 +126,56 @@ public class Datacopy extends Action {
 		}
 	}
 
+	// determine if this datacopy get is combined in a row merge
+	private boolean isCombineRowMergeGet(int i, int combineRowMergeStartIndex) {
+
+		// promote combineRowMergeStartIndex is not set yet
+		if (combineRowMergeStartIndex < 0) combineRowMergeStartIndex = i;
+
+		// get the data copies we want to check, if they exist
+		DataCopy dataCopy = _dataCopies.get(i);
+		DataCopy dataCopyStart = (combineRowMergeStartIndex > -1 && combineRowMergeStartIndex < _dataCopies.size() ? _dataCopies.get(combineRowMergeStartIndex) : null);
+		DataCopy dataCopyNext = (i < _dataCopies.size() - 1 ? _dataCopies.get(i + 1) : null);
+		DataCopy dataCopyPrev = (i > 0 ? _dataCopies.get(i - 1) : null);
+
+		// assume it's not
+		boolean result = false;
+
+		// check some basics
+		if (dataCopy != null && dataCopyStart != null && dataCopy.getSource() != null) {
+
+			// if this is a row merge, or it's the first one that's a replace
+			result = ("row".equals(dataCopy.getType()) || (i == combineRowMergeStartIndex &&"".equals(dataCopyStart.getType()))) && (
+				// if the next one is for the same source and it's a row merge
+				(dataCopyNext != null && dataCopyNext.getSource() != null && dataCopy.getSource().equals(dataCopyNext.getSource()) && "row".equals(dataCopyNext.getType()))
+				||
+				// if the previous one is for the same source and it's a row merge or the start which can be a replace
+				(dataCopyPrev != null && dataCopyPrev.getSource() != null && dataCopy.getSource().equals(dataCopyPrev.getSource()) && ("row".equals(dataCopyPrev.getType()) || (i-1 == combineRowMergeStartIndex && "".equals(dataCopyPrev.getType()))))
+			);
+
+		}
+
+		// we're done!
+		return result;
+
+	}
+
+	// determine if this datacopy set is combined in a row merge
+	private boolean isCombineRowMergeSet(int i, int combineRowMergeStartIndex) {
+
+		// get this data copy
+		DataCopy dataCopy = _dataCopies.get(i);
+		// if there is a next one get it
+		DataCopy dataCopyNext = (i < _dataCopies.size() - 1 ? _dataCopies.get(i + 1) : null);
+
+		// if there is a next data copy and it's a row merge, and this is a row merge or replace if its the start,
+		boolean result = (dataCopyNext != null && "row".equals(dataCopyNext.getType()) && ("row".equals(dataCopy.getType()) || (i == combineRowMergeStartIndex && "".equals(dataCopy.getType()))));
+
+		// we're done!
+		return result;
+
+	}
+
 	// overrides
 
 	@Override
@@ -156,9 +206,14 @@ public class Datacopy extends Action {
 
 				// compare against last getData call to avoid recalling
 				String lastGetDataFunction = null;
+				// assume we have not started to combine row merges
+				int combineRowMergeStartIndex = -1;
 
 				// loop them
-				for (DataCopy dataCopy : _dataCopies) {
+				for (int i = 0; i < _dataCopies.size(); i++) {
+
+					// get this data copy (we want to look ahead to combine row merges in the get data function)
+					DataCopy dataCopy = _dataCopies.get(i);
 
 					if (dataCopy.getSource() == null ) {
 
@@ -173,108 +228,141 @@ public class Datacopy extends Action {
 
 						// check we got one
 						if (destinationId.length() > 0) {
-							
+
 							String getDataFunction = null;
-							
+
 							// if this is a datetime value, and it has a type
 							if ("Datetime".equals(sourceParts[0]) && sourceParts.length > 1) {
 								// make the js!
 								getDataFunction = makeDateGetter(sourceParts[1]);
 
 							} else {
+
 								// get the get data function
 								getDataFunction = Control.getDataJavaScript(rapidServlet.getServletContext(), application, page, dataCopy.getSource(), dataCopy.getSourceField());
+
 							}
-							
+
+							// get the destination field
+							String destinationField = dataCopy.getDestinationField();
+							// clean up the field
+							if (destinationField == null) destinationField = "";
+
 							// add the getData if different from the last one
-							if (!getDataFunction.equals(lastGetDataFunction)) js += "var data = " + getDataFunction + ";\n";
+							if (!getDataFunction.equals(lastGetDataFunction)) {
+
+								// if this is row merge and so is the next or previous one - merge into same data object
+								if (isCombineRowMergeGet(i, combineRowMergeStartIndex)) {
+
+									// start data object if
+									if (combineRowMergeStartIndex < 0) {
+										// retain the we have started
+										combineRowMergeStartIndex = i;
+										// start the data object
+										js += "var data = {};\n";
+									}
+
+									// use the data function to add to the data object
+									js += "data['" + destinationField + "'] = " + getDataFunction + ";\n";
+
+
+								} else {
+
+									// use the data function to make a data object
+									js += "var data = " + getDataFunction + ";\n";
+
+								}
+
+							}
 
 							// remember this one
 							lastGetDataFunction = getDataFunction;
 
 							if ("System.clipboard".equals(destinationId)) {
+
 								// do the data copy
 								js += "Action_datacopy(ev, data, [{id:'" + destinationId + "'}]);\n";
+
 							} else {
+
+								// assume control id is destination id
+								String controlId = destinationId;
 								// split if by escaped .
 								String idParts[] = destinationId.split("\\.");
 								// if there is more than 1 part we are dealing with set properties, for now just update the destintation id
-								if (idParts.length > 1) destinationId = idParts[0];
+								if (idParts.length > 1) controlId = idParts[0];
 								// first try and look for the control in the page
-								Control destinationControl = page.getControl(destinationId);
+								Control destinationControl = page.getControl(controlId);
 								// assume we found it
 								boolean pageControl = true;
+
 								// check we got a control
 								if (destinationControl == null) {
 									// now look for the control in the application
-									destinationControl = application.getControl(rapidServlet.getServletContext(), destinationId);
+									destinationControl = application.getControl(rapidServlet.getServletContext(), controlId);
 									// set page control to false
 									pageControl = false;
 								}
+
 								// check we got one from either location
 								if (destinationControl == null) {
 
 									// data copies not found return a comment
-									js += "// data destination not found for " + destinationId + "\n";
+									js += "// data destination not found for " + controlId + "\n";
 
 								} else {
 
-									// get the field
-									String destinationField = dataCopy.getDestinationField();
-									// clean up the field
-									if (destinationField == null) destinationField = "";
+									// try and get the type
+									String type = dataCopy.getType();
+									// check it fot backwards compatibility
+									if (type == null || "false".equals(type)) {
+										// update to empty string
+										type = "";
+										// add back to object so it can be used to detect combined row merges
+										dataCopy.setType(type);
+									} else {
+										// update to comma-prefixed, string escaped
+										type = ", '" + type + "'";
+									}
 
 									// get any details we may have
 									String details = destinationControl.getDetailsJavaScript(application, page);
 
-									// if the idParts is greater then 1 this is a set property
-									if (idParts.length > 1) {
-
-										// if we have some details
-										if (details != null) {
-											// if this is a page control
-											if (pageControl) {
-												// the details will already be in the page so we can use the short form
-												details = destinationControl.getId() + "details";
-											}
+									// if we have some details
+									if (details != null) {
+										// if this is a page control
+										if (pageControl) {
+											// the details will already be in the page so we can use the short form
+											details = destinationControl.getId() + "details";
 										}
+									}
 
-										// get the property from the second id part
-										String property = idParts[1];
-										// append the set property call
-										js += "setProperty_" + destinationControl.getType() + "_" + property + "(ev, '" + destinationControl.getId() + "', '" + destinationField + "', " + details + ", data, " + Boolean.parseBoolean(getProperty("changeEvents")) + ");\n";
+									// if this is row merge and so is the next one - skip the data copy
+									if (!isCombineRowMergeSet(i, combineRowMergeStartIndex)) {
 
-									} else {
+										// if we started combining row merges
+										if (combineRowMergeStartIndex > -1) {
 
-										// set details to empty string or clean up
-										if (details == null) {
-											details = "";
+											// empty the destination field
+											destinationField = "null";
+
+											// if we started with a replace (the rest would be merge) set type to replace
+											if ("".equals(_dataCopies.get(combineRowMergeStartIndex).getType())) type = "";
+
+											// reset in case there are others
+											combineRowMergeStartIndex = -1;
+
 										} else {
-											// if this is a page control
-											if (pageControl) {
-												// the details will already be in the page so we can use the short form
-												details = ",details:" + destinationControl.getId() + "details";
-											} else {
-												// write the full details
-												details = ",details:" + details;
-											}
-										}
 
-										// try and get the type
-										String type = dataCopy.getType();
-										// check it
-										if (type == null || "false".equals(type)) {
-											// update to empty string
-											type = "";
-										} else {
-											// update to comma-prefixed, string escaped
-											type = ",'" + type + "'";
-										}
+											// wrap the destination field
+											destinationField = "'" + destinationField + "'";
+
+										} // this and next are row merge check
 
 										// do the data copy
-										js += "Action_datacopy(ev, data, [{id:'" + destinationControl.getId() + "',type:'" + destinationControl.getType() + "',field:'" + destinationField + "'" + details + "}], " + Boolean.parseBoolean(getProperty("changeEvents")) + type + ");\n";
+										js += "Action_datacopy(ev, data, [{id:'" + destinationId + "',type:'" + destinationControl.getType() + "',field:" + destinationField + ",details:" + details + "}], " + Boolean.parseBoolean(getProperty("changeEvents")) + type + ");\n";
 
-									} // copy / set property check
+									}
 
 								} // destination control check
 
@@ -314,9 +402,12 @@ public class Datacopy extends Action {
 
 				} else {
 
-					js = "var data = " + Control.getDataJavaScript(rapidServlet.getServletContext(), application, page, dataSourceId, dataSourceField) + ";\n";
+					js = "var data = " + Control.getDataJavaScript(rapidServlet.getServletContext(), application, page, dataSourceId, dataSourceField);
 
 				}
+
+				// append the line ending for both the above
+				js += ";\n";
 
 				// we're going to work with the data destinations in a json array
 				JSONArray jsonDataDestinations = null;
@@ -352,6 +443,7 @@ public class Datacopy extends Action {
 								jsOutputs += "{id: '" + destinationId + "'},";
 								// we will need an outputs array
 								outputsArray = true;
+								// no destination control to worry about
 								continue;
 							}
 
@@ -502,7 +594,7 @@ public class Datacopy extends Action {
 		return js;
 
 	}
-	
+
 	private String makeDateGetter(String type) {
 		// make format with dateFormat and timeFormat properties
 		String format = "";
@@ -522,7 +614,7 @@ public class Datacopy extends Action {
 
 		String formatter = "current date and time".startsWith(type) ? "formatDatetime" : "formatTime";
 		// make the js!
-		return formatter + "('" + format + "', new Date());\n";
+		return formatter + "('" + format + "', new Date())";
 	}
 
 }
