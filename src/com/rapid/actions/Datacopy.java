@@ -142,15 +142,15 @@ public class Datacopy extends Action {
 		boolean result = false;
 
 		// check some basics
-		if (dataCopy != null && dataCopyStart != null && dataCopy.getSource() != null) {
+		if (dataCopy != null && dataCopyStart != null && dataCopy.getDestination() != null) {
 
 			// if this is a row merge, or it's the first one that's a replace
 			result = ("row".equals(dataCopy.getType()) || (i == combineRowMergeStartIndex &&"".equals(dataCopyStart.getType()))) && (
 				// if the next one is for the same source and it's a row merge
-				(dataCopyNext != null && dataCopyNext.getSource() != null && dataCopy.getSource().equals(dataCopyNext.getSource()) && "row".equals(dataCopyNext.getType()))
+				(dataCopyNext != null && dataCopyNext.getDestination() != null && dataCopy.getDestination().equals(dataCopyNext.getDestination()) && "row".equals(dataCopyNext.getType()))
 				||
 				// if the previous one is for the same source and it's a row merge or the start which can be a replace
-				(dataCopyPrev != null && dataCopyPrev.getSource() != null && dataCopy.getSource().equals(dataCopyPrev.getSource()) && ("row".equals(dataCopyPrev.getType()) || (i-1 == combineRowMergeStartIndex && "".equals(dataCopyPrev.getType()))))
+				(dataCopyPrev != null && dataCopyPrev.getDestination() != null && dataCopy.getDestination().equals(dataCopyPrev.getDestination()) && ("row".equals(dataCopyPrev.getType()) || (i-1 == combineRowMergeStartIndex && "".equals(dataCopyPrev.getType()))))
 			);
 
 		}
@@ -169,7 +169,7 @@ public class Datacopy extends Action {
 		DataCopy dataCopyNext = (i < _dataCopies.size() - 1 ? _dataCopies.get(i + 1) : null);
 
 		// if there is a next data copy and it's a row merge, and this is a row merge or replace if its the start,
-		boolean result = (dataCopyNext != null && "row".equals(dataCopyNext.getType()) && ("row".equals(dataCopy.getType()) || (i == combineRowMergeStartIndex && "".equals(dataCopy.getType()))));
+		boolean result = (dataCopyNext != null && dataCopy.getDestination() != null && dataCopy.getDestination().equals(dataCopyNext.getDestination()) && "row".equals(dataCopyNext.getType()) && ("row".equals(dataCopy.getType()) || (i == combineRowMergeStartIndex && "".equals(dataCopy.getType()))));
 
 		// we're done!
 		return result;
