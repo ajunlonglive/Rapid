@@ -1044,10 +1044,9 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 		source.getStream({ ignoreAudio: true })
 		.then(function(stream) {
 			
-			$("#cameraVideoContainer").show();
-			setTimeout(function() {
+			_cameraPlayer.addEventListener("play", function() {
 				$("#btnTakePicture, #btnRecordVideo").removeAttr("disabled");
-			}, 500);
+			});
 			
 			// Use the stream
 			// Now attach the video stream to the video element and auto play
