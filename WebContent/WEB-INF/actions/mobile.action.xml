@@ -1451,14 +1451,11 @@ function base64toBlob(base64Data, contentType) {
 }
 
 var _uploadedImageNames;
-var _uploadedImageErrored;
 
 function uploadImages(controlIds, ev, successCallback, errorCallback) {
 
 	// reset uploaded images - we'll use this later to empty the session once all images are uploaded
 	_uploadedImageNames = [];
-	// reset uploaded image error to false - we'll use this to ensure only the first error is shown/handled
-	_uploadedImageErrored = false;
 
 	// If we have one
 	if (controlIds && controlIds.length > 0) {
@@ -1514,7 +1511,7 @@ function uploadImages(controlIds, ev, successCallback, errorCallback) {
 		} else {
 		
 			// make a progress object set total uploads to size of images
-			var progress = {totalUploads:images.length, totalUploaded:0};
+			var progress = {totalUploads:images.length, totalUploaded:0, totalErrored:0};
 			
 			// loop images to upload
 			for (var i in images) {
@@ -1563,7 +1560,7 @@ function uploadImage(url, dataSource, progress, ev, successCallback, errorCallba
 			data: data,
 			success: function(ev) {
 				// in total uploaded
-				progress.totalUploaded ++;
+				progress.totalUploaded++;
 				// if name and session storage
 				if (name && sessionStorage) _uploadedImageNames.push(name);
 				// if all uploaded
@@ -1595,9 +1592,9 @@ function uploadImage(url, dataSource, progress, ev, successCallback, errorCallba
 			},
 			error: function(server, status, message) {
 				// if we have not had an error yet
-				if (!_uploadedImageErrored) {
+				if (!progress.totalErrored) {
 					// remember this one
-					_uploadedImageErrored = true;
+					progress.totalErrored++;
 					// if there is an error call back 
 					if (errorCallback) {
 						// call it
@@ -1611,11 +1608,15 @@ function uploadImage(url, dataSource, progress, ev, successCallback, errorCallba
 		});
 		
 	} catch(ex) {
-	
-		if (errorCallback) {
-			window[errorCallback](ev);
-		} else {
-			throw ex;
+		// if we have not had an error yet
+		if (!progress.totalErrored) {
+			// remember this one
+			progress.totalErrored++;
+			if (errorCallback) {
+				window[errorCallback](ev);
+			} else {
+				throw ex;
+			}
 		}
 	}
 }

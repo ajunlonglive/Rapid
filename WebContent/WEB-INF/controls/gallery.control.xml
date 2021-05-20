@@ -300,9 +300,9 @@ function IDBputObject(object, callback, retrys) {
 		transaction.onerror = function(error) {
 			if (retrys === undefined) retrys = 10;
 			if (retrys > 0) {
-				getLeastUsedObject(function(oldObject) {
+				IDBgetLeastUsedObject(function(oldObject) {
 					if (oldObject) {
-						deleteByKey(oldObject.filename, function() {
+						IDBdeleteByKey(oldObject.filename, function() {
 							IDBputObject(object, callback, retrys - 1);
 						});
 					} else {
