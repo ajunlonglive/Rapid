@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
@@ -15,7 +13,7 @@
    version="1.1"
    id="svg8"
    sodipodi:docname="upload.svg"
-   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)"
    style="enable-background:new">
   <defs
      id="defs2" />
@@ -26,9 +24,9 @@
      borderopacity="1"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="18"
-     inkscape:cx="8.1133276"
-     inkscape:cy="21.076371"
+     inkscape:zoom="50.911688"
+     inkscape:cx="12.590922"
+     inkscape:cy="14.298723"
      inkscape:document-units="pt"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -38,10 +36,11 @@
      showborder="true"
      inkscape:showpageshadow="false"
      inkscape:window-width="1682"
-     inkscape:window-height="1045"
-     inkscape:window-x="2158"
-     inkscape:window-y="5"
-     inkscape:window-maximized="0">
+     inkscape:window-height="1041"
+     inkscape:window-x="125"
+     inkscape:window-y="196"
+     inkscape:window-maximized="0"
+     inkscape:document-rotation="0">
     <inkscape:grid
        type="xygrid"
        id="grid815"
@@ -63,7 +62,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -100,8 +99,8 @@
        rx="2.0461712e-06"
        ry="2.0461712e-06" />
     <path
-       style="fill:#ffffff;fill-opacity:0.98627002;stroke:#000000;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 1.8520834,294.08958 h 2.6458334 l -1.3229167,-1.5875 z"
+       style="fill:#ffffff;fill-opacity:0.98627;stroke:#000000;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 1.5875,294.08958 h 3.1750001 l -1.5875,-1.5875 z"
        id="path822"
        inkscape:connector-curvature="0" />
   </g>
