@@ -56,7 +56,10 @@ public String escapeValue(String value) {
 }
 
 %><%
+	// Expect that the data from the front-end is encoded as UTF-8
 	request.setCharacterEncoding("UTF-8");
+	// Inform the output file that the content may be encoded UTF-16
+	// due to some windows instances underestimating the character set, e.g. showing £ as AA£
 	response.setCharacterEncoding("UTF-16");
 	
 	String fileName = request.getParameter("downloadFileName");
@@ -64,7 +67,6 @@ public String escapeValue(String value) {
 	if (fileName == null) fileName = "download.csv";
 
 	response.setHeader("Content-Disposition","attachment; filename=\"" + fileName + "\"");
-
 	String jsonData = request.getParameter("downloadData");
 	
 	if (jsonData == null) jsonData = request.getParameter("data");
