@@ -935,7 +935,7 @@ function mergeDataObjects(data1, data2, mergeType, field, maxRows, details) {
 							for (var j in fieldIndexes) {
 								var v = data2.rows[i][fieldIndexes[j]];
 								if (v != null && typeof v !== "undefined") {
-									if (v !== "" && v.toLowerCase().indexOf(value) > -1) {
+									if (v !== "" && String(v).toLowerCase().indexOf(value) > -1) {
 										data.rows.push(data2.rows[i]);
 										break;
 									}
