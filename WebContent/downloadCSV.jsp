@@ -56,7 +56,9 @@ public String escapeValue(String value) {
 }
 
 %><%
-
+	request.setCharacterEncoding("UTF-8");
+	response.setCharacterEncoding("UTF-16");
+	
 	String fileName = request.getParameter("downloadFileName");
 
 	if (fileName == null) fileName = "download.csv";
@@ -84,7 +86,7 @@ public String escapeValue(String value) {
 				out.write(header.replaceAll("[^ -~]", ""));
 				
 				// print the comma if not the last value
-				if (i < headers.length() - 1) out.write(",");				
+				if (i < headers.length() - 1) out.write(",");
 			}
 			// print the line break
 			out.write("\r\n");
@@ -95,10 +97,10 @@ public String escapeValue(String value) {
 			JSONArray row = rows.getJSONArray(i);
 			// loop the cells
 			for (int j = 0; j < row.length(); j++) {
-				// print the escaped col value				
+				// print the escaped col value
 				out.write(escapeValue(row.optString(j)));
 				// print the comma if not the last value
-				if (j < row.length() - 1) out.write(",");	
+				if (j < row.length() - 1) out.write(",");
 			}				
 			// print the line break
 			out.write("\r\n");
