@@ -102,6 +102,11 @@ var _offlinePageResources = [
 	"favicon.ico"
 ];
 
+var _appFiles = [
+	"rapid.js",
+	"rapid.css"
+];
+
 var _rapidResourceFolders = [
 	"images/",
 	"scripts/",
@@ -176,6 +181,7 @@ self.addEventListener("fetch", function(event) {
 	var referrer = event.request.referrer.replace(_contextPath,"");
 	
 	if ((designerIndicators.concat(adminIndicators).some(indicator => referrer.includes(indicator)))
+		&& !_appFiles.some(indicator => referrer.includes(indicator))
 		&& !_offlinePageResources.some(resource => url.endsWith(resource))) {
 		return;
 	}
