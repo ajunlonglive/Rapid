@@ -148,8 +148,9 @@ function getDatabaseActionInputData(multiRow, inputs, sourceId, sourceData) {
 	var data = {};
 	// check multirow
 	if (multiRow) {
+		sourceData = makeDataObject(sourceData);
 		// check there are sourceData rows
-		if (sourceData && sourceData.fields && sourceData.rows && sourceData.fields.length > 0 && sourceData.rows.length > 0) {
+		if (sourceData.fields.length > 0 && sourceData.rows.length > 0) {
 			// add a fields collection
 			// the field we want to send is the source id plus the field, this matches how we do non multi row queries
 			data.fields = inputs.map(function(input) {
