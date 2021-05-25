@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -286,70 +286,46 @@ public class Database extends Action {
 				// check there is at least one
 				if (inputs.size() > 0) {
 
-					// open the array
+					// get the first itemId (this is the only one visible to the users)
+					String sourceItemId = inputs.get(0).getItemId();
+
 					js += "[";
+
+					// loop them
+					for (int i = 0; i < inputs.size(); i++) {
+						// get the parameter
+						Parameter parameter = inputs.get(i);
+						// get this item id
+						String itemId = parameter.getItemId();
+						// get this item field
+						String itemField = parameter.getField();
+						// if there was an id
+						if (itemId != null) {
+
+							// add the input item
+							js += "{";
+							if (query.getMultiRow() && itemId.equals(sourceItemId)) {
+								js += "field: '" + itemField + "'";
+							} else {
+								js += "id: '" + itemId + (itemField == null || "".equals(itemField) ? "" : "." + itemField) + "', ";
+								js += "value:" + Control.getDataJavaScript(servletContext, application, page, itemId, itemField);
+							}
+							js += "}";
+							// add comma if not last item
+							if (i < inputs.size() - 1) js += ", ";
+
+						} // got item
+
+					} // loop inputs
+
+					// close the array
+					js += "]";
 
 					// if this is a multirow query
 					if (query.getMultiRow()) {
-
-						// loop the inputs
-						for (int i = 0; i < inputs.size(); i++) {
-							// get the parameter
-							Parameter parameter = inputs.get(i);
-							// get this item id
-							String itemId = parameter.getItemId();
-							// if there was an id
-							if (itemId != null) {
-
-								// get any parameter field
-								String field = parameter.getField();
-								// if there was one
-								if (field == null) {
-									js += "null";
-								} else {
-									// check if there was one
-									js += "'" + field + "'";
-								}
-
-								// add comma if not last item
-								if (i < inputs.size() - 1) js += ", ";
-
-							} // got item
-
-						} // loop inputs
-
-						// get the first itemId (this is the only one visible to the users)
-						String sourceItemId = inputs.get(0).getItemId();
-
-						// close array and add the field-less get data for the first item the first parameter
-						js += "], '" + sourceItemId + "', " + Control.getDataJavaScript(servletContext, application, page, sourceItemId, null);
-
-					} else {
-
-						// loop them
-						for (int i = 0; i < inputs.size(); i++) {
-							// get the parameter
-							Parameter parameter = inputs.get(i);
-							// get this item id
-							String itemId = parameter.getItemId();
-							// get this item field
-							String itemField = parameter.getField();
-							// if there was an id
-							if (itemId != null) {
-
-								// add the input item
-								js += "{id: '" + itemId + (itemField == null || "".equals(itemField) ? "" : "." + itemField)  + "', value:" + Control.getDataJavaScript(servletContext, application, page, itemId, itemField) + "}";
-								// add comma if not last item
-								if (i < inputs.size() - 1) js += ", ";
-
-							} // got item
-
-						} // loop inputs
-
-						// close the array
-						js += "]";
-
-					} // multi row check
+						// add the field-less get data for the first item the first parameter
+						js += ", '" + sourceItemId + "', " + Control.getDataJavaScript(servletContext, application, page, sourceItemId, null);
+					}
 
 				} // inputs > 0
 

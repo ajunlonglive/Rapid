@@ -151,45 +151,25 @@ function getDatabaseActionInputData(multiRow, inputs, sourceId, sourceData) {
 		// check there are sourceData rows
 		if (sourceData && sourceData.fields && sourceData.rows && sourceData.fields.length > 0 && sourceData.rows.length > 0) {
 			// add a fields collection
-			data.fields = [];
-			// loop the inputs
-			for (var i in inputs) {
-				// the field we want to send is the source id plus the field, this matches how we do non multi row queries
-				data.fields.push(sourceId + "." + inputs[i]);
-			}
+			// the field we want to send is the source id plus the field, this matches how we do non multi row queries
+			data.fields = inputs.map(function(input) {
+				return input.field ? (sourceId + "." + input.field) : input.id;
+			});
 			// add a rows collection
-			data.rows = [];
-			// loop the sourceData rows
-			for (var i in sourceData.rows) {
-				// get the source row
-				var sourceRow = sourceData.rows[i];
-				// make a row for our return
-				var row = [];
-				// now loop the inputs
-				for (var j in inputs) {
-					// get the input field
-					var field = inputs[j];
-					// assume we can't find the field we want
-					var fieldIndex = -1;
-					// loop the source fields looking for the position of the field we want
-					for (var k in sourceData.fields) {
-						if (field.toLowerCase() == sourceData.fields[k].toLowerCase()) {
-							// set the fieldIndex
-							fieldIndex = k;
-							// we're done
-							break;
-						}
-					}
-					// if we found the field
-					if (fieldIndex > -1) {
-						row.push(sourceRow[fieldIndex]);
+			var fieldIndex = {};
+			sourceData.fields.forEach(function(field, index) {
+				fieldIndex[field] = index;
+			});
+			data.rows = sourceData.rows.map(function(row) {
+				return inputs.map(function(input) {
+					if (input.field) {
+						return row[fieldIndex[input.field]];
 					} else {
-						row.push(null);
+						return input.value;
 					}
-				}
-				// add the row
-				data.rows.push(row);
-			}
+				});
+			});
+			
 		} else {
 			// add a dummy row 
 			data.rows = [];

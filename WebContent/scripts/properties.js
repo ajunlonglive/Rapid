@@ -2537,7 +2537,7 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 		// make it an empty space if null
 		if (!field) field = "";
 		// add the row
-		inputsTable.append("<tr><td style='text-align:center;'>" + (+i + 1) + ".</td><td>" + (query.multiRow && i > 0 ? "&nbsp;" : inputsSelect) + "</td><td><input value='" + escapeApos(field) + "' /></td><td style='width:45px;'>" +
+		inputsTable.append("<tr><td style='text-align:center;'>" + (+i + 1) + ".</td><td>" + inputsSelect + "</td><td><input value='" + escapeApos(field) + "' /></td><td style='width:45px;'>" +
 				   "<div class='iconsPanel'>" +
 				   "<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fas fa-arrow-up fa-stack-1x'></i><i class='fas fa-arrow-down fa-stack-1x'></i></div>" +
 				   "<div class='delete fa-stack fa-sm'><i class='delete fas fa-trash-alt' title='Click to delete'></i></div>" +
