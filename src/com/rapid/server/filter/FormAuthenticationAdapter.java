@@ -533,9 +533,15 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 
 					// remember whether we are authorised for at least one application
 					boolean authorised = RapidFilter.isAuthorised(req, userName, userPassword, indexPath);
+					
+					// get csrf token
+					String csrfToken = request.getParameter("csrfToken");
+					String sessionCsrfToken = RapidRequest.getCSRFToken(session);
+					// check the token
+					boolean validCSRF = sessionCsrfToken.equals(csrfToken);
 
 					// we passed authorisation so redirect the client to the resource they wanted
-					if (authorised) {
+					if (authorised && validCSRF) {
 
 						// retain user name in the session
 						session.setAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME, userName);

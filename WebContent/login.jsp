@@ -1,4 +1,4 @@
-<!DOCTYPE html><%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%><%
+<!DOCTYPE html><%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%><%@page import="com.rapid.server.RapidRequest"%><%
 
 /*
 
@@ -70,7 +70,7 @@ String message = (String) session.getAttribute("message");
 					<div class="columnUserIcon"><span class="fa fa-lock"></span></div>
 					<div class="columnUserInput"><input type="password" placeholder="Password" name="userPassword" autocomplete="current-password"></div>
 				</div>
-				 
+				<input type='hidden' name='csrfToken' value='<%=RapidRequest.getCSRFToken(session) %>' />
 				<button type="submit"><i class="fas fa-sign-in-alt"></i>Log in</button>
 				
 			</form>
