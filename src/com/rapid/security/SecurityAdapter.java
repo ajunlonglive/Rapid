@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -526,6 +526,8 @@ public abstract class SecurityAdapter {
 
 	// reset user password
 	public boolean resetUserPassword(RapidRequest rapidRequest, String email) throws SecurityAdapaterException, AddressException, MessagingException {
+		// assume not reset done
+		boolean resetDone = false;
 		// get email settings
 		Email emailSettings = Email.getEmailSettings();
 		// if we have email settings
@@ -552,6 +554,8 @@ public abstract class SecurityAdapter {
 							updateUser(rapidRequest, user);
 							// send the email
 							sendPasswordReset(rapidRequest, email, password);
+							// retain that reset was done
+							resetDone = true;
 							// we're done
 							break;
 						}
@@ -559,8 +563,8 @@ public abstract class SecurityAdapter {
 				}
 			}
 		}
-		// report as false
-		return false;
+		// return whether reset done (stops multiple emails)
+		return resetDone;
 	}
 
 	// overridden in certain adapters
