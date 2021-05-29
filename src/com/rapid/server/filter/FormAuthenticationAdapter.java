@@ -111,6 +111,11 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 			_logger.debug("Headers : " + headers);
 		}
 
+		// get the user agent string
+		String agent = request.getHeader("User-Agent");
+		// determine if RapidMobile
+		boolean isRapidMobile = (agent != null && agent.contains("RapidMobile"));
+
 		// now get just the resource path
 		String requestPath = request.getServletPath();
 		// if null set to root
@@ -136,14 +141,9 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 				// get the client IP
 				String ip = request.getRemoteAddr();
 				// if this is for login.jsp
-				if (requestPath.startsWith("/" + LOGIN_PATH)) {
-					// get the user agent
-					String agent = request.getHeader("User-Agent");
-					// if we got one
-					if (agent != null) {
-						// Rapid Mobile exempts just login.jsp from the IP checks
-						if (agent.contains("RapidMobile")) pass = true;
-					}
+				if (requestPath.startsWith("/" + LOGIN_PATH) && isRapidMobile) {
+					// Rapid Mobile exempts just login.jsp from the IP checks
+					pass = true;
 				}
 				// if we haven't passed yet
 				if (!pass) {
@@ -439,7 +439,7 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 						}
 
 						// if we're allowing public access, but not if this is the login page, nor RapidMobile
-						if (publicAccess && !requestPath.endsWith(loginPath) && request.getHeader("User-Agent") != null && !request.getHeader("User-Agent").contains("RapidMobile")) {
+						if (publicAccess && !requestPath.endsWith(loginPath) && !isRapidMobile) {
 
 							// set the user name to public
 							session.setAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME, PUBLIC_ACCESS_USER);
@@ -488,7 +488,7 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 						}
 
 						// send a redirect to load the login page unless the login path (from the custom login) is the request path (this creates a redirect)
-						if (authorisationRequestPath.equals(loginPath) && request.getHeader("User-Agent") != null && request.getHeader("User-Agent").contains("RapidMobile")) {
+						if (authorisationRequestPath.equals(loginPath) && isRapidMobile) {
 							// send a 401 with the login path to get RapidMobile to authenticate
 							response.sendError(401, "location=" + loginPath);
 						} else {
@@ -533,7 +533,7 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 
 					// remember whether we are authorised for at least one application
 					boolean authorised = RapidFilter.isAuthorised(req, userName, userPassword, indexPath);
-					
+
 					// get csrf token
 					String csrfToken = request.getParameter("csrfToken");
 					String sessionCsrfToken = RapidRequest.getCSRFToken(session);
@@ -541,7 +541,7 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 					boolean validCSRF = sessionCsrfToken.equals(csrfToken);
 
 					// we passed authorisation so redirect the client to the resource they wanted
-					if (authorised && validCSRF) {
+					if (authorised && (validCSRF || isRapidMobile || "GET".equals(request.getMethod()))) {
 
 						// retain user name in the session
 						session.setAttribute(RapidFilter.SESSION_VARIABLE_USER_NAME, userName);
