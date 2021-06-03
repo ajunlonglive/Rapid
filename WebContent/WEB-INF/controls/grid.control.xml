@@ -595,7 +595,7 @@ function getGridUnescapedValue(value) {
 // global function to set the grid header multi-select, used in both control init, and dynamic column header add
 function setGridHeaderMultiSelect(id, grid) {
 	// this must fire before the row click
-	$("#" + id).find("input.gridMultiSelectHeader").click(function(ev) {
+	$("#" + id).find("input.gridMultiSelectHeader").first().click(function(ev) {
 		// get the header value
 		var select = $(this).prop("checked");
 		// update rowSelect accordingly
@@ -1085,6 +1085,7 @@ if (data !== undefined && data !== "") {
 								}
 							});
 						}
+						if (details.multiSelect) setGridHeaderMultiSelect(id, grid);
 					    
 					} // fixed header applied
 					
