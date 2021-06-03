@@ -931,7 +931,7 @@ if (data !== undefined && data !== "") {
 	data = makeDataObject(data, field);
 	
 	// if we have some rows to load
-	if (data && data.rows && data.rows.length > 0) {
+	if (data && data.rows) {
 		
 		// retain number of rows we're about to load
 		_gridLoaders[id].rows = data.rows.length;
@@ -1218,6 +1218,20 @@ if (data !== undefined && data !== "") {
 						input.className = "gridMultiSelect"
 						td.appendChild(input);
 						tr.appendChild(td);
+						// listen for rows checkbox - needs to be click to beat the listener on the row, and use id in case of fixed header
+						$(input).click(function(ev){
+							// get the input
+							var i = $(this);
+							// get the value
+							var select = i.prop("checked");
+							// add or remove class accordingly
+							if (select) {
+								i.closest("tr").addClass("rowSelect");
+							} else {
+								i.closest("tr").removeClass("rowSelect");
+								$("#" + id).find("input.gridMultiSelectHeader").prop("checked",false);
+							}
+						});
 					}
 					
 					// loop the row cells
@@ -1349,6 +1363,20 @@ if (data !== undefined && data !== "") {
 						input.className = "gridMultiSelect"
 						td.appendChild(input);
 						tr.appendChild(td);
+						// listen for rows checkbox - needs to be click to beat the listener on the row, and use id in case of fixed header
+						$(input).click(function(ev){
+							// get the input
+							var i = $(this);
+							// get the value
+							var select = i.prop("checked");
+							// add or remove class accordingly
+							if (select) {
+								i.closest("tr").addClass("rowSelect");
+							} else {
+								i.closest("tr").removeClass("rowSelect");
+								$("#" + id).find("input.gridMultiSelectHeader").prop("checked",false);
+							}
+						});
 					}
 		            
 		            // loop the row cells
@@ -1425,21 +1453,6 @@ if (data !== undefined && data !== "") {
 				grid.find("input.gridMultiSelect").prop("checked",select);
 			});
 		}
-		// listen for rows checkbox - needs to be click to beat the listener on the row, and use id in case of fixed header
-		$(grid).find("input.gridMultiSelect").click(function(ev){
-			// get the input
-			var i = $(this);
-			// get the value
-			var select = i.prop("checked");
-			// add or remove class accordingly
-			if (select) {
-				i.closest("tr").addClass("rowSelect");
-			} else {
-				i.closest("tr").removeClass("rowSelect");
-			}
-			// check whether any rows without rowSelect, if not uncheck header checkboxs (includes if fixed header)
-			if (grid.find("tr.rowStyle1,tr.rowStyle2").not("[data-ignore]").not(".rowSelect").length > 0) $("#" + id).find("input.gridMultiSelectHeader").prop("checked",false);
-		});
 	}
 	
 } else {
