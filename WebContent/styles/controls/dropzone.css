@@ -302,6 +302,8 @@
         display: block;
         width: 54px;
         height: 54px; }
+      .dropzone .dz-preview .dz-success-mark svg, .dropzone .dz-preview .dz-error-mark svg :first-child {
+        fill: red;}
     .dropzone .dz-preview.dz-processing .dz-progress {
       opacity: 1;
       -webkit-transition: all 0.2s linear;
