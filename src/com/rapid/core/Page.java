@@ -2276,7 +2276,7 @@ public class Page {
 									// escape any apostrophes
 									if (title != null) title = title.replace("'", "&apos;");
 									// add the link into the string builder
-									designLinkStringBuilder.append("<a id='designLink_" + control.getId() + "' data-id='" + control.getId() + "' href='#'><img src='" + jsonControl.optString("image","images/penknife_24x24.png") + "' title='" + title +  "'/></a>\n");
+									designLinkStringBuilder.append("<span id='designLink_" + control.getId() + "' data-id='" + control.getId() + "'><img src='" + jsonControl.optString("image","images/penknife_24x24.png") + "' title='" + title +  "'/></span>\n");
 									// trim the JQuery
 									designLinkJQuery = designLinkJQuery.trim();
 									// start with a . if not
@@ -2296,7 +2296,7 @@ public class Page {
 						+ "<script type='text/javascript' src='scripts/designlinks.js'></script>\n"
 						+ "<div id='designShow'></div>\n"
 						+ "<div id='designLinks' style='display:none;'>\n"
-				    	+ "<a id='designLink' href='#'><img src='images/tool.svg' title='Open Rapid Design'/></a>\n"
+						+ "<a id='designLink' href='#'><img src='images/tool.svg' title='Open Rapid Design'/></a>\n"
 				    	+ "<a id='designLinkNewTab' style='padding:5px;' href='#'><img src='images/right.svg' title='Open Rapid Design in a new tab'/></a>\n"
 						+ designLinkStringBuilder.toString()
 						+ "</div>\n"
