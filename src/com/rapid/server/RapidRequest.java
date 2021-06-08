@@ -62,8 +62,9 @@ public class RapidRequest {
 	// instance variables
 
 	private RapidHttpServlet _rapidServlet;
+	private ServletContext _servletContext;
 	private HttpServletRequest _request;
-	private HttpSession _session;
+	private HttpSession _session;	
 	private String _actionName, _appId, _version, _userName;
 	private Application _application;
 	private Page _page;
@@ -74,7 +75,7 @@ public class RapidRequest {
 	// properties
 
 	public RapidHttpServlet getRapidServlet() { return _rapidServlet; }
-	public ServletContext getServletContext() { if (_rapidServlet == null) return null; return _rapidServlet.getServletContext(); }
+	public ServletContext getServletContext() { return _servletContext; }
 	public HttpServletRequest getRequest() { return _request; }
 	public String getAppId() { return _appId; }
 	public String getVersion() { return _version; }
@@ -137,9 +138,10 @@ public class RapidRequest {
 
 	// most likely to construct a rapidRequest from a servlet and an http request
 	public RapidRequest(RapidHttpServlet rapidServlet, HttpServletRequest request) {
-
 		// retain the servlet
 		_rapidServlet = rapidServlet;
+		// if there was a rapidServlet, store the context 
+		if (_rapidServlet != null) _servletContext = _rapidServlet.getServletContext();
 		// retain the http request
 		_request = request;
 		// retain the session
@@ -263,6 +265,8 @@ public class RapidRequest {
 	public RapidRequest(RapidHttpServlet rapidServlet, HttpServletRequest request, Application application) {
 		// store the servlet
 		_rapidServlet = rapidServlet;
+		// if there was a rapidServlet, store the context 
+		if (_rapidServlet != null) _servletContext = _rapidServlet.getServletContext();
 		// store the request
 		_request = request;
 		// retain the session
@@ -284,9 +288,12 @@ public class RapidRequest {
 
 	// can also instantiate a rapid request with just an HttpServletRequest and an application
 	public RapidRequest(HttpServletRequest request, Application application) {
+		// if there was a request
 		if (request != null) {
 			// store the request
 			_request = request;
+			// store the context 
+			_servletContext = _request.getServletContext();
 			// retain the session
 			_session = request.getSession(false);
 			// store the user name from the session
@@ -307,6 +314,8 @@ public class RapidRequest {
 	public RapidRequest(RapidHttpServlet rapidServlet, HttpServletRequest request, HttpSession session, Application application) {
 		// store the servlet
 		_rapidServlet = rapidServlet;
+		// if there was a rapidServlet, store the context 
+		if (_rapidServlet != null) _servletContext = _rapidServlet.getServletContext();
 		// store the request
 		_request = request;
 		// retain the session
@@ -322,6 +331,23 @@ public class RapidRequest {
 			// store the version
 			_version = application.getVersion();
 		}
+	}
+	
+	// can also instantiate a rapid request with just a ServletContext and an application, the actionName is mostly there so the signature is not ambiguous if the two-paramter method above with the request set to null
+	public RapidRequest(ServletContext servletContext, Application application, String actionName) {
+		// store the context 
+		_servletContext = servletContext;
+		// store the application
+		_application = application;
+		// if we got an application
+		if (application != null) {
+			// store the application id
+			_appId = application.getId();
+			// store the version
+			_version = application.getVersion();
+		}
+		// store the action name
+		_actionName = actionName;
 	}
 
 	// good for printing details of the Rapid request into logs and error messages
