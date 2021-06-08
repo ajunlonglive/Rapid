@@ -246,7 +246,7 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 				// log that we are requesting a password update
 				_logger.info("FormAuthenticationAdapter requesting password reset for " + email);
 
-				// if password reset is present
+				// if password reset is and present
 				if (RapidSecurityAdapter.hasPasswordReset(getServletContext())) {
 
 					// look in the request for the crsf token
@@ -271,18 +271,24 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 								// if there are some applications
 								if (applications != null) {
 
+									// start with a blank password
+									String password = null;
+
 									// loop all applications
 									for (Application application : applications.get()) {
 
-										// get a Rapid request
+										// get a Rapid request for this application
 										RapidRequest rapidRequest = new RapidRequest(request, application);
 
-										// have the security reset this email and break once done
-										if (application.getSecurityAdapter().resetUserPassword(rapidRequest, email)) break;
+										// have the security reset this email and return the new password
+										String newPassword = application.getSecurityAdapter().resetUserPassword(rapidRequest, email, password);
 
-									}
+										// if there was a new password remember it to pass into the next app and avoid additional emails being sent
+										if (newPassword != null) password = newPassword;
 
-								}
+									} // applications loop
+
+								} // applications check
 
 							} catch (Exception ex) {
 								// log the error

@@ -524,47 +524,41 @@ public abstract class SecurityAdapter {
 		Email.send(Email.getEmailSettings().getUserName(), email, "Rapid password reset", "Your new Rapid password is " + password + "\n\n" + "If you did not request a new password contact your Rapid administrator.");
 	}
 
-	// reset user password
-	public boolean resetUserPassword(RapidRequest rapidRequest, String email) throws SecurityAdapaterException, AddressException, MessagingException {
-		// assume not reset done
-		boolean resetDone = false;
-		// get email settings
-		Email emailSettings = Email.getEmailSettings();
-		// if we have email settings
-		if (emailSettings != null) {
-			// get users
-			Users users = getUsers(rapidRequest);
-			// if we got some
-			if (users != null) {
-				// loop them
-				for (User user : users) {
-					// get their email
-					String userEmail = user.getEmail();
-					// if they have one
-					if (userEmail != null) {
-						// if we got an email for the user
-						if (userEmail.equalsIgnoreCase(email)) {
-							// get a new password
-							String password = getPasswordReset(rapidRequest);
-							// set the password
-							user.setPassword(password);
-							// unlock the user
-							user.setIsLocked(false);
-							// update the user (saves password and lock state)
-							updateUser(rapidRequest, user);
+	// reset user password - if we are sent a null password we know to update it and email it out, if non-null apply it and don't email
+	public String resetUserPassword(RapidRequest rapidRequest, String emailAddress, String password) throws SecurityAdapaterException, AddressException, MessagingException {
+		// get users
+		Users users = getUsers(rapidRequest);
+		// if we got some
+		if (users != null) {
+			// loop them
+			for (User user : users) {
+				// get their email
+				String userEmail = user.getEmail();
+				// if they have one
+				if (userEmail != null) {
+					// if we got an email for the user
+					if (userEmail.equalsIgnoreCase(emailAddress)) {
+						// if we were provided with a null password it means it hasn't been re-generated yet
+						if (password == null) {
+							// generate a new password
+							password = getPasswordReset(rapidRequest);
 							// send the email
-							sendPasswordReset(rapidRequest, email, password);
-							// retain that reset was done
-							resetDone = true;
-							// we're done
-							break;
+							sendPasswordReset(rapidRequest, emailAddress, password);
 						}
+						// set the password for this app
+						user.setPassword(password);
+						// unlock the user
+						user.setIsLocked(false);
+						// update the user (saves password and lock state)
+						updateUser(rapidRequest, user);
+						// we're done
+						break;
 					}
 				}
 			}
 		}
-		// return whether reset done (stops multiple emails)
-		return resetDone;
+		// return the password (stops multiple emails)
+		return password;
 	}
 
 	// overridden in certain adapters
@@ -603,18 +597,28 @@ public abstract class SecurityAdapter {
 
 	// public static methods
 
+	// if there is at least one application with reset password
 	public static boolean hasPasswordReset(ServletContext servletContext) {
-		// assume no app has password reset
-		boolean gotPasswordReset = getAdaptersValue(servletContext, "canResetPassword");
+		// assume password reset is unavailable
+		boolean gotPasswordReset = false;
+		// get email settings
+		Email emailSettings = Email.getEmailSettings();
+		// if we have email settings
+		if (emailSettings != null) {
+			// check if any of the adapters has password reset
+			gotPasswordReset = getAdaptersValue(servletContext, "canResetPassword");
+		}
 		// return
 		return gotPasswordReset;
 	}
 
+	// if there is at least one application with password update
 	public static boolean hasPasswordUpdate(ServletContext servletContext) {
 		// assume no app has password reset
 		boolean gotPasswordUpdate = getAdaptersValue(servletContext, "canUpdatePassword");
 		// return
 		return gotPasswordUpdate;
 	}
+
 
 }
