@@ -58,30 +58,37 @@ public String escapeValue(String value) {
 %><%
 	// Expect that the data from the front-end is encoded as UTF-8
 	request.setCharacterEncoding("UTF-8");
-	// Inform the output file that the content may be encoded UTF-16
-	// due to some windows instances underestimating the character set, e.g. showing £ as AA£
-	response.setCharacterEncoding("UTF-16");
-	
+
+	// get any file name provided to us
 	String fileName = request.getParameter("downloadFileName");
 
+	// if we didn't get a filename set to default
 	if (fileName == null) fileName = "download.csv";
 
+	// set response filename for automatic download
 	response.setHeader("Content-Disposition","attachment; filename=\"" + fileName + "\"");
-	String jsonData = request.getParameter("downloadData");
 	
-	if (jsonData == null) jsonData = request.getParameter("data");
+	// get any downloadData
+	String data = request.getParameter("downloadData");
 	
-	if (jsonData != null) {
+	// if not data yet look for backwards compatible location
+	if (data == null) data = request.getParameter("data");
+	
+	// if we got some data
+	if (data != null) {
 		
-		JSONObject data = new JSONObject(jsonData);
+		// turn it into a proper json object 
+		JSONObject jsonData = new JSONObject(data);
 		
-		JSONArray rows = data.getJSONArray("rows");
+		// get its rows 2d-array
+		JSONArray rows = jsonData.getJSONArray("rows");
 				
 		// look for a headers collection - this was added by looping the grid header row columns 
-		JSONArray headers = data.optJSONArray("headers");
+		JSONArray headers = jsonData.optJSONArray("headers");
 		
+		// if we got any headers 
 		if (headers != null) {
-			// this is the dynamic header list
+			// this is the dynamic header list, so loop it
 			for (int i = 0; i < headers.length(); i++) {
 				// print the escaped header
 				String header = escapeValue(headers.optString(i));
@@ -93,11 +100,12 @@ public String escapeValue(String value) {
 			// print the line break
 			out.write("\r\n");
 		}
-		// do the same with rows
+
+		// now loop the rows
 		for (int i = 0; i < rows.length(); i++) {
 			// get this row
 			JSONArray row = rows.getJSONArray(i);
-			// loop the cells
+			// loop the cells in the row
 			for (int j = 0; j < row.length(); j++) {
 				// print the escaped col value
 				out.write(escapeValue(row.optString(j)));
