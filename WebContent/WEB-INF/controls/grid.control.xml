@@ -1821,18 +1821,18 @@ if (gridData && gridData.selectedRowNumber && gridData.selectedRowNumber > 0) {
 			var fieldMap = {};
 			// loop the incoming fields
 			for (var i in data.fields) {
-				// get it's name
-				var field = data.fields[i];
+				// get it's name without overwriteing the parameter passed into setProperty_grid_selectedRowData (IE doesn't support let)
+				var fieldName = data.fields[i];
 				// make sure there was one
-				if (field) {
+				if (fieldName) {
 					// assume it wasn't found in the grid's list of fields	
 					var foundField = false;							
 					// loop the grid's fields
 					for (var j in gridData.fields) {
 						// if there's a match					
-						if (field.toLowerCase() == gridData.fields[j].toLowerCase()) {
+						if (fieldName.toLowerCase() == gridData.fields[j].toLowerCase()) {
 							// store it's position
-							fieldMap[field] = j;
+							fieldMap[fieldName] = j;
 							foundField = true;
 							break;
 						}
@@ -1840,12 +1840,12 @@ if (gridData && gridData.selectedRowNumber && gridData.selectedRowNumber > 0) {
 					// if the field wasn't found in the grid
 					if (!foundField) {
 						// add it to the grid's fields
-						gridData.fields.push(field);
+						gridData.fields.push(fieldName);
 						gridData.rows.forEach(function(row) {
 							row.push(null);
 						});
 						// retain the position
-						fieldMap[field] = gridData.fields.length - 1;
+						fieldMap[fieldName] = gridData.fields.length - 1;
 					}
 				}
 			}			
