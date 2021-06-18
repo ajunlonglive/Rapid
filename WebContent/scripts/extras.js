@@ -140,10 +140,11 @@ $.fn.extend({
 	  var dialogue = $(this).closest("div.dialogue");
 	  // if we didn't find one but we have an id, use that
 	  if (dialogue.length == 0 && id) dialogue = $(".dialogue").last();
-	  // remove the cover
-	  dialogue.prev("div.dialogueCover").remove();
+	  var dialogueCover = dialogue.prev("div.dialogueCover");
 	  // remove the dialogue
 	  dialogue.remove();
+	  // remove the cover
+	  dialogueCover.remove();
 	  // check reload
 	  if (reload) {
 		  var pageId = $("body").attr("id");

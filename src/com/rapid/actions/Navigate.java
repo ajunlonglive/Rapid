@@ -26,6 +26,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 package com.rapid.actions;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -39,6 +40,13 @@ import com.rapid.server.RapidRequest;
 import com.rapid.server.filter.FormAuthenticationAdapter;
 
 public class Navigate extends Action {
+
+	// instance variables
+	private List<Action> _actions;
+
+	// properties
+	public List<Action> getActions() { return _actions; }
+	public void setActions(List<Action> actions) { _actions = actions; }
 
 	// details of the inputs
 	public static class SessionVariable {
@@ -104,10 +112,24 @@ public class Navigate extends Action {
 				));
 			}
 		}
+
+		// grab any actions
+		JSONArray jsonActions = jsonAction.optJSONArray("closeActions");
+		// if we had some
+		if (jsonActions != null) {
+			_actions = Control.getActions(rapidServlet, jsonActions);
+		}
+	}
+
+	// overrides
+	@Override
+	public List<Action> getChildActions() {
+		// child actions are all actions
+		return _actions;
 	}
 
 	@Override
-	public String getJavaScript(RapidRequest rapidRequest, Application application, Page page, Control control, JSONObject jsonDetails) {
+	public String getJavaScript(RapidRequest rapidRequest, Application application, Page page, Control control, JSONObject jsonDetails) throws Exception {
 
 		// the JavaScript we are making
 		String js = "";
@@ -205,8 +227,15 @@ public class Navigate extends Action {
 				// if so add the action parameter to the url
 				boolean dismissibleDialogue = Boolean.parseBoolean(getProperty("dismissibleDialogue"));
 				if (dialogue) js += "&action=dialogue";
+				
+				String closeActions = "function() {\n";
+				if (_actions != null) {
+					for (Action action : _actions) closeActions += action.getJavaScriptWithHeader(rapidRequest, application, page, control, jsonDetails).trim() + "\n";
+				}
+				closeActions += "}\n";
+				
 				// now add the other parameters
-				js += sessionVariables + "'," + dialogue + ",'" + pageId + "'," + popup + "," + dismissibleDialogue + ");\n";
+				js += sessionVariables + "'," + dialogue + ",'" + pageId + "'," + popup + "," + dismissibleDialogue + "," + closeActions + ");\n";
 				// replace any unnecessary characters
 				js = js.replace(" + ''", "");
 

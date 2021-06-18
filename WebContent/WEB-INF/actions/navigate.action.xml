@@ -92,6 +92,14 @@ return [["P","Page"],["U","URL"],["R","Rapid"],["PR","Printer"]];
 	        </property>
 	        
 	        <property>
+	            <key>closeActions</key>
+	            <name>Close actions</name>
+	            <changeValueJavaScript>closeActions</changeValueJavaScript>
+	            <refreshProperties>false</refreshProperties>
+	            <helpHtml>Add actions to be done after the dialogue is closed.</helpHtml>
+	        </property>
+	        
+	        <property>
 	            <key>stopActions</key>
 	            <name>Stop further actions</name>
 	            <changeValueJavaScript>navigationStopActions</changeValueJavaScript>
@@ -193,7 +201,7 @@ $(document).ready( function() {
 	    <actionJavaScript>
 	        <![CDATA[
 
-function Action_navigate(url, dialogue, id, popup, dismissibleDialogue) {
+function Action_navigate(url, dialogue, id, popup, dismissibleDialogue, closeActions) {
 	
 	if (dialogue) {
 	
@@ -349,6 +357,13 @@ function Action_navigate(url, dialogue, id, popup, dismissibleDialogue) {
 		           	$("#" + id).remove();
 		           	// add the dialogue container and remove the reference
 		           	dialogue = body.append("<div id='" + id + "' class='dialogue' style='position:fixed;z-index:1001;'></div>").children().last(); 
+		           	
+		           	new MutationObserver(function(ev, mo) {
+						if (ev[0].removedNodes[0] === dialogue[0]) {
+							closeActions();
+							mo.disconnect();
+						}
+					}).observe(document.body, { childList: true, subtree: false });
 		           	
 					if (dismissibleDialogue) {
 		           	    dialogueCover.on("click", function() {

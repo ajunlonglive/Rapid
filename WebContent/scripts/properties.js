@@ -7062,3 +7062,14 @@ function getControlActionOptions(controlType) {
 		return "<option" + isSelected + ">" + value + "</option>";
 	}).join("");
 }
+
+function Property_closeActions(cell, propertyObject, property, details) {
+	// if the type is a page
+	if ((propertyObject.linkType == "P" || propertyObject.navigationType == "P") && propertyObject.dialogue)	{
+		// add child actions
+		Property_childActions(cell, propertyObject, property, details);
+	} else {
+		// remove the row
+		cell.parent().remove();
+	}
+}
