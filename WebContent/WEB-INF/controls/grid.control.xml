@@ -486,6 +486,7 @@ function sortGridByColumn(ev, id, details, column, asc) {
 			// replace the selectedRowNumber if need be
 			if (selectedRowNumber.length) data.selectedRowNumber = selectedRowNumber;
 			// set the sorted data
+			details.sorting = true;
 			setData_grid(ev, id, null, details, data);
 		}
 	}
@@ -1312,7 +1313,8 @@ if (data !== undefined && data !== "") {
 					// add any after loaded code, like vertical scrolling
 					afterLoaded();
 					// fire the loaded event
-					if (window["Event_gridLoaded_" + id]) window["Event_gridLoaded_" + id](ev);
+					if (window["Event_gridLoaded_" + id] && !details.sorting) window["Event_gridLoaded_" + id](ev);
+					details.sorting = false;
 				}
 				
 			} // addRows function
@@ -1424,7 +1426,8 @@ if (data !== undefined && data !== "") {
 		        	// apply any after loaded code
 					afterLoaded();
 		        	// run any loaded handler
-                    if (window["Event_gridLoaded_" + id]) window["Event_gridLoaded_" + id](ev);
+                    if (window["Event_gridLoaded_" + id] && !details.sorting) window["Event_gridLoaded_" + id](ev);
+                    details.sorting = false;
                 }
                 
 			}
