@@ -46,7 +46,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	        
 	        <property>
 	            <key>visible</key>
-	            <name>Visible</name>
+	            <name>Open</name>
 	            <setConstructValueFunction>return false;</setConstructValueFunction>
 	            <changeValueJavaScript>slidePanelVisibility</changeValueJavaScript>
 	            <helpHtml>Whether or not the slide panel is open with its contents visible.</helpHtml>
