@@ -348,16 +348,6 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 				);
 				Action_datacopy(
 					ev,
-					data.interval,
-					[{
-						id:'rapid_P0_C3357_',
-						type:'input',
-						field:''
-					}],
-					false
-				);
-				Action_datacopy(
-					ev,
 					data.interval > 0,
 					[{
 						id: 'rapid_P0_C3435_',
@@ -365,6 +355,16 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 						field: ''}],
 					true,
 					'replace'
+				);
+				Action_datacopy(
+					ev,
+					data.interval,
+					[{
+						id:'rapid_P0_C3357_',
+						type:'input',
+						field:''
+					}],
+					true
 				);
 				Action_datacopy(
 					ev,
