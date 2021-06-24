@@ -227,15 +227,24 @@ public class Navigate extends Action {
 				// if so add the action parameter to the url
 				boolean dismissibleDialogue = Boolean.parseBoolean(getProperty("dismissibleDialogue"));
 				if (dialogue) js += "&action=dialogue";
-				
-				String closeActions = "function() {\n";
-				if (_actions != null) {
+
+				// assume no close actions
+				String closeActions = "";
+				// if there are some close actions
+				if (_actions != null && _actions.size() > 0) {
+					// start the close callback function
+					closeActions += ",function(ev) {\n";
+					// loop the actions and add into the call back
 					for (Action action : _actions) closeActions += action.getJavaScriptWithHeader(rapidRequest, application, page, control, jsonDetails).trim() + "\n";
+					// set the correct indentation
+					closeActions = closeActions.replace("\n", "\n  ");
+					closeActions = closeActions.substring(0, closeActions.length() - 2);
+					// close the call back function
+					closeActions += "}";
 				}
-				closeActions += "}\n";
-				
-				// now add the other parameters
-				js += sessionVariables + "'," + dialogue + ",'" + pageId + "'," + popup + "," + dismissibleDialogue + "," + closeActions + ");\n";
+
+				// now add the other parameters (closeActions has its own leading comma)
+				js += sessionVariables + "'," + dialogue + ",'" + pageId + "'," + popup + "," + dismissibleDialogue + closeActions + ");\n";
 				// replace any unnecessary characters
 				js = js.replace(" + ''", "");
 

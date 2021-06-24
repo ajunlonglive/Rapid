@@ -354,23 +354,29 @@ function Action_navigate(url, dialogue, id, popup, dismissibleDialogue, closeAct
 		           	dialogueCover = body.append("<div id='" + id + "cover' class='dialogueCover'></div>").children().last();
 		           	
 	            	// remove any existing dialogue container for this action
-		           	$("#" + id).remove();
+		           	$("div#" + id).remove();
 		           	// add the dialogue container and remove the reference
-		           	dialogue = body.append("<div id='" + id + "' class='dialogue' style='position:fixed;z-index:1001;'></div>").children().last(); 
+		           	dialogue = body.append("<div id='" + id + "' class='dialogue' style='position:fixed;z-index:1001;'></div>").children().last();
 		           	
-		           	new MutationObserver(function(ev, mo) {
-						if (ev[0].removedNodes[0] === dialogue[0]) {
-							closeActions();
-							mo.disconnect();
-						}
-					}).observe(document.body, { childList: true, subtree: false });
-		           	
-					if (dismissibleDialogue) {
+		           	// if this is a dismissibleDialogue allow clicking on the cover to close it
+		           	if (dismissibleDialogue) {
 		           	    dialogueCover.on("click", function() {
 		           	        dialogue.remove();
 		           	        $(this).remove();
 		           	    })
 		           	}
+		           	
+		           	// if we have close actions
+		           	if (closeActions) {
+
+						// add an observer to run our closeActions when the dialogue is removed		           	
+			           	new MutationObserver(function(ev, mo) {
+							if (ev[0].removedNodes[0] === dialogue[0]) {
+								closeActions($(ev));
+								mo.disconnect();
+							}
+						}).observe(document.body, { childList: true, subtree: false });
+			        }
 		           	
 		           	// make sure it's hidden
 		           	dialogue.css("visibility","hidden");
