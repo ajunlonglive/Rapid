@@ -200,6 +200,10 @@ div.gallery .galleryItem {
 var _oneDaysMilliseconds = 1000 * 60 * 60 * 24;
 var _threeMonthsMilliseconds = _oneDaysMilliseconds * 30 * 3;
 
+if (navigator.storage && navigator.storage.persist) {
+	navigator.storage.persist();
+}
+
 indexedDB.open("imagesDB", 2)
 .onupgradeneeded = function(versionChangeEvent) {
 	var imagesDB = versionChangeEvent.target.result;
