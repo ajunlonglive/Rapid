@@ -3,7 +3,7 @@
 /*
 
 
-Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -200,6 +200,7 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 				<div id="controlControls" style="margin-top:0;margin-bottom:-3px;">
 					<h2 id="controlsHeader">Controls
 						<i class="headerToggle fas" title="Hide controls" style="color:white;"></i>
+						<i id="helpControls" class="headerHelp glyph fas hintIcon">&#Xf059;</i>
 					</h2>
 					
 					<div id="controlsList">
