@@ -1356,7 +1356,7 @@ function Property_gap(cell, propertyObject, property, details) {
 		// get label from invoking the function
 		var name = f.apply(this, []); 
 		// display the name
-		cell.parent().after("<tr><td colspan='2' class='propertySubHeader'><h3>" + name + "</h3></td></tr>");
+		cell.parent().after("<tr><td colspan='2' class='propertySubHeader gap'><h3>" + name + "</h3></td></tr>");
 		// if there is helphtml
 		if (property.helpHtml) {
 			// add the icon
