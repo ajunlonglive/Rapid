@@ -129,7 +129,8 @@ return [[0,"Normal"],[1,"Submission confirmation"],[2,"Submission error"],[3,"Sa
 	        
 	        <property>
 	            <key>gap1</key>
-	            <name>Gap 1</name>
+	            <name>General</name>
+	            <setConstructValueFunction>return "General"</setConstructValueFunction>
 	            <changeValueJavaScript>gap</changeValueJavaScript>
 	        </property>
 	        

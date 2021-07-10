@@ -381,7 +381,8 @@ td.propertySubHeader {
 }
 
 .propertySubHeader h3 {
-	float: left;
+	display: block;
+	text-align:center;
 	padding-top: 2px;
 }
 
