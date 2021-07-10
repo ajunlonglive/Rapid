@@ -4766,8 +4766,8 @@ function Property_datacopyDestinations(cell, propertyObject, property, details) 
 
 // only show this checkbox if copy type is child
 function Property_datacopyNoChildrenCheckbox(cell, propertyObject, property, details) {
-	// only if this is not a child database action
-	if (propertyObject.copyType == "child") {
+	// only if this is not a child database action or, added later, row merge
+	if (propertyObject.copyType == "child" || propertyObject.copyType == "row") {
 		// use the standard child actions as anything is allowed
 		Property_checkbox(cell, propertyObject, property, details);
 	} else {

@@ -360,7 +360,7 @@ public class Datacopy extends Action {
 										} // this and next are row merge check
 
 										// do the data copy
-										js += "Action_datacopy(ev, data, [{id:'" + destinationId + "',type:'" + destinationControl.getType() + "',field:" + destinationField + ",details:" + details + "}], " + Boolean.parseBoolean(getProperty("changeEvents")) + type + ");\n";
+										js += "Action_datacopy(ev, data, [{id:'" + destinationId + "', type:'" + destinationControl.getType() + "', field:" + destinationField + ", details:" + details + "}], " + Boolean.parseBoolean(getProperty("changeEvents")) + type + ");\n";
 
 									}
 
@@ -521,8 +521,15 @@ public class Datacopy extends Action {
 
 						// add the copy type to the js
 						js += ", '" + copyType + "'";
+
 						// check the copy type
-						if ("child".equals(copyType)) {
+						if ("row".equals(copyType)) {
+
+							// add the details with _mergeChildren
+							js += ", null, null, {mergeChildren: " + _mergeChildren + "}";
+
+						} else if ("child".equals(copyType)) {
+
 							// no merge data object
 							js += ", null";
 							// look for a merge field

@@ -176,13 +176,13 @@ return "<option value=''>Please select...</option>" + getInputOptions(this.dataS
 	        
 	        <property>
 	            <key>mergeChildren</key>
-	            <name>Merge child data</name>
+	            <name>Match rows</name>
 	            <changeValueJavaScript>datacopyNoChildrenCheckbox</changeValueJavaScript>
 	            <getValuesFunction>return false;</getValuesFunction>
-	            <helpHtml>Whether to use values in columns with the same name in the parent and child queries to create child data objects for each matching parent row.</helpHtml>
+	            <helpHtml>Whether to use fields with the same name in the source and destination data to only apply to rows with matching values.</helpHtml>
 	        </property>
 	        
-	         <property>
+	        <property>
 	            <key>keyFields</key>
 	            <name>Key fields</name>
 	            <changeValueJavaScript>datacopyFields</changeValueJavaScript>
@@ -246,7 +246,9 @@ function Action_datacopy(ev, data, outputs, changeEvents, copyType, copyData, fi
 				case "append" :	case "row" : case "child" :
 					// add details object if there isn't one, we're going to inspect it in the mergeDataObjects
 					if (!output.details) output.details = {};
+					// assume we won't be merging / row field matching
 					var mergeData = null;
+					// properties have more id parts than default getters
 					if (idParts.length > 1) {
 						// set noFieldMatch to true
 						output.details.noFieldMatch = true;
@@ -258,9 +260,10 @@ function Action_datacopy(ev, data, outputs, changeEvents, copyType, copyData, fi
 						// get the merge data with the main get data method
 						mergeData = window["getData_" + output.type](ev, outputId, null, output.details);
 					}
+					// use the new mergeChildren property to override noFieldMatch if it's set - used in child and row merges
+					if (details && details.mergeChildren !== undefined) output.details.noFieldMatch = !details.mergeChildren;
+					// child has extra drilling
 					if (copyType == "child") {
-						// use the new mergeChildren property to override noFieldMatch if it's set
-						if (details && details.mergeChildren !== undefined) output.details.noFieldMatch = !details.mergeChildren;
 						// convert any object to data objects
 						data = makeDataObject(data);
 						// check we have rows

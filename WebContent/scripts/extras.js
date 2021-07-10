@@ -768,20 +768,30 @@ function mergeDataObjects(data1, data2, mergeType, field, maxRows, details) {
 			data2 = makeDataObject(data2);
 			switch (mergeType) {
 				case "append" : case "row" :
+					// start result fields array
 					var fields = [];
+					// add all fields from source
 					for (var i in data1.fields) fields.push(data1.fields[i]);
+					// loop all rows in destination
 					for (var i in data2.fields) {
+						// assume we don't have this field already
 						var gotField = false;
+						// loop fields so far
 						for (var j in fields) {
+							// if we have this field already remember that we do
 							if (data2.fields[i] !== undefined && fields[j] !== undefined && data2.fields[i].toLowerCase() == fields[j].toLowerCase()) {
 								gotField = true;
 								break;
 							}
 						}
+						// add this field if we don't have it already
 						if (!gotField) fields.push(data2.fields[i]);
 					}
+					// make result data object
 					data = {};
+					// add fields to data object
 					data.fields = fields;
+					// append is downwards, row is across
 					if (mergeType == "append") {						
 						if (data1.rows.length == 1 && data1.fields.length == 1 && data2.rows.length == 1 && data2.fields.length == 1 && !(details && (details.type == "grid" || details.type == "gallery" ))) {
 							data = data1.rows[0][0] + data2.rows[0][0]; 
@@ -803,37 +813,149 @@ function mergeDataObjects(data1, data2, mergeType, field, maxRows, details) {
 							}
 						}
 					} else {
-						data.rows = [];
-						var totalRows = data2.rows.length;
-						if (data1.rows.length > totalRows) totalRows = data1.rows.length;			
-						for (var i = 0; i < totalRows; i++) {
-							var row = [];
-							for (var j in fields) {
-								var value = null;								
-								// we need to know if we find a value
-								var valueFound = false;
-								if (i < data2.rows.length) {
-									for (var k in data2.fields) {
-										if (fields[j] !== undefined && data2.fields[k] !== undefined && fields[j].toLowerCase() == data2.fields[k].toLowerCase()) {
-											value = data2.rows[i][k];
-											// record that we found a value in the source data
-											valueFound = true;
-											break;
-										}
+						
+						// assume no fields in common
+						var fieldMap = {};
+						var fieldCount = 0;
+						
+						// if we have details and we are field matching
+						if (details && !details.noFieldMatch) {
+							// make a map of positions for fields common to source and destination data objects
+							for (var i in data1.fields) {
+								for (var j in data2.fields) {
+									if (data1.fields[i] !== undefined && data2.fields[j] !== undefined && data1.fields[i].toLowerCase() == data2.fields[j].toLowerCase()) {
+										fieldMap[i] = j;
+										fieldCount ++;
 									}
 								}
-								// send the original values if we didn't find a value in the source data
-								if (i < data1.rows.length && value == null && !valueFound) {
-									for (var k in data1.fields) {
-										if (fields[j] !== undefined && data1.fields[k] !== undefined && fields[j].toLowerCase() == data1.fields[k].toLowerCase()) {
-											value = data1.rows[i][k];
-											break;
-										}
-									}
-								}
-								row.push(value);
 							}
+						}
+
+						// start result rows as empty array
+						data.rows = [];
+						// assume no rows
+						var totalRows = 0;
+						
+						// if we have no matching fields - i.e. not matching - merge rows will be greater of either
+						if (fieldCount == 0) {
+							
+							// assume total rows will be destination rows
+							totalRows = data2.rows.length;
+							
+							// if we have no matching fields - i.e. not matching - merge rows will be greater of either
+							if (data1.rows.length > totalRows) totalRows = data1.rows.length;
+							
+						} else {
+							
+							// rows will be from destination
+							totalRows = data1.rows.length;
+							
+						}
+						
+						// assume match offset is 0 - this will speed the idea that the rows will be in the same order so checks the next row first, rather than the top
+						var rowMatchOffset = 0;
+
+						// loop the rows
+						for (var i = 0; i < totalRows; i++) {
+							
+							// start row as empty array
+							var row = [];
+
+							// if we are matching on fields
+							if (fieldCount > 0 ) {
+								
+								// row starts with destination row values
+								for (var j in data1.fields) row.push(data1.rows[i][j]);
+								
+								// loop the child (source) rows
+								for (var j in data2.rows) {
+									// derive the next row index with the offset and loop index
+									var idx = rowMatchOffset + j*1;
+									// if the rowOffset has exceeded the length 
+									if (idx >= data2.rows.length) {
+										// ensure the next index is 0;
+										rowMatchOffset -= data2.rows.length;
+										// make sure that it is
+										idx = rowMatchOffset + j*1;
+									}
+									// get the row
+									var sourceRow = data2.rows[idx];
+									// assume no matches
+									var matches = 0;
+									// loop the parent/child field map
+									for (var k in fieldMap) {
+										// if there is a match of values between the mapped fields in parent/child, count the match
+										if (row[k] == sourceRow[fieldMap[k]]) matches ++; 
+									}								
+									// if values in all common fields between source and destination have been matched
+									if (matches == fieldCount) {															
+										
+										// loop source fields
+										for (var k = 0; k < data2.fields.length; k++) {
+											
+											// assume we're adding
+											var add = true;
+											
+											// loop the parent/child field map
+											for (var l in fieldMap) {
+												// if this field is in the map don't add it
+												if (k == fieldMap[l]) add = false;
+											}
+											
+											// add value if field not in map
+											if (add) row.push(sourceRow[k]);
+											
+										}
+										
+										// retain this index + 1 as the offset so we check the very next row first on the next loop
+										rowMatchOffset = idx + 1;
+										// only use the first match
+										break;
+										
+									}
+								}
+								
+							} else {
+
+								// loop the fields
+								for (var j in fields) {
+								
+									// assume no value
+									var value = null;								
+									// we need to know if we find a value
+									var valueFound = false;
+									if (i < data2.rows.length) {
+										for (var k in data2.fields) {
+											if (fields[j] !== undefined && data2.fields[k] !== undefined && fields[j].toLowerCase() == data2.fields[k].toLowerCase()) {
+												value = data2.rows[i][k];
+												// record that we found a value in the source data
+												valueFound = true;
+												break;
+											}
+										}
+									}
+									// send the original value if we didn't find a value in the source data
+									if (i < data1.rows.length && value == null && !valueFound) {
+										for (var k in data1.fields) {
+											if (fields[j] !== undefined && data1.fields[k] !== undefined && fields[j].toLowerCase() == data1.fields[k].toLowerCase()) {
+												value = data1.rows[i][k];
+												break;
+											}
+										}
+									}
+									// put the value in the row
+									row.push(value);
+									
+								}
+								
+							}
+							
+							// add any missing null field values
+							while (row.length < fields.length) row.push(null);
+							
+							// add this row
 							data.rows.push(row);
+							
 						}		
 					}
 				break;
@@ -843,7 +965,7 @@ function mergeDataObjects(data1, data2, mergeType, field, maxRows, details) {
 					var fieldIndex = -1;
 					// make a map of positions for fields common to parent and child data objects
 					for (var i in data1.fields) {
-						// if noFieldMatch is set don't build the map
+						// if noFieldMatch is set don't build the map, but support backwards compatibility that merging was the default behaviour
 						if (!details || !details.noFieldMatch) {
 							for (var j in data2.fields) {
 								if (data1.fields[i] !== undefined && data2.fields[j] !== undefined && data1.fields[i].toLowerCase() == data2.fields[j].toLowerCase()) {
