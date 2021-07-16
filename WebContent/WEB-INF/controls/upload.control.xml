@@ -32,7 +32,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	    <name>Upload</name>
 	    <image>images/upload.svg</image>
 	    <helpHtml>A button that lets the user select a file from their computer.</helpHtml>
-	    	            
+	    
 	    <canUserAdd>true</canUserAdd>
 	    <canUserMove>true</canUserMove>
 	    <canUserAddPeers>true</canUserAddPeers>
@@ -96,6 +96,18 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <name>Max file size</name>
 	            <changeValueJavaScript>integer</changeValueJavaScript>
 	            <helpHtml>Maximum allowed file size in megabytes.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>capture</key>
+	            <name>Mobile capture</name>
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	            <getValuesFunction>
+	                 <![CDATA[
+	                return [["",""],["camera","camera"],["microphone","microphone"],["camcorder","camcorder"]];
+	               	]]>
+	            </getValuesFunction>
+	            <helpHtml>If camera, mobile devices will skip the file selection and choose camera If microphone, mobile devices will skip the file selection and choose the microphone If camcorder, mobile devices will skip the file selection and choose the camera in video mode.</helpHtml>
 	        </property>
 	        
 	        <property>
@@ -185,6 +197,7 @@ return {
   acceptedFiles: this.acceptedFiles,
   maxFiles: this.maxFiles,
   maxSize: this.maxSize,
+  capture: this.capture,
   resizeWidth: this.resizeWidth,
   resizeHeight: this.resizeHeight,  
   resizeQuality: this.resizeQuality / 100,
@@ -295,8 +308,7 @@ return "#" + this.id + " a.dz-remove";
 	        <![CDATA[
 var options = {
 	url: "~?a=" + _appId + "&v=" + _appVersion + "&action=uploadImage", 
-	addRemoveLinks: true,
-	capture: "camera",
+	addRemoveLinks: true,	
 	hiddenInputContainer: "div#" + id,
 	dictCancelUploadConfirmation: null,
 	dictRemoveFileConfirmation: null
@@ -307,6 +319,7 @@ if (details.dictRemoveFile) options.dictRemoveFile = details.dictRemoveFile;
 if (details.acceptedFiles) options.acceptedFiles = details.acceptedFiles;
 if (details.maxFiles) options.maxFiles = details.maxFiles;
 if (details.maxSize) options.maxFilesize = details.maxSize*1;
+if (details.capture) options.capture = details.capture;
 if (details.resizeWidth) options.resizeWidth = details.resizeWidth;
 if (details.resizeHeight) options.resizeHeight = details.resizeHeight;
 if (details.resizeQuality) options.resizeQuality = details.resizeQuality;
