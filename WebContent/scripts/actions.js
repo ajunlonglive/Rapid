@@ -537,7 +537,7 @@ function showAction(actionsTable, action, collection, refreshFunction, details) 
 		showEvents(_selectedControl);
 	}));
 	// show the id if requested
-	if (_version.showActionIds) insertRow.before("<tr><td>ID</td><td class='canSelect'>" + action.id + "</td></tr>");
+	insertRow.before("<tr class='actionId'><td>ID</td><td class='canSelect'>" + action.id + "</td></tr>");
 	// get the action class properties
 	var properties = actionClass.properties;
 	// check

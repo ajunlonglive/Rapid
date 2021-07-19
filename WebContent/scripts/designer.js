@@ -1321,6 +1321,7 @@ function loadVersions(selectedVersion, forceLoad) {
             		// show the designer
             		showDesigner();
             	}
+				setIdVisibility();
         		
         	} // versions check	
         }
@@ -4826,6 +4827,11 @@ function fileuploaded(fileuploadframe) {
 
 }
 
+function setIdVisibility() {
+	document.body.classList[_version.showControlIds ? "add" : "remove"]("showControlIds");
+	document.body.classList[_version.showActionIds ? "add" : "remove"]("showActionIds");
+}
+
 // listen for changes to storage which is how Rapid Admin communicated events to Rapid Design
 window.addEventListener("storage", function(storageEvent) {
 	// if this is a change for us
@@ -4861,6 +4867,12 @@ window.addEventListener("storage", function(storageEvent) {
 						$("#appSelect").change();
 					}, 1000);
 					break;
+				}
+			case "applicationMetaSaved":
+				if (broadcast.a === _version.id && broadcast.v === _version.version) {
+					_version.showControlIds = broadcast.showControlIds;
+					_version.showActionIds = broadcast.showActionIds;
+					setIdVisibility();
 				}
 			}
 		}

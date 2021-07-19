@@ -1481,3 +1481,15 @@ div.CodeMirror-scroll {
 	
 }
 
+.controlId,
+.actionId {
+	display: none;
+}
+
+.showControlIds tr.controlId {
+	display: table-row;
+}
+
+.showActionIds tr.actionId {
+	display: table-row;
+}

@@ -618,7 +618,7 @@ function showProperties(control) {
 		// show any conflict message
 		if (control._conflict) propertiesTable.append("<tr><td colspan='2' class='conflict propertyHeader'>Page \"" + control._conflict + "\" has a control with the same name</td></tr>");
 		// show the control id if requested
-		if (_version.showControlIds) propertiesTable.append("<tr><td>ID</td><td class='canSelect'>" + control.id + "</td></tr>");
+		propertiesTable.append("<tr class='controlId'><td>ID</td><td class='canSelect'>" + control.id + "</td></tr>");
 		// check there are class properties
 		var properties = controlClass.properties;
 		if (properties) {
