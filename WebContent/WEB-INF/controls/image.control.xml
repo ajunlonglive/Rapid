@@ -3,7 +3,7 @@
 
 <!-- 
 
-Copyright (C) 2018 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -89,7 +89,38 @@ var title = (this.title) ? " title='" + this.title + "'" : "";
 var alt = (this.alt) ? " alt='" + this.alt + "'" : "";
 return "<img id='" + this.id + "' src='applications/" + _version.id + "/" + _version.version + "/" + this.file + "'" + title + alt + " class='image" + getStyleClasses(this) + "' ></img>"
 	        ]]>
-	    </getHtmlFunction> 
+	    </getHtmlFunction>
+	    
+	    <getDataFunction>
+	        <![CDATA[
+return $("#" + id).attr("src");
+			]]>
+	    </getDataFunction>
+	    
+	    <setDataJavaScript>
+	        <![CDATA[
+var control = $("#" + id);	        
+if (data != null && data !== undefined) {	
+	data = makeDataObject(data, field);
+	if (data.rows && data.rows[0]) {	        		
+		if (field && data.fields) {
+			for (var i in data.fields) {
+				if (data.fields[i] && data.fields[i].toLowerCase() == field.toLowerCase()) {
+					control.html(data.rows[0][i]);
+					break;
+				}
+			}
+		} else {
+			control.attr("src",data.rows[0][0]);
+		}
+	} else {
+		control.attr("src","");
+	}
+} else {
+	control.attr("src","");
+}
+			]]>
+	    </setDataJavaScript>
 	    
 	    <events>
 	        <event>
