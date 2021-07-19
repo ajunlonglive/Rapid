@@ -249,12 +249,12 @@ public class Mobile extends Action {
 					// get the property from the second id part
 					String property = idParts[1];
 
-					// make the getGps call to the bridge
-					outputsString += "{\\\"f\\\":\\\"setProperty_" + destinationControl.getType() +  "_" + property + "\\\",\\\"id\\\":\\\"" + itemId + "\\\",\\\"field\\\":\\\"" + field + "\\\",\\\"details\\\":" + details + "}";
+					// make the set data call to the bridge
+					outputsString += "{\\\"f\\\":\\\"setProperty_" + destinationControl.getType() +  "_" + property + "\\\",\\\"id\\\":\\\"" + itemId + "\\\",\\\"field\\\":\\\"" + field + "\\\",\\\"details\\\":" + details + ",\\\"changeEvents\\\":true}";
 
 				} else {
 
-					outputsString += "{\\\"f\\\":\\\"setData_" + destinationControl.getType() + "\\\",\\\"id\\\":\\\"" + itemId + "\\\",\\\"field\\\":\\\"" + field + "\\\",\\\"details\\\":" + details + "}";
+					outputsString += "{\\\"f\\\":\\\"setData_" + destinationControl.getType() + "\\\",\\\"id\\\":\\\"" + itemId + "\\\",\\\"field\\\":\\\"" + field + "\\\",\\\"details\\\":" + details + ",\\\"changeEvents\\\":true}";
 
 				} // copy / set property check
 
@@ -329,11 +329,11 @@ public class Mobile extends Action {
 					String property = idParts[1];
 
 					// make the getGps call to the bridge
-					outputsString += "setProperty_" + destinationControl.getType() +  "_" + property + "(ev,'" + itemId + "','" + field + "'," + details + "," + data + ")";
+					outputsString += "setProperty_" + destinationControl.getType() +  "_" + property + "(ev, '" + itemId + "', '" + field + "', " + details + ", " + data + ", true)";
 
 				} else {
 
-					outputsString += "setData_" + destinationControl.getType() + "(ev,'" + itemId + "','" + field + "'," + details + "," + data + ")";
+					outputsString += "setData_" + destinationControl.getType() + "(ev, '" + itemId + "', '" + field + "', " + details + ", " + data + ", true)";
 
 				} // copy / set property check
 
@@ -1010,24 +1010,24 @@ public class Mobile extends Action {
 					String barcodeDestinations = getProperty("barcodeDestinations");
 
 					// start the check for the addBarcode function
-					String jsBarcode = "  if (typeof _rapidmobile != 'undefined' && _rapidmobile.addBarcode) {\n";
+					String jsBarcode = "if (typeof _rapidmobile != 'undefined' && _rapidmobile.addBarcode) {\n";
 
 					// start the add barcode call
-					jsBarcode += "    _rapidmobile.addBarcode(\"[";
+					jsBarcode += "  _rapidmobile.addBarcode(\"[";
 
 					jsBarcode += getMobileOutputs(rapidServlet, application, page, barcodeDestinations);
 
 					// call get barcode
 					jsBarcode +=  "]\");\n";
-					
+
 					jsBarcode += "} else {\n";
-					
+
 					//jsBarcode += "    alert('Barcode reading is not available in this version of Rapid Mobile');\n";
-					
-					jsBarcode += "  scanQrCodeAction(function(data) { ";
-					jsBarcode += getOutputs(rapidServlet, application, page, barcodeDestinations,"data");
+
+					jsBarcode += "  scanQrCodeAction(function(data) {\n";
+					jsBarcode += "    " + getOutputs(rapidServlet, application, page, barcodeDestinations, "data") + "\n";
 					jsBarcode +=  " });\n";
-					
+
 					// close if (_rapidmobile.addBarcode)
 					jsBarcode += "}\n";
 
