@@ -616,7 +616,7 @@ if (window["_rapidmobile"]) {
 function showControlValidation(controlId, message) {
 	var control = $("#" + controlId);
 	control.addClass("validation");
-	if (message) {
+	if (message && message !== true) {
 		var element = control.next("div.validation.validationMessage")[0];
 		if (element) {
 			$(element).html(message);
