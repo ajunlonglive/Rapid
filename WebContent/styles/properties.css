@@ -375,19 +375,9 @@ div.propertyDialogue {
 	text-align: right;
 }
 
-td.propertySubHeader {
-	text-align: right;
-}
-
 .propertySubHeader h3 {
 	float: left;
 	padding-top: 2px;
-}
-
-.propertySubHeader.gap h3 {
-	float: none;
-	display: block;
-	text-align: center;
 }
 
 .propertySubHeader i {

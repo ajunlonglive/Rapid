@@ -132,6 +132,7 @@ return [[0,"Normal"],[1,"Submission confirmation"],[2,"Submission error"],[3,"Sa
 	            <name>General</name>
 	            <setConstructValueFunction>return "General"</setConstructValueFunction>
 	            <changeValueJavaScript>gap</changeValueJavaScript>
+	            <helpHtml>These properties control more general features of how pages behave and display in the Rapid Designer</helpHtml>
 	        </property>
 	        
 	        <property>
