@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -2089,8 +2089,8 @@ public class Rapid extends Action {
 										if (process.getFileName().equals(xmlFile.getName())) {
 
 											process.interrupt();
-
 											process.save(details, xmlFile);
+											RapidServletContextListener.loadProcess(xmlFile, servletContext);
 
 											break searchForProcess;
 										}
@@ -2100,7 +2100,6 @@ public class Rapid extends Action {
 
 						}
 
-						doAction(rapidRequest, new JSONObject().put("actionType", "RELOADPROCESSES").put("appId", appId));
 					} else if ("GETRAPIDLOG".equals(action)) {
 
 							int nLines = jsonAction.optInt("nLines");
