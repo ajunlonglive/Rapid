@@ -44,7 +44,6 @@ import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Scanner;
 import java.util.Set;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -97,8 +96,11 @@ public class RapidServletContextListener implements ServletContextListener {
 	// the logger which we will initialise
 	private static Logger _logger;
 
-	// the schema factory that we will load the actions and controls schemas into
+	// the schema factory that we will load the actions, controls, and processes schemas into
 	private static SchemaFactory _schemaFactory;
+
+	// processes can be reloaded individually so we keep a reference to their schema validator to save re-creating it for each
+	private static Validator _processValidator;
 
 	// all of the classes we are going to put into our jaxb context
 	private static ArrayList<Class> _jaxbClasses;
@@ -1144,33 +1146,36 @@ public class RapidServletContextListener implements ServletContextListener {
 		return workflows.size();
 
 	}
-	
+
+	// load and start a single process from an xml file - used to reload single processed in Rapid Admin
 	public static Process loadProcess(File xmlFile, ServletContext servletContext) throws Exception {
-		
-		// create a schema object for the xsd
-		Schema schema = _schemaFactory.newSchema(new File(servletContext.getRealPath("/") + "/WEB-INF/schemas/" + "/process.xsd"));
-		
-		// create a validator
-		Validator validator = schema.newValidator();
-		
-		// get a scanner to read the file
-		Scanner fileScanner = new Scanner(xmlFile).useDelimiter("\\A");
-		
+
+		// log
+		_logger.info("Loading process from " + xmlFile.getName());
+
+		// if the process validator has not been initialised yet
+		if (_processValidator == null) {
+
+			// create a schema object for the xsd
+			Schema schema = _schemaFactory.newSchema(new File(servletContext.getRealPath("/") + "/WEB-INF/schemas/" + "/process.xsd"));
+
+			// create the validator for the schema
+			_processValidator = schema.newValidator();
+
+		}
+
 		// read the xml into a string
-		String xml = fileScanner.next();
-		
-		// close the scanner (and file)
-		fileScanner.close();
-		
-		// validate the control xml file against the schema
-		validator.validate(new StreamSource(new ByteArrayInputStream(xml.getBytes("UTF-8"))));
-		
+		String xml = Strings.getString(xmlFile);
+
+		// validate the process xml file against the schema
+		_processValidator.validate(new StreamSource(new ByteArrayInputStream(xml.getBytes("UTF-8"))));
+
 		// convert the xml into JSON
 		JSONObject jsonProcess = org.json.XML.toJSONObject(xml).getJSONObject("process");
-		
+
 		// add the filename to the json so we can save/overwrite later
 		jsonProcess.put("fileName", xmlFile.getName());
-		
+
 		// get the name from the json
 		String name = jsonProcess.getString("name");
 		// get the class name from the json
@@ -1181,36 +1186,45 @@ public class RapidServletContextListener implements ServletContextListener {
 		if (!Classes.extendsClass(classClass, com.rapid.core.Process.class)) throw new Exception(name + " process class " + classClass.getCanonicalName() + " must extend com.rapid.core.Process");
 		// get a constructor
 		Constructor constructor = classClass.getConstructor(ServletContext.class, JSONObject.class);
-		
+
 		// create a process object from the xml
 		Process newProcess = (Process) constructor.newInstance(servletContext, jsonProcess);
 		// start it
 		newProcess.start();
-		
-		// get any existing processes
+
+		// get the list of processes
 		List<Process> processes = (List<Process>) servletContext.getAttribute("processes");
+		// make the list if we don't have one yet
 		if (processes == null) processes = new ArrayList<>();
-		
-		boolean existingProcessReplaced = false;
-		searchForExistingProcess:
-		for (int processIndex = 0; processIndex < processes.size(); processIndex++) {
-			Process process = processes.get(processIndex);
+
+		// loop the processes
+		for (int i = 0; i < processes.size(); i ++) {
+			// get the process at this index
+			Process process = processes.get(i);
+			// if this process is the one we're (re)loading
 			if (process.getFileName().equals(xmlFile.getName())) {
+				// remove this process instance from the list
+				processes.remove(i);
+				// log
 				_logger.info("Stopping process");
+				// stop / interrupt the process
 				process.interrupt();
-				processes.set(processIndex, newProcess);
-				existingProcessReplaced = true;
-				break searchForExistingProcess;
+				// we're done
+				break;
 			}
 		}
-		
-		if (!existingProcessReplaced) processes.add(newProcess);
-		
+
+		// add this process to the list
+		processes.add(newProcess);
+
+		// retain the processes list in the context
 		servletContext.setAttribute("processes", processes);
-		
+
+		// return
 		return newProcess;
 	}
 
+	// load all processes
 	public static int loadProcesses(ServletContext servletContext) throws Exception {
 
 		// log
@@ -1219,7 +1233,7 @@ public class RapidServletContextListener implements ServletContextListener {
 		// get the directory in which the process xml files are stored
 		File dir = new File(servletContext.getRealPath("/") + "/WEB-INF/processes/");
 
-		// create a filter for finding .control.xml files
+		// create a filter for finding .process.xml files
 		FilenameFilter xmlFilenameFilter = new FilenameFilter() {
 	    	@Override
 			public boolean accept(File dir, String name) {
@@ -1232,25 +1246,23 @@ public class RapidServletContextListener implements ServletContextListener {
 
 		// loop the xml files in the folder
 		for (File xmlFile : dir.listFiles(xmlFilenameFilter)) {
-			
+
 			// create a process object from the xml
 			Process process = loadProcess(xmlFile, servletContext);
 			// inc the visible count if visible
-			if (process.isVisible()) visibleProcesses++;
+			if (process.isVisible()) visibleProcesses ++;
 		}
 
 		// log that we've loaded the visible ones
 		_logger.info(visibleProcesses + " process" + (visibleProcesses == 1 ? "" : "es") + " loaded");
 
-		// get any existing processes
-		List<Process> processes = (List<Process>) servletContext.getAttribute("processes");
-
 		// return the size
-		return processes.size();
+		return visibleProcesses;
 
 	}
 
 
+	// this is the entry point to loading all of the bits we want in the context as Rapid starts
 	@Override
 	public void contextInitialized(ServletContextEvent event) {
 
