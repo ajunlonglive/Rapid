@@ -313,7 +313,10 @@ var options = {
 	dictCancelUploadConfirmation: null,
 	dictRemoveFileConfirmation: null
 }
-if (details.message) options.dictDefaultMessage = details.message
+// allow overriding of url from custom details object
+if (details.url) options.url = details.url;
+// set other options from details object made in designer
+if (details.message) options.dictDefaultMessage = details.message;
 if (details.dictCancelUpload) options.dictCancelUpload = details.dictCancelUpload;
 if (details.dictRemoveFile) options.dictRemoveFile = details.dictRemoveFile;
 if (details.acceptedFiles) options.acceptedFiles = details.acceptedFiles;
