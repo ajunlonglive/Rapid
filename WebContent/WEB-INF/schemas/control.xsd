@@ -139,36 +139,35 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 							<xs:element name="visible" type="xs:boolean"
 								minOccurs="0">
 								<xs:annotation>
-									<xs:documentation>For legacy controls. If set to false the control will not be available in Rapid Admin to select for adding to applications
+									<xs:documentation>For legacy controls. If set to false the control will not be available in Rapid Admin to select for adding to applications.
 									</xs:documentation>
 								</xs:annotation>
 							</xs:element>
 							<xs:element name="addToNewApplications" type="xs:boolean"
 								minOccurs="0">
 								<xs:annotation>
-									<xs:documentation>If set to true the control will be added to
-										new applications when they are created
+									<xs:documentation>If set to true the control will be added to new applications when they are created.
 									</xs:documentation>
 								</xs:annotation>
 							</xs:element>
 							<xs:element name="addToNewDesktopApplications" type="xs:boolean"
 								minOccurs="0">
 								<xs:annotation>
-									<xs:documentation>If true will be added to new responsive applications. If false will not be added to responsive applications.
+									<xs:documentation>If true will be added to new desktop applications. If false will not be added to desktop applications.
 									</xs:documentation>
 								</xs:annotation>
 							</xs:element>
 							<xs:element name="addToNewMobileApplications" type="xs:boolean"
 								minOccurs="0">
 								<xs:annotation>
-									<xs:documentation>If true will be added to new responsive applications. If false will not be added to responsive applications.
+									<xs:documentation>If true will be added to new mobile applications. If false will not be added to mobile applications.
 									</xs:documentation>
 								</xs:annotation>
 							</xs:element>
 							<xs:element name="addToNewFormApplications" type="xs:boolean"
 								minOccurs="0">
 								<xs:annotation>
-									<xs:documentation>If true will be added to new responsive applications. If false will not be added to responsive applications.
+									<xs:documentation>If true will be added to new form applications. If false will not be added to form applications.
 									</xs:documentation>
 								</xs:annotation>
 							</xs:element>
@@ -198,9 +197,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 							<xs:element name="canUserAddPeers" type="xs:boolean"  minOccurs="0" />
 							<xs:element name="canBeUsedFromOtherPages" type="xs:boolean" minOccurs="0">
 								<xs:annotation>
-									<xs:documentation>Controls like the Data store have getData and
-										setData methods which use global objects so they can be used
-										in all pages
+									<xs:documentation>Controls like the Data store have getData and setData methods which use global objects so they can be used in all pages
 									</xs:documentation>
 								</xs:annotation>
 							</xs:element>
@@ -260,8 +257,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 													<xs:element name="visible" type="xs:boolean"
 														minOccurs="0">
 														<xs:annotation>
-															<xs:documentation>Set this optional item to false to not
-																render the property
+															<xs:documentation>Set this optional item to false to not display the property in the property panel
 															</xs:documentation>
 														</xs:annotation>
 													</xs:element>
@@ -291,8 +287,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 													<xs:element name="setConstructValueFunction"
 														minOccurs="0">
 														<xs:annotation>
-															<xs:documentation>Leave this out to not set a property
-																value when the control is constructed
+															<xs:documentation>Leave this out to not set a property value when the control is constructed
 															</xs:documentation>
 														</xs:annotation>
 														<xs:simpleType>
