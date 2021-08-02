@@ -106,11 +106,22 @@ return [[0,"Normal"],[1,"Submission confirmation"],[2,"Submission error"],[3,"Sa
 	            <helpHtml>Only allows the viewing of the page based on the type of privileges a user has.</helpHtml>
 	        </property>
 	        
+	        <!-- 
+	        
 	        <property>
 	            <key>sessionVariables</key>
 	            <name>Variables</name>
 	            <changeValueJavaScript>pageSessionVariables</changeValueJavaScript>
 	            <helpHtml>Enables the current page to be aware of values that are set in other pages. Particularly useful for page visibility rules.</helpHtml>
+	        </property>
+	        
+	        -->
+	        
+	        <property>
+	            <key>pageVariables</key>
+	            <name>Variables</name>
+	            <changeValueJavaScript>pageVariables</changeValueJavaScript>
+	            <helpHtml>Values that can be set in the page url, often by navigation. Tick the checkbox to store the value in the session to persist it across pages.</helpHtml>
 	        </property>
 	               	        
 	        <property>

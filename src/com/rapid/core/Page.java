@@ -97,6 +97,68 @@ public class Page {
 	public static final int FORM_PAGE_TYPE_SAVE = 3;
 	public static final int FORM_PAGE_TYPE_RESUME = 4;
 
+	// a class for a page parameter - formerly a session variable, but storing in the session is now optional
+	public static class Variable {
+
+		// instance variables
+
+		private String _name;
+		private boolean _session;
+
+		// properties
+
+		public String getName() { return _name; }
+		public boolean getSession() { return _session; }
+
+		// constructors
+		public Variable() {}
+
+		public Variable(String name, boolean session) {
+			_name = name;
+			_session = session;
+		}
+
+	}
+
+	// a list class for the above with helper methods
+	public static class Variables extends ArrayList<Variable> {
+
+		// get a parameter by its name
+		public Variable get(String name) {
+
+			if (name != null) {
+
+				for (Variable variable : this) {
+
+					if (name.equals(variable.getName())) return variable;
+
+				}
+
+			}
+
+			return null;
+
+		}
+
+		// whether a named parameter is in the list
+		public boolean contains(String name) {
+
+			if (name != null) {
+
+				for (Variable variable : this) {
+
+					if (name.equals(variable.getName())) return true;
+
+				}
+
+			}
+
+			return false;
+
+		}
+
+	}
+
 	// a class for retaining page html for a set of user roles - this structure is now depreciated as of Rapid 2.3.5.2 in favour of a more efficient tree structure
 	public static class RoleHtml {
 
@@ -199,6 +261,7 @@ public class Page {
 	private String _id, _name, _title, _label, _description, _createdBy, _modifiedBy, _htmlBody, _bodyStyleClasses, _cachedHeadLinks, _cachedHeadCSS, _cachedHeadReadyJS, _cachedHeadJS, _eTag;
 	private boolean _simple, _hideHeaderFooter;
 	private Date _createdDate, _modifiedDate;
+	private Variables _variables;
 	private List<Control> _controls, _reCaptchaControls;
 	private List<Event> _events;
 	private List<Style> _styles;
@@ -288,9 +351,28 @@ public class Page {
 	public List<Style> getStyles() { return _styles; }
 	public void setStyles(List<Style> styles) { _styles = styles; }
 
-	// session variables used by this page (navigation actions are expected to pass them in)
+	@Deprecated
+	// session variables used by this page (navigation actions are expected to pass them in) - deprecated by getVaraibles with session boolean
 	public List<String> getSessionVariables() { return _sessionVariables; }
-	public void setSessionVariables(List<String> sessionVariables) { _sessionVariables = sessionVariables; }
+	@Deprecated
+	public void setSessionVariables(List<String> sessionVariables) {
+		// this is for backwards compatibility when JAXB passes in session variables we need to convert them to variables with the session parameter if we don't have them already
+		if (sessionVariables != null && sessionVariables.size() > 0 && _variables == null) {
+			// make the new collection
+			_variables = new Variables();
+			// loop these deprecated variables
+			for (String sessionVariable : sessionVariables) {
+				// make new equivalents with the session set to true
+				_variables.add(new Variable(sessionVariable, true));
+			}
+		}
+	}
+
+	// variables / parameters that can go on the page url and be used in the page, whether they're stored in the session is now set in the designer
+	public Variables getVariables() { return _variables; }
+	public void setVariables(Variables variables) {
+		_variables = variables;
+	}
 
 	// the roles required to view this page
 	public List<String> getRoles() { return _roles; }
@@ -1103,7 +1185,7 @@ public class Page {
 		// empty the cached control types
 		_controlTypes = null;
 
-		// empty the page variables so they are rebuilt the next time
+		// empty the page ariables so they are rebuilt the next time
 		application.emptyPageVariables();
 
 		// empty the resources JSON so it's rebuilt next time
@@ -1494,19 +1576,21 @@ public class Page {
 			if (user != null) writer.write("var _userName = '" + user.getName() + "';\n");
 			if (user != null) writer.write("var _userDescription = '" + user.getDescription() + "';\n");
 			// get app page variables
-			List<String> pageVariables = application.getPageVariables(rapidRequest.getRapidServlet().getServletContext());
+			Variables pageVariables = application.getPageVariables(rapidRequest.getRapidServlet().getServletContext());
 			// if we got some
 			if (pageVariables != null) {
 				// prepare json to hold page variables
 				JSONObject jsonPageVariables = new JSONObject();
 				// loop them
-				for (String pageVariable : pageVariables) {
-					// null safety
-					if (pageVariable != null) {
+				for (Variable pageVariable : pageVariables) {
+					// null safety and whether for the session
+					if (pageVariable != null && pageVariable.getSession()) {
+						// get its name
+						String name = pageVariable.getName();
 						// look for a value in the session
-						String value = (String) rapidRequest.getSessionAttribute(pageVariable);
+						String value = (String) rapidRequest.getSessionAttribute(name);
 						// if we got one add it
-						if (value != null) jsonPageVariables.put(pageVariable, value);
+						if (value != null) jsonPageVariables.put(name, value);
 					}
 				}
 				// write page variables

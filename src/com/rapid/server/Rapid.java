@@ -57,6 +57,7 @@ import org.json.JSONObject;
 import com.rapid.core.Application;
 import com.rapid.core.Application.RapidLoadingException;
 import com.rapid.core.Page;
+import com.rapid.core.Page.Variable;
 import com.rapid.core.Pages.PageHeader;
 import com.rapid.core.Pages.PageHeaders;
 import com.rapid.forms.FormAdapter;
@@ -571,14 +572,19 @@ public class Rapid extends RapidHttpServlet {
 													} // pages remaining check
 												} // page visible loop
 
-												// if this page has session values
-												if (page.getSessionVariables() != null) {
+												// if this page has variables
+												if (page.getVariables() != null) {
 													// loop them
-													for (String variable : page.getSessionVariables()) {
-														// look for session values
-														String value = (String) rapidRequest.getSessionAttribute(variable);
-														// if we got one update it's value
-														if (value != null) formAdapter.setFormPageVariableValue(rapidRequest, formDetails.getId(), variable, value);
+													for (Variable variable : page.getVariables()) {
+														// if this is for the session
+														if (variable.getSession()) {
+															// get its name
+															String name = variable.getName();
+															// look for session values
+															String value = (String) rapidRequest.getSessionAttribute(name);
+															// if we got one update it's value
+															if (value != null) formAdapter.setFormPageVariableValue(rapidRequest, formDetails.getId(), name, value);
+														}
 													}
 												}
 

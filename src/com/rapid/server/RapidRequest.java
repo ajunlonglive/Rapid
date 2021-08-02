@@ -39,7 +39,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.security.GeneralSecurityException;
 import java.util.Enumeration;
-import java.util.List;
 import java.util.Random;
 
 import javax.servlet.ServletContext;
@@ -53,6 +52,8 @@ import com.rapid.core.Application;
 import com.rapid.core.Application.RapidLoadingException;
 import com.rapid.core.Control;
 import com.rapid.core.Page;
+import com.rapid.core.Page.Variable;
+import com.rapid.core.Page.Variables;
 import com.rapid.server.filter.RapidFilter;
 import com.rapid.utils.Encryption;
 
@@ -64,7 +65,7 @@ public class RapidRequest {
 	private RapidHttpServlet _rapidServlet;
 	private ServletContext _servletContext;
 	private HttpServletRequest _request;
-	private HttpSession _session;	
+	private HttpSession _session;
 	private String _actionName, _appId, _version, _userName;
 	private Application _application;
 	private Page _page;
@@ -140,7 +141,7 @@ public class RapidRequest {
 	public RapidRequest(RapidHttpServlet rapidServlet, HttpServletRequest request) {
 		// retain the servlet
 		_rapidServlet = rapidServlet;
-		// if there was a rapidServlet, store the context 
+		// if there was a rapidServlet, store the context
 		if (_rapidServlet != null) _servletContext = _rapidServlet.getServletContext();
 		// retain the http request
 		_request = request;
@@ -234,17 +235,19 @@ public class RapidRequest {
 		// if we have a page
 		if (_page != null) {
 			// get page session / page variables
-			List<String> sessionVariables = _page.getSessionVariables();
+			Variables pageVariables = _page.getVariables();
 			// get query string parameter values
-			Enumeration<String> parameterNames = _request.getParameterNames();
+			Enumeration<String> requestParameterNames = _request.getParameterNames();
 			// if there were variables and values for them
-			if (sessionVariables != null && parameterNames != null) {
+			if (pageVariables != null && requestParameterNames != null) {
 				// loop parameter names
-				while (parameterNames.hasMoreElements()) {
+				while (requestParameterNames.hasMoreElements()) {
 					// get the name
-					String parameterName = parameterNames.nextElement();
-					// if this parameter is a session / page variable - and not a sensitive one
-					if (sessionVariables.contains(parameterName)
+					String parameterName = requestParameterNames.nextElement();
+					// get the page variable for it
+					Variable pageVariable = pageVariables.get(parameterName);
+					// if this parameter is a page parameter with session - and not a sensitive one
+					if (pageVariable != null && pageVariable.getSession()
 							&& !RapidFilter.SESSION_VARIABLE_INDEX_PATH.equals(parameterName)
 							&& !RapidFilter.SESSION_VARIABLE_USER_NAME.equals(parameterName)
 							&& !RapidFilter.SESSION_VARIABLE_USER_PASSWORD.equals(parameterName)
@@ -265,7 +268,7 @@ public class RapidRequest {
 	public RapidRequest(RapidHttpServlet rapidServlet, HttpServletRequest request, Application application) {
 		// store the servlet
 		_rapidServlet = rapidServlet;
-		// if there was a rapidServlet, store the context 
+		// if there was a rapidServlet, store the context
 		if (_rapidServlet != null) _servletContext = _rapidServlet.getServletContext();
 		// store the request
 		_request = request;
@@ -292,7 +295,7 @@ public class RapidRequest {
 		if (request != null) {
 			// store the request
 			_request = request;
-			// store the context 
+			// store the context
 			_servletContext = _request.getServletContext();
 			// retain the session
 			_session = request.getSession(false);
@@ -314,7 +317,7 @@ public class RapidRequest {
 	public RapidRequest(RapidHttpServlet rapidServlet, HttpServletRequest request, HttpSession session, Application application) {
 		// store the servlet
 		_rapidServlet = rapidServlet;
-		// if there was a rapidServlet, store the context 
+		// if there was a rapidServlet, store the context
 		if (_rapidServlet != null) _servletContext = _rapidServlet.getServletContext();
 		// store the request
 		_request = request;
@@ -332,10 +335,10 @@ public class RapidRequest {
 			_version = application.getVersion();
 		}
 	}
-	
+
 	// can also instantiate a rapid request with just a ServletContext and an application, the actionName is mostly there so the signature is not ambiguous if the two-paramter method above with the request set to null
 	public RapidRequest(ServletContext servletContext, Application application, String actionName) {
-		// store the context 
+		// store the context
 		_servletContext = servletContext;
 		// store the application
 		_application = application;
