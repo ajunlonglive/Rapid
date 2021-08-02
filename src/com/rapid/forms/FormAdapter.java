@@ -73,6 +73,8 @@ import com.rapid.core.Email;
 import com.rapid.core.Email.Attachment;
 import com.rapid.core.Email.StringDataSource;
 import com.rapid.core.Page;
+import com.rapid.core.Page.Variable;
+import com.rapid.core.Page.Variables;
 import com.rapid.core.Pages;
 import com.rapid.core.Pages.PageHeader;
 import com.rapid.core.Pages.PageHeaders;
@@ -2354,7 +2356,7 @@ public abstract class FormAdapter {
 											}
 
 										}// end of outer loop
-										
+
 										y = maxYOffset;
 
 									} else {
@@ -2480,13 +2482,13 @@ public abstract class FormAdapter {
 					// get the page
 					Page page = pages.getPage(getServletContext(), pageId);
 					// if it has variables
-					List<String> variables = page.getSessionVariables();
+					Variables variables = page.getVariables();
 					// if it has some
 					if (variables != null) {
 						// loop them
-						for (String variable : variables) {
+						for (Variable variable : variables) {
 							// set them to null
-							rapidRequest.getRequest().getSession().setAttribute(variable, null);
+							rapidRequest.getRequest().getSession().setAttribute(variable.getName(), null);
 						}
 					}
 				}

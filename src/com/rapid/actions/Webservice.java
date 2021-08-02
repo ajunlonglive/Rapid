@@ -46,6 +46,7 @@ import com.rapid.core.Action;
 import com.rapid.core.Application;
 import com.rapid.core.Control;
 import com.rapid.core.Page;
+import com.rapid.core.Page.Variables;
 import com.rapid.core.Parameter;
 import com.rapid.server.ActionCache;
 import com.rapid.server.RapidHttpServlet;
@@ -524,16 +525,16 @@ public class Webservice extends Action {
 				} else {
 					// didn't look like a control so check page variables
 					if (rapidRequest.getPage() != null) {
-						// check for page variables
-						if (rapidRequest.getPage().getSessionVariables() != null) {
-							// loop them
-							for (String variable : rapidRequest.getPage().getSessionVariables()) {
-								// if this is the variable
-								if (variable.equalsIgnoreCase(id)) {
+						// didn't look like a control so check page parameters
+						if (rapidRequest.getPage() != null) {
+							// get page variables
+							Variables pageVariables = rapidRequest.getPage().getVariables();
+							// check for page parameters
+							if (pageVariables != null) {
+								// if this is one
+								if (pageVariables.contains(id)) {
 									// get the value from the inputs
 									value = escapeType(type, input.optString("value"));
-									// no need to keep looking in the page variables
-									break;
 								}
 							}
 						}

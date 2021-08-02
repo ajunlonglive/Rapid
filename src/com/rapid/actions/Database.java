@@ -54,6 +54,7 @@ import com.rapid.core.Action;
 import com.rapid.core.Application;
 import com.rapid.core.Control;
 import com.rapid.core.Page;
+import com.rapid.core.Page.Variables;
 import com.rapid.core.Parameter;
 import com.rapid.data.ConnectionAdapter;
 import com.rapid.data.DataFactory;
@@ -711,19 +712,16 @@ public class Database extends Action {
 											value = getJsonInputValue(jsonFields, jsonRow, id);
 									}
 								} else {
-									// didn't look like a control so check page variables
+									// didn't look like a control so check page parameters
 									if (rapidRequest.getPage() != null) {
-										// check for page variables
-										if (rapidRequest.getPage().getSessionVariables() != null) {
-											// loop them
-											for (String variable : rapidRequest.getPage().getSessionVariables()) {
-												// if this is the variable
-												if (variable.equalsIgnoreCase(id)) {
-													// get the value
-													value = getJsonInputValue(jsonFields, jsonRow, id);
-													// no need to keep looking in the page variables
-													break;
-												}
+										// get page variables
+										Variables pageVariables = rapidRequest.getPage().getVariables();
+										// check for page parameters
+										if (pageVariables != null) {
+											// if this is one
+											if (pageVariables.contains(id)) {
+												// get the value
+												value = getJsonInputValue(jsonFields, jsonRow, id);
 											}
 										}
 									}

@@ -144,7 +144,7 @@ function getSystemValueOptions(selectId, input) {
 	return options;
 }
 
-//this function returns a set of options for a dropdown for inputs or outputs (depending on input true/false), can be controls, control properties (input only), other page controls, page variables (input only), system values (input only)
+// this function returns a set of options for a dropdown for inputs or outputs (depending on input true/false), can be controls, control properties (input only), other page controls, page variables (input only), system values (input only)
 function getDataOptions(selectId, ignoreId, input, hasDatetime, hasClipboard) {
 
 	var options = "";
@@ -153,14 +153,14 @@ function getDataOptions(selectId, ignoreId, input, hasDatetime, hasClipboard) {
 	var gotSelected = false;
 	
 	// page variables are for input only, put them at the top
-	if (input && _page && _page.sessionVariables) {
+	if (input && _page && _page.variables) {
 		options += "<optgroup label='Page variables'>";
-		for (var i in _page.sessionVariables) {
-			if (selectId == _page.sessionVariables[i] && !gotSelected) {
-				options += "<option value='" + escapeApos(_page.sessionVariables[i]) + "' selected='selected' >" + _page.sessionVariables[i] + "</option>";
+		for (var i in _page.variables) {
+			if (selectId == _page.variables[i] && !gotSelected) {
+				options += "<option value='" + escapeApos(_page.variables[i].name) + "' selected='selected' >" + _page.variables[i].name + "</option>";
 				gotSelected = true;
 			} else {
-				options += "<option value='" + escapeApos(_page.sessionVariables[i]) + "' >" + _page.sessionVariables[i] + "</option>";
+				options += "<option value='" + escapeApos(_page.variables[i].name) + "' >" + _page.variables[i].name + "</option>";
 			}			
 		}
 		options += "</optgroup>";
@@ -299,15 +299,15 @@ function getFormValueOptions(selectId) {
 	var options = "";
 	var gotSelected = false;
 	// page variables 
-	if (_page && _page.sessionVariables) {
+	if (_page && _page.variables) {
 		options += "<optgroup label='Page variables'>";
-		for (var i in _page.sessionVariables) {
-			var val = "Session." + _page.sessionVariables[i];
+		for (var i in _page.variables) {
+			var val = "Session." + _page.variables[i].name;
 			if (selectId == val && !gotSelected) {
-				options += "<option value='" + val + "' selected='selected' >" + _page.sessionVariables[i] + "</option>";
+				options += "<option value='" + val + "' selected='selected' >" + _page.variables[i].name + "</option>";
 				gotSelected = true;
 			} else {
-				options += "<option value='" + val + "' >" + _page.sessionVariables[i] + "</option>";
+				options += "<option value='" + val + "' >" + _page.variables[i].name + "</option>";
 			}			
 		}
 		options += "</optgroup>";
@@ -321,13 +321,13 @@ function getFormValueOptions(selectId) {
 			if (_pages[i].controls) {
 				var pageControlOptions = "";
 				// page session variables
-				for (var j in _pages[i].sessionVariables) {
-					var val = "Session." + _pages[i].sessionVariables[j];
+				for (var j in _pages[i].variables) {
+					var val = "Session." + _pages[i].variables[j].name;
 					if (selectId == val) {
-						pageControlOptions += "<option value='" + val + "' selected='selected' >" +  _pages[i].sessionVariables[j] + "</option>";
+						pageControlOptions += "<option value='" + val + "' selected='selected' >" +  _pages[i].variables[j].name + "</option>";
 						gotSelected = true;
 					} else {
-						pageControlOptions += "<option value='" + val + "' >" + _pages[i].sessionVariables[j] + "</option>";						
+						pageControlOptions += "<option value='" + val + "' >" + _pages[i].variables[j].name + "</option>";						
 					}
 				}
 				// page controls
@@ -3077,7 +3077,7 @@ function Property_navigationPage(cell, navigationAction, property, details) {
 }
 
 // this is a dialogue to specify the session variables of the current page
-function Property_pageSessionVariables(cell, page, property, details, textOnly) {
+function Property_pageVariables(cell, page, property, details, textOnly) {
 	
 	// check for simple
 	if (_page.simple) {
@@ -3089,11 +3089,11 @@ function Property_pageSessionVariables(cell, page, property, details, textOnly) 
 			
 		var variables = [];
 		// set the value if it exists
-		if (page.sessionVariables) variables = page.sessionVariables;
+		if (page.variables) variables = page.variables;
 		// make some text
 		var text = "";
 		for (var i = 0; i < variables.length; i++) {
-			text += variables[i];
+			text += variables[i].name;
 			if (i < variables.length - 1) text += ",";
 		}
 		// add a descrption if nothing yet
@@ -3116,39 +3116,55 @@ function Property_pageSessionVariables(cell, page, property, details, textOnly) 
 			// show variables
 			for (var i in variables) {
 				// add the line
-				table.append("<tr><td><input class='variable' value='" + escapeApos(variables[i]) + "' /></td><td style='width:25px; text-align:right;'>" +
-						"<div class='delete fa-stack fa-sm'><i class='delete fas fa-trash-alt' title='Click to delete'></i></div></td></tr>");
-				
-				// find the text
-				var valueEdit = table.find("input.variable").last();
-				// add a listener
-				addListener( valueEdit.keyup( {cell: cell, page: page, property: property, details: details}, function(ev) {
-					// get the input box
-					var input = $(ev.target);
-					// get the value
-					var value = input.val();
-					// get the index
-					var index = input.closest("tr").index();
-					// update value
-					ev.data.page.sessionVariables[index] = value;
-					// refresh
-					Property_pageSessionVariables(ev.data.cell, ev.data.page, ev.data.property, ev.data.details, true);
-				}));
-						
-				// find the delete
-				var optionDelete = table.find("div.delete");
-				// add a listener
-				addListener( optionDelete.click( {variables: variables}, function(ev) {
-					// add an undo snapshot
-					addUndo();
-					// get the input
-					var input = $(ev.target);
-					// remove from parameters
-					ev.data.variables.splice(input.closest("tr").index(),1);
-					// remove row
-					input.closest("tr").remove();
-				}));
+				table.append("<tr><td><input class='variable' value='" + escapeApos(variables[i].name) + "' /></td>" + 
+					"<td><input class='session' type='checkbox' title='Store value in session' " + (variables[i].session ? " checked='checked'" : "") + " /></td>" +
+					"<td style='width:25px; text-align:right;'><div class='delete fa-stack fa-sm'><i class='delete fas fa-trash-alt' title='Click to delete'></i></div></td></tr>");
+
 			}
+			
+			// find the name
+			var valueEdit = table.find("input.variable");
+			// add a listener
+			addListener( valueEdit.keyup( {cell: cell, page: page, property: property, details: details}, function(ev) {
+				// get the input box
+				var input = $(ev.target);
+				// get the value
+				var value = input.val();
+				// get the index
+				var index = input.closest("tr").index();
+				// update value
+				ev.data.page.variables[index].name = value;
+				// refresh to update the names into the main property preview
+				Property_pageVariables(ev.data.cell, ev.data.page, ev.data.property, ev.data.details, true);
+			}));
+			
+			// find the session checkbox
+			var valueEdit = table.find("input.session");
+			// add a listener
+			addListener( valueEdit.change( {cell: cell, page: page, property: property, details: details}, function(ev) {
+				// get the input box
+				var input = $(ev.target);
+				// get the value
+				var value = input.prop("checked");
+				// get the index
+				var index = input.closest("tr").index();
+				// update value
+				ev.data.page.variables[index].session = value;
+			}));
+					
+			// find the delete
+			var optionDelete = table.find("div.delete");
+			// add a listener
+			addListener( optionDelete.click( {variables: variables}, function(ev) {
+				// add an undo snapshot
+				addUndo();
+				// get the input
+				var input = $(ev.target);
+				// remove from parameters
+				ev.data.variables.splice(input.closest("tr").index(),1);
+				// remove row
+				input.closest("tr").remove();
+			}));
 				
 			// have an add row
 			table.append("<tr><td colspan='2'><span class='propertyAction'>add...</span></td></tr>");
@@ -3159,11 +3175,11 @@ function Property_pageSessionVariables(cell, page, property, details, textOnly) 
 				// add an undo snapshot
 				addUndo();
 				// initialise if required
-				if (!ev.data.page.sessionVariables) ev.data.page.sessionVariables = [];
-				// add a blank option
-				ev.data.page.sessionVariables.push("");
+				if (!ev.data.page.variables) ev.data.page.variables = [];
+				// add a blank option - note the session default is different for apps and forms
+				ev.data.page.variables.push({name:"", session:_version.isForm});
 				// refresh
-				Property_pageSessionVariables(ev.data.cell, ev.data.page, ev.data.property, ev.data.details);		
+				Property_pageVariables(ev.data.cell, ev.data.page, ev.data.property, ev.data.details);		
 			}));
 			
 		}
@@ -3292,8 +3308,8 @@ function Property_navigationSessionVariables(cell, navigation, property, details
 	
 		// initialise the collection if need be
 		if (!navigation.sessionVariables || navigation.sessionVariables == "[]") navigation.sessionVariables = [];
-		// reset if there are no page session variables
-		if (!page.sessionVariables || page.sessionVariables.length == 0) navigation.sessionVariables = [];
+		// reset if there are no page variables
+		if (!page.variables || page.variables.length == 0) navigation.sessionVariables = [];
 		// retrieve the collection
 		var sessionVariables = navigation.sessionVariables;
 		
@@ -3312,14 +3328,14 @@ function Property_navigationSessionVariables(cell, navigation, property, details
 		table.append("<tr><td><b>Variable</b></td><td><b>Input</b></td><td><b>Field</b></td></tr>");
 						
 		// show all session parameters in the target page
-		for (var i in page.sessionVariables) {
+		for (var i in page.variables) {
 			
 			// get the corresponding action variable
 			var sessionVariable = sessionVariables[i];
 			// if not there or not the right one
-			if (!sessionVariable || sessionVariable.name != page.sessionVariables[i]) {
+			if (!sessionVariable || sessionVariable.name != page.variables[i].name) {
 				// create a new one with the right name
-				sessionVariable = {name:page.sessionVariables[i], itemId:"", field:""};
+				sessionVariable = {name:page.variables[i].name, itemId:"", field:""};
 				// add to the aray at this position				
 				sessionVariables.splice(i,0,sessionVariable);
 			}

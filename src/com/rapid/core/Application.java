@@ -69,6 +69,7 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import com.rapid.core.Page.Lock;
+import com.rapid.core.Page.Variables;
 import com.rapid.core.Pages.PageHeader;
 import com.rapid.data.DatabaseConnection;
 import com.rapid.forms.FormAdapter;
@@ -589,7 +590,7 @@ public class Application {
 	private Pages _pages;
 	private Resources _appResources, _resources;
 	private List<String> _styleClasses;
-	private List<String> _pageVariables;
+	private Variables _pageVariables;
 
 	// properties
 
@@ -1244,25 +1245,22 @@ public class Application {
 		return _styleClasses;
 	}
 
-	// return the list of page variables used in the application
-	public List<String> getPageVariables(ServletContext servletContext) throws RapidLoadingException {
+	// return the list of all page varibles used in the application
+	public Variables getPageVariables(ServletContext servletContext) throws RapidLoadingException {
 		// if not set yet
 		if (_pageVariables == null) {
 			// make the collection of pages
-			_pageVariables = new ArrayList<>();
+			_pageVariables = new Variables();
 			// loop the pages
 			for (String pageId : _pages.getPageIds()) {
 				// get the page
 				Page page = _pages.getPage(servletContext, pageId);
 				// get any variables
-				List<String> pageVariables = page.getSessionVariables();
+				Variables pageVariables = page.getVariables();
 				// if we got some
 				if (pageVariables != null) {
-					// loop them
-					for (String pageVariable : pageVariables) {
-						// add if we don't have already
-						if (!_pageVariables.contains(pageVariable)) _pageVariables.add(pageVariable);
-					}
+					// add them all
+					_pageVariables.addAll(pageVariables);
 				}
 			}
 		}

@@ -80,6 +80,8 @@ import com.rapid.core.Event;
 import com.rapid.core.Page;
 import com.rapid.core.Page.Lock;
 import com.rapid.core.Page.RoleControlHtml;
+import com.rapid.core.Page.Variable;
+import com.rapid.core.Page.Variables;
 import com.rapid.core.Pages.PageHeader;
 import com.rapid.core.Pages.PageHeaders;
 import com.rapid.core.Theme;
@@ -787,10 +789,18 @@ public class Designer extends RapidHttpServlet {
 									jsonPage.put("simple", page.getSimple());
 									jsonPage.put("hideHeaderFooter", page.getHideHeaderFooter());
 
-									// get a list of page session variables
+									/*
+									// get a list of page session variables - now deprecated by page variables with the optional session storage
 									List<String> pageSessionVariables = page.getSessionVariables();
 									// add them if there are some
 									if (pageSessionVariables != null) if (pageSessionVariables.size() > 0) 	jsonPage.put("sessionVariables", pageSessionVariables);
+									*/
+
+									// get page variables
+									Variables pageVariables = page.getVariables();
+									// add them if there are some
+									if (pageVariables != null && pageVariables.size() > 0) jsonPage.put("variables", pageVariables);
+
 									// assume we don't need to know page visibilty
 									boolean includePageVisibiltyControls = false;
 									// if there is a form adapter
@@ -802,6 +812,7 @@ public class Designer extends RapidHttpServlet {
 										// add them if there are some
 										if (pageVisibilityConditions != null) if (pageVisibilityConditions.size() > 0) jsonPage.put("visibilityConditions", pageVisibilityConditions);
 									}
+
 									// assume no page is selected in the designer that we want dialogue controls for
 									Boolean includeFromDialogue = false;
 									// if this loadPages was from a save
@@ -1917,6 +1928,8 @@ public class Designer extends RapidHttpServlet {
 									newPage.setRoles(userRoles);
 								}
 
+								/*
+
 								// look in the JSON for a sessionVariables array
 								JSONArray jsonSessionVariables = jsonPage.optJSONArray("sessionVariables");
 								// if we found one
@@ -1926,6 +1939,20 @@ public class Designer extends RapidHttpServlet {
 										sessionVariables.add(jsonSessionVariables.getString(i));
 									}
 									newPage.setSessionVariables(sessionVariables);
+								}
+
+								*/
+
+								// look in the JSON for a sessionVariables array
+								JSONArray jsonPageVariables = jsonPage.optJSONArray("variables");
+								// if we found one
+								if (jsonPageVariables != null) {
+									Variables pageVariables = new Variables();
+									for (int i = 0; i < jsonPageVariables.length(); i++) {
+										JSONObject jsonPageVariable = jsonPageVariables.getJSONObject(i);
+										pageVariables.add(new Variable(jsonPageVariable.getString("name"), jsonPageVariable.optBoolean("session")));
+									}
+									newPage.setVariables(pageVariables);
 								}
 
 								// look in the JSON for a pageVisibilityRules array
