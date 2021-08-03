@@ -1244,14 +1244,23 @@ public class RapidServletContextListener implements ServletContextListener {
 	    // users should just be informed of visible processes
 	    int visibleProcesses = 0;
 
+	    // make a new list of processes
+	 	List<Process> processes = new ArrayList<>();
+
 		// loop the xml files in the folder
 		for (File xmlFile : dir.listFiles(xmlFilenameFilter)) {
 
 			// create a process object from the xml
 			Process process = loadProcess(xmlFile, servletContext);
+			// add it to our new list
+			processes.add(process);
 			// inc the visible count if visible
 			if (process.isVisible()) visibleProcesses ++;
+
 		}
+
+		// update the processes list in the context
+		servletContext.setAttribute("processes", processes);
 
 		// log that we've loaded the visible ones
 		_logger.info(visibleProcesses + " process" + (visibleProcesses == 1 ? "" : "es") + " loaded");
