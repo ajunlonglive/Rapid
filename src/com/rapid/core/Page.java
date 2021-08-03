@@ -108,7 +108,10 @@ public class Page {
 		// properties
 
 		public String getName() { return _name; }
+		public void setName(String name) { _name = name; }
+
 		public boolean getSession() { return _session; }
+		public void setSession(boolean session) { _session = session; }
 
 		// constructors
 		public Variable() {}
@@ -125,36 +128,22 @@ public class Page {
 
 		// get a parameter by its name
 		public Variable get(String name) {
-
 			if (name != null) {
-
 				for (Variable variable : this) {
-
 					if (name.equals(variable.getName())) return variable;
-
 				}
-
 			}
-
 			return null;
-
 		}
 
 		// whether a named parameter is in the list
 		public boolean contains(String name) {
-
 			if (name != null) {
-
 				for (Variable variable : this) {
-
 					if (name.equals(variable.getName())) return true;
-
 				}
-
 			}
-
 			return false;
-
 		}
 
 	}
@@ -281,7 +270,24 @@ public class Page {
 
 	// the xml version is used to upgrade xml files before unmarshalling (we use a property so it's written ito xml)
 	public int getXMLVersion() { return _xmlVersion; }
-	public void setXMLVersion(int xmlVersion) { _xmlVersion = xmlVersion; }
+	public void setXMLVersion(int xmlVersion) {
+
+		_xmlVersion = xmlVersion;
+
+		// this is for backwards compatibility - I have no idea when JAXB passed in the session variables but here we need to convert them to variables with the session parameter if we don't have them already
+		if (_variables == null && _sessionVariables != null && _sessionVariables.size() > 0) {
+			// make the new collection
+			_variables = new Variables();
+			// loop these deprecated variables
+			for (String sessionVariable : _sessionVariables) {
+				// make new equivalents with the session set to true
+				_variables.add(new Variable(sessionVariable, true));
+			}
+			// empty _sessionVariables so only variables is used in future
+			_sessionVariables = null;
+		}
+
+	}
 
 	// the id uniquely identifies the page (it is quiet short and is concatinated to control id's so more than one page's control's can be working in a document at one time)
 	public String getId() { return _id; }
@@ -351,28 +357,13 @@ public class Page {
 	public List<Style> getStyles() { return _styles; }
 	public void setStyles(List<Style> styles) { _styles = styles; }
 
-	@Deprecated
 	// session variables used by this page (navigation actions are expected to pass them in) - deprecated by getVaraibles with session boolean
 	public List<String> getSessionVariables() { return _sessionVariables; }
-	@Deprecated
-	public void setSessionVariables(List<String> sessionVariables) {
-		// this is for backwards compatibility when JAXB passes in session variables we need to convert them to variables with the session parameter if we don't have them already
-		if (sessionVariables != null && sessionVariables.size() > 0 && _variables == null) {
-			// make the new collection
-			_variables = new Variables();
-			// loop these deprecated variables
-			for (String sessionVariable : sessionVariables) {
-				// make new equivalents with the session set to true
-				_variables.add(new Variable(sessionVariable, true));
-			}
-		}
-	}
+	public void setSessionVariables(List<String> sessionVariables) { _sessionVariables = sessionVariables; }
 
 	// variables / parameters that can go on the page url and be used in the page, whether they're stored in the session is now set in the designer
 	public Variables getVariables() { return _variables; }
-	public void setVariables(Variables variables) {
-		_variables = variables;
-	}
+	public void setVariables(Variables variables) {	_variables = variables;	}
 
 	// the roles required to view this page
 	public List<String> getRoles() { return _roles; }
