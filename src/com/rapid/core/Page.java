@@ -271,9 +271,8 @@ public class Page {
 	// the xml version is used to upgrade xml files before unmarshalling (we use a property so it's written ito xml)
 	public int getXMLVersion() { return _xmlVersion; }
 	public void setXMLVersion(int xmlVersion) {
-
+		// retain the version
 		_xmlVersion = xmlVersion;
-
 		// this is for backwards compatibility - I have no idea when JAXB passed in the session variables but here we need to convert them to variables with the session parameter if we don't have them already
 		if (_variables == null && _sessionVariables != null && _sessionVariables.size() > 0) {
 			// make the new collection
@@ -283,10 +282,7 @@ public class Page {
 				// make new equivalents with the session set to true
 				_variables.add(new Variable(sessionVariable, true));
 			}
-			// empty _sessionVariables so only variables is used in future
-			_sessionVariables = null;
 		}
-
 	}
 
 	// the id uniquely identifies the page (it is quiet short and is concatinated to control id's so more than one page's control's can be working in a document at one time)
@@ -363,7 +359,17 @@ public class Page {
 
 	// variables / parameters that can go on the page url and be used in the page, whether they're stored in the session is now set in the designer
 	public Variables getVariables() { return _variables; }
-	public void setVariables(Variables variables) {	_variables = variables;	}
+	public void setVariables(Variables variables) {
+		// retain new stuff
+		_variables = variables;
+		// make old stuff too, for older servers
+		if (variables != null) {
+			_sessionVariables = new ArrayList<>();
+			for (Variable variable : variables) {
+				_sessionVariables.add(variable.getName());
+			}
+		}
+	}
 
 	// the roles required to view this page
 	public List<String> getRoles() { return _roles; }
