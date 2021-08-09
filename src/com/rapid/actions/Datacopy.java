@@ -192,6 +192,14 @@ public class Datacopy extends Action {
 
 		// set to replace if null (for backwards compatibility)
 		if (copyType == null) copyType = "replace";
+		
+		String changeEvents = "false";
+		if (Boolean.parseBoolean(getProperty("changeEvents"))) {
+			changeEvents = "true";
+			if (Boolean.parseBoolean(getProperty("noValidation"))) {
+				changeEvents = "{ noValidation: true }";
+			}
+		}
 
 		// bulk copy is a special animal
 		if ("bulk".equals(copyType)) {
@@ -358,9 +366,9 @@ public class Datacopy extends Action {
 											destinationField = "'" + destinationField + "'";
 
 										} // this and next are row merge check
-
+										
 										// do the data copy
-										js += "Action_datacopy(ev, data, [{id:'" + destinationId + "', type:'" + destinationControl.getType() + "', field:" + destinationField + ", details:" + details + "}], " + Boolean.parseBoolean(getProperty("changeEvents")) + type + ");\n";
+										js += "Action_datacopy(ev, data, [{id:'" + destinationId + "', type:'" + destinationControl.getType() + "', field:" + destinationField + ", details:" + details + "}], " + changeEvents + type + ");\n";
 
 									}
 
@@ -517,10 +525,12 @@ public class Datacopy extends Action {
 						// add to js as an array
 						js += "var outputs = [" + jsOutputs + "];\n";
 						// add the start of the call
-						js += "Action_datacopy(ev, data, outputs, " + Boolean.parseBoolean(getProperty("changeEvents"));
+						js += "Action_datacopy(ev, data, outputs, " + changeEvents;
 
 						// add the copy type to the js
 						js += ", '" + copyType + "'";
+						
+						
 
 						// check the copy type
 						if ("row".equals(copyType)) {

@@ -3,7 +3,7 @@
 
 <!-- 
 
-Copyright (C) 2018 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -137,6 +137,7 @@ li.validation {
 	    <actionJavaScript>
 	        <![CDATA[
 function Action_validation(ev, validations, showMessages, scrollToFirst) {
+	if (window["_noValidation"]) return;
 	var valid = true;
 	ev.validation = true;
 	var firstFailedControl = null;
