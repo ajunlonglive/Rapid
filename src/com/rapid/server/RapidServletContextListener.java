@@ -874,6 +874,9 @@ public class RapidServletContextListener implements ServletContextListener {
 			// assume we should not load this app
 			boolean shouldLoadApp = false;
 
+			// assume no version to check
+			String loadAppVersion = null;
+
 			// if this child file is a directory and not in our list of apps to ignore
 			if (applicationFolder.isDirectory() && loadApps.size() == 0 && !ignoreApps.contains(appFolderName)) {
 				// we can load the app
@@ -885,6 +888,13 @@ public class RapidServletContextListener implements ServletContextListener {
 				} else {
 					// loop all load apps
 					for (String loadApp : loadApps) {
+						// if loadApp has a version
+						if (loadApp.contains("[") && loadApp.indexOf("]") > loadApp.indexOf("[")) {
+							// get the version
+							loadAppVersion = loadApp.substring(loadApp.indexOf("[") + 1, loadApp.indexOf("]"));
+							// remove from loadApp
+							loadApp = loadApp.substring(0, loadApp.indexOf("["));
+						}
 						// check for loadApp ending in wildcard matching start of appFolderName
 						if (loadApp.endsWith("*") && appFolderName.startsWith(loadApp.substring(0, loadApp.length() - 1))) {
 							// we can load this app
@@ -967,82 +977,90 @@ public class RapidServletContextListener implements ServletContextListener {
 									// if it exists
 									if (applicationFile.exists()) {
 
-										// placeholder for the application we're going to version up or just load
-										Application application = null;
+										// the parent of the folder should be the version
+										version = applicationFile.getParentFile().getName();
 
-										// if we had to create a version for it
-										if (versionCreated) {
+										// if we had a version to check, this must be it
+										if (loadAppVersion == null || loadAppVersion.equals(version)) {
 
-											// load without resources
-											application = Application.load(servletContext, applicationFile, false);
+											// placeholder for the application we're going to version up or just load
+											Application application = null;
 
-											// set the new version
-											application.setVersion(version);
+											// if we had to create a version for it
+											if (versionCreated) {
 
-											// re-initialise it without resources (for the security adapter)
-											application.initialise(servletContext, false);
+												// load without resources
+												application = Application.load(servletContext, applicationFile, false);
 
-											// marshal the updated application object to it's file
-											FileOutputStream fos = new FileOutputStream(applicationFile);
-											marshaller.marshal(application, fos);
-										    fos.close();
+												// set the new version
+												application.setVersion(version);
 
-											// get a dir for the pages
-											File pageDir = new File(versionFolder + "/pages");
-											// check it exists
-											if (pageDir.exists()) {
-												// loop the pages files
-												for (File pageFile : pageDir.listFiles()) {
-													// read the contents of the file
-													String pageContent = Strings.getString(pageFile);
-													// replace all old file references
-													pageContent = pageContent
-														.replace("/" + application.getId() + "/", "/" + application.getId() + "/" + application.getVersion() + "/")
-														.replace("~?a=" + application.getId() + "&amp;", "~?a=" + application.getId() + "&amp;" + application.getVersion() + "&amp;");
-													// create a file writer
-													FileWriter fs = new FileWriter(pageFile);
-													// save the changes
-													fs.write(pageContent);
-													// close the writer
-													fs.close();
-													_logger.info(pageFile + " updated with new references");
+												// re-initialise it without resources (for the security adapter)
+												application.initialise(servletContext, false);
+
+												// marshal the updated application object to it's file
+												FileOutputStream fos = new FileOutputStream(applicationFile);
+												marshaller.marshal(application, fos);
+											    fos.close();
+
+												// get a dir for the pages
+												File pageDir = new File(versionFolder + "/pages");
+												// check it exists
+												if (pageDir.exists()) {
+													// loop the pages files
+													for (File pageFile : pageDir.listFiles()) {
+														// read the contents of the file
+														String pageContent = Strings.getString(pageFile);
+														// replace all old file references
+														pageContent = pageContent
+															.replace("/" + application.getId() + "/", "/" + application.getId() + "/" + application.getVersion() + "/")
+															.replace("~?a=" + application.getId() + "&amp;", "~?a=" + application.getId() + "&amp;" + application.getVersion() + "&amp;");
+														// create a file writer
+														FileWriter fs = new FileWriter(pageFile);
+														// save the changes
+														fs.write(pageContent);
+														// close the writer
+														fs.close();
+														_logger.info(pageFile + " updated with new references");
+													}
 												}
-											}
-											// make a dir for it's web resources
-											File webDir = new File(application.getWebFolder(servletContext));
-											webDir.mkdir();
-											_logger.info(webDir + " created");
-											// loop all the files in the parent
-											for (File file : webDir.getParentFile().listFiles()) {
-												// check not dir
-												if (!file.isDirectory()) {
-													// create a destination file for the new location
-													File destFile = new File(webDir + "/" + file.getName());
-													// copy it to the new destination
-													Files.copyFile(file, destFile);
-													// delete the file or folder
-													file.delete();
-													_logger.info(file + " moved to " + destFile);
+												// make a dir for it's web resources
+												File webDir = new File(application.getWebFolder(servletContext));
+												webDir.mkdir();
+												_logger.info(webDir + " created");
+												// loop all the files in the parent
+												for (File file : webDir.getParentFile().listFiles()) {
+													// check not dir
+													if (!file.isDirectory()) {
+														// create a destination file for the new location
+														File destFile = new File(webDir + "/" + file.getName());
+														// copy it to the new destination
+														Files.copyFile(file, destFile);
+														// delete the file or folder
+														file.delete();
+														_logger.info(file + " moved to " + destFile);
+													}
+
 												}
 
 											}
 
-										}
+											// (re)load the application
+											application = Application.load(servletContext, applicationFile);
 
-										// (re)load the application
-										application = Application.load(servletContext, applicationFile);
+											if(_monitor!=null && _monitor.isAlive(servletContext) && _monitor.isLoggingExceptions()) {
+												long versionFolderSize = Files.getSize(versionFolder);
+												File backupFolder = new File(versionFolder.getAbsoluteFile()+"/_backups");
+												long versionBackupFolderSize = Files.getSize(backupFolder);
+												_monitor.createEntry(servletContext, application.getName(), application.getVersion(), "loadApp", versionFolderSize-versionBackupFolderSize, versionFolderSize);
+											}
 
-										if(_monitor!=null && _monitor.isAlive(servletContext) && _monitor.isLoggingExceptions()) {
-											long versionFolderSize = Files.getSize(versionFolder);
-											File backupFolder = new File(versionFolder.getAbsoluteFile()+"/_backups");
-											long versionBackupFolderSize = Files.getSize(backupFolder);
-											_monitor.createEntry(servletContext, application.getName(), application.getVersion(), "loadApp", versionFolderSize-versionBackupFolderSize, versionFolderSize);
-										}
+											// put it in our collection
+											applications.put(application);
 
-										// put it in our collection
-										applications.put(application);
+										} // loadAppVersion check
 
-									}
+									} // application.xml file check
 
 								} // folder check
 
