@@ -274,6 +274,32 @@ return "<option value=''>Please select...</option>" + getControlOptions(this.gal
 	        </property>
 	        
 	        <property>
+	            <key>progressOutputControl</key>
+	            <name>Progress output</name>
+	            <visible>false</visible>
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	            <getValuesFunction>
+	                 <![CDATA[
+	                // default to the selected control if one hasn't been specified
+	                if (!this.control  && _selectedControl && _selectedControl.name) this.control = _selectedControl.id;
+	                // return the list of all controls on the page with the one for this action selected
+	                return "<option value=''>Please select...</option><optgroup label='Page'><option value='" + _page.id + "'>page</option></optgroup>" + getControlOptions(this.control);
+	               	]]>
+	            </getValuesFunction>
+	            <refreshProperties>true</refreshProperties>
+	            <helpHtml>Control to send upload progress to as a percentage.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>progressOutputControlField</key>
+	            <name>Progress output field</name>
+	            <visible>false</visible>
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <refreshProperties>true</refreshProperties>
+	            <helpHtml>Field of the control to send upload progress to as a percentage.</helpHtml>
+	        </property>
+	        
+	        <property>
 	            <key>successActions</key>
 	            <name>Success actions</name>
 	            <visible>false</visible>
@@ -1451,7 +1477,7 @@ function base64toBlob(base64Data, contentType) {
 
 var _uploadedImageNames;
 
-function uploadImages(controlIds, ev, successCallback, errorCallback) {
+function uploadImages(controlIds, ev, successCallback, errorCallback, progressOutput) {
 
 	// reset uploaded images - we'll use this later to empty the session once all images are uploaded
 	_uploadedImageNames = [];
@@ -1513,12 +1539,17 @@ function uploadImages(controlIds, ev, successCallback, errorCallback) {
 			var progress = {totalUploads:images.length, totalUploaded:0, totalErrored:0};
 			
 			// loop images to upload
-			for (var i in images) {
-				// get the image
-				var image = images[i];
+			images.forEach(function(image) {
+				image.progress = 0;
+				var onProgress = function(ev) {
+					image.progress = ev.loaded / ev.total;
+					var totalProgressPercentage = Math.round((images.reduce(function(sum, i) { return sum + i.progress; }, 0) / images.length) * 100);
+					window["setData_" + progressOutput.type](ev, progressOutput.id, progressOutput.field, progressOutput.details, totalProgressPercentage, true);
+				};
+				
 				// send it for uploading
-				uploadImage(image.url, image.dataURL, progress, ev, successCallback, errorCallback);
-			}
+				uploadImage(image.url, image.dataURL, progress, ev, successCallback, errorCallback, onProgress);
+			});
 			
 		}
 		
@@ -1526,7 +1557,7 @@ function uploadImages(controlIds, ev, successCallback, errorCallback) {
 	
 }
 
-function uploadImage(url, dataSource, progress, ev, successCallback, errorCallback) {
+function uploadImage(url, dataSource, progress, ev, successCallback, errorCallback, progressCallback) {
 
 	try {
 
@@ -1603,6 +1634,11 @@ function uploadImage(url, dataSource, progress, ev, successCallback, errorCallba
 						alert("Error uploading images: " + server.statusText||message);
 					}
 				}
+			},
+			xhr: function() {
+				var xhr = new window.XMLHttpRequest();
+				xhr.upload.addEventListener("progress", progressCallback);
+				return xhr;
 			}
 		});
 		
@@ -1777,7 +1813,7 @@ function scanQrCodeAction(callback) {
 		});
 		
 		var toggleCamera = function() {
-			noCameraWarning.style.display = "none";
+			noCameraWarning.style.visibility = "hidden";
 			
 			setFacingMode(
 				getFacingMode() === "environment" ? "user" : "environment"

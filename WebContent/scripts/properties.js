@@ -5705,6 +5705,8 @@ function Property_mobileActionType(cell, mobileAction, property, details) {
 	setPropertyVisibilty(mobileAction, "cameraSelectImage", false);
 	setPropertyVisibilty(mobileAction, "galleryControlIds", false);
 	setPropertyVisibilty(mobileAction, "barcodeDestinations", false);
+	setPropertyVisibilty(mobileAction, "progressOutputControl", false);
+	setPropertyVisibilty(mobileAction, "progressOutputControlField", false);
 	setPropertyVisibilty(mobileAction, "successActions", false);
 	setPropertyVisibilty(mobileAction, "errorActions", false);
 	setPropertyVisibilty(mobileAction, "navigateControlId", false);
@@ -5778,6 +5780,8 @@ function Property_mobileActionType(cell, mobileAction, property, details) {
 		break;
 		case "uploadImages" :
 			setPropertyVisibilty(mobileAction, "galleryControlIds", true);
+			setPropertyVisibilty(mobileAction, "progressOutputControl", true);
+			setPropertyVisibilty(mobileAction, "progressOutputControlField", true);
 			setPropertyVisibilty(mobileAction, "successActions", true);
 			setPropertyVisibilty(mobileAction, "errorActions", true);
 		break;

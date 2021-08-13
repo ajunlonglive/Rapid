@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -630,11 +630,16 @@ public class Mobile extends Action {
 
 					// remove any controls we couldn't find
 					controlIds.removeAll(removeControlIds);
-
+					
+					String ProgressOutputId = getProperty("progressOutputControl");
+					String ProgressOutputField = getProperty("progressOutputControlField");
+					Control ProgressOutput = page.getControl(ProgressOutputId);
+					String projressOutputJavaScript = "{id:'" + ProgressOutputId + "', type:'" + ProgressOutput.getType() + "', field:" + ProgressOutputField + ", details:" + ProgressOutput.getDetails() + "}";
+					
 					// if we got any urls check whether request is from a mobile - upload the images
 					js += "if (urls) { \n"
 						+ "   if (typeof _rapidmobile == 'undefined') {\n"
-						+ "      uploadImages(" + new JSONArray(controlIds) + ", ev, " + successCallback + ", " + errorCallback + ");\n"
+						+ "      uploadImages(" + new JSONArray(controlIds) + ", ev, " + successCallback + ", " + errorCallback + ", " + projressOutputJavaScript + ");\n"
 						+ "   } else {\n"
 						+ "      _rapidmobile.uploadImages('" + getId() + "', urls, " + successCallback + ", " + errorCallback + ");\n"
 						+ "   }\n"
