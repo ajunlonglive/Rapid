@@ -28,6 +28,7 @@ div#designLinks {
 	vertical-align: middle;
 	border: 0;
 	cursor: pointer;
+	display: inline;
 }
 
 .designData {

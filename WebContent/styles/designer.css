@@ -50,6 +50,10 @@ hr {
 	color: white;
 }
 
+#loadingPanel .glyph {
+	color: white;
+}
+
 #page {
 	transition: left 0.2s ease-in-out, width 0.2s ease-in-out;
 	margin: -1px;
