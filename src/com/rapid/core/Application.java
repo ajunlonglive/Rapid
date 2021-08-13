@@ -48,6 +48,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletContext;
 import javax.xml.bind.JAXBException;
@@ -1355,63 +1357,24 @@ public class Application {
     	// not found
     	return null;
 	}
-
+	
 	// scan the css for classes
-	private List<String> scanStyleClasses(String css, List<String> classes) {
-
+	private static List<String> scanStyleClasses(String css, List<String> classes) {
+		
 		// only if we got something we can use
 		if (css != null) {
-
-			// find the first .
-			int startPos = css.indexOf(".");
-
-			// if we got one
-			while (startPos >= 0) {
-
-				// find the start of the next style
-				int styleStartPos = css.indexOf("{", startPos);
-
-				// find the end of the next style
-				int styleEndPos = css.indexOf("}", startPos);
-
-				// only if we are in front of a completed style and there is a . starting before the style
-				if (styleStartPos < styleEndPos && startPos < styleStartPos) {
-
-					// find the end of the class style target by the first brace
-					int endPos = styleStartPos;
-					// if it works out
-					if (endPos > startPos) {
-						// fetch the class without the . and any trailing space
-						String styleClass = css.substring(startPos + 1, endPos).trim();
-						// remove any closing brackets
-						if (styleClass.indexOf(")") > 0) styleClass = styleClass.substring(0, styleClass.indexOf(")"));
-						// remove any colons
-						if (styleClass.indexOf(":") > 0) styleClass = styleClass.substring(0, styleClass.indexOf(":"));
-						// remove anything after a space
-						if (styleClass.indexOf(" ") > 0) styleClass = styleClass.substring(0, styleClass.indexOf(" "));
-						// remove anything after a [
-						if (styleClass.indexOf("[") > 0) styleClass = styleClass.substring(0, styleClass.indexOf("["));
-						// check we don't have it already and add it if ok - i.e. contains no other .'s (this is common for urls getting picked up here)
-						if (!classes.contains(styleClass) && styleClass.indexOf(".") < 0) classes.add(styleClass);
-					}
-
-				}
-
-				// exit here if styleEndPos is going to cause problems
-				if (styleEndPos == -1) break;
-
-				// find the next .
-				startPos = css.indexOf(".", styleEndPos);
-
+			Matcher cssClassMatcher = Pattern.compile("((\\.)|(\\[class\\s*~=\\s*))(?<className>[^\\s{\\.\\[\\]]+)").matcher(css);
+			while(cssClassMatcher.find()) {
+				String className = cssClassMatcher.group("className");
+				if (!classes.contains(className)) classes.add(className);
 			}
-
 		}
-
+		
 		// sort the classes into alphabetical order
 		Collections.sort(classes);
-
+		
 		return classes;
-
+		
 	}
 
 	// this adds resources from either a control or action, they are added to the resources collection for printing in the top of each page if they are files, or amended to the application .js or .css files

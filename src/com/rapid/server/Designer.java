@@ -1724,6 +1724,18 @@ public class Designer extends RapidHttpServlet {
 							// send it immediately
 							out.flush();
 
+						} else if ("getStyleClasses".equals(actionName)) {
+							
+							String a = request.getParameter("a");
+							String v = request.getParameter("v");
+							
+							Application application = getApplications().get(a, v);
+							List<String> classNames = application.getStyleClasses();
+							
+							JSONArray json = new JSONArray(classNames);
+							output = json.toString();
+							sendJsonOutput(response, output);
+							
 						} // action name check
 
 					} else {

@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -4852,7 +4852,7 @@ window.addEventListener("storage", function(storageEvent) {
 					location.reload();
 				}
 				break;
-			case "controlsSaved": case "actionsSaved": case "databaseConnectionSaved": case "applicationStyleSaved":
+			case "controlsSaved": case "actionsSaved": case "databaseConnectionSaved":
 				// reload the current app and keep the page we're on
 				if (!_dirty && broadcast.a === _version.id && broadcast.v === _version.version) {
 					_stayOnAppPage = $("#pageSelect").val();
@@ -4873,6 +4873,30 @@ window.addEventListener("storage", function(storageEvent) {
 					_version.showControlIds = broadcast.showControlIds;
 					_version.showActionIds = broadcast.showActionIds;
 					setIdVisibility();
+				}
+			case "applicationStyleSaved":
+				if (broadcast.a === _version.id && broadcast.v === _version.version) {
+					$.ajax({
+						url: "designer?action=getStyleClasses&a=" + _version.id + "&v=" + _version.version,
+						type: "GET",
+						contentType: "application/json",
+						dataType: "json",
+						data: null,
+						error: function(server, status, error) {
+							alert("Error loading style classes : " + error);
+						},
+						success: function(styleClasses) {
+							_styleClasses = styleClasses;
+							var select = $("#styleClasses")
+							var value = select.val();
+							select.empty();
+							select.append("<option>add...</option>")
+							_styleClasses.forEach(function(className) {
+								select.append("<option>" + className + "</option>")
+							});
+							select.val(value);
+						}
+					});
 				}
 			}
 		}

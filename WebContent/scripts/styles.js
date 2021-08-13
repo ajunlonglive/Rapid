@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2019 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -878,7 +878,7 @@ function showStyles(control) {
 				rebuildHtml(ev.data.control);				
 			}));
 			
-			classesTable.append("<tr><td colspan='2' style='padding:0; border-bottom:none;'><select class='propertiesPanelTable'></select></td></tr>");
+			classesTable.append("<tr><td colspan='2' style='padding:0; border-bottom:none;'><select id='styleClasses' class='propertiesPanelTable'></select></td></tr>");
 			// get a reference to the select
 			var addClass = classesTable.find("select").last();
 			// retain a string for the class options
