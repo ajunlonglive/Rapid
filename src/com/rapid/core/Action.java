@@ -169,8 +169,14 @@ public abstract class Action {
 
 		// if this action has comments
 		if (getProperties().containsKey("comments")) {
-			// add the comments to the message with the apostrophes escaped
-			errorSourceMessage += ("\\n\\n" + getProperty("comments").replace("'", "\\'"));
+			// get the comments
+			String comments = getProperty("comments");
+			// trim for good measure
+			comments = comments.trim();
+			// escape any quotes and new lines
+			comments = comments.replace("'", "\\'").replace("\n", "\\n");
+			// add the comments after the error message
+			errorSourceMessage += ("\\n\\n" + comments);
 		}
 
 		return errorSourceMessage.replace("'", "\'");
