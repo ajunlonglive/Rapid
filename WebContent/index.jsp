@@ -2,7 +2,7 @@
 
 /*
 
-Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -25,12 +25,15 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-//get the applications
+// get the applications
 Applications applications = (Applications) getServletContext().getAttribute("applications");
 // get the rapid app
 Application rapid = applications.get("rapid");
-//get a rapid request
-RapidRequest rapidRequest = new RapidRequest(request, rapid); 
+// get a rapid request for the rapid application
+RapidRequest rapidRequest = new RapidRequest(request, rapid);
+// get the user name
+String userName = rapidRequest.getUserName();
+
 %>
 <html>
 	<head>
@@ -149,9 +152,12 @@ $(window).on("online", function() {
 			<span style="">Rapid</span>
 		</div>
 		<div class="subBar">
-			<span class="link requiresOnline"><a href="logout.jsp">LOG OUT</a></span><% if (com.rapid.security.SecurityAdapter.hasPasswordUpdate(getServletContext())) { %>			
-			<span class="link requiresOnline"><a href="update.jsp">CHANGE PASSWORD</a></span><%} %>
-			<span class="versionColumn"><%=com.rapid.server.Rapid.VERSION %></span>
+			<span class="link requiresOnline"><a href="logout.jsp">LOG OUT</a></span>
+<%			// public users should not be able to change the password 		
+			if (!"public".equalsIgnoreCase(userName) && com.rapid.security.SecurityAdapter.hasPasswordUpdate(getServletContext())) {
+%>			<span class="link requiresOnline"><a href="update.jsp">CHANGE PASSWORD</a></span>
+<%			} 
+%>			<span class="versionColumn"><%=com.rapid.server.Rapid.VERSION %></span>
 		</div>
 
 		<div class="body">
@@ -163,8 +169,8 @@ $(window).on("online", function() {
 			// get the rapid application security
 			SecurityAdapter securityAdapter = rapid.getSecurityAdapter();
 			
-			// check the user password in the rapid application
-			if (securityAdapter.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRequest.getUserPassword())) {
+			// check the user is not public and then the password in the rapid application
+			if (!"public".equalsIgnoreCase(userName) && securityAdapter.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRequest.getUserPassword())) {
 		
 				// check for any of the offical roles
 				if (securityAdapter.checkUserRole(rapidRequest, com.rapid.server.Rapid.ADMIN_ROLE) || securityAdapter.checkUserRole(rapidRequest, com.rapid.server.Rapid.DESIGN_ROLE) || securityAdapter.checkUserRole(rapidRequest, com.rapid.server.Rapid.USERS_ROLE) || securityAdapter.checkUserRole(rapidRequest, com.rapid.server.Rapid.SUPER_ROLE)) {
