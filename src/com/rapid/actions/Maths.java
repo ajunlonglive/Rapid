@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -163,25 +163,15 @@ public class Maths extends Action {
      				// append argument value
 					String argName = "v" + (i + 1);
 					js += "var " + argName + " = " + Control.getDataJavaScript(rapidRequest.getRapidServlet().getServletContext(), application, page, itemId, itemField) + ";\n";
-					js += "var " + argName + "Num = parseFloat(" + argName + ");\n";
-					js += "if (" + argName + "Num.toString() === " + argName + ") " + argName + " = " + argName + "Num;\n";
      				// append parameter name (all with comma and space)
      				String inputField = input.getInputField();
      				
-     				if (inputField.isEmpty()) {
-     					arguments += (i == 0 ? "" : ", ") + argName;
-     					parameters += "'" + argName + "', ";
-     				} else {
-     					arguments += (i == 0 ? "" : ", ") + argName + ", " + argName;
-         				parameters += "'" + inputField + "', '" + argName + "', ";
-     				}
+     				arguments += (i == 0 ? "" : ", ") + argName;
+     				parameters += (i == 0 ? "" : ", ") + (inputField.isEmpty() ? argName : inputField);
      			}
-     	     	
-     			String functionName = "window[\"customMaths" + getId() + "\"]";
      			
      			js += "try {\n";
-     			js += "    " + functionName + " = " + functionName + " || new Function(" + parameters + "'" + customOperation + "');\n";
-     			js += "    data = " + functionName + "(" + arguments + ");\n";
+     			js += "    data = (function(" + parameters + ") { " + customOperation + " })(" + arguments + ");\n";
      			js += "} catch (ex) {\n";
      			js += "    alert('Error in maths action: ' + ex);\n";
      			js += "}\n";
