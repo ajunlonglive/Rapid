@@ -2,7 +2,7 @@
 
 /*
 
-Copyright (C) 2018 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -53,37 +53,38 @@ String message = (String) session.getAttribute("message");
 
 <div class="body">
 
-		<div class="columnMiddle">
+	<div class="columnMiddle">
 
-			<form name="login" id="RapidLogin" method="post">
-			
-				<div class="row">
-					<div class="columnUserInput">
-						<div class="columnUserIcon" style="">
-							<span class="fa fa-user" style=""></span>
-						</div>
-						<input type="text" placeholder="Username" name="userName" autocomplete="username" required="required">
+		<form name="login" id="RapidLogin" method="post">
+		
+			<div class="row">
+				<div class="columnUserInput">
+					<div class="columnUserIcon" style="">
+						<span class="fa fa-user" style=""></span>
 					</div>
+					<input type="text" placeholder="Username" name="userName" autocomplete="username" required="required">
 				</div>
+			</div>
+			
+			<div class="row">
+				<div class="columnUserIcon"><span class="fa fa-lock"></span></div>
+				<div class="columnUserInput"><input type="password" placeholder="Password" name="userPassword" autocomplete="current-password"></div>
+			</div>
+			<input type='hidden' name='csrfToken' value='<%=RapidRequest.getCSRFToken(session) %>' />
+			<button type="submit"><i class="fas fa-sign-in-alt"></i>Log in</button>
+			
+		</form>
 				
-				<div class="row">
-					<div class="columnUserIcon"><span class="fa fa-lock"></span></div>
-					<div class="columnUserInput"><input type="password" placeholder="Password" name="userPassword" autocomplete="current-password"></div>
-				</div>
-				<input type='hidden' name='csrfToken' value='<%=RapidRequest.getCSRFToken(session) %>' />
-				<button type="submit"><i class="fas fa-sign-in-alt"></i>Log in</button>
-				
-			</form>
-				
-			<% 
-			if (message != null) {
-			%>
-				<p class="message"><%=message %></p>
-			<%	
-				session.setAttribute("message", null);
-			}
-			%>
-		</div>	
+<% 
+if (message != null) {
+%>
+	<p class="message"><%=message %></p>
+<%	
+	// empty the message
+	session.setAttribute("message", null);
+}
+%>
+	</div>	
 	
 </div>
 
