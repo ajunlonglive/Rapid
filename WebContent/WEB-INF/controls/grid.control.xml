@@ -1677,7 +1677,7 @@ if (_gridLoaders[id] && _gridLoaders[id].loading) {
 		// make sure it's a table
 		if (!grid.is("table")) grid = grid.find("table").last();
 		// return number of rows
-		return grid.find("tr").length - 1;
+		return Math.max(0, grid.find("tr").length - 1).toString();
 	}
 }
 			        ]]>	  	   	            

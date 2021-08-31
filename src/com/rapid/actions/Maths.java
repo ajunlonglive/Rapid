@@ -158,11 +158,23 @@ public class Maths extends Action {
      			
      			for (int i = 0; i < _inputs.size(); i++) {
 					Input input = _inputs.get(i);
-					String itemId = input.getItemId();
+					String inputId = input.getItemId();
+					String[] idParts = inputId.split("\\.");
+					String itemId = idParts[0];
+					String property = idParts.length > 1 ? idParts[1] : "";
 					String itemField = input.getField();
      				// append argument value
 					String argName = "v" + (i + 1);
-					js += "var " + argName + " = " + Control.getDataJavaScript(rapidRequest.getRapidServlet().getServletContext(), application, page, itemId, itemField) + ";\n";
+					Control inputControl = page.getControl(itemId);
+					String parse = "";
+					String parseEnd = "";
+					boolean inputIsNumberInput = inputControl != null && inputControl.getType().toLowerCase().contains("input") && "Num".equals(inputControl.getProperty("controlType"));
+					boolean inputIsGridRowCount = inputControl != null && inputControl.getType().toLowerCase().equals("grid") && "rowCount".equals(property);
+					if (inputIsNumberInput || inputIsGridRowCount) {
+						parse = "parseFloat(";
+						parseEnd = ")";
+					}
+					js += "var " + argName + " = " + parse + Control.getDataJavaScript(rapidRequest.getRapidServlet().getServletContext(), application, page, inputId, itemField) + parseEnd + ";\n";
      				// append parameter name (all with comma and space)
      				String inputField = input.getInputField();
      				

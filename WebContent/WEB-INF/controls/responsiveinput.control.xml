@@ -264,9 +264,7 @@ if (this.responsiveLabel) {
 	    
 	    <getDataFunction>
 	        <![CDATA[
-var input = $("#" + id).find("input,textarea");
-if (input.attr("type") === "number") return parseFloat(input.val());
-else return input.val();
+return $("#" + id).find("input,textarea").val();
 			]]>
 	    </getDataFunction>
 	    
