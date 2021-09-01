@@ -347,10 +347,12 @@ if (this.responsiveLabel) {
 		
 		<getDetailsFunction>
 	 		<![CDATA[
+var optionsData = makeDataObject(this.options);
+
 if (this.filter) {
-	return {codes:this.codes, filter:this.filter, placeholder:this.placeholder, customValue:this.customValue, maxLength:this.maxLength};
+	return {codes:this.codes, filter:this.filter, placeholder:this.placeholder, customValue:this.customValue, maxLength:this.maxLength, options:optionsData };
 } else {
-	return {codes:this.codes};
+	return {codes:this.codes, options:optionsData };
 }
 			]]>
 		</getDetailsFunction>
@@ -359,8 +361,12 @@ if (this.filter) {
 			<![CDATA[
 // if this is a searchable dropdown with a custom value
 if (details && !details.codes && details.customValue) {
-	// return the value from the search input
-	return $("#" + id).find("input").val();
+	if (!field || field === "value") {
+		// return the value from the search input
+		return $("#" + id).find("input").val();
+	} else {
+		return null;
+	}
 } else {
 	// get the control
 	var control = $("#" + id).find("select");
@@ -368,9 +374,20 @@ if (details && !details.codes && details.customValue) {
 	var setValue = control.attr("data-value");
 	// if the was one, and there is 1 child or fewer
 	if (setValue && control.children().length <= 1) {
-		// return the pre-set value
-		return setValue;
+		if (!field || field === "value") {
+			// return the pre-set value
+			return setValue;
+		} else {
+			return null;
+		}
 	} else {
+		if (field) {
+			var selectedIndex = control.prop('selectedIndex');
+			if (selectedIndex === -1) return null;
+			var option = details.options.rows[selectedIndex];
+			var fieldIndex = details.options.fields.indexOf(field);
+			return option[fieldIndex];
+		}
 		// return the selected value
 		return control.val();
 	}
@@ -389,6 +406,7 @@ if (data !== undefined) {
 		$("#" + id).find("input").val("");
 		// remove any preset value
 		control.removeAttr("data-value");
+		details.options.fields = details.options.rows = [];
 	} else {
 		data = makeDataObject(data, field);
 		if (data.rows && data.fields) {
@@ -427,6 +445,21 @@ if (data !== undefined) {
 				// trigger change events
 				if (changeEvents) control.trigger("change");
 			} else {
+				// data is options
+				var newFields = data.fields.filter(function(field) { return details.options.fields.indexOf(field) === -1; });
+				details.options.fields = details.options.fields.concat(newFields)
+				details.options.rows.forEach(function(row) {
+					row.length = details.options.fields.length;
+					row.fill("", details.options.fields.length - newFields.length);
+				});
+				data.rows.forEach(function(row) {
+					var newRow = details.options.fields.map(function(field) {
+						var fieldIndex = data.fields.indexOf(field);
+						if (fieldIndex === -1) return "";
+						return row[fieldIndex];
+					});
+					details.options.rows.push(newRow);
+				});
 				// html we are creating
 				var html = "";
 				// assume no last group
