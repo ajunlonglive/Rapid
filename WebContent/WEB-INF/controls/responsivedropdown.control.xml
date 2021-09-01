@@ -382,6 +382,8 @@ if (details && !details.codes && details.customValue) {
 		}
 	} else {
 		if (field) {
+			if (!details) details = {};
+			if (!details.options) details.options = { fields: [], rows: [] };
 			var selectedIndex = control.prop('selectedIndex');
 			if (selectedIndex === -1) return null;
 			var option = details.options.rows[selectedIndex];
@@ -406,6 +408,8 @@ if (data !== undefined) {
 		$("#" + id).find("input").val("");
 		// remove any preset value
 		control.removeAttr("data-value");
+		if (!details) details = {};
+		if (!details.options) details.options = { fields: [], rows: [] };
 		details.options.fields = details.options.rows = [];
 	} else {
 		data = makeDataObject(data, field);
@@ -445,6 +449,8 @@ if (data !== undefined) {
 				// trigger change events
 				if (changeEvents) control.trigger("change");
 			} else {
+				if (!details) details = {};
+				if (!details.options) details.options = { fields: [], rows: [] };
 				// data is options
 				var newFields = data.fields.filter(function(field) { return details.options.fields.indexOf(field) === -1; });
 				details.options.fields = details.options.fields.concat(newFields)
