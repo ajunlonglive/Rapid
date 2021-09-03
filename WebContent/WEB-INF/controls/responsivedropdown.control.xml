@@ -347,12 +347,10 @@ if (this.responsiveLabel) {
 		
 		<getDetailsFunction>
 	 		<![CDATA[
-var optionsData = makeDataObject(this.options);
-
 if (this.filter) {
-	return {codes:this.codes, filter:this.filter, placeholder:this.placeholder, customValue:this.customValue, maxLength:this.maxLength, options:optionsData };
+	return {codes:this.codes, filter:this.filter, placeholder:this.placeholder, customValue:this.customValue, maxLength:this.maxLength};
 } else {
-	return {codes:this.codes, options:optionsData };
+	return {codes:this.codes};
 }
 			]]>
 		</getDetailsFunction>
@@ -382,13 +380,13 @@ if (details && !details.codes && details.customValue) {
 		}
 	} else {
 		if (field) {
-			if (details && details.options) options = details.options;
-			else options = { fields: [], rows: [] };
-			var selectedIndex = control.prop('selectedIndex');
-			if (selectedIndex === -1) return null;
-			var option = options.rows[selectedIndex];
-			var fieldIndex = options.fields.indexOf(field);
-			return option[fieldIndex];
+			if (details && details.options) {
+				var selectedIndex = control.prop('selectedIndex');
+				if (selectedIndex === -1) return null;
+				var option = details.options.rows[selectedIndex];
+				var fieldIndex = details.options.fields.indexOf(field);
+				return option[fieldIndex];
+			}
 		}
 		// return the selected value
 		return control.val();
@@ -408,9 +406,7 @@ if (data !== undefined) {
 		$("#" + id).find("input").val("");
 		// remove any preset value
 		control.removeAttr("data-value");
-		if (details && details.options) {
-			details.options.fields = details.options.rows = [];
-		}
+		details.options = null;
 	} else {
 		data = makeDataObject(data, field);
 		if (data.rows && data.fields) {
@@ -449,23 +445,25 @@ if (data !== undefined) {
 				// trigger change events
 				if (changeEvents) control.trigger("change");
 			} else {
-				if (details && details.options) options = details.options;
-				else options = { fields: [], rows: [] };
 				// data is options
-				var newFields = data.fields.filter(function(field) { return options.fields.indexOf(field) === -1; });
-				options.fields = options.fields.concat(newFields)
-				options.rows.forEach(function(row) {
-					row.length = options.fields.length;
-					row.fill("", options.fields.length - newFields.length);
-				});
-				data.rows.forEach(function(row) {
-					var newRow = options.fields.map(function(field) {
-						var fieldIndex = data.fields.indexOf(field);
-						if (fieldIndex === -1) return "";
-						return row[fieldIndex];
+				if ((details && details.options) || data.fields.length > 2) {
+					if (!details) details = {};
+					if (!details.options) details.options = { fields: [], rows: [] }; // GET OLD OPTIONS ! ! ! ! ! !
+					var newFields = data.fields.filter(function(field) { return details.options.fields.indexOf(field) === -1; });
+					details.options.fields = details.options.fields.concat(newFields)
+					details.options.rows.forEach(function(row) {
+						row.length = details.options.fields.length;
+						row.fill("", details.options.fields.length - newFields.length);
 					});
-					options.rows.push(newRow);
-				});
+					data.rows.forEach(function(row) {
+						var newRow = details.options.fields.map(function(field) {
+							var fieldIndex = data.fields.indexOf(field);
+							if (fieldIndex === -1) return "";
+							return row[fieldIndex];
+						});
+						details.options.rows.push(newRow);
+					});
+				}
 				// html we are creating
 				var html = "";
 				// assume no last group
