@@ -717,6 +717,12 @@ td.styleCell.validationFail {
 	background-color: silver;
 }
 
+a.button {
+	text-decoration: none;
+	padding: 5px 20px !important;
+	display: inline-block;
+}
+
 div.button {
 	margin-left: -10px;
 	margin-right: -10px;	

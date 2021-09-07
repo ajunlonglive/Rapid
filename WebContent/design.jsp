@@ -156,12 +156,24 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 			<div id="controlPanelSize" ></div>
 															
 			<div id="controlPanelInner">
-																
+			
+<% 
+			// check for any of the offical roles that allow access to Rapid Admin
+			if (security.checkUserRole(rapidRequest, com.rapid.server.Rapid.ADMIN_ROLE) || security.checkUserRole(rapidRequest, com.rapid.server.Rapid.USERS_ROLE) || security.checkUserRole(rapidRequest, com.rapid.server.Rapid.SUPER_ROLE)) {
+%>												
 				<div id="adminButtons" class="buttons">					
 					<button id="appAdmin" class="buttonLeft" title="Open the Rapid Admin screen">Rapid Admin</button>
 					<button id="appAdminNewTab" class="buttonRight buttonImage" title="Open the Rapid Admin screen in a new tab"></button>
-				</div>
-				
+				</div>		
+<%
+			} else {
+%>
+				<div id="adminButtons" class="buttons">					
+					<a id="appIndex" class="button" title="Open the home screen" href=".">Home</a>
+				</div>	
+<%				
+			}
+%>				
 				<h2 style="">Application<i id="helpApplication" class="headerHelp glyph fas hintIcon">&#Xf059;</i></h2>
 				<select id="appSelect">
 					<!-- Applications are added here as options the designer loads -->
