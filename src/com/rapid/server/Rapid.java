@@ -958,7 +958,7 @@ public class Rapid extends RapidHttpServlet {
 
 												if ("rapid".equals(app.getId())) {
 													// must have one of the official Rapid roles to see Rapid Admin
-													canAdd = security.checkUserRole(rapidRequest, Rapid.ADMIN_ROLE) || security.checkUserRole(rapidRequest, Rapid.DESIGN_ROLE) || security.checkUserRole(rapidRequest, Rapid.USERS_ROLE) || security.checkUserRole(rapidRequest, Rapid.SUPER_ROLE);
+													canAdd = security.checkUserRole(rapidRequest, Rapid.ADMIN_ROLE) || security.checkUserRole(rapidRequest, Rapid.USERS_ROLE) || security.checkUserRole(rapidRequest, Rapid.SUPER_ROLE);
 												}
 
 												if (canAdd) {
