@@ -78,8 +78,14 @@ function getDesignDataTable(data) {
 			for (var k = 0; k <= i; k++) {
 				// get the contents at this position
 				var d = data.rows[j][k];
-				// if it's an object with it's own fields and rows, get it's own table!
-				if (d && d.fields && d.rows) d = getDesignDataTable(d);
+				// if it's an object 
+				if (d) {				
+					// with it's own fields and rows, get it's own table!
+					if (d.fields && d.rows) 
+						d = getDesignDataTable(d);
+					else if ($.type(d) == "array" || $.type(d) == "object")
+						d = JSON.stringify(d);
+				}
 				// add the cell contents
 				table += "<td>" +  d + "</td>";
 			}
