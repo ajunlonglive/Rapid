@@ -894,6 +894,9 @@ public class RapidServletContextListener implements ServletContextListener {
 							loadAppVersion = loadApp.substring(loadApp.indexOf("[") + 1, loadApp.indexOf("]"));
 							// remove from loadApp
 							loadApp = loadApp.substring(0, loadApp.indexOf("["));
+						} else {
+							// set load app version back to null to not affect further entries
+							loadAppVersion = null;
 						}
 						// check for loadApp ending in wildcard matching start of appFolderName
 						if (loadApp.endsWith("*") && appFolderName.startsWith(loadApp.substring(0, loadApp.length() - 1))) {
