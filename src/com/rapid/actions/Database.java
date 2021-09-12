@@ -510,7 +510,7 @@ public class Database extends Action {
 			// if we have an offline page
 			if (offlinePage != null) {
 				// update defaultErrorHandler to navigate to offline page, if we have the navigate action, and we know we're offline, or it looks like we must be
-				defaultErrorHandler = "if (Action_navigate && !(typeof _rapidmobile == 'undefined' ? navigator.onLine : _rapidmobile.isOnline() && server.getAllResponseHeaders())) {\n          Action_navigate('~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + offlinePage + "&action=dialogue',true,'" + getId() + "');\n        } else {\n          " + defaultErrorHandler + "\n        }";
+				defaultErrorHandler = "if (Action_navigate && !(typeof _rapidmobile == 'undefined' ? navigator.onLine && server.getAllResponseHeaders() : _rapidmobile.isOnline())) {\n          Action_navigate('~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + offlinePage + "&action=dialogue',true,'" + getId() + "');\n        } else {\n          " + defaultErrorHandler + "\n        }";
 				// remove the offline page so we don't interfere with actions down the tree
 				jsonDetails.remove("offlinePage");
 			}
