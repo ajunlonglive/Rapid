@@ -1,136 +1,202 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?><application><actionTypes>control</actionTypes><actionTypes>custom</actionTypes><actionTypes>dataCopy</actionTypes><actionTypes>database</actionTypes><actionTypes>event</actionTypes><actionTypes>existing</actionTypes><actionTypes>logic</actionTypes><actionTypes>mobile</actionTypes><actionTypes>navigate</actionTypes><actionTypes>validation</actionTypes><actionTypes>webservice</actionTypes><controlTypes>button</controlTypes><controlTypes>calendar</controlTypes><controlTypes>checkbox</controlTypes><controlTypes>dataStore</controlTypes><controlTypes>dropdown</controlTypes><controlTypes>flowLayout</controlTypes><controlTypes>gallery</controlTypes><controlTypes>glyph</controlTypes><controlTypes>grid</controlTypes><controlTypes>hints</controlTypes><controlTypes>image</controlTypes><controlTypes>input</controlTypes><controlTypes>link</controlTypes><controlTypes>map</controlTypes><controlTypes>pagePanel</controlTypes><controlTypes>panel</controlTypes><controlTypes>radiobuttons</controlTypes><controlTypes>signature</controlTypes><controlTypes>slidePanel</controlTypes><controlTypes>tabGroup</controlTypes><controlTypes>table</controlTypes><controlTypes>text</controlTypes><createdBy>admin</createdBy><createdDate>2014-08-27T10:45:44.906+01:00</createdDate><databaseConnections><connectionAdapterClass>com.rapid.data.SimpleConnectionAdapter</connectionAdapterClass><connectionString>jdbc:sqlite:[[rootfolder]]/database/rapidsample.db</connectionString><driverClass>org.sqlite.JDBC</driverClass><name>Demo connection</name><password></password><userName></userName></databaseConnections><description>This is a demonstration application provided to showcase many Rapid Mobile features</description><id>mobdemo</id><modifiedBy>admin</modifiedBy><modifiedDate>2016-02-04T16:00:56.946Z</modifiedDate><name>mobdemo</name><pageBackupsMaxSize>3</pageBackupsMaxSize><pageOrders/><securityAdapterType>rapid</securityAdapterType><showActionIds>false</showActionIds><showControlIds>false</showControlIds><startPageId>P3</startPageId><status>0</status><statusBarColour>#1e5799</statusBarColour><statusBarHighlightColour>#105090</statusBarHighlightColour><statusBarIconColour>white</statusBarIconColour><statusBarTextColour>#eeeeff</statusBarTextColour><styles>/*
-Styles saved here will be applied to all pages in the application
-*/
-
-html {
-  height: 100%;
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?><application><actionTypes>control</actionTypes><actionTypes>custom</actionTypes><actionTypes>dataCopy</actionTypes><actionTypes>database</actionTypes><actionTypes>email</actionTypes><actionTypes>existing</actionTypes><actionTypes>logic</actionTypes><actionTypes>mobile</actionTypes><actionTypes>navigate</actionTypes><actionTypes>validation</actionTypes><actionTypes>webservice</actionTypes><controlTypes>page</controlTypes><controlTypes>button</controlTypes><controlTypes>calendar</controlTypes><controlTypes>dataStore</controlTypes><controlTypes>flowLayout</controlTypes><controlTypes>gallery</controlTypes><controlTypes>glyph</controlTypes><controlTypes>grid</controlTypes><controlTypes>image</controlTypes><controlTypes>link</controlTypes><controlTypes>map</controlTypes><controlTypes>pagePanel</controlTypes><controlTypes>panel</controlTypes><controlTypes>responsivebutton</controlTypes><controlTypes>responsivecheckbox</controlTypes><controlTypes>responsivedate</controlTypes><controlTypes>responsivedropdown</controlTypes><controlTypes>responsiveinput</controlTypes><controlTypes>responsivepanel</controlTypes><controlTypes>responsiveradiobuttons</controlTypes><controlTypes>responsivetext</controlTypes><controlTypes>signature</controlTypes><controlTypes>slidePanel</controlTypes><controlTypes>text</controlTypes><controlTypes>flowLayoutCell</controlTypes><controlTypes>slidePanelPane</controlTypes><createdBy>admin</createdBy><createdDate>2021-09-12T07:33:35.124+01:00</createdDate><databaseConnections><connectionAdapterClass>com.rapid.data.SimpleConnectionAdapter</connectionAdapterClass><connectionString>jdbc:sqlite:[[rootfolder]]/database/rapidsample.db</connectionString><driverClass>org.sqlite.JDBC</driverClass><name>Demo connection</name><password></password><userName></userName></databaseConnections><description></description><deviceSecurity>false</deviceSecurity><formAdapterType></formAdapterType><formDisableAutoComplete>false</formDisableAutoComplete><formEmail>false</formEmail><formEmailAttachmentType></formEmailAttachmentType><formEmailCustomer>false</formEmailCustomer><formEmailCustomerAttachmentType></formEmailCustomerAttachmentType><formEmailCustomerBody></formEmailCustomerBody><formEmailCustomerControlId></formEmailCustomerControlId><formEmailCustomerSubject></formEmailCustomerSubject><formEmailCustomerType>T</formEmailCustomerType><formEmailFrom></formEmailFrom><formEmailTo></formEmailTo><formFile>false</formFile><formFilePassword></formFilePassword><formFilePath></formFilePath><formFileType></formFileType><formFileUserName></formFileUserName><formShowSummary>true</formShowSummary><formWebservice>false</formWebservice><formWebserviceSOAPAction></formWebserviceSOAPAction><formWebserviceType></formWebserviceType><formWebserviceURL></formWebserviceURL><id>mobdemo</id><isForm>false</isForm><isHidden>false</isHidden><modifiedBy>admin</modifiedBy><modifiedDate>2021-09-12T07:33:35.484+01:00</modifiedDate><name>mobdemo</name><pageBackupsMaxSize>3</pageBackupsMaxSize><pageNameIds>false</pageNameIds><pageOrders/><securityAdapterType>rapid</securityAdapterType><showActionIds>false</showActionIds><showControlIds>false</showControlIds><startPageId>P1</startPageId><status>0</status><statusBarColour>#666666</statusBarColour><statusBarHighlightColour>#999999</statusBarHighlightColour><statusBarIconColour>white</statusBarIconColour><statusBarTextColour>#ffffff</statusBarTextColour><styles>* {
+  cursor: default;
 }
 
 body {
-  font-family : 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;
-  font-size : 18px;
-  margin: 0;
-  background: linear-gradient(#fff, #fff 75%, rgba(170, 204, 238, 0.59)) fixed;
-}	
-
-table {
-  font-family : 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;
-  font-size : 18px;
+  background: white;
 }
 
-input {
-	font-size: 18px;
-	padding: 8px;
-	border: 1px solid #888;
-	border-radius: 10px;
-	box-shadow: inset -2px 2px 5px 0px #bcd;
-	box-sizing: border-box;																				 
-	width: 100%;
-	margin: 1px;
-}
-
-input:focus {
-	border: 2px solid black;
-	border-radius: 10px;
-	box-shadow: inset -2px 2px 5px 0px #aaa; 
-	outline:none;
-	margin: 0;
-}
-
-button {
-  font-size: 18px;
-  font-family : 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;
-  color: white;
-  box-shadow: inset -2px 2px 10px 0px #ace;
-  background: linear-gradient(to bottom, #1e5799 0%, #2989d8 50%, #207cca 100%);	
-  background-color: #2989d8;	
-  border-radius: 10px;	
-  border:1px solid #005;	
-  display: inline-block;	
-  cursor: pointer;
-  padding: 7px 25px;	
-  text-decoration: none;	
-  text-shadow: 0px 1px 0px #000;
-}
-
-
-button:hover {	
-  background: linear-gradient(to top, #1e5799 0%, #2989d8 50%, #207cca 100%);	
-  background-color: #207cca;
-}
-
-
-button:active {	
-  position:relative;	
-  top:1px;
-}
-
-button:focus {
-	outline:none;
-}
-
-.cellLabel {
-	font-size: 18px;
-	min-width: 120px;	
-}
-
-.titleBar {
- background-color: rgb(30,87,153); /* Old browsers */
- background: -moz-linear-gradient(top, rgba(30,87,153,1) 0%, rgba(41,137,216,1) 50%, rgba(32,124,202,1) 51%, rgba(125,185,232,1) 100%); /* FF3.6+ */
- background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(30,87,153,1)), color-stop(50%,rgba(41,137,216,1)), color-stop(51%,rgba(32,124,202,1)), color-stop(100%,rgba(125,185,232,1))); /* Chrome,Safari4+ */
- background: -webkit-linear-gradient(top, rgba(30,87,153,1) 0%,rgba(41,137,216,1) 50%,rgba(32,124,202,1) 51%,rgba(125,185,232,1) 100%); /* Chrome10+,Safari5.1+ */
- background: -o-linear-gradient(top, rgba(30,87,153,1) 0%,rgba(41,137,216,1) 50%,rgba(32,124,202,1) 51%,rgba(125,185,232,1) 100%); /* Opera 11.10+ */
- background: -ms-linear-gradient(top, rgba(30,87,153,1) 0%,rgba(41,137,216,1) 50%,rgba(32,124,202,1) 51%,rgba(125,185,232,1) 100%); /* IE10+ */
- background: linear-gradient(to bottom, rgba(30,87,153,1) 0%,rgba(41,137,216,1) 50%,rgba(32,124,202,1) 51%,rgba(125,185,232,1) 100%); /* W3C */
+body, .form-control {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  background: #f0f1f3;
 }
 
 .titleText {
- z-index: 100;
+ z-index: 99;
  position: absolute;
  top: 0;
  left: 0;
- padding-top: 12px;
+ padding-top: 10px;
  text-align: center;
  width: 100%;
  color: white;
  font-weight: bold;
- font-size: 20;
- text-shadow: 2px 2px 2px #000;
+ font-size: 20px;
+}
+
+h1 {
+  font-weight: 700;
 }
 
 .menuItem {
-  padding: 10px;
-  border-bottom: 1px solid black;
-  cursor: pointer;
-  background: -moz-linear-gradient(left,  rgba(0,0,0,0) 85%, rgba(108,174,226,0.5) 100%);
-  background: -o-linear-gradient(left,  rgba(0,0,0,0) 85%, rgba(108,174,226,0.5) 100%);
-  background: -ms-linear-gradient(left,  rgba(0,0,0,0) 85%, rgba(108,174,226,0.5) 100%);
-  background: linear-gradient(to right,  rgba(0,0,0,0) 85%, rgba(108,174,226,0.5) 100%);
+ padding: 10px;
 }
 
-div.dialogue {
-  background-color: rgba(1,1,1,0);
+.menuItem:hover {
+  color: white;
+  background: #0066b8;
 }
 
-.dialogueCover {
-  background-color : #888;
-  opacity:0.7;
-  filter:alpha(opacity=70);
-}
-
-div.validation {
- font-size: 12px;
- margin: 10px 10px 10px 0px;
- padding: 6px 10px 5px 25px;	
- background: url(../../images/alert_16x16.png) 5px 5px no-repeat;
- border: 1px solid red;
- border-radius: 5px;
- max-width: 200px;
-}
-
-input.validation {
-  border: 2px solid red;
+.form-control {
+  transition: border-color 0.3s;
+  padding: 0px 6px 3px;
   border-radius: 5px;
-  box-shadow: 1px 1px 2px;
+  border-color: #ddd;
+  background: white;
 }
-</styles><themeType></themeType><title>Rapid Mobile demo</title><version>1</version><XMLVersion>1</XMLVersion></application>
+
+.form-control:focus {
+  border-color: #d00;
+}
+
+.r-inputbox label, .r-date label {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+button.btn {
+  transition: filter 0.3s, box-shadow 0.3s;
+  border: none;
+  background: white;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1), 0 0 2px rgba(0, 0, 0, 0.2);
+  padding: 0 10px;
+  min-width: 45px;
+  font-weight: 700;
+  height: 35px;
+}
+
+button.btn:hover {
+  transition: none;
+  filter: brightness(120%);
+  box-shadow: 0 6px 10px rgba(0,0,0,0.1), 0 0 2px rgba(0, 0, 0, 0.2);
+}
+
+button.btn:active {
+  transition: none;
+  filter: brightness(90%);
+  box-shadow: none;
+}
+
+.grid tr:first-child {
+  font-weight: 600;
+}
+
+.grid tr:nth-child(2n-1) {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.grid tr:hover:not(:first-child) {
+  background: #0066b8;
+  color: white;
+}
+
+.grid td {
+  padding: 8px;
+}
+
+.grid td:not(:last-child) {
+  border-right: solid 1px rgba(0, 0, 0, 0.08);
+}
+
+#cameraVideoContainer {
+  z-index: 101;
+}
+
+.signature {
+  border: 1px solid #ccc;
+  box-shadow: 0 8px 12px 2px rgba(0, 0, 0 0.1);
+}
+
+.slidePanelCover, .dialogueCover {
+  background-color: #000;
+  opacity: 0.2;
+}
+
+.slidePanelPane, .dialogue {
+  border: none;
+  box-shadow: 0 0 12px 6px rgba(0, 0, 0, 0.1);
+}
+
+.slidePanelPane {
+  background-color: rgba(255,255,255,0.9);
+}
+
+.slidePanelPane .glyph {
+  font-size: 20px;
+}
+
+div.slidePanelOpen {
+    margin-left: 0;
+}
+
+.slidePanelPane + .r-panel {
+  background: #606369 !important;
+}
+
+.slidePanelPane &gt; .r-panel:first-child {
+  background: none !important;
+}
+
+.slidePanel &gt; .fa-bars {
+  cursor: pointer;
+}
+
+.slidePanelOpen &gt; .fa-bars {
+  color: black;
+}
+			
+div.ui-datepicker {
+	box-shadow: 0 3px 10px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,0,0,0.1);
+}
+
+div.ui-datepicker div.ui-datepicker-header {
+	background: white;
+	border: none;
+}
+
+.ui-datepicker tr:first-child {
+	border: none !important;
+}
+
+.ui-datepicker tr:not(:last-child) td:not(ui-state-disabled) {
+	border-bottom: solid 1px #ddd;
+}
+
+div.ui-datepicker thead th {
+	background: #ddd;
+	padding: 0;
+	border-top: 1px solid #ddd !important;
+}
+
+div.ui-datepicker thead th&gt;span {
+	color: black;
+	text-shadow: none;
+}
+
+.ui-datepicker td {
+	border: none;
+}
+
+.ui-datepicker td a.ui-state-default {
+	background: #eee;
+	box-shadow: none;
+	text-shadow: none;
+}
+
+.ui-datepicker-today a.ui-state-highlight {
+ 	background: gray !important;
+	color: white !important;
+	box-shadow: none !important;
+}
+
+.ui-datepicker-current-day a.ui-state-active {
+	    background: darkred !important;
+	    box-shadow: none !important;
+}
+
+.ui-datepicker-current-day a {
+	color: white !important;
+	text-shadow: none !important;
+	box-shadow: none !important;
+}</styles><themeType>responsive</themeType><title>Rapid Mobile demo</title><version>1</version><XMLVersion>1</XMLVersion></application>
