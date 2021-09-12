@@ -499,7 +499,7 @@ public class Database extends Action {
 			// hide the loading javascript (if applicable)
 			if (_showLoading) js += "    " + getLoadingJS(page, outputs, false);
 
-			// this avoids doing the errors if the page is unloading or the back button was pressed
+			// this avoids doing the errors if the page is unloading or the back button was pressed, unless we know we're offline
 			js += "    if (server.readyState > 0 || !navigator.onLine) {\n";
 
 			// retain if error actions
@@ -509,8 +509,8 @@ public class Database extends Action {
 			String defaultErrorHandler = "alert('Error with database action" + errorSourceMessage(application, control) + "\\n\\n' + server.responseText||message);";
 			// if we have an offline page
 			if (offlinePage != null) {
-				// update defaultErrorHandler to navigate to offline page
-				defaultErrorHandler = "if (Action_navigate && !(typeof _rapidmobile == 'undefined' ? navigator.onLine : _rapidmobile.isOnline())) {\n          Action_navigate('~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + offlinePage + "&action=dialogue',true,'" + getId() + "');\n        } else {\n          " + defaultErrorHandler + "\n        }";
+				// update defaultErrorHandler to navigate to offline page, if we have the navigate action, and we know we're offline, or it looks like we must be
+				defaultErrorHandler = "if (Action_navigate && !(typeof _rapidmobile == 'undefined' ? navigator.onLine : _rapidmobile.isOnline() || server.getAllResponseHeaders())) {\n          Action_navigate('~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + offlinePage + "&action=dialogue',true,'" + getId() + "');\n        } else {\n          " + defaultErrorHandler + "\n        }";
 				// remove the offline page so we don't interfere with actions down the three
 				jsonDetails.remove("offlinePage");
 			}
