@@ -140,21 +140,28 @@ public abstract class Process extends Thread {
 		String start = durationJSON.optString("start");
 		String stop = durationJSON.optString("stop");
 		
-		processXML.add(
-			new XMLGroup("duration")
-			.add(new XMLValue("start", start))
-			.add(new XMLValue("stop", stop))
-		);
+		if (!(start.isEmpty() || stop.isEmpty())) {
+			
+			processXML.add(
+				new XMLGroup("duration")
+				.add(new XMLValue("start", start))
+				.add(new XMLValue("stop", stop))
+			);
+		}
 		
 		JSONObject daysJSON = details.optJSONObject("days");
 		
 		XMLGroup daysXML = new XMLGroup("days");
 		
+		boolean anyDays = false;
+		
 		for (String day : new String[] {"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"}) {
-			daysXML.add(new XMLValue(day, daysJSON.optString(day)));
+			String value = daysJSON.optString(day);
+			daysXML.add(new XMLValue(day, value));
+			if ("true".equals(value)) anyDays = true;
 		}
 		
-		processXML.add(daysXML);
+		if (anyDays) processXML.add(daysXML);
 		
 		String newDocumentBody = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 			+ processXML;

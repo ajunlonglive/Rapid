@@ -3,7 +3,7 @@
 
 <!-- 
 
-Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -368,7 +368,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 				);
 				Action_datacopy(
 					ev,
-					data.duration && data.duration.start,
+					data.duration && data.duration.start || "",
 					[{
 						id:'rapid_P0_C3358_',
 						type:'input',
@@ -378,7 +378,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 				);
 				Action_datacopy(
 					ev,
-					data.duration && data.duration.stop,
+					data.duration && data.duration.stop || "",
 					[{
 						id:'rapid_P0_C3359_',
 						type:'input',
@@ -456,6 +456,24 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 					}],
 					false
 				);
+				Action_datacopy(
+					ev,
+					!data.days
+						|| (data.days.monday
+						&& data.days.tuesday
+						&& data.days.wednesday
+						&& data.days.thursday
+						&& data.days.friday
+						&& data.days.saturday
+						&& data.days.sunday),
+					[{
+						id:'rapid_P0_C3572_',
+						type:'checkbox',
+						field:''
+					}],
+					true
+				);
+				
 				var data = {
 					fields: ["name", "value"],
 					rows: data.parameters && data.parameters.map(function(parameter) {
