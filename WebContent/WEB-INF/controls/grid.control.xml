@@ -273,10 +273,18 @@ function sortGridByColumn(ev, id, details, column, asc) {
 
 	// check we have details and this column
 	if (details && details.columns && details.columns[column]) {
-
+		
+		details.columns.forEach(function(column, columnIndex) {
+			if (column.field == undefined) column.field = "gridSortNamelessFieldAtColumnIndex" + columnIndex;
+		});
+		
 		// get the grid data
 		var data = getData_grid(ev, id, null, details);
-			
+		
+		details.columns.forEach(function(column, columnIndex) {
+			if (column.field.indexOf("gridSortNamelessFieldAtColumnIndex") === 0) column.field = undefined;
+		});
+		
 		// get the field
 		var field = details.columns[column].field;
 		
