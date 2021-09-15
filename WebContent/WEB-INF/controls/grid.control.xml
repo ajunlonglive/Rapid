@@ -274,19 +274,24 @@ function sortGridByColumn(ev, id, details, column, asc) {
 	// check we have details and this column
 	if (details && details.columns && details.columns[column]) {
 		
-		details.columns.forEach(function(column, columnIndex) {
-			if (column.field == undefined) column.field = "gridSortNamelessFieldAtColumnIndex" + columnIndex;
-		});
+		// ensure the column to sort has a field for getData_grid to return it
+		if (details.columns[column].field == undefined) details.columns[column].field = "gridSortNamelessField";
 		
 		// get the grid data
 		var data = getData_grid(ev, id, null, details);
 		
-		details.columns.forEach(function(column, columnIndex) {
-			if (column.field.indexOf("gridSortNamelessFieldAtColumnIndex") === 0) column.field = undefined;
-		});
+		// remove the fake field from the sorting column
+		if (details.columns[column].field === "gridSortNamelessField") details.columns[column].field = undefined;
 		
 		// get the field
 		var field = details.columns[column].field;
+		
+		// adjust the column number to account for the removal of fieldless columns
+		var columnNumber = parseInt(column);
+		var columnsRemoved = details.columns.slice(0, columnNumber)
+			.filter(function(column) { return column.field == undefined; })
+			.length;
+		var column = columnNumber - columnsRemoved;
 		
 		// assume data and details columns are the same
 		var dataColumn = column;
