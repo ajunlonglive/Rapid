@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -353,7 +353,9 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 						// get the custom index
 						String customIndexPath = jsonLogin.optString("index").trim();
 						// get any password reset
-						String customPasswordReset = jsonLogin.optString("passwordreset",null);
+						String customPasswordReset = jsonLogin.optString("passwordreset", null);
+						// get any password update
+						String customPasswordUpdate = jsonLogin.optString("passwordupdate", null);
 
 						// assume the custom index is pretty url direct for app
 						String customIndexApp = customIndexPath;
@@ -383,10 +385,12 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 							session.setAttribute(RapidFilter.SESSION_VARIABLE_INDEX_PATH, customIndexPath);
 							// put the password reset page in the session if there is one
 							if (customPasswordReset != null) session.setAttribute(SESSION_VARIABLE_PASSWORDRESET_PATH, customPasswordReset.trim());
+							// put the password update page in the session if there is one
+							if (customPasswordUpdate != null) session.setAttribute(SESSION_VARIABLE_PASSWORDUPDATE_PATH, customPasswordUpdate.trim());
 							// add cache defeating to try and stop the 302 from custom login .jsp pages to index.jsp
 							RapidFilter.noCache(response);
 							// log
-							_logger.debug("Custom login " + customLoginPath + " identified. Index=" + customIndexPath + ", logout=" + customLogoutPath + ", reset=" + customPasswordReset);
+							_logger.debug("Custom login " + customLoginPath + " identified. Index=" + customIndexPath + ", logout=" + customLogoutPath + ", reset=" + customPasswordReset + ", update = " + customPasswordUpdate);
 							// we're done
 							break;
 						}
