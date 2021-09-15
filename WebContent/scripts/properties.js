@@ -156,7 +156,7 @@ function getDataOptions(selectId, ignoreId, input, hasDatetime, hasClipboard) {
 	if (input && _page && _page.variables) {
 		options += "<optgroup label='Page variables'>";
 		for (var i in _page.variables) {
-			if (selectId == _page.variables[i] && !gotSelected) {
+			if ((selectId == _page.variables[i].name || selectId == _page.variables[i])  && !gotSelected) {
 				options += "<option value='" + escapeApos(_page.variables[i].name) + "' selected='selected' >" + _page.variables[i].name + "</option>";
 				gotSelected = true;
 			} else {
@@ -185,7 +185,7 @@ function getDataOptions(selectId, ignoreId, input, hasDatetime, hasClipboard) {
 					} else {
 						controlOptions += "<option value='" + control.id + "' >" + control.name + "</option>";
 					}
-					if (control.id == _selectedControl.id && _selectedControl.name && _selectedControl.type !== "page") {	
+					if (_selectedControl && control.id == _selectedControl.id && _selectedControl.name && _selectedControl.type !== "page") {	
 						selectedOption = "<optgroup label='Selected control'>";
 						selectedOption += "<option value='" + control.id + "'>" + control.name + "</option>";
 						selectedOption += "</optgroup>";
