@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2019 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -117,7 +117,7 @@ public class Webservice extends Action {
 
 	private Request _request;
 	private boolean _showLoading;
-	private ArrayList<Action> _successActions, _errorActions, _childActions;
+	private List<Action> _successActions, _errorActions, _childActions;
 
 	// properties
 
@@ -127,11 +127,11 @@ public class Webservice extends Action {
 	public boolean getShowLoading() { return _showLoading; }
 	public void setShowLoading(boolean showLoading) { _showLoading = showLoading; }
 
-	public ArrayList<Action> getSuccessActions() { return _successActions; }
-	public void setSuccessActions(ArrayList<Action> successActions) { _successActions = successActions; }
+	public List<Action> getSuccessActions() { return _successActions; }
+	public void setSuccessActions(List<Action> successActions) { _successActions = successActions; }
 
-	public ArrayList<Action> getErrorActions() { return _errorActions; }
-	public void setErrorActions(ArrayList<Action> errorActions) { _errorActions = errorActions; }
+	public List<Action> getErrorActions() { return _errorActions; }
+	public void setErrorActions(List<Action> errorActions) { _errorActions = errorActions; }
 
 	// constructors
 
@@ -319,57 +319,11 @@ public class Webservice extends Action {
 			js += "  data: query,\n";
 			js += "  error: function(server, status, message) {\n";
 
-			// if there is a working page
-			if (workingPage != null) {
-				// remove any working page dialogue
-				js += "    $(" + workingPage + ").hideDialogue(false,'" + workingPage + "');\n";
-			}
-
 			// hide the loading javascript (if applicable)
 			if (_showLoading) js += "    " + getLoadingJS(page, outputs, false);
 
-			// this avoids doing the errors if the page is unloading or the back button was pressed
-			js += "    if (server.readyState > 0 || !navigator.onLine) {\n";
-
-			// retain if error actions
-			boolean errorActions = false;
-
-			// prepare a default error hander we'll show if no error actions, or pass to child actions for them to use
-			String defaultErrorHandler = "alert('Error with webservice action" + errorSourceMessage(application, control) + "\\n\\n' + server.responseText||message);";
-			// if we have an offline page
-			if (offlinePage != null) {
-				// update defaultErrorHandler to navigate to offline page
-				defaultErrorHandler = "if (Action_navigate && !(typeof _rapidmobile == 'undefined' ? navigator.onLine && server.getAllResponseHeaders() : _rapidmobile.isOnline())) {\n        Action_navigate('~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + offlinePage + "&action=dialogue', true, '" + getId() + "', false, false);\n      } else {\n         " + defaultErrorHandler + "\n      }";
-				// remove the offline page so we don't interfere with actions down the tree
-				jsonDetails.remove("offlinePage");
-			}
-
-			// add any error actions
-			if (_errorActions != null) {
-				// count the actions
-				int i = 0;
-				// loop the actions
-				for (Action action : _errorActions) {
-					// retain that we have custom error actions
-					errorActions = true;
-					// if this is the last error action add in the default error handler
-					if (i == _errorActions.size() - 1) jsonDetails.put("defaultErrorHandler", defaultErrorHandler);
-					// add the js
-					js += "         " + action.getJavaScriptWithHeader(rapidRequest, application, page, control, jsonDetails).trim().replace("\n", "\n         ") + "\n";
-					// if this is the last error action and the default error handler is still present, remove it so it isn't sent down the success path
-					if (i == _errorActions.size() - 1 && jsonDetails.optString("defaultErrorHandler", null) != null) jsonDetails.remove("defaultErrorHandler");
-					// increase the count
-					i++;
-				}
-			}
-			// add default error handler if none in collection
-			if (!errorActions) js += "      " + defaultErrorHandler + "\n";
-
-			// close unloading check
-			js += "    }\n";
-
-			// close error actions
-			js += "  },\n";
+			// add standard error actions with offline and working handling
+			js += getErrorActionsJavaScript(rapidRequest, application, page, control, jsonDetails, _errorActions);
 
 			// open success function
 			js += "  success: function(data) {\n";
@@ -456,15 +410,10 @@ public class Webservice extends Action {
 				js += "    }\n";
 			} // outputs null check
 
-			// if there is a working page (from the details)
-			if (workingPage != null) {
-				// remove any working page dialogue
-				js += "    $(" + workingPage + ").hideDialogue(false,'" + workingPage + "');\n";
-				// remove the working page so as not to affect actions further down the tree
-				jsonDetails.remove("workingPage");
-			}
+			// get the standardised JavaScript to hide any working page only if this action has no children
+			js += getWorkingPageHideJavaScript(jsonDetails, _successActions, "    ");
 
-			// add any sucess actions
+			// add any success actions
 			if (_successActions != null) {
 				for (Action action : _successActions) {
 					js += "    " + action.getJavaScriptWithHeader(rapidRequest, application, page, control, jsonDetails).trim().replace("\n", "\n    ") + "\n";

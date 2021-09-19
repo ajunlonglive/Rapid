@@ -44,17 +44,17 @@ import com.rapid.server.RapidRequest;
 public class Mobile extends Action {
 
 	// private instance variables
-	private ArrayList<Action> _successActions, _errorActions, _onlineActions, _childActions;
+	private List<Action> _successActions, _errorActions, _onlineActions, _childActions;
 
 	// properties
-	public ArrayList<Action> getSuccessActions() { return _successActions; }
-	public void setSuccessActions(ArrayList<Action> successActions) { _successActions = successActions; }
+	public List<Action> getSuccessActions() { return _successActions; }
+	public void setSuccessActions(List<Action> successActions) { _successActions = successActions; }
 
-	public ArrayList<Action> getErrorActions() { return _errorActions; }
-	public void setErrorActions(ArrayList<Action> errorActions) { _errorActions = errorActions; }
+	public List<Action> getErrorActions() { return _errorActions; }
+	public void setErrorActions(List<Action> errorActions) { _errorActions = errorActions; }
 
-	public ArrayList<Action> getOnlineActions() { return _onlineActions; }
-	public void setOnlineActions(ArrayList<Action> onlineActions) { _onlineActions = onlineActions; }
+	public List<Action> getOnlineActions() { return _onlineActions; }
+	public void setOnlineActions(List<Action> onlineActions) { _onlineActions = onlineActions; }
 
 	// constructors
 
@@ -136,8 +136,23 @@ public class Mobile extends Action {
 
 	@Override
 	public String getPageJavaScript(RapidRequest rapidRequest, Application application, Page page, JSONObject jsonDetails) throws Exception {
-		// refrence to these success and fail actions are sent as callbacks to the on-mobile device file upload function
-		if (_successActions == null && _errorActions == null) {
+
+		// get the type
+		String type = getProperty("actionType");
+		// if it's online
+		if ("online".equals(type)) {
+			// get any working / loading page
+			String workingPage = getProperty("onlineWorking");
+			// if there was one record that we have a working page in the details
+			if (workingPage != null && !workingPage.equals("")) jsonDetails.put("workingPage", getId());
+			// get the offline dialogue
+			String offlinePage = getProperty("onlineFail");
+			// record that we have an offline page
+			if (offlinePage != null && !offlinePage.equals("")) jsonDetails.put("offlinePage", offlinePage);
+		}
+
+		// reference to these success and fail actions are sent as callbacks to the on-mobile device file upload function, uploadImages always has at least an error
+		if ( _successActions == null && _errorActions == null && !"uploadImages".equals(type)) {
 			return null;
 		} else {
 			String js  = "";
@@ -146,20 +161,38 @@ public class Mobile extends Action {
 			// get the control (the slow way)
 			Control control = page.getActionControl(id);
 			// check if we have any success actions
-			if (_successActions != null) {
+			if (_successActions != null || ("uploadImages".equals(type) && _successActions == null)) {
+				// start the callback function
 				js += "function " + id + "success(ev) {\n";
-				for (Action action : _successActions) {
-					js += "  " + action.getJavaScriptWithHeader(rapidRequest, application, page, control, jsonDetails).trim().replace("\n", "\n  ") + "\n";
+				// hide any working page if there are no children to this action
+				if ("uploadImages".equals(type)) js += getWorkingPageHideJavaScript(jsonDetails, _successActions, "  ");
+				// if there are success actions
+				if (_successActions != null) {
+					// the success actions
+					for (Action action : _successActions) {
+						js += "  " + action.getJavaScriptWithHeader(rapidRequest, application, page, control, jsonDetails).trim().replace("\n", "\n  ") + "\n";
+					}
 				}
-				js += "}\n";
+				js += "}\n\n";
 			}
-			// check if we have any success actions
-			if (_errorActions != null) {
+			// check if we have any error actions, or we are doing uploadImages
+			if (_errorActions != null || "uploadImages".equals(type)) {
+				// start the callback function
 				js += "function " + id + "error(ev, server, status, message) {\n";
-				for (Action action : _errorActions) {
-					js += "  " + action.getJavaScriptWithHeader(rapidRequest, application, page, control, jsonDetails).trim().replace("\n", "\n  ") + "\n";
+				// hide any working page
+				js += getWorkingPageHideJavaScript(jsonDetails, "  ");
+				if (_errorActions == null) {
+					// look for any offline page
+					String offlinePage = jsonDetails.optString("offlinePage", null);
+					// use the default error handler
+					js += "  " + getDefaultErrorJavaScript(application, page, control, offlinePage).replaceAll("\n", "\n  ") + "\n";
+				} else {
+					// the error actions
+					for (Action action : _errorActions) {
+						js += "  " + action.getJavaScriptWithHeader(rapidRequest, application, page, control, jsonDetails).trim().replace("\n", "\n  ") + "\n";
+					}
 				}
-				js += "}\n";
+				js += "}\n\n";
 			}
 			return js;
 		}
@@ -590,14 +623,17 @@ public class Mobile extends Action {
 					js += "  // no controls specified\n";
 				} else {
 
+					// ensure we have a details object
+					if (jsonDetails == null) jsonDetails = new JSONObject();
+					// if it has a workingDialogue
+					boolean gotWorkingDialogue = jsonDetails.has("workingDialogue");
+
 					// assume no success call back
 					String successCallback = "null";
 					// update to name of callback if we have any success actions
-					if (_successActions != null) successCallback = "'" + getId() + "success'";
-					// assume no error call back
-					String errorCallback = "null";
-					// update to name of callback  if we have any error actions
-					if (_errorActions != null) errorCallback = "'" + getId() + "error'";
+					if (_successActions != null || gotWorkingDialogue) successCallback = "'" + getId() + "success'";
+					// we always have an error call back for either showing errors and/or hiding dialogues
+					String errorCallback = "'" + getId() + "error'";
 
 					// start building the js
 					js += "var urls = '';\n";
@@ -630,16 +666,25 @@ public class Mobile extends Action {
 
 					// remove any controls we couldn't find
 					controlIds.removeAll(removeControlIds);
-					
-					String ProgressOutputId = getProperty("progressOutputControl");
-					String ProgressOutputField = getProperty("progressOutputControlField");
-					Control ProgressOutput = page.getControl(ProgressOutputId);
-					String projressOutputJavaScript = "{id:'" + ProgressOutputId + "', type:'" + ProgressOutput.getType() + "', field:" + ProgressOutputField + ", details:" + ProgressOutput.getDetails() + "}";
-					
+
+					// get any progress output id
+					String progressOutputId = getProperty("progressOutputControl");
+					// assume there is no progress output JavaScript
+					String progressOutputJavaScript = "";
+					// if we got one
+					if (progressOutputId != null) {
+						// get any progress output field
+						String progressOutputField = getProperty("progressOutputControlField");
+						// get the progress out control
+						Control progressOutput = application.getControl(servletContext, progressOutputId);
+						// if we got a control
+						if (progressOutput != null) progressOutputJavaScript = ", {id:'" + progressOutputId + "', type:'" + progressOutput.getType() + "', field:" + progressOutputField + ", details:" + progressOutput.getDetails() + "}";
+					}
+
 					// if we got any urls check whether request is from a mobile - upload the images
 					js += "if (urls) { \n"
 						+ "   if (typeof _rapidmobile == 'undefined') {\n"
-						+ "      uploadImages(" + new JSONArray(controlIds) + ", ev, " + successCallback + ", " + errorCallback + ", " + projressOutputJavaScript + ");\n"
+						+ "      uploadImages(" + new JSONArray(controlIds) + ", ev, " + successCallback + ", " + errorCallback + progressOutputJavaScript + ");\n"
 						+ "   } else {\n"
 						+ "      _rapidmobile.uploadImages('" + getId() + "', urls, " + successCallback + ", " + errorCallback + ");\n"
 						+ "   }\n"
@@ -975,19 +1020,14 @@ public class Mobile extends Action {
 
 							// get the offline dialogue
 							String offlinePage = getProperty("onlineFail");
+							// record that we have an offline page
+							if (offlinePage != null && !offlinePage.equals("")) jsonDetails.put("offlinePage", offlinePage);
 
-							// loop them (this should clean out the working and offline entries in the details)
+							// loop the online actions (this will apply the working and offline entries in the details)
 							for (Action action : _onlineActions) {
-
-								// record that we have an offline page
-								jsonDetails.put("offlinePage", offlinePage);
-
+								// add the child action JavaScript
 								js += "  " + action.getJavaScriptWithHeader(rapidRequest, application, page, control, jsonDetails).trim().replace("\n", "\n  ") + "\n";
-
 							}
-
-							// get the working details page (in case none of the actions have used it
-							workingPage = jsonDetails.optString("workingPage", null);
 
 							// js online check fail
 							js += "} else {\n";

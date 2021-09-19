@@ -70,16 +70,16 @@ public class Database extends Action {
 	// details of the query (inputs, sql, outputs)
 	public static class Query {
 
-		private ArrayList<Parameter> _inputs, _outputs;
+		private List<Parameter> _inputs, _outputs;
 		private String _sql;
 		private boolean _multiRow;
 		private int _databaseConnectionIndex;
 
-		public ArrayList<Parameter> getInputs() { return _inputs; }
-		public void setInputs(ArrayList<Parameter> inputs) { _inputs = inputs; }
+		public List<Parameter> getInputs() { return _inputs; }
+		public void setInputs(List<Parameter> inputs) { _inputs = inputs; }
 
-		public ArrayList<Parameter> getOutputs() { return _outputs; }
-		public void setOutputs(ArrayList<Parameter> outputs) { _outputs = outputs; }
+		public List<Parameter> getOutputs() { return _outputs; }
+		public void setOutputs(List<Parameter> outputs) { _outputs = outputs; }
 
 		public String getSQL() { return _sql; }
 		public void setSQL(String sql) { _sql = sql; }
@@ -91,7 +91,7 @@ public class Database extends Action {
 		public void setDatabaseConnectionIndex(int databaseConnectionIndex) { _databaseConnectionIndex = databaseConnectionIndex; }
 
 		public Query() {};
-		public Query(ArrayList<Parameter> inputs, ArrayList<Parameter> outputs, String sql, boolean multiRow, int databaseConnectionIndex) {
+		public Query(List<Parameter> inputs, List<Parameter> outputs, String sql, boolean multiRow, int databaseConnectionIndex) {
 			_inputs = inputs;
 			_outputs = outputs;
 			_sql = sql;
@@ -279,7 +279,7 @@ public class Database extends Action {
 		if (query != null) {
 
 			// get the inputs from the query
-			ArrayList<Parameter> inputs = query.getInputs();
+			List<Parameter> inputs = query.getInputs();
 
 			// if we were given some
 			if (inputs != null) {
@@ -470,14 +470,7 @@ public class Database extends Action {
 			if (control != null) controlParam = "&c=" + control.getId();
 
 			// get the outputs
-			ArrayList<Parameter> outputs = _query.getOutputs();
-
-			// instantiate the jsonDetails if required
-			if (jsonDetails == null) jsonDetails = new JSONObject();
-			// look for a working page in the jsonDetails
-			String workingPage = jsonDetails.optString("workingPage", null);
-			// look for an offline page in the jsonDetails
-			String offlinePage = jsonDetails.optString("offlinePage", null);
+			List<Parameter> outputs = _query.getOutputs();
 
 			// get the js to hide the loading (if applicable)
 			if (_showLoading) js += getLoadingJS(page, outputs, true);
@@ -490,57 +483,11 @@ public class Database extends Action {
 			js += "  data: query,\n";
 			js += "  error: function(server, status, message) {\n";
 
-			// if there is a working page
-			if (workingPage != null) {
-				// remove any working page dialogue
-				js += "    $('#" + workingPage + "').hideDialogue(false,'" + workingPage + "');\n";
-			}
-
 			// hide the loading javascript (if applicable)
 			if (_showLoading) js += "    " + getLoadingJS(page, outputs, false);
 
-			// this avoids doing the errors if the page is unloading or the back button was pressed, unless we know we're offline
-			js += "    if (server.readyState > 0 || !navigator.onLine) {\n";
-
-			// retain if error actions
-			boolean errorActions = false;
-
-			// prepare a default error hander we'll show if no error actions, or pass to child actions for them to use
-			String defaultErrorHandler = "alert('Error with database action" + errorSourceMessage(application, control) + "\\n\\n' + server.responseText||message);";
-			// if we have an offline page
-			if (offlinePage != null) {
-				// update defaultErrorHandler to navigate to offline page, if we have the navigate action, and we know we're offline, or it looks like we must be
-				defaultErrorHandler = "if (Action_navigate && !(typeof _rapidmobile == 'undefined' ? navigator.onLine && server.getAllResponseHeaders() : _rapidmobile.isOnline())) {\n          Action_navigate('~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + offlinePage + "&action=dialogue',true,'" + getId() + "');\n        } else {\n          " + defaultErrorHandler + "\n        }";
-				// remove the offline page so we don't interfere with actions down the tree
-				jsonDetails.remove("offlinePage");
-			}
-
-			// add any error actions
-			if (_errorActions != null) {
-				// count the actions
-				int i = 0;
-				// loop the actions
-				for (Action action : _errorActions) {
-					// retain that we have custom error actions
-					errorActions = true;
-					// if this is the last error action add in the default error handler
-					if (i == _errorActions.size() - 1) jsonDetails.put("defaultErrorHandler", defaultErrorHandler);
-					// add the js
-					js += "       " + action.getJavaScriptWithHeader(rapidRequest, application, page, control, jsonDetails).trim().replace("\n", "\n       ") + "\n";
-					// if this is the last error action and the default error handler is still present, remove it so it isn't sent down the success path
-					if (i == _errorActions.size() - 1 && jsonDetails.optString("defaultErrorHandler", null) != null) jsonDetails.remove("defaultErrorHandler");
-					// increase the count
-					i++;
-				}
-			}
-			// add default error handler if none in collection
-			if (!errorActions) js += "        " + defaultErrorHandler + "\n";
-
-			// close unloading check
-			js += "    }\n";
-
-			// close error actions
-			js += "  },\n";
+			// add standard error actions with offline and working handling
+			js += getErrorActionsJavaScript(rapidRequest, application, page, control, jsonDetails, _errorActions);
 
 			// open success function
 			js += "  success: function(data) {\n";
@@ -576,35 +523,27 @@ public class Database extends Action {
 					// get the outputs
 					List<Parameter> childOutputs = _childDatabaseActions.get(i).getQuery().getOutputs();
 					// if it has out puts
-					if (childOutputs != null) {
-						// if it really has some
-						if (childOutputs.size() > 0) {
-							// get the name of this child
-							String childName = "childAction" + (i + 1);
-							// get the outputs
-							js += "      " + getOutputsJavaScript(rapidServlet.getServletContext(), application, page, childOutputs, childName) + ";\n";
-							// get the data
-							js += "      Action_database(ev,'" + getId() + "', data, " + "outputs" + childName + ",'" + childName + "');\n";
-						} // output length check
-					} // output null check
+					if (childOutputs != null && childOutputs.size() > 0) {
+						// get the name of this child
+						String childName = "childAction" + (i + 1);
+						// get the outputs
+						js += "      " + getOutputsJavaScript(rapidServlet.getServletContext(), application, page, childOutputs, childName) + ";\n";
+						// get the data
+						js += "      Action_database(ev,'" + getId() + "', data, " + "outputs" + childName + ",'" + childName + "');\n";
+					} // outputs check
 				} // child action loop
 			} // child action check
 
 			// close if data check
 			js += "    }\n";
 
-			// if there is a working page (from the details)
-			if (workingPage != null) {
-				// remove any working page dialogue
-				js += "    $('#" + workingPage + "').hideDialogue(false,'" + workingPage + "');\n";
-				// remove the working page so as not to affect actions further down the tree
-				jsonDetails.remove("workingPage");
-			}
+			// get the standardised JavaScript to hide any working page only if this action has no children
+			js += getWorkingPageHideJavaScript(jsonDetails, _successActions, "    ");
 
 			// add any success actions
 			if (_successActions != null) {
 				for (Action action : _successActions) {
-					js += "     " + action.getJavaScriptWithHeader(rapidRequest, application, page, control, jsonDetails).trim().replace("\n", "\n       ") + "\n";
+					js += "    " + action.getJavaScriptWithHeader(rapidRequest, application, page, control, jsonDetails).trim().replace("\n", "\n    ") + "\n";
 				}
 			}
 

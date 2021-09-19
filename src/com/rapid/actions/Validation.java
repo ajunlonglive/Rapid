@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2015 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -44,19 +44,19 @@ import com.rapid.server.RapidRequest;
 public class Validation extends Action {
 
 	// instance variables
-	private ArrayList<String> _controls;
-	private ArrayList<Action> _passActions, _failActions, _childActions;
+	private List<String> _controls;
+	private List<Action> _passActions, _failActions, _childActions;
 
 	// properties
 
-	public ArrayList<String> getControls() { return _controls; }
-	public void setControls(ArrayList<String> controls) { _controls = controls; }
+	public List<String> getControls() { return _controls; }
+	public void setControls(List<String> controls) { _controls = controls; }
 
-	public ArrayList<Action> getPassActions() { return _passActions; }
-	public void setPassActions(ArrayList<Action> passActions) { _passActions = passActions; }
+	public List<Action> getPassActions() { return _passActions; }
+	public void setPassActions(List<Action> passActions) { _passActions = passActions; }
 
-	public ArrayList<Action> getFailActions() { return _failActions; }
-	public void setFailActions(ArrayList<Action> failActions) { _failActions = failActions; }
+	public List<Action> getFailActions() { return _failActions; }
+	public void setFailActions(List<Action> failActions) { _failActions = failActions; }
 
 	// constructors
 

@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -61,7 +61,7 @@ public class DownloadCSV extends Action{
 		String controlId = getProperty("gridId");
 		// get the output file name
 		String outputFile = getProperty("outputFilename");
-		
+
 		String includeHiddenColumns = getProperty("includeHiddenColumns");
 
 		Control dataControl = application.getControl(rapidRequest.getRapidServlet().getServletContext(), controlId);
@@ -97,8 +97,5 @@ public class DownloadCSV extends Action{
 
 		return js;
 	}
-
-
-
 
 }

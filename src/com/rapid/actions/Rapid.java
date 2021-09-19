@@ -117,15 +117,15 @@ public class Rapid extends Action {
 
 	// instance variables
 
-	private ArrayList<Action> _successActions, _errorActions, _childActions;
+	private List<Action> _successActions, _errorActions, _childActions;
 
 	// properties
 
-	public ArrayList<Action> getSuccessActions() { return _successActions; }
-	public void setSuccessActions(ArrayList<Action> successActions) { _successActions = successActions; }
+	public List<Action> getSuccessActions() { return _successActions; }
+	public void setSuccessActions(List<Action> successActions) { _successActions = successActions; }
 
-	public ArrayList<Action> getErrorActions() { return _errorActions; }
-	public void setErrorActions(ArrayList<Action> errorActions) { _errorActions = errorActions; }
+	public List<Action> getErrorActions() { return _errorActions; }
+	public void setErrorActions(List<Action> errorActions) { _errorActions = errorActions; }
 
 	// enterprise monitor
 	protected Monitor _monitor = new Monitor();

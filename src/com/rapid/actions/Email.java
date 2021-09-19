@@ -237,9 +237,9 @@ public class Email extends Action {
 	        // add any js for additional data
 	        js += getAdditionalDataJS(rapidRequest, application, page, control, jsonDetails);
 
-	        //Lastly, check for upload controls
-	        //Check if an attachment control is specified
-	        if(attachmentsString != null){
+	        // Lastly, check for upload controls
+	        // Check if an attachment control is specified
+	        if (attachmentsString != null){
 	        	//Convert the string to json
 	        	JSONArray jsonAttachments = new JSONArray(attachmentsString);
 	        	js += "data.attachments = [];\n";
@@ -259,57 +259,24 @@ public class Email extends Action {
 	        	}
 	        }
 
-	        // instantiate the jsonDetails if required
-	     	if (jsonDetails == null) jsonDetails = new JSONObject();
-
 			// open the ajax call
 	        js += "$.ajax({ url : '~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + page.getId() + controlParam + "&act=" + getId() + "', type: 'POST', contentType: 'application/json', dataType: 'json',\n";
 	        js += "  data: JSON.stringify(data),\n";
 	        js += "  error: function(server, status, message) {\n";
 
-	        // this avoids doing the errors if the page is unloading or the back button was pressed
- 			js += "    if (server.readyState > 0) {\n";
+	        // add standard error actions with offline and working handling
+	     	js += getErrorActionsJavaScript(rapidRequest, application, page, control, jsonDetails, _errorActions);
 
- 			// retain if error actions
- 			boolean errorActions = false;
-
- 			// prepare a default error hander we'll show if no error actions, or pass to child actions for them to use
- 			String defaultErrorHandler = "alert('Error with email action : ' + server.responseText||message);";
-
- 			// add any error actions
- 			if (_errorActions != null) {
- 				// count the actions
- 				int i = 0;
- 				// loop the actions
- 				for (Action action : _errorActions) {
- 					// retain that we have custom error actions
- 					errorActions = true;
- 					// if this is the last error action add in the default error handler
- 					if (i == _errorActions.size() - 1) jsonDetails.put("defaultErrorHandler", defaultErrorHandler);
- 					// add the js
- 					js += "       " + action.getJavaScriptWithHeader(rapidRequest, application, page, control, jsonDetails).trim().replace("\n", "\n       ") + "\n";
- 					// if this is the last error action and the default error handler is still present, remove it so it isn't sent down the success path
- 					if (i == _errorActions.size() - 1 && jsonDetails.optString("defaultErrorHandler", null) != null) jsonDetails.remove("defaultErrorHandler");
- 					// increase the count
- 					i++;
- 				}
- 			}
- 			// add default error handler if none in collection
- 			if (!errorActions) js += "        " + defaultErrorHandler + "\n";
-
- 			// close unloading check
- 			js += "    }\n";
-
- 			// close error actions
- 			js += "  },\n";
-
+	     	// start the success handler
 	        js += "  success: function(data) {\n";
 
+	        // get the standardised JavaScript to hide any working page only if this action has no children
+	     	js += getWorkingPageHideJavaScript(jsonDetails, _successActions, "    ");
 
-			// add any error actions
+			// add any success actions
 			if (_successActions != null) {
 				for (Action action : _successActions) {
-					js += "    " + action.getJavaScriptWithHeader(rapidRequest, application, page, control, jsonDetails).trim().replace("\n", "\n  ") + "\n";
+					js += "    " + action.getJavaScriptWithHeader(rapidRequest, application, page, control, jsonDetails).trim().replace("\n", "\n    ") + "\n";
 				}
 			}
 
@@ -324,9 +291,9 @@ public class Email extends Action {
     public JSONObject doAction(RapidRequest rapidRequest, JSONObject jsonData) throws Exception {
 
 		// get the from address
-		String from = jsonData.getString("from");
+		String from = jsonData.optString("from", null);
 		// get the to address
-		String to = jsonData.getString("to");
+		String to = jsonData.optString("to", null);
 		// get the content as a string
         String stringContent = getProperty("content");
 		// get the type
