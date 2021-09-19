@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -128,21 +128,21 @@ public abstract class Action {
 	public Node upgrade(Node actionNode) { return actionNode; }
 
 	// this produces a helpful string with the source of of the action / control, including ids if selected on the application
-	protected String errorSourceMessage(Application application, Control control) {
+	protected String getErrorSource(Application application, Control control) {
 
 		// start with a blank message
-		String errorSourceMessage = "";
+		String errorSource = getType() + " action";
 
 		// if we're in development and showing id's add that to the message
-		if (application.getStatus() == Application.STATUS_DEVELOPMENT && application.getShowActionIds()) errorSourceMessage += " " + getId();
+		if (application.getStatus() == Application.STATUS_DEVELOPMENT && application.getShowActionIds()) errorSource += " " + getId();
 
 		// if the control is null it's the page
 		if (control == null) {
-			errorSourceMessage += " on page";
+			errorSource += " on page";
 		} else {
 
 			// add the control type
-			errorSourceMessage += " on " + control.getType();
+			errorSource += " from " + control.getType();
 
 			// get the control name
 			String controlName = control.getName();
@@ -150,17 +150,17 @@ public abstract class Action {
 			// if we're in development and showing id's
 			if (application.getStatus() == Application.STATUS_DEVELOPMENT && application.getShowControlIds()) {
 				// add id to the message
-				errorSourceMessage += " " + control.getId();
+				errorSource += " " + control.getId();
 				// add name if there is one
-				if (controlName != null && !"".equals(controlName)) errorSourceMessage += " " + controlName;
+				if (controlName != null && !"".equals(controlName)) errorSource += " " + controlName;
 			} else {
 				// if there is no name
 				if (controlName == null || "".equals(controlName)) {
 					// add the id
-					errorSourceMessage += " " + control.getId();
+					errorSource += " " + control.getId();
 				} else {
 					// add the name
-					errorSourceMessage += " " + controlName;
+					errorSource += " " + controlName;
 				}
 
 			} // development status check
@@ -171,15 +171,126 @@ public abstract class Action {
 		if (getProperties().containsKey("comments")) {
 			// get the comments
 			String comments = getProperty("comments");
+			// if there is a double line break stop at that (sometimes there are paragraphs and sql statements in here)
+			if (comments.contains("\n\n")) comments = comments.substring(0, comments.indexOf("\n\n"));
 			// trim for good measure
 			comments = comments.trim();
-			// escape any quotes and new lines
+			// escape any quotes and new lines (this causes issues for the JavaScript)
 			comments = comments.replace("'", "\\'").replace("\n", "\\n");
 			// add the comments after the error message
-			errorSourceMessage += ("\\n\\n" + comments);
+			errorSource += ("\\n\\n" + comments);
 		}
 
-		return errorSourceMessage.replace("'", "\'");
+		return errorSource;
+	}
+
+	// this produces JavaScript with the error actions and a standardised way of dealing with and showing or hiding offline and working dialogues
+	protected String getWorkingPageHideJavaScript(JSONObject jsonDetails, boolean success, List<Action> successActions, String padding) throws Exception {
+
+		// start the JavaScript as an empty string
+		String js = "";
+
+		// instantiate the jsonDetails if required
+		if (jsonDetails == null) jsonDetails = new JSONObject();
+		// look for a working page in the jsonDetails
+		String workingPage = jsonDetails.optString("workingPage", null);
+
+		// if there is a working page (from the details) and we have no further success children so we must have come to the end of a success branch / finished the action chain successfully
+		if (workingPage != null && (successActions == null || successActions.size() == 0)) {
+			// hide if we are doing an error branch, or we have not hidden the working yet
+			boolean hide = !success || !jsonDetails.optBoolean("workingHidden");
+			// if we've not yet hidden the working dialogue on success
+			if (hide) {
+				// hide any working page dialogue
+				js += padding + "$('#" + workingPage + "').hideDialogue(false, '" + workingPage + "');\n";
+				// mark that we have applied the working page hide at the end of a success branch
+				if (success) jsonDetails.put("workingHidden", true);
+			}
+		}
+
+		return js;
+
+	}
+
+	// overload to produces JavaScript with the success actions and a standardised way of dealing with and showing or hiding offline and working dialogues
+	protected String getWorkingPageHideJavaScript(JSONObject jsonDetails, List<Action> successActions, String padding) throws Exception {
+		return getWorkingPageHideJavaScript(jsonDetails, true, successActions, padding);
+	}
+
+	// overload to produces JavaScript with the error actions and a standardised way of dealing with and showing or hiding offline and working dialogues
+	protected String getWorkingPageHideJavaScript(JSONObject jsonDetails, String padding) throws Exception {
+		return getWorkingPageHideJavaScript(jsonDetails, false, null, padding);
+	}
+
+	protected String getDefaultErrorJavaScript(Application application, Page page, Control control, String offlinePage) {
+		// prepare a default error hander we'll show if no error actions, or pass to child actions for them to use
+		String defaultErrorHandler = "alert('Error with " + getErrorSource(application, control) + "\\n\\n' + server.responseText||message);";
+		// if we have an offline page wrap the default above with the offline check and dialogue show
+		if (offlinePage != null) {
+			// update defaultErrorHandler to navigate to offline page, if we have the navigate action, and we know we're offline, or it looks like we must be
+			defaultErrorHandler = "if (Action_navigate && !(typeof _rapidmobile == 'undefined' ? navigator.onLine && server.getAllResponseHeaders() : _rapidmobile.isOnline())) {\n" +
+			"  Action_navigate('~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + offlinePage + "&action=dialogue',true,'" + getId() + "');\n" +
+			"} else {\n  " + defaultErrorHandler + "\n}";
+		}
+		return defaultErrorHandler;
+	}
+
+	// this produces JavaScript with the error actions and a standardised way of dealing with and showing or hiding offline and working dialogues - some actions like the PDF use a callback instead of this making the calls
+	protected String getErrorActionsJavaScript(RapidRequest rapidRequest, Application application, Page page, Control control, JSONObject jsonDetails, List<Action> errorActions, String errorCallback) throws Exception {
+
+		// start the JavaScript by hiding any working page
+		String js = getWorkingPageHideJavaScript(jsonDetails, "    ");
+
+		// instantiate the jsonDetails if required
+		if (jsonDetails == null) jsonDetails = new JSONObject();
+		// look for an offline page in the jsonDetails
+		String offlinePage = jsonDetails.optString("offlinePage", null);
+
+		// this avoids doing the errors if the page is unloading or the back button was pressed, unless we know we're offline
+		js += "    if (server.readyState > 0 || !navigator.onLine) {\n";
+
+		// prepare a default error hander we'll show if no error actions, or pass to child actions for them to use
+		String defaultErrorHandler = getDefaultErrorJavaScript(application, page, control, offlinePage);
+
+		// check for any error actions
+		if (errorActions == null || errorActions.size() == 0) {
+			// check for any error callback
+			if (errorCallback == null) {
+				// add default error handler if none
+				js += "      " + defaultErrorHandler.replaceAll("\n", "\n      ") + "\n";
+			} else {
+				// add error callback
+				js += "      " + errorCallback + ";\n";
+			}
+		} else {
+			// loop the actions
+			for (Action action : errorActions) {
+				// add the js for this error child action
+				js += "       " + action.getJavaScriptWithHeader(rapidRequest, application, page, control, jsonDetails).trim().replace("\n", "\n       ") + "\n";
+			}
+		}
+
+		// close unloading check
+		js += "    }\n";
+
+		// close error actions
+		js += "  },\n";
+
+
+		return js;
+
+	}
+
+	// overload to produce JavaScript with the error actions and a standardised way of dealing with and showing or hiding offline and working dialogues with a list of error actions
+	protected String getErrorActionsJavaScript(RapidRequest rapidRequest, Application application, Page page, Control control, JSONObject jsonDetails, List<Action> errorActions) throws Exception {
+		// call the full method with null callback
+		return getErrorActionsJavaScript(rapidRequest, application, page, control, jsonDetails, errorActions, null);
+	}
+
+	// overload to produce JavaScript with the error actions and a standardised way of dealing with and showing or hiding offline and working dialogues with a callback
+	protected String getErrorActionsJavaScript(RapidRequest rapidRequest, Application application, Page page, Control control, JSONObject jsonDetails, String errorCallback) throws Exception {
+		// call the full method with null callback
+		return getErrorActionsJavaScript(rapidRequest, application, page, control, jsonDetails, null, errorCallback);
 	}
 
 	@Override

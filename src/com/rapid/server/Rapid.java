@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -79,7 +79,7 @@ public class Rapid extends RapidHttpServlet {
 
 	// these are held here and referred to globally
 
-	public static final String VERSION = "2.5.1"; // the master version of this Rapid server instance
+	public static final String VERSION = "2.5.2"; // the master version of this Rapid server instance
 	public static final String MOBILE_VERSION = "1"; // the mobile version. update it if you want all mobile devices to run app updates on their next version check
 	public static final String JQUERY = "jquery-3.3.1.js"; // the version of jquery we have which we write into the pages, jquery ui is in each control
 	public static final String JQUERYUI = "jquery-ui-1.12.1.js"; // the version of jquery ui we have which we write into the design.jsp page, amongst others

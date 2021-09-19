@@ -68,9 +68,9 @@ public class Control {
 	// these are instance variables that all the different controls provide
 	protected HashMap<String,String> _properties;
 	protected Validation _validation;
-	protected ArrayList<Event> _events;
-	protected ArrayList<Style> _styles;
-	protected ArrayList<Control> _childControls;
+	protected List<Event> _events;
+	protected List<Style> _styles;
+	protected List<Control> _childControls;
 
 	// the xml version is used to upgrade xml files before unmarshalling (we use a property so it's written ito xml)
 	public int getXMLVersion() { return _xmlVersion; }
@@ -81,20 +81,20 @@ public class Control {
 	public void setProperties(HashMap<String,String> properties) { _properties = properties; }
 
 	// every control can have events (and actions)
-	public ArrayList<Event> getEvents() { return _events; }
-	public void setEvents(ArrayList<Event> events) { _events = events; }
+	public List<Event> getEvents() { return _events; }
+	public void setEvents(List<Event> events) { _events = events; }
 
 	// every control can have validation (not all do)
 	public Validation getValidation() { return _validation; }
 	public void setValidation(Validation validation) { _validation = validation; }
 
 	// every control can have styles
-	public ArrayList<Style> getStyles() { return _styles; }
-	public void setStyles(ArrayList<Style> styles) { _styles = styles;	}
+	public List<Style> getStyles() { return _styles; }
+	public void setStyles(List<Style> styles) { _styles = styles;	}
 
 	// every control can have child components
-	public ArrayList<Control> getChildControls() { return _childControls; }
-	public void setChildControls(ArrayList<Control> childControls) { _childControls = childControls; }
+	public List<Control> getChildControls() { return _childControls; }
+	public void setChildControls(List<Control> childControls) { _childControls = childControls; }
 
 	// these are some helper methods for common properties
 	public void addProperty(String key, String value) {
@@ -285,7 +285,7 @@ public class Control {
 		return control;
 	}
 
-	public static Control searchChildControl(ArrayList<Control> controls, String controlId) {
+	public static Control searchChildControl(List<Control> controls, String controlId) {
 		Control returnControl = null;
 		if (controls != null) {
 			for (Control childControl : controls) {
@@ -326,10 +326,10 @@ public class Control {
 	}
 
 	// this is here as a static so it used when creating the page object, or a control object
-	public static ArrayList<Event> getEvents(RapidHttpServlet rapidServlet, JSONArray jsonEvents) throws IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException, JSONException {
+	public static List<Event> getEvents(RapidHttpServlet rapidServlet, JSONArray jsonEvents) throws IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException, JSONException {
 
 		// the array of events we're about to return
-		ArrayList<Event> events = new ArrayList<>();
+		List<Event> events = new ArrayList<>();
 
 		// if we have events
 		if (jsonEvents != null) {
@@ -347,7 +347,7 @@ public class Control {
 				);
 
 				// get any actions
-				ArrayList<Action> actions = getActions(rapidServlet, jsonEvent.optJSONArray("actions"));
+				List<Action> actions = getActions(rapidServlet, jsonEvent.optJSONArray("actions"));
 
 				// check we got some
 				if (actions != null) {
@@ -366,9 +366,9 @@ public class Control {
 	}
 
 	// this is here as a static so it can be used when creating control event actions, or child actions
-	public static ArrayList<Action> getActions(RapidHttpServlet rapidServlet, JSONArray jsonActions) throws JSONException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
+	public static List<Action> getActions(RapidHttpServlet rapidServlet, JSONArray jsonActions) throws JSONException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
 		// the array we are going to return
-		ArrayList<Action> actions = null;
+		List<Action> actions = null;
 		// if any came in
 		if (jsonActions != null) {
 			// instantiate our return
@@ -391,9 +391,9 @@ public class Control {
 	}
 
 	// this is here as a static so it used when creating the page object, or a control object
-	public static ArrayList<Style> getStyles(RapidHttpServlet rapidServlet, JSONArray jsonStyles) throws JSONException {
+	public static List<Style> getStyles(RapidHttpServlet rapidServlet, JSONArray jsonStyles) throws JSONException {
 		// the styles we are making
-		ArrayList<Style> styles = new ArrayList<>();
+		List<Style> styles = new ArrayList<>();
 		// if not null
 		if (jsonStyles != null) {
 			// loop jsonStyles

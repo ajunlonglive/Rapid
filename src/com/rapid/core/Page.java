@@ -468,7 +468,7 @@ public class Page {
 		return controls;
 	}
 
-	// find an action from a list of actions, including checking child actions
+	// find an action from a list of actions, including iteratively checking child actions
 	public Action getChildAction(List<Action> actions, String actionId) {
 		// assume not found
 		Action foundAction = null;
@@ -734,7 +734,10 @@ public class Page {
 					for (Event event : control.getEvents()) {
 						if (event.getActions() != null) {
 							for (Action action : event.getActions()) {
+								// if this is the action we can return the control
 								if (actionId.equals(action.getId())) return control;
+								// check any child actions and return control if down there
+								if (getChildAction(action.getChildActions(), actionId) != null) return control;
 							}
 						}
 					}
@@ -1023,7 +1026,7 @@ public class Page {
 		if (controls != null) {
 			for (Control control : controls) {
 				// look for styles
-				ArrayList<Style> controlStyles = control.getStyles();
+				List<Style> controlStyles = control.getStyles();
 				if (controlStyles != null) {
 					// loop the styles
 					for (Style style  : controlStyles) {
@@ -1786,6 +1789,51 @@ public class Page {
 
     }
 
+	// this is used to tree-walk actions to find if any have page JavaScript
+	private void getActionsPageJS(RapidRequest rapidRequest, StringBuilder jsStringBuilder, Application application, List<Action> actions, JSONObject jsonDetails) throws Exception {
+
+		// check actions
+		if (actions != null) {
+			// loop them
+			for (Action action : actions) {
+				// look for any JavaScript to print into the page that this action may have
+				String actionPageJavaScript = action.getPageJavaScript(rapidRequest, application, this, jsonDetails);
+				// print it here if so
+				if (actionPageJavaScript != null) jsStringBuilder.append(actionPageJavaScript.trim() + "\n\n");
+				// tree walk for child actions
+				getActionsPageJS(rapidRequest, jsStringBuilder, application, action.getChildActions(), jsonDetails);
+
+			}
+
+		}
+
+	}
+
+	// this is used to tree-walk controls to find if they have actions with page JavaScript
+	private void getControlsActionsPageJS(RapidRequest rapidRequest, StringBuilder jsStringBuilder, Application application, List<Control> controls, JSONObject jsonDetails) throws Exception {
+
+		// check controls
+		if (controls != null) {
+			// loop them
+			for (Control control : controls) {
+				// get any control events
+				List<Event> events = control.getEvents();
+				// check the page events first
+				if (events != null) {
+					for (Event event : events) {
+						// add these actions, including their children
+						getActionsPageJS(rapidRequest, jsStringBuilder, application, event.getActions(), jsonDetails);
+					}
+				}
+				// get any child controls
+				getControlsActionsPageJS(rapidRequest, jsStringBuilder, application, control.getChildControls(), jsonDetails);
+
+			}
+
+		}
+
+	}
+
 	// this private method produces the head of the page which is often cached, if resourcesOnly is true only page resources are included which is used when sending no permission
 	private String getHeadJS(RapidRequest rapidRequest, Application application, boolean isDialogue) throws JSONException {
 
@@ -1818,20 +1866,28 @@ public class Page {
 				} // redundantActions != null
 			} // action loop to check redundancy
 
-			// loop the list of actions
-			for (Action action : pageActions) {
+			// a json object for the actions to communicate with each other - this should tree walk, or keep a list of actions done
+			JSONObject jsonDetails = new JSONObject();
 
-				try {
-					// look for any javascript to print into the page that this action may have
-					String actionPageJavaScript = action.getPageJavaScript(rapidRequest, application, this, null);
-					// print it here if so
-					if (actionPageJavaScript != null) jsStringBuilder.append(actionPageJavaScript.trim() + "\n\n");
-				} catch (Exception ex) {
-					// print the exception as a comment
-					jsStringBuilder.append("// Error producing page JavaScript : " + ex.getMessage() + "\n\n");
+			// tree-walk all of the page actions to get their page JavaScript, this should pass jsonDetails down trees like the standard action JavaScript
+			try {
+
+				// check the page events first
+				if (_events != null) {
+					// loop the page events
+					for (Event event : _events) {
+						// add any page JavaScript for these actions, including tree-walking their children
+						getActionsPageJS(rapidRequest, jsStringBuilder, application, event.getActions(), jsonDetails);
+					}
 				}
 
-			} // action loop
+				// tree walk for child control actions
+				getControlsActionsPageJS(rapidRequest, jsStringBuilder, application, _controls, jsonDetails);
+
+			} catch (Exception ex) {
+				// print the exception as a comment
+				jsStringBuilder.append("// Error producing page JavaScript : " + ex.getMessage() + "\n\n");
+			}
 
 			// add event handlers, staring at the root controls
 			getEventHandlersJavaScript(rapidRequest, jsStringBuilder, application, _controls);
