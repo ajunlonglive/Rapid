@@ -149,23 +149,24 @@ public class Maths extends Action {
 		// check if we have inputs
 		if (_inputs == null) _inputs = Collections.emptyList();
 		
- 		if ("custom".equals(operation)) {
- 			String customOperation = getProperty("customOperation");
- 			//replace single-quotes with non-literal single-quote
- 			customOperation = customOperation.replace("'", "\' + q + \'").replace('"', '\"').replace("\\", "\\\\").replaceAll("//[^\n]*\n", "").replace("\n", "");
- 			if (customOperation.contains("'")) js += "var q = String.fromCharCode(39);\n";
- 			
- 			String arguments = "";
- 			String parameters = "";
- 			
- 			for (int i = 0; i < _inputs.size(); i++) {
+		if ("custom".equals(operation)) {
+			String customOperation = getProperty("customOperation");
+			// escape single-quotes and remove comments
+			customOperation = customOperation.replace("\\", "\\\\").replace("'", "\\'").replace('"', '\"').replaceAll("//[^\n]*\n", "").replace("\n", "");
+			
+			// arguments are the names of the input data passed into the function
+			String arguments = "";
+			// parameters are the aliases of the arguments available in the function as the named input field and v-number
+			String parameters = "";
+			
+			for (int i = 0; i < _inputs.size(); i++) {
 				Input input = _inputs.get(i);
 				String inputId = input.getItemId();
 				String[] idParts = inputId.split("\\.");
 				String itemId = idParts[0];
 				String property = idParts.length > 1 ? idParts[1] : "";
 				String itemField = input.getField();
- 				// append argument value
+				// append argument value
 				String argName = "v" + (i + 1);
 				Control inputControl = page.getControl(itemId);
 				String parse = "";
