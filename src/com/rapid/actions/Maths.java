@@ -26,6 +26,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 package com.rapid.actions;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlType;
@@ -138,91 +139,103 @@ public class Maths extends Action {
 		
 		// get the JavaScript
 		String js = "";
-        
-        // empty the outputs collection
-        //js += "outputs = [];\n";
-        // start the data object with the type
-     	js += "var data = null;\n";
-     	
-     	//now get the operation type
-     	String operation = getProperty("operation");
-     	
-        // check if we have inputs
-     	if (_inputs != null) {
-     		if ("custom".equals(operation)) {
-     	     	String customOperation = getProperty("customOperation");
-     	     	customOperation = customOperation.replace("'", "\\'").replace('"', '\"').replace("\\", "\\\\").replace("\n", "");
-     	     	
-     	     	String arguments = "";
-     	     	String parameters = "";
-     			
-     			for (int i = 0; i < _inputs.size(); i++) {
-					Input input = _inputs.get(i);
-					String inputId = input.getItemId();
-					String[] idParts = inputId.split("\\.");
-					String itemId = idParts[0];
-					String property = idParts.length > 1 ? idParts[1] : "";
-					String itemField = input.getField();
-     				// append argument value
-					String argName = "v" + (i + 1);
-					Control inputControl = page.getControl(itemId);
-					String parse = "";
-					String parseEnd = "";
-					boolean inputIsNumberInput = inputControl != null && inputControl.getType().toLowerCase().contains("input") && "Num".equals(inputControl.getProperty("controlType"));
-					boolean inputIsGridRowCount = inputControl != null && inputControl.getType().toLowerCase().equals("grid") && "rowCount".equals(property);
-					if (inputIsNumberInput || inputIsGridRowCount) {
-						parse = "parseFloat(";
-						parseEnd = ")";
-					}
-					js += "var " + argName + " = " + parse + Control.getDataJavaScript(rapidRequest.getRapidServlet().getServletContext(), application, page, inputId, itemField) + parseEnd + ";\n";
-     				// append parameter name (all with comma and space)
-     				String inputField = input.getInputField();
-     				
-     				arguments += (i == 0 ? "" : ", ") + argName;
-     				parameters += (i == 0 ? "" : ", ") + (inputField.isEmpty() ? argName : inputField);
-     			}
-     			
-     			js += "try {\n";
-     			js += "    data = (function(" + parameters + ") { " + customOperation + " })(" + arguments + ");\n";
-     			js += "} catch (ex) {\n";
-     			js += "    alert('Error in maths action: ' + ex);\n";
-     			js += "}\n";
-     			
-     		} else {
-				// loop them
-				for (int i = 0; i < _inputs.size(); i++) {
-					
-					// get the input
-					Input input = _inputs.get(i);
-					// get this item id
-					String itemId = input.getItemId();
-					// get this item field
-					String itemField = input.getField();
-					// get the inpute field
-					String inputField = input.getInputField();
-					// update the input field with the index if blank
-					if (inputField == null || "".equals(inputField)) inputField = Integer.toString(i);
-					
-					// set data for first input then use assignment operator for operations
-					if (i == 0) {
-						js += "data = parseFloat(" + Control.getDataJavaScript(rapidRequest.getRapidServlet().getServletContext(), application, page, itemId, itemField) + ");\n";
-					} else {
-						js += "data " + operation + "= parseFloat(" + Control.getDataJavaScript(rapidRequest.getRapidServlet().getServletContext(), application, page, itemId, itemField) + ");\n";
-					}
-					
+		
+		// start the data object with the type
+		js += "var data = null;\n";
+		
+		//now get the operation type
+		String operation = getProperty("operation");
+		
+		// check if we have inputs
+		if (_inputs == null) _inputs = Collections.emptyList();
+		
+ 		if ("custom".equals(operation)) {
+ 			String customOperation = getProperty("customOperation");
+ 			//replace single-quotes with non-literal single-quote
+ 			customOperation = customOperation.replace("'", "\' + q + \'").replace('"', '\"').replace("\\", "\\\\").replaceAll("//[^\n]*\n", "").replace("\n", "");
+ 			if (customOperation.contains("'")) js += "var q = String.fromCharCode(39);\n";
+ 			
+ 			String arguments = "";
+ 			String parameters = "";
+ 			
+ 			for (int i = 0; i < _inputs.size(); i++) {
+				Input input = _inputs.get(i);
+				String inputId = input.getItemId();
+				String[] idParts = inputId.split("\\.");
+				String itemId = idParts[0];
+				String property = idParts.length > 1 ? idParts[1] : "";
+				String itemField = input.getField();
+ 				// append argument value
+				String argName = "v" + (i + 1);
+				Control inputControl = page.getControl(itemId);
+				String parse = "";
+				String parseEnd = "";
+				// detect inputs that should be parsed as numbers
+				boolean inputIsNumberInput = inputControl != null && inputControl.getType().toLowerCase().contains("input") && "Num".equals(inputControl.getProperty("controlType"));
+				boolean inputIsGridRowCount = inputControl != null && inputControl.getType().toLowerCase().equals("grid") && "rowCount".equals(property);
+				if (inputIsNumberInput || inputIsGridRowCount) {
+					parse = "parseFloat(";
+					parseEnd = ")";
 				}
-	     	}
-     	}
-     	
-     	// get the output control details
-     	String outputId = getProperty("output");
-     	String outputField = getProperty("outputField");
-     	String changeEvents = getProperty("changeEvents");
-     	if (changeEvents == null) changeEvents = "true";
-     	
-     	// send data into the output control
-     	js += Control.setDataJavaScript(rapidRequest.getRequest().getServletContext(), application, page, outputId, outputField, changeEvents) + ";\n";
-     	
+				
+				js += "var " + argName + " = " + parse + Control.getDataJavaScript(rapidRequest.getRapidServlet().getServletContext(), application, page, inputId, itemField) + parseEnd + ";\n";
+				// append parameter name (all with comma and space)
+				String inputField = input.getInputField();
+				
+				if (inputField.isEmpty()) {
+					arguments += (i == 0 ? "" : ", ") + argName;
+					parameters += "'" + argName + "', ";
+				} else {
+					// pass the argument in twice, aliased as inputField and v-number
+					arguments += (i == 0 ? "" : ", ") + argName + ", " + argName;
+					parameters += "'" + inputField + "', '" + argName + "', ";
+				}
+			}
+ 			
+			String functionName = "window[\"customMaths" + getId() + "\"]";
+
+			// make the function on first request, throwing errors constructing/running it, and caching the function
+			js += "try {\n";
+			js += "    " + functionName + " = " + functionName + " || new Function(" + parameters + "'" + customOperation + "');\n";
+			js += "    data = " + functionName + "(" + arguments + ");\n";
+			js += "} catch (ex) {\n";
+			js += "    alert('Error with maths action " + getId() +": ' + ex);\n";
+			js += "}\n";
+			
+		} else {
+			// loop them
+			for (int i = 0; i < _inputs.size(); i++) {
+				
+				// get the input
+				Input input = _inputs.get(i);
+				// get this item id
+				String itemId = input.getItemId();
+				// get this item field
+				String itemField = input.getField();
+				// get the inpute field
+				String inputField = input.getInputField();
+				// update the input field with the index if blank
+				if (inputField == null || "".equals(inputField)) inputField = Integer.toString(i);
+				
+				// set data for first input then use assignment operator for operations
+				if (i == 0) {
+					js += "data = parseFloat(" + Control.getDataJavaScript(rapidRequest.getRapidServlet().getServletContext(), application, page, itemId, itemField) + ");\n";
+				} else {
+					js += "data " + operation + "= parseFloat(" + Control.getDataJavaScript(rapidRequest.getRapidServlet().getServletContext(), application, page, itemId, itemField) + ");\n";
+				}
+				
+			}
+		}
+ 		
+		// get the output control details
+		String outputId = getProperty("output");
+		String outputField = getProperty("outputField");
+		String changeEvents = getProperty("changeEvents");
+		if (changeEvents == null) changeEvents = "true";
+		
+		// send data into the output control
+		if (outputId != null) js += Control.setDataJavaScript(rapidRequest.getRequest().getServletContext(), application, page, outputId, outputField, changeEvents) + ";\n";
+		
 		return js;
 		
 	}
