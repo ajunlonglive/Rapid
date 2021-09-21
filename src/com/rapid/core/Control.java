@@ -632,9 +632,13 @@ public class Control {
 		}
 		return js;
 	}
-
+	
 	// this method returns JavaScript for retrieving a control's data, or runtime property value
 	public static String setDataJavaScript(ServletContext servletContext, Application application, Page page, String id, String field) {
+		return setDataJavaScript(servletContext, application, page, id, field, "true");
+	}
+	
+	public static String setDataJavaScript(ServletContext servletContext, Application application, Page page, String id, String field, String changeEvents) {
 
 		// assume an empty string
 		String js = "";
@@ -685,12 +689,12 @@ public class Control {
 						if ("clipboard".equals(idParts[1])) return "clipboardWriteValue(data)";
 					} else {
 						// get the runtime property
-						return "setProperty_" + control.getType() + "_" + idParts[1] + "(ev,'" + control.getId() + "'," + fieldJS + detailsJS + ", data, true)";
+						return "setProperty_" + control.getType() + "_" + idParts[1] + "(ev,'" + control.getId() + "'," + fieldJS + detailsJS + ", data, " + changeEvents + ")";
 					}
 
 				} else {
 					// no other parts return getData call
-					return "setData_" + control.getType() + "(ev,'" + control.getId() + "'," + fieldJS + detailsJS + ", data, true)";
+					return "setData_" + control.getType() + "(ev,'" + control.getId() + "'," + fieldJS + detailsJS + ", data, " + changeEvents + ")";
 				}
 
 			} // control check

@@ -7093,3 +7093,8 @@ function Property_closeActions(cell, propertyObject, property, details) {
 		cell.parent().remove();
 	}
 }
+
+function Property_checkboxUndefinedTrue(cell, propertyObject, property, details) {
+	if (propertyObject[property.key] === undefined) propertyObject[property.key] = true;
+	Property_checkbox(cell, propertyObject, property, details);
+}

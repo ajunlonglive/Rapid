@@ -217,14 +217,14 @@ public class Maths extends Action {
      	// get the output control details
      	String outputId = getProperty("output");
      	String outputField = getProperty("outputField");
+     	String changeEvents = getProperty("changeEvents");
+     	if (changeEvents == null) changeEvents = "true";
      	
      	// send data into the output control
-     	js += Control.setDataJavaScript(rapidRequest.getRequest().getServletContext(), application, page, outputId, outputField) + ";\n";
+     	js += Control.setDataJavaScript(rapidRequest.getRequest().getServletContext(), application, page, outputId, outputField, changeEvents) + ";\n";
      	
 		return js;
-
+		
 	}
-	
-	
 	
 }

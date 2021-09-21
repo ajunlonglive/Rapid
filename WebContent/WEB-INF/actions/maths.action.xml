@@ -83,6 +83,14 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <getValuesFunction>return "";</getValuesFunction>
 	            <helpHtml>Optionally specify a field or property that holds the data within the output control. An example of this is a specific cloumn's field name in a table or grid.</helpHtml>
 	        </property>
+	        
+	        <property>
+	            <key>changeEvents</key>
+	            <name>Trigger change events</name>
+	            <changeValueJavaScript>checkboxUndefinedTrue</changeValueJavaScript>
+	            <refreshProperties>true</refreshProperties>
+	            <helpHtml>Causes a change event to occur when the data is copied. Useful for validation.</helpHtml>
+	        </property>
 	    </properties>
 	    
 	    <actionJavaScript>
