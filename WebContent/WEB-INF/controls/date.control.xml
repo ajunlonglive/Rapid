@@ -3,7 +3,7 @@
 
 <!-- 
 
-Copyright (C) 2018 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -396,8 +396,8 @@ $( "#" + id ).datepicker({
     onChangeMonthYear: function(year, month, inst) {
     	// this changes the default behaviour of the month and year change drop down and arrows to select the previously selected day in the new month or year
     	try {
-    		// if we have an instance of the date picker and it has a value we can work on
-    		if (inst  && inst.currentDay && inst.input.val()) {
+    		// if we have an instance of the date picker and it has a value we can work on, unless these have been temporarily turned off in the setData method
+    		if (!details.dontTriggerChange && inst && inst.currentDay && inst.input.val()) {
     			// get the currently selected day - this can change as soon as we call getDate below
     			var dy = inst.selectedDay;
     			// get an jQuery wrapped instance of the date picker control
@@ -414,8 +414,8 @@ $( "#" + id ).datepicker({
 		      		d.setFullYear(year);
 		      		// set the new date
 		      		dp.datepicker("setDate", d);
-		      		// trigger a change in the control unless these have been temporarily turned off in the setData method 
-		      		if (!details.dontTriggerChange) inst.input.trigger("change");
+		      		// trigger a change in the control
+		      		inst.input.trigger("change");
 				}
 			}
 		} catch(ex){}
