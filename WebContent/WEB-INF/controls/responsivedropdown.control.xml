@@ -359,7 +359,7 @@ if (this.filter) {
 			<![CDATA[
 // if this is a searchable dropdown with a custom value
 if (details && !details.codes && details.customValue) {
-	if (!field || field === "value") {
+	if (!field || field.toLowerCase() === "value") {
 		// return the value from the search input
 		return $("#" + id).find("input").val();
 	} else {
@@ -372,7 +372,7 @@ if (details && !details.codes && details.customValue) {
 	var setValue = control.attr("data-value");
 	// if the was one, and there is 1 child or fewer
 	if (setValue && control.children().length <= 1) {
-		if (!field || field === "value") {
+		if (!field || field.toLowerCase() === "value") {
 			// return the pre-set value
 			return setValue;
 		} else {
@@ -386,6 +386,9 @@ if (details && !details.codes && details.customValue) {
 				var option = details.options.rows[selectedIndex];
 				var fieldIndex = details.options.fields.indexOf(field);
 				return option[fieldIndex];
+			}
+			if (field.toLowerCase() === "text") {
+				return control.find(":selected").text();
 			}
 		}
 		// return the selected value
@@ -406,11 +409,16 @@ if (data !== undefined) {
 		$("#" + id).find("input").val("");
 		// remove any preset value
 		control.removeAttr("data-value");
-		details.options = null;
+		// empty multi-column options object if we have a details object and any now-old options on it
+		if (details) details.options = null;
 	} else {
+		// make a nice data object or drill into one
 		data = makeDataObject(data, field);
+		// if the data has rows and fields as a bare minimum
 		if (data.rows && data.fields) {
+			// if there is a field (and at least one row) this is a value to be selected (not a list of options)
 			if (field && data.rows[0]) {
+				// get the value
 				var value = data.rows[0][0];
 				for (var i in data.fields) {
 					if (data.fields[i] && field.toLowerCase() == data.fields[i].toLowerCase()) {
@@ -445,12 +453,14 @@ if (data !== undefined) {
 				// trigger change events
 				if (changeEvents) control.trigger("change");
 			} else {
-				// data is options
-				if ((details && details.options) || data.fields.length > 2) {
-					if (!details) details = {};
-					if (!details.options) details.options = { fields: [], rows: [] }; // GET OLD OPTIONS ! ! ! ! ! !
+				// data is set of dropdown options
+				// if there are details we know we must be a new-ish version (older simple apps didn't make one) and more than 2 columns in the data
+				if (details && data.fields.length > 2) {
+					// make an options object which will merge current options and incomming data so data from columns not in the markup can be retrieved
+					if (!details.options) details.options = { fields: [], rows: [] };
+					// merge current options in the control markup with incomming data
 					var newFields = data.fields.filter(function(field) { return details.options.fields.indexOf(field) === -1; });
-					details.options.fields = details.options.fields.concat(newFields)
+					details.options.fields = details.options.fields.concat(newFields);
 					details.options.rows.forEach(function(row) {
 						row.length = details.options.fields.length;
 						row.fill("", details.options.fields.length - newFields.length);
