@@ -151,21 +151,25 @@ function getDatabaseActionInputData(multiRow, inputs, sourceId, sourceData) {
 		sourceData = makeDataObject(sourceData);
 		// check there are sourceData rows
 		if (sourceData.fields.length > 0 && sourceData.rows.length > 0) {
-			// add a fields collection
-			// the field we want to send is the source id plus the field, this matches how we do non multi row queries
+			// create the fields collection we're sending as the source id plus the field, this matches how we do non multi row queries
 			data.fields = inputs.map(function(input) {
 				return input.field ? (sourceId + "." + input.field) : input.id;
 			});
-			// add a rows collection
+			// make fields index object which holds the index of each field
 			var fieldIndex = {};
 			sourceData.fields.forEach(function(field, index) {
-				fieldIndex[field] = index;
+				if (field) fieldIndex[field.toLowerCase()] = index;
 			});
+			// make the rows 2d array object from each source row
 			data.rows = sourceData.rows.map(function(row) {
+				// and each input which uses the map to find it's value
 				return inputs.map(function(input) {
+					// if this input has a field
 					if (input.field) {
-						return row[fieldIndex[input.field]];
+						// look up the value from row with the fieldIndex
+						return row[fieldIndex[input.field.toLowerCase()]];
 					} else {
+						// just return the value
 						return input.value;
 					}
 				});
