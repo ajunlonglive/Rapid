@@ -543,33 +543,21 @@ if (window["_rapidmobile"]) {
 				settings.method = "GET";
 			}
 		}
-		// retain the original success function
-		var success = settings.success;
-		// override it (and pass in the orginal)
-		settings.success = function(data, textStatus, jqXHR) {
-			// if there is a json object in the response
-			if (jqXHR.responseJSON) {
-				// if it contains an error object
-				if (jqXHR.responseJSON.error) {					
-					// get the error object
-					var error = jqXHR.responseJSON.error;
-					// check the status code
-					switch (error.status) {
-					case (401) :
-						// the user failed authentication show them a message in the ui
-						_rapidmobile.showMessage(error.responseText);
-						// bail
-						return false;
-					default :
-						// run the error function
-						settings.error(error, error.status, error.responseText);
-						// bail
-						return false;
-					}					
-				}
+
+		// retain the original error function
+		var error = settings.error;
+		// override error
+		settings.error = function(jqXHR, textStatus, errorThrown) {
+			// if this is a 401 (unauthorised) send a status bar message that their user name or password is incorrect
+			if (jqXHR.status == 401) {
+				// the user failed authentication show them a message in the ui
+				_rapidmobile.showMessage("Your user name or password is incorrect");
+				// bail
+				return false;
+			} else {
+				// run the original error function
+				error(jqXHR, textStatus, errorThrown);
 			}
-			// run the original function if all good
-			if (success) success(data, textStatus, jqXHR);
 		}
 		// now run the original ajax with our modified settings
 		ajax(settings);
@@ -580,11 +568,11 @@ if (window["_rapidmobile"]) {
 	// retain the original JQuery ajax function
 	var ajax = $.ajax;
 	// substitute our own
-	$.ajax = function(url, settings) {
+	$.ajax = function(settings) {
 		// retain original error handler
-		var error = url.error;
+		var error = settings.error;
 		// override error
-		url.error = function(jqXHR, textStatus, errorThrown) {
+		settings.error = function(jqXHR, textStatus, errorThrown) {
 			// if this is a 401 (unauthorised) redirect the user to the login page and set requestApp so we'll come straight back
 			if (jqXHR.status == 401) {
 				// start with a basic login page url
@@ -607,8 +595,8 @@ if (window["_rapidmobile"]) {
 				if (error) error(jqXHR, textStatus, errorThrown);
 			}
 		}
-		// call the original
-		ajax(url, settings);
+		// call the original ajax
+		ajax(settings);
 	}
 }
 
