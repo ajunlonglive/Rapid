@@ -266,7 +266,7 @@ public abstract class SecurityAdapter {
 					String[] attributeParts = deviceAttribute.split("=");
 					// if we got two parts
 					if (attributeParts.length == 2) {
-						// add key in upper case and value to our device map
+						// add key in lower case and value to our device map
 						deviceValues.put(attributeParts[0].toLowerCase().trim(),attributeParts[1].trim());
 					}
 				}
@@ -285,7 +285,7 @@ public abstract class SecurityAdapter {
 						String[] conditionParts = condition.split("=");
 						// if we had a key and a value
 						if (conditionParts.length == 2) {
-							// get the key in upper case
+							// get the key in lower case
 							String key = conditionParts[0].toLowerCase().trim();
 							// get the value
 							String value = conditionParts[1].trim();
