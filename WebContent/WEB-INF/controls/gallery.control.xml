@@ -638,6 +638,9 @@ var END_EV = useTouchEvents ? (SUPPORTS_POINTER ? (SUPPORTS_POINTER_IE10 ? 'MSPo
 var LEAVE_EV = useTouchEvents ? (SUPPORTS_POINTER ? 'mouseleave' : null) : 'mouseleave'; //we manually detect leave on touch devices, so null event here
 var CANCEL_EV = (SUPPORTS_POINTER ? (SUPPORTS_POINTER_IE10 ? 'MSPointerCancel' : 'pointercancel') : 'touchcancel');
 
+var pastDrawings = [];
+var futureDrawings = [];
+
 
 function Gallery_showImage(ev, id, galleryItem, allowDelete, openEditor, allowEdit) {
 	
@@ -738,7 +741,7 @@ function Gallery_showImage(ev, id, galleryItem, allowDelete, openEditor, allowEd
 			btnSave.on(START_EV, function(ev) {
 				btnSave.hide();
 				$(".galleryEditor").remove();
-				saveEdit(gallery, galleryItem);
+				gallerySaveEdit(gallery, galleryItem);
 				if (openEditor) {
 					gallery.remove();
 				} else {
@@ -823,48 +826,54 @@ function Gallery_showImage(ev, id, galleryItem, allowDelete, openEditor, allowEd
 	setNextPrevButton(galleryItem, $("#btnPrev"), $("#btnNext"));
 }
 
+// create objects with functions only once and use them as prototypes
+ImageDrawing = {
+	draw: function(context) {
+		context.drawImage(this.img, 0, 0);
+	}
+};
+
 function newImageDrawing(img) {
-	return {
-		draw: function(context) {
-			context.drawImage(img, 0, 0);
-		}
-	};
+	var drawing = Object.create(ImageDrawing);
+	drawing.img = img;
+	return drawing;
 }
+
+var StrokeDrawing = {
+	color: "#000",
+	draw: function(context) {
+		context.strokeStyle = this.color;
+		context.beginPath();
+		context.moveTo(this.x1, this.y1)
+		context.lineTo(this.x2, this.y2);
+		context.stroke();
+	}
+};
 
 function newStrokeDrawing(x1, y1, x2, y2) {
-	return {
-		color: "#000",
-		draw: function(context) {
-			context.strokeStyle = this.color;
-			context.beginPath();
-			context.moveTo(x1, y1)
-			context.lineTo(x2, y2);
-			context.stroke();
-		},
-		setColor: function(color) {
-			this.color = color;
-		}
-	};
+	var drawing = Object.create(StrokeDrawing);
+	drawing.x1 = x1;
+	drawing.y1 = y1;
+	drawing.x2 = x2;
+	drawing.y2 = y2;
+	return drawing;
 }
+
+var GroupDrawing = {
+	draw: function(context) {
+		this.drawings.forEach(function(drawing) {
+			drawing.draw(context);
+		});
+	},
+	push: function(drawing) {
+		this.drawings.push(drawing);
+	}
+};
 
 function newGroupDrawing() {
-	return {
-		drawings: [],
-		draw: function(context) {
-			this.drawings.forEach(function(drawing) {
-				drawing.draw(context);
-			});
-		},
-		push: function(drawing) {
-			this.drawings.push(drawing);
-		}
-	};
-}
-
-function draw(drawings, context) {
-	drawings.forEach(function(drawing) {
-		drawing.draw(context);
-	});
+	var drawing = Object.create(GroupDrawing);
+	drawing.drawings = [];
+	return drawing;
 }
 
 function editImage(gallery) {
@@ -928,8 +937,8 @@ function editImage(gallery) {
 		return (dimension - canvasOffset) * scale();
 	}
 	
-	var pastDrawings = [];
-	var futureDrawings = [];
+	pastDrawings = [];
+	futureDrawings = [];
 	
 	var imageDrawing = newImageDrawing(img[0]);
 	imageDrawing.draw(context);
@@ -950,7 +959,7 @@ function editImage(gallery) {
 			var newY = scaleY(newY);
 			
 			var strokeDrawing = newStrokeDrawing(x, y, newX, newY);
-			strokeDrawing.setColor(color);
+			strokeDrawing.color = color;
 			strokeDrawing.draw(context);
 			groupDrawing.push(strokeDrawing);
 			
@@ -1000,7 +1009,9 @@ function editImage(gallery) {
 		if (pastDrawings.length > 1) {
 			var undoneDrawing = pastDrawings.pop();
 			futureDrawings.push(undoneDrawing);
-			draw(pastDrawings, context);
+			pastDrawings.forEach(function(drawing) {
+				drawing.draw(context);
+			});
 		}
 	}
 	
@@ -1019,7 +1030,7 @@ function editImage(gallery) {
 	gallery.append(canvas);
 }
 
-function saveEdit(gallery, galleryItem) {
+function gallerySaveEdit(gallery, galleryItem) {
 	var canvas = gallery.find("canvas")[0];
 	var img = gallery.find("img.galleryItem.editing");
 	img.removeClass("editing");
@@ -1029,13 +1040,22 @@ function saveEdit(gallery, galleryItem) {
 	galleryItem[0].src = dataURL;
 	// thumbnail in gallery in page
 	img[0].src = dataURL;
-	// storage
-	IDBputObject({ filename: img.attr("data-filename"), url: dataURL },
-		function() {
-			canvas.remove();
-			img.show();
-		}
-	);
+	var filename = img.attr("data-filename");
+		// if Rapid Mobile is present and it has the update method call to put the user image edit on the device
+	if (window._rapidmobile && window._rapidmobile.updateImage) {
+		// avoid filesystem access if there are no changes to be saved
+		if (pastDrawings.length > 1) _rapidmobile.updateImage(filename, dataURL);
+		canvas.remove();
+		img.show();
+	} else {
+		// IndexedDB
+		IDBputObject({ filename: filename, url: dataURL },
+			function() {
+				canvas.remove();
+				img.show();
+			}
+		);
+	}
 }
 
 	                ]]>
