@@ -229,18 +229,18 @@ function Event_error(eventName, controlId, ex) {
 	}
 }
 
-var _pwa = true;
-
-if ('serviceWorker' in navigator) {
-	console.log('CLIENT: service worker registration in progress.');
-	navigator.serviceWorker.register('sw.js')
-	.then(function(registration) {
-		console.log('CLIENT: service worker registration complete.');
-	}).catch(function(error) {
-		console.log('CLIENT: service worker registration failure : ' + error);
-	});
-} else {
-	console.log('CLIENT: service worker is not supported.');
+if (typeof _rapidmobile == "undefined") {
+	if ('serviceWorker' in navigator) {
+		console.log('CLIENT: service worker registration in progress.');
+		navigator.serviceWorker.register('sw.js')
+		.then(function(registration) {
+			console.log('CLIENT: service worker registration complete.');
+		}).catch(function(error) {
+			console.log('CLIENT: service worker registration failure : ' + error);
+		});
+	} else {
+		console.log('CLIENT: service worker is not supported.');
+	}
 }
                     ]]>
                 </contents>

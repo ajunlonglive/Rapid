@@ -1538,7 +1538,7 @@ public class Page {
 		// if you're looking for where the jquery link is added it's the first resource in the page.control.xml file
 		stringBuilder.append("    " + getResourcesHtml(application, false).trim() + "\n");
 
-		// add a JavaScript block with important global variables - this removed by the pagePanel loader and navigation action when showing dialogues, by matching to the various variables so be careful changing anything below
+		// add a JavaScript block with important global variables - this is removed by the pagePanel loader and navigation action when showing dialogues, by matching to the various variables so be careful changing anything below
 		stringBuilder.append("    <script type='text/javascript'>\n");
 		if (application != null) {
 			stringBuilder.append("var _appId = '" + application.getId() + "';\n");

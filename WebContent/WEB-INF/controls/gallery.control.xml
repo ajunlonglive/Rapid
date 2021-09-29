@@ -364,31 +364,8 @@ function addToImageControl(ev, control, filename, url, type) {
 	
 	// assume no image has been added
 	var imageSet = false;
-	
-	// if we're in Rapid Mobile
-	if (!typeof _rapidmobile == "undefined") {
-	
-		// if it doesn't start with http or data
-		if (filename.indexOf("http") != 0 && filename.indexOf("data:") != 0) {
 
-			// if this is Android
-			if (navigator.userAgent.indexOf("Android") > 0) {
-
-				// add a psuedo host for Rapid Mobile on Android
-				filename = "http://images/" + filename;
-										
-			} else {
-			
-				// add a psuedo host for Rapid Mobile on iOS
-				filename = window.location.origin + "/_images/" + filename;
-			
-			}							
-			
-		}
-	
-	}
-
-	// if we got a url - images which we no longer have in storage will empty this
+	// if we got a filename - images which we no longer have in storage will empty this
 	if (filename) {
 		// assume we're adding the image
 		var addImage = true;
@@ -423,9 +400,31 @@ function addToImageControl(ev, control, filename, url, type) {
 	
 		// only if we don't have the image alreay in there
 		if (addImage) {
+		
+			// assume no crossOrigin (which allows editing on Rapid Mobile)
+			var crossOrigin = "";
+			
+			// if we're in Rapid Mobile
+			if (typeof _rapidmobile != "undefined") {
+			
+				// if it starts with http
+				if (filename.indexOf("http") == 0) {
+		
+					// if this is Android
+					if (navigator.userAgent.indexOf("Android") > 0) {
+		
+						// if this is Android
+						crossOrigin = " crossOrigin='http://127.0.0.1:8888'";
+												
+					} 			
+					
+				}
+			
+			}
+			
 			
 			// add an image element with the url
-			control.append("<" + type + " class='galleryItem' src='" + (url || filename) + "' data-filename='" + filename + "'>");
+			control.append("<" + type + " class='galleryItem' src='" + (url || filename) + "' data-filename='" + filename + "'" + crossOrigin + ">");
 
 			// remember we set an image in the gallery
 			imageSet = true;
@@ -528,7 +527,7 @@ function specifyUrl(filename) {
 	
 } // function specifyUrl
 
-var _swipeHandlers = {};
+var _gallerySwipeHandlers = {};
        
 function Gallery_removeImage(ev, id, galleryImg) {
 	// confirm
@@ -638,8 +637,8 @@ var END_EV = useTouchEvents ? (SUPPORTS_POINTER ? (SUPPORTS_POINTER_IE10 ? 'MSPo
 var LEAVE_EV = useTouchEvents ? (SUPPORTS_POINTER ? 'mouseleave' : null) : 'mouseleave'; //we manually detect leave on touch devices, so null event here
 var CANCEL_EV = (SUPPORTS_POINTER ? (SUPPORTS_POINTER_IE10 ? 'MSPointerCancel' : 'pointercancel') : 'touchcancel');
 
-var pastDrawings = [];
-var futureDrawings = [];
+var _galleryPastDrawings = [];
+var _galleryFutureDrawings = [];
 
 
 function Gallery_showImage(ev, id, galleryItem, allowDelete, openEditor, allowEdit) {
@@ -752,7 +751,7 @@ function Gallery_showImage(ev, id, galleryItem, allowDelete, openEditor, allowEd
 		}
 		
 		// Include swipe actions, only if global has been set by mobile action and this is a mobile browser
-		if (_swipeHandlers && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+		if (_gallerySwipeHandlers && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
 		
 			var direction = "left";
 			var fingers = 1;
@@ -764,7 +763,7 @@ function Gallery_showImage(ev, id, galleryItem, allowDelete, openEditor, allowEd
 				},fingers:'all'
 			});
 		  	
-		  	_swipeHandlers[target] = [];
+		  	_gallerySwipeHandlers[target] = [];
 		  	
 		  	// Create the functions, that handles what should happen when there is a swipe
 		  	var swipeLeftHandler = function(ev) { 
@@ -776,8 +775,8 @@ function Gallery_showImage(ev, id, galleryItem, allowDelete, openEditor, allowEd
 		  	};
 		  	
 		  	// Add the handlers to the map
-		  	_swipeHandlers[target].push({direction:"left", fingers:1, "function":swipeLeftHandler});
-			_swipeHandlers[target].push({direction:"right", fingers:1, "function":swipeRightHandler});
+		  	_gallerySwipeHandlers[target].push({direction:"left", fingers:1, "function":swipeLeftHandler});
+			_gallerySwipeHandlers[target].push({direction:"right", fingers:1, "function":swipeRightHandler});
 		
 		}
 		
@@ -937,12 +936,12 @@ function editImage(gallery) {
 		return (dimension - canvasOffset) * scale();
 	}
 	
-	pastDrawings = [];
-	futureDrawings = [];
+	_galleryPastDrawings = [];
+	_galleryFutureDrawings = [];
 	
 	var imageDrawing = newImageDrawing(img[0]);
 	imageDrawing.draw(context);
-	pastDrawings.push(imageDrawing);
+	_galleryPastDrawings.push(imageDrawing);
 	
 	function startListener(x, y) {
 		
@@ -983,8 +982,8 @@ function editImage(gallery) {
 			
 			$("#tools button, #pallet button").removeClass("faded");
 			
-			pastDrawings.push(groupDrawing);
-			futureDrawings = [];
+			_galleryPastDrawings.push(groupDrawing);
+			_galleryFutureDrawings = [];
 			
 		}
 		
@@ -1006,19 +1005,19 @@ function editImage(gallery) {
 	$(tools).find("button").css({"pointer-events": "all"});
 	
 	function undo() {
-		if (pastDrawings.length > 1) {
-			var undoneDrawing = pastDrawings.pop();
-			futureDrawings.push(undoneDrawing);
-			pastDrawings.forEach(function(drawing) {
+		if (_galleryPastDrawings.length > 1) {
+			var undoneDrawing = _galleryPastDrawings.pop();
+			_galleryFutureDrawings.push(undoneDrawing);
+			_galleryPastDrawings.forEach(function(drawing) {
 				drawing.draw(context);
 			});
 		}
 	}
 	
 	function redo() {
-		if (futureDrawings.length > 0) {
-			var redoneDrawing = futureDrawings.pop();
-			pastDrawings.push(redoneDrawing);
+		if (_galleryFutureDrawings.length > 0) {
+			var redoneDrawing = _galleryFutureDrawings.pop();
+			_galleryPastDrawings.push(redoneDrawing);
 			redoneDrawing.draw(context);
 		}
 	}
@@ -1031,31 +1030,43 @@ function editImage(gallery) {
 }
 
 function gallerySaveEdit(gallery, galleryItem) {
+
+	// get the gallery canvas
 	var canvas = gallery.find("canvas")[0];
+	
+	// find the image that was being edited and remove editing class
 	var img = gallery.find("img.galleryItem.editing");
 	img.removeClass("editing");
-	var dataURL = canvas.toDataURL();
 	
-	// gallery viewer
-	galleryItem[0].src = dataURL;
-	// thumbnail in gallery in page
-	img[0].src = dataURL;
-	var filename = img.attr("data-filename");
+	// avoid updates if there are no changes to be saved
+	if (_galleryPastDrawings.length > 1) {
+	
+		// get the base64 image data from the canvas
+		var dataURL = canvas.toDataURL();
+		
+		// gallery viewer
+		galleryItem[0].src = dataURL;
+		
+		// thumbnail in gallery in page
+		img[0].src = dataURL;
+		
+		// get the friendly name of the image file
+		var filename = img.attr("data-filename");
+		
 		// if Rapid Mobile is present and it has the update method call to put the user image edit on the device
-	if (window._rapidmobile && window._rapidmobile.updateImage) {
-		// avoid filesystem access if there are no changes to be saved
-		if (pastDrawings.length > 1) _rapidmobile.updateImage(filename, dataURL);
-		canvas.remove();
-		img.show();
-	} else {
-		// IndexedDB
-		IDBputObject({ filename: filename, url: dataURL },
-			function() {
-				canvas.remove();
-				img.show();
-			}
-		);
-	}
+		if (typeof _rapidmobile == "undefined") {
+			// IndexedDB
+			IDBputObject({ filename: filename, url: dataURL });
+		} else {
+			// update on device (if method is present)
+			if (_rapidmobile.updateImage) _rapidmobile.updateImage(filename, dataURL);
+		}	
+	
+	} // edit check
+	
+	canvas.remove();
+	img.show();
+
 }
 
 	                ]]>
@@ -1152,6 +1163,29 @@ if (data) {
  				
 					// get the url
 					var url = urls[j];
+					
+					// if we're in Rapid Mobile
+					if (typeof _rapidmobile != "undefined") {
+					
+						// if it doesn't start with http or data
+						if (url.indexOf("http") != 0 && url.indexOf("data:") != 0) {
+				
+							// if this is Android
+							if (navigator.userAgent.indexOf("Android") > 0) {
+				
+								// add a psuedo host for Rapid Mobile on Android
+								url = "http://images/" + url;
+														
+							} else {
+							
+								// add a psuedo host for Rapid Mobile on iOS
+								url = window.location.origin + "/_images/" + url;
+							
+							}							
+							
+						}
+					
+					}
 				
 					// url type check
 					if (url.indexOf("data:") == 0) { // if url is a data url
@@ -1163,6 +1197,10 @@ if (data) {
  						var type = url.indexOf("data:video") == 0 ? "video" : "img";
  						
 						addToImageControl(ev, control, imageRecord.filename, imageRecord.url, type);
+						
+					} else if (url.indexOf("http") == 0) { // external or mobile image
+									
+						addToImageControl(ev, control, url);
 						
 					} else { // if url is a filename
 						
