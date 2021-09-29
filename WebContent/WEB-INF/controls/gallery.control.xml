@@ -129,6 +129,10 @@ div.gallery .galleryItem {
 	vertical-align:top;
 }
 
+.bigGallery .galleryItem {
+	cursor: default;
+}
+
 .galleryControlButton {
 	background: black;
 	outline: none;
@@ -840,8 +844,10 @@ function newImageDrawing(img) {
 
 var StrokeDrawing = {
 	color: "#000",
+	width: 1,
 	draw: function(context) {
 		context.strokeStyle = this.color;
+		context.lineWidth = this.width;
 		context.beginPath();
 		context.moveTo(this.x1, this.y1)
 		context.lineTo(this.x2, this.y2);
@@ -943,6 +949,8 @@ function editImage(gallery) {
 	imageDrawing.draw(context);
 	_galleryPastDrawings.push(imageDrawing);
 	
+	StrokeDrawing.width = verticalResolution / 200;
+	
 	function startListener(x, y) {
 		
 		var x = scaleX(x);
@@ -983,7 +991,9 @@ function editImage(gallery) {
 			$("#tools button, #pallet button").removeClass("faded");
 			
 			_galleryPastDrawings.push(groupDrawing);
+			btnUndo.show();
 			_galleryFutureDrawings = [];
+			btnRedo.hide();
 			
 		}
 		
@@ -1004,6 +1014,9 @@ function editImage(gallery) {
 	var btnRedo = $("#historyButtons").append("<button id='btnRedo' class='galleryControlButton galleryEditor' style='float: left;'><i class='fas fa-redo'></i></button>").find("#btnRedo");
 	$(tools).find("button").css({"pointer-events": "all"});
 	
+	btnUndo.hide();
+	btnRedo.hide();
+	
 	function undo() {
 		if (_galleryPastDrawings.length > 1) {
 			var undoneDrawing = _galleryPastDrawings.pop();
@@ -1022,8 +1035,16 @@ function editImage(gallery) {
 		}
 	}
 	
-	btnUndo.on(START_EV, undo);
-	btnRedo.on(START_EV, redo);
+	btnUndo.on(START_EV, function() {
+		undo();
+		if (_galleryPastDrawings.length <= 1) btnUndo.hide();
+		if (_galleryFutureDrawings.length > 0) btnRedo.show();
+	});
+	btnRedo.on(START_EV, function() {
+		redo();
+		if (_galleryFutureDrawings.length <= 0) btnRedo.hide();
+		if (_galleryPastDrawings.length > 1) btnUndo.show();
+	});
 	
 	img.addClass("editing").hide();
 	gallery.append(canvas);
