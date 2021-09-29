@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2018 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -457,7 +457,7 @@ public class RapidSecurityAdapter extends SecurityAdapter {
 						// if it has device security
 						if (application.getDeviceSecurity()) {
 							// check device security as well
-							if (user.checkDevice(rapidRequest))
+							if (user.checkDevice(rapidRequest) || checkUserRole(rapidRequest, Rapid.ADMIN_ROLE) || checkUserRole(rapidRequest, Rapid.USERS_ROLE))
 								pass = true;
 						} else
 							pass = true;
