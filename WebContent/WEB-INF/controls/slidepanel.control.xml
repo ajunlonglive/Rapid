@@ -108,12 +108,18 @@ return ["grey","white","black", "green"];
 	left: 0;
 	z-index: 101;
 	font-size: 55px;
-	padding: 0 0.35em;
+	padding: 0 0.35em;	
 }
 
+/* Images have been phased out for the font-awesome glyph */
 .slidePanel img {
 	width: 100%;
 	height: 100%;
+	cursor: pointer;
+}
+
+.slidePanel span {
+	cursor: pointer;
 }
 
 .slidePanelPane {
