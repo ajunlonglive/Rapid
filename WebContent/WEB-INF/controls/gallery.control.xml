@@ -129,10 +129,6 @@ div.gallery .galleryItem {
 	vertical-align:top;
 }
 
-.bigGallery .galleryItem {
-	cursor: default;
-}
-
 .galleryControlButton {
 	background: black;
 	outline: none;
@@ -168,6 +164,15 @@ div.gallery .galleryItem {
 
 .galleryItem {
 	cursor: pointer;
+}
+
+.bigGallery .galleryItem {
+	cursor: default;
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	position: absolute;
+	z-index: -1;
 }
 
 #tools button, #pallet button {
@@ -532,14 +537,14 @@ function specifyUrl(filename) {
 } // function specifyUrl
 
 var _gallerySwipeHandlers = {};
-       
+
 function Gallery_removeImage(ev, id, galleryImg) {
 	// confirm
 	if (confirm("Remove image?")) {
 	    // remove the image
 		if (galleryImg) galleryImg.remove();
 		// get the image
-		var img = $(".bigGallery .galleryItem:visible");
+		var img = $(".bigGallery .galleryItem").last();
 		// use the event target if we didn't get one from the big gallery
 		if (img.length == 0) img = $(ev.target);
 		// check if Rapid Mobile is present
@@ -593,36 +598,38 @@ function setNextPrevImgAndButton(currentImage, direction, prevButton, nextButton
 	
 	if (direction == "next") {
 		
-		var nextImage = currentImage.next(".galleryItem");
+		var filename = currentImage.attr("data-filename");
+		var currentGalleryImage = $(".gallery .galleryItem[data-filename='" + filename + "']");
+		var nextImage = currentGalleryImage.next(".galleryItem");
 		
 		if (nextImage.length) {
 			
-			// Hide this image
-			currentImage.hide();
 			// Show the next img sibling of the given image
-			nextImage.show("slide", {direction:"right"}, 500, function(){
-			
-				setNextPrevButton($(this), prevButton, nextButton);
-				
-			});
-			
+			var clone = nextImage.clone();
+			$(".bigGallery").append(clone);
+			// Hide this image
+			currentImage.fadeOut(500, function() { currentImage.remove(); });
+			clone.hide();
+			clone.show("slide", {direction:"right"}, 500);
+			setNextPrevButton(nextImage, prevButton, nextButton);
 		} 
 		
 	} else {
-	
-		var prevImage = currentImage.prev(".galleryItem");
+		
+		var filename = currentImage.attr("data-filename");
+		var currentGalleryImage = $(".gallery .galleryItem[data-filename='" + filename + "']");
+		var prevImage = currentGalleryImage.prev(".galleryItem");
 		
 		if (prevImage.length) {
 			
-			// Hide this image
-			currentImage.hide();
 			// Show the previous img sibling of the given image
-			prevImage.show("slide", {direction:"left"}, 500, function(){
-			
-				setNextPrevButton($(this), prevButton, nextButton);
-				
-			});
-				
+			var clone = prevImage.clone();
+			$(".bigGallery").append(clone);
+			// Hide this image
+			currentImage.fadeOut(500, function() { currentImage.remove(); });
+			clone.hide();
+			clone.show("slide", {direction:"left"}, 500, function() { currentImage.remove(); });
+			setNextPrevButton(prevImage, prevButton, nextButton);
 		} 
 	
 	}
@@ -654,20 +661,20 @@ function Gallery_showImage(ev, id, galleryItem, allowDelete, openEditor, allowEd
 	var galleryItem = $(galleryItem);
 	
 	// look for the big gallery div
-	var gallery = $("div.bigGallery");
+	var bigGallery = $(".bigGallery");
 	
 	// if we couldn't find one create
-	if (!gallery[0]) {	
+	if (!bigGallery[0]) {
 		
 		// Create a new gallery
-		gallery = $("body").append("<div class='bigGallery'></div>").find("div.bigGallery");
-		gallery.css({"position":"fixed", "top":0, "left":0, "right":0, "bottom":0});
+		bigGallery = $("body").append("<div class='bigGallery'></div>").find("div.bigGallery");
+		bigGallery.css({"position":"fixed", "top":0, "left":0, "right":0, "bottom":0});
 		
 		// buttons to the gallery
-		var btnPrev = gallery.append("<button id='btnPrev' class='galleryControlDirectionButton' style='position:absolute; left:0; top:50%;'><i class='fas fa-chevron-left'></i></button>").find("#btnPrev");
-		var btnNext = gallery.append("<button id='btnNext' class='galleryControlDirectionButton' style='position:absolute; right:0; top:50%;'><i class='fas fa-chevron-right'></i></button>").find("#btnNext");
+		var btnPrev = bigGallery.append("<button id='btnPrev' class='galleryControlDirectionButton' style='position:absolute; left:0; top:50%;'><i class='fas fa-chevron-left'></i></button>").find("#btnPrev");
+		var btnNext = bigGallery.append("<button id='btnNext' class='galleryControlDirectionButton' style='position:absolute; right:0; top:50%;'><i class='fas fa-chevron-right'></i></button>").find("#btnNext");
 		
-		var tools = gallery.append("<div id='tools' style='position:absolute; top:0; left:0; width:100%;'>").find("#tools").css({"text-align":"center", "color":"#FFF", "z-index":"1", "pointer-events": "none"});
+		var tools = bigGallery.append("<div id='tools' style='position:absolute; top:0; left:0; width:100%;'>").find("#tools").css({"text-align":"center", "color":"#FFF", "z-index":"1", "pointer-events": "none"});
 		var btnDelete = tools.append("<button id ='btnDeleteImage' class='galleryControlButton' style='float: left;'><i class='fas fa-trash'></i></button>").find("#btnDeleteImage");
 		var btnClose = tools.append("<button id ='btnCloseGallery' class='galleryControlButton' style='float: right;'><i class='fas fa-times'></i></button>").find("#btnCloseGallery");
 		if (galleryItem.is("img")) {
@@ -684,31 +691,29 @@ function Gallery_showImage(ev, id, galleryItem, allowDelete, openEditor, allowEd
 		if (typeof _rapidmobile != "undefined" && !_rapidmobile.updateImage) btnEdit.hide();
 	
 		// Add click listeners to the buttons
-		btnPrev.on(START_EV,function(){
-		
+		btnPrev.on(START_EV,function() {
 			// Get the currently shown img object in the big gallery
-			var currentImage = gallery.find(".galleryItem:visible");
+			var currentImage = $(".bigGallery .galleryItem").last();
 			// Display the previous image, and decide whether next/prev button should be shown
 			setNextPrevImgAndButton(currentImage, "previous", btnPrev, btnNext);
 			
 		});
 		
-		btnNext.on(START_EV, function(){
-		
+		btnNext.on(START_EV, function() {
 			// Get the currently shown img object in the big gallery
-			var currentImage = gallery.find(".galleryItem:visible");
+			var currentImage = $(".bigGallery .galleryItem").last();
 			// Display the previous image, and decide whether next/prev button should be shown
 			setNextPrevImgAndButton(currentImage, "next", btnPrev, btnNext);
 			
 		});
 		
-		btnClose.on(START_EV, function(){
+		btnClose.on(START_EV, function() {
 			$(document.body).css({overflow:"unset", "touch-action":"auto"});
 			$(window).css({overflow:"unset", "touch-action":"auto"});
-			gallery.css({opacity:"0"});
+			bigGallery.css({opacity:"0"});
 			setTimeout(function() {
 				// Hide the gallery
-				gallery.remove();
+				bigGallery.remove();
 			}, 200);
 		});
 		
@@ -716,45 +721,37 @@ function Gallery_showImage(ev, id, galleryItem, allowDelete, openEditor, allowEd
 			$(document.body).css({overflow:"unset", "touch-action":"auto"});
 			$(window).css({overflow:"unset", "touch-action":"auto"});
 		
-			// Loop through only the images in the gallery, and get the currently shown img object in the big gallery
-			gallery.children(".galleryItem").each(function(index, element) {
-				// get this image
-				var self = $(this);
-				// if it is the one showing
-				if (self.is(":visible") || self.is(".editing")) {
-					// get the source gallery
-					var sourceGallery = $("#" + gallery.attr("data-gallery"));
-					// Find  and delete this image 
-					var galleryItem = sourceGallery.children(".galleryItem").eq(index);
-					// remove from storage
-					var removed = Gallery_removeImage(ev, id, galleryItem);
-					// hide the gallery
-					if (removed) gallery.remove();
-					// we're done
-					return false;
-				}
-			});
+			// Remove the current image from the gallery
+			var currentImage = $(".bigGallery .galleryItem").last();
+			var filename = currentImage.attr("data-filename");
+			var currentGalleryImage = $(".gallery .galleryItem[data-filename='" + filename + "']");
+			var removed = Gallery_removeImage(ev, id, currentGalleryImage);
+			if (removed) bigGallery.remove();
 			
 		});
 		
 		if (btnEdit) {
 			btnEdit.on(START_EV, function(ev) {
 				btnEdit.hide();
-				editImage(gallery);
+				editImage(bigGallery);
 				btnSave.show();
 			});
 			if (openEditor) setTimeout(function() { $("#btnEdit").click(); });
 			
 			btnSave.on(START_EV, function(ev) {
 				btnSave.hide();
-				$(".galleryEditor").remove();
-				gallerySaveEdit(gallery, galleryItem);
+				var currentImage = $(".bigGallery .galleryItem").last();
 				if (openEditor) {
-					gallery.remove();
+					bigGallery.remove();
 				} else {
-					$(btnPrev, btnNext).show();
+					var filename = currentImage.attr("data-filename");
+					var currentGalleryImage = $(".gallery .galleryItem[data-filename='" + filename + "']");
+					if (currentGalleryImage.prevAll().length) btnPrev.show();
+					if (currentGalleryImage.nextAll().length) btnNext.show();
 					btnEdit.show();
 				}
+				gallerySaveEdit(bigGallery, currentImage);
+				$(".galleryEditor").remove();
 			});
 		}
 		
@@ -763,7 +760,7 @@ function Gallery_showImage(ev, id, galleryItem, allowDelete, openEditor, allowEd
 		
 			var direction = "left";
 			var fingers = 1;
-			var target = gallery;
+			var target = bigGallery;
 			
 			$(target).swipe({ 
 				swipe:function(event, direction, distance, duration, fingers, fingerData) { 
@@ -791,8 +788,8 @@ function Gallery_showImage(ev, id, galleryItem, allowDelete, openEditor, allowEd
 	}
 	
 	// Empty the big gallery
-	// Clear the images in the gallery	
-	gallery.children(".galleryItem").each(function() {
+	// Clear the images in the gallery
+	bigGallery.children(".galleryItem").each(function() {
 		// Remove this object
 		$(this).remove();
 	});
@@ -801,20 +798,12 @@ function Gallery_showImage(ev, id, galleryItem, allowDelete, openEditor, allowEd
 	var mainGallery = galleryItem.parent();
 	
 	// set an attribute for the source gallery
-	gallery.attr("data-gallery", mainGallery.attr("id"));
+	bigGallery.attr("data-gallery", mainGallery.attr("id"));
 	
-	// Get all the siblings of the clicked img in the main gallery including itself, and put it in the bigGallery
-    mainGallery.children().each(function(){
-    
-    	// Make a clone of this children to copy into big gallery
-    	var self = $(this).clone(); 	
-    	self.css({"width":"100%", "height":"100%", "object-fit":"contain", "display":"none"});
-		self.attr("controls", "controls");
-    	gallery.append(self);
-    	
-    	// If clicked img is this image - then show this image
-    	if (galleryItem[0] === this) self.show();
-    });
+	// Move galleryItem into bigGallery
+	var selectedImage = galleryItem.clone();
+	selectedImage.attr("controls", "controls");
+	bigGallery.append(selectedImage);
 	
 	// get the index
 	var index = galleryItem.index();
@@ -823,11 +812,11 @@ function Gallery_showImage(ev, id, galleryItem, allowDelete, openEditor, allowEd
 	// if we've got the details
 	if (details && details.captions && details.captions.length > index) {					
 		// show the caption
-		gallery.append(details.captions[index]);
+		bigGallery.append(details.captions[index]);
 	}
 	
 	// Now show the gallery
-	gallery.show();
+	bigGallery.show();
 	
 	// Initialise the next/prev button - depending on whether there are more than one img in the gallery
 	setNextPrevButton(galleryItem, $("#btnPrev"), $("#btnNext"));
@@ -891,9 +880,9 @@ function editImage(gallery) {
 	
 	$("#btnPrev, #btnNext").hide();
 	
-	var img = gallery.find("img.galleryItem:visible");
-	var horizontalResolution = img[0].naturalWidth;
-	var verticalResolution = img[0].naturalHeight;
+	var currentImage = gallery.find("img.galleryItem");
+	var horizontalResolution = currentImage[0].naturalWidth;
+	var verticalResolution = currentImage[0].naturalHeight;
 	
 	var canvas = document.createElement("canvas");
 	canvas.width = horizontalResolution;
@@ -949,7 +938,7 @@ function editImage(gallery) {
 	_galleryPastDrawings = [];
 	_galleryFutureDrawings = [];
 	
-	var imageDrawing = newImageDrawing(img[0]);
+	var imageDrawing = newImageDrawing(currentImage[0]);
 	imageDrawing.draw(context);
 	_galleryPastDrawings.push(imageDrawing);
 	
@@ -1050,18 +1039,14 @@ function editImage(gallery) {
 		if (_galleryPastDrawings.length > 1) btnUndo.show();
 	});
 	
-	img.addClass("editing").hide();
+	currentImage.hide();
 	gallery.append(canvas);
 }
 
-function gallerySaveEdit(gallery, galleryItem) {
+function gallerySaveEdit(gallery, currentImage) {
 
 	// get the gallery canvas
 	var canvas = gallery.find("canvas")[0];
-	
-	// find the image that was being edited and remove editing class
-	var img = gallery.find("img.galleryItem.editing");
-	img.removeClass("editing");
 	
 	// avoid updates if there are no changes to be saved
 	if (_galleryPastDrawings.length > 1) {
@@ -1069,36 +1054,27 @@ function gallerySaveEdit(gallery, galleryItem) {
 		// get the base64 image data from the canvas
 		var dataURL = canvas.toDataURL();
 		
-		// gallery viewer
-		galleryItem[0].src = dataURL;
-		
-		// get the friendly name of the image file
-		var filename = img.attr("data-filename");
+		// update both gallery and bigGallery images with new dataURL
+		var filename = currentImage.attr("data-filename");
+		$(".galleryItem[data-filename='" + filename + "']").each(function(_, img) {
+			img.src = dataURL;
+		});
 		
 		// if Rapid Mobile is present and it has the update method call to put the user image edit on the device
 		if (typeof _rapidmobile == "undefined") {
 		
 			// save the image data to IndexedDB
 			IDBputObject({ filename: filename, url: dataURL });
-			
-			// update the thumbnail in gallery in page with data url
-			img[0].src = dataURL;
-			
 		} else {
 			
 			// update on device (if method is present)
 			if (_rapidmobile.updateImage) _rapidmobile.updateImage(filename, dataURL);
-
-			// update the thumbnail in gallery in page with image url - this is required as the Rapid Mobile updater has to work with files as source (not base 64)
-			img[0].src = filename + "?r=" + Math.floor(Math.random() * 1000);
-			
 		}	
 	
 	} // edit check
 	
 	canvas.remove();
-	img.show();
-
+	currentImage.show();
 }
 
 	                ]]>
