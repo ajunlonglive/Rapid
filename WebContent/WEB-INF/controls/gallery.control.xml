@@ -676,8 +676,12 @@ function Gallery_showImage(ev, id, galleryItem, allowDelete, openEditor, allowEd
 		}
 		$(tools).find("button").css({"pointer-events": "all"});
 		
+		// design-time requested no edit and no delete
 		if (allowDelete == false) btnDelete.hide();
 		if (allowEdit == false) btnEdit.hide();
+		
+		// also hide the edit button if rapid mobile is present, but it doesn't have the updateImage method
+		if (typeof _rapidmobile != "undefined" && !_rapidmobile.updateImage) btnEdit.hide();
 	
 		// Add click listeners to the buttons
 		btnPrev.on(START_EV,function(){
@@ -1068,19 +1072,26 @@ function gallerySaveEdit(gallery, galleryItem) {
 		// gallery viewer
 		galleryItem[0].src = dataURL;
 		
-		// thumbnail in gallery in page
-		img[0].src = dataURL;
-		
 		// get the friendly name of the image file
 		var filename = img.attr("data-filename");
 		
 		// if Rapid Mobile is present and it has the update method call to put the user image edit on the device
 		if (typeof _rapidmobile == "undefined") {
-			// IndexedDB
+		
+			// save the image data to IndexedDB
 			IDBputObject({ filename: filename, url: dataURL });
+			
+			// update the thumbnail in gallery in page with data url
+			img[0].src = dataURL;
+			
 		} else {
+			
 			// update on device (if method is present)
 			if (_rapidmobile.updateImage) _rapidmobile.updateImage(filename, dataURL);
+
+			// update the thumbnail in gallery in page with image url - this is required as the Rapid Mobile updater has to work with files as source (not base 64)
+			img[0].src = filename + "?r=" + Math.floor(Math.random() * 1000);
+			
 		}	
 	
 	} // edit check
