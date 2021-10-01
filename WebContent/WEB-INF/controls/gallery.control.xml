@@ -648,6 +648,19 @@ var END_EV = useTouchEvents ? (SUPPORTS_POINTER ? (SUPPORTS_POINTER_IE10 ? 'MSPo
 var LEAVE_EV = useTouchEvents ? (SUPPORTS_POINTER ? 'mouseleave' : null) : 'mouseleave'; //we manually detect leave on touch devices, so null event here
 var CANCEL_EV = (SUPPORTS_POINTER ? (SUPPORTS_POINTER_IE10 ? 'MSPointerCancel' : 'pointercancel') : 'touchcancel');
 
+// a function to check the map of handlers and call any number of functions
+function galleryHandleSwipe(event, direction, distance, duration, fingers, fingerData, target, ev) {
+	// get the handlers for a target
+	var handlers = _gallerySwipeHandlers[target];
+	// loop them
+	for (var i in handlers) {
+		// get the hanlder
+		var handler = handlers[i];
+		// if the directions match and either the fingers match too, or are all/any, run the function!
+		if (handler.direction == direction && (handler.fingers == fingers || handler.fingers == 0)) handler["function"](ev);
+	}
+}
+
 var _galleryPastDrawings = [];
 var _galleryFutureDrawings = [];
 
@@ -764,7 +777,7 @@ function Gallery_showImage(ev, id, galleryItem, allowDelete, openEditor, allowEd
 			
 			$(target).swipe({ 
 				swipe:function(event, direction, distance, duration, fingers, fingerData) { 
-					handleSwipe(event, direction, distance, duration, fingers, fingerData, target, ev); 
+					galleryHandleSwipe(event, direction, distance, duration, fingers, fingerData, target, ev); 
 				},fingers:'all'
 			});
 		  	
@@ -971,7 +984,7 @@ function editImage(gallery) {
 			moveListener(mousemove.offsetX, mousemove.offsetY);
 		}
 		function touchmoveListener(touchmove) {
-			moveListener(touchmove.targetTouches[0].pageX, touchmove.targetTouches[0].pageY);
+			moveListener(touchmove.targetTouches[0].clientX, touchmove.targetTouches[0].clientY);
 		}
 		
 		if (touch) $(window).on("touchmove", touchmoveListener);
@@ -995,7 +1008,7 @@ function editImage(gallery) {
 	
 	$(canvas).on("touchstart", function(touchstart) {
 		touch = true;
-		startListener(touchstart.targetTouches[0].pageX, touchstart.targetTouches[0].pageY);
+		startListener(touchstart.targetTouches[0].clientX, touchstart.targetTouches[0].clientY);
 	});
 	
 	$(canvas).on("mousedown", function(mousedown) {
