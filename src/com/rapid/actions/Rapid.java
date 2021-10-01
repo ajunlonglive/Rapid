@@ -2072,7 +2072,6 @@ public class Rapid extends Action {
 						// processes and their info are added to the UI in the GETAPPS action type
 
 						String processName = jsonAction.getString("processName");
-						JSONObject details = jsonAction.getJSONObject("details");
 
 						List<Process> processes = rapidServlet.getProcesses();
 
@@ -2082,16 +2081,23 @@ public class Rapid extends Action {
 							// get the directory in which the process xml files are stored
 							File dir = new File(servletContext.getRealPath("/") + "/WEB-INF/processes/");
 
+							// loop through all processes, matching on name to find the right one, then loop all files matching against the process file to find that
 							searchForProcess:
 							for (Process process : processes) {
 								if (process.getProcessName().equals(processName)) {
 									for (File xmlFile : dir.listFiles()) {
 										if (process.getFileName().equals(xmlFile.getName())) {
 
-											process.interrupt();
+											// get all of the process details sent to us in the action json
+											JSONObject details = jsonAction.getJSONObject("details");
+
+											// use those details to save the process to the correct file
 											process.save(details, xmlFile);
+
+											// now (re)load the process from the file we just saved
 											RapidServletContextListener.loadProcess(xmlFile, servletContext);
 
+											// exit both loops
 											break searchForProcess;
 										}
 									}

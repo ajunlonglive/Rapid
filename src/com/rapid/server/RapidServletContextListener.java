@@ -1223,11 +1223,11 @@ public class RapidServletContextListener implements ServletContextListener {
 			// get the process at this index
 			Process process = processes.get(i);
 			// if this process is the one we're (re)loading
-			if (process.getFileName().equals(xmlFile.getName())) {
+			if (process.getClassName().equals(newProcess.getClassName())) {
 				// remove this process instance from the list
 				processes.remove(i);
 				// log
-				_logger.info("Stopping process");
+				_logger.info("Stopping process " + process.getName());
 				// stop / interrupt the process
 				process.interrupt();
 				// we're done
@@ -1265,8 +1265,23 @@ public class RapidServletContextListener implements ServletContextListener {
 	    // users should just be informed of visible processes
 	    int visibleProcesses = 0;
 
-	    // make a new list of processes
-	 	List<Process> processes = new ArrayList<>();
+	    // get the list of processes
+ 		List<Process> processes = (List<Process>) servletContext.getAttribute("processes");
+ 		// if we don't have one yet
+ 		if (processes == null) {
+ 			// make the list
+ 			processes = new ArrayList<>();
+ 		} else {
+ 			// loop all processes - this is to ensure they're all stopped and avoid possible two running
+ 			for (Process process : processes) {
+ 			// log
+				_logger.info("Stopping process " + process.getName());
+ 				// stop this process
+ 				process.interrupt();
+ 			}
+ 			// remove all processes
+ 			processes.removeAll(processes);
+ 		}
 
 		// loop the xml files in the folder
 		for (File xmlFile : dir.listFiles(xmlFilenameFilter)) {
