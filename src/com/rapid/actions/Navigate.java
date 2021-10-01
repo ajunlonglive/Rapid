@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -233,7 +233,7 @@ public class Navigate extends Action {
 				// if there are some close actions
 				if (_actions != null && _actions.size() > 0) {
 					// start the close callback function
-					closeActions += ",function(ev) {\n";
+					closeActions += "function(ev) {\n";
 					// loop the actions and add into the call back
 					for (Action action : _actions) closeActions += action.getJavaScriptWithHeader(rapidRequest, application, page, control, jsonDetails).trim() + "\n";
 					// set the correct indentation
@@ -241,10 +241,12 @@ public class Navigate extends Action {
 					closeActions = closeActions.substring(0, closeActions.length() - 2);
 					// close the call back function
 					closeActions += "}";
+				} else {
+					closeActions = "null";
 				}
 
 				// now add the other parameters (closeActions has its own leading comma)
-				js += sessionVariables + "'," + dialogue + ",'" + pageId + "'," + popup + "," + dismissibleDialogue + closeActions + ");\n";
+				js += sessionVariables + "'," + dialogue + ",'" + pageId + "'," + popup + "," + dismissibleDialogue + "," + closeActions + ",'" + this.getId() + "');\n";
 				// replace any unnecessary characters
 				js = js.replace(" + ''", "");
 
