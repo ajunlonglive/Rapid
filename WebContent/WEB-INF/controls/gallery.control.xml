@@ -1054,21 +1054,38 @@ function gallerySaveEdit(gallery, currentImage) {
 		// get the base64 image data from the canvas
 		var dataURL = canvas.toDataURL();
 		
-		// update both gallery and bigGallery images with new dataURL
+		// get the image file name
 		var filename = currentImage.attr("data-filename");
-		$(".galleryItem[data-filename='" + filename + "']").each(function(_, img) {
-			img.src = dataURL;
-		});
-		
-		// if Rapid Mobile is present and it has the update method call to put the user image edit on the device
+				
+		// if Rapid Mobile is not present
 		if (typeof _rapidmobile == "undefined") {
+		
+				// update both gallery and bigGallery images with new dataURL
+				$(".galleryItem[data-filename='" + filename + "']").each(function(_, img) {
+					img.src = dataURL;
+				});
 		
 			// save the image data to IndexedDB
 			IDBputObject({ filename: filename, url: dataURL });
+			
 		} else {
 			
-			// update on device (if method is present)
-			if (_rapidmobile.updateImage) _rapidmobile.updateImage(filename, dataURL);
+			// present and it has the update method call to put the user image edit on the device
+			if (_rapidmobile.updateImage) {
+			
+				// update the image on the device
+				_rapidmobile.updateImage(filename, dataURL);
+				
+				// append the file name with a random parameter so it re-fetches - this is required as the Rapid Mobile updater has to work with files as source (not base 64)
+				var refetchFilename = filename + "?r=" + Math.floor(Math.random() * 1000);
+			
+				// update both gallery and bigGallery images so it re-fetches the file, but hopefully just once
+				$(".galleryItem[data-filename='" + filename + "']").each(function(_, img) {
+					img.src = refetchFilename;
+				});
+				
+			}
+
 		}	
 	
 	} // edit check
