@@ -263,13 +263,15 @@ function Action_navigate(url, dialogue, id, popup, dismissibleDialogue, closeAct
        	// add the dialogue container and remove the reference
        	dialogue = body.append("<div id='" + id + "' class='dialogue' style='position:fixed;z-index:1001;'></div>").children().last();
        	
+       	function closeDialogue() {
+       	    dialogue.remove();
+       	    $(dialogueCover).remove();
+			$("script." + actionId).remove();
+       	}
+       	
        	// if this is a dismissibleDialogue allow clicking on the cover to close it
        	if (dismissibleDialogue) {
-       	    dialogueCover.on("click", function() {
-       	        dialogue.remove();
-       	        $(this).remove();
-				$("script." + actionId).remove();
-       	    })
+       	    dialogueCover.on("click", closeDialogue);
        	}
        	
        	// if we have close actions
@@ -302,6 +304,7 @@ function Action_navigate(url, dialogue, id, popup, dismissibleDialogue, closeAct
 		       			window.location = "login.jsp?requestPath=" + window.location; 
 		       		} else { 
 		       			alert("Error loading dialogue : " + error.responseText||message);
+		       			closeDialogue();
 		       		} 
 		       },
 		       success: function(page) {
