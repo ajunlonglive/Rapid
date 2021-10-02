@@ -1274,7 +1274,7 @@ public class RapidServletContextListener implements ServletContextListener {
  		} else {
  			// loop all processes - this is to ensure they're all stopped and avoid possible two running
  			for (Process process : processes) {
- 			// log
+ 				// log
 				_logger.info("Stopping process " + process.getName());
  				// stop this process
  				process.interrupt();
