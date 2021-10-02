@@ -260,9 +260,10 @@ function Action_navigate(url, dialogue, id, popup, dismissibleDialogue, closeAct
        	
     	// remove any existing dialogue container for this action
        	$("div#" + id).remove();
-       	// add the dialogue container and remove the reference
+       	// add the dialogue container and return the reference
        	dialogue = body.append("<div id='" + id + "' class='dialogue' style='position:fixed;z-index:1001;'></div>").children().last();
        	
+       	// clean up the dialogue used in dissmissable dialogue and on error loading
        	function closeDialogue() {
        	    dialogue.remove();
        	    $(dialogueCover).remove();
@@ -302,8 +303,10 @@ function Action_navigate(url, dialogue, id, popup, dismissibleDialogue, closeAct
 		       		if (error && error.status == 403) {
 		       			// go to login to authenticate		       		
 		       			window.location = "login.jsp?requestPath=" + window.location; 
-		       		} else { 
+		       		} else {
+		       			// inform the user with the error loading the dialogue
 		       			alert("Error loading dialogue : " + error.responseText||message);
+		       			// clean up
 		       			closeDialogue();
 		       		} 
 		       },
